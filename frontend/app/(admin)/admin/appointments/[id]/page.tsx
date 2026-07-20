@@ -14,7 +14,7 @@ import {
   patchAdminAppointmentStatus,
   patchAdminAppointmentUpdate,
 } from "@/lib/admin/admin-api";
-import { formatAppDateTime } from "@/lib/format-datetime";
+import { formatAppDateTime, formatAppDateTimeWithZone } from "@/lib/format-datetime";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { AdminAppointmentChat } from "../_components/admin-appointment-chat";
 import {
@@ -22,6 +22,7 @@ import {
   isTerminalAppointmentStatus,
 } from "@/lib/admin/appointment-status";
 import { FlagBadge } from "../../_components/flag-badge";
+import { SetCrumbTitle } from "../../_components/crumb-title";
 import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import { ScheduleSlotInput } from "../_components/schedule-slot-input";
 import { AdminAppointmentTabs } from "./_components/appointment-tabs";
@@ -51,6 +52,9 @@ function safeHttpUrl(url: string | undefined | null): string | null {
 // with the order pages. Always go through the shared formatter's explicit
 // display zone.
 const formatDate = formatAppDateTime;
+
+/** The zone every admin surface renders in — `formatAppDateTime`'s default. */
+const CLINIC_TZ = "Europe/Dublin";
 
 function statusToneFor(status: string): PillTone {
   if (status === "COMPLETED") return "published";
@@ -325,13 +329,27 @@ export default async function AdminAppointmentDetailPage({
     countryCode: appointment.country,
     pageSize: "100",
   });
-  const doctors =
-    doctorsResult.ok && doctorsResult.data.items
-      ? doctorsResult.data.items.filter((d) => d.active)
-      : [];
+  const allDoctors =
+    doctorsResult.ok && doctorsResult.data.items ? doctorsResult.data.items : [];
+  const doctors = allDoctors.filter((d) => d.active);
+  // Name lookup runs over the UNFILTERED list — a booking can still be
+  // assigned to a doctor who has since been deactivated, and the overview
+  // must name them even though the reassign <select> hides them.
+  const assignedDoctor = appointment.doctorId
+    ? (allDoctors.find((d) => d.id === appointment.doctorId) ?? null)
+    : null;
+
+  const assignedClinic = appointment.clinicId
+    ? (clinicOptions.find((c) => c.id === appointment.clinicId) ?? null)
+    : null;
+  const locationLabel = assignedClinic
+    ? [assignedClinic.name, assignedClinic.city].filter(Boolean).join(" · ")
+    : (appointment.locationAddress ?? "No location set");
 
   return (
     <>
+      {/* Replaces the opaque id crumb ("cmrtif3u…") with the patient name. */}
+      <SetCrumbTitle label={appointment.fullName} />
       <Link
         href="/admin/appointments"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -454,13 +472,47 @@ export default async function AdminAppointmentDetailPage({
                       }
                     />
                     <FieldRow
-                      label="Scheduled call"
+                      label="Assigned doctor"
                       value={
-                        appointment.scheduledAt
-                          ? formatDate(appointment.scheduledAt)
-                          : "Not scheduled yet"
+                        assignedDoctor
+                          ? `${assignedDoctor.fullName}${assignedDoctor.active ? "" : " (inactive)"}`
+                          : appointment.doctorId
+                            ? "Assigned — doctor not in this country's list"
+                            : "Unassigned"
                       }
                     />
+                    <FieldRow
+                      label="Mode"
+                      value={isInPerson ? "In person (at a clinic)" : "Online (video call)"}
+                    />
+                    {/* A bare wall clock is ambiguous across admins, so the
+                        zone is spelled out — plus the patient's own local
+                        time when they booked from a different zone. */}
+                    <FieldRow
+                      label="Scheduled call"
+                      value={
+                        appointment.scheduledAt ? (
+                          <>
+                            {formatAppDateTimeWithZone(appointment.scheduledAt)} clinic time
+                            {appointment.patientTimezone &&
+                            appointment.patientTimezone !== CLINIC_TZ ? (
+                              <span className="mt-0.5 block text-portal-compact text-[var(--color-text-muted)]">
+                                {formatAppDateTimeWithZone(
+                                  appointment.scheduledAt,
+                                  appointment.patientTimezone,
+                                )}{" "}
+                                patient time
+                              </span>
+                            ) : null}
+                          </>
+                        ) : (
+                          "Not scheduled yet"
+                        )
+                      }
+                    />
+                    {isInPerson ? (
+                      <FieldRow label="Location" value={locationLabel} />
+                    ) : null}
                     <FieldRow
                       label="Meeting URL"
                       value={

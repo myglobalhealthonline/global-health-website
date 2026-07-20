@@ -92,6 +92,56 @@ export function formatAppTime(
   }).format(value);
 }
 
+/** Short city label for an IANA zone ("Europe/Dublin" → "Dublin"). */
+export function timezoneCity(tz?: string | null): string {
+  const zone = resolveTz(tz);
+  return zone.includes("/")
+    ? zone.slice(zone.lastIndexOf("/") + 1).replace(/_/g, " ")
+    : zone;
+}
+
+/**
+ * DST-correct short offset ("GMT+1") for `tz` at that specific instant —
+ * resolved on the appointment's own date, not on today's, so a summer
+ * booking read in winter still prints the offset it will actually happen at.
+ */
+export function timezoneOffsetLabel(
+  dateLike: string,
+  tz?: string | null,
+): string {
+  const value = new Date(dateLike);
+  if (Number.isNaN(value.getTime())) return "";
+  return (
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: resolveTz(tz),
+      timeZoneName: "shortOffset",
+    })
+      .formatToParts(value)
+      .find((p) => p.type === "timeZoneName")?.value ?? ""
+  );
+}
+
+/**
+ * `formatAppDateTime` with the zone spelled out:
+ *
+ *   "21 Jul 2026, 14:00 (Dublin, GMT+1)"
+ *
+ * Use anywhere a bare wall clock would be ambiguous — an admin in Lisbon
+ * and one in Bucharest otherwise read the same string as two instants.
+ */
+export function formatAppDateTimeWithZone(
+  dateLike: string,
+  tz?: string | null,
+): string {
+  const value = new Date(dateLike);
+  if (Number.isNaN(value.getTime())) return dateLike;
+  const offset = timezoneOffsetLabel(dateLike, tz);
+  const zone = offset
+    ? `${timezoneCity(tz)}, ${offset}`
+    : timezoneCity(tz);
+  return `${formatAppDateTime(dateLike, tz)} (${zone})`;
+}
+
 /**
  * Dual-timezone string for the doctor portal: doctor-local time first,
  * patient-local time and short IANA city tag in parens.
