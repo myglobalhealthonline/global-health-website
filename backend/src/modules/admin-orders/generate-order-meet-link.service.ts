@@ -1,6 +1,8 @@
 import { CartItemKind, OrderStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
-import { formatDoctorForDocument } from "../../lib/doctor-name.js";
+// Calendar invites are a patient-facing notification, not a clinical document —
+// they carry the bare name (the invite copy labels the role separately).
+import { formatDoctorForPatientNotification } from "../../lib/doctor-name.js";
 import {
   createMeetLinkForAppointment,
   isGoogleMeetConfigured,
@@ -150,7 +152,7 @@ export async function generateOrderMeetLink(
       startAt = appointment.scheduledAt ?? appointment.timeSlot?.startAt ?? null;
       endAt = appointment.timeSlot?.endAt ?? null;
       if (appointment.doctor?.fullName) {
-        doctorName = formatDoctorForDocument(appointment.doctor.fullName);
+        doctorName = formatDoctorForPatientNotification(appointment.doctor.fullName);
       }
       if (appointment.service?.name) serviceTitle = appointment.service.name;
       doctorId = appointment.doctorId ?? doctorId;
@@ -172,7 +174,7 @@ export async function generateOrderMeetLink(
       startAt = slot.startAt;
       endAt = slot.endAt;
       if (slot.doctor?.fullName) {
-        doctorName = formatDoctorForDocument(slot.doctor.fullName);
+        doctorName = formatDoctorForPatientNotification(slot.doctor.fullName);
       }
       doctorId = slot.doctorId;
       doctorEmail = slot.doctor?.loginUser?.email?.trim().toLowerCase() ?? null;

@@ -5,7 +5,11 @@ export type TemplateLabels = {
   address: string;
   consultationDate: string;
   doctorName: string;
+  /** Honorific printed before the doctor's name on generated documents. */
+  doctorHonorific: string;
   registration: string;
+  /** Value printed after the registration label when none is on file. */
+  registrationNotOnFile: string;
   signatureLine: string;
   examsTitle: string;
   absenceTitle: string;
@@ -48,7 +52,9 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     address: "Address",
     consultationDate: "Consultation date",
     doctorName: "Doctor",
+    doctorHonorific: "Dr",
     registration: "Medical registration",
+    registrationNotOnFile: "not on file",
     signatureLine: "Prescriber signature",
     examsTitle: "Examinations requested",
     absenceTitle: "Medical absence period",
@@ -89,7 +95,9 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     address: "Morada",
     consultationDate: "Data da consulta",
     doctorName: "Médico",
+    doctorHonorific: "Dr.",
     registration: "Número de registo médico",
+    registrationNotOnFile: "não consta",
     signatureLine: "Assinatura do médico",
     examsTitle: "Exames solicitados",
     absenceTitle: "Período de incapacidade",
@@ -130,7 +138,9 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     address: "Dirección",
     consultationDate: "Fecha de consulta",
     doctorName: "Doctor",
+    doctorHonorific: "Dr.",
     registration: "Número de registro médico",
+    registrationNotOnFile: "no consta",
     signatureLine: "Firma del prescriptor",
     examsTitle: "Pruebas solicitadas",
     absenceTitle: "Período de baja médica",
@@ -171,7 +181,10 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     address: "Adresa",
     consultationDate: "Datum konzultace",
     doctorName: "Lékař",
+    // Czech physicians carry the MUDr. academic title, not a bare "Dr.".
+    doctorHonorific: "MUDr.",
     registration: "Registrační číslo",
+    registrationNotOnFile: "neuvedeno",
     signatureLine: "Podpis lékaře",
     examsTitle: "Požadovaná vyšetření",
     absenceTitle: "Pracovní neschopnost",
@@ -212,7 +225,9 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     address: "Adresă",
     consultationDate: "Data consultației",
     doctorName: "Medic",
+    doctorHonorific: "Dr.",
     registration: "Număr de înregistrare medicală",
+    registrationNotOnFile: "nespecificat",
     signatureLine: "Semnătura medicului",
     examsTitle: "Investigații solicitate",
     absenceTitle: "Concediu medical",
