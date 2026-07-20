@@ -23,7 +23,17 @@ import { createManualBooking } from "../appointments/manual-booking.service.js";
  * their own portal-access email regardless.
  */
 
-export type PartnerBookingPatient = {
+/**
+ * Flat on the wire — the booking body carries exactly one person, so a
+ * `patient` wrapper would nest without disambiguating. The grouping is
+ * restored below when handing off to `createManualBooking`, which is shared
+ * with the admin console and keeps its own shape.
+ */
+export type CreatePartnerBookingInput = {
+  countryCode: string;
+  serviceId: string;
+  doctorId: string;
+  timeSlotId: string;
   email: string;
   fullName: string;
   phone: string;
@@ -36,15 +46,7 @@ export type PartnerBookingPatient = {
   utenteNumber?: string | null;
   /** Single line: street, city and postcode together. */
   address?: string | null;
-};
-
-export type CreatePartnerBookingInput = {
-  countryCode: string;
-  serviceId: string;
-  doctorId: string;
-  timeSlotId: string;
   notes?: string | null;
-  patient: PartnerBookingPatient;
   partnerClientId: string;
   request?: FastifyRequest;
 };
@@ -78,20 +80,21 @@ export async function createPartnerBooking(
     // `createManualBooking` already supports via a null admin id. The
     // PartnerApiClient id lands in the audit metadata via `origin` instead.
     adminUserId: null,
+    // Re-nest the flat wire fields into the shape createManualBooking uses.
     patient: {
-      email: input.patient.email,
-      fullName: input.patient.fullName,
-      phone: input.patient.phone,
-      dateOfBirth: input.patient.dateOfBirth ?? null,
-      taxIdNumber: input.patient.taxIdNumber ?? null,
-      nationalIdNumber: input.patient.nationalIdNumber ?? null,
-      passportNumber: input.patient.passportNumber ?? null,
-      utenteNumber: input.patient.utenteNumber ?? null,
+      email: input.email,
+      fullName: input.fullName,
+      phone: input.phone,
+      dateOfBirth: input.dateOfBirth ?? null,
+      taxIdNumber: input.taxIdNumber ?? null,
+      nationalIdNumber: input.nationalIdNumber ?? null,
+      passportNumber: input.passportNumber ?? null,
+      utenteNumber: input.utenteNumber ?? null,
       // The partner contract takes one address line; the patient record
       // stores street/city/country separately. City and country are left
       // unset rather than guessed — a wrong split is worse than an absent
       // one, and nothing downstream parses the street line.
-      addressLine1: input.patient.address ?? null,
+      addressLine1: input.address ?? null,
     },
     serviceId: input.serviceId,
     doctorId: input.doctorId,
