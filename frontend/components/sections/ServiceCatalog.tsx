@@ -13,8 +13,6 @@ import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import {
   ArrowUpRight,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
   Package,
   Stethoscope,
   User,
@@ -22,6 +20,7 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { CarouselNav } from "@/components/ui/CarouselNav";
 
 export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
 
@@ -244,42 +243,17 @@ export function ServiceCatalog({
 
             {/* Prev / Next — only when more than one page */}
             {showPager && (
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                  aria-label={i18n.prevServices}
-                  className="inline-flex size-11 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-                  style={{
-                    background: page > 0 ? "var(--color-brand-accent)" : "transparent",
-                    borderColor: page > 0 ? "var(--color-brand-accent)" : "rgba(255,255,255,0.20)",
-                    color: page > 0 ? "#0a1f14" : "rgba(255,255,255,0.50)",
-                  }}
-                >
-                  <ChevronLeft className="size-4" strokeWidth={2} aria-hidden />
-                </button>
-                <span
-                  className="text-[11px] font-bold tabular-nums"
-                  style={{ color: "rgba(255,255,255,0.40)" }}
-                >
-                  {page + 1} / {totalPages}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                  disabled={page === totalPages - 1}
-                  aria-label={i18n.nextServices}
-                  className="inline-flex size-11 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-                  style={{
-                    background: page < totalPages - 1 ? "var(--color-brand-accent)" : "transparent",
-                    borderColor: page < totalPages - 1 ? "var(--color-brand-accent)" : "rgba(255,255,255,0.20)",
-                    color: page < totalPages - 1 ? "#0a1f14" : "rgba(255,255,255,0.50)",
-                  }}
-                >
-                  <ChevronRight className="size-4" strokeWidth={2} aria-hidden />
-                </button>
-              </div>
+              <CarouselNav
+                onPrev={() => setPage((p) => Math.max(0, p - 1))}
+                onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                canPrev={page > 0}
+                canNext={page < totalPages - 1}
+                progress={(page + 1) / totalPages}
+                prevLabel={i18n.prevServices}
+                nextLabel={i18n.nextServices}
+                page={page}
+                totalPages={totalPages}
+              />
             )}
           </div>
         </header>
