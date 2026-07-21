@@ -8,9 +8,9 @@
  */
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { CarouselNav } from "@/components/ui/CarouselNav";
 
 type DoctorItem = {
   name: string;
@@ -78,43 +78,19 @@ export function DoctorsSection({
   const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
   const showPager = totalPages > 1;
 
-  const activeStyle = {
-    background: "var(--color-brand-accent)",
-    borderColor: "var(--color-brand-accent)",
-    color: "#0a1f14",
-  };
-  const inactiveStyle = isLight
-    ? { background: "transparent", borderColor: "rgba(29,75,54,0.20)", color: "rgba(29,75,54,0.35)" }
-    : { background: "transparent", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.40)" };
-
   const pager = showPager ? (
-    <div className="flex items-center gap-3 shrink-0">
-      <button
-        onClick={() => setPage((p) => Math.max(0, p - 1))}
-        disabled={safePage === 0}
-        aria-label={previousPageLabel}
-        className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-        style={safePage === 0 ? inactiveStyle : activeStyle}
-      >
-        <ChevronLeft size={18} aria-hidden />
-      </button>
-      <span
-        aria-live="polite"
-        className="text-[11px] font-bold tabular-nums"
-        style={{ color: isLight ? "var(--color-text-muted)" : "var(--gh2-on-dark-muted)" }}
-      >
-        {safePage + 1} / {totalPages}
-      </span>
-      <button
-        onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-        disabled={safePage === totalPages - 1}
-        aria-label={nextPageLabel}
-        className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-        style={safePage === totalPages - 1 ? inactiveStyle : activeStyle}
-      >
-        <ChevronRight size={18} aria-hidden />
-      </button>
-    </div>
+    <CarouselNav
+      onPrev={() => setPage((p) => Math.max(0, p - 1))}
+      onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+      canPrev={safePage > 0}
+      canNext={safePage < totalPages - 1}
+      progress={(safePage + 1) / totalPages}
+      dark={!isLight}
+      prevLabel={previousPageLabel}
+      nextLabel={nextPageLabel}
+      page={safePage}
+      totalPages={totalPages}
+    />
   ) : null;
 
   const grid = (
