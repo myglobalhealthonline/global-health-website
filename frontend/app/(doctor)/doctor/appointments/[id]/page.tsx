@@ -19,13 +19,11 @@ import {
   fetchDoctorDocuments,
   fetchDoctorGeneratedDocuments,
   fetchDoctorMe,
-  fetchDoctorExams,
   fetchDoctorFormSubmissions,
   fetchDoctorFormTemplates,
   fetchDoctorInternalMessages,
 } from "@/lib/api/doctor-api";
 import { ConsultationForm } from "./_components/consultation-form";
-import { ExamResultsList } from "./_components/exam-results-list";
 import { ServicesUsedList } from "./_components/services-used-list";
 import { ShareConsultationButton } from "./_components/share-button";
 import { AppointmentActions } from "./_components/appointment-actions";
@@ -35,8 +33,6 @@ import { FollowUpButton } from "./_components/follow-up-button";
 import { AppointmentDocumentsTab } from "./_components/appointment-documents-tab";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { DoctorConsultationChatSection } from "./_components/consultation-chat-section";
-import { PrescriptionsList } from "./_components/prescriptions-list";
-import { fetchDoctorPrescriptions } from "@/lib/api/prescriptions-api";
 import { AppointmentTabs } from "./_components/appointment-tabs";
 import { FinalizeChecklist } from "./_components/finalize-checklist";
 import {
@@ -84,24 +80,20 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   };
   const [
     consultRes,
-    examsRes,
     messagesRes,
     submissionsRes,
     templatesRes,
     documentsRes,
     generatedDocsRes,
     meRes,
-    prescriptionsRes,
   ] = await Promise.all([
     fetchDoctorConsultation(id),
-    fetchDoctorExams(id),
     fetchDoctorInternalMessages(id),
     fetchDoctorFormSubmissions(id),
     fetchDoctorFormTemplates(),
     fetchDoctorDocuments(id),
     fetchDoctorGeneratedDocuments(id),
     fetchDoctorMe(),
-    fetchDoctorPrescriptions(id),
   ]);
 
   if (!consultRes.ok) {
@@ -121,7 +113,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   }
 
   const { appointment, consultation } = consultRes.data;
-  const exams = examsRes.ok ? examsRes.data.items : [];
   const messages = messagesRes.ok ? messagesRes.data.items : [];
   const submissions = submissionsRes.ok ? submissionsRes.data.items : [];
   const templates = templatesRes.ok ? templatesRes.data.items : [];
@@ -130,7 +121,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const doctorName = meRes.ok ? meRes.data.doctor.fullName : d.portal.sectionLabel;
   const documentsTabBadge =
     pendingSendCount > 0 ? String(pendingSendCount) : null;
-  const prescriptions = prescriptionsRes.ok ? prescriptionsRes.data.items : [];
   const consultationMode = appointment.consultationMode ?? "ONLINE";
   const followUpFromId = appointment.followUpFromAppointmentId ?? null;
   const signed = consultation?.status === "SIGNED";
@@ -289,13 +279,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 : d.appointmentDetail.documentsHint,
             tone: pendingSendCount > 0 ? "warning" : "neutral",
             icon: <FileStack aria-hidden />,
-          },
-          {
-            label: d.appointmentDetail.clinicalItems,
-            value: exams.length + prescriptions.length,
-            hint: d.appointmentDetail.clinicalItemsHint,
-            tone: exams.length + prescriptions.length > 0 ? "brand" : "neutral",
-            icon: <Stethoscope aria-hidden />,
           },
           {
             label: d.appointmentDetail.messages,
@@ -477,41 +460,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   </div>
                 </div>
               </FormSection>
-            ),
-          },
-          {
-            id: "clinical",
-            label: d.appointmentDetail.tabClinical,
-            icon: <FileText aria-hidden />,
-            badge:
-              exams.length + prescriptions.length > 0
-                ? String(exams.length + prescriptions.length)
-                : null,
-            panel: (
-              <div className="grid gap-4">
-                <FormSection
-                  title={d.appointmentDetail.examResults}
-                  description={d.appointmentDetail.examResultsDesc}
-                >
-                  <div className="gh-form-section__span-2">
-                    <ExamResultsList appointmentId={appointment.id} initialItems={exams} copy={d.examResultsList} />
-                  </div>
-                </FormSection>
-
-                <FormSection
-                  title={d.appointmentDetail.prescriptions}
-                  description={d.appointmentDetail.prescriptionsDesc}
-                >
-                  <div className="gh-form-section__span-2">
-                    <PrescriptionsList
-                      appointmentId={appointment.id}
-                      initialItems={prescriptions}
-                      consultationLocked={signed}
-                      copy={d.prescriptionsList}
-                    />
-                  </div>
-                </FormSection>
-              </div>
             ),
           },
           {

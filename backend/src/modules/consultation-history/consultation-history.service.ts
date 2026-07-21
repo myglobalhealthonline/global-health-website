@@ -107,7 +107,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
   const appointmentIds = appointments.map((a) => a.id);
   const orderRefByAppointment = await loadOrderRefsByAppointmentId(appointmentIds);
 
-  const [medicalNotes, generatedDocs, uploads] = await Promise.all([
+  const [medicalNotes, consultations, generatedDocs, uploads] = await Promise.all([
     prisma.medicalNote.findMany({
       where: {
         patientEmail: email,
@@ -124,6 +124,27 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
             symptoms: true,
           },
         },
+      },
+    }),
+    // Per-appointment SOAP note the doctor writes in the Consultation tab.
+    // Surfaced alongside medical notes / documents so the patient record
+    // shows the clinical narrative, not just the artefacts generated from it.
+    prisma.consultation.findMany({
+      where: {
+        appointmentId: { in: appointmentIds },
+        doctorId,
+      },
+      orderBy: { createdAt: "desc" },
+      include: {
+        appointment: {
+          select: {
+            id: true,
+            scheduledAt: true,
+            createdAt: true,
+            consultationType: true,
+          },
+        },
+        doctor: { select: { fullName: true } },
       },
     }),
     prisma.generatedDocument.findMany({
@@ -167,6 +188,45 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
 
   const generatedRows = generatedDocs.map((d) => mapGeneratedRow(d, orderRefByAppointment));
 
+  // An untouched DRAFT consultation row is auto-created for every appointment,
+  // so only surface consults that actually carry written content.
+  const consultationRows = consultations
+    .filter((c) =>
+      Boolean(
+        c.chiefComplaint?.trim() ||
+          c.subjective?.trim() ||
+          c.objective?.trim() ||
+          c.assessment?.trim() ||
+          c.plan?.trim(),
+      ),
+    )
+    .map((c) => {
+      const { sessionDate, sessionTime, sessionIso } = formatSessionParts(
+        c.appointment.scheduledAt,
+        c.appointment.createdAt,
+      );
+      const orderId = orderRefByAppointment.get(c.appointmentId);
+      return {
+        id: c.id,
+        appointmentId: c.appointmentId,
+        chiefComplaint: c.chiefComplaint,
+        subjective: c.subjective,
+        objective: c.objective,
+        assessment: c.assessment,
+        plan: c.plan,
+        status: c.status,
+        signedAt: c.signedAt ? c.signedAt.toISOString() : null,
+        createdByName: c.doctor.fullName,
+        createdAt: c.createdAt.toISOString(),
+        sessionDate,
+        sessionTime,
+        sessionIso,
+        orderNumber: formatOrderRef(c.appointmentId, orderId),
+        consultationType: c.appointment.consultationType,
+        consultationTypeLabel: formatConsultationTypeLabel(c.appointment.consultationType),
+      };
+    });
+
   const byType = (type: GeneratedDocumentType) =>
     generatedRows.filter((r) => r.documentType === type);
 
@@ -194,6 +254,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
         symptoms: n.appointment.symptoms,
       };
     }),
+    consultationNotes: consultationRows,
     generatedDocuments: {
       total: generatedRows.length,
       rows: generatedRows,

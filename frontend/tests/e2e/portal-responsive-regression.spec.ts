@@ -263,10 +263,10 @@ test.describe("doctor appointment workspace — tab/rail layout", () => {
 
   test("?tab= deep link opens the right tab", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto(`/doctor/appointments/${TEST_APPOINTMENT_ID}?tab=clinical`, { waitUntil: "domcontentloaded" });
-    const clinicalTab = page.locator("#gh-tab-clinical");
-    await expect(clinicalTab).toHaveAttribute("aria-selected", "true");
-    await expect(page.locator("#gh-tabpanel-clinical")).toBeVisible();
+    await page.goto(`/doctor/appointments/${TEST_APPOINTMENT_ID}?tab=documents`, { waitUntil: "domcontentloaded" });
+    const documentsTab = page.locator("#gh-tab-documents");
+    await expect(documentsTab).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator("#gh-tabpanel-documents")).toBeVisible();
   });
 
   test("arrow keys move tab focus/selection", async ({ page }) => {

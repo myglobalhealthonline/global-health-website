@@ -18,6 +18,25 @@ type MedicalNoteRow = {
   symptoms: string | null;
 };
 
+type ConsultationNoteRow = {
+  id: string;
+  appointmentId: string;
+  chiefComplaint: string | null;
+  subjective: string | null;
+  objective: string | null;
+  assessment: string | null;
+  plan: string | null;
+  status: string;
+  signedAt: string | null;
+  createdByName: string;
+  createdAt: string;
+  sessionDate: string;
+  sessionTime: string;
+  orderNumber: string;
+  consultationType: string;
+  consultationTypeLabel: string;
+};
+
 type DocRow = {
   id: string;
   appointmentId: string;
@@ -74,10 +93,20 @@ export type ConsultationHistoryCopy = {
   colFileType: string;
   colUploadedBy: string;
   colView: string;
+  consultationNotesTitle: string;
+  colStatus: string;
+  consultSigned: string;
+  consultDraft: string;
+  soapChiefComplaint: string;
+  soapSubjective: string;
+  soapObjective: string;
+  soapAssessment: string;
+  soapPlan: string;
 };
 
 type HistoryData = {
   medicalNotes: MedicalNoteRow[];
+  consultationNotes: ConsultationNoteRow[];
   generatedDocuments: {
     total: number;
     rows: DocRow[];
@@ -146,6 +175,76 @@ function HistorySection({
       </button>
       {open ? <div className="gh-doctor-history-body bg-white">{children}</div> : null}
     </section>
+  );
+}
+
+/**
+ * Truncated preview + chevron that toggles the full-width expanded row.
+ * ColumnPriorityTable only wraps the FIRST cell in its `onRowClick` button,
+ * so the chevron (last column) needs its own button or it is inert.
+ *
+ * `full` is the same content the desktop expanded row shows; it renders here
+ * only in mobile-card mode (`renderExpandedRow` is table-only) — portal.css
+ * hides `.gh-history-inline-full` inside `.gh-cpt-table-wrap`.
+ */
+function ExpandToggleCell({
+  open,
+  preview,
+  onToggle,
+  label,
+  full,
+}: {
+  open: boolean;
+  preview: string;
+  onToggle: () => void;
+  label: string;
+  full: React.ReactNode;
+}) {
+  return (
+    <span className="block">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-label={label}
+        className="flex w-full max-w-[220px] cursor-pointer items-center gap-2 text-left text-[var(--portal-muted)]"
+        style={{ background: "none", border: "none", padding: 0, font: "inherit" }}
+      >
+        {open ? (
+          <ChevronDown className="size-3.5 shrink-0" />
+        ) : (
+          <ChevronRight className="size-3.5 shrink-0" />
+        )}
+        <span className="truncate">
+          {preview.slice(0, 80)}
+          {preview.length > 80 ? "…" : ""}
+        </span>
+      </button>
+      {open ? (
+        <span className="gh-history-inline-full mt-2 block text-portal-compact text-[var(--portal-text)]">
+          {full}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
+/** Labelled SOAP blocks. Built from <span>s so it stays valid inside the
+ *  phrasing-content cell of ExpandToggleCell as well as in a table row. */
+function SoapBody({ sections }: { sections: { label: string; value: string | null }[] }) {
+  return (
+    <span className="grid gap-2.5">
+      {sections.map((s) => (
+        <span key={s.label} className="block">
+          <span className="block text-portal-thead font-bold uppercase tracking-[0.06em] text-[var(--portal-muted)]">
+            {s.label}
+          </span>
+          <span className="mt-0.5 block whitespace-pre-wrap break-words text-[var(--portal-text)]">
+            {s.value}
+          </span>
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -267,6 +366,7 @@ export function ConsultationHistoryPanel({
 }) {
   const [data, setData] = useState<HistoryData | null>(null);
   const [expandedNote, setExpandedNote] = useState<string | null>(null);
+  const [expandedConsult, setExpandedConsult] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -307,6 +407,7 @@ export function ConsultationHistoryPanel({
 
   const hasAny =
     data.medicalNotes.length > 0 ||
+    (data.consultationNotes?.length ?? 0) > 0 ||
     data.generatedDocuments.total > 0 ||
     data.uploadedFiles.length > 0;
 
@@ -347,19 +448,68 @@ export function ConsultationHistoryPanel({
       label: copy.medicalNotesTitle,
       priority: 1,
       cardPrimary: true,
-      render: (n) =>
-        expandedNote === n.id ? (
-          <span className="flex items-center gap-2 whitespace-pre-wrap text-[var(--portal-text)]">
-            <ChevronDown className="size-3.5 shrink-0 text-[var(--portal-muted)]" />
-            {n.content}
-          </span>
-        ) : (
-          <span className="flex max-w-[160px] items-center gap-2 truncate text-[var(--portal-muted)]">
-            <ChevronRight className="size-3.5 shrink-0" />
-            {n.content.slice(0, 80)}
-            {n.content.length > 80 ? "…" : ""}
-          </span>
-        ),
+      render: (n) => (
+        <ExpandToggleCell
+          open={expandedNote === n.id}
+          preview={n.content}
+          label={copy.medicalNotesTitle}
+          onToggle={() => setExpandedNote(expandedNote === n.id ? null : n.id)}
+          full={<span className="block whitespace-pre-wrap break-words">{n.content}</span>}
+        />
+      ),
+    },
+  ];
+
+  const consultationNotes = data.consultationNotes ?? [];
+
+  const soapSections = (c: ConsultationNoteRow) =>
+    [
+      { label: copy.soapChiefComplaint, value: c.chiefComplaint },
+      { label: copy.soapSubjective, value: c.subjective },
+      { label: copy.soapObjective, value: c.objective },
+      { label: copy.soapAssessment, value: c.assessment },
+      { label: copy.soapPlan, value: c.plan },
+    ].filter((s) => Boolean(s.value?.trim()));
+
+  const consultPreview = (c: ConsultationNoteRow) =>
+    soapSections(c)
+      .map((s) => s.value?.trim())
+      .join(" · ");
+
+  const consultationNoteFields: ColumnPriorityField<ConsultationNoteRow>[] = [
+    { key: "sessionDate", label: copy.colSessionDate, priority: 1, render: (c) => <span className="whitespace-nowrap">{c.sessionDate}</span> },
+    { key: "time", label: copy.colTime, priority: 3, render: (c) => <span className="whitespace-nowrap">{c.sessionTime}</span> },
+    { key: "order", label: copy.colOrderNumber, priority: 3, render: (c) => c.orderNumber },
+    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (c) => <SessionTypeBadge label={c.consultationTypeLabel} /> },
+    {
+      key: "status",
+      label: copy.colStatus,
+      priority: 2,
+      render: (c) => (
+        <span
+          className={`inline-block rounded-full px-2 py-0.5 text-portal-thead font-semibold ${
+            c.status === "SIGNED" ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"
+          }`}
+        >
+          {c.status === "SIGNED" ? copy.consultSigned : copy.consultDraft}
+        </span>
+      ),
+    },
+    { key: "doctor", label: copy.colDoctor, priority: 4, render: (c) => c.createdByName },
+    {
+      key: "note",
+      label: copy.consultationNotesTitle,
+      priority: 1,
+      cardPrimary: true,
+      render: (c) => (
+        <ExpandToggleCell
+          open={expandedConsult === c.id}
+          preview={consultPreview(c)}
+          label={copy.consultationNotesTitle}
+          onToggle={() => setExpandedConsult(expandedConsult === c.id ? null : c.id)}
+          full={<SoapBody sections={soapSections(c)} />}
+        />
+      ),
     },
   ];
 
@@ -375,8 +525,31 @@ export function ConsultationHistoryPanel({
             renderExpandedRow={(n, columnCount) =>
               expandedNote === n.id ? (
                 <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">
-                  <td colSpan={columnCount} className="px-4 py-3 whitespace-pre-wrap">
+                  <td
+                    colSpan={columnCount}
+                    className="px-4 py-3 text-portal-compact whitespace-pre-wrap break-words text-[var(--portal-text)]"
+                  >
                     {n.content}
+                  </td>
+                </tr>
+              ) : null
+            }
+          />
+        </HistorySection>
+      ) : null}
+
+      {consultationNotes.length > 0 ? (
+        <HistorySection title={copy.consultationNotesTitle} count={consultationNotes.length}>
+          <ColumnPriorityTable
+            fields={consultationNoteFields}
+            rows={consultationNotes}
+            getRowKey={(c) => c.id}
+            onRowClick={(c) => setExpandedConsult(expandedConsult === c.id ? null : c.id)}
+            renderExpandedRow={(c, columnCount) =>
+              expandedConsult === c.id ? (
+                <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">
+                  <td colSpan={columnCount} className="px-4 py-3 text-portal-compact">
+                    <SoapBody sections={soapSections(c)} />
                   </td>
                 </tr>
               ) : null

@@ -6025,6 +6025,13 @@ html::-webkit-scrollbar-thumb:hover {
   }
 }
 
+/* Expanded row detail (consultation history): the desktop table renders the
+   full note in its own colSpan row via `renderExpandedRow`, so the copy
+   inlined in the cell is for mobile-card mode only. */
+.gh-cpt-table-wrap .gh-history-inline-full {
+  display: none;
+}
+
 @media (max-height: 720px) {
   .gh-portal-topbar {
     min-height: 56px;
