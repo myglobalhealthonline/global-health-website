@@ -188,7 +188,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         {/* Depth base + vignette */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-0"
+          className="gh-medical-pattern-layer pointer-events-none absolute inset-0 z-0"
           style={{
             background:
               "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.34), transparent 42%)," +
@@ -199,7 +199,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         {/* Lime glow behind the headline */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-0"
+          className="gh-medical-pattern-layer pointer-events-none absolute inset-0 z-0"
           style={{
             background:
               "radial-gradient(circle at 30% 38%, rgba(176,241,34,0.09), transparent 32%)," +
