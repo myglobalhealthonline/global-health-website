@@ -81,7 +81,17 @@ function logEmailInstead(input: SendEmailInput, reason: string): SendEmailResult
   return { ok: true, id: null, mode: "log", reason };
 }
 
+/** Test/preview hook: when set, emails are captured instead of sent. */
+export let emailCaptureHook: ((input: SendEmailInput) => void) | null = null;
+export function setEmailCaptureHook(hook: ((input: SendEmailInput) => void) | null): void {
+  emailCaptureHook = hook;
+}
+
 export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
+  if (emailCaptureHook) {
+    emailCaptureHook(input);
+    return { ok: true, id: null, mode: "log", reason: "captured by test hook" };
+  }
   if (isGmailConfigured()) {
     const result = await sendViaGmail(input);
     if (result.ok) {

@@ -216,19 +216,19 @@ function introCopy(lang: Lang, variant: PostPaymentEmailVariant): string {
   });
 }
 
-function buildMeetLinkRow(lang: Lang, ctx: PostPaymentMessageContext): string {
+function buildMeetLinkRow(lang: Lang, ctx: PostPaymentMessageContext): [string, string] {
   const L = labels(lang);
-  return `<tr>
-            <td><b>${L.meetingLink}:</b></td>
-            <td><a href="${esc(ctx.meetingLink)}" style="color:#2d4f3d;word-break:break-all;">${esc(ctx.meetingLinkDisplay)}</a></td>
-          </tr>`;
+  return [
+    L.meetingLink,
+    `<a href="${esc(ctx.meetingLink)}" style="color:#1D4B36;word-break:break-all;">${esc(ctx.meetingLinkDisplay)}</a>`,
+  ];
 }
 
 function buildJoinButton(lang: Lang, ctx: PostPaymentMessageContext): string {
   const L = labels(lang);
   return `<p style="margin:28px 0;text-align:center;">
          <a href="${esc(ctx.meetingLink)}"
-            style="background-color:#2d4f3d;color:#ffffff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:16px;display:inline-block;">
+            style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;">
            ${L.joinNow}
          </a>
        </p>`;
@@ -257,27 +257,33 @@ export function buildPostPaymentPatientEmailHtml(
     variant === "appointment_updated";
   const dateValue = ctx.appointmentDateTime;
 
-  const rows = [
-    `<tr><td style="width:38%;vertical-align:top;"><b>${L.orderNo}:</b></td><td>#${esc(ctx.orderNumber)}</td></tr>`,
-    `<tr><td><b>${L.dateTime}:</b></td><td>${esc(dateValue)}</td></tr>`,
+  const rows: Array<[string, string]> = [
+    [L.orderNo, `#${esc(ctx.orderNumber)}`],
+    [L.dateTime, esc(dateValue)],
   ];
   if (showDoctor) {
-    rows.push(`<tr><td><b>${L.doctor}:</b></td><td>${esc(ctx.doctorName)}</td></tr>`);
+    rows.push([L.doctor, esc(ctx.doctorName)]);
   }
   if (showService) {
-    rows.push(`<tr><td><b>${L.service}:</b></td><td>${esc(ctx.serviceName)}</td></tr>`);
+    rows.push([L.service, esc(ctx.serviceName)]);
   }
   if (showPrice) {
-    rows.push(`<tr><td><b>${L.price}:</b></td><td>${esc(ctx.totalLabel)}</td></tr>`);
+    rows.push([L.price, esc(ctx.totalLabel)]);
   }
   if (showMeetLink && ctx.meetingLink) {
     rows.push(buildMeetLinkRow(lang, ctx));
   }
   if (variant === "appointment_updated" && ctx.changeReason?.trim()) {
-    rows.push(
-      `<tr><td><b>${L.reasonForChange}:</b></td><td>${esc(ctx.changeReason.trim())}</td></tr>`,
-    );
+    rows.push([L.reasonForChange, esc(ctx.changeReason.trim())]);
   }
+  const detailTable = rows
+    .map(
+      ([label, value], i) => `<tr>
+            <td style="padding:9px 2px;${i === 0 ? "" : "border-top:1px solid rgba(29,75,54,0.16);"}color:#6D6D6D;width:40%;font-weight:400;">${label}</td>
+            <td style="padding:9px 2px;${i === 0 ? "" : "border-top:1px solid rgba(29,75,54,0.16);"}font-weight:600;color:#1D4B36;">${value}</td>
+          </tr>`,
+    )
+    .join("\n          ");
 
   const actionBlock =
     (variant === "session_start" || variant === "one_hour") && ctx.meetingLink
@@ -286,34 +292,32 @@ export function buildPostPaymentPatientEmailHtml(
 
   const portalBlock = portal ? buildPortalBlock(lang, portal) : "";
 
-  return `<div style="background-color:#f4f1ea;padding:20px;font-family:Georgia,'Times New Roman',serif;color:#333;">
-  <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);max-width:100%;">
+  const title = `#${esc(ctx.orderNumber)} · ${statusHeading(lang, variant)}`;
+
+  return `<!doctype html><html><body style="margin:0;padding:0;background-color:#F6F8F1;">
+<div style="background-color:#F6F8F1;padding:28px 16px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#2D3B36;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:100%;background-color:#ffffff;border:1px solid #E4E7DD;border-radius:20px;overflow:hidden;">
     <tr>
-      <td align="center" style="background-color:#2d4f3d;padding:30px;">
-        <img src="${esc(logoSrc)}" alt="Global Health" width="180" style="display:block;max-width:180px;height:auto;" />
+      <td align="center" style="background-color:#15382A;background:linear-gradient(172deg,#1D4B36 0%,#15382A 55%,#0F2E25 100%);padding:34px 40px 30px;text-align:center;">
+        <img src="${esc(logoSrc)}" alt="Global Health" width="160" style="display:block;max-width:160px;height:auto;margin:0 auto;" />
+        <div style="margin-top:26px;font-family:'Cascadia Code',Consolas,Menlo,monospace;font-size:11px;letter-spacing:0.14em;color:#B0F122;text-transform:uppercase;">Global Health</div>
+        <h1 style="margin:8px 0 0;font-size:24px;line-height:1.25;font-weight:700;color:rgba(255,255,255,0.95);letter-spacing:-0.01em;">${title}</h1>
       </td>
     </tr>
     <tr>
-      <td align="center" style="padding:25px 20px;border-bottom:1px solid #eeeeee;">
-        <h2 style="color:#2d4f3d;letter-spacing:2px;margin:0;font-size:22px;font-weight:700;">
-          #${esc(ctx.orderNumber)} &nbsp;·&nbsp; ${statusHeading(lang, variant)}
-        </h2>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:40px;line-height:1.6;font-size:15px;">
+      <td style="padding:36px 40px;line-height:1.65;font-size:15px;color:#2D3B36;">
         <p style="margin:0 0 16px;">${greeting},</p>
         <p style="margin:0 0 20px;">${intro}</p>
-        <table width="100%" cellpadding="8" cellspacing="0" style="background-color:#fafaf8;border-radius:5px;font-size:14px;">
-          ${rows.join("\n          ")}
+        <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
+          ${detailTable}
         </table>
         ${actionBlock}
         ${portalBlock}
-        <p style="font-size:14px;color:#444;margin:24px 0 0;">
+        <p style="font-size:14px;color:#2D3B36;margin:24px 0 0;">
           ${L.contactLead}
-          <a href="mailto:${SUPPORT_EMAIL}" style="color:#2d4f3d;">${SUPPORT_EMAIL}</a>
+          <a href="mailto:${SUPPORT_EMAIL}" style="color:#1D4B36;">${SUPPORT_EMAIL}</a>
           ${L.whatsappLead}
-          <a href="${WHATSAPP_URL}" style="color:#2d4f3d;font-weight:bold;">${WHATSAPP_DISPLAY}</a>.
+          <a href="${WHATSAPP_URL}" style="color:#1D4B36;font-weight:bold;">${WHATSAPP_DISPLAY}</a>.
         </p>
         <p style="margin:28px 0 0;font-size:14px;">
           ${L.signOff}<br/>
@@ -322,12 +326,14 @@ export function buildPostPaymentPatientEmailHtml(
       </td>
     </tr>
     <tr>
-      <td align="center" style="padding:24px;background-color:#fafaf8;border-top:1px solid #eeeeee;font-size:12px;color:#777;">
-        <a href="https://www.myglobalhealth.online" style="color:#2d4f3d;text-decoration:none;font-weight:bold;">www.myglobalhealth.online</a>
+      <td align="center" style="padding:22px 40px;background-color:#0B241C;font-size:12px;color:rgba(255,255,255,0.5);text-align:center;">
+        <span style="color:rgba(255,255,255,0.5);">Medicine anytime, anywhere · </span>
+        <a href="https://www.myglobalhealth.online" style="color:#B0F122;text-decoration:none;font-weight:600;">myglobalhealth.online</a>
       </td>
     </tr>
   </table>
-</div>`;
+</div>
+</body></html>`;
 }
 
 export function buildPostPaymentPatientEmailText(
@@ -389,43 +395,42 @@ export function buildPostPaymentDoctorEmailHtml(
       ? serviceNameForDoctorReminder(ctx.serviceName)
       : ctx.serviceName;
 
-  const rows: string[] = [
-    `<tr><td style="width:38%;"><b>${L.patient}:</b></td><td>${esc(ctx.patientName)}</td></tr>`,
-  ];
+  const pairs: Array<[string, string]> = [[L.patient, esc(ctx.patientName)]];
   if (variant === "meeting_link" || variant === "appointment_updated") {
-    rows.push(
-      `<tr><td><b>Email:</b></td><td>${esc(ctx.patientEmail)}</td></tr>`,
-      `<tr><td><b>Phone:</b></td><td>${esc(ctx.patientPhone || "—")}</td></tr>`,
-      `<tr><td><b>${L.service}:</b></td><td>${esc(service)}</td></tr>`,
-      `<tr><td><b>${L.dateTime}:</b></td><td>${esc(ctx.appointmentDateTime)}</td></tr>`,
+    pairs.push(
+      ["Email", esc(ctx.patientEmail)],
+      ["Phone", esc(ctx.patientPhone || "—")],
+      [L.service, esc(service)],
+      [L.dateTime, esc(ctx.appointmentDateTime)],
     );
   } else if (variant === "appointment_reassigned") {
-    rows.push(
-      `<tr><td><b>${L.service}:</b></td><td>${esc(service)}</td></tr>`,
-      `<tr><td><b>${L.dateTime}:</b></td><td>${esc(ctx.appointmentDateTime)}</td></tr>`,
-    );
+    pairs.push([L.service, esc(service)], [L.dateTime, esc(ctx.appointmentDateTime)]);
   } else if (variant === "one_hour") {
-    rows.push(
-      `<tr><td><b>${L.service}:</b></td><td>${esc(service)}</td></tr>`,
-      `<tr><td><b>${L.startTime}:</b></td><td>${esc(ctx.appointmentDateTime)}</td></tr>`,
-    );
+    pairs.push([L.service, esc(service)], [L.startTime, esc(ctx.appointmentDateTime)]);
   }
   if (ctx.meetingLink && variant !== "appointment_reassigned") {
-    rows.push(
-      `<tr><td><b>${L.meetingLink}:</b></td><td><a href="${esc(ctx.meetingLink)}" style="color:#2d4f3d;">${esc(ctx.meetingLinkDisplay)}</a></td></tr>`,
-    );
+    pairs.push([
+      L.meetingLink,
+      `<a href="${esc(ctx.meetingLink)}" style="color:#1D4B36;">${esc(ctx.meetingLinkDisplay)}</a>`,
+    ]);
   }
   if (
     (variant === "appointment_updated" || variant === "appointment_reassigned") &&
     ctx.changeReason?.trim()
   ) {
-    rows.push(
-      `<tr><td><b>${L.reasonForChange}:</b></td><td>${esc(ctx.changeReason.trim())}</td></tr>`,
-    );
+    pairs.push([L.reasonForChange, esc(ctx.changeReason.trim())]);
   }
+
+  const rows: string[] = pairs.map(
+    ([label, value], i) => `<tr>
+    <td style="padding:9px 2px;${i === 0 ? "" : "border-top:1px solid rgba(29,75,54,0.16);"}color:#6D6D6D;width:40%;font-weight:400;">${label}</td>
+    <td style="padding:9px 2px;${i === 0 ? "" : "border-top:1px solid rgba(29,75,54,0.16);"}font-weight:600;color:#1D4B36;">${value}</td>
+  </tr>`,
+  );
+
   if (variant === "appointment_reassigned") {
     rows.push(
-      `<tr><td colspan="2" style="padding-top:12px;">${t(lang, {
+      `<tr><td colspan="2" style="padding:9px 2px;border-top:1px solid rgba(29,75,54,0.16);">${t(lang, {
         en: "This appointment has been reassigned to another doctor.",
         pt: "Esta consulta foi reatribuída a outro médico.",
         ro: "Această programare a fost realocată altui medic.",
@@ -436,7 +441,7 @@ export function buildPostPaymentDoctorEmailHtml(
   }
   if (variant === "session_start") {
     rows.push(
-      `<tr><td colspan="2" style="padding-top:12px;">${t(lang, {
+      `<tr><td colspan="2" style="padding:9px 2px;border-top:1px solid rgba(29,75,54,0.16);">${t(lang, {
         en: "Your consultation starts in 5 minutes.",
         pt: "A sua consulta começa dentro de 5 minutos.",
         ro: "Consultația începe peste 5 minute.",
@@ -486,7 +491,7 @@ export function buildPostPaymentDoctorEmailHtml(
 
   return wrapHtml(
     heading,
-    `<table width="100%" cellpadding="8" cellspacing="0" style="background:#fafaf8;border-radius:5px;font-size:14px;">
+    `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
     ${rows.join("\n    ")}
   </table>`,
   );
