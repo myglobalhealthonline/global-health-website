@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils/cn";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
+import { useSwipePage } from "@/hooks/use-swipe-page";
 
 export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
 
@@ -148,6 +149,10 @@ export function ServiceCatalog({
     setPage(0);
   }
 
+  const goPrev = () => setPage((p) => Math.max(0, p - 1));
+  const goNext = () => setPage((p) => Math.min(totalPages - 1, p + 1));
+  const swipe = useSwipePage(goPrev, goNext);
+
   return (
     <section
       id="services"
@@ -244,8 +249,8 @@ export function ServiceCatalog({
             {/* Prev / Next — only when more than one page */}
             {showPager && (
               <CarouselNav
-                onPrev={() => setPage((p) => Math.max(0, p - 1))}
-                onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                onPrev={goPrev}
+                onNext={goNext}
                 canPrev={page > 0}
                 canNext={page < totalPages - 1}
                 progress={(page + 1) / totalPages}
@@ -258,31 +263,33 @@ export function ServiceCatalog({
           </div>
         </header>
 
-        <RevealOnScroll
-          key={`${filter}-${page}`}
-          stagger
-          className={cn(
-            "gh-card-grid",
-            useFeaturedFirst ? "gh-card-grid--featured" : null,
-          )}
-        >
-          {shown.map((s, i) => (
-            <ServiceTile
-              key={`${s.type}-${s.title}-${s.href}`}
-              service={s}
-              variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
-              i18n={i18n}
-            />
-          ))}
-        </RevealOnScroll>
+        <div {...(showPager ? swipe : {})}>
+          <RevealOnScroll
+            key={`${filter}-${page}`}
+            stagger
+            className={cn(
+              "gh-card-grid",
+              useFeaturedFirst ? "gh-card-grid--featured" : null,
+            )}
+          >
+            {shown.map((s, i) => (
+              <ServiceTile
+                key={`${s.type}-${s.title}-${s.href}`}
+                service={s}
+                variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
+                i18n={i18n}
+              />
+            ))}
+          </RevealOnScroll>
+        </div>
 
         {/* Bottom pager — mirrors the header one so paging past row 1
             doesn't force a scroll back to the top of the list. */}
         {showPager && (
           <div className="mt-10 flex justify-center">
             <CarouselNav
-              onPrev={() => setPage((p) => Math.max(0, p - 1))}
-              onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              onPrev={goPrev}
+              onNext={goNext}
               canPrev={page > 0}
               canNext={page < totalPages - 1}
               variant="segments"

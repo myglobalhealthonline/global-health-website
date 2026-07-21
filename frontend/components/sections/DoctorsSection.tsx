@@ -11,6 +11,7 @@ import { useState } from "react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
+import { useSwipePage } from "@/hooks/use-swipe-page";
 
 type DoctorItem = {
   name: string;
@@ -78,10 +79,14 @@ export function DoctorsSection({
   const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
   const showPager = totalPages > 1;
 
+  const goPrev = () => setPage((p) => Math.max(0, p - 1));
+  const goNext = () => setPage((p) => Math.min(totalPages - 1, p + 1));
+  const swipe = useSwipePage(goPrev, goNext);
+
   const pager = showPager ? (
     <CarouselNav
-      onPrev={() => setPage((p) => Math.max(0, p - 1))}
-      onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+      onPrev={goPrev}
+      onNext={goNext}
       canPrev={safePage > 0}
       canNext={safePage < totalPages - 1}
       progress={(safePage + 1) / totalPages}
@@ -99,8 +104,8 @@ export function DoctorsSection({
   const bottomPager = showPager ? (
     <div className="mt-10 flex justify-center">
       <CarouselNav
-        onPrev={() => setPage((p) => Math.max(0, p - 1))}
-        onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+        onPrev={goPrev}
+        onNext={goNext}
         canPrev={safePage > 0}
         canNext={safePage < totalPages - 1}
         variant="segments"
@@ -114,7 +119,11 @@ export function DoctorsSection({
   ) : null;
 
   const grid = (
-    <div className="gh-card-grid" style={{ columnGap: "2rem", rowGap: "2.5rem" }}>
+    <div
+      className="gh-card-grid"
+      style={{ columnGap: "2rem", rowGap: "2.5rem" }}
+      {...(showPager ? swipe : {})}
+    >
       {paged.map((doctor) => (
         <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} dark={isCardDark} />
       ))}

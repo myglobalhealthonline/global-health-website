@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CarouselNav } from "@/components/ui/CarouselNav";
+import { useSwipePage } from "@/hooks/use-swipe-page";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import {
   SERVICE_CATALOG_DEFAULT_I18N,
@@ -92,6 +93,10 @@ export function ServicesGrid({
   const paged = items.slice(start, end);
   const showPager = totalPages > 1;
 
+  const goPrev = () => setPage((p) => p - 1);
+  const goNext = () => setPage((p) => p + 1);
+  const swipe = useSwipePage(goPrev, goNext);
+
   return (
     <section
       className={isDark ? "relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" : ""}
@@ -141,8 +146,8 @@ export function ServicesGrid({
           {/* Right: pager arrows */}
           {showPager && (
             <CarouselNav
-              onPrev={() => setPage((p) => p - 1)}
-              onNext={() => setPage((p) => p + 1)}
+              onPrev={goPrev}
+              onNext={goNext}
               canPrev={page > 0}
               canNext={page < totalPages - 1}
               progress={(page + 1) / totalPages}
@@ -157,7 +162,10 @@ export function ServicesGrid({
 
         {/* Card grid — dark sections reuse the home-page catalog tiles so
             service pages and the country home share one card design. */}
-        <div className={useFeaturedFirst ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
+        <div
+          className={useFeaturedFirst ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}
+          {...(showPager ? swipe : {})}
+        >
           {isDark
             ? paged.map((item, i) => (
                 <ServiceTile
@@ -193,8 +201,8 @@ export function ServicesGrid({
         {showPager && (
           <div className="mt-10 flex justify-center">
             <CarouselNav
-              onPrev={() => setPage((p) => p - 1)}
-              onNext={() => setPage((p) => p + 1)}
+              onPrev={goPrev}
+              onNext={goNext}
               canPrev={page > 0}
               canNext={page < totalPages - 1}
               variant="segments"
