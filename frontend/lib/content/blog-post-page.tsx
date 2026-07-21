@@ -207,8 +207,8 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           }}
         />
         {/* Plus glyph watermarks — desktop only */}
-        <span aria-hidden className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ top: "-4%", right: "40%", fontSize: 160, color: "rgba(176,241,34,0.05)" }}>+</span>
-        <span aria-hidden className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ bottom: "10%", left: "44%", fontSize: 84, color: "rgba(176,241,34,0.045)" }}>+</span>
+        <span aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ top: "-4%", right: "40%", fontSize: 160, color: "rgba(176,241,34,0.05)" }}>+</span>
+        <span aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ bottom: "10%", left: "44%", fontSize: 84, color: "rgba(176,241,34,0.045)" }}>+</span>
 
         <div
           className="relative z-10 mx-auto max-w-[var(--container-width)] px-5 md:px-10"
