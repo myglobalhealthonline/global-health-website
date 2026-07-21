@@ -103,6 +103,12 @@ const envSchema = z.object({
   GMAIL_SEND_REFRESH_TOKEN: z.string().trim().min(1).optional(),
   /** Used to build absolute URLs in emails (e.g. https://myglobalhealth.online). No trailing slash. */
   PUBLIC_SITE_URL: z.string().trim().url().optional(),
+  /** Accounting archive inbox (Dext). Every PAID fiscal document for a country
+   *  other than PT and CZ is forwarded there as a bare PDF — no body, no
+   *  template. Falls back to the address baked into
+   *  lib/email/sales-invoice-copy.ts, so production needs no variable at all.
+   *  Set "off" to disable the forward entirely. Not `.email()` — "off" must pass. */
+  SALES_INVOICE_COPY_EMAIL: z.string().trim().min(1).optional(),
 
   /** Stripe — keep test keys in dev. Payments stay disabled when STRIPE_SECRET_KEY is absent.
    *  STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET are the DEFAULT (Ireland) account —

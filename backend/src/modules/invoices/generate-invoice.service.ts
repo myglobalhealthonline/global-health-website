@@ -2,6 +2,7 @@ import { prisma } from "../../db/prisma.js";
 import { invoicePrefix, generateInvoiceNumber, generateCreditNoteNumber } from "../../lib/invoice-number.js";
 import { sendInvoiceEmail } from "../../lib/email/templates.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
+import { sendSalesInvoiceCopy } from "../../lib/email/sales-invoice-copy.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer, type CreditNoteReason } from "./invoice-pdf.js";
 
@@ -135,8 +136,16 @@ async function renderInvoiceDocPdf(opts: InvoiceDocRef, log: PaymentLog): Promis
  * Render the document PDF and email it to the patient, then stamp emailSentAt.
  * Shared by every issue/transition path. PDF + email failures are non-fatal —
  * the invoice row is the source of truth and must survive email trouble.
+ *
+ * `salesCopy` (default true) also forwards the PDF to the accounting inbox for
+ * PAID documents outside PT/CZ — see lib/email/sales-invoice-copy.ts. Admin
+ * resends pass false so the accountant is never sent the same document twice.
  */
-async function renderAndSendInvoiceDoc(opts: InvoiceDocRef, log: PaymentLog): Promise<void> {
+async function renderAndSendInvoiceDoc(
+  opts: InvoiceDocRef,
+  log: PaymentLog,
+  { salesCopy = true }: { salesCopy?: boolean } = {},
+): Promise<void> {
   const pdfBuffer = await renderInvoiceDocPdf(opts, log);
 
   const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${opts.invoiceId}`);
@@ -158,6 +167,21 @@ async function renderAndSendInvoiceDoc(opts: InvoiceDocRef, log: PaymentLog): Pr
     log.info({ invoiceId: opts.invoiceId, documentType: opts.documentType }, "Invoice email sent");
   } catch (err) {
     log.warn({ err, invoiceId: opts.invoiceId }, "Invoice email failed — invoice still created");
+  }
+
+  // Outside the try above on purpose: a failed patient email must not cost the
+  // accountant their copy. Self-gates on country + document type.
+  if (salesCopy) {
+    await sendSalesInvoiceCopy(
+      {
+        invoiceId: opts.invoiceId,
+        invoiceNumber: opts.invoiceNumber,
+        countryCode: opts.countryCode,
+        documentType: opts.documentType,
+        pdfBuffer,
+      },
+      log,
+    );
   }
 }
 
@@ -197,6 +221,9 @@ export async function resendInvoiceDocument(
       creditNoteReason: invoice.creditNoteReason as CreditNoteReason | null,
     },
     log,
+    // Patient-only resend. The accounting inbox already received this document
+    // when it was issued; forwarding again would duplicate it in the books.
+    { salesCopy: false },
   );
   return true;
 }

@@ -19,6 +19,20 @@ import {
 import {
   finalizeDoctorAppointment,
 } from "../modules/doctor-appointments/doctor-appointments.service.js";
+import {
+  createFollowUpBooking,
+  FollowUpSourceNotBillableError,
+  FollowUpSourceNotFoundError,
+  FollowUpVenueMissingError,
+} from "../modules/appointments/follow-up-booking.service.js";
+import {
+  DoctorNotAssignedToServiceError,
+  DoctorNotAvailableInCountryError,
+  DoctorNotFoundError,
+  ServiceNotFoundError,
+  ServicePriceMissingError,
+  SlotNotAvailableError,
+} from "../modules/appointments/manual-booking.service.js";
 
 /**
  * Doctor-side appointment actions + per-patient drilldown + invoices.
@@ -103,11 +117,10 @@ const patchAppointmentSchema = z
 
 const followUpSchema = z
   .object({
-    scheduledAt: z
-      .string()
-      .datetime({ offset: true })
-      .nullable()
-      .optional(),
+    /** First base DoctorTimeSlot to claim. Required — a follow-up must sit on
+     *  a real open slot so it blocks the doctor's calendar like any other
+     *  booking. The old free-text `scheduledAt` reserved nothing. */
+    timeSlotId: z.string().min(1).max(120),
     consultationType: z
       .enum(["general", "specialist", "prescription", "health-test", "follow-up"])
       .default("follow-up"),
@@ -388,11 +401,15 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
   );
 
   /**
-   * Create a follow-up appointment linked to the source. Copies
-   * patient identity, doctor, consultation mode, country. Defaults to
-   * "follow-up" consultation type unless the caller overrides. The
-   * source appointment's `followUps` collection picks the new row up
-   * automatically.
+   * Create a follow-up appointment linked to the source, on a real open
+   * slot from the doctor's own calendar.
+   *
+   * Delegates to `createFollowUpBooking`, which runs the shared manual-
+   * booking pipeline: the slot is atomically held (so the hour stops being
+   * bookable), an Order + Stripe Checkout link are minted at the source
+   * consultation's price, and the standard pre-payment notification
+   * sequence goes out to both patient and doctor. Non-payment cancels the
+   * booking and returns the slot to the base grid.
    */
   app.post<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/follow-up",
@@ -406,86 +423,91 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
           .send(errorResponse("Invalid follow-up", body.error.flatten()));
       }
       try {
-        const source = await prisma.appointment.findFirst({
-          where: { id: request.params.id, doctorId: auth.doctorId },
-          select: {
-            id: true,
-            userId: true,
-            countryCode: true,
-            consultationType: true,
-            fullName: true,
-            email: true,
-            phone: true,
-            dateOfBirth: true,
-            consultationMode: true,
-            serviceId: true,
-            healthTestId: true,
-            amountCents: true,
-            currencyCode: true,
-          },
+        const result = await createFollowUpBooking({
+          sourceAppointmentId: request.params.id,
+          doctorId: auth.doctorId,
+          actorUserId: auth.userId,
+          timeSlotId: body.data.timeSlotId,
+          consultationMode: body.data.consultationMode,
+          consultationType: body.data.consultationType,
+          notes: body.data.notes ?? null,
+          request,
         });
-        if (!source) {
-          return reply.status(404).send(errorResponse("Source appointment not found"));
-        }
-        const created = await prisma.appointment.create({
-          data: {
-            userId: source.userId,
-            countryCode: source.countryCode,
-            consultationType: body.data.consultationType,
-            fullName: source.fullName,
-            email: source.email,
-            phone: source.phone,
-            dateOfBirth: source.dateOfBirth,
-            notes: body.data.notes ?? null,
-            consentAccepted: true,
-            status: "REQUEST_RECEIVED",
-            doctorId: auth.doctorId,
-            scheduledAt: body.data.scheduledAt
-              ? new Date(body.data.scheduledAt)
-              : null,
-            consultationMode: body.data.consultationMode ?? source.consultationMode,
-            // Carry billing context forward so the follow-up isn't a
-            // priceless orphan — admin can still adjust before issuing.
-            serviceId: source.serviceId,
-            healthTestId: source.healthTestId,
-            amountCents: source.amountCents,
-            currencyCode: source.currencyCode,
-            followUpFromAppointmentId: source.id,
-          },
+
+        const created = await prisma.appointment.findUnique({
+          where: { id: result.appointmentId },
           select: {
             id: true,
+            fullName: true,
             scheduledAt: true,
             consultationType: true,
             status: true,
             createdAt: true,
           },
         });
+
         recordAudit({
           actorUserId: auth.userId,
           actorRole: "DOCTOR",
           action: "FOLLOW_UP_CREATED",
           entityType: "Appointment",
-          entityId: created.id,
-          metadata: { followUpFromAppointmentId: source.id },
+          entityId: result.appointmentId,
+          metadata: {
+            followUpFromAppointmentId: request.params.id,
+            orderId: result.orderId,
+            timeSlotId: body.data.timeSlotId,
+          },
           request,
         }).catch(() => {});
         notifyAdmins("APPOINTMENT_FOLLOWUP_BOOKED", {
-          appointmentId: created.id,
-          snippet: `${source.fullName} · follow-up booked`,
+          appointmentId: result.appointmentId,
+          snippet: `${created?.fullName ?? "Patient"} · follow-up booked`,
         }).catch(() => {});
+
         return reply.status(201).send(
           okResponse(
             {
-              appointment: {
-                ...created,
-                scheduledAt: created.scheduledAt?.toISOString() ?? null,
-                createdAt: created.createdAt.toISOString(),
-              },
+              appointment: created
+                ? {
+                    ...created,
+                    scheduledAt: created.scheduledAt?.toISOString() ?? null,
+                    createdAt: created.createdAt.toISOString(),
+                  }
+                : { id: result.appointmentId },
+              orderId: result.orderId,
+              // Null when Stripe isn't configured or the session failed —
+              // the booking still stands and admin can recover it by hand.
+              paymentUrl: result.paymentUrl,
             },
             "Follow-up created",
           ),
         );
       } catch (error) {
+        if (error instanceof FollowUpSourceNotFoundError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (
+          error instanceof FollowUpSourceNotBillableError ||
+          error instanceof FollowUpVenueMissingError
+        ) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        // Race loser / stale picker — the doctor re-picks an open slot.
+        if (error instanceof SlotNotAvailableError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        // The source's service/doctor can disappear or be unassigned between
+        // the source lookup and the booking (admin edit, deactivation). All
+        // are "fix the catalogue, then retry" — a 400, not a 500.
+        if (
+          error instanceof ServicePriceMissingError ||
+          error instanceof ServiceNotFoundError ||
+          error instanceof DoctorNotFoundError ||
+          error instanceof DoctorNotAssignedToServiceError ||
+          error instanceof DoctorNotAvailableInCountryError
+        ) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));
         }

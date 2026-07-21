@@ -12,6 +12,8 @@
  * patient time, Bucharest)" pattern from the booking-lift plan.
  */
 
+import { timezoneLabel } from "./timezone-label";
+
 const DISPLAY_LOCALE = "en-IE";
 const DEFAULT_TIME_ZONE = "Europe/Dublin";
 
@@ -90,6 +92,22 @@ export function formatAppTime(
     minute: "2-digit",
     timeZone: resolveTz(tz),
   }).format(value);
+}
+
+/**
+ * `formatAppDateTime` in a given zone, tagged with the country that names
+ * that zone the exact way patient notifications do ("21 Jul 2026, 14:00
+ * (Portugal)"). Mirrors the backend `formatDeadline` + `timezoneLabel`, so
+ * the admin reads a booking's time in the same words the patient was told.
+ * Multi-timezone countries fall back to the IANA city; a missing zone → UTC.
+ */
+export function formatAppDateTimeWithZone(
+  dateLike: string,
+  tz?: string | null,
+): string {
+  const value = new Date(dateLike);
+  if (Number.isNaN(value.getTime())) return dateLike;
+  return `${formatAppDateTime(dateLike, tz)} (${timezoneLabel(tz, DISPLAY_LOCALE)})`;
 }
 
 /**

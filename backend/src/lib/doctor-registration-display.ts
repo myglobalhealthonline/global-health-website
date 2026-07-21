@@ -1,4 +1,3 @@
-import { prisma } from "../db/prisma.js";
 import { getDoctorRegistrationByCountryCode } from "../modules/doctor-registrations/doctor-registrations.service.js";
 
 export type RegistrationRow = {
@@ -22,14 +21,21 @@ export function defaultChamberEntityForCountry(countryCode: string): string {
   return CHAMBER_BY_COUNTRY[code] ?? code;
 }
 
+/**
+ * Render the registration value a document prints. The templates already emit a
+ * localized "Medical registration" label before this, so the returned string is
+ * the value only — passing `notOnFileLabel` keeps the missing case in the
+ * document's own language instead of stacking English after a localized label.
+ */
 export function formatRegistrationLine(
   registration: Pick<RegistrationRow, "chamberEntity" | "registrationNumber" | "isVerified"> | null,
   countryCode: string,
+  notOnFileLabel = "not on file",
 ): { line: string; verified: boolean; missing: boolean } {
   const number = registration?.registrationNumber?.trim();
   if (!number) {
     return {
-      line: `Registration (${countryCode.toUpperCase()}): not on file`,
+      line: notOnFileLabel,
       verified: false,
       missing: true,
     };
@@ -46,6 +52,18 @@ export function formatRegistrationLine(
   return { line, verified, missing: false };
 }
 
+/**
+ * Resolve the registration a document must print, for the country that document
+ * is being issued in.
+ *
+ * Strictly scoped to `appointmentCountryCode`: a doctor licensed in several
+ * markets holds one registration row per country, and a document may only ever
+ * carry the number for its own market — an Irish IMC number on a Portuguese
+ * prescription is a regulatory defect, not a helpful fallback. So when the
+ * doctor has no registration on file for this country we return null and let
+ * `formatRegistrationLine` print "not on file"; the caller logs the gap so an
+ * admin can add the missing registration and regenerate.
+ */
 export async function resolveDoctorRegistrationForAppointment(
   doctorId: string,
   appointmentCountryCode: string,
@@ -56,57 +74,12 @@ export async function resolveDoctorRegistrationForAppointment(
     doctorId,
     apptCode,
   );
-  if (byAppointmentCountry?.registrationNumber?.trim()) {
-    return {
-      chamberEntity: byAppointmentCountry.chamberEntity,
-      registrationNumber: byAppointmentCountry.registrationNumber,
-      isVerified: byAppointmentCountry.isVerified,
-      countryCode: byAppointmentCountry.countryCode,
-    };
-  }
+  if (!byAppointmentCountry?.registrationNumber?.trim()) return null;
 
-  const doctor = await prisma.doctor.findUnique({
-    where: { id: doctorId },
-    select: { countryId: true, country: { select: { code: true } } },
-  });
-  if (!doctor) return null;
-
-  const primaryRow = await prisma.doctorCountry.findFirst({
-    where: { doctorId, countryId: doctor.countryId },
-    select: {
-      chamberEntity: true,
-      registrationNumber: true,
-      isVerified: true,
-      country: { select: { code: true } },
-    },
-  });
-  if (primaryRow?.registrationNumber?.trim()) {
-    return {
-      chamberEntity: primaryRow.chamberEntity,
-      registrationNumber: primaryRow.registrationNumber,
-      isVerified: primaryRow.isVerified,
-      countryCode: primaryRow.country.code.toUpperCase(),
-    };
-  }
-
-  const anyWithNumber = await prisma.doctorCountry.findFirst({
-    where: { doctorId, registrationNumber: { not: null } },
-    orderBy: { createdAt: "asc" },
-    select: {
-      chamberEntity: true,
-      registrationNumber: true,
-      isVerified: true,
-      country: { select: { code: true } },
-    },
-  });
-  if (anyWithNumber?.registrationNumber?.trim()) {
-    return {
-      chamberEntity: anyWithNumber.chamberEntity,
-      registrationNumber: anyWithNumber.registrationNumber,
-      isVerified: anyWithNumber.isVerified,
-      countryCode: anyWithNumber.country.code.toUpperCase(),
-    };
-  }
-
-  return null;
+  return {
+    chamberEntity: byAppointmentCountry.chamberEntity,
+    registrationNumber: byAppointmentCountry.registrationNumber,
+    isVerified: byAppointmentCountry.isVerified,
+    countryCode: byAppointmentCountry.countryCode,
+  };
 }

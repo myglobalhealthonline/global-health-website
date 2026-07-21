@@ -185,9 +185,36 @@ export type CreateManualBookingInput = {
   /** Path to land the patient back on after Stripe success (e.g.
    *  `/ireland/en`). Cancel URL is built off the same base. */
   returnTo?: string;
+  /** Set when this booking is a follow-up spun off an earlier appointment —
+   *  stamped onto `Appointment.followUpFromAppointmentId` so the workspace
+   *  renders the "Follow-up of …" badge and the patient history stays a
+   *  continuous chain. */
+  followUpFromAppointmentId?: string | null;
+  /** Charge exactly this instead of deriving the price from the service.
+   *  Used by the doctor follow-up flow, where the follow-up costs precisely
+   *  what the source consultation cost — peak/off-peak must NOT re-price it,
+   *  or a follow-up dropped into an evening slot would silently cost more
+   *  than the consultation it continues. Wins over base, peak, and insurance
+   *  pricing. Must be > 0. */
+  amountCentsOverride?: number | null;
+  /** Override `Appointment.consultationType`, which otherwise snapshots the
+   *  service name. The follow-up flow passes `"follow-up"` so the doctor /
+   *  admin list filters and the reports type breakdown classify it correctly. */
+  consultationTypeOverride?: string | null;
   /** Caller request — forwarded to recordAudit so the IP lands in the
    *  AuditLog row, and used for structured logging. */
   request?: FastifyRequest;
+  /** Provenance of the booking, for Stripe metadata + the audit row.
+   *  Defaults to the admin console (`admin_manual`, actor role ADMIN).
+   *  The partner booking API passes its own marker plus the
+   *  `PartnerApiClient.id`, so every programmatically-created booking is
+   *  traceable to the integration that made it — an audit trail the plain
+   *  "admin did it" attribution would otherwise lose. */
+  origin?: {
+    source: string;
+    actorRole?: string;
+    partnerClientId?: string | null;
+  };
 };
 
 export type CreateManualBookingResult = {
@@ -257,12 +284,19 @@ export async function createManualBooking(
   if (!service) {
     throw new ServiceNotFoundError();
   }
-  if (service.basePriceCents == null || service.basePriceCents <= 0) {
+  // An explicit override carries its own price, so a service whose base price
+  // was cleared since the source consultation was booked can still be followed
+  // up on. Without one we require a real base price to charge.
+  const amountOverride =
+    input.amountCentsOverride != null && input.amountCentsOverride > 0
+      ? input.amountCentsOverride
+      : null;
+  if (amountOverride == null && (service.basePriceCents == null || service.basePriceCents <= 0)) {
     throw new ServicePriceMissingError();
   }
   // Base price; overridden below with the slot's peak/off-peak price so a
   // manual booking is charged exactly what the public picker would show.
-  let amountCents = service.basePriceCents;
+  let amountCents = amountOverride ?? (service.basePriceCents as number);
 
   // Clinic timezone for the country (falls back to UTC). The appointment
   // time now comes from the picked slot (already UTC), so this is only
@@ -371,7 +405,7 @@ export async function createManualBooking(
   // Apply peak / off-peak pricing for the picked slot so the manual price
   // matches the public picker + checkout summary. Falls through to the base
   // price when the service has no enabled peak config.
-  const peakConfig = await getServicePeakConfig(service.id);
+  const peakConfig = amountOverride == null ? await getServicePeakConfig(service.id) : null;
   if (peakConfig?.enabled) {
     const tz = await resolveDoctorTimeZone(input.doctorId);
     const priced = computeSlotPrice({
@@ -387,7 +421,9 @@ export async function createManualBooking(
   // Insurance wins over peak: a negotiated insurance price is a flat per-service
   // rate independent of time-of-day. Resolved server-side above (never trusted
   // from the form) — same authority the public cart uses.
-  if (insurancePriceCents != null) {
+  // An explicit override outranks both: it is itself a price already charged
+  // once (the source consultation's), so re-deriving would defeat the point.
+  if (insurancePriceCents != null && amountOverride == null) {
     amountCents = insurancePriceCents;
   }
 
@@ -475,7 +511,8 @@ export async function createManualBooking(
         id: appointmentId,
         userId,
         countryCode: input.countryCode,
-        consultationType: service.name,
+        consultationType: input.consultationTypeOverride?.trim() || service.name,
+        followUpFromAppointmentId: input.followUpFromAppointmentId ?? null,
         fullName,
         email,
         phone: input.patient.phone?.trim() || null,
@@ -606,7 +643,7 @@ export async function createManualBooking(
           orderId: order.id,
           appointmentId,
           countryCode: input.countryCode,
-          source: "admin_manual",
+          source: input.origin?.source ?? "admin_manual",
         },
       });
       paymentUrl = session.url ?? null;
@@ -663,13 +700,16 @@ export async function createManualBooking(
 
   recordAudit({
     actorUserId: input.adminUserId ?? null,
-    actorRole: "ADMIN",
+    actorRole: input.origin?.actorRole ?? "ADMIN",
     action: "APPOINTMENT_CREATED",
     entityType: "Appointment",
     entityId: appointmentId,
     metadata: {
-      source: "admin_manual",
+      source: input.origin?.source ?? "admin_manual",
       adminAuth: input.adminUserId ? "session" : "token",
+      ...(input.origin?.partnerClientId
+        ? { partnerClientId: input.origin.partnerClientId }
+        : {}),
       patientUserId: userId,
       patientAccountCreated: created,
       serviceId: service.id,

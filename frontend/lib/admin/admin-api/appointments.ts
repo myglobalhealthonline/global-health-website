@@ -46,6 +46,14 @@ type AdminAppointmentDetailPayload = {
     doctorId: string | null;
     /** IANA tz captured at booking time; null on legacy appointments. */
     patientTimezone: string | null;
+    /** Linked order for the clickable order reference. `orderId` targets
+     *  /admin/orders/[id]; `orderNumber` (ORD-000001) is the label. Both
+     *  null when the appointment has no linked order. */
+    orderId: string | null;
+    orderNumber: string | null;
+    /** Booked service-name snapshot from the order line; null when there's
+     *  no linked order item (client falls back to a consultationType label). */
+    serviceName: string | null;
     createdAt: string;
     updatedAt: string;
   };

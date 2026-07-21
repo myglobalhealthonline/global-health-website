@@ -14,7 +14,8 @@ import {
   patchAdminAppointmentStatus,
   patchAdminAppointmentUpdate,
 } from "@/lib/admin/admin-api";
-import { formatAppDateTime } from "@/lib/format-datetime";
+import { formatAppDateTime, formatAppDateTimeWithZone } from "@/lib/format-datetime";
+import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { AdminAppointmentChat } from "../_components/admin-appointment-chat";
 import {
@@ -22,6 +23,7 @@ import {
   isTerminalAppointmentStatus,
 } from "@/lib/admin/appointment-status";
 import { FlagBadge } from "../../_components/flag-badge";
+import { SetCrumbTitle } from "../../_components/crumb-title";
 import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import { ScheduleSlotInput } from "../_components/schedule-slot-input";
 import { AdminAppointmentTabs } from "./_components/appointment-tabs";
@@ -51,6 +53,33 @@ function safeHttpUrl(url: string | undefined | null): string | null {
 // with the order pages. Always go through the shared formatter's explicit
 // display zone.
 const formatDate = formatAppDateTime;
+
+/** Clinic zone — the fallback for legacy bookings with no captured patient tz. */
+const CLINIC_TZ = "Europe/Dublin";
+
+// Human name for the raw consultationType enum, matching the patient-facing
+// labels in locales/en/account.json (the admin API only returns the enum).
+// Falls back to a title-cased form for any unmapped value.
+const CONSULTATION_NAMES: Record<string, string> = {
+  general: "GP consultation",
+  specialist: "Specialist consultation",
+  prescription: "Online prescription",
+  health_test: "Health test",
+  home_delivery: "Home delivery",
+};
+
+function consultationName(type: string): string {
+  const key = type.toLowerCase().replace(/[\s-]+/g, "_");
+  return (
+    CONSULTATION_NAMES[key] ??
+    type
+      .replace(/[-_]/g, " ")
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ")
+  );
+}
 
 function statusToneFor(status: string): PillTone {
   if (status === "COMPLETED") return "published";
@@ -325,13 +354,32 @@ export default async function AdminAppointmentDetailPage({
     countryCode: appointment.country,
     pageSize: "100",
   });
-  const doctors =
-    doctorsResult.ok && doctorsResult.data.items
-      ? doctorsResult.data.items.filter((d) => d.active)
-      : [];
+  const allDoctors =
+    doctorsResult.ok && doctorsResult.data.items ? doctorsResult.data.items : [];
+  const doctors = allDoctors.filter((d) => d.active);
+  // Name lookup runs over the UNFILTERED list — a booking can still be
+  // assigned to a doctor who has since been deactivated, and the overview
+  // must name them even though the reassign <select> hides them.
+  const assignedDoctor = appointment.doctorId
+    ? (allDoctors.find((d) => d.id === appointment.doctorId) ?? null)
+    : null;
+
+  const assignedClinic = appointment.clinicId
+    ? (clinicOptions.find((c) => c.id === appointment.clinicId) ?? null)
+    : null;
+  const locationLabel = assignedClinic
+    ? [assignedClinic.name, assignedClinic.city].filter(Boolean).join(" · ")
+    : (appointment.locationAddress ?? "No location set");
+
+  // Prefer the booked order-line name ("IE - General Consultation"); fall
+  // back to a label mapped from the raw consultationType enum.
+  const consultationDisplay =
+    appointment.serviceName ?? consultationName(appointment.consultationType);
 
   return (
     <>
+      {/* Replaces the opaque id crumb ("cmrtif3u…") with the patient name. */}
+      <SetCrumbTitle label={appointment.fullName} />
       <Link
         href="/admin/appointments"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -346,7 +394,7 @@ export default async function AdminAppointmentDetailPage({
           </span>
         }
         title={appointment.fullName}
-        description={`${appointment.consultationType} · ${formatDate(appointment.createdAt)}`}
+        description={`${consultationDisplay} · ${formatDate(appointment.createdAt)}`}
         icon={<UserRound aria-hidden />}
         actions={
           <Pill tone={statusToneFor(appointment.status)}>
@@ -442,7 +490,25 @@ export default async function AdminAppointmentDetailPage({
                       value={appointment.phone ?? "No phone provided"}
                     />
                     <FieldRow label="Country" value={appointment.country.toUpperCase()} />
-                    <FieldRow label="Consultation type" value={appointment.consultationType} />
+                    <FieldRow label="Consultation" value={consultationDisplay} />
+                    <FieldRow
+                      label="Order"
+                      value={
+                        appointment.orderId ? (
+                          <Link
+                            href={`/admin/orders/${appointment.orderId}`}
+                            className="underline text-[var(--color-brand-primary)]"
+                          >
+                            {formatOrderDisplayId({
+                              id: appointment.orderId,
+                              orderNumber: appointment.orderNumber,
+                            })}
+                          </Link>
+                        ) : (
+                          "No linked order"
+                        )
+                      }
+                    />
                     <FieldRow
                       label="Payment"
                       value={
@@ -454,13 +520,37 @@ export default async function AdminAppointmentDetailPage({
                       }
                     />
                     <FieldRow
+                      label="Assigned doctor"
+                      value={
+                        assignedDoctor
+                          ? `${assignedDoctor.fullName}${assignedDoctor.active ? "" : " (inactive)"}`
+                          : appointment.doctorId
+                            ? "Assigned — doctor not in this country's list"
+                            : "Unassigned"
+                      }
+                    />
+                    <FieldRow
+                      label="Mode"
+                      value={isInPerson ? "In person (at a clinic)" : "Online (video call)"}
+                    />
+                    {/* Rendered in the timezone the patient booked in and
+                        named by country — the exact string their booking
+                        notifications show. Falls back to the clinic zone for
+                        legacy bookings that captured no patient timezone. */}
+                    <FieldRow
                       label="Scheduled call"
                       value={
                         appointment.scheduledAt
-                          ? formatDate(appointment.scheduledAt)
+                          ? formatAppDateTimeWithZone(
+                              appointment.scheduledAt,
+                              appointment.patientTimezone ?? CLINIC_TZ,
+                            )
                           : "Not scheduled yet"
                       }
                     />
+                    {isInPerson ? (
+                      <FieldRow label="Location" value={locationLabel} />
+                    ) : null}
                     <FieldRow
                       label="Meeting URL"
                       value={

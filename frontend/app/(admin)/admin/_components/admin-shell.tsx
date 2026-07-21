@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IdleLogout } from "@/components/IdleLogout";
 import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
+import { CrumbTitleContext } from "./crumb-title";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import {
   BarChart3,
@@ -310,7 +311,19 @@ export function AdminShell({
 }) {
   const [navOpen, setNavOpen] = useState(false);
   const pathname = usePathname();
-  const breadcrumbs = useBreadcrumbs(pathname, countries, activeCountry);
+  // Detail pages (rendered inside <main>) can name their own trailing crumb
+  // via <SetCrumbTitle>, so a record route reads "… / Appointments / Thomas
+  // Lubbe" instead of "… / cmrtif3u…". Null on every route that doesn't set one.
+  const [crumbTitle, setCrumbTitle] = useState<string | null>(null);
+  const derivedBreadcrumbs = useBreadcrumbs(pathname, countries, activeCountry);
+  const breadcrumbs = useMemo(() => {
+    if (!crumbTitle || derivedBreadcrumbs.length === 0) return derivedBreadcrumbs;
+    const last = derivedBreadcrumbs[derivedBreadcrumbs.length - 1];
+    return [
+      ...derivedBreadcrumbs.slice(0, -1),
+      { ...last, label: crumbTitle },
+    ];
+  }, [derivedBreadcrumbs, crumbTitle]);
   const navRef = useRef<HTMLElement | null>(null);
   const topbarRef = useRef<HTMLElement | null>(null);
   usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
@@ -611,7 +624,11 @@ export function AdminShell({
             </div>
           ) : null}
 
-          <main className="gh-admin-main gh-portal-main min-w-0 flex-1">{children}</main>
+          <main className="gh-admin-main gh-portal-main min-w-0 flex-1">
+            <CrumbTitleContext.Provider value={setCrumbTitle}>
+              {children}
+            </CrumbTitleContext.Provider>
+          </main>
         </div>
 
       <Toaster
