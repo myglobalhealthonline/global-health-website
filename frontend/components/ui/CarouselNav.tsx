@@ -22,15 +22,18 @@ type CarouselNavProps = {
   dark?: boolean;
   prevLabel?: string;
   nextLabel?: string;
-  /** Optional page info for screen readers (visually the hairline replaces the counter). */
+  /** Page info for screen readers; also drives the dots in `variant="segments"`. */
   page?: number;
   totalPages?: number;
+  /** "hairline" (default) — continuous fill bar. "segments" — one dot per
+   *  page, current page accent-filled. Requires `page` + `totalPages`. */
+  variant?: "hairline" | "segments";
 };
 
 /**
- * Shared prev/next carousel control — variant B "progress hairline".
- * One 38px ghost arrow, a 72px hairline that fills with progress, one
- * accent-filled arrow. Replaces the per-section hand-rolled pagers.
+ * Shared prev/next carousel control. Replaces the per-section hand-rolled
+ * pagers. Two visual variants: a continuous progress hairline (default,
+ * works for scroll carousels via `progressVar`) or page-precise segments.
  */
 export function CarouselNav({
   onPrev,
@@ -44,6 +47,7 @@ export function CarouselNav({
   nextLabel = "Next",
   page,
   totalPages,
+  variant = "hairline",
 }: CarouselNavProps) {
   const arrowStyle = (enabled: boolean) =>
     enabled
@@ -74,19 +78,40 @@ export function CarouselNav({
       >
         <ChevronLeft size={16} aria-hidden />
       </button>
-      <div
-        aria-hidden
-        className="h-[3px] w-16 overflow-hidden rounded-full sm:w-20"
-        style={{ background: dark ? "rgba(255,255,255,0.14)" : "rgba(29,75,54,0.15)" }}
-      >
+      {variant === "segments" && page !== undefined && totalPages !== undefined ? (
+        <div aria-hidden className="flex items-center gap-[5px]">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <span
+              key={i}
+              className="h-[3px] w-[22px] rounded-full transition-colors duration-200"
+              style={{
+                background:
+                  i === page
+                    ? dark
+                      ? "var(--color-brand-accent)"
+                      : "var(--color-brand-primary)"
+                    : dark
+                      ? "rgba(255,255,255,0.16)"
+                      : "rgba(29,75,54,0.18)",
+              }}
+            />
+          ))}
+        </div>
+      ) : (
         <div
-          className="h-full rounded-full transition-[width] duration-200"
-          style={{
-            background: dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)",
-            width: fillWidth,
-          }}
-        />
-      </div>
+          aria-hidden
+          className="h-[3px] w-16 overflow-hidden rounded-full sm:w-20"
+          style={{ background: dark ? "rgba(255,255,255,0.14)" : "rgba(29,75,54,0.15)" }}
+        >
+          <div
+            className="h-full rounded-full transition-[width] duration-200"
+            style={{
+              background: dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)",
+              width: fillWidth,
+            }}
+          />
+        </div>
+      )}
       {page !== undefined && totalPages !== undefined ? (
         <span aria-live="polite" className="sr-only">
           {page + 1} / {totalPages}
