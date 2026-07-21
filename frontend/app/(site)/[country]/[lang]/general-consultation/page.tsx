@@ -176,7 +176,7 @@ export default async function CountryLangGeneralConsultationPage({
     title: d.title,
     bio: d.bio ?? "",
     languages: d.languages,
-    country: config.name,
+    country: config.code,
     imageSrc: d.imageSrc ?? null,
     href: `/${slug}/${lang}/doctors/${d.slug}`,
     bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
