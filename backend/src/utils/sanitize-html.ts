@@ -79,10 +79,18 @@ const BLOG_ALLOWED_TAGS = [
   "figure", "figcaption", "address", "time", "details", "summary",
   "img", "picture", "source",
   "table", "thead", "tbody", "tfoot", "tr", "td", "th", "caption", "colgroup", "col",
+  // Inline SVG icons (shapes only — no <use>/<foreignObject>/href, no script surface).
+  "svg", "g", "path", "circle", "rect", "line", "polyline", "polygon", "ellipse",
   "style",
 ];
 
 const BLOG_COMMON_ATTRS = ["class", "id", "style", "title", "role", "dir", "lang", "align"];
+
+const SVG_PRESENTATION_ATTRS = [
+  "viewbox", "width", "height", "fill", "stroke", "stroke-width", "stroke-linecap",
+  "stroke-linejoin", "stroke-dasharray", "opacity", "transform", "focusable",
+  "d", "cx", "cy", "r", "rx", "ry", "x", "y", "x1", "y1", "x2", "y2", "points",
+];
 
 export function sanitizeBlogHtml(input: string | null | undefined): string | null {
   if (input == null) return null;
@@ -107,6 +115,16 @@ export function sanitizeBlogHtml(input: string | null | undefined): string | nul
       col: [...BLOG_COMMON_ATTRS, "span"],
       colgroup: [...BLOG_COMMON_ATTRS, "span"],
       time: [...BLOG_COMMON_ATTRS, "datetime"],
+      details: [...BLOG_COMMON_ATTRS, "open"],
+      svg: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS, "xmlns", "aria-hidden"],
+      g: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS],
+      path: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS],
+      circle: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS],
+      rect: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS],
+      line: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS],
+      polyline: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS],
+      polygon: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS],
+      ellipse: [...BLOG_COMMON_ATTRS, ...SVG_PRESENTATION_ATTRS],
     },
     // No allowedStyles filter → inline styles pass through verbatim (layout,
     // spacing, colour, grid/flex all survive). Safe inside the Shadow DOM.

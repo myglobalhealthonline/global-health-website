@@ -23,25 +23,64 @@ const DENIED_AT_RULES = new Set(["import", "charset", "namespace"]);
  */
 const KEYFRAME_PREFIX = "ghblog-";
 
+// Mirrors the backend's sanitizeBlogHtml allow-list (backend/src/utils/
+// sanitize-html.ts) so a designed article that survives save also survives
+// render. Keep the two lists in sync.
 const BLOG_ALLOWED_TAGS = [
   ...sanitizeHtml.defaults.allowedTags,
   "article",
   "aside",
+  "details",
   "figure",
   "figcaption",
   "h1",
   "h2",
+  "header",
+  "footer",
   "img",
+  "mark",
+  "picture",
   "section",
+  "source",
   "span",
+  "summary",
+  "time",
+  // Inline SVG icons (shapes only — no <use>/<foreignObject>/href).
+  "svg",
+  "g",
+  "path",
+  "circle",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "ellipse",
   "style",
+];
+
+const SVG_PRESENTATION_ATTRS = [
+  "viewbox", "width", "height", "fill", "stroke", "stroke-width", "stroke-linecap",
+  "stroke-linejoin", "stroke-dasharray", "opacity", "transform", "focusable",
+  "d", "cx", "cy", "r", "rx", "ry", "x", "y", "x1", "y1", "x2", "y2", "points",
 ];
 
 const BLOG_ALLOWED_ATTRIBUTES: IOptions["allowedAttributes"] = {
   ...sanitizeHtml.defaults.allowedAttributes,
-  "*": ["class", "id", "style", "aria-label", "aria-hidden"],
-  a: ["href", "name", "target", "rel", "title"],
-  img: ["src", "alt", "title", "width", "height", "loading"],
+  "*": ["class", "id", "style", "title", "role", "dir", "lang", "aria-label", "aria-hidden", "aria-labelledby", "aria-describedby"],
+  a: ["class", "id", "href", "name", "target", "rel", "title"],
+  img: ["class", "id", "src", "srcset", "sizes", "alt", "title", "width", "height", "loading"],
+  source: ["src", "srcset", "sizes", "type", "media"],
+  details: ["class", "id", "open"],
+  time: ["class", "id", "datetime"],
+  svg: [...SVG_PRESENTATION_ATTRS, "class", "id", "xmlns", "aria-hidden"],
+  g: [...SVG_PRESENTATION_ATTRS, "class"],
+  path: [...SVG_PRESENTATION_ATTRS, "class"],
+  circle: [...SVG_PRESENTATION_ATTRS, "class"],
+  rect: [...SVG_PRESENTATION_ATTRS, "class"],
+  line: [...SVG_PRESENTATION_ATTRS, "class"],
+  polyline: [...SVG_PRESENTATION_ATTRS, "class"],
+  polygon: [...SVG_PRESENTATION_ATTRS, "class"],
+  ellipse: [...SVG_PRESENTATION_ATTRS, "class"],
 };
 
 /**
@@ -60,6 +99,8 @@ export function scopeBlogHtml(html: string): string {
   if (!html) return html;
   const sanitized = sanitizeHtml(html, {
     allowedTags: BLOG_ALLOWED_TAGS,
+    // <style> is deliberate: its contents are hardened + @scope-wrapped below.
+    allowVulnerableTags: true,
     allowedAttributes: BLOG_ALLOWED_ATTRIBUTES,
     // Constrain the inline `style` attribute to a presentational allowlist.
     // This keeps the rich-text editor's typography output (color, font,
@@ -172,7 +213,22 @@ function hardenStyleBlockCss(css: string): string | null {
     });
   }
 
-  // 4. Value hygiene: drop declarations carrying script/exfil vectors.
+  // 4. Authors write `:root { --vars }` / `html` / `body` rules, but inside
+  //    `@scope` those selectors can never match (the scope root is a <div>).
+  //    Rewrite them to `:scope` so pasted standalone-page CSS — especially
+  //    CSS-variable blocks — applies verbatim to the article wrapper.
+  root.walkRules((rule) => {
+    const parent = rule.parent;
+    if (parent?.type === "atrule" && /^(-\w+-)?keyframes$/i.test((parent as postcss.AtRule).name)) return;
+    if (!/(?:^|[\s>+~,(]):?(?:root\b|html\b|body\b)/i.test(rule.selector)) return;
+    rule.selectors = rule.selectors.map((sel) =>
+      sel
+        .replace(/(^|[\s>+~(])(?::root|html|body)(?![\w-])/gi, "$1:scope")
+        .replace(/:scope(\s+:scope)+/g, ":scope"),
+    );
+  });
+
+  // 5. Value hygiene: drop declarations carrying script/exfil vectors.
   root.walkDecls((decl) => {
     const value = decl.value;
     if (/expression\s*\(/i.test(value) || /javascript:/i.test(value)) {
