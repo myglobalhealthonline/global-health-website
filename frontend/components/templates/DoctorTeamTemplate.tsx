@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { CarouselNav } from "@/components/ui/CarouselNav";
-import { SwipePageTrack } from "@/components/ui/SwipePageTrack";
+import { useSwipePage } from "@/hooks/use-swipe-page";
 import { DoctorsHero } from "@/components/sections/DoctorsHero";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -97,17 +97,15 @@ export function DoctorTeamTemplate({
 }: DoctorTeamTemplateProps) {
   const [page, setPage] = useState(0);
   const availableCount = totalDoctorCount ?? doctors.length;
-  const totalPages = Math.max(1, Math.ceil(doctors.length / PAGE_SIZE));
+  const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
   // Clamp so a filter that shrinks the list (URL nav keeps the page
   // state) never slices past the end into an empty grid.
   const safePage = Math.min(page, Math.max(0, totalPages - 1));
-  const pages: Doctor[][] = [];
-  for (let i = 0; i < Math.max(doctors.length, 1); i += PAGE_SIZE) {
-    pages.push(doctors.slice(i, i + PAGE_SIZE));
-  }
+  const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
 
   const goPrev = () => setPage((p) => Math.max(0, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages - 1, p + 1));
+  const swipe = useSwipePage(goPrev, goNext);
 
   return (
     <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
@@ -193,45 +191,42 @@ export function DoctorTeamTemplate({
                   />
                 </div>
               )}
-              <SwipePageTrack
-                pages={pages}
-                page={safePage}
-                onPageChange={setPage}
-                renderPage={(paged) => (
-                  <ul className="gh-card-grid" style={{ columnGap: "2rem", rowGap: "2rem" }}>
-                    {paged.map((d) => (
-                      <li key={(d.href ?? "") + d.name}>
-                        <DoctorCard
-                          name={d.name}
-                          title={d.title}
-                          imcRegistration={d.imcRegistration}
-                          registrationDivision={d.registrationDivision}
-                          registrationVerified={d.registrationVerified}
-                          credentials={d.credentials}
-                          medicalRegistrationUrl={d.medicalRegistrationUrl}
-                          verificationUrl={d.verificationUrl}
-                          languages={d.languages}
-                          whatsappNumber={d.whatsappNumber}
-                          instagramUrl={d.instagramUrl}
-                          facebookUrl={d.facebookUrl}
-                          linkedinUrl={d.linkedinUrl}
-                          bio={d.bio}
-                          imageSrc={d.imageSrc}
-                          imageFocalX={d.imageFocalX}
-                          imageFocalY={d.imageFocalY}
-                          imageZoom={d.imageZoom}
-                          href={d.href}
-                          bookingHref={d.bookingHref ?? bookingHref}
-                          ctaLabel={d.ctaLabel ?? "View profile"}
-                          bookLabel={d.bookLabel}
-                          dark
-                          viewProfileAriaLabel={i18n?.viewProfileAria?.replace("{name}", d.name)}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              />
+              <ul
+                className="gh-card-grid"
+                style={{ columnGap: "2rem", rowGap: "2rem" }}
+                {...(totalPages > 1 ? swipe : {})}
+              >
+                {paged.map((d) => (
+                  <li key={(d.href ?? "") + d.name}>
+                    <DoctorCard
+                      name={d.name}
+                      title={d.title}
+                      imcRegistration={d.imcRegistration}
+                      registrationDivision={d.registrationDivision}
+                      registrationVerified={d.registrationVerified}
+                      credentials={d.credentials}
+                      medicalRegistrationUrl={d.medicalRegistrationUrl}
+                      verificationUrl={d.verificationUrl}
+                      languages={d.languages}
+                      whatsappNumber={d.whatsappNumber}
+                      instagramUrl={d.instagramUrl}
+                      facebookUrl={d.facebookUrl}
+                      linkedinUrl={d.linkedinUrl}
+                      bio={d.bio}
+                      imageSrc={d.imageSrc}
+                      imageFocalX={d.imageFocalX}
+                      imageFocalY={d.imageFocalY}
+                      imageZoom={d.imageZoom}
+                      href={d.href}
+                      bookingHref={d.bookingHref ?? bookingHref}
+                      ctaLabel={d.ctaLabel ?? "View profile"}
+                      bookLabel={d.bookLabel}
+                      dark
+                      viewProfileAriaLabel={i18n?.viewProfileAria?.replace("{name}", d.name)}
+                    />
+                  </li>
+                ))}
+              </ul>
 
               {/* Bottom pager — mirrors the header one so paging past row 1
                   doesn't force a scroll back to the top of the list. */}
