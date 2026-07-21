@@ -3,11 +3,10 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, User, Calendar, BadgeCheck } from "lucide-react";
+import { Clock, User, Calendar, BadgeCheck, ArrowUpRight } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, type BlogDoctor, type BlogPostFull } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
-import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd } from "@/lib/seo/structured-data";
@@ -179,72 +178,173 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           reviewerPhysician,
         })}
       />
-      <GH2CompactHero
-        eyebrow={post.category}
-        title={post.title}
-        accent=""
-        watermark="Blog"
-        body={post.excerpt}
-        backHref={backHref}
-        backLabel={blogI18n.allArticles}
-        meta={
-          <div className="flex flex-wrap items-center gap-5 text-sm normal-case tracking-normal font-sans">
-            <span className="flex items-center gap-1.5">
-              <User className="size-4" aria-hidden />
-              {post.author}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Calendar className="size-4" aria-hidden />
-              {formatted}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="size-4" aria-hidden />
-              {post.readingTime} {blogI18n.minRead}
-            </span>
-            {reviewerName ? (
-              <span className="flex items-center gap-1.5">
-                <BadgeCheck className="size-4" aria-hidden />
-                {blogI18n.clinicallyReviewedBy}{" "}
-                {reviewerHref ? (
-                  <Link href={reviewerHref} className="underline underline-offset-2">
-                    {reviewerName}
-                  </Link>
-                ) : (
-                  reviewerName
-                )}
-              </span>
+      {/* ── Article hero — matches the PageHero atmosphere (layered forest
+          gradients, lime glow, plus glyphs) with the cover image living IN the
+          hero as a right-column panel instead of a detached banner below. */}
+      <section
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        style={{ background: "#0F2E25" }}
+      >
+        {/* Depth base + vignette */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background:
+              "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.34), transparent 42%)," +
+              "radial-gradient(circle at 12% 90%, rgba(3,26,20,0.55), transparent 46%)," +
+              "linear-gradient(135deg, #0a2a20 0%, #0F2E25 48%, #06201a 100%)",
+          }}
+        />
+        {/* Lime glow behind the headline */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background:
+              "radial-gradient(circle at 30% 38%, rgba(176,241,34,0.09), transparent 32%)," +
+              "radial-gradient(ellipse 620px 480px at 108% -6%, rgba(176,241,34,0.10), transparent 62%)",
+          }}
+        />
+        {/* Plus glyph watermarks — desktop only */}
+        <span aria-hidden className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ top: "-4%", right: "40%", fontSize: 160, color: "rgba(176,241,34,0.05)" }}>+</span>
+        <span aria-hidden className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ bottom: "10%", left: "44%", fontSize: 84, color: "rgba(176,241,34,0.045)" }}>+</span>
+
+        <div
+          className="relative z-10 mx-auto max-w-[var(--container-width)] px-5 md:px-10"
+          style={{ paddingTop: "clamp(48px,6vw,80px)", paddingBottom: "clamp(48px,6vw,80px)" }}
+        >
+          <div className={post.coverImageSrc ? "grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""}>
+            <div>
+              <Link
+                href={backHref}
+                className="gh-focus-on-dark mb-7 inline-flex min-h-11 items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/60 transition-colors hover:text-[var(--color-brand-accent)]"
+              >
+                <ArrowUpRight className="size-3.5 -rotate-[135deg]" aria-hidden />
+                {blogI18n.allArticles}
+              </Link>
+
+              {/* Category pill */}
+              <p>
+                <span
+                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em]"
+                  style={{
+                    background: "rgba(176,241,34,0.09)",
+                    border: "1px solid rgba(176,241,34,0.22)",
+                    color: "var(--color-brand-accent)",
+                  }}
+                >
+                  <span aria-hidden className="size-1.5 rounded-full" style={{ background: "var(--color-brand-accent)" }} />
+                  {post.category}
+                </span>
+              </p>
+
+              <h1
+                className="mt-6 font-extrabold leading-[1.02] tracking-[-0.035em]"
+                style={{ fontSize: "clamp(2.1rem,3.4vw + 0.9rem,3.8rem)", color: "rgba(255,255,255,0.96)", maxWidth: "18ch" }}
+              >
+                {post.title}
+              </h1>
+
+              {post.excerpt ? (
+                <p
+                  className="mt-5 max-w-[52ch] leading-relaxed"
+                  style={{ fontSize: "var(--text-body-lg)", color: "rgba(255,255,255,0.62)" }}
+                >
+                  {post.excerpt}
+                </p>
+              ) : null}
+
+              {/* Meta — glass chips */}
+              <div className="mt-7 flex flex-wrap items-center gap-2.5 text-[13px] font-medium">
+                {[
+                  { icon: <User className="size-3.5" aria-hidden />, label: post.author },
+                  { icon: <Calendar className="size-3.5" aria-hidden />, label: formatted },
+                  { icon: <Clock className="size-3.5" aria-hidden />, label: `${post.readingTime} ${blogI18n.minRead}` },
+                ].map((chip) => (
+                  <span
+                    key={chip.label}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5"
+                    style={{
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.11)",
+                      color: "rgba(255,255,255,0.72)",
+                    }}
+                  >
+                    {chip.icon}
+                    {chip.label}
+                  </span>
+                ))}
+                {reviewerName ? (
+                  <span
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5"
+                    style={{
+                      background: "rgba(176,241,34,0.08)",
+                      border: "1px solid rgba(176,241,34,0.20)",
+                      color: "rgba(255,255,255,0.82)",
+                    }}
+                  >
+                    <BadgeCheck className="size-3.5 text-[var(--color-brand-accent)]" aria-hidden />
+                    {blogI18n.clinicallyReviewedBy}{" "}
+                    {reviewerHref ? (
+                      <Link
+                        href={reviewerHref}
+                        className="gh-focus-on-dark underline decoration-[rgba(176,241,34,0.5)] underline-offset-2 transition-colors hover:text-[var(--color-brand-accent)]"
+                      >
+                        {reviewerName}
+                      </Link>
+                    ) : (
+                      reviewerName
+                    )}
+                  </span>
+                ) : null}
+              </div>
+            </div>
+
+            {/* Cover image — in-hero panel (desktop right column; stacks below
+                content on mobile) */}
+            {post.coverImageSrc ? (
+              <div
+                className="relative mt-2 overflow-hidden rounded-[var(--radius-card)] lg:mt-0"
+                style={{
+                  aspectRatio: "4 / 3",
+                  maxHeight: 440,
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  boxShadow: "0 24px 60px -24px rgba(0,0,0,0.55), 0 0 0 1px rgba(176,241,34,0.06)",
+                }}
+              >
+                <Image
+                  src={post.coverImageSrc}
+                  alt={post.coverImageAlt ?? post.title}
+                  fill
+                  priority
+                  sizes="(min-width:1024px) 46vw, 100vw"
+                  className="object-cover"
+                  unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
+                />
+                {/* Bottom fade into the forest base */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 bottom-0"
+                  style={{ height: "40%", background: "linear-gradient(to top, rgba(6,26,18,0.55), transparent)" }}
+                />
+              </div>
             ) : null}
           </div>
-        }
-      />
-
-      {/* Cover image banner */}
-      {post.coverImageSrc ? (
-        <div style={{ background: "var(--color-background-page)" }}>
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10" style={{ paddingTop: "clamp(32px,4vw,56px)" }}>
-            <div
-              className="relative w-full overflow-hidden rounded-[var(--radius-card)]"
-              style={{ aspectRatio: "2.4 / 1", maxHeight: 460 }}
-            >
-              <Image
-                src={post.coverImageSrc}
-                alt={post.coverImageAlt ?? post.title}
-                fill
-                priority
-                sizes="(min-width:1024px) 1024px, 100vw"
-                className="object-cover"
-                unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
-              />
-            </div>
-          </div>
         </div>
-      ) : null}
+      </section>
 
-      {/* Article body — full-width; the article's own HTML controls its
-          inner layout/width. */}
+      {/* Article body. Designed articles (they ship their own <style>) are
+          full-bleed — their CSS sizes sections against 100vw, so any site
+          container/padding here squeezes their grid columns. Plain rich-text
+          bodies keep the site container + padding. */}
       <section
-        className="mx-auto max-w-[var(--container-width)]"
-        style={{ background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }}
+        className={post.body.includes("<style") ? undefined : "mx-auto max-w-[var(--container-width)]"}
+        style={
+          post.body.includes("<style")
+            ? { background: "var(--color-background-page)" }
+            : { background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }
+        }
       >
         {/* Admin-authored article HTML. Sanitized on save (scripts stripped,
             <style>/classes preserved) and CSS-scoped to .gh-article-body so it
