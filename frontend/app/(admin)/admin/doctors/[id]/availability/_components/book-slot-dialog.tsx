@@ -426,6 +426,19 @@ export function BookSlotDialog({
           />
         </label>
 
+        <label className="flex items-start gap-2 text-portal-meta text-[var(--color-text-body)]">
+          <input
+            type="checkbox"
+            checked
+            disabled
+            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+          />
+          <span>
+            The patient has consented to their medical data being accessed and used for their
+            consultation notes and medical records.
+          </span>
+        </label>
+
         <div className="flex justify-end gap-2">
           <button type="button" onClick={onClose} className="gh-btn gh-btn-ghost">
             Cancel
