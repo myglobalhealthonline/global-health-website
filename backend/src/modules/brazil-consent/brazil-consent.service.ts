@@ -2,6 +2,7 @@ import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
 import { sendEmail } from "../../lib/email/send-email.js";
+import { wrapHtml } from "../../lib/email/templates.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
 import { createBrazilConsentToken } from "./brazil-consent-link.service.js";
 
@@ -116,7 +117,10 @@ export async function submitBrazilConsent(input: {
       to: notifyEmail,
       subject: `Brazil consent submitted — ${appt.fullName}`,
       text: `New Brazil consent for appointment ${appt.id}.\nPatient: ${submission.fullName}\nEmail: ${submission.email}`,
-      html: `<p>New Brazil consent for appointment <strong>${appt.id}</strong>.</p><p>Patient: ${submission.fullName}<br/>Email: ${submission.email}</p>`,
+      html: wrapHtml(
+        "Brazil consent submitted",
+        `<p>New Brazil consent for appointment <strong>${appt.id}</strong>.</p><p>Patient: ${submission.fullName}<br/>Email: ${submission.email}</p>`,
+      ),
     });
   }
 

@@ -5,6 +5,7 @@ import { cancelOrderAppointments } from "../appointments/appointments.service.js
 import { releaseOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
+import { wrapHtml } from "../../lib/email/templates.js";
 import { resolveOrderPaymentUrl, orderPayShortLink } from "../orders/order-payment-url.service.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
 import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
@@ -457,7 +458,10 @@ async function notifyDoctorOnBooking(
           to: doctorContact.loginEmail,
           subject: doctorEmailSubjectBooking(lang),
           text: body,
-          html: `<div style="font-family:Georgia,serif;line-height:1.6;white-space:pre-wrap;">${body.replace(/\n/g, "<br/>")}</div>`,
+          html: wrapHtml(
+            doctorEmailSubjectBooking(lang),
+            `<div style="white-space:pre-wrap;">${body.replace(/\n/g, "<br/>")}</div>`,
+          ),
         },
         { recordLabel: ctx.orderNumber },
       );
@@ -672,7 +676,10 @@ export async function sendPrePaymentCancelledNotifications(
             to: doctorContact.loginEmail,
             subject: doctorEmailSubjectCancelled(lang),
             text: body,
-            html: `<div style="font-family:Georgia,serif;line-height:1.6;white-space:pre-wrap;">${body.replace(/\n/g, "<br/>")}</div>`,
+            html: wrapHtml(
+              doctorEmailSubjectCancelled(lang),
+              `<div style="white-space:pre-wrap;">${body.replace(/\n/g, "<br/>")}</div>`,
+            ),
           },
           { recordLabel: ctx.orderNumber },
         );

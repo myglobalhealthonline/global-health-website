@@ -5,6 +5,7 @@ import { formatOrderTotal, resolvePatientFullName } from "./pre-payment-email-te
 import { formatOrderDisplayId } from "./automation-catalog.js";
 import { createAutomationRun, finishAutomationRun } from "./automation-run.service.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
+import { wrapHtml } from "../../lib/email/templates.js";
 import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
 import type { PhoneNormalizeHints } from "../../lib/whatsapp/normalize-phone.js";
 
@@ -71,12 +72,7 @@ function refundEmailHtml(body: string): string {
     .split("\n\n")
     .map((p) => `<p style="margin:0 0 16px;line-height:1.6;">${p.replace(/\n/g, "<br/>")}</p>`)
     .join("");
-  return `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:560px;margin:32px auto;padding:0 16px;color:#0F2E25;">
-  <h2 style="color:#1B4D3E;margin:0 0 16px;">Refund processed</h2>
-  ${paras}
-  <hr style="margin-top:32px;border:0;border-top:1px solid #E5E5E3;" />
-  <p style="font-size:12px;color:#737373;">Global Health · Medicine anytime anywhere</p>
-</body></html>`;
+  return wrapHtml("Refund processed", paras);
 }
 
 /**

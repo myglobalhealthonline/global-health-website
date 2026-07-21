@@ -2,17 +2,39 @@ import { env } from "../../config/env.js";
 import { sendAutomationEmail } from "../../modules/automation/send-automation-notification.js";
 import { formatOrderDisplayId } from "../../modules/automation/automation-catalog.js";
 import { absoluteSiteUrl, sendEmail } from "./send-email.js";
+import { DEFAULT_EMAIL_LOGO_PATH } from "./resolve-email-logo-url.js";
 import { createBrazilConsentToken } from "../../modules/brazil-consent/brazil-consent-link.service.js";
 
-/** Shared, minimal transactional email shell — works in plain-text clients
- *  and renders neatly in HTML clients. Avoid heavy inline CSS so the message
- *  doesn't trip aggressive spam filters. */
+/** Shared branded transactional email shell — same visual system as the
+ *  pre/post-payment automation emails (green header band + logo, serif body,
+ *  ivory background, footer). Every transactional email routes through this. */
 export function wrapHtml(title: string, bodyHtml: string): string {
-  return `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:560px;margin:32px auto;padding:0 16px;color:#0F2E25;">
-  <h2 style="color:#1B4D3E;margin:0 0 16px;">${escapeHtml(title)}</h2>
-  ${bodyHtml}
-  <hr style="margin-top:32px;border:0;border-top:1px solid #E5E5E3;" />
-  <p style="font-size:12px;color:#737373;">Global Health · Medicine anytime anywhere</p>
+  const logoSrc = absoluteSiteUrl(DEFAULT_EMAIL_LOGO_PATH);
+  return `<!doctype html><html><body style="margin:0;padding:0;background-color:#f4f1ea;">
+<div style="background-color:#f4f1ea;padding:20px;font-family:Georgia,'Times New Roman',serif;color:#333;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);max-width:100%;">
+    <tr>
+      <td align="center" style="background-color:#2d4f3d;padding:30px;">
+        <img src="${escapeHtml(logoSrc)}" alt="Global Health" width="180" style="display:block;max-width:180px;height:auto;" />
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding:25px 20px;border-bottom:1px solid #eeeeee;">
+        <h2 style="color:#2d4f3d;letter-spacing:2px;margin:0;font-size:22px;font-weight:700;">${escapeHtml(title)}</h2>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;line-height:1.6;font-size:15px;">
+        ${bodyHtml}
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding:24px;background-color:#fafaf8;border-top:1px solid #eeeeee;font-size:12px;color:#777;">
+        <a href="https://www.myglobalhealth.online" style="color:#2d4f3d;text-decoration:none;font-weight:bold;">www.myglobalhealth.online</a>
+      </td>
+    </tr>
+  </table>
+</div>
 </body></html>`;
 }
 

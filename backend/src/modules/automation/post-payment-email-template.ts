@@ -5,6 +5,7 @@ import {
   buildPortalTextBlock,
   type PrePaymentEmailPortalAccess,
 } from "./pre-payment-email-template.js";
+import { wrapHtml } from "../../lib/email/templates.js";
 
 type Lang = "en" | "pt" | "ro" | "cs" | "es";
 export type PostPaymentEmailVariant =
@@ -445,11 +446,50 @@ export function buildPostPaymentDoctorEmailHtml(
     );
   }
 
-  return `<div style="font-family:Georgia,serif;color:#333;line-height:1.6;font-size:15px;">
-  <table width="100%" cellpadding="8" cellspacing="0" style="background:#fafaf8;border-radius:5px;">
+  const heading = t(lang, {
+    en: {
+      meeting_link: "New appointment",
+      one_hour: "Appointment in 1 hour",
+      session_start: "Appointment starting",
+      appointment_updated: "Appointment updated",
+      appointment_reassigned: "Appointment reassigned",
+    }[variant],
+    pt: {
+      meeting_link: "Nova consulta",
+      one_hour: "Consulta dentro de 1 hora",
+      session_start: "Consulta a começar",
+      appointment_updated: "Consulta atualizada",
+      appointment_reassigned: "Consulta reatribuída",
+    }[variant],
+    ro: {
+      meeting_link: "Programare nouă",
+      one_hour: "Programare într-o oră",
+      session_start: "Programarea începe",
+      appointment_updated: "Programare actualizată",
+      appointment_reassigned: "Programare realocată",
+    }[variant],
+    cs: {
+      meeting_link: "Nová konzultace",
+      one_hour: "Konzultace za 1 hodinu",
+      session_start: "Konzultace začíná",
+      appointment_updated: "Konzultace upravena",
+      appointment_reassigned: "Konzultace přeřazena",
+    }[variant],
+    es: {
+      meeting_link: "Nueva cita",
+      one_hour: "Cita en 1 hora",
+      session_start: "La cita comienza",
+      appointment_updated: "Cita actualizada",
+      appointment_reassigned: "Cita reasignada",
+    }[variant],
+  });
+
+  return wrapHtml(
+    heading,
+    `<table width="100%" cellpadding="8" cellspacing="0" style="background:#fafaf8;border-radius:5px;font-size:14px;">
     ${rows.join("\n    ")}
-  </table>
-</div>`;
+  </table>`,
+  );
 }
 
 export function buildPostPaymentDoctorEmailText(
