@@ -227,7 +227,10 @@ export default async function CountryLangDoctorsPage({
 function DoctorsDirectorySkeleton() {
   return (
     <div aria-hidden className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
-      <div className="h-[70vh] min-h-[520px] w-full animate-pulse bg-[var(--color-brand-primary)]/90" />
+      {/* Matches DoctorsHero's own gh2-hero background exactly (not a flat
+          brand color) — a mismatched fallback color flashes visibly for the
+          instant before the resolved child replaces it. */}
+      <div className="gh2-hero h-[70vh] min-h-[520px] w-full" />
       <div className="gh-container py-16">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
