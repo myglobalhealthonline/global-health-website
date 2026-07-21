@@ -652,7 +652,7 @@ function roGc(locale: string): GcFields {
 function brGc(locale: string): GcFields {
   // BR's own drafts omit the price FAQ entirely — match that (no priceLine).
   const accent: Record<string, string> = { ES: "Brasil" };
-  return { ...buildGenericGc(locale, { reg: "Conselho Federal de Medicina (CFM) / CRM", accent: accent[locale], emergency: "SAMU 192" }) };
+  return { ...buildGenericGc(locale, { reg: "CRM (Conselho Regional de Medicina)", accent: accent[locale], emergency: "SAMU 192" }) };
 }
 
 // ── HOME / SPECIALIST_CONSULTATION / DOCTORS_INDEX — hero/SEO only, body is

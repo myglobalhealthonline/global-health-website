@@ -83,7 +83,7 @@ const MARKETS: MarketConfig[] = [
   },
   {
     countryCode: "br",
-    regulator: "Conselho Federal de Medicina (CFM) / CRM",
+    regulator: "CRM (Conselho Regional de Medicina)",
     emergency: "SAMU 192",
     countryName: { EN: "Brazil", PT: "Brasil", ES: "Brasil", CS: "Brazílii", RO: "Brazilia", DE: "Brasilien" },
   },

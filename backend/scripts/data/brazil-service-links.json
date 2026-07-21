@@ -76,8 +76,8 @@
     "target": "pediatria-online",
     "type": "COMPLEMENTARY",
     "heading": "Sua consulta é sobre consulta pediátrica para seu filho?",
-    "body": "Nossa Pediatria foi pensada especificamente para consulta pediátrica para seu filho.",
-    "ctaLabel": "Pediatria",
+    "body": "Nossa Saúde da criança e do adolescente foi pensada especificamente para consulta pediátrica para seu filho.",
+    "ctaLabel": "Saúde da criança e do adolescente",
     "priority": 8
   },
   {
@@ -679,8 +679,8 @@
     "target": "pediatria-online",
     "type": "COMPLEMENTARY",
     "heading": "Saúde de viagem para crianças?",
-    "body": "Se a sua situação está relacionada a saúde de viagem para crianças, nossa Pediatria oferece a avaliação adequada.",
-    "ctaLabel": "Pediatria",
+    "body": "Se a sua situação está relacionada a saúde de viagem para crianças, nossa Saúde da criança e do adolescente oferece a avaliação adequada.",
+    "ctaLabel": "Saúde da criança e do adolescente",
     "priority": 3
   },
   {

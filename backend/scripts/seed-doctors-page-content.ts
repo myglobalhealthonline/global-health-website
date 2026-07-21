@@ -55,7 +55,7 @@ const MARKETS: MarketConfig[] = [
   { countryCode: "pt", regulator: "Ordem dos Médicos", emergency: "112" },
   { countryCode: "es", regulator: "Organización Médica Colegial (colegios de médicos)", emergency: "112" },
   { countryCode: "ro", regulator: "Colegiul Medicilor din România", emergency: "112" },
-  { countryCode: "br", regulator: "Conselho Federal de Medicina (CFM) / CRM", emergency: "SAMU 192" },
+  { countryCode: "br", regulator: "CRM (Conselho Regional de Medicina)", emergency: "SAMU 192" },
 ];
 
 // ── locale connector phrase — identical convention to

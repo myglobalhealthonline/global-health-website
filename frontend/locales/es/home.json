@@ -53,7 +53,7 @@
     "licensedSingular": "Médico colegiado",
     "licensedPlural": "Médicos colegiados",
     "markets": "Mercados europeos · Registrado en la UE",
-    "gdpr": "Conformidad {law} por defecto",
+    "gdpr": "Conformidad {law}",
     "slots": "Plazas sujetas a disponibilidad",
     "languagesSpoken": "Idiomas de consulta"
   },

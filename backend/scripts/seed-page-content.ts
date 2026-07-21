@@ -165,7 +165,7 @@ const DRAFT_MARKETS: MarketConfig[] = [
   { countryCode: "pt", regulator: "Ordem dos Médicos", emergency: "112", locale: LocaleCode.PT, localeLabel: "pt" },
   { countryCode: "es", regulator: "Organización Médica Colegial (colegios de médicos)", emergency: "112", locale: LocaleCode.ES, localeLabel: "es" },
   { countryCode: "ro", regulator: "Colegiul Medicilor din România", emergency: "112", locale: LocaleCode.RO, localeLabel: "ro" },
-  { countryCode: "br", regulator: "Conselho Federal de Medicina (CFM) / CRM", emergency: "SAMU 192", locale: LocaleCode.PT, localeLabel: "pt-br" },
+  { countryCode: "br", regulator: "CRM (Conselho Regional de Medicina)", emergency: "SAMU 192", locale: LocaleCode.PT, localeLabel: "pt-br" },
 ];
 
 /** Generic disclaimer paragraphs modelled on IE §1,2,3,5 (skips IE §4 — DSP sick-cert specifics, not verifiable elsewhere). */
@@ -567,7 +567,7 @@ const NATIVE_COPY: Record<
     heroTitleLead: "Consulta Médica Online no",
     heroTitleAccent: "Brasil",
     intro:
-      "A Global Health conecta você a médicos inscritos no Conselho Federal de Medicina (CFM) / CRM para consultas médicas online. Os médicos avaliam seus sintomas, histórico e queixa atual por meio de uma consulta online segura.",
+      "A Global Health conecta você a médicos inscritos no CRM (Conselho Regional de Medicina) para consultas médicas online. Os médicos avaliam seus sintomas, histórico e queixa atual por meio de uma consulta online segura.",
     whoForTitle: "Para quem é este serviço",
     whoForIntro: "Esta consulta é indicada para avaliação e manejo de:",
     whoForItems: [
@@ -636,7 +636,7 @@ const NATIVE_COPY: Record<
     disclaimerShort: (regulator, emergency) =>
       `Todos os serviços são prestados no nível de clínica geral por médicos inscritos no ${regulator}. Recomendações de tratamento, encaminhamentos e atestados médicos só são emitidos quando clinicamente apropriado e a critério do médico. Nossos médicos não prescrevem rotineiramente substâncias controladas por meio de consultas online. Em emergência médica ligue para ${emergency}.`,
     seoTitle: "Consulta Médica Online no Brasil | Global Health",
-    seoDescription: "Consultas médicas online com médicos inscritos no Conselho Federal de Medicina (CFM) / CRM.",
+    seoDescription: "Consultas médicas online com médicos inscritos no CRM (Conselho Regional de Medicina).",
   },
 };
 
