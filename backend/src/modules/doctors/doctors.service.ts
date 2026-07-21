@@ -479,6 +479,9 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
             title: true,
             caption: true,
             description: true,
+            focalX: true,
+            focalY: true,
+            zoom: true,
           },
         },
         // Per-market registration row. The single DoctorCountry record
@@ -701,6 +704,9 @@ export async function getDoctorByCountryAndSlug(
             title: true,
             caption: true,
             description: true,
+            focalX: true,
+            focalY: true,
+            zoom: true,
           },
         },
         // Per-market registration row for this country (see Phase 2
