@@ -275,6 +275,24 @@ export function ServiceCatalog({
             />
           ))}
         </RevealOnScroll>
+
+        {/* Bottom pager — mirrors the header one so paging past row 1
+            doesn't force a scroll back to the top of the list. */}
+        {showPager && (
+          <div className="mt-10 flex justify-center">
+            <CarouselNav
+              onPrev={() => setPage((p) => Math.max(0, p - 1))}
+              onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              canPrev={page > 0}
+              canNext={page < totalPages - 1}
+              variant="segments"
+              prevLabel={i18n.prevServices}
+              nextLabel={i18n.nextServices}
+              page={page}
+              totalPages={totalPages}
+            />
+          </div>
+        )}
       </div>
     </section>
   );
