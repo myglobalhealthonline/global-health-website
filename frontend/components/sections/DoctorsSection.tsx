@@ -93,6 +93,26 @@ export function DoctorsSection({
     />
   ) : null;
 
+  // Second pager below the grid — same page/setPage wiring, segmented dots
+  // instead of the header's hairline — so paging past row 1 doesn't force
+  // a scroll back to the top of the list.
+  const bottomPager = showPager ? (
+    <div className="mt-10 flex justify-center">
+      <CarouselNav
+        onPrev={() => setPage((p) => Math.max(0, p - 1))}
+        onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+        canPrev={safePage > 0}
+        canNext={safePage < totalPages - 1}
+        variant="segments"
+        dark={!isLight}
+        prevLabel={previousPageLabel}
+        nextLabel={nextPageLabel}
+        page={safePage}
+        totalPages={totalPages}
+      />
+    </div>
+  ) : null;
+
   const grid = (
     <div className="gh-card-grid" style={{ columnGap: "2rem", rowGap: "2.5rem" }}>
       {paged.map((doctor) => (
@@ -106,6 +126,7 @@ export function DoctorsSection({
       <div>
         {showPager ? <div className="mb-8 flex justify-end">{pager}</div> : null}
         {grid}
+        {bottomPager}
       </div>
     );
   }
@@ -156,6 +177,7 @@ export function DoctorsSection({
           </div>
         )}
         {grid}
+        {bottomPager}
       </div>
     </section>
   );
