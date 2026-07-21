@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CarouselNav } from "@/components/ui/CarouselNav";
-import { useSwipePage } from "@/hooks/use-swipe-page";
+import { SwipePageTrack } from "@/components/ui/SwipePageTrack";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import {
   SERVICE_CATALOG_DEFAULT_I18N,
@@ -78,24 +78,26 @@ export function ServicesGrid({
   const isDark = variant === "dark";
 
   // Page 0 renders PAGE_SIZE_FEATURED items, every later page renders
-  // PAGE_SIZE_REGULAR — a plain `page * pageSize` offset assumes a uniform
-  // page size and silently drops the item at index PAGE_SIZE_FEATURED once
-  // you paginate past page 0. Offsets below account for the smaller first page.
+  // PAGE_SIZE_REGULAR — chunk every page upfront (not just the current
+  // one) so they can all sit in the scroll-snap track at once and native
+  // touch/trackpad drag gets real browser momentum, same as DoctorCarousel.
   const canFeatureFirst = featureFirst && items.length >= 4;
   const firstPageSize = canFeatureFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
-  const useFeaturedFirst = canFeatureFirst && page === 0;
-  const totalPages =
-    items.length <= firstPageSize
-      ? 1
-      : 1 + Math.ceil((items.length - firstPageSize) / PAGE_SIZE_REGULAR);
-  const start = page === 0 ? 0 : firstPageSize + (page - 1) * PAGE_SIZE_REGULAR;
-  const end = page === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR;
-  const paged = items.slice(start, end);
+  const pages: Item[][] = [];
+  if (items.length === 0) {
+    pages.push([]);
+  } else {
+    pages.push(items.slice(0, firstPageSize));
+    for (let i = firstPageSize; i < items.length; i += PAGE_SIZE_REGULAR) {
+      pages.push(items.slice(i, i + PAGE_SIZE_REGULAR));
+    }
+  }
+  const totalPages = pages.length;
+  const safePage = Math.min(page, totalPages - 1);
   const showPager = totalPages > 1;
 
   const goPrev = () => setPage((p) => p - 1);
   const goNext = () => setPage((p) => p + 1);
-  const swipe = useSwipePage(goPrev, goNext);
 
   return (
     <section
@@ -148,13 +150,13 @@ export function ServicesGrid({
             <CarouselNav
               onPrev={goPrev}
               onNext={goNext}
-              canPrev={page > 0}
-              canNext={page < totalPages - 1}
-              progress={(page + 1) / totalPages}
+              canPrev={safePage > 0}
+              canNext={safePage < totalPages - 1}
+              progress={(safePage + 1) / totalPages}
               dark={isDark}
               prevLabel={previousPageLabel}
               nextLabel={nextPageLabel}
-              page={page}
+              page={safePage}
               totalPages={totalPages}
             />
           )}
@@ -162,39 +164,46 @@ export function ServicesGrid({
 
         {/* Card grid — dark sections reuse the home-page catalog tiles so
             service pages and the country home share one card design. */}
-        <div
-          className={useFeaturedFirst ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}
-          {...(showPager ? swipe : {})}
-        >
-          {isDark
-            ? paged.map((item, i) => (
-                <ServiceTile
-                  key={item.detailHref ?? item.href ?? item.title}
-                  service={toCatalogItem(item)}
-                  variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
-                  i18n={{
-                    ...SERVICE_CATALOG_DEFAULT_I18N,
-                    // Featured tile shows the service's own summary, and Book
-                    // buttons keep the caller's (localised) label.
-                    featuredDescription:
-                      paged[0]?.description ?? SERVICE_CATALOG_DEFAULT_I18N.featuredDescription,
-                    bookConsultation:
-                      item.bookLabel ?? SERVICE_CATALOG_DEFAULT_I18N.bookConsultation,
-                    learnMore: learnMoreLabel,
-                    learnMoreAria: `${learnMoreLabel}: {title}`,
-                  }}
-                />
-              ))
-            : paged.map((item, i) => (
-                <ServiceCard
-                  key={item.detailHref ?? item.href ?? item.title}
-                  {...item}
-                  ctaLabel={learnMoreLabel}
-                  dark={isDark}
-                  featured={useFeaturedFirst && i === 0}
-                />
-              ))}
-        </div>
+        <SwipePageTrack
+          pages={pages}
+          page={safePage}
+          onPageChange={setPage}
+          renderPage={(paged, pageIndex) => {
+            const pageFeatured = canFeatureFirst && pageIndex === 0;
+            return (
+              <div className={pageFeatured ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
+                {isDark
+                  ? paged.map((item, i) => (
+                      <ServiceTile
+                        key={item.detailHref ?? item.href ?? item.title}
+                        service={toCatalogItem(item)}
+                        variant={pageFeatured && i === 0 ? "featured" : "default"}
+                        i18n={{
+                          ...SERVICE_CATALOG_DEFAULT_I18N,
+                          // Featured tile shows the service's own summary, and Book
+                          // buttons keep the caller's (localised) label.
+                          featuredDescription:
+                            paged[0]?.description ?? SERVICE_CATALOG_DEFAULT_I18N.featuredDescription,
+                          bookConsultation:
+                            item.bookLabel ?? SERVICE_CATALOG_DEFAULT_I18N.bookConsultation,
+                          learnMore: learnMoreLabel,
+                          learnMoreAria: `${learnMoreLabel}: {title}`,
+                        }}
+                      />
+                    ))
+                  : paged.map((item, i) => (
+                      <ServiceCard
+                        key={item.detailHref ?? item.href ?? item.title}
+                        {...item}
+                        ctaLabel={learnMoreLabel}
+                        dark={isDark}
+                        featured={pageFeatured && i === 0}
+                      />
+                    ))}
+              </div>
+            );
+          }}
+        />
 
         {/* Bottom pager — mirrors the header one so paging past row 1
             doesn't force a scroll back to the top of the list. */}
@@ -203,13 +212,13 @@ export function ServicesGrid({
             <CarouselNav
               onPrev={goPrev}
               onNext={goNext}
-              canPrev={page > 0}
-              canNext={page < totalPages - 1}
+              canPrev={safePage > 0}
+              canNext={safePage < totalPages - 1}
               variant="segments"
               dark={isDark}
               prevLabel={previousPageLabel}
               nextLabel={nextPageLabel}
-              page={page}
+              page={safePage}
               totalPages={totalPages}
             />
           </div>

@@ -11,7 +11,7 @@ import { useState } from "react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
-import { useSwipePage } from "@/hooks/use-swipe-page";
+import { SwipePageTrack } from "@/components/ui/SwipePageTrack";
 
 type DoctorItem = {
   name: string;
@@ -74,14 +74,16 @@ export function DoctorsSection({
   const isCardDark = cardTheme ? cardTheme === "dark" : !isLight;
   const [page, setPage] = useState(0);
 
-  const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(doctors.length / PAGE_SIZE));
   const safePage = Math.min(page, Math.max(0, totalPages - 1));
-  const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
+  const pages: DoctorItem[][] = [];
+  for (let i = 0; i < Math.max(doctors.length, 1); i += PAGE_SIZE) {
+    pages.push(doctors.slice(i, i + PAGE_SIZE));
+  }
   const showPager = totalPages > 1;
 
   const goPrev = () => setPage((p) => Math.max(0, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages - 1, p + 1));
-  const swipe = useSwipePage(goPrev, goNext);
 
   const pager = showPager ? (
     <CarouselNav
@@ -119,15 +121,18 @@ export function DoctorsSection({
   ) : null;
 
   const grid = (
-    <div
-      className="gh-card-grid"
-      style={{ columnGap: "2rem", rowGap: "2.5rem" }}
-      {...(showPager ? swipe : {})}
-    >
-      {paged.map((doctor) => (
-        <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} dark={isCardDark} />
-      ))}
-    </div>
+    <SwipePageTrack
+      pages={pages}
+      page={safePage}
+      onPageChange={setPage}
+      renderPage={(paged) => (
+        <div className="gh-card-grid" style={{ columnGap: "2rem", rowGap: "2.5rem" }}>
+          {paged.map((doctor) => (
+            <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} dark={isCardDark} />
+          ))}
+        </div>
+      )}
+    />
   );
 
   if (bare) {

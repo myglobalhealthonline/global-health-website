@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils/cn";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
-import { useSwipePage } from "@/hooks/use-swipe-page";
+import { SwipePageTrack } from "@/components/ui/SwipePageTrack";
 
 export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
 
@@ -129,19 +129,22 @@ export function ServiceCatalog({
   if (services.length === 0) return null;
 
   // Page 0 renders PAGE_SIZE_FEATURED items, every later page renders
-  // PAGE_SIZE_REGULAR — a plain `page * pageSize` offset assumes a uniform
-  // page size and silently drops the item at index PAGE_SIZE_FEATURED once
-  // you paginate past page 0. Offsets below account for the smaller first page.
+  // PAGE_SIZE_REGULAR — chunk every page upfront (not just the current
+  // one) so they can all sit in the scroll-snap track at once and native
+  // touch/trackpad drag gets real browser momentum, same as DoctorCarousel.
   const canFeatureFirst = filter === "all" && allShown.length >= 4;
   const firstPageSize = canFeatureFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
-  const useFeaturedFirst = canFeatureFirst && page === 0;
-  const totalPages =
-    allShown.length <= firstPageSize
-      ? 1
-      : 1 + Math.ceil((allShown.length - firstPageSize) / PAGE_SIZE_REGULAR);
-  const start = page === 0 ? 0 : firstPageSize + (page - 1) * PAGE_SIZE_REGULAR;
-  const end = page === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR;
-  const shown = allShown.slice(start, end);
+  const pages: ServiceCatalogItem[][] = [];
+  if (allShown.length === 0) {
+    pages.push([]);
+  } else {
+    pages.push(allShown.slice(0, firstPageSize));
+    for (let i = firstPageSize; i < allShown.length; i += PAGE_SIZE_REGULAR) {
+      pages.push(allShown.slice(i, i + PAGE_SIZE_REGULAR));
+    }
+  }
+  const totalPages = pages.length;
+  const safePage = Math.min(page, totalPages - 1);
   const showPager = totalPages > 1;
 
   function handleFilter(id: FilterId) {
@@ -151,7 +154,6 @@ export function ServiceCatalog({
 
   const goPrev = () => setPage((p) => Math.max(0, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages - 1, p + 1));
-  const swipe = useSwipePage(goPrev, goNext);
 
   return (
     <section
@@ -251,37 +253,45 @@ export function ServiceCatalog({
               <CarouselNav
                 onPrev={goPrev}
                 onNext={goNext}
-                canPrev={page > 0}
-                canNext={page < totalPages - 1}
-                progress={(page + 1) / totalPages}
+                canPrev={safePage > 0}
+                canNext={safePage < totalPages - 1}
+                progress={(safePage + 1) / totalPages}
                 prevLabel={i18n.prevServices}
                 nextLabel={i18n.nextServices}
-                page={page}
+                page={safePage}
                 totalPages={totalPages}
               />
             )}
           </div>
         </header>
 
-        <div {...(showPager ? swipe : {})}>
-          <RevealOnScroll
-            key={`${filter}-${page}`}
-            stagger
-            className={cn(
-              "gh-card-grid",
-              useFeaturedFirst ? "gh-card-grid--featured" : null,
-            )}
-          >
-            {shown.map((s, i) => (
-              <ServiceTile
-                key={`${s.type}-${s.title}-${s.href}`}
-                service={s}
-                variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
-                i18n={i18n}
-              />
-            ))}
-          </RevealOnScroll>
-        </div>
+        <RevealOnScroll key={filter}>
+          <SwipePageTrack
+            pages={pages}
+            page={safePage}
+            onPageChange={setPage}
+            renderPage={(items, i) => {
+              const pageFeatured = canFeatureFirst && i === 0;
+              return (
+                <div
+                  className={cn(
+                    "gh-card-grid",
+                    pageFeatured ? "gh-card-grid--featured" : null,
+                  )}
+                >
+                  {items.map((s, idx) => (
+                    <ServiceTile
+                      key={`${s.type}-${s.title}-${s.href}`}
+                      service={s}
+                      variant={pageFeatured && idx === 0 ? "featured" : "default"}
+                      i18n={i18n}
+                    />
+                  ))}
+                </div>
+              );
+            }}
+          />
+        </RevealOnScroll>
 
         {/* Bottom pager — mirrors the header one so paging past row 1
             doesn't force a scroll back to the top of the list. */}
@@ -290,12 +300,12 @@ export function ServiceCatalog({
             <CarouselNav
               onPrev={goPrev}
               onNext={goNext}
-              canPrev={page > 0}
-              canNext={page < totalPages - 1}
+              canPrev={safePage > 0}
+              canNext={safePage < totalPages - 1}
               variant="segments"
               prevLabel={i18n.prevServices}
               nextLabel={i18n.nextServices}
-              page={page}
+              page={safePage}
               totalPages={totalPages}
             />
           </div>
