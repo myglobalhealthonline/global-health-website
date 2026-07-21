@@ -260,25 +260,25 @@ export function manualBookingPaymentDeadlineLabel(lang: Lang): string {
 export function buildPortalBlock(lang: Lang, portal: PrePaymentEmailPortalAccess): string {
   const L = labels(lang);
   const tempBlock = portal.tempPassword
-    ? `<p style="margin:16px 0;font-size:14px;color:#444;">
+    ? `<p style="margin:16px 0;font-size:14px;color:#2D3B36;">
          ${L.tempPasswordLead}<br/>
-         <code style="display:inline-block;margin-top:8px;padding:8px 12px;background:#fafaf8;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:1px;">${esc(portal.tempPassword)}</code>
+         <code style="display:inline-block;margin-top:8px;padding:8px 12px;background:#F6F8F1;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:1px;color:#1D4B36;">${esc(portal.tempPassword)}</code>
        </p>`
-    : `<p style="margin:16px 0;font-size:14px;color:#444;">${L.existingAccountLead}</p>`;
+    : `<p style="margin:16px 0;font-size:14px;color:#2D3B36;">${L.existingAccountLead}</p>`;
 
-  return `<h3 style="margin:32px 0 12px;color:#2d4f3d;font-size:17px;">${L.portalHeading}</h3>
-        <p style="margin:0 0 16px;font-size:14px;color:#444;">${L.portalLead}</p>
+  return `<h3 style="margin:32px 0 12px;color:#1D4B36;font-size:17px;">${L.portalHeading}</h3>
+        <p style="margin:0 0 16px;font-size:14px;color:#2D3B36;">${L.portalLead}</p>
         <p style="margin:16px 0;text-align:center;">
           <a href="${esc(portal.setPasswordUrl)}"
-             style="background-color:#2d4f3d;color:#ffffff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:16px;display:inline-block;">
+             style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;">
             ${L.setPasswordButton}
           </a>
         </p>
-        <p style="font-size:12px;color:#777;text-align:center;margin:0 0 20px;">${L.setPasswordHint}</p>
+        <p style="font-size:12px;color:#6D6D6D;text-align:center;margin:0 0 20px;">${L.setPasswordHint}</p>
         ${tempBlock}
         <p style="margin:16px 0;text-align:center;">
           <a href="${esc(portal.signInUrl)}"
-             style="color:#2d4f3d;font-weight:700;text-decoration:underline;">
+             style="color:#1D4B36;font-weight:700;text-decoration:underline;">
             ${L.signInButton}
           </a>
         </p>`;
@@ -350,7 +350,7 @@ export function buildPrePaymentEmailHtml(
   const payBlock = showPayment
     ? `<p style="margin:28px 0;text-align:center;">
          <a href="${esc(ctx.paymentLink)}"
-            style="background-color:#2d4f3d;color:#ffffff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:16px;display:inline-block;">
+            style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;">
            ${L.payButton}
          </a>
        </p>`
@@ -359,58 +359,50 @@ export function buildPrePaymentEmailHtml(
   const portalBlock =
     variant !== "cancelled" && portal ? buildPortalBlock(lang, portal) : "";
 
-  return `<div style="background-color:#f4f1ea;padding:20px;font-family:Georgia,'Times New Roman',serif;color:#333;">
-  <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);max-width:100%;">
+  const detailRows: Array<[string, string]> = [
+    [refKey, `#${esc(ctx.orderNumber)}`],
+    [L.dateTime, esc(ctx.appointmentDate)],
+    [L.doctor, esc(ctx.doctorName)],
+    [L.service, esc(ctx.serviceName)],
+    [L.price, esc(ctx.totalLabel)],
+    [L.deadline, esc(ctx.deadline)],
+  ];
+  const detailTable = detailRows
+    .map(
+      ([label, value], i) => `<tr>
+            <td style="padding:9px 2px;${i === 0 ? "" : "border-top:1px solid rgba(29,75,54,0.16);"}color:#6D6D6D;width:40%;font-weight:400;">${label}</td>
+            <td style="padding:9px 2px;${i === 0 ? "" : "border-top:1px solid rgba(29,75,54,0.16);"}font-weight:600;color:#1D4B36;">${value}</td>
+          </tr>`,
+    )
+    .join("\n          ");
+
+  const title = `#${esc(ctx.orderNumber)} · ${statusHeading(lang)}`;
+
+  return `<!doctype html><html><body style="margin:0;padding:0;background-color:#F6F8F1;">
+<div style="background-color:#F6F8F1;padding:28px 16px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#2D3B36;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:100%;background-color:#ffffff;border:1px solid #E4E7DD;border-radius:20px;overflow:hidden;">
     <tr>
-      <td align="center" style="background-color:#2d4f3d;padding:30px;">
-        <img src="${esc(logoSrc)}" alt="Global Health" width="180" style="display:block;max-width:180px;height:auto;" />
+      <td align="center" style="background-color:#15382A;background:linear-gradient(172deg,#1D4B36 0%,#15382A 55%,#0F2E25 100%);padding:34px 40px 30px;text-align:center;">
+        <img src="${esc(logoSrc)}" alt="Global Health" width="160" style="display:block;max-width:160px;height:auto;margin:0 auto;" />
+        <div style="margin-top:26px;font-family:'Cascadia Code',Consolas,Menlo,monospace;font-size:11px;letter-spacing:0.14em;color:#B0F122;text-transform:uppercase;">Global Health</div>
+        <h1 style="margin:8px 0 0;font-size:24px;line-height:1.25;font-weight:700;color:rgba(255,255,255,0.95);letter-spacing:-0.01em;">${title}</h1>
       </td>
     </tr>
     <tr>
-      <td align="center" style="padding:25px 20px;border-bottom:1px solid #eeeeee;">
-        <h2 style="color:#2d4f3d;letter-spacing:2px;margin:0;font-size:22px;font-weight:700;">
-          #${esc(ctx.orderNumber)} &nbsp;·&nbsp; ${statusHeading(lang)}
-        </h2>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:40px;line-height:1.6;font-size:15px;">
+      <td style="padding:36px 40px;line-height:1.65;font-size:15px;color:#2D3B36;">
         <p style="margin:0 0 16px;">${greeting},</p>
         <p style="margin:0 0 20px;">${intro}</p>
-        <table width="100%" cellpadding="8" cellspacing="0" style="background-color:#fafaf8;border-radius:5px;font-size:14px;">
-          <tr>
-            <td style="width:38%;vertical-align:top;"><b>${refKey}:</b></td>
-            <td>#${esc(ctx.orderNumber)}</td>
-          </tr>
-          <tr>
-            <td><b>${L.dateTime}:</b></td>
-            <td>${esc(ctx.appointmentDate)}</td>
-          </tr>
-          <tr>
-            <td><b>${L.doctor}:</b></td>
-            <td>${esc(ctx.doctorName)}</td>
-          </tr>
-          <tr>
-            <td><b>${L.service}:</b></td>
-            <td>${esc(ctx.serviceName)}</td>
-          </tr>
-          <tr>
-            <td><b>${L.price}:</b></td>
-            <td>${esc(ctx.totalLabel)}</td>
-          </tr>
-          <tr>
-            <td><b>${L.deadline}:</b></td>
-            <td>${esc(ctx.deadline)}</td>
-          </tr>
+        <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
+          ${detailTable}
         </table>
         ${payBlock}
         ${portalBlock}
         ${creditNoteBlock}
-        <p style="font-size:14px;color:#444;margin:24px 0 0;">
+        <p style="font-size:14px;color:#2D3B36;margin:24px 0 0;">
           ${L.contactLead}
-          <a href="mailto:${SUPPORT_EMAIL}" style="color:#2d4f3d;">${SUPPORT_EMAIL}</a>
+          <a href="mailto:${SUPPORT_EMAIL}" style="color:#1D4B36;">${SUPPORT_EMAIL}</a>
           ${L.whatsappLead}
-          <a href="${WHATSAPP_URL}" style="color:#2d4f3d;font-weight:bold;">${WHATSAPP_DISPLAY}</a>.
+          <a href="${WHATSAPP_URL}" style="color:#1D4B36;font-weight:bold;">${WHATSAPP_DISPLAY}</a>.
         </p>
         <p style="margin:28px 0 0;font-size:14px;">
           ${L.signOff}<br/>
@@ -419,12 +411,14 @@ export function buildPrePaymentEmailHtml(
       </td>
     </tr>
     <tr>
-      <td align="center" style="padding:24px;background-color:#fafaf8;border-top:1px solid #eeeeee;font-size:12px;color:#777;">
-        <a href="https://www.myglobalhealth.online" style="color:#2d4f3d;text-decoration:none;font-weight:bold;">www.myglobalhealth.online</a>
+      <td align="center" style="padding:22px 40px;background-color:#0B241C;font-size:12px;color:rgba(255,255,255,0.5);text-align:center;">
+        <span style="color:rgba(255,255,255,0.5);">Medicine anytime, anywhere · </span>
+        <a href="https://www.myglobalhealth.online" style="color:#B0F122;text-decoration:none;font-weight:600;">myglobalhealth.online</a>
       </td>
     </tr>
   </table>
-</div>`;
+</div>
+</body></html>`;
 }
 
 export function buildPrePaymentEmailText(

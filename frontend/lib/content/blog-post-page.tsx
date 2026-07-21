@@ -188,7 +188,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         {/* Depth base + vignette */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-0"
+          className="gh-medical-pattern-layer pointer-events-none absolute inset-0 z-0"
           style={{
             background:
               "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.34), transparent 42%)," +
@@ -199,7 +199,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         {/* Lime glow behind the headline */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-0"
+          className="gh-medical-pattern-layer pointer-events-none absolute inset-0 z-0"
           style={{
             background:
               "radial-gradient(circle at 30% 38%, rgba(176,241,34,0.09), transparent 32%)," +
@@ -207,8 +207,8 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           }}
         />
         {/* Plus glyph watermarks — desktop only */}
-        <span aria-hidden className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ top: "-4%", right: "40%", fontSize: 160, color: "rgba(176,241,34,0.05)" }}>+</span>
-        <span aria-hidden className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ bottom: "10%", left: "44%", fontSize: 84, color: "rgba(176,241,34,0.045)" }}>+</span>
+        <span aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ top: "-4%", right: "40%", fontSize: 160, color: "rgba(176,241,34,0.05)" }}>+</span>
+        <span aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ bottom: "10%", left: "44%", fontSize: 84, color: "rgba(176,241,34,0.045)" }}>+</span>
 
         <div
           className="relative z-10 mx-auto max-w-[var(--container-width)] px-5 md:px-10"
@@ -307,8 +307,9 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
               <div
                 className="relative mt-2 overflow-hidden rounded-[var(--radius-card)] lg:mt-0"
                 style={{
-                  aspectRatio: "4 / 3",
+                  aspectRatio: "16 / 9",
                   maxHeight: 440,
+                  background: "rgba(4,32,24,0.85)",
                   border: "1px solid rgba(255,255,255,0.12)",
                   boxShadow: "0 24px 60px -24px rgba(0,0,0,0.55), 0 0 0 1px rgba(176,241,34,0.06)",
                 }}
@@ -319,14 +320,8 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                   fill
                   priority
                   sizes="(min-width:1024px) 46vw, 100vw"
-                  className="object-cover"
+                  className="object-contain"
                   unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
-                />
-                {/* Bottom fade into the forest base */}
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 bottom-0"
-                  style={{ height: "40%", background: "linear-gradient(to top, rgba(6,26,18,0.55), transparent)" }}
                 />
               </div>
             ) : null}
