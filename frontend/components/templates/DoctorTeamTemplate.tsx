@@ -2,7 +2,8 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { CarouselNav } from "@/components/ui/CarouselNav";
 import { DoctorsHero } from "@/components/sections/DoctorsHero";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -170,49 +171,19 @@ export function DoctorTeamTemplate({
           ) : (
             <>
               {totalPages > 1 && (
-                <div className="mb-6 flex items-center justify-end gap-2">
-                  <span
-                    className="text-[11px] font-bold tabular-nums"
-                    style={{ color: "var(--color-text-muted)" }}
-                  >
-                    {safePage + 1} / {totalPages}
-                  </span>
-                  <button
-                    onClick={() => setPage((p) => Math.max(0, p - 1))}
-                    disabled={safePage === 0}
-                    aria-label="Previous page"
-                    className="inline-flex size-11 items-center justify-center rounded-full border transition-all duration-150 disabled:cursor-not-allowed"
-                    style={
-                      safePage === 0
-                        ? { opacity: 0.3, borderColor: "currentColor", color: "var(--color-text-muted)" }
-                        : {
-                            background: "var(--color-brand-primary)",
-                            borderColor: "var(--color-brand-primary)",
-                            color: "#fff",
-                          }
-                    }
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setPage((p) => Math.min(totalPages - 1, p + 1))
-                    }
-                    disabled={safePage === totalPages - 1}
-                    aria-label="Next page"
-                    className="inline-flex size-11 items-center justify-center rounded-full border transition-all duration-150 disabled:cursor-not-allowed"
-                    style={
-                      safePage === totalPages - 1
-                        ? { opacity: 0.3, borderColor: "currentColor", color: "var(--color-text-muted)" }
-                        : {
-                            background: "var(--color-brand-primary)",
-                            borderColor: "var(--color-brand-primary)",
-                            color: "#fff",
-                          }
-                    }
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
+                <div className="mb-6 flex justify-end">
+                  <CarouselNav
+                    onPrev={() => setPage((p) => Math.max(0, p - 1))}
+                    onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                    canPrev={safePage > 0}
+                    canNext={safePage < totalPages - 1}
+                    progress={(safePage + 1) / totalPages}
+                    dark={false}
+                    prevLabel="Previous page"
+                    nextLabel="Next page"
+                    page={safePage}
+                    totalPages={totalPages}
+                  />
                 </div>
               )}
               <ul className="gh-card-grid" style={{ columnGap: "2rem", rowGap: "2rem" }}>

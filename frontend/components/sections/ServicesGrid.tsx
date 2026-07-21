@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CarouselNav } from "@/components/ui/CarouselNav";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import {
   SERVICE_CATALOG_DEFAULT_I18N,
@@ -92,32 +92,6 @@ export function ServicesGrid({
   const paged = items.slice(start, end);
   const showPager = totalPages > 1;
 
-  const arrowActive = isDark
-    ? {
-        background: "var(--color-brand-accent)",
-        color: "#0a1f14",
-        border: "1px solid var(--color-brand-accent)",
-      }
-    : {
-        background: "var(--color-brand-primary)",
-        color: "#ffffff",
-        border: "1px solid var(--color-brand-primary)",
-      };
-
-  const arrowInactive = isDark
-    ? {
-        background: "transparent",
-        color: "rgba(255,255,255,0.50)",
-        border: "1px solid rgba(255,255,255,0.20)",
-      }
-    : {
-        background: "transparent",
-        color: "var(--color-text-muted)",
-        border: "1px solid var(--color-border)",
-      };
-
-  const counterColor = isDark ? "rgba(255,255,255,0.50)" : "var(--color-text-muted)";
-
   return (
     <section
       className={isDark ? "relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" : ""}
@@ -166,32 +140,18 @@ export function ServicesGrid({
 
           {/* Right: pager arrows */}
           {showPager && (
-            <div className="flex items-center gap-3 shrink-0">
-              <span
-                className="text-[11px] font-bold tabular-nums"
-                style={{ color: counterColor }}
-              >
-                {page + 1} / {totalPages}
-              </span>
-              <button
-                onClick={() => setPage((p) => p - 1)}
-                disabled={page === 0}
-                aria-label={previousPageLabel}
-                className="size-11 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-                style={page === 0 ? arrowInactive : arrowActive}
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page >= totalPages - 1}
-                aria-label={nextPageLabel}
-                className="size-11 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-                style={page >= totalPages - 1 ? arrowInactive : arrowActive}
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
+            <CarouselNav
+              onPrev={() => setPage((p) => p - 1)}
+              onNext={() => setPage((p) => p + 1)}
+              canPrev={page > 0}
+              canNext={page < totalPages - 1}
+              progress={(page + 1) / totalPages}
+              dark={isDark}
+              prevLabel={previousPageLabel}
+              nextLabel={nextPageLabel}
+              page={page}
+              totalPages={totalPages}
+            />
           )}
         </div>
 

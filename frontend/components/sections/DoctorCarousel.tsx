@@ -7,8 +7,8 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import { CarouselNav } from "@/components/ui/CarouselNav";
 
 export type DoctorCarouselItem = {
   kind?: "gp" | "specialist";
@@ -65,6 +65,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
   const filtered =
     filter === "all" ? doctors : doctors.filter((d) => d.kind === filter);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
@@ -75,7 +76,10 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
     if (!el) return;
     const max = el.scrollWidth - el.clientWidth;
     const progress = max > 0 ? el.scrollLeft / max : 1;
-    el.style.setProperty("--scroll-progress", String(progress));
+    // Set on the wrapper (common ancestor of nav + track) — the nav's
+    // hairline reads this var, so setting it on the track alone would
+    // never reach the sibling header row.
+    wrapperRef.current?.style.setProperty("--scroll-progress", String(progress));
     setCanPrev(el.scrollLeft > 8);
     setCanNext(el.scrollLeft < max - 8);
   }, []);
@@ -118,23 +122,11 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
     color: "var(--gh2-on-dark-muted)",
     borderColor: "rgba(255,255,255,0.20)",
   };
-  const arrowStyle = (enabled: boolean) =>
-    enabled
-      ? {
-          background: "var(--color-brand-accent)",
-          color: "#0a1f14",
-          borderColor: "var(--color-brand-accent)",
-        }
-      : {
-          background: "transparent",
-          color: "rgba(255,255,255,0.22)",
-          borderColor: "rgba(255,255,255,0.12)",
-        };
 
   const showArrows = canPrev || canNext;
 
   return (
-    <div>
+    <div ref={wrapperRef} style={{ "--scroll-progress": 0 } as CSSProperties}>
       {(showFilters || showArrows) && (
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           {showFilters ? (
@@ -162,41 +154,15 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
           )}
 
           {showArrows && (
-            <div className="flex items-center gap-3 shrink-0">
-              <button
-                onClick={() => scrollByViewport(-1)}
-                disabled={!canPrev}
-                aria-label={i18n.previousLabel ?? "Previous"}
-                className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
-                style={arrowStyle(canPrev)}
-              >
-                <ChevronLeft size={18} aria-hidden />
-              </button>
-              {/* Progress bar — replaces the old "1 / 4" counter */}
-              <div
-                aria-hidden
-                className="h-[3px] w-20 overflow-hidden rounded-full"
-                style={{ background: "rgba(255,255,255,0.14)" }}
-              >
-                <div
-                  className="h-full rounded-full transition-[width] duration-200"
-                  style={{
-                    background: "var(--color-brand-accent)",
-                    width:
-                      "calc(max(0.12, var(--scroll-progress, 0)) * 100%)",
-                  }}
-                />
-              </div>
-              <button
-                onClick={() => scrollByViewport(1)}
-                disabled={!canNext}
-                aria-label={i18n.nextLabel ?? "Next"}
-                className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
-                style={arrowStyle(canNext)}
-              >
-                <ChevronRight size={18} aria-hidden />
-              </button>
-            </div>
+            <CarouselNav
+              onPrev={() => scrollByViewport(-1)}
+              onNext={() => scrollByViewport(1)}
+              canPrev={canPrev}
+              canNext={canNext}
+              progressVar="--scroll-progress"
+              prevLabel={i18n.previousLabel ?? "Previous"}
+              nextLabel={i18n.nextLabel ?? "Next"}
+            />
           )}
         </div>
       )}
@@ -205,7 +171,6 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
         ref={trackRef}
         onScroll={onScroll}
         className="gh-scrollbar-none -mx-1 flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth px-1 pb-2"
-        style={{ "--scroll-progress": 0 } as CSSProperties}
         role="list"
       >
         {filtered.map((doctor) => (
