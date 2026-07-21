@@ -760,6 +760,22 @@ export function ManualBookingForm({
           </label>
         </div>
 
+        {/* Every manual booking needs the patient's medical data for their
+          * consultation notes — always true, shown checked for transparency
+          * rather than left as a silent assumption. */}
+        <label className="mt-4 flex items-start gap-2 text-portal-compact text-[var(--color-text-body)]">
+          <input
+            type="checkbox"
+            checked
+            disabled
+            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+          />
+          <span>
+            The patient has consented to their medical data being accessed and used for their
+            consultation notes and medical records.
+          </span>
+        </label>
+
         {errors.venue ? (
           <div className="mt-3">
             <FieldError msg={errors.venue} />

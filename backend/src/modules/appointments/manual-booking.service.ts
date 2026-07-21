@@ -35,6 +35,7 @@ import { encryptPhi } from "../../lib/crypto/phi-crypto.js";
 import { startPrePaymentFlow } from "../automation/pre-payment-flow.service.js";
 import { persistOrderPortalAccess } from "../automation/resolve-order-portal-access.service.js";
 import { createUnpaidInvoiceForOrder } from "../invoices/generate-invoice.service.js";
+import { promoteAppointmentConsents } from "../consents/promote-appointment-consents.js";
 
 /**
  * Admin walk-in / phone-in booking pipeline. The patient may or may
@@ -519,6 +520,9 @@ export async function createManualBooking(
         dateOfBirth: dob,
         notes: input.notes?.trim() || null,
         consentAccepted: true,
+        // Without a scope the consent promotion job skips this appointment and
+        // the medical-access guard denies the booking doctor (DOCTOR_NO_VALID_ACCESS_PATH).
+        medicalAccessConsentScope: "DIRECT",
         status: "REQUEST_RECEIVED",
         serviceId: service.id,
         doctorId: input.doctorId,
@@ -546,6 +550,12 @@ export async function createManualBooking(
   } catch (error) {
     throw normalizeDbError(error, "Could not create manual appointment");
   }
+
+  // Manual-booking patients may never log in (promotion normally runs on
+  // login/verify), so promote booking consents into PatientConsent now.
+  promoteAppointmentConsents(userId, email).catch((err) => {
+    console.error("[manual-booking] consent promotion failed", err);
+  });
 
   const orderNumber = await generateOrderNumber();
   const order = await prisma.order.create({
