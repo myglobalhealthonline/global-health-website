@@ -130,7 +130,7 @@ export async function notifyAdminsOfInsuranceOrder(
       <li><strong>Service:</strong> ${esc(serviceName)}</li>
     </ul>
     <p>Open the order to view the card number and mark it verified or not verified:</p>
-    <p><a href="${esc(verifyUrl)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Verify insurance</a></p>
+    <p style="margin:24px 0;text-align:center;"><a href="${esc(verifyUrl)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Verify insurance</a></p>
     <p style="font-size:12px;color:#737373;">${esc(verifyUrl)}</p>
   `);
   const waText =
@@ -254,7 +254,7 @@ export async function applyInsuranceVerificationDecision(
     const html = wrapHtml("Your insurance was verified", `
       <p>Good news — your ${esc(companyName)} insurance card was verified.</p>
       <p>Complete your booking at your insurance price (<strong>${esc(amount)}</strong>):</p>
-      <p><a href="${esc(payLink)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Pay &amp; confirm</a></p>
+      <p style="margin:24px 0;text-align:center;"><a href="${esc(payLink)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Pay &amp; confirm</a></p>
       <p style="font-size:12px;color:#737373;">${esc(payLink)}</p>
     `);
     await safeSend(order.email, `Insurance verified — complete your booking`, html,
@@ -264,7 +264,7 @@ export async function applyInsuranceVerificationDecision(
     const html = wrapHtml("We couldn't verify your insurance card", `
       <p>Unfortunately we were unable to verify your ${esc(companyName)} insurance card.</p>
       <p>You can still book this consultation with the same doctor and time at the standard price (<strong>${esc(amount)}</strong>):</p>
-      <p><a href="${esc(payLink)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Book at standard price</a></p>
+      <p style="margin:24px 0;text-align:center;"><a href="${esc(payLink)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Book at standard price</a></p>
       <p style="font-size:12px;color:#737373;">${esc(payLink)}</p>
     `);
     await safeSend(order.email, `Insurance card could not be verified`, html,

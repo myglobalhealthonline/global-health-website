@@ -61,7 +61,7 @@ export async function sendPasswordResetEmail(opts: {
       "Reset your password",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>We got a request to reset your password. Click the button to set a new one. The link expires in 1 hour.</p>
-       <p style="margin:24px 0;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Reset password</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Reset password</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
        <p>If you didn't request this, you can ignore the email — nothing has changed yet.</p>`,
     ),
@@ -94,7 +94,7 @@ export async function sendDoctorInviteEmail(opts: {
       "Welcome to Global Health",
       `<p>Hi ${escapeHtml(greetingName)},</p>
        <p>The Global Health team has set up a doctor portal account for you. Click the button to set a password — you'll land straight on your dashboard.</p>
-       <p style="margin:24px 0;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Set password &amp; sign in</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Set password &amp; sign in</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
        <p>The link expires in 7 days. If you didn't expect this invite, you can ignore the email.</p>`,
     ),
@@ -115,7 +115,7 @@ export async function sendEmailVerificationEmail(opts: {
       "Confirm your email",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>Thanks for signing up to Global Health. Confirm your email so we can keep your account secure.</p>
-       <p style="margin:24px 0;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Confirm email</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Confirm email</a></p>
        <p style="font-size:13px;color:#737373;">Or paste into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
        <p>The link expires in 24 hours.</p>`,
     ),
@@ -141,7 +141,7 @@ export async function sendLoginOtpEmail(opts: {
       "Your sign-in code",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>Enter this code on the sign-in screen to continue:</p>
-       <p style="margin:24px 0;font-size:32px;font-weight:700;letter-spacing:0.3em;color:#1B4D3E;">${escapeHtml(opts.code)}</p>
+       <p style="margin:24px 0;font-size:32px;font-weight:700;letter-spacing:0.3em;color:#1B4D3E;text-align:center;">${escapeHtml(opts.code)}</p>
        <p style="font-size:13px;color:#737373;">Expires in 10 minutes. Single use only.</p>
        <p>If you didn't try to sign in, you can ignore this email — nothing has changed.</p>`,
     ),
@@ -168,7 +168,7 @@ export async function sendDuplicateRegistrationNoticeEmail(opts: {
       "Someone tried to sign up with your email",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>Someone just tried to create a Global Health account using this email address. You already have an account, so nothing changed — no new account was created.</p>
-       <p style="margin:24px 0;"><a href="${loginLink}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Sign in</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${loginLink}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Sign in</a></p>
        <p style="font-size:13px;color:#737373;">Forgot your password? <a href="${resetLink}">Reset it here</a>.</p>
        <p>If you don't recognize this, no action is needed — your account is safe.</p>`,
     ),
@@ -205,7 +205,7 @@ export async function sendAppointmentScheduledEmail(opts: {
     : "plan to arrive 5–10 minutes early.";
 
   const ctaHtml = meetLink
-    ? `<p style="margin:24px 0;">
+    ? `<p style="margin:24px 0;text-align:center;">
          <a href="${escapeHtml(meetLink)}"
             style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">
            Join the call
@@ -272,7 +272,7 @@ export async function sendAppointmentReminderEmail(opts: {
     : "Plan to arrive 5–10 minutes early.";
 
   const ctaHtml = meetLink
-    ? `<p style="margin:24px 0;">
+    ? `<p style="margin:24px 0;text-align:center;">
          <a href="${escapeHtml(meetLink)}"
             style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">
            Join the call
@@ -438,7 +438,7 @@ https://myglobalhealth.online/cart
         "Your cart is waiting",
         `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>You left <strong>${opts.itemCount} item${opts.itemCount === 1 ? "" : "s"}</strong> in your cart (${escapeHtml(opts.totalLabel)}).</p>
-       <p style="margin:24px 0;">
+       <p style="margin:24px 0;text-align:center;">
          <a href="${absoluteSiteUrl("/cart")}"
             style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">
            Resume checkout
@@ -493,7 +493,7 @@ export async function sendBrazilFinalizationEmail(opts: {
       "Consulta concluída",
       `<p>Olá ${escapeHtml(opts.patientName)},</p>
        <p>A sua consulta foi concluída. Para os próximos passos no Brasil, complete o consentimento e o pagamento de processamento (€29).</p>
-       <p style="margin:24px 0;"><a href="${bookingUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Continuar</a></p>`,
+       <p style="margin:24px 0;text-align:center;"><a href="${bookingUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Continuar</a></p>`,
     ),
   });
 }
@@ -513,7 +513,7 @@ export async function sendReviewInviteEmail(opts: {
         opts.localeTitle,
         `<p>Hi ${escapeHtml(opts.patientName)},</p>
        <p>We would love your feedback on your recent visit.</p>
-       <p style="margin:24px 0;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Leave a review</a></p>`,
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Leave a review</a></p>`,
       ),
     },
     { recordLabel: "review_invite" },
@@ -582,7 +582,7 @@ export async function sendPatientUploadLinkEmail(opts: {
       "Upload your files",
       `<p>Hi ${escapeHtml(opts.patientName)},</p>
        <p>Use this secure link to upload your exam results for your doctor.</p>
-       <p style="margin:24px 0;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Upload files</a></p>`,
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Upload files</a></p>`,
     ),
   });
 }
@@ -609,7 +609,7 @@ export async function sendMedicalAccessRequestEmail(opts: {
       `<p>Hi ${escapeHtml(opts.patientName)},</p>
        <p><strong>Dr. ${escapeHtml(opts.doctorName)}</strong> (${escapeHtml(opts.doctorCountry)}) is requesting access to your Global Health medical file:</p>
        <p style="font-style:italic;color:#555;">"${escapeHtml(opts.reason)}"</p>
-       <p style="margin:24px 0;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Review request</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Review request</a></p>
        <p style="font-size:13px;color:#777;">This link expires in 14 days. If you don't recognize this request, you can safely deny it or ignore this email.</p>`,
     ),
   });

@@ -142,7 +142,7 @@ async function dispatch(to: string, locale: LocaleCode, built: BuiltEmail): Prom
   const bodyHtml = [
     ...built.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`),
     built.cta
-      ? `<p style="margin:24px 0;"><a href="${built.cta.href}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${escapeHtml(built.cta.label)}</a></p>`
+      ? `<p style="margin:24px 0;text-align:center;"><a href="${built.cta.href}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${escapeHtml(built.cta.label)}</a></p>`
       : "",
   ].join("\n");
   const text = `${built.paragraphs.join("\n\n")}${built.cta ? `\n\n${built.cta.label}: ${built.cta.href}` : ""}`;
