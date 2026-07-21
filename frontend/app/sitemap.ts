@@ -21,6 +21,14 @@ import { hreflangRegion } from "@/lib/seo/hreflang";
  *   • Auth + account routes.
  *   • Every legacy Wix slug (handled by proxy 308s and disallowed in robots.txt).
  */
+// Rendered at request time: the detail-page entries (doctors, services,
+// lab tests, landing pages, blog) come from the backend API, which is not
+// reachable during the static build — a build-time render silently drops
+// them all (the try/catch fallbacks fire) and ships a section-pages-only
+// sitemap. force-dynamic keeps the sitemap complete; crawler traffic on
+// /sitemap.xml is rare enough that per-request rendering is fine.
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
   const urls: MetadataRoute.Sitemap = [];
