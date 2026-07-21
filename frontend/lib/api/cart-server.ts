@@ -179,14 +179,33 @@ export async function syncOrderPaymentServer(input: {
   }
 }
 
+/** Server-side filters forwarded verbatim to `GET /api/admin/orders`. */
+export type AdminOrderFilters = {
+  /** Free text — order number, order id, patient name, email, phone, doctor. */
+  q?: string;
+  status?: string;
+  paymentStatus?: string;
+  countryCode?: string;
+  doctorName?: string;
+  createdFrom?: string;
+  createdTo?: string;
+  consultFrom?: string;
+  consultTo?: string;
+};
+
 export async function fetchAdminOrders(
   cursor?: string,
+  filters: AdminOrderFilters = {},
 ): Promise<Result<{ items: AdminOrderRow[]; nextCursor: string | null }>> {
   const backend = getBackendOrigin();
   if (!backend) return { ok: false, message: "Backend not configured" };
   try {
     const qs = new URLSearchParams({ limit: "50" });
     if (cursor) qs.set("cursor", cursor);
+    for (const [key, value] of Object.entries(filters)) {
+      const trimmed = value?.trim();
+      if (trimmed) qs.set(key, trimmed);
+    }
     const res = await fetch(`${backend}/api/admin/orders?${qs.toString()}`, {
       headers: { cookie: await cookieHeader() },
       cache: "no-store",

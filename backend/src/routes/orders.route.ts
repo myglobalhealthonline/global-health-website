@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { CartItemKind, OrderStatus, PaymentStatus } from "@prisma/client";
+import { CartItemKind, OrderStatus, PaymentStatus, type Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import {
   getStripeClient,
@@ -818,13 +818,33 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
   );
 
   // ── Admin: list all orders ─────────────────────────────────────────
+  /** Treat `?status=` (an empty select) as absent instead of a parse error. */
+  const blankToUndefined = (v: unknown) =>
+    typeof v === "string" && v.trim() === "" ? undefined : v;
+
   const adminOrdersQuerySchema = z.object({
     limit: z.coerce.number().int().min(1).max(100).default(50),
     cursor: z.string().min(1).max(120).optional(),
-    status: z.nativeEnum(OrderStatus).optional(),
-    countryCode: z.string().trim().min(2).max(4).optional(),
-    q: z.string().trim().min(1).max(120).optional(),
+    status: z.preprocess(blankToUndefined, z.nativeEnum(OrderStatus).optional()),
+    paymentStatus: z.preprocess(blankToUndefined, z.nativeEnum(PaymentStatus).optional()),
+    countryCode: z.preprocess(blankToUndefined, z.string().trim().min(2).max(4).optional()),
+    q: z.preprocess(blankToUndefined, z.string().trim().min(1).max(120).optional()),
+    /** Doctor filter — case-insensitive substring of the assigned doctor's name. */
+    doctorName: z.preprocess(blankToUndefined, z.string().trim().min(1).max(160).optional()),
+    /** Order-date (createdAt) range, inclusive. */
+    createdFrom: z.preprocess(blankToUndefined, z.coerce.date().optional()),
+    createdTo: z.preprocess(blankToUndefined, z.coerce.date().optional()),
+    /** Consultation-date (appointment.scheduledAt) range, inclusive. */
+    consultFrom: z.preprocess(blankToUndefined, z.coerce.date().optional()),
+    consultTo: z.preprocess(blankToUndefined, z.coerce.date().optional()),
   });
+
+  /** Push a plain `YYYY-MM-DD` to the last instant of that day so `lte` covers it. */
+  function endOfDay(d: Date): Date {
+    const end = new Date(d);
+    end.setHours(23, 59, 59, 999);
+    return end;
+  }
 
   app.get("/api/admin/orders", async (request, reply) => {
     const auth = await verifyAdminAccess(request);
@@ -834,7 +854,19 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid orders query", query.error.flatten()));
     }
-    const { limit, cursor, status, countryCode, q } = query.data;
+    const {
+      limit,
+      cursor,
+      status,
+      paymentStatus,
+      countryCode,
+      q,
+      doctorName,
+      createdFrom,
+      createdTo,
+      consultFrom,
+      consultTo,
+    } = query.data;
 
     // LOCAL_ADMIN folder scope (code review 2026-07-05, bug #4) — restrict
     // the list to the admin's assigned countries. null means unscoped
@@ -856,27 +888,75 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       countryCodeFilter = { in: scopedFolders };
     }
 
-    try {
-      // Filters compose: status / countryCode are exact-match, `q`
-      // searches across email + fullName + id (case-insensitive). Cursor
-      // pagination off Order.id — stable because id is a cuid.
-      // countryCode is stored lowercase (see manual-booking.service.ts) —
-      // this filter previously uppercased it, silently matching nothing.
-      const orders = await prisma.order.findMany({
-        where: {
-          ...(status ? { status } : {}),
-          ...(countryCodeFilter !== undefined ? { countryCode: countryCodeFilter } : {}),
-          ...(q
-            ? {
-                OR: [
-                  { email: { contains: q, mode: "insensitive" } },
-                  { fullName: { contains: q, mode: "insensitive" } },
-                  { id: { contains: q } },
-                  { orderNumber: { contains: q, mode: "insensitive" } },
-                ],
-              }
-            : {}),
+    // Filters compose — every clause is ANDed, so they narrow, never widen.
+    // `q` is a case-insensitive OR across order number / id / patient name /
+    // email / phone / assigned doctor. Doctor, order-date and consultation-date
+    // each get their own clause: two of them target the SAME `orderAppointments`
+    // relation, so they must live in an AND array — merged into one object
+    // literal the later key would silently overwrite the earlier one.
+    // countryCode is stored lowercase (see manual-booking.service.ts) — this
+    // filter previously uppercased it, silently matching nothing.
+    const and: Prisma.OrderWhereInput[] = [];
+    if (status) and.push({ status });
+    if (paymentStatus) and.push({ paymentStatus });
+    if (countryCodeFilter !== undefined) and.push({ countryCode: countryCodeFilter });
+
+    if (q) {
+      const contains = { contains: q, mode: "insensitive" as const };
+      and.push({
+        OR: [
+          { email: contains },
+          { fullName: contains },
+          { phone: contains },
+          { id: { contains: q } },
+          { orderNumber: contains },
+          // Free text also reaches the assigned doctor, so typing "Silva" in
+          // the search box finds that doctor's consultation orders.
+          { orderAppointments: { some: { appointment: { doctor: { fullName: contains } } } } },
+        ],
+      });
+    }
+
+    if (doctorName) {
+      and.push({
+        orderAppointments: {
+          some: {
+            appointment: {
+              doctor: { fullName: { contains: doctorName, mode: "insensitive" } },
+            },
+          },
         },
+      });
+    }
+
+    if (createdFrom || createdTo) {
+      and.push({
+        createdAt: {
+          ...(createdFrom ? { gte: createdFrom } : {}),
+          ...(createdTo ? { lte: endOfDay(createdTo) } : {}),
+        },
+      });
+    }
+
+    if (consultFrom || consultTo) {
+      and.push({
+        orderAppointments: {
+          some: {
+            appointment: {
+              scheduledAt: {
+                ...(consultFrom ? { gte: consultFrom } : {}),
+                ...(consultTo ? { lte: endOfDay(consultTo) } : {}),
+              },
+            },
+          },
+        },
+      });
+    }
+
+    try {
+      // Cursor pagination off Order.id — stable because id is a cuid.
+      const orders = await prisma.order.findMany({
+        where: and.length ? { AND: and } : {},
         orderBy: { createdAt: "desc" },
         include: {
           items: { select: { quantity: true, kind: true } },
