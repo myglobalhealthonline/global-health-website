@@ -163,11 +163,20 @@ const nextConfig: NextConfig = {
       },
       // Next content-hashes everything under /_next/static (filename embeds
       // the build hash), so a stale cache is impossible — safe to cache for
-      // a year as immutable.
-      {
-        source: "/_next/static/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
+      // a year as immutable. Production only: dev chunks are NOT hashed
+      // (stable names like frontend_app_globals_….css), so `immutable` makes
+      // the browser keep stale CSS/JS across edits and Next itself warns
+      // this header breaks dev behavior.
+      ...(process.env.NODE_ENV === "production"
+        ? [
+            {
+              source: "/_next/static/:path*",
+              headers: [
+                { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+              ],
+            },
+          ]
+        : []),
       // Unhashed /public assets (icons, hero images, stock photos — see
       // public/) are NOT content-hashed: a redeploy can overwrite
       // public/foo.png at the same URL. `immutable` previously cached these

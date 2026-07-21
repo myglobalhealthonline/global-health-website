@@ -250,7 +250,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             <style>/classes preserved) and CSS-scoped to .gh-article-body so it
             can't bleed into the site. Rendered server-side for SEO. */}
         <div
-          className="gh-article-body"
+          className="gh-article-body gh-article-raw"
           dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
         />
       </section>

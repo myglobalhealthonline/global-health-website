@@ -526,30 +526,45 @@ img {
 /* Admin-authored blog article body. The article's own <style>/classes are
  * preserved on save and applied here. Base rules use :where() so they carry
  * ZERO specificity — the author's CSS always wins; these are only fallbacks
- * for un-styled markup. */
+ * for un-styled markup.
+ * .gh-article-raw (blog detail only, added by blog-post-page.tsx): the
+ * article ships its own complete design, so every DESIGN rule below is
+ * gated behind :not(.gh-article-raw). Only layout-safety rules (overflow,
+ * media max-width) still apply to raw articles. */
 .gh-article-body {
-  font-size: 16px;
-  line-height: 1.75;
-  color: var(--color-text-body);
   overflow-wrap: break-word;
 }
 .gh-article-body :where(img, svg, video) {
   max-width: 100%;
   height: auto;
-  border-radius: 12px;
-}
-.gh-article-body :where(a):not([class]) {
-  color: var(--color-brand-primary);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 .gh-article-body :where(table) {
   max-width: 100%;
 }
+/* Raw blog articles: neutralise Tailwind preflight (list-style:none, zeroed
+ * heading margins…) back to browser defaults. Double :where() keeps this at
+ * ZERO specificity and it is unlayered, so it beats the layered preflight
+ * but loses to any selector the article author writes. */
+:where(.gh-article-raw) :where(h1, h2, h3, h4, h5, h6, p, a, ul, ol, li, strong, em, blockquote, hr, table) {
+  all: revert;
+}
+.gh-article-body:not(.gh-article-raw) {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--color-text-body);
+}
+.gh-article-body:not(.gh-article-raw) :where(img, svg, video) {
+  border-radius: 12px;
+}
+.gh-article-body:not(.gh-article-raw) :where(a):not([class]) {
+  color: var(--color-brand-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 /* Spacing scale — without this every heading/paragraph/list item sits
  * flush against the next with no rhythm, reading as one dense wall of
  * text regardless of the source HTML's structure. */
-.gh-article-body :where(h1, h2):not([class]) {
+.gh-article-body:not(.gh-article-raw) :where(h1, h2):not([class]) {
   font-family: var(--font-display);
   font-size: clamp(22px, 3vw, 30px);
   font-weight: 800;
@@ -558,7 +573,7 @@ img {
   margin: 40px 0 16px;
   color: var(--color-text-primary);
 }
-.gh-article-body :where(h3):not([class]) {
+.gh-article-body:not(.gh-article-raw) :where(h3):not([class]) {
   font-family: var(--font-display);
   font-size: clamp(17px, 2vw, 21px);
   font-weight: 700;
@@ -567,26 +582,25 @@ img {
   margin: 30px 0 12px;
   color: var(--color-text-primary);
 }
-.gh-article-body :where(h1, h2, h3):first-child {
+.gh-article-body:not(.gh-article-raw) :where(h1, h2, h3):first-child {
   margin-top: 0;
 }
-.gh-article-body :where(p):not([class]) { margin: 14px 0; }
+.gh-article-body:not(.gh-article-raw) :where(p):not([class]) { margin: 14px 0; }
 /* Tailwind preflight resets ul/ol to list-style:none — restore real
- * markers here or every list silently reads as flush paragraphs.
- * (force-touch for HMR) */
-.gh-article-body :where(ul):not([class]) { margin: 16px 0 16px 4px; padding: 0 0 0 20px; list-style: disc; }
-.gh-article-body :where(ol):not([class]) { margin: 16px 0 16px 4px; padding: 0 0 0 20px; list-style: decimal; }
-.gh-article-body :where(li):not([class]) { margin: 8px 0; padding-left: 4px; }
-.gh-article-body :where(li):not([class])::marker { color: var(--color-brand-accent); }
-.gh-article-body :where(strong):not([class]) { font-weight: 700; color: var(--color-text-primary); }
-.gh-article-body :where(blockquote):not([class]) {
+ * markers here or every list silently reads as flush paragraphs. */
+.gh-article-body:not(.gh-article-raw) :where(ul):not([class]) { margin: 16px 0 16px 4px; padding: 0 0 0 20px; list-style: disc; }
+.gh-article-body:not(.gh-article-raw) :where(ol):not([class]) { margin: 16px 0 16px 4px; padding: 0 0 0 20px; list-style: decimal; }
+.gh-article-body:not(.gh-article-raw) :where(li):not([class]) { margin: 8px 0; padding-left: 4px; }
+.gh-article-body:not(.gh-article-raw) :where(li):not([class])::marker { color: var(--color-brand-accent); }
+.gh-article-body:not(.gh-article-raw) :where(strong):not([class]) { font-weight: 700; color: var(--color-text-primary); }
+.gh-article-body:not(.gh-article-raw) :where(blockquote):not([class]) {
   margin: 20px 0;
   padding: 4px 20px;
   border-left: 3px solid rgba(176, 241, 34, 0.4);
   color: var(--color-text-muted);
   font-style: italic;
 }
-.gh-article-body :where(hr):not([class]) {
+.gh-article-body:not(.gh-article-raw) :where(hr):not([class]) {
   margin: 32px 0;
   border: none;
   border-top: 1px solid rgba(29, 75, 54, 0.12);
