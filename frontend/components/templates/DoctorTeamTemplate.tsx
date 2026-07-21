@@ -218,6 +218,25 @@ export function DoctorTeamTemplate({
                   </li>
                 ))}
               </ul>
+
+              {/* Bottom pager — mirrors the header one so paging past row 1
+                  doesn't force a scroll back to the top of the list. */}
+              {totalPages > 1 && (
+                <div className="mt-10 flex justify-center">
+                  <CarouselNav
+                    onPrev={() => setPage((p) => Math.max(0, p - 1))}
+                    onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                    canPrev={safePage > 0}
+                    canNext={safePage < totalPages - 1}
+                    variant="segments"
+                    dark={false}
+                    prevLabel="Previous page"
+                    nextLabel="Next page"
+                    page={safePage}
+                    totalPages={totalPages}
+                  />
+                </div>
+              )}
             </>
           )}
         </div>
