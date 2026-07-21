@@ -51,7 +51,30 @@ export async function completeOrderPaymentFromCheckoutSession(
   opts: { stripeEventId: string; eventType: string },
   log: PaymentLog = noopLog,
 ): Promise<CompleteOrderPaymentResult> {
-  const { alreadyPaid } = await markOrderPaidFromStripeSession(orderId, session, opts, log);
+  const { alreadyPaid, resurrectedFromCancelled } = await markOrderPaidFromStripeSession(
+    orderId,
+    session,
+    opts,
+    log,
+  );
+
+  if (resurrectedFromCancelled) {
+    // The order had already been cancelled when this payment arrived, so its
+    // slot was released, its appointments cancelled and its plan credits handed
+    // back — none of which the fulfilment below can undo. The money is real, so
+    // we still record it as PAID, but a human has to rebuild the booking.
+    log.error(
+      { orderId, stripeEventId: opts.stripeEventId },
+      "Payment landed on a CANCELLED order — booking was already torn down",
+    );
+    await emitOpsAlert({
+      severity: "critical",
+      title: "Payment received for an already-cancelled order",
+      detail:
+        "The order was CANCELLED before its payment arrived, so the held slot was released and any appointment cancelled. The order is now PAID with no booking behind it — rebuild the appointment or refund.",
+      context: { orderId, stripeEventId: opts.stripeEventId, sessionId: session.id },
+    });
+  }
 
   if (alreadyPaid) {
     // Side effects now run via the durable outbox (P-007). The first-flip path
@@ -125,16 +148,23 @@ async function markOrderPaidFromStripeSession(
   session: CheckoutSessionSnapshot,
   opts: { stripeEventId: string; eventType: string },
   log: PaymentLog,
-): Promise<{ alreadyPaid: boolean }> {
+): Promise<{ alreadyPaid: boolean; resurrectedFromCancelled: boolean }> {
   return prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({
       where: { id: orderId },
       select: { paymentStatus: true, status: true },
     });
-    if (!order) return { alreadyPaid: true };
+    if (!order) return { alreadyPaid: true, resurrectedFromCancelled: false };
     if (order.paymentStatus === "PAID" || order.status === "PAID") {
-      return { alreadyPaid: true };
+      return { alreadyPaid: true, resurrectedFromCancelled: false };
     }
+
+    // A payment arriving on a CANCELLED order is not a normal flip: the
+    // cancellation already released the slot and cancelled the appointment, so
+    // marking it PAID leaves an order with nothing behind it. We record the
+    // money anyway (refusing it would be worse) but flag it loudly upstream.
+    const resurrectedFromCancelled =
+      order.status === "CANCELLED" || order.paymentStatus === "FAILED";
 
     const seen = await tx.processedWebhookEvent.findUnique({
       where: { stripeEventId: opts.stripeEventId },
@@ -142,7 +172,7 @@ async function markOrderPaidFromStripeSession(
     });
     if (seen) {
       log.info({ orderId, stripeEventId: opts.stripeEventId }, "Stripe event already processed");
-      return { alreadyPaid: true };
+      return { alreadyPaid: true, resurrectedFromCancelled: false };
     }
 
     await tx.order.update({
@@ -170,7 +200,7 @@ async function markOrderPaidFromStripeSession(
     // old first-flip behaviour (shop-only orders got the confirmation email).
     await enqueueOrderPaidAutomations(tx, orderId, { sendShopConfirmation: true });
 
-    return { alreadyPaid: false };
+    return { alreadyPaid: false, resurrectedFromCancelled };
   });
 }
 
@@ -224,6 +254,11 @@ async function fulfillPaidOrderFromCheckoutSession(
     }
 
     const appointmentIds: string[] = [...order.appointmentIds];
+    // Consultation lines that finish this loop WITHOUT an appointment behind
+    // them. Each one is a patient who has paid and has no booking — previously
+    // only a log.warn, which is how ORD-000182 went unnoticed until the patient
+    // asked where their consultation was.
+    const unfulfilled: { itemId: string; slotId: string | null; reason: string }[] = [];
     for (const item of consultationItems) {
       if (item.appointmentId) {
         if (item.timeSlotId) {
@@ -261,6 +296,11 @@ async function fulfillPaidOrderFromCheckoutSession(
           { orderId, itemId: item.id },
           "Consultation order item missing slot/doctor/service",
         );
+        unfulfilled.push({
+          itemId: item.id,
+          slotId: item.timeSlotId,
+          reason: "missing slot/doctor/service on the order line",
+        });
         continue;
       }
 
@@ -293,7 +333,14 @@ async function fulfillPaidOrderFromCheckoutSession(
       const claim = await tx.doctorTimeSlot.updateMany({
         where: {
           id: item.timeSlotId,
-          status: { in: ["HELD", "OPEN"] },
+          // BOOKED counts as claimable here ONLY because the appointment
+          // lookup above proved nothing occupies this slot. An insurance
+          // order commits HELD→BOOKED at checkout time (orders.route.ts) to
+          // survive the manual card-verification window, so by the time the
+          // patient pays the slot is already BOOKED and owned by this very
+          // order — excluding it skipped the mint and left a paid order with
+          // no consultation (ORD-000143, ORD-000177).
+          status: { in: ["HELD", "OPEN", "BOOKED"] },
         },
         data: { status: "BOOKED" },
       });
@@ -302,6 +349,15 @@ async function fulfillPaidOrderFromCheckoutSession(
           { orderId, itemId: item.id, slotId: item.timeSlotId },
           "Slot already claimed by someone else — appointment skipped",
         );
+        unfulfilled.push({
+          itemId: item.id,
+          slotId: item.timeSlotId,
+          // Either a genuine double-booking, or the slot was deleted out from
+          // under us — which is what a pre-payment cancel does when it races
+          // this payment (it folds the held slot back into the base grid under
+          // a new id, so this lookup can never match again).
+          reason: "held slot is gone or no longer claimable",
+        });
         continue;
       }
       const slot = await tx.doctorTimeSlot.findUniqueOrThrow({
@@ -452,11 +508,25 @@ async function fulfillPaidOrderFromCheckoutSession(
         skipDuplicates: true,
       });
     }
-    return appointmentIds;
+    return { appointmentIds, unfulfilled };
   },
     { maxWait: 10_000, timeout: 30_000 },
-  ).then((appointmentIds: string[] | undefined) => {
-    if (!appointmentIds) return;
+  ).then((result) => {
+    if (!result) return;
+    const { appointmentIds, unfulfilled } = result;
+
+    // Paid, but at least one consultation line has no appointment behind it.
+    // Nothing downstream can self-heal this — the patient's money is taken and
+    // their booking does not exist — so it has to reach a human immediately.
+    if (unfulfilled.length > 0) {
+      void emitOpsAlert({
+        severity: "critical",
+        title: "Paid consultation order has no appointment",
+        detail:
+          "Payment succeeded but the appointment could not be minted. The patient has been charged and has no booking — rebuild it by hand or refund.",
+        context: { orderId, unfulfilled },
+      });
+    }
     // Corporate lifecycle hook — link freshly-minted appointments to a
     // pending pre-assessment / open corporate request (plan doc §2.1/§2.3).
     // Fire-and-forget + idempotent, so webhook redelivery is harmless.

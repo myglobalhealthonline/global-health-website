@@ -45,6 +45,8 @@ import {
   resolveOrderPortalAccess,
 } from "./resolve-order-portal-access.service.js";
 import { generateCreditNoteForOrder } from "../invoices/generate-invoice.service.js";
+import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
+import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 
 const MS_HOUR = 60 * 60 * 1000;
 const MS_MIN = 60 * 1000;
@@ -52,6 +54,23 @@ const MS_MIN = 60 * 1000;
  *  of the normal 1h, so an urgent last-minute booking isn't cancelled on the
  *  spot for "non-payment" before the patient can pay. */
 const URGENT_BOOKING_HOURS = 2;
+/**
+ * Floor on every payment window, measured from the moment of booking.
+ *
+ * The 5-min urgent lead above is relative to the CONSULTATION, not to the
+ * booking, so a slot booked less than 5 minutes before it starts produced a
+ * `paymentDueAt` that was already in the past when the order row was written.
+ * The cancel sweep (60s tick) then tore the reservation down while the patient
+ * was still on the Stripe checkout page — ORD-000182: order created 21:40:04
+ * with a deadline of 21:40:00, cancelled at 21:40:23, paid at 21:40:24. The
+ * order flipped back to PAID but its slot was already released, so no
+ * appointment was ever minted.
+ *
+ * A deadline may now land after the consultation has started. That is the
+ * correct trade: an unpaid booking sitting a few minutes past its slot is
+ * cheap, and charging a patient for a consultation we just cancelled is not.
+ */
+const MIN_PAY_WINDOW_MIN = 10;
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
@@ -93,6 +112,13 @@ export function computePrePaymentPlan(input: {
       ? (consultAt.getTime() - bookedAt.getTime()) / MS_HOUR
       : Number.POSITIVE_INFINITY;
 
+  // Never hand back a deadline the patient cannot possibly meet — see
+  // MIN_PAY_WINDOW_MIN. Applied to both flows: the 24h-before deadline of an
+  // OUTSIDE_48H booking is equally in the past if the consultation is 49h out
+  // and the clock has drifted, and a floor costs nothing when it doesn't bind.
+  const floorAt = new Date(bookedAt.getTime() + MIN_PAY_WINDOW_MIN * MS_MIN);
+  const notBefore = (due: Date): Date => (due.getTime() < floorAt.getTime() ? floorAt : due);
+
   if (hoursUntilConsult <= 48) {
     // Urgent last-minute booking (≤2h out): a 1h-before deadline would already
     // be in the past at booking time, cancelling the order immediately. Shrink
@@ -100,19 +126,21 @@ export function computePrePaymentPlan(input: {
     const leadMs = hoursUntilConsult <= URGENT_BOOKING_HOURS ? 5 * MS_MIN : 1 * MS_HOUR;
     return {
       flow: PrePaymentFlow.WITHIN_48H,
-      paymentDueAt:
+      paymentDueAt: notBefore(
         consultAt != null
           ? new Date(consultAt.getTime() - leadMs)
           : new Date(bookedAt.getTime() + 1 * MS_HOUR),
+      ),
     };
   }
 
   return {
     flow: PrePaymentFlow.OUTSIDE_48H,
-    paymentDueAt:
+    paymentDueAt: notBefore(
       consultAt != null
         ? new Date(consultAt.getTime() - 24 * MS_HOUR)
         : new Date(bookedAt.getTime() + 24 * MS_HOUR),
+    ),
   };
 }
 
@@ -733,6 +761,42 @@ async function executeReminderStage(
 }
 
 /**
+ * Ask Stripe directly whether this order's checkout session has been paid.
+ *
+ * Our own `paymentStatus` column is only as fresh as the last webhook we
+ * received, and the gap between "card charged at Stripe" and "webhook lands
+ * here" is seconds — long enough for the cancel sweep to tear down a booking
+ * the patient has already paid for (ORD-000182). Stripe is the authority, so
+ * consult it before destroying anything.
+ *
+ *   "paid"         — do not cancel under any circumstance
+ *   "not-paid"     — safe to cancel
+ *   "unverifiable" — we could not reach Stripe; treated as "do not cancel",
+ *                    because a slot held too long is recoverable and a patient
+ *                    charged for a cancelled consultation is not.
+ */
+async function stripePaymentVerdict(order: {
+  countryCode: string;
+  stripeSessionId: string | null;
+}): Promise<"paid" | "not-paid" | "unverifiable"> {
+  // No session was ever created (e.g. insurance orders awaiting verification),
+  // so there is no payment in flight to race with.
+  if (!order.stripeSessionId) return "not-paid";
+  if (!isStripeConfigured(order.countryCode)) return "not-paid";
+  try {
+    const stripe = getStripeClient(order.countryCode);
+    const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+    // `status: "complete"` covers a €0/credit-covered checkout, which completes
+    // without ever setting payment_status to "paid".
+    return session.payment_status === "paid" || session.status === "complete"
+      ? "paid"
+      : "not-paid";
+  } catch {
+    return "unverifiable";
+  }
+}
+
+/**
  * Cancel an unpaid pre-payment order. The status flip is a single conditional
  * update, so exactly one caller can win it — a sweep racing another sweep (or
  * racing the Stripe session-expiry webhook) sees `false` and skips the
@@ -744,6 +808,11 @@ async function executeReminderStage(
  * (payments.route.ts): the held slots, the appointments, and any reserved plan
  * credits. That path cannot be relied on as a backstop here — it only acts on
  * orders still PENDING, so once this function flips the status it is skipped.
+ *
+ * Because that teardown is destructive and effectively irreversible (the held
+ * slot is deleted and folded back into the base grid under a NEW id, so the
+ * paid-order path can no longer find it), the local `paymentStatus` check below
+ * is backed by a live Stripe lookup — see stripePaymentVerdict.
  */
 export async function cancelPrePaymentOrder(orderId: string): Promise<boolean> {
   const order = await prisma.order.findUnique({
@@ -751,6 +820,35 @@ export async function cancelPrePaymentOrder(orderId: string): Promise<boolean> {
     include: { items: true },
   });
   if (!order || order.paymentStatus === "PAID" || order.status === "PAID") return false;
+
+  const verdict = await stripePaymentVerdict(order);
+  if (verdict === "paid") {
+    // The money is already at Stripe; only the webhook is late. Pull the payment
+    // in now rather than cancelling a consultation the patient has bought.
+    // Dynamic import — complete-order-payment.service imports this module.
+    await import("../orders/complete-order-payment.service.js")
+      .then((m) => m.syncOrderPaymentFromStripe(orderId))
+      .catch(() => undefined);
+    await createAutomationRun({
+      automationKey: "pre_payment_cancel_skipped_paid_at_stripe",
+      orderId,
+      status: "SKIPPED",
+      summary:
+        "Deadline passed but Stripe reports the session paid — cancellation aborted, payment synced instead.",
+      executedAt: new Date(),
+    });
+    return false;
+  }
+  if (verdict === "unverifiable") {
+    await emitOpsAlert({
+      severity: "warning",
+      title: "Pre-payment cancel skipped — Stripe unreachable",
+      detail:
+        "Could not confirm the checkout session is unpaid, so the reservation was left intact. The sweep retries on its next tick.",
+      context: { orderId, stripeSessionId: order.stripeSessionId },
+    });
+    return false;
+  }
 
   const heldSlotIds = order.items
     .map((i) => i.timeSlotId)
