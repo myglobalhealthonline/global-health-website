@@ -307,8 +307,9 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
               <div
                 className="relative mt-2 overflow-hidden rounded-[var(--radius-card)] lg:mt-0"
                 style={{
-                  aspectRatio: "4 / 3",
+                  aspectRatio: "16 / 9",
                   maxHeight: 440,
+                  background: "rgba(4,32,24,0.85)",
                   border: "1px solid rgba(255,255,255,0.12)",
                   boxShadow: "0 24px 60px -24px rgba(0,0,0,0.55), 0 0 0 1px rgba(176,241,34,0.06)",
                 }}
@@ -319,14 +320,8 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                   fill
                   priority
                   sizes="(min-width:1024px) 46vw, 100vw"
-                  className="object-cover"
+                  className="object-contain"
                   unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
-                />
-                {/* Bottom fade into the forest base */}
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 bottom-0"
-                  style={{ height: "40%", background: "linear-gradient(to top, rgba(6,26,18,0.55), transparent)" }}
                 />
               </div>
             ) : null}
