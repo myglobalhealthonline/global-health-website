@@ -18,7 +18,7 @@ import {
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { issuePasswordResetToken } from "../modules/auth/auth.service.js";
 import { sendDoctorInviteEmail } from "../lib/email/templates.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
+import { recordAudit, recordCriticalAudit } from "../modules/audit/audit.service.js";
 import {
   adminDoctorCreateBodySchema,
   adminDoctorUpdateBodySchema,
@@ -48,6 +48,10 @@ import {
   pendingProfileChangeRequestsQuerySchema,
 } from "../validations/doctor-profile-change-requests.schema.js";
 import { z } from "zod";
+
+/** Raised inside the login-email change transaction when the requested
+ *  address already belongs to another User or PatientProfile. */
+class DoctorEmailTakenError extends Error {}
 
 function handleDoctorWriteError(
   app: { log: { error: (e: unknown) => void } },
@@ -324,6 +328,106 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       const email = body.data.email;
       const fullName = body.data.fullName?.trim() || doctor.fullName;
 
+      // The doctor may already have a linked login user. If the admin submits
+      // a DIFFERENT address this is an email CHANGE, not a fresh invite:
+      // rewrite the existing User in place. Creating a second User instead
+      // would just hit the `User.doctorId` unique and 409 with a misleading
+      // "email already registered" — which is why the old UI could only ever
+      // resend to the address captured on the first invite.
+      const linked = await prisma.user.findUnique({
+        where: { doctorId: doctor.id },
+        select: { id: true, email: true },
+      });
+      const emailChanged = Boolean(linked && linked.email !== email);
+      if (linked && emailChanged) {
+        // Same bar as PATCH /api/admin/users/:id: the login address is also
+        // the password-reset destination, so rewriting it is an
+        // account-takeover primitive. Country-scoped LOCAL_ADMINs and the
+        // dev token fallback (no session actor) are excluded.
+        const actorRole = resolveAdminSessionActor(request)?.role;
+        if (actorRole !== "ADMIN" && actorRole !== "SUPER_ADMIN") {
+          return reply
+            .status(403)
+            .send(
+              errorResponse(
+                "Only a global admin can change a doctor's login email",
+              ),
+            );
+        }
+        const previousEmail = linked.email;
+        await prisma.$transaction(
+          async (tx) => {
+            // Both tables carry a unique on email. Check inside the tx so the
+            // answer can't go stale, and so the admin gets a readable 409
+            // instead of a raw P2002.
+            const [takenByUser, takenByProfile] = await Promise.all([
+              tx.user.findFirst({
+                where: { email, id: { not: linked.id } },
+                select: { id: true },
+              }),
+              tx.patientProfile.findFirst({
+                where: { email, userId: { not: linked.id } },
+                select: { id: true },
+              }),
+            ]);
+            if (takenByUser || takenByProfile) {
+              throw new DoctorEmailTakenError();
+            }
+            // PatientProfile is joined by email, not userId — a doctor who is
+            // also a patient here would otherwise have their chart stranded at
+            // the old address. Both move together or neither does.
+            const movedProfiles = await tx.patientProfile.findMany({
+              where: { email: previousEmail },
+              select: { id: true, globalHealthNumber: true },
+            });
+            await tx.patientProfile.updateMany({
+              where: { email: previousEmail },
+              data: { email },
+            });
+            if (movedProfiles.length > 0) {
+              await tx.patientContactChangeLog.createMany({
+                data: movedProfiles.map((p) => ({
+                  patientProfileId: p.id,
+                  globalHealthNumber: p.globalHealthNumber ?? null,
+                  changedById: resolveAdminSessionActor(request)?.userId ?? null,
+                  changedByRole: actorRole,
+                  fieldChanged: "EMAIL",
+                  oldValue: previousEmail,
+                  newValue: email,
+                  ipAddress: request.ip ?? null,
+                })),
+              });
+            }
+            await tx.user.update({
+              where: { id: linked.id },
+              data: {
+                email,
+                // The new address is unproven, and any session still open on
+                // the old one must die immediately rather than at JWT expiry.
+                emailVerifiedAt: null,
+                tokenVersion: { increment: 1 },
+              },
+            });
+          },
+          { isolationLevel: "Serializable" },
+        );
+        const emailChangeActor = resolveAdminSessionActor(request);
+        await recordCriticalAudit({
+          actorUserId: emailChangeActor?.userId ?? null,
+          actorRole: emailChangeActor?.role ?? "ADMIN",
+          action: "USER_UPDATED",
+          entityType: "User",
+          entityId: linked.id,
+          metadata: {
+            doctorId: doctor.id,
+            changedFields: ["email"],
+            emailFrom: previousEmail,
+            emailTo: email,
+          },
+          request,
+        });
+      }
+
       // Locate existing user by email (case-insensitive); decide between
       // create / link / conflict based on what's there.
       const existing = await prisma.user.findUnique({
@@ -427,6 +531,7 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
           email: user.email,
           resend: Boolean(existing),
           emailed,
+          emailChanged,
         },
         request,
       }).catch(() => {});
@@ -442,11 +547,21 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
             },
             resend: Boolean(existing),
             emailed,
+            emailChanged,
           },
-          existing ? "Invite resent" : "Doctor invited",
+          emailChanged
+            ? "Login email changed — invite sent to the new address"
+            : existing
+              ? "Invite resent"
+              : "Doctor invited",
         ),
       );
     } catch (error) {
+      if (error instanceof DoctorEmailTakenError) {
+        return reply
+          .status(409)
+          .send(errorResponse("That email is already in use by another account"));
+      }
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
         return reply
           .status(409)

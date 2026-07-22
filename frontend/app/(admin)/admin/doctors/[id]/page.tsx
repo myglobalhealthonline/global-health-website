@@ -111,7 +111,11 @@ export default async function AdminDoctorDetailPage({
     }
     revalidatePath(`/admin/doctors/${id}`);
     revalidatePath("/admin/doctors");
-    const msg = result.data.resend
+    const msg = result.data.emailChanged
+      ? result.data.emailed
+        ? `Login email changed to ${result.data.user.email} — invite sent there`
+        : `Login email changed to ${result.data.user.email} — email delivery failed, share link manually`
+      : result.data.resend
       ? result.data.emailed
         ? "Invite resent to the doctor"
         : "Invite refreshed — email delivery failed, share link manually"
@@ -451,8 +455,22 @@ export default async function AdminDoctorDetailPage({
                     {d.loginUser.isActive ? "Account active" : "Account suspended"}
                   </p>
                 </div>
-                <form action={inviteDoctorAction} className="gh-admin-doctor-invite-form grid gap-2">
-                  <input type="hidden" name="email" value={d.loginUser.email} />
+                <form action={inviteDoctorAction} className="gh-admin-doctor-invite-form grid gap-2.5">
+                  <label className="flex flex-col gap-1">
+                    <span className="gh-field-label">Login email</span>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      maxLength={200}
+                      defaultValue={d.loginUser.email}
+                      className="gh-input"
+                    />
+                    <span className="text-portal-thead text-[var(--color-text-muted)]">
+                      Edit to move the account to a new address — the invite
+                      goes there and any open session is signed out.
+                    </span>
+                  </label>
                   <input type="hidden" name="fullName" value={d.loginUser.fullName} />
                   <button
                     type="submit"
