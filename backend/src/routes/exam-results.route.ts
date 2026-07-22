@@ -176,6 +176,8 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           {
             appointmentId: appt.id,
             snippet: row.testName,
+            byUserName: auth.fullName,
+            byRole: "DOCTOR",
           },
         ).catch(() => {});
         return reply.status(201).send(
@@ -295,6 +297,8 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           notifyAdmins("EXAM_LOGGED", {
             appointmentId: existing.appointmentId,
             snippet: `${row.testName} · result in`,
+            byUserName: auth.fullName,
+            byRole: "DOCTOR",
           }).catch(() => {});
         }
         return okResponse({

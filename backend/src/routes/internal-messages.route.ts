@@ -10,6 +10,7 @@ import {
   notifyDoctor,
 } from "../modules/notifications/notify.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
 
 /**
  * Internal (doctor ↔ admin) per-appointment notes. Patient never sees
@@ -23,6 +24,7 @@ import { recordAudit } from "../modules/audit/audit.service.js";
  * Admin-side:
  *   GET    /api/admin/appointments/:id/internal-messages
  *   POST   /api/admin/appointments/:id/internal-messages
+ *   GET    /api/admin/internal-message-threads   (inbox roll-up)
  *
  * The thread shape (`appointmentId + createdAt`) is the same for both —
  * the only difference is the author role stamped on insert.
@@ -252,6 +254,106 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not post message"));
+      }
+    },
+  );
+
+  // ── Admin: inbox — every appointment carrying internal notes ──────
+  // Powers the "Internal notes" tab of the admin Messages page. Mirrors
+  // /api/admin/message-threads (patient↔clinic) so the two tabs render
+  // from the same InboxThread shape.
+  //
+  // InternalMessage has no per-reader read flag, so "unread" is derived
+  // from the calling admin's own unread INTERNAL_MESSAGE notification
+  // rows — which is what the bell counts too, keeping both surfaces
+  // consistent.
+  app.get(
+    "/api/admin/internal-message-threads",
+    { config: { rateLimit: { max: 120, timeWindow: "1 minute" } } },
+    async (request, reply) => {
+      const admin = await verifyAdminAccess(request);
+      if (!admin.ok) return reply.status(admin.status).send(errorResponse(admin.message));
+      // Bearer-token admin fallback has no user id — it simply gets no
+      // unread marks rather than being refused the inbox.
+      const actor = resolveAdminSessionActor(request);
+      try {
+        const appts = await prisma.appointment.findMany({
+          where: { internalMessages: { some: {} } },
+          orderBy: { updatedAt: "desc" },
+          take: 100,
+          select: {
+            id: true,
+            fullName: true,
+            consultationType: true,
+            countryCode: true,
+            doctor: { select: { fullName: true } },
+            user: { select: { email: true } },
+            internalMessages: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              select: {
+                body: true,
+                authorRole: true,
+                createdAt: true,
+                author: { select: { fullName: true } },
+              },
+            },
+          },
+        });
+
+        const ids = appts.map((a) => a.id);
+        const [orderNumbers, unreadNotifications] = await Promise.all([
+          mapAppointmentOrderNumbers(ids),
+          actor
+            ? prisma.notification.findMany({
+                where: {
+                  recipientUserId: actor.userId,
+                  type: "INTERNAL_MESSAGE",
+                  readAt: null,
+                },
+                select: { payload: true },
+                take: 500,
+              })
+            : Promise.resolve([]),
+        ]);
+
+        const unreadMap = new Map<string, number>();
+        for (const n of unreadNotifications) {
+          const appointmentId = (n.payload as { appointmentId?: string } | null)
+            ?.appointmentId;
+          if (!appointmentId) continue;
+          unreadMap.set(appointmentId, (unreadMap.get(appointmentId) ?? 0) + 1);
+        }
+
+        const items = appts.map((a) => {
+          const last = a.internalMessages[0];
+          return {
+            appointmentId: a.id,
+            orderNumber: orderNumbers.get(a.id) ?? null,
+            patientName: a.fullName,
+            patientEmail: a.user?.email ?? null,
+            doctorName: a.doctor?.fullName ?? null,
+            consultationType: a.consultationType,
+            countryCode: a.countryCode,
+            lastMessage: last
+              ? {
+                  body: last.body,
+                  authorRole: last.authorRole,
+                  authorName: last.author?.fullName ?? "Staff",
+                  createdAt: last.createdAt.toISOString(),
+                }
+              : null,
+            unreadCount: unreadMap.get(a.id) ?? 0,
+          };
+        });
+
+        return okResponse({ items });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load internal threads"));
       }
     },
   );

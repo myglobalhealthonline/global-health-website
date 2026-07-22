@@ -82,6 +82,9 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     APPOINTMENT_ASSIGNED: d.notifications.appointmentAssigned,
     INTERNAL_MESSAGE: d.notifications.internalMessage,
     PATIENT_MESSAGE: d.notifications.patientMessage,
+    // Patient replies in the consultation chat arrive as MESSAGE_REPLY —
+    // same thing from the doctor's point of view.
+    MESSAGE_REPLY: d.notifications.patientMessage,
     CONSULT_SIGNED: d.notifications.consultSigned,
     EXAM_LOGGED: d.notifications.examLogged,
     FORM_SUBMITTED: d.notifications.formSubmitted,
@@ -90,13 +93,15 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     unreadCount = notif.data.unreadCount;
     notifications = notif.data.items.slice(0, 10).map((n) => {
       const appointmentId = n.payload?.appointmentId;
+      const who = n.payload?.byUserName?.trim() || null;
+      const label = NOTIF_TYPE_LABEL[n.type] ?? humanizeNotificationType(n.type);
       return {
         id: n.id,
-        title: NOTIF_TYPE_LABEL[n.type] ?? n.type,
+        // Name the sender/actor when the payload carries one — a bell entry
+        // that can't say who acted is unactionable.
+        title: who ? `${label} · ${who}` : label,
         body: n.payload?.snippet ?? null,
-        href: appointmentId
-          ? `/doctor/messages?open=${appointmentId}`
-          : "/doctor/notifications",
+        href: doctorNotificationHref(n.type, appointmentId),
         createdAt: n.createdAt,
         readAt: n.readAt,
       };
@@ -203,4 +208,28 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       />
     </PortalShell>
   );
+}
+
+/** Where a doctor notification should land. Patient chat opens in place in
+ *  the doctor Messages inbox; internal notes and clinical events live on the
+ *  appointment workspace, so send those there instead. */
+function doctorNotificationHref(type: string, appointmentId?: string): string {
+  if (!appointmentId) return "/doctor/notifications";
+  switch (type) {
+    case "PATIENT_MESSAGE":
+    case "MESSAGE_REPLY":
+      return `/doctor/messages?open=${appointmentId}`;
+    case "INTERNAL_MESSAGE":
+      return `/doctor/appointments/${appointmentId}?tab=messages#internal-notes`;
+    default:
+      return `/doctor/appointments/${appointmentId}`;
+  }
+}
+
+/** "APPOINTMENT_RESCHEDULED" → "Appointment rescheduled". Fallback for
+ *  notification types that have no locale label yet — better than leaking
+ *  the raw enum into the bell. */
+function humanizeNotificationType(type: string): string {
+  const words = type.toLowerCase().replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }

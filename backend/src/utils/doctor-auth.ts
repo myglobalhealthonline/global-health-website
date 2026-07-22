@@ -22,6 +22,9 @@ export type DoctorAuthResult =
       userId: string;
       doctorId: string;
       email: string;
+      /** Display name of the signed-in user. Stamped onto notification
+       *  payloads (`byUserName`) so the admin bell can say who acted. */
+      fullName: string;
       /** "DOCTOR" or "ADMIN" — exposed so routes can gate admin-only
        *  surfaces (e.g. the downloadable patient-document archive). */
       role: "DOCTOR" | "ADMIN";
@@ -71,6 +74,7 @@ export async function verifyDoctorAccess(
       select: {
         id: true,
         email: true,
+        fullName: true,
         isActive: true,
         role: true,
         doctorId: true,
@@ -97,6 +101,7 @@ export async function verifyDoctorAccess(
       userId: user.id,
       doctorId: user.doctorId,
       email: user.email,
+      fullName: user.fullName,
       role: user.role as "DOCTOR" | "ADMIN",
     };
   } catch {

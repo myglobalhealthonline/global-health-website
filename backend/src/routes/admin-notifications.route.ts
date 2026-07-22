@@ -15,6 +15,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
  *   GET   /api/admin/notifications?onlyUnread=1&limit=50
  *   PATCH /api/admin/notifications/:id/read
  *   POST  /api/admin/notifications/read-all
+ *   POST  /api/admin/notifications/appointment/:appointmentId/read
  */
 
 const listQuerySchema = z.object({
@@ -103,6 +104,38 @@ const adminNotificationsRoute: FastifyPluginAsync = async (app) => {
       try {
         const updated = await prisma.notification.updateMany({
           where: { id: request.params.id, recipientUserId: userId, readAt: null },
+          data: { readAt: new Date() },
+        });
+        return okResponse({ updated: updated.count });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not mark as read"));
+      }
+    },
+  );
+
+  // Clear every unread notification tied to one appointment. Called when
+  // an admin actually opens that appointment's thread in the Messages
+  // inbox — without it the bell count only ever grows, since nothing else
+  // marks admin rows read.
+  app.post<{ Params: { appointmentId: string } }>(
+    "/api/admin/notifications/appointment/:appointmentId/read",
+    async (request, reply) => {
+      const userId = await requireAdminId(request, reply);
+      if (!userId) return;
+      try {
+        const updated = await prisma.notification.updateMany({
+          where: {
+            recipientUserId: userId,
+            readAt: null,
+            payload: {
+              path: ["appointmentId"],
+              equals: request.params.appointmentId,
+            },
+          },
           data: { readAt: new Date() },
         });
         return okResponse({ updated: updated.count });

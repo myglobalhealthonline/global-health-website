@@ -236,22 +236,54 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   );
 }
 
-/** Map a stored admin Notification row to a bell item. Patient chat messages
- *  deep-link to the appointment (where the admin chat lives); other events
- *  link to the appointment too when a payload id is present. */
+/** Where a notification of `type` should land. Chat threads open in place
+ *  inside the Messages inbox (patient tab or internal tab); everything else
+ *  is a clinical event that belongs on the appointment record. */
+function adminNotificationHref(type: string, appointmentId?: string): string {
+  if (!appointmentId) {
+    return type === "PATIENT_MESSAGE" || type === "MESSAGE_REPLY"
+      ? "/admin/messages"
+      : "/admin/appointments";
+  }
+  switch (type) {
+    case "PATIENT_MESSAGE":
+    case "MESSAGE_REPLY":
+      return `/admin/messages?open=${appointmentId}`;
+    case "INTERNAL_MESSAGE":
+      return `/admin/messages?tab=internal&open=${appointmentId}`;
+    default:
+      return `/admin/appointments/${appointmentId}`;
+  }
+}
+
+function actorRoleLabel(role?: string): string | null {
+  switch (role) {
+    case "DOCTOR":
+      return "Doctor";
+    case "ADMIN":
+      return "Admin";
+    case "PATIENT":
+      return "Patient";
+    default:
+      return null;
+  }
+}
+
+/** Map a stored admin Notification row to a bell item. Every item names the
+ *  actor when the payload carries one (`byUserName`) — a bell entry that
+ *  can't say who acted is unactionable — and deep-links to the surface that
+ *  actually renders the event. */
 function mapAdminNotification(n: AdminNotificationDto): NotificationPopoverItem {
   const p = n.payload ?? {};
-  // Open the conversation in place inside the Messages inbox.
-  const href = p.appointmentId
-    ? `/admin/messages?open=${p.appointmentId}`
-    : "/admin/messages";
+  const href = adminNotificationHref(n.type, p.appointmentId);
+  const who = p.byUserName?.trim() || null;
+  const role = actorRoleLabel(p.byRole);
 
-  if (n.type === "PATIENT_MESSAGE") {
-    const who = p.byUserName ?? "A patient";
+  if (n.type === "PATIENT_MESSAGE" || n.type === "MESSAGE_REPLY") {
     const channel = p.channel === "doctor" ? "doctor chat" : "clinic chat";
     return {
       id: n.id,
-      title: `${who} sent a message`,
+      title: who ? `${who} sent a message` : "New patient message",
       body: p.snippet ?? `New message in ${channel}`,
       href,
       createdAt: n.createdAt,
@@ -259,9 +291,25 @@ function mapAdminNotification(n: AdminNotificationDto): NotificationPopoverItem 
     };
   }
 
+  if (n.type === "INTERNAL_MESSAGE") {
+    return {
+      id: n.id,
+      // "Dr Silva sent an internal note" — role prefix disambiguates the
+      // two staff sides of the thread when names alone are ambiguous.
+      title: who
+        ? `${role ? `${role} ` : ""}${who} sent an internal note`
+        : "New internal message",
+      body: p.snippet ?? null,
+      href,
+      createdAt: n.createdAt,
+      readAt: n.readAt,
+    };
+  }
+
+  const base = p.title ?? notificationTypeLabel(n.type);
   return {
     id: n.id,
-    title: p.title ?? notificationTypeLabel(n.type),
+    title: who ? `${base} · ${who}` : base,
     body: p.body ?? p.snippet ?? null,
     href,
     createdAt: n.createdAt,
@@ -283,6 +331,14 @@ function notificationTypeLabel(type: string): string {
       return "Document uploaded";
     case "FORM_SUBMITTED":
       return "Form submitted";
+    case "APPOINTMENT_RESCHEDULED":
+      return "Appointment rescheduled";
+    case "APPOINTMENT_FOLLOWUP_BOOKED":
+      return "Follow-up booked";
+    case "EXAM_REQUESTED":
+      return "Exam requested";
+    case "EXAM_LOGGED":
+      return "Exam result logged";
     default:
       return "New notification";
   }

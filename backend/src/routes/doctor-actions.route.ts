@@ -280,6 +280,8 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
           notifyAdmins("APPOINTMENT_STATUS_CHANGED", {
             appointmentId: updated.id,
             snippet: `${appt.fullName} · ${appt.status} → ${updated.status}`,
+            byUserName: auth.fullName,
+            byRole: "DOCTOR",
           }).catch(() => {});
         }
         if (
@@ -309,6 +311,8 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
                 ? formatNotificationDateTime(updated.scheduledAt, clinicTz)
                 : "cleared"
             }`,
+            byUserName: auth.fullName,
+            byRole: "DOCTOR",
           }).catch(() => {});
         }
         if (body.data.meetingUrl !== undefined) {
@@ -372,6 +376,8 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         notifyAdmins("APPOINTMENT_STATUS_CHANGED", {
           appointmentId: updated.id,
           snippet: `${updated.fullName} · finalized`,
+          byUserName: auth.fullName,
+          byRole: "DOCTOR",
         }).catch(() => {});
         return okResponse({
           appointment: {
@@ -462,6 +468,8 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         notifyAdmins("APPOINTMENT_FOLLOWUP_BOOKED", {
           appointmentId: result.appointmentId,
           snippet: `${created?.fullName ?? "Patient"} · follow-up booked`,
+          byUserName: auth.fullName,
+          byRole: "DOCTOR",
         }).catch(() => {});
 
         return reply.status(201).send(

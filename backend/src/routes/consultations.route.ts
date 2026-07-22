@@ -418,6 +418,8 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
         notifyAdmins("CONSULT_SIGNED", {
           appointmentId: appt.id,
           snippet: `${appt.fullName} · consult signed`,
+          byUserName: auth.fullName,
+          byRole: "DOCTOR",
         }).catch(() => {});
         return okResponse(
           {

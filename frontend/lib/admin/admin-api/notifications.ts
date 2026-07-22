@@ -77,3 +77,27 @@ export async function fetchAdminInternalMessages(appointmentId: string) {
     `/api/admin/appointments/${appointmentId}/internal-messages`,
   );
 }
+
+// ── Admin internal inbox (doctor ↔ admin threads) ──────────────────────
+export type AdminInternalMessageThread = {
+  appointmentId: string;
+  orderNumber: string | null;
+  patientName: string;
+  patientEmail: string | null;
+  doctorName: string | null;
+  consultationType: string;
+  countryCode: string;
+  lastMessage: {
+    body: string;
+    authorRole: "DOCTOR" | "ADMIN";
+    authorName: string;
+    createdAt: string;
+  } | null;
+  unreadCount: number;
+};
+
+export async function fetchAdminInternalMessageThreads() {
+  return adminRequest<{ items: AdminInternalMessageThread[] }>(
+    "/api/admin/internal-message-threads",
+  );
+}

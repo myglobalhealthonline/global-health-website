@@ -833,7 +833,9 @@ export default async function AdminAppointmentDetailPage({
 
                 {/* Internal (doctor ↔ admin) per-appointment notes. NOT
                     patient-visible. Same thread surface as on the doctor
-                    portal at /doctor/appointments/[id]. */}
+                    portal at /doctor/appointments/[id]. `id` is the
+                    deep-link target for `?tab=messages#internal-notes`. */}
+                <div id="internal-notes" className="scroll-mt-24">
                 <AdminCard>
                   <h3 className="gh-admin-card-title">Internal notes (doctor ↔ admin)</h3>
                   <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
@@ -847,6 +849,7 @@ export default async function AdminAppointmentDetailPage({
                     currentRole="ADMIN"
                   />
                 </AdminCard>
+                </div>
               </div>
             ),
           },

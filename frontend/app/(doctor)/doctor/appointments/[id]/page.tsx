@@ -582,6 +582,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   </FormSection>
                 </div>
 
+                {/* `id` is the deep-link target for the notification bell
+                    (`?tab=messages#internal-notes`). */}
+                <div id="internal-notes" className="scroll-mt-24">
                 <FormSection
                   title={d.appointmentDetail.internalNotes}
                   description={d.appointmentDetail.internalNotesDesc}
@@ -604,6 +607,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     />
                   </div>
                 </FormSection>
+                </div>
               </div>
             ),
           },

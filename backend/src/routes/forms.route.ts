@@ -398,6 +398,8 @@ const formsRoute: FastifyPluginAsync = async (app) => {
         }).catch(() => {});
         notifyAdmins("FORM_SUBMITTED", {
           appointmentId: appt.id,
+          byUserName: auth.fullName,
+          byRole: "DOCTOR",
         }).catch(() => {});
         return reply.status(201).send(
           okResponse({

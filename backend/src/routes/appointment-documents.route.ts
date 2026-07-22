@@ -217,6 +217,8 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         notifyAdmins("DOCUMENT_UPLOADED", {
           appointmentId: appt.id,
           snippet: `${appt.fullName} · ${label}`,
+          byUserName: auth.fullName,
+          byRole: "DOCTOR",
         }).catch(() => {});
         return reply.status(201).send(
           okResponse({
