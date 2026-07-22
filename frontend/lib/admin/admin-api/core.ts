@@ -63,27 +63,27 @@ export async function adminRequest<T>(
     body?: unknown;
   },
 ): Promise<AdminApiResponse<T>> {
-  const allCookies = (await cookies()).getAll();
-  const validCookies = allCookies.filter((entry) => VALID_COOKIE_NAME.test(entry.name));
-  if (validCookies.length !== allCookies.length && process.env.NODE_ENV !== "production") {
-    // Dev-only diagnostic — this is a stale-localhost-cookie hint, not a
-    // production concern, so don't spam prod logs on every request.
-    const dropped = allCookies
-      .filter((entry) => !VALID_COOKIE_NAME.test(entry.name))
-      .map((entry) => entry.name.slice(0, 40));
-
-    console.warn(
-      `[admin-api] Dropped ${dropped.length} malformed cookie(s) before forwarding to backend. ` +
-        "Clear localhost cookies in DevTools to remove them from your browser.",
-    );
-  }
-  const cookieHeader = validCookies
-    .map((entry) => `${entry.name}=${entry.value}`)
-    .join("; ");
-  const token = getAdminApiToken();
-  const tokenFallbackEnabled = isAdminTokenFallbackEnabled();
-
   try {
+    const allCookies = (await cookies()).getAll();
+    const validCookies = allCookies.filter((entry) => VALID_COOKIE_NAME.test(entry.name));
+    if (validCookies.length !== allCookies.length && process.env.NODE_ENV !== "production") {
+      // Dev-only diagnostic — this is a stale-localhost-cookie hint, not a
+      // production concern, so don't spam prod logs on every request.
+      const dropped = allCookies
+        .filter((entry) => !VALID_COOKIE_NAME.test(entry.name))
+        .map((entry) => entry.name.slice(0, 40));
+
+      console.warn(
+        `[admin-api] Dropped ${dropped.length} malformed cookie(s) before forwarding to backend. ` +
+          "Clear localhost cookies in DevTools to remove them from your browser.",
+      );
+    }
+    const cookieHeader = validCookies
+      .map((entry) => `${entry.name}=${entry.value}`)
+      .join("; ");
+    const token = getAdminApiToken();
+    const tokenFallbackEnabled = isAdminTokenFallbackEnabled();
+
     const headers: Record<string, string> = {};
     if (init?.body !== undefined) {
       headers["Content-Type"] = "application/json";
@@ -130,16 +130,16 @@ export async function adminRequest<T>(
 export async function adminUploadFile(
   file: File,
 ): Promise<AdminApiResponse<{ key: string; publicUrl: string }>> {
-  const allCookies = (await cookies()).getAll();
-  const validCookies = allCookies.filter((entry) => VALID_COOKIE_NAME.test(entry.name));
-  const cookieHeader = validCookies.map((e) => `${e.name}=${e.value}`).join("; ");
-  const token = getAdminApiToken();
-  const tokenFallbackEnabled = isAdminTokenFallbackEnabled();
-
-  const body = new FormData();
-  body.append("file", file);
-
   try {
+    const allCookies = (await cookies()).getAll();
+    const validCookies = allCookies.filter((entry) => VALID_COOKIE_NAME.test(entry.name));
+    const cookieHeader = validCookies.map((e) => `${e.name}=${e.value}`).join("; ");
+    const token = getAdminApiToken();
+    const tokenFallbackEnabled = isAdminTokenFallbackEnabled();
+
+    const body = new FormData();
+    body.append("file", file);
+
     const headers: Record<string, string> = {};
     if (cookieHeader) headers.cookie = cookieHeader;
     if (!cookieHeader && tokenFallbackEnabled && token) headers.Authorization = `Bearer ${token}`;

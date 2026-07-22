@@ -17,16 +17,16 @@ import type {
  * throw. Mutations stay on the client (`me-subscription.ts`).
  */
 async function meServerGet<T>(path: string): Promise<T | null> {
-  const cookieHeader = (await cookies())
-    .getAll()
-    .map((entry) => `${entry.name}=${entry.value}`)
-    .join("; ");
-  if (!cookieHeader) return null;
-
-  const backend = getBackendOrigin();
-  if (!backend) return null;
-
   try {
+    const cookieHeader = (await cookies())
+      .getAll()
+      .map((entry) => `${entry.name}=${entry.value}`)
+      .join("; ");
+    if (!cookieHeader) return null;
+
+    const backend = getBackendOrigin();
+    if (!backend) return null;
+
     const response = await fetch(`${backend}/api/me/${path}`, {
       method: "GET",
       headers: { cookie: cookieHeader },

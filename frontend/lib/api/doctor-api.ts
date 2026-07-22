@@ -16,11 +16,11 @@ type ApiResult<T> =
 async function doctorRequest<T>(path: string): Promise<ApiResult<T>> {
   const apiUrl = getBackendOrigin();
   if (!apiUrl) return { ok: false, message: "Backend is not configured" };
-  const cookieHeader = (await cookies())
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
   try {
+    const cookieHeader = (await cookies())
+      .getAll()
+      .map((c) => `${c.name}=${c.value}`)
+      .join("; ");
     const res = await fetch(`${apiUrl}${path}`, {
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       cache: "no-store",

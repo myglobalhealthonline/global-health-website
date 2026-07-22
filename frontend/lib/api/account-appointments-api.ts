@@ -39,15 +39,16 @@ type ApiResult<T> =
   | { ok: true; data: T; message?: string }
   | { ok: false; message: string; status?: number };
 
-function buildCookieHeader() {
-  return cookies()
-    .then((store) =>
-      store
-        .getAll()
-        .map((entry) => `${entry.name}=${entry.value}`)
-        .join("; "),
-    )
-    .catch(() => "");
+async function buildCookieHeader() {
+  try {
+    const store = await cookies();
+    return store
+      .getAll()
+      .map((entry) => `${entry.name}=${entry.value}`)
+      .join("; ");
+  } catch {
+    return "";
+  }
 }
 
 export async function fetchAccountAppointments(): Promise<ApiResult<{ items: AccountAppointment[] }>> {

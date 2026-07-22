@@ -31,9 +31,13 @@ export default async function AdminOrdersPage({
 
   // No `active` filter on the doctor list — deactivated doctors still own
   // historical orders, and dropping them would make those unfilterable.
+  // The doctor list only feeds the filter dropdown — its failure must never
+  // take down the orders list, so it degrades to an empty option set.
   const [result, doctorsResult] = await Promise.all([
     fetchAdminOrders(cursor, filters),
-    fetchAdminDoctors({ pageSize: "250" }),
+    fetchAdminDoctors({ pageSize: "250" }).catch(
+      () => ({ ok: false as const, message: "Doctors unavailable" }),
+    ),
   ]);
   const items = result.ok ? result.data.items : [];
   const nextCursor = result.ok ? result.data.nextCursor : null;

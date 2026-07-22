@@ -17,16 +17,16 @@ import type { AuthUser } from "./auth-api";
  * call it directly.
  */
 export async function getServerAuthUser(): Promise<AuthUser | null> {
-  const cookieHeader = (await cookies())
-    .getAll()
-    .map((entry) => `${entry.name}=${entry.value}`)
-    .join("; ");
-  if (!cookieHeader) return null;
-
-  const backend = getBackendOrigin();
-  if (!backend) return null;
-
   try {
+    const cookieHeader = (await cookies())
+      .getAll()
+      .map((entry) => `${entry.name}=${entry.value}`)
+      .join("; ");
+    if (!cookieHeader) return null;
+
+    const backend = getBackendOrigin();
+    if (!backend) return null;
+
     const response = await fetch(`${backend}/api/auth/me`, {
       method: "GET",
       headers: { cookie: cookieHeader },

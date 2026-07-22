@@ -47,11 +47,15 @@ type ApiResult<T> =
   | { ok: false; message: string; status?: number };
 
 async function cookieHeader() {
-  const store = await cookies();
-  return store
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
+  try {
+    const store = await cookies();
+    return store
+      .getAll()
+      .map((c) => `${c.name}=${c.value}`)
+      .join("; ");
+  } catch {
+    return "";
+  }
 }
 
 export async function fetchDoctorPrescriptions(

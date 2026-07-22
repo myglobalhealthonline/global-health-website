@@ -44,13 +44,13 @@ export async function corporateRequest<T>(
   path: string,
   init?: { method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE"; body?: unknown },
 ): Promise<CorporateApiResponse<T>> {
-  const cookieHeader = (await cookies())
-    .getAll()
-    .filter((entry) => VALID_COOKIE_NAME.test(entry.name))
-    .map((entry) => `${entry.name}=${entry.value}`)
-    .join("; ");
-
   try {
+    const cookieHeader = (await cookies())
+      .getAll()
+      .filter((entry) => VALID_COOKIE_NAME.test(entry.name))
+      .map((entry) => `${entry.name}=${entry.value}`)
+      .join("; ");
+
     const headers: Record<string, string> = {};
     if (init?.body !== undefined) headers["Content-Type"] = "application/json";
     if (cookieHeader) headers.cookie = cookieHeader;
