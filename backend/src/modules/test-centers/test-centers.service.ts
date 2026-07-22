@@ -9,8 +9,28 @@ import type {
   AdminTestCentersQuery,
   AdminTestCenterUpdateBody,
   AdminTestCenterExamCreateBody,
+  AdminTestCenterExamsQuery,
   AdminTestCenterExamUpdateBody,
 } from "../../validations/admin-test-centers.schema.js";
+
+/** Shape shared by every paginated list in this module. */
+export type Pagination = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
+/** Clamp the requested page to the last page that actually has rows, so a
+ *  stale `?page=` in the admin URL shows the tail instead of an empty table. */
+function paginate(page: number, pageSize: number, total: number) {
+  const totalPages = total === 0 ? 0 : Math.ceil(total / pageSize);
+  const effectivePage = totalPages === 0 ? page : Math.min(page, totalPages);
+  return {
+    skip: (effectivePage - 1) * pageSize,
+    pagination: { page: effectivePage, pageSize, total, totalPages } satisfies Pagination,
+  };
+}
 
 // ─── Typed domain errors ───────────────────────────────────────────────────
 
@@ -84,24 +104,64 @@ export type ExamTypeRecord = Prisma.ExamTypeGetPayload<Record<string, never>> & 
   offeringCount?: number;
 };
 
-export async function listAdminExamTypes(query: AdminExamTypesQuery) {
+function buildExamTypeWhere(query: {
+  isActive?: boolean;
+  category?: string;
+  notOnCenterId?: string;
+  search?: string;
+}): Prisma.ExamTypeWhereInput {
   const where: Prisma.ExamTypeWhereInput = {};
   if (query.isActive !== undefined) where.isActive = query.isActive;
+  if (query.category) where.category = { equals: query.category, mode: "insensitive" };
+  if (query.notOnCenterId) {
+    where.offerings = { none: { testCenterId: query.notOnCenterId } };
+  }
   const term = query.search?.trim();
   if (term) {
     where.OR = [
+      { code: { contains: term, mode: "insensitive" } },
       { name: { contains: term, mode: "insensitive" } },
       { slug: { contains: term, mode: "insensitive" } },
       { category: { contains: term, mode: "insensitive" } },
     ];
   }
+  return where;
+}
+
+/** Paginated — the catalogue carries thousands of rows once a supplier price
+ *  list is imported, so this never returns the whole table. */
+export async function listAdminExamTypes(query: AdminExamTypesQuery) {
+  const where = buildExamTypeWhere(query);
   try {
+    const total = await prisma.examType.count({ where });
+    const { skip, pagination } = paginate(query.page, query.pageSize, total);
     const rows = await prisma.examType.findMany({
       where,
+      skip,
+      take: query.pageSize,
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
       include: { _count: { select: { offerings: true } } },
     });
-    return rows.map((row) => ({ ...row, offeringCount: row._count.offerings }));
+    return {
+      items: rows.map((row) => ({ ...row, offeringCount: row._count.offerings })),
+      pagination,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Exam type data is unavailable");
+  }
+}
+
+/** Distinct category labels, for the admin filter dropdown. Cheap enough to
+ *  compute on demand — the catalogue has ~15 of them, not thousands. */
+export async function listAdminExamTypeCategories(): Promise<string[]> {
+  try {
+    const rows = await prisma.examType.findMany({
+      where: { category: { not: null } },
+      distinct: ["category"],
+      select: { category: true },
+      orderBy: { category: "asc" },
+    });
+    return rows.map((row) => row.category).filter((c): c is string => Boolean(c));
   } catch (error) {
     throw normalizeDbError(error, "Exam type data is unavailable");
   }
@@ -111,6 +171,7 @@ export async function createAdminExamType(input: AdminExamTypeCreateBody) {
   try {
     return await prisma.examType.create({
       data: {
+        code: input.code,
         name: input.name,
         slug: input.slug,
         category: input.category,
@@ -131,6 +192,7 @@ export async function updateAdminExamType(id: string, body: AdminExamTypeUpdateB
     return await prisma.examType.update({
       where: { id },
       data: {
+        ...(body.code !== undefined && { code: body.code }),
         ...(body.name !== undefined && { name: body.name }),
         ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.category !== undefined && { category: body.category }),
@@ -157,15 +219,15 @@ export async function disableAdminExamType(id: string) {
 // ─── Test centers (country-scoped) ─────────────────────────────────────────
 
 const testCenterExamInclude = {
-  examType: { select: { id: true, name: true, slug: true, category: true } },
+  examType: { select: { id: true, code: true, name: true, slug: true, category: true } },
 } satisfies Prisma.TestCenterExamInclude;
 
+/** A center can carry a whole supplier catalogue (thousands of offerings), so
+ *  the center payload only reports how many it has — the rows themselves come
+ *  from the paginated `/exams` endpoint. */
 const testCenterInclude = {
   country: { select: { id: true, code: true, name: true } },
-  exams: {
-    orderBy: [{ examType: { name: "asc" } }] as Prisma.TestCenterExamOrderByWithRelationInput[],
-    include: testCenterExamInclude,
-  },
+  _count: { select: { exams: true } },
 } satisfies Prisma.TestCenterInclude;
 
 type TestCenterRecord = Prisma.TestCenterGetPayload<{ include: typeof testCenterInclude }>;
@@ -177,8 +239,11 @@ function toOfferingDto(row: TestCenterExamRecord) {
     id: row.id,
     testCenterId: row.testCenterId,
     examTypeId: row.examTypeId,
+    examTypeCode: row.examType.code,
     examTypeName: row.examType.name,
     examTypeCategory: row.examType.category,
+    supplierCode: row.supplierCode,
+    turnaroundDays: row.turnaroundDays,
     costCents: row.costCents,
     markupMode: row.markupMode,
     markupValue: row.markupValue,
@@ -191,8 +256,8 @@ function toOfferingDto(row: TestCenterExamRecord) {
 }
 
 function toTestCenterDto(row: TestCenterRecord) {
-  const { exams, ...rest } = row;
-  return { ...rest, exams: exams.map(toOfferingDto) };
+  const { _count, ...rest } = row;
+  return { ...rest, examCount: _count.exams };
 }
 
 export async function listAdminTestCenters(query: AdminTestCentersQuery) {
@@ -305,16 +370,38 @@ export async function purgeAdminTestCenter(id: string): Promise<boolean> {
 
 // ─── Exam offerings on a center ────────────────────────────────────────────
 
-export async function listTestCenterExams(testCenterId: string) {
+/** Paginated — a center importing a full supplier price list holds thousands
+ *  of offerings. `search` matches the supplier's code, our GH reference and the
+ *  exam name, which is how admins actually look a row up. */
+export async function listTestCenterExams(testCenterId: string, query: AdminTestCenterExamsQuery) {
   const center = await prisma.testCenter.findUnique({ where: { id: testCenterId }, select: { id: true } });
   if (!center) throw new TestCenterNotFoundError();
+
+  const where: Prisma.TestCenterExamWhereInput = { testCenterId };
+  if (query.isActive !== undefined) where.isActive = query.isActive;
+  if (query.category) {
+    where.examType = { category: { equals: query.category, mode: "insensitive" } };
+  }
+  const term = query.search?.trim();
+  if (term) {
+    where.OR = [
+      { supplierCode: { contains: term, mode: "insensitive" } },
+      { examType: { code: { contains: term, mode: "insensitive" } } },
+      { examType: { name: { contains: term, mode: "insensitive" } } },
+    ];
+  }
+
   try {
+    const total = await prisma.testCenterExam.count({ where });
+    const { skip, pagination } = paginate(query.page, query.pageSize, total);
     const rows = await prisma.testCenterExam.findMany({
-      where: { testCenterId },
+      where,
+      skip,
+      take: query.pageSize,
       orderBy: [{ examType: { name: "asc" } }],
       include: testCenterExamInclude,
     });
-    return rows.map(toOfferingDto);
+    return { items: rows.map(toOfferingDto), pagination };
   } catch (error) {
     throw normalizeDbError(error, "Test center data is unavailable");
   }
@@ -330,6 +417,8 @@ export async function createTestCenterExam(testCenterId: string, input: AdminTes
       data: {
         testCenterId,
         examTypeId: input.examTypeId,
+        supplierCode: input.supplierCode ?? null,
+        turnaroundDays: input.turnaroundDays ?? null,
         costCents: input.costCents,
         markupMode: input.markupMode,
         markupValue: input.markupValue,
@@ -355,6 +444,8 @@ export async function updateTestCenterExam(
     const row = await prisma.testCenterExam.update({
       where: { id: offeringId },
       data: {
+        ...(body.supplierCode !== undefined && { supplierCode: body.supplierCode }),
+        ...(body.turnaroundDays !== undefined && { turnaroundDays: body.turnaroundDays }),
         ...(body.costCents !== undefined && { costCents: body.costCents }),
         ...(body.markupMode !== undefined && { markupMode: body.markupMode }),
         ...(body.markupValue !== undefined && { markupValue: body.markupValue }),

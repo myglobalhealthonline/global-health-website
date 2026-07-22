@@ -13,6 +13,7 @@ import {
   disableAdminExamType,
   disableAdminTestCenter,
   getAdminTestCenterById,
+  listAdminExamTypeCategories,
   listAdminExamTypes,
   listAdminTestCenters,
   listTestCenterExams,
@@ -30,6 +31,7 @@ import {
   adminTestCentersQuerySchema,
   adminTestCenterUpdateBodySchema,
   adminTestCenterExamCreateBodySchema,
+  adminTestCenterExamsQuerySchema,
   adminTestCenterExamUpdateBodySchema,
   examTypeIdParamsSchema,
   testCenterExamIdParamsSchema,
@@ -52,7 +54,13 @@ function handleWriteError(
     return reply.status(400).send(errorResponse(error.message));
   }
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-    return reply.status(409).send(errorResponse("Duplicate value for a unique field (slug, or this exam is already on the center)"));
+    return reply
+      .status(409)
+      .send(
+        errorResponse(
+          "Duplicate value for a unique field (slug, GH code, supplier code, or this exam is already on the center)",
+        ),
+      );
   }
   if (error instanceof DatabaseUnavailableError) {
     return reply.status(503).send(errorResponse(error.message));
@@ -77,8 +85,22 @@ const adminTestCentersRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid exam type query", query.error.flatten()));
     }
     try {
-      const examTypes = await listAdminExamTypes(query.data);
-      return okResponse({ examTypes });
+      const { items, pagination } = await listAdminExamTypes(query.data);
+      return okResponse({ examTypes: items, pagination });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected test center error"));
+    }
+  });
+
+  // Distinct category labels — feeds the catalogue filter dropdown.
+  app.get("/api/admin/exam-types/categories", async (request, reply) => {
+    try {
+      const categories = await listAdminExamTypeCategories();
+      return okResponse({ categories });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
@@ -255,9 +277,13 @@ const adminTestCentersRoute: FastifyPluginAsync = async (app) => {
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid test center id", params.error.flatten()));
     }
+    const query = adminTestCenterExamsQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid exam offering query", query.error.flatten()));
+    }
     try {
-      const exams = await listTestCenterExams(params.data.id);
-      return okResponse({ exams });
+      const { items, pagination } = await listTestCenterExams(params.data.id, query.data);
+      return okResponse({ exams: items, pagination });
     } catch (error) {
       return handleWriteError(app, reply, error);
     }

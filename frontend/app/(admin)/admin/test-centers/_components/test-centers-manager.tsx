@@ -10,13 +10,17 @@ import {
   deleteAdminExamType,
   deleteAdminTestCenter,
   deleteAdminTestCenterExam,
+  fetchAdminExamTypeCategories,
   fetchAdminExamTypes,
+  fetchAdminTestCenterExams,
   fetchAdminTestCenters,
   updateAdminExamType,
   updateAdminTestCenter,
   updateAdminTestCenterExam,
   type AdminExamTypeDto,
+  type AdminPagination,
   type AdminTestCenterDto,
+  type AdminTestCenterExamDto,
 } from "@/lib/admin/admin-api";
 import {
   AdminCard,
@@ -32,6 +36,12 @@ import {
 import { FlagBadge } from "../../_components/flag-badge";
 
 type ManagerSearchParams = Record<string, string | undefined>;
+
+/** Rows per page for the two big tables. The catalogue holds thousands of rows
+ *  once a supplier price list is imported, so nothing here is ever unbounded. */
+const PAGE_SIZE = 50;
+/** How many catalogue matches the "add an exam" picker offers at a time. */
+const PICKER_LIMIT = 25;
 
 function centsToInput(cents: number | null | undefined): string {
   return cents == null ? "" : (cents / 100).toFixed(2);
@@ -61,15 +71,126 @@ function markupLabel(mode: "FIXED" | "PERCENT", value: number, currency: string)
     : `+${formatMoney(value, currency)}`;
 }
 
+function parsePage(raw: string | undefined): number {
+  const n = Number(raw);
+  return Number.isInteger(n) && n >= 1 ? n : 1;
+}
+
+/** Prev/next bar for a server-paginated table. Collapses to a row count when
+ *  everything fits on one page. */
+function Pager({
+  pagination,
+  hrefForPage,
+}: {
+  pagination: AdminPagination;
+  hrefForPage: (page: number) => string;
+}) {
+  const { page, pageSize, total, totalPages } = pagination;
+  if (totalPages <= 1) {
+    return (
+      <p className="m-0 px-1 py-2 text-[12px] text-[var(--color-text-muted)]">
+        {total} {total === 1 ? "row" : "rows"}
+      </p>
+    );
+  }
+  return (
+    <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] px-1 py-3 text-[12px]">
+      <div className="text-[var(--color-text-muted)]">
+        Page {page} of {totalPages} · {total} rows · {pageSize} per page
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href={hrefForPage(Math.max(1, page - 1))}
+          className={`gh-btn gh-btn-soft text-[12px] ${page <= 1 ? "pointer-events-none opacity-40" : ""}`}
+        >
+          Previous
+        </Link>
+        <Link
+          href={hrefForPage(Math.min(totalPages, page + 1))}
+          className={`gh-btn gh-btn-primary text-[12px] ${page >= totalPages ? "pointer-events-none opacity-40" : ""}`}
+        >
+          Next
+        </Link>
+      </div>
+    </nav>
+  );
+}
+
+/** Search + category filter bar. Submits as GET so the filter state lives in
+ *  the URL; `carried` holds the other view params so paging/panels survive. */
+function FilterBar({
+  action,
+  carried,
+  searchKey,
+  categoryKey,
+  categories,
+  searchValue,
+  categoryValue,
+  placeholder,
+  clearHref,
+}: {
+  action: string;
+  carried: [string, string][];
+  searchKey: string;
+  categoryKey: string;
+  categories: string[];
+  searchValue: string | undefined;
+  categoryValue: string | undefined;
+  placeholder: string;
+  clearHref: string;
+}) {
+  return (
+    <form method="get" action={action} className="flex flex-wrap items-end gap-2">
+      {carried.map(([key, value]) => (
+        <input key={key} type="hidden" name={key} value={value} />
+      ))}
+      <label className="flex flex-col gap-1">
+        <span className="gh-field-label">Search</span>
+        <input
+          name={searchKey}
+          defaultValue={searchValue ?? ""}
+          placeholder={placeholder}
+          className="gh-input"
+          style={{ minWidth: 240 }}
+        />
+      </label>
+      <label className="flex flex-col gap-1">
+        <span className="gh-field-label">Category</span>
+        <select name={categoryKey} defaultValue={categoryValue ?? ""} className="gh-input">
+          <option value="">All categories</option>
+          {categories.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </label>
+      <button type="submit" className="gh-btn gh-btn-soft">
+        Filter
+      </button>
+      {searchValue || categoryValue ? (
+        <Link href={clearHref} className="gh-btn gh-btn-ghost text-[12px]">
+          Clear
+        </Link>
+      ) : null}
+    </form>
+  );
+}
+
 /**
  * Shared test-centers management UI (country-scoped). Sits beside Insurance in
  * the sidebar. Three stacked sections:
  *   1. Test centers table (create / edit / soft-delete).
- *   2. A per-center "manage exams" panel (add offerings from the exam
- *      catalogue with cost + markup → patient price; edit / remove).
- *   3. The global exam-type catalogue (create / edit / deactivate).
- * All mutations run as inline server actions and redirect back to `basePath`
- * so each host keeps its own URL state.
+ *   2. A per-center "manage exams" panel — the center's priced offerings
+ *      (paginated + searchable) plus a picker to add more from the catalogue.
+ *   3. The global exam-type catalogue (paginated + searchable).
+ *
+ * Both exam tables are server-paginated: a single center can carry a whole
+ * supplier price list (Synlab PT is ~4.2k rows), so neither the offerings nor
+ * the catalogue may ever be fetched whole.
+ *
+ * All mutations run as inline server actions and redirect back to the URL the
+ * form was submitted from (`returnTo`), so paging/search survive a save.
  */
 export async function TestCentersManager({
   countryId,
@@ -89,27 +210,109 @@ export async function TestCentersManager({
   const sp = searchParams;
   const base = basePath;
 
-  const [centersRes, examTypesRes] = await Promise.all([
+  const manageId = sp.center ?? null;
+  const editId = sp.edit ?? null;
+  const editTypeId = sp.editType ?? null;
+  const editOfferingId = sp.editOffering ?? null;
+
+  // Offerings table state (per-center) and catalogue table state.
+  const offeringPage = parsePage(sp.oPage);
+  const offeringSearch = sp.oSearch?.trim() || undefined;
+  const offeringCategory = sp.oCat?.trim() || undefined;
+  const cataloguePage = parsePage(sp.cPage);
+  const catalogueSearch = sp.cSearch?.trim() || undefined;
+  const catalogueCategory = sp.cCat?.trim() || undefined;
+  const pickerSearch = sp.pick?.trim() || undefined;
+
+  /** Rebuild the current URL with some params replaced. `null` drops a param. */
+  function href(overrides: Record<string, string | number | null | undefined>): string {
+    const params = new URLSearchParams();
+    const merged: Record<string, string | number | null | undefined> = {
+      center: manageId,
+      edit: editId,
+      editType: editTypeId,
+      editOffering: editOfferingId,
+      oPage: offeringPage > 1 ? offeringPage : null,
+      oSearch: offeringSearch,
+      oCat: offeringCategory,
+      cPage: cataloguePage > 1 ? cataloguePage : null,
+      cSearch: catalogueSearch,
+      cCat: catalogueCategory,
+      pick: pickerSearch,
+      ...overrides,
+    };
+    for (const [key, value] of Object.entries(merged)) {
+      if (value === null || value === undefined || value === "") continue;
+      params.set(key, String(value));
+    }
+    const qs = params.toString();
+    return qs ? `${base}?${qs}` : base;
+  }
+
+  /** The URL a form should return to after saving — current view, no flash keys. */
+  const returnTo = href({});
+
+  const [centersRes, categoriesRes, catalogueRes] = await Promise.all([
     fetchAdminTestCenters(countryId),
-    fetchAdminExamTypes(),
+    fetchAdminExamTypeCategories(),
+    fetchAdminExamTypes({
+      page: cataloguePage,
+      pageSize: PAGE_SIZE,
+      category: catalogueCategory,
+      search: catalogueSearch,
+    }),
   ]);
 
   const centers: AdminTestCenterDto[] = centersRes.ok ? centersRes.data.testCenters : [];
-  const examTypes: AdminExamTypeDto[] = examTypesRes.ok ? examTypesRes.data.examTypes : [];
-  const activeExamTypes = examTypes.filter((t) => t.isActive);
+  const categories: string[] = categoriesRes.ok ? categoriesRes.data.categories : [];
+  const examTypes: AdminExamTypeDto[] = catalogueRes.ok ? catalogueRes.data.examTypes : [];
+  const cataloguePagination: AdminPagination | null = catalogueRes.ok
+    ? catalogueRes.data.pagination
+    : null;
 
-  const editId = sp.edit ?? null;
   const editCenter = editId ? centers.find((c) => c.id === editId) ?? null : null;
-
-  const manageId = sp.center ?? null;
   const manageCenter = manageId ? centers.find((c) => c.id === manageId) ?? null : null;
-
-  const editTypeId = sp.editType ?? null;
   const editExamType = editTypeId ? examTypes.find((t) => t.id === editTypeId) ?? null : null;
 
-  const editOfferingId = sp.editOffering ?? null;
+  // Offerings + picker candidates only load while a center is open.
+  const [offeringsRes, pickerRes] = manageCenter
+    ? await Promise.all([
+        fetchAdminTestCenterExams(manageCenter.id, {
+          page: offeringPage,
+          pageSize: PAGE_SIZE,
+          category: offeringCategory,
+          search: offeringSearch,
+        }),
+        fetchAdminExamTypes({
+          page: 1,
+          pageSize: PICKER_LIMIT,
+          isActive: "true",
+          notOnCenterId: manageCenter.id,
+          search: pickerSearch,
+        }),
+      ])
+    : [null, null];
+
+  const offerings: AdminTestCenterExamDto[] = offeringsRes?.ok ? offeringsRes.data.exams : [];
+  const offeringsPagination: AdminPagination | null = offeringsRes?.ok
+    ? offeringsRes.data.pagination
+    : null;
+  const addableExamTypes: AdminExamTypeDto[] = pickerRes?.ok ? pickerRes.data.examTypes : [];
+  const addableTotal = pickerRes?.ok ? pickerRes.data.pagination.total : 0;
+
+  const editingOffering = editOfferingId
+    ? offerings.find((e) => e.id === editOfferingId) ?? null
+    : null;
 
   // ─── Server actions ────────────────────────────────────────────────────
+
+  /** Where to send the browser after a mutation — the view the form came from,
+   *  with a flash message appended. */
+  function backTo(formData: FormData, key: "success" | "error", message: string): string {
+    const target = String(formData.get("returnTo") ?? "").trim() || base;
+    const sep = target.includes("?") ? "&" : "?";
+    return `${target}${sep}${key}=${encodeURIComponent(message)}`;
+  }
 
   async function saveCenterAction(formData: FormData) {
     "use server";
@@ -118,7 +321,7 @@ export async function TestCentersManager({
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
     if (!name || !slug) {
-      redirect(`${base}?error=${encodeURIComponent("Name and slug are required")}`);
+      redirect(backTo(formData, "error", "Name and slug are required"));
     }
     const body = {
       name,
@@ -135,10 +338,10 @@ export async function TestCentersManager({
       ? await updateAdminTestCenter(centerId, body)
       : await createAdminTestCenter({ ...body, countryId });
     if (!result.ok) {
-      redirect(`${base}?error=${encodeURIComponent(result.message)}`);
+      redirect(backTo(formData, "error", result.message));
     }
     revalidatePath(base);
-    redirect(`${base}?success=${encodeURIComponent("Test center saved")}`);
+    redirect(backTo(formData, "success", "Test center saved"));
   }
 
   async function deleteCenterAction(formData: FormData) {
@@ -148,11 +351,11 @@ export async function TestCentersManager({
     if (centerId) {
       const result = await deleteAdminTestCenter(centerId);
       if (!result.ok) {
-        redirect(`${base}?error=${encodeURIComponent(result.message)}`);
+        redirect(backTo(formData, "error", result.message));
       }
     }
     revalidatePath(base);
-    redirect(`${base}?success=${encodeURIComponent("Test center deactivated")}`);
+    redirect(backTo(formData, "success", "Test center deactivated"));
   }
 
   async function saveExamTypeAction(formData: FormData) {
@@ -162,9 +365,11 @@ export async function TestCentersManager({
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
     if (!name || !slug) {
-      redirect(`${base}?error=${encodeURIComponent("Exam name and slug are required")}`);
+      redirect(backTo(formData, "error", "Exam name and slug are required"));
     }
     const body = {
+      // Blank clears the reference; the API validates the GH1-0001 shape.
+      code: String(formData.get("code") ?? "").trim().toUpperCase() || null,
       name,
       slug,
       category: String(formData.get("category") ?? "").trim() || null,
@@ -176,10 +381,10 @@ export async function TestCentersManager({
       ? await updateAdminExamType(typeId, body)
       : await createAdminExamType(body);
     if (!result.ok) {
-      redirect(`${base}?error=${encodeURIComponent(result.message)}`);
+      redirect(backTo(formData, "error", result.message));
     }
     revalidatePath(base);
-    redirect(`${base}?success=${encodeURIComponent("Exam type saved")}`);
+    redirect(backTo(formData, "success", "Exam type saved"));
   }
 
   async function deleteExamTypeAction(formData: FormData) {
@@ -189,11 +394,11 @@ export async function TestCentersManager({
     if (typeId) {
       const result = await deleteAdminExamType(typeId);
       if (!result.ok) {
-        redirect(`${base}?error=${encodeURIComponent(result.message)}`);
+        redirect(backTo(formData, "error", result.message));
       }
     }
     revalidatePath(base);
-    redirect(`${base}?success=${encodeURIComponent("Exam type deactivated")}`);
+    redirect(backTo(formData, "success", "Exam type deactivated"));
   }
 
   // Add or update an offering. markupMode drives how markupValue is parsed:
@@ -209,36 +414,35 @@ export async function TestCentersManager({
     const costCents = amountToCents(String(formData.get("cost") ?? "")) ?? 0;
     const markupRaw = String(formData.get("markupValue") ?? "").trim();
     const markupNum = Number(markupRaw.replace(",", ".")) || 0;
-    const markupValue = markupMode === "PERCENT" ? Math.round(markupNum * 100) : Math.round(markupNum * 100);
+    const markupValue = Math.round(markupNum * 100);
     const currency = String(formData.get("currencyCode") ?? currencyCode).trim().toUpperCase() || currencyCode;
+    const supplierCode = String(formData.get("supplierCode") ?? "").trim() || null;
+    const turnaroundRaw = String(formData.get("turnaroundDays") ?? "").trim();
+    const turnaroundDays = turnaroundRaw === "" ? null : Number(turnaroundRaw);
 
-    const back = `${base}?center=${centerId}`;
     if (!offeringId && !examTypeId) {
-      redirect(`${back}&error=${encodeURIComponent("Pick an exam to add")}`);
+      redirect(backTo(formData, "error", "Pick an exam to add"));
+    }
+    if (turnaroundDays !== null && !Number.isInteger(turnaroundDays)) {
+      redirect(backTo(formData, "error", "Turnaround must be a whole number of days"));
     }
 
-    let result;
-    if (offeringId) {
-      result = await updateAdminTestCenterExam(centerId, offeringId, {
-        costCents,
-        markupMode,
-        markupValue,
-        currencyCode: currency,
-      });
-    } else {
-      result = await createAdminTestCenterExam(centerId, {
-        examTypeId,
-        costCents,
-        markupMode,
-        markupValue,
-        currencyCode: currency,
-      });
-    }
+    const body = {
+      supplierCode,
+      turnaroundDays,
+      costCents,
+      markupMode,
+      markupValue,
+      currencyCode: currency,
+    };
+    const result = offeringId
+      ? await updateAdminTestCenterExam(centerId, offeringId, body)
+      : await createAdminTestCenterExam(centerId, { ...body, examTypeId });
     if (!result.ok) {
-      redirect(`${back}&error=${encodeURIComponent(result.message)}`);
+      redirect(backTo(formData, "error", result.message));
     }
     revalidatePath(base);
-    redirect(`${back}&success=${encodeURIComponent("Exam pricing saved")}`);
+    redirect(backTo(formData, "success", "Exam pricing saved"));
   }
 
   async function deleteOfferingAction(formData: FormData) {
@@ -249,20 +453,34 @@ export async function TestCentersManager({
     if (centerId && offeringId) {
       const result = await deleteAdminTestCenterExam(centerId, offeringId);
       if (!result.ok) {
-        redirect(`${base}?center=${centerId}&error=${encodeURIComponent(result.message)}`);
+        redirect(backTo(formData, "error", result.message));
       }
     }
     revalidatePath(base);
-    redirect(`${base}?center=${centerId}&success=${encodeURIComponent("Exam removed")}`);
+    redirect(backTo(formData, "success", "Exam removed"));
   }
 
-  // Exams not yet on the center being managed — available to add.
-  const offeredTypeIds = new Set((manageCenter?.exams ?? []).map((e) => e.examTypeId));
-  const addableExamTypes = activeExamTypes.filter((t) => !offeredTypeIds.has(t.id));
-  const editingOffering =
-    manageCenter && editOfferingId
-      ? manageCenter.exams.find((e) => e.id === editOfferingId) ?? null
-      : null;
+  // ─── Filter-bar params ─────────────────────────────────────────────────
+  // Each bar owns two keys and resets its own page; everything else rides
+  // along as hidden fields so the other panel keeps its state.
+
+  const offeringFilterCarried: [string, string][] = Object.entries({
+    center: manageId,
+    editOffering: editOfferingId,
+    cPage: cataloguePage > 1 ? String(cataloguePage) : null,
+    cSearch: catalogueSearch,
+    cCat: catalogueCategory,
+    pick: pickerSearch,
+  }).filter((entry): entry is [string, string] => Boolean(entry[1]));
+
+  const catalogueFilterCarried: [string, string][] = Object.entries({
+    center: manageId,
+    editOffering: editOfferingId,
+    oPage: offeringPage > 1 ? String(offeringPage) : null,
+    oSearch: offeringSearch,
+    oCat: offeringCategory,
+    pick: pickerSearch,
+  }).filter((entry): entry is [string, string] => Boolean(entry[1]));
 
   return (
     <>
@@ -322,7 +540,7 @@ export async function TestCentersManager({
                   <Tr key={c.id}>
                     <Td>{c.name}</Td>
                     <Td>{c.city ?? "—"}</Td>
-                    <Td>{c.exams.length}</Td>
+                    <Td>{c.examCount}</Td>
                     <Td>
                       <Pill tone={c.isActive ? "published" : "inactive"}>
                         {c.isActive ? "Active" : "Inactive"}
@@ -338,6 +556,7 @@ export async function TestCentersManager({
                         </Link>
                         <form action={deleteCenterAction} className="inline">
                           <input type="hidden" name="centerId" value={c.id} />
+                          <input type="hidden" name="returnTo" value={returnTo} />
                           <button
                             type="submit"
                             className="gh-btn gh-btn-danger flex items-center gap-1 text-[12px]"
@@ -367,6 +586,7 @@ export async function TestCentersManager({
           </h3>
           <form action={saveCenterAction} className="mt-4 grid gap-4">
             <input type="hidden" name="centerId" value={editCenter?.id ?? ""} />
+            <input type="hidden" name="returnTo" value={base} />
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">Name</span>
@@ -428,13 +648,37 @@ export async function TestCentersManager({
           </h3>
           <p className="mt-1 mb-4 text-[12px] text-[var(--color-text-muted)]">
             Our cost is what the center bills us. The markup (a percentage of cost, or a fixed amount)
-            is added to give the patient price shown below.
+            is added to give the patient price shown below. <strong>Ref</strong> is our catalogue
+            reference; <strong>center code</strong> is the lab&rsquo;s own code for the same exam.
           </p>
+
+          <div className="mb-3">
+            <FilterBar
+              action={base}
+              carried={offeringFilterCarried}
+              searchKey="oSearch"
+              categoryKey="oCat"
+              categories={categories}
+              searchValue={offeringSearch}
+              categoryValue={offeringCategory}
+              placeholder="Exam name, GH ref or center code…"
+              clearHref={href({ oSearch: null, oCat: null, oPage: null })}
+            />
+          </div>
+
+          {offeringsRes && !offeringsRes.ok ? (
+            <p className="gh-status-warning mb-3 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+              {offeringsRes.message}
+            </p>
+          ) : null}
 
           <div className="overflow-x-auto">
             <AdminTable>
               <Thead>
+                <Th>Ref</Th>
                 <Th>Exam</Th>
+                <Th>Center code</Th>
+                <Th align="right">Days</Th>
                 <Th align="right">Our cost</Th>
                 <Th align="right">Markup</Th>
                 <Th align="right">Patient price</Th>
@@ -442,11 +686,13 @@ export async function TestCentersManager({
                 <Th align="right">Actions</Th>
               </Thead>
               <tbody>
-                {manageCenter.exams.length === 0 ? (
+                {offerings.length === 0 ? (
                   <Tr>
                     <Td>
                       <span className="text-[12px] text-[var(--color-text-muted)]">
-                        No exams on this center yet — add one below.
+                        {offeringSearch || offeringCategory
+                          ? "No exams match this filter."
+                          : "No exams on this center yet — add one below."}
                       </span>
                     </Td>
                     <Td></Td>
@@ -454,11 +700,21 @@ export async function TestCentersManager({
                     <Td></Td>
                     <Td></Td>
                     <Td></Td>
+                    <Td></Td>
+                    <Td></Td>
+                    <Td></Td>
                   </Tr>
                 ) : (
-                  manageCenter.exams.map((e) => (
+                  offerings.map((e) => (
                     <Tr key={e.id}>
+                      <Td>
+                        <span className="font-mono text-[12px]">{e.examTypeCode ?? "—"}</span>
+                      </Td>
                       <Td>{e.examTypeName}</Td>
+                      <Td>
+                        <span className="font-mono text-[12px]">{e.supplierCode ?? "—"}</span>
+                      </Td>
+                      <Td align="right">{e.turnaroundDays ?? "—"}</Td>
                       <Td align="right">{formatMoney(e.costCents, e.currencyCode)}</Td>
                       <Td align="right">{markupLabel(e.markupMode, e.markupValue, e.currencyCode)}</Td>
                       <Td align="right">
@@ -471,15 +727,13 @@ export async function TestCentersManager({
                       </Td>
                       <Td align="right">
                         <div className="flex items-center justify-end gap-2">
-                          <Link
-                            href={`${base}?center=${manageCenter.id}&editOffering=${e.id}`}
-                            className="gh-btn gh-btn-soft text-[12px]"
-                          >
+                          <Link href={href({ editOffering: e.id })} className="gh-btn gh-btn-soft text-[12px]">
                             Edit
                           </Link>
                           <form action={deleteOfferingAction} className="inline">
                             <input type="hidden" name="centerId" value={manageCenter.id} />
                             <input type="hidden" name="offeringId" value={e.id} />
+                            <input type="hidden" name="returnTo" value={href({ editOffering: null })} />
                             <button
                               type="submit"
                               className="gh-btn gh-btn-danger flex items-center gap-1 text-[12px]"
@@ -497,10 +751,15 @@ export async function TestCentersManager({
             </AdminTable>
           </div>
 
+          {offeringsPagination ? (
+            <Pager pagination={offeringsPagination} hrefForPage={(p) => href({ oPage: p })} />
+          ) : null}
+
           {/* Add / edit an offering */}
           <form action={saveOfferingAction} className="mt-5 grid gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
             <input type="hidden" name="centerId" value={manageCenter.id} />
             <input type="hidden" name="offeringId" value={editingOffering?.id ?? ""} />
+            <input type="hidden" name="returnTo" value={href({ editOffering: null })} />
             <p className="m-0 text-[13px] font-semibold text-[var(--color-text-primary)]">
               {editingOffering ? `Edit pricing — ${editingOffering.examTypeName}` : "Add an exam to this center"}
             </p>
@@ -514,13 +773,15 @@ export async function TestCentersManager({
                     <option value="" disabled>Choose an exam…</option>
                     {addableExamTypes.map((t) => (
                       <option key={t.id} value={t.id}>
-                        {t.category ? `${t.category} — ${t.name}` : t.name}
+                        {[t.code, t.category, t.name].filter(Boolean).join(" — ")}
                       </option>
                     ))}
                   </select>
                 ) : (
                   <span className="text-[12px] text-[var(--color-text-muted)]">
-                    All catalogue exams are already on this center. Add a new exam type below first.
+                    {pickerSearch
+                      ? "No unpriced catalogue exam matches that search."
+                      : "All catalogue exams are already on this center."}
                   </span>
                 )}
               </label>
@@ -566,6 +827,28 @@ export async function TestCentersManager({
                 <input name="currencyCode" defaultValue={editingOffering?.currencyCode ?? currencyCode} className="gh-input" />
               </label>
             </div>
+            <div className="grid gap-4 sm:grid-cols-[1fr_160px]">
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Center&rsquo;s own code</span>
+                <input
+                  name="supplierCode"
+                  defaultValue={editingOffering?.supplierCode ?? ""}
+                  placeholder="e.g. 1102"
+                  className="gh-input"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Turnaround (days)</span>
+                <input
+                  name="turnaroundDays"
+                  type="number"
+                  min={0}
+                  max={365}
+                  defaultValue={editingOffering?.turnaroundDays ?? ""}
+                  className="gh-input"
+                />
+              </label>
+            </div>
             <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
               Percentage: enter <strong>30</strong> for a 30% markup. Fixed: enter an amount in {currencyCode}.
             </p>
@@ -579,12 +862,39 @@ export async function TestCentersManager({
               </button>
               <Link href={base} className="gh-btn gh-btn-soft">Done</Link>
               {editingOffering ? (
-                <Link href={`${base}?center=${manageCenter.id}`} className="gh-btn gh-btn-soft">
+                <Link href={href({ editOffering: null })} className="gh-btn gh-btn-soft">
                   Cancel edit
                 </Link>
               ) : null}
             </div>
           </form>
+
+          {/* Catalogue search feeding the picker above. Separate GET form so it
+              can be used without submitting the pricing form. */}
+          {editingOffering ? null : (
+            <form method="get" action={base} className="mt-3 flex flex-wrap items-end gap-2">
+              <input type="hidden" name="center" value={manageCenter.id} />
+              {offeringSearch ? <input type="hidden" name="oSearch" value={offeringSearch} /> : null}
+              {offeringCategory ? <input type="hidden" name="oCat" value={offeringCategory} /> : null}
+              {offeringPage > 1 ? <input type="hidden" name="oPage" value={String(offeringPage)} /> : null}
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Find an exam to add</span>
+                <input
+                  name="pick"
+                  defaultValue={pickerSearch ?? ""}
+                  placeholder="Search the catalogue by name or GH ref…"
+                  className="gh-input"
+                  style={{ minWidth: 300 }}
+                />
+              </label>
+              <button type="submit" className="gh-btn gh-btn-soft">Search catalogue</button>
+              <span className="pb-2 text-[12px] text-[var(--color-text-muted)]">
+                {addableTotal > PICKER_LIMIT
+                  ? `Showing ${PICKER_LIMIT} of ${addableTotal} unpriced matches — narrow the search.`
+                  : `${addableTotal} unpriced ${addableTotal === 1 ? "exam" : "exams"} available.`}
+              </span>
+            </form>
+          )}
         </AdminCard>
       ) : null}
 
@@ -606,9 +916,31 @@ export async function TestCentersManager({
             <Plus className="size-3.5" /> New exam type
           </Btn>
         </div>
+
+        <div className="px-5 pt-4">
+          <FilterBar
+            action={base}
+            carried={catalogueFilterCarried}
+            searchKey="cSearch"
+            categoryKey="cCat"
+            categories={categories}
+            searchValue={catalogueSearch}
+            categoryValue={catalogueCategory}
+            placeholder="Exam name or GH ref…"
+            clearHref={href({ cSearch: null, cCat: null, cPage: null })}
+          />
+        </div>
+
+        {!catalogueRes.ok ? (
+          <p className="gh-status-warning mx-5 mt-3 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            {catalogueRes.message}
+          </p>
+        ) : null}
+
         <div className="mt-4 overflow-x-auto">
           <AdminTable>
             <Thead>
+              <Th>Ref</Th>
               <Th>Name</Th>
               <Th>Category</Th>
               <Th>In use</Th>
@@ -620,9 +952,12 @@ export async function TestCentersManager({
                 <Tr>
                   <Td>
                     <span className="text-[12px] text-[var(--color-text-muted)]">
-                      No exam types yet. Add one to start pricing centers.
+                      {catalogueSearch || catalogueCategory
+                        ? "No exam types match this filter."
+                        : "No exam types yet. Add one to start pricing centers."}
                     </span>
                   </Td>
+                  <Td></Td>
                   <Td></Td>
                   <Td></Td>
                   <Td></Td>
@@ -631,6 +966,9 @@ export async function TestCentersManager({
               ) : (
                 examTypes.map((t) => (
                   <Tr key={t.id}>
+                    <Td>
+                      <span className="font-mono text-[12px]">{t.code ?? "—"}</span>
+                    </Td>
                     <Td>{t.name}</Td>
                     <Td>{t.category ?? "—"}</Td>
                     <Td>{t.offeringCount ?? 0}</Td>
@@ -641,11 +979,12 @@ export async function TestCentersManager({
                     </Td>
                     <Td align="right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link href={`${base}?editType=${t.id}`} className="gh-btn gh-btn-soft text-[12px]">
+                        <Link href={href({ editType: t.id })} className="gh-btn gh-btn-soft text-[12px]">
                           Edit
                         </Link>
                         <form action={deleteExamTypeAction} className="inline">
                           <input type="hidden" name="typeId" value={t.id} />
+                          <input type="hidden" name="returnTo" value={href({ editType: null })} />
                           <button
                             type="submit"
                             className="gh-btn gh-btn-danger flex items-center gap-1 text-[12px]"
@@ -663,6 +1002,12 @@ export async function TestCentersManager({
           </AdminTable>
         </div>
 
+        <div className="px-5">
+          {cataloguePagination ? (
+            <Pager pagination={cataloguePagination} hrefForPage={(p) => href({ cPage: p })} />
+          ) : null}
+        </div>
+
         {editTypeId !== null ? (
           <div className="border-t border-[var(--color-border)] p-5">
             <h4
@@ -673,7 +1018,17 @@ export async function TestCentersManager({
             </h4>
             <form action={saveExamTypeAction} className="mt-4 grid gap-4">
               <input type="hidden" name="typeId" value={editExamType?.id ?? ""} />
-              <div className="grid gap-4 sm:grid-cols-2">
+              <input type="hidden" name="returnTo" value={href({ editType: null })} />
+              <div className="grid gap-4 sm:grid-cols-[160px_1fr_1fr]">
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Reference</span>
+                  <input
+                    name="code"
+                    defaultValue={editExamType?.code ?? ""}
+                    placeholder="GH1-0001"
+                    className="gh-input"
+                  />
+                </label>
                 <label className="flex flex-col gap-1">
                   <span className="gh-field-label">Name</span>
                   <input name="name" defaultValue={editExamType?.name ?? ""} placeholder="MRI Brain" className="gh-input" required />
@@ -703,7 +1058,7 @@ export async function TestCentersManager({
               </label>
               <div className="flex items-center gap-3">
                 <button type="submit" className="gh-btn gh-btn-primary">Save exam type</button>
-                <Link href={base} className="gh-btn gh-btn-soft">Cancel</Link>
+                <Link href={href({ editType: null })} className="gh-btn gh-btn-soft">Cancel</Link>
               </div>
             </form>
           </div>

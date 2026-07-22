@@ -21,19 +21,51 @@ export const examTypeIdParamsSchema = z.object({
   id: z.string().trim().min(1),
 });
 
+/** The catalogue holds thousands of rows (a single supplier price list is ~4.2k),
+ *  so the admin list is paginated and filterable. `pageSize` is capped at 200 —
+ *  enough for a generous table page, small enough that no caller can pull the
+ *  whole catalogue in one request. */
 export const adminExamTypesQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).default(50).transform((n) => Math.min(n, 200)),
   isActive: z.preprocess((v) => {
     if (v === undefined || v === null || v === "") return undefined;
     if (v === "true" || v === true) return true;
     if (v === "false" || v === false) return false;
     return undefined;
   }, z.boolean().optional()),
+  category: z
+    .string()
+    .trim()
+    .max(120)
+    .optional()
+    .transform((v) => (v === undefined || v === "" ? undefined : v)),
+  /** Exclude exam types this center already prices — powers the "add an exam"
+   *  picker, which must not offer duplicates out of a 4k-row catalogue. */
+  notOnCenterId: z
+    .string()
+    .trim()
+    .max(60)
+    .optional()
+    .transform((v) => (v === undefined || v === "" ? undefined : v)),
   search: z.string().trim().max(120).optional().transform((v) => (v === undefined || v === "" ? undefined : v)),
 });
 
 export type AdminExamTypesQuery = z.infer<typeof adminExamTypesQuerySchema>;
 
+/** Our catalogue reference — "GH" + group number + "-" + 4-digit counter
+ *  (e.g. GH1-0001, GH15-0219). Optional: exam types created by hand before the
+ *  scheme, or outside any supplier import, may have none. */
+const examTypeCodeSchema = z
+  .string()
+  .trim()
+  .regex(/^GH\d{1,2}-\d{4}$/, "Code must look like GH1-0001")
+  .optional()
+  .nullable()
+  .transform((value) => (value === "" || value === undefined ? null : value));
+
 const examTypeBaseObject = z.object({
+  code: examTypeCodeSchema,
   name: z.string().trim().min(1).max(200),
   slug: serviceSlugSchema,
   category: optionalTrimmed(120),
@@ -97,12 +129,39 @@ export const testCenterExamIdParamsSchema = z.object({
   offeringId: z.string().trim().min(1),
 });
 
+/** A single center can carry the whole supplier catalogue, so its offering list
+ *  is paginated and searchable on the same terms as the exam catalogue. */
+export const adminTestCenterExamsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).default(50).transform((n) => Math.min(n, 200)),
+  isActive: z.preprocess((v) => {
+    if (v === undefined || v === null || v === "") return undefined;
+    if (v === "true" || v === true) return true;
+    if (v === "false" || v === false) return false;
+    return undefined;
+  }, z.boolean().optional()),
+  category: z
+    .string()
+    .trim()
+    .max(120)
+    .optional()
+    .transform((v) => (v === undefined || v === "" ? undefined : v)),
+  search: z.string().trim().max(120).optional().transform((v) => (v === undefined || v === "" ? undefined : v)),
+});
+
+export type AdminTestCenterExamsQuery = z.infer<typeof adminTestCenterExamsQuerySchema>;
+
 /** Shared refinement: PERCENT markup is basis points (0..1,000,000 = 0..10000%);
  *  FIXED markup is cents added on top of cost. Both non-negative. */
 const markupValueSchema = z.coerce.number().int().min(0).max(100_000_000);
 
 const testCenterExamBaseObject = z.object({
   examTypeId: z.string().trim().min(1),
+  /// The center's own code for this exam (e.g. Synlab "Código"), used to
+  /// reconcile our orders against theirs.
+  supplierCode: optionalTrimmed(60),
+  /// Result turnaround the center quotes, in business days.
+  turnaroundDays: z.coerce.number().int().min(0).max(365).optional().nullable(),
   costCents: z.coerce.number().int().min(0).max(100_000_000),
   markupMode: markupModeSchema,
   markupValue: markupValueSchema,
