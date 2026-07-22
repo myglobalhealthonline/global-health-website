@@ -492,7 +492,9 @@ export async function setAdminDoctorFeatured(
 }
 
 /** Mint or refresh a doctor portal invite. Idempotent — second call for
- *  the same doctor "resends" with a new token. */
+ *  the same doctor "resends" with a new token. Passing a different email
+ *  than the linked login user's rewrites that address (`emailChanged`) and
+ *  sends the invite there instead of to the original one. */
 export type AdminDoctorInvitePayload = {
   user: {
     id: string;
@@ -502,6 +504,7 @@ export type AdminDoctorInvitePayload = {
   };
   resend: boolean;
   emailed: boolean;
+  emailChanged: boolean;
 };
 
 export async function postAdminDoctorInvite(
