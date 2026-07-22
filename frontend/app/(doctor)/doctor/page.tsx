@@ -23,10 +23,18 @@ import {
   AdminEmptyState,
   Btn,
   CommandBand,
+  Pill,
   SectionHeader,
   StatCard,
+  type PillTone,
 } from "@/components/portal-atoms";
-import { formatAppDateTimeShort, formatAppTime } from "@/lib/format-datetime";
+import {
+  formatAppDateTimeShort,
+  formatAppTime,
+  getAppointmentDayBucket,
+  type AppointmentDayBucket,
+} from "@/lib/format-datetime";
+import { groupAppointmentsByDay } from "@/lib/appointment-day-groups";
 import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -36,6 +44,13 @@ export const dynamic = "force-dynamic";
 function startOfDayUtc(d: Date): Date {
   return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
 }
+
+const DAY_BUCKET_TONE: Record<AppointmentDayBucket | "unscheduled", PillTone> = {
+  today: "brand",
+  tomorrow: "info",
+  later: "neutral",
+  unscheduled: "neutral",
+};
 
 export default async function DoctorOverviewPage() {
   const locale = await getPageLocale();
@@ -71,44 +86,49 @@ export default async function DoctorOverviewPage() {
   }
   const { doctor, stats } = result.data;
 
-  // Today's schedule + pending-action list. We fetch a wide window
-  // and filter locally so a single roundtrip serves both panels.
+  // Upcoming schedule + pending-action list. We fetch a wide window (today
+  // through the next 6 days) and filter/group locally so a single roundtrip
+  // serves both panels. `to` is inclusive (backend expands it to
+  // end-of-day) — do not naively add a day past the intended end, that's
+  // what previously leaked a tomorrow-only booking into "today".
   const now = new Date();
   const todayStart = startOfDayUtc(now);
-  // `to` is inclusive (backend expands it to end-of-day), so today's window
-  // is from=to=today — sending tomorrow here pulled tomorrow's bookings
-  // into "Today's schedule" and the next-consultation hero.
-  const [todayRes, notifRes] = await Promise.all([
+  const weekEnd = new Date(todayStart.getTime() + 6 * 24 * 60 * 60 * 1000);
+  const [weekRes, notifRes] = await Promise.all([
     fetchDoctorAppointments({
       page: "1",
       pageSize: "50",
       from: todayStart.toISOString().slice(0, 10),
-      to: todayStart.toISOString().slice(0, 10),
+      to: weekEnd.toISOString().slice(0, 10),
     }),
     fetchDoctorNotifications(true),
   ]);
-  const todayAppointments = todayRes.ok
-    ? todayRes.data.items.filter(
-        (a) => a.status !== "CANCELLED" && a.status !== "COMPLETED",
-      )
+  const weekAppointments = weekRes.ok
+    ? weekRes.data.items
+        .filter((a) => a.status !== "CANCELLED" && a.status !== "COMPLETED")
+        .sort((a, b) => {
+          // Backend returns upcoming-asc then past-desc as two concatenated
+          // buckets — re-sort ascending here so the grouped panel reads
+          // earliest-to-latest; unscheduled rows (no scheduledAt) sort last.
+          const at = a.scheduledAt ? new Date(a.scheduledAt).getTime() : Infinity;
+          const bt = b.scheduledAt ? new Date(b.scheduledAt).getTime() : Infinity;
+          return at - bt;
+        })
     : [];
 
   // Pending-action queue: appointments scheduled within 24h that don't
   // have a meeting URL set + first unread notifications.
-  const upcoming24h = todayAppointments.filter(
+  const upcoming24h = weekAppointments.filter(
     (a) =>
       a.scheduledAt &&
       new Date(a.scheduledAt).getTime() <= now.getTime() + 24 * 60 * 60 * 1000,
   );
   const missingMeetingLink = upcoming24h.filter((a) => !a.meetingUrl);
   const unreadNotifs = notifRes.ok ? notifRes.data.items : [];
-  const nextAppointment = todayAppointments
-    .filter((a) => a.scheduledAt)
-    .sort(
-      (a, b) =>
-        new Date(a.scheduledAt ?? 0).getTime() -
-        new Date(b.scheduledAt ?? 0).getTime(),
-    )[0];
+  const nextAppointment = weekAppointments.find((a) => a.scheduledAt);
+  const nextAppointmentDay = nextAppointment?.scheduledAt
+    ? getAppointmentDayBucket(nextAppointment.scheduledAt)
+    : null;
 
   const subtitle =
     `${doctor.title} · ${doctor.country.name}` +
@@ -129,7 +149,16 @@ export default async function DoctorOverviewPage() {
   return (
     <>
       <CommandBand
-        context={isLive ? d.dashboard.consultationLive : d.dashboard.nextConsultation}
+        context={
+          isLive
+            ? d.dashboard.consultationLive
+            : nextAppointmentDay && nextAppointmentDay.bucket !== "today"
+              ? d.dashboard.nextConsultationDay.replace(
+                  "{day}",
+                  nextAppointmentDay.bucket === "tomorrow" ? d.common.tomorrow : nextAppointmentDay.label,
+                )
+              : d.dashboard.nextConsultation
+        }
         title={
           nextAppointment
             ? nextAppointment.fullName
@@ -263,7 +292,7 @@ export default async function DoctorOverviewPage() {
             flat
           />
           <div className="p-5">
-            {todayAppointments.length === 0 ? (
+            {weekAppointments.length === 0 ? (
               <AdminEmptyState
                 className="gh-doctor-empty-state"
                 icon={<Calendar className="size-5" aria-hidden />}
@@ -282,46 +311,61 @@ export default async function DoctorOverviewPage() {
                 }
               />
             ) : (
-              <ul className="gh-doctor-schedule-list divide-y divide-[var(--portal-line)]">
-                {todayAppointments.slice(0, 8).map((a) => (
-                  <li
-                    key={a.id}
-                    className="gh-doctor-schedule-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-portal-body font-semibold text-[var(--portal-text)]">
-                        {a.scheduledAt ? formatAppTime(a.scheduledAt) : d.common.unscheduled}{" "}
-                        · {a.fullName}
-                      </p>
-                      <p className="text-portal-meta text-[var(--portal-muted)]">
-                        {a.consultationType} · {viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
-                      </p>
-                    </div>
-                    <div className="inline-flex items-center gap-2">
-                      {a.meetingUrl ? (
-                        <Btn
-                          href={a.meetingUrl}
-                          variant="primary"
-                          size="sm"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          iconLeft={<Video className="size-3.5" />}
+              <div className="grid gap-4">
+                {groupAppointmentsByDay(weekAppointments.slice(0, 8)).map((group) => (
+                  <div key={group.key}>
+                    <Pill tone={DAY_BUCKET_TONE[group.bucket]} withDot>
+                      {group.bucket === "unscheduled"
+                        ? d.common.unscheduled
+                        : group.bucket === "today"
+                          ? d.common.today
+                          : group.bucket === "tomorrow"
+                            ? d.common.tomorrow
+                            : group.label}
+                    </Pill>
+                    <ul className="gh-doctor-schedule-list mt-2 divide-y divide-[var(--portal-line)]">
+                      {group.items.map((a) => (
+                        <li
+                          key={a.id}
+                          className="gh-doctor-schedule-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                         >
-                          {d.common.join}
-                        </Btn>
-                      ) : null}
-                      <Btn
-                        href={`/doctor/appointments/${a.id}`}
-                        variant="secondary"
-                        size="sm"
-                        iconRight={<ChevronRight className="size-3.5" />}
-                      >
-                        {d.dashboard.open}
-                      </Btn>
-                    </div>
-                  </li>
+                          <div className="min-w-0">
+                            <p className="text-portal-body font-semibold text-[var(--portal-text)]">
+                              {a.scheduledAt ? formatAppTime(a.scheduledAt) : d.common.unscheduled}{" "}
+                              · {a.fullName}
+                            </p>
+                            <p className="text-portal-meta text-[var(--portal-muted)]">
+                              {a.consultationType} · {viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
+                            </p>
+                          </div>
+                          <div className="inline-flex items-center gap-2">
+                            {a.meetingUrl ? (
+                              <Btn
+                                href={a.meetingUrl}
+                                variant="primary"
+                                size="sm"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                iconLeft={<Video className="size-3.5" />}
+                              >
+                                {d.common.join}
+                              </Btn>
+                            ) : null}
+                            <Btn
+                              href={`/doctor/appointments/${a.id}`}
+                              variant="secondary"
+                              size="sm"
+                              iconRight={<ChevronRight className="size-3.5" />}
+                            >
+                              {d.dashboard.open}
+                            </Btn>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         </AdminCard>

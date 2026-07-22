@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { AlertTriangle, CalendarDays, CheckCircle2, SearchX, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
 import {
@@ -11,10 +12,17 @@ import {
   Btn,
   PageHeader,
   Pill,
+  type PillTone,
 } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { AppointmentCard, type AppointmentCardTone } from "@/components/AppointmentCard";
-import { formatAppDateTimeShort, formatAppDayMonth, formatAppTime } from "@/lib/format-datetime";
+import {
+  formatAppDateTimeShort,
+  formatAppDayMonth,
+  formatAppTime,
+  type AppointmentDayBucket,
+} from "@/lib/format-datetime";
+import { groupAppointmentsByDay } from "@/lib/appointment-day-groups";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -38,6 +46,13 @@ function statusToneForAppointmentCard(status: string): AppointmentCardTone {
   return "neutral";
 }
 
+const DAY_BUCKET_TONE: Record<AppointmentDayBucket | "unscheduled", PillTone> = {
+  today: "brand",
+  tomorrow: "info",
+  later: "neutral",
+  unscheduled: "neutral",
+};
+
 export const dynamic = "force-dynamic";
 
 /**
@@ -53,6 +68,13 @@ function pick(sp: SearchParams, key: string): string | undefined {
   const v = sp[key];
   return typeof v === "string" && v.trim() !== "" ? v.trim() : undefined;
 }
+
+type Block = {
+  key: string;
+  label: ReactNode | null;
+  collapsible?: boolean;
+  items: DoctorAppointment[];
+};
 
 export default async function DoctorAppointmentsPage({
   searchParams,
@@ -129,8 +151,10 @@ export default async function DoctorAppointmentsPage({
   });
   const appointments = result.ok ? result.data.items : [];
   // Backend returns two buckets (upcoming asc, then past/concluded desc) in one
-  // flat list — split them under headings so the order change doesn't read as
-  // random. Headings only on the unfiltered view with both groups present.
+  // flat list. We further split upcoming rows by calendar day (Today /
+  // Tomorrow / Wed 23 Jul …) so proximity is visible at a glance, and tuck
+  // the past bucket behind a collapsed `<details>` — grouping only applies
+  // on the default unfiltered view where both buckets are present.
   const nowMs = Date.now();
   const isUpcomingRow = (a: DoctorAppointment) =>
     a.status !== "CANCELLED" &&
@@ -139,13 +163,10 @@ export default async function DoctorAppointmentsPage({
       new Date(a.scheduledAt).getTime() + LIVE_WINDOW_MS >= nowMs);
   const upcomingRows = appointments.filter(isUpcomingRow);
   const pastRows = appointments.filter((a) => !isUpcomingRow(a));
-  const sections: { title: string | null; items: DoctorAppointment[] }[] =
-    !view && upcomingRows.length > 0 && pastRows.length > 0
-      ? [
-          { title: d.appointments.sectionUpcoming, items: upcomingRows },
-          { title: d.appointments.sectionPast, items: pastRows },
-        ]
-      : [{ title: null, items: appointments }];
+  const showGrouped = !view && upcomingRows.length > 0 && pastRows.length > 0;
+  const blocks: Block[] = showGrouped
+    ? [...buildDayBlocks(upcomingRows, d), buildPastBlock(pastRows, d)]
+    : [{ key: "all", label: null, items: appointments }];
   // Queue-wide totals from the backend — deliberately not derived from
   // `appointments`, which is only the current page and only the current filter.
   const openAppointments = result.ok ? (result.data.summary?.openConsults ?? 0) : 0;
@@ -321,134 +342,124 @@ export default async function DoctorAppointmentsPage({
       ) : (
         <div className="gh-card gh-card-jewel gh-doctor-table-card p-0 overflow-hidden">
           <div className="hidden md:block space-y-5 p-3">
-            {sections.map((section) => (
-            <div key={section.title ?? "all"}>
-            {section.title ? (
-              <h3 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
-                {section.title}
-              </h3>
-            ) : null}
-            <div className="grid gap-2">
-            {section.items.map((a: DoctorAppointment) => {
-              const live = isAppointmentLive(a);
-              return (
-                <AppointmentCard
-                  key={a.id}
-                  time={a.scheduledAt ? formatAppTime(a.scheduledAt) : "—"}
-                  timeMeta={
-                    a.scheduledAt
-                      ? formatAppDayMonth(a.scheduledAt)
-                      : d.common.unscheduled
-                  }
-                  person={a.fullName}
-                  service={<span className="capitalize">{a.consultationType}</span>}
-                  tone={statusToneForAppointmentCard(a.status)}
-                  live={live}
-                  statusPill={
-                    <Pill
-                      tone={live ? "live" : doctorAppointmentViewTone(doctorAppointmentView(a.status, a.paymentStatus))}
-                      withDot
-                    >
-                      {live ? d.common.liveNow : viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
-                    </Pill>
-                  }
-                  action={
-                    a.meetingUrl ? (
-                      <span className="inline-flex items-center gap-2">
-                        <Btn
-                          href={a.meetingUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          variant="primary"
-                          size="sm"
-                          iconLeft={<Video className="size-3.5" aria-hidden />}
-                        >
-                          {d.common.join}
-                        </Btn>
-                        <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
-                          {d.common.open}
-                        </Btn>
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-2">
-                        <span className="hidden text-xs text-[var(--portal-muted)] lg:inline">
-                          {d.appointments.meetingLinkNotCreated}
-                        </span>
-                        <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
-                          {d.common.open}
-                        </Btn>
-                      </span>
-                    )
-                  }
-                />
-              );
-            })}
-            </div>
-            </div>
+            {blocks.map((block) => (
+              <BlockWrap key={block.key} block={block}>
+                <div className="grid gap-2">
+                  {block.items.map((a) => {
+                    const live = isAppointmentLive(a);
+                    return (
+                      <AppointmentCard
+                        key={a.id}
+                        time={a.scheduledAt ? formatAppTime(a.scheduledAt) : "—"}
+                        timeMeta={
+                          a.scheduledAt
+                            ? formatAppDayMonth(a.scheduledAt)
+                            : d.common.unscheduled
+                        }
+                        person={a.fullName}
+                        service={<span className="capitalize">{a.consultationType}</span>}
+                        tone={statusToneForAppointmentCard(a.status)}
+                        live={live}
+                        statusPill={
+                          <Pill
+                            tone={live ? "live" : doctorAppointmentViewTone(doctorAppointmentView(a.status, a.paymentStatus))}
+                            withDot
+                          >
+                            {live ? d.common.liveNow : viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
+                          </Pill>
+                        }
+                        action={
+                          a.meetingUrl ? (
+                            <span className="inline-flex items-center gap-2">
+                              <Btn
+                                href={a.meetingUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                variant="primary"
+                                size="sm"
+                                iconLeft={<Video className="size-3.5" aria-hidden />}
+                              >
+                                {d.common.join}
+                              </Btn>
+                              <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
+                                {d.common.open}
+                              </Btn>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-2">
+                              <span className="hidden text-xs text-[var(--portal-muted)] lg:inline">
+                                {d.appointments.meetingLinkNotCreated}
+                              </span>
+                              <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
+                                {d.common.open}
+                              </Btn>
+                            </span>
+                          )
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              </BlockWrap>
             ))}
           </div>
           <div className="space-y-5 p-3 md:hidden">
-            {sections.map((section) => (
-            <div key={section.title ?? "all"}>
-            {section.title ? (
-              <h3 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
-                {section.title}
-              </h3>
-            ) : null}
-            <div className="grid gap-3">
-            {section.items.map((a) => {
-              const live = isAppointmentLive(a);
-              return (
-                <PortalMobileCard
-                  key={a.id}
-                  title={a.fullName}
-                  subtitle={a.email}
-                  statusPill={
-                    <Pill
-                      tone={live ? "live" : doctorAppointmentViewTone(doctorAppointmentView(a.status, a.paymentStatus))}
-                      withDot
-                    >
-                      {live ? d.common.liveNow : viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
-                    </Pill>
-                  }
-                  tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
-                  live={live}
-                  meta={[
-                    { label: d.common.type, value: <span className="capitalize">{a.consultationType}</span> },
-                    {
-                      label: d.appointments.scheduled,
-                      value: a.scheduledAt
-                        ? formatAppDateTimeShort(a.scheduledAt)
-                        : d.common.unscheduled,
-                    },
-                    { label: d.common.payment, value: a.paymentStatus },
-                    { label: d.appointments.meeting, value: a.meetingUrl ? d.appointments.ready : d.common.notSet },
-                  ]}
-                  actions={
-                    <>
-                      {a.meetingUrl ? (
-                        <a
-                          href={a.meetingUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="gh-btn gh-btn-primary text-sm"
-                        >
-                          <Video className="size-3.5" aria-hidden /> {d.appointments.joinSession}
-                        </a>
-                      ) : null}
-                      <Link
-                        href={`/doctor/appointments/${a.id}`}
-                        className="gh-btn gh-btn-soft text-sm"
-                      >
-                        <CalendarDays className="size-3.5" aria-hidden /> {d.appointments.openWorkspace}
-                      </Link>
-                    </>
-                  }
-                />
-              );
-            })}
-            </div>
-            </div>
+            {blocks.map((block) => (
+              <BlockWrap key={block.key} block={block}>
+                <div className="grid gap-3">
+                  {block.items.map((a) => {
+                    const live = isAppointmentLive(a);
+                    return (
+                      <PortalMobileCard
+                        key={a.id}
+                        title={a.fullName}
+                        subtitle={a.email}
+                        statusPill={
+                          <Pill
+                            tone={live ? "live" : doctorAppointmentViewTone(doctorAppointmentView(a.status, a.paymentStatus))}
+                            withDot
+                          >
+                            {live ? d.common.liveNow : viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
+                          </Pill>
+                        }
+                        tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
+                        live={live}
+                        meta={[
+                          { label: d.common.type, value: <span className="capitalize">{a.consultationType}</span> },
+                          {
+                            label: d.appointments.scheduled,
+                            value: a.scheduledAt
+                              ? formatAppDateTimeShort(a.scheduledAt)
+                              : d.common.unscheduled,
+                          },
+                          { label: d.common.payment, value: a.paymentStatus },
+                          { label: d.appointments.meeting, value: a.meetingUrl ? d.appointments.ready : d.common.notSet },
+                        ]}
+                        actions={
+                          <>
+                            {a.meetingUrl ? (
+                              <a
+                                href={a.meetingUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="gh-btn gh-btn-primary text-sm"
+                              >
+                                <Video className="size-3.5" aria-hidden /> {d.appointments.joinSession}
+                              </a>
+                            ) : null}
+                            <Link
+                              href={`/doctor/appointments/${a.id}`}
+                              className="gh-btn gh-btn-soft text-sm"
+                            >
+                              <CalendarDays className="size-3.5" aria-hidden /> {d.appointments.openWorkspace}
+                            </Link>
+                          </>
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              </BlockWrap>
             ))}
           </div>
           {result.data.pagination.totalPages > 1 ? (
@@ -492,5 +503,63 @@ export default async function DoctorAppointmentsPage({
         </div>
       )}
     </>
+  );
+}
+
+// Wraps the shared day-grouping (groupAppointmentsByDay) with this page's
+// Pill-header rendering.
+function buildDayBlocks(
+  rows: DoctorAppointment[],
+  d: ReturnType<typeof loadLocaleBundle>["doctor"],
+): Block[] {
+  return groupAppointmentsByDay(rows).map((group) => {
+    const text =
+      group.bucket === "unscheduled"
+        ? d.appointments.sectionUpcoming
+        : group.bucket === "today"
+          ? d.common.today
+          : group.bucket === "tomorrow"
+            ? d.common.tomorrow
+            : group.label;
+    return {
+      key: group.key,
+      label: (
+        <Pill tone={DAY_BUCKET_TONE[group.bucket]} withDot>
+          {text}
+        </Pill>
+      ),
+      items: group.items,
+    };
+  });
+}
+
+function buildPastBlock(rows: DoctorAppointment[], d: ReturnType<typeof loadLocaleBundle>["doctor"]): Block {
+  return {
+    key: "past",
+    label: `${d.appointments.sectionPast} (${rows.length})`,
+    collapsible: true,
+    items: rows,
+  };
+}
+
+// Renders a block's header (plain or a collapsed `<details>` for the past
+// bucket) around its row list. `label === null` (single flat block, e.g. any
+// filtered view) renders no header at all.
+function BlockWrap({ block, children }: { block: Block; children: ReactNode }) {
+  if (block.collapsible) {
+    return (
+      <details className="gh-doctor-past-group">
+        <summary className="mb-2 flex cursor-pointer items-center gap-1 px-1 text-xs font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+          {block.label}
+        </summary>
+        <div className="pt-2">{children}</div>
+      </details>
+    );
+  }
+  return (
+    <div>
+      {block.label ? <div className="mb-2 px-1">{block.label}</div> : null}
+      {children}
+    </div>
   );
 }

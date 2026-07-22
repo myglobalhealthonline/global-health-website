@@ -110,6 +110,45 @@ export function formatAppDateTimeWithZone(
   return `${formatAppDateTime(dateLike, tz)} (${timezoneLabel(tz, DISPLAY_LOCALE)})`;
 }
 
+export type AppointmentDayBucket = "today" | "tomorrow" | "later";
+
+function dayKeyInTz(value: Date, tz: string): string {
+  // en-CA gives YYYY-MM-DD directly — a sortable/comparable grouping key.
+  return new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(value);
+}
+
+/**
+ * Buckets an appointment's date against "today" in the resolved tz, for
+ * grouping appointment lists by day (doctor portal appointments list +
+ * dashboard). `dayKey` is a stable `YYYY-MM-DD` string for grouping/sorting;
+ * `label` is a ready-to-render weekday+date string for the `"later"` bucket
+ * only — `"today"`/`"tomorrow"` are translated by the caller instead, since
+ * dates elsewhere in this file are deliberately not locale-translated
+ * (`DISPLAY_LOCALE` stays `en-IE` regardless of UI language).
+ */
+export function getAppointmentDayBucket(
+  dateLike: string,
+  tz?: string | null,
+): { bucket: AppointmentDayBucket; dayKey: string; label: string } {
+  const zone = resolveTz(tz);
+  const value = new Date(dateLike);
+  const todayKey = dayKeyInTz(new Date(), zone);
+  const tomorrowKey = dayKeyInTz(new Date(Date.now() + 24 * 60 * 60 * 1000), zone);
+  const dayKey = Number.isNaN(value.getTime()) ? "" : dayKeyInTz(value, zone);
+  const bucket: AppointmentDayBucket =
+    dayKey === todayKey ? "today" : dayKey === tomorrowKey ? "tomorrow" : "later";
+  const label =
+    bucket === "later" && dayKey
+      ? new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+          weekday: "short",
+          month: "short",
+          day: "2-digit",
+          timeZone: zone,
+        }).format(value)
+      : "";
+  return { bucket, dayKey, label };
+}
+
 /**
  * Dual-timezone string for the doctor portal: doctor-local time first,
  * patient-local time and short IANA city tag in parens.
