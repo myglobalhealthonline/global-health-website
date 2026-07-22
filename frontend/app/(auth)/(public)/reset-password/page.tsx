@@ -30,7 +30,7 @@ export default async function ResetPasswordPage() {
   const { auth } = loadLocaleBundle(locale);
   return (
     <Suspense fallback={<div className="min-h-[100svh]" aria-busy="true" />}>
-      <ResetPasswordClient t={auth.resetPassword} shell={auth.shell} />
+      <ResetPasswordClient t={auth.resetPassword} twoFa={auth.login.twoFa} shell={auth.shell} />
     </Suspense>
   );
 }

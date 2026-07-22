@@ -430,6 +430,45 @@ const authRoute: FastifyPluginAsync = async (app) => {
       if (body.data.invite === true && result.isInvite) {
         const user = await getSafeUserById(result.userId);
         if (user && user.isActive) {
+          // 2FA gate — same rule as /api/auth/login. Without it this path
+          // minted a full session for REQUIRE_2FA_FOR_ROLES accounts, and
+          // the portal then 403'd ("2FA required") with no code ever
+          // emailed — the doctor's first login appeared broken.
+          const twoFa = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { twoFactorEnabled: true },
+          });
+          const needs2fa =
+            Boolean(twoFa?.twoFactorEnabled) || env.REQUIRE_2FA_FOR_ROLES.has(user.role);
+          const trusted =
+            needs2fa &&
+            (await isTrustedDevice(user.id, request.cookies[TRUSTED_DEVICE_COOKIE_NAME]));
+          if (needs2fa && !trusted) {
+            if (twoFa?.twoFactorEnabled) {
+              const pendingToken = signPending2faToken(user.id, "TOTP");
+              return okResponse(
+                { accepted: true, needs2fa: true, pendingToken, method: "TOTP" },
+                "Password set. Enter your authenticator code to sign in.",
+              );
+            }
+            try {
+              const code = await issueLoginOtp(user.id);
+              await sendLoginOtpEmail({ to: user.email, fullName: user.fullName, code });
+            } catch (emailError) {
+              app.log.error(
+                { err: emailError, userId: user.id },
+                "Could not send login OTP email after invite password set",
+              );
+              // Password IS set at this point — degrade to the manual
+              // sign-in path instead of failing the whole request.
+              return okResponse({ accepted: true }, "Password set. You can sign in now.");
+            }
+            const pendingToken = signPending2faToken(user.id, "EMAIL_OTP");
+            return okResponse(
+              { accepted: true, needs2fa: true, pendingToken, method: "EMAIL_OTP" },
+              "Password set. Enter the code we emailed you to sign in.",
+            );
+          }
           const tokenVersion = await getUserTokenVersion(user.id);
           const sessionToken = signAuthToken({
             sub: user.id,
