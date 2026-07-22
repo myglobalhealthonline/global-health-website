@@ -20,7 +20,7 @@ const publicSeoLandingRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid country code"));
       }
       try {
-        const pages = await listPublishedLandingSlugs(request.params.code.toUpperCase());
+        const pages = await listPublishedLandingSlugs(request.params.code.toLowerCase());
         return okResponse({ landingPages: pages });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -42,7 +42,7 @@ const publicSeoLandingRoute: FastifyPluginAsync = async (app) => {
       const query = localeQuery.safeParse(request.query);
       try {
         const page = await getPublicLandingPage(
-          request.params.code.toUpperCase(),
+          request.params.code.toLowerCase(),
           request.params.slug,
           query.success ? query.data.locale : undefined,
         );
