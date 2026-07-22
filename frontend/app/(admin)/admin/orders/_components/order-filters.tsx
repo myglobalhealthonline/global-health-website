@@ -24,28 +24,7 @@ const PAYMENT_STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "FAILED", label: "Failed" },
 ];
 
-export type OrderFilterValues = {
-  q?: string;
-  status?: string;
-  paymentStatus?: string;
-  doctorName?: string;
-  createdFrom?: string;
-  createdTo?: string;
-  consultFrom?: string;
-  consultTo?: string;
-};
-
-/** Every key the form writes back to the URL. */
-export const ORDER_FILTER_KEYS = [
-  "q",
-  "status",
-  "paymentStatus",
-  "doctorName",
-  "createdFrom",
-  "createdTo",
-  "consultFrom",
-  "consultTo",
-] as const;
+import { ORDER_FILTER_KEYS, type OrderFilterValues } from "./order-filter-keys";
 
 const labelCls =
   "mb-1 block text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";

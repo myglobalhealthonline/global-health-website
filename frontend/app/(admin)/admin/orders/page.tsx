@@ -4,11 +4,11 @@ import { fetchAdminOrders } from "@/lib/api/cart-server";
 import { fetchAdminDoctors } from "@/lib/admin/admin-api";
 import { AdminCard, AdminEmptyState, PageHeader } from "@/components/portal-atoms";
 import { AdminOrdersTable } from "./_components/admin-orders-table";
+import { OrderFilters } from "./_components/order-filters";
 import {
-  OrderFilters,
   ORDER_FILTER_KEYS,
   type OrderFilterValues,
-} from "./_components/order-filters";
+} from "./_components/order-filter-keys";
 
 export const dynamic = "force-dynamic";
 
