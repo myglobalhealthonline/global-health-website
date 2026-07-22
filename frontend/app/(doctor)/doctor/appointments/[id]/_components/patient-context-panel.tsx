@@ -8,6 +8,8 @@ export type PatientContextCopy = {
   email: string;
   phone: string;
   dateOfBirth: string;
+  address: string;
+  utenteNumber: string;
   consultationLanguage: string;
   statusLabel: string;
   booked: string;
@@ -15,6 +17,24 @@ export type PatientContextCopy = {
   openPatientChart: string;
   editHealthDataHint: string;
 };
+
+/**
+ * One-line postal address. Country code is deliberately left off — the
+ * appointment card already carries the market context, and repeating it
+ * reads as noise in the narrow rail.
+ */
+function formatAddress(a: {
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  addressCity?: string | null;
+  addressPostalCode?: string | null;
+}): string | null {
+  const cityLine = [a.addressPostalCode, a.addressCity].filter(Boolean).join(" ");
+  const parts = [a.addressLine1, a.addressLine2, cityLine].filter(
+    (p): p is string => Boolean(p && p.trim()),
+  );
+  return parts.length ? parts.join(", ") : null;
+}
 
 /**
  * Patient-context card — shared by the ≥lg persistent rail and the below-lg
@@ -32,6 +52,11 @@ export function PatientContextPanel({
     email: string;
     phone?: string | null;
     dateOfBirth?: string | null;
+    addressLine1?: string | null;
+    addressLine2?: string | null;
+    addressCity?: string | null;
+    addressPostalCode?: string | null;
+    utenteNumber?: string | null;
     consultationLanguageCode?: string | null;
     createdAt: string;
     notes?: string | null;
@@ -39,6 +64,7 @@ export function PatientContextPanel({
   statusText: string;
   copy: PatientContextCopy;
 }) {
+  const address = formatAddress(appointment);
   return (
     <FormSection title={copy.patient}>
       <div className="gh-form-section__span-2">
@@ -56,6 +82,12 @@ export function PatientContextPanel({
                 : "—"
             }
           />
+          {address ? <Row label={copy.address} value={address} /> : null}
+          {/* PT-only: the backend returns this solely for markets with
+              `collectUtenteNumber`, so presence is the gate here. */}
+          {appointment.utenteNumber ? (
+            <Row label={copy.utenteNumber} value={appointment.utenteNumber} />
+          ) : null}
           {appointment.consultationLanguageCode ? (
             <Row
               label={copy.consultationLanguage}
@@ -98,7 +130,9 @@ function Row({ label, value }: { label: string; value: string }) {
       <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {label}
       </dt>
-      <dd className="text-right text-[var(--portal-text)]">{value}</dd>
+      {/* Addresses are long enough to overflow the narrow rail — wrap rather
+          than push the label off the row. */}
+      <dd className="text-right break-words text-[var(--portal-text)]">{value}</dd>
     </div>
   );
 }

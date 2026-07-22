@@ -211,6 +211,8 @@
     "ghn": "Global Health No.",
     "email": "Email",
     "phone": "Phone",
+    "address": "Address",
+    "utenteNumber": "Número de Utente",
     "consultationLanguage": "Consultation language",
     "statusLabel": "Status",
     "booked": "Booked",

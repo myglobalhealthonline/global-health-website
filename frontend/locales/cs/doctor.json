@@ -204,6 +204,8 @@
     "ghn": "Číslo Global Health",
     "email": "E-mail",
     "phone": "Telefon",
+    "address": "Adresa",
+    "utenteNumber": "Número de Utente",
     "consultationLanguage": "Jazyk konzultace",
     "statusLabel": "Stav",
     "booked": "Rezervováno",

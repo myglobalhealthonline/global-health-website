@@ -397,6 +397,19 @@ export type AppointmentDetailDto = {
   consultationLanguageCode?: string | null;
   /** Patient's Global Health Number — shown in appointment/medical context only. */
   globalHealthNumber?: string | null;
+  /** Patient's home address (PatientProfile, not the per-order shipping
+   *  address). Already doctor-visible on the patient chart; repeated here so
+   *  the consult card is self-sufficient. */
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  addressCity?: string | null;
+  addressPostalCode?: string | null;
+  addressCountryCode?: string | null;
+  /** Número de Utente — the PT SNS number, needed for electronic
+   *  prescription. The only government ID the doctor portal receives; NIF,
+   *  national ID and passport remain admin-only per the GDPR plan. Null
+   *  outside markets with `BookingSetting.collectUtenteNumber`. */
+  utenteNumber?: string | null;
   createdAt: string;
 };
 

@@ -9,7 +9,12 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
-import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import {
+  guardMedicalRead,
+  guardMedicalReadForAppointment,
+  MedicalAccessDeniedError,
+} from "../utils/guard-medical-read.js";
+import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 
 /**
  * Clinical consultation endpoints, doctor-only.
@@ -120,17 +125,26 @@ async function findReadableAppointment(
 }
 
 /**
- * Resolve the clinic timezone for an appointment's country. Stored values
- * are IANA-validated on write, so a plain default to UTC is enough here.
- * Drives the doctor portal's clinic-local time display.
+ * Resolve the booking settings that shape the doctor's read of an
+ * appointment: the clinic timezone (IANA-validated on write, so a plain
+ * default to UTC is enough) and whether this market collects a Número de
+ * Utente — the flag that gates the SNS number in the patient card below.
+ *
+ * Country codes are stored lowercase, so match case-insensitively; an
+ * exact match on an upper-cased code silently returns null.
  */
-async function readClinicTimezone(countryCode: string | null): Promise<string> {
-  if (!countryCode) return "UTC";
+async function readCountryBookingSetting(
+  countryCode: string | null,
+): Promise<{ timezone: string; collectUtenteNumber: boolean }> {
+  if (!countryCode) return { timezone: "UTC", collectUtenteNumber: false };
   const bs = await prisma.bookingSetting.findFirst({
-    where: { country: { code: countryCode } },
-    select: { timezone: true },
+    where: { country: { code: { equals: countryCode, mode: "insensitive" } } },
+    select: { timezone: true, collectUtenteNumber: true },
   });
-  return bs?.timezone ?? "UTC";
+  return {
+    timezone: bs?.timezone ?? "UTC",
+    collectUtenteNumber: bs?.collectUtenteNumber ?? false,
+  };
 }
 
 const consultationsRoute: FastifyPluginAsync = async (app) => {
@@ -161,22 +175,86 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           }
           throw guardError;
         }
-        const [consultation, clinicTimezone, patientProfile] = await Promise.all([
+        const [consultation, bookingSetting, patientProfile] = await Promise.all([
           prisma.consultation.findUnique({ where: { appointmentId: appt.id } }),
-          readClinicTimezone(appt.countryCode),
+          readCountryBookingSetting(appt.countryCode),
           prisma.patientProfile.findUnique({
             where: { email: appt.email },
-            select: { globalHealthNumber: true },
+            select: {
+              id: true,
+              globalHealthNumber: true,
+              // Postal address is already doctor-visible (it survives
+              // `stripIdentityFields` on /api/doctor/patients/:email/profile);
+              // surfacing it here just saves a hop to the patient chart.
+              addressLine1: true,
+              addressLine2: true,
+              addressCity: true,
+              addressPostalCode: true,
+              addressCountryCode: true,
+              // Número de Utente is the ONE government ID the doctor portal
+              // may see. It is the SNS number needed to reach the patient's
+              // national records in the electronic prescription system, so it
+              // is clinical, not administrative. NIF / national ID / passport
+              // stay admin-only per the GDPR plan — see `stripIdentityFields`
+              // in doctor-patient-profile.route.ts.
+              utenteNumber: true,
+            },
           }),
         ]);
+
+        // Only markets that collect the number may show it (PT today).
+        // Decryption is best-effort: a legacy plaintext row, a rotated key or
+        // corrupt ciphertext must not take down the whole appointment view.
+        let utenteNumber: string | null = null;
+        if (bookingSetting.collectUtenteNumber && patientProfile?.utenteNumber) {
+          try {
+            utenteNumber = decryptPhi(patientProfile.utenteNumber);
+          } catch {
+            utenteNumber = null;
+          }
+        }
+
+        // An identity number is a separate disclosure from the consult note,
+        // so it gets its own SENSITIVE_PROFILE entry in MedicalAccessLog —
+        // matching /api/doctor/patients/:email/profile. Logged only when a
+        // value is actually returned, so an empty card leaves no false trail.
+        if (utenteNumber && patientProfile) {
+          try {
+            await guardMedicalRead(
+              request,
+              { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+              {
+                patientProfileId: patientProfile.id,
+                resourceType: "SENSITIVE_PROFILE",
+                accessAction: "VIEWED",
+                relatedAppointmentId: appt.id,
+              },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              // Denied access to the identity field alone must not 403 the
+              // consultation — drop the number and serve the rest.
+              utenteNumber = null;
+            } else {
+              throw guardError;
+            }
+          }
+        }
+
         return okResponse({
           appointment: {
             ...appt,
             scheduledAt: appt.scheduledAt?.toISOString() ?? null,
             dateOfBirth: appt.dateOfBirth?.toISOString() ?? null,
             createdAt: appt.createdAt.toISOString(),
-            clinicTimezone,
+            clinicTimezone: bookingSetting.timezone,
             globalHealthNumber: patientProfile?.globalHealthNumber ?? null,
+            addressLine1: patientProfile?.addressLine1 ?? null,
+            addressLine2: patientProfile?.addressLine2 ?? null,
+            addressCity: patientProfile?.addressCity ?? null,
+            addressPostalCode: patientProfile?.addressPostalCode ?? null,
+            addressCountryCode: patientProfile?.addressCountryCode ?? null,
+            utenteNumber,
           },
           consultation: consultation
             ? {

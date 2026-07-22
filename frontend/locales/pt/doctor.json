@@ -204,6 +204,8 @@
     "ghn": "N.º Global Health",
     "email": "Email",
     "phone": "Telefone",
+    "address": "Morada",
+    "utenteNumber": "Número de Utente",
     "consultationLanguage": "Idioma da consulta",
     "statusLabel": "Estado",
     "booked": "Marcada",

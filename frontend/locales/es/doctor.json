@@ -204,6 +204,8 @@
     "ghn": "N.º Global Health",
     "email": "Correo",
     "phone": "Teléfono",
+    "address": "Dirección",
+    "utenteNumber": "Número de Utente",
     "consultationLanguage": "Idioma de la consulta",
     "statusLabel": "Estado",
     "booked": "Reservada",

@@ -157,6 +157,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     email: d.appointmentDetail.email,
     phone: d.appointmentDetail.phone,
     dateOfBirth: d.common.dateOfBirth,
+    address: d.appointmentDetail.address,
+    utenteNumber: d.appointmentDetail.utenteNumber,
     consultationLanguage: d.appointmentDetail.consultationLanguage,
     statusLabel: d.appointmentDetail.statusLabel,
     booked: d.appointmentDetail.booked,
@@ -556,6 +558,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     copy={d.appointmentDocumentsTab}
                     modalCopy={consultationDocsCopy}
                     uploadCopy={d.documentUploadForm}
+                    uploadLinkCopy={d.patientUploadLinkCard}
                     reviewCopy={d.documentsReviewSendPanel}
                   />
                 </div>

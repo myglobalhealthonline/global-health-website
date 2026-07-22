@@ -18,6 +18,11 @@ const stringField = (max: number) =>
 
 // Government-ID numbers are intentionally withheld from the doctor portal
 // (GDPR plan): doctors see idVerificationStatus only, never the numbers.
+// One deliberate carve-out lives outside this route: the appointment
+// workspace card shows Número de Utente for markets with
+// `BookingSetting.collectUtenteNumber` (PT), because it is the SNS number
+// required to reach national records for electronic prescription. It is
+// logged as a SENSITIVE_PROFILE read there. See consultations.route.ts.
 function stripIdentityFields<T extends Record<string, unknown> | null>(profile: T): T {
   if (!profile) return profile;
   const { nationalIdNumber, taxIdNumber, passportNumber, utenteNumber, ...rest } =

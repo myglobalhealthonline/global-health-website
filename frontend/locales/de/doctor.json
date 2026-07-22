@@ -204,6 +204,8 @@
     "ghn": "Global-Health-Nr.",
     "email": "E-Mail",
     "phone": "Telefon",
+    "address": "Adresse",
+    "utenteNumber": "Número de Utente",
     "consultationLanguage": "Konsultationssprache",
     "statusLabel": "Status",
     "booked": "Gebucht",

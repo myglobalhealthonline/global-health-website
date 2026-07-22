@@ -204,6 +204,8 @@
     "ghn": "Nr. Global Health",
     "email": "E-mail",
     "phone": "Telefon",
+    "address": "Adresă",
+    "utenteNumber": "Número de Utente",
     "consultationLanguage": "Limba consultației",
     "statusLabel": "Stare",
     "booked": "Rezervată",
