@@ -126,8 +126,6 @@ export function ServiceCatalog({
     (f) => f.id === "all" || availableTypes.has(f.id as ServiceTileType),
   );
 
-  if (services.length === 0) return null;
-
   // Page 0 renders PAGE_SIZE_FEATURED items, every later page renders
   // PAGE_SIZE_REGULAR — a plain `page * pageSize` offset assumes a uniform
   // page size and silently drops the item at index PAGE_SIZE_FEATURED once
@@ -152,6 +150,11 @@ export function ServiceCatalog({
   const goPrev = () => setPage((p) => Math.max(0, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages - 1, p + 1));
   const swipe = useSwipePage(goPrev, goNext);
+
+  // After every hook: an early return above `useSwipePage` would make the hook
+  // call conditional and break the hook order on the render where a country
+  // first gains a service.
+  if (services.length === 0) return null;
 
   return (
     <section

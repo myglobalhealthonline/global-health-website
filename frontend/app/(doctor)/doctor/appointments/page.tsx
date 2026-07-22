@@ -155,6 +155,7 @@ export default async function DoctorAppointmentsPage({
   // Tomorrow / Wed 23 Jul …) so proximity is visible at a glance, and tuck
   // the past bucket behind a collapsed `<details>` — grouping only applies
   // on the default unfiltered view where both buckets are present.
+  // eslint-disable-next-line react-hooks/purity -- Server Component: evaluated once per request, no client re-render
   const nowMs = Date.now();
   const isUpcomingRow = (a: DoctorAppointment) =>
     a.status !== "CANCELLED" &&

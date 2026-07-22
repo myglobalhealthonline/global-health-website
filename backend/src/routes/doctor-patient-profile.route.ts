@@ -25,8 +25,13 @@ const stringField = (max: number) =>
 // logged as a SENSITIVE_PROFILE read there. See consultations.route.ts.
 function stripIdentityFields<T extends Record<string, unknown> | null>(profile: T): T {
   if (!profile) return profile;
-  const { nationalIdNumber, taxIdNumber, passportNumber, utenteNumber, ...rest } =
-    profile as Record<string, unknown>;
+  const {
+    nationalIdNumber: _nationalIdNumber,
+    taxIdNumber: _taxIdNumber,
+    passportNumber: _passportNumber,
+    utenteNumber: _utenteNumber,
+    ...rest
+  } = profile as Record<string, unknown>;
   return rest as T;
 }
 
