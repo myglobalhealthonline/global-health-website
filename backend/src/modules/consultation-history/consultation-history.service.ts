@@ -261,7 +261,12 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
       examsPrescriptions: byType("EXAMS_PRESCRIPTION"),
       absenceCertificates: byType("ABSENCE_CERTIFICATE"),
       medicinePrescriptions: byType("PRESCRIPTION"),
-      other: byType("OTHER"),
+      // Catch-all so unmapped types (e.g. CUSTOM_CERTIFICATE) never vanish
+      // from the grouped view while still counting toward `total`.
+      other: generatedRows.filter(
+        (r) =>
+          !["EXAMS_PRESCRIPTION", "ABSENCE_CERTIFICATE", "PRESCRIPTION"].includes(r.documentType),
+      ),
     },
     uploadedFiles: uploads.map((u) => {
       const { sessionDate, sessionTime, sessionIso } = formatSessionParts(
