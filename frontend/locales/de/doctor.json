@@ -1035,6 +1035,22 @@
     "uploading": "Wird hochgeladen…",
     "uploadFiles": "Dateien hochladen"
   },
+  "patientUploadLinkCard": {
+    "title": "Upload-Link an Patient senden",
+    "description": "Erzeugt einen sicheren Link, über den der Patient Dateien direkt zu diesem Termin hochladen kann. Ein neuer Link macht den vorherigen ungültig.",
+    "sendWhatsapp": "Per WhatsApp senden",
+    "sendEmail": "Per E-Mail senden",
+    "sending": "Wird gesendet…",
+    "copyLink": "Link kopieren",
+    "copied": "Link kopiert",
+    "sentWhatsapp": "Upload-Link per WhatsApp gesendet.",
+    "sentEmail": "Upload-Link per E-Mail gesendet.",
+    "failedWhatsapp": "WhatsApp-Versand fehlgeschlagen.",
+    "failedEmail": "E-Mail-Versand fehlgeschlagen.",
+    "noPhone": "Für diesen Termin ist keine Telefonnummer hinterlegt — WhatsApp konnte nicht genutzt werden.",
+    "failed": "Der Upload-Link konnte nicht gesendet werden.",
+    "expiresAt": "Link läuft am {date} ab"
+  },
   "documentsList": {
     "fileTooLarge": "Datei zu groß (max. 10 MB).",
     "uploadFailed": "Upload fehlgeschlagen",

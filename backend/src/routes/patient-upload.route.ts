@@ -14,6 +14,12 @@ import {
   createPatientUploadToken,
   verifyPatientUploadToken,
 } from "../modules/patient-upload/patient-upload-link.service.js";
+import {
+  parseUploadLinkChannels,
+  sendAppointmentUploadLink,
+} from "../modules/patient-upload/appointment-upload-link.service.js";
+import { resolveAdminSessionActor, verifyAdminAccess } from "../utils/admin-auth.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 import { upsertPatientProfileByEmail } from "../modules/patient-profile/patient-profile.service.js";
 import {
   sendPatientUploadLinkEmail,
@@ -274,6 +280,111 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
         expiresAt: expiresAt.toISOString(),
         deliveryWarnings: deliveryWarnings.length ? deliveryWarnings : undefined,
       });
+    },
+  );
+
+  /**
+   * General appointment-scoped upload link — "send the patient a link so they
+   * can attach files to THIS appointment". Registered twice with different
+   * auth gates and different doctor scoping:
+   *
+   *   POST /api/doctor/appointments/:id/upload-link  — doctor's own rows only
+   *   POST /api/admin/appointments/:id/upload-link   — any appointment
+   *
+   * Body: `{ channels?: ("email" | "whatsapp")[] }` — omitted/empty means both.
+   */
+  const uploadLinkRateLimit = {
+    config: { rateLimit: { max: 20, timeWindow: "1 hour", skipOnError: false } },
+  } as const;
+
+  app.post<{ Params: { id: string }; Body: { channels?: unknown } }>(
+    "/api/doctor/appointments/:id/upload-link",
+    uploadLinkRateLimit,
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const result = await sendAppointmentUploadLink({
+          appointmentId: request.params.id,
+          // ADMINs reaching this route still carry a linked doctorId, so
+          // scoping to it is correct for both roles here.
+          doctorIdScope: auth.doctorId,
+          channels: parseUploadLinkChannels(request.body?.channels),
+        });
+        if (!result.ok) {
+          return reply.status(result.status).send(errorResponse(result.message));
+        }
+        void recordAudit({
+          actorUserId: auth.userId,
+          actorRole: auth.role,
+          action: "SHARE_LINK_CREATED",
+          entityType: "PatientUploadLink",
+          entityId: request.params.id,
+          metadata: { kind: "appointment-upload-link", sent: result.sent },
+          request,
+        });
+        return okResponse(
+          {
+            link: result.link,
+            expiresAt: result.expiresAt.toISOString(),
+            sent: result.sent,
+            failed: result.failed,
+            missingPhone: result.missingPhone,
+          },
+          "Upload link sent",
+        );
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not send upload link"));
+      }
+    },
+  );
+
+  app.post<{ Params: { id: string }; Body: { channels?: unknown } }>(
+    "/api/admin/appointments/:id/upload-link",
+    uploadLinkRateLimit,
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const result = await sendAppointmentUploadLink({
+          appointmentId: request.params.id,
+          doctorIdScope: null,
+          channels: parseUploadLinkChannels(request.body?.channels),
+        });
+        if (!result.ok) {
+          return reply.status(result.status).send(errorResponse(result.message));
+        }
+        const actor = resolveAdminSessionActor(request);
+        void recordAudit({
+          actorUserId: actor?.userId ?? null,
+          actorRole: actor?.role ?? "ADMIN",
+          action: "SHARE_LINK_CREATED",
+          entityType: "PatientUploadLink",
+          entityId: request.params.id,
+          metadata: { kind: "appointment-upload-link", sent: result.sent },
+          request,
+        });
+        return okResponse(
+          {
+            link: result.link,
+            expiresAt: result.expiresAt.toISOString(),
+            sent: result.sent,
+            failed: result.failed,
+            missingPhone: result.missingPhone,
+          },
+          "Upload link sent",
+        );
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not send upload link"));
+      }
     },
   );
 };

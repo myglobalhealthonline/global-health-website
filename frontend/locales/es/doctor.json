@@ -1035,6 +1035,22 @@
     "uploading": "Subiendo…",
     "uploadFiles": "Subir archivos"
   },
+  "patientUploadLinkCard": {
+    "title": "Enviar enlace de subida al paciente",
+    "description": "Genera un enlace seguro que el paciente puede usar para subir archivos directamente a esta cita. Enviar un enlace nuevo invalida el anterior.",
+    "sendWhatsapp": "Enviar por WhatsApp",
+    "sendEmail": "Enviar por correo",
+    "sending": "Enviando…",
+    "copyLink": "Copiar enlace",
+    "copied": "Enlace copiado",
+    "sentWhatsapp": "Enlace de subida enviado por WhatsApp.",
+    "sentEmail": "Enlace de subida enviado por correo.",
+    "failedWhatsapp": "Falló el envío por WhatsApp.",
+    "failedEmail": "Falló el envío por correo.",
+    "noPhone": "Esta cita no tiene número de teléfono — no se pudo usar WhatsApp.",
+    "failed": "No se pudo enviar el enlace de subida.",
+    "expiresAt": "El enlace caduca el {date}"
+  },
   "documentsList": {
     "fileTooLarge": "Archivo demasiado grande (máx. 10MB).",
     "uploadFailed": "Error al subir el archivo",

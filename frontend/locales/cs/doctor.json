@@ -1035,6 +1035,22 @@
     "uploading": "Nahrávání…",
     "uploadFiles": "Nahrát soubory"
   },
+  "patientUploadLinkCard": {
+    "title": "Odeslat pacientovi odkaz pro nahrání",
+    "description": "Vytvoří bezpečný odkaz, přes který pacient nahraje soubory přímo k tomuto termínu. Odesláním nového odkazu přestane platit ten předchozí.",
+    "sendWhatsapp": "Odeslat přes WhatsApp",
+    "sendEmail": "Odeslat e-mailem",
+    "sending": "Odesílání…",
+    "copyLink": "Kopírovat odkaz",
+    "copied": "Odkaz zkopírován",
+    "sentWhatsapp": "Odkaz pro nahrání odeslán přes WhatsApp.",
+    "sentEmail": "Odkaz pro nahrání odeslán e-mailem.",
+    "failedWhatsapp": "Odeslání přes WhatsApp se nezdařilo.",
+    "failedEmail": "Odeslání e-mailem se nezdařilo.",
+    "noPhone": "U tohoto termínu není telefonní číslo — WhatsApp nebylo možné použít.",
+    "failed": "Odkaz pro nahrání se nepodařilo odeslat.",
+    "expiresAt": "Odkaz vyprší {date}"
+  },
   "documentsList": {
     "fileTooLarge": "Soubor je příliš velký (max. 10 MB).",
     "uploadFailed": "Nahrání se nezdařilo",

@@ -37,6 +37,10 @@ import {
   type EditDraftDoc,
 } from "./consultation-documents-modal";
 import { DocumentUploadForm, type DocumentUploadFormCopy } from "./document-upload-form";
+import {
+  SendPatientUploadLinkCard,
+  type SendPatientUploadLinkCopy,
+} from "@/components/SendPatientUploadLinkCard";
 
 export type AppointmentDocumentsTabCopy = {
   summary: string;
@@ -84,6 +88,7 @@ export function AppointmentDocumentsTab({
   copy,
   modalCopy,
   uploadCopy,
+  uploadLinkCopy,
   reviewCopy,
 }: {
   appointmentId: string;
@@ -95,6 +100,7 @@ export function AppointmentDocumentsTab({
   copy: AppointmentDocumentsTabCopy;
   modalCopy: ConsultationDocumentsModalCopy;
   uploadCopy: DocumentUploadFormCopy;
+  uploadLinkCopy: SendPatientUploadLinkCopy;
   reviewCopy: DocumentsReviewSendPanelCopy;
 }) {
   const [uploads, setUploads] = useState<DoctorDocumentDto[]>(initialUploads);
@@ -297,11 +303,17 @@ export function AppointmentDocumentsTab({
       </HistorySection>
 
       <HistorySection title={copy.uploadFilesTitle} count={undefined} defaultOpen>
-        <div className="p-4">
+        <div className="grid gap-3 p-4">
           <DocumentUploadForm
             appointmentId={appointmentId}
             onUploaded={(doc) => setUploads((prev) => [doc, ...prev])}
             copy={uploadCopy}
+          />
+          {/* Patient-side counterpart to the form above — same destination,
+              the AppointmentDocument rows listed in "Uploaded files". */}
+          <SendPatientUploadLinkCard
+            endpoint={`/api/doctor/appointments/${appointmentId}/upload-link`}
+            copy={uploadLinkCopy}
           />
         </div>
       </HistorySection>

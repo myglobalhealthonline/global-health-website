@@ -1035,6 +1035,22 @@
     "uploading": "A carregar…",
     "uploadFiles": "Carregar ficheiros"
   },
+  "patientUploadLinkCard": {
+    "title": "Enviar link de carregamento ao paciente",
+    "description": "Gera um link seguro que o paciente pode usar para carregar ficheiros diretamente para esta consulta. Enviar um novo link invalida o anterior.",
+    "sendWhatsapp": "Enviar por WhatsApp",
+    "sendEmail": "Enviar por email",
+    "sending": "A enviar…",
+    "copyLink": "Copiar link",
+    "copied": "Link copiado",
+    "sentWhatsapp": "Link de carregamento enviado por WhatsApp.",
+    "sentEmail": "Link de carregamento enviado por email.",
+    "failedWhatsapp": "Falha no envio por WhatsApp.",
+    "failedEmail": "Falha no envio por email.",
+    "noPhone": "Esta consulta não tem número de telefone — não foi possível usar o WhatsApp.",
+    "failed": "Não foi possível enviar o link de carregamento.",
+    "expiresAt": "O link expira em {date}"
+  },
   "documentsList": {
     "fileTooLarge": "Ficheiro demasiado grande (máx. 10MB).",
     "uploadFailed": "Falha no carregamento",

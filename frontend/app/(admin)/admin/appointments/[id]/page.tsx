@@ -27,6 +27,7 @@ import { SetCrumbTitle } from "../../_components/crumb-title";
 import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import { ScheduleSlotInput } from "../_components/schedule-slot-input";
 import { AdminAppointmentTabs } from "./_components/appointment-tabs";
+import { SendPatientUploadLinkCard } from "@/components/SendPatientUploadLinkCard";
 import {
   AdminCard,
   Btn,
@@ -571,6 +572,22 @@ export default async function AdminAppointmentDetailPage({
                     <FieldRow label="Created" value={formatDate(appointment.createdAt)} />
                     <FieldRow label="Updated" value={formatDate(appointment.updatedAt)} full />
                   </div>
+                </AdminCard>
+
+                {/* Patient upload link — the only document action admins get
+                    here. Files the patient sends back land on this
+                    appointment and surface in the assigned doctor's
+                    Documents tab, same as a doctor-issued link. */}
+                <AdminCard>
+                  <h3 className="gh-admin-card-title">Patient documents</h3>
+                  <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
+                    Send the patient a secure link to upload files for this
+                    appointment. Uploads appear in the assigned doctor&apos;s
+                    Documents tab.
+                  </p>
+                  <SendPatientUploadLinkCard
+                    endpoint={`/api/admin/appointments/${appointment.id}/upload-link`}
+                  />
                 </AdminCard>
 
                 <AdminCard>
