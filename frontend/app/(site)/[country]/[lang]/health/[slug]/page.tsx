@@ -8,6 +8,9 @@ import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { articleJsonLd } from "@/lib/seo/structured-data";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -61,16 +64,25 @@ export default async function CountryLandingPage({
   const bodyHtml = page.bodyHtml ? scopeBlogHtml(page.bodyHtml) : null;
 
   return (
-    <article className="mx-auto max-w-[var(--container-width)] px-5 py-[clamp(48px,7vw,96px)] md:px-10">
-      <h1 className="text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-[-0.02em] text-[var(--color-text-primary)]">
-        {page.title}
-      </h1>
-      {bodyHtml ? (
-        <div
-          className="gh-article-body mt-8 max-w-[76ch]"
-          dangerouslySetInnerHTML={{ __html: bodyHtml }}
-        />
-      ) : null}
-    </article>
+    <>
+      <JsonLd
+        data={articleJsonLd({
+          title: page.seoTitle ?? page.title,
+          description: page.seoDescription,
+          url: `${getSiteUrl()}/${country}/${lang}/health/${slug}`,
+        })}
+      />
+      <article className="mx-auto max-w-[var(--container-width)] px-5 py-[clamp(48px,7vw,96px)] md:px-10">
+        <h1 className="text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-[-0.02em] text-[var(--color-text-primary)]">
+          {page.title}
+        </h1>
+        {bodyHtml ? (
+          <div
+            className="gh-article-body mt-8 max-w-[76ch]"
+            dangerouslySetInnerHTML={{ __html: bodyHtml }}
+          />
+        ) : null}
+      </article>
+    </>
   );
 }
