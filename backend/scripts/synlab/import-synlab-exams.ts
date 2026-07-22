@@ -53,7 +53,14 @@ const MARKUP: "fixed" | "percent" = arg("markup") === "percent" ? "percent" : "f
 /** Basis points added to cost in PERCENT mode. 2500 = 25.00% = the inverse of
  *  a 20% purchase discount. */
 const PERCENT_BASIS_POINTS = 2500;
-const BATCH = 200;
+/** Rows per transaction. Each row costs two round trips (exam type + offering),
+ *  so over a remote database this is latency-bound — keep the batch small
+ *  enough to stay well inside TX_TIMEOUT_MS. */
+const BATCH = 50;
+/** Prisma's default interactive-transaction timeout is 5s, which one batch
+ *  blows through against a proxied Railway database. */
+const TX_TIMEOUT_MS = 120_000;
+const TX_MAX_WAIT_MS = 30_000;
 
 type Row = {
   ghCode: string;
@@ -242,11 +249,59 @@ async function main() {
     return;
   }
 
+  // Snapshot what is already in the database so an interrupted or repeated run
+  // only writes the rows that actually differ. Over a remote database each
+  // upsert is a round trip, so skipping the unchanged majority is the
+  // difference between a re-run costing minutes and costing nothing.
+  const existingTypeRows = await prisma.examType.findMany({
+    where: { code: { in: rows.map((r) => r.ghCode) } },
+    select: { id: true, code: true, name: true, category: true },
+  });
+  const typeByCode = new Map(existingTypeRows.map((t) => [t.code!, t]));
+
+  const existingOfferingRows = await prisma.testCenterExam.findMany({
+    where: { testCenterId: center.id },
+    select: {
+      examTypeId: true,
+      supplierCode: true,
+      turnaroundDays: true,
+      costCents: true,
+      markupMode: true,
+      markupValue: true,
+      currencyCode: true,
+    },
+  });
+  const offeringByTypeId = new Map(existingOfferingRows.map((o) => [o.examTypeId, o]));
+
   let types = 0;
   let offerings = 0;
+  let skippedTypes = 0;
+  let skippedOfferings = 0;
 
   for (let i = 0; i < rows.length; i += BATCH) {
     const slice = rows.slice(i, i + BATCH);
+    // Nothing in this slice differs from the database — skip the transaction.
+    const slicePending = slice.some((row) => {
+      const type = typeByCode.get(row.ghCode);
+      if (!type || type.name !== row.name || (type.category ?? "") !== row.category) return true;
+      const offering = offeringByTypeId.get(type.id);
+      if (!offering) return true;
+      const { markupMode, markupValue } = markupFor(row);
+      return (
+        offering.supplierCode !== row.synlabCode ||
+        offering.turnaroundDays !== (row.turnaroundDays || null) ||
+        offering.costCents !== row.costCents ||
+        offering.markupMode !== markupMode ||
+        offering.markupValue !== markupValue ||
+        offering.currencyCode !== CURRENCY
+      );
+    });
+    if (!slicePending) {
+      skippedTypes += slice.length;
+      skippedOfferings += slice.length;
+      continue;
+    }
+
     await prisma.$transaction(async (tx) => {
       for (const row of slice) {
         const examType = await tx.examType.upsert({
@@ -294,11 +349,14 @@ async function main() {
         });
         offerings += 1;
       }
-    });
+    }, { timeout: TX_TIMEOUT_MS, maxWait: TX_MAX_WAIT_MS });
     console.log(`[${mode}] ${Math.min(i + BATCH, rows.length)}/${rows.length}`);
   }
 
-  console.log(`[${mode}] done — ${types} exam types upserted, ${offerings} offerings upserted.`);
+  console.log(
+    `[${mode}] done — ${types} exam types and ${offerings} offerings written, ` +
+      `${skippedTypes} rows already up to date.`,
+  );
 }
 
 main()
