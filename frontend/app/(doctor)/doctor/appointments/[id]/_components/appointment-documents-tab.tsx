@@ -194,6 +194,12 @@ export function AppointmentDocumentsTab({
 
   const byType = (type: string) =>
     generatedHistory.filter((d) => d.documentType === type).map(toGeneratedTableRow);
+  // Catch-all so unmapped types (e.g. CUSTOM_CERTIFICATE) never vanish —
+  // an open section with zero rows reads as "the accordion is broken".
+  const NAMED_TYPES = ["EXAMS_PRESCRIPTION", "ABSENCE_CERTIFICATE", "PRESCRIPTION"];
+  const otherRows = generatedHistory
+    .filter((d) => !NAMED_TYPES.includes(d.documentType))
+    .map(toGeneratedTableRow);
 
   const uploadRows: UploadDocTableRow[] = uploads.map((u) => ({
     id: u.id,
@@ -276,7 +282,7 @@ export function AppointmentDocumentsTab({
             rows={byType("PRESCRIPTION")}
             session={session}
           />
-          <DocTypeGroup title={copy.typeOther} rows={byType("OTHER")} session={session} />
+          <DocTypeGroup title={copy.typeOther} rows={otherRows} session={session} />
         </HistorySection>
       )}
 
