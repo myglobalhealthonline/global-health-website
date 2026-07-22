@@ -125,6 +125,8 @@
     "statusConfirmed": "Rezervare confirmată",
     "statusCancelled": "Anulată",
     "statusConcluded": "Încheiată",
+    "sectionUpcoming": "Viitoare",
+    "sectionPast": "Trecute și încheiate",
     "typeGeneral": "General",
     "typeSpecialist": "Specialist",
     "typePrescription": "Rețetă",

@@ -125,6 +125,8 @@
     "statusConfirmed": "Booking confirmed",
     "statusCancelled": "Cancelled",
     "statusConcluded": "Concluded",
+    "sectionUpcoming": "Upcoming",
+    "sectionPast": "Past & concluded",
     "typeGeneral": "General",
     "typeSpecialist": "Specialist",
     "typePrescription": "Prescription",

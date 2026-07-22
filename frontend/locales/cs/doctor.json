@@ -125,6 +125,8 @@
     "statusConfirmed": "Rezervace potvrzena",
     "statusCancelled": "Zrušeno",
     "statusConcluded": "Ukončeno",
+    "sectionUpcoming": "Nadcházející",
+    "sectionPast": "Proběhlé a uzavřené",
     "typeGeneral": "Obecné",
     "typeSpecialist": "Specialista",
     "typePrescription": "Předpis",

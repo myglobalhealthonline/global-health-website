@@ -128,6 +128,24 @@ export default async function DoctorAppointmentsPage({
     includeSummary: "true",
   });
   const appointments = result.ok ? result.data.items : [];
+  // Backend returns two buckets (upcoming asc, then past/concluded desc) in one
+  // flat list — split them under headings so the order change doesn't read as
+  // random. Headings only on the unfiltered view with both groups present.
+  const nowMs = Date.now();
+  const isUpcomingRow = (a: DoctorAppointment) =>
+    a.status !== "CANCELLED" &&
+    a.status !== "COMPLETED" &&
+    (!a.scheduledAt ||
+      new Date(a.scheduledAt).getTime() + LIVE_WINDOW_MS >= nowMs);
+  const upcomingRows = appointments.filter(isUpcomingRow);
+  const pastRows = appointments.filter((a) => !isUpcomingRow(a));
+  const sections: { title: string | null; items: DoctorAppointment[] }[] =
+    !view && upcomingRows.length > 0 && pastRows.length > 0
+      ? [
+          { title: d.appointments.sectionUpcoming, items: upcomingRows },
+          { title: d.appointments.sectionPast, items: pastRows },
+        ]
+      : [{ title: null, items: appointments }];
   // Queue-wide totals from the backend — deliberately not derived from
   // `appointments`, which is only the current page and only the current filter.
   const openAppointments = result.ok ? (result.data.summary?.openConsults ?? 0) : 0;
@@ -302,8 +320,16 @@ export default async function DoctorAppointmentsPage({
         )
       ) : (
         <div className="gh-card gh-card-jewel gh-doctor-table-card p-0 overflow-hidden">
-          <div className="hidden md:grid gap-2 p-3">
-            {appointments.map((a: DoctorAppointment) => {
+          <div className="hidden md:block space-y-5 p-3">
+            {sections.map((section) => (
+            <div key={section.title ?? "all"}>
+            {section.title ? (
+              <h3 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+                {section.title}
+              </h3>
+            ) : null}
+            <div className="grid gap-2">
+            {section.items.map((a: DoctorAppointment) => {
               const live = isAppointmentLive(a);
               return (
                 <AppointmentCard
@@ -357,9 +383,20 @@ export default async function DoctorAppointmentsPage({
                 />
               );
             })}
+            </div>
+            </div>
+            ))}
           </div>
-          <div className="grid gap-3 p-3 md:hidden">
-            {appointments.map((a) => {
+          <div className="space-y-5 p-3 md:hidden">
+            {sections.map((section) => (
+            <div key={section.title ?? "all"}>
+            {section.title ? (
+              <h3 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+                {section.title}
+              </h3>
+            ) : null}
+            <div className="grid gap-3">
+            {section.items.map((a) => {
               const live = isAppointmentLive(a);
               return (
                 <PortalMobileCard
@@ -410,6 +447,9 @@ export default async function DoctorAppointmentsPage({
                 />
               );
             })}
+            </div>
+            </div>
+            ))}
           </div>
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--portal-line)] flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-xs text-[var(--portal-muted)]">

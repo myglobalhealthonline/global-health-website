@@ -125,6 +125,8 @@
     "statusConfirmed": "Reserva confirmada",
     "statusCancelled": "Cancelada",
     "statusConcluded": "Concluida",
+    "sectionUpcoming": "Próximas",
+    "sectionPast": "Pasadas y concluidas",
     "typeGeneral": "General",
     "typeSpecialist": "Especialista",
     "typePrescription": "Receta",

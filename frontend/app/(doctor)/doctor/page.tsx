@@ -75,13 +75,15 @@ export default async function DoctorOverviewPage() {
   // and filter locally so a single roundtrip serves both panels.
   const now = new Date();
   const todayStart = startOfDayUtc(now);
-  const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
+  // `to` is inclusive (backend expands it to end-of-day), so today's window
+  // is from=to=today — sending tomorrow here pulled tomorrow's bookings
+  // into "Today's schedule" and the next-consultation hero.
   const [todayRes, notifRes] = await Promise.all([
     fetchDoctorAppointments({
       page: "1",
       pageSize: "50",
       from: todayStart.toISOString().slice(0, 10),
-      to: todayEnd.toISOString().slice(0, 10),
+      to: todayStart.toISOString().slice(0, 10),
     }),
     fetchDoctorNotifications(true),
   ]);

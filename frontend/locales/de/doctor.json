@@ -125,6 +125,8 @@
     "statusConfirmed": "Buchung bestätigt",
     "statusCancelled": "Storniert",
     "statusConcluded": "Abgeschlossen",
+    "sectionUpcoming": "Anstehend",
+    "sectionPast": "Vergangen & abgeschlossen",
     "typeGeneral": "Allgemein",
     "typeSpecialist": "Facharzt",
     "typePrescription": "Rezept",

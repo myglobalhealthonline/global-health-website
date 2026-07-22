@@ -125,6 +125,8 @@
     "statusConfirmed": "Marcação confirmada",
     "statusCancelled": "Cancelada",
     "statusConcluded": "Concluída",
+    "sectionUpcoming": "Próximas",
+    "sectionPast": "Passadas e concluídas",
     "typeGeneral": "Geral",
     "typeSpecialist": "Especialista",
     "typePrescription": "Receita",
