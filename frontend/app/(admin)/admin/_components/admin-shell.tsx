@@ -126,6 +126,7 @@ const COUNTRY_HREFS = new Set([
   "/admin/appointments",
   "/admin/insurance",
   "/admin/test-centers",
+  "/admin/lab-requisitions",
 ]);
 
 /** Map sidebar href → feature key stored in `Country.enabledFeatures`.
@@ -173,6 +174,7 @@ const ORDER: Record<string, number> = {
   "/admin/patients": 8.2,
   "/admin/insurance": 8.5,
   "/admin/test-centers": 8.6,
+  "/admin/lab-requisitions": 8.7,
   "/admin/footer": 9,
 };
 

@@ -134,6 +134,40 @@ const envSchema = z.object({
   INVOICE_EXPRESS_API_KEY: optionalSecret,
   INVOICE_EXPRESS_ACCOUNT: optionalSecret,
 
+  /** Synlab CZ — WebLIMS 2 Remote API (electronic laboratory requisitions).
+   *  See docs/synlab/synlab-integration-questions.md.
+   *
+   *  BASE_URL + CLIENT_ID + CLIENT_SECRET are the hard gate: with any of them
+   *  unset `isWeblimsConfigured()` is false and the whole lab handoff is dark —
+   *  the admin UI shows the queue but refuses to mint a form token. Blank ("")
+   *  counts as unset, so the vars can sit empty in .env until Synlab issues
+   *  test credentials.
+   *
+   *  BASE_URL has no default on purpose: their OpenAPI ships only the relative
+   *  server path `/weblimsdev`, so guessing a host would silently point the
+   *  integration at nothing. API_VERSION likewise — the value for the
+   *  `X-Api-Version` header is not documented anywhere and must come from them. */
+  WEBLIMS_BASE_URL: z.string().trim().url().optional(),
+  WEBLIMS_CLIENT_ID: optionalSecret,
+  WEBLIMS_CLIENT_SECRET: optionalSecret,
+  WEBLIMS_API_VERSION: z.string().trim().min(1).optional(),
+
+  /** Our identity in Synlab's FOL codebook, issued when they register us as a
+   *  requesting workplace. Sent on every requisition. Unset → the field is
+   *  omitted and their form falls back to whatever the logged-in WebLIMS user
+   *  is bound to. */
+  WEBLIMS_WARD_CODE: z.string().trim().min(1).optional(),
+  WEBLIMS_WARD_ICP: z.string().trim().min(1).optional(),
+  WEBLIMS_WARD_NODE: z.string().trim().min(1).optional(),
+  WEBLIMS_WARD_SPECIALITY: z.string().trim().min(1).optional(),
+  /** Fallback prescribing doctor for requisitions whose doctor is not
+   *  registered in the Czech KRZP register (question B3). */
+  WEBLIMS_DEFAULT_DOCTOR_CODE: z.string().trim().min(1).optional(),
+  /** FOL insurance/invoice code for a self-paying patient (question B4). Our
+   *  billing model is self-pay, so this is the code sent on every requisition
+   *  until insurance-billed exams are supported. */
+  WEBLIMS_SELFPAY_INSURANCE_CODE: z.string().trim().min(1).optional(),
+
   /** Subscription billing provider. `fake` (default) = in-memory port, no
    *  Stripe keys needed (dev/test). `stripe` = real Stripe Subscriptions —
    *  only honoured when STRIPE_SECRET_KEY is also set, else falls back to

@@ -21,6 +21,12 @@ import {
 } from "lucide-react";
 import { type DocumentContext } from "./document-context-banner";
 import { PortalTabs } from "@/components/PortalTabs";
+import { buildExamTypeIdsField } from "@/lib/doctor/exam-type-ids";
+import {
+  ExamCataloguePicker,
+  type CatalogueExam,
+  type ExamCataloguePickerCopy,
+} from "./exam-catalogue-picker";
 
 export type ConsultationDocTabId = "overview" | "exams" | "medicine" | "absence" | "certificate";
 
@@ -61,6 +67,10 @@ export type ConsultationDocumentsModalCopy = {
   examsPlaceholder: string;
   examsNotesLabel: string;
   examsNotesPlaceholder: string;
+  examCatalogueLabel: string;
+  examCataloguePlaceholder: string;
+  examCatalogueHint: string;
+  examCatalogueEmpty: string;
   generatePdf: string;
   examsRequiredError: string;
   medicineIntro: string;
@@ -210,6 +220,8 @@ export function ConsultationDocumentsModal({
 
   const [exams, setExams] = useState("");
   const [examsNotes, setExamsNotes] = useState("");
+  /** Catalogue picks backing the lines in `exams`. See buildExamTypeIdsField. */
+  const [pickedExams, setPickedExams] = useState<CatalogueExam[]>([]);
   const [meds, setMeds] = useState<string[]>([""]);
   const [pharmacy, setPharmacy] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -419,8 +431,10 @@ export function ConsultationDocumentsModal({
       setError(copy.examsRequiredError);
       return;
     }
+    const examTypeIds = buildExamTypeIdsField(exams.trim(), pickedExams);
     void generate("EXAMS_PRESCRIPTION", {
       exams: exams.trim(),
+      ...(examTypeIds ? { examTypeIds } : {}),
       ...(examsNotes.trim() ? { notes: examsNotes.trim() } : {}),
     });
   }
@@ -589,6 +603,19 @@ export function ConsultationDocumentsModal({
 
           {tab === "exams" ? (
             <div className="space-y-3">
+              <ExamCataloguePicker
+                copy={copy as ExamCataloguePickerCopy}
+                onPick={(exam) => {
+                  setPickedExams((prev) =>
+                    prev.some((p) => p.id === exam.id) ? prev : [...prev, exam],
+                  );
+                  setExams((prev) => {
+                    const lines = prev.split(/\r?\n/).filter((l) => l.trim());
+                    if (lines.some((l) => l.trim() === exam.name.trim())) return prev;
+                    return [...lines, exam.name].join("\n");
+                  });
+                }}
+              />
               <label className="block text-sm font-semibold">
                 {copy.examsLabel} <span className="text-red-600">*</span>
               </label>

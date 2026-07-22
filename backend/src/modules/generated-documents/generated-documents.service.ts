@@ -21,6 +21,7 @@ import {
   isVisibleInHistory,
 } from "./document-template-utils.js";
 import { getHealthPortalForCountry } from "./country-portals.js";
+import { createRequisitionFromPrescription } from "../lab-orders/lab-requisitions.service.js";
 import { renderDocxTemplatePdf, type DocxQrOptions } from "./docx-document-renderer.js";
 import { renderDocumentPdf } from "./html-document-renderer.js";
 import { labelsForPrefix } from "./docx-template-labels.js";
@@ -665,6 +666,52 @@ export async function purgeOrphanGeneratedDocuments(appointmentId: string): Prom
   return removed;
 }
 
+/**
+ * Turn a sent exams prescription into a lab requisition in the admin queue.
+ *
+ * The exams live in the document's stored `metadata`: `exams` is the doctor's
+ * one-per-line text (also what the PDF renders) and `examTypeIds` is a
+ * newline-separated list positionally aligned with it — one entry per exams
+ * line, blank where the doctor typed free text instead of picking from the
+ * catalogue. Kept as a string because `fields` is a `Record<string, string>`
+ * all the way through generate, metadata and the edit-reload path.
+ */
+async function openLabRequisitionForPrescription(
+  doc: { id: string; metadata: unknown },
+  appt: { id: string; email: string; countryCode: string },
+  doctorId: string,
+): Promise<void> {
+  const meta = (doc.metadata ?? null) as { exams?: unknown; examTypeIds?: unknown } | null;
+  const rawLines =
+    typeof meta?.exams === "string" ? meta.exams.split(/\r?\n/) : ([] as string[]);
+  const idLines =
+    typeof meta?.examTypeIds === "string" ? meta.examTypeIds.split(/\r?\n/) : ([] as string[]);
+
+  // Align ids to lines BEFORE dropping blanks, otherwise a blank line in the
+  // textarea shifts every catalogue id onto the wrong exam.
+  const exams = rawLines
+    .map((line, i) => ({ label: line.trim(), examTypeId: idLines[i]?.trim() || null }))
+    .filter((e) => e.label.length > 0);
+  if (exams.length === 0) return;
+
+  const patientProfile = await prisma.patientProfile.findUnique({
+    where: { email: appt.email },
+    select: { id: true },
+  });
+  // No profile means nothing to attach a requisition to. The prescription PDF
+  // still reached the patient; the queue entry appears once they have a record.
+  if (!patientProfile) return;
+
+  await createRequisitionFromPrescription({
+    patientProfileId: patientProfile.id,
+    countryCode: appt.countryCode,
+    appointmentId: appt.id,
+    doctorId,
+    generatedDocumentId: doc.id,
+    exams,
+  });
+}
+
 export async function sendGeneratedDocuments(
   doctorId: string,
   appointmentId: string,
@@ -672,7 +719,7 @@ export async function sendGeneratedDocuments(
 ) {
   const appt = await prisma.appointment.findFirst({
     where: { id: appointmentId, doctorId },
-    select: { id: true, fullName: true, email: true },
+    select: { id: true, fullName: true, email: true, countryCode: true },
   });
   if (!appt) return null;
 
@@ -720,6 +767,21 @@ export async function sendGeneratedDocuments(
         where: { id: doc.id },
         data: { sentToPatient: true },
       });
+      // An exams prescription that actually reached the patient opens a case in
+      // the admin lab queue, so someone can ring them and agree what to book.
+      // Deliberately on SEND and not on generate: a draft the doctor redraws
+      // three times must not queue three times, and an unsent draft is not yet
+      // a prescription. Idempotent per document — see the service.
+      if (doc.documentType === "EXAMS_PRESCRIPTION") {
+        await openLabRequisitionForPrescription(doc, appt, doctorId).catch((err) => {
+          // Never let a lab-queue failure look like a failed document send —
+          // the patient has the PDF either way.
+          console.error("[lab] could not open a requisition for exams prescription", {
+            documentId: doc.id,
+            err: err instanceof Error ? err.message : err,
+          });
+        });
+      }
       sent += 1;
     } else {
       const detail = !result.ok

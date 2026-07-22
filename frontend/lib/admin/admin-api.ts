@@ -14,6 +14,7 @@ export * from "./admin-api/patients";
 export * from "./admin-api/patients-merge";
 export * from "./admin-api/health-tests";
 export * from "./admin-api/test-centers";
+export * from "./admin-api/lab-requisitions";
 export * from "./admin-api/assets";
 export * from "./admin-api/page-content";
 export * from "./admin-api/blog";

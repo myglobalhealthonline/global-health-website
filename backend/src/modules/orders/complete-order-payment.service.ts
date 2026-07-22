@@ -11,6 +11,7 @@ import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import { commitOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
 import { enqueueOrderPaidAutomations } from "../outbox/outbox.js";
 import { encryptPhi } from "../../lib/crypto/phi-crypto.js";
+import { markRequisitionsReadyOnOrderPaid } from "../lab-orders/lab-requisitions.service.js";
 
 export type PaymentLog = {
   info: (obj: unknown, msg?: string) => void;
@@ -221,6 +222,14 @@ async function fulfillPaidOrderFromCheckoutSession(
     const consultationItems = order.items.filter(
       (i) => i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
     );
+
+    // Self-pay laboratory exams: advance the requisition this order was paying
+    // for so the admin queue shows it as ready to send to Synlab. Inside the
+    // fulfilment transaction, so a paid lab order and its requisition state can
+    // never disagree. No-op for every other kind of order.
+    if (order.items.some((i) => i.kind === "LAB_EXAM")) {
+      await markRequisitionsReadyOnOrderPaid(tx, orderId);
+    }
 
     const healthTestItems = order.items.filter(
       (i) => i.kind === "HEALTH_TEST" && i.healthTestId,
