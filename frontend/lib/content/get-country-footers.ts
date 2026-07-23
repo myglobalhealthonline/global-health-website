@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { PUBLIC_CONTENT_FETCH_TIMEOUT_MS } from "@/lib/content/public-content-source";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 /**
@@ -61,6 +62,8 @@ export const getCountryFooter = cache(
     if (!origin) return null;
     const code = countryCode.trim().toLowerCase();
     if (!code) return null;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), PUBLIC_CONTENT_FETCH_TIMEOUT_MS);
     try {
       const query = locale ? `?locale=${locale.toUpperCase()}` : "";
       const res = await fetch(`${origin}/api/public/countries/${code}/footer${query}`, {
@@ -69,12 +72,15 @@ export const getCountryFooter = cache(
         // so we can safely cache here without a TTL. If the layout call ever
         // changes, swap to `cache: "no-store"`.
         next: { tags: [`country-footer:${code}`] },
+        signal: controller.signal,
       });
       if (!res.ok) return null;
       const json = (await res.json()) as FooterApiResponse;
       return json.ok && json.data ? json.data.footer : null;
     } catch {
       return null;
+    } finally {
+      clearTimeout(timeout);
     }
   },
 );
