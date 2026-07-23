@@ -63,6 +63,14 @@ export default async function CountryLangLayout({
   // that case, so this is defense in depth, not the primary path.
   const config = countriesMerged.find((c) => c.code === code) ?? getCountryByCode(code);
   if (!config) notFound();
+  // Admin's supportedLocales is the sole source of truth for which locale
+  // URLs exist for this country — resolveLocale() below only validates
+  // against the site-wide 6-locale set, not per-country, so without this a
+  // country restricted to e.g. 3 locales would still silently 200 the other
+  // 3 (params-only check keeps this static-generation-safe — no headers()).
+  if (!config.supportedLocales.some((l) => l.toLowerCase() === lang.toLowerCase())) {
+    notFound();
+  }
 
   const currentLocale = resolveLocale({
     explicitLocale: lang,
