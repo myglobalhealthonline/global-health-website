@@ -24,10 +24,14 @@ type BlogIndexRouteParams = {
 
 export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteParams) {
   const countryCode = countrySlug ? countryCodeFromSlug(countrySlug) : null;
-  const [ordered, cookieStore, locale] = await Promise.all([
+  // `lang` is passed as the explicit locale so a `[country]/[lang]/blog`
+  // call resolves it from the URL segment already in hand instead of
+  // reaching for cookies()/headers() — those are Next.js Dynamic APIs and
+  // invoking them (even unused) forces the whole route to render dynamically,
+  // defeating static generation on what should be a static country page.
+  const [ordered, locale] = await Promise.all([
     listBlogPosts(countryCode ?? undefined),
-    cookies(),
-    getPageLocale(),
+    getPageLocale(lang),
   ]);
   const common = getCommonLocale(locale);
   const bp = common.blogPage;
@@ -38,11 +42,12 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
   // country's home. On the bare index, fall back to the visitor's
   // remembered country (not the bare gateway "/" — it renders its own
   // country-picker logo lockup below the header, which reads as a
-  // duplicate logo).
+  // duplicate logo). Only the bare (lang-less) route needs the cookie read.
   let homeHref = "/";
   if (countrySlug && lang) {
     homeHref = `/${countrySlug}/${lang}`;
   } else {
+    const cookieStore = await cookies();
     const lastCountryRaw = cookieStore.get("gh-last-country")?.value;
     const [lastSlug, lastLang] = lastCountryRaw?.split(":") ?? [];
     homeHref = lastSlug && lastLang ? `/${lastSlug}/${lastLang}` : "/";
