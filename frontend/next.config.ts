@@ -177,6 +177,61 @@ const nextConfig: NextConfig = {
             },
           ]
         : []),
+      // SEO-audit perf fix — CDN/edge caching for the anonymous-only public
+      // marketing pages under `[country]/[lang]`. These document responses
+      // were shipping the Next.js dynamic-render default
+      // (`private, no-cache, no-store, must-revalidate`), forcing full
+      // origin revalidation on every crawler/anonymous hit.
+      //
+      // Root cause (see backend investigation notes / PR description): every
+      // page below is verified free of `cookies()`/`headers()`/`searchParams`
+      // reads in its entire render tree (layouts included) — the header/nav
+      // auth state is hydrated client-side post-mount (PublicAuthContext),
+      // never read server-side, so the HTML byte-for-byte does NOT vary by
+      // visitor. All their data reads already go through Next's Data Cache
+      // (`revalidate: 60`/tags — see lib/api/site-content-api.ts), so the
+      // underlying content is cache-coherent too. Despite that, this Next.js
+      // 16/Turbopack build still classifies the whole `[country]/[lang]`
+      // segment as dynamic (`ƒ`) in `next build`'s route table — verified via
+      // a `dynamic = "error"` bisection that even a fully stripped page+layout
+      // tree (zero dynamic-API calls anywhere) still gets flagged, so this
+      // looks like a platform-level classification quirk tied to sibling
+      // routes under the same segment (pricing/book/cart/checkout) that
+      // *do* need per-request auth cookies, not a per-page bug. That's a
+      // separate, deeper investigation — NOT attempted here.
+      //
+      // This header doesn't change that (the origin still re-renders on
+      // every request that reaches it), but it lets any CDN/reverse-proxy in
+      // front of the origin — and the browser — treat the response as
+      // cacheable, which is exactly what the audit flagged as missing.
+      // `max-age=0` keeps the browser itself always revalidating (so a user
+      // never sees content older than they'd expect); `s-maxage=60` mirrors
+      // the 60s origin data-cache window; `stale-while-revalidate=300` gives
+      // a 5-minute grace window so a slow origin re-render never blocks a
+      // cache hit. Deliberately EXCLUDES `/pricing` (reads the visitor's auth
+      // session + active subscription — genuinely personalized, confirmed via
+      // `getServerAuthUser`/`getServerSubscription`) and `/book`, `/cart`,
+      // `/checkout*`, `/legal*` (unverified / auth-adjacent) — those keep the
+      // default no-store behavior.
+      {
+        source: "/:country/:lang",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
+        ],
+      },
+      {
+        source:
+          "/:country/:lang/(gp-consultation-online|see-a-specialist|repeat-prescription-request|lab-tests|doctors|blog)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
+        ],
+      },
+      {
+        source: "/:country/:lang/(lab-tests|doctors|blog|services)/:slug",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
+        ],
+      },
       // Unhashed /public assets (icons, hero images, stock photos — see
       // public/) are NOT content-hashed: a redeploy can overwrite
       // public/foo.png at the same URL. `immutable` previously cached these

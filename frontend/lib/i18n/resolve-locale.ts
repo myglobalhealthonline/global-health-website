@@ -8,7 +8,13 @@ function normalizeLocale(value?: string | null): string | null {
   return value.trim().toLowerCase().replace("_", "-");
 }
 
-function toSupportedLocale(value?: string | null): LocaleCode | null {
+/** Maps a raw locale-ish string to a supported `LocaleCode`, or null. Exported
+ *  so callers (e.g. `getPageLocale`) can check "is this explicit value usable"
+ *  BEFORE reaching for cookies()/headers() — calling those Next.js dynamic
+ *  APIs unconditionally forces the whole route to render dynamically even
+ *  when the explicit value (already known from route params) was going to
+ *  win anyway. See get-page-locale.ts. */
+export function toSupportedLocale(value?: string | null): LocaleCode | null {
   const normalized = normalizeLocale(value);
   if (!normalized) return null;
   const base = normalized.split("-")[0] as LocaleCode;

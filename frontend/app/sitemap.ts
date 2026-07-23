@@ -8,6 +8,7 @@ import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { hreflangRegion } from "@/lib/seo/hreflang";
+import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -73,14 +74,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Country home + section pages — every enabled locale, with hreflang
   // alternates so Google indexes each translated variant.
+  // Section routes gated by a per-country feature flag (see
+  // `isCountryFeatureEnabled`) are skipped for countries that don't have
+  // the flag — those routes `notFound()` at request time, so listing them
+  // unconditionally submitted dead 404s to Search Console for markets
+  // without that product line (e.g. /lab-tests, /see-a-specialist before
+  // a market has health-tests / specialist-consultations turned on).
   for (const country of countries) {
     pushLocalized(country, "", 0.9);
     pushLocalized(country, "/doctors", 0.8);
-    pushLocalized(country, "/gp-consultation-online", 0.8);
-    pushLocalized(country, "/see-a-specialist", 0.8);
+    if (isCountryFeatureEnabled(country, "general-consultations")) {
+      pushLocalized(country, "/gp-consultation-online", 0.8);
+    }
+    if (isCountryFeatureEnabled(country, "specialist-consultations")) {
+      pushLocalized(country, "/see-a-specialist", 0.8);
+    }
     pushLocalized(country, "/book", 0.85);
-    pushLocalized(country, "/lab-tests", 0.7);
-    pushLocalized(country, "/pricing", 0.6);
+    if (isCountryFeatureEnabled(country, "health-tests")) {
+      pushLocalized(country, "/lab-tests", 0.7);
+    }
+    if (isCountryFeatureEnabled(country, "subscriptions")) {
+      pushLocalized(country, "/pricing", 0.6);
+    }
     pushLocalized(country, "/blog", 0.6);
   }
 

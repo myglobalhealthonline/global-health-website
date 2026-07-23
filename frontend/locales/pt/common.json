@@ -785,7 +785,7 @@
   },
   "homeMeta": {
     "titleTemplate": "Médico Online {country} | Clínicos Gerais e Especialistas Registados | Global Health",
-    "descriptionTemplate": "Consulte hoje um médico registado por videochamada — consultas de clínica geral, atestados médicos, referenciações para especialistas. Consultas no mesmo dia em {country}."
+    "descriptionTemplate": "Consulte hoje um médico registado por videochamada — clínica geral, atestados médicos, referenciações para especialistas. Mesmo dia em {country}."
   },
   "pricingPage": {
     "trustLicensedTitle": "Médicos licenciados",
