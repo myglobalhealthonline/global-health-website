@@ -24,6 +24,9 @@ import { FlagBadge } from "../../../_components/flag-badge";
 
 export const dynamic = "force-dynamic";
 
+const FAQ_ROWS = 10;
+const RELATED_ROWS = 8;
+
 type PageProps = {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ success?: string; error?: string; edit?: string }>;
@@ -69,6 +72,37 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
     if (!slug || !title) {
       redirect(`/admin/countries/${id}/landing-pages?error=${encodeURIComponent("Slug and title are required")}`);
     }
+    const faq = Array.from({ length: FAQ_ROWS })
+      .map((_, i) => ({
+        question: String(formData.get(`faqQuestion${i}`) ?? "").trim(),
+        answer: String(formData.get(`faqAnswer${i}`) ?? "").trim(),
+      }))
+      .filter((f) => f.question && f.answer);
+
+    const related = Array.from({ length: RELATED_ROWS })
+      .map((_, i) => ({
+        label: String(formData.get(`relatedLabel${i}`) ?? "").trim(),
+        href: String(formData.get(`relatedHref${i}`) ?? "").trim(),
+      }))
+      .filter((r) => r.label && r.href);
+
+    const doctorLanguage = String(formData.get("doctorLanguage") ?? "").trim();
+    const doctorSlugs = String(formData.get("doctorSlugs") ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const ctaService = String(formData.get("ctaService") ?? "").trim();
+
+    const template =
+      doctorLanguage || doctorSlugs.length > 0 || ctaService || related.length > 0
+        ? {
+            ...(doctorLanguage ? { doctorLanguage } : {}),
+            ...(doctorSlugs.length > 0 ? { doctorSlugs } : {}),
+            ...(ctaService ? { ctaService } : {}),
+            ...(related.length > 0 ? { related } : {}),
+          }
+        : null;
+
     const body = {
       slug,
       isPublished: formData.get("isPublished") === "on",
@@ -80,8 +114,10 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
           seoTitle: String(formData.get("seoTitle") ?? "").trim() || null,
           seoDescription: String(formData.get("seoDescription") ?? "").trim() || null,
           bodyHtml: String(formData.get("bodyHtml") ?? "").trim() || null,
+          faq: faq.length > 0 ? faq : null,
         },
       ],
+      template,
     };
     const result = await putAdminCountryLandingPage(id, body);
     if (!result.ok) {
@@ -267,6 +303,83 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
                 placeholder="<p>…</p>"
               />
             </label>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Doctor language filter</span>
+                <input
+                  name="doctorLanguage"
+                  defaultValue={editPage?.template?.doctorLanguage ?? ""}
+                  placeholder="Arabic"
+                  className="gh-input"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Doctor slugs (comma-separated)</span>
+                <input
+                  name="doctorSlugs"
+                  defaultValue={(editPage?.template?.doctorSlugs ?? []).join(", ")}
+                  placeholder="dr-jane-doe, dr-john-smith"
+                  className="gh-input"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">CTA service slug</span>
+                <input
+                  name="ctaService"
+                  defaultValue={editPage?.template?.ctaService ?? ""}
+                  placeholder="general-consultation"
+                  className="gh-input"
+                />
+              </label>
+            </div>
+
+            <div className="grid gap-2">
+              <span className="gh-field-label">Related links</span>
+              {Array.from({ length: RELATED_ROWS }).map((_, i) => {
+                const r = editPage?.template?.related?.[i];
+                return (
+                  <div key={i} className="grid gap-2 sm:grid-cols-[1fr_1fr]">
+                    <input
+                      name={`relatedLabel${i}`}
+                      defaultValue={r?.label ?? ""}
+                      placeholder="Label"
+                      className="gh-input"
+                    />
+                    <input
+                      name={`relatedHref${i}`}
+                      defaultValue={r?.href ?? ""}
+                      placeholder="/ireland/en/services/..."
+                      className="gh-input"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="grid gap-2">
+              <span className="gh-field-label">FAQ</span>
+              {Array.from({ length: FAQ_ROWS }).map((_, i) => {
+                const f = editTr?.faq?.[i];
+                return (
+                  <div key={i} className="grid gap-2 rounded-[var(--radius-card-sm)] border p-3" style={{ borderColor: "var(--color-border-subtle)" }}>
+                    <input
+                      name={`faqQuestion${i}`}
+                      defaultValue={f?.question ?? ""}
+                      placeholder="Question"
+                      className="gh-input"
+                    />
+                    <textarea
+                      name={`faqAnswer${i}`}
+                      defaultValue={f?.answer ?? ""}
+                      placeholder="Answer"
+                      rows={2}
+                      className="gh-input resize-y"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
             <label className="flex items-center gap-2">
               <input type="checkbox" name="isPublished" defaultChecked={editPage?.isPublished ?? false} className="size-4" />
               <span className="text-portal-compact text-[var(--color-text-body)]">Published</span>

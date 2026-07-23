@@ -26,6 +26,13 @@ export const seoLandingPageParamsSchema = z.object({
   pageId: z.string().trim().min(1).max(64),
 });
 
+const faqItemSchema = z
+  .object({
+    question: z.string().trim().min(1).max(300),
+    answer: z.string().trim().min(1).max(4000),
+  })
+  .strict();
+
 export const seoLandingTranslationSchema = z
   .object({
     locale: localeCodeSchema,
@@ -35,6 +42,23 @@ export const seoLandingTranslationSchema = z
     bodyHtml: z.string().trim().max(200000).optional().nullable().transform((v) =>
       v === undefined || v === null || v === "" ? null : v,
     ),
+    faq: z.array(faqItemSchema).max(20).optional().nullable(),
+  })
+  .strict();
+
+const relatedLinkSchema = z
+  .object({
+    label: z.string().trim().min(1).max(120),
+    href: z.string().trim().min(1).max(300).regex(/^\//, "href must start with /"),
+  })
+  .strict();
+
+export const seoLandingTemplateSchema = z
+  .object({
+    doctorLanguage: z.string().trim().min(1).max(60).optional(),
+    doctorSlugs: z.array(z.string().trim().min(1).max(120)).max(24).optional(),
+    ctaService: z.string().trim().min(1).max(120).optional(),
+    related: z.array(relatedLinkSchema).max(8).optional(),
   })
   .strict();
 
@@ -44,6 +68,7 @@ export const seoLandingUpsertBodySchema = z
     isPublished: z.boolean().optional().default(false),
     sortOrder: z.coerce.number().int().min(0).max(1000).optional().default(0),
     translations: z.array(seoLandingTranslationSchema).min(1).max(6),
+    template: seoLandingTemplateSchema.optional().nullable(),
   })
   .strict();
 

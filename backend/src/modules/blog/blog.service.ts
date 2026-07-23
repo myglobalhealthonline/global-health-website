@@ -372,6 +372,7 @@ export type PublicBlogPost = {
   author: string | null;
   reviewer: string | null;
   publishedAt: string | null;
+  lastReviewedAt: string | null;
   coverImageUrl: string | null;
   coverImageAlt: string | null;
   seoTitle: string | null;
@@ -423,6 +424,7 @@ function toPublicBlogPost(row: {
   reviewerDisplayName: string | null;
   publishedAt: Date | null;
   createdAt: Date;
+  lastReviewedAt: Date | null;
   coverAsset: { path: string; altText: string | null } | null;
   seoTitle: string | null;
   seoDescription: string | null;
@@ -441,6 +443,7 @@ function toPublicBlogPost(row: {
     author: row.authorDisplayName,
     reviewer: row.reviewerDisplayName,
     publishedAt: (row.publishedAt ?? row.createdAt).toISOString(),
+    lastReviewedAt: row.lastReviewedAt ? row.lastReviewedAt.toISOString() : null,
     coverImageUrl: row.coverAsset?.path ?? null,
     coverImageAlt: row.coverAsset?.altText ?? null,
     seoTitle: row.seoTitle,
@@ -482,6 +485,7 @@ const publicBlogSelect = {
   reviewerDisplayName: true,
   publishedAt: true,
   createdAt: true,
+  lastReviewedAt: true,
   coverAsset: { select: { path: true, altText: true } },
   seoTitle: true,
   seoDescription: true,

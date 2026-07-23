@@ -28,6 +28,7 @@ function mapAdmin(row: AdminRow) {
     slug: row.slug,
     isPublished: row.isPublished,
     sortOrder: row.sortOrder,
+    template: (row.template as SeoLandingUpsertBody["template"]) ?? null,
     translations: row.translations.map((t) => ({
       id: t.id,
       locale: t.locale,
@@ -35,6 +36,7 @@ function mapAdmin(row: AdminRow) {
       seoTitle: t.seoTitle,
       seoDescription: t.seoDescription,
       bodyHtml: t.bodyHtml,
+      faq: (t.faq as Array<{ question: string; answer: string }> | null) ?? null,
     })),
   };
 }
@@ -71,6 +73,9 @@ export async function upsertLandingPage(countryId: string, input: SeoLandingUpse
     );
 
     const saved = await prisma.$transaction(async (tx) => {
+      const templateValue = (input.template ?? Prisma.DbNull) as
+        | Prisma.InputJsonValue
+        | typeof Prisma.DbNull;
       const page = await tx.seoLandingPage.upsert({
         where: { countryId_slug: { countryId, slug: input.slug } },
         create: {
@@ -78,8 +83,9 @@ export async function upsertLandingPage(countryId: string, input: SeoLandingUpse
           slug: input.slug,
           isPublished: input.isPublished,
           sortOrder: input.sortOrder,
+          template: templateValue,
         },
-        update: { isPublished: input.isPublished, sortOrder: input.sortOrder },
+        update: { isPublished: input.isPublished, sortOrder: input.sortOrder, template: templateValue },
         select: { id: true },
       });
       await tx.seoLandingPageTranslation.deleteMany({ where: { landingPageId: page.id } });
@@ -91,6 +97,9 @@ export async function upsertLandingPage(countryId: string, input: SeoLandingUpse
           seoTitle: t.seoTitle ?? null,
           seoDescription: t.seoDescription ?? null,
           bodyHtml: t.bodyHtml == null ? null : sanitizeRichHtml(t.bodyHtml),
+          faq: (t.faq && t.faq.length > 0
+            ? t.faq.map((f) => ({ question: f.question.trim(), answer: f.answer.trim() }))
+            : Prisma.DbNull) as Prisma.InputJsonValue | typeof Prisma.DbNull,
         })),
       });
       return tx.seoLandingPage.findUniqueOrThrow({
@@ -200,6 +209,8 @@ export async function getPublicLandingPage(
       seoTitle: tr.seoTitle,
       seoDescription: tr.seoDescription,
       bodyHtml: tr.bodyHtml,
+      template: (page.template as SeoLandingUpsertBody["template"]) ?? null,
+      faq: (tr.faq as Array<{ question: string; answer: string }> | null) ?? null,
     };
   } catch (error) {
     throw normalizeDbError(error, "Landing page is unavailable");

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck, ArrowUpRight } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
-import { getBlogPost, type BlogDoctor, type BlogPostFull } from "@/lib/content/get-public-blog";
+import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -132,10 +132,12 @@ export async function buildBlogPostMetadata(
 }
 
 export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
-  const resolved = await resolveBlogPostRoute(await params);
+  const routeParams = await params;
+  const resolved = await resolveBlogPostRoute(routeParams);
   if (resolved.kind === "not-found") notFound();
   if (resolved.kind === "redirect") redirect(resolved.redirectTo);
   const { post, canonicalUrl, backHref } = resolved;
+  const routeCode = routeParams.countrySlug ? countryCodeFromSlug(routeParams.countrySlug) : undefined;
 
   const locale = await getPageLocale(post.locale);
   const { home } = loadLocaleBundle(locale);
@@ -151,9 +153,12 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
     year: "numeric",
   });
 
-  const [authorPhysician, reviewerPhysician] = await Promise.all([
+  const [authorPhysician, reviewerPhysician, relatedPosts] = await Promise.all([
     blogPhysicianInput(post.authorDoctor),
     blogPhysicianInput(post.reviewerDoctor),
+    listBlogPosts(routeCode ?? undefined).then((posts) =>
+      posts.filter((p) => p.slug !== post.slug).slice(0, 3),
+    ),
   ]);
 
   // "Clinically reviewed by Dr X" — prefer the linked reviewer doctor (with
@@ -163,6 +168,17 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
     post.reviewerDoctor?.countrySlug
       ? `/${post.reviewerDoctor.countrySlug}/en/doctors/${post.reviewerDoctor.slug}`
       : null;
+  const lastReviewedFormatted = post.lastReviewedAt
+    ? new Date(post.lastReviewedAt).toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : formatted;
+  const relatedHrefFor = (p: BlogListItem) =>
+    routeParams.countrySlug && routeParams.lang
+      ? `/${routeParams.countrySlug}/${routeParams.lang}/blog/${p.slug}`
+      : `/blog/${p.slug}`;
 
   return (
     <>
@@ -172,6 +188,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           description: post.seoDescription ?? post.excerpt,
           url: `${getSiteUrl()}${canonicalUrl}`,
           datePublished: post.publishedAt,
+          dateModified: post.lastReviewedAt,
           imageSrc: post.coverImageSrc,
           authorName: post.author,
           authorPhysician,
@@ -348,6 +365,12 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           className="gh-article-body gh-article-raw"
           dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
         />
+        {reviewerName ? (
+          <p className="mx-auto mt-8 max-w-[76ch] text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
+            {blogI18n.clinicallyReviewedBy} {reviewerName}. {blogI18n.lastReviewed} {lastReviewedFormatted}.{" "}
+            {blogI18n.medicalDisclaimer}
+          </p>
+        ) : null}
       </section>
 
       {/* Dark CTA block — matches luxury language of the rest of the site */}
@@ -397,6 +420,40 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           </div>
         </div>
       </section>
+
+      {relatedPosts.length > 0 ? (
+        <section
+          className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
+          style={{ padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }}
+        >
+          <h2
+            className="font-extrabold tracking-[-0.02em]"
+            style={{ fontSize: "clamp(1.4rem,2.4vw,2rem)", color: "var(--color-text-primary)" }}
+          >
+            {blogI18n.moreArticles}
+          </h2>
+          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedPosts.map((p) => (
+              <Link
+                key={p.slug}
+                href={relatedHrefFor(p)}
+                className="gh-focus-on-dark block rounded-[var(--radius-card)] border p-5 transition-colors hover:border-[var(--color-brand-accent)]"
+                style={{ borderColor: "var(--color-border-subtle)" }}
+              >
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--color-brand-accent)" }}>
+                  {p.category}
+                </p>
+                <h3 className="mt-2 font-bold" style={{ color: "var(--color-text-primary)" }}>
+                  {p.title}
+                </h3>
+                <p className="mt-2 text-[13px] leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+                  {p.excerpt}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }

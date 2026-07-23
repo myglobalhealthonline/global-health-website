@@ -105,7 +105,10 @@
     "readyToSpeak": "Jste připraveni mluvit s lékařem?",
     "bookConsultationBody": "Zarezervujte si online konzultaci s místně registrovaným lékařem ve vaší zemi. Otevřené termíny jsou zobrazeny během rezervace.",
     "bookConsultation": "Zarezervovat konzultaci",
-    "clinicallyReviewedBy": "Klinicky přezkoumáno"
+    "clinicallyReviewedBy": "Klinicky přezkoumáno",
+    "lastReviewed": "Last reviewed",
+    "moreArticles": "More articles",
+    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
   },
   "flow": {
     "patientUploadHeading": "Nahrát lékařské dokumenty",
