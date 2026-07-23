@@ -1045,6 +1045,11 @@ model SeoLandingPage {
   slug         String
   isPublished  Boolean                     @default(false)
   sortOrder    Int                         @default(0)
+  /// Template config: `{ doctorLanguage?: string; doctorSlugs?: string[];
+  /// ctaService?: string; related?: Array<{label: string; href: string}> }`.
+  /// doctorLanguage is a language name matching Doctor languages entries
+  /// (e.g. "Arabic").
+  template     Json?
   country      Country                     @relation(fields: [countryId], references: [id], onDelete: Cascade)
   translations SeoLandingPageTranslation[]
   createdAt    DateTime                    @default(now())
@@ -1063,6 +1068,8 @@ model SeoLandingPageTranslation {
   seoTitle       String?
   seoDescription String?
   bodyHtml       String?
+  /// Array of `{question: string; answer: string}`, plain text answers.
+  faq            Json?
   landingPage    SeoLandingPage @relation(fields: [landingPageId], references: [id], onDelete: Cascade)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt

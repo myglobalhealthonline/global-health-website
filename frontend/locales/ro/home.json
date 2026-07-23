@@ -105,7 +105,10 @@
     "readyToSpeak": "Sunteți gata să vorbiți cu un medic?",
     "bookConsultationBody": "Programați o consultație online cu un medic înregistrat local în țara dumneavoastră. Programările disponibile sunt afișate în timpul rezervării.",
     "bookConsultation": "Programați consultația",
-    "clinicallyReviewedBy": "Revizuit clinic de"
+    "clinicallyReviewedBy": "Revizuit clinic de",
+    "lastReviewed": "Last reviewed",
+    "moreArticles": "More articles",
+    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
   },
   "flow": {
     "patientUploadHeading": "Încărcați fișiere medicale",

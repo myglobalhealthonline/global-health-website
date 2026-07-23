@@ -105,7 +105,10 @@
     "readyToSpeak": "Pronto para falar com um médico?",
     "bookConsultationBody": "Agende uma consulta online com um médico registado localmente no seu país. As nomeações disponíveis são mostradas durante a reserva.",
     "bookConsultation": "Agendar consulta",
-    "clinicallyReviewedBy": "Revisado clinicamente por"
+    "clinicallyReviewedBy": "Revisado clinicamente por",
+    "lastReviewed": "Last reviewed",
+    "moreArticles": "More articles",
+    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
   },
   "flow": {
     "patientUploadHeading": "Carregar ficheiros médicos",

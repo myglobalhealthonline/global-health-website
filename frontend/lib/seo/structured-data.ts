@@ -272,6 +272,7 @@ export function articleJsonLd(input: {
   description?: string | null;
   url: string;
   datePublished?: string | null;
+  dateModified?: string | null;
   imageSrc?: string | null;
   authorName?: string | null;
   authorPhysician?: Parameters<typeof physicianJsonLd>[0] | null;
@@ -290,6 +291,7 @@ export function articleJsonLd(input: {
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
     ...(input.imageSrc ? { image: input.imageSrc } : {}),
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
+    ...(input.dateModified ? { dateModified: input.dateModified } : {}),
     author,
     ...(input.reviewerPhysician
       ? { reviewedBy: physicianJsonLd(input.reviewerPhysician) }

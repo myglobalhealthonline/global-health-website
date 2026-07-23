@@ -43,6 +43,7 @@ export type BlogPostFull = BlogListItem & {
   authorDoctor: BlogDoctor | null;
   reviewerDoctor: BlogDoctor | null;
   ctaService: { slug: string; name: string; countrySlug: string } | null;
+  lastReviewedAt: string | null;
 };
 
 type ApiBlogPost = {
@@ -63,6 +64,7 @@ type ApiBlogPost = {
   authorDoctor?: unknown;
   reviewerDoctor?: unknown;
   ctaService?: unknown;
+  lastReviewedAt?: unknown;
 };
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
@@ -139,6 +141,7 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     authorDoctor: normalizeBlogDoctor(raw.authorDoctor),
     reviewerDoctor: normalizeBlogDoctor(raw.reviewerDoctor),
     ctaService: normalizeCtaService(raw.ctaService),
+    lastReviewedAt: str(raw.lastReviewedAt) || null,
   };
 }
 

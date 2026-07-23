@@ -105,7 +105,10 @@
     "readyToSpeak": "Bereit, mit einem Arzt zu sprechen?",
     "bookConsultationBody": "Buchen Sie eine Online-Konsultation mit einem lokal registrierten Arzt in Ihrem Land. Offene Termine werden während der Buchung angezeigt.",
     "bookConsultation": "Konsultation buchen",
-    "clinicallyReviewedBy": "Klinisch überprüft von"
+    "clinicallyReviewedBy": "Klinisch überprüft von",
+    "lastReviewed": "Last reviewed",
+    "moreArticles": "More articles",
+    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
   },
   "flow": {
     "patientUploadHeading": "Medizinische Unterlagen hochladen",
