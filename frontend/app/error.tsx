@@ -6,11 +6,11 @@ import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 
 const T: Record<string, { title: string; subtitle: string; tryAgain: string; backToHome: string }> = {
   en: { title: "Something went wrong", subtitle: "An unexpected error occurred. Please try again.", tryAgain: "Try again", backToHome: "Back to home" },
-  pt: { title: "Algo correu mal", subtitle: "Ocorreu um erro inesperado. Por favor, tente novamente.", tryAgain: "Tentar novamente", backToHome: "Voltar ao inÃ­cio" },
-  es: { title: "Algo saliÃ³ mal", subtitle: "OcurriÃ³ un error inesperado. Por favor, intÃ©ntalo de nuevo.", tryAgain: "Intentar de nuevo", backToHome: "Volver al inicio" },
-  cs: { title: "NÄ›co se pokazilo", subtitle: "DoÅ¡lo k neoÄekÃ¡vanÃ© chybÄ›. Zkuste to prosÃ­m znovu.", tryAgain: "Zkusit znovu", backToHome: "ZpÄ›t na hlavnÃ­ strÃ¡nku" },
-  ro: { title: "Ceva a mers greÈ™it", subtitle: "A apÄƒrut o eroare neaÈ™teptatÄƒ. VÄƒ rugÄƒm sÄƒ Ã®ncercaÈ›i din nou.", tryAgain: "ÃŽncearcÄƒ din nou", backToHome: "ÃŽnapoi acasÄƒ" },
-  de: { title: "Etwas ist schiefgelaufen", subtitle: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", tryAgain: "Erneut versuchen", backToHome: "ZurÃ¼ck zur Startseite" },
+  pt: { title: "Algo correu mal", subtitle: "Ocorreu um erro inesperado. Por favor, tente novamente.", tryAgain: "Tentar novamente", backToHome: "Voltar ao início" },
+  es: { title: "Algo salió mal", subtitle: "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.", tryAgain: "Intentar de nuevo", backToHome: "Volver al inicio" },
+  cs: { title: "Něco se pokazilo", subtitle: "Došlo k neoÄekávané chybě. Zkuste to prosím znovu.", tryAgain: "Zkusit znovu", backToHome: "Zpět na hlavní stránku" },
+  ro: { title: "Ceva a mers greșit", subtitle: "A apărut o eroare neașteptată. Vă rugăm să încercați din nou.", tryAgain: "Încearcă din nou", backToHome: "Înapoi acasă" },
+  de: { title: "Etwas ist schiefgelaufen", subtitle: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", tryAgain: "Erneut versuchen", backToHome: "Zurück zur Startseite" },
 };
 
 function getClientLocale(): string {

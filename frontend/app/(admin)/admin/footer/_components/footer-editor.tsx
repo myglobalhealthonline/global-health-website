@@ -7,7 +7,7 @@ import { PhoneField } from "@/components/forms/phone-field";
 
 /**
  * Per-country footer editor. Contact block + social links + active flag
- * only â€” tagline / custom columns / copyright override were dropped
+ * only — tagline / custom columns / copyright override were dropped
  * (2026-07-24, owner request): the public footer always uses the global
  * defaults for those. Submit serialises to a hidden `payload` JSON field
  * parsed by the server action, mirroring the page-content editor.
@@ -59,7 +59,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
     e.preventDefault();
     // Strip empty strings to null so the backend's optionalText
     // transformer doesn't store `""`. tagline/customColumns/copyrightLine
-    // are always cleared â€” those sections were removed from the editor.
+    // are always cleared — those sections were removed from the editor.
     const norm = (v: string) => (v.trim() === "" ? null : v.trim());
 
     const payload = {
@@ -99,7 +99,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
         </h2>
         <p className="mt-1 text-xs text-[var(--color-text-muted)]">
           Rendered under the brand block on the public footer. All fields
-          optional â€” leave blank to hide.
+          optional — leave blank to hide.
         </p>
         <div className="gh-admin-support-field-grid mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-2">
@@ -147,7 +147,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
               value={state.contactHours}
               onChange={(e) => update("contactHours", e.target.value)}
               maxLength={160}
-              placeholder="Monâ€“Fri Â· 09:00â€“17:00 IST"
+              placeholder="Mon–Fri · 09:00–17:00 IST"
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
@@ -159,7 +159,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
           Social links
         </h2>
         <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-          https:// URLs only â€” rendered as icon row in the footer ribbon.
+          https:// URLs only — rendered as icon row in the footer ribbon.
           Leave blank to hide an icon.
         </p>
         <div className="gh-admin-support-field-grid mt-4 grid gap-4 sm:grid-cols-2">
@@ -204,14 +204,14 @@ export function FooterEditor({ initial, saveAction }: Props) {
             className="size-4"
           />
           <span className="text-[var(--color-text-body)]">
-            Active â€” render this footer on the public site
+            Active — render this footer on the public site
           </span>
         </label>
       </AdminCard>
 
       <div className="gh-admin-support-actions flex justify-end">
         <Btn type="submit" variant="primary" size="md" disabled={pending}>
-          {pending ? "Savingâ€¦" : "Save footer"}
+          {pending ? "Saving…" : "Save footer"}
         </Btn>
       </div>
     </form>
