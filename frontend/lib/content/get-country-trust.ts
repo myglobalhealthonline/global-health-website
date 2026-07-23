@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { PUBLIC_CONTENT_FETCH_TIMEOUT_MS } from "@/lib/content/public-content-source";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 /**
@@ -79,17 +80,22 @@ export const getCountryTrust = cache(
     if (!origin) return null;
     const code = countryCode.trim().toLowerCase();
     if (!code) return null;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), PUBLIC_CONTENT_FETCH_TIMEOUT_MS);
     try {
       const query = locale ? `?locale=${locale.toUpperCase()}` : "";
       const res = await fetch(`${origin}/api/public/countries/${code}/trust${query}`, {
         method: "GET",
         next: { tags: [`country-trust:${code}`] },
+        signal: controller.signal,
       });
       if (!res.ok) return null;
       const json = (await res.json()) as TrustApiResponse;
       return json.ok && json.data ? json.data.trust : null;
     } catch {
       return null;
+    } finally {
+      clearTimeout(timeout);
     }
   },
 );
