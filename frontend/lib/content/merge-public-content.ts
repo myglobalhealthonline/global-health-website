@@ -106,14 +106,12 @@ export function mergeCountryConfigWithBackend(
         ? backend.slug.trim().toLowerCase()
         : fallback.slug,
     ...(backend.defaultLocale ? { defaultLocale: backend.defaultLocale } : {}),
-    ...((() => {
-      const combined = [
-        ...fallback.supportedLocales,
-        ...(backend.supportedLocales ?? []),
-      ];
-      const deduped = [...new Set(combined)];
-      return deduped.length > 0 ? { supportedLocales: deduped } : {};
-    })()),
+    // Admin's saved list wins outright — union-with-seed used to make any
+    // admin restriction a no-op, since every seeded country's static
+    // fallback hardcodes all 6 locales (deduping the union back to 6).
+    ...(backend.supportedLocales && backend.supportedLocales.length > 0
+      ? { supportedLocales: backend.supportedLocales }
+      : {}),
     ...(backend.enabledFeatures && backend.enabledFeatures.length > 0
       ? { enabledFeatures: backend.enabledFeatures }
       : {}),
