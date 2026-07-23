@@ -167,7 +167,7 @@ export function ServiceCatalog({
       <SectionSeam theme="dark" />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         {/* Header */}
-        <header className="grid items-end gap-8 lg:grid-cols-[1fr_auto] mb-12 md:mb-16">
+        <header className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_auto] mb-12 md:mb-16">
           <div>
             <p className="flex items-center gap-3">
               <span
@@ -391,7 +391,7 @@ export function ServiceTile({
           "focus-visible:outline-none",
           "motion-reduce:transition-none",
           // Horizontal grid: image 40% | content 60% — only on desktop
-          "grid grid-cols-1 lg:grid-cols-[2fr_3fr]",
+          "grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]",
         )}
       >
         {overlay}

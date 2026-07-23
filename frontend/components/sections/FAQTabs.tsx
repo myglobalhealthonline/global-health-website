@@ -91,7 +91,7 @@ export function FAQTabs({ groups }: { groups: FAQGroup[] }) {
             {active.items.map((item, index) => (
               <article
                 key={item.question}
-                className="grid gap-5 py-7 sm:grid-cols-[90px_1fr]"
+                className="grid gap-5 py-7 sm:grid-cols-[90px_minmax(0,1fr)]"
                 style={{ borderBottom: "1px solid rgba(29,75,54,0.12)" }}
               >
                 <span
