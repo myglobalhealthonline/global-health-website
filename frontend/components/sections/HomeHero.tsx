@@ -275,6 +275,7 @@ export function HomeHero({
                 configured={sameDay.configured}
                 className="max-w-none"
                 i18n={i18n?.sameDay}
+                viewport="mobile"
               />
             </HeroReveal>
           ) : null}
@@ -292,6 +293,7 @@ export function HomeHero({
                 configured={sameDay.configured}
                 className="max-w-none"
                 i18n={i18n?.sameDay}
+                viewport="desktop"
               />
             </div>
           ) : doctorsForPanel.length > 0 ? (

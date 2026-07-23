@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, User, Calendar, BadgeCheck, ArrowUpRight } from "lucide-react";
+import { Clock, User, Calendar, BadgeCheck, ArrowUpRight, RefreshCw } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
@@ -272,12 +272,23 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                 </p>
               ) : null}
 
-              {/* Meta — glass chips */}
+              {/* Meta — glass chips. The "last reviewed" chip is the single
+                  visible freshness indicator; it reads from post.lastReviewedAt,
+                  the exact same field that feeds the JSON-LD Article.dateModified
+                  below, so the two can never drift apart. Only shown once the
+                  post has actually been revised past its publish date — avoids
+                  a redundant "Published X / Updated X" chip pair on day one. */}
               <div className="mt-7 flex flex-wrap items-center gap-2.5 text-[13px] font-medium">
                 {[
                   { icon: <User className="size-3.5" aria-hidden />, label: post.author },
                   { icon: <Calendar className="size-3.5" aria-hidden />, label: formatted },
                   { icon: <Clock className="size-3.5" aria-hidden />, label: `${post.readingTime} ${blogI18n.minRead}` },
+                  ...(post.lastReviewedAt && lastReviewedFormatted !== formatted
+                    ? [{
+                        icon: <RefreshCw className="size-3.5" aria-hidden />,
+                        label: `${blogI18n.lastReviewed} ${lastReviewedFormatted}`,
+                      }]
+                    : []),
                 ].map((chip) => (
                   <span
                     key={chip.label}
