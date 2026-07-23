@@ -392,6 +392,14 @@ export type AdminLandingTranslationDto = {
   seoTitle: string | null;
   seoDescription: string | null;
   bodyHtml: string | null;
+  faq: Array<{ question: string; answer: string }> | null;
+};
+
+export type AdminLandingTemplateDto = {
+  doctorLanguage?: string;
+  doctorSlugs?: string[];
+  ctaService?: string;
+  related?: Array<{ label: string; href: string }>;
 };
 
 export type AdminLandingPageDto = {
@@ -400,6 +408,7 @@ export type AdminLandingPageDto = {
   slug: string;
   isPublished: boolean;
   sortOrder: number;
+  template: AdminLandingTemplateDto | null;
   translations: AdminLandingTranslationDto[];
 };
 

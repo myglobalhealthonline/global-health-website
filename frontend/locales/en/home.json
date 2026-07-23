@@ -111,7 +111,10 @@
     "readyToSpeak": "Ready to speak with a doctor?",
     "bookConsultationBody": "Book an online consultation with a locally-registered doctor in your country. Open appointments are shown during booking.",
     "bookConsultation": "Book consultation",
-    "clinicallyReviewedBy": "Clinically reviewed by"
+    "clinicallyReviewedBy": "Clinically reviewed by",
+    "lastReviewed": "Last reviewed",
+    "moreArticles": "More articles",
+    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
   },
   "flow": {
     "patientUploadHeading": "Upload medical files",

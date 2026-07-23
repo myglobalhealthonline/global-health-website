@@ -645,13 +645,61 @@ export const getCountryServiceDetail = cache(async (
 });
 
 /** SEO landing page (condition/audience marketing page) for the public site. */
+/** Landing page template config — drives the doctor grid / CTA / related
+ *  links blocks. All fields optional. */
+export type CountryLandingPageTemplate = {
+  doctorLanguage?: string;
+  doctorSlugs?: string[];
+  ctaService?: string;
+  related?: Array<{ label: string; href: string }>;
+};
+
 export type CountryLandingPage = {
   slug: string;
   title: string;
   seoTitle: string | null;
   seoDescription: string | null;
   bodyHtml: string | null;
+  template: CountryLandingPageTemplate | null;
+  faq: Array<{ question: string; answer: string }> | null;
 };
+
+function readLandingTemplate(v: unknown): CountryLandingPageTemplate | null {
+  if (!v || typeof v !== "object") return null;
+  const r = v as Record<string, unknown>;
+  const out: CountryLandingPageTemplate = {};
+  if (typeof r.doctorLanguage === "string") out.doctorLanguage = r.doctorLanguage;
+  if (Array.isArray(r.doctorSlugs)) {
+    out.doctorSlugs = r.doctorSlugs.filter((s): s is string => typeof s === "string");
+  }
+  if (typeof r.ctaService === "string") out.ctaService = r.ctaService;
+  if (Array.isArray(r.related)) {
+    out.related = r.related
+      .map((item) => {
+        if (!item || typeof item !== "object") return null;
+        const e = item as Record<string, unknown>;
+        return typeof e.label === "string" && typeof e.href === "string"
+          ? { label: e.label, href: e.href }
+          : null;
+      })
+      .filter((v): v is { label: string; href: string } => v !== null);
+  }
+  return out;
+}
+
+function readLandingFaq(v: unknown): Array<{ question: string; answer: string }> | null {
+  if (!Array.isArray(v)) return null;
+  const out = v
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+      const e = item as Record<string, unknown>;
+      return typeof e.question === "string" && typeof e.answer === "string"
+        ? { question: e.question, answer: e.answer }
+        : null;
+    })
+    .filter((v): v is { question: string; answer: string } => v !== null);
+  return out.length > 0 ? out : null;
+}
 
 export const getCountryLandingPage = cache(async (
   countryCode: string,
@@ -673,6 +721,8 @@ export const getCountryLandingPage = cache(async (
     seoTitle: typeof r.seoTitle === "string" ? r.seoTitle : null,
     seoDescription: typeof r.seoDescription === "string" ? r.seoDescription : null,
     bodyHtml: typeof r.bodyHtml === "string" ? r.bodyHtml : null,
+    template: readLandingTemplate(r.template),
+    faq: readLandingFaq(r.faq),
   };
 });
 

@@ -105,7 +105,10 @@
     "readyToSpeak": "¿Listo para hablar con un médico?",
     "bookConsultationBody": "Reserve una consulta en línea con un médico registrado localmente en su país. Las citas disponibles se muestran durante la reserva.",
     "bookConsultation": "Reservar consulta",
-    "clinicallyReviewedBy": "Revisado clínicamente por"
+    "clinicallyReviewedBy": "Revisado clínicamente por",
+    "lastReviewed": "Last reviewed",
+    "moreArticles": "More articles",
+    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
   },
   "flow": {
     "patientUploadHeading": "Subir archivos médicos",
