@@ -19,6 +19,9 @@ import {
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { SectionSeam } from "@/components/ui/SectionSeam";
+import { ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -129,41 +132,59 @@ export default async function CountryLandingPage({
       />
       {page.faq && page.faq.length > 0 ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
 
-      <div style={{ background: "var(--color-background-page)" }}>
-      <article className="mx-auto max-w-[var(--container-width)] px-5 py-[clamp(48px,7vw,96px)] md:px-10">
-        <h1 className="text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-[-0.02em] text-[var(--color-text-primary)]">
-          {page.title}
-        </h1>
-        {bodyHtml ? (
-          <div
-            className="gh-article-body mt-8 max-w-[76ch]"
-            dangerouslySetInnerHTML={{ __html: bodyHtml }}
-          />
-        ) : null}
+      {/* Header + body — ivory band, same rhythm as the service page's
+          "About this service" section. */}
+      <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <SectionSeam theme="light" />
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
+            {config.name}
+          </p>
+          <h1 className="mt-3 max-w-[20ch] text-[clamp(2rem,4vw,3rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]">
+            {page.title}
+          </h1>
+          {bodyHtml ? (
+            <div
+              className="gh2-card-ivory gh-article-body mt-8 max-w-[76ch] border-t-2 border-t-[rgba(176,241,34,0.24)] p-6 md:p-8"
+              dangerouslySetInnerHTML={{ __html: bodyHtml }}
+            />
+          ) : null}
+          <div className="mt-8">
+            <Link href={ctaHref} className="gh2-btn-lime inline-flex items-center gap-2">
+              Book a consultation
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </div>
+        </div>
+      </section>
 
-        {doctors.length > 0 ? (
-          <section className="mt-16">
-            <h2 className="text-[clamp(1.4rem,2.4vw,2rem)] font-bold tracking-[-0.02em] text-[var(--color-text-primary)]">
+      {doctors.length > 0 ? (
+        <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+          <SectionSeam theme="light" />
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <h2 className="max-w-[20ch] text-[clamp(1.9rem,3.5vw,2.8rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]">
               Doctors who can help
             </h2>
-            <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-10 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {doctors.map((d) => (
-                <DoctorCard
-                  key={d.id}
-                  name={d.fullName}
-                  title={d.title}
-                  bio={d.bio ?? ""}
-                  languages={d.languages}
-                  imageSrc={d.imageSrc ?? null}
-                  imcRegistration={d.imcRegistration}
-                  registrationDivision={d.registrationDivision}
-                  registrationVerified={d.registrationVerified}
-                  medicalRegistrationUrl={d.medicalRegistrationUrl}
-                  credentials={d.credentials}
-                  href={`/${country}/${lang}/doctors/${d.slug}`}
-                />
+                <li key={d.id}>
+                  <DoctorCard
+                    name={d.fullName}
+                    title={d.title}
+                    bio={d.bio ?? ""}
+                    languages={d.languages}
+                    imageSrc={d.imageSrc ?? null}
+                    imcRegistration={d.imcRegistration}
+                    registrationDivision={d.registrationDivision}
+                    registrationVerified={d.registrationVerified}
+                    medicalRegistrationUrl={d.medicalRegistrationUrl}
+                    credentials={d.credentials}
+                    href={`/${country}/${lang}/doctors/${d.slug}`}
+                    dark
+                  />
+                </li>
               ))}
-            </div>
+            </ul>
             {template?.doctorLanguage ? (
               <Link
                 href={`/${country}/${lang}/doctors?lang=${encodeURIComponent(template.doctorLanguage)}`}
@@ -172,37 +193,18 @@ export default async function CountryLandingPage({
                 See all {template.doctorLanguage}-speaking doctors
               </Link>
             ) : null}
-          </section>
-        ) : null}
-
-        <section className="mt-16">
-          <Link href={ctaHref} className="gh2-btn-lime inline-flex">
-            Book a consultation
-          </Link>
+          </div>
         </section>
+      ) : null}
 
-        {page.faq && page.faq.length > 0 ? (
-          <section className="mt-16">
-            <h2 className="text-[clamp(1.4rem,2.4vw,2rem)] font-bold tracking-[-0.02em] text-[var(--color-text-primary)]">
-              Frequently asked questions
-            </h2>
-            <div className="mt-6 space-y-5 max-w-[76ch]">
-              {page.faq.map((item, idx) => (
-                <div key={idx} className="border-b border-[var(--color-border-subtle)] pb-5">
-                  <h3 className="text-[16px] font-semibold text-[var(--color-text-primary)]">
-                    {item.question}
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-text-secondary)]">
-                    {item.answer}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
+      {page.faq && page.faq.length > 0 ? (
+        <FAQSection title="Frequently asked questions" items={page.faq} theme="light" />
+      ) : null}
 
-        {template?.related && template.related.length > 0 ? (
-          <section className="mt-16">
+      {template?.related && template.related.length > 0 ? (
+        <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+          <SectionSeam theme="light" />
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <h2 className="text-[clamp(1.2rem,2vw,1.6rem)] font-bold tracking-[-0.02em] text-[var(--color-text-primary)]">
               You might also need
             </h2>
@@ -218,10 +220,33 @@ export default async function CountryLandingPage({
                 </li>
               ))}
             </ul>
-          </section>
-        ) : null}
-      </article>
-      </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* Closing booking band — visual parity with the service page's
+          closing CTA. */}
+      <section className="gh-inline-clamp-section gh2-section-forest relative isolate overflow-hidden gh-medical-pattern gh-medical-pattern-dark">
+        <SectionSeam theme="dark" />
+        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
+                Ready when you are
+              </p>
+              <h2 className="mt-5 max-w-[18ch] text-[clamp(2rem,4vw,3.4rem)] font-extrabold leading-[1.0] tracking-[-0.035em] text-white/95">
+                {page.title}
+              </h2>
+            </div>
+            <div className="flex lg:justify-end">
+              <Link href={ctaHref} className="gh2-btn-lime gh-focus-on-dark">
+                Book a consultation
+                <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
