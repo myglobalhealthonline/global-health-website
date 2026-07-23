@@ -142,7 +142,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
                   key={key}
                   onClick={() => changeFilter(key)}
                   aria-pressed={filter === key}
-                  className="gh-focus-on-dark rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
+                  className="gh-focus-on-dark inline-flex min-h-11 items-center justify-center rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
                   style={filter === key ? filterActiveStyle : ghostStyle}
                 >
                   {label}

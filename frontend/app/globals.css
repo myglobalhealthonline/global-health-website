@@ -857,6 +857,12 @@ img {
 
 .gh-footer-brandLink {
   text-decoration: none;
+  /* Logo mark's own box is 58x38 — floor the box (not just the pixels) so
+     getBoundingClientRect (and Lighthouse's tap-target audit, which reads
+     the same rect) sees >=44px tall, not just the icon glyph. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 .gh-footer-logo {
@@ -876,6 +882,9 @@ img {
 }
 
 .gh-footer-contactLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: inherit;
   text-decoration: none;
   transition: color 200ms ease-out;
@@ -898,7 +907,15 @@ img {
 }
 
 .gh-footer-navLink {
-  display: inline-block;
+  /* Real box growth (not the pseudo-element hit-slop trick) — these links
+     stack with only an 8px gap, so an invisible expanded hit area would
+     overlap the neighbouring link. min-height/-width floors the actual
+     box at 44px so adjacent targets never overlap; the extra footer
+     height/gutter is intentional (WCAG 2.5.5 / Google mobile-usability). */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
   font-size: 14px;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.7);
@@ -925,8 +942,8 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.7);
@@ -967,6 +984,10 @@ img {
 }
 
 .gh-footer-legalLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
   color: inherit;
   text-decoration: none;
   transition: color 200ms ease-out;

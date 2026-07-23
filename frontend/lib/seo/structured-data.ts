@@ -283,6 +283,10 @@ export function articleJsonLd(input: {
   authorName?: string | null;
   authorPhysician?: Parameters<typeof physicianJsonLd>[0] | null;
   reviewerPhysician?: Parameters<typeof physicianJsonLd>[0] | null;
+  /** Free-text topic (e.g. a blog post's category) — emitted as a generic
+   *  `about.name`. Deliberately typed `Thing`, not `MedicalCondition`: we
+   *  only have a category label here, never a coded clinical entity. */
+  about?: string | null;
 }) {
   const author = input.authorPhysician
     ? physicianJsonLd(input.authorPhysician)
@@ -296,12 +300,17 @@ export function articleJsonLd(input: {
     ...(input.description ? { description: input.description } : {}),
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
     ...(input.imageSrc ? { image: input.imageSrc } : {}),
+    ...(input.about ? { about: { "@type": "Thing", name: input.about } } : {}),
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
     ...(input.dateModified ? { dateModified: input.dateModified } : {}),
     author,
     ...(input.reviewerPhysician
       ? { reviewedBy: physicianJsonLd(input.reviewerPhysician) }
       : {}),
+    // `lastReviewed` is WebPage/MedicalWebPage vocabulary (same precedent as
+    // putting `reviewedBy` on this Article node). Sourced from the exact
+    // same field as `dateModified` so the two can never drift apart.
+    ...(input.dateModified ? { lastReviewed: input.dateModified } : {}),
     publisher: {
       "@type": "MedicalOrganization",
       name: SITE_NAME,

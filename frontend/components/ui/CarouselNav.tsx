@@ -73,7 +73,7 @@ export function CarouselNav({
         onClick={onPrev}
         disabled={!canPrev}
         aria-label={prevLabel}
-        className="gh-focus-on-dark inline-flex size-9 items-center justify-center rounded-full border transition-[background-color,border-color,color] duration-150 disabled:cursor-not-allowed"
+        className="gh-focus-on-dark inline-flex size-11 items-center justify-center rounded-full border transition-[background-color,border-color,color] duration-150 disabled:cursor-not-allowed"
         style={arrowStyle(canPrev)}
       >
         <ChevronLeft size={16} aria-hidden />
@@ -122,7 +122,7 @@ export function CarouselNav({
         onClick={onNext}
         disabled={!canNext}
         aria-label={nextLabel}
-        className="gh-focus-on-dark inline-flex size-9 items-center justify-center rounded-full border transition-[background-color,border-color,color] duration-150 disabled:cursor-not-allowed"
+        className="gh-focus-on-dark inline-flex size-11 items-center justify-center rounded-full border transition-[background-color,border-color,color] duration-150 disabled:cursor-not-allowed"
         style={arrowStyle(canNext)}
       >
         <ChevronRight size={16} aria-hidden />

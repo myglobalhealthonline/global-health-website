@@ -237,7 +237,7 @@ export function FeaturedDoctor({
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={doctor.verifyRegistrationLabel ?? "Verify registration on the official register"}
-                      className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 transition-opacity hover:opacity-75 motion-reduce:transition-none"
+                      className="inline-flex min-h-11 items-center gap-1 font-semibold underline underline-offset-2 transition-opacity hover:opacity-75 motion-reduce:transition-none"
                       style={{ color: body }}
                     >
                       {doctor.imcRegistration}
