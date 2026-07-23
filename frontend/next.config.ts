@@ -564,6 +564,14 @@ const nextConfig: NextConfig = {
       // platform — there is only one canonical /about page (app/(site)/(global)/about).
       { source: "/pt/about", destination: "/about", permanent: true },
       { source: "/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
+      // Brazil deliberately supports only en/es/pt (admin decision, not a
+      // content gap) — CS/RO/DE are still valid site-wide locale codes
+      // (resolveLocale() accepts any of the 6 global ones regardless of a
+      // country's own supportedLocales), so a direct/old link to one of
+      // these still resolves 200 unless redirected. Consolidate onto pt.
+      { source: "/brazil/cs/:path*", destination: "/brazil/pt/:path*", permanent: true },
+      { source: "/brazil/ro/:path*", destination: "/brazil/pt/:path*", permanent: true },
+      { source: "/brazil/de/:path*", destination: "/brazil/pt/:path*", permanent: true },
       // Legacy specialist pages whose service still exists → new slug 1:1.
       { source: "/ireland-specialist-consultations/cardiology-consultation", destination: "/ireland/en/services/cardiology-specialist-consultation", permanent: true },
       { source: "/ireland-specialist-consultations/neurology-consultation", destination: "/ireland/en/services/neurology-specialist-consultation", permanent: true },
