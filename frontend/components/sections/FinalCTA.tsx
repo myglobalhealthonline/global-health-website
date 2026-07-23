@@ -48,7 +48,7 @@ export function FinalCTA({
         "
       >
         {/* Main grid */}
-        <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.25fr] lg:gap-20 min-h-[400px]">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:gap-20 min-h-[400px]">
           {/* Left — oversized "Live" stat with expanding ring */}
           <RevealOnScroll delay={0}>
             <div>

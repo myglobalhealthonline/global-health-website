@@ -239,7 +239,7 @@ export function CountryTrustBar({
     >
       <div className="relative z-[1] mx-auto max-w-[var(--container-width)] px-5 py-[clamp(48px,6vw,78px)] md:px-10">
         <div className="overflow-hidden rounded-[32px] border border-[rgba(29,75,54,0.14)] bg-[rgba(255,253,241,0.84)] shadow-[0_24px_70px_rgba(29,75,54,0.12)] backdrop-blur-md">
-          <div className="grid items-stretch gap-0 lg:grid-cols-[0.72fr_1.28fr]">
+          <div className="grid items-stretch gap-0 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
             <div className="border-b border-[rgba(29,75,54,0.12)] bg-[linear-gradient(145deg,rgba(29,75,54,0.08),rgba(255,255,255,0.30))] p-6 sm:p-8 lg:border-b-0 lg:border-r lg:border-r-[rgba(29,75,54,0.12)]">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="rounded-full bg-[var(--color-brand-primary)] px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-white shadow-[0_10px_24px_rgba(29,75,54,0.20)]">

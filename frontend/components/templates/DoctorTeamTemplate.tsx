@@ -255,7 +255,7 @@ export function DoctorTeamTemplate({
         <section className="gh-section relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest">
           <SectionSeam theme="dark" />
           <div className="gh-container">
-            <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_1fr]">
+            <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
               <h2
                 className="gh-display text-[clamp(2rem,4.5vw,4rem)]"
                 style={{ fontWeight: 800, color: "rgba(255,255,255,0.92)" }}

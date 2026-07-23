@@ -251,7 +251,7 @@ export function VerifiedProfessionals({
       <SectionSeam theme="light" />
       <SectionSeam position="bottom" theme="light" />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-        <div className="grid items-center gap-14 lg:grid-cols-[1fr_1.35fr] lg:gap-20">
+        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
           <RevealOnScroll delay={0}>
             <div className="lg:sticky lg:top-[calc(var(--header-height)_+_32px)]">
               <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]">

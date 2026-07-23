@@ -131,7 +131,7 @@ export function ServiceCard({
         <article
           className={cn(
             "group relative h-full overflow-hidden gh2-glass-forest gh2-glass-hover",
-            featured ? "flex flex-col lg:grid lg:grid-cols-[2fr_3fr]" : "flex flex-col",
+            featured ? "flex flex-col lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : "flex flex-col",
             "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
             className,
           )}
@@ -331,7 +331,7 @@ export function ServiceCard({
     <article
       className={cn(
         "group relative h-full overflow-hidden gh2-card-ivory gh2-card-hover",
-        featured && imageSrc ? "flex flex-col lg:grid lg:grid-cols-[2fr_3fr]" : "flex flex-col",
+        featured && imageSrc ? "flex flex-col lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : "flex flex-col",
         className,
       )}
     >

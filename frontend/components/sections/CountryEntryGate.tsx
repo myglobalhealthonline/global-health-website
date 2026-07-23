@@ -296,7 +296,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
       {/* Body — two-column clinic hero */}
       <section className={`${styles.body} relative flex flex-1 items-center`}>
         <div className={`${styles.content} w-full`}>
-          <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16">
             {/* Left — clinic intro + trust */}
             <div className="min-w-0">
               <HeroReveal delay={0}>

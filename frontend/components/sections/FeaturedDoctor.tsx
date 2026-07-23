@@ -346,11 +346,14 @@ export function FeaturedDoctor({
       <style>{`
         .gh-featured-card {
           display: grid;
-          grid-template-columns: 1fr;
+          /* minmax(0,…) — bare 1fr can't shrink below the content's
+             min-content width, so a long unbreakable credential line
+             blows the card past the viewport on mobile. */
+          grid-template-columns: minmax(0, 1fr);
         }
         @media (min-width: 640px) {
           .gh-featured-card {
-            grid-template-columns: 320px 1fr;
+            grid-template-columns: 320px minmax(0, 1fr);
           }
           .gh-featured-photo {
             min-height: 360px;
