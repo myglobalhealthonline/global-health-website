@@ -33,7 +33,11 @@ export type PublicMetadataInput = {
   noindex?: boolean;
 };
 
-const DOCUMENT_TITLE_LIMIT = 60;
+// Google renders document titles by pixel width (~600px), not a fixed
+// character count — 60 was cutting titles that fit comfortably in the SERP.
+// 74 covers the real title+" · Global Health" combination (see page-seo.test.ts)
+// while still truncating genuinely long titles at a clean word boundary.
+const DOCUMENT_TITLE_LIMIT = 74;
 const SEARCH_DESCRIPTION_LIMIT = 155;
 const SOCIAL_DESCRIPTION_LIMIT = 125;
 const BRAND_SEPARATOR = " | ";

@@ -10,7 +10,7 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
-import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, subscriptionPlanProductJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
@@ -127,6 +127,21 @@ export default async function PricingPage({
           { name: t.heading, url: `/${slug}/${lang}/pricing` },
         ])}
       />
+      {/* Product + Offer per plan tier — sourced from the same `plans` fetch
+          the cards below render, so schema price never drifts from the page. */}
+      {plans.length > 0 ? (
+        <JsonLd
+          data={plans.map((plan) =>
+            subscriptionPlanProductJsonLd({
+              name: plan.name,
+              description: plan.shortDescription,
+              url: `/${slug}/${lang}/pricing`,
+              priceCents: plan.monthlyPriceCents,
+              currencyCode: plan.currencyCode,
+            }),
+          )}
+        />
+      ) : null}
 
       <PageHero
         watermark={t.watermark}

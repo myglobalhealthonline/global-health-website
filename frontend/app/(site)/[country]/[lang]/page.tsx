@@ -31,8 +31,6 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import {
   breadcrumbJsonLd,
   medicalBusinessJsonLd,
-  organizationJsonLd,
-  websiteJsonLd,
   faqJsonLd,
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
@@ -519,12 +517,6 @@ export default async function CountryLangHomePage({
     <>
       <JsonLd
         data={[
-          organizationJsonLd(
-            countryTrust
-              ? countryTrust.authorityLinks.filter((l) => l.showInSchema).map((l) => l.url)
-              : [],
-          ),
-          websiteJsonLd(),
           medicalBusinessJsonLd({
             name: config.name,
             url: countryUrl,

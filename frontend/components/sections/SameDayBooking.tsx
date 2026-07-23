@@ -112,6 +112,8 @@ function languageLabel(code: string): string {
   return LANGUAGE_NAMES[key] ?? key.charAt(0).toUpperCase() + key.slice(1);
 }
 
+const DESKTOP_QUERY = "(min-width: 1024px)";
+
 export function SameDayBooking({
   country,
   lang,
@@ -120,6 +122,7 @@ export function SameDayBooking({
   configured,
   className,
   i18n,
+  viewport,
 }: {
   /** Country URL slug, e.g. "ireland". */
   country: string;
@@ -134,6 +137,18 @@ export function SameDayBooking({
   /** Extra classes for placement (the hero positions it absolutely). */
   className?: string;
   i18n?: Partial<SameDayBookingI18n>;
+  /**
+   * HomeHero mounts two instances of this component — one laid out inline in
+   * the mobile text column, one in the desktop side panel — because those are
+   * genuinely different DOM parents (the desktop grid cell is `hidden` below
+   * `lg`, so a single node can't be CSS-repositioned between them). Tailwind's
+   * `lg:` classes only toggle `display`, so without this both instances still
+   * mount, both fetch gp-availability, and both render the H2 into the DOM.
+   * `viewport` tells an instance which breakpoint it's meant to serve; it
+   * checks the real viewport on mount and only the matching instance
+   * fetches/renders.
+   */
+  viewport: "mobile" | "desktop";
 }) {
   const t = { ...DEFAULT_I18N, ...i18n };
   const router = useRouter();
@@ -165,6 +180,11 @@ export function SameDayBooking({
   // Distinguishes "fetch failed" from "fetch succeeded, no slots" so the UI can
   // offer a retry instead of silently rendering the same empty state (spec §11).
   const [fetchError, setFetchError] = useState(false);
+  // True until the mount effect below proves this instance doesn't match the
+  // live viewport — see the `viewport` prop doc. Starts true so SSR still
+  // renders real content on both instances (no blank/no-index first paint).
+  const [isActive, setIsActive] = useState(true);
+  const loadedRef = useRef(false);
 
   async function loadAvailability(code: string) {
     setSlots([]);
@@ -199,10 +219,25 @@ export function SameDayBooking({
   }
 
   // Auto-load the default language's times on mount so the panel shows
-  // availability immediately instead of waiting for a language pick.
+  // availability immediately instead of waiting for a language pick — but
+  // only for the instance matching the real viewport (see `viewport` prop
+  // doc): otherwise both the mobile and desktop instance fire the same
+  // gp-availability request. Re-checks on resize so crossing the 1024px
+  // breakpoint without a reload still loads the now-visible instance.
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- kicks off the initial fetch; loadAvailability sets loading state before the request resolves
-    if (defaultLanguage) void loadAvailability(defaultLanguage);
+    const mq = window.matchMedia(DESKTOP_QUERY);
+    function sync(matches: boolean) {
+      const active = viewport === "desktop" ? matches : !matches;
+      setIsActive(active);
+      if (active && !loadedRef.current && defaultLanguage) {
+        loadedRef.current = true;
+        void loadAvailability(defaultLanguage);
+      }
+    }
+    sync(mq.matches);
+    const listener = (e: MediaQueryListEvent) => sync(e.matches);
+    mq.addEventListener("change", listener);
+    return () => mq.removeEventListener("change", listener);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -269,7 +304,7 @@ export function SameDayBooking({
     });
   }
 
-  if (!configured || languages.length === 0) return null;
+  if (!configured || languages.length === 0 || !isActive) return null;
 
   const tzLabel = clinicTz.includes("/")
     ? clinicTz.slice(clinicTz.lastIndexOf("/") + 1).replace(/_/g, " ")
