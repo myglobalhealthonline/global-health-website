@@ -215,7 +215,7 @@ export function DoctorsHero({
           paddingBottom: "clamp(20px,3.5vw,40px)",
         }}
       >
-        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
           {/* ── LEFT — type, CTAs, trust cards ───────────────────────── */}
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">

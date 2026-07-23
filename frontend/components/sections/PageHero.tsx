@@ -383,7 +383,7 @@ export function PageHero({
           paddingBottom: "clamp(20px,3.5vw,40px)",
         }}
       >
-        <div className={hasRightColumn ? "grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""}>
+        <div className={hasRightColumn ? "grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14" : ""}>
           <div>
             {countryCode || countryLabel ? (
               <p className="flex flex-wrap items-center gap-3">

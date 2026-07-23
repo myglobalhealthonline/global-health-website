@@ -394,7 +394,7 @@ export function GH2AuthShell({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3,1fr)",
+              gridTemplateColumns: "repeat(3,minmax(0,1fr))",
               borderRadius: 18,
               background: "rgba(255,255,255,0.045)",
               border: "1px solid rgba(255,255,255,0.10)",

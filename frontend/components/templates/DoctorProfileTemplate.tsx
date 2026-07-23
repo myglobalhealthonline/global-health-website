@@ -412,7 +412,7 @@ export function DoctorProfileTemplate({
       {/* ── BODY — long-form bio + sticky booking ── */}
       <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(56px,7vw,96px)]">
         <SectionSeam theme="light" />
-        <div className="gh-container grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
+        <div className="gh-container grid grid-cols-1 gap-16 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:gap-24">
           <article>
             <p
               className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]"
@@ -428,7 +428,7 @@ export function DoctorProfileTemplate({
               )}
             </h2>
             <div
-              className="mt-8 text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-2"
+              className="mt-8 break-words text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-2"
               dangerouslySetInnerHTML={{ __html: safeBio }}
             />
 
@@ -531,7 +531,7 @@ export function DoctorProfileTemplate({
       <section className="relative bg-[linear-gradient(168deg,#15382A_0%,#0F2E25_55%,#0B241C_100%)] gh-inline-clamp-section-cta">
         <SectionSeam theme="dark" />
         <div className="gh-container">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_1fr]">
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
             <div>
               <p
                 className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]"
