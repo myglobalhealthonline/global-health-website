@@ -129,6 +129,7 @@ export default async function CountryLandingPage({
       />
       {page.faq && page.faq.length > 0 ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
 
+      <div style={{ background: "var(--color-background-page)" }}>
       <article className="mx-auto max-w-[var(--container-width)] px-5 py-[clamp(48px,7vw,96px)] md:px-10">
         <h1 className="text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-[-0.02em] text-[var(--color-text-primary)]">
           {page.title}
@@ -220,6 +221,7 @@ export default async function CountryLandingPage({
           </section>
         ) : null}
       </article>
+      </div>
     </>
   );
 }
