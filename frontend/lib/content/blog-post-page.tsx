@@ -9,7 +9,7 @@ import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type Bl
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { articleJsonLd } from "@/lib/seo/structured-data";
+import { articleJsonLd, breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
@@ -183,17 +183,29 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   return (
     <>
       <JsonLd
-        data={articleJsonLd({
-          title: post.title,
-          description: post.seoDescription ?? post.excerpt,
-          url: `${getSiteUrl()}${canonicalUrl}`,
-          datePublished: post.publishedAt,
-          dateModified: post.lastReviewedAt,
-          imageSrc: post.coverImageSrc,
-          authorName: post.author,
-          authorPhysician,
-          reviewerPhysician,
-        })}
+        data={[
+          articleJsonLd({
+            title: post.title,
+            description: post.seoDescription ?? post.excerpt,
+            url: `${getSiteUrl()}${canonicalUrl}`,
+            datePublished: post.publishedAt,
+            dateModified: post.lastReviewedAt,
+            imageSrc: post.coverImageSrc,
+            authorName: post.author,
+            authorPhysician,
+            // `reviewedBy`: the distinct clinical reviewer if one is linked,
+            // otherwise the author physician stands as their own reviewer —
+            // both are the SAME real, credentialed Physician entity already
+            // rendered elsewhere on the page, never a fabricated reviewer.
+            reviewerPhysician: reviewerPhysician ?? authorPhysician,
+            about: post.category,
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", url: "/" },
+            { name: "Blog", url: backHref },
+            { name: post.title, url: canonicalUrl },
+          ]),
+        ]}
       />
       {/* ── Article hero — matches the PageHero atmosphere (layered forest
           gradients, lime glow, plus glyphs) with the cover image living IN the

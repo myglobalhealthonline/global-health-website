@@ -430,8 +430,8 @@ function VerifyLink({
       rel="noopener noreferrer"
       className={
         variant === "dark"
-          ? "group inline-flex items-center gap-1 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-brand-accent)] transition-opacity hover:opacity-75"
-          : "group inline-flex items-center gap-1 text-[12px] font-extrabold uppercase tracking-[0.08em] text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
+          ? "group inline-flex min-h-11 items-center gap-1 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-brand-accent)] transition-opacity hover:opacity-75"
+          : "group inline-flex min-h-11 items-center gap-1 text-[12px] font-extrabold uppercase tracking-[0.08em] text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
       }
     >
       {label}

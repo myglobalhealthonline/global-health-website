@@ -11,6 +11,8 @@ import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { CommonLocale } from "@/lib/i18n/types";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 
 type BlogIndexRouteParams = {
   /** Country slug from the route (e.g. "ireland"). Absent on the bare
@@ -46,8 +48,16 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
     homeHref = lastSlug && lastLang ? `/${lastSlug}/${lastLang}` : "/";
   }
 
+  const blogHref = countrySlug && lang ? `/${countrySlug}/${lang}/blog` : "/blog";
+
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", url: "/" },
+          { name: "Blog", url: blogHref },
+        ])}
+      />
       <PageHero
         watermark={bp.heroWatermark ?? "Blog"}
         countryLabel={bp.heroCountryLabel ?? "Global Health · Blog"}
