@@ -24,6 +24,7 @@ export type PublicCountryFooter = {
   linkedinUrl: string | null;
   twitterUrl: string | null;
   youtubeUrl: string | null;
+  tiktokUrl: string | null;
   customColumns: Array<{
     title: string;
     links: Array<{ label: string; href: string; external?: boolean }>;

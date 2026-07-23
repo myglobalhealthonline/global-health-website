@@ -72,6 +72,7 @@ export const countryFooterUpsertSchema = z.object({
   linkedinUrl: socialUrlSchema,
   twitterUrl: socialUrlSchema,
   youtubeUrl: socialUrlSchema,
+  tiktokUrl: socialUrlSchema,
   customColumns: z.array(footerColumnSchema).max(6).default([]),
   copyrightLine: optionalText(160),
   isActive: z.boolean().default(true),
@@ -117,6 +118,7 @@ export type CountryFooterDto = {
   linkedinUrl: string | null;
   twitterUrl: string | null;
   youtubeUrl: string | null;
+  tiktokUrl: string | null;
   customColumns: Array<{
     title: string;
     links: Array<{ label: string; href: string; external?: boolean }>;
@@ -157,6 +159,7 @@ export function toCountryFooterDto(
     linkedinUrl: row.linkedinUrl,
     twitterUrl: row.twitterUrl,
     youtubeUrl: row.youtubeUrl,
+    tiktokUrl: row.tiktokUrl,
     customColumns: row.customColumns as CountryFooterDto["customColumns"],
     copyrightLine: row.copyrightLine,
     isActive: row.isActive,

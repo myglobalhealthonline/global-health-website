@@ -1614,6 +1614,7 @@ model CountryFooter {
   linkedinUrl    String?
   twitterUrl     String?
   youtubeUrl     String?
+  tiktokUrl      String?
   /// Custom link columns. Array of
   /// `{ title: string; links: Array<{ label: string; href: string; external?: boolean }> }`.
   /// Defaults to `[]`. Admin reorders by re-saving; UI is a simple
