@@ -556,6 +556,14 @@ const nextConfig: NextConfig = {
       { source: "/specialty-rm", destination: "/romania/ro/see-a-specialist", permanent: true },
       // Legacy Wix doctor profiles — slugs carried over 1:1.
       { source: "/ireland-doctors/:slug", destination: "/ireland/en/doctors/:slug", permanent: true },
+      { source: "/czechia-doctors/:slug", destination: "/czechia/cs/doctors/:slug", permanent: true },
+      { source: "/pt/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
+      { source: "/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
+      { source: "/romania-doctors/:slug", destination: "/romania/ro/doctors/:slug", permanent: true },
+      // Legacy Wix top-level pages with no per-country equivalent on the new
+      // platform — there is only one canonical /about page (app/(site)/(global)/about).
+      { source: "/pt/about", destination: "/about", permanent: true },
+      { source: "/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
       // Legacy specialist pages whose service still exists → new slug 1:1.
       { source: "/ireland-specialist-consultations/cardiology-consultation", destination: "/ireland/en/services/cardiology-specialist-consultation", permanent: true },
       { source: "/ireland-specialist-consultations/neurology-consultation", destination: "/ireland/en/services/neurology-specialist-consultation", permanent: true },
