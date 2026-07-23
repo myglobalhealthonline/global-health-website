@@ -213,7 +213,13 @@ export function physicianJsonLd(doc: {
         }
       : {}),
     ...(hasCredential ? { hasCredential } : {}),
-    ...(doc.regulator
+    // memberOf (council registration) only asserted for team members who
+    // actually hold a registration number with that regulator — a country's
+    // `regulator` is resolved once for every doctor on the page, but allied
+    // health / non-physician team members (e.g. wellness consultants,
+    // manual therapists) have no `registrationNumber` and must not inherit
+    // the country's medical-council membership as a blanket default.
+    ...(doc.regulator && doc.registrationNumber
       ? {
           memberOf: {
             "@type": "Organization",
@@ -443,6 +449,88 @@ export function medicalClinicServiceJsonLd(input: {
         target: input.bookingUrl.startsWith("http")
           ? input.bookingUrl
           : `${SITE_URL}${input.bookingUrl}`,
+      },
+    },
+  };
+}
+
+/**
+ * Schema.org `Service` + nested `Offer[]` for a priced consultation hub (e.g.
+ * the GP consultation page). One `Offer` per bookable service card actually
+ * rendered on the page — prices/currency are passed in from the same
+ * server-fetched catalogue the page renders, never hardcoded, so the schema
+ * can't drift from what a visitor sees.
+ */
+export function consultationServiceOffersJsonLd(input: {
+  name: string;
+  description: string;
+  serviceType: string;
+  countryName: string;
+  url: string;
+  offers: Array<{
+    name: string;
+    url: string;
+    priceCents: number;
+    currencyCode: string;
+    durationMinutes?: number | null;
+  }>;
+}) {
+  if (input.offers.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: input.name,
+    description: input.description,
+    serviceType: input.serviceType,
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    areaServed: { "@type": "Country", name: input.countryName },
+    provider: { "@type": "MedicalOrganization", name: SITE_NAME },
+    offers: input.offers.map((offer) => ({
+      "@type": "Offer",
+      name: offer.name,
+      url: offer.url.startsWith("http") ? offer.url : `${SITE_URL}${offer.url}`,
+      price: (offer.priceCents / 100).toFixed(2),
+      priceCurrency: offer.currencyCode,
+      availability: "https://schema.org/InStock",
+      ...(offer.durationMinutes != null
+        ? { eligibleDuration: { "@type": "QuantitativeValue", value: offer.durationMinutes, unitCode: "MIN" } }
+        : {}),
+    })),
+  };
+}
+
+/**
+ * Schema.org `Product` + nested `Offer` for one subscription plan tier on the
+ * pricing page. Called once per plan from the same server-fetched plan list
+ * the cards render, so price/currency always match what's on screen.
+ */
+export function subscriptionPlanProductJsonLd(input: {
+  name: string;
+  description?: string | null;
+  url: string;
+  priceCents: number;
+  currencyCode: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: input.name,
+    ...(input.description ? { description: input.description } : {}),
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    brand: { "@type": "Brand", name: SITE_NAME },
+    offers: {
+      "@type": "Offer",
+      price: (input.priceCents / 100).toFixed(2),
+      priceCurrency: input.currencyCode,
+      availability: "https://schema.org/InStock",
+      url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: (input.priceCents / 100).toFixed(2),
+        priceCurrency: input.currencyCode,
+        unitCode: "MON",
+        billingDuration: 1,
+        billingIncrement: 1,
       },
     },
   };

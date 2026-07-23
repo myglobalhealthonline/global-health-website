@@ -25,7 +25,12 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
-import { breadcrumbJsonLd, medicalProcedureJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
+import {
+  breadcrumbJsonLd,
+  consultationServiceOffersJsonLd,
+  medicalProcedureJsonLd,
+  faqJsonLd,
+} from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
   getPageContent,
@@ -202,6 +207,28 @@ export default async function CountryLangGeneralConsultationPage({
           bookingUrl: ctaHref,
         })}
       />
+      {/* Commercial layer alongside MedicalProcedure above — one real Offer per
+          bookable GP service card rendered below, sourced from the same
+          `services` catalogue fetch (never hardcoded). */}
+      {(() => {
+        const serviceOffersLd = consultationServiceOffersJsonLd({
+          name: heroTitle,
+          description: heroSubtitle,
+          serviceType: "General practitioner (GP) online consultation",
+          countryName: config.name,
+          url: `/${slug}/${lang}/gp-consultation-online`,
+          offers: services
+            .filter((s) => s.basePriceCents != null)
+            .map((s) => ({
+              name: s.name,
+              url: `/${slug}/${lang}/services/${s.slug}`,
+              priceCents: s.basePriceCents!,
+              currencyCode: s.currencyCode ?? "EUR",
+              durationMinutes: s.durationMinutes,
+            })),
+        });
+        return serviceOffersLd ? <JsonLd data={serviceOffersLd} /> : null;
+      })()}
 
       {/* Hero — dark editorial, shared with every inner page. Admin
         * copy still takes precedence via the heroTitle / heroSubtitle

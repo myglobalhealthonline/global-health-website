@@ -16,7 +16,7 @@ export async function GET() {
   const lines: string[] = [
     `# ${SITE_NAME}`,
     "",
-    "> Online medical consultations with licensed clinicians across Ireland, Portugal, Spain, Czechia, and Romania.",
+    "> Online medical consultations with licensed clinicians across Ireland, Portugal, Spain, Czechia, Romania, and Brazil.",
     "",
     "## Countries",
   ];

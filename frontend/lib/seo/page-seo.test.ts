@@ -175,8 +175,8 @@ describe("buildPublicMetadata", () => {
     const openGraph = metadata.openGraph as OpenGraphMetadata;
     const ogTitle = openGraph.title as string;
 
-    expect(documentTitle.length).toBeLessThanOrEqual(60);
-    expect(ogTitle.length).toBeLessThanOrEqual(60);
+    expect(documentTitle.length).toBeLessThanOrEqual(74);
+    expect(ogTitle.length).toBeLessThanOrEqual(74);
 
     expectWordSafeTruncation(documentTitle, title);
     expectWordSafeTruncation(ogTitle, title);
@@ -225,7 +225,7 @@ describe("buildPublicMetadata", () => {
     }
   });
 
-  it("includes the layout brand suffix inside the 60-character document limit", () => {
+  it("includes the layout brand suffix inside the 74-character document limit", () => {
     const metadata = buildPublicMetadata({
       path: "/ireland/en/services/a-long-service",
       title: "A very detailed specialist consultation service for patients throughout Ireland",
@@ -233,8 +233,21 @@ describe("buildPublicMetadata", () => {
     });
 
     const title = renderedDocumentTitle(metadata.title);
-    expect(title.length).toBeLessThanOrEqual(60);
+    expect(title.length).toBeLessThanOrEqual(74);
     expect(title).toContain("Global Health");
+  });
+
+  it("does not truncate a realistic homepage title that fits within the new budget", () => {
+    const metadata = buildPublicMetadata({
+      path: "/",
+      title: "Licensed online consultations tailored to where you live",
+      description: "Meet licensed doctors and specialists online, in your country.",
+    });
+
+    const title = renderedDocumentTitle(metadata.title);
+    expect(title).toBe(
+      "Licensed online consultations tailored to where you live · Global Health",
+    );
   });
 
   it("keeps doctor OG metadata on the branded endpoint when the source image is untrusted", () => {
