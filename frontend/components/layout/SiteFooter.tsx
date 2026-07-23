@@ -28,6 +28,7 @@ import {
   IconLinkedin,
   IconTwitter,
   IconYoutube,
+  IconTiktok,
   type BrandIcon,
 } from "@/components/ui/BrandIcons";
 import { NewsletterSignup } from "./NewsletterSignup";
@@ -44,12 +45,13 @@ const REGULATORY_TEXT: Partial<Record<string, string>> = {
 // component body flatMap straight into render entries without ad-hoc
 // ternary-then-filter shapes.
 const SOCIAL_FIELDS: ReadonlyArray<{
-  key: "instagramUrl" | "facebookUrl" | "linkedinUrl" | "twitterUrl" | "youtubeUrl";
+  key: "instagramUrl" | "facebookUrl" | "linkedinUrl" | "twitterUrl" | "youtubeUrl" | "tiktokUrl";
   Icon: BrandIcon;
   label: string;
 }> = [
   { key: "instagramUrl", Icon: IconInstagram, label: "Instagram" },
   { key: "facebookUrl", Icon: IconFacebook, label: "Facebook" },
+  { key: "tiktokUrl", Icon: IconTiktok, label: "TikTok" },
   { key: "linkedinUrl", Icon: IconLinkedin, label: "LinkedIn" },
   { key: "twitterUrl", Icon: IconTwitter, label: "X / Twitter" },
   { key: "youtubeUrl", Icon: IconYoutube, label: "YouTube" },
@@ -319,11 +321,14 @@ export function SiteFooter({
           <p className="gh-footer-regulatory gh-body-sm text-white/60">{regulatoryText}</p>
         ) : null}
 
-        <div className="gh-footer-copyrightBar flex flex-wrap justify-between gap-3">
+        {/* items-center: legal links have a 44px tap-target min-height, so
+            without centering the plain-text siblings (·, GDPR line) sat at
+            the top of the row while the links floated lower. */}
+        <div className="gh-footer-copyrightBar flex flex-wrap items-center justify-between gap-3">
           <span suppressHydrationWarning>
             {copyrightPrefix} · {navigation.footerCopyrightSuffix}
           </span>
-          <span className="flex gap-3">
+          <span className="flex flex-wrap items-center gap-3">
             <Link
               href="/privacy"
               className="gh-footer-legalLink gh-focus-on-dark"

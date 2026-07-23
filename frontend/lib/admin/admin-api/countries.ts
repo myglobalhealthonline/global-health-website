@@ -485,6 +485,7 @@ export type AdminCountryFooterDto = {
   linkedinUrl: string | null;
   twitterUrl: string | null;
   youtubeUrl: string | null;
+  tiktokUrl: string | null;
   customColumns: AdminFooterCustomColumn[];
   copyrightLine: string | null;
   isActive: boolean;

@@ -11,7 +11,17 @@ const SITE_URL = getSiteUrl();
 // Official social profiles that always belong in the entity's `sameAs`,
 // regardless of which country the visitor is in. Per-country regulator
 // authority URLs are merged on top of these (passed by the layout).
-const BASE_SAME_AS = ["https://www.instagram.com/globalhealth_ie/"];
+const BASE_SAME_AS = [
+  "https://www.instagram.com/globalhealth_ie/",
+  "https://www.instagram.com/globalhealth_es/",
+  "https://www.instagram.com/globalhealth_ro/",
+  "https://www.instagram.com/globalhealth_pt/",
+  "https://www.instagram.com/globalhealth_cz/",
+  "https://www.tiktok.com/@globalhealth.online",
+  "https://www.linkedin.com/company/myglobalhealth.online",
+  "https://www.youtube.com/@GlobalHealth-y9o",
+  "https://www.wikidata.org/wiki/Q140363271",
+];
 
 export function organizationJsonLd(sameAs: string[] = []) {
   return {
