@@ -282,7 +282,9 @@ export function DoctorCard({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Verify registration on the official register"
-                    className="relative z-20 inline-flex items-center gap-1 text-[13px] font-semibold underline underline-offset-2 transition-opacity hover:opacity-70"
+                    // min-h-11 floors the box at the 44px touch target
+                    // (WCAG 2.5.5) — this is the tappable "verify" link.
+                    className="relative z-20 inline-flex min-h-11 items-center gap-1 text-[13px] font-semibold underline underline-offset-2 transition-opacity hover:opacity-70"
                     style={{ color: "var(--dc-ink)" }}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -328,7 +330,7 @@ export function DoctorCard({
                           href={c.bodyUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="relative z-20 underline underline-offset-2 transition-opacity hover:opacity-75"
+                          className="relative z-20 inline-flex min-h-11 min-w-11 items-center underline underline-offset-2 transition-opacity hover:opacity-75"
                           onClick={(e) => e.stopPropagation()}
                         >
                           {c.label}
