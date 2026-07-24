@@ -325,6 +325,7 @@ export function DoctorCalendarUI({
           trigger={
             <button
               type="button"
+              data-tour="calendar-legend"
               className="gh-doctor-calendar-legend-trigger inline-flex items-center gap-1.5 rounded-[999px] px-3 py-1.5 text-xs font-semibold transition hover:bg-[var(--portal-well)]"
               style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
             >
@@ -426,7 +427,7 @@ export function DoctorCalendarUI({
           description={s.addAvailabilityDesc.replace("{tz}", clinicTimezone)}
           className="gh-doctor-calendar-form-card"
         >
-          <div className="gh-form-section__span-2 grid gap-3">
+          <div className="gh-form-section__span-2 grid gap-3" data-tour="calendar-add">
             <div className="gh-doctor-calendar-date-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">{s.fromDate}</span>
@@ -498,7 +499,7 @@ export function DoctorCalendarUI({
           description={s.timeOffDesc.replace("{tz}", tz)}
           className="gh-doctor-calendar-form-card"
         >
-          <div className="gh-form-section__span-2 grid gap-3">
+          <div className="gh-form-section__span-2 grid gap-3" data-tour="calendar-timeoff">
             <div className="gh-doctor-calendar-date-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">{common.from}</span>

@@ -36,6 +36,7 @@ import {
 import { groupAppointmentsByDay } from "@/lib/appointment-day-groups";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { DoctorTourDemo } from "@/components/doctor-tour-demo";
 
 // Same-shape "in progress now" check as the CommandBand instrument on
 // /doctor (DESIGN.md §6.1) — scheduled time has passed, the row is still
@@ -216,28 +217,32 @@ export default async function DoctorAppointmentsPage({
         }
       />
 
+      <DoctorTourDemo strings={d.tour.demo} />
+
       {result.ok ? (
-        <AdminSummaryStrip
-          className="mb-4"
-          items={[
-            {
-              label: d.appointments.openConsults,
-              value: openAppointments,
-              hint: d.appointments.openConsultsHint,
-              tone: openAppointments > 0 ? "warning" : "neutral",
-              icon: <AlertTriangle aria-hidden />,
-              href: "/doctor/appointments?open=true",
-            },
-            {
-              label: d.appointments.notFinalized,
-              value: unfinalized,
-              hint: d.appointments.notFinalizedHint,
-              tone: unfinalized > 0 ? "warning" : "neutral",
-              icon: <CheckCircle2 aria-hidden />,
-              href: "/doctor/appointments?notFinalized=true",
-            },
-          ]}
-        />
+        <div data-tour="appointments-summary">
+          <AdminSummaryStrip
+            className="mb-4"
+            items={[
+              {
+                label: d.appointments.openConsults,
+                value: openAppointments,
+                hint: d.appointments.openConsultsHint,
+                tone: openAppointments > 0 ? "warning" : "neutral",
+                icon: <AlertTriangle aria-hidden />,
+                href: "/doctor/appointments?open=true",
+              },
+              {
+                label: d.appointments.notFinalized,
+                value: unfinalized,
+                hint: d.appointments.notFinalizedHint,
+                tone: unfinalized > 0 ? "warning" : "neutral",
+                icon: <CheckCircle2 aria-hidden />,
+                href: "/doctor/appointments?notFinalized=true",
+              },
+            ]}
+          />
+        </div>
       ) : null}
 
       <details className="gh-card gh-doctor-filter-card mb-4 p-4">

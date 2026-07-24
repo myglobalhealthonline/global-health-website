@@ -1453,60 +1453,98 @@
     "steps": {
       "welcome": {
         "title": "Willkommen in Ihrem Arztportal",
-        "body": "Ein kurzer Rundgang durch Ihren Arbeitsbereich. Wir gehen die Werkzeuge durch, die Sie täglich nutzen — in der Reihenfolge, die die Einrichtung am einfachsten macht."
+        "body": "Gehen wir durch, wie Sie hier tatsächlich arbeiten werden — von Anfang bis Ende, über die Seiten, die Sie am meisten nutzen."
       },
       "overview": {
         "title": "Heutige Übersicht",
-        "body": "Sehen Sie die heutigen Konsultationen und was Ihre Aufmerksamkeit erfordert, auf einen Blick. Dies ist Ihre Startseite nach jeder Anmeldung."
+        "body": "Sehen Sie den heutigen Zeitplan und was Ihre Aufmerksamkeit erfordert, auf einen Blick. Dies ist Ihre Startseite nach jeder Anmeldung."
       },
-      "availability": {
+      "availabilityForm": {
         "title": "Legen Sie zuerst Ihre Verfügbarkeit fest",
-        "body": "Definieren Sie vor allem anderen Ihre wöchentlichen Arbeitszeiten — sie bestimmen direkt, welche Buchungstermine Patienten sehen. Aktualisieren Sie sie, sobald sich Ihr Zeitplan ändert."
+        "body": "Fügen Sie hier zuerst Ihre wöchentlichen Arbeitszeiten hinzu — sie erzeugen die Buchungstermine, die Patienten tatsächlich sehen. Tun Sie dies, bevor Sie den Kalender anfassen."
       },
-      "calendar": {
-        "title": "Ihr Kalender",
-        "body": "Sehen Sie Ihren gesamten Zeitplan nach Tag und Woche geordnet. Praktisch, um Lücken oder Überschneidungen auf einen Blick zu erkennen."
+      "availabilityWeek": {
+        "title": "Das Wochenraster",
+        "body": "Klicken Sie auf einen freien Termin, um ihn als besetzt oder blockiert zu markieren. Klicken Sie erneut auf einen blockierten Termin, um ihn wieder zu öffnen."
       },
-      "appointments": {
-        "title": "Termine verwalten",
-        "body": "Sehen Sie sich anstehende Konsultationen an und bestätigen Sie sie, und nehmen Sie direkt von hier aus an Videosprechstunden teil. Vergangene Termine bleiben durchsuchbar."
+      "availabilityWindows": {
+        "title": "Wiederkehrende Zeitfenster",
+        "body": "Überprüfen, bearbeiten oder löschen Sie die wiederkehrenden wöchentlichen Zeitfenster, die Sie eingerichtet haben. Änderungen hier wirken sich auf künftige Wochen aus."
       },
-      "patients": {
-        "title": "Patientenakten",
-        "body": "Sehen Sie sicher in Krankengeschichte, Notizen und medizinische Dateien der Patienten ein. Alles, was Sie vor und während einer Konsultation benötigen, finden Sie hier."
+      "calendarAdd": {
+        "title": "Verfügbarkeit für einen Zeitraum hinzufügen",
+        "body": "Brauchen Sie zusätzliche Stunden an bestimmten Terminen? Fügen Sie sie hier hinzu, ohne Ihren festen Wochenplan zu ändern."
       },
-      "messages": {
-        "title": "Sichere Nachrichten",
-        "body": "Senden Sie Nachrichten an Patienten und Kollegen über den sicheren Posteingang. Antworten kommen als Benachrichtigungen an, damit nichts übersehen wird."
+      "calendarTimeoff": {
+        "title": "Abwesenheit blockieren",
+        "body": "Sind Sie im Urlaub? Blockieren Sie einen ganzen Zeitraum als Abwesenheit. Heben Sie die Blockierung auf dieselbe Weise auf, wenn sich die Pläne ändern."
       },
-      "services": {
-        "title": "Ihre Leistungen",
-        "body": "Verwalten Sie die Leistungen, die Sie anbieten, und was Patienten bei Ihnen buchen können. Halten Sie dies aktuell, damit Buchungen dem entsprechen, was Sie tatsächlich anbieten."
+      "appointmentsSummary": {
+        "title": "Ihre Tagesübersicht",
+        "body": "Sehen Sie auf einen Blick offene Konsultationen und noch nicht abgeschlossene Termine — das erfordert heute Ihre Handlung."
+      },
+      "demoAppointment": {
+        "title": "Ein Beispieltermin",
+        "body": "Beitreten startet die Videosprechstunde. Öffnen bringt Sie in den Konsultations-Arbeitsbereich, wo die klinische Arbeit stattfindet."
+      },
+      "demoSoap": {
+        "title": "Die Konsultationsnotiz",
+        "body": "Im Arbeitsbereich schreiben Sie die SOAP-Notiz — Beschwerde, Subjektiv, Objektiv, Beurteilung, Plan. Speichern Sie Entwürfe während der Arbeit und signieren Sie dann zur Finalisierung — signierte Notizen werden gesperrt."
+      },
+      "demoForms": {
+        "title": "Klinische Formulare",
+        "body": "Füllen Sie bei Bedarf während der Konsultation klinische Formularvorlagen aus. Einreichungen werden direkt im Termin gespeichert."
+      },
+      "demoDocuments": {
+        "title": "Dokumente",
+        "body": "Erstellen Sie hier Rezepte, Überweisungen und Arbeitsunfähigkeitsbescheinigungen. Sie landen in einer Prüf- und Versandwarteschlange, bevor sie den Patienten erreichen."
       },
       "forms": {
-        "title": "Klinische Formulare",
-        "body": "Nutzen Sie Vorlagen für gängige Konsultationsformulare, damit Sie dieselben Notizen nicht doppelt schreiben. Hängen Sie sie direkt an einen Termin an."
+        "title": "Formularvorlagen",
+        "body": "Verwalten Sie die wiederverwendbaren Formularvorlagen, die Sie während Konsultationen ausfüllen."
       },
       "invoices": {
-        "title": "Rechnungen & Einnahmen",
-        "body": "Behalten Sie den Überblick über Rechnungen für Ihre Konsultationen und sehen Sie Ihre Auszahlungsdetails ein. Eine klare Übersicht darüber, was Ihnen zusteht und wann es ausgezahlt wird."
-      },
-      "reports": {
-        "title": "Berichte",
-        "body": "Überprüfen Sie Ihre Aktivität und Leistung im Zeitverlauf. Praktisch, um Trends in Ihrem Fallaufkommen zu erkennen."
+        "title": "Rechnungen",
+        "body": "Behalten Sie Einnahmen und Rechnungen für Ihre Konsultationen im Blick."
       },
       "notifications": {
         "title": "Benachrichtigungen",
         "body": "Bleiben Sie über neue Termine und Nachrichten informiert, sobald sie eintreffen."
       },
-      "confidentiality": {
-        "title": "Vertraulichkeitspflichten",
-        "body": "Überprüfen Sie Ihre Datenschutz- und Vertraulichkeitspflichten als Fachkraft auf der Plattform. Pflichtlektüre, bevor Sie Patientendaten bearbeiten."
-      },
       "profile": {
         "title": "Ihr öffentliches Profil",
-        "body": "Verwalten Sie Foto, Biografie und Qualifikationen, die Patienten bei der Arztwahl sehen. Ein vollständiges Profil schafft Vertrauen vor der ersten Konsultation."
+        "body": "Verwalten Sie Foto, Biografie und Qualifikationen, die Patienten bei der Arztwahl sehen."
       }
+    },
+    "demo": {
+      "badge": "Beispiel — für die Tour",
+      "patientName": "Jane Beispiel",
+      "consultationType": "Videosprechstunde",
+      "statusConfirmed": "Bestätigt",
+      "join": "Beitreten",
+      "open": "Öffnen",
+      "soapTitle": "Konsultationsnotiz (SOAP)",
+      "chiefComplaint": "Beschwerde",
+      "chiefComplaintSample": "Halsschmerzen, seit 3 Tagen",
+      "subjective": "Subjektiv",
+      "subjectiveSample": "Leichte Schmerzen beim Schlucken, kein Fieber berichtet",
+      "objective": "Objektiv",
+      "objectiveSample": "Rachen leicht gerötet, kein Exsudat",
+      "assessment": "Beurteilung",
+      "assessmentSample": "Wahrscheinlich virale Pharyngitis",
+      "plan": "Plan",
+      "planSample": "Ruhe, Flüssigkeit, Kontrolle in 5 Tagen bei anhaltenden Symptomen",
+      "saveDraft": "Entwurf speichern",
+      "saveSign": "Speichern & signieren",
+      "formsTitle": "Klinische Formulare",
+      "formTemplateName": "Aufnahmeformular für neue Patienten",
+      "fillForm": "Formular ausfüllen",
+      "documentsTitle": "Dokumente",
+      "documentPrescription": "Rezept",
+      "documentReferral": "Überweisung",
+      "documentCertificate": "Arbeitsunfähigkeitsbescheinigung",
+      "generate": "Erstellen",
+      "documentsQueueNote": "Erstellte Dokumente landen in einer Prüf- und Versandwarteschlange, bevor sie den Patienten erreichen."
     }
   }
 }

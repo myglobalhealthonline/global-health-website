@@ -6,14 +6,23 @@
  *
  * Auto-starts once per browser (localStorage[storageKey]) and can be
  * restarted from the sidebar via `window.dispatchEvent(new Event("gh:tour:start"))`.
+ *
+ * Cross-page steps: a step with `route` navigates there first (router.push),
+ * then polls for its target element to appear (page still loading). Progress
+ * is mirrored to sessionStorage so the tour survives the navigation/remount
+ * (the doctor/patient layout doesn't unmount across same-portal routes, but
+ * a hard reload or route-group boundary would otherwise reset to step 0).
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { usePathname, useRouter } from "next/navigation";
 
 export type TourStep = {
   /** data-tour attribute value to spotlight; omit for a centered welcome card. */
   target?: string;
+  /** Navigate here first if not already on this route (cross-page steps). */
+  route?: string;
   title: string;
   body: string;
 };
@@ -30,12 +39,19 @@ export type TourLabels = {
 type Rect = { top: number; left: number; width: number; height: number };
 
 const MOBILE_BREAKPOINT = 640;
+const POLL_INTERVAL_MS = 150;
+const POLL_TIMEOUT_MS = 4000;
+const ACTIVE_FLAG_KEY = "gh_tour_active";
 
 function isVisible(el: Element): boolean {
   const htmlEl = el as HTMLElement;
   if (htmlEl.offsetParent !== null) return true;
   // offsetParent is null for fixed-position elements even when visible.
   return getComputedStyle(htmlEl).position === "fixed";
+}
+
+function sessionKey(storageKey: string): string {
+  return `gh_tour_state:${storageKey}`;
 }
 
 export function PortalTour({
@@ -53,17 +69,21 @@ export function PortalTour({
   const [mounted, setMounted] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const targetElRef = useRef<Element | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => setMounted(true), []);
 
-  const start = useCallback(() => {
-    setStepIndex(0);
+  const start = useCallback((atStep = 0) => {
+    setStepIndex(atStep);
     setActive(true);
   }, []);
 
   const finish = useCallback(() => {
     try {
       localStorage.setItem(storageKey, "1");
+      sessionStorage.removeItem(sessionKey(storageKey));
+      sessionStorage.removeItem(ACTIVE_FLAG_KEY);
     } catch {
       // ponytail: storage can throw in locked-down browsers — tour just
       // won't remember dismissal, not worth a fallback store.
@@ -72,54 +92,117 @@ export function PortalTour({
     targetElRef.current = null;
   }, [storageKey]);
 
+  // Resume mid-tour progress (cross-page nav) takes priority over the
+  // once-per-browser first-run check.
   useEffect(() => {
+    let resumeStep: number | null = null;
+    try {
+      const raw = sessionStorage.getItem(sessionKey(storageKey));
+      if (raw) resumeStep = JSON.parse(raw).step ?? 0;
+    } catch {
+      resumeStep = null;
+    }
+    if (resumeStep !== null) {
+      start(resumeStep);
+      return;
+    }
     let seen: string | null = null;
     try {
       seen = localStorage.getItem(storageKey);
     } catch {
       seen = "1";
     }
-    const timer = seen === null ? window.setTimeout(start, 600) : undefined;
-    const onStart = () => start();
+    const timer = seen === null ? window.setTimeout(() => start(0), 600) : undefined;
+    const onStart = () => start(0);
     window.addEventListener("gh:tour:start", onStart);
     return () => {
       if (timer) window.clearTimeout(timer);
       window.removeEventListener("gh:tour:start", onStart);
     };
-  }, [storageKey, start]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount only
+  }, [storageKey]);
 
-  // Resolve the current step's target, skipping steps whose element is
-  // missing/hidden. Loop-guarded: if every remaining step skips, end tour.
+  // Broadcast active state + persist progress for demo components / cross-
+  // page resume.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("gh:tour:state", { detail: { active } }));
+    try {
+      if (active) {
+        sessionStorage.setItem(sessionKey(storageKey), JSON.stringify({ step: stepIndex }));
+        sessionStorage.setItem(ACTIVE_FLAG_KEY, "1");
+      }
+    } catch {
+      // ponytail: same non-fatal storage guard as finish().
+    }
+  }, [active, stepIndex, storageKey]);
+
+  // Resolve the current step's target: navigate if needed, then poll for
+  // the element (page may still be loading), skipping steps whose element
+  // never appears/stays hidden. Loop-guarded: if every remaining step
+  // skips, end tour.
   useEffect(() => {
     if (!active) return;
-    let idx = stepIndex;
-    let guard = 0;
-    while (idx < steps.length && guard <= steps.length) {
-      const step = steps[idx];
-      if (!step.target) {
-        targetElRef.current = null;
-        setRect(null);
-        if (idx !== stepIndex) setStepIndex(idx);
-        return;
-      }
+    const step = steps[stepIndex];
+    if (!step) {
+      finish();
+      return;
+    }
+    if (!step.target) {
+      targetElRef.current = null;
+      setRect(null);
+      return;
+    }
+    if (step.route && pathname !== step.route) {
+      router.push(step.route);
+      return;
+    }
+
+    let cancelled = false;
+    let measureTimer: number | undefined;
+    const deadline = Date.now() + POLL_TIMEOUT_MS;
+
+    const tryResolve = () => {
+      if (cancelled) return;
       const el = document.querySelector(`[data-tour="${step.target}"]`);
       if (el && isVisible(el)) {
         targetElRef.current = el;
-        if (idx !== stepIndex) setStepIndex(idx);
         el.scrollIntoView({ block: "center", behavior: "smooth" });
-        const measure = () => {
+        measureTimer = window.setTimeout(() => {
+          if (cancelled) return;
           const r = el.getBoundingClientRect();
           setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
-        };
-        const t = window.setTimeout(measure, 350);
-        return () => window.clearTimeout(t);
+        }, 350);
+        return;
       }
-      idx += 1;
-      guard += 1;
-    }
-    // Nothing left to show.
-    finish();
-  }, [active, stepIndex, steps, finish]);
+      if (Date.now() < deadline) {
+        window.setTimeout(tryResolve, POLL_INTERVAL_MS);
+        return;
+      }
+      // Timed out — skip forward, loop-guarded by advancing at most
+      // steps.length times before giving up entirely.
+      let idx = stepIndex + 1;
+      let guard = 0;
+      const advance = () => {
+        while (idx < steps.length && guard <= steps.length) {
+          const next = steps[idx];
+          if (!next.target || document.querySelector(`[data-tour="${next.target}"]`)) {
+            setStepIndex(idx);
+            return;
+          }
+          idx += 1;
+          guard += 1;
+        }
+        finish();
+      };
+      advance();
+    };
+
+    tryResolve();
+    return () => {
+      cancelled = true;
+      if (measureTimer) window.clearTimeout(measureTimer);
+    };
+  }, [active, stepIndex, steps, pathname, router, finish]);
 
   // Recompute rect on resize/scroll while a target step is showing.
   useEffect(() => {
@@ -150,10 +233,12 @@ export function PortalTour({
       finish();
       return;
     }
+    setRect(null);
     setStepIndex((i) => i + 1);
   }, [stepIndex, steps.length, finish]);
 
   const goBack = useCallback(() => {
+    setRect(null);
     setStepIndex((i) => Math.max(0, i - 1));
   }, []);
 

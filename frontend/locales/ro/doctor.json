@@ -1453,60 +1453,98 @@
     "steps": {
       "welcome": {
         "title": "Bine ați venit în portalul dumneavoastră de medic",
-        "body": "Un tur rapid al spațiului dumneavoastră de lucru. Vom parcurge instrumentele pe care le veți folosi zilnic, în ordinea care ușurează configurarea."
+        "body": "Haideți să parcurgem cum veți lucra aici, de la început până la sfârșit, pe paginile pe care le veți folosi cel mai mult."
       },
       "overview": {
         "title": "Prezentarea zilei",
-        "body": "Vedeți consultațiile de azi și ce necesită atenția dumneavoastră dintr-o privire. Aceasta este baza dumneavoastră după fiecare conectare."
+        "body": "Vedeți programul de azi și ce necesită atenția dumneavoastră dintr-o privire. Aceasta este baza dumneavoastră după fiecare conectare."
       },
-      "availability": {
+      "availabilityForm": {
         "title": "Setați mai întâi disponibilitatea",
-        "body": "Definiți-vă programul săptămânal înainte de orice altceva — determină direct ce sloturi de programare văd pacienții. Actualizați-l ori de câte ori se schimbă programul."
+        "body": "Adăugați aici programul săptămânal înainte de orice altceva — generează sloturile de programare pe care pacienții le văd cu adevărat. Faceți asta înainte de a atinge calendarul."
       },
-      "calendar": {
-        "title": "Calendarul dumneavoastră",
-        "body": "Vedeți întregul program organizat pe zi și săptămână. Util pentru a observa dintr-o privire spațiile libere sau suprapunerile."
+      "availabilityWeek": {
+        "title": "Grila săptămânală",
+        "body": "Faceți clic pe un slot liber pentru a-l marca ocupat sau blocat. Faceți din nou clic pe un slot blocat pentru a-l redeschide."
       },
-      "appointments": {
-        "title": "Gestionați consultațiile",
-        "body": "Revizuiți și confirmați consultațiile viitoare și alăturați-vă vizitelor video direct de aici. Consultațiile trecute rămân căutabile."
+      "availabilityWindows": {
+        "title": "Intervale recurente",
+        "body": "Revizuiți, editați sau ștergeți intervalele săptămânale recurente pe care le-ați configurat. Modificările de aici se răsfrâng asupra săptămânilor viitoare."
       },
-      "patients": {
-        "title": "Fișe de pacienți",
-        "body": "Consultați în siguranță istoricul, notițele și fișierele medicale ale pacienților. Tot ce aveți nevoie înainte și în timpul unei consultații se află aici."
+      "calendarAdd": {
+        "title": "Adăugați disponibilitate pentru un interval",
+        "body": "Aveți nevoie de ore suplimentare în date specifice? Adăugați-le aici fără a vă modifica programul săptămânal fix."
       },
-      "messages": {
-        "title": "Mesagerie securizată",
-        "body": "Trimiteți mesaje pacienților și colegilor prin căsuța de mesaje securizată. Răspunsurile sosesc ca notificări, astfel încât nimic nu este ratat."
+      "calendarTimeoff": {
+        "title": "Blocați o perioadă liberă",
+        "body": "Plecați undeva? Blocați un întreg interval ca perioadă liberă. Deblocați-l în același mod dacă planurile se schimbă."
       },
-      "services": {
-        "title": "Serviciile dumneavoastră",
-        "body": "Gestionați serviciile pe care le oferiți și ce pot programa pacienții cu dumneavoastră. Păstrați-le actualizate pentru ca programările să corespundă cu ceea ce oferiți efectiv."
+      "appointmentsSummary": {
+        "title": "Coada dumneavoastră zilnică",
+        "body": "Vedeți dintr-o privire consultațiile deschise și cele nefinalizate încă — asta necesită acțiune azi."
+      },
+      "demoAppointment": {
+        "title": "O consultație exemplu",
+        "body": "Alăturare pornește vizita video. Deschidere vă duce în spațiul de lucru al consultației, unde efectuați activitatea clinică."
+      },
+      "demoSoap": {
+        "title": "Nota consultației",
+        "body": "În spațiul de lucru scrieți nota SOAP — motivul prezentării, subiectiv, obiectiv, evaluare, plan. Salvați ciorne pe măsură ce avansați, apoi semnați pentru a finaliza — notele semnate se blochează."
+      },
+      "demoForms": {
+        "title": "Formulare clinice",
+        "body": "Completați șabloane de formulare clinice în timpul consultației, când este necesar. Trimiterile se salvează direct în fișa consultației."
+      },
+      "demoDocuments": {
+        "title": "Documente",
+        "body": "Generați rețete, trimiteri pentru examinări și certificate de concediu medical de aici. Acestea intră într-o coadă de revizuire și trimitere înainte de a ajunge la pacient."
       },
       "forms": {
-        "title": "Formulare clinice",
-        "body": "Folosiți șabloane pentru formularele de consultație frecvente, ca să nu scrieți aceleași notițe de două ori. Atașați-le direct la o consultație."
+        "title": "Șabloane de formulare",
+        "body": "Gestionați șabloanele de formulare reutilizabile pe care le completați în timpul consultațiilor."
       },
       "invoices": {
-        "title": "Facturi și venituri",
-        "body": "Urmăriți facturile pentru consultațiile dumneavoastră și vedeți detaliile de plată. O evidență clară a ceea ce vi se datorează și când este plătit."
-      },
-      "reports": {
-        "title": "Rapoarte",
-        "body": "Revizuiți-vă activitatea și performanța în timp. Util pentru a observa tendințe în volumul dumneavoastră de cazuri."
+        "title": "Facturi",
+        "body": "Urmăriți veniturile și facturile pentru consultațiile dumneavoastră."
       },
       "notifications": {
         "title": "Notificări",
         "body": "Fiți la curent cu noile consultații și mesaje imediat ce sosesc."
       },
-      "confidentiality": {
-        "title": "Obligații de confidențialitate",
-        "body": "Revizuiți-vă responsabilitățile de protecție a datelor și confidențialitate ca practician pe platformă. Lectură obligatorie înainte de a gestiona datele pacienților."
-      },
       "profile": {
         "title": "Profilul dumneavoastră public",
-        "body": "Gestionați fotografia, biografia și calificările pe care pacienții le văd când aleg un medic. Un profil complet construiește încredere înainte de prima consultație."
+        "body": "Gestionați fotografia, biografia și calificările pe care pacienții le văd când aleg un medic."
       }
+    },
+    "demo": {
+      "badge": "Exemplu — pentru tur",
+      "patientName": "Jane Exemplu",
+      "consultationType": "Videoconsultație",
+      "statusConfirmed": "Confirmată",
+      "join": "Alăturare",
+      "open": "Deschidere",
+      "soapTitle": "Nota consultației (SOAP)",
+      "chiefComplaint": "Motivul prezentării",
+      "chiefComplaintSample": "Durere în gât, de 3 zile",
+      "subjective": "Subiectiv",
+      "subjectiveSample": "Durere ușoară la înghițire, fără febră raportată",
+      "objective": "Obiectiv",
+      "objectiveSample": "Gât ușor inflamat, fără exsudat",
+      "assessment": "Evaluare",
+      "assessmentSample": "Probabil faringită virală",
+      "plan": "Plan",
+      "planSample": "Repaus, hidratare, reevaluare în 5 zile dacă simptomele persistă",
+      "saveDraft": "Salvare ciornă",
+      "saveSign": "Salvare și semnare",
+      "formsTitle": "Formulare clinice",
+      "formTemplateName": "Formular de admitere pacient nou",
+      "fillForm": "Completare formular",
+      "documentsTitle": "Documente",
+      "documentPrescription": "Rețetă",
+      "documentReferral": "Trimitere pentru examinare",
+      "documentCertificate": "Certificat de concediu medical",
+      "generate": "Generare",
+      "documentsQueueNote": "Documentele generate intră într-o coadă de revizuire și trimitere înainte de a ajunge la pacient."
     }
   }
 }

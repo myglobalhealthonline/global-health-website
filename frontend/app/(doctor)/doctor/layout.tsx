@@ -78,20 +78,25 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     getPageLocale(),
   ]);
   const { doctor: d, common } = loadLocaleBundle(locale);
+  // Cross-page workflow walkthrough (PortalTour `route` support): steps 3-12
+  // hop across availability → calendar → appointments, ending on the sample
+  // consultation-workspace demo (DoctorTourDemo on the appointments page).
   const tourSteps = [
     { title: d.tour.steps.welcome.title, body: d.tour.steps.welcome.body },
     { target: "/doctor", title: d.tour.steps.overview.title, body: d.tour.steps.overview.body },
-    { target: "/doctor/availability", title: d.tour.steps.availability.title, body: d.tour.steps.availability.body },
-    { target: "/doctor/calendar", title: d.tour.steps.calendar.title, body: d.tour.steps.calendar.body },
-    { target: "/doctor/appointments", title: d.tour.steps.appointments.title, body: d.tour.steps.appointments.body },
-    { target: "/doctor/patients", title: d.tour.steps.patients.title, body: d.tour.steps.patients.body },
-    { target: "/doctor/messages", title: d.tour.steps.messages.title, body: d.tour.steps.messages.body },
-    { target: "/doctor/services", title: d.tour.steps.services.title, body: d.tour.steps.services.body },
+    { route: "/doctor/availability", target: "availability-form", title: d.tour.steps.availabilityForm.title, body: d.tour.steps.availabilityForm.body },
+    { target: "availability-week", title: d.tour.steps.availabilityWeek.title, body: d.tour.steps.availabilityWeek.body },
+    { target: "availability-windows", title: d.tour.steps.availabilityWindows.title, body: d.tour.steps.availabilityWindows.body },
+    { route: "/doctor/calendar", target: "calendar-add", title: d.tour.steps.calendarAdd.title, body: d.tour.steps.calendarAdd.body },
+    { target: "calendar-timeoff", title: d.tour.steps.calendarTimeoff.title, body: d.tour.steps.calendarTimeoff.body },
+    { route: "/doctor/appointments", target: "appointments-summary", title: d.tour.steps.appointmentsSummary.title, body: d.tour.steps.appointmentsSummary.body },
+    { target: "demo-appointment", title: d.tour.steps.demoAppointment.title, body: d.tour.steps.demoAppointment.body },
+    { target: "demo-soap", title: d.tour.steps.demoSoap.title, body: d.tour.steps.demoSoap.body },
+    { target: "demo-forms", title: d.tour.steps.demoForms.title, body: d.tour.steps.demoForms.body },
+    { target: "demo-documents", title: d.tour.steps.demoDocuments.title, body: d.tour.steps.demoDocuments.body },
     { target: "/doctor/forms", title: d.tour.steps.forms.title, body: d.tour.steps.forms.body },
     { target: "/doctor/invoices", title: d.tour.steps.invoices.title, body: d.tour.steps.invoices.body },
-    { target: "/doctor/reports", title: d.tour.steps.reports.title, body: d.tour.steps.reports.body },
     { target: "topbar-notifications", title: d.tour.steps.notifications.title, body: d.tour.steps.notifications.body },
-    { target: "/doctor/confidentiality", title: d.tour.steps.confidentiality.title, body: d.tour.steps.confidentiality.body },
     { target: "/doctor/profile", title: d.tour.steps.profile.title, body: d.tour.steps.profile.body },
   ];
   const NOTIF_TYPE_LABEL: Record<string, string> = {

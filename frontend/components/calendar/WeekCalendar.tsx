@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { Ban, ChevronLeft, ChevronRight, Clock, User } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
@@ -26,6 +26,11 @@ const TWO_LINE_PX = 38; // time range + name
 const THREE_LINE_PX = 58; // + doctor or consultation type
 const GUTTER_PX = 56; // hour-label column
 const MIN_LANE_PX = 74; // narrower than this and a lane can't show a name
+// Narrowest a single day column can go before it stops reading as a day
+// column (time + name clipped past usefulness). Drives how many of the 7
+// days actually fit — rest scroll into view via the day-window arrows
+// instead of forcing the whole week into a horizontal scrollbar.
+const MIN_DAY_COL_PX = 200;
 
 type Props = {
   /** Any calendar date inside the week to render ("YYYY-MM-DD"). */
@@ -219,6 +224,67 @@ export function WeekCalendar({
     legendBooked: labels?.legendBooked ?? "Booked",
     legendBlocked: labels?.legendBlocked ?? "Blocked",
   };
+  // Measure the scroll container so the grid renders only as many day
+  // columns as actually fit at a legible width — no forced horizontal
+  // scrollbar on tablet/mobile. Falls back to all 7 days until measured
+  // (matches the previous desktop behaviour, avoids a layout flash there).
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number | null>(null);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width;
+      if (w) setContainerWidth(w);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const visibleCount = containerWidth
+    ? Math.min(7, Math.max(2, Math.floor((containerWidth - GUTTER_PX) / MIN_DAY_COL_PX)))
+    : 7;
+
+  // Sliding day-window when fewer than 7 columns fit. Resets to the start of
+  // the week whenever the week itself changes (new anchor) or the visible
+  // count grows enough that the current offset would run past the end.
+  const [windowStart, setWindowStart] = useState(0);
+  useEffect(() => {
+    setWindowStart(0);
+  }, [anchorDayKey]);
+  useEffect(() => {
+    setWindowStart((w) => Math.max(0, Math.min(w, weekDays.length - visibleCount)));
+  }, [visibleCount, weekDays.length]);
+
+  const visibleDays = useMemo(
+    () => weekDays.slice(windowStart, windowStart + visibleCount),
+    [weekDays, windowStart, visibleCount],
+  );
+  const isWindowed = visibleCount < weekDays.length;
+  const atWindowStart = windowStart <= 0;
+  const atWindowEnd = windowStart + visibleCount >= weekDays.length;
+
+  // Step the window by one day. At either edge, roll into the adjacent week
+  // (refetches via the existing prev/next-week handlers) and land the window
+  // on that week's near edge — so paging feels continuous across week
+  // boundaries instead of stopping dead at day 1 or day 7.
+  function stepDay(dir: -1 | 1) {
+    if (dir === -1) {
+      if (atWindowStart) {
+        onPrevWeek();
+        setWindowStart(Math.max(0, weekDays.length - visibleCount));
+      } else {
+        setWindowStart((w) => Math.max(0, w - 1));
+      }
+    } else {
+      if (atWindowEnd) {
+        onNextWeek();
+        setWindowStart(0);
+      } else {
+        setWindowStart((w) => Math.min(weekDays.length - visibleCount, w + 1));
+      }
+    }
+  }
+
   // Positioned blocks per day + the visible hour window (expands to fit early
   // / late items so nothing is clipped) + the widest lane stack in the week.
   const { perDay, startHour, endHour, maxLanes } = useMemo(() => {
@@ -226,7 +292,7 @@ export function WeekCalendar({
     let maxHour = DEFAULT_END_HOUR;
     let maxLanes = 1;
     const perDay = new Map<string, PositionedItem[]>();
-    for (const day of weekDays) {
+    for (const day of visibleDays) {
       const raw = dropSlotsUnderConsultations(itemsByDay.get(day.key) ?? []);
       const positioned = packDay(raw, tz);
       for (const p of positioned) {
@@ -242,14 +308,18 @@ export function WeekCalendar({
       startHour: Math.max(0, minHour),
       endHour: Math.min(24, Math.max(maxHour, minHour + 1)),
     };
-  }, [weekDays, itemsByDay, tz]);
+  }, [visibleDays, itemsByDay, tz]);
 
   // Lanes split a day column between blocks that overlap in time. On the
   // all-doctors calendar that stack gets deep — five doctors free at 09:00 is
   // five lanes — and at a fixed width each lane shrinks to a nameless sliver.
-  // Grow the grid instead and let it scroll sideways: a single-doctor week
-  // (1 lane) is unaffected and keeps the original 720px.
-  const gridMinWidth = Math.max(720, GUTTER_PX + 7 * maxLanes * MIN_LANE_PX);
+  // Only force a min-width (and the resulting horizontal scroll) when lanes
+  // actually need it; a single-doctor week (1 lane) always fits the measured
+  // container — that's the whole point of the day-window above.
+  const gridMinWidth =
+    maxLanes > 1
+      ? Math.max(containerWidth ?? 0, GUTTER_PX + visibleDays.length * maxLanes * MIN_LANE_PX)
+      : undefined;
 
   // Explicit 24-hour clock (en-GB, hour12:false) so every block reads the same
   // — en-IE, used elsewhere, flips to AM/PM which looked inconsistent.
@@ -306,21 +376,42 @@ export function WeekCalendar({
           >
             <ChevronRight className="size-4" aria-hidden />
           </IconBtn>
+          {/* Day-window paging — only shown once the grid can't fit all 7
+              columns. Steps one day at a time; rolls into the adjacent week
+              (via onPrevWeek/onNextWeek) at either edge (see stepDay). */}
+          {isWindowed ? (
+            <div className="ml-1.5 flex items-center gap-1.5 border-l pl-1.5" style={{ borderColor: "var(--portal-line-strong)" }}>
+              <IconBtn
+                onClick={() => stepDay(-1)}
+                ariaLabel={t.prevWeekAria}
+                style={{ width: 28, height: 28, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
+              >
+                <ChevronLeft className="size-3.5" aria-hidden />
+              </IconBtn>
+              <IconBtn
+                onClick={() => stepDay(1)}
+                ariaLabel={t.nextWeekAria}
+                style={{ width: 28, height: 28, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
+              >
+                <ChevronRight className="size-3.5" aria-hidden />
+              </IconBtn>
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <div className="gh-week-scroll">
+      <div className="gh-week-scroll" ref={scrollRef}>
         <div className="gh-week-grid" style={{ minWidth: gridMinWidth }}>
           {/* Day header row — sticky while the hour grid scrolls */}
           <div
             className="gh-week-header-row grid"
             style={{
-              gridTemplateColumns: `${GUTTER_PX}px repeat(7, minmax(0, 1fr))`,
+              gridTemplateColumns: `${GUTTER_PX}px repeat(${visibleDays.length}, minmax(0, 1fr))`,
               borderBottom: "1px solid var(--portal-line)",
             }}
           >
             <div />
-            {weekDays.map((d) => {
+            {visibleDays.map((d) => {
               const isToday = d.key === todayKey;
               return (
                 <div
@@ -353,7 +444,7 @@ export function WeekCalendar({
           <div
             className="grid"
             style={{
-              gridTemplateColumns: `${GUTTER_PX}px repeat(7, minmax(0, 1fr))`,
+              gridTemplateColumns: `${GUTTER_PX}px repeat(${visibleDays.length}, minmax(0, 1fr))`,
             }}
           >
             {/* Hour gutter */}
@@ -375,7 +466,7 @@ export function WeekCalendar({
             </div>
 
             {/* One positioned column per day */}
-            {weekDays.map((d) => {
+            {visibleDays.map((d) => {
               const positioned = perDay.get(d.key) ?? [];
               const isTodayCol = d.key === todayKey;
               return (

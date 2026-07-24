@@ -1453,60 +1453,98 @@
     "steps": {
       "welcome": {
         "title": "Vítejte ve svém lékařském portálu",
-        "body": "Rychlá prohlídka vaší pracovní plochy. Projdeme si nástroje, které budete používat každý den, v pořadí, které nastavení nejvíce usnadní."
+        "body": "Projdeme si, jak zde budete pracovat — od začátku do konce, na stránkách, které budete používat nejčastěji."
       },
       "overview": {
         "title": "Dnešní přehled",
-        "body": "Podívejte se na dnešní konzultace a co vyžaduje vaši pozornost. Toto je vaše výchozí místo po každém přihlášení."
+        "body": "Podívejte se na dnešní rozvrh a co vyžaduje vaši pozornost. Toto je vaše výchozí místo po každém přihlášení."
       },
-      "availability": {
+      "availabilityForm": {
         "title": "Nejprve nastavte dostupnost",
-        "body": "Než cokoli jiného nastavte svou týdenní pracovní dobu — přímo určuje, které termíny pacienti vidí. Aktualizujte ji vždy, když se váš rozvrh změní."
+        "body": "Nejprve zde přidejte svou týdenní pracovní dobu — generuje termíny rezervací, které pacienti skutečně vidí. Udělejte to dřív, než se pustíte do kalendáře."
       },
-      "calendar": {
-        "title": "Váš kalendář",
-        "body": "Zobrazte si celý rozvrh podle dne a týdne. Užitečné pro rychlé odhalení volných míst nebo kolizí."
+      "availabilityWeek": {
+        "title": "Týdenní mřížka",
+        "body": "Klikněte na volný termín a označte jej jako obsazený nebo blokovaný. Klikněte znovu na blokovaný termín a znovu jej otevřete."
       },
-      "appointments": {
-        "title": "Správa konzultací",
-        "body": "Prohlédněte si a potvrďte nadcházející konzultace a připojte se k videokonzultacím přímo odsud. Minulé konzultace zůstávají vyhledatelné."
+      "availabilityWindows": {
+        "title": "Opakující se okna",
+        "body": "Zkontrolujte, upravte nebo smažte opakující se týdenní okna, která jste nastavili. Změny se promítnou i do dalších týdnů."
       },
-      "patients": {
-        "title": "Záznamy pacientů",
-        "body": "Bezpečně nahlédněte do historie, poznámek a zdravotních dokumentů pacientů. Vše potřebné před konzultací i během ní najdete zde."
+      "calendarAdd": {
+        "title": "Přidejte dostupnost pro rozsah dat",
+        "body": "Potřebujete extra hodiny v konkrétních dnech? Přidejte je zde, aniž byste měnili svůj stálý týdenní rozvrh."
       },
-      "messages": {
-        "title": "Zabezpečené zprávy",
-        "body": "Posílejte zprávy pacientům a kolegům přes zabezpečenou schránku. Odpovědi přicházejí jako oznámení, takže nic neuniká."
+      "calendarTimeoff": {
+        "title": "Zablokujte volno",
+        "body": "Odjíždíte? Zablokujte celý rozsah dat jako volno. Stejným způsobem jej odblokujte, pokud se plány změní."
       },
-      "services": {
-        "title": "Vaše služby",
-        "body": "Spravujte služby, které nabízíte, a to, co si u vás pacienti mohou rezervovat. Udržujte je aktuální, aby rezervace odpovídaly tomu, co skutečně poskytujete."
+      "appointmentsSummary": {
+        "title": "Váš denní fronta",
+        "body": "Na první pohled vidíte otevřené konzultace a ty, které ještě nebyly uzavřeny — to je to, co dnes vyžaduje akci."
+      },
+      "demoAppointment": {
+        "title": "Ukázková konzultace",
+        "body": "Připojit spustí videokonzultaci. Otevřít vás přenese do pracovního prostoru konzultace, kde probíhá klinická práce."
+      },
+      "demoSoap": {
+        "title": "Záznam z konzultace",
+        "body": "V pracovním prostoru píšete zprávu SOAP — hlavní obtíž, subjektivní nález, objektivní nález, hodnocení, plán. Ukládejte průběžně koncepty a poté podepište pro finalizaci — podepsané záznamy se uzamknou."
+      },
+      "demoForms": {
+        "title": "Klinické formuláře",
+        "body": "Podle potřeby vyplňte během konzultace šablony klinických formulářů. Odeslané formuláře se uloží přímo k záznamu o konzultaci."
+      },
+      "demoDocuments": {
+        "title": "Dokumenty",
+        "body": "Odsud vygenerujte recepty, žádanky na vyšetření a potvrzení o pracovní neschopnosti. Než se dostanou k pacientovi, čekají ve frontě ke kontrole a odeslání."
       },
       "forms": {
-        "title": "Klinické formuláře",
-        "body": "Používejte šablony pro běžné konzultační formuláře, abyste nepsali stejné poznámky dvakrát. Připojte je přímo ke konzultaci."
+        "title": "Šablony formulářů",
+        "body": "Spravujte opakovaně použitelné šablony formulářů, které vyplňujete během konzultací."
       },
       "invoices": {
-        "title": "Faktury a výdělky",
-        "body": "Sledujte faktury za své konzultace a zobrazte si údaje o výplatě. Přehledný záznam o tom, co vám náleží a kdy je to vyplaceno."
-      },
-      "reports": {
-        "title": "Přehledy",
-        "body": "Prohlédněte si svou aktivitu a výkon v čase. Užitečné pro odhalení trendů ve vaší zátěži."
+        "title": "Faktury",
+        "body": "Sledujte výdělky a faktury za své konzultace."
       },
       "notifications": {
         "title": "Oznámení",
         "body": "Buďte v obraze ohledně nových konzultací a zpráv, jakmile dorazí."
       },
-      "confidentiality": {
-        "title": "Povinnosti mlčenlivosti",
-        "body": "Prohlédněte si své povinnosti v oblasti ochrany dat a mlčenlivosti jako odborník na platformě. Povinné čtení před prací s daty pacientů."
-      },
       "profile": {
         "title": "Váš veřejný profil",
-        "body": "Spravujte fotografii, medailonek a kvalifikace, které pacienti vidí při výběru lékaře. Kompletní profil buduje důvěru ještě před první konzultací."
+        "body": "Spravujte fotografii, medailonek a kvalifikace, které pacienti vidí při výběru lékaře."
       }
+    },
+    "demo": {
+      "badge": "Ukázka — pro prohlídku",
+      "patientName": "Jana Ukázková",
+      "consultationType": "Videokonzultace",
+      "statusConfirmed": "Potvrzeno",
+      "join": "Připojit",
+      "open": "Otevřít",
+      "soapTitle": "Zpráva z konzultace (SOAP)",
+      "chiefComplaint": "Hlavní obtíž",
+      "chiefComplaintSample": "Bolest v krku, 3 dny",
+      "subjective": "Subjektivní nález",
+      "subjectiveSample": "Mírná bolest při polykání, horečka neuvedena",
+      "objective": "Objektivní nález",
+      "objectiveSample": "Krk mírně zarudlý, bez povlaku",
+      "assessment": "Hodnocení",
+      "assessmentSample": "Pravděpodobně virová faryngitida",
+      "plan": "Plán",
+      "planSample": "Klid, tekutiny, kontrola za 5 dní při přetrvávání příznaků",
+      "saveDraft": "Uložit koncept",
+      "saveSign": "Uložit a podepsat",
+      "formsTitle": "Klinické formuláře",
+      "formTemplateName": "Vstupní formulář nového pacienta",
+      "fillForm": "Vyplnit formulář",
+      "documentsTitle": "Dokumenty",
+      "documentPrescription": "Recept",
+      "documentReferral": "Žádanka na vyšetření",
+      "documentCertificate": "Potvrzení o pracovní neschopnosti",
+      "generate": "Vygenerovat",
+      "documentsQueueNote": "Vygenerované dokumenty čekají ve frontě ke kontrole a odeslání, než se dostanou k pacientovi."
     }
   }
 }

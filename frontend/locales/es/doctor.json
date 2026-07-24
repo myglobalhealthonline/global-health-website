@@ -1453,60 +1453,98 @@
     "steps": {
       "welcome": {
         "title": "Bienvenido a su portal de médico",
-        "body": "Un recorrido rápido por su espacio de trabajo. Repasaremos las herramientas que usará a diario, en el orden que facilita la configuración."
+        "body": "Repasemos cómo va a trabajar aquí, de principio a fin, por las páginas que más usará."
       },
       "overview": {
         "title": "Resumen de hoy",
-        "body": "Vea las consultas de hoy y lo que requiere su atención de un vistazo. Esta es su base tras cada inicio de sesión."
+        "body": "Vea la agenda de hoy y lo que requiere su atención de un vistazo. Esta es su base tras cada inicio de sesión."
       },
-      "availability": {
+      "availabilityForm": {
         "title": "Configure primero su disponibilidad",
-        "body": "Defina su horario semanal antes que nada — determina directamente qué horarios de reserva ven los pacientes. Actualícelo cuando cambie su agenda."
+        "body": "Añada aquí su horario semanal antes que nada — genera los horarios de reserva que los pacientes realmente ven. Hágalo antes de tocar el calendario."
       },
-      "calendar": {
-        "title": "Su calendario",
-        "body": "Vea toda su agenda organizada por día y semana. Útil para detectar huecos o solapes de un vistazo."
+      "availabilityWeek": {
+        "title": "La cuadrícula semanal",
+        "body": "Haga clic en un horario libre para marcarlo como ocupado o bloqueado. Haga clic de nuevo en uno bloqueado para reabrirlo."
       },
-      "appointments": {
-        "title": "Gestionar citas",
-        "body": "Revise y confirme las próximas consultas, y únase a videoconsultas directamente desde aquí. Las citas pasadas siguen siendo consultables."
+      "availabilityWindows": {
+        "title": "Franjas recurrentes",
+        "body": "Revise, edite o elimine las franjas semanales recurrentes que ha configurado. Los cambios aquí afectan a las semanas siguientes."
       },
-      "patients": {
-        "title": "Historiales de pacientes",
-        "body": "Consulte de forma segura el historial, notas y archivos médicos de los pacientes. Todo lo que necesita antes y durante una consulta está aquí."
+      "calendarAdd": {
+        "title": "Añada disponibilidad para un periodo",
+        "body": "¿Necesita horas extra en fechas concretas? Añádalas aquí sin alterar su horario semanal fijo."
       },
-      "messages": {
-        "title": "Mensajería segura",
-        "body": "Envíe mensajes a pacientes y colegas a través de la bandeja segura. Las respuestas llegan como notificaciones, para que nada se pase por alto."
+      "calendarTimeoff": {
+        "title": "Bloquee ausencias",
+        "body": "¿Va a estar fuera? Bloquee todo un periodo como ausencia. Desbloquéelo de la misma forma si cambian los planes."
       },
-      "services": {
-        "title": "Sus servicios",
-        "body": "Gestione los servicios que ofrece y lo que los pacientes pueden reservar con usted. Manténgalo actualizado para que las reservas coincidan con lo que realmente ofrece."
+      "appointmentsSummary": {
+        "title": "Su cola diaria",
+        "body": "Vea de un vistazo las consultas abiertas y las aún no finalizadas — esto es lo que requiere acción hoy."
+      },
+      "demoAppointment": {
+        "title": "Una cita de ejemplo",
+        "body": "Unirse inicia la videoconsulta. Abrir le lleva al espacio de trabajo de la consulta, donde realiza el trabajo clínico."
+      },
+      "demoSoap": {
+        "title": "La nota de la consulta",
+        "body": "Dentro del espacio de trabajo escribe la nota SOAP — motivo de consulta, subjetivo, objetivo, valoración, plan. Guarde borradores mientras avanza y luego firme para finalizar — las notas firmadas quedan bloqueadas."
+      },
+      "demoForms": {
+        "title": "Formularios clínicos",
+        "body": "Rellene plantillas de formularios clínicos durante la consulta cuando sea necesario. Los envíos se guardan directamente en el registro de la cita."
+      },
+      "demoDocuments": {
+        "title": "Documentos",
+        "body": "Genere recetas, derivaciones a pruebas y certificados de ausencia desde aquí. Quedan en una cola de revisión y envío antes de llegar al paciente."
       },
       "forms": {
-        "title": "Formularios clínicos",
-        "body": "Use plantillas para los formularios de consulta habituales, así no escribe las mismas notas dos veces. Adjúntelos directamente a una cita."
+        "title": "Plantillas de formularios",
+        "body": "Gestione las plantillas de formularios reutilizables que rellena durante las consultas."
       },
       "invoices": {
-        "title": "Facturas y ganancias",
-        "body": "Realice el seguimiento de las facturas de sus consultas y vea los detalles de pago. Un registro claro de lo que se le debe y cuándo se paga."
-      },
-      "reports": {
-        "title": "Informes",
-        "body": "Revise su actividad y desempeño a lo largo del tiempo. Útil para detectar tendencias en su carga de trabajo."
+        "title": "Facturas",
+        "body": "Realice el seguimiento de ganancias y facturas de sus consultas."
       },
       "notifications": {
         "title": "Notificaciones",
         "body": "Manténgase al día de nuevas citas y mensajes en cuanto lleguen."
       },
-      "confidentiality": {
-        "title": "Obligaciones de confidencialidad",
-        "body": "Revise sus responsabilidades de protección de datos y confidencialidad como profesional en la plataforma. Lectura obligatoria antes de tratar datos de pacientes."
-      },
       "profile": {
         "title": "Su perfil público",
-        "body": "Gestione la foto, biografía y credenciales que los pacientes ven al elegir un médico. Un perfil completo genera confianza antes de la primera consulta."
+        "body": "Gestione la foto, biografía y credenciales que los pacientes ven al elegir un médico."
       }
+    },
+    "demo": {
+      "badge": "Ejemplo — para el recorrido",
+      "patientName": "Jane Ejemplo",
+      "consultationType": "Videoconsulta",
+      "statusConfirmed": "Confirmada",
+      "join": "Unirse",
+      "open": "Abrir",
+      "soapTitle": "Nota de la consulta (SOAP)",
+      "chiefComplaint": "Motivo de consulta",
+      "chiefComplaintSample": "Dolor de garganta, 3 días",
+      "subjective": "Subjetivo",
+      "subjectiveSample": "Dolor leve al tragar, sin fiebre referida",
+      "objective": "Objetivo",
+      "objectiveSample": "Garganta levemente inflamada, sin exudado",
+      "assessment": "Valoración",
+      "assessmentSample": "Probable faringitis vírica",
+      "plan": "Plan",
+      "planSample": "Reposo, líquidos, revisar en 5 días si persisten los síntomas",
+      "saveDraft": "Guardar borrador",
+      "saveSign": "Guardar y firmar",
+      "formsTitle": "Formularios clínicos",
+      "formTemplateName": "Formulario de admisión de nuevo paciente",
+      "fillForm": "Rellenar formulario",
+      "documentsTitle": "Documentos",
+      "documentPrescription": "Receta",
+      "documentReferral": "Derivación a prueba",
+      "documentCertificate": "Certificado de ausencia",
+      "generate": "Generar",
+      "documentsQueueNote": "Los documentos generados pasan a una cola de revisión y envío antes de llegar al paciente."
     }
   }
 }

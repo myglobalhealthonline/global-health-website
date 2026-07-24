@@ -376,6 +376,7 @@ export function DoctorAvailabilityUI({
       <div className="gh-doctor-detail-grid gh-doctor-availability-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* ── Week calendar (same grid as the admin availability page) ─── */}
         <AdminCard padding={0} className="gh-doctor-panel">
+          <div data-tour="availability-week">
           <SectionHeader
             title={s.weekCalendarTitle}
             description={s.weekCalendarDesc}
@@ -423,6 +424,7 @@ export function DoctorAvailabilityUI({
               }}
             />
           </div>
+          </div>
         </AdminCard>
 
         {/* ── Sidebar: windows list + add form ─────────────────── */}
@@ -441,7 +443,7 @@ export function DoctorAvailabilityUI({
                   description={s.noWindowsDesc}
                 />
               ) : (
-                <ul className="gh-doctor-window-list grid gap-2">
+                <ul className="gh-doctor-window-list grid gap-2" data-tour="availability-windows">
                   {windowGroups.map((group) => {
                     const hasDuplicates = group.items.length > 1;
                     return (
@@ -530,7 +532,7 @@ export function DoctorAvailabilityUI({
             description={s.addWindowDesc.replace("{tz}", countryTimeZone)}
             className="gh-doctor-panel"
           >
-            <form onSubmit={onAddWindow} className="gh-doctor-availability-form gh-form-section__span-2 grid gap-3">
+            <form onSubmit={onAddWindow} data-tour="availability-form" className="gh-doctor-availability-form gh-form-section__span-2 grid gap-3">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">{s.day}</span>
                 <select

@@ -1453,60 +1453,98 @@
     "steps": {
       "welcome": {
         "title": "Bem-vindo ao seu portal de médico",
-        "body": "Uma visita rápida ao seu espaço de trabalho. Vamos percorrer as ferramentas que vai usar todos os dias, pela ordem que torna a configuração mais fácil."
+        "body": "Vamos percorrer como vai trabalhar aqui, do início ao fim, pelas páginas que mais vai usar."
       },
       "overview": {
         "title": "Resumo de hoje",
-        "body": "Veja as consultas de hoje e o que precisa da sua atenção num relance. Esta é a sua base após cada início de sessão."
+        "body": "Veja a agenda de hoje e o que precisa da sua atenção num relance. Esta é a sua base após cada início de sessão."
       },
-      "availability": {
+      "availabilityForm": {
         "title": "Defina primeiro a sua disponibilidade",
-        "body": "Defina o seu horário semanal antes de mais nada — determina diretamente que horários de marcação os doentes veem. Atualize sempre que a sua agenda mudar."
+        "body": "Adicione aqui o seu horário semanal antes de mais nada — gera os horários de marcação que os doentes realmente veem. Faça isto antes de mexer no calendário."
       },
-      "calendar": {
-        "title": "O seu calendário",
-        "body": "Veja toda a sua agenda organizada por dia e semana. Útil para identificar espaços livres ou sobreposições num relance."
+      "availabilityWeek": {
+        "title": "A grelha semanal",
+        "body": "Clique num horário livre para o marcar como ocupado ou bloqueado. Clique novamente num horário bloqueado para o reabrir."
       },
-      "appointments": {
-        "title": "Gerir consultas",
-        "body": "Reveja e confirme as próximas consultas, e entre em videochamadas diretamente daqui. As consultas passadas continuam pesquisáveis."
+      "availabilityWindows": {
+        "title": "Janelas recorrentes",
+        "body": "Reveja, edite ou elimine as janelas semanais recorrentes que configurou. As alterações aqui repercutem-se nas semanas seguintes."
       },
-      "patients": {
-        "title": "Registos de doentes",
-        "body": "Consulte o histórico, notas e ficheiros médicos dos doentes em segurança. Tudo o que precisa antes e durante uma consulta está aqui."
+      "calendarAdd": {
+        "title": "Adicione disponibilidade para um período",
+        "body": "Precisa de horas extra em datas específicas? Adicione-as aqui sem alterar o seu horário semanal fixo."
       },
-      "messages": {
-        "title": "Mensagens seguras",
-        "body": "Envie mensagens a doentes e colegas através da caixa de entrada segura. As respostas chegam como notificações, para nada passar despercebido."
+      "calendarTimeoff": {
+        "title": "Bloqueie ausências",
+        "body": "Vai estar ausente? Bloqueie todo um período como ausência. Desbloqueie da mesma forma se os planos mudarem."
       },
-      "services": {
-        "title": "Os seus serviços",
-        "body": "Gira os serviços que oferece e o que os doentes podem marcar consigo. Mantenha isto atualizado para as marcações corresponderem ao que realmente presta."
+      "appointmentsSummary": {
+        "title": "A sua fila diária",
+        "body": "Veja num relance as consultas em aberto e as ainda não finalizadas — é isto que precisa de ação hoje."
+      },
+      "demoAppointment": {
+        "title": "Uma consulta de exemplo",
+        "body": "Entrar inicia a videochamada. Abrir leva-o ao espaço de trabalho da consulta, onde faz o trabalho clínico."
+      },
+      "demoSoap": {
+        "title": "A nota da consulta",
+        "body": "Dentro do espaço de trabalho escreve a nota SOAP — queixa principal, subjetivo, objetivo, avaliação, plano. Guarde rascunhos à medida que avança e depois assine para finalizar — notas assinadas ficam bloqueadas."
+      },
+      "demoForms": {
+        "title": "Formulários clínicos",
+        "body": "Preencha modelos de formulários clínicos durante a consulta quando necessário. As submissões guardam-se diretamente no registo da consulta."
+      },
+      "demoDocuments": {
+        "title": "Documentos",
+        "body": "Gere receitas, referências para exames e atestados de ausência a partir daqui. Ficam numa fila de revisão e envio antes de chegarem ao doente."
       },
       "forms": {
-        "title": "Formulários clínicos",
-        "body": "Use modelos para formulários de consulta comuns, para não escrever as mesmas notas duas vezes. Anexe-os diretamente a uma consulta."
+        "title": "Modelos de formulários",
+        "body": "Gira os modelos de formulários reutilizáveis que preenche durante as consultas."
       },
       "invoices": {
-        "title": "Faturas e ganhos",
-        "body": "Acompanhe as faturas das suas consultas e veja os detalhes de pagamento. Um registo claro do que lhe é devido e de quando é pago."
-      },
-      "reports": {
-        "title": "Relatórios",
-        "body": "Reveja a sua atividade e desempenho ao longo do tempo. Útil para identificar tendências na sua carga de trabalho."
+        "title": "Faturas",
+        "body": "Acompanhe os ganhos e as faturas das suas consultas."
       },
       "notifications": {
         "title": "Notificações",
         "body": "Fique a par de novas consultas e mensagens assim que chegam."
       },
-      "confidentiality": {
-        "title": "Obrigações de confidencialidade",
-        "body": "Reveja as suas responsabilidades de proteção de dados e confidencialidade como profissional na plataforma. Leitura obrigatória antes de tratar dados de doentes."
-      },
       "profile": {
         "title": "O seu perfil público",
-        "body": "Gira a foto, biografia e credenciais que os doentes veem ao escolher um médico. Um perfil completo gera confiança antes da primeira consulta."
+        "body": "Gira a foto, biografia e credenciais que os doentes veem ao escolher um médico."
       }
+    },
+    "demo": {
+      "badge": "Exemplo — para a visita guiada",
+      "patientName": "Joana Exemplo",
+      "consultationType": "Videoconsulta",
+      "statusConfirmed": "Confirmada",
+      "join": "Entrar",
+      "open": "Abrir",
+      "soapTitle": "Nota da consulta (SOAP)",
+      "chiefComplaint": "Queixa principal",
+      "chiefComplaintSample": "Dor de garganta, há 3 dias",
+      "subjective": "Subjetivo",
+      "subjectiveSample": "Dor ligeira ao engolir, sem febre relatada",
+      "objective": "Objetivo",
+      "objectiveSample": "Garganta ligeiramente inflamada, sem exsudado",
+      "assessment": "Avaliação",
+      "assessmentSample": "Provável faringite viral",
+      "plan": "Plano",
+      "planSample": "Repouso, hidratação, reavaliar em 5 dias se os sintomas persistirem",
+      "saveDraft": "Guardar rascunho",
+      "saveSign": "Guardar e assinar",
+      "formsTitle": "Formulários clínicos",
+      "formTemplateName": "Formulário de admissão de novo doente",
+      "fillForm": "Preencher formulário",
+      "documentsTitle": "Documentos",
+      "documentPrescription": "Receita",
+      "documentReferral": "Referência para exame",
+      "documentCertificate": "Atestado de ausência",
+      "generate": "Gerar",
+      "documentsQueueNote": "Os documentos gerados seguem para uma fila de revisão e envio antes de chegarem ao doente."
     }
   }
 }

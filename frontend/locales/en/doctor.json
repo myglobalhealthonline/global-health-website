@@ -1453,60 +1453,98 @@
     "steps": {
       "welcome": {
         "title": "Welcome to your doctor portal",
-        "body": "A quick look around your workspace. We'll walk through the tools you'll use every day, in the order that makes setup easiest."
+        "body": "Let's walk through how you'll actually work here — start to finish, across the pages you'll use most."
       },
       "overview": {
         "title": "Today's overview",
-        "body": "See today's consultations and what needs your attention at a glance. This is your home base after every login."
+        "body": "See today's schedule and what needs your attention at a glance. This is your home base after every login."
       },
-      "availability": {
+      "availabilityForm": {
         "title": "Set your availability first",
-        "body": "Define your weekly working hours before anything else — it directly drives which booking slots patients see. Update it any time your schedule changes."
+        "body": "Add your weekly working hours here before anything else — they generate the booking slots patients actually see. Do this before touching the calendar."
       },
-      "calendar": {
-        "title": "Your calendar",
-        "body": "See your full schedule laid out by day and week. Useful for spotting gaps or clashes at a glance."
+      "availabilityWeek": {
+        "title": "The week grid",
+        "body": "Click an open slot to mark it busy or blocked. Click a blocked slot again to reopen it."
       },
-      "appointments": {
-        "title": "Manage appointments",
-        "body": "Review and confirm upcoming consultations, and join video visits straight from here. Past appointments stay searchable too."
+      "availabilityWindows": {
+        "title": "Recurring windows",
+        "body": "Review, edit, or delete the recurring weekly windows you've set up. Changes here ripple forward to future weeks."
       },
-      "patients": {
-        "title": "Patient records",
-        "body": "Look up patient history, notes, and medical files securely. Everything you need before and during a consultation lives here."
+      "calendarAdd": {
+        "title": "Add availability for a date range",
+        "body": "Need extra hours on specific dates? Add them here without touching your standing weekly schedule."
       },
-      "messages": {
-        "title": "Secure messaging",
-        "body": "Message patients and colleagues through the secure inbox. Replies arrive as notifications, so nothing gets missed."
+      "calendarTimeoff": {
+        "title": "Block time off",
+        "body": "Going away? Block a whole date range as time off. Unblock it the same way if plans change."
       },
-      "services": {
-        "title": "Your services",
-        "body": "Manage the services you offer and what patients can book with you. Keep this current so bookings match what you actually provide."
+      "appointmentsSummary": {
+        "title": "Your daily queue",
+        "body": "See open consultations and appointments not yet finalized at a glance — this is what needs action today."
+      },
+      "demoAppointment": {
+        "title": "A sample appointment",
+        "body": "Join starts the video visit. Open takes you into the consultation workspace where you do the clinical work."
+      },
+      "demoSoap": {
+        "title": "The consultation note",
+        "body": "Inside the workspace you write the SOAP note — chief complaint, subjective, objective, assessment, plan. Save drafts as you go, then sign to finalize — signed notes lock."
+      },
+      "demoForms": {
+        "title": "Clinical forms",
+        "body": "Fill clinical form templates during the consultation when needed. Submissions save straight to the appointment record."
+      },
+      "demoDocuments": {
+        "title": "Documents",
+        "body": "Generate prescriptions, exam referrals, and absence certificates from here. They land in a review & send queue before reaching the patient."
       },
       "forms": {
-        "title": "Clinical forms",
-        "body": "Use templates for common consultation forms so you're not writing the same notes twice. Attach them straight to an appointment."
+        "title": "Form templates",
+        "body": "Manage the reusable form templates you fill during consultations."
       },
       "invoices": {
-        "title": "Invoices & earnings",
-        "body": "Track invoices for your consultations and see your payout details. A clear record of what you're owed and when it's paid."
-      },
-      "reports": {
-        "title": "Reports",
-        "body": "Review your activity and performance over time. Useful for spotting trends in your caseload."
+        "title": "Invoices",
+        "body": "Track earnings and invoices for your consultations."
       },
       "notifications": {
         "title": "Notifications",
         "body": "Stay on top of new appointments and messages the moment they come in."
       },
-      "confidentiality": {
-        "title": "Confidentiality obligations",
-        "body": "Review your data-protection and confidentiality responsibilities as a practitioner on the platform. Required reading before handling patient data."
-      },
       "profile": {
         "title": "Your public profile",
-        "body": "Manage the photo, bio, and credentials patients see when choosing a doctor. A complete profile builds trust before the first consultation."
+        "body": "Manage the photo, bio, and credentials patients see when choosing a doctor."
       }
+    },
+    "demo": {
+      "badge": "Sample — for the tour",
+      "patientName": "Jane Sample",
+      "consultationType": "Video consultation",
+      "statusConfirmed": "Confirmed",
+      "join": "Join",
+      "open": "Open",
+      "soapTitle": "Consultation note (SOAP)",
+      "chiefComplaint": "Chief complaint",
+      "chiefComplaintSample": "Sore throat, 3 days",
+      "subjective": "Subjective",
+      "subjectiveSample": "Mild pain on swallowing, no fever reported",
+      "objective": "Objective",
+      "objectiveSample": "Throat mildly inflamed, no exudate",
+      "assessment": "Assessment",
+      "assessmentSample": "Likely viral pharyngitis",
+      "plan": "Plan",
+      "planSample": "Rest, fluids, review in 5 days if symptoms persist",
+      "saveDraft": "Save draft",
+      "saveSign": "Save & sign",
+      "formsTitle": "Clinical forms",
+      "formTemplateName": "New patient intake form",
+      "fillForm": "Fill form",
+      "documentsTitle": "Documents",
+      "documentPrescription": "Prescription",
+      "documentReferral": "Exam referral",
+      "documentCertificate": "Absence certificate",
+      "generate": "Generate",
+      "documentsQueueNote": "Generated documents go to a review & send queue before reaching the patient."
     }
   }
 }

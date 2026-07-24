@@ -5463,6 +5463,57 @@ a.gh-appointment-card:hover {
   }
 }
 
+/* DoctorTourDemo — sample-data walkthrough block (doctor-tour-demo.tsx),
+ * only rendered while the tour is active. Sits on the real .gh-card. */
+.gh-tour-demo {
+  position: relative;
+  border: 1px dashed var(--portal-mint);
+}
+
+.gh-tour-demo__badge {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 3px 10px;
+  border-radius: var(--portal-radius-pill);
+  background: var(--portal-mint-soft);
+  color: var(--portal-mint-text);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gh-tour-demo__section {
+  padding: 12px 0;
+  border-top: 1px solid var(--portal-line);
+}
+
+.gh-tour-demo__section:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.gh-tour-demo__section-title {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--portal-muted);
+}
+
+.gh-tour-demo__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.gh-tour-demo__note {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--portal-muted);
+}
+
 /* ── AppSheet — portal skin (Obsidian Ivory · Liquid Lux) ────────────────
  * DRAWER_ARCHITECTURE_PLAN §1: ivory panel, obsidian scrim, lux hairlines/
  * radii/shadows — reads as a native portal surface, not a generic sheet.
@@ -6223,7 +6274,9 @@ html::-webkit-scrollbar-thumb:hover {
 }
 
 /* Week grid — sticky day-header row, current-time indicator, today column
- * tint. Horizontal scroll below 720px is intentional (dense hour grid). */
+ * tint. Day-column count is measured in WeekCalendar.tsx (2-7, ~200px/day
+ * min) so a single-doctor week never forces horizontal scroll; scroll only
+ * kicks in for the multi-lane (all-doctors) grid, via gridMinWidth. */
 
 /* Body scroller. The grid is deliberately tall (160px/hour) so even a 15-min
  * block fits a time range + patient name — bounding it here keeps the PAGE
