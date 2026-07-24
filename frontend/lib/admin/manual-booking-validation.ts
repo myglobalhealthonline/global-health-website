@@ -92,3 +92,25 @@ export function validateManualBooking(
 export function hasErrors(errors: ManualBookingErrors): boolean {
   return Object.keys(errors).length > 0;
 }
+
+/**
+ * Parse the optional admin discount field. Blank means "no discount" (null, so
+ * the backend keeps the resolved price untouched); anything else must be a
+ * whole 0–100. Returned as a discriminated pair so the server actions can bail
+ * with the message instead of silently dropping a mistyped discount and
+ * charging the patient full price.
+ */
+export function parseDiscountPercent(
+  raw: string | null | undefined,
+): { value: number | null; error: string | null } {
+  const trimmed = (raw ?? "").trim();
+  if (trimmed === "") return { value: null, error: null };
+  const n = Number(trimmed);
+  if (!Number.isFinite(n) || !Number.isInteger(n) || n < 0 || n > 100) {
+    return {
+      value: null,
+      error: "Discount must be a whole number between 0 and 100.",
+    };
+  }
+  return { value: n === 0 ? null : n, error: null };
+}

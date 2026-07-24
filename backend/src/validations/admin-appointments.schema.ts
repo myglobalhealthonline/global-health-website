@@ -258,6 +258,10 @@ export const createManualAppointmentBodySchema = z
      *  requires the doctor to be in that insurer's network for the service. */
     insuranceCompanyId: z.string().trim().min(1).max(64).optional().nullable(),
     insurancePolicyNumber: z.string().trim().max(120).optional().nullable(),
+    /** Admin discretionary discount, whole percent 0..100, applied to whatever
+     *  price the server resolves (base / peak / insurance). 100 comps the
+     *  booking outright — no payment link is issued. */
+    discountPercent: z.number().int().min(0).max(100).optional().nullable(),
     returnTo: z
       .string()
       .trim()

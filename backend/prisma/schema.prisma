@@ -2396,6 +2396,14 @@ model Order {
   subtotalCents                 Int
   shippingCents                 Int                   @default(0)
   totalCents                    Int
+  /// Admin discretionary discount applied at manual-booking time (walk-in /
+  /// phone-in goodwill, staff comp). AUDIT ONLY — `subtotalCents`,
+  /// `totalCents` and every `OrderItem.unitPriceCents` are ALREADY net of it,
+  /// same convention as `OrderItem.corporateDiscountCents`. Null on every
+  /// self-service order. `discountCents` is what was taken off the gross price
+  /// the pricing chain (base → peak → insurance) resolved.
+  discountPercent               Int?
+  discountCents                 Int?
   status                        OrderStatus           @default(PENDING)
   paymentStatus                 PaymentStatus         @default(UNPAID)
   /// Insurance card manual-verification state. Null = ordinary (non-insurance)

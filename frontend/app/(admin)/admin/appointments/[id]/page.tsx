@@ -126,6 +126,11 @@ type ManualBookingRecovery = {
   setPasswordUrl: string;
   paymentUrl: string;
   emailQueued: string;
+  /** "1" when a 100% admin discount comped the booking — it is created already
+   *  paid, so there is deliberately no payment link. */
+  free?: string;
+  /** Admin discount applied at booking time, as a whole percent string. */
+  discountPercent?: string;
 };
 
 export default async function AdminAppointmentDetailPage({
@@ -419,10 +424,19 @@ export default async function AdminAppointmentDetailPage({
         <div className="gh-admin-appointment-recovery mb-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border-strong)] bg-[var(--color-background-soft)] px-4 py-3 text-sm">
           <p className="font-bold text-[var(--color-text-primary)]">
             Manual booking created.
-            {manualBooking.emailQueued === "1"
-              ? " Pre-payment automation started (WhatsApp + reservation email)."
-              : " Automation failed — copy the details below and share manually."}
+            {manualBooking.free === "1"
+              ? " Comped at 100% — recorded as paid, confirmation automation started."
+              : manualBooking.emailQueued === "1"
+                ? " Pre-payment automation started (WhatsApp + reservation email)."
+                : " Automation failed — copy the details below and share manually."}
           </p>
+          {manualBooking.free !== "1" &&
+          Number(manualBooking.discountPercent ?? 0) > 0 ? (
+            <p className="mt-1 text-portal-compact text-[var(--color-text-body)]">
+              {manualBooking.discountPercent}% discount applied — the payment link
+              charges the discounted price.
+            </p>
+          ) : null}
           <dl className="mt-2 grid gap-1 text-portal-compact text-[var(--color-text-body)]">
             {manualBooking.tempPassword ? (
               <div>
@@ -459,6 +473,11 @@ export default async function AdminAppointmentDetailPage({
                 >
                   {manualBooking.paymentUrl}
                 </a>
+              </div>
+            ) : manualBooking.free === "1" ? (
+              <div className="text-[var(--color-text-muted)]">
+                Nothing to pay — the booking was comped in full, so no payment
+                link was issued.
               </div>
             ) : (
               <div className="text-[var(--color-text-muted)]">

@@ -165,6 +165,10 @@ export type CreateManualAppointmentInput = {
    *  requires the doctor to be in that insurer's network for the service. */
   insuranceCompanyId?: string | null;
   insurancePolicyNumber?: string | null;
+  /** Admin discretionary discount, whole percent 0..100. Applied by the
+   *  backend to whatever price it resolves (base / peak / insurance); 100 comps
+   *  the booking, which is then created already paid with no payment link. */
+  discountPercent?: number | null;
   returnTo?: string;
 };
 
@@ -180,6 +184,12 @@ export type CreateManualAppointmentResult = {
   tempPassword: string | null;
   setPasswordUrl: string;
   emailQueued: boolean;
+  /** What was actually charged after any admin discount, plus the discount
+   *  itself. `free` = comped in full: no payment link exists to chase. */
+  amountCents: number;
+  discountPercent: number;
+  discountCents: number;
+  free: boolean;
 };
 
 export async function postAdminManualBooking(input: CreateManualAppointmentInput) {
