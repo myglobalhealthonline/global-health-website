@@ -23,7 +23,10 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const blog = loadLocaleBundle(lang as LocaleCode).common.blogPage;
-  const title = `${blog.heroTitleLead ?? blog.heroWatermark ?? "Blog"} ${blog.heroTitleAccent ?? ""}`.trim();
+  const heroTitle = `${blog.heroTitleLead ?? blog.heroWatermark ?? "Blog"} ${blog.heroTitleAccent ?? ""}`
+    .trim()
+    .replace(/\.$/, "");
+  const title = `${heroTitle} in ${config.name}`;
   const description = blog.heroLede ?? "Evidence-based health guides written and reviewed by our medical team.";
   return buildPublicMetadata({
     path: `/${country}/${lang}/blog`,
