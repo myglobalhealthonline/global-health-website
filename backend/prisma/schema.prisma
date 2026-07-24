@@ -920,6 +920,9 @@ model Service {
   shippingCents            Int                            @default(0)
   editorialChecklist       Json?
   isActive                 Boolean                        @default(true)
+  /// Clinical review date shown on the service page as "Last reviewed"
+  /// (E-E-A-T signal). Nullable, no backfill — set by admins going forward.
+  lastReviewedAt           DateTime?
   /// Who may see/book this service. PUBLIC keeps today's behaviour.
   /// CORPORATE_ONLY = corporate employee onboarding (pre-assessment);
   /// CORPORATE_REQUEST_ONLY = bookable only against an open
