@@ -2,7 +2,8 @@ import type { MetadataRoute } from "next";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { getPublicDoctorBySlug, getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
 import { getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
@@ -52,10 +53,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     path: string,
     priority: number,
     extra?: Partial<MetadataRoute.Sitemap[number]>,
+    langsOverride?: string[],
   ) => {
     const slug = `/${country.slug || countrySlug(country.code)}`;
     const region = hreflangRegion(country.code);
-    const langs = countryLangs(country);
+    const langs = langsOverride ?? countryLangs(country);
+    if (langs.length === 0) return;
     const languages: Record<string, string> = {};
     for (const lang of langs) {
       languages[`${lang}-${region}`] = `${base}${slug}/${lang}${path}`;
@@ -203,15 +206,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Doctor profile pages — every enabled locale with hreflang alternates,
-  // matching the section/service entries above.
+  // Doctor profile pages — one entry per (doctor, locale), restricted to
+  // locale variants that actually render indexable. `buildDoctorProfileMetadata`
+  // sets noindex when a locale's translation/market row fails editorial
+  // validation; submitting those variants to Google anyway just trains a
+  // "noindex in sitemap" penalty, so we apply the identical predicate here
+  // (`isPublicDoctorRecordIndexable`, same helper the page uses) before
+  // listing a locale.
   try {
     const byCode = new Map(countries.map((c) => [c.code, c]));
     const allDoctors = await getPublicDoctorsNormalized();
     for (const d of allDoctors) {
       const country = byCode.get(d.countryCode);
       if (!country) continue;
-      pushLocalized(country, `/doctors/${d.slug}`, 0.7);
+      const indexableLangs = (
+        await Promise.all(
+          countryLangs(country).map(async (lang) => {
+            const localized = await getPublicDoctorBySlug(d.slug, lang);
+            return localized && isPublicDoctorRecordIndexable(localized) ? lang : null;
+          }),
+        )
+      ).filter((lang): lang is string => lang !== null);
+      if (indexableLangs.length === 0) continue;
+      pushLocalized(country, `/doctors/${d.slug}`, 0.7, undefined, indexableLangs);
     }
   } catch {
     // Doctor list unavailable — sitemap still emits the country tree.
