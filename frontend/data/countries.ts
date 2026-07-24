@@ -113,7 +113,9 @@ export const countries: CountryConfig[] = [
     label: "BR",
     slug: "brazil",
     defaultLocale: "pt",
-    supportedLocales: ["pt", "en", "es", "cs", "ro", "de"],
+    // Brazil intentionally supports 3 locales (matches CountryLocale rows in
+    // DB — user decision 2026-07-24); other markets carry all six.
+    supportedLocales: ["pt", "en", "es"],
     legacyHomePath: "/home-br",
     teamPath: "/brazil-team",
     generalConsultationPath: "/general-consultation-br",
