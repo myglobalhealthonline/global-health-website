@@ -10,6 +10,7 @@ import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { hreflangRegion } from "@/lib/seo/hreflang";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
+import { getCountryLegal, LEGAL_TYPE_SLUGS } from "@/lib/content/get-country-legal";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -162,6 +163,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     } catch {
       // Landing list unavailable for this country — skip, keep the rest.
+    }
+  }
+
+  // Country legal pages — the index (always renders) + each doc type that
+  // actually has a published row. One published row of a type, in ANY
+  // locale, makes it resolve for every enabled locale: the public API falls
+  // back exact-locale → "en" → any published row (see
+  // getPublicCountryLegalDocument in backend/src/modules/countries/countries.service.ts),
+  // matching the per-country (not per-locale) availability the page itself
+  // relies on. MEDICAL_DISCLAIMER also counts when only the profile's
+  // fullDisclaimer is set, mirroring the page's disclaimer fallback. Enum
+  // types with no data anywhere (e.g. COOKIE_POLICY) are skipped — driven by
+  // the API response, not the enum.
+  for (const country of countries) {
+    try {
+      const legal = await getCountryLegal(country.code);
+      pushLocalized(country, "/legal", 0.3);
+      const types = new Set((legal?.documents ?? []).map((d) => d.type));
+      if (legal?.profile?.fullDisclaimer) types.add("MEDICAL_DISCLAIMER");
+      for (const type of types) {
+        pushLocalized(country, `/legal/${LEGAL_TYPE_SLUGS[type]}`, 0.3);
+      }
+    } catch {
+      // Legal data unavailable for this country — keep the rest of the sitemap.
     }
   }
 
