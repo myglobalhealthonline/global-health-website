@@ -1514,6 +1514,22 @@
       "profile": {
         "title": "Your public profile",
         "body": "Manage the photo, bio, and credentials patients see when choosing a doctor."
+      },
+      "workspace": {
+        "title": "Your consultation workspace",
+        "body": "Everything for this visit lives in one place — overview, notes, forms, and documents, all in these tabs."
+      },
+      "workspaceSoap": {
+        "title": "The consultation note",
+        "body": "Write the SOAP note here — chief complaint, subjective, objective, assessment, plan. Save drafts as you go, then sign to finalize — signed notes lock."
+      },
+      "workspaceForms": {
+        "title": "Clinical forms",
+        "body": "Fill clinical form templates for this consultation when needed. Submissions save straight to the appointment record."
+      },
+      "workspaceDocuments": {
+        "title": "Documents",
+        "body": "Generate prescriptions, exam referrals, and absence certificates from here. They land in a review & send queue before reaching the patient."
       }
     },
     "demo": {

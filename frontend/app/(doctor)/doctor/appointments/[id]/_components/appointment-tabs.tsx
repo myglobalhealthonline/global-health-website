@@ -98,21 +98,25 @@ export function AppointmentTabs({
   }, []);
 
   return (
-    <div className="gh-doctor-appointment-tabs" data-tour="appointment-tabs">
-      <PortalTabs
-        ariaLabel={ariaLabel ?? "Appointment sections"}
-        value={active}
-        onChange={setActive}
-        sticky
-        syncParam="tab"
-        items={tabs.map((tab) => ({
-          value: tab.id,
-          label: tab.label,
-          badge: tab.badge,
-          badgeAlert: tab.badgeAlert,
-          icon: tab.icon,
-        }))}
-      />
+    <div className="gh-doctor-appointment-tabs">
+      {/* data-tour on the strip row only — NOT the panels below, which can
+          run taller than the viewport and blow out the tour spotlight. */}
+      <div data-tour="appointment-tabs">
+        <PortalTabs
+          ariaLabel={ariaLabel ?? "Appointment sections"}
+          value={active}
+          onChange={setActive}
+          sticky
+          syncParam="tab"
+          items={tabs.map((tab) => ({
+            value: tab.id,
+            label: tab.label,
+            badge: tab.badge,
+            badgeAlert: tab.badgeAlert,
+            icon: tab.icon,
+          }))}
+        />
+      </div>
 
       <div className="mt-4 grid gap-4">
         {tabs.map((tab) => (

@@ -1514,6 +1514,22 @@
       "profile": {
         "title": "Váš veřejný profil",
         "body": "Spravujte fotografii, medailonek a kvalifikace, které pacienti vidí při výběru lékaře."
+      },
+      "workspace": {
+        "title": "Váš pracovní prostor konzultace",
+        "body": "Vše potřebné pro tuto konzultaci najdete zde — přehled, poznámky, formuláře a dokumenty, vše v těchto záložkách."
+      },
+      "workspaceSoap": {
+        "title": "Záznam z konzultace",
+        "body": "Napište zde zprávu SOAP — hlavní obtíž, subjektivní nález, objektivní nález, hodnocení, plán. Ukládejte průběžně koncepty a poté podepište pro finalizaci — podepsané záznamy se uzamknou."
+      },
+      "workspaceForms": {
+        "title": "Klinické formuláře",
+        "body": "Podle potřeby vyplňte pro tuto konzultaci šablony klinických formulářů. Odeslané formuláře se uloží přímo k záznamu o konzultaci."
+      },
+      "workspaceDocuments": {
+        "title": "Dokumenty",
+        "body": "Odsud vygenerujte recepty, žádanky na vyšetření a potvrzení o pracovní neschopnosti. Než se dostanou k pacientovi, čekají ve frontě ke kontrole a odeslání."
       }
     },
     "demo": {

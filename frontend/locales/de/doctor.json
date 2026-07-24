@@ -1514,6 +1514,22 @@
       "profile": {
         "title": "Ihr öffentliches Profil",
         "body": "Verwalten Sie Foto, Biografie und Qualifikationen, die Patienten bei der Arztwahl sehen."
+      },
+      "workspace": {
+        "title": "Ihr Konsultations-Arbeitsbereich",
+        "body": "Alles für diesen Termin ist an einem Ort — Übersicht, Notizen, Formulare und Dokumente, alle in diesen Reitern."
+      },
+      "workspaceSoap": {
+        "title": "Die Konsultationsnotiz",
+        "body": "Schreiben Sie hier die SOAP-Notiz — Beschwerde, Subjektiv, Objektiv, Beurteilung, Plan. Speichern Sie Entwürfe während der Arbeit und signieren Sie dann zur Finalisierung — signierte Notizen werden gesperrt."
+      },
+      "workspaceForms": {
+        "title": "Klinische Formulare",
+        "body": "Füllen Sie bei Bedarf klinische Formularvorlagen für diesen Termin aus. Einreichungen werden direkt im Termin gespeichert."
+      },
+      "workspaceDocuments": {
+        "title": "Dokumente",
+        "body": "Erstellen Sie hier Rezepte, Überweisungen und Arbeitsunfähigkeitsbescheinigungen. Sie landen in einer Prüf- und Versandwarteschlange, bevor sie den Patienten erreichen."
       }
     },
     "demo": {

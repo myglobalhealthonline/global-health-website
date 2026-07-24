@@ -1514,6 +1514,22 @@
       "profile": {
         "title": "Profilul dumneavoastră public",
         "body": "Gestionați fotografia, biografia și calificările pe care pacienții le văd când aleg un medic."
+      },
+      "workspace": {
+        "title": "Spațiul dumneavoastră de lucru al consultației",
+        "body": "Tot ce aveți nevoie pentru această consultație se află aici — prezentare generală, notițe, formulare și documente, toate în aceste file."
+      },
+      "workspaceSoap": {
+        "title": "Nota consultației",
+        "body": "Scrieți aici nota SOAP — motivul prezentării, subiectiv, obiectiv, evaluare, plan. Salvați ciorne pe măsură ce avansați, apoi semnați pentru a finaliza — notele semnate se blochează."
+      },
+      "workspaceForms": {
+        "title": "Formulare clinice",
+        "body": "Completați șabloane de formulare clinice pentru această consultație, când este necesar. Trimiterile se salvează direct în fișa consultației."
+      },
+      "workspaceDocuments": {
+        "title": "Documente",
+        "body": "Generați rețete, trimiteri pentru examinări și certificate de concediu medical de aici. Acestea intră într-o coadă de revizuire și trimitere înainte de a ajunge la pacient."
       }
     },
     "demo": {

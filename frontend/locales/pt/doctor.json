@@ -1514,6 +1514,22 @@
       "profile": {
         "title": "O seu perfil público",
         "body": "Gira a foto, biografia e credenciais que os doentes veem ao escolher um médico."
+      },
+      "workspace": {
+        "title": "O seu espaço de trabalho da consulta",
+        "body": "Tudo o que precisa para esta consulta está aqui — resumo, notas, formulários e documentos, todos nestes separadores."
+      },
+      "workspaceSoap": {
+        "title": "A nota da consulta",
+        "body": "Escreva aqui a nota SOAP — queixa principal, subjetivo, objetivo, avaliação, plano. Guarde rascunhos à medida que avança e depois assine para finalizar — notas assinadas ficam bloqueadas."
+      },
+      "workspaceForms": {
+        "title": "Formulários clínicos",
+        "body": "Preencha modelos de formulários clínicos para esta consulta quando necessário. As submissões guardam-se diretamente no registo da consulta."
+      },
+      "workspaceDocuments": {
+        "title": "Documentos",
+        "body": "Gere receitas, referências para exames e atestados de ausência a partir daqui. Ficam numa fila de revisão e envio antes de chegarem ao doente."
       }
     },
     "demo": {

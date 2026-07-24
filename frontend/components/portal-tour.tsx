@@ -45,6 +45,14 @@ const MOBILE_BREAKPOINT = 640;
 const POLL_INTERVAL_MS = 150;
 const POLL_TIMEOUT_MS = 4000;
 const ACTIVE_FLAG_KEY = "gh_tour_active";
+const VIEWPORT_MARGIN = 12;
+// A target counts as "oversized" on an axis once it leaves less than this
+// much breathing room around it — the spotlight/card clamp and the
+// scrollIntoView block choice below both key off it.
+const OVERSIZE_MARGIN = 120;
+const FALLBACK_CARD_HEIGHT = 220;
+const FALLBACK_CARD_WIDTH = 340;
+const CARD_GAP = 14;
 
 function isVisible(el: Element): boolean {
   const htmlEl = el as HTMLElement;
@@ -55,6 +63,68 @@ function isVisible(el: Element): boolean {
 
 function sessionKey(storageKey: string): string {
   return `gh_tour_state:${storageKey}`;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  // max can be < min when the viewport is smaller than the content (tiny
+  // window / huge card) — always prefer the min so the card stays reachable
+  // near the top-left rather than collapsing to a negative-size box.
+  return Math.min(Math.max(value, min), Math.max(min, max));
+}
+
+/**
+ * Numeric (never `transform`) top/left for the tour card, unconditionally
+ * clamped to the viewport. `transform: translateY(-100%)` (the old
+ * above-placement trick) can't be clamped — the reported "card renders off
+ * the top edge" bug was exactly that: a target near the top of the page
+ * flips to above-placement, and the transform pushes it past y=0 with
+ * nothing to pull it back. Measured `cardW`/`cardH` come from the actual
+ * card (ref, refreshed every rAF tick) so this is accurate after first
+ * paint; before that it falls back to FALLBACK_CARD_WIDTH/HEIGHT.
+ */
+function computeCardPosition(
+  rect: Rect | null,
+  cardW: number,
+  cardH: number,
+  viewportW: number,
+  viewportH: number,
+): { top: number; left: number } {
+  if (!rect) {
+    return {
+      top: clamp(viewportH / 2 - cardH / 2, VIEWPORT_MARGIN, viewportH - cardH - VIEWPORT_MARGIN),
+      left: clamp(viewportW / 2 - cardW / 2, VIEWPORT_MARGIN, viewportW - cardW - VIEWPORT_MARGIN),
+    };
+  }
+  const spaceBelow = viewportH - (rect.top + rect.height);
+  const spaceAbove = rect.top;
+  const spaceRight = viewportW - (rect.left + rect.width);
+  const spaceLeft = rect.left;
+
+  let top: number;
+  let left = clamp(rect.left + rect.width / 2 - cardW / 2, VIEWPORT_MARGIN, viewportW - cardW - VIEWPORT_MARGIN);
+
+  if (spaceBelow >= cardH + CARD_GAP) {
+    top = rect.top + rect.height + CARD_GAP;
+  } else if (spaceAbove >= cardH + CARD_GAP) {
+    top = rect.top - cardH - CARD_GAP;
+  } else if (spaceRight >= cardW + CARD_GAP) {
+    // Neither above nor below fits (oversized/edge target) — beside the
+    // spotlight instead of overlapping it.
+    top = clamp(rect.top, VIEWPORT_MARGIN, viewportH - cardH - VIEWPORT_MARGIN);
+    left = rect.left + rect.width + CARD_GAP;
+  } else if (spaceLeft >= cardW + CARD_GAP) {
+    top = clamp(rect.top, VIEWPORT_MARGIN, viewportH - cardH - VIEWPORT_MARGIN);
+    left = rect.left - cardW - CARD_GAP;
+  } else {
+    // No side fits either — center in viewport, last resort.
+    top = viewportH / 2 - cardH / 2;
+    left = viewportW / 2 - cardW / 2;
+  }
+
+  return {
+    top: clamp(top, VIEWPORT_MARGIN, viewportH - cardH - VIEWPORT_MARGIN),
+    left: clamp(left, VIEWPORT_MARGIN, viewportW - cardW - VIEWPORT_MARGIN),
+  };
 }
 
 export function PortalTour({
@@ -72,6 +142,11 @@ export function PortalTour({
   const [mounted, setMounted] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const targetElRef = useRef<Element | null>(null);
+  // Actual rendered card size, refreshed every tracking tick — not known
+  // before first paint, so placement starts from the FALLBACK_CARD_*
+  // constants and self-corrects once measured.
+  const cardHeightRef = useRef<number>(FALLBACK_CARD_HEIGHT);
+  const cardWidthRef = useRef<number>(FALLBACK_CARD_WIDTH);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -189,7 +264,14 @@ export function PortalTour({
       const el = document.querySelector(`[data-tour="${step.target}"]`);
       if (el && isVisible(el)) {
         targetElRef.current = el;
-        el.scrollIntoView({ block: "center", behavior: "smooth" });
+        const r0 = el.getBoundingClientRect();
+        // An element taller than the viewport can't ever be centered —
+        // "center" just scrolls back and forth chasing an impossible mid-
+        // point. "nearest" settles once it's in view.
+        el.scrollIntoView({
+          block: r0.height > window.innerHeight ? "nearest" : "center",
+          behavior: "smooth",
+        });
         const r = el.getBoundingClientRect();
         setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
         return;
@@ -233,6 +315,11 @@ export function PortalTour({
     let raf = 0;
     let last: Rect | null = null;
     const tick = () => {
+      if (cardRef.current) {
+        const cr = cardRef.current.getBoundingClientRect();
+        if (cr.height) cardHeightRef.current = cr.height;
+        if (cr.width) cardWidthRef.current = cr.width;
+      }
       const el = targetElRef.current;
       if (el) {
         const r = el.getBoundingClientRect();
@@ -291,6 +378,28 @@ export function PortalTour({
     .replace("{current}", String(stepIndex + 1))
     .replace("{total}", String(steps.length));
 
+  // A target bigger than (roughly) the viewport can't be fully haloed or
+  // used to place the card relative to its edges — clamp the DISPLAYED
+  // spotlight box to the viewport and fall back to a centered card so
+  // neither ever renders off-screen (bug: availability-week/appointment-tabs
+  // wrap a whole scrollable card taller than the window).
+  const oversizedH = rect ? rect.height > window.innerHeight - OVERSIZE_MARGIN : false;
+  const oversizedW = rect ? rect.width > window.innerWidth - OVERSIZE_MARGIN : false;
+  const clampedRect: Rect | null = rect
+    ? {
+        top: oversizedH ? Math.max(rect.top, VIEWPORT_MARGIN) : rect.top,
+        left: oversizedW ? Math.max(rect.left, VIEWPORT_MARGIN) : rect.left,
+        width: oversizedW
+          ? Math.min(rect.left + rect.width, window.innerWidth - VIEWPORT_MARGIN) -
+            Math.max(rect.left, VIEWPORT_MARGIN)
+          : rect.width,
+        height: oversizedH
+          ? Math.min(rect.top + rect.height, window.innerHeight - VIEWPORT_MARGIN) -
+            Math.max(rect.top, VIEWPORT_MARGIN)
+          : rect.height,
+      }
+    : null;
+
   const cardStyle: React.CSSProperties = {};
   if (isMobile) {
     cardStyle.left = 12;
@@ -298,29 +407,31 @@ export function PortalTour({
     cardStyle.bottom = 12;
     cardStyle.width = "auto";
     cardStyle.maxWidth = "none";
-  } else if (rect) {
-    const cardWidth = 340;
-    const spaceBelow = window.innerHeight - rect.top - rect.height;
-    const placeBelow = spaceBelow > 200;
-    cardStyle.top = placeBelow ? rect.top + rect.height + 14 : Math.max(12, rect.top - 14);
-    if (!placeBelow) cardStyle.transform = "translateY(-100%)";
-    let left = rect.left + rect.width / 2 - cardWidth / 2;
-    left = Math.max(12, Math.min(left, window.innerWidth - cardWidth - 12));
-    cardStyle.left = left;
-    cardStyle.width = cardWidth;
   } else {
-    cardStyle.top = "50%";
-    cardStyle.left = "50%";
-    cardStyle.transform = "translate(-50%, -50%)";
-    cardStyle.width = 340;
+    // Numeric top/left only — no `transform` placement. `translateY(-100%)`
+    // (the old above-placement trick) can't be clamped: it was pushing the
+    // card past the top edge for any target near the top of the page,
+    // which is the reported "card renders off-screen" bug. Position is
+    // fully computed + clamped every render from the measured (or
+    // fallback) card size, so no placement path can skip the clamp.
+    const { top, left } = computeCardPosition(
+      rect,
+      cardWidthRef.current,
+      cardHeightRef.current,
+      window.innerWidth,
+      window.innerHeight,
+    );
+    cardStyle.top = top;
+    cardStyle.left = left;
+    cardStyle.width = cardWidthRef.current;
   }
 
-  const spotlightStyle: React.CSSProperties | null = rect
+  const spotlightStyle: React.CSSProperties | null = clampedRect
     ? {
-        top: rect.top - 6,
-        left: rect.left - 6,
-        width: rect.width + 12,
-        height: rect.height + 12,
+        top: clampedRect.top - 6,
+        left: clampedRect.left - 6,
+        width: clampedRect.width + 12,
+        height: clampedRect.height + 12,
       }
     : null;
 

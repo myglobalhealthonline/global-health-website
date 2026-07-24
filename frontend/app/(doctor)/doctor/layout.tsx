@@ -97,10 +97,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   // otherwise the sample-data demo block on the appointments page).
   const workspaceSteps = tourAppointmentId
     ? [
-        { route: `/doctor/appointments/${tourAppointmentId}`, target: "appointment-tabs", title: d.tour.steps.demoAppointment.title, body: d.tour.steps.demoAppointment.body },
-        { route: `/doctor/appointments/${tourAppointmentId}?tab=consultation`, target: "soap-form", title: d.tour.steps.demoSoap.title, body: d.tour.steps.demoSoap.body },
-        { route: `/doctor/appointments/${tourAppointmentId}?tab=forms`, target: "appointment-forms", title: d.tour.steps.demoForms.title, body: d.tour.steps.demoForms.body },
-        { route: `/doctor/appointments/${tourAppointmentId}?tab=documents`, target: "appointment-documents", title: d.tour.steps.demoDocuments.title, body: d.tour.steps.demoDocuments.body },
+        { route: `/doctor/appointments/${tourAppointmentId}`, target: "appointment-tabs", title: d.tour.steps.workspace.title, body: d.tour.steps.workspace.body },
+        { route: `/doctor/appointments/${tourAppointmentId}?tab=consultation`, target: "soap-form", title: d.tour.steps.workspaceSoap.title, body: d.tour.steps.workspaceSoap.body },
+        { route: `/doctor/appointments/${tourAppointmentId}?tab=forms`, target: "appointment-forms", title: d.tour.steps.workspaceForms.title, body: d.tour.steps.workspaceForms.body },
+        { route: `/doctor/appointments/${tourAppointmentId}?tab=documents`, target: "appointment-documents", title: d.tour.steps.workspaceDocuments.title, body: d.tour.steps.workspaceDocuments.body },
       ]
     : [
         { target: "demo-appointment", title: d.tour.steps.demoAppointment.title, body: d.tour.steps.demoAppointment.body },
