@@ -1,0 +1,74 @@
+{
+  "home": {
+    "desktop": {
+      "errors": [],
+      "status": 200,
+      "h1_text": "Licensed doctors and online care, in your country.",
+      "h1_visible": true,
+      "h1_in_viewport": true,
+      "body_scroll_width": 1920,
+      "viewport_width": 1920,
+      "horizontal_scroll": false,
+      "html_class": "h-full antialiased js"
+    },
+    "mobile": {
+      "errors": [],
+      "status": 200,
+      "h1_text": "Licensed doctors and online care, in your country.",
+      "h1_visible": true,
+      "h1_in_viewport": true,
+      "body_scroll_width": 375,
+      "viewport_width": 375,
+      "horizontal_scroll": false,
+      "html_class": "h-full antialiased js"
+    }
+  },
+  "ireland-en": {
+    "desktop": {
+      "errors": [],
+      "status": 200,
+      "h1_text": "Online medical care in Ireland",
+      "h1_visible": true,
+      "h1_in_viewport": true,
+      "body_scroll_width": 1920,
+      "viewport_width": 1920,
+      "horizontal_scroll": false,
+      "html_class": "h-full antialiased js"
+    },
+    "mobile": {
+      "errors": [],
+      "status": 200,
+      "h1_text": "Online medical care in Ireland",
+      "h1_visible": true,
+      "h1_in_viewport": true,
+      "body_scroll_width": 375,
+      "viewport_width": 375,
+      "horizontal_scroll": false,
+      "html_class": "h-full antialiased js"
+    }
+  },
+  "service": {
+    "desktop": {
+      "errors": [],
+      "status": 200,
+      "h1_text": "See a Doctor Online in Ireland",
+      "h1_visible": true,
+      "h1_in_viewport": true,
+      "body_scroll_width": 1920,
+      "viewport_width": 1920,
+      "horizontal_scroll": false,
+      "html_class": "h-full antialiased js"
+    },
+    "mobile": {
+      "errors": [],
+      "status": 200,
+      "h1_text": "See a Doctor Online in Ireland",
+      "h1_visible": true,
+      "h1_in_viewport": true,
+      "body_scroll_width": 375,
+      "viewport_width": 375,
+      "horizontal_scroll": false,
+      "html_class": "h-full antialiased js"
+    }
+  }
+}

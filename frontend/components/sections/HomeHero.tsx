@@ -78,6 +78,7 @@ export function HomeHero({
   heroBullets,
   heroImageSrc,
   ctaLabel,
+  heroPriceBadge,
   i18n,
 }: {
   countryCode: CountryCode;
@@ -94,10 +95,13 @@ export function HomeHero({
   heroBullets?: string[] | null;
   heroImageSrc?: string | null;
   ctaLabel?: string | null;
+  /** Small above-fold price line, e.g. "GP consultations from €45". Verbatim, pre-translated. */
+  heroPriceBadge?: string | null;
   i18n?: HomeHeroI18n;
 }) {
   const displayHeroTitle = heroTitle?.trim() || null;
   const displayHeroSubtitle = heroSubtitle?.trim() || null;
+  const displayHeroPriceBadge = heroPriceBadge?.trim() || null;
   const displayCtaLabel = ctaLabel?.trim() || i18n?.cta || "Book Appointment";
   const doctorsForPanel = (liveDoctors ?? []).slice(0, 3);
   const showSameDay = Boolean(sameDay?.configured && sameDay.languages.length > 0);
@@ -225,6 +229,14 @@ export function HomeHero({
                   "Choose a service, select an open time, and speak with licensed clinicians registered with national medical councils across Europe.")}
             </p>
           </HeroReveal>
+
+          {displayHeroPriceBadge ? (
+            <HeroReveal delay={280}>
+              <span className="gh-home-hero-availableBadge mt-6 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]">
+                {displayHeroPriceBadge}
+              </span>
+            </HeroReveal>
+          ) : null}
 
           <HeroReveal delay={340}>
             <div className="mt-11 flex flex-wrap items-center gap-4">

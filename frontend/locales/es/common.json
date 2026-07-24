@@ -496,7 +496,8 @@
     "bookHeading": "Reservar {service} en {country}",
     "fromPricePrefix": "Desde {price} · ",
     "liveAvailability": "Disponibilidad en directo — elige un médico y una hora que te convenga.",
-    "disclaimer": "La información de esta página es general y no sustituye el asesoramiento, diagnóstico o tratamiento médico profesional. Reserva una consulta para hablar de tu situación con un médico colegiado para ejercer en {country}."
+    "disclaimer": "La información de esta página es general y no sustituye el asesoramiento, diagnóstico o tratamiento médico profesional. Reserva una consulta para hablar de tu situación con un médico colegiado para ejercer en {country}.",
+    "clinicallyReviewedBy": "Revisado clínicamente por"
   },
   "homeCatalog": {
     "tagGeneral": "General",

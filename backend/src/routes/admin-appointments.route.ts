@@ -25,6 +25,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   createManualBooking,
+  DiscountTooLargeError,
   DoctorNotAssignedToServiceError,
   DoctorNotInInsuranceNetworkError,
   InsuranceNotCoveredError,
@@ -120,6 +121,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         countryCode: body.data.countryCode,
         insuranceCompanyId: body.data.insuranceCompanyId ?? null,
         insurancePolicyNumber: body.data.insurancePolicyNumber ?? null,
+        discountPercent: body.data.discountPercent ?? null,
         returnTo: body.data.returnTo,
         request,
       });
@@ -145,6 +147,11 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(422).send(errorResponse(error.message));
       }
       if (error instanceof ServicePriceMissingError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      // Discount left a total Stripe can't charge (above zero, below its
+      // per-currency minimum). The slot was already handed back.
+      if (error instanceof DiscountTooLargeError) {
         return reply.status(422).send(errorResponse(error.message));
       }
       // Slot taken / stale between picker load and submit → 409 so the

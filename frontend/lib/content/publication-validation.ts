@@ -127,6 +127,29 @@ export function validatePublicDoctorRecord(doctor: Pick<PublicDoctorRecord, "ful
   return buildResult(issues);
 }
 
+/**
+ * Same predicate `buildDoctorProfileMetadata` uses to decide `noindex` on a
+ * doctor profile page — reused by sitemap generation so noindexed locale
+ * variants are never submitted to Google in the first place.
+ */
+export function isPublicDoctorRecordIndexable(
+  doctor: Pick<
+    PublicDoctorRecord,
+    | "fullName"
+    | "title"
+    | "bio"
+    | "languages"
+    | "specialties"
+    | "imcRegistration"
+    | "medicalRegistrationUrl"
+    | "qualifications"
+    | "editorialChecklist"
+  >,
+): boolean {
+  const validation = validatePublicDoctorRecord(doctor);
+  return !validation.shouldNoindex && doctor.editorialChecklist?.readyToIndex === true;
+}
+
 export function validateAdminServicePayload(service: Pick<AdminServiceDto, "kind" | "name" | "summary" | "heroTitle" | "heroDescription" | "detailBody" | "durationMinutes" | "basePriceCents" | "currencyCode" | "isActive">): PublicationValidationResult {
   return validatePublicServiceRecord({
     kind: service.kind,

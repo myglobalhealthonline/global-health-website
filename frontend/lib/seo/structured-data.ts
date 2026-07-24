@@ -8,6 +8,11 @@ import { getSiteUrl } from "@/lib/seo/site-url";
 
 const SITE_URL = getSiteUrl();
 
+// Shared @id anchors so every block that repeats the org/website inline can
+// be joined into one entity graph instead of being read as duplicate nodes.
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const WEBSITE_ID = `${SITE_URL}/#website`;
+
 // Official social profiles that always belong in the entity's `sameAs`,
 // regardless of which country the visitor is in. Per-country regulator
 // authority URLs are merged on top of these (passed by the layout).
@@ -27,10 +32,16 @@ export function organizationJsonLd(sameAs: string[] = []) {
   return {
     "@context": "https://schema.org",
     "@type": "MedicalOrganization",
+    "@id": ORGANIZATION_ID,
     name: SITE_NAME,
     legalName: "Global Guest s.r.o.",
     url: SITE_URL,
-    logo: `${SITE_URL}/logos/global-health-light.png`,
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}/logos/global-health-light.png`,
+      width: 399,
+      height: 260,
+    },
     foundingDate: "2023",
     slogan: "Medicine Anytime Anywhere",
     description:
@@ -99,6 +110,7 @@ export function websiteJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": WEBSITE_ID,
     name: SITE_NAME,
     url: SITE_URL,
   };
@@ -210,6 +222,7 @@ export function physicianJsonLd(doc: {
     ...(doc.specialty ? { medicalSpecialty: doc.specialty } : {}),
     worksFor: {
       "@type": "MedicalOrganization",
+      "@id": ORGANIZATION_ID,
       name: SITE_NAME,
       url: SITE_URL,
     },
@@ -323,6 +336,7 @@ export function articleJsonLd(input: {
     ...(input.dateModified ? { lastReviewed: input.dateModified } : {}),
     publisher: {
       "@type": "MedicalOrganization",
+      "@id": ORGANIZATION_ID,
       name: SITE_NAME,
       url: SITE_URL,
     },
@@ -358,6 +372,7 @@ export function medicalProcedureJsonLd(input: {
     },
     provider: {
       "@type": "MedicalOrganization",
+      "@id": ORGANIZATION_ID,
       name: SITE_NAME,
       areaServed: { "@type": "Country", name: input.countryName },
     },
@@ -382,7 +397,7 @@ export function medicalServiceHubJsonLd(input: {
     serviceType: "Online specialist consultation",
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
     areaServed: { "@type": "Country", name: input.countryName },
-    provider: { "@type": "MedicalOrganization", name: SITE_NAME },
+    provider: { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID, name: SITE_NAME },
     ...(input.bookingUrl
       ? {
           potentialAction: {
@@ -450,6 +465,15 @@ export function medicalClinicServiceJsonLd(input: {
   countryName: string;
   url: string;
   bookingUrl: string;
+  /** Named clinical reviewer (Physician schema) for this service page's
+   *  content — same `reviewedBy` precedent as the blog Article schema.
+   *  Omitted entirely when the country has no named reviewer. */
+  reviewerPhysician?: ReturnType<typeof physicianJsonLd> | null;
+  /** ISO timestamp of the admin-set clinical review date. Same field feeds
+   *  both `dateModified` and `lastReviewed` (WebPage/MedicalWebPage
+   *  vocabulary, same precedent as the blog Article schema) — omitted
+   *  entirely when the service has no review date set. */
+  dateModified?: string | null;
 }) {
   return {
     "@context": "https://schema.org",
@@ -458,6 +482,8 @@ export function medicalClinicServiceJsonLd(input: {
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
     medicalSpecialty: input.specialty,
     areaServed: { "@type": "Country", name: input.countryName },
+    ...(input.reviewerPhysician ? { reviewedBy: input.reviewerPhysician } : {}),
+    ...(input.dateModified ? { dateModified: input.dateModified, lastReviewed: input.dateModified } : {}),
     availableService: {
       "@type": "MedicalProcedure",
       name: input.serviceName,
@@ -503,7 +529,7 @@ export function consultationServiceOffersJsonLd(input: {
     serviceType: input.serviceType,
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
     areaServed: { "@type": "Country", name: input.countryName },
-    provider: { "@type": "MedicalOrganization", name: SITE_NAME },
+    provider: { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID, name: SITE_NAME },
     offers: input.offers.map((offer) => ({
       "@type": "Offer",
       name: offer.name,

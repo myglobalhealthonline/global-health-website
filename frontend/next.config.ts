@@ -642,6 +642,122 @@ const nextConfig: NextConfig = {
       // Legacy /ireland/<gp-slug> pages. The {3,} length guard keeps the
       // live 2-letter locale URLs (/ireland/en, /ireland/pt, …) untouched.
       { source: "/ireland/:slug([a-z0-9-]{3,})", destination: "/ireland/en/gp-consultation-online", permanent: true },
+
+      // ── GSC top-500 404 sweep (2026-07-24) ────────────────────────────
+      // 187 legacy Wix URLs still 404'd because the rules above only cover
+      // the UNPREFIXED family names. Wix also served every page under a
+      // /{locale}/ prefix (language switcher URLs) — same page, extra
+      // segment. All countries support all 6 site locales (data/countries.ts
+      // supportedLocales), so `/{locale}/{page}` is a legitimate, live
+      // variant, not a typo. Rules below add the locale-prefixed forms; the
+      // bare (unprefixed) rules above stay as-is.
+
+      // -- locale-prefixed doctor listings: slug carried over 1:1 --------
+      { source: "/:locale(cs|es|pt|ro)/czechia-doctors/:slug", destination: "/czechia/cs/doctors/:slug", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/ireland-doctors/:slug", destination: "/ireland/en/doctors/:slug", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/romania-doctors/:slug", destination: "/romania/ro/doctors/:slug", permanent: true },
+      // Bare (unprefixed) portugal-doctors — the other 4 country families
+      // already have bare rules above; portugal-doctors was missing one.
+      { source: "/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
+
+      // -- locale-prefixed team/hub pages ---------------------------------
+      { source: "/:locale(cs|es|pt|ro)/ireland-team", destination: "/ireland/en/doctors", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal-team", destination: "/portugal/pt/doctors", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/spain-team", destination: "/spain/es/doctors", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/romania-team", destination: "/romania/ro/doctors", permanent: true },
+
+      // -- locale-prefixed country homepages (/{locale}/home[-suffix]) ---
+      // `:locale` is reused in the destination so one rule covers every
+      // language-prefixed variant of a given country home.
+      { source: "/:locale(cs|es|pt|ro)/home-pt", destination: "/portugal/:locale", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-sp", destination: "/spain/:locale", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-cz", destination: "/czechia/:locale", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-rm", destination: "/romania/:locale", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-br", destination: "/brazil/:locale", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home", destination: "/ireland/:locale", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-delivery", destination: "/", permanent: true },
+      // Bare Wix language-root (e.g. plain /cs with no page segment).
+      { source: "/cs", destination: "/czechia/cs", permanent: true },
+
+      // -- one-off top-level pages, bare + locale-prefixed ----------------
+      { source: "/careers", destination: "/about", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/careers", destination: "/about", permanent: true },
+      { source: "/legal-notices", destination: "/ireland/en/legal", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/legal-notices", destination: "/ireland/en/legal", permanent: true },
+      { source: "/book-online", destination: "/ireland/en/book", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/book-online", destination: "/ireland/en/book", permanent: true },
+      { source: "/plans-pricing", destination: "/ireland/en/pricing", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/plans-pricing", destination: "/ireland/en/pricing", permanent: true },
+      { source: "/corporate-plans", destination: "/ireland/en/pricing", permanent: true },
+      { source: "/return-and-refund-policy", destination: "/privacy", permanent: true },
+      { source: "/copy-of-privacy-policy", destination: "/privacy", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/privacy", destination: "/privacy", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/about", destination: "/about", permanent: true },
+      { source: "/frequent-asked-questions", destination: "/faq", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/gift-card", destination: "/", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/partner-clinics", destination: "/", permanent: true },
+      { source: "/es/partnerclinics", destination: "/", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/category/:slug", destination: "/", permanent: true },
+      { source: "/product-page/:slug", destination: "/", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/product-page/:slug", destination: "/", permanent: true },
+
+      // -- Ireland partner-clinic / prescriptions / service-page ----------
+      { source: "/ireland-partner-clinic/:slug", destination: "/ireland/en", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/ireland-partner-clinic/:slug", destination: "/ireland/en", permanent: true },
+      { source: "/online-prescriptions/:slug", destination: "/ireland/en/repeat-prescription-request", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/online-prescriptions/:slug", destination: "/ireland/en/repeat-prescription-request", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/service-page/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
+
+      // -- specialist-consultation hubs (locale-prefixed + missing bares) -
+      { source: "/:locale(cs|es|pt|ro)/ireland-specialist-consultations/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal-specialist-consultations/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/czechia-specialist-consultations/:slug", destination: "/czechia/cs/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/czechia-specialist-consultations/:slug", destination: "/czechia/cs/see-a-specialist", permanent: true },
+      { source: "/spain-specialist-consultations/:slug", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/spain-specialist-consultations/:slug", destination: "/spain/es/see-a-specialist", permanent: true },
+
+      // -- general-consultation-XX / specialty-XX: locale prefix ≠ suffix -
+      // (the matching bare rules already exist above; these are the
+      // mismatched-prefix variants actually indexed by Google)
+      { source: "/pt/general-consultation-sp", destination: "/spain/es/gp-consultation-online", permanent: true },
+      { source: "/cs/general-consultation-pt", destination: "/portugal/pt/gp-consultation-online", permanent: true },
+      { source: "/cs/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
+      { source: "/cs/general-consultation-sp", destination: "/spain/es/gp-consultation-online", permanent: true },
+      { source: "/es/general-consultation-cz", destination: "/czechia/cs/gp-consultation-online", permanent: true },
+      { source: "/es/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
+      { source: "/es/general-consultation-sp", destination: "/spain/es/gp-consultation-online", permanent: true },
+      { source: "/pt/specialty-pt", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/pt/specialty-ie", destination: "/ireland/en/see-a-specialist", permanent: true },
+      { source: "/cs/specialty-pt", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/es/specialty-pt", destination: "/portugal/pt/see-a-specialist", permanent: true },
+
+      // -- Portugal service pages: renamed slug already lives at /services/*
+      { source: "/portugal/traveler's-consultation", destination: "/portugal/pt/services/consulta-do-viajante", permanent: true },
+      { source: "/es/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
+      { source: "/cs/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
+      { source: "/pt/portugal/weight-loss-consultation", destination: "/portugal/pt/services/perda-de-peso", permanent: true },
+      { source: "/es/portugal/weight-loss-consultation", destination: "/portugal/pt/services/perda-de-peso", permanent: true },
+      { source: "/cs/portugal/family-and-general-medicine", destination: "/portugal/pt/services/medicina-geral-e-familiar", permanent: true },
+      { source: "/cs/portugal/smoking-cessation-consultation", destination: "/portugal/pt/services/deixar-de-fumar", permanent: true },
+      // No renamed-slug match for "medical-exam" — nearest real page is the hub.
+      { source: "/cs/portugal/medical-exam", destination: "/portugal/pt/see-a-specialist", permanent: true },
+
+      // -- one-off country service pages with no exact new-scheme match ---
+      { source: "/spain/treatment-renewal", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/cs/spain/aesthetic-medicine-online-consultation", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/es/spain/diabetes-consultation", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/es/ireland/mental-health-assessment-consultation", destination: "/ireland/en/see-a-specialist", permanent: true },
+
+      // -- Czech-language legacy paths (Wix "czech-republic" section) -----
+      { source: "/czech-republic/:slug", destination: "/czechia/cs/see-a-specialist", permanent: true },
+
+      // -- misc content families -------------------------------------------
+      { source: "/home-health-tests-1/:slug", destination: "/ireland/en/lab-tests", permanent: true },
+      { source: "/post/:slug", destination: "/ireland/en/blog", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/post/:slug", destination: "/ireland/en/blog", permanent: true },
+      { source: "/blog/categories/:slug", destination: "/ireland/en/blog", permanent: true },
     ];
   },
 };

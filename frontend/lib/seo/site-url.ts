@@ -1,4 +1,4 @@
-const PROD_SITE_URL = "https://www.myglobalhealth.online";
+export const PROD_SITE_URL = "https://www.myglobalhealth.online";
 
 export function getSiteUrl(): string {
   const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();

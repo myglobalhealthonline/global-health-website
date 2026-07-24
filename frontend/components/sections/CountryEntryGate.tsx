@@ -154,6 +154,11 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
     if (!slot || !panel || !grid) return;
 
     let raf = 0;
+    // Last measured (unscaled) heights, to skip re-measuring when a
+    // ResizeObserver/resize fires but nothing actually moved (e.g. a canvas
+    // opacity fade or webfont swap that doesn't change box size).
+    let lastNatural = 0;
+    let lastFooterH = 0;
     const measureAndApply = () => {
       if (window.innerWidth < 1024) {
         // Single-column: let CSS flow govern (no scaling).
@@ -165,14 +170,26 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
       // so measuring never feeds back into the scale it produces.
       const natural = panel.offsetHeight;
       if (!natural) return;
+      const footerH = footerRef.current?.offsetHeight ?? 0;
+      // Sub-pixel/paint-only churn (e.g. globe fade-in, flag icon decode,
+      // font swap) re-fires the observer without changing layout size —
+      // skip the reflow-triggering re-measurement below in that case.
+      if (
+        lastNatural !== 0 &&
+        Math.abs(natural - lastNatural) < 1 &&
+        Math.abs(footerH - lastFooterH) < 1
+      ) {
+        return;
+      }
+      lastNatural = natural;
+      lastFooterH = footerH;
       // Anchor on the grid top, not the panel's own (centered) top — the grid
       // top is fixed by the header above it, so shrinking the panel can't move
       // the reference and oscillate the result.
       const top = grid.getBoundingClientRect().top;
       // Subtract the footer's real height — it sits below the flex-1 body,
       // so budget that ignores it over-scales the panel and reintroduces
-      // the page scrollbar this mechanism exists to prevent.
-      const footerH = footerRef.current?.offsetHeight ?? 0;
+      // the page scrollbar this mechanism exists to prevent (footerH read above).
       const avail = window.innerHeight - top - footerH - 24;
       const fit = Math.max(0.72, Math.min(1, avail / natural));
       panel.style.setProperty("--gate-fit", fit.toFixed(4));
@@ -198,19 +215,34 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
     // ResizeObserver on the panel catches list-length/content changes itself.
   }, []);
 
-  function enter(country: CountryConfig) {
+  // Real crawlable href per country (real anchor, not JS-only) so search
+  // engines can discover /{slug}/{lang} without executing the click handler —
+  // fixes zero-outbound-internal-link crawl-depth risk on "/".
+  function hrefFor(country: CountryConfig): string {
     const slug = country.slug || countrySlug(country.code);
-    // Use the detected language when the country offers it, else its default.
     const lang = (
       country.supportedLocales?.includes(detectedLocale)
         ? detectedLocale
         : country.defaultLocale ?? "en"
     ) as LocaleCode;
-    // Hard navigation so the edge proxy re-runs and the server layout re-renders
-    // with the new x-gh-country / x-gh-locale headers. router.push would keep the
-    // shared layout stale and data may not refresh.
+    return `/${slug}/${lang}`;
+  }
+
+  function enter(country: CountryConfig, event: React.MouseEvent) {
+    // Plain left-click: still do a hard navigation (edge proxy re-runs, unlike
+    // router.push) after persisting the locale cookie. Modified clicks
+    // (ctrl/cmd/middle/shift) fall through to native <a> behavior (new tab).
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    event.preventDefault();
+    const lang = (
+      country.supportedLocales?.includes(detectedLocale)
+        ? detectedLocale
+        : country.defaultLocale ?? "en"
+    ) as LocaleCode;
     setClientLocaleCookie(lang);
-    globalThis.location.assign(`/${slug}/${lang}`);
+    globalThis.location.assign(hrefFor(country));
   }
 
   const trust = [
@@ -362,9 +394,9 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
                       const flagCls = flagClassForCode(c.code);
                       return (
                         <HeroReveal key={c.code} delay={i * 55 + 340}>
-                          <button
-                            type="button"
-                            onClick={() => enter(c)}
+                          <a
+                            href={hrefFor(c)}
+                            onClick={(event) => enter(c, event)}
                             className={`${styles.countryCard} ${styles.countryRow} flex w-full items-center text-left text-white`}
                           >
                             <div className="flex min-w-0 flex-1 items-center gap-2.5">
@@ -379,7 +411,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
                               </span>
                               <ArrowRight className={`${styles.cardArrow} size-4`} aria-hidden />
                             </div>
-                          </button>
+                          </a>
                         </HeroReveal>
                       );
                     })}

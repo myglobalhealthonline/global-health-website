@@ -37,6 +37,8 @@ export type HomePageExtras = {
   heroSubtitle?: string;
   /** Hero trust bullets, verbatim (no country name appended). Exactly three. */
   heroBullets?: string[];
+  /** Small above-fold hero price line, e.g. "GP consultations from €39". */
+  heroPriceBadge?: string;
   /** Services section H2. */
   servicesHeadline?: string;
 };
@@ -50,7 +52,7 @@ const EXTRAS: Record<string, HomePageExtras> = {
     seoTitle:
       "Online Doctor Ireland | IMC-Registered GPs & Specialists | Same Day",
     seoDescription:
-      "See an IMC-registered doctor by video call today — GP consultations, sick certs, specialist referrals. Same-day appointments anywhere in Ireland. From €45.",
+      "See an IMC-registered doctor by video call today — GP consultations, sick certs, specialist referrals. Same-day appointments anywhere in Ireland. From €39.",
     ogTitle: "Online Doctor Ireland — See a Doctor Today | Global Health",
     ogDescription:
       "IMC-registered GPs and specialists by video call — sick certs, prescriptions, referrals. Same-day appointments anywhere in Ireland.",
@@ -62,13 +64,14 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Same-day appointments",
       "Valid sick certs & prescriptions",
     ],
-    servicesHeadline: "GP and specialist consultations — from €45.",
+    servicesHeadline: "GP and specialist consultations — from €39.",
+    heroPriceBadge: "GP consultations from €39",
   },
   "IE:es": {
     seoTitle:
       "Médico Online Irlanda | Médicos de Cabecera y Especialistas Colegiados en el IMC | Mismo Día",
     seoDescription:
-      "Consulte hoy con un médico colegiado en el IMC por videollamada — consultas de médico de cabecera, certificados médicos, derivaciones a especialistas. Citas el mismo día en toda Irlanda. Desde 45 €.",
+      "Consulte hoy con un médico colegiado en el IMC por videollamada — consultas de médico de cabecera, certificados médicos, derivaciones a especialistas. Citas el mismo día en toda Irlanda. Desde 39 €.",
     ogTitle: "Médico Online Irlanda — Consulte hoy | Global Health",
     ogDescription:
       "Médicos de cabecera y especialistas colegiados en el IMC por videollamada — certificados médicos, recetas, derivaciones. Citas el mismo día en toda Irlanda.",
@@ -80,13 +83,14 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Citas el mismo día",
       "Certificados médicos y recetas válidos",
     ],
-    servicesHeadline: "Consultas de médico de cabecera y especialista — desde 45 €.",
+    servicesHeadline: "Consultas de médico de cabecera y especialista — desde 39 €.",
+    heroPriceBadge: "Consultas de médico de cabecera desde 39 €",
   },
   "IE:pt": {
     seoTitle:
       "Médico Online Irlanda | Clínicos Gerais e Especialistas Registados no IMC | Mesmo Dia",
     seoDescription:
-      "Consulte hoje um médico registado no IMC por videochamada — consultas de clínica geral, atestados médicos, referenciações para especialistas. Consultas no mesmo dia em toda a Irlanda. A partir de 45 €.",
+      "Consulte hoje um médico registado no IMC por videochamada — consultas de clínica geral, atestados médicos, referenciações para especialistas. Consultas no mesmo dia em toda a Irlanda. A partir de 39 €.",
     ogTitle: "Médico Online Irlanda — Consulte hoje | Global Health",
     ogDescription:
       "Clínicos gerais e especialistas registados no IMC por videochamada — atestados médicos, receitas, referenciações. Consultas no mesmo dia em toda a Irlanda.",
@@ -98,13 +102,14 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Consultas no mesmo dia",
       "Atestados e receitas médicas válidos",
     ],
-    servicesHeadline: "Consultas de clínica geral e especialidade — a partir de 45 €.",
+    servicesHeadline: "Consultas de clínica geral e especialidade — a partir de 39 €.",
+    heroPriceBadge: "Consultas de clínica geral a partir de 39 €",
   },
   "IE:cs": {
     seoTitle:
       "Online lékař Irsko | Praktičtí lékaři a specialisté registrovaní u IMC | Tentýž den",
     seoDescription:
-      "Promluvte si dnes s lékařem registrovaným u IMC prostřednictvím videohovoru — konzultace s praktickým lékařem, pracovní neschopnost, odeslání ke specialistovi. Termíny tentýž den kdekoli v Irsku. Od 45 €.",
+      "Promluvte si dnes s lékařem registrovaným u IMC prostřednictvím videohovoru — konzultace s praktickým lékařem, pracovní neschopnost, odeslání ke specialistovi. Termíny tentýž den kdekoli v Irsku. Od 39 €.",
     ogTitle: "Online lékař Irsko — Konzultace ještě dnes | Global Health",
     ogDescription:
       "Praktičtí lékaři a specialisté registrovaní u IMC prostřednictvím videohovoru — pracovní neschopnost, recepty, odeslání ke specialistovi. Termíny tentýž den kdekoli v Irsku.",
@@ -116,13 +121,14 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Termíny tentýž den",
       "Platná pracovní neschopnost a recepty",
     ],
-    servicesHeadline: "Konzultace s praktickým lékařem a specialistou — od 45 €.",
+    servicesHeadline: "Konzultace s praktickým lékařem a specialistou — od 39 €.",
+    heroPriceBadge: "Konzultace s praktickým lékařem od 39 €",
   },
   "IE:ro": {
     seoTitle:
       "Medic Online Irlanda | Medici de Familie și Specialiști Înregistrați la IMC | În Aceeași Zi",
     seoDescription:
-      "Vorbiți azi cu un medic înregistrat la IMC prin apel video — consultații de medicină de familie, concedii medicale, trimiteri către specialiști. Programări în aceeași zi oriunde în Irlanda. De la 45 €.",
+      "Vorbiți azi cu un medic înregistrat la IMC prin apel video — consultații de medicină de familie, concedii medicale, trimiteri către specialiști. Programări în aceeași zi oriunde în Irlanda. De la 39 €.",
     ogTitle: "Medic Online Irlanda — Consultație azi | Global Health",
     ogDescription:
       "Medici de familie și specialiști înregistrați la IMC prin apel video — concedii medicale, rețete, trimiteri. Programări în aceeași zi oriunde în Irlanda.",
@@ -134,13 +140,14 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Programări în aceeași zi",
       "Concedii medicale și rețete valabile",
     ],
-    servicesHeadline: "Consultații de medicină de familie și specialitate — de la 45 €.",
+    servicesHeadline: "Consultații de medicină de familie și specialitate — de la 39 €.",
+    heroPriceBadge: "Consultații de medicină de familie de la 39 €",
   },
   "IE:de": {
     seoTitle:
       "Online-Arzt Irland | Bei IMC registrierte Hausärzte & Fachärzte | Am selben Tag",
     seoDescription:
-      "Sprechen Sie noch heute per Videoanruf mit einem bei IMC registrierten Arzt — Hausarzttermine, Krankschreibungen, Facharztüberweisungen. Termine am selben Tag in ganz Irland. Ab 45 €.",
+      "Sprechen Sie noch heute per Videoanruf mit einem bei IMC registrierten Arzt — Hausarzttermine, Krankschreibungen, Facharztüberweisungen. Termine am selben Tag in ganz Irland. Ab 39 €.",
     ogTitle: "Online-Arzt Irland — Noch heute einen Arzt sprechen | Global Health",
     ogDescription:
       "Bei IMC registrierte Hausärzte und Fachärzte per Videoanruf — Krankschreibungen, Rezepte, Überweisungen. Termine am selben Tag in ganz Irland.",
@@ -152,7 +159,8 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Termine am selben Tag",
       "Gültige Krankschreibungen & Rezepte",
     ],
-    servicesHeadline: "Hausarzt- und Facharzttermine — ab 45 €.",
+    servicesHeadline: "Hausarzt- und Facharzttermine — ab 39 €.",
+    heroPriceBadge: "Hausarzttermine ab 39 €",
   },
   // Spain/Romania/Brazil have no seeded HOME PageContentTranslation row (the
   // seed script only covers ie/pt), so they fell through to the generic

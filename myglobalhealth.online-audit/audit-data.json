@@ -1,0 +1,168 @@
+{
+  "summary": {
+    "health_score": 73,
+    "business_type": "Multi-country telehealth / online GP provider (IE, ES, PT, CZ, BR, RO)",
+    "top_findings": [
+      "Google is not ranking real country pages for any tested query — legacy Wix-era URLs (/home, /es/home-sp, /post/*) still occupy the site's SERP presence; competitors take 100% of visible slots",
+      "~250+ noindexed locale-variant doctor URLs remain in sitemap.xml (68% of sampled doctor URLs), wasting crawl budget",
+      "Cookie consent modal fully covers primary CTA on mobile on every page tested (site-wide component issue)",
+      "Homepage mobile: LCP 3.04s with 82% JS-gated render delay on hero H1; ~30s main-thread work, TBT 1,840ms; /ireland/en TBT 2,970ms",
+      "Homepage is a 162-word country gate with zero E-E-A-T signals and zero outbound internal links — crawl-depth risk for all country pages"
+    ],
+    "quick_wins": [
+      "Add <link rel=\"alternate\" hreflang> head tags in generateMetadata for [country]/[lang] routes (currently sitemap-only)",
+      "Deploy commit 6a756ff1 — legal-page BreadcrumbList is committed but not live",
+      "Surface €29 price as visible hero badge on /ireland/en (currently meta-description only)",
+      "Fix mojibake: em-dash renders as \"�\" across homepage, blog, doctor pages",
+      "Serve service-page hero via Next/Image instead of raw /api/media proxy (LCP 4.62s → resource load is 3.6s of it)",
+      "Add internal links from the homepage gate to country pages"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 83,
+      "what_works": [
+        "robots.txt current with 2026 AI-crawler tokens; Railway fallback domain verified noindexed at edge",
+        "Single-hop apex→www 301 with HSTS; full security header set incl. enforcing CSP",
+        "100% SSR — zero JS-rendering dependency for crawlers; self-referencing canonicals on all 64 sampled URLs",
+        "sitemap.xml: 1,422 URLs, valid, 0 duplicates, correct hreflang reciprocity"
+      ],
+      "findings": [
+        {"title": "hreflang only in sitemap, not in page <head>", "severity": "High", "description": "0 <link rel=alternate hreflang> matches on /ireland/en and /about; single-channel signal is fragile for a 6-market site", "recommendation": "Emit matching hreflang head tags in generateMetadata for [country]/[lang] routes"},
+        {"title": "250+ noindexed doctor URLs in sitemap", "severity": "High", "description": "13/19 sampled locale-variant doctor-profile URLs are noindex,nofollow yet listed in sitemap.xml (381 doctor URLs total)", "recommendation": "Exclude noindexed locale variants from sitemap generation; root cause is the locale-resolution/market-row gap"},
+        {"title": "/legal/* routes 404 site-wide", "severity": "Medium", "description": "Ingested legal/compliance content (complaints procedure, cookie policy) has no live page", "recommendation": "Ship the legal routes or remove references"},
+        {"title": "Legal pages global-only in sitemap", "severity": "Medium", "description": "No per-country privacy/terms variants despite country-specific compliance content in codebase", "recommendation": "Add per-country legal URLs once routes exist"},
+        {"title": "Portuguese slugs under /brazil/en and /brazil/es", "severity": "Medium", "description": "e.g. segunda-opiniao-medica under English/Spanish locale paths", "recommendation": "Confirm intentional vs localization gap"},
+        {"title": "lastmod missing on 92% of sitemap URLs", "severity": "Low", "description": "Present values are batch/migration timestamps, not real edit dates", "recommendation": "Wire lastmod to content updatedAt; strip priority/changefreq (ignored)"}
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 74,
+      "what_works": [
+        "Doctor profiles: named clinicians, IMC registration numbers, Physician schema",
+        "Blog post diabetes-a-silent-disease: 4,023 words, credentialed author, last-reviewed date, HSE/peer-reviewed citations — textbook YMYL quality",
+        "Country home pages genuinely localized, not boilerplate",
+        "GDPR/DPC, IMC verify links, emergency-112 disclaimer present"
+      ],
+      "findings": [
+        {"title": "Homepage is a 162-word country gate", "severity": "Critical", "description": "Far under 500-word floor, zero E-E-A-T signals, zero internal links", "recommendation": "Add trust content, stats, and country links to the gate page"},
+        {"title": "Only 2 blog articles total", "severity": "Critical", "description": "Insufficient topical authority for a YMYL brand across 6 markets", "recommendation": "Editorial calendar; replicate the diabetes-article template"},
+        {"title": "Generic 'Reviewed by licensed doctors' on service pages and /about", "severity": "High", "description": "No named reviewer + date, unlike blog", "recommendation": "Named clinical reviewer + review date on every medical page"},
+        {"title": "No external authoritative citations outside one blog post", "severity": "High", "description": "Service/doctor pages cite nothing (WHO/NHS/HSE/PubMed)", "recommendation": "Add sourced citations to service pages"},
+        {"title": "Mojibake: em-dash renders as \"�\"", "severity": "High", "description": "Recurring across homepage, blog, doctor pages — charset/CMS encoding issue", "recommendation": "Fix encoding at CMS ingestion or render layer"},
+        {"title": "Blog listing H1 reads as placeholder copy", "severity": "Medium", "description": "Unedited copy on blog index", "recommendation": "Rewrite H1/intro"}
+      ]
+    },
+    {
+      "name": "On-Page & Search Experience",
+      "score": 60,
+      "what_works": [
+        "/ireland/en is the correct page type for the money queries: 1,860 words, 11 H2s, 5 schema blocks, €29/same-day/IMC in meta",
+        "SERP consensus (local/transactional service page) matches the page's actual pattern"
+      ],
+      "findings": [
+        {"title": "Real country pages absent from Google for all tested queries", "severity": "Critical", "description": "Legacy Wix URLs (/home, /es/home-sp, /post/*) are what Google shows site-scoped; competitors (webdoctor.ie, gpdoctor.ie, eirdoc.com, dronline.ie, medis.pt) hold 100% of visible slots", "recommendation": "GSC: submit /ireland/en and country pages; reconcile legacy Wix URL redirects; add internal links from homepage gate"},
+        {"title": "€29 price not visible on-page above fold", "severity": "High", "description": "Price shopper persona scored 14/25; price lives only in meta description", "recommendation": "Hero price badge on country/service pages"},
+        {"title": "Multi-country/11-language USP buried", "severity": "Medium", "description": "The one differentiator vs all competitors found is not headlined", "recommendation": "Make multilingual credential angle the headline USP"},
+        {"title": "No single-purpose landers for sick-cert/prescription", "severity": "Medium", "description": "Single-purpose competitors rank on exact-match intent", "recommendation": "Consider dedicated sick-cert and prescription landers per market"}
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 78,
+      "what_works": [
+        "Sitewide MedicalOrganization with CRO/IČO/NRPZS identifiers + regulator sameAs",
+        "Physician with hasCredential→recognizedBy + IMC identifier on doctor pages and as Article author/reviewedBy",
+        "Valid Service + MedicalProcedure + 16 Offers with price/currency on service page; correct BreadcrumbList on main templates",
+        "All JSON-LD in raw HTML (no client injection), no deprecated types, no placeholders"
+      ],
+      "findings": [
+        {"title": "Legal-page BreadcrumbList not live in production", "severity": "High", "description": "Commit 6a756ff1 adds it but production doesn't serve it — deploy gap, not code gap", "recommendation": "Deploy the commit"},
+        {"title": "Article.publisher missing logo ImageObject", "severity": "Medium", "description": "Required for Article rich-result eligibility", "recommendation": "Add publisher logo"},
+        {"title": "No @id entity linking", "severity": "Medium", "description": "Repeated Org/Physician/Service blocks not linked as one graph", "recommendation": "Add @id and reference across blocks"},
+        {"title": "No AggregateRating/Review schema", "severity": "Medium", "description": "Doctify integration exists but no review schema detected server-side", "recommendation": "Check if Doctify emits schema client-side; consider server-side aggregate"}
+      ]
+    },
+    {
+      "name": "Performance (CWV)",
+      "score": 72,
+      "what_works": [
+        "Desktop Lighthouse 96-98 on all three pages",
+        "CLS = 0 everywhere"
+      ],
+      "findings": [
+        {"title": "Homepage mobile LCP 3.04s — 82% element render delay", "severity": "Critical", "description": "LCP element is hero H1 text; JS-gated reveal blocks text paint (known reveal-system pattern)", "recommendation": "Ensure hero H1 paints without JS gate on mobile"},
+        {"title": "Homepage ~30s mobile main-thread work, TBT 1,840ms", "severity": "Critical", "description": "Style&Layout 10.3s + Rendering 8.9s — points to animation/observer loop, not one-time hydration", "recommendation": "Profile the reveal/IO system on mobile; throttle or disable animation loops"},
+        {"title": "/ireland/en TBT 2,970ms mobile", "severity": "High", "description": "Worst TBT of the three despite good LCP; route-specific client components hydrating heavily", "recommendation": "Audit client components on country home route"},
+        {"title": "Service-page hero LCP 4.62s — 3.6s resource load", "severity": "High", "description": "Hero served raw via /api/media proxy, bypassing Next/Image optimization", "recommendation": "Route service hero images through Next/Image"}
+      ]
+    },
+    {
+      "name": "AI Search Readiness (GEO)",
+      "score": 68,
+      "what_works": [
+        "robots.txt explicitly allows GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended",
+        "llms.txt present and well-structured (6 countries × 5 page types)",
+        "Full SSR — zero JS-rendering risk for AI crawlers; strong schema on service pages"
+      ],
+      "findings": [
+        {"title": "No sourced statistics anywhere", "severity": "Medium", "description": "No doctor counts, wait times, consultation volume — nothing citable", "recommendation": "Add sourced stats to hero/answer blocks"},
+        {"title": "Answer passages too short (35-80 words vs 134-167 optimal)", "severity": "Medium", "description": "Direct-answer-first structure right, length wrong", "recommendation": "Lengthen key answers into the optimal band"},
+        {"title": "No visible author/reviewer/date bylines on About/FAQ/service pages", "severity": "Medium", "description": "YMYL trust gap for AI citation", "recommendation": "Add bylines (overlaps content findings)"},
+        {"title": "CCBot not individually addressed", "severity": "Low", "description": "Implicitly allowed via wildcard; decide training-exclusion policy", "recommendation": "Explicit CCBot policy + consider RSL licensing section in llms.txt"}
+      ]
+    },
+    {
+      "name": "Images & Visual",
+      "score": 70,
+      "what_works": [
+        "No horizontal scroll on any page/viewport; H1 above fold on all 6 device/page combos",
+        "Tap targets meet 48px minimum; hero contrast good"
+      ],
+      "findings": [
+        {"title": "Cookie modal covers primary CTA on mobile, site-wide", "severity": "High", "description": "Country picker, Book Appointment, and Book-this-service CTAs all obscured on the 3 pages tested", "recommendation": "Reduce banner height or reposition so primary CTA stays visible"},
+        {"title": "Cookie banner clips country-picker card on desktop home", "severity": "Low", "description": "Portugal row clipped — cosmetic", "recommendation": "Same fix covers it"},
+        {"title": "Service hero image unoptimized", "severity": "High", "description": "Raw /api/media delivery (see Performance)", "recommendation": "Next/Image"}
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {"name": "Phase 1: Critical Fixes", "timeframe": "Week 1", "items": [
+        "Reconcile legacy Wix URLs: verify 301s, request removal/recrawl in GSC, submit country pages for indexing",
+        "Remove noindexed doctor locale variants from sitemap generation",
+        "Fix mobile cookie-modal CTA occlusion",
+        "Deploy commit 6a756ff1 (legal BreadcrumbList)",
+        "Fix em-dash mojibake encoding bug"
+      ]},
+      {"name": "Phase 2: High-Impact Improvements", "timeframe": "Weeks 2-3", "items": [
+        "Add hreflang head tags via generateMetadata",
+        "Fix homepage mobile LCP (JS-gated H1 reveal) and main-thread loop; audit /ireland/en client components",
+        "Serve service hero images via Next/Image",
+        "Add internal links + trust content to homepage gate",
+        "Visible €29 hero price badge on country/service pages",
+        "Named clinical reviewer + date on all service pages and /about"
+      ]},
+      {"name": "Phase 3: Content & Authority", "timeframe": "Month 2", "items": [
+        "Editorial calendar — scale from 2 blog posts using the diabetes-article template",
+        "External citations (HSE/WHO/NHS) on service pages",
+        "Sourced stats + 134-167-word answer blocks for AI citability",
+        "Dedicated sick-cert/prescription landers per market",
+        "Ship /legal/* routes; per-country legal sitemap entries",
+        "Article publisher logo + @id entity graph + review schema"
+      ]},
+      {"name": "Phase 4: Monitoring & Iteration", "timeframe": "Ongoing", "items": [
+        "Set up GSC + CrUX monitoring (no Google API creds configured today)",
+        "Capture drift baseline (claude-seo drift) post-fixes",
+        "Track SERP positions for the 4 money queries vs competitors",
+        "Re-run mobile Lighthouse after perf fixes"
+      ]}
+    ]
+  },
+  "artifacts": {
+    "findings_dir": "findings/",
+    "screenshots_dir": "screenshots/"
+  }
+}

@@ -191,13 +191,23 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
               addressCity: true,
               addressPostalCode: true,
               addressCountryCode: true,
-              // Número de Utente is the ONE government ID the doctor portal
-              // may see. It is the SNS number needed to reach the patient's
-              // national records in the electronic prescription system, so it
-              // is clinical, not administrative. NIF / national ID / passport
-              // stay admin-only per the GDPR plan — see `stripIdentityFields`
-              // in doctor-patient-profile.route.ts.
+              // Government IDs the doctor portal may see. Número de Utente is
+              // the SNS number needed to reach the patient's national records
+              // in the electronic prescription system. NIF (`taxIdNumber`) and
+              // Cartão de Cidadão (`nationalIdNumber`) are the two identifiers
+              // a Portuguese prescription/certificate has to carry — see
+              // `buildPatientIdLine` in generated-documents-fields.ts, which
+              // renders "NIF: …" / "Cartão de Cidadão: …" onto the PDF. All
+              // three are Portugal-gated below; outside PT they stay
+              // admin-only per the GDPR plan (`stripIdentityFields` in
+              // doctor-patient-profile.route.ts), and passport never crosses.
               utenteNumber: true,
+              taxIdNumber: true,
+              nationalIdNumber: true,
+              // Not a government ID — plaintext, no guard needed. Carried in
+              // the same PT block so the doctor can fill it mid-consult and
+              // have it land on the prescription.
+              preferredPharmacy: true,
             },
           }),
         ]);
@@ -214,11 +224,32 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           }
         }
 
+        // NIF + Cartão de Cidadão are Portugal-only, gated on the appointment's
+        // own market rather than a BookingSetting flag: this is a disclosure
+        // rule about PT prescriptions, not a booking-form option. Country codes
+        // are stored lowercase; compare case-insensitively either way.
+        const isPortugal = (appt.countryCode ?? "").toLowerCase() === "pt";
+        const decryptOrNull = (value: string | null) => {
+          if (!value) return null;
+          try {
+            return decryptPhi(value);
+          } catch {
+            return null;
+          }
+        };
+        let taxIdNumber = isPortugal ? decryptOrNull(patientProfile?.taxIdNumber ?? null) : null;
+        let nationalIdNumber = isPortugal
+          ? decryptOrNull(patientProfile?.nationalIdNumber ?? null)
+          : null;
+        const preferredPharmacy = isPortugal
+          ? (patientProfile?.preferredPharmacy ?? null)
+          : null;
+
         // An identity number is a separate disclosure from the consult note,
         // so it gets its own SENSITIVE_PROFILE entry in MedicalAccessLog —
         // matching /api/doctor/patients/:email/profile. Logged only when a
         // value is actually returned, so an empty card leaves no false trail.
-        if (utenteNumber && patientProfile) {
+        if (patientProfile && (utenteNumber || taxIdNumber || nationalIdNumber)) {
           try {
             await guardMedicalRead(
               request,
@@ -232,9 +263,11 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             );
           } catch (guardError) {
             if (guardError instanceof MedicalAccessDeniedError) {
-              // Denied access to the identity field alone must not 403 the
-              // consultation — drop the number and serve the rest.
+              // Denied access to the identity fields alone must not 403 the
+              // consultation — drop the numbers and serve the rest.
               utenteNumber = null;
+              taxIdNumber = null;
+              nationalIdNumber = null;
             } else {
               throw guardError;
             }
@@ -255,6 +288,9 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             addressPostalCode: patientProfile?.addressPostalCode ?? null,
             addressCountryCode: patientProfile?.addressCountryCode ?? null,
             utenteNumber,
+            taxIdNumber,
+            nationalIdNumber,
+            preferredPharmacy,
           },
           consultation: consultation
             ? {

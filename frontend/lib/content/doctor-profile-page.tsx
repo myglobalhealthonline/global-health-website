@@ -6,7 +6,7 @@ import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTempl
 import { JsonLd } from "@/components/seo/JsonLd";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
-import { validatePublicDoctorRecord } from "@/lib/content/publication-validation";
+import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
 import { getCountryByCode } from "@/data/countries";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
@@ -49,7 +49,7 @@ export async function buildDoctorProfileMetadata(
   const { doctorSlug, countrySlug: routeCountrySlug, lang } = await params;
   const code = routeCountrySlug ? countryCodeFromSlug(routeCountrySlug) : null;
   const data = await resolveDoctorProfilePageData(doctorSlug, lang, code ?? undefined);
-  const validation = validatePublicDoctorRecord({
+  const indexable = isPublicDoctorRecordIndexable({
     fullName: data.profile.name,
     title: data.profile.title,
     bio: data.profile.bio,
@@ -58,6 +58,7 @@ export async function buildDoctorProfileMetadata(
     imcRegistration: data.profile.imcRegistration,
     medicalRegistrationUrl: data.profile.medicalRegistrationUrl,
     qualifications: data.profile.qualifications,
+    editorialChecklist: data.profile.editorialChecklist,
   });
   const countryNameToSlug: Record<string, string> = {
     Ireland: "ireland",
@@ -77,8 +78,6 @@ export async function buildDoctorProfileMetadata(
     `Book an online consultation with ${data.profile.name}, ${data.profile.title} in ${data.profile.country}. Languages: ${data.profile.languages.join(", ") || "English"}.`;
   const resolvedCode = countryCodeFromSlug(slug);
   const config = resolvedCode ? getCountryByCode(resolvedCode) : null;
-  const shouldNoindex =
-    validation.shouldNoindex || data.profile.editorialChecklist?.readyToIndex !== true;
   return buildPublicMetadata({
     path: canonical,
     title,
@@ -94,7 +93,7 @@ export async function buildDoctorProfileMetadata(
     locale: config ? ogLocales(config, routeLang).locale : undefined,
     languages: config ? hreflangAlternates(config, `/doctors/${doctorSlug}`) : undefined,
     keywords: data.profile.seoKeywords,
-    noindex: shouldNoindex,
+    noindex: !indexable,
   });
 }
 export async function renderDoctorProfilePage(params: Promise<DoctorProfileRouteParams>) {

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DEFAULT_BOOK_CTA_LABEL } from "@/lib/constants";
 
 /**
@@ -11,6 +12,22 @@ import { DEFAULT_BOOK_CTA_LABEL } from "@/lib/constants";
  */
 const HIDDEN_PATH_SEGMENTS = new Set(["book", "cart", "checkout"]);
 
+// ponytail: fixed-position chrome, no SEO content — defer mount past the
+// main-thread-busy hydration window instead of racing every other section.
+function useIdleReady() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const ric =
+      window.requestIdleCallback ??
+      ((cb: IdleRequestCallback) => window.setTimeout(() => cb({} as IdleDeadline), 200));
+    const cic = window.cancelIdleCallback ?? window.clearTimeout;
+    const id = ric(() => setReady(true));
+    return () => cic(id as number);
+  }, []);
+  return ready;
+}
+
 export function StickyBookingCTA({
   href,
   label = DEFAULT_BOOK_CTA_LABEL,
@@ -18,12 +35,13 @@ export function StickyBookingCTA({
   href: string;
   label?: string;
 }) {
+  const ready = useIdleReady();
   const pathname = usePathname();
   const shouldHide = pathname
     ?.split("/")
     .some((segment) => HIDDEN_PATH_SEGMENTS.has(segment));
 
-  if (shouldHide) return null;
+  if (shouldHide || !ready) return null;
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[var(--z-fixed-bar)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:hidden">

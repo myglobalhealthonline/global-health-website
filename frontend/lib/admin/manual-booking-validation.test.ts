@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   combinePhone,
   hasErrors,
+  parseDiscountPercent,
   validateManualBooking,
   type ManualBookingValues,
 } from "./manual-booking-validation";
@@ -33,6 +34,31 @@ describe("combinePhone", () => {
 
   it("returns empty string when there is no national number", () => {
     expect(combinePhone("353", "   ")).toBe("");
+  });
+});
+
+describe("parseDiscountPercent", () => {
+  it("treats blank / missing as no discount", () => {
+    for (const raw of ["", "   ", null, undefined]) {
+      expect(parseDiscountPercent(raw)).toEqual({ value: null, error: null });
+    }
+  });
+
+  it("normalises an explicit 0 to no discount", () => {
+    expect(parseDiscountPercent("0")).toEqual({ value: null, error: null });
+  });
+
+  it("accepts whole percents up to a full comp", () => {
+    expect(parseDiscountPercent("20").value).toBe(20);
+    expect(parseDiscountPercent(" 100 ").value).toBe(100);
+  });
+
+  it("rejects out-of-range, fractional, and non-numeric input", () => {
+    for (const raw of ["-5", "101", "12.5", "abc", "20%"]) {
+      const result = parseDiscountPercent(raw);
+      expect(result.value).toBeNull();
+      expect(result.error).toBeTruthy();
+    }
   });
 });
 

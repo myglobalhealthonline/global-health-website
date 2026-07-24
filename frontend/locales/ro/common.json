@@ -496,7 +496,8 @@
     "bookHeading": "Programează {service} în {country}",
     "fromPricePrefix": "De la {price} · ",
     "liveAvailability": "Disponibilitate în timp real — alege un medic și o oră care ți se potrivesc.",
-    "disclaimer": "Informațiile de pe această pagină sunt generale și nu înlocuiesc sfatul, diagnosticul sau tratamentul medical profesional. Programează o consultație pentru a discuta situația ta cu un medic înregistrat pentru a profesa în {country}."
+    "disclaimer": "Informațiile de pe această pagină sunt generale și nu înlocuiesc sfatul, diagnosticul sau tratamentul medical profesional. Programează o consultație pentru a discuta situația ta cu un medic înregistrat pentru a profesa în {country}.",
+    "clinicallyReviewedBy": "Revizuit clinic de"
   },
   "homeCatalog": {
     "tagGeneral": "General",

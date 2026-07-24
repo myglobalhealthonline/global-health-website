@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { FormSection } from "@/components/FormSection";
+import {
+  PtPatientIdentityRows,
+  type PtPatientFieldsCopy,
+} from "./pt-patient-identity-rows";
 
 export type PatientContextCopy = {
   patient: string;
@@ -16,6 +20,7 @@ export type PatientContextCopy = {
   bookingNotes: string;
   openPatientChart: string;
   editHealthDataHint: string;
+  ptFields: PtPatientFieldsCopy;
 };
 
 /**
@@ -50,6 +55,7 @@ export function PatientContextPanel({
   appointment: {
     globalHealthNumber?: string | null;
     email: string;
+    countryCode: string;
     phone?: string | null;
     dateOfBirth?: string | null;
     addressLine1?: string | null;
@@ -57,6 +63,10 @@ export function PatientContextPanel({
     addressCity?: string | null;
     addressPostalCode?: string | null;
     utenteNumber?: string | null;
+    taxIdNumber?: string | null;
+    nationalIdNumber?: string | null;
+    preferredPharmacy?: string | null;
+    pharmacy?: string | null;
     consultationLanguageCode?: string | null;
     createdAt: string;
     notes?: string | null;
@@ -65,6 +75,11 @@ export function PatientContextPanel({
   copy: PatientContextCopy;
 }) {
   const address = formatAddress(appointment);
+  // NIF / Cartão de Cidadão / pharmacy are a Portugal-only block. Unlike the
+  // rows above, presence can't be the gate: the whole point is to render an
+  // "add" affordance when the patient left the field blank, so the market has
+  // to be checked explicitly. Country codes are stored lowercase.
+  const isPortugal = appointment.countryCode.toLowerCase() === "pt";
   return (
     <FormSection title={copy.patient}>
       <div className="gh-form-section__span-2">
@@ -87,6 +102,21 @@ export function PatientContextPanel({
               `collectUtenteNumber`, so presence is the gate here. */}
           {appointment.utenteNumber ? (
             <Row label={copy.utenteNumber} value={appointment.utenteNumber} />
+          ) : null}
+          {isPortugal ? (
+            <PtPatientIdentityRows
+              email={appointment.email}
+              initial={{
+                taxIdNumber: appointment.taxIdNumber ?? null,
+                nationalIdNumber: appointment.nationalIdNumber ?? null,
+                // Falls back to the pharmacy captured on this booking when the
+                // profile has none — the doctor sees a value either way, and
+                // saving promotes it onto the profile for the next visit.
+                preferredPharmacy:
+                  appointment.preferredPharmacy ?? appointment.pharmacy ?? null,
+              }}
+              copy={copy.ptFields}
+            />
           ) : null}
           {appointment.consultationLanguageCode ? (
             <Row

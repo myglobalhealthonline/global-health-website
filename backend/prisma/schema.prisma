@@ -920,6 +920,9 @@ model Service {
   shippingCents            Int                            @default(0)
   editorialChecklist       Json?
   isActive                 Boolean                        @default(true)
+  /// Clinical review date shown on the service page as "Last reviewed"
+  /// (E-E-A-T signal). Nullable, no backfill — set by admins going forward.
+  lastReviewedAt           DateTime?
   /// Who may see/book this service. PUBLIC keeps today's behaviour.
   /// CORPORATE_ONLY = corporate employee onboarding (pre-assessment);
   /// CORPORATE_REQUEST_ONLY = bookable only against an open
@@ -2396,6 +2399,14 @@ model Order {
   subtotalCents                 Int
   shippingCents                 Int                   @default(0)
   totalCents                    Int
+  /// Admin discretionary discount applied at manual-booking time (walk-in /
+  /// phone-in goodwill, staff comp). AUDIT ONLY — `subtotalCents`,
+  /// `totalCents` and every `OrderItem.unitPriceCents` are ALREADY net of it,
+  /// same convention as `OrderItem.corporateDiscountCents`. Null on every
+  /// self-service order. `discountCents` is what was taken off the gross price
+  /// the pricing chain (base → peak → insurance) resolved.
+  discountPercent               Int?
+  discountCents                 Int?
   status                        OrderStatus           @default(PENDING)
   paymentStatus                 PaymentStatus         @default(UNPAID)
   /// Insurance card manual-verification state. Null = ordinary (non-insurance)

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   ArrowRight,
@@ -32,15 +33,19 @@ import {
   faqJsonLd,
   medicalClinicServiceJsonLd,
   medicalSpecialtyForService,
+  physicianJsonLd,
 } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
+import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
@@ -122,8 +127,21 @@ export default async function ServiceDetailPage({
   const detail = await getCountryServiceDetail(code, serviceSlug, lang);
   if (!detail) notFound();
 
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
   const t = c.serviceDetailPage;
+
+  // Clinical review date chip — same "Last reviewed <date>" label/format the
+  // blog byline already uses. Renders nothing when the service has none set.
+  const lastReviewedFormatted = detail.lastReviewedAt
+    ? new Date(detail.lastReviewedAt).toLocaleDateString(lang, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
+  const reviewedDateLabel = lastReviewedFormatted
+    ? `${home.blog.lastReviewed} ${lastReviewedFormatted}`
+    : null;
 
   // Country-specific short medical disclaimer (admin-authored, per country);
   // falls back to the generic translated line when not set. Independent of
@@ -143,6 +161,27 @@ export default async function ServiceDetailPage({
   const assignedIds = new Set(serviceCard?.assignedDoctorIds ?? []);
   const assignedDoctors =
     assignedIds.size > 0 ? allDoctors.filter((d) => assignedIds.has(d.id)).slice(0, 3) : [];
+
+  // Named clinical reviewer for the E-E-A-T byline + schema — the country's
+  // admin-flagged "Clinical Director" (CountryDoctorCard.isFeatured, same
+  // flag the /doctors spotlight uses), never a fabricated name. Renders
+  // nothing when the country has no featured doctor set.
+  const reviewer = allDoctors.find((d) => d.isFeatured) ?? null;
+  const reviewerTrust = reviewer ? await getCountryTrust(code) : null;
+  const reviewerHref = reviewer ? `/${country}/${lang}/doctors/${reviewer.slug}` : null;
+  const reviewerPhysician = reviewer
+    ? physicianJsonLd({
+        name: reviewer.fullName,
+        title: reviewer.title,
+        countryName: config.name,
+        url: reviewerHref!,
+        registrationNumber: reviewer.registrationNumber,
+        chamber: reviewer.registrationChamber,
+        regulator: reviewerTrust?.regulator?.name
+          ? { name: reviewerTrust.regulator.name, url: reviewerTrust.regulator.url }
+          : null,
+      })
+    : null;
 
   const back = listingPath(detail.kind, country, lang, {
     specialist: t.backSpecialist,
@@ -188,6 +227,8 @@ export default async function ServiceDetailPage({
           countryName: config.name,
           url: `/${country}/${lang}/services/${serviceSlug}`,
           bookingUrl: bookHref,
+          reviewerPhysician,
+          dateModified: detail.lastReviewedAt,
         })}
       />
 
@@ -200,11 +241,15 @@ export default async function ServiceDetailPage({
          *  front of the photo instead of it being a stacked block above. */}
         {detail.imageSrc ? (
           <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={detail.imageSrc}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover object-top"
+              fill
+              priority
+              fetchPriority="high"
+              sizes="100vw"
+              className="object-cover object-top"
+              unoptimized={isUnlistedRemote(detail.imageSrc)}
             />
             <div
               className="absolute inset-0"
@@ -222,11 +267,15 @@ export default async function ServiceDetailPage({
           {/* ── LEFT — full-bleed service image (desktop only) ──────────────── */}
           <div className="relative hidden h-full overflow-hidden lg:block">
             {detail.imageSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={detail.imageSrc}
                 alt={detail.name}
-                className="absolute inset-0 h-full w-full object-cover object-top"
+                fill
+                priority
+                fetchPriority="high"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover object-top"
+                unoptimized={isUnlistedRemote(detail.imageSrc)}
               />
             ) : (
               <div
@@ -357,6 +406,14 @@ export default async function ServiceDetailPage({
                   </span>
                 ))}
               </div>
+
+              <ClinicalReviewer
+                label={t.clinicallyReviewedBy}
+                name={reviewer?.fullName}
+                href={reviewerHref}
+                credential={reviewer?.imcRegistration}
+                reviewedDate={reviewedDateLabel}
+              />
 
               {/* ── Booking card ─────────────────────────────────────────────── */}
               <div

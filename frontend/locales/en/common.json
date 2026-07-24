@@ -496,7 +496,8 @@
     "bookHeading": "Book {service} in {country}",
     "fromPricePrefix": "From {price} · ",
     "liveAvailability": "Live availability — pick a doctor and a time that suits you.",
-    "disclaimer": "Information on this page is general and is not a substitute for professional medical advice, diagnosis or treatment. Book a consultation to discuss your situation with a doctor registered to practise in {country}."
+    "disclaimer": "Information on this page is general and is not a substitute for professional medical advice, diagnosis or treatment. Book a consultation to discuss your situation with a doctor registered to practise in {country}.",
+    "clinicallyReviewedBy": "Clinically reviewed by"
   },
   "homeCatalog": {
     "tagGeneral": "General",

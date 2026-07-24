@@ -94,6 +94,11 @@ function GlobeImpl({
   // loop keeps running (a bare callback is effectively free) so resuming
   // needs no separate wake-up wiring.
   const isIntersectingRef = useRef(true);
+  // ponytail: coarse-pointer (mobile/touch) devices redrew WebGL 60fps
+  // continuously with no way to ever stop — draw once so the canvas isn't
+  // blank, then gate future draws off like the other checks above.
+  const coarsePointerRef = useRef(false);
+  const hasDrawnOnceRef = useRef(false);
 
   const cobeMarkers = useMemo(
     () =>
@@ -162,6 +167,13 @@ function GlobeImpl({
 
   useEffect(() => {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const coarseQuery = window.matchMedia("(pointer: coarse)");
+    coarsePointerRef.current = coarseQuery.matches;
+    const handleCoarseChange = (e: MediaQueryListEvent) => {
+      coarsePointerRef.current = e.matches;
+    };
+    coarseQuery.addEventListener("change", handleCoarseChange);
+    return () => coarseQuery.removeEventListener("change", handleCoarseChange);
   }, []);
 
   useEffect(() => {
@@ -214,8 +226,10 @@ function GlobeImpl({
       const shouldDraw =
         !document.hidden &&
         isIntersectingRef.current &&
-        (!reducedMotionRef.current || pointerInteracting.current !== null);
+        (!reducedMotionRef.current || pointerInteracting.current !== null) &&
+        (!coarsePointerRef.current || !hasDrawnOnceRef.current);
       if (shouldDraw) {
+        hasDrawnOnceRef.current = true;
         globe.update({
           phi: phi + phiOffsetRef.current + dragOffset.current.phi,
           theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
@@ -236,6 +250,7 @@ function GlobeImpl({
       if (globe || !canvasRef.current) return;
       const width = canvasRef.current.offsetWidth;
       if (width === 0) return;
+      hasDrawnOnceRef.current = false;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       globe = createGlobe(canvas, {
         devicePixelRatio: dpr,

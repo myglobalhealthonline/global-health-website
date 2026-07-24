@@ -61,6 +61,8 @@ export type PublicDoctorRecord = {
   profileImageFocalY: number;
   profileImageZoom: number;
   editorialChecklist?: Record<string, unknown>;
+  /** ISO timestamp string, when the backend row includes one (Prisma @updatedAt). */
+  updatedAt?: string;
 };
 
 function readCountry(row: unknown): { code: CountryCode; name: string; teamPath: string } | undefined {
@@ -217,6 +219,7 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
     r.editorialChecklist && typeof r.editorialChecklist === "object"
       ? (r.editorialChecklist as Record<string, unknown>)
       : undefined;
+  const updatedAt = typeof r.updatedAt === "string" ? r.updatedAt : undefined;
 
   return {
     id,
@@ -248,6 +251,7 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
     profileImageFocalY: profileImage?.focalY ?? 50,
     profileImageZoom: profileImage?.zoom ?? 1,
     ...(editorialChecklist ? { editorialChecklist } : {}),
+    ...(updatedAt ? { updatedAt } : {}),
   };
 }
 

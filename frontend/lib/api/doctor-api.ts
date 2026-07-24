@@ -406,10 +406,20 @@ export type AppointmentDetailDto = {
   addressPostalCode?: string | null;
   addressCountryCode?: string | null;
   /** Número de Utente — the PT SNS number, needed for electronic
-   *  prescription. The only government ID the doctor portal receives; NIF,
-   *  national ID and passport remain admin-only per the GDPR plan. Null
-   *  outside markets with `BookingSetting.collectUtenteNumber`. */
+   *  prescription. Null outside markets with
+   *  `BookingSetting.collectUtenteNumber`. */
   utenteNumber?: string | null;
+  /** NIF (fiscal number). Portugal-only — the backend returns null for every
+   *  other market, where it stays admin-only per the GDPR plan. Goes on PT
+   *  prescriptions/certificates as "NIF: …". */
+  taxIdNumber?: string | null;
+  /** Cartão de Cidadão number. Portugal-only, same gate as `taxIdNumber`.
+   *  Often absent — patients are not asked for it at booking. */
+  nationalIdNumber?: string | null;
+  /** Patient's usual pharmacy from their profile (PatientProfile.
+   *  preferredPharmacy). Portugal-only in this payload. Distinct from
+   *  `pharmacy`, which is the per-visit value captured on the appointment. */
+  preferredPharmacy?: string | null;
   createdAt: string;
 };
 
@@ -727,4 +737,40 @@ export async function fetchDoctorServices() {
   const locale = (await cookies()).get("gh_locale")?.value;
   const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
   return doctorRequest<DoctorServicesPayload>(`/api/doctor/services${qs}`);
+}
+
+/* ── Manual booking (walk-in / phone-in taken by the doctor) ───────── */
+
+/**
+ * A service this doctor may book a patient onto. Price fields are absent by
+ * design: the doctor portal never renders what the patient is charged — the
+ * backend mints the Stripe link at the published catalogue price.
+ */
+export type DoctorBookableService = {
+  id: string;
+  slug: string;
+  name: string;
+  kind: string;
+  durationMinutes: number | null;
+  countryCode: string;
+  countryName: string;
+};
+
+export type DoctorBookingClinic = {
+  id: string;
+  name: string;
+  city: string | null;
+  countryCode: string;
+};
+
+export type DoctorBookingOptions = {
+  /** Admin-granted per-doctor permission (`Doctor.canCreateManualAppointments`).
+   *  Gates the booking entry point; the backend re-checks it on POST. */
+  canCreateManualAppointments: boolean;
+  services: DoctorBookableService[];
+  clinics: DoctorBookingClinic[];
+};
+
+export async function fetchDoctorBookingOptions() {
+  return doctorRequest<DoctorBookingOptions>("/api/doctor/booking-options");
 }
