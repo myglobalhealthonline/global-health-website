@@ -110,7 +110,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const services = await getPublicServicesForCountry(country.code);
       for (const s of services) {
         if (s.kind !== "GENERAL" && s.kind !== "SPECIALIST") continue;
-        pushLocalized(country, `/services/${s.slug}`, 0.7);
+        pushLocalized(country, `/services/${s.slug}`, 0.7, s.updatedAt ? { lastModified: s.updatedAt } : undefined);
       }
     } catch {
       // Service list unavailable — keep the rest of the sitemap.
@@ -228,7 +228,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         )
       ).filter((lang): lang is string => lang !== null);
       if (indexableLangs.length === 0) continue;
-      pushLocalized(country, `/doctors/${d.slug}`, 0.7, undefined, indexableLangs);
+      pushLocalized(
+        country,
+        `/doctors/${d.slug}`,
+        0.7,
+        d.updatedAt ? { lastModified: d.updatedAt } : undefined,
+        indexableLangs,
+      );
     }
   } catch {
     // Doctor list unavailable — sitemap still emits the country tree.

@@ -65,10 +65,6 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Valid sick certs & prescriptions",
     ],
     servicesHeadline: "GP and specialist consultations — from €39.",
-    // ponytail: en-only for now — es/pt/cs equivalents share the same €39
-    // figure as servicesHeadline below but haven't been proofread for the
-    // hero badge specifically; add them here once confirmed rather than
-    // guess-translating.
     heroPriceBadge: "GP consultations from €39",
   },
   "IE:es": {
@@ -88,6 +84,7 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Certificados médicos y recetas válidos",
     ],
     servicesHeadline: "Consultas de médico de cabecera y especialista — desde 39 €.",
+    heroPriceBadge: "Consultas de médico de cabecera desde 39 €",
   },
   "IE:pt": {
     seoTitle:
@@ -106,6 +103,7 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Atestados e receitas médicas válidos",
     ],
     servicesHeadline: "Consultas de clínica geral e especialidade — a partir de 39 €.",
+    heroPriceBadge: "Consultas de clínica geral a partir de 39 €",
   },
   "IE:cs": {
     seoTitle:
@@ -124,6 +122,7 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Platná pracovní neschopnost a recepty",
     ],
     servicesHeadline: "Konzultace s praktickým lékařem a specialistou — od 39 €.",
+    heroPriceBadge: "Konzultace s praktickým lékařem od 39 €",
   },
   "IE:ro": {
     seoTitle:
@@ -142,6 +141,7 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Concedii medicale și rețete valabile",
     ],
     servicesHeadline: "Consultații de medicină de familie și specialitate — de la 39 €.",
+    heroPriceBadge: "Consultații de medicină de familie de la 39 €",
   },
   "IE:de": {
     seoTitle:
@@ -160,6 +160,7 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Gültige Krankschreibungen & Rezepte",
     ],
     servicesHeadline: "Hausarzt- und Facharzttermine — ab 39 €.",
+    heroPriceBadge: "Hausarzttermine ab 39 €",
   },
   // Spain/Romania/Brazil have no seeded HOME PageContentTranslation row (the
   // seed script only covers ie/pt), so they fell through to the generic

@@ -24,6 +24,8 @@ export type PublicServiceRecord = {
   currencyCode: string | null;
   imagePath: string | null;
   editorialChecklist: Record<string, unknown> | null;
+  /** ISO timestamp string, when the backend row includes one (Prisma @updatedAt). */
+  updatedAt: string | null;
 };
 
 function readCountryCode(row: unknown): CountryCode | undefined {
@@ -79,6 +81,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     r.editorialChecklist && typeof r.editorialChecklist === "object"
       ? (r.editorialChecklist as Record<string, unknown>)
       : null;
+  const updatedAt = typeof r.updatedAt === "string" ? r.updatedAt : null;
   const assets = Array.isArray(r.assets) ? r.assets : [];
   const imagePath = (() => {
     const first = assets[0];
@@ -106,6 +109,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     currencyCode,
     imagePath,
     editorialChecklist,
+    updatedAt,
   };
 }
 
