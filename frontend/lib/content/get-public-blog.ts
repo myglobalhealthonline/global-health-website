@@ -18,6 +18,10 @@ export type BlogListItem = {
   coverImageAlt: string | null;
   /** Countries this post is scoped to. Empty = global (shown everywhere). */
   countries: Array<{ code: string; slug: string }>;
+  /** The post's own authored locale (raw Prisma enum casing, e.g. "PT") — see
+   *  BlogPostFull.locale. Used by sitemap.ts to emit only the locale the
+   *  content is actually written in (no per-locale translation rows exist). */
+  locale: string;
 };
 
 /** Named clinician linked as a post's author / clinical reviewer. */
@@ -176,6 +180,7 @@ export async function listBlogPosts(countryCode?: string): Promise<BlogListItem[
     coverImageSrc: p.coverImageSrc,
     coverImageAlt: p.coverImageAlt,
     countries: p.countries,
+    locale: p.locale,
   }));
 }
 

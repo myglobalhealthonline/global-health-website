@@ -115,8 +115,21 @@ export async function buildBlogPostMetadata(
     ro: "RO",
     de: "DE",
   };
+  // Blog posts have exactly one authored locale (post.locale) — there's no
+  // per-locale translation row like the CMS content-page/doctor tables. A
+  // country-scoped visitor hitting a locale that ISN'T the post's own locale
+  // (e.g. .../pt/blog/x when the post was written in EN) is served the same
+  // English body verbatim: canonicalize to the post's real-content URL and
+  // noindex the untranslated variant instead of self-canonicalizing a
+  // duplicate. Bare `/blog/[slug]` has no route lang, so it's always "its
+  // own" URL.
+  const postLanguage = post.locale.toLowerCase();
+  const isTranslatedVariant = !routeParams.countrySlug || !routeParams.lang || language === postLanguage;
+  const metadataPath = isTranslatedVariant
+    ? canonicalUrl
+    : `/${routeParams.countrySlug}/${postLanguage}/blog/${post.slug}`;
   return buildPublicMetadata({
-    path: canonicalUrl,
+    path: metadataPath,
     title: post.seoTitle ?? post.title,
     description: post.seoDescription ?? post.excerpt,
     type: "article",
@@ -128,6 +141,7 @@ export async function buildBlogPostMetadata(
       ? ogLocales(config, language).locale
       : `${language}_${nativeRegion[language] ?? language.toUpperCase()}`,
     languages: config ? hreflangAlternates(config, `/blog/${post.slug}`) : undefined,
+    noindex: !isTranslatedVariant,
   });
 }
 

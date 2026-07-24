@@ -224,7 +224,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const countryPosts = await listBlogPosts(country.code);
       for (const p of countryPosts) {
         if (p.countries.length === 0) continue; // already emitted above as a bare-URL entry
-        pushLocalized(country, `/blog/${p.slug}`, 0.5, { lastModified: p.publishedAt });
+        // A blog post has exactly one authored locale (BlogListItem carries
+        // no per-locale translation), so every OTHER enabled locale for this
+        // country would just be an English-body page with noindex set by
+        // buildBlogPostMetadata — don't submit those to Google. Only the
+        // post's actual content locale is emitted here.
+        pushLocalized(country, `/blog/${p.slug}`, 0.5, { lastModified: p.publishedAt }, [p.locale.toLowerCase()]);
       }
     } catch {
       // Blog list unavailable for this country — keep the rest of the sitemap.
