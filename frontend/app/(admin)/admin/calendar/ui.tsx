@@ -36,7 +36,14 @@ type Props = {
   doctorOptions: Option[];
   typeOptions: string[];
   countryOptions: string[];
+  /** Display state of the filter bar. `country` is the *effective* country —
+   *  it includes the header picker's scope, which is why it differs from
+   *  `countryParam`. */
   filters: { doctorId: string; type: string; country: string };
+  /** The `country` search param exactly as it arrived (empty when the scope
+   *  came from the header picker). Carried forward when other filters change
+   *  so an untouched calendar keeps following the picker. */
+  countryParam: string;
 };
 
 const DEFAULT_TZ = ADMIN_CALENDAR_DEFAULT_TZ;
@@ -53,6 +60,7 @@ export function AdminCalendarUI({
   typeOptions,
   countryOptions,
   filters,
+  countryParam,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -135,7 +143,7 @@ export function AdminCalendarUI({
     params.set("ym", next.ym ?? yearMonthParam(year, month));
     const doctorId = next.doctorId ?? filters.doctorId;
     const type = next.type ?? filters.type;
-    const country = next.country ?? filters.country;
+    const country = next.country ?? countryParam;
     if (doctorId) params.set("doctorId", doctorId);
     if (type) params.set("type", type);
     if (country) params.set("country", country);
@@ -209,9 +217,11 @@ export function AdminCalendarUI({
             <select
               className="gh-select h-10 min-w-[120px]"
               value={filters.country}
-              onChange={(e) => pushParams({ country: e.target.value })}
+              // The doctor filter is country-scoped, so a doctor picked under
+              // the old country would otherwise survive into an empty grid.
+              onChange={(e) => pushParams({ country: e.target.value, doctorId: "" })}
             >
-              <option value="">All countries</option>
+              <option value="all">All countries</option>
               {countryOptions.map((c) => (
                 <option key={c} value={c}>
                   {c.toUpperCase()}

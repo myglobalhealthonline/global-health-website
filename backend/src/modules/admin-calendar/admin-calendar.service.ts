@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { ensureSlotsForRange } from "../doctor-availability/doctor-availability.service.js";
@@ -63,6 +64,23 @@ export async function getAdminCalendar(
 ): Promise<AdminCalendarPayload> {
   const { fromUtc, toUtc, doctorId, consultationType, countryCode } = filters;
   try {
+    // A doctor can serve markets beyond their primary country
+    // (`additionalCountries`), and the admin doctor roster scopes that way
+    // too. The calendar has to match: otherwise a doctor who is selectable in
+    // the country-scoped filter would draw an empty grid.
+    const doctorCountryWhere: Prisma.DoctorWhereInput | null = countryCode
+      ? {
+          OR: [
+            { country: { code: countryCode } },
+            {
+              additionalCountries: {
+                some: { active: true, country: { code: countryCode } },
+              },
+            },
+          ],
+        }
+      : null;
+
     // 1. Materialise recurring slots for the doctors in scope. Bounded to
     //    doctors that actually have an availability window so we don't loop
     //    over the whole roster; ensureSlotsForRange is idempotent + cheap
@@ -71,7 +89,7 @@ export async function getAdminCalendar(
       where: {
         availabilities: { some: {} },
         ...(doctorId ? { id: doctorId } : {}),
-        ...(countryCode ? { country: { code: countryCode } } : {}),
+        ...(doctorCountryWhere ?? {}),
       },
       select: { id: true },
       take: 500,
@@ -85,7 +103,7 @@ export async function getAdminCalendar(
         where: {
           startAt: { gte: fromUtc, lt: toUtc },
           ...(doctorId ? { doctorId } : {}),
-          ...(countryCode ? { doctor: { country: { code: countryCode } } } : {}),
+          ...(doctorCountryWhere ? { doctor: doctorCountryWhere } : {}),
         },
         orderBy: { startAt: "asc" },
         select: {

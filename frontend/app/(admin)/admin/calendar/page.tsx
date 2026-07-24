@@ -1,6 +1,12 @@
 import { CalendarRange } from "lucide-react";
 import { PageHeader, AdminCard } from "@/components/portal-atoms";
-import { fetchAdminCalendar, fetchAdminDoctors } from "@/lib/admin/admin-api";
+import {
+  fetchAdminCalendar,
+  fetchAdminCountries,
+  fetchAdminDoctors,
+  type AdminDoctorDto,
+} from "@/lib/admin/admin-api";
+import { getActiveCountry, scopedCountryCode } from "@/lib/admin/admin-scope";
 import {
   monthGridRangeIso,
   parseWeekAnchor,
@@ -23,6 +29,16 @@ type Props = {
     country?: string;
   }>;
 };
+
+/** Does this doctor serve `code`, either as their primary country or as an
+ *  active additional market? Mirrors the admin doctor roster's country filter
+ *  (and the calendar endpoint's own scope). */
+function servesCountry(doctor: AdminDoctorDto, code: string): boolean {
+  if (doctor.country?.code?.toLowerCase() === code) return true;
+  return (doctor.additionalCountries ?? []).some(
+    (ac) => ac.active && ac.country?.code?.toLowerCase() === code,
+  );
+}
 
 export default async function AdminCalendarPage({ searchParams }: Props) {
   const sp = await searchParams;
@@ -47,14 +63,27 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
         })()
       : monthGridRangeIso(year, month);
 
+  // The header country picker (cookie scope) is the default country filter, so
+  // switching to Spain scopes the grid + the doctor dropdown without touching
+  // the URL. An explicit `country` in the URL still wins, and `country=all`
+  // is the deliberate opt-out that ignores the picker for this page.
+  const countriesResult = await fetchAdminCountries();
+  const countriesForScope = countriesResult.ok ? countriesResult.data.countries : [];
+  const activeCountry = await getActiveCountry(countriesForScope);
+  const countryCode =
+    sp.country === "all" ? undefined : scopedCountryCode(sp.country, activeCountry);
+
   const [calendar, doctors] = await Promise.all([
     fetchAdminCalendar({
       from: fromIso,
       to: toIso,
       doctorId: sp.doctorId,
       consultationType: sp.type,
-      countryCode: sp.country,
+      countryCode,
     }),
+    // Fetched unscoped: the roster is small, and keeping every doctor lets the
+    // dropdown still name a doctorId that falls outside the current scope
+    // instead of rendering a blank select.
     fetchAdminDoctors({ pageSize: "100" }),
   ]);
 
@@ -108,23 +137,33 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
     })),
   ];
 
-  const doctorOptions = doctors.ok
-    ? doctors.data.items.map((d) => ({ id: d.id, name: d.fullName }))
-    : [];
+  const allDoctors = doctors.ok ? doctors.data.items : [];
+  const doctorOptions = allDoctors
+    .filter((d) => !countryCode || servesCountry(d, countryCode))
+    .map((d) => ({ id: d.id, name: d.fullName }));
+
+  // A doctorId can outlive the scope it was picked under (the header country
+  // picker only refreshes — it doesn't rewrite the URL). Keep it named in the
+  // dropdown so the admin can see why the grid is empty.
+  if (sp.doctorId && !doctorOptions.some((o) => o.id === sp.doctorId)) {
+    const outside = allDoctors.find((d) => d.id === sp.doctorId);
+    doctorOptions.unshift({
+      id: sp.doctorId,
+      name: outside ? `${outside.fullName} (outside ${countryCode?.toUpperCase()})` : "Selected doctor",
+    });
+  }
 
   // Country + type filter options derived from the doctor roster + the
   // consultations in view (plus whatever filter is currently applied so it
   // never disappears from its own dropdown).
   const countrySet = new Set<string>();
-  if (doctors.ok) {
-    for (const d of doctors.data.items) {
-      if (d.country?.code) countrySet.add(d.country.code);
-      for (const ac of d.additionalCountries ?? []) {
-        if (ac.country?.code) countrySet.add(ac.country.code);
-      }
+  for (const d of allDoctors) {
+    if (d.country?.code) countrySet.add(d.country.code);
+    for (const ac of d.additionalCountries ?? []) {
+      if (ac.country?.code) countrySet.add(ac.country.code);
     }
   }
-  if (sp.country) countrySet.add(sp.country);
+  if (countryCode) countrySet.add(countryCode);
   const countryOptions = [...countrySet].sort();
 
   const typeSet = new Set<string>(consultations.map((c) => c.consultationType));
@@ -157,8 +196,11 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
           filters={{
             doctorId: sp.doctorId ?? "",
             type: sp.type ?? "",
-            country: sp.country ?? "",
+            // "all" is the select's value for the unscoped option, so an
+            // unfiltered calendar keeps a real selection instead of a blank.
+            country: countryCode ?? "all",
           }}
+          countryParam={sp.country ?? ""}
         />
       ) : (
         <AdminCard>
