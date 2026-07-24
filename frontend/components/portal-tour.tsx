@@ -8,15 +8,18 @@
  * restarted from the sidebar via `window.dispatchEvent(new Event("gh:tour:start"))`.
  *
  * Cross-page steps: a step with `route` navigates there first (router.push),
- * then polls for its target element to appear (page still loading). Progress
- * is mirrored to sessionStorage so the tour survives the navigation/remount
- * (the doctor/patient layout doesn't unmount across same-portal routes, but
- * a hard reload or route-group boundary would otherwise reset to step 0).
+ * then polls for its target element to appear (page still loading). A route
+ * that only differs by query string (e.g. an appointment `?tab=`) clicks the
+ * real tab button instead of relying on router history — see the resolve
+ * effect below for why. Progress is mirrored to sessionStorage so the tour
+ * survives the navigation/remount (the doctor/patient layout doesn't unmount
+ * across same-portal routes, but a hard reload or route-group boundary would
+ * otherwise reset to step 0).
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export type TourStep = {
   /** data-tour attribute value to spotlight; omit for a centered welcome card. */
@@ -71,6 +74,7 @@ export function PortalTour({
   const targetElRef = useRef<Element | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => setMounted(true), []);
 
@@ -152,13 +156,32 @@ export function PortalTour({
       setRect(null);
       return;
     }
-    if (step.route && pathname !== step.route) {
-      router.push(step.route);
-      return;
+    if (step.route) {
+      const [routePath, routeQuery] = step.route.split("?");
+      const currentSearch = searchParams.toString();
+      const currentFull = pathname + (currentSearch ? `?${currentSearch}` : "");
+      if (routePath !== pathname) {
+        router.push(step.route);
+        return;
+      }
+      if (step.route !== currentFull) {
+        // Same page, only the query differs — typically a `?tab=` step.
+        // AppointmentTabs/PortalTabs only read `?tab=` from the URL once on
+        // mount (deliberately, so in-page clicks don't fight external nav),
+        // so a route-only change here wouldn't otherwise flip the active
+        // tab. Click the real tab button (stable `#gh-tab-<id>` id) instead
+        // of fighting that guard, then mirror the URL for the address bar.
+        const tabId = new URLSearchParams(routeQuery).get("tab");
+        if (tabId) {
+          const tabBtn = document.getElementById(`gh-tab-${tabId}`);
+          if (tabBtn instanceof HTMLElement) tabBtn.click();
+        }
+        router.replace(step.route, { scroll: false });
+        return;
+      }
     }
 
     let cancelled = false;
-    let measureTimer: number | undefined;
     const deadline = Date.now() + POLL_TIMEOUT_MS;
 
     const tryResolve = () => {
@@ -167,11 +190,8 @@ export function PortalTour({
       if (el && isVisible(el)) {
         targetElRef.current = el;
         el.scrollIntoView({ block: "center", behavior: "smooth" });
-        measureTimer = window.setTimeout(() => {
-          if (cancelled) return;
-          const r = el.getBoundingClientRect();
-          setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
-        }, 350);
+        const r = el.getBoundingClientRect();
+        setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
         return;
       }
       if (Date.now() < deadline) {
@@ -200,32 +220,37 @@ export function PortalTour({
     tryResolve();
     return () => {
       cancelled = true;
-      if (measureTimer) window.clearTimeout(measureTimer);
     };
-  }, [active, stepIndex, steps, pathname, router, finish]);
+  }, [active, stepIndex, steps, pathname, searchParams, router, finish]);
 
-  // Recompute rect on resize/scroll while a target step is showing.
+  // Continuous tracking while a target step is showing — every frame,
+  // update `rect` only when it actually moved (>0.5px) so re-renders stay
+  // cheap. Replaces separate scroll/resize listeners: this also follows the
+  // smooth `scrollIntoView` from the resolve effect above without a fixed
+  // delay before the first measurement.
   useEffect(() => {
     if (!active || !targetElRef.current) return;
     let raf = 0;
-    const recompute = () => {
-      raf = 0;
+    let last: Rect | null = null;
+    const tick = () => {
       const el = targetElRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+      if (el) {
+        const r = el.getBoundingClientRect();
+        const changed =
+          !last ||
+          Math.abs(r.top - last.top) > 0.5 ||
+          Math.abs(r.left - last.left) > 0.5 ||
+          Math.abs(r.width - last.width) > 0.5 ||
+          Math.abs(r.height - last.height) > 0.5;
+        if (changed) {
+          last = { top: r.top, left: r.left, width: r.width, height: r.height };
+          setRect(last);
+        }
+      }
+      raf = requestAnimationFrame(tick);
     };
-    const onEvent = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(recompute);
-    };
-    window.addEventListener("resize", onEvent, { passive: true });
-    window.addEventListener("scroll", onEvent, { passive: true, capture: true });
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      window.removeEventListener("resize", onEvent);
-      window.removeEventListener("scroll", onEvent, { capture: true });
-    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, [active, stepIndex]);
 
   const goNext = useCallback(() => {
@@ -233,12 +258,14 @@ export function PortalTour({
       finish();
       return;
     }
-    setRect(null);
+    // Deliberately don't clear `rect` here — keeping the stale value lets
+    // the CSS transition glide the spotlight/card from the old position to
+    // the new one once the resolve effect measures it, instead of the
+    // fallback centered style flashing in for a frame.
     setStepIndex((i) => i + 1);
   }, [stepIndex, steps.length, finish]);
 
   const goBack = useCallback(() => {
-    setRect(null);
     setStepIndex((i) => Math.max(0, i - 1));
   }, []);
 

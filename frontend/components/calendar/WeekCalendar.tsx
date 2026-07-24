@@ -8,7 +8,6 @@ import {
   CONSULT_FALLBACK_MIN,
   dropSlotsUnderConsultations,
   durationMinutes,
-  weekLabel,
   zonedMinutesOfDay,
   type WeekDay,
 } from "./calendar-utils";
@@ -142,6 +141,27 @@ function useNowMinutes(tz: string): number | null {
     return () => clearInterval(id);
   }, [tz]);
   return minutes;
+}
+
+/** "23–29 June 2026" (or "30 Jun – 6 Jul 2026" across a month boundary) for
+ *  an arbitrary [firstKey, lastKey] range — unlike calendar-utils' weekLabel
+ *  (always the full Mon-Sun week), this reflects whatever subset of days is
+ *  actually visible, so a windowed 4-day view says "10–13 Aug", not the
+ *  underlying week's "10–16 Aug". */
+function rangeLabel(firstKey: string, lastKey: string): string {
+  const first = firstKey.split("-").map(Number);
+  const last = lastKey.split("-").map(Number);
+  const sameMonth = first[1] === last[1] && first[0] === last[0];
+  const fmt = (parts: number[], withMonthYear: boolean) =>
+    new Intl.DateTimeFormat("en-IE", {
+      day: "numeric",
+      ...(withMonthYear ? { month: "short", year: "numeric" } : {}),
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])));
+  if (firstKey === lastKey) return fmt(first, true);
+  return sameMonth
+    ? `${first[2]}–${fmt(last, true)}`
+    : `${fmt(first, true)} – ${fmt(last, true)}`;
 }
 
 // 24-hour gutter label, matching the 24-hour block times below.
@@ -351,7 +371,9 @@ export function WeekCalendar({
         style={{ borderBottom: "1px solid var(--portal-line)" }}
       >
         <h2 className="text-base font-bold" style={{ color: "var(--portal-text)" }}>
-          {weekLabel(anchorDayKey)}
+          {visibleDays.length
+            ? rangeLabel(visibleDays[0].key, visibleDays[visibleDays.length - 1].key)
+            : ""}
         </h2>
         <div className="flex items-center gap-1.5">
           <button
@@ -362,41 +384,24 @@ export function WeekCalendar({
           >
             {t.today}
           </button>
+          {/* Single chevron pair, dual-purpose: steps by day (rolling into
+              the adjacent week at either edge via stepDay) once the grid is
+              windowed to fewer than 7 columns; otherwise steps by week, same
+              as before. */}
           <IconBtn
-            onClick={onPrevWeek}
+            onClick={() => (isWindowed ? stepDay(-1) : onPrevWeek())}
             ariaLabel={t.prevWeekAria}
             style={{ width: 32, height: 32, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             <ChevronLeft className="size-4" aria-hidden />
           </IconBtn>
           <IconBtn
-            onClick={onNextWeek}
+            onClick={() => (isWindowed ? stepDay(1) : onNextWeek())}
             ariaLabel={t.nextWeekAria}
             style={{ width: 32, height: 32, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             <ChevronRight className="size-4" aria-hidden />
           </IconBtn>
-          {/* Day-window paging — only shown once the grid can't fit all 7
-              columns. Steps one day at a time; rolls into the adjacent week
-              (via onPrevWeek/onNextWeek) at either edge (see stepDay). */}
-          {isWindowed ? (
-            <div className="ml-1.5 flex items-center gap-1.5 border-l pl-1.5" style={{ borderColor: "var(--portal-line-strong)" }}>
-              <IconBtn
-                onClick={() => stepDay(-1)}
-                ariaLabel={t.prevWeekAria}
-                style={{ width: 28, height: 28, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
-              >
-                <ChevronLeft className="size-3.5" aria-hidden />
-              </IconBtn>
-              <IconBtn
-                onClick={() => stepDay(1)}
-                ariaLabel={t.nextWeekAria}
-                style={{ width: 28, height: 28, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
-              >
-                <ChevronRight className="size-3.5" aria-hidden />
-              </IconBtn>
-            </div>
-          ) : null}
         </div>
       </div>
 

@@ -217,7 +217,10 @@ export default async function DoctorAppointmentsPage({
         }
       />
 
-      <DoctorTourDemo strings={d.tour.demo} />
+      {/* Only shown when the doctor has no real appointments — the tour
+          walks a real one through the actual workspace tabs instead
+          (app/(doctor)/doctor/layout.tsx picks the id). */}
+      {appointments.length === 0 ? <DoctorTourDemo strings={d.tour.demo} /> : null}
 
       {result.ok ? (
         <div data-tour="appointments-summary">

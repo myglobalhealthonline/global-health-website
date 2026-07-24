@@ -98,7 +98,7 @@ export function AppointmentTabs({
   }, []);
 
   return (
-    <div className="gh-doctor-appointment-tabs">
+    <div className="gh-doctor-appointment-tabs" data-tour="appointment-tabs">
       <PortalTabs
         ariaLabel={ariaLabel ?? "Appointment sections"}
         value={active}

@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
+  fetchDoctorAppointments,
   fetchDoctorComplianceStatus,
   fetchDoctorNotifications,
   fetchDoctorUnreadMessageCount,
@@ -71,16 +72,42 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const [notif, unreadMessages, compliance, locale] = await Promise.all([
+  const [notif, unreadMessages, compliance, locale, tourAppointments] = await Promise.all([
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
     fetchDoctorComplianceStatus(),
     getPageLocale(),
+    // Minimal page just to find one appointment id to walk the tour through
+    // (steps 9-12 below) — no filters, first page is enough.
+    fetchDoctorAppointments({ page: "1", pageSize: "5" }),
   ]);
   const { doctor: d, common } = loadLocaleBundle(locale);
-  // Cross-page workflow walkthrough (PortalTour `route` support): steps 3-12
-  // hop across availability → calendar → appointments, ending on the sample
-  // consultation-workspace demo (DoctorTourDemo on the appointments page).
+  // The tour prefers an upcoming (not cancelled/completed) appointment so the
+  // consultation workspace steps land somewhere still actionable; falls back
+  // to any appointment, then to the sample-data demo block if the doctor has
+  // none yet.
+  const tourAppointmentId = tourAppointments.ok
+    ? (tourAppointments.data.items.find((a) => a.status !== "CANCELLED" && a.status !== "COMPLETED") ??
+        tourAppointments.data.items[0])?.id
+    : undefined;
+
+  // Cross-page workflow walkthrough (PortalTour `route`/`?tab=` support):
+  // steps 3-12 hop across availability → calendar → appointments, ending on
+  // the consultation workspace (real appointment tabs when one exists,
+  // otherwise the sample-data demo block on the appointments page).
+  const workspaceSteps = tourAppointmentId
+    ? [
+        { route: `/doctor/appointments/${tourAppointmentId}`, target: "appointment-tabs", title: d.tour.steps.demoAppointment.title, body: d.tour.steps.demoAppointment.body },
+        { route: `/doctor/appointments/${tourAppointmentId}?tab=consultation`, target: "soap-form", title: d.tour.steps.demoSoap.title, body: d.tour.steps.demoSoap.body },
+        { route: `/doctor/appointments/${tourAppointmentId}?tab=forms`, target: "appointment-forms", title: d.tour.steps.demoForms.title, body: d.tour.steps.demoForms.body },
+        { route: `/doctor/appointments/${tourAppointmentId}?tab=documents`, target: "appointment-documents", title: d.tour.steps.demoDocuments.title, body: d.tour.steps.demoDocuments.body },
+      ]
+    : [
+        { target: "demo-appointment", title: d.tour.steps.demoAppointment.title, body: d.tour.steps.demoAppointment.body },
+        { target: "demo-soap", title: d.tour.steps.demoSoap.title, body: d.tour.steps.demoSoap.body },
+        { target: "demo-forms", title: d.tour.steps.demoForms.title, body: d.tour.steps.demoForms.body },
+        { target: "demo-documents", title: d.tour.steps.demoDocuments.title, body: d.tour.steps.demoDocuments.body },
+      ];
   const tourSteps = [
     { title: d.tour.steps.welcome.title, body: d.tour.steps.welcome.body },
     { target: "/doctor", title: d.tour.steps.overview.title, body: d.tour.steps.overview.body },
@@ -90,11 +117,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     { route: "/doctor/calendar", target: "calendar-add", title: d.tour.steps.calendarAdd.title, body: d.tour.steps.calendarAdd.body },
     { target: "calendar-timeoff", title: d.tour.steps.calendarTimeoff.title, body: d.tour.steps.calendarTimeoff.body },
     { route: "/doctor/appointments", target: "appointments-summary", title: d.tour.steps.appointmentsSummary.title, body: d.tour.steps.appointmentsSummary.body },
-    { target: "demo-appointment", title: d.tour.steps.demoAppointment.title, body: d.tour.steps.demoAppointment.body },
-    { target: "demo-soap", title: d.tour.steps.demoSoap.title, body: d.tour.steps.demoSoap.body },
-    { target: "demo-forms", title: d.tour.steps.demoForms.title, body: d.tour.steps.demoForms.body },
-    { target: "demo-documents", title: d.tour.steps.demoDocuments.title, body: d.tour.steps.demoDocuments.body },
-    { target: "/doctor/forms", title: d.tour.steps.forms.title, body: d.tour.steps.forms.body },
+    ...workspaceSteps,
+    // Route back explicitly — the previous step may have left the tour on
+    // the appointment detail page (a route the sidebar link doesn't cover).
+    { route: "/doctor/forms", target: "/doctor/forms", title: d.tour.steps.forms.title, body: d.tour.steps.forms.body },
     { target: "/doctor/invoices", title: d.tour.steps.invoices.title, body: d.tour.steps.invoices.body },
     { target: "topbar-notifications", title: d.tour.steps.notifications.title, body: d.tour.steps.notifications.body },
     { target: "/doctor/profile", title: d.tour.steps.profile.title, body: d.tour.steps.profile.body },

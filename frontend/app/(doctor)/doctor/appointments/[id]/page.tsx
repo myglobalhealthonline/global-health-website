@@ -483,7 +483,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             icon: <FileStack aria-hidden />,
             badge: submissions.length > 0 ? String(submissions.length) : null,
             panel: (
-              <div className="grid gap-4">
+              <div className="grid gap-4" data-tour="appointment-forms">
                 <FormSection
                   title={d.appointmentDetail.tabForms}
                   description={d.appointmentDetail.formsDesc}

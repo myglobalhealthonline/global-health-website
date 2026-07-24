@@ -217,7 +217,7 @@ export function AppointmentDocumentsTab({
   const docCount = generatedTotal + uploads.length;
 
   return (
-    <div className="gh-doctor-documents-tab mt-4 grid gap-4">
+    <div className="gh-doctor-documents-tab mt-4 grid gap-4" data-tour="appointment-documents">
       <div className="gh-doctor-documents-toolbar flex flex-wrap items-center justify-between gap-3">
         <p className="text-portal-compact text-[var(--portal-muted)]">
           {copy.summary.replace("{count}", String(docCount))}

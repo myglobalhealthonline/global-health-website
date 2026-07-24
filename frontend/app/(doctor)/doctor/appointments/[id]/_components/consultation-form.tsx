@@ -167,7 +167,7 @@ export function ConsultationForm({
   }
 
   return (
-    <div className="mt-4 grid gap-3">
+    <div className="mt-4 grid gap-3" data-tour="soap-form">
       <Field
         label={copy.fieldChiefComplaint}
         value={state.chiefComplaint}
