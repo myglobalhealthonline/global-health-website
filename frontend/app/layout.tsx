@@ -27,13 +27,12 @@ export const metadata: Metadata = {
     "Online medical consultations with licensed clinicians across Ireland, Czechia, Portugal, Spain, and Romania.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // P-001: no cookies()/headers() here — see getRootHtmlLang() for why.
-  const lang = getRootHtmlLang();
+  const lang = await getRootHtmlLang();
   return (
     <html
       lang={lang}
