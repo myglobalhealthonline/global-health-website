@@ -228,6 +228,30 @@ export async function resendInvoiceDocument(
   return true;
 }
 
+type InvoiceWhatsAppLang = "en" | "pt" | "ro" | "cs" | "es";
+
+const INVOICE_DOC_LABEL: Record<
+  InvoiceWhatsAppLang,
+  Record<"RECEIPT" | "CREDIT_NOTE" | "INVOICE", string>
+> = {
+  en: { RECEIPT: "receipt", CREDIT_NOTE: "credit note", INVOICE: "invoice" },
+  pt: { RECEIPT: "recibo", CREDIT_NOTE: "nota de crédito", INVOICE: "fatura" },
+  ro: { RECEIPT: "chitanță", CREDIT_NOTE: "notă de credit", INVOICE: "factură" },
+  cs: { RECEIPT: "účtenka", CREDIT_NOTE: "dobropis", INVOICE: "faktura" },
+  es: { RECEIPT: "recibo", CREDIT_NOTE: "nota de crédito", INVOICE: "factura" },
+};
+
+const INVOICE_WHATSAPP_INTRO: Record<
+  InvoiceWhatsAppLang,
+  (name: string, docLabel: string, number: string, url: string) => string
+> = {
+  en: (n, d, no, url) => `Hi ${n}, here is your ${d} #${no} from Global Health: ${url}`,
+  pt: (n, d, no, url) => `Olá ${n}, aqui está a sua ${d} #${no} da Global Health: ${url}`,
+  ro: (n, d, no, url) => `Bună ${n}, aceasta este ${d} dumneavoastră #${no} de la Global Health: ${url}`,
+  cs: (n, d, no, url) => `Dobrý den ${n}, zde je vaše ${d} #${no} od Global Health: ${url}`,
+  es: (n, d, no, url) => `Hola ${n}, aquí tiene su ${d} #${no} de Global Health: ${url}`,
+};
+
 /**
  * Send the fiscal document to the patient over WhatsApp (admin action) as a
  * message with the print-page link. Consent-gated the same way as the other
@@ -273,18 +297,22 @@ export async function resendInvoiceWhatsApp(
   }
 
   const { sendWhatsAppText, formatWhatsAppSendError } = await import("../../lib/whatsapp/wasender.js");
-  const docLabel =
+  const { detectAutomationLanguage } = await import("../automation/pre-payment-messages.js");
+  const { whatsappContactFooter } = await import("../automation/whatsapp-contact-footer.js");
+  const lang = detectAutomationLanguage({ countryCode: invoice.order.countryCode });
+  const docLabel = INVOICE_DOC_LABEL[lang][
     invoice.documentType === "RECEIPT"
-      ? "receipt"
+      ? "RECEIPT"
       : invoice.documentType === "CREDIT_NOTE"
-        ? "credit note"
-        : "invoice";
+        ? "CREDIT_NOTE"
+        : "INVOICE"
+  ];
   const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${invoice.id}`);
   const result = await sendWhatsAppText({
     to: invoice.order.phone,
     message:
-      `Hi ${invoice.order.fullName}, here is your ${docLabel} #${invoice.invoiceNumber} from Global Health: ${invoiceUrl}` +
-      `\n\nReply here or reach us out at globalhealth@myglobalhealth.online`,
+      INVOICE_WHATSAPP_INTRO[lang](invoice.order.fullName, docLabel, invoice.invoiceNumber, invoiceUrl) +
+      whatsappContactFooter(lang),
     hints: {
       orderCountryCode: invoice.order.countryCode,
       patientAddressCountryCode: item.patientAddressCountryCode ?? null,

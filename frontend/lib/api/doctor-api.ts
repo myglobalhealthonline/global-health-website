@@ -290,6 +290,9 @@ export type DoctorPatientDetail = {
   appointments: Array<{
     id: string;
     consultationType: string;
+    /** Booked Service name (or OrderItem snapshot); falls back to the
+     *  formatted consultationType for legacy rows with neither. */
+    consultationName: string;
     countryCode: string;
     status: string;
     paymentStatus: string;

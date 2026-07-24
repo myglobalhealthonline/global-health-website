@@ -221,6 +221,17 @@ const envSchema = z.object({
    *  Defaults to globalhealth@myglobalhealth.online when unset. */
   AUTOMATION_OFFICIAL_EMAIL: z.string().trim().email().optional(),
 
+  /** Comma-separated staff WhatsApp numbers (E.164, e.g. "+3538900000,+351900000")
+   *  that receive the per-booking admin alert (order no., slot, doctor, service —
+   *  the patient name is withheld when the patient declined WhatsApp updates).
+   *  Unset → the WhatsApp leg of the admin alert is skipped; the in-portal
+   *  admin notification still fires. */
+  ADMIN_NOTIFY_WHATSAPP_NUMBERS: z.string().trim().optional(),
+
+  /** Comma-separated staff inboxes that receive the same admin booking alert by
+   *  email. Unset → the email leg is skipped. */
+  ADMIN_NOTIFY_EMAILS: z.string().trim().optional(),
+
   BRAZIL_BOOKING_URL: z.string().trim().url().optional(),
   BRAZIL_CONSENT_NOTIFY_EMAIL: z.string().trim().email().optional(),
   BRAZIL_CONSENT_DOCTOR_PHONE: z.string().trim().optional(),

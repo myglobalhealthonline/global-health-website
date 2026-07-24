@@ -16,7 +16,10 @@ import {
   detectAutomationLanguage,
   pendingAppointmentDateLabel,
   prefixServiceName,
+  type AutomationLang,
 } from "./pre-payment-messages.js";
+import { whatsappContactFooter } from "./whatsapp-contact-footer.js";
+import { sendAdminBookingAlert } from "./admin-booking-alert.service.js";
 import { formatOrderTotal, resolvePatientFullName, splitPatientName } from "./pre-payment-email-template.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
 import {
@@ -174,15 +177,14 @@ async function loadPostPaymentContext(orderId: string) {
   };
 }
 
-const WHATSAPP_CONTACT_FOOTER =
-  "\n\nReply here or reach us out at globalhealth@myglobalhealth.online";
-
 async function sendWhatsApp(
   automationKey: string,
   orderId: string,
   to: string | null | undefined,
   message: string,
   summary: string,
+  /** Market language — drives the localised contact footer. */
+  lang: AutomationLang,
   phoneHints?: PhoneNormalizeHints,
   /** Pass `false` for patient sends when the booking lacks WhatsApp consent
    *  — the send is skipped (GDPR). Doctor sends omit this entirely. */
@@ -221,7 +223,7 @@ async function sendWhatsApp(
   });
   const result = await sendWhatsAppText({
     to,
-    message: message + WHATSAPP_CONTACT_FOOTER,
+    message: message + whatsappContactFooter(lang),
     hints: phoneHints,
     patientConsent,
   });
@@ -380,6 +382,7 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
     order.phone,
     appendPatientPortalWhatsApp(patientWhatsAppMeetingLink(ctx, lang), portal, lang),
     "Patient WhatsApp — meeting link",
+    lang,
     phoneHints,
     primary.patientWhatsappConsent,
   );
@@ -403,6 +406,7 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
       doctorContact.whatsappNumber,
       doctorWhatsAppMeetingLink(ctx, lang),
       "Doctor WhatsApp — meeting link",
+      lang,
       doctorContact.whatsappHints,
     );
   } else {
@@ -457,6 +461,14 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
     });
   }
 
+  await sendAdminBookingAlert(orderId, baseKey, "payment_confirmed", {
+    orderNumber: ctx.orderNumber,
+    appointmentDateTime: ctx.appointmentDateTime,
+    doctorName: ctx.doctorName,
+    serviceName: ctx.serviceName,
+    patientName: ctx.patientName,
+    patientWhatsappConsent: primary.patientWhatsappConsent,
+  }).catch(() => undefined);
 }
 
 /** Re-send meeting-link WhatsApp only (e.g. after fixing phone format). */
@@ -475,6 +487,7 @@ export async function post_resendMeetingLinkWhatsApp(orderId: string) {
     order.phone,
     appendPatientPortalWhatsApp(patientWhatsAppMeetingLink(ctx, lang), portal, lang),
     "Patient WhatsApp — meeting link (resend)",
+    lang,
     phoneHints,
     primary.patientWhatsappConsent,
   );
@@ -486,6 +499,7 @@ export async function post_resendMeetingLinkWhatsApp(orderId: string) {
       doctorContact.whatsappNumber,
       doctorWhatsAppMeetingLink(ctx, lang),
       "Doctor WhatsApp — meeting link (resend)",
+      lang,
       doctorContact.whatsappHints,
     );
   } else {
@@ -521,6 +535,7 @@ export async function post_sendOneHourReminder(orderId: string) {
     order.phone,
     patientWhatsAppOneHourReminder(ctx, lang),
     "Patient WhatsApp — 1 hour reminder",
+    lang,
     phoneHints,
     primary.patientWhatsappConsent,
   );
@@ -544,6 +559,7 @@ export async function post_sendOneHourReminder(orderId: string) {
       doctorContact.whatsappNumber,
       doctorWhatsAppOneHourReminder(ctx, lang),
       "Doctor WhatsApp — 1 hour reminder",
+      lang,
       doctorContact.whatsappHints,
     );
   } else {
@@ -607,6 +623,7 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
     order.phone,
     patientWhatsAppSessionStart(ctx, lang),
     "Patient WhatsApp — 5 minute reminder",
+    lang,
     phoneHints,
     primary.patientWhatsappConsent,
   );
@@ -630,6 +647,7 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
       doctorContact.whatsappNumber,
       doctorWhatsAppSessionStart(ctx, lang),
       "Doctor WhatsApp — 5 minute reminder",
+      lang,
       doctorContact.whatsappHints,
     );
   } else {

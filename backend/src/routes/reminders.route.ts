@@ -3,6 +3,7 @@ import { prisma } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
 import { sendAppointmentReminderEmail } from "../lib/email/templates.js";
+import { formatDoctorForPatientNotification } from "../lib/doctor-name.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { formatNotificationDateTime } from "../modules/notifications/notification-datetime.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
@@ -65,6 +66,7 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
           consultationMode: true,
           locationAddress: true,
           clinic: { select: { name: true, city: true } },
+          doctor: { select: { fullName: true } },
         },
         take: 100,
       });
@@ -88,6 +90,9 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
             scheduledAt: a.scheduledAt,
             meetingUrl: isInPerson ? null : a.meetingUrl,
             where: isInPerson ? where : null,
+            doctorName: a.doctor
+              ? formatDoctorForPatientNotification(a.doctor.fullName)
+              : null,
           });
           return a.id;
         }),

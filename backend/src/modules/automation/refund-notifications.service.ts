@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import { generateCreditNoteForOrder } from "../invoices/generate-invoice.service.js";
 import { detectAutomationLanguage, type AutomationLang } from "./pre-payment-messages.js";
+import { whatsappContactFooter } from "./whatsapp-contact-footer.js";
 import { formatOrderTotal, resolvePatientFullName } from "./pre-payment-email-template.js";
 import { formatOrderDisplayId } from "./automation-catalog.js";
 import { createAutomationRun, finishAutomationRun } from "./automation-run.service.js";
@@ -23,9 +24,6 @@ import type { PhoneNormalizeHints } from "../../lib/whatsapp/normalize-phone.js"
  */
 
 export const ORDER_REFUND_AUTOMATION_KEY = "order_refund";
-
-const WHATSAPP_CONTACT_FOOTER =
-  "\n\nReply here or reach us out at globalhealth@myglobalhealth.online";
 
 type Ctx = {
   fullName: string;
@@ -210,7 +208,7 @@ export async function sendOrderRefundNotifications(orderId: string): Promise<voi
   });
   const result = await sendWhatsAppText({
     to: order.phone,
-    message: refundWhatsAppMessage(lang, ctx) + WHATSAPP_CONTACT_FOOTER,
+    message: refundWhatsAppMessage(lang, ctx) + whatsappContactFooter(lang),
     hints,
     patientConsent: consent,
   });

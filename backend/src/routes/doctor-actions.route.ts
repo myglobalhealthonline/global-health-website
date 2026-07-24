@@ -10,6 +10,7 @@ import { formatNotificationDateTime } from "../modules/notifications/notificatio
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { resolveConsultationName } from "../modules/consultation-history/consultation-history-display.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
 import {
   assertValidStatusTransition,
@@ -562,6 +563,7 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             meetingUrl: true,
             createdAt: true,
             dateOfBirth: true,
+            service: { select: { name: true } },
             consultation: {
               select: { id: true, status: true, signedAt: true },
             },
@@ -570,6 +572,20 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         if (rows.length === 0) {
           return reply.status(404).send(errorResponse("Patient not found"));
         }
+        // `consultationType` is only "general" / "specialist" for native
+        // bookings, so the Type column read "General" for everything. Fall
+        // back to the OrderItem name snapshot when the appointment has no
+        // catalogue Service linked. No relation from Appointment → OrderItem,
+        // so this is a separate keyed lookup.
+        const orderItems = await prisma.orderItem.findMany({
+          where: { appointmentId: { in: rows.map((r) => r.id) } },
+          select: { appointmentId: true, name: true },
+        });
+        const itemNameByAppointment = new Map(
+          orderItems
+            .filter((i) => i.appointmentId)
+            .map((i) => [i.appointmentId as string, i.name]),
+        );
         const latest = rows[0];
         // GDPR plan: email + phone never surface to the doctor portal.
         // Email is still in URL (used as the slug) and used by the
@@ -592,6 +608,11 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
           appointments: rows.map((r) => ({
             id: r.id,
             consultationType: r.consultationType,
+            consultationName: resolveConsultationName(
+              r.service?.name,
+              itemNameByAppointment.get(r.id),
+              r.consultationType,
+            ),
             countryCode: r.countryCode,
             status: r.status,
             paymentStatus: r.paymentStatus,

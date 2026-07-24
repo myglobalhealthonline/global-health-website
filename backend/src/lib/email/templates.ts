@@ -190,15 +190,19 @@ export async function sendAppointmentScheduledEmail(opts: {
   meetingUrl?: string | null;
   /** Pre-formatted "Where" line — clinic name + city, or a free-text address. */
   where?: string | null;
+  /** Display name of the assigned doctor. Omitted when none is assigned yet. */
+  doctorName?: string | null;
 }) {
   const formatted = opts.scheduledAt.toUTCString();
   const localHint = opts.scheduledAt.toISOString();
   const meetLink = opts.meetingUrl?.trim() || null;
   const where = opts.where?.trim() || null;
+  const doctorName = opts.doctorName?.trim() || null;
 
   const joinText = meetLink
     ? `Join the call here when it's time:\n${meetLink}\n\n`
     : "";
+  const doctorText = doctorName ? `Doctor: ${doctorName}\n\n` : "";
   const whereText = where ? `Where: ${where}\n\n` : "";
   const earlyTipText = meetLink
     ? "open the link 5 minutes early to test your camera and mic."
@@ -219,6 +223,9 @@ export async function sendAppointmentScheduledEmail(opts: {
   const whereHtml = where
     ? `<p style="margin:16px 0;font-size:14px;color:#1B4D3E;">📍 ${escapeHtml(where)}</p>`
     : "";
+  const doctorHtml = doctorName
+    ? `<p style="margin:16px 0;font-size:14px;color:#1B4D3E;">👤 Doctor: <strong>${escapeHtml(doctorName)}</strong></p>`
+    : "";
 
   return sendEmail({
     to: opts.to,
@@ -227,7 +234,7 @@ export async function sendAppointmentScheduledEmail(opts: {
 
 Your ${opts.consultationType} is scheduled for ${formatted}.
 
-${whereText}${joinText}Tip: ${earlyTipText} If you need to reschedule, reply to this email.
+${doctorText}${whereText}${joinText}Tip: ${earlyTipText} If you need to reschedule, reply to this email.
 
 — Global Health`,
     html: wrapHtml(
@@ -237,6 +244,7 @@ ${whereText}${joinText}Tip: ${earlyTipText} If you need to reschedule, reply to 
        <p style="margin:16px 0;font-size:18px;font-weight:700;color:#1B4D3E;">
          <time datetime="${escapeHtml(localHint)}">${escapeHtml(formatted)}</time>
        </p>
+       ${doctorHtml}
        ${whereHtml}
        ${ctaHtml}
        <p>Tip: ${earlyTipText} If you need to reschedule, just reply to this email.</p>`,
@@ -258,14 +266,18 @@ export async function sendAppointmentReminderEmail(opts: {
   meetingUrl?: string | null;
   /** Pre-formatted "Where" line for IN_PERSON visits. */
   where?: string | null;
+  /** Display name of the assigned doctor. Omitted when none is assigned yet. */
+  doctorName?: string | null;
 }) {
   const formatted = opts.scheduledAt.toUTCString();
   const localHint = opts.scheduledAt.toISOString();
   const meetLink = opts.meetingUrl?.trim() || null;
   const where = opts.where?.trim() || null;
+  const doctorName = opts.doctorName?.trim() || null;
   const joinText = meetLink
     ? `Join the call:\n${meetLink}\n\n`
     : "";
+  const doctorText = doctorName ? `Doctor: ${doctorName}\n\n` : "";
   const whereText = where ? `Where: ${where}\n\n` : "";
   const earlyTipText = meetLink
     ? "Open it 5 minutes early to test camera + mic."
@@ -286,6 +298,9 @@ export async function sendAppointmentReminderEmail(opts: {
   const whereHtml = where
     ? `<p style="margin:16px 0;font-size:14px;color:#1B4D3E;">📍 ${escapeHtml(where)}</p>`
     : "";
+  const doctorHtml = doctorName
+    ? `<p style="margin:16px 0;font-size:14px;color:#1B4D3E;">👤 Doctor: <strong>${escapeHtml(doctorName)}</strong></p>`
+    : "";
 
   return sendAutomationEmail(
     {
@@ -295,7 +310,7 @@ export async function sendAppointmentReminderEmail(opts: {
 
 Quick reminder — your ${opts.consultationType} is tomorrow at ${formatted}.
 
-${whereText}${joinText}${earlyTipText} Reply to this email if you need to reschedule.
+${doctorText}${whereText}${joinText}${earlyTipText} Reply to this email if you need to reschedule.
 
 — Global Health`,
       html: wrapHtml(
@@ -305,6 +320,7 @@ ${whereText}${joinText}${earlyTipText} Reply to this email if you need to resche
        <p style="margin:16px 0;font-size:18px;font-weight:700;color:#1B4D3E;">
          <time datetime="${escapeHtml(localHint)}">${escapeHtml(formatted)}</time>
        </p>
+       ${doctorHtml}
        ${whereHtml}
        ${ctaHtml}
        <p>${earlyTipText} Reply if you need to reschedule.</p>`,

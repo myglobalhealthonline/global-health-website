@@ -37,8 +37,11 @@ import {
   doctorEmailSubjectCancelled,
   doctorWhatsAppBookingReceived,
   doctorWhatsAppCancelled,
+  type AutomationLang,
   type PrePaymentMessageContext,
 } from "./pre-payment-messages.js";
+import { whatsappContactFooter } from "./whatsapp-contact-footer.js";
+import { sendAdminBookingAlert } from "./admin-booking-alert.service.js";
 import {
   markOrderPortalTempPasswordSent,
   persistOrderPortalAccess,
@@ -367,15 +370,14 @@ async function sendPatientEmail(
   }
 }
 
-const WHATSAPP_CONTACT_FOOTER =
-  "\n\nReply here or reach us out at globalhealth@myglobalhealth.online";
-
 async function sendWhatsApp(
   automationKey: string,
   orderId: string,
   to: string | null | undefined,
   message: string,
   summary: string,
+  /** Market language — drives the localised contact footer. */
+  lang: AutomationLang,
   phoneHints?: PhoneNormalizeHints,
   /** Pass `false` for patient sends when the booking lacks WhatsApp consent
    *  — the send is skipped (GDPR). Doctor sends omit this entirely. */
@@ -414,7 +416,7 @@ async function sendWhatsApp(
   });
   const result = await sendWhatsAppText({
     to,
-    message: message + WHATSAPP_CONTACT_FOOTER,
+    message: message + whatsappContactFooter(lang),
     hints: phoneHints,
     patientConsent,
   });
@@ -455,6 +457,7 @@ async function notifyDoctorOnBooking(
       doctorContact.whatsappNumber,
       doctorWhatsAppBookingReceived(ctx, lang),
       "Doctor WhatsApp — new booking (payment pending)",
+      lang,
       doctorContact.whatsappHints,
     );
   } else if (doctorContact?.whatsappRaw) {
@@ -578,6 +581,7 @@ export async function startPrePaymentFlow(
       o.phone,
       appendPatientPortalWhatsApp(patientWhatsAppInitial(ctx, lang), portal, lang),
       "Patient WhatsApp — reservation",
+      lang,
       phoneHints,
       primary.patientWhatsappConsent,
     );
@@ -593,6 +597,17 @@ export async function startPrePaymentFlow(
       portal,
     );
   }
+
+  // Admin alert fires for EVERY booking, website self-service included — the
+  // stage-1 patient/doctor skip above is a patient-facing rule, not a staff one.
+  await sendAdminBookingAlert(orderId, baseKey, "booking_received", {
+    orderNumber: ctx.orderNumber,
+    appointmentDateTime: ctx.appointmentDate,
+    doctorName: ctx.doctorName,
+    serviceName: ctx.serviceName,
+    patientName: ctx.patientName,
+    patientWhatsappConsent: primary.patientWhatsappConsent,
+  }).catch(() => undefined);
 
   if (portal?.tempPassword) {
     await markOrderPortalTempPasswordSent(orderId);
@@ -658,7 +673,7 @@ export async function sendPrePaymentCancelledNotifications(
   const creditNote = await resolveCancellationCreditNote(orderId).catch(() => null);
 
   const msg = reminderMessage(ctx, lang, "cancelled");
-  await sendWhatsApp(stageKey, orderId, order.phone, msg.whatsapp, "Patient WhatsApp — reservation cancelled", phoneHints, primary.patientWhatsappConsent);
+  await sendWhatsApp(stageKey, orderId, order.phone, msg.whatsapp, "Patient WhatsApp — reservation cancelled", lang, phoneHints, primary.patientWhatsappConsent);
   await sendPatientEmail(
     stageKey,
     orderId,
@@ -685,6 +700,7 @@ export async function sendPrePaymentCancelledNotifications(
         doctorContact.whatsappNumber,
         doctorWhatsAppCancelled(ctx, lang),
         "Doctor WhatsApp — reservation cancelled",
+        lang,
         doctorContact.whatsappHints,
       );
     }
@@ -744,6 +760,7 @@ async function executeReminderStage(
     order.phone,
     msg.whatsapp,
     `Patient WhatsApp — reminder ${stage}`,
+    lang,
     phoneHints,
     primary.patientWhatsappConsent,
   );
@@ -1056,6 +1073,7 @@ export async function resendPrePaymentInitialNotifications(orderId: string) {
     o.phone,
     appendPatientPortalWhatsApp(patientWhatsAppInitial(ctx, lang), portal, lang),
     "Patient WhatsApp — reservation (resend)",
+    lang,
     phoneHints,
     primary.patientWhatsappConsent,
   );

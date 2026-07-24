@@ -32,6 +32,7 @@ import {
   patientWhatsAppAppointmentUpdated,
   type PostPaymentMessageContext,
 } from "./post-payment-messages.js";
+import { sendAdminBookingAlert } from "./admin-booking-alert.service.js";
 
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
@@ -460,6 +461,15 @@ export async function sendAppointmentUpdateNotifications(
       "appointment_reassigned",
     );
   }
+
+  await sendAdminBookingAlert(order.id, "appointment_update", "appointment_updated", {
+    orderNumber: ctx.orderNumber,
+    appointmentDateTime: ctx.appointmentDateTime,
+    doctorName: ctx.doctorName,
+    serviceName: ctx.serviceName,
+    patientName: ctx.patientName,
+    patientWhatsappConsent: primary.patientWhatsappConsent,
+  }).catch(() => undefined);
 
   return { sent: true };
 }

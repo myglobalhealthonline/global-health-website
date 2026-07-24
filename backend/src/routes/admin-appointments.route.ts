@@ -11,6 +11,7 @@ import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-av
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
+import { formatDoctorForPatientNotification } from "../lib/doctor-name.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
@@ -335,6 +336,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
           clinicId: true,
           locationAddress: true,
           clinic: { select: { name: true, city: true } },
+          doctor: { select: { fullName: true } },
         },
       });
       const whereLabel = afterRow?.clinic
@@ -359,6 +361,9 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
           scheduledAt: new Date(appointment.scheduledAt!),
           meetingUrl: isInPerson ? null : appointment.meetingUrl,
           where: isInPerson ? whereLabel : null,
+          doctorName: afterRow?.doctor
+            ? formatDoctorForPatientNotification(afterRow.doctor.fullName)
+            : null,
         }).catch((emailErr) => {
           app.log.warn({ err: emailErr }, "Failed to send schedule email — continuing");
         });

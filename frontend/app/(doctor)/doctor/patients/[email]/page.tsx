@@ -147,7 +147,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
                         ? formatAppDateTime(a.scheduledAt)
                         : formatAppDate(a.createdAt)}
                     </td>
-                    <td className="py-2.5 capitalize">{a.consultationType}</td>
+                    <td className="py-2.5">{a.consultationName}</td>
                     <td className="py-2.5 text-portal-meta">{a.status}</td>
                     <td className="py-2.5 text-portal-meta">{a.paymentStatus}</td>
                     <td className="py-2.5 text-portal-meta">
@@ -186,7 +186,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
               {appointments.map((a) => (
                 <PortalMobileCard
                   key={a.id}
-                  title={<span className="capitalize">{a.consultationType}</span>}
+                  title={<span>{a.consultationName}</span>}
                   subtitle={
                     a.scheduledAt
                       ? formatAppDateTime(a.scheduledAt)
