@@ -154,6 +154,11 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
     if (!slot || !panel || !grid) return;
 
     let raf = 0;
+    // Last measured (unscaled) heights, to skip re-measuring when a
+    // ResizeObserver/resize fires but nothing actually moved (e.g. a canvas
+    // opacity fade or webfont swap that doesn't change box size).
+    let lastNatural = 0;
+    let lastFooterH = 0;
     const measureAndApply = () => {
       if (window.innerWidth < 1024) {
         // Single-column: let CSS flow govern (no scaling).
@@ -165,14 +170,26 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
       // so measuring never feeds back into the scale it produces.
       const natural = panel.offsetHeight;
       if (!natural) return;
+      const footerH = footerRef.current?.offsetHeight ?? 0;
+      // Sub-pixel/paint-only churn (e.g. globe fade-in, flag icon decode,
+      // font swap) re-fires the observer without changing layout size —
+      // skip the reflow-triggering re-measurement below in that case.
+      if (
+        lastNatural !== 0 &&
+        Math.abs(natural - lastNatural) < 1 &&
+        Math.abs(footerH - lastFooterH) < 1
+      ) {
+        return;
+      }
+      lastNatural = natural;
+      lastFooterH = footerH;
       // Anchor on the grid top, not the panel's own (centered) top — the grid
       // top is fixed by the header above it, so shrinking the panel can't move
       // the reference and oscillate the result.
       const top = grid.getBoundingClientRect().top;
       // Subtract the footer's real height — it sits below the flex-1 body,
       // so budget that ignores it over-scales the panel and reintroduces
-      // the page scrollbar this mechanism exists to prevent.
-      const footerH = footerRef.current?.offsetHeight ?? 0;
+      // the page scrollbar this mechanism exists to prevent (footerH read above).
       const avail = window.innerHeight - top - footerH - 24;
       const fit = Math.max(0.72, Math.min(1, avail / natural));
       panel.style.setProperty("--gate-fit", fit.toFixed(4));
