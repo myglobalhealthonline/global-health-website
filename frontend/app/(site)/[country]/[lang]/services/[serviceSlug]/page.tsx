@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   ArrowRight,
@@ -41,6 +42,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
@@ -200,11 +202,15 @@ export default async function ServiceDetailPage({
          *  front of the photo instead of it being a stacked block above. */}
         {detail.imageSrc ? (
           <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={detail.imageSrc}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover object-top"
+              fill
+              priority
+              fetchPriority="high"
+              sizes="100vw"
+              className="object-cover object-top"
+              unoptimized={isUnlistedRemote(detail.imageSrc)}
             />
             <div
               className="absolute inset-0"
@@ -222,11 +228,15 @@ export default async function ServiceDetailPage({
           {/* ── LEFT — full-bleed service image (desktop only) ──────────────── */}
           <div className="relative hidden h-full overflow-hidden lg:block">
             {detail.imageSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={detail.imageSrc}
                 alt={detail.name}
-                className="absolute inset-0 h-full w-full object-cover object-top"
+                fill
+                priority
+                fetchPriority="high"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover object-top"
+                unoptimized={isUnlistedRemote(detail.imageSrc)}
               />
             ) : (
               <div
