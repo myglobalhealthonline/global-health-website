@@ -561,6 +561,7 @@ export default async function CountryLangHomePage({
         heroTitle={page?.heroTitle ?? extras?.heroTitle ?? null}
         heroSubtitle={page?.heroSubtitle ?? extras?.heroSubtitle ?? null}
         heroBullets={extras?.heroBullets ?? null}
+        heroPriceBadge={extras?.heroPriceBadge ?? null}
         heroImageSrc={page?.heroImageSrc ?? null}
         ctaLabel={page?.ctaLabel ?? null}
         i18n={t.countryHero}

@@ -198,19 +198,34 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
     // ResizeObserver on the panel catches list-length/content changes itself.
   }, []);
 
-  function enter(country: CountryConfig) {
+  // Real crawlable href per country (real anchor, not JS-only) so search
+  // engines can discover /{slug}/{lang} without executing the click handler —
+  // fixes zero-outbound-internal-link crawl-depth risk on "/".
+  function hrefFor(country: CountryConfig): string {
     const slug = country.slug || countrySlug(country.code);
-    // Use the detected language when the country offers it, else its default.
     const lang = (
       country.supportedLocales?.includes(detectedLocale)
         ? detectedLocale
         : country.defaultLocale ?? "en"
     ) as LocaleCode;
-    // Hard navigation so the edge proxy re-runs and the server layout re-renders
-    // with the new x-gh-country / x-gh-locale headers. router.push would keep the
-    // shared layout stale and data may not refresh.
+    return `/${slug}/${lang}`;
+  }
+
+  function enter(country: CountryConfig, event: React.MouseEvent) {
+    // Plain left-click: still do a hard navigation (edge proxy re-runs, unlike
+    // router.push) after persisting the locale cookie. Modified clicks
+    // (ctrl/cmd/middle/shift) fall through to native <a> behavior (new tab).
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    event.preventDefault();
+    const lang = (
+      country.supportedLocales?.includes(detectedLocale)
+        ? detectedLocale
+        : country.defaultLocale ?? "en"
+    ) as LocaleCode;
     setClientLocaleCookie(lang);
-    globalThis.location.assign(`/${slug}/${lang}`);
+    globalThis.location.assign(hrefFor(country));
   }
 
   const trust = [
@@ -362,9 +377,9 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
                       const flagCls = flagClassForCode(c.code);
                       return (
                         <HeroReveal key={c.code} delay={i * 55 + 340}>
-                          <button
-                            type="button"
-                            onClick={() => enter(c)}
+                          <a
+                            href={hrefFor(c)}
+                            onClick={(event) => enter(c, event)}
                             className={`${styles.countryCard} ${styles.countryRow} flex w-full items-center text-left text-white`}
                           >
                             <div className="flex min-w-0 flex-1 items-center gap-2.5">
@@ -379,7 +394,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
                               </span>
                               <ArrowRight className={`${styles.cardArrow} size-4`} aria-hidden />
                             </div>
-                          </button>
+                          </a>
                         </HeroReveal>
                       );
                     })}

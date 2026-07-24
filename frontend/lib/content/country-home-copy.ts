@@ -37,6 +37,8 @@ export type HomePageExtras = {
   heroSubtitle?: string;
   /** Hero trust bullets, verbatim (no country name appended). Exactly three. */
   heroBullets?: string[];
+  /** Small above-fold hero price line, e.g. "GP consultations from €45". */
+  heroPriceBadge?: string;
   /** Services section H2. */
   servicesHeadline?: string;
 };
@@ -63,6 +65,11 @@ const EXTRAS: Record<string, HomePageExtras> = {
       "Valid sick certs & prescriptions",
     ],
     servicesHeadline: "GP and specialist consultations — from €45.",
+    // ponytail: en-only for now — es/pt/cs equivalents share the same €45
+    // figure as servicesHeadline below but haven't been proofread for the
+    // hero badge specifically; add them here once confirmed rather than
+    // guess-translating.
+    heroPriceBadge: "GP consultations from €45",
   },
   "IE:es": {
     seoTitle:
