@@ -13,6 +13,7 @@ import {
   fetchAdminDoctorRegistrations,
   fetchAdminDoctorCredentials,
   fetchAdminDoctorBank,
+  fetchAdminDoctorConfidentiality,
   postAdminDoctorInvite,
   purgeAdminDoctor,
   setAdminDoctorFeatured,
@@ -24,6 +25,7 @@ import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { DeleteDoctorButton } from "../../_components/delete-doctor-button";
 import { DoctorRegistrationsCard } from "../_components/registrations-card";
 import { DoctorCredentialsCard } from "../_components/doctor-credentials-card";
+import { DoctorConfidentialityCard } from "../_components/doctor-confidentiality-card";
 import { DoctorFaqsCard } from "../_components/doctor-faqs-card";
 
 export const dynamic = "force-dynamic";
@@ -168,6 +170,9 @@ export default async function AdminDoctorDetailPage({
   const revealBank = messages.revealBank === "1";
   const bankResult = await fetchAdminDoctorBank(id, revealBank);
   const bank = bankResult.ok ? bankResult.data.bank : null;
+  // Confidentiality: electronic acceptance + the doctor's uploaded signed copies.
+  const confidentialityResult = await fetchAdminDoctorConfidentiality(id);
+  const confidentiality = confidentialityResult.ok ? confidentialityResult.data : null;
   const faqsResult = await fetchAdminDoctorFaqs(id);
   const faqs = faqsResult.ok ? faqsResult.data : null;
   // Primary country + any additional country listings — admin can issue
@@ -378,6 +383,8 @@ export default async function AdminDoctorDetailPage({
             rows={credentials}
             associatedCountries={associatedCountries}
           />
+
+          <DoctorConfidentialityCard record={confidentiality} />
 
           <AdminCard>
             <h3 className={cardTitleClass}>Payout bank details</h3>

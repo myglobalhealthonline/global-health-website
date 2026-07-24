@@ -42,6 +42,37 @@ export async function fetchAdminDoctorBank(doctorId: string, reveal = false) {
   );
 }
 
+// ── Confidentiality agreement (acceptance + doctor-signed copies) ────────────
+
+export type AdminDoctorSignedAgreementDto = {
+  key: string;
+  doctorId: string;
+  agreementVersion: string;
+  filename: string;
+  size: number;
+  uploadedAt: string | null;
+};
+
+export type AdminDoctorConfidentialityDto = {
+  /** True only when the doctor accepted the CURRENT agreement version. */
+  accepted: boolean;
+  acceptedAt: string | null;
+  agreementVersion: string;
+  currentVersion: string;
+  /** False when the backend has no object storage — the signed list is then
+   *  empty for that reason, not because the doctor uploaded nothing. */
+  storageConfigured: boolean;
+  signedDocuments: AdminDoctorSignedAgreementDto[];
+};
+
+/** Read a doctor's confidentiality record: in-portal acceptance status plus
+ *  every hand-signed copy they uploaded. */
+export async function fetchAdminDoctorConfidentiality(doctorId: string) {
+  return adminRequest<AdminDoctorConfidentialityDto>(
+    `/api/admin/doctors/${doctorId}/confidentiality`,
+  );
+}
+
 export type AdminDoctorMarketTranslationDto = {
   id: string;
   locale: string;

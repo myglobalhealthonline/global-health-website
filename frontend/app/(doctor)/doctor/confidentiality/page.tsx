@@ -2,6 +2,7 @@ import { ScrollText } from "lucide-react";
 import { fetchDoctorConfidentialityAgreement } from "@/lib/api/doctor-api";
 import { PageHeader } from "@/components/portal-atoms";
 import { ConfidentialityForm } from "./_components/confidentiality-form";
+import { SignedCopyPanel } from "./_components/signed-copy-panel";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -49,6 +50,8 @@ export default async function DoctorConfidentialityPage() {
         agreementText={result.data.agreementText}
         strings={d.confidentiality}
       />
+
+      <SignedCopyPanel strings={d.confidentiality} />
     </>
   );
 }
