@@ -182,7 +182,6 @@ export async function doctorServicesReport(
         select: {
           name: true,
           kind: true,
-          basePriceCents: true,
           currencyCode: true,
           country: { select: { name: true } },
         },
@@ -197,11 +196,12 @@ export async function doctorServicesReport(
     subtitle: doctorName,
     generatedAt: new Date().toISOString(),
     truncated,
+    // No gross/base price here — a doctor's statement shows only what they are
+    // paid. The patient-facing price stays on the admin report.
     columns: [
       { key: "service", label: "Service" },
       { key: "kind", label: "Type" },
       { key: "country", label: "Country" },
-      { key: "basePrice", label: "Base price", align: "right" },
       { key: "payout", label: "Your payout", align: "right" },
       { key: "status", label: "Assignment" },
       { key: "active", label: "Active" },
@@ -210,7 +210,6 @@ export async function doctorServicesReport(
       service: r.service.name,
       kind: r.service.kind,
       country: r.service.country.name,
-      basePrice: fmtMoney(r.service.basePriceCents, r.service.currencyCode),
       payout: fmtMoney(r.doctorAmountCents, r.service.currencyCode),
       status: r.status,
       active: r.isActive ? "Yes" : "No",
@@ -655,9 +654,11 @@ export async function adminPatientsReport(
     subtitle: scope.length === 0 ? "All registered patients" : scope.join(" · "),
     generatedAt: new Date().toISOString(),
     truncated: rosterTruncated || facts.truncated,
+    // Patient email is deliberately NOT a column — it is still selected above
+    // because it is the only join key to the appointment facts, but it never
+    // leaves this function. Only the doctor's own reports print it.
     columns: [
       { key: "name", label: "Patient" },
-      { key: "email", label: "Email" },
       { key: "phone", label: "Phone" },
       { key: "country", label: "Country" },
       { key: "markets", label: "Markets" },
@@ -672,7 +673,6 @@ export async function adminPatientsReport(
       const f = facts.byEmail.get(r.email.toLowerCase());
       return {
         name: r.fullName ?? "",
-        email: r.email,
         phone: r.phone ?? "",
         country: r.addressCountryCode ?? "",
         markets: joinSet(f?.countries),
@@ -708,7 +708,6 @@ export async function adminAppointmentsReport(
       createdAt: true,
       countryCode: true,
       fullName: true,
-      email: true,
       consultationType: true,
       status: true,
       paymentStatus: true,
@@ -730,7 +729,6 @@ export async function adminAppointmentsReport(
       { key: "country", label: "Country" },
       { key: "doctor", label: "Doctor" },
       { key: "patient", label: "Patient" },
-      { key: "email", label: "Email" },
       { key: "type", label: "Type" },
       { key: "status", label: "Status" },
       { key: "payment", label: "Payment" },
@@ -742,7 +740,6 @@ export async function adminAppointmentsReport(
       country: r.countryCode,
       doctor: r.doctor?.fullName ?? "",
       patient: r.fullName,
-      email: r.email,
       type: r.consultationType,
       status: r.status,
       payment: r.paymentStatus,
