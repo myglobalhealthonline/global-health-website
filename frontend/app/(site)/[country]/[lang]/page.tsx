@@ -8,6 +8,7 @@ import {
   type ServiceCatalogItem,
 } from "@/components/sections/ServiceCatalog";
 import { DoctorCarousel, type DoctorCarouselItem } from "@/components/sections/DoctorCarousel";
+import { LazyHydrate } from "@/components/motion/LazyHydrate";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { TrustMarquee, type TrustMarqueeItem } from "@/components/sections/TrustMarquee";
 import { fetchPublicReviewConfig } from "@/lib/api/reviews-config";
@@ -573,7 +574,9 @@ export default async function CountryLangHomePage({
         <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
       <TrustRibbon items={trustItems} theme="light" />
-      <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
+      <LazyHydrate>
+        <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
+      </LazyHydrate>
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
       <DoctifyReviewsSection
         theme="ivory"
@@ -669,17 +672,19 @@ export default async function CountryLangHomePage({
           ) : null}
 
           {/* Doctor carousel — 3 at a time, GP/Specialist filter tabs, prev/next arrows */}
-          <DoctorCarousel
-            doctors={teamDoctorItems}
-            i18n={{
-              filterAll: t.team.filterAll,
-              filterGP: t.team.filterGP,
-              filterSpecialist: t.team.filterSpecialist,
-              pickTime: t.team.pickTime,
-              previousLabel: t.team.previousLabel,
-              nextLabel: t.team.nextLabel,
-            }}
-          />
+          <LazyHydrate>
+            <DoctorCarousel
+              doctors={teamDoctorItems}
+              i18n={{
+                filterAll: t.team.filterAll,
+                filterGP: t.team.filterGP,
+                filterSpecialist: t.team.filterSpecialist,
+                pickTime: t.team.pickTime,
+                previousLabel: t.team.previousLabel,
+                nextLabel: t.team.nextLabel,
+              }}
+            />
+          </LazyHydrate>
         </div>
       </section>
       {page?.sections.whyChoose ? (
