@@ -26,9 +26,11 @@ const THREE_LINE_PX = 58; // + doctor or consultation type
 const GUTTER_PX = 56; // hour-label column
 const MIN_LANE_PX = 74; // narrower than this and a lane can't show a name
 // Narrowest a single day column can go before it stops reading as a day
-// column (time + name clipped past usefulness). Drives how many of the 7
-// days actually fit — rest scroll into view via the day-window arrows
-// instead of forcing the whole week into a horizontal scrollbar.
+// column (time + name clipped past usefulness) — floor for the per-day
+// width used to size the visible-day count (see perDayMinPx below). Widened
+// per-lane on laney weeks (all-doctors grid) so a stack of overlapping
+// blocks doesn't shrink to nameless slivers. Days that don't fit slide into
+// view via the day-step arrows — never a horizontal scrollbar.
 const MIN_DAY_COL_PX = 200;
 
 type Props = {
@@ -260,8 +262,27 @@ export function WeekCalendar({
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+  // Lane count over the FULL week (not just the visible window) — visible
+  // days feed the day-count calc below, so basing lane width on only the
+  // visible days' lanes would create a feedback loop (fewer visible days ->
+  // different lane count -> different visible-day count -> ...). Cheap: just
+  // the max lane count, no positioning.
+  const weekMaxLanes = useMemo(() => {
+    let max = 1;
+    for (const day of weekDays) {
+      const raw = dropSlotsUnderConsultations(itemsByDay.get(day.key) ?? []);
+      for (const p of packDay(raw, tz)) max = Math.max(max, p.lanes);
+    }
+    return max;
+  }, [weekDays, itemsByDay, tz]);
+
+  // A laney day (overlapping blocks split into side-by-side lanes) needs a
+  // wider column than a plain single-lane day, or names clip. No case forces
+  // a horizontal scrollbar anymore: worst case (many lanes, narrow screen)
+  // is exactly 1 day shown, not an overflowing grid.
+  const perDayMinPx = Math.max(MIN_DAY_COL_PX, weekMaxLanes * MIN_LANE_PX);
   const visibleCount = containerWidth
-    ? Math.min(7, Math.max(2, Math.floor((containerWidth - GUTTER_PX) / MIN_DAY_COL_PX)))
+    ? Math.min(7, Math.max(1, Math.floor((containerWidth - GUTTER_PX) / perDayMinPx)))
     : 7;
 
   // Sliding day-window when fewer than 7 columns fit. Resets to the start of
@@ -306,11 +327,11 @@ export function WeekCalendar({
   }
 
   // Positioned blocks per day + the visible hour window (expands to fit early
-  // / late items so nothing is clipped) + the widest lane stack in the week.
-  const { perDay, startHour, endHour, maxLanes } = useMemo(() => {
+  // / late items so nothing is clipped). Lane count for width purposes comes
+  // from weekMaxLanes above, not from here — this is render data only.
+  const { perDay, startHour, endHour } = useMemo(() => {
     let minHour = DEFAULT_START_HOUR;
     let maxHour = DEFAULT_END_HOUR;
-    let maxLanes = 1;
     const perDay = new Map<string, PositionedItem[]>();
     for (const day of visibleDays) {
       const raw = dropSlotsUnderConsultations(itemsByDay.get(day.key) ?? []);
@@ -318,28 +339,15 @@ export function WeekCalendar({
       for (const p of positioned) {
         minHour = Math.min(minHour, Math.floor(p.top / 60));
         maxHour = Math.max(maxHour, Math.ceil((p.top + p.height) / 60));
-        maxLanes = Math.max(maxLanes, p.lanes);
       }
       perDay.set(day.key, positioned);
     }
     return {
       perDay,
-      maxLanes,
       startHour: Math.max(0, minHour),
       endHour: Math.min(24, Math.max(maxHour, minHour + 1)),
     };
   }, [visibleDays, itemsByDay, tz]);
-
-  // Lanes split a day column between blocks that overlap in time. On the
-  // all-doctors calendar that stack gets deep — five doctors free at 09:00 is
-  // five lanes — and at a fixed width each lane shrinks to a nameless sliver.
-  // Only force a min-width (and the resulting horizontal scroll) when lanes
-  // actually need it; a single-doctor week (1 lane) always fits the measured
-  // container — that's the whole point of the day-window above.
-  const gridMinWidth =
-    maxLanes > 1
-      ? Math.max(containerWidth ?? 0, GUTTER_PX + visibleDays.length * maxLanes * MIN_LANE_PX)
-      : undefined;
 
   // Explicit 24-hour clock (en-GB, hour12:false) so every block reads the same
   // — en-IE, used elsewhere, flips to AM/PM which looked inconsistent.
@@ -406,7 +414,7 @@ export function WeekCalendar({
       </div>
 
       <div className="gh-week-scroll" ref={scrollRef}>
-        <div className="gh-week-grid" style={{ minWidth: gridMinWidth }}>
+        <div className="gh-week-grid">
           {/* Day header row — sticky while the hour grid scrolls */}
           <div
             className="gh-week-header-row grid"

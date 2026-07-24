@@ -6284,17 +6284,22 @@ html::-webkit-scrollbar-thumb:hover {
 }
 
 /* Week grid — sticky day-header row, current-time indicator, today column
- * tint. Day-column count is measured in WeekCalendar.tsx (2-7, ~200px/day
- * min) so a single-doctor week never forces horizontal scroll; scroll only
- * kicks in for the multi-lane (all-doctors) grid, via gridMinWidth. */
+ * tint. Day-column count (1-7) is measured in WeekCalendar.tsx from the
+ * container width and the week's widest lane stack, so the grid always
+ * fits — no horizontal scroll in any case, including the multi-lane
+ * (all-doctors) grid, which used to force a min-width here. */
 
 /* Body scroller. The grid is deliberately tall (160px/hour) so even a 15-min
  * block fits a time range + patient name — bounding it here keeps the PAGE
  * short and, critically, gives `.gh-week-header-row` a scroll container to
  * stick to. Unbounded, the header's only scroll ancestor is the page, which it
- * can never move within, so the day labels scrolled away with the grid. */
+ * can never move within, so the day labels scrolled away with the grid.
+ * overflow-x is hidden outright — the day-count calc means there is never
+ * horizontal overflow to scroll, so a hidden axis is more honest than an
+ * auto one that never triggers. */
 .gh-week-scroll {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   max-height: min(76vh, 940px);
   overscroll-behavior: contain;
   /* Reserve the vertical scrollbar's track up front instead of only once
