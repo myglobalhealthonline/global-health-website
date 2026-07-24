@@ -496,7 +496,8 @@
     "bookHeading": "Objednat {service} v {country}",
     "fromPricePrefix": "Od {price} · ",
     "liveAvailability": "Aktuální dostupnost — vyberte si lékaře a čas, který vám vyhovuje.",
-    "disclaimer": "Informace na této stránce jsou obecné a nenahrazují odbornou lékařskou radu, diagnózu ani léčbu. Objednejte si konzultaci a proberte svou situaci s lékařem registrovaným k výkonu praxe v {country}."
+    "disclaimer": "Informace na této stránce jsou obecné a nenahrazují odbornou lékařskou radu, diagnózu ani léčbu. Objednejte si konzultaci a proberte svou situaci s lékařem registrovaným k výkonu praxe v {country}.",
+    "clinicallyReviewedBy": "Klinicky přezkoumáno"
   },
   "homeCatalog": {
     "tagGeneral": "Praktické",

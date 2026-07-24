@@ -513,6 +513,7 @@ export type CommonLocale = {
     fromPricePrefix: string;
     liveAvailability: string;
     disclaimer: string;
+    clinicallyReviewedBy: string;
   };
   homeCatalog: {
     tagGeneral: string;

@@ -33,10 +33,13 @@ import {
   faqJsonLd,
   medicalClinicServiceJsonLd,
   medicalSpecialtyForService,
+  physicianJsonLd,
 } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
+import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -146,6 +149,27 @@ export default async function ServiceDetailPage({
   const assignedDoctors =
     assignedIds.size > 0 ? allDoctors.filter((d) => assignedIds.has(d.id)).slice(0, 3) : [];
 
+  // Named clinical reviewer for the E-E-A-T byline + schema — the country's
+  // admin-flagged "Clinical Director" (CountryDoctorCard.isFeatured, same
+  // flag the /doctors spotlight uses), never a fabricated name. Renders
+  // nothing when the country has no featured doctor set.
+  const reviewer = allDoctors.find((d) => d.isFeatured) ?? null;
+  const reviewerTrust = reviewer ? await getCountryTrust(code) : null;
+  const reviewerHref = reviewer ? `/${country}/${lang}/doctors/${reviewer.slug}` : null;
+  const reviewerPhysician = reviewer
+    ? physicianJsonLd({
+        name: reviewer.fullName,
+        title: reviewer.title,
+        countryName: config.name,
+        url: reviewerHref!,
+        registrationNumber: reviewer.registrationNumber,
+        chamber: reviewer.registrationChamber,
+        regulator: reviewerTrust?.regulator?.name
+          ? { name: reviewerTrust.regulator.name, url: reviewerTrust.regulator.url }
+          : null,
+      })
+    : null;
+
   const back = listingPath(detail.kind, country, lang, {
     specialist: t.backSpecialist,
     prescription: t.backPrescription,
@@ -190,6 +214,7 @@ export default async function ServiceDetailPage({
           countryName: config.name,
           url: `/${country}/${lang}/services/${serviceSlug}`,
           bookingUrl: bookHref,
+          reviewerPhysician,
         })}
       />
 
@@ -367,6 +392,13 @@ export default async function ServiceDetailPage({
                   </span>
                 ))}
               </div>
+
+              <ClinicalReviewer
+                label={t.clinicallyReviewedBy}
+                name={reviewer?.fullName}
+                href={reviewerHref}
+                credential={reviewer?.imcRegistration}
+              />
 
               {/* ── Booking card ─────────────────────────────────────────────── */}
               <div
