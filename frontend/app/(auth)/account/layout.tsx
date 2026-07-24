@@ -71,6 +71,17 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   ]);
   const hasCorporateMembership = corporateResult.ok && corporateResult.data !== null;
   const { account: a, common } = loadLocaleBundle(locale);
+  const tourSteps = [
+    { title: a.tour.steps.welcome.title, body: a.tour.steps.welcome.body },
+    { target: "/account", title: a.tour.steps.overview.title, body: a.tour.steps.overview.body },
+    { target: "/account/bookings", title: a.tour.steps.bookings.title, body: a.tour.steps.bookings.body },
+    { target: "/account/messages", title: a.tour.steps.messages.title, body: a.tour.steps.messages.body },
+    { target: "/account/prescriptions", title: a.tour.steps.prescriptions.title, body: a.tour.steps.prescriptions.body },
+    { target: "/account/medical-files", title: a.tour.steps.medicalFiles.title, body: a.tour.steps.medicalFiles.body },
+    { target: "/account/payments", title: a.tour.steps.payments.title, body: a.tour.steps.payments.body },
+    { target: "topbar-notifications", title: a.tour.steps.notifications.title, body: a.tour.steps.notifications.body },
+    { target: "/account/profile", title: a.tour.steps.profile.title, body: a.tour.steps.profile.body },
+  ];
 
   // Map in-app notification rows → bell items. Payload carries the already-
   // localized { title, body, href } written by the subscription dispatchers.
@@ -157,6 +168,11 @@ export default async function AccountLayout({ children }: { children: ReactNode 
         notificationsUnreadSuffix: a.portal.notificationsUnreadSuffix,
         notificationsUnreadSr: a.portal.notificationsUnreadSr,
         notificationsViewAll: a.portal.notificationsViewAll,
+      }}
+      tour={{
+        steps: tourSteps,
+        labels: { ...a.tour.labels },
+        storageKey: "gh_tour_done_patient",
       }}
     >
       {children}

@@ -823,5 +823,53 @@
     "disabledPaymentDoctor": "Der Patient hat die Zahlung noch nicht abgeschlossen.",
     "disabledLocked": "Der Chat ist geschlossen. Nur Ihr Arzt kann ihn wieder öffnen.",
     "attachmentFallback": "Anhang"
+  },
+  "tour": {
+    "labels": {
+      "next": "Weiter",
+      "back": "Zurück",
+      "done": "Fertig",
+      "skip": "Tour überspringen",
+      "progress": "{current} von {total}",
+      "restart": "Tour starten"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Willkommen in Ihrem Gesundheitsportal",
+        "body": "Ein kurzer Rundgang — buchen Sie Termine, schreiben Sie Ihrem Arzt und verwalten Sie Ihre Versorgung an einem Ort."
+      },
+      "overview": {
+        "title": "Ihre Übersicht",
+        "body": "Sehen Sie anstehende Buchungen und aktuelle Aktivitäten auf einen Blick."
+      },
+      "bookings": {
+        "title": "Ihre Buchungen",
+        "body": "Verfolgen Sie anstehende und vergangene Termine und verschieben Sie diese bei Bedarf."
+      },
+      "messages": {
+        "title": "Schreiben Sie Ihrem Arzt",
+        "body": "Senden und empfangen Sie sichere Nachrichten mit Ihrem Behandlungsteam."
+      },
+      "prescriptions": {
+        "title": "Rezepte",
+        "body": "Sehen Sie Rezepte ein, die Ihr Arzt ausgestellt hat."
+      },
+      "medicalFiles": {
+        "title": "Medizinische Dateien",
+        "body": "Laden Sie Dokumente hoch, die Ihr Arzt möglicherweise einsehen muss."
+      },
+      "payments": {
+        "title": "Zahlungen",
+        "body": "Überprüfen Sie Rechnungen und verwalten Sie, wie Sie Ihre Konsultationen bezahlen."
+      },
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "body": "Bleiben Sie über Neuigkeiten zu Ihren Terminen und Ihrer Versorgung informiert."
+      },
+      "profile": {
+        "title": "Vervollständigen Sie Ihr Profil",
+        "body": "Halten Sie Ihre Daten aktuell, damit Ihr Behandlungsteam immer alles Nötige hat."
+      }
+    }
   }
 }

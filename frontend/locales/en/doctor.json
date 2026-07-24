@@ -1440,5 +1440,73 @@
     "copied": "Copied",
     "openAppointment": "Open appointment",
     "bookAnother": "Book another"
+  },
+  "tour": {
+    "labels": {
+      "next": "Next",
+      "back": "Back",
+      "done": "Done",
+      "skip": "Skip tour",
+      "progress": "{current} of {total}",
+      "restart": "Take a tour"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Welcome to your doctor portal",
+        "body": "A quick look around your workspace. We'll walk through the tools you'll use every day, in the order that makes setup easiest."
+      },
+      "overview": {
+        "title": "Today's overview",
+        "body": "See today's consultations and what needs your attention at a glance. This is your home base after every login."
+      },
+      "availability": {
+        "title": "Set your availability first",
+        "body": "Define your weekly working hours before anything else — it directly drives which booking slots patients see. Update it any time your schedule changes."
+      },
+      "calendar": {
+        "title": "Your calendar",
+        "body": "See your full schedule laid out by day and week. Useful for spotting gaps or clashes at a glance."
+      },
+      "appointments": {
+        "title": "Manage appointments",
+        "body": "Review and confirm upcoming consultations, and join video visits straight from here. Past appointments stay searchable too."
+      },
+      "patients": {
+        "title": "Patient records",
+        "body": "Look up patient history, notes, and medical files securely. Everything you need before and during a consultation lives here."
+      },
+      "messages": {
+        "title": "Secure messaging",
+        "body": "Message patients and colleagues through the secure inbox. Replies arrive as notifications, so nothing gets missed."
+      },
+      "services": {
+        "title": "Your services",
+        "body": "Manage the services you offer and what patients can book with you. Keep this current so bookings match what you actually provide."
+      },
+      "forms": {
+        "title": "Clinical forms",
+        "body": "Use templates for common consultation forms so you're not writing the same notes twice. Attach them straight to an appointment."
+      },
+      "invoices": {
+        "title": "Invoices & earnings",
+        "body": "Track invoices for your consultations and see your payout details. A clear record of what you're owed and when it's paid."
+      },
+      "reports": {
+        "title": "Reports",
+        "body": "Review your activity and performance over time. Useful for spotting trends in your caseload."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "body": "Stay on top of new appointments and messages the moment they come in."
+      },
+      "confidentiality": {
+        "title": "Confidentiality obligations",
+        "body": "Review your data-protection and confidentiality responsibilities as a practitioner on the platform. Required reading before handling patient data."
+      },
+      "profile": {
+        "title": "Your public profile",
+        "body": "Manage the photo, bio, and credentials patients see when choosing a doctor. A complete profile builds trust before the first consultation."
+      }
+    }
   }
 }

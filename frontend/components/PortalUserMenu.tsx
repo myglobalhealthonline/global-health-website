@@ -33,6 +33,7 @@ export function PortalUserMenu({
       trigger={
         <button
           type="button"
+          data-tour="topbar-user"
           className="inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-sm font-semibold text-[var(--portal-chrome-text-active)] transition hover:bg-white/5"
         >
           <span className="gh-portal-avatar inline-flex size-7 items-center justify-center rounded-[9px] text-[11px] font-extrabold text-white">

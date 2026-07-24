@@ -1440,5 +1440,73 @@
     "copied": "Kopiert",
     "openAppointment": "Termin öffnen",
     "bookAnother": "Weiteren anlegen"
+  },
+  "tour": {
+    "labels": {
+      "next": "Weiter",
+      "back": "Zurück",
+      "done": "Fertig",
+      "skip": "Tour überspringen",
+      "progress": "{current} von {total}",
+      "restart": "Tour starten"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Willkommen in Ihrem Arztportal",
+        "body": "Ein kurzer Rundgang durch Ihren Arbeitsbereich. Wir gehen die Werkzeuge durch, die Sie täglich nutzen — in der Reihenfolge, die die Einrichtung am einfachsten macht."
+      },
+      "overview": {
+        "title": "Heutige Übersicht",
+        "body": "Sehen Sie die heutigen Konsultationen und was Ihre Aufmerksamkeit erfordert, auf einen Blick. Dies ist Ihre Startseite nach jeder Anmeldung."
+      },
+      "availability": {
+        "title": "Legen Sie zuerst Ihre Verfügbarkeit fest",
+        "body": "Definieren Sie vor allem anderen Ihre wöchentlichen Arbeitszeiten — sie bestimmen direkt, welche Buchungstermine Patienten sehen. Aktualisieren Sie sie, sobald sich Ihr Zeitplan ändert."
+      },
+      "calendar": {
+        "title": "Ihr Kalender",
+        "body": "Sehen Sie Ihren gesamten Zeitplan nach Tag und Woche geordnet. Praktisch, um Lücken oder Überschneidungen auf einen Blick zu erkennen."
+      },
+      "appointments": {
+        "title": "Termine verwalten",
+        "body": "Sehen Sie sich anstehende Konsultationen an und bestätigen Sie sie, und nehmen Sie direkt von hier aus an Videosprechstunden teil. Vergangene Termine bleiben durchsuchbar."
+      },
+      "patients": {
+        "title": "Patientenakten",
+        "body": "Sehen Sie sicher in Krankengeschichte, Notizen und medizinische Dateien der Patienten ein. Alles, was Sie vor und während einer Konsultation benötigen, finden Sie hier."
+      },
+      "messages": {
+        "title": "Sichere Nachrichten",
+        "body": "Senden Sie Nachrichten an Patienten und Kollegen über den sicheren Posteingang. Antworten kommen als Benachrichtigungen an, damit nichts übersehen wird."
+      },
+      "services": {
+        "title": "Ihre Leistungen",
+        "body": "Verwalten Sie die Leistungen, die Sie anbieten, und was Patienten bei Ihnen buchen können. Halten Sie dies aktuell, damit Buchungen dem entsprechen, was Sie tatsächlich anbieten."
+      },
+      "forms": {
+        "title": "Klinische Formulare",
+        "body": "Nutzen Sie Vorlagen für gängige Konsultationsformulare, damit Sie dieselben Notizen nicht doppelt schreiben. Hängen Sie sie direkt an einen Termin an."
+      },
+      "invoices": {
+        "title": "Rechnungen & Einnahmen",
+        "body": "Behalten Sie den Überblick über Rechnungen für Ihre Konsultationen und sehen Sie Ihre Auszahlungsdetails ein. Eine klare Übersicht darüber, was Ihnen zusteht und wann es ausgezahlt wird."
+      },
+      "reports": {
+        "title": "Berichte",
+        "body": "Überprüfen Sie Ihre Aktivität und Leistung im Zeitverlauf. Praktisch, um Trends in Ihrem Fallaufkommen zu erkennen."
+      },
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "body": "Bleiben Sie über neue Termine und Nachrichten informiert, sobald sie eintreffen."
+      },
+      "confidentiality": {
+        "title": "Vertraulichkeitspflichten",
+        "body": "Überprüfen Sie Ihre Datenschutz- und Vertraulichkeitspflichten als Fachkraft auf der Plattform. Pflichtlektüre, bevor Sie Patientendaten bearbeiten."
+      },
+      "profile": {
+        "title": "Ihr öffentliches Profil",
+        "body": "Verwalten Sie Foto, Biografie und Qualifikationen, die Patienten bei der Arztwahl sehen. Ein vollständiges Profil schafft Vertrauen vor der ersten Konsultation."
+      }
+    }
   }
 }

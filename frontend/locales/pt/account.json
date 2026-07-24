@@ -823,5 +823,53 @@
     "disabledPaymentDoctor": "O paciente ainda não completou o pagamento.",
     "disabledLocked": "O chat está fechado. Apenas o seu médico pode reabri-lo.",
     "attachmentFallback": "Anexo"
+  },
+  "tour": {
+    "labels": {
+      "next": "Seguinte",
+      "back": "Voltar",
+      "done": "Concluir",
+      "skip": "Saltar visita guiada",
+      "progress": "{current} de {total}",
+      "restart": "Fazer visita guiada"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Bem-vindo ao seu portal de saúde",
+        "body": "Uma visita rápida — marque consultas, envie mensagens ao seu médico e faça a gestão dos seus cuidados num só lugar."
+      },
+      "overview": {
+        "title": "A sua visão geral",
+        "body": "Veja as próximas marcações e a atividade recente num relance."
+      },
+      "bookings": {
+        "title": "As suas marcações",
+        "body": "Acompanhe consultas futuras e passadas, e reagende se os planos mudarem."
+      },
+      "messages": {
+        "title": "Envie mensagens ao seu médico",
+        "body": "Envie e receba mensagens seguras com a sua equipa de cuidados."
+      },
+      "prescriptions": {
+        "title": "Receitas",
+        "body": "Veja as receitas emitidas pelo seu médico."
+      },
+      "medicalFiles": {
+        "title": "Ficheiros médicos",
+        "body": "Carregue e guarde documentos que o seu médico possa precisar de ver."
+      },
+      "payments": {
+        "title": "Pagamentos",
+        "body": "Reveja faturas e faça a gestão da forma como paga as consultas."
+      },
+      "notifications": {
+        "title": "Notificações",
+        "body": "Fique a par de atualizações sobre as suas consultas e cuidados."
+      },
+      "profile": {
+        "title": "Complete o seu perfil",
+        "body": "Mantenha os seus dados atualizados para que a sua equipa de cuidados tenha sempre o que precisa."
+      }
+    }
   }
 }

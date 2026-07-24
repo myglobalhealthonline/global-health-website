@@ -78,6 +78,22 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     getPageLocale(),
   ]);
   const { doctor: d, common } = loadLocaleBundle(locale);
+  const tourSteps = [
+    { title: d.tour.steps.welcome.title, body: d.tour.steps.welcome.body },
+    { target: "/doctor", title: d.tour.steps.overview.title, body: d.tour.steps.overview.body },
+    { target: "/doctor/availability", title: d.tour.steps.availability.title, body: d.tour.steps.availability.body },
+    { target: "/doctor/calendar", title: d.tour.steps.calendar.title, body: d.tour.steps.calendar.body },
+    { target: "/doctor/appointments", title: d.tour.steps.appointments.title, body: d.tour.steps.appointments.body },
+    { target: "/doctor/patients", title: d.tour.steps.patients.title, body: d.tour.steps.patients.body },
+    { target: "/doctor/messages", title: d.tour.steps.messages.title, body: d.tour.steps.messages.body },
+    { target: "/doctor/services", title: d.tour.steps.services.title, body: d.tour.steps.services.body },
+    { target: "/doctor/forms", title: d.tour.steps.forms.title, body: d.tour.steps.forms.body },
+    { target: "/doctor/invoices", title: d.tour.steps.invoices.title, body: d.tour.steps.invoices.body },
+    { target: "/doctor/reports", title: d.tour.steps.reports.title, body: d.tour.steps.reports.body },
+    { target: "topbar-notifications", title: d.tour.steps.notifications.title, body: d.tour.steps.notifications.body },
+    { target: "/doctor/confidentiality", title: d.tour.steps.confidentiality.title, body: d.tour.steps.confidentiality.body },
+    { target: "/doctor/profile", title: d.tour.steps.profile.title, body: d.tour.steps.profile.body },
+  ];
   const NOTIF_TYPE_LABEL: Record<string, string> = {
     APPOINTMENT_ASSIGNED: d.notifications.appointmentAssigned,
     INTERNAL_MESSAGE: d.notifications.internalMessage,
@@ -185,6 +201,11 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
         notificationsUnreadSuffix: d.portal.notificationsUnreadSuffix,
         notificationsUnreadSr: d.portal.notificationsUnreadSr,
         notificationsViewAll: d.portal.notificationsViewAll,
+      }}
+      tour={{
+        steps: tourSteps,
+        labels: { ...d.tour.labels },
+        storageKey: "gh_tour_done_doctor",
       }}
       banner={
         compliance.ok &&

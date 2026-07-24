@@ -26,7 +26,7 @@ import {
 } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, Menu, X } from "lucide-react";
+import { ChevronRight, HelpCircle, Menu, X } from "lucide-react";
 import {
   NotificationPopover,
   type NotificationPopoverItem,
@@ -37,6 +37,7 @@ import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { PortalTour, type TourLabels, type TourStep } from "@/components/portal-tour";
 
 export type PortalShellUser = {
   fullName: string;
@@ -172,6 +173,7 @@ export function PortalShell({
   locale,
   availableLocales,
   chrome,
+  tour,
   children,
 }: {
   user: PortalShellUser;
@@ -212,6 +214,10 @@ export function PortalShell({
   availableLocales?: LocaleCode[];
   /** Localized shell strings; defaults to English when omitted. */
   chrome?: PortalShellChrome;
+  /** Onboarding spotlight tour — omit to skip rendering it (e.g. corporate
+   *  portal hasn't got copy yet). Auto-starts once per browser via
+   *  `storageKey`; the sidebar footer gets a "restart tour" button. */
+  tour?: { steps: TourStep[]; labels: TourLabels & { restart: string }; storageKey: string };
   children: ReactNode;
 }) {
   const c = { ...DEFAULT_CHROME, ...chrome };
@@ -335,10 +341,18 @@ export function PortalShell({
             ))}
           </nav>
 
-          <div
-            className="gh-portal-sidebar-footer px-5 py-4 text-[12px] font-bold uppercase tracking-[0.06em]"
-          >
-            {c.slogan}
+          <div className="gh-portal-sidebar-footer px-5 py-4">
+            {tour ? (
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new Event("gh:tour:start"))}
+                className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.06em] opacity-80 transition hover:opacity-100"
+              >
+                <HelpCircle className="size-3.5" aria-hidden />
+                {tour.labels.restart}
+              </button>
+            ) : null}
+            <p className="text-[12px] font-bold uppercase tracking-[0.06em]">{c.slogan}</p>
           </div>
         </aside>
 
@@ -462,6 +476,7 @@ export function PortalShell({
           </main>
         </div>
     </div>
+    {tour ? <PortalTour steps={tour.steps} labels={tour.labels} storageKey={tour.storageKey} /> : null}
     </NotificationCenterContext.Provider>
   );
 }
@@ -516,6 +531,7 @@ function SidebarItem({
       href={href}
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
+      data-tour={href}
       className="gh-portal-nav-item"
     >
       {/* Left accent bar — CSS-driven, scales in on activation (§5.1). */}

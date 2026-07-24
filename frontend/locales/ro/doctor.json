@@ -1440,5 +1440,73 @@
     "copied": "Copiat",
     "openAppointment": "Deschide programarea",
     "bookAnother": "Creează alta"
+  },
+  "tour": {
+    "labels": {
+      "next": "Următorul",
+      "back": "Înapoi",
+      "done": "Finalizare",
+      "skip": "Omite turul",
+      "progress": "{current} din {total}",
+      "restart": "Vezi turul"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Bine ați venit în portalul dumneavoastră de medic",
+        "body": "Un tur rapid al spațiului dumneavoastră de lucru. Vom parcurge instrumentele pe care le veți folosi zilnic, în ordinea care ușurează configurarea."
+      },
+      "overview": {
+        "title": "Prezentarea zilei",
+        "body": "Vedeți consultațiile de azi și ce necesită atenția dumneavoastră dintr-o privire. Aceasta este baza dumneavoastră după fiecare conectare."
+      },
+      "availability": {
+        "title": "Setați mai întâi disponibilitatea",
+        "body": "Definiți-vă programul săptămânal înainte de orice altceva — determină direct ce sloturi de programare văd pacienții. Actualizați-l ori de câte ori se schimbă programul."
+      },
+      "calendar": {
+        "title": "Calendarul dumneavoastră",
+        "body": "Vedeți întregul program organizat pe zi și săptămână. Util pentru a observa dintr-o privire spațiile libere sau suprapunerile."
+      },
+      "appointments": {
+        "title": "Gestionați consultațiile",
+        "body": "Revizuiți și confirmați consultațiile viitoare și alăturați-vă vizitelor video direct de aici. Consultațiile trecute rămân căutabile."
+      },
+      "patients": {
+        "title": "Fișe de pacienți",
+        "body": "Consultați în siguranță istoricul, notițele și fișierele medicale ale pacienților. Tot ce aveți nevoie înainte și în timpul unei consultații se află aici."
+      },
+      "messages": {
+        "title": "Mesagerie securizată",
+        "body": "Trimiteți mesaje pacienților și colegilor prin căsuța de mesaje securizată. Răspunsurile sosesc ca notificări, astfel încât nimic nu este ratat."
+      },
+      "services": {
+        "title": "Serviciile dumneavoastră",
+        "body": "Gestionați serviciile pe care le oferiți și ce pot programa pacienții cu dumneavoastră. Păstrați-le actualizate pentru ca programările să corespundă cu ceea ce oferiți efectiv."
+      },
+      "forms": {
+        "title": "Formulare clinice",
+        "body": "Folosiți șabloane pentru formularele de consultație frecvente, ca să nu scrieți aceleași notițe de două ori. Atașați-le direct la o consultație."
+      },
+      "invoices": {
+        "title": "Facturi și venituri",
+        "body": "Urmăriți facturile pentru consultațiile dumneavoastră și vedeți detaliile de plată. O evidență clară a ceea ce vi se datorează și când este plătit."
+      },
+      "reports": {
+        "title": "Rapoarte",
+        "body": "Revizuiți-vă activitatea și performanța în timp. Util pentru a observa tendințe în volumul dumneavoastră de cazuri."
+      },
+      "notifications": {
+        "title": "Notificări",
+        "body": "Fiți la curent cu noile consultații și mesaje imediat ce sosesc."
+      },
+      "confidentiality": {
+        "title": "Obligații de confidențialitate",
+        "body": "Revizuiți-vă responsabilitățile de protecție a datelor și confidențialitate ca practician pe platformă. Lectură obligatorie înainte de a gestiona datele pacienților."
+      },
+      "profile": {
+        "title": "Profilul dumneavoastră public",
+        "body": "Gestionați fotografia, biografia și calificările pe care pacienții le văd când aleg un medic. Un profil complet construiește încredere înainte de prima consultație."
+      }
+    }
   }
 }

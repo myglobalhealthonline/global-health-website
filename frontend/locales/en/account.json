@@ -823,5 +823,53 @@
     "postalCode": "Postal code",
     "country": "Country",
     "cancelRedemption": "Cancel redemption"
+  },
+  "tour": {
+    "labels": {
+      "next": "Next",
+      "back": "Back",
+      "done": "Done",
+      "skip": "Skip tour",
+      "progress": "{current} of {total}",
+      "restart": "Take a tour"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Welcome to your health portal",
+        "body": "A quick look around — book appointments, message your doctor, and manage your care in one place."
+      },
+      "overview": {
+        "title": "Your overview",
+        "body": "See upcoming bookings and recent activity at a glance."
+      },
+      "bookings": {
+        "title": "Your bookings",
+        "body": "Track upcoming and past appointments, and reschedule if plans change."
+      },
+      "messages": {
+        "title": "Message your doctor",
+        "body": "Send and receive secure messages with your care team."
+      },
+      "prescriptions": {
+        "title": "Prescriptions",
+        "body": "View prescriptions your doctor has issued for you."
+      },
+      "medicalFiles": {
+        "title": "Medical files",
+        "body": "Upload and store documents your doctor may need to see."
+      },
+      "payments": {
+        "title": "Payments",
+        "body": "Review invoices and manage how you pay for consultations."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "body": "Stay on top of updates about your appointments and care."
+      },
+      "profile": {
+        "title": "Complete your profile",
+        "body": "Keep your details up to date so your care team always has what they need."
+      }
+    }
   }
 }

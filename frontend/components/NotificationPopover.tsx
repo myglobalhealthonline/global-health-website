@@ -60,6 +60,7 @@ export function NotificationPopover({
         <button
           type="button"
           aria-label={ariaLabel}
+          data-tour="topbar-notifications"
           className="gh-notification-button relative inline-flex size-9 items-center justify-center rounded-full transition hover:bg-white/5"
           style={{ color: "var(--portal-chrome-text)" }}
         >

@@ -1440,5 +1440,73 @@
     "copied": "Zkopírováno",
     "openAppointment": "Otevřít rezervaci",
     "bookAnother": "Vytvořit další"
+  },
+  "tour": {
+    "labels": {
+      "next": "Další",
+      "back": "Zpět",
+      "done": "Dokončit",
+      "skip": "Přeskočit prohlídku",
+      "progress": "{current} z {total}",
+      "restart": "Zobrazit prohlídku"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Vítejte ve svém lékařském portálu",
+        "body": "Rychlá prohlídka vaší pracovní plochy. Projdeme si nástroje, které budete používat každý den, v pořadí, které nastavení nejvíce usnadní."
+      },
+      "overview": {
+        "title": "Dnešní přehled",
+        "body": "Podívejte se na dnešní konzultace a co vyžaduje vaši pozornost. Toto je vaše výchozí místo po každém přihlášení."
+      },
+      "availability": {
+        "title": "Nejprve nastavte dostupnost",
+        "body": "Než cokoli jiného nastavte svou týdenní pracovní dobu — přímo určuje, které termíny pacienti vidí. Aktualizujte ji vždy, když se váš rozvrh změní."
+      },
+      "calendar": {
+        "title": "Váš kalendář",
+        "body": "Zobrazte si celý rozvrh podle dne a týdne. Užitečné pro rychlé odhalení volných míst nebo kolizí."
+      },
+      "appointments": {
+        "title": "Správa konzultací",
+        "body": "Prohlédněte si a potvrďte nadcházející konzultace a připojte se k videokonzultacím přímo odsud. Minulé konzultace zůstávají vyhledatelné."
+      },
+      "patients": {
+        "title": "Záznamy pacientů",
+        "body": "Bezpečně nahlédněte do historie, poznámek a zdravotních dokumentů pacientů. Vše potřebné před konzultací i během ní najdete zde."
+      },
+      "messages": {
+        "title": "Zabezpečené zprávy",
+        "body": "Posílejte zprávy pacientům a kolegům přes zabezpečenou schránku. Odpovědi přicházejí jako oznámení, takže nic neuniká."
+      },
+      "services": {
+        "title": "Vaše služby",
+        "body": "Spravujte služby, které nabízíte, a to, co si u vás pacienti mohou rezervovat. Udržujte je aktuální, aby rezervace odpovídaly tomu, co skutečně poskytujete."
+      },
+      "forms": {
+        "title": "Klinické formuláře",
+        "body": "Používejte šablony pro běžné konzultační formuláře, abyste nepsali stejné poznámky dvakrát. Připojte je přímo ke konzultaci."
+      },
+      "invoices": {
+        "title": "Faktury a výdělky",
+        "body": "Sledujte faktury za své konzultace a zobrazte si údaje o výplatě. Přehledný záznam o tom, co vám náleží a kdy je to vyplaceno."
+      },
+      "reports": {
+        "title": "Přehledy",
+        "body": "Prohlédněte si svou aktivitu a výkon v čase. Užitečné pro odhalení trendů ve vaší zátěži."
+      },
+      "notifications": {
+        "title": "Oznámení",
+        "body": "Buďte v obraze ohledně nových konzultací a zpráv, jakmile dorazí."
+      },
+      "confidentiality": {
+        "title": "Povinnosti mlčenlivosti",
+        "body": "Prohlédněte si své povinnosti v oblasti ochrany dat a mlčenlivosti jako odborník na platformě. Povinné čtení před prací s daty pacientů."
+      },
+      "profile": {
+        "title": "Váš veřejný profil",
+        "body": "Spravujte fotografii, medailonek a kvalifikace, které pacienti vidí při výběru lékaře. Kompletní profil buduje důvěru ještě před první konzultací."
+      }
+    }
   }
 }

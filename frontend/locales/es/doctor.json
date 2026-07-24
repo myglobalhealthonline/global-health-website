@@ -1440,5 +1440,73 @@
     "copied": "Copiado",
     "openAppointment": "Abrir cita",
     "bookAnother": "Crear otra"
+  },
+  "tour": {
+    "labels": {
+      "next": "Siguiente",
+      "back": "Atrás",
+      "done": "Finalizar",
+      "skip": "Omitir recorrido",
+      "progress": "{current} de {total}",
+      "restart": "Hacer un recorrido"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Bienvenido a su portal de médico",
+        "body": "Un recorrido rápido por su espacio de trabajo. Repasaremos las herramientas que usará a diario, en el orden que facilita la configuración."
+      },
+      "overview": {
+        "title": "Resumen de hoy",
+        "body": "Vea las consultas de hoy y lo que requiere su atención de un vistazo. Esta es su base tras cada inicio de sesión."
+      },
+      "availability": {
+        "title": "Configure primero su disponibilidad",
+        "body": "Defina su horario semanal antes que nada — determina directamente qué horarios de reserva ven los pacientes. Actualícelo cuando cambie su agenda."
+      },
+      "calendar": {
+        "title": "Su calendario",
+        "body": "Vea toda su agenda organizada por día y semana. Útil para detectar huecos o solapes de un vistazo."
+      },
+      "appointments": {
+        "title": "Gestionar citas",
+        "body": "Revise y confirme las próximas consultas, y únase a videoconsultas directamente desde aquí. Las citas pasadas siguen siendo consultables."
+      },
+      "patients": {
+        "title": "Historiales de pacientes",
+        "body": "Consulte de forma segura el historial, notas y archivos médicos de los pacientes. Todo lo que necesita antes y durante una consulta está aquí."
+      },
+      "messages": {
+        "title": "Mensajería segura",
+        "body": "Envíe mensajes a pacientes y colegas a través de la bandeja segura. Las respuestas llegan como notificaciones, para que nada se pase por alto."
+      },
+      "services": {
+        "title": "Sus servicios",
+        "body": "Gestione los servicios que ofrece y lo que los pacientes pueden reservar con usted. Manténgalo actualizado para que las reservas coincidan con lo que realmente ofrece."
+      },
+      "forms": {
+        "title": "Formularios clínicos",
+        "body": "Use plantillas para los formularios de consulta habituales, así no escribe las mismas notas dos veces. Adjúntelos directamente a una cita."
+      },
+      "invoices": {
+        "title": "Facturas y ganancias",
+        "body": "Realice el seguimiento de las facturas de sus consultas y vea los detalles de pago. Un registro claro de lo que se le debe y cuándo se paga."
+      },
+      "reports": {
+        "title": "Informes",
+        "body": "Revise su actividad y desempeño a lo largo del tiempo. Útil para detectar tendencias en su carga de trabajo."
+      },
+      "notifications": {
+        "title": "Notificaciones",
+        "body": "Manténgase al día de nuevas citas y mensajes en cuanto lleguen."
+      },
+      "confidentiality": {
+        "title": "Obligaciones de confidencialidad",
+        "body": "Revise sus responsabilidades de protección de datos y confidencialidad como profesional en la plataforma. Lectura obligatoria antes de tratar datos de pacientes."
+      },
+      "profile": {
+        "title": "Su perfil público",
+        "body": "Gestione la foto, biografía y credenciales que los pacientes ven al elegir un médico. Un perfil completo genera confianza antes de la primera consulta."
+      }
+    }
   }
 }

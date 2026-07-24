@@ -1440,5 +1440,73 @@
     "copied": "Copiado",
     "openAppointment": "Abrir consulta",
     "bookAnother": "Criar outra"
+  },
+  "tour": {
+    "labels": {
+      "next": "Seguinte",
+      "back": "Voltar",
+      "done": "Concluir",
+      "skip": "Saltar visita guiada",
+      "progress": "{current} de {total}",
+      "restart": "Fazer visita guiada"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Bem-vindo ao seu portal de médico",
+        "body": "Uma visita rápida ao seu espaço de trabalho. Vamos percorrer as ferramentas que vai usar todos os dias, pela ordem que torna a configuração mais fácil."
+      },
+      "overview": {
+        "title": "Resumo de hoje",
+        "body": "Veja as consultas de hoje e o que precisa da sua atenção num relance. Esta é a sua base após cada início de sessão."
+      },
+      "availability": {
+        "title": "Defina primeiro a sua disponibilidade",
+        "body": "Defina o seu horário semanal antes de mais nada — determina diretamente que horários de marcação os doentes veem. Atualize sempre que a sua agenda mudar."
+      },
+      "calendar": {
+        "title": "O seu calendário",
+        "body": "Veja toda a sua agenda organizada por dia e semana. Útil para identificar espaços livres ou sobreposições num relance."
+      },
+      "appointments": {
+        "title": "Gerir consultas",
+        "body": "Reveja e confirme as próximas consultas, e entre em videochamadas diretamente daqui. As consultas passadas continuam pesquisáveis."
+      },
+      "patients": {
+        "title": "Registos de doentes",
+        "body": "Consulte o histórico, notas e ficheiros médicos dos doentes em segurança. Tudo o que precisa antes e durante uma consulta está aqui."
+      },
+      "messages": {
+        "title": "Mensagens seguras",
+        "body": "Envie mensagens a doentes e colegas através da caixa de entrada segura. As respostas chegam como notificações, para nada passar despercebido."
+      },
+      "services": {
+        "title": "Os seus serviços",
+        "body": "Gira os serviços que oferece e o que os doentes podem marcar consigo. Mantenha isto atualizado para as marcações corresponderem ao que realmente presta."
+      },
+      "forms": {
+        "title": "Formulários clínicos",
+        "body": "Use modelos para formulários de consulta comuns, para não escrever as mesmas notas duas vezes. Anexe-os diretamente a uma consulta."
+      },
+      "invoices": {
+        "title": "Faturas e ganhos",
+        "body": "Acompanhe as faturas das suas consultas e veja os detalhes de pagamento. Um registo claro do que lhe é devido e de quando é pago."
+      },
+      "reports": {
+        "title": "Relatórios",
+        "body": "Reveja a sua atividade e desempenho ao longo do tempo. Útil para identificar tendências na sua carga de trabalho."
+      },
+      "notifications": {
+        "title": "Notificações",
+        "body": "Fique a par de novas consultas e mensagens assim que chegam."
+      },
+      "confidentiality": {
+        "title": "Obrigações de confidencialidade",
+        "body": "Reveja as suas responsabilidades de proteção de dados e confidencialidade como profissional na plataforma. Leitura obrigatória antes de tratar dados de doentes."
+      },
+      "profile": {
+        "title": "O seu perfil público",
+        "body": "Gira a foto, biografia e credenciais que os doentes veem ao escolher um médico. Um perfil completo gera confiança antes da primeira consulta."
+      }
+    }
   }
 }

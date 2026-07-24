@@ -823,5 +823,53 @@
     "disabledPaymentDoctor": "El paciente aún no ha completado el pago.",
     "disabledLocked": "El chat está cerrado. Solo su médico puede reabrirlo.",
     "attachmentFallback": "Adjunto"
+  },
+  "tour": {
+    "labels": {
+      "next": "Siguiente",
+      "back": "Atrás",
+      "done": "Finalizar",
+      "skip": "Omitir recorrido",
+      "progress": "{current} de {total}",
+      "restart": "Hacer un recorrido"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Bienvenido a su portal de salud",
+        "body": "Un recorrido rápido — reserve citas, envíe mensajes a su médico y gestione su atención en un solo lugar."
+      },
+      "overview": {
+        "title": "Su resumen",
+        "body": "Vea sus próximas citas y la actividad reciente de un vistazo."
+      },
+      "bookings": {
+        "title": "Sus citas",
+        "body": "Consulte citas próximas y pasadas, y reprograme si cambian sus planes."
+      },
+      "messages": {
+        "title": "Envíe mensajes a su médico",
+        "body": "Envíe y reciba mensajes seguros con su equipo médico."
+      },
+      "prescriptions": {
+        "title": "Recetas",
+        "body": "Consulte las recetas emitidas por su médico."
+      },
+      "medicalFiles": {
+        "title": "Archivos médicos",
+        "body": "Suba y guarde documentos que su médico pueda necesitar ver."
+      },
+      "payments": {
+        "title": "Pagos",
+        "body": "Revise facturas y gestione cómo paga sus consultas."
+      },
+      "notifications": {
+        "title": "Notificaciones",
+        "body": "Manténgase al día con novedades sobre sus citas y su atención."
+      },
+      "profile": {
+        "title": "Complete su perfil",
+        "body": "Mantenga sus datos actualizados para que su equipo médico siempre tenga lo que necesita."
+      }
+    }
   }
 }

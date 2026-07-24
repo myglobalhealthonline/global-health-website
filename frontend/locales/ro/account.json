@@ -823,5 +823,53 @@
     "disabledPaymentDoctor": "Pacientul nu a finalizat încă plata.",
     "disabledLocked": "Chatul este închis. Numai medicul tău îl poate redeschide.",
     "attachmentFallback": "Atașament"
+  },
+  "tour": {
+    "labels": {
+      "next": "Următorul",
+      "back": "Înapoi",
+      "done": "Finalizare",
+      "skip": "Omite turul",
+      "progress": "{current} din {total}",
+      "restart": "Vezi turul"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Bine ați venit în portalul dumneavoastră de sănătate",
+        "body": "Un tur rapid — programați consultații, trimiteți mesaje medicului dumneavoastră și gestionați îngrijirea într-un singur loc."
+      },
+      "overview": {
+        "title": "Prezentarea dumneavoastră generală",
+        "body": "Vedeți programările viitoare și activitatea recentă dintr-o privire."
+      },
+      "bookings": {
+        "title": "Programările dumneavoastră",
+        "body": "Urmăriți consultațiile viitoare și trecute și reprogramați dacă planurile se schimbă."
+      },
+      "messages": {
+        "title": "Trimiteți mesaje medicului dumneavoastră",
+        "body": "Trimiteți și primiți mesaje securizate cu echipa dumneavoastră medicală."
+      },
+      "prescriptions": {
+        "title": "Rețete",
+        "body": "Vizualizați rețetele emise de medicul dumneavoastră."
+      },
+      "medicalFiles": {
+        "title": "Fișiere medicale",
+        "body": "Încărcați și păstrați documente pe care medicul dumneavoastră ar putea avea nevoie să le vadă."
+      },
+      "payments": {
+        "title": "Plăți",
+        "body": "Verificați facturile și gestionați modul de plată a consultațiilor."
+      },
+      "notifications": {
+        "title": "Notificări",
+        "body": "Fiți la curent cu actualizările despre programările și îngrijirea dumneavoastră."
+      },
+      "profile": {
+        "title": "Completați-vă profilul",
+        "body": "Păstrați-vă datele actualizate pentru ca echipa medicală să aibă mereu ce îi trebuie."
+      }
+    }
   }
 }

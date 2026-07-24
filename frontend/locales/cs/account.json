@@ -823,5 +823,53 @@
     "disabledPaymentDoctor": "Pacient ještě nedokončil platbu.",
     "disabledLocked": "Chat je uzavřen. Pouze váš lékař ho může znovu otevřít.",
     "attachmentFallback": "Příloha"
+  },
+  "tour": {
+    "labels": {
+      "next": "Další",
+      "back": "Zpět",
+      "done": "Dokončit",
+      "skip": "Přeskočit prohlídku",
+      "progress": "{current} z {total}",
+      "restart": "Zobrazit prohlídku"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Vítejte ve svém zdravotním portálu",
+        "body": "Rychlá prohlídka — rezervujte konzultace, pište svému lékaři a spravujte svou péči na jednom místě."
+      },
+      "overview": {
+        "title": "Váš přehled",
+        "body": "Nadcházející rezervace a nedávná aktivita na první pohled."
+      },
+      "bookings": {
+        "title": "Vaše rezervace",
+        "body": "Sledujte nadcházející i minulé konzultace a v případě potřeby je přeplánujte."
+      },
+      "messages": {
+        "title": "Napište svému lékaři",
+        "body": "Posílejte a přijímejte bezpečné zprávy se svým ošetřujícím týmem."
+      },
+      "prescriptions": {
+        "title": "Recepty",
+        "body": "Prohlédněte si recepty vystavené vaším lékařem."
+      },
+      "medicalFiles": {
+        "title": "Zdravotní dokumenty",
+        "body": "Nahrajte a uložte dokumenty, které váš lékař může potřebovat vidět."
+      },
+      "payments": {
+        "title": "Platby",
+        "body": "Zkontrolujte faktury a spravujte způsob platby za konzultace."
+      },
+      "notifications": {
+        "title": "Oznámení",
+        "body": "Buďte v obraze ohledně novinek týkajících se vašich konzultací a péče."
+      },
+      "profile": {
+        "title": "Doplňte svůj profil",
+        "body": "Udržujte své údaje aktuální, aby váš ošetřující tým měl vždy vše potřebné."
+      }
+    }
   }
 }
