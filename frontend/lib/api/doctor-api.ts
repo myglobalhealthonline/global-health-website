@@ -291,8 +291,10 @@ export type DoctorPatientDetail = {
     id: string;
     consultationType: string;
     /** Booked Service name (or OrderItem snapshot); falls back to the
-     *  formatted consultationType for legacy rows with neither. */
-    consultationName: string;
+     *  formatted consultationType for legacy rows with neither. Optional
+     *  because a backend older than this build omits it — callers must
+     *  fall back to `consultationType` or the cell renders empty. */
+    consultationName?: string;
     countryCode: string;
     status: string;
     paymentStatus: string;
