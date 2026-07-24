@@ -136,6 +136,8 @@ export type CountryServiceDetail = {
   insuranceOptions: InsuranceOption[];
   /** Auto SEO line ("We also have … for this service.") or null when none. */
   insuranceSeoLine: string | null;
+  /** ISO timestamp — admin-set clinical review date. Null when unset. */
+  lastReviewedAt: string | null;
 };
 
 export type HealthTestFaqItem = { id: string; question: string; answer: string };
@@ -641,6 +643,7 @@ export const getCountryServiceDetail = cache(async (
     links: readServiceLinks(r.links),
     insuranceOptions: parseInsuranceOptions(r.insuranceOptions),
     insuranceSeoLine: typeof r.insuranceSeoLine === "string" ? r.insuranceSeoLine : null,
+    lastReviewedAt: typeof r.lastReviewedAt === "string" ? r.lastReviewedAt : null,
   };
 });
 

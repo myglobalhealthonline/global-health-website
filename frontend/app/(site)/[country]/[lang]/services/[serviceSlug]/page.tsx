@@ -127,8 +127,21 @@ export default async function ServiceDetailPage({
   const detail = await getCountryServiceDetail(code, serviceSlug, lang);
   if (!detail) notFound();
 
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
   const t = c.serviceDetailPage;
+
+  // Clinical review date chip — same "Last reviewed <date>" label/format the
+  // blog byline already uses. Renders nothing when the service has none set.
+  const lastReviewedFormatted = detail.lastReviewedAt
+    ? new Date(detail.lastReviewedAt).toLocaleDateString(lang, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
+  const reviewedDateLabel = lastReviewedFormatted
+    ? `${home.blog.lastReviewed} ${lastReviewedFormatted}`
+    : null;
 
   // Country-specific short medical disclaimer (admin-authored, per country);
   // falls back to the generic translated line when not set. Independent of
@@ -215,6 +228,7 @@ export default async function ServiceDetailPage({
           url: `/${country}/${lang}/services/${serviceSlug}`,
           bookingUrl: bookHref,
           reviewerPhysician,
+          dateModified: detail.lastReviewedAt,
         })}
       />
 
@@ -398,6 +412,7 @@ export default async function ServiceDetailPage({
                 name={reviewer?.fullName}
                 href={reviewerHref}
                 credential={reviewer?.imcRegistration}
+                reviewedDate={reviewedDateLabel}
               />
 
               {/* ── Booking card ─────────────────────────────────────────────── */}

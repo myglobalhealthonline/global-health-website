@@ -469,6 +469,11 @@ export function medicalClinicServiceJsonLd(input: {
    *  content — same `reviewedBy` precedent as the blog Article schema.
    *  Omitted entirely when the country has no named reviewer. */
   reviewerPhysician?: ReturnType<typeof physicianJsonLd> | null;
+  /** ISO timestamp of the admin-set clinical review date. Same field feeds
+   *  both `dateModified` and `lastReviewed` (WebPage/MedicalWebPage
+   *  vocabulary, same precedent as the blog Article schema) — omitted
+   *  entirely when the service has no review date set. */
+  dateModified?: string | null;
 }) {
   return {
     "@context": "https://schema.org",
@@ -478,6 +483,7 @@ export function medicalClinicServiceJsonLd(input: {
     medicalSpecialty: input.specialty,
     areaServed: { "@type": "Country", name: input.countryName },
     ...(input.reviewerPhysician ? { reviewedBy: input.reviewerPhysician } : {}),
+    ...(input.dateModified ? { dateModified: input.dateModified, lastReviewed: input.dateModified } : {}),
     availableService: {
       "@type": "MedicalProcedure",
       name: input.serviceName,

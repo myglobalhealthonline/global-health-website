@@ -26,6 +26,9 @@ export type PublicServiceRecord = {
   editorialChecklist: Record<string, unknown> | null;
   /** ISO timestamp string, when the backend row includes one (Prisma @updatedAt). */
   updatedAt: string | null;
+  /** ISO timestamp string — admin-set clinical review date. Null until an
+   *  admin sets it (no backfill); the E-E-A-T byline renders nothing then. */
+  lastReviewedAt: string | null;
 };
 
 function readCountryCode(row: unknown): CountryCode | undefined {
@@ -82,6 +85,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
       ? (r.editorialChecklist as Record<string, unknown>)
       : null;
   const updatedAt = typeof r.updatedAt === "string" ? r.updatedAt : null;
+  const lastReviewedAt = typeof r.lastReviewedAt === "string" ? r.lastReviewedAt : null;
   const assets = Array.isArray(r.assets) ? r.assets : [];
   const imagePath = (() => {
     const first = assets[0];
@@ -110,6 +114,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     imagePath,
     editorialChecklist,
     updatedAt,
+    lastReviewedAt,
   };
 }
 

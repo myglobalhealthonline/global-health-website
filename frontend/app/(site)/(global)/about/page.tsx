@@ -11,6 +11,8 @@ import { FAQSection } from "@/components/sections/FAQSection";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
+import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
+import { getCountryDoctors } from "@/lib/content/get-country-collections";
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -89,7 +91,14 @@ const FAQ_ITEMS: ReadonlyArray<{ question: string; answer: string }> = [
 
 export default async function AboutPage() {
   const locale = await getPageLocale();
-  const { about, faq } = loadLocaleBundle(locale);
+  const { about, faq, common } = loadLocaleBundle(locale);
+
+  // Named clinical reviewer byline — Ireland's admin-flagged "Clinical
+  // Director" (same CountryDoctorCard.isFeatured lookup the service page
+  // uses). Never a fabricated name: renders nothing if IE has none set.
+  const ieDoctors = await getCountryDoctors("IE", locale);
+  const reviewer = ieDoctors.find((d) => d.isFeatured) ?? null;
+  const reviewerHref = reviewer ? `/ireland/en/doctors/${reviewer.slug}` : null;
 
   return (
     <section>
@@ -186,6 +195,13 @@ export default async function AboutPage() {
             <p>{about.mission_p1}</p>
             <p>{about.mission_p2}</p>
             <p className="font-medium text-white/90">{about.mission_p3}</p>
+            <ClinicalReviewer
+              label={common.serviceDetailPage.clinicallyReviewedBy}
+              name={reviewer?.fullName}
+              href={reviewerHref}
+              credential={reviewer?.imcRegistration}
+              dark
+            />
           </div>
         </div>
       </section>
