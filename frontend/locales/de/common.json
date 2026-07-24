@@ -108,7 +108,8 @@
     "trustLocal": "Länderspezifische Gesundheitsversorgung",
     "trustGdpr": "DSGVO-konforme Versorgung",
     "euProvider": "Lizenzierte Telemedizin-Plattform",
-    "gdprNote": "DSGVO-konform · Ärzte lokal registriert"
+    "gdprNote": "DSGVO-konform · Ärzte lokal registriert",
+    "statLine": "{count} registrierte Ärzte in 6 europäischen Ländern und Brasilien, Beratungen in 6 Sprachen."
   },
   "cta": {
     "primaryBooking": "Online buchen"

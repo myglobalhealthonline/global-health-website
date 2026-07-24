@@ -108,7 +108,8 @@
     "trustLocal": "Country-specific healthcare",
     "trustGdpr": "GDPR-compliant care",
     "euProvider": "Licensed telemedicine platform",
-    "gdprNote": "GDPR compliant · Doctors registered locally"
+    "gdprNote": "GDPR compliant · Doctors registered locally",
+    "statLine": "{count} registered doctors across 6 European countries and Brazil, consultations in 6 languages."
   },
   "cta": {
     "primaryBooking": "Book Online"

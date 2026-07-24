@@ -202,6 +202,14 @@
   color: rgba(255, 255, 255, 0.82);
 }
 
+.statLine {
+  margin: 16px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 46ch;
+}
+
 .trustIcon {
   display: inline-flex;
   align-items: center;

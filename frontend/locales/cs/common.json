@@ -108,7 +108,8 @@
     "trustLocal": "Zdravotní péče specifická pro danou zemi",
     "trustGdpr": "Péče v souladu s GDPR",
     "euProvider": "Licencovaná telemedicínská platforma",
-    "gdprNote": "V souladu s GDPR · Lékaři registrovaní lokálně"
+    "gdprNote": "V souladu s GDPR · Lékaři registrovaní lokálně",
+    "statLine": "{count} registrovaných lékařů v 6 evropských zemích a Brazílii, konzultace v 6 jazycích."
   },
   "cta": {
     "primaryBooking": "Rezervovat online"

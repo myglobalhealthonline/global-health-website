@@ -108,7 +108,8 @@
     "trustLocal": "Cuidados de saúde específicos do país",
     "trustGdpr": "Cuidados conformes com o RGPD",
     "euProvider": "Plataforma de telemedicina licenciada",
-    "gdprNote": "Conforme com o RGPD · Médicos registados localmente"
+    "gdprNote": "Conforme com o RGPD · Médicos registados localmente",
+    "statLine": "{count} médicos registados em 6 países europeus e no Brasil, consultas em 6 idiomas."
   },
   "cta": {
     "primaryBooking": "Marcar Online"

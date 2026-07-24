@@ -108,7 +108,8 @@
     "trustLocal": "Servicii medicale specifice țării",
     "trustGdpr": "Îngrijire conformă cu GDPR",
     "euProvider": "Platformă de telemedicină licențiată",
-    "gdprNote": "Conform GDPR · Medici înregistrați local"
+    "gdprNote": "Conform GDPR · Medici înregistrați local",
+    "statLine": "{count} medici înregistrați în 6 țări europene și Brazilia, consultații în 6 limbi."
   },
   "cta": {
     "primaryBooking": "Programează online"

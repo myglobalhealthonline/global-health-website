@@ -57,6 +57,10 @@ export type EntryGateCopy = {
   trustGdpr: string;
   euProvider: string;
   gdprNote: string;
+  /** Citable aggregate line, e.g. "142 registered doctors across...".
+   *  `{count}` is replaced with the real live doctor count. Optional so
+   *  callers that can't compute it yet (or fail open) just omit the line. */
+  statLine?: string;
 };
 
 type Props = {
@@ -65,6 +69,9 @@ type Props = {
   detectedLocale: LocaleCode;
   /** Entry-gate copy already translated to `detectedLocale`. */
   copy: EntryGateCopy;
+  /** Live total registered-doctor count across all countries, for the
+   *  citable stat line. Undefined/0 hides the line (no fabricated numbers). */
+  doctorCount?: number;
 };
 
 type EntryRevealProps = {
@@ -118,7 +125,7 @@ function matchNavigatorLocale(): LocaleCode | null {
   return null;
 }
 
-export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
+export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount }: Props) {
   const [countryQuery, setCountryQuery] = useState("");
   const panelSlotRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -355,6 +362,13 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
                   ))}
                 </ul>
               </HeroReveal>
+              {doctorCount && doctorCount > 0 && copy.statLine ? (
+                <HeroReveal delay={340}>
+                  <p className={styles.statLine}>
+                    {copy.statLine.replace("{count}", String(doctorCount))}
+                  </p>
+                </HeroReveal>
+              ) : null}
             </div>
 
             {/* Right — country selection panel */}
