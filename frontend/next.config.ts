@@ -476,6 +476,13 @@ const nextConfig: NextConfig = {
     );
     return [
       ...localizedSlugRedirects,
+      // No services index page exists — only /services/:slug. Send the bare
+      // section URL to the country home instead of a 404.
+      {
+        source: "/:country/:lang/services",
+        destination: "/:country/:lang",
+        permanent: true,
+      },
       {
         source: "/:country/:lang/book-online",
         destination: "/:country/:lang/book",
