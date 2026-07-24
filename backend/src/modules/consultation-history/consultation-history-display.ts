@@ -62,6 +62,22 @@ export function formatConsultationTypeLabel(raw: string | null | undefined): str
     .join(" ");
 }
 
+/**
+ * What the doctor booked, by name — the catalogue Service ("General
+ * Practitioner Consultation"), else the OrderItem name snapshot (survives
+ * service deletion / renames), else the coarse `consultationType` label
+ * ("General") so legacy rows with neither still render something.
+ */
+export function resolveConsultationName(
+  serviceName: string | null | undefined,
+  orderItemName: string | null | undefined,
+  consultationType: string | null | undefined,
+): string {
+  if (serviceName?.trim()) return serviceName.trim();
+  if (orderItemName?.trim()) return orderItemName.trim();
+  return formatConsultationTypeLabel(consultationType);
+}
+
 export function uploadFileTypeLabel(mimetype: string): string {
   const m = mimetype.toLowerCase();
   if (m.includes("pdf")) return "PDF";

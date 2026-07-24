@@ -10,6 +10,7 @@ type MedicalNoteRow = {
   content: string;
   consultationType: string | null;
   consultationTypeLabel: string;
+  consultationName: string;
   createdByName: string;
   createdAt: string;
   sessionDate: string;
@@ -35,6 +36,7 @@ type ConsultationNoteRow = {
   orderNumber: string;
   consultationType: string;
   consultationTypeLabel: string;
+  consultationName: string;
 };
 
 type DocRow = {
@@ -50,6 +52,7 @@ type DocRow = {
   orderNumber: string;
   consultationType: string;
   consultationTypeLabel: string;
+  consultationName: string;
   uploadedBy: string;
   pdfUrl: string;
 };
@@ -67,6 +70,7 @@ type UploadRow = {
   orderNumber: string;
   consultationType: string;
   consultationTypeLabel: string;
+  consultationName: string;
   uploadedBy: string;
   viewUrl: string;
 };
@@ -294,7 +298,7 @@ type DocLikeRow = {
   sessionDate: string;
   sessionTime: string;
   orderNumber: string;
-  consultationTypeLabel: string;
+  consultationName: string;
   fileName: string;
   fileTypeLabel: string;
   uploadedBy: string;
@@ -315,7 +319,7 @@ function DocumentsTable<T extends DocLikeRow>({
     { key: "sessionDate", label: copy.colSessionDate, priority: 1, render: (r) => <span className="whitespace-nowrap">{r.sessionDate}</span> },
     { key: "time", label: copy.colTime, priority: 3, render: (r) => <span className="whitespace-nowrap">{r.sessionTime}</span> },
     { key: "order", label: copy.colOrderNumber, priority: 3, render: (r) => r.orderNumber },
-    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (r) => <SessionTypeBadge label={r.consultationTypeLabel} /> },
+    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (r) => <SessionTypeBadge label={r.consultationName} /> },
     {
       key: "fileName",
       label: copy.colFileName,
@@ -431,7 +435,7 @@ export function ConsultationHistoryPanel({
     { key: "sessionDate", label: copy.colSessionDate, priority: 1, render: (n) => <span className="whitespace-nowrap">{n.sessionDate}</span> },
     { key: "time", label: copy.colTime, priority: 3, render: (n) => <span className="whitespace-nowrap">{n.sessionTime}</span> },
     { key: "order", label: copy.colOrderNumber, priority: 3, render: (n) => n.orderNumber },
-    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (n) => <SessionTypeBadge label={n.consultationTypeLabel} /> },
+    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (n) => <SessionTypeBadge label={n.consultationName} /> },
     {
       key: "symptoms",
       label: copy.colSymptoms,
@@ -480,7 +484,7 @@ export function ConsultationHistoryPanel({
     { key: "sessionDate", label: copy.colSessionDate, priority: 1, render: (c) => <span className="whitespace-nowrap">{c.sessionDate}</span> },
     { key: "time", label: copy.colTime, priority: 3, render: (c) => <span className="whitespace-nowrap">{c.sessionTime}</span> },
     { key: "order", label: copy.colOrderNumber, priority: 3, render: (c) => c.orderNumber },
-    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (c) => <SessionTypeBadge label={c.consultationTypeLabel} /> },
+    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (c) => <SessionTypeBadge label={c.consultationName} /> },
     {
       key: "status",
       label: copy.colStatus,

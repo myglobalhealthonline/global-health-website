@@ -7,10 +7,12 @@ import {
   formatSessionParts,
   generatedDocumentTitle,
   GENERATED_DOCUMENT_TYPE_LABELS,
+  resolveConsultationName,
   uploadFileTypeLabel,
 } from "./consultation-history-display.js";
 
-type OrderRef = { id: string; orderNumber: string | null };
+/** `itemName` = OrderItem.name snapshot — the booked consultation's name. */
+type OrderRef = { id: string; orderNumber: string | null; itemName: string | null };
 
 async function loadOrderRefsByAppointmentId(
   appointmentIds: string[],
@@ -25,14 +27,18 @@ async function loadOrderRefsByAppointmentId(
     }),
     prisma.orderItem.findMany({
       where: { appointmentId: { in: appointmentIds } },
-      select: { appointmentId: true, order: { select: { id: true, orderNumber: true } } },
+      select: {
+        appointmentId: true,
+        name: true,
+        order: { select: { id: true, orderNumber: true } },
+      },
     }),
   ]);
 
   for (const o of orders) {
     for (const aid of o.appointmentIds) {
       if (appointmentIds.includes(aid)) {
-        map.set(aid, { id: o.id, orderNumber: o.orderNumber });
+        map.set(aid, { id: o.id, orderNumber: o.orderNumber, itemName: null });
       }
     }
   }
@@ -41,6 +47,7 @@ async function loadOrderRefsByAppointmentId(
       map.set(item.appointmentId, {
         id: item.order.id,
         orderNumber: item.order.orderNumber,
+        itemName: item.name,
       });
     }
   }
@@ -60,6 +67,7 @@ function mapGeneratedRow(
       scheduledAt: Date | null;
       createdAt: Date;
       consultationType: string;
+      service: { name: string } | null;
     };
     doctor: { fullName: string };
   },
@@ -84,6 +92,11 @@ function mapGeneratedRow(
     orderNumber: formatOrderRef(d.appointmentId, orderId),
     consultationType: d.appointment.consultationType,
     consultationTypeLabel: formatConsultationTypeLabel(d.appointment.consultationType),
+    consultationName: resolveConsultationName(
+      d.appointment.service?.name,
+      orderId?.itemName,
+      d.appointment.consultationType,
+    ),
     uploadedBy: d.doctor.fullName,
     pdfUrl: `/api/doctor/documents/generated/${d.id}/pdf`,
   };
@@ -122,6 +135,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
             createdAt: true,
             consultationType: true,
             symptoms: true,
+            service: { select: { name: true } },
           },
         },
       },
@@ -142,6 +156,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
             scheduledAt: true,
             createdAt: true,
             consultationType: true,
+            service: { select: { name: true } },
           },
         },
         doctor: { select: { fullName: true } },
@@ -161,6 +176,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
             scheduledAt: true,
             createdAt: true,
             consultationType: true,
+            service: { select: { name: true } },
           },
         },
         doctor: { select: { fullName: true } },
@@ -179,6 +195,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
             scheduledAt: true,
             createdAt: true,
             consultationType: true,
+            service: { select: { name: true } },
           },
         },
         doctor: { select: { fullName: true } },
@@ -224,6 +241,11 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
         orderNumber: formatOrderRef(c.appointmentId, orderId),
         consultationType: c.appointment.consultationType,
         consultationTypeLabel: formatConsultationTypeLabel(c.appointment.consultationType),
+        consultationName: resolveConsultationName(
+          c.appointment.service?.name,
+          orderId?.itemName,
+          c.appointment.consultationType,
+        ),
       };
     });
 
@@ -243,6 +265,11 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
         content: decryptPhi(n.content) ?? n.content,
         consultationType: n.consultationType,
         consultationTypeLabel: formatConsultationTypeLabel(
+          n.consultationType ?? n.appointment.consultationType,
+        ),
+        consultationName: resolveConsultationName(
+          n.appointment.service?.name,
+          orderId?.itemName,
           n.consultationType ?? n.appointment.consultationType,
         ),
         createdByName: n.createdByName,
@@ -289,6 +316,11 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
         orderNumber: formatOrderRef(u.appointmentId, orderId),
         consultationType: u.appointment.consultationType,
         consultationTypeLabel: formatConsultationTypeLabel(u.appointment.consultationType),
+        consultationName: resolveConsultationName(
+          u.appointment.service?.name,
+          orderId?.itemName,
+          u.appointment.consultationType,
+        ),
         uploadedBy: u.doctor.fullName,
         viewUrl: `/api/doctor/documents/${u.id}/download`,
       };
