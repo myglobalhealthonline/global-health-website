@@ -29,6 +29,23 @@ type Target = {
 
 const TARGETS: Target[] = [
   {
+    // 2026-07-24 re-audit: IE/EN row is 167 chars, truncates live at 155 as
+    // "...languages. Global…" — trimmed "consultation" + kept the brand close.
+    countryCode: "ie",
+    locale: "EN",
+    after:
+      "IMC-registered GPs available today — same-day appointments from €29. Sick certs, prescriptions, specialist referrals, 11 languages. Global Health Ireland.",
+  },
+  {
+    // 2026-07-24 re-audit: BR/PT row is 170 chars, truncates live at 155 as
+    // "...Consultas no…" — same trim style as the pt/PT row (Brazilian
+    // "registrado"/"encaminhamentos" wording kept).
+    countryCode: "br",
+    locale: "PT",
+    after:
+      "Consulte hoje um médico registrado por videochamada — clínica geral, atestados médicos, encaminhamentos para especialistas. Mesmo dia no Brasil.",
+  },
+  {
     countryCode: "pt",
     locale: "PT",
     after:

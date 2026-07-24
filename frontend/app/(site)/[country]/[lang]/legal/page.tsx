@@ -12,6 +12,8 @@ import {
 } from "@/lib/content/get-country-legal";
 import { SITE_NAME } from "@/lib/constants";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import type { CommonLocale, LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
@@ -242,6 +244,13 @@ export default async function CountryLegalIndexPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", url: "/" },
+          { name: config.name, url: `/${slug}/${lang}` },
+          { name: `${t.heroTitle} ${t.heroAccent}`.trim(), url: `/${slug}/${lang}/legal` },
+        ])}
+      />
       <GH2CompactHero
         eyebrow={t.heroEyebrow.replace("{country}", config.name)}
         title={t.heroTitle}
