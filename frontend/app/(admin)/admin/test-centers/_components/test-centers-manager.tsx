@@ -76,6 +76,22 @@ function parsePage(raw: string | undefined): number {
   return Number.isInteger(n) && n >= 1 ? n : 1;
 }
 
+/** Where to send the browser after a mutation — the view the form came from
+ *  (its hidden `returnTo`), with a flash message appended. Module-scoped so the
+ *  inline server actions never close over it: Next.js serializes each action's
+ *  captured closure, and a captured *function* throws "Functions cannot be
+ *  passed directly to Client Components". `base` is the string fallback. */
+function backTo(
+  base: string,
+  formData: FormData,
+  key: "success" | "error",
+  message: string,
+): string {
+  const target = String(formData.get("returnTo") ?? "").trim() || base;
+  const sep = target.includes("?") ? "&" : "?";
+  return `${target}${sep}${key}=${encodeURIComponent(message)}`;
+}
+
 /** Prev/next bar for a server-paginated table. Collapses to a row count when
  *  everything fits on one page. */
 function Pager({
@@ -306,14 +322,6 @@ export async function TestCentersManager({
 
   // ─── Server actions ────────────────────────────────────────────────────
 
-  /** Where to send the browser after a mutation — the view the form came from,
-   *  with a flash message appended. */
-  function backTo(formData: FormData, key: "success" | "error", message: string): string {
-    const target = String(formData.get("returnTo") ?? "").trim() || base;
-    const sep = target.includes("?") ? "&" : "?";
-    return `${target}${sep}${key}=${encodeURIComponent(message)}`;
-  }
-
   async function saveCenterAction(formData: FormData) {
     "use server";
     await requireAdminAction();
@@ -321,7 +329,7 @@ export async function TestCentersManager({
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
     if (!name || !slug) {
-      redirect(backTo(formData, "error", "Name and slug are required"));
+      redirect(backTo(base, formData, "error", "Name and slug are required"));
     }
     const body = {
       name,
@@ -338,10 +346,10 @@ export async function TestCentersManager({
       ? await updateAdminTestCenter(centerId, body)
       : await createAdminTestCenter({ ...body, countryId });
     if (!result.ok) {
-      redirect(backTo(formData, "error", result.message));
+      redirect(backTo(base, formData, "error", result.message));
     }
     revalidatePath(base);
-    redirect(backTo(formData, "success", "Test center saved"));
+    redirect(backTo(base, formData, "success", "Test center saved"));
   }
 
   async function deleteCenterAction(formData: FormData) {
@@ -351,11 +359,11 @@ export async function TestCentersManager({
     if (centerId) {
       const result = await deleteAdminTestCenter(centerId);
       if (!result.ok) {
-        redirect(backTo(formData, "error", result.message));
+        redirect(backTo(base, formData, "error", result.message));
       }
     }
     revalidatePath(base);
-    redirect(backTo(formData, "success", "Test center deactivated"));
+    redirect(backTo(base, formData, "success", "Test center deactivated"));
   }
 
   async function saveExamTypeAction(formData: FormData) {
@@ -365,7 +373,7 @@ export async function TestCentersManager({
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
     if (!name || !slug) {
-      redirect(backTo(formData, "error", "Exam name and slug are required"));
+      redirect(backTo(base, formData, "error", "Exam name and slug are required"));
     }
     const body = {
       // Blank clears the reference; the API validates the GH1-0001 shape.
@@ -381,10 +389,10 @@ export async function TestCentersManager({
       ? await updateAdminExamType(typeId, body)
       : await createAdminExamType(body);
     if (!result.ok) {
-      redirect(backTo(formData, "error", result.message));
+      redirect(backTo(base, formData, "error", result.message));
     }
     revalidatePath(base);
-    redirect(backTo(formData, "success", "Exam type saved"));
+    redirect(backTo(base, formData, "success", "Exam type saved"));
   }
 
   async function deleteExamTypeAction(formData: FormData) {
@@ -394,11 +402,11 @@ export async function TestCentersManager({
     if (typeId) {
       const result = await deleteAdminExamType(typeId);
       if (!result.ok) {
-        redirect(backTo(formData, "error", result.message));
+        redirect(backTo(base, formData, "error", result.message));
       }
     }
     revalidatePath(base);
-    redirect(backTo(formData, "success", "Exam type deactivated"));
+    redirect(backTo(base, formData, "success", "Exam type deactivated"));
   }
 
   // Add or update an offering. markupMode drives how markupValue is parsed:
@@ -421,10 +429,10 @@ export async function TestCentersManager({
     const turnaroundDays = turnaroundRaw === "" ? null : Number(turnaroundRaw);
 
     if (!offeringId && !examTypeId) {
-      redirect(backTo(formData, "error", "Pick an exam to add"));
+      redirect(backTo(base, formData, "error", "Pick an exam to add"));
     }
     if (turnaroundDays !== null && !Number.isInteger(turnaroundDays)) {
-      redirect(backTo(formData, "error", "Turnaround must be a whole number of days"));
+      redirect(backTo(base, formData, "error", "Turnaround must be a whole number of days"));
     }
 
     const body = {
@@ -439,10 +447,10 @@ export async function TestCentersManager({
       ? await updateAdminTestCenterExam(centerId, offeringId, body)
       : await createAdminTestCenterExam(centerId, { ...body, examTypeId });
     if (!result.ok) {
-      redirect(backTo(formData, "error", result.message));
+      redirect(backTo(base, formData, "error", result.message));
     }
     revalidatePath(base);
-    redirect(backTo(formData, "success", "Exam pricing saved"));
+    redirect(backTo(base, formData, "success", "Exam pricing saved"));
   }
 
   async function deleteOfferingAction(formData: FormData) {
@@ -453,11 +461,11 @@ export async function TestCentersManager({
     if (centerId && offeringId) {
       const result = await deleteAdminTestCenterExam(centerId, offeringId);
       if (!result.ok) {
-        redirect(backTo(formData, "error", result.message));
+        redirect(backTo(base, formData, "error", result.message));
       }
     }
     revalidatePath(base);
-    redirect(backTo(formData, "success", "Exam removed"));
+    redirect(backTo(base, formData, "success", "Exam removed"));
   }
 
   // ─── Filter-bar params ─────────────────────────────────────────────────
