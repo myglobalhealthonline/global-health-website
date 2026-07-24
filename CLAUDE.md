@@ -30,6 +30,18 @@ fallback from one source. See `docs/responsive-audit/HANDOFF.md` for the full
 migration history and `shared/RESPONSIVE_DESIGN_SYSTEM_PLAN.md` for the rules
 (z-token scale, height-axis tiers, theme fidelity).
 
+## Agent workflow rules
+
+- Subagent gating: mechanical fix → Sonnet agent directly. Unknown feasibility or
+  architecture change → spawn an INVESTIGATION-ONLY agent first (report, no code
+  changes), wait for user approval before any implementation agent.
+- Status recaps ("what's left"): full list once per session; afterwards deltas only.
+- End multi-step tasks with a proof line (hashes, tsc/test output), not a question.
+- Next 16: the middleware convention file is `proxy.ts`, NOT `middleware.ts`.
+  Check framework conventions before adding framework-level files.
+- Heavy skills (full seo-audit crawl etc.): invoke only for genuinely full runs.
+  Narrow verification/fix tasks get a plain instruction instead.
+
 ## Dependency overrides
 
 `pnpm.overrides` are NOT inherited by the deployed services (each builds

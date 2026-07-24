@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { jwtVerify, importSPKI, type JWTPayload } from "jose";
 import { getRequestContext } from "@/lib/routing/get-request-context";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
+import { PROD_SITE_URL } from "@/lib/seo/site-url";
 
 /**
  * Frontend edge proxy.
@@ -27,6 +28,14 @@ import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
  *      headers so downstream RSCs can read locale context.
  */
 const PUBLIC_FILE = /\.(.*)$/;
+
+// Railway keeps its auto-generated `*.up.railway.app` domain publicly reachable
+// even after a custom domain is attached, and site-url.ts self-canonicalizes to
+// whatever host NEXT_PUBLIC_SITE_URL resolves to — so that domain is a fully
+// indexable duplicate of the whole site unless we say otherwise. noindex it
+// rather than redirect: a hard redirect would also hit legitimate non-prod
+// Railway environments (staging clones) that share the same domain suffix.
+const CANONICAL_HOST = new URL(PROD_SITE_URL).host;
 
 // Content-Security-Policy (S-010 — see SECURITY_AUDIT2.md, AUDIT2 workstream W6).
 //
@@ -351,6 +360,11 @@ export async function proxy(request: NextRequest) {
     },
   });
   response.headers.set("Content-Security-Policy", csp);
+
+  const host = request.headers.get("host") ?? "";
+  if (host !== CANONICAL_HOST && host.endsWith(".up.railway.app")) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+  }
 
   // Persist the URL-carried locale so locale-less shared pages (/about,
   // /blog, /contact, /faq) keep the language the visitor was browsing in.
