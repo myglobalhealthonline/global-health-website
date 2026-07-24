@@ -17,6 +17,7 @@ import { dialCodeForCountry } from "@/lib/phone/dial-codes";
 import { getPublicBookingRequirements } from "@/lib/content/get-public-countries";
 import {
   hasErrors,
+  parseDiscountPercent,
   validateManualBooking,
 } from "@/lib/admin/manual-booking-validation";
 
@@ -229,6 +230,15 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       );
     }
 
+    // Optional discount — a malformed value must stop the booking rather than
+    // silently fall through to the full price.
+    const discount = parseDiscountPercent(readOpt("discountPercent"));
+    if (discount.error) {
+      redirect(
+        `/admin/appointments/new?countryCode=${encodeURIComponent(countryCode ?? "")}&error=${encodeURIComponent(discount.error)}`,
+      );
+    }
+
     const result = await postAdminManualBooking({
       patient: {
         email: readStr("email"),
@@ -259,6 +269,9 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       // doctor is in the insurer's network — never trusted from the form.
       insuranceCompanyId: readOpt("insuranceCompanyId"),
       insurancePolicyNumber: readOpt("insurancePolicyNumber"),
+      // Applied by the backend to the price it resolves (base / peak /
+      // insurance); 100 comps the booking and skips the payment link.
+      discountPercent: discount.value,
     });
 
     if (!result.ok) {
@@ -279,6 +292,10 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         setPasswordUrl: data.setPasswordUrl,
         paymentUrl: data.paymentUrl ?? "",
         emailQueued: data.emailQueued ? "1" : "0",
+        // 100% discount: the booking is already paid, so the banner must not
+        // read the missing payment link as a Stripe failure.
+        free: data.free ? "1" : "0",
+        discountPercent: String(data.discountPercent ?? 0),
       }),
       {
         httpOnly: true,

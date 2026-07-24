@@ -39,6 +39,10 @@ type AdminOrder = {
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
+  /** Admin discount applied at manual-booking time. The totals above are
+   *  already net of it — these say how much was taken off and at what rate. */
+  discountPercent?: number | null;
+  discountCents?: number | null;
   status: string;
   paymentStatus: string;
   stripeSessionId: string | null;
@@ -275,6 +279,12 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
               <dl className="mt-4 space-y-2 border-t border-[var(--color-border)] pt-4 text-sm">
                 <Row label="Subtotal" value={formatPrice(order.subtotalCents, order.currencyCode)} />
                 <Row label="Shipping" value={formatPrice(order.shippingCents, order.currencyCode)} />
+                {order.discountCents ? (
+                  <Row
+                    label={`Admin discount (${order.discountPercent ?? 0}%)`}
+                    value={`−${formatPrice(order.discountCents, order.currencyCode)} — already applied above`}
+                  />
+                ) : null}
                 <Row label="Total" value={formatPrice(order.totalCents, order.currencyCode)} bold />
               </dl>
             </div>

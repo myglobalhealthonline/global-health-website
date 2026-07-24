@@ -165,6 +165,19 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     bookingNotes: d.appointmentDetail.bookingNotes,
     openPatientChart: d.appointmentDetail.openPatientChart,
     editHealthDataHint: d.appointmentDetail.editHealthDataHint,
+    // Portugal-only NIF / Cartão de Cidadão / pharmacy rows. The labels stay
+    // in Portuguese-market terms in every locale — they name PT documents,
+    // not generic concepts.
+    ptFields: {
+      nif: d.appointmentDetail.ptNif,
+      idCard: d.appointmentDetail.ptIdCard,
+      pharmacy: d.appointmentDetail.ptPharmacy,
+      add: d.appointmentDetail.ptFieldAdd,
+      edit: d.appointmentDetail.ptFieldEdit,
+      save: d.appointmentDetail.ptFieldSave,
+      cancel: d.appointmentDetail.ptFieldCancel,
+      saveFailed: d.appointmentDetail.ptFieldSaveFailed,
+    },
   };
   // Calm mode — DESIGN.md §6.3/strategy Doctor plan: while a consultation
   // is actively in progress (scheduled time has passed, not yet wrapped

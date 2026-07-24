@@ -1,7 +1,18 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { AlertTriangle, CalendarDays, CheckCircle2, SearchX, Video } from "lucide-react";
-import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
+import {
+  AlertTriangle,
+  CalendarDays,
+  CalendarPlus,
+  CheckCircle2,
+  SearchX,
+  Video,
+} from "lucide-react";
+import {
+  fetchDoctorAppointments,
+  fetchDoctorBookingOptions,
+  type DoctorAppointment,
+} from "@/lib/api/doctor-api";
 import {
   doctorAppointmentView,
   doctorAppointmentViewTone,
@@ -134,21 +145,29 @@ export default async function DoctorAppointmentsPage({
     return qs ? `/doctor/appointments?${qs}` : "/doctor/appointments";
   };
 
-  const result = await fetchDoctorAppointments({
-    page: String(page),
-    pageSize: "25",
-    ...(view ? { view } : {}),
-    ...(search ? { search } : {}),
-    ...(from ? { from } : {}),
-    ...(to ? { to } : {}),
-    ...(consultationType ? { consultationType } : {}),
-    ...(openOnly ? { openOnly: "true" } : {}),
-    ...(finalized ? { finalized } : {}),
-    ...(open ? { open: "true" } : {}),
-    ...(notFinalized ? { notFinalized: "true" } : {}),
-    notBefore: QUEUE_START_DATE,
-    includeSummary: "true",
-  });
+  // Booking permission decides whether the "New booking" action renders.
+  // Fetched alongside the queue so the header doesn't wait on a second
+  // round-trip; the backend re-checks the flag when the booking is posted.
+  const [result, bookingOptions] = await Promise.all([
+    fetchDoctorAppointments({
+      page: String(page),
+      pageSize: "25",
+      ...(view ? { view } : {}),
+      ...(search ? { search } : {}),
+      ...(from ? { from } : {}),
+      ...(to ? { to } : {}),
+      ...(consultationType ? { consultationType } : {}),
+      ...(openOnly ? { openOnly: "true" } : {}),
+      ...(finalized ? { finalized } : {}),
+      ...(open ? { open: "true" } : {}),
+      ...(notFinalized ? { notFinalized: "true" } : {}),
+      notBefore: QUEUE_START_DATE,
+      includeSummary: "true",
+    }),
+    fetchDoctorBookingOptions(),
+  ]);
+  const canBookManually =
+    bookingOptions.ok && bookingOptions.data.canCreateManualAppointments;
   const appointments = result.ok ? result.data.items : [];
   // Backend returns two buckets (upcoming asc, then past/concluded desc) in one
   // flat list. We further split upcoming rows by calendar day (Today /
@@ -181,9 +200,19 @@ export default async function DoctorAppointmentsPage({
         description={d.appointments.description}
         icon={<CalendarDays aria-hidden />}
         actions={
-          <Link href="/doctor/calendar" className="gh-btn gh-btn-soft text-sm">
-            {d.appointments.calendarView}
-          </Link>
+          <span className="inline-flex flex-wrap items-center gap-2">
+            {/* Only rendered for doctors an admin has granted manual entry.
+                The page behind it re-checks, and so does the POST. */}
+            {canBookManually ? (
+              <Link href="/doctor/appointments/new" className="gh-btn gh-btn-primary text-sm">
+                <CalendarPlus className="size-3.5" aria-hidden />{" "}
+                {d.manualBooking.newBooking}
+              </Link>
+            ) : null}
+            <Link href="/doctor/calendar" className="gh-btn gh-btn-soft text-sm">
+              {d.appointments.calendarView}
+            </Link>
+          </span>
         }
       />
 

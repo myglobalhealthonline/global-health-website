@@ -144,6 +144,9 @@ export function ManualBookingForm({
   // service, because the insurer decides which doctors are bookable.
   const [insuranceCompanyId, setInsuranceCompanyId] = useState("");
   const [insurancePolicyNumber, setInsurancePolicyNumber] = useState("");
+  // Admin discretionary discount, whole percent. Kept as a string so the field
+  // can be empty (= no discount) rather than forcing a 0.
+  const [discountPercent, setDiscountPercent] = useState("");
   const [consultationMode, setConsultationMode] = useState<"ONLINE" | "IN_PERSON">(
     "ONLINE",
   );
@@ -361,6 +364,42 @@ export function ManualBookingForm({
 
   const combinedPhone = combinePhone(dialCode, phoneNational);
 
+  // ── Discount + live price preview ────────────────────────────────────────
+  // The backend re-derives the price itself (base → peak → insurance) and
+  // applies the discount to that; this preview mirrors the same order so the
+  // admin can quote the patient a figure before submitting.
+  const discountPct = useMemo(() => {
+    const raw = discountPercent.trim();
+    if (raw === "") return 0;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : Number.NaN;
+  }, [discountPercent]);
+  const discountError =
+    Number.isNaN(discountPct) ||
+    !Number.isInteger(discountPct) ||
+    discountPct < 0 ||
+    discountPct > 100
+      ? "Discount must be a whole number between 0 and 100."
+      : null;
+
+  const selectedSlot = useMemo(
+    () => slots.find((s) => s.id === selectedSlotId) ?? null,
+    [slots, selectedSlotId],
+  );
+  // Insurance price beats the slot's peak price, which beats the service base —
+  // the same precedence the server applies.
+  const grossPriceCents =
+    selectedInsurance?.insurancePriceCents ??
+    selectedSlot?.priceCents ??
+    selectedService?.basePriceCents ??
+    null;
+  const priceCurrency =
+    selectedService?.currencyCode ?? selectedSlot?.currencyCode ?? "EUR";
+  const netPriceCents =
+    grossPriceCents == null || discountError || discountPct <= 0
+      ? grossPriceCents
+      : grossPriceCents - Math.round((grossPriceCents * discountPct) / 100);
+
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     const result = validateManualBooking({
       fullName,
@@ -373,7 +412,7 @@ export function ManualBookingForm({
       clinicId: consultationMode === "IN_PERSON" ? clinicId : "",
       locationAddress: consultationMode === "IN_PERSON" ? locationAddress : "",
     });
-    if (hasErrors(result)) {
+    if (hasErrors(result) || discountError) {
       e.preventDefault(); // block — no booking, no account, no email
       setErrors(result);
       // Surface the summary so the admin sees what's missing.
@@ -386,7 +425,7 @@ export function ManualBookingForm({
     // Validation passed — let the native submit invoke the server action.
   }
 
-  const errorList = Object.values(errors);
+  const errorList = [...Object.values(errors), ...(discountError ? [discountError] : [])];
 
   return (
     <form action={action} onSubmit={onSubmit} className="gh-admin-manual-booking-form" noValidate>
@@ -669,6 +708,50 @@ export function ManualBookingForm({
               </span>
             </label>
           ) : null}
+
+          {/* Discretionary discount. Applied server-side to whatever price the
+            * booking resolves to (base, peak, or insurance), so the percentage
+            * always reads against what the patient would otherwise pay. */}
+          <label className="flex flex-col gap-1.5">
+            <span className="gh-field-label">Discount %</span>
+            <input
+              type="number"
+              name="discountPercent"
+              className="gh-input"
+              inputMode="numeric"
+              min={0}
+              max={100}
+              step={1}
+              placeholder="0"
+              value={discountPercent}
+              onChange={(e) => setDiscountPercent(e.target.value)}
+              aria-invalid={Boolean(discountError)}
+            />
+            {discountError ? (
+              <FieldError msg={discountError} />
+            ) : grossPriceCents != null && netPriceCents != null && discountPct > 0 ? (
+              <span className="text-portal-meta text-[var(--color-text-body)]">
+                {netPriceCents === 0 ? (
+                  <>
+                    Comped in full — the booking is created already paid, with no
+                    payment link.
+                  </>
+                ) : (
+                  <>
+                    Charges {(netPriceCents / 100).toFixed(2)} {priceCurrency} instead of{" "}
+                    {(grossPriceCents / 100).toFixed(2)} {priceCurrency}.
+                  </>
+                )}
+              </span>
+            ) : (
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                Optional — leave blank to charge the full price.
+                {grossPriceCents != null
+                  ? ` Currently ${(grossPriceCents / 100).toFixed(2)} ${priceCurrency}.`
+                  : ""}
+              </span>
+            )}
+          </label>
 
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Doctor *</span>

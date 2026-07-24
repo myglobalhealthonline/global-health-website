@@ -20,9 +20,11 @@ import {
 import { normalizeDbError } from "../shared/db-errors.js";
 import {
   holdConsecutiveSlots,
+  releaseSlotsToBaseGrid,
   resolveDoctorTimeZone,
   SlotAlreadyTakenError,
 } from "../doctor-availability/doctor-availability.service.js";
+import { completeOrderPaymentFromCheckoutSession } from "../orders/complete-order-payment.service.js";
 import {
   computeSlotPrice,
   getServicePeakConfig,
@@ -60,6 +62,23 @@ export class ServicePriceMissingError extends Error {
   constructor() {
     super("Service has no price configured. Set a base price before creating manual bookings.");
     this.name = "ServicePriceMissingError";
+  }
+}
+
+/**
+ * The discount left a total that is above zero but below Stripe's minimum
+ * charge for the currency, so the Checkout Session would be created with an
+ * amount Stripe refuses — a booking with a dead payment link. Either discount
+ * less, or go all the way to 100% (which skips Stripe and comps the booking).
+ */
+export class DiscountTooLargeError extends Error {
+  constructor(minimumCents: number, currencyCode: string) {
+    super(
+      `That discount leaves less than the minimum chargeable amount (${(
+        minimumCents / 100
+      ).toFixed(2)} ${currencyCode}). Lower the discount, or use 100% to comp the booking entirely.`,
+    );
+    this.name = "DiscountTooLargeError";
   }
 }
 
@@ -198,6 +217,12 @@ export type CreateManualBookingInput = {
    *  than the consultation it continues. Wins over base, peak, and insurance
    *  pricing. Must be > 0. */
   amountCentsOverride?: number | null;
+  /** Whole-number admin discount 0..100, applied LAST — on top of whatever the
+   *  base → peak → insurance → override chain resolved — so "20% off" always
+   *  means 20% off what the patient would otherwise have been charged. 100
+   *  comps the booking: no Stripe session, the order is completed through the
+   *  same free-order path a fully-credit cart uses. Null/0 = no discount. */
+  discountPercent?: number | null;
   /** Override `Appointment.consultationType`, which otherwise snapshots the
    *  service name. The follow-up flow passes `"follow-up"` so the doctor /
    *  admin list filters and the reports type breakdown classify it correctly. */
@@ -229,7 +254,49 @@ export type CreateManualBookingResult = {
   tempPassword: string | null;
   setPasswordUrl: string;
   emailQueued: boolean;
+  /** What the booking was actually charged, after any admin discount, plus the
+   *  discount itself for the admin confirmation banner. `free` is true when a
+   *  100% discount comped it — there is no payment link to chase. */
+  amountCents: number;
+  discountPercent: number;
+  discountCents: number;
+  free: boolean;
 };
+
+/**
+ * Stripe rejects a Checkout line below its published per-currency minimum, so a
+ * discount landing between zero and this floor would mint a booking whose
+ * payment link is dead on arrival. Minor units, keyed by ISO currency; the
+ * fallback covers any currency added to a country before this map is updated.
+ */
+const STRIPE_MIN_CHARGE_CENTS: Record<string, number> = {
+  EUR: 50,
+  GBP: 30,
+  USD: 50,
+  CHF: 50,
+  CZK: 1500,
+  PLN: 200,
+  RON: 200,
+  HUF: 17_500,
+  SEK: 300,
+  DKK: 250,
+  NOK: 300,
+  BGN: 100,
+};
+
+function minimumChargeCents(currencyCode: string): number {
+  return STRIPE_MIN_CHARGE_CENTS[currencyCode.trim().toUpperCase()] ?? 50;
+}
+
+/** Clamp to a whole 0..100. Anything unusable (NaN, negative, > 100) becomes
+ *  "no discount" rather than a surprise price — the route's Zod schema is the
+ *  real guard; this keeps direct service callers safe. */
+function normalizeDiscountPercent(raw: number | null | undefined): number {
+  if (raw == null || !Number.isFinite(raw)) return 0;
+  const pct = Math.round(raw);
+  if (pct <= 0 || pct > 100) return 0;
+  return pct;
+}
 
 /** 12 bytes → 16-char base64url. Plenty of entropy + short enough to
  *  copy/paste by hand if the patient asks for it on the phone. */
@@ -428,6 +495,29 @@ export async function createManualBooking(
     amountCents = insurancePriceCents;
   }
 
+  // Admin discretionary discount — applied LAST, on the resolved price, so the
+  // percentage always reads against what the patient would otherwise pay.
+  // The slot is already HELD at this point, so a rejected discount has to hand
+  // it back before throwing or the time is stranded until the HELD sweep runs.
+  const discountPercent = normalizeDiscountPercent(input.discountPercent);
+  const grossAmountCents = amountCents;
+  const discountCents =
+    discountPercent > 0 ? Math.round((grossAmountCents * discountPercent) / 100) : 0;
+  amountCents = grossAmountCents - discountCents;
+  const currencyCode = service.currencyCode ?? "EUR";
+  const minChargeCents = minimumChargeCents(currencyCode);
+  // Only the discount is policed here — a service priced below the minimum on
+  // its own is a pricing problem, not this booking's, and rejecting it would
+  // blame the wrong field.
+  if (discountCents > 0 && amountCents > 0 && amountCents < minChargeCents) {
+    await releaseSlotsToBaseGrid([input.timeSlotId]).catch(() => {});
+    throw new DiscountTooLargeError(minChargeCents, currencyCode);
+  }
+  // Nothing left to charge (100% off, or an insurer covering the service in
+  // full): skip Stripe and complete the order through the same path a
+  // fully-credit cart uses, rather than minting a €0 session Stripe rejects.
+  const isFree = amountCents === 0;
+
   // Generate the temp credential up-front so a brand-new User is
   // created with the real bcrypt hash on the first write — no
   // throwaway placeholder, no double-hash.
@@ -566,9 +656,13 @@ export async function createManualBooking(
       fullName,
       phone: input.patient.phone?.trim() || null,
       countryCode: input.countryCode.toLowerCase(),
-      currencyCode: service.currencyCode ?? "EUR",
+      currencyCode,
       subtotalCents: amountCents,
       totalCents: amountCents,
+      // Audit only — the totals and the line price above are ALREADY net of
+      // the discount (same convention as OrderItem.corporateDiscountCents).
+      discountPercent: discountPercent > 0 ? discountPercent : null,
+      discountCents: discountCents > 0 ? discountCents : null,
       // An admin doing a manual booking IS the verifier — they take the card
       // details directly from the patient — so the order is recorded as already
       // VERIFIED and goes straight to a payment link, rather than parking in
@@ -613,9 +707,56 @@ export async function createManualBooking(
   // Stripe is best-effort. Failures log via the request's pino logger when
   // available and surface to the admin UI via null `paymentUrl` — admin then
   // has the recovery banner to act on by hand.
+  // Portal access (set-password URL + temp password) is persisted BEFORE the
+  // payment branch: a comped booking completes inline below and immediately
+  // queues the paid-order automations, which read these columns off the order.
+  let portalAccessSaved = false;
+  try {
+    await persistOrderPortalAccess(order.id, {
+      setPasswordUrl,
+      tempPassword: created ? tempPassword : null,
+    });
+    portalAccessSaved = true;
+  } catch (err) {
+    input.request?.log.warn(
+      { err, appointmentId, orderId: order.id },
+      "[manual-booking] Portal access persist failed",
+    );
+  }
+
   let paymentUrl: string | null = null;
   let paymentSessionId: string | null = null;
-  if (isStripeConfigured(input.countryCode)) {
+  if (isFree) {
+    // Comped booking (100% off, or an insurer covering the service in full).
+    // There is nothing to charge, so run the same completion the €0 cart path
+    // uses: marks the order PAID, flips the appointment + its HELD slot, and
+    // queues the paid-order automations (confirmation, meeting link, invoice).
+    try {
+      await completeOrderPaymentFromCheckoutSession(
+        order.id,
+        {
+          id: `free_${order.id}`,
+          payment_intent: null,
+          invoice: null,
+          client_reference_id: order.id,
+          metadata: {
+            kind: "order",
+            orderId: order.id,
+            appointmentId,
+            countryCode: input.countryCode,
+            source: input.origin?.source ?? "admin_manual",
+          },
+        },
+        { stripeEventId: `free_${order.id}`, eventType: "free_order" },
+        input.request?.log,
+      );
+    } catch (err) {
+      input.request?.log.error(
+        { err, appointmentId, orderId: order.id },
+        "[manual-booking] Free-booking completion failed — order left unpaid",
+      );
+    }
+  } else if (isStripeConfigured(input.countryCode)) {
     try {
       const stripe = getStripeClient(input.countryCode);
       const baseUrl =
@@ -678,35 +819,42 @@ export async function createManualBooking(
   }
 
   let emailQueued = false;
-  try {
-    await persistOrderPortalAccess(order.id, {
-      setPasswordUrl,
-      tempPassword: created ? tempPassword : null,
-    });
-    await startPrePaymentFlow(order.id, paymentUrl, {
-      portal: {
-        setPasswordUrl,
-        tempPassword: created ? tempPassword : null,
-      },
-    });
-    emailQueued = true;
-  } catch (err) {
-    input.request?.log.warn(
-      { err, appointmentId, orderId: order.id },
-      "[manual-booking] Pre-payment automation failed",
-    );
+  if (isFree) {
+    // Nothing to chase: the completion above already queued the paid-order
+    // automations, so the pre-payment flow (payment link, reminders, and the
+    // cancel sweep that voids unpaid bookings) must NOT start on top of them.
+    emailQueued = portalAccessSaved;
+  } else {
+    try {
+      await startPrePaymentFlow(order.id, paymentUrl, {
+        portal: {
+          setPasswordUrl,
+          tempPassword: created ? tempPassword : null,
+        },
+      });
+      emailQueued = true;
+    } catch (err) {
+      input.request?.log.warn(
+        { err, appointmentId, orderId: order.id },
+        "[manual-booking] Pre-payment automation failed",
+      );
+    }
   }
 
   // Issue the unpaid invoice document for this manual/AI booking and email it to
   // the patient (skips Portugal / prefixless countries internally). Fire-and-
   // forget — an invoice/email failure must never roll back the booking. Its
   // existence is later how the payment path knows to transition it to a RECEIPT.
-  void createUnpaidInvoiceForOrder(order.id).catch((err) => {
-    input.request?.log.warn(
-      { err, orderId: order.id },
-      "[manual-booking] Unpaid invoice issue failed",
-    );
-  });
+  // A comped booking is already PAID, so its receipt comes from the paid-order
+  // path instead — issuing an unpaid invoice here would contradict it.
+  if (!isFree) {
+    void createUnpaidInvoiceForOrder(order.id).catch((err) => {
+      input.request?.log.warn(
+        { err, orderId: order.id },
+        "[manual-booking] Unpaid invoice issue failed",
+      );
+    });
+  }
 
   recordAudit({
     actorUserId: input.adminUserId ?? null,
@@ -727,6 +875,16 @@ export async function createManualBooking(
       consultationMode: input.consultationMode,
       orderId: order.id,
       stripeSessionId: paymentSessionId,
+      // Discount trail: who discounted, by how much, off what price.
+      ...(discountPercent > 0
+        ? {
+            discountPercent,
+            discountCents,
+            grossAmountCents,
+            chargedAmountCents: amountCents,
+            comped: isFree,
+          }
+        : {}),
     },
     request: input.request,
   }).catch(() => {});
@@ -740,5 +898,9 @@ export async function createManualBooking(
     tempPassword: created ? tempPassword : null,
     setPasswordUrl,
     emailQueued,
+    amountCents,
+    discountPercent,
+    discountCents,
+    free: isFree,
   };
 }

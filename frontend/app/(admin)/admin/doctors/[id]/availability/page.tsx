@@ -27,6 +27,7 @@ import { BASE_SLOT_MINUTES } from "@/lib/constants";
 import { dialCodeForCountry } from "@/lib/phone/dial-codes";
 import {
   hasErrors,
+  parseDiscountPercent,
   validateManualBooking,
 } from "@/lib/admin/manual-booking-validation";
 import { AvailabilityWeek } from "./_components/availability-week";
@@ -342,6 +343,11 @@ export default async function AdminDoctorAvailabilityPage({
       );
     }
 
+    // Optional discount — a malformed value stops the booking instead of
+    // silently charging the full price.
+    const discount = parseDiscountPercent(readOpt("discountPercent"));
+    if (discount.error) back(discount.error, false);
+
     const result = await postAdminManualBooking({
       patient: {
         email: readStr("email"),
@@ -358,13 +364,21 @@ export default async function AdminDoctorAvailabilityPage({
       locationAddress,
       notes: readOpt("notes"),
       countryCode: readStr("countryCode"),
+      discountPercent: discount.value,
     });
 
     if (!result.ok) {
       back(result.message, false);
     }
     revalidatePath(`/admin/doctors/${id}/availability`);
-    back("Appointment booked — reservation email sent.", true);
+    back(
+      result.ok && result.data.free
+        ? "Appointment booked and comped in full — recorded as paid."
+        : discount.value
+          ? `Appointment booked with a ${discount.value}% discount — reservation email sent.`
+          : "Appointment booked — reservation email sent.",
+      true,
+    );
   }
 
   return (

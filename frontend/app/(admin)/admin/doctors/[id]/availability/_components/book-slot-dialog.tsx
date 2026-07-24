@@ -7,6 +7,7 @@ import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { DIAL_OPTIONS, combinePhone, splitPhone } from "@/lib/phone/dial-codes";
 import {
   hasErrors,
+  parseDiscountPercent,
   validateManualBooking,
   type ManualBookingErrors,
 } from "@/lib/admin/manual-booking-validation";
@@ -86,11 +87,14 @@ export function BookSlotDialog({
   const [clinicId, setClinicId] = useState("");
   const [locationAddress, setLocationAddress] = useState("");
   const [notes, setNotes] = useState("");
+  // Optional admin discount, whole percent. Blank = charge the full price.
+  const [discountPercent, setDiscountPercent] = useState("");
 
   const [patientOptions, setPatientOptions] = useState<PatientOption[]>([]);
   const [lookupLoading, setLookupLoading] = useState(false);
   const [showPatientMenu, setShowPatientMenu] = useState(false);
   const [errors, setErrors] = useState<ManualBookingErrors>({});
+  const [discountError, setDiscountError] = useState<string | null>(null);
 
   // The parent remounts this component (via `key={slot.id}`) whenever a new
   // slot is clicked, so the useState defaults above are the reset — no
@@ -162,12 +166,15 @@ export function BookSlotDialog({
       clinicId: consultationMode === "IN_PERSON" ? clinicId : "",
       locationAddress: consultationMode === "IN_PERSON" ? locationAddress : "",
     });
-    if (hasErrors(result)) {
+    const discount = parseDiscountPercent(discountPercent);
+    if (hasErrors(result) || discount.error) {
       e.preventDefault();
       setErrors(result);
+      setDiscountError(discount.error);
       return;
     }
     setErrors({});
+    setDiscountError(null);
     // Native submit proceeds → server action creates the booking.
   }
 
@@ -354,6 +361,32 @@ export function BookSlotDialog({
               Blocks {duration} min ({Math.ceil(duration / 15)} × 15-min slot
               {Math.ceil(duration / 15) === 1 ? "" : "s"}).
             </span>
+          </label>
+
+          {/* Discretionary discount off whatever price the backend resolves for
+            * this service + slot. 100 comps the booking outright. */}
+          <label className="flex flex-col gap-1.5">
+            <span className="gh-field-label">Discount %</span>
+            <input
+              type="number"
+              name="discountPercent"
+              className="gh-input"
+              inputMode="numeric"
+              min={0}
+              max={100}
+              step={1}
+              placeholder="0"
+              value={discountPercent}
+              onChange={(e) => setDiscountPercent(e.target.value)}
+              aria-invalid={Boolean(discountError)}
+            />
+            {discountError ? (
+              <FieldError msg={discountError} />
+            ) : (
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                Optional. 100 = comped (booked as paid, no payment link).
+              </span>
+            )}
           </label>
 
           <label className="flex flex-col gap-1.5">

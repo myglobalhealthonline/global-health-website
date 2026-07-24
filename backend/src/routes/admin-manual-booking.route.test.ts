@@ -198,6 +198,35 @@ describe("admin manual booking route — auth + validation", () => {
     assert.equal(tooShort.success, false);
   });
 
+  it("schema accepts an omitted, null, or whole 0..100 discount", () => {
+    for (const discountPercent of [undefined, null, 0, 20, 100]) {
+      const ok = createManualAppointmentBodySchema.safeParse(
+        validPayload({ discountPercent }),
+      );
+      assert.equal(
+        ok.success,
+        true,
+        `expected discountPercent ${String(discountPercent)} to be accepted`,
+      );
+    }
+  });
+
+  it("schema rejects an out-of-range or fractional discount", () => {
+    // Over 100 would flip the price negative; below 0 would be a surcharge the
+    // admin never intended; fractional percents don't survive the cents maths
+    // cleanly, so they're rejected rather than silently rounded.
+    for (const discountPercent of [-1, 101, 12.5, "20"]) {
+      const bad = createManualAppointmentBodySchema.safeParse(
+        validPayload({ discountPercent }),
+      );
+      assert.equal(
+        bad.success,
+        false,
+        `expected discountPercent ${String(discountPercent)} to be rejected`,
+      );
+    }
+  });
+
   it("schema accepts valid international phone formats across markets", () => {
     for (const phone of [
       "+353 871234567", // Ireland

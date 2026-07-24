@@ -1133,6 +1133,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           subtotalCents: order.subtotalCents,
           shippingCents: order.shippingCents,
           totalCents: order.totalCents,
+          // Admin discount applied at manual-booking time. The totals above are
+          // already net of it; these are what was taken off, for the admin's
+          // "why is this cheaper than the list price" answer.
+          discountPercent: order.discountPercent,
+          discountCents: order.discountCents,
           email: order.email,
           fullName: order.fullName,
           phone: order.phone,
