@@ -134,9 +134,20 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
           consultationType: true,
           scheduledAt: true,
           meetingUrl: true,
+          countryCode: true,
           // Clinic zone for the snippet's wall clock. Pulled through the
-          // relation rather than via resolveDoctorTimeZone() per row, which
-          // would add a query per appointment to a loop of up to 200.
+          // relations rather than via resolveStaffTimeZone() per row, which
+          // would add queries per appointment to a loop of up to 200. The
+          // booked SERVICE's market wins over the doctor's own country — a
+          // doctor rostered in several markets reads each booking on the
+          // clock of the country it was booked in.
+          service: {
+            select: {
+              country: {
+                select: { bookingSetting: { select: { timezone: true } } },
+              },
+            },
+          },
           doctor: {
             select: {
               country: {
@@ -148,15 +159,32 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
         take: 200,
       });
 
+      // One lookup for the whole batch — covers free-text bookings that carry a
+      // countryCode but no Service row. Country codes are stored lowercase.
+      const countryZones = new Map<string, string>();
+      if (doctorWindowDue.length > 0) {
+        const countries = await prisma.country.findMany({
+          select: { code: true, bookingSetting: { select: { timezone: true } } },
+        });
+        for (const c of countries) {
+          const tz = c.bookingSetting?.timezone;
+          if (tz) countryZones.set(c.code.toLowerCase(), tz);
+        }
+      }
+
       let doctorNotified = 0;
       for (const a of doctorWindowDue) {
         if (!a.doctorId || !a.scheduledAt) continue;
         try {
+          const staffTz =
+            a.service?.country?.bookingSetting?.timezone ??
+            countryZones.get(a.countryCode?.toLowerCase() ?? "") ??
+            a.doctor?.country?.bookingSetting?.timezone;
           await notifyDoctor(a.doctorId, "APPOINTMENT_REMINDER", {
             appointmentId: a.id,
             snippet: `${a.fullName} · ${formatNotificationDateTime(
               a.scheduledAt,
-              a.doctor?.country?.bookingSetting?.timezone,
+              staffTz,
             )}${a.meetingUrl ? "" : " (missing meeting link)"}`,
           });
           await prisma.appointment.update({

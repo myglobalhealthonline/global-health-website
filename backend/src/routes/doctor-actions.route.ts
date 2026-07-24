@@ -2,10 +2,8 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import {
-  releaseAppointmentSlot,
-  resolveDoctorTimeZone,
-} from "../modules/doctor-availability/doctor-availability.service.js";
+import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
+import { resolveStaffTimeZone } from "../modules/automation/staff-timezone.js";
 import { formatNotificationDateTime } from "../modules/notifications/notification-datetime.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -176,6 +174,8 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             consultationMode: true,
             timeSlotId: true,
             fullName: true,
+            serviceId: true,
+            countryCode: true,
           },
         });
         if (!appt) {
@@ -302,8 +302,15 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             },
             request,
           }).catch(() => {});
+          // Admins read the slot on the BOOKED MARKET's clock — a doctor
+          // rostered in several countries reschedules against the service's
+          // country, not their own profile country.
           const clinicTz = updated.scheduledAt
-            ? await resolveDoctorTimeZone(auth.doctorId).catch(() => "UTC")
+            ? await resolveStaffTimeZone({
+                serviceId: appt.serviceId,
+                countryCode: appt.countryCode,
+                doctorId: auth.doctorId,
+              }).catch(() => "UTC")
             : "UTC";
           notifyAdmins("APPOINTMENT_RESCHEDULED", {
             appointmentId: updated.id,

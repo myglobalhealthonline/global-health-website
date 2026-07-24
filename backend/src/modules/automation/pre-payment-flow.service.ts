@@ -10,6 +10,7 @@ import { resolveOrderPaymentUrl, orderPayShortLink } from "../orders/order-payme
 import { sendAutomationEmail } from "./send-automation-notification.js";
 import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
 import { resolveDoctorContact } from "../../lib/whatsapp/resolve-doctor-contact.js";
+import { resolveStaffTimeZone } from "./staff-timezone.js";
 import { formatDoctorForPatientNotification } from "../../lib/doctor-name.js";
 import type { PhoneNormalizeHints } from "../../lib/whatsapp/normalize-phone.js";
 import { formatOrderDisplayId } from "./automation-catalog.js";
@@ -278,12 +279,28 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
     totalLabel: formatOrderTotal(order.totalCents, order.currencyCode),
   };
 
+  // Doctor + admin read the same booking on the BOOKED MARKET's clock, not the
+  // patient's — see resolveStaffTimeZone.
+  const staffTimeZone = await resolveStaffTimeZone({
+    serviceId: primary.serviceId,
+    countryCode: order.countryCode,
+    doctorId: primary.doctorId,
+  });
+  const staffCtx: PrePaymentMessageContext = {
+    ...ctx,
+    appointmentDate: appointmentStart
+      ? formatDeadline(appointmentStart, staffTimeZone, lang)
+      : pendingAppointmentDateLabel(lang),
+    deadline: formatDeadline(deadline, staffTimeZone, lang),
+  };
+
   return {
     order,
     primary,
     doctor,
     lang,
     ctx,
+    staffCtx,
     phoneHints: {
       orderCountryCode: order.countryCode,
       patientAddressCountryCode: primary.patientAddressCountryCode,
@@ -439,6 +456,7 @@ async function sendWhatsApp(
   });
 }
 
+/** `ctx` MUST be the staff-zone context — the doctor reads the booked market's clock. */
 async function notifyDoctorOnBooking(
   orderId: string,
   doctorId: string | null | undefined,
@@ -566,7 +584,7 @@ export async function startPrePaymentFlow(
 
   const loaded = await loadOrderContext(orderId, paymentUrl);
   if (!loaded) return;
-  const { order: o, primary, lang, ctx, phoneHints, portal } = loaded;
+  const { order: o, primary, lang, ctx, staffCtx, phoneHints, portal } = loaded;
   const baseKey = automationBaseKey(plan.flow);
   const stageKey = `${baseKey}_stage_1`;
 
@@ -574,7 +592,7 @@ export async function startPrePaymentFlow(
   // Manual bookings (portal options always provided) send reservation alerts to both.
   const isManualBooking = Boolean(opts?.portal);
   if (isManualBooking) {
-    await notifyDoctorOnBooking(orderId, primary.doctorId, ctx, lang);
+    await notifyDoctorOnBooking(orderId, primary.doctorId, staffCtx, lang);
     await sendWhatsApp(
       stageKey,
       orderId,
@@ -601,11 +619,11 @@ export async function startPrePaymentFlow(
   // Admin alert fires for EVERY booking, website self-service included — the
   // stage-1 patient/doctor skip above is a patient-facing rule, not a staff one.
   await sendAdminBookingAlert(orderId, baseKey, "booking_received", {
-    orderNumber: ctx.orderNumber,
-    appointmentDateTime: ctx.appointmentDate,
-    doctorName: ctx.doctorName,
-    serviceName: ctx.serviceName,
-    patientName: ctx.patientName,
+    orderNumber: staffCtx.orderNumber,
+    appointmentDateTime: staffCtx.appointmentDate,
+    doctorName: staffCtx.doctorName,
+    serviceName: staffCtx.serviceName,
+    patientName: staffCtx.patientName,
     patientWhatsappConsent: primary.patientWhatsappConsent,
   }).catch(() => undefined);
 
@@ -663,7 +681,7 @@ export async function sendPrePaymentCancelledNotifications(
 ): Promise<void> {
   const loaded = await loadOrderContext(orderId, null);
   if (!loaded) return;
-  const { order, primary, lang, ctx, phoneHints } = loaded;
+  const { order, primary, lang, ctx, staffCtx, phoneHints } = loaded;
   const flow = order.prePaymentFlow ?? PrePaymentFlow.WITHIN_48H;
   const baseKey = automationBaseKey(flow);
   const stageKey = stageKeyOverride ?? `${baseKey}_cancelled`;
@@ -698,7 +716,7 @@ export async function sendPrePaymentCancelledNotifications(
         `${cancelKey}_whatsapp`,
         orderId,
         doctorContact.whatsappNumber,
-        doctorWhatsAppCancelled(ctx, lang),
+        doctorWhatsAppCancelled(staffCtx, lang),
         "Doctor WhatsApp — reservation cancelled",
         lang,
         doctorContact.whatsappHints,
@@ -714,7 +732,7 @@ export async function sendPrePaymentCancelledNotifications(
         status: "RUNNING",
       });
       try {
-        const body = doctorWhatsAppCancelled(ctx, lang);
+        const body = doctorWhatsAppCancelled(staffCtx, lang);
         await sendAutomationEmail(
           {
             to: doctorContact.loginEmail,
@@ -1062,11 +1080,11 @@ export async function resendPrePaymentInitialNotifications(orderId: string) {
     throw new Error("Order not found or has no consultation items");
   }
 
-  const { order: o, primary, lang, ctx, phoneHints, portal } = loaded;
+  const { order: o, primary, lang, ctx, staffCtx, phoneHints, portal } = loaded;
   const flow = o.prePaymentFlow ?? PrePaymentFlow.WITHIN_48H;
   const baseKey = `${automationBaseKey(flow)}_stage_1_resend`;
 
-  await notifyDoctorOnBooking(orderId, primary.doctorId, ctx, lang);
+  await notifyDoctorOnBooking(orderId, primary.doctorId, staffCtx, lang);
   await sendWhatsApp(
     `${baseKey}_patient_whatsapp`,
     orderId,

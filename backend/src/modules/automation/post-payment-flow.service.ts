@@ -20,6 +20,7 @@ import {
 } from "./pre-payment-messages.js";
 import { whatsappContactFooter } from "./whatsapp-contact-footer.js";
 import { sendAdminBookingAlert } from "./admin-booking-alert.service.js";
+import { resolveStaffTimeZone } from "./staff-timezone.js";
 import { formatOrderTotal, resolvePatientFullName, splitPatientName } from "./pre-payment-email-template.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
 import {
@@ -161,6 +162,22 @@ async function loadPostPaymentContext(orderId: string) {
 
   const doctorEmail = doctorContact?.loginEmail ?? null;
 
+  // Doctor + admin read the same booking on the BOOKED MARKET's clock, not the
+  // patient's — see resolveStaffTimeZone.
+  const staffTimeZone = await resolveStaffTimeZone({
+    serviceId: primary.serviceId,
+    countryCode: order.countryCode,
+    doctorId: primary.doctorId,
+  });
+  const staffAppointmentLabel = appointmentStart
+    ? formatDeadline(appointmentStart, staffTimeZone, lang)
+    : pendingAppointmentDateLabel(lang);
+  const staffCtx: PostPaymentMessageContext = {
+    ...ctx,
+    appointmentDate: staffAppointmentLabel,
+    appointmentDateTime: staffAppointmentLabel,
+  };
+
   return {
     order,
     primary,
@@ -168,6 +185,7 @@ async function loadPostPaymentContext(orderId: string) {
     doctorEmail,
     lang,
     ctx,
+    staffCtx,
     consultStart: appointmentStart,
     phoneHints: {
       orderCountryCode: order.countryCode,
@@ -373,7 +391,8 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
   });
   if (claimed.count === 0) return;
 
-  const { order, primary, doctorContact, doctorEmail, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, doctorContact, doctorEmail, lang, ctx, staffCtx, phoneHints, portal } =
+    loaded;
   const baseKey = "post_payment_meeting_link";
 
   await sendWhatsApp(
@@ -404,7 +423,7 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
       `${baseKey}_doctor_whatsapp`,
       orderId,
       doctorContact.whatsappNumber,
-      doctorWhatsAppMeetingLink(ctx, lang),
+      doctorWhatsAppMeetingLink(staffCtx, lang),
       "Doctor WhatsApp — meeting link",
       lang,
       doctorContact.whatsappHints,
@@ -429,7 +448,7 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
       orderId,
       doctorEmail,
       lang,
-      ctx,
+      staffCtx,
       "Doctor email — meeting link",
       "meeting_link",
       doctorEmailSubjectMeetingLink(lang),
@@ -449,7 +468,7 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
   if (primary.doctorId) {
     const { notifyDoctor } = await import("../notifications/notify.service.js");
     await notifyDoctor(primary.doctorId, "APPOINTMENT_ASSIGNED", {
-      snippet: `${ctx.patientName} · ${ctx.serviceName} · ${ctx.appointmentDateTime} · paid`,
+      snippet: `${staffCtx.patientName} · ${staffCtx.serviceName} · ${staffCtx.appointmentDateTime} · paid`,
     }).catch(() => undefined);
     await createAutomationRun({
       automationKey: `${baseKey}_doctor_portal`,
@@ -462,11 +481,11 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
   }
 
   await sendAdminBookingAlert(orderId, baseKey, "payment_confirmed", {
-    orderNumber: ctx.orderNumber,
-    appointmentDateTime: ctx.appointmentDateTime,
-    doctorName: ctx.doctorName,
-    serviceName: ctx.serviceName,
-    patientName: ctx.patientName,
+    orderNumber: staffCtx.orderNumber,
+    appointmentDateTime: staffCtx.appointmentDateTime,
+    doctorName: staffCtx.doctorName,
+    serviceName: staffCtx.serviceName,
+    patientName: staffCtx.patientName,
     patientWhatsappConsent: primary.patientWhatsappConsent,
   }).catch(() => undefined);
 }
@@ -478,7 +497,7 @@ export async function post_resendMeetingLinkWhatsApp(orderId: string) {
   if (loaded.order.paymentStatus !== "PAID" && loaded.order.status !== "PAID") return;
   if (!loaded.ctx.meetingLink) return;
 
-  const { order, primary, doctorContact, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, doctorContact, lang, ctx, staffCtx, phoneHints, portal } = loaded;
   const baseKey = "post_payment_meeting_link_resend";
 
   await sendWhatsApp(
@@ -497,7 +516,7 @@ export async function post_resendMeetingLinkWhatsApp(orderId: string) {
       `${baseKey}_doctor_whatsapp`,
       orderId,
       doctorContact.whatsappNumber,
-      doctorWhatsAppMeetingLink(ctx, lang),
+      doctorWhatsAppMeetingLink(staffCtx, lang),
       "Doctor WhatsApp — meeting link (resend)",
       lang,
       doctorContact.whatsappHints,
@@ -526,7 +545,8 @@ export async function post_sendOneHourReminder(orderId: string) {
   if (loaded.order.postPaymentStage >= POST_PAYMENT_STAGE_ONE_HOUR) return;
   if (!loaded.ctx.meetingLink || !loaded.consultStart) return;
 
-  const { order, primary, doctorContact, doctorEmail, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, doctorContact, doctorEmail, lang, ctx, staffCtx, phoneHints, portal } =
+    loaded;
   const baseKey = "post_payment_one_hour";
 
   await sendWhatsApp(
@@ -557,7 +577,7 @@ export async function post_sendOneHourReminder(orderId: string) {
       `${baseKey}_doctor_whatsapp`,
       orderId,
       doctorContact.whatsappNumber,
-      doctorWhatsAppOneHourReminder(ctx, lang),
+      doctorWhatsAppOneHourReminder(staffCtx, lang),
       "Doctor WhatsApp — 1 hour reminder",
       lang,
       doctorContact.whatsappHints,
@@ -582,7 +602,7 @@ export async function post_sendOneHourReminder(orderId: string) {
       orderId,
       doctorEmail,
       lang,
-      ctx,
+      staffCtx,
       "Doctor email — 1 hour reminder",
       "one_hour",
       doctorEmailSubjectOneHour(lang),
@@ -614,7 +634,8 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
   if (loaded.order.postPaymentStage >= POST_PAYMENT_STAGE_SESSION_START) return;
   if (!loaded.ctx.meetingLink || !loaded.consultStart) return;
 
-  const { order, primary, doctorContact, doctorEmail, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, doctorContact, doctorEmail, lang, ctx, staffCtx, phoneHints, portal } =
+    loaded;
   const baseKey = "post_payment_five_min";
 
   await sendWhatsApp(
@@ -645,7 +666,7 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
       `${baseKey}_doctor_whatsapp`,
       orderId,
       doctorContact.whatsappNumber,
-      doctorWhatsAppSessionStart(ctx, lang),
+      doctorWhatsAppSessionStart(staffCtx, lang),
       "Doctor WhatsApp — 5 minute reminder",
       lang,
       doctorContact.whatsappHints,
@@ -670,7 +691,7 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
       orderId,
       doctorEmail,
       lang,
-      ctx,
+      staffCtx,
       "Doctor email — 5 minute reminder",
       "session_start",
       doctorEmailSubjectSessionStart(lang),

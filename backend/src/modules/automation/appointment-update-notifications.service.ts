@@ -33,6 +33,7 @@ import {
   type PostPaymentMessageContext,
 } from "./post-payment-messages.js";
 import { sendAdminBookingAlert } from "./admin-booking-alert.service.js";
+import { resolveStaffTimeZone } from "./staff-timezone.js";
 
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
@@ -64,7 +65,7 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
   const primary = order.items[0]!;
   const appointment = await prisma.appointment.findUnique({
     where: { id: input.appointmentId },
-    select: { scheduledAt: true, doctorId: true },
+    select: { scheduledAt: true, doctorId: true, serviceId: true, countryCode: true },
   });
   if (!appointment) return null;
 
@@ -102,11 +103,28 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
     changeReason: input.changeReason.trim(),
   };
 
+  // Doctor + admin read the same booking on the BOOKED MARKET's clock, not the
+  // patient's — see resolveStaffTimeZone.
+  const staffTimeZone = await resolveStaffTimeZone({
+    serviceId: primary.serviceId ?? appointment.serviceId,
+    countryCode: appointment.countryCode || order.countryCode,
+    doctorId: appointment.doctorId,
+  });
+  const staffAppointmentLabel = appointmentStart
+    ? formatDeadline(appointmentStart, staffTimeZone, lang)
+    : pendingAppointmentDateLabel(lang);
+  const staffCtx: PostPaymentMessageContext = {
+    ...ctx,
+    appointmentDate: staffAppointmentLabel,
+    appointmentDateTime: staffAppointmentLabel,
+  };
+
   return {
     order,
     primary,
     lang,
     ctx,
+    staffCtx,
     doctorContact,
     phoneHints: {
       orderCountryCode: order.countryCode,
@@ -280,6 +298,7 @@ async function notifyDoctorPortal(
   });
 }
 
+/** `ctx` MUST be the staff-zone context — the doctor reads the booked market's clock. */
 async function notifyDoctorUpdated(
   orderId: string,
   appointmentId: string,
@@ -377,7 +396,7 @@ export async function sendAppointmentUpdateNotifications(
   const loaded = await loadUpdateContext(input);
   if (!loaded) return { sent: false };
 
-  const { order, primary, lang, ctx, phoneHints } = loaded;
+  const { order, primary, lang, ctx, staffCtx, phoneHints } = loaded;
   const patientPhone = order.phone?.trim() || ctx.patientPhone;
 
   if (order.email?.trim()) {
@@ -426,7 +445,7 @@ export async function sendAppointmentUpdateNotifications(
       input.appointmentId,
       newDoctorId,
       lang,
-      ctx,
+      staffCtx,
       phoneHints,
       "",
       "appointment_updated",
@@ -438,7 +457,7 @@ export async function sendAppointmentUpdateNotifications(
       input.appointmentId,
       newDoctorId,
       lang,
-      ctx,
+      staffCtx,
       phoneHints,
       "",
       "appointment_updated",
@@ -455,7 +474,7 @@ export async function sendAppointmentUpdateNotifications(
       input.appointmentId,
       previousDoctorId,
       lang,
-      ctx,
+      staffCtx,
       phoneHints,
       "_previous",
       "appointment_reassigned",
@@ -463,11 +482,11 @@ export async function sendAppointmentUpdateNotifications(
   }
 
   await sendAdminBookingAlert(order.id, "appointment_update", "appointment_updated", {
-    orderNumber: ctx.orderNumber,
-    appointmentDateTime: ctx.appointmentDateTime,
-    doctorName: ctx.doctorName,
-    serviceName: ctx.serviceName,
-    patientName: ctx.patientName,
+    orderNumber: staffCtx.orderNumber,
+    appointmentDateTime: staffCtx.appointmentDateTime,
+    doctorName: staffCtx.doctorName,
+    serviceName: staffCtx.serviceName,
+    patientName: staffCtx.patientName,
     patientWhatsappConsent: primary.patientWhatsappConsent,
   }).catch(() => undefined);
 
