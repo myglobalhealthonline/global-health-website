@@ -301,9 +301,29 @@ async function main() {
 
     if (!APPLY) continue;
 
-    await prisma.blogPost.upsert({
-      where: { slug_locale_countryId: { slug: draft.slug, locale: "EN", countryId: null as unknown as string } },
-      create: {
+    // Compound-unique upsert can't match a NULL countryId member (Prisma
+    // rejects it), so branch on the findFirst above instead.
+    if (existing) {
+      await prisma.blogPost.update({
+        where: { id: existing.id },
+        data: {
+          title: draft.title,
+          excerpt: draft.excerpt,
+          body: draft.body,
+          category: draft.category,
+          authorDoctorId: AUTHOR_DOCTOR_ID,
+          seoTitle: draft.seoTitle,
+          seoDescription: draft.seoDescription,
+          // Deliberately do NOT touch status/publishedAt/lastReviewedAt on
+          // re-run — if a reviewer already progressed the post, re-running
+          // this seed must not silently revert it back to an unreviewed draft.
+        },
+      });
+      console.log(`  updated.\n`);
+      continue;
+    }
+    await prisma.blogPost.create({
+      data: {
         slug: draft.slug,
         title: draft.title,
         excerpt: draft.excerpt,
@@ -318,20 +338,8 @@ async function main() {
         lastReviewedAt: null,
         isActive: true,
       },
-      update: {
-        title: draft.title,
-        excerpt: draft.excerpt,
-        body: draft.body,
-        category: draft.category,
-        authorDoctorId: AUTHOR_DOCTOR_ID,
-        seoTitle: draft.seoTitle,
-        seoDescription: draft.seoDescription,
-        // Deliberately do NOT touch status/publishedAt/lastReviewedAt on
-        // re-run — if a reviewer already progressed the post, re-running
-        // this seed must not silently revert it back to an unreviewed draft.
-      },
     });
-    console.log(`  upserted.\n`);
+    console.log(`  created.\n`);
   }
 
   if (!APPLY) {
