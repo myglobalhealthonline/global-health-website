@@ -21,6 +21,7 @@ export function CookieBanner() {
   const [locale, setLocale] = useState<LocaleCode>("en");
   const [choices, setChoices] = useState<ConsentChoices>(DENY_ALL);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const barRef = useRef<HTMLDivElement | null>(null);
   // Only steal focus when the visitor *asked* for the panel (footer link).
   // Grabbing it on first page load would be hostile.
   const focusOnOpen = useRef(false);
@@ -60,6 +61,31 @@ export function CookieBanner() {
     }
   }, [visible]);
 
+  // Reserve room at the bottom of the page equal to the banner's own height
+  // so it never covers an in-flow CTA (mobile "Book Appointment" etc.) or
+  // clips the bottom of a hero card — instead of a fixed guess, measure the
+  // real rendered height (it varies: collapsed vs. expanded, locale string
+  // length, viewport width) and feed it back as a CSS var.
+  useEffect(() => {
+    if (!visible) return;
+    const el = barRef.current;
+    if (!el) return;
+    const setHeight = () =>
+      document.documentElement.style.setProperty(
+        "--gh-cookie-bar-h",
+        `${el.offsetHeight}px`,
+      );
+    setHeight();
+    document.body.classList.add("gh-cookie-bar-open");
+    const ro = new ResizeObserver(setHeight);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      document.body.classList.remove("gh-cookie-bar-open");
+      document.documentElement.style.removeProperty("--gh-cookie-bar-h");
+    };
+  }, [visible, expanded]);
+
   const decide = useCallback((next: ConsentChoices) => {
     writeConsent(next);
     setVisible(false);
@@ -74,6 +100,7 @@ export function CookieBanner() {
 
   return (
     <div
+      ref={barRef}
       role="dialog"
       aria-modal="false"
       aria-labelledby="gh-cookie-title"

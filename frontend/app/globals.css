@@ -3715,13 +3715,17 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
  * Same glass chrome as the navbar + footer (--gh-chrome-*), so the
  * consent bar reads as part of the site's own furniture rather than a
  * bolted-on third-party widget. Forest surface → on-dark text tokens.
- * `bottom: 6rem` on mobile clears the sticky bottom CTA. */
+ * `bottom: 6rem` on mobile clears the sticky bottom CTA. Whatever height the
+ * bar renders at, `body.gh-cookie-bar-open` (below) reserves the same space
+ * at the foot of the page (CookieBanner measures itself via ResizeObserver),
+ * so an in-flow page CTA never sits underneath it — mobile "Book Appointment"
+ * buttons and the homepage country-picker card included. */
 .gh-cookie-bar {
   position: fixed;
   left: 1rem;
   right: 1rem;
   bottom: 6rem;
-  z-index: 60;
+  z-index: var(--z-fixed-bar);
   margin-inline: auto;
   max-width: 44rem;
   padding: 20px;
@@ -3740,6 +3744,18 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
   .gh-cookie-bar {
     bottom: 1rem;
     padding: 24px;
+  }
+}
+
+/* Reserved space, kept in step with the bar's own bottom offset above (6rem
+ * mobile / 1rem desktop) plus a small clearance gap. */
+body.gh-cookie-bar-open {
+  padding-bottom: calc(var(--gh-cookie-bar-h, 0px) + 6rem + 12px);
+}
+
+@media (min-width: 768px) {
+  body.gh-cookie-bar-open {
+    padding-bottom: calc(var(--gh-cookie-bar-h, 0px) + 1rem + 12px);
   }
 }
 
