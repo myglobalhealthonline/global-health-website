@@ -411,19 +411,56 @@ export async function doctorPayoutStatementReport(
   filters: ReportFilters,
   bank?: PayoutBankInfo,
 ): Promise<ReportTable> {
-  const scheduledAt = rangeWhere(filters);
+  // Hard floor: never pay for consultations dated before go-live (17 Jul 2026).
+  // Everything earlier is legacy-import noise (e.g. `legacy-records` rows), so it
+  // is excluded even when the caller's From date reaches further back.
+  const PAYOUT_MIN_DATE = new Date(Date.UTC(2026, 6, 17, 0, 0, 0, 0));
+  const from =
+    filters.from && filters.from > PAYOUT_MIN_DATE ? filters.from : PAYOUT_MIN_DATE;
+  const to = filters.to;
+  const dateRange = { gte: from, ...(to ? { lte: to } : {}) };
+  const periodLabel = `${fmtDate(from)} → ${to ? fmtDate(to) : "—"}`;
+
   const appts = await prisma.appointment.findMany({
     where: {
       doctorId,
-      status: "COMPLETED",
-      ...(scheduledAt ? { scheduledAt } : {}),
+      ...(filters.countryCode ? { countryCode: filters.countryCode } : {}),
       ...(filters.consultationType ? { consultationType: filters.consultationType } : {}),
+      // Never pay for a refunded consultation — the money went back to the
+      // patient, so it drops off the payout regardless of everything else.
+      paymentStatus: { not: "REFUNDED" },
+      AND: [
+        // Payable when the patient PAID, OR the consultation was delivered
+        // (explicit COMPLETED status, or a set `consultationCompletedAt` — some
+        // concluded consultations, e.g. legacy/finalize flows, keep a
+        // REQUEST_RECEIVED status while their completed-timestamp is set, and an
+        // insurance consultation is delivered without the patient ever paying).
+        {
+          OR: [
+            { paymentStatus: "PAID" },
+            { status: "COMPLETED" },
+            { consultationCompletedAt: { not: null } },
+          ],
+        },
+        // Consultation date = scheduledAt, else consultationCompletedAt, else
+        // createdAt — a COALESCE expressed as a filter so a call with no
+        // scheduledAt still lands in the right period.
+        {
+          OR: [
+            { scheduledAt: dateRange },
+            { scheduledAt: null, consultationCompletedAt: dateRange },
+            { scheduledAt: null, consultationCompletedAt: null, createdAt: dateRange },
+          ],
+        },
+      ],
     },
     take: ROW_LIMIT + 1,
     orderBy: [{ countryCode: "asc" }, { scheduledAt: "asc" }],
     select: {
+      id: true,
       createdAt: true,
       scheduledAt: true,
+      consultationCompletedAt: true,
       countryCode: true,
       fullName: true,
       consultationType: true,
@@ -435,6 +472,29 @@ export async function doctorPayoutStatementReport(
   });
   const truncated = appts.length > ROW_LIMIT;
   const capped = truncated ? appts.slice(0, ROW_LIMIT) : appts;
+
+  // Cross-border async consults carry no catalogue service — their payout was
+  // snapshotted on the CrossBorderPrescriptionRequest at request time. Look
+  // those up so the statement values them (otherwise they'd read "Not set").
+  const crossBorderApptIds = capped
+    .filter((a) => a.consultationType === "cross-border-prescription")
+    .map((a) => a.id);
+  const crossBorderPayoutByApptId = new Map<string, number | null>();
+  if (crossBorderApptIds.length > 0) {
+    const reqs = await prisma.crossBorderPrescriptionRequest.findMany({
+      where: { asyncAppointmentId: { in: crossBorderApptIds } },
+      select: { asyncAppointmentId: true, payoutCents: true },
+    });
+    for (const r of reqs) {
+      if (r.asyncAppointmentId) {
+        crossBorderPayoutByApptId.set(r.asyncAppointmentId, r.payoutCents);
+      }
+    }
+  }
+
+  // Effective consultation date, matching the COALESCE filter above.
+  const effDate = (a: (typeof capped)[number]): Date =>
+    a.scheduledAt ?? a.consultationCompletedAt ?? a.createdAt;
 
   // Live payout lookup per (doctor, service). Appointments whose service has
   // no payout set show "Not set" and are excluded from the totals.
@@ -503,6 +563,14 @@ export async function doctorPayoutStatementReport(
   const multiMarket = marketKeys.length > 1;
 
   const payoutOf = (a: (typeof capped)[number]) => {
+    // Cross-border async consult: payout snapshotted on the request; no service.
+    if (a.consultationType === "cross-border-prescription") {
+      return {
+        payout: crossBorderPayoutByApptId.get(a.id) ?? null,
+        insurer: "—",
+        currency: a.currencyCode ?? "—",
+      };
+    }
     const isInsurance = Boolean(a.insuranceCompanyId);
     const payout = isInsurance
       ? a.serviceId
@@ -522,6 +590,7 @@ export async function doctorPayoutStatementReport(
   const rows: ReportRow[] = [];
   for (const key of marketKeys) {
     const list = byMarket.get(key)!;
+    list.sort((x, y) => effDate(x).getTime() - effDate(y).getTime());
     if (multiMarket) rows.push({ _section: `Market — ${marketLabel(key)}` });
     const subtotal: Record<string, number> = {};
     for (const a of list) {
@@ -531,11 +600,10 @@ export async function doctorPayoutStatementReport(
         grand[currency] = (grand[currency] ?? 0) + payout;
       }
       rows.push({
-        date: fmtDate(a.scheduledAt ?? a.createdAt),
+        date: fmtDate(effDate(a)),
         patient: a.fullName,
         service: a.service?.name ?? "—",
         insurer,
-        type: a.consultationType,
         payout: payout == null ? "Not set" : fmtMoney(payout, currency),
       });
     }
@@ -545,9 +613,8 @@ export async function doctorPayoutStatementReport(
           _total: true,
           date: "",
           patient: "",
-          service: "",
+          service: `Subtotal — ${marketLabel(key)}`,
           insurer: "",
-          type: `Subtotal — ${marketLabel(key)}`,
           payout: fmtMoney(cents, currency),
         });
       }
@@ -560,9 +627,8 @@ export async function doctorPayoutStatementReport(
       _total: true,
       date: "",
       patient: "",
-      service: "",
+      service: "TOTAL TO PAY",
       insurer: "",
-      type: "TOTAL TO PAY",
       payout: fmtMoney(cents, currency),
     });
   }
@@ -573,7 +639,7 @@ export async function doctorPayoutStatementReport(
       .join(" · ") || "—";
 
   const summary: ReportSummaryItem[] = [
-    { label: "Period", value: rangeLabel(filters) },
+    { label: "Period", value: periodLabel },
     { label: "Account holder", value: bank?.accountHolder?.trim() || doctorName },
     {
       label: "IBAN",
@@ -588,19 +654,19 @@ export async function doctorPayoutStatementReport(
 
   return {
     title: "Payout statement",
-    subtitle: `${doctorName} · ${rangeLabel(filters)} · ${capped.length} consultation${capped.length === 1 ? "" : "s"}`,
+    subtitle: `${doctorName} · ${periodLabel} · ${capped.length} consultation${capped.length === 1 ? "" : "s"}`,
     summary,
     generatedAt: new Date().toISOString(),
     truncated,
     // No patient/gross price column — a payout statement shows only what the
     // doctor is paid (standard per-service payout, or the insurance payout for
     // insured bookings). The patient-facing price lives on the admin reports.
+    // No consultation-type column either — the Service names the consultation.
     columns: [
       { key: "date", label: "Date" },
       { key: "patient", label: "Patient" },
       { key: "service", label: "Service" },
       { key: "insurer", label: "Insurer" },
-      { key: "type", label: "Type" },
       { key: "payout", label: "Payout", align: "right" },
     ],
     rows,

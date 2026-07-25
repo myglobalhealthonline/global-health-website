@@ -14,13 +14,11 @@ import { breadcrumbJsonLd, subscriptionPlanProductJsonLd } from "@/lib/seo/struc
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
-import { getServerAuthUser } from "@/lib/api/server-auth";
-import { getServerSubscription } from "@/lib/api/me-subscription-server";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { interpolate } from "@/lib/subscription/format";
-import { PricingPlanCard } from "./_components/PricingPlanCard";
+import { PricingPlansGrid } from "./_components/PricingPlansGrid";
 import { Stethoscope, Calendar, ShieldCheck, CreditCard, Zap, BadgeCheck } from "lucide-react";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -52,38 +50,15 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   });
 }
 
-/** Auth-aware subscribe CTA (D15 — no guest). Logged-in patients go straight to
- *  the confirm screen; anonymous visitors are routed to login and resumed back
- *  onto the same subscribe action via `?next`. Country + lang ride along so the
- *  account-area confirm screen can resolve the plan from the right catalogue. */
-function subscribeHref(
-  planId: string,
-  countryCode: string,
-  lang: string,
-  isAuthenticated: boolean,
-  returnTo?: string,
-): string {
-  const base = `/account/subscribe?plan=${encodeURIComponent(planId)}&country=${encodeURIComponent(countryCode)}&lang=${encodeURIComponent(lang)}`;
-  // `returnTo` (e.g. the cart) rides through so the post-payment Stripe redirect
-  // lands back in the checkout funnel with benefits applied (§6c).
-  const target = returnTo ? `${base}&returnTo=${encodeURIComponent(returnTo)}` : base;
-  return isAuthenticated ? target : `/login?next=${encodeURIComponent(target)}`;
-}
-
-/** Accept only safe in-site relative paths for a post-subscribe return. */
-function safeReturnTo(value: string | undefined): string | undefined {
-  return value && /^\/[a-zA-Z0-9/_-]*$/.test(value) ? value : undefined;
-}
-
-export default async function PricingPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<Params>;
-  searchParams: Promise<{ returnTo?: string }>;
-}) {
-  const [{ country: slug, lang }, { returnTo: returnToRaw }] = await Promise.all([params, searchParams]);
-  const returnTo = safeReturnTo(returnToRaw);
+/**
+ * P-001: this page is statically generated, so it must not read `cookies()`
+ * or `searchParams`. The visitor-specific bits — "your current plan", the
+ * switch-vs-subscribe CTA, and the `?returnTo` passthrough — live in
+ * <PricingPlansGrid>, a client island. The plan catalogue below is identical
+ * for every visitor and stays prerendered.
+ */
+export default async function PricingPage({ params }: { params: Promise<Params> }) {
+  const { country: slug, lang } = await params;
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
   const config = getCountryByCode(code);
@@ -96,23 +71,7 @@ export default async function PricingPage({
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "subscriptions")) notFound();
 
-  const [plans, user, sub] = await Promise.all([
-    getCountryPlans(code, lang),
-    getServerAuthUser(),
-    getServerSubscription(),
-  ]);
-  const isAuthenticated = Boolean(user);
-  // Mark the active plan only when the subscription is live AND belongs to the
-  // country being viewed (plans are per-country, so a sub elsewhere must not
-  // flag a card or block a purchase here). PAST_DUE still counts as "current".
-  const activeSub =
-    sub &&
-    (sub.status === "ACTIVE" || sub.status === "PAST_DUE") &&
-    sub.countryCode?.toLowerCase() === code.toLowerCase()
-      ? sub
-      : null;
-  const activePlanId = activeSub?.plan?.id ?? null;
-  const hasActiveSub = Boolean(activeSub);
+  const plans = await getCountryPlans(code, lang);
   const { subscription, common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = subscription.pricing;
   const hiw = subscription.howItWorks;
@@ -199,26 +158,13 @@ export default async function PricingPage({
           </div>
 
           {plans.length > 0 ? (
-            <div className="mx-auto mt-14 grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {plans.map((plan) => (
-                <PricingPlanCard
-                  key={plan.id}
-                  plan={plan}
-                  t={t}
-                  note={subscription.note}
-                  ctaHref={subscribeHref(plan.id, code, lang, isAuthenticated, returnTo)}
-                  isCurrentPlan={plan.id === activePlanId}
-                  hasActiveSub={hasActiveSub}
-                  // "Switch to this plan" lands on the manage panel with the
-                  // target preselected; the current plan's card just manages.
-                  manageHref={
-                    plan.id === activePlanId
-                      ? "/account/membership"
-                      : `/account/membership?plan=${encodeURIComponent(plan.id)}`
-                  }
-                />
-              ))}
-            </div>
+            <PricingPlansGrid
+              plans={plans}
+              t={t}
+              note={subscription.note}
+              countryCode={code}
+              lang={lang}
+            />
           ) : (
             <div className="mx-auto mt-14 max-w-xl rounded-[var(--radius-card)] border border-[var(--color-border)] gh2-glass-forest p-10 text-center">
               <h3

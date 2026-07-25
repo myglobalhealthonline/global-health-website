@@ -62,6 +62,12 @@ const patchProfileSchema = z
     nationalIdNumber: stringField(64),
     taxIdNumber: stringField(64),
     passportNumber: stringField(64),
+    // Doctor may write the Número de Utente for a PT patient who booked
+    // without one — the appointment card exposes it as an editable row for
+    // markets with `collectUtenteNumber`. PHI-encrypted on write like the
+    // other government IDs (PHI_ENCRYPTED_FIELDS). Read stays gated + logged
+    // in consultations.route.ts; it is stripped from this route's response.
+    utenteNumber: stringField(64),
     addressLine1: stringField(200),
     addressLine2: stringField(200),
     addressCity: stringField(120),

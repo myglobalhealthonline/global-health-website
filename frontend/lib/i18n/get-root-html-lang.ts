@@ -6,28 +6,29 @@ export function toHtmlLang(locale: string): string {
 }
 
 /**
- * Root `<html lang>` — real per-request locale in the initial HTML bytes.
+ * Root `<html lang>` — a static "en" default, deliberately.
  *
- * Reads the `x-gh-locale` request header stamped by proxy.ts (derived from
- * the URL path for `/{country}/{lang}` routes, cookie/geo elsewhere), so
- * curl/non-JS crawlers/social unfurlers see the correct language, not a
- * JS-corrected one. `<HtmlLangSync>` in `[country]/[lang]/layout.tsx` still
- * covers client-side soft navigations.
+ * P-001: the root layout wraps every route, so reading `headers()` here (the
+ * previous implementation read the `x-gh-locale` header stamped by proxy.ts)
+ * forces the whole site to render per-request and defeats
+ * `generateStaticParams()` on the `[country]/[lang]` tree. Static generation
+ * won that trade-off.
  *
- * P-001 note: reading `headers()` here forces every layout-wrapped route
- * dynamic. That is currently a no-op — the `(site)` layout ancestry already
- * blocks static rendering for the whole tree (see P-001), and metadata
- * routes (robots.txt etc.) bypass the root layout. If P-001 is ever fixed
- * and static country pages become possible, this must move to a multi-root
- * layout split instead — do NOT silently revert to a hardcoded "en".
+ * The real request locale is applied by a synchronous inline script emitted by
+ * each subtree layout that knows it — `[country]/[lang]/layout.tsx` (from the
+ * route param) and `(site)/(global)/layout.tsx` (from the header) — which runs
+ * while the browser is still parsing the stream, before any page content below
+ * it is parsed and before hydration. `<HtmlLangSync>` covers client-side soft
+ * navigations.
+ *
+ * KNOWN GAP: a non-JS client (curl, a bare crawler, a social unfurler) sees
+ * `lang="en"` in the raw bytes on non-English pages. hreflang / og:locale in
+ * <head> are unaffected and still carry the correct language. Closing this
+ * properly needs multi-root layouts with `[country]/[lang]` hoisted to
+ * root-param level — a whole-app restructure, out of scope here. Do NOT
+ * reintroduce `headers()` in this file: it silently un-statics every public
+ * route again.
  */
-export async function getRootHtmlLang(): Promise<string> {
-  try {
-    const { headers } = await import("next/headers");
-    const h = await headers();
-    const locale = h.get("x-gh-locale");
-    return locale ? toHtmlLang(locale) : "en";
-  } catch {
-    return "en";
-  }
+export function getRootHtmlLang(): string {
+  return "en";
 }

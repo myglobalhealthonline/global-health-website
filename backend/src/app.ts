@@ -167,10 +167,45 @@ export async function buildApp() {
     client.on("error", (err) => app.log.warn({ err }, "rate-limit Redis error (failing open)"));
     rateLimitRedis = client;
   }
+  // A `next build` prerenders ~550 public pages across ~15 worker processes
+  // from ONE egress IP in well under a minute, so the 300/min default below
+  // 429s most of it. Pre-P-001 that only cost a slow build; now those pages
+  // are statically generated, so a rejected read BAKES an empty plan grid /
+  // doctor list into a file that is then served (and crawled) until ISR
+  // revalidates. The frontend marks build-phase reads with `x-gh-build`,
+  // authenticated by the same shared secret the client-IP forwarding uses.
+  //
+  // Deliberately NOT an allowList (a full bypass): a leaked secret would then
+  // grant unmetered reads. This keeps the limiter on and only raises the
+  // ceiling, on an allowlist of anonymous public marketing GETs — never a
+  // mutation, never /api/auth|me|account|admin|doctor|corporate|payments.
+  const BUILD_READ_PREFIXES = [
+    "/api/countries",
+    "/api/public/countries",
+    "/api/doctors",
+    "/api/services",
+    "/api/specialties",
+    "/api/health-tests",
+    "/api/assets",
+    "/api/blog",
+    "/api/blog-posts",
+    "/api/pricing",
+  ];
+  const isTrustedBuildRead = (req: { method: string; url: string; headers: Record<string, unknown> }) => {
+    const secret = env.PROXY_CLIENT_IP_SECRET;
+    if (!secret || req.headers["x-gh-proxy-secret"] !== secret) return false;
+    if (req.headers["x-gh-build"] !== "1") return false;
+    if (req.method !== "GET") return false;
+    const path = req.url.split("?")[0];
+    return BUILD_READ_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`));
+  };
+
   await app.register(rateLimit, {
     global: true,
     timeWindow: "1 minute",
-    max: 300,
+    // Still bounded — a runaway build gets throttled, it just isn't capped at
+    // a ceiling a single build blows through in seconds.
+    max: (req) => (isTrustedBuildRead(req) ? 20_000 : 300),
     skipOnError: true, // never 500 because Redis is down etc.
     // The Next.js frontend proxies browser API calls server-side, so at this
     // hop request.ip is the frontend service's egress IP for EVERY visitor —
@@ -181,6 +216,9 @@ export async function buildApp() {
     keyGenerator: (req) => {
       const secret = env.PROXY_CLIENT_IP_SECRET;
       if (secret && req.headers["x-gh-proxy-secret"] === secret) {
+        // Builds get their own bucket so a deploy can't exhaust the quota of
+        // real visitors sharing the frontend's egress IP.
+        if (isTrustedBuildRead(req)) return "gh-build";
         const fwd = req.headers["x-gh-client-ip"];
         if (typeof fwd === "string" && fwd.length > 0 && fwd.length <= 64) {
           return fwd;

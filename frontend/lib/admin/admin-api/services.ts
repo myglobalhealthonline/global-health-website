@@ -44,7 +44,8 @@ export type AdminServiceKind =
   | "SPECIALIST"
   | "PRESCRIPTION"
   | "HEALTH_TEST"
-  | "HOME_DELIVERY";
+  | "HOME_DELIVERY"
+  | "ASYNC_PRESCRIPTION";
 
 export type AdminServiceTranslationDto = {
   id: string;

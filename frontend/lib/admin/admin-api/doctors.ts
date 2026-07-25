@@ -270,6 +270,15 @@ export type AdminDoctorDto = {
   /** When true the doctor's own portal can create manual appointments.
    *  Default false — admin grants per doctor. ADMIN role always bypasses. */
   canCreateManualAppointments?: boolean;
+  /** When true the doctor may raise cross-jurisdiction prescription requests.
+   *  Default false — admin grants per doctor. ADMIN role always bypasses. */
+  canRequestCrossJurisdictionRx?: boolean;
+  /** Cross-border PRESCRIBER config (Doctor B). When enabled, this doctor can
+   *  be sent prescription requests from other countries. Price = patient fee,
+   *  payout = doctor earning, both in cents in the doctor's country currency. */
+  crossBorderRxEnabled?: boolean;
+  crossBorderRxPriceCents?: number | null;
+  crossBorderRxPayoutCents?: number | null;
 };
 
 export type AdminDoctorRegistrationDto = {

@@ -38,6 +38,13 @@ enum ServiceKind {
   PRESCRIPTION
   HEALTH_TEST
   HOME_DELIVERY
+  /// Inner (admin-only) cross-jurisdiction prescription service. One row per
+  /// country carries the async-prescription fee (basePriceCents + currencyCode)
+  /// and, via ServiceDoctor, the admin-authorised prescribing doctors + their
+  /// payout. Always visibility = ADMIN_ONLY — never listed publicly or bookable
+  /// from the normal funnel. Drives the "Request prescription outside
+  /// jurisdiction" flow. See CrossBorderPrescriptionRequest.
+  ASYNC_PRESCRIPTION
 }
 
 enum UserRole {
@@ -127,6 +134,14 @@ enum NotificationType {
   // { title, body, href } for the patient bell.
   CORPORATE_REQUEST_CREATED // company requested an Illness-Benefit / Fit-for-Work consult for the employee
   CORPORATE_MEMBERSHIP // membership activated / card issued / suspended / expired
+  // Cross-jurisdiction prescription flow. REQUESTED notifies the target-country
+  // prescribing doctor (Doctor B) once the patient has paid the async fee and
+  // the async consultation is minted. UPDATED notifies the requesting doctor
+  // (Doctor A) and/or the patient on an outcome (accepted / more-info / refused
+  // + upgrade link). Payload carries { requestId, appointmentId, snippet } for
+  // the staff bell or { title, body, href } for the patient bell.
+  CROSS_BORDER_RX_REQUESTED
+  CROSS_BORDER_RX_UPDATED
 }
 
 /// Exam lifecycle.
@@ -278,6 +293,11 @@ enum AuditAction {
   /// The ordered-methods text was read back from the laboratory.
   LAB_REQUISITION_METHODS_FETCHED
   LAB_REQUISITION_STATUS_CHANGED
+  // --- Cross-jurisdiction prescription ---
+  /// Doctor A raised a "Request prescription outside jurisdiction".
+  CROSS_BORDER_RX_REQUESTED
+  /// Doctor B accepted / asked for more info / refused a request.
+  CROSS_BORDER_RX_DECIDED
 }
 
 enum CountryAccessModel {
@@ -522,6 +542,21 @@ model Doctor {
   /// from their portal. Admin still bypasses via role=ADMIN. Default false
   /// so existing doctors retain current scope until an admin grants it.
   canCreateManualAppointments     Boolean                          @default(false)
+  /// Per-doctor RBAC: when true, the doctor may raise a cross-jurisdiction
+  /// prescription request from a consultation (the "Request prescription
+  /// outside jurisdiction" action). Gates only the requesting side (Doctor A);
+  /// who may FULFIL such a request is the `crossBorderRx*` config below.
+  /// Default false so existing doctors keep current scope until an admin grants it.
+  canRequestCrossJurisdictionRx   Boolean                          @default(false)
+  /// Cross-border PRESCRIBER config (the fulfilling side, Doctor B). When
+  /// enabled, this doctor is a target a treating doctor in another country can
+  /// send a prescription request to. `priceCents` = the patient fee for the
+  /// async request; `payoutCents` = what the clinic pays this doctor. Both in
+  /// the doctor's own country currency. Replaces the old ASYNC_PRESCRIPTION
+  /// service — the config now lives on the doctor, not a catalogue service.
+  crossBorderRxEnabled            Boolean                          @default(false)
+  crossBorderRxPriceCents         Int?
+  crossBorderRxPayoutCents        Int?
   /// Per-locale CMS content (professional title, bio, SEO). Base columns
   /// above stay as the default-locale copy + fallback; a translation row
   /// overrides them per locale. fullName + qualifications are NOT
@@ -3229,6 +3264,87 @@ model Prescription {
 
   @@index([consultationId, createdAt])
   @@index([doctorId, createdAt])
+}
+
+/// Lifecycle of a cross-jurisdiction prescription request.
+///   PENDING_PAYMENT — request created, patient not yet paid the async fee.
+///   AWAITING_DOCTOR — fee paid, async Appointment minted, Doctor B notified.
+///   MORE_INFO       — Doctor B asked the patient / Doctor A for more detail.
+///   ACCEPTED        — Doctor B issued the prescription (async).
+///   REFUSED         — Doctor B declined; patient offered a full-consult upgrade.
+///   UPGRADED        — patient took the upgrade and booked a full consultation.
+///   EXPIRED         — patient never paid the async fee before the deadline.
+enum CrossBorderRxStatus {
+  PENDING_PAYMENT
+  AWAITING_DOCTOR
+  MORE_INFO
+  ACCEPTED
+  REFUSED
+  UPGRADED
+  EXPIRED
+}
+
+/// A "Request prescription outside jurisdiction" workflow row. Doctor A (the
+/// treating doctor, licensed elsewhere) asks a doctor in `targetCountryCode`
+/// (Doctor B) to issue a prescription asynchronously.
+///
+/// Relations are intentionally kept as soft FK string columns (no Prisma
+/// navigation), matching MedicalAccessRequest.requestingDoctorId and
+/// Appointment.insuranceCompanyId — this keeps the workflow table decoupled so
+/// re-syncing doctors/services/appointments never cascade-touches a request,
+/// and avoids growing back-relation arrays on Doctor/Appointment/Order/Service.
+///
+/// `targetServiceId` points at the country's inner ASYNC_PRESCRIPTION Service:
+/// it fixes the fee (basePriceCents + currencyCode), the authorised doctors
+/// (ServiceDoctor), and the payout (ServiceDoctor.doctorAmountCents), so the
+/// request slots straight into existing reporting.
+///
+/// `clinicalSummary` is Doctor A's rationale written FOR Doctor B, so Doctor B
+/// can prescribe without cross-border access to the origin-country file. If
+/// Doctor B needs the full chart they use the standard MedicalAccessRequest.
+model CrossBorderPrescriptionRequest {
+  id                   String              @id @default(cuid())
+  /// The consultation the request was raised from (Doctor A's appointment).
+  sourceAppointmentId  String
+  /// Doctor A — the requesting/treating doctor.
+  sourceDoctorId       String
+  /// Snapshot of the patient identity from the source appointment, so the
+  /// async fee Order + notifications resolve without a join back.
+  patientEmail         String
+  patientFullName      String
+  /// Target market (lowercase ISO code, matching the rest of the app).
+  targetCountryCode    String
+  /// Legacy: the inner ASYNC_PRESCRIPTION Service. Nullable now — fee + payout
+  /// come from the prescriber doctor's `crossBorderRx*` config, not a service.
+  targetServiceId      String?
+  /// Snapshot of the prescriber's payout (cents) at request time, in the target
+  /// country currency. The payout statement reads this to value the async
+  /// consult (which no longer carries a ServiceDoctor payout).
+  payoutCents          Int?
+  /// Doctor B — the admin-authorised prescribing doctor in the target country.
+  targetDoctorId       String
+  /// Doctor A's clinical rationale, shown to Doctor B (no PHI file access).
+  clinicalSummary      String
+  /// The Order minted for the async fee (slot-less checkout).
+  orderId              String?
+  /// The Appointment minted for Doctor B once the fee is paid (drives the
+  /// consult-note + prescription workspace and the payout via serviceId).
+  asyncAppointmentId   String?             @unique
+  /// The full-consultation Appointment created if the patient upgrades after a
+  /// refusal.
+  upgradeAppointmentId String?             @unique
+  status               CrossBorderRxStatus @default(PENDING_PAYMENT)
+  /// Timestamps for the terminal transitions (audit/reporting convenience).
+  paidAt               DateTime?
+  decidedAt            DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  @@index([targetDoctorId, status])
+  @@index([sourceDoctorId, status])
+  @@index([sourceAppointmentId])
+  @@index([orderId])
+  @@index([status, createdAt])
 }
 
 /// Per-appointment lab / imaging / test order or result the doctor

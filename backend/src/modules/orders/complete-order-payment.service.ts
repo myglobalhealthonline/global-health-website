@@ -95,6 +95,11 @@ export async function completeOrderPaymentFromCheckoutSession(
     // retrying here on every redelivered webhook or sync-order call is
     // also a self-heal if the original commit attempt silently failed.
     await commitCreditsForPaidOrder(orderId, opts.stripeEventId, log);
+    // Cross-jurisdiction prescription: mint the async appointment + notify the
+    // prescribing doctor on payment. Idempotent (guarded by request status +
+    // unique asyncAppointmentId), so calling it on the redelivery / sync-order
+    // path too is a self-heal, mirroring commitCreditsForPaidOrder above.
+    await settleCrossBorderRxOnPaid(orderId, log);
     return { alreadyPaid: true, orderId };
   }
 
@@ -111,6 +116,7 @@ export async function completeOrderPaymentFromCheckoutSession(
   }
 
   await commitCreditsForPaidOrder(orderId, opts.stripeEventId, log);
+  await settleCrossBorderRxOnPaid(orderId, log);
   // Post-payment side effects (Meet link, confirmation email/WhatsApp, invoice
   // PDF) are NOT awaited here anymore. markOrderPaidFromStripeSession already
   // wrote the outbox row inside the same transaction that flipped PAID, so the
@@ -139,6 +145,34 @@ async function commitCreditsForPaidOrder(
       title: "Order paid but credit reservation commit failed",
       detail: err instanceof Error ? err.message : String(err),
       context: { orderId, stripeEventId },
+    });
+  }
+}
+
+/**
+ * Cross-jurisdiction prescription settlement. Dynamically imported to avoid a
+ * static import cycle (cross-border-rx → notifications/consultations → …). The
+ * hook is a no-op for every non-cross-border order and idempotent for the ones
+ * it does handle, so calling it on every paid-order path is safe.
+ */
+async function settleCrossBorderRxOnPaid(orderId: string, log: PaymentLog): Promise<void> {
+  try {
+    const { onCrossBorderRxFeePaid, linkCrossBorderUpgradeOnPaid } = await import(
+      "../cross-border-rx/cross-border-rx.service.js"
+    );
+    // Fee paid → mint the async consult + notify Doctor B (no-op unless this
+    // order is a cross-border async fee).
+    await onCrossBorderRxFeePaid(orderId, log);
+    // Full-consult booked after a refusal → link it back + flip to UPGRADED
+    // (no-op unless a matching REFUSED request exists).
+    await linkCrossBorderUpgradeOnPaid(orderId, log);
+  } catch (err) {
+    log.error({ err, orderId }, "Cross-border Rx settlement failed after payment");
+    await emitOpsAlert({
+      severity: "critical",
+      title: "Cross-border prescription paid but async consultation not created",
+      detail: err instanceof Error ? err.message : String(err),
+      context: { orderId },
     });
   }
 }

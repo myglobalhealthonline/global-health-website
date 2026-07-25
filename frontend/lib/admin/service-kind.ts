@@ -4,6 +4,9 @@ export const SERVICE_KIND_ORDER: AdminServiceKind[] = [
   "GENERAL",
   "SPECIALIST",
   "PRESCRIPTION",
+  // ASYNC_PRESCRIPTION (cross-border) is no longer a catalogue service — it is
+  // configured per prescribing doctor on the doctor edit page. Kept out of the
+  // Services section entirely.
 ];
 
 type ServiceKindMeta = {
@@ -95,6 +98,18 @@ export const SERVICE_KIND_META: Record<AdminServiceKind, ServiceKindMeta> = {
     addLabel: "Add home delivery service",
     emptySpecialtyLabel: "Not used",
   },
+  ASYNC_PRESCRIPTION: {
+    label: "Cross-Border Prescription",
+    singularLabel: "cross-border prescription service",
+    shortLabel: "Cross-border Rx",
+    // Inner admin-only service — managed through the generic services screens
+    // (no dedicated public catalogue section; it is never listed publicly).
+    listHref: "/admin/services?kind=ASYNC_PRESCRIPTION",
+    newHref: "/admin/services/new?kind=ASYNC_PRESCRIPTION",
+    pageTitle: "Cross-Border Prescription",
+    addLabel: "Add cross-border prescription service",
+    emptySpecialtyLabel: "Not used",
+  },
 };
 
 export function isAdminServiceKind(value: string | undefined | null): value is AdminServiceKind {
@@ -102,7 +117,8 @@ export function isAdminServiceKind(value: string | undefined | null): value is A
     value === "SPECIALIST" ||
     value === "PRESCRIPTION" ||
     value === "HEALTH_TEST" ||
-    value === "HOME_DELIVERY";
+    value === "HOME_DELIVERY" ||
+    value === "ASYNC_PRESCRIPTION";
 }
 
 export function readServiceKind(value: string | undefined | null, fallback: AdminServiceKind = "GENERAL"): AdminServiceKind {

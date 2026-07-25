@@ -1,17 +1,18 @@
-import Link from "next/link";
-import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
+import { NotFoundClient, type NotFoundCopy } from "./_components/NotFoundClient";
 
-export default async function NotFound() {
-  const locale = await getPageLocale();
-  const { notFound } = getCommonLocale(locale);
+/**
+ * Root 404 boundary. MUST stay free of `cookies()`/`headers()`/`searchParams`
+ * — Next renders this into every route's RSC payload, so one dynamic API call
+ * here makes the ENTIRE site render at request time (P-001; this file's
+ * `getPageLocale()` call was the single reason 0 pages were prerendered).
+ * Locale selection happens in the client child instead.
+ */
+const copy = Object.fromEntries(
+  supportedLocaleCodes.map((code) => [code, getCommonLocale(code).notFound]),
+) as Record<LocaleCode, NotFoundCopy>;
 
-  return (
-    <GH2StatusPage status="error" title={notFound.title} body={notFound.body}>
-      <Link href="/" className="gh2-btn-lime">
-        {notFound.cta}
-      </Link>
-    </GH2StatusPage>
-  );
+export default function NotFound() {
+  return <NotFoundClient copy={copy} />;
 }
