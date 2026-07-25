@@ -176,6 +176,14 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
     ),
   ]);
 
+  // Byline — prefer the linked author doctor (with a profile link), fall back
+  // to the free-text author ("Global Health Editorial Team" when unset). Same
+  // preference the Article JSON-LD uses, so the visible byline and the schema
+  // can't name different people.
+  const authorName = post.authorDoctor?.name ?? post.author;
+  const authorHref = post.authorDoctor?.countrySlug
+    ? `/${post.authorDoctor.countrySlug}/en/doctors/${post.authorDoctor.slug}`
+    : null;
   // "Clinically reviewed by Dr X" — prefer the linked reviewer doctor (with
   // a profile link), fall back to the free-text reviewer name.
   const reviewerName = post.reviewerDoctor?.name ?? post.reviewer;
@@ -206,7 +214,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             datePublished: post.publishedAt,
             dateModified: post.lastReviewedAt,
             imageSrc: post.coverImageSrc,
-            authorName: post.author,
+            authorName,
             authorPhysician,
             // `reviewedBy`: the distinct clinical reviewer if one is linked,
             // otherwise the author physician stands as their own reviewer —
@@ -430,8 +438,27 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                   post has actually been revised past its publish date — avoids
                   a redundant "Published X / Updated X" chip pair on day one. */}
               <div className="mt-7 flex flex-wrap items-center gap-2.5 text-[13px] font-medium">
+                <span
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.11)",
+                    color: "rgba(255,255,255,0.72)",
+                  }}
+                >
+                  <User className="size-3.5" aria-hidden />
+                  {authorHref ? (
+                    <Link
+                      href={authorHref}
+                      className="gh-focus-on-dark underline decoration-[rgba(255,255,255,0.35)] underline-offset-2 transition-colors hover:text-[var(--color-brand-accent)]"
+                    >
+                      {authorName}
+                    </Link>
+                  ) : (
+                    authorName
+                  )}
+                </span>
                 {[
-                  { icon: <User className="size-3.5" aria-hidden />, label: post.author },
                   { icon: <Calendar className="size-3.5" aria-hidden />, label: formatted },
                   { icon: <Clock className="size-3.5" aria-hidden />, label: `${post.readingTime} ${blogI18n.minRead}` },
                   ...(post.lastReviewedAt && lastReviewedFormatted !== formatted
