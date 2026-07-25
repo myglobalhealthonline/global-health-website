@@ -3,7 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import type { Cart, OrderDetail, OrderListItem } from "./cart-types";
-import type { AdminOrderRow } from "@/app/(admin)/admin/orders/_components/admin-orders-table";
+import type { AdminOrderRow } from "@/app/(portal)/(admin)/admin/orders/_components/admin-orders-table";
 
 // H22: validate the admin-orders response at the boundary instead of casting
 // `unknown[]` straight to AdminOrderRow[]. A backend shape change now surfaces

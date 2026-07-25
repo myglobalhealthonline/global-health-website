@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { COUNTRY_PREF_COOKIE } from "@/app/(admin)/admin/_components/country-picker-constants";
+import { COUNTRY_PREF_COOKIE } from "@/app/(portal)/(admin)/admin/_components/country-picker-constants";
 import type { AdminCountryDto } from "@/lib/admin/admin-api";
 
 export type ActiveAdminCountry = {
