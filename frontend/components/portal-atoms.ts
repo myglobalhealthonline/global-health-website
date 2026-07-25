@@ -26,7 +26,7 @@ export {
   Toggle,
   Btn,
   CommandBand,
-} from "@/app/(admin)/admin/_components/atoms";
+} from "@/app/(portal)/(admin)/admin/_components/atoms";
 
 export type {
   StatTone,
@@ -34,4 +34,4 @@ export type {
   BtnVariant,
   BtnSize,
   CommandBandMetric,
-} from "@/app/(admin)/admin/_components/atoms";
+} from "@/app/(portal)/(admin)/admin/_components/atoms";

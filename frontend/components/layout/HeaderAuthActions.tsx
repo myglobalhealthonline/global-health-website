@@ -20,7 +20,14 @@ function initialFromEmail(email?: string | null): string {
   return ch ? ch.toUpperCase() : "•";
 }
 
-export function HeaderAuthActions({ navigation }: { navigation: SiteNavigationData }) {
+export function HeaderAuthActions({
+  navigation,
+  a11y,
+}: {
+  navigation: SiteNavigationData;
+  /** Localized aria-labels, resolved server-side by SiteHeader. */
+  a11y: { yourAccount: string; notifications: string };
+}) {
   const { user, loading } = usePublicAuth();
   // Optimistic while the /api/auth/me fetch is in flight (auth-hint cookie
   // was present): route to the authenticated destinations now rather than
@@ -34,7 +41,7 @@ export function HeaderAuthActions({ navigation }: { navigation: SiteNavigationDa
           lime dot is the signature live-status accent. */}
       <Link
         href={authed ? "/account/notifications" : "/login"}
-        aria-label="Notifications"
+        aria-label={a11y.notifications}
         className="gh-focus-on-dark relative hidden size-11 items-center justify-center rounded-full text-white/85 transition-colors duration-200 hover:bg-white/12 hover:text-white xl:inline-flex"
       >
         <Bell className="size-4" strokeWidth={2} aria-hidden />
@@ -51,7 +58,7 @@ export function HeaderAuthActions({ navigation }: { navigation: SiteNavigationDa
         // (ADMIN/DOCTOR get redirected on to /admin or /doctor there).
         <Link
           href="/account"
-          aria-label="Your account"
+          aria-label={a11y.yourAccount}
           className="gh-focus-on-dark group hidden size-11 items-center justify-center rounded-full transition-transform duration-200 active:scale-95 xl:inline-flex"
         >
           <span className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white/50 transition-[background-color,border-color] duration-200 group-hover:border-[var(--color-brand-accent)] group-hover:bg-white/[0.16]">
@@ -74,7 +81,7 @@ export function HeaderAuthActions({ navigation }: { navigation: SiteNavigationDa
                 ? "/doctor"
                 : "/account"
           }
-          aria-label={user.email ? `Your account (${user.email})` : "Your account"}
+          aria-label={user.email ? `${a11y.yourAccount} (${user.email})` : a11y.yourAccount}
           title={user.email ?? undefined}
           className="gh-focus-on-dark group hidden size-11 items-center justify-center rounded-full transition-transform duration-200 active:scale-95 xl:inline-flex"
         >

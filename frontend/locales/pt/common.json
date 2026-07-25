@@ -164,7 +164,11 @@
     "viewProfileAria": "Ver perfil de {name}",
     "languagesMoreTemplate": "{languages} e mais",
     "clinicalDirectorLabel": "Diretor Clínico",
-    "ourTeamEyebrow": "A Nossa Equipa"
+    "ourTeamEyebrow": "A Nossa Equipa",
+    "showResults": "Ver resultados",
+    "featuredClinician": "Clínico em destaque",
+    "registrationLabel": "Registo",
+    "verifiedSuffix": "Verificado"
   },
   "cookie": {
     "title": "Preferências de cookies",
@@ -316,7 +320,9 @@
     "fallbackTitle": "Perfil do Médico da Clínica",
     "fallbackBio": "Este clínico apoia consultas online e orientação de acompanhamento através da Global Health.",
     "fallbackQualification1": "As qualificações e detalhes de registo são apresentados quando verificados pela equipa da clínica.",
-    "fallbackQualification2": "Os pacientes podem confirmar a adequação do clínico durante o processo de agendamento."
+    "fallbackQualification2": "Os pacientes podem confirmar a adequação do clínico durante o processo de agendamento.",
+    "nextStep": "Próximo passo",
+    "patientReviews": "Avaliações de pacientes"
   },
   "bookingForm": {
     "benefitHeading": "Aplicar o seu plano",
@@ -769,7 +775,21 @@
     "whyPatientsTrustUs": "Porque os pacientes confiam em nós",
     "previousPage": "Página anterior",
     "nextPage": "Página seguinte",
-    "medicalDisclaimer": "Aviso médico"
+    "medicalDisclaimer": "Aviso médico",
+    "skipToContent": "Saltar para o conteúdo",
+    "skipToBooking": "Saltar para a marcação",
+    "openMenu": "Abrir menu",
+    "mobileMenuDescription": "Mude de país, altere o idioma e marque uma consulta.",
+    "yourAccount": "A sua conta",
+    "notifications": "Notificações",
+    "chooseLanguage": "Escolher idioma",
+    "searchLanguages": "Pesquisar idiomas…",
+    "sectionNavigation": "Navegação de secções",
+    "sections": "Secções",
+    "bookAnAppointment": "Marcar uma consulta",
+    "patientReviews": "Avaliações de pacientes",
+    "doctifyReviews": "Avaliações de pacientes Doctify",
+    "phoneCountryCode": "Indicativo do país"
   },
   "flow": {
     "cartOpeningTitle": "A abrir o seu carrinho",
@@ -817,5 +837,16 @@
     "loadingArticleAriaLabel": "A carregar artigo…",
     "categoryFallback": "Guia de saúde",
     "readArticle": "Ler artigo"
+  },
+  "calendar": {
+    "selectDay": "Selecione um dia",
+    "selectDayHint": "As consultas e os horários disponíveis do dia selecionado aparecem aqui."
+  },
+  "reports": {
+    "noRowsInRange": "Sem registos neste intervalo.",
+    "truncatedNotice": "Lista truncada no limite de linhas da exportação — restrinja o intervalo de datas ou os filtros para obter tudo."
+  },
+  "doctify": {
+    "body": "Avaliações independentes e verificadas, recolhidas pela Doctify junto de pacientes tratados pelos nossos clínicos."
   }
 }

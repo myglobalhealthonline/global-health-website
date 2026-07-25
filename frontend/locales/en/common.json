@@ -164,7 +164,11 @@
     "verifyRegistrationAria": "Verify registration on the official register",
     "viewProfileAria": "View profile for {name}",
     "languagesMoreTemplate": "{languages} & More",
-    "clinicalDirectorLabel": "Clinical Director"
+    "clinicalDirectorLabel": "Clinical Director",
+    "showResults": "Show results",
+    "featuredClinician": "Featured clinician",
+    "registrationLabel": "Registration",
+    "verifiedSuffix": "Verified"
   },
   "cookie": {
     "title": "Cookie preferences",
@@ -316,7 +320,9 @@
     "fallbackTitle": "Clinic Doctor Profile",
     "fallbackBio": "This clinician supports online consultations and follow-up guidance through Global Health.",
     "fallbackQualification1": "Qualifications and registration details are shown when verified by the clinic team.",
-    "fallbackQualification2": "Patients can confirm clinician fit during the booking intake."
+    "fallbackQualification2": "Patients can confirm clinician fit during the booking intake.",
+    "nextStep": "Next step",
+    "patientReviews": "Patient reviews"
   },
   "bookingForm": {
     "benefitHeading": "Apply your plan",
@@ -769,7 +775,21 @@
     "whyPatientsTrustUs": "Why patients trust us",
     "previousPage": "Previous page",
     "nextPage": "Next page",
-    "medicalDisclaimer": "Medical disclaimer"
+    "medicalDisclaimer": "Medical disclaimer",
+    "skipToContent": "Skip to content",
+    "skipToBooking": "Skip to booking",
+    "openMenu": "Open menu",
+    "mobileMenuDescription": "Switch country, change language, and book a consultation.",
+    "yourAccount": "Your account",
+    "notifications": "Notifications",
+    "chooseLanguage": "Choose language",
+    "searchLanguages": "Search languages…",
+    "sectionNavigation": "Section navigation",
+    "sections": "Sections",
+    "bookAnAppointment": "Book an appointment",
+    "patientReviews": "Patient reviews",
+    "doctifyReviews": "Doctify patient reviews",
+    "phoneCountryCode": "Country code"
   },
   "flow": {
     "cartOpeningTitle": "Opening your cart",
@@ -817,5 +837,16 @@
     "loadingArticleAriaLabel": "Loading article…",
     "categoryFallback": "Health guide",
     "readArticle": "Read article"
+  },
+  "calendar": {
+    "selectDay": "Select a day",
+    "selectDayHint": "Consultations and availability slots for the selected day will appear here."
+  },
+  "reports": {
+    "noRowsInRange": "No rows in this range.",
+    "truncatedNotice": "List truncated at the export row limit — narrow the date range or filters for a complete pull."
+  },
+  "doctify": {
+    "body": "Independent, verified reviews collected by Doctify from patients treated by our clinicians."
   }
 }

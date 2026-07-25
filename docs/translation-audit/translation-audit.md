@@ -8,18 +8,18 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | Severity | Count |
 |---|---|
 | Critical | 0 |
-| Warning | 282 |
+| Warning | 561 |
 | Info | 1 |
 
 ### Per-locale key health (vs en)
 
 | Locale | Keys checked | Missing | Empty | Identical to en (flagged) |
 |---|---|---|---|---|
-| pt | 3671 | 0 | 0 | 43 |
-| es | 3671 | 0 | 0 | 42 |
-| cs | 3671 | 0 | 0 | 22 |
-| ro | 3671 | 0 | 0 | 78 |
-| de | 3671 | 0 | 0 | 67 |
+| pt | 4059 | 0 | 0 | 95 |
+| es | 4059 | 0 | 0 | 97 |
+| cs | 4059 | 0 | 0 | 74 |
+| ro | 4059 | 0 | 0 | 133 |
+| de | 4059 | 0 | 0 | 127 |
 
 ## Wiring checks (persistence, fallback, SSR/CSR)
 
@@ -31,12 +31,16 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | Server rendering reads header + cookie | `frontend/lib/i18n/get-page-locale.ts` | ✅ pass | getPageLocale reads x-gh-locale header and gh_locale cookie. |
 | Middleware stamps locale header | `frontend/proxy.ts` | ✅ pass | proxy.ts stamps x-gh-locale for server components. |
 | Language switcher re-renders after switch | `frontend/components/layout/LanguageSwitcher.tsx` | ✅ pass | Switcher writes gh_locale cookie then reloads/refreshes so server-rendered content updates. |
-| html lang reflects locale | `frontend/app/layout.tsx` | ✅ pass | Root layout sets <html lang> from resolved locale. |
+| Locale survives authentication | `frontend/../backend/prisma/schema.prisma` | ✅ pass | User.preferredLocale exists — the chosen language is restored after login on any device. |
+| html lang reflects locale — app/(global)/layout.tsx | `frontend/app/(global)/layout.tsx` | ✅ pass | Emits <html lang> via toHtmlLang(resolvedLocale). |
+| html lang reflects locale — app/[country]/[lang]/layout.tsx | `frontend/app/[country]/[lang]/layout.tsx` | ✅ pass | Emits <html lang> via toHtmlLang(resolvedLocale). |
+| html lang reflects locale — app/(portal)/layout.tsx | `frontend/app/(portal)/layout.tsx` | ✅ pass | Static lang by design (redirect-only shell / non-indexable portal, P-001). |
+| html lang reflects locale — app/(redirect)/layout.tsx | `frontend/app/(redirect)/layout.tsx` | ✅ pass | Static lang by design (redirect-only shell / non-indexable portal, P-001). |
 | Admin portal localization | `frontend/app/(admin)/admin/_components/admin-shell.tsx` | ❌ FAIL | Admin portal is English-only by construction (no locale plumbing). Known/possibly intentional. |
 
 ## Findings
 
-### identical-to-english (252) — warning
+### identical-to-english (526) — warning
 
 > Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).
 
@@ -49,6 +53,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/account.json` | `orders.colTotal` | pt | Total |  |
 | `frontend/locales/pt/account.json` | `profile.nationalIdHint` | pt | NIC / DNI / RG / CC |  |
 | `frontend/locales/pt/account.json` | `profile.taxIdHint` | pt | NIF / PPS / CPF |  |
+| `frontend/locales/pt/account.json` | `profile.utente` | pt | Número de Utente |  |
 | `frontend/locales/pt/account.json` | `profile.statusPatientIdHint` | pt | Global Health Number |  |
 | `frontend/locales/pt/account.json` | `notificationsPage.total` | pt | Total |  |
 | `frontend/locales/pt/account.json` | `calendar.sectionSlots` | pt | Slots |  |
@@ -70,7 +75,12 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/contact.json` | `form_full_name_placeholder` | pt | Jane Smith |  |
 | `frontend/locales/pt/corporate.json` | `employees.addEmployee.email` | pt | Email * |  |
 | `frontend/locales/pt/corporate.json` | `employees.bulkUpload.textareaPlaceholder` | pt | firstName,lastName,email,phone Mary,Byrne,mary.byrne@acme.i… |  |
+| `frontend/locales/pt/doctor.json` | `nav.crossBorderRx` | pt | Cross-border requests |  |
+| `frontend/locales/pt/doctor.json` | `notifications.crossBorderRxRequested` | pt | Cross-border prescription request |  |
+| `frontend/locales/pt/doctor.json` | `notifications.crossBorderRxUpdated` | pt | Cross-border prescription update |  |
 | `frontend/locales/pt/doctor.json` | `appointmentDetail.internalNotesAuthorAdmin` | pt | Admin |  |
+| `frontend/locales/pt/doctor.json` | `appointmentDetail.utenteNumber` | pt | Número de Utente |  |
+| `frontend/locales/pt/doctor.json` | `appointmentDetail.ptIdCard` | pt | Cartão de Cidadão |  |
 | `frontend/locales/pt/doctor.json` | `availability.minutesShort` | pt | {count} min |  |
 | `frontend/locales/pt/doctor.json` | `availability.removeWindowDateQualifier` | pt | ({from} – {until}). |  |
 | `frontend/locales/pt/doctor.json` | `profile.registrationBodyPlaceholder` | pt | IMC, OM, OMC |  |
@@ -78,11 +88,57 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/doctor.json` | `profile.focalPreviewAvatar` | pt | Avatar |  |
 | `frontend/locales/pt/doctor.json` | `invoices.excel` | pt | Excel |  |
 | `frontend/locales/pt/doctor.json` | `notificationsPage.total` | pt | Total |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.openButton` | pt | Request prescription outside jurisdiction |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.title` | pt | Request prescription outside jurisdiction |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.description` | pt | Ask an authorised doctor in another country to issue this p… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.countryLabel` | pt | Country |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.countryPlaceholder` | pt | Select country… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.doctorLabel` | pt | Prescribing doctor |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.doctorPlaceholder` | pt | Select doctor… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.summaryLabel` | pt | Clinical summary for the prescribing doctor |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.summaryPlaceholder` | pt | Diagnosis, medication requested, dose, and rationale… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.submit` | pt | Create request |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.submitting` | pt | Creating… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.cancel` | pt | Cancel |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.loadingOptions` | pt | Loading available countries… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.noTargets` | pt | No prescribing doctors are set up in other countries yet. A… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.selectCountryFirst` | pt | Select a country first. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.selectDoctorFirst` | pt | Select a doctor. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.summaryRequired` | pt | Add a clinical summary. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.couldNotCreate` | pt | Could not create the request. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.copyLink` | pt | Copy link |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.copied` | pt | Copied |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRx.done` | pt | Done |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.eyebrow` | pt | Cross-border |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.title` | pt | Cross-border prescription requests |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.description` | pt | Requests from doctors in other countries asking you to issu… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.empty` | pt | No pending cross-border requests. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.fromLabel` | pt | Requested by |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.statusAwaiting` | pt | Awaiting your review |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.statusMoreInfo` | pt | More information requested |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.openConsultation` | pt | Open consultation |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.accept` | pt | Accept & prescribe |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.requestInfo` | pt | Request more info |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.refuse` | pt | Refuse |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.messageLabel` | pt | Message |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.messagePlaceholder` | pt | What information do you need, or why are you refusing? |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.acceptHint` | pt | Marks the request accepted. Issue the prescription in the c… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.refuseHint` | pt | Declines the request and offers the patient a full consulta… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.messageRequired` | pt | A message is required to request more information. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.submit` | pt | Submit |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.submitting` | pt | Submitting… |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.couldNotSubmit` | pt | Could not submit the decision. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.acceptedToast` | pt | Request accepted. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.moreInfoToast` | pt | Information request sent. |  |
+| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.refusedToast` | pt | Request refused and upgrade offered. |  |
 | `frontend/locales/pt/doctor.json` | `servicesUsedList.colItem` | pt | Item |  |
 | `frontend/locales/pt/doctor.json` | `servicesUsedList.total` | pt | Total |  |
 | `frontend/locales/pt/doctor.json` | `calendar.eventDetailLinks` | pt | Links |  |
 | `frontend/locales/pt/faq.json` | `hero_eyebrow` | pt | Global Health · FAQ |  |
 | `frontend/locales/pt/home.json` | `countryHero.sameDay.minSuffix` | pt | min |  |
+| `frontend/locales/pt/home.json` | `blog.lastReviewed` | pt | Last reviewed |  |
+| `frontend/locales/pt/home.json` | `blog.moreArticles` | pt | More articles |  |
+| `frontend/locales/pt/home.json` | `blog.medicalDisclaimer` | pt | This article is for information only and is not a substitut… |  |
 | `frontend/locales/pt/legal.json` | `privacy.eyebrow` | pt | Legal |  |
 | `frontend/locales/pt/legal.json` | `terms.eyebrow` | pt | Legal |  |
 | `frontend/locales/es/account.json` | `dashboard.totalLabel` | es | Total |  |
@@ -92,6 +148,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/es/account.json` | `orders.colTotal` | es | Total |  |
 | `frontend/locales/es/account.json` | `profile.nationalIdHint` | es | NIC / DNI / RG / CC |  |
 | `frontend/locales/es/account.json` | `profile.taxIdHint` | es | NIF / PPS / CPF |  |
+| `frontend/locales/es/account.json` | `profile.utente` | es | Número de Utente |  |
 | `frontend/locales/es/account.json` | `profile.tabPersonal` | es | Personal |  |
 | `frontend/locales/es/account.json` | `profile.statusPatientIdHint` | es | Global Health Number |  |
 | `frontend/locales/es/account.json` | `notificationsPage.total` | es | Total |  |
@@ -112,174 +169,133 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/es/contact.json` | `form_full_name_placeholder` | es | Jane Smith |  |
 | `frontend/locales/es/corporate.json` | `employees.bulkUpload.textareaPlaceholder` | es | firstName,lastName,email,phone Mary,Byrne,mary.byrne@acme.i… |  |
 | `frontend/locales/es/corporate.json` | `settings.plan.plan` | es | Plan |  |
+| `frontend/locales/es/doctor.json` | `nav.crossBorderRx` | es | Cross-border requests |  |
+| `frontend/locales/es/doctor.json` | `notifications.crossBorderRxRequested` | es | Cross-border prescription request |  |
+| `frontend/locales/es/doctor.json` | `notifications.crossBorderRxUpdated` | es | Cross-border prescription update |  |
 | `frontend/locales/es/doctor.json` | `appointments.typeGeneral` | es | General |  |
 | `frontend/locales/es/doctor.json` | `appointmentDetail.internalNotesAuthorAdmin` | es | Admin |  |
+| `frontend/locales/es/doctor.json` | `appointmentDetail.utenteNumber` | es | Número de Utente |  |
+| `frontend/locales/es/doctor.json` | `appointmentDetail.ptIdCard` | es | Cartão de Cidadão |  |
+| `frontend/locales/es/doctor.json` | `patients.soapPlan` | es | Plan |  |
 | `frontend/locales/es/doctor.json` | `availability.minutesShort` | es | {count} min |  |
 | `frontend/locales/es/doctor.json` | `availability.removeWindowDateQualifier` | es | ({from} – {until}). |  |
 | `frontend/locales/es/doctor.json` | `profile.registrationBodyPlaceholder` | es | IMC, OM, OMC |  |
 | `frontend/locales/es/doctor.json` | `profile.focalPreviewAvatar` | es | Avatar |  |
 | `frontend/locales/es/doctor.json` | `invoices.excel` | es | Excel |  |
 | `frontend/locales/es/doctor.json` | `notificationsPage.total` | es | Total |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.openButton` | es | Request prescription outside jurisdiction |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.title` | es | Request prescription outside jurisdiction |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.description` | es | Ask an authorised doctor in another country to issue this p… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.countryLabel` | es | Country |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.countryPlaceholder` | es | Select country… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.doctorLabel` | es | Prescribing doctor |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.doctorPlaceholder` | es | Select doctor… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.summaryLabel` | es | Clinical summary for the prescribing doctor |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.summaryPlaceholder` | es | Diagnosis, medication requested, dose, and rationale… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.submit` | es | Create request |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.submitting` | es | Creating… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.cancel` | es | Cancel |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.loadingOptions` | es | Loading available countries… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.noTargets` | es | No prescribing doctors are set up in other countries yet. A… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.selectCountryFirst` | es | Select a country first. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.selectDoctorFirst` | es | Select a doctor. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.summaryRequired` | es | Add a clinical summary. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.couldNotCreate` | es | Could not create the request. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.copyLink` | es | Copy link |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.copied` | es | Copied |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRx.done` | es | Done |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.eyebrow` | es | Cross-border |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.title` | es | Cross-border prescription requests |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.description` | es | Requests from doctors in other countries asking you to issu… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.empty` | es | No pending cross-border requests. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.fromLabel` | es | Requested by |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapPlan` | es | Plan |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.statusAwaiting` | es | Awaiting your review |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.statusMoreInfo` | es | More information requested |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.openConsultation` | es | Open consultation |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.accept` | es | Accept & prescribe |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.requestInfo` | es | Request more info |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.refuse` | es | Refuse |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.messageLabel` | es | Message |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.messagePlaceholder` | es | What information do you need, or why are you refusing? |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.acceptHint` | es | Marks the request accepted. Issue the prescription in the c… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.refuseHint` | es | Declines the request and offers the patient a full consulta… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.messageRequired` | es | A message is required to request more information. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.submit` | es | Submit |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.submitting` | es | Submitting… |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.couldNotSubmit` | es | Could not submit the decision. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.acceptedToast` | es | Request accepted. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.moreInfoToast` | es | Information request sent. |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.refusedToast` | es | Request refused and upgrade offered. |  |
 | `frontend/locales/es/doctor.json` | `servicesUsedList.total` | es | Total |  |
 | `frontend/locales/es/doctor.json` | `consultationForm.fieldPlan` | es | Plan |  |
 | `frontend/locales/es/doctor.json` | `calendar.eventDetailDoctor` | es | Doctor |  |
+| `frontend/locales/es/doctor.json` | `tour.demo.plan` | es | Plan |  |
 | `frontend/locales/es/faq.json` | `hero_eyebrow` | es | Global Health · FAQ |  |
 | `frontend/locales/es/home.json` | `countryHero.sameDay.minSuffix` | es | min |  |
+| `frontend/locales/es/home.json` | `blog.lastReviewed` | es | Last reviewed |  |
+| `frontend/locales/es/home.json` | `blog.moreArticles` | es | More articles |  |
+| `frontend/locales/es/home.json` | `blog.medicalDisclaimer` | es | This article is for information only and is not a substitut… |  |
 | `frontend/locales/es/legal.json` | `privacy.eyebrow` | es | Legal |  |
 | `frontend/locales/es/legal.json` | `terms.eyebrow` | es | Legal |  |
 | `frontend/locales/cs/account.json` | `profile.nationalIdHint` | cs | NIC / DNI / RG / CC |  |
 | `frontend/locales/cs/account.json` | `profile.taxIdHint` | cs | NIF / PPS / CPF |  |
+| `frontend/locales/cs/account.json` | `profile.utente` | cs | Número de Utente |  |
 | `frontend/locales/cs/account.json` | `profile.statusPatientIdHint` | cs | Global Health Number |  |
 | `frontend/locales/cs/common.json` | `entryGate.motto` | cs | Medicine Anytime Anywhere |  |
 | `frontend/locales/cs/common.json` | `extra.minSuffix` | cs | min |  |
 | `frontend/locales/cs/common.json` | `testsPage.testSingular` | cs | test |  |
 | `frontend/locales/cs/common.json` | `homeCatalog.testSingular` | cs | test |  |
-| `frontend/locales/cs/common.json` | `blogPage.heroCountryLabel` | cs | Global Health · Blog |  |
-| `frontend/locales/cs/contact.json` | `form_full_name_placeholder` | cs | Jane Smith |  |
-| `frontend/locales/cs/corporate.json` | `employees.bulkUpload.textareaPlaceholder` | cs | firstName,lastName,email,phone Mary,Byrne,mary.byrne@acme.i… |  |
-| `frontend/locales/cs/doctor.json` | `nav.groupFinance` | cs | Finance |  |
-| `frontend/locales/cs/doctor.json` | `appointmentDetail.internalNotesAuthorAdmin` | cs | Admin |  |
-| `frontend/locales/cs/doctor.json` | `availability.minutesShort` | cs | {count} min |  |
-| `frontend/locales/cs/doctor.json` | `availability.removeWindowDateQualifier` | cs | ({from} – {until}). |  |
-| `frontend/locales/cs/doctor.json` | `profile.urlSlug` | cs | URL slug |  |
-| `frontend/locales/cs/doctor.json` | `profile.registrationBodyPlaceholder` | cs | IMC, OM, OMC |  |
-| `frontend/locales/cs/doctor.json` | `profile.focalPreviewAvatar` | cs | Avatar |  |
-| `frontend/locales/cs/doctor.json` | `invoices.excel` | cs | Excel |  |
-| `frontend/locales/cs/doctor.json` | `appointmentActions.modeOnline` | cs | Online (video) |  |
-| `frontend/locales/cs/doctor.json` | `followUpButton.onlineOption` | cs | Online (video) |  |
-| `frontend/locales/cs/faq.json` | `hero_eyebrow` | cs | Global Health · FAQ |  |
-| `frontend/locales/cs/home.json` | `countryHero.sameDay.minSuffix` | cs | min |  |
-| `frontend/locales/ro/account.json` | `nav.calendar` | ro | Calendar |  |
-| `frontend/locales/ro/account.json` | `dashboard.totalLabel` | ro | Total |  |
-| `frontend/locales/ro/account.json` | `orders.subtotal` | ro | Subtotal |  |
-| `frontend/locales/ro/account.json` | `orders.total` | ro | Total |  |
-| `frontend/locales/ro/account.json` | `orders.contact` | ro | Contact |  |
-| `frontend/locales/ro/account.json` | `orders.statusLabel` | ro | Status |  |
-| `frontend/locales/ro/account.json` | `orders.sumTotal` | ro | Total |  |
-| `frontend/locales/ro/account.json` | `orders.colTotal` | ro | Total |  |
-| `frontend/locales/ro/account.json` | `payments.colStatus` | ro | Status |  |
-| `frontend/locales/ro/account.json` | `profile.nationalIdHint` | ro | NIC / DNI / RG / CC |  |
-| `frontend/locales/ro/account.json` | `profile.taxIdHint` | ro | NIF / PPS / CPF |  |
-| `frontend/locales/ro/account.json` | `profile.tabContact` | ro | Contact |  |
-| `frontend/locales/ro/account.json` | `profile.tabPersonal` | ro | Personal |  |
-| `frontend/locales/ro/account.json` | `profile.statusPatientIdHint` | ro | Global Health Number |  |
-| `frontend/locales/ro/account.json` | `notificationsPage.total` | ro | Total |  |
-| `frontend/locales/ro/account.json` | `notificationsPage.statusLabel` | ro | Status |  |
-| `frontend/locales/ro/account.json` | `membership.sumPlan` | ro | Plan |  |
-| `frontend/locales/ro/account.json` | `membership.sumStatus` | ro | Status |  |
-| `frontend/locales/ro/account.json` | `calendar.title` | ro | Calendar |  |
-| `frontend/locales/ro/account.json` | `calendar.eventDetailDoctor` | ro | Doctor |  |
-| `frontend/locales/ro/common.json` | `navigation.contact` | ro | Contact |  |
-| `frontend/locales/ro/common.json` | `footer.legal` | ro | Legal |  |
-| `frontend/locales/ro/common.json` | `entryGate.motto` | ro | Medicine Anytime Anywhere |  |
-| `frontend/locales/ro/common.json` | `extra.minSuffix` | ro | min |  |
-| `frontend/locales/ro/common.json` | `prescriptionsPage.trustClinicianValue` | ro | Clinician |  |
-| `frontend/locales/ro/common.json` | `homeCatalog.tagGeneral` | ro | General |  |
-| `frontend/locales/ro/common.json` | `legalPage.heroWatermark` | ro | Legal |  |
-| `frontend/locales/ro/common.json` | `legalDocPage.heroWatermark` | ro | Legal |  |
-| `frontend/locales/ro/common.json` | `cartPage.subtotalItems` | ro | Subtotal ({count} {unit}) |  |
-| `frontend/locales/ro/common.json` | `cartPage.total` | ro | Total |  |
-| `frontend/locales/ro/common.json` | `checkoutPage.subtotal` | ro | Subtotal |  |
-| `frontend/locales/ro/common.json` | `checkoutPage.total` | ro | Total |  |
-| `frontend/locales/ro/common.json` | `bookPage.tagGeneral` | ro | General |  |
-| `frontend/locales/ro/common.json` | `cardVerify.valid` | ro | Card valid |  |
-| `frontend/locales/ro/common.json` | `cardVerify.plan` | ro | Plan |  |
-| `frontend/locales/ro/common.json` | `blogPage.heroCountryLabel` | ro | Global Health · Blog |  |
-| `frontend/locales/ro/contact.json` | `hero_eyebrow` | ro | Global Health · Contact |  |
-| `frontend/locales/ro/contact.json` | `watermark` | ro | Contact |  |
-| `frontend/locales/ro/contact.json` | `form_full_name_placeholder` | ro | Jane Smith |  |
-| `frontend/locales/ro/corporate.json` | `employees.addEmployee.email` | ro | Email * |  |
-| `frontend/locales/ro/corporate.json` | `employees.bulkUpload.textareaPlaceholder` | ro | firstName,lastName,email,phone Mary,Byrne,mary.byrne@acme.i… |  |
-| `frontend/locales/ro/corporate.json` | `employees.table.colStatus` | ro | Status |  |
-| `frontend/locales/ro/corporate.json` | `employees.table.reactivate` | ro | Reactivate |  |
-| `frontend/locales/ro/corporate.json` | `employees.table.inviteStatusLabel` | ro | Status |  |
-| `frontend/locales/ro/corporate.json` | `settings.plan.sectionTitle` | ro | Plan + contract |  |
-| `frontend/locales/ro/corporate.json` | `settings.plan.plan` | ro | Plan |  |
-| `frontend/locales/ro/doctor.json` | `nav.calendar` | ro | Calendar |  |
-| `frontend/locales/ro/doctor.json` | `common.activeCount` | ro | {count} active |  |
-| `frontend/locales/ro/doctor.json` | `dashboard.calendar` | ro | Calendar |  |
-| `frontend/locales/ro/doctor.json` | `appointments.typeGeneral` | ro | General |  |
-| `frontend/locales/ro/doctor.json` | `appointments.typeSpecialist` | ro | Specialist |  |
-| `frontend/locales/ro/doctor.json` | `appointmentDetail.internalNotesAuthorAdmin` | ro | Admin |  |
-| `frontend/locales/ro/doctor.json` | `patients.docTypeDocument` | ro | Document |  |
-| `frontend/locales/ro/doctor.json` | `availability.minutesShort` | ro | {count} min |  |
-| `frontend/locales/ro/doctor.json` | `availability.removeWindowDateQualifier` | ro | ({from} – {until}). |  |
-| `frontend/locales/ro/doctor.json` | `profile.registrationBodyPlaceholder` | ro | IMC, OM, OMC |  |
-| `frontend/locales/ro/doctor.json` | `profile.focalZoom` | ro | Zoom |  |
-| `frontend/locales/ro/doctor.json` | `profile.focalPreviewCard` | ro | Card |  |
-| `frontend/locales/ro/doctor.json` | `profile.focalPreviewAvatar` | ro | Avatar |  |
-| `frontend/locales/ro/doctor.json` | `invoices.excel` | ro | Excel |  |
-| `frontend/locales/ro/doctor.json` | `notificationsPage.total` | ro | Total |  |
-| `frontend/locales/ro/doctor.json` | `services.kindSpecialistShort` | ro | Specialist |  |
-| `frontend/locales/ro/doctor.json` | `appointmentActions.modeOnline` | ro | Online (video) |  |
-| `frontend/locales/ro/doctor.json` | `followUpButton.onlineOption` | ro | Online (video) |  |
-| `frontend/locales/ro/doctor.json` | `servicesUsedList.total` | ro | Total |  |
-| `frontend/locales/ro/doctor.json` | `consultationForm.fieldPlan` | ro | Plan |  |
-| `frontend/locales/ro/doctor.json` | `calendar.title` | ro | Calendar |  |
-| `frontend/locales/ro/faq.json` | `hero_eyebrow` | ro | Global Health · FAQ |  |
-| `frontend/locales/ro/home.json` | `countryHero.sameDay.minSuffix` | ro | min |  |
-| `frontend/locales/ro/home.json` | `team.filterSpecialist` | ro | Specialist |  |
-| `frontend/locales/ro/home.json` | `finalCta.liveLabel` | ro | Live |  |
-| `frontend/locales/ro/home.json` | `finalCta.headlineAccent` | ro | clinician |  |
-| `frontend/locales/ro/home.json` | `statsBand.stat3Value` | ro | Live |  |
-| `frontend/locales/ro/legal.json` | `privacy.eyebrow` | ro | Legal |  |
-| `frontend/locales/ro/legal.json` | `terms.eyebrow` | ro | Legal |  |
-| `frontend/locales/ro/legal.json` | `terms.s10_h` | ro | Contact |  |
-| `frontend/locales/ro/subscription.json` | `manage.upgradeLabel` | ro | Upgrade |  |
-| `frontend/locales/ro/subscription.json` | `manage.downgradeLabel` | ro | Downgrade |  |
-| `frontend/locales/de/account.json` | `bookings.statusLabel` | de | Status |  |
-| `frontend/locales/de/account.json` | `orders.statusLabel` | de | Status |  |
-| `frontend/locales/de/account.json` | `orders.colStatus` | de | Status |  |
-| `frontend/locales/de/account.json` | `payments.colStatus` | de | Status |  |
-| `frontend/locales/de/account.json` | `profile.nationalIdHint` | de | NIC / DNI / RG / CC |  |
-| `frontend/locales/de/account.json` | `profile.taxIdHint` | de | NIF / PPS / CPF |  |
-| `frontend/locales/de/account.json` | `profile.statusPatientIdHint` | de | Global Health Number |  |
-| `frontend/locales/de/account.json` | `security.sumAccountValue` | de | Patient |  |
-| `frontend/locales/de/account.json` | `family.optional` | de | optional |  |
-| `frontend/locales/de/account.json` | `notificationsPage.statusLabel` | de | Status |  |
-| `frontend/locales/de/account.json` | `membership.sumStatus` | de | Status |  |
-| `frontend/locales/de/account.json` | `calendar.sectionSlots` | de | Slots |  |
-| `frontend/locales/de/account.json` | `calendar.eventDetailPatient` | de | Patient |  |
-| `frontend/locales/de/account.json` | `calendar.eventDetailLinks` | de | Links |  |
-| `frontend/locales/de/account.json` | `accessHistory.roleSystem` | de | System |  |
-| _…and 52 more (see JSON report)_ | | | | |
+| _…and 326 more (see JSON report)_ | | | | |
 
-### hardcoded-text (30) — warning
+### hardcoded-text (27) — warning
 
 > Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.
 
 | File | Key | Locale | English value | Detail |
 |---|---|---|---|---|
-| `frontend/app/(site)/(global)/about/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Global Health telemedicine platform — online doctor consul… |
-| `frontend/app/(site)/(global)/blog/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Medical team reviewing health articles and educational con… |
-| `frontend/app/(site)/(global)/contact/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Telehealth care coordinator supporting a patient through a… |
-| `frontend/app/(site)/[country]/[lang]/book/page.tsx` |  |  |  | 1 candidate string(s): "Need a same-day GP instead?" |
-| `frontend/app/(site)/[country]/[lang]/book/_components/service-time-picker.tsx` |  |  |  | 2 candidate string(s): "Change service", "[attr] Available dates" |
-| `frontend/app/(site)/[country]/[lang]/cart/_components/CartPageClient.tsx` |  |  |  | 2 candidate string(s): "Pick another time", "void | Promise" |
-| `frontend/app/(site)/[country]/[lang]/checkout/success/page.tsx` |  |  |  | 1 candidate string(s): "Usually under 30 seconds." |
-| `frontend/app/(site)/[country]/[lang]/checkout/_components/CheckoutPageClient.tsx` |  |  |  | 2 candidate string(s): "Back to home", "Use a different contact for this payment?" |
-| `frontend/app/(site)/[country]/[lang]/consult/[serviceSlug]/_components/consultation-booking-form.tsx` |  |  |  | 4 candidate string(s): "That time is no longer available — pick another.", "Patient being… |
-| `frontend/app/(site)/[country]/[lang]/consult/[serviceSlug]/_components/slot-picker-step.tsx` |  |  |  | 1 candidate string(s): "Pick another clinician" |
-| `frontend/app/(auth)/account/membership/page.tsx` |  |  |  | 1 candidate string(s): "kit.eligible).length), hint: a.membership.sumEligibleNowHint, ico… |
-| `frontend/app/(auth)/account/profile/_components/profile-client.tsx` |  |  |  | 1 candidate string(s): "null) as Promise" |
-| `frontend/app/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx` |  |  |  | 1 candidate string(s): "locked ? null : (" |
-| `frontend/app/(doctor)/doctor/page.tsx` |  |  |  | 1 candidate string(s): "a.scheduledAt &&\r\n      new Date(a.scheduledAt).getTime()" |
-| `frontend/components/calendar/DayAgenda.tsx` |  |  |  | 2 candidate string(s): "Select a day", "Consultations and availability slots for the sele… |
-| `frontend/components/cards/DoctorCard.tsx` |  |  |  | 1 candidate string(s): "[attr] Verify registration on the official register" |
+| `frontend/app/(global)/about/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Global Health telemedicine platform — online doctor consul… |
+| `frontend/app/(global)/access-request/AccessRequestPageClient.tsx` |  |  |  | 1 candidate string(s): "Medical file access request" |
+| `frontend/app/(global)/contact/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Telehealth care coordinator supporting a patient through a… |
+| `frontend/app/(portal)/(auth)/account/membership/page.tsx` |  |  |  | 1 candidate string(s): "kit.eligible).length), hint: a.membership.sumEligibleNowHint, ico… |
+| `frontend/app/(portal)/(auth)/account/profile/_components/profile-client.tsx` |  |  |  | 1 candidate string(s): "null) as Promise" |
+| `frontend/app/(portal)/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx` |  |  |  | 1 candidate string(s): "locked ? null : (" |
+| `frontend/app/(portal)/(doctor)/doctor/appointments/_components/doctor-manual-booking-form.tsx` |  |  |  | 1 candidate string(s): "[attr] ie / pt / es…" |
+| `frontend/app/(portal)/(doctor)/doctor/page.tsx` |  |  |  | 1 candidate string(s): "a.scheduledAt &&\r\n      new Date(a.scheduledAt).getTime()" |
+| `frontend/app/(portal)/print/appointments/[id]/page.tsx` |  |  |  | 5 candidate string(s): "Services rendered", "Exam results", "Attached documents", "Form s… |
+| `frontend/app/(portal)/print/consults/[id]/page.tsx` |  |  |  | 2 candidate string(s): "Exam results", "[attr] Chief complaint" |
+| `frontend/app/(portal)/print/forms/[submissionId]/page.tsx` |  |  |  | 3 candidate string(s): "Service unavailable.", "Could not load submission.", "Form Submis… |
+| `frontend/app/(portal)/print/invoices/[id]/page.tsx` |  |  |  | 2 candidate string(s): "Consultation fee", "Payment events" |
+| `frontend/app/(portal)/print/order-invoices/[invoiceId]/page.tsx` |  |  |  | 1 candidate string(s): "Medicine Anytime Anywhere — myglobalhealth.online" |
+| `frontend/app/(portal)/share/consults/[token]/page.tsx` |  |  |  | 6 candidate string(s): "Service unavailable. Try again later.", "Link no longer valid", "… |
+| `frontend/app/(portal)/unauthorized/page.tsx` |  |  |  | 2 candidate string(s): "Access denied", "Back to my account" |
+| `frontend/app/(site)/(global)/cross-border-consent/CrossBorderConsentPageClient.tsx` |  |  |  | 7 candidate string(s): "Your prescription request", "to\r\n        issue a prescription f… |
+| `frontend/app/[country]/[lang]/book/page.tsx` |  |  |  | 1 candidate string(s): "Need a same-day GP instead?" |
+| `frontend/app/[country]/[lang]/book/_components/service-time-picker.tsx` |  |  |  | 2 candidate string(s): "Change service", "[attr] Available dates" |
+| `frontend/app/[country]/[lang]/cart/_components/CartPageClient.tsx` |  |  |  | 2 candidate string(s): "Pick another time", "void | Promise" |
+| `frontend/app/[country]/[lang]/checkout/success/page.tsx` |  |  |  | 1 candidate string(s): "Usually under 30 seconds." |
+| `frontend/app/[country]/[lang]/checkout/_components/CheckoutPageClient.tsx` |  |  |  | 2 candidate string(s): "Back to home", "Use a different contact for this payment?" |
+| `frontend/app/[country]/[lang]/consult/[serviceSlug]/_components/consultation-booking-form.tsx` |  |  |  | 4 candidate string(s): "That time is no longer available — pick another.", "Patient being… |
+| `frontend/app/[country]/[lang]/consult/[serviceSlug]/_components/slot-picker-step.tsx` |  |  |  | 1 candidate string(s): "Pick another clinician" |
+| `frontend/app/[country]/[lang]/health/[slug]/page.tsx` |  |  |  | 5 candidate string(s): "Book a consultation", "Doctors who can help", "You might also nee… |
 | `frontend/components/forms/LanguagePicker.tsx` |  |  |  | 1 candidate string(s): "[attr] Search languages…" |
 | `frontend/components/forms/phone-field.tsx` |  |  |  | 1 candidate string(s): "[attr] Country code" |
-| `frontend/components/layout/BookingSkipLink.tsx` |  |  |  | 1 candidate string(s): "Skip to booking" |
-| `frontend/components/layout/HeaderAuthActions.tsx` |  |  |  | 1 candidate string(s): "[attr] Your account" |
-| `frontend/components/layout/LanguageSwitcher.tsx` |  |  |  | 1 candidate string(s): "[attr] Choose language" |
-| `frontend/components/layout/MobileNav.tsx` |  |  |  | 2 candidate string(s): "Switch country, change language, and book a consultation.", "[att… |
-| `frontend/components/layout/SectionNav.tsx` |  |  |  | 1 candidate string(s): "[attr] Section navigation" |
-| `frontend/components/layout/SiteChrome.tsx` |  |  |  | 2 candidate string(s): "Skip to content", "[attr] Medical disclaimer" |
-| `frontend/components/layout/SiteHeader.tsx` |  |  |  | 1 candidate string(s): "[attr] Book an appointment" |
-| `frontend/components/sections/DoctifyReviews.tsx` |  |  |  | 1 candidate string(s): "[attr] Doctify patient reviews" |
-| `frontend/components/sections/DoctorFilters.tsx` |  |  |  | 1 candidate string(s): "Show results" |
-| `frontend/components/sections/FeaturedDoctor.tsx` |  |  |  | 1 candidate string(s): "Featured clinician" |
-| `frontend/components/templates/DoctorProfileTemplate.tsx` |  |  |  | 2 candidate string(s): "Next step", "[attr] Patient reviews" |
-| `frontend/components/templates/DoctorTeamTemplate.tsx` |  |  |  | 2 candidate string(s): "[attr] Previous page", "[attr] Next page" |
+| `frontend/components/reports/report-results-table.tsx` |  |  |  | 2 candidate string(s): "No rows in this range.", "List truncated at the export row limit … |
+
+### page-without-i18n (8) — warning
+
+> Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language.
+
+| File | Key | Locale | English value | Detail |
+|---|---|---|---|---|
+| `frontend/app/(global)/blog/[slug]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/appointments/[id]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/consults/[id]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/forms/[submissionId]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/invoices/[id]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/order-invoices/[invoiceId]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/share/consults/[token]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/unauthorized/page.tsx` |  |  |  |  |
 
 ### wiring (1) — info
 

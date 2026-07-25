@@ -44,9 +44,13 @@ export function LanguageSwitcher({
   currentLang,
   availableLocales,
   mode = "auto",
+  chooseLanguageLabel,
 }: {
   currentLang: LocaleCode;
   availableLocales: LocaleCode[];
+  /** Localized aria-label for the locale list, resolved server-side by the
+   *  caller (this is a client component — it must not import the bundles). */
+  chooseLanguageLabel: string;
   /** Accepted for caller compatibility (SiteHeader passes it) but not
    *  currently consumed — the path-swap logic below already handles the
    *  global-page case. Kept in the prop type so callers still typecheck. */
@@ -90,7 +94,7 @@ export function LanguageSwitcher({
         </button>
       }
     >
-      <ul aria-label="Choose language" className="m-0 list-none">
+      <ul aria-label={chooseLanguageLabel} className="m-0 list-none">
         {availableLocales.map((loc) => {
               const isActive = loc === currentLang;
               const current = pathname || "/";

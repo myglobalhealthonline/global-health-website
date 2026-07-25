@@ -153,7 +153,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       getCountryDoctors(code, lang),
       getCountryServices(code, "GENERAL", lang),
       getCountryServices(code, "SPECIALIST", lang),
-      getCountryTrust(code),
+      getCountryTrust(code, lang as LocaleCode),
     ]);
     countryTrust = trust;
     const doc = doctors.find((d) => d.slug === doctorSlug);

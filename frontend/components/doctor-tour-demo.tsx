@@ -8,7 +8,7 @@
  * or navigating into a real appointment.
  */
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Video } from "lucide-react";
 import { AppointmentCard } from "@/components/AppointmentCard";
 import { Pill } from "@/components/portal-atoms";
@@ -44,18 +44,24 @@ export type DoctorTourDemoStrings = {
   documentsQueueNote: string;
 };
 
-export function DoctorTourDemo({ strings: s }: { strings: DoctorTourDemoStrings }) {
-  const [active, setActive] = useState(false);
+/** PortalTour writes `gh_tour_active` and fires `gh:tour:state` on every
+ *  change, so sessionStorage IS the store — subscribe to the event and read
+ *  the flag, instead of mirroring it into local state from an effect. */
+function subscribeTourState(onChange: () => void) {
+  window.addEventListener("gh:tour:state", onChange);
+  return () => window.removeEventListener("gh:tour:state", onChange);
+}
 
-  useEffect(() => {
-    setActive(sessionStorage.getItem("gh_tour_active") === "1");
-    function onState(e: Event) {
-      const detail = (e as CustomEvent<{ active: boolean }>).detail;
-      setActive(!!detail?.active);
-    }
-    window.addEventListener("gh:tour:state", onState);
-    return () => window.removeEventListener("gh:tour:state", onState);
-  }, []);
+function isTourActive(): boolean {
+  try {
+    return sessionStorage.getItem("gh_tour_active") === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function DoctorTourDemo({ strings: s }: { strings: DoctorTourDemoStrings }) {
+  const active = useSyncExternalStore(subscribeTourState, isTourActive, () => false);
 
   if (!active) return null;
 

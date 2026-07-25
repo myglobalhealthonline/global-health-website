@@ -8,6 +8,7 @@ import { EMERGENCY_NOTICE } from "@/lib/constants";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { registerCountrySlugs } from "@/lib/routing/country-slug";
 import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
@@ -58,10 +59,14 @@ export function SiteChrome({
   // even when it was warmed during SSR.
   registerCountrySlugs(countries);
 
+  // Chrome a11y labels, resolved once server-side. The client components below
+  // take them as props rather than importing the bundles themselves.
+  const a11y = getCommonLocale(currentLocale ?? "en").a11y;
+
   return (
     <>
       <a href="#main-content" className="gh-skip-link">
-        Skip to content
+        {a11y.skipToContent}
       </a>
       {/* 04-003: the booking wizard is a single-task flow reached from the
        * portal — a keyboard user tabbing past the generic skip link still
@@ -72,7 +77,7 @@ export function SiteChrome({
        * `[country]/[lang]/layout.tsx` above intentionally keeps `parsed`
        * built from route params only (`rest: []`) to stay static-generation
        * safe; see that file's comment. */}
-      <BookingSkipLink />
+      <BookingSkipLink label={a11y.skipToBooking} />
       {isGatewayHome ? null : (
         <SiteHeader
           siteName={siteName}
@@ -92,7 +97,7 @@ export function SiteChrome({
         <CountryTrustBar trust={countryTrust} locale={currentLocale} />
       ) : (
         <aside
-          aria-label="Medical disclaimer"
+          aria-label={a11y.medicalDisclaimer}
           className="relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
           style={{ borderTop: "1px solid rgba(29,75,54,0.10)" }}
         >

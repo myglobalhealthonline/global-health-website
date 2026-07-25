@@ -51,9 +51,12 @@ function pillClass(active: boolean, dark: boolean): string {
 export function SectionNav({
   items,
   variant = "light",
+  label,
 }: {
   items: SectionNavItem[];
   variant?: "light" | "dark";
+  /** Localized aria-label, resolved server-side by the caller. */
+  label: string;
 }) {
   const pathname = usePathname() || "";
   const isDark = variant === "dark";
@@ -73,7 +76,7 @@ export function SectionNav({
 
   return (
     <nav
-      aria-label="Section navigation"
+      aria-label={label}
       className={`hidden items-center md:flex ${isDark ? "gap-1 2xl:gap-2" : ""}`}
       style={{
         gap: isDark ? undefined : 4,

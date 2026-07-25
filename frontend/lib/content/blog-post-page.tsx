@@ -12,9 +12,11 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd, breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import type { LocaleCode } from "@/lib/i18n/types";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
+import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -30,9 +32,9 @@ type BlogPostRouteParams = {
 
 /** Build a Physician schema input for a blog author/reviewer doctor, with the
  *  recognisedBy regulator resolved from the doctor's country trust data. */
-async function blogPhysicianInput(doctor: BlogDoctor | null) {
+async function blogPhysicianInput(doctor: BlogDoctor | null, locale: LocaleCode) {
   if (!doctor) return null;
-  const trust = doctor.countryCode ? await getCountryTrust(doctor.countryCode) : null;
+  const trust = doctor.countryCode ? await getCountryTrust(doctor.countryCode, locale) : null;
   const profileUrl =
     doctor.countrySlug ? `/${doctor.countrySlug}/en/doctors/${doctor.slug}` : `/blog`;
   return {
@@ -168,13 +170,21 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   });
 
   const [authorPhysician, reviewerPhysician, relatedPosts] = await Promise.all([
-    blogPhysicianInput(post.authorDoctor),
-    blogPhysicianInput(post.reviewerDoctor),
+    blogPhysicianInput(post.authorDoctor, locale),
+    blogPhysicianInput(post.reviewerDoctor, locale),
     listBlogPosts(routeCode ?? undefined).then((posts) =>
       posts.filter((p) => p.slug !== post.slug).slice(0, 3),
     ),
   ]);
 
+  // Byline — prefer the linked author doctor (with a profile link), fall back
+  // to the free-text author ("Global Health Editorial Team" when unset). Same
+  // preference the Article JSON-LD uses, so the visible byline and the schema
+  // can't name different people.
+  const authorName = post.authorDoctor?.name ?? post.author;
+  const authorHref = post.authorDoctor?.countrySlug
+    ? `/${post.authorDoctor.countrySlug}/en/doctors/${post.authorDoctor.slug}`
+    : null;
   // "Clinically reviewed by Dr X" — prefer the linked reviewer doctor (with
   // a profile link), fall back to the free-text reviewer name.
   const reviewerName = post.reviewerDoctor?.name ?? post.reviewer;
@@ -205,7 +215,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             datePublished: post.publishedAt,
             dateModified: post.lastReviewedAt,
             imageSrc: post.coverImageSrc,
-            authorName: post.author,
+            authorName,
             authorPhysician,
             // `reviewedBy`: the distinct clinical reviewer if one is linked,
             // otherwise the author physician stands as their own reviewer —
@@ -225,40 +235,151 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           gradients, lime glow, plus glyphs) with the cover image living IN the
           hero as a right-column panel instead of a detached banner below. */}
       <section
-        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
-        style={{ background: "#0F2E25" }}
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate flex flex-col !overflow-visible gh-hero-cap lg:min-h-[calc(100svh-var(--header-height))]"
+        style={{ background: "#031F18" }}
       >
-        {/* Depth base + vignette */}
-        <div
-          aria-hidden
-          className="gh-medical-pattern-layer pointer-events-none absolute inset-0 z-0"
-          style={{
-            background:
-              "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.34), transparent 42%)," +
-              "radial-gradient(circle at 12% 90%, rgba(3,26,20,0.55), transparent 46%)," +
-              "linear-gradient(135deg, #0a2a20 0%, #0F2E25 48%, #06201a 100%)",
-          }}
-        />
-        {/* Lime glow behind the headline */}
-        <div
-          aria-hidden
-          className="gh-medical-pattern-layer pointer-events-none absolute inset-0 z-0"
-          style={{
-            background:
-              "radial-gradient(circle at 30% 38%, rgba(176,241,34,0.09), transparent 32%)," +
-              "radial-gradient(ellipse 620px 480px at 108% -6%, rgba(176,241,34,0.10), transparent 62%)",
-          }}
-        />
-        {/* Plus glyph watermarks — desktop only */}
-        <span aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ top: "-4%", right: "40%", fontSize: 160, color: "rgba(176,241,34,0.05)" }}>+</span>
-        <span aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block" style={{ bottom: "10%", left: "44%", fontSize: 84, color: "rgba(176,241,34,0.045)" }}>+</span>
+        {/* Mobile/tablet — cover photo as the full-bleed backdrop behind the
+            text, same treatment as ServiceHero (desktop uses the left column). */}
+        {post.coverImageSrc ? (
+          <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+            <Image
+              src={post.coverImageSrc}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center"
+              unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(3,31,24,0.72) 0%, rgba(3,31,24,0.86) 45%, rgba(3,31,24,0.97) 100%)",
+              }}
+            />
+          </div>
+        ) : null}
 
         <div
-          className="relative z-10 mx-auto max-w-[var(--container-width)] px-5 md:px-10"
-          style={{ paddingTop: "clamp(48px,6vw,80px)", paddingBottom: "clamp(48px,6vw,80px)" }}
+          className={`relative lg:min-h-0 lg:flex-1 ${post.coverImageSrc ? "grid lg:grid-cols-2" : "flex"}`}
         >
-          <div className={post.coverImageSrc ? "grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""}>
-            <div>
+          {/* ── LEFT — full-bleed cover panel (desktop only) ─────────────── */}
+          {post.coverImageSrc ? (
+            <div
+              className="relative hidden overflow-hidden lg:block"
+              style={{ minHeight: "clamp(300px, 46vw, 900px)" }}
+            >
+              {/* Blurred fill so the column reads full-bleed, while the poster
+                  itself stays uncropped on top (blog covers carry baked-in
+                  text — object-cover would slice it off at this aspect). */}
+              <Image
+                src={post.coverImageSrc}
+                alt=""
+                aria-hidden
+                fill
+                sizes="50vw"
+                className="scale-110 object-cover object-center blur-2xl"
+                style={{ opacity: 0.45 }}
+                unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
+              />
+              <Image
+                src={post.coverImageSrc}
+                alt={post.coverImageAlt ?? post.title}
+                fill
+                priority
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-contain object-center p-8 xl:p-12"
+                unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
+              />
+              {/* Brand green wash */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(3,31,24,0.28) 0%, rgba(3,31,24,0.08) 30%, rgba(3,31,24,0.50) 100%)",
+                }}
+              />
+              {/* Right-edge bleed into the content column */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 right-0"
+                style={{
+                  width: "40%",
+                  background:
+                    "linear-gradient(to right, rgba(3,31,24,0) 0%, rgba(3,31,24,0.78) 68%, #031F18 100%)",
+                }}
+              />
+            </div>
+          ) : null}
+
+          {/* ── RIGHT — article meta over the layered premium background ─── */}
+          <div className="relative isolate flex w-full flex-col justify-center bg-transparent px-8 py-12 md:px-12 lg:bg-[#031F18] lg:px-16 lg:py-10">
+            {/* gradient depth + vignette — desktop only */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
+              style={{
+                background:
+                  "radial-gradient(circle at 90% 12%, rgba(22,89,64,0.32), transparent 40%)," +
+                  "radial-gradient(circle at 14% 88%, rgba(2,18,13,0.55), transparent 46%)," +
+                  "linear-gradient(135deg, #062b21 0%, #031F18 46%, #02140e 100%)",
+              }}
+            />
+            {/* technical grid — desktop only */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(176,241,34,0.05) 1px, transparent 1px)," +
+                  "linear-gradient(90deg, rgba(176,241,34,0.05) 1px, transparent 1px)",
+                backgroundSize: "48px 48px",
+                maskImage:
+                  "radial-gradient(120% 120% at 80% 20%, #000 0%, rgba(0,0,0,0.45) 55%, transparent 90%)",
+                WebkitMaskImage:
+                  "radial-gradient(120% 120% at 80% 20%, #000 0%, rgba(0,0,0,0.45) 55%, transparent 90%)",
+              }}
+            />
+            {/* dotted texture — desktop only */}
+            <div
+              aria-hidden
+              className="gh-dot-grid pointer-events-none absolute inset-0 z-0 hidden lg:block"
+              style={{
+                opacity: 0.6,
+                maskImage: "radial-gradient(680px 520px at 88% 10%, #000 0%, transparent 72%)",
+                WebkitMaskImage: "radial-gradient(680px 520px at 88% 10%, #000 0%, transparent 72%)",
+              }}
+            />
+            {/* soft radial glow behind content */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 38% 40%, rgba(176,241,34,0.10), transparent 30%)," +
+                  "radial-gradient(circle at 72% 72%, rgba(18,120,76,0.22), transparent 38%)," +
+                  "radial-gradient(ellipse 620px 520px at 112% -8%, rgba(176,241,34,0.12), transparent 62%)",
+              }}
+            />
+            {/* faint medical plus symbols — desktop-only watermark glyphs */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block"
+              style={{ top: "-2%", right: "6%", fontSize: "180px", color: "rgba(176,241,34,0.06)" }}
+            >
+              +
+            </span>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block"
+              style={{ bottom: "10%", right: "12%", fontSize: "72px", color: "rgba(176,241,34,0.05)" }}
+            >
+              +
+            </span>
+
+            <div className="relative z-10" style={{ maxWidth: 640 }}>
               <Link
                 href={backHref}
                 className="gh-focus-on-dark mb-7 inline-flex min-h-11 items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/60 transition-colors hover:text-[var(--color-brand-accent)]"
@@ -283,8 +404,21 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
               </p>
 
               <h1
-                className="mt-6 font-extrabold leading-[1.02] tracking-[-0.035em]"
-                style={{ fontSize: "clamp(2.1rem,3.4vw + 0.9rem,3.8rem)", color: "rgba(255,255,255,0.96)", maxWidth: "18ch" }}
+                className="mt-6 font-extrabold tracking-[-0.035em]"
+                style={{
+                  // Blog titles run far longer than service-hero titles, so the
+                  // fitter is tuned to a 60-char budget instead of ~22.
+                  fontSize: fitHeadingFontSize(post.title, {
+                    minRem: 2.4,
+                    maxRem: 4.2,
+                    viewportTerm: "2.2vw + 1.7rem",
+                    idealChars: 60,
+                    svhCap: 13,
+                  }),
+                  lineHeight: 1.04,
+                  color: "#F5FFF8",
+                  maxWidth: "20ch",
+                }}
               >
                 {post.title}
               </h1>
@@ -305,8 +439,27 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                   post has actually been revised past its publish date — avoids
                   a redundant "Published X / Updated X" chip pair on day one. */}
               <div className="mt-7 flex flex-wrap items-center gap-2.5 text-[13px] font-medium">
+                <span
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.11)",
+                    color: "rgba(255,255,255,0.72)",
+                  }}
+                >
+                  <User className="size-3.5" aria-hidden />
+                  {authorHref ? (
+                    <Link
+                      href={authorHref}
+                      className="gh-focus-on-dark underline decoration-[rgba(255,255,255,0.35)] underline-offset-2 transition-colors hover:text-[var(--color-brand-accent)]"
+                    >
+                      {authorName}
+                    </Link>
+                  ) : (
+                    authorName
+                  )}
+                </span>
                 {[
-                  { icon: <User className="size-3.5" aria-hidden />, label: post.author },
                   { icon: <Calendar className="size-3.5" aria-hidden />, label: formatted },
                   { icon: <Clock className="size-3.5" aria-hidden />, label: `${post.readingTime} ${blogI18n.minRead}` },
                   ...(post.lastReviewedAt && lastReviewedFormatted !== formatted
@@ -354,31 +507,6 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                 ) : null}
               </div>
             </div>
-
-            {/* Cover image — in-hero panel (desktop right column; stacks below
-                content on mobile) */}
-            {post.coverImageSrc ? (
-              <div
-                className="relative mt-2 overflow-hidden rounded-[var(--radius-card)] lg:mt-0"
-                style={{
-                  aspectRatio: "16 / 9",
-                  maxHeight: 440,
-                  background: "rgba(4,32,24,0.85)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  boxShadow: "0 24px 60px -24px rgba(0,0,0,0.55), 0 0 0 1px rgba(176,241,34,0.06)",
-                }}
-              >
-                <Image
-                  src={post.coverImageSrc}
-                  alt={post.coverImageAlt ?? post.title}
-                  fill
-                  priority
-                  sizes="(min-width:1024px) 46vw, 100vw"
-                  className="object-contain"
-                  unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
-                />
-              </div>
-            ) : null}
           </div>
         </div>
       </section>
@@ -459,35 +587,50 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
       </section>
 
       {relatedPosts.length > 0 ? (
-        <section
-          className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
-          style={{ padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }}
-        >
-          <h2
-            className="font-extrabold tracking-[-0.02em]"
-            style={{ fontSize: "clamp(1.4rem,2.4vw,2rem)", color: "var(--color-text-primary)" }}
-          >
-            {blogI18n.moreArticles}
-          </h2>
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {relatedPosts.map((p) => (
-              <Link
-                key={p.slug}
-                href={relatedHrefFor(p)}
-                className="gh-focus-on-dark block rounded-[var(--radius-card)] border p-5 transition-colors hover:border-[var(--color-brand-accent)]"
-                style={{ borderColor: "var(--color-border-subtle)" }}
-              >
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--color-brand-accent)" }}>
-                  {p.category}
-                </p>
-                <h3 className="mt-2 font-bold" style={{ color: "var(--color-text-primary)" }}>
-                  {p.title}
-                </h3>
-                <p className="mt-2 text-[13px] leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
-                  {p.excerpt}
-                </p>
-              </Link>
-            ))}
+        <section className="gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+          <SectionSeam theme="light" />
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <h2
+              className="max-w-[24ch] font-extrabold tracking-[-0.03em] leading-[1.04]"
+              style={{
+                fontSize: "clamp(1.9rem,3.5vw + 0.4rem,3rem)",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {blogI18n.moreArticles}
+            </h2>
+            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:mt-12">
+              {relatedPosts.map((p) => (
+                <Link
+                  key={p.slug}
+                  href={relatedHrefFor(p)}
+                  className="gh2-glass-forest gh2-glass-hover gh-focus-on-dark group flex flex-col p-6"
+                >
+                  <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-accent)]">
+                    {p.category}
+                  </span>
+                  <h3
+                    className="mt-3 text-[17px] font-bold leading-snug"
+                    style={{ color: "rgba(255,255,255,0.92)" }}
+                  >
+                    {p.title}
+                  </h3>
+                  <p
+                    className="mt-3 line-clamp-4 text-[13px] leading-relaxed"
+                    style={{ color: "var(--gh2-on-dark-muted)" }}
+                  >
+                    {p.excerpt}
+                  </p>
+                  <span
+                    className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[12px] font-bold uppercase tracking-[0.14em] transition-colors group-hover:text-[var(--color-brand-accent)]"
+                    style={{ color: "var(--gh2-on-dark-faint)" }}
+                  >
+                    {p.readingTime} {blogI18n.minRead}
+                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}

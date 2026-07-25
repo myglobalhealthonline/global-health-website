@@ -68,14 +68,16 @@ type TrustApiResponse = {
  * back to generic GDPR / licensed-doctor copy. Cached per-request so the
  * layout, footer and schema can all read it without duplicate requests.
  *
- * `locale` is optional and additive: omitted keeps the previous behavior
- * (country default-locale copy). When passed, the backend resolves each
- * translatable text field (regulator/provider-registration labels,
- * emergency notice, data-protection law name, and each authority link's
- * name/abbreviation/description) for that locale.
+ * `locale` is REQUIRED. It used to be optional, and four page-level callers
+ * quietly dropped it — the backend then answered in the country's default
+ * language, so the trust bar rendered Portuguese/Czech inside an English page.
+ * Making it required moves that from a silent runtime mixed-language bug to a
+ * compile error. The backend resolves each translatable text field
+ * (regulator/provider-registration labels, emergency notice, data-protection
+ * law name, and each authority link's name/abbreviation/description) for it.
  */
 export const getCountryTrust = cache(
-  async (countryCode: string, locale?: LocaleCode): Promise<CountryTrust | null> => {
+  async (countryCode: string, locale: LocaleCode): Promise<CountryTrust | null> => {
     const origin = getBackendOrigin();
     if (!origin) return null;
     const code = countryCode.trim().toLowerCase();

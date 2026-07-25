@@ -164,7 +164,11 @@
     "viewProfileAria": "Ver perfil de {name}",
     "languagesMoreTemplate": "{languages} y más",
     "clinicalDirectorLabel": "Director Clínico",
-    "ourTeamEyebrow": "Nuestro equipo"
+    "ourTeamEyebrow": "Nuestro equipo",
+    "showResults": "Ver resultados",
+    "featuredClinician": "Médico destacado",
+    "registrationLabel": "Registro",
+    "verifiedSuffix": "Verificado"
   },
   "cookie": {
     "title": "Preferencias de cookies",
@@ -316,7 +320,9 @@
     "fallbackTitle": "Perfil del Médico de la Clínica",
     "fallbackBio": "Este clínico apoya consultas en línea y orientación de seguimiento a través de Global Health.",
     "fallbackQualification1": "Las calificaciones y detalles de registro se muestran cuando son verificados por el equipo de la clínica.",
-    "fallbackQualification2": "Los pacientes pueden confirmar la idoneidad del clínico durante la recopilación de información para la reserva."
+    "fallbackQualification2": "Los pacientes pueden confirmar la idoneidad del clínico durante la recopilación de información para la reserva.",
+    "nextStep": "Siguiente paso",
+    "patientReviews": "Opiniones de pacientes"
   },
   "bookingForm": {
     "benefitHeading": "Aplicar su plan",
@@ -769,7 +775,21 @@
     "whyPatientsTrustUs": "Por qué los pacientes confían en nosotros",
     "previousPage": "Página anterior",
     "nextPage": "Página siguiente",
-    "medicalDisclaimer": "Aviso médico"
+    "medicalDisclaimer": "Aviso médico",
+    "skipToContent": "Saltar al contenido",
+    "skipToBooking": "Saltar a la reserva",
+    "openMenu": "Abrir menú",
+    "mobileMenuDescription": "Cambia de país, cambia de idioma y reserva una consulta.",
+    "yourAccount": "Tu cuenta",
+    "notifications": "Notificaciones",
+    "chooseLanguage": "Elegir idioma",
+    "searchLanguages": "Buscar idiomas…",
+    "sectionNavigation": "Navegación por secciones",
+    "sections": "Secciones",
+    "bookAnAppointment": "Reservar una cita",
+    "patientReviews": "Opiniones de pacientes",
+    "doctifyReviews": "Opiniones de pacientes en Doctify",
+    "phoneCountryCode": "Prefijo del país"
   },
   "flow": {
     "cartOpeningTitle": "Abriendo tu carrito",
@@ -817,5 +837,16 @@
     "loadingArticleAriaLabel": "Cargando artículo…",
     "categoryFallback": "Guía de salud",
     "readArticle": "Leer artículo"
+  },
+  "calendar": {
+    "selectDay": "Seleccione un día",
+    "selectDayHint": "Las consultas y las franjas de disponibilidad del día seleccionado aparecerán aquí."
+  },
+  "reports": {
+    "noRowsInRange": "No hay filas en este intervalo.",
+    "truncatedNotice": "Lista truncada en el límite de filas de exportación — reduzca el intervalo de fechas o los filtros para obtener todo."
+  },
+  "doctify": {
+    "body": "Opiniones independientes y verificadas, recogidas por Doctify de pacientes atendidos por nuestros médicos."
   }
 }

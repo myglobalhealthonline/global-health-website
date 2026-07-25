@@ -164,7 +164,11 @@
     "viewProfileAria": "Vizualizați profilul pentru {name}",
     "languagesMoreTemplate": "{languages} și altele",
     "clinicalDirectorLabel": "Director clinic",
-    "ourTeamEyebrow": "Echipa noastră"
+    "ourTeamEyebrow": "Echipa noastră",
+    "showResults": "Arată rezultatele",
+    "featuredClinician": "Medic recomandat",
+    "registrationLabel": "Înregistrare",
+    "verifiedSuffix": "Verificat"
   },
   "cookie": {
     "title": "Preferințe cookie",
@@ -316,7 +320,9 @@
     "fallbackTitle": "Profilul medicului clinicii",
     "fallbackBio": "Acest clinician susține consultații online și îndrumări de urmărire prin Global Health.",
     "fallbackQualification1": "Calificările și detaliile de înregistrare sunt afișate atunci când sunt verificate de echipa clinicii.",
-    "fallbackQualification2": "Pacienții pot confirma potrivirea clinicianului în timpul procesului de programare."
+    "fallbackQualification2": "Pacienții pot confirma potrivirea clinicianului în timpul procesului de programare.",
+    "nextStep": "Pasul următor",
+    "patientReviews": "Recenzii ale pacienților"
   },
   "bookingForm": {
     "benefitHeading": "Aplicați planul",
@@ -769,7 +775,21 @@
     "whyPatientsTrustUs": "De ce au încredere pacienții în noi",
     "previousPage": "Pagina anterioară",
     "nextPage": "Pagina următoare",
-    "medicalDisclaimer": "Aviz medical"
+    "medicalDisclaimer": "Aviz medical",
+    "skipToContent": "Salt la conținut",
+    "skipToBooking": "Salt la programare",
+    "openMenu": "Deschide meniul",
+    "mobileMenuDescription": "Schimbă țara, schimbă limba și programează o consultație.",
+    "yourAccount": "Contul tău",
+    "notifications": "Notificări",
+    "chooseLanguage": "Alege limba",
+    "searchLanguages": "Caută limbi…",
+    "sectionNavigation": "Navigare pe secțiuni",
+    "sections": "Secțiuni",
+    "bookAnAppointment": "Programează o consultație",
+    "patientReviews": "Recenzii ale pacienților",
+    "doctifyReviews": "Recenzii ale pacienților pe Doctify",
+    "phoneCountryCode": "Prefixul țării"
   },
   "flow": {
     "cartOpeningTitle": "Se deschide coșul dvs.",
@@ -817,5 +837,16 @@
     "loadingArticleAriaLabel": "Se încarcă articolul…",
     "categoryFallback": "Ghid de sănătate",
     "readArticle": "Citește articolul"
+  },
+  "calendar": {
+    "selectDay": "Selectați o zi",
+    "selectDayHint": "Consultațiile și intervalele disponibile pentru ziua selectată vor apărea aici."
+  },
+  "reports": {
+    "noRowsInRange": "Niciun rând în acest interval.",
+    "truncatedNotice": "Listă trunchiată la limita de rânduri a exportului — restrângeți intervalul de date sau filtrele pentru un export complet."
+  },
+  "doctify": {
+    "body": "Recenzii independente și verificate, colectate de Doctify de la pacienți tratați de medicii noștri."
   }
 }

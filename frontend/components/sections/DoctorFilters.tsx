@@ -40,6 +40,7 @@ export function DoctorFilters({
   hasActive,
   clearLabel,
   filtersLabel,
+  showResultsLabel,
   dark = false,
 }: {
   groups: FilterGroup[];
@@ -48,6 +49,8 @@ export function DoctorFilters({
   clearLabel?: string;
   /** "Filters" trigger label / sheet title / sheet aria-label. */
   filtersLabel?: string;
+  /** Mobile sheet "Show results" button label. */
+  showResultsLabel: string;
   /** Forest-glass panel + on-dark chips — for dark grid sections. */
   dark?: boolean;
 }) {
@@ -128,7 +131,7 @@ export function DoctorFilters({
               className="gh2-btn-compact gh2-btn-compact-primary"
               onClick={() => setMobileOpen(false)}
             >
-              Show results
+              {showResultsLabel}
             </button>
           </div>
         }

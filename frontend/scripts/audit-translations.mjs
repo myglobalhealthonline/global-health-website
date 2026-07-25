@@ -113,6 +113,8 @@ const RECOMMENDATIONS = {
   "hardcoded-text": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
   "page-without-i18n": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language.",
   "fetch-without-locale": "Thread the resolved locale to the backend call (?locale= param) or content will fall back to the country default language.",
+  "helper-call-without-locale": "Pass the resolved locale as the second argument; without it the backend returns the country default-language copy while the rest of the page renders in the selected language (mixed-language page).",
+  "client-locale-import": "Client components must not import locale JSON as a value (it pins one language and ships all bundles). Resolve strings server-side and pass the slice down as a prop, or use `import type`.",
   "wiring": "See detail.",
 };
 
@@ -392,6 +394,32 @@ async function walk(dir, exts, out = []) {
   return out;
 }
 
+/**
+ * Every app/ subtree that renders localized UI: the public route groups and
+ * `[country]/[lang]`, minus `(portal)/(admin)` (English-only by construction)
+ * and the framework-only dirs. Reading the tree instead of hardcoding group
+ * names keeps this working across route-group renames.
+ */
+async function localizedAppRoots() {
+  const appDir = path.join(frontendRoot, "app");
+  const skip = new Set(["api", "_components"]);
+  const entries = await readdir(appDir, { withFileTypes: true });
+  const roots = [];
+  for (const e of entries) {
+    if (!e.isDirectory() || skip.has(e.name)) continue;
+    if (e.name === "(portal)") {
+      // portal minus admin
+      const portalDir = path.join(appDir, e.name);
+      for (const sub of await readdir(portalDir, { withFileTypes: true })) {
+        if (sub.isDirectory() && sub.name !== "(admin)") roots.push(path.join(portalDir, sub.name));
+      }
+      continue;
+    }
+    roots.push(path.join(appDir, e.name));
+  }
+  return roots;
+}
+
 const JSX_TEXT_RE = />\s*([A-Za-zÀ-ſ][^<>{}\n]*\s+[^<>{}\n]*[a-zà-ſ][^<>{}\n]*)\s*</g;
 const ATTR_TEXT_RE = /(?:placeholder|aria-label|alt|title)=\s*"([A-Za-z][^"]{4,})"/g;
 
@@ -414,13 +442,11 @@ function stripCodeNoise(src) {
 }
 
 async function auditHardcodedText() {
-  const scanRoots = [
-    path.join(frontendRoot, "app", "(site)"),
-    path.join(frontendRoot, "app", "(auth)"),
-    path.join(frontendRoot, "app", "(doctor)"),
-    path.join(frontendRoot, "app", "(corporate)"),
-    path.join(frontendRoot, "components"),
-  ];
+  // These were once "(site)"/"(auth)"/"(doctor)"/"(corporate)" — route groups
+  // that no longer exist, so the whole public site went unscanned and this
+  // check only ever saw components/. Derived from the real app/ tree now, with
+  // the admin portal excluded (English-only by construction).
+  const scanRoots = [...(await localizedAppRoots()), path.join(frontendRoot, "components")];
   const perFile = new Map();
   for (const root of scanRoots) {
     for (const file of await walk(root, [".tsx"])) {
@@ -447,11 +473,7 @@ async function auditHardcodedText() {
 async function auditPagesWithoutI18n() {
   // localized route groups: page.tsx should touch the i18n lib directly or via
   // a locale prop/param; flag pages with zero locale references.
-  const roots = [
-    path.join(frontendRoot, "app", "(site)"),
-    path.join(frontendRoot, "app", "(auth)"),
-    path.join(frontendRoot, "app", "(doctor)"),
-  ];
+  const roots = await localizedAppRoots();
   const offenders = [];
   for (const root of roots) {
     for (const file of (await walk(root, [".tsx"])).filter((f) => path.basename(f) === "page.tsx")) {
@@ -490,6 +512,58 @@ async function auditFetchWithoutLocale() {
             value: line.trim().slice(0, 120),
           });
         }
+      });
+    }
+  }
+  return offenders;
+}
+
+/**
+ * Locale-aware content helpers whose locale argument is OPTIONAL — omitting it
+ * silently serves the country default-language copy. Call sites that drop it
+ * are the most common source of a page mixing two languages.
+ */
+const LOCALE_OPTIONAL_HELPERS = ["getCountryTrust", "getCountryFooter", "getCountryFooters"];
+
+async function auditHelperCallsWithoutLocale() {
+  const roots = [path.join(frontendRoot, "app"), path.join(frontendRoot, "components")];
+  const offenders = [];
+  const callRe = new RegExp(`\\b(${LOCALE_OPTIONAL_HELPERS.join("|")})\\s*\\(([^()]*)\\)`, "g");
+  for (const root of roots) {
+    for (const file of await walk(root, [".ts", ".tsx"])) {
+      const src = await readFile(file, "utf8");
+      if (/\/lib\/content\//.test(file.replaceAll("\\", "/"))) continue; // the definitions themselves
+      for (const m of src.matchAll(callRe)) {
+        const args = m[2].trim();
+        if (!args) continue; // zero-arg = not the content helper
+        if (/locale|lang/i.test(args)) continue;
+        const line = src.slice(0, m.index).split("\n").length;
+        const rel = path.relative(repoRoot, file).replaceAll("\\", "/");
+        offenders.push(`${rel}:${line}`);
+        add("warning", "helper-call-without-locale", `${rel}:${line}`, {
+          value: `${m[1]}(${truncate(args, 40)}) — no locale argument`,
+        });
+      }
+    }
+  }
+  return offenders;
+}
+
+async function auditClientLocaleImports() {
+  const roots = [path.join(frontendRoot, "app"), path.join(frontendRoot, "components")];
+  const offenders = [];
+  for (const root of roots) {
+    for (const file of await walk(root, [".tsx", ".ts"])) {
+      const src = await readFile(file, "utf8");
+      if (!/^\s*["']use client["']/m.test(src)) continue;
+      const lines = src.split("\n");
+      lines.forEach((line, idx) => {
+        if (!/from\s+["']@\/locales\//.test(line) && !/loadLocaleBundle["']?\s*\}?\s*from/.test(line)) return;
+        if (/^\s*import\s+type\b/.test(line) || /\btypeof import\(/.test(line)) return; // type-only is fine
+        if (!/^\s*import\b/.test(line)) return;
+        const rel = path.relative(repoRoot, file).replaceAll("\\", "/");
+        offenders.push(`${rel}:${idx + 1}`);
+        add("warning", "client-locale-import", `${rel}:${idx + 1}`, { value: line.trim().slice(0, 120) });
       });
     }
   }
@@ -559,12 +633,51 @@ async function auditWiring() {
     "Switcher writes the cookie without a refresh — stale language persists until manual reload.",
   );
   await fileHas(
-    "app/layout.tsx",
-    /getRootHtmlLang|lang=/,
-    "html lang reflects locale",
-    "Root layout sets <html lang> from resolved locale.",
-    "Root layout hardcodes <html lang> — a11y/SEO language mismatch.",
+    "../backend/prisma/schema.prisma",
+    /preferredLocale\s+LocaleCode/,
+    "Locale survives authentication",
+    "User.preferredLocale exists — the chosen language is restored after login on any device.",
+    "No User.preferredLocale column: language selection lives only in the device cookie and is lost on login from another device.",
   );
+
+  // Root layouts own <html lang>; each must derive it from the resolved locale.
+  // (There is no single app/layout.tsx — the app has several root layouts.)
+  for (const rel of [
+    "app/(global)/layout.tsx",
+    "app/[country]/[lang]/layout.tsx",
+    "app/(portal)/layout.tsx",
+    "app/(redirect)/layout.tsx",
+  ]) {
+    let src;
+    try {
+      src = await readFile(path.join(frontendRoot, rel), "utf8");
+    } catch {
+      continue;
+    }
+    if (!/<RootDocument|<html/.test(src)) continue;
+    const dynamic = /toHtmlLang\(/.test(src);
+    // Exempt by design, both documented in the files themselves:
+    //  - (redirect) only ever renders a redirect() — no readable content.
+    //  - (portal) is authenticated, non-indexable, and resolving the locale
+    //    there would need cookies()/headers() in a ROOT layout, which
+    //    un-statics everything below it (P-001).
+    const exempt = rel.includes("(redirect)") || rel.includes("(portal)");
+    checks.push({
+      label: `html lang reflects locale — ${rel}`,
+      file: `frontend/${rel}`,
+      pass: dynamic || exempt,
+      detail: dynamic
+        ? "Emits <html lang> via toHtmlLang(resolvedLocale)."
+        : exempt
+          ? "Static lang by design (redirect-only shell / non-indexable portal, P-001)."
+          : "Hardcodes <html lang> — pages rendered in another language declare the wrong language to screen readers and crawlers.",
+    });
+    if (!dynamic && !exempt) {
+      add("warning", "wiring", `frontend/${rel}`, {
+        value: "Root layout hardcodes <html lang> while the surface renders localized copy — pass toHtmlLang(locale).",
+      });
+    }
+  }
 
   // Admin portal: known unlocalized (informational — mirrors LOCALE_INVESTIGATION issue #5)
   let adminLocalized = false;
@@ -642,7 +755,8 @@ function buildMarkdown({ stats, wiringChecks, counts }) {
   const order = [
     "invalid-locale", "missing-namespace-file", "extra-namespace-file", "duplicate-key",
     "type-mismatch", "missing-key", "empty-value", "placeholder-mismatch", "extra-key",
-    "identical-to-english", "hardcoded-text", "page-without-i18n", "fetch-without-locale", "wiring",
+    "identical-to-english", "hardcoded-text", "page-without-i18n", "fetch-without-locale",
+    "helper-call-without-locale", "client-locale-import", "wiring",
   ];
   lines.push("## Findings");
   lines.push("");
@@ -682,6 +796,8 @@ async function main() {
   await auditHardcodedText();
   await auditPagesWithoutI18n();
   await auditFetchWithoutLocale();
+  await auditHelperCallsWithoutLocale();
+  await auditClientLocaleImports();
   const wiringChecks = await auditWiring();
 
   const counts = { critical: 0, warning: 0, info: 0 };

@@ -136,6 +136,10 @@ export type CommonLocale = {
     languagesMoreTemplate: string;
     /** FeaturedDoctor photo-overlay ribbon, e.g. "Clinical Director". */
     clinicalDirectorLabel?: string;
+    showResults: string;
+    featuredClinician: string;
+    registrationLabel: string;
+    verifiedSuffix: string;
   };
   countrySelector: {
     title: string;
@@ -326,6 +330,8 @@ export type CommonLocale = {
     fallbackBio?: string;
     fallbackQualification1?: string;
     fallbackQualification2?: string;
+    nextStep: string;
+    patientReviews: string;
   };
   bookingForm: {
     /** Booking-step plan benefit selector (B6). */
@@ -789,6 +795,22 @@ export type CommonLocale = {
   /** Generic accessibility labels shared across public sections. */
   a11y: {
     whyPatientsTrustUs: string;
+    /** Chrome a11y labels. Resolved server-side and passed into the client
+     *  header/drawer components as props — see SiteChrome/SiteHeader. */
+    skipToContent: string;
+    skipToBooking: string;
+    openMenu: string;
+    mobileMenuDescription: string;
+    yourAccount: string;
+    notifications: string;
+    chooseLanguage: string;
+    searchLanguages: string;
+    sectionNavigation: string;
+    sections: string;
+    bookAnAppointment: string;
+    patientReviews: string;
+    doctifyReviews: string;
+    phoneCountryCode: string;
     previousPage: string;
     nextPage: string;
     medicalDisclaimer: string;
@@ -845,5 +867,17 @@ export type CommonLocale = {
     trustFlexibleSubtitle: string;
     trustSecureTitle: string;
     trustSecureSubtitle: string;
+  };
+  /** Doctify reviews section lede (the eyebrow reuses a11y.patientReviews). */
+  doctify: { body: string };
+  /** Shared day-agenda calendar (admin / doctor / patient portals). */
+  calendar: {
+    selectDay: string;
+    selectDayHint: string;
+  };
+  /** Shared report results table (admin / doctor portals). */
+  reports: {
+    noRowsInRange: string;
+    truncatedNotice: string;
   };
 };

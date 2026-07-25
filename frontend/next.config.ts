@@ -129,6 +129,11 @@ const nextConfig: NextConfig = {
   // throttles itself instead. Builds are slower; they are also correct.
   experimental: {
     cpus: buildCpus,
+    // Required now that there is no `app/layout.tsx` (each subtree owns its
+    // own root layout so `[country]/[lang]` can emit the real `<html lang>`):
+    // the `/_not-found` route has no root layout to render inside, so the 404
+    // owns its own document via `app/global-not-found.tsx`.
+    globalNotFound: true,
   },
   turbopack: {
     root: path.resolve(__dirname, ".."),
@@ -608,7 +613,7 @@ const nextConfig: NextConfig = {
       { source: "/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
       { source: "/romania-doctors/:slug", destination: "/romania/ro/doctors/:slug", permanent: true },
       // Legacy Wix top-level pages with no per-country equivalent on the new
-      // platform — there is only one canonical /about page (app/(site)/(global)/about).
+      // platform — there is only one canonical /about page (app/(global)/about).
       { source: "/pt/about", destination: "/about", permanent: true },
       { source: "/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
       // Brazil deliberately supports only en/es/pt (admin decision, not a

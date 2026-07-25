@@ -85,6 +85,7 @@ export type PortalShellChrome = {
   notificationsUnreadSuffix?: string;
   notificationsUnreadSr?: string;
   notificationsViewAll?: string;
+  chooseLanguage?: string;
 };
 
 const DEFAULT_CHROME: PortalShellChrome = {
@@ -102,6 +103,7 @@ const DEFAULT_CHROME: PortalShellChrome = {
   notificationsUnreadSuffix: "unread",
   notificationsUnreadSr: "{count} unread notifications",
   notificationsViewAll: "View all",
+  chooseLanguage: "Choose language",
 };
 
 /** Live unread-notifications count, shared between the shell's own bell/nav
@@ -435,6 +437,7 @@ export function PortalShell({
                   currentLang={locale}
                   availableLocales={availableLocales}
                   mode="refresh"
+                  chooseLanguageLabel={c.chooseLanguage ?? DEFAULT_CHROME.chooseLanguage!}
                 />
               ) : null}
               {/* Bell + user chip share one chrome pill (DESIGN.md §5.2). */}

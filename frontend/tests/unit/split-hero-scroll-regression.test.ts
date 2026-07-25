@@ -6,8 +6,8 @@ const frontendRoot = path.resolve(__dirname, "../..");
 
 const splitHeroFiles = [
   "components/templates/DoctorProfileTemplate.tsx",
-  "app/(site)/[country]/[lang]/services/[serviceSlug]/page.tsx",
-  "app/(site)/[country]/[lang]/tests/[testSlug]/page.tsx",
+  "app/[country]/[lang]/services/[serviceSlug]/page.tsx",
+  "app/[country]/[lang]/tests/[testSlug]/page.tsx",
 ];
 
 describe("split hero scrolling", () => {

@@ -3,13 +3,12 @@
 /**
  * RevealOnScroll — IntersectionObserver-driven entry animation.
  *
- * CSS-hidden-before-paint: targets render with the `gh-reveal-pending` class
- * (globals.css) from the server. That class only actually hides content once
- * the `js` class lands on <html> — a synchronous inline script in
- * layout.tsx runs before first paint — so JS visitors never see a flash of
- * visible content before it's hidden, and no-JS/SSR visitors stay visible
- * always. IO adds `gh-reveal-in` to reveal; both classes are plain DOM
- * mutations (no React state), immune to reconciliation resetting them.
+ * Content ships visible. The layout effect below adds the hiding classes
+ * (`gh-reveal-pending` / `gh-reveal-stagger`, globals.css, gated on `html.js`)
+ * and IO adds `gh-reveal-in` to reveal — all plain DOM mutations (no React
+ * state), immune to reconciliation resetting them. Hiding from SSR instead
+ * would blank out any subtree whose JS has not mounted yet; see the note
+ * above the JSX.
  *
  * Usage:
  *   // Single element fade-up on scroll:
@@ -67,11 +66,11 @@ export function RevealOnScroll({
     // a fast scroll outruns IO and sections show up blank/late.
     const coarse = window.matchMedia("(pointer: coarse)").matches;
 
-    if (reduced || coarse) {
-      targets.forEach((t) => t.classList.add("gh-reveal-in"));
-      return;
-    }
+    // Nothing is hidden until this effect runs (see the note on the JSX
+    // below), so reduced-motion / touch just leave the content alone.
+    if (reduced || coarse) return;
 
+    if (stagger) el.classList.add("gh-reveal-stagger");
     targets.forEach((t, i) => {
       const d = delay + (stagger ? i * STAGGER_STEP : 0);
       t.style.transitionDelay = `${d}ms`;
@@ -81,8 +80,9 @@ export function RevealOnScroll({
     // Already in view at mount (e.g. above-the-fold, or fast scroll landed
     // past it before hydration): reveal immediately, no transition.
     const rect = el.getBoundingClientRect();
-    const alreadyVisible =
-      rect.top < window.innerHeight * (1 - 0.1) && rect.bottom > 0;
+    // No `rect.bottom > 0`: an element already scrolled PAST also reveals
+    // instantly rather than waiting a frame for IO.
+    const alreadyVisible = rect.top < window.innerHeight * (1 - 0.1);
     if (alreadyVisible) {
       targets.forEach((t) => {
         t.style.transition = "none";
@@ -104,14 +104,17 @@ export function RevealOnScroll({
     return () => observer.disconnect();
   }, [stagger, delay, threshold, rootMargin]);
 
+  // Visible-until-hidden, NOT hidden-until-revealed: the hiding classes are
+  // added by the layout effect above, never by SSR. Shipping them from the
+  // server meant any subtree that had not mounted yet — every RevealOnScroll
+  // inside a <LazyHydrate>, which only mounts ~600px before the viewport —
+  // sat on screen as an empty box until hydration caught up. Fast scrolling
+  // outran it and whole sections rendered blank. useLayoutEffect runs before
+  // paint of its own commit, so there is still no visible hide-flash.
   return (
     <div
       ref={ref}
-      className={
-        stagger
-          ? `gh-reveal-stagger ${className}`.trim()
-          : `gh-reveal-pending ${className}`.trim()
-      }
+      className={className || undefined}
       style={style}
       role={role}
     >

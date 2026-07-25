@@ -288,13 +288,19 @@ export function WeekCalendar({
   // Sliding day-window when fewer than 7 columns fit. Resets to the start of
   // the week whenever the week itself changes (new anchor) or the visible
   // count grows enough that the current offset would run past the end.
-  const [windowStart, setWindowStart] = useState(0);
-  useEffect(() => {
+  const [rawWindowStart, setWindowStart] = useState(0);
+  // Reset during render (React's "adjust state when a prop changes" pattern)
+  // rather than in an effect: the old effect version painted one frame of the
+  // new week still scrolled to the previous week's offset before correcting.
+  const [prevAnchorDayKey, setPrevAnchorDayKey] = useState(anchorDayKey);
+  if (prevAnchorDayKey !== anchorDayKey) {
+    setPrevAnchorDayKey(anchorDayKey);
     setWindowStart(0);
-  }, [anchorDayKey]);
-  useEffect(() => {
-    setWindowStart((w) => Math.max(0, Math.min(w, weekDays.length - visibleCount)));
-  }, [visibleCount, weekDays.length]);
+  }
+  // Clamping is derived, not stored — a widened container can no longer leave
+  // the offset past the last column for a frame.
+  const maxWindowStart = Math.max(0, weekDays.length - visibleCount);
+  const windowStart = Math.min(rawWindowStart, maxWindowStart);
 
   const visibleDays = useMemo(
     () => weekDays.slice(windowStart, windowStart + visibleCount),
@@ -312,16 +318,16 @@ export function WeekCalendar({
     if (dir === -1) {
       if (atWindowStart) {
         onPrevWeek();
-        setWindowStart(Math.max(0, weekDays.length - visibleCount));
+        setWindowStart(maxWindowStart);
       } else {
-        setWindowStart((w) => Math.max(0, w - 1));
+        setWindowStart(Math.max(0, windowStart - 1));
       }
     } else {
       if (atWindowEnd) {
         onNextWeek();
         setWindowStart(0);
       } else {
-        setWindowStart((w) => Math.min(weekDays.length - visibleCount, w + 1));
+        setWindowStart(Math.min(maxWindowStart, windowStart + 1));
       }
     }
   }

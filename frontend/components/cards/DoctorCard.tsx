@@ -1,5 +1,6 @@
 "use client";
 
+import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -88,6 +89,10 @@ type DoctorCardProps = {
    *  Dr. Smith"). Falls back to the English default when the caller hasn't
    *  threaded a localised value through yet. */
   viewProfileAriaLabel?: string;
+  /** Remaining card chrome strings, resolved by the (server) caller from
+   *  `common.doctors`. Required — these used to be English literals baked
+   *  into the card, so every non-en page rendered them untranslated. */
+  cardI18n: DoctorCardI18n;
 };
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
@@ -121,6 +126,7 @@ export function DoctorCard({
   primaryLabel,
   dark = false,
   viewProfileAriaLabel,
+  cardI18n,
 }: DoctorCardProps) {
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
@@ -274,14 +280,15 @@ export function DoctorCard({
                   className="text-[10.5px] font-bold uppercase tracking-[0.13em]"
                   style={{ color: "var(--dc-muted)" }}
                 >
-                  Registration{registrationVerified ? " · Verified" : ""}
+                  {cardI18n.registrationLabel}
+                  {registrationVerified ? ` · ${cardI18n.verifiedSuffix}` : ""}
                 </p>
                 {medicalRegistrationUrl || verificationUrl ? (
                   <a
                     href={medicalRegistrationUrl ?? verificationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Verify registration on the official register"
+                    aria-label={cardI18n.verifyRegistrationAria}
                     // min-h-11 floors the box at the 44px touch target
                     // (WCAG 2.5.5) — this is the tappable "verify" link.
                     className="relative z-20 inline-flex min-h-11 items-center gap-1 text-[13px] font-semibold underline underline-offset-2 transition-opacity hover:opacity-70"

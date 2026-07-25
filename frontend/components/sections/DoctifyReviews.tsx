@@ -31,6 +31,14 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
 const TENANT = "athena-ie";
 const SLUG = "global-health-ireland";
 
+/** Doctify only serves this practice's reviews in English — asking for any
+ *  other language returns an empty widget, which reads as a broken section on
+ *  the non-EN locales. So every embed is pinned to `en`; the `language` prop
+ *  still drives the consent-placeholder copy, which IS translated.
+ *  ponytail: pin to en, thread the real locale through once Doctify actually
+ *  returns translated reviews. */
+const WIDGET_LANGUAGE = "en";
+
 /** Doctify's widget scripts hijack the single global `window.onresize`
  *  (a plain assignment, not `addEventListener`) to reposition/redraw their
  *  carousel. If the container that handler was built for is gone — this
@@ -151,7 +159,7 @@ export function DoctifyRatingStrip({
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
-    `&dotsArrowsColor=${onDark ? "FFFFFF" : "1D4B36"}&language=${language}` +
+    `&dotsArrowsColor=${onDark ? "FFFFFF" : "1D4B36"}&language=${WIDGET_LANGUAGE}` +
     `&profileType=practice&slugs=${SLUG}&tenantId=${TENANT}` +
     `&theme=${onDark ? "ivory" : "transparent"}&widgetName=average-carousel-rating-widget`;
 
@@ -159,7 +167,7 @@ export function DoctifyRatingStrip({
     <iframe
       id={id}
       src={src}
-      title="Doctify patient reviews"
+      title={getCommonLocale(resolveLocale({ explicitLocale: language })).a11y.doctifyReviews}
       name="average-carousel-rating-widget"
       className={`doctify-widget block min-h-[160px] w-full border-0 ${className ?? ""}`}
       loading="lazy"
@@ -207,7 +215,7 @@ export function DoctifyWidget({
     const script = document.createElement("script");
     script.src =
       `https://www.doctify.com/get-script?widget_container_id=${id}` +
-      `&${VARIANT_QUERY[variant]}&tenant=${TENANT}&language=${language}` +
+      `&${VARIANT_QUERY[variant]}&tenant=${TENANT}&language=${WIDGET_LANGUAGE}` +
       `&profileType=practice&slugs=${SLUG}&background=${theme === "dark" ? "ivory" : "transparent"}`;
     script.async = true;
     script.onload = () => setLoaded(true);
@@ -259,10 +267,10 @@ export function DoctifyReviewsSection({
   theme = "ivory",
   variant = "carousel",
   language = "en",
-  eyebrow = "Patient reviews",
+  eyebrow,
   headline = "Rated by real patients",
   headlineAccent = "on Doctify",
-  body = "Independent, verified reviews collected by Doctify from patients treated by our clinicians.",
+  body,
 }: {
   theme?: "ivory" | "forest";
   variant?: DoctifyWidgetVariant;
@@ -273,6 +281,12 @@ export function DoctifyReviewsSection({
   body?: string;
 }) {
   const dark = theme === "forest";
+  // `eyebrow`/`body` used to default to English string literals. No caller
+  // passes either, so every non-en page rendered an English eyebrow and lede
+  // above a translated headline — resolve them from the locale instead.
+  const common = getCommonLocale(resolveLocale({ explicitLocale: language }));
+  const eyebrowText = eyebrow ?? common.a11y.patientReviews;
+  const bodyText = body ?? common.doctify.body;
   return (
     <section
       className={
@@ -289,7 +303,7 @@ export function DoctifyReviewsSection({
               ? "text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]"
               : "text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]"}
           >
-            {eyebrow}
+            {eyebrowText}
           </span>
           <h2
             className={dark
@@ -308,7 +322,7 @@ export function DoctifyReviewsSection({
               ? "mt-4 max-w-[54ch] text-[15px] leading-relaxed text-[var(--gh2-on-dark-muted)]"
               : "mt-4 max-w-[54ch] text-[15px] leading-relaxed text-[var(--color-text-muted)]"}
           >
-            {body}
+            {bodyText}
           </p>
         </div>
 
@@ -364,7 +378,7 @@ export function DoctifyInlineRating({
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
-    `&dotsArrowsColor=FFFFFF&language=${language}` +
+    `&dotsArrowsColor=FFFFFF&language=${WIDGET_LANGUAGE}` +
     `&profileType=practice&slugs=${SLUG}&tenantId=${TENANT}` +
     `&theme=transparent&widgetName=average-carousel-rating-widget`;
 
@@ -372,7 +386,7 @@ export function DoctifyInlineRating({
     <iframe
       id={id}
       src={src}
-      title="Doctify patient reviews"
+      title={getCommonLocale(resolveLocale({ explicitLocale: language })).a11y.doctifyReviews}
       name="average-carousel-rating-widget"
       className={`doctify-widget block min-h-[120px] w-full border-0 ${className ?? ""}`}
       loading="lazy"

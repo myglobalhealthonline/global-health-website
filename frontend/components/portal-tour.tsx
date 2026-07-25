@@ -17,7 +17,7 @@
  * otherwise reset to step 0).
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -45,6 +45,8 @@ const MOBILE_BREAKPOINT = 640;
 const POLL_INTERVAL_MS = 150;
 const POLL_TIMEOUT_MS = 4000;
 const ACTIVE_FLAG_KEY = "gh_tour_active";
+/** Never fires — "are we on the client yet" flips exactly once, at hydration. */
+const subscribeNever = () => () => {};
 const VIEWPORT_MARGIN = 12;
 // A target counts as "oversized" on an axis once it leaves less than this
 // much breathing room around it — the spotlight/card clamp and the
@@ -139,7 +141,10 @@ export function PortalTour({
   const [active, setActive] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
-  const [mounted, setMounted] = useState(false);
+  // Client-only gate for createPortal (no document during SSR). Server
+  // snapshot false / client snapshot true is exactly what
+  // useSyncExternalStore models — no setState-in-effect needed.
+  const mounted = useSyncExternalStore(subscribeNever, () => true, () => false);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const targetElRef = useRef<Element | null>(null);
   // Actual rendered card size, refreshed every tracking tick — not known
@@ -157,8 +162,6 @@ export function PortalTour({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  useEffect(() => setMounted(true), []);
 
   const start = useCallback((atStep = 0) => {
     setStepIndex(atStep);
@@ -189,6 +192,7 @@ export function PortalTour({
       resumeStep = null;
     }
     if (resumeStep !== null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resume progress lives in sessionStorage, which SSR can't read; seeding it in the initializer would desync hydration
       start(resumeStep);
       return;
     }
@@ -211,7 +215,9 @@ export function PortalTour({
   // Broadcast active state + persist progress for demo components / cross-
   // page resume.
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent("gh:tour:state", { detail: { active } }));
+    // Storage first, THEN the event: DoctorTourDemo reads the flag out of
+    // sessionStorage when the event fires, so dispatching first handed it a
+    // stale "inactive" snapshot on the frame the tour started.
     try {
       if (active) {
         sessionStorage.setItem(sessionKey(storageKey), JSON.stringify({ step: stepIndex }));
@@ -220,6 +226,7 @@ export function PortalTour({
     } catch {
       // ponytail: same non-fatal storage guard as finish().
     }
+    window.dispatchEvent(new CustomEvent("gh:tour:state", { detail: { active } }));
   }, [active, stepIndex, storageKey]);
 
   // Resolve the current step's target: navigate if needed, then poll for
@@ -230,6 +237,7 @@ export function PortalTour({
     if (!active) return;
     const step = steps[stepIndex];
     if (!step) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- ending the tour is the effect's job: stepIndex can run past the last step from a DOM poll that skipped every remaining target
       finish();
       return;
     }
