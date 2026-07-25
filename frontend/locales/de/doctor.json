@@ -1270,6 +1270,7 @@
     "title": "Berichte",
     "description": "Aggregierte Kennzahlen zu Konsultationen, Patienten, Nachsorge und bezahltem Umsatz für Ihre zugewiesenen Termine. Standardmäßig die letzten 30 Tage.",
     "exportCsv": "Zusammenfassung exportieren (CSV)",
+    "viewResults": "Ergebnisse anzeigen",
     "tileAppointments": "Termine",
     "tileSignedConsults": "Signierte Konsultationen",
     "tileFollowUps": "Nachsorgetermine",

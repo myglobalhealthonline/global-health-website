@@ -1270,6 +1270,7 @@
     "title": "Informes",
     "description": "Señales agregadas de consultas, pacientes, seguimientos e ingresos pagados de sus consultas asignadas. Predeterminado a los últimos 30 días.",
     "exportCsv": "Exportar resumen (CSV)",
+    "viewResults": "Ver resultados",
     "tileAppointments": "Consultas",
     "tileSignedConsults": "Consultas firmadas",
     "tileFollowUps": "Seguimientos",

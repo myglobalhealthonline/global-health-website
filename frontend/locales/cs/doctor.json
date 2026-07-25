@@ -1270,6 +1270,7 @@
     "title": "Výkazy",
     "description": "Souhrnné údaje o konzultacích, pacientech, kontrolních vyšetřeních a zaplacených příjmech pro vaše přiřazené termíny. Výchozí zobrazení je posledních 30 dní.",
     "exportCsv": "Exportovat souhrn (CSV)",
+    "viewResults": "Zobrazit výsledky",
     "tileAppointments": "Termíny",
     "tileSignedConsults": "Podepsané konzultace",
     "tileFollowUps": "Kontrolní vyšetření",

@@ -1270,6 +1270,7 @@
     "title": "Relatórios",
     "description": "Sinais agregados de consultas, pacientes, seguimentos e receita paga para as suas consultas atribuídas. Predefinido para os últimos 30 dias.",
     "exportCsv": "Exportar resumo (CSV)",
+    "viewResults": "Ver resultados",
     "tileAppointments": "Consultas",
     "tileSignedConsults": "Consultas assinadas",
     "tileFollowUps": "Seguimentos",

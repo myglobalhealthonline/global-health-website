@@ -23,12 +23,22 @@ export type ReportRow = {
   [key: string]: ReportCellValue;
   /** Marks a summary/total row — rendered bold in PDF + Excel. */
   _total?: boolean;
+  /** Full-width section-header row (e.g. a market name). When set, the row's
+   *  column cells are ignored and this label spans the whole width. */
+  _section?: string;
 };
+
+/** A label/value fact rendered in the report header block (above the table) —
+ *  e.g. account holder, IBAN, total to pay on a payout statement. */
+export type ReportSummaryItem = { label: string; value: string };
 
 export type ReportTable = {
   title: string;
   /** e.g. "Dr Jane Doe · last 30 days". Rendered under the title. */
   subtitle?: string;
+  /** Key facts shown in a header block above the table (payout statements use
+   *  this for account holder / IBAN / period / total to pay). */
+  summary?: ReportSummaryItem[];
   columns: ReportColumn[];
   rows: ReportRow[];
   /** Set when the row cap was hit so the reader knows the list is partial. */
@@ -84,8 +94,18 @@ function csvCell(value: ReportCellValue): string {
 
 export function toCsv(table: ReportTable): string {
   const lines: string[] = [];
+  if (table.summary?.length) {
+    for (const s of table.summary) {
+      lines.push(`${csvCell(s.label)},${csvCell(s.value)}`);
+    }
+    lines.push("");
+  }
   lines.push(table.columns.map((c) => csvCell(c.label)).join(","));
   for (const row of table.rows) {
+    if (row._section) {
+      lines.push(csvCell(row._section));
+      continue;
+    }
     lines.push(table.columns.map((c) => csvCell(row[c.key])).join(","));
   }
   if (table.truncated) {
@@ -137,16 +157,27 @@ export function buildReportHtml(table: ReportTable): string {
     table.rows.length === 0
       ? `<tr><td colspan="${table.columns.length}" style="padding:18px 8px;text-align:center;color:#888;">No rows in this range.</td></tr>`
       : table.rows
-          .map(
-            (row) =>
-              `<tr${row._total ? ' class="total"' : ""}>${table.columns
-                .map(
-                  (c) =>
-                    `<td style="text-align:${c.align === "right" ? "right" : "left"};">${esc(row[c.key])}</td>`,
-                )
-                .join("")}</tr>`,
-          )
+          .map((row) => {
+            if (row._section) {
+              return `<tr class="section"><td colspan="${table.columns.length}">${esc(row._section)}</td></tr>`;
+            }
+            return `<tr${row._total ? ' class="total"' : ""}>${table.columns
+              .map(
+                (c) =>
+                  `<td style="text-align:${c.align === "right" ? "right" : "left"};">${esc(row[c.key])}</td>`,
+              )
+              .join("")}</tr>`;
+          })
           .join("");
+
+  const summaryHtml = table.summary?.length
+    ? `<div class="summary">${table.summary
+        .map(
+          (s) =>
+            `<div class="sum-item"><span class="sum-label">${esc(s.label)}</span><span class="sum-value">${esc(s.value)}</span></div>`,
+        )
+        .join("")}</div>`
+    : "";
 
   const truncatedNote = table.truncated
     ? `<p style="margin:12px 0 0;font-size:10px;color:#b45309;">List truncated at the export row limit — narrow the date range or filters for a complete pull.</p>`
@@ -195,6 +226,22 @@ export function buildReportHtml(table: ReportTable): string {
   }
   td { padding: 1.9mm 1.8mm; border-bottom: 0.4pt solid ${T.hairline}; vertical-align: top; font-variant-numeric: tabular-nums; }
   tr.total td { font-weight: 700; color: ${T.night}; border-top: 1pt solid ${T.night}; border-bottom: none; }
+  tr.section td {
+    font-size: 7pt; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    color: ${T.forest}; padding: 4mm 1.8mm 1.6mm; border-bottom: 0.6pt solid ${T.night};
+  }
+  .summary {
+    margin-top: 4mm; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.4mm 8mm;
+  }
+  .sum-item {
+    display: flex; justify-content: space-between; gap: 4mm; align-items: baseline;
+    border-bottom: 0.4pt solid ${T.hairline}; padding-bottom: 1.2mm;
+  }
+  .sum-label {
+    font-size: 6.6pt; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: ${T.forest};
+  }
+  .sum-value { font-size: 8.4pt; color: ${T.night}; font-variant-numeric: tabular-nums; text-align: right; }
   .count { font-size: 7.6pt; color: ${T.faint}; margin-top: 4mm; }
 </style>
 </head>
@@ -212,6 +259,7 @@ export function buildReportHtml(table: ReportTable): string {
       </div>
       <div class="meta">${table.rows.length} row${table.rows.length === 1 ? "" : "s"}</div>
     </div>
+    ${summaryHtml}
     <div class="rule"></div>
     <table>
       <thead><tr>${head}</tr></thead>
@@ -260,13 +308,26 @@ export function toExcelXml(table: ReportTable): string {
     .map((c) => `<Cell ss:StyleID="hdr"><Data ss:Type="String">${xmlEsc(c.label)}</Data></Cell>`)
     .join("");
 
+  const colCount = table.columns.length;
   const bodyRows = table.rows
     .map((row) => {
+      if (row._section) {
+        const merge = colCount > 1 ? ` ss:MergeAcross="${colCount - 1}"` : "";
+        return `<Row><Cell ss:StyleID="section"${merge}><Data ss:Type="String">${xmlEsc(row._section)}</Data></Cell></Row>`;
+      }
       const style = row._total ? "total" : undefined;
       const cells = table.columns.map((c) => excelCell(row[c.key], style)).join("");
       return `<Row>${cells}</Row>`;
     })
     .join("");
+
+  const summaryRows = (table.summary ?? [])
+    .map(
+      (s) =>
+        `<Row><Cell ss:StyleID="hdr"><Data ss:Type="String">${xmlEsc(s.label)}</Data></Cell><Cell><Data ss:Type="String">${xmlEsc(s.value)}</Data></Cell></Row>`,
+    )
+    .join("");
+  const summaryBlock = summaryRows ? `${summaryRows}<Row></Row>` : "";
 
   const sheetName = table.title.replace(/[\\/?*[\]:]/g, " ").slice(0, 31) || "Report";
 
@@ -277,9 +338,11 @@ export function toExcelXml(table: ReportTable): string {
   <Styles>
     <Style ss:ID="hdr"><Font ss:Bold="1"/><Interior ss:Color="#E5EAE7" ss:Pattern="Solid"/></Style>
     <Style ss:ID="total"><Font ss:Bold="1"/></Style>
+    <Style ss:ID="section"><Font ss:Bold="1"/><Interior ss:Color="#EAF0EC" ss:Pattern="Solid"/></Style>
   </Styles>
   <Worksheet ss:Name="${xmlEsc(sheetName)}">
     <Table>
+      ${summaryBlock}
       <Row>${header}</Row>
       ${bodyRows}
     </Table>

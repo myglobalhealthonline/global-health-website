@@ -33,3 +33,23 @@ export async function fetchDownload(url: string, fallbackName = "download"): Pro
   a.remove();
   URL.revokeObjectURL(objectUrl);
 }
+
+/**
+ * Fetch a same-origin report endpoint with `?format=json` and return the parsed
+ * `ReportTable`. Surfaces backend `{ message }` errors as a thrown Error, the
+ * same way `fetchDownload` does — used by the on-screen report preview.
+ */
+export async function fetchReportJson<T = unknown>(url: string): Promise<T> {
+  const res = await fetch(url, { credentials: "same-origin", cache: "no-store" });
+  if (!res.ok) {
+    let message = `Request failed (HTTP ${res.status})`;
+    try {
+      const json = await res.json();
+      if (json?.message) message = json.message;
+    } catch {
+      // non-JSON body — keep the status message
+    }
+    throw new Error(message);
+  }
+  return (await res.json()) as T;
+}

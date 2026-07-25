@@ -1270,6 +1270,7 @@
     "title": "Reports",
     "description": "Aggregated consultation, patient, follow-up, and paid revenue signals for your assigned appointments. Defaults to the last 30 days.",
     "exportCsv": "Export summary (CSV)",
+    "viewResults": "View results",
     "tileAppointments": "Appointments",
     "tileSignedConsults": "Signed consults",
     "tileFollowUps": "Follow-ups",
