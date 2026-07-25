@@ -9,40 +9,40 @@
     "de"
   ],
   "counts": {
-    "critical": 0,
-    "warning": 282,
+    "critical": 45,
+    "warning": 541,
     "info": 1
   },
   "stats": {
     "pt": {
-      "missing": 0,
+      "missing": 9,
       "empty": 0,
-      "identical": 43,
-      "total": 3671
+      "identical": 95,
+      "total": 4055
     },
     "es": {
-      "missing": 0,
+      "missing": 9,
       "empty": 0,
-      "identical": 42,
-      "total": 3671
+      "identical": 96,
+      "total": 4055
     },
     "cs": {
-      "missing": 0,
+      "missing": 9,
       "empty": 0,
-      "identical": 22,
-      "total": 3671
+      "identical": 74,
+      "total": 4055
     },
     "ro": {
-      "missing": 0,
+      "missing": 9,
       "empty": 0,
-      "identical": 78,
-      "total": 3671
+      "identical": 132,
+      "total": 4055
     },
     "de": {
-      "missing": 0,
+      "missing": 9,
       "empty": 0,
-      "identical": 67,
-      "total": 3671
+      "identical": 126,
+      "total": 4055
     }
   },
   "wiringChecks": [
@@ -83,10 +83,34 @@
       "detail": "Switcher writes gh_locale cookie then reloads/refreshes so server-rendered content updates."
     },
     {
-      "label": "html lang reflects locale",
-      "file": "frontend/app/layout.tsx",
+      "label": "Locale survives authentication",
+      "file": "frontend/../backend/prisma/schema.prisma",
       "pass": true,
-      "detail": "Root layout sets <html lang> from resolved locale."
+      "detail": "User.preferredLocale exists — the chosen language is restored after login on any device."
+    },
+    {
+      "label": "html lang reflects locale — app/(global)/layout.tsx",
+      "file": "frontend/app/(global)/layout.tsx",
+      "pass": true,
+      "detail": "Emits <html lang> via toHtmlLang(resolvedLocale)."
+    },
+    {
+      "label": "html lang reflects locale — app/[country]/[lang]/layout.tsx",
+      "file": "frontend/app/[country]/[lang]/layout.tsx",
+      "pass": true,
+      "detail": "Emits <html lang> via toHtmlLang(resolvedLocale)."
+    },
+    {
+      "label": "html lang reflects locale — app/(portal)/layout.tsx",
+      "file": "frontend/app/(portal)/layout.tsx",
+      "pass": false,
+      "detail": "Hardcodes <html lang> — pages rendered in another language declare the wrong language to screen readers and crawlers."
+    },
+    {
+      "label": "html lang reflects locale — app/(redirect)/layout.tsx",
+      "file": "frontend/app/(redirect)/layout.tsx",
+      "pass": true,
+      "detail": "Redirect-only shell, no rendered copy — static lang is fine."
     },
     {
       "label": "Admin portal localization",
@@ -158,6 +182,15 @@
       "key": "profile.taxIdHint",
       "locale": "pt",
       "english": "NIF / PPS / CPF"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.utente",
+      "locale": "pt",
+      "english": "Número de Utente"
     },
     {
       "severity": "warning",
@@ -353,9 +386,54 @@
       "type": "identical-to-english",
       "file": "frontend/locales/pt/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "nav.crossBorderRx",
+      "locale": "pt",
+      "english": "Cross-border requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxRequested",
+      "locale": "pt",
+      "english": "Cross-border prescription request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxUpdated",
+      "locale": "pt",
+      "english": "Cross-border prescription update"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "appointmentDetail.internalNotesAuthorAdmin",
       "locale": "pt",
       "english": "Admin"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.utenteNumber",
+      "locale": "pt",
+      "english": "Número de Utente"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.ptIdCard",
+      "locale": "pt",
+      "english": "Cartão de Cidadão"
     },
     {
       "severity": "warning",
@@ -425,6 +503,474 @@
       "type": "identical-to-english",
       "file": "frontend/locales/pt/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.openButton",
+      "locale": "pt",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.title",
+      "locale": "pt",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.description",
+      "locale": "pt",
+      "english": "Ask an authorised doctor in another country to issue this prescription asynchronously. The patient pays a fee, then the prescribing doctor reviews your request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryLabel",
+      "locale": "pt",
+      "english": "Country"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryPlaceholder",
+      "locale": "pt",
+      "english": "Select country…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorLabel",
+      "locale": "pt",
+      "english": "Prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorPlaceholder",
+      "locale": "pt",
+      "english": "Select doctor…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryLabel",
+      "locale": "pt",
+      "english": "Clinical summary for the prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryPlaceholder",
+      "locale": "pt",
+      "english": "Diagnosis, medication requested, dose, and rationale…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submit",
+      "locale": "pt",
+      "english": "Create request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submitting",
+      "locale": "pt",
+      "english": "Creating…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.cancel",
+      "locale": "pt",
+      "english": "Cancel"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.loadingOptions",
+      "locale": "pt",
+      "english": "Loading available countries…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.noTargets",
+      "locale": "pt",
+      "english": "No prescribing doctors are set up in other countries yet. Ask an administrator."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectCountryFirst",
+      "locale": "pt",
+      "english": "Select a country first."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectDoctorFirst",
+      "locale": "pt",
+      "english": "Select a doctor."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryRequired",
+      "locale": "pt",
+      "english": "Add a clinical summary."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.couldNotCreate",
+      "locale": "pt",
+      "english": "Could not create the request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copyLink",
+      "locale": "pt",
+      "english": "Copy link"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copied",
+      "locale": "pt",
+      "english": "Copied"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.done",
+      "locale": "pt",
+      "english": "Done"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.eyebrow",
+      "locale": "pt",
+      "english": "Cross-border"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.title",
+      "locale": "pt",
+      "english": "Cross-border prescription requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.description",
+      "locale": "pt",
+      "english": "Requests from doctors in other countries asking you to issue a prescription. Review the summary, then open the consultation to prescribe."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.empty",
+      "locale": "pt",
+      "english": "No pending cross-border requests."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.fromLabel",
+      "locale": "pt",
+      "english": "Requested by"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.summaryHeading",
+      "locale": "pt",
+      "english": "Reason for request"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapHeading",
+      "locale": "pt",
+      "english": "Shared consultation record"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapConsentNote",
+      "locale": "pt",
+      "english": "The patient consented to sharing this record with you."
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapChiefComplaint",
+      "locale": "pt",
+      "english": "Chief complaint"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapSubjective",
+      "locale": "pt",
+      "english": "Subjective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapObjective",
+      "locale": "pt",
+      "english": "Objective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapAssessment",
+      "locale": "pt",
+      "english": "Assessment"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapPlan",
+      "locale": "pt",
+      "english": "Plan"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapEmpty",
+      "locale": "pt",
+      "english": "No consultation note was recorded on the source appointment."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusAwaiting",
+      "locale": "pt",
+      "english": "Awaiting your review"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusMoreInfo",
+      "locale": "pt",
+      "english": "More information requested"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.openConsultation",
+      "locale": "pt",
+      "english": "Open consultation"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.accept",
+      "locale": "pt",
+      "english": "Accept & prescribe"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.requestInfo",
+      "locale": "pt",
+      "english": "Request more info"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuse",
+      "locale": "pt",
+      "english": "Refuse"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageLabel",
+      "locale": "pt",
+      "english": "Message"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messagePlaceholder",
+      "locale": "pt",
+      "english": "What information do you need, or why are you refusing?"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptHint",
+      "locale": "pt",
+      "english": "Marks the request accepted. Issue the prescription in the consultation, then sign."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuseHint",
+      "locale": "pt",
+      "english": "Declines the request and offers the patient a full consultation with you."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageRequired",
+      "locale": "pt",
+      "english": "A message is required to request more information."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submit",
+      "locale": "pt",
+      "english": "Submit"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submitting",
+      "locale": "pt",
+      "english": "Submitting…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.couldNotSubmit",
+      "locale": "pt",
+      "english": "Could not submit the decision."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptedToast",
+      "locale": "pt",
+      "english": "Request accepted."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.moreInfoToast",
+      "locale": "pt",
+      "english": "Information request sent."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refusedToast",
+      "locale": "pt",
+      "english": "Request refused and upgrade offered."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "servicesUsedList.colItem",
       "locale": "pt",
       "english": "Item"
@@ -464,6 +1010,33 @@
       "key": "countryHero.sameDay.minSuffix",
       "locale": "pt",
       "english": "min"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.lastReviewed",
+      "locale": "pt",
+      "english": "Last reviewed"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.moreArticles",
+      "locale": "pt",
+      "english": "More articles"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.medicalDisclaimer",
+      "locale": "pt",
+      "english": "This article is for information only and is not a substitute for medical advice."
     },
     {
       "severity": "warning",
@@ -545,6 +1118,15 @@
       "key": "profile.taxIdHint",
       "locale": "es",
       "english": "NIF / PPS / CPF"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.utente",
+      "locale": "es",
+      "english": "Número de Utente"
     },
     {
       "severity": "warning",
@@ -731,6 +1313,33 @@
       "type": "identical-to-english",
       "file": "frontend/locales/es/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "nav.crossBorderRx",
+      "locale": "es",
+      "english": "Cross-border requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxRequested",
+      "locale": "es",
+      "english": "Cross-border prescription request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxUpdated",
+      "locale": "es",
+      "english": "Cross-border prescription update"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "appointments.typeGeneral",
       "locale": "es",
       "english": "General"
@@ -743,6 +1352,33 @@
       "key": "appointmentDetail.internalNotesAuthorAdmin",
       "locale": "es",
       "english": "Admin"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.utenteNumber",
+      "locale": "es",
+      "english": "Número de Utente"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.ptIdCard",
+      "locale": "es",
+      "english": "Cartão de Cidadão"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "patients.soapPlan",
+      "locale": "es",
+      "english": "Plan"
     },
     {
       "severity": "warning",
@@ -803,6 +1439,474 @@
       "type": "identical-to-english",
       "file": "frontend/locales/es/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.openButton",
+      "locale": "es",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.title",
+      "locale": "es",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.description",
+      "locale": "es",
+      "english": "Ask an authorised doctor in another country to issue this prescription asynchronously. The patient pays a fee, then the prescribing doctor reviews your request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryLabel",
+      "locale": "es",
+      "english": "Country"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryPlaceholder",
+      "locale": "es",
+      "english": "Select country…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorLabel",
+      "locale": "es",
+      "english": "Prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorPlaceholder",
+      "locale": "es",
+      "english": "Select doctor…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryLabel",
+      "locale": "es",
+      "english": "Clinical summary for the prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryPlaceholder",
+      "locale": "es",
+      "english": "Diagnosis, medication requested, dose, and rationale…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submit",
+      "locale": "es",
+      "english": "Create request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submitting",
+      "locale": "es",
+      "english": "Creating…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.cancel",
+      "locale": "es",
+      "english": "Cancel"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.loadingOptions",
+      "locale": "es",
+      "english": "Loading available countries…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.noTargets",
+      "locale": "es",
+      "english": "No prescribing doctors are set up in other countries yet. Ask an administrator."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectCountryFirst",
+      "locale": "es",
+      "english": "Select a country first."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectDoctorFirst",
+      "locale": "es",
+      "english": "Select a doctor."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryRequired",
+      "locale": "es",
+      "english": "Add a clinical summary."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.couldNotCreate",
+      "locale": "es",
+      "english": "Could not create the request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copyLink",
+      "locale": "es",
+      "english": "Copy link"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copied",
+      "locale": "es",
+      "english": "Copied"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.done",
+      "locale": "es",
+      "english": "Done"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.eyebrow",
+      "locale": "es",
+      "english": "Cross-border"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.title",
+      "locale": "es",
+      "english": "Cross-border prescription requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.description",
+      "locale": "es",
+      "english": "Requests from doctors in other countries asking you to issue a prescription. Review the summary, then open the consultation to prescribe."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.empty",
+      "locale": "es",
+      "english": "No pending cross-border requests."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.fromLabel",
+      "locale": "es",
+      "english": "Requested by"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.summaryHeading",
+      "locale": "es",
+      "english": "Reason for request"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapHeading",
+      "locale": "es",
+      "english": "Shared consultation record"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapConsentNote",
+      "locale": "es",
+      "english": "The patient consented to sharing this record with you."
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapChiefComplaint",
+      "locale": "es",
+      "english": "Chief complaint"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapSubjective",
+      "locale": "es",
+      "english": "Subjective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapObjective",
+      "locale": "es",
+      "english": "Objective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapAssessment",
+      "locale": "es",
+      "english": "Assessment"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapPlan",
+      "locale": "es",
+      "english": "Plan"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapEmpty",
+      "locale": "es",
+      "english": "No consultation note was recorded on the source appointment."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusAwaiting",
+      "locale": "es",
+      "english": "Awaiting your review"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusMoreInfo",
+      "locale": "es",
+      "english": "More information requested"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.openConsultation",
+      "locale": "es",
+      "english": "Open consultation"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.accept",
+      "locale": "es",
+      "english": "Accept & prescribe"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.requestInfo",
+      "locale": "es",
+      "english": "Request more info"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuse",
+      "locale": "es",
+      "english": "Refuse"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageLabel",
+      "locale": "es",
+      "english": "Message"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messagePlaceholder",
+      "locale": "es",
+      "english": "What information do you need, or why are you refusing?"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptHint",
+      "locale": "es",
+      "english": "Marks the request accepted. Issue the prescription in the consultation, then sign."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuseHint",
+      "locale": "es",
+      "english": "Declines the request and offers the patient a full consultation with you."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageRequired",
+      "locale": "es",
+      "english": "A message is required to request more information."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submit",
+      "locale": "es",
+      "english": "Submit"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submitting",
+      "locale": "es",
+      "english": "Submitting…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.couldNotSubmit",
+      "locale": "es",
+      "english": "Could not submit the decision."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptedToast",
+      "locale": "es",
+      "english": "Request accepted."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.moreInfoToast",
+      "locale": "es",
+      "english": "Information request sent."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refusedToast",
+      "locale": "es",
+      "english": "Request refused and upgrade offered."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "servicesUsedList.total",
       "locale": "es",
       "english": "Total"
@@ -828,6 +1932,15 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "tour.demo.plan",
+      "locale": "es",
+      "english": "Plan"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/es/faq.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "hero_eyebrow",
@@ -842,6 +1955,33 @@
       "key": "countryHero.sameDay.minSuffix",
       "locale": "es",
       "english": "min"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.lastReviewed",
+      "locale": "es",
+      "english": "Last reviewed"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.moreArticles",
+      "locale": "es",
+      "english": "More articles"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.medicalDisclaimer",
+      "locale": "es",
+      "english": "This article is for information only and is not a substitute for medical advice."
     },
     {
       "severity": "warning",
@@ -878,6 +2018,15 @@
       "key": "profile.taxIdHint",
       "locale": "cs",
       "english": "NIF / PPS / CPF"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.utente",
+      "locale": "cs",
+      "english": "Número de Utente"
     },
     {
       "severity": "warning",
@@ -965,9 +2114,54 @@
       "type": "identical-to-english",
       "file": "frontend/locales/cs/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "nav.crossBorderRx",
+      "locale": "cs",
+      "english": "Cross-border requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxRequested",
+      "locale": "cs",
+      "english": "Cross-border prescription request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxUpdated",
+      "locale": "cs",
+      "english": "Cross-border prescription update"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "appointmentDetail.internalNotesAuthorAdmin",
       "locale": "cs",
       "english": "Admin"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.utenteNumber",
+      "locale": "cs",
+      "english": "Número de Utente"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.ptIdCard",
+      "locale": "cs",
+      "english": "Cartão de Cidadão"
     },
     {
       "severity": "warning",
@@ -1044,6 +2238,474 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.openButton",
+      "locale": "cs",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.title",
+      "locale": "cs",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.description",
+      "locale": "cs",
+      "english": "Ask an authorised doctor in another country to issue this prescription asynchronously. The patient pays a fee, then the prescribing doctor reviews your request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryLabel",
+      "locale": "cs",
+      "english": "Country"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryPlaceholder",
+      "locale": "cs",
+      "english": "Select country…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorLabel",
+      "locale": "cs",
+      "english": "Prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorPlaceholder",
+      "locale": "cs",
+      "english": "Select doctor…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryLabel",
+      "locale": "cs",
+      "english": "Clinical summary for the prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryPlaceholder",
+      "locale": "cs",
+      "english": "Diagnosis, medication requested, dose, and rationale…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submit",
+      "locale": "cs",
+      "english": "Create request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submitting",
+      "locale": "cs",
+      "english": "Creating…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.cancel",
+      "locale": "cs",
+      "english": "Cancel"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.loadingOptions",
+      "locale": "cs",
+      "english": "Loading available countries…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.noTargets",
+      "locale": "cs",
+      "english": "No prescribing doctors are set up in other countries yet. Ask an administrator."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectCountryFirst",
+      "locale": "cs",
+      "english": "Select a country first."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectDoctorFirst",
+      "locale": "cs",
+      "english": "Select a doctor."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryRequired",
+      "locale": "cs",
+      "english": "Add a clinical summary."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.couldNotCreate",
+      "locale": "cs",
+      "english": "Could not create the request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copyLink",
+      "locale": "cs",
+      "english": "Copy link"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copied",
+      "locale": "cs",
+      "english": "Copied"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.done",
+      "locale": "cs",
+      "english": "Done"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.eyebrow",
+      "locale": "cs",
+      "english": "Cross-border"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.title",
+      "locale": "cs",
+      "english": "Cross-border prescription requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.description",
+      "locale": "cs",
+      "english": "Requests from doctors in other countries asking you to issue a prescription. Review the summary, then open the consultation to prescribe."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.empty",
+      "locale": "cs",
+      "english": "No pending cross-border requests."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.fromLabel",
+      "locale": "cs",
+      "english": "Requested by"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.summaryHeading",
+      "locale": "cs",
+      "english": "Reason for request"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapHeading",
+      "locale": "cs",
+      "english": "Shared consultation record"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapConsentNote",
+      "locale": "cs",
+      "english": "The patient consented to sharing this record with you."
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapChiefComplaint",
+      "locale": "cs",
+      "english": "Chief complaint"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapSubjective",
+      "locale": "cs",
+      "english": "Subjective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapObjective",
+      "locale": "cs",
+      "english": "Objective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapAssessment",
+      "locale": "cs",
+      "english": "Assessment"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapPlan",
+      "locale": "cs",
+      "english": "Plan"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapEmpty",
+      "locale": "cs",
+      "english": "No consultation note was recorded on the source appointment."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusAwaiting",
+      "locale": "cs",
+      "english": "Awaiting your review"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusMoreInfo",
+      "locale": "cs",
+      "english": "More information requested"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.openConsultation",
+      "locale": "cs",
+      "english": "Open consultation"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.accept",
+      "locale": "cs",
+      "english": "Accept & prescribe"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.requestInfo",
+      "locale": "cs",
+      "english": "Request more info"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuse",
+      "locale": "cs",
+      "english": "Refuse"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageLabel",
+      "locale": "cs",
+      "english": "Message"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messagePlaceholder",
+      "locale": "cs",
+      "english": "What information do you need, or why are you refusing?"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptHint",
+      "locale": "cs",
+      "english": "Marks the request accepted. Issue the prescription in the consultation, then sign."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuseHint",
+      "locale": "cs",
+      "english": "Declines the request and offers the patient a full consultation with you."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageRequired",
+      "locale": "cs",
+      "english": "A message is required to request more information."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submit",
+      "locale": "cs",
+      "english": "Submit"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submitting",
+      "locale": "cs",
+      "english": "Submitting…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.couldNotSubmit",
+      "locale": "cs",
+      "english": "Could not submit the decision."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptedToast",
+      "locale": "cs",
+      "english": "Request accepted."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.moreInfoToast",
+      "locale": "cs",
+      "english": "Information request sent."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refusedToast",
+      "locale": "cs",
+      "english": "Request refused and upgrade offered."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/cs/faq.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "hero_eyebrow",
@@ -1058,6 +2720,33 @@
       "key": "countryHero.sameDay.minSuffix",
       "locale": "cs",
       "english": "min"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.lastReviewed",
+      "locale": "cs",
+      "english": "Last reviewed"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.moreArticles",
+      "locale": "cs",
+      "english": "More articles"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.medicalDisclaimer",
+      "locale": "cs",
+      "english": "This article is for information only and is not a substitute for medical advice."
     },
     {
       "severity": "warning",
@@ -1157,6 +2846,15 @@
       "key": "profile.taxIdHint",
       "locale": "ro",
       "english": "NIF / PPS / CPF"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.utente",
+      "locale": "ro",
+      "english": "Número de Utente"
     },
     {
       "severity": "warning",
@@ -1487,6 +3185,33 @@
       "type": "identical-to-english",
       "file": "frontend/locales/ro/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "nav.crossBorderRx",
+      "locale": "ro",
+      "english": "Cross-border requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxRequested",
+      "locale": "ro",
+      "english": "Cross-border prescription request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxUpdated",
+      "locale": "ro",
+      "english": "Cross-border prescription update"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "common.activeCount",
       "locale": "ro",
       "english": "{count} active"
@@ -1532,9 +3257,36 @@
       "type": "identical-to-english",
       "file": "frontend/locales/ro/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.utenteNumber",
+      "locale": "ro",
+      "english": "Número de Utente"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.ptIdCard",
+      "locale": "ro",
+      "english": "Cartão de Cidadão"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "patients.docTypeDocument",
       "locale": "ro",
       "english": "Document"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "patients.soapPlan",
+      "locale": "ro",
+      "english": "Plan"
     },
     {
       "severity": "warning",
@@ -1640,6 +3392,474 @@
       "type": "identical-to-english",
       "file": "frontend/locales/ro/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.openButton",
+      "locale": "ro",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.title",
+      "locale": "ro",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.description",
+      "locale": "ro",
+      "english": "Ask an authorised doctor in another country to issue this prescription asynchronously. The patient pays a fee, then the prescribing doctor reviews your request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryLabel",
+      "locale": "ro",
+      "english": "Country"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryPlaceholder",
+      "locale": "ro",
+      "english": "Select country…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorLabel",
+      "locale": "ro",
+      "english": "Prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorPlaceholder",
+      "locale": "ro",
+      "english": "Select doctor…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryLabel",
+      "locale": "ro",
+      "english": "Clinical summary for the prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryPlaceholder",
+      "locale": "ro",
+      "english": "Diagnosis, medication requested, dose, and rationale…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submit",
+      "locale": "ro",
+      "english": "Create request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submitting",
+      "locale": "ro",
+      "english": "Creating…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.cancel",
+      "locale": "ro",
+      "english": "Cancel"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.loadingOptions",
+      "locale": "ro",
+      "english": "Loading available countries…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.noTargets",
+      "locale": "ro",
+      "english": "No prescribing doctors are set up in other countries yet. Ask an administrator."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectCountryFirst",
+      "locale": "ro",
+      "english": "Select a country first."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectDoctorFirst",
+      "locale": "ro",
+      "english": "Select a doctor."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryRequired",
+      "locale": "ro",
+      "english": "Add a clinical summary."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.couldNotCreate",
+      "locale": "ro",
+      "english": "Could not create the request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copyLink",
+      "locale": "ro",
+      "english": "Copy link"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copied",
+      "locale": "ro",
+      "english": "Copied"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.done",
+      "locale": "ro",
+      "english": "Done"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.eyebrow",
+      "locale": "ro",
+      "english": "Cross-border"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.title",
+      "locale": "ro",
+      "english": "Cross-border prescription requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.description",
+      "locale": "ro",
+      "english": "Requests from doctors in other countries asking you to issue a prescription. Review the summary, then open the consultation to prescribe."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.empty",
+      "locale": "ro",
+      "english": "No pending cross-border requests."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.fromLabel",
+      "locale": "ro",
+      "english": "Requested by"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.summaryHeading",
+      "locale": "ro",
+      "english": "Reason for request"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapHeading",
+      "locale": "ro",
+      "english": "Shared consultation record"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapConsentNote",
+      "locale": "ro",
+      "english": "The patient consented to sharing this record with you."
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapChiefComplaint",
+      "locale": "ro",
+      "english": "Chief complaint"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapSubjective",
+      "locale": "ro",
+      "english": "Subjective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapObjective",
+      "locale": "ro",
+      "english": "Objective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapAssessment",
+      "locale": "ro",
+      "english": "Assessment"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapPlan",
+      "locale": "ro",
+      "english": "Plan"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapEmpty",
+      "locale": "ro",
+      "english": "No consultation note was recorded on the source appointment."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusAwaiting",
+      "locale": "ro",
+      "english": "Awaiting your review"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusMoreInfo",
+      "locale": "ro",
+      "english": "More information requested"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.openConsultation",
+      "locale": "ro",
+      "english": "Open consultation"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.accept",
+      "locale": "ro",
+      "english": "Accept & prescribe"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.requestInfo",
+      "locale": "ro",
+      "english": "Request more info"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuse",
+      "locale": "ro",
+      "english": "Refuse"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageLabel",
+      "locale": "ro",
+      "english": "Message"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messagePlaceholder",
+      "locale": "ro",
+      "english": "What information do you need, or why are you refusing?"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptHint",
+      "locale": "ro",
+      "english": "Marks the request accepted. Issue the prescription in the consultation, then sign."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuseHint",
+      "locale": "ro",
+      "english": "Declines the request and offers the patient a full consultation with you."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageRequired",
+      "locale": "ro",
+      "english": "A message is required to request more information."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submit",
+      "locale": "ro",
+      "english": "Submit"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submitting",
+      "locale": "ro",
+      "english": "Submitting…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.couldNotSubmit",
+      "locale": "ro",
+      "english": "Could not submit the decision."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptedToast",
+      "locale": "ro",
+      "english": "Request accepted."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.moreInfoToast",
+      "locale": "ro",
+      "english": "Information request sent."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refusedToast",
+      "locale": "ro",
+      "english": "Request refused and upgrade offered."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "servicesUsedList.total",
       "locale": "ro",
       "english": "Total"
@@ -1661,6 +3881,15 @@
       "key": "calendar.title",
       "locale": "ro",
       "english": "Calendar"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "tour.demo.plan",
+      "locale": "ro",
+      "english": "Plan"
     },
     {
       "severity": "warning",
@@ -1715,6 +3944,33 @@
       "key": "statsBand.stat3Value",
       "locale": "ro",
       "english": "Live"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.lastReviewed",
+      "locale": "ro",
+      "english": "Last reviewed"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.moreArticles",
+      "locale": "ro",
+      "english": "More articles"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.medicalDisclaimer",
+      "locale": "ro",
+      "english": "This article is for information only and is not a substitute for medical advice."
     },
     {
       "severity": "warning",
@@ -1820,6 +4076,15 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.utente",
+      "locale": "de",
+      "english": "Número de Utente"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "profile.statusPatientIdHint",
       "locale": "de",
       "english": "Global Health Number"
@@ -1901,6 +4166,15 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/auth.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "login.twoFa.codeLabel",
+      "locale": "de",
+      "english": "Code"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/auth.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "register.phoneOptional",
       "locale": "de",
       "english": "(optional)"
@@ -1922,6 +4196,15 @@
       "key": "bookingForm.nationalIdOptional",
       "locale": "de",
       "english": "{label} (optional)"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/common.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "bookingForm.utenteOptional",
+      "locale": "de",
+      "english": "Número de Utente (optional)"
     },
     {
       "severity": "warning",
@@ -2081,6 +4364,33 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "nav.crossBorderRx",
+      "locale": "de",
+      "english": "Cross-border requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxRequested",
+      "locale": "de",
+      "english": "Cross-border prescription request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "notifications.crossBorderRxUpdated",
+      "locale": "de",
+      "english": "Cross-border prescription update"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "common.status",
       "locale": "de",
       "english": "Status"
@@ -2117,9 +4427,27 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.utenteNumber",
+      "locale": "de",
+      "english": "Número de Utente"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "appointmentDetail.statusLabel",
       "locale": "de",
       "english": "Status"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.ptIdCard",
+      "locale": "de",
+      "english": "Cartão de Cidadão"
     },
     {
       "severity": "warning",
@@ -2138,6 +4466,15 @@
       "key": "patients.colStatus",
       "locale": "de",
       "english": "Status"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "patients.soapPlan",
+      "locale": "de",
+      "english": "Plan"
     },
     {
       "severity": "warning",
@@ -2225,6 +4562,474 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.openButton",
+      "locale": "de",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.title",
+      "locale": "de",
+      "english": "Request prescription outside jurisdiction"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.description",
+      "locale": "de",
+      "english": "Ask an authorised doctor in another country to issue this prescription asynchronously. The patient pays a fee, then the prescribing doctor reviews your request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryLabel",
+      "locale": "de",
+      "english": "Country"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.countryPlaceholder",
+      "locale": "de",
+      "english": "Select country…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorLabel",
+      "locale": "de",
+      "english": "Prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.doctorPlaceholder",
+      "locale": "de",
+      "english": "Select doctor…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryLabel",
+      "locale": "de",
+      "english": "Clinical summary for the prescribing doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryPlaceholder",
+      "locale": "de",
+      "english": "Diagnosis, medication requested, dose, and rationale…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submit",
+      "locale": "de",
+      "english": "Create request"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.submitting",
+      "locale": "de",
+      "english": "Creating…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.cancel",
+      "locale": "de",
+      "english": "Cancel"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.loadingOptions",
+      "locale": "de",
+      "english": "Loading available countries…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.noTargets",
+      "locale": "de",
+      "english": "No prescribing doctors are set up in other countries yet. Ask an administrator."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectCountryFirst",
+      "locale": "de",
+      "english": "Select a country first."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.selectDoctorFirst",
+      "locale": "de",
+      "english": "Select a doctor."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.summaryRequired",
+      "locale": "de",
+      "english": "Add a clinical summary."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.couldNotCreate",
+      "locale": "de",
+      "english": "Could not create the request."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copyLink",
+      "locale": "de",
+      "english": "Copy link"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.copied",
+      "locale": "de",
+      "english": "Copied"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRx.done",
+      "locale": "de",
+      "english": "Done"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.eyebrow",
+      "locale": "de",
+      "english": "Cross-border"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.title",
+      "locale": "de",
+      "english": "Cross-border prescription requests"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.description",
+      "locale": "de",
+      "english": "Requests from doctors in other countries asking you to issue a prescription. Review the summary, then open the consultation to prescribe."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.empty",
+      "locale": "de",
+      "english": "No pending cross-border requests."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.fromLabel",
+      "locale": "de",
+      "english": "Requested by"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.summaryHeading",
+      "locale": "de",
+      "english": "Reason for request"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapHeading",
+      "locale": "de",
+      "english": "Shared consultation record"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapConsentNote",
+      "locale": "de",
+      "english": "The patient consented to sharing this record with you."
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapChiefComplaint",
+      "locale": "de",
+      "english": "Chief complaint"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapSubjective",
+      "locale": "de",
+      "english": "Subjective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapObjective",
+      "locale": "de",
+      "english": "Objective"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapAssessment",
+      "locale": "de",
+      "english": "Assessment"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapPlan",
+      "locale": "de",
+      "english": "Plan"
+    },
+    {
+      "severity": "critical",
+      "type": "missing-key",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "key": "crossBorderRxInbox.soapEmpty",
+      "locale": "de",
+      "english": "No consultation note was recorded on the source appointment."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusAwaiting",
+      "locale": "de",
+      "english": "Awaiting your review"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.statusMoreInfo",
+      "locale": "de",
+      "english": "More information requested"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.openConsultation",
+      "locale": "de",
+      "english": "Open consultation"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.accept",
+      "locale": "de",
+      "english": "Accept & prescribe"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.requestInfo",
+      "locale": "de",
+      "english": "Request more info"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuse",
+      "locale": "de",
+      "english": "Refuse"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageLabel",
+      "locale": "de",
+      "english": "Message"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messagePlaceholder",
+      "locale": "de",
+      "english": "What information do you need, or why are you refusing?"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptHint",
+      "locale": "de",
+      "english": "Marks the request accepted. Issue the prescription in the consultation, then sign."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refuseHint",
+      "locale": "de",
+      "english": "Declines the request and offers the patient a full consultation with you."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.messageRequired",
+      "locale": "de",
+      "english": "A message is required to request more information."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submit",
+      "locale": "de",
+      "english": "Submit"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.submitting",
+      "locale": "de",
+      "english": "Submitting…"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.couldNotSubmit",
+      "locale": "de",
+      "english": "Could not submit the decision."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.acceptedToast",
+      "locale": "de",
+      "english": "Request accepted."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.moreInfoToast",
+      "locale": "de",
+      "english": "Information request sent."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "crossBorderRxInbox.refusedToast",
+      "locale": "de",
+      "english": "Request refused and upgrade offered."
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "consultationForm.fieldPlan",
       "locale": "de",
       "english": "Plan"
@@ -2277,6 +5082,42 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "confidentiality.signedVersionLabel",
+      "locale": "de",
+      "english": "Version {version}"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "manualBooking.sectionPatient",
+      "locale": "de",
+      "english": "Patient"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "manualBooking.utente",
+      "locale": "de",
+      "english": "Número de Utente (optional)"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "tour.demo.plan",
+      "locale": "de",
+      "english": "Plan"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/de/faq.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "hero_eyebrow",
@@ -2318,6 +5159,33 @@
       "key": "statsBand.stat3Value",
       "locale": "de",
       "english": "Live"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.lastReviewed",
+      "locale": "de",
+      "english": "Last reviewed"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.moreArticles",
+      "locale": "de",
+      "english": "More articles"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blog.medicalDisclaimer",
+      "locale": "de",
+      "english": "This article is for information only and is not a substitute for medical advice."
     },
     {
       "severity": "warning",
@@ -2367,100 +5235,9 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/about/page.tsx",
+      "file": "frontend/app/(site)/(global)/cross-border-consent/CrossBorderConsentPageClient.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Global Health telemedicine platform — online doctor consultations across multiple markets\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/blog/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Medical team reviewing health articles and educational content\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/contact/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Telehealth care coordinator supporting a patient through an online consultation platform\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/[country]/[lang]/book/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Need a same-day GP instead?\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/[country]/[lang]/book/_components/service-time-picker.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Change service\", \"[attr] Available dates\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/[country]/[lang]/cart/_components/CartPageClient.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Pick another time\", \"void | Promise\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/[country]/[lang]/checkout/success/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Usually under 30 seconds.\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/[country]/[lang]/checkout/_components/CheckoutPageClient.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Back to home\", \"Use a different contact for this payment?\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/[country]/[lang]/consult/[serviceSlug]/_components/consultation-booking-form.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "4 candidate string(s): \"That time is no longer available — pick another.\", \"Patient being treated\", \"Patient full name\", \"Insurance card / policy number\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/[country]/[lang]/consult/[serviceSlug]/_components/slot-picker-step.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Pick another clinician\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/account/membership/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"kit.eligible).length), hint: a.membership.sumEligibleNowHint, icon:\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/account/profile/_components/profile-client.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"null) as Promise\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"locked ? null : (\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(doctor)/doctor/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"a.scheduledAt &&\\r\\n      new Date(a.scheduledAt).getTime()\""
+      "value": "7 candidate string(s): \"Your prescription request\", \"to\\r\\n        issue a prescription for you.\", \"What this means\", \"Continue to payment\", \"Book a GP consultation\", …"
     },
     {
       "severity": "warning",
@@ -2542,6 +5319,13 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
+      "file": "frontend/components/reports/report-results-table.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "2 candidate string(s): \"No rows in this range.\", \"List truncated at the export row limit — narrow the date range or filters\\r\\n          for a complete pull.\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
       "file": "frontend/components/sections/DoctifyReviews.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"[attr] Doctify patient reviews\""
@@ -2569,10 +5353,10 @@
     },
     {
       "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/templates/DoctorTeamTemplate.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"[attr] Previous page\", \"[attr] Next page\""
+      "type": "wiring",
+      "file": "frontend/app/(portal)/layout.tsx",
+      "recommendation": "See detail.",
+      "value": "Root layout hardcodes <html lang> while the surface renders localized copy — pass toHtmlLang(locale)."
     },
     {
       "severity": "info",

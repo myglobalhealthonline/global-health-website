@@ -18,6 +18,7 @@ import {
   medicalBusinessJsonLd,
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import type { LocaleCode } from "@/lib/i18n/types";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -71,7 +72,7 @@ export default async function CountryLandingPage({
 
   const [page, countryTrust] = await Promise.all([
     getCountryLandingPage(code, slug, lang),
-    getCountryTrust(code),
+    getCountryTrust(code, lang as LocaleCode),
   ]);
   if (!page) notFound();
 

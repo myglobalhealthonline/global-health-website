@@ -113,6 +113,8 @@ const RECOMMENDATIONS = {
   "hardcoded-text": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
   "page-without-i18n": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language.",
   "fetch-without-locale": "Thread the resolved locale to the backend call (?locale= param) or content will fall back to the country default language.",
+  "helper-call-without-locale": "Pass the resolved locale as the second argument; without it the backend returns the country default-language copy while the rest of the page renders in the selected language (mixed-language page).",
+  "client-locale-import": "Client components must not import locale JSON as a value (it pins one language and ships all bundles). Resolve strings server-side and pass the slice down as a prop, or use `import type`.",
   "wiring": "See detail.",
 };
 
@@ -496,6 +498,58 @@ async function auditFetchWithoutLocale() {
   return offenders;
 }
 
+/**
+ * Locale-aware content helpers whose locale argument is OPTIONAL — omitting it
+ * silently serves the country default-language copy. Call sites that drop it
+ * are the most common source of a page mixing two languages.
+ */
+const LOCALE_OPTIONAL_HELPERS = ["getCountryTrust", "getCountryFooter", "getCountryFooters"];
+
+async function auditHelperCallsWithoutLocale() {
+  const roots = [path.join(frontendRoot, "app"), path.join(frontendRoot, "components")];
+  const offenders = [];
+  const callRe = new RegExp(`\\b(${LOCALE_OPTIONAL_HELPERS.join("|")})\\s*\\(([^()]*)\\)`, "g");
+  for (const root of roots) {
+    for (const file of await walk(root, [".ts", ".tsx"])) {
+      const src = await readFile(file, "utf8");
+      if (/\/lib\/content\//.test(file.replaceAll("\\", "/"))) continue; // the definitions themselves
+      for (const m of src.matchAll(callRe)) {
+        const args = m[2].trim();
+        if (!args) continue; // zero-arg = not the content helper
+        if (/locale|lang/i.test(args)) continue;
+        const line = src.slice(0, m.index).split("\n").length;
+        const rel = path.relative(repoRoot, file).replaceAll("\\", "/");
+        offenders.push(`${rel}:${line}`);
+        add("warning", "helper-call-without-locale", `${rel}:${line}`, {
+          value: `${m[1]}(${truncate(args, 40)}) — no locale argument`,
+        });
+      }
+    }
+  }
+  return offenders;
+}
+
+async function auditClientLocaleImports() {
+  const roots = [path.join(frontendRoot, "app"), path.join(frontendRoot, "components")];
+  const offenders = [];
+  for (const root of roots) {
+    for (const file of await walk(root, [".tsx", ".ts"])) {
+      const src = await readFile(file, "utf8");
+      if (!/^\s*["']use client["']/m.test(src)) continue;
+      const lines = src.split("\n");
+      lines.forEach((line, idx) => {
+        if (!/from\s+["']@\/locales\//.test(line) && !/loadLocaleBundle["']?\s*\}?\s*from/.test(line)) return;
+        if (/^\s*import\s+type\b/.test(line) || /\btypeof import\(/.test(line)) return; // type-only is fine
+        if (!/^\s*import\b/.test(line)) return;
+        const rel = path.relative(repoRoot, file).replaceAll("\\", "/");
+        offenders.push(`${rel}:${idx + 1}`);
+        add("warning", "client-locale-import", `${rel}:${idx + 1}`, { value: line.trim().slice(0, 120) });
+      });
+    }
+  }
+  return offenders;
+}
+
 // ---------------------------------------------------------------------------
 // Part 3 — wiring assertions (locale persistence & fallback behavior)
 // ---------------------------------------------------------------------------
@@ -559,12 +613,47 @@ async function auditWiring() {
     "Switcher writes the cookie without a refresh — stale language persists until manual reload.",
   );
   await fileHas(
-    "app/layout.tsx",
-    /getRootHtmlLang|lang=/,
-    "html lang reflects locale",
-    "Root layout sets <html lang> from resolved locale.",
-    "Root layout hardcodes <html lang> — a11y/SEO language mismatch.",
+    "../backend/prisma/schema.prisma",
+    /preferredLocale\s+LocaleCode/,
+    "Locale survives authentication",
+    "User.preferredLocale exists — the chosen language is restored after login on any device.",
+    "No User.preferredLocale column: language selection lives only in the device cookie and is lost on login from another device.",
   );
+
+  // Root layouts own <html lang>; each must derive it from the resolved locale.
+  // (There is no single app/layout.tsx — the app has several root layouts.)
+  for (const rel of [
+    "app/(global)/layout.tsx",
+    "app/[country]/[lang]/layout.tsx",
+    "app/(portal)/layout.tsx",
+    "app/(redirect)/layout.tsx",
+  ]) {
+    let src;
+    try {
+      src = await readFile(path.join(frontendRoot, rel), "utf8");
+    } catch {
+      continue;
+    }
+    if (!/<RootDocument|<html/.test(src)) continue;
+    const dynamic = /toHtmlLang\(/.test(src);
+    // The (redirect) shell only ever renders a redirect() — no readable content.
+    const exempt = rel.includes("(redirect)");
+    checks.push({
+      label: `html lang reflects locale — ${rel}`,
+      file: `frontend/${rel}`,
+      pass: dynamic || exempt,
+      detail: dynamic
+        ? "Emits <html lang> via toHtmlLang(resolvedLocale)."
+        : exempt
+          ? "Redirect-only shell, no rendered copy — static lang is fine."
+          : "Hardcodes <html lang> — pages rendered in another language declare the wrong language to screen readers and crawlers.",
+    });
+    if (!dynamic && !exempt) {
+      add("warning", "wiring", `frontend/${rel}`, {
+        value: "Root layout hardcodes <html lang> while the surface renders localized copy — pass toHtmlLang(locale).",
+      });
+    }
+  }
 
   // Admin portal: known unlocalized (informational — mirrors LOCALE_INVESTIGATION issue #5)
   let adminLocalized = false;
@@ -642,7 +731,8 @@ function buildMarkdown({ stats, wiringChecks, counts }) {
   const order = [
     "invalid-locale", "missing-namespace-file", "extra-namespace-file", "duplicate-key",
     "type-mismatch", "missing-key", "empty-value", "placeholder-mismatch", "extra-key",
-    "identical-to-english", "hardcoded-text", "page-without-i18n", "fetch-without-locale", "wiring",
+    "identical-to-english", "hardcoded-text", "page-without-i18n", "fetch-without-locale",
+    "helper-call-without-locale", "client-locale-import", "wiring",
   ];
   lines.push("## Findings");
   lines.push("");
@@ -682,6 +772,8 @@ async function main() {
   await auditHardcodedText();
   await auditPagesWithoutI18n();
   await auditFetchWithoutLocale();
+  await auditHelperCallsWithoutLocale();
+  await auditClientLocaleImports();
   const wiringChecks = await auditWiring();
 
   const counts = { critical: 0, warning: 0, info: 0 };

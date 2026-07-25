@@ -12,6 +12,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd, breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import type { LocaleCode } from "@/lib/i18n/types";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
@@ -31,9 +32,9 @@ type BlogPostRouteParams = {
 
 /** Build a Physician schema input for a blog author/reviewer doctor, with the
  *  recognisedBy regulator resolved from the doctor's country trust data. */
-async function blogPhysicianInput(doctor: BlogDoctor | null) {
+async function blogPhysicianInput(doctor: BlogDoctor | null, locale: LocaleCode) {
   if (!doctor) return null;
-  const trust = doctor.countryCode ? await getCountryTrust(doctor.countryCode) : null;
+  const trust = doctor.countryCode ? await getCountryTrust(doctor.countryCode, locale) : null;
   const profileUrl =
     doctor.countrySlug ? `/${doctor.countrySlug}/en/doctors/${doctor.slug}` : `/blog`;
   return {
@@ -169,8 +170,8 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   });
 
   const [authorPhysician, reviewerPhysician, relatedPosts] = await Promise.all([
-    blogPhysicianInput(post.authorDoctor),
-    blogPhysicianInput(post.reviewerDoctor),
+    blogPhysicianInput(post.authorDoctor, locale),
+    blogPhysicianInput(post.reviewerDoctor, locale),
     listBlogPosts(routeCode ?? undefined).then((posts) =>
       posts.filter((p) => p.slug !== post.slug).slice(0, 3),
     ),

@@ -167,7 +167,7 @@ export default async function ServiceDetailPage({
   // flag the /doctors spotlight uses), never a fabricated name. Renders
   // nothing when the country has no featured doctor set.
   const reviewer = allDoctors.find((d) => d.isFeatured) ?? null;
-  const reviewerTrust = reviewer ? await getCountryTrust(code) : null;
+  const reviewerTrust = reviewer ? await getCountryTrust(code, lang as LocaleCode) : null;
   const reviewerHref = reviewer ? `/${country}/${lang}/doctors/${reviewer.slug}` : null;
   const reviewerPhysician = reviewer
     ? physicianJsonLd({

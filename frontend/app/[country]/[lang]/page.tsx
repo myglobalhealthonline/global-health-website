@@ -211,7 +211,7 @@ export default async function CountryLangHomePage({
       // Count projection, not the full global roster (was fetched only for
       // its `.length`).
       getPublicDoctorsCount(),
-      getCountryTrust(code),
+      getCountryTrust(code, lang as LocaleCode),
       getGpLanguages(code),
     ]);
 

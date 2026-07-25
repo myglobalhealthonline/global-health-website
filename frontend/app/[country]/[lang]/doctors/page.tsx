@@ -110,7 +110,7 @@ export default async function CountryLangDoctorsPage({
   const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust, generalServices, specialistServices] = await Promise.all([
     getCountryDoctors(code, lang),
     getPageContent(code, "DOCTORS_INDEX", lang as PublicLocale),
-    getCountryTrust(code),
+    getCountryTrust(code, lang as LocaleCode),
     getCountryServices(code, "GENERAL", lang),
     getCountryServices(code, "SPECIALIST", lang),
   ]);
