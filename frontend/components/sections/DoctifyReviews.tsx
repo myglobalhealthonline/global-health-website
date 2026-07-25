@@ -31,6 +31,14 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
 const TENANT = "athena-ie";
 const SLUG = "global-health-ireland";
 
+/** Doctify only serves this practice's reviews in English — asking for any
+ *  other language returns an empty widget, which reads as a broken section on
+ *  the non-EN locales. So every embed is pinned to `en`; the `language` prop
+ *  still drives the consent-placeholder copy, which IS translated.
+ *  ponytail: pin to en, thread the real locale through once Doctify actually
+ *  returns translated reviews. */
+const WIDGET_LANGUAGE = "en";
+
 /** Doctify's widget scripts hijack the single global `window.onresize`
  *  (a plain assignment, not `addEventListener`) to reposition/redraw their
  *  carousel. If the container that handler was built for is gone — this
@@ -151,7 +159,7 @@ export function DoctifyRatingStrip({
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
-    `&dotsArrowsColor=${onDark ? "FFFFFF" : "1D4B36"}&language=${language}` +
+    `&dotsArrowsColor=${onDark ? "FFFFFF" : "1D4B36"}&language=${WIDGET_LANGUAGE}` +
     `&profileType=practice&slugs=${SLUG}&tenantId=${TENANT}` +
     `&theme=${onDark ? "ivory" : "transparent"}&widgetName=average-carousel-rating-widget`;
 
@@ -207,7 +215,7 @@ export function DoctifyWidget({
     const script = document.createElement("script");
     script.src =
       `https://www.doctify.com/get-script?widget_container_id=${id}` +
-      `&${VARIANT_QUERY[variant]}&tenant=${TENANT}&language=${language}` +
+      `&${VARIANT_QUERY[variant]}&tenant=${TENANT}&language=${WIDGET_LANGUAGE}` +
       `&profileType=practice&slugs=${SLUG}&background=${theme === "dark" ? "ivory" : "transparent"}`;
     script.async = true;
     script.onload = () => setLoaded(true);
@@ -364,7 +372,7 @@ export function DoctifyInlineRating({
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
-    `&dotsArrowsColor=FFFFFF&language=${language}` +
+    `&dotsArrowsColor=FFFFFF&language=${WIDGET_LANGUAGE}` +
     `&profileType=practice&slugs=${SLUG}&tenantId=${TENANT}` +
     `&theme=transparent&widgetName=average-carousel-rating-widget`;
 
