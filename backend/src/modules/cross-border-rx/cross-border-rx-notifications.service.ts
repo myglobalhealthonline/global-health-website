@@ -156,6 +156,66 @@ async function trackedEmail(opts: {
   }
 }
 
+// ── 0) Patient: consent to disclose SOAP (on request creation) ────────────────
+
+/**
+ * First contact after Doctor A raises the request: the patient is asked to
+ * consent to sharing their consultation notes with the prescribing doctor.
+ * Email + WhatsApp, carrying the consent link (agree → pay; decline → book a
+ * full GP consultation). No Order exists yet, so this sends directly rather
+ * than logging an order-scoped AutomationRun.
+ */
+export async function notifyPatientCrossBorderConsent(opts: {
+  fullName: string;
+  email: string;
+  phone: string | null;
+  countryCode: string;
+  whatsappConsent: boolean;
+  consentUrl: string;
+  sourceDoctorName: string;
+  targetDoctorName: string;
+  targetCountryName: string;
+}): Promise<void> {
+  const emailHtml = wrapHtml(
+    "Your prescription request — your consent is needed",
+    `<p>Dear ${esc(opts.fullName)},</p>
+     <p>${esc(opts.sourceDoctorName)} would like a prescription issued for you by
+     ${esc(opts.targetDoctorName)} in ${esc(opts.targetCountryName)}.</p>
+     <p>To make this possible, your consultation notes would be shared with
+     ${esc(opts.targetDoctorName)}. Please review and choose how to proceed —
+     agree and pay for the prescription, or book a full GP consultation instead.</p>
+     ${ctaButton(opts.consentUrl, "Review &amp; continue")}`,
+  );
+  const emailText = `Dear ${opts.fullName},\n\n${opts.sourceDoctorName} would like a prescription issued for you by ${opts.targetDoctorName} in ${opts.targetCountryName}. To make this possible, your consultation notes would be shared with ${opts.targetDoctorName}.\n\nReview and choose how to proceed:\n${opts.consentUrl}`;
+
+  try {
+    await sendAutomationEmail(
+      {
+        to: opts.email,
+        subject: "Your prescription request — your consent is needed",
+        text: emailText,
+        html: emailHtml,
+      },
+      { recordLabel: "cross-border-consent" },
+    );
+  } catch {
+    // best-effort
+  }
+
+  if (opts.whatsappConsent && opts.phone?.trim()) {
+    try {
+      await sendWhatsAppText({
+        to: opts.phone,
+        message: `Hi ${opts.fullName}, ${opts.sourceDoctorName} has requested a prescription for you from ${opts.targetDoctorName} (${opts.targetCountryName}). Review what will be shared and choose how to proceed (agree & pay, or book a full GP consultation):\n${opts.consentUrl}`,
+        hints: { orderCountryCode: opts.countryCode },
+        patientConsent: opts.whatsappConsent,
+      });
+    } catch {
+      // best-effort
+    }
+  }
+}
+
 // ── 1) Patient: pay the async fee (on request creation) ───────────────────────
 
 export async function notifyPatientCrossBorderPayment(opts: {

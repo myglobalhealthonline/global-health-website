@@ -41,7 +41,9 @@ import {
 const createBodySchema = z.object({
   targetCountryCode: z.string().trim().min(2).max(8),
   targetDoctorId: z.string().trim().min(1).max(120),
-  clinicalSummary: z.string().trim().min(1, "A clinical summary is required").max(5000),
+  // Optional — the consultation SOAP is disclosed to Doctor B, so the treating
+  // doctor no longer has to write a summary.
+  clinicalSummary: z.string().trim().max(5000).optional(),
 });
 
 const decisionBodySchema = z.object({
