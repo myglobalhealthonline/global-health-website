@@ -1,3 +1,5 @@
+import { hasPublicApiBaseUrl } from "@/lib/api/client";
+
 /**
  * Next sets `NEXT_PHASE=phase-production-build` for the whole `next build`
  * process, which is how the two knobs below tell "prerendering at build time"
@@ -33,6 +35,16 @@ export const PUBLIC_CONTENT_FETCH_TIMEOUT_MS = IS_BUILD
  * logging it would flood the platform logs whenever the backend hiccups.
  */
 export function logPublicContentFallback(entity: string, detail: string): void {
+  // A build with NO backend configured at all is not a degraded build — it is
+  // a compile/export smoke build (CI runs `pnpm build` with no
+  // NEXT_PUBLIC_API_URL, purely to catch what `tsc --noEmit` can't). There is
+  // no content to be missing, so failing closed here just breaks CI on every
+  // commit. The hard failure below is for the case that actually matters: a
+  // backend IS configured and is returning nothing.
+  if (IS_BUILD && !hasPublicApiBaseUrl()) {
+    console.warn(`[public-content][BUILD] ${entity}: ${detail} — no API URL configured, using fallback`);
+    return;
+  }
   if (IS_BUILD) {
     console.warn(`[public-content][BUILD] ${entity}: ${detail} — using fallback`);
     // Fail the build rather than write a thin page to disk. Since P-001 these

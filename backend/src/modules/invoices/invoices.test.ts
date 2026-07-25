@@ -47,7 +47,16 @@ describe("invoices", () => {
     it("returns the known prefix for a country with invoicing enabled", () => {
       assert.equal(invoiceNumberMod.invoicePrefix("ie"), "IE");
       assert.equal(invoiceNumberMod.invoicePrefix("CZ"), "CZ");
-      assert.equal(invoiceNumberMod.invoicePrefix("rm"), "RO");
+      assert.equal(invoiceNumberMod.invoicePrefix("ro"), "RO");
+      assert.equal(invoiceNumberMod.invoicePrefix("br"), "BR");
+    });
+
+    it("returns null for the legacy Wix-era aliases", () => {
+      // invoice-number.ts used to key Romania/Brazil as "rm"/"sp", which match
+      // no real Country.code — so both silently got no invoice at all. The map
+      // is keyed on the real codes now; the aliases must stay unmapped.
+      assert.equal(invoiceNumberMod.invoicePrefix("rm"), null);
+      assert.equal(invoiceNumberMod.invoicePrefix("sp"), null);
     });
 
     it("returns null for Portugal (no invoices issued there)", () => {

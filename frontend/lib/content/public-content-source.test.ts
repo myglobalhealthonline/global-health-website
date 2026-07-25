@@ -47,6 +47,7 @@ describe("logPublicContentFallback", () => {
     const m = await load({
       NEXT_PHASE: "phase-production-build",
       NODE_ENV: "production",
+      NEXT_PUBLIC_API_URL: "https://api.example.test",
       ALLOW_DEGRADED_BUILD: undefined,
     });
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -54,10 +55,25 @@ describe("logPublicContentFallback", () => {
     expect(warn.mock.calls[0][0]).toContain("[BUILD]");
   });
 
+  it("only warns during a build with NO API URL — that is a smoke build, not a degraded one", async () => {
+    // CI runs `pnpm build` with no backend at all, purely to catch what
+    // `tsc --noEmit` can't. Failing closed there red-lights every commit.
+    const m = await load({
+      NEXT_PHASE: "phase-production-build",
+      NODE_ENV: "production",
+      NEXT_PUBLIC_API_URL: undefined,
+      ALLOW_DEGRADED_BUILD: undefined,
+    });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    expect(() => m.logPublicContentFallback("countries", "not configured")).not.toThrow();
+    expect(warn.mock.calls[0][0]).toContain("no API URL configured");
+  });
+
   it("downgrades to a warning when ALLOW_DEGRADED_BUILD=1", async () => {
     const m = await load({
       NEXT_PHASE: "phase-production-build",
       NODE_ENV: "production",
+      NEXT_PUBLIC_API_URL: "https://api.example.test",
       ALLOW_DEGRADED_BUILD: "1",
     });
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
