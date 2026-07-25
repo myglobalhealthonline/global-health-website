@@ -149,7 +149,8 @@ function ConsentForm() {
   if (!info) return null;
 
   const doctorB = info.targetDoctorName;
-  const doctorA = info.sourceDoctorName ? `Dr. ${info.sourceDoctorName}` : "Your doctor";
+  // Names already include the doctor's title (e.g. "Dr", "MUDr.") — never prepend another.
+  const doctorA = info.sourceDoctorName ?? "Your doctor";
   const busy = pending || acting !== null;
 
   // ── Already agreed → resume payment ──────────────────────────────────────
@@ -162,7 +163,7 @@ function ConsentForm() {
             You&rsquo;re almost done
           </h1>
           <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-text-body)]">
-            Thank you — you&rsquo;ve agreed to share your consultation notes with Dr. {doctorB}.
+            Thank you — you&rsquo;ve agreed to share your consultation notes with {doctorB}.
             Complete the payment to send your request.
           </p>
           {paymentUrl ? (
@@ -186,7 +187,7 @@ function ConsentForm() {
           </h1>
           <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-text-body)]">
             No problem — your record won&rsquo;t be shared. You can book a full consultation with
-            Dr. {doctorB}. You&rsquo;ll choose a time and fill in a short form.
+            {doctorB}. You&rsquo;ll choose a time and fill in a short form.
           </p>
           {gpBookingUrl ? (
             <a href={gpBookingUrl} className="gh2-btn-lime mt-6 inline-flex w-full items-center justify-center gap-2 sm:w-auto">
@@ -240,7 +241,7 @@ function ConsentForm() {
         </div>
 
         <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-text-body)]">
-          {doctorA} has asked <strong>Dr. {doctorB}</strong> in{" "}
+          {doctorA} has asked <strong>{doctorB}</strong> in{" "}
           <strong>{info.targetCountryName}</strong> to issue a prescription for you.
         </p>
 
@@ -252,7 +253,7 @@ function ConsentForm() {
               What this means
             </p>
             <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-body)]">
-              To prescribe for you, Dr. {doctorB} needs to see your consultation notes. Choose an
+              To prescribe for you, {doctorB} needs to see your consultation notes. Choose an
               option below to continue.
             </p>
           </div>
@@ -275,7 +276,7 @@ function ConsentForm() {
               </h2>
             </div>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--color-text-body)]">
-              Share your consultation notes with Dr. {doctorB} and pay the prescription fee.
+              Share your consultation notes with {doctorB} and pay the prescription fee.
             </p>
             <button
               type="button"
@@ -304,7 +305,7 @@ function ConsentForm() {
               </h2>
             </div>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--color-text-body)]">
-              Don&rsquo;t share your notes — book a full GP consultation with Dr. {doctorB} instead.
+              Don&rsquo;t share your notes — book a full GP consultation with {doctorB} instead.
             </p>
             <button
               type="button"
