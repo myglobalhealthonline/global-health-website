@@ -545,10 +545,18 @@ model Doctor {
   /// Per-doctor RBAC: when true, the doctor may raise a cross-jurisdiction
   /// prescription request from a consultation (the "Request prescription
   /// outside jurisdiction" action). Gates only the requesting side (Doctor A);
-  /// who may FULFIL such a request is controlled separately by admin via
-  /// ServiceDoctor on the target country's ASYNC_PRESCRIPTION service. Default
-  /// false so existing doctors keep current scope until an admin grants it.
+  /// who may FULFIL such a request is the `crossBorderRx*` config below.
+  /// Default false so existing doctors keep current scope until an admin grants it.
   canRequestCrossJurisdictionRx   Boolean                          @default(false)
+  /// Cross-border PRESCRIBER config (the fulfilling side, Doctor B). When
+  /// enabled, this doctor is a target a treating doctor in another country can
+  /// send a prescription request to. `priceCents` = the patient fee for the
+  /// async request; `payoutCents` = what the clinic pays this doctor. Both in
+  /// the doctor's own country currency. Replaces the old ASYNC_PRESCRIPTION
+  /// service — the config now lives on the doctor, not a catalogue service.
+  crossBorderRxEnabled            Boolean                          @default(false)
+  crossBorderRxPriceCents         Int?
+  crossBorderRxPayoutCents        Int?
   /// Per-locale CMS content (professional title, bio, SEO). Base columns
   /// above stay as the default-locale copy + fallback; a translation row
   /// overrides them per locale. fullName + qualifications are NOT
@@ -3306,8 +3314,13 @@ model CrossBorderPrescriptionRequest {
   patientFullName      String
   /// Target market (lowercase ISO code, matching the rest of the app).
   targetCountryCode    String
-  /// The inner ASYNC_PRESCRIPTION Service in the target country (fee + payout).
-  targetServiceId      String
+  /// Legacy: the inner ASYNC_PRESCRIPTION Service. Nullable now — fee + payout
+  /// come from the prescriber doctor's `crossBorderRx*` config, not a service.
+  targetServiceId      String?
+  /// Snapshot of the prescriber's payout (cents) at request time, in the target
+  /// country currency. The payout statement reads this to value the async
+  /// consult (which no longer carries a ServiceDoctor payout).
+  payoutCents          Int?
   /// Doctor B — the admin-authorised prescribing doctor in the target country.
   targetDoctorId       String
   /// Doctor A's clinical rationale, shown to Doctor B (no PHI file access).

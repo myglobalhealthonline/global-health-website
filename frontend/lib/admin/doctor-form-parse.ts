@@ -17,6 +17,16 @@ function numberOr(value: FormDataEntryValue | null, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
+/** Parse a money input (major units, e.g. "30.50") to integer cents, or null
+ *  when blank/invalid. Used for the per-doctor cross-border price + payout. */
+function moneyToCents(value: FormDataEntryValue | null): number | null {
+  const s = String(value ?? "").trim();
+  if (s === "") return null;
+  const n = Number(s);
+  if (!Number.isFinite(n) || n < 0) return null;
+  return Math.round(n * 100);
+}
+
 export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: string) {
   const specialtyIds = formData
     .getAll("specialtyIds")
@@ -78,5 +88,8 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
       formData.get("canCreateManualAppointments") === "on",
     canRequestCrossJurisdictionRx:
       formData.get("canRequestCrossJurisdictionRx") === "on",
+    crossBorderRxEnabled: formData.get("crossBorderRxEnabled") === "on",
+    crossBorderRxPriceCents: moneyToCents(formData.get("crossBorderRxPrice")),
+    crossBorderRxPayoutCents: moneyToCents(formData.get("crossBorderRxPayout")),
   };
 }

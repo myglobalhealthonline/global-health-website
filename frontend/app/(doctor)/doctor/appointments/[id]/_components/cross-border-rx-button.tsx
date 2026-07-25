@@ -41,7 +41,6 @@ export type CrossBorderRxCopy = {
 type TargetCountry = {
   countryCode: string;
   countryName: string;
-  serviceId: string;
   doctors: { id: string; fullName: string; title: string }[];
 };
 
@@ -66,22 +65,30 @@ export function CrossBorderRxButton({
   const loadOptions = useCallback(async () => {
     setLoadingOptions(true);
     setError(null);
-    const res = await fetch(
-      `/api/doctor/appointments/${appointmentId}/cross-border-rx/options`,
-      { headers: { accept: "application/json" } },
-    );
-    const json = (await res.json()) as {
-      ok?: boolean;
-      message?: string;
-      data?: { targets?: TargetCountry[] };
-    };
-    if (!res.ok || !json.ok || !json.data) {
-      setError(json.message ?? copy.couldNotCreate);
+    try {
+      const res = await fetch(
+        `/api/doctor/appointments/${appointmentId}/cross-border-rx/options`,
+        { headers: { accept: "application/json" } },
+      );
+      const json = (await res.json()) as {
+        ok?: boolean;
+        message?: string;
+        data?: { targets?: TargetCountry[] };
+      };
+      if (!res.ok || !json.ok || !json.data) {
+        setError(json.message ?? copy.couldNotCreate);
+        setTargets([]);
+      } else {
+        setTargets(json.data.targets ?? []);
+      }
+    } catch {
+      // Network / non-JSON response — surface an error instead of hanging the
+      // "Loading available countries…" state forever.
+      setError(copy.couldNotCreate);
       setTargets([]);
-    } else {
-      setTargets(json.data.targets ?? []);
+    } finally {
+      setLoadingOptions(false);
     }
-    setLoadingOptions(false);
   }, [appointmentId, copy.couldNotCreate]);
 
   const activeCountry = useMemo(

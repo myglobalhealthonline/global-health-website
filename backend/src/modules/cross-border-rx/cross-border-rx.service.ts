@@ -22,11 +22,12 @@ import type { PaymentLog } from "../orders/complete-order-payment.service.js";
  * script), asks for more information, or refuses (offering the patient a
  * full-consultation upgrade).
  *
- * The fee, currency, authorised doctors and per-doctor payout all live on an
- * inner `ASYNC_PRESCRIPTION` Service (visibility ADMIN_ONLY) in the target
- * country + its `ServiceDoctor` rows — so the whole thing slots into existing
- * reporting without new report code. No price ever crosses into the doctor
- * portal (same rule as the manual-booking pipeline).
+ * The fee + payout live on the prescribing doctor (`Doctor.crossBorderRx*`):
+ * admin enables a doctor as a cross-border prescriber and sets the patient
+ * price + doctor payout, in the doctor's country currency. The payout is
+ * snapshotted onto the request at creation so the payout statement can value
+ * the async consult. No price ever crosses into the doctor portal (same rule as
+ * the manual-booking pipeline).
  */
 
 // ── Errors ───────────────────────────────────────────────────────────────────
@@ -87,16 +88,15 @@ export class CrossBorderRxMessageRequiredError extends Error {
 export type CrossBorderRxTargetCountry = {
   countryCode: string;
   countryName: string;
-  serviceId: string;
   doctors: { id: string; fullName: string; title: string }[];
 };
 
 /**
  * Countries the patient can be referred to for a cross-jurisdiction
- * prescription: those with an active inner ASYNC_PRESCRIPTION service AND at
- * least one admin-authorised (active) doctor assigned. The source
- * appointment's own country is excluded — the whole point is issuing OUTSIDE
- * the treating doctor's jurisdiction. No price is returned to the portal.
+ * prescription: those with at least one active, cross-border-enabled prescriber
+ * doctor that has a price set. Grouped by the prescriber's primary country. The
+ * source appointment's own country is excluded — the whole point is issuing
+ * OUTSIDE the treating doctor's jurisdiction. No price is returned to the portal.
  */
 export async function listCrossBorderRxTargets(
   sourceAppointmentId: string,
@@ -109,44 +109,38 @@ export async function listCrossBorderRxTargets(
     });
     if (!source) throw new CrossBorderRxSourceNotFoundError();
 
-    const services = await prisma.service.findMany({
+    const doctors = await prisma.doctor.findMany({
       where: {
-        kind: "ASYNC_PRESCRIPTION",
-        isActive: true,
+        crossBorderRxEnabled: true,
+        active: true,
+        crossBorderRxPriceCents: { gt: 0 },
         country: { isActive: true },
-        assignedDoctors: { some: { isActive: true, status: "active" } },
       },
-      orderBy: [{ country: { name: "asc" } }],
+      orderBy: [{ country: { name: "asc" } }, { fullName: "asc" }],
       select: {
         id: true,
+        fullName: true,
+        title: true,
         country: { select: { code: true, name: true } },
-        assignedDoctors: {
-          where: { isActive: true, status: "active" },
-          orderBy: [{ sortOrder: "asc" }],
-          select: { doctor: { select: { id: true, fullName: true, title: true, active: true } } },
-        },
       },
     });
 
     const sourceCountry = source.countryCode.toLowerCase();
-    const targets: CrossBorderRxTargetCountry[] = services
-      .filter((s) => s.country.code.toLowerCase() !== sourceCountry)
-      .map((s) => ({
-        countryCode: s.country.code,
-        countryName: s.country.name,
-        serviceId: s.id,
-        doctors: s.assignedDoctors
-          .map((a) => a.doctor)
-          .filter((d) => d.active)
-          .map((d) => ({ id: d.id, fullName: d.fullName, title: d.title })),
-      }))
-      .filter((t) => t.doctors.length > 0);
+    const byCountry = new Map<string, CrossBorderRxTargetCountry>();
+    for (const d of doctors) {
+      const code = d.country.code.toLowerCase();
+      if (code === sourceCountry) continue; // must be a DIFFERENT jurisdiction
+      let entry = byCountry.get(code);
+      if (!entry) {
+        entry = { countryCode: d.country.code, countryName: d.country.name, doctors: [] };
+        byCountry.set(code, entry);
+      }
+      entry.doctors.push({ id: d.id, fullName: d.fullName, title: d.title });
+    }
 
-    return { targets };
+    return { targets: Array.from(byCountry.values()) };
   } catch (error) {
-    if (
-      error instanceof CrossBorderRxSourceNotFoundError
-    ) {
+    if (error instanceof CrossBorderRxSourceNotFoundError) {
       throw error;
     }
     throw normalizeDbError(error, "Cross-border prescription options are unavailable");
@@ -182,37 +176,42 @@ export async function createCrossBorderRxRequest(
   });
   if (!source) throw new CrossBorderRxSourceNotFoundError();
 
-  // Resolve the target country's inner service AND confirm the chosen doctor is
-  // an admin-authorised, active provider on it. One query enforces both — a
-  // crafted payload can't attach an unauthorised doctor.
-  const service = await prisma.service.findFirst({
+  // Resolve the chosen prescriber (Doctor B): cross-border-enabled, active,
+  // priced, and whose PRIMARY country is the requested target. One query
+  // enforces all of it — a crafted payload can't reach a doctor who isn't set
+  // up. Fee + payout come from the doctor's own config, not a service.
+  const doctor = await prisma.doctor.findFirst({
     where: {
-      kind: "ASYNC_PRESCRIPTION",
-      isActive: true,
+      id: input.targetDoctorId,
+      crossBorderRxEnabled: true,
+      active: true,
+      crossBorderRxPriceCents: { gt: 0 },
       country: { code: { equals: input.targetCountryCode, mode: "insensitive" }, isActive: true },
-      assignedDoctors: {
-        some: { doctorId: input.targetDoctorId, isActive: true, status: "active" },
-      },
     },
     select: {
       id: true,
-      name: true,
-      basePriceCents: true,
-      currencyCode: true,
-      country: { select: { code: true } },
+      fullName: true,
+      crossBorderRxPriceCents: true,
+      crossBorderRxPayoutCents: true,
+      country: { select: { code: true, currency: { select: { code: true } } } },
     },
   });
-  if (!service) throw new CrossBorderRxTargetNotAvailableError();
-  if (!service.basePriceCents || service.basePriceCents <= 0 || !service.currencyCode) {
-    throw new CrossBorderRxServicePriceMissingError();
+  if (!doctor || doctor.crossBorderRxPriceCents == null || doctor.crossBorderRxPriceCents <= 0) {
+    throw new CrossBorderRxTargetNotAvailableError();
   }
-  const targetCountryCode = service.country.code;
+  const targetCountryCode = doctor.country.code;
+  // Must be a DIFFERENT jurisdiction than the treating doctor's.
+  if (source.countryCode.toLowerCase() === targetCountryCode.toLowerCase()) {
+    throw new CrossBorderRxTargetNotAvailableError();
+  }
   if (!isStripeConfigured(targetCountryCode)) {
     throw new CrossBorderRxStripeNotConfiguredError();
   }
 
-  const priceCents = service.basePriceCents;
-  const currency = service.currencyCode;
+  const priceCents = doctor.crossBorderRxPriceCents;
+  const currency = doctor.country.currency.code;
+  const payoutCents = doctor.crossBorderRxPayoutCents ?? null;
+  const serviceName = `Cross-border prescription — ${doctor.fullName}`;
 
   // Request row + Order + OrderItem in one tx so a partial state is impossible.
   const orderNumber = await generateOrderNumber();
@@ -235,9 +234,9 @@ export async function createCrossBorderRxRequest(
               // A non-consultation line: it must NOT trigger the standard
               // appointment mint (that only fires for GENERAL/SPECIALIST lines).
               // The async appointment is minted separately in onAsyncFeePaid.
+              // No serviceId — cross-border config lives on the doctor now.
               kind: CartItemKind.PRESCRIPTION_SERVICE,
-              serviceId: service.id,
-              name: service.name,
+              name: serviceName,
               unitPriceCents: priceCents,
               quantity: 1,
               lineTotalCents: priceCents,
@@ -258,8 +257,8 @@ export async function createCrossBorderRxRequest(
         patientEmail: source.email,
         patientFullName: source.fullName,
         targetCountryCode,
-        targetServiceId: service.id,
-        targetDoctorId: input.targetDoctorId,
+        targetDoctorId: doctor.id,
+        payoutCents,
         clinicalSummary: input.clinicalSummary,
         orderId: createdOrder.id,
         status: "PENDING_PAYMENT",
@@ -277,7 +276,7 @@ export async function createCrossBorderRxRequest(
   const successUrl = `${baseUrl}/checkout/success?orderId=${order.id}&payment=ok&session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${baseUrl}/checkout/cancelled?orderId=${order.id}&payment=cancelled`;
   const invoiceCreation =
-    (await buildPtStripeInvoiceData(targetCountryCode, source.email, service.name)) ?? {
+    (await buildPtStripeInvoiceData(targetCountryCode, source.email, serviceName)) ?? {
       enabled: true,
     };
 
@@ -292,7 +291,7 @@ export async function createCrossBorderRxRequest(
         price_data: {
           currency: currency.toLowerCase(),
           unit_amount: priceCents,
-          product_data: { name: service.name },
+          product_data: { name: serviceName },
         },
       },
     ],
