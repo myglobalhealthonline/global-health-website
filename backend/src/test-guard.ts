@@ -23,6 +23,15 @@ import { join } from "node:path";
  * Escape hatch for a genuinely isolated CI test database that doesn't fit
  * the naming convention: set `ALLOW_LIVE_DB_TESTS=1` explicitly.
  */
+// `.env.test` FIRST — dotenv never overwrites an already-set variable, so
+// whatever loads first wins. It carries the committed test-only RS256 keypair
+// (S-012 made the keys mandatory at boot) and the docker-compose test database.
+// Without it, CI has no `.env` at all and every suite died in its before-hook
+// with "AUTH_JWT_PRIVATE_KEY is required", while locally `.env`'s live Railway
+// DATABASE_URL loaded first and the guard below refused to run at all.
+// A real environment variable still beats both files, so CI's own DATABASE_URL
+// (its Postgres service) keeps winning over the file's.
+loadEnv({ path: join(__dirname, "..", ".env.test") });
 loadEnv({ path: join(__dirname, "..", ".env") });
 
 const SAFE_HOSTS = new Set(["localhost", "127.0.0.1", "postgres"]);
