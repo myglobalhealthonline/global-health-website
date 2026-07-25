@@ -95,7 +95,7 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
                 </div>
                 <div>
                   <p
-                    className="font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
+                    className="break-words font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
                     style={{
                       fontSize: "clamp(2rem,3.4vw,3rem)",
                       color: "var(--color-brand-accent)",
