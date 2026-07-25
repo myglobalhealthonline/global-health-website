@@ -33,7 +33,26 @@ export const PUBLIC_CONTENT_FETCH_TIMEOUT_MS = IS_BUILD
  * logging it would flood the platform logs whenever the backend hiccups.
  */
 export function logPublicContentFallback(entity: string, detail: string): void {
-  if (process.env.NODE_ENV !== "development" && !IS_BUILD) return;
-  const prefix = IS_BUILD ? "[public-content][BUILD]" : "[public-content]";
-  console.warn(`${prefix} ${entity}: ${detail} — using fallback`);
+  if (IS_BUILD) {
+    console.warn(`[public-content][BUILD] ${entity}: ${detail} — using fallback`);
+    // Fail the build rather than write a thin page to disk. Since P-001 these
+    // pages are prerendered, so a fallback here is not a transient blip that
+    // the next request repairs — it is an empty doctor list / plan grid baked
+    // into a static file and served (and crawled) until ISR revalidates.
+    // A build that dies loudly is strictly cheaper than a deploy that ships
+    // thin content silently, which is exactly what happened before this
+    // logger was made visible during builds at all.
+    //
+    // Escape hatch for a genuinely degraded backend you want to ship past:
+    // ALLOW_DEGRADED_BUILD=1. It downgrades this to the warning above.
+    if (process.env.ALLOW_DEGRADED_BUILD !== "1") {
+      throw new Error(
+        `[public-content][BUILD] ${entity}: ${detail}. Refusing to prerender a page with missing content — ` +
+          `fix the backend read, or set ALLOW_DEGRADED_BUILD=1 to ship the fallback anyway.`,
+      );
+    }
+    return;
+  }
+  if (process.env.NODE_ENV !== "development") return;
+  console.warn(`[public-content] ${entity}: ${detail} — using fallback`);
 }

@@ -43,12 +43,26 @@ describe("PUBLIC_CONTENT_FETCH_TIMEOUT_MS", () => {
 });
 
 describe("logPublicContentFallback", () => {
-  it("warns during a production build — a silent fallback here ships a thin deploy", async () => {
-    const m = await load({ NEXT_PHASE: "phase-production-build", NODE_ENV: "production" });
+  it("THROWS during a production build — a baked thin page is worse than a failed build", async () => {
+    const m = await load({
+      NEXT_PHASE: "phase-production-build",
+      NODE_ENV: "production",
+      ALLOW_DEGRADED_BUILD: undefined,
+    });
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    m.logPublicContentFallback("country-plans", "timeout");
-    expect(warn).toHaveBeenCalledTimes(1);
+    expect(() => m.logPublicContentFallback("country-plans", "timeout")).toThrow(/Refusing to prerender/);
     expect(warn.mock.calls[0][0]).toContain("[BUILD]");
+  });
+
+  it("downgrades to a warning when ALLOW_DEGRADED_BUILD=1", async () => {
+    const m = await load({
+      NEXT_PHASE: "phase-production-build",
+      NODE_ENV: "production",
+      ALLOW_DEGRADED_BUILD: "1",
+    });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    expect(() => m.logPublicContentFallback("country-plans", "timeout")).not.toThrow();
+    expect(warn).toHaveBeenCalledTimes(1);
   });
 
   it("warns in development", async () => {

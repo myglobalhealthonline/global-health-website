@@ -92,6 +92,18 @@ const nextConfig: NextConfig = {
   // blow past 60s for one page). Raise the ceiling; if a route is genuinely
   // hanging (not just queued), check backend logs for that build window.
   staticPageGenerationTimeout: 180,
+  // Prerender worker count. Since P-001 the ~550 public pages are statically
+  // generated, and every worker fetches the same backend concurrently — which
+  // has a `pg` pool of max 10 with a 5s connect timeout (backend/src/db/
+  // prisma.ts). At the default worker count the queue blows past that timeout
+  // and reads fail with "timeout exceeded when trying to connect", which now
+  // BAKES an empty doctor/plan list into a static file instead of just being
+  // a slow request. Raising the DB pool was considered and rejected
+  // separately (Postgres max_connections on the current plan), so the build
+  // throttles itself instead. Builds are slower; they are also correct.
+  experimental: {
+    cpus: Number(process.env.NEXT_BUILD_CPUS) || 4,
+  },
   turbopack: {
     root: path.resolve(__dirname, ".."),
   },
