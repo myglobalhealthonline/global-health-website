@@ -1270,6 +1270,7 @@
     "title": "Rapoarte",
     "description": "Semnale agregate privind consultațiile, pacienții, controalele și veniturile plătite pentru programările dvs. alocate. Implicit ultimele 30 de zile.",
     "exportCsv": "Exportă rezumat (CSV)",
+    "viewResults": "Vezi rezultatele",
     "tileAppointments": "Programări",
     "tileSignedConsults": "Consultații semnate",
     "tileFollowUps": "Controale",

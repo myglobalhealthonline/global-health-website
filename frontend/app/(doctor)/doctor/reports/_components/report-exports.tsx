@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FileSpreadsheet, FileText, Loader2 } from "lucide-react";
-import { fetchDownload } from "@/lib/download";
+import { FileSpreadsheet, FileText, Loader2, Search } from "lucide-react";
+import { fetchDownload, fetchReportJson } from "@/lib/download";
+import {
+  ReportResultsTable,
+  type ReportTableDto,
+} from "@/components/reports/report-results-table";
 
 /**
  * Download panel for the raw list reports behind the dashboard tiles.
@@ -41,10 +45,10 @@ export function DoctorReportExports({
   const [dataset, setDataset] = useState<Dataset>("services");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<ReportTableDto | null>(null);
+  const [loadingResults, setLoadingResults] = useState(false);
 
-  async function download(format: "excel" | "pdf") {
-    if (busy) return;
-    setError(null);
+  function buildParams(format: "excel" | "pdf" | "json"): string {
     const params = new URLSearchParams();
     params.set("dataset", dataset);
     params.set("format", format);
@@ -54,13 +58,35 @@ export function DoctorReportExports({
     if (filters.consultationType) params.set("consultationType", filters.consultationType);
     if (filters.paymentStatus) params.set("paymentStatus", filters.paymentStatus);
     if (filters.status) params.set("status", filters.status);
+    return params.toString();
+  }
+
+  async function download(format: "excel" | "pdf") {
+    if (busy) return;
+    setError(null);
     setBusy(true);
     try {
-      await fetchDownload(`/api/doctor/reports/export?${params.toString()}`);
+      await fetchDownload(`/api/doctor/reports/export?${buildParams(format)}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : s.downloadFailed);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function viewResults() {
+    if (loadingResults) return;
+    setError(null);
+    setLoadingResults(true);
+    try {
+      const table = await fetchReportJson<ReportTableDto>(
+        `/api/doctor/reports/export?${buildParams("json")}`,
+      );
+      setResults(table);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : s.downloadFailed);
+    } finally {
+      setLoadingResults(false);
     }
   }
 
@@ -97,6 +123,9 @@ export function DoctorReportExports({
             ))}
           </select>
         </label>
+        <button type="button" onClick={viewResults} disabled={loadingResults} className="gh-btn gh-btn-primary text-sm disabled:opacity-50">
+          {loadingResults ? <Loader2 className="size-3.5 animate-spin" /> : <Search className="size-3.5" />} {s.viewResults ?? "View results"}
+        </button>
         <button type="button" onClick={() => download("excel")} disabled={busy} className="gh-btn gh-btn-soft text-sm disabled:opacity-50">
           {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileSpreadsheet className="size-3.5" />} {excelLabel}
         </button>
@@ -107,6 +136,11 @@ export function DoctorReportExports({
       {error ? <p className="mt-2 text-xs text-rose-600">{error}</p> : null}
       {activeNote ? (
         <p className="mt-2 text-xs text-[var(--portal-muted)]">{activeNote}</p>
+      ) : null}
+      {results ? (
+        <div className="mt-4">
+          <ReportResultsTable table={results} />
+        </div>
       ) : null}
     </section>
   );

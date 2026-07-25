@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse } from "../utils/response.js";
+import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
   doctorAppointmentsReport,
   doctorPatientsReport,
@@ -28,7 +29,7 @@ import {
 
 const querySchema = z.object({
   dataset: z.enum(["services", "patients", "appointments", "payout"]),
-  format: z.enum(["csv", "excel", "pdf"]).default("excel"),
+  format: z.enum(["csv", "excel", "pdf", "json"]).default("excel"),
   from: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -121,9 +122,26 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
       } else if (q.dataset === "patients") {
         table = await doctorPatientsReport(auth.doctorId, doctorName, filters);
       } else if (q.dataset === "payout") {
-        table = await doctorPayoutStatementReport(auth.doctorId, doctorName, filters);
+        // The doctor's own payout bank details — their own data, so no
+        // reveal-audit (unlike the admin export of another doctor's IBAN).
+        const bankRow = await prisma.doctorBankAccount.findUnique({
+          where: { doctorId: auth.doctorId },
+          select: { accountHolder: true, ibanEncrypted: true, bic: true },
+        });
+        const iban = bankRow?.ibanEncrypted ? decryptPhi(bankRow.ibanEncrypted) : null;
+        table = await doctorPayoutStatementReport(auth.doctorId, doctorName, filters, {
+          accountHolder: bankRow?.accountHolder ?? null,
+          iban,
+          bic: bankRow?.bic ?? null,
+        });
       } else {
         table = await doctorAppointmentsReport(auth.doctorId, doctorName, filters);
+      }
+
+      // JSON = the on-screen preview: same builder output the file formats use,
+      // so the table shown on screen can never diverge from the download.
+      if (q.format === "json") {
+        return reply.send(table);
       }
 
       const stamp = new Date().toISOString().slice(0, 10);

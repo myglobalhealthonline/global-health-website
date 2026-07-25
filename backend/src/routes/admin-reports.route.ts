@@ -1,9 +1,11 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse } from "../utils/response.js";
 import { prisma } from "../db/prisma.js";
+import { decryptPhi } from "../lib/crypto/phi-crypto.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import {
   adminAppointmentsReport,
   adminPatientsReport,
@@ -31,7 +33,7 @@ import {
 
 const querySchema = z.object({
   dataset: z.enum(["services", "patients", "appointments", "payout"]),
-  format: z.enum(["csv", "excel", "pdf"]).default("excel"),
+  format: z.enum(["csv", "excel", "pdf", "json"]).default("excel"),
   doctorId: z.string().trim().min(1).max(40).optional(),
   countryCode: z.string().trim().min(2).max(8).optional(),
   from: z
@@ -116,17 +118,54 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
       } else if (q.dataset === "patients") {
         table = await adminPatientsReport(filters);
       } else if (q.dataset === "payout") {
-        const doctor = await prisma.doctor.findUnique({
-          where: { id: q.doctorId! },
-          select: { fullName: true },
-        });
+        const [doctor, bankRow] = await Promise.all([
+          prisma.doctor.findUnique({
+            where: { id: q.doctorId! },
+            select: { fullName: true },
+          }),
+          prisma.doctorBankAccount.findUnique({
+            where: { doctorId: q.doctorId! },
+            select: { accountHolder: true, ibanEncrypted: true, bic: true },
+          }),
+        ]);
+
+        // Finance needs the full IBAN to pay the doctor, so the statement
+        // carries it in the clear. A full-IBAN reveal is financial data — audit
+        // it (DOCTOR_BANK_VIEWED) exactly as the dedicated bank-reveal route
+        // does, and fail the export if the audit write fails rather than emit
+        // un-audited account details.
+        let iban: string | null = null;
+        if (bankRow?.ibanEncrypted) {
+          iban = decryptPhi(bankRow.ibanEncrypted);
+          const actor = resolveAdminSessionActor(request);
+          await recordCriticalAudit({
+            actorUserId: actor?.userId ?? null,
+            actorRole: actor?.role ?? "ADMIN",
+            action: "DOCTOR_BANK_VIEWED",
+            entityType: "Doctor",
+            entityId: q.doctorId!,
+            request,
+          });
+        }
+
         table = await doctorPayoutStatementReport(
           q.doctorId!,
           doctor?.fullName ?? "Doctor",
           filters,
+          {
+            accountHolder: bankRow?.accountHolder ?? null,
+            iban,
+            bic: bankRow?.bic ?? null,
+          },
         );
       } else {
         table = await adminAppointmentsReport(filters);
+      }
+
+      // JSON = the on-screen preview: same builder output the file formats use,
+      // so the table shown on screen can never diverge from the download.
+      if (q.format === "json") {
+        return reply.send(table);
       }
 
       const stamp = new Date().toISOString().slice(0, 10);

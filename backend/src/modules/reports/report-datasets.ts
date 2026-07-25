@@ -1,9 +1,11 @@
 import { prisma } from "../../db/prisma.js";
+import { normalizeIban } from "../../utils/iban.js";
 import {
   fmtDate,
   fmtDateTime,
   fmtMoney,
   type ReportRow,
+  type ReportSummaryItem,
   type ReportTable,
 } from "./report-formatters.js";
 
@@ -374,30 +376,55 @@ export async function doctorAppointmentsReport(
 
 // ── Doctor: monthly payout statement (consultations provided) ────────────────
 
+/** Doctor payout bank details rendered in the statement header. The full IBAN
+ *  is decrypted + (for admin pulls) audited by the ROUTE, never here. */
+export type PayoutBankInfo = {
+  accountHolder?: string | null;
+  /** Full, already-decrypted IBAN. Null when none is on file. */
+  iban?: string | null;
+  bic?: string | null;
+};
+
+/** Group a normalised IBAN into 4-char blocks for legibility on the statement. */
+function groupIban(iban: string): string {
+  return normalizeIban(iban).replace(/(.{4})/g, "$1 ").trim();
+}
+
 /**
  * The consultations a doctor provided in the period, each valued at the
  * admin-set per-service payout (ServiceDoctor.doctorAmountCents) — NOT the
- * patient's gross price. Ends with a bold TOTAL row per currency. This is the
- * statement the doctor bases their own invoice on before uploading it.
+ * patient's gross price.
+ *
+ * Keyed on the CONSULTATION date (`scheduledAt`), not `createdAt`: a call held
+ * on the 19th belongs in that week's statement even if it was booked weeks
+ * earlier. Appointments never scheduled (no `scheduledAt`) carry no
+ * consultation date and are out of scope for a period payout.
+ *
+ * When the doctor served more than one market the rows are split into a
+ * section per market, each with its own subtotal, followed by a grand
+ * "TOTAL TO PAY". The header block carries the payout bank details so finance
+ * can process the transfer straight from the statement.
  */
 export async function doctorPayoutStatementReport(
   doctorId: string,
   doctorName: string,
   filters: ReportFilters,
+  bank?: PayoutBankInfo,
 ): Promise<ReportTable> {
-  const createdAt = rangeWhere(filters);
+  const scheduledAt = rangeWhere(filters);
   const appts = await prisma.appointment.findMany({
     where: {
       doctorId,
       status: "COMPLETED",
-      ...(createdAt ? { createdAt } : {}),
+      ...(scheduledAt ? { scheduledAt } : {}),
       ...(filters.consultationType ? { consultationType: filters.consultationType } : {}),
     },
     take: ROW_LIMIT + 1,
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ countryCode: "asc" }, { scheduledAt: "asc" }],
     select: {
       createdAt: true,
       scheduledAt: true,
+      countryCode: true,
       fullName: true,
       consultationType: true,
       serviceId: true,
@@ -448,8 +475,34 @@ export async function doctorPayoutStatementReport(
     for (const c of companies) companyNameById.set(c.id, c.name);
   }
 
-  const totals: Record<string, number> = {};
-  const rows: ReportRow[] = capped.map((a) => {
+  // Market (Appointment.countryCode) → display name. The codes are stored
+  // lower-case; the Country table is small, so load it once and match
+  // case-insensitively rather than round-trip per code.
+  const countryNameByCode = new Map<string, string>();
+  if (capped.length > 0) {
+    const countries = await prisma.country.findMany({ select: { code: true, name: true } });
+    for (const c of countries) countryNameByCode.set(c.code.toLowerCase(), c.name);
+  }
+  const marketLabel = (code: string): string =>
+    countryNameByCode.get(code.toLowerCase()) ?? code.toUpperCase();
+
+  // Group appointments by market, preserving first-seen order.
+  const byMarket = new Map<string, typeof capped>();
+  for (const a of capped) {
+    const key = a.countryCode.toLowerCase();
+    let list = byMarket.get(key);
+    if (!list) {
+      list = [];
+      byMarket.set(key, list);
+    }
+    list.push(a);
+  }
+  const marketKeys = Array.from(byMarket.keys()).sort((x, y) =>
+    marketLabel(x).localeCompare(marketLabel(y)),
+  );
+  const multiMarket = marketKeys.length > 1;
+
+  const payoutOf = (a: (typeof capped)[number]) => {
     const isInsurance = Boolean(a.insuranceCompanyId);
     const payout = isInsurance
       ? a.serviceId
@@ -458,37 +511,90 @@ export async function doctorPayoutStatementReport(
       : a.serviceId
         ? payoutByServiceId.get(a.serviceId) ?? null
         : null;
-    const insurer = isInsurance ? companyNameById.get(a.insuranceCompanyId as string) ?? "Insurance" : "—";
+    const insurer = isInsurance
+      ? companyNameById.get(a.insuranceCompanyId as string) ?? "Insurance"
+      : "—";
     const currency = a.service?.currencyCode ?? a.currencyCode ?? "—";
-    if (payout != null) totals[currency] = (totals[currency] ?? 0) + payout;
-    return {
-      date: fmtDate(a.scheduledAt ?? a.createdAt),
-      patient: a.fullName,
-      service: a.service?.name ?? "—",
-      insurer,
-      type: a.consultationType,
-      payout: payout == null ? "Not set" : fmtMoney(payout, currency),
-    };
-  });
+    return { payout, insurer, currency };
+  };
 
-  // Bold total row(s) — one per currency present.
-  for (const [currency, cents] of Object.entries(totals)) {
+  const grand: Record<string, number> = {};
+  const rows: ReportRow[] = [];
+  for (const key of marketKeys) {
+    const list = byMarket.get(key)!;
+    if (multiMarket) rows.push({ _section: `Market — ${marketLabel(key)}` });
+    const subtotal: Record<string, number> = {};
+    for (const a of list) {
+      const { payout, insurer, currency } = payoutOf(a);
+      if (payout != null) {
+        subtotal[currency] = (subtotal[currency] ?? 0) + payout;
+        grand[currency] = (grand[currency] ?? 0) + payout;
+      }
+      rows.push({
+        date: fmtDate(a.scheduledAt ?? a.createdAt),
+        patient: a.fullName,
+        service: a.service?.name ?? "—",
+        insurer,
+        type: a.consultationType,
+        payout: payout == null ? "Not set" : fmtMoney(payout, currency),
+      });
+    }
+    if (multiMarket) {
+      for (const [currency, cents] of Object.entries(subtotal)) {
+        rows.push({
+          _total: true,
+          date: "",
+          patient: "",
+          service: "",
+          insurer: "",
+          type: `Subtotal — ${marketLabel(key)}`,
+          payout: fmtMoney(cents, currency),
+        });
+      }
+    }
+  }
+
+  // Grand total row(s) — one per currency present.
+  for (const [currency, cents] of Object.entries(grand)) {
     rows.push({
       _total: true,
       date: "",
       patient: "",
       service: "",
       insurer: "",
-      type: "TOTAL",
+      type: "TOTAL TO PAY",
       payout: fmtMoney(cents, currency),
     });
   }
 
+  const totalToPay =
+    Object.entries(grand)
+      .map(([currency, cents]) => fmtMoney(cents, currency))
+      .join(" · ") || "—";
+
+  const summary: ReportSummaryItem[] = [
+    { label: "Period", value: rangeLabel(filters) },
+    { label: "Account holder", value: bank?.accountHolder?.trim() || doctorName },
+    {
+      label: "IBAN",
+      value: bank?.iban?.trim() ? groupIban(bank.iban) : "Not on file",
+    },
+    ...(bank?.bic?.trim() ? [{ label: "BIC / SWIFT", value: bank.bic.trim() }] : []),
+    ...(multiMarket
+      ? [{ label: "Markets", value: marketKeys.map(marketLabel).join(", ") }]
+      : []),
+    { label: "Total to pay", value: totalToPay },
+  ];
+
   return {
     title: "Payout statement",
     subtitle: `${doctorName} · ${rangeLabel(filters)} · ${capped.length} consultation${capped.length === 1 ? "" : "s"}`,
+    summary,
     generatedAt: new Date().toISOString(),
     truncated,
+    // No patient/gross price column — a payout statement shows only what the
+    // doctor is paid (standard per-service payout, or the insurance payout for
+    // insured bookings). The patient-facing price lives on the admin reports.
     columns: [
       { key: "date", label: "Date" },
       { key: "patient", label: "Patient" },
@@ -506,12 +612,18 @@ export async function doctorPayoutStatementReport(
 export async function adminServicesReport(
   filters: ReportFilters,
 ): Promise<ReportTable> {
+  // Optional From/To narrows to assignments CREATED in the window
+  // (ServiceDoctor.createdAt) — i.e. doctors newly assigned to a service in
+  // that period. The "Assigned" column spells the date out so the filter's
+  // meaning is visible on the report itself.
+  const createdAt = rangeWhere(filters);
   const rows = await prisma.serviceDoctor.findMany({
     where: {
       ...(filters.doctorId ? { doctorId: filters.doctorId } : {}),
       ...(filters.countryCode
         ? { service: { country: { code: filters.countryCode } } }
         : {}),
+      ...(createdAt ? { createdAt } : {}),
     },
     take: ROW_LIMIT + 1,
     orderBy: [{ doctor: { fullName: "asc" } }, { service: { name: "asc" } }],
@@ -519,6 +631,7 @@ export async function adminServicesReport(
       status: true,
       isActive: true,
       doctorAmountCents: true,
+      createdAt: true,
       doctor: { select: { fullName: true } },
       service: {
         select: {
@@ -536,7 +649,10 @@ export async function adminServicesReport(
 
   return {
     title: "Services by doctor",
-    subtitle: filters.doctorId ? capped[0]?.doctor.fullName ?? "Doctor" : "All doctors",
+    subtitle: [
+      filters.doctorId ? capped[0]?.doctor.fullName ?? "Doctor" : "All doctors",
+      ...(createdAt ? [rangeLabel(filters)] : []),
+    ].join(" · "),
     generatedAt: new Date().toISOString(),
     truncated,
     columns: [
@@ -548,6 +664,7 @@ export async function adminServicesReport(
       { key: "payout", label: "Payout", align: "right" },
       { key: "status", label: "Assignment" },
       { key: "active", label: "Active" },
+      { key: "assigned", label: "Assigned" },
     ],
     rows: capped.map((r) => ({
       doctor: r.doctor.fullName,
@@ -558,6 +675,7 @@ export async function adminServicesReport(
       payout: fmtMoney(r.doctorAmountCents, r.service.currencyCode),
       status: r.status,
       active: r.isActive ? "Yes" : "No",
+      assigned: fmtDate(r.createdAt),
     })),
   };
 }

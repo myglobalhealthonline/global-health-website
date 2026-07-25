@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { FileSpreadsheet, FileText, Loader2 } from "lucide-react";
-import { fetchDownload } from "@/lib/download";
+import { FileSpreadsheet, FileText, Loader2, Search } from "lucide-react";
+import { fetchDownload, fetchReportJson } from "@/lib/download";
+import {
+  ReportResultsTable,
+  type ReportTableDto,
+} from "@/components/reports/report-results-table";
 
 /**
  * Admin (global) report download panel. Builds a same-origin
@@ -21,7 +25,7 @@ const DATASETS: { value: Dataset; label: string; note: string }[] = [
   {
     value: "services",
     label: "Services by doctor",
-    note: "Every doctor↔service assignment with payout. Narrow by doctor or country. Ignores the date range and consultation type.",
+    note: "Every doctor↔service assignment with payout. Narrow by doctor or country. An optional date range narrows to assignments created in that window (see the Assigned column). Ignores consultation type.",
   },
   {
     value: "patients",
@@ -71,6 +75,8 @@ export function AdminReportExports({
   const [paymentStatus, setPaymentStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<ReportTableDto | null>(null);
+  const [loadingResults, setLoadingResults] = useState(false);
 
   // Each flag tracks which filters the matching backend builder actually
   // honours — a control is only rendered where it changes the output. Every
@@ -78,13 +84,13 @@ export function AdminReportExports({
   const showCountry = dataset !== "payout";
   const showType = dataset !== "services";
   const showStatusFilters = dataset === "appointments";
-  const showDateRange = dataset !== "services";
+  // Services by doctor now honours an optional From/To (filters by assignment
+  // date), so every dataset shows the date range.
+  const showDateRange = true;
   const doctorRequired = dataset === "payout";
   const blocked = doctorRequired && !doctorId;
 
-  async function download(format: "excel" | "pdf") {
-    if (blocked || busy) return;
-    setError(null);
+  function buildParams(format: "excel" | "pdf" | "json"): string {
     const params = new URLSearchParams();
     params.set("dataset", dataset);
     params.set("format", format);
@@ -99,13 +105,35 @@ export function AdminReportExports({
       if (status) params.set("status", status);
       if (paymentStatus) params.set("paymentStatus", paymentStatus);
     }
+    return params.toString();
+  }
+
+  async function download(format: "excel" | "pdf") {
+    if (blocked || busy) return;
+    setError(null);
     setBusy(true);
     try {
-      await fetchDownload(`/api/admin/reports/export?${params.toString()}`);
+      await fetchDownload(`/api/admin/reports/export?${buildParams(format)}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Download failed");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function viewResults() {
+    if (blocked || loadingResults) return;
+    setError(null);
+    setLoadingResults(true);
+    try {
+      const table = await fetchReportJson<ReportTableDto>(
+        `/api/admin/reports/export?${buildParams("json")}`,
+      );
+      setResults(table);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not load results");
+    } finally {
+      setLoadingResults(false);
     }
   }
 
@@ -228,9 +256,17 @@ export function AdminReportExports({
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
+          onClick={viewResults}
+          disabled={blocked || loadingResults}
+          className="gh-btn gh-btn-primary text-sm disabled:opacity-50"
+        >
+          {loadingResults ? <Loader2 className="size-3.5 animate-spin" /> : <Search className="size-3.5" />} View results
+        </button>
+        <button
+          type="button"
           onClick={() => download("excel")}
           disabled={blocked || busy}
-          className="gh-btn gh-btn-primary text-sm disabled:opacity-50"
+          className="gh-btn gh-btn-outline text-sm disabled:opacity-50"
         >
           {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileSpreadsheet className="size-3.5" />} Export Excel
         </button>
@@ -246,9 +282,15 @@ export function AdminReportExports({
 
       {error ? <p className="text-xs text-rose-600">{error}</p> : null}
       {blocked ? (
-        <p className="text-xs text-amber-600">Select a doctor to export a payout statement.</p>
+        <p className="text-xs text-amber-600">Select a doctor to view or export a payout statement.</p>
       ) : null}
       {activeNote ? <p className="text-xs text-[var(--color-text-muted)]">{activeNote}</p> : null}
+
+      {results ? (
+        <div className="mt-2">
+          <ReportResultsTable table={results} />
+        </div>
+      ) : null}
     </div>
   );
 }
