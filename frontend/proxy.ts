@@ -37,7 +37,7 @@ const PUBLIC_FILE = /\.(.*)$/;
 // Railway environments (staging clones) that share the same domain suffix.
 const CANONICAL_HOST = new URL(PROD_SITE_URL).host;
 
-// Content-Security-Policy (S-010 — see SECURITY_AUDIT2.md, AUDIT2 workstream W6).
+// Content-Security-Policy (S-010 / MED-5 — see SECURITY_AUDIT2.md, workstream W6).
 //
 // Two policies, one per rendering mode, because a per-request nonce is
 // fundamentally incompatible with static output (Next stamps nonces only during
@@ -45,13 +45,42 @@ const CANONICAL_HOST = new URL(PROD_SITE_URL).host;
 // modern browsers, which ignore 'unsafe-inline' once a nonce is present, would
 // BLOCK all JS):
 //
-//   • Public documents (the (site) group + login/register etc.): the enforcing
-//     baseline below — clickjacking + object/base-uri lockdown, NO script-src —
-//     PLUS a full report-only policy (default/script/style/img/font/connect/
-//     frame/form-action) shipped from `next.config.ts headers()`. Report-only so
-//     it can't break the (currently still dynamically-rendered — see P-001 notes
-//     on (site)/layout.tsx) public pages; it exists to gather the inline-script
-//     violations needed to derive hashes before enforcing.
+//   • Public documents (the (site) group + login/register etc.): the full
+//     ENFORCING `publicCsp()` below — default/script/style/img/font/connect/
+//     frame/form-action, built from the hosts the public site actually uses
+//     (Doctify review widgets, Meta Pixel, GA4, the free stock-image hosts,
+//     the backend API/media origin), on top of the same baseline. Its
+//     `script-src 'self' 'unsafe-inline' <hosts>` is host-allowlisted but
+//     inline-permissive — the only shape compatible with statically generated
+//     pages, and the `[country]/[lang]` subtree now prerenders (P-001).
+//
+//     Both policies are emitted HERE, not from `next.config.ts headers()`,
+//     because this proxy sets the `Content-Security-Policy` response header on
+//     every document — anything `headers()` emits under that key is silently
+//     overwritten. (The old Report-Only header coexisted only by having a
+//     different key.)
+//
+//     MED-5 — the plan previously recorded here (ship Report-Only, derive
+//     hashes for the inline scripts, then flip to enforce) is a DEAD END and
+//     has been removed. A public page ships ~12 inline <script> tags and 10 of
+//     them are `self.__next_f.push(...)` React Server Component flight
+//     payloads: those bytes are page CONTENT. They differ per page and change
+//     on every CMS edit, so a hash allowlist over them goes stale silently and
+//     breaks that page's JavaScript with nothing surfaced. Do not re-attempt
+//     hashing. The only two real options are:
+//
+//       A — nonce public pages like the portals. REJECTED: a nonce must be
+//           minted per request, so the pages must be server-rendered on every
+//           hit. With P-001 landed this is actively breaking (prerendered
+//           scripts carry no nonce → all public JS blocked), not a trade-off.
+//       B — chosen: enforce every directive except inline script, i.e. keep
+//           'unsafe-inline' in script-src. No inline-XSS protection on public
+//           pages, but the host allowlist, form-action, frame-src, object-src
+//           and base-uri lockdowns are all real and enforced. Public pages are
+//           marketing content; PHI lives behind the portals, which get the
+//           strict nonce policy below.
+//
+//     Revisit A only if public pages ever return to dynamic rendering.
 //
 //   • Authenticated portals (/account, /admin, /doctor, /corporate): these
 //     always render dynamically (their layouts read the auth cookie), so here we
@@ -66,11 +95,50 @@ const NONCE_ROUTES = /^\/(account|admin|doctor|corporate)(\/|$)/;
 // media <img> need to be reachable under connect-src / img-src. Empty on deploys
 // where the public env is unset (same-origin only), which is fine.
 const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, "") ?? "";
-// Enforcing nonce CSP is ON by default for the portals (W6). Kill switch:
-// set DISABLE_NONCE_CSP=true to fall back to the bare baseline if a portal page
-// is ever found to hydrate with CSP console errors in production. The public
-// site is unaffected either way (it never matches NONCE_ROUTES).
+// Both enforcing policies are ON by default (W6 portals, MED-5 public). Kill
+// switch: set DISABLE_NONCE_CSP=true to fall back to the bare baseline
+// everywhere if any page is ever found to hydrate with CSP console errors in
+// production. The baseline (frame-ancestors/object-src/base-uri) still ships.
 const NONCE_CSP_ENABLED = process.env.DISABLE_NONCE_CSP !== "true";
+
+/** Public-site policy. No nonce anywhere in it — must stay valid for
+ *  prerendered HTML. See the MED-5 block comment above. */
+function publicCsp(): string {
+  const media = API_ORIGIN ? ` ${API_ORIGIN}` : "";
+  return [
+    "default-src 'self'",
+    // Doctify injects <script src> at runtime; Meta Pixel loads fbevents.js;
+    // GA4 loads gtag.js from googletagmanager.com. 'unsafe-inline' is forced by
+    // the prerendered RSC flight payloads — see the block comment above.
+    //
+    // Doctify is wildcarded because its loader (www.doctify.com/get-script)
+    // renders INTO our DOM — unlike the rating strip, which is an iframe with
+    // its own CSP context — so any CDN subdomain it pulls from hits this
+    // policy. Pinning www only would fail silently: the reviews just stop
+    // rendering, with nothing surfaced outside the console.
+    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com",
+    // Tailwind + CMS emit inline <style>; keep permissive (style injection is
+    // low value to an attacker relative to the breakage risk).
+    "style-src 'self' 'unsafe-inline'",
+    // `https:` rather than a host list: the CMS body sanitizer
+    // (lib/content/sanitize-page-body.ts) allows <img src> from ANY https host
+    // by design, so an allowlist here would blank out editor-inserted images in
+    // blog/page bodies with no warning. CSP was never the control on that
+    // vector — the sanitizer is — and img-src buys little against an attacker
+    // who already has script execution.
+    `img-src 'self' data: blob: https:${media}`,
+    "font-src 'self' data: https://*.doctify.com",
+    // google-analytics.com/region1.google-analytics.com carry the gtag
+    // measurement beacons (region1 = EU data-residency endpoint);
+    // *.analytics.google.com + stats.g.doubleclick.net carry the Google
+    // Signals ones, which fail silently if omitted.
+    `connect-src 'self' https://*.doctify.com https://connect.facebook.net https://www.facebook.com https://www.googletagmanager.com https://*.google-analytics.com https://region1.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net${media}`,
+    // Doctify rating strips render in <iframe> from doctify.com.
+    "frame-src 'self' https://*.doctify.com",
+    `form-action 'self'${media}`,
+    CSP_BASE,
+  ].join("; ");
+}
 
 function nonceCsp(nonce: string): string {
   const media = API_ORIGIN ? ` ${API_ORIGIN}` : "";
@@ -343,10 +411,10 @@ export async function proxy(request: NextRequest) {
   }
 
   // Attach the CSP. Nonce policy for the dynamic portals — set on the request
-  // header too so Next can extract the nonce for its own scripts; baseline
-  // policy (no script-src) for every other document. Exactly one CSP header is
-  // emitted per request (the static one was removed from next.config.ts).
-  let csp = CSP_BASE;
+  // header too so Next can extract the nonce for its own scripts; the
+  // enforcing public policy (no nonce, static-safe) for every other document.
+  // Exactly one CSP header is emitted per request; next.config.ts sets none.
+  let csp = NONCE_CSP_ENABLED ? publicCsp() : CSP_BASE;
   if (NONCE_CSP_ENABLED && NONCE_ROUTES.test(pathname)) {
     const nonce = btoa(crypto.randomUUID());
     csp = nonceCsp(nonce);
