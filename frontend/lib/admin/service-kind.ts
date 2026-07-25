@@ -4,7 +4,9 @@ export const SERVICE_KIND_ORDER: AdminServiceKind[] = [
   "GENERAL",
   "SPECIALIST",
   "PRESCRIPTION",
-  "ASYNC_PRESCRIPTION",
+  // ASYNC_PRESCRIPTION (cross-border) is no longer a catalogue service — it is
+  // configured per prescribing doctor on the doctor edit page. Kept out of the
+  // Services section entirely.
 ];
 
 type ServiceKindMeta = {

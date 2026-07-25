@@ -161,6 +161,14 @@ const adminDoctorBaseObject = z.object({
   canCreateManualAppointments: z.boolean().optional(),
   canRequestCrossJurisdictionRx: z.boolean().optional(),
   /**
+   * Cross-border PRESCRIBER config (Doctor B). When enabled, admin sets the
+   * patient fee + doctor payout (in the doctor's country currency, cents).
+   * Nullable clears them. Replaces the old ASYNC_PRESCRIPTION service.
+   */
+  crossBorderRxEnabled: z.boolean().optional(),
+  crossBorderRxPriceCents: z.number().int().min(0).max(100_000_00).nullable().optional(),
+  crossBorderRxPayoutCents: z.number().int().min(0).max(100_000_00).nullable().optional(),
+  /**
    * SEO metadata for the public doctor profile page. Kept admin-managed
    * (not on the doctor's self-edit form) so changes can't break canonical
    * URL signals after the doctor has signed up.

@@ -457,6 +457,7 @@ export async function doctorPayoutStatementReport(
     take: ROW_LIMIT + 1,
     orderBy: [{ countryCode: "asc" }, { scheduledAt: "asc" }],
     select: {
+      id: true,
       createdAt: true,
       scheduledAt: true,
       consultationCompletedAt: true,
@@ -471,6 +472,25 @@ export async function doctorPayoutStatementReport(
   });
   const truncated = appts.length > ROW_LIMIT;
   const capped = truncated ? appts.slice(0, ROW_LIMIT) : appts;
+
+  // Cross-border async consults carry no catalogue service — their payout was
+  // snapshotted on the CrossBorderPrescriptionRequest at request time. Look
+  // those up so the statement values them (otherwise they'd read "Not set").
+  const crossBorderApptIds = capped
+    .filter((a) => a.consultationType === "cross-border-prescription")
+    .map((a) => a.id);
+  const crossBorderPayoutByApptId = new Map<string, number | null>();
+  if (crossBorderApptIds.length > 0) {
+    const reqs = await prisma.crossBorderPrescriptionRequest.findMany({
+      where: { asyncAppointmentId: { in: crossBorderApptIds } },
+      select: { asyncAppointmentId: true, payoutCents: true },
+    });
+    for (const r of reqs) {
+      if (r.asyncAppointmentId) {
+        crossBorderPayoutByApptId.set(r.asyncAppointmentId, r.payoutCents);
+      }
+    }
+  }
 
   // Effective consultation date, matching the COALESCE filter above.
   const effDate = (a: (typeof capped)[number]): Date =>
@@ -543,6 +563,14 @@ export async function doctorPayoutStatementReport(
   const multiMarket = marketKeys.length > 1;
 
   const payoutOf = (a: (typeof capped)[number]) => {
+    // Cross-border async consult: payout snapshotted on the request; no service.
+    if (a.consultationType === "cross-border-prescription") {
+      return {
+        payout: crossBorderPayoutByApptId.get(a.id) ?? null,
+        insurer: "—",
+        currency: a.currencyCode ?? "—",
+      };
+    }
     const isInsurance = Boolean(a.insuranceCompanyId);
     const payout = isInsurance
       ? a.serviceId
