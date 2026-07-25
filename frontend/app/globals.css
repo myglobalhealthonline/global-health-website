@@ -1528,11 +1528,15 @@ img {
    * Fill runs more opaque than --gh-chrome (0.78): the navbar always sits
    * on dark content, cards often sit on ivory bands — at 0.78 the light
    * band bleeds through and the card reads sage instead of navbar-dark. */
-  background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.92);
+  /* ponytail: NO backdrop-filter. The fill is 92% opaque, so the blur was
+   * contributing ~8% of a blurred backdrop — invisible — while forcing a
+   * backdrop snapshot + 18px blur per element per scroll frame. This class
+   * alone was 56 instances / ~10.4M px² on /ireland/en, the dominant cause
+   * of desktop scroll jank. Solid #06221A is the 0.92 fill composited over
+   * a forest section. Restore blur only if the fill ever drops below ~0.8. */
+  background: var(--liquid-fill-dark), #06221A;
   border: var(--gh-chrome-border);
   border-radius: var(--radius-card);
-  -webkit-backdrop-filter: var(--gh-chrome-filter);
-  backdrop-filter: var(--gh-chrome-filter);
   box-shadow:
     var(--liquid-specular),                    /* lit top edge + lime under-rim */
     0 18px 40px -18px rgba(4, 24, 18, 0.55);   /* calm premium shadow */
