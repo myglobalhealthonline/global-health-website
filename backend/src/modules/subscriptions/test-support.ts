@@ -72,13 +72,17 @@ export async function makeSubscriptionFixture(
   opts: MakeFixtureOptions = {},
 ): Promise<SubscriptionFixture> {
   counter += 1;
-  const uniq = `${tag}-${counter}`;
   // The old `T${tag}-${counter}`.slice(0, 8) truncated the counter away for
   // any tag of 7+ chars, so every fixture in a file got the same Country.code
   // and the second create hit the unique constraint. Build codes from the
   // pid + counter instead (tag can't fit uniquely in 8 chars); pid keeps
   // codes unique across runs when a failed run leaves rows behind.
   const pfx = `${process.pid % 10000}-${counter}`;
+  // `uniq` feeds Country.slug and the four unique *Path columns, so it needs
+  // the same pid scoping as `code` — without it, rows left behind by a failed
+  // run collide on slug forever and every subscription suite fails on a dirty
+  // test database.
+  const uniq = `${tag}-${pfx}`;
   const code = `T${pfx}`.slice(0, 8).toUpperCase();
 
   const currency = await prisma.currency.create({
