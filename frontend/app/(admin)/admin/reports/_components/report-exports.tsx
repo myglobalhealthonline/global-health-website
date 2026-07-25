@@ -20,7 +20,7 @@ const DATASETS: { value: Dataset; label: string; note: string }[] = [
   {
     value: "payout",
     label: "Doctor payout statement",
-    note: "One doctor's consultations valued at their per-service payout, with a total. Select a doctor; optionally narrow by consultation type. Defaults to last calendar month.",
+    note: "One doctor's consultations valued at their per-service payout, with a total and the doctor's IBAN. Select a doctor; optionally narrow by country (for doctors working several markets) or consultation type. Starts from 17 Jul 2026 — earlier consultations are excluded. Defaults to last calendar month.",
   },
   {
     value: "services",
@@ -80,8 +80,9 @@ export function AdminReportExports({
 
   // Each flag tracks which filters the matching backend builder actually
   // honours — a control is only rendered where it changes the output. Every
-  // dataset narrows by doctor, so that select is always shown.
-  const showCountry = dataset !== "payout";
+  // dataset narrows by doctor, so that select is always shown. Payout now
+  // honours a country filter too (for doctors working more than one market).
+  const showCountry = true;
   const showType = dataset !== "services";
   const showStatusFilters = dataset === "appointments";
   // Services by doctor now honours an optional From/To (filters by assignment
