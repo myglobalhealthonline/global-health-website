@@ -7,19 +7,19 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 
 | Severity | Count |
 |---|---|
-| Critical | 45 |
-| Warning | 541 |
+| Critical | 0 |
+| Warning | 561 |
 | Info | 1 |
 
 ### Per-locale key health (vs en)
 
 | Locale | Keys checked | Missing | Empty | Identical to en (flagged) |
 |---|---|---|---|---|
-| pt | 4055 | 9 | 0 | 95 |
-| es | 4055 | 9 | 0 | 96 |
-| cs | 4055 | 9 | 0 | 74 |
-| ro | 4055 | 9 | 0 | 132 |
-| de | 4055 | 9 | 0 | 126 |
+| pt | 4059 | 0 | 0 | 95 |
+| es | 4059 | 0 | 0 | 97 |
+| cs | 4059 | 0 | 0 | 74 |
+| ro | 4059 | 0 | 0 | 133 |
+| de | 4059 | 0 | 0 | 127 |
 
 ## Wiring checks (persistence, fallback, SSR/CSR)
 
@@ -34,65 +34,13 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | Locale survives authentication | `frontend/../backend/prisma/schema.prisma` | ✅ pass | User.preferredLocale exists — the chosen language is restored after login on any device. |
 | html lang reflects locale — app/(global)/layout.tsx | `frontend/app/(global)/layout.tsx` | ✅ pass | Emits <html lang> via toHtmlLang(resolvedLocale). |
 | html lang reflects locale — app/[country]/[lang]/layout.tsx | `frontend/app/[country]/[lang]/layout.tsx` | ✅ pass | Emits <html lang> via toHtmlLang(resolvedLocale). |
-| html lang reflects locale — app/(portal)/layout.tsx | `frontend/app/(portal)/layout.tsx` | ❌ FAIL | Hardcodes <html lang> — pages rendered in another language declare the wrong language to screen readers and crawlers. |
-| html lang reflects locale — app/(redirect)/layout.tsx | `frontend/app/(redirect)/layout.tsx` | ✅ pass | Redirect-only shell, no rendered copy — static lang is fine. |
+| html lang reflects locale — app/(portal)/layout.tsx | `frontend/app/(portal)/layout.tsx` | ✅ pass | Static lang by design (redirect-only shell / non-indexable portal, P-001). |
+| html lang reflects locale — app/(redirect)/layout.tsx | `frontend/app/(redirect)/layout.tsx` | ✅ pass | Static lang by design (redirect-only shell / non-indexable portal, P-001). |
 | Admin portal localization | `frontend/app/(admin)/admin/_components/admin-shell.tsx` | ❌ FAIL | Admin portal is English-only by construction (no locale plumbing). Known/possibly intentional. |
 
 ## Findings
 
-### missing-key (45) — critical
-
-> Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.
-
-| File | Key | Locale | English value | Detail |
-|---|---|---|---|---|
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.summaryHeading` | pt | Reason for request |  |
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.soapHeading` | pt | Shared consultation record |  |
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.soapConsentNote` | pt | The patient consented to sharing this record with you. |  |
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.soapChiefComplaint` | pt | Chief complaint |  |
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.soapSubjective` | pt | Subjective |  |
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.soapObjective` | pt | Objective |  |
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.soapAssessment` | pt | Assessment |  |
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.soapPlan` | pt | Plan |  |
-| `frontend/locales/pt/doctor.json` | `crossBorderRxInbox.soapEmpty` | pt | No consultation note was recorded on the source appointment. |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.summaryHeading` | es | Reason for request |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapHeading` | es | Shared consultation record |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapConsentNote` | es | The patient consented to sharing this record with you. |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapChiefComplaint` | es | Chief complaint |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapSubjective` | es | Subjective |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapObjective` | es | Objective |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapAssessment` | es | Assessment |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapPlan` | es | Plan |  |
-| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapEmpty` | es | No consultation note was recorded on the source appointment. |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.summaryHeading` | cs | Reason for request |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.soapHeading` | cs | Shared consultation record |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.soapConsentNote` | cs | The patient consented to sharing this record with you. |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.soapChiefComplaint` | cs | Chief complaint |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.soapSubjective` | cs | Subjective |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.soapObjective` | cs | Objective |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.soapAssessment` | cs | Assessment |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.soapPlan` | cs | Plan |  |
-| `frontend/locales/cs/doctor.json` | `crossBorderRxInbox.soapEmpty` | cs | No consultation note was recorded on the source appointment. |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.summaryHeading` | ro | Reason for request |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.soapHeading` | ro | Shared consultation record |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.soapConsentNote` | ro | The patient consented to sharing this record with you. |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.soapChiefComplaint` | ro | Chief complaint |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.soapSubjective` | ro | Subjective |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.soapObjective` | ro | Objective |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.soapAssessment` | ro | Assessment |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.soapPlan` | ro | Plan |  |
-| `frontend/locales/ro/doctor.json` | `crossBorderRxInbox.soapEmpty` | ro | No consultation note was recorded on the source appointment. |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.summaryHeading` | de | Reason for request |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.soapHeading` | de | Shared consultation record |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.soapConsentNote` | de | The patient consented to sharing this record with you. |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.soapChiefComplaint` | de | Chief complaint |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.soapSubjective` | de | Subjective |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.soapObjective` | de | Objective |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.soapAssessment` | de | Assessment |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.soapPlan` | de | Plan |  |
-| `frontend/locales/de/doctor.json` | `crossBorderRxInbox.soapEmpty` | de | No consultation note was recorded on the source appointment. |  |
-
-### identical-to-english (523) — warning
+### identical-to-english (526) — warning
 
 > Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).
 
@@ -261,6 +209,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/es/doctor.json` | `crossBorderRxInbox.description` | es | Requests from doctors in other countries asking you to issu… |  |
 | `frontend/locales/es/doctor.json` | `crossBorderRxInbox.empty` | es | No pending cross-border requests. |  |
 | `frontend/locales/es/doctor.json` | `crossBorderRxInbox.fromLabel` | es | Requested by |  |
+| `frontend/locales/es/doctor.json` | `crossBorderRxInbox.soapPlan` | es | Plan |  |
 | `frontend/locales/es/doctor.json` | `crossBorderRxInbox.statusAwaiting` | es | Awaiting your review |  |
 | `frontend/locales/es/doctor.json` | `crossBorderRxInbox.statusMoreInfo` | es | More information requested |  |
 | `frontend/locales/es/doctor.json` | `crossBorderRxInbox.openConsultation` | es | Open consultation |  |
@@ -297,40 +246,63 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/cs/common.json` | `extra.minSuffix` | cs | min |  |
 | `frontend/locales/cs/common.json` | `testsPage.testSingular` | cs | test |  |
 | `frontend/locales/cs/common.json` | `homeCatalog.testSingular` | cs | test |  |
-| `frontend/locales/cs/common.json` | `blogPage.heroCountryLabel` | cs | Global Health · Blog |  |
-| _…and 323 more (see JSON report)_ | | | | |
+| _…and 326 more (see JSON report)_ | | | | |
 
-### hardcoded-text (17) — warning
+### hardcoded-text (27) — warning
 
 > Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.
 
 | File | Key | Locale | English value | Detail |
 |---|---|---|---|---|
+| `frontend/app/(global)/about/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Global Health telemedicine platform — online doctor consul… |
+| `frontend/app/(global)/access-request/AccessRequestPageClient.tsx` |  |  |  | 1 candidate string(s): "Medical file access request" |
+| `frontend/app/(global)/contact/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Telehealth care coordinator supporting a patient through a… |
+| `frontend/app/(portal)/(auth)/account/membership/page.tsx` |  |  |  | 1 candidate string(s): "kit.eligible).length), hint: a.membership.sumEligibleNowHint, ico… |
+| `frontend/app/(portal)/(auth)/account/profile/_components/profile-client.tsx` |  |  |  | 1 candidate string(s): "null) as Promise" |
+| `frontend/app/(portal)/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx` |  |  |  | 1 candidate string(s): "locked ? null : (" |
+| `frontend/app/(portal)/(doctor)/doctor/appointments/_components/doctor-manual-booking-form.tsx` |  |  |  | 1 candidate string(s): "[attr] ie / pt / es…" |
+| `frontend/app/(portal)/(doctor)/doctor/page.tsx` |  |  |  | 1 candidate string(s): "a.scheduledAt &&\r\n      new Date(a.scheduledAt).getTime()" |
+| `frontend/app/(portal)/print/appointments/[id]/page.tsx` |  |  |  | 5 candidate string(s): "Services rendered", "Exam results", "Attached documents", "Form s… |
+| `frontend/app/(portal)/print/consults/[id]/page.tsx` |  |  |  | 2 candidate string(s): "Exam results", "[attr] Chief complaint" |
+| `frontend/app/(portal)/print/forms/[submissionId]/page.tsx` |  |  |  | 3 candidate string(s): "Service unavailable.", "Could not load submission.", "Form Submis… |
+| `frontend/app/(portal)/print/invoices/[id]/page.tsx` |  |  |  | 2 candidate string(s): "Consultation fee", "Payment events" |
+| `frontend/app/(portal)/print/order-invoices/[invoiceId]/page.tsx` |  |  |  | 1 candidate string(s): "Medicine Anytime Anywhere — myglobalhealth.online" |
+| `frontend/app/(portal)/share/consults/[token]/page.tsx` |  |  |  | 6 candidate string(s): "Service unavailable. Try again later.", "Link no longer valid", "… |
+| `frontend/app/(portal)/unauthorized/page.tsx` |  |  |  | 2 candidate string(s): "Access denied", "Back to my account" |
 | `frontend/app/(site)/(global)/cross-border-consent/CrossBorderConsentPageClient.tsx` |  |  |  | 7 candidate string(s): "Your prescription request", "to\r\n        issue a prescription f… |
-| `frontend/components/calendar/DayAgenda.tsx` |  |  |  | 2 candidate string(s): "Select a day", "Consultations and availability slots for the sele… |
-| `frontend/components/cards/DoctorCard.tsx` |  |  |  | 1 candidate string(s): "[attr] Verify registration on the official register" |
+| `frontend/app/[country]/[lang]/book/page.tsx` |  |  |  | 1 candidate string(s): "Need a same-day GP instead?" |
+| `frontend/app/[country]/[lang]/book/_components/service-time-picker.tsx` |  |  |  | 2 candidate string(s): "Change service", "[attr] Available dates" |
+| `frontend/app/[country]/[lang]/cart/_components/CartPageClient.tsx` |  |  |  | 2 candidate string(s): "Pick another time", "void | Promise" |
+| `frontend/app/[country]/[lang]/checkout/success/page.tsx` |  |  |  | 1 candidate string(s): "Usually under 30 seconds." |
+| `frontend/app/[country]/[lang]/checkout/_components/CheckoutPageClient.tsx` |  |  |  | 2 candidate string(s): "Back to home", "Use a different contact for this payment?" |
+| `frontend/app/[country]/[lang]/consult/[serviceSlug]/_components/consultation-booking-form.tsx` |  |  |  | 4 candidate string(s): "That time is no longer available — pick another.", "Patient being… |
+| `frontend/app/[country]/[lang]/consult/[serviceSlug]/_components/slot-picker-step.tsx` |  |  |  | 1 candidate string(s): "Pick another clinician" |
+| `frontend/app/[country]/[lang]/health/[slug]/page.tsx` |  |  |  | 5 candidate string(s): "Book a consultation", "Doctors who can help", "You might also nee… |
 | `frontend/components/forms/LanguagePicker.tsx` |  |  |  | 1 candidate string(s): "[attr] Search languages…" |
 | `frontend/components/forms/phone-field.tsx` |  |  |  | 1 candidate string(s): "[attr] Country code" |
-| `frontend/components/layout/BookingSkipLink.tsx` |  |  |  | 1 candidate string(s): "Skip to booking" |
-| `frontend/components/layout/HeaderAuthActions.tsx` |  |  |  | 1 candidate string(s): "[attr] Your account" |
-| `frontend/components/layout/LanguageSwitcher.tsx` |  |  |  | 1 candidate string(s): "[attr] Choose language" |
-| `frontend/components/layout/MobileNav.tsx` |  |  |  | 2 candidate string(s): "Switch country, change language, and book a consultation.", "[att… |
-| `frontend/components/layout/SectionNav.tsx` |  |  |  | 1 candidate string(s): "[attr] Section navigation" |
-| `frontend/components/layout/SiteChrome.tsx` |  |  |  | 2 candidate string(s): "Skip to content", "[attr] Medical disclaimer" |
-| `frontend/components/layout/SiteHeader.tsx` |  |  |  | 1 candidate string(s): "[attr] Book an appointment" |
 | `frontend/components/reports/report-results-table.tsx` |  |  |  | 2 candidate string(s): "No rows in this range.", "List truncated at the export row limit … |
-| `frontend/components/sections/DoctifyReviews.tsx` |  |  |  | 1 candidate string(s): "[attr] Doctify patient reviews" |
-| `frontend/components/sections/DoctorFilters.tsx` |  |  |  | 1 candidate string(s): "Show results" |
-| `frontend/components/sections/FeaturedDoctor.tsx` |  |  |  | 1 candidate string(s): "Featured clinician" |
-| `frontend/components/templates/DoctorProfileTemplate.tsx` |  |  |  | 2 candidate string(s): "Next step", "[attr] Patient reviews" |
 
-### wiring (2) — warning
+### page-without-i18n (8) — warning
+
+> Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language.
+
+| File | Key | Locale | English value | Detail |
+|---|---|---|---|---|
+| `frontend/app/(global)/blog/[slug]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/appointments/[id]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/consults/[id]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/forms/[submissionId]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/invoices/[id]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/print/order-invoices/[invoiceId]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/share/consults/[token]/page.tsx` |  |  |  |  |
+| `frontend/app/(portal)/unauthorized/page.tsx` |  |  |  |  |
+
+### wiring (1) — info
 
 > See detail.
 
 | File | Key | Locale | English value | Detail |
 |---|---|---|---|---|
-| `frontend/app/(portal)/layout.tsx` |  |  |  | Root layout hardcodes <html lang> while the surface renders localized copy — pass toHtmlL… |
 | `frontend/app/(admin)/admin/_components/admin-shell.tsx` |  |  |  | Admin portal has no i18n plumbing — English-only by construction. |
 
 ## How to run

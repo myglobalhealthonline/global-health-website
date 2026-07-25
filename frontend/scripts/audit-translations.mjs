@@ -394,6 +394,32 @@ async function walk(dir, exts, out = []) {
   return out;
 }
 
+/**
+ * Every app/ subtree that renders localized UI: the public route groups and
+ * `[country]/[lang]`, minus `(portal)/(admin)` (English-only by construction)
+ * and the framework-only dirs. Reading the tree instead of hardcoding group
+ * names keeps this working across route-group renames.
+ */
+async function localizedAppRoots() {
+  const appDir = path.join(frontendRoot, "app");
+  const skip = new Set(["api", "_components"]);
+  const entries = await readdir(appDir, { withFileTypes: true });
+  const roots = [];
+  for (const e of entries) {
+    if (!e.isDirectory() || skip.has(e.name)) continue;
+    if (e.name === "(portal)") {
+      // portal minus admin
+      const portalDir = path.join(appDir, e.name);
+      for (const sub of await readdir(portalDir, { withFileTypes: true })) {
+        if (sub.isDirectory() && sub.name !== "(admin)") roots.push(path.join(portalDir, sub.name));
+      }
+      continue;
+    }
+    roots.push(path.join(appDir, e.name));
+  }
+  return roots;
+}
+
 const JSX_TEXT_RE = />\s*([A-Za-zÀ-ſ][^<>{}\n]*\s+[^<>{}\n]*[a-zà-ſ][^<>{}\n]*)\s*</g;
 const ATTR_TEXT_RE = /(?:placeholder|aria-label|alt|title)=\s*"([A-Za-z][^"]{4,})"/g;
 
@@ -416,13 +442,11 @@ function stripCodeNoise(src) {
 }
 
 async function auditHardcodedText() {
-  const scanRoots = [
-    path.join(frontendRoot, "app", "(site)"),
-    path.join(frontendRoot, "app", "(auth)"),
-    path.join(frontendRoot, "app", "(doctor)"),
-    path.join(frontendRoot, "app", "(corporate)"),
-    path.join(frontendRoot, "components"),
-  ];
+  // These were once "(site)"/"(auth)"/"(doctor)"/"(corporate)" — route groups
+  // that no longer exist, so the whole public site went unscanned and this
+  // check only ever saw components/. Derived from the real app/ tree now, with
+  // the admin portal excluded (English-only by construction).
+  const scanRoots = [...(await localizedAppRoots()), path.join(frontendRoot, "components")];
   const perFile = new Map();
   for (const root of scanRoots) {
     for (const file of await walk(root, [".tsx"])) {
@@ -449,11 +473,7 @@ async function auditHardcodedText() {
 async function auditPagesWithoutI18n() {
   // localized route groups: page.tsx should touch the i18n lib directly or via
   // a locale prop/param; flag pages with zero locale references.
-  const roots = [
-    path.join(frontendRoot, "app", "(site)"),
-    path.join(frontendRoot, "app", "(auth)"),
-    path.join(frontendRoot, "app", "(doctor)"),
-  ];
+  const roots = await localizedAppRoots();
   const offenders = [];
   for (const root of roots) {
     for (const file of (await walk(root, [".tsx"])).filter((f) => path.basename(f) === "page.tsx")) {
@@ -636,8 +656,12 @@ async function auditWiring() {
     }
     if (!/<RootDocument|<html/.test(src)) continue;
     const dynamic = /toHtmlLang\(/.test(src);
-    // The (redirect) shell only ever renders a redirect() — no readable content.
-    const exempt = rel.includes("(redirect)");
+    // Exempt by design, both documented in the files themselves:
+    //  - (redirect) only ever renders a redirect() — no readable content.
+    //  - (portal) is authenticated, non-indexable, and resolving the locale
+    //    there would need cookies()/headers() in a ROOT layout, which
+    //    un-statics everything below it (P-001).
+    const exempt = rel.includes("(redirect)") || rel.includes("(portal)");
     checks.push({
       label: `html lang reflects locale — ${rel}`,
       file: `frontend/${rel}`,
@@ -645,7 +669,7 @@ async function auditWiring() {
       detail: dynamic
         ? "Emits <html lang> via toHtmlLang(resolvedLocale)."
         : exempt
-          ? "Redirect-only shell, no rendered copy — static lang is fine."
+          ? "Static lang by design (redirect-only shell / non-indexable portal, P-001)."
           : "Hardcodes <html lang> — pages rendered in another language declare the wrong language to screen readers and crawlers.",
     });
     if (!dynamic && !exempt) {

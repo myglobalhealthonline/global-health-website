@@ -9,40 +9,40 @@
     "de"
   ],
   "counts": {
-    "critical": 45,
-    "warning": 541,
+    "critical": 0,
+    "warning": 561,
     "info": 1
   },
   "stats": {
     "pt": {
-      "missing": 9,
+      "missing": 0,
       "empty": 0,
       "identical": 95,
-      "total": 4055
+      "total": 4059
     },
     "es": {
-      "missing": 9,
+      "missing": 0,
       "empty": 0,
-      "identical": 96,
-      "total": 4055
+      "identical": 97,
+      "total": 4059
     },
     "cs": {
-      "missing": 9,
+      "missing": 0,
       "empty": 0,
       "identical": 74,
-      "total": 4055
+      "total": 4059
     },
     "ro": {
-      "missing": 9,
+      "missing": 0,
       "empty": 0,
-      "identical": 132,
-      "total": 4055
+      "identical": 133,
+      "total": 4059
     },
     "de": {
-      "missing": 9,
+      "missing": 0,
       "empty": 0,
-      "identical": 126,
-      "total": 4055
+      "identical": 127,
+      "total": 4059
     }
   },
   "wiringChecks": [
@@ -103,14 +103,14 @@
     {
       "label": "html lang reflects locale — app/(portal)/layout.tsx",
       "file": "frontend/app/(portal)/layout.tsx",
-      "pass": false,
-      "detail": "Hardcodes <html lang> — pages rendered in another language declare the wrong language to screen readers and crawlers."
+      "pass": true,
+      "detail": "Static lang by design (redirect-only shell / non-indexable portal, P-001)."
     },
     {
       "label": "html lang reflects locale — app/(redirect)/layout.tsx",
       "file": "frontend/app/(redirect)/layout.tsx",
       "pass": true,
-      "detail": "Redirect-only shell, no rendered copy — static lang is fine."
+      "detail": "Static lang by design (redirect-only shell / non-indexable portal, P-001)."
     },
     {
       "label": "Admin portal localization",
@@ -731,87 +731,6 @@
       "key": "crossBorderRxInbox.fromLabel",
       "locale": "pt",
       "english": "Requested by"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.summaryHeading",
-      "locale": "pt",
-      "english": "Reason for request"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapHeading",
-      "locale": "pt",
-      "english": "Shared consultation record"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapConsentNote",
-      "locale": "pt",
-      "english": "The patient consented to sharing this record with you."
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapChiefComplaint",
-      "locale": "pt",
-      "english": "Chief complaint"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapSubjective",
-      "locale": "pt",
-      "english": "Subjective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapObjective",
-      "locale": "pt",
-      "english": "Objective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapAssessment",
-      "locale": "pt",
-      "english": "Assessment"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapPlan",
-      "locale": "pt",
-      "english": "Plan"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/pt/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapEmpty",
-      "locale": "pt",
-      "english": "No consultation note was recorded on the source appointment."
     },
     {
       "severity": "warning",
@@ -1669,85 +1588,13 @@
       "english": "Requested by"
     },
     {
-      "severity": "critical",
-      "type": "missing-key",
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.summaryHeading",
-      "locale": "es",
-      "english": "Reason for request"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapHeading",
-      "locale": "es",
-      "english": "Shared consultation record"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapConsentNote",
-      "locale": "es",
-      "english": "The patient consented to sharing this record with you."
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapChiefComplaint",
-      "locale": "es",
-      "english": "Chief complaint"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapSubjective",
-      "locale": "es",
-      "english": "Subjective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapObjective",
-      "locale": "es",
-      "english": "Objective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapAssessment",
-      "locale": "es",
-      "english": "Assessment"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "crossBorderRxInbox.soapPlan",
       "locale": "es",
       "english": "Plan"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/es/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapEmpty",
-      "locale": "es",
-      "english": "No consultation note was recorded on the source appointment."
     },
     {
       "severity": "warning",
@@ -2468,87 +2315,6 @@
       "key": "crossBorderRxInbox.fromLabel",
       "locale": "cs",
       "english": "Requested by"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.summaryHeading",
-      "locale": "cs",
-      "english": "Reason for request"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapHeading",
-      "locale": "cs",
-      "english": "Shared consultation record"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapConsentNote",
-      "locale": "cs",
-      "english": "The patient consented to sharing this record with you."
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapChiefComplaint",
-      "locale": "cs",
-      "english": "Chief complaint"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapSubjective",
-      "locale": "cs",
-      "english": "Subjective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapObjective",
-      "locale": "cs",
-      "english": "Objective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapAssessment",
-      "locale": "cs",
-      "english": "Assessment"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapPlan",
-      "locale": "cs",
-      "english": "Plan"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/cs/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapEmpty",
-      "locale": "cs",
-      "english": "No consultation note was recorded on the source appointment."
     },
     {
       "severity": "warning",
@@ -3622,85 +3388,13 @@
       "english": "Requested by"
     },
     {
-      "severity": "critical",
-      "type": "missing-key",
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.summaryHeading",
-      "locale": "ro",
-      "english": "Reason for request"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapHeading",
-      "locale": "ro",
-      "english": "Shared consultation record"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapConsentNote",
-      "locale": "ro",
-      "english": "The patient consented to sharing this record with you."
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapChiefComplaint",
-      "locale": "ro",
-      "english": "Chief complaint"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapSubjective",
-      "locale": "ro",
-      "english": "Subjective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapObjective",
-      "locale": "ro",
-      "english": "Objective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapAssessment",
-      "locale": "ro",
-      "english": "Assessment"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "crossBorderRxInbox.soapPlan",
       "locale": "ro",
       "english": "Plan"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/ro/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapEmpty",
-      "locale": "ro",
-      "english": "No consultation note was recorded on the source appointment."
     },
     {
       "severity": "warning",
@@ -4792,85 +4486,13 @@
       "english": "Requested by"
     },
     {
-      "severity": "critical",
-      "type": "missing-key",
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.summaryHeading",
-      "locale": "de",
-      "english": "Reason for request"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapHeading",
-      "locale": "de",
-      "english": "Shared consultation record"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapConsentNote",
-      "locale": "de",
-      "english": "The patient consented to sharing this record with you."
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapChiefComplaint",
-      "locale": "de",
-      "english": "Chief complaint"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapSubjective",
-      "locale": "de",
-      "english": "Subjective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapObjective",
-      "locale": "de",
-      "english": "Objective"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapAssessment",
-      "locale": "de",
-      "english": "Assessment"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "crossBorderRxInbox.soapPlan",
       "locale": "de",
       "english": "Plan"
-    },
-    {
-      "severity": "critical",
-      "type": "missing-key",
-      "file": "frontend/locales/de/doctor.json",
-      "recommendation": "Add the key to the locale file with a reviewed translation (do not machine-copy English silently). Until then the per-key deep-merge falls back to English.",
-      "key": "crossBorderRxInbox.soapEmpty",
-      "locale": "de",
-      "english": "No consultation note was recorded on the source appointment."
     },
     {
       "severity": "warning",
@@ -5235,6 +4857,111 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
+      "file": "frontend/app/(global)/about/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"[attr] Global Health telemedicine platform — online doctor consultations across multiple markets\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(global)/access-request/AccessRequestPageClient.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"Medical file access request\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(global)/contact/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"[attr] Telehealth care coordinator supporting a patient through an online consultation platform\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/(auth)/account/membership/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"kit.eligible).length), hint: a.membership.sumEligibleNowHint, icon:\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/(auth)/account/profile/_components/profile-client.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"null) as Promise\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"locked ? null : (\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/(doctor)/doctor/appointments/_components/doctor-manual-booking-form.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"[attr] ie / pt / es…\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/(doctor)/doctor/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"a.scheduledAt &&\\r\\n      new Date(a.scheduledAt).getTime()\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/print/appointments/[id]/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "5 candidate string(s): \"Services rendered\", \"Exam results\", \"Attached documents\", \"Form submissions\", \"[attr] Chief complaint\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/print/consults/[id]/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "2 candidate string(s): \"Exam results\", \"[attr] Chief complaint\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/print/forms/[submissionId]/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "3 candidate string(s): \"Service unavailable.\", \"Could not load submission.\", \"Form Submission\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/print/invoices/[id]/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "2 candidate string(s): \"Consultation fee\", \"Payment events\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/print/order-invoices/[invoiceId]/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"Medicine Anytime Anywhere — myglobalhealth.online\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/share/consults/[token]/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "6 candidate string(s): \"Service unavailable. Try again later.\", \"Link no longer valid\", \"Could not load\", \"Please ask the sender for a new link.\", \"Shared consultation summary\", …"
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/(portal)/unauthorized/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "2 candidate string(s): \"Access denied\", \"Back to my account\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
       "file": "frontend/app/(site)/(global)/cross-border-consent/CrossBorderConsentPageClient.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "7 candidate string(s): \"Your prescription request\", \"to\\r\\n        issue a prescription for you.\", \"What this means\", \"Continue to payment\", \"Book a GP consultation\", …"
@@ -5242,16 +4969,58 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/components/calendar/DayAgenda.tsx",
+      "file": "frontend/app/[country]/[lang]/book/page.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Select a day\", \"Consultations and availability slots for the selected day will appear here.\""
+      "value": "1 candidate string(s): \"Need a same-day GP instead?\""
     },
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/components/cards/DoctorCard.tsx",
+      "file": "frontend/app/[country]/[lang]/book/_components/service-time-picker.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Verify registration on the official register\""
+      "value": "2 candidate string(s): \"Change service\", \"[attr] Available dates\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/[country]/[lang]/cart/_components/CartPageClient.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "2 candidate string(s): \"Pick another time\", \"void | Promise\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/[country]/[lang]/checkout/success/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"Usually under 30 seconds.\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/[country]/[lang]/checkout/_components/CheckoutPageClient.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "2 candidate string(s): \"Back to home\", \"Use a different contact for this payment?\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/[country]/[lang]/consult/[serviceSlug]/_components/consultation-booking-form.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "4 candidate string(s): \"That time is no longer available — pick another.\", \"Patient being treated\", \"Patient full name\", \"Insurance card / policy number\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/[country]/[lang]/consult/[serviceSlug]/_components/slot-picker-step.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "1 candidate string(s): \"Pick another clinician\""
+    },
+    {
+      "severity": "warning",
+      "type": "hardcoded-text",
+      "file": "frontend/app/[country]/[lang]/health/[slug]/page.tsx",
+      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
+      "value": "5 candidate string(s): \"Book a consultation\", \"Doctors who can help\", \"You might also need\", \"Ready when you are\", \"[attr] Frequently asked questions\""
     },
     {
       "severity": "warning",
@@ -5270,93 +5039,57 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/components/layout/BookingSkipLink.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Skip to booking\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/layout/HeaderAuthActions.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Your account\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/layout/LanguageSwitcher.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Choose language\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/layout/MobileNav.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Switch country, change language, and book a consultation.\", \"[attr] Open menu\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/layout/SectionNav.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Section navigation\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/layout/SiteChrome.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Skip to content\", \"[attr] Medical disclaimer\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/layout/SiteHeader.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Book an appointment\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/components/reports/report-results-table.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "2 candidate string(s): \"No rows in this range.\", \"List truncated at the export row limit — narrow the date range or filters\\r\\n          for a complete pull.\""
     },
     {
       "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/sections/DoctifyReviews.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Doctify patient reviews\""
+      "type": "page-without-i18n",
+      "file": "frontend/app/(global)/blog/[slug]/page.tsx",
+      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
     },
     {
       "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/sections/DoctorFilters.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Show results\""
+      "type": "page-without-i18n",
+      "file": "frontend/app/(portal)/print/appointments/[id]/page.tsx",
+      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
     },
     {
       "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/sections/FeaturedDoctor.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Featured clinician\""
+      "type": "page-without-i18n",
+      "file": "frontend/app/(portal)/print/consults/[id]/page.tsx",
+      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
     },
     {
       "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/templates/DoctorProfileTemplate.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Next step\", \"[attr] Patient reviews\""
+      "type": "page-without-i18n",
+      "file": "frontend/app/(portal)/print/forms/[submissionId]/page.tsx",
+      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
     },
     {
       "severity": "warning",
-      "type": "wiring",
-      "file": "frontend/app/(portal)/layout.tsx",
-      "recommendation": "See detail.",
-      "value": "Root layout hardcodes <html lang> while the surface renders localized copy — pass toHtmlLang(locale)."
+      "type": "page-without-i18n",
+      "file": "frontend/app/(portal)/print/invoices/[id]/page.tsx",
+      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
+    },
+    {
+      "severity": "warning",
+      "type": "page-without-i18n",
+      "file": "frontend/app/(portal)/print/order-invoices/[invoiceId]/page.tsx",
+      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
+    },
+    {
+      "severity": "warning",
+      "type": "page-without-i18n",
+      "file": "frontend/app/(portal)/share/consults/[token]/page.tsx",
+      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
+    },
+    {
+      "severity": "warning",
+      "type": "page-without-i18n",
+      "file": "frontend/app/(portal)/unauthorized/page.tsx",
+      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
     },
     {
       "severity": "info",
