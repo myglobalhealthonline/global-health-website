@@ -164,7 +164,9 @@
     "viewProfileAria": "Profil von {name} anzeigen",
     "languagesMoreTemplate": "{languages} & mehr",
     "clinicalDirectorLabel": "Ärztlicher Direktor",
-    "ourTeamEyebrow": "Unser Team"
+    "ourTeamEyebrow": "Unser Team",
+    "showResults": "Ergebnisse anzeigen",
+    "featuredClinician": "Empfohlener Arzt"
   },
   "cookie": {
     "title": "Cookie-Einstellungen",
@@ -316,7 +318,8 @@
     "fallbackTitle": "Klinik Arztprofil",
     "fallbackBio": "Dieser Kliniker unterstützt Online-Konsultationen und Nachsorge über Global Health.",
     "fallbackQualification1": "Qualifikationen und Registrierungsdetails werden angezeigt, wenn sie vom Klinikteam verifiziert sind.",
-    "fallbackQualification2": "Patienten können die Eignung des Klinikers während der Buchungsaufnahme bestätigen."
+    "fallbackQualification2": "Patienten können die Eignung des Klinikers während der Buchungsaufnahme bestätigen.",
+    "nextStep": "Nächster Schritt"
   },
   "bookingForm": {
     "benefitHeading": "Tarif anwenden",
@@ -769,7 +772,21 @@
     "whyPatientsTrustUs": "Warum Patienten uns vertrauen",
     "previousPage": "Vorherige Seite",
     "nextPage": "Nächste Seite",
-    "medicalDisclaimer": "Medizinischer Haftungsausschluss"
+    "medicalDisclaimer": "Medizinischer Haftungsausschluss",
+    "skipToContent": "Zum Inhalt springen",
+    "skipToBooking": "Zur Buchung springen",
+    "openMenu": "Menü öffnen",
+    "mobileMenuDescription": "Land wechseln, Sprache ändern und eine Beratung buchen.",
+    "yourAccount": "Ihr Konto",
+    "notifications": "Benachrichtigungen",
+    "chooseLanguage": "Sprache auswählen",
+    "searchLanguages": "Sprachen suchen…",
+    "sectionNavigation": "Abschnittsnavigation",
+    "sections": "Abschnitte",
+    "bookAnAppointment": "Termin buchen",
+    "patientReviews": "Patientenbewertungen",
+    "doctifyReviews": "Doctify-Patientenbewertungen",
+    "phoneCountryCode": "Ländervorwahl"
   },
   "flow": {
     "cartOpeningTitle": "Ihr Warenkorb wird geöffnet",
@@ -817,5 +834,13 @@
     "loadingArticleAriaLabel": "Artikel wird geladen…",
     "categoryFallback": "Gesundheitsleitfaden",
     "readArticle": "Artikel lesen"
+  },
+  "calendar": {
+    "selectDay": "Wählen Sie einen Tag",
+    "selectDayHint": "Beratungen und verfügbare Zeitfenster für den ausgewählten Tag erscheinen hier."
+  },
+  "reports": {
+    "noRowsInRange": "Keine Zeilen in diesem Zeitraum.",
+    "truncatedNotice": "Liste am Zeilenlimit des Exports gekürzt — grenzen Sie Zeitraum oder Filter ein, um alles zu erhalten."
   }
 }

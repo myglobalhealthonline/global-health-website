@@ -164,7 +164,9 @@
     "viewProfileAria": "Zobrazit profil pro {name}",
     "languagesMoreTemplate": "{languages} a další",
     "clinicalDirectorLabel": "Klinický ředitel",
-    "ourTeamEyebrow": "Náš tým"
+    "ourTeamEyebrow": "Náš tým",
+    "showResults": "Zobrazit výsledky",
+    "featuredClinician": "Vybraný lékař"
   },
   "cookie": {
     "title": "Nastavení cookies",
@@ -316,7 +318,8 @@
     "fallbackTitle": "Profil lékaře kliniky",
     "fallbackBio": "Tento klinik podporuje online konzultace a následné poradenství prostřednictvím Global Health.",
     "fallbackQualification1": "Kvalifikace a registrační údaje jsou zobrazeny po ověření týmem kliniky.",
-    "fallbackQualification2": "Pacienti mohou potvrdit vhodnost klinika během procesu rezervace."
+    "fallbackQualification2": "Pacienti mohou potvrdit vhodnost klinika během procesu rezervace.",
+    "nextStep": "Další krok"
   },
   "bookingForm": {
     "benefitHeading": "Použít váš plán",
@@ -769,7 +772,21 @@
     "whyPatientsTrustUs": "Proč nám pacienti důvěřují",
     "previousPage": "Předchozí stránka",
     "nextPage": "Další stránka",
-    "medicalDisclaimer": "Lékařské upozornění"
+    "medicalDisclaimer": "Lékařské upozornění",
+    "skipToContent": "Přejít na obsah",
+    "skipToBooking": "Přejít na rezervaci",
+    "openMenu": "Otevřít menu",
+    "mobileMenuDescription": "Změňte zemi, jazyk a rezervujte si konzultaci.",
+    "yourAccount": "Váš účet",
+    "notifications": "Oznámení",
+    "chooseLanguage": "Vybrat jazyk",
+    "searchLanguages": "Hledat jazyky…",
+    "sectionNavigation": "Navigace v sekcích",
+    "sections": "Sekce",
+    "bookAnAppointment": "Objednat se na konzultaci",
+    "patientReviews": "Hodnocení pacientů",
+    "doctifyReviews": "Hodnocení pacientů Doctify",
+    "phoneCountryCode": "Předvolba země"
   },
   "flow": {
     "cartOpeningTitle": "Otevírá se váš košík",
@@ -817,5 +834,13 @@
     "loadingArticleAriaLabel": "Načítání článku…",
     "categoryFallback": "Zdravotní příručka",
     "readArticle": "Přečíst článek"
+  },
+  "calendar": {
+    "selectDay": "Vyberte den",
+    "selectDayHint": "Konzultace a dostupné termíny pro vybraný den se zobrazí zde."
+  },
+  "reports": {
+    "noRowsInRange": "V tomto rozsahu nejsou žádné záznamy.",
+    "truncatedNotice": "Seznam zkrácen na limit řádků exportu — zužte rozsah dat nebo filtry pro úplný výpis."
   }
 }
