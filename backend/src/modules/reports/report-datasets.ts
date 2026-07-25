@@ -411,19 +411,45 @@ export async function doctorPayoutStatementReport(
   filters: ReportFilters,
   bank?: PayoutBankInfo,
 ): Promise<ReportTable> {
-  const scheduledAt = rangeWhere(filters);
+  // Hard floor: never pay for consultations dated before go-live (17 Jul 2026).
+  // Everything earlier is legacy-import noise (e.g. `legacy-records` rows), so it
+  // is excluded even when the caller's From date reaches further back.
+  const PAYOUT_MIN_DATE = new Date(Date.UTC(2026, 6, 17, 0, 0, 0, 0));
+  const from =
+    filters.from && filters.from > PAYOUT_MIN_DATE ? filters.from : PAYOUT_MIN_DATE;
+  const to = filters.to;
+  const dateRange = { gte: from, ...(to ? { lte: to } : {}) };
+  const periodLabel = `${fmtDate(from)} → ${to ? fmtDate(to) : "—"}`;
+
   const appts = await prisma.appointment.findMany({
     where: {
       doctorId,
-      status: "COMPLETED",
-      ...(scheduledAt ? { scheduledAt } : {}),
+      ...(filters.countryCode ? { countryCode: filters.countryCode } : {}),
       ...(filters.consultationType ? { consultationType: filters.consultationType } : {}),
+      AND: [
+        // "Delivered" = an explicit COMPLETED status OR a set consultation-completed
+        // timestamp. Some concluded consultations (legacy / finalize flows) carry
+        // `consultationCompletedAt` while their status never advanced past
+        // REQUEST_RECEIVED — those are still payable and must appear.
+        { OR: [{ status: "COMPLETED" }, { consultationCompletedAt: { not: null } }] },
+        // Consultation date = scheduledAt, else consultationCompletedAt, else
+        // createdAt — a COALESCE expressed as a filter so a call with no
+        // scheduledAt still lands in the right period.
+        {
+          OR: [
+            { scheduledAt: dateRange },
+            { scheduledAt: null, consultationCompletedAt: dateRange },
+            { scheduledAt: null, consultationCompletedAt: null, createdAt: dateRange },
+          ],
+        },
+      ],
     },
     take: ROW_LIMIT + 1,
     orderBy: [{ countryCode: "asc" }, { scheduledAt: "asc" }],
     select: {
       createdAt: true,
       scheduledAt: true,
+      consultationCompletedAt: true,
       countryCode: true,
       fullName: true,
       consultationType: true,
@@ -435,6 +461,10 @@ export async function doctorPayoutStatementReport(
   });
   const truncated = appts.length > ROW_LIMIT;
   const capped = truncated ? appts.slice(0, ROW_LIMIT) : appts;
+
+  // Effective consultation date, matching the COALESCE filter above.
+  const effDate = (a: (typeof capped)[number]): Date =>
+    a.scheduledAt ?? a.consultationCompletedAt ?? a.createdAt;
 
   // Live payout lookup per (doctor, service). Appointments whose service has
   // no payout set show "Not set" and are excluded from the totals.
@@ -522,6 +552,7 @@ export async function doctorPayoutStatementReport(
   const rows: ReportRow[] = [];
   for (const key of marketKeys) {
     const list = byMarket.get(key)!;
+    list.sort((x, y) => effDate(x).getTime() - effDate(y).getTime());
     if (multiMarket) rows.push({ _section: `Market — ${marketLabel(key)}` });
     const subtotal: Record<string, number> = {};
     for (const a of list) {
@@ -531,11 +562,10 @@ export async function doctorPayoutStatementReport(
         grand[currency] = (grand[currency] ?? 0) + payout;
       }
       rows.push({
-        date: fmtDate(a.scheduledAt ?? a.createdAt),
+        date: fmtDate(effDate(a)),
         patient: a.fullName,
         service: a.service?.name ?? "—",
         insurer,
-        type: a.consultationType,
         payout: payout == null ? "Not set" : fmtMoney(payout, currency),
       });
     }
@@ -545,9 +575,8 @@ export async function doctorPayoutStatementReport(
           _total: true,
           date: "",
           patient: "",
-          service: "",
+          service: `Subtotal — ${marketLabel(key)}`,
           insurer: "",
-          type: `Subtotal — ${marketLabel(key)}`,
           payout: fmtMoney(cents, currency),
         });
       }
@@ -560,9 +589,8 @@ export async function doctorPayoutStatementReport(
       _total: true,
       date: "",
       patient: "",
-      service: "",
+      service: "TOTAL TO PAY",
       insurer: "",
-      type: "TOTAL TO PAY",
       payout: fmtMoney(cents, currency),
     });
   }
@@ -573,7 +601,7 @@ export async function doctorPayoutStatementReport(
       .join(" · ") || "—";
 
   const summary: ReportSummaryItem[] = [
-    { label: "Period", value: rangeLabel(filters) },
+    { label: "Period", value: periodLabel },
     { label: "Account holder", value: bank?.accountHolder?.trim() || doctorName },
     {
       label: "IBAN",
@@ -588,19 +616,19 @@ export async function doctorPayoutStatementReport(
 
   return {
     title: "Payout statement",
-    subtitle: `${doctorName} · ${rangeLabel(filters)} · ${capped.length} consultation${capped.length === 1 ? "" : "s"}`,
+    subtitle: `${doctorName} · ${periodLabel} · ${capped.length} consultation${capped.length === 1 ? "" : "s"}`,
     summary,
     generatedAt: new Date().toISOString(),
     truncated,
     // No patient/gross price column — a payout statement shows only what the
     // doctor is paid (standard per-service payout, or the insurance payout for
     // insured bookings). The patient-facing price lives on the admin reports.
+    // No consultation-type column either — the Service names the consultation.
     columns: [
       { key: "date", label: "Date" },
       { key: "patient", label: "Patient" },
       { key: "service", label: "Service" },
       { key: "insurer", label: "Insurer" },
-      { key: "type", label: "Type" },
       { key: "payout", label: "Payout", align: "right" },
     ],
     rows,
