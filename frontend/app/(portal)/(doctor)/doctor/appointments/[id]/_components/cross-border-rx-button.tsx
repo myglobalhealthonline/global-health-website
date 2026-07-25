@@ -58,7 +58,7 @@ export function CrossBorderRxButton({
   const [doctorId, setDoctorId] = useState("");
   const [summary, setSummary] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+  const [consentUrl, setConsentUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -101,7 +101,7 @@ export function CrossBorderRxButton({
     setDoctorId("");
     setSummary("");
     setError(null);
-    setPaymentUrl(null);
+    setConsentUrl(null);
     setCopied(false);
   }
 
@@ -124,13 +124,13 @@ export function CrossBorderRxButton({
       const json = (await res.json()) as {
         ok?: boolean;
         message?: string;
-        data?: { paymentUrl?: string | null };
+        data?: { consentUrl?: string | null };
       };
       if (!res.ok || !json.ok) {
         setError(json.message ?? copy.couldNotCreate);
         return;
       }
-      setPaymentUrl(json.data?.paymentUrl ?? null);
+      setConsentUrl(json.data?.consentUrl ?? null);
     });
   }
 
@@ -150,19 +150,19 @@ export function CrossBorderRxButton({
     );
   }
 
-  // Success view — request created, show the payment link.
-  if (paymentUrl !== null) {
+  // Success view — request created, show the consent link to share.
+  if (consentUrl !== null) {
     return (
       <div className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
         <p className="text-portal-meta font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
           {copy.createdTitle}
         </p>
         <p className="mt-1 text-portal-label text-[var(--portal-muted)]">{copy.createdBody}</p>
-        {paymentUrl ? (
+        {consentUrl ? (
           <div className="mt-2 flex items-center gap-2">
             <input
               readOnly
-              value={paymentUrl}
+              value={consentUrl}
               className="gh-input flex-1 text-portal-label"
               onFocus={(e) => e.currentTarget.select()}
             />
@@ -170,7 +170,7 @@ export function CrossBorderRxButton({
               type="button"
               className="gh-btn gh-btn-soft"
               onClick={() => {
-                void navigator.clipboard?.writeText(paymentUrl).then(() => setCopied(true));
+                void navigator.clipboard?.writeText(consentUrl).then(() => setCopied(true));
               }}
             >
               {copied ? copy.copied : copy.copyLink}

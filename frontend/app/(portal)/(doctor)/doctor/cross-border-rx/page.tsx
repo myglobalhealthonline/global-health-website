@@ -63,9 +63,51 @@ export default async function CrossBorderRxInboxPage() {
                 </span>
               </div>
 
-              <p className="mt-2 whitespace-pre-wrap rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact text-[var(--portal-text)]">
+              <p className="mt-3 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                {copy.summaryHeading}
+              </p>
+              <p className="mt-1 whitespace-pre-wrap rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact text-[var(--portal-text)]">
                 {item.clinicalSummary}
               </p>
+
+              {(() => {
+                const rows: Array<[string, string | null]> = [
+                  [copy.soapChiefComplaint, item.soap.chiefComplaint],
+                  [copy.soapSubjective, item.soap.subjective],
+                  [copy.soapObjective, item.soap.objective],
+                  [copy.soapAssessment, item.soap.assessment],
+                  [copy.soapPlan, item.soap.plan],
+                ];
+                const present = rows.filter(([, v]) => v && v.trim());
+                return (
+                  <div className="mt-3">
+                    <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                      {copy.soapHeading}
+                    </p>
+                    <p className="mt-0.5 text-portal-label text-[var(--portal-muted)]">
+                      {copy.soapConsentNote}
+                    </p>
+                    {present.length === 0 ? (
+                      <p className="mt-1 text-portal-label text-[var(--portal-muted)]">
+                        {copy.soapEmpty}
+                      </p>
+                    ) : (
+                      <dl className="mt-2 grid gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
+                        {present.map(([label, value]) => (
+                          <div key={label}>
+                            <dt className="text-portal-label font-semibold text-[var(--portal-muted)]">
+                              {label}
+                            </dt>
+                            <dd className="mt-0.5 whitespace-pre-wrap text-portal-compact text-[var(--portal-text)]">
+                              {value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+                  </div>
+                );
+              })()}
 
               <CrossBorderRxDecisionPanel
                 requestId={item.id}

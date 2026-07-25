@@ -12,6 +12,8 @@ import {
   createCrossBorderRxRequest,
   listCrossBorderRxInbox,
   decideCrossBorderRxRequest,
+  getCrossBorderRxConsentView,
+  submitCrossBorderRxConsent,
   CrossBorderRxSourceNotFoundError,
   CrossBorderRxTargetNotAvailableError,
   CrossBorderRxServicePriceMissingError,
@@ -19,6 +21,8 @@ import {
   CrossBorderRxRequestNotFoundError,
   CrossBorderRxNotActionableError,
   CrossBorderRxMessageRequiredError,
+  CrossBorderRxConsentInvalidError,
+  CrossBorderRxConsentExpiredError,
 } from "../modules/cross-border-rx/cross-border-rx.service.js";
 
 /**
@@ -43,6 +47,12 @@ const createBodySchema = z.object({
 const decisionBodySchema = z.object({
   decision: z.enum(["ACCEPT", "MORE_INFO", "REFUSE"]),
   message: z.string().trim().max(5000).optional(),
+});
+
+const consentQuerySchema = z.object({ token: z.string().min(10).max(400) });
+const consentBodySchema = z.object({
+  token: z.string().min(10).max(400),
+  decision: z.enum(["AGREE", "DECLINE"]),
 });
 
 const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
@@ -101,7 +111,6 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
             sourceAppointmentId: request.params.id,
             targetCountryCode: body.data.targetCountryCode,
             targetDoctorId: body.data.targetDoctorId,
-            orderId: result.orderId,
           },
           request,
         }).catch(() => {});
@@ -110,8 +119,10 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
           okResponse(
             {
               requestId: result.requestId,
-              orderId: result.orderId,
-              paymentUrl: result.paymentUrl,
+              // The patient is emailed a consent link; it is also returned so
+              // Doctor A can share it directly. No payment link yet — that is
+              // minted only after the patient consents to disclosing their SOAP.
+              consentUrl: result.consentUrl,
             },
             "Cross-border prescription request created",
           ),
@@ -202,6 +213,73 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not record the decision"));
+      }
+    },
+  );
+
+  // ── Public: patient consent (token-based, no auth) ───────────────
+  app.get(
+    "/api/public/cross-border-rx-consent",
+    { config: { rateLimit: { max: 30, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const q = consentQuerySchema.safeParse(request.query);
+      if (!q.success) return reply.status(400).send(errorResponse("Invalid link"));
+      try {
+        const data = await getCrossBorderRxConsentView(q.data.token);
+        return okResponse(data);
+      } catch (error) {
+        if (error instanceof CrossBorderRxConsentInvalidError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxConsentExpiredError) {
+          return reply.status(410).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load the request"));
+      }
+    },
+  );
+
+  app.post(
+    "/api/public/cross-border-rx-consent",
+    { config: { rateLimit: { max: 20, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const body = consentBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid request", body.error.flatten()));
+      }
+      try {
+        const data = await submitCrossBorderRxConsent(body.data.token, body.data.decision);
+        return okResponse(
+          data,
+          body.data.decision === "AGREE"
+            ? "Consent recorded"
+            : "You can book a full consultation instead",
+        );
+      } catch (error) {
+        if (error instanceof CrossBorderRxConsentInvalidError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxConsentExpiredError) {
+          return reply.status(410).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxNotActionableError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        if (
+          error instanceof CrossBorderRxTargetNotAvailableError ||
+          error instanceof CrossBorderRxStripeNotConfiguredError
+        ) {
+          return reply.status(422).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not record your choice"));
       }
     },
   );

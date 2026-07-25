@@ -126,6 +126,13 @@ export type CrossBorderRxInboxItem = {
   status: string;
   patientFullName: string;
   clinicalSummary: string;
+  soap: {
+    chiefComplaint: string | null;
+    subjective: string | null;
+    objective: string | null;
+    assessment: string | null;
+    plan: string | null;
+  };
   asyncAppointmentId: string | null;
   sourceDoctorName: string | null;
   createdAt: string;

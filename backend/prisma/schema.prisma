@@ -3267,14 +3267,19 @@ model Prescription {
 }
 
 /// Lifecycle of a cross-jurisdiction prescription request.
-///   PENDING_PAYMENT — request created, patient not yet paid the async fee.
-///   AWAITING_DOCTOR — fee paid, async Appointment minted, Doctor B notified.
-///   MORE_INFO       — Doctor B asked the patient / Doctor A for more detail.
-///   ACCEPTED        — Doctor B issued the prescription (async).
-///   REFUSED         — Doctor B declined; patient offered a full-consult upgrade.
-///   UPGRADED        — patient took the upgrade and booked a full consultation.
-///   EXPIRED         — patient never paid the async fee before the deadline.
+///   PENDING_CONSENT  — created; patient must consent to disclosing their
+///                      consultation record (SOAP) to the prescribing doctor.
+///   CONSENT_DECLINED — patient declined disclosure; offered a full GP consult.
+///   PENDING_PAYMENT  — patient consented; awaiting the async-fee payment.
+///   AWAITING_DOCTOR  — fee paid, async Appointment minted, Doctor B notified.
+///   MORE_INFO        — Doctor B asked the patient / Doctor A for more detail.
+///   ACCEPTED         — Doctor B issued the prescription (async).
+///   REFUSED          — Doctor B declined; patient offered a full-consult upgrade.
+///   UPGRADED         — patient took the upgrade and booked a full consultation.
+///   EXPIRED          — patient never consented / paid before the deadline.
 enum CrossBorderRxStatus {
+  PENDING_CONSENT
+  CONSENT_DECLINED
   PENDING_PAYMENT
   AWAITING_DOCTOR
   MORE_INFO
@@ -3325,6 +3330,22 @@ model CrossBorderPrescriptionRequest {
   targetDoctorId       String
   /// Doctor A's clinical rationale, shown to Doctor B (no PHI file access).
   clinicalSummary      String
+  /// Snapshot of the source consultation's SOAP note, copied at request time so
+  /// the disclosed record is fixed and doesn't drift if the source note changes.
+  /// Disclosed to Doctor B ONLY after the patient consents (status advances past
+  /// PENDING_CONSENT) — the consent gate is enforced in the service layer.
+  sourceChiefComplaint String?
+  sourceSubjective     String?
+  sourceObjective      String?
+  sourceAssessment     String?
+  sourcePlan           String?
+  /// Patient consent to disclose the SOAP snapshot to the prescribing doctor.
+  /// The raw token only ever lives in the consent link emailed to the patient;
+  /// we store its SHA-256 hash (same pattern as ShareLink / MedicalAccessRequest).
+  consentTokenHash     String?             @unique
+  consentTokenExpiresAt DateTime?
+  /// When the patient granted disclosure consent (null until they agree).
+  soapConsentAt        DateTime?
   /// The Order minted for the async fee (slot-less checkout).
   orderId              String?
   /// The Appointment minted for Doctor B once the fee is paid (drives the
@@ -3333,7 +3354,7 @@ model CrossBorderPrescriptionRequest {
   /// The full-consultation Appointment created if the patient upgrades after a
   /// refusal.
   upgradeAppointmentId String?             @unique
-  status               CrossBorderRxStatus @default(PENDING_PAYMENT)
+  status               CrossBorderRxStatus @default(PENDING_CONSENT)
   /// Timestamps for the terminal transitions (audit/reporting convenience).
   paidAt               DateTime?
   decidedAt            DateTime?
