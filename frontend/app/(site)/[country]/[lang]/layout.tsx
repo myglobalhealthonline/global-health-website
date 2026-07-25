@@ -128,7 +128,8 @@ export default async function CountryLangLayout({
        * fix (multi-root layouts) this was weighed against and why it was
        * out of scope here. */}
       <script
-        // eslint-disable-next-line react/no-danger -- static, non-user-derived string; sets documentElement.lang ahead of hydration
+        // Static, non-user-derived string (toHtmlLang maps to a 6-value
+        // allowlist); sets documentElement.lang ahead of hydration.
         dangerouslySetInnerHTML={{
           __html: `document.documentElement.lang=${JSON.stringify(htmlLang)};`,
         }}

@@ -144,9 +144,16 @@ export function PortalTour({
   const targetElRef = useRef<Element | null>(null);
   // Actual rendered card size, refreshed every tracking tick — not known
   // before first paint, so placement starts from the FALLBACK_CARD_*
-  // constants and self-corrects once measured.
-  const cardHeightRef = useRef<number>(FALLBACK_CARD_HEIGHT);
-  const cardWidthRef = useRef<number>(FALLBACK_CARD_WIDTH);
+  // constants and self-corrects once measured. State, not a ref: placement
+  // below reads it during render, and reading a ref that a rAF loop mutates
+  // is a render-phase tear (React flags it, and a ref write never schedules
+  // the re-render that would apply the new size). Same >0.5px change guard
+  // as `rect`, so an unchanged frame returns `prev` and React bails out —
+  // re-renders stay exactly as cheap as they were with the refs.
+  const [cardSize, setCardSize] = useState({
+    width: FALLBACK_CARD_WIDTH,
+    height: FALLBACK_CARD_HEIGHT,
+  });
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -317,8 +324,13 @@ export function PortalTour({
     const tick = () => {
       if (cardRef.current) {
         const cr = cardRef.current.getBoundingClientRect();
-        if (cr.height) cardHeightRef.current = cr.height;
-        if (cr.width) cardWidthRef.current = cr.width;
+        if (cr.width && cr.height) {
+          setCardSize((prev) =>
+            Math.abs(cr.width - prev.width) > 0.5 || Math.abs(cr.height - prev.height) > 0.5
+              ? { width: cr.width, height: cr.height }
+              : prev,
+          );
+        }
       }
       const el = targetElRef.current;
       if (el) {
@@ -416,14 +428,14 @@ export function PortalTour({
     // fallback) card size, so no placement path can skip the clamp.
     const { top, left } = computeCardPosition(
       rect,
-      cardWidthRef.current,
-      cardHeightRef.current,
+      cardSize.width,
+      cardSize.height,
       window.innerWidth,
       window.innerHeight,
     );
     cardStyle.top = top;
     cardStyle.left = left;
-    cardStyle.width = cardWidthRef.current;
+    cardStyle.width = cardSize.width;
   }
 
   const spotlightStyle: React.CSSProperties | null = clampedRect

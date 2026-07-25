@@ -71,7 +71,13 @@ export const getCountryFooter = cache(
         // Next.js data cache — admin save calls revalidatePath(`/${slug}`, "layout")
         // so we can safely cache here without a TTL. If the layout call ever
         // changes, swap to `cache: "no-store"`.
-        next: { tags: [`country-footer:${code}`] },
+        //
+        // `revalidate: false` is what actually opts in. A bare `fetch` defaults
+        // to no-store since Next 15, so `tags` on its own cached NOTHING — it
+        // only labelled an entry that was never written, and every one of the
+        // ~550 prerenders paid a real round-trip. `false` = cache until a tag or
+        // path revalidation busts it, which is the no-TTL behaviour described above.
+        next: { revalidate: false, tags: [`country-footer:${code}`] },
         signal: controller.signal,
       });
       if (!res.ok) return null;

@@ -36,10 +36,26 @@ const BUILD_RETRY_STATUSES = new Set([429, 502, 503, 504]);
  * PROXY_CLIENT_IP_SECRET is not NEXT_PUBLIC_*, so it is never inlined into a
  * client bundle; IS_BUILD additionally pins this to the server build.
  */
+let warnedNoBuildSecret = false;
+
 function buildAuthHeaders(): Record<string, string> {
   if (!IS_BUILD) return {};
   const secret = process.env.PROXY_CLIENT_IP_SECRET?.trim();
-  if (!secret) return {};
+  if (!secret) {
+    // Returning {} silently is the worst failure mode here: the build simply
+    // falls back to the shared 300/min bucket, 429s its way through ~550
+    // prerenders, and (with ALLOW_DEGRADED_BUILD unset) dies somewhere far
+    // from the cause. Say it once, up front, so the build log names it.
+    if (!warnedNoBuildSecret) {
+      warnedNoBuildSecret = true;
+      console.warn(
+        "[apiRequest][BUILD] PROXY_CLIENT_IP_SECRET is not set for this build. " +
+          "Build reads will NOT get the raised rate-limit ceiling and will likely 429. " +
+          "Set it as a build-visible variable on the frontend service.",
+      );
+    }
+    return {};
+  }
   return { "x-gh-proxy-secret": secret, "x-gh-build": "1" };
 }
 

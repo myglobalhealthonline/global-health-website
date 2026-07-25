@@ -84,6 +84,32 @@ const SECURITY_HEADERS = [
   },
 ];
 
+/**
+ * The build's total concurrent load on the backend's connection pool is
+ * `cpus x NEXT_BUILD_API_CONCURRENCY` (see frontend/lib/api/client.ts). That
+ * product MUST stay under the backend's `pg` pool max of 10
+ * (backend/src/db/prisma.ts) or reads start timing out at the 5s connect
+ * window — which, since P-001, bakes empty doctor/plan lists into static
+ * files rather than merely being slow.
+ *
+ * Two independent env knobs guarding one shared ceiling is a footgun: raising
+ * either alone silently breaks the invariant, and the symptom (thin pages) is
+ * indistinguishable from a content bug. So assert it here, at build start,
+ * instead of discovering it in a deploy.
+ */
+const BACKEND_POOL_MAX = 10;
+const buildCpus = Number(process.env.NEXT_BUILD_CPUS) || 4;
+const buildApiConcurrency = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 2;
+if (buildCpus * buildApiConcurrency >= BACKEND_POOL_MAX) {
+  throw new Error(
+    `NEXT_BUILD_CPUS (${buildCpus}) x NEXT_BUILD_API_CONCURRENCY ` +
+      `(${buildApiConcurrency}) = ${buildCpus * buildApiConcurrency}, which is not below the ` +
+      `backend pg pool max of ${BACKEND_POOL_MAX}. The build would saturate the pool and ` +
+      `prerender pages with missing content. Lower one of the two, or raise the pool in ` +
+      `backend/src/db/prisma.ts and this constant together.`,
+  );
+}
+
 const nextConfig: NextConfig = {
   output: "standalone",
   // ponytail: default 60s static-page timeout was too tight under the
@@ -102,7 +128,7 @@ const nextConfig: NextConfig = {
   // separately (Postgres max_connections on the current plan), so the build
   // throttles itself instead. Builds are slower; they are also correct.
   experimental: {
-    cpus: Number(process.env.NEXT_BUILD_CPUS) || 4,
+    cpus: buildCpus,
   },
   turbopack: {
     root: path.resolve(__dirname, ".."),

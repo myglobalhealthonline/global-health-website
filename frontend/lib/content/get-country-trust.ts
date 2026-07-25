@@ -86,7 +86,13 @@ export const getCountryTrust = cache(
       const query = locale ? `?locale=${locale.toUpperCase()}` : "";
       const res = await fetch(`${origin}/api/public/countries/${code}/trust${query}`, {
         method: "GET",
-        next: { tags: [`country-trust:${code}`] },
+        // `tags` ALONE does not cache: since Next 15 a bare `fetch` defaults to
+        // no-store, so a tag with no `revalidate` only marks an entry that was
+        // never written. That made this a real round-trip on every one of the
+        // ~550 prerenders — a top contributor to the build saturating the
+        // backend's pg pool. 60s matches the other public readers
+        // (site-content-api.ts); `revalidateTag` still busts it after an edit.
+        next: { revalidate: 60, tags: [`country-trust:${code}`] },
         signal: controller.signal,
       });
       if (!res.ok) return null;
