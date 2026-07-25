@@ -7,6 +7,7 @@ export const serviceKindSchema = z.enum([
   "PRESCRIPTION",
   "HEALTH_TEST",
   "HOME_DELIVERY",
+  "ASYNC_PRESCRIPTION",
 ]);
 
 /** Lowercase URL segment style: letters, numbers, hyphens (no leading/trailing hyphen). */

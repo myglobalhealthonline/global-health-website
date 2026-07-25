@@ -906,6 +906,10 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
           galleryImagePaths: input.galleryImagePaths,
         }),
         ...(input.shippingCents !== undefined && { shippingCents: input.shippingCents }),
+        // The inner cross-jurisdiction prescription service is never public —
+        // force ADMIN_ONLY so it can't leak into listings / slug lookups /
+        // sitemaps / the public cart, regardless of the form.
+        ...(input.kind === "ASYNC_PRESCRIPTION" && { visibility: "ADMIN_ONLY" as const }),
         isActive: input.isActive ?? true,
       },
       include: adminServiceInclude,
@@ -956,6 +960,9 @@ export async function updateAdminService(
       data: {
         ...(body.countryId !== undefined && { countryId: body.countryId }),
         ...(body.kind !== undefined && { kind: body.kind }),
+        // Keep the inner cross-jurisdiction prescription service ADMIN_ONLY
+        // whenever an admin sets/keeps its kind (mirror of create above).
+        ...(body.kind === "ASYNC_PRESCRIPTION" && { visibility: "ADMIN_ONLY" as const }),
         ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.name !== undefined && { name: body.name }),
         ...(body.summary !== undefined && { summary: body.summary }),

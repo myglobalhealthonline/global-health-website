@@ -162,6 +162,35 @@ export async function verifyManualEntryPermission(
   return auth;
 }
 
+/**
+ * Per-doctor permission gate for raising a cross-jurisdiction prescription
+ * request (the "Request prescription outside jurisdiction" action). ADMINs
+ * always pass; DOCTORs need `Doctor.canRequestCrossJurisdictionRx=true`.
+ * Mirrors `verifyManualEntryPermission`.
+ */
+export async function verifyCrossJurisdictionRxPermission(
+  request: FastifyRequest,
+): Promise<DoctorAuthResult> {
+  const auth = await verifyDoctorAccess(request);
+  if (!auth.ok) return auth;
+  const token = request.cookies[env.AUTH_COOKIE_NAME];
+  const payload = token ? verifyAuthToken(token) : null;
+  if (payload?.role === "ADMIN") return auth;
+  const doctor = await prisma.doctor.findUnique({
+    where: { id: auth.doctorId },
+    select: { canRequestCrossJurisdictionRx: true },
+  });
+  if (!doctor?.canRequestCrossJurisdictionRx) {
+    return {
+      ok: false,
+      status: 403,
+      message:
+        "Your account isn't enabled for cross-jurisdiction prescription requests. Ask an admin to enable it.",
+    };
+  }
+  return auth;
+}
+
 export async function verifyClinicalReadAccess(
   request: FastifyRequest,
 ): Promise<ClinicalReadResult> {

@@ -1289,6 +1289,9 @@ export async function updateAdminDoctor(
           ...(body.canCreateManualAppointments !== undefined && {
             canCreateManualAppointments: body.canCreateManualAppointments,
           }),
+          ...(body.canRequestCrossJurisdictionRx !== undefined && {
+            canRequestCrossJurisdictionRx: body.canRequestCrossJurisdictionRx,
+          }),
         },
         include: { country: { select: { id: true, code: true } } },
       });

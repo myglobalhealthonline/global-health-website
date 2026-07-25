@@ -22,8 +22,10 @@ import {
   fetchDoctorFormSubmissions,
   fetchDoctorFormTemplates,
   fetchDoctorInternalMessages,
+  fetchDoctorPermissions,
 } from "@/lib/api/doctor-api";
 import { ConsultationForm } from "./_components/consultation-form";
+import { CrossBorderRxButton } from "./_components/cross-border-rx-button";
 import { ServicesUsedList } from "./_components/services-used-list";
 import { ShareConsultationButton } from "./_components/share-button";
 import { AppointmentActions } from "./_components/appointment-actions";
@@ -86,6 +88,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     documentsRes,
     generatedDocsRes,
     meRes,
+    permsRes,
   ] = await Promise.all([
     fetchDoctorConsultation(id),
     fetchDoctorInternalMessages(id),
@@ -94,6 +97,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     fetchDoctorDocuments(id),
     fetchDoctorGeneratedDocuments(id),
     fetchDoctorMe(),
+    fetchDoctorPermissions(),
   ]);
 
   if (!consultRes.ok) {
@@ -119,6 +123,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const documents = documentsRes.ok ? documentsRes.data.items : [];
   const pendingSendCount = generatedDocsRes.ok ? generatedDocsRes.data.queue.length : 0;
   const doctorName = meRes.ok ? meRes.data.doctor.fullName : d.portal.sectionLabel;
+  const canRequestCrossJurisdictionRx =
+    permsRes.ok && permsRes.data.canRequestCrossJurisdictionRx;
   const documentsTabBadge =
     pendingSendCount > 0 ? String(pendingSendCount) : null;
   const consultationMode = appointment.consultationMode ?? "ONLINE";
@@ -165,10 +171,11 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     bookingNotes: d.appointmentDetail.bookingNotes,
     openPatientChart: d.appointmentDetail.openPatientChart,
     editHealthDataHint: d.appointmentDetail.editHealthDataHint,
-    // Portugal-only NIF / Cartão de Cidadão / pharmacy rows. The labels stay
-    // in Portuguese-market terms in every locale — they name PT documents,
-    // not generic concepts.
+    // Portugal-only Número de Utente / NIF / Cartão de Cidadão / pharmacy
+    // rows. The labels stay in Portuguese-market terms in every locale — they
+    // name PT documents, not generic concepts.
     ptFields: {
+      utente: d.appointmentDetail.utenteNumber,
       nif: d.appointmentDetail.ptNif,
       idCard: d.appointmentDetail.ptIdCard,
       pharmacy: d.appointmentDetail.ptPharmacy,
@@ -473,6 +480,30 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       )}
                     </div>
                   </div>
+
+                  {canRequestCrossJurisdictionRx ? (
+                    <div className="mt-6 border-t border-[var(--portal-line)] pt-5">
+                      <h4
+                        className="m-0 text-[var(--portal-text)]"
+                        style={{
+                          fontFamily: "var(--font-display)",
+                          fontSize: 14,
+                          fontWeight: 800,
+                        }}
+                      >
+                        {d.crossBorderRx.title}
+                      </h4>
+                      <p className="mt-1 text-portal-label text-[var(--portal-muted)]">
+                        {d.crossBorderRx.description}
+                      </p>
+                      <div className="mt-2">
+                        <CrossBorderRxButton
+                          appointmentId={appointment.id}
+                          copy={d.crossBorderRx}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </FormSection>
             ),
