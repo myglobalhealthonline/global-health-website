@@ -9,6 +9,12 @@ import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js"
 import { ensureConsultationDraft } from "../consultations/ensure-consultation-draft.js";
 import { notifyDoctor, notifyUser, notifyAdmins } from "../notifications/notify.service.js";
 import { sendEmail } from "../../lib/email/send-email.js";
+import { wrapHtml } from "../../lib/email/templates.js";
+import { orderPayShortLink } from "../orders/order-payment-url.service.js";
+import {
+  notifyPatientCrossBorderPayment,
+  notifyStaffCrossBorderRequest,
+} from "./cross-border-rx-notifications.service.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 
 /**
@@ -172,7 +178,15 @@ export async function createCrossBorderRxRequest(
 ): Promise<CreateCrossBorderRxResult> {
   const source = await prisma.appointment.findFirst({
     where: { id: input.sourceAppointmentId, doctorId: input.sourceDoctorId },
-    select: { id: true, fullName: true, email: true, phone: true, userId: true, countryCode: true },
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      phone: true,
+      userId: true,
+      countryCode: true,
+      whatsappConsent: true,
+    },
   });
   if (!source) throw new CrossBorderRxSourceNotFoundError();
 
@@ -310,40 +324,28 @@ export async function createCrossBorderRxRequest(
     },
   });
 
-  // Deliver the payment link to the patient. The async fee is a shop-style
-  // purchase (no consultation line), so the pre-payment automation — which only
-  // fires for consultation orders — does not cover it; send a dedicated email.
-  if (session.url) {
-    void sendCrossBorderRxPaymentEmail(source.email, source.fullName, session.url).catch(() => {});
-    if (source.userId) {
-      void notifyUser(source.userId, "CROSS_BORDER_RX_UPDATED", {
-        title: "Complete your prescription request",
-        body: "A doctor has started a cross-border prescription request for you. Pay the fee to send it to the prescribing doctor.",
-        href: session.url,
-      }).catch(() => {});
-    }
+  // Deliver the payment link to the patient — branded email + WhatsApp with the
+  // SHORT pay link (`orderPayShortLink`), same as the pre-payment drip. The
+  // async fee is a shop-style purchase (no consultation line), so the standard
+  // pre-payment automation does not cover it; this is its dedicated path.
+  void notifyPatientCrossBorderPayment({
+    orderId: order.id,
+    orderNumber,
+    fullName: source.fullName,
+    email: source.email,
+    phone: source.phone,
+    countryCode: targetCountryCode,
+    whatsappConsent: source.whatsappConsent,
+  }).catch(() => {});
+  if (source.userId) {
+    void notifyUser(source.userId, "CROSS_BORDER_RX_UPDATED", {
+      title: "Complete your prescription request",
+      body: "A doctor has started a cross-border prescription request for you. Pay the fee to send it to the prescribing doctor.",
+      href: orderPayShortLink(order.id),
+    }).catch(() => {});
   }
 
   return { requestId: requestRow.id, orderId: order.id, paymentUrl: session.url ?? null };
-}
-
-async function sendCrossBorderRxPaymentEmail(
-  to: string,
-  fullName: string,
-  paymentUrl: string,
-): Promise<void> {
-  const subject = "Complete your prescription request";
-  const html = `
-    <p>Dear ${escapeHtml(fullName)},</p>
-    <p>Your doctor has started a cross-border prescription request on your behalf.
-    To send it to the prescribing doctor, please complete the payment below.</p>
-    <p><a href="${paymentUrl}" style="display:inline-block;padding:12px 20px;background:#0f766e;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">Pay &amp; submit request</a></p>
-    <p>Or open this link: <br>${paymentUrl}</p>
-    <p>Once paid, the prescribing doctor will review your request and either issue
-    the prescription, ask for more information, or offer a full consultation.</p>
-  `;
-  const text = `Dear ${fullName},\n\nYour doctor has started a cross-border prescription request on your behalf. To send it to the prescribing doctor, complete the payment here:\n\n${paymentUrl}\n\nOnce paid, the prescribing doctor will review your request.`;
-  await sendEmail({ to, subject, html, text });
 }
 
 function escapeHtml(value: string): string {
@@ -384,7 +386,7 @@ export async function onCrossBorderRxFeePaid(
 
   const order = await prisma.order.findUnique({
     where: { id: orderId },
-    select: { currencyCode: true, totalCents: true, phone: true, userId: true },
+    select: { orderNumber: true, currencyCode: true, totalCents: true, phone: true, userId: true },
   });
 
   const appt = await prisma.appointment.create({
@@ -419,10 +421,18 @@ export async function onCrossBorderRxFeePaid(
     },
   });
 
+  // Portal bell for the prescribing doctor (existing), plus WhatsApp + email to
+  // the doctor AND the admin team via the shared drip helpers.
   await notifyDoctor(request.targetDoctorId, "CROSS_BORDER_RX_REQUESTED", {
     appointmentId: appt.id,
     snippet: `${request.patientFullName} · cross-border prescription request`,
   }).catch((err) => log?.warn({ err, orderId }, "Cross-border Rx doctor notify failed"));
+
+  await notifyStaffCrossBorderRequest({
+    orderId,
+    orderNumber: order?.orderNumber ?? orderId,
+    targetDoctorId: request.targetDoctorId,
+  }).catch((err) => log?.warn({ err, orderId }, "Cross-border Rx staff notify failed"));
 }
 
 // ── On upgrade payment: link the full consultation back to the request ───────
@@ -744,16 +754,17 @@ async function sendCrossBorderRxRefusalEmail(
 ): Promise<void> {
   const subject = "Your prescription request — next steps";
   const cta = upgradeUrl
-    ? `<p><a href="${upgradeUrl}" style="display:inline-block;padding:12px 20px;background:#0f766e;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">Book a full consultation</a></p><p>Or open this link:<br>${upgradeUrl}</p>`
+    ? `<p style="margin:20px 0;"><a href="${escapeHtml(upgradeUrl)}" style="display:inline-block;padding:12px 22px;background:#1D4B36;color:#ffffff;border-radius:8px;text-decoration:none;font-weight:600;">Book a full consultation</a></p><p style="font-size:13px;color:#6D6D6D;">Or open this link:<br>${escapeHtml(upgradeUrl)}</p>`
     : "";
   const note = message ? `<p>${escapeHtml(message)}</p>` : "";
-  const html = `
-    <p>Dear ${escapeHtml(fullName)},</p>
-    <p>The prescribing doctor was unable to issue your prescription asynchronously
-    and recommends a full consultation.</p>
-    ${note}
-    ${cta}
-  `;
+  const html = wrapHtml(
+    "Your prescription request — next steps",
+    `<p>Dear ${escapeHtml(fullName)},</p>
+     <p>The prescribing doctor was unable to issue your prescription asynchronously
+     and recommends a full consultation.</p>
+     ${note}
+     ${cta}`,
+  );
   const text = `Dear ${fullName},\n\nThe prescribing doctor recommends a full consultation before a prescription can be issued.${
     message ? `\n\n${message}` : ""
   }${upgradeUrl ? `\n\nBook here: ${upgradeUrl}` : ""}`;
