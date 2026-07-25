@@ -426,12 +426,22 @@ export async function doctorPayoutStatementReport(
       doctorId,
       ...(filters.countryCode ? { countryCode: filters.countryCode } : {}),
       ...(filters.consultationType ? { consultationType: filters.consultationType } : {}),
+      // Never pay for a refunded consultation — the money went back to the
+      // patient, so it drops off the payout regardless of everything else.
+      paymentStatus: { not: "REFUNDED" },
       AND: [
-        // "Delivered" = an explicit COMPLETED status OR a set consultation-completed
-        // timestamp. Some concluded consultations (legacy / finalize flows) carry
-        // `consultationCompletedAt` while their status never advanced past
-        // REQUEST_RECEIVED — those are still payable and must appear.
-        { OR: [{ status: "COMPLETED" }, { consultationCompletedAt: { not: null } }] },
+        // Payable when the patient PAID, OR the consultation was delivered
+        // (explicit COMPLETED status, or a set `consultationCompletedAt` — some
+        // concluded consultations, e.g. legacy/finalize flows, keep a
+        // REQUEST_RECEIVED status while their completed-timestamp is set, and an
+        // insurance consultation is delivered without the patient ever paying).
+        {
+          OR: [
+            { paymentStatus: "PAID" },
+            { status: "COMPLETED" },
+            { consultationCompletedAt: { not: null } },
+          ],
+        },
         // Consultation date = scheduledAt, else consultationCompletedAt, else
         // createdAt — a COALESCE expressed as a filter so a call with no
         // scheduledAt still lands in the right period.
