@@ -1292,6 +1292,15 @@ export async function updateAdminDoctor(
           ...(body.canRequestCrossJurisdictionRx !== undefined && {
             canRequestCrossJurisdictionRx: body.canRequestCrossJurisdictionRx,
           }),
+          ...(body.crossBorderRxEnabled !== undefined && {
+            crossBorderRxEnabled: body.crossBorderRxEnabled,
+          }),
+          ...(body.crossBorderRxPriceCents !== undefined && {
+            crossBorderRxPriceCents: body.crossBorderRxPriceCents,
+          }),
+          ...(body.crossBorderRxPayoutCents !== undefined && {
+            crossBorderRxPayoutCents: body.crossBorderRxPayoutCents,
+          }),
         },
         include: { country: { select: { id: true, code: true } } },
       });

@@ -41,7 +41,6 @@ export type CrossBorderRxCopy = {
 type TargetCountry = {
   countryCode: string;
   countryName: string;
-  serviceId: string;
   doctors: { id: string; fullName: string; title: string }[];
 };
 

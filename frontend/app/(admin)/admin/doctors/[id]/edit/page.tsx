@@ -158,6 +158,9 @@ export default async function AdminEditDoctorPage({
       active: raw.active,
       canCreateManualAppointments: raw.canCreateManualAppointments,
       canRequestCrossJurisdictionRx: raw.canRequestCrossJurisdictionRx,
+      crossBorderRxEnabled: raw.crossBorderRxEnabled,
+      crossBorderRxPriceCents: raw.crossBorderRxPriceCents,
+      crossBorderRxPayoutCents: raw.crossBorderRxPayoutCents,
     };
 
     const [existingDoctors, validation] = await Promise.all([
@@ -473,6 +476,60 @@ export default async function AdminEditDoctorPage({
                   jurisdiction&rdquo; action in the consultation and can refer a
                   patient to an authorised prescribing doctor in another country.
                 </p>
+              </div>
+            </label>
+            <label className="flex cursor-pointer items-start gap-2.5 border-t border-[var(--color-border)] py-3">
+              <input
+                type="checkbox"
+                form="doctor-edit-form"
+                name="crossBorderRxEnabled"
+                defaultChecked={Boolean(doctor.crossBorderRxEnabled)}
+                className="mt-0.5 h-5 w-5 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
+              />
+              <div className="flex-1">
+                <p className="m-0 text-portal-compact font-bold text-[var(--color-text-primary)]">
+                  Available as cross-border prescriber
+                </p>
+                <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
+                  When on, treating doctors in other countries can send this
+                  doctor a cross-border prescription request. Set the patient
+                  price and the doctor&rsquo;s payout below, in the doctor&rsquo;s
+                  country currency.
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <span className="flex flex-col gap-1">
+                    <span className="gh-field-label">Price (patient fee)</span>
+                    <input
+                      type="number"
+                      form="doctor-edit-form"
+                      name="crossBorderRxPrice"
+                      min="0"
+                      step="0.01"
+                      defaultValue={
+                        doctor.crossBorderRxPriceCents != null
+                          ? (doctor.crossBorderRxPriceCents / 100).toFixed(2)
+                          : ""
+                      }
+                      className="gh-input"
+                    />
+                  </span>
+                  <span className="flex flex-col gap-1">
+                    <span className="gh-field-label">Payout (doctor earns)</span>
+                    <input
+                      type="number"
+                      form="doctor-edit-form"
+                      name="crossBorderRxPayout"
+                      min="0"
+                      step="0.01"
+                      defaultValue={
+                        doctor.crossBorderRxPayoutCents != null
+                          ? (doctor.crossBorderRxPayoutCents / 100).toFixed(2)
+                          : ""
+                      }
+                      className="gh-input"
+                    />
+                  </span>
+                </div>
               </div>
             </label>
           </AdminCard>
