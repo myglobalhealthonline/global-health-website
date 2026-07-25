@@ -167,6 +167,14 @@ const EXTRAS: Record<string, HomePageExtras> = {
   // "Medicine Anytime / Anywhere" i18n default. These heroTitle-only entries
   // give them the same "Online medical care in {Country}" pattern IE/PT get
   // from the DB, without needing a DB write.
+  // Portugal GP price €39 (owner-confirmed 2026-07-25). Badge strings reuse
+  // the proofread IE-locale phrasings, same figure.
+  "pt:pt": { heroPriceBadge: "Consultas de clínica geral a partir de 39 €" },
+  "pt:en": { heroPriceBadge: "GP consultations from €39" },
+  "pt:es": { heroPriceBadge: "Consultas de médico de cabecera desde 39 €" },
+  "pt:cs": { heroPriceBadge: "Konzultace s praktickým lékařem od 39 €" },
+  "pt:ro": { heroPriceBadge: "Consultații de medicină de familie de la 39 €" },
+  "pt:de": { heroPriceBadge: "Hausarzttermine ab 39 €" },
   "es:en": { heroTitle: "Online medical care in Spain" },
   "es:es": { heroTitle: "Atención médica online en España" },
   "es:pt": { heroTitle: "Cuidados médicos online em Espanha" },
@@ -360,11 +368,17 @@ const BUNDLE: Record<string, DeepPartial<HomeBundle>> = {
   },
 };
 
+// Key lookup is case-insensitive: EXTRAS historically mixes "IE:en" and
+// "es:en" key styles and CountryCode casing varies by call site.
+const EXTRAS_NORMALIZED: Record<string, HomePageExtras> = Object.fromEntries(
+  Object.entries(EXTRAS).map(([k, v]) => [k.toLowerCase(), v]),
+);
+
 export function homePageExtras(
   code: CountryCode,
   locale: string,
 ): HomePageExtras | null {
-  return EXTRAS[key(code, locale)] ?? null;
+  return EXTRAS_NORMALIZED[key(code, locale).toLowerCase()] ?? null;
 }
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {

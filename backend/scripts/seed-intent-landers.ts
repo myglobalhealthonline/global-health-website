@@ -18,7 +18,7 @@
  *    prescriptions/page.tsx comment). No stronger claim added here.
  *  - Prices: IE GP €39 confirmed live (frontend/lib/content/country-home-copy.ts).
  *    CZ GP 650 Kč confirmed live (backend/scripts/patch-czechia-gp-content.ts).
- *    PT GP price not found in repo/content — omitted rather than guessed.
+ *    PT GP price €39 owner-confirmed 2026-07-25.
  *
  *   node --import tsx scripts/seed-intent-landers.ts          # dry-run
  *   node --import tsx scripts/seed-intent-landers.ts --apply  # DO NOT RUN yet
@@ -184,7 +184,7 @@ const LANDERS: Lander[] = [
     title: "Atestado Médico Online — Consulta no Mesmo Dia | Portugal",
     seoTitle: "Atestado Médico Online Portugal | Consulta Mesmo Dia",
     seoDescription:
-      "Obtenha um atestado médico após consulta com um médico registado na Ordem dos Médicos, por videochamada segura, ainda hoje.",
+      "Obtenha um atestado médico após consulta com um médico registado na Ordem dos Médicos, por videochamada segura, ainda hoje. Consultas desde 39 €.",
     bodyHtml:
       "<h2>Atestado médico após consulta com um médico registado</h2>" +
       "<p>Precisa de um atestado médico para o trabalho ou para a escola? Pode ser avaliado por um médico registado na Ordem dos Médicos por videochamada segura, ainda hoje. A consulta avalia devidamente os seus sintomas — o atestado é emitido quando clinicamente apropriado, com base nessa avaliação, e não como um extra automático.</p>" +
@@ -195,7 +195,7 @@ const LANDERS: Lander[] = [
         ["Emissão do atestado", "Enviado de forma segura, caso seja clinicamente indicado."],
       ]) +
       "<h2>Marque a sua consulta</h2>" +
-      "<p>Fale hoje com um médico registado na Ordem dos Médicos.</p>" +
+      "<p>Fale hoje com um médico registado na Ordem dos Médicos. Consultas de clínica geral a partir de 39 €.</p>" +
       '<p><a href="/portugal/pt/services/sick-leave">Atestado Médico</a></p>',
     faq: [
       {
@@ -211,7 +211,7 @@ const LANDERS: Lander[] = [
       {
         question: "Quanto tempo demora a consulta?",
         answer:
-          "Consultas no mesmo dia estão disponíveis consoante a disponibilidade dos médicos.",
+          "Consultas no mesmo dia estão disponíveis consoante a disponibilidade dos médicos. As consultas de clínica geral têm um custo a partir de 39 €.",
       },
       {
         question: "E se precisar de avaliação presencial?",
