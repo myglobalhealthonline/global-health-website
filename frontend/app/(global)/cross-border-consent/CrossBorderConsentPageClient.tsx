@@ -267,7 +267,7 @@ function ConsentForm() {
         {/* Two options */}
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {/* Option A — share & pay */}
-          <div className="flex flex-col rounded-2xl border-2 border-[var(--color-brand-primary)] p-5">
+          <div className="flex flex-col rounded-2xl border border-[var(--color-border)] p-5">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
               <h2 className="text-base font-bold text-[var(--color-text-primary)]">
@@ -298,7 +298,7 @@ function ConsentForm() {
           {/* Option B — GP consult */}
           <div className="flex flex-col rounded-2xl border border-[var(--color-border)] p-5">
             <div className="flex items-center gap-2">
-              <Stethoscope className="size-5 text-[var(--color-text-muted)]" aria-hidden />
+              <Stethoscope className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
               <h2 className="text-base font-bold text-[var(--color-text-primary)]">
                 Prefer a full consultation?
               </h2>
@@ -310,8 +310,7 @@ function ConsentForm() {
               type="button"
               onClick={() => decide("DECLINE")}
               disabled={busy}
-              className="mt-4 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 px-6 font-semibold transition-colors disabled:opacity-60"
-              style={{ borderColor: FOREST, color: FOREST, background: "transparent" }}
+              className="gh2-btn-lime mt-4 inline-flex w-full items-center justify-center gap-2 disabled:opacity-60"
             >
               {acting === "DECLINE" ? (
                 <>
