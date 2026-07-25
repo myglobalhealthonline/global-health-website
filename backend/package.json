@@ -65,13 +65,15 @@
         "prisma": "^7.8.0",
         "tsx": "^4.21.0",
         "typescript": "^5",
-        "typescript-eslint": "^8"
+        "typescript-eslint": "^8.65.0"
     },
     "pnpm": {
         "//": "S-004: this service deploys standalone with --ignore-workspace and does NOT inherit the root package.json overrides. Mirror every security pin here by hand — when the root adds/bumps a CVE pin, add it here too or this build ships unpatched. Prefer major-scoped keys (e.g. ws@7) so a floor never becomes a ceiling.",
         "//auditConfig": "Mirrors root package.json — see the note there. GHSA-mh99-v99m-4gvg's single '<=5.0.7' range cross-matches the patched brace-expansion@1.1.16 that eslint's minimatch@3 (devDependency) pulls in.",
         "auditConfig": {
-            "ignoreGhsas": ["GHSA-mh99-v99m-4gvg"]
+            "ignoreGhsas": [
+                "GHSA-mh99-v99m-4gvg"
+            ]
         },
         "overrides": {
             "sanitize-html": "^2.17.4",
@@ -83,11 +85,11 @@
             "ws@7": "7.5.11",
             "form-data": "4.0.6",
             "js-yaml": "4.3.0",
-      "fast-uri": "3.1.4",
-      "axios": "^1.18.1",
-      "find-my-way": "^9.7.0",
-      "sharp": "^0.35.3",
-      "postcss": "8.5.23"
+            "fast-uri": "3.1.4",
+            "axios": "^1.18.1",
+            "find-my-way": "^9.7.0",
+            "sharp": "^0.35.3",
+            "postcss": "8.5.23"
         }
     }
 }
