@@ -167,8 +167,13 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
     let lastNatural = 0;
     let lastFooterH = 0;
     const measureAndApply = () => {
-      if (window.innerWidth < 1024) {
-        // Single-column: let CSS flow govern (no scaling).
+      // Coarse pointer (touch) mirrors the CSS at any width: `@media (pointer:
+      // coarse)` forces `.selectPanel { transform: none }` and unclips
+      // `.countryScroller`, so a reserved height computed from a scale that
+      // CSS is about to ignore would cut the list off with no scrollbar to
+      // reach the rest (list "disappears" on touch tablets/laptops >=1024px).
+      if (window.innerWidth < 1024 || window.matchMedia("(pointer: coarse)").matches) {
+        // Let CSS flow govern (no scaling).
         panel.style.removeProperty("--gate-fit");
         slot.style.removeProperty("height");
         return;

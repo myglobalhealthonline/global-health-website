@@ -16,6 +16,18 @@ const DEFAULT_GLOW_COLOR: [number, number, number] = [0.08, 0.22, 0.17];
 const DEFAULT_MARKERS: GlobeMarker[] = [];
 const DEFAULT_ARCS: GlobeArc[] = [];
 
+// The flag/label overlay below is positioned entirely via CSS Anchor
+// Positioning (position-anchor/anchor(), driven by cobe's per-marker
+// --cobe-{id} anchor names — see cobe's README). Browsers without support
+// (Firefox, older Safari/Chromium) treat anchor(top)/anchor(center) as
+// invalid, which resolves to `auto`, collapsing every label to the same
+// static top-of-container position — a stacked cluster of flags instead of
+// pins on the globe. The canvas dots themselves are drawn by cobe directly
+// and are unaffected, so on unsupported browsers we just skip the HTML
+// overlay rather than show the broken cluster.
+const SUPPORTS_ANCHOR_POSITIONING =
+  typeof CSS !== "undefined" && typeof CSS.supports === "function" && CSS.supports("anchor-name", "--gh-anchor-probe");
+
 export type GlobeMarker = {
   id: string;
   location: [number, number];
@@ -335,7 +347,7 @@ function GlobeImpl({
   return (
     <div className={`relative aspect-square select-none ${className}`}>
       <div ref={containerRef} className="absolute inset-0" aria-hidden />
-      {markers.map((m) => (
+      {SUPPORTS_ANCHOR_POSITIONING && markers.map((m) => (
         <div
           key={m.id}
           style={
