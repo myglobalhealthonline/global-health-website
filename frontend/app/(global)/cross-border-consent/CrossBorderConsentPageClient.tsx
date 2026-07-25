@@ -310,7 +310,8 @@ function ConsentForm() {
               type="button"
               onClick={() => decide("DECLINE")}
               disabled={busy}
-              className="gh2-btn-ghost mt-4 inline-flex w-full items-center justify-center gap-2 disabled:opacity-60"
+              className="mt-4 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 px-6 font-semibold transition-colors disabled:opacity-60"
+              style={{ borderColor: FOREST, color: FOREST, background: "transparent" }}
             >
               {acting === "DECLINE" ? (
                 <>
