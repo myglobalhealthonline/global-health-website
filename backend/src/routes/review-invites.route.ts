@@ -9,6 +9,7 @@ import {
   submitReviewInvite,
 } from "../modules/review-invites/review-invite.service.js";
 import { getReviewFormLocale } from "../lib/i18n/review-form.js";
+import { isValidCronSecret } from "../utils/cron-auth.js";
 
 const ratingSchema = z.object({
   overallSatisfaction: z.number().int().min(1).max(5),
@@ -85,7 +86,9 @@ const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
       request.headers["x-review-secret"] ??
       request.headers["x-cron-secret"];
     const expected = env.REVIEW_FORM_WEBHOOK_SECRET ?? env.CRON_SECRET;
-    if (!expected || secret !== expected) {
+    // Constant-time compare: a `!==` on the shared secret leaks its prefix
+    // byte-by-byte to an attacker who can time this endpoint.
+    if (!isValidCronSecret(secret, expected)) {
       return reply.status(401).send(errorResponse("Unauthorized"));
     }
     const body = z.object({ appointmentId: z.string().min(1) }).safeParse(request.body ?? {});

@@ -56,7 +56,11 @@ const ALLOWED_MIME = new Set([
   "image/avif",
   "application/pdf",
 ]);
-const MAX_BYTES = 20 * 1024 * 1024; // 20 MB
+// Must not exceed the global @fastify/multipart `fileSize` ceiling in app.ts
+// (10 MB). Above that, `toBuffer()` throws on the truncated stream before this
+// check ever runs, so an oversized upload 500s instead of returning the 413
+// advertised below — the same mismatch S-021 fixed on the other upload routes.
+const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 
 const idParamSchema = z.object({ id: z.string().min(1).max(120) });
 const messageIdParamSchema = z.object({
@@ -345,7 +349,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
 
         const buffer = await file.toBuffer();
         if (buffer.length > MAX_BYTES) {
-          return reply.status(413).send(errorResponse("File too large (max 20 MB)"));
+          return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
         }
         const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
         if (!mimetype) {
@@ -577,7 +581,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
 
         const buffer = await file.toBuffer();
         if (buffer.length > MAX_BYTES) {
-          return reply.status(413).send(errorResponse("File too large (max 20 MB)"));
+          return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
         }
         const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
         if (!mimetype) {
