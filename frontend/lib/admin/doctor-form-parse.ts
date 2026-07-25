@@ -76,5 +76,7 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
     active: formData.get("active") === "on",
     canCreateManualAppointments:
       formData.get("canCreateManualAppointments") === "on",
+    canRequestCrossJurisdictionRx:
+      formData.get("canRequestCrossJurisdictionRx") === "on",
   };
 }

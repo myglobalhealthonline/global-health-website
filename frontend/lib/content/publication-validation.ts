@@ -152,7 +152,10 @@ export function isPublicDoctorRecordIndexable(
 
 export function validateAdminServicePayload(service: Pick<AdminServiceDto, "kind" | "name" | "summary" | "heroTitle" | "heroDescription" | "detailBody" | "durationMinutes" | "basePriceCents" | "currencyCode" | "isActive">): PublicationValidationResult {
   return validatePublicServiceRecord({
-    kind: service.kind,
+    // The inner ASYNC_PRESCRIPTION service is admin-only and never publicly
+    // listed, so no public editorial rule targets it — fold it into the
+    // prescription family for validation (non-blocking warnings only).
+    kind: service.kind === "ASYNC_PRESCRIPTION" ? "PRESCRIPTION" : service.kind,
     name: service.name,
     summary: service.summary,
     heroTitle: service.heroTitle,

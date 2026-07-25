@@ -111,6 +111,30 @@ export async function fetchDoctorMe() {
   return doctorRequest<DoctorMe>("/api/doctor/me");
 }
 
+export type DoctorPermissions = {
+  doctorId: string;
+  canCreateManualAppointments: boolean;
+  canRequestCrossJurisdictionRx: boolean;
+};
+
+export async function fetchDoctorPermissions() {
+  return doctorRequest<DoctorPermissions>("/api/doctor/me/permissions");
+}
+
+export type CrossBorderRxInboxItem = {
+  id: string;
+  status: string;
+  patientFullName: string;
+  clinicalSummary: string;
+  asyncAppointmentId: string | null;
+  sourceDoctorName: string | null;
+  createdAt: string;
+};
+
+export async function fetchCrossBorderRxInbox() {
+  return doctorRequest<{ items: CrossBorderRxInboxItem[] }>("/api/doctor/cross-border-rx");
+}
+
 /* ── Admin-approved profile fields ────────────────────────────────── */
 
 /**

@@ -14,6 +14,7 @@ import {
   CalendarClock,
   CalendarRange,
   FileText,
+  Globe2,
   LayoutDashboard,
   MessagesSquare,
   Receipt,
@@ -135,6 +136,8 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     CONSULT_SIGNED: d.notifications.consultSigned,
     EXAM_LOGGED: d.notifications.examLogged,
     FORM_SUBMITTED: d.notifications.formSubmitted,
+    CROSS_BORDER_RX_REQUESTED: d.notifications.crossBorderRxRequested,
+    CROSS_BORDER_RX_UPDATED: d.notifications.crossBorderRxUpdated,
   };
   if (notif.ok) {
     unreadCount = notif.data.unreadCount;
@@ -183,6 +186,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
         { href: "/doctor/patients", label: d.nav.patients, icon: <Users className="size-4" aria-hidden /> },
         { href: "/doctor/services", label: d.nav.myServices, icon: <Stethoscope className="size-4" aria-hidden /> },
         { href: "/doctor/forms", label: d.nav.forms, icon: <FileText className="size-4" aria-hidden /> },
+        { href: "/doctor/cross-border-rx", label: d.nav.crossBorderRx, icon: <Globe2 className="size-4" aria-hidden /> },
       ],
     },
     {

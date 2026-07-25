@@ -157,6 +157,7 @@ export default async function AdminEditDoctorPage({
       profileImageZoom: raw.profileImageZoom,
       active: raw.active,
       canCreateManualAppointments: raw.canCreateManualAppointments,
+      canRequestCrossJurisdictionRx: raw.canRequestCrossJurisdictionRx,
     };
 
     const [existingDoctors, validation] = await Promise.all([
@@ -452,6 +453,25 @@ export default async function AdminEditDoctorPage({
                   When on, the doctor sees a &ldquo;New appointment&rdquo;
                   action in their portal and can book on behalf of patients
                   without going through the public flow.
+                </p>
+              </div>
+            </label>
+            <label className="flex cursor-pointer items-start gap-2.5 border-t border-[var(--color-border)] py-3">
+              <input
+                type="checkbox"
+                form="doctor-edit-form"
+                name="canRequestCrossJurisdictionRx"
+                defaultChecked={Boolean(doctor.canRequestCrossJurisdictionRx)}
+                className="mt-0.5 h-5 w-5 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
+              />
+              <div className="flex-1">
+                <p className="m-0 text-portal-compact font-bold text-[var(--color-text-primary)]">
+                  Can request prescriptions outside jurisdiction
+                </p>
+                <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
+                  When on, the doctor sees a &ldquo;Request prescription outside
+                  jurisdiction&rdquo; action in the consultation and can refer a
+                  patient to an authorised prescribing doctor in another country.
                 </p>
               </div>
             </label>
