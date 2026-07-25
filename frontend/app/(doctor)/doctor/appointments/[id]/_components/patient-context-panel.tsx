@@ -98,15 +98,19 @@ export function PatientContextPanel({
             }
           />
           {address ? <Row label={copy.address} value={address} /> : null}
-          {/* PT-only: the backend returns this solely for markets with
-              `collectUtenteNumber`, so presence is the gate here. */}
-          {appointment.utenteNumber ? (
-            <Row label={copy.utenteNumber} value={appointment.utenteNumber} />
-          ) : null}
+          {/* PT-only block. Número de Utente, NIF, Cartão de Cidadão and the
+              pharmacy each render as an editable row so the doctor can fill
+              one the patient left blank at booking. Presence can't be the
+              gate — the whole point is the "add" affordance on an empty field
+              — so the market is checked explicitly. Non-PT markets that were
+              never shown these keep seeing nothing. For a non-PT market that
+              somehow carries a utente value, fall back to the read-only Row so
+              it is not silently dropped. */}
           {isPortugal ? (
             <PtPatientIdentityRows
               email={appointment.email}
               initial={{
+                utenteNumber: appointment.utenteNumber ?? null,
                 taxIdNumber: appointment.taxIdNumber ?? null,
                 nationalIdNumber: appointment.nationalIdNumber ?? null,
                 // Falls back to the pharmacy captured on this booking when the
@@ -117,6 +121,8 @@ export function PatientContextPanel({
               }}
               copy={copy.ptFields}
             />
+          ) : appointment.utenteNumber ? (
+            <Row label={copy.utenteNumber} value={appointment.utenteNumber} />
           ) : null}
           {appointment.consultationLanguageCode ? (
             <Row

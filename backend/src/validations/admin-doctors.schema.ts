@@ -159,6 +159,7 @@ const adminDoctorBaseObject = z.object({
    * always bypasses this gate downstream.
    */
   canCreateManualAppointments: z.boolean().optional(),
+  canRequestCrossJurisdictionRx: z.boolean().optional(),
   /**
    * SEO metadata for the public doctor profile page. Kept admin-managed
    * (not on the doctor's self-edit form) so changes can't break canonical

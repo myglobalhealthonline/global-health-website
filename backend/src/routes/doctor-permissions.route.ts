@@ -15,11 +15,15 @@ const doctorPermissionsRoute: FastifyPluginAsync = async (app) => {
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
     const doctor = await prisma.doctor.findUnique({
       where: { id: auth.doctorId },
-      select: { canCreateManualAppointments: true },
+      select: {
+        canCreateManualAppointments: true,
+        canRequestCrossJurisdictionRx: true,
+      },
     });
     return okResponse({
       doctorId: auth.doctorId,
       canCreateManualAppointments: Boolean(doctor?.canCreateManualAppointments),
+      canRequestCrossJurisdictionRx: Boolean(doctor?.canRequestCrossJurisdictionRx),
     });
   });
 };

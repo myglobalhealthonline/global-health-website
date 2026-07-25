@@ -29,7 +29,8 @@
     "profile": "Profil",
     "profileCountry": "Profil ({country})",
     "security": "Zabezpečení",
-    "confidentiality": "Mlčenlivost"
+    "confidentiality": "Mlčenlivost",
+    "crossBorderRx": "Cross-border requests"
   },
   "notifications": {
     "appointmentAssigned": "Přiřazený termín",
@@ -38,7 +39,9 @@
     "consultSigned": "Konzultace podepsána",
     "examLogged": "Výsledek vyšetření zaznamenán",
     "formSubmitted": "Formulář odeslán",
-    "emptyMessage": "Zatím žádná oznámení."
+    "emptyMessage": "Zatím žádná oznámení.",
+    "crossBorderRxRequested": "Cross-border prescription request",
+    "crossBorderRxUpdated": "Cross-border prescription update"
   },
   "common": {
     "apply": "Použít",
@@ -1579,5 +1582,55 @@
       "generate": "Vygenerovat",
       "documentsQueueNote": "Vygenerované dokumenty čekají ve frontě ke kontrole a odeslání, než se dostanou k pacientovi."
     }
+  },
+  "crossBorderRx": {
+    "openButton": "Request prescription outside jurisdiction",
+    "title": "Request prescription outside jurisdiction",
+    "description": "Ask an authorised doctor in another country to issue this prescription asynchronously. The patient pays a fee, then the prescribing doctor reviews your request.",
+    "countryLabel": "Country",
+    "countryPlaceholder": "Select country…",
+    "doctorLabel": "Prescribing doctor",
+    "doctorPlaceholder": "Select doctor…",
+    "summaryLabel": "Clinical summary for the prescribing doctor",
+    "summaryPlaceholder": "Diagnosis, medication requested, dose, and rationale…",
+    "billingNote": "The patient receives a payment link. Once paid, the prescribing doctor is notified and can accept, ask for more information, or refuse.",
+    "submit": "Create request",
+    "submitting": "Creating…",
+    "cancel": "Cancel",
+    "loadingOptions": "Loading available countries…",
+    "noTargets": "No prescribing doctors are set up in other countries yet. Ask an administrator.",
+    "selectCountryFirst": "Select a country first.",
+    "selectDoctorFirst": "Select a doctor.",
+    "summaryRequired": "Add a clinical summary.",
+    "couldNotCreate": "Could not create the request.",
+    "createdTitle": "Request created",
+    "createdBody": "A payment link has been sent to the patient. Share this link if needed:",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "done": "Done"
+  },
+  "crossBorderRxInbox": {
+    "eyebrow": "Cross-border",
+    "title": "Cross-border prescription requests",
+    "description": "Requests from doctors in other countries asking you to issue a prescription. Review the summary, then open the consultation to prescribe.",
+    "empty": "No pending cross-border requests.",
+    "fromLabel": "Requested by",
+    "statusAwaiting": "Awaiting your review",
+    "statusMoreInfo": "More information requested",
+    "openConsultation": "Open consultation",
+    "accept": "Accept & prescribe",
+    "requestInfo": "Request more info",
+    "refuse": "Refuse",
+    "messageLabel": "Message",
+    "messagePlaceholder": "What information do you need, or why are you refusing?",
+    "acceptHint": "Marks the request accepted. Issue the prescription in the consultation, then sign.",
+    "refuseHint": "Declines the request and offers the patient a full consultation with you.",
+    "messageRequired": "A message is required to request more information.",
+    "submit": "Submit",
+    "submitting": "Submitting…",
+    "couldNotSubmit": "Could not submit the decision.",
+    "acceptedToast": "Request accepted.",
+    "moreInfoToast": "Information request sent.",
+    "refusedToast": "Request refused and upgrade offered."
   }
 }

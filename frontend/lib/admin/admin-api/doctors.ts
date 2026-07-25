@@ -270,6 +270,9 @@ export type AdminDoctorDto = {
   /** When true the doctor's own portal can create manual appointments.
    *  Default false — admin grants per doctor. ADMIN role always bypasses. */
   canCreateManualAppointments?: boolean;
+  /** When true the doctor may raise cross-jurisdiction prescription requests.
+   *  Default false — admin grants per doctor. ADMIN role always bypasses. */
+  canRequestCrossJurisdictionRx?: boolean;
 };
 
 export type AdminDoctorRegistrationDto = {

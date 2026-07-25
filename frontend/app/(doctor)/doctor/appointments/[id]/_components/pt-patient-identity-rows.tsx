@@ -4,6 +4,7 @@ import { useId, useRef, useState, useTransition } from "react";
 import { Check, Pencil, Plus, X } from "lucide-react";
 
 export type PtPatientFieldsCopy = {
+  utente: string;
   nif: string;
   idCard: string;
   pharmacy: string;
@@ -14,17 +15,22 @@ export type PtPatientFieldsCopy = {
   saveFailed: string;
 };
 
-/** The three PatientProfile columns this card writes. Keys match the PATCH
- *  body of /api/doctor/patients/:email/profile one-for-one. */
-type FieldKey = "taxIdNumber" | "nationalIdNumber" | "preferredPharmacy";
+/** The PatientProfile columns this card writes. Keys match the PATCH body of
+ *  /api/doctor/patients/:email/profile one-for-one. */
+type FieldKey =
+  | "utenteNumber"
+  | "taxIdNumber"
+  | "nationalIdNumber"
+  | "preferredPharmacy";
 
 type Values = Record<FieldKey, string | null>;
 
 /**
  * Portugal-only identity + pharmacy rows for the patient-context card.
  *
- * Two things a PT consultation needs that the booking form does not always
- * capture: the NIF and Cartão de Cidadão that `buildPatientIdLine` prints on
+ * The booking form does not always capture what a PT consultation needs: the
+ * Número de Utente (SNS number for electronic prescription), the NIF and
+ * Cartão de Cidadão that `buildPatientIdLine` prints on
  * prescriptions/certificates, and the pharmacy the script is sent to. When
  * the patient left one blank the doctor can fill it inline mid-consult
  * instead of leaving the workspace for the patient chart.
@@ -95,6 +101,7 @@ export function PtPatientIdentityRows({
   }
 
   const rows: Array<{ field: FieldKey; label: string; maxLength: number }> = [
+    { field: "utenteNumber", label: copy.utente, maxLength: 64 },
     { field: "taxIdNumber", label: copy.nif, maxLength: 64 },
     { field: "nationalIdNumber", label: copy.idCard, maxLength: 64 },
     { field: "preferredPharmacy", label: copy.pharmacy, maxLength: 200 },
