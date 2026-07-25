@@ -114,6 +114,9 @@ describe("POST /api/appointments — peak pricing", () => {
       fullName: "Peak Pricing Test Patient",
       email: `${uniq}@test.local`,
       consentAccepted: true,
+      // Required-true on every booking since the compliance pass
+      // (booking.schema.ts) — omitting it 400s before pricing is ever reached.
+      crossBorderConsentAccepted: true,
       gdprConsentClinic: true,
       gdprConsentPlatform: true,
       serviceSlug,
