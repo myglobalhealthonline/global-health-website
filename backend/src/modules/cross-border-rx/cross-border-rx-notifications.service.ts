@@ -184,7 +184,9 @@ export async function notifyPatientCrossBorderConsent(opts: {
      <p>To make this possible, your consultation notes would be shared with
      ${esc(opts.targetDoctorName)}. Please review and choose how to proceed —
      agree and pay for the prescription, or book a full GP consultation instead.</p>
-     ${ctaButton(opts.consentUrl, "Review &amp; continue")}`,
+     <p style="margin:24px 0;">
+       <a href="${esc(opts.consentUrl)}" style="display:inline-block;padding:13px 26px;background:#1D4B36;color:#ffffff;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">Review &amp; continue</a>
+     </p>`,
   );
   const emailText = `Dear ${opts.fullName},\n\n${opts.sourceDoctorName} would like a prescription issued for you by ${opts.targetDoctorName} in ${opts.targetCountryName}. To make this possible, your consultation notes would be shared with ${opts.targetDoctorName}.\n\nReview and choose how to proceed:\n${opts.consentUrl}`;
 
