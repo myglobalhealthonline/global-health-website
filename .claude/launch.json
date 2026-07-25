@@ -4,15 +4,30 @@
     {
       "name": "frontend",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev:frontend"],
+      "runtimeArgs": [
+        "dev:frontend"
+      ],
       "port": 3000,
       "autoPort": true
     },
     {
       "name": "backend",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev:backend"],
+      "runtimeArgs": [
+        "dev:backend"
+      ],
       "port": 4000
+    },
+    {
+      "name": "frontend-prod",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "frontend",
+        "start"
+      ],
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }
