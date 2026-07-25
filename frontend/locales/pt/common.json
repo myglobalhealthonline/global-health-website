@@ -166,7 +166,9 @@
     "clinicalDirectorLabel": "Diretor Clínico",
     "ourTeamEyebrow": "A Nossa Equipa",
     "showResults": "Ver resultados",
-    "featuredClinician": "Clínico em destaque"
+    "featuredClinician": "Clínico em destaque",
+    "registrationLabel": "Registo",
+    "verifiedSuffix": "Verificado"
   },
   "cookie": {
     "title": "Preferências de cookies",
@@ -319,7 +321,8 @@
     "fallbackBio": "Este clínico apoia consultas online e orientação de acompanhamento através da Global Health.",
     "fallbackQualification1": "As qualificações e detalhes de registo são apresentados quando verificados pela equipa da clínica.",
     "fallbackQualification2": "Os pacientes podem confirmar a adequação do clínico durante o processo de agendamento.",
-    "nextStep": "Próximo passo"
+    "nextStep": "Próximo passo",
+    "patientReviews": "Avaliações de pacientes"
   },
   "bookingForm": {
     "benefitHeading": "Aplicar o seu plano",
@@ -842,5 +845,8 @@
   "reports": {
     "noRowsInRange": "Sem registos neste intervalo.",
     "truncatedNotice": "Lista truncada no limite de linhas da exportação — restrinja o intervalo de datas ou os filtros para obter tudo."
+  },
+  "doctify": {
+    "body": "Avaliações independentes e verificadas, recolhidas pela Doctify junto de pacientes tratados pelos nossos clínicos."
   }
 }

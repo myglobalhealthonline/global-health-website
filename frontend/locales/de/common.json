@@ -166,7 +166,9 @@
     "clinicalDirectorLabel": "Ärztlicher Direktor",
     "ourTeamEyebrow": "Unser Team",
     "showResults": "Ergebnisse anzeigen",
-    "featuredClinician": "Empfohlener Arzt"
+    "featuredClinician": "Empfohlener Arzt",
+    "registrationLabel": "Registrierung",
+    "verifiedSuffix": "Verifiziert"
   },
   "cookie": {
     "title": "Cookie-Einstellungen",
@@ -319,7 +321,8 @@
     "fallbackBio": "Dieser Kliniker unterstützt Online-Konsultationen und Nachsorge über Global Health.",
     "fallbackQualification1": "Qualifikationen und Registrierungsdetails werden angezeigt, wenn sie vom Klinikteam verifiziert sind.",
     "fallbackQualification2": "Patienten können die Eignung des Klinikers während der Buchungsaufnahme bestätigen.",
-    "nextStep": "Nächster Schritt"
+    "nextStep": "Nächster Schritt",
+    "patientReviews": "Patientenbewertungen"
   },
   "bookingForm": {
     "benefitHeading": "Tarif anwenden",
@@ -842,5 +845,8 @@
   "reports": {
     "noRowsInRange": "Keine Zeilen in diesem Zeitraum.",
     "truncatedNotice": "Liste am Zeilenlimit des Exports gekürzt — grenzen Sie Zeitraum oder Filter ein, um alles zu erhalten."
+  },
+  "doctify": {
+    "body": "Unabhängige, verifizierte Bewertungen, die Doctify bei Patientinnen und Patienten unserer Ärzte erhebt."
   }
 }

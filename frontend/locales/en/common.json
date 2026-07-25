@@ -166,7 +166,9 @@
     "languagesMoreTemplate": "{languages} & More",
     "clinicalDirectorLabel": "Clinical Director",
     "showResults": "Show results",
-    "featuredClinician": "Featured clinician"
+    "featuredClinician": "Featured clinician",
+    "registrationLabel": "Registration",
+    "verifiedSuffix": "Verified"
   },
   "cookie": {
     "title": "Cookie preferences",
@@ -319,7 +321,8 @@
     "fallbackBio": "This clinician supports online consultations and follow-up guidance through Global Health.",
     "fallbackQualification1": "Qualifications and registration details are shown when verified by the clinic team.",
     "fallbackQualification2": "Patients can confirm clinician fit during the booking intake.",
-    "nextStep": "Next step"
+    "nextStep": "Next step",
+    "patientReviews": "Patient reviews"
   },
   "bookingForm": {
     "benefitHeading": "Apply your plan",
@@ -842,5 +845,8 @@
   "reports": {
     "noRowsInRange": "No rows in this range.",
     "truncatedNotice": "List truncated at the export row limit — narrow the date range or filters for a complete pull."
+  },
+  "doctify": {
+    "body": "Independent, verified reviews collected by Doctify from patients treated by our clinicians."
   }
 }

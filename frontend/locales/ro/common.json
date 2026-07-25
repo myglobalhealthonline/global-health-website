@@ -166,7 +166,9 @@
     "clinicalDirectorLabel": "Director clinic",
     "ourTeamEyebrow": "Echipa noastră",
     "showResults": "Arată rezultatele",
-    "featuredClinician": "Medic recomandat"
+    "featuredClinician": "Medic recomandat",
+    "registrationLabel": "Înregistrare",
+    "verifiedSuffix": "Verificat"
   },
   "cookie": {
     "title": "Preferințe cookie",
@@ -319,7 +321,8 @@
     "fallbackBio": "Acest clinician susține consultații online și îndrumări de urmărire prin Global Health.",
     "fallbackQualification1": "Calificările și detaliile de înregistrare sunt afișate atunci când sunt verificate de echipa clinicii.",
     "fallbackQualification2": "Pacienții pot confirma potrivirea clinicianului în timpul procesului de programare.",
-    "nextStep": "Pasul următor"
+    "nextStep": "Pasul următor",
+    "patientReviews": "Recenzii ale pacienților"
   },
   "bookingForm": {
     "benefitHeading": "Aplicați planul",
@@ -842,5 +845,8 @@
   "reports": {
     "noRowsInRange": "Niciun rând în acest interval.",
     "truncatedNotice": "Listă trunchiată la limita de rânduri a exportului — restrângeți intervalul de date sau filtrele pentru un export complet."
+  },
+  "doctify": {
+    "body": "Recenzii independente și verificate, colectate de Doctify de la pacienți tratați de medicii noștri."
   }
 }

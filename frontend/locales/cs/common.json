@@ -166,7 +166,9 @@
     "clinicalDirectorLabel": "Klinický ředitel",
     "ourTeamEyebrow": "Náš tým",
     "showResults": "Zobrazit výsledky",
-    "featuredClinician": "Vybraný lékař"
+    "featuredClinician": "Vybraný lékař",
+    "registrationLabel": "Registrace",
+    "verifiedSuffix": "Ověřeno"
   },
   "cookie": {
     "title": "Nastavení cookies",
@@ -319,7 +321,8 @@
     "fallbackBio": "Tento klinik podporuje online konzultace a následné poradenství prostřednictvím Global Health.",
     "fallbackQualification1": "Kvalifikace a registrační údaje jsou zobrazeny po ověření týmem kliniky.",
     "fallbackQualification2": "Pacienti mohou potvrdit vhodnost klinika během procesu rezervace.",
-    "nextStep": "Další krok"
+    "nextStep": "Další krok",
+    "patientReviews": "Hodnocení pacientů"
   },
   "bookingForm": {
     "benefitHeading": "Použít váš plán",
@@ -842,5 +845,8 @@
   "reports": {
     "noRowsInRange": "V tomto rozsahu nejsou žádné záznamy.",
     "truncatedNotice": "Seznam zkrácen na limit řádků exportu — zužte rozsah dat nebo filtry pro úplný výpis."
+  },
+  "doctify": {
+    "body": "Nezávislá ověřená hodnocení, která Doctify sbírá od pacientů ošetřených našimi lékaři."
   }
 }
