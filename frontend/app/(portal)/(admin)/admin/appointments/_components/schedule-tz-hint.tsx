@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 /**
  * Timezone caption for the reschedule `<input type="datetime-local">`.
@@ -47,6 +47,15 @@ function timeIn(at: Date, tz: string): string {
   }).format(at);
 }
 
+/** Never fires — the browser zone can't change mid-page. */
+function subscribeNever() {
+  return () => {};
+}
+
+function getBrowserTz(): string | null {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+}
+
 export function ScheduleTzHint({
   iso,
   patientTimezone,
@@ -54,11 +63,10 @@ export function ScheduleTzHint({
   iso: string | null;
   patientTimezone?: string | null;
 }) {
-  const [browserTz, setBrowserTz] = useState<string | null>(null);
-
-  useEffect(() => {
-    setBrowserTz(Intl.DateTimeFormat().resolvedOptions().timeZone || null);
-  }, []);
+  // The browser zone is a client-only value that never changes for the life
+  // of the page: read it through useSyncExternalStore so the server snapshot
+  // stays null (matching SSR) without a setState-in-effect round trip.
+  const browserTz = useSyncExternalStore(subscribeNever, getBrowserTz, () => null);
 
   const at = iso ? new Date(iso) : null;
   const valid = at && !Number.isNaN(at.getTime()) ? at : null;

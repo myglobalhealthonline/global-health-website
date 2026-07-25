@@ -41,6 +41,7 @@ export function LazyHydrate({
 
     if (typeof IntersectionObserver === "undefined") {
       // ponytail: no IO support, fail open rather than stay inert forever
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- IO support is only knowable post-mount; hydrating in the initializer would desync SSR markup
       setHydrated(true);
       return;
     }

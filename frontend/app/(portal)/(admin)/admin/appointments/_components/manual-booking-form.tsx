@@ -177,7 +177,10 @@ export function ManualBookingForm({
 
   // Insurers bookable for the chosen service (backend already dropped any with
   // no in-network doctor), and the one currently selected.
-  const insuranceOptions = selectedService?.insuranceOptions ?? [];
+  const insuranceOptions = useMemo(
+    () => selectedService?.insuranceOptions ?? [],
+    [selectedService],
+  );
   const selectedInsurance = useMemo(
     () => insuranceOptions.find((o) => o.companyId === insuranceCompanyId) ?? null,
     [insuranceOptions, insuranceCompanyId],
