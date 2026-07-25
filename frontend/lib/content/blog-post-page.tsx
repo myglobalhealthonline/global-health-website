@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck, ArrowUpRight, RefreshCw } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
-import { getBlogPost, type BlogDoctor, type BlogPostFull } from "@/lib/content/get-public-blog";
+import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -151,6 +151,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   if (resolved.kind === "not-found") notFound();
   if (resolved.kind === "redirect") redirect(resolved.redirectTo);
   const { post, canonicalUrl, backHref } = resolved;
+  const routeCode = routeParams.countrySlug ? countryCodeFromSlug(routeParams.countrySlug) : undefined;
 
   const locale = await getPageLocale(post.locale);
   const { home } = loadLocaleBundle(locale);
@@ -166,9 +167,12 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
     year: "numeric",
   });
 
-  const [authorPhysician, reviewerPhysician] = await Promise.all([
+  const [authorPhysician, reviewerPhysician, relatedPosts] = await Promise.all([
     blogPhysicianInput(post.authorDoctor),
     blogPhysicianInput(post.reviewerDoctor),
+    listBlogPosts(routeCode ?? undefined).then((posts) =>
+      posts.filter((p) => p.slug !== post.slug).slice(0, 3),
+    ),
   ]);
 
   // "Clinically reviewed by Dr X" — prefer the linked reviewer doctor (with
@@ -185,6 +189,10 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         year: "numeric",
       })
     : formatted;
+  const relatedHrefFor = (p: BlogListItem) =>
+    routeParams.countrySlug && routeParams.lang
+      ? `/${routeParams.countrySlug}/${routeParams.lang}/blog/${p.slug}`
+      : `/blog/${p.slug}`;
 
   return (
     <>
@@ -450,6 +458,54 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         </div>
       </section>
 
+      {relatedPosts.length > 0 ? (
+        <section className="gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+          <SectionSeam theme="light" />
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <h2
+              className="max-w-[24ch] font-extrabold tracking-[-0.03em] leading-[1.04]"
+              style={{
+                fontSize: "clamp(1.9rem,3.5vw + 0.4rem,3rem)",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {blogI18n.moreArticles}
+            </h2>
+            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:mt-12">
+              {relatedPosts.map((p) => (
+                <Link
+                  key={p.slug}
+                  href={relatedHrefFor(p)}
+                  className="gh2-glass-forest gh2-glass-hover gh-focus-on-dark group flex flex-col p-6"
+                >
+                  <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-accent)]">
+                    {p.category}
+                  </span>
+                  <h3
+                    className="mt-3 text-[17px] font-bold leading-snug"
+                    style={{ color: "rgba(255,255,255,0.92)" }}
+                  >
+                    {p.title}
+                  </h3>
+                  <p
+                    className="mt-3 line-clamp-4 text-[13px] leading-relaxed"
+                    style={{ color: "var(--gh2-on-dark-muted)" }}
+                  >
+                    {p.excerpt}
+                  </p>
+                  <span
+                    className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[12px] font-bold uppercase tracking-[0.14em] transition-colors group-hover:text-[var(--color-brand-accent)]"
+                    style={{ color: "var(--gh2-on-dark-faint)" }}
+                  >
+                    {p.readingTime} {blogI18n.minRead}
+                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }
