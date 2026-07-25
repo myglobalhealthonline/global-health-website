@@ -27,12 +27,12 @@ export const metadata: Metadata = {
     "Online medical consultations with licensed clinicians across Ireland, Czechia, Portugal, Spain, and Romania.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const lang = await getRootHtmlLang();
+  const lang = getRootHtmlLang();
   return (
     <html
       lang={lang}

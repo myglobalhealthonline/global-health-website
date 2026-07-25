@@ -134,7 +134,22 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
     countryFooters[runtimeCountry.toLowerCase()] = activeFooter;
   }
 
+  const htmlLang = toHtmlLang(currentLocale);
+
   return (
+    <>
+      {/* The root layout now ships a static lang="en" <html> (P-001 — see
+       * getRootHtmlLang()). This subtree IS request-rendered and knows the
+       * real locale, so correct it synchronously as the browser parses the
+       * stream — before any content below is parsed, before hydration, and
+       * ahead of anything assistive tech would read. HtmlLangSync below stays
+       * as the client-side soft-navigation fallback. */}
+      <script
+        // Non-user-derived: toHtmlLang() maps to a 6-value allowlist.
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang=${JSON.stringify(htmlLang)};`,
+        }}
+      />
     <SiteChrome
       siteName={common.site.name}
       navigation={navigation}
@@ -149,9 +164,10 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
       parsed={parsed}
       isGatewayHome={isGatewayHome}
     >
-      <HtmlLangSync lang={toHtmlLang(currentLocale)} />
+      <HtmlLangSync lang={htmlLang} />
       <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
       {children}
     </SiteChrome>
+    </>
   );
 }
