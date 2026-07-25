@@ -24,17 +24,17 @@
     "flag-icons": "^7.5.0",
     "jose": "^6.2.3",
     "lucide-react": "^1.14.0",
-    "next": "16.2.6",
-    "postcss": "8.5.10",
+    "next": "16.2.11",
+    "postcss": "8.5.23",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sanitize-html": "^2.17.3",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.2.6",
+    "@next/bundle-analyzer": "^16.2.11",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -60,12 +60,13 @@
     "//": "S-004: this service deploys standalone with --ignore-workspace and does NOT inherit the root package.json overrides. Mirror every security pin here by hand — when the root adds/bumps a CVE pin, add it here too or this build ships unpatched. Prefer major-scoped keys (e.g. ws@7) so a floor never becomes a ceiling.",
     "overrides": {
       "sanitize-html": "^2.17.4",
-      "postcss": "8.5.10",
+      "postcss": "8.5.23",
       "brace-expansion@5": "5.0.6",
       "esbuild": "0.28.1",
       "vite": "8.0.16",
       "@babel/core": "7.29.6",
-      "js-yaml": "4.2.0"
+      "js-yaml": "4.2.0",
+      "sharp": "^0.35.3"
     }
   }
 }
