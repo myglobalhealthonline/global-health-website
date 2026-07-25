@@ -47,6 +47,7 @@ export function MobileNav({
   bookHref,
   countries,
   lastCountry,
+  a11y,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
@@ -57,6 +58,8 @@ export function MobileNav({
   /** Remembered country (server-read gh-last-country cookie) so the drawer
    *  keeps the in-country IA on global pages — mirrors SiteHeader. */
   lastCountry?: { code: CountryCode; slug: string; lang: string } | null;
+  /** Localized drawer a11y strings, resolved server-side by SiteHeader. */
+  a11y: { openMenu: string; menuDescription: string; chooseLanguage: string };
 }) {
   // P-001: read from the client-fetched session instead of a server prop
   // sourced from headers() — see PublicAuthContext.tsx.
@@ -166,7 +169,7 @@ export function MobileNav({
         <button
           type="button"
           className="gh-focus-on-dark inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white xl:hidden"
-          aria-label="Open menu"
+          aria-label={a11y.openMenu}
         >
           <Menu className="size-5" aria-hidden />
         </button>
@@ -175,13 +178,14 @@ export function MobileNav({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[var(--z-drawer-overlay)] bg-black/50 backdrop-blur-sm" />
         <Dialog.Content className="fixed inset-x-0 top-0 z-[var(--z-drawer)] flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] xl:hidden">
-          <Dialog.Title className="sr-only">{navigation.navHome} navigation</Dialog.Title>
-          <Dialog.Description className="sr-only">
-            Switch country, change language, and book a consultation.
-          </Dialog.Description>
+          {/* Was `{navigation.navHome} navigation` — a localized label glued
+              to a hardcoded English noun, which read as half-translated to a
+              screen reader on every non-en page. */}
+          <Dialog.Title className="sr-only">{a11y.openMenu}</Dialog.Title>
+          <Dialog.Description className="sr-only">{a11y.menuDescription}</Dialog.Description>
 
           <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4">
-            <Link href="/" className="flex items-center" aria-label={`${siteName} home`}>
+            <Link href="/" className="flex items-center" aria-label={`${siteName} ${navigation.navHome}`}>
               <Image
                 src={DEFAULT_BRAND_LOGO.src}
                 alt={brandLogo.alt}
@@ -278,7 +282,7 @@ export function MobileNav({
                   <Languages aria-hidden className="size-3.5" />
                   {navigation.navLanguage}
                 </p>
-                <ul className="flex flex-col gap-1">
+                <ul aria-label={a11y.chooseLanguage} className="flex flex-col gap-1">
                   {activeCountry.supportedLocales.map((loc) => {
                     const isActive = loc === activeLang;
                     const href = swapLangInPath(pathname, loc);

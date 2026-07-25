@@ -43,6 +43,7 @@ import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
@@ -542,6 +543,7 @@ export default async function ServiceDetailPage({
               {assignedDoctors.map((d) => (
                 <li key={d.id}>
                   <DoctorCard
+                    cardI18n={doctorCardI18n(c.doctors)}
                     name={d.fullName}
                     title={d.title}
                     imcRegistration={d.imcRegistration}

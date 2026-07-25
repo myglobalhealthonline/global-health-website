@@ -8,6 +8,7 @@ import {
   type CSSProperties,
 } from "react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { CarouselNav } from "@/components/ui/CarouselNav";
 
 export type DoctorCarouselItem = {
@@ -49,6 +50,8 @@ type DoctorCarouselProps = {
     nextLabel?: string;
     noDoctorsFound?: string;
   };
+  /** Doctor-card chrome strings, resolved by the (server) caller. */
+  cardI18n: DoctorCardI18n;
 };
 
 /**
@@ -56,7 +59,7 @@ type DoctorCarouselProps = {
  * paging on desktop) instead of the old hard 3-card page swap. Arrows
  * scroll one viewport at a time; a lime progress bar tracks position.
  */
-export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
+export function DoctorCarousel({ doctors, i18n, cardI18n }: DoctorCarouselProps) {
   const hasGP = doctors.some((d) => d.kind === "gp");
   const hasSpecialist = doctors.some((d) => d.kind === "specialist");
   const showFilters = hasGP && hasSpecialist;
@@ -179,7 +182,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
             role="listitem"
             className="w-[86%] shrink-0 snap-start sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]"
           >
-            <DoctorCard {...doctor} bookLabel={i18n.pickTime} dark />
+            <DoctorCard {...doctor} bookLabel={i18n.pickTime} dark cardI18n={cardI18n} />
           </div>
         ))}
       </div>

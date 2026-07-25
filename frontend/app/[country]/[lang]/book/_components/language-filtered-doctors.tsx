@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { buildBookHref } from "@/lib/routing/book-href";
 import type { CountryDoctorCard, CountryServiceCard } from "@/lib/content/get-country-collections";
 
@@ -31,6 +32,7 @@ export function LanguageFilteredDoctors({
   service,
   doctors,
   slotByDoctorId,
+  cardI18n,
   at,
   bp,
   insurance,
@@ -49,6 +51,7 @@ export function LanguageFilteredDoctors({
    *  service-first ordering. */
   at?: string;
   bp: import("@/lib/i18n/types").CommonLocale["bookPage"];
+  cardI18n: DoctorCardI18n;
 }) {
   const allLanguages = useMemo(() => {
     const set = new Set<string>();
@@ -150,6 +153,7 @@ export function LanguageFilteredDoctors({
           {filtered.map((doctor) => (
             <li key={doctor.id}>
               <DoctorCard
+                cardI18n={cardI18n}
                 name={doctor.fullName}
                 title={doctor.title}
                 imcRegistration={doctor.imcRegistration}

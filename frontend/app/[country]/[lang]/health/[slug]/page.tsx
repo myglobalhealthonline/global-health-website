@@ -19,6 +19,8 @@ import {
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -170,6 +172,7 @@ export default async function CountryLandingPage({
               {doctors.map((d) => (
                 <li key={d.id}>
                   <DoctorCard
+                    cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode).common.doctors)}
                     name={d.fullName}
                     title={d.title}
                     bio={d.bio ?? ""}

@@ -9,6 +9,7 @@
 
 import { useState } from "react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
 import { useSwipePage } from "@/hooks/use-swipe-page";
@@ -55,6 +56,8 @@ type DoctorsSectionProps = {
   previousPageLabel?: string;
   nextPageLabel?: string;
   eyebrow?: string;
+  /** Doctor-card chrome strings, resolved by the (server) caller. */
+  cardI18n: DoctorCardI18n;
 };
 
 const PAGE_SIZE = 6;
@@ -69,6 +72,7 @@ export function DoctorsSection({
   previousPageLabel = "Previous page",
   nextPageLabel = "Next page",
   eyebrow = "Our Team",
+  cardI18n,
 }: DoctorsSectionProps) {
   const isLight = theme === "light";
   const isCardDark = cardTheme ? cardTheme === "dark" : !isLight;
@@ -125,7 +129,12 @@ export function DoctorsSection({
       {...(showPager ? swipe : {})}
     >
       {paged.map((doctor) => (
-        <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} dark={isCardDark} />
+        <DoctorCard
+          key={doctor.href ?? `${doctor.name}-${doctor.title}`}
+          {...doctor}
+          dark={isCardDark}
+          cardI18n={cardI18n}
+        />
       ))}
     </div>
   );

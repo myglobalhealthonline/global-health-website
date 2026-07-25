@@ -70,8 +70,11 @@ export function FeaturedDoctor({
   doctor,
   standalone = true,
   dark = true,
+  featuredLabel,
 }: {
   doctor: DoctorSpotlightProps;
+  /** Eyebrow above the standalone card — was a hardcoded English literal. */
+  featuredLabel: string;
   standalone?: boolean;
   /** Surface theme — must match the section the card sits on. */
   dark?: boolean;
@@ -236,7 +239,7 @@ export function FeaturedDoctor({
                       href={doctor.verificationUrl ?? doctor.medicalRegistrationUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={doctor.verifyRegistrationLabel ?? "Verify registration on the official register"}
+                      aria-label={doctor.verifyRegistrationLabel ?? ""}
                       className="inline-flex min-h-11 items-center gap-1 font-semibold underline underline-offset-2 transition-opacity hover:opacity-75 motion-reduce:transition-none"
                       style={{ color: body }}
                     >
@@ -383,7 +386,7 @@ export function FeaturedDoctor({
             className="mb-8 text-[11px] font-bold uppercase tracking-[0.22em]"
             style={{ color: "var(--color-brand-accent)" }}
           >
-            Featured clinician
+            {featuredLabel}
           </p>
           {card}
         </div>

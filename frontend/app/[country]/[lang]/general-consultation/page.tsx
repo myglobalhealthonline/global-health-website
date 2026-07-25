@@ -46,6 +46,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string };
@@ -361,6 +362,7 @@ export default async function CountryLangGeneralConsultationPage({
           intro={gp.doctorsSectionIntro}
           doctors={doctorItems}
           theme="dark"
+          cardI18n={doctorCardI18n(c.doctors)}
           previousPageLabel={c.a11y.previousPage}
           nextPageLabel={c.a11y.nextPage}
         />

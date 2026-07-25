@@ -1,4 +1,5 @@
 import { DoctorTeamTemplate } from "@/components/templates/DoctorTeamTemplate";
+import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { DoctorFilters } from "@/components/sections/DoctorFilters";
 import type { DoctorDirectoryView as DoctorDirectoryViewModel } from "@/lib/content/doctor-directory";
@@ -19,11 +20,16 @@ export function DoctorDirectoryView({ view }: { view: DoctorDirectoryViewModel }
       bookingHref={bookingHref}
       bookingLabel={bookingLabel}
       i18n={i18n}
+      cardI18n={doctorCardI18n(i18n)}
       showBottomCta
       spotlight={
         spotlight ? (
           <div key="featured-spotlight" className="mb-10">
-            <FeaturedDoctor standalone={false} doctor={spotlight} />
+            <FeaturedDoctor
+              standalone={false}
+              doctor={spotlight}
+              featuredLabel={i18n.featuredClinician}
+            />
           </div>
         ) : null
       }
@@ -35,6 +41,7 @@ export function DoctorDirectoryView({ view }: { view: DoctorDirectoryViewModel }
           hasActive={hasActive}
           clearLabel={clearLabel}
           filtersLabel={filtersLabel}
+          showResultsLabel={i18n.showResults}
           dark
         />
       }

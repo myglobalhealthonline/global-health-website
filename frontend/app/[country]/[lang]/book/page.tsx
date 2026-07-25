@@ -35,6 +35,7 @@ import { LanguageFilteredDoctors } from "./_components/language-filtered-doctors
 import { PortalReturnBand } from "./_components/portal-return-band";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 
 type Params = { country: string; lang: string };
 type SearchParams = {
@@ -700,6 +701,7 @@ async function SelectedServiceFlow({
               slotByDoctorId={slotByDoctorId}
               at={at}
               bp={bp}
+              cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode).common.doctors)}
               insurance={insuranceHrefParam}
             />
           )}

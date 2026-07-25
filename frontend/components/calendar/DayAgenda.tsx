@@ -62,6 +62,10 @@ type Props = {
    *  copy) never renders; these two labels do render and take overrides. */
   consultationsLabel?: string;
   slotsLabel?: string;
+  /** No-day-selected placeholder. Localized callers pass `common.calendar`;
+   *  the English defaults remain for the (English-only) admin portal. */
+  selectDayLabel?: string;
+  selectDayHint?: string;
 };
 
 function consultationBadgeClass(status: string): string {
@@ -106,6 +110,8 @@ export function DayAgenda({
   slotActionsBusy = false,
   showDoctorName,
   hideHeader = false,
+  selectDayLabel = "Select a day",
+  selectDayHint = "Consultations and availability slots for the selected day will appear here.",
   consultationsLabel = "Consultations",
   slotsLabel = "Slots",
 }: Props) {
@@ -145,10 +151,10 @@ export function DayAgenda({
           >
             <CalendarDays className="mx-auto size-7" style={{ color: "var(--portal-muted)" }} aria-hidden />
             <p className="mt-2 text-sm font-bold" style={{ color: "var(--portal-text)" }}>
-              Select a day
+              {selectDayLabel}
             </p>
             <p className="mx-auto mt-1 max-w-xs text-portal-meta" style={{ color: "var(--portal-muted)" }}>
-              Consultations and availability slots for the selected day will appear here.
+              {selectDayHint}
             </p>
           </div>
         ) : items.length === 0 ? (

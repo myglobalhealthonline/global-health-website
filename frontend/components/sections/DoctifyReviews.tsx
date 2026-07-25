@@ -167,7 +167,7 @@ export function DoctifyRatingStrip({
     <iframe
       id={id}
       src={src}
-      title="Doctify patient reviews"
+      title={getCommonLocale(resolveLocale({ explicitLocale: language })).a11y.doctifyReviews}
       name="average-carousel-rating-widget"
       className={`doctify-widget block min-h-[160px] w-full border-0 ${className ?? ""}`}
       loading="lazy"
@@ -267,10 +267,10 @@ export function DoctifyReviewsSection({
   theme = "ivory",
   variant = "carousel",
   language = "en",
-  eyebrow = "Patient reviews",
+  eyebrow,
   headline = "Rated by real patients",
   headlineAccent = "on Doctify",
-  body = "Independent, verified reviews collected by Doctify from patients treated by our clinicians.",
+  body,
 }: {
   theme?: "ivory" | "forest";
   variant?: DoctifyWidgetVariant;
@@ -281,6 +281,12 @@ export function DoctifyReviewsSection({
   body?: string;
 }) {
   const dark = theme === "forest";
+  // `eyebrow`/`body` used to default to English string literals. No caller
+  // passes either, so every non-en page rendered an English eyebrow and lede
+  // above a translated headline — resolve them from the locale instead.
+  const common = getCommonLocale(resolveLocale({ explicitLocale: language }));
+  const eyebrowText = eyebrow ?? common.a11y.patientReviews;
+  const bodyText = body ?? common.doctify.body;
   return (
     <section
       className={
@@ -297,7 +303,7 @@ export function DoctifyReviewsSection({
               ? "text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]"
               : "text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]"}
           >
-            {eyebrow}
+            {eyebrowText}
           </span>
           <h2
             className={dark
@@ -316,7 +322,7 @@ export function DoctifyReviewsSection({
               ? "mt-4 max-w-[54ch] text-[15px] leading-relaxed text-[var(--gh2-on-dark-muted)]"
               : "mt-4 max-w-[54ch] text-[15px] leading-relaxed text-[var(--color-text-muted)]"}
           >
-            {body}
+            {bodyText}
           </p>
         </div>
 
@@ -380,7 +386,7 @@ export function DoctifyInlineRating({
     <iframe
       id={id}
       src={src}
-      title="Doctify patient reviews"
+      title={getCommonLocale(resolveLocale({ explicitLocale: language })).a11y.doctifyReviews}
       name="average-carousel-rating-widget"
       className={`doctify-widget block min-h-[120px] w-full border-0 ${className ?? ""}`}
       loading="lazy"

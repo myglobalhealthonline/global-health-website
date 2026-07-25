@@ -76,6 +76,9 @@ type DoctorProfileTemplateProps = {
     openVideoSlotsHeading?: string;
     calendarInviteBody?: string;
     generalPracticeFallback?: string;
+    /** Bottom-CTA eyebrow + Doctify iframe title — were English literals. */
+    nextStep?: string;
+    patientReviews?: string;
   };
 };
 
@@ -460,7 +463,7 @@ export function DoctorProfileTemplate({
               >
                 <iframe
                   src={doctifyWidgetUrl}
-                  title="Patient reviews"
+                  title={t?.patientReviews ?? ""}
                   className="h-[220px] w-full"
                   loading="lazy"
                 />
@@ -536,7 +539,7 @@ export function DoctorProfileTemplate({
               <p
                 className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]"
               >
-                Next step
+                {t?.nextStep ?? ""}
               </p>
               <h2
                 className="mt-4 text-[clamp(1.85rem,4vw,3rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white/95"

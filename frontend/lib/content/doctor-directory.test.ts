@@ -39,6 +39,10 @@ const i18n = {
   bioFallbackTemplate: "Licensed clinician available for online consultations in {country}.",
   verifyRegistrationAria: "Verify registration on the official register",
   languagesMoreTemplate: "{languages} & More",
+  showResults: "Show results",
+  featuredClinician: "Featured clinician",
+  registrationLabel: "Registration",
+  verifiedSuffix: "Verified",
 };
 
 const gpService = "svc-gp";

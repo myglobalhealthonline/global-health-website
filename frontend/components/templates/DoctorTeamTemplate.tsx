@@ -7,6 +7,7 @@ import { CarouselNav } from "@/components/ui/CarouselNav";
 import { useSwipePage } from "@/hooks/use-swipe-page";
 import { DoctorsHero } from "@/components/sections/DoctorsHero";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 
 const PAGE_SIZE = 6;
@@ -66,6 +67,8 @@ export type DoctorTeamI18n = {
   floatCard3Subtitle?: string;
   /** "{name}" placeholder for each card's whole-card overlay-link aria-label. */
   viewProfileAria?: string;
+  /** Card CTA label — was a hardcoded English "View profile" fallback. */
+  viewProfile?: string;
 };
 
 type DoctorTeamTemplateProps = {
@@ -77,6 +80,8 @@ type DoctorTeamTemplateProps = {
   filters?: ReactNode;
   spotlight?: ReactNode;
   i18n?: DoctorTeamI18n;
+  /** Doctor-card chrome strings, resolved by the (server) caller. */
+  cardI18n: DoctorCardI18n;
   /** Total roster size for the hero's "available" count — defaults to
    *  `doctors.length`. Pass this when a featured doctor is rendered
    *  separately via `spotlight` and pulled out of `doctors`, so the count
@@ -93,6 +98,7 @@ export function DoctorTeamTemplate({
   filters,
   spotlight,
   i18n,
+  cardI18n,
   totalDoctorCount,
 }: DoctorTeamTemplateProps) {
   const [page, setPage] = useState(0);
@@ -219,7 +225,8 @@ export function DoctorTeamTemplate({
                       imageZoom={d.imageZoom}
                       href={d.href}
                       bookingHref={d.bookingHref ?? bookingHref}
-                      ctaLabel={d.ctaLabel ?? "View profile"}
+                      ctaLabel={d.ctaLabel ?? i18n?.viewProfile ?? ""}
+                      cardI18n={cardI18n}
                       bookLabel={d.bookLabel}
                       dark
                       viewProfileAriaLabel={i18n?.viewProfileAria?.replace("{name}", d.name)}

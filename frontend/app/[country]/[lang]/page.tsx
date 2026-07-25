@@ -8,6 +8,7 @@ import {
   type ServiceCatalogItem,
 } from "@/components/sections/ServiceCatalog";
 import { DoctorCarousel, type DoctorCarouselItem } from "@/components/sections/DoctorCarousel";
+import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { LazyHydrate } from "@/components/motion/LazyHydrate";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { TrustMarquee, type TrustMarqueeItem } from "@/components/sections/TrustMarquee";
@@ -632,6 +633,7 @@ export default async function CountryLangHomePage({
             <div className="mb-10">
               <FeaturedDoctor
                 standalone={false}
+                featuredLabel={cc.doctors.featuredClinician}
                 doctor={{
                   name: featuredDoctor.fullName,
                   title: featuredDoctor.title,
@@ -674,6 +676,7 @@ export default async function CountryLangHomePage({
           {/* Doctor carousel — 3 at a time, GP/Specialist filter tabs, prev/next arrows */}
           <LazyHydrate>
             <DoctorCarousel
+              cardI18n={doctorCardI18n(cc.doctors)}
               doctors={teamDoctorItems}
               i18n={{
                 filterAll: t.team.filterAll,
