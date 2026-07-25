@@ -83,15 +83,18 @@ function publicCspReportOnly(): string {
   const media = apiOrigin ? ` ${apiOrigin}` : "";
   return [
     "default-src 'self'",
-    // Doctify injects <script src> at runtime; Meta Pixel loads fbevents.js.
-    // Both external hosts — no 'unsafe-inline' so inline scripts get reported.
-    "script-src 'self' https://www.doctify.com https://connect.facebook.net",
+    // Doctify injects <script src> at runtime; Meta Pixel loads fbevents.js;
+    // GA4 loads gtag.js from googletagmanager.com. All external hosts — no
+    // 'unsafe-inline' so inline scripts get reported.
+    "script-src 'self' https://www.doctify.com https://connect.facebook.net https://www.googletagmanager.com",
     // Tailwind + CMS emit inline <style>; keep permissive (style injection is
     // low value to an attacker and blocking it would drown the report signal).
     "style-src 'self' 'unsafe-inline'",
     `img-src 'self' data: blob: https://www.doctify.com https://www.facebook.com https://images.unsplash.com https://images.pexels.com${media}`,
     "font-src 'self' data:",
-    `connect-src 'self' https://www.doctify.com https://connect.facebook.net https://www.facebook.com${media}`,
+    // google-analytics.com/region1.google-analytics.com carry the gtag
+    // measurement beacons (region1 = EU data-residency endpoint).
+    `connect-src 'self' https://www.doctify.com https://connect.facebook.net https://www.facebook.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com${media}`,
     // Doctify rating strips render in <iframe> from www.doctify.com.
     "frame-src 'self' https://www.doctify.com",
     "frame-ancestors 'self'",

@@ -85,6 +85,7 @@ function DoctifyPlaceholder({
     writeConsent({
       marketing: existing?.marketing === true,
       thirdParty: true,
+      analytics: existing?.analytics === true,
     });
   }
 

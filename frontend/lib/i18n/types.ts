@@ -191,6 +191,8 @@ export type CommonLocale = {
     marketingBody: string;
     thirdPartyTitle: string;
     thirdPartyBody: string;
+    analyticsTitle: string;
+    analyticsBody: string;
     settingsLink: string;
     doctifyBlockedTitle: string;
     doctifyBlockedBody: string;

@@ -182,6 +182,8 @@
     "marketingBody": "Meta Pixel — ne arată ce reclame aduc pacienți la noi.",
     "thirdPartyTitle": "Conținut de la terți",
     "thirdPartyBody": "Widget-uri cu recenzii ale pacienților de la Doctify, încorporate de pe doctify.com.",
+    "analyticsTitle": "Analiză — statistici anonime de utilizare (Google Analytics)",
+    "analyticsBody": "Google Analytics — ne ajută să înțelegem ce pagini sunt utile, cu adresa dvs. IP anonimizată.",
     "settingsLink": "Setări cookie",
     "doctifyBlockedTitle": "Recenziile pacienților sunt blocate",
     "doctifyBlockedBody": "Recenziile sunt încărcate de la Doctify, care își setează propriile cookie-uri.",

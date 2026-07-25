@@ -182,6 +182,8 @@
     "marketingBody": "Meta Pixel — indica-nos que anúncios trazem doentes até nós.",
     "thirdPartyTitle": "Conteúdo de terceiros",
     "thirdPartyBody": "Widgets de avaliações de doentes do Doctify, incorporados a partir de doctify.com.",
+    "analyticsTitle": "Análise — estatísticas de utilização anónimas (Google Analytics)",
+    "analyticsBody": "Google Analytics — ajuda-nos a perceber que páginas são úteis, com o seu endereço IP anonimizado.",
     "settingsLink": "Definições de cookies",
     "doctifyBlockedTitle": "As avaliações estão bloqueadas",
     "doctifyBlockedBody": "As avaliações são carregadas do Doctify, que define os seus próprios cookies.",

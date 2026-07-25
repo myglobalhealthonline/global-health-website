@@ -42,7 +42,11 @@ export function CookieBanner() {
       setLocale(readClientLocale());
       setChoices(
         existing
-          ? { marketing: existing.marketing, thirdParty: existing.thirdParty }
+          ? {
+              marketing: existing.marketing,
+              thirdParty: existing.thirdParty,
+              analytics: existing.analytics,
+            }
           : DENY_ALL,
       );
       returnFocusRef.current = document.activeElement as HTMLElement | null;
@@ -138,6 +142,12 @@ export function CookieBanner() {
             body={t.thirdPartyBody}
             checked={choices.thirdParty}
             onChange={(v) => setChoices((c) => ({ ...c, thirdParty: v }))}
+          />
+          <CategoryRow
+            title={t.analyticsTitle}
+            body={t.analyticsBody}
+            checked={choices.analytics}
+            onChange={(v) => setChoices((c) => ({ ...c, analytics: v }))}
           />
         </div>
       ) : null}

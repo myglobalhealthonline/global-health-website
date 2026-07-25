@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { PublicAuthProvider } from "@/components/layout/PublicAuthContext";
 import { CartProvider } from "@/components/cart/CartContext";
 import { MetaPixel } from "@/components/compliance/MetaPixel";
+import { GoogleAnalytics } from "@/components/compliance/GoogleAnalytics";
 
 /**
  * Pass-through shell shared by both `(global)` (no country/lang URL
@@ -10,8 +11,8 @@ import { MetaPixel } from "@/components/compliance/MetaPixel";
  * they need live in each sibling's own layout, which is what lets
  * `[country]/[lang]/*` pages become statically generated.
  *
- * MetaPixel must never load on (auth)/(admin)/(doctor) portal routes and
- * must be consent-gated (S-027) — this layout is scoped to (site) only,
+ * MetaPixel/GoogleAnalytics must never load on (auth)/(admin)/(doctor) portal
+ * routes and must be consent-gated (S-027) — this layout is scoped to (site) only,
  * same as before the split. CartProvider stays here rather than the true
  * root: CartIcon in SiteHeader needs it on every public page, but zero
  * portal pages render cart UI, so hoisting further would ship a client
@@ -22,6 +23,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     <PublicAuthProvider>
       <CartProvider>
         <MetaPixel />
+        <GoogleAnalytics />
         {children}
       </CartProvider>
     </PublicAuthProvider>

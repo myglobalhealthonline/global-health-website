@@ -182,6 +182,8 @@
     "marketingBody": "Meta Pixel — ukazuje nám, které reklamy k nám přivádějí pacienty.",
     "thirdPartyTitle": "Obsah třetích stran",
     "thirdPartyBody": "Widgety s hodnoceními pacientů od Doctify, vložené z doctify.com.",
+    "analyticsTitle": "Analytika — anonymní statistiky používání (Google Analytics)",
+    "analyticsBody": "Google Analytics — pomáhá nám pochopit, které stránky jsou užitečné, s anonymizovanou IP adresou.",
     "settingsLink": "Nastavení cookies",
     "doctifyBlockedTitle": "Hodnocení pacientů jsou blokována",
     "doctifyBlockedBody": "Hodnocení se načítají z Doctify, které nastavuje vlastní cookies.",

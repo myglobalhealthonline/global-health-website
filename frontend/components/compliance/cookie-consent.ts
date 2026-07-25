@@ -1,10 +1,11 @@
 import { readCookie, writeCookie, deleteCookie } from "@/lib/utils/cookies";
 
 /**
- * Consent state for the two non-essential things this site loads:
+ * Consent state for the non-essential things this site loads:
  *
  *  - `marketing`  → Meta Pixel (components/compliance/MetaPixel.tsx)
  *  - `thirdParty` → Doctify review widgets (components/sections/DoctifyReviews.tsx)
+ *  - `analytics`  → Google Analytics (components/compliance/GoogleAnalytics.tsx)
  *
  * "Strictly necessary" (auth session, locale, country) is implied true and
  * deliberately not stored — it cannot be refused, so there is nothing to record.
@@ -37,6 +38,11 @@ const LEGACY_STORAGE_KEY = "gh-cookie-consent";
 export type ConsentChoices = {
   marketing: boolean;
   thirdParty: boolean;
+  /** GA4 (components/compliance/GoogleAnalytics.tsx). Added after CONSENT_VERSION
+   * 2 shipped — a stored record from before this key existed has it `undefined`,
+   * which the `=== true` check below defaults to `false` (denied), same as any
+   * other missing/malformed field. No version bump needed for an additive key. */
+  analytics: boolean;
 };
 
 export type ConsentRecord = ConsentChoices & {
@@ -45,8 +51,8 @@ export type ConsentRecord = ConsentChoices & {
   ts: number;
 };
 
-export const DENY_ALL: ConsentChoices = { marketing: false, thirdParty: false };
-export const ACCEPT_ALL: ConsentChoices = { marketing: true, thirdParty: true };
+export const DENY_ALL: ConsentChoices = { marketing: false, thirdParty: false, analytics: false };
+export const ACCEPT_ALL: ConsentChoices = { marketing: true, thirdParty: true, analytics: true };
 
 /** Returns null when the visitor has not decided yet. Fails closed. */
 export function readConsent(): ConsentRecord | null {
@@ -63,6 +69,7 @@ export function readConsent(): ConsentRecord | null {
       v: CONSENT_VERSION,
       marketing: record.marketing === true,
       thirdParty: record.thirdParty === true,
+      analytics: record.analytics === true,
       ts: typeof record.ts === "number" ? record.ts : 0,
     };
   } catch {
@@ -75,6 +82,7 @@ export function writeConsent(choices: ConsentChoices): void {
     v: CONSENT_VERSION,
     marketing: choices.marketing === true,
     thirdParty: choices.thirdParty === true,
+    analytics: choices.analytics === true,
     ts: Date.now(),
   };
   try {
