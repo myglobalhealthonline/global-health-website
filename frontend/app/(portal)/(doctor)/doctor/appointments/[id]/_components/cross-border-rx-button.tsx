@@ -19,8 +19,7 @@ export type CrossBorderRxCopy = {
   countryPlaceholder: string;
   doctorLabel: string;
   doctorPlaceholder: string;
-  summaryLabel: string;
-  summaryPlaceholder: string;
+  soapNote: string;
   billingNote: string;
   submit: string;
   submitting: string;
@@ -29,7 +28,6 @@ export type CrossBorderRxCopy = {
   noTargets: string;
   selectCountryFirst: string;
   selectDoctorFirst: string;
-  summaryRequired: string;
   couldNotCreate: string;
   createdTitle: string;
   createdBody: string;
@@ -56,7 +54,6 @@ export function CrossBorderRxButton({
   const [targets, setTargets] = useState<TargetCountry[]>([]);
   const [countryCode, setCountryCode] = useState("");
   const [doctorId, setDoctorId] = useState("");
-  const [summary, setSummary] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [consentUrl, setConsentUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -99,7 +96,6 @@ export function CrossBorderRxButton({
   function reset() {
     setCountryCode("");
     setDoctorId("");
-    setSummary("");
     setError(null);
     setConsentUrl(null);
     setCopied(false);
@@ -110,7 +106,6 @@ export function CrossBorderRxButton({
     setError(null);
     if (!countryCode) return setError(copy.selectCountryFirst);
     if (!doctorId) return setError(copy.selectDoctorFirst);
-    if (!summary.trim()) return setError(copy.summaryRequired);
     startTransition(async () => {
       const res = await fetch(`/api/doctor/appointments/${appointmentId}/cross-border-rx`, {
         method: "POST",
@@ -118,7 +113,6 @@ export function CrossBorderRxButton({
         body: JSON.stringify({
           targetCountryCode: countryCode,
           targetDoctorId: doctorId,
-          clinicalSummary: summary.trim(),
         }),
       });
       const json = (await res.json()) as {
@@ -245,17 +239,7 @@ export function CrossBorderRxButton({
             </select>
           </label>
 
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">{copy.summaryLabel}</span>
-            <textarea
-              className="gh-input min-h-[5rem] resize-y"
-              value={summary}
-              onChange={(e) => setSummary(e.target.value)}
-              placeholder={copy.summaryPlaceholder}
-              maxLength={5000}
-            />
-          </label>
-
+          <p className="text-portal-label text-[var(--portal-muted)]">{copy.soapNote}</p>
           <p className="text-portal-label text-[var(--portal-muted)]">{copy.billingNote}</p>
         </div>
       )}

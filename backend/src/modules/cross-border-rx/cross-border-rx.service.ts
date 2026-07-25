@@ -14,6 +14,7 @@ import { wrapHtml } from "../../lib/email/templates.js";
 import { orderPayShortLink } from "../orders/order-payment-url.service.js";
 import { resolveGpSameDayService } from "../gp-booking/gp-config.service.js";
 import {
+  notifyPatientCrossBorderConsent,
   notifyPatientCrossBorderPayment,
   notifyStaffCrossBorderRequest,
 } from "./cross-border-rx-notifications.service.js";
@@ -191,7 +192,8 @@ export type CreateCrossBorderRxInput = {
   actorUserId: string | null;
   targetCountryCode: string;
   targetDoctorId: string;
-  clinicalSummary: string;
+  /** Optional — the consultation SOAP is disclosed to Doctor B instead. */
+  clinicalSummary?: string | null;
   request?: FastifyRequest;
 };
 
@@ -206,7 +208,15 @@ export async function createCrossBorderRxRequest(
 ): Promise<CreateCrossBorderRxResult> {
   const source = await prisma.appointment.findFirst({
     where: { id: input.sourceAppointmentId, doctorId: input.sourceDoctorId },
-    select: { id: true, fullName: true, email: true, userId: true, countryCode: true },
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      phone: true,
+      userId: true,
+      countryCode: true,
+      whatsappConsent: true,
+    },
   });
   if (!source) throw new CrossBorderRxSourceNotFoundError();
 
@@ -276,7 +286,10 @@ export async function createCrossBorderRxRequest(
       targetCountryCode,
       targetDoctorId: doctor.id,
       payoutCents: doctor.crossBorderRxPayoutCents ?? null,
-      clinicalSummary: input.clinicalSummary,
+      // Optional now — the consultation SOAP is disclosed to Doctor B, so the
+      // treating doctor no longer has to re-type a summary. Stored as "" when
+      // omitted (the column is NOT NULL); the inbox hides an empty reason.
+      clinicalSummary: input.clinicalSummary?.trim() ?? "",
       sourceChiefComplaint: soap?.chiefComplaint ?? null,
       sourceSubjective: soap?.subjective ?? null,
       sourceObjective: soap?.objective ?? null,
@@ -293,13 +306,17 @@ export async function createCrossBorderRxRequest(
   // their consultation record to the prescribing doctor. The checkout is minted
   // only when they agree (submitCrossBorderRxConsent → AGREE).
   const consentUrl = buildConsentUrl(rawToken);
-  void sendCrossBorderRxConsentEmail({
-    to: source.email,
+  // Email + WhatsApp with the consent link (agree → pay; decline → book GP).
+  void notifyPatientCrossBorderConsent({
     fullName: source.fullName,
+    email: source.email,
+    phone: source.phone ?? null,
+    countryCode: targetCountryCode,
+    whatsappConsent: source.whatsappConsent,
     consentUrl,
     sourceDoctorName: sourceDoctor?.fullName ?? "your doctor",
     targetDoctorName: doctor.fullName,
-    countryName: doctor.country.name,
+    targetCountryName: doctor.country.name,
   }).catch(() => {});
   if (source.userId) {
     void notifyUser(source.userId, "CROSS_BORDER_RX_UPDATED", {
@@ -641,32 +658,6 @@ async function buildGpBookingUrl(
   return gpService?.slug
     ? `${base}/${code}/${lang}/book?service=${encodeURIComponent(gpService.slug)}&doctor=${doctorParam}`
     : `${base}/${code}/${lang}/book?doctor=${doctorParam}`;
-}
-
-async function sendCrossBorderRxConsentEmail(opts: {
-  to: string;
-  fullName: string;
-  consentUrl: string;
-  sourceDoctorName: string;
-  targetDoctorName: string;
-  countryName: string;
-}): Promise<void> {
-  const subject = "Your prescription request — your consent is needed";
-  const html = wrapHtml(
-    subject,
-    `<p>Dear ${escapeHtml(opts.fullName)},</p>
-     <p>${escapeHtml(opts.sourceDoctorName)} would like a prescription issued for you by
-     ${escapeHtml(opts.targetDoctorName)} in ${escapeHtml(opts.countryName)}.</p>
-     <p>To make this possible, your consultation notes (the SOAP record from your
-     consultation) would be shared with ${escapeHtml(opts.targetDoctorName)}. Please
-     review and choose how you would like to proceed.</p>
-     <p style="margin:20px 0;"><a href="${escapeHtml(opts.consentUrl)}" style="display:inline-block;padding:12px 22px;background:#1D4B36;color:#ffffff;border-radius:8px;text-decoration:none;font-weight:600;">Review &amp; continue</a></p>
-     <p style="font-size:13px;color:#6D6D6D;">If you would rather not share your record,
-     you can instead book a full GP consultation with the same doctor.</p>
-     <p style="font-size:13px;color:#6D6D6D;">Or open this link:<br>${escapeHtml(opts.consentUrl)}</p>`,
-  );
-  const text = `Dear ${opts.fullName},\n\n${opts.sourceDoctorName} would like a prescription issued for you by ${opts.targetDoctorName} in ${opts.countryName}. To make this possible, your consultation notes would be shared with ${opts.targetDoctorName}.\n\nReview and choose how to proceed:\n${opts.consentUrl}\n\nIf you would rather not share your record, you can instead book a full GP consultation with the same doctor.`;
-  await sendEmail({ to: opts.to, subject, html, text });
 }
 
 function escapeHtml(value: string): string {

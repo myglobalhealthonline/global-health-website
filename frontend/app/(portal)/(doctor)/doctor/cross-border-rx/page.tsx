@@ -63,12 +63,16 @@ export default async function CrossBorderRxInboxPage() {
                 </span>
               </div>
 
-              <p className="mt-3 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-                {copy.summaryHeading}
-              </p>
-              <p className="mt-1 whitespace-pre-wrap rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact text-[var(--portal-text)]">
-                {item.clinicalSummary}
-              </p>
+              {item.clinicalSummary && item.clinicalSummary.trim() ? (
+                <>
+                  <p className="mt-3 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                    {copy.summaryHeading}
+                  </p>
+                  <p className="mt-1 whitespace-pre-wrap rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact text-[var(--portal-text)]">
+                    {item.clinicalSummary}
+                  </p>
+                </>
+              ) : null}
 
               {(() => {
                 const rows: Array<[string, string | null]> = [
