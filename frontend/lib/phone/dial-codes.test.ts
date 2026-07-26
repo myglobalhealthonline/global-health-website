@@ -2,10 +2,22 @@ import { describe, expect, it } from "vitest";
 import {
   combinePhone,
   DEFAULT_DIAL,
+  DIAL_OPTIONS,
   dialCodeForCountry,
   dialCodeForCountrySlug,
   splitPhone,
 } from "./dial-codes";
+
+describe("DIAL_OPTIONS", () => {
+  // The <select> value IS the dial code, so a duplicate makes one option unselectable.
+  it("has unique dial codes and keys", () => {
+    expect(new Set(DIAL_OPTIONS.map((o) => o.dial)).size).toBe(DIAL_OPTIONS.length);
+    expect(new Set(DIAL_OPTIONS.map((o) => o.key)).size).toBe(DIAL_OPTIONS.length);
+  });
+  it("keeps the active markets pinned on top", () => {
+    expect(DIAL_OPTIONS.slice(0, 3).map((o) => o.key)).toEqual(["ie", "cz", "pt"]);
+  });
+});
 
 describe("combinePhone", () => {
   it("joins dial + national as +<dial> <national>", () => {

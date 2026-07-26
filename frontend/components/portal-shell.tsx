@@ -544,7 +544,13 @@ function SidebarItem({
       </span>
       <span className="truncate flex-1">{label}</span>
       {badge && badge > 0 ? (
-        <span className="gh-portal-nav-item__badge gh-portal-nav-item__badge--live">
+        // Name what the number is — a bare count in the nav says nothing about
+        // what needs attention, and screen readers announce it as digits.
+        <span
+          className="gh-portal-nav-item__badge gh-portal-nav-item__badge--live"
+          title={`${badge} unread in ${label}`}
+          aria-label={`${badge} unread in ${label}`}
+        >
           {badge > 99 ? "99+" : badge}
         </span>
       ) : null}

@@ -14,6 +14,8 @@ import {
   fetchAdminDoctorCredentials,
   fetchAdminDoctorBank,
   fetchAdminDoctorConfidentiality,
+  fetchAdminDoctorProfileChangeRequests,
+  fetchAdminPendingServiceRequests,
   postAdminDoctorInvite,
   purgeAdminDoctor,
   setAdminDoctorFeatured,
@@ -22,6 +24,11 @@ import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
+import {
+  profileChangeFieldLabel,
+  serviceKindLabel,
+} from "@/lib/admin/approval-labels";
+import { formatAppDateTime } from "@/lib/format-datetime";
 import { DeleteDoctorButton } from "../../_components/delete-doctor-button";
 import { DoctorRegistrationsCard } from "../_components/registrations-card";
 import { DoctorCredentialsCard } from "../_components/doctor-credentials-card";
@@ -175,6 +182,39 @@ export default async function AdminDoctorDetailPage({
   const confidentiality = confidentialityResult.ok ? confidentialityResult.data : null;
   const faqsResult = await fetchAdminDoctorFaqs(id);
   const faqs = faqsResult.ok ? faqsResult.data : null;
+
+  // What this doctor is waiting on. Same two queues the sidebar count and the
+  // topbar bell read, narrowed to this doctor — the header's "Profile
+  // requests" / "Services" links otherwise look identical whether there is
+  // something to action or not.
+  const [profileReqResult, serviceReqResult] = await Promise.all([
+    fetchAdminDoctorProfileChangeRequests(id).catch(() => null),
+    fetchAdminPendingServiceRequests().catch(() => null),
+  ]);
+
+  const pendingProfileRequests = profileReqResult?.ok
+    ? profileReqResult.data.items.filter((r) => r.status === "pending")
+    : [];
+  const pendingServiceRequests = serviceReqResult?.ok
+    ? serviceReqResult.data.items.filter((r) => r.doctorId === id)
+    : [];
+
+  const pendingApprovals = [
+    ...pendingProfileRequests.map((r) => ({
+      key: r.id,
+      what: `${profileChangeFieldLabel(r.field)} change`,
+      scope: r.isGlobal ? "All markets" : r.countryName,
+      createdAt: r.createdAt,
+      href: `/admin/doctors/${id}/profile-requests`,
+    })),
+    ...pendingServiceRequests.map((r) => ({
+      key: r.id,
+      what: `${serviceKindLabel(r.serviceKind)} — ${r.serviceName}`,
+      scope: r.countryName,
+      createdAt: r.createdAt,
+      href: `/admin/doctors/${id}/services`,
+    })),
+  ].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   // Primary country + any additional country listings — admin can issue
   // a registration for any of these.
   const associatedCountries = [
@@ -235,11 +275,21 @@ export default async function AdminDoctorDetailPage({
             <Btn href={`/admin/doctors/${id}/availability`} variant="ghost">
               Availability
             </Btn>
-            <Btn href={`/admin/doctors/${id}/services`} variant="ghost">
+            {/* Count in the label — a plain link gives no hint that something
+                is queued behind it. */}
+            <Btn
+              href={`/admin/doctors/${id}/services`}
+              variant={pendingServiceRequests.length > 0 ? "secondary" : "ghost"}
+            >
               Services
+              {pendingServiceRequests.length > 0 ? ` (${pendingServiceRequests.length})` : ""}
             </Btn>
-            <Btn href={`/admin/doctors/${id}/profile-requests`} variant="ghost">
+            <Btn
+              href={`/admin/doctors/${id}/profile-requests`}
+              variant={pendingProfileRequests.length > 0 ? "secondary" : "ghost"}
+            >
               Profile requests
+              {pendingProfileRequests.length > 0 ? ` (${pendingProfileRequests.length})` : ""}
             </Btn>
             <Btn href={`/admin/doctors/${id}/edit`} variant="primary">
               Edit
@@ -247,6 +297,36 @@ export default async function AdminDoctorDetailPage({
           </>
         }
       />
+
+      {pendingApprovals.length > 0 ? (
+        <AdminCard className="gh-status-warning mb-4" padding={0}>
+          <div className="px-5 py-4">
+            <p className="m-0 text-portal-body font-bold text-[var(--color-text-primary)]">
+              {pendingApprovals.length === 1
+                ? `${d.fullName} is waiting on 1 approval`
+                : `${d.fullName} is waiting on ${pendingApprovals.length} approvals`}
+            </p>
+            <ul className="mt-2 grid list-none gap-1.5 p-0">
+              {pendingApprovals.map((p) => (
+                <li key={p.key} className="flex flex-wrap items-center gap-2">
+                  <Pill tone="pending" withDot>
+                    {p.what}
+                  </Pill>
+                  <span className="text-portal-compact text-[var(--color-text-body)]">
+                    {p.scope} · submitted {formatAppDateTime(p.createdAt)}
+                  </span>
+                  <Link
+                    href={p.href}
+                    className="text-portal-compact font-semibold text-[var(--color-text-primary)] underline"
+                  >
+                    Review
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </AdminCard>
+      ) : null}
 
       {messages.error ? (
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
