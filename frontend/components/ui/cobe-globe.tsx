@@ -16,15 +16,16 @@ const DEFAULT_GLOW_COLOR: [number, number, number] = [0.08, 0.22, 0.17];
 const DEFAULT_MARKERS: GlobeMarker[] = [];
 const DEFAULT_ARCS: GlobeArc[] = [];
 
-// The flag/label overlay below is positioned entirely via CSS Anchor
-// Positioning (position-anchor/anchor(), driven by cobe's per-marker
-// --cobe-{id} anchor names — see cobe's README). Browsers without support
-// (Firefox, older Safari/Chromium) treat anchor(top)/anchor(center) as
-// invalid, which resolves to `auto`, collapsing every label to the same
-// static top-of-container position — a stacked cluster of flags instead of
-// pins on the globe. The canvas dots themselves are drawn by cobe directly
-// and are unaffected, so on unsupported browsers we just skip the HTML
-// overlay rather than show the broken cluster.
+// The flag/label overlay below is positioned via CSS Anchor Positioning
+// (position-anchor/anchor(), driven by cobe's per-marker --cobe-{id} anchor
+// names — see cobe's README) where that is supported (Chromium 125+).
+// Firefox, Safari and older Chromium treat anchor(top)/anchor(center) as
+// invalid, which resolves to `auto` and collapses every label to the same
+// static top-of-container position. On those engines we instead mirror the
+// left/top percentages off cobe's own (always-created) anchor elements every
+// frame — same result, no anchor positioning needed. The per-marker
+// visibility custom property cobe writes to :root is a plain CSS variable and
+// works everywhere, so the fade in/out is unaffected either way.
 const SUPPORTS_ANCHOR_POSITIONING =
   typeof CSS !== "undefined" && typeof CSS.supports === "function" && CSS.supports("anchor-name", "--gh-anchor-probe");
 
@@ -111,6 +112,10 @@ function GlobeImpl({
   // blank, then gate future draws off like the other checks above.
   const coarsePointerRef = useRef(false);
   const hasDrawnOnceRef = useRef(false);
+  // Anchor-positioning fallback: our label element per marker id, plus the
+  // cobe-created anchor element we copy left/top off. See the comment on
+  // SUPPORTS_ANCHOR_POSITIONING above.
+  const labelRefs = useRef(new Map<string, HTMLDivElement>());
 
   const cobeMarkers = useMemo(
     () =>
@@ -211,6 +216,30 @@ function GlobeImpl({
     let resizeObserver: ResizeObserver | null = null;
     let phi = initialPhi;
 
+    // Engines without CSS anchor positioning: copy the left/top percentages
+    // cobe writes on its own 1x1 anchor elements onto our label. They cannot be
+    // matched by anchor-name — an engine that does not support the property
+    // drops it from the serialized style attribute, which is exactly the case
+    // we are here for — so match on the 1x1 box instead. cobe appends one per
+    // marker, in markers order, before any arc anchors; labelRefs is keyed in
+    // that same order. Reading an inline style property forces no layout, and
+    // cobe has already written this frame's value.
+    let anchorEls: HTMLElement[] = [];
+    function syncLabels() {
+      const labels = [...labelRefs.current.values()];
+      if (anchorEls.length < labels.length || !anchorEls[0]?.isConnected) {
+        anchorEls = [...container!.querySelectorAll<HTMLElement>("div")].filter(
+          (el) => el.style.width === "1px" && el.style.height === "1px",
+        );
+      }
+      for (let i = 0; i < labels.length; i++) {
+        const anchor = anchorEls[i];
+        if (!anchor) break;
+        labels[i]!.style.left = anchor.style.left;
+        labels[i]!.style.top = anchor.style.top;
+      }
+    }
+
     function render() {
       if (!globe) return;
       if (!isPausedRef.current && !reducedMotionRef.current) {
@@ -254,6 +283,7 @@ function GlobeImpl({
           markers: cobeMarkers,
           arcs: cobeArcs,
         });
+        if (!SUPPORTS_ANCHOR_POSITIONING) syncLabels();
       }
       animationId = window.requestAnimationFrame(render);
     }
@@ -264,27 +294,36 @@ function GlobeImpl({
       if (width === 0) return;
       hasDrawnOnceRef.current = false;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      globe = createGlobe(canvas, {
-        devicePixelRatio: dpr,
-        width,
-        height: width,
-        phi: initialPhi,
-        theta,
-        dark,
-        diffuse,
-        mapSamples,
-        mapBrightness,
-        baseColor,
-        markerColor,
-        glowColor,
-        markerElevation,
-        markers: cobeMarkers,
-        arcs: cobeArcs,
-        arcColor,
-        arcWidth,
-        arcHeight,
-        scale,
-      });
+      // No WebGL (hardware acceleration off, blocklisted GPU, remote desktop,
+      // strict privacy extension) makes createGlobe throw. Unguarded that
+      // escapes the effect and takes the whole entry gate down with it — the
+      // globe is decoration, so swallow it and leave the placeholder circle.
+      try {
+        globe = createGlobe(canvas, {
+          devicePixelRatio: dpr,
+          width,
+          height: width,
+          phi: initialPhi,
+          theta,
+          dark,
+          diffuse,
+          mapSamples,
+          mapBrightness,
+          baseColor,
+          markerColor,
+          glowColor,
+          markerElevation,
+          markers: cobeMarkers,
+          arcs: cobeArcs,
+          arcColor,
+          arcWidth,
+          arcHeight,
+          scale,
+        });
+      } catch {
+        globe = null;
+        return;
+      }
       render();
       window.setTimeout(() => {
         canvas.style.opacity = "1";
@@ -347,16 +386,26 @@ function GlobeImpl({
   return (
     <div className={`relative aspect-square select-none ${className}`}>
       <div ref={containerRef} className="absolute inset-0" aria-hidden />
-      {SUPPORTS_ANCHOR_POSITIONING && markers.map((m) => (
+      {markers.map((m) => (
         <div
           key={m.id}
+          ref={(el) => {
+            if (el) labelRefs.current.set(m.id, el);
+            else labelRefs.current.delete(m.id);
+          }}
           style={
             {
               position: "absolute",
-              positionAnchor: `--cobe-${m.id}`,
-              bottom: "anchor(top)",
-              left: "anchor(center)",
-              translate: "-50% 0",
+              ...(SUPPORTS_ANCHOR_POSITIONING
+                ? {
+                    positionAnchor: `--cobe-${m.id}`,
+                    bottom: "anchor(top)",
+                    left: "anchor(center)",
+                    translate: "-50% 0",
+                  }
+                : // left/top are written per frame by syncLabels(); translate
+                  // lifts the label off the marker the way anchor(top) does.
+                  { left: "-100%", top: 0, translate: "-50% -100%" }),
               marginBottom: 6,
               pointerEvents: "none",
               opacity: `var(--cobe-visible-${m.id}, 0)`,
