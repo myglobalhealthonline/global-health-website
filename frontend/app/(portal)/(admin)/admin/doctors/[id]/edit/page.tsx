@@ -118,6 +118,28 @@ export default async function AdminEditDoctorPage({
     code: c.code,
     name: c.name,
   }));
+
+  // Countries the doctor prescribes in (primary + additional) → one cross-border
+  // price/payout row each, pre-filled from the saved per-country config.
+  const crossBorderConfigByCountry = new Map(
+    (doctor.crossBorderRxCountries ?? []).map((c) => [c.countryId, c]),
+  );
+  const crossBorderCountries = Array.from(
+    new Set([doctor.countryId, ...(doctor.additionalCountries ?? []).map((c) => c.countryId)]),
+  )
+    .map((cid) => {
+      const c = countriesResult.data.countries.find((x) => x.id === cid);
+      if (!c) return null;
+      const cfg = crossBorderConfigByCountry.get(cid);
+      return {
+        id: c.id,
+        name: c.name,
+        currencyCode: c.currency.code,
+        priceCents: cfg?.priceCents ?? null,
+        payoutCents: cfg?.payoutCents ?? null,
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null);
   const { locales, defaultLocale } = resolveCountryLocaleTabs(
     countriesResult.data.countries.find((c) => c.id === doctor.countryId),
   );
@@ -159,8 +181,7 @@ export default async function AdminEditDoctorPage({
       canCreateManualAppointments: raw.canCreateManualAppointments,
       canRequestCrossJurisdictionRx: raw.canRequestCrossJurisdictionRx,
       crossBorderRxEnabled: raw.crossBorderRxEnabled,
-      crossBorderRxPriceCents: raw.crossBorderRxPriceCents,
-      crossBorderRxPayoutCents: raw.crossBorderRxPayoutCents,
+      crossBorderRxCountries: raw.crossBorderRxCountries,
     };
 
     const [existingDoctors, validation] = await Promise.all([
@@ -493,42 +514,58 @@ export default async function AdminEditDoctorPage({
                 <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
                   When on, treating doctors in other countries can send this
                   doctor a cross-border prescription request. Set the patient
-                  price and the doctor&rsquo;s payout below, in the doctor&rsquo;s
-                  country currency.
+                  price and the doctor&rsquo;s payout <strong>per country</strong>,
+                  each in that country&rsquo;s currency. A country is only offered
+                  to requesting doctors once both its price and payout are set.
                 </p>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  <span className="flex flex-col gap-1">
-                    <span className="gh-field-label">Price (patient fee)</span>
-                    <input
-                      type="number"
-                      form="doctor-edit-form"
-                      name="crossBorderRxPrice"
-                      min="0"
-                      step="0.01"
-                      defaultValue={
-                        doctor.crossBorderRxPriceCents != null
-                          ? (doctor.crossBorderRxPriceCents / 100).toFixed(2)
-                          : ""
-                      }
-                      className="gh-input"
-                    />
-                  </span>
-                  <span className="flex flex-col gap-1">
-                    <span className="gh-field-label">Payout (doctor earns)</span>
-                    <input
-                      type="number"
-                      form="doctor-edit-form"
-                      name="crossBorderRxPayout"
-                      min="0"
-                      step="0.01"
-                      defaultValue={
-                        doctor.crossBorderRxPayoutCents != null
-                          ? (doctor.crossBorderRxPayoutCents / 100).toFixed(2)
-                          : ""
-                      }
-                      className="gh-input"
-                    />
-                  </span>
+                <div className="mt-3 grid gap-3">
+                  {crossBorderCountries.map((c) => (
+                    <div
+                      key={c.id}
+                      className="rounded-md border border-[var(--color-border)] p-3"
+                    >
+                      <input
+                        type="hidden"
+                        form="doctor-edit-form"
+                        name="crossBorderRxCountryId"
+                        value={c.id}
+                      />
+                      <p className="m-0 text-portal-compact font-semibold text-[var(--color-text-primary)]">
+                        {c.name}{" "}
+                        <span className="text-[var(--color-text-muted)]">({c.currencyCode})</span>
+                      </p>
+                      <div className="mt-2 grid grid-cols-2 gap-2">
+                        <span className="flex flex-col gap-1">
+                          <span className="gh-field-label">Price (patient fee)</span>
+                          <input
+                            type="number"
+                            form="doctor-edit-form"
+                            name={`crossBorderRxPrice_${c.id}`}
+                            min="0"
+                            step="0.01"
+                            defaultValue={
+                              c.priceCents != null ? (c.priceCents / 100).toFixed(2) : ""
+                            }
+                            className="gh-input"
+                          />
+                        </span>
+                        <span className="flex flex-col gap-1">
+                          <span className="gh-field-label">Payout (doctor earns)</span>
+                          <input
+                            type="number"
+                            form="doctor-edit-form"
+                            name={`crossBorderRxPayout_${c.id}`}
+                            min="0"
+                            step="0.01"
+                            defaultValue={
+                              c.payoutCents != null ? (c.payoutCents / 100).toFixed(2) : ""
+                            }
+                            className="gh-input"
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </label>
