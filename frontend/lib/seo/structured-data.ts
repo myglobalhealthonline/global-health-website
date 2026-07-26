@@ -4,9 +4,20 @@
  * Google ignores anything too far below the page topic.
  */
 import { SITE_NAME } from "@/lib/constants";
+import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
 import { getSiteUrl } from "@/lib/seo/site-url";
 
 const SITE_URL = getSiteUrl();
+
+/** Trim schema prose to a whole word under `max` chars. */
+function truncateForSchema(text: string, max: number): string | undefined {
+  const clean = text.trim();
+  if (!clean) return undefined;
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).replace(/[.,;:\s]+$/, "")}…`;
+}
 
 // Shared @id anchors so every block that repeats the org/website inline can
 // be joined into one entity graph instead of being read as duplicate nodes.
@@ -208,15 +219,31 @@ export function physicianJsonLd(doc: {
   regulator?: SchemaRegulator | null;
   credentials?: SchemaCredential[];
   specialty?: string | null;
+  /** Profile-image SEO metadata (Asset.altText / caption) — promotes the bare
+   *  image URL to a captioned ImageObject so image search has something to
+   *  read beyond the file name. */
+  imageAltText?: string | null;
+  imageCaption?: string | null;
+  /** Doctor bio (may contain HTML) — becomes the Physician `description`. */
+  bio?: string | null;
 }) {
   const hasCredential = buildHasCredential(doc);
+  const description = doc.bio ? truncateForSchema(toDoctorBioPlainText(doc.bio), 300) : undefined;
   return {
     "@context": "https://schema.org",
     "@type": "Physician",
     name: doc.name,
     jobTitle: doc.title ?? "Physician",
     url: doc.url.startsWith("http") ? doc.url : `${SITE_URL}${doc.url}`,
-    image: doc.imageSrc,
+    ...(description ? { description } : {}),
+    image: doc.imageSrc
+      ? {
+          "@type": "ImageObject",
+          url: doc.imageSrc.startsWith("http") ? doc.imageSrc : `${SITE_URL}${doc.imageSrc}`,
+          ...(doc.imageCaption ? { caption: doc.imageCaption } : {}),
+          ...(doc.imageAltText ? { name: doc.imageAltText } : {}),
+        }
+      : undefined,
     knowsLanguage: doc.languages,
     areaServed: doc.countryName,
     ...(doc.specialty ? { medicalSpecialty: doc.specialty } : {}),

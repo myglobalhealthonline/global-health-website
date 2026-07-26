@@ -146,6 +146,9 @@ export default async function CountryLangDoctorsPage({
         division: d.registrationDivision ?? null,
         regulator: schemaRegulator,
         credentials: d.credentials,
+        imageAltText: d.imageAltText,
+        imageCaption: d.imageCaption ?? d.imageDescription,
+        bio: d.bio,
       }),
     })),
   };
