@@ -365,8 +365,20 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
-  scrollbar-color: rgba(176, 241, 34, 0.46) rgba(255, 255, 255, 0.06);
-  scrollbar-width: thin;
+}
+
+/* `scrollbar-color`/`scrollbar-width` opt the element into NATIVE scrollbars
+   and make Chromium ignore the ::-webkit-scrollbar rules below. Native means
+   OVERLAY on macOS (and on Windows with "automatically hide scroll bars" on):
+   invisible at rest, so the list looks like it holds only ~3 countries and the
+   rest is unreachable-looking. Scope them to engines with no ::-webkit-
+   scrollbar support (Firefox) and let everything else use the always-visible
+   styled bar. */
+@supports not selector(::-webkit-scrollbar) {
+  .countryScroller {
+    scrollbar-color: rgba(176, 241, 34, 0.46) rgba(255, 255, 255, 0.06);
+    scrollbar-width: thin;
+  }
 }
 
 .countryScroller::-webkit-scrollbar {

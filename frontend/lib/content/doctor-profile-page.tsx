@@ -233,6 +233,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             regulator,
             credentials: profileDoc?.credentials,
             specialty: data.profile.specialties[0] ?? null,
+            imageAltText: data.profile.imageAltText,
+            imageCaption: data.profile.imageCaption ?? data.profile.imageDescription,
+            bio: data.profile.bio,
           }),
           breadcrumbJsonLd([
             { name: "Home", url: "/" },

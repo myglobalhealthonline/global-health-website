@@ -50,4 +50,7 @@ export interface PublicPlan {
   perkUnlockMonths: number | null;
   perks: PublicPlanPerk[];
   wellnessKits: PublicPlanWellnessKit[];
+  /** Last edit to the plan row; null when the API predates the field. Dates
+   *  the /pricing sitemap entry, which has no timestamp of its own. */
+  updatedAt: string | null;
 }
