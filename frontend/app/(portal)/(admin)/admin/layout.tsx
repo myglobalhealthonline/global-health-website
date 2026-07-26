@@ -18,6 +18,10 @@ import {
   type AdminNotificationDto,
 } from "@/lib/admin/admin-api";
 import { AdminShell, type NavBadge } from "./_components/admin-shell";
+import {
+  profileChangeFieldLabel,
+  serviceKindLabel,
+} from "@/lib/admin/approval-labels";
 import type { NotificationPopoverItem } from "@/components/NotificationPopover";
 import {
   COUNTRY_PREF_COOKIE,
@@ -369,32 +373,3 @@ function notificationTypeLabel(type: string): string {
   }
 }
 
-function serviceKindLabel(kind: string): string {
-  switch (kind) {
-    case "GENERAL":
-      return "GP consultation";
-    case "SPECIALIST":
-      return "Specialist consultation";
-    case "PRESCRIPTION":
-      return "Prescription";
-    default:
-      return "Service";
-  }
-}
-
-function profileChangeFieldLabel(field: string): string {
-  switch (field) {
-    case "fullName":
-      return "name";
-    case "qualifications":
-      return "qualifications";
-    case "bio":
-      return "bio";
-    case "registration":
-      return "registration";
-    case "photo":
-      return "photo";
-    default:
-      return "profile";
-  }
-}

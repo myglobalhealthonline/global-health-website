@@ -6,10 +6,16 @@ import { Edit3, Eye, Plus, Stethoscope } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminDoctors,
+  fetchAdminPendingProfileChangeRequests,
+  fetchAdminPendingServiceRequests,
   purgeAdminDoctor,
   type AdminDoctorDto,
   type AdminServiceKind,
 } from "@/lib/admin/admin-api";
+import {
+  profileChangeFieldLabel,
+  serviceKindLabel,
+} from "@/lib/admin/approval-labels";
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
@@ -62,8 +68,23 @@ function doctorInitials(fullName: string): string {
     .join("");
 }
 
+/** One doctor-initiated request waiting on an admin, flattened from the two
+ *  queues (service assignments + locked-profile edits) so the list can show
+ *  who is waiting and link straight to the right review screen. */
+type PendingApproval = {
+  doctorId: string;
+  doctorName: string;
+  /** What they asked for, e.g. "photo change" or "GP consultation". */
+  what: string;
+  /** Market the request applies to. */
+  scope: string;
+  href: string;
+  createdAt: string;
+};
+
 function doctorFields(
   deleteDoctorAction: (formData: FormData) => void | Promise<void>,
+  pendingByDoctor: Map<string, PendingApproval[]>,
 ): ColumnPriorityField<AdminDoctorDto>[] {
   return [
     {
@@ -89,9 +110,25 @@ function doctorFields(
       key: "status",
       label: "Status",
       priority: 1,
-      render: (d) => (
-        <Pill tone={d.active ? "published" : "inactive"}>{d.active ? "Published" : "Suspended"}</Pill>
-      ),
+      render: (d) => {
+        const pending = pendingByDoctor.get(d.id) ?? [];
+        return (
+          <span className="inline-flex flex-wrap items-center gap-1.5">
+            <Pill tone={d.active ? "published" : "inactive"}>{d.active ? "Published" : "Suspended"}</Pill>
+            {/* The sidebar badge only says a request exists; this is the row
+                that raised it. Links to the queue that can approve it. */}
+            {pending.length > 0 ? (
+              <Link href={pending[0].href} className="no-underline">
+                <Pill tone="pending" withDot>
+                  {pending.length === 1
+                    ? `${pending[0].what} awaiting approval`
+                    : `${pending.length} awaiting approval`}
+                </Pill>
+              </Link>
+            ) : null}
+          </span>
+        );
+      },
     },
     {
       key: "practicingIn",
@@ -231,6 +268,52 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
 
   const listResult = await fetchAdminDoctors(filters);
 
+  // Pending doctor-initiated requests — the same two queues the topbar bell
+  // and the sidebar count read. Scoped to the active country like the rest of
+  // the portal. Best-effort: a failed queue just means no banner.
+  const pending: PendingApproval[] = [];
+  const countryQuery = activeCountry ? { countryCode: activeCountry.code } : undefined;
+
+  const [serviceReqs, profileReqs] = await Promise.all([
+    fetchAdminPendingServiceRequests(countryQuery).catch(() => null),
+    fetchAdminPendingProfileChangeRequests(countryQuery).catch(() => null),
+  ]);
+
+  if (serviceReqs?.ok) {
+    for (const r of serviceReqs.data.items) {
+      pending.push({
+        doctorId: r.doctorId,
+        doctorName: r.doctorName,
+        what: `${serviceKindLabel(r.serviceKind)} — ${r.serviceName}`,
+        scope: r.countryName,
+        href: `/admin/doctors/${r.doctorId}/services`,
+        createdAt: r.createdAt,
+      });
+    }
+  }
+
+  if (profileReqs?.ok) {
+    for (const r of profileReqs.data.items) {
+      pending.push({
+        doctorId: r.doctorId,
+        doctorName: r.doctorName,
+        what: `${profileChangeFieldLabel(r.field)} change`,
+        scope: r.isGlobal ? "All markets" : r.countryName,
+        href: `/admin/doctors/${r.doctorId}/profile-requests`,
+        createdAt: r.createdAt,
+      });
+    }
+  }
+
+  pending.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+  const pendingByDoctor = new Map<string, PendingApproval[]>();
+  for (const p of pending) {
+    const list = pendingByDoctor.get(p.doctorId);
+    if (list) list.push(p);
+    else pendingByDoctor.set(p.doctorId, [p]);
+  }
+
   if (!countriesResult.ok) {
     return (
       <>
@@ -303,6 +386,35 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
 
       <ScopeBanner activeCountry={activeCountry} clearHref="/admin/doctors" />
       <QueryToast />
+
+      {/* Names every doctor behind the sidebar's count badge, so the alert is
+          never anonymous. Each row deep-links to the screen that approves it. */}
+      {pending.length > 0 ? (
+        <AdminCard className="gh-status-warning mb-4" padding={0}>
+          <div className="px-5 py-4">
+            <p className="m-0 text-portal-body font-bold text-[var(--color-text-primary)]">
+              {pending.length === 1
+                ? "1 request awaiting your approval"
+                : `${pending.length} requests awaiting your approval`}
+            </p>
+            <ul className="mt-2 grid list-none gap-1.5 p-0">
+              {pending.map((p) => (
+                <li key={p.href + p.what} className="flex flex-wrap items-center gap-2">
+                  <span className="text-portal-compact text-[var(--color-text-body)]">
+                    <strong>{p.doctorName}</strong> — {p.what} · {p.scope}
+                  </span>
+                  <Link
+                    href={p.href}
+                    className="text-portal-compact font-semibold text-[var(--color-text-primary)] underline"
+                  >
+                    Review
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </AdminCard>
+      ) : null}
 
       <AdminSummaryStrip
         items={[
@@ -394,7 +506,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
       <AdminCard padding={0} className="gh-admin-doctor-table-card overflow-hidden">
         {items.length > 0 ? (
           <ColumnPriorityTable<AdminDoctorDto>
-            fields={doctorFields(deleteDoctorAction)}
+            fields={doctorFields(deleteDoctorAction, pendingByDoctor)}
             rows={items}
             getRowKey={(d) => d.id}
             cardTone={(d) => (d.active ? "success" : "neutral")}
