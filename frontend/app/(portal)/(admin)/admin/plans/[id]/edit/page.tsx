@@ -185,6 +185,8 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         requiredWellnessCredits: r.requiredWellnessCredits,
         unlockAfterPaidMonths: r.unlockAfterPaidMonths,
       })),
+    // Admin preview only — never reaches a sitemap, so it carries no date.
+    updatedAt: null,
   };
 
   // ── Server actions ─────────────────────────────────────────────────────────

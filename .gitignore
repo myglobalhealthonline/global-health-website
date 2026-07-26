@@ -31,6 +31,11 @@
 !/backend/.env.example
 !/backend/.env.test
 
+# doctor credential mailout — roster holds plaintext mailbox passwords,
+# out/ holds rendered previews and the send log. Never commit either.
+/backend/scripts/data/doctor-credentials.json
+/backend/scripts/out/
+
 # editor
 .vscode
 

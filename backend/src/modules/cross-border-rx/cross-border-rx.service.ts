@@ -634,9 +634,10 @@ export async function submitCrossBorderRxConsent(
 /**
  * Deep link into the public booking funnel for a full GP (GENERAL) consultation
  * with the prescribing doctor in their country. Pre-selects the country's
- * GENERAL service + the doctor, so the funnel lands the patient on slot
- * selection then the booking form. Falls back to the doctor-first funnel when
- * no GENERAL service resolves, and returns null if the doctor has no slug.
+ * GENERAL service + the doctor so the funnel lands on slot selection, then the
+ * booking form. Degrades gracefully: drops whichever of service/doctor can't be
+ * resolved, and as a last resort links the country's booking page. Only returns
+ * null if the target country itself can't be resolved (should never happen).
  */
 async function buildGpBookingUrl(
   targetDoctorId: string,
@@ -648,16 +649,17 @@ async function buildGpBookingUrl(
       where: { code: { equals: targetCountryCode, mode: "insensitive" } },
       select: { code: true, defaultLocale: true },
     }),
-    resolveGpSameDayService(targetCountryCode),
+    resolveGpSameDayService(targetCountryCode).catch(() => null),
   ]);
-  if (!doctor?.slug || !country) return null;
+  if (!country) return null;
   const base = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
   const lang = country.defaultLocale.toLowerCase();
   const code = country.code.toLowerCase();
-  const doctorParam = encodeURIComponent(doctor.slug);
-  return gpService?.slug
-    ? `${base}/${code}/${lang}/book?service=${encodeURIComponent(gpService.slug)}&doctor=${doctorParam}`
-    : `${base}/${code}/${lang}/book?doctor=${doctorParam}`;
+  const params = new URLSearchParams();
+  if (gpService?.slug) params.set("service", gpService.slug);
+  if (doctor?.slug) params.set("doctor", doctor.slug);
+  const qs = params.toString();
+  return `${base}/${code}/${lang}/book${qs ? `?${qs}` : ""}`;
 }
 
 function escapeHtml(value: string): string {
