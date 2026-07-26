@@ -33,7 +33,7 @@ export function ForgotPasswordForm({ i18n = DEFAULT_I18N }: { i18n?: ForgotPassw
     setLoading(false);
     setMessage(
       result.ok
-        ? (result.message ?? "If an account exists, reset instructions will be sent when email is configured.")
+        ? (result.message ?? "If an account exists for that email, password reset instructions are on the way.")
         : result.message,
     );
     if (!result.ok) setIsError(true);

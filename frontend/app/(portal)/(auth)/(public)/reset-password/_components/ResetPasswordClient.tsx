@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GH2AuthShell, type GH2AuthShellI18n } from "@/components/sections/GH2PagePrimitives";
 import { verifyPending2fa, resendLoginOtp, type Pending2faMethod } from "@/lib/api/auth-api";
@@ -31,6 +32,7 @@ export function ResetPasswordClient({
   const isInvite = searchParams.get("invite") === "1";
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
@@ -190,6 +192,14 @@ export function ResetPasswordClient({
               {verifying ? twoFa.verifying : twoFa.verify}
             </button>
           </div>
+
+          <Link
+            href="/login"
+            className="block text-sm font-semibold underline-offset-4 hover:underline"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            {twoFa.back}
+          </Link>
         </form>
       </GH2AuthShell>
     );
@@ -211,42 +221,67 @@ export function ResetPasswordClient({
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">{subhead}</p>
 
         {!token ? (
-          <p className="mt-6 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800" role="alert" aria-live="polite">
-            {t.noToken.replace("{kind}", isInvite ? t.inviteTokenKind : t.resetTokenKind)}
-          </p>
+          <div className="mt-6 space-y-3">
+            <p className="rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800" role="alert" aria-live="polite">
+              {t.noToken.replace("{kind}", isInvite ? t.inviteTokenKind : t.resetTokenKind)}
+            </p>
+            {!isInvite ? (
+              <Link
+                href="/forgot-password"
+                className="text-sm font-semibold text-emerald-700 underline-offset-4 hover:underline"
+              >
+                {t.requestNewLink}
+              </Link>
+            ) : null}
+          </div>
         ) : (
           <form onSubmit={onSubmit} method="post" className="mt-6 space-y-4">
-            <label className="block">
-              <span className="gh-field-label" data-required>{t.newPasswordLabel}</span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                aria-required="true"
-                minLength={8}
-                maxLength={128}
-                className="gh-input mt-1 min-w-0"
-                autoComplete="new-password"
-              />
-            </label>
-            <label className="block">
-              <span className="gh-field-label" data-required>{t.confirmPasswordLabel}</span>
-              <input
-                type="password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                required
-                aria-required="true"
-                minLength={8}
-                maxLength={128}
-                className="gh-input mt-1 min-w-0"
-                autoComplete="new-password"
-              />
-            </label>
+            {!(msg?.kind === "ok" && !isInvite) ? (
+              <>
+                <label className="block">
+                  <span className="gh-field-label" data-required>{t.newPasswordLabel}</span>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      aria-required="true"
+                      minLength={8}
+                      maxLength={128}
+                      className="gh-input mt-1 min-w-0"
+                      style={{ paddingRight: "2.75rem" }}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="gh-auth-eye-toggle absolute right-3 top-1/2 mt-0.5 -translate-y-1/2 cursor-pointer transition-colors duration-150"
+                      aria-label={showPassword ? t.hidePassword : t.showPassword}
+                    >
+                      {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+                    </button>
+                  </div>
+                </label>
+                <label className="block">
+                  <span className="gh-field-label" data-required>{t.confirmPasswordLabel}</span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    required
+                    aria-required="true"
+                    minLength={8}
+                    maxLength={128}
+                    className="gh-input mt-1 min-w-0"
+                    autoComplete="new-password"
+                  />
+                </label>
+              </>
+            ) : null}
 
             {msg ? (
-              <p
+              <div
                 className={`rounded-md px-3 py-2 text-sm ${
                   msg.kind === "ok"
                     ? "bg-emerald-50 text-emerald-800"
@@ -255,26 +290,31 @@ export function ResetPasswordClient({
                 role={msg.kind === "err" ? "alert" : "status"}
                 aria-live="polite"
               >
-                {msg.text}
-              </p>
+                <p>{msg.text}</p>
+                {msg.kind === "err" && !isInvite ? (
+                  <Link
+                    href="/forgot-password"
+                    className="mt-1 inline-block font-semibold underline-offset-4 hover:underline"
+                  >
+                    {t.requestNewLink}
+                  </Link>
+                ) : null}
+              </div>
             ) : null}
-
-            <button
-              type="submit"
-              disabled={busy}
-              className="gh2-btn-lime disabled:opacity-60"
-            >
-              {busy ? t.saving : submitLabel}
-            </button>
 
             {msg?.kind === "ok" && !isInvite ? (
-              <Link
-                href="/login"
-                className="ml-3 text-sm font-semibold text-emerald-700 hover:underline"
-              >
+              <Link href="/login" className="gh2-btn-lime inline-flex justify-center">
                 {t.goToSignIn}
               </Link>
-            ) : null}
+            ) : (
+              <button
+                type="submit"
+                disabled={busy}
+                className="gh2-btn-lime disabled:opacity-60"
+              >
+                {busy ? t.saving : submitLabel}
+              </button>
+            )}
           </form>
         )}
     </GH2AuthShell>
