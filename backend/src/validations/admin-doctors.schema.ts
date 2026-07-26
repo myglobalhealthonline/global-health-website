@@ -168,6 +168,19 @@ const adminDoctorBaseObject = z.object({
   crossBorderRxEnabled: z.boolean().optional(),
   crossBorderRxPriceCents: z.number().int().min(0).max(100_000_00).nullable().optional(),
   crossBorderRxPayoutCents: z.number().int().min(0).max(100_000_00).nullable().optional(),
+  /// Per-country cross-border prescriber price + payout. One entry per country
+  /// the doctor prescribes in. A country is only offered to requesting doctors
+  /// when BOTH price (> 0) and payout are set.
+  crossBorderRxCountries: z
+    .array(
+      z.object({
+        countryId: z.string().min(1).max(120),
+        priceCents: z.number().int().min(0).max(100_000_00).nullable(),
+        payoutCents: z.number().int().min(0).max(100_000_00).nullable(),
+      }),
+    )
+    .max(50)
+    .optional(),
   /**
    * SEO metadata for the public doctor profile page. Kept admin-managed
    * (not on the doctor's self-edit form) so changes can't break canonical

@@ -350,6 +350,10 @@ const adminDoctorInclude = {
   },
   // Per-locale CMS content for the admin translation tabs (form pre-fill).
   translations: { orderBy: { locale: "asc" as const } },
+  // Per-country cross-border prescriber price + payout (form pre-fill).
+  crossBorderRxCountries: {
+    select: { countryId: true, priceCents: true, payoutCents: true },
+  },
 } satisfies Prisma.DoctorInclude;
 
 export type AdminDoctorRecord = Prisma.DoctorGetPayload<{ include: typeof adminDoctorInclude }>;
@@ -1328,6 +1332,30 @@ export async function updateAdminDoctor(
         effectiveCountryId,
         body.additionalCountryIds,
       );
+
+      // Per-country cross-border prescriber price + payout. Upsert each entry;
+      // a row with neither price nor payout is deleted so that country falls out
+      // of the requesting-doctor picker ("not set" → not offered).
+      if (body.crossBorderRxCountries !== undefined) {
+        for (const entry of body.crossBorderRxCountries) {
+          if (entry.priceCents == null && entry.payoutCents == null) {
+            await tx.doctorCrossBorderRxCountry.deleteMany({
+              where: { doctorId: id, countryId: entry.countryId },
+            });
+            continue;
+          }
+          await tx.doctorCrossBorderRxCountry.upsert({
+            where: { doctorId_countryId: { doctorId: id, countryId: entry.countryId } },
+            create: {
+              doctorId: id,
+              countryId: entry.countryId,
+              priceCents: entry.priceCents,
+              payoutCents: entry.payoutCents,
+            },
+            update: { priceCents: entry.priceCents, payoutCents: entry.payoutCents },
+          });
+        }
+      }
 
       if (body.imcRegistration !== undefined) {
         await syncLegacyImcRegistrationToPrimaryCountry(

@@ -89,7 +89,17 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
     canRequestCrossJurisdictionRx:
       formData.get("canRequestCrossJurisdictionRx") === "on",
     crossBorderRxEnabled: formData.get("crossBorderRxEnabled") === "on",
-    crossBorderRxPriceCents: moneyToCents(formData.get("crossBorderRxPrice")),
-    crossBorderRxPayoutCents: moneyToCents(formData.get("crossBorderRxPayout")),
+    // Per-country price + payout. The form renders a hidden
+    // `crossBorderRxCountryId` per country row plus `crossBorderRxPrice_<id>` /
+    // `crossBorderRxPayout_<id>` inputs; enumerate the ids to rebuild the array.
+    crossBorderRxCountries: formData
+      .getAll("crossBorderRxCountryId")
+      .map(String)
+      .filter(Boolean)
+      .map((countryId) => ({
+        countryId,
+        priceCents: moneyToCents(formData.get(`crossBorderRxPrice_${countryId}`)),
+        payoutCents: moneyToCents(formData.get(`crossBorderRxPayout_${countryId}`)),
+      })),
   };
 }

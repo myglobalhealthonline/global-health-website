@@ -382,6 +382,7 @@ model Country {
   /// Doctors with their *primary* country elsewhere who have been linked
   /// into this country's roster via the `DoctorCountry` M:N join.
   linkedDoctors               DoctorCountry[]
+  crossBorderRxDoctors        DoctorCrossBorderRxCountry[]
   /// Pending/decided doctor edits scoped to this market (bio, registration).
   doctorProfileChangeRequests DoctorProfileChangeRequest[]
   specialties                 Specialty[]
@@ -548,15 +549,20 @@ model Doctor {
   /// who may FULFIL such a request is the `crossBorderRx*` config below.
   /// Default false so existing doctors keep current scope until an admin grants it.
   canRequestCrossJurisdictionRx   Boolean                          @default(false)
-  /// Cross-border PRESCRIBER config (the fulfilling side, Doctor B). When
-  /// enabled, this doctor is a target a treating doctor in another country can
-  /// send a prescription request to. `priceCents` = the patient fee for the
-  /// async request; `payoutCents` = what the clinic pays this doctor. Both in
-  /// the doctor's own country currency. Replaces the old ASYNC_PRESCRIPTION
-  /// service — the config now lives on the doctor, not a catalogue service.
+  /// Cross-border PRESCRIBER master toggle (the fulfilling side, Doctor B).
+  /// When on, this doctor CAN be a cross-border prescriber; the actual per-market
+  /// price + payout live on `crossBorderRxCountries` (one row per country the
+  /// doctor prescribes in). A doctor is only offered to requesting doctors for a
+  /// country whose config row has BOTH price and payout set — so a multi-country
+  /// doctor can be live in one market and not another.
   crossBorderRxEnabled            Boolean                          @default(false)
+  /// Legacy single-market price/payout (pre per-country config). Kept for back-
+  /// compat; the data was migrated into a `crossBorderRxCountries` row for the
+  /// primary country. No longer read by the picker/checkout.
   crossBorderRxPriceCents         Int?
   crossBorderRxPayoutCents        Int?
+  /// Per-country cross-border prescriber price + payout (the source of truth).
+  crossBorderRxCountries          DoctorCrossBorderRxCountry[]
   /// Per-locale CMS content (professional title, bio, SEO). Base columns
   /// above stay as the default-locale copy + fallback; a translation row
   /// overrides them per locale. fullName + qualifications are NOT
@@ -802,6 +808,31 @@ model DoctorCountry {
   @@unique([doctorId, countryId])
   @@index([countryId, active])
   @@index([countryId, isVerified])
+  @@index([doctorId])
+}
+
+/// Per-(doctor, country) cross-border prescriber config. A doctor who
+/// prescribes cross-border in more than one country gets one row per country,
+/// each carrying that market's patient price + doctor payout (in the country's
+/// own currency). The requesting-doctor picker only offers this doctor for a
+/// country whose row has BOTH `priceCents` (> 0) and `payoutCents` set — so a
+/// multi-country doctor can be live in one market while another is left unset.
+/// Gated overall by `Doctor.crossBorderRxEnabled`.
+model DoctorCrossBorderRxCountry {
+  id          String   @id @default(cuid())
+  doctorId    String
+  countryId   String
+  /// Patient fee for the async request, in the country's currency (cents).
+  priceCents  Int?
+  /// What the clinic pays this doctor, in the country's currency (cents).
+  payoutCents Int?
+  doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([doctorId, countryId])
+  @@index([countryId])
   @@index([doctorId])
 }
 

@@ -144,33 +144,35 @@ export async function listCrossBorderRxTargets(
     });
     if (!source) throw new CrossBorderRxSourceNotFoundError();
 
-    const doctors = await prisma.doctor.findMany({
+    // One row per (prescriber, country) that is fully configured — BOTH price
+    // (> 0) and payout set — for an enabled, active doctor in an active country.
+    // A multi-country prescriber therefore surfaces under EACH country they have
+    // a complete config for, and not under those they don't.
+    const configs = await prisma.doctorCrossBorderRxCountry.findMany({
       where: {
-        crossBorderRxEnabled: true,
-        active: true,
-        crossBorderRxPriceCents: { gt: 0 },
+        priceCents: { gt: 0 },
+        payoutCents: { not: null },
+        doctor: { crossBorderRxEnabled: true, active: true },
         country: { isActive: true },
       },
-      orderBy: [{ country: { name: "asc" } }, { fullName: "asc" }],
+      orderBy: [{ country: { name: "asc" } }, { doctor: { fullName: "asc" } }],
       select: {
-        id: true,
-        fullName: true,
-        title: true,
         country: { select: { code: true, name: true } },
+        doctor: { select: { id: true, fullName: true, title: true } },
       },
     });
 
     const sourceCountry = source.countryCode.toLowerCase();
     const byCountry = new Map<string, CrossBorderRxTargetCountry>();
-    for (const d of doctors) {
-      const code = d.country.code.toLowerCase();
+    for (const c of configs) {
+      const code = c.country.code.toLowerCase();
       if (code === sourceCountry) continue; // must be a DIFFERENT jurisdiction
       let entry = byCountry.get(code);
       if (!entry) {
-        entry = { countryCode: d.country.code, countryName: d.country.name, doctors: [] };
+        entry = { countryCode: c.country.code, countryName: c.country.name, doctors: [] };
         byCountry.set(code, entry);
       }
-      entry.doctors.push({ id: d.id, fullName: d.fullName, title: d.title });
+      entry.doctors.push({ id: c.doctor.id, fullName: c.doctor.fullName, title: c.doctor.title });
     }
 
     return { targets: Array.from(byCountry.values()) };
@@ -220,30 +222,30 @@ export async function createCrossBorderRxRequest(
   });
   if (!source) throw new CrossBorderRxSourceNotFoundError();
 
-  // Resolve the chosen prescriber (Doctor B): cross-border-enabled, active,
-  // priced, and whose PRIMARY country is the requested target. One query
-  // enforces all of it — a crafted payload can't reach a doctor who isn't set
-  // up. Fee + payout come from the doctor's own config, not a service.
-  const doctor = await prisma.doctor.findFirst({
+  // Resolve the (prescriber, target country) config: the doctor must be enabled
+  // + active, and have a COMPLETE row for the requested country (price > 0 AND
+  // payout set). One query enforces all of it — a crafted payload can't reach a
+  // doctor/country pairing an admin hasn't fully set up.
+  const config = await prisma.doctorCrossBorderRxCountry.findFirst({
     where: {
-      id: input.targetDoctorId,
-      crossBorderRxEnabled: true,
-      active: true,
-      crossBorderRxPriceCents: { gt: 0 },
+      doctorId: input.targetDoctorId,
+      priceCents: { gt: 0 },
+      payoutCents: { not: null },
+      doctor: { crossBorderRxEnabled: true, active: true },
       country: { code: { equals: input.targetCountryCode, mode: "insensitive" }, isActive: true },
     },
     select: {
-      id: true,
-      fullName: true,
-      crossBorderRxPriceCents: true,
-      crossBorderRxPayoutCents: true,
+      priceCents: true,
+      payoutCents: true,
+      doctor: { select: { id: true, fullName: true } },
       country: { select: { code: true, name: true } },
     },
   });
-  if (!doctor || doctor.crossBorderRxPriceCents == null || doctor.crossBorderRxPriceCents <= 0) {
+  if (!config || config.priceCents == null || config.priceCents <= 0) {
     throw new CrossBorderRxTargetNotAvailableError();
   }
-  const targetCountryCode = doctor.country.code;
+  const doctor = { id: config.doctor.id, fullName: config.doctor.fullName, country: config.country };
+  const targetCountryCode = config.country.code;
   // Must be a DIFFERENT jurisdiction than the treating doctor's.
   if (source.countryCode.toLowerCase() === targetCountryCode.toLowerCase()) {
     throw new CrossBorderRxTargetNotAvailableError();
@@ -285,7 +287,7 @@ export async function createCrossBorderRxRequest(
       patientFullName: source.fullName,
       targetCountryCode,
       targetDoctorId: doctor.id,
-      payoutCents: doctor.crossBorderRxPayoutCents ?? null,
+      payoutCents: config.payoutCents ?? null,
       // Optional now — the consultation SOAP is disclosed to Doctor B, so the
       // treating doctor no longer has to re-type a summary. Stored as "" when
       // omitted (the column is NOT NULL); the inbox hides an empty reason.
@@ -361,29 +363,32 @@ async function createAsyncFeeCheckoutForRequest(
     return existing?.stripeCheckoutUrl ?? orderPayShortLink(request.orderId);
   }
 
-  const doctor = await prisma.doctor.findFirst({
+  // Re-resolve the per-country config for THIS request's target country, so the
+  // patient is charged the current price in that country's currency.
+  const config = await prisma.doctorCrossBorderRxCountry.findFirst({
     where: {
-      id: request.targetDoctorId,
-      crossBorderRxEnabled: true,
-      active: true,
-      crossBorderRxPriceCents: { gt: 0 },
+      doctorId: request.targetDoctorId,
+      priceCents: { gt: 0 },
+      payoutCents: { not: null },
+      doctor: { crossBorderRxEnabled: true, active: true },
+      country: { code: { equals: request.targetCountryCode, mode: "insensitive" } },
     },
     select: {
-      fullName: true,
-      crossBorderRxPriceCents: true,
+      priceCents: true,
+      doctor: { select: { fullName: true } },
       country: { select: { code: true, currency: { select: { code: true } } } },
     },
   });
-  if (!doctor || doctor.crossBorderRxPriceCents == null || doctor.crossBorderRxPriceCents <= 0) {
+  if (!config || config.priceCents == null || config.priceCents <= 0) {
     throw new CrossBorderRxTargetNotAvailableError();
   }
-  const targetCountryCode = doctor.country.code;
+  const targetCountryCode = config.country.code;
   if (!isStripeConfigured(targetCountryCode)) {
     throw new CrossBorderRxStripeNotConfiguredError();
   }
-  const priceCents = doctor.crossBorderRxPriceCents;
-  const currency = doctor.country.currency.code;
-  const serviceName = `Cross-border prescription — ${doctor.fullName}`;
+  const priceCents = config.priceCents;
+  const currency = config.country.currency.code;
+  const serviceName = `Cross-border prescription — ${config.doctor.fullName}`;
 
   const source = await prisma.appointment.findUnique({
     where: { id: request.sourceAppointmentId },
