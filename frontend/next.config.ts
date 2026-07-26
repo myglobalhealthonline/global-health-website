@@ -112,6 +112,9 @@ if (buildCpus * buildApiConcurrency >= BACKEND_POOL_MAX) {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Drop `X-Powered-By: Next.js` — free framework fingerprint for anyone
+  // scanning the site (flagged by an external scan). No behaviour change.
+  poweredByHeader: false,
   // ponytail: default 60s static-page timeout was too tight under the
   // 31-worker build concurrency (backend fetches are individually capped at
   // PUBLIC_CONTENT_FETCH_TIMEOUT_MS=4s, but queuing under load can still
