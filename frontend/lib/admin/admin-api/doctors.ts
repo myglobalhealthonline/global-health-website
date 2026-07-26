@@ -279,6 +279,14 @@ export type AdminDoctorDto = {
   crossBorderRxEnabled?: boolean;
   crossBorderRxPriceCents?: number | null;
   crossBorderRxPayoutCents?: number | null;
+  /** Per-country cross-border prescriber price + payout (one per country the
+   *  doctor prescribes in). A country is offered to requesting doctors only
+   *  when BOTH price and payout are set. */
+  crossBorderRxCountries?: Array<{
+    countryId: string;
+    priceCents: number | null;
+    payoutCents: number | null;
+  }>;
 };
 
 export type AdminDoctorRegistrationDto = {
