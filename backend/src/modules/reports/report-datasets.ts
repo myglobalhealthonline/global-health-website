@@ -228,7 +228,8 @@ export async function doctorPatientsReport(
 ): Promise<ReportTable> {
   const createdAt = rangeWhere(filters);
   // Load bounded appointment contacts, then fold to one row per patient email
-  // in memory — avoids groupBy losing the name/phone columns.
+  // in memory — avoids groupBy losing the name column. Email is the dedup key
+  // only; neither it nor the phone reaches a column.
   const appts = await prisma.appointment.findMany({
     where: {
       doctorId,
@@ -241,7 +242,6 @@ export async function doctorPatientsReport(
     select: {
       fullName: true,
       email: true,
-      phone: true,
       countryCode: true,
       consultationType: true,
       createdAt: true,
@@ -254,8 +254,6 @@ export async function doctorPatientsReport(
     string,
     {
       fullName: string;
-      email: string;
-      phone: string | null;
       countries: Set<string>;
       types: Set<string>;
       count: number;
@@ -273,8 +271,6 @@ export async function doctorPatientsReport(
     } else {
       byEmail.set(key, {
         fullName: a.fullName,
-        email: a.email,
-        phone: a.phone,
         countries: new Set([a.countryCode.toUpperCase()]),
         types: new Set([a.consultationType]),
         count: 1,
@@ -293,10 +289,11 @@ export async function doctorPatientsReport(
     subtitle: [doctorName, rangeLabel(filters), ...scope].join(" · "),
     generatedAt: new Date().toISOString(),
     truncated,
+    // No patient email/phone — the doctor's list reports carry no direct
+    // contact details. Email is still folded on in memory (it is the dedup
+    // key) but never becomes a column.
     columns: [
       { key: "name", label: "Patient" },
-      { key: "email", label: "Email" },
-      { key: "phone", label: "Phone" },
       { key: "country", label: "Country" },
       { key: "types", label: "Consultation types" },
       { key: "count", label: "Appointments", align: "right" },
@@ -304,8 +301,6 @@ export async function doctorPatientsReport(
     ],
     rows: patients.map((p) => ({
       name: p.fullName,
-      email: p.email,
-      phone: p.phone ?? "",
       country: joinSet(p.countries),
       types: joinSet(p.types),
       count: p.count,
@@ -335,7 +330,6 @@ export async function doctorAppointmentsReport(
     select: {
       createdAt: true,
       fullName: true,
-      email: true,
       consultationType: true,
       status: true,
       paymentStatus: true,
@@ -354,7 +348,6 @@ export async function doctorAppointmentsReport(
     columns: [
       { key: "created", label: "Created" },
       { key: "patient", label: "Patient" },
-      { key: "email", label: "Email" },
       { key: "type", label: "Type" },
       { key: "status", label: "Status" },
       { key: "payment", label: "Payment" },
@@ -364,7 +357,6 @@ export async function doctorAppointmentsReport(
     rows: capped.map((r) => ({
       created: fmtDate(r.createdAt),
       patient: r.fullName,
-      email: r.email,
       type: r.consultationType,
       status: r.status,
       payment: r.paymentStatus,
@@ -840,7 +832,7 @@ export async function adminPatientsReport(
     truncated: rosterTruncated || facts.truncated,
     // Patient email is deliberately NOT a column — it is still selected above
     // because it is the only join key to the appointment facts, but it never
-    // leaves this function. Only the doctor's own reports print it.
+    // leaves this function. No report, doctor or admin, prints patient email.
     columns: [
       { key: "name", label: "Patient" },
       { key: "phone", label: "Phone" },
