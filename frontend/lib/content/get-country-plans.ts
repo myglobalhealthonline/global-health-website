@@ -96,6 +96,7 @@ function parsePlan(row: unknown): PublicPlan | null {
     wellnessKits: Array.isArray(r.wellnessKits)
       ? r.wellnessKits.map(parseKit).filter((k): k is PublicPlanWellnessKit => k !== null)
       : [],
+    updatedAt: typeof r.updatedAt === "string" ? r.updatedAt : null,
   };
 }
 

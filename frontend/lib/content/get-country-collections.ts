@@ -62,6 +62,9 @@ export type CountryHealthTestCard = {
   /** null = unlimited inventory; 0 = sold out; <=5 surfaces a "Only N
    *  left" badge on the public card. */
   stock: number | null;
+  /** Last edit to the test row; null when absent from the API payload.
+   *  Dates the lab-test sitemap entries. */
+  updatedAt: string | null;
 };
 
 export type ServiceFaq = { id: string; question: string; answer: string };
@@ -544,6 +547,7 @@ export const getCountryHealthTests = cache(async (
       resultsTimeline: typeof r.resultsTimeline === "string" ? r.resultsTimeline : null,
       imageSrc: imagePath ? resolveTrustedAssetUrl(imagePath) ?? null : null,
       stock: typeof r.stock === "number" ? r.stock : null,
+      updatedAt: typeof r.updatedAt === "string" ? r.updatedAt : null,
     });
   }
   return out;

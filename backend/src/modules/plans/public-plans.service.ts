@@ -60,6 +60,9 @@ export interface PublicPlanView {
   perkUnlockMonths: number | null;
   perks: PublicPlanPerk[];
   wellnessKits: PublicPlanWellnessKit[];
+  /** Last edit to the plan row. Consumed by the sitemap to date the
+   *  /pricing page — it has no timestamp of its own. */
+  updatedAt: string;
 }
 
 export interface PublicPlansResult {
@@ -145,6 +148,7 @@ function serializePublicPlan(plan: PublicPlanRecord, requested: LocaleCode, defa
       requiredWellnessCredits: r.requiredWellnessCredits,
       unlockAfterPaidMonths: r.unlockAfterPaidMonths,
     })),
+    updatedAt: plan.updatedAt.toISOString(),
   };
 }
 

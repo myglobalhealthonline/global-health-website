@@ -11,6 +11,8 @@ import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { hreflangRegion } from "@/lib/seo/hreflang";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getCountryLegal, LEGAL_TYPE_SLUGS } from "@/lib/content/get-country-legal";
+import { getCountryPlans } from "@/lib/content/get-country-plans";
+import { newestTimestamp } from "@/lib/seo/newest-timestamp";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -76,32 +78,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   };
 
-  // Country home + section pages — every enabled locale, with hreflang
-  // alternates so Google indexes each translated variant.
-  // Section routes gated by a per-country feature flag (see
-  // `isCountryFeatureEnabled`) are skipped for countries that don't have
-  // the flag — those routes `notFound()` at request time, so listing them
-  // unconditionally submitted dead 404s to Search Console for markets
-  // without that product line (e.g. /lab-tests, /see-a-specialist before
-  // a market has health-tests / specialist-consultations turned on).
-  for (const country of countries) {
-    pushLocalized(country, "", 0.9);
-    pushLocalized(country, "/doctors", 0.8);
-    if (isCountryFeatureEnabled(country, "general-consultations")) {
-      pushLocalized(country, "/gp-consultation-online", 0.8);
-    }
-    if (isCountryFeatureEnabled(country, "specialist-consultations")) {
-      pushLocalized(country, "/see-a-specialist", 0.8);
-    }
-    pushLocalized(country, "/book", 0.85);
-    if (isCountryFeatureEnabled(country, "health-tests")) {
-      pushLocalized(country, "/lab-tests", 0.7);
-    }
-    if (isCountryFeatureEnabled(country, "subscriptions")) {
-      pushLocalized(country, "/pricing", 0.6);
-    }
-    pushLocalized(country, "/blog", 0.6);
-  }
+  // Hub/list pages (country home, /doctors, /blog, /pricing …) have no
+  // timestamp of their own — they're generated from whatever content sits
+  // under them. We accumulate the newest child timestamp per country as the
+  // detail loops below run, then date each hub from its own children (see
+  // "Country home + section pages" at the end of this file). Deliberately NOT
+  // build time: a lastModified that changes on every deploy teaches Google the
+  // signal is noise and gets it discounted sitewide, including for the detail
+  // pages where it IS accurate.
+  type StampKey = "service" | "doctor" | "blog" | "legal" | "landing" | "test" | "plan";
+  const stamps = new Map<string, Partial<Record<StampKey, string>>>();
+  const bump = (code: string, key: StampKey, ts: string | null | undefined) => {
+    const forCountry = stamps.get(code) ?? {};
+    const winner = newestTimestamp(forCountry[key], ts);
+    if (!winner) return;
+    forCountry[key] = winner;
+    stamps.set(code, forCountry);
+  };
+  /** Newest of the given child timestamps for a country, or undefined. */
+  const newest = (code: string, ...keys: StampKey[]): string | undefined => {
+    const forCountry = stamps.get(code);
+    if (!forCountry) return undefined;
+    return newestTimestamp(...keys.map((k) => forCountry[k]));
+  };
+  const dated = (ts: string | undefined) => (ts ? { lastModified: ts } : undefined);
 
   // Service detail pages — active public GP/specialist services per country.
   // (PRESCRIPTION/HOME_DELIVERY kinds stay out: hidden from the public site
@@ -111,7 +111,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const services = await getPublicServicesForCountry(country.code);
       for (const s of services) {
         if (s.kind !== "GENERAL" && s.kind !== "SPECIALIST") continue;
-        pushLocalized(country, `/services/${s.slug}`, 0.7, s.updatedAt ? { lastModified: s.updatedAt } : undefined);
+        bump(country.code, "service", s.updatedAt);
+        pushLocalized(country, `/services/${s.slug}`, 0.7, dated(s.updatedAt ?? undefined));
       }
     } catch {
       // Service list unavailable — keep the rest of the sitemap.
@@ -123,7 +124,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
       const tests = await getCountryHealthTests(country.code);
       for (const t of tests) {
-        pushLocalized(country, `/lab-tests/${t.slug}`, 0.6);
+        bump(country.code, "test", t.updatedAt);
+        pushLocalized(country, `/lab-tests/${t.slug}`, 0.6, dated(t.updatedAt ?? undefined));
       }
     } catch {
       // Test list unavailable — keep the rest of the sitemap.
@@ -146,6 +148,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           ? country.supportedLocales.map((l) => l.toLowerCase())
           : [defaultLang];
       for (const page of res.data.landingPages) {
+        bump(country.code, "landing", page.updatedAt);
         const languages: Record<string, string> = {};
         for (const lang of langs) {
           languages[`${lang}-${region}`] = `${base}${slug}/${lang}/health/${page.slug}`;
@@ -179,11 +182,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const country of countries) {
     try {
       const legal = await getCountryLegal(country.code);
-      pushLocalized(country, "/legal", 0.3);
+      // Newest published row per type, across locales — the page resolves one
+      // row for every locale (exact → "en" → any), so every locale variant of
+      // a type shares that type's timestamp.
+      const stampByType = new Map<string, string>();
+      for (const d of legal?.documents ?? []) {
+        const winner = newestTimestamp(stampByType.get(d.type), d.updatedAt);
+        if (winner) stampByType.set(d.type, winner);
+        bump(country.code, "legal", d.updatedAt);
+      }
+      pushLocalized(country, "/legal", 0.3, dated(newest(country.code, "legal")));
       const types = new Set((legal?.documents ?? []).map((d) => d.type));
+      // The profile-only MEDICAL_DISCLAIMER fallback carries no timestamp of
+      // its own — it stays undated rather than borrowing an unrelated one.
       if (legal?.profile?.fullDisclaimer) types.add("MEDICAL_DISCLAIMER");
       for (const type of types) {
-        pushLocalized(country, `/legal/${LEGAL_TYPE_SLUGS[type]}`, 0.3);
+        pushLocalized(country, `/legal/${LEGAL_TYPE_SLUGS[type]}`, 0.3, dated(stampByType.get(type)));
       }
     } catch {
       // Legal data unavailable for this country — keep the rest of the sitemap.
@@ -197,17 +211,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/faq`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.4 },
-    { url: `${base}/blog`, changeFrequency: "weekly", priority: 0.6 },
   );
+  // `/blog` (global index) is pushed after the post loop below, so it can be
+  // dated from the newest post. The five above are hand-authored pages with no
+  // row behind them — nothing honest to date them from, so they stay undated.
 
   // Blog posts — published, admin-managed. [] when API unavailable.
   // Global posts (no countries assigned) canonicalize at the bare URL;
   // country-specific posts get one entry per assigned country × enabled
   // locale (via pushLocalized), matching the redirect/canonical scheme in
   // blog-post-page.tsx.
+  let newestPostAt: string | undefined;
   try {
     const posts = await listBlogPosts();
     for (const p of posts) {
+      newestPostAt = newestTimestamp(newestPostAt, p.publishedAt);
       urls.push({
         url: `${base}/blog/${p.slug}`,
         lastModified: p.publishedAt,
@@ -218,12 +236,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   } catch {
     // Blog list unavailable — sitemap still emits the rest.
   }
+  urls.push({
+    url: `${base}/blog`,
+    changeFrequency: "weekly",
+    priority: 0.6,
+    ...dated(newestPostAt),
+  });
 
   for (const country of countries) {
     try {
       const countryPosts = await listBlogPosts(country.code);
       for (const p of countryPosts) {
         if (p.countries.length === 0) continue; // already emitted above as a bare-URL entry
+        bump(country.code, "blog", p.publishedAt);
         // A blog post has exactly one authored locale (BlogListItem carries
         // no per-locale translation), so every OTHER enabled locale for this
         // country would just be an English-body page with noindex set by
@@ -258,16 +283,62 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         )
       ).filter((lang): lang is string => lang !== null);
       if (indexableLangs.length === 0) continue;
+      bump(country.code, "doctor", d.updatedAt);
       pushLocalized(
         country,
         `/doctors/${d.slug}`,
         0.7,
-        d.updatedAt ? { lastModified: d.updatedAt } : undefined,
+        dated(d.updatedAt ?? undefined),
         indexableLangs,
       );
     }
   } catch {
     // Doctor list unavailable — sitemap still emits the country tree.
+  }
+
+  // Plan rows back-date /pricing only; the plans themselves have no public
+  // URL of their own, so nothing is pushed here.
+  for (const country of countries) {
+    if (!isCountryFeatureEnabled(country, "subscriptions")) continue;
+    try {
+      for (const p of await getCountryPlans(country.code)) bump(country.code, "plan", p.updatedAt);
+    } catch {
+      // Plan list unavailable — /pricing just stays undated.
+    }
+  }
+
+  // Country home + section pages — every enabled locale, with hreflang
+  // alternates so Google indexes each translated variant.
+  // Section routes gated by a per-country feature flag (see
+  // `isCountryFeatureEnabled`) are skipped for countries that don't have
+  // the flag — those routes `notFound()` at request time, so listing them
+  // unconditionally submitted dead 404s to Search Console for markets
+  // without that product line (e.g. /lab-tests, /see-a-specialist before
+  // a market has health-tests / specialist-consultations turned on).
+  //
+  // Runs LAST because each hub is dated from the child content gathered by
+  // the loops above. Sitemap entry order is not significant to crawlers.
+  for (const country of countries) {
+    const code = country.code;
+    // The country home surfaces every content type, so any of them changing
+    // is a real change to it.
+    pushLocalized(country, "", 0.9, dated(newest(code, "service", "doctor", "blog", "legal", "landing", "test", "plan")));
+    pushLocalized(country, "/doctors", 0.8, dated(newest(code, "doctor")));
+    if (isCountryFeatureEnabled(country, "general-consultations")) {
+      pushLocalized(country, "/gp-consultation-online", 0.8, dated(newest(code, "service")));
+    }
+    if (isCountryFeatureEnabled(country, "specialist-consultations")) {
+      pushLocalized(country, "/see-a-specialist", 0.8, dated(newest(code, "service", "doctor")));
+    }
+    // /book lists the bookable services and the doctors who staff them.
+    pushLocalized(country, "/book", 0.85, dated(newest(code, "service", "doctor")));
+    if (isCountryFeatureEnabled(country, "health-tests")) {
+      pushLocalized(country, "/lab-tests", 0.7, dated(newest(code, "test")));
+    }
+    if (isCountryFeatureEnabled(country, "subscriptions")) {
+      pushLocalized(country, "/pricing", 0.6, dated(newest(code, "plan")));
+    }
+    pushLocalized(country, "/blog", 0.6, dated(newest(code, "blog")));
   }
 
   return urls;
