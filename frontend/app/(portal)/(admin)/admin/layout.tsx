@@ -17,7 +17,7 @@ import {
   fetchAdminPendingServiceRequests,
   type AdminNotificationDto,
 } from "@/lib/admin/admin-api";
-import { AdminShell } from "./_components/admin-shell";
+import { AdminShell, type NavBadge } from "./_components/admin-shell";
 import type { NotificationPopoverItem } from "@/components/NotificationPopover";
 import {
   COUNTRY_PREF_COOKIE,
@@ -40,6 +40,17 @@ async function setCountryPreferenceAction(slug: string) {
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",
   });
+}
+
+/** "2 pending approvals — Dr A (service request), Dr B (name change)".
+ *  `sources` is capped by the caller's page size, so any remainder is folded
+ *  into "+N more" rather than silently dropped. */
+function buildBadgeTitle(count: number, sources: string[]): string {
+  const head = `${count} pending approval${count === 1 ? "" : "s"}`;
+  if (sources.length === 0) return head;
+  const shown = sources.slice(0, 3);
+  const rest = count - shown.length;
+  return `${head} — ${shown.join(", ")}${rest > 0 ? `, +${rest} more` : ""}`;
 }
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
@@ -142,7 +153,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   let notifications:
     | { items: NotificationPopoverItem[]; unreadCount: number }
     | undefined;
-  let navBadges: Record<string, number> | undefined;
+  let navBadges: Record<string, NavBadge> | undefined;
 
   const feedItems: NotificationPopoverItem[] = [];
   let unreadTotal = 0;
@@ -163,6 +174,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   // the count is the sum: a doctor waiting on a name change is as much an
   // approval to action as one waiting on a service.
   let doctorApprovalCount = 0;
+  // Who raised each pending approval — surfaced as the nav badge's tooltip /
+  // screen-reader label so the number names its source instead of being an
+  // anonymous alert.
+  const doctorApprovalSources: string[] = [];
 
   try {
     const res = await fetchAdminPendingServiceRequests(
@@ -173,6 +188,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       doctorApprovalCount += count;
       unreadTotal += count;
       for (const r of items.slice(0, 8)) {
+        doctorApprovalSources.push(`${r.doctorName} (service request)`);
         feedItems.push({
           id: r.id,
           title: `${r.doctorName} requested ${r.serviceName}`,
@@ -196,6 +212,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       doctorApprovalCount += count;
       unreadTotal += count;
       for (const r of items.slice(0, 8)) {
+        doctorApprovalSources.push(
+          `${r.doctorName} (${profileChangeFieldLabel(r.field)} change)`,
+        );
         feedItems.push({
           id: r.id,
           title: `${r.doctorName} requested a ${profileChangeFieldLabel(r.field)} change`,
@@ -211,7 +230,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
 
   if (doctorApprovalCount > 0) {
-    navBadges = { "/admin/doctors": doctorApprovalCount };
+    navBadges = {
+      "/admin/doctors": {
+        count: doctorApprovalCount,
+        title: buildBadgeTitle(doctorApprovalCount, doctorApprovalSources),
+      },
+    };
   }
 
   if (feedItems.length > 0 || unreadTotal > 0) {

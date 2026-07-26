@@ -180,6 +180,8 @@ export function MessagesInbox({
                       <span
                         className="inline-flex min-w-[18px] items-center justify-center rounded-full px-1.5 text-portal-thead font-bold"
                         style={{ background: signal, color: "#0b150f" }}
+                        title={`${unread} unread from ${t.name}`}
+                        aria-label={`${unread} unread from ${t.name}`}
                       >
                         {unread}
                       </span>

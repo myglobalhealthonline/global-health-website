@@ -60,6 +60,13 @@ export function NotificationPopover({
         <button
           type="button"
           aria-label={ariaLabel}
+          // The dot alone doesn't say how many or what — hovering the bell
+          // should answer that without opening the menu.
+          title={
+            unreadCount > 0
+              ? unreadNotificationsSr.replace("{count}", String(unreadCount))
+              : ariaLabel
+          }
           data-tour="topbar-notifications"
           className="gh-notification-button relative inline-flex size-9 items-center justify-center rounded-full transition hover:bg-white/5"
           style={{ color: "var(--portal-chrome-text)" }}

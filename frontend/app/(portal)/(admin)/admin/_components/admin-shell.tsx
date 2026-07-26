@@ -53,6 +53,12 @@ type Section = { href: string; label: string };
 type SignOutAction = () => Promise<void> | void;
 type SetCountryPreferenceAction = (slug: string) => Promise<void>;
 
+/** A sidebar count badge. `title` says WHAT is pending and WHO raised it
+ *  ("2 pending approvals — Dr A (service request), Dr B (name change)") so a
+ *  bare number is never a dead end: it's both the hover tooltip and the
+ *  screen-reader label. */
+export type NavBadge = { count: number; title: string };
+
 // Icons used ONLY in the Global section — country-scoped items use dot bullets
 // per the reference (admin-portal-reference Shell.jsx).
 const GLOBAL_ICONS: Record<string, LucideIcon> = {
@@ -308,7 +314,7 @@ export function AdminShell({
   /** Topbar bell feed. Defaults to an empty caught-up state. */
   notifications?: { items: NotificationPopoverItem[]; unreadCount: number };
   /** Sidebar count badges keyed by href (e.g. pending approvals on Doctors). */
-  navBadges?: Record<string, number>;
+  navBadges?: Record<string, NavBadge>;
   children: ReactNode;
 }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -478,6 +484,7 @@ export function AdminShell({
                         }
                         label={section.label}
                         active={isActive(section.href)}
+                        badge={navBadges?.[section.href]}
                         onNavigate={() => setNavOpen(false)}
                       />
                     ))}
@@ -712,7 +719,7 @@ function SidebarItem({
   icon: ReactNode;
   label: string;
   active: boolean;
-  badge?: number;
+  badge?: NavBadge;
   onNavigate: () => void;
 }) {
   return (
@@ -731,12 +738,13 @@ function SidebarItem({
         {icon}
       </span>
       <span className="truncate">{label}</span>
-      {badge && badge > 0 ? (
+      {badge && badge.count > 0 ? (
         <span
           className="gh-portal-nav-item__badge gh-portal-nav-item__badge--live ml-auto"
-          aria-label={`${badge} pending`}
+          title={badge.title}
+          aria-label={badge.title}
         >
-          {badge > 99 ? "99+" : badge}
+          {badge.count > 99 ? "99+" : badge.count}
         </span>
       ) : null}
     </Link>
