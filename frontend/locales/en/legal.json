@@ -11,7 +11,7 @@
     "s2_i3": "Payment data: Stripe charge IDs, amounts, and timestamps. We never see card numbers — Stripe holds those directly.",
     "s2_i4": "Email-delivery metadata: when SendGrid accepted, opened, or bounced our messages.",
     "s3_h": "Cookies",
-    "s3_p": "Strictly-necessary cookies: gh_auth keeps you signed in, gh_locale and gh-last-country remember your language and country, and gh-consent records the choice you make below. Only with your consent do we also load the Meta Pixel (advertising measurement, set by Meta) and Doctify review widgets (patient reviews, set by doctify.com) — both place their own cookies. Refuse them and neither is ever loaded.",
+    "s3_p": "Strictly-necessary cookies: gh_auth keeps you signed in, gh_locale and gh-last-country remember your language and country, and gh-consent records the choice you make below. Only with your consent do we also load Google Analytics (_ga, _ga_… — usage statistics, set by Google Ireland Ltd), Microsoft Clarity (_clck, _clsk — usage statistics and session replay, set by Microsoft Ireland Operations Ltd), the Meta Pixel (advertising measurement, set by Meta) and Doctify review widgets (patient reviews, set by doctify.com) — each places its own cookies. Refuse them and none is ever loaded. Withdrawing consent stops both analytics tools and deletes their cookies from this site; cookies Microsoft sets on its own clarity.ms and bing.com domains are outside our reach, which is why we never authorise Clarity's advertising storage.",
     "s3_manage": "You can change or withdraw your choice at any time:",
     "s4_h": "Your rights",
     "s4_intro": "Under GDPR you can:",
@@ -24,7 +24,7 @@
     "s5_h": "Retention",
     "s5_p": "Account data is kept while your account is active. Booking and payment data is retained for 7 years to satisfy medical record-keeping and tax-audit requirements, even if you delete your account.",
     "s6_h": "Sub-processors",
-    "s6_p": "We use Railway (hosting), Stripe (payments), and SendGrid (transactional email). Each is GDPR-compliant and bound by Data Processing Agreements. Subject to your cookie choice, we also use Meta (advertising measurement) and Doctify (patient reviews)."
+    "s6_p": "We use Railway (hosting), Stripe (payments), and SendGrid (transactional email). Each is GDPR-compliant and bound by Data Processing Agreements. Subject to your cookie choice, we also use Google (Google Analytics — usage statistics), Microsoft (Clarity — usage statistics and session replay), Meta (advertising measurement) and Doctify (patient reviews). Neither analytics tool runs on booking, cart, checkout, upload, verification or signed-in portal pages, and page addresses are stripped of identifying values before they are sent."
   },
   "terms": {
     "eyebrow": "Legal",

@@ -11,7 +11,7 @@
     "s2_i3": "Date de plată: ID-uri de plată Stripe, sume și marcaje de timp. Nu vedem niciodată numerele de card — Stripe le stochează direct.",
     "s2_i4": "Metadate de livrare e-mail: când SendGrid a acceptat, deschis sau respins mesajele noastre.",
     "s3_h": "Cookie-uri",
-    "s3_p": "Cookie-uri strict necesare: gh_auth vă menține autentificat, gh_locale și gh-last-country rețin limba și țara dumneavoastră, iar gh-consent înregistrează alegerea pe care o faceți mai jos. Doar cu acordul dumneavoastră încărcăm și Meta Pixel (măsurarea publicității, setat de Meta) și widget-urile de recenzii Doctify (recenzii ale pacienților, setate de doctify.com) — ambele plasează propriile cookie-uri. Dacă le refuzați, niciunul nu este încărcat.",
+    "s3_p": "Cookie-uri strict necesare: gh_auth vă menține autentificat, gh_locale și gh-last-country rețin limba și țara dumneavoastră, iar gh-consent înregistrează alegerea pe care o faceți mai jos. Doar cu acordul dumneavoastră încărcăm și Google Analytics (_ga, _ga_… — statistici de utilizare, setate de Google Ireland Ltd), Microsoft Clarity (_clck, _clsk — statistici de utilizare și înregistrarea sesiunii, setate de Microsoft Ireland Operations Ltd), Meta Pixel (măsurarea publicității, setat de Meta) și widget-urile de recenzii Doctify (recenzii ale pacienților, setate de doctify.com) — fiecare plasează propriile cookie-uri. Dacă le refuzați, niciunul nu este încărcat. Retragerea acordului oprește ambele instrumente de analiză și le șterge cookie-urile de pe acest site; cookie-urile setate de Microsoft pe propriile domenii clarity.ms și bing.com sunt în afara controlului nostru, motiv pentru care nu autorizăm niciodată stocarea publicitară a Clarity.",
     "s3_manage": "Vă puteți schimba sau retrage alegerea în orice moment:",
     "s4_h": "Drepturile dumneavoastră",
     "s4_intro": "În conformitate cu GDPR puteți:",
@@ -24,7 +24,7 @@
     "s5_h": "Retenție",
     "s5_p": "Datele contului sunt păstrate atât timp cât contul este activ. Datele de rezervare și plată sunt reținute timp de 7 ani pentru a satisface cerințele de păstrare a evidențelor medicale și de audit fiscal, chiar dacă vă ștergeți contul.",
     "s6_h": "Sub-procesatori",
-    "s6_p": "Folosim Railway (găzduire), Stripe (plăți) și SendGrid (e-mail tranzacțional). Fiecare respectă GDPR și este legat prin Acorduri de Prelucrare a Datelor. În funcție de alegerea dumneavoastră privind cookie-urile, folosim și Meta (măsurarea publicității) și Doctify (recenzii ale pacienților)."
+    "s6_p": "Folosim Railway (găzduire), Stripe (plăți) și SendGrid (e-mail tranzacțional). Fiecare respectă GDPR și este legat prin Acorduri de Prelucrare a Datelor. În funcție de alegerea dumneavoastră privind cookie-urile, folosim și Google (Google Analytics — statistici de utilizare), Microsoft (Clarity — statistici de utilizare și înregistrarea sesiunii), Meta (măsurarea publicității) și Doctify (recenzii ale pacienților). Niciunul dintre instrumentele de analiză nu rulează pe paginile de programare, coș, plată, încărcare de fișiere, verificare sau în portalul autentificat, iar adresele paginilor sunt curățate de valori de identificare înainte de a fi trimise."
   },
   "terms": {
     "eyebrow": "Legal",

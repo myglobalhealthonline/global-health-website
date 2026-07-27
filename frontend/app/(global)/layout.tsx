@@ -5,6 +5,7 @@ import { PublicAuthProvider } from "@/components/layout/PublicAuthContext";
 import { CartProvider } from "@/components/cart/CartContext";
 import { MetaPixel } from "@/components/compliance/MetaPixel";
 import { GoogleAnalytics } from "@/components/compliance/GoogleAnalytics";
+import { MicrosoftClarity } from "@/components/compliance/MicrosoftClarity";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { toHtmlLang } from "@/lib/i18n/html-lang";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -145,6 +146,7 @@ export default async function GlobalRootLayout({ children }: { children: ReactNo
         <CartProvider>
           <MetaPixel />
           <GoogleAnalytics />
+          <MicrosoftClarity />
           <SiteChrome
             siteName={common.site.name}
             navigation={navigation}

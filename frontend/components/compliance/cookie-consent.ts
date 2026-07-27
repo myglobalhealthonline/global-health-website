@@ -16,7 +16,25 @@ import { readCookie, writeCookie, deleteCookie } from "@/lib/utils/cookies";
  */
 
 export const CONSENT_COOKIE = "gh-consent";
-export const CONSENT_VERSION = 2;
+/**
+ * v2 → v3 (Microsoft Clarity, 2026-07-28): bumped because the PROCESSING
+ * changed, not the schema.
+ *
+ * The `analytics` key itself was added additively without a bump — a missing
+ * field fails closed to `false`, so nothing could leak. Clarity is a different
+ * case: an existing `analytics: true` record was given against copy that named
+ * Google Analytics and nothing else, for hit counting. Clarity is a second
+ * processor doing session replay of DOM and interaction. That is not what
+ * those visitors agreed to, so they are asked again.
+ *
+ * The rule, for next time: bump when a new processor or a new KIND of
+ * processing enters a category; do not bump for an additive field.
+ *
+ * Cost of a bump, so it stays a conscious choice: every stored record reads as
+ * null, the banner reappears for every returning visitor, and Meta Pixel and
+ * Doctify reviews stay dark until each visitor re-consents.
+ */
+export const CONSENT_VERSION = 3;
 
 /** Six months, then we ask again. */
 const CONSENT_MAX_AGE = 60 * 60 * 24 * 180;

@@ -116,7 +116,9 @@ function publicCsp(): string {
     // its own CSP context — so any CDN subdomain it pulls from hits this
     // policy. Pinning www only would fail silently: the reviews just stop
     // rendering, with nothing surfaced outside the console.
-    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com",
+    // Microsoft Clarity loads its recorder from www.clarity.ms/tag/<id>; the
+    // wildcard covers the CDN subdomains that tag pulls from.
+    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms",
     // Tailwind + CMS emit inline <style>; keep permissive (style injection is
     // low value to an attacker relative to the breakage risk).
     "style-src 'self' 'unsafe-inline'",
@@ -128,11 +130,30 @@ function publicCsp(): string {
     // who already has script execution.
     `img-src 'self' data: blob: https:${media}`,
     "font-src 'self' data: https://*.doctify.com",
+    // There was no worker-src, so the fallback chain was child-src →
+    // default-src 'self', which blocks the Blob-URL worker Clarity uses to
+    // batch uploads. The failure mode is silent degradation, not a console
+    // error, so this is set explicitly. It grants nothing meaningful: a blob
+    // worker can only run script the page already produced, and script-src
+    // here already carries 'unsafe-inline'.
+    "worker-src 'self' blob:",
     // google-analytics.com/region1.google-analytics.com carry the gtag
     // measurement beacons (region1 = EU data-residency endpoint);
     // *.analytics.google.com + stats.g.doubleclick.net carry the Google
     // Signals ones, which fail silently if omitted.
-    `connect-src 'self' https://*.doctify.com https://connect.facebook.net https://www.facebook.com https://www.googletagmanager.com https://*.google-analytics.com https://region1.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net${media}`,
+    //
+    // Clarity is wildcarded because its ingest endpoints are rotating
+    // single-letter subdomains (a./b./c./e./f.clarity.ms) — pinning
+    // c.clarity.ms would break intermittently and only in production.
+    //
+    // https://c.bing.com is DELIBERATELY ABSENT. It carries the MUID
+    // advertising-identity sync with Microsoft Advertising, which no Clarity
+    // analytics function needs. Expect a connect-src violation line in the
+    // console on Clarity pages if it tries — that is the block working, not a
+    // bug to fix by adding the host. (Note img-src is already `https:`, so a
+    // pixel-shaped beacon cannot be blocked by CSP at all; the real control is
+    // ad_Storage:"denied" via consentv2 in MicrosoftClarity.tsx.)
+    `connect-src 'self' https://*.doctify.com https://connect.facebook.net https://www.facebook.com https://www.googletagmanager.com https://*.google-analytics.com https://region1.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://*.clarity.ms${media}`,
     // Doctify rating strips render in <iframe> from doctify.com.
     "frame-src 'self' https://*.doctify.com",
     `form-action 'self'${media}`,

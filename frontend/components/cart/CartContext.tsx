@@ -19,6 +19,7 @@ import {
   type UpdateItemInput,
 } from "@/lib/api/cart-client";
 import type { Cart } from "@/lib/api/cart-types";
+import { trackAnalyticsEvent } from "@/lib/analytics/track";
 
 const EMPTY_CART: Cart = {
   id: "",
@@ -44,6 +45,35 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
+/**
+ * The single funnel event wired into the app. `add` is the one choke point
+ * every add path goes through — consultations, health tests, prescriptions —
+ * so one call site covers the whole catalogue.
+ *
+ * `item_category` is the CartItemKind enum, not the item name. "Erectile
+ * Dysfunction Consultation added to cart", tied to a GA client id, is a health
+ * inference about a pseudonymous individual drawn from their own stated
+ * intent — a different thing entirely from the published /services/[slug] page
+ * path, and not something to hand to an analytics property. Category plus
+ * value answers the conversion-rate and basket-size question without it.
+ *
+ * `trackAnalyticsEvent` no-ops unless consent, production and gtag are all
+ * present, so this is safe to call unconditionally.
+ */
+function reportAddToCart(input: AddItemInput, cart: Cart): void {
+  const line = cart.items.find(
+    (item) =>
+      item.kind === input.kind &&
+      (input.healthTestId ? item.healthTestId === input.healthTestId : true) &&
+      (input.serviceId ? item.serviceId === input.serviceId : true),
+  );
+  trackAnalyticsEvent("add_to_cart", {
+    item_category: input.kind,
+    currency: cart.currencyCode,
+    ...(line ? { value: line.unitPriceCents / 100 } : {}),
+  });
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart>(EMPTY_CART);
   const [loading, setLoading] = useState(true);
@@ -68,6 +98,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const res = await apiAdd(input);
     if (res.ok) {
       setCart(res.data);
+      reportAddToCart(input, res.data);
       return { ok: true };
     }
     return { ok: false, message: res.message, conflict: res.conflict };

@@ -5,6 +5,7 @@ import { PublicAuthProvider } from "@/components/layout/PublicAuthContext";
 import { CartProvider } from "@/components/cart/CartContext";
 import { MetaPixel } from "@/components/compliance/MetaPixel";
 import { GoogleAnalytics } from "@/components/compliance/GoogleAnalytics";
+import { MicrosoftClarity } from "@/components/compliance/MicrosoftClarity";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
@@ -137,6 +138,7 @@ export default async function CountryLangRootLayout({
         <CartProvider>
           <MetaPixel />
           <GoogleAnalytics />
+          <MicrosoftClarity />
           <LocaleCookieSync lang={lang} />
           <SiteChrome
             siteName={common.site.name}

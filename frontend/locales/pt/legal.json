@@ -11,7 +11,7 @@
     "s2_i3": "Dados de pagamento: IDs de cobrança Stripe, montantes e registos de data/hora. Nunca vemos os números de cartão — o Stripe guarda-os diretamente.",
     "s2_i4": "Metadados de entrega de e-mail: quando o SendGrid aceitou, abriu ou rejeitou as nossas mensagens.",
     "s3_h": "Cookies",
-    "s3_p": "Cookies estritamente necessários: o gh_auth mantém a sua sessão iniciada, o gh_locale e o gh-last-country memorizam o seu idioma e país, e o gh-consent regista a escolha que fizer abaixo. Apenas com o seu consentimento carregamos também o Meta Pixel (medição de publicidade, definido pela Meta) e os widgets de avaliações do Doctify (avaliações de doentes, definidos por doctify.com) — ambos colocam os seus próprios cookies. Se os recusar, nenhum deles é carregado.",
+    "s3_p": "Cookies estritamente necessários: o gh_auth mantém a sua sessão iniciada, o gh_locale e o gh-last-country memorizam o seu idioma e país, e o gh-consent regista a escolha que fizer abaixo. Apenas com o seu consentimento carregamos também o Google Analytics (_ga, _ga_… — estatísticas de utilização, definidos pela Google Ireland Ltd), o Microsoft Clarity (_clck, _clsk — estatísticas de utilização e gravação de sessão, definidos pela Microsoft Ireland Operations Ltd), o Meta Pixel (medição de publicidade, definido pela Meta) e os widgets de avaliações do Doctify (avaliações de doentes, definidos por doctify.com) — cada um coloca os seus próprios cookies. Se os recusar, nenhum deles é carregado. Retirar o consentimento interrompe ambas as ferramentas de análise e elimina os seus cookies neste site; os cookies que a Microsoft define nos seus próprios domínios clarity.ms e bing.com estão fora do nosso alcance, razão pela qual nunca autorizamos o armazenamento publicitário do Clarity.",
     "s3_manage": "Pode alterar ou retirar a sua escolha a qualquer momento:",
     "s4_h": "Os seus direitos",
     "s4_intro": "Ao abrigo do RGPD pode:",
@@ -24,7 +24,7 @@
     "s5_h": "Retenção",
     "s5_p": "Os dados da conta são conservados enquanto a sua conta estiver ativa. Os dados de reserva e pagamento são retidos durante 7 anos para cumprir os requisitos de registo médico e auditoria fiscal, mesmo que elimine a sua conta.",
     "s6_h": "Sub-processadores",
-    "s6_p": "Utilizamos Railway (alojamento), Stripe (pagamentos) e SendGrid (e-mail transacional). Cada um está em conformidade com o RGPD e vinculado por Acordos de Processamento de Dados. Sujeito à sua escolha de cookies, utilizamos também a Meta (medição de publicidade) e o Doctify (avaliações de doentes)."
+    "s6_p": "Utilizamos Railway (alojamento), Stripe (pagamentos) e SendGrid (e-mail transacional). Cada um está em conformidade com o RGPD e vinculado por Acordos de Processamento de Dados. Sujeito à sua escolha de cookies, utilizamos também a Google (Google Analytics — estatísticas de utilização), a Microsoft (Clarity — estatísticas de utilização e gravação de sessão), a Meta (medição de publicidade) e o Doctify (avaliações de doentes). Nenhuma das ferramentas de análise é executada nas páginas de marcação, carrinho, pagamento, carregamento de ficheiros, verificação ou no portal autenticado, e os endereços das páginas são limpos de valores identificativos antes de serem enviados."
   },
   "terms": {
     "eyebrow": "Legal",

@@ -83,6 +83,12 @@ export function HeaderAuthActions({
           }
           aria-label={user.email ? `${a11y.yourAccount} (${user.email})` : a11y.yourAccount}
           title={user.email ?? undefined}
+          // The signed-in branch is the only part of the public chrome that
+          // carries the visitor's own identity — the email sits in title and
+          // aria-label, and the avatar renders its initial. Force-masked so a
+          // Clarity recording of a marketing page cannot pick it up, whatever
+          // the project's dashboard masking level happens to be set to.
+          data-clarity-mask="true"
           className="gh-focus-on-dark group hidden size-11 items-center justify-center rounded-full transition-transform duration-200 active:scale-95 xl:inline-flex"
         >
           {/* 44px hit area; 36px visual circle so the tight lg header row

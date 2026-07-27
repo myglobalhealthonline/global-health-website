@@ -66,7 +66,11 @@ export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
       <p className="gh-newsletter-desc">
         {i18n?.newsletterDesc ?? "Quarterly updates on new countries, doctors, and health topics. No spam."}
       </p>
-      <form onSubmit={onSubmit} className="gh-newsletter-form">
+      {/* Force-masked for Microsoft Clarity: this is the one free-text input
+          on the otherwise-public footer, and it takes an email address.
+          Belt-and-braces on top of the project's dashboard masking level,
+          which this codebase cannot enforce. */}
+      <form onSubmit={onSubmit} className="gh-newsletter-form" data-clarity-mask="true">
         <label className="gh-newsletter-label">
           <span className="sr-only">Email</span>
           <div className="gh-newsletter-inputWrap">

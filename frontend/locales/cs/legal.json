@@ -11,7 +11,7 @@
     "s2_i3": "Platební údaje: ID poplatků Stripe, částky a časová razítka. Čísla karet nikdy nevidíme — ta ukládá přímo Stripe.",
     "s2_i4": "Metadata doručení e-mailů: kdy SendGrid přijal, otevřel nebo zamítl naše zprávy.",
     "s3_h": "Soubory cookie",
-    "s3_p": "Nezbytně nutné cookies: gh_auth vás udržuje přihlášené, gh_locale a gh-last-country si pamatují váš jazyk a zemi a gh-consent zaznamenává volbu, kterou níže učiníte. Pouze s vaším souhlasem načítáme také Meta Pixel (měření reklamy, nastavuje Meta) a widgety hodnocení Doctify (hodnocení pacientů, nastavuje doctify.com) — obojí ukládá vlastní cookies. Pokud je odmítnete, nenačte se ani jedno.",
+    "s3_p": "Nezbytně nutné cookies: gh_auth vás udržuje přihlášené, gh_locale a gh-last-country si pamatují váš jazyk a zemi a gh-consent zaznamenává volbu, kterou níže učiníte. Pouze s vaším souhlasem načítáme také Google Analytics (_ga, _ga_… — statistiky používání, nastavuje Google Ireland Ltd), Microsoft Clarity (_clck, _clsk — statistiky používání a záznam relace, nastavuje Microsoft Ireland Operations Ltd), Meta Pixel (měření reklamy, nastavuje Meta) a widgety hodnocení Doctify (hodnocení pacientů, nastavuje doctify.com) — každý ukládá vlastní cookies. Pokud je odmítnete, nenačte se ani jedno. Odvolání souhlasu zastaví oba analytické nástroje a smaže jejich cookies na tomto webu; cookies, které Microsoft nastavuje na vlastních doménách clarity.ms a bing.com, jsou mimo náš dosah — proto nikdy neautorizujeme reklamní úložiště Clarity.",
     "s3_manage": "Svou volbu můžete kdykoli změnit nebo odvolat:",
     "s4_h": "Vaše práva",
     "s4_intro": "Podle GDPR máte právo:",
@@ -24,7 +24,7 @@
     "s5_h": "Uchovávání",
     "s5_p": "Údaje o účtu jsou uchovávány po dobu, kdy je váš účet aktivní. Údaje o rezervacích a platbách jsou uchovávány po dobu 7 let z důvodu požadavků na vedení zdravotnické dokumentace a daňové audity, a to i v případě, že svůj účet smažete.",
     "s6_h": "Zpracovatelé",
-    "s6_p": "Využíváme Railway (hosting), Stripe (platby) a SendGrid (transakční e-mail). Každý z nich splňuje požadavky GDPR a je vázán smlouvami o zpracování údajů. V závislosti na vaší volbě cookies využíváme také Meta (měření reklamy) a Doctify (hodnocení pacientů)."
+    "s6_p": "Využíváme Railway (hosting), Stripe (platby) a SendGrid (transakční e-mail). Každý z nich splňuje požadavky GDPR a je vázán smlouvami o zpracování údajů. V závislosti na vaší volbě cookies využíváme také Google (Google Analytics — statistiky používání), Microsoft (Clarity — statistiky používání a záznam relace), Meta (měření reklamy) a Doctify (hodnocení pacientů). Ani jeden z analytických nástrojů neběží na stránkách rezervace, košíku, platby, nahrávání souborů, ověření ani v přihlášeném portálu a adresy stránek jsou před odesláním zbaveny identifikujících hodnot."
   },
   "terms": {
     "eyebrow": "Právní",
