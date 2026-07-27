@@ -27,6 +27,10 @@ const FIELD_TYPES: FormFieldDef["type"][] = [
   "date",
 ];
 
+/** Mirrors the API's per-field caps in `backend/src/routes/forms.route.ts`. */
+const KEY_MAX_LENGTH = 64;
+const FIELDS_MAX_COUNT = 50;
+
 type DraftField = {
   key: string;
   label: string;
@@ -45,6 +49,30 @@ function emptyField(): DraftField {
 // ponytail: cs/de/ro doctor.json are partial locale stubs (missing many keys), so the
 // exact per-locale union type doesn't structurally match; loosen to Record<string, string>.
 type FormsStrings = { [key: string]: string };
+
+type ApiErrorBody = {
+  ok?: boolean;
+  message?: string;
+  details?: {
+    formErrors?: string[];
+    fieldErrors?: Record<string, string[]>;
+  };
+};
+
+/**
+ * The API answers a rejected payload with a bare headline ("Invalid template")
+ * plus a zod `flatten()` in `details`. Showing only the headline left the
+ * doctor staring at an error with nothing to act on, so fold the per-field
+ * messages into the banner.
+ */
+function describeApiError(json: ApiErrorBody, fallback: string): string {
+  const headline = json.message ?? fallback;
+  const detail = [
+    ...(json.details?.formErrors ?? []),
+    ...Object.values(json.details?.fieldErrors ?? {}).flat(),
+  ].filter(Boolean);
+  return detail.length > 0 ? `${headline}: ${detail.join("; ")}` : headline;
+}
 
 export function FormTemplatesClient({
   initial,
@@ -99,18 +127,39 @@ export function FormTemplatesClient({
   }
 
   function addField() {
-    setFields((prev) => [...prev, emptyField()]);
+    setFields((prev) =>
+      prev.length >= FIELDS_MAX_COUNT ? prev : [...prev, emptyField()],
+    );
   }
 
   function removeField(index: number) {
     setFields((prev) => prev.filter((_, i) => i !== index));
   }
 
+  /**
+   * `key` is never typed by hand — the builder slugifies it from the label,
+   * which this dialog lets run to 200 chars while the API caps keys at 64.
+   * A question-style label ("Declaro que li, compreendi e concordo com todos
+   * os itens acima…") overflowed that cap and the whole POST came back
+   * "Invalid template", with no field the doctor could edit to fix it. Clamp
+   * to the API limit here, and de-duplicate so two labels that truncate to
+   * the same slug don't silently share one answer key.
+   */
   function serialiseFields(): FormFieldDef[] {
+    const used = new Set<string>();
     return fields
       .filter((f) => f.label.trim() !== "")
-      .map((f) => {
-        const key = f.key.trim() || f.label.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_");
+      .map((f, index) => {
+        const slug =
+          f.key.trim() || f.label.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_");
+        const base =
+          slug.slice(0, KEY_MAX_LENGTH).replace(/^_+|_+$/g, "") || `field_${index + 1}`;
+        let key = base;
+        for (let n = 2; used.has(key); n += 1) {
+          const suffix = `_${n}`;
+          key = `${base.slice(0, KEY_MAX_LENGTH - suffix.length)}${suffix}`;
+        }
+        used.add(key);
         const opts =
           f.type === "choice"
             ? f.optionsText
@@ -151,13 +200,11 @@ export function FormTemplatesClient({
           fields: payloadFields,
         }),
       });
-      const json = (await res.json()) as {
-        ok?: boolean;
-        message?: string;
+      const json = (await res.json()) as ApiErrorBody & {
         data?: { template?: FormTemplateDto };
       };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? strings.saveFailed);
+        setError(describeApiError(json, strings.saveFailed));
         return;
       }
       if (json.data?.template) {
@@ -178,9 +225,9 @@ export function FormTemplatesClient({
       const res = await fetch(`/api/doctor/form-templates/${id}`, {
         method: "DELETE",
       });
-      const json = (await res.json()) as { ok?: boolean; message?: string };
+      const json = (await res.json()) as ApiErrorBody;
       if (!res.ok || !json.ok) {
-        setError(json.message ?? strings.deleteFailed);
+        setError(describeApiError(json, strings.deleteFailed));
         return;
       }
       setItems((prev) => prev.filter((t) => t.id !== id));
@@ -379,7 +426,8 @@ export function FormTemplatesClient({
           <button
             type="button"
             onClick={addField}
-            className="inline-flex items-center gap-1 self-start text-portal-compact font-semibold text-[var(--portal-primary)] hover:underline"
+            disabled={fields.length >= FIELDS_MAX_COUNT}
+            className="inline-flex items-center gap-1 self-start text-portal-compact font-semibold text-[var(--portal-primary)] hover:underline disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:no-underline"
           >
             <Plus className="size-3.5" /> {strings.addField}
           </button>
