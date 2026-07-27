@@ -185,6 +185,7 @@ export async function startSubscription(
     // VAT removed from subscription plans — never apply Stripe Tax (no tax line).
     automaticTax: false,
     metadata: { kind: "subscription", internalSubId: sub.id, userId: input.userId },
+    countryCode: plan.country.code,
   };
 
   let checkout;

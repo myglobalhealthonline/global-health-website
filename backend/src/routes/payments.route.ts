@@ -11,6 +11,7 @@ import {
 import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { checkoutBranding } from "../modules/billing/checkout-branding.js";
 import { completeOrderPaymentFromCheckoutSession, syncOrderPaymentFromStripe, syncOrderPaymentFromStripeSession } from "../modules/orders/complete-order-payment.service.js";
 import {
   handleSubscriptionEvent,
@@ -177,6 +178,9 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
         ],
         success_url: successUrl,
         cancel_url: cancelUrl,
+        // Global Health branding: page language pinned to the appointment's
+        // market, plus the trust line above the pay button.
+        ...(await checkoutBranding(appointment.countryCode)),
         metadata: {
           appointmentId: appointment.id,
           countryCode: appointment.countryCode,

@@ -5,6 +5,7 @@ import { sendEmail } from "../../lib/email/send-email.js";
 import { wrapHtml } from "../../lib/email/templates.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
 import { createBrazilConsentToken } from "./brazil-consent-link.service.js";
+import { checkoutBranding } from "../billing/checkout-branding.js";
 
 const BRAZIL_CONSENT_AMOUNT_CENTS = 2900;
 
@@ -102,6 +103,9 @@ export async function submitBrazilConsent(input: {
       ],
       success_url: `${success}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancel,
+      // Global Health branding. `br` resolves to Brazilian Portuguese (pt-BR),
+      // not the European `pt` the LocaleCode enum would otherwise give.
+      ...(await checkoutBranding(appt.countryCode)),
     });
 
     checkoutUrl = session.url;

@@ -11,6 +11,7 @@ import {
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { generateOrderNumber } from "../../lib/order-number.js";
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
+import { checkoutBranding } from "../billing/checkout-branding.js";
 import { issuePasswordResetToken } from "../auth/auth.service.js";
 import { recordAudit } from "../audit/audit.service.js";
 import {
@@ -789,6 +790,9 @@ export async function createManualBooking(
           (await buildPtStripeInvoiceData(input.countryCode, email, service.name)) ?? {
             enabled: true,
           },
+        // Global Health branding: page language pinned to the booking's market
+        // plus the trust line above the pay button.
+        ...(await checkoutBranding(input.countryCode)),
         metadata: {
           kind: "order",
           orderId: order.id,

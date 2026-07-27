@@ -7,6 +7,7 @@ import { normalizeDbError } from "../shared/db-errors.js";
 import { generateOrderNumber } from "../../lib/order-number.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
+import { checkoutBranding } from "../billing/checkout-branding.js";
 import { ensureConsultationDraft } from "../consultations/ensure-consultation-draft.js";
 import { notifyDoctor, notifyUser, notifyAdmins } from "../notifications/notify.service.js";
 import { sendEmail } from "../../lib/email/send-email.js";
@@ -460,6 +461,9 @@ async function createAsyncFeeCheckoutForRequest(
     success_url: successUrl,
     cancel_url: cancelUrl,
     invoice_creation: invoiceCreation,
+    // Global Health branding — language pinned to the country the prescription
+    // is being issued in, not the patient's browser.
+    ...(await checkoutBranding(targetCountryCode)),
     metadata: { kind: "order", orderId: order.id, countryCode: targetCountryCode },
   });
 

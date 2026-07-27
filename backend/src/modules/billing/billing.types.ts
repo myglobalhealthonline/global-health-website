@@ -54,6 +54,8 @@ export interface CreateSubscriptionCheckoutInput {
   /** Drive Stripe Tax (`automatic_tax`) — false for VAT-EXEMPT plans (D21). */
   automaticTax: boolean;
   metadata: Record<string, string>;
+  /** Plan's country — pins the Checkout page language (see checkout-branding.ts). */
+  countryCode?: string | null;
 }
 
 export interface BillingPortalInput {

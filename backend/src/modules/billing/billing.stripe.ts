@@ -1,4 +1,5 @@
 import { getStripeClient } from "../../lib/stripe/client.js";
+import { checkoutBranding } from "./checkout-branding.js";
 import type {
   BillingPort,
   BillingPriceRef,
@@ -107,6 +108,9 @@ export class StripeBillingPort implements BillingPort {
       success_url: input.successUrl,
       cancel_url: input.cancelUrl,
       automatic_tax: { enabled: input.automaticTax },
+      // Global Health branding: language pinned to the plan's country, plus the
+      // recurring-billing trust line above the subscribe button.
+      ...(await checkoutBranding(input.countryCode, "subscription")),
       // SCA + off-session mandate are collected by Checkout in subscription
       // mode automatically (§38.2). No coupons/trials in v1 (D23).
       metadata: input.metadata,

@@ -2,6 +2,7 @@ import { env } from "../../config/env.js";
 import { prisma } from "../../db/prisma.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
+import { checkoutBranding } from "../billing/checkout-branding.js";
 
 function isSessionOpen(session: {
   status: string | null;
@@ -113,6 +114,9 @@ export async function resolveOrderPaymentUrl(
       success_url: successUrl,
       cancel_url: cancelUrl,
       ...(invoiceCreation ? { invoice_creation: invoiceCreation } : {}),
+      // Global Health branding — same language + trust line as the first-pass
+      // checkout, so a resent pay link doesn't look like a different vendor.
+      ...(await checkoutBranding(order.countryCode)),
       metadata: {
         kind: "order",
         orderId: order.id,

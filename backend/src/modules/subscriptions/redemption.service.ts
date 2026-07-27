@@ -3,6 +3,7 @@ import { prisma } from "../../db/prisma.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
 import { generateOrderNumber } from "../../lib/order-number.js";
 import { recordAudit } from "../audit/audit.service.js";
+import { checkoutBranding } from "../billing/checkout-branding.js";
 import {
   commitReservation,
   getBalance,
@@ -320,6 +321,9 @@ export async function startRedemption(
     ],
     success_url: `${base}${ret}?redemption=ok`,
     cancel_url: `${base}${ret}?redemption=cancelled`,
+    // Global Health branding — the postage charge is a one-off payment, so the
+    // payment (not subscription) copy applies even though this is a perk.
+    ...(await checkoutBranding(created.order.countryCode)),
     metadata: { kind: "redemption", redemptionId: created.redemption.id, orderId: created.order.id },
   });
   await prisma.order.update({

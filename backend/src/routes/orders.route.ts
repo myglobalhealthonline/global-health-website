@@ -9,6 +9,7 @@ import {
 import { env } from "../config/env.js";
 import { generateOrderNumber } from "../lib/order-number.js";
 import { buildPtStripeInvoiceData } from "../modules/invoices/pt-stripe-invoice-data.js";
+import { checkoutBranding } from "../modules/billing/checkout-branding.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
@@ -567,6 +568,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           success_url: successUrl,
           cancel_url: cancelUrl,
           invoice_creation: invoiceCreation,
+          // Global Health branding: pin the page language to the order's market
+          // and add the trust line above the pay button.
+          ...(await checkoutBranding(cart.countryCode)),
           metadata: {
             kind: "order",
             orderId: order.id,
