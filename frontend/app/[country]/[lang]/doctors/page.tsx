@@ -29,7 +29,11 @@ import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
-import type { DoctorDirectoryContext } from "@/lib/content/doctor-directory";
+import {
+  buildDoctorDirectoryView,
+  type DoctorDirectoryContext,
+} from "@/lib/content/doctor-directory";
+import { DoctorDirectoryView } from "./_components/DoctorDirectoryView";
 import { overrideDoctorsBundle } from "@/lib/content/country-doctors-copy";
 import { DoctorsDirectoryClient } from "./_components/DoctorsDirectoryClient";
 
@@ -179,7 +183,15 @@ export default async function CountryLangDoctorsPage({
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
       {/* Directory IS this page's header/hero (no ServiceHero here) — every
           marketing section below must render AFTER it, never before. */}
-      <Suspense fallback={<DoctorsDirectorySkeleton />}>
+      {/* The fallback renders the REAL unfiltered directory, not a skeleton:
+          it is what ends up in the static HTML, so a skeleton meant crawlers
+          (and no-JS visitors) got an aria-hidden shell with no <h1> and no
+          doctor links on all 33 country/locale directory pages. The view is
+          hook-free and server-safe by design; the client child re-renders it
+          with the ?lang/?type filters applied after hydration. */}
+      <Suspense
+        fallback={<DoctorDirectoryView view={buildDoctorDirectoryView(directoryCtx, [], [])} />}
+      >
         <DoctorsDirectoryClient ctx={directoryCtx} />
       </Suspense>
       {countryTrust ? (
@@ -222,25 +234,5 @@ export default async function CountryLangDoctorsPage({
         />
       ) : null}
     </>
-  );
-}
-
-/** Contentless placeholder for the brief window before `DoctorsDirectoryClient`
- *  resolves — see the duplicate-content note above the page component. */
-function DoctorsDirectorySkeleton() {
-  return (
-    <div aria-hidden className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
-      {/* Matches DoctorsHero's own gh2-hero background exactly (not a flat
-          brand color) — a mismatched fallback color flashes visibly for the
-          instant before the resolved child replaces it. */}
-      <div className="gh2-hero h-[70vh] min-h-[520px] w-full" />
-      <div className="gh-container py-16">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[360px] animate-pulse rounded-2xl bg-black/5" />
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }
