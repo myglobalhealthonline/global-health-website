@@ -458,6 +458,13 @@ export type AppointmentDetailDto = {
    *  preferredPharmacy). Portugal-only in this payload. Distinct from
    *  `pharmacy`, which is the per-visit value captured on the appointment. */
   preferredPharmacy?: string | null;
+  /** Which identity fields this appointment's market discloses to the treating
+   *  doctor, and therefore which render as editable rows — PT returns the
+   *  utente/NIF/Cartão de Cidadão/pharmacy set, BR just `taxIdNumber` (CPF),
+   *  everywhere else it is empty. Decided server-side (see
+   *  patient-identity-fields.ts) so the rows can't offer more than was
+   *  disclosed. */
+  identityFields?: string[] | null;
   /** Cross-jurisdiction prescription only: the referring doctor's consultation
    *  record, as the patient consented to disclose it. Null on every ordinary
    *  appointment, and for any viewer who is not the prescribing doctor. */

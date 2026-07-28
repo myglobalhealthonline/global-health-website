@@ -189,12 +189,14 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     bookingNotes: d.appointmentDetail.bookingNotes,
     openPatientChart: d.appointmentDetail.openPatientChart,
     editHealthDataHint: d.appointmentDetail.editHealthDataHint,
-    // Portugal-only Número de Utente / NIF / Cartão de Cidadão / pharmacy
-    // rows. The labels stay in Portuguese-market terms in every locale — they
-    // name PT documents, not generic concepts.
-    ptFields: {
+    // Per-market editable identity rows — PT's Número de Utente / NIF /
+    // Cartão de Cidadão / pharmacy, BR's CPF. The identifier names stay in
+    // their own market's terms in every locale: they name real documents, not
+    // generic concepts.
+    identityFields: {
       utente: d.appointmentDetail.utenteNumber,
       nif: d.appointmentDetail.ptNif,
+      cpf: d.appointmentDetail.brCpf,
       idCard: d.appointmentDetail.ptIdCard,
       pharmacy: d.appointmentDetail.ptPharmacy,
       add: d.appointmentDetail.ptFieldAdd,

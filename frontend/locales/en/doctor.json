@@ -230,7 +230,8 @@
     "ptFieldSave": "Save",
     "ptFieldCancel": "Cancel",
     "ptFieldSaveFailed": "Could not save. Try again.",
-    "tabsAriaLabel": "Appointment sections"
+    "tabsAriaLabel": "Appointment sections",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Patient records",

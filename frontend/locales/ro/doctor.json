@@ -230,7 +230,8 @@
     "internalNotesPlaceholderFromDoctor": "Notă pentru admin (de exemplu, necesită confirmarea plății)…",
     "internalNotesPlaceholderFromAdmin": "Notă pentru medic (de exemplu, pacientul a sunat pentru un follow-up)…",
     "internalNotesPostNote": "Publică notă",
-    "internalNotesPostFailed": "Nu s-a putut publica."
+    "internalNotesPostFailed": "Nu s-a putut publica.",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Fișe pacienți",

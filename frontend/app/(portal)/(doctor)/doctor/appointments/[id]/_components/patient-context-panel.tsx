@@ -2,9 +2,10 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { FormSection } from "@/components/FormSection";
 import {
-  PtPatientIdentityRows,
-  type PtPatientFieldsCopy,
-} from "./pt-patient-identity-rows";
+  PatientIdentityRows,
+  type PatientIdentityFieldKey,
+  type PatientIdentityFieldsCopy,
+} from "./patient-identity-rows";
 
 export type PatientContextCopy = {
   patient: string;
@@ -20,7 +21,7 @@ export type PatientContextCopy = {
   bookingNotes: string;
   openPatientChart: string;
   editHealthDataHint: string;
-  ptFields: PtPatientFieldsCopy;
+  identityFields: PatientIdentityFieldsCopy;
 };
 
 /**
@@ -77,6 +78,7 @@ export function PatientContextPanel({
     preferredPharmacy?: string | null;
     pharmacy?: string | null;
     consultationLanguageCode?: string | null;
+    identityFields?: string[] | null;
     createdAt: string;
     notes?: string | null;
   };
@@ -84,11 +86,20 @@ export function PatientContextPanel({
   copy: PatientContextCopy;
 }) {
   const address = formatAddress(appointment);
-  // NIF / Cartão de Cidadão / pharmacy are a Portugal-only block. Unlike the
-  // rows above, presence can't be the gate: the whole point is to render an
-  // "add" affordance when the patient left the field blank, so the market has
-  // to be checked explicitly. Country codes are stored lowercase.
-  const isPortugal = appointment.countryCode.toLowerCase() === "pt";
+  // Which identity rows this market opens up. Unlike the read-only rows above,
+  // presence of a value can't be the gate: the whole point is to render an
+  // "add" affordance on a field the patient left blank. The backend decides
+  // (see patient-identity-fields.ts) and sends the list, so the rows offered
+  // here always match the values it actually disclosed.
+  const identityFields = (appointment.identityFields ?? []) as PatientIdentityFieldKey[];
+  // PT calls the tax ID a NIF, BR a CPF — one column, two markets.
+  const isBrazil = appointment.countryCode.toLowerCase() === "br";
+  const identityLabels: Partial<Record<PatientIdentityFieldKey, string>> = {
+    utenteNumber: copy.utenteNumber,
+    taxIdNumber: isBrazil ? copy.identityFields.cpf : copy.identityFields.nif,
+    nationalIdNumber: copy.identityFields.idCard,
+    preferredPharmacy: copy.identityFields.pharmacy,
+  };
   return (
     <FormSection title={copy.patient}>
       <div className="gh-form-section__span-2">
@@ -107,17 +118,18 @@ export function PatientContextPanel({
             }
           />
           {address ? <Row label={copy.address} value={address} /> : null}
-          {/* PT-only block. Número de Utente, NIF, Cartão de Cidadão and the
-              pharmacy each render as an editable row so the doctor can fill
-              one the patient left blank at booking. Presence can't be the
-              gate — the whole point is the "add" affordance on an empty field
-              — so the market is checked explicitly. Non-PT markets that were
-              never shown these keep seeing nothing. For a non-PT market that
-              somehow carries a utente value, fall back to the read-only Row so
-              it is not silently dropped. */}
-          {isPortugal ? (
-            <PtPatientIdentityRows
+          {/* Per-market editable identity rows: PT gets Número de Utente, NIF,
+              Cartão de Cidadão and pharmacy; BR gets CPF. Each renders an
+              "add" affordance when the patient left it blank at booking, so
+              the doctor can fill it mid-consult. Markets that disclose nothing
+              see nothing — except that a market somehow carrying a utente
+              value still gets the read-only Row, so it is never silently
+              dropped. */}
+          {identityFields.length > 0 ? (
+            <PatientIdentityRows
               email={appointment.email}
+              fields={identityFields}
+              labels={identityLabels}
               initial={{
                 utenteNumber: appointment.utenteNumber ?? null,
                 taxIdNumber: appointment.taxIdNumber ?? null,
@@ -128,7 +140,7 @@ export function PatientContextPanel({
                 preferredPharmacy:
                   appointment.preferredPharmacy ?? appointment.pharmacy ?? null,
               }}
-              copy={copy.ptFields}
+              copy={copy.identityFields}
             />
           ) : appointment.utenteNumber ? (
             <Row label={copy.utenteNumber} value={appointment.utenteNumber} />

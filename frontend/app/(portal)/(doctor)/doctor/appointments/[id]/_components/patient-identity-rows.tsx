@@ -3,9 +3,12 @@
 import { useId, useRef, useState, useTransition } from "react";
 import { Check, Pencil, Plus, X } from "lucide-react";
 
-export type PtPatientFieldsCopy = {
+export type PatientIdentityFieldsCopy = {
   utente: string;
+  /** Portugal's NIF. */
   nif: string;
+  /** Brazil's CPF. Same column as `nif` — only the market label differs. */
+  cpf: string;
   idCard: string;
   pharmacy: string;
   add: string;
@@ -16,41 +19,59 @@ export type PtPatientFieldsCopy = {
 };
 
 /** The PatientProfile columns this card writes. Keys match the PATCH body of
- *  /api/doctor/patients/:email/profile one-for-one. */
-type FieldKey =
+ *  /api/doctor/patients/:email/profile one-for-one, and the `identityFields`
+ *  list the consultation endpoint returns for the appointment's market. */
+export type PatientIdentityFieldKey =
   | "utenteNumber"
   | "taxIdNumber"
   | "nationalIdNumber"
   | "preferredPharmacy";
 
-type Values = Record<FieldKey, string | null>;
+type Values = Record<PatientIdentityFieldKey, string | null>;
+
+const MAX_LENGTHS: Record<PatientIdentityFieldKey, number> = {
+  utenteNumber: 64,
+  taxIdNumber: 64,
+  nationalIdNumber: 64,
+  preferredPharmacy: 200,
+};
 
 /**
- * Portugal-only identity + pharmacy rows for the patient-context card.
+ * Editable identity + pharmacy rows for the patient-context card, for whichever
+ * fields the appointment's market discloses.
  *
- * The booking form does not always capture what a PT consultation needs: the
- * Número de Utente (SNS number for electronic prescription), the NIF and
- * Cartão de Cidadão that `buildPatientIdLine` prints on
- * prescriptions/certificates, and the pharmacy the script is sent to. When
- * the patient left one blank the doctor can fill it inline mid-consult
+ * The booking form does not always capture what a consultation needs. In PT
+ * that is the Número de Utente (SNS number for electronic prescription), the
+ * NIF and Cartão de Cidadão that `buildPatientIdLine` prints on
+ * prescriptions/certificates, and the pharmacy the script is sent to; in BR it
+ * is the CPF, which the same helper already prints on Brazilian documents.
+ * When the patient left one blank the doctor can fill it inline mid-consult
  * instead of leaving the workspace for the patient chart.
+ *
+ * `fields` comes from the backend rather than being derived here, so the values
+ * that were disclosed and the rows offered for editing cannot drift apart.
  *
  * Writes go to the existing doctor profile PATCH, which already validates,
  * authorizes (MedicalAccessLog `UPDATED`) and PHI-encrypts these columns. It
  * strips the ID numbers back out of its response by design, so the saved
  * draft — not the response — is what this component renders afterwards.
  */
-export function PtPatientIdentityRows({
+export function PatientIdentityRows({
   email,
+  fields,
+  labels,
   initial,
   copy,
 }: {
   email: string;
+  fields: readonly PatientIdentityFieldKey[];
+  /** Per-market label for each field — PT calls `taxIdNumber` NIF, BR CPF. */
+  labels: Partial<Record<PatientIdentityFieldKey, string>>;
   initial: Values;
-  copy: PtPatientFieldsCopy;
+  copy: PatientIdentityFieldsCopy;
 }) {
   const [values, setValues] = useState<Values>(initial);
-  const [editing, setEditing] = useState<FieldKey | null>(null);
+  const [editing, setEditing] = useState<PatientIdentityFieldKey | null>(null);
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -58,7 +79,7 @@ export function PtPatientIdentityRows({
   // dropped back at the top of the rail.
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-  function open(field: FieldKey, trigger: HTMLButtonElement | null) {
+  function open(field: PatientIdentityFieldKey, trigger: HTMLButtonElement | null) {
     triggerRef.current = trigger;
     setError(null);
     setDraft(values[field] ?? "");
@@ -71,7 +92,7 @@ export function PtPatientIdentityRows({
     triggerRef.current?.focus();
   }
 
-  function save(field: FieldKey) {
+  function save(field: PatientIdentityFieldKey) {
     const next = draft.trim() === "" ? null : draft.trim();
     if (next === (values[field] ?? null)) {
       close();
@@ -100,21 +121,14 @@ export function PtPatientIdentityRows({
     });
   }
 
-  const rows: Array<{ field: FieldKey; label: string; maxLength: number }> = [
-    { field: "utenteNumber", label: copy.utente, maxLength: 64 },
-    { field: "taxIdNumber", label: copy.nif, maxLength: 64 },
-    { field: "nationalIdNumber", label: copy.idCard, maxLength: 64 },
-    { field: "preferredPharmacy", label: copy.pharmacy, maxLength: 200 },
-  ];
-
   return (
     <>
-      {rows.map(({ field, label, maxLength }) => (
+      {fields.map((field) => (
         <EditableRow
           key={field}
-          label={label}
+          label={labels[field] ?? field}
           value={values[field]}
-          maxLength={maxLength}
+          maxLength={MAX_LENGTHS[field]}
           editing={editing === field}
           pending={pending}
           draft={draft}
@@ -151,7 +165,7 @@ function EditableRow({
   pending: boolean;
   draft: string;
   error: string | null;
-  copy: PtPatientFieldsCopy;
+  copy: PatientIdentityFieldsCopy;
   onOpen: (trigger: HTMLButtonElement | null) => void;
   onDraftChange: (v: string) => void;
   onSave: () => void;

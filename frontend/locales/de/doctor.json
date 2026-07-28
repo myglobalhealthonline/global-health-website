@@ -230,7 +230,8 @@
     "internalNotesPlaceholderFromDoctor": "Notiz für Admin (z. B. benötigt Zahlungsbestätigung)…",
     "internalNotesPlaceholderFromAdmin": "Notiz für Arzt (z. B. Patient hat wegen Nachsorge angerufen)…",
     "internalNotesPostNote": "Notiz posten",
-    "internalNotesPostFailed": "Konnte nicht posten."
+    "internalNotesPostFailed": "Konnte nicht posten.",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Patientenakten",

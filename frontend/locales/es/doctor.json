@@ -230,7 +230,8 @@
     "internalNotesPlaceholderFromDoctor": "Nota para el admin (por ejemplo, necesita confirmación de pago)…",
     "internalNotesPlaceholderFromAdmin": "Nota para el médico (por ejemplo, el paciente llamó sobre el seguimiento)…",
     "internalNotesPostNote": "Publicar nota",
-    "internalNotesPostFailed": "No se pudo publicar."
+    "internalNotesPostFailed": "No se pudo publicar.",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Registros de pacientes",

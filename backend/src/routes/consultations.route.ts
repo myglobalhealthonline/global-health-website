@@ -16,6 +16,7 @@ import {
 } from "../utils/guard-medical-read.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import { getDisclosedCrossBorderRecord } from "../modules/cross-border-rx/cross-border-rx-disclosure.service.js";
+import { doctorVisibleIdentityFields } from "../utils/patient-identity-fields.js";
 
 /**
  * Clinical consultation endpoints, doctor-only.
@@ -235,11 +236,13 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           }
         }
 
-        // NIF + Cartão de Cidadão are Portugal-only, gated on the appointment's
-        // own market rather than a BookingSetting flag: this is a disclosure
-        // rule about PT prescriptions, not a booking-form option. Country codes
-        // are stored lowercase; compare case-insensitively either way.
-        const isPortugal = (appt.countryCode ?? "").toLowerCase() === "pt";
+        // Which identity fields this market discloses to the treating doctor.
+        // A disclosure rule about what a prescription in that country has to
+        // carry, not a booking-form option, so it is keyed off the
+        // appointment's own market rather than a BookingSetting flag. PT gets
+        // NIF + Cartão de Cidadão + pharmacy; BR gets CPF (same `taxIdNumber`
+        // column, different label). See patient-identity-fields.ts.
+        const identityFields = doctorVisibleIdentityFields(appt.countryCode);
         const decryptOrNull = (value: string | null) => {
           if (!value) return null;
           try {
@@ -248,11 +251,13 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             return null;
           }
         };
-        let taxIdNumber = isPortugal ? decryptOrNull(patientProfile?.taxIdNumber ?? null) : null;
-        let nationalIdNumber = isPortugal
+        let taxIdNumber = identityFields.has("taxIdNumber")
+          ? decryptOrNull(patientProfile?.taxIdNumber ?? null)
+          : null;
+        let nationalIdNumber = identityFields.has("nationalIdNumber")
           ? decryptOrNull(patientProfile?.nationalIdNumber ?? null)
           : null;
-        const preferredPharmacy = isPortugal
+        const preferredPharmacy = identityFields.has("preferredPharmacy")
           ? (patientProfile?.preferredPharmacy ?? null)
           : null;
 
@@ -303,6 +308,10 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             taxIdNumber,
             nationalIdNumber,
             preferredPharmacy,
+            // The portal renders exactly these as editable rows. Sent rather
+            // than re-derived client-side so what is disclosed and what is
+            // offered for editing cannot drift apart.
+            identityFields: Array.from(identityFields),
             crossBorderSource,
           },
           consultation: consultation

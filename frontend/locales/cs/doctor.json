@@ -230,7 +230,8 @@
     "internalNotesPlaceholderFromDoctor": "Poznámka pro admina (např. potřebuje potvrzení platby)…",
     "internalNotesPlaceholderFromAdmin": "Poznámka pro lékaře (např. pacient volal ohledně následného vyšetření)…",
     "internalNotesPostNote": "Odeslat poznámku",
-    "internalNotesPostFailed": "Nepodařilo se odeslat."
+    "internalNotesPostFailed": "Nepodařilo se odeslat.",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Záznamy pacientů",
