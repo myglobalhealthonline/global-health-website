@@ -62,6 +62,12 @@ export type AdminCountryDto = {
    *  this country. CLINIC = same-country doctors with patient consent may
    *  access; PLATFORM = only the treating doctor. */
   accessModel: "CLINIC" | "PLATFORM";
+  /** Billing model. When true this market issues a COMMISSION-ONLY receipt:
+   *  the document total is Global Health's intermediation commission (price
+   *  − doctor payout), not the amount charged to the card, and the doctor
+   *  documents their own fee. Also disables Stripe's auto-invoice and makes
+   *  a doctor unbookable until their per-service payout is set. */
+  commissionReceiptEnabled: boolean;
   createdAt: string;
   updatedAt: string;
   currency: AdminCurrencyDto;

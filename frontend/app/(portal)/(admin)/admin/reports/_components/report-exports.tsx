@@ -14,13 +14,23 @@ import {
  * admin session cookie rides along — and triggers a plain browser download.
  */
 
-type Dataset = "payout" | "services" | "patients" | "appointments";
+type Dataset =
+  | "payout"
+  | "commission-payouts"
+  | "services"
+  | "patients"
+  | "appointments";
 
 const DATASETS: { value: Dataset; label: string; note: string }[] = [
   {
     value: "payout",
     label: "Doctor payout statement",
     note: "One doctor's consultations valued at their per-service payout, with a total and the doctor's IBAN. Select a doctor; optionally narrow by country (for doctors working several markets) or consultation type. Starts from 17 Jul 2026 — earlier consultations are excluded. Defaults to last calendar month.",
+  },
+  {
+    value: "commission-payouts",
+    label: "Doctor payouts — commission markets (Brazil)",
+    note: "What to transfer each doctor, for the manual bank run. Grouped by doctor, with the amount charged, Global Health's commission and the doctor's payout per consultation, plus a TO TRANSFER subtotal each and a grand total. Covers ALL doctors unless you pick one. Only paid, non-refunded orders count, and the figures are the ones frozen on the order at checkout — so the run always reconciles against the receipts actually issued, even if a service's payout was edited since. Defaults to last calendar month.",
   },
   {
     value: "services",

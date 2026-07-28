@@ -6,6 +6,10 @@ import { wrapHtml } from "../../lib/email/templates.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
 import { computeEffectivePrices } from "../orders/effective-pricing.service.js";
 import {
+  computeOrderCommission,
+  isCommissionCountry,
+} from "../orders/commission.service.js";
+import {
   resolveOrderPaymentUrl,
   orderPayShortLink,
 } from "../orders/order-payment-url.service.js";
@@ -210,6 +214,31 @@ export async function applyInsuranceVerificationDecision(
         insuranceCompanyId: null, // force standard price (ignore insurance)
       })),
     );
+    // Commission markets: the line prices are changing, so the frozen
+    // payout/commission snapshot taken at checkout is now stale and must be
+    // recomputed. The payout source also switches — an insurance booking pays the
+    // per-insurer payout, a standard one pays ServiceDoctor.doctorAmountCents —
+    // so this is a genuine re-resolution, not just re-arithmetic on the price.
+    // Safe to recompute here: nothing is invoiced until payment, and this order
+    // is by definition still unpaid.
+    const commission = (await isCommissionCountry(order.countryCode))
+      ? await computeOrderCommission(
+          order.items.map((i) => ({
+            id: i.id,
+            serviceId: i.serviceId,
+            doctorId: i.doctorId,
+            insuranceCompanyId: null, // rejected → standard payout applies
+            quantity: i.quantity,
+            unitPriceCents: standardByItem.get(i.id) ?? i.unitPriceCents,
+          })),
+          order.shippingCents,
+          { orderId: order.id, countryCode: order.countryCode },
+        )
+      : null;
+    const commissionByItemId = new Map(
+      (commission?.lines ?? []).map((l) => [l.id as string, l]),
+    );
+
     await prisma.$transaction(async (tx) => {
       let subtotal = 0;
       for (const item of order.items) {
@@ -223,6 +252,8 @@ export async function applyInsuranceVerificationDecision(
             insuranceCompanyId: null,
             insurancePolicyNumber: null,
             insurancePriceCents: null,
+            doctorPayoutCents: commissionByItemId.get(item.id)?.doctorPayoutCents ?? null,
+            commissionCents: commissionByItemId.get(item.id)?.commissionCents ?? null,
           },
         });
       }
@@ -233,6 +264,8 @@ export async function applyInsuranceVerificationDecision(
           insuranceCompanyId: null,
           subtotalCents: subtotal,
           totalCents: subtotal + order.shippingCents,
+          commissionTotalCents: commission?.commissionTotalCents ?? null,
+          doctorPayoutTotalCents: commission?.doctorPayoutTotalCents ?? null,
         },
       });
     });

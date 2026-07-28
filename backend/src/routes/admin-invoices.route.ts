@@ -12,6 +12,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 import { resendInvoiceDocument, resendInvoiceWhatsApp } from "../modules/invoices/generate-invoice.service.js";
+import { isCommissionCountry } from "../modules/orders/commission.service.js";
 
 /**
  * Admin invoice endpoints.
@@ -546,6 +547,16 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
             totalCents: invoice.order.totalCents,
             subtotalCents: invoice.order.subtotalCents,
             shippingCents: invoice.order.shippingCents,
+            // Commission markets: the print page renders a single commission line
+            // instead of the basket, mirroring the PDF. The DECISION is made here
+            // rather than in the page so both renderers agree — same rule as
+            // buildInvoicePdfData: a commission market with no frozen snapshot
+            // (pre-feature order) falls back to full-price rendering.
+            commissionMode:
+              invoice.order.commissionTotalCents != null &&
+              (await isCommissionCountry(invoice.order.countryCode)),
+            commissionTotalCents: invoice.order.commissionTotalCents,
+            doctorPayoutTotalCents: invoice.order.doctorPayoutTotalCents,
             paymentStatus: invoice.order.paymentStatus,
             paidAt: invoice.order.paidAt?.toISOString() ?? null,
             taxIdNumber: profile?.taxIdNumber ?? null,

@@ -68,7 +68,12 @@ const LABELS: Record<string, Record<string, string>> = {
     taxId: "DIČ",
     consultationDate: "Datum konzultace",
   },
-  sp: {
+  // Keys MUST match `Country.code` as stored in the DB (ie, cz, es, ro, pt, br).
+  // These were once keyed "sp"/"rm" — legacy Wix-era aliases that match no real
+  // order, so Spanish, Romanian and Brazilian invoices all silently fell through
+  // to the English set on this page. Same bug the backend hit in
+  // lib/invoice-number.ts; see the comment there.
+  es: {
     invoice: "Factura",
     receipt: "Recibo",
     invoiceReceipt: "Factura / Recibo",
@@ -92,7 +97,7 @@ const LABELS: Record<string, Record<string, string>> = {
     taxId: "NIF",
     consultationDate: "Fecha de consulta",
   },
-  rm: {
+  ro: {
     invoice: "Factură",
     receipt: "Chitanță",
     invoiceReceipt: "Factură / Chitanță",
@@ -116,7 +121,69 @@ const LABELS: Record<string, Record<string, string>> = {
     taxId: "CUI",
     consultationDate: "Data consultației",
   },
+  pt: {
+    invoice: "Fatura",
+    receipt: "Recibo",
+    invoiceReceipt: "Fatura / Recibo",
+    creditNote: "Nota de crédito",
+    refunded: "REEMBOLSADO",
+    cancelled: "ANULADA",
+    unpaid: "NÃO PAGO",
+    invoiceRef: "Referência da fatura",
+    from: "De",
+    billTo: "Faturado a",
+    description: "Descrição",
+    qty: "Qtd.",
+    unit: "Preço unit.",
+    total: "Total",
+    paid: "PAGO",
+    doctor: "Médico",
+    reg: "Número de registo médico",
+    footer: "Global Health · Medicine Anytime Anywhere",
+    company: "Global Health · Registada na Irlanda · N.º CRO 910267",
+    address: "Irlanda",
+    taxId: "NIF",
+    consultationDate: "Data da consulta",
+  },
+  // Brazil — pt-BR. Deliberately not a copy of `pt`: different taxpayer id (CPF
+  // vs NIF) and different vocabulary ("registro" not "registo").
+  br: {
+    invoice: "Fatura",
+    receipt: "Recibo",
+    invoiceReceipt: "Fatura / Recibo",
+    creditNote: "Nota de crédito",
+    refunded: "REEMBOLSADO",
+    cancelled: "CANCELADA",
+    unpaid: "NÃO PAGO",
+    invoiceRef: "Referência da fatura",
+    from: "De",
+    billTo: "Faturado para",
+    description: "Descrição",
+    qty: "Qtd.",
+    unit: "Preço unit.",
+    total: "Total",
+    paid: "PAGO",
+    doctor: "Médico responsável",
+    reg: "Número de registro médico",
+    footer: "Global Health · Medicine Anytime Anywhere",
+    company: "Global Health · Registrada na Irlanda · N.º CRO 910267",
+    address: "Irlanda",
+    taxId: "CPF",
+    consultationDate: "Data da consulta",
+    // Commission markets only — mirrors backend invoice-pdf.ts INVOICE_LABELS.br.
+    commissionLine: "Comissão Global Health",
+    commissionNote:
+      "A Global Health atua como intermediária. Este documento refere-se exclusivamente à comissão de intermediação. Os honorários médicos são documentados pelo profissional responsável.",
+  },
 };
+
+/** English fallbacks for a market switched into commission billing before its
+ *  localised copy exists. Mirrors COMMISSION_FALLBACK in backend invoice-pdf.ts. */
+const COMMISSION_FALLBACK = {
+  commissionLine: "Global Health commission",
+  commissionNote:
+    "Global Health acts as an intermediary. This document covers the intermediation commission only. Medical fees are documented by the treating practitioner.",
+} as const;
 
 function getLabels(countryCode: string) {
   return LABELS[countryCode.toLowerCase()] ?? LABELS.ie;
@@ -198,6 +265,11 @@ type InvoiceDetail = {
     totalCents: number;
     subtotalCents: number;
     shippingCents: number;
+    /** Commission market: bill the intermediation commission, not the amount
+     *  charged. Decided server-side so this page and the PDF always agree. */
+    commissionMode?: boolean;
+    commissionTotalCents?: number | null;
+    doctorPayoutTotalCents?: number | null;
     paymentStatus: string;
     paidAt: string | null;
     taxIdNumber: string | null;
@@ -282,6 +354,26 @@ export default async function PrintOrderInvoicePage({
       : isUnpaid
         ? L.unpaid
         : L.paid;
+
+  // Commission markets: collapse the basket to a single commission line and
+  // restate the totals, mirroring buildInvoicePdfData on the backend. Shipping is
+  // already inside the commission total (it is 100% ours), so it is not shown
+  // again as its own row.
+  const commissionMode = order.commissionMode === true && order.commissionTotalCents != null;
+  const documentTotalCents = commissionMode
+    ? (order.commissionTotalCents as number)
+    : order.totalCents;
+  const lineItems = commissionMode
+    ? [
+        {
+          id: "commission",
+          name: L.commissionLine ?? COMMISSION_FALLBACK.commissionLine,
+          quantity: 1,
+          unitPriceCents: documentTotalCents,
+          lineTotalCents: documentTotalCents,
+        },
+      ]
+    : order.items;
 
   return (
     <div className="vk-backdrop">
@@ -381,7 +473,7 @@ export default async function PrintOrderInvoicePage({
               </tr>
             </thead>
             <tbody>
-              {order.items.map((item, idx) => (
+              {lineItems.map((item, idx) => (
                 <tr key={item.id}>
                   <td className="vk-td vk-idx">{String(idx + 1).padStart(2, "0")}</td>
                   <td className="vk-td vk-desc">{item.name}</td>
@@ -400,7 +492,7 @@ export default async function PrintOrderInvoicePage({
               {L.invoiceRef} <b>{invoice.invoiceNumber}</b>
             </div>
             <div className="vk-totals">
-              {order.shippingCents > 0 ? (
+              {!commissionMode && order.shippingCents > 0 ? (
                 <div className="vk-trow">
                   <span>Shipping</span>
                   <span className="vk-tv">{fmtMoney(order.shippingCents, currency)}</span>
@@ -408,8 +500,13 @@ export default async function PrintOrderInvoicePage({
               ) : null}
               <div className="vk-grand">
                 <span className="vk-gl">{L.total}</span>
-                <span className="vk-gv">{fmtMoney(order.totalCents, currency)}</span>
+                <span className="vk-gv">{fmtMoney(documentTotalCents, currency)}</span>
               </div>
+              {commissionMode ? (
+                <div className="vk-commission-note">
+                  {L.commissionNote ?? COMMISSION_FALLBACK.commissionNote}
+                </div>
+              ) : null}
               {order.paidAt ? (
                 <div className="vk-settled">
                   {isCreditNote ? "Refund issued" : "Settled in full"} ·{" "}
@@ -417,7 +514,7 @@ export default async function PrintOrderInvoicePage({
                 </div>
               ) : isUnpaid ? (
                 <div className="vk-settled">
-                  Amount due: {fmtMoney(order.totalCents, currency)}
+                  Amount due: {fmtMoney(documentTotalCents, currency)}
                 </div>
               ) : null}
             </div>
@@ -567,6 +664,15 @@ export default async function PrintOrderInvoicePage({
         .vk-gl { font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: ${VK.forest}; }
         .vk-gv { font-family: ${VK_SERIF}; font-style: italic; font-size: 28px; color: ${VK.night}; letter-spacing: -0.01em; }
         .vk-settled { text-align: right; font-size: 12px; color: ${VK.muted}; margin-top: 6px; }
+        /* Commission markets: explains why the document total is lower than the
+           amount the patient was charged. Left-aligned + wrapping, unlike the
+           right-aligned single-line rows above it. */
+        .vk-commission-note {
+          margin-top: 8px;
+          font-size: 10.5px;
+          line-height: 1.5;
+          color: ${VK.faint};
+        }
         .vk-foot { margin-top: 40px; }
         .vk-foot-rule { border-top: 1px solid ${VK.hairline}; margin-bottom: 14px; }
         .vk-fb { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 11px; }

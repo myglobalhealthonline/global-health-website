@@ -5,6 +5,10 @@ import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { generateOrderNumber } from "../../lib/order-number.js";
+import {
+  computeOrderCommission,
+  isCommissionCountry,
+} from "../orders/commission.service.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
 import { checkoutBranding } from "../billing/checkout-branding.js";
@@ -376,6 +380,9 @@ async function createAsyncFeeCheckoutForRequest(
     },
     select: {
       priceCents: true,
+      // The prescriber's payout. Already required non-null by the where clause
+      // above; read it so commission markets can carve it out of the fee.
+      payoutCents: true,
       doctor: { select: { fullName: true } },
       country: { select: { code: true, currency: { select: { code: true } } } },
     },
@@ -397,6 +404,25 @@ async function createAsyncFeeCheckoutForRequest(
   });
 
   const orderNumber = await generateOrderNumber();
+
+  // Commission markets: the prescriber's payout lives on the per-country
+  // cross-border config, not on a (service, doctor) pair — this order line
+  // carries neither id — so hand it to the commission engine directly.
+  const commission = (await isCommissionCountry(targetCountryCode))
+    ? await computeOrderCommission(
+        [
+          {
+            id: "line",
+            quantity: 1,
+            unitPriceCents: priceCents,
+            payoutOverrideCents: config.payoutCents ?? 0,
+          },
+        ],
+        0,
+        { countryCode: targetCountryCode },
+      )
+    : null;
+
   const order = await prisma.order.create({
     data: {
       orderNumber,
@@ -409,6 +435,8 @@ async function createAsyncFeeCheckoutForRequest(
       subtotalCents: priceCents,
       shippingCents: 0,
       totalCents: priceCents,
+      commissionTotalCents: commission?.commissionTotalCents ?? null,
+      doctorPayoutTotalCents: commission?.doctorPayoutTotalCents ?? null,
       items: {
         create: [
           {
@@ -423,6 +451,8 @@ async function createAsyncFeeCheckoutForRequest(
             patientFullName: request.patientFullName,
             patientEmail: request.patientEmail,
             patientPhone: source?.phone ?? null,
+            doctorPayoutCents: commission?.lines[0]?.doctorPayoutCents ?? null,
+            commissionCents: commission?.lines[0]?.commissionCents ?? null,
           },
         ],
       },

@@ -91,6 +91,7 @@ export const adminCountryCreateBodySchema = z
     isActive: z.boolean().optional(),
     domains: z.array(domainEntrySchema).optional(),
     accessModel: countryAccessModelSchema.optional(),
+    commissionReceiptEnabled: z.boolean().optional(),
   })
   .superRefine((data, ctx) => {
     refineLocalesDefault(data, ctx);
@@ -157,6 +158,7 @@ export const adminCountryUpdateBodySchema = z
     bookingSetting: bookingSettingPartialSchema.optional(),
     enabledFeatures: z.array(countryFeatureKeySchema).optional(),
     accessModel: countryAccessModelSchema.optional(),
+    commissionReceiptEnabled: z.boolean().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.supportedLocales !== undefined) {

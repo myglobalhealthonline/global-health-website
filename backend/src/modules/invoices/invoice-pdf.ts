@@ -2,6 +2,7 @@ import { prisma } from "../../db/prisma.js";
 import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.js";
 import { PDF_TOKENS as T, PDF_SANS, PDF_SERIF, pdfLogoDataUrl, pdfEcgRule } from "../../lib/pdf/brand.js";
 import { clinicAddressLines } from "../../lib/clinic-addresses.js";
+import { isCommissionCountry } from "../orders/commission.service.js";
 
 // ── i18n labels ───────────────────────────────────────────────────────────────
 
@@ -252,8 +253,32 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     quoteRef: "Por favor, mencione esta referência em qualquer comunicação.",
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Os serviços de saúde são isentos de IVA nos termos da Lei de Consolidação do Imposto sobre o Valor Agregado de 2010, Seção 61 e Anexo 1, Parágrafo 23. O IVA não se aplica, uma vez que o prestador ainda não está registrado para fins de IVA na Irlanda, nos termos da Lei de Consolidação do IVA de 2010.\n\nTermos\nA Global Health é um nome comercial registrado sob a Global Guest. Todas as transações realizadas sob a marca Global Health são processadas legalmente de acordo com o registro comercial e os dados fiscais da Global Guest.",
+    // Commission-mode copy. Only read when the country has
+    // `commissionReceiptEnabled`; every other market ignores these keys.
+    commissionLine: "Comissão Global Health",
+    commissionNote:
+      "A Global Health atua como intermediária. Este documento refere-se exclusivamente à comissão de intermediação. Os honorários médicos são documentados pelo profissional responsável.",
+    // Replaces `legalFooter` in commission mode. The standard BR footer above
+    // cites Irish VAT law against the full consultation price, which does not
+    // describe an intermediation commission billed in Brazil.
+    // ⚠️ PLACEHOLDER — pending the wording Global Health's accountant/lawyer
+    // confirms, including whether ISS or withholding must be stated. Do not
+    // treat as legally reviewed.
+    commissionLegalFooter:
+      "Intermediação\nA Global Health atua exclusivamente como intermediária entre o paciente e o profissional de saúde. O valor constante neste documento corresponde somente à comissão de intermediação retida pela Global Health. Os honorários médicos são devidos ao profissional responsável, que emite a documentação fiscal correspondente.\n\nTermos\nA Global Health é um nome comercial registrado sob a Global Guest. Todas as transações realizadas sob a marca Global Health são processadas legalmente de acordo com o registro comercial e os dados fiscais da Global Guest.",
   },
 };
+
+/**
+ * Commission-mode fallbacks. A market can be switched into commission billing
+ * from the admin UI before anyone has written its localised copy, so resolve
+ * against English rather than rendering `undefined` onto a fiscal document.
+ */
+const COMMISSION_FALLBACK = {
+  commissionLine: "Global Health commission",
+  commissionNote:
+    "Global Health acts as an intermediary. This document covers the intermediation commission only. Medical fees are documented by the treating practitioner.",
+} as const;
 
 function getL(countryCode: string) {
   return INVOICE_LABELS[countryCode.toLowerCase()] ?? INVOICE_LABELS.ie;
@@ -276,6 +301,15 @@ export interface InvoicePdfData {
   countryCode: string;
   /** Drives the title + paid/unpaid badge. Defaults to INVOICE_RECEIPT. */
   documentType: InvoiceDocumentType;
+  /**
+   * Commission markets (`Country.commissionReceiptEnabled`). When true the
+   * document bills Global Health's intermediation commission only: `order.items`
+   * has ALREADY been collapsed to a single commission line and the money fields
+   * ALREADY hold the commission — see buildInvoicePdfData. The renderer only uses
+   * this flag to add the explanatory note, so the collapse happens in exactly one
+   * place rather than being re-derived here.
+   */
+  commissionMode?: boolean;
   /** CREDIT_NOTE only. Defaults to REFUND — the original credit-note cause. */
   creditNoteReason?: CreditNoteReason | null;
   order: {
@@ -364,10 +398,20 @@ export function buildInvoiceHtml(data: InvoicePdfData): string {
     )
     .join("");
 
-  const legalFooterHtml = L.legalFooter
+  // Commission mode swaps the legal footer: the standard one describes VAT on a
+  // healthcare service, this document bills an intermediation commission.
+  // Falls back to the standard footer when a market has no commission copy yet —
+  // a wrong-but-present footer beats an empty one on a fiscal document.
+  const legalFooterSource = data.commissionMode
+    ? L.commissionLegalFooter ?? L.legalFooter
+    : L.legalFooter;
+  const legalFooterHtml = legalFooterSource
     .split("\n\n")
     .map((para) => `<p style="margin:0 0 1.4mm;">${esc(para).replace(/\n/g, "<br>")}</p>`)
     .join("");
+  const commissionNote = data.commissionMode
+    ? L.commissionNote ?? COMMISSION_FALLBACK.commissionNote
+    : null;
 
   return `<!DOCTYPE html>
 <html lang="${loc.split("-")[0]}">
@@ -432,6 +476,9 @@ export function buildInvoiceHtml(data: InvoicePdfData): string {
   .trow { display: flex; justify-content: space-between; padding: 1.5mm 0; font-size: 9pt; color: ${T.muted}; }
   .trow .tv { font-variant-numeric: tabular-nums; color: ${T.ink}; }
   .tnote { font-size: 6.8pt; color: ${T.faint}; text-align: right; padding: 0.4mm 0 2.6mm; }
+  /* Commission markets: explains why the total is smaller than the amount the
+     patient was charged. Needs to wrap, unlike the single-line VAT note. */
+  .tnote.commission-note { text-align: left; line-height: 1.5; padding-top: 0; }
   .grand { border-top: 1pt solid ${T.night}; padding-top: 2.6mm;
     display: flex; justify-content: space-between; align-items: baseline; }
   .grand .gl { font-size: 6.8pt; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: ${T.forest}; }
@@ -517,6 +564,7 @@ export function buildInvoiceHtml(data: InvoicePdfData): string {
       ${order.shippingCents > 0 ? `<div class="trow"><span>${L.shipping}</span><span class="tv">${fmtMoney(order.shippingCents, cur, loc)}</span></div>` : ""}
       <div class="trow"><span>${L.vat}</span><span class="tv">${fmtMoney(0, cur, loc)}</span></div>
       <div class="tnote">${esc(L.vatNote)}</div>
+      ${commissionNote ? `<div class="tnote commission-note">${esc(commissionNote)}</div>` : ""}
       <div class="grand"><span class="gl">${isCancellationNote ? L.totalCredited : isCreditNote ? L.totalRefunded : L.total}</span><span class="gv">${fmtMoney(order.totalCents, cur, loc)}</span></div>
       ${
         isCancellationNote
@@ -572,6 +620,7 @@ export async function buildInvoicePdfData(
       totalCents: true,
       subtotalCents: true,
       shippingCents: true,
+      commissionTotalCents: true,
       paidAt: true,
       items: {
         select: {
@@ -653,6 +702,59 @@ export async function buildInvoicePdfData(
       }
       doctor = { fullName: doctorRow.fullName, registrationNumber: regNumber, chamberEntity };
     }
+  }
+
+  // ── Commission markets ────────────────────────────────────────────────────
+  // The document bills our intermediation commission, not the amount charged.
+  // Collapse the basket to one commission line and restate every money field, so
+  // the renderer needs no special case: its existing item loop and totals block
+  // already produce the right document from this shape.
+  //
+  // Reads the FROZEN `Order.commissionTotalCents` rather than recomputing — an
+  // admin editing a payout must never move an already-issued document. A
+  // commission-market order with no snapshot predates the feature (or was written
+  // by a path that misses it); fall back to today's full-price rendering rather
+  // than invent a number, since a wrong commission is worse than a correct
+  // full-price receipt.
+  const commissionMode =
+    order.commissionTotalCents != null && (await isCommissionCountry(order.countryCode));
+
+  if (commissionMode) {
+    const L = getL(order.countryCode);
+    const commissionCents = order.commissionTotalCents as number;
+    return {
+      invoiceNumber,
+      invoiceDate,
+      countryCode: order.countryCode,
+      documentType,
+      creditNoteReason,
+      commissionMode: true,
+      order: {
+        fullName: order.fullName,
+        email: order.email,
+        phone: order.phone,
+        currencyCode: order.currencyCode,
+        totalCents: commissionCents,
+        subtotalCents: commissionCents,
+        // Shipping is already inside the commission total (it is 100% ours), so
+        // showing it again as its own line would double-count it.
+        shippingCents: 0,
+        paidAt: order.paidAt?.toISOString() ?? null,
+        taxIdNumber: profile?.taxIdNumber ?? null,
+        consultationDate,
+        items: [
+          {
+            name: L.commissionLine ?? COMMISSION_FALLBACK.commissionLine,
+            quantity: 1,
+            unitPriceCents: commissionCents,
+            lineTotalCents: commissionCents,
+          },
+        ],
+      },
+      // The treating doctor still appears — the patient needs to know whose
+      // consultation this commission relates to, and who owes them the fee note.
+      doctor,
+    };
   }
 
   return {

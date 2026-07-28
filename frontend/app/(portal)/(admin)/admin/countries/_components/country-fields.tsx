@@ -109,6 +109,38 @@ export function CountryFields({ currencies, initial }: Props) {
         </label>
       </FormSection>
 
+      {/* Billing model — commission vs standard. Off for every market by
+          default; turning it on changes what the patient's fiscal document
+          says, so the copy below spells out all three consequences rather
+          than leaving them to be discovered in production. */}
+      <FormSection
+        title="Billing model"
+        description="Controls what the receipt Global Health issues in this market is FOR. Leave off unless this market bills as an intermediary."
+      >
+        <div className="gh-form-section__span-2 flex flex-col gap-2">
+          <label
+            className="flex items-center gap-3 text-sm"
+            style={{ color: "var(--portal-text)" }}
+          >
+            <input
+              type="checkbox"
+              name="commissionReceiptEnabled"
+              defaultChecked={initial?.commissionReceiptEnabled ?? false}
+              className="h-4 w-4 rounded border-[var(--color-border)]"
+            />
+            Commission-only receipts (Global Health bills as intermediary)
+          </label>
+          <span className="text-portal-meta" style={{ color: "var(--portal-muted)" }}>
+            When on, the patient is still charged the full service price, but the
+            receipt we issue is for our commission only (price minus the doctor&apos;s
+            payout) — the doctor documents their own fee separately. This also
+            disables Stripe&apos;s own invoice for this market, and makes a doctor
+            unbookable for a service until their payout is set under{" "}
+            <strong>Doctors → Services</strong>.
+          </span>
+        </div>
+      </FormSection>
+
       <FormSection title="Locales">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Default locale</span>

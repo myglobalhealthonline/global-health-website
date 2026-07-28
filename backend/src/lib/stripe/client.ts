@@ -77,6 +77,12 @@ export function resolveStripeAccount(countryCode?: string | null): StripeAccount
       return "cz";
     default:
       // Everything else — Ireland, Romania, Spain (es/sp), Brazil, unknown.
+      //
+      // Brazil stays on Ireland deliberately. It bills on commission (see
+      // modules/orders/commission.service.ts) but doctor payouts are settled
+      // OUTSIDE Stripe by bank transfer, against the admin commission-payout
+      // report — Stripe permits no transfer from an EEA platform to a Brazilian
+      // connected account, and we hold no Brazilian Stripe entity.
       return "ie";
   }
 }
