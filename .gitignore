@@ -84,3 +84,6 @@ backups/
 docs/portal-implementation/screenshots/
 docs/portal-audits/doctor/screenshots/
 myglobalhealth.online-audit/screenshots/
+
+# Machine-translation drafts pending human review — never committed.
+backend/tmp/i18n-drafts/
