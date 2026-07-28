@@ -22,10 +22,13 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
   const proto = request.headers.get("x-forwarded-proto") ?? "https";
   const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
   const base = host ? `${proto}://${host}` : request.nextUrl.origin;
-  const statusUrl = (state: "paid" | "expired") =>
+  const statusUrl = (state: "paid" | "expired" | "unknown") =>
     `${base}/pay-status?state=${state}&orderId=${encodeURIComponent(orderId)}`;
 
-  if (!backend) return NextResponse.redirect(statusUrl("expired"));
+  // Never guess: only say "paid" or "expired" when the backend confirms it.
+  // Anything else (error, unreachable, indeterminate) → "unknown", so a paid
+  // order is never mislabelled as expired on a transient hiccup.
+  if (!backend) return NextResponse.redirect(statusUrl("unknown"));
 
   try {
     const res = await fetch(`${backend}/api/orders/${orderId}/pay-url`, { cache: "no-store" });
@@ -33,11 +36,12 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
       | { ok?: boolean; data?: { url?: string | null; payable?: boolean; status?: string } }
       | null;
     const url = json?.data?.url;
-    if (res.ok && url) return NextResponse.redirect(url);
-    // Not payable: send to a clear status page — already paid vs expired.
-    if (json?.data?.status === "PAID") return NextResponse.redirect(statusUrl("paid"));
+    if (res.ok && url) return NextResponse.redirect(url); // still payable → Stripe
+    const status = json?.data?.status;
+    if (status === "PAID") return NextResponse.redirect(statusUrl("paid"));
+    if (status === "CANCELLED") return NextResponse.redirect(statusUrl("expired"));
+    return NextResponse.redirect(statusUrl("unknown"));
   } catch {
-    // fall through to the expired page
+    return NextResponse.redirect(statusUrl("unknown"));
   }
-  return NextResponse.redirect(statusUrl("expired"));
 }
