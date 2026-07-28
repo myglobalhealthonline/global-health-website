@@ -1,15 +1,20 @@
 /**
- * Copy for Dr. Renato's shareable consultation page (`/dr-renato`).
+ * Copy for Dr. Renato's shareable consultation page, at
+ * `/brazil/<locale>/dr-renato`.
  *
  * Deliberately NOT in the i18n bundles: this is a single non-indexed page a
- * doctor hands to patients, not site chrome, and the bundles are already
- * 1000+ keys per locale. Two locales only — `pt` (default, the audience) and
- * `en` via `?lang=en`.
+ * doctor hands to patients, not site chrome, and the bundles already carry
+ * 1000+ keys per locale. Three locales — the ones he consults in, and the
+ * ones Brazil's language switcher offers.
  */
 
-export type ShareLocale = "pt" | "en";
+export type ShareLocale = "pt" | "en" | "es";
 
-export const SHARE_LOCALES: ShareLocale[] = ["pt", "en"];
+export const SHARE_LOCALES: ShareLocale[] = ["pt", "en", "es"];
+
+export function isShareLocale(v: string): v is ShareLocale {
+  return (SHARE_LOCALES as string[]).includes(v);
+}
 
 type Copy = {
   htmlLang: string;
@@ -157,6 +162,7 @@ export const SHARE_COPY: Record<ShareLocale, Copy> = {
     ],
     noticeTitle: "Aviso importante",
     noticeParagraphs: [
+      "A Global Health é uma plataforma de telemedicina operada a partir da Irlanda. Os médicos da rede exercem a medicina de forma independente e são os únicos responsáveis pelas suas decisões clínicas. No Brasil, a Global Health não atua como clínica médica: atua exclusivamente como intermediária de serviços prestados por profissionais habilitados e devidamente registrados nos respectivos conselhos.",
       "O valor da consulta cobre apenas o atendimento com o médico registrado no Brasil. A análise documental além-fronteiras é um serviço separado e independente, prestado por médicos Global Health registrados localmente, sujeito à avaliação clínica deles e à regulamentação local aplicável. A Global Health não garante a emissão de qualquer receita, atestado ou documento clínico como resultado de nenhum dos dois serviços.",
       "Em qualquer situação urgente ou de emergência, não utilize este serviço. Procure imediatamente o serviço de emergência local.",
     ],
@@ -259,6 +265,7 @@ export const SHARE_COPY: Record<ShareLocale, Copy> = {
     ],
     noticeTitle: "Important notice",
     noticeParagraphs: [
+      "Global Health is a telemedicine platform operated from Ireland. The physicians in our network practise independently and are solely responsible for their own clinical decisions. In Brazil, Global Health does not operate as a medical clinic: it acts only as an intermediary for services delivered by qualified practitioners registered with their respective medical councils.",
       "The consultation fee covers your appointment with a Brazil-registered physician only. The cross-border document review is a separate, independent service provided by locally registered Global Health physicians, subject to their clinical assessment and applicable local regulations. Global Health does not guarantee the issuance of any prescription, certificate, or clinical document as a result of either service.",
       "In any urgent or emergency situation, do not use this service. Contact your local emergency services immediately.",
     ],
@@ -269,5 +276,109 @@ export const SHARE_COPY: Record<ShareLocale, Copy> = {
     metaTitle: "Online consultation with a family doctor · Global Health Brazil",
     metaDescription:
       "A private video consultation with a Brazil-registered family doctor, for Brazilian patients anywhere in the world.",
+  },
+  es: {
+    htmlLang: "es",
+    eyebrow: "Brasil · Medicina de Familia",
+    heroLead: "Consulta en línea con",
+    heroAccent: "tu médico",
+    heroTrail: "de familia",
+    lede: "Videoconsulta privada con un médico de familia colegiado en Brasil (CRM). Disponible para pacientes brasileños en cualquier parte del mundo.",
+    bookCta: "Reservar consulta",
+    profileCta: "Ver perfil completo",
+    feature1: { title: "Videoconsulta", subtitle: "Desde cualquier dispositivo" },
+    feature2: { title: "Colegiado CRM", subtitle: "Médico verificado" },
+    feature3: { title: "Sin prisas", subtitle: "Consulta individual" },
+    aboutEyebrow: "El médico",
+    aboutTitle: "Sobre mí",
+    aboutParagraphs: [
+      "Soy médico de familia y me dedico a una atención integral y centrada en la persona, para pacientes de todas las edades. Mis consultas empiezan por escuchar — entender no solo los síntomas, sino tu vida, tu contexto y tus objetivos — para ofrecerte después una orientación basada en la evidencia y hecha a tu medida.",
+      "Ya sea que necesites seguimiento de una enfermedad crónica, entender un diagnóstico nuevo o simplemente quieras un médico de confianza que conozca tu historial, estoy aquí para darte una atención cercana e individualizada — estés donde estés.",
+    ],
+    howEyebrow: "Paso a paso",
+    howTitle: "Cómo funciona",
+    howSteps: [
+      { title: "Reserva tu consulta", body: "Elige la hora que mejor te venga." },
+      { title: "Entra en la videollamada", body: "Desde donde sea, en cualquier dispositivo." },
+      { title: "Recibe tu valoración", body: "Personalizada, basada en la evidencia y sin prisas." },
+      { title: "Recibe tu documentación", body: "Informes clínicos, derivaciones o justificantes, cuando esté clínicamente indicado." },
+    ],
+    offerEyebrow: "Consulta en línea",
+    offerTitle: "Videoconsulta privada",
+    offerBody: "Consulta individual por vídeo con un médico de familia colegiado en Brasil. Disponible para pacientes brasileños que viven en cualquier país.",
+    offerLanguageNote: "Todas las consultas se realizan en portugués.",
+    offerPriceFallback: "Consultar precio",
+    crossBorderEyebrow: "Atención transfronteriza",
+    crossBorderTitle: "¿Vives en Europa? También te cuidamos.",
+    crossBorderIntro:
+      "Si eres brasileño y vives en Irlanda, Portugal, España, Chequia o Rumanía, pregunta a tu médico durante la consulta por la continuidad asistencial transfronteriza.",
+    crossBorderBody:
+      "Cuando sea clínicamente apropiado, tu médico puede derivarte a un médico de Global Health colegiado en tu país de residencia. Ese médico revisa tu caso de forma independiente y puede emitir recetas, solicitudes de pruebas o certificados médicos, siempre conforme a las guías y la normativa médica locales.",
+    crossBorderFeeLead:
+      "Esta vía se inicia durante la consulta, a petición tuya. Si tu médico te deriva, el precio de la revisión transfronteriza es:",
+    crossBorderTableCountry: "País",
+    crossBorderTableFee: "Precio",
+    crossBorderComingSoon: "Próximamente",
+    crossBorderFootnote:
+      "Solo se cobra si tu médico inicia la derivación durante la consulta. La revisión la realiza un médico de Global Health independiente, colegiado localmente, y queda sujeta a su valoración clínica y a su criterio profesional.",
+    countryNames: {
+      IE: "Irlanda",
+      PT: "Portugal",
+      ES: "España",
+      CZ: "Chequia",
+      RO: "Rumanía",
+    },
+    aboutGhEyebrow: "Qué es Global Health",
+    aboutGhTitle: "Qué es Global Health",
+    aboutGhBody:
+      "Global Health es una plataforma de telemedicina multipaís que conecta a pacientes con médicos colegiados en Brasil, Irlanda, Portugal, España, Chequia y Rumanía. Nuestra red garantiza acceso a una atención de calidad — en tu idioma, con médicos que entienden de dónde vienes — allá donde te lleve la vida.",
+    aboutGhCta: "Conoce Global Health",
+    faqEyebrow: "Dudas",
+    faqTitle: "Preguntas frecuentes",
+    faq: [
+      {
+        question: "¿Tengo que estar en Brasil para reservar?",
+        answer:
+          "No. La consulta está disponible para pacientes brasileños que viven en cualquier parte del mundo. Solo necesitas conexión estable y un dispositivo con cámara.",
+      },
+      {
+        question: "¿La consulta es en portugués?",
+        answer:
+          "Sí, íntegramente. La consulta con tu médico brasileño se realiza por completo en portugués.",
+      },
+      {
+        question: "¿Qué es exactamente el servicio transfronterizo?",
+        answer:
+          "Es una vía clínica opcional, disponible en algunos países europeos, en la que un médico colegiado localmente revisa la documentación de tu caso y puede emitir recetas o certificados locales cuando esté clínicamente justificado. No es un extra automático: se comenta y se inicia durante la consulta si encaja con lo que necesitas.",
+      },
+      {
+        question: "¿El médico transfronterizo siempre puede emitir una receta?",
+        answer:
+          "No automáticamente. El médico colegiado localmente ejerce un criterio clínico independiente, conforme a las guías médicas de su país. La emisión de cualquier documento depende enteramente de su valoración.",
+      },
+      {
+        question: "¿Y si necesito atención urgente?",
+        answer:
+          "La telemedicina no es adecuada para urgencias. Si estás ante una urgencia médica, contacta de inmediato con los servicios de emergencia locales.",
+      },
+      {
+        question: "¿Cómo se paga?",
+        answer:
+          "La consulta se paga en línea al reservar. El precio de la revisión transfronteriza, cuando corresponda, se cobra por separado en el momento de la derivación.",
+      },
+    ],
+    noticeTitle: "Aviso importante",
+    noticeParagraphs: [
+      "Global Health es una plataforma de telemedicina operada desde Irlanda. Los médicos de la red ejercen de forma independiente y son los únicos responsables de sus decisiones clínicas. En Brasil, Global Health no opera como clínica médica: actúa únicamente como intermediaria de servicios prestados por profesionales cualificados y colegiados en sus respectivos consejos de medicina.",
+      "El precio de la consulta cubre únicamente la cita con el médico colegiado en Brasil. La revisión documental transfronteriza es un servicio independiente y aparte, prestado por médicos de Global Health colegiados localmente, sujeto a su valoración clínica y a la normativa local aplicable. Global Health no garantiza la emisión de ninguna receta, certificado o documento clínico como resultado de ninguno de los dos servicios.",
+      "Ante cualquier situación urgente o de emergencia, no utilices este servicio. Contacta de inmediato con los servicios de emergencia locales.",
+    ],
+    shareLinkTitle: "Página para pacientes brasileños en el extranjero",
+    shareLinkBody:
+      "Una página breve que explica la videoconsulta en portugués y la vía de continuidad asistencial transfronteriza para quienes viven en Europa.",
+    shareLinkCta: "Abrir la página",
+    metaTitle: "Consulta en línea con un médico de familia · Global Health Brasil",
+    metaDescription:
+      "Videoconsulta privada con un médico de familia colegiado en Brasil, para pacientes brasileños en cualquier parte del mundo.",
   },
 };

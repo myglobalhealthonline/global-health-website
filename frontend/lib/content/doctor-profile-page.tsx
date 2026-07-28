@@ -361,7 +361,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           </div>
         </section>
       )}
-      <DoctorSharePageLink doctorSlug={doctorSlug} lang={lang} theme="light" />
+      <DoctorSharePageLink doctorSlug={doctorSlug} countrySlug={slug} lang={lang} theme="light" />
       {doctorDisclaimerLead ? (
         <section
           className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
