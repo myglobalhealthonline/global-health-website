@@ -3491,6 +3491,10 @@ model CrossBorderPrescriptionRequest {
   /// Timestamps for the terminal transitions (audit/reporting convenience).
   paidAt               DateTime?
   decidedAt            DateTime?
+  /// Set when Doctor B finalises the prescription document. Guards the
+  /// patient + Doctor A "prescription sent" notifications so they fire exactly
+  /// once even if several documents are finalised.
+  finalisedAt          DateTime?
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
 

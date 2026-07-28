@@ -921,5 +921,18 @@ export async function finalizeGeneratedDocument(doctorId: string, documentId: st
     where: { id: doc.id },
     data: { sentToPatient: true },
   });
+  // If this prescription belongs to a cross-border async consultation, finalising
+  // it is the "prescription issued" moment: complete the request + notify the
+  // patient (sent to pharmacy) and the requesting doctor. Best-effort + idempotent;
+  // dynamically imported to avoid a module cycle. Never blocks the finalise.
+  try {
+    const { onCrossBorderRxPrescriptionFinalised } = await import(
+      "../cross-border-rx/cross-border-rx.service.js"
+    );
+    await onCrossBorderRxPrescriptionFinalised(doc.appointmentId);
+  } catch {
+    // A non-cross-border prescription (the common case) or a notify hiccup must
+    // never fail the finalise itself.
+  }
   return { ok: true as const };
 }

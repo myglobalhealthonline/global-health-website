@@ -60,6 +60,13 @@ export function CrossBorderRxDecisionPanel({
         setError(json.message ?? copy.couldNotSubmit);
         return;
       }
+      // Accepting takes the doctor straight to the consultation to write and
+      // finalise the prescription. Finalising the prescription document is what
+      // notifies the patient + requesting doctor — not this accept step.
+      if (decision === "ACCEPT" && asyncAppointmentId) {
+        router.push(`/doctor/appointments/${asyncAppointmentId}?tab=consultation`);
+        return;
+      }
       setMode(null);
       setMessage("");
       router.refresh();
