@@ -1644,6 +1644,10 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Záznam odesílajícího lékaře",
+    "sourceRecordDesc": "Záznam z konzultace, jehož sdílení s vámi pacient pro tuto žádost o předpis odsouhlasil.",
+    "requestedOn": "Vyžádáno dne",
+    "sourceDocumentsNote": "Soubory z této konzultace byly zkopírovány do záložky Dokumenty této návštěvy."
   }
 }

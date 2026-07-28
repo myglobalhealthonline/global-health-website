@@ -3680,6 +3680,13 @@ model AppointmentDocument {
   /// When a patient uploads via a per-prescription QR/link, the exams
   /// prescription (GeneratedDocument) this upload answers.
   sourceGeneratedDocumentId String?
+  /// Cross-jurisdiction prescription disclosure: the doctor this file actually
+  /// came from. `doctorId` above has to be the RECEIVING doctor — it is what
+  /// the download route authorises against — so without this the patient chart
+  /// credited the copy to the prescriber who received it. Soft FK (no relation,
+  /// same pattern as `insuranceCompanyId` on Appointment); null for every
+  /// ordinary upload, where `doctorId` is already the uploader.
+  disclosedFromDoctorId     String?
   appointment               Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   doctor                    Doctor      @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   createdAt                 DateTime    @default(now())

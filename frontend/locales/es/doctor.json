@@ -1644,6 +1644,10 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Historia del médico solicitante",
+    "sourceRecordDesc": "El registro de la consulta que el paciente consintió compartir con usted para esta solicitud de receta.",
+    "requestedOn": "Solicitado el",
+    "sourceDocumentsNote": "Los archivos de esa consulta se copiaron a la pestaña Documentos de esta cita."
   }
 }

@@ -458,6 +458,23 @@ export type AppointmentDetailDto = {
    *  preferredPharmacy). Portugal-only in this payload. Distinct from
    *  `pharmacy`, which is the per-visit value captured on the appointment. */
   preferredPharmacy?: string | null;
+  /** Cross-jurisdiction prescription only: the referring doctor's consultation
+   *  record, as the patient consented to disclose it. Null on every ordinary
+   *  appointment, and for any viewer who is not the prescribing doctor. */
+  crossBorderSource?: {
+    requestId: string;
+    status: string;
+    requestedAt: string;
+    sourceDoctorName: string | null;
+    clinicalSummary: string;
+    soap: {
+      chiefComplaint: string | null;
+      subjective: string | null;
+      objective: string | null;
+      assessment: string | null;
+      plan: string | null;
+    };
+  } | null;
   createdAt: string;
 };
 

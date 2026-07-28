@@ -15,6 +15,7 @@ import {
   MedicalAccessDeniedError,
 } from "../utils/guard-medical-read.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
+import { getDisclosedCrossBorderRecord } from "../modules/cross-border-rx/cross-border-rx-disclosure.service.js";
 
 /**
  * Clinical consultation endpoints, doctor-only.
@@ -175,7 +176,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           }
           throw guardError;
         }
-        const [consultation, bookingSetting, patientProfile] = await Promise.all([
+        const [consultation, bookingSetting, patientProfile, crossBorderSource] = await Promise.all([
           prisma.consultation.findUnique({ where: { appointmentId: appt.id } }),
           readCountryBookingSetting(appt.countryCode),
           prisma.patientProfile.findUnique({
@@ -211,6 +212,15 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
               preferredPharmacy: true,
             },
           }),
+          // Cross-jurisdiction prescription: the referring doctor's disclosed
+          // consultation record. Null for every ordinary appointment. Read here
+          // rather than only on the request inbox because the inbox card
+          // vanishes the moment the request is decided — the prescriber needs
+          // the record they prescribed against to stay open afterwards.
+          getDisclosedCrossBorderRecord(appt.id, {
+            doctorId: auth.doctorId ?? null,
+            isAdmin: auth.role === "ADMIN",
+          }).catch(() => null),
         ]);
 
         // Only markets that collect the number may show it (PT today).
@@ -293,6 +303,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             taxIdNumber,
             nationalIdNumber,
             preferredPharmacy,
+            crossBorderSource,
           },
           consultation: consultation
             ? {

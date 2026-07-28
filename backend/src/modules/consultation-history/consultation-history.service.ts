@@ -187,6 +187,9 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
         appointmentId: { in: appointmentIds },
         doctorId,
       },
+      // `doctorId` is the owning doctor, which for a cross-border disclosure is
+      // the doctor who RECEIVED the file, not the one who produced it. Pull the
+      // provenance id so `uploadedBy` can credit the real author.
       orderBy: { createdAt: "desc" },
       include: {
         appointment: {
@@ -204,6 +207,20 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
   ]);
 
   const generatedRows = generatedDocs.map((d) => mapGeneratedRow(d, orderRefByAppointment));
+
+  // Cross-border disclosures: resolve the referring doctor's name so the
+  // "Uploaded by" column names whoever actually produced the file.
+  const disclosedFromIds = Array.from(
+    new Set(uploads.map((u) => u.disclosedFromDoctorId).filter((id): id is string => Boolean(id))),
+  );
+  const disclosedFromNameById = new Map<string, string>();
+  if (disclosedFromIds.length > 0) {
+    const rows = await prisma.doctor.findMany({
+      where: { id: { in: disclosedFromIds } },
+      select: { id: true, fullName: true },
+    });
+    for (const row of rows) disclosedFromNameById.set(row.id, row.fullName);
+  }
 
   // An untouched DRAFT consultation row is auto-created for every appointment,
   // so only surface consults that actually carry written content.
@@ -321,7 +338,10 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
           orderId?.itemName,
           u.appointment.consultationType,
         ),
-        uploadedBy: u.doctor.fullName,
+        uploadedBy:
+          (u.disclosedFromDoctorId
+            ? disclosedFromNameById.get(u.disclosedFromDoctorId)
+            : null) ?? u.doctor.fullName,
         viewUrl: `/api/doctor/documents/${u.id}/download`,
       };
     }),

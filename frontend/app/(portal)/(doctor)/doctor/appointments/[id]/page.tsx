@@ -43,6 +43,7 @@ import {
 } from "./_components/consultation-documents-section";
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
 import { PatientContextPanel } from "./_components/patient-context-panel";
+import { ReferringRecordPanel } from "./_components/referring-record-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -155,6 +156,23 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const consultationDocsCopy = {
     ...d.consultationDocuments,
     ...d.consultationDocumentsModal,
+  };
+  // Cross-jurisdiction prescription: labels for the referring doctor's
+  // disclosed record. Shares the inbox block so the two surfaces can't drift.
+  const referringRecordCopy = {
+    sourceRecordTitle: d.crossBorderRxInbox.sourceRecordTitle,
+    sourceRecordDesc: d.crossBorderRxInbox.sourceRecordDesc,
+    fromLabel: d.crossBorderRxInbox.fromLabel,
+    requestedOn: d.crossBorderRxInbox.requestedOn,
+    summaryHeading: d.crossBorderRxInbox.summaryHeading,
+    soapConsentNote: d.crossBorderRxInbox.soapConsentNote,
+    soapChiefComplaint: d.crossBorderRxInbox.soapChiefComplaint,
+    soapSubjective: d.crossBorderRxInbox.soapSubjective,
+    soapObjective: d.crossBorderRxInbox.soapObjective,
+    soapAssessment: d.crossBorderRxInbox.soapAssessment,
+    soapPlan: d.crossBorderRxInbox.soapPlan,
+    soapEmpty: d.crossBorderRxInbox.soapEmpty,
+    sourceDocumentsNote: d.crossBorderRxInbox.sourceDocumentsNote,
   };
   // Shared by both renderers of the patient-context card (>=lg rail, <lg tab).
   const patientContextCopy = {
@@ -404,6 +422,12 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 }
               >
                 <div className="gh-form-section__span-2">
+                  {appointment.crossBorderSource ? (
+                    <ReferringRecordPanel
+                      record={appointment.crossBorderSource}
+                      copy={referringRecordCopy}
+                    />
+                  ) : null}
                   <ConsultationForm
                     appointmentId={appointment.id}
                     copy={d.consultationForm}

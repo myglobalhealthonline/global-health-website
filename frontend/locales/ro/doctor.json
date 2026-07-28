@@ -1644,6 +1644,10 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Documentația medicului care a trimis solicitarea",
+    "sourceRecordDesc": "Documentația consultației pe care pacientul a consimțit să o partajeze cu dumneavoastră pentru această solicitare de prescripție.",
+    "requestedOn": "Solicitat la",
+    "sourceDocumentsNote": "Fișierele din acea consultație au fost copiate în fila Documente a acestei programări."
   }
 }

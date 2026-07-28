@@ -1644,6 +1644,10 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Registo do médico requisitante",
+    "sourceRecordDesc": "O registo da consulta que o doente consentiu partilhar consigo para este pedido de prescrição.",
+    "requestedOn": "Pedido em",
+    "sourceDocumentsNote": "Os ficheiros dessa consulta foram copiados para o separador Documentos desta marcação."
   }
 }

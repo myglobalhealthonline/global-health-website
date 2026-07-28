@@ -914,7 +914,11 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Referring doctor's record",
+    "sourceRecordDesc": "The consultation record the patient consented to share with you for this prescription request.",
+    "requestedOn": "Requested",
+    "sourceDocumentsNote": "Files from that consultation were copied to the Documents tab of this appointment."
   },
   "servicesUsedList": {
     "saveNoteFirstTitle": "Save the clinical note first",

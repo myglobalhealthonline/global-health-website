@@ -23,6 +23,10 @@ import {
   notifyPatientCrossBorderPayment,
   notifyStaffCrossBorderRequest,
 } from "./cross-border-rx-notifications.service.js";
+import {
+  copyDisclosedDocuments,
+  copyDisclosedPatientContext,
+} from "./cross-border-rx-disclosure.service.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 
 /**
@@ -210,6 +214,71 @@ export type CreateCrossBorderRxResult = {
   consentUrl: string | null;
 };
 
+type SourceSoap = {
+  chiefComplaint: string | null;
+  subjective: string | null;
+  objective: string | null;
+  assessment: string | null;
+  plan: string | null;
+} | null;
+
+async function readSourceSoap(sourceAppointmentId: string): Promise<SourceSoap> {
+  return prisma.consultation.findUnique({
+    where: { appointmentId: sourceAppointmentId },
+    select: {
+      chiefComplaint: true,
+      subjective: true,
+      objective: true,
+      assessment: true,
+      plan: true,
+    },
+  });
+}
+
+function soapHasContent(soap: SourceSoap): boolean {
+  if (!soap) return false;
+  return Boolean(
+    soap.chiefComplaint?.trim() ||
+      soap.subjective?.trim() ||
+      soap.objective?.trim() ||
+      soap.assessment?.trim() ||
+      soap.plan?.trim(),
+  );
+}
+
+/**
+ * Re-take the SOAP snapshot at the moment the patient consents.
+ *
+ * The snapshot has to be immutable once disclosed — but consent happens AFTER
+ * the request is raised, and the treating doctor routinely writes the consult
+ * note in between. Freezing the note at request time meant a request raised
+ * mid-consult disclosed nothing at all. Taking it at consent time is both the
+ * correct GDPR reading (the patient consents to the record as it stands when
+ * they agree) and the fix for the empty-record case; from here it is frozen.
+ *
+ * Only overwrites when the fresh read actually has content, so a source note
+ * that was later blanked can never erase an already-captured snapshot.
+ */
+async function refreshSoapSnapshot(requestId: string, sourceAppointmentId: string): Promise<void> {
+  try {
+    const soap = await readSourceSoap(sourceAppointmentId);
+    if (!soapHasContent(soap)) return;
+    await prisma.crossBorderPrescriptionRequest.update({
+      where: { id: requestId },
+      data: {
+        sourceChiefComplaint: soap?.chiefComplaint ?? null,
+        sourceSubjective: soap?.subjective ?? null,
+        sourceObjective: soap?.objective ?? null,
+        sourceAssessment: soap?.assessment ?? null,
+        sourcePlan: soap?.plan ?? null,
+      },
+    });
+  } catch {
+    // Snapshot refresh is an improvement on what is already stored — never
+    // block the patient's consent on it.
+  }
+}
+
 export async function createCrossBorderRxRequest(
   input: CreateCrossBorderRxInput,
 ): Promise<CreateCrossBorderRxResult> {
@@ -261,19 +330,11 @@ export async function createCrossBorderRxRequest(
     throw new CrossBorderRxStripeNotConfiguredError();
   }
 
-  // Snapshot the source consultation's SOAP note. Fixed at request time so the
-  // record the patient consents to disclose can't drift. Disclosed to Doctor B
-  // only after consent (enforced by the status gate).
-  const soap = await prisma.consultation.findUnique({
-    where: { appointmentId: source.id },
-    select: {
-      chiefComplaint: true,
-      subjective: true,
-      objective: true,
-      assessment: true,
-      plan: true,
-    },
-  });
+  // Snapshot the source consultation's SOAP note. Re-taken when the patient
+  // actually consents (see `refreshSoapSnapshot`) — a request raised before the
+  // treating doctor has written up the consult would otherwise disclose an
+  // empty record, which is how Doctor B ends up prescribing blind.
+  const soap = await readSourceSoap(source.id);
 
   const sourceDoctor = await prisma.doctor.findUnique({
     where: { id: input.sourceDoctorId },
@@ -550,6 +611,7 @@ async function loadRequestByConsentToken(token: string) {
       status: true,
       patientFullName: true,
       sourceDoctorId: true,
+      sourceAppointmentId: true,
       targetDoctorId: true,
       targetCountryCode: true,
       orderId: true,
@@ -647,6 +709,10 @@ export async function submitCrossBorderRxConsent(
   }
 
   if (decision === "AGREE") {
+    // Re-take the SOAP snapshot first: the treating doctor may have written or
+    // finished the consult note since raising the request, and what the patient
+    // is consenting to is the record as it stands now. Frozen from here on.
+    await refreshSoapSnapshot(request.id, request.sourceAppointmentId);
     // Record disclosure consent, then mint the payment link. The SOAP snapshot
     // becomes visible to Doctor B from here (gated on status past PENDING_CONSENT).
     await prisma.crossBorderPrescriptionRequest.update({
@@ -732,6 +798,7 @@ export async function onCrossBorderRxFeePaid(
       patientEmail: true,
       patientFullName: true,
       sourceAppointmentId: true,
+      sourceDoctorId: true,
     },
   });
   if (!request) return; // not a cross-border order
@@ -764,6 +831,24 @@ export async function onCrossBorderRxFeePaid(
   });
 
   await ensureConsultationDraft(appt.id, request.targetDoctorId);
+
+  // The patient's record travels with them. Without this the prescribing
+  // doctor opens a name, an email and nothing else — the patient chart is
+  // scoped to `doctorId = self`, so none of the referring doctor's history is
+  // reachable from here. Both steps swallow their own failures: a paid order
+  // must still produce a consultation even if S3 is having a bad day.
+  await copyDisclosedPatientContext({
+    sourceAppointmentId: request.sourceAppointmentId,
+    targetAppointmentId: appt.id,
+    log,
+  });
+  await copyDisclosedDocuments({
+    sourceAppointmentId: request.sourceAppointmentId,
+    targetAppointmentId: appt.id,
+    targetDoctorId: request.targetDoctorId,
+    sourceDoctorId: request.sourceDoctorId,
+    log,
+  });
 
   await prisma.crossBorderPrescriptionRequest.update({
     where: { id: request.id },
