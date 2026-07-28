@@ -591,6 +591,7 @@ async function GpBookingFlow({
                     initialSlotId={at}
                     changeTimeHref={homeHref}
                     autoAssign={{ country: code, language }}
+                    countryCode={code}
                     i18n={bf}
                     bookingRequirements={bookingRequirements}
                   />
@@ -871,6 +872,7 @@ async function SelectedServiceFlow({
                       insurance: insuranceHrefParam,
                     })
               }
+              countryCode={code}
               i18n={bf}
               bookingRequirements={bookingRequirements}
               selectedInsurance={selectedInsurance}
