@@ -41,6 +41,11 @@ type ServicesGridProps = {
   /** "Learn more" CTA label (single-CTA cards / two-CTA detail button).
    *  Callers should pass the locale's `services.catalog.learnMore`. */
   learnMoreLabel?: string;
+  /** Items per page, overriding the 5-then-6 default. Pass `items.length` to
+   *  list everything in one page (no pager) — worth it where paging costs more
+   *  than scrolling, e.g. a phone-first share page whose whole job is to show
+   *  one doctor's catalogue. */
+  pageSize?: number;
 };
 
 const PAGE_SIZE_FEATURED = 5;
@@ -73,6 +78,7 @@ export function ServicesGrid({
   previousPageLabel = "Previous page",
   nextPageLabel = "Next page",
   learnMoreLabel = "Learn more",
+  pageSize,
 }: ServicesGridProps) {
   const [page, setPage] = useState(0);
   const isDark = variant === "dark";
@@ -82,14 +88,16 @@ export function ServicesGrid({
   // page size and silently drops the item at index PAGE_SIZE_FEATURED once
   // you paginate past page 0. Offsets below account for the smaller first page.
   const canFeatureFirst = featureFirst && items.length >= 4;
-  const firstPageSize = canFeatureFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
+  const regularPageSize = pageSize && pageSize > 0 ? pageSize : PAGE_SIZE_REGULAR;
+  const firstPageSize =
+    pageSize && pageSize > 0 ? pageSize : canFeatureFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
   const useFeaturedFirst = canFeatureFirst && page === 0;
   const totalPages =
     items.length <= firstPageSize
       ? 1
-      : 1 + Math.ceil((items.length - firstPageSize) / PAGE_SIZE_REGULAR);
-  const start = page === 0 ? 0 : firstPageSize + (page - 1) * PAGE_SIZE_REGULAR;
-  const end = page === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR;
+      : 1 + Math.ceil((items.length - firstPageSize) / regularPageSize);
+  const start = page === 0 ? 0 : firstPageSize + (page - 1) * regularPageSize;
+  const end = page === 0 ? firstPageSize : start + regularPageSize;
   const paged = items.slice(start, end);
   const showPager = totalPages > 1;
 

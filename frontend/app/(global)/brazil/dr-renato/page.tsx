@@ -217,6 +217,10 @@ export default async function DrRenatoSharePage({ searchParams }: { searchParams
             previousPageLabel={bundle.common.a11y.previousPage}
             nextPageLabel={bundle.common.a11y.nextPage}
             learnMoreLabel={bundle.services.catalog.learnMore}
+            // One page, no pager: this is a link handed out on WhatsApp, read
+            // on a phone, and its whole job is showing what he can be booked
+            // for. Five cards then a pager buried the other thirteen.
+            pageSize={serviceItems.length}
           />
         </div>
       ) : null}
