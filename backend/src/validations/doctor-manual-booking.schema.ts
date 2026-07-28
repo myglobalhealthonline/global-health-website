@@ -37,6 +37,9 @@ export const createDoctorManualAppointmentBodySchema = z
         utenteNumber: z.string().trim().max(64).optional().nullable(),
         addressLine1: z.string().trim().max(200).optional().nullable(),
         addressCity: z.string().trim().max(100).optional().nullable(),
+        // Brazil asks for the UF (Estado) alongside the CEP; blank elsewhere.
+        addressState: z.string().trim().max(100).optional().nullable(),
+        addressPostalCode: z.string().trim().max(32).optional().nullable(),
         addressCountryCode: z.string().trim().max(8).optional().nullable(),
       })
       .strict(),

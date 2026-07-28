@@ -11,7 +11,11 @@
  */
 
 export type CredentialLang = "en" | "cs" | "pt" | "pt-BR" | "es" | "ro";
-export type CredentialVariant = "portal" | "webmail" | "announcement";
+export type CredentialVariant =
+  | "portal"
+  | "webmail"
+  | "announcement"
+  | "calendar-notice";
 
 /** Country (as written in the roster file) → email language. */
 export const COUNTRY_LANGUAGE: Record<string, CredentialLang> = {
@@ -34,6 +38,7 @@ export const LANGUAGE_LABEL: Record<CredentialLang, string> = {
 
 export const PORTAL_URL = "https://www.myglobalhealth.online/login";
 export const WEBMAIL_URL = "https://webmail.migadu.com/";
+export const AVAILABILITY_URL = "https://www.myglobalhealth.online/doctor/availability";
 export const SUPPORT_EMAIL = "support@myglobalhealth.online";
 
 /** Primary destination shown in the preflight summary. The announcement
@@ -42,7 +47,12 @@ export const VARIANT_URL: Record<CredentialVariant, string> = {
   portal: PORTAL_URL,
   webmail: WEBMAIL_URL,
   announcement: PORTAL_URL,
+  "calendar-notice": AVAILABILITY_URL,
 };
+
+/** Variants that carry no mailbox password, so a roster row missing its
+ *  credentials is still mailable. */
+export const CREDENTIAL_FREE_VARIANTS: CredentialVariant[] = ["calendar-notice"];
 
 /** Wording that does not change between the two variants. */
 type SharedCopy = {
@@ -585,6 +595,148 @@ const ANNOUNCEMENT: Record<CredentialLang, AnnouncementCopy> = {
   },
 };
 
+/** System notice: Google Calendar sync retired. Carries no credentials. */
+type NoticeCopy = {
+  subject: string;
+  title: string;
+  greeting: (name: string) => string;
+  paras: string[];
+  warning: string;
+  cta: string;
+  support: string;
+  signOff: string;
+  team: string;
+};
+
+const CALENDAR_NOTICE: Record<CredentialLang, NoticeCopy> = {
+  en: {
+    subject: "System Notification — Google Calendar Integration No Longer Supported",
+    title: "Google Calendar integration retired",
+    greeting: (name) => `Dear ${name},`,
+    paras: [
+      "Google Calendar integration is no longer supported. From now on, all availability must be set and managed directly in the Doctor Portal calendar.",
+    ],
+    warning:
+      "Previously synced hours will no longer update automatically. Please log in and set your availability now to avoid scheduling conflicts.",
+    cta: "Set my availability",
+    support: "If you need any help, please reach out to {support}.",
+    signOff: "Kind regards,",
+    team: "The Global Health Team",
+  },
+
+  cs: {
+    subject: "Systémové oznámení — propojení s Google Kalendářem již není podporováno",
+    title: "Propojení s Google Kalendářem bylo ukončeno",
+    greeting: (name) => `Dobrý den, ${name},`,
+    paras: [
+      "propojení s Google Kalendářem již není podporováno. Veškerou dostupnost je od nynějška nutné nastavovat a spravovat přímo v kalendáři lékařského portálu.",
+    ],
+    warning:
+      "Dříve synchronizované hodiny se již nebudou automaticky aktualizovat. Přihlaste se prosím a nastavte si svou dostupnost nyní, abyste předešli kolizím v objednávkách.",
+    cta: "Nastavit dostupnost",
+    support: "Pokud budete potřebovat pomoc, obraťte se prosím na {support}.",
+    signOff: "S pozdravem,",
+    team: "tým Global Health",
+  },
+
+  pt: {
+    subject: "Notificação de sistema — integração com o Google Calendar descontinuada",
+    title: "Integração com o Google Calendar descontinuada",
+    greeting: (name) => `Caro(a) ${name},`,
+    paras: [
+      "A integração com o Google Calendar deixou de ser suportada. A partir de agora, toda a disponibilidade deve ser definida e gerida diretamente no calendário do Portal do Médico.",
+    ],
+    warning:
+      "Os horários anteriormente sincronizados deixarão de ser atualizados automaticamente. Inicie sessão e defina já a sua disponibilidade para evitar conflitos de agendamento.",
+    cta: "Definir a minha disponibilidade",
+    support: "Se precisar de ajuda, contacte {support}.",
+    signOff: "Com os melhores cumprimentos,",
+    team: "A Equipa Global Health",
+  },
+
+  "pt-BR": {
+    subject: "Notificação do sistema — integração com o Google Agenda descontinuada",
+    title: "Integração com o Google Agenda descontinuada",
+    greeting: (name) => `Prezado(a) ${name},`,
+    paras: [
+      "A integração com o Google Agenda não é mais suportada. A partir de agora, toda a disponibilidade deve ser definida e gerenciada diretamente no calendário do Portal do Médico.",
+    ],
+    warning:
+      "Os horários sincronizados anteriormente não serão mais atualizados automaticamente. Faça login e defina sua disponibilidade agora para evitar conflitos de agendamento.",
+    cta: "Definir minha disponibilidade",
+    support: "Se precisar de ajuda, entre em contato pelo {support}.",
+    signOff: "Atenciosamente,",
+    team: "Equipe Global Health",
+  },
+
+  es: {
+    subject: "Notificación del sistema — la integración con Google Calendar deja de estar disponible",
+    title: "Integración con Google Calendar retirada",
+    greeting: (name) => `Estimado/a ${name},`,
+    paras: [
+      "La integración con Google Calendar ya no está disponible. A partir de ahora, toda la disponibilidad debe configurarse y gestionarse directamente en el calendario del Portal del Médico.",
+    ],
+    warning:
+      "Los horarios sincronizados anteriormente dejarán de actualizarse automáticamente. Inicie sesión y configure su disponibilidad ahora para evitar conflictos de agenda.",
+    cta: "Configurar mi disponibilidad",
+    support: "Si necesita ayuda, escriba a {support}.",
+    signOff: "Un cordial saludo,",
+    team: "El equipo de Global Health",
+  },
+
+  ro: {
+    subject: "Notificare de sistem — integrarea cu Google Calendar nu mai este acceptată",
+    title: "Integrarea cu Google Calendar a fost retrasă",
+    greeting: (name) => `Bună ziua, ${name},`,
+    paras: [
+      "Integrarea cu Google Calendar nu mai este acceptată. De acum înainte, toată disponibilitatea trebuie stabilită și gestionată direct în calendarul Portalului Medicului.",
+    ],
+    warning:
+      "Orele sincronizate anterior nu se vor mai actualiza automat. Vă rugăm să vă autentificați și să vă stabiliți disponibilitatea acum, pentru a evita conflictele de programare.",
+    cta: "Stabiliți disponibilitatea",
+    support: "Dacă aveți nevoie de ajutor, scrieți la {support}.",
+    signOff: "Cu stimă,",
+    team: "Echipa Global Health",
+  },
+};
+
+function renderCalendarNotice(input: CredentialEmailInput): RenderedCredentialEmail {
+  const c = CALENDAR_NOTICE[input.lang];
+  const url = input.url || AVAILABILITY_URL;
+  const supportHtml = escapeHtml(c.support).replace(
+    "{support}",
+    `<a href="mailto:${SUPPORT_EMAIL}" style="color:#15382A;font-weight:600;">${SUPPORT_EMAIL}</a>`,
+  );
+
+  const paras = c.paras
+    .map((p) => `<p style="margin:0 0 16px;">${escapeHtml(p)}</p>`)
+    .join("\n       ");
+
+  const bodyHtml = `<p style="margin:0 0 16px;">${escapeHtml(c.greeting(input.name))}</p>
+       ${paras}
+       <p style="margin:0 0 24px;padding:14px 16px;background-color:#F6F8F1;border-left:3px solid #B0F122;border-radius:0 10px 10px 0;font-size:14px;">${escapeHtml(c.warning)}</p>
+       <p style="margin:0 0 24px;text-align:center;"><a href="${escapeHtml(url)}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">${escapeHtml(c.cta)}</a></p>
+       <p style="margin:0 0 24px;font-size:13px;color:#737373;word-break:break-all;"><a href="${escapeHtml(url)}" style="color:#737373;">${escapeHtml(url)}</a></p>
+       <p style="margin:0 0 24px;font-size:14px;">${supportHtml}</p>
+       <p style="margin:0;">${escapeHtml(c.signOff)}<br/>${escapeHtml(c.team)}</p>`;
+
+  const text = [
+    c.greeting(input.name),
+    "",
+    ...c.paras.flatMap((p) => [p, ""]),
+    c.warning,
+    "",
+    url,
+    "",
+    c.support.replace("{support}", SUPPORT_EMAIL),
+    "",
+    c.signOff,
+    c.team,
+  ].join("\n");
+
+  return { subject: c.subject, title: c.title, bodyHtml, text };
+}
+
 export function languageForCountry(country: string): CredentialLang {
   return COUNTRY_LANGUAGE[country.trim()] ?? "en";
 }
@@ -739,6 +891,7 @@ export function renderCredentialEmail(
   input: CredentialEmailInput,
 ): RenderedCredentialEmail {
   if (input.variant === "announcement") return renderAnnouncement(input);
+  if (input.variant === "calendar-notice") return renderCalendarNotice(input);
 
   const c = copyFor(input.variant, input.lang);
   const row = (label: string, value: string, isLink = false) => `

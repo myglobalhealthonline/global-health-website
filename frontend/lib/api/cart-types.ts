@@ -75,6 +75,8 @@ export type CartItemPatientInput = {
   addressLine1?: string;
   addressLine2?: string;
   addressCity?: string;
+  /** State / province / federative unit — Brazil's UF. Absent elsewhere. */
+  addressState?: string;
   addressPostalCode?: string;
   addressCountryCode?: string;
   /** Dual GDPR consent — both required for new bookings. Stored

@@ -398,6 +398,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   patientAddressLine1: i.patientAddressLine1,
                   patientAddressLine2: i.patientAddressLine2,
                   patientAddressCity: i.patientAddressCity,
+                  patientAddressState: i.patientAddressState,
                   patientAddressPostalCode: i.patientAddressPostalCode,
                   patientAddressCountryCode: i.patientAddressCountryCode,
                   patientGdprConsentClinic: i.patientGdprConsentClinic,

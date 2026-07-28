@@ -189,6 +189,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
               addressLine1: true,
               addressLine2: true,
               addressCity: true,
+              addressState: true,
               addressPostalCode: true,
               addressCountryCode: true,
               // Government IDs the doctor portal may see. Número de Utente is
@@ -285,6 +286,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             addressLine1: patientProfile?.addressLine1 ?? null,
             addressLine2: patientProfile?.addressLine2 ?? null,
             addressCity: patientProfile?.addressCity ?? null,
+            addressState: patientProfile?.addressState ?? null,
             addressPostalCode: patientProfile?.addressPostalCode ?? null,
             addressCountryCode: patientProfile?.addressCountryCode ?? null,
             utenteNumber,

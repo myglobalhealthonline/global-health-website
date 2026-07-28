@@ -29,6 +29,7 @@ export type AdminPatientProfileDto = {
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
+  addressState: string | null;
   addressPostalCode: string | null;
   addressCountryCode: string | null;
   preferredPharmacy: string | null;
@@ -147,6 +148,7 @@ export async function patchAdminPatientProfile(
       | "addressLine1"
       | "addressLine2"
       | "addressCity"
+      | "addressState"
       | "addressPostalCode"
       | "addressCountryCode"
       | "preferredPharmacy"
@@ -173,6 +175,7 @@ export async function postAdminPatient(body: {
   addressLine1?: string | null;
   addressLine2?: string | null;
   addressCity?: string | null;
+  addressState?: string | null;
   addressPostalCode?: string | null;
   addressCountryCode?: string | null;
 }) {

@@ -61,6 +61,7 @@ const patientPatchSchema = z
     addressLine1: stringField(200),
     addressLine2: stringField(200),
     addressCity: stringField(120),
+    addressState: stringField(120),
     addressPostalCode: stringField(32),
     addressCountryCode: stringField(8),
     preferredPharmacy: stringField(200),

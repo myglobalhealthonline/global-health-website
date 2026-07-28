@@ -20,6 +20,10 @@ import { DobField, isoToDisplayDob } from "@/components/forms/dob-field";
 import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
 import type { CommonLocale } from "@/lib/i18n/types";
 import type { InsuranceOption } from "@/lib/content/get-country-collections";
+import {
+  BRAZIL_STATES,
+  bookingAddressCopy,
+} from "@/lib/content/booking-address-copy";
 
 type Slot = {
   id: string;
@@ -77,6 +81,7 @@ type ProfileAddress = {
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
+  addressState: string | null;
   addressPostalCode: string | null;
   nationalIdNumber: string | null;
   utenteNumber: string | null;
@@ -120,6 +125,14 @@ export function ConsultationBookingForm({
   const requireAddress = bookingRequirements?.requireAddress ?? false;
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
+  // Brazil addresses differently from Portugal even in Portuguese (Endereço /
+  // CEP / Estado vs Morada / Código postal), and the UF has no equivalent in
+  // any other market — so the address labels come from a country-aware map,
+  // and `addressCopy.state` being non-null is what renders the Estado field.
+  const addressCopy = useMemo(
+    () => bookingAddressCopy(params?.country, params?.lang, i18n),
+    [params?.country, params?.lang, i18n],
+  );
   const { add } = useCart();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -229,6 +242,7 @@ export function ConsultationBookingForm({
                 addressLine1: p.addressLine1 ?? null,
                 addressLine2: p.addressLine2 ?? null,
                 addressCity: p.addressCity ?? null,
+                addressState: p.addressState ?? null,
                 addressPostalCode: p.addressPostalCode ?? null,
                 nationalIdNumber: p.nationalIdNumber ?? null,
                 utenteNumber: p.utenteNumber ?? null,
@@ -317,6 +331,7 @@ export function ConsultationBookingForm({
       addressLine1: profile?.addressLine1 ?? "",
       addressLine2: profile?.addressLine2 ?? "",
       addressCity: profile?.addressCity ?? "",
+      addressState: profile?.addressState ?? "",
       addressPostalCode: profile?.addressPostalCode ?? "",
     }),
     [me, profile],
@@ -352,6 +367,11 @@ export function ConsultationBookingForm({
     const addressLine1 = String(form.get("addressLine1") ?? "").trim();
     const addressLine2 = String(form.get("addressLine2") ?? "").trim();
     const addressCity = String(form.get("addressCity") ?? "").trim();
+    // Same gate as `utenteNumber`: read only where the market collects it, so
+    // a non-BR booking can never carry a state.
+    const addressState = addressCopy.state
+      ? String(form.get("addressState") ?? "").trim()
+      : "";
     const addressPostalCode = String(form.get("addressPostalCode") ?? "").trim();
     const addressCountryCode = (params?.country ?? "").slice(0, 2).toLowerCase();
     const consent = form.get("consent") === "on";
@@ -481,6 +501,7 @@ export function ConsultationBookingForm({
           addressLine1: addressLine1 || undefined,
           addressLine2: addressLine2 || undefined,
           addressCity: addressCity || undefined,
+          addressState: addressState || undefined,
           addressPostalCode: addressPostalCode || undefined,
           addressCountryCode: addressCountryCode || undefined,
           // Combined checkbox above maps to all three backend consent
@@ -509,6 +530,7 @@ export function ConsultationBookingForm({
           profilePatch.addressLine1 = addressLine1;
           if (addressLine2) profilePatch.addressLine2 = addressLine2;
           if (addressCity) profilePatch.addressCity = addressCity;
+          if (addressState) profilePatch.addressState = addressState;
           if (addressPostalCode) profilePatch.addressPostalCode = addressPostalCode;
           if (addressCountryCode) profilePatch.addressCountryCode = addressCountryCode;
         }
@@ -1011,15 +1033,15 @@ export function ConsultationBookingForm({
         * profile. Country code is implicit from the URL slug. */}
       <div role="group" className="gh2-card-ivory p-5 sm:p-6">
         <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
-          {i18n.patientAddress}
+          {addressCopy.patientAddress}
         </p>
         <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-          {i18n.patientAddressNote}
+          {addressCopy.patientAddressNote}
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-2">
             <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>
-              {i18n.streetAddress}
+              {addressCopy.streetAddress}
             </span>
             <input
               type="text"
@@ -1034,7 +1056,7 @@ export function ConsultationBookingForm({
           </label>
           <label className="block sm:col-span-2">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              {i18n.aptUnit}
+              {addressCopy.aptUnit}
             </span>
             <input
               type="text"
@@ -1046,7 +1068,7 @@ export function ConsultationBookingForm({
             />
           </label>
           <label className="block">
-            <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>{i18n.city}</span>
+            <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>{addressCopy.city}</span>
             <input
               type="text"
               name="addressCity"
@@ -1058,9 +1080,35 @@ export function ConsultationBookingForm({
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
+          {/* Estado (UF) — Brazil only. A Brazilian address is ambiguous
+            * without it, and no other market on the platform has an
+            * equivalent, so the field appears only where the copy map
+            * supplies a label. Required alongside the rest of the address. */}
+          {addressCopy.state ? (
+            <label className="block">
+              <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>
+                {addressCopy.state}
+              </span>
+              <select
+                name="addressState"
+                required={requireAddress}
+                aria-required={requireAddress}
+                autoComplete="address-level1"
+                defaultValue={defaults.addressState}
+                className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              >
+                <option value="">{addressCopy.statePlaceholder}</option>
+                {BRAZIL_STATES.map((uf) => (
+                  <option key={uf} value={uf}>
+                    {uf}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
           <label className="block">
             <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>
-              {i18n.postalCode}
+              {addressCopy.postalCode}
             </span>
             <input
               type="text"

@@ -95,6 +95,7 @@ export function PatientProfileEditor({
       addressLine1: text("addressLine1"),
       addressLine2: text("addressLine2"),
       addressCity: text("addressCity"),
+      addressState: text("addressState"),
       addressPostalCode: text("addressPostalCode"),
       addressCountryCode: text("addressCountryCode"),
       preferredPharmacy: text("preferredPharmacy"),
@@ -216,6 +217,15 @@ export function PatientProfileEditor({
               label="City"
               name="addressCity"
               defaultValue={profile?.addressCity ?? ""}
+              maxLength={120}
+            />
+            {/* Free text rather than the BR UF picker: this editor is
+              * market-agnostic, and a patient's address country need not
+              * match the country they book in. */}
+            <Field
+              label="State / province"
+              name="addressState"
+              defaultValue={profile?.addressState ?? ""}
               maxLength={120}
             />
             <Field

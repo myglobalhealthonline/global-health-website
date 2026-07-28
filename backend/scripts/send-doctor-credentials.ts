@@ -4,6 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   COUNTRY_LANGUAGE,
+  CREDENTIAL_FREE_VARIANTS,
   LANGUAGE_LABEL,
   PORTAL_URL,
   VARIANT_URL,
@@ -87,6 +88,7 @@ if (!(variant in VARIANT_URL)) {
   process.exit(1);
 }
 const targetUrl = VARIANT_URL[variant];
+const credentialFree = CREDENTIAL_FREE_VARIANTS.includes(variant);
 
 const doSend = flag("send");
 const testTo = opt("test-to");
@@ -165,6 +167,9 @@ async function main() {
     lang: CredentialLang;
     migaduEmail: string;
     migaduPassword: string;
+    /** Sent-log identity. Falls back to the personal address for rows that
+     *  have no mailbox (only reachable on credential-free variants). */
+    logKey: string;
   }> = [];
 
   const seenPersonal = new Map<string, string>();
@@ -175,20 +180,24 @@ async function main() {
       skipped.push({ name: row.name, reason: row.skipReason });
       continue;
     }
-    if (!row.migaduEmail || !row.migaduPassword) {
-      skipped.push({ name: row.name, reason: "Missing mailbox or password" });
-      continue;
-    }
     if (!row.personalEmail?.includes("@")) {
       skipped.push({ name: row.name, reason: "Missing/invalid personal email" });
       continue;
     }
-    if (!row.migaduEmail.toLowerCase().endsWith(MAILBOX_DOMAIN) && !allowBadDomain) {
-      skipped.push({
-        name: row.name,
-        reason: `Mailbox domain looks wrong: ${row.migaduEmail} (expected ${MAILBOX_DOMAIN})`,
-      });
-      continue;
+    // A notice that carries no password is still deliverable to a doctor whose
+    // mailbox was never provisioned — the credential variants are not.
+    if (!credentialFree) {
+      if (!row.migaduEmail || !row.migaduPassword) {
+        skipped.push({ name: row.name, reason: "Missing mailbox or password" });
+        continue;
+      }
+      if (!row.migaduEmail.toLowerCase().endsWith(MAILBOX_DOMAIN) && !allowBadDomain) {
+        skipped.push({
+          name: row.name,
+          reason: `Mailbox domain looks wrong: ${row.migaduEmail} (expected ${MAILBOX_DOMAIN})`,
+        });
+        continue;
+      }
     }
 
     const prev = seenPersonal.get(row.personalEmail.toLowerCase());
@@ -204,15 +213,14 @@ async function main() {
     queue.push({
       row,
       lang,
-      migaduEmail: row.migaduEmail,
-      migaduPassword: row.migaduPassword,
+      migaduEmail: row.migaduEmail ?? "",
+      migaduPassword: row.migaduPassword ?? "",
+      logKey: (row.migaduEmail ?? row.personalEmail).toLowerCase(),
     });
   }
 
   const alreadySent = resend ? new Set<string>() : loadSentSet();
-  const pending = queue.filter(
-    (q) => !alreadySent.has(`${variant}:${q.migaduEmail.toLowerCase()}`),
-  );
+  const pending = queue.filter((q) => !alreadySent.has(`${variant}:${q.logKey}`));
   const skippedAsSent = queue.length - pending.length;
   const batch = limit ? pending.slice(0, limit) : pending;
 
@@ -278,7 +286,7 @@ async function main() {
     if (!doSend) {
       const previewPath = join(
         OUT_DIR,
-        `${variant}-${item.lang}-${safeSlug(item.migaduEmail)}.html`,
+        `${variant}-${item.lang}-${safeSlug(item.logKey)}.html`,
       );
       writeFileSync(previewPath, html, "utf-8");
       console.log(`  ${position}  [dry] ${item.lang.padEnd(5)} → ${recipient}  (${item.row.name})`);
@@ -311,7 +319,7 @@ async function main() {
         country: item.row.country,
         lang: item.lang,
         to: recipient,
-        migaduEmail: item.migaduEmail,
+        migaduEmail: item.logKey,
         testRun: Boolean(testTo),
         ok,
         detail,

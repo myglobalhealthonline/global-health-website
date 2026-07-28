@@ -439,6 +439,8 @@ export type AppointmentDetailDto = {
   addressLine1?: string | null;
   addressLine2?: string | null;
   addressCity?: string | null;
+  /** Brazil's UF (Estado). Null in every other market. */
+  addressState?: string | null;
   addressPostalCode?: string | null;
   addressCountryCode?: string | null;
   /** Número de Utente — the PT SNS number, needed for electronic

@@ -13,6 +13,35 @@ Two sections:
 
 ---
 
+## Answers received from Synlab (Jana Velinská, 2026-07-22)
+
+Business terms are settled; IT (test environment) still owed within 1–2 weeks.
+
+| # | Answer |
+|---|---|
+| Workflow | Confirmed exactly as we described. Patient is handed the request form (PDF) and presents it at **any** Synlab collection centre — no per-centre booking. |
+| **IČP** | We are registered. Our **fictitious IČP is `99002052`** → this is `WEBLIMS_WARD_ICP`. |
+| **Patient identification (C1)** | **Solved via D-identifiers.** For foreign patients with no rodné číslo, Synlab issues us a **series of D-identifiers**. We assign one per patient and send it as `patientId`; Synlab matches on the same value. Standard practice for clients with many foreign patients. The actual series is still to be delivered. |
+| Billing (F3/F4) | **Self-pay**, monthly invoice issued on the **15th**. **No** contract with Czech health insurers required. |
+| Price list | https://kalkulacka.synlab.cz/ — CZ blood-test calculator. Source for the CZ `TestCenterExam` import. |
+| A1–A3 (test URL, credentials, `X-Api-Version`) | Test environment being prepared with their external supplier; **1–2 weeks**. |
+| Point 5 (labels / `wlbrowser.exe`) | Not yet answered. |
+| Point 6 (SFTP / results) | Deferred to their IT, with the test environment. |
+| Point 7 (DPA / hosting) | Deferred to their IT, with the test environment. |
+
+### Still owed by Synlab
+- Test base URL + `client_id` / `client_secret` + `X-Api-Version` value.
+- **The D-identifier series** (range/format), and whether `isTravel` is set true or false when `patientId` is a D-identifier.
+- Remaining FOL codes if any beyond IČP (`wardCode`, `wardNode`, `wardSpeciality`, `doctorCode`); KRZP-doctor question.
+- Point 5 (labels), Point 6 (SFTP), Point 7 (DPA).
+
+### Follow-ups this opens on our side (no longer blocked on Synlab)
+- **D-identifier storage + allocation.** Persist one D-identifier per patient, allocate the next free one from the delivered series on first requisition, reuse forever. Replaces the provisional insurance-policy fallback in `weblims-payload.ts::resolvePatientIdentifier`.
+- **CZ Synlab collection centre + pricing.** Create a CZ Synlab `TestCenter` and import the kalkulacka price list into `TestCenterExam` (our importer exists; the 4.2k rows currently loaded are the *Portuguese* centre).
+- **Consent capture.** Surface `THIRD_PARTY_LAB` consent in the booking/portal flow (only 3 patients platform-wide carry it today).
+
+---
+
 ## What their API actually does (internal note, do not send)
 
 The Remote API is **not** a booking API and **not** a headless requisition API. It is a

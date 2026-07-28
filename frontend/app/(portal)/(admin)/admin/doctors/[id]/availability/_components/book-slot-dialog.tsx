@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { PortalDialog } from "@/components/PortalDialog";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
-import { DIAL_OPTIONS, combinePhone, splitPhone } from "@/lib/phone/dial-codes";
+import { CountryDialSelect } from "@/components/forms/country-dial-select";
+import { combinePhone, splitPhone } from "@/lib/phone/dial-codes";
 import {
   hasErrors,
   parseDiscountPercent,
@@ -281,18 +282,11 @@ export function BookSlotDialog({
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Phone *</span>
             <div className="flex gap-2">
-              <select
-                aria-label="Country code"
+              <CountryDialSelect
                 className="gh-select max-w-[140px]"
                 value={dialCode}
-                onChange={(e) => setDialCode(e.target.value)}
-              >
-                {DIAL_OPTIONS.map((o) => (
-                  <option key={o.key} value={o.dial}>
-                    {o.label} (+{o.dial})
-                  </option>
-                ))}
-              </select>
+                onChange={setDialCode}
+              />
               <input
                 type="tel"
                 inputMode="tel"

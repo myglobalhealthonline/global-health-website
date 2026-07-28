@@ -49,6 +49,7 @@ export default async function AdminCreatePatientPage({ searchParams }: PageProps
       addressLine1: str(formData, "addressLine1"),
       addressLine2: str(formData, "addressLine2"),
       addressCity: str(formData, "addressCity"),
+      addressState: str(formData, "addressState"),
       addressPostalCode: str(formData, "addressPostalCode"),
       addressCountryCode: str(formData, "addressCountryCode"),
     };
@@ -170,6 +171,10 @@ export default async function AdminCreatePatientPage({ searchParams }: PageProps
                 <label className="flex flex-col gap-1">
                   <span className="gh-field-label">City</span>
                   <input name="addressCity" className="gh-input" />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">State / province</span>
+                  <input name="addressState" className="gh-input" />
                 </label>
                 <label className="flex flex-col gap-1">
                   <span className="gh-field-label">Postal code</span>

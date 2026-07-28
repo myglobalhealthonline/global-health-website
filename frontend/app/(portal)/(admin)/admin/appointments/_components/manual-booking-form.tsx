@@ -7,7 +7,9 @@ import { Loader2 } from "lucide-react";
 import { AdminCard } from "../../_components/atoms";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
-import { DIAL_OPTIONS, splitPhone } from "@/lib/phone/dial-codes";
+import { CountryDialSelect } from "@/components/forms/country-dial-select";
+import { splitPhone } from "@/lib/phone/dial-codes";
+import { BRAZIL_STATES } from "@/lib/content/booking-address-copy";
 import {
   combinePhone,
   hasErrors,
@@ -59,6 +61,8 @@ type PatientOption = {
   utenteNumber: string | null;
   addressLine1: string | null;
   addressCity: string | null;
+  addressState: string | null;
+  addressPostalCode: string | null;
   addressCountryCode: string | null;
 };
 
@@ -116,6 +120,9 @@ export function ManualBookingForm({
   initialDoctorId,
   initialSlotId,
 }: Props) {
+  // Brazil is the one market that addresses by UF + CEP rather than
+  // city + postal code — same split the public BR booking form uses.
+  const isBrazil = countryCode.trim().toLowerCase() === "br";
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
@@ -129,6 +136,8 @@ export function ManualBookingForm({
   const [utenteNumber, setUtenteNumber] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
   const [addressCity, setAddressCity] = useState("");
+  const [addressState, setAddressState] = useState("");
+  const [addressPostalCode, setAddressPostalCode] = useState("");
   const [addressCountryCode, setAddressCountryCode] = useState("");
 
   // Existing-patient typeahead for the email field. Multiple distinct people
@@ -361,6 +370,8 @@ export function ManualBookingForm({
     setUtenteNumber(p.utenteNumber ?? "");
     setAddressLine1(p.addressLine1 ?? "");
     setAddressCity(p.addressCity ?? "");
+    setAddressState(p.addressState ?? "");
+    setAddressPostalCode(p.addressPostalCode ?? "");
     setAddressCountryCode(p.addressCountryCode ?? "");
     setShowPatientMenu(false);
   }
@@ -526,18 +537,11 @@ export function ManualBookingForm({
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Phone *</span>
             <div className="flex gap-2">
-              <select
-                aria-label="Country code"
+              <CountryDialSelect
                 className="gh-select max-w-[150px]"
                 value={dialCode}
-                onChange={(e) => setDialCode(e.target.value)}
-              >
-                {DIAL_OPTIONS.map((o) => (
-                  <option key={o.key} value={o.dial}>
-                    {o.label} (+{o.dial})
-                  </option>
-                ))}
-              </select>
+                onChange={setDialCode}
+              />
               <input
                 type="tel"
                 inputMode="tel"
@@ -612,6 +616,34 @@ export function ManualBookingForm({
             maxLength={100}
             value={addressCity}
             onChange={setAddressCity}
+          />
+          {/* Estado (UF) — Brazil only, matching the public BR booking form.
+            * Other markets have no equivalent, so the field stays hidden and
+            * nothing is submitted for it. */}
+          {isBrazil ? (
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Estado (UF)</span>
+              <select
+                name="addressState"
+                className="gh-select"
+                value={addressState}
+                onChange={(e) => setAddressState(e.target.value)}
+              >
+                <option value="">— Select —</option>
+                {BRAZIL_STATES.map((uf) => (
+                  <option key={uf} value={uf}>
+                    {uf}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+          <Field
+            label={isBrazil ? "CEP" : "Postal code"}
+            name="addressPostalCode"
+            maxLength={32}
+            value={addressPostalCode}
+            onChange={setAddressPostalCode}
           />
           <Field
             label="Address country code"
