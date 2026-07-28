@@ -88,6 +88,7 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
       formData.get("canCreateManualAppointments") === "on",
     canRequestCrossJurisdictionRx:
       formData.get("canRequestCrossJurisdictionRx") === "on",
+    trustpilotInviteEnabled: formData.get("trustpilotInviteEnabled") === "on",
     crossBorderRxEnabled: formData.get("crossBorderRxEnabled") === "on",
     // Per-country price + payout. The form renders a hidden
     // `crossBorderRxCountryId` per country row plus `crossBorderRxPrice_<id>` /

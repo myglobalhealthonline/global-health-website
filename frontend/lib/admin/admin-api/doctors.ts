@@ -273,6 +273,11 @@ export type AdminDoctorDto = {
   /** When true the doctor may raise cross-jurisdiction prescription requests.
    *  Default false — admin grants per doctor. ADMIN role always bypasses. */
   canRequestCrossJurisdictionRx?: boolean;
+  /** Review destination for this doctor's completed consultations. Default
+   *  false — the patient gets our own 7-dimension form. When true the patient
+   *  is invited to Trustpilot instead, 24h after the consultation ends, and
+   *  our form is not sent at all. */
+  trustpilotInviteEnabled?: boolean;
   /** Cross-border PRESCRIBER config (Doctor B). When enabled, this doctor can
    *  be sent prescription requests from other countries. Price = patient fee,
    *  payout = doctor earning, both in cents in the doctor's country currency. */

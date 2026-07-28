@@ -110,6 +110,18 @@ const envSchema = z.object({
    *  Set "off" to disable the forward entirely. Not `.email()` — "off" must pass. */
   SALES_INVOICE_COPY_EMAIL: z.string().trim().min(1).optional(),
 
+  /** Trustpilot Automatic Feedback Service trigger address, e.g.
+   *  `myglobalhealth.online+<hash>@invite.trustpilot.com`. Secret-ish: anyone
+   *  holding it can raise invitations on our Trustpilot account, so it lives in
+   *  env, never in code. Unset => Trustpilot invites are disabled entirely and
+   *  doctors flagged for Trustpilot fall back to the internal review form. */
+  TRUSTPILOT_AFS_TRIGGER_EMAIL: z.string().trim().email().optional(),
+  /** Trustpilot's Free plan accepts 50 invitations per calendar month. Beyond
+   *  that Trustpilot silently drops triggers, so we count our own sends and
+   *  fall back to the internal form rather than losing the ask. Override only
+   *  if the plan changes. */
+  TRUSTPILOT_MONTHLY_INVITE_LIMIT: z.coerce.number().int().min(0).max(100_000).default(50),
+
   /** Stripe — keep test keys in dev. Payments stay disabled when STRIPE_SECRET_KEY is absent.
    *  STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET are the DEFAULT (Ireland) account —
    *  used for every country except PT/ES/CZ and for all subscription / Brazil /

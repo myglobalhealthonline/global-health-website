@@ -1296,6 +1296,9 @@ export async function updateAdminDoctor(
           ...(body.canRequestCrossJurisdictionRx !== undefined && {
             canRequestCrossJurisdictionRx: body.canRequestCrossJurisdictionRx,
           }),
+          ...(body.trustpilotInviteEnabled !== undefined && {
+            trustpilotInviteEnabled: body.trustpilotInviteEnabled,
+          }),
           ...(body.crossBorderRxEnabled !== undefined && {
             crossBorderRxEnabled: body.crossBorderRxEnabled,
           }),

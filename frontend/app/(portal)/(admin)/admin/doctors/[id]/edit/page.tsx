@@ -180,6 +180,7 @@ export default async function AdminEditDoctorPage({
       active: raw.active,
       canCreateManualAppointments: raw.canCreateManualAppointments,
       canRequestCrossJurisdictionRx: raw.canRequestCrossJurisdictionRx,
+      trustpilotInviteEnabled: raw.trustpilotInviteEnabled,
       crossBorderRxEnabled: raw.crossBorderRxEnabled,
       crossBorderRxCountries: raw.crossBorderRxCountries,
     };
@@ -567,6 +568,42 @@ export default async function AdminEditDoctorPage({
                     </div>
                   ))}
                 </div>
+              </div>
+            </label>
+          </AdminCard>
+
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Patient reviews
+            </h3>
+            <p className="mb-3 mt-1 text-portal-compact text-[var(--color-text-muted)]">
+              Where this doctor&apos;s patients are asked to leave a review once
+              the consultation is marked complete. One request per visit — the
+              two are never both sent.
+            </p>
+            <label className="flex cursor-pointer items-start gap-2.5 border-t border-[var(--color-border)] py-3">
+              <input
+                type="checkbox"
+                form="doctor-edit-form"
+                name="trustpilotInviteEnabled"
+                defaultChecked={Boolean(doctor.trustpilotInviteEnabled)}
+                className="mt-0.5 h-5 w-5 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
+              />
+              <div className="flex-1">
+                <p className="m-0 text-portal-compact font-bold text-[var(--color-text-primary)]">
+                  Use Trustpilot instead of our review form
+                </p>
+                <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
+                  Off (default): the patient gets the Global Health review form
+                  straight away — 7 questions, private, stored with the
+                  appointment. On: we send the patient nothing, and 24 hours
+                  after the consultation Trustpilot emails its own invite. That
+                  review is public on the Trustpilot profile, but it is a star
+                  rating and free text only — the 7 questions are not asked.
+                </p>
               </div>
             </label>
           </AdminCard>

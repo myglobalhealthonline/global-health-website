@@ -549,6 +549,15 @@ model Doctor {
   /// who may FULFIL such a request is the `crossBorderRx*` config below.
   /// Default false so existing doctors keep current scope until an admin grants it.
   canRequestCrossJurisdictionRx   Boolean                          @default(false)
+  /// Review destination for this doctor's completed consultations.
+  /// false (default) — the patient gets our own 7-dimension form at
+  ///   /reviews/rate, sent immediately on completion. Unchanged behaviour.
+  /// true            — the patient gets NOTHING from us. 24h after the
+  ///   consultation ends a trigger email goes to Trustpilot's Automatic
+  ///   Feedback Service and Trustpilot mails its own invite. The internal
+  ///   form is skipped so the patient is never asked twice for one visit.
+  /// Admin flips this per doctor on the doctor edit page. See ReviewInvite.
+  trustpilotInviteEnabled         Boolean                          @default(false)
   /// Cross-border PRESCRIBER master toggle (the fulfilling side, Doctor B).
   /// When on, this doctor CAN be a cross-border prescriber; the actual per-market
   /// price + payout live on `crossBorderRxCountries` (one row per country the
@@ -1930,6 +1939,10 @@ model Appointment {
   addressLine1                   String?
   addressLine2                   String?
   addressCity                    String?
+  /// State / province / federative unit. Collected only where the market
+  /// needs it (BR asks for the two-letter UF alongside the CEP); null
+  /// everywhere else, so PT/IE/ES booking forms are unchanged.
+  addressState                   String?
   addressPostalCode              String?
   addressCountryCode             String?
   /// GDPR consent — two independent flags captured at booking. The first
@@ -2040,6 +2053,8 @@ model PatientProfile {
   addressLine1              String?
   addressLine2              String?
   addressCity               String?
+  /// State / province / federative unit — see `Appointment.addressState`.
+  addressState              String?
   addressPostalCode         String?
   addressCountryCode        String?
   /// Pharmacy the patient most often uses. Prefills
@@ -2222,6 +2237,18 @@ model BrazilConsentSubmission {
   @@index([appointmentId])
 }
 
+/// Where a completed appointment's review request was routed.
+/// INTERNAL   — our own 7-dimension form at /reviews/rate. Sent by us, at once.
+/// TRUSTPILOT — the doctor has `Doctor.trustpilotInviteEnabled`. Nothing is
+///              sent to the patient by us; the row is a scheduled trigger,
+///              picked up by POST /api/cron/trustpilot-invites once
+///              `scheduledFor` passes, which emails Trustpilot's Automatic
+///              Feedback Service address. Trustpilot then invites the patient.
+enum ReviewInviteChannel {
+  INTERNAL
+  TRUSTPILOT
+}
+
 model ReviewInvite {
   id                    String       @id @default(cuid())
   /// Legacy import: source `reviewinvites._id` (Mongo ObjectId hex). Null for
@@ -2240,6 +2267,20 @@ model ReviewInvite {
   contactPhone          String?
   localeCode            String?
   expiresAt             DateTime
+  /// Which review destination this appointment was routed to. Also keeps the
+  /// two populations separable: only INTERNAL rows can carry ratings below.
+  channel               ReviewInviteChannel @default(INTERNAL)
+  /// TRUSTPILOT rows only: when the AFS trigger becomes due (consultation end
+  /// + 24h). Null on INTERNAL rows, which are sent inline at creation.
+  scheduledFor          DateTime?
+  /// TRUSTPILOT rows only: stamped once the cron has handled the row —
+  /// trigger sent, or permanently skipped (see dispatchError). A non-null
+  /// value means the row is done and will never be picked up again.
+  dispatchedAt          DateTime?
+  /// Why the last dispatch attempt failed, or why the row was skipped
+  /// (e.g. the Free plan's 50/month quota was already spent). Null on
+  /// success. Rows with a transient error keep dispatchedAt null and retry.
+  dispatchError         String?
   submittedAt           DateTime?
   overallSatisfaction   Int?
   doctorProfessionalism Int?
@@ -2252,6 +2293,8 @@ model ReviewInvite {
   createdAt             DateTime     @default(now())
 
   @@index([appointmentId])
+  /// Backs the cron's "due and not yet handled" scan.
+  @@index([channel, dispatchedAt, scheduledFor])
 }
 
 /// Lightweight chat thread for the patient ↔ admin pre-consult conversation.
@@ -2425,6 +2468,8 @@ model CartItem {
   patientAddressLine1               String?
   patientAddressLine2               String?
   patientAddressCity                String?
+  /// State / province / federative unit — see `Appointment.addressState`.
+  patientAddressState               String?
   patientAddressPostalCode          String?
   patientAddressCountryCode         String?
   patientGdprConsentClinic          Boolean          @default(false)
@@ -2659,6 +2704,8 @@ model OrderItem {
   patientAddressLine1               String?
   patientAddressLine2               String?
   patientAddressCity                String?
+  /// State / province / federative unit — see `Appointment.addressState`.
+  patientAddressState               String?
   patientAddressPostalCode          String?
   patientAddressCountryCode         String?
   patientGdprConsentClinic          Boolean          @default(false)

@@ -161,6 +161,12 @@ const adminDoctorBaseObject = z.object({
   canCreateManualAppointments: z.boolean().optional(),
   canRequestCrossJurisdictionRx: z.boolean().optional(),
   /**
+   * Review destination for this doctor's completed consultations. false /
+   * omitted keeps the internal 7-dimension form; true routes the patient to
+   * Trustpilot instead, 24h after the consultation ends.
+   */
+  trustpilotInviteEnabled: z.boolean().optional(),
+  /**
    * Cross-border PRESCRIBER config (Doctor B). When enabled, admin sets the
    * patient fee + doctor payout (in the doctor's country currency, cents).
    * Nullable clears them. Replaces the old ASYNC_PRESCRIPTION service.
