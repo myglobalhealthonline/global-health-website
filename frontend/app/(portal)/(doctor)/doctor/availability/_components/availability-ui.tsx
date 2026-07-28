@@ -33,6 +33,12 @@ import {
 import { FormSection } from "@/components/FormSection";
 import { PortalDialog } from "@/components/PortalDialog";
 import { BASE_SLOT_MINUTES } from "@/lib/constants";
+import {
+  endTimeToMinutes,
+  minutesToTimeInput,
+  minutesToTimeLabel,
+  timeToMinutes,
+} from "@/lib/time-of-day";
 type AvailabilityStrings = Record<string, string>;
 type CommonStrings = Record<string, string>;
 
@@ -40,16 +46,9 @@ type CommonStrings = Record<string, string>;
 // dialog footer — the `form` attribute associates them across that boundary.
 const EDIT_FORM_ID = "gh-edit-window-form";
 
-function minutesToTime(min: number): string {
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
-
-function timeToMinutes(t: string): number {
-  const [h, m] = t.split(":").map(Number);
-  return (h || 0) * 60 + (m || 0);
-}
+// Window labels render end-of-day as "24:00"; the edit form's <input type="time">
+// needs the same minute as "00:00" (see @/lib/time-of-day).
+const minutesToTime = minutesToTimeLabel;
 
 // Effective dates are stored as UTC instants pinned to the start/end of the
 // chosen day (see onAddWindow), so the ISO date part round-trips straight back
@@ -154,7 +153,7 @@ export function DoctorAvailabilityUI({
   const overlapWindow = useMemo(() => {
     if (!startTime || !endTime) return null;
     const startMin = timeToMinutes(startTime);
-    const endMin = timeToMinutes(endTime);
+    const endMin = endTimeToMinutes(endTime);
     if (endMin <= startMin) return null;
     return (
       windows.find(
@@ -177,7 +176,8 @@ export function DoctorAvailabilityUI({
       return;
     }
     const startMin = timeToMinutes(startTime);
-    const endMin = timeToMinutes(endTime);
+    // Midnight as an end time means end-of-day (1440), not minute 0.
+    const endMin = endTimeToMinutes(endTime);
     if (endMin <= startMin) {
       setFieldError({ field: "time", message: s.errorEndAfterStart });
       return;
@@ -223,8 +223,10 @@ export function DoctorAvailabilityUI({
   function onEditWindow(w: AvailabilityWindow) {
     setEditError(null);
     setEditWeekday(w.weekday);
-    setEditStartTime(minutesToTime(w.startMinute));
-    setEditEndTime(minutesToTime(w.endMinute));
+    // <input type="time"> can't hold "24:00", so an end-of-day window seeds the
+    // field as "00:00" — endTimeToMinutes maps it back on save.
+    setEditStartTime(minutesToTimeInput(w.startMinute));
+    setEditEndTime(minutesToTimeInput(w.endMinute));
     setEditFromDate(isoToDateInput(w.effectiveFrom));
     setEditUntilDate(isoToDateInput(w.effectiveUntil));
     setEditActive(w.isActive);
@@ -237,7 +239,7 @@ export function DoctorAvailabilityUI({
     if (!id) return;
     setEditError(null);
     const startMin = timeToMinutes(editStartTime);
-    const endMin = timeToMinutes(editEndTime);
+    const endMin = endTimeToMinutes(editEndTime);
     if (endMin <= startMin) {
       setEditError(s.errorEndAfterStart);
       return;

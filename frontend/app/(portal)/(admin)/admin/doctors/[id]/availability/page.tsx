@@ -24,6 +24,7 @@ import {
   weekRangeIso,
 } from "@/components/calendar/calendar-utils";
 import { BASE_SLOT_MINUTES } from "@/lib/constants";
+import { MINUTES_IN_DAY } from "@/lib/time-of-day";
 import { dialCodeForCountry } from "@/lib/phone/dial-codes";
 import {
   hasErrors,
@@ -61,6 +62,14 @@ function hhmmToMinutes(value: string): number {
   return h * 60 + m;
 }
 
+// End-of-day. An <input type="time"> submits midnight as "00:00", which parses
+// to minute 0 and trips the `end <= start` guard on a legitimate window that
+// runs to midnight. The API caps `endMinute` at 24 * 60, so map it there.
+function hhmmToEndMinutes(value: string): number {
+  const min = hhmmToMinutes(value);
+  return min === 0 ? MINUTES_IN_DAY : min;
+}
+
 type PageProps = {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ success?: string; error?: string; wk?: string }>;
@@ -84,7 +93,7 @@ export default async function AdminDoctorAvailabilityPage({
     try {
       const weekday = Number(formData.get("weekday"));
       const startMinute = hhmmToMinutes(String(formData.get("startTime") ?? ""));
-      const endMinute = hhmmToMinutes(String(formData.get("endTime") ?? ""));
+      const endMinute = hhmmToEndMinutes(String(formData.get("endTime") ?? ""));
       if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) {
         throw new Error("Invalid weekday");
       }
@@ -125,7 +134,7 @@ export default async function AdminDoctorAvailabilityPage({
       }
       const weekday = Number(formData.get("weekday"));
       const startMinute = hhmmToMinutes(String(formData.get("startTime") ?? ""));
-      const endMinute = hhmmToMinutes(String(formData.get("endTime") ?? ""));
+      const endMinute = hhmmToEndMinutes(String(formData.get("endTime") ?? ""));
       // An unchecked checkbox sends nothing at all — absence means "paused".
       const isActive = formData.get("isActive") !== null;
       if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) {
