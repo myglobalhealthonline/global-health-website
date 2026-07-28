@@ -41,13 +41,23 @@ function mapAdmin(row: AdminRow) {
   };
 }
 
+const SERVICE_HREF = /\/services\/([A-Za-z0-9-]+)/g;
+
 /**
- * Service slugs a landing page points at: the explicit `ctaService` plus any
- * `/…/services/<slug>` found in its `related` links. Both are needed — seeded
- * Ireland content sets only `related`, later admin edits set only `ctaService`.
+ * Service slugs a landing page points at, from all three places the relation
+ * is actually authored:
+ *   - `template.ctaService`  — set by later admin edits
+ *   - `template.related[]`   — set by the seeded Ireland content
+ *   - the translation body   — where MOST of it lives: of the 9 live Ireland
+ *     pages only `hypertension` has a template at all, and the other 8 link
+ *     their services inline in `bodyHtml`.
+ *
+ * Reading only the template found 6 of 90 pages. All three sources are needed
+ * or the reverse link silently covers a fraction of the content.
  */
 export function landingServiceSlugs(
   template: SeoLandingUpsertBody["template"] | null | undefined,
+  bodyHtml?: string | null,
 ): string[] {
   const slugs = new Set<string>();
   const cta = template?.ctaService?.trim();
@@ -56,6 +66,7 @@ export function landingServiceSlugs(
     const match = /\/services\/([A-Za-z0-9-]+)/.exec(link?.href ?? "");
     if (match) slugs.add(match[1]);
   }
+  for (const match of (bodyHtml ?? "").matchAll(SERVICE_HREF)) slugs.add(match[1]);
   return [...slugs];
 }
 
@@ -215,7 +226,7 @@ export async function listPublishedLandingSlugs(countryCode: string, locale?: Lo
         updatedAt: true,
         template: true,
         country: { select: { defaultLocale: true } },
-        translations: { select: { locale: true, title: true } },
+        translations: { select: { locale: true, title: true, bodyHtml: true } },
       },
     });
     return pages.map((p) => {
@@ -229,7 +240,7 @@ export async function listPublishedLandingSlugs(countryCode: string, locale?: Lo
         slug: p.slug,
         updatedAt: p.updatedAt.toISOString(),
         title: tr?.title ?? null,
-        serviceSlugs: landingServiceSlugs(template),
+        serviceSlugs: landingServiceSlugs(template, tr?.bodyHtml),
       };
     });
   } catch (error) {

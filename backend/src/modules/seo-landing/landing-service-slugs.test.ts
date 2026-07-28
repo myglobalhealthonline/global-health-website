@@ -44,6 +44,29 @@ describe("landingServiceSlugs", () => {
     );
   });
 
+  it("extracts slugs from the translation body — where most live content authors them", () => {
+    assert.deepEqual(
+      landingServiceSlugs(
+        null,
+        '<p>Book a <a href="/ireland/en/services/chronic-disease-consultation">chronic ' +
+          'disease consultation</a> or see a ' +
+          '<a href="/ireland/en/services/cardiology-specialist-consultation">cardiologist</a>.</p>',
+      ),
+      ["chronic-disease-consultation", "cardiology-specialist-consultation"],
+    );
+  });
+
+  it("merges template and body sources without duplicating", () => {
+    assert.deepEqual(
+      landingServiceSlugs(
+        { ctaService: "chronic-disease-consultation" },
+        '<a href="/ireland/en/services/chronic-disease-consultation">same</a>' +
+          '<a href="/ireland/en/services/nutrition-specialist-consultation">other</a>',
+      ),
+      ["chronic-disease-consultation", "nutrition-specialist-consultation"],
+    );
+  });
+
   it("skips related links that are not service URLs", () => {
     assert.deepEqual(
       landingServiceSlugs({
