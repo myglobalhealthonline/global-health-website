@@ -11,6 +11,7 @@ import {
   MediaObjectNotFoundError,
 } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
+import { contentDisposition } from "../utils/content-disposition.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   verifyClinicalReadAccess,
@@ -309,10 +310,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         // Force download rather than inline rendering — the stored MIME
         // type is client-declared at upload time (not byte-sniffed), so
         // inline rendering of a mislabeled file is a content-execution risk.
-        reply.header(
-          "Content-Disposition",
-          `attachment; filename="${doc.label.replace(/"/g, "")}"`,
-        );
+        reply.header("Content-Disposition", contentDisposition(doc.label));
         reply.header("Cache-Control", "private, no-store");
         return reply.send(stream);
       } catch (error) {
