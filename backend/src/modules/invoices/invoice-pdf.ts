@@ -334,6 +334,49 @@ export interface InvoicePdfData {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+/**
+ * The line items shown on a commission-market document.
+ *
+ * One line PER SERVICE rather than a single lumped "commission" row, so the
+ * patient can see which consultation each amount relates to:
+ *
+ *   Renovação de Receita — Comissão Global Health      R$ 50,00
+ *
+ * Shipping is deliberately absent — it is 100% commission, but the totals block
+ * renders it as its own row, so including it here would double-count it.
+ *
+ * Falls back to one unlabelled commission line when no per-item snapshot exists
+ * (an order whose rollup was backfilled but whose lines weren't, or one whose
+ * whole commission is shipping). A correct total with a vaguer description beats
+ * a document that renders no lines at all.
+ */
+export function buildCommissionLines(
+  items: { name: string; commissionCents: number | null }[],
+  commissionTotalCents: number,
+  shippingCents: number,
+  labels: Record<string, string>,
+): { name: string; quantity: number; unitPriceCents: number; lineTotalCents: number }[] {
+  const label = labels.commissionLine ?? COMMISSION_FALLBACK.commissionLine;
+  const perService = items.filter(
+    (i): i is { name: string; commissionCents: number } =>
+      i.commissionCents != null && i.commissionCents > 0,
+  );
+
+  if (perService.length > 0) {
+    return perService.map((i) => ({
+      name: `${i.name} — ${label}`,
+      quantity: 1,
+      unitPriceCents: i.commissionCents,
+      lineTotalCents: i.commissionCents,
+    }));
+  }
+
+  const remainder = commissionTotalCents - shippingCents;
+  return remainder > 0
+    ? [{ name: label, quantity: 1, unitPriceCents: remainder, lineTotalCents: remainder }]
+    : [];
+}
+
 function esc(s: string): string {
   return s
     .replace(/&/g, "&amp;")
@@ -628,6 +671,7 @@ export async function buildInvoicePdfData(
           quantity: true,
           unitPriceCents: true,
           lineTotalCents: true,
+          commissionCents: true,
           doctorId: true,
           appointmentId: true,
           kind: true,
@@ -735,21 +779,16 @@ export async function buildInvoicePdfData(
         phone: order.phone,
         currencyCode: order.currencyCode,
         totalCents: commissionCents,
-        subtotalCents: commissionCents,
-        // Shipping is already inside the commission total (it is 100% ours), so
-        // showing it again as its own line would double-count it.
-        shippingCents: 0,
+        // Shipping is 100% commission and already inside commissionTotalCents,
+        // but it is still shown on its own row (the item lines below carry only
+        // the per-service commission), so subtotal must exclude it or the
+        // totals block double-counts.
+        subtotalCents: commissionCents - order.shippingCents,
+        shippingCents: order.shippingCents,
         paidAt: order.paidAt?.toISOString() ?? null,
         taxIdNumber: profile?.taxIdNumber ?? null,
         consultationDate,
-        items: [
-          {
-            name: L.commissionLine ?? COMMISSION_FALLBACK.commissionLine,
-            quantity: 1,
-            unitPriceCents: commissionCents,
-            lineTotalCents: commissionCents,
-          },
-        ],
+        items: buildCommissionLines(order.items, commissionCents, order.shippingCents, L),
       },
       // The treating doctor still appears — the patient needs to know whose
       // consultation this commission relates to, and who owes them the fee note.

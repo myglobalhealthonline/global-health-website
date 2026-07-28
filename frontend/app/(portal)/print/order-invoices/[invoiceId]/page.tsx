@@ -281,6 +281,8 @@ type InvoiceDetail = {
       quantity: number;
       unitPriceCents: number;
       lineTotalCents: number;
+      /** Commission markets: this line's share of the commission. */
+      commissionCents?: number | null;
     }[];
   };
   doctor: {
@@ -363,17 +365,36 @@ export default async function PrintOrderInvoicePage({
   const documentTotalCents = commissionMode
     ? (order.commissionTotalCents as number)
     : order.totalCents;
-  const lineItems = commissionMode
-    ? [
-        {
-          id: "commission",
-          name: L.commissionLine ?? COMMISSION_FALLBACK.commissionLine,
+
+  // One line PER SERVICE — "Renovação de Receita — Comissão Global Health" —
+  // so the patient can see which consultation each amount relates to. Mirrors
+  // buildCommissionLines() in backend invoice-pdf.ts; keep the two in step.
+  const commissionLabel = L.commissionLine ?? COMMISSION_FALLBACK.commissionLine;
+  const perService = commissionMode
+    ? order.items.filter((i) => (i.commissionCents ?? 0) > 0)
+    : [];
+  const commissionRemainder = documentTotalCents - order.shippingCents;
+  const lineItems = !commissionMode
+    ? order.items
+    : perService.length > 0
+      ? perService.map((i) => ({
+          id: i.id,
+          name: `${i.name} — ${commissionLabel}`,
           quantity: 1,
-          unitPriceCents: documentTotalCents,
-          lineTotalCents: documentTotalCents,
-        },
-      ]
-    : order.items;
+          unitPriceCents: i.commissionCents as number,
+          lineTotalCents: i.commissionCents as number,
+        }))
+      : commissionRemainder > 0
+        ? [
+            {
+              id: "commission",
+              name: commissionLabel,
+              quantity: 1,
+              unitPriceCents: commissionRemainder,
+              lineTotalCents: commissionRemainder,
+            },
+          ]
+        : [];
 
   return (
     <div className="vk-backdrop">
@@ -492,7 +513,9 @@ export default async function PrintOrderInvoicePage({
               {L.invoiceRef} <b>{invoice.invoiceNumber}</b>
             </div>
             <div className="vk-totals">
-              {!commissionMode && order.shippingCents > 0 ? (
+              {/* Shipping is 100% commission, so it shows in commission mode too —
+                  the item lines above carry only the per-service commission. */}
+              {order.shippingCents > 0 ? (
                 <div className="vk-trow">
                   <span>Shipping</span>
                   <span className="vk-tv">{fmtMoney(order.shippingCents, currency)}</span>
