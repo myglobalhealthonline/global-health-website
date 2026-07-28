@@ -416,6 +416,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
                     quantity: true,
                     unitPriceCents: true,
                     lineTotalCents: true,
+                    commissionCents: true,
                     doctorId: true,
                     appointmentId: true,
                   },
@@ -568,6 +569,8 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
               quantity: i.quantity,
               unitPriceCents: i.unitPriceCents,
               lineTotalCents: i.lineTotalCents,
+              // Drives the per-service commission lines on the print page.
+              commissionCents: i.commissionCents,
             })),
           },
           doctor,

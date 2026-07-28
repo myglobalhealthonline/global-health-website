@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { buildInvoiceHtml, type InvoicePdfData } from "./invoice-pdf.js";
+import { buildCommissionLines, buildInvoiceHtml, type InvoicePdfData } from "./invoice-pdf.js";
 
 /**
  * Commission-mode rendering of the fiscal document (Brazil).
@@ -42,8 +42,9 @@ function standardDoc(over: Partial<InvoicePdfData> = {}): InvoicePdfData {
   };
 }
 
-/** What buildInvoicePdfData produces for a commission market: basket collapsed,
- *  money fields restated to the commission (200.00 charged − 140.00 payout). */
+/** What buildInvoicePdfData produces for a commission market: one line per
+ *  service naming it, money fields restated to the commission
+ *  (200.00 charged − 140.00 payout = 60.00). */
 function commissionDoc(over: Partial<InvoicePdfData> = {}): InvoicePdfData {
   return standardDoc({
     commissionMode: true,
@@ -53,7 +54,12 @@ function commissionDoc(over: Partial<InvoicePdfData> = {}): InvoicePdfData {
       subtotalCents: 6000,
       shippingCents: 0,
       items: [
-        { name: "Comissão Global Health", quantity: 1, unitPriceCents: 6000, lineTotalCents: 6000 },
+        {
+          name: "Consulta Geral — Comissão Global Health",
+          quantity: 1,
+          unitPriceCents: 6000,
+          lineTotalCents: 6000,
+        },
       ],
     },
     ...over,
@@ -68,7 +74,13 @@ describe("invoice-pdf commission mode", () => {
     // so match on the digits rather than the whole formatted string.
     assert.match(html, /60,00/);
     assert.doesNotMatch(html, /200,00/, "the full price must not appear anywhere");
-    assert.doesNotMatch(html, /Consulta Geral/, "the basket must be collapsed away");
+  });
+
+  it("names the service on the commission line", () => {
+    // "Comissão Global Health" alone doesn't tell the patient which consultation
+    // the amount relates to.
+    const html = buildInvoiceHtml(commissionDoc());
+    assert.match(html, /Consulta Geral — Comissão Global Health/);
   });
 
   it("explains the intermediation so the smaller total is legible", () => {
@@ -118,6 +130,86 @@ describe("invoice-pdf commission mode", () => {
     const html = buildInvoiceHtml(commissionDoc({ countryCode: "ie" }));
     assert.match(html, /Global Health commission|acts as an intermediary/);
     assert.doesNotMatch(html, /undefined/);
+  });
+});
+
+describe("buildCommissionLines", () => {
+  const L = { commissionLine: "Comissão Global Health" };
+
+  it("emits one named line per service", () => {
+    const lines = buildCommissionLines(
+      [
+        { name: "Renovação de Receita", commissionCents: 5000 },
+        { name: "Consulta Clínica Online", commissionCents: 10000 },
+      ],
+      15000,
+      0,
+      L,
+    );
+    assert.deepEqual(
+      lines.map((l) => l.name),
+      [
+        "Renovação de Receita — Comissão Global Health",
+        "Consulta Clínica Online — Comissão Global Health",
+      ],
+    );
+    assert.equal(
+      lines.reduce((s, l) => s + l.lineTotalCents, 0),
+      15000,
+    );
+  });
+
+  it("omits lines whose commission is zero", () => {
+    const lines = buildCommissionLines(
+      [
+        { name: "Paid line", commissionCents: 5000 },
+        { name: "Fully credited line", commissionCents: 0 },
+      ],
+      5000,
+      0,
+      L,
+    );
+    assert.equal(lines.length, 1);
+    assert.match(lines[0].name, /Paid line/);
+  });
+
+  it("excludes shipping — the totals block renders it as its own row", () => {
+    // Otherwise shipping is counted twice: once in an item line, once as the
+    // shipping row, and the document stops adding up.
+    const lines = buildCommissionLines(
+      [{ name: "Kit", commissionCents: 3000 }],
+      3500,
+      500,
+      L,
+    );
+    assert.equal(
+      lines.reduce((s, l) => s + l.lineTotalCents, 0),
+      3000,
+      "shipping's 500 must not appear in the item lines",
+    );
+  });
+
+  it("falls back to one generic line when no per-item snapshot exists", () => {
+    // A backfilled order rollup whose lines were never populated.
+    const lines = buildCommissionLines(
+      [{ name: "Legacy line", commissionCents: null }],
+      5000,
+      0,
+      L,
+    );
+    assert.deepEqual(lines, [
+      {
+        name: "Comissão Global Health",
+        quantity: 1,
+        unitPriceCents: 5000,
+        lineTotalCents: 5000,
+      },
+    ]);
+  });
+
+  it("emits nothing when the entire commission is shipping", () => {
+    const lines = buildCommissionLines([{ name: "Kit", commissionCents: null }], 500, 500, L);
+    assert.deepEqual(lines, []);
   });
 });
 
