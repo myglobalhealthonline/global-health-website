@@ -1,6 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useState, useTransition, type ReactNode } from "react";
+import {
+  Suspense,
+  useEffect,
+  useState,
+  useTransition,
+  type ChangeEvent,
+  type ReactNode,
+} from "react";
 import { useSearchParams } from "next/navigation";
 import {
   ArrowRight,
@@ -65,6 +72,17 @@ function ConsentForm() {
   const [acting, setActing] = useState<"AGREE" | "DECLINE" | null>(null);
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [gpBookingUrl, setGpBookingUrl] = useState<string | null>(null);
+  // "choose" = the two options; "details" = the pre-filled pharmacy/address form
+  // shown after Agree, before payment.
+  const [step, setStep] = useState<"choose" | "details">("choose");
+  const [form, setForm] = useState({
+    pharmacyName: "",
+    addressLine1: "",
+    addressLine2: "",
+    addressCity: "",
+    addressPostalCode: "",
+    addressCountryCode: "",
+  });
 
   useEffect(() => {
     if (!token) {
@@ -81,16 +99,35 @@ function ConsentForm() {
         setInfo(res.data);
         setPaymentUrl(res.data.paymentUrl);
         setGpBookingUrl(res.data.gpBookingUrl);
+        const p = res.data.prefill;
+        setForm({
+          pharmacyName: p.pharmacyName ?? "",
+          addressLine1: p.addressLine1 ?? "",
+          addressLine2: p.addressLine2 ?? "",
+          addressCity: p.addressCity ?? "",
+          addressPostalCode: p.addressPostalCode ?? "",
+          addressCountryCode: p.addressCountryCode ?? "",
+        });
       }
       setLoading(false);
     });
   }, [token]);
 
-  function decide(decision: "AGREE" | "DECLINE") {
+  function decide(
+    decision: "AGREE" | "DECLINE",
+    details?: {
+      pharmacyName: string;
+      addressLine1: string;
+      addressLine2: string;
+      addressCity: string;
+      addressPostalCode: string;
+      addressCountryCode: string;
+    },
+  ) {
     setError(null);
     setActing(decision);
     startTransition(async () => {
-      const res = await submitCrossBorderRxConsent(token, decision);
+      const res = await submitCrossBorderRxConsent(token, decision, details);
       if (!res.ok) {
         setError(res.message);
         setActing(null);
@@ -220,6 +257,95 @@ function ConsentForm() {
     );
   }
 
+  // ── Details step (after Agree, before payment) ───────────────────────────
+  if (step === "details") {
+    const set = (k: keyof typeof form) => (e: ChangeEvent<HTMLInputElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
+    const field =
+      "mt-1 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface,#fff)] px-3 py-2 text-sm text-[var(--color-text-primary)]";
+    const label = "text-xs font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
+    const canPay = form.pharmacyName.trim().length > 0 && form.addressLine1.trim().length > 0;
+    return (
+      <Shell>
+        <Card>
+          <Eyebrow />
+          <h1 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
+            Confirm your delivery details
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-body)]">
+            Please enter your <strong>pharmacy name</strong> and confirm your{" "}
+            <strong>delivery address</strong> so {doctorB} can send your prescription to the right
+            place. Everything else is already on file.
+          </p>
+
+          <div className="mt-5 grid gap-4">
+            <label className="block">
+              <span className={label}>Pharmacy name</span>
+              <input
+                className={field}
+                value={form.pharmacyName}
+                onChange={set("pharmacyName")}
+                placeholder="e.g. Farmácia Central, Lisbon"
+                maxLength={200}
+              />
+            </label>
+            <label className="block">
+              <span className={label}>Address line 1</span>
+              <input className={field} value={form.addressLine1} onChange={set("addressLine1")} maxLength={300} />
+            </label>
+            <label className="block">
+              <span className={label}>Address line 2 (optional)</span>
+              <input className={field} value={form.addressLine2} onChange={set("addressLine2")} maxLength={300} />
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <label className="block">
+                <span className={label}>City</span>
+                <input className={field} value={form.addressCity} onChange={set("addressCity")} maxLength={200} />
+              </label>
+              <label className="block">
+                <span className={label}>Postal code</span>
+                <input className={field} value={form.addressPostalCode} onChange={set("addressPostalCode")} maxLength={40} />
+              </label>
+            </div>
+          </div>
+
+          {error ? (
+            <p role="alert" className="mt-4 rounded-xl bg-[rgba(200,40,40,0.08)] px-4 py-3 text-sm text-[#9b1c1c]">
+              {error}
+            </p>
+          ) : null}
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => setStep("choose")}
+              disabled={busy}
+              className="text-sm font-semibold text-[var(--color-text-muted)] disabled:opacity-60"
+            >
+              ← Back
+            </button>
+            <button
+              type="button"
+              onClick={() => decide("AGREE", form)}
+              disabled={busy || !canPay}
+              className="gh2-btn-lime inline-flex items-center justify-center gap-2 disabled:opacity-60"
+            >
+              {acting === "AGREE" ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" aria-hidden /> Please wait…
+                </>
+              ) : (
+                <>
+                  Continue to payment <ArrowRight className="size-4" aria-hidden />
+                </>
+              )}
+            </button>
+          </div>
+        </Card>
+      </Shell>
+    );
+  }
+
   // ── Main consent view ────────────────────────────────────────────────────
   return (
     <Shell>
@@ -280,19 +406,14 @@ function ConsentForm() {
             </p>
             <button
               type="button"
-              onClick={() => decide("AGREE")}
+              onClick={() => {
+                setError(null);
+                setStep("details");
+              }}
               disabled={busy}
               className="gh2-btn-lime mt-4 inline-flex w-full items-center justify-center gap-2 disabled:opacity-60"
             >
-              {acting === "AGREE" ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" aria-hidden /> Please wait…
-                </>
-              ) : (
-                <>
-                  Agree &amp; continue <ArrowRight className="size-4" aria-hidden />
-                </>
-              )}
+              Agree &amp; continue <ArrowRight className="size-4" aria-hidden />
             </button>
           </div>
 

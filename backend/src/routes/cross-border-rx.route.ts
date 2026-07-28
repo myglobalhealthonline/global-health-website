@@ -55,6 +55,18 @@ const consentQuerySchema = z.object({ token: z.string().min(10).max(400) });
 const consentBodySchema = z.object({
   token: z.string().min(10).max(400),
   decision: z.enum(["AGREE", "DECLINE"]),
+  // Payment-step details the patient confirms (pharmacy + address). Only used
+  // on AGREE; ignored on DECLINE.
+  details: z
+    .object({
+      pharmacyName: z.string().trim().max(200).optional(),
+      addressLine1: z.string().trim().max(300).optional(),
+      addressLine2: z.string().trim().max(300).optional(),
+      addressCity: z.string().trim().max(200).optional(),
+      addressPostalCode: z.string().trim().max(40).optional(),
+      addressCountryCode: z.string().trim().max(8).optional(),
+    })
+    .optional(),
 });
 
 const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
@@ -254,7 +266,11 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid request", body.error.flatten()));
       }
       try {
-        const data = await submitCrossBorderRxConsent(body.data.token, body.data.decision);
+        const data = await submitCrossBorderRxConsent(
+          body.data.token,
+          body.data.decision,
+          body.data.details,
+        );
         return okResponse(
           data,
           body.data.decision === "AGREE"

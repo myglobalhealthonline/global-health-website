@@ -218,6 +218,82 @@ export async function notifyPatientCrossBorderConsent(opts: {
   }
 }
 
+// ── Finalised: prescription issued (on ACCEPT) ────────────────────────────────
+
+/** Patient: the prescription is finalised and sent to the pharmacy. */
+export async function notifyPatientCrossBorderAccepted(opts: {
+  fullName: string;
+  email: string;
+  phone: string | null;
+  countryCode: string;
+  whatsappConsent: boolean;
+}): Promise<void> {
+  const emailHtml = wrapHtml(
+    "Your prescription is on its way",
+    `<p>Dear ${esc(opts.fullName)},</p>
+     <p>Good news — the prescribing doctor has finalised your prescription and
+     sent it to your pharmacy. You should receive your medicine within a few days.</p>
+     <p>If the pharmacy needs anything further, they will be in touch.</p>`,
+  );
+  const emailText = `Dear ${opts.fullName},\n\nGood news — the prescribing doctor has finalised your prescription and sent it to your pharmacy. You should receive your medicine within a few days.`;
+  try {
+    await sendAutomationEmail(
+      { to: opts.email, subject: "Your prescription is on its way", text: emailText, html: emailHtml },
+      { recordLabel: "cross-border-accepted" },
+    );
+  } catch {
+    // best-effort
+  }
+  if (opts.whatsappConsent && opts.phone?.trim()) {
+    try {
+      await sendWhatsAppText({
+        to: opts.phone,
+        message: `Hi ${opts.fullName}, your prescription has been finalised and sent to your pharmacy. You should receive your medicine within a few days.`,
+        hints: { orderCountryCode: opts.countryCode },
+        patientConsent: opts.whatsappConsent,
+      });
+    } catch {
+      // best-effort
+    }
+  }
+}
+
+/** Doctor A (the requesting doctor): the prescription they requested is done. */
+export async function notifyRequestingDoctorFinalised(
+  sourceDoctorId: string,
+  patientFullName: string,
+): Promise<void> {
+  const contact = await resolveDoctorContact(sourceDoctorId);
+  if (!contact) return;
+  const msg = `The cross-border prescription you requested for ${patientFullName} has been finalised by the prescribing doctor and sent to the patient's pharmacy.`;
+  if (contact.whatsappNumber) {
+    try {
+      await sendWhatsAppText({
+        to: contact.whatsappNumber,
+        message: msg,
+        hints: contact.whatsappHints,
+      });
+    } catch {
+      // best-effort
+    }
+  }
+  if (contact.loginEmail) {
+    try {
+      await sendAutomationEmail(
+        {
+          to: contact.loginEmail,
+          subject: "Cross-border prescription finalised",
+          text: msg,
+          html: wrapHtml("Cross-border prescription finalised", `<p>${esc(msg)}</p>`),
+        },
+        { recordLabel: "cross-border-accepted" },
+      );
+    } catch {
+      // best-effort
+    }
+  }
+}
+
 // ── 1) Patient: pay the async fee (on request creation) ───────────────────────
 
 export async function notifyPatientCrossBorderPayment(opts: {
