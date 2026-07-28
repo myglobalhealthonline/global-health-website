@@ -100,11 +100,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     forCountry[key] = winner;
     stamps.set(code, forCountry);
   };
-  /** Newest of the given child timestamps for a country, or undefined. */
+  const ALL_STAMP_KEYS: StampKey[] = [
+    "service",
+    "doctor",
+    "blog",
+    "legal",
+    "landing",
+    "test",
+    "plan",
+  ];
+  /**
+   * Newest of the given child timestamps for a country.
+   *
+   * Falls back to the country's newest content of ANY type when the requested
+   * types have none: a market with zero plan rows still has a real /pricing
+   * page, and leaving it undated (60 URLs did) tells Google nothing at all.
+   * Still never build time — see the note above.
+   */
   const newest = (code: string, ...keys: StampKey[]): string | undefined => {
     const forCountry = stamps.get(code);
     if (!forCountry) return undefined;
-    return newestTimestamp(...keys.map((k) => forCountry[k]));
+    return (
+      newestTimestamp(...keys.map((k) => forCountry[k])) ??
+      newestTimestamp(...ALL_STAMP_KEYS.map((k) => forCountry[k]))
+    );
   };
   const dated = (ts: string | undefined) => (ts ? { lastModified: ts } : undefined);
 
