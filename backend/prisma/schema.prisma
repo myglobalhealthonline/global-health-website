@@ -3470,6 +3470,15 @@ model CrossBorderPrescriptionRequest {
   consentTokenExpiresAt DateTime?
   /// When the patient granted disclosure consent (null until they agree).
   soapConsentAt        DateTime?
+  /// Patient-entered delivery details captured at the payment step (pharmacy +
+  /// confirmed address). Applied to the async Appointment when it's minted so
+  /// the prescribing doctor + prescription have the right pharmacy + address.
+  pharmacyName             String?
+  patientAddressLine1      String?
+  patientAddressLine2      String?
+  patientAddressCity       String?
+  patientAddressPostalCode String?
+  patientAddressCountryCode String?
   /// The Order minted for the async fee (slot-less checkout).
   orderId              String?
   /// The Appointment minted for Doctor B once the fee is paid (drives the

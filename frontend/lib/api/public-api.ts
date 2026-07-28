@@ -98,12 +98,22 @@ export function respondToMedicalAccessRequest(token: string, decision: "APPROVE"
   });
 }
 
+export type CrossBorderRxDeliveryDetails = {
+  pharmacyName: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
+  addressCity: string | null;
+  addressPostalCode: string | null;
+  addressCountryCode: string | null;
+};
+
 export type CrossBorderRxConsentView = {
   status: string;
   patientFullName: string;
   sourceDoctorName: string | null;
   targetDoctorName: string;
   targetCountryName: string;
+  prefill: CrossBorderRxDeliveryDetails & { phone: string | null };
   paymentUrl: string | null;
   gpBookingUrl: string | null;
 };
@@ -114,10 +124,14 @@ export function fetchCrossBorderRxConsent(token: string) {
   );
 }
 
-export function submitCrossBorderRxConsent(token: string, decision: "AGREE" | "DECLINE") {
+export function submitCrossBorderRxConsent(
+  token: string,
+  decision: "AGREE" | "DECLINE",
+  details?: Partial<CrossBorderRxDeliveryDetails>,
+) {
   return publicFetch<{ status: string; paymentUrl: string | null; gpBookingUrl: string | null }>(
     "/api/public/cross-border-rx-consent",
-    { method: "POST", body: JSON.stringify({ token, decision }) },
+    { method: "POST", body: JSON.stringify({ token, decision, details }) },
   );
 }
 
