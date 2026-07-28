@@ -126,9 +126,15 @@ Uses the existing Ireland test keys — nothing new to set up.
   .commissionLegalFooter` in `modules/invoices/invoice-pdf.ts` is marked ⚠️
   in-code as not legally reviewed. It needs your accountant's wording, including
   whether ISS or withholding must be stated.
-- **The migration is written, not applied**
-  (`20260728140000_commission_receipt_model`). Idempotent DDL; apply with
-  `prisma migrate deploy`, never `migrate dev`.
-- **Confirm Brazil's `Country.currency`.** If it is BRL, check the Ireland Stripe
-  account can actually present BRL; the code lowercases `order.currencyCode` and
-  defaults to EUR, so a mismatch charges the wrong currency.
+- **Set the per-service doctor payouts** for every Brazilian service × doctor
+  pair before enabling the toggle — a doctor with no payout configured is not
+  bookable in a commission market, by design.
+
+## Settled questions
+
+- **Currency.** Brazil's `Country.currency` is **BRL**, charged on the Ireland
+  Stripe account, and that works — Brazilian patients have already paid in BRL
+  on it. Presentment currency does not have to match the account's country.
+- **Migration.** `20260728140000_commission_receipt_model` was applied to the
+  live database on 2026-07-28 and verified against `information_schema`. Brazil
+  remains `commissionReceiptEnabled = false` until someone flips it in admin.
