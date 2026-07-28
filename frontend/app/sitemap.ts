@@ -215,13 +215,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (winner) stampByType.set(d.type, winner);
         bump(country.code, "legal", d.updatedAt);
       }
-      pushLocalized(country, "/legal", 0.3, dated(newest(country.code, "legal")));
+      // Default locale ONLY. Legal pages were 231 of 1353 sitemap URLs — 17%
+      // of the crawl budget — for boilerplate that answers no query (nothing
+      // legal appears anywhere in Search Console's query report) and that
+      // Google was already declining: 65% indexed, 71 of them sharing 17
+      // titles because "Cookie Policy · Ireland" is identical in all six
+      // locales. Submitting six near-duplicates per document spends crawl on
+      // the pages that earn nothing, while real content still waits.
+      //
+      // Every locale variant stays live, linked from the footer, and fully
+      // indexable — this drops them from the SUBMITTED set, nothing more.
+      // Compliance needs these reachable, not searchable.
+      const legalLangs = [countryLangs(country)[0]];
+      pushLocalized(country, "/legal", 0.3, dated(newest(country.code, "legal")), legalLangs);
       const types = new Set((legal?.documents ?? []).map((d) => d.type));
       // The profile-only MEDICAL_DISCLAIMER fallback carries no timestamp of
       // its own — it stays undated rather than borrowing an unrelated one.
       if (legal?.profile?.fullDisclaimer) types.add("MEDICAL_DISCLAIMER");
       for (const type of types) {
-        pushLocalized(country, `/legal/${LEGAL_TYPE_SLUGS[type]}`, 0.3, dated(stampByType.get(type)));
+        pushLocalized(
+          country,
+          `/legal/${LEGAL_TYPE_SLUGS[type]}`,
+          0.3,
+          dated(stampByType.get(type)),
+          legalLangs,
+        );
       }
     } catch {
       // Legal data unavailable for this country — keep the rest of the sitemap.
