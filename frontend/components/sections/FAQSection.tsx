@@ -15,9 +15,16 @@ type FAQSectionProps = {
   title?: string;
   items: FAQItem[];
   theme?: "dark" | "light";
+  /** Eyebrow above the title. Pass a translated string on localised pages. */
+  eyebrow?: string;
 };
 
-export function FAQSection({ title = "FAQs", items, theme = "dark" }: FAQSectionProps) {
+export function FAQSection({
+  title = "FAQs",
+  items,
+  theme = "dark",
+  eyebrow = "Questions",
+}: FAQSectionProps) {
   const light = theme === "light";
   return (
     <section
@@ -38,7 +45,7 @@ export function FAQSection({ title = "FAQs", items, theme = "dark" }: FAQSection
             className="text-[11px] font-bold tracking-[0.22em] uppercase"
             style={{ color: light ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
           >
-            Questions
+            {eyebrow}
           </p>
           <h2
             className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
