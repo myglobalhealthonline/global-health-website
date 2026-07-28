@@ -794,10 +794,28 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
       try {
         const url = await resolveOrderPaymentUrl(params.data.id);
-        return okResponse({ url: url || null, payable: Boolean(url) });
+        if (url) return okResponse({ url, payable: true, status: "PAYABLE" });
+        // Not payable — tell the caller WHY so the pay page can show the right
+        // message (already paid vs cancelled/expired) instead of a dead link.
+        const order = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          select: { status: true, paymentStatus: true },
+        });
+        let status: "PAID" | "CANCELLED" | "UNAVAILABLE" = "UNAVAILABLE";
+        if (order) {
+          if (order.paymentStatus === "PAID" || order.status === "PAID") status = "PAID";
+          else if (
+            order.status === "CANCELLED" ||
+            order.status === "REFUNDED" ||
+            order.paymentStatus === "REFUNDED"
+          ) {
+            status = "CANCELLED";
+          }
+        }
+        return okResponse({ url: null, payable: false, status });
       } catch (err) {
         app.log.error({ err, orderId: params.data.id }, "pay-url resolve failed");
-        return okResponse({ url: null, payable: false });
+        return okResponse({ url: null, payable: false, status: "UNAVAILABLE" });
       }
     },
   );
