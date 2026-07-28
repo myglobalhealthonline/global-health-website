@@ -1,8 +1,9 @@
 "use client";
 
 import { Suspense, type ReactNode } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, Clock } from "lucide-react";
+import { CheckCircle2, Clock, HelpCircle } from "lucide-react";
 
 const FOREST = "#1D4B36";
 
@@ -35,24 +36,61 @@ function Card({ children }: { children: ReactNode }) {
 
 function StatusBody() {
   const state = useSearchParams().get("state");
-  const paid = state === "paid";
 
+  if (state === "paid") {
+    return (
+      <Shell>
+        <Card>
+          <div className="flex flex-col items-center gap-3">
+            <CheckCircle2 className="size-12 text-[var(--color-brand-mint,#8FB021)]" aria-hidden />
+            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Payment received</h1>
+            <p className="max-w-sm text-[15px] leading-relaxed text-[var(--color-text-body)]">
+              Thank you — your payment has been received and your request has been sent to the
+              prescribing doctor. We&rsquo;ll keep you updated by email.
+            </p>
+          </div>
+        </Card>
+      </Shell>
+    );
+  }
+
+  if (state === "expired") {
+    return (
+      <Shell>
+        <Card>
+          <div className="flex flex-col items-center gap-3">
+            <Clock className="size-12 text-[var(--color-text-muted)]" aria-hidden />
+            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">
+              This link has expired
+            </h1>
+            <p className="max-w-sm text-[15px] leading-relaxed text-[var(--color-text-body)]">
+              This request was cancelled because the payment wasn&rsquo;t completed in time. You can
+              book a consultation to get started again.
+            </p>
+            <Link
+              href="/"
+              className="gh2-btn-lime mt-2 inline-flex items-center justify-center gap-2"
+            >
+              Book a consultation
+            </Link>
+          </div>
+        </Card>
+      </Shell>
+    );
+  }
+
+  // Unknown / indeterminate — never falsely claim paid or expired.
   return (
     <Shell>
       <Card>
         <div className="flex flex-col items-center gap-3">
-          {paid ? (
-            <CheckCircle2 className="size-12 text-[var(--color-brand-mint,#8FB021)]" aria-hidden />
-          ) : (
-            <Clock className="size-12 text-[var(--color-text-muted)]" aria-hidden />
-          )}
+          <HelpCircle className="size-12 text-[var(--color-text-muted)]" aria-hidden />
           <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">
-            {paid ? "Payment received" : "This link has expired"}
+            We couldn&rsquo;t confirm this link
           </h1>
           <p className="max-w-sm text-[15px] leading-relaxed text-[var(--color-text-body)]">
-            {paid
-              ? "Thank you — your payment has been received and your request has been sent to the prescribing doctor. We'll keep you updated by email."
-              : "This request was cancelled because the payment wasn't completed in time. Please ask your doctor to send you a new link to try again."}
+            Please try again in a moment. If it keeps happening, contact us or ask your doctor to
+            send you a new link.
           </p>
         </div>
       </Card>
