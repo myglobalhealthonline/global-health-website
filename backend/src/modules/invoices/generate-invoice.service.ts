@@ -35,6 +35,7 @@ async function sendPaymentWebhookToMake(
       fullName: true,
       email: true,
       totalCents: true,
+      commissionTotalCents: true,
       shipLine1: true,
       shipCity: true,
       shipPostalCode: true,
@@ -61,7 +62,10 @@ async function sendPaymentWebhookToMake(
     customer_address_street: order.shipLine1 ?? profile?.addressLine1 ?? "",
     customer_address_zip: order.shipPostalCode ?? profile?.addressPostalCode ?? "",
     customer_address_city: order.shipCity ?? profile?.addressCity ?? "",
-    total: order.totalCents / 100,
+    // Must match the document we actually issued. In a commission market that is
+    // the commission, NOT the amount charged — sending the gross here would book
+    // revenue we never earned (the doctor's share is not ours).
+    total: (order.commissionTotalCents ?? order.totalCents) / 100,
     service_name: order.items[0]?.name ?? "Medical Consultation",
     vat_id: profile?.taxIdNumber?.trim() ?? "",
     invoice_id: invoiceId,

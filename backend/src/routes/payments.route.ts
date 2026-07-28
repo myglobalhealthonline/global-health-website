@@ -642,6 +642,12 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                 void sendOrderRefundNotifications(order.id).catch((err) => {
                   app.log.error({ err, orderId: order.id }, "Refund notifications failed");
                 });
+                // NOTE: in commission markets the doctor's share is paid by bank
+                // transfer outside Stripe, so there is nothing to claw back here.
+                // A refund issued AFTER the doctor was already paid has to be
+                // recovered manually — the admin commission-payout report only
+                // counts non-refunded orders, so it self-corrects for anything
+                // refunded before that month's run.
               }
             }
           }

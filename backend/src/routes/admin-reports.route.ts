@@ -8,6 +8,7 @@ import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import {
   adminAppointmentsReport,
+  adminCommissionPayoutReport,
   adminPatientsReport,
   adminServicesReport,
   doctorPayoutStatementReport,
@@ -32,7 +33,15 @@ import {
  */
 
 const querySchema = z.object({
-  dataset: z.enum(["services", "patients", "appointments", "payout"]),
+  dataset: z.enum([
+    "services",
+    "patients",
+    "appointments",
+    "payout",
+    // Commission markets (Brazil): what each doctor is owed, for the manual
+    // bank-transfer run. Not doctor-scoped like "payout" — it covers everyone.
+    "commission-payouts",
+  ]),
   format: z.enum(["csv", "excel", "pdf", "json"]).default("excel"),
   doctorId: z.string().trim().min(1).max(40).optional(),
   countryCode: z.string().trim().min(2).max(8).optional(),
@@ -98,8 +107,10 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // Both payout datasets default to the previous full calendar month —
+      // that's the cadence finance actually runs them on.
       const range =
-        q.dataset === "payout" && !q.from && !q.to
+        (q.dataset === "payout" || q.dataset === "commission-payouts") && !q.from && !q.to
           ? lastCalendarMonth()
           : resolveRange(q.from, q.to);
       const filters: ReportFilters = {
@@ -117,6 +128,11 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
         table = await adminServicesReport(filters);
       } else if (q.dataset === "patients") {
         table = await adminPatientsReport(filters);
+      } else if (q.dataset === "commission-payouts") {
+        // No bank details on this one, so no DOCTOR_BANK_VIEWED audit: it spans
+        // every doctor and is a "what to transfer" worksheet. Finance reads the
+        // IBAN from the per-doctor payout statement, which does audit the reveal.
+        table = await adminCommissionPayoutReport(filters);
       } else if (q.dataset === "payout") {
         const [doctor, bankRow] = await Promise.all([
           prisma.doctor.findUnique({

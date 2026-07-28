@@ -79,6 +79,7 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
       currencyId: String(formData.get("currencyId") ?? "").trim(),
       isActive: formData.get("isActive") === "on",
       accessModel: String(formData.get("accessModel") ?? "PLATFORM").trim(),
+      commissionReceiptEnabled: formData.get("commissionReceiptEnabled") === "on",
       ...(domains ? { domains } : {}),
     };
 

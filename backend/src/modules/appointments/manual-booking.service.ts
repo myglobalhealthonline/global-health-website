@@ -11,6 +11,10 @@ import {
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { generateOrderNumber } from "../../lib/order-number.js";
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
+import {
+  computeOrderCommission,
+  isCommissionCountry,
+} from "../orders/commission.service.js";
 import { checkoutBranding } from "../billing/checkout-branding.js";
 import { issuePasswordResetToken } from "../auth/auth.service.js";
 import { recordAudit } from "../audit/audit.service.js";
@@ -666,6 +670,33 @@ export async function createManualBooking(
   });
 
   const orderNumber = await generateOrderNumber();
+
+  // Commission markets: freeze the doctor payout + our commission at sale time,
+  // exactly as the self-service checkout does. An admin booking must produce the
+  // same fiscal document a web booking would.
+  //
+  // Deliberately NOT gated on a payout being configured: an admin taking a card
+  // over the phone cannot be blocked mid-call by a missing config row. A payout-
+  // less line falls through to "commission = full price" and raises a critical
+  // ops alert from computeOrderCommission, which is the reviewable outcome.
+  const isCommissionOrder = await isCommissionCountry(input.countryCode);
+  const commission = isCommissionOrder
+    ? await computeOrderCommission(
+        [
+          {
+            id: "line",
+            serviceId: service.id,
+            doctorId: input.doctorId,
+            insuranceCompanyId,
+            quantity: 1,
+            unitPriceCents: amountCents,
+          },
+        ],
+        0,
+        { countryCode: input.countryCode },
+      )
+    : null;
+
   const order = await prisma.order.create({
     data: {
       orderNumber,
@@ -677,6 +708,8 @@ export async function createManualBooking(
       currencyCode,
       subtotalCents: amountCents,
       totalCents: amountCents,
+      commissionTotalCents: commission?.commissionTotalCents ?? null,
+      doctorPayoutTotalCents: commission?.doctorPayoutTotalCents ?? null,
       // Audit only — the totals and the line price above are ALREADY net of
       // the discount (same convention as OrderItem.corporateDiscountCents).
       discountPercent: discountPercent > 0 ? discountPercent : null,
@@ -721,6 +754,9 @@ export async function createManualBooking(
           insuranceCompanyId,
           insurancePolicyNumber: encryptedPolicy,
           insurancePriceCents: insurancePriceCents,
+          // Commission-market snapshot (see the block above the order create).
+          doctorPayoutCents: commission?.lines[0]?.doctorPayoutCents ?? null,
+          commissionCents: commission?.lines[0]?.commissionCents ?? null,
         },
       },
     },
@@ -807,10 +843,13 @@ export async function createManualBooking(
         ],
         success_url: successUrl,
         cancel_url: cancelUrl,
-        invoice_creation:
-          (await buildPtStripeInvoiceData(input.countryCode, email, service.name)) ?? {
-            enabled: true,
-          },
+        // Commission markets: suppress Stripe's own invoice — it would document
+        // the full amount charged and contradict our commission-only receipt.
+        invoice_creation: isCommissionOrder
+          ? { enabled: false }
+          : (await buildPtStripeInvoiceData(input.countryCode, email, service.name)) ?? {
+              enabled: true,
+            },
         // Global Health branding: page language pinned to the booking's market
         // plus the trust line above the pay button.
         ...(await checkoutBranding(input.countryCode)),

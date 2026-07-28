@@ -23,6 +23,7 @@ import {
   loadValidatedInsurancePrice,
   isDoctorInInsuranceNetwork,
 } from "../modules/pricing/insurance-pricing.service.js";
+import { isLineSellableInCommissionMarket } from "../modules/orders/commission.service.js";
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 
 /**
@@ -955,6 +956,26 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                 );
               }
               unitPriceCents = insurancePrice;
+            }
+
+            // Commission markets (Brazil): our receipt bills the commission,
+            // which is price − doctor payout. With no payout configured the
+            // commission would silently be the FULL price and the doctor would
+            // be owed nothing on paper, so the pair isn't sellable at all.
+            // Same shape as the insurance-network gate above — a missing payout
+            // row means "not bookable", not "payout is zero".
+            const sellable = await isLineSellableInCommissionMarket({
+              countryCode: svc.country.code,
+              serviceId: svc.id,
+              doctorId,
+              insuranceCompanyId: insuranceCompanyIdValue,
+            });
+            if (!sellable) {
+              return reply.status(400).send(
+                errorResponse(
+                  "That doctor is not available for this service right now. Please pick another doctor.",
+                ),
+              );
             }
 
             if (settings) {

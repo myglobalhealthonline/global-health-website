@@ -19,6 +19,8 @@ describe("resolveStripeAccount", () => {
     assert.equal(resolveStripeAccount("ie"), "ie");
     assert.equal(resolveStripeAccount("rm"), "ie");
     assert.equal(resolveStripeAccount("ro"), "ie");
+    // Brazil bills on commission but settles doctor payouts by bank transfer
+    // outside Stripe, so it needs no account of its own.
     assert.equal(resolveStripeAccount("br"), "ie");
     assert.equal(resolveStripeAccount("xx"), "ie");
   });

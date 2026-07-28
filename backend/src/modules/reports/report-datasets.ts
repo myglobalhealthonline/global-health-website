@@ -665,6 +665,219 @@ export async function doctorPayoutStatementReport(
   };
 }
 
+// ── Admin: commission-market payout run (all doctors) ────────────────────────
+
+/**
+ * What each doctor is owed in a commission market, so finance can transfer it by
+ * hand.
+ *
+ * This is the settlement mechanism for Brazil. Stripe permits no transfer from
+ * our Ireland platform to a Brazilian connected account, and we hold no Brazilian
+ * Stripe entity, so payouts leave the platform as ordinary bank transfers and
+ * this report is what they are made against.
+ *
+ * Reads the FROZEN per-line snapshots (`OrderItem.doctorPayoutCents` /
+ * `.commissionCents`) rather than resolving payouts live, so the run reconciles
+ * against the receipts that were actually issued. Editing a service's payout
+ * later cannot retroactively change what a past month's report says — the exact
+ * opposite of `doctorPayoutStatementReport`, which is a live valuation.
+ *
+ * Only PAID, non-refunded orders count. Refunding before the run self-corrects;
+ * refunding after it has to be recovered by hand (there is no clawback when the
+ * money left over a bank rail).
+ */
+export async function adminCommissionPayoutReport(
+  filters: ReportFilters,
+): Promise<ReportTable> {
+  const paidAt = rangeWhere(filters);
+
+  const items = await prisma.orderItem.findMany({
+    where: {
+      doctorId: filters.doctorId ? filters.doctorId : { not: null },
+      // Snapshot present = the order was placed in a commission market. Null
+      // means "not applicable" (standard market, or pre-feature), not zero.
+      doctorPayoutCents: { not: null },
+      order: {
+        paymentStatus: "PAID",
+        // A refunded order is not payable. `status` carries the refund state for
+        // cart orders; paymentStatus alone can lag behind it.
+        status: { not: "REFUNDED" },
+        ...(filters.countryCode
+          ? { countryCode: { equals: filters.countryCode, mode: "insensitive" } }
+          : {}),
+        ...(paidAt ? { paidAt } : {}),
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      quantity: true,
+      lineTotalCents: true,
+      doctorPayoutCents: true,
+      commissionCents: true,
+      appointmentId: true,
+      doctorId: true,
+      order: {
+        select: {
+          orderNumber: true,
+          paidAt: true,
+          currencyCode: true,
+          countryCode: true,
+          fullName: true,
+        },
+      },
+    },
+    orderBy: { order: { paidAt: "asc" } },
+    take: ROW_LIMIT + 1,
+  });
+
+  const truncated = items.length > ROW_LIMIT;
+  const capped = truncated ? items.slice(0, ROW_LIMIT) : items;
+
+  // OrderItem.doctorId is a bare id with no relation (the line must survive the
+  // doctor row being retired), so resolve names in one pass.
+  const doctorNameById = new Map<string, string>();
+  const doctorIds = [...new Set(capped.map((i) => i.doctorId).filter((d): d is string => !!d))];
+  if (doctorIds.length > 0) {
+    const doctors = await prisma.doctor.findMany({
+      where: { id: { in: doctorIds } },
+      select: { id: true, fullName: true },
+    });
+    for (const d of doctors) doctorNameById.set(d.id, d.fullName);
+  }
+
+  // Consultation dates, so finance can match a payout line to the appointment
+  // the doctor actually performed. One query, not one per row.
+  const apptIds = capped.map((i) => i.appointmentId).filter((id): id is string => !!id);
+  const scheduledById = new Map<string, Date | null>();
+  if (apptIds.length > 0) {
+    const appts = await prisma.appointment.findMany({
+      where: { id: { in: apptIds } },
+      select: { id: true, scheduledAt: true },
+    });
+    for (const a of appts) scheduledById.set(a.id, a.scheduledAt);
+  }
+
+  // Group by doctor — the report exists to drive one bank transfer per doctor.
+  const byDoctor = new Map<string, typeof capped>();
+  for (const i of capped) {
+    const key = i.doctorId ?? "unassigned";
+    let list = byDoctor.get(key);
+    if (!list) {
+      list = [];
+      byDoctor.set(key, list);
+    }
+    list.push(i);
+  }
+  // A deleted doctor still owes a reconcilable line — fall back to the id rather
+  // than dropping the row or labelling it "Unassigned" misleadingly.
+  const doctorName = (key: string) =>
+    key === "unassigned" ? "Unassigned" : (doctorNameById.get(key) ?? key);
+  const doctorKeys = [...byDoctor.keys()].sort((a, b) =>
+    doctorName(a).localeCompare(doctorName(b)),
+  );
+
+  const grandPayout: Record<string, number> = {};
+  const grandCommission: Record<string, number> = {};
+  const rows: ReportRow[] = [];
+
+  for (const key of doctorKeys) {
+    const list = byDoctor.get(key)!;
+    rows.push({ _section: `Doctor — ${doctorName(key)}` });
+
+    const subPayout: Record<string, number> = {};
+    const subCommission: Record<string, number> = {};
+
+    for (const i of list) {
+      const currency = i.order.currencyCode;
+      const payout = (i.doctorPayoutCents ?? 0) * i.quantity;
+      const commission = i.commissionCents ?? 0;
+      subPayout[currency] = (subPayout[currency] ?? 0) + payout;
+      subCommission[currency] = (subCommission[currency] ?? 0) + commission;
+      grandPayout[currency] = (grandPayout[currency] ?? 0) + payout;
+      grandCommission[currency] = (grandCommission[currency] ?? 0) + commission;
+
+      const scheduled = i.appointmentId ? scheduledById.get(i.appointmentId) : null;
+      rows.push({
+        date: i.order.paidAt ? fmtDate(i.order.paidAt) : "—",
+        consultation: scheduled ? fmtDate(scheduled) : "—",
+        order: i.order.orderNumber ?? "—",
+        patient: i.order.fullName,
+        service: i.name,
+        gross: fmtMoney(i.lineTotalCents, currency),
+        commission: fmtMoney(commission, currency),
+        payout: fmtMoney(payout, currency),
+      });
+    }
+
+    for (const [currency, cents] of Object.entries(subPayout)) {
+      rows.push({
+        _total: true,
+        date: "",
+        consultation: "",
+        order: "",
+        patient: "",
+        service: `TO TRANSFER — ${doctorName(key)}`,
+        gross: "",
+        commission: fmtMoney(subCommission[currency] ?? 0, currency),
+        payout: fmtMoney(cents, currency),
+      });
+    }
+  }
+
+  for (const [currency, cents] of Object.entries(grandPayout)) {
+    rows.push({
+      _total: true,
+      date: "",
+      consultation: "",
+      order: "",
+      patient: "",
+      service: "TOTAL TO TRANSFER (all doctors)",
+      gross: "",
+      commission: fmtMoney(grandCommission[currency] ?? 0, currency),
+      payout: fmtMoney(cents, currency),
+    });
+  }
+
+  const fmtTotals = (t: Record<string, number>) =>
+    Object.entries(t)
+      .map(([currency, cents]) => fmtMoney(cents, currency))
+      .join(" · ") || "—";
+
+  const summary: ReportSummaryItem[] = [
+    { label: "Period", value: rangeLabel(filters) },
+    { label: "Doctors", value: String(doctorKeys.length) },
+    { label: "Consultations", value: String(capped.length) },
+    { label: "Total to transfer", value: fmtTotals(grandPayout) },
+    { label: "Global Health commission", value: fmtTotals(grandCommission) },
+  ];
+
+  const scope = scopeLabels(filters);
+
+  return {
+    title: "Doctor payouts — commission markets",
+    subtitle: [
+      "Paid, non-refunded orders",
+      rangeLabel(filters),
+      ...scope,
+    ].join(" · "),
+    summary,
+    generatedAt: new Date().toISOString(),
+    truncated,
+    columns: [
+      { key: "date", label: "Paid" },
+      { key: "consultation", label: "Consultation" },
+      { key: "order", label: "Order" },
+      { key: "patient", label: "Patient" },
+      { key: "service", label: "Service" },
+      { key: "gross", label: "Charged", align: "right" },
+      { key: "commission", label: "GH commission", align: "right" },
+      { key: "payout", label: "Doctor payout", align: "right" },
+    ],
+    rows,
+  };
+}
+
 // ── Admin: service assignments (all doctors) ─────────────────────────────────
 
 export async function adminServicesReport(
