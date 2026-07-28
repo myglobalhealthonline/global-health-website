@@ -313,7 +313,7 @@ export async function notifyPatientCrossBorderPayment(opts: {
     `<p>Dear ${esc(opts.fullName)},</p>
      <p>Your doctor has started a cross-border prescription request on your behalf.
      To send it to the prescribing doctor, please complete the payment below.</p>
-     ${ctaButton(shortLink, "Pay &amp; submit request")}
+     ${ctaButton(shortLink, "Pay & submit request")}
      <p>Once paid, the prescribing doctor reviews your request and either issues
      the prescription, asks for more information, or recommends a full consultation.</p>`,
   );
