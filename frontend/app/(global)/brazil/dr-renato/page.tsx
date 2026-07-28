@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { ArrowRight, Clock, ShieldCheck, Video } from "lucide-react";
 import { ServiceHero } from "@/components/sections/ServiceHero";
@@ -56,8 +57,26 @@ const CONTENT_LANG = "pt";
 
 type Search = Promise<{ lang?: string }>;
 
-function shareLocale(lang: string | undefined): ShareLocale {
-  return lang === "en" ? "en" : "pt";
+/**
+ * Page locale, in priority order:
+ *
+ *  1. `gh_locale` — what the header language switcher writes (on locale-less
+ *     routes like this one it sets the cookie + router.refresh()). The visitor's
+ *     own choice always wins, otherwise a shared `?lang=` link would pin the
+ *     page and the switcher would appear broken.
+ *  2. `?lang=` on the shared link — the doctor's choice for a first-time
+ *     visitor who has never picked a language.
+ *  3. Portuguese — this page's audience. Deliberately not the Accept-Language
+ *     fallback inside getPageLocale(): a Brazilian abroad on an English phone
+ *     should still land in Portuguese.
+ *
+ * Only pt and en copy exists here, so every other site locale reads English.
+ */
+async function shareLocale(lang: string | undefined): Promise<ShareLocale> {
+  const chosen = (await cookies()).get("gh_locale")?.value;
+  if (chosen) return chosen.toLowerCase().startsWith("pt") ? "pt" : "en";
+  if (lang === "en" || lang === "pt") return lang;
+  return "pt";
 }
 
 export async function generateMetadata({
@@ -66,7 +85,7 @@ export async function generateMetadata({
   searchParams: Search;
 }): Promise<Metadata> {
   const { lang } = await searchParams;
-  const locale = shareLocale(lang);
+  const locale = await shareLocale(lang);
   const t = SHARE_COPY[locale];
   return buildPublicMetadata({
     path: "/brazil/dr-renato",
@@ -81,7 +100,7 @@ export async function generateMetadata({
 
 export default async function DrRenatoSharePage({ searchParams }: { searchParams: Search }) {
   const { lang } = await searchParams;
-  const locale = shareLocale(lang);
+  const locale = await shareLocale(lang);
   const t = SHARE_COPY[locale];
 
   const [doctors, generalServices, feesRes] = await Promise.all([

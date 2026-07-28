@@ -74,7 +74,14 @@ export function swapCountryInPath(
 /** Swap the `[lang]` segment, preserving everything else. */
 export function swapLangInPath(pathname: string, newLang: string): string {
   const parsed = parseSitePath(pathname);
-  if (!parsed.country) return pathname;
+  // No country, or a country-scoped path with NO locale segment to swap
+  // (e.g. `/brazil/dr-renato`) — there is nothing to rewrite. Without the
+  // `lang` guard this returned `/brazil/en`, i.e. the language switcher threw
+  // the visitor off the page they were reading onto the country home, and
+  // `rest` is empty in exactly that case so the page slug was silently lost.
+  // Returning the path unchanged makes the switcher fall through to its
+  // cookie + router.refresh() branch, which re-renders this same page.
+  if (!parsed.country || !parsed.lang) return pathname;
   const tail = parsed.rest.length > 0 ? `/${parsed.rest.join("/")}` : "";
   return `/${parsed.country}/${newLang}${tail}`;
 }
