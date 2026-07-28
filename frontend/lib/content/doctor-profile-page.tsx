@@ -4,6 +4,7 @@ import { ArrowRight, CalendarClock } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTemplate";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { DoctorSharePageLink } from "@/components/sections/DoctorSharePageLink";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
 import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
@@ -360,6 +361,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           </div>
         </section>
       )}
+      <DoctorSharePageLink doctorSlug={doctorSlug} lang={lang} theme="light" />
       {doctorDisclaimerLead ? (
         <section
           className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"

@@ -7,6 +7,7 @@ import { ServiceHero } from "@/components/sections/ServiceHero";
 import { MessageCircle, ShieldCheck, Clock, Star, Lock } from "lucide-react";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
+import { DoctorSharePageLink, DOCTOR_SHARE_PAGES } from "@/components/sections/DoctorSharePageLink";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -367,6 +368,15 @@ export default async function CountryLangGeneralConsultationPage({
           nextPageLabel={c.a11y.nextPage}
         />
       ) : null}
+
+      {/* Non-indexed patient share pages for any doctor on this roster who
+          has one (Rule 6: they get no nav slot, so this is their only
+          human-discoverable entry point besides the doctor own link). */}
+      {doctors
+        .filter((d) => DOCTOR_SHARE_PAGES[d.slug])
+        .map((d) => (
+          <DoctorSharePageLink key={d.slug} doctorSlug={d.slug} lang={lang} theme="light" />
+        ))}
 
       {page?.sections.whyChoose ? (
         <WhyChooseSection
