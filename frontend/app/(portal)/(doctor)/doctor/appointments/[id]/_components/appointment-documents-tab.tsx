@@ -212,6 +212,9 @@ export function AppointmentDocumentsTab({
     fileName: u.label,
     fileTypeLabel: uploadFileTypeLabel(u.mimetype),
     viewUrl: u.url || `/api/doctor/documents/${u.id}/download`,
+    // Falls back to `session.uploadedBy` (this doctor) in the table; set for
+    // files disclosed by a referring doctor.
+    uploadedBy: u.uploadedBy ?? null,
   }));
 
   const docCount = generatedTotal + uploads.length;

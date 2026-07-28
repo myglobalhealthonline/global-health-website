@@ -491,6 +491,11 @@ export type DoctorDocumentDto = {
   mimetype: string;
   byteSize: number;
   url: string;
+  /** Who actually produced the file. Normally the appointment's own doctor,
+   *  but a cross-border disclosure is owned by the doctor who RECEIVED it, so
+   *  this names the referring doctor instead. Optional — older cached payloads
+   *  and other callers fall back to the workspace doctor's name. */
+  uploadedBy?: string | null;
   createdAt: string;
 };
 

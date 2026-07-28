@@ -5,7 +5,7 @@ import { prisma } from "../db/prisma.js";
 import {
   putObject,
   getObject,
-  streamToNodeReadable,
+  readObjectBodyToBuffer,
   deleteObject,
   isMediaStorageConfigured,
   MediaObjectNotFoundError,
@@ -20,7 +20,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
-import { verifySniffedMime } from "../utils/sniff-mime.js";
+import { sniffFileMime, verifySniffedMime } from "../utils/sniff-mime.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 /**
@@ -52,6 +52,20 @@ const ALLOWED_MIME = new Set([
 ]);
 
 const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+
+/**
+ * Types safe to render inline in the doctor portal. Deliberately narrower than
+ * ALLOWED_MIME's spirit — no SVG, which is a script container. Membership is
+ * decided by sniffed magic bytes, never by the stored (client-declared) MIME.
+ */
+const INLINE_VIEWABLE_MIME = new Set([
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+  "image/gif",
+]);
 
 // ponytail: hard cap on the per-appointment document list — bounds worst
 // case, no "load older" UI exists for this yet.
@@ -97,7 +111,29 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
           where: { appointmentId: appt.id },
           orderBy: { createdAt: "desc" },
           take: LIST_CAP,
+          include: { doctor: { select: { fullName: true } } },
         });
+
+        // `doctorId` is the OWNING doctor — for a cross-border disclosure that
+        // is the doctor who received the file, not the one who produced it.
+        // Resolve the provenance names so the list can credit the real author
+        // instead of the viewer's own name.
+        const disclosedFromIds = Array.from(
+          new Set(
+            rows
+              .map((r) => r.disclosedFromDoctorId)
+              .filter((id): id is string => Boolean(id)),
+          ),
+        );
+        const disclosedFromNameById = new Map<string, string>();
+        if (disclosedFromIds.length > 0) {
+          const doctors = await prisma.doctor.findMany({
+            where: { id: { in: disclosedFromIds } },
+            select: { id: true, fullName: true },
+          });
+          for (const d of doctors) disclosedFromNameById.set(d.id, d.fullName);
+        }
+
         return okResponse({
           items: rows.map((r) => ({
             id: r.id,
@@ -105,6 +141,10 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             mimetype: r.mimetype,
             byteSize: r.byteSize,
             url: buildDownloadPath(r.id),
+            uploadedBy:
+              (r.disclosedFromDoctorId
+                ? disclosedFromNameById.get(r.disclosedFromDoctorId)
+                : null) ?? r.doctor.fullName,
             createdAt: r.createdAt.toISOString(),
           })),
         });
@@ -300,19 +340,34 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
           throw guardError;
         }
         const obj = await getObject(doc.storageKey);
-        const stream = streamToNodeReadable(obj.Body);
-        if (!stream) {
+        const buffer = await readObjectBodyToBuffer(obj.Body);
+        if (!buffer) {
           return reply
             .status(500)
             .send(errorResponse("Unable to read document"));
         }
-        reply.header("Content-Type", obj.ContentType ?? doc.mimetype);
-        // Force download rather than inline rendering — the stored MIME
-        // type is client-declared at upload time (not byte-sniffed), so
-        // inline rendering of a mislabeled file is a content-execution risk.
-        reply.header("Content-Disposition", contentDisposition(doc.label));
+
+        // Doctors read scans and PDFs far more often than they archive them,
+        // so render in the browser rather than forcing a download. The old
+        // blanket `attachment` was there because the stored MIME is
+        // client-declared — so decide from the actual magic bytes instead of
+        // trusting it. Anything that doesn't sniff to a known-safe viewable
+        // type (an HTML or SVG payload mislabeled as a PDF, say) still
+        // downloads, as octet-stream, and never renders in our origin.
+        const sniffed = sniffFileMime(buffer);
+        const viewable = sniffed !== null && INLINE_VIEWABLE_MIME.has(sniffed);
+        reply.header("Content-Type", viewable ? sniffed : "application/octet-stream");
+        reply.header(
+          "Content-Disposition",
+          contentDisposition(doc.label, viewable ? "inline" : "attachment"),
+        );
+        // Belt and braces for the inline path: no MIME re-guessing by the
+        // browser, and a sandboxed document so even a crafted PDF cannot run
+        // script or reach the session that authorised the download.
+        reply.header("X-Content-Type-Options", "nosniff");
+        reply.header("Content-Security-Policy", "sandbox; default-src 'none'; object-src 'self'");
         reply.header("Cache-Control", "private, no-store");
-        return reply.send(stream);
+        return reply.send(buffer);
       } catch (error) {
         if (error instanceof NoSuchKey || error instanceof MediaObjectNotFoundError) {
           return reply.status(404).send(errorResponse("Document not found"));
