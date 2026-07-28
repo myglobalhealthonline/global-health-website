@@ -18,6 +18,7 @@ import {
 import { purgeExpiredAccountDeletions } from "../modules/auth/auth.service.js";
 import { runOutboxDispatch } from "../modules/outbox/outbox.js";
 import { runRetentionSweepReport } from "../modules/data-policy/country-data-policy.service.js";
+import { dispatchDueTrustpilotInvites } from "../modules/review-invites/review-invite.service.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
@@ -35,6 +36,10 @@ const DAILY_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h — renewal reminders (24h
 const ACCOUNT_PURGE_INTERVAL_MS = 60 * 60 * 1000; // hourly — S-017 GDPR grace-period purge
 const OUTBOX_INTERVAL_MS = 30 * 1000; // 30s — drain durable post-payment side effects (P-006/P-007)
 const DATA_RETENTION_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h — Task 1d report-only sweep
+// Hourly — Trustpilot review invites whose 24h post-consultation delay has
+// elapsed. The delay lives on the ReviewInvite row, so this interval only sets
+// how punctually a due invite goes out, never whether it does.
+const TRUSTPILOT_INVITES_INTERVAL_MS = 60 * 60 * 1000;
 
 // Distinct advisory-lock keys, one per job, so only one replica runs a given
 // tick when horizontally scaled. Single-replica (today) always acquires → no
@@ -48,6 +53,7 @@ const LOCK_ACCOUNT_PURGE = 4010006;
 const LOCK_OUTBOX = 4010007;
 const LOCK_PRE_PAYMENT_CANCEL = 4010008;
 const LOCK_DATA_RETENTION = 4010009;
+const LOCK_TRUSTPILOT_INVITES = 4010010;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -307,6 +313,31 @@ async function tickDataRetention(log: Logger) {
   );
 }
 
+async function tickTrustpilotInvites(log: Logger) {
+  // Non-idempotent: each due row causes Trustpilot to email a patient, and the
+  // row is only stamped `dispatchedAt` AFTER that send returns — so two
+  // concurrent runs could invite the same patient twice. Fail CLOSED.
+  await withAdvisoryLock(
+    LOCK_TRUSTPILOT_INVITES,
+    async () => {
+      try {
+        const r = await dispatchDueTrustpilotInvites();
+        // Silent on empty ticks — most hours have nothing due.
+        if (r.scanned > 0) {
+          log.info(
+            `[cron] trustpilot-invites: scanned=${r.scanned} sent=${r.sent} retrying=${r.retrying} skipped=${r.skipped} quotaLeft=${r.quotaRemaining}`,
+          );
+        }
+      } catch (err) {
+        log.error(
+          `[cron] trustpilot-invites error: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    { failClosed: true },
+  );
+}
+
 /** No-op stop handle — returned when the scheduler never actually started
  *  (RUN_SCHEDULER=false), so callers can unconditionally invoke the
  *  returned function on shutdown without an extra null check. */
@@ -330,7 +361,7 @@ export function startInternalScheduler(log: Logger): () => void {
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
-    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h",
+    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, trustpilot-invites 60m",
   );
 
   const timers: NodeJS.Timeout[] = [];
@@ -352,6 +383,10 @@ export function startInternalScheduler(log: Logger): () => void {
       void tickReconciliation(log);
       void tickAccountPurge(log);
       void tickOutboxDispatch(log);
+      // Safe on boot: a row is only due once its stored 24h delay has passed,
+      // and the advisory lock keeps a rolling deploy's overlapping processes
+      // from both dispatching it.
+      void tickTrustpilotInvites(log);
     }, startupJitterMs),
   );
 
@@ -366,6 +401,9 @@ export function startInternalScheduler(log: Logger): () => void {
   timers.push(setInterval(() => void tickDailyReminders(log), DAILY_INTERVAL_MS));
   timers.push(setInterval(() => void tickOutboxDispatch(log), OUTBOX_INTERVAL_MS));
   timers.push(setInterval(() => void tickDataRetention(log), DATA_RETENTION_INTERVAL_MS));
+  timers.push(
+    setInterval(() => void tickTrustpilotInvites(log), TRUSTPILOT_INVITES_INTERVAL_MS),
+  );
 
   return () => {
     for (const t of timers) clearTimeout(t);
