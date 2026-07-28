@@ -189,16 +189,26 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     bookingNotes: d.appointmentDetail.bookingNotes,
     openPatientChart: d.appointmentDetail.openPatientChart,
     editHealthDataHint: d.appointmentDetail.editHealthDataHint,
-    // Per-market editable identity rows — PT's Número de Utente / NIF /
-    // Cartão de Cidadão / pharmacy, BR's CPF. The identifier names stay in
-    // their own market's terms in every locale: they name real documents, not
-    // generic concepts.
+    // Editable identity/address/DOB rows, offered in every market. The
+    // document names stay in their own market's terms in every locale — a NIF
+    // and a CPF name real documents, not generic concepts — while `taxId` and
+    // `nationalId` are the neutral wording for markets that have neither.
     identityFields: {
       utente: d.appointmentDetail.utenteNumber,
       nif: d.appointmentDetail.ptNif,
       cpf: d.appointmentDetail.brCpf,
+      taxId: d.appointmentDetail.taxId,
       idCard: d.appointmentDetail.ptIdCard,
+      nationalId: d.appointmentDetail.nationalId,
+      passport: d.appointmentDetail.passport,
       pharmacy: d.appointmentDetail.ptPharmacy,
+      dateOfBirth: d.common.dateOfBirth,
+      address: d.appointmentDetail.address,
+      addressLine1: d.appointmentDetail.addressLine1,
+      addressLine2: d.appointmentDetail.addressLine2,
+      addressCity: d.appointmentDetail.addressCity,
+      addressState: d.appointmentDetail.addressState,
+      addressPostalCode: d.appointmentDetail.addressPostalCode,
       add: d.appointmentDetail.ptFieldAdd,
       edit: d.appointmentDetail.ptFieldEdit,
       save: d.appointmentDetail.ptFieldSave,
