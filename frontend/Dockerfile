@@ -58,6 +58,23 @@ RUN STANDALONE=/app/.next/standalone; \
   SERVER_DIR="$(dirname "$SERVER_JS")"; \
   cp -a "$SERVER_DIR"/. /app/standalone_out
 
+# `/api/og` renders every Open Graph card and needs sharp, whose libvips
+# shared object lives in a separate `@img/sharp-libvips-linux-x64` package
+# that standalone tracing missed — the route 500'd in production for every
+# crawler while building and booting cleanly. next.config.ts now force-traces
+# `@img*`; this asserts the copy in the image can actually dlopen before the
+# build is allowed to ship.
+# A plain `node -e "require('sharp')"` here would pass even when broken: node
+# walks up to the builder's own /app/node_modules, which the runner never
+# gets. Assert on the copied tree instead — the .so itself has to be there.
+RUN LIBVIPS="$(find /app/standalone_out/node_modules -name 'libvips-cpp.so*' -print -quit)"; \
+  if [ -z "$LIBVIPS" ]; then \
+    echo "ERROR: libvips missing from standalone output — /api/og would 500 on every OG card"; \
+    ls /app/standalone_out/node_modules/.pnpm 2>/dev/null | grep -i img || true; \
+    exit 1; \
+  fi; \
+  echo "sharp/libvips present: $LIBVIPS"
+
 # ── Stage 3: production runner (minimal) ─────────────────────────────────────
 FROM node:22-bookworm-slim AS runner
 
