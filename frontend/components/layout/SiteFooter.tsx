@@ -35,6 +35,9 @@ import { NewsletterSignup } from "./NewsletterSignup";
 import { CookieSettingsButton } from "@/components/compliance/CookieSettingsButton";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { localeDisplayName } from "@/lib/i18n/locale-display";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { hreflangRegion } from "@/lib/seo/hreflang";
 
 const REGULATORY_TEXT: Partial<Record<string, string>> = {
   cz: "Global Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
@@ -84,9 +87,8 @@ export function SiteFooter({
 }) {
   const year = new Date().getFullYear();
 
-  const cookieCopy = getCommonLocale(
-    resolveLocale({ explicitLocale: parsed.lang }),
-  ).cookie;
+  const common = getCommonLocale(resolveLocale({ explicitLocale: parsed.lang }));
+  const cookieCopy = common.cookie;
 
   const careBase =
     parsed.country && parsed.lang ? `/${parsed.country}/${parsed.lang}` : null;
@@ -165,6 +167,36 @@ export function SiteFooter({
         ]
       : []),
   ];
+
+  // Crawlable locale row. The header's LanguageSwitcher lives inside a Radix
+  // portal that only mounts on open, so its links are absent from the served
+  // HTML — every non-default-locale URL was therefore orphaned (GSC: "URL is
+  // unknown to Google" / "Discovered - currently not indexed"). These anchors
+  // are server-rendered, so Googlebot has a real path into each locale.
+  // Only inside a country scope: global pages have no [lang] segment to swap.
+  //
+  // ponytail: [country]/[lang]/layout.tsx hardcodes `rest: []` (reading the
+  // real pathname needs headers(), which would opt those pages out of static
+  // rendering — see P-001), so in practice these point at the locale HOME, not
+  // the current deep page. That's enough: the locale home carries the full
+  // in-locale nav, so crawlers reach the deep pages one hop later. Populate
+  // `rest` if per-page swapping is ever wanted.
+  const localeTail = parsed.rest.length > 0 ? `/${parsed.rest.join("/")}` : "";
+  const localeLinks =
+    parsed.country && parsed.lang
+      ? (
+          activeCountries.find((c) => c.code === activeCountryCode)
+            ?.supportedLocales ?? [parsed.lang as LocaleCode]
+        ).map((loc) => ({
+          loc,
+          label: localeDisplayName(loc, "native"),
+          href: `/${parsed.country}/${loc}${localeTail}`,
+          hrefLang: activeCountryCode
+            ? `${loc}-${hreflangRegion(activeCountryCode)}`
+            : loc,
+          isActive: loc === parsed.lang,
+        }))
+      : [];
 
   // Built-in groups stay auto-derived (Care + Clinics from features,
   // Account from auth pages, Company from global pages). Admin's
@@ -316,6 +348,31 @@ export function SiteFooter({
             </div>
           ))}
         </div>
+
+        {localeLinks.length > 1 ? (
+          <nav
+            aria-label={common.a11y.chooseLanguage}
+            className="gh-footer-localeRow mt-10 flex flex-wrap items-center gap-x-3 gap-y-1"
+          >
+            {/* Plain <a>, not <Link>: a client-side nav would keep the shared
+                (site)/layout mounted, so the chrome never re-renders under the
+                new x-gh-locale header (same reason LanguageSwitcher hard-navs).
+                It also avoids prefetching every locale from every page. */}
+            {localeLinks.map((l) => (
+              <a
+                key={l.loc}
+                href={l.href}
+                hrefLang={l.hrefLang}
+                aria-current={l.isActive ? "true" : undefined}
+                className={`gh-footer-legalLink gh-focus-on-dark ${
+                  l.isActive ? "text-white" : ""
+                }`}
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
+        ) : null}
 
         {regulatoryText ? (
           <p className="gh-footer-regulatory gh-body-sm text-white/60">{regulatoryText}</p>

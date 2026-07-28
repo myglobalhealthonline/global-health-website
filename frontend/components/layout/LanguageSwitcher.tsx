@@ -127,18 +127,20 @@ export function LanguageSwitcher({
                 return (
                   <li key={loc}>
                     <AppMenuItem asChild>
-                      <button
-                        type="button"
+                      <a
+                        href={swapped}
+                        hrefLang={loc}
                         onClick={() => {
                           setClientLocaleCookie(loc);
                           persistPreferredLocale(loc);
                           setOpen(false);
-                          window.location.href = swapped;
+                          // No preventDefault: the browser's own navigation is
+                          // the hard nav this branch wants.
                         }}
                         className={itemClass(isActive)}
                       >
                         {label}
-                      </button>
+                      </a>
                     </AppMenuItem>
                   </li>
                 );
