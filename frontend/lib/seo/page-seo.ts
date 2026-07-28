@@ -33,11 +33,16 @@ export type PublicMetadataInput = {
   noindex?: boolean;
 };
 
-// Google renders document titles by pixel width (~600px), not a fixed
-// character count — 60 was cutting titles that fit comfortably in the SERP.
-// 74 covers the real title+" · Global Health" combination (see page-seo.test.ts)
-// while still truncating genuinely long titles at a clean word boundary.
-const DOCUMENT_TITLE_LIMIT = 74;
+// Social cards clip hard at render time and never rank, so an OG/Twitter title
+// is worth shortening ourselves — a card is better ending on a whole word than
+// mid-syllable.
+//
+// The DOCUMENT title is not truncated at all. Google clips titles visually by
+// pixel width but INDEXES the whole string, so cutting at a character budget
+// only deletes keywords from the index — it buys no display benefit. Doing it
+// cost us the tail of 531 of 1353 titles, worst in the translated locales,
+// where the same copy runs longer than the English it was budgeted against.
+const SOCIAL_TITLE_LIMIT = 74;
 const SEARCH_DESCRIPTION_LIMIT = 155;
 const SOCIAL_DESCRIPTION_LIMIT = 125;
 const BRAND_SEPARATOR = " | ";
@@ -57,16 +62,17 @@ function wordSafeLimit(value: string, maximum: number): string {
   return `${safePrefix.replace(/[\s,;:|·—-]+$/u, "")}…`;
 }
 
-function compactTitle(value: string): string {
+/** Shorten a SOCIAL card title, keeping any trailing brand intact. */
+function compactSocialTitle(value: string): string {
   const normalized = normalizeCopy(value);
-  if (Array.from(normalized).length <= DOCUMENT_TITLE_LIMIT) return normalized;
+  if (Array.from(normalized).length <= SOCIAL_TITLE_LIMIT) return normalized;
 
   const brandPattern = /\s*(?:[|·—-]\s*)?global health\s*$/iu;
-  if (!brandPattern.test(normalized)) return wordSafeLimit(normalized, DOCUMENT_TITLE_LIMIT);
+  if (!brandPattern.test(normalized)) return wordSafeLimit(normalized, SOCIAL_TITLE_LIMIT);
 
   const unbranded = normalized.replace(brandPattern, "").trim();
   const suffix = `${BRAND_SEPARATOR}${SITE_NAME}`;
-  const body = wordSafeLimit(unbranded, DOCUMENT_TITLE_LIMIT - suffix.length);
+  const body = wordSafeLimit(unbranded, SOCIAL_TITLE_LIMIT - suffix.length);
   return `${body}${suffix}`;
 }
 
@@ -86,8 +92,8 @@ function normalizeCustomImage(url: string): string | undefined {
 /** Build one complete, conflict-free metadata object for any public route. */
 export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
   const canonical = getPublicUrl(input.path);
-  const title = compactTitle(input.title);
-  const socialTitle = compactTitle(input.socialTitle ?? input.title);
+  const title = normalizeCopy(input.title);
+  const socialTitle = compactSocialTitle(input.socialTitle ?? input.title);
   const description = wordSafeLimit(input.description, SEARCH_DESCRIPTION_LIMIT);
   const socialDescription = wordSafeLimit(
     input.socialDescription ?? input.description,
@@ -100,7 +106,7 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
       kind:
         input.kind ??
         (input.type === "article" ? "article" : input.type === "profile" ? "doctor" : "page"),
-      title: compactTitle(input.imageTitle ?? socialTitle),
+      title: compactSocialTitle(input.imageTitle ?? socialTitle),
       subtitle: input.subtitle,
       locale: input.locale,
       image: input.sourceImage,
@@ -359,15 +365,10 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
  */
 export function resolveBrandTitle(raw: string): string | { absolute: string } {
   const normalized = normalizeCopy(raw);
+  // Brand already present → bypass the layout template so it appears once.
+  // Length is deliberately not capped here; see SOCIAL_TITLE_LIMIT.
   if (normalized.toLowerCase().includes(SITE_NAME.toLowerCase())) {
-    return { absolute: compactTitle(normalized) };
-  }
-
-  const suffix = ` · ${SITE_NAME}`;
-  if (Array.from(normalized + suffix).length > DOCUMENT_TITLE_LIMIT) {
-    return {
-      absolute: `${wordSafeLimit(normalized, DOCUMENT_TITLE_LIMIT - suffix.length)}${suffix}`,
-    };
+    return { absolute: normalized };
   }
   return normalized;
 }

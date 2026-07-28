@@ -161,7 +161,7 @@ describe("buildPublicMetadata", () => {
     );
   });
 
-  it("keeps document and social titles within word-safe preview limits", () => {
+  it("keeps social titles word-safe but never truncates the indexed document title", () => {
     const title =
       "Online Doctor Ireland | IMC-Registered General Practitioners and Specialists | Global Health";
     const metadata = buildPublicMetadata({
@@ -175,10 +175,12 @@ describe("buildPublicMetadata", () => {
     const openGraph = metadata.openGraph as OpenGraphMetadata;
     const ogTitle = openGraph.title as string;
 
-    expect(documentTitle.length).toBeLessThanOrEqual(74);
-    expect(ogTitle.length).toBeLessThanOrEqual(74);
+    // Google indexes the whole document title and clips it only for display,
+    // so every keyword survives here — ellipsis truncation would delete them.
+    expect(documentTitle).toBe(title);
+    expect(documentTitle).not.toContain("…");
 
-    expectWordSafeTruncation(documentTitle, title);
+    expect(ogTitle.length).toBeLessThanOrEqual(74);
     expectWordSafeTruncation(ogTitle, title);
   });
 
@@ -225,16 +227,18 @@ describe("buildPublicMetadata", () => {
     }
   });
 
-  it("includes the layout brand suffix inside the 74-character document limit", () => {
+  it("brands a long document title without dropping any of its keywords", () => {
+    const source =
+      "A very detailed specialist consultation service for patients throughout Ireland";
     const metadata = buildPublicMetadata({
       path: "/ireland/en/services/a-long-service",
-      title: "A very detailed specialist consultation service for patients throughout Ireland",
+      title: source,
       description: "Licensed medical care in Ireland.",
     });
 
     const title = renderedDocumentTitle(metadata.title);
-    expect(title.length).toBeLessThanOrEqual(74);
-    expect(title).toContain("Global Health");
+    expect(title).toBe(`${source} · Global Health`);
+    expect(title).not.toContain("…");
   });
 
   it("does not truncate a realistic homepage title that fits within the new budget", () => {
