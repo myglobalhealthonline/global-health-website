@@ -1236,57 +1236,14 @@ export async function decideCrossBorderRxRequest(
   const patientUserId = await resolvePatientUserId(request.patientEmail);
 
   if (input.decision === "ACCEPT") {
+    // Accepting only commits Doctor B to prescribing and opens the workspace
+    // (the frontend navigates there). The patient + Doctor A "prescription
+    // sent" notifications and the appointment completion fire later, when the
+    // prescription DOCUMENT is finalised — see onCrossBorderRxPrescriptionFinalised.
     await prisma.crossBorderPrescriptionRequest.update({
       where: { id: request.id },
       data: { status: "ACCEPTED", decidedAt: new Date() },
     });
-    // Close the async consultation so it counts toward Doctor B's monthly
-    // payout statement (which only totals COMPLETED appointments) and starts
-    // the consultation-chat lock window. Doctor B still issues the actual
-    // prescription through the normal Rx tools on this appointment.
-    if (request.asyncAppointmentId) {
-      await prisma.appointment
-        .update({
-          where: { id: request.asyncAppointmentId, consultationCompletedAt: null },
-          data: { status: "COMPLETED", consultationCompletedAt: new Date() },
-        })
-        .catch(() => {
-          // Already completed (re-decision race) — the WHERE narrows to no rows
-          // and Prisma throws P2025. Ensure the status is COMPLETED regardless.
-          return prisma.appointment.update({
-            where: { id: request.asyncAppointmentId! },
-            data: { status: "COMPLETED" },
-          });
-        })
-        .catch(() => {});
-    }
-    // Doctor A (requesting): portal bell + email/WhatsApp that it's finalised.
-    await notifySourceDoctor(request.sourceDoctorId, request.sourceAppointmentId, {
-      snippet: `${request.patientFullName} · prescription finalised`,
-    });
-    void notifyRequestingDoctorFinalised(
-      request.sourceDoctorId,
-      request.patientFullName,
-    ).catch(() => {});
-    // Patient: portal bell + email + WhatsApp — sent to pharmacy.
-    if (patientUserId) {
-      await notifyUser(patientUserId, "CROSS_BORDER_RX_UPDATED", {
-        title: "Your prescription is on its way",
-        body: "Your prescription has been finalised and sent to your pharmacy. You should receive your medicine within a few days.",
-        href: "/account/bookings",
-      }).catch(() => {});
-    }
-    const src = await prisma.appointment.findUnique({
-      where: { id: request.sourceAppointmentId },
-      select: { phone: true, whatsappConsent: true, countryCode: true },
-    });
-    void notifyPatientCrossBorderAccepted({
-      fullName: request.patientFullName,
-      email: request.patientEmail,
-      phone: src?.phone ?? null,
-      countryCode: src?.countryCode ?? request.targetCountryCode,
-      whatsappConsent: src?.whatsappConsent ?? false,
-    }).catch(() => {});
     return { status: "ACCEPTED", upgradeUrl: null };
   }
 
@@ -1348,6 +1305,86 @@ export async function decideCrossBorderRxRequest(
   ).catch(() => {});
 
   return { status: "REFUSED", upgradeUrl };
+}
+
+/**
+ * Called when Doctor B finalises a prescription DOCUMENT on the async
+ * consultation (finalizeGeneratedDocument). This is the true "prescription
+ * issued" moment: mark the request ACCEPTED + finalised, complete the async
+ * appointment (payout + chat lock), and fire the patient + Doctor A "sent to
+ * pharmacy" notifications. Idempotent via `finalisedAt` — safe if the doctor
+ * finalises more than one document. No-op for non-cross-border appointments.
+ */
+export async function onCrossBorderRxPrescriptionFinalised(
+  asyncAppointmentId: string,
+): Promise<void> {
+  const request = await prisma.crossBorderPrescriptionRequest.findFirst({
+    where: {
+      asyncAppointmentId,
+      finalisedAt: null,
+      status: { in: ["AWAITING_DOCTOR", "MORE_INFO", "ACCEPTED"] },
+    },
+    select: {
+      id: true,
+      sourceDoctorId: true,
+      sourceAppointmentId: true,
+      patientEmail: true,
+      patientFullName: true,
+      targetCountryCode: true,
+    },
+  });
+  if (!request) return;
+
+  // Atomic guard: only the first finalise wins.
+  const claimed = await prisma.crossBorderPrescriptionRequest.updateMany({
+    where: { id: request.id, finalisedAt: null },
+    data: { status: "ACCEPTED", finalisedAt: new Date(), decidedAt: new Date() },
+  });
+  if (claimed.count === 0) return;
+
+  // Complete the async appointment (counts toward payout; starts chat lock).
+  await prisma.appointment
+    .update({
+      where: { id: asyncAppointmentId, consultationCompletedAt: null },
+      data: { status: "COMPLETED", consultationCompletedAt: new Date() },
+    })
+    .catch(() =>
+      prisma.appointment.update({
+        where: { id: asyncAppointmentId },
+        data: { status: "COMPLETED" },
+      }),
+    )
+    .catch(() => {});
+
+  // Doctor A (requesting): portal bell + email/WhatsApp.
+  await notifySourceDoctor(request.sourceDoctorId, request.sourceAppointmentId, {
+    snippet: `${request.patientFullName} · prescription finalised`,
+  });
+  void notifyRequestingDoctorFinalised(
+    request.sourceDoctorId,
+    request.patientFullName,
+  ).catch(() => {});
+
+  // Patient: portal bell + email + WhatsApp — sent to pharmacy.
+  const patientUserId = await resolvePatientUserId(request.patientEmail);
+  if (patientUserId) {
+    void notifyUser(patientUserId, "CROSS_BORDER_RX_UPDATED", {
+      title: "Your prescription is on its way",
+      body: "Your prescription has been finalised and sent to your pharmacy. You should receive your medicine within a few days.",
+      href: "/account/bookings",
+    }).catch(() => {});
+  }
+  const src = await prisma.appointment.findUnique({
+    where: { id: request.sourceAppointmentId },
+    select: { phone: true, whatsappConsent: true, countryCode: true },
+  });
+  void notifyPatientCrossBorderAccepted({
+    fullName: request.patientFullName,
+    email: request.patientEmail,
+    phone: src?.phone ?? null,
+    countryCode: src?.countryCode ?? request.targetCountryCode,
+    whatsappConsent: src?.whatsappConsent ?? false,
+  }).catch(() => {});
 }
 
 async function resolvePatientUserId(email: string): Promise<string | null> {
