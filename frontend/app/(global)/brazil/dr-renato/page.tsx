@@ -116,18 +116,17 @@ export default async function DrRenatoSharePage({ searchParams }: { searchParams
   // uses — one Offer per assigned service, priced from the DB.
   const assigned = new Set(doctor.assignedServiceIds);
   const bookable = generalServices.filter((s) => assigned.has(s.id));
-  const cheapest = bookable
-    .filter((s) => s.basePriceCents != null)
-    .reduce<(typeof bookable)[number] | null>(
-      (best, s) => (best == null || s.basePriceCents! < best.basePriceCents! ? s : best),
-      null,
-    );
+  // The hero CTA books the headline consultation, which is the FIRST service in
+  // the admin's sort order (BR: "Consulta Clínica Online"), not the cheapest —
+  // by price the winner was "Renovação de Receita" at R$199, so the main
+  // "Agendar consulta" button was starting a prescription refill.
+  const primary = bookable.find((s) => s.basePriceCents != null) ?? null;
 
   const bookHref = buildBookHref({
     country: COUNTRY_SLUG,
     lang: CONTENT_LANG,
     doctor: DOCTOR_SLUG,
-    service: cheapest?.slug ?? null,
+    service: primary?.slug ?? null,
   });
   const profileHref = `/${COUNTRY_SLUG}/${CONTENT_LANG}/doctors/${DOCTOR_SLUG}`;
 
