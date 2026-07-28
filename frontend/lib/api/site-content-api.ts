@@ -414,3 +414,23 @@ export async function fetchHealthTestDetail(
   );
 }
 
+
+export type PublicCrossBorderFee = {
+  countryCode: string;
+  countryName: string;
+  currencyCode: string;
+  priceCents: number;
+};
+
+/**
+ * Cross-border prescription review fee per market. Only countries with a
+ * bookable prescriber are returned — the rest render as "coming soon".
+ */
+export async function fetchCrossBorderRxFees(
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  return apiRequest<{ fees: PublicCrossBorderFee[] }>(
+    "/api/public/cross-border-rx/fees",
+    { timeoutMs, revalidate: REVALIDATE_SECONDS, tags: ["cross-border-rx:fees"] },
+  );
+}

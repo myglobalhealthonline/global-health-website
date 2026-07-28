@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 
 export type FinalCtaI18n = {
   eyebrow: string;
@@ -54,10 +55,20 @@ export function FinalCTA({
             <div>
               <p className="flex items-center gap-5">
                 <span aria-hidden className="gh2-live-dot mt-2 shrink-0" />
+                {/* The word is sized for "Live" (4 chars). Translations run
+                    far longer ("Disponível" = 10) and at the fixed clamp they
+                    burst out of the left column and collide with the headline.
+                    Scale the ceiling by length, same helper the heroes use. */}
                 <span
-                  className="font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
+                  className="min-w-0 font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
                   style={{
-                    fontSize: "clamp(5rem,13vw,9.5rem)",
+                    fontSize: fitHeadingFontSize(i18n?.liveLabel ?? "Live", {
+                      minRem: 2.75,
+                      maxRem: 9.5,
+                      viewportTerm: "13vw",
+                      idealChars: 5,
+                      svhCap: 22,
+                    }),
                     color: "var(--color-brand-accent)",
                   }}
                 >
