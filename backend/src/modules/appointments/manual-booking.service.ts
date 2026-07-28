@@ -176,6 +176,8 @@ export type CreateManualBookingInput = {
     utenteNumber?: string | null;
     addressLine1?: string | null;
     addressCity?: string | null;
+    addressState?: string | null;
+    addressPostalCode?: string | null;
     addressCountryCode?: string | null;
   };
   serviceId: string;
@@ -578,6 +580,12 @@ export async function createManualBooking(
       ...(input.patient.addressCity !== undefined
         ? { addressCity: input.patient.addressCity?.trim() || null }
         : {}),
+      ...(input.patient.addressState !== undefined
+        ? { addressState: input.patient.addressState?.trim() || null }
+        : {}),
+      ...(input.patient.addressPostalCode !== undefined
+        ? { addressPostalCode: input.patient.addressPostalCode?.trim() || null }
+        : {}),
       ...(input.patient.addressCountryCode !== undefined
         ? {
             addressCountryCode:
@@ -610,6 +618,15 @@ export async function createManualBooking(
         phone: input.patient.phone?.trim() || null,
         dateOfBirth: dob,
         notes: input.notes?.trim() || null,
+        // Same address snapshot the self-service booking flow writes, so a
+        // manually-booked consultation carries the address its prescriptions
+        // and certificates are rendered from.
+        addressLine1: input.patient.addressLine1?.trim() || null,
+        addressCity: input.patient.addressCity?.trim() || null,
+        addressState: input.patient.addressState?.trim() || null,
+        addressPostalCode: input.patient.addressPostalCode?.trim() || null,
+        addressCountryCode:
+          input.patient.addressCountryCode?.trim().toLowerCase() || null,
         consentAccepted: true,
         // Without a scope the consent promotion job skips this appointment and
         // the medical-access guard denies the booking doctor (DOCTOR_NO_VALID_ACCESS_PATH).
@@ -692,6 +709,10 @@ export async function createManualBooking(
           patientDateOfBirth: dob,
           patientNotes: input.notes?.trim() || null,
           patientTimezone: clinicTimeZone,
+          patientAddressLine1: input.patient.addressLine1?.trim() || null,
+          patientAddressCity: input.patient.addressCity?.trim() || null,
+          patientAddressState: input.patient.addressState?.trim() || null,
+          patientAddressPostalCode: input.patient.addressPostalCode?.trim() || null,
           patientAddressCountryCode:
             input.patient.addressCountryCode?.trim().toLowerCase() || null,
           patientConsentAcceptedAt: new Date(),

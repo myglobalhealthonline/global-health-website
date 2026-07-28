@@ -138,6 +138,9 @@ const addItemBodySchema = z.object({
       addressLine1: z.string().trim().max(120).optional().or(z.literal("")),
       addressLine2: z.string().trim().max(120).optional().or(z.literal("")),
       addressCity: z.string().trim().max(80).optional().or(z.literal("")),
+      // State / province / federative unit. Only Brazil's booking form
+      // collects it (the two-letter UF); never required.
+      addressState: z.string().trim().max(80).optional().or(z.literal("")),
       addressPostalCode: z.string().trim().max(20).optional().or(z.literal("")),
       addressCountryCode: z
         .string()
@@ -1250,6 +1253,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             patientAddressLine1: patient?.addressLine1 || null,
             patientAddressLine2: patient?.addressLine2 || null,
             patientAddressCity: patient?.addressCity || null,
+            patientAddressState: patient?.addressState || null,
             patientAddressPostalCode: patient?.addressPostalCode || null,
             patientAddressCountryCode: patient?.addressCountryCode || null,
             patientGdprConsentClinic: patient?.gdprConsentClinic === true,

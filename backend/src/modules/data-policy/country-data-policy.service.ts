@@ -394,6 +394,7 @@ export async function anonymizePatient(params: {
           addressLine1: null,
           addressLine2: null,
           addressCity: null,
+          addressState: null,
           addressPostalCode: null,
           nationalIdNumber: null,
           taxIdNumber: null,

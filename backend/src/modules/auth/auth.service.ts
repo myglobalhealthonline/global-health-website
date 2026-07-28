@@ -533,6 +533,7 @@ async function purgeOneAccount(userId: string): Promise<void> {
           addressLine1: null,
           addressLine2: null,
           addressCity: null,
+          addressState: null,
           addressPostalCode: null,
           nationalIdNumber: null,
           taxIdNumber: null,

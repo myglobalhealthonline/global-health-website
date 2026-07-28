@@ -32,9 +32,17 @@ function formatAddress(a: {
   addressLine1?: string | null;
   addressLine2?: string | null;
   addressCity?: string | null;
+  addressState?: string | null;
   addressPostalCode?: string | null;
 }): string | null {
-  const cityLine = [a.addressPostalCode, a.addressCity].filter(Boolean).join(" ");
+  // Brazil's UF rides with the city — "01310-100 São Paulo — SP". Null
+  // everywhere else, so the line is unchanged in the other markets.
+  const cityLine = [
+    [a.addressPostalCode, a.addressCity].filter(Boolean).join(" "),
+    a.addressState,
+  ]
+    .filter((p) => Boolean(p && p.trim()))
+    .join(" — ");
   const parts = [a.addressLine1, a.addressLine2, cityLine].filter(
     (p): p is string => Boolean(p && p.trim()),
   );
@@ -61,6 +69,7 @@ export function PatientContextPanel({
     addressLine1?: string | null;
     addressLine2?: string | null;
     addressCity?: string | null;
+    addressState?: string | null;
     addressPostalCode?: string | null;
     utenteNumber?: string | null;
     taxIdNumber?: string | null;

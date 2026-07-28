@@ -53,6 +53,7 @@ const adminPatchSchema = z
     addressLine1: stringField(200),
     addressLine2: stringField(200),
     addressCity: stringField(120),
+    addressState: stringField(120),
     addressPostalCode: stringField(32),
     addressCountryCode: stringField(8),
     preferredPharmacy: stringField(200),
@@ -78,6 +79,7 @@ const adminCreatePatientSchema = z
     addressLine1: stringField(200),
     addressLine2: stringField(200),
     addressCity: stringField(120),
+    addressState: stringField(120),
     addressPostalCode: stringField(32),
     addressCountryCode: stringField(8),
   })
@@ -152,6 +154,9 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           : {}),
         ...(parsed.data.addressCity !== undefined
           ? { addressCity: parsed.data.addressCity?.trim() || null }
+          : {}),
+        ...(parsed.data.addressState !== undefined
+          ? { addressState: parsed.data.addressState?.trim() || null }
           : {}),
         ...(parsed.data.addressPostalCode !== undefined
           ? { addressPostalCode: parsed.data.addressPostalCode?.trim() || null }
@@ -473,6 +478,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
             utenteNumber: true,
             addressLine1: true,
             addressCity: true,
+            addressState: true,
+            addressPostalCode: true,
             addressCountryCode: true,
           },
           take: 50,
@@ -491,6 +498,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           utenteNumber: string | null;
           addressLine1: string | null;
           addressCity: string | null;
+          addressState: string | null;
+          addressPostalCode: string | null;
           addressCountryCode: string | null;
         }
       >();
@@ -517,6 +526,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           utenteNumber: safeDecrypt(profile.utenteNumber),
           addressLine1: profile.addressLine1 ?? null,
           addressCity: profile.addressCity ?? null,
+          addressState: profile.addressState ?? null,
+          addressPostalCode: profile.addressPostalCode ?? null,
           addressCountryCode: profile.addressCountryCode ?? null,
         });
       }
@@ -581,6 +592,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         utenteNumber: null,
         addressLine1: null,
         addressCity: null,
+        addressState: null,
+        addressPostalCode: null,
         addressCountryCode: null,
       };
       const patients = [...byKey.values()]

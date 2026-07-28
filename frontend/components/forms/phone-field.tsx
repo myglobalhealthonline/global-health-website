@@ -1,12 +1,8 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
-import {
-  combinePhone,
-  DEFAULT_DIAL,
-  DIAL_OPTIONS,
-  splitPhone,
-} from "@/lib/phone/dial-codes";
+import { CountryDialSelect } from "@/components/forms/country-dial-select";
+import { combinePhone, DEFAULT_DIAL, splitPhone } from "@/lib/phone/dial-codes";
 
 type Props = {
   /** Hidden-input name so plain (FormData) forms pick up the combined value. */
@@ -77,28 +73,18 @@ export function PhoneField({
     onChange?.(combinePhone(nextDial, nextNational));
   }
 
-  // If the parsed dial isn't one of the offered options (e.g. a saved number
-  // with an exotic code), surface it as an extra option so it round-trips.
-  const options = DIAL_OPTIONS.some((o) => o.dial === dial)
-    ? DIAL_OPTIONS
-    : [{ key: dial, dial, label: `+${dial}` }, ...DIAL_OPTIONS];
-
   return (
     <div className={className}>
       <input type="hidden" name={name} value={combined} />
-      <select
-        aria-label="Country code"
-        className={`gh-phone-field__dial ${selectClassName} max-w-[150px]`}
+      {/* Searchable picker over every country — a saved number with a code
+          outside the list still round-trips: the trigger shows "+<dial>" as
+          parsed, it just has no flag until the user picks a country. */}
+      <CountryDialSelect
         value={dial}
         disabled={disabled}
-        onChange={(e) => update(e.target.value, national)}
-      >
-        {options.map((o) => (
-          <option key={o.key} value={o.dial}>
-            {o.label} (+{o.dial})
-          </option>
-        ))}
-      </select>
+        className={`gh-phone-field__dial ${selectClassName} max-w-[150px]`}
+        onChange={(next) => update(next, national)}
+      />
       <input
         id={inputId}
         type="tel"

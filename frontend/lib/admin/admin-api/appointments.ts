@@ -144,6 +144,9 @@ export type CreateManualAppointmentInput = {
     utenteNumber?: string | null;
     addressLine1?: string | null;
     addressCity?: string | null;
+    /** Brazil's UF (Estado). Null in every other market. */
+    addressState?: string | null;
+    addressPostalCode?: string | null;
     addressCountryCode?: string | null;
   };
   serviceId: string;

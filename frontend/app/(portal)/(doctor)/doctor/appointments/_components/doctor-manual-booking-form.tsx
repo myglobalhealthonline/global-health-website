@@ -9,8 +9,10 @@ import type {
   DoctorBookableService,
   DoctorBookingClinic,
 } from "@/lib/api/doctor-api";
-import { combinePhone, DIAL_OPTIONS, dialCodeForCountry } from "@/lib/phone/dial-codes";
+import { CountryDialSelect } from "@/components/forms/country-dial-select";
+import { combinePhone, dialCodeForCountry } from "@/lib/phone/dial-codes";
 import { formatAppTime } from "@/lib/format-datetime";
+import { BRAZIL_STATES } from "@/lib/content/booking-address-copy";
 
 /**
  * Doctor-side walk-in / phone-in booking form.
@@ -45,6 +47,12 @@ export type DoctorManualBookingCopy = {
   utente: string;
   addressLine1: string;
   city: string;
+  /** Brazil only — the UF picker's label + its empty option. */
+  addressState: string;
+  addressStatePlaceholder: string;
+  addressPostalCode: string;
+  /** Brazil's name for the postal code. */
+  addressCep: string;
   addressCountry: string;
   service: string;
   servicePlaceholder: string;
@@ -136,6 +144,8 @@ export function DoctorManualBookingForm({
   const [utenteNumber, setUtenteNumber] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
   const [addressCity, setAddressCity] = useState("");
+  const [addressState, setAddressState] = useState("");
+  const [addressPostalCode, setAddressPostalCode] = useState("");
   const [addressCountryCode, setAddressCountryCode] = useState("");
 
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
@@ -174,6 +184,10 @@ export function DoctorManualBookingForm({
   );
   // Portugal's Número de Utente — collected only when booking a PT service.
   const collectUtente = selectedService?.countryCode.toLowerCase() === "pt";
+  // Brazil is the one market that addresses by UF + CEP — same split the
+  // public BR booking form uses. Keyed off the picked service's country,
+  // exactly like `collectUtente` above.
+  const isBrazil = selectedService?.countryCode.toLowerCase() === "br";
 
   const loadSlots = useCallback(async () => {
     setLoadingSlots(true);
@@ -292,6 +306,9 @@ export function DoctorManualBookingForm({
             utenteNumber: collectUtente ? utenteNumber.trim() || null : null,
             addressLine1: addressLine1.trim() || null,
             addressCity: addressCity.trim() || null,
+            // Same gate as `utenteNumber` — never sent outside Brazil.
+            addressState: isBrazil ? addressState.trim() || null : null,
+            addressPostalCode: addressPostalCode.trim() || null,
             addressCountryCode: addressCountryCode.trim() || null,
           },
           serviceId,
@@ -469,18 +486,12 @@ export function DoctorManualBookingForm({
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">{copy.phone} *</span>
             <div className="flex gap-2">
-              <select
-                aria-label={copy.phone}
+              <CountryDialSelect
+                ariaLabel={copy.phone}
                 className="gh-select max-w-[150px]"
                 value={dialCode}
-                onChange={(e) => setDialCode(e.target.value)}
-              >
-                {DIAL_OPTIONS.map((o) => (
-                  <option key={o.key} value={o.dial}>
-                    {o.label} (+{o.dial})
-                  </option>
-                ))}
-              </select>
+                onChange={setDialCode}
+              />
               <input
                 type="tel"
                 inputMode="tel"
@@ -545,6 +556,30 @@ export function DoctorManualBookingForm({
             maxLength={100}
             value={addressCity}
             onChange={setAddressCity}
+          />
+          {/* Estado (UF) — Brazil only; no other market has an equivalent. */}
+          {isBrazil ? (
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">{copy.addressState}</span>
+              <select
+                className="gh-select"
+                value={addressState}
+                onChange={(e) => setAddressState(e.target.value)}
+              >
+                <option value="">{copy.addressStatePlaceholder}</option>
+                {BRAZIL_STATES.map((uf) => (
+                  <option key={uf} value={uf}>
+                    {uf}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+          <TextField
+            label={isBrazil ? copy.addressCep : copy.addressPostalCode}
+            maxLength={32}
+            value={addressPostalCode}
+            onChange={setAddressPostalCode}
           />
           <TextField
             label={copy.addressCountry}

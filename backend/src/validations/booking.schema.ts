@@ -111,6 +111,9 @@ export const bookingSchema = z.object({
   addressLine1: z.string().trim().max(120).optional().or(z.literal("")),
   addressLine2: z.string().trim().max(120).optional().or(z.literal("")),
   addressCity: z.string().trim().max(80).optional().or(z.literal("")),
+  /** State / province / federative unit. Only Brazil's form collects it
+   *  (the two-letter UF); never required, so other markets are unchanged. */
+  addressState: z.string().trim().max(80).optional().or(z.literal("")),
   addressPostalCode: z.string().trim().max(20).optional().or(z.literal("")),
   addressCountryCode: z
     .string()

@@ -18,6 +18,7 @@ function buildAddressBlock(
     addressLine1: string | null;
     addressLine2: string | null;
     addressCity: string | null;
+    addressState: string | null;
     addressPostalCode: string | null;
     addressCountryCode: string | null;
   },
@@ -25,6 +26,7 @@ function buildAddressBlock(
     addressLine1: string | null;
     addressLine2: string | null;
     addressCity: string | null;
+    addressState: string | null;
     addressPostalCode: string | null;
     addressCountryCode: string | null;
   } | null,
@@ -35,6 +37,7 @@ function buildAddressBlock(
           addressLine1: appt.addressLine1,
           addressLine2: appt.addressLine2,
           addressCity: appt.addressCity,
+          addressState: appt.addressState,
           addressPostalCode: appt.addressPostalCode,
           addressCountryCode: appt.addressCountryCode,
         })
@@ -112,6 +115,7 @@ export async function resolveAppointmentDocumentSource(
       addressLine1: true,
       addressLine2: true,
       addressCity: true,
+      addressState: true,
       addressPostalCode: true,
       addressCountryCode: true,
       dateOfBirth: true,

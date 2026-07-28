@@ -97,6 +97,7 @@ function buildBookingExtras(input: BookingInput) {
     addressLine1: nullify(input.addressLine1),
     addressLine2: nullify(input.addressLine2),
     addressCity: nullify(input.addressCity),
+    addressState: nullify(input.addressState),
     addressPostalCode: nullify(input.addressPostalCode),
     addressCountryCode: nullify(input.addressCountryCode),
     gdprConsentClinic: input.gdprConsentClinic === true,

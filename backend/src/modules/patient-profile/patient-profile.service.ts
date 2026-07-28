@@ -237,6 +237,7 @@ export type ProfileWriteFields = {
   addressLine1?: string | null;
   addressLine2?: string | null;
   addressCity?: string | null;
+  addressState?: string | null;
   addressPostalCode?: string | null;
   addressCountryCode?: string | null;
   preferredPharmacy?: string | null;

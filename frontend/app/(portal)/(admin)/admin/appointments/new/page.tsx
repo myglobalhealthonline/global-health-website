@@ -253,6 +253,13 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         utenteNumber: collectUtente ? readOpt("utenteNumber") : null,
         addressLine1: readOpt("addressLine1"),
         addressCity: readOpt("addressCity"),
+        // Brazil-only field — same gate as `utenteNumber`, so a crafted form
+        // post can't attach a state to a non-BR booking.
+        addressState:
+          (countryCode ?? "").trim().toLowerCase() === "br"
+            ? readOpt("addressState")
+            : null,
+        addressPostalCode: readOpt("addressPostalCode"),
         addressCountryCode: readOpt("addressCountryCode"),
       },
       serviceId,

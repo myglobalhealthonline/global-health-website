@@ -59,16 +59,19 @@ export function buildAddressLines(profile: {
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
+  addressState?: string | null;
   addressPostalCode: string | null;
   addressCountryCode: string | null;
 }): string[] {
   const out: string[] = [];
   if (profile.addressLine1) out.push(profile.addressLine1);
   if (profile.addressLine2) out.push(profile.addressLine2);
+  // "1000-001 Lisboa" everywhere; Brazil adds the UF — "01310-100 São Paulo — SP".
   const cityLine = [profile.addressPostalCode, profile.addressCity]
     .filter(Boolean)
     .join(" ");
-  if (cityLine) out.push(cityLine);
+  const cityStateLine = [cityLine, profile.addressState].filter(Boolean).join(" — ");
+  if (cityStateLine) out.push(cityStateLine);
   if (profile.addressCountryCode) out.push(profile.addressCountryCode);
   return out;
 }

@@ -177,6 +177,8 @@ export type CreateDoctorManualBookingInput = {
     utenteNumber?: string | null;
     addressLine1?: string | null;
     addressCity?: string | null;
+    addressState?: string | null;
+    addressPostalCode?: string | null;
     addressCountryCode?: string | null;
   };
   serviceId: string;
