@@ -12,10 +12,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getPageLocale();
   const { hero } = loadLocaleBundle(locale).home;
 
+  // The visible hero sells the promise; the SERP snippet has to answer the
+  // query. `/` is the country picker, but Google ranks it for the commercial
+  // head terms ("global health clinic", "global health medical services" —
+  // ~200 impressions, 0 clicks over 28 days) because the hero copy names
+  // neither the service nor the markets. seoTitle/seoDescription do both,
+  // without touching what visitors see. Fall back to the hero copy so a
+  // locale that has not translated them yet still gets its own language.
   return buildPublicMetadata({
     path: "/",
-    title: hero.title,
-    description: hero.description,
+    title: hero.seoTitle || hero.title,
+    description: hero.seoDescription || hero.description,
     locale,
     kind: "page",
     subtitle: hero.eyebrow,
