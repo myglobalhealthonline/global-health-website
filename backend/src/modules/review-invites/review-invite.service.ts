@@ -7,6 +7,7 @@ import { getReviewFormLocale } from "../../lib/i18n/review-form.js";
 import {
   isTrustpilotAfsConfigured,
   sendTrustpilotAfsTrigger,
+  toTrustpilotLocale,
 } from "../../lib/trustpilot/afs-trigger.js";
 
 const INVITE_TTL_DAYS = 14;
@@ -243,10 +244,12 @@ export async function dispatchDueTrustpilotInvites(
       continue;
     }
 
+    const locale = toTrustpilotLocale(row.localeCode);
     const result = await sendTrustpilotAfsTrigger({
       customerEmail: row.contactEmail,
       customerName: firstName(row.customerName),
       referenceId: row.appointmentId ?? row.id,
+      ...(locale ? { locale } : {}),
     });
 
     if (result.ok) {
