@@ -1006,7 +1006,8 @@
     "typeOther": "Sonstiges",
     "uploadedFilesTitle": "Hochgeladene Dateien",
     "noUploadedFiles": "Noch keine hochgeladenen Dateien.",
-    "uploadFilesTitle": "Dateien hochladen"
+    "uploadFilesTitle": "Dateien hochladen",
+    "sendDocumentTitle": "Dokument senden"
   },
   "consultationForm": {
     "fieldChiefComplaint": "Hauptbeschwerde",
@@ -1649,5 +1650,23 @@
     "sourceRecordDesc": "Die Konsultationsaufzeichnung, deren Weitergabe an Sie die Patientin bzw. der Patient für diese Verschreibungsanfrage genehmigt hat.",
     "requestedOn": "Angefragt am",
     "sourceDocumentsNote": "Die Dateien aus dieser Konsultation wurden in den Reiter „Dokumente“ dieses Termins kopiert."
+  },
+  "sendDocumentForm": {
+    "title": "Ein Dokument an die Patientin bzw. den Patienten senden",
+    "description": "Benennen Sie das Dokument und hängen Sie die Datei an — sie wird von Global Health per E-Mail zugestellt. Eine Kopie bleibt unter „Hochgeladene Dateien“.",
+    "nameField": "Name des Dokuments",
+    "namePlaceholder": "z. B. Blutbefunde",
+    "nameRequired": "Geben Sie dem Dokument einen Namen — er erscheint als E-Mail-Betreff.",
+    "fileField": "Datei",
+    "chooseFile": "Datei auswählen",
+    "changeFile": "Datei ändern",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP oder AVIF · max. 10MB",
+    "fileRequired": "Hängen Sie eine Datei zum Senden an.",
+    "fileTooLarge": "Datei zu groß (max. 10MB).",
+    "subjectPreview": "Zu sehen ist",
+    "send": "An Patient senden",
+    "sending": "Wird gesendet…",
+    "sendFailed": "Das Dokument konnte nicht gesendet werden.",
+    "sentTo": "Gesendet an"
   }
 }

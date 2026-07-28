@@ -1068,7 +1068,8 @@
     "typeOther": "Other",
     "uploadedFilesTitle": "Uploaded files",
     "noUploadedFiles": "No uploaded files yet.",
-    "uploadFilesTitle": "Upload files"
+    "uploadFilesTitle": "Upload files",
+    "sendDocumentTitle": "Send document"
   },
   "consultationForm": {
     "fieldChiefComplaint": "Chief complaint",
@@ -1648,5 +1649,23 @@
       "generate": "Generate",
       "documentsQueueNote": "Generated documents go to a review & send queue before reaching the patient."
     }
+  },
+  "sendDocumentForm": {
+    "title": "Send a document to the patient",
+    "description": "Name the document, attach the file, and it is emailed to the patient from Global Health. A copy is kept under Uploaded files.",
+    "nameField": "Document name",
+    "namePlaceholder": "e.g. Blood test results",
+    "nameRequired": "Give the document a name — the patient sees it as the email subject.",
+    "fileField": "File",
+    "chooseFile": "Choose a file",
+    "changeFile": "Change file",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP, or AVIF · max 10MB",
+    "fileRequired": "Attach a file to send.",
+    "fileTooLarge": "File too large (max 10MB).",
+    "subjectPreview": "The patient will see",
+    "send": "Send to patient",
+    "sending": "Sending…",
+    "sendFailed": "Could not send the document.",
+    "sentTo": "Sent to"
   }
 }

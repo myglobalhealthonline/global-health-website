@@ -1006,7 +1006,8 @@
     "typeOther": "Otros",
     "uploadedFilesTitle": "Archivos subidos",
     "noUploadedFiles": "Aún no hay archivos subidos.",
-    "uploadFilesTitle": "Subir archivos"
+    "uploadFilesTitle": "Subir archivos",
+    "sendDocumentTitle": "Enviar documento"
   },
   "consultationForm": {
     "fieldChiefComplaint": "Motivo de consulta",
@@ -1649,5 +1650,23 @@
     "sourceRecordDesc": "El registro de la consulta que el paciente consintió compartir con usted para esta solicitud de receta.",
     "requestedOn": "Solicitado el",
     "sourceDocumentsNote": "Los archivos de esa consulta se copiaron a la pestaña Documentos de esta cita."
+  },
+  "sendDocumentForm": {
+    "title": "Enviar un documento al paciente",
+    "description": "Ponga nombre al documento, adjunte el archivo y se enviará por correo al paciente desde Global Health. Se guarda una copia en Archivos subidos.",
+    "nameField": "Nombre del documento",
+    "namePlaceholder": "p. ej. Resultados de análisis",
+    "nameRequired": "Ponga un nombre al documento: el paciente lo ve como asunto del correo.",
+    "fileField": "Archivo",
+    "chooseFile": "Elegir archivo",
+    "changeFile": "Cambiar archivo",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP o AVIF · máx. 10MB",
+    "fileRequired": "Adjunte un archivo para enviar.",
+    "fileTooLarge": "Archivo demasiado grande (máx. 10MB).",
+    "subjectPreview": "El paciente verá",
+    "send": "Enviar al paciente",
+    "sending": "Enviando…",
+    "sendFailed": "No se pudo enviar el documento.",
+    "sentTo": "Enviado a"
   }
 }

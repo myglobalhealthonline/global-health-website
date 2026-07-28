@@ -1006,7 +1006,8 @@
     "typeOther": "Ostatní",
     "uploadedFilesTitle": "Nahrané soubory",
     "noUploadedFiles": "Zatím žádné nahrané soubory.",
-    "uploadFilesTitle": "Nahrát soubory"
+    "uploadFilesTitle": "Nahrát soubory",
+    "sendDocumentTitle": "Odeslat dokument"
   },
   "consultationForm": {
     "fieldChiefComplaint": "Hlavní obtíž",
@@ -1649,5 +1650,23 @@
     "sourceRecordDesc": "Záznam z konzultace, jehož sdílení s vámi pacient pro tuto žádost o předpis odsouhlasil.",
     "requestedOn": "Vyžádáno dne",
     "sourceDocumentsNote": "Soubory z této konzultace byly zkopírovány do záložky Dokumenty této návštěvy."
+  },
+  "sendDocumentForm": {
+    "title": "Odeslat dokument pacientovi",
+    "description": "Pojmenujte dokument, přiložte soubor a Global Health jej odešle pacientovi e-mailem. Kopie zůstane v sekci Nahrané soubory.",
+    "nameField": "Název dokumentu",
+    "namePlaceholder": "např. Výsledky krevních testů",
+    "nameRequired": "Pojmenujte dokument — pacient jej uvidí jako předmět e-mailu.",
+    "fileField": "Soubor",
+    "chooseFile": "Vybrat soubor",
+    "changeFile": "Změnit soubor",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP nebo AVIF · max. 10 MB",
+    "fileRequired": "Přiložte soubor k odeslání.",
+    "fileTooLarge": "Soubor je příliš velký (max. 10 MB).",
+    "subjectPreview": "Pacient uvidí",
+    "send": "Odeslat pacientovi",
+    "sending": "Odesílá se…",
+    "sendFailed": "Dokument se nepodařilo odeslat.",
+    "sentTo": "Odesláno na"
   }
 }

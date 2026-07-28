@@ -626,6 +626,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     copy={d.appointmentDocumentsTab}
                     modalCopy={consultationDocsCopy}
                     uploadCopy={d.documentUploadForm}
+                    sendDocumentCopy={d.sendDocumentForm}
                     uploadLinkCopy={d.patientUploadLinkCard}
                     reviewCopy={d.documentsReviewSendPanel}
                   />

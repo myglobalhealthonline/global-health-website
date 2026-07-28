@@ -203,6 +203,10 @@ enum AuditAction {
   FOLLOW_UP_CREATED
   DOCUMENT_UPLOADED
   DOCUMENT_DELETED
+  /// A doctor emailed a named file straight to the patient from the
+  /// appointment workspace. Separate from DOCUMENT_UPLOADED because this is
+  /// the moment PHI leaves the platform, not just the moment it is stored.
+  DOCUMENT_SENT_TO_PATIENT
   DOCTOR_INVITED
   DOCTOR_CREATED
   DOCTOR_UPDATED

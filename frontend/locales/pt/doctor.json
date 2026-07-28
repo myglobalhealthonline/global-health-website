@@ -1006,7 +1006,8 @@
     "typeOther": "Outros",
     "uploadedFilesTitle": "Ficheiros carregados",
     "noUploadedFiles": "Ainda não há ficheiros carregados.",
-    "uploadFilesTitle": "Carregar ficheiros"
+    "uploadFilesTitle": "Carregar ficheiros",
+    "sendDocumentTitle": "Enviar documento"
   },
   "consultationForm": {
     "fieldChiefComplaint": "Motivo da consulta",
@@ -1649,5 +1650,23 @@
     "sourceRecordDesc": "O registo da consulta que o doente consentiu partilhar consigo para este pedido de prescrição.",
     "requestedOn": "Pedido em",
     "sourceDocumentsNote": "Os ficheiros dessa consulta foram copiados para o separador Documentos desta marcação."
+  },
+  "sendDocumentForm": {
+    "title": "Enviar um documento ao doente",
+    "description": "Dê um nome ao documento, anexe o ficheiro e este é enviado por email ao doente a partir da Global Health. Fica uma cópia em Ficheiros carregados.",
+    "nameField": "Nome do documento",
+    "namePlaceholder": "ex.: Resultados das análises",
+    "nameRequired": "Dê um nome ao documento — o doente vê-o como assunto do email.",
+    "fileField": "Ficheiro",
+    "chooseFile": "Escolher ficheiro",
+    "changeFile": "Alterar ficheiro",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP ou AVIF · máx. 10MB",
+    "fileRequired": "Anexe um ficheiro para enviar.",
+    "fileTooLarge": "Ficheiro demasiado grande (máx. 10MB).",
+    "subjectPreview": "O doente verá",
+    "send": "Enviar ao doente",
+    "sending": "A enviar…",
+    "sendFailed": "Não foi possível enviar o documento.",
+    "sentTo": "Enviado para"
   }
 }

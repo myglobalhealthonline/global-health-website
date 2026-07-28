@@ -1006,7 +1006,8 @@
     "typeOther": "Altele",
     "uploadedFilesTitle": "Fișiere încărcate",
     "noUploadedFiles": "Încă niciun fișier încărcat.",
-    "uploadFilesTitle": "Încarcă fișiere"
+    "uploadFilesTitle": "Încarcă fișiere",
+    "sendDocumentTitle": "Trimite document"
   },
   "consultationForm": {
     "fieldChiefComplaint": "Motivul principal",
@@ -1649,5 +1650,23 @@
     "sourceRecordDesc": "Documentația consultației pe care pacientul a consimțit să o partajeze cu dumneavoastră pentru această solicitare de prescripție.",
     "requestedOn": "Solicitat la",
     "sourceDocumentsNote": "Fișierele din acea consultație au fost copiate în fila Documente a acestei programări."
+  },
+  "sendDocumentForm": {
+    "title": "Trimite un document pacientului",
+    "description": "Denumiți documentul, atașați fișierul, iar Global Health îl trimite pacientului prin e-mail. O copie rămâne la Fișiere încărcate.",
+    "nameField": "Numele documentului",
+    "namePlaceholder": "ex.: Rezultatele analizelor",
+    "nameRequired": "Denumiți documentul — pacientul îl vede ca subiect al e-mailului.",
+    "fileField": "Fișier",
+    "chooseFile": "Alegeți un fișier",
+    "changeFile": "Schimbați fișierul",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP sau AVIF · max. 10MB",
+    "fileRequired": "Atașați un fișier pentru trimitere.",
+    "fileTooLarge": "Fișier prea mare (max. 10MB).",
+    "subjectPreview": "Pacientul va vedea",
+    "send": "Trimite pacientului",
+    "sending": "Se trimite…",
+    "sendFailed": "Documentul nu a putut fi trimis.",
+    "sentTo": "Trimis către"
   }
 }
