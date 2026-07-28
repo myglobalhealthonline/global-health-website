@@ -403,6 +403,24 @@ model Country {
   footer                      CountryFooter?
   /// Access model controlling which doctors can access patient files in this country.
   accessModel                 CountryAccessModel           @default(PLATFORM)
+  /// Billing model. When true this market issues a COMMISSION-ONLY fiscal
+  /// document: the receipt total is Global Health's intermediation commission
+  /// (amount charged − doctor payouts), NOT the amount charged to the card. The
+  /// treating doctor documents their own fee separately. Global Health acts as
+  /// an intermediary rather than the provider in these markets.
+  ///
+  /// Consequences when on, all keyed off this one flag:
+  ///   - the invoice/receipt PDF renders a single "commission" line (invoice-pdf.ts)
+  ///   - Stripe's own auto-invoice is disabled at checkout, so our receipt is the
+  ///     only document the patient receives
+  ///   - a consultation whose (service, doctor) has no `ServiceDoctor
+  ///     .doctorAmountCents` is NOT bookable — the commission would otherwise be
+  ///     the full price (see commission.service.ts)
+  ///
+  /// Introduced for Brazil. Flipping it off returns the market to the standard
+  /// full-price receipt with no code change and no data migration — already-issued
+  /// documents keep rendering from their frozen OrderItem snapshots.
+  commissionReceiptEnabled    Boolean                      @default(false)
   dataPolicy                  CountryDataPolicy?
   legalProfile                CountryLegalProfile?
   legalDocuments              CountryLegalDocument[]
@@ -2518,6 +2536,17 @@ model Order {
   /// the pricing chain (base → peak → insurance) resolved.
   discountPercent               Int?
   discountCents                 Int?
+  /// Commission-model snapshot (markets with `Country.commissionReceiptEnabled`).
+  /// `commissionTotalCents` is what the receipt we issue is FOR — the sum of every
+  /// line's `commissionCents` plus shipping. It is deliberately NOT `totalCents`:
+  /// the card is charged `totalCents`, the document we issue is for the
+  /// commission, and the difference is `doctorPayoutTotalCents` owed to the
+  /// treating doctor(s).
+  ///
+  /// Null outside commission markets and on every order predating the feature.
+  /// Invariant when set: commissionTotalCents + doctorPayoutTotalCents == totalCents.
+  commissionTotalCents          Int?
+  doctorPayoutTotalCents        Int?
   status                        OrderStatus           @default(PENDING)
   paymentStatus                 PaymentStatus         @default(UNPAID)
   /// Insurance card manual-verification state. Null = ordinary (non-insurance)
@@ -2730,6 +2759,19 @@ model OrderItem {
   /// Plain id, not an FK: the catalogue entry may be retired while the paid
   /// line must stay intact.
   testCenterExamId                  String?
+  /// Commission-model snapshot (markets with `Country.commissionReceiptEnabled`).
+  /// SNAPSHOT, not a live lookup: `doctorPayoutCents` is a copy of
+  /// `ServiceDoctor.doctorAmountCents` (or the insurance override) taken at
+  /// checkout, PER UNIT. Frozen deliberately — the payout statement reads payouts
+  /// live, so editing an amount there re-values past statements; a fiscal document
+  /// must never move once issued.
+  ///
+  /// Null on every line created before this feature and in non-commission
+  /// countries — treat null as "not applicable", not as zero.
+  doctorPayoutCents                 Int?
+  /// `lineTotalCents − doctorPayoutCents * quantity`, clamped at ≥ 0. Lines with
+  /// no doctor (health tests, products, lab exams) carry the full line total here.
+  commissionCents                   Int?
 
   @@index([orderId])
 }

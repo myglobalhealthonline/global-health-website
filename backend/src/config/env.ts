@@ -138,6 +138,9 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET_PT: optionalSecret,
   STRIPE_SECRET_KEY_CZ: optionalSecret,
   STRIPE_WEBHOOK_SECRET_CZ: optionalSecret,
+  // Brazil has no account of its own on purpose: it charges on Ireland and
+  // settles doctor payouts by bank transfer outside Stripe. See
+  // lib/stripe/client.ts and docs/brazil-commission-and-doctor-payouts.md.
 
   /** Portugal InvoiceExpress — direct REST issuance of the legal InvoiceReceipt
    *  when a PT order is paid on the LIVE Stripe account. Both must be set for the

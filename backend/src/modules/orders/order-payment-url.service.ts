@@ -3,6 +3,7 @@ import { prisma } from "../../db/prisma.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
 import { checkoutBranding } from "../billing/checkout-branding.js";
+import { isCommissionCountry } from "./commission.service.js";
 
 function isSessionOpen(session: {
   status: string | null;
@@ -99,11 +100,19 @@ export async function resolveOrderPaymentUrl(
     // Portugal: attach NIF + service to the auto-created Stripe invoice for
     // InvoiceExpress. Non-PT orders keep Stripe's default (no invoice created
     // on this resend path).
-    const invoiceCreation = await buildPtStripeInvoiceData(
-      order.countryCode,
-      order.email,
-      order.items[0]?.name ?? "Medical Consultation",
-    );
+    //
+    // Commission markets never get a Stripe invoice: it would document the full
+    // amount charged and contradict our commission-only receipt. Today no
+    // commission market is also PT, so buildPtStripeInvoiceData already returns
+    // undefined for them — but the commission flag is an admin toggle on any
+    // country, so make the exclusion explicit rather than incidental.
+    const invoiceCreation = (await isCommissionCountry(order.countryCode))
+      ? undefined
+      : await buildPtStripeInvoiceData(
+          order.countryCode,
+          order.email,
+          order.items[0]?.name ?? "Medical Consultation",
+        );
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

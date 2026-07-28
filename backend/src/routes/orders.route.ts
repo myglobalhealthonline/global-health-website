@@ -30,6 +30,11 @@ import {
 import { resolveCorporateDiscountsForItems } from "../modules/corporate/corporate-benefit.service.js";
 import { computeEffectivePrices } from "../modules/orders/effective-pricing.service.js";
 import {
+  computeOrderCommission,
+  findUnsellableCommissionLine,
+  isCommissionCountry,
+} from "../modules/orders/commission.service.js";
+import {
   assertOrderCountryScope,
   resolveOrderListCountryScope,
 } from "../utils/order-country-scope.js";
@@ -262,6 +267,23 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           }
         }
 
+        // Commission markets (Brazil): our fiscal document bills the commission,
+        // i.e. price − doctor payout, so every consultation line needs a payout
+        // configured before it can be sold. The cart already blocks this at
+        // add-to-cart; re-check here because an admin can un-set a payout in
+        // between, and because a merged guest cart bypasses that entry point.
+        const isCommissionOrder = await isCommissionCountry(cart.countryCode);
+        if (isCommissionOrder) {
+          const unsellable = await findUnsellableCommissionLine(cart.countryCode, cart.items);
+          if (unsellable) {
+            return reply.status(400).send(
+              errorResponse(
+                "That doctor is not available for this service right now. Please pick another doctor.",
+              ),
+            );
+          }
+        }
+
         // Create Order + OrderItems in one tx so a partial state is impossible
         const orderNumber = await generateOrderNumber();
         const txResult = await prisma.$transaction(async (tx) => {
@@ -337,6 +359,31 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             0,
           );
           const totalCents = subtotalCents + shippingCents;
+
+          // Commission markets: freeze the doctor payout and our commission onto
+          // the order now, at the final prices. A SNAPSHOT on purpose — the payout
+          // statement resolves payouts live, so an admin editing an amount later
+          // must not silently rewrite an already-issued fiscal document.
+          // Reads run on the pooled client rather than `tx`: payout config is
+          // reference data none of this transaction writes.
+          const commission = isCommissionOrder
+            ? await computeOrderCommission(
+                cart.items.map((i) => ({
+                  id: i.id,
+                  serviceId: i.serviceId,
+                  doctorId: i.doctorId,
+                  insuranceCompanyId: i.insuranceCompanyId,
+                  quantity: i.quantity,
+                  unitPriceCents: finalUnitPrice(i),
+                })),
+                shippingCents,
+                { countryCode: cart.countryCode },
+              )
+            : null;
+          const commissionByCartItemId = new Map(
+            (commission?.lines ?? []).map((l) => [l.id as string, l]),
+          );
+
           const created = await tx.order.create({
             data: {
               orderNumber,
@@ -349,6 +396,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               subtotalCents,
               shippingCents,
               totalCents,
+              // Null outside commission markets — "not applicable", not zero.
+              commissionTotalCents: commission?.commissionTotalCents ?? null,
+              doctorPayoutTotalCents: commission?.doctorPayoutTotalCents ?? null,
               shipName: body.data.shipName || null,
               shipLine1: body.data.shipLine1 || null,
               shipLine2: body.data.shipLine2 || null,
@@ -414,6 +464,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   insuranceCompanyId: i.insuranceCompanyId,
                   insurancePolicyNumber: i.insurancePolicyNumber,
                   insurancePriceCents: i.insuranceCompanyId ? finalUnitPrice(i) : null,
+                  // Commission-market snapshot (see the block above).
+                  doctorPayoutCents: commissionByCartItemId.get(i.id)?.doctorPayoutCents ?? null,
+                  commissionCents: commissionByCartItemId.get(i.id)?.commissionCents ?? null,
                 })),
               },
             },
@@ -553,12 +606,18 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         // Portugal: enrich the auto-created Stripe invoice with NIF + service
         // name so InvoiceExpress issues a complete invoice. Non-PT → plain
         // invoice_creation (Stripe's own invoice, no InvoiceExpress).
-        const invoiceCreation =
-          (await buildPtStripeInvoiceData(
-            cart.countryCode,
-            body.data.email,
-            order.items[0]?.name ?? "Medical Consultation",
-          )) ?? { enabled: true };
+        //
+        // Commission markets are the exception: Stripe's invoice would be for the
+        // FULL amount charged, directly contradicting the commission-only receipt
+        // we issue — and the patient can see both. Suppress it so our document is
+        // the only one.
+        const invoiceCreation = isCommissionOrder
+          ? { enabled: false }
+          : (await buildPtStripeInvoiceData(
+              cart.countryCode,
+              body.data.email,
+              order.items[0]?.name ?? "Medical Consultation",
+            )) ?? { enabled: true };
 
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
