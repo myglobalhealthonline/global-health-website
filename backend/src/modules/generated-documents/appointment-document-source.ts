@@ -11,7 +11,10 @@ import {
 } from "./generated-documents-fields.js";
 import { formatDateDdMmYyyy } from "./document-template-utils.js";
 import { labelsForPrefix } from "./docx-template-labels.js";
-import { templatePrefixForCountry } from "./docx-template-profiles.js";
+import {
+  labelPrefixForCountry,
+  templatePrefixForCountry,
+} from "./docx-template-profiles.js";
 
 function buildAddressBlock(
   appt: {
@@ -89,8 +92,10 @@ export async function resolveAppointmentDocumentSource(
   // Honorific matches the market the document is issued in ("Dr" in IE, "Dr."
   // in PT/ES/RO, "MUDr." in CZ). The Global Health fallback is the brand, not a
   // person, so it never takes one.
-  const templatePrefix = templatePrefixForCountry(appt.countryCode) ?? "IR";
-  const labels = labelsForPrefix(templatePrefix);
+  // Language, not stationery: BR has no Word template but its documents are
+  // still written in Portuguese. `labelPrefixForCountry` resolves the two
+  // separately — conflating them is what shipped Brazilian documents in English.
+  const labels = labelsForPrefix(labelPrefixForCountry(appt.countryCode));
   const doctorFullName = appt.doctor?.fullName?.trim();
   const doctorName = doctorFullName
     ? formatDoctorForDocument(doctorFullName, labels.doctorHonorific)
@@ -101,6 +106,7 @@ export async function resolveAppointmentDocumentSource(
     registration,
     appt.countryCode,
     labels.registrationNotOnFile,
+    labels.registrationUnverified,
   );
   const registrationLine = formatted.line;
   const registrationVerified = formatted.verified;

@@ -16,6 +16,32 @@ export function templatePrefixForCountry(countryCode: string): string | null {
   return COUNTRY_TO_TEMPLATE_PREFIX[countryCode.toLowerCase().trim()] ?? null;
 }
 
+/**
+ * Markets whose documents are localized but that have no Word template of their
+ * own, so they render through the HTML pipeline.
+ *
+ * Kept separate from COUNTRY_TO_TEMPLATE_PREFIX on purpose: adding `br` there
+ * would make `hasDocxTemplate` true and print Brazilian documents on the
+ * Portuguese clinic's Word template. Language and stationery are two different
+ * questions, and they were conflated — which is why every Brazilian document
+ * came out in English.
+ */
+const COUNTRY_TO_LABEL_PREFIX: Record<string, string> = {
+  br: "BR",
+};
+
+/**
+ * The label set a document for this country must be written in. Falls back to
+ * the country's Word-template prefix, then to IR (English) for a market with
+ * neither — so an unlisted country still produces a readable document rather
+ * than throwing, but a market we actually serve should be listed in one of the
+ * two maps.
+ */
+export function labelPrefixForCountry(countryCode: string): string {
+  const code = countryCode.toLowerCase().trim();
+  return COUNTRY_TO_LABEL_PREFIX[code] ?? COUNTRY_TO_TEMPLATE_PREFIX[code] ?? "IR";
+}
+
 /** Literal placeholder strings baked into the Word templates (use as-is). */
 export type DocxLiteralProfile = {
   prefix: string;

@@ -1,4 +1,10 @@
-/** Localized field labels + copy per template prefix (IR, PT, ES, CZ, RO). */
+/**
+ * Localized field labels + copy per label prefix (IR, PT, ES, CZ, RO, BR).
+ *
+ * A prefix is not always a Word-template prefix: BR has no .docx of its own and
+ * renders through the HTML pipeline, but its documents still have to be written
+ * in Portuguese. `labelPrefixForCountry` resolves the two independently.
+ */
 export type TemplateLabels = {
   patientName: string;
   birthDate: string;
@@ -10,6 +16,10 @@ export type TemplateLabels = {
   registration: string;
   /** Value printed after the registration label when none is on file. */
   registrationNotOnFile: string;
+  /** Parenthesised suffix when the registration number is not yet verified.
+   *  Localized because it prints inside the document body — a hardcoded
+   *  "(unverified)" was leaking English onto every non-English document. */
+  registrationUnverified: string;
   signatureLine: string;
   examsTitle: string;
   absenceTitle: string;
@@ -55,6 +65,7 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     doctorHonorific: "Dr",
     registration: "Medical registration",
     registrationNotOnFile: "not on file",
+    registrationUnverified: "unverified",
     signatureLine: "Prescriber signature",
     examsTitle: "Examinations requested",
     absenceTitle: "Medical absence period",
@@ -98,6 +109,7 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     doctorHonorific: "Dr.",
     registration: "Número de registo médico",
     registrationNotOnFile: "não consta",
+    registrationUnverified: "não verificado",
     signatureLine: "Assinatura do médico",
     examsTitle: "Exames solicitados",
     absenceTitle: "Período de incapacidade",
@@ -141,6 +153,7 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     doctorHonorific: "Dr.",
     registration: "Número de registro médico",
     registrationNotOnFile: "no consta",
+    registrationUnverified: "no verificado",
     signatureLine: "Firma del prescriptor",
     examsTitle: "Pruebas solicitadas",
     absenceTitle: "Período de baja médica",
@@ -185,6 +198,7 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     doctorHonorific: "MUDr.",
     registration: "Registrační číslo",
     registrationNotOnFile: "neuvedeno",
+    registrationUnverified: "neověřeno",
     signatureLine: "Podpis lékaře",
     examsTitle: "Požadovaná vyšetření",
     absenceTitle: "Pracovní neschopnost",
@@ -228,6 +242,7 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     doctorHonorific: "Dr.",
     registration: "Număr de înregistrare medicală",
     registrationNotOnFile: "nespecificat",
+    registrationUnverified: "neverificat",
     signatureLine: "Semnătura medicului",
     examsTitle: "Investigații solicitate",
     absenceTitle: "Concediu medical",
@@ -261,6 +276,56 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     docTitlePrescription: "Rețetă Medicală",
     absenceCertifiesPre: "Se certifică faptul că",
     absenceCertifiesPost: "este inapt(ă) de muncă sau studiu pentru perioada de mai jos.",
+  },
+  // Brazilian Portuguese. Not an alias of PT: the clinical vocabulary genuinely
+  // differs — a sick note is an "atestado médico" in BR and a "certificado de
+  // incapacidade" in PT, an address is "endereço" not "morada", and the
+  // registration is the CRM. BR has no Word template, so these labels drive the
+  // HTML documents (see labelPrefixForCountry).
+  BR: {
+    patientName: "Nome do paciente",
+    birthDate: "Data de nascimento",
+    address: "Endereço",
+    consultationDate: "Data da consulta",
+    doctorName: "Médico",
+    doctorHonorific: "Dr.",
+    registration: "Registro médico (CRM)",
+    registrationNotOnFile: "não informado",
+    registrationUnverified: "não verificado",
+    signatureLine: "Assinatura do médico",
+    examsTitle: "Exames solicitados",
+    absenceTitle: "Período de afastamento",
+    prescriptionTitle: "Prescrição",
+    additionalNotes: "Observações",
+    pharmacy: "Farmácia",
+    from: "De",
+    to: "Até",
+    reason: "Motivo",
+    patient: "Paciente",
+    consultation: "Consulta",
+    prescriber: "Médico prescritor",
+    attendingDoctor: "Médico assistente",
+    clinicalDocument: "Documento clínico",
+    issued: "Emitido em",
+    signed: "Assinado",
+    stamp: "Carimbo",
+    id: "ID",
+    date: "Data",
+    certificateDetails: "Dados do atestado",
+    documentSection: "Documento",
+    certificateId: "ID do atestado",
+    documentId: "ID do documento",
+    verifyHint: "Escaneie para verificar a autenticidade em myglobalhealth.online",
+    uploadTitle: "Envie seus resultados",
+    uploadHint: "Escaneie para enviar com segurança os resultados dos exames à Global Health",
+    confidentialNote:
+      "Este documento contém informações médicas confidenciais destinadas exclusivamente ao paciente identificado.",
+    docTitleAbsence: "Atestado Médico",
+    docTitleExams: "Solicitação de Exames",
+    docTitlePrescription: "Receita Médica",
+    absenceCertifiesPre: "Atesto que",
+    absenceCertifiesPost:
+      "esteve impossibilitado(a) de exercer suas atividades laborais ou escolares durante o período abaixo.",
   },
 };
 
