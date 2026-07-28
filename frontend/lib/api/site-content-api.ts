@@ -346,14 +346,33 @@ export async function fetchServiceDetail(
   );
 }
 
-/** Published SEO landing slugs for a country (feeds the sitemap). */
+export type PublicLandingSlug = {
+  slug: string;
+  updatedAt: string;
+  /** Resolved for `locale` (falls back to the country default). */
+  title: string | null;
+  /** Services this landing page points at — used to build the reverse link. */
+  serviceSlugs: string[];
+};
+
+/**
+ * Published SEO landing slugs for a country. Feeds the sitemap, and — with a
+ * `locale` — the related-topics block that gives these pages their only
+ * internal inbound links (they stay out of nav by design, Rule 6).
+ */
 export async function fetchLandingSlugs(
   countryCode: string,
+  locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
-  return apiRequest<{ landingPages: Array<{ slug: string; updatedAt: string }> }>(
-    `/api/public/countries/${encodeURIComponent(countryCode)}/landing-pages`,
-    { timeoutMs, revalidate: REVALIDATE_SECONDS, tags: [`landing:${countryCode}`] },
+  const query = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
+  return apiRequest<{ landingPages: PublicLandingSlug[] }>(
+    `/api/public/countries/${encodeURIComponent(countryCode)}/landing-pages${query}`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      tags: [`landing:${countryCode}`],
+    },
   );
 }
 

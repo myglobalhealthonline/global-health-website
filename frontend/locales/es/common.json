@@ -501,6 +501,7 @@
     "secureCheckoutFooter": "Pago seguro · pagos procesados por Stripe",
     "aboutService": "Sobre este servicio",
     "faqTitle": "Preguntas frecuentes",
+    "relatedTopicsTitle": "Temas de salud relacionados",
     "readyEyebrow": "Cuando tú quieras",
     "bookHeading": "Reservar {service} en {country}",
     "fromPricePrefix": "Desde {price} · ",

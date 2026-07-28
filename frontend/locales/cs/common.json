@@ -501,6 +501,7 @@
     "secureCheckoutFooter": "Bezpečná platba · platby zpracovává Stripe",
     "aboutService": "O této službě",
     "faqTitle": "Často kladené otázky",
+    "relatedTopicsTitle": "Související zdravotní témata",
     "readyEyebrow": "Připraveni, kdykoli vy",
     "bookHeading": "Objednat {service} v {country}",
     "fromPricePrefix": "Od {price} · ",

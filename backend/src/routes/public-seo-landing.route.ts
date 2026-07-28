@@ -12,15 +12,20 @@ const codeParam = z.string().trim().min(1).max(8);
 const localeQuery = z.object({ locale: z.nativeEnum(LocaleCode).optional() });
 
 const publicSeoLandingRoute: FastifyPluginAsync = async (app) => {
-  // Published landing slugs for a country — feeds the sitemap.
+  // Published landing slugs for a country — feeds the sitemap, and (with
+  // ?locale) the related-topics block on service pages.
   app.get<{ Params: { code: string } }>(
     "/api/public/countries/:code/landing-pages",
     async (request, reply) => {
       if (!codeParam.safeParse(request.params.code).success) {
         return reply.status(400).send(errorResponse("Invalid country code"));
       }
+      const listQuery = localeQuery.safeParse(request.query);
       try {
-        const pages = await listPublishedLandingSlugs(request.params.code.toLowerCase());
+        const pages = await listPublishedLandingSlugs(
+          request.params.code.toLowerCase(),
+          listQuery.success ? listQuery.data.locale : undefined,
+        );
         return okResponse({ landingPages: pages });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

@@ -516,6 +516,8 @@ export type CommonLocale = {
     secureCheckoutFooter: string;
     aboutService: string;
     faqTitle: string;
+    /** Heading over the links to `/health/*` landing pages for this service. */
+    relatedTopicsTitle: string;
     readyEyebrow: string;
     bookHeading: string;
     fromPricePrefix: string;

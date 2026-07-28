@@ -501,6 +501,7 @@
     "secureCheckoutFooter": "Secure checkout · payments processed by Stripe",
     "aboutService": "About this service",
     "faqTitle": "Frequently Asked Questions",
+    "relatedTopicsTitle": "Related health topics",
     "readyEyebrow": "Ready when you are",
     "bookHeading": "Book {service} in {country}",
     "fromPricePrefix": "From {price} · ",

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import Image from "next/image";
 import {
   ArrowLeft,
@@ -147,14 +148,19 @@ export default async function ServiceDetailPage({
   // Country-specific short medical disclaimer (admin-authored, per country);
   // falls back to the generic translated line when not set. Independent of
   // the doctor/service reads below — started together instead of sequentially.
-  const [{ short: shortDisclaimer }, generals, specialists, allDoctors] = await Promise.all([
-    getCountryDisclaimer(code, lang),
-    // Clinicians assigned to this service — surfaced as a credibility strip
-    // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
-    getCountryServices(code, "GENERAL", lang),
-    getCountryServices(code, "SPECIALIST", lang),
-    getCountryDoctors(code, lang),
-  ]);
+  const [{ short: shortDisclaimer }, generals, specialists, allDoctors, landingRes] =
+    await Promise.all([
+      getCountryDisclaimer(code, lang),
+      // Clinicians assigned to this service — surfaced as a credibility strip
+      // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
+      getCountryServices(code, "GENERAL", lang),
+      getCountryServices(code, "SPECIALIST", lang),
+      getCountryDoctors(code, lang),
+      // SEO landing pages that point AT this service. They are kept out of nav
+      // and the service hub by design (Rule 6), so this is their only internal
+      // inbound link — without it Google left all 90 of them unindexed.
+      fetchLandingSlugs(code, lang).catch(() => null),
+    ]);
   const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", config.name);
   const serviceCard =
     generals.find((s) => s.slug === serviceSlug) ??
@@ -162,6 +168,12 @@ export default async function ServiceDetailPage({
   const assignedIds = new Set(serviceCard?.assignedDoctorIds ?? []);
   const assignedDoctors =
     assignedIds.size > 0 ? allDoctors.filter((d) => assignedIds.has(d.id)).slice(0, 3) : [];
+
+  // Capped at 4 to match the spec's max-boxes rule — a link dump would defeat
+  // the point of keeping these pages off the hub in the first place.
+  const relatedTopics = (landingRes?.ok ? landingRes.data.landingPages : [])
+    .filter((p) => p.title && p.serviceSlugs.includes(serviceSlug))
+    .slice(0, 4);
 
   // Named clinical reviewer for the E-E-A-T byline + schema — the country's
   // admin-flagged "Clinical Director" (CountryDoctorCard.isFeatured, same
@@ -575,6 +587,34 @@ export default async function ServiceDetailPage({
 
       {detail.faqs.length > 0 ? (
         <FAQSection title={t.faqTitle} items={detail.faqs} />
+      ) : null}
+
+      {relatedTopics.length > 0 ? (
+        <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <h2
+              className="font-extrabold tracking-[-0.02em] leading-tight"
+              style={{
+                fontSize: "clamp(1.25rem, 1.5vw + 0.75rem, 1.75rem)",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {t.relatedTopicsTitle}
+            </h2>
+            <ul className="mt-4 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
+              {relatedTopics.map((topic) => (
+                <li key={topic.slug}>
+                  <Link
+                    href={`/${country}/${lang}/health/${topic.slug}`}
+                    className="inline-flex min-h-11 items-center font-semibold text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
+                  >
+                    {topic.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       ) : null}
 
       {/* Doctify social proof — compact verified-rating strip */}

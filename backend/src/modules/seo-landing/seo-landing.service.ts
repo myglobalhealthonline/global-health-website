@@ -41,6 +41,24 @@ function mapAdmin(row: AdminRow) {
   };
 }
 
+/**
+ * Service slugs a landing page points at: the explicit `ctaService` plus any
+ * `/…/services/<slug>` found in its `related` links. Both are needed — seeded
+ * Ireland content sets only `related`, later admin edits set only `ctaService`.
+ */
+export function landingServiceSlugs(
+  template: SeoLandingUpsertBody["template"] | null | undefined,
+): string[] {
+  const slugs = new Set<string>();
+  const cta = template?.ctaService?.trim();
+  if (cta) slugs.add(cta);
+  for (const link of template?.related ?? []) {
+    const match = /\/services\/([A-Za-z0-9-]+)/.exec(link?.href ?? "");
+    if (match) slugs.add(match[1]);
+  }
+  return [...slugs];
+}
+
 export async function listAdminLandingPages(countryId: string) {
   try {
     const country = await prisma.country.findUnique({
@@ -172,14 +190,48 @@ export const resolveLandingPageCountry = createResolveLandingPageCountry();
 export const deleteLandingPage = createDeleteLandingPage();
 
 /** Public: published landing slugs for a country (sitemap + nav exclusion). */
-export async function listPublishedLandingSlugs(countryCode: string) {
+/**
+ * Public: published landing slugs for a country.
+ *
+ * Feeds the sitemap (slug + updatedAt) and the "related health topics" block
+ * on service pages. The landing pages are deliberately absent from nav and the
+ * service-listing hub (see docs/plans/ireland-internal-linking-seo.md, Rule 6),
+ * so a service-page backlink is their ONLY internal entry point — without it
+ * all 90 sat in the sitemap with zero inbound links and went unindexed.
+ *
+ * `serviceSlugs` is every service the page already points AT — the template's
+ * `ctaService` plus the slugs in its `related` hrefs (production content uses
+ * the latter). Returning it lets a service page invert the relation instead of
+ * guessing at one. `title` resolves through the country default locale so an
+ * untranslated page still yields a usable anchor.
+ */
+export async function listPublishedLandingSlugs(countryCode: string, locale?: LocaleCode) {
   try {
     const pages = await prisma.seoLandingPage.findMany({
       where: { isPublished: true, country: { code: countryCode, isActive: true } },
       orderBy: [{ sortOrder: "asc" }, { slug: "asc" }],
-      select: { slug: true, updatedAt: true },
+      select: {
+        slug: true,
+        updatedAt: true,
+        template: true,
+        country: { select: { defaultLocale: true } },
+        translations: { select: { locale: true, title: true } },
+      },
     });
-    return pages.map((p) => ({ slug: p.slug, updatedAt: p.updatedAt.toISOString() }));
+    return pages.map((p) => {
+      const { tr } = resolveTranslation(
+        p.translations,
+        locale ?? p.country.defaultLocale,
+        p.country.defaultLocale,
+      );
+      const template = p.template as SeoLandingUpsertBody["template"];
+      return {
+        slug: p.slug,
+        updatedAt: p.updatedAt.toISOString(),
+        title: tr?.title ?? null,
+        serviceSlugs: landingServiceSlugs(template),
+      };
+    });
   } catch (error) {
     throw normalizeDbError(error, "Landing pages are unavailable");
   }
