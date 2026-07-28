@@ -1,16 +1,19 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { SectionSeam } from "@/components/ui/SectionSeam";
-import { SHARE_COPY } from "@/app/(global)/brazil/dr-renato/copy";
+import {
+  isShareLocale,
+  SHARE_COPY,
+} from "@/app/[country]/[lang]/dr-renato/copy";
 
 /**
  * Doctors who have a hand-shareable, non-indexed patient page (`noindex`, out
- * of the sitemap). Keyed by doctor slug → page path. One entry today; the map
- * is what keeps the two call sites (his profile, the country GP page) from
- * hardcoding a doctor.
+ * of the sitemap). Keyed by doctor slug → the page's path segment under
+ * `/[country]/[lang]/`. One entry today; the map is what keeps the two call
+ * sites (his profile, the country GP page) from hardcoding a doctor.
  */
 export const DOCTOR_SHARE_PAGES: Record<string, string> = {
-  "dr-renato-sarmento": "/brazil/dr-renato",
+  "dr-renato-sarmento": "dr-renato",
 };
 
 /**
@@ -20,19 +23,22 @@ export const DOCTOR_SHARE_PAGES: Record<string, string> = {
  */
 export function DoctorSharePageLink({
   doctorSlug,
+  countrySlug,
   lang,
   theme = "light",
 }: {
   doctorSlug: string;
-  /** Page locale; anything other than `pt` gets the English variant. */
+  /** Country slug of the page holding this link, e.g. "brazil". */
+  countrySlug: string;
+  /** Page locale. Locales the share page has no copy for read English. */
   lang: string;
   theme?: "light" | "dark";
 }) {
-  const path = DOCTOR_SHARE_PAGES[doctorSlug];
-  if (!path) return null;
-  const locale = lang === "pt" ? "pt" : "en";
+  const segment = DOCTOR_SHARE_PAGES[doctorSlug];
+  if (!segment) return null;
+  const locale = isShareLocale(lang) ? lang : "en";
   const t = SHARE_COPY[locale];
-  const href = locale === "pt" ? path : `${path}?lang=en`;
+  const href = `/${countrySlug}/${locale}/${segment}`;
   const dark = theme === "dark";
 
   return (

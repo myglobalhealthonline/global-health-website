@@ -375,7 +375,7 @@ export default async function CountryLangGeneralConsultationPage({
       {doctors
         .filter((d) => DOCTOR_SHARE_PAGES[d.slug])
         .map((d) => (
-          <DoctorSharePageLink key={d.slug} doctorSlug={d.slug} lang={lang} theme="light" />
+          <DoctorSharePageLink key={d.slug} doctorSlug={d.slug} countrySlug={slug} lang={lang} theme="light" />
         ))}
 
       {page?.sections.whyChoose ? (
