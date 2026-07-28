@@ -112,6 +112,20 @@ if (buildCpus * buildApiConcurrency >= BACKEND_POOL_MAX) {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // `/api/og` imports sharp. Under pnpm, sharp's native binding lives in
+  // `@img/sharp-<platform>` and the libvips shared object in a SEPARATE
+  // sibling package (`@img/sharp-libvips-<platform>`); standalone file
+  // tracing only follows the first one. The Docker runner ships nothing but
+  // the standalone output, so on Linux the route died at import with
+  // `ERR_DLOPEN_FAILED: libvips-cpp.so.8.18.3` -> every og:image URL a
+  // crawler fetched returned 500. Never reproduces on Windows/macOS, where
+  // libvips is bundled inside the single platform package.
+  // Both layouts are listed on purpose: pnpm flattens the scope into the
+  // virtual-store directory name (`.pnpm/@img+sharp-linux-x64@0.35.3/...`),
+  // while the symlink farm exposes the same files as `node_modules/@img/...`.
+  outputFileTracingIncludes: {
+    "/api/og": ["./node_modules/.pnpm/@img*/**/*", "./node_modules/@img/**/*"],
+  },
   // Drop `X-Powered-By: Next.js` — free framework fingerprint for anyone
   // scanning the site (flagged by an external scan). No behaviour change.
   poweredByHeader: false,

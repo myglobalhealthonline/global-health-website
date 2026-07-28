@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import sharp from "sharp";
+import type SharpModule from "sharp";
 import { SITE_NAME } from "@/lib/constants";
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, type OgImageKind } from "@/lib/seo/og-image";
 import { getOgLabel } from "@/lib/seo/og-labels";
@@ -13,6 +13,23 @@ const MAX_IMAGE_BYTES = 1024 * 1024;
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const KINDS = new Set<OgImageKind>(["page", "country", "service", "doctor", "article", "pricing", "corporate", "legal"]);
 export const runtime = "nodejs";
+
+// sharp is a native module: on a platform where its libvips binding is
+// missing it throws at import time, which used to take the whole route down
+// with a 500 (see the outputFileTracingIncludes note in next.config.ts).
+// Loading it lazily keeps the branded card renderable without it — degraded
+// (larger PNG, no remote portraits) instead of no OG image at all.
+let sharpModule: typeof SharpModule | null | undefined;
+async function loadSharp(): Promise<typeof SharpModule | null> {
+  if (sharpModule === undefined) {
+    try {
+      sharpModule = (await import("sharp")).default;
+    } catch {
+      sharpModule = null;
+    }
+  }
+  return sharpModule;
+}
 
 function bounded(value: string | null, maximum: number): string | undefined {
   if (!value) return undefined;
@@ -79,6 +96,7 @@ async function loadImage(
     fit?: "cover" | "contain";
     format?: "jpeg" | "png";
   },
+  trusted = false,
 ): Promise<string | undefined> {
   if (!url) return undefined;
   const controller = new AbortController();
@@ -94,6 +112,14 @@ async function loadImage(
     // Decode before handing bytes to ImageResponse. Its WASM renderer can
     // abort the entire request on a malformed or incompatible remote image.
     // Re-encoding gives it one known-safe format and also downsizes portraits.
+    const sharp = await loadSharp();
+    // Without sharp only our own assets are safe to pass through unchecked;
+    // an arbitrary remote portrait is exactly what the re-encode guards.
+    // WebP is excluded even when trusted — satori decodes PNG/JPEG only, so
+    // the og-background would abort the render it is meant to decorate.
+    if (!sharp) {
+      return trusted && (type === "image/png" || type === "image/jpeg") ? dataUrl(bytes, type) : undefined;
+    }
     let pipeline = sharp(bytes).rotate();
     if (options) {
       pipeline = pipeline.resize(options.width, options.height, {
@@ -200,14 +226,14 @@ export async function GET(request: Request): Promise<Response> {
   const locale = bounded(requestUrl.searchParams.get("locale"), 35);
   const sourceUrl = approvedSource(bounded(requestUrl.searchParams.get("image"), 2_048));
   const [background, source, logo] = await Promise.all([
-    loadImage(new URL("/social/og-background.webp", getSiteUrl())),
+    loadImage(new URL("/social/og-background.webp", getSiteUrl()), undefined, true),
     loadImage(sourceUrl, { width: 430, height: 526 }),
     loadImage(new URL("/logos/global-health-light.png", getSiteUrl()), {
       width: 440,
       height: 286,
       fit: "contain",
       format: "png",
-    }),
+    }, true),
   ]);
   const props = { kind, title, subtitle, locale, background, source, logo };
   let rendered: Uint8Array;
@@ -216,14 +242,17 @@ export async function GET(request: Request): Promise<Response> {
   } catch {
     rendered = await renderCard({ ...props, source: undefined });
   }
-  const optimized = await sharp(rendered)
-    .jpeg({ quality: 84, mozjpeg: true, chromaSubsampling: "4:2:0" })
-    .toBuffer();
+  const sharp = await loadSharp();
+  const optimized: Uint8Array<ArrayBuffer> = sharp
+    ? new Uint8Array(
+        await sharp(rendered).jpeg({ quality: 84, mozjpeg: true, chromaSubsampling: "4:2:0" }).toBuffer(),
+      )
+    : new Uint8Array(rendered);
 
-  return new Response(new Uint8Array(optimized), {
+  return new Response(optimized, {
     headers: {
       "Cache-Control": CACHE_CONTROL,
-      "Content-Type": "image/jpeg",
+      "Content-Type": sharp ? "image/jpeg" : "image/png",
       "X-Content-Type-Options": "nosniff",
     },
   });
