@@ -157,6 +157,7 @@ export const SHARE_COPY: Record<ShareLocale, Copy> = {
     ],
     noticeTitle: "Aviso importante",
     noticeParagraphs: [
+      "A Global Health é uma plataforma de telemedicina operada a partir da Irlanda. Os médicos da rede exercem a medicina de forma independente e são os únicos responsáveis pelas suas decisões clínicas. No Brasil, a Global Health não atua como clínica médica: atua exclusivamente como intermediária de serviços prestados por profissionais habilitados e devidamente registrados nos respectivos conselhos.",
       "O valor da consulta cobre apenas o atendimento com o médico registrado no Brasil. A análise documental além-fronteiras é um serviço separado e independente, prestado por médicos Global Health registrados localmente, sujeito à avaliação clínica deles e à regulamentação local aplicável. A Global Health não garante a emissão de qualquer receita, atestado ou documento clínico como resultado de nenhum dos dois serviços.",
       "Em qualquer situação urgente ou de emergência, não utilize este serviço. Procure imediatamente o serviço de emergência local.",
     ],
@@ -259,6 +260,7 @@ export const SHARE_COPY: Record<ShareLocale, Copy> = {
     ],
     noticeTitle: "Important notice",
     noticeParagraphs: [
+      "Global Health is a telemedicine platform operated from Ireland. The physicians in our network practise independently and are solely responsible for their own clinical decisions. In Brazil, Global Health does not operate as a medical clinic: it acts only as an intermediary for services delivered by qualified practitioners registered with their respective medical councils.",
       "The consultation fee covers your appointment with a Brazil-registered physician only. The cross-border document review is a separate, independent service provided by locally registered Global Health physicians, subject to their clinical assessment and applicable local regulations. Global Health does not guarantee the issuance of any prescription, certificate, or clinical document as a result of either service.",
       "In any urgent or emergency situation, do not use this service. Contact your local emergency services immediately.",
     ],
