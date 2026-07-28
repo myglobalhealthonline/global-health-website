@@ -24,7 +24,12 @@ import { newestTimestamp } from "@/lib/seo/newest-timestamp";
  *   • The global entry `/` — it's a country picker, not a content target.
  *   • The country root `/{country}` — redirects to `/{country}/{defaultLocale}`.
  *   • Auth + account routes.
- *   • Every legacy Wix slug (handled by proxy 308s and disallowed in robots.txt).
+ *   • Every legacy Wix slug — kept out of the sitemap, but served by proxy
+ *     308s to their new URL. They are deliberately NOT disallowed in
+ *     robots.txt: Googlebot has to crawl a legacy URL to see the 308, and
+ *     those URLs still hold the ranking equity from the Wix site (they out-
+ *     rank their own targets today). Blocking them would strand that equity
+ *     permanently, so leave robots.txt alone.
  */
 // Rendered at request time: the detail-page entries (doctors, services,
 // lab tests, landing pages, blog) come from the backend API, which is not
