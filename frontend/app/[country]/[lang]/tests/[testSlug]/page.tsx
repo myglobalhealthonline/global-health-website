@@ -102,7 +102,8 @@ export default async function HealthTestDetailPage({
   const soldOut = detail.stock !== null && detail.stock <= 0;
   const lowStock = !soldOut && detail.stock !== null && detail.stock <= 5 ? detail.stock : null;
   const priceLabel = formatPriceRounded(detail.priceCents, detail.currencyCode);
-  const backHref = `/${country}/${lang}/tests`;
+  // Canonical public path — `/tests/…` is only the internal rewrite target.
+  const backHref = `/${country}/${lang}/lab-tests`;
   const intro = stripHtml(detail.detailIntro) ?? stripHtml(detail.shortDescription);
 
   const { common: c, subscription } = loadLocaleBundle(lang as LocaleCode);
@@ -125,7 +126,7 @@ export default async function HealthTestDetailPage({
           { name: "Home", url: "/" },
           { name: config.name, url: `/${country}/${lang}` },
           { name: "Lab tests", url: backHref },
-          { name: detail.title, url: `/${country}/${lang}/tests/${testSlug}` },
+          { name: detail.title, url: `/${country}/${lang}/lab-tests/${testSlug}` },
         ])}
       />
 

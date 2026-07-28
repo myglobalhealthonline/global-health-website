@@ -130,7 +130,11 @@ export default async function HealthTestsPage({
           data={catalogueItemListJsonLd(
             items.map((item) => ({
               name: item.title,
-              url: `/${slug}/${lang}/tests/${item.slug}`,
+              // `/lab-tests/…` is the canonical, sitemapped URL; `/tests/…` is
+              // only the internal rewrite target (see next.config.ts). Linking
+              // the rewrite target left every canonical test URL with zero
+              // inbound links.
+              url: `/${slug}/${lang}/lab-tests/${item.slug}`,
             })),
           )}
         />
@@ -242,7 +246,7 @@ export default async function HealthTestsPage({
                     resultsTimeline={t.resultsTimeline}
                     startingPrice={priceLabel}
                     ctaLabel={c.testDetailPage.addToCart.replace("{price}", priceLabel)}
-                    detailHref={`/${slug}/${lang}/tests/${t.slug}`}
+                    detailHref={`/${slug}/${lang}/lab-tests/${t.slug}`}
                     soldOut={soldOut}
                     lowStock={lowStock}
                     iconVariant="flask"
