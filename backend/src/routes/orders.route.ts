@@ -621,13 +621,19 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
 
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
-          payment_method_types: ["card"],
+          payment_method_types:
+            cart.countryCode?.toLowerCase() === "pt"
+              ? ["card", "mb_way", "multibanco"]
+              : ["card"],
           customer_email: body.data.email,
           client_reference_id: order.id,
           line_items: lineItems,
           success_url: successUrl,
           cancel_url: cancelUrl,
           invoice_creation: invoiceCreation,
+          ...(cart.countryCode?.toLowerCase() === "pt"
+            ? { phone_number_collection: { enabled: true } }
+            : {}),
           // Global Health branding: pin the page language to the order's market
           // and add the trust line above the pay button.
           ...(await checkoutBranding(cart.countryCode)),

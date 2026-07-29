@@ -824,9 +824,15 @@ export async function createManualBooking(
       const cancelUrl = `${baseUrl}${returnBase}?orderId=${order.id}&payment=cancelled`;
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        payment_method_types: ["card"],
+        payment_method_types:
+          input.countryCode?.toLowerCase() === "pt"
+            ? ["card", "mb_way", "multibanco"]
+            : ["card"],
         customer_email: email,
         client_reference_id: order.id,
+        ...(input.countryCode?.toLowerCase() === "pt"
+          ? { phone_number_collection: { enabled: true } }
+          : {}),
         line_items: [
           {
             quantity: 1,
