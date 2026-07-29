@@ -20,6 +20,7 @@ export type InvoiceStrings = {
   step1Title: string;
   step1Desc: string;
   month: string;
+  statementLanguage: string;
   excel: string;
   pdf: string;
   step2Title: string;
@@ -33,6 +34,18 @@ export type InvoiceStrings = {
   nothingUploaded: string;
   download: string;
 };
+
+/** Native display name — shown regardless of the doctor's portal UI locale,
+ *  same list every time, so the language the STATEMENT comes out in is
+ *  never ambiguous. */
+const STATEMENT_LANGUAGES: Array<{ code: string; name: string }> = [
+  { code: "en", name: "English" },
+  { code: "pt", name: "Português" },
+  { code: "es", name: "Español" },
+  { code: "cs", name: "Čeština" },
+  { code: "ro", name: "Română" },
+  { code: "de", name: "Deutsch" },
+];
 
 /**
  * Doctor payout workflow, in one card:
@@ -79,8 +92,18 @@ function fmtSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function PayoutInvoicePanel({ strings }: { strings: InvoiceStrings }) {
+export function PayoutInvoicePanel({
+  strings,
+  defaultLocale = "en",
+}: {
+  strings: InvoiceStrings;
+  /** Doctor's portal UI locale — just the initial pick; the doctor can pick
+   *  a different statement language regardless (e.g. read the portal in
+   *  English, hand a Portuguese statement to their accountant). */
+  defaultLocale?: string;
+}) {
   const [statementMonth, setStatementMonth] = useState(lastMonth());
+  const [statementLocale, setStatementLocale] = useState(defaultLocale);
   const [uploadMonth, setUploadMonth] = useState(lastMonth());
   const [items, setItems] = useState<UploadItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,7 +134,13 @@ export function PayoutInvoicePanel({ strings }: { strings: InvoiceStrings }) {
   async function downloadStatement(format: "excel" | "pdf") {
     setError(null);
     const { from, to } = monthRange(statementMonth);
-    const params = new URLSearchParams({ dataset: "payout", format, from, to });
+    const params = new URLSearchParams({
+      dataset: "payout",
+      format,
+      from,
+      to,
+      locale: statementLocale,
+    });
     try {
       await fetchDownload(`/api/doctor/reports/export?${params.toString()}`);
     } catch (e) {
@@ -177,6 +206,20 @@ export function PayoutInvoicePanel({ strings }: { strings: InvoiceStrings }) {
               onChange={(e) => setStatementMonth(e.target.value)}
               className="gh-input"
             />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">{strings.statementLanguage}</span>
+            <select
+              value={statementLocale}
+              onChange={(e) => setStatementLocale(e.target.value)}
+              className="gh-select"
+            >
+              {STATEMENT_LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.name}
+                </option>
+              ))}
+            </select>
           </label>
           <button type="button" onClick={() => downloadStatement("excel")} className="gh-btn gh-btn-soft text-sm">
             <FileSpreadsheet className="size-3.5" /> {strings.excel}
