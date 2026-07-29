@@ -514,9 +514,17 @@ const nextConfig: NextConfig = {
         destination: "/:country/:lang/see-a-specialist",
         permanent: true,
       },
+      // The `online-prescriptions` feature flag is OFF in every market (Ads
+      // compliance — the public site is GP-only), so
+      // `/repeat-prescription-request` 404s everywhere and any redirect aimed
+      // at it is a 308→404 chain that keeps the old URL in Google's index as
+      // an error instead of consolidating it. Point the aliases at the GP page
+      // (200 in all six markets) until the flag is turned back on; the
+      // canonical `/repeat-prescription-request` rewrite above is untouched, so
+      // re-enabling the feature only means reverting these two destinations.
       {
         source: "/:country/:lang/prescriptions",
-        destination: "/:country/:lang/repeat-prescription-request",
+        destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       {
@@ -537,7 +545,8 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/:country/:lang/repeat-prescription",
-        destination: "/:country/:lang/repeat-prescription-request",
+        // See the note above — flag off site-wide, so this would 308→404.
+        destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       // Ireland internal-linking slug migration (per the internal-linking spec).
@@ -599,7 +608,7 @@ const nextConfig: NextConfig = {
       { source: "/partner-clinics", destination: "/", permanent: true },
       { source: "/category/:slug", destination: "/", permanent: true },
       { source: "/pricing-plans/list", destination: "/ireland/en/pricing", permanent: true },
-      { source: "/online-prescription", destination: "/ireland/en/repeat-prescription-request", permanent: true },
+      { source: "/online-prescription", destination: "/ireland/en/gp-consultation-online", permanent: true },
       { source: "/home-health-test", destination: "/ireland/en/lab-tests", permanent: true },
       { source: "/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
       { source: "/booking-calendar", destination: "/ireland/en/book", permanent: true },
@@ -610,7 +619,10 @@ const nextConfig: NextConfig = {
       { source: "/home-cz", destination: "/czechia/cs", permanent: true },
       { source: "/czechia-team", destination: "/czechia/cs/doctors", permanent: true },
       { source: "/general-consultation-cz", destination: "/czechia/cs/gp-consultation-online", permanent: true },
-      { source: "/specialty-cz", destination: "/czechia/cs/see-a-specialist", permanent: true },
+      // Czechia has `specialist-consultations` disabled, so
+      // /czechia/cs/see-a-specialist 404s (every other market's does not).
+      // Send these to the country hub rather than into a 404.
+      { source: "/specialty-cz", destination: "/czechia/cs", permanent: true },
       { source: "/home-pt", destination: "/portugal/pt", permanent: true },
       { source: "/portugal-team", destination: "/portugal/pt/doctors", permanent: true },
       { source: "/general-consultation-pt", destination: "/portugal/pt/gp-consultation-online", permanent: true },
@@ -707,6 +719,65 @@ const nextConfig: NextConfig = {
       { source: "/corporate-plans", destination: "/ireland/en/pricing", permanent: true },
       { source: "/return-and-refund-policy", destination: "/privacy", permanent: true },
       { source: "/copy-of-privacy-policy", destination: "/privacy", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/copy-of-privacy-policy", destination: "/privacy", permanent: true },
+
+      // ── GSC 90-day legacy sweep (2026-07-28) ──────────────────────────
+      // Every pre-migration URL Google still shows impressions for was
+      // re-tested against production: 410 redirected cleanly, 61 died. 35 of
+      // those were redirects aimed at pages the feature flags had since taken
+      // offline (fixed above). These are the other 26 — legacy families that
+      // never had a rule at all. Left alone they are 404s absorbing 1,552
+      // impressions/90d, the single largest of them being /term-and-conditions
+      // at 1,164.
+
+      // Wix used the singular "term". 1,164 impressions, position 7.8 — by
+      // some distance the most valuable dead URL on the site.
+      { source: "/term-and-conditions", destination: "/terms", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/term-and-conditions", destination: "/terms", permanent: true },
+
+      // Locale-prefixed forms of country hubs that only had bare rules.
+      { source: "/:locale(cs|es|pt|ro)/specialty-ie", destination: "/ireland/en/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/specialty-pt", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/specialty-sp", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/specialty-rm", destination: "/romania/ro/see-a-specialist", permanent: true },
+      // Czechia has specialist-consultations disabled — hub, not a 404.
+      { source: "/:locale(cs|es|pt|ro)/specialty-cz", destination: "/czechia/cs", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/general-consultation-ie", destination: "/ireland/en/gp-consultation-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/general-consultation-pt", destination: "/portugal/pt/gp-consultation-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/general-consultation-sp", destination: "/spain/es/gp-consultation-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/general-consultation-cz", destination: "/czechia/cs/gp-consultation-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/czechia-team", destination: "/czechia/cs/doctors", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/online-prescription", destination: "/ireland/en/gp-consultation-online", permanent: true },
+
+      // The bare form existed for every other market; Portugal's was missing,
+      // as was the "-1" duplicate section Wix created.
+      { source: "/portugal-specialist-consultations/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/portugal-specialist-consultations-1/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal-specialist-consultations-1/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
+
+      // Wix's `/{locale}/{country}/{service}` pages. One exact mapping for the
+      // Spain aesthetic-medicine page (228 impressions, and a live equivalent
+      // exists); the rest go to that country's specialist hub, which is the
+      // closest live intent — a dead-end 404 helps nobody.
+      {
+        source: "/:locale(cs|es|pt|ro)/spain/aesthetic-medicine-online-consultation",
+        destination: "/spain/es/services/consulta-online-medicina-estetica",
+        permanent: true,
+      },
+      { source: "/:locale(cs|es|pt|ro)/spain/:slug", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/czechia/:slug", destination: "/czechia/cs", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/romania/:slug", destination: "/romania/ro/see-a-specialist", permanent: true },
+
+      // Remaining one-offs the sweep turned up.
+      { source: "/:locale(cs|es|pt|ro)/blog", destination: "/blog", permanent: true },
+      { source: "/booking-calendar/:slug", destination: "/ireland/en/book", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/booking-calendar/:slug", destination: "/ireland/en/book", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
+      // Top-level /services/<slug> only — the live pages are
+      // /{country}/{lang}/services/<slug>, which this cannot match.
+      { source: "/services/:slug", destination: "/ireland/en/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/privacy", destination: "/privacy", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/about", destination: "/about", permanent: true },
       { source: "/frequent-asked-questions", destination: "/faq", permanent: true },
@@ -720,15 +791,15 @@ const nextConfig: NextConfig = {
       // -- Ireland partner-clinic / prescriptions / service-page ----------
       { source: "/ireland-partner-clinic/:slug", destination: "/ireland/en", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/ireland-partner-clinic/:slug", destination: "/ireland/en", permanent: true },
-      { source: "/online-prescriptions/:slug", destination: "/ireland/en/repeat-prescription-request", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/online-prescriptions/:slug", destination: "/ireland/en/repeat-prescription-request", permanent: true },
+      { source: "/online-prescriptions/:slug", destination: "/ireland/en/gp-consultation-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/online-prescriptions/:slug", destination: "/ireland/en/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/service-page/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
 
       // -- specialist-consultation hubs (locale-prefixed + missing bares) -
       { source: "/:locale(cs|es|pt|ro)/ireland-specialist-consultations/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/portugal-specialist-consultations/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
-      { source: "/czechia-specialist-consultations/:slug", destination: "/czechia/cs/see-a-specialist", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/czechia-specialist-consultations/:slug", destination: "/czechia/cs/see-a-specialist", permanent: true },
+      { source: "/czechia-specialist-consultations/:slug", destination: "/czechia/cs", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/czechia-specialist-consultations/:slug", destination: "/czechia/cs", permanent: true },
       { source: "/spain-specialist-consultations/:slug", destination: "/spain/es/see-a-specialist", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/spain-specialist-consultations/:slug", destination: "/spain/es/see-a-specialist", permanent: true },
 
@@ -765,7 +836,7 @@ const nextConfig: NextConfig = {
       { source: "/es/ireland/mental-health-assessment-consultation", destination: "/ireland/en/see-a-specialist", permanent: true },
 
       // -- Czech-language legacy paths (Wix "czech-republic" section) -----
-      { source: "/czech-republic/:slug", destination: "/czechia/cs/see-a-specialist", permanent: true },
+      { source: "/czech-republic/:slug", destination: "/czechia/cs", permanent: true },
 
       // -- misc content families -------------------------------------------
       { source: "/home-health-tests-1/:slug", destination: "/ireland/en/lab-tests", permanent: true },
