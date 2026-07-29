@@ -205,6 +205,7 @@ export function DoctorTeamTemplate({
                 {paged.map((d) => (
                   <li key={(d.href ?? "") + d.name}>
                     <DoctorCard
+                      titleAs="h2"
                       name={d.name}
                       title={d.title}
                       imcRegistration={d.imcRegistration}

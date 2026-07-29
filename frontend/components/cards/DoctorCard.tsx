@@ -93,6 +93,11 @@ type DoctorCardProps = {
    *  `common.doctors`. Required — these used to be English literals baked
    *  into the card, so every non-en page rendered them untranslated. */
   cardI18n: DoctorCardI18n;
+  /** Heading level for the doctor's name. Defaults to h3, correct wherever the
+   *  card grid sits under a section <h2>. The doctors directory renders its
+   *  grid directly under the page <h1> with no section heading above it, so it
+   *  passes "h2" to avoid skipping a level. */
+  titleAs?: "h2" | "h3";
 };
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
@@ -127,6 +132,7 @@ export function DoctorCard({
   dark = false,
   viewProfileAriaLabel,
   cardI18n,
+  titleAs: NameHeading = "h3",
 }: DoctorCardProps) {
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
@@ -256,12 +262,12 @@ export function DoctorCard({
       <div className="relative z-[1] flex flex-1 flex-col px-5 pb-5 pt-4">
 
         {/* Name — dark green, extrabold */}
-        <h3
+        <NameHeading
           className="text-[1.1rem] font-extrabold tracking-[-0.015em] leading-snug"
           style={{ color: "var(--dc-ink)" }}
         >
           {name}
-        </h3>
+        </NameHeading>
 
         {/* Metadata rows */}
         <div className="mt-4 space-y-3">

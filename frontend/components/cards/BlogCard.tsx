@@ -86,9 +86,12 @@ export function BlogCard({
           ) : null}
         </div>
 
-        <h3 className="mt-3 text-xl font-extrabold tracking-[-0.015em] leading-snug text-[var(--color-text-primary)] sm:text-2xl">
+        {/* h2, not h3 — the blog index renders this grid directly under the
+            page <h1> with no intervening section heading, so h3 would skip a
+            level. Single call site (blog-index-page.tsx), hence no prop. */}
+        <h2 className="mt-3 text-xl font-extrabold tracking-[-0.015em] leading-snug text-[var(--color-text-primary)] sm:text-2xl">
           {title}
-        </h3>
+        </h2>
 
         <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
           {excerpt}
