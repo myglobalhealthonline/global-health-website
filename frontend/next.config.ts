@@ -417,7 +417,10 @@ const nextConfig: NextConfig = {
         "medical-consultation": "consulta-medica",
         "mens-health-consultation": "saude-do-homem",
         "mental-health-consultation": "saude-mental",
-        "nutrition-consultation": "consulta-de-nutricao",
+        // NOTE: no `nutrition-consultation` entry — the renamed PT slug
+        // (`consulta-de-nutricao`) has no live Service row, so a rule aimed at
+        // it is a 308→404. Both spellings get an explicit hub rule further
+        // down instead.
         "oncology-consultation": "consulta-de-oncologia",
         "paediatric-primary-care-consultation": "pediatria-geral",
         "pain-management-consultation": "gestao-da-dor",
@@ -471,27 +474,38 @@ const nextConfig: NextConfig = {
         "womens-health-romania": "sanatatea-femeii-online",
       },
     };
+    // `/{country}/{lang}/consult/{slug}` is itself a permanentRedirect stub
+    // (app/[country]/[lang]/consult/[serviceSlug]/page.tsx → /services/{slug}),
+    // so BOTH sections must land on /services/ directly. Sending the consult
+    // form to /consult/{newSlug} produced 308→308→200 on 56 rules.
     const localizedSlugRedirects = Object.entries(localizedSlugRenames).flatMap(
       ([countrySlug, map]) =>
         Object.entries(map).flatMap(([oldSlug, newSlug]) =>
           ["services", "consult"].map((section) => ({
             source: `/${countrySlug}/:lang/${section}/${oldSlug}`,
-            destination: `/${countrySlug}/:lang/${section}/${newSlug}`,
+            destination: `/${countrySlug}/:lang/services/${newSlug}`,
             permanent: true,
           })),
         ),
     );
+    // The six real locale codes. Every `/:country/:lang/…` rule below MUST
+    // constrain `:lang` to this set: unconstrained it also matches the Wix
+    // shape `/{locale}/{country}/{slug}` (reading /cs/portugal/tests as
+    // country="cs", lang="portugal"), which rewrites into a second redirect
+    // and turns one clean 308 into a 2-hop chain — or, where the destination
+    // country hub does not exist, into 308→404.
+    const LANG = "(en|pt|es|cs|ro|de)";
     return [
       ...localizedSlugRedirects,
       // No services index page exists — only /services/:slug. Send the bare
       // section URL to the country home instead of a 404.
       {
-        source: "/:country/:lang/services",
+        source: `/:country/:lang${LANG}/services`,
         destination: "/:country/:lang",
         permanent: true,
       },
       {
-        source: "/:country/:lang/book-online",
+        source: `/:country/:lang${LANG}/book-online`,
         destination: "/:country/:lang/book",
         permanent: true,
       },
@@ -499,18 +513,18 @@ const nextConfig: NextConfig = {
       // search-intent slug. MUST ship at launch to preserve any pre-indexed
       // /gp-appointment links (brief §1.4).
       {
-        source: "/:country/:lang/gp-appointment",
+        source: `/:country/:lang${LANG}/gp-appointment`,
         destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       // Legacy → final
       {
-        source: "/:country/:lang/general-consultation",
+        source: `/:country/:lang${LANG}/general-consultation`,
         destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       {
-        source: "/:country/:lang/specialist-consultation",
+        source: `/:country/:lang${LANG}/specialist-consultation`,
         destination: "/:country/:lang/see-a-specialist",
         permanent: true,
       },
@@ -523,28 +537,28 @@ const nextConfig: NextConfig = {
       // canonical `/repeat-prescription-request` rewrite above is untouched, so
       // re-enabling the feature only means reverting these two destinations.
       {
-        source: "/:country/:lang/prescriptions",
+        source: `/:country/:lang${LANG}/prescriptions`,
         destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       {
-        source: "/:country/:lang/tests",
+        source: `/:country/:lang${LANG}/tests`,
         destination: "/:country/:lang/lab-tests",
         permanent: true,
       },
       // Interim → final (safety net)
       {
-        source: "/:country/:lang/online-doctor-visit",
+        source: `/:country/:lang${LANG}/online-doctor-visit`,
         destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       {
-        source: "/:country/:lang/specialist-appointment",
+        source: `/:country/:lang${LANG}/specialist-appointment`,
         destination: "/:country/:lang/see-a-specialist",
         permanent: true,
       },
       {
-        source: "/:country/:lang/repeat-prescription",
+        source: `/:country/:lang${LANG}/repeat-prescription`,
         // See the note above — flag off site-wide, so this would 308→404.
         destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
@@ -553,48 +567,58 @@ const nextConfig: NextConfig = {
       // Old indexed/bookmarked slugs → new canonical slugs. Country/lang kept.
       // NOTE: `erectyle` and `respiractory` are spelled as in the live old URLs
       // (typos preserved on the FROM side on purpose).
+      //
+      // `:lang` is constrained to the real locale set. Unconstrained it matched
+      // any two leading segments, so the Wix path /cs/portugal/medical-
+      // consultation was read as country="cs", lang="portugal" and rewritten
+      // into a second redirect — a 2-hop chain instead of one clean 308.
       {
-        source: "/:country/:lang/medical-consultation",
+        source: `/:country/:lang${LANG}/medical-consultation`,
         destination: "/:country/:lang/acute-medical-consultation",
         permanent: true,
       },
       {
-        source: "/:country/:lang/family-medicine-consultation",
+        source: `/:country/:lang${LANG}/family-medicine-consultation`,
         destination: "/:country/:lang/chronic-disease-consultation",
         permanent: true,
       },
       {
-        source: "/:country/:lang/pain-management-consultation",
+        source: `/:country/:lang${LANG}/pain-management-consultation`,
         destination: "/:country/:lang/musculoskeletal-pain-assessment",
         permanent: true,
       },
       {
-        source: "/:country/:lang/erectyle-dysfunction-consultation",
+        source: `/:country/:lang${LANG}/erectyle-dysfunction-consultation`,
         destination: "/:country/:lang/mens-health-consultation",
         permanent: true,
       },
       {
-        source: "/:country/:lang/treatment-refill",
+        source: `/:country/:lang${LANG}/treatment-refill`,
         destination: "/:country/:lang/treatment-review",
         permanent: true,
       },
       {
-        source: "/:country/:lang/referral-consultation",
+        source: `/:country/:lang${LANG}/referral-consultation`,
         destination: "/:country/:lang/referral-and-investigations",
         permanent: true,
       },
       {
-        source: "/:country/:lang/self-referral",
+        source: `/:country/:lang${LANG}/self-referral`,
         destination: "/:country/:lang/referral-and-investigations",
         permanent: true,
       },
       {
-        source: "/:country/:lang/respiractory-infections",
-        destination: "/:country/:lang/respiratory-infections",
+        source: `/:country/:lang${LANG}/respiractory-infections`,
+        // `/{country}/{lang}/respiratory-infections` is a rewrite onto
+        // /services/respiratory-infections, and no market has that Service row
+        // — the clean URL 404s, so pointing here was a 308→404. Same treatment
+        // as the prescription aliases: send it to the GP page (200 everywhere)
+        // and restore the direct mapping if the service is ever created.
+        destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       {
-        source: "/:country/:lang/sick-leave",
+        source: `/:country/:lang${LANG}/sick-leave`,
         destination: "/:country/:lang/sick-certificate-ireland",
         permanent: true,
       },
@@ -668,6 +692,20 @@ const nextConfig: NextConfig = {
       { source: "/ireland-specialist-consultations/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
       // Legacy generic Wix service pages → specialist listing (best hub).
       { source: "/service-page/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
+      // Bare /ireland/<slug> pages that DO have an exact live equivalent. The
+      // blanket rule below already returned 200 for all of them, but it dumped
+      // every one on the GP page; these are the ones with real 90-day
+      // impressions (sick-leave 291, self-referral 133, mental-health 53,
+      // hypertension 12, migraine 7), so send them to the matching page.
+      { source: "/ireland/sick-leave", destination: "/ireland/en/services/sick-certificate-ireland", permanent: true },
+      { source: "/ireland/self-referral", destination: "/ireland/en/services/referral-and-investigations", permanent: true },
+      { source: "/ireland/referral-consultation", destination: "/ireland/en/services/referral-and-investigations", permanent: true },
+      { source: "/ireland/mental-health-assessment-consultation", destination: "/ireland/en/services/mental-health-consultation", permanent: true },
+      { source: "/ireland/hypertension-consultation", destination: "/ireland/en/health/hypertension", permanent: true },
+      { source: "/ireland/migraine-consultation", destination: "/ireland/en/health/migraine", permanent: true },
+      { source: "/ireland/medical-consultation", destination: "/ireland/en/services/acute-medical-consultation", permanent: true },
+      { source: "/ireland/weight-loss-consultation", destination: "/ireland/en/services/weight-management-consultation", permanent: true },
+      { source: "/ireland/erectyle-dysfunction-consultation", destination: "/ireland/en/services/mens-health-consultation", permanent: true },
       // Legacy /ireland/<gp-slug> pages. The {3,} length guard keeps the
       // live 2-letter locale URLs (/ireland/en, /ireland/pt, …) untouched.
       { source: "/ireland/:slug([a-z0-9-]{3,})", destination: "/ireland/en/gp-consultation-online", permanent: true },
@@ -704,7 +742,11 @@ const nextConfig: NextConfig = {
       { source: "/:locale(cs|es|pt|ro)/home-sp", destination: "/spain/:locale", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/home-cz", destination: "/czechia/:locale", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/home-rm", destination: "/romania/:locale", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/home-br", destination: "/brazil/:locale", permanent: true },
+      // Brazil supports only en/es/pt, and /brazil/{cs,ro,de}/* is itself
+      // 308'd onto /brazil/pt — so reusing `:locale` here chained 308→308 for
+      // cs and ro. Split the rule and land those two on /brazil/pt directly.
+      { source: "/:locale(es|pt)/home-br", destination: "/brazil/:locale", permanent: true },
+      { source: "/:locale(cs|ro)/home-br", destination: "/brazil/pt", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/home", destination: "/ireland/:locale", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/home-delivery", destination: "/", permanent: true },
       // Bare Wix language-root (e.g. plain /cs with no page segment).
@@ -759,24 +801,44 @@ const nextConfig: NextConfig = {
       { source: "/portugal-specialist-consultations-1/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/portugal-specialist-consultations-1/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
 
-      // Wix's `/{locale}/{country}/{service}` pages. One exact mapping for the
-      // Spain aesthetic-medicine page (228 impressions, and a live equivalent
-      // exists); the rest go to that country's specialist hub, which is the
-      // closest live intent — a dead-end 404 helps nobody.
+      // Wix's `/{locale}/{country}/{service}` pages. Exact mappings first —
+      // Next matches redirects in array order, so ANY precise rule for this
+      // shape MUST sit above the `:slug` catch-alls that close the group.
+      // (These exact rules used to live at the bottom of the file, below the
+      // catch-alls, which made all six of them dead config: /es/portugal/
+      // medical-certificate-for-driving-license landed on the Portugal
+      // specialist hub instead of the certificate page it names.)
       {
         source: "/:locale(cs|es|pt|ro)/spain/aesthetic-medicine-online-consultation",
         destination: "/spain/es/services/consulta-online-medicina-estetica",
         permanent: true,
       },
+      { source: "/:locale(cs|es|pt|ro)/spain/weight-loss-consultation", destination: "/spain/es/services/control-peso-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/spain/pain-management-consultation", destination: "/spain/es/services/musculoesqueletico-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/spain/vascular-circulatory-health-consultation", destination: "/spain/es/services/consulta-salud-vascular-circulatoria", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/spain/treatment-renewal", destination: "/spain/es/services/renovacion-tratamiento-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal/weight-loss-consultation", destination: "/portugal/pt/services/perda-de-peso", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal/family-and-general-medicine", destination: "/portugal/pt/services/medicina-geral-e-familiar", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal/smoking-cessation-consultation", destination: "/portugal/pt/services/deixar-de-fumar", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal/medical-consultation", destination: "/portugal/pt/services/consulta-medica", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal/travelers-consultation", destination: "/portugal/pt/services/consulta-do-viajante", permanent: true },
+      // The rest go to that country's specialist hub, which is the closest live
+      // intent — a dead-end 404 helps nobody. Ireland is included so the
+      // /{locale}/ireland/{slug} shape stops falling through to the
+      // `/:country/:lang/{slug}` rules and chaining into a 404.
+      { source: "/:locale(cs|es|pt|ro)/ireland/mental-health-assessment-consultation", destination: "/ireland/en/services/mental-health-consultation", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/spain/:slug", destination: "/spain/es/see-a-specialist", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/portugal/:slug", destination: "/portugal/pt/see-a-specialist", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/czechia/:slug", destination: "/czechia/cs", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/romania/:slug", destination: "/romania/ro/see-a-specialist", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/ireland/:slug", destination: "/ireland/en/gp-consultation-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/brazil/:slug", destination: "/brazil/pt", permanent: true },
 
       // Remaining one-offs the sweep turned up.
       { source: "/:locale(cs|es|pt|ro)/blog", destination: "/blog", permanent: true },
-      { source: "/booking-calendar/:slug", destination: "/ireland/en/book", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/booking-calendar/:slug", destination: "/ireland/en/book", permanent: true },
+      // (bare + locale-prefixed /booking-calendar/:slug are declared once,
+      // higher up in the legacy Wix block — a second copy here was dead.)
       { source: "/:locale(cs|es|pt|ro)/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
       // Top-level /services/<slug> only — the live pages are
       // /{country}/{lang}/services/<slug>, which this cannot match.
@@ -821,22 +883,42 @@ const nextConfig: NextConfig = {
       { source: "/cs/specialty-pt", destination: "/portugal/pt/see-a-specialist", permanent: true },
       { source: "/es/specialty-pt", destination: "/portugal/pt/see-a-specialist", permanent: true },
 
-      // -- Portugal service pages: renamed slug already lives at /services/*
+      // -- Portugal/Spain service pages: renamed slug lives at /services/*
+      // (the locale-PREFIXED variants of these live in the
+      // `/{locale}/{country}/{slug}` group above, where they have to sit to
+      // beat the catch-alls. Everything here is the BARE `/{country}/{slug}`
+      // Wix shape, which had no catch-all at all: 2,426 impressions/90d, of
+      // which /portugal/medical-certificate-for-driving-license alone is 1,723.)
       { source: "/portugal/traveler's-consultation", destination: "/portugal/pt/services/consulta-do-viajante", permanent: true },
-      { source: "/es/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
-      { source: "/cs/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
-      { source: "/pt/portugal/weight-loss-consultation", destination: "/portugal/pt/services/perda-de-peso", permanent: true },
-      { source: "/es/portugal/weight-loss-consultation", destination: "/portugal/pt/services/perda-de-peso", permanent: true },
-      { source: "/cs/portugal/family-and-general-medicine", destination: "/portugal/pt/services/medicina-geral-e-familiar", permanent: true },
-      { source: "/cs/portugal/smoking-cessation-consultation", destination: "/portugal/pt/services/deixar-de-fumar", permanent: true },
-      // No renamed-slug match for "medical-exam" — nearest real page is the hub.
-      { source: "/cs/portugal/medical-exam", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/portugal/travelers-consultation", destination: "/portugal/pt/services/consulta-do-viajante", permanent: true },
+      { source: "/portugal/weight-loss-consultation", destination: "/portugal/pt/services/perda-de-peso", permanent: true },
+      { source: "/portugal/smoking-cessation-consultation", destination: "/portugal/pt/services/deixar-de-fumar", permanent: true },
+      { source: "/portugal/medical-consultation", destination: "/portugal/pt/services/consulta-medica", permanent: true },
+      { source: "/portugal/family-and-general-medicine", destination: "/portugal/pt/services/medicina-geral-e-familiar", permanent: true },
+      { source: "/spain/vascular-circulatory-health-consultation", destination: "/spain/es/services/consulta-salud-vascular-circulatoria", permanent: true },
+      { source: "/spain/pain-management-consultation", destination: "/spain/es/services/musculoesqueletico-online", permanent: true },
+      { source: "/spain/weight-loss-consultation", destination: "/spain/es/services/control-peso-online", permanent: true },
+      { source: "/spain/treatment-renewal", destination: "/spain/es/services/renovacion-tratamiento-online", permanent: true },
+      { source: "/spain/aesthetic-medicine-online-consultation", destination: "/spain/es/services/consulta-online-medicina-estetica", permanent: true },
+      // Bare `/{country}/{slug}` catch-alls for everything else in that shape
+      // (/portugal/medical-exam, /portugal/diabetes-consultation, …). The {3,}
+      // length guard keeps the live 2-letter locale roots (/portugal/pt, …)
+      // untouched, exactly as the /ireland/:slug rule above does; `%` and `'`
+      // are in the class so Wix's apostrophe slugs match in either spelling.
+      { source: "/portugal/:slug([a-z0-9%'-]{3,})", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/spain/:slug([a-z0-9%'-]{3,})", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/czechia/:slug([a-z0-9%'-]{3,})", destination: "/czechia/cs", permanent: true },
+      { source: "/romania/:slug([a-z0-9%'-]{3,})", destination: "/romania/ro/see-a-specialist", permanent: true },
+      { source: "/brazil/:slug([a-z0-9%'-]{3,})", destination: "/brazil/pt", permanent: true },
 
-      // -- one-off country service pages with no exact new-scheme match ---
-      { source: "/spain/treatment-renewal", destination: "/spain/es/see-a-specialist", permanent: true },
-      { source: "/cs/spain/aesthetic-medicine-online-consultation", destination: "/spain/es/see-a-specialist", permanent: true },
-      { source: "/es/spain/diabetes-consultation", destination: "/spain/es/see-a-specialist", permanent: true },
-      { source: "/es/ireland/mental-health-assessment-consultation", destination: "/ireland/en/see-a-specialist", permanent: true },
+      // Portugal has no live nutrition Service row, so neither the old English
+      // slug nor the renamed PT one (`consulta-de-nutricao`, 7 impressions,
+      // currently a hard 404) can point at /services/*. Hub instead — and both
+      // sections need a rule, because /consult/* is itself a redirect stub.
+      { source: `/portugal/:lang${LANG}/services/nutrition-consultation`, destination: "/portugal/:lang/see-a-specialist", permanent: true },
+      { source: `/portugal/:lang${LANG}/consult/nutrition-consultation`, destination: "/portugal/:lang/see-a-specialist", permanent: true },
+      { source: `/portugal/:lang${LANG}/services/consulta-de-nutricao`, destination: "/portugal/:lang/see-a-specialist", permanent: true },
+      { source: `/portugal/:lang${LANG}/consult/consulta-de-nutricao`, destination: "/portugal/:lang/see-a-specialist", permanent: true },
 
       // -- Czech-language legacy paths (Wix "czech-republic" section) -----
       { source: "/czech-republic/:slug", destination: "/czechia/cs", permanent: true },
