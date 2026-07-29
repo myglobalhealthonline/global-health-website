@@ -75,13 +75,19 @@ export default async function CrossBorderRxInboxPage() {
               ) : null}
 
               {(() => {
-                const rows: Array<[string, string | null]> = [
-                  [copy.soapChiefComplaint, item.soap.chiefComplaint],
-                  [copy.soapSubjective, item.soap.subjective],
-                  [copy.soapObjective, item.soap.objective],
-                  [copy.soapAssessment, item.soap.assessment],
-                  [copy.soapPlan, item.soap.plan],
-                ];
+                const rows: Array<[string, string | null]> =
+                  item.soap.noteFormat === "FREEFORM"
+                    ? [
+                        [copy.soapChiefComplaint, item.soap.chiefComplaint],
+                        [copy.soapNote, item.soap.note],
+                      ]
+                    : [
+                        [copy.soapChiefComplaint, item.soap.chiefComplaint],
+                        [copy.soapSubjective, item.soap.subjective],
+                        [copy.soapObjective, item.soap.objective],
+                        [copy.soapAssessment, item.soap.assessment],
+                        [copy.soapPlan, item.soap.plan],
+                      ];
                 const present = rows.filter(([, v]) => v && v.trim());
                 return (
                   <div className="mt-3">

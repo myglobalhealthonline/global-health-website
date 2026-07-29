@@ -231,7 +231,8 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
           c.subjective?.trim() ||
           c.objective?.trim() ||
           c.assessment?.trim() ||
-          c.plan?.trim(),
+          c.plan?.trim() ||
+          c.note?.trim(),
       ),
     )
     .map((c) => {
@@ -248,6 +249,8 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
         objective: c.objective,
         assessment: c.assessment,
         plan: c.plan,
+        noteFormat: c.noteFormat,
+        note: c.note,
         status: c.status,
         signedAt: c.signedAt ? c.signedAt.toISOString() : null,
         createdByName: c.doctor.fullName,

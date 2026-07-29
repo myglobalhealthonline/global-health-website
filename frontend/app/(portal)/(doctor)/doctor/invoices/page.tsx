@@ -340,7 +340,9 @@ export default async function DoctorInvoicesPage({
             )}
           </>
         }
-        statementPanel={<PayoutInvoicePanel strings={d.invoices as InvoiceStrings} />}
+        statementPanel={
+          <PayoutInvoicePanel strings={d.invoices as InvoiceStrings} defaultLocale={locale} />
+        }
       />
     </>
   );

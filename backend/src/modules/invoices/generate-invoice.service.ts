@@ -421,6 +421,7 @@ export async function createUnpaidInvoiceForOrder(
 export async function generateInvoiceForOrder(
   orderId: string,
   log: PaymentLog = noopLog,
+  opts: { skipEmail?: boolean } = {},
 ): Promise<void> {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
@@ -481,24 +482,28 @@ export async function generateInvoiceForOrder(
       "Receipt issued on payment (unpaid invoice row preserved)",
     );
 
-    // Fire-and-forget — webhook failure must never block the receipt.
-    sendPaymentWebhookToMake(orderId, receipt.id, receipt.invoiceNumber, log).catch((err) => {
-      log.warn({ err, orderId, invoiceNumber: receipt.invoiceNumber }, "Make.com invoice webhook failed");
-    });
+    // create-only backfill: keep the invoice row (it shows in the invoice
+    // section, unsent) but don't deliver it — the admin sends it via Resend.
+    if (!opts.skipEmail) {
+      // Fire-and-forget — webhook failure must never block the receipt.
+      sendPaymentWebhookToMake(orderId, receipt.id, receipt.invoiceNumber, log).catch((err) => {
+        log.warn({ err, orderId, invoiceNumber: receipt.invoiceNumber }, "Make.com invoice webhook failed");
+      });
 
-    await renderAndSendInvoiceDoc(
-      {
-        invoiceId: receipt.id,
-        orderId: order.id,
-        invoiceNumber: receipt.invoiceNumber,
-        invoiceDateIso: receipt.generatedAt.toISOString(),
-        email: order.email,
-        fullName: order.fullName,
-        countryCode: order.countryCode,
-        documentType: "RECEIPT",
-      },
-      log,
-    );
+      await renderAndSendInvoiceDoc(
+        {
+          invoiceId: receipt.id,
+          orderId: order.id,
+          invoiceNumber: receipt.invoiceNumber,
+          invoiceDateIso: receipt.generatedAt.toISOString(),
+          email: order.email,
+          fullName: order.fullName,
+          countryCode: order.countryCode,
+          documentType: "RECEIPT",
+        },
+        log,
+      );
+    }
     return;
   }
 
@@ -523,24 +528,28 @@ export async function generateInvoiceForOrder(
 
   log.info({ orderId, invoiceNumber, invoiceId: invoice.id }, "Invoice/receipt created");
 
-  // Fire-and-forget — webhook failure must never block invoice creation.
-  sendPaymentWebhookToMake(orderId, invoice.id, invoiceNumber, log).catch((err) => {
-    log.warn({ err, orderId, invoiceNumber }, "Make.com invoice webhook failed");
-  });
+  // create-only backfill: keep the row (visible + unsent in the invoice
+  // section) but skip delivery — admin sends it via Resend.
+  if (!opts.skipEmail) {
+    // Fire-and-forget — webhook failure must never block invoice creation.
+    sendPaymentWebhookToMake(orderId, invoice.id, invoiceNumber, log).catch((err) => {
+      log.warn({ err, orderId, invoiceNumber }, "Make.com invoice webhook failed");
+    });
 
-  await renderAndSendInvoiceDoc(
-    {
-      invoiceId: invoice.id,
-      orderId: order.id,
-      invoiceNumber,
-      invoiceDateIso: invoice.generatedAt.toISOString(),
-      email: order.email,
-      fullName: order.fullName,
-      countryCode: order.countryCode,
-      documentType: "INVOICE_RECEIPT",
-    },
-    log,
-  );
+    await renderAndSendInvoiceDoc(
+      {
+        invoiceId: invoice.id,
+        orderId: order.id,
+        invoiceNumber,
+        invoiceDateIso: invoice.generatedAt.toISOString(),
+        email: order.email,
+        fullName: order.fullName,
+        countryCode: order.countryCode,
+        documentType: "INVOICE_RECEIPT",
+      },
+      log,
+    );
+  }
 }
 
 /**

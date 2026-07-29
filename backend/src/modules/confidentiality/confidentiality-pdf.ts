@@ -6,16 +6,22 @@ import {
   pdfEcgRule,
 } from "../../lib/pdf/brand.js";
 import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.js";
-import { CURRENT_AGREEMENT_TEXT, CURRENT_AGREEMENT_VERSION } from "./confidentiality.service.js";
+import {
+  agreementContentFor,
+  CONFIDENTIALITY_AGREEMENT_VERSION,
+  type AgreementLocale,
+} from "./confidentiality-agreement-content.js";
 
 /**
  * Printable, hand-signable copy of the doctor confidentiality agreement,
  * rendered in the Global Health PDF design language (Variant K tokens from
  * `lib/pdf/brand.ts` — same spine / masthead / ECG rule as the invoice).
  *
- * The clause text is the single source of truth in `confidentiality.service.ts`
- * (CURRENT_AGREEMENT_TEXT) — this module only lays it out, so the printed and
- * on-screen wording can never drift.
+ * The clause text AND the surrounding chrome labels come from
+ * `confidentiality-agreement-content.ts` (one locale-keyed record) — this
+ * module only lays them out, so the printed and on-screen wording can never
+ * drift, and every language it lists renders correctly (no English-only
+ * regex parsing of prose).
  */
 
 export type ConfidentialityPdfDoctor = {
@@ -27,6 +33,8 @@ export type ConfidentialityPdfDoctor = {
 
 export type ConfidentialityPdfInput = {
   doctor: ConfidentialityPdfDoctor;
+  /** Language to render the agreement in — the doctor's operating locale. */
+  locale: AgreementLocale;
   /** Portal acceptance already on file, if any — printed as an evidence note. */
   acceptedAt: Date | null;
   acceptedVersion: string | null;
@@ -42,8 +50,15 @@ function esc(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function fmtDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-GB", {
+function fill(template: string, vars: Record<string, string>): string {
+  return Object.entries(vars).reduce(
+    (text, [key, value]) => text.replaceAll(`{${key}}`, value),
+    template,
+  );
+}
+
+function fmtDate(date: Date, htmlLang: string): string {
+  return new Intl.DateTimeFormat(htmlLang, {
     day: "2-digit",
     month: "long",
     year: "numeric",
@@ -51,62 +66,20 @@ function fmtDate(date: Date): string {
   }).format(date);
 }
 
-type Block =
-  | { kind: "intro"; text: string }
-  | { kind: "clause"; number: string; heading: string; body: string };
-
-/**
- * Split CURRENT_AGREEMENT_TEXT into its layout blocks.
- *
- * The first paragraph is the document's own title line (the PDF prints its
- * own masthead instead), and the trailing "By accepting…" line is replaced by
- * the signature declaration — both are dropped here.
- */
-export function parseAgreementBlocks(text: string): Block[] {
-  const paragraphs = text
-    .split(/\n{2,}/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-
-  const blocks: Block[] = [];
-  for (const [index, paragraph] of paragraphs.entries()) {
-    if (index === 0 && /confidentiality/i.test(paragraph) && /\(v\d/i.test(paragraph)) {
-      continue; // title line — the masthead covers it
-    }
-    if (/^by accepting/i.test(paragraph)) {
-      continue; // replaced by the signature declaration
-    }
-    const clause = /^(\d+)\.\s+([^.]+)\.\s*([\s\S]*)$/.exec(paragraph);
-    if (clause) {
-      blocks.push({
-        kind: "clause",
-        number: clause[1],
-        heading: clause[2].trim(),
-        body: clause[3].trim(),
-      });
-      continue;
-    }
-    blocks.push({ kind: "intro", text: paragraph });
-  }
-  return blocks;
-}
-
 export function buildConfidentialityAgreementHtml(input: ConfidentialityPdfInput): string {
   const logo = pdfLogoDataUrl();
-  const blocks = parseAgreementBlocks(CURRENT_AGREEMENT_TEXT);
-  const intro = blocks
-    .filter((b): b is Extract<Block, { kind: "intro" }> => b.kind === "intro")
-    .map((b) => `<p class="intro">${esc(b.text)}</p>`)
-    .join("");
-  const clauses = blocks
-    .filter((b): b is Extract<Block, { kind: "clause" }> => b.kind === "clause")
+  const content = agreementContentFor(input.locale);
+  const l = content.labels;
+  const version = CONFIDENTIALITY_AGREEMENT_VERSION;
+
+  const clauses = content.clauses
     .map(
-      (c) => `
+      (clause, index) => `
       <li class="clause">
-        <span class="cnum">${esc(c.number.padStart(2, "0"))}</span>
+        <span class="cnum">${esc(String(index + 1).padStart(2, "0"))}</span>
         <div class="cbody">
-          <h2 class="chead">${esc(c.heading)}</h2>
-          <p class="ctext">${esc(c.body)}</p>
+          <h2 class="chead">${esc(clause.heading)}</h2>
+          <p class="ctext">${esc(clause.body)}</p>
         </div>
       </li>`,
     )
@@ -115,22 +88,24 @@ export function buildConfidentialityAgreementHtml(input: ConfidentialityPdfInput
   const acceptedNote =
     input.acceptedAt && input.acceptedVersion
       ? `<div class="evidence">
-           <span class="caps">Portal acceptance on file</span>
-           <p>Accepted electronically in the Global Health doctor portal on
-             ${esc(fmtDate(input.acceptedAt))} (version ${esc(input.acceptedVersion)}).
-             This signed copy supplements — it does not replace — that record.</p>
+           <span class="caps">${esc(l.acceptanceOnFileCaps)}</span>
+           <p>${esc(
+             fill(l.acceptanceOnFileBody, {
+               date: fmtDate(input.acceptedAt, l.htmlLang),
+               version: input.acceptedVersion,
+             }),
+           )}</p>
          </div>`
       : `<div class="evidence pending">
-           <span class="caps">Portal acceptance</span>
-           <p>Not yet recorded. Accept the agreement in the Global Health doctor
-             portal as well as returning this signed copy.</p>
+           <span class="caps">${esc(l.acceptancePendingCaps)}</span>
+           <p>${esc(l.acceptancePendingBody)}</p>
          </div>`;
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${esc(l.htmlLang)}">
 <head>
 <meta charset="UTF-8">
-<title>Confidentiality Agreement — ${esc(input.doctor.fullName)}</title>
+<title>${esc(fill(l.docTitle, { name: input.doctor.fullName }))}</title>
 <style>
   @page { size: A4; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -215,29 +190,29 @@ export function buildConfidentialityAgreementHtml(input: ConfidentialityPdfInput
 
   <div class="topline">
     ${logo ? `<img class="logo" src="${logo}" alt="Global Health" />` : `<span class="logo-text">Global Health</span>`}
-    <span class="caps">Compliance Document — Clinician Confidentiality</span>
+    <span class="caps">${esc(l.topline)}</span>
   </div>
 
   <div class="masthead">
-    <div class="mast-title">Confidentiality &amp;<br />Data Protection Agreement</div>
+    <div class="mast-title">${esc(l.mastTitleLine1)}<br />${esc(l.mastTitleLine2)}</div>
     <div class="mast-sub">
-      <span class="mast-no">VERSION ${esc(CURRENT_AGREEMENT_VERSION)}</span>
-      <span class="mast-issued">Issued ${esc(fmtDate(input.issuedAt))}</span>
-      <span class="mast-status">For signature</span>
+      <span class="mast-no">${esc(l.versionCaps)} ${esc(version)}</span>
+      <span class="mast-issued">${esc(l.issuedPrefix)} ${esc(fmtDate(input.issuedAt, l.htmlLang))}</span>
+      <span class="mast-status">${esc(l.statusForSignature)}</span>
     </div>
     <div class="ecg">${pdfEcgRule()}</div>
   </div>
 
   <div class="parties">
     <div class="party">
-      <span class="caps">Clinician</span>
+      <span class="caps">${esc(l.partyClinician)}</span>
       <div class="n">${esc(input.doctor.fullName)}</div>
       ${input.doctor.title ? `<div class="l">${esc(input.doctor.title)}</div>` : ""}
       ${input.doctor.countryName ? `<div class="l">${esc(input.doctor.countryName)}</div>` : ""}
       ${input.doctor.email ? `<div class="l">${esc(input.doctor.email)}</div>` : ""}
     </div>
     <div class="party">
-      <span class="caps">Platform</span>
+      <span class="caps">${esc(l.partyPlatform)}</span>
       <div class="n">Global Health</div>
       <div class="l">Global Health Network</div>
       <div class="l">globalhealth@myglobalhealth.online</div>
@@ -245,43 +220,39 @@ export function buildConfidentialityAgreementHtml(input: ConfidentialityPdfInput
     </div>
   </div>
 
-  ${intro}
+  <p class="intro">${esc(content.intro)}</p>
 
   <ol class="clauses">${clauses}</ol>
 
   ${acceptedNote}
 
   <div class="sign">
-    <div class="sign-title">Declaration &amp; signature</div>
-    <p class="declare">I confirm that I have read, understood, and agree to be bound by this
-      Confidentiality &amp; Data Protection Agreement (version ${esc(CURRENT_AGREEMENT_VERSION)}).</p>
+    <div class="sign-title">${esc(l.signTitle)}</div>
+    <p class="declare">${esc(fill(l.declaration, { version }))}</p>
 
     <div class="sign-grid">
       <div class="sig">
         <div class="rule"></div>
-        <div class="lbl">Signature</div>
+        <div class="lbl">${esc(l.sigSignature)}</div>
       </div>
       <div class="sig">
         <div class="rule"><span class="pre">${esc(input.doctor.fullName)}</span></div>
-        <div class="lbl">Printed name</div>
+        <div class="lbl">${esc(l.sigPrintedName)}</div>
       </div>
       <div class="sig">
         <div class="rule"></div>
-        <div class="lbl">Date signed</div>
+        <div class="lbl">${esc(l.sigDateSigned)}</div>
       </div>
     </div>
 
-    <p class="sign-note">Print this document, sign it, then scan or photograph the signed copy and
-      upload it in the Global Health doctor portal under Compliance → Confidentiality agreement.
-      The uploaded copy is retained alongside your electronic acceptance and is visible to you and
-      to Global Health administrators only.</p>
+    <p class="sign-note">${esc(l.signNote)}</p>
   </div>
 
 </div>
 
 <div class="foot">
   <div class="foot-rule"></div>
-  <div class="fb"><span class="b">Global Health</span><span class="t">Confidentiality Agreement v${esc(CURRENT_AGREEMENT_VERSION)} — myglobalhealth.online</span></div>
+  <div class="fb"><span class="b">Global Health</span><span class="t">${esc(fill(l.footerNote, { version }))}</span></div>
 </div>
 
 </body>

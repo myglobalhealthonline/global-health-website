@@ -91,6 +91,13 @@ enum ConsultationStatus {
   SIGNED
 }
 
+/// SOAP (4 structured sections) vs a single free-text note — some specialities
+/// don't work naturally in SOAP, so the doctor picks per note.
+enum ConsultationNoteFormat {
+  SOAP
+  FREEFORM
+}
+
 /// Author side for internal (doctor ↔ admin) per-appointment notes. Kept
 /// separate from the patient-facing `MessageAuthorRole` so we never mix
 /// the two threads.
@@ -3342,6 +3349,11 @@ model Consultation {
   assessment     String?
   /// SOAP: Plan — prescriptions, follow-up, referrals.
   plan           String?
+  /// Whether this note is written as structured SOAP (the 4 fields above) or
+  /// as a single free-text note (below) — doctor's choice, per note.
+  noteFormat     ConsultationNoteFormat @default(SOAP)
+  /// Free-text note body, used only when `noteFormat` is FREEFORM.
+  note           String?
   status         ConsultationStatus    @default(DRAFT)
   signedAt       DateTime?
   appointment    Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
@@ -3463,6 +3475,10 @@ model CrossBorderPrescriptionRequest {
   sourceObjective      String?
   sourceAssessment     String?
   sourcePlan           String?
+  /// Snapshot of the source note's format + free-text body, when the treating
+  /// doctor wrote a single note instead of SOAP.
+  sourceNoteFormat     ConsultationNoteFormat @default(SOAP)
+  sourceNote           String?
   /// Patient consent to disclose the SOAP snapshot to the prescribing doctor.
   /// The raw token only ever lives in the consent link emailed to the patient;
   /// we store its SHA-256 hash (same pattern as ShareLink / MedicalAccessRequest).

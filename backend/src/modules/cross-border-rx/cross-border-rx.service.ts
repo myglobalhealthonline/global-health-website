@@ -222,6 +222,8 @@ type SourceSoap = {
   objective: string | null;
   assessment: string | null;
   plan: string | null;
+  noteFormat: "SOAP" | "FREEFORM";
+  note: string | null;
 } | null;
 
 async function readSourceSoap(sourceAppointmentId: string): Promise<SourceSoap> {
@@ -233,6 +235,8 @@ async function readSourceSoap(sourceAppointmentId: string): Promise<SourceSoap> 
       objective: true,
       assessment: true,
       plan: true,
+      noteFormat: true,
+      note: true,
     },
   });
 }
@@ -244,7 +248,8 @@ function soapHasContent(soap: SourceSoap): boolean {
       soap.subjective?.trim() ||
       soap.objective?.trim() ||
       soap.assessment?.trim() ||
-      soap.plan?.trim(),
+      soap.plan?.trim() ||
+      soap.note?.trim(),
   );
 }
 
@@ -273,6 +278,8 @@ async function refreshSoapSnapshot(requestId: string, sourceAppointmentId: strin
         sourceObjective: soap?.objective ?? null,
         sourceAssessment: soap?.assessment ?? null,
         sourcePlan: soap?.plan ?? null,
+        sourceNoteFormat: soap?.noteFormat ?? "SOAP",
+        sourceNote: soap?.note ?? null,
       },
     });
   } catch {
@@ -365,6 +372,8 @@ export async function createCrossBorderRxRequest(
       sourceObjective: soap?.objective ?? null,
       sourceAssessment: soap?.assessment ?? null,
       sourcePlan: soap?.plan ?? null,
+      sourceNoteFormat: soap?.noteFormat ?? "SOAP",
+      sourceNote: soap?.note ?? null,
       consentTokenHash,
       consentTokenExpiresAt,
       status: "PENDING_CONSENT",
@@ -1127,6 +1136,8 @@ export type CrossBorderRxInboxItem = {
     objective: string | null;
     assessment: string | null;
     plan: string | null;
+    noteFormat: "SOAP" | "FREEFORM";
+    note: string | null;
   };
   asyncAppointmentId: string | null;
   sourceDoctorName: string | null;
@@ -1154,6 +1165,8 @@ export async function listCrossBorderRxInbox(
         sourceObjective: true,
         sourceAssessment: true,
         sourcePlan: true,
+        sourceNoteFormat: true,
+        sourceNote: true,
         asyncAppointmentId: true,
         sourceDoctorId: true,
         createdAt: true,
@@ -1181,6 +1194,8 @@ export async function listCrossBorderRxInbox(
           objective: r.sourceObjective,
           assessment: r.sourceAssessment,
           plan: r.sourcePlan,
+          noteFormat: r.sourceNoteFormat,
+          note: r.sourceNote,
         },
         asyncAppointmentId: r.asyncAppointmentId,
         sourceDoctorName: nameById.get(r.sourceDoctorId) ?? null,

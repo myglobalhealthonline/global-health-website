@@ -202,6 +202,13 @@ function labels(lang: Lang) {
       cs: "Přihlaste se pro zobrazení rezervace a správu péče.",
       es: "Inicie sesión para ver su cita y gestionar su atención.",
     }),
+    manageAppointmentsLead: t(lang, {
+      en: "You can also manage your appointments at the Patient Portal:",
+      pt: "Também pode gerir as suas consultas no Portal do Paciente:",
+      ro: "De asemenea, puteți gestiona programările în Portalul Pacientului:",
+      cs: "Své termíny můžete také spravovat v Portálu pacienta:",
+      es: "También puede gestionar sus citas en el Portal del Paciente:",
+    }),
     setPasswordButton: t(lang, {
       en: "Set your password",
       pt: "Definir palavra-passe",
@@ -268,6 +275,7 @@ export function buildPortalBlock(lang: Lang, portal: PrePaymentEmailPortalAccess
 
   return `<h3 style="margin:32px 0 12px;color:#1D4B36;font-size:17px;">${L.portalHeading}</h3>
         <p style="margin:0 0 16px;font-size:14px;color:#2D3B36;">${L.portalLead}</p>
+        <p style="margin:0 0 16px;font-size:14px;color:#2D3B36;">${L.manageAppointmentsLead} <a href="${esc(portal.signInUrl)}" style="color:#1D4B36;font-weight:600;">${esc(portal.signInUrl)}</a></p>
         <p style="margin:16px 0;text-align:center;">
           <a href="${esc(portal.setPasswordUrl)}"
              style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;">
@@ -290,6 +298,7 @@ export function buildPortalTextBlock(lang: Lang, portal: PrePaymentEmailPortalAc
     "",
     L.portalHeading,
     L.portalLead,
+    `${L.manageAppointmentsLead} ${portal.signInUrl}`,
     `${L.setPasswordButton}: ${portal.setPasswordUrl}`,
     `(${L.setPasswordHint})`,
   ];

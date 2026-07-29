@@ -26,6 +26,8 @@ type SharedConsult = {
   objective: string | null;
   assessment: string | null;
   plan: string | null;
+  noteFormat: "SOAP" | "FREEFORM";
+  note: string | null;
   doctor: { fullName: string; title: string } | null;
   appointment: {
     fullName: string;
@@ -135,10 +137,16 @@ export default async function SharedConsultPage({
       </header>
 
       <SoapSection title="Chief complaint" body={consultation.chiefComplaint} />
-      <SoapSection title="Subjective" body={consultation.subjective} />
-      <SoapSection title="Objective" body={consultation.objective} />
-      <SoapSection title="Assessment" body={consultation.assessment} />
-      <SoapSection title="Plan" body={consultation.plan} />
+      {consultation.noteFormat === "FREEFORM" ? (
+        <SoapSection title="Clinical note" body={consultation.note} />
+      ) : (
+        <>
+          <SoapSection title="Subjective" body={consultation.subjective} />
+          <SoapSection title="Objective" body={consultation.objective} />
+          <SoapSection title="Assessment" body={consultation.assessment} />
+          <SoapSection title="Plan" body={consultation.plan} />
+        </>
+      )}
 
       <footer
         style={{
