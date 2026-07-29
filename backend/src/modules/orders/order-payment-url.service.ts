@@ -116,12 +116,18 @@ export async function resolveOrderPaymentUrl(
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types: ["card"],
+      payment_method_types:
+        order.countryCode?.toLowerCase() === "pt"
+          ? ["card", "mb_way", "multibanco"]
+          : ["card"],
       customer_email: order.email,
       client_reference_id: order.id,
       line_items: lineItems,
       success_url: successUrl,
       cancel_url: cancelUrl,
+      ...(order.countryCode?.toLowerCase() === "pt"
+        ? { phone_number_collection: { enabled: true } }
+        : {}),
       ...(invoiceCreation ? { invoice_creation: invoiceCreation } : {}),
       // Global Health branding — same language + trust line as the first-pass
       // checkout, so a resent pay link doesn't look like a different vendor.
