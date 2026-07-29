@@ -27,6 +27,7 @@ export function DoctorDirectoryView({ view }: { view: DoctorDirectoryViewModel }
           <div key="featured-spotlight" className="mb-10">
             <FeaturedDoctor
               standalone={false}
+              titleAs="h2"
               doctor={spotlight}
               featuredLabel={i18n.featuredClinician}
             />
