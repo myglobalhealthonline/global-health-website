@@ -25,7 +25,7 @@ import { createRequisitionFromPrescription } from "../lab-orders/lab-requisition
 import { renderDocxTemplatePdf, type DocxQrOptions } from "./docx-document-renderer.js";
 import { renderDocumentPdf } from "./html-document-renderer.js";
 import { labelsForPrefix } from "./docx-template-labels.js";
-import { templatePrefixForCountry } from "./docx-template-profiles.js";
+import { labelPrefixForCountry } from "./docx-template-profiles.js";
 import { qrPngBuffer, qrDataUrl } from "./qr-code.js";
 import {
   buildPatientUploadUrl,
@@ -319,7 +319,7 @@ async function generateAppointmentDocumentUnlocked(input: {
   const customLabel = input.fields?.customLabel?.trim();
   // Localized document titles for the standard clinical types; custom/OTHER
   // keep the doctor-supplied label.
-  const docLabels = labelsForPrefix(templatePrefixForCountry(appt.countryCode ?? "") ?? "IR");
+  const docLabels = labelsForPrefix(labelPrefixForCountry(appt.countryCode ?? ""));
   const title =
     input.documentType === "OTHER" && customLabel
       ? customLabel
@@ -745,12 +745,22 @@ export async function sendGeneratedDocuments(
       typeof meta?.customLabel === "string" ? meta.customLabel.trim() : "";
     const certName =
       typeof meta?.certificateName === "string" ? meta.certificateName.trim() : "";
+    // Same localization as the title printed on the PDF — a Brazilian patient
+    // receiving "Receita Médica" should not be told about a "Medical
+    // prescription" in the covering email.
+    const mailLabels = labelsForPrefix(labelPrefixForCountry(appt.countryCode ?? ""));
     const documentLabel =
       doc.documentType === "OTHER" && customLabel
         ? customLabel
         : doc.documentType === "CUSTOM_CERTIFICATE" && certName
           ? certName
-          : TITLES[doc.documentType];
+          : doc.documentType === "ABSENCE_CERTIFICATE"
+            ? mailLabels.docTitleAbsence
+            : doc.documentType === "EXAMS_PRESCRIPTION"
+              ? mailLabels.docTitleExams
+              : doc.documentType === "PRESCRIPTION"
+                ? mailLabels.docTitlePrescription
+                : TITLES[doc.documentType];
     const result = await sendGeneratedDocumentEmail({
       to: appt.email,
       patientName: appt.fullName,
@@ -911,5 +921,18 @@ export async function finalizeGeneratedDocument(doctorId: string, documentId: st
     where: { id: doc.id },
     data: { sentToPatient: true },
   });
+  // If this prescription belongs to a cross-border async consultation, finalising
+  // it is the "prescription issued" moment: complete the request + notify the
+  // patient (sent to pharmacy) and the requesting doctor. Best-effort + idempotent;
+  // dynamically imported to avoid a module cycle. Never blocks the finalise.
+  try {
+    const { onCrossBorderRxPrescriptionFinalised } = await import(
+      "../cross-border-rx/cross-border-rx.service.js"
+    );
+    await onCrossBorderRxPrescriptionFinalised(doc.appointmentId);
+  } catch {
+    // A non-cross-border prescription (the common case) or a notify hiccup must
+    // never fail the finalise itself.
+  }
   return { ok: true as const };
 }

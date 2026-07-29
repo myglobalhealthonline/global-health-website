@@ -56,6 +56,15 @@ type Props = {
    * mode — the resolved one wins. Null/undefined = ordinary doctor-first flow.
    */
   autoAssign?: { country: string; language: string } | null;
+  /**
+   * Resolved ISO country code for the market being booked ("br", "pt", …).
+   *
+   * NOT derivable from the URL here: the `[country]` segment is a SLUG
+   * ("brazil", "portugal"), and only the server has the slug→code registry
+   * (`countryCodeFromSlug`) fully warmed, since admin-added countries are
+   * registered per-request. So the page hands the code down instead.
+   */
+  countryCode: string;
   i18n: CommonLocale["bookingForm"];
   /** Which patient-intake fields this country's `BookingSetting` requires
    *  server-side — drives the required/optional label + attr so the form
@@ -115,6 +124,7 @@ export function ConsultationBookingForm({
   initialSlotId,
   changeTimeHref,
   autoAssign,
+  countryCode,
   i18n,
   bookingRequirements,
   selectedInsurance = null,
@@ -129,9 +139,12 @@ export function ConsultationBookingForm({
   // CEP / Estado vs Morada / Código postal), and the UF has no equivalent in
   // any other market — so the address labels come from a country-aware map,
   // and `addressCopy.state` being non-null is what renders the Estado field.
+  //
+  // Keyed on `countryCode`, NOT on `params.country`: the URL segment is the
+  // slug ("brazil"), so matching it against "br" silently never fires.
   const addressCopy = useMemo(
-    () => bookingAddressCopy(params?.country, params?.lang, i18n),
-    [params?.country, params?.lang, i18n],
+    () => bookingAddressCopy(countryCode, params?.lang, i18n),
+    [countryCode, params?.lang, i18n],
   );
   const { add } = useCart();
   const [pending, startTransition] = useTransition();
@@ -373,7 +386,10 @@ export function ConsultationBookingForm({
       ? String(form.get("addressState") ?? "").trim()
       : "";
     const addressPostalCode = String(form.get("addressPostalCode") ?? "").trim();
-    const addressCountryCode = (params?.country ?? "").slice(0, 2).toLowerCase();
+    // The resolved code, NOT the URL segment's first two characters: the
+    // segment is a slug, so slicing gave "po" for /portugal and "ir" for
+    // /ireland. Only br/es/ro/cz sliced correctly, by coincidence.
+    const addressCountryCode = countryCode.trim().toLowerCase();
     const consent = form.get("consent") === "on";
     // Combined GDPR checkbox: covers clinic/doctor sharing + platform
     // processing + cross-border access in one tick (was 3 separate boxes).

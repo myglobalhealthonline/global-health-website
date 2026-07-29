@@ -43,6 +43,7 @@ import {
 } from "./_components/consultation-documents-section";
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
 import { PatientContextPanel } from "./_components/patient-context-panel";
+import { ReferringRecordPanel } from "./_components/referring-record-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -138,7 +139,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         consultation.subjective ||
         consultation.objective ||
         consultation.assessment ||
-        consultation.plan),
+        consultation.plan ||
+        consultation.note),
   );
   const timeReached = !appointment.scheduledAt || new Date(appointment.scheduledAt) <= new Date();
   // Services-used are scoped by consultationId, so we can only fetch
@@ -156,6 +158,24 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     ...d.consultationDocuments,
     ...d.consultationDocumentsModal,
   };
+  // Cross-jurisdiction prescription: labels for the referring doctor's
+  // disclosed record. Shares the inbox block so the two surfaces can't drift.
+  const referringRecordCopy = {
+    sourceRecordTitle: d.crossBorderRxInbox.sourceRecordTitle,
+    sourceRecordDesc: d.crossBorderRxInbox.sourceRecordDesc,
+    fromLabel: d.crossBorderRxInbox.fromLabel,
+    requestedOn: d.crossBorderRxInbox.requestedOn,
+    summaryHeading: d.crossBorderRxInbox.summaryHeading,
+    soapConsentNote: d.crossBorderRxInbox.soapConsentNote,
+    soapChiefComplaint: d.crossBorderRxInbox.soapChiefComplaint,
+    soapSubjective: d.crossBorderRxInbox.soapSubjective,
+    soapObjective: d.crossBorderRxInbox.soapObjective,
+    soapAssessment: d.crossBorderRxInbox.soapAssessment,
+    soapPlan: d.crossBorderRxInbox.soapPlan,
+    soapNote: d.crossBorderRxInbox.soapNote,
+    soapEmpty: d.crossBorderRxInbox.soapEmpty,
+    sourceDocumentsNote: d.crossBorderRxInbox.sourceDocumentsNote,
+  };
   // Shared by both renderers of the patient-context card (>=lg rail, <lg tab).
   const patientContextCopy = {
     patient: d.appointmentDetail.patient,
@@ -171,14 +191,26 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     bookingNotes: d.appointmentDetail.bookingNotes,
     openPatientChart: d.appointmentDetail.openPatientChart,
     editHealthDataHint: d.appointmentDetail.editHealthDataHint,
-    // Portugal-only Número de Utente / NIF / Cartão de Cidadão / pharmacy
-    // rows. The labels stay in Portuguese-market terms in every locale — they
-    // name PT documents, not generic concepts.
-    ptFields: {
+    // Editable identity/address/DOB rows, offered in every market. The
+    // document names stay in their own market's terms in every locale — a NIF
+    // and a CPF name real documents, not generic concepts — while `taxId` and
+    // `nationalId` are the neutral wording for markets that have neither.
+    identityFields: {
       utente: d.appointmentDetail.utenteNumber,
       nif: d.appointmentDetail.ptNif,
+      cpf: d.appointmentDetail.brCpf,
+      taxId: d.appointmentDetail.taxId,
       idCard: d.appointmentDetail.ptIdCard,
+      nationalId: d.appointmentDetail.nationalId,
+      passport: d.appointmentDetail.passport,
       pharmacy: d.appointmentDetail.ptPharmacy,
+      dateOfBirth: d.common.dateOfBirth,
+      address: d.appointmentDetail.address,
+      addressLine1: d.appointmentDetail.addressLine1,
+      addressLine2: d.appointmentDetail.addressLine2,
+      addressCity: d.appointmentDetail.addressCity,
+      addressState: d.appointmentDetail.addressState,
+      addressPostalCode: d.appointmentDetail.addressPostalCode,
       add: d.appointmentDetail.ptFieldAdd,
       edit: d.appointmentDetail.ptFieldEdit,
       save: d.appointmentDetail.ptFieldSave,
@@ -404,6 +436,12 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 }
               >
                 <div className="gh-form-section__span-2">
+                  {appointment.crossBorderSource ? (
+                    <ReferringRecordPanel
+                      record={appointment.crossBorderSource}
+                      copy={referringRecordCopy}
+                    />
+                  ) : null}
                   <ConsultationForm
                     appointmentId={appointment.id}
                     copy={d.consultationForm}
@@ -415,6 +453,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                             objective: consultation.objective ?? "",
                             assessment: consultation.assessment ?? "",
                             plan: consultation.plan ?? "",
+                            noteFormat: consultation.noteFormat,
+                            note: consultation.note ?? "",
                             status: consultation.status,
                             signedAt: consultation.signedAt,
                           }
@@ -424,6 +464,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                             objective: "",
                             assessment: "",
                             plan: "",
+                            noteFormat: "SOAP",
+                            note: "",
                             status: "DRAFT",
                             signedAt: null,
                           }
@@ -602,6 +644,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     copy={d.appointmentDocumentsTab}
                     modalCopy={consultationDocsCopy}
                     uploadCopy={d.documentUploadForm}
+                    sendDocumentCopy={d.sendDocumentForm}
                     uploadLinkCopy={d.patientUploadLinkCard}
                     reviewCopy={d.documentsReviewSendPanel}
                   />

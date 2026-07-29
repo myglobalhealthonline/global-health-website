@@ -2,9 +2,12 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { FormSection } from "@/components/FormSection";
 import {
-  PtPatientIdentityRows,
-  type PtPatientFieldsCopy,
-} from "./pt-patient-identity-rows";
+  PatientAddressRow,
+  PatientDateOfBirthRow,
+  PatientIdentityRows,
+  type PatientIdentityFieldKey,
+  type PatientIdentityFieldsCopy,
+} from "./patient-identity-rows";
 
 export type PatientContextCopy = {
   patient: string;
@@ -20,7 +23,7 @@ export type PatientContextCopy = {
   bookingNotes: string;
   openPatientChart: string;
   editHealthDataHint: string;
-  ptFields: PtPatientFieldsCopy;
+  identityFields: PatientIdentityFieldsCopy;
 };
 
 /**
@@ -65,7 +68,10 @@ export function PatientContextPanel({
     email: string;
     countryCode: string;
     phone?: string | null;
+    /** Booking-time snapshot. Display fallback only — the editable row writes
+     *  `profileDateOfBirth`. */
     dateOfBirth?: string | null;
+    profileDateOfBirth?: string | null;
     addressLine1?: string | null;
     addressLine2?: string | null;
     addressCity?: string | null;
@@ -74,9 +80,11 @@ export function PatientContextPanel({
     utenteNumber?: string | null;
     taxIdNumber?: string | null;
     nationalIdNumber?: string | null;
+    passportNumber?: string | null;
     preferredPharmacy?: string | null;
     pharmacy?: string | null;
     consultationLanguageCode?: string | null;
+    identityFields?: string[] | null;
     createdAt: string;
     notes?: string | null;
   };
@@ -84,11 +92,29 @@ export function PatientContextPanel({
   copy: PatientContextCopy;
 }) {
   const address = formatAddress(appointment);
-  // NIF / Cartão de Cidadão / pharmacy are a Portugal-only block. Unlike the
-  // rows above, presence can't be the gate: the whole point is to render an
-  // "add" affordance when the patient left the field blank, so the market has
-  // to be checked explicitly. Country codes are stored lowercase.
-  const isPortugal = appointment.countryCode.toLowerCase() === "pt";
+  // Which identity rows to offer. Presence of a value can't be the gate: the
+  // whole point is to render an "add" affordance on a field the patient left
+  // blank. The backend decides (see patient-identity-fields.ts) and sends the
+  // list, so the rows offered here always match the values it disclosed.
+  const identityFields = (appointment.identityFields ?? []) as PatientIdentityFieldKey[];
+  // One column, three labels: PT's NIF is BR's CPF is everyone else's tax ID.
+  // Only the wording is market-specific — the field itself is universal.
+  const country = appointment.countryCode.toLowerCase();
+  const isBrazil = country === "br";
+  const isPortugal = country === "pt";
+  const identityLabels: Partial<Record<PatientIdentityFieldKey, string>> = {
+    utenteNumber: copy.utenteNumber,
+    taxIdNumber: isBrazil
+      ? copy.identityFields.cpf
+      : isPortugal
+        ? copy.identityFields.nif
+        : copy.identityFields.taxId,
+    nationalIdNumber: isPortugal
+      ? copy.identityFields.idCard
+      : copy.identityFields.nationalId,
+    passportNumber: copy.identityFields.passport,
+    preferredPharmacy: copy.identityFields.pharmacy,
+  };
   return (
     <FormSection title={copy.patient}>
       <div className="gh-form-section__span-2">
@@ -97,38 +123,53 @@ export function PatientContextPanel({
             <Row label={copy.ghn} value={appointment.globalHealthNumber} />
           ) : null}
           <Row label={copy.email} value={appointment.email} />
+          {/* Phone stays read-only on purpose: a verified patient's number can
+              only be changed by the patient or an admin, and the doctor PATCH
+              excludes it (see applyPatientProfileUpdate's actor guard). */}
           <Row label={copy.phone} value={appointment.phone ?? "—"} />
-          <Row
-            label={copy.dateOfBirth}
-            value={
-              appointment.dateOfBirth
-                ? new Date(appointment.dateOfBirth).toLocaleDateString()
-                : "—"
-            }
+          {/* Reads and writes the PROFILE's DOB, falling back to the booking
+              snapshot for display when the profile has none. */}
+          <PatientDateOfBirthRow
+            email={appointment.email}
+            value={appointment.profileDateOfBirth ?? appointment.dateOfBirth ?? null}
+            copy={copy.identityFields}
           />
-          {address ? <Row label={copy.address} value={address} /> : null}
-          {/* PT-only block. Número de Utente, NIF, Cartão de Cidadão and the
-              pharmacy each render as an editable row so the doctor can fill
-              one the patient left blank at booking. Presence can't be the
-              gate — the whole point is the "add" affordance on an empty field
-              — so the market is checked explicitly. Non-PT markets that were
-              never shown these keep seeing nothing. For a non-PT market that
-              somehow carries a utente value, fall back to the read-only Row so
-              it is not silently dropped. */}
-          {isPortugal ? (
-            <PtPatientIdentityRows
+          <PatientAddressRow
+            email={appointment.email}
+            initial={{
+              addressLine1: appointment.addressLine1 ?? null,
+              addressLine2: appointment.addressLine2 ?? null,
+              addressCity: appointment.addressCity ?? null,
+              addressState: appointment.addressState ?? null,
+              addressPostalCode: appointment.addressPostalCode ?? null,
+            }}
+            showState={isBrazil}
+            formatted={address}
+            copy={copy.identityFields}
+          />
+          {/* Editable identity rows, every market. Each renders an "add"
+              affordance when the patient left it blank at booking, so the
+              doctor can fill it mid-consult rather than leaving the workspace.
+              The empty-list branch is unreachable today (the backend returns
+              the full set) but is kept so narrowing the policy later degrades
+              to read-only rows instead of dropping values silently. */}
+          {identityFields.length > 0 ? (
+            <PatientIdentityRows
               email={appointment.email}
+              fields={identityFields}
+              labels={identityLabels}
               initial={{
                 utenteNumber: appointment.utenteNumber ?? null,
                 taxIdNumber: appointment.taxIdNumber ?? null,
                 nationalIdNumber: appointment.nationalIdNumber ?? null,
+                passportNumber: appointment.passportNumber ?? null,
                 // Falls back to the pharmacy captured on this booking when the
                 // profile has none — the doctor sees a value either way, and
                 // saving promotes it onto the profile for the next visit.
                 preferredPharmacy:
                   appointment.preferredPharmacy ?? appointment.pharmacy ?? null,
               }}
-              copy={copy.ptFields}
+              copy={copy.identityFields}
             />
           ) : appointment.utenteNumber ? (
             <Row label={copy.utenteNumber} value={appointment.utenteNumber} />

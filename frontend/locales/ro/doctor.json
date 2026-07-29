@@ -217,6 +217,14 @@
     "editHealthDataHint": "Editați datele de sănătate: IMC, tensiune arterială, alergii, boli cronice, istoric familial, obiceiuri sociale, medicație obișnuită.",
     "ptNif": "NIF",
     "ptIdCard": "Cartão de Cidadão",
+    "taxId": "Cod fiscal",
+    "nationalId": "Act de identitate",
+    "passport": "Pașaport",
+    "addressLine1": "Adresă, linia 1",
+    "addressLine2": "Adresă, linia 2",
+    "addressCity": "Oraș",
+    "addressState": "Stat / provincie",
+    "addressPostalCode": "Cod poștal",
     "ptPharmacy": "Farmacie",
     "ptFieldAdd": "Adaugă",
     "ptFieldEdit": "Editează",
@@ -230,7 +238,8 @@
     "internalNotesPlaceholderFromDoctor": "Notă pentru admin (de exemplu, necesită confirmarea plății)…",
     "internalNotesPlaceholderFromAdmin": "Notă pentru medic (de exemplu, pacientul a sunat pentru un follow-up)…",
     "internalNotesPostNote": "Publică notă",
-    "internalNotesPostFailed": "Nu s-a putut publica."
+    "internalNotesPostFailed": "Nu s-a putut publica.",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Fișe pacienți",
@@ -325,6 +334,7 @@
     "soapObjective": "Obiectiv",
     "soapAssessment": "Evaluare",
     "soapPlan": "Plan",
+    "soapNote": "Notă clinică",
     "chartTitle": "Fișa pacientului",
     "idVerifiedBadge": "ID verificat",
     "idPendingBadge": "ID în așteptarea verificării",
@@ -622,6 +632,7 @@
     "step1Title": "1 · Descărcați extrasul de plată",
     "step1Desc": "Consultațiile prestate în luna respectivă, evaluate la plata per serviciu stabilită de administrator, cu un total. Folosiți-l pentru a emite factura.",
     "month": "Luna",
+    "statementLanguage": "Limba extrasului",
     "excel": "Excel",
     "pdf": "PDF",
     "step2Title": "2 · Încărcați factura",
@@ -1006,9 +1017,12 @@
     "typeOther": "Altele",
     "uploadedFilesTitle": "Fișiere încărcate",
     "noUploadedFiles": "Încă niciun fișier încărcat.",
-    "uploadFilesTitle": "Încarcă fișiere"
+    "uploadFilesTitle": "Încarcă fișiere",
+    "sendDocumentTitle": "Trimite document"
   },
   "consultationForm": {
+    "formatSoap": "Format SOAP",
+    "formatFreeform": "Notă unică",
     "fieldChiefComplaint": "Motivul principal",
     "fieldSubjective": "Subiectiv",
     "fieldSubjectiveHelper": "Ce raportează pacientul — istoric, simptome, context.",
@@ -1018,6 +1032,8 @@
     "fieldAssessmentHelper": "Impresie clinică / diagnostic diferențial.",
     "fieldPlan": "Plan",
     "fieldPlanHelper": "Rețete, control, trimiteri.",
+    "fieldNote": "Notă clinică",
+    "fieldNoteHelper": "Notă liberă — istoric, examinare, evaluare și plan într-un singur câmp.",
     "signConfirm": "Prin semnare, această notă clinică devine definitivă din punct de vedere legal și este blocată pentru editări ulterioare. Orice modificare după semnare trebuie adăugată ca o completare datată.",
     "signDialogTitle": "Semnați și blocați această notă?",
     "signDialogConfirm": "Semnați și blocați nota",
@@ -1627,6 +1643,7 @@
     "soapObjective": "Obiectiv",
     "soapAssessment": "Evaluare",
     "soapPlan": "Plan",
+    "soapNote": "Notă clinică",
     "soapEmpty": "Nu a fost înregistrată nicio notă de consultație la programarea sursă.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
@@ -1644,6 +1661,28 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Documentația medicului care a trimis solicitarea",
+    "sourceRecordDesc": "Documentația consultației pe care pacientul a consimțit să o partajeze cu dumneavoastră pentru această solicitare de prescripție.",
+    "requestedOn": "Solicitat la",
+    "sourceDocumentsNote": "Fișierele din acea consultație au fost copiate în fila Documente a acestei programări."
+  },
+  "sendDocumentForm": {
+    "title": "Trimite un document pacientului",
+    "description": "Denumiți documentul, atașați fișierul, iar Global Health îl trimite pacientului prin e-mail. O copie rămâne la Fișiere încărcate.",
+    "nameField": "Numele documentului",
+    "namePlaceholder": "ex.: Rezultatele analizelor",
+    "nameRequired": "Denumiți documentul — pacientul îl vede ca subiect al e-mailului.",
+    "fileField": "Fișier",
+    "chooseFile": "Alegeți un fișier",
+    "changeFile": "Schimbați fișierul",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP sau AVIF · max. 10MB",
+    "fileRequired": "Atașați un fișier pentru trimitere.",
+    "fileTooLarge": "Fișier prea mare (max. 10MB).",
+    "subjectPreview": "Pacientul va vedea",
+    "send": "Trimite pacientului",
+    "sending": "Se trimite…",
+    "sendFailed": "Documentul nu a putut fi trimis.",
+    "sentTo": "Trimis către"
   }
 }

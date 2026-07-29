@@ -165,6 +165,15 @@ export function appendPatientPortalWhatsApp(
   const lines = [body, ""];
   lines.push(
     t(lang, {
+      en: `You can also manage your appointments at the Patient Portal: ${portal.signInUrl}`,
+      pt: `Também pode gerir as suas consultas no Portal do Paciente: ${portal.signInUrl}`,
+      ro: `De asemenea, puteți gestiona programările în Portalul Pacientului: ${portal.signInUrl}`,
+      cs: `Své termíny můžete také spravovat v Portálu pacienta: ${portal.signInUrl}`,
+      es: `También puede gestionar sus citas en el Portal del Paciente: ${portal.signInUrl}`,
+    }),
+  );
+  lines.push(
+    t(lang, {
       en: `Sign in: ${portal.signInUrl}`,
       pt: `Iniciar sessão: ${portal.signInUrl}`,
       ro: `Conectare: ${portal.signInUrl}`,

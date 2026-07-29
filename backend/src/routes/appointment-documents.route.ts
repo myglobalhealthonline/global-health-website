@@ -5,12 +5,15 @@ import { prisma } from "../db/prisma.js";
 import {
   putObject,
   getObject,
-  streamToNodeReadable,
+  readObjectBodyToBuffer,
   deleteObject,
   isMediaStorageConfigured,
   MediaObjectNotFoundError,
 } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
+import { contentDisposition } from "../utils/content-disposition.js";
+import { isEmailConfigured } from "../lib/email/send-email.js";
+import { sendDoctorDocumentToPatientEmail } from "../lib/email/templates.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   verifyClinicalReadAccess,
@@ -19,7 +22,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
-import { verifySniffedMime } from "../utils/sniff-mime.js";
+import { sniffFileMime, verifySniffedMime } from "../utils/sniff-mime.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 /**
@@ -51,6 +54,20 @@ const ALLOWED_MIME = new Set([
 ]);
 
 const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+
+/**
+ * Types safe to render inline in the doctor portal. Deliberately narrower than
+ * ALLOWED_MIME's spirit — no SVG, which is a script container. Membership is
+ * decided by sniffed magic bytes, never by the stored (client-declared) MIME.
+ */
+const INLINE_VIEWABLE_MIME = new Set([
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+  "image/gif",
+]);
 
 // ponytail: hard cap on the per-appointment document list — bounds worst
 // case, no "load older" UI exists for this yet.
@@ -96,7 +113,29 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
           where: { appointmentId: appt.id },
           orderBy: { createdAt: "desc" },
           take: LIST_CAP,
+          include: { doctor: { select: { fullName: true } } },
         });
+
+        // `doctorId` is the OWNING doctor — for a cross-border disclosure that
+        // is the doctor who received the file, not the one who produced it.
+        // Resolve the provenance names so the list can credit the real author
+        // instead of the viewer's own name.
+        const disclosedFromIds = Array.from(
+          new Set(
+            rows
+              .map((r) => r.disclosedFromDoctorId)
+              .filter((id): id is string => Boolean(id)),
+          ),
+        );
+        const disclosedFromNameById = new Map<string, string>();
+        if (disclosedFromIds.length > 0) {
+          const doctors = await prisma.doctor.findMany({
+            where: { id: { in: disclosedFromIds } },
+            select: { id: true, fullName: true },
+          });
+          for (const d of doctors) disclosedFromNameById.set(d.id, d.fullName);
+        }
+
         return okResponse({
           items: rows.map((r) => ({
             id: r.id,
@@ -104,6 +143,10 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             mimetype: r.mimetype,
             byteSize: r.byteSize,
             url: buildDownloadPath(r.id),
+            uploadedBy:
+              (r.disclosedFromDoctorId
+                ? disclosedFromNameById.get(r.disclosedFromDoctorId)
+                : null) ?? r.doctor.fullName,
             createdAt: r.createdAt.toISOString(),
           })),
         });
@@ -249,6 +292,191 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
   );
 
   /**
+   * Name a file and email it straight to the patient, in one action.
+   *
+   * Same validation as the plain upload above (allowlist, 10MB, byte-sniff)
+   * and the file is stored as an ordinary AppointmentDocument, so a document
+   * the patient received is always on the clinical record.
+   *
+   * On a delivery failure the row and the object are rolled back. There is no
+   * `sentToPatient` flag on this table, so leaving a stored-but-unsent file
+   * behind would be indistinguishable from a sent one — and the doctor's next
+   * move is to retry the same file anyway. Presence therefore means sent.
+   */
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/documents/send-to-patient",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      if (!isMediaStorageConfigured()) {
+        return reply.status(503).send(errorResponse("Object storage is not configured"));
+      }
+      if (!isEmailConfigured()) {
+        return reply.status(503).send(errorResponse("Email is not configured"));
+      }
+
+      const appt = await prisma.appointment.findFirst({
+        where: { id: request.params.id, doctorId: auth.doctorId },
+        select: { id: true, fullName: true, email: true },
+      });
+      if (!appt) {
+        return reply.status(404).send(errorResponse("Appointment not found"));
+      }
+
+      const file = await request.file();
+      if (!file) {
+        return reply.status(400).send(errorResponse('Expected one file field named "file"'));
+      }
+      const declaredMime = file.mimetype ?? "";
+      if (!ALLOWED_MIME.has(declaredMime)) {
+        return reply
+          .status(415)
+          .send(errorResponse("Unsupported file type — use PDF / JPEG / PNG / WebP / AVIF"));
+      }
+      const buffer = await file.toBuffer();
+      if (buffer.length > MAX_BYTES) {
+        return reply.status(413).send(errorResponse("File too large (max 10MB)"));
+      }
+      const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+      if (!mimetype) {
+        return reply.status(415).send(errorResponse("File content does not match declared type"));
+      }
+
+      // The document name is what the patient sees in their subject line, so
+      // unlike the plain upload's optional label it is required here.
+      const nameField = file.fields?.["name"];
+      const documentName =
+        nameField && !Array.isArray(nameField) && "value" in nameField
+          ? String(nameField.value ?? "").trim().slice(0, 200)
+          : "";
+      if (!documentName) {
+        return reply.status(400).send(errorResponse("A document name is required"));
+      }
+
+      // The Doctor profile name ("Dr. …"), not the login User's — this is what
+      // the patient is shown as the sender.
+      const doctorProfile = await prisma.doctor.findUnique({
+        where: { id: auth.doctorId },
+        select: { fullName: true },
+      });
+      const doctorName = doctorProfile?.fullName ?? auth.fullName;
+
+      const safeName = sanitizeOriginalFilename(file.filename ?? "document");
+      const storageKey = `clinical/${auth.doctorId}/${appt.id}/${randomUUID()}-${safeName}`;
+
+      try {
+        await putObject(storageKey, buffer, mimetype);
+      } catch (error) {
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Upload failed"));
+      }
+
+      let row: { id: string; label: string; mimetype: string; byteSize: number; createdAt: Date };
+      try {
+        row = await prisma.appointmentDocument.create({
+          data: {
+            appointmentId: appt.id,
+            doctorId: auth.doctorId,
+            label: documentName,
+            storageKey,
+            mimetype,
+            byteSize: buffer.length,
+          },
+          select: { id: true, label: true, mimetype: true, byteSize: true, createdAt: true },
+        });
+      } catch (error) {
+        try {
+          await deleteObject(storageKey);
+        } catch {
+          /* best-effort */
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not save document"));
+      }
+
+      const result = await sendDoctorDocumentToPatientEmail({
+        to: appt.email,
+        patientName: appt.fullName,
+        documentName,
+        doctorName,
+        attachment: {
+          filename: safeName,
+          content: buffer,
+          contentType: mimetype,
+        },
+      });
+      // `mode: "log"` means no provider is wired and nothing left the building —
+      // treat it as a failure so the doctor is never told a patient received
+      // something they did not.
+      if (!result.ok || result.mode === "log") {
+        await prisma.appointmentDocument.delete({ where: { id: row.id } }).catch(() => {});
+        try {
+          await deleteObject(storageKey);
+        } catch {
+          /* best-effort */
+        }
+        const detail = !result.ok
+          ? result.message
+          : "Email is not configured — set GMAIL_SEND_FROM + Google OAuth or SENDGRID_API_KEY";
+        app.log.error({ appointmentId: appt.id, detail }, "Send-document-to-patient failed");
+        return reply.status(502).send(errorResponse(`Could not send the document: ${detail}`));
+      }
+
+      // S-008: PHI left the platform — this audit must be loud, but the send
+      // already happened, so a failed audit write must not 500 a delivered
+      // document. Same reasoning as the upload path above.
+      try {
+        await recordCriticalAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "DOCUMENT_SENT_TO_PATIENT",
+          entityType: "AppointmentDocument",
+          entityId: row.id,
+          metadata: {
+            appointmentId: appt.id,
+            documentName,
+            byteSize: buffer.length,
+          },
+          request,
+        });
+      } catch (auditError) {
+        app.log.error(
+          { err: auditError, documentId: row.id },
+          "CRITICAL: DOCUMENT_SENT_TO_PATIENT audit write failed",
+        );
+      }
+      notifyAdmins("DOCUMENT_UPLOADED", {
+        appointmentId: appt.id,
+        snippet: `${appt.fullName} · ${documentName} · sent to patient`,
+        byUserName: auth.fullName,
+        byRole: "DOCTOR",
+      }).catch(() => {});
+
+      return reply.status(201).send(
+        okResponse(
+          {
+            document: {
+              id: row.id,
+              label: row.label,
+              mimetype: row.mimetype,
+              byteSize: row.byteSize,
+              url: buildDownloadPath(row.id),
+              uploadedBy: doctorName,
+              createdAt: row.createdAt.toISOString(),
+            },
+            sentTo: appt.email,
+          },
+          "Document sent to the patient",
+        ),
+      );
+    },
+  );
+
+  /**
    * Auth-gated streaming download. The public `/api/media/*` route
    * refuses any `clinical/*` key, so this is the ONLY path that hands
    * out clinical attachments. Doctors can fetch their own files;
@@ -299,22 +527,34 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
           throw guardError;
         }
         const obj = await getObject(doc.storageKey);
-        const stream = streamToNodeReadable(obj.Body);
-        if (!stream) {
+        const buffer = await readObjectBodyToBuffer(obj.Body);
+        if (!buffer) {
           return reply
             .status(500)
             .send(errorResponse("Unable to read document"));
         }
-        reply.header("Content-Type", obj.ContentType ?? doc.mimetype);
-        // Force download rather than inline rendering — the stored MIME
-        // type is client-declared at upload time (not byte-sniffed), so
-        // inline rendering of a mislabeled file is a content-execution risk.
+
+        // Doctors read scans and PDFs far more often than they archive them,
+        // so render in the browser rather than forcing a download. The old
+        // blanket `attachment` was there because the stored MIME is
+        // client-declared — so decide from the actual magic bytes instead of
+        // trusting it. Anything that doesn't sniff to a known-safe viewable
+        // type (an HTML or SVG payload mislabeled as a PDF, say) still
+        // downloads, as octet-stream, and never renders in our origin.
+        const sniffed = sniffFileMime(buffer);
+        const viewable = sniffed !== null && INLINE_VIEWABLE_MIME.has(sniffed);
+        reply.header("Content-Type", viewable ? sniffed : "application/octet-stream");
         reply.header(
           "Content-Disposition",
-          `attachment; filename="${doc.label.replace(/"/g, "")}"`,
+          contentDisposition(doc.label, viewable ? "inline" : "attachment"),
         );
+        // Belt and braces for the inline path: no MIME re-guessing by the
+        // browser, and a sandboxed document so even a crafted PDF cannot run
+        // script or reach the session that authorised the download.
+        reply.header("X-Content-Type-Options", "nosniff");
+        reply.header("Content-Security-Policy", "sandbox; default-src 'none'; object-src 'self'");
         reply.header("Cache-Control", "private, no-store");
-        return reply.send(stream);
+        return reply.send(buffer);
       } catch (error) {
         if (error instanceof NoSuchKey || error instanceof MediaObjectNotFoundError) {
           return reply.status(404).send(errorResponse("Document not found"));

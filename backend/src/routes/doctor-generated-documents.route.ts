@@ -16,6 +16,7 @@ import {
 } from "../modules/generated-documents/generated-documents.service.js";
 import { prisma } from "../db/prisma.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { contentDisposition } from "../utils/content-disposition.js";
 
 const baseFields = z.record(z.string()).optional();
 
@@ -337,10 +338,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
             .send(errorResponse("PDF file missing — please generate the document again"));
         }
         reply.header("Content-Type", "application/pdf");
-        reply.header(
-          "Content-Disposition",
-          `inline; filename="${result.fileName.replace(/"/g, "")}"`,
-        );
+        reply.header("Content-Disposition", contentDisposition(result.fileName, "inline"));
         return reply.send(result.buffer);
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

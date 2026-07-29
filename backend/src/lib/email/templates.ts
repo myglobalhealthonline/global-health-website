@@ -368,8 +368,24 @@ export async function sendOrderConfirmationEmail(opts: {
     postalCode: string;
     countryCode: string;
   } | null;
+  /**
+   * Order contains a cross-border prescription line. These never ship — the
+   * doctor finalizes the prescription and the patient is notified — so the
+   * "we'll email you when it ships" copy below is wrong for them.
+   */
+  hasPrescriptionItem?: boolean;
 }) {
   const shortId = formatOrderDisplayId({ id: opts.orderId, orderNumber: opts.orderNumber });
+  const fulfillmentText = opts.shipAddress
+    ? "We'll send a separate email when your items ship."
+    : opts.hasPrescriptionItem
+      ? "Once the doctor finalizes your prescription, you'll get a notification."
+      : "We'll notify you as soon as your order is ready.";
+  const fulfillmentHtml = opts.shipAddress
+    ? "We'll send another email when it ships."
+    : opts.hasPrescriptionItem
+      ? "Once the doctor finalizes your prescription, you'll get a notification."
+      : "We'll notify you as soon as it's ready.";
   const itemLines = opts.items
     .map((i) => `  - ${i.name} × ${i.quantity}  ${i.lineLabel}`)
     .join("\n");
@@ -407,13 +423,13 @@ ${itemLines}
 
 Total paid: ${opts.totalLabel}${shipText}
 
-We'll send a separate email when your items ship. Track your order any time at your account page.
+${fulfillmentText} Track your order any time at your account page.
 
 — Global Health`,
     html: wrapHtml(
       "Order confirmed",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
-       <p>Your order is confirmed and being prepared. We'll send another email when it ships.</p>
+       <p>Your order is confirmed. ${escapeHtml(fulfillmentHtml)}</p>
        <p style="margin-top:16px;font-size:12px;color:#737373;">Order #${escapeHtml(shortId)}</p>
        <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;">
          ${itemRowsHtml}
@@ -562,6 +578,38 @@ export async function sendGeneratedDocumentEmail(opts: {
   });
 }
 
+
+/**
+ * A file the doctor picked off their own machine, named, and sent straight to
+ * the patient from the appointment workspace. Distinct from
+ * `sendGeneratedDocumentEmail` above, which carries a PDF the platform
+ * generated from a template and so can describe it by type.
+ *
+ * The subject is `<document name> by <doctor>` verbatim — the patient's inbox
+ * shows what arrived and who sent it without opening anything, and the doctor
+ * chose that name knowing it would be read that way.
+ */
+export async function sendDoctorDocumentToPatientEmail(opts: {
+  to: string;
+  patientName: string;
+  documentName: string;
+  doctorName: string;
+  attachment: { filename: string; content: Buffer; contentType?: string };
+}) {
+  const subject = `${opts.documentName} by ${opts.doctorName}`;
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `Hi ${opts.patientName},\n\n${opts.doctorName} has sent you a document: ${opts.documentName}. It is attached to this email (${opts.attachment.filename}).\n\nIf you have any questions about it, reply to your doctor through your Global Health account.\n\n— Global Health`,
+    html: wrapHtml(
+      opts.documentName,
+      `<p>Hi ${escapeHtml(opts.patientName)},</p>
+       <p>${escapeHtml(opts.doctorName)} has sent you a document: <strong>${escapeHtml(opts.documentName)}</strong>. It is attached to this email (${escapeHtml(opts.attachment.filename)}).</p>
+       <p>If you have any questions about it, reply to your doctor through your Global Health account.</p>`,
+    ),
+    attachments: [opts.attachment],
+  });
+}
 
 /**
  * Sent after an admin merges a duplicate patient record into this

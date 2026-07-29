@@ -224,13 +224,22 @@
     "editHealthDataHint": "Edit health data: BMI, blood pressure, allergies, chronic diseases, family history, social habits, usual medication.",
     "ptNif": "NIF",
     "ptIdCard": "Cartão de Cidadão",
+    "taxId": "Tax ID",
+    "nationalId": "National ID",
+    "passport": "Passport",
+    "addressLine1": "Address line 1",
+    "addressLine2": "Address line 2",
+    "addressCity": "City",
+    "addressState": "State / province",
+    "addressPostalCode": "Postal code",
     "ptPharmacy": "Pharmacy",
     "ptFieldAdd": "Add",
     "ptFieldEdit": "Edit",
     "ptFieldSave": "Save",
     "ptFieldCancel": "Cancel",
     "ptFieldSaveFailed": "Could not save. Try again.",
-    "tabsAriaLabel": "Appointment sections"
+    "tabsAriaLabel": "Appointment sections",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Patient records",
@@ -327,6 +336,7 @@
     "soapObjective": "Objective",
     "soapAssessment": "Assessment",
     "soapPlan": "Plan",
+    "soapNote": "Clinical note",
     "chartTitle": "Patient chart",
     "idVerifiedBadge": "ID verified",
     "idPendingBadge": "ID pending review",
@@ -622,6 +632,7 @@
     "step1Title": "1 · Download your payout statement",
     "step1Desc": "Consultations you provided that month, valued at your admin-set per-service payout, with a total. Use it to raise your invoice.",
     "month": "Month",
+    "statementLanguage": "Statement language",
     "excel": "Excel",
     "pdf": "PDF",
     "step2Title": "2 · Upload your invoice",
@@ -897,6 +908,7 @@
     "soapObjective": "Objective",
     "soapAssessment": "Assessment",
     "soapPlan": "Plan",
+    "soapNote": "Clinical note",
     "soapEmpty": "No consultation note was recorded on the source appointment.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
@@ -914,7 +926,11 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Referring doctor's record",
+    "sourceRecordDesc": "The consultation record the patient consented to share with you for this prescription request.",
+    "requestedOn": "Requested",
+    "sourceDocumentsNote": "Files from that consultation were copied to the Documents tab of this appointment."
   },
   "servicesUsedList": {
     "saveNoteFirstTitle": "Save the clinical note first",
@@ -1064,9 +1080,12 @@
     "typeOther": "Other",
     "uploadedFilesTitle": "Uploaded files",
     "noUploadedFiles": "No uploaded files yet.",
-    "uploadFilesTitle": "Upload files"
+    "uploadFilesTitle": "Upload files",
+    "sendDocumentTitle": "Send document"
   },
   "consultationForm": {
+    "formatSoap": "SOAP format",
+    "formatFreeform": "Single note",
     "fieldChiefComplaint": "Chief complaint",
     "fieldSubjective": "Subjective",
     "fieldSubjectiveHelper": "What the patient reports — history, symptoms, context.",
@@ -1076,6 +1095,8 @@
     "fieldAssessmentHelper": "Clinical impression / differential.",
     "fieldPlan": "Plan",
     "fieldPlanHelper": "Prescriptions, follow-up, referrals.",
+    "fieldNote": "Clinical note",
+    "fieldNoteHelper": "Free-text note — write history, exam, assessment and plan together.",
     "signConfirm": "Signing makes this consultation note legally final and locks it from further edits. Any changes after signing must be added as a dated addendum.",
     "signDialogTitle": "Sign and lock this note?",
     "signDialogConfirm": "Sign and lock note",
@@ -1644,5 +1665,23 @@
       "generate": "Generate",
       "documentsQueueNote": "Generated documents go to a review & send queue before reaching the patient."
     }
+  },
+  "sendDocumentForm": {
+    "title": "Send a document to the patient",
+    "description": "Name the document, attach the file, and it is emailed to the patient from Global Health. A copy is kept under Uploaded files.",
+    "nameField": "Document name",
+    "namePlaceholder": "e.g. Blood test results",
+    "nameRequired": "Give the document a name — the patient sees it as the email subject.",
+    "fileField": "File",
+    "chooseFile": "Choose a file",
+    "changeFile": "Change file",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP, or AVIF · max 10MB",
+    "fileRequired": "Attach a file to send.",
+    "fileTooLarge": "File too large (max 10MB).",
+    "subjectPreview": "The patient will see",
+    "send": "Send to patient",
+    "sending": "Sending…",
+    "sendFailed": "Could not send the document.",
+    "sentTo": "Sent to"
   }
 }

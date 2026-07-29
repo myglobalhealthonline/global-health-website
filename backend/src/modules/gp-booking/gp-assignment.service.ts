@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
@@ -5,6 +6,7 @@ import {
   listOpenSlotsForDoctorAndService,
   releaseExpiredHeldSlotsForDoctors,
 } from "../doctor-availability/doctor-availability.service.js";
+import { isValidTimeZone } from "../doctor-availability/timezone.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
 import {
   resolveGpSameDayService,
@@ -43,12 +45,15 @@ const START_BUFFER_MS = HOUR_MS;
  * slot, so a slot booked within the TTL just 409s and the patient retries.
  */
 const AVAILABILITY_TTL_MS = 45_000;
-const LANGUAGES_TTL_MS = 5 * 60_000;
+// Shorter than the old 5min: the result now carries `bookableLanguages`, which
+// changes as slots get booked out. 60s keeps the dropdown from advertising a
+// language whose last same-day slot went minutes ago.
+const LANGUAGES_TTL_MS = 60_000;
 // ponytail: keyed by country[:language], so real growth is tiny — the cap
 // just guards against unbounded growth in a long-lived process.
 const CACHE_MAX_ENTRIES = 1000;
 const availabilityCache = new TtlCache<GpAvailabilityResult>(CACHE_MAX_ENTRIES);
-const languagesCache = new TtlCache<{ configured: boolean; languages: string[] }>(CACHE_MAX_ENTRIES);
+const languagesCache = new TtlCache<GpLanguagesResult>(CACHE_MAX_ENTRIES);
 
 export type GpAvailabilitySlot = {
   /** ISO start (UTC). Distinct across the eligible doctor pool. */
@@ -63,6 +68,23 @@ export type GpAvailabilityResult = {
   service: GpSameDayService | null;
   clinicTimezone: string;
   slots: GpAvailabilitySlot[];
+};
+
+export type GpLanguagesResult = {
+  /** False when the country has no same-day GP service set up at all. */
+  configured: boolean;
+  /**
+   * Every consultation language the GP pool speaks. Trust/marketing copy only
+   * ("N languages spoken") — a stable pool figure that must NOT flicker with
+   * hour-to-hour availability.
+   */
+  languages: string[];
+  /**
+   * The subset with at least one bookable same-day slot right now. This is what
+   * the homepage dropdown must render: offering a language whose doctors have no
+   * open times only yields the dead-end "no times today or tomorrow" state.
+   */
+  bookableLanguages: string[];
 };
 
 export type GpAssignmentReason = "PRIORITY_24H" | "ROTATION" | "ONLY_AVAILABLE";
@@ -220,24 +242,40 @@ export async function getGpAvailability(args: {
 }
 
 /**
- * Distinct consultation languages offered by the GP doctor pool for a country.
- * Powers the homepage language dropdown. Returns `configured: false` when the
- * country has no same-day GP service set up at all.
+ * Exclusive UTC end of the clinic-local *tomorrow* — the same horizon the
+ * homepage panel renders (it buckets returned slots into clinic-local today +
+ * tomorrow and drops the rest). Filtering `bookableLanguages` on a wider window
+ * would re-list a language whose only free times are next week.
  */
-export async function getGpLanguages(countryCode: string): Promise<{
-  configured: boolean;
-  languages: string[];
-}> {
+function endOfClinicTomorrowUtc(timeZone: string): Date {
+  const zone = isValidTimeZone(timeZone) ? timeZone : "utc";
+  return DateTime.now().setZone(zone).startOf("day").plus({ days: 2 }).toUTC().toJSDate();
+}
+
+/**
+ * Consultation languages for a country's same-day GP pool.
+ *
+ * Returns BOTH the full pool (`languages`, for trust copy) and the bookable
+ * subset (`bookableLanguages`, for the dropdown) — see `GpLanguagesResult`.
+ * `configured: false` when the country has no same-day GP service at all.
+ *
+ * The bookable pass costs one availability sweep over the whole GP pool
+ * (materialise + read today/tomorrow slots per doctor), which is why the result
+ * is memoised for `LANGUAGES_TTL_MS`. It reuses the exact same slot machinery
+ * as `getGpAvailability`, so a language survives the filter only when the
+ * availability endpoint would actually return times for it.
+ */
+export async function getGpLanguages(countryCode: string): Promise<GpLanguagesResult> {
   const cacheKey = countryCode.toLowerCase();
   const cached = languagesCache.get(cacheKey);
   if (cached) return cached;
-  const store = (value: { configured: boolean; languages: string[] }) => {
+  const store = (value: GpLanguagesResult) => {
     languagesCache.set(cacheKey, value, LANGUAGES_TTL_MS);
     return value;
   };
   try {
     const service = await resolveGpSameDayService(countryCode);
-    if (!service) return store({ configured: false, languages: [] });
+    if (!service) return store({ configured: false, languages: [], bookableLanguages: [] });
 
     const code = countryCode.trim().toLowerCase();
     const rows = await prisma.doctor.findMany({
@@ -255,17 +293,56 @@ export async function getGpLanguages(countryCode: string): Promise<{
           some: { serviceId: service.id, isActive: true, status: "active" },
         },
       },
-      select: { languages: true },
+      select: { id: true, languages: true },
     });
+
+    const normalizeLanguages = (languages: string[]) =>
+      languages.map((l) => l.trim().toLowerCase()).filter((l) => l.length > 0);
 
     const set = new Set<string>();
     for (const row of rows) {
-      for (const lang of row.languages) {
-        const norm = lang.trim().toLowerCase();
-        if (norm) set.add(norm);
-      }
+      for (const lang of normalizeLanguages(row.languages)) set.add(lang);
     }
-    return store({ configured: true, languages: Array.from(set).sort() });
+    const languages = Array.from(set).sort();
+    if (rows.length === 0) return store({ configured: true, languages, bookableLanguages: [] });
+
+    // Which of those languages can actually be booked today/tomorrow: sweep the
+    // pool's open slots and keep only the languages of doctors who have ≥1.
+    const clinicTimezone = await resolveCountryTimeZone(countryCode);
+    const fromUtc = new Date(Date.now() + START_BUFFER_MS);
+    const toUtc = endOfClinicTomorrowUtc(clinicTimezone);
+    if (toUtc <= fromUtc) return store({ configured: true, languages, bookableLanguages: [] });
+
+    // One batched release for the whole pool instead of one per doctor (P-005);
+    // each slot read below then skips its own release.
+    await releaseExpiredHeldSlotsForDoctors(rows.map((d) => d.id));
+
+    const bookable = new Set<string>();
+    const CONCURRENCY = 8;
+    for (let i = 0; i < rows.length; i += CONCURRENCY) {
+      const batch = rows.slice(i, i + CONCURRENCY);
+      const results = await Promise.all(
+        batch.map((doc) =>
+          listOpenSlotsForDoctorAndService(
+            doc.id,
+            service.durationMinutes,
+            fromUtc,
+            toUtc,
+            { skipExpiredRelease: true },
+          ),
+        ),
+      );
+      results.forEach((slots, idx) => {
+        if (slots.length === 0) return;
+        for (const lang of normalizeLanguages(batch[idx].languages)) bookable.add(lang);
+      });
+    }
+
+    return store({
+      configured: true,
+      languages,
+      bookableLanguages: Array.from(bookable).sort(),
+    });
   } catch (error) {
     throw normalizeDbError(error, "Could not load consultation languages");
   }

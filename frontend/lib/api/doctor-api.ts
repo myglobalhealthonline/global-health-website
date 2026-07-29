@@ -132,6 +132,8 @@ export type CrossBorderRxInboxItem = {
     objective: string | null;
     assessment: string | null;
     plan: string | null;
+    noteFormat: "SOAP" | "FREEFORM";
+    note: string | null;
   };
   asyncAppointmentId: string | null;
   sourceDoctorName: string | null;
@@ -392,6 +394,8 @@ export type ConsultationDto = {
   objective: string | null;
   assessment: string | null;
   plan: string | null;
+  noteFormat: "SOAP" | "FREEFORM";
+  note: string | null;
   status: "DRAFT" | "SIGNED";
   signedAt: string | null;
   createdAt: string;
@@ -443,21 +447,52 @@ export type AppointmentDetailDto = {
   addressState?: string | null;
   addressPostalCode?: string | null;
   addressCountryCode?: string | null;
-  /** Número de Utente — the PT SNS number, needed for electronic
-   *  prescription. Null outside markets with
-   *  `BookingSetting.collectUtenteNumber`. */
+  /** The PatientProfile's own date of birth, as distinct from `dateOfBirth`
+   *  above, which is the booking-time snapshot. The card's editable row reads
+   *  and writes this one, so a save can't look like it reverted. */
+  profileDateOfBirth?: string | null;
+  /** Número de Utente — the PT SNS number, needed for electronic prescription.
+   *  Disclosed in every market (a number already on file is readable by the
+   *  treating doctor regardless of whether that market's booking form asks
+   *  for one); simply absent for patients who have none. */
   utenteNumber?: string | null;
-  /** NIF (fiscal number). Portugal-only — the backend returns null for every
-   *  other market, where it stays admin-only per the GDPR plan. Goes on PT
-   *  prescriptions/certificates as "NIF: …". */
+  /** Fiscal number — PT's NIF, BR's CPF, elsewhere just a tax ID. One column,
+   *  the label is the only market-specific part. Printed on PT/BR documents by
+   *  `buildPatientIdLine`. */
   taxIdNumber?: string | null;
-  /** Cartão de Cidadão number. Portugal-only, same gate as `taxIdNumber`.
-   *  Often absent — patients are not asked for it at booking. */
+  /** National ID — PT's Cartão de Cidadão. Often absent: most booking forms
+   *  don't ask for it. */
   nationalIdNumber?: string | null;
+  /** Passport number. Collected by the manual-booking forms, so the treating
+   *  doctor can already see and set it there. */
+  passportNumber?: string | null;
   /** Patient's usual pharmacy from their profile (PatientProfile.
-   *  preferredPharmacy). Portugal-only in this payload. Distinct from
-   *  `pharmacy`, which is the per-visit value captured on the appointment. */
+   *  preferredPharmacy). Distinct from `pharmacy`, which is the per-visit
+   *  value captured on the appointment. */
   preferredPharmacy?: string | null;
+  /** Which identity fields render as editable rows. Every market gets the full
+   *  set today; still decided server-side (see patient-identity-fields.ts) so
+   *  the rows can never offer more than was actually disclosed. */
+  identityFields?: string[] | null;
+  /** Cross-jurisdiction prescription only: the referring doctor's consultation
+   *  record, as the patient consented to disclose it. Null on every ordinary
+   *  appointment, and for any viewer who is not the prescribing doctor. */
+  crossBorderSource?: {
+    requestId: string;
+    status: string;
+    requestedAt: string;
+    sourceDoctorName: string | null;
+    clinicalSummary: string;
+    soap: {
+      chiefComplaint: string | null;
+      subjective: string | null;
+      objective: string | null;
+      assessment: string | null;
+      plan: string | null;
+      noteFormat: "SOAP" | "FREEFORM";
+      note: string | null;
+    };
+  } | null;
   createdAt: string;
 };
 
@@ -474,6 +509,11 @@ export type DoctorDocumentDto = {
   mimetype: string;
   byteSize: number;
   url: string;
+  /** Who actually produced the file. Normally the appointment's own doctor,
+   *  but a cross-border disclosure is owned by the doctor who RECEIVED it, so
+   *  this names the referring doctor instead. Optional — older cached payloads
+   *  and other callers fall back to the workspace doctor's name. */
+  uploadedBy?: string | null;
   createdAt: string;
 };
 

@@ -37,6 +37,7 @@ import {
   type EditDraftDoc,
 } from "./consultation-documents-modal";
 import { DocumentUploadForm, type DocumentUploadFormCopy } from "./document-upload-form";
+import { SendDocumentForm, type SendDocumentFormCopy } from "./send-document-form";
 import {
   SendPatientUploadLinkCard,
   type SendPatientUploadLinkCopy,
@@ -57,6 +58,7 @@ export type AppointmentDocumentsTabCopy = {
   uploadedFilesTitle: string;
   noUploadedFiles: string;
   uploadFilesTitle: string;
+  sendDocumentTitle: string;
 };
 
 type GeneratedDoc = {
@@ -88,6 +90,7 @@ export function AppointmentDocumentsTab({
   copy,
   modalCopy,
   uploadCopy,
+  sendDocumentCopy,
   uploadLinkCopy,
   reviewCopy,
 }: {
@@ -100,6 +103,7 @@ export function AppointmentDocumentsTab({
   copy: AppointmentDocumentsTabCopy;
   modalCopy: ConsultationDocumentsModalCopy;
   uploadCopy: DocumentUploadFormCopy;
+  sendDocumentCopy: SendDocumentFormCopy;
   uploadLinkCopy: SendPatientUploadLinkCopy;
   reviewCopy: DocumentsReviewSendPanelCopy;
 }) {
@@ -212,6 +216,9 @@ export function AppointmentDocumentsTab({
     fileName: u.label,
     fileTypeLabel: uploadFileTypeLabel(u.mimetype),
     viewUrl: u.url || `/api/doctor/documents/${u.id}/download`,
+    // Falls back to `session.uploadedBy` (this doctor) in the table; set for
+    // files disclosed by a referring doctor.
+    uploadedBy: u.uploadedBy ?? null,
   }));
 
   const docCount = generatedTotal + uploads.length;
@@ -314,6 +321,20 @@ export function AppointmentDocumentsTab({
           <SendPatientUploadLinkCard
             endpoint={`/api/doctor/appointments/${appointmentId}/upload-link`}
             copy={uploadLinkCopy}
+          />
+        </div>
+      </HistorySection>
+
+      {/* Upload stores; this stores AND emails. Kept as its own section rather
+          than a checkbox on the upload form so "the patient now has this" is a
+          deliberate act, not a toggle someone leaves on by accident. */}
+      <HistorySection title={copy.sendDocumentTitle} count={undefined} defaultOpen={false}>
+        <div className="grid gap-3 p-4">
+          <SendDocumentForm
+            appointmentId={appointmentId}
+            doctorName={doctorName}
+            onSent={(doc) => setUploads((prev) => [doc, ...prev])}
+            copy={sendDocumentCopy}
           />
         </div>
       </HistorySection>

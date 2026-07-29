@@ -217,6 +217,14 @@
     "editHealthDataHint": "Upravit zdravotní údaje: BMI, krevní tlak, alergie, chronická onemocnění, rodinnou anamnézu, sociální návyky, obvyklou medikaci.",
     "ptNif": "NIF",
     "ptIdCard": "Cartão de Cidadão",
+    "taxId": "Daňové číslo",
+    "nationalId": "Číslo dokladu",
+    "passport": "Pas",
+    "addressLine1": "Adresa, řádek 1",
+    "addressLine2": "Adresa, řádek 2",
+    "addressCity": "Město",
+    "addressState": "Stát / provincie",
+    "addressPostalCode": "PSČ",
     "ptPharmacy": "Lékárna",
     "ptFieldAdd": "Přidat",
     "ptFieldEdit": "Upravit",
@@ -230,7 +238,8 @@
     "internalNotesPlaceholderFromDoctor": "Poznámka pro admina (např. potřebuje potvrzení platby)…",
     "internalNotesPlaceholderFromAdmin": "Poznámka pro lékaře (např. pacient volal ohledně následného vyšetření)…",
     "internalNotesPostNote": "Odeslat poznámku",
-    "internalNotesPostFailed": "Nepodařilo se odeslat."
+    "internalNotesPostFailed": "Nepodařilo se odeslat.",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Záznamy pacientů",
@@ -325,6 +334,7 @@
     "soapObjective": "Objektivní",
     "soapAssessment": "Zhodnocení",
     "soapPlan": "Plán",
+    "soapNote": "Klinická poznámka",
     "chartTitle": "Karta pacienta",
     "idVerifiedBadge": "ID ověřeno",
     "idPendingBadge": "ID čeká na kontrolu",
@@ -622,6 +632,7 @@
     "step1Title": "1 · Stáhněte si výpis výplaty",
     "step1Desc": "Konzultace, které jste ten měsíc poskytli, oceněné podle administrátorem stanovené výplaty za službu, s celkovým součtem. Použijte jej pro vystavení faktury.",
     "month": "Měsíc",
+    "statementLanguage": "Jazyk výpisu",
     "excel": "Excel",
     "pdf": "PDF",
     "step2Title": "2 · Nahrajte svou fakturu",
@@ -1006,9 +1017,12 @@
     "typeOther": "Ostatní",
     "uploadedFilesTitle": "Nahrané soubory",
     "noUploadedFiles": "Zatím žádné nahrané soubory.",
-    "uploadFilesTitle": "Nahrát soubory"
+    "uploadFilesTitle": "Nahrát soubory",
+    "sendDocumentTitle": "Odeslat dokument"
   },
   "consultationForm": {
+    "formatSoap": "Formát SOAP",
+    "formatFreeform": "Jedna poznámka",
     "fieldChiefComplaint": "Hlavní obtíž",
     "fieldSubjective": "Subjektivní",
     "fieldSubjectiveHelper": "Co pacient uvádí — anamnéza, příznaky, kontext.",
@@ -1018,6 +1032,8 @@
     "fieldAssessmentHelper": "Klinický dojem / diferenciální diagnóza.",
     "fieldPlan": "Plán",
     "fieldPlanHelper": "Předpisy, kontrolní vyšetření, doporučení.",
+    "fieldNote": "Klinická poznámka",
+    "fieldNoteHelper": "Volný text — anamnéza, vyšetření, hodnocení a plán v jednom poli.",
     "signConfirm": "Podpisem se tato klinická poznámka stává právně závaznou a je uzamčena proti dalším úpravám. Případné změny po podpisu musí být přidány jako datovaný dodatek.",
     "signDialogTitle": "Podepsat a uzamknout tuto poznámku?",
     "signDialogConfirm": "Podepsat a uzamknout poznámku",
@@ -1627,6 +1643,7 @@
     "soapObjective": "Objektivní",
     "soapAssessment": "Zhodnocení",
     "soapPlan": "Plán",
+    "soapNote": "Klinická poznámka",
     "soapEmpty": "U původního termínu nebyl zaznamenán žádný záznam z konzultace.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
@@ -1644,6 +1661,28 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Záznam odesílajícího lékaře",
+    "sourceRecordDesc": "Záznam z konzultace, jehož sdílení s vámi pacient pro tuto žádost o předpis odsouhlasil.",
+    "requestedOn": "Vyžádáno dne",
+    "sourceDocumentsNote": "Soubory z této konzultace byly zkopírovány do záložky Dokumenty této návštěvy."
+  },
+  "sendDocumentForm": {
+    "title": "Odeslat dokument pacientovi",
+    "description": "Pojmenujte dokument, přiložte soubor a Global Health jej odešle pacientovi e-mailem. Kopie zůstane v sekci Nahrané soubory.",
+    "nameField": "Název dokumentu",
+    "namePlaceholder": "např. Výsledky krevních testů",
+    "nameRequired": "Pojmenujte dokument — pacient jej uvidí jako předmět e-mailu.",
+    "fileField": "Soubor",
+    "chooseFile": "Vybrat soubor",
+    "changeFile": "Změnit soubor",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP nebo AVIF · max. 10 MB",
+    "fileRequired": "Přiložte soubor k odeslání.",
+    "fileTooLarge": "Soubor je příliš velký (max. 10 MB).",
+    "subjectPreview": "Pacient uvidí",
+    "send": "Odeslat pacientovi",
+    "sending": "Odesílá se…",
+    "sendFailed": "Dokument se nepodařilo odeslat.",
+    "sentTo": "Odesláno na"
   }
 }

@@ -8,6 +8,10 @@ import {
   type ReportSummaryItem,
   type ReportTable,
 } from "./report-formatters.js";
+import {
+  payoutStatementLabelsFor,
+  type PayoutStatementLocale,
+} from "./payout-statement-content.js";
 
 /**
  * Query builders for the list reports exported from the doctor + admin
@@ -402,7 +406,10 @@ export async function doctorPayoutStatementReport(
   doctorName: string,
   filters: ReportFilters,
   bank?: PayoutBankInfo,
+  locale: PayoutStatementLocale = "en",
 ): Promise<ReportTable> {
+  const t = payoutStatementLabelsFor(locale);
+  const htmlLang = t.htmlLang;
   // Hard floor: never pay for consultations dated before go-live (17 Jul 2026).
   // Everything earlier is legacy-import noise (e.g. `legacy-records` rows), so it
   // is excluded even when the caller's From date reaches further back.
@@ -411,7 +418,7 @@ export async function doctorPayoutStatementReport(
     filters.from && filters.from > PAYOUT_MIN_DATE ? filters.from : PAYOUT_MIN_DATE;
   const to = filters.to;
   const dateRange = { gte: from, ...(to ? { lte: to } : {}) };
-  const periodLabel = `${fmtDate(from)} → ${to ? fmtDate(to) : "—"}`;
+  const periodLabel = `${fmtDate(from, htmlLang)} → ${to ? fmtDate(to, htmlLang) : "—"}`;
 
   const appts = await prisma.appointment.findMany({
     where: {
@@ -583,7 +590,7 @@ export async function doctorPayoutStatementReport(
   for (const key of marketKeys) {
     const list = byMarket.get(key)!;
     list.sort((x, y) => effDate(x).getTime() - effDate(y).getTime());
-    if (multiMarket) rows.push({ _section: `Market — ${marketLabel(key)}` });
+    if (multiMarket) rows.push({ _section: t.marketSection.replace("{market}", marketLabel(key)) });
     const subtotal: Record<string, number> = {};
     for (const a of list) {
       const { payout, insurer, currency } = payoutOf(a);
@@ -592,11 +599,11 @@ export async function doctorPayoutStatementReport(
         grand[currency] = (grand[currency] ?? 0) + payout;
       }
       rows.push({
-        date: fmtDate(effDate(a)),
+        date: fmtDate(effDate(a), htmlLang),
         patient: a.fullName,
         service: a.service?.name ?? "—",
         insurer,
-        payout: payout == null ? "Not set" : fmtMoney(payout, currency),
+        payout: payout == null ? t.notSet : fmtMoney(payout, currency, htmlLang),
       });
     }
     if (multiMarket) {
@@ -605,9 +612,9 @@ export async function doctorPayoutStatementReport(
           _total: true,
           date: "",
           patient: "",
-          service: `Subtotal — ${marketLabel(key)}`,
+          service: t.subtotalPrefix.replace("{market}", marketLabel(key)),
           insurer: "",
-          payout: fmtMoney(cents, currency),
+          payout: fmtMoney(cents, currency, htmlLang),
         });
       }
     }
@@ -619,47 +626,52 @@ export async function doctorPayoutStatementReport(
       _total: true,
       date: "",
       patient: "",
-      service: "TOTAL TO PAY",
+      service: t.totalToPayCaps,
       insurer: "",
-      payout: fmtMoney(cents, currency),
+      payout: fmtMoney(cents, currency, htmlLang),
     });
   }
 
   const totalToPay =
     Object.entries(grand)
-      .map(([currency, cents]) => fmtMoney(cents, currency))
+      .map(([currency, cents]) => fmtMoney(cents, currency, htmlLang))
       .join(" · ") || "—";
 
   const summary: ReportSummaryItem[] = [
-    { label: "Period", value: periodLabel },
-    { label: "Account holder", value: bank?.accountHolder?.trim() || doctorName },
+    { label: t.period, value: periodLabel },
+    { label: t.accountHolder, value: bank?.accountHolder?.trim() || doctorName },
     {
-      label: "IBAN",
-      value: bank?.iban?.trim() ? groupIban(bank.iban) : "Not on file",
+      label: t.iban,
+      value: bank?.iban?.trim() ? groupIban(bank.iban) : t.ibanNotOnFile,
     },
-    ...(bank?.bic?.trim() ? [{ label: "BIC / SWIFT", value: bank.bic.trim() }] : []),
+    ...(bank?.bic?.trim() ? [{ label: t.bic, value: bank.bic.trim() }] : []),
     ...(multiMarket
-      ? [{ label: "Markets", value: marketKeys.map(marketLabel).join(", ") }]
+      ? [{ label: t.markets, value: marketKeys.map(marketLabel).join(", ") }]
       : []),
-    { label: "Total to pay", value: totalToPay },
+    { label: t.totalToPay, value: totalToPay },
   ];
 
+  const consultationUnit =
+    capped.length === 1 ? t.consultationSingular : t.consultationPlural;
+
   return {
-    title: "Payout statement",
-    subtitle: `${doctorName} · ${periodLabel} · ${capped.length} consultation${capped.length === 1 ? "" : "s"}`,
+    title: t.title,
+    subtitle: `${doctorName} · ${periodLabel} · ${capped.length} ${consultationUnit}`,
     summary,
     generatedAt: new Date().toISOString(),
     truncated,
+    locale: htmlLang,
+    chrome: t.chrome,
     // No patient/gross price column — a payout statement shows only what the
     // doctor is paid (standard per-service payout, or the insurance payout for
     // insured bookings). The patient-facing price lives on the admin reports.
     // No consultation-type column either — the Service names the consultation.
     columns: [
-      { key: "date", label: "Date" },
-      { key: "patient", label: "Patient" },
-      { key: "service", label: "Service" },
-      { key: "insurer", label: "Insurer" },
-      { key: "payout", label: "Payout", align: "right" },
+      { key: "date", label: t.colDate },
+      { key: "patient", label: t.colPatient },
+      { key: "service", label: t.colService },
+      { key: "insurer", label: t.colInsurer },
+      { key: "payout", label: t.colPayout, align: "right" },
     ],
     rows,
   };

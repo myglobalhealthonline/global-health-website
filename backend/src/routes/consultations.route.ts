@@ -15,6 +15,8 @@ import {
   MedicalAccessDeniedError,
 } from "../utils/guard-medical-read.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
+import { getDisclosedCrossBorderRecord } from "../modules/cross-border-rx/cross-border-rx-disclosure.service.js";
+import { doctorVisibleIdentityFields } from "../utils/patient-identity-fields.js";
 
 /**
  * Clinical consultation endpoints, doctor-only.
@@ -40,6 +42,8 @@ const patchBodySchema = z
     objective: z.string().trim().max(20000).nullable().optional(),
     assessment: z.string().trim().max(20000).nullable().optional(),
     plan: z.string().trim().max(20000).nullable().optional(),
+    noteFormat: z.enum(["SOAP", "FREEFORM"]).optional(),
+    note: z.string().trim().max(20000).nullable().optional(),
   })
   .strict()
   .refine((d) => Object.keys(d).length > 0, {
@@ -175,7 +179,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           }
           throw guardError;
         }
-        const [consultation, bookingSetting, patientProfile] = await Promise.all([
+        const [consultation, bookingSetting, patientProfile, crossBorderSource] = await Promise.all([
           prisma.consultation.findUnique({ where: { appointmentId: appt.id } }),
           readCountryBookingSetting(appt.countryCode),
           prisma.patientProfile.findUnique({
@@ -192,44 +196,49 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
               addressState: true,
               addressPostalCode: true,
               addressCountryCode: true,
-              // Government IDs the doctor portal may see. Número de Utente is
-              // the SNS number needed to reach the patient's national records
-              // in the electronic prescription system. NIF (`taxIdNumber`) and
-              // Cartão de Cidadão (`nationalIdNumber`) are the two identifiers
-              // a Portuguese prescription/certificate has to carry — see
-              // `buildPatientIdLine` in generated-documents-fields.ts, which
-              // renders "NIF: …" / "Cartão de Cidadão: …" onto the PDF. All
-              // three are Portugal-gated below; outside PT they stay
-              // admin-only per the GDPR plan (`stripIdentityFields` in
-              // doctor-patient-profile.route.ts), and passport never crosses.
+              // Government IDs the treating doctor may see, in every market —
+              // see patient-identity-fields.ts. Número de Utente is the SNS
+              // number that reaches PT national records; NIF (`taxIdNumber`,
+              // BR's CPF) and Cartão de Cidadão (`nationalIdNumber`) are what
+              // `buildPatientIdLine` prints on prescriptions/certificates.
+              // Each disclosure is logged as SENSITIVE_PROFILE below. They stay
+              // admin-only on the patient chart (`stripIdentityFields`).
               utenteNumber: true,
               taxIdNumber: true,
               nationalIdNumber: true,
-              // Not a government ID — plaintext, no guard needed. Carried in
-              // the same PT block so the doctor can fill it mid-consult and
-              // have it land on the prescription.
+              passportNumber: true,
+              // Not a government ID — plaintext, no guard needed. Offered
+              // alongside them so the doctor can fill it mid-consult and have
+              // it land on the prescription.
               preferredPharmacy: true,
+              // Canonical DOB. The card's editable row writes the profile, so
+              // it must also READ the profile — showing the appointment's
+              // booking-time snapshot instead would make a successful save look
+              // like it silently reverted on the next page load.
+              dateOfBirth: true,
             },
           }),
+          // Cross-jurisdiction prescription: the referring doctor's disclosed
+          // consultation record. Null for every ordinary appointment. Read here
+          // rather than only on the request inbox because the inbox card
+          // vanishes the moment the request is decided — the prescriber needs
+          // the record they prescribed against to stay open afterwards.
+          getDisclosedCrossBorderRecord(appt.id, {
+            doctorId: auth.doctorId ?? null,
+            isAdmin: auth.role === "ADMIN",
+          }).catch(() => null),
         ]);
 
-        // Only markets that collect the number may show it (PT today).
         // Decryption is best-effort: a legacy plaintext row, a rotated key or
         // corrupt ciphertext must not take down the whole appointment view.
-        let utenteNumber: string | null = null;
-        if (bookingSetting.collectUtenteNumber && patientProfile?.utenteNumber) {
-          try {
-            utenteNumber = decryptPhi(patientProfile.utenteNumber);
-          } catch {
-            utenteNumber = null;
-          }
-        }
-
-        // NIF + Cartão de Cidadão are Portugal-only, gated on the appointment's
-        // own market rather than a BookingSetting flag: this is a disclosure
-        // rule about PT prescriptions, not a booking-form option. Country codes
-        // are stored lowercase; compare case-insensitively either way.
-        const isPortugal = (appt.countryCode ?? "").toLowerCase() === "pt";
+        //
+        // Every identity field, in every market — see patient-identity-fields.ts
+        // for why this is no longer per-country. Note `utenteNumber` is no
+        // longer gated on `BookingSetting.collectUtenteNumber` either: that
+        // flag governs whether the BOOKING FORM asks for it, which is a
+        // separate question from whether the treating doctor may read one that
+        // is already on file.
+        const identityFields = doctorVisibleIdentityFields();
         const decryptOrNull = (value: string | null) => {
           if (!value) return null;
           try {
@@ -238,19 +247,20 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             return null;
           }
         };
-        let taxIdNumber = isPortugal ? decryptOrNull(patientProfile?.taxIdNumber ?? null) : null;
-        let nationalIdNumber = isPortugal
-          ? decryptOrNull(patientProfile?.nationalIdNumber ?? null)
-          : null;
-        const preferredPharmacy = isPortugal
-          ? (patientProfile?.preferredPharmacy ?? null)
-          : null;
+        let utenteNumber = decryptOrNull(patientProfile?.utenteNumber ?? null);
+        let taxIdNumber = decryptOrNull(patientProfile?.taxIdNumber ?? null);
+        let nationalIdNumber = decryptOrNull(patientProfile?.nationalIdNumber ?? null);
+        let passportNumber = decryptOrNull(patientProfile?.passportNumber ?? null);
+        const preferredPharmacy = patientProfile?.preferredPharmacy ?? null;
 
         // An identity number is a separate disclosure from the consult note,
         // so it gets its own SENSITIVE_PROFILE entry in MedicalAccessLog —
         // matching /api/doctor/patients/:email/profile. Logged only when a
         // value is actually returned, so an empty card leaves no false trail.
-        if (patientProfile && (utenteNumber || taxIdNumber || nationalIdNumber)) {
+        if (
+          patientProfile &&
+          (utenteNumber || taxIdNumber || nationalIdNumber || passportNumber)
+        ) {
           try {
             await guardMedicalRead(
               request,
@@ -269,6 +279,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
               utenteNumber = null;
               taxIdNumber = null;
               nationalIdNumber = null;
+              passportNumber = null;
             } else {
               throw guardError;
             }
@@ -289,10 +300,19 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             addressState: patientProfile?.addressState ?? null,
             addressPostalCode: patientProfile?.addressPostalCode ?? null,
             addressCountryCode: patientProfile?.addressCountryCode ?? null,
+            // Canonical DOB, separate from the booking-time `dateOfBirth`
+            // above: the card's editable row writes and reads this one.
+            profileDateOfBirth: patientProfile?.dateOfBirth?.toISOString() ?? null,
             utenteNumber,
             taxIdNumber,
             nationalIdNumber,
+            passportNumber,
             preferredPharmacy,
+            // The portal renders exactly these as editable rows. Sent rather
+            // than re-derived client-side so what is disclosed and what is
+            // offered for editing cannot drift apart.
+            identityFields: Array.from(identityFields),
+            crossBorderSource,
           },
           consultation: consultation
             ? {
@@ -354,6 +374,10 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             assessment: body.data.assessment,
           }),
           ...(body.data.plan !== undefined && { plan: body.data.plan }),
+          ...(body.data.noteFormat !== undefined && {
+            noteFormat: body.data.noteFormat,
+          }),
+          ...(body.data.note !== undefined && { note: body.data.note }),
         };
 
         const consultation = await prisma.consultation.upsert({

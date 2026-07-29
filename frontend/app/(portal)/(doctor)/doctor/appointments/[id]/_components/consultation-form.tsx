@@ -12,11 +12,15 @@ type SoapState = {
   objective: string;
   assessment: string;
   plan: string;
+  noteFormat: "SOAP" | "FREEFORM";
+  note: string;
   status: "DRAFT" | "SIGNED";
   signedAt: string | null;
 };
 
 export type ConsultationFormCopy = {
+  formatSoap: string;
+  formatFreeform: string;
   fieldChiefComplaint: string;
   fieldSubjective: string;
   fieldSubjectiveHelper: string;
@@ -26,6 +30,8 @@ export type ConsultationFormCopy = {
   fieldAssessmentHelper: string;
   fieldPlan: string;
   fieldPlanHelper: string;
+  fieldNote: string;
+  fieldNoteHelper: string;
   signConfirm: string;
   signDialogTitle: string;
   signDialogConfirm: string;
@@ -77,7 +83,9 @@ export function ConsultationForm({
       state.subjective !== baseline.subjective ||
       state.objective !== baseline.objective ||
       state.assessment !== baseline.assessment ||
-      state.plan !== baseline.plan);
+      state.plan !== baseline.plan ||
+      state.noteFormat !== baseline.noteFormat ||
+      state.note !== baseline.note);
   useUnsavedChanges(dirty);
 
   function update<K extends keyof SoapState>(key: K, value: SoapState[K]) {
@@ -94,6 +102,8 @@ export function ConsultationForm({
         objective: state.objective.trim() || null,
         assessment: state.assessment.trim() || null,
         plan: state.plan.trim() || null,
+        noteFormat: state.noteFormat,
+        note: state.note.trim() || null,
       };
       try {
         const res = await fetch(
@@ -136,8 +146,31 @@ export function ConsultationForm({
 
   function confirmSign() {
     setSignConfirmOpen(false);
+    const savedValues = state;
     startTransition(async () => {
       try {
+        const saveRes = await fetch(
+          `/api/doctor/appointments/${appointmentId}/consultation`,
+          {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              chiefComplaint: state.chiefComplaint.trim() || null,
+              subjective: state.subjective.trim() || null,
+              objective: state.objective.trim() || null,
+              assessment: state.assessment.trim() || null,
+              plan: state.plan.trim() || null,
+              noteFormat: state.noteFormat,
+              note: state.note.trim() || null,
+            }),
+          },
+        );
+        const saveJson = (await saveRes.json()) as { ok?: boolean; message?: string };
+        if (!saveRes.ok || !saveJson.ok) {
+          setMessage({ kind: "error", text: saveJson.message ?? copy.couldNotSave });
+          return;
+        }
+
         const res = await fetch(
           `/api/doctor/appointments/${appointmentId}/consultation/sign`,
           { method: "POST" },
@@ -158,6 +191,7 @@ export function ConsultationForm({
             signedAt: json.data!.consultation!.signedAt ?? null,
           }));
         }
+        setBaseline(savedValues);
         setMessage({ kind: "success", text: copy.signed });
         router.refresh();
       } catch {
@@ -166,8 +200,39 @@ export function ConsultationForm({
     });
   }
 
+  const isFreeform = state.noteFormat === "FREEFORM";
+
   return (
     <div className="mt-4 grid gap-3" data-tour="soap-form">
+      <div className="flex gap-2">
+        <button
+          type="button"
+          aria-pressed={!isFreeform}
+          onClick={() => update("noteFormat", "SOAP")}
+          disabled={signed}
+          className={
+            !isFreeform
+              ? "gh-btn gh-btn-primary px-3 py-1.5 text-portal-label"
+              : "gh-btn gh-btn-soft px-3 py-1.5 text-portal-label"
+          }
+        >
+          {copy.formatSoap}
+        </button>
+        <button
+          type="button"
+          aria-pressed={isFreeform}
+          onClick={() => update("noteFormat", "FREEFORM")}
+          disabled={signed}
+          className={
+            isFreeform
+              ? "gh-btn gh-btn-primary px-3 py-1.5 text-portal-label"
+              : "gh-btn gh-btn-soft px-3 py-1.5 text-portal-label"
+          }
+        >
+          {copy.formatFreeform}
+        </button>
+      </div>
+
       <Field
         label={copy.fieldChiefComplaint}
         value={state.chiefComplaint}
@@ -175,38 +240,51 @@ export function ConsultationForm({
         disabled={signed}
         rows={2}
       />
-      <Field
-        label={copy.fieldSubjective}
-        helper={copy.fieldSubjectiveHelper}
-        value={state.subjective}
-        onChange={(v) => update("subjective", v)}
-        disabled={signed}
-        rows={5}
-      />
-      <Field
-        label={copy.fieldObjective}
-        helper={copy.fieldObjectiveHelper}
-        value={state.objective}
-        onChange={(v) => update("objective", v)}
-        disabled={signed}
-        rows={5}
-      />
-      <Field
-        label={copy.fieldAssessment}
-        helper={copy.fieldAssessmentHelper}
-        value={state.assessment}
-        onChange={(v) => update("assessment", v)}
-        disabled={signed}
-        rows={4}
-      />
-      <Field
-        label={copy.fieldPlan}
-        helper={copy.fieldPlanHelper}
-        value={state.plan}
-        onChange={(v) => update("plan", v)}
-        disabled={signed}
-        rows={5}
-      />
+      {isFreeform ? (
+        <Field
+          label={copy.fieldNote}
+          helper={copy.fieldNoteHelper}
+          value={state.note}
+          onChange={(v) => update("note", v)}
+          disabled={signed}
+          rows={12}
+        />
+      ) : (
+        <>
+          <Field
+            label={copy.fieldSubjective}
+            helper={copy.fieldSubjectiveHelper}
+            value={state.subjective}
+            onChange={(v) => update("subjective", v)}
+            disabled={signed}
+            rows={5}
+          />
+          <Field
+            label={copy.fieldObjective}
+            helper={copy.fieldObjectiveHelper}
+            value={state.objective}
+            onChange={(v) => update("objective", v)}
+            disabled={signed}
+            rows={5}
+          />
+          <Field
+            label={copy.fieldAssessment}
+            helper={copy.fieldAssessmentHelper}
+            value={state.assessment}
+            onChange={(v) => update("assessment", v)}
+            disabled={signed}
+            rows={4}
+          />
+          <Field
+            label={copy.fieldPlan}
+            helper={copy.fieldPlanHelper}
+            value={state.plan}
+            onChange={(v) => update("plan", v)}
+            disabled={signed}
+            rows={5}
+          />
+        </>
+      )}
 
       {message ? (
         <p

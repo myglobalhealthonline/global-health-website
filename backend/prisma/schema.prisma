@@ -91,6 +91,13 @@ enum ConsultationStatus {
   SIGNED
 }
 
+/// SOAP (4 structured sections) vs a single free-text note — some specialities
+/// don't work naturally in SOAP, so the doctor picks per note.
+enum ConsultationNoteFormat {
+  SOAP
+  FREEFORM
+}
+
 /// Author side for internal (doctor ↔ admin) per-appointment notes. Kept
 /// separate from the patient-facing `MessageAuthorRole` so we never mix
 /// the two threads.
@@ -203,6 +210,10 @@ enum AuditAction {
   FOLLOW_UP_CREATED
   DOCUMENT_UPLOADED
   DOCUMENT_DELETED
+  /// A doctor emailed a named file straight to the patient from the
+  /// appointment workspace. Separate from DOCUMENT_UPLOADED because this is
+  /// the moment PHI leaves the platform, not just the moment it is stored.
+  DOCUMENT_SENT_TO_PATIENT
   DOCTOR_INVITED
   DOCTOR_CREATED
   DOCTOR_UPDATED
@@ -3338,6 +3349,11 @@ model Consultation {
   assessment     String?
   /// SOAP: Plan — prescriptions, follow-up, referrals.
   plan           String?
+  /// Whether this note is written as structured SOAP (the 4 fields above) or
+  /// as a single free-text note (below) — doctor's choice, per note.
+  noteFormat     ConsultationNoteFormat @default(SOAP)
+  /// Free-text note body, used only when `noteFormat` is FREEFORM.
+  note           String?
   status         ConsultationStatus    @default(DRAFT)
   signedAt       DateTime?
   appointment    Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
@@ -3459,6 +3475,10 @@ model CrossBorderPrescriptionRequest {
   sourceObjective      String?
   sourceAssessment     String?
   sourcePlan           String?
+  /// Snapshot of the source note's format + free-text body, when the treating
+  /// doctor wrote a single note instead of SOAP.
+  sourceNoteFormat     ConsultationNoteFormat @default(SOAP)
+  sourceNote           String?
   /// Patient consent to disclose the SOAP snapshot to the prescribing doctor.
   /// The raw token only ever lives in the consent link emailed to the patient;
   /// we store its SHA-256 hash (same pattern as ShareLink / MedicalAccessRequest).
@@ -3466,6 +3486,15 @@ model CrossBorderPrescriptionRequest {
   consentTokenExpiresAt DateTime?
   /// When the patient granted disclosure consent (null until they agree).
   soapConsentAt        DateTime?
+  /// Patient-entered delivery details captured at the payment step (pharmacy +
+  /// confirmed address). Applied to the async Appointment when it's minted so
+  /// the prescribing doctor + prescription have the right pharmacy + address.
+  pharmacyName             String?
+  patientAddressLine1      String?
+  patientAddressLine2      String?
+  patientAddressCity       String?
+  patientAddressPostalCode String?
+  patientAddressCountryCode String?
   /// The Order minted for the async fee (slot-less checkout).
   orderId              String?
   /// The Appointment minted for Doctor B once the fee is paid (drives the
@@ -3478,6 +3507,10 @@ model CrossBorderPrescriptionRequest {
   /// Timestamps for the terminal transitions (audit/reporting convenience).
   paidAt               DateTime?
   decidedAt            DateTime?
+  /// Set when Doctor B finalises the prescription document. Guards the
+  /// patient + Doctor A "prescription sent" notifications so they fire exactly
+  /// once even if several documents are finalised.
+  finalisedAt          DateTime?
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
 
@@ -3680,6 +3713,13 @@ model AppointmentDocument {
   /// When a patient uploads via a per-prescription QR/link, the exams
   /// prescription (GeneratedDocument) this upload answers.
   sourceGeneratedDocumentId String?
+  /// Cross-jurisdiction prescription disclosure: the doctor this file actually
+  /// came from. `doctorId` above has to be the RECEIVING doctor — it is what
+  /// the download route authorises against — so without this the patient chart
+  /// credited the copy to the prescriber who received it. Soft FK (no relation,
+  /// same pattern as `insuranceCompanyId` on Appointment); null for every
+  /// ordinary upload, where `doctorId` is already the uploader.
+  disclosedFromDoctorId     String?
   appointment               Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   doctor                    Doctor      @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   createdAt                 DateTime    @default(now())

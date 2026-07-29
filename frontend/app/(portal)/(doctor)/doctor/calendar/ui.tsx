@@ -20,6 +20,7 @@ import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { AppSheet } from "@/components/AppSheet";
 import { BASE_SLOT_MINUTES } from "@/lib/constants";
+import { endTimeToMinutes, timeToMinutes } from "@/lib/time-of-day";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
   addMonths,
@@ -31,11 +32,6 @@ import {
 } from "@/components/calendar/calendar-utils";
 
 const TZ_STORAGE_KEY = "gh-doctor-cal-tz";
-
-function timeToMinutes(t: string): number {
-  const [h, m] = t.split(":").map(Number);
-  return (h || 0) * 60 + (m || 0);
-}
 
 /** Distinct weekdays (0=Sun..6=Sat) that occur in [fromDate, toDate]. */
 function weekdaysInRange(fromDate: string, toDate: string): number[] {
@@ -275,7 +271,9 @@ export function DoctorCalendarUI({
       return;
     }
     const startMin = timeToMinutes(addStart);
-    const endMin = timeToMinutes(addEnd);
+    // "00:00" as an end time means midnight/end-of-day (1440), not minute 0 —
+    // otherwise a 16:00 → midnight evening clinic fails the guard below.
+    const endMin = endTimeToMinutes(addEnd);
     if (endMin <= startMin) {
       setAddAvailError(errorEndAfterStart);
       return;

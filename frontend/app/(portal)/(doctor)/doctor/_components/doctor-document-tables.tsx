@@ -139,6 +139,10 @@ export type GeneratedDocTableRow = {
   fileName: string;
   fileTypeLabel: string;
   pdfUrl: string;
+  /** Overrides `session.uploadedBy` when this file came from someone other
+   *  than the doctor whose workspace is being viewed (cross-border
+   *  disclosure). Omitted for ordinary files. */
+  uploadedBy?: string | null;
 };
 
 type AnyDocumentRow = GeneratedDocTableRow | UploadDocTableRow;
@@ -167,7 +171,9 @@ function DocumentTable<T extends AnyDocumentRow>({
       render: (row) => <div className="max-w-[200px]"><DocumentRow icon={<FileText className="size-4" />} title={row.fileName} /></div>,
     },
     { key: "fileType", label: copy.colFileType, priority: 2, render: (row) => <FileTypeBadge label={row.fileTypeLabel} /> },
-    { key: "uploadedBy", label: copy.colUploadedBy, priority: 4, render: () => session.uploadedBy },
+    // Per-row uploader wins: `session.uploadedBy` is the doctor whose
+    // workspace this is, which is wrong for a file disclosed by another doctor.
+    { key: "uploadedBy", label: copy.colUploadedBy, priority: 4, render: (row) => row.uploadedBy ?? session.uploadedBy },
     {
       key: "view",
       label: copy.colView,
@@ -214,6 +220,8 @@ export type UploadDocTableRow = {
   fileName: string;
   fileTypeLabel: string;
   viewUrl: string;
+  /** See GeneratedDocTableRow.uploadedBy. */
+  uploadedBy?: string | null;
 };
 
 export function UploadedFilesTable({
@@ -261,12 +269,15 @@ export function DocumentMobileCard({
   fileName,
   fileTypeLabel,
   viewUrl,
+  uploadedBy,
   session,
   copy = DEFAULT_DOCUMENT_TABLES_COPY,
 }: {
   fileName: string;
   fileTypeLabel: string;
   viewUrl: string;
+  /** See GeneratedDocTableRow.uploadedBy. */
+  uploadedBy?: string | null;
   session: SessionMeta;
   copy?: DocumentTablesCopy;
 }) {
@@ -279,7 +290,7 @@ export function DocumentMobileCard({
       meta={[
         { label: copy.type, value: <SessionTypeBadge label={session.consultationTypeLabel} /> },
         { label: copy.order, value: session.orderNumber },
-        { label: copy.uploadedBy, value: session.uploadedBy },
+        { label: copy.uploadedBy, value: uploadedBy ?? session.uploadedBy },
       ]}
       actions={
         <a

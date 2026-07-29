@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Pencil } from "lucide-react";
 import { PortalDialog } from "@/components/PortalDialog";
 import { BASE_SLOT_MINUTES } from "@/lib/constants";
+import { minutesToTimeInput } from "@/lib/time-of-day";
 
 const WEEKDAYS = [
   { value: 0, label: "Sun" },
@@ -103,7 +104,7 @@ export function EditWindowButton({ availability: w, action }: EditWindowButtonPr
               <input
                 type="time"
                 name="startTime"
-                defaultValue={minutesToHHmm(w.startMinute)}
+                defaultValue={minutesToTimeInput(w.startMinute)}
                 required
                 className="gh-input"
               />
@@ -113,7 +114,9 @@ export function EditWindowButton({ availability: w, action }: EditWindowButtonPr
               <input
                 type="time"
                 name="endTime"
-                defaultValue={minutesToHHmm(w.endMinute)}
+                // An end-of-day window is minute 1440; <input type="time"> only
+                // accepts "00:00" for it (mapped back server-side on submit).
+                defaultValue={minutesToTimeInput(w.endMinute)}
                 required
                 className="gh-input"
               />

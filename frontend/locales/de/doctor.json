@@ -217,6 +217,14 @@
     "editHealthDataHint": "Gesundheitsdaten bearbeiten: BMI, Blutdruck, Allergien, chronische Erkrankungen, Familienanamnese, soziale Gewohnheiten, übliche Medikation.",
     "ptNif": "NIF",
     "ptIdCard": "Cartão de Cidadão",
+    "taxId": "Steuernummer",
+    "nationalId": "Ausweisnummer",
+    "passport": "Pass",
+    "addressLine1": "Adresse, Zeile 1",
+    "addressLine2": "Adresse, Zeile 2",
+    "addressCity": "Stadt",
+    "addressState": "Bundesland / Provinz",
+    "addressPostalCode": "Postleitzahl",
     "ptPharmacy": "Apotheke",
     "ptFieldAdd": "Hinzufügen",
     "ptFieldEdit": "Bearbeiten",
@@ -230,7 +238,8 @@
     "internalNotesPlaceholderFromDoctor": "Notiz für Admin (z. B. benötigt Zahlungsbestätigung)…",
     "internalNotesPlaceholderFromAdmin": "Notiz für Arzt (z. B. Patient hat wegen Nachsorge angerufen)…",
     "internalNotesPostNote": "Notiz posten",
-    "internalNotesPostFailed": "Konnte nicht posten."
+    "internalNotesPostFailed": "Konnte nicht posten.",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Patientenakten",
@@ -325,6 +334,7 @@
     "soapObjective": "Objektiv",
     "soapAssessment": "Beurteilung",
     "soapPlan": "Plan",
+    "soapNote": "Klinische Notiz",
     "chartTitle": "Patientenakte",
     "idVerifiedBadge": "Ausweis verifiziert",
     "idPendingBadge": "Ausweisprüfung ausstehend",
@@ -622,6 +632,7 @@
     "step1Title": "1 · Auszahlungsübersicht herunterladen",
     "step1Desc": "Von Ihnen erbrachte Konsultationen in diesem Monat, bewertet zum von der Verwaltung festgelegten Auszahlungsbetrag pro Leistung, mit Gesamtsumme. Nutzen Sie diese, um Ihre Rechnung zu erstellen.",
     "month": "Monat",
+    "statementLanguage": "Sprache der Übersicht",
     "excel": "Excel",
     "pdf": "PDF",
     "step2Title": "2 · Rechnung hochladen",
@@ -1006,9 +1017,12 @@
     "typeOther": "Sonstiges",
     "uploadedFilesTitle": "Hochgeladene Dateien",
     "noUploadedFiles": "Noch keine hochgeladenen Dateien.",
-    "uploadFilesTitle": "Dateien hochladen"
+    "uploadFilesTitle": "Dateien hochladen",
+    "sendDocumentTitle": "Dokument senden"
   },
   "consultationForm": {
+    "formatSoap": "SOAP-Format",
+    "formatFreeform": "Einzelne Notiz",
     "fieldChiefComplaint": "Hauptbeschwerde",
     "fieldSubjective": "Subjektiv",
     "fieldSubjectiveHelper": "Was der Patient berichtet — Anamnese, Symptome, Kontext.",
@@ -1018,6 +1032,8 @@
     "fieldAssessmentHelper": "Klinischer Eindruck / Differenzialdiagnose.",
     "fieldPlan": "Plan",
     "fieldPlanHelper": "Rezepte, Nachsorge, Überweisungen.",
+    "fieldNote": "Klinische Notiz",
+    "fieldNoteHelper": "Freitext-Notiz — Anamnese, Untersuchung, Beurteilung und Plan in einem Feld.",
     "signConfirm": "Durch die Signierung wird diese klinische Notiz rechtlich verbindlich und gegen weitere Bearbeitung gesperrt. Änderungen nach der Signierung müssen als datierter Nachtrag hinzugefügt werden.",
     "signDialogTitle": "Notiz signieren und sperren?",
     "signDialogConfirm": "Notiz signieren und sperren",
@@ -1627,6 +1643,7 @@
     "soapObjective": "Objektiv",
     "soapAssessment": "Beurteilung",
     "soapPlan": "Plan",
+    "soapNote": "Klinische Notiz",
     "soapEmpty": "Zum ursprünglichen Termin wurde keine Konsultationsnotiz erfasst.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
@@ -1644,6 +1661,28 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Aufzeichnung der überweisenden Ärztin bzw. des überweisenden Arztes",
+    "sourceRecordDesc": "Die Konsultationsaufzeichnung, deren Weitergabe an Sie die Patientin bzw. der Patient für diese Verschreibungsanfrage genehmigt hat.",
+    "requestedOn": "Angefragt am",
+    "sourceDocumentsNote": "Die Dateien aus dieser Konsultation wurden in den Reiter „Dokumente“ dieses Termins kopiert."
+  },
+  "sendDocumentForm": {
+    "title": "Ein Dokument an die Patientin bzw. den Patienten senden",
+    "description": "Benennen Sie das Dokument und hängen Sie die Datei an — sie wird von Global Health per E-Mail zugestellt. Eine Kopie bleibt unter „Hochgeladene Dateien“.",
+    "nameField": "Name des Dokuments",
+    "namePlaceholder": "z. B. Blutbefunde",
+    "nameRequired": "Geben Sie dem Dokument einen Namen — er erscheint als E-Mail-Betreff.",
+    "fileField": "Datei",
+    "chooseFile": "Datei auswählen",
+    "changeFile": "Datei ändern",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP oder AVIF · max. 10MB",
+    "fileRequired": "Hängen Sie eine Datei zum Senden an.",
+    "fileTooLarge": "Datei zu groß (max. 10MB).",
+    "subjectPreview": "Zu sehen ist",
+    "send": "An Patient senden",
+    "sending": "Wird gesendet…",
+    "sendFailed": "Das Dokument konnte nicht gesendet werden.",
+    "sentTo": "Gesendet an"
   }
 }

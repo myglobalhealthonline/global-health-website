@@ -217,6 +217,14 @@
     "editHealthDataHint": "Editar dados de saúde: IMC, tensão arterial, alergias, doenças crónicas, história familiar, hábitos sociais, medicação habitual.",
     "ptNif": "NIF",
     "ptIdCard": "Cartão de Cidadão",
+    "taxId": "NIF / Nº fiscal",
+    "nationalId": "Documento de identificação",
+    "passport": "Passaporte",
+    "addressLine1": "Morada, linha 1",
+    "addressLine2": "Morada, linha 2",
+    "addressCity": "Cidade",
+    "addressState": "Estado / distrito",
+    "addressPostalCode": "Código postal",
     "ptPharmacy": "Farmácia",
     "ptFieldAdd": "Adicionar",
     "ptFieldEdit": "Editar",
@@ -230,7 +238,8 @@
     "internalNotesPlaceholderFromDoctor": "Nota para o admin (ex.: precisa de confirmação de pagamento)…",
     "internalNotesPlaceholderFromAdmin": "Nota para o médico (ex.: o paciente ligou sobre seguimento)…",
     "internalNotesPostNote": "Publicar nota",
-    "internalNotesPostFailed": "Não foi possível publicar."
+    "internalNotesPostFailed": "Não foi possível publicar.",
+    "brCpf": "CPF"
   },
   "patients": {
     "eyebrow": "Registos de pacientes",
@@ -327,6 +336,7 @@
     "soapObjective": "Objetivo",
     "soapAssessment": "Avaliação",
     "soapPlan": "Plano",
+    "soapNote": "Nota clínica",
     "chartTitle": "Ficha do paciente",
     "idVerifiedBadge": "ID verificado",
     "idPendingBadge": "ID pendente de revisão",
@@ -622,6 +632,7 @@
     "step1Title": "1 · Descarregar o seu extrato de pagamento",
     "step1Desc": "Consultas que prestou nesse mês, valorizadas ao pagamento por serviço definido pela administração, com um total. Use-o para emitir a sua fatura.",
     "month": "Mês",
+    "statementLanguage": "Idioma do extrato",
     "excel": "Excel",
     "pdf": "PDF",
     "step2Title": "2 · Carregar a sua fatura",
@@ -1006,9 +1017,12 @@
     "typeOther": "Outros",
     "uploadedFilesTitle": "Ficheiros carregados",
     "noUploadedFiles": "Ainda não há ficheiros carregados.",
-    "uploadFilesTitle": "Carregar ficheiros"
+    "uploadFilesTitle": "Carregar ficheiros",
+    "sendDocumentTitle": "Enviar documento"
   },
   "consultationForm": {
+    "formatSoap": "Formato SOAP",
+    "formatFreeform": "Nota única",
     "fieldChiefComplaint": "Motivo da consulta",
     "fieldSubjective": "Subjetivo",
     "fieldSubjectiveHelper": "O que o paciente relata — história, sintomas, contexto.",
@@ -1018,6 +1032,8 @@
     "fieldAssessmentHelper": "Impressão clínica / diagnóstico diferencial.",
     "fieldPlan": "Plano",
     "fieldPlanHelper": "Receitas, seguimento, referenciações.",
+    "fieldNote": "Nota clínica",
+    "fieldNoteHelper": "Nota de texto livre — história, exame, avaliação e plano num único campo.",
     "signConfirm": "Ao assinar, esta nota clínica torna-se legalmente definitiva e fica bloqueada para novas edições. Quaisquer alterações após a assinatura devem ser adicionadas como um aditamento datado.",
     "signDialogTitle": "Assinar e bloquear esta nota?",
     "signDialogConfirm": "Assinar e bloquear nota",
@@ -1627,6 +1643,7 @@
     "soapObjective": "Objetivo",
     "soapAssessment": "Avaliação",
     "soapPlan": "Plano",
+    "soapNote": "Nota clínica",
     "soapEmpty": "Não foi registada qualquer nota de consulta na marcação de origem.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
@@ -1644,6 +1661,28 @@
     "couldNotSubmit": "Could not submit the decision.",
     "acceptedToast": "Request accepted.",
     "moreInfoToast": "Information request sent.",
-    "refusedToast": "Request refused and upgrade offered."
+    "refusedToast": "Request refused and upgrade offered.",
+    "sourceRecordTitle": "Registo do médico requisitante",
+    "sourceRecordDesc": "O registo da consulta que o doente consentiu partilhar consigo para este pedido de prescrição.",
+    "requestedOn": "Pedido em",
+    "sourceDocumentsNote": "Os ficheiros dessa consulta foram copiados para o separador Documentos desta marcação."
+  },
+  "sendDocumentForm": {
+    "title": "Enviar um documento ao doente",
+    "description": "Dê um nome ao documento, anexe o ficheiro e este é enviado por email ao doente a partir da Global Health. Fica uma cópia em Ficheiros carregados.",
+    "nameField": "Nome do documento",
+    "namePlaceholder": "ex.: Resultados das análises",
+    "nameRequired": "Dê um nome ao documento — o doente vê-o como assunto do email.",
+    "fileField": "Ficheiro",
+    "chooseFile": "Escolher ficheiro",
+    "changeFile": "Alterar ficheiro",
+    "acceptedTypes": "PDF, JPEG, PNG, WebP ou AVIF · máx. 10MB",
+    "fileRequired": "Anexe um ficheiro para enviar.",
+    "fileTooLarge": "Ficheiro demasiado grande (máx. 10MB).",
+    "subjectPreview": "O doente verá",
+    "send": "Enviar ao doente",
+    "sending": "A enviar…",
+    "sendFailed": "Não foi possível enviar o documento.",
+    "sentTo": "Enviado para"
   }
 }

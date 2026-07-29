@@ -31,6 +31,7 @@ export function formatRegistrationLine(
   registration: Pick<RegistrationRow, "chamberEntity" | "registrationNumber" | "isVerified"> | null,
   countryCode: string,
   notOnFileLabel = "not on file",
+  unverifiedLabel = "unverified",
 ): { line: string; verified: boolean; missing: boolean } {
   const number = registration?.registrationNumber?.trim();
   if (!number) {
@@ -47,7 +48,7 @@ export function formatRegistrationLine(
   const verified = Boolean(registration?.isVerified);
   const line = verified
     ? `${chamber}: ${number}`
-    : `${chamber}: ${number} (unverified)`;
+    : `${chamber}: ${number} (${unverifiedLabel})`;
 
   return { line, verified, missing: false };
 }

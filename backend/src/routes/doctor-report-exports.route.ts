@@ -16,6 +16,7 @@ import {
   serializeReport,
   type ReportTable,
 } from "../modules/reports/report-formatters.js";
+import { resolvePayoutStatementLocale } from "../modules/reports/payout-statement-content.js";
 
 /**
  * GET /api/doctor/reports/export?dataset=services|patients|appointments
@@ -52,6 +53,9 @@ const querySchema = z.object({
       "CANCELLED",
     ])
     .optional(),
+  /** Language to render the export in. Only `dataset=payout` honours this —
+   *  the doctor picks it explicitly from the payout-statement panel. */
+  locale: z.string().trim().min(2).max(8).optional(),
 });
 
 /** Resolve the from/to strings into a bounded date range. Defaults to the
@@ -129,11 +133,17 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
           select: { accountHolder: true, ibanEncrypted: true, bic: true },
         });
         const iban = bankRow?.ibanEncrypted ? decryptPhi(bankRow.ibanEncrypted) : null;
-        table = await doctorPayoutStatementReport(auth.doctorId, doctorName, filters, {
-          accountHolder: bankRow?.accountHolder ?? null,
-          iban,
-          bic: bankRow?.bic ?? null,
-        });
+        table = await doctorPayoutStatementReport(
+          auth.doctorId,
+          doctorName,
+          filters,
+          {
+            accountHolder: bankRow?.accountHolder ?? null,
+            iban,
+            bic: bankRow?.bic ?? null,
+          },
+          resolvePayoutStatementLocale(q.locale),
+        );
       } else {
         table = await doctorAppointmentsReport(auth.doctorId, doctorName, filters);
       }
