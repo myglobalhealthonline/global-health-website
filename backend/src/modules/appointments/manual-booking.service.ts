@@ -7,6 +7,7 @@ import { env } from "../../config/env.js";
 import {
   getStripeClient,
   isStripeConfigured,
+  resolveCheckoutPaymentMethods,
 } from "../../lib/stripe/client.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { generateOrderNumber } from "../../lib/order-number.js";
@@ -822,17 +823,15 @@ export async function createManualBooking(
       const returnBase = input.returnTo ?? "/account/bookings";
       const successUrl = `${baseUrl}${returnBase}?orderId=${order.id}&payment=ok&session_id={CHECKOUT_SESSION_ID}`;
       const cancelUrl = `${baseUrl}${returnBase}?orderId=${order.id}&payment=cancelled`;
+      const paymentMethodConfig = await resolveCheckoutPaymentMethods(
+        stripe,
+        input.countryCode,
+        email,
+      );
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        payment_method_types:
-          input.countryCode?.toLowerCase() === "pt"
-            ? ["card", "mb_way", "multibanco"]
-            : ["card"],
-        customer_email: email,
+        ...paymentMethodConfig,
         client_reference_id: order.id,
-        ...(input.countryCode?.toLowerCase() === "pt"
-          ? { phone_number_collection: { enabled: true } }
-          : {}),
         line_items: [
           {
             quantity: 1,

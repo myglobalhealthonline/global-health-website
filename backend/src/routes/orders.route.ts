@@ -5,6 +5,7 @@ import { prisma } from "../db/prisma.js";
 import {
   getStripeClient,
   isStripeConfigured,
+  resolveCheckoutPaymentMethods,
 } from "../lib/stripe/client.js";
 import { env } from "../config/env.js";
 import { generateOrderNumber } from "../lib/order-number.js";
@@ -684,21 +685,19 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               order.items[0]?.name ?? "Medical Consultation",
             )) ?? { enabled: true };
 
+        const paymentMethodConfig = await resolveCheckoutPaymentMethods(
+          stripe,
+          cart.countryCode,
+          body.data.email,
+        );
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
-          payment_method_types:
-            cart.countryCode?.toLowerCase() === "pt"
-              ? ["card", "mb_way", "multibanco"]
-              : ["card"],
-          customer_email: body.data.email,
+          ...paymentMethodConfig,
           client_reference_id: order.id,
           line_items: lineItems,
           success_url: successUrl,
           cancel_url: cancelUrl,
           invoice_creation: invoiceCreation,
-          ...(cart.countryCode?.toLowerCase() === "pt"
-            ? { phone_number_collection: { enabled: true } }
-            : {}),
           // Global Health branding: pin the page language to the order's market
           // and add the trust line above the pay button.
           ...(await checkoutBranding(cart.countryCode)),

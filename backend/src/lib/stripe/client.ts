@@ -125,6 +125,53 @@ export function getConfiguredWebhookSecrets(): string[] {
   return [...secrets];
 }
 
+// Stripe's default export resolves to the constructor interface, not the type
+// namespace (same quirk noted in checkout-branding.ts), so this is declared
+// structurally rather than pulled off `Stripe.Checkout.SessionCreateParams`.
+type CheckoutPaymentMethodType = "card" | "mb_way" | "multibanco" | "customer_balance";
+
+export type CheckoutPaymentMethodConfig = {
+  customer_email?: string;
+  customer?: string;
+  payment_method_types: CheckoutPaymentMethodType[];
+  phone_number_collection?: { enabled: boolean };
+  payment_method_options?: {
+    customer_balance: {
+      funding_type: "bank_transfer";
+      bank_transfer: { type: "eu_bank_transfer"; eu_bank_transfer: { country: "PT" } };
+    };
+  };
+};
+
+/**
+ * Portugal gets card + MB WAY + Multibanco + EU bank transfer; every other
+ * market keeps plain card. Bank transfer (`customer_balance`) requires a
+ * Stripe Customer object rather than a bare `customer_email` — Checkout
+ * refuses to display the IBAN voucher without one — so PT mints a fresh
+ * Customer per session.
+ */
+export async function resolveCheckoutPaymentMethods(
+  stripe: StripeInstance,
+  countryCode: string | null | undefined,
+  email: string,
+): Promise<CheckoutPaymentMethodConfig> {
+  if (countryCode?.trim().toLowerCase() !== "pt") {
+    return { customer_email: email, payment_method_types: ["card"] };
+  }
+  const customer = await stripe.customers.create({ email });
+  return {
+    customer: customer.id,
+    payment_method_types: ["card", "mb_way", "multibanco", "customer_balance"],
+    phone_number_collection: { enabled: true },
+    payment_method_options: {
+      customer_balance: {
+        funding_type: "bank_transfer",
+        bank_transfer: { type: "eu_bank_transfer", eu_bank_transfer: { country: "PT" } },
+      },
+    },
+  };
+}
+
 const clients = new Map<StripeAccountId, StripeInstance>();
 
 /**

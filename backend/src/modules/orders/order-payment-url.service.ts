@@ -1,6 +1,10 @@
 import { env } from "../../config/env.js";
 import { prisma } from "../../db/prisma.js";
-import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
+import {
+  getStripeClient,
+  isStripeConfigured,
+  resolveCheckoutPaymentMethods,
+} from "../../lib/stripe/client.js";
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
 import { checkoutBranding } from "../billing/checkout-branding.js";
 import { isCommissionCountry } from "./commission.service.js";
@@ -114,20 +118,18 @@ export async function resolveOrderPaymentUrl(
           order.items[0]?.name ?? "Medical Consultation",
         );
 
+    const paymentMethodConfig = await resolveCheckoutPaymentMethods(
+      stripe,
+      order.countryCode,
+      order.email,
+    );
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types:
-        order.countryCode?.toLowerCase() === "pt"
-          ? ["card", "mb_way", "multibanco"]
-          : ["card"],
-      customer_email: order.email,
+      ...paymentMethodConfig,
       client_reference_id: order.id,
       line_items: lineItems,
       success_url: successUrl,
       cancel_url: cancelUrl,
-      ...(order.countryCode?.toLowerCase() === "pt"
-        ? { phone_number_collection: { enabled: true } }
-        : {}),
       ...(invoiceCreation ? { invoice_creation: invoiceCreation } : {}),
       // Global Health branding — same language + trust line as the first-pass
       // checkout, so a resent pay link doesn't look like a different vendor.
