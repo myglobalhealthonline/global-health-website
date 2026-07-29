@@ -111,7 +111,7 @@ export async function generateMetadata({
     kind: "country",
     subtitle: config.name,
     sourceImage: page?.ogImageSrc ?? undefined,
-    imageAlt: `${ogTitle} ? ${config.name}`,
+    imageAlt: `${ogTitle} — ${config.name}`,
     languages: hreflangAlternates(config, ""),
   });
 }

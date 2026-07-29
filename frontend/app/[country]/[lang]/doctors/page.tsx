@@ -65,7 +65,7 @@ export async function generateMetadata({
     lang,
   );
   const metadataTitle = (page?.seoTitle ??
-    `${localized.heroTitleLead} ${localized.heroTitleAccent} ${localized.heroTitleTrail} ? ${config.name}`) || title;
+    `${localized.heroTitleLead} ${localized.heroTitleAccent} ${localized.heroTitleTrail} — ${config.name}`) || title;
   const metadataDescription = (page?.seoDescription ?? localized.heroLedeTemplate.replace("{country}", config.name)) || description;
   return buildPublicMetadata({
     path: `/${country}/${lang}/doctors`,
@@ -75,7 +75,7 @@ export async function generateMetadata({
     kind: "doctor",
     subtitle: config.name,
     sourceImage: page?.ogImageSrc ?? undefined,
-    imageAlt: `${metadataTitle} ? ${config.name}`,
+    imageAlt: `${metadataTitle} — ${config.name}`,
     languages: hreflangAlternates(config, "/doctors"),
   });
 }

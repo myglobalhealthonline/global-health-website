@@ -74,7 +74,7 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
-  const title = `${common.bookPage.title} ? ${config.name}`;
+  const title = `${common.bookPage.title} — ${config.name}`;
   const description = common.bookPage.subtitle.replace("{country}", config.name);
   return buildPublicMetadata({
     path: `/${country}/${lang}/book`,
@@ -83,7 +83,7 @@ export async function generateMetadata({
     locale: ogLocales(config, lang).locale,
     kind: "service",
     subtitle: config.name,
-    imageAlt: `${common.bookPage.title} ? ${config.name}`,
+    imageAlt: `${common.bookPage.title} — ${config.name}`,
     languages: hreflangAlternates(config, "/book"),
   });
 }

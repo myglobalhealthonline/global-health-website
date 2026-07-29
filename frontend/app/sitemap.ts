@@ -246,8 +246,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Static legal / global pages.
+  // Static legal / global pages. `/` is the country entry gate — the domain
+  // root, canonical and indexable, so it belongs here at top priority.
   urls.push(
+    { url: `${base}/`, changeFrequency: "monthly", priority: 1 },
     { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.5 },
@@ -255,7 +257,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.4 },
   );
   // `/blog` (global index) is pushed after the post loop below, so it can be
-  // dated from the newest post. The five above are hand-authored pages with no
+  // dated from the newest post. The six above are hand-authored pages with no
   // row behind them — nothing honest to date them from, so they stay undated.
 
   // Blog posts — published, admin-managed. [] when API unavailable.
