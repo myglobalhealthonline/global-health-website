@@ -48,7 +48,11 @@ const publicGpBookingRoute: FastifyPluginAsync = async (app) => {
       }
       try {
         const result = await getGpLanguages(parsed.data.country);
-        return okResponse(result);
+        return okResponse({
+          configured: result.configured,
+          languages: result.languages,
+          bookableLanguages: result.bookableLanguages,
+        });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));

@@ -613,7 +613,7 @@ async function sendShopOrderConfirmationEmail(
     orderNumber?: string | null;
     currencyCode: string;
     totalCents: number;
-    items: { name: string; quantity: number; lineTotalCents: number }[];
+    items: { name: string; quantity: number; lineTotalCents: number; kind: string }[];
     shipName: string | null;
     shipLine1: string | null;
     shipLine2: string | null;
@@ -645,6 +645,7 @@ async function sendShopOrderConfirmationEmail(
           countryCode: paidOrder.shipCountryCode ?? "",
         }
       : null,
+    hasPrescriptionItem: paidOrder.items.some((i) => i.kind === "PRESCRIPTION_SERVICE"),
   });
 }
 

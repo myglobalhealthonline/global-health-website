@@ -368,8 +368,24 @@ export async function sendOrderConfirmationEmail(opts: {
     postalCode: string;
     countryCode: string;
   } | null;
+  /**
+   * Order contains a cross-border prescription line. These never ship — the
+   * doctor finalizes the prescription and the patient is notified — so the
+   * "we'll email you when it ships" copy below is wrong for them.
+   */
+  hasPrescriptionItem?: boolean;
 }) {
   const shortId = formatOrderDisplayId({ id: opts.orderId, orderNumber: opts.orderNumber });
+  const fulfillmentText = opts.shipAddress
+    ? "We'll send a separate email when your items ship."
+    : opts.hasPrescriptionItem
+      ? "Once the doctor finalizes your prescription, you'll get a notification."
+      : "We'll notify you as soon as your order is ready.";
+  const fulfillmentHtml = opts.shipAddress
+    ? "We'll send another email when it ships."
+    : opts.hasPrescriptionItem
+      ? "Once the doctor finalizes your prescription, you'll get a notification."
+      : "We'll notify you as soon as it's ready.";
   const itemLines = opts.items
     .map((i) => `  - ${i.name} × ${i.quantity}  ${i.lineLabel}`)
     .join("\n");
@@ -407,13 +423,13 @@ ${itemLines}
 
 Total paid: ${opts.totalLabel}${shipText}
 
-We'll send a separate email when your items ship. Track your order any time at your account page.
+${fulfillmentText} Track your order any time at your account page.
 
 — Global Health`,
     html: wrapHtml(
       "Order confirmed",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
-       <p>Your order is confirmed and being prepared. We'll send another email when it ships.</p>
+       <p>Your order is confirmed. ${escapeHtml(fulfillmentHtml)}</p>
        <p style="margin-top:16px;font-size:12px;color:#737373;">Order #${escapeHtml(shortId)}</p>
        <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;">
          ${itemRowsHtml}

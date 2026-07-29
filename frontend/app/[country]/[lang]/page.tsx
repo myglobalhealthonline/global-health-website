@@ -557,7 +557,11 @@ export default async function CountryLangHomePage({
           countryCode: code,
           countrySlug: slug,
           lang,
-          languages: gpLanguages.languages,
+          // Dropdown must only offer languages bookable right now — the full
+          // pool (gpLanguages.languages) still backs the trust/marquee copy
+          // above, where "N languages spoken" is a stable roster stat, not a
+          // same-day availability claim.
+          languages: gpLanguages.bookableLanguages,
           configured: gpLanguages.configured,
         }}
         heroTitle={page?.heroTitle ?? extras?.heroTitle ?? null}
