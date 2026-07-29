@@ -495,6 +495,19 @@ const nextConfig: NextConfig = {
     // and turns one clean 308 into a 2-hop chain — or, where the destination
     // country hub does not exist, into 308→404.
     const LANG = "(en|pt|es|cs|ro|de)";
+    // Destination-availability groups. `:country` is a wildcard, but several
+    // destinations only exist in SOME markets — an unconstrained rule there is
+    // a 308→404, which keeps the old URL in Google index as an error. Verified
+    // against production per market:
+    //   IE_ONLY  — the Ireland internal-linking slug migration. Those Service
+    //              rows exist in Ireland alone, so the other five markets each
+    //              got 7 chains into a 404.
+    //   HAS_TESTS      — /lab-tests renders only in Ireland and Romania.
+    //   HAS_SPECIALIST — /see-a-specialist is off in Czechia (documented
+    //                    above) and Brazil.
+    const IE_ONLY = "(ireland)";
+    const HAS_TESTS = "(ireland|romania)";
+    const HAS_SPECIALIST = "(ireland|portugal|spain|romania)";
     return [
       ...localizedSlugRedirects,
       // No services index page exists — only /services/:slug. Send the bare
@@ -524,7 +537,7 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/specialist-consultation`,
+        source: `/:country${HAS_SPECIALIST}/:lang${LANG}/specialist-consultation`,
         destination: "/:country/:lang/see-a-specialist",
         permanent: true,
       },
@@ -542,7 +555,7 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/tests`,
+        source: `/:country${HAS_TESTS}/:lang${LANG}/tests`,
         destination: "/:country/:lang/lab-tests",
         permanent: true,
       },
@@ -553,7 +566,7 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/specialist-appointment`,
+        source: `/:country${HAS_SPECIALIST}/:lang${LANG}/specialist-appointment`,
         destination: "/:country/:lang/see-a-specialist",
         permanent: true,
       },
@@ -573,37 +586,37 @@ const nextConfig: NextConfig = {
       // consultation was read as country="cs", lang="portugal" and rewritten
       // into a second redirect — a 2-hop chain instead of one clean 308.
       {
-        source: `/:country/:lang${LANG}/medical-consultation`,
+        source: `/:country${IE_ONLY}/:lang${LANG}/medical-consultation`,
         destination: "/:country/:lang/acute-medical-consultation",
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/family-medicine-consultation`,
+        source: `/:country${IE_ONLY}/:lang${LANG}/family-medicine-consultation`,
         destination: "/:country/:lang/chronic-disease-consultation",
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/pain-management-consultation`,
+        source: `/:country${IE_ONLY}/:lang${LANG}/pain-management-consultation`,
         destination: "/:country/:lang/musculoskeletal-pain-assessment",
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/erectyle-dysfunction-consultation`,
+        source: `/:country${IE_ONLY}/:lang${LANG}/erectyle-dysfunction-consultation`,
         destination: "/:country/:lang/mens-health-consultation",
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/treatment-refill`,
+        source: `/:country${IE_ONLY}/:lang${LANG}/treatment-refill`,
         destination: "/:country/:lang/treatment-review",
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/referral-consultation`,
+        source: `/:country${IE_ONLY}/:lang${LANG}/referral-consultation`,
         destination: "/:country/:lang/referral-and-investigations",
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/self-referral`,
+        source: `/:country${IE_ONLY}/:lang${LANG}/self-referral`,
         destination: "/:country/:lang/referral-and-investigations",
         permanent: true,
       },
@@ -618,7 +631,7 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: `/:country/:lang${LANG}/sick-leave`,
+        source: `/:country${IE_ONLY}/:lang${LANG}/sick-leave`,
         destination: "/:country/:lang/sick-certificate-ireland",
         permanent: true,
       },
