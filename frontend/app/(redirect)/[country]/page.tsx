@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { countries } from "@/data/countries";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { countryCodeFromSlug, countrySlug } from "@/lib/routing/country-slug";
@@ -46,5 +46,10 @@ export default async function CountryHomeRedirect({
   const lang = requestedSupported
     ? requested
     : (config.defaultLocale ?? "EN").toLowerCase();
-  redirect(`/${canonicalSlug}/${lang}`);
+  // Without `?lang=` the mapping is fixed (country → its default locale), so
+  // 308 it: a crawler that keeps seeing 307 treats /portugal as its own URL
+  // and never folds it into /portugal/pt. With `?lang=` the target varies per
+  // visitor, so that path stays a temporary 307.
+  if (requestedSupported) redirect(`/${canonicalSlug}/${lang}`);
+  permanentRedirect(`/${canonicalSlug}/${lang}`);
 }

@@ -612,6 +612,9 @@ const nextConfig: NextConfig = {
       { source: "/home-health-test", destination: "/ireland/en/lab-tests", permanent: true },
       { source: "/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
       { source: "/booking-calendar", destination: "/ireland/en/book", permanent: true },
+      // Wix appended the service name as a path segment (…/consulta-de-urologia).
+      { source: "/booking-calendar/:slug", destination: "/ireland/en/book", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/booking-calendar/:slug", destination: "/ireland/en/book", permanent: true },
       // Legacy country hubs
       { source: "/ireland-team", destination: "/ireland/en/doctors", permanent: true },
       { source: "/general-consultation-ie", destination: "/ireland/en/gp-consultation-online", permanent: true },
