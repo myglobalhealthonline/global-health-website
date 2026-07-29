@@ -36,25 +36,32 @@ export type GpAvailabilityResult = {
   slots: GpAvailabilitySlot[];
 };
 
-export async function getGpLanguages(
-  countryCode: string,
-): Promise<{ configured: boolean; languages: string[] }> {
-  const empty = { configured: false, languages: [] as string[] };
+export async function getGpLanguages(countryCode: string): Promise<{
+  configured: boolean;
+  /** Full GP-pool language set — for trust/marketing copy ("N languages spoken"). */
+  languages: string[];
+  /** Subset with an actual open same-day slot right now — for the booking dropdown. */
+  bookableLanguages: string[];
+}> {
+  const empty = { configured: false, languages: [] as string[], bookableLanguages: [] as string[] };
   const backend = getBackendOrigin();
   if (!backend) return empty;
   const url = `${backend}/api/public/gp-languages?country=${encodeURIComponent(countryCode)}`;
   try {
-    // ponytail: 300s TTL, add a revalidateTag if admins complain about staleness
-    const res = await fetch(url, { next: { revalidate: 300 } });
+    // Short TTL — bookableLanguages tracks live availability, not just config.
+    const res = await fetch(url, { next: { revalidate: 60 } });
     if (!res.ok) return empty;
     const json = (await res.json()) as {
       ok?: boolean;
-      data?: { configured?: boolean; languages?: string[] };
+      data?: { configured?: boolean; languages?: string[]; bookableLanguages?: string[] };
     };
     if (!json.ok || !json.data) return empty;
     return {
       configured: Boolean(json.data.configured),
       languages: Array.isArray(json.data.languages) ? json.data.languages : [],
+      bookableLanguages: Array.isArray(json.data.bookableLanguages)
+        ? json.data.bookableLanguages
+        : [],
     };
   } catch {
     return empty;
