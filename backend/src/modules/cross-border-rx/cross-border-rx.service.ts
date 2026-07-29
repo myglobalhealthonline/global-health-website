@@ -939,6 +939,19 @@ export async function onCrossBorderRxFeePaid(
     select: { id: true },
   });
 
+  // Dual-write into the relational join table + legacy array (same pattern as
+  // complete-order-payment.service.ts) — without this the admin/patient order
+  // views can't resolve the doctor/consultation for a paid cross-border order,
+  // since they read through `orderAppointments`, not `CrossBorderPrescriptionRequest`.
+  await prisma.orderAppointment.createMany({
+    data: [{ orderId, appointmentId: appt.id }],
+    skipDuplicates: true,
+  });
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { appointmentIds: { push: appt.id } },
+  });
+
   await ensureConsultationDraft(appt.id, request.targetDoctorId);
 
   // The patient's record travels with them. Without this the prescribing

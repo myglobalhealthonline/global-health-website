@@ -87,8 +87,59 @@ type OrderConsultationDto = {
   consultationType: string;
 };
 
+const CONSULTATION_ITEM_KINDS: CartItemKind[] = [
+  CartItemKind.GENERAL_CONSULTATION,
+  CartItemKind.SPECIALIST_CONSULTATION,
+];
+
+type OrderItemForConsultationFallback = {
+  id: string;
+  kind: CartItemKind;
+  appointmentId: string | null;
+  doctorId: string | null;
+  timeSlotId: string | null;
+};
+
+type ConsultationFallbackContext = {
+  doctorNameById: Map<string, string>;
+  slotStartById: Map<string, Date>;
+};
+
+/** Batch-resolve doctor names + slot start times for consultation `OrderItem`s
+ *  that haven't been minted into an Appointment yet (order still PENDING, or
+ *  CANCELLED before payment ever reached the webhook). `doctorId`/`timeSlotId`
+ *  are plain scalars on `OrderItem` — there's no Prisma relation to `include`
+ *  them through — so this does one batched pair of lookups covering every
+ *  order in a list response, instead of an include or per-order query. */
+async function resolveUnmintedConsultationContext(
+  itemLists: OrderItemForConsultationFallback[][],
+): Promise<ConsultationFallbackContext> {
+  const unminted = itemLists
+    .flat()
+    .filter((i) => i.appointmentId === null && CONSULTATION_ITEM_KINDS.includes(i.kind));
+  const doctorIds = [
+    ...new Set(unminted.map((i) => i.doctorId).filter((id): id is string => id !== null)),
+  ];
+  const slotIds = [
+    ...new Set(unminted.map((i) => i.timeSlotId).filter((id): id is string => id !== null)),
+  ];
+
+  const [doctors, slots] = await Promise.all([
+    prisma.doctor.findMany({ where: { id: { in: doctorIds } }, select: { id: true, fullName: true } }),
+    prisma.doctorTimeSlot.findMany({ where: { id: { in: slotIds } }, select: { id: true, startAt: true } }),
+  ]);
+
+  return {
+    doctorNameById: new Map(doctors.map((d) => [d.id, d.fullName])),
+    slotStartById: new Map(slots.map((s) => [s.id, s.startAt])),
+  };
+}
+
 /** Flatten an order's `orderAppointments` join into a lean, wire-ready list of
- *  consultations (earliest scheduled first; unscheduled last). */
+ *  consultations (earliest scheduled first; unscheduled last), falling back
+ *  to the reserving `OrderItem`'s doctor/slot — via the batched `context` —
+ *  for consultation lines that never got an Appointment minted (no payment
+ *  yet, or cancelled first). */
 function buildOrderConsultations(
   orderAppointments: {
     appointment: {
@@ -98,21 +149,35 @@ function buildOrderConsultations(
       doctor: { fullName: string } | null;
     } | null;
   }[],
+  items: OrderItemForConsultationFallback[] = [],
+  context?: ConsultationFallbackContext,
 ): OrderConsultationDto[] {
-  return orderAppointments
+  const minted = orderAppointments
     .map((oa) => oa.appointment)
     .filter((a): a is NonNullable<typeof a> => a !== null)
+    .map((a) => ({
+      appointmentId: a.id,
+      doctorName: a.doctor?.fullName ?? null,
+      scheduledAt: a.scheduledAt,
+      consultationType: a.consultationType,
+    }));
+
+  const unminted = items
+    .filter((i) => i.appointmentId === null && CONSULTATION_ITEM_KINDS.includes(i.kind))
+    .map((i) => ({
+      appointmentId: i.id,
+      doctorName: (i.doctorId ? context?.doctorNameById.get(i.doctorId) : null) ?? null,
+      scheduledAt: (i.timeSlotId ? context?.slotStartById.get(i.timeSlotId) : null) ?? null,
+      consultationType: i.kind as string,
+    }));
+
+  return [...minted, ...unminted]
     .sort(
       (a, b) =>
         (a.scheduledAt?.getTime() ?? Number.POSITIVE_INFINITY) -
         (b.scheduledAt?.getTime() ?? Number.POSITIVE_INFINITY),
     )
-    .map((a) => ({
-      appointmentId: a.id,
-      doctorName: a.doctor?.fullName ?? null,
-      scheduledAt: a.scheduledAt?.toISOString() ?? null,
-      consultationType: a.consultationType,
-    }));
+    .map((c) => ({ ...c, scheduledAt: c.scheduledAt?.toISOString() ?? null }));
 }
 
 const checkoutBodySchema = z.object({
@@ -701,6 +766,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         orderBy: { createdAt: "desc" },
         include: { items: true, ...orderConsultationsInclude },
       });
+      const consultationCtx = await resolveUnmintedConsultationContext(orders.map((o) => o.items));
       return okResponse({
         items: orders.map((o) => ({
           id: o.id,
@@ -713,7 +779,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           shippingCents: o.shippingCents,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
-          consultations: buildOrderConsultations(o.orderAppointments),
+          consultations: buildOrderConsultations(o.orderAppointments, o.items, consultationCtx),
           paidAt: o.paidAt?.toISOString() ?? null,
           createdAt: o.createdAt.toISOString(),
         })),
@@ -853,6 +919,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           include: { items: true, ...orderConsultationsInclude },
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
+        const consultationCtx = await resolveUnmintedConsultationContext([order.items]);
         return okResponse({
           id: order.id,
           orderNumber: order.orderNumber,
@@ -887,7 +954,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             healthTestId: i.healthTestId,
             serviceId: i.serviceId,
           })),
-          consultations: buildOrderConsultations(order.orderAppointments),
+          consultations: buildOrderConsultations(order.orderAppointments, order.items, consultationCtx),
           trackingNumber: order.trackingNumber,
           trackingCarrier: order.trackingCarrier,
           trackingUrl: order.trackingUrl,
@@ -1047,7 +1114,16 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         where: and.length ? { AND: and } : {},
         orderBy: { createdAt: "desc" },
         include: {
-          items: { select: { quantity: true, kind: true } },
+          items: {
+            select: {
+              id: true,
+              quantity: true,
+              kind: true,
+              appointmentId: true,
+              doctorId: true,
+              timeSlotId: true,
+            },
+          },
           invoices: { where: { documentType: { not: "CREDIT_NOTE" } }, select: { id: true }, take: 1 },
           ...orderConsultationsInclude,
         },
@@ -1057,6 +1133,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       const hasMore = orders.length > limit;
       const page = hasMore ? orders.slice(0, limit) : orders;
       const nextCursor = hasMore ? page[page.length - 1]?.id ?? null : null;
+      const consultationCtx = await resolveUnmintedConsultationContext(page.map((o) => o.items));
 
       const needingMeet = page.filter((o) =>
         orderNeedsAutoMeetLink({
@@ -1105,7 +1182,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           meetingUrl: meetingUrlById.get(o.id) ?? o.meetingUrl,
           hasConsultation: orderHasConsultationItem(o.items),
           invoiceId: o.invoices[0]?.id ?? null,
-          consultations: buildOrderConsultations(o.orderAppointments),
+          consultations: buildOrderConsultations(o.orderAppointments, o.items, consultationCtx),
           // Suppress the pay link once the order is no longer payable
           // (cancelled / refunded / already paid).
           stripeCheckoutUrl:
@@ -1252,7 +1329,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             appointmentId: i.appointmentId,
           })),
           appointmentIds: order.appointmentIds,
-          consultations: buildOrderConsultations(order.orderAppointments),
+          consultations: buildOrderConsultations(
+            order.orderAppointments,
+            order.items,
+            await resolveUnmintedConsultationContext([order.items]),
+          ),
           meetingUrl,
           trackingNumber: order.trackingNumber,
           trackingCarrier: order.trackingCarrier,
