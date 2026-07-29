@@ -42,6 +42,8 @@ const patchBodySchema = z
     objective: z.string().trim().max(20000).nullable().optional(),
     assessment: z.string().trim().max(20000).nullable().optional(),
     plan: z.string().trim().max(20000).nullable().optional(),
+    noteFormat: z.enum(["SOAP", "FREEFORM"]).optional(),
+    note: z.string().trim().max(20000).nullable().optional(),
   })
   .strict()
   .refine((d) => Object.keys(d).length > 0, {
@@ -372,6 +374,10 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             assessment: body.data.assessment,
           }),
           ...(body.data.plan !== undefined && { plan: body.data.plan }),
+          ...(body.data.noteFormat !== undefined && {
+            noteFormat: body.data.noteFormat,
+          }),
+          ...(body.data.note !== undefined && { note: body.data.note }),
         };
 
         const consultation = await prisma.consultation.upsert({

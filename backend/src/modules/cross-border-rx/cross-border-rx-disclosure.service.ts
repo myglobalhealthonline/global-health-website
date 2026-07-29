@@ -239,6 +239,8 @@ export type DisclosedCrossBorderRecord = {
     objective: string | null;
     assessment: string | null;
     plan: string | null;
+    noteFormat: "SOAP" | "FREEFORM";
+    note: string | null;
   };
 };
 
@@ -271,6 +273,8 @@ export async function getDisclosedCrossBorderRecord(
       sourceObjective: true,
       sourceAssessment: true,
       sourcePlan: true,
+      sourceNoteFormat: true,
+      sourceNote: true,
     },
   });
   if (!request) return null;
@@ -294,6 +298,8 @@ export async function getDisclosedCrossBorderRecord(
       objective: request.sourceObjective,
       assessment: request.sourceAssessment,
       plan: request.sourcePlan,
+      noteFormat: request.sourceNoteFormat,
+      note: request.sourceNote,
     },
   };
 }

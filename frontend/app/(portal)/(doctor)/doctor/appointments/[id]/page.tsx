@@ -139,7 +139,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         consultation.subjective ||
         consultation.objective ||
         consultation.assessment ||
-        consultation.plan),
+        consultation.plan ||
+        consultation.note),
   );
   const timeReached = !appointment.scheduledAt || new Date(appointment.scheduledAt) <= new Date();
   // Services-used are scoped by consultationId, so we can only fetch
@@ -171,6 +172,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     soapObjective: d.crossBorderRxInbox.soapObjective,
     soapAssessment: d.crossBorderRxInbox.soapAssessment,
     soapPlan: d.crossBorderRxInbox.soapPlan,
+    soapNote: d.crossBorderRxInbox.soapNote,
     soapEmpty: d.crossBorderRxInbox.soapEmpty,
     sourceDocumentsNote: d.crossBorderRxInbox.sourceDocumentsNote,
   };
@@ -451,6 +453,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                             objective: consultation.objective ?? "",
                             assessment: consultation.assessment ?? "",
                             plan: consultation.plan ?? "",
+                            noteFormat: consultation.noteFormat,
+                            note: consultation.note ?? "",
                             status: consultation.status,
                             signedAt: consultation.signedAt,
                           }
@@ -460,6 +464,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                             objective: "",
                             assessment: "",
                             plan: "",
+                            noteFormat: "SOAP",
+                            note: "",
                             status: "DRAFT",
                             signedAt: null,
                           }

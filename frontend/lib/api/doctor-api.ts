@@ -132,6 +132,8 @@ export type CrossBorderRxInboxItem = {
     objective: string | null;
     assessment: string | null;
     plan: string | null;
+    noteFormat: "SOAP" | "FREEFORM";
+    note: string | null;
   };
   asyncAppointmentId: string | null;
   sourceDoctorName: string | null;
@@ -392,6 +394,8 @@ export type ConsultationDto = {
   objective: string | null;
   assessment: string | null;
   plan: string | null;
+  noteFormat: "SOAP" | "FREEFORM";
+  note: string | null;
   status: "DRAFT" | "SIGNED";
   signedAt: string | null;
   createdAt: string;
@@ -485,6 +489,8 @@ export type AppointmentDetailDto = {
       objective: string | null;
       assessment: string | null;
       plan: string | null;
+      noteFormat: "SOAP" | "FREEFORM";
+      note: string | null;
     };
   } | null;
   createdAt: string;

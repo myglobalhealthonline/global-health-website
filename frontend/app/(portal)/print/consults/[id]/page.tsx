@@ -158,10 +158,16 @@ export default async function PrintConsultPage({
           </div>
 
           <SoapSection title="Chief complaint" body={consultation?.chiefComplaint} />
-          <SoapSection title="Subjective" body={consultation?.subjective} />
-          <SoapSection title="Objective" body={consultation?.objective} />
-          <SoapSection title="Assessment" body={consultation?.assessment} />
-          <SoapSection title="Plan" body={consultation?.plan} />
+          {consultation?.noteFormat === "FREEFORM" ? (
+            <SoapSection title="Clinical note" body={consultation.note} />
+          ) : (
+            <>
+              <SoapSection title="Subjective" body={consultation?.subjective} />
+              <SoapSection title="Objective" body={consultation?.objective} />
+              <SoapSection title="Assessment" body={consultation?.assessment} />
+              <SoapSection title="Plan" body={consultation?.plan} />
+            </>
+          )}
 
           {exams.length > 0 ? (
             <div className="vk-section">

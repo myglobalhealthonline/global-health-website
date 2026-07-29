@@ -29,6 +29,8 @@ type ConsultationNoteRow = {
   objective: string | null;
   assessment: string | null;
   plan: string | null;
+  noteFormat: "SOAP" | "FREEFORM";
+  note: string | null;
   status: string;
   signedAt: string | null;
   createdByName: string;
@@ -114,6 +116,7 @@ export type ConsultationHistoryCopy = {
   soapObjective: string;
   soapAssessment: string;
   soapPlan: string;
+  soapNote: string;
 };
 
 type HistoryData = {
@@ -478,13 +481,19 @@ export function ConsultationHistoryPanel({
   const consultationNotes = data.consultationNotes ?? [];
 
   const soapSections = (c: ConsultationNoteRow) =>
-    [
-      { label: copy.soapChiefComplaint, value: c.chiefComplaint },
-      { label: copy.soapSubjective, value: c.subjective },
-      { label: copy.soapObjective, value: c.objective },
-      { label: copy.soapAssessment, value: c.assessment },
-      { label: copy.soapPlan, value: c.plan },
-    ].filter((s) => Boolean(s.value?.trim()));
+    (c.noteFormat === "FREEFORM"
+      ? [
+          { label: copy.soapChiefComplaint, value: c.chiefComplaint },
+          { label: copy.soapNote, value: c.note },
+        ]
+      : [
+          { label: copy.soapChiefComplaint, value: c.chiefComplaint },
+          { label: copy.soapSubjective, value: c.subjective },
+          { label: copy.soapObjective, value: c.objective },
+          { label: copy.soapAssessment, value: c.assessment },
+          { label: copy.soapPlan, value: c.plan },
+        ]
+    ).filter((s) => Boolean(s.value?.trim()));
 
   const consultPreview = (c: ConsultationNoteRow) =>
     soapSections(c)

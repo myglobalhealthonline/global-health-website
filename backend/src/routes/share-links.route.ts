@@ -205,6 +205,8 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
             objective: c.objective,
             assessment: c.assessment,
             plan: c.plan,
+            noteFormat: c.noteFormat,
+            note: c.note,
             doctor: c.doctor,
             appointment: {
               ...c.appointment,
