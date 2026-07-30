@@ -677,7 +677,11 @@ export function WeekCalendar({
                       p.item.kind === "slot" &&
                       (p.item.status === "OPEN" || p.item.status === "BLOCKED") &&
                       ((onBlockSlot && p.item.status === "OPEN") || onRemoveSlot) ? (
-                        <span className="absolute right-0.5 top-0.5 z-[3] inline-flex gap-0.5">
+                        // z-2 keeps the actions above their own block (solid
+                        // tones sit at z-2) but BELOW the sticky day-header row
+                        // (z-3, portal.css) — at z-3 they painted over the
+                        // weekday labels when the grid was scrolled.
+                        <span className="absolute right-0.5 top-0.5 z-[2] inline-flex gap-0.5">
                           {onBlockSlot && p.item.status === "OPEN" ? (
                             <CornerAction
                               label={t.blockThisTime}
@@ -838,11 +842,13 @@ function CornerAction({
       onClick={onClick}
       aria-label={label}
       title={title}
-      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border transition hover:brightness-105 disabled:opacity-50"
+      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border opacity-70 shadow-sm transition hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40"
+      // Neutral surface, not another red fill: a danger-toned button on a
+      // BLOCKED block's danger-toned fill was a red square on red.
       style={{
-        borderColor: "var(--portal-danger)",
-        background: "var(--portal-danger)",
-        color: "#fff",
+        borderColor: "var(--portal-line-strong)",
+        background: "var(--portal-surface)",
+        color: "var(--portal-danger)",
       }}
     >
       {children}

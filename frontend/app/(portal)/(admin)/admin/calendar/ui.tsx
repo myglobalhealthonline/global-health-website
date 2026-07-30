@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
+import { Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
@@ -19,10 +20,15 @@ import {
   weekDaysOf,
   yearMonthParam,
 } from "@/components/calendar/calendar-utils";
+import { AddSlotDialog } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
-import { adminRemoveSlot, adminToggleSlotStatus } from "@/lib/api/admin-slot-client";
+import {
+  adminCreateSlot,
+  adminRemoveSlot,
+  adminToggleSlotStatus,
+} from "@/lib/api/admin-slot-client";
 
 type Option = { id: string; name: string };
 
@@ -74,6 +80,7 @@ export function AdminCalendarUI({
   const [slotError, setSlotError] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
     const eventId = searchParams.get("event");
     return eventId ? items.find((i) => i.id === eventId) ?? null : null;
@@ -145,6 +152,23 @@ export function AdminCalendarUI({
       return;
     }
     setRemoveTarget(null);
+    router.refresh();
+  }
+
+  // One-off slot for the doctor the calendar is filtered to. The grid can show
+  // every doctor at once, so "which doctor" has to come from the filter — the
+  // button is disabled until one is picked.
+  async function addSlot(startAtIso: string, durationMinutes: number) {
+    if (!filters.doctorId) return;
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminCreateSlot(filters.doctorId, startAtIso, durationMinutes);
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setAddOpen(false);
     router.refresh();
   }
 
@@ -292,6 +316,22 @@ export function AdminCalendarUI({
           </label>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="gh-btn gh-btn-outline"
+            disabled={!filters.doctorId}
+            title={
+              filters.doctorId
+                ? "Add a one-off slot for this doctor"
+                : "Pick a doctor first — a slot belongs to one calendar"
+            }
+            onClick={() => {
+              setSlotError(null);
+              setAddOpen(true);
+            }}
+          >
+            <Plus className="size-3.5" aria-hidden /> Add slot
+          </button>
           <ViewToggle
             view={view}
             onChange={(next) =>
@@ -315,7 +355,7 @@ export function AdminCalendarUI({
 
       {/* Block/unblock failures on the week grid have no drawer to land in —
           and the dialog shows its own copy while it's open. */}
-      {slotError && !blockTarget && !removeTarget && !daySheetOpen ? (
+      {slotError && !blockTarget && !removeTarget && !addOpen && !daySheetOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotError}
         </p>
@@ -481,6 +521,23 @@ export function AdminCalendarUI({
         onConfirm={(reason) => {
           if (blockTarget) void setSlotStatus(blockTarget, "BLOCKED", reason || undefined);
         }}
+      />
+
+      <AddSlotDialog
+        key={addOpen ? `add-${selectedDay}` : "no-add"}
+        open={addOpen}
+        doctorName={doctorOptions.find((d) => d.id === filters.doctorId)?.name ?? null}
+        tz={tz}
+        defaultDate={view === "week" ? weekAnchor : selectedDay || todayKey(tz)}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setAddOpen(false);
+          setSlotError(null);
+        }}
+        onConfirm={(startAtIso, durationMinutes) =>
+          void addSlot(startAtIso, durationMinutes)
+        }
       />
 
       <RemoveSlotDialog

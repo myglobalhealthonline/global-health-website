@@ -297,6 +297,9 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
               doctorId: auth.doctorId,
               status: "OPEN",
               startAt: { gte: new Date() },
+              // Admin-added one-off slots aren't derived from any window, so a
+              // sweep would delete them permanently. They opt out.
+              isAdHoc: false,
             },
           });
         } catch {
@@ -337,6 +340,9 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
               doctorId: auth.doctorId,
               status: "OPEN",
               startAt: { gte: new Date() },
+              // Admin-added one-off slots aren't derived from any window, so a
+              // sweep would delete them permanently. They opt out.
+              isAdHoc: false,
             },
           });
         } catch {
