@@ -226,7 +226,14 @@ export default async function AdminDoctorAvailabilityPage({
           ?.bookingSetting?.timezone
       : null) ?? "Europe/Dublin";
   const weekAnchor = parseWeekAnchor(messages.wk, clinicTz);
-  const { fromIso, toIso } = weekRangeIso(weekAnchor, clinicTz);
+  // ±1 day, same as the admin calendar: the grid places blocks by the VIEWER's
+  // timezone, which can differ from the clinic's, so a slot near either edge of
+  // the week belongs in a column the unpadded clinic-local range never fetched.
+  // Without this the first or last day of the week can look empty here while
+  // the doctor's own calendar shows it.
+  const week = weekRangeIso(weekAnchor, clinicTz);
+  const fromIso = new Date(new Date(week.fromIso).getTime() - 86400000).toISOString();
+  const toIso = new Date(new Date(week.toIso).getTime() + 86400000).toISOString();
 
   const [calendarResult, servicesResult, clinicsResult] = await Promise.all([
     fetchAdminCalendar({ from: fromIso, to: toIso, doctorId: id }),

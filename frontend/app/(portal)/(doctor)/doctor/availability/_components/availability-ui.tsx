@@ -43,6 +43,7 @@ import { countRangeSlots, expandDaySpans } from "@/lib/calendar/expand-range";
 import type { BulkSlotAction } from "@/lib/api/slot-bulk-types";
 import { useSlotManager } from "@/lib/calendar/use-slot-manager";
 import {
+  addDaysKey,
   addMonths,
   addWeeksKey,
   dayLabel,
@@ -267,24 +268,6 @@ export function DoctorAvailabilityUI({
   const itemsByDay = useMemo(() => groupItemsByLocalDay(items, tz), [items, tz]);
   const dayItems = selectedDay ? itemsByDay.get(selectedDay) ?? [] : [];
   const weekDays = useMemo(() => weekDaysOf(weekAnchor), [weekAnchor]);
-
-  // What the Manage panel acts on when its date fields are left blank: the
-  // stretch currently on screen. Acting on what you can see beats making the
-  // doctor retype dates they already navigated to.
-  const visibleRange = useMemo(() => {
-    if (view === "week") {
-      return {
-        from: weekDays[0]?.key ?? weekAnchor,
-        to: weekDays[weekDays.length - 1]?.key ?? weekAnchor,
-      };
-    }
-    const last = new Date(Date.UTC(year, month, 0)).getUTCDate();
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return {
-      from: `${year}-${pad(month)}-01`,
-      to: `${year}-${pad(month)}-${pad(last)}`,
-    };
-  }, [view, weekDays, weekAnchor, year, month]);
 
   // ── URL-driven view state ─────────────────────────────────────────
   function pushParams(next: { view?: CalendarView; ym?: string; wk?: string }) {
@@ -1018,15 +1001,11 @@ export function DoctorAvailabilityUI({
             weekday={editTarget.weekday}
             startTime={minutesToTimeInput(editTarget.startMinute)}
             endTime={minutesToTimeInput(editTarget.endMinute)}
-            fallbackFrom={visibleRange.from}
-            fallbackTo={visibleRange.to}
+            effectiveUntil={editTarget.effectiveUntil}
             busy={busy}
             labels={{
               title: s.manageSlotsTitle,
               hint: s.windowSlotsHint,
-              fromDate: s.manageFromDate,
-              toDate: s.manageToDate,
-              datesHint: s.manageDatesOptionalHint,
               reason: s.reasonOptional,
               reasonPlaceholder: s.manageReasonPlaceholder,
               block: s.slotActionBlock,
@@ -1126,13 +1105,21 @@ export function DoctorAvailabilityUI({
  * day-spans exactly like the bulk endpoints expect, filtered to this window's
  * weekday, and hands them up — booked slots are skipped server-side.
  */
+/**
+ * Slot controls for one weekly window, rendered inside its edit dialog.
+ *
+ * No date pickers: the window already says which day and which hours, so the
+ * only sensible target is "the slots this window still has ahead of it". The
+ * horizon runs from now to the window's end date, or 120 days out when it runs
+ * forever — the same bound the availability API uses for a single read.
+ * Booked and held slots are skipped server-side.
+ */
 function WindowSlotControls({
   tz,
   weekday,
   startTime,
   endTime,
-  fallbackFrom,
-  fallbackTo,
+  effectiveUntil,
   busy,
   labels: t,
   onSubmit,
@@ -1141,15 +1128,12 @@ function WindowSlotControls({
   weekday: number;
   startTime: string;
   endTime: string;
-  fallbackFrom: string;
-  fallbackTo: string;
+  /** ISO date the window stops applying, if it has one. */
+  effectiveUntil: string | null;
   busy: boolean;
   labels: {
     title: string;
     hint: string;
-    fromDate: string;
-    toDate: string;
-    datesHint: string;
     reason: string;
     reasonPlaceholder: string;
     block: string;
@@ -1166,13 +1150,15 @@ function WindowSlotControls({
     reason: string,
   ) => void;
 }) {
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const from = fromDate || fallbackFrom;
-  const to = toDate || fallbackTo;
+  // Today in the display timezone, so "future" means the doctor's future.
+  const from = todayKey(tz);
+  const horizon = addDaysKey(from, 120);
+  const until = effectiveUntil ? effectiveUntil.slice(0, 10) : horizon;
+  const to = until < horizon ? until : horizon;
+
   const affected = countRangeSlots(from, to, startTime, endTime, [weekday]);
 
   function submit(action: BulkSlotAction) {
@@ -1197,36 +1183,6 @@ function WindowSlotControls({
         <p className="text-sm font-bold text-[var(--portal-text)]">{t.title}</p>
         <p className="text-portal-thead text-[var(--portal-muted)]">{t.hint}</p>
       </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="gh-field-label">{t.fromDate}</span>
-          <input
-            type="date"
-            className="gh-input h-10"
-            value={fromDate}
-            onChange={(e) => {
-              setFromDate(e.target.value);
-              if (toDate && e.target.value && e.target.value > toDate) {
-                setToDate(e.target.value);
-              }
-            }}
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="gh-field-label">{t.toDate}</span>
-          <input
-            type="date"
-            className="gh-input h-10"
-            min={fromDate || undefined}
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-          />
-        </label>
-      </div>
-      <p className="text-portal-meta text-[var(--portal-muted)]">
-        {t.datesHint.split("{from}").join(fallbackFrom).split("{to}").join(fallbackTo)}
-      </p>
 
       <label className="flex flex-col gap-1 text-sm">
         <span className="gh-field-label">{t.reason}</span>

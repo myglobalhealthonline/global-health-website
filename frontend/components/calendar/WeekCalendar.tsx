@@ -17,6 +17,7 @@ import {
   Clock,
   Square,
   Trash2,
+  Unlock,
   User,
 } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
@@ -70,8 +71,9 @@ type Props = {
    *  top-right corner — the block's own click stays the booking flow, so
    *  blocking never costs the admin an extra step to book. */
   onBlockSlot?: (item: CalendarItem) => void;
-  /** Admin mode: clicking a BLOCKED slot re-opens it. Without this, blocked
-   *  blocks render as inert divs (the doctor portal uses onToggleSlot). */
+  /** Clicking a BLOCKED slot re-opens it, and it also gets an unlock corner
+   *  button so the action is visible rather than discovered. Without this,
+   *  blocked blocks render as inert divs. */
   onSelectBlockedSlot?: (item: CalendarItem) => void;
   /** Admin mode: delete an OPEN or BLOCKED slot outright (that date only).
    *  Renders a 🗑 corner button beside the block one. */
@@ -742,7 +744,9 @@ export function WeekCalendar({
                     const cornerActions =
                       p.item.kind === "slot" &&
                       (p.item.status === "OPEN" || p.item.status === "BLOCKED") &&
-                      ((onBlockSlot && p.item.status === "OPEN") || onRemoveSlot) ? (
+                      ((onBlockSlot && p.item.status === "OPEN") ||
+                        (onSelectBlockedSlot && p.item.status === "BLOCKED") ||
+                        onRemoveSlot) ? (
                         // z-2 keeps the actions above their own block (solid
                         // tones sit at z-2) but BELOW the sticky day-header row
                         // (z-3, portal.css) — at z-3 they painted over the
@@ -756,6 +760,16 @@ export function WeekCalendar({
                               onClick={() => onBlockSlot(p.item)}
                             >
                               <Ban className="size-3" aria-hidden />
+                            </CornerAction>
+                          ) : null}
+                          {onSelectBlockedSlot && p.item.status === "BLOCKED" ? (
+                            <CornerAction
+                              label={t.clickToReopen}
+                              title={`${timeLabel} · ${t.clickToReopen}`}
+                              disabled={slotActionsBusy}
+                              onClick={() => onSelectBlockedSlot(p.item)}
+                            >
+                              <Unlock className="size-3" aria-hidden />
                             </CornerAction>
                           ) : null}
                           {onRemoveSlot ? (
