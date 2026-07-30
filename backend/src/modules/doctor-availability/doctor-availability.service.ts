@@ -158,6 +158,132 @@ async function listAvailabilityExceptions(
 }
 
 /**
+ * Add slots at explicit instants, independent of the recurring weekly windows.
+ *
+ * The admin picks a date range and a daily time range; the UI expands that into
+ * the concrete instants (it owns the display timezone) and hands them here. Rows
+ * are flagged `isAdHoc` so the "window changed → drop stale future OPEN slots"
+ * sweeps leave them alone: nothing derives them, so a sweep would delete them
+ * for good. Any `DoctorAvailabilityException` covering an added span is cleared
+ * too — adding a slot back where one was removed is the admin undoing that.
+ *
+ * Partial success is the point: a range almost always crosses times the doctor
+ * already has slots for, and failing the whole request over one collision would
+ * make the feature unusable. Clashes and past instants are skipped and counted,
+ * never an error.
+ */
+export async function createAdHocSlots(
+  doctorId: string,
+  startAts: Date[],
+  durationMinutes: number,
+): Promise<{ created: number; skippedOverlap: number; skippedPast: number }> {
+  const durationMs = durationMinutes * 60 * 1000;
+  const now = Date.now();
+
+  // Dedupe identical instants (a caller expanding overlapping ranges) and sort
+  // so the in-memory overlap test below sees them in time order.
+  const unique = [...new Map(startAts.map((d) => [d.getTime(), d])).values()].sort(
+    (a, b) => a.getTime() - b.getTime(),
+  );
+
+  const future = unique.filter((d) => d.getTime() > now);
+  const skippedPast = unique.length - future.length;
+  if (future.length === 0) return { created: 0, skippedOverlap: 0, skippedPast };
+
+  const rangeStart = future[0];
+  const rangeEnd = new Date(future[future.length - 1].getTime() + durationMs);
+
+  try {
+    // One read for the whole span instead of a query per candidate. Every
+    // status counts: a BOOKED consultation blocks an add just as an OPEN slot
+    // does.
+    const occupied = await prisma.doctorTimeSlot.findMany({
+      where: {
+        doctorId,
+        startAt: { lt: rangeEnd },
+        endAt: { gt: rangeStart },
+      },
+      select: { startAt: true, endAt: true },
+    });
+
+    const accepted: { doctorId: string; startAt: Date; endAt: Date; isAdHoc: true }[] = [];
+    for (const startAt of future) {
+      const endAt = new Date(startAt.getTime() + durationMs);
+      if (occupied.some((row) => intervalsOverlap({ startAt, endAt }, row))) continue;
+      accepted.push({ doctorId, startAt, endAt, isAdHoc: true });
+      // Track it so two candidates in the same request can't overlap each other
+      // (a caller passing a step shorter than the duration).
+      occupied.push({ startAt, endAt });
+    }
+    const skippedOverlap = future.length - accepted.length;
+    if (accepted.length === 0) return { created: 0, skippedOverlap, skippedPast };
+
+    const created = await prisma.$transaction(async (tx) => {
+      await tx.doctorAvailabilityException.deleteMany({
+        where: {
+          doctorId,
+          OR: accepted.map((row) => ({
+            startAt: { lt: row.endAt },
+            endAt: { gt: row.startAt },
+          })),
+        },
+      });
+      const result = await tx.doctorTimeSlot.createMany({
+        data: accepted,
+        skipDuplicates: true,
+      });
+      return result.count;
+    });
+
+    // New bookable slots must show up in public listings now, not after the
+    // read cache's TTL.
+    slotCache.clear();
+    return { created, skippedOverlap, skippedPast };
+  } catch (error) {
+    // Lost a race against a concurrent write the pre-flight read missed. The
+    // batch insert aborts entirely on one conflicting row, so fall back to
+    // inserting one at a time and count the losers as skipped.
+    if (isExclusionViolation(error) || isUniqueViolation(error)) {
+      return createAdHocSlotsOneByOne(doctorId, future, durationMs, skippedPast);
+    }
+    throw normalizeDbError(error, "Could not add slots");
+  }
+}
+
+/** Row-at-a-time fallback for `createAdHocSlots` when the batch lost a race. */
+async function createAdHocSlotsOneByOne(
+  doctorId: string,
+  startAts: Date[],
+  durationMs: number,
+  skippedPast: number,
+): Promise<{ created: number; skippedOverlap: number; skippedPast: number }> {
+  let created = 0;
+  let skippedOverlap = 0;
+  for (const startAt of startAts) {
+    const endAt = new Date(startAt.getTime() + durationMs);
+    try {
+      await prisma.$transaction(async (tx) => {
+        await tx.doctorAvailabilityException.deleteMany({
+          where: { doctorId, startAt: { lt: endAt }, endAt: { gt: startAt } },
+        });
+        await tx.doctorTimeSlot.create({
+          data: { doctorId, startAt, endAt, status: "OPEN", isAdHoc: true },
+        });
+      });
+      created += 1;
+    } catch (rowError) {
+      if (isExclusionViolation(rowError) || isUniqueViolation(rowError)) {
+        skippedOverlap += 1;
+        continue;
+      }
+      throw normalizeDbError(rowError, "Could not add slots");
+    }
+  }
+  slotCache.clear();
+  return { created, skippedOverlap, skippedPast };
+}
+
+/**
  * Remove ONE concrete slot for ONE date, permanently.
  *
  * Deleting the row alone would not stick — the generators re-materialise slots
@@ -410,6 +536,13 @@ export function intervalsOverlap(
   b: { startAt: Date; endAt: Date },
 ): boolean {
   return a.startAt < b.endAt && a.endAt > b.startAt;
+}
+
+/** Prisma unique-constraint violation — here, @@unique([doctorId, startAt]). */
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"
+  );
 }
 
 /** Postgres exclusion-constraint violation (23P01) — not modeled in the Prisma schema. */

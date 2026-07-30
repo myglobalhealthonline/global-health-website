@@ -11,7 +11,10 @@ import {
 } from "../utils/admin-country-scope.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { removeSlotForDate } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  createAdHocSlots,
+  removeSlotForDate,
+} from "../modules/doctor-availability/doctor-availability.service.js";
 
 /**
  * Admin block/unblock of a single doctor time slot — the admin-side twin of
@@ -39,6 +42,24 @@ const deleteBodySchema = z
   .object({ reason: z.string().trim().max(200).optional() })
   .strict();
 
+/** Doctor-scoped params for the collection route (add a slot). */
+const doctorParamsSchema = z.object({
+  doctorId: z.string().trim().min(1).max(64),
+});
+
+/**
+ * One-off slots. `startAts` are UTC instants — the admin UI expands the date
+ * range + daily time range it collected into concrete instants using the zone
+ * it's displaying, so this route never has to guess a timezone. The 2000 cap is
+ * a request-size bound (a month of 15-min slots over a 12h day is ~1440).
+ */
+const createBodySchema = z
+  .object({
+    startAts: z.array(z.string().datetime()).min(1).max(2000),
+    durationMinutes: z.number().int().min(5).max(480),
+  })
+  .strict();
+
 type AdminDoctorTimeSlotsDependencies = {
   verifyAdminAccess(request: FastifyRequest): Promise<AdminAccessResult>;
   verifyCountryScope(input: AdminCountryScopeInput): Promise<AdminCountryScopeResult>;
@@ -61,6 +82,84 @@ export function createAdminDoctorTimeSlotsRoute(
       const auth = await dependencies.verifyAdminAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       authenticatedRequests.set(request, auth);
+    });
+
+    /**
+     * Add one-off slots to a doctor's calendar for specific instants, with no
+     * reference to their recurring weekly windows. Rows are flagged ad-hoc so a
+     * later window edit can't sweep them away. Instants that clash with an
+     * existing slot (or sit in the past) are skipped and reported, not fatal —
+     * a date range routinely covers times the doctor is already booked for.
+     */
+    app.post("/api/admin/doctors/:doctorId/time-slots", async (request, reply) => {
+      const params = doctorParamsSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      const body = createBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid body", body.error.flatten()));
+      }
+      const startAts = body.data.startAts.map((iso) => new Date(iso));
+      if (startAts.some((d) => Number.isNaN(d.getTime()))) {
+        return reply.status(400).send(errorResponse("Invalid start time"));
+      }
+
+      const authenticatedAccess = authenticatedRequests.get(request);
+      if (!authenticatedAccess) {
+        return reply
+          .status(503)
+          .send(errorResponse("Admin authorization is temporarily unavailable"));
+      }
+
+      try {
+        const doctor = await prisma.doctor.findUnique({
+          where: { id: params.data.doctorId },
+          select: { id: true, countryId: true },
+        });
+        if (!doctor) return reply.status(404).send(errorResponse("Doctor not found"));
+
+        const scope = await dependencies.verifyCountryScope({
+          request,
+          authenticatedAccess,
+          countryId: doctor.countryId,
+          operation: "add_slot",
+          resourceType: "DoctorTimeSlot",
+        });
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        const result = await createAdHocSlots(
+          doctor.id,
+          startAts,
+          body.data.durationMinutes,
+        );
+        // Nothing landed and nothing was in the past → every instant clashed.
+        // That's the one case worth an error: the admin's whole range was a
+        // no-op and a success toast would be a lie.
+        if (result.created === 0 && result.skippedOverlap > 0) {
+          return reply
+            .status(409)
+            .send(
+              errorResponse(
+                result.skippedOverlap === 1
+                  ? "This doctor already has a slot overlapping that time"
+                  : "Every time in that range already has a slot",
+              ),
+            );
+        }
+        if (result.created === 0) {
+          return reply.status(400).send(errorResponse("Pick a time in the future"));
+        }
+
+        return okResponse(result);
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not add slots"));
+      }
     });
 
     app.patch("/api/admin/doctors/:doctorId/time-slots/:slotId", async (request, reply) => {
