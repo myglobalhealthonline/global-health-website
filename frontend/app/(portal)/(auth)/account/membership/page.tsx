@@ -14,7 +14,9 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import { AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { deriveMemberId } from "@/lib/subscription/member-id";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
+import { MembershipCard } from "./_components/MembershipCard";
 import { MembershipTabsClient } from "./_components/MembershipTabsClient";
 import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 import { RewardsPanel } from "../rewards/_components/RewardsPanel";
@@ -43,7 +45,7 @@ export default async function MembershipPage({
     getServerAuthUser(),
     getPageLocale(),
   ]);
-  const { subscription, account: a } = loadLocaleBundle(locale);
+  const { subscription, account: a, common } = loadLocaleBundle(locale);
   const t = subscription.manage;
   const rt = subscription.redeem;
 
@@ -88,6 +90,11 @@ export default async function MembershipPage({
     : null;
   const pricingHref = config ? `/${config.slug}/${locale}/pricing` : "/";
 
+  // Tier position inside this country's ladder (cheapest = 1), for the card's
+  // pips. 0 when the plan isn't in the fetched catalogue — pips are dropped.
+  const ladder = [...plans].sort((x, y) => x.monthlyPriceCents - y.monthlyPriceCents);
+  const tier = ladder.findIndex((p) => p.id === sub.plan!.id) + 1;
+
   const kits = redemptions?.kits ?? [];
   const livePlan = plans.find((p) => p.id === sub.plan?.id);
   const unlockByKit = new Map(
@@ -107,6 +114,31 @@ export default async function MembershipPage({
         tabsAria={a.membership.tabsAria}
         membershipPanel={
           <>
+            {/* Physical membership card — identity (plan, holder, member no.,
+                renewal, market). The strip below keeps the numbers that move. */}
+            <div className="mb-5">
+              <MembershipCard
+                planName={sub.plan.name}
+                cardholderName={user?.fullName ?? ""}
+                memberId={user ? deriveMemberId(user.id) : "—"}
+                validThrough={nextBillingLabel ?? a.membership.notScheduled}
+                countryName={config?.name ?? null}
+                status={sub.status}
+                cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
+                // Short pill copy — "Cancellation scheduled" ellipsises on the
+                // card at column widths; the strip below still spells it out.
+                cancelLabel={a.membership.cardEnding}
+                tier={tier}
+                labels={{
+                  cardholder: a.membership.cardCardholder,
+                  memberId: a.membership.cardMemberId,
+                  validThrough: a.membership.cardValidThrough,
+                  // Brand motto — same string the entry gate prints, kept
+                  // untranslated in every locale bundle by design.
+                  motto: common.entryGate.motto,
+                }}
+              />
+            </div>
             <AdminSummaryStrip
               className="mb-5"
               items={[

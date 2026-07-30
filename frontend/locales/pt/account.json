@@ -668,7 +668,11 @@
     "sumEligibleNowHint": "Pronto para resgatar",
     "sumMembership": "Membresia",
     "currentPlanHint": "Plano atual",
-    "noRewardsTitle": "Sem recompensas disponíveis"
+    "noRewardsTitle": "Sem recompensas disponíveis",
+    "cardCardholder": "Titular",
+    "cardMemberId": "ID de membro",
+    "cardValidThrough": "Válido até",
+    "cardEnding": "A terminar"
   },
   "calendar": {
     "eyebrow": "A minha agenda",

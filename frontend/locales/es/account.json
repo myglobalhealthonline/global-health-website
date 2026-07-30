@@ -668,7 +668,11 @@
     "sumEligibleNowHint": "Listo para canjear",
     "sumMembership": "Membresía",
     "currentPlanHint": "Plan actual",
-    "noRewardsTitle": "No hay recompensas disponibles"
+    "noRewardsTitle": "No hay recompensas disponibles",
+    "cardCardholder": "Titular",
+    "cardMemberId": "ID de miembro",
+    "cardValidThrough": "Válida hasta",
+    "cardEnding": "Finaliza"
   },
   "calendar": {
     "eyebrow": "Mi agenda",

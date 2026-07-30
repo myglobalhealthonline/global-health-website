@@ -668,7 +668,11 @@
     "sumEligibleNowHint": "Pregătit pentru a fi răscumpărat",
     "sumMembership": "Calitate",
     "currentPlanHint": "Plan curent",
-    "noRewardsTitle": "Nu sunt recompense disponibile"
+    "noRewardsTitle": "Nu sunt recompense disponibile",
+    "cardCardholder": "Titular card",
+    "cardMemberId": "ID membru",
+    "cardValidThrough": "Valabil până",
+    "cardEnding": "Se încheie"
   },
   "calendar": {
     "eyebrow": "Programul meu",

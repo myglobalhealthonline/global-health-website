@@ -668,7 +668,11 @@
     "sumEligibleNowHint": "Připraveno k uplatnění",
     "sumMembership": "Členství",
     "currentPlanHint": "Aktuální plán",
-    "noRewardsTitle": "Žádné odměny nejsou k dispozici"
+    "noRewardsTitle": "Žádné odměny nejsou k dispozici",
+    "cardCardholder": "Držitel karty",
+    "cardMemberId": "ID člena",
+    "cardValidThrough": "Platnost do",
+    "cardEnding": "Končí"
   },
   "calendar": {
     "eyebrow": "Můj rozvrh",

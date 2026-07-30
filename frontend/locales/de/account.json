@@ -668,7 +668,11 @@
     "sumEligibleNowHint": "Bereit zur Einlösung",
     "sumMembership": "Mitgliedschaft",
     "currentPlanHint": "Aktueller Plan",
-    "noRewardsTitle": "Keine Belohnungen verfügbar"
+    "noRewardsTitle": "Keine Belohnungen verfügbar",
+    "cardCardholder": "Karteninhaber",
+    "cardMemberId": "Mitglieds-ID",
+    "cardValidThrough": "Gültig bis",
+    "cardEnding": "Endet"
   },
   "calendar": {
     "eyebrow": "Mein Zeitplan",

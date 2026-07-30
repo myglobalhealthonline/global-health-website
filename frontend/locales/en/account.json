@@ -668,7 +668,11 @@
     "sumEligibleNowHint": "Ready to redeem",
     "sumMembership": "Membership",
     "currentPlanHint": "Current plan",
-    "noRewardsTitle": "No rewards available"
+    "noRewardsTitle": "No rewards available",
+    "cardCardholder": "Cardholder",
+    "cardMemberId": "Member ID",
+    "cardValidThrough": "Valid through",
+    "cardEnding": "Ending"
   },
   "calendar": {
     "eyebrow": "My schedule",
