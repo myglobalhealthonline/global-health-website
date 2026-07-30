@@ -210,7 +210,7 @@ export default async function DoctorAppointmentsPage({
                 {d.manualBooking.newBooking}
               </Link>
             ) : null}
-            <Link href="/doctor/calendar" className="gh-btn gh-btn-soft text-sm">
+            <Link href="/doctor/availability" className="gh-btn gh-btn-soft text-sm">
               {d.appointments.calendarView}
             </Link>
           </span>

@@ -46,15 +46,16 @@ function expandRange(
   startTime: string,
   endTime: string,
   tz: string,
+  t: AddSlotLabels,
 ): { instants: string[]; problem: string | null } {
   const dates = eachDate(fromDate, toDate);
   if (dates.length === 0) {
-    return { instants: [], problem: "End date must be on or after the start date." };
+    return { instants: [], problem: t.errorEndDate };
   }
   const startMin = toMinutes(startTime);
   const endMin = toMinutes(endTime);
   if (startMin === null || endMin === null) {
-    return { instants: [], problem: "Enter times as HH:MM." };
+    return { instants: [], problem: t.errorTimeFormat };
   }
   // "00:00" as an end time means midnight/end-of-day, not minute zero —
   // otherwise an evening clinic running to midnight fails this guard.
@@ -62,7 +63,7 @@ function expandRange(
   if (end - startMin < BASE_SLOT_MINUTES) {
     return {
       instants: [],
-      problem: `End time must be at least ${BASE_SLOT_MINUTES} minutes after the start time.`,
+      problem: fill(t.errorTooShort, { minutes: BASE_SLOT_MINUTES }),
     };
   }
   const out: string[] = [];
@@ -73,7 +74,7 @@ function expandRange(
       if (out.length > MAX_SLOTS) {
         return {
           instants: [],
-          problem: `That range is over ${MAX_SLOTS} slots — add it in smaller batches.`,
+          problem: fill(t.errorTooMany, { max: MAX_SLOTS }),
         };
       }
     }
@@ -81,26 +82,77 @@ function expandRange(
   return { instants: out, problem: null };
 }
 
+export type AddSlotLabels = {
+  title: string;
+  titleWithDoctor: string;
+  intro: string;
+  fromDate: string;
+  toDate: string;
+  fromTime: string;
+  toTime: string;
+  timezoneHint: string;
+  cancel: string;
+  confirm: string;
+  confirmBusy: string;
+  errorEndDate: string;
+  errorTimeFormat: string;
+  errorTooShort: string;
+  errorTooMany: string;
+  errorNoSlots: string;
+  noticeAdded: string;
+  noticeSkippedOverlap: string;
+  noticeSkippedPast: string;
+};
+
+export const DEFAULT_ADD_SLOT_LABELS: AddSlotLabels = {
+  title: "Add slots",
+  titleWithDoctor: "Add slots — {doctor}",
+  intro:
+    "Creates bookable slots on these dates only, on the fixed {minutes}-minute grid. The recurring weekly windows are not changed, and these slots stay put even if those windows are edited later. Times that already have a slot are skipped.",
+  fromDate: "From date",
+  toDate: "To date",
+  fromTime: "From time",
+  toTime: "To time",
+  timezoneHint:
+    "Entered in {tz} — the timezone this calendar is showing. Each slot is {minutes} minutes; a longer consultation consumes consecutive slots.",
+  cancel: "Cancel",
+  confirm: "Add {count} slots",
+  confirmBusy: "Adding…",
+  errorEndDate: "End date must be on or after the start date.",
+  errorTimeFormat: "Enter times as HH:MM.",
+  errorTooShort: "End time must be at least {minutes} minutes after the start time.",
+  errorTooMany: "That range is over {max} slots — add it in smaller batches.",
+  errorNoSlots: "That range produces no slots.",
+  noticeAdded: "Added {count} slots.",
+  noticeSkippedOverlap:
+    "{count} skipped — already booked, blocked, or covered by an existing slot.",
+  noticeSkippedPast: "{count} skipped — in the past.",
+};
+
+/** `{token}` substitution — the locale files store the same placeholders. */
+function fill(template: string, values: Record<string, string | number>): string {
+  return Object.entries(values).reduce(
+    (out, [key, value]) => out.split(`{${key}}`).join(String(value)),
+    template,
+  );
+}
+
 /**
  * Plain-English summary of what an add actually did. Skips are normal (a range
  * crosses times the doctor already has), so they belong in the success line
  * rather than being swallowed or dressed up as an error.
  */
-export function describeAddResult(result: {
-  created: number;
-  skippedOverlap: number;
-  skippedPast: number;
-}): string {
-  const parts = [
-    `Added ${result.created} slot${result.created === 1 ? "" : "s"}.`,
-  ];
+export function describeAddResult(
+  result: { created: number; skippedOverlap: number; skippedPast: number },
+  labels?: Partial<AddSlotLabels>,
+): string {
+  const t = { ...DEFAULT_ADD_SLOT_LABELS, ...labels };
+  const parts = [fill(t.noticeAdded, { count: result.created })];
   if (result.skippedOverlap > 0) {
-    parts.push(
-      `${result.skippedOverlap} skipped — already booked, blocked, or covered by an existing slot.`,
-    );
+    parts.push(fill(t.noticeSkippedOverlap, { count: result.skippedOverlap }));
   }
   if (result.skippedPast > 0) {
-    parts.push(`${result.skippedPast} skipped — in the past.`);
+    parts.push(fill(t.noticeSkippedPast, { count: result.skippedPast }));
   }
   return parts.join(" ");
 }
@@ -121,6 +173,7 @@ export function AddSlotDialog({
   defaultDate,
   busy = false,
   error,
+  labels,
   onClose,
   onConfirm,
 }: {
@@ -132,6 +185,8 @@ export function AddSlotDialog({
   defaultDate: string;
   busy?: boolean;
   error?: string | null;
+  /** Doctor portal passes localized copy; admin takes the English defaults. */
+  labels?: Partial<AddSlotLabels>;
   onClose: () => void;
   onConfirm: (startAtIsos: string[], durationMinutes: number) => void;
 }) {
@@ -145,7 +200,15 @@ export function AddSlotDialog({
   // "Add 224 slots" is a very different click from "Add 4 slots". Plain call,
   // no useMemo: the React Compiler memoizes it, and a hand-rolled useMemo here
   // reads as un-memoizable to the lint rule.
-  const { instants, problem } = expandRange(fromDate, toDate, startTime, endTime, tz);
+  const t = { ...DEFAULT_ADD_SLOT_LABELS, ...labels };
+  const { instants, problem } = expandRange(
+    fromDate,
+    toDate,
+    startTime,
+    endTime,
+    tz,
+    t,
+  );
 
   function submit() {
     if (problem) {
@@ -153,7 +216,7 @@ export function AddSlotDialog({
       return;
     }
     if (instants.length === 0) {
-      setLocalError("That range produces no slots.");
+      setLocalError(t.errorNoSlots);
       return;
     }
     setLocalError(null);
@@ -165,19 +228,16 @@ export function AddSlotDialog({
       open={open}
       onClose={onClose}
       width="lg"
-      title={doctorName ? `Add slots — ${doctorName}` : "Add slots"}
+      title={doctorName ? fill(t.titleWithDoctor, { doctor: doctorName }) : t.title}
     >
       <div className="grid gap-4">
         <p className="text-portal-compact text-[var(--color-text-body)]">
-          Creates bookable slots on these dates only, on the fixed{" "}
-          {BASE_SLOT_MINUTES}-minute grid. The doctor&apos;s recurring weekly
-          windows are not changed, and these slots stay put even if those windows
-          are edited later. Times that already have a slot are skipped.
+          {fill(t.intro, { minutes: BASE_SLOT_MINUTES })}
         </p>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1.5">
-            <span className="gh-field-label">From date *</span>
+            <span className="gh-field-label">{t.fromDate} *</span>
             <input
               type="date"
               className="gh-input"
@@ -191,7 +251,7 @@ export function AddSlotDialog({
             />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="gh-field-label">To date *</span>
+            <span className="gh-field-label">{t.toDate} *</span>
             <input
               type="date"
               className="gh-input"
@@ -201,7 +261,7 @@ export function AddSlotDialog({
             />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="gh-field-label">From time *</span>
+            <span className="gh-field-label">{t.fromTime} *</span>
             <input
               type="time"
               className="gh-input"
@@ -210,7 +270,7 @@ export function AddSlotDialog({
             />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="gh-field-label">To time *</span>
+            <span className="gh-field-label">{t.toTime} *</span>
             <input
               type="time"
               className="gh-input"
@@ -221,9 +281,7 @@ export function AddSlotDialog({
         </div>
 
         <p className="text-portal-meta text-[var(--color-text-muted)]">
-          Entered in <strong>{tz}</strong> — the timezone this calendar is
-          showing. Each slot is {BASE_SLOT_MINUTES} minutes; a longer
-          consultation consumes consecutive slots.
+          {fill(t.timezoneHint, { tz, minutes: BASE_SLOT_MINUTES })}
         </p>
 
         {localError || problem || error ? (
@@ -239,7 +297,7 @@ export function AddSlotDialog({
             className="gh-btn gh-btn-ghost"
             disabled={busy}
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             type="button"
@@ -247,9 +305,7 @@ export function AddSlotDialog({
             className="gh-btn gh-btn-primary"
             disabled={busy || instants.length === 0}
           >
-            {busy
-              ? "Adding…"
-              : `Add ${instants.length} slot${instants.length === 1 ? "" : "s"}`}
+            {busy ? t.confirmBusy : fill(t.confirm, { count: instants.length })}
           </button>
         </div>
       </div>

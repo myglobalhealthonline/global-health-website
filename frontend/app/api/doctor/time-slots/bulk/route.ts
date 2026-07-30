@@ -3,29 +3,18 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export const dynamic = "force-dynamic";
 
-type Params = Promise<{ slotId: string }>;
-
-export async function PATCH(request: NextRequest, { params }: { params: Params }) {
-  return forward(request, params, "PATCH");
-}
-
-/** Remove one slot for its own date. The backend also records an availability
- *  exception so the recurring window doesn't regenerate it. */
-export async function DELETE(request: NextRequest, { params }: { params: Params }) {
-  return forward(request, params, "DELETE");
-}
-
-async function forward(request: NextRequest, params: Params, method: "PATCH" | "DELETE") {
+/** Doctor: block / unblock / remove many slots at once, named either by UTC
+ *  spans (a date range × a daily time range) or by explicit slot ids. */
+export async function POST(request: NextRequest) {
   const backend = getBackendOrigin();
   if (!backend) {
     return NextResponse.json({ ok: false, message: "Backend not configured" }, { status: 503 });
   }
-  const { slotId } = await params;
   const cookieHeader = request.headers.get("cookie") ?? "";
   const bodyText = await request.text();
 
-  const upstream = await fetch(`${backend}/api/doctor/time-slots/${slotId}`, {
-    method,
+  const upstream = await fetch(`${backend}/api/doctor/time-slots/bulk`, {
+    method: "POST",
     headers: {
       "content-type": "application/json",
       ...(cookieHeader ? { cookie: cookieHeader } : {}),

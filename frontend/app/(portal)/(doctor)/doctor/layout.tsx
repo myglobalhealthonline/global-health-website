@@ -11,7 +11,6 @@ import {
   BarChart3,
   Bell,
   Calendar,
-  CalendarClock,
   CalendarRange,
   FileText,
   Globe2,
@@ -112,11 +111,12 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   const tourSteps = [
     { title: d.tour.steps.welcome.title, body: d.tour.steps.welcome.body },
     { target: "/doctor", title: d.tour.steps.overview.title, body: d.tour.steps.overview.body },
-    { route: "/doctor/availability", target: "availability-form", title: d.tour.steps.availabilityForm.title, body: d.tour.steps.availabilityForm.body },
-    { target: "availability-week", title: d.tour.steps.availabilityWeek.title, body: d.tour.steps.availabilityWeek.body },
+    // Schedule is one page now (the calendar route redirects here), so these
+    // four steps walk the single surface instead of hopping between two.
+    { route: "/doctor/availability", target: "availability-week", title: d.tour.steps.availabilityWeek.title, body: d.tour.steps.availabilityWeek.body },
+    { target: "availability-add", title: d.tour.steps.availabilityForm.title, body: d.tour.steps.availabilityForm.body },
     { target: "availability-windows", title: d.tour.steps.availabilityWindows.title, body: d.tour.steps.availabilityWindows.body },
-    { route: "/doctor/calendar", target: "calendar-add", title: d.tour.steps.calendarAdd.title, body: d.tour.steps.calendarAdd.body },
-    { target: "calendar-timeoff", title: d.tour.steps.calendarTimeoff.title, body: d.tour.steps.calendarTimeoff.body },
+    { target: "availability-manage", title: d.tour.steps.calendarTimeoff.title, body: d.tour.steps.calendarTimeoff.body },
     { route: "/doctor/appointments", target: "appointments-summary", title: d.tour.steps.appointmentsSummary.title, body: d.tour.steps.appointmentsSummary.body },
     ...workspaceSteps,
     // Route back explicitly — the previous step may have left the tour on
@@ -176,8 +176,9 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       items: [
         { href: "/doctor/appointments", label: d.nav.appointments, icon: <Calendar className="size-4" aria-hidden /> },
         { href: "/doctor/messages", label: d.nav.messages, icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
-        { href: "/doctor/calendar", label: d.nav.calendar, icon: <CalendarRange className="size-4" aria-hidden /> },
-        { href: "/doctor/availability", label: d.nav.availability, icon: <CalendarClock className="size-4" aria-hidden /> },
+        // One schedule entry: the calendar and availability pages merged, and
+        // /doctor/calendar now redirects here.
+        { href: "/doctor/availability", label: d.nav.calendar, icon: <CalendarRange className="size-4" aria-hidden /> },
       ],
     },
     {

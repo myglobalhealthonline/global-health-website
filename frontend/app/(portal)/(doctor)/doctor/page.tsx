@@ -196,11 +196,9 @@ export default async function DoctorOverviewPage() {
                 {d.common.join}
               </Btn>
             ) : null}
-            <Btn href="/doctor/calendar" variant="on-chrome" size="sm">
-              {d.dashboard.calendar}
-            </Btn>
+            {/* Calendar and availability are one page now — one button. */}
             <Btn href="/doctor/availability" variant="on-chrome" size="sm">
-              {d.dashboard.availability}
+              {d.dashboard.calendar}
             </Btn>
           </div>
         }

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Plus } from "lucide-react";
+import { CheckSquare, Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
@@ -26,10 +26,17 @@ import {
 } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
+import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
 import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
+import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
+import { SlotManagerPanel } from "@/components/calendar/slot-manager-panel";
+import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
+import type { BulkSlotAction } from "@/lib/api/slot-bulk-types";
 import {
+  adminBulkSlotAction,
   adminCreateSlots,
   adminRemoveSlot,
+  adminResizeSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
 
@@ -83,10 +90,17 @@ export function AdminCalendarUI({
   const [slotError, setSlotError] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
+  const [resizeTarget, setResizeTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   // Add reports partial success ("added 20, skipped 4") — information, not an
   // error, so it gets its own line rather than the warning banner.
   const [slotNotice, setSlotNotice] = useState<string | null>(null);
+  // Bulk work is per-doctor: the endpoint is scoped to one calendar, and a
+  // sweep across every doctor at once is not a thing an admin should be able to
+  // do by accident. Both affordances therefore need the doctor filter set.
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const bulkReady = Boolean(filters.doctorId);
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
     const eventId = searchParams.get("event");
     return eventId ? items.find((i) => i.id === eventId) ?? null : null;
@@ -179,6 +193,38 @@ export function AdminCalendarUI({
     router.refresh();
   }
 
+  // Resize keeps the slot's start and moves its end on the base grid.
+  async function resizeSlot(item: CalendarItem, durationMinutes: number) {
+    const doctorId = item.meta?.doctorId;
+    if (!doctorId) {
+      setSlotError("This slot has no doctor — reload the calendar and try again.");
+      return;
+    }
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminResizeSlot(
+      doctorId,
+      item.id.replace(/^s-/, ""),
+      durationMinutes,
+    );
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setResizeTarget(null);
+    router.refresh();
+  }
+
+  function openResizeDialog(item: CalendarItem) {
+    if (item.kind !== "slot") return;
+    if (item.status !== "OPEN" && item.status !== "BLOCKED") return;
+    if (!item.meta?.doctorId) return;
+    setDaySheetOpen(false);
+    setSlotError(null);
+    setResizeTarget(item);
+  }
+
   function openRemoveDialog(item: CalendarItem) {
     if (item.kind !== "slot") return;
     if (item.status !== "OPEN" && item.status !== "BLOCKED") return;
@@ -186,6 +232,41 @@ export function AdminCalendarUI({
     setDaySheetOpen(false);
     setSlotError(null);
     setRemoveTarget(item);
+  }
+
+  function toggleSelected(item: CalendarItem) {
+    const id = item.id.replace(/^s-/, "");
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  /** Bulk over the current selection, or over a date × time sweep. Both post to
+   *  the doctor-scoped bulk endpoint, which skips booked and held slots. */
+  async function runBulk(
+    action: BulkSlotAction,
+    payload: { slotIds?: string[]; spans?: { fromUtc: string; toUtc: string }[] },
+    reason?: string,
+  ) {
+    if (!filters.doctorId) return;
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminBulkSlotAction(filters.doctorId, {
+      action,
+      ...payload,
+      ...(reason ? { reason } : {}),
+    });
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    if (payload.slotIds) setSelected(new Set());
+    setSlotNotice(describeBulkResult(action, res.data));
+    router.refresh();
   }
 
   function openBlockDialog(item: CalendarItem) {
@@ -340,6 +421,25 @@ export function AdminCalendarUI({
           >
             <Plus className="size-3.5" aria-hidden /> Add slots
           </button>
+          <button
+            type="button"
+            className="gh-btn gh-btn-outline"
+            disabled={!bulkReady}
+            title={
+              bulkReady
+                ? "Pick several slots and act on them together"
+                : "Pick a doctor first — bulk actions run on one calendar"
+            }
+            onClick={() => {
+              setSelectionMode((on) => {
+                if (on) setSelected(new Set());
+                return !on;
+              });
+            }}
+          >
+            <CheckSquare className="size-3.5" aria-hidden />{" "}
+            {selectionMode ? "Selecting" : "Select"}
+          </button>
           <ViewToggle
             view={view}
             onChange={(next) =>
@@ -363,7 +463,12 @@ export function AdminCalendarUI({
 
       {/* Block/unblock failures on the week grid have no drawer to land in —
           and the dialog shows its own copy while it's open. */}
-      {slotError && !blockTarget && !removeTarget && !addOpen && !daySheetOpen ? (
+      {slotError &&
+      !blockTarget &&
+      !removeTarget &&
+      !resizeTarget &&
+      !addOpen &&
+      !daySheetOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotError}
         </p>
@@ -386,6 +491,10 @@ export function AdminCalendarUI({
           onBlockSlot={openBlockDialog}
           onSelectBlockedSlot={onUnblockSlot}
           onRemoveSlot={openRemoveDialog}
+          onResizeSlot={openResizeDialog}
+          selectionMode={selectionMode && bulkReady}
+          selectedIds={selected}
+          onToggleSelect={toggleSelected}
           slotActionsBusy={slotBusy}
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
           onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
@@ -415,6 +524,23 @@ export function AdminCalendarUI({
           }}
         />
       )}
+
+      <SelectionActionBar
+        count={selected.size}
+        busy={slotBusy}
+        onAction={(action) => void runBulk(action, { slotIds: [...selected] })}
+        onClear={() => setSelected(new Set())}
+      />
+
+      {/* Range sweep — one doctor at a time, same rule as the other bulk work. */}
+      {bulkReady ? (
+        <SlotManagerPanel
+          tz={tz}
+          defaultDate={view === "week" ? weekAnchor : selectedDay || todayKey(tz)}
+          busy={slotBusy}
+          onSubmit={(action, spans, reason) => void runBulk(action, { spans }, reason)}
+        />
+      ) : null}
 
       {/* Day agenda — lux sheet, same skin as the event drawer. */}
       <AppSheet
@@ -469,6 +595,9 @@ export function AdminCalendarUI({
           }
           showDoctorName
           onSelectConsultation={openEvent}
+          selectionMode={selectionMode && bulkReady}
+          selectedIds={selected}
+          onToggleSelect={toggleSelected}
           // Every slot action is an explicit chip button (Book / Block /
           // Re-open / Remove), so the chip itself is never a button — nesting
           // them would be invalid markup.
@@ -505,6 +634,14 @@ export function AdminCalendarUI({
                   className={actionClass}
                 >
                   {item.status === "OPEN" ? "Block" : "Re-open"}
+                </button>
+                <button
+                  type="button"
+                  disabled={slotBusy}
+                  onClick={() => openResizeDialog(item)}
+                  className={actionClass}
+                >
+                  Length
                 </button>
                 <button
                   type="button"
@@ -551,6 +688,22 @@ export function AdminCalendarUI({
         onConfirm={(startAtIsos, durationMinutes) =>
           void addSlots(startAtIsos, durationMinutes)
         }
+      />
+
+      <ResizeSlotDialog
+        key={resizeTarget?.id ?? "no-resize"}
+        open={resizeTarget !== null}
+        slot={resizeTarget}
+        tz={tz}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setResizeTarget(null);
+          setSlotError(null);
+        }}
+        onConfirm={(durationMinutes) => {
+          if (resizeTarget) void resizeSlot(resizeTarget, durationMinutes);
+        }}
       />
 
       <RemoveSlotDialog
