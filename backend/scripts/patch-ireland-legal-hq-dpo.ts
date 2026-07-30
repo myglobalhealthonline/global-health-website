@@ -1,6 +1,6 @@
 /**
  * Patch Ireland's CountryLegalProfile (/ireland/*\/legal) per the July 2026
- * SEO audit trust-signal findings (myglobalhealth.online-audit/):
+ * SEO audit trust-signal findings (docs/audits/seo/site-audit-2026-07/):
  *
  *   1. "Legal-entity / address discrepancy" — the page's visible
  *      "Registered address" showed only the Dublin branch address with no

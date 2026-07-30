@@ -1,5 +1,5 @@
 /**
- * PHI Access Recovery Plan (docs/security/phi-access-recovery-plan-2026-07-17.md)
+ * PHI Access Recovery Plan (docs/plans/security/phi-access-recovery-plan-2026-07-17.md)
  * Task 2 — backfill `PatientConsent` so the medical-access guard's direct-consent
  * path (`MEDICAL_ACCESS_DIRECT`) doesn't lock every pre-existing patient's doctor
  * out once `MEDICAL_ACCESS_ENFORCE` flips on.

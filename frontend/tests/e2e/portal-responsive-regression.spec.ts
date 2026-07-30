@@ -1,7 +1,7 @@
 import { expect, test, type Cookie, type Page } from "@playwright/test";
 
 /**
- * Phase F regression spec — docs/portal-implementation/TASK.md §11.
+ * Phase F regression spec — docs/plans/portal-implementation/task.md §11.
  * Covers the doctor/admin appointment workspace, calendars, and
  * account pages after the Phase B/C/D portal fixes (commits 4ca59296,
  * 07d75ad2, 21b7dacd): sticky tab/rail overlap, tab state preservation,

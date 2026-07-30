@@ -34,7 +34,7 @@ import {
  *   patient attends, results land  → SAMPLE_COLLECTED / RESULT_RECEIVED
  *
  * Nothing here can create a requisition in Synlab's LIS on its own — step 5 is
- * an operator working their form. See docs/synlab/synlab-integration-questions.md.
+ * an operator working their form. See docs/guides/synlab-integration-questions.md.
  */
 
 export class LabRequisitionNotFoundError extends Error {

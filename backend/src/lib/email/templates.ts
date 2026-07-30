@@ -6,7 +6,7 @@ import { DEFAULT_EMAIL_LOGO_PATH } from "./resolve-email-logo-url.js";
 import { createBrazilConsentToken } from "../../modules/brazil-consent/brazil-consent-link.service.js";
 
 /** Shared branded transactional email shell — matches the public site's
- *  "Clinical Editorial" system (docs/DESIGN-GH2.md): deep-night forest
+ *  "Clinical Editorial" system (docs/design/design-system-gh2-clinical-editorial.md): deep-night forest
  *  gradient header, lime #B0F122 accent, mono eyebrow, hairline rules.
  *  Every transactional email routes through this. Email-safe: tables,
  *  inline styles, flat-color fallbacks behind gradients. */

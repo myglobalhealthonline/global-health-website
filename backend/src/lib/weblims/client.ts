@@ -25,7 +25,7 @@ import { env } from "../../config/env.js";
  * persistence, and never lets a lab failure corrupt the requisition record.
  *
  * Open questions with Synlab that affect this file are tracked in
- * docs/synlab/synlab-integration-questions.md (A1–A3, C1, C4, D3–D6).
+ * docs/guides/synlab-integration-questions.md (A1–A3, C1, C4, D3–D6).
  */
 
 const TIMEOUT_MS = 20_000;

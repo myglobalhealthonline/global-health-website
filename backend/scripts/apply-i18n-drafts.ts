@@ -5,7 +5,7 @@ import { prisma } from "../src/db/prisma.js";
 // Applies JSONL translation drafts (produced by draft-i18n-translations-openai.ts /
 // draft-ireland-service-translations-openai.ts) to the DB. Upserts ONLY fields that
 // are currently missing/empty on the target row — never overwrites a meaningful
-// existing value. See CLAUDE.md-adjacent docs/I18N_TRANSLATION_HANDOFF.md for context.
+// existing value. See CLAUDE.md-adjacent docs/i18n/translation-handoff.md for context.
 
 type EntityFlag = "services" | "service-faqs" | "doctors" | "doctor-markets" | "health-tests" | "health-test-faqs";
 

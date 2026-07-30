@@ -2865,7 +2865,7 @@ model User {
   /// UI language the user last explicitly chose while authenticated
   /// (LanguageSwitcher). Nullable — most users never override it. Seeds
   /// the `gh_locale` cookie on login when that cookie is absent (Phase 3
-  /// of docs/LOCALE_INVESTIGATION_2026-07-16.md); never itself read by
+  /// of docs/i18n/locale-investigation-2026-07-16.md); never itself read by
   /// resolveLocale() directly.
   preferredLocale              LocaleCode?
   emailVerifiedAt              DateTime?
@@ -5226,7 +5226,7 @@ enum LabRequisitionStatus {
 ///
 /// Deliberately NOT modelled as a booking: the WebLIMS Remote API has no slots
 /// and no appointment times — the patient walks into a collection point. See
-/// `docs/synlab/synlab-integration-questions.md` for the protocol and the open
+/// `docs/guides/synlab-integration-questions.md` for the protocol and the open
 /// questions with the laboratory.
 ///
 /// Most foreign keys here are plain id columns rather than Prisma relations,

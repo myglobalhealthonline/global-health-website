@@ -150,7 +150,7 @@ const envSchema = z.object({
   INVOICE_EXPRESS_ACCOUNT: optionalSecret,
 
   /** Synlab CZ — WebLIMS 2 Remote API (electronic laboratory requisitions).
-   *  See docs/synlab/synlab-integration-questions.md.
+   *  See docs/guides/synlab-integration-questions.md.
    *
    *  BASE_URL + CLIENT_ID + CLIENT_SECRET are the hard gate: with any of them
    *  unset `isWeblimsConfigured()` is false and the whole lab handoff is dark —

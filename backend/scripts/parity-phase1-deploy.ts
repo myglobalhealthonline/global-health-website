@@ -4,7 +4,7 @@ import { prisma } from "../src/db/prisma.js";
 /**
  * End-to-end runner for the doctor-dashboard parity Phase 1 deploy. Walks
  * through every deploy-time gate listed in §15 of
- * `docs/DOCTOR_DASHBOARD_PARITY_PLAN.md`:
+ * `docs/plans/doctor-dashboard-parity-plan.md`:
  *
  *   1. DB connectivity probe
  *   2. Schema-level verification — the new columns exist (i.e. the

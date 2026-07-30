@@ -81,9 +81,9 @@ docs/admin-portal-reference.html
 backups/
 
 # Session verification screenshots — large PNG dumps, never shipped
-docs/portal-implementation/screenshots/
-docs/portal-audits/doctor/screenshots/
-myglobalhealth.online-audit/screenshots/
+docs/plans/portal-implementation/screenshots/
+docs/audits/portal/doctor/screenshots/
+docs/audits/seo/site-audit-2026-07/screenshots/
 
 # Regenerable audit/QA artifacts. Re-run the tool instead of committing the
 # output: Lighthouse dumps, audit and QA screenshot sets.

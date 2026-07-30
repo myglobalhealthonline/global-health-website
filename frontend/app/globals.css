@@ -1873,7 +1873,7 @@ img {
 }
 
 /* Portal system v4 "Obsidian Ivory": forest-black glass chrome, gallery-ivory
- * content, lime voltage. Token reference: docs/portal-redesign/DESIGN.md §3.
+ * content, lime voltage. Token reference: docs/design/portal-redesign/portal-design-system.md §3.
  * Preserves pre-existing var names consumed with a fallback elsewhere in this
  * file (--portal-bg, --portal-surface, --portal-line, --portal-line-strong,
  * --portal-muted, --portal-radius*, --portal-shadow*, --portal-sidebar-w,

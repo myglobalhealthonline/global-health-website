@@ -11,7 +11,7 @@ const eslintConfig = defineConfig([
       // effects (HeroReveal, last-country, brazil-consent, …) are
       // pre-existing and behavior-correct; keep as a warning so it does not
       // block `next build`. Proper effect refactors are tracked in
-      // docs/public-website-phase-2-redundancy-imagery-plan.md.
+      // docs/design/public-website/phase-2-redundancy-imagery-plan.md.
       "react-hooks/set-state-in-effect": "warn",
     },
   },

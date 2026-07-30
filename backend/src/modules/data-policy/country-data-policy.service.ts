@@ -7,7 +7,7 @@ import { createSecurityAlert } from "../security-alerts/security-alert.service.j
 
 // ─── PRIV-002 per-country retention hints ─────────────────────────────────────
 //
-// ⚠️ LEGAL SIGN-OFF PENDING (docs/security/priv-002-retention-table-2026-07-17.md).
+// ⚠️ LEGAL SIGN-OFF PENDING (docs/audits/security/priv-002-retention-table-2026-07-17.md).
 // Retention-first defaults: clinical + financial rows are ALWAYS kept, identity
 // is ALWAYS erased — behaviour is identical for every country today. This map
 // only reserves a seam so a later legal review can diverge purge behaviour per
@@ -318,7 +318,7 @@ export async function runRetentionSweepReport(): Promise<{
 /**
  * PRIV-002 — complete a deletion/anonymization request under RETENTION-FIRST
  * defaults (⚠️ LEGAL SIGN-OFF PENDING; see
- * docs/security/priv-002-retention-table-2026-07-17.md).
+ * docs/audits/security/priv-002-retention-table-2026-07-17.md).
  *
  * ERASES all identity, contact, national-ID, marketing and auth artifacts;
  * REVOKES every session; and RETAINS clinical + financial rows tombstoned to

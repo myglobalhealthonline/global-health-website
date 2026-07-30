@@ -26,9 +26,9 @@ New dropdowns/popovers/dialogs/drawers — never hand-roll: use `AppMenu`
 (drawer/sheet). New list/table pages — never hand-write twin table+card
 markup: use a `ColumnPriorityTable` config (`ResponsiveField` priority 1-4 +
 drawer flag), which renders both the desktop table and the `PortalMobileCard`
-fallback from one source. See `docs/responsive-audit/HANDOFF.md` for the full
-migration history and `shared/RESPONSIVE_DESIGN_SYSTEM_PLAN.md` for the rules
-(z-token scale, height-axis tiers, theme fidelity).
+fallback from one source. See `docs/design/responsive/handoff.md` for the full
+migration history and `docs/design/responsive/shared/responsive-design-system-plan.md`
+for the rules (z-token scale, height-axis tiers, theme fidelity).
 
 ## Agent workflow rules
 
@@ -47,4 +47,4 @@ migration history and `shared/RESPONSIVE_DESIGN_SYSTEM_PLAN.md` for the rules
 `pnpm.overrides` are NOT inherited by the deployed services (each builds
 standalone with `--ignore-workspace`). Mirror every security pin into root,
 `frontend/`, and `backend/` package.json. CI gate: `scripts/check-override-drift.mjs`.
-See `docs/dependency-overrides.md`.
+See `docs/guides/dependency-overrides.md`.

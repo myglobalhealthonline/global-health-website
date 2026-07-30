@@ -1,5 +1,5 @@
 /**
- * Ads-policy content corrections from docs/MULTILINGUAL_AND_ADS_COMPLIANCE_AUDIT.md
+ * Ads-policy content corrections from docs/audits/multilingual-and-ads-compliance-audit.md
  * ("Post-translation ads-policy scan" section).
  *
  * Fix 1 — syphilis cure-claim (Google healthcare: no affirmative cure claims).

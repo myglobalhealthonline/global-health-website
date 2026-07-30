@@ -1,5 +1,5 @@
 /**
- * PHI Access Recovery Plan (docs/security/phi-access-recovery-plan-2026-07-17.md)
+ * PHI Access Recovery Plan (docs/plans/security/phi-access-recovery-plan-2026-07-17.md)
  * Task 6 — preview would-be denials across the system before flipping
  * `MEDICAL_ACCESS_ENFORCE` from shadow to enforce.
  *

@@ -9,7 +9,7 @@
 // deployed artifact. A security-motivated pin (transitive-CVE fix, forced
 // minimum) that lives only in the root does nothing for the shipped service —
 // it must be MIRRORED into the `pnpm.overrides` of every service that actually
-// resolves the dependency. See docs/dependency-overrides.md.
+// resolves the dependency. See docs/guides/dependency-overrides.md.
 //
 // This check FAILS (exit 1) when:
 //   1. the same override KEY is pinned to DIFFERENT values across the files, or
@@ -135,7 +135,7 @@ if (problems.length) {
   for (const p of problems) console.error(`  - ${p}`);
   console.error(
     "\nMirror each pin into every service that resolves the package. " +
-      "See docs/dependency-overrides.md.",
+      "See docs/guides/dependency-overrides.md.",
   );
   process.exit(1);
 }
