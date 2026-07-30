@@ -1,7 +1,7 @@
 /**
  * Spain doctors datasheet — transcribed from the July 2026
  * "GlobalHealth_Spain_DoctorsPage_Brief" + per-doctor SEO docx (14 profiles).
- * Consumed by scripts/patch-spain-doctors-datasheet.ts. Mirrors the shape of
+ * Consumed by scripts/applied/patch-spain-doctors-datasheet.ts. Mirrors the shape of
  * scripts/data/ireland-doctors-datasheet.ts.
  */
 

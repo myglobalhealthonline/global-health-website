@@ -30,8 +30,8 @@
  * fallback when the slug lookup misses, then the slug itself is corrected.
  */
 import { LocaleCode } from "@prisma/client";
-import { prisma } from "../src/db/prisma.js";
-import { SPAIN_DOCTORS, type DoctorSheet } from "./data/spain-doctors-datasheet.js";
+import { prisma } from "../../src/db/prisma.js";
+import { SPAIN_DOCTORS, type DoctorSheet } from "../data/spain-doctors-datasheet.js";
 
 const APPLY = process.argv.includes("--apply");
 const note = (m: string) => console.log(m);

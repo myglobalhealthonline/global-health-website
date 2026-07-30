@@ -31,8 +31,8 @@
  * with a warning.
  */
 import { LocaleCode } from "@prisma/client";
-import { prisma } from "../src/db/prisma.js";
-import { IRELAND_DOCTORS, type DoctorSheet } from "./data/ireland-doctors-datasheet.js";
+import { prisma } from "../../src/db/prisma.js";
+import { IRELAND_DOCTORS, type DoctorSheet } from "../data/ireland-doctors-datasheet.js";
 
 const APPLY = process.argv.includes("--apply");
 const note = (m: string) => console.log(m);

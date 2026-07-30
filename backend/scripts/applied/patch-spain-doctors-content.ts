@@ -16,7 +16,7 @@
  * written until you pass --apply.
  */
 import { LocaleCode, Prisma } from "@prisma/client";
-import { prisma } from "../src/db/prisma.js";
+import { prisma } from "../../src/db/prisma.js";
 
 const COUNTRY_CODE = "es";
 const LOCALE: LocaleCode = "ES";

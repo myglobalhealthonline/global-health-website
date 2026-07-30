@@ -11,7 +11,7 @@
  * written until you pass --apply. Modeled on patch-ireland-gp-content.ts.
  */
 import { LocaleCode, Prisma } from "@prisma/client";
-import { prisma } from "../src/db/prisma.js";
+import { prisma } from "../../src/db/prisma.js";
 
 const COUNTRY_CODE = "cz";
 const LOCALE: LocaleCode = "CS";

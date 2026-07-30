@@ -1,7 +1,7 @@
 /**
  * Patch all Portugal doctor profiles from the July 2026 "Dr portugal seo.docx"
  * per-doctor datasheet (scripts/data/portugal-doctors-datasheet.ts). Mirrors
- * scripts/patch-ireland-doctors-datasheet.ts / patch-spain-doctors-datasheet.ts.
+ * scripts/applied/patch-ireland-doctors-datasheet.ts / applied/patch-spain-doctors-datasheet.ts.
  *
  *   node --env-file=.env --import tsx scripts/patch-portugal-doctors-datasheet.ts           # dry-run
  *   node --env-file=.env --import tsx scripts/patch-portugal-doctors-datasheet.ts --apply   # write

@@ -1,7 +1,7 @@
 /**
  * Patch Portugal /portugal/pt/doctors (DOCTORS_INDEX) page content per the
  * July 2026 "Dr portugal seo.docx" brief. Mirrors
- * scripts/patch-spain-doctors-content.ts / patch-romania-doctors-content.ts.
+ * scripts/applied/patch-spain-doctors-content.ts / patch-romania-doctors-content.ts.
  * PT locale only — the brief supplies no EN/ES copy for this page.
  *
  *   node --env-file=.env --import tsx scripts/patch-portugal-doctors-content.ts            # dry-run

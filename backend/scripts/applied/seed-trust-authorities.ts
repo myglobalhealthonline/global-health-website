@@ -19,7 +19,7 @@
  */
 import "dotenv/config";
 import { AuthorityCategory, type Prisma } from "@prisma/client";
-import { prisma } from "../src/db/prisma.js";
+import { prisma } from "../../src/db/prisma.js";
 
 if (process.env.NODE_ENV === "production" && process.env.ALLOW_PROD_SEED !== "1") {
   console.error("Refusing to seed on production without ALLOW_PROD_SEED=1");

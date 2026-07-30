@@ -23,7 +23,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { LegalDocumentType } from "@prisma/client";
-import { prisma } from "../src/db/prisma.js";
+import { prisma } from "../../src/db/prisma.js";
 
 if (process.env.NODE_ENV === "production" && process.env.ALLOW_PROD_SEED !== "1") {
   console.error("Refusing to seed on production without ALLOW_PROD_SEED=1");
@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === "production" && process.env.ALLOW_PROD_SEED !== "1"
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CONTENT_DIR = path.join(__dirname, "content", "legal");
+const CONTENT_DIR = path.join(__dirname, "..", "content", "legal");
 
 const UPLOAD_PDFS = process.argv.includes("--upload-pdfs");
 
@@ -188,7 +188,7 @@ async function uploadPdf(
   const pdfDir = PDF_DIR;
   const sourceFile = PDF_SOURCE_FILE[type];
   if (!pdfDir || !sourceFile) return null;
-  const { putObject } = await import("../src/services/object-storage.js");
+  const { putObject } = await import("../../src/services/object-storage.js");
 
   let buffer: Buffer;
   if (type === LegalDocumentType.TERMS_OF_SERVICE) {

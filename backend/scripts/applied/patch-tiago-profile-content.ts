@@ -24,7 +24,7 @@
  *   - Canonical/OG domain — NEXT_PUBLIC_SITE_URL env on Railway (human).
  */
 import { LocaleCode } from "@prisma/client";
-import { prisma } from "../src/db/prisma.js";
+import { prisma } from "../../src/db/prisma.js";
 
 const APPLY = process.argv.includes("--apply");
 const note = (m: string) => console.log(m);

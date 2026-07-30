@@ -31,7 +31,7 @@
  *   pnpm --filter backend exec node --env-file=.env --import tsx scripts/seed-missing-legal-docs.ts
  *
  * Refuses to run when NODE_ENV=production unless ALLOW_PROD_SEED=1 (same
- * convention as scripts/seed-legal-documents.ts).
+ * convention as scripts/applied/seed-legal-documents.ts).
  */
 import "dotenv/config";
 import { LegalDocumentType } from "@prisma/client";

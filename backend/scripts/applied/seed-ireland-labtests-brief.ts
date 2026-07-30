@@ -21,7 +21,7 @@
  *   npx tsx scripts/seed-ireland-labtests-brief.ts --apply  # write (PROD)
  */
 import "dotenv/config";
-import { prisma } from "../src/db/prisma.js";
+import { prisma } from "../../src/db/prisma.js";
 
 const APPLY = process.argv.includes("--apply");
 const PAGE_KEY = "HEALTH_TESTS";

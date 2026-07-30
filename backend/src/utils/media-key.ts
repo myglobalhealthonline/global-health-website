@@ -12,7 +12,7 @@ const MEDIA_KEY_RE = /^media\/(?:[a-z]+\/[a-z0-9]{20,30}\/)?[0-9a-f]{8}-[0-9a-f]
 
 /**
  * `documents/legal-<slug>.pdf` — CountryLegalDocument PDFs written by
- * seed-legal-documents.ts (`putObject(\`documents/legal-${slug}.pdf\`, ...)`).
+ * applied/seed-legal-documents.ts (`putObject(\`documents/legal-${slug}.pdf\`, ...)`).
  * Not UUID-named like media uploads, so it needs its own shape.
  */
 const DOCUMENTS_KEY_RE = /^documents\/[a-zA-Z0-9._-]{1,200}\.pdf$/;

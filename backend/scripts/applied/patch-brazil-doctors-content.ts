@@ -44,7 +44,7 @@
  *     regardless, since that's bundle-level, not PageContent-level.)
  */
 import { LocaleCode } from "@prisma/client";
-import { prisma } from "../src/db/prisma.js";
+import { prisma } from "../../src/db/prisma.js";
 
 const APPLY = process.argv.includes("--apply");
 const note = (m: string) => console.log(m);

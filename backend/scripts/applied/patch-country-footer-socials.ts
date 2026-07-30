@@ -8,7 +8,7 @@
  *
  * Run: node --env-file=.env --import tsx scripts/patch-country-footer-socials.ts
  */
-import { prisma } from "../src/db/prisma.js";
+import { prisma } from "../../src/db/prisma.js";
 
 const SHARED = {
   tiktokUrl: "https://www.tiktok.com/@globalhealth.online",
