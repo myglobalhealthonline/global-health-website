@@ -17,7 +17,7 @@ import { AdminEmptyState, AdminSummaryStrip, PageHeader, StatCard } from "@/comp
 import { deriveMemberId } from "@/lib/subscription/member-id";
 import { subscriptionStatusLabel } from "@/lib/subscription/status-label";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
-import { MembershipCard } from "./_components/MembershipCard";
+import { MembershipCard } from "../_components/MembershipCard";
 import { MembershipTabsClient } from "./_components/MembershipTabsClient";
 import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 import { RewardsPanel } from "../rewards/_components/RewardsPanel";

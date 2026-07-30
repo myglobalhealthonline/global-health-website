@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Award, CreditCard, Gift, Lock, Sparkles, Stethoscope } from "lucide-react";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { getCountryByCode } from "@/data/countries";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   getServerCredits,
   getServerRedemptions,
@@ -19,7 +21,10 @@ import {
   pluralTemplate,
   remainingCredits,
 } from "@/lib/subscription/format";
-import { AdminCard, Pill, type PillTone } from "@/components/portal-atoms";
+import { deriveMemberId } from "@/lib/subscription/member-id";
+import { subscriptionStatusLabel } from "@/lib/subscription/status-label";
+import { AdminCard } from "@/components/portal-atoms";
+import { MembershipCard } from "./MembershipCard";
 
 /**
  * Patient dashboard subscription cards (§12). Server component — reads the
@@ -48,16 +53,18 @@ export async function SubscriptionDashboard({
   embedded?: boolean;
   variant?: "compact";
 }) {
-  const [sub, credits, redemptions] = await Promise.all([
+  const [sub, credits, redemptions, user] = await Promise.all([
     getServerSubscription(),
     getServerCredits(),
     getServerRedemptions(),
+    getServerAuthUser(),
   ]);
 
   if (!sub || !sub.plan) return null;
 
-  const { subscription } = loadLocaleBundle(locale);
+  const { subscription, account, common } = loadLocaleBundle(locale);
   const t = subscription.dashboard;
+  const country = sub.countryCode ? getCountryByCode(sub.countryCode) : null;
 
   const plans = sub.countryCode ? await getCountryPlans(sub.countryCode, locale) : [];
   const livePlan = plans.find((p) => p.id === sub.plan!.id) ?? null;
@@ -66,18 +73,31 @@ export async function SubscriptionDashboard({
     maximumFractionDigits: 0,
   });
   const nextBilling = sub.currentPeriodEnd ? formatAppDate(sub.currentPeriodEnd) : null;
-  const statusTone: PillTone =
-    sub.status === "ACTIVE" ? "active" : sub.status === "CANCELED" ? "inactive" : "pending";
-  const statusLabel =
-    (
-      {
-        ACTIVE: subscription.manage.status_active,
-        INCOMPLETE: subscription.manage.status_incomplete,
-        PAST_DUE: subscription.manage.status_past_due,
-        CANCELED: subscription.manage.status_canceled,
-        PAUSED: subscription.manage.status_paused,
-      } as Record<string, string>
-    )[sub.status] ?? sub.status;
+  const statusLabel = subscriptionStatusLabel(sub.status, subscription.manage);
+
+  // The membership card, rendered identically on the overview (compact) and
+  // the membership tab — one card, not a second summary of the same plan.
+  const ladder = [...plans].sort((x, y) => x.monthlyPriceCents - y.monthlyPriceCents);
+  const planCard = (
+    <MembershipCard
+      planName={sub.plan.name}
+      cardholderName={user?.fullName ?? ""}
+      memberId={user ? deriveMemberId(user.id) : "—"}
+      validThrough={nextBilling ?? account.membership.notScheduled}
+      countryName={country?.name ?? null}
+      status={sub.status}
+      statusLabel={statusLabel}
+      cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
+      cancelLabel={account.membership.cardEnding}
+      tier={ladder.findIndex((p) => p.id === sub.plan!.id) + 1}
+      labels={{
+        cardholder: account.membership.cardCardholder,
+        memberId: account.membership.cardMemberId,
+        validThrough: account.membership.cardValidThrough,
+        motto: common.entryGate.motto,
+      }}
+    />
+  );
 
   // Consultation credits
   const remaining = credits?.consultation.balance ?? 0;
@@ -103,58 +123,25 @@ export async function SubscriptionDashboard({
 
   if (variant === "compact") {
     return (
-      <section className="gh-patient-subscription-dashboard mt-6">
-        <div
-          className="gh-patient-membership-card overflow-hidden"
-          style={{
-            borderRadius: "var(--portal-radius-lg)",
-            border: "1px solid var(--portal-line)",
-            boxShadow: "var(--portal-shadow)",
-          }}
+      <section className="gh-patient-subscription-dashboard gh-patient-membership-teaser mt-6">
+        {planCard}
+        <p className="mt-3 text-sm" style={{ color: "var(--portal-muted)" }}>
+          {priceLabel} {subscription.pricing.perMonth}
+          {nextBilling ? ` · ${interpolate(t.nextBilling, { date: nextBilling })}` : ""}
+          {sub.paidMonthsCount > 0
+            ? ` · ${interpolate(
+                pluralTemplate(sub.paidMonthsCount, t.memberMonthsSingular, t.memberMonths),
+                { months: sub.paidMonthsCount },
+              )}`
+            : ""}
+        </p>
+        <Link
+          href="/account/membership"
+          className="mt-2 inline-flex text-sm font-semibold underline"
+          style={{ color: "var(--portal-primary)" }}
         >
-          <div
-            className="gh-patient-membership-card__header flex items-start justify-between gap-3 p-5"
-            style={{
-              background: "var(--portal-chrome-solid)",
-              borderBottom: "1px solid var(--portal-member, var(--portal-chrome-border))",
-            }}
-          >
-            <span
-              className="inline-flex size-10 items-center justify-center rounded-[12px]"
-              style={{ background: "color-mix(in srgb, var(--portal-member, var(--portal-accent)) 18%, transparent)", color: "var(--portal-member, var(--portal-accent))" }}
-            >
-              <Award className="size-5" aria-hidden />
-            </span>
-            <Pill tone={statusTone} withDot>{statusLabel}</Pill>
-          </div>
-          <div className="p-5" style={{ background: "var(--portal-surface)" }}>
-            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
-              {t.planCardTitle}
-            </p>
-            <p className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.25rem", color: "var(--portal-text)" }}>
-              {sub.plan.name}
-            </p>
-            <p className="mt-1 text-sm" style={{ color: "var(--portal-muted)" }}>
-              {priceLabel} {subscription.pricing.perMonth}
-              {nextBilling ? ` · ${interpolate(t.nextBilling, { date: nextBilling })}` : ""}
-            </p>
-            {sub.paidMonthsCount > 0 ? (
-              <p className="mt-0.5 text-xs" style={{ color: "var(--portal-muted)" }}>
-                {interpolate(
-                  pluralTemplate(sub.paidMonthsCount, t.memberMonthsSingular, t.memberMonths),
-                  { months: sub.paidMonthsCount },
-                )}
-              </p>
-            ) : null}
-            <Link
-              href="/account/membership"
-              className="mt-4 inline-flex text-sm font-semibold underline"
-              style={{ color: "var(--portal-primary)" }}
-            >
-              {t.manage}
-            </Link>
-          </div>
-        </div>
+          {t.manage}
+        </Link>
       </section>
     );
   }
@@ -168,63 +155,9 @@ export async function SubscriptionDashboard({
       )}
 
       <div className={embedded ? "gh-patient-subscription-grid grid gap-4 sm:grid-cols-2" : "gh-patient-subscription-grid grid gap-4 lg:grid-cols-3"}>
-        {/* Plan — hidden when embedded (ManagePanel already shows it).
-            Membership card recipe (DESIGN.md §5.21): dark chrome header +
-            --portal-member hairline + white body — the one surface in the
-            system that gets the "lime silk" membership treatment. */}
-        {embedded ? null : (
-        <div
-          className="gh-patient-membership-card overflow-hidden"
-          style={{
-            borderRadius: "var(--portal-radius-lg)",
-            border: "1px solid var(--portal-line)",
-            boxShadow: "var(--portal-shadow)",
-          }}
-        >
-          <div
-            className="gh-patient-membership-card__header flex items-start justify-between gap-3 p-5"
-            style={{
-              background: "var(--portal-chrome-solid)",
-              borderBottom: "1px solid var(--portal-member, var(--portal-chrome-border))",
-            }}
-          >
-            <span
-              className="inline-flex size-10 items-center justify-center rounded-[12px]"
-              style={{ background: "color-mix(in srgb, var(--portal-member, var(--portal-accent)) 18%, transparent)", color: "var(--portal-member, var(--portal-accent))" }}
-            >
-              <Award className="size-5" aria-hidden />
-            </span>
-            <Pill tone={statusTone} withDot>{statusLabel}</Pill>
-          </div>
-          <div className="p-5" style={{ background: "var(--portal-surface)" }}>
-            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
-              {t.planCardTitle}
-            </p>
-            <p className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.25rem", color: "var(--portal-text)" }}>
-              {sub.plan.name}
-            </p>
-            <p className="mt-1 text-sm" style={{ color: "var(--portal-muted)" }}>
-              {priceLabel} {subscription.pricing.perMonth}
-              {nextBilling ? ` · ${interpolate(t.nextBilling, { date: nextBilling })}` : ""}
-            </p>
-            {sub.paidMonthsCount > 0 ? (
-              <p className="mt-0.5 text-xs" style={{ color: "var(--portal-muted)" }}>
-                {interpolate(
-                  pluralTemplate(sub.paidMonthsCount, t.memberMonthsSingular, t.memberMonths),
-                  { months: sub.paidMonthsCount },
-                )}
-              </p>
-            ) : null}
-            <Link
-              href="/account/membership"
-              className="mt-4 inline-flex text-sm font-semibold underline"
-              style={{ color: "var(--portal-primary)" }}
-            >
-              {t.manage}
-            </Link>
-          </div>
-        </div>
-        )}
+        {/* Plan — hidden when embedded (the membership tab shows the card in
+            its own hero). Same MembershipCard as everywhere else. */}
+        {embedded ? null : <div className="gh-patient-plan-cell">{planCard}</div>}
 
         {/* Consultation credits — carries the system's one progress bar
             (§5.21: lime fill, --portal-well track, 6px, pill radius). */}
