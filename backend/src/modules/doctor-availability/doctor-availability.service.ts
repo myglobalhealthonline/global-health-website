@@ -359,6 +359,24 @@ async function deleteSlotsWithExceptions(
 }
 
 /**
+ * Which generated candidates are not already on the calendar, by start instant.
+ *
+ * Extracted and exported for the regression test: this used to be a COUNT
+ * comparison ("the range already holds as many slots as we'd generate, so skip
+ * the insert"), which quietly assumed the existing rows were always a subset of
+ * the candidates. A doctor with leftover BLOCKED slots from a deleted window
+ * breaks that assumption — the leftovers out-number the new window's
+ * candidates, generation skips the write, and the new window produces nothing.
+ */
+export function selectMissingSlots<T extends { startAt: Date }>(
+  generated: T[],
+  existingStarts: Date[],
+): T[] {
+  const taken = new Set(existingStarts.map((d) => d.getTime()));
+  return generated.filter((g) => !taken.has(g.startAt.getTime()));
+}
+
+/**
  * Single-date holes in the recurring windows (`DoctorAvailabilityException`).
  * Loaded with a ±1 day pad so a candidate that starts just outside the queried
  * range but overlaps an exception is still dropped.
@@ -759,36 +777,45 @@ export async function ensureSlotsForRange(
 
   if (generated.length === 0) return;
 
-  // Skip the createMany round-trip + row locks on the hot read path when every
-  // generated slot already exists. Generation is deterministic for the range,
-  // so once the range holds at least as many slots as we'd generate, the
-  // skipDuplicates insert would be a pure no-op. `existing < generated.length`
-  // still runs the write after slots are consumed/collapsed or a new window
-  // widens the set.
-  const existing = await prisma.doctorTimeSlot.count({
+  // Insert only the candidates that are genuinely missing, and skip the write
+  // entirely when none are.
+  //
+  // This used to compare COUNTS — "the range already holds at least as many
+  // slots as we'd generate, so the insert would be a no-op". That assumed the
+  // existing rows are always a subset of the candidates, which breaks the
+  // moment the two sets don't line up: a doctor with a week of BLOCKED slots
+  // left over from an old window adds a new window, the leftovers out-number
+  // the new candidates, and generation silently does nothing — the window is
+  // listed but produces no slots, forever. Comparing the actual instants costs
+  // one column instead of a count and cannot be fooled that way.
+  const existingRows = await prisma.doctorTimeSlot.findMany({
     where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
+    select: { startAt: true },
   });
-  if (existing >= generated.length) return;
+  const missing = selectMissingSlots(
+    generated,
+    existingRows.map((r) => r.startAt),
+  );
+  if (missing.length === 0) return;
 
   try {
     await prisma.doctorTimeSlot.createMany({
-      data: generated,
+      data: missing,
       skipDuplicates: true,
     });
   } catch (error) {
-    // A concurrent caller (e.g. a different service for the same doctor) may
-    // have created an overlapping slot between our in-process check above
-    // and this write — the DB-level exclusion constraint
-    // (no_overlapping_doctor_slots) catches what the in-memory `existing`
-    // array can't. Batch insert aborts entirely on one conflicting row, so
-    // fall back to inserting one at a time and drop just the row(s) that
-    // lost the race.
+    // A concurrent caller may have created an overlapping slot between the
+    // in-process check above and this write, and a longer existing slot can
+    // overlap a candidate without sharing its start — either way the DB-level
+    // exclusion constraint (no_overlapping_doctor_slots) catches it. A batch
+    // insert aborts entirely on one conflicting row, so fall back to inserting
+    // one at a time and drop just the losers.
     if (isExclusionViolation(error)) {
-      for (const row of generated) {
+      for (const row of missing) {
         try {
           await prisma.doctorTimeSlot.create({ data: row });
         } catch (rowError) {
-          if (!isExclusionViolation(rowError)) {
+          if (!isExclusionViolation(rowError) && !isUniqueViolation(rowError)) {
             throw normalizeDbError(rowError, "Slot generation unavailable");
           }
         }

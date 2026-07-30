@@ -1,6 +1,9 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { intervalsOverlap } from "./doctor-availability.service.js";
+import {
+  intervalsOverlap,
+  selectMissingSlots,
+} from "./doctor-availability.service.js";
 import {
   eachClinicLocalDay,
   isValidTimeZone,
@@ -123,5 +126,50 @@ describe("intervalsOverlap", () => {
   it("returns false for zero-length intervals at the boundary", () => {
     // Degenerate but the math still holds — endAt == startAt of the next.
     assert.equal(intervalsOverlap(slot("09:00", "09:00"), slot("09:00", "09:30")), false);
+  });
+});
+
+describe("selectMissingSlots", () => {
+  const at = (iso: string) => new Date(iso);
+  const slot = (iso: string) => ({ startAt: at(iso), endAt: at(iso) });
+
+  it("returns only the candidates whose start is not already on the calendar", () => {
+    const generated = [
+      slot("2026-07-31T09:00:00.000Z"),
+      slot("2026-07-31T09:15:00.000Z"),
+      slot("2026-07-31T09:30:00.000Z"),
+    ];
+    const missing = selectMissingSlots(generated, [at("2026-07-31T09:15:00.000Z")]);
+    assert.deepEqual(
+      missing.map((m) => m.startAt.toISOString()),
+      ["2026-07-31T09:00:00.000Z", "2026-07-31T09:30:00.000Z"],
+    );
+  });
+
+  it("returns nothing when every candidate already exists", () => {
+    const generated = [slot("2026-07-31T09:00:00.000Z"), slot("2026-07-31T09:15:00.000Z")];
+    const missing = selectMissingSlots(
+      generated,
+      generated.map((g) => g.startAt),
+    );
+    assert.equal(missing.length, 0);
+  });
+
+  it("still generates when unrelated slots out-number the candidates", () => {
+    // The regression: a doctor whose week is full of BLOCKED slots left over
+    // from a deleted window adds a new Friday window. The old count-based
+    // short-circuit saw "52 existing >= 4 candidates" and skipped the insert,
+    // so the new window listed in the UI but produced no slots at all.
+    const leftovers = Array.from({ length: 52 }, (_, i) =>
+      at(new Date(Date.UTC(2026, 6, 29, 8, i * 15)).toISOString()),
+    );
+    const generated = [
+      slot("2026-07-31T00:30:00.000Z"),
+      slot("2026-07-31T00:45:00.000Z"),
+      slot("2026-07-31T01:00:00.000Z"),
+      slot("2026-07-31T01:15:00.000Z"),
+    ];
+    const missing = selectMissingSlots(generated, leftovers);
+    assert.equal(missing.length, 4);
   });
 });
