@@ -4,7 +4,7 @@ A scalable healthcare platform rebuilt from the existing Wix website into a clea
 
 > **Status (June 2026):** This is a production system. The bullets below are
 > historical artifacts — the platform now ships all listed features and more.
-> Treat the code and `REPO_REVIEW_FINDINGS.md` as the source of truth.
+> Treat the code and `docs/audits/repo-review-findings-2026-06-10.md` as the source of truth.
 
 ## What is shipped
 

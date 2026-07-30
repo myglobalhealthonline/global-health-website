@@ -3,7 +3,7 @@
 > **Updated 2026-06-10.** Earlier versions of this file claimed payments,
 > the doctor portal, and password reset were out of scope. All three are
 > shipped and live. See `README.md` "What is shipped" and
-> `REPO_REVIEW_FINDINGS.md` for current status.
+> `docs/audits/repo-review-findings-2026-06-10.md` for current status.
 
 These items require business, legal, or deployment-owner completion before
 production go-live. They are **operational/sign-off** items, not missing

@@ -1,6 +1,6 @@
 # Audit 2 — Execution Plan
 
-**Scope:** `PERFORMANCE_OPTIMIZATION_AUDIT2.md` (P-001…P-022) + `SECURITY_AUDIT2.md` (S-001…S-027).
+**Scope:** `docs/audits/performance/performance-audit-2-2026-07-10.md` (P-001…P-022) + `docs/audits/security/security-audit-2-2026-07-10.md` (S-001…S-027).
 **Model roles:** **Fable 5** owns architecture — design decisions, cross-cutting contracts, spec review, and final review gates. **Sonnet 5** owns execution — implementing well-specified changes, writing tests/migrations/docs, and running verification commands. A finding marked *design-gated* must have a Fable-approved spec before Sonnet implements it.
 
 ## 0. Prerequisites (before any implementation wave)

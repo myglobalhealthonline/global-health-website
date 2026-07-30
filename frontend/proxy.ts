@@ -37,7 +37,7 @@ const PUBLIC_FILE = /\.(.*)$/;
 // Railway environments (staging clones) that share the same domain suffix.
 const CANONICAL_HOST = new URL(PROD_SITE_URL).host;
 
-// Content-Security-Policy (S-010 / MED-5 — see SECURITY_AUDIT2.md, workstream W6).
+// Content-Security-Policy (S-010 / MED-5 — see docs/audits/security/security-audit-2-2026-07-10.md, workstream W6).
 //
 // Two policies, one per rendering mode, because a per-request nonce is
 // fundamentally incompatible with static output (Next stamps nonces only during

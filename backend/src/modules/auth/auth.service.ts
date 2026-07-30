@@ -478,7 +478,7 @@ async function purgeOneAccount(userId: string): Promise<void> {
   // `anonymizePatient` path — those are legal/medical retention records tied
   // to the GHN, not the login account, and untangling per-country retention
   // rules for them is out of scope for this pass (see S-017 in
-  // SECURITY_AUDIT2.md: "jurisdiction/legal retention map" is future work).
+  // docs/audits/security/security-audit-2-2026-07-10.md: "jurisdiction/legal retention map" is future work).
   const fileKeys: string[] = [];
   if (patientProfile) {
     if (patientProfile.insuranceDocumentKey) fileKeys.push(patientProfile.insuranceDocumentKey);

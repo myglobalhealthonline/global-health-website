@@ -197,7 +197,7 @@ Zero tests in: `invoices` (financial documents, PT tax logic), `gp-booking` (ass
 ### Clean / no issues
 Verified clean on this pass: all frontend sanitization call sites; `proxy.ts` edge auth; cart/checkout proxy routes; `format-datetime.ts` timezone handling; `timezone.ts` DST math; `claimDoctorSlot` atomic claim; entire `subscriptions` module (`refund`, `subscription-webhook`, `subscription-grant`, `redemption`, `checkout-pricing`, `credit-balance` services); `media-public.route.ts` PHI-prefix blocking + path-traversal-safe keys; Stripe webhook signature handling; CORS/trustProxy config; cron fail-closed guards; seed/reset script hardening; git hygiene (no secrets, dumps, or logs tracked); `tsc` and `eslint` both green repo-wide.
 
-**Prior-audit verification:** of the findings in `REPO_REVIEW_FINDINGS.md` / `SECURITY_AUDIT.md`, C1, C2, C3, C6, C7, H2, H6, H7, H9, H10, H14, M25 are confirmed **fixed** in current source. Still open: SEC-001 (→ B1), SEC-003 (→ SF5), SEC-005 (→ SF3), SEC-011 (→ SF2), SEC-009 (JWT revocation — unchanged, larger feature). SEC-004 partially fixed (→ SF1).
+**Prior-audit verification:** of the findings in `docs/audits/repo-review-findings-2026-06-10.md` / `docs/archive/2026-audit-round-1/security-audit-2026-07-08.md`, C1, C2, C3, C6, C7, H2, H6, H7, H9, H10, H14, M25 are confirmed **fixed** in current source. Still open: SEC-001 (→ B1), SEC-003 (→ SF5), SEC-005 (→ SF3), SEC-011 (→ SF2), SEC-009 (JWT revocation — unchanged, larger feature). SEC-004 partially fixed (→ SF1).
 
 ---
 

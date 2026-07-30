@@ -3,7 +3,7 @@
 **Audit date:** 2026-07-10  
 **Repository:** `C:\Users\kingh\Desktop\NashaaFrontend\global-health-website`  
 **Audit mode:** Defensive, read-only source/configuration review. No exploit payloads were produced and no application behavior was changed.
-**Execution plan:** see `AUDIT2_EXECUTION_PLAN.md` for model assignment (Fable 5 architecture / Sonnet 5 implementation), cross-audit deduplication, and sequencing shared with `PERFORMANCE_OPTIMIZATION_AUDIT2.md`.
+**Execution plan:** see `docs/plans/audit2-execution-plan.md` for model assignment (Fable 5 architecture / Sonnet 5 implementation), cross-audit deduplication, and sequencing shared with `docs/audits/performance/performance-audit-2-2026-07-10.md`.
 
 ## Executive Summary
 

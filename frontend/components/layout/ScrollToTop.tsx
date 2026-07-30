@@ -18,7 +18,7 @@ import { usePathname } from "next/navigation";
  * change fights the position the user (and the back/forward gesture)
  * expects to land on. The `popstate` listener below flags the next
  * pathname-change effect run as a known back/forward nav so it can skip
- * the correction — see P-022 in PERFORMANCE_OPTIMIZATION_AUDIT2.md.
+ * the correction — see P-022 in docs/audits/performance/performance-audit-2-2026-07-10.md.
  *
  * Mounted once at the root so it applies to every page. In-page hash
  * links (e.g. "#doctor-grid") keep the same pathname, so anchor jumps
