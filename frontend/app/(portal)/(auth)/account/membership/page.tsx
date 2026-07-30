@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Award, Activity, CalendarClock, CreditCard, Sparkles, Gift, CheckCircle2 } from "lucide-react";
+import { Award, Sparkles, Gift, CheckCircle2 } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
@@ -9,12 +9,13 @@ import {
   getServerSubscription,
 } from "@/lib/api/me-subscription-server";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
-import { AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { deriveMemberId } from "@/lib/subscription/member-id";
+import { subscriptionStatusLabel } from "@/lib/subscription/status-label";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
 import { MembershipCard } from "./_components/MembershipCard";
 import { MembershipTabsClient } from "./_components/MembershipTabsClient";
@@ -43,7 +44,7 @@ export default async function MembershipPage({
     getServerCredits(),
     getServerRedemptions(),
     getServerAuthUser(),
-    getPageLocale(),
+    getPortalLocale(),
   ]);
   const { subscription, account: a, common } = loadLocaleBundle(locale);
   const t = subscription.manage;
@@ -94,6 +95,7 @@ export default async function MembershipPage({
   // pips. 0 when the plan isn't in the fetched catalogue — pips are dropped.
   const ladder = [...plans].sort((x, y) => x.monthlyPriceCents - y.monthlyPriceCents);
   const tier = ladder.findIndex((p) => p.id === sub.plan!.id) + 1;
+  const statusLabel = subscriptionStatusLabel(sub.status, t);
 
   const kits = redemptions?.kits ?? [];
   const livePlan = plans.find((p) => p.id === sub.plan?.id);
@@ -114,9 +116,12 @@ export default async function MembershipPage({
         tabsAria={a.membership.tabsAria}
         membershipPanel={
           <>
-            {/* Physical membership card — identity (plan, holder, member no.,
-                renewal, market). The strip below keeps the numbers that move. */}
-            <div className="mb-5">
+            {/* Hero: the card carries identity (plan, holder, member no.,
+                renewal, market, status); the facts panel beside it carries the
+                billing numbers. Nothing repeats — the old summary strip and the
+                manage panel's "Current plan" block said the same things three
+                times over. */}
+            <div className="gh-membership-hero mb-5">
               <MembershipCard
                 planName={sub.plan.name}
                 cardholderName={user?.fullName ?? ""}
@@ -124,9 +129,10 @@ export default async function MembershipPage({
                 validThrough={nextBillingLabel ?? a.membership.notScheduled}
                 countryName={config?.name ?? null}
                 status={sub.status}
+                statusLabel={statusLabel}
                 cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
                 // Short pill copy — "Cancellation scheduled" ellipsises on the
-                // card at column widths; the strip below still spells it out.
+                // card at column widths; the facts panel spells it out.
                 cancelLabel={a.membership.cardEnding}
                 tier={tier}
                 labels={{
@@ -138,21 +144,26 @@ export default async function MembershipPage({
                   motto: common.entryGate.motto,
                 }}
               />
+              <AdminCard className="gh-membership-facts">
+                <dl>
+                  <div>
+                    <dt>{t.monthlyPrice}</dt>
+                    <dd>{priceLabel}</dd>
+                  </div>
+                  <div>
+                    <dt>{t.nextBilling}</dt>
+                    <dd>{nextBillingLabel ?? a.membership.notScheduled}</dd>
+                  </div>
+                  <div>
+                    <dt>{a.membership.sumStatus}</dt>
+                    <dd>{sub.cancelAtPeriodEnd ? a.membership.cancellationScheduled : statusLabel}</dd>
+                  </div>
+                </dl>
+              </AdminCard>
             </div>
-            <AdminSummaryStrip
-              className="mb-5"
-              items={[
-                { label: a.membership.sumPlan, value: sub.plan.name, hint: a.membership.sumPlanHint, icon: <Award aria-hidden /> },
-                { label: a.membership.sumStatus, value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? a.membership.cancellationScheduled : a.membership.sumStatusHint, icon: <Activity aria-hidden /> },
-                { label: a.membership.sumNextBilling, value: nextBillingLabel ?? a.membership.notScheduled, hint: a.membership.sumNextBillingHint, icon: <CalendarClock aria-hidden /> },
-                { label: a.membership.sumPrice, value: priceLabel, hint: a.membership.sumPriceHint, icon: <CreditCard aria-hidden /> },
-              ]}
-            />
             <ManagePanel
               t={t}
               status={sub.status}
-              planName={sub.plan.name}
-              priceLabel={priceLabel}
               currentPriceCents={sub.plan.monthlyPriceCents}
               nextBillingLabel={nextBillingLabel}
               cancelAtPeriodEnd={sub.cancelAtPeriodEnd}

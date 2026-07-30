@@ -13,7 +13,7 @@ import {
 } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
 import { interpolate } from "@/lib/subscription/format";
-import { AdminCard, Btn, Pill, type PillTone } from "@/components/portal-atoms";
+import { AdminCard, Btn } from "@/components/portal-atoms";
 import { PortalDialog } from "@/components/PortalDialog";
 
 export interface PlanOption {
@@ -33,8 +33,6 @@ type ManageCopy = ReturnType<
 export interface ManagePanelProps {
   t: ManageCopy;
   status: string;
-  planName: string;
-  priceLabel: string;
   /** Current plan monthly price in cents — to classify changes up/down. */
   currentPriceCents: number;
   nextBillingLabel: string | null;
@@ -48,23 +46,6 @@ export interface ManagePanelProps {
   pricingHref: string;
 }
 
-function statusMeta(status: string, t: ManageCopy): { tone: PillTone; label: string } {
-  switch (status) {
-    case "ACTIVE":
-      return { tone: "active", label: t.status_active };
-    case "INCOMPLETE":
-      return { tone: "pending", label: t.status_incomplete };
-    case "PAST_DUE":
-      return { tone: "pending", label: t.status_past_due };
-    case "CANCELED":
-      return { tone: "inactive", label: t.status_canceled };
-    case "PAUSED":
-      return { tone: "neutral", label: t.status_paused };
-    default:
-      return { tone: "neutral", label: status };
-  }
-}
-
 export function ManagePanel(props: ManagePanelProps) {
   const { t } = props;
   const router = useRouter();
@@ -75,7 +56,6 @@ export function ManagePanel(props: ManagePanelProps) {
   const [confirmChangeOpen, setConfirmChangeOpen] = useState(false);
   const [alreadyActiveDismissed, setAlreadyActiveDismissed] = useState(false);
 
-  const meta = statusMeta(props.status, t);
   const canCancel =
     !props.cancelAtPeriodEnd && (props.status === "ACTIVE" || props.status === "PAST_DUE");
   const canChange =
@@ -272,59 +252,37 @@ export function ManagePanel(props: ManagePanelProps) {
         </div>
       ) : null}
 
-      <AdminCard>
-        <div className="gh-membership-manage-head grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
-          <div>
-            <p className="text-portal-thead font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-member)" }}>
-              {t.currentPlan}
+      {/* Scheduled changes only. Plan name, price, renewal and status live on
+          the membership card and its facts panel above — this panel is the
+          actions surface, not a second copy of the plan. */}
+      {(props.cancelAtPeriodEnd && props.nextBillingLabel) ||
+      (props.pendingChangePlanName && props.pendingChangeDate) ? (
+        <AdminCard>
+          {props.cancelAtPeriodEnd && props.nextBillingLabel ? (
+            <p className="text-sm" style={{ color: "var(--portal-warning-text)" }}>
+              {interpolate(t.cancelAtPeriodEnd, { date: props.nextBillingLabel })}
             </p>
-            <h2 className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.4rem", color: "var(--portal-chrome-text-active)" }}>
-              {props.planName}
-            </h2>
-          </div>
-          <Pill tone={meta.tone} withDot>
-            {meta.label}
-          </Pill>
-        </div>
-
-        <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="text-xs" style={{ color: "var(--portal-muted)" }}>{t.monthlyPrice}</dt>
-            <dd className="mt-0.5 font-semibold" style={{ color: "var(--portal-text)" }}>{props.priceLabel}</dd>
-          </div>
-          {props.nextBillingLabel ? (
-            <div>
-              <dt className="text-xs" style={{ color: "var(--portal-muted)" }}>{t.nextBilling}</dt>
-              <dd className="mt-0.5 font-semibold" style={{ color: "var(--portal-text)" }}>{props.nextBillingLabel}</dd>
-            </div>
           ) : null}
-        </dl>
-
-        {props.cancelAtPeriodEnd && props.nextBillingLabel ? (
-          <p className="mt-4 text-sm" style={{ color: "var(--portal-warning-text)" }}>
-            {interpolate(t.cancelAtPeriodEnd, { date: props.nextBillingLabel })}
-          </p>
-        ) : null}
-        {props.pendingChangePlanName && props.pendingChangeDate ? (
-          <div
-            className="mt-4 rounded-[10px] p-3"
-            style={{ background: "var(--portal-well)", border: "1px solid var(--portal-line)" }}
-          >
-            <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
-              {interpolate(t.pendingChange, { plan: props.pendingChangePlanName, date: props.pendingChangeDate })}
-            </p>
-            <button
-              type="button"
-              onClick={doCancelChange}
-              disabled={busy === "cancelChange"}
-              className="mt-2 text-xs font-semibold underline disabled:opacity-60"
-              style={{ color: "var(--portal-primary)" }}
-            >
-              {busy === "cancelChange" ? t.cancelingChange : t.cancelChange}
-            </button>
-          </div>
-        ) : null}
-      </AdminCard>
+          {props.pendingChangePlanName && props.pendingChangeDate ? (
+            <>
+              <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+                {interpolate(t.pendingChange, { plan: props.pendingChangePlanName, date: props.pendingChangeDate })}
+              </p>
+              <div className="gh-patient-form-actions mt-3 flex justify-end">
+                <button
+                  type="button"
+                  onClick={doCancelChange}
+                  disabled={busy === "cancelChange"}
+                  className="text-xs font-semibold underline disabled:opacity-60"
+                  style={{ color: "var(--portal-primary)" }}
+                >
+                  {busy === "cancelChange" ? t.cancelingChange : t.cancelChange}
+                </button>
+              </div>
+            </>
+          ) : null}
+        </AdminCard>
+      ) : null}
 
       {notice ? (
         <p
@@ -374,7 +332,9 @@ export function ManagePanel(props: ManagePanelProps) {
         </AdminCard>
       ) : null}
 
-      <div className="gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
+      {/* Actions sit on their own surface instead of floating under the last
+          card — the row used to read as orphaned chrome. */}
+      <AdminCard className="gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
         <Btn
           variant="soft"
           onClick={openPortal}
@@ -396,7 +356,7 @@ export function ManagePanel(props: ManagePanelProps) {
         <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:inline" style={{ color: "var(--portal-primary)" }}>
           {t.browseAllPlans}
         </Link>
-      </div>
+      </AdminCard>
 
       <PortalDialog
         open={confirmCancelOpen}

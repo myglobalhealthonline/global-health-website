@@ -8,8 +8,10 @@ export interface MembershipCardProps {
   validThrough: string;
   /** Country display name, or null when the sub has no country. */
   countryName: string | null;
-  /** Raw subscription status (ACTIVE, PAST_DUE…) — shown lowercased, CSS uppercases. */
+  /** Raw subscription status (ACTIVE, PAST_DUE…) — drives the lit/dim face. */
   status: string;
+  /** Localized status copy for the pill; falls back to the raw status. */
+  statusLabel?: string;
   /** True when the membership is cancelling at period end. */
   cancelAtPeriodEnd?: boolean;
   /** Copy for the cancellation pill; falls back to the status when absent. */
@@ -35,6 +37,7 @@ export function MembershipCard({
   validThrough,
   countryName,
   status,
+  statusLabel,
   cancelAtPeriodEnd = false,
   cancelLabel,
   tier = 0,
@@ -42,7 +45,8 @@ export function MembershipCard({
 }: MembershipCardProps) {
   const live = LIVE.has(status.toUpperCase());
   const pillTone = cancelAtPeriodEnd ? "warn" : live ? "live" : "muted";
-  const pillText = cancelAtPeriodEnd && cancelLabel ? cancelLabel : status.toLowerCase();
+  const pillText =
+    cancelAtPeriodEnd && cancelLabel ? cancelLabel : (statusLabel ?? status.toLowerCase());
 
   return (
     <article
@@ -68,7 +72,9 @@ export function MembershipCard({
           </div>
           <span className={`gh-member-card__pill gh-member-card__pill--${pillTone}`}>
             <span aria-hidden className="gh-member-card__dot" />
-            {pillText}
+            {/* Own element so long statuses ("Awaiting first payment") can
+                ellipsis — a bare text node in a flex row cannot. */}
+            <span className="gh-member-card__pill-text">{pillText}</span>
           </span>
         </header>
 

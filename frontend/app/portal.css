@@ -3525,6 +3525,43 @@ a.gh-admin-summary-item--link:focus-visible {
   opacity: 0.5;
 }
 
+/* Membership hero — card + billing facts, side by side above the actions.
+ * Single column until there is room for a readable card AND a facts column;
+ * the card caps itself at 560px so it never stretches into a banner. */
+.gh-membership-hero {
+  display: grid;
+  align-items: start;
+  gap: clamp(14px, 1.8vw, 22px);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .gh-membership-hero {
+    grid-template-columns: minmax(320px, 560px) minmax(240px, 1fr);
+  }
+}
+
+.gh-membership-facts dl {
+  display: grid;
+  gap: 16px;
+}
+
+.gh-membership-facts dt {
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.gh-membership-facts dd {
+  margin: 5px 0 0;
+  color: var(--portal-text);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
 /* ── Membership card (Signal) ────────────────────────────────────────────
  * Physical-card render of the member's subscription, top of the membership
  * tab. Everything sizes off `cqw` against the card itself (container-type:
@@ -3670,8 +3707,6 @@ a.gh-admin-summary-item--link:focus-visible {
   align-items: center;
   gap: 6px;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   padding: clamp(3px, 0.9cqw, 6px) clamp(7px, 2.2cqw, 13px);
   border: 1px solid rgba(176, 241, 34, 0.45);
   border-radius: 999px;
@@ -3681,6 +3716,13 @@ a.gh-admin-summary-item--link:focus-visible {
   font-weight: 800;
   letter-spacing: 0.13em;
   text-transform: uppercase;
+}
+
+.gh-member-card__pill-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .gh-member-card__dot {
