@@ -85,5 +85,11 @@ docs/portal-implementation/screenshots/
 docs/portal-audits/doctor/screenshots/
 myglobalhealth.online-audit/screenshots/
 
+# Regenerable audit/QA artifacts. Re-run the tool instead of committing the
+# output: Lighthouse dumps, audit and QA screenshot sets.
+**/lighthouse/*.json
+docs/audits/service-hub-screenshots/
+frontend/docs/qa-screenshots/
+
 # Machine-translation drafts pending human review — never committed.
 backend/tmp/i18n-drafts/
