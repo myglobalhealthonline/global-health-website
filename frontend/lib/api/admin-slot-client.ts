@@ -32,30 +32,33 @@ export async function adminToggleSlotStatus(
 }
 
 /**
- * Add a one-off slot for a single date/time. Nothing to do with the doctor's
- * recurring weekly windows — the row is flagged ad-hoc server-side so a later
- * window edit can't sweep it away. `startAtIso` must be a UTC instant: the
- * caller converts the wall-clock the admin typed using the timezone the
+ * Add one-off slots at the given instants. Nothing to do with the doctor's
+ * recurring weekly windows — the rows are flagged ad-hoc server-side so a later
+ * window edit can't sweep them away. `startAtIsos` must be UTC instants: the
+ * caller expands the date + time range the admin picked using the timezone the
  * calendar is displaying.
+ *
+ * Instants that clash with an existing slot are skipped rather than failing the
+ * batch; the counts come back so the UI can say what actually happened.
  */
-export async function adminCreateSlot(
+export async function adminCreateSlots(
   doctorId: string,
-  startAtIso: string,
+  startAtIsos: string[],
   durationMinutes: number,
 ): Promise<
-  Result<{ slot: { id: string; startAt: string; endAt: string; status: string } }>
+  Result<{ created: number; skippedOverlap: number; skippedPast: number }>
 > {
   const res = await fetch(
     `/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots`,
     {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ startAt: startAtIso, durationMinutes }),
+      body: JSON.stringify({ startAts: startAtIsos, durationMinutes }),
     },
   );
   const json = await res.json().catch(() => ({}));
   if (!res.ok || !json?.ok) {
-    return { ok: false, message: json?.message ?? "Could not add slot" };
+    return { ok: false, message: json?.message ?? "Could not add slots" };
   }
   return { ok: true, data: json.data };
 }

@@ -12,7 +12,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
-  createAdHocSlot,
+  createAdHocSlots,
   removeSlotForDate,
 } from "../modules/doctor-availability/doctor-availability.service.js";
 
@@ -48,14 +48,14 @@ const doctorParamsSchema = z.object({
 });
 
 /**
- * One-off slot. `startAt` is a UTC instant — the admin UI converts the clinic
- * (or whatever zone it's displaying) wall-clock the admin typed, so this route
- * never has to guess a timezone. 8h ceiling on the duration is a sanity bound,
- * not a product rule.
+ * One-off slots. `startAts` are UTC instants — the admin UI expands the date
+ * range + daily time range it collected into concrete instants using the zone
+ * it's displaying, so this route never has to guess a timezone. The 2000 cap is
+ * a request-size bound (a month of 15-min slots over a 12h day is ~1440).
  */
 const createBodySchema = z
   .object({
-    startAt: z.string().datetime(),
+    startAts: z.array(z.string().datetime()).min(1).max(2000),
     durationMinutes: z.number().int().min(5).max(480),
   })
   .strict();
@@ -85,9 +85,11 @@ export function createAdminDoctorTimeSlotsRoute(
     });
 
     /**
-     * Add a one-off slot to a doctor's calendar for a single date/time, with no
-     * reference to their recurring weekly windows. The row is flagged ad-hoc so
-     * a later window edit can't sweep it away.
+     * Add one-off slots to a doctor's calendar for specific instants, with no
+     * reference to their recurring weekly windows. Rows are flagged ad-hoc so a
+     * later window edit can't sweep them away. Instants that clash with an
+     * existing slot (or sit in the past) are skipped and reported, not fatal —
+     * a date range routinely covers times the doctor is already booked for.
      */
     app.post("/api/admin/doctors/:doctorId/time-slots", async (request, reply) => {
       const params = doctorParamsSchema.safeParse(request.params);
@@ -97,8 +99,8 @@ export function createAdminDoctorTimeSlotsRoute(
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid body", body.error.flatten()));
       }
-      const startAt = new Date(body.data.startAt);
-      if (Number.isNaN(startAt.getTime())) {
+      const startAts = body.data.startAts.map((iso) => new Date(iso));
+      if (startAts.some((d) => Number.isNaN(d.getTime()))) {
         return reply.status(400).send(errorResponse("Invalid start time"));
       }
 
@@ -127,37 +129,36 @@ export function createAdminDoctorTimeSlotsRoute(
           return reply.status(scope.status).send(errorResponse(scope.message));
         }
 
-        const result = await createAdHocSlot(
+        const result = await createAdHocSlots(
           doctor.id,
-          startAt,
+          startAts,
           body.data.durationMinutes,
         );
-        if (!result.ok) {
-          return result.code === "PAST"
-            ? reply.status(400).send(errorResponse("Pick a time in the future"))
-            : reply
-                .status(409)
-                .send(
-                  errorResponse(
-                    "This doctor already has a slot overlapping that time",
-                  ),
-                );
+        // Nothing landed and nothing was in the past → every instant clashed.
+        // That's the one case worth an error: the admin's whole range was a
+        // no-op and a success toast would be a lie.
+        if (result.created === 0 && result.skippedOverlap > 0) {
+          return reply
+            .status(409)
+            .send(
+              errorResponse(
+                result.skippedOverlap === 1
+                  ? "This doctor already has a slot overlapping that time"
+                  : "Every time in that range already has a slot",
+              ),
+            );
+        }
+        if (result.created === 0) {
+          return reply.status(400).send(errorResponse("Pick a time in the future"));
         }
 
-        return okResponse({
-          slot: {
-            id: result.slot.id,
-            startAt: result.slot.startAt.toISOString(),
-            endAt: result.slot.endAt.toISOString(),
-            status: "OPEN",
-          },
-        });
+        return okResponse(result);
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));
         }
         app.log.error(error);
-        return reply.status(500).send(errorResponse("Could not add slot"));
+        return reply.status(500).send(errorResponse("Could not add slots"));
       }
     });
 
