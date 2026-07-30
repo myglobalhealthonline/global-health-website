@@ -794,6 +794,13 @@ model DoctorTimeSlot {
   status      DoctorSlotStatus @default(OPEN)
   /// Optional reason when status = BLOCKED. Free-text, admin-only.
   blockReason String?
+  /// True for a slot an admin created by hand for one specific date, rather
+  /// than one derived from a `DoctorAvailability` window. Two consequences:
+  /// the generators never re-create it (nothing to derive it from), and the
+  /// "window changed → drop stale future OPEN slots" sweeps skip it. Without
+  /// the flag, editing any weekly window would silently delete every one-off
+  /// slot the admin had added.
+  isAdHoc     Boolean          @default(false)
   doctor      Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   /// One slot ↔ at most one appointment. Set via `Appointment.timeSlotId`.
   appointment Appointment?     @relation("AppointmentSlot")

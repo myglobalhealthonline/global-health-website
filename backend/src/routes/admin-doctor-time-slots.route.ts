@@ -11,7 +11,10 @@ import {
 } from "../utils/admin-country-scope.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { removeSlotForDate } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  createAdHocSlot,
+  removeSlotForDate,
+} from "../modules/doctor-availability/doctor-availability.service.js";
 
 /**
  * Admin block/unblock of a single doctor time slot — the admin-side twin of
@@ -39,6 +42,24 @@ const deleteBodySchema = z
   .object({ reason: z.string().trim().max(200).optional() })
   .strict();
 
+/** Doctor-scoped params for the collection route (add a slot). */
+const doctorParamsSchema = z.object({
+  doctorId: z.string().trim().min(1).max(64),
+});
+
+/**
+ * One-off slot. `startAt` is a UTC instant — the admin UI converts the clinic
+ * (or whatever zone it's displaying) wall-clock the admin typed, so this route
+ * never has to guess a timezone. 8h ceiling on the duration is a sanity bound,
+ * not a product rule.
+ */
+const createBodySchema = z
+  .object({
+    startAt: z.string().datetime(),
+    durationMinutes: z.number().int().min(5).max(480),
+  })
+  .strict();
+
 type AdminDoctorTimeSlotsDependencies = {
   verifyAdminAccess(request: FastifyRequest): Promise<AdminAccessResult>;
   verifyCountryScope(input: AdminCountryScopeInput): Promise<AdminCountryScopeResult>;
@@ -61,6 +82,83 @@ export function createAdminDoctorTimeSlotsRoute(
       const auth = await dependencies.verifyAdminAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       authenticatedRequests.set(request, auth);
+    });
+
+    /**
+     * Add a one-off slot to a doctor's calendar for a single date/time, with no
+     * reference to their recurring weekly windows. The row is flagged ad-hoc so
+     * a later window edit can't sweep it away.
+     */
+    app.post("/api/admin/doctors/:doctorId/time-slots", async (request, reply) => {
+      const params = doctorParamsSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      const body = createBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid body", body.error.flatten()));
+      }
+      const startAt = new Date(body.data.startAt);
+      if (Number.isNaN(startAt.getTime())) {
+        return reply.status(400).send(errorResponse("Invalid start time"));
+      }
+
+      const authenticatedAccess = authenticatedRequests.get(request);
+      if (!authenticatedAccess) {
+        return reply
+          .status(503)
+          .send(errorResponse("Admin authorization is temporarily unavailable"));
+      }
+
+      try {
+        const doctor = await prisma.doctor.findUnique({
+          where: { id: params.data.doctorId },
+          select: { id: true, countryId: true },
+        });
+        if (!doctor) return reply.status(404).send(errorResponse("Doctor not found"));
+
+        const scope = await dependencies.verifyCountryScope({
+          request,
+          authenticatedAccess,
+          countryId: doctor.countryId,
+          operation: "add_slot",
+          resourceType: "DoctorTimeSlot",
+        });
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        const result = await createAdHocSlot(
+          doctor.id,
+          startAt,
+          body.data.durationMinutes,
+        );
+        if (!result.ok) {
+          return result.code === "PAST"
+            ? reply.status(400).send(errorResponse("Pick a time in the future"))
+            : reply
+                .status(409)
+                .send(
+                  errorResponse(
+                    "This doctor already has a slot overlapping that time",
+                  ),
+                );
+        }
+
+        return okResponse({
+          slot: {
+            id: result.slot.id,
+            startAt: result.slot.startAt.toISOString(),
+            endAt: result.slot.endAt.toISOString(),
+            status: "OPEN",
+          },
+        });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not add slot"));
+      }
     });
 
     app.patch("/api/admin/doctors/:doctorId/time-slots/:slotId", async (request, reply) => {

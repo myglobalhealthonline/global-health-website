@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
@@ -12,10 +13,15 @@ import {
   todayKey,
   weekDaysOf,
 } from "@/components/calendar/calendar-utils";
+import { AddSlotDialog } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
-import { adminRemoveSlot, adminToggleSlotStatus } from "@/lib/api/admin-slot-client";
+import {
+  adminCreateSlot,
+  adminRemoveSlot,
+  adminToggleSlotStatus,
+} from "@/lib/api/admin-slot-client";
 import {
   BookSlotDialog,
   type ClinicOption,
@@ -59,6 +65,7 @@ export function AvailabilityWeek({
   // server-rendered week — the slot list comes from the page, not local state.
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
   const [slotBusy, setSlotBusy] = useState(false);
   const [slotError, setSlotError] = useState<string | null>(null);
 
@@ -113,6 +120,21 @@ export function AvailabilityWeek({
     router.refresh();
   }
 
+  // One-off slot at a date/time of the admin's choosing — no weekly window
+  // involved, so it also survives later edits to those windows.
+  async function addSlot(startAtIso: string, durationMinutes: number) {
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminCreateSlot(doctorId, startAtIso, durationMinutes);
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setAddOpen(false);
+    router.refresh();
+  }
+
   function goToWeek(anchor: string) {
     const params = new URLSearchParams();
     params.set("wk", anchor);
@@ -122,11 +144,21 @@ export function AvailabilityWeek({
   return (
     <div className="grid min-w-0 gap-3">
       <div className="flex flex-wrap items-center justify-end gap-3">
+        <button
+          type="button"
+          className="gh-btn gh-btn-outline"
+          onClick={() => {
+            setSlotError(null);
+            setAddOpen(true);
+          }}
+        >
+          <Plus className="size-3.5" aria-hidden /> Add slot
+        </button>
         <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />
       </div>
 
       {/* The dialogs render their own copy of the error — don't say it twice. */}
-      {slotError && !blockTarget && !removeTarget ? (
+      {slotError && !blockTarget && !removeTarget && !addOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotError}
         </p>
@@ -186,6 +218,23 @@ export function AvailabilityWeek({
         onConfirm={(reason) => {
           if (blockTarget) void setSlotStatus(blockTarget, "BLOCKED", reason || undefined);
         }}
+      />
+
+      <AddSlotDialog
+        key={addOpen ? `add-${weekAnchor}` : "no-add"}
+        open={addOpen}
+        doctorName={doctorName}
+        tz={tz}
+        defaultDate={weekAnchor}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setAddOpen(false);
+          setSlotError(null);
+        }}
+        onConfirm={(startAtIso, durationMinutes) =>
+          void addSlot(startAtIso, durationMinutes)
+        }
       />
 
       <RemoveSlotDialog

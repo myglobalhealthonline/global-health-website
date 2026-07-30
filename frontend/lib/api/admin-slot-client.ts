@@ -32,6 +32,35 @@ export async function adminToggleSlotStatus(
 }
 
 /**
+ * Add a one-off slot for a single date/time. Nothing to do with the doctor's
+ * recurring weekly windows — the row is flagged ad-hoc server-side so a later
+ * window edit can't sweep it away. `startAtIso` must be a UTC instant: the
+ * caller converts the wall-clock the admin typed using the timezone the
+ * calendar is displaying.
+ */
+export async function adminCreateSlot(
+  doctorId: string,
+  startAtIso: string,
+  durationMinutes: number,
+): Promise<
+  Result<{ slot: { id: string; startAt: string; endAt: string; status: string } }>
+> {
+  const res = await fetch(
+    `/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots`,
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ startAt: startAtIso, durationMinutes }),
+    },
+  );
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.ok) {
+    return { ok: false, message: json?.message ?? "Could not add slot" };
+  }
+  return { ok: true, data: json.data };
+}
+
+/**
  * Remove one slot for its own date only. The backend deletes the row and
  * records an availability exception for the same span — without that, the
  * recurring weekly window would regenerate the slot on the next availability

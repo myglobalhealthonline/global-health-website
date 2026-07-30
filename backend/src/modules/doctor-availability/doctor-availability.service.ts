@@ -158,6 +158,65 @@ async function listAvailabilityExceptions(
 }
 
 /**
+ * Add ONE slot for ONE date/time, independent of the recurring weekly windows.
+ *
+ * The row is flagged `isAdHoc` so the "window changed → drop stale future OPEN
+ * slots" sweeps leave it alone: nothing derives it, so a sweep would delete it
+ * for good. Any `DoctorAvailabilityException` covering the span is cleared too —
+ * adding a slot back where one was removed is the admin undoing the removal.
+ *
+ * Overlap is the one hard rule: a doctor can't hold two slots over the same
+ * minutes (enforced in Postgres by the `no_overlapping_doctor_slots` exclusion
+ * constraint, checked here first so the admin gets a sentence instead of a 500).
+ */
+export async function createAdHocSlot(
+  doctorId: string,
+  startAt: Date,
+  durationMinutes: number,
+): Promise<
+  | { ok: true; slot: { id: string; startAt: Date; endAt: Date } }
+  | { ok: false; code: "OVERLAP" | "PAST" }
+> {
+  const endAt = new Date(startAt.getTime() + durationMinutes * 60 * 1000);
+  if (startAt.getTime() <= Date.now()) return { ok: false, code: "PAST" };
+
+  try {
+    // Pre-flight overlap check against every status: a BOOKED consultation
+    // spanning these minutes must block the add just as an OPEN slot does.
+    const clash = await prisma.doctorTimeSlot.findFirst({
+      where: {
+        doctorId,
+        startAt: { lt: endAt },
+        endAt: { gt: startAt },
+      },
+      select: { id: true },
+    });
+    if (clash) return { ok: false, code: "OVERLAP" };
+
+    const slot = await prisma.$transaction(async (tx) => {
+      await tx.doctorAvailabilityException.deleteMany({
+        where: { doctorId, startAt: { lt: endAt }, endAt: { gt: startAt } },
+      });
+      return tx.doctorTimeSlot.create({
+        data: { doctorId, startAt, endAt, status: "OPEN", isAdHoc: true },
+        select: { id: true, startAt: true, endAt: true },
+      });
+    });
+
+    // A new bookable slot must show up in public listings now, not after the
+    // read cache's TTL.
+    slotCache.clear();
+    return { ok: true, slot };
+  } catch (error) {
+    // Lost the race against a concurrent write that the pre-flight missed.
+    if (isExclusionViolation(error) || isUniqueViolation(error)) {
+      return { ok: false, code: "OVERLAP" };
+    }
+    throw normalizeDbError(error, "Could not add slot");
+  }
+}
+
+/**
  * Remove ONE concrete slot for ONE date, permanently.
  *
  * Deleting the row alone would not stick — the generators re-materialise slots
@@ -410,6 +469,13 @@ export function intervalsOverlap(
   b: { startAt: Date; endAt: Date },
 ): boolean {
   return a.startAt < b.endAt && a.endAt > b.startAt;
+}
+
+/** Prisma unique-constraint violation — here, @@unique([doctorId, startAt]). */
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"
+  );
 }
 
 /** Postgres exclusion-constraint violation (23P01) — not modeled in the Prisma schema. */
