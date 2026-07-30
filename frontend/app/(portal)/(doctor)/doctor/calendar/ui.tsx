@@ -9,7 +9,10 @@ import { FormSection } from "@/components/FormSection";
 import {
   bulkBlockSlots,
   createAvailabilityWindow,
+  createSlots,
   fetchAvailabilityRangeClient,
+  removeSlot,
+  resizeSlot,
   toggleSlotStatus,
 } from "@/lib/api/doctor-availability-client";
 import type { DoctorTimeSlotView } from "@/lib/api/doctor-availability-types";
@@ -17,6 +20,12 @@ import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { DayAgenda } from "@/components/calendar/DayAgenda";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
+import {
+  AddSlotDialog,
+  describeAddResult,
+} from "@/components/calendar/add-slot-dialog";
+import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
+import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { AppSheet } from "@/components/AppSheet";
 import { BASE_SLOT_MINUTES } from "@/lib/constants";
@@ -112,6 +121,12 @@ export function DoctorCalendarUI({
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Per-slot management: resize / remove, plus the ad-hoc add. Each keeps its
+  // own target so the day sheet can stay closed behind the dialog.
+  const [resizeTarget, setResizeTarget] = useState<CalendarItem | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   // Add-availability / time-off validation and submit errors render inline
   // next to their own form instead of the shared top-of-page banner, which
   // sits ~170px above these bottom-of-page forms with no scroll affordance
@@ -221,6 +236,101 @@ export function DoctorCalendarUI({
       setError(res.message);
     }
     setBusy(false);
+  }
+
+  // The shared slot dialogs are English-by-default (admin uses them as-is);
+  // the doctor portal feeds them locale strings. `definedOnly` matters: a
+  // spread of `{ title: undefined }` would blank the default rather than fall
+  // back to it, so any key missing from a locale file must be dropped first.
+  const addSlotLabels = definedOnly({
+    title: s.addSlotsTitle,
+    titleWithDoctor: s.addSlotsTitle,
+    intro: s.addSlotsIntro,
+    fromDate: s.fromDate,
+    toDate: s.toDate,
+    fromTime: s.fromTime,
+    toTime: s.toTime,
+    timezoneHint: s.addSlotsTimezoneHint,
+    cancel: s.slotDialogCancel,
+    confirm: s.addSlotsConfirm,
+    confirmBusy: s.addSlotsBusy,
+    errorEndDate: s.errorEndDateAfterStartDate,
+    errorTimeFormat: s.errorTimeFormat,
+    errorTooShort: s.errorTooShort,
+    errorTooMany: s.errorTooMany,
+    errorNoSlots: s.errorNoSlots,
+    noticeAdded: s.noticeAdded,
+    noticeSkippedOverlap: s.noticeSkippedOverlap,
+    noticeSkippedPast: s.noticeSkippedPast,
+  });
+  const resizeSlotLabels = definedOnly({
+    title: s.resizeSlotTitle,
+    intro: s.resizeSlotIntro,
+    lengthLabel: s.resizeSlotLength,
+    currentSuffix: s.resizeSlotCurrent,
+    growthHint: s.resizeSlotHint,
+    cancel: s.slotDialogCancel,
+    confirm: s.resizeSlotConfirm,
+    confirmBusy: s.resizeSlotBusy,
+  });
+  const removeSlotLabels = definedOnly({
+    title: s.removeSlotTitle,
+    blockedSuffix: s.removeSlotBlockedSuffix,
+    intro: s.removeSlotIntro,
+    warning: s.removeSlotWarning,
+    reasonLabel: s.reasonOptional,
+    reasonPlaceholder: s.removeSlotReasonPlaceholder,
+    reasonHint: s.removeSlotReasonHint,
+    cancel: s.slotDialogCancel,
+    confirm: s.removeSlotConfirm,
+    confirmBusy: s.removeSlotBusy,
+  });
+
+  // Grid resize: the slot keeps its start, the end moves. Growing swallows the
+  // free slots that follow; shrinking hands that time back.
+  async function onResizeSlot(durationMinutes: number) {
+    if (!resizeTarget) return;
+    setError(null);
+    setBusy(true);
+    const res = await resizeSlot(resizeTarget.id, durationMinutes);
+    setBusy(false);
+    if (!res.ok) {
+      setError(res.message);
+      return;
+    }
+    setResizeTarget(null);
+    await refetchMonth();
+  }
+
+  // Removal is per-date: the row goes and an availability exception stops the
+  // recurring window regenerating it. The window itself is untouched.
+  async function onRemoveSlot(reason: string) {
+    if (!removeTarget) return;
+    setError(null);
+    setBusy(true);
+    const res = await removeSlot(removeTarget.id, reason || undefined);
+    setBusy(false);
+    if (!res.ok) {
+      setError(res.message);
+      return;
+    }
+    setRemoveTarget(null);
+    await refetchMonth();
+  }
+
+  // One-off slots over a date + time range, independent of the weekly windows.
+  async function onAddSlots(startAtIsos: string[], durationMinutes: number) {
+    setError(null);
+    setBusy(true);
+    const res = await createSlots(startAtIsos, durationMinutes);
+    setBusy(false);
+    if (!res.ok) {
+      setError(res.message);
+      return;
+    }
+    setAddOpen(false);
+    setNotice(describeAddResult(res.data, addSlotLabels));
+    await refetchMonth();
   }
 
   async function onRangeTimeOff(action: "BLOCK" | "UNBLOCK") {
@@ -346,12 +456,33 @@ export function DoctorCalendarUI({
             </span>
           </div>
         </AppMenu>
-        <TimezoneSelect value={tz} options={tzOptions} onChange={onChangeTz} />
+        <div className="flex items-center gap-2">
+          <Btn
+            type="button"
+            size="sm"
+            variant="ghost"
+            disabled={busy}
+            onClick={() => {
+              setError(null);
+              setNotice(null);
+              setAddOpen(true);
+            }}
+            iconLeft={<Plus className="size-3.5" />}
+          >
+            {s.addSlotsButton}
+          </Btn>
+          <TimezoneSelect value={tz} options={tzOptions} onChange={onChangeTz} />
+        </div>
       </div>
 
       {error ? (
         <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
           {error}
+        </div>
+      ) : null}
+      {notice ? (
+        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+          {notice}
         </div>
       ) : null}
 
@@ -399,15 +530,52 @@ export function DoctorCalendarUI({
           consultationsLabel={s.sectionConsultations}
           slotsLabel={s.sectionSlots}
           onSelectConsultation={openEvent}
-          onSelectSlot={onToggleSlot}
+          // Every slot action is its own chip button now (block/re-open, length,
+          // remove), so the chip itself must not also be a button.
+          canToggleSlot={() => false}
           slotActionsBusy={busy}
           renderSlotAction={(item) => {
             if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
-            // Indicator only — the chip itself is the button now.
-            return item.status === "OPEN" ? (
-              <Lock className="size-3" aria-hidden />
-            ) : (
-              <Unlock className="size-3" aria-hidden />
+            const actionClass =
+              "ml-0.5 inline-flex items-center gap-1 rounded-full border border-current px-1.5 text-portal-micro font-bold uppercase tracking-wide hover:opacity-80 disabled:opacity-50";
+            return (
+              <>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void onToggleSlot(item)}
+                  className={actionClass}
+                >
+                  {item.status === "OPEN" ? (
+                    <Lock className="size-3" aria-hidden />
+                  ) : (
+                    <Unlock className="size-3" aria-hidden />
+                  )}
+                  {item.status === "OPEN" ? s.slotActionBlock : s.slotActionReopen}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => {
+                    setDaySheetOpen(false);
+                    setResizeTarget(item);
+                  }}
+                  className={actionClass}
+                >
+                  {s.slotActionLength}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => {
+                    setDaySheetOpen(false);
+                    setRemoveTarget(item);
+                  }}
+                  className={actionClass}
+                >
+                  {s.slotActionRemove}
+                </button>
+              </>
             );
           }}
         />
@@ -560,6 +728,53 @@ export function DoctorCalendarUI({
         </FormSection>
       </div>
 
+      <AddSlotDialog
+        key={addOpen ? `add-${selectedDay}` : "no-add"}
+        open={addOpen}
+        tz={tz}
+        defaultDate={selectedDay || todayKey(tz)}
+        busy={busy}
+        error={error}
+        labels={addSlotLabels}
+        onClose={() => {
+          setAddOpen(false);
+          setError(null);
+        }}
+        onConfirm={(startAtIsos, durationMinutes) =>
+          void onAddSlots(startAtIsos, durationMinutes)
+        }
+      />
+
+      <ResizeSlotDialog
+        key={resizeTarget?.id ?? "no-resize"}
+        open={resizeTarget !== null}
+        slot={resizeTarget}
+        tz={tz}
+        busy={busy}
+        error={error}
+        labels={resizeSlotLabels}
+        onClose={() => {
+          setResizeTarget(null);
+          setError(null);
+        }}
+        onConfirm={(durationMinutes) => void onResizeSlot(durationMinutes)}
+      />
+
+      <RemoveSlotDialog
+        key={removeTarget?.id ?? "no-remove"}
+        open={removeTarget !== null}
+        slot={removeTarget}
+        tz={tz}
+        busy={busy}
+        error={error}
+        labels={removeSlotLabels}
+        onClose={() => {
+          setRemoveTarget(null);
+          setError(null);
+        }}
+        onConfirm={(reason) => void onRemoveSlot(reason)}
+      />
+
       <EventDetailDialog
         item={activeItem}
         tz={tz}
@@ -589,6 +804,20 @@ export function DoctorCalendarUI({
       />
     </div>
   );
+}
+
+/** Drop keys whose locale string is missing so the component's own default
+ *  survives the spread instead of being overwritten with undefined. */
+function definedOnly<T extends Record<string, string | undefined>>(
+  input: T,
+): Partial<Record<keyof T, string>> {
+  const out: Partial<Record<keyof T, string>> = {};
+  for (const [key, value] of Object.entries(input)) {
+    if (typeof value === "string" && value.length > 0) {
+      out[key as keyof T] = value;
+    }
+  }
+  return out;
 }
 
 function LegendDot({ className, label }: { className: string; label: string }) {

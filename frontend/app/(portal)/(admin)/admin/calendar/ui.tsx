@@ -26,10 +26,12 @@ import {
 } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
+import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
 import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
   adminCreateSlots,
   adminRemoveSlot,
+  adminResizeSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
 
@@ -83,6 +85,7 @@ export function AdminCalendarUI({
   const [slotError, setSlotError] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
+  const [resizeTarget, setResizeTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   // Add reports partial success ("added 20, skipped 4") — information, not an
   // error, so it gets its own line rather than the warning banner.
@@ -177,6 +180,38 @@ export function AdminCalendarUI({
     setAddOpen(false);
     setSlotNotice(describeAddResult(res.data));
     router.refresh();
+  }
+
+  // Resize keeps the slot's start and moves its end on the base grid.
+  async function resizeSlot(item: CalendarItem, durationMinutes: number) {
+    const doctorId = item.meta?.doctorId;
+    if (!doctorId) {
+      setSlotError("This slot has no doctor — reload the calendar and try again.");
+      return;
+    }
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminResizeSlot(
+      doctorId,
+      item.id.replace(/^s-/, ""),
+      durationMinutes,
+    );
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setResizeTarget(null);
+    router.refresh();
+  }
+
+  function openResizeDialog(item: CalendarItem) {
+    if (item.kind !== "slot") return;
+    if (item.status !== "OPEN" && item.status !== "BLOCKED") return;
+    if (!item.meta?.doctorId) return;
+    setDaySheetOpen(false);
+    setSlotError(null);
+    setResizeTarget(item);
   }
 
   function openRemoveDialog(item: CalendarItem) {
@@ -363,7 +398,12 @@ export function AdminCalendarUI({
 
       {/* Block/unblock failures on the week grid have no drawer to land in —
           and the dialog shows its own copy while it's open. */}
-      {slotError && !blockTarget && !removeTarget && !addOpen && !daySheetOpen ? (
+      {slotError &&
+      !blockTarget &&
+      !removeTarget &&
+      !resizeTarget &&
+      !addOpen &&
+      !daySheetOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotError}
         </p>
@@ -386,6 +426,7 @@ export function AdminCalendarUI({
           onBlockSlot={openBlockDialog}
           onSelectBlockedSlot={onUnblockSlot}
           onRemoveSlot={openRemoveDialog}
+          onResizeSlot={openResizeDialog}
           slotActionsBusy={slotBusy}
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
           onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
@@ -509,6 +550,14 @@ export function AdminCalendarUI({
                 <button
                   type="button"
                   disabled={slotBusy}
+                  onClick={() => openResizeDialog(item)}
+                  className={actionClass}
+                >
+                  Length
+                </button>
+                <button
+                  type="button"
+                  disabled={slotBusy}
                   onClick={() => openRemoveDialog(item)}
                   className={actionClass}
                 >
@@ -551,6 +600,22 @@ export function AdminCalendarUI({
         onConfirm={(startAtIsos, durationMinutes) =>
           void addSlots(startAtIsos, durationMinutes)
         }
+      />
+
+      <ResizeSlotDialog
+        key={resizeTarget?.id ?? "no-resize"}
+        open={resizeTarget !== null}
+        slot={resizeTarget}
+        tz={tz}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setResizeTarget(null);
+          setSlotError(null);
+        }}
+        onConfirm={(durationMinutes) => {
+          if (resizeTarget) void resizeSlot(resizeTarget, durationMinutes);
+        }}
       />
 
       <RemoveSlotDialog

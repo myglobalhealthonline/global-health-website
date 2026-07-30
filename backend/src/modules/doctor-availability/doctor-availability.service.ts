@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, type DoctorSlotStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
@@ -29,6 +29,13 @@ import {
  *   `UPDATE … WHERE id=? AND status='OPEN'` so two patients hitting
  *   submit at the same instant can't both grab the same slot.
  */
+
+/**
+ * Product-wide base grid. Recurring windows generate on it and consultations
+ * consume consecutive base slots to fit their real length, so a resize snaps to
+ * it too. Mirrors the frontend's `BASE_SLOT_MINUTES`.
+ */
+export const BASE_SLOT_MINUTES = 15;
 
 export class SlotAlreadyTakenError extends Error {
   constructor() {
@@ -281,6 +288,122 @@ async function createAdHocSlotsOneByOne(
   }
   slotCache.clear();
   return { created, skippedOverlap, skippedPast };
+}
+
+/**
+ * Resize an OPEN/BLOCKED slot on the base grid. The start never moves.
+ *
+ * Lengthening swallows the following slots up to the new end: they must all be
+ * OPEN or BLOCKED, because a BOOKED/HELD slot in the way is a real appointment
+ * or a live cart hold. Shortening releases the freed tail back into base-grid
+ * slots carrying the same status (and `isAdHoc`) as the slot they came from, so
+ * a shrunk BLOCKED slot doesn't quietly re-open the time it gave up.
+ *
+ * Any `DoctorAvailabilityException` inside the new span is cleared: explicitly
+ * extending over a previously-removed time is the admin overriding that removal.
+ */
+export async function resizeSlot(
+  doctorId: string,
+  slotId: string,
+  durationMinutes: number,
+): Promise<
+  | { ok: true; slot: { id: string; startAt: Date; endAt: Date } }
+  | { ok: false; code: "NOT_FOUND" | "OCCUPIED" | "BLOCKED_BY_BOOKING" }
+> {
+  const durationMs = durationMinutes * 60 * 1000;
+  try {
+    const slot = await prisma.doctorTimeSlot.findFirst({
+      where: { id: slotId, doctorId },
+      select: {
+        id: true,
+        status: true,
+        startAt: true,
+        endAt: true,
+        blockReason: true,
+        isAdHoc: true,
+      },
+    });
+    if (!slot) return { ok: false, code: "NOT_FOUND" };
+    if (slot.status !== "OPEN" && slot.status !== "BLOCKED") {
+      return { ok: false, code: "OCCUPIED" };
+    }
+
+    const newEnd = new Date(slot.startAt.getTime() + durationMs);
+    if (newEnd.getTime() === slot.endAt.getTime()) {
+      return { ok: true, slot: { id: slot.id, startAt: slot.startAt, endAt: slot.endAt } };
+    }
+
+    // Everything the resize touches, in one read: the slots between the old and
+    // new end (absorbed when growing, irrelevant when shrinking).
+    const neighbours = await prisma.doctorTimeSlot.findMany({
+      where: {
+        doctorId,
+        id: { not: slot.id },
+        startAt: { lt: newEnd },
+        endAt: { gt: slot.startAt },
+      },
+      select: { id: true, status: true },
+    });
+    if (neighbours.some((n) => n.status !== "OPEN" && n.status !== "BLOCKED")) {
+      return { ok: false, code: "BLOCKED_BY_BOOKING" };
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      if (neighbours.length > 0) {
+        await tx.doctorTimeSlot.deleteMany({
+          where: { id: { in: neighbours.map((n) => n.id) } },
+        });
+      }
+      await tx.doctorAvailabilityException.deleteMany({
+        where: { doctorId, startAt: { lt: newEnd }, endAt: { gt: slot.startAt } },
+      });
+      const row = await tx.doctorTimeSlot.update({
+        where: { id: slot.id },
+        data: { endAt: newEnd },
+        select: { id: true, startAt: true, endAt: true },
+      });
+
+      // Shrinking: hand the tail back as base-grid slots rather than leaving a
+      // hole only a recurring window could refill (an ad-hoc slot has none).
+      if (newEnd < slot.endAt) {
+        const freed: {
+          doctorId: string;
+          startAt: Date;
+          endAt: Date;
+          status: DoctorSlotStatus;
+          blockReason: string | null;
+          isAdHoc: boolean;
+        }[] = [];
+        const stepMs = BASE_SLOT_MINUTES * 60 * 1000;
+        for (
+          let t = newEnd.getTime();
+          t + stepMs <= slot.endAt.getTime();
+          t += stepMs
+        ) {
+          freed.push({
+            doctorId,
+            startAt: new Date(t),
+            endAt: new Date(t + stepMs),
+            status: slot.status,
+            blockReason: slot.blockReason,
+            isAdHoc: slot.isAdHoc,
+          });
+        }
+        if (freed.length > 0) {
+          await tx.doctorTimeSlot.createMany({ data: freed, skipDuplicates: true });
+        }
+      }
+      return row;
+    });
+
+    slotCache.clear();
+    return { ok: true, slot: updated };
+  } catch (error) {
+    if (isExclusionViolation(error) || isUniqueViolation(error)) {
+      return { ok: false, code: "BLOCKED_BY_BOOKING" };
+    }
+    throw normalizeDbError(error, "Could not resize slot");
+  }
 }
 
 /**

@@ -19,10 +19,12 @@ import {
 } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
+import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
   adminCreateSlots,
   adminRemoveSlot,
+  adminResizeSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
 import {
@@ -68,6 +70,7 @@ export function AvailabilityWeek({
   // server-rendered week — the slot list comes from the page, not local state.
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
+  const [resizeTarget, setResizeTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   // Add reports partial success ("added 20, skipped 4"), which is information,
   // not an error — it gets its own line rather than the warning banner.
@@ -142,6 +145,24 @@ export function AvailabilityWeek({
     router.refresh();
   }
 
+  // Resize keeps the slot's start and moves its end on the base grid.
+  async function resizeSlot(item: CalendarItem, durationMinutes: number) {
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminResizeSlot(
+      doctorId,
+      item.id.replace(/^s-/, ""),
+      durationMinutes,
+    );
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setResizeTarget(null);
+    router.refresh();
+  }
+
   function goToWeek(anchor: string) {
     const params = new URLSearchParams();
     params.set("wk", anchor);
@@ -166,7 +187,7 @@ export function AvailabilityWeek({
       </div>
 
       {/* The dialogs render their own copy of the error — don't say it twice. */}
-      {slotError && !blockTarget && !removeTarget && !addOpen ? (
+      {slotError && !blockTarget && !removeTarget && !resizeTarget && !addOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotError}
         </p>
@@ -194,6 +215,10 @@ export function AvailabilityWeek({
           onRemoveSlot={(item) => {
             setSlotError(null);
             setRemoveTarget(item);
+          }}
+          onResizeSlot={(item) => {
+            setSlotError(null);
+            setResizeTarget(item);
           }}
           slotActionsBusy={slotBusy}
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
@@ -248,6 +273,22 @@ export function AvailabilityWeek({
         onConfirm={(startAtIsos, durationMinutes) =>
           void addSlots(startAtIsos, durationMinutes)
         }
+      />
+
+      <ResizeSlotDialog
+        key={resizeTarget?.id ?? "no-resize"}
+        open={resizeTarget !== null}
+        slot={resizeTarget}
+        tz={tz}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setResizeTarget(null);
+          setSlotError(null);
+        }}
+        onConfirm={(durationMinutes) => {
+          if (resizeTarget) void resizeSlot(resizeTarget, durationMinutes);
+        }}
       />
 
       <RemoveSlotDialog

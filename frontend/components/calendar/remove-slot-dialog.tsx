@@ -11,12 +11,41 @@ import type { CalendarItem } from "./calendar-types";
  * window can't regenerate it — there is no undo in the UI. Hence a confirm step
  * that spells out the scope: this date only, the weekly window is untouched.
  */
+export type RemoveSlotLabels = {
+  title: string;
+  blockedSuffix: string;
+  intro: string;
+  warning: string;
+  reasonLabel: string;
+  reasonPlaceholder: string;
+  reasonHint: string;
+  cancel: string;
+  confirm: string;
+  confirmBusy: string;
+};
+
+const DEFAULT_LABELS: RemoveSlotLabels = {
+  title: "Remove this slot",
+  blockedSuffix: "currently blocked",
+  intro:
+    "The slot is deleted from this date only — the recurring weekly window is not changed, so the same weekday next week still generates slots as usual.",
+  warning:
+    "This can't be undone from the calendar. To keep the slot but take it out of bookable inventory, block it instead.",
+  reasonLabel: "Reason",
+  reasonPlaceholder: "Created in error, clinic closed…",
+  reasonHint: "Optional — kept on the removal record.",
+  cancel: "Cancel",
+  confirm: "Remove slot",
+  confirmBusy: "Removing…",
+};
+
 export function RemoveSlotDialog({
   open,
   slot,
   tz,
   busy = false,
   error,
+  labels,
   onClose,
   onConfirm,
 }: {
@@ -26,6 +55,8 @@ export function RemoveSlotDialog({
   tz: string;
   busy?: boolean;
   error?: string | null;
+  /** Doctor portal passes localized copy; admin takes the English defaults. */
+  labels?: Partial<RemoveSlotLabels>;
   onClose: () => void;
   onConfirm: (reason: string) => void;
 }) {
@@ -33,10 +64,11 @@ export function RemoveSlotDialog({
 
   if (!slot) return null;
 
+  const t = { ...DEFAULT_LABELS, ...labels };
   const isBlocked = slot.status === "BLOCKED";
 
   return (
-    <PortalDialog open={open} onClose={onClose} title="Remove this slot" danger>
+    <PortalDialog open={open} onClose={onClose} title={t.title} danger>
       <div className="grid gap-4">
         <div
           className="rounded-[var(--radius-card-sm)] border px-3 py-2.5 text-sm"
@@ -55,33 +87,28 @@ export function RemoveSlotDialog({
           ) : null}
           {isBlocked ? (
             <span className="ml-1 text-portal-meta text-[var(--color-text-muted)]">
-              · currently blocked
+              · {t.blockedSuffix}
             </span>
           ) : null}
         </div>
 
-        <p className="text-portal-compact text-[var(--color-text-body)]">
-          The slot is deleted from this date only — the doctor&apos;s recurring
-          weekly window is not changed, so the same weekday next week still
-          generates slots as usual.
-        </p>
+        <p className="text-portal-compact text-[var(--color-text-body)]">{t.intro}</p>
         <p className="text-portal-compact font-semibold text-[var(--color-text-primary)]">
-          This can&apos;t be undone from the calendar. To keep the slot but take
-          it out of bookable inventory, block it instead.
+          {t.warning}
         </p>
 
         <label className="flex flex-col gap-1.5">
-          <span className="gh-field-label">Reason</span>
+          <span className="gh-field-label">{t.reasonLabel}</span>
           <input
             type="text"
             className="gh-input"
             maxLength={200}
-            placeholder="Created in error, clinic closed…"
+            placeholder={t.reasonPlaceholder}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
           />
           <span className="text-portal-meta text-[var(--color-text-muted)]">
-            Optional — kept on the removal record.
+            {t.reasonHint}
           </span>
         </label>
 
@@ -98,7 +125,7 @@ export function RemoveSlotDialog({
             className="gh-btn gh-btn-ghost"
             disabled={busy}
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             type="button"
@@ -106,7 +133,7 @@ export function RemoveSlotDialog({
             className="gh-btn gh-btn-danger"
             disabled={busy}
           >
-            {busy ? "Removing…" : "Remove slot"}
+            {busy ? t.confirmBusy : t.confirm}
           </button>
         </div>
       </div>
