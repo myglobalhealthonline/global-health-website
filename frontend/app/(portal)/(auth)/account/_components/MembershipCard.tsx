@@ -80,12 +80,17 @@ export function MembershipCard({
 
         <h2 className="gh-member-card__plan">{planName}</h2>
 
+        {/* One PQRST beat on the baseline rule. Drawn to its own aspect ratio
+            (no `preserveAspectRatio="none"`) — stretching a wide viewBox into
+            this short row flattened the spikes into noise. */}
         <div aria-hidden className="gh-member-card__pulse">
-          <svg viewBox="0 0 420 80" fill="none" preserveAspectRatio="none">
+          <svg viewBox="0 0 96 40" fill="none" preserveAspectRatio="xMaxYMid meet">
             <path
-              d="M0 42H82L98 42L108 29L117 54L129 38H214L224 42L235 29L245 55L258 40H334L348 42L362 7L376 72L390 42H420"
-              stroke="rgba(168,255,24,.48)"
-              strokeWidth="3"
+              d="M0 20H18q3-6 6 0h6l4 8 5-21 5 30 4-17h5q5-10 10 0h33"
+              stroke="#a8ff18"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               vectorEffect="non-scaling-stroke"
             />
           </svg>
