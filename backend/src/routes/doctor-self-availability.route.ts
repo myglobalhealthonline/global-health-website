@@ -3,12 +3,16 @@ import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
+  BASE_SLOT_MINUTES,
   bulkSetSlotBlockInRange,
+  createAdHocSlots,
   createAdminAvailability,
   deleteAdminAvailability,
   ensureSlotsForRange,
   listAdminAvailability,
   patchAdminAvailability,
+  removeSlotForDate,
+  resizeSlot,
   resolveDoctorTimeZone,
   resolveDoctorTimeZones,
 } from "../modules/doctor-availability/doctor-availability.service.js";
@@ -25,7 +29,9 @@ import { verifyDoctorAccess } from "../utils/doctor-auth.js";
  *   POST   /api/doctor/availability                 — add a weekly window
  *   PATCH  /api/doctor/availability/:availabilityId — edit a window (hours, grid, dates, pause)
  *   DELETE /api/doctor/availability/:availabilityId — remove a window (+ orphan OPEN slots)
- *   PATCH  /api/doctor/time-slots/:slotId           — toggle OPEN ↔ BLOCKED (mark busy)
+ *   PATCH  /api/doctor/time-slots/:slotId           — toggle OPEN ↔ BLOCKED and/or resize on the base grid
+ *   DELETE /api/doctor/time-slots/:slotId           — remove a slot for that date only (+ exception)
+ *   POST   /api/doctor/time-slots                   — add one-off slots at explicit instants
  *
  * BOOKED slots are never toggleable from here — those belong to real
  * appointments. Admin can release a BOOKED slot via the appointment
@@ -88,9 +94,38 @@ const patchBodySchema = z
     message: "Provide at least one field to update",
   });
 
-const slotPatchSchema = z.object({
-  status: z.enum(["OPEN", "BLOCKED"]),
-});
+/** Flip the status, resize on the base grid, or both — at least one. */
+const slotPatchSchema = z
+  .object({
+    status: z.enum(["OPEN", "BLOCKED"]).optional(),
+    durationMinutes: z
+      .number()
+      .int()
+      .min(BASE_SLOT_MINUTES)
+      .max(480)
+      .refine((v) => v % BASE_SLOT_MINUTES === 0, {
+        message: `Must be a multiple of ${BASE_SLOT_MINUTES} minutes`,
+      })
+      .optional(),
+  })
+  .strict()
+  .refine((d) => d.status !== undefined || d.durationMinutes !== undefined, {
+    message: "Provide a status, a durationMinutes, or both",
+  });
+
+/** Optional note kept on the removal record. */
+const slotDeleteSchema = z
+  .object({ reason: z.string().trim().max(200).optional() })
+  .strict();
+
+/** Ad-hoc slots at explicit UTC instants — the doctor UI expands the date +
+ *  time range it collected using the timezone it is displaying. */
+const slotCreateSchema = z
+  .object({
+    startAts: z.array(z.string().datetime()).min(1).max(2000),
+    durationMinutes: z.number().int().min(5).max(480),
+  })
+  .strict();
 
 const slotIdParamSchema = z.object({ slotId: z.string().min(1).max(120) });
 const availabilityIdParamSchema = z.object({
@@ -393,8 +428,35 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
               ),
             );
         }
-        if (slot.status === body.data.status) {
-          return okResponse({ id: slot.id, status: slot.status });
+        // Resize first: it can fail on a booked neighbour, and a status flip
+        // that already landed would leave half the request applied.
+        if (body.data.durationMinutes !== undefined) {
+          const resized = await resizeSlot(
+            auth.doctorId,
+            slot.id,
+            body.data.durationMinutes,
+          );
+          if (!resized.ok) {
+            return resized.code === "NOT_FOUND"
+              ? reply.status(404).send(errorResponse("Slot not found"))
+              : reply
+                  .status(409)
+                  .send(
+                    errorResponse(
+                      resized.code === "BLOCKED_BY_BOOKING"
+                        ? "A booked or held slot sits in the way of that length"
+                        : "Only open or blocked slots can be changed",
+                    ),
+                  );
+          }
+        }
+
+        if (body.data.status === undefined || slot.status === body.data.status) {
+          const row = await prisma.doctorTimeSlot.findUnique({
+            where: { id: slot.id },
+            select: { id: true, status: true },
+          });
+          return okResponse({ id: slot.id, status: row?.status ?? slot.status });
         }
 
         const updated = await prisma.doctorTimeSlot.update({
@@ -412,6 +474,106 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
       }
     },
   );
+
+  // ── Remove a concrete slot (this date only) ────────────────────────
+  // Deletes the row AND records an availability exception, because slots are
+  // regenerated from the doctor's recurring windows on every read — without the
+  // exception the slot would simply come back. The weekly window is untouched.
+  app.delete<{ Params: { slotId: string } }>(
+    "/api/doctor/time-slots/:slotId",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) {
+        return reply.status(auth.status).send(errorResponse(auth.message));
+      }
+      const params = slotIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+      // A DELETE with no body at all is the common case — treat it as {}.
+      const body = slotDeleteSchema.safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid body", body.error.flatten()));
+      }
+
+      try {
+        const result = await removeSlotForDate(
+          auth.doctorId,
+          params.data.slotId,
+          body.data.reason,
+        );
+        if (!result.ok) {
+          return result.code === "NOT_FOUND"
+            ? reply.status(404).send(errorResponse("Slot not found"))
+            : reply
+                .status(409)
+                .send(
+                  errorResponse(
+                    "This slot has been claimed. Cancel the booking first to free it.",
+                  ),
+                );
+        }
+        return okResponse({
+          removed: {
+            id: params.data.slotId,
+            startAt: result.startAt.toISOString(),
+            endAt: result.endAt.toISOString(),
+          },
+        });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not remove slot"));
+      }
+    },
+  );
+
+  // ── Add one-off slots at explicit instants ─────────────────────────
+  // Independent of the recurring windows; rows are flagged ad-hoc so a later
+  // window edit can't sweep them away. Clashes are skipped, not fatal.
+  app.post("/api/doctor/time-slots", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    const body = slotCreateSchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid body", body.error.flatten()));
+    }
+    const startAts = body.data.startAts.map((iso) => new Date(iso));
+    if (startAts.some((d) => Number.isNaN(d.getTime()))) {
+      return reply.status(400).send(errorResponse("Invalid start time"));
+    }
+
+    try {
+      const result = await createAdHocSlots(
+        auth.doctorId,
+        startAts,
+        body.data.durationMinutes,
+      );
+      if (result.created === 0 && result.skippedOverlap > 0) {
+        return reply
+          .status(409)
+          .send(
+            errorResponse(
+              result.skippedOverlap === 1
+                ? "You already have a slot overlapping that time"
+                : "Every time in that range already has a slot",
+            ),
+          );
+      }
+      if (result.created === 0) {
+        return reply.status(400).send(errorResponse("Pick a time in the future"));
+      }
+      return okResponse(result);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not add slots"));
+    }
+  });
 
   // ── Bulk block / unblock a UTC range (whole-day / vacation time-off) ──
   // Blocks every OPEN slot in [fromUtc, toUtc) (materialising any missing

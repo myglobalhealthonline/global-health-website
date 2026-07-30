@@ -9,7 +9,15 @@ import {
   useRef,
   useState,
 } from "react";
-import { Ban, ChevronLeft, ChevronRight, Clock, Trash2, User } from "lucide-react";
+import {
+  Ban,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MoveVertical,
+  Trash2,
+  User,
+} from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
 import {
@@ -67,6 +75,8 @@ type Props = {
   /** Admin mode: delete an OPEN or BLOCKED slot outright (that date only).
    *  Renders a 🗑 corner button beside the block one. */
   onRemoveSlot?: (item: CalendarItem) => void;
+  /** Admin mode: change an OPEN or BLOCKED slot's length on the base grid. */
+  onResizeSlot?: (item: CalendarItem) => void;
   /** Disables the block/unblock affordances while a mutation is in flight. */
   slotActionsBusy?: boolean;
   onPrevWeek: () => void;
@@ -88,6 +98,7 @@ type Props = {
     bookThisTime?: string;
     blockThisTime?: string;
     removeThisSlot?: string;
+    resizeThisSlot?: string;
     legendOpen?: string;
     legendBooked?: string;
     legendBlocked?: string;
@@ -254,6 +265,7 @@ export function WeekCalendar({
   onBlockSlot,
   onSelectBlockedSlot,
   onRemoveSlot,
+  onResizeSlot,
   slotActionsBusy = false,
   onPrevWeek,
   onNextWeek,
@@ -270,6 +282,7 @@ export function WeekCalendar({
     bookThisTime: labels?.bookThisTime ?? "Book this time",
     blockThisTime: labels?.blockThisTime ?? "Block this time (mark unavailable)",
     removeThisSlot: labels?.removeThisSlot ?? "Remove this slot (this date only)",
+    resizeThisSlot: labels?.resizeThisSlot ?? "Change this slot's length",
     legendOpen: labels?.legendOpen ?? "Open · click to book",
     legendBooked: labels?.legendBooked ?? "Booked",
     legendBlocked: labels?.legendBlocked ?? "Blocked",
@@ -676,7 +689,9 @@ export function WeekCalendar({
                     const cornerActions =
                       p.item.kind === "slot" &&
                       (p.item.status === "OPEN" || p.item.status === "BLOCKED") &&
-                      ((onBlockSlot && p.item.status === "OPEN") || onRemoveSlot) ? (
+                      ((onBlockSlot && p.item.status === "OPEN") ||
+                        onResizeSlot ||
+                        onRemoveSlot) ? (
                         // z-2 keeps the actions above their own block (solid
                         // tones sit at z-2) but BELOW the sticky day-header row
                         // (z-3, portal.css) — at z-3 they painted over the
@@ -690,6 +705,16 @@ export function WeekCalendar({
                               onClick={() => onBlockSlot(p.item)}
                             >
                               <Ban className="size-3" aria-hidden />
+                            </CornerAction>
+                          ) : null}
+                          {onResizeSlot ? (
+                            <CornerAction
+                              label={t.resizeThisSlot}
+                              title={`${timeLabel} · ${t.resizeThisSlot}`}
+                              disabled={slotActionsBusy}
+                              onClick={() => onResizeSlot(p.item)}
+                            >
+                              <MoveVertical className="size-3" aria-hidden />
                             </CornerAction>
                           ) : null}
                           {onRemoveSlot ? (
