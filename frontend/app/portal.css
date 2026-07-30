@@ -3476,6 +3476,206 @@ a.gh-admin-summary-item--link:focus-visible {
 }
 
 
+/* ── Membership tab sections ──────────────────────────────────────────────
+ * Three repeating shapes below the hero: benefit rows (what you get),
+ * timeline steps (what happens next), manage rows (what you can do). All
+ * three are "explain, then show the control/number" — the tab's whole job. */
+
+.gh-membership-benefit {
+  display: grid;
+  align-items: start;
+  padding: 16px 0;
+  border-top: 1px solid var(--portal-line-soft);
+  gap: 14px;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+}
+
+.gh-membership-benefit:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Locked benefits stay visible — a member has to see what they are waiting
+ * for — but drop back so the active rows read first. */
+.gh-membership-benefit--locked {
+  opacity: 0.62;
+}
+
+.gh-membership-benefit__tile {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--portal-radius);
+  background: var(--portal-well);
+  color: var(--portal-primary);
+  place-items: center;
+}
+
+.gh-membership-benefit__title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.gh-membership-benefit__body {
+  margin: 4px 0 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gh-membership-benefit__amount {
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.gh-membership-benefit__meter {
+  max-width: 320px;
+  height: 6px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: var(--portal-well);
+  overflow: hidden;
+}
+
+.gh-membership-benefit__meter > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--portal-mint), var(--portal-signal));
+}
+
+.gh-membership-lock {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--portal-well);
+  color: var(--portal-text-2);
+  font-size: 11px;
+  font-weight: 700;
+  gap: 5px;
+}
+
+.gh-membership-step {
+  position: relative;
+  display: grid;
+  padding: 0 0 18px;
+  gap: 14px;
+  grid-template-columns: 26px minmax(0, 1fr);
+}
+
+.gh-membership-step:last-child {
+  padding-bottom: 0;
+}
+
+/* Connector between dots; the last step has nothing left to connect to. */
+.gh-membership-step::before {
+  content: "";
+  position: absolute;
+  top: 26px;
+  bottom: 0;
+  left: 12.5px;
+  width: 1px;
+  background: var(--portal-line);
+}
+
+.gh-membership-step:last-child::before {
+  display: none;
+}
+
+.gh-membership-step__dot {
+  display: grid;
+  z-index: 1;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--portal-well);
+  color: var(--portal-text-2);
+  font-size: 12px;
+  font-weight: 800;
+  place-items: center;
+}
+
+.gh-membership-step--done .gh-membership-step__dot {
+  background: var(--portal-primary);
+  color: #f4f8f1;
+}
+
+.gh-membership-step--now .gh-membership-step__dot {
+  background: var(--portal-signal);
+  color: #12220f;
+  box-shadow: 0 0 0 4px var(--portal-signal-soft);
+}
+
+.gh-membership-step__when {
+  color: var(--portal-mint-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gh-membership-step__title {
+  margin: 3px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.gh-membership-step__body {
+  margin: 3px 0 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gh-membership-do {
+  display: grid;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid var(--portal-line-soft);
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.gh-membership-do:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.gh-membership-do__title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.gh-membership-do__body {
+  max-width: 62ch;
+  margin: 4px 0 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gh-membership-do__ctl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Below ~640px the control drops under its explanation and right-aligns,
+ * matching every other portal form-actions row. */
+@media (max-width: 640px) {
+  .gh-membership-do {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gh-membership-do__ctl {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
 /* Membership hero — card + billing facts, side by side above the actions.
  * Single column until there is room for a readable card AND a facts column;
  * the card caps itself at 560px so it never stretches into a banner. */

@@ -30,8 +30,16 @@ type ManageCopy = ReturnType<
   typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
 >["subscription"]["manage"];
 
+// Row copy lives in the account bundle (account.membership.*) — same strings
+// the benefits and timeline sections use.
+type MembershipCopy = ReturnType<
+  typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
+>["account"]["membership"];
+
 export interface ManagePanelProps {
   t: ManageCopy;
+  /** account.membership — the row titles and "when it takes effect" copy. */
+  m: MembershipCopy;
   status: string;
   /** Current plan monthly price in cents — to classify changes up/down. */
   currentPriceCents: number;
@@ -47,7 +55,7 @@ export interface ManagePanelProps {
 }
 
 export function ManagePanel(props: ManagePanelProps) {
-  const { t } = props;
+  const { t, m } = props;
   const router = useRouter();
   const [busy, setBusy] = useState<null | "portal" | "cancel" | "change" | "cancelChange">(null);
   const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
@@ -298,76 +306,103 @@ export function ManagePanel(props: ManagePanelProps) {
         </p>
       ) : null}
 
-      {/* One sectioned card for everything you can DO with the membership:
-          switch plan, then the billing actions in its footer. Two separate
-          floating surfaces read as leftovers next to the hero. */}
+      {/* Everything you can DO, one labelled row each: what it does and when
+          it takes effect, then the control. The old panel showed bare buttons
+          and left the consequences to a confirm dialog. */}
       <AdminCard padding={0}>
-        <SectionHeader
-          as="h2"
-          title={canChange ? t.upgrade : t.manageBilling}
-          description={
-            canChange
-              ? props.nextBillingLabel
-                ? interpolate(t.changeEffective, { date: props.nextBillingLabel })
-                : t.changeNote
-              : undefined
-          }
-        />
-        <div className="grid gap-4 p-5">
+        <SectionHeader as="h2" title={m.manageTitle} description={m.manageDesc} />
+        <div className="p-5">
           {canChange ? (
-            <div className="gh-patient-form-actions grid gap-3 sm:grid-cols-[minmax(0,20rem)_auto] sm:items-center">
-              <select
-                value={selectedPlan}
-                onChange={(e) => setSelectedPlan(e.target.value)}
-                className="gh-input w-full"
-                aria-label={t.change}
-              >
-                <option value="">{t.change}…</option>
-                {props.planOptions.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.priceCents > props.currentPriceCents ? t.upgradeLabel : t.downgradeLabel}: {p.name} — {p.priceLabel}
-                  </option>
-                ))}
-              </select>
-              <Btn
-                variant="secondary"
-                onClick={doChange}
-                disabled={!selectedPlan || busy === "change"}
-                iconLeft={busy === "change" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
-              >
-                {busy === "change" ? t.changing : t.change}
-              </Btn>
+            <div className="gh-membership-do">
+              <div>
+                <h3 className="gh-membership-do__title">{m.rowSwitchTitle}</h3>
+                <p className="gh-membership-do__body">
+                  {props.nextBillingLabel
+                    ? interpolate(m.rowSwitchBody, { date: props.nextBillingLabel })
+                    : m.rowSwitchBodyPending}
+                </p>
+              </div>
+              <div className="gh-membership-do__ctl">
+                <select
+                  value={selectedPlan}
+                  onChange={(e) => setSelectedPlan(e.target.value)}
+                  className="gh-input"
+                  aria-label={t.change}
+                >
+                  <option value="">{t.change}…</option>
+                  {props.planOptions.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.priceCents > props.currentPriceCents ? t.upgradeLabel : t.downgradeLabel}: {p.name} — {p.priceLabel}
+                    </option>
+                  ))}
+                </select>
+                <Btn
+                  variant="secondary"
+                  onClick={doChange}
+                  disabled={!selectedPlan || busy === "change"}
+                  iconLeft={busy === "change" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
+                >
+                  {busy === "change" ? t.changing : t.change}
+                </Btn>
+              </div>
             </div>
           ) : null}
 
-          <div
-            className={`gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end${
-              canChange ? " border-t pt-4" : ""
-            }`}
-            style={canChange ? { borderColor: "var(--portal-line)" } : undefined}
-          >
-            <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:mr-auto sm:inline" style={{ color: "var(--portal-primary)" }}>
-              {t.browseAllPlans}
-            </Link>
-            {canCancel ? (
+          <div className="gh-membership-do">
+            <div>
+              <h3 className="gh-membership-do__title">{m.rowBillingTitle}</h3>
+              <p className="gh-membership-do__body">{m.rowBillingBody}</p>
+            </div>
+            <div className="gh-membership-do__ctl">
               <Btn
-                variant="ghost"
-                onClick={doCancel}
-                disabled={busy === "cancel"}
-                iconLeft={busy === "cancel" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
+                variant="primary"
+                onClick={openPortal}
+                disabled={busy === "portal"}
+                iconLeft={busy === "portal" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <CreditCard className="size-4" aria-hidden />}
               >
-                {busy === "cancel" ? t.canceling : t.cancel}
+                {t.manageBilling}
               </Btn>
-            ) : null}
-            <Btn
-              variant="primary"
-              onClick={openPortal}
-              disabled={busy === "portal"}
-              iconLeft={busy === "portal" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <CreditCard className="size-4" aria-hidden />}
-            >
-              {t.manageBilling}
-            </Btn>
+            </div>
           </div>
+
+          <div className="gh-membership-do">
+            <div>
+              <h3 className="gh-membership-do__title">{t.browseAllPlans}</h3>
+              <p className="gh-membership-do__body">{t.changeNote}</p>
+            </div>
+            <div className="gh-membership-do__ctl">
+              <Link
+                href={props.pricingHref}
+                className="text-sm font-semibold underline"
+                style={{ color: "var(--portal-primary)" }}
+              >
+                {t.browsePlans}
+              </Link>
+            </div>
+          </div>
+
+          {canCancel ? (
+            <div className="gh-membership-do">
+              <div>
+                <h3 className="gh-membership-do__title">{m.rowCancelTitle}</h3>
+                <p className="gh-membership-do__body">
+                  {props.nextBillingLabel
+                    ? interpolate(m.rowCancelBody, { date: props.nextBillingLabel })
+                    : m.rowCancelBodyPending}
+                </p>
+              </div>
+              <div className="gh-membership-do__ctl">
+                <Btn
+                  variant="ghost"
+                  onClick={doCancel}
+                  disabled={busy === "cancel"}
+                  iconLeft={busy === "cancel" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
+                >
+                  {busy === "cancel" ? t.canceling : t.cancel}
+                </Btn>
+              </div>
+            </div>
+          ) : null}
         </div>
       </AdminCard>
 

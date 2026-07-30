@@ -13,11 +13,13 @@ import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
-import { AdminEmptyState, AdminSummaryStrip, PageHeader, StatCard } from "@/components/portal-atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, SectionHeader, StatCard } from "@/components/portal-atoms";
 import { deriveMemberId } from "@/lib/subscription/member-id";
 import { subscriptionStatusLabel } from "@/lib/subscription/status-label";
+import { interpolate } from "@/lib/subscription/format";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
 import { MembershipCard } from "../_components/MembershipCard";
+import { MembershipTimeline, type TimelineStep } from "../_components/MembershipTimeline";
 import { MembershipTabsClient } from "./_components/MembershipTabsClient";
 import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 import { RewardsPanel } from "../rewards/_components/RewardsPanel";
@@ -101,7 +103,75 @@ export default async function MembershipPage({
   const ladder = [...plans].sort((x, y) => x.monthlyPriceCents - y.monthlyPriceCents);
   const tier = ladder.findIndex((p) => p.id === sub.plan!.id) + 1;
   const statusLabel = subscriptionStatusLabel(sub.status, t);
-  const live = sub.status === "ACTIVE" && !sub.cancelAtPeriodEnd;
+  const benefitsLive = sub.benefitsUnlocked !== false && sub.status === "ACTIVE";
+  const unlockMonths = sub.benefitsUnlockAfterPaidMonths ?? 2;
+  // "Member since" only exists once a payment has cleared; before that the tile
+  // and the timeline both say so rather than showing an empty slot.
+  // Derived by counting the paid months back from the current period end —
+  // the API carries no start date.
+  const memberSince = (() => {
+    if (sub.paidMonthsCount <= 0 || !sub.currentPeriodEnd) return null;
+    const started = new Date(sub.currentPeriodEnd);
+    started.setMonth(started.getMonth() - sub.paidMonthsCount);
+    return new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(started);
+  })();
+
+  /** Lifecycle steps: what already happened, what is happening, what is next. */
+  const steps: TimelineStep[] = sub.status === "ACTIVE"
+    ? [
+        {
+          state: "done",
+          when: memberSince ?? a.membership.stepWhenNow,
+          title: a.membership.stepStartedTitle,
+          body: a.membership.stepStartedBody,
+        },
+        benefitsLive
+          ? {
+              state: "done" as const,
+              when: interpolate(a.membership.stepWhenAfterMonths, { months: unlockMonths }),
+              title: a.membership.stepUnlockedTitle,
+              body: interpolate(a.membership.stepUnlockedBody, { months: unlockMonths }),
+            }
+          : {
+              state: "todo" as const,
+              when: interpolate(a.membership.stepWhenAfterMonths, { months: unlockMonths }),
+              title: a.membership.stepUnlockTitle,
+              body: a.membership.stepUnlockBody,
+            },
+        sub.cancelAtPeriodEnd
+          ? {
+              state: "now" as const,
+              when: nextBillingLabel ?? a.membership.stepWhenNext,
+              title: a.membership.stepEndsTitle,
+              body: a.membership.stepEndsBody,
+            }
+          : {
+              state: "now" as const,
+              when: nextBillingLabel ?? a.membership.stepWhenNext,
+              title: interpolate(a.membership.stepRenewTitle, { price: priceLabel }),
+              body: a.membership.stepRenewBody,
+            },
+      ]
+    : [
+        {
+          state: "now",
+          when: a.membership.stepWhenNow,
+          title: a.membership.stepWaitingTitle,
+          body: a.membership.stepWaitingBody,
+        },
+        {
+          state: "todo",
+          when: a.membership.stepWhenNext,
+          title: a.membership.stepSwitchOnTitle,
+          body: a.membership.stepSwitchOnBody,
+        },
+        {
+          state: "todo",
+          when: interpolate(a.membership.stepWhenAfterMonths, { months: unlockMonths }),
+          title: a.membership.stepUnlockTitle,
+          body: a.membership.stepUnlockBody,
+        },
+      ];
 
   const kits = redemptions?.kits ?? [];
   const livePlan = plans.find((p) => p.id === sub.plan?.id);
@@ -163,27 +233,47 @@ export default async function MembershipPage({
                   tone="brand"
                   label={t.monthlyPrice}
                   value={priceLabel}
-                  hint={a.membership.sumPriceHint}
+                  hint={a.membership.priceHintBilled}
                   icon={<CreditCard className="size-5" aria-hidden />}
                 />
+                {/* No period end exists until the first payment clears — say
+                    that, instead of the bare "Not scheduled" that read as a
+                    bug. */}
                 <StatCard
-                  tone="accent"
+                  tone={nextBillingLabel ? "accent" : "warning"}
                   label={t.nextBilling}
-                  value={nextBillingLabel ?? a.membership.notScheduled}
-                  hint={a.membership.sumNextBillingHint}
+                  value={nextBillingLabel ?? a.membership.billingNotSet}
+                  hint={nextBillingLabel ? a.membership.sumNextBillingHint : a.membership.billingNotSetHint}
                   icon={<CalendarClock className="size-5" aria-hidden />}
                 />
                 <StatCard
-                  tone={live ? "success" : "warning"}
-                  label={a.membership.sumStatus}
-                  value={sub.cancelAtPeriodEnd ? a.membership.cancellationScheduled : statusLabel}
-                  hint={a.membership.sumStatusHint}
+                  tone="neutral"
+                  label={a.membership.memberSince}
+                  value={memberSince ?? a.membership.memberSincePending}
+                  hint={
+                    memberSince
+                      ? interpolate(a.membership.memberSinceHint, { months: sub.paidMonthsCount })
+                      : a.membership.memberSinceHintPending
+                  }
                   icon={<Activity className="size-5" aria-hidden />}
                 />
               </div>
             </div>
+            {/* Benefits (what you get) — rendered by the dashboard in its
+                embedded cut, so credits/wellness/perks stay one source. */}
+            <SubscriptionDashboard locale={locale} embedded />
+
+            <AdminCard padding={0} className="mt-5">
+              <SectionHeader as="h2" title={a.membership.timelineTitle} description={a.membership.timelineDesc} />
+              <div className="p-5">
+                <MembershipTimeline steps={steps} />
+              </div>
+            </AdminCard>
+
+            <div className="mt-5">
             <ManagePanel
               t={t}
+              m={a.membership}
               status={sub.status}
               currentPriceCents={sub.plan.monthlyPriceCents}
               nextBillingLabel={nextBillingLabel}
@@ -197,10 +287,7 @@ export default async function MembershipPage({
               returnState={returnState ?? null}
               pricingHref={pricingHref}
             />
-            {/* Consolidated benefits: GP credits remaining, wellness, discount perks
-                and their unlock conditions (Req 3). Reuses the dashboard widgets;
-                `embedded` hides its plan card since ManagePanel shows that above. */}
-            <SubscriptionDashboard locale={locale} embedded />
+            </div>
           </>
         }
         rewardsPanel={

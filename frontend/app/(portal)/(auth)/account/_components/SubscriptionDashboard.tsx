@@ -23,7 +23,7 @@ import {
 } from "@/lib/subscription/format";
 import { deriveMemberId } from "@/lib/subscription/member-id";
 import { subscriptionStatusLabel } from "@/lib/subscription/status-label";
-import { AdminCard } from "@/components/portal-atoms";
+import { AdminCard, SectionHeader } from "@/components/portal-atoms";
 import { MembershipCard } from "./MembershipCard";
 
 /**
@@ -142,6 +142,136 @@ export async function SubscriptionDashboard({
         >
           {t.manage}
         </Link>
+      </section>
+    );
+  }
+
+  // Membership tab: one "what your plan includes" card — a row per benefit
+  // that says what it is, how it is used, and (when withheld) what unlocks it.
+  // Replaces the three separate credit/wellness/perk cards, which stated
+  // numbers without ever explaining them.
+  if (embedded) {
+    const m = account.membership;
+    const creditRow = (
+      <div className={`gh-membership-benefit${benefitsLocked ? " gh-membership-benefit--locked" : ""}`}>
+        <span aria-hidden className="gh-membership-benefit__tile">
+          <Stethoscope className="size-5" />
+        </span>
+        <div>
+          <h3 className="gh-membership-benefit__title">{t.creditsTitle}</h3>
+          <p className="gh-membership-benefit__body">{interpolate(m.benefitGpBody, { total: granted })}</p>
+          {benefitsLocked ? (
+            <span className="gh-membership-lock">
+              <Lock className="size-3" aria-hidden />
+              {interpolate(m.benefitLockChip, { months: benefitsUnlockMonths })}
+            </span>
+          ) : granted > 0 ? (
+            <div
+              className="gh-membership-benefit__meter"
+              role="progressbar"
+              aria-valuenow={remaining}
+              aria-valuemin={0}
+              aria-valuemax={granted}
+            >
+              <i style={{ width: `${Math.min(100, (remaining / granted) * 100)}%` }} />
+            </div>
+          ) : null}
+        </div>
+        <span className="gh-membership-benefit__amount">
+          {benefitsLocked ? "—" : interpolate(m.benefitCreditsOf, { remaining, total: granted })}
+        </span>
+      </div>
+    );
+
+    const wellnessRow = hasWellness ? (
+      <div className={`gh-membership-benefit${benefitsLocked ? " gh-membership-benefit--locked" : ""}`}>
+        <span aria-hidden className="gh-membership-benefit__tile">
+          <Sparkles className="size-5" />
+        </span>
+        <div>
+          <h3 className="gh-membership-benefit__title">{t.wellnessTitle}</h3>
+          <p className="gh-membership-benefit__body">
+            {m.benefitWellnessBody}
+            {cheapestKit
+              ? ` ${
+                  cheapestKit.eligible
+                    ? interpolate(t.wellnessReady, { kit: cheapestKit.name })
+                    : interpolate(t.wellnessProgress, {
+                        remaining: remainingCredits(wellnessBalance, cheapestKit.requiredWellnessCredits),
+                        kit: cheapestKit.name,
+                      })
+                }`
+              : ""}
+          </p>
+          {benefitsLocked ? (
+            <span className="gh-membership-lock">
+              <Lock className="size-3" aria-hidden />
+              {interpolate(m.benefitLockChip, { months: benefitsUnlockMonths })}
+            </span>
+          ) : kits.length > 0 ? (
+            <Link
+              href="/account/rewards"
+              className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold underline"
+              style={{ color: "var(--portal-primary)" }}
+            >
+              <Gift className="size-4" aria-hidden />
+              {t.redeem}
+            </Link>
+          ) : null}
+        </div>
+        <span className="gh-membership-benefit__amount">{benefitsLocked ? "—" : wellnessBalance}</span>
+      </div>
+    ) : null;
+
+    const perkRows = perks.map((perk) => {
+      const status = perkStatus(perk, sub.paidMonthsCount, benefitsUnlockMonths);
+      const months = effectivePerkUnlockMonths(perk, benefitsUnlockMonths);
+      return (
+        <div
+          key={perk.perkKey}
+          className={`gh-membership-benefit${status === "unlocked" ? "" : " gh-membership-benefit--locked"}`}
+        >
+          <span aria-hidden className="gh-membership-benefit__tile">
+            <Award className="size-5" />
+          </span>
+          <div>
+            <h3 className="gh-membership-benefit__title">{perkLabel(perk.perkKey)}</h3>
+            {status === "unlocked" ? (
+              <p className="gh-membership-benefit__body">{t.perkUnlocked}</p>
+            ) : (
+              <span className="gh-membership-lock">
+                <Lock className="size-3" aria-hidden />
+                {status === "manual"
+                  ? t.perkLockedManual
+                  : interpolate(m.benefitLockChip, { months })}
+              </span>
+            )}
+          </div>
+          <span aria-hidden />
+        </div>
+      );
+    });
+
+    return (
+      <section className="gh-patient-subscription-dashboard mt-5 grid gap-5">
+        <AdminCard padding={0}>
+          <SectionHeader
+            as="h2"
+            title={m.benefitsTitle}
+            description={
+              benefitsLocked
+                ? m.benefitsPendingDesc
+                : nextBilling
+                  ? interpolate(m.benefitsResetDesc, { date: nextBilling })
+                  : undefined
+            }
+          />
+          <div className="p-5">
+            {creditRow}
+            {wellnessRow}
+            {perkRows}
+          </div>
+        </AdminCard>
       </section>
     );
   }
