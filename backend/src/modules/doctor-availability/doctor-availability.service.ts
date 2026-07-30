@@ -137,10 +137,95 @@ export async function bulkSetSlotBlockInRange(
 }
 
 /**
+ * Single-date holes in the recurring windows (`DoctorAvailabilityException`).
+ * Loaded with a ±1 day pad so a candidate that starts just outside the queried
+ * range but overlaps an exception is still dropped.
+ */
+async function listAvailabilityExceptions(
+  doctorId: string,
+  fromUtc: Date,
+  toUtc: Date,
+): Promise<{ startAt: Date; endAt: Date }[]> {
+  const pad = 24 * 60 * 60 * 1000;
+  return prisma.doctorAvailabilityException.findMany({
+    where: {
+      doctorId,
+      startAt: { gte: new Date(fromUtc.getTime() - pad) },
+      endAt: { lte: new Date(toUtc.getTime() + pad) },
+    },
+    select: { startAt: true, endAt: true },
+  });
+}
+
+/**
+ * Remove ONE concrete slot for ONE date, permanently.
+ *
+ * Deleting the row alone would not stick — the generators re-materialise slots
+ * from the recurring windows on every availability read — so this also writes a
+ * `DoctorAvailabilityException` for the slot's exact span. The weekly window is
+ * left completely untouched: the same weekday next week still generates.
+ *
+ * Only OPEN/BLOCKED slots can go: BOOKED/HELD carry a real appointment or a
+ * live cart hold and must be cancelled through their own flow first.
+ */
+export async function removeSlotForDate(
+  doctorId: string,
+  slotId: string,
+  reason?: string | null,
+): Promise<
+  | { ok: true; startAt: Date; endAt: Date }
+  | { ok: false; code: "NOT_FOUND" | "OCCUPIED" }
+> {
+  try {
+    const slot = await prisma.doctorTimeSlot.findFirst({
+      where: { id: slotId, doctorId },
+      select: { id: true, status: true, startAt: true, endAt: true },
+    });
+    if (!slot) return { ok: false, code: "NOT_FOUND" };
+    if (slot.status !== "OPEN" && slot.status !== "BLOCKED") {
+      return { ok: false, code: "OCCUPIED" };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // Exception first, then the delete: if the transaction is retried or the
+      // delete races another writer, the hole is already recorded and the slot
+      // can't come back.
+      await tx.doctorAvailabilityException.upsert({
+        where: { doctorId_startAt: { doctorId, startAt: slot.startAt } },
+        create: {
+          doctorId,
+          startAt: slot.startAt,
+          endAt: slot.endAt,
+          reason: reason?.trim() || null,
+        },
+        update: { endAt: slot.endAt, reason: reason?.trim() || null },
+      });
+      // Re-assert the status in the delete filter: a booking could have claimed
+      // the slot between the read above and here, and a paid appointment must
+      // never lose its slot to a stale Remove click.
+      const deleted = await tx.doctorTimeSlot.deleteMany({
+        where: { id: slot.id, doctorId, status: { in: ["OPEN", "BLOCKED"] } },
+      });
+      if (deleted.count === 0) throw new SlotAlreadyTakenError();
+    });
+
+    // The read caches key on doctor + date bucket, so a removed slot would
+    // linger in a public listing for up to the TTL otherwise.
+    slotCache.clear();
+    return { ok: true, startAt: slot.startAt, endAt: slot.endAt };
+  } catch (error) {
+    if (error instanceof SlotAlreadyTakenError) return { ok: false, code: "OCCUPIED" };
+    throw normalizeDbError(error, "Could not remove slot");
+  }
+}
+
+/**
  * Ensure DoctorTimeSlot rows exist for every window across the requested
  * date range. Idempotent — uses `createMany({ skipDuplicates: true })`
  * against the `@@unique([doctorId, startAt])` index. Doctors with no
- * availability rows produce zero slots.
+ * availability rows produce zero slots. Spans carrying a
+ * `DoctorAvailabilityException` are skipped, which is what makes an admin's
+ * one-off slot removal permanent.
  */
 export async function ensureSlotsForRange(
   doctorId: string,
@@ -172,6 +257,9 @@ export async function ensureSlotsForRange(
   if (windows.length === 0) return;
 
   const tz = await resolveDoctorTimeZone(doctorId);
+  // Admin-removed single dates. A candidate overlapping one of these is never
+  // re-created, which is the whole point of the exception row.
+  const exceptions = await listAvailabilityExceptions(doctorId, fromUtc, toUtc);
   const generated: { doctorId: string; startAt: Date; endAt: Date }[] = [];
 
   // Iterate clinic-local calendar days (not UTC midnights). `startMinute` is
@@ -197,6 +285,9 @@ export async function ensureSlotsForRange(
         const startAt = zonedWallClockToUtc(day, minute, tz);
         const endAt = new Date(startAt.getTime() + duration * 60 * 1000);
         if (startAt < fromUtc || startAt >= toUtc) continue;
+        if (exceptions.some((ex) => intervalsOverlap({ startAt, endAt }, ex))) {
+          continue;
+        }
         generated.push({ doctorId, startAt, endAt });
       }
     }
@@ -380,6 +471,10 @@ export async function ensureServiceSlotsForRange(
     },
     select: { startAt: true, endAt: true },
   });
+
+  // Admin-removed single dates count as occupied for the overlap test below, so
+  // a longer service-duration candidate can't fill a hole the admin punched.
+  existing.push(...(await listAvailabilityExceptions(doctorId, fromUtc, toUtc)));
 
   const generated: { doctorId: string; startAt: Date; endAt: Date }[] = [];
 

@@ -401,7 +401,7 @@ export default async function AdminDoctorAvailabilityPage({
       <PageHeader
         eyebrow="Doctor"
         title={`${doctor.fullName} · Availability`}
-        description="Week calendar of booked appointments and open slots — click an open time to book. Recurring weekly windows below generate the slots (clinic timezone)."
+        description="Week calendar of booked appointments and open slots — click an open time to book, or use its corner buttons to block or remove it. Recurring weekly windows below generate the slots (clinic timezone)."
       />
 
       {messages.error ? (
@@ -417,7 +417,7 @@ export default async function AdminDoctorAvailabilityPage({
 
       <FormSection
         title="Week calendar"
-        description="Booked appointments and open slots for this doctor. Click a green (open) time to book directly — patient, service, and mode are filled in a quick dialog; the doctor and time come from the slot you clicked."
+        description="Booked appointments and open slots for this doctor. Click a green (open) time to book directly — patient, service, and mode are filled in a quick dialog; the doctor and time come from the slot you clicked. The corner buttons on a slot block it (⃠ — keeps the slot, marks it unavailable) or remove it (🗑 — deletes it for that date only, leaving the weekly window untouched); clicking a red blocked slot re-opens it."
       >
         <div className="gh-form-section__span-2 mt-4 min-w-0">
           {calendarResult.ok ? (
