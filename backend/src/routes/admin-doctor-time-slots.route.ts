@@ -11,6 +11,7 @@ import {
 } from "../utils/admin-country-scope.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { removeSlotForDate } from "../modules/doctor-availability/doctor-availability.service.js";
 
 /**
  * Admin block/unblock of a single doctor time slot — the admin-side twin of
@@ -31,6 +32,11 @@ const bodySchema = z
     status: z.enum(["OPEN", "BLOCKED"]),
     reason: z.string().trim().max(200).optional(),
   })
+  .strict();
+
+/** DELETE carries an optional note only — the slot is identified by the path. */
+const deleteBodySchema = z
+  .object({ reason: z.string().trim().max(200).optional() })
   .strict();
 
 type AdminDoctorTimeSlotsDependencies = {
@@ -125,6 +131,82 @@ export function createAdminDoctorTimeSlotsRoute(
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not update slot"));
+      }
+    });
+
+    /**
+     * Remove one slot for its own date only. Deletes the row AND records a
+     * `DoctorAvailabilityException` for the same span, because slots are
+     * regenerated from the recurring weekly windows on every availability read
+     * — without the exception the slot would simply come back. The weekly
+     * window is not touched: the same weekday next week still generates.
+     */
+    app.delete("/api/admin/doctors/:doctorId/time-slots/:slotId", async (request, reply) => {
+      const params = paramsSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      // A DELETE with no body at all is the common case — treat it as {}.
+      const body = deleteBodySchema.safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid body", body.error.flatten()));
+      }
+
+      const authenticatedAccess = authenticatedRequests.get(request);
+      if (!authenticatedAccess) {
+        return reply
+          .status(503)
+          .send(errorResponse("Admin authorization is temporarily unavailable"));
+      }
+
+      try {
+        const doctor = await prisma.doctor.findUnique({
+          where: { id: params.data.doctorId },
+          select: { id: true, countryId: true },
+        });
+        if (!doctor) return reply.status(404).send(errorResponse("Doctor not found"));
+
+        const scope = await dependencies.verifyCountryScope({
+          request,
+          authenticatedAccess,
+          countryId: doctor.countryId,
+          operation: "remove_slot",
+          resourceType: "DoctorTimeSlot",
+          resourceId: params.data.slotId,
+        });
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        const result = await removeSlotForDate(
+          doctor.id,
+          params.data.slotId,
+          body.data.reason,
+        );
+        if (!result.ok) {
+          return result.code === "NOT_FOUND"
+            ? reply.status(404).send(errorResponse("Slot not found"))
+            : reply
+                .status(409)
+                .send(
+                  errorResponse(
+                    "This slot is booked or on hold — cancel the appointment before removing it",
+                  ),
+                );
+        }
+
+        return okResponse({
+          removed: {
+            id: params.data.slotId,
+            startAt: result.startAt.toISOString(),
+            endAt: result.endAt.toISOString(),
+          },
+        });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not remove slot"));
       }
     });
   };
