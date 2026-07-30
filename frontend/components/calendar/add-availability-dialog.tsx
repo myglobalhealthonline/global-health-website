@@ -16,8 +16,8 @@ import {
  *
  * The mode is the real distinction, and it is the first thing you pick:
  *   • Repeats weekly → writes DoctorAvailability windows. Slots regenerate from
- *     them forever (or between the optional dates), which is how a normal
- *     schedule is expressed.
+ *     them week after week until the doctor pauses or deletes the window, which
+ *     is how a normal working schedule is expressed.
  *   • Specific dates → writes concrete ad-hoc slots for those dates only. They
  *     survive later edits to the weekly windows, which is exactly what a
  *     one-off extra clinic needs.
@@ -34,9 +34,6 @@ export type AddAvailabilityLabels = {
   toTime: string;
   fromDate: string;
   toDate: string;
-  startsOptional: string;
-  endsOptional: string;
-  datesHint: string;
   gridHint: string;
   timezoneHint: string;
   cancel: string;
@@ -55,7 +52,7 @@ export const DEFAULT_ADD_AVAILABILITY_LABELS: AddAvailabilityLabels = {
   modeWeekly: "Repeats weekly",
   modeDates: "Specific dates",
   weeklyIntro:
-    "Pick the days you work and the hours you work them. Slots are generated on the {minutes}-minute grid and keep regenerating week after week.",
+    "Pick the days you work and the hours you work them. Slots are generated on the {minutes}-minute grid and keep regenerating week after week, until you pause or delete the window.",
   datesIntro:
     "Slots on these dates only, on the {minutes}-minute grid. Nothing repeats, and these slots stay put even if your weekly hours change later.",
   days: "Days",
@@ -63,9 +60,6 @@ export const DEFAULT_ADD_AVAILABILITY_LABELS: AddAvailabilityLabels = {
   toTime: "To time",
   fromDate: "From date",
   toDate: "To date",
-  startsOptional: "Starts (optional)",
-  endsOptional: "Ends (optional)",
-  datesHint: "Leave the dates blank to repeat forever.",
   gridHint:
     "Each slot is {minutes} minutes; a longer consultation takes consecutive slots.",
   timezoneHint: "Times are in {tz}.",
@@ -138,8 +132,6 @@ export function AddAvailabilityDialog({
   const [weekdays, setWeekdays] = useState<number[]>([]);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [effectiveFrom, setEffectiveFrom] = useState("");
-  const [effectiveUntil, setEffectiveUntil] = useState("");
   const [fromDate, setFromDate] = useState(defaultDate);
   const [toDate, setToDate] = useState(defaultDate);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -157,7 +149,7 @@ export function AddAvailabilityDialog({
     if (startMin === null || rawEnd === null) return null;
     const endMin = rawEnd === 0 ? 24 * 60 : rawEnd;
     if (endMin <= startMin) return null;
-    return describeConflict(weekdays, startMin, endMin, effectiveFrom, effectiveUntil);
+    return describeConflict(weekdays, startMin, endMin, "", "");
   })();
 
   function toggleWeekday(value: number) {
@@ -198,17 +190,15 @@ export function AddAvailabilityDialog({
         setLocalError(t.errorPickDay);
         return;
       }
-      if (effectiveFrom && effectiveUntil && effectiveFrom > effectiveUntil) {
-        setLocalError(t.errorEndDateAfterStart);
-        return;
-      }
       setLocalError(null);
       onSubmitWeekly({
         weekdays: [...weekdays].sort((a, b) => a - b),
         startMinute: startMin,
         endMinute: endMin,
-        effectiveFrom,
-        effectiveUntil,
+        // Always-on: a recurring window runs until the doctor pauses or
+        // deletes it. Bounded runs are what "Specific dates" is for.
+        effectiveFrom: "",
+        effectiveUntil: "",
       });
       return;
     }
@@ -345,33 +335,6 @@ export function AddAvailabilityDialog({
           </label>
         </div>
 
-        {mode === "weekly" ? (
-          <>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">{t.startsOptional}</span>
-                <input
-                  type="date"
-                  className="gh-input"
-                  value={effectiveFrom}
-                  onChange={(e) => setEffectiveFrom(e.target.value)}
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">{t.endsOptional}</span>
-                <input
-                  type="date"
-                  className="gh-input"
-                  value={effectiveUntil}
-                  onChange={(e) => setEffectiveUntil(e.target.value)}
-                />
-              </label>
-            </div>
-            <p className="text-portal-meta text-[var(--color-text-muted)]">
-              {t.datesHint}
-            </p>
-          </>
-        ) : null}
 
         <p className="text-portal-meta text-[var(--color-text-muted)]">
           {fill(t.gridHint, { minutes: BASE_SLOT_MINUTES })}{" "}
