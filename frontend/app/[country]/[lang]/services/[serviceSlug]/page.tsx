@@ -87,9 +87,13 @@ export async function generateMetadata({
   const detail = await getCountryServiceDetail(code, serviceSlug, lang);
   if (!detail) return { title: SITE_NAME };
 
-  // When an admin SEO title exists it already carries branding, so set it
-  // absolute to bypass the layout's "%s · Global Health" template. Otherwise
-  // fall back to the bare service name and let the template add the brand.
+  // Admin SEO titles here already carry the service AND the country, and the
+  // translated locales run 15-35 chars longer than the English they were
+  // budgeted against — a prod audit found 747 of 786 service title rows over
+  // Google's ~60-char display budget. `brandSuffix: false` drops the layout's
+  // " · Global Health" suffix on this route only: 15 chars back with zero
+  // keyword loss, instead of truncating the tail (see page-seo.ts SOCIAL_TITLE_LIMIT
+  // for why truncation is off the table). Social/OG titles keep their own brand.
   const title = detail.seoTitle ?? detail.name;
   const baseDescription =
     detail.seoDescription ?? detail.summary ?? `Learn about ${detail.name} and book a consultation.`;
@@ -102,6 +106,7 @@ export async function generateMetadata({
     path: `/${country}/${lang}/services/${serviceSlug}`,
     title,
     description,
+    brandSuffix: false,
     type: "website",
     kind: "service",
     subtitle: config?.name,
