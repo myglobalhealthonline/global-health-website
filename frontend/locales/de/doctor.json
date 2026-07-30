@@ -504,7 +504,10 @@
     "windowSlotsHint": "Blockieren, wieder öffnen oder entfernen Sie die Termine, die dieses Fenster erzeugt. Wählen Sie die Daten; Tag und Uhrzeit stammen aus dem Fenster oben.",
     "oneOffTitle": "Einzelne Tage",
     "oneOffDesc": "Termine für ein einzelnes Datum. Kein Wochenfenster erzeugt sie.",
-    "oneOffCounts": "{open} frei · {blocked} blockiert · {taken} gebucht"
+    "oneOffCounts": "{open} frei · {blocked} blockiert · {taken} gebucht",
+    "blockSlotTitle": "Diesen Termin blockieren",
+    "blockSlotIntro": "Der Termin verlässt die Buchung — Patienten sehen ihn nicht mehr. Sie können ihn jederzeit im Kalender wieder öffnen.",
+    "blockSlotReasonHint": "Optional — wird im Kalender beim Überfahren angezeigt."
   },
   "profile": {
     "eyebrow": "Arzt",

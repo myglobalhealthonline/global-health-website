@@ -504,7 +504,10 @@
     "windowSlotsHint": "Bloquea, reabre o elimina los huecos que genera esta ventana. Elige las fechas; el día y las horas vienen de la ventana de arriba.",
     "oneOffTitle": "Fechas puntuales",
     "oneOffDesc": "Huecos añadidos para una fecha concreta. Ninguna ventana semanal los genera.",
-    "oneOffCounts": "{open} libres · {blocked} bloqueados · {taken} reservados"
+    "oneOffCounts": "{open} libres · {blocked} bloqueados · {taken} reservados",
+    "blockSlotTitle": "Bloquear este hueco",
+    "blockSlotIntro": "El hueco sale de las reservas: los pacientes dejan de verlo. Puedes reabrirlo cuando quieras desde el calendario.",
+    "blockSlotReasonHint": "Opcional: se muestra al pasar el ratón en el calendario."
   },
   "profile": {
     "eyebrow": "Médico",

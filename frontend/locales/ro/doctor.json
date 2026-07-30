@@ -504,7 +504,10 @@
     "windowSlotsHint": "Blochează, redeschide sau elimină intervalele generate de această fereastră. Alege datele; ziua și orele vin din fereastra de mai sus.",
     "oneOffTitle": "Zile punctuale",
     "oneOffDesc": "Intervale adăugate pentru o singură zi. Nicio fereastră săptămânală nu le generează.",
-    "oneOffCounts": "{open} libere · {blocked} blocate · {taken} rezervate"
+    "oneOffCounts": "{open} libere · {blocked} blocate · {taken} rezervate",
+    "blockSlotTitle": "Blochează acest interval",
+    "blockSlotIntro": "Intervalul iese din rezervări — pacienții nu îl mai văd. Îl poți redeschide oricând din calendar.",
+    "blockSlotReasonHint": "Opțional — apare la trecerea cu mouse-ul în calendar."
   },
   "profile": {
     "eyebrow": "Medic",

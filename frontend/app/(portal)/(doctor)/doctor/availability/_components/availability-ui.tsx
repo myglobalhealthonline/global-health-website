@@ -35,6 +35,7 @@ import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { ViewToggle, type CalendarView } from "@/components/calendar/view-toggle";
 import { AddAvailabilityDialog } from "@/components/calendar/add-availability-dialog";
+import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
 import { describeAddResult } from "@/components/calendar/add-slot-dialog";
@@ -636,7 +637,10 @@ export function DoctorAvailabilityUI({
               // blocked block clicks back open — same set as the admin grid.
               onSelectOpenSlot={(item) => void slotManager.setStatus(item, "BLOCKED")}
               onSelectConsultation={openEvent}
-              onBlockSlot={(item) => void slotManager.setStatus(item, "BLOCKED")}
+              onBlockSlot={(item) => {
+                slotManager.setError(null);
+                slotManager.setBlockTarget(item);
+              }}
               onSelectBlockedSlot={(item) => void slotManager.setStatus(item, "OPEN")}
               onRemoveSlot={(item) => slotManager.setRemoveTarget(item)}
               selectionMode={slotManager.selectionMode}
@@ -968,6 +972,33 @@ export function DoctorAvailabilityUI({
         }}
         onSubmitWeekly={(input) => void onAddWeekly(input)}
         onSubmitDates={(isos, duration) => void slotManager.create(isos, duration)}
+      />
+
+      <BlockSlotDialog
+        key={slotManager.blockTarget?.id ?? "no-block"}
+        open={slotManager.blockTarget !== null}
+        slot={slotManager.blockTarget}
+        tz={tz}
+        busy={busy}
+        error={slotManager.error}
+        labels={{
+          title: s.blockSlotTitle,
+          intro: s.blockSlotIntro,
+          reasonLabel: s.reasonOptional,
+          reasonPlaceholder: s.manageReasonPlaceholder,
+          reasonHint: s.blockSlotReasonHint,
+          cancel: c.slotDialogCancel,
+          confirm: s.slotActionBlock,
+          confirmBusy: s.manageBusy,
+        }}
+        onClose={() => {
+          slotManager.setBlockTarget(null);
+          slotManager.setError(null);
+        }}
+        onConfirm={(reason) => {
+          const target = slotManager.blockTarget;
+          if (target) void slotManager.setStatus(target, "BLOCKED", reason || undefined);
+        }}
       />
 
       <RemoveSlotDialog

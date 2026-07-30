@@ -864,18 +864,34 @@ export function WeekCalendar({
                         </button>
                       );
                     }
-                    return (
+                    // Anything left over: HELD, a past OPEN slot, a BLOCKED
+                    // one on a surface with no re-open handler. Still gets its
+                    // corner actions when the surface offers them — a slot the
+                    // doctor can see is a slot they should be able to manage.
+                    const inertBlock = (
                       <div
-                        key={p.item.id}
                         title={
                           p.item.meta?.blockReason
                             ? `${timeLabel} · ${p.item.meta.blockReason}`
                             : fullTitle
                         }
                         className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1"
-                        style={style}
+                        style={
+                          cornerActions
+                            ? { position: "absolute", inset: 0, ...toneStyle(p.item) }
+                            : style
+                        }
                       >
                         {inner}
+                      </div>
+                    );
+                    if (!cornerActions) {
+                      return <Fragment key={p.item.id}>{inertBlock}</Fragment>;
+                    }
+                    return (
+                      <div key={p.item.id} style={geometry}>
+                        {inertBlock}
+                        {cornerActions}
                       </div>
                     );
                   })}
@@ -922,7 +938,7 @@ function CornerAction({
       onClick={onClick}
       aria-label={label}
       title={title}
-      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border opacity-70 shadow-sm transition hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40"
+      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border opacity-90 shadow-sm transition hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40"
       // Neutral surface, not another red fill: a danger-toned button on a
       // BLOCKED block's danger-toned fill was a red square on red.
       style={{

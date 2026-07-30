@@ -504,7 +504,10 @@
     "windowSlotsHint": "Block, re-open, or remove the slots this window generates. Pick which dates; the day and hours come from the window above.",
     "oneOffTitle": "One-off dates",
     "oneOffDesc": "Slots added for a single date. No weekly window generates these.",
-    "oneOffCounts": "{open} open · {blocked} blocked · {taken} booked"
+    "oneOffCounts": "{open} open · {blocked} blocked · {taken} booked",
+    "blockSlotTitle": "Block this time",
+    "blockSlotIntro": "The slot leaves bookable inventory — patients stop seeing it. Re-open it any time from the calendar.",
+    "blockSlotReasonHint": "Optional — shown on hover in the calendar."
   },
   "profile": {
     "eyebrow": "Doctor",

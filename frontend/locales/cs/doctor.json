@@ -504,7 +504,10 @@
     "windowSlotsHint": "Zablokujte, znovu otevřete nebo odeberte termíny, které toto okno vytváří. Vyberte data; den a hodiny přebírá okno výše.",
     "oneOffTitle": "Jednorázové dny",
     "oneOffDesc": "Termíny přidané pro jeden konkrétní den. Negeneruje je žádné týdenní okno.",
-    "oneOffCounts": "{open} volných · {blocked} blokovaných · {taken} rezervovaných"
+    "oneOffCounts": "{open} volných · {blocked} blokovaných · {taken} rezervovaných",
+    "blockSlotTitle": "Blokovat tento termín",
+    "blockSlotIntro": "Termín zmizí z rezervací — pacienti ho přestanou vidět. Kdykoli jej v kalendáři znovu otevřete.",
+    "blockSlotReasonHint": "Nepovinné — zobrazí se v kalendáři po najetí myší."
   },
   "profile": {
     "eyebrow": "Lékař",

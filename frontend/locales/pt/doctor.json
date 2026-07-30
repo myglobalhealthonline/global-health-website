@@ -504,7 +504,10 @@
     "windowSlotsHint": "Bloqueie, reabra ou remova os horários gerados por esta janela. Escolha as datas; o dia e as horas vêm da janela acima.",
     "oneOffTitle": "Datas pontuais",
     "oneOffDesc": "Horários adicionados para uma data específica. Nenhuma janela semanal os gera.",
-    "oneOffCounts": "{open} livres · {blocked} bloqueados · {taken} reservados"
+    "oneOffCounts": "{open} livres · {blocked} bloqueados · {taken} reservados",
+    "blockSlotTitle": "Bloquear este horário",
+    "blockSlotIntro": "O horário sai das reservas — os pacientes deixam de o ver. Pode reabri-lo a qualquer momento no calendário.",
+    "blockSlotReasonHint": "Opcional — aparece ao passar o rato no calendário."
   },
   "profile": {
     "eyebrow": "Médico",
