@@ -7,7 +7,6 @@ import {
   Ban,
   CalendarClock,
   CheckCircle2,
-  CheckSquare,
   Pencil,
   Plus,
   Trash2,
@@ -593,15 +592,6 @@ export function DoctorAvailabilityUI({
             labels={{ month: s.viewMonth, week: s.viewWeek }}
             ariaLabel={s.viewToggleAria}
           />
-          <Btn
-            type="button"
-            size="sm"
-            variant={slotManager.selectionMode ? "primary" : "ghost"}
-            onClick={() => slotManager.setSelectionMode(!slotManager.selectionMode)}
-            iconLeft={<CheckSquare className="size-3.5" />}
-          >
-            {slotManager.selectionMode ? s.selectModeOn : s.selectMode}
-          </Btn>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Btn
@@ -643,8 +633,7 @@ export function DoctorAvailabilityUI({
               }}
               onSelectBlockedSlot={(item) => void slotManager.setStatus(item, "OPEN")}
               onRemoveSlot={(item) => slotManager.setRemoveTarget(item)}
-              selectionMode={slotManager.selectionMode}
-              selectedIds={slotManager.selected}
+                  selectedIds={slotManager.selected}
               onToggleSelect={slotManager.toggleSelected}
               slotActionsBusy={busy}
               onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
@@ -891,7 +880,6 @@ export function DoctorAvailabilityUI({
           slotsLabel={s.sectionSlots}
           onSelectConsultation={openEvent}
           canToggleSlot={() => false}
-          selectionMode={slotManager.selectionMode}
           selectedIds={slotManager.selected}
           onToggleSelect={slotManager.toggleSelected}
           slotActionsBusy={busy}

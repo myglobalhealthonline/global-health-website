@@ -357,23 +357,8 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
         );
         if (!row) return reply.status(404).send(errorResponse("Window not found"));
 
-        // The window moved, so future OPEN slots minted from its old shape are
-        // stale — drop them and let the next range fetch re-materialise from
-        // the new shape. BOOKED/HELD/BLOCKED stay: they are real commitments.
-        try {
-          await prisma.doctorTimeSlot.deleteMany({
-            where: {
-              doctorId: auth.doctorId,
-              status: "OPEN",
-              startAt: { gte: new Date() },
-              // Admin-added one-off slots aren't derived from any window, so a
-              // sweep would delete them permanently. They opt out.
-              isAdHoc: false,
-            },
-          });
-        } catch {
-          /* non-fatal — stale open slots age out */
-        }
+        // Stale slots left by the old window shape are reconciled inside
+        // `patchAdminAvailability` — see reconcileWindowDerivedSlots.
         return okResponse({ availability: row });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -402,21 +387,8 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
           params.data.availabilityId,
         );
         if (!ok) return reply.status(404).send(errorResponse("Window not found"));
-        // Clean up derived OPEN slots — leave BOOKED + BLOCKED alone
-        try {
-          await prisma.doctorTimeSlot.deleteMany({
-            where: {
-              doctorId: auth.doctorId,
-              status: "OPEN",
-              startAt: { gte: new Date() },
-              // Admin-added one-off slots aren't derived from any window, so a
-              // sweep would delete them permanently. They opt out.
-              isAdHoc: false,
-            },
-          });
-        } catch {
-          /* non-fatal — slots will time out naturally */
-        }
+        // Future slots this window was the only source for are reconciled
+        // inside `deleteAdminAvailability` — see reconcileWindowDerivedSlots.
         return okResponse({ deleted: true });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

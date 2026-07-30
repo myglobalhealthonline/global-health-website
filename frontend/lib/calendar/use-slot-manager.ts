@@ -65,8 +65,8 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
 
-  // Multi-select. Holds BARE slot ids so the set can be posted as-is.
-  const [selectionMode, setSelectionMode] = useState(false);
+  // Multi-select. Holds BARE slot ids so the set can be posted as-is. Always
+  // available — every slot carries its own checkbox, so there is no mode.
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const clearMessages = useCallback(() => {
@@ -177,12 +177,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
 
   const clearSelection = useCallback(() => setSelected(new Set()), []);
 
-  /** Leaving select mode must not strand a selection the user can't see. */
-  const setSelectionModeSafely = useCallback((on: boolean) => {
-    setSelectionMode(on);
-    if (!on) setSelected(new Set());
-  }, []);
-
   return {
     busy,
     error,
@@ -198,8 +192,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     addOpen,
     setAddOpen,
 
-    selectionMode,
-    setSelectionMode: setSelectionModeSafely,
     selected,
     toggleSelected,
     clearSelection,

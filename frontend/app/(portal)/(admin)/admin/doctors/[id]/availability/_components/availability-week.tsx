@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { CheckSquare, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
@@ -105,15 +105,7 @@ export function AvailabilityWeek({
 
   return (
     <div className="grid min-w-0 gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <button
-          type="button"
-          className="gh-btn gh-btn-outline"
-          onClick={() => slotManager.setSelectionMode(!slotManager.selectionMode)}
-        >
-          <CheckSquare className="size-3.5" aria-hidden />{" "}
-          {slotManager.selectionMode ? "Selecting" : "Select"}
-        </button>
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
@@ -162,7 +154,6 @@ export function AvailabilityWeek({
             slotManager.setError(null);
             slotManager.setRemoveTarget(item);
           }}
-          selectionMode={slotManager.selectionMode}
           selectedIds={slotManager.selected}
           onToggleSelect={slotManager.toggleSelected}
           slotActionsBusy={busy}

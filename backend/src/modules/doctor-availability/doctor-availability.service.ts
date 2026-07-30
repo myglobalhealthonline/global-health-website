@@ -702,19 +702,20 @@ export async function removeSlotForDate(
 }
 
 /**
- * Ensure DoctorTimeSlot rows exist for every window across the requested
- * date range. Idempotent — uses `createMany({ skipDuplicates: true })`
- * against the `@@unique([doctorId, startAt])` index. Doctors with no
- * availability rows produce zero slots. Spans carrying a
- * `DoctorAvailabilityException` are skipped, which is what makes an admin's
- * one-off slot removal permanent.
+ * Every base-grid slot the doctor's recurring windows justify in
+ * [fromUtc, toUtc) — the single definition of "a window-derived slot".
+ *
+ * Shared by generation (`ensureSlotsForRange`) and the window-change reconcile
+ * (`reconcileWindowDerivedSlots`) on purpose: if the two computed candidates
+ * independently they could disagree, and a slot neither side claimed would
+ * either be deleted while still legitimate or linger while orphaned.
  */
-export async function ensureSlotsForRange(
+async function windowSlotCandidates(
   doctorId: string,
   fromUtc: Date,
   toUtc: Date,
-): Promise<void> {
-  if (toUtc <= fromUtc) return;
+): Promise<{ doctorId: string; startAt: Date; endAt: Date }[]> {
+  if (toUtc <= fromUtc) return [];
 
   const windows = await prisma.doctorAvailability.findMany({
     where: {
@@ -736,7 +737,7 @@ export async function ensureSlotsForRange(
       effectiveUntil: true,
     },
   });
-  if (windows.length === 0) return;
+  if (windows.length === 0) return [];
 
   const tz = await resolveDoctorTimeZone(doctorId);
   // Admin-removed single dates. A candidate overlapping one of these is never
@@ -774,7 +775,113 @@ export async function ensureSlotsForRange(
       }
     }
   }
+  return generated;
+}
 
+/**
+ * How far ahead a window change reconciles. Windows recur forever, so the sweep
+ * needs a horizon; a year matches the frontend bulk tools' `MAX_RANGE_DAYS` and
+ * covers every range the portal or a patient can browse to.
+ */
+export const WINDOW_SWEEP_HORIZON_DAYS = 366;
+
+/**
+ * Existing slots no window justifies any more, matched on the exact span.
+ *
+ * Comparing `endAt` as well as `startAt` is what catches duration drift: a
+ * legacy 30-min slot at 09:00 shares its start with a 15-min candidate at
+ * 09:00, so a start-only match would keep the coarse row — and the 09:15
+ * candidate would then die on the overlap exclusion constraint, leaving the
+ * doctor on a grid their window no longer describes.
+ */
+export function selectStaleSlots<T extends { startAt: Date; endAt: Date }>(
+  existing: T[],
+  candidates: { startAt: Date; endAt: Date }[],
+): T[] {
+  const span = (s: { startAt: Date; endAt: Date }) =>
+    `${s.startAt.getTime()}:${s.endAt.getTime()}`;
+  const owned = new Set(candidates.map(span));
+  return existing.filter((e) => !owned.has(span(e)));
+}
+
+/**
+ * Reconcile a doctor's future slots against their CURRENT windows — run after
+ * any window is changed, paused, or deleted.
+ *
+ * Slot rows are materialised, not derived at read time, so a window that moves
+ * (Fri → Mon), narrows, or disappears leaves its old slots behind. Those rows
+ * are unreachable from the UI's "Weekly windows" list, no generator can ever
+ * re-derive them, and an OPEN one is still bookable by a patient — a booking on
+ * a day the doctor no longer works.
+ *
+ * What survives, and why:
+ *   • BOOKED / HELD — a real appointment or a live cart hold. Never touched
+ *     here; those go through cancellation.
+ *   • `isAdHoc` — added for one specific date, with no window behind it. There
+ *     is nothing to reconcile against, so the sweep must not judge them.
+ *   • OPEN / BLOCKED whose exact span a live window still generates. A BLOCKED
+ *     slot inside live hours is the doctor deliberately marking themselves busy
+ *     and is left exactly as it is.
+ *
+ * Everything else in the horizon goes. Regeneration stays lazy: the next range
+ * read calls `ensureSlotsForRange`, which re-mints from the new shape.
+ */
+export async function reconcileWindowDerivedSlots(
+  doctorId: string,
+  now: Date = new Date(),
+): Promise<number> {
+  try {
+    const horizonEnd = new Date(
+      now.getTime() + WINDOW_SWEEP_HORIZON_DAYS * 24 * 60 * 60 * 1000,
+    );
+    const [candidates, existing] = await Promise.all([
+      windowSlotCandidates(doctorId, now, horizonEnd),
+      prisma.doctorTimeSlot.findMany({
+        where: {
+          doctorId,
+          status: { in: ["OPEN", "BLOCKED"] },
+          isAdHoc: false,
+          startAt: { gte: now, lt: horizonEnd },
+        },
+        select: { id: true, startAt: true, endAt: true },
+      }),
+    ]);
+    const stale = selectStaleSlots(existing, candidates);
+    if (stale.length === 0) return 0;
+
+    // Re-assert status in the delete filter: a patient could have claimed one of
+    // these between the read and here, and a paid appointment must never lose
+    // its slot to a window edit.
+    const deleted = await prisma.doctorTimeSlot.deleteMany({
+      where: {
+        id: { in: stale.map((s) => s.id) },
+        doctorId,
+        status: { in: ["OPEN", "BLOCKED"] },
+      },
+    });
+    invalidateAvailabilityCaches();
+    return deleted.count;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not reconcile doctor slots");
+  }
+}
+
+/**
+ * Ensure DoctorTimeSlot rows exist for every window across the requested
+ * date range. Idempotent — uses `createMany({ skipDuplicates: true })`
+ * against the `@@unique([doctorId, startAt])` index. Doctors with no
+ * availability rows produce zero slots. Spans carrying a
+ * `DoctorAvailabilityException` are skipped, which is what makes an admin's
+ * one-off slot removal permanent.
+ */
+export async function ensureSlotsForRange(
+  doctorId: string,
+  fromUtc: Date,
+  toUtc: Date,
+): Promise<void> {
+  if (toUtc <= fromUtc) return;
+
+  const generated = await windowSlotCandidates(doctorId, fromUtc, toUtc);
   if (generated.length === 0) return;
 
   // Insert only the candidates that are genuinely missing, and skip the write
@@ -1549,6 +1656,11 @@ export async function patchAdminAvailability(
         ...(input.isActive !== undefined && { isActive: input.isActive }),
       },
     });
+    // The window moved, narrowed, or paused, so slots minted from its old shape
+    // may no longer be justified by any window. Reconcile before returning:
+    // leaving it to a later read would mean a patient can book a slot on a day
+    // the doctor just removed. Also invalidates the caches.
+    await reconcileWindowDerivedSlots(doctorId);
     // The windows drive generation, so the cached slot views are now stale.
     invalidateAvailabilityCaches();
     return {
@@ -1574,6 +1686,10 @@ export async function deleteAdminAvailability(
     const result = await prisma.doctorAvailability.deleteMany({
       where: { id: availabilityId, doctorId },
     });
+    // After the row is gone, so the reconcile's candidate set no longer counts
+    // this window. Drops every future OPEN/BLOCKED slot it was the only source
+    // for; slots another window still justifies stay.
+    if (result.count > 0) await reconcileWindowDerivedSlots(doctorId);
     // The windows drive generation, so the cached slot views are now stale.
     invalidateAvailabilityCaches();
     return result.count > 0;

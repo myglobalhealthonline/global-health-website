@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
-import { CheckSquare, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
@@ -95,7 +95,6 @@ export function AdminCalendarUI({
   // Bulk work is per-doctor: the endpoint is scoped to one calendar, and a
   // sweep across every doctor at once is not a thing an admin should be able to
   // do by accident. Both affordances therefore need the doctor filter set.
-  const [selectionMode, setSelectionMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const bulkReady = Boolean(filters.doctorId);
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
@@ -406,25 +405,6 @@ export function AdminCalendarUI({
           >
             <Plus className="size-3.5" aria-hidden /> Add slots
           </button>
-          <button
-            type="button"
-            className="gh-btn gh-btn-outline"
-            disabled={!bulkReady}
-            title={
-              bulkReady
-                ? "Pick several slots and act on them together"
-                : "Pick a doctor first — bulk actions run on one calendar"
-            }
-            onClick={() => {
-              setSelectionMode((on) => {
-                if (on) setSelected(new Set());
-                return !on;
-              });
-            }}
-          >
-            <CheckSquare className="size-3.5" aria-hidden />{" "}
-            {selectionMode ? "Selecting" : "Select"}
-          </button>
           <ViewToggle
             view={view}
             onChange={(next) =>
@@ -475,9 +455,8 @@ export function AdminCalendarUI({
           onBlockSlot={openBlockDialog}
           onSelectBlockedSlot={onUnblockSlot}
           onRemoveSlot={openRemoveDialog}
-          selectionMode={selectionMode && bulkReady}
           selectedIds={selected}
-          onToggleSelect={toggleSelected}
+          onToggleSelect={bulkReady ? toggleSelected : undefined}
           slotActionsBusy={slotBusy}
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
           onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
@@ -580,9 +559,8 @@ export function AdminCalendarUI({
           }
           showDoctorName
           onSelectConsultation={openEvent}
-          selectionMode={selectionMode && bulkReady}
           selectedIds={selected}
-          onToggleSelect={toggleSelected}
+          onToggleSelect={bulkReady ? toggleSelected : undefined}
           // Every slot action is an explicit chip button (Book / Block /
           // Re-open / Remove), so the chip itself is never a button — nesting
           // them would be invalid markup.
