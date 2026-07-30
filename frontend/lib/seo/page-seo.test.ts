@@ -254,6 +254,28 @@ describe("buildPublicMetadata", () => {
     );
   });
 
+  it("omits the brand suffix on routes that opt out, keeping every keyword", () => {
+    const source = "Consulta Pediátrica de Medicina Geral na Irlanda | Médico Online para Crianças";
+    const metadata = buildPublicMetadata({
+      path: "/ireland/pt/services/paediatric-consultation",
+      title: source,
+      description: "Consultas pediátricas no mesmo dia com médicos registados na Irlanda.",
+      kind: "service",
+      brandSuffix: false,
+    });
+    const openGraph = metadata.openGraph as OpenGraphMetadata;
+
+    // Document title: brand dropped, source intact — no ellipsis, no lost clause.
+    expect(metadata.title).toEqual({ absolute: source });
+    expect(renderedDocumentTitle(metadata.title)).toBe(source);
+    expect(renderedDocumentTitle(metadata.title)).not.toContain("Global Health");
+
+    // Social cards keep their own word-safe budget and carry the brand via
+    // `siteName`, so dropping the document-title suffix costs them nothing.
+    expect((openGraph.title as string).length).toBeLessThanOrEqual(74);
+    expect(openGraph.siteName).toBe("Global Health");
+  });
+
   it("keeps doctor OG metadata on the branded endpoint when the source image is untrusted", () => {
     const metadata = buildPublicMetadata({
       path: "/ireland/en/doctors/aoife-murphy",

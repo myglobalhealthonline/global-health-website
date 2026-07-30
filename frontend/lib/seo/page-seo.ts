@@ -31,6 +31,14 @@ export type PublicMetadataInput = {
   languages?: Record<string, string | URL>;
   keywords?: string[];
   noindex?: boolean;
+  /**
+   * Set false on routes whose CMS titles already carry the service AND country
+   * keywords and run long in the translated locales — the root layout's
+   * ` · Global Health` suffix then only pushes them further past Google's
+   * ~60-char display budget, and the brand is the one part Google rewrites or
+   * re-appends itself. Defaults to true (append the brand once).
+   */
+  brandSuffix?: boolean;
 };
 
 // Social cards clip hard at render time and never rank, so an OG/Twitter title
@@ -120,7 +128,7 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
   };
 
   return {
-    title: resolveBrandTitle(title),
+    title: input.brandSuffix === false ? { absolute: title } : resolveBrandTitle(title),
     description,
     keywords: input.keywords,
     alternates: {
