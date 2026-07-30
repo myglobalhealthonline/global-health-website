@@ -2,17 +2,12 @@ import { BASE_SLOT_MINUTES } from "@/lib/constants";
 import { zonedLocalDateTimeToUtc } from "@/components/calendar/calendar-utils";
 
 /**
- * Turning "these dates, these hours" into something the API accepts.
+ * Turning "these dates, these hours" into the start instant of every base-grid
+ * slot it covers — what adding availability posts.
  *
- * Two shapes come out of the same picker, because the two bulk operations name
- * their targets differently:
- *   • adding slots wants the START INSTANT of every base-grid slot;
- *   • blocking / unblocking / removing wants one UTC SPAN PER DAY.
- * A single from→to interval would be wrong for both: it would swallow the
- * nights between the days.
- *
- * All conversion happens here, in the timezone the calendar is displaying, so
- * the API never has to guess a zone.
+ * Conversion happens here, in the timezone the calendar is displaying, so the
+ * API never has to guess a zone. Block / unblock / remove no longer come
+ * through this path: they act on the slots ticked on the grid, by id.
  */
 
 /** Matches the API's per-request bound. */
@@ -118,44 +113,6 @@ export function expandSlotStarts(
     }
   }
   return { instants: out, problem: null };
-}
-
-/**
- * One UTC span per day — what block / unblock / remove post. The end of the
- * last slot is the span's end, so a 09:00–13:00 sweep covers exactly the slots
- * starting in [09:00, 13:00).
- */
-export function expandDaySpans(
-  fromDate: string,
-  toDate: string,
-  startTime: string,
-  endTime: string,
-  tz: string,
-  weekdays?: number[],
-): { spans: { fromUtc: string; toUtc: string }[]; problem: RangeProblem | null } {
-  const result = parseRange(fromDate, toDate, startTime, endTime, weekdays);
-  if ("problem" in result) return { spans: [], problem: result.problem };
-  const { dates, startMin, endMin } = result.parsed;
-
-  const spans: { fromUtc: string; toUtc: string }[] = [];
-  for (const date of dates) {
-    const fromUtc = zonedLocalDateTimeToUtc(`${date}T${minutesToHhmm(startMin)}`, tz);
-    // 24:00 is not a wall-clock an <input type="time"> or our converter accepts,
-    // so end-of-day is expressed as the last instant of the day instead.
-    const toUtc =
-      endMin >= 24 * 60
-        ? zonedLocalDateTimeToUtc(`${date}T23:59`, tz)
-        : zonedLocalDateTimeToUtc(`${date}T${minutesToHhmm(endMin)}`, tz);
-    if (!fromUtc || !toUtc) continue;
-    // Nudge an end-of-day span past 23:59 so the final slot of the day is
-    // inside the half-open interval the API queries with.
-    const end =
-      endMin >= 24 * 60
-        ? new Date(new Date(toUtc).getTime() + 60_000).toISOString()
-        : toUtc;
-    spans.push({ fromUtc, toUtc: end });
-  }
-  return { spans, problem: null };
 }
 
 /** How many base-grid slots a range covers — for "Block 96 slots" style copy. */

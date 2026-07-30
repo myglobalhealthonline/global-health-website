@@ -123,20 +123,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     [adapter, run],
   );
 
-  /** Bulk over a date × time sweep. Spans are pre-expanded by the caller. */
-  const bulkBySpans = useCallback(
-    async (
-      action: BulkSlotAction,
-      spans: { fromUtc: string; toUtc: string }[],
-      reason?: string,
-    ) =>
-      run(
-        () => adapter.bulk({ action, spans, reason }),
-        (data) => setNotice(adapter.describeBulk(action, data)),
-      ),
-    [adapter, run],
-  );
-
   /** Bulk over an explicit id list — used by the sidebar's per-date groups,
    *  which already know exactly which slots they cover. */
   const bulkIds = useCallback(
@@ -199,7 +185,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     setStatus,
     remove,
     create,
-    bulkBySpans,
     bulkIds,
     bulkSelected,
   };

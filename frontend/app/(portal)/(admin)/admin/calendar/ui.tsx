@@ -28,7 +28,6 @@ import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
-import { SlotManagerPanel } from "@/components/calendar/slot-manager-panel";
 import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
 import type { BulkSlotAction } from "@/lib/api/slot-bulk-types";
 import {
@@ -317,22 +316,6 @@ export function AdminCalendarUI({
 
   const weekDays = useMemo(() => weekDaysOf(weekAnchor), [weekAnchor]);
 
-  // What the Manage panel sweeps when its date fields are left blank: whatever
-  // stretch is on screen.
-  const visibleRange = useMemo(() => {
-    if (view === "week") {
-      return {
-        from: weekDays[0]?.key ?? weekAnchor,
-        to: weekDays[weekDays.length - 1]?.key ?? weekAnchor,
-      };
-    }
-    const last = new Date(Date.UTC(year, month, 0)).getUTCDate();
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return {
-      from: `${year}-${pad(month)}-01`,
-      to: `${year}-${pad(month)}-${pad(last)}`,
-    };
-  }, [view, weekDays, weekAnchor, year, month]);
 
   return (
     <div className="gh-admin-calendar-ui grid gap-4">
@@ -493,18 +476,6 @@ export function AdminCalendarUI({
         onAction={(action) => void runBulk(action, { slotIds: [...selected] })}
         onClear={() => setSelected(new Set())}
       />
-
-      {/* Range sweep — one doctor at a time, same rule as the other bulk work. */}
-      {bulkReady ? (
-        <SlotManagerPanel
-          tz={tz}
-          fallbackFrom={visibleRange.from}
-          fallbackTo={visibleRange.to}
-          weekdayLabels={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
-          busy={slotBusy}
-          onSubmit={(action, spans, reason) => void runBulk(action, { spans }, reason)}
-        />
-      ) : null}
 
       {/* Day agenda — lux sheet, same skin as the event drawer. */}
       <AppSheet

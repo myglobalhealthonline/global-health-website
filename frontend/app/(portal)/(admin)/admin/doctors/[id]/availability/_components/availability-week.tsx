@@ -20,7 +20,6 @@ import {
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
-import { SlotManagerPanel } from "@/components/calendar/slot-manager-panel";
 import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
 import { useSlotManager } from "@/lib/calendar/use-slot-manager";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
@@ -170,16 +169,6 @@ export function AvailabilityWeek({
         onClear={slotManager.clearSelection}
       />
 
-      <SlotManagerPanel
-        tz={tz}
-        fallbackFrom={weekDays[0]?.key ?? weekAnchor}
-        fallbackTo={weekDays[weekDays.length - 1]?.key ?? weekAnchor}
-        weekdayLabels={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
-        busy={busy}
-        onSubmit={(action, spans, reason) =>
-          void slotManager.bulkBySpans(action, spans, reason || undefined)
-        }
-      />
 
       <BookSlotDialog
         key={selectedSlot?.id ?? "none"}

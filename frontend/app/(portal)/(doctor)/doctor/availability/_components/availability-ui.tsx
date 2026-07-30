@@ -39,11 +39,8 @@ import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
 import { describeAddResult } from "@/components/calendar/add-slot-dialog";
 import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
-import { countRangeSlots, expandDaySpans } from "@/lib/calendar/expand-range";
-import type { BulkSlotAction } from "@/lib/api/slot-bulk-types";
 import { useSlotManager } from "@/lib/calendar/use-slot-manager";
 import {
-  addDaysKey,
   addMonths,
   addWeeksKey,
   dayLabel,
@@ -1112,37 +1109,6 @@ export function DoctorAvailabilityUI({
           <p className="text-portal-thead text-[var(--portal-muted)]">{s.editWindowSlotsNote}</p>
         </form>
 
-        {/* Managing the slots this window produced belongs here, not in a
-            separate panel: the weekday and the hours are already established
-            by the window being edited, so all that's left to choose is which
-            dates and which action. */}
-        {editTarget ? (
-          <WindowSlotControls
-            key={editTarget.id}
-            tz={tz}
-            weekday={editTarget.weekday}
-            startTime={minutesToTimeInput(editTarget.startMinute)}
-            endTime={minutesToTimeInput(editTarget.endMinute)}
-            effectiveUntil={editTarget.effectiveUntil}
-            busy={busy}
-            labels={{
-              title: s.manageSlotsTitle,
-              hint: s.windowSlotsHint,
-              reason: s.reasonOptional,
-              reasonPlaceholder: s.manageReasonPlaceholder,
-              block: s.slotActionBlock,
-              unblock: s.slotActionReopen,
-              remove: s.slotActionRemove,
-              busy: s.manageBusy,
-              affects: s.manageAffects,
-              removeConfirm: s.manageRemoveConfirm,
-              errorRange: s.manageErrorNoMatchingDays,
-            }}
-            onSubmit={(action, spans, reason) => {
-              void slotManager.bulkBySpans(action, spans, reason || undefined);
-            }}
-          />
-        ) : null}
       </PortalDialog>
 
       <PortalDialog
@@ -1219,148 +1185,7 @@ export function DoctorAvailabilityUI({
   );
 }
 
-/**
- * Slot controls for one weekly window, rendered inside its edit dialog.
- *
- * The window already fixes the weekday and the hours, so this only asks for the
- * dates (blank = the stretch on screen) and the action. It expands to UTC
- * day-spans exactly like the bulk endpoints expect, filtered to this window's
- * weekday, and hands them up — booked slots are skipped server-side.
- */
-/**
- * Slot controls for one weekly window, rendered inside its edit dialog.
- *
- * No date pickers: the window already says which day and which hours, so the
- * only sensible target is "the slots this window still has ahead of it". The
- * horizon runs from now to the window's end date, or 120 days out when it runs
- * forever — the same bound the availability API uses for a single read.
- * Booked and held slots are skipped server-side.
- */
-function WindowSlotControls({
-  tz,
-  weekday,
-  startTime,
-  endTime,
-  effectiveUntil,
-  busy,
-  labels: t,
-  onSubmit,
-}: {
-  tz: string;
-  weekday: number;
-  startTime: string;
-  endTime: string;
-  /** ISO date the window stops applying, if it has one. */
-  effectiveUntil: string | null;
-  busy: boolean;
-  labels: {
-    title: string;
-    hint: string;
-    reason: string;
-    reasonPlaceholder: string;
-    block: string;
-    unblock: string;
-    remove: string;
-    busy: string;
-    affects: string;
-    removeConfirm: string;
-    errorRange: string;
-  };
-  onSubmit: (
-    action: BulkSlotAction,
-    spans: { fromUtc: string; toUtc: string }[],
-    reason: string,
-  ) => void;
-}) {
-  const [reason, setReason] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  // Today in the display timezone, so "future" means the doctor's future.
-  const from = todayKey(tz);
-  const horizon = addDaysKey(from, 120);
-  const until = effectiveUntil ? effectiveUntil.slice(0, 10) : horizon;
-  const to = until < horizon ? until : horizon;
-
-  const affected = countRangeSlots(from, to, startTime, endTime, [weekday]);
-
-  function submit(action: BulkSlotAction) {
-    const { spans, problem } = expandDaySpans(from, to, startTime, endTime, tz, [
-      weekday,
-    ]);
-    if (problem || spans.length === 0) {
-      setError(t.errorRange);
-      return;
-    }
-    if (action === "REMOVE" && !window.confirm(t.removeConfirm)) return;
-    setError(null);
-    onSubmit(action, spans, reason.trim());
-  }
-
-  return (
-    <div
-      className="mt-4 grid gap-3 border-t pt-4"
-      style={{ borderColor: "var(--portal-line)" }}
-    >
-      <div>
-        <p className="text-sm font-bold text-[var(--portal-text)]">{t.title}</p>
-        <p className="text-portal-thead text-[var(--portal-muted)]">{t.hint}</p>
-      </div>
-
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="gh-field-label">{t.reason}</span>
-        <input
-          type="text"
-          className="gh-input h-10"
-          maxLength={200}
-          placeholder={t.reasonPlaceholder}
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-        />
-      </label>
-
-      <p className="text-portal-meta text-[var(--portal-muted)]">
-        {t.affects.split("{count}").join(String(affected))}
-      </p>
-
-      {error ? (
-        <p className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
-          {error}
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => submit("BLOCK")}
-          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-portal-compact font-semibold disabled:opacity-50"
-          style={{ borderColor: "var(--portal-line-strong)", color: "var(--portal-text)" }}
-        >
-          <Ban className="size-3.5" aria-hidden /> {busy ? t.busy : t.block}
-        </button>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => submit("UNBLOCK")}
-          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-portal-compact font-semibold disabled:opacity-50"
-          style={{ borderColor: "var(--portal-line-strong)", color: "var(--portal-text)" }}
-        >
-          <Unlock className="size-3.5" aria-hidden /> {t.unblock}
-        </button>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => submit("REMOVE")}
-          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-portal-compact font-semibold disabled:opacity-50"
-          style={{ borderColor: "var(--portal-danger)", color: "var(--portal-danger)" }}
-        >
-          <Trash2 className="size-3.5" aria-hidden /> {t.remove}
-        </button>
-      </div>
-    </div>
-  );
-}
-
+/** Compact action button for the one-off date rows in the sidebar. */
 function GroupAction({
   children,
   disabled,
