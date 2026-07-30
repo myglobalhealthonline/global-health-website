@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { invalidateAvailabilityCaches } from "../modules/doctor-availability/availability-cache-bus.js";
 import {
   BASE_SLOT_MINUTES,
   bulkSetSlotBlockInRange,
@@ -212,6 +213,10 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
               endAt: true,
               status: true,
               blockReason: true,
+              // One-off slots have no window behind them, so the portal lists
+              // them separately — otherwise they exist on the grid with nothing
+              // in the sidebar explaining where they came from.
+              isAdHoc: true,
               // Booked/held slots carry the claiming appointment — surface the
               // patient + consultation detail so the doctor's calendar can open
               // a booked slot the same way the admin calendar does.
@@ -237,6 +242,7 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
             endAt: s.endAt.toISOString(),
             status: s.status,
             blockReason: s.blockReason,
+            isAdHoc: s.isAdHoc,
             // Only booked slots have a patient behind them; open/blocked stay bare.
             appointmentId: s.appointment?.id ?? null,
             patientName: s.appointment?.fullName ?? null,
@@ -351,23 +357,8 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
         );
         if (!row) return reply.status(404).send(errorResponse("Window not found"));
 
-        // The window moved, so future OPEN slots minted from its old shape are
-        // stale — drop them and let the next range fetch re-materialise from
-        // the new shape. BOOKED/HELD/BLOCKED stay: they are real commitments.
-        try {
-          await prisma.doctorTimeSlot.deleteMany({
-            where: {
-              doctorId: auth.doctorId,
-              status: "OPEN",
-              startAt: { gte: new Date() },
-              // Admin-added one-off slots aren't derived from any window, so a
-              // sweep would delete them permanently. They opt out.
-              isAdHoc: false,
-            },
-          });
-        } catch {
-          /* non-fatal — stale open slots age out */
-        }
+        // Stale slots left by the old window shape are reconciled inside
+        // `patchAdminAvailability` — see reconcileWindowDerivedSlots.
         return okResponse({ availability: row });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -396,21 +387,8 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
           params.data.availabilityId,
         );
         if (!ok) return reply.status(404).send(errorResponse("Window not found"));
-        // Clean up derived OPEN slots — leave BOOKED + BLOCKED alone
-        try {
-          await prisma.doctorTimeSlot.deleteMany({
-            where: {
-              doctorId: auth.doctorId,
-              status: "OPEN",
-              startAt: { gte: new Date() },
-              // Admin-added one-off slots aren't derived from any window, so a
-              // sweep would delete them permanently. They opt out.
-              isAdHoc: false,
-            },
-          });
-        } catch {
-          /* non-fatal — slots will time out naturally */
-        }
+        // Future slots this window was the only source for are reconciled
+        // inside `deleteAdminAvailability` — see reconcileWindowDerivedSlots.
         return okResponse({ deleted: true });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -492,6 +470,9 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
           data: { status: body.data.status },
           select: { id: true, status: true },
         });
+        // Same reason as the bulk paths: the slot must leave (or re-enter) the
+        // patient-facing views now, not when the read caches expire.
+        invalidateAvailabilityCaches();
         return okResponse({ id: updated.id, status: updated.status });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

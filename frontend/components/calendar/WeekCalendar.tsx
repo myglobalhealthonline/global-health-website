@@ -15,9 +15,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  MoveVertical,
   Square,
   Trash2,
+  Unlock,
   User,
 } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
@@ -71,21 +71,20 @@ type Props = {
    *  top-right corner — the block's own click stays the booking flow, so
    *  blocking never costs the admin an extra step to book. */
   onBlockSlot?: (item: CalendarItem) => void;
-  /** Admin mode: clicking a BLOCKED slot re-opens it. Without this, blocked
-   *  blocks render as inert divs (the doctor portal uses onToggleSlot). */
+  /** Clicking a BLOCKED slot re-opens it, and it also gets an unlock corner
+   *  button so the action is visible rather than discovered. Without this,
+   *  blocked blocks render as inert divs. */
   onSelectBlockedSlot?: (item: CalendarItem) => void;
   /** Admin mode: delete an OPEN or BLOCKED slot outright (that date only).
    *  Renders a 🗑 corner button beside the block one. */
   onRemoveSlot?: (item: CalendarItem) => void;
-  /** Admin mode: change an OPEN or BLOCKED slot's length on the base grid. */
-  onResizeSlot?: (item: CalendarItem) => void;
-  /** Multi-select: while on, clicking an OPEN/BLOCKED slot selects it instead
-   *  of running that slot's normal action, and the corner buttons step aside.
+  /** Multi-select. Supplying this puts a checkbox in the top-left corner of
+   *  every OPEN/BLOCKED block, so picking several slots and acting on them
+   *  together needs no mode switch and leaves the per-slot buttons usable.
    *  Booked time is never selectable — bulk actions must not touch it. */
-  selectionMode?: boolean;
+  onToggleSelect?: (item: CalendarItem) => void;
   /** Bare slot ids currently selected (no `s-` prefix). */
   selectedIds?: Set<string>;
-  onToggleSelect?: (item: CalendarItem) => void;
   /** Disables the block/unblock affordances while a mutation is in flight. */
   slotActionsBusy?: boolean;
   onPrevWeek: () => void;
@@ -107,7 +106,6 @@ type Props = {
     bookThisTime?: string;
     blockThisTime?: string;
     removeThisSlot?: string;
-    resizeThisSlot?: string;
     selectSlot?: string;
     deselectSlot?: string;
     legendOpen?: string;
@@ -276,8 +274,6 @@ export function WeekCalendar({
   onBlockSlot,
   onSelectBlockedSlot,
   onRemoveSlot,
-  onResizeSlot,
-  selectionMode = false,
   selectedIds,
   onToggleSelect,
   slotActionsBusy = false,
@@ -296,7 +292,6 @@ export function WeekCalendar({
     bookThisTime: labels?.bookThisTime ?? "Book this time",
     blockThisTime: labels?.blockThisTime ?? "Block this time (mark unavailable)",
     removeThisSlot: labels?.removeThisSlot ?? "Remove this slot (this date only)",
-    resizeThisSlot: labels?.resizeThisSlot ?? "Change this slot's length",
     selectSlot: labels?.selectSlot ?? "Select this slot",
     deselectSlot: labels?.deselectSlot ?? "Deselect this slot",
     legendOpen: labels?.legendOpen ?? "Open · click to book",
@@ -676,49 +671,6 @@ export function WeekCalendar({
                       : [timeLabel, doctorName, p.item.status]
                           .filter(Boolean)
                           .join(" · ");
-                    // Selection wins over every other click behaviour: while
-                    // picking slots for a bulk action, a stray click must not
-                    // also book, block, or open a dialog.
-                    const selectable =
-                      selectionMode &&
-                      Boolean(onToggleSelect) &&
-                      p.item.kind === "slot" &&
-                      (p.item.status === "OPEN" || p.item.status === "BLOCKED");
-                    if (selectable) {
-                      const bareId = p.item.id.replace(/^s-/, "");
-                      const isSelected = selectedIds?.has(bareId) ?? false;
-                      return (
-                        <button
-                          key={p.item.id}
-                          type="button"
-                          onClick={() => onToggleSelect?.(p.item)}
-                          aria-pressed={isSelected}
-                          title={`${timeLabel} · ${
-                            isSelected ? t.deselectSlot : t.selectSlot
-                          }`}
-                          className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
-                          style={{
-                            ...style,
-                            // Ring rather than a colour change: the status tone
-                            // still has to read while selecting.
-                            outline: isSelected
-                              ? "2px solid var(--portal-info)"
-                              : undefined,
-                            outlineOffset: isSelected ? "-2px" : undefined,
-                            opacity: isSelected ? 1 : 0.75,
-                          }}
-                        >
-                          <span className="flex items-center gap-1">
-                            {isSelected ? (
-                              <CheckSquare className="size-3 shrink-0" aria-hidden />
-                            ) : (
-                              <Square className="size-3 shrink-0 opacity-60" aria-hidden />
-                            )}
-                            <span className="min-w-0 flex-1">{inner}</span>
-                          </span>
-                        </button>
-                      );
-                    }
                     // Doctor mode: click an OPEN/BLOCKED slot to toggle it.
                     const toggleable =
                       onToggleSlot &&
@@ -745,11 +697,43 @@ export function WeekCalendar({
                     // Admin corner actions. `null` when this surface passes no
                     // admin handlers (doctor portal, patient views) — then the
                     // block renders exactly as it did before.
+                    // The checkbox rides the LEFT corner so it never collides
+                    // with the action buttons on the right, and it shows for
+                    // exactly the statuses a bulk action can touch.
+                    const selectBox =
+                      onToggleSelect &&
+                      p.item.kind === "slot" &&
+                      (p.item.status === "OPEN" || p.item.status === "BLOCKED")
+                        ? (() => {
+                            const bareId = p.item.id.replace(/^s-/, "");
+                            const isSelected = selectedIds?.has(bareId) ?? false;
+                            return (
+                              <span className="absolute left-0.5 top-0.5 z-[2] inline-flex">
+                                <CornerAction
+                                  label={isSelected ? t.deselectSlot : t.selectSlot}
+                                  title={`${timeLabel} · ${
+                                    isSelected ? t.deselectSlot : t.selectSlot
+                                  }`}
+                                  disabled={slotActionsBusy}
+                                  pressed={isSelected}
+                                  onClick={() => onToggleSelect(p.item)}
+                                >
+                                  {isSelected ? (
+                                    <CheckSquare className="size-3" aria-hidden />
+                                  ) : (
+                                    <Square className="size-3" aria-hidden />
+                                  )}
+                                </CornerAction>
+                              </span>
+                            );
+                          })()
+                        : null;
+
                     const cornerActions =
                       p.item.kind === "slot" &&
                       (p.item.status === "OPEN" || p.item.status === "BLOCKED") &&
                       ((onBlockSlot && p.item.status === "OPEN") ||
-                        onResizeSlot ||
+                        (onSelectBlockedSlot && p.item.status === "BLOCKED") ||
                         onRemoveSlot) ? (
                         // z-2 keeps the actions above their own block (solid
                         // tones sit at z-2) but BELOW the sticky day-header row
@@ -766,14 +750,14 @@ export function WeekCalendar({
                               <Ban className="size-3" aria-hidden />
                             </CornerAction>
                           ) : null}
-                          {onResizeSlot ? (
+                          {onSelectBlockedSlot && p.item.status === "BLOCKED" ? (
                             <CornerAction
-                              label={t.resizeThisSlot}
-                              title={`${timeLabel} · ${t.resizeThisSlot}`}
+                              label={t.clickToReopen}
+                              title={`${timeLabel} · ${t.clickToReopen}`}
                               disabled={slotActionsBusy}
-                              onClick={() => onResizeSlot(p.item)}
+                              onClick={() => onSelectBlockedSlot(p.item)}
                             >
-                              <MoveVertical className="size-3" aria-hidden />
+                              <Unlock className="size-3" aria-hidden />
                             </CornerAction>
                           ) : null}
                           {onRemoveSlot ? (
@@ -797,7 +781,7 @@ export function WeekCalendar({
                           title={`${timeLabel} · ${t.bookThisTime}`}
                           className="gh-week-block gh-week-block--open overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={
-                            cornerActions
+                            cornerActions || selectBox
                               ? {
                                   position: "absolute",
                                   inset: 0,
@@ -809,7 +793,7 @@ export function WeekCalendar({
                           {inner}
                         </button>
                       );
-                      if (!cornerActions) {
+                      if (!cornerActions && !selectBox) {
                         return <Fragment key={p.item.id}>{bookButton}</Fragment>;
                       }
                       // Admin: the block itself still books; the corner buttons
@@ -817,6 +801,7 @@ export function WeekCalendar({
                       return (
                         <div key={p.item.id} style={geometry}>
                           {bookButton}
+                          {selectBox}
                           {cornerActions}
                         </div>
                       );
@@ -836,7 +821,7 @@ export function WeekCalendar({
                           } · ${t.clickToReopen}`}
                           className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105 disabled:opacity-60"
                           style={
-                            cornerActions
+                            cornerActions || selectBox
                               ? { position: "absolute", inset: 0, ...toneStyle(p.item) }
                               : style
                           }
@@ -844,12 +829,13 @@ export function WeekCalendar({
                           {inner}
                         </button>
                       );
-                      if (!cornerActions) {
+                      if (!cornerActions && !selectBox) {
                         return <Fragment key={p.item.id}>{reopenButton}</Fragment>;
                       }
                       return (
                         <div key={p.item.id} style={geometry}>
                           {reopenButton}
+                          {selectBox}
                           {cornerActions}
                         </div>
                       );
@@ -868,18 +854,35 @@ export function WeekCalendar({
                         </button>
                       );
                     }
-                    return (
+                    // Anything left over: HELD, a past OPEN slot, a BLOCKED
+                    // one on a surface with no re-open handler. Still gets its
+                    // corner actions when the surface offers them — a slot the
+                    // doctor can see is a slot they should be able to manage.
+                    const inertBlock = (
                       <div
-                        key={p.item.id}
                         title={
                           p.item.meta?.blockReason
                             ? `${timeLabel} · ${p.item.meta.blockReason}`
                             : fullTitle
                         }
                         className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1"
-                        style={style}
+                        style={
+                          cornerActions || selectBox
+                            ? { position: "absolute", inset: 0, ...toneStyle(p.item) }
+                            : style
+                        }
                       >
                         {inner}
+                      </div>
+                    );
+                    if (!cornerActions && !selectBox) {
+                      return <Fragment key={p.item.id}>{inertBlock}</Fragment>;
+                    }
+                    return (
+                      <div key={p.item.id} style={geometry}>
+                        {inertBlock}
+                        {selectBox}
+                        {cornerActions}
                       </div>
                     );
                   })}
@@ -910,12 +913,15 @@ function CornerAction({
   label,
   title,
   disabled,
+  pressed,
   onClick,
   children,
 }: {
   label: string;
   title: string;
   disabled?: boolean;
+  /** Set for the selection checkbox — a ticked box has to look ticked. */
+  pressed?: boolean;
   onClick: () => void;
   children: ReactNode;
 }) {
@@ -925,15 +931,24 @@ function CornerAction({
       disabled={disabled}
       onClick={onClick}
       aria-label={label}
+      aria-pressed={pressed}
       title={title}
-      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border opacity-70 shadow-sm transition hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40"
+      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border opacity-90 shadow-sm transition hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40"
       // Neutral surface, not another red fill: a danger-toned button on a
       // BLOCKED block's danger-toned fill was a red square on red.
-      style={{
-        borderColor: "var(--portal-line-strong)",
-        background: "var(--portal-surface)",
-        color: "var(--portal-danger)",
-      }}
+      style={
+        pressed
+          ? {
+              borderColor: "var(--portal-info)",
+              background: "var(--portal-info)",
+              color: "#fff",
+            }
+          : {
+              borderColor: "var(--portal-line-strong)",
+              background: "var(--portal-surface)",
+              color: "var(--portal-danger)",
+            }
+      }
     >
       {children}
     </button>

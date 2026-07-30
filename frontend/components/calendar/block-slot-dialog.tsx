@@ -11,12 +11,36 @@ import type { CalendarItem } from "./calendar-types";
  * which is what the calendar shows on hover afterwards — not as a safety gate.
  * Shared by the admin calendar and the per-doctor availability week grid.
  */
+export type BlockSlotLabels = {
+  title: string;
+  intro: string;
+  reasonLabel: string;
+  reasonPlaceholder: string;
+  reasonHint: string;
+  cancel: string;
+  confirm: string;
+  confirmBusy: string;
+};
+
+const DEFAULT_LABELS: BlockSlotLabels = {
+  title: "Block this time",
+  intro:
+    "The slot leaves bookable inventory — patients and the booking flow stop seeing it. Click the red block again to re-open it.",
+  reasonLabel: "Reason",
+  reasonPlaceholder: "Admin hold, training, clinic closed…",
+  reasonHint: "Optional — shown on hover in the calendar.",
+  cancel: "Cancel",
+  confirm: "Block slot",
+  confirmBusy: "Blocking…",
+};
+
 export function BlockSlotDialog({
   open,
   slot,
   tz,
   busy = false,
   error,
+  labels,
   onClose,
   onConfirm,
 }: {
@@ -26,6 +50,8 @@ export function BlockSlotDialog({
   tz: string;
   busy?: boolean;
   error?: string | null;
+  /** Doctor portal passes localized copy; admin takes the English defaults. */
+  labels?: Partial<BlockSlotLabels>;
   onClose: () => void;
   onConfirm: (reason: string) => void;
 }) {
@@ -33,8 +59,10 @@ export function BlockSlotDialog({
 
   if (!slot) return null;
 
+  const t = { ...DEFAULT_LABELS, ...labels };
+
   return (
-    <PortalDialog open={open} onClose={onClose} title="Block this time" danger>
+    <PortalDialog open={open} onClose={onClose} title={t.title} danger>
       <div className="grid gap-4">
         <div
           className="rounded-[var(--radius-card-sm)] border px-3 py-2.5 text-sm"
@@ -53,24 +81,20 @@ export function BlockSlotDialog({
           ) : null}
         </div>
 
-        <p className="text-portal-compact text-[var(--color-text-body)]">
-          The slot leaves bookable inventory — patients and the booking flow stop
-          seeing it. Click the red block again to re-open it.
-        </p>
+        <p className="text-portal-compact text-[var(--color-text-body)]">{t.intro}</p>
 
         <label className="flex flex-col gap-1.5">
-          <span className="gh-field-label">Reason</span>
+          <span className="gh-field-label">{t.reasonLabel}</span>
           <input
             type="text"
             className="gh-input"
             maxLength={200}
-            placeholder="Admin hold, training, clinic closed…"
+            placeholder={t.reasonPlaceholder}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
           />
           <span className="text-portal-meta text-[var(--color-text-muted)]">
-            Optional — shown on hover in the calendar. Defaults to “Blocked by
-            admin”.
+            {t.reasonHint}
           </span>
         </label>
 
@@ -87,7 +111,7 @@ export function BlockSlotDialog({
             className="gh-btn gh-btn-ghost"
             disabled={busy}
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             type="button"
@@ -95,7 +119,7 @@ export function BlockSlotDialog({
             className="gh-btn gh-btn-primary"
             disabled={busy}
           >
-            {busy ? "Blocking…" : "Block slot"}
+            {busy ? t.confirmBusy : t.confirm}
           </button>
         </div>
       </div>

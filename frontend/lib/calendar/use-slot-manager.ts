@@ -30,7 +30,6 @@ export type SlotManagerAdapter = {
     status: "OPEN" | "BLOCKED",
     reason?: string,
   ): Promise<SlotResult<unknown>>;
-  resize(slotId: string, durationMinutes: number): Promise<SlotResult<unknown>>;
   remove(slotId: string, reason?: string): Promise<SlotResult<unknown>>;
   create(
     startAtIsos: string[],
@@ -63,12 +62,11 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
   // Dialog targets. Null means closed; the surfaces key their dialogs on the
   // target id so each one remounts with fresh field state.
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
-  const [resizeTarget, setResizeTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
 
-  // Multi-select. Holds BARE slot ids so the set can be posted as-is.
-  const [selectionMode, setSelectionMode] = useState(false);
+  // Multi-select. Holds BARE slot ids so the set can be posted as-is. Always
+  // available — every slot carries its own checkbox, so there is no mode.
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const clearMessages = useCallback(() => {
@@ -106,14 +104,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     [adapter, run],
   );
 
-  const resize = useCallback(
-    async (item: CalendarItem, durationMinutes: number) => {
-      const ok = await run(() => adapter.resize(bareSlotId(item), durationMinutes));
-      if (ok) setResizeTarget(null);
-    },
-    [adapter, run],
-  );
-
   const remove = useCallback(
     async (item: CalendarItem, reason?: string) => {
       const ok = await run(() => adapter.remove(bareSlotId(item), reason));
@@ -133,17 +123,16 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     [adapter, run],
   );
 
-  /** Bulk over a date × time sweep. Spans are pre-expanded by the caller. */
-  const bulkBySpans = useCallback(
-    async (
-      action: BulkSlotAction,
-      spans: { fromUtc: string; toUtc: string }[],
-      reason?: string,
-    ) =>
-      run(
-        () => adapter.bulk({ action, spans, reason }),
+  /** Bulk over an explicit id list — used by the sidebar's per-date groups,
+   *  which already know exactly which slots they cover. */
+  const bulkIds = useCallback(
+    async (action: BulkSlotAction, slotIds: string[], reason?: string) => {
+      if (slotIds.length === 0) return false;
+      return run(
+        () => adapter.bulk({ action, slotIds, reason }),
         (data) => setNotice(adapter.describeBulk(action, data)),
-      ),
+      );
+    },
     [adapter, run],
   );
 
@@ -174,12 +163,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
 
   const clearSelection = useCallback(() => setSelected(new Set()), []);
 
-  /** Leaving select mode must not strand a selection the user can't see. */
-  const setSelectionModeSafely = useCallback((on: boolean) => {
-    setSelectionMode(on);
-    if (!on) setSelected(new Set());
-  }, []);
-
   return {
     busy,
     error,
@@ -190,24 +173,19 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
 
     blockTarget,
     setBlockTarget,
-    resizeTarget,
-    setResizeTarget,
     removeTarget,
     setRemoveTarget,
     addOpen,
     setAddOpen,
 
-    selectionMode,
-    setSelectionMode: setSelectionModeSafely,
     selected,
     toggleSelected,
     clearSelection,
 
     setStatus,
-    resize,
     remove,
     create,
-    bulkBySpans,
+    bulkIds,
     bulkSelected,
   };
 }

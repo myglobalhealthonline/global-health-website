@@ -11,6 +11,7 @@ import {
 } from "../utils/admin-country-scope.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { invalidateAvailabilityCaches } from "../modules/doctor-availability/availability-cache-bus.js";
 import {
   BASE_SLOT_MINUTES,
   createAdHocSlots,
@@ -333,6 +334,10 @@ export function createAdminDoctorTimeSlotsRoute(
           select: { id: true, status: true, blockReason: true, startAt: true, endAt: true },
         });
 
+        // A single block/unblock changes bookable inventory just as much as a
+        // bulk one — without this the slot stayed on offer to patients until
+        // the read caches expired.
+        invalidateAvailabilityCaches();
         return okResponse({ slot: updated });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

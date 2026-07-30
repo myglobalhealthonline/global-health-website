@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { CheckSquare, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
@@ -19,9 +19,7 @@ import {
 } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
-import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
-import { SlotManagerPanel } from "@/components/calendar/slot-manager-panel";
 import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
 import { useSlotManager } from "@/lib/calendar/use-slot-manager";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
@@ -29,7 +27,6 @@ import {
   adminBulkSlotAction,
   adminCreateSlots,
   adminRemoveSlot,
-  adminResizeSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
 import {
@@ -77,8 +74,6 @@ export function AvailabilityWeek({
   const slotManager = useSlotManager({
     setStatus: (slotId, status, reason) =>
       adminToggleSlotStatus(doctorId, slotId, status, reason),
-    resize: (slotId, durationMinutes) =>
-      adminResizeSlot(doctorId, slotId, durationMinutes),
     remove: (slotId, reason) => adminRemoveSlot(doctorId, slotId, reason),
     create: (startAtIsos, durationMinutes) =>
       adminCreateSlots(doctorId, startAtIsos, durationMinutes),
@@ -100,21 +95,16 @@ export function AvailabilityWeek({
     const params = new URLSearchParams();
     params.set("wk", anchor);
     router.push(`${pathname}?${params.toString()}`);
+    // Next caches the RSC payload per URL on the client, so navigating to a
+    // week or month you visited before a mutation would replay the stale one.
+    router.refresh();
   }
 
   const busy = slotManager.busy;
 
   return (
     <div className="grid min-w-0 gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <button
-          type="button"
-          className="gh-btn gh-btn-outline"
-          onClick={() => slotManager.setSelectionMode(!slotManager.selectionMode)}
-        >
-          <CheckSquare className="size-3.5" aria-hidden />{" "}
-          {slotManager.selectionMode ? "Selecting" : "Select"}
-        </button>
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
@@ -134,7 +124,6 @@ export function AvailabilityWeek({
       {slotManager.error &&
       !slotManager.blockTarget &&
       !slotManager.removeTarget &&
-      !slotManager.resizeTarget &&
       !slotManager.addOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotManager.error}
@@ -164,11 +153,6 @@ export function AvailabilityWeek({
             slotManager.setError(null);
             slotManager.setRemoveTarget(item);
           }}
-          onResizeSlot={(item) => {
-            slotManager.setError(null);
-            slotManager.setResizeTarget(item);
-          }}
-          selectionMode={slotManager.selectionMode}
           selectedIds={slotManager.selected}
           onToggleSelect={slotManager.toggleSelected}
           slotActionsBusy={busy}
@@ -185,14 +169,6 @@ export function AvailabilityWeek({
         onClear={slotManager.clearSelection}
       />
 
-      <SlotManagerPanel
-        tz={tz}
-        defaultDate={weekAnchor}
-        busy={busy}
-        onSubmit={(action, spans, reason) =>
-          void slotManager.bulkBySpans(action, spans, reason || undefined)
-        }
-      />
 
       <BookSlotDialog
         key={selectedSlot?.id ?? "none"}
@@ -241,23 +217,6 @@ export function AvailabilityWeek({
         onConfirm={(startAtIsos, durationMinutes) =>
           void slotManager.create(startAtIsos, durationMinutes)
         }
-      />
-
-      <ResizeSlotDialog
-        key={slotManager.resizeTarget?.id ?? "no-resize"}
-        open={slotManager.resizeTarget !== null}
-        slot={slotManager.resizeTarget}
-        tz={tz}
-        busy={busy}
-        error={slotManager.error}
-        onClose={() => {
-          slotManager.setResizeTarget(null);
-          slotManager.setError(null);
-        }}
-        onConfirm={(durationMinutes) => {
-          const target = slotManager.resizeTarget;
-          if (target) void slotManager.resize(target, durationMinutes);
-        }}
       />
 
       <RemoveSlotDialog

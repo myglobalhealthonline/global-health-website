@@ -7,10 +7,10 @@ import {
   Ban,
   CalendarClock,
   CheckCircle2,
-  CheckSquare,
   Pencil,
   Plus,
   Trash2,
+  Unlock,
   UserRound,
 } from "lucide-react";
 import {
@@ -19,7 +19,6 @@ import {
   createSlots,
   deleteAvailabilityWindow,
   removeSlot as removeSlotRequest,
-  resizeSlot as resizeSlotRequest,
   toggleSlotStatus,
   updateAvailabilityWindow,
 } from "@/lib/api/doctor-availability-client";
@@ -35,9 +34,8 @@ import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { ViewToggle, type CalendarView } from "@/components/calendar/view-toggle";
 import { AddAvailabilityDialog } from "@/components/calendar/add-availability-dialog";
-import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
+import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
-import { SlotManagerPanel } from "@/components/calendar/slot-manager-panel";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
 import { describeAddResult } from "@/components/calendar/add-slot-dialog";
 import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
@@ -47,11 +45,13 @@ import {
   addWeeksKey,
   dayLabel,
   groupItemsByLocalDay,
+  localDayKey,
   todayKey,
   weekDaysOf,
   yearMonthParam,
 } from "@/components/calendar/calendar-utils";
 import { AppSheet } from "@/components/AppSheet";
+import { formatAppTime } from "@/lib/format-datetime";
 import {
   AdminCard,
   AdminEmptyState,
@@ -252,7 +252,6 @@ export function DoctorAvailabilityUI({
   };
   const slotManager = useSlotManager({
     setStatus: (slotId, status) => toggleSlotStatus(slotId, status),
-    resize: (slotId, durationMinutes) => resizeSlotRequest(slotId, durationMinutes),
     remove: (slotId, reason) => removeSlotRequest(slotId, reason),
     create: (startAtIsos, durationMinutes) => createSlots(startAtIsos, durationMinutes),
     bulk: (input) => bulkSlotAction(input),
@@ -277,6 +276,12 @@ export function DoctorAvailabilityUI({
     if (nextView === "month") params.set("view", "month");
     else params.set("wk", next.wk ?? weekAnchor);
     router.push(`${pathname}?${params.toString()}`);
+    // Next caches the RSC payload per URL on the client. Without this, adding
+    // availability and then switching view (or stepping a week) replays the
+    // payload fetched BEFORE the mutation — the slots exist server-side but the
+    // grid you land on is the stale one, which is exactly the "it showed in the
+    // month but not the week" report.
+    router.refresh();
   }
 
   // The month rides along with the week anchor so flipping back to Month lands
@@ -459,6 +464,52 @@ export function DoctorAvailabilityUI({
     return groups;
   }, [windows]);
 
+  /**
+   * One-off slots on the visible grid, grouped per date.
+   *
+   * Slots added for specific dates have no weekly window behind them, so the
+   * sidebar used to show nothing for them — a Friday full of slots with an
+   * empty "Weekly windows" list, and no way to manage them except slot by slot.
+   * These groups make everything on the grid accounted for, and carry the same
+   * block / re-open / remove actions as a window does.
+   */
+  const oneOffGroups = useMemo(() => {
+    const byDay = new Map<
+      string,
+      { ids: string[]; open: number; blocked: number; taken: number; from: string; to: string }
+    >();
+    for (const slot of slots) {
+      if (!slot.isAdHoc) continue;
+      const day = localDayKey(slot.startAt, tz);
+      const entry = byDay.get(day) ?? {
+        ids: [],
+        open: 0,
+        blocked: 0,
+        taken: 0,
+        from: slot.startAt,
+        to: slot.endAt,
+      };
+      // Booked and held slots are listed in the counts but never handed to a
+      // bulk action — the API would skip them anyway, and offering them here
+      // would imply otherwise.
+      if (slot.status === "OPEN") {
+        entry.open += 1;
+        entry.ids.push(slot.id);
+      } else if (slot.status === "BLOCKED") {
+        entry.blocked += 1;
+        entry.ids.push(slot.id);
+      } else {
+        entry.taken += 1;
+      }
+      if (slot.startAt < entry.from) entry.from = slot.startAt;
+      if (slot.endAt > entry.to) entry.to = slot.endAt;
+      byDay.set(day, entry);
+    }
+    return [...byDay.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([day, v]) => ({ day, ...v }));
+  }, [slots, tz]);
+
   const busy = windowBusy || slotManager.busy;
   const error = windowError ?? slotManager.error;
 
@@ -473,7 +524,7 @@ export function DoctorAvailabilityUI({
     legendBooked: s.weekLegendBooked,
     legendBlocked: s.weekLegendBlocked,
     removeThisSlot: c.removeSlotTitle,
-    resizeThisSlot: c.resizeSlotTitle,
+    blockThisTime: s.slotActionBlock,
     selectSlot: s.selectSlot,
     deselectSlot: s.deselectSlot,
   };
@@ -538,15 +589,6 @@ export function DoctorAvailabilityUI({
             labels={{ month: s.viewMonth, week: s.viewWeek }}
             ariaLabel={s.viewToggleAria}
           />
-          <Btn
-            type="button"
-            size="sm"
-            variant={slotManager.selectionMode ? "primary" : "ghost"}
-            onClick={() => slotManager.setSelectionMode(!slotManager.selectionMode)}
-            iconLeft={<CheckSquare className="size-3.5" />}
-          >
-            {slotManager.selectionMode ? s.selectModeOn : s.selectMode}
-          </Btn>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Btn
@@ -577,20 +619,18 @@ export function DoctorAvailabilityUI({
               itemsByDay={itemsByDay}
               tz={tz}
               todayKey={todayKey(tz)}
-              // A doctor never books their own slot; clicking an open slot in
-              // normal mode blocks it, which is what onToggleSlot does.
+              // A doctor never books their own slot, so clicking an open one
+              // blocks it. The corner buttons carry block and remove, and a
+              // blocked block clicks back open — same set as the admin grid.
               onSelectOpenSlot={(item) => void slotManager.setStatus(item, "BLOCKED")}
               onSelectConsultation={openEvent}
-              onToggleSlot={(item) =>
-                void slotManager.setStatus(
-                  item,
-                  item.status === "OPEN" ? "BLOCKED" : "OPEN",
-                )
-              }
-              onResizeSlot={(item) => slotManager.setResizeTarget(item)}
+              onBlockSlot={(item) => {
+                slotManager.setError(null);
+                slotManager.setBlockTarget(item);
+              }}
+              onSelectBlockedSlot={(item) => void slotManager.setStatus(item, "OPEN")}
               onRemoveSlot={(item) => slotManager.setRemoveTarget(item)}
-              selectionMode={slotManager.selectionMode}
-              selectedIds={slotManager.selected}
+                  selectedIds={slotManager.selected}
               onToggleSelect={slotManager.toggleSelected}
               slotActionsBusy={busy}
               onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
@@ -651,7 +691,7 @@ export function DoctorAvailabilityUI({
                   description={s.noWindowsDesc}
                 />
               ) : (
-                <ul className="gh-doctor-window-list grid gap-2" data-tour="availability-windows">
+                <ul className="gh-doctor-window-list grid gap-2" data-tour="availability-windows" id="gh-availability-windows">
                   {windowGroups.map((group) => {
                     const hasDuplicates = group.items.length > 1;
                     return (
@@ -740,35 +780,60 @@ export function DoctorAvailabilityUI({
             </div>
           </AdminCard>
 
-          <SlotManagerPanel
-            tz={tz}
-            defaultDate={weekAnchor}
-            busy={busy}
-            dataTour="availability-manage"
-            labels={{
-              title: s.manageSlotsTitle,
-              description: s.manageSlotsDesc,
-              fromDate: s.manageFromDate,
-              toDate: s.manageToDate,
-              fromTime: s.manageFromTime,
-              toTime: s.manageToTime,
-              reason: s.reasonOptional,
-              reasonPlaceholder: s.manageReasonPlaceholder,
-              block: s.slotActionBlock,
-              unblock: s.slotActionReopen,
-              remove: s.slotActionRemove,
-              busy: s.manageBusy,
-              affects: s.manageAffects,
-              removeConfirm: s.manageRemoveConfirm,
-              errorEndDate: s.errorEndDateAfterStart,
-              errorTimeFormat: s.manageErrorTimeFormat,
-              errorTooShort: s.manageErrorTooShort,
-              errorTooMany: s.manageErrorTooMany,
-            }}
-            onSubmit={(action, spans, reason) =>
-              void slotManager.bulkBySpans(action, spans, reason || undefined)
-            }
-          />
+          {/* Everything on the grid is accounted for: slots added for one
+              specific date have no weekly window, so they get their own
+              entries rather than existing on the calendar unexplained. */}
+          {oneOffGroups.length > 0 ? (
+            <AdminCard padding={0} className="gh-doctor-panel">
+              <SectionHeader title={s.oneOffTitle} description={s.oneOffDesc} />
+              <ul className="grid gap-2 p-5">
+                {oneOffGroups.map((g) => (
+                  <li
+                    key={g.day}
+                    className="grid gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--portal-text)]">
+                        {dayLabel(g.day)}
+                      </p>
+                      <p className="text-portal-thead text-[var(--portal-muted)]">
+                        {formatAppTime(g.from, tz)}–{formatAppTime(g.to, tz)} ·{" "}
+                        {s.oneOffCounts
+                          .replace("{open}", String(g.open))
+                          .replace("{blocked}", String(g.blocked))
+                          .replace("{taken}", String(g.taken))}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <GroupAction
+                        disabled={busy || g.open === 0}
+                        onClick={() => void slotManager.bulkIds("BLOCK", g.ids)}
+                      >
+                        <Ban className="size-3" aria-hidden /> {s.slotActionBlock}
+                      </GroupAction>
+                      <GroupAction
+                        disabled={busy || g.blocked === 0}
+                        onClick={() => void slotManager.bulkIds("UNBLOCK", g.ids)}
+                      >
+                        <Unlock className="size-3" aria-hidden /> {s.slotActionReopen}
+                      </GroupAction>
+                      <GroupAction
+                        danger
+                        disabled={busy || g.ids.length === 0}
+                        onClick={() => {
+                          if (window.confirm(s.manageRemoveConfirm)) {
+                            void slotManager.bulkIds("REMOVE", g.ids);
+                          }
+                        }}
+                      >
+                        <Trash2 className="size-3" aria-hidden /> {s.slotActionRemove}
+                      </GroupAction>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </AdminCard>
+          ) : null}
 
           <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader title={s.legend} />
@@ -812,7 +877,6 @@ export function DoctorAvailabilityUI({
           slotsLabel={s.sectionSlots}
           onSelectConsultation={openEvent}
           canToggleSlot={() => false}
-          selectionMode={slotManager.selectionMode}
           selectedIds={slotManager.selected}
           onToggleSelect={slotManager.toggleSelected}
           slotActionsBusy={busy}
@@ -834,17 +898,6 @@ export function DoctorAvailabilityUI({
                   className={actionClass}
                 >
                   {item.status === "OPEN" ? s.slotActionBlock : s.slotActionReopen}
-                </button>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => {
-                    setDaySheetOpen(false);
-                    slotManager.setResizeTarget(item);
-                  }}
-                  className={actionClass}
-                >
-                  {s.slotActionLength}
                 </button>
                 <button
                   type="button"
@@ -906,30 +959,30 @@ export function DoctorAvailabilityUI({
         onSubmitDates={(isos, duration) => void slotManager.create(isos, duration)}
       />
 
-      <ResizeSlotDialog
-        key={slotManager.resizeTarget?.id ?? "no-resize"}
-        open={slotManager.resizeTarget !== null}
-        slot={slotManager.resizeTarget}
+      <BlockSlotDialog
+        key={slotManager.blockTarget?.id ?? "no-block"}
+        open={slotManager.blockTarget !== null}
+        slot={slotManager.blockTarget}
         tz={tz}
         busy={busy}
         error={slotManager.error}
         labels={{
-          title: c.resizeSlotTitle,
-          intro: c.resizeSlotIntro,
-          lengthLabel: c.resizeSlotLength,
-          currentSuffix: c.resizeSlotCurrent,
-          growthHint: c.resizeSlotHint,
+          title: s.blockSlotTitle,
+          intro: s.blockSlotIntro,
+          reasonLabel: s.reasonOptional,
+          reasonPlaceholder: s.manageReasonPlaceholder,
+          reasonHint: s.blockSlotReasonHint,
           cancel: c.slotDialogCancel,
-          confirm: c.resizeSlotConfirm,
-          confirmBusy: c.resizeSlotBusy,
+          confirm: s.slotActionBlock,
+          confirmBusy: s.manageBusy,
         }}
         onClose={() => {
-          slotManager.setResizeTarget(null);
+          slotManager.setBlockTarget(null);
           slotManager.setError(null);
         }}
-        onConfirm={(duration) => {
-          const target = slotManager.resizeTarget;
-          if (target) void slotManager.resize(target, duration);
+        onConfirm={(reason) => {
+          const target = slotManager.blockTarget;
+          if (target) void slotManager.setStatus(target, "BLOCKED", reason || undefined);
         }}
       />
 
@@ -1055,6 +1108,7 @@ export function DoctorAvailabilityUI({
           {editError ? <p className="text-sm text-rose-700">{editError}</p> : null}
           <p className="text-portal-thead text-[var(--portal-muted)]">{s.editWindowSlotsNote}</p>
         </form>
+
       </PortalDialog>
 
       <PortalDialog
@@ -1128,6 +1182,34 @@ export function DoctorAvailabilityUI({
         }}
       />
     </>
+  );
+}
+
+/** Compact action button for the one-off date rows in the sidebar. */
+function GroupAction({
+  children,
+  disabled,
+  danger = false,
+  onClick,
+}: {
+  children: React.ReactNode;
+  disabled?: boolean;
+  danger?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-portal-micro font-bold uppercase tracking-wide disabled:opacity-40"
+      style={{
+        borderColor: danger ? "var(--portal-danger)" : "var(--portal-line-strong)",
+        color: danger ? "var(--portal-danger)" : "var(--portal-text)",
+      }}
+    >
+      {children}
+    </button>
   );
 }
 
