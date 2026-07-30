@@ -137,6 +137,19 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     [adapter, run],
   );
 
+  /** Bulk over an explicit id list — used by the sidebar's per-date groups,
+   *  which already know exactly which slots they cover. */
+  const bulkIds = useCallback(
+    async (action: BulkSlotAction, slotIds: string[], reason?: string) => {
+      if (slotIds.length === 0) return false;
+      return run(
+        () => adapter.bulk({ action, slotIds, reason }),
+        (data) => setNotice(adapter.describeBulk(action, data)),
+      );
+    },
+    [adapter, run],
+  );
+
   /** Bulk over the current selection; clears it on success. */
   const bulkSelected = useCallback(
     async (action: BulkSlotAction, reason?: string) => {
@@ -195,6 +208,7 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     remove,
     create,
     bulkBySpans,
+    bulkIds,
     bulkSelected,
   };
 }

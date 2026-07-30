@@ -501,7 +501,10 @@
     "manageAnyDay": "Every day in the range.",
     "manageDatesOptionalHint": "Leave the dates blank to use the dates you are looking at ({from} – {to}).",
     "manageErrorNoMatchingDays": "None of the days you picked fall inside those dates.",
-    "windowSlotsHint": "Block, re-open, or remove the slots this window generates. Pick which dates; the day and hours come from the window above."
+    "windowSlotsHint": "Block, re-open, or remove the slots this window generates. Pick which dates; the day and hours come from the window above.",
+    "oneOffTitle": "One-off dates",
+    "oneOffDesc": "Slots added for a single date. No weekly window generates these.",
+    "oneOffCounts": "{open} open · {blocked} blocked · {taken} booked"
   },
   "profile": {
     "eyebrow": "Doctor",

@@ -501,7 +501,10 @@
     "manageAnyDay": "Toate zilele din interval.",
     "manageDatesOptionalHint": "Lasă datele goale pentru a folosi intervalul pe care îl vezi ({from} – {to}).",
     "manageErrorNoMatchingDays": "Niciuna dintre zilele alese nu se încadrează în acele date.",
-    "windowSlotsHint": "Blochează, redeschide sau elimină intervalele generate de această fereastră. Alege datele; ziua și orele vin din fereastra de mai sus."
+    "windowSlotsHint": "Blochează, redeschide sau elimină intervalele generate de această fereastră. Alege datele; ziua și orele vin din fereastra de mai sus.",
+    "oneOffTitle": "Zile punctuale",
+    "oneOffDesc": "Intervale adăugate pentru o singură zi. Nicio fereastră săptămânală nu le generează.",
+    "oneOffCounts": "{open} libere · {blocked} blocate · {taken} rezervate"
   },
   "profile": {
     "eyebrow": "Medic",

@@ -213,6 +213,10 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
               endAt: true,
               status: true,
               blockReason: true,
+              // One-off slots have no window behind them, so the portal lists
+              // them separately — otherwise they exist on the grid with nothing
+              // in the sidebar explaining where they came from.
+              isAdHoc: true,
               // Booked/held slots carry the claiming appointment — surface the
               // patient + consultation detail so the doctor's calendar can open
               // a booked slot the same way the admin calendar does.
@@ -238,6 +242,7 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
             endAt: s.endAt.toISOString(),
             status: s.status,
             blockReason: s.blockReason,
+            isAdHoc: s.isAdHoc,
             // Only booked slots have a patient behind them; open/blocked stay bare.
             appointmentId: s.appointment?.id ?? null,
             patientName: s.appointment?.fullName ?? null,

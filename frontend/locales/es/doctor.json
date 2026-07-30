@@ -501,7 +501,10 @@
     "manageAnyDay": "Todos los días del rango.",
     "manageDatesOptionalHint": "Deja las fechas en blanco para usar las que estás viendo ({from} – {to}).",
     "manageErrorNoMatchingDays": "Ninguno de los días elegidos cae dentro de esas fechas.",
-    "windowSlotsHint": "Bloquea, reabre o elimina los huecos que genera esta ventana. Elige las fechas; el día y las horas vienen de la ventana de arriba."
+    "windowSlotsHint": "Bloquea, reabre o elimina los huecos que genera esta ventana. Elige las fechas; el día y las horas vienen de la ventana de arriba.",
+    "oneOffTitle": "Fechas puntuales",
+    "oneOffDesc": "Huecos añadidos para una fecha concreta. Ninguna ventana semanal los genera.",
+    "oneOffCounts": "{open} libres · {blocked} bloqueados · {taken} reservados"
   },
   "profile": {
     "eyebrow": "Médico",

@@ -48,11 +48,13 @@ import {
   addWeeksKey,
   dayLabel,
   groupItemsByLocalDay,
+  localDayKey,
   todayKey,
   weekDaysOf,
   yearMonthParam,
 } from "@/components/calendar/calendar-utils";
 import { AppSheet } from "@/components/AppSheet";
+import { formatAppTime } from "@/lib/format-datetime";
 import {
   AdminCard,
   AdminEmptyState,
@@ -465,6 +467,52 @@ export function DoctorAvailabilityUI({
     return groups;
   }, [windows]);
 
+  /**
+   * One-off slots on the visible grid, grouped per date.
+   *
+   * Slots added for specific dates have no weekly window behind them, so the
+   * sidebar used to show nothing for them — a Friday full of slots with an
+   * empty "Weekly windows" list, and no way to manage them except slot by slot.
+   * These groups make everything on the grid accounted for, and carry the same
+   * block / re-open / remove actions as a window does.
+   */
+  const oneOffGroups = useMemo(() => {
+    const byDay = new Map<
+      string,
+      { ids: string[]; open: number; blocked: number; taken: number; from: string; to: string }
+    >();
+    for (const slot of slots) {
+      if (!slot.isAdHoc) continue;
+      const day = localDayKey(slot.startAt, tz);
+      const entry = byDay.get(day) ?? {
+        ids: [],
+        open: 0,
+        blocked: 0,
+        taken: 0,
+        from: slot.startAt,
+        to: slot.endAt,
+      };
+      // Booked and held slots are listed in the counts but never handed to a
+      // bulk action — the API would skip them anyway, and offering them here
+      // would imply otherwise.
+      if (slot.status === "OPEN") {
+        entry.open += 1;
+        entry.ids.push(slot.id);
+      } else if (slot.status === "BLOCKED") {
+        entry.blocked += 1;
+        entry.ids.push(slot.id);
+      } else {
+        entry.taken += 1;
+      }
+      if (slot.startAt < entry.from) entry.from = slot.startAt;
+      if (slot.endAt > entry.to) entry.to = slot.endAt;
+      byDay.set(day, entry);
+    }
+    return [...byDay.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([day, v]) => ({ day, ...v }));
+  }, [slots, tz]);
+
   const busy = windowBusy || slotManager.busy;
   const error = windowError ?? slotManager.error;
 
@@ -741,6 +789,61 @@ export function DoctorAvailabilityUI({
               )}
             </div>
           </AdminCard>
+
+          {/* Everything on the grid is accounted for: slots added for one
+              specific date have no weekly window, so they get their own
+              entries rather than existing on the calendar unexplained. */}
+          {oneOffGroups.length > 0 ? (
+            <AdminCard padding={0} className="gh-doctor-panel">
+              <SectionHeader title={s.oneOffTitle} description={s.oneOffDesc} />
+              <ul className="grid gap-2 p-5">
+                {oneOffGroups.map((g) => (
+                  <li
+                    key={g.day}
+                    className="grid gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--portal-text)]">
+                        {dayLabel(g.day)}
+                      </p>
+                      <p className="text-portal-thead text-[var(--portal-muted)]">
+                        {formatAppTime(g.from, tz)}–{formatAppTime(g.to, tz)} ·{" "}
+                        {s.oneOffCounts
+                          .replace("{open}", String(g.open))
+                          .replace("{blocked}", String(g.blocked))
+                          .replace("{taken}", String(g.taken))}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <GroupAction
+                        disabled={busy || g.open === 0}
+                        onClick={() => void slotManager.bulkIds("BLOCK", g.ids)}
+                      >
+                        <Ban className="size-3" aria-hidden /> {s.slotActionBlock}
+                      </GroupAction>
+                      <GroupAction
+                        disabled={busy || g.blocked === 0}
+                        onClick={() => void slotManager.bulkIds("UNBLOCK", g.ids)}
+                      >
+                        <Unlock className="size-3" aria-hidden /> {s.slotActionReopen}
+                      </GroupAction>
+                      <GroupAction
+                        danger
+                        disabled={busy || g.ids.length === 0}
+                        onClick={() => {
+                          if (window.confirm(s.manageRemoveConfirm)) {
+                            void slotManager.bulkIds("REMOVE", g.ids);
+                          }
+                        }}
+                      >
+                        <Trash2 className="size-3" aria-hidden /> {s.slotActionRemove}
+                      </GroupAction>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </AdminCard>
+          ) : null}
 
           <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader title={s.legend} />
@@ -1236,6 +1339,33 @@ function WindowSlotControls({
         </button>
       </div>
     </div>
+  );
+}
+
+function GroupAction({
+  children,
+  disabled,
+  danger = false,
+  onClick,
+}: {
+  children: React.ReactNode;
+  disabled?: boolean;
+  danger?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-portal-micro font-bold uppercase tracking-wide disabled:opacity-40"
+      style={{
+        borderColor: danger ? "var(--portal-danger)" : "var(--portal-line-strong)",
+        color: danger ? "var(--portal-danger)" : "var(--portal-text)",
+      }}
+    >
+      {children}
+    </button>
   );
 }
 

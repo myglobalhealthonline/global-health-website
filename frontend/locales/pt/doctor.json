@@ -501,7 +501,10 @@
     "manageAnyDay": "Todos os dias do intervalo.",
     "manageDatesOptionalHint": "Deixe as datas em branco para usar as datas que está a ver ({from} – {to}).",
     "manageErrorNoMatchingDays": "Nenhum dos dias escolhidos cai dentro dessas datas.",
-    "windowSlotsHint": "Bloqueie, reabra ou remova os horários gerados por esta janela. Escolha as datas; o dia e as horas vêm da janela acima."
+    "windowSlotsHint": "Bloqueie, reabra ou remova os horários gerados por esta janela. Escolha as datas; o dia e as horas vêm da janela acima.",
+    "oneOffTitle": "Datas pontuais",
+    "oneOffDesc": "Horários adicionados para uma data específica. Nenhuma janela semanal os gera.",
+    "oneOffCounts": "{open} livres · {blocked} bloqueados · {taken} reservados"
   },
   "profile": {
     "eyebrow": "Médico",

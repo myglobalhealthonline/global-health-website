@@ -501,7 +501,10 @@
     "manageAnyDay": "Každý den v rozsahu.",
     "manageDatesOptionalHint": "Nechte data prázdná a použije se rozsah, který si právě prohlížíte ({from} – {to}).",
     "manageErrorNoMatchingDays": "Žádný z vybraných dnů do tohoto rozsahu nespadá.",
-    "windowSlotsHint": "Zablokujte, znovu otevřete nebo odeberte termíny, které toto okno vytváří. Vyberte data; den a hodiny přebírá okno výše."
+    "windowSlotsHint": "Zablokujte, znovu otevřete nebo odeberte termíny, které toto okno vytváří. Vyberte data; den a hodiny přebírá okno výše.",
+    "oneOffTitle": "Jednorázové dny",
+    "oneOffDesc": "Termíny přidané pro jeden konkrétní den. Negeneruje je žádné týdenní okno.",
+    "oneOffCounts": "{open} volných · {blocked} blokovaných · {taken} rezervovaných"
   },
   "profile": {
     "eyebrow": "Lékař",
