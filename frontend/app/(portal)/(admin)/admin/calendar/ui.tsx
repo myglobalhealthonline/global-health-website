@@ -20,12 +20,15 @@ import {
   weekDaysOf,
   yearMonthParam,
 } from "@/components/calendar/calendar-utils";
-import { AddSlotDialog } from "@/components/calendar/add-slot-dialog";
+import {
+  AddSlotDialog,
+  describeAddResult,
+} from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
-  adminCreateSlot,
+  adminCreateSlots,
   adminRemoveSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
@@ -81,6 +84,9 @@ export function AdminCalendarUI({
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
+  // Add reports partial success ("added 20, skipped 4") — information, not an
+  // error, so it gets its own line rather than the warning banner.
+  const [slotNotice, setSlotNotice] = useState<string | null>(null);
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
     const eventId = searchParams.get("event");
     return eventId ? items.find((i) => i.id === eventId) ?? null : null;
@@ -155,20 +161,21 @@ export function AdminCalendarUI({
     router.refresh();
   }
 
-  // One-off slot for the doctor the calendar is filtered to. The grid can show
+  // One-off slots for the doctor the calendar is filtered to. The grid can show
   // every doctor at once, so "which doctor" has to come from the filter — the
   // button is disabled until one is picked.
-  async function addSlot(startAtIso: string, durationMinutes: number) {
+  async function addSlots(startAtIsos: string[], durationMinutes: number) {
     if (!filters.doctorId) return;
     setSlotError(null);
     setSlotBusy(true);
-    const res = await adminCreateSlot(filters.doctorId, startAtIso, durationMinutes);
+    const res = await adminCreateSlots(filters.doctorId, startAtIsos, durationMinutes);
     setSlotBusy(false);
     if (!res.ok) {
       setSlotError(res.message);
       return;
     }
     setAddOpen(false);
+    setSlotNotice(describeAddResult(res.data));
     router.refresh();
   }
 
@@ -322,15 +329,16 @@ export function AdminCalendarUI({
             disabled={!filters.doctorId}
             title={
               filters.doctorId
-                ? "Add a one-off slot for this doctor"
-                : "Pick a doctor first — a slot belongs to one calendar"
+                ? "Add one-off slots for this doctor"
+                : "Pick a doctor first — slots belong to one calendar"
             }
             onClick={() => {
               setSlotError(null);
+              setSlotNotice(null);
               setAddOpen(true);
             }}
           >
-            <Plus className="size-3.5" aria-hidden /> Add slot
+            <Plus className="size-3.5" aria-hidden /> Add slots
           </button>
           <ViewToggle
             view={view}
@@ -358,6 +366,11 @@ export function AdminCalendarUI({
       {slotError && !blockTarget && !removeTarget && !addOpen && !daySheetOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotError}
+        </p>
+      ) : null}
+      {slotNotice ? (
+        <p className="gh-status-success rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
+          {slotNotice}
         </p>
       ) : null}
 
@@ -535,8 +548,8 @@ export function AdminCalendarUI({
           setAddOpen(false);
           setSlotError(null);
         }}
-        onConfirm={(startAtIso, durationMinutes) =>
-          void addSlot(startAtIso, durationMinutes)
+        onConfirm={(startAtIsos, durationMinutes) =>
+          void addSlots(startAtIsos, durationMinutes)
         }
       />
 

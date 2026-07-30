@@ -13,12 +13,15 @@ import {
   todayKey,
   weekDaysOf,
 } from "@/components/calendar/calendar-utils";
-import { AddSlotDialog } from "@/components/calendar/add-slot-dialog";
+import {
+  AddSlotDialog,
+  describeAddResult,
+} from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
-  adminCreateSlot,
+  adminCreateSlots,
   adminRemoveSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
@@ -66,6 +69,9 @@ export function AvailabilityWeek({
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
+  // Add reports partial success ("added 20, skipped 4"), which is information,
+  // not an error — it gets its own line rather than the warning banner.
+  const [slotNotice, setSlotNotice] = useState<string | null>(null);
   const [slotBusy, setSlotBusy] = useState(false);
   const [slotError, setSlotError] = useState<string | null>(null);
 
@@ -120,18 +126,19 @@ export function AvailabilityWeek({
     router.refresh();
   }
 
-  // One-off slot at a date/time of the admin's choosing — no weekly window
-  // involved, so it also survives later edits to those windows.
-  async function addSlot(startAtIso: string, durationMinutes: number) {
+  // One-off slots over a date + time range of the admin's choosing — no weekly
+  // window involved, so they also survive later edits to those windows.
+  async function addSlots(startAtIsos: string[], durationMinutes: number) {
     setSlotError(null);
     setSlotBusy(true);
-    const res = await adminCreateSlot(doctorId, startAtIso, durationMinutes);
+    const res = await adminCreateSlots(doctorId, startAtIsos, durationMinutes);
     setSlotBusy(false);
     if (!res.ok) {
       setSlotError(res.message);
       return;
     }
     setAddOpen(false);
+    setSlotNotice(describeAddResult(res.data));
     router.refresh();
   }
 
@@ -149,10 +156,11 @@ export function AvailabilityWeek({
           className="gh-btn gh-btn-outline"
           onClick={() => {
             setSlotError(null);
+            setSlotNotice(null);
             setAddOpen(true);
           }}
         >
-          <Plus className="size-3.5" aria-hidden /> Add slot
+          <Plus className="size-3.5" aria-hidden /> Add slots
         </button>
         <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />
       </div>
@@ -161,6 +169,11 @@ export function AvailabilityWeek({
       {slotError && !blockTarget && !removeTarget && !addOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotError}
+        </p>
+      ) : null}
+      {slotNotice ? (
+        <p className="gh-status-success rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
+          {slotNotice}
         </p>
       ) : null}
 
@@ -232,8 +245,8 @@ export function AvailabilityWeek({
           setAddOpen(false);
           setSlotError(null);
         }}
-        onConfirm={(startAtIso, durationMinutes) =>
-          void addSlot(startAtIso, durationMinutes)
+        onConfirm={(startAtIsos, durationMinutes) =>
+          void addSlots(startAtIsos, durationMinutes)
         }
       />
 
