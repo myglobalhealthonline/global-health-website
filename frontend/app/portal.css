@@ -3896,8 +3896,10 @@ a.gh-admin-summary-item--link:focus-visible {
 }
 
 .gh-member-card__plan {
-  margin: clamp(8px, 2.6cqw, 15px) 0 0;
-  max-width: 78%;
+  /* Full width: the ECG rule below is a separate row, so nothing sits
+   * beside the title and the two can never collide. */
+  margin: clamp(6px, 2cqw, 12px) 0 0;
+  max-width: 100%;
   font-size: clamp(15px, 5cqw, 28px);
   font-weight: 760;
   letter-spacing: -0.03em;
@@ -3908,7 +3910,7 @@ a.gh-admin-summary-item--link:focus-visible {
 .gh-member-card__pulse {
   position: relative;
   height: clamp(14px, 4.4cqw, 26px);
-  margin-top: clamp(2px, 0.6cqw, 5px);
+  margin-top: clamp(6px, 2cqw, 12px);
 }
 
 .gh-member-card__pulse::before {
