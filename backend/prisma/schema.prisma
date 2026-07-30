@@ -554,6 +554,9 @@ model Doctor {
   availabilities                  DoctorAvailability[]
   /// Generated bookable slots. Booking flow claims one atomically.
   timeSlots                       DoctorTimeSlot[]
+  /// One-off "this date only" holes punched in the recurring windows so an
+  /// admin-removed slot isn't regenerated. See DoctorAvailabilityException.
+  availabilityExceptions          DoctorAvailabilityException[]
   /// Inverse of `Consultation.doctorId`. Populated when the doctor
   /// starts a consult on one of their assigned appointments.
   consultations                   Consultation[]
@@ -799,6 +802,37 @@ model DoctorTimeSlot {
 
   @@unique([doctorId, startAt])
   @@index([doctorId, startAt, status])
+}
+
+/// A single-date hole in a doctor's recurring availability — the tombstone that
+/// makes "remove this slot" stick.
+///
+/// `DoctorTimeSlot` rows are derived from `DoctorAvailability` windows and
+/// re-materialised on every availability read (`ensureSlotsForRange`), so
+/// deleting a slot row on its own does nothing durable: the next patient or
+/// admin read regenerates it. Both generators skip any candidate whose span
+/// overlaps an exception row, so removing "this Tuesday 11:00" leaves the
+/// weekly Tuesday window itself untouched and every other Tuesday still
+/// generates normally.
+///
+/// Distinct from status = BLOCKED: a blocked slot still exists and shows red on
+/// the calendar; an exception means the slot is gone from that date entirely.
+model DoctorAvailabilityException {
+  id        String   @id @default(cuid())
+  doctorId  String
+  /// UTC span the generators must not fill — mirrors the removed slot's own
+  /// `startAt`/`endAt`, so it also covers a longer service-duration candidate
+  /// that would have started inside the removed span.
+  startAt   DateTime
+  endAt     DateTime
+  /// Optional admin note ("clinic closed", "double-booked in error").
+  reason    String?
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  /// Removing the same slot twice is a no-op, not a duplicate row.
+  @@unique([doctorId, startAt])
+  @@index([doctorId, startAt])
 }
 
 /// Join row letting one Doctor profile appear on multiple country rosters.

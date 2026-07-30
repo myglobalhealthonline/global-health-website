@@ -12,7 +12,10 @@ import {
   todayKey,
   weekDaysOf,
 } from "@/components/calendar/calendar-utils";
+import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
+import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
+import { adminRemoveSlot, adminToggleSlotStatus } from "@/lib/api/admin-slot-client";
 import {
   BookSlotDialog,
   type ClinicOption,
@@ -52,6 +55,12 @@ export function AvailabilityWeek({
   const [tz, setTz] = useState<string>(clinicTz);
   const [selectedSlot, setSelectedSlot] = useState<CalendarItem | null>(null);
   const [activeConsult, setActiveConsult] = useState<CalendarItem | null>(null);
+  // Block/unblock talks to the API from the client and then refreshes the
+  // server-rendered week — the slot list comes from the page, not local state.
+  const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
+  const [slotBusy, setSlotBusy] = useState(false);
+  const [slotError, setSlotError] = useState<string | null>(null);
 
   const tzOptions = useMemo(() => {
     const set = new Set<string>([clinicTz, ...CURATED_TIME_ZONES]);
@@ -60,6 +69,49 @@ export function AvailabilityWeek({
 
   const weekDays = useMemo(() => weekDaysOf(weekAnchor), [weekAnchor]);
   const itemsByDay = useMemo(() => groupItemsByLocalDay(items, tz), [items, tz]);
+
+  // Calendar ids are prefixed ("s-<slotId>") so slots and consultations can't
+  // collide; the API wants the bare slot id.
+  async function setSlotStatus(
+    item: CalendarItem,
+    status: "OPEN" | "BLOCKED",
+    reason?: string,
+  ) {
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminToggleSlotStatus(
+      doctorId,
+      item.id.replace(/^s-/, ""),
+      status,
+      reason,
+    );
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setBlockTarget(null);
+    router.refresh();
+  }
+
+  // Removal deletes the slot for THIS date and records an availability
+  // exception server-side, so the weekly window can't regenerate it.
+  async function removeSlot(item: CalendarItem, reason?: string) {
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminRemoveSlot(
+      doctorId,
+      item.id.replace(/^s-/, ""),
+      reason,
+    );
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setRemoveTarget(null);
+    router.refresh();
+  }
 
   function goToWeek(anchor: string) {
     const params = new URLSearchParams();
@@ -73,6 +125,13 @@ export function AvailabilityWeek({
         <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />
       </div>
 
+      {/* The dialogs render their own copy of the error — don't say it twice. */}
+      {slotError && !blockTarget && !removeTarget ? (
+        <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
+          {slotError}
+        </p>
+      ) : null}
+
       <div className="min-w-0">
         <WeekCalendar
           anchorDayKey={weekAnchor}
@@ -82,6 +141,16 @@ export function AvailabilityWeek({
           todayKey={todayKey(tz)}
           onSelectOpenSlot={setSelectedSlot}
           onSelectConsultation={setActiveConsult}
+          onBlockSlot={(item) => {
+            setSlotError(null);
+            setBlockTarget(item);
+          }}
+          onSelectBlockedSlot={(item) => void setSlotStatus(item, "OPEN")}
+          onRemoveSlot={(item) => {
+            setSlotError(null);
+            setRemoveTarget(item);
+          }}
+          slotActionsBusy={slotBusy}
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
           onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
           onToday={() => goToWeek(todayKey(tz))}
@@ -101,6 +170,38 @@ export function AvailabilityWeek({
         clinics={clinics}
         defaultDialCode={defaultDialCode}
         action={bookAction}
+      />
+
+      <BlockSlotDialog
+        key={blockTarget?.id ?? "no-block"}
+        open={blockTarget !== null}
+        slot={blockTarget}
+        tz={tz}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setBlockTarget(null);
+          setSlotError(null);
+        }}
+        onConfirm={(reason) => {
+          if (blockTarget) void setSlotStatus(blockTarget, "BLOCKED", reason || undefined);
+        }}
+      />
+
+      <RemoveSlotDialog
+        key={removeTarget?.id ?? "no-remove"}
+        open={removeTarget !== null}
+        slot={removeTarget}
+        tz={tz}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setRemoveTarget(null);
+          setSlotError(null);
+        }}
+        onConfirm={(reason) => {
+          if (removeTarget) void removeSlot(removeTarget, reason || undefined);
+        }}
       />
 
       <EventDetailDialog

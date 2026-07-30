@@ -9,6 +9,16 @@ type Params = Promise<{ id: string; slotId: string }>;
  *  /api/doctor/time-slots/[slotId] proxy; the backend runs the admin
  *  country-scope guard against the slot's owning doctor. */
 export async function PATCH(request: NextRequest, { params }: { params: Params }) {
+  return forward(request, params, "PATCH");
+}
+
+/** Remove one slot for its own date. The backend also records an availability
+ *  exception so the recurring window doesn't regenerate it. */
+export async function DELETE(request: NextRequest, { params }: { params: Params }) {
+  return forward(request, params, "DELETE");
+}
+
+async function forward(request: NextRequest, params: Params, method: "PATCH" | "DELETE") {
   const backend = getBackendOrigin();
   if (!backend) {
     return NextResponse.json({ ok: false, message: "Backend not configured" }, { status: 503 });
@@ -20,7 +30,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Params }
   const upstream = await fetch(
     `${backend}/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots/${encodeURIComponent(slotId)}`,
     {
-      method: "PATCH",
+      method,
       headers: {
         "content-type": "application/json",
         ...(cookieHeader ? { cookie: cookieHeader } : {}),

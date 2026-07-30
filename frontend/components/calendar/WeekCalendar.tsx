@@ -1,7 +1,15 @@
 "use client";
 
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
-import { Ban, ChevronLeft, ChevronRight, Clock, User } from "lucide-react";
+import {
+  Fragment,
+  type CSSProperties,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Ban, ChevronLeft, ChevronRight, Clock, Trash2, User } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
 import {
@@ -49,6 +57,18 @@ type Props = {
    *  (block / re-open) instead of opening the admin booking dialog. Omit for
    *  the admin booking flow. */
   onToggleSlot?: (item: CalendarItem) => void;
+  /** Admin mode: block an OPEN slot. Renders a small ⃠ button in the block's
+   *  top-right corner — the block's own click stays the booking flow, so
+   *  blocking never costs the admin an extra step to book. */
+  onBlockSlot?: (item: CalendarItem) => void;
+  /** Admin mode: clicking a BLOCKED slot re-opens it. Without this, blocked
+   *  blocks render as inert divs (the doctor portal uses onToggleSlot). */
+  onSelectBlockedSlot?: (item: CalendarItem) => void;
+  /** Admin mode: delete an OPEN or BLOCKED slot outright (that date only).
+   *  Renders a 🗑 corner button beside the block one. */
+  onRemoveSlot?: (item: CalendarItem) => void;
+  /** Disables the block/unblock affordances while a mutation is in flight. */
+  slotActionsBusy?: boolean;
   onPrevWeek: () => void;
   onNextWeek: () => void;
   onToday: () => void;
@@ -66,6 +86,8 @@ type Props = {
     clickToBlock?: string;
     clickToReopen?: string;
     bookThisTime?: string;
+    blockThisTime?: string;
+    removeThisSlot?: string;
     legendOpen?: string;
     legendBooked?: string;
     legendBlocked?: string;
@@ -229,6 +251,10 @@ export function WeekCalendar({
   onSelectOpenSlot,
   onSelectConsultation,
   onToggleSlot,
+  onBlockSlot,
+  onSelectBlockedSlot,
+  onRemoveSlot,
+  slotActionsBusy = false,
   onPrevWeek,
   onNextWeek,
   onToday,
@@ -242,6 +268,8 @@ export function WeekCalendar({
     clickToBlock: labels?.clickToBlock ?? "Click to block (mark busy)",
     clickToReopen: labels?.clickToReopen ?? "Click to re-open",
     bookThisTime: labels?.bookThisTime ?? "Book this time",
+    blockThisTime: labels?.blockThisTime ?? "Block this time (mark unavailable)",
+    removeThisSlot: labels?.removeThisSlot ?? "Remove this slot (this date only)",
     legendOpen: labels?.legendOpen ?? "Open · click to book",
     legendBooked: labels?.legendBooked ?? "Booked",
     legendBlocked: labels?.legendBlocked ?? "Blocked",
@@ -540,12 +568,19 @@ export function WeekCalendar({
                     const showPatient = isConsult || isBookedWithPatient;
                     const patientName =
                       p.item.meta?.patientName || p.item.title;
-                    const style: CSSProperties = {
+                    // Geometry is kept separate from the tone so a block that
+                    // needs a corner action (OPEN + admin) can hand the
+                    // position to a wrapper and the colours to the inner
+                    // button — the action button can't nest inside it.
+                    const geometry: CSSProperties = {
                       position: "absolute",
                       top,
                       height,
                       left: `calc(${p.lane * laneWidth}% + 2px)`,
                       width: `calc(${laneWidth}% - 4px)`,
+                    };
+                    const style: CSSProperties = {
+                      ...geometry,
                       ...toneStyle(p.item),
                     };
                     // Draw the SPAN, not just the start: a 45-min consult that
@@ -635,18 +670,100 @@ export function WeekCalendar({
                         </button>
                       );
                     }
+                    // Admin corner actions. `null` when this surface passes no
+                    // admin handlers (doctor portal, patient views) — then the
+                    // block renders exactly as it did before.
+                    const cornerActions =
+                      p.item.kind === "slot" &&
+                      (p.item.status === "OPEN" || p.item.status === "BLOCKED") &&
+                      ((onBlockSlot && p.item.status === "OPEN") || onRemoveSlot) ? (
+                        <span className="absolute right-0.5 top-0.5 z-[3] inline-flex gap-0.5">
+                          {onBlockSlot && p.item.status === "OPEN" ? (
+                            <CornerAction
+                              label={t.blockThisTime}
+                              title={`${timeLabel} · ${t.blockThisTime}`}
+                              disabled={slotActionsBusy}
+                              onClick={() => onBlockSlot(p.item)}
+                            >
+                              <Ban className="size-3" aria-hidden />
+                            </CornerAction>
+                          ) : null}
+                          {onRemoveSlot ? (
+                            <CornerAction
+                              label={t.removeThisSlot}
+                              title={`${timeLabel} · ${t.removeThisSlot}`}
+                              disabled={slotActionsBusy}
+                              onClick={() => onRemoveSlot(p.item)}
+                            >
+                              <Trash2 className="size-3" aria-hidden />
+                            </CornerAction>
+                          ) : null}
+                        </span>
+                      ) : null;
+
                     if (bookable) {
-                      return (
+                      const bookButton = (
                         <button
-                          key={p.item.id}
                           type="button"
                           onClick={() => onSelectOpenSlot(p.item)}
                           title={`${timeLabel} · ${t.bookThisTime}`}
                           className="gh-week-block gh-week-block--open overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
-                          style={style}
+                          style={
+                            cornerActions
+                              ? {
+                                  position: "absolute",
+                                  inset: 0,
+                                  ...toneStyle(p.item),
+                                }
+                              : style
+                          }
                         >
                           {inner}
                         </button>
+                      );
+                      if (!cornerActions) {
+                        return <Fragment key={p.item.id}>{bookButton}</Fragment>;
+                      }
+                      // Admin: the block itself still books; the corner buttons
+                      // block or remove the slot instead.
+                      return (
+                        <div key={p.item.id} style={geometry}>
+                          {bookButton}
+                          {cornerActions}
+                        </div>
+                      );
+                    }
+                    if (
+                      onSelectBlockedSlot &&
+                      p.item.kind === "slot" &&
+                      p.item.status === "BLOCKED"
+                    ) {
+                      const reopenButton = (
+                        <button
+                          type="button"
+                          disabled={slotActionsBusy}
+                          onClick={() => onSelectBlockedSlot(p.item)}
+                          title={`${timeLabel} · ${
+                            p.item.meta?.blockReason ?? t.legendBlocked
+                          } · ${t.clickToReopen}`}
+                          className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105 disabled:opacity-60"
+                          style={
+                            cornerActions
+                              ? { position: "absolute", inset: 0, ...toneStyle(p.item) }
+                              : style
+                          }
+                        >
+                          {inner}
+                        </button>
+                      );
+                      if (!cornerActions) {
+                        return <Fragment key={p.item.id}>{reopenButton}</Fragment>;
+                      }
+                      return (
+                        <div key={p.item.id} style={geometry}>
+                          {reopenButton}
+                          {cornerActions}
+                        </div>
                       );
                     }
                     if (isConsult || isBookedWithPatient) {
@@ -695,6 +812,41 @@ export function WeekCalendar({
         <LegendDot tone="var(--portal-danger)" label={t.legendBlocked} />
       </div>
     </div>
+  );
+}
+
+/** Small solid-red icon button riding in a slot block's top-right corner —
+ *  the admin's block/remove affordances. Deliberately tiny (20px) so it fits
+ *  even a 15-min block's 40px span without covering the time label. */
+function CornerAction({
+  label,
+  title,
+  disabled,
+  onClick,
+  children,
+}: {
+  label: string;
+  title: string;
+  disabled?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      aria-label={label}
+      title={title}
+      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border transition hover:brightness-105 disabled:opacity-50"
+      style={{
+        borderColor: "var(--portal-danger)",
+        background: "var(--portal-danger)",
+        color: "#fff",
+      }}
+    >
+      {children}
+    </button>
   );
 }
 
