@@ -12,6 +12,7 @@ import {
   devActivateSubscription,
   getBillingPortalUrl,
   startSubscription,
+  syncSubscriptionFromProvider,
 } from "../modules/subscriptions/subscription.service.js";
 import { getSubscriptionView } from "../modules/subscriptions/subscription-read.service.js";
 import { RefundError, refundSubscription } from "../modules/subscriptions/refund.service.js";
@@ -105,6 +106,28 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
           returnTo: body.data.returnTo,
         });
         return okResponse(result);
+      } catch (err) {
+        return handleError(reply, err, app);
+      }
+    },
+  );
+
+  /**
+   * Provider-sync fallback — the subscription sibling of
+   * /api/payments/sync-order. Called by the membership page's post-checkout
+   * poller so a lost or slow Stripe webhook can't strand a paying customer on
+   * INCOMPLETE. Idempotent; safe to call repeatedly.
+   */
+  app.post(
+    "/api/me/subscription/sync",
+    // Each call can make up to 3 Stripe reads, so it needs a real cap — but the
+    // poller fires every 2s for ~30s on a legitimate return from Checkout.
+    { config: { rateLimit: { max: 40, timeWindow: "1 hour" } } },
+    async (request, reply) => {
+      const user = await requirePatient(request, reply);
+      if (!user) return;
+      try {
+        return okResponse(await syncSubscriptionFromProvider(user.id));
       } catch (err) {
         return handleError(reply, err, app);
       }

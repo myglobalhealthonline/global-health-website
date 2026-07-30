@@ -9,7 +9,7 @@ import {
   cancelSubscription,
   changePlan,
   getBillingPortalUrl,
-  getSubscription,
+  syncSubscription,
 } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
 import { interpolate } from "@/lib/subscription/format";
@@ -72,31 +72,59 @@ export function ManagePanel(props: ManagePanelProps) {
   // Webhook race after a successful Stripe return (B4): the page reads status
   // once, server-side, and the activating webhook may not have landed yet — so
   // a freshly-paid subscriber would otherwise see the INCOMPLETE "complete your
-  // payment" scold. When we returned with ?subscription=ok but status isn't yet
-  // ACTIVE, poll GET /api/me/subscription (2s, ~30s cap); on ACTIVE we refresh
-  // the server render (→ success banner); on timeout we show a soft
-  // "still processing" state with a refresh CTA — never the scold.
-  const shouldConfirm =
-    props.returnState === "ok" && props.status !== "ACTIVE" && props.status !== "CANCELED";
+  // payment" scold.
+  //
+  // This used to poll GET /api/me/subscription, which re-reads the SAME row the
+  // server already rendered — if the webhook was lost rather than merely late,
+  // 15 reads returned INCOMPLETE and the customer stayed stranded with no way
+  // out. It now calls POST /api/me/subscription/sync, which asks Stripe and
+  // applies the answer, so a dropped webhook self-heals.
+  //
+  //   "poll" — returned from Checkout: sync every 2s up to ~30s, since the
+  //            subscription may genuinely not exist provider-side for a beat.
+  //   "once" — landed on an already-INCOMPLETE membership (revisit, bookmark,
+  //            e-mail link): one sync attempt. Enough to recover a lost webhook
+  //            without spending Stripe calls on a genuinely abandoned checkout.
+  const confirmMode: "poll" | "once" | "off" =
+    props.status === "ACTIVE" || props.status === "CANCELED"
+      ? "off"
+      : props.returnState === "ok"
+        ? "poll"
+        : props.status === "INCOMPLETE"
+          ? "once"
+          : "off";
   const [confirmPhase, setConfirmPhase] = useState<"idle" | "confirming" | "timeout">(
-    shouldConfirm ? "confirming" : "idle",
+    confirmMode === "poll" ? "confirming" : "idle",
   );
   const deadlineRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!shouldConfirm) {
+    if (confirmMode === "off") {
       // Sync confirm phase back to idle when the triggering prop clears.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setConfirmPhase("idle");
       return;
     }
-    setConfirmPhase("confirming");
-    deadlineRef.current = Date.now() + 30_000;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
+
+    // Single silent attempt — no spinner: the page already shows the
+    // INCOMPLETE banner and flipping to "confirming" on every visit would
+    // flicker. A successful heal refreshes into the active state.
+    if (confirmMode === "once") {
+      void syncSubscription().then((res) => {
+        if (!cancelled && res.ok && res.data.changed) router.refresh();
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setConfirmPhase("confirming");
+    deadlineRef.current = Date.now() + 30_000;
     const poll = async () => {
       if (cancelled) return;
-      const res = await getSubscription();
+      const res = await syncSubscription();
       if (cancelled) return;
       if (res.ok && res.data.status === "ACTIVE") {
         router.refresh(); // server re-render flips to the success banner
@@ -113,7 +141,7 @@ export function ManagePanel(props: ManagePanelProps) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [shouldConfirm, router]);
+  }, [confirmMode, router]);
 
   // Return / status banner (success, SCA action-required, INCOMPLETE, cancelled).
   const banner = (() => {
@@ -240,7 +268,9 @@ export function ManagePanel(props: ManagePanelProps) {
             ) : "action" in banner && banner.action === "refresh" ? (
               <button
                 type="button"
-                onClick={() => router.refresh()}
+                // Re-sync from Stripe, not just re-render — a plain refresh
+                // would re-read the same unchanged row the poll gave up on.
+                onClick={() => void syncSubscription().then(() => router.refresh())}
                 className="mt-2 font-semibold underline"
               >
                 {t.return.refresh}

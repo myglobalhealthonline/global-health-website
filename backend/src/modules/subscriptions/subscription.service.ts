@@ -6,9 +6,10 @@ import { syncPlanStripePrice } from "../billing/price-sync.service.js";
 import { isSubscriptionsEnabled } from "./feature-gate.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
 import { notifySubscriptionCanceled } from "./subscription-emails.service.js";
-import { handleSubscriptionEvent } from "./subscription-webhook.service.js";
+import { applyPaidInvoice, handleSubscriptionEvent } from "./subscription-webhook.service.js";
+import { ACTIVE_SLOT_STATUSES } from "./subscription-eligibility.js";
 import { emitOpsAlert } from "./ops/ops-alert.js";
-import type { Prisma } from "@prisma/client";
+import type { Prisma, SubscriptionStatus } from "@prisma/client";
 
 /**
  * Patient-initiated subscription lifecycle (Phase 1): subscribe, cancel,
@@ -213,6 +214,125 @@ export async function startSubscription(
   }
 
   return { checkoutUrl: checkout.url };
+}
+
+/**
+ * Pull the subscription's true state from the provider and apply it (§38.7).
+ *
+ * Activation used to be webhook-ONLY: if the Stripe delivery was lost, delayed
+ * or the endpoint wasn't subscribed to the right events, a customer who had
+ * genuinely paid sat on INCOMPLETE forever, watching "Complete payment
+ * verification". Nothing self-healed — the reconciliation report only inspects
+ * ACTIVE/PAST_DUE subs, so it never even saw them. This is the subscription
+ * sibling of `/api/payments/sync-order`.
+ *
+ * Everything routes through the SAME `applyPaidInvoice` the webhook uses, so a
+ * sync can never grant differently from a webhook. Idempotent: replaying an
+ * already-granted period is a no-op, and a caller may hammer it safely.
+ */
+export async function syncSubscriptionFromProvider(
+  userId: string,
+): Promise<{ status: string; changed: boolean; detail: string }> {
+  const sub = await prisma.userSubscription.findFirst({
+    where: { userId, status: { in: ACTIVE_SLOT_STATUSES } },
+    orderBy: { createdAt: "desc" },
+  });
+  if (!sub) {
+    throw new SubscriptionServiceError("NO_ACTIVE_SUBSCRIPTION", "No subscription to sync");
+  }
+  const unchanged = (detail: string) => ({ status: sub.status, changed: false, detail });
+
+  const billing = getBillingPort();
+  // The fake driver has no provider to ask — dev-activate is that path's tool.
+  if (billing.driver !== "stripe") return unchanged("no-provider");
+
+  // Recover the link when `checkout.session.completed` never landed: the
+  // customer id is written before Checkout opens, so it's always available.
+  let stripeSubscriptionId = sub.stripeSubscriptionId;
+  if (!stripeSubscriptionId) {
+    if (!sub.stripeCustomerId || sub.stripeCustomerId.includes("_fake_")) {
+      return unchanged("no-customer");
+    }
+    stripeSubscriptionId = await billing.findLatestSubscriptionIdForCustomer(
+      sub.stripeCustomerId,
+    );
+    if (!stripeSubscriptionId) return unchanged("no-provider-subscription");
+    await prisma.userSubscription.update({
+      where: { id: sub.id },
+      data: { stripeSubscriptionId },
+    });
+  }
+
+  const live = await billing.retrieveSubscription(stripeSubscriptionId);
+  if (!live) return unchanged("provider-subscription-missing");
+
+  // Replay the paid invoice through the shared grant path — this is what
+  // promotes INCOMPLETE/PAST_DUE → ACTIVE, grants credits and mirrors the
+  // invoice. Skipped when nothing has actually been paid yet.
+  const invoice = await billing.retrieveLatestPaidInvoice(stripeSubscriptionId);
+  if (invoice && invoice.amountPaidCents > 0) {
+    await applyPaidInvoice({
+      stripeSubscriptionId,
+      billingReason: invoice.billingReason,
+      amountPaidCents: invoice.amountPaidCents,
+      periodStart: invoice.periodStart ?? live.currentPeriodStart,
+      periodEnd: invoice.periodEnd ?? live.currentPeriodEnd,
+      stripeInvoiceId: invoice.id,
+      number: invoice.number,
+      currency: invoice.currency,
+      taxCents: invoice.taxCents,
+      hostedInvoiceUrl: invoice.hostedInvoiceUrl,
+      pdfUrl: invoice.pdfUrl,
+      status: invoice.status,
+    });
+  }
+
+  // Then fold in the live subscription state (cancel_at_period_end, a status
+  // the invoice path doesn't set — canceled/paused/past_due). Re-read first:
+  // applyPaidInvoice may have just moved the row.
+  const after = await prisma.userSubscription.findUnique({ where: { id: sub.id } });
+  if (!after) return unchanged("row-vanished");
+
+  const liveStatus = mapProviderStatus(live.status);
+  const nextStatus =
+    // Never rewind a just-granted ACTIVE on a stale provider read, and never
+    // resurrect a CANCELED row — same monotonic rules as the webhook sync.
+    after.status === "CANCELED" || (after.status === "ACTIVE" && liveStatus === "INCOMPLETE")
+      ? after.status
+      : liveStatus;
+
+  await prisma.userSubscription.update({
+    where: { id: after.id },
+    data: {
+      status: nextStatus,
+      cancelAtPeriodEnd: live.cancelAtPeriodEnd,
+      ...(live.currentPeriodEnd ? { currentPeriodEnd: live.currentPeriodEnd } : {}),
+    },
+  });
+
+  return {
+    status: nextStatus,
+    changed: nextStatus !== sub.status,
+    detail: "synced",
+  };
+}
+
+/** Provider status string → our enum. Mirrors the webhook's `mapStripeStatus`. */
+function mapProviderStatus(status: string | null): SubscriptionStatus {
+  switch (status) {
+    case "active":
+    case "trialing":
+      return "ACTIVE";
+    case "past_due":
+    case "unpaid":
+      return "PAST_DUE";
+    case "canceled":
+      return "CANCELED";
+    case "paused":
+      return "PAUSED";
+    default:
+      return "INCOMPLETE";
+  }
 }
 
 /** Cancel at period end (Q5=A) — benefits persist to currentPeriodEnd. */

@@ -1,6 +1,12 @@
-import { getStripeClient } from "../../lib/stripe/client.js";
+import {
+  DEFAULT_STRIPE_ACCOUNT,
+  getStripeClient,
+  resolveStripeAccount,
+} from "../../lib/stripe/client.js";
+import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import { checkoutBranding } from "./checkout-branding.js";
 import type {
+  BillingInvoiceView,
   BillingPort,
   BillingPriceRef,
   BillingProductRef,
@@ -22,6 +28,38 @@ export function isResourceMissing(err: unknown): boolean {
     typeof err === "object" &&
     err !== null &&
     (err as { code?: string }).code === "resource_missing"
+  );
+}
+
+/**
+ * Every method here uses the DEFAULT (Ireland) Stripe account — customers,
+ * prices, subscriptions and the billing portal all have to live on one account,
+ * and threading a per-country client through the whole port only pays off once a
+ * second market actually sells memberships. One-off payments DO route per
+ * country (`getStripeClient(countryCode)`), so a plan in a PT/CZ country would
+ * silently mint its customer + subscription on the Irish entity while its
+ * one-off orders bill elsewhere. Fail loudly at the entry point instead.
+ *
+ * ponytail: single-account until a second market sells memberships; the upgrade
+ * is `getStripeClient(countryCode)` in every method plus a per-account customer
+ * id on UserSubscription.
+ */
+function assertDefaultStripeAccount(
+  countryCode: string | null | undefined,
+  operation: string,
+): void {
+  const account = resolveStripeAccount(countryCode);
+  if (account === DEFAULT_STRIPE_ACCOUNT) return;
+  void emitOpsAlert({
+    severity: "critical",
+    title: "Subscription blocked — plan country maps to a non-default Stripe account",
+    detail:
+      `${operation} for country "${countryCode}" resolves to the "${account}" Stripe account, ` +
+      `but the subscription billing port only speaks to "${DEFAULT_STRIPE_ACCOUNT}". ` +
+      "Selling memberships in this market needs per-account subscription support first.",
+  });
+  throw new Error(
+    `Subscriptions are not configured for the "${account}" Stripe account (country "${countryCode}").`,
   );
 }
 
@@ -100,6 +138,7 @@ export class StripeBillingPort implements BillingPort {
   async createSubscriptionCheckout(
     input: CreateSubscriptionCheckoutInput,
   ): Promise<{ url: string; sessionId: string }> {
+    assertDefaultStripeAccount(input.countryCode, "subscription checkout");
     const stripe = getStripeClient();
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -206,6 +245,59 @@ export class StripeBillingPort implements BillingPort {
       });
     }
     return { scheduleId: null };
+  }
+
+  async findLatestSubscriptionIdForCustomer(
+    customerId: string,
+  ): Promise<string | null> {
+    const stripe = getStripeClient();
+    try {
+      // Stripe returns newest-first; `status: "all"` so a sub that already went
+      // past_due (first payment retried) is still recoverable.
+      const list = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "all",
+        limit: 1,
+      });
+      return list.data[0]?.id ?? null;
+    } catch (err) {
+      if (isResourceMissing(err)) return null;
+      throw err;
+    }
+  }
+
+  async retrieveLatestPaidInvoice(
+    subscriptionId: string,
+  ): Promise<BillingInvoiceView | null> {
+    const stripe = getStripeClient();
+    try {
+      const list = await stripe.invoices.list({
+        subscription: subscriptionId,
+        status: "paid",
+        limit: 1,
+      });
+      const inv = list.data[0];
+      if (!inv) return null;
+      const linePeriod = inv.lines?.data?.[0]?.period;
+      const unix = (v: number | null | undefined) =>
+        typeof v === "number" && v > 0 ? new Date(v * 1000) : null;
+      return {
+        id: inv.id ?? subscriptionId,
+        billingReason: inv.billing_reason ?? null,
+        amountPaidCents: inv.amount_paid ?? 0,
+        currency: inv.currency ?? null,
+        number: inv.number ?? null,
+        taxCents: (inv as unknown as { tax?: number | null }).tax ?? 0,
+        hostedInvoiceUrl: inv.hosted_invoice_url ?? null,
+        pdfUrl: inv.invoice_pdf ?? null,
+        status: inv.status ?? null,
+        periodStart: unix(linePeriod?.start) ?? unix(inv.period_start),
+        periodEnd: unix(linePeriod?.end) ?? unix(inv.period_end),
+      };
+    } catch (err) {
+      if (isResourceMissing(err)) return null;
+      throw err;
+    }
   }
 
   async retrieveSubscription(

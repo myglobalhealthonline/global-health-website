@@ -28,6 +28,21 @@ export interface MinimalStripeEvent {
   data: { object: Record<string, unknown> };
 }
 
+/**
+ * Stripe emits `invoice.paid` AND `invoice.payment_succeeded` for the SAME
+ * invoice (aliases) — two event ids, ~0.3s apart, both subscribed on the live
+ * endpoint. The period-keyed grant already made the second a no-op, but only
+ * after re-running the whole 20s grant transaction and re-upserting the mirrored
+ * invoice. Dedupe on the invoice id instead so the money path runs once.
+ */
+export function invoiceAliasKey(event: MinimalStripeEvent): string | null {
+  if (event.type !== "invoice.paid" && event.type !== "invoice.payment_succeeded") {
+    return null;
+  }
+  const invoiceId = str(event.data.object.id);
+  return invoiceId ? `invoice-paid:${invoiceId}` : null;
+}
+
 export interface SubscriptionEventResult {
   handled: boolean;
   detail?: string;
@@ -75,8 +90,10 @@ export async function handleSubscriptionEvent(
 ): Promise<SubscriptionEventResult> {
   // Exact event-id dedupe (retries). Period-keyed grant covers same-period
   // duplicate invoices with different event ids.
-  const already = await prisma.processedWebhookEvent.findUnique({
-    where: { stripeEventId: event.id },
+  const aliasKey = invoiceAliasKey(event);
+  const dedupeKeys = aliasKey ? [event.id, aliasKey] : [event.id];
+  const already = await prisma.processedWebhookEvent.findFirst({
+    where: { stripeEventId: { in: dedupeKeys } },
     select: { id: true },
   });
   if (already) return { handled: true, detail: "deduped" };
@@ -114,7 +131,10 @@ export async function handleSubscriptionEvent(
 
   if (result.handled) {
     await prisma.processedWebhookEvent
-      .create({ data: { stripeEventId: event.id, eventType: event.type } })
+      .createMany({
+        data: dedupeKeys.map((stripeEventId) => ({ stripeEventId, eventType: event.type })),
+        skipDuplicates: true,
+      })
       .catch(() => {
         // A concurrent retry may have inserted it first — safe to ignore.
       });
@@ -123,6 +143,34 @@ export async function handleSubscriptionEvent(
 }
 
 // ── handlers ────────────────────────────────────────────────────────────────
+
+/**
+ * We received an event for a Stripe subscription we can't resolve. Two very
+ * different causes, and acking both was a silent data-loss bug: the caller
+ * records the event id as processed, so Stripe never retries and whatever the
+ * event carried (ACTIVE + the billing period, a cancel, a PAST_DUE flip) is
+ * gone for good.
+ *
+ * Distinguish them by the CUSTOMER: when that customer still has a
+ * UserSubscription row with no `stripeSubscriptionId`, the linking
+ * `checkout.session.completed` simply hasn't landed yet → return unhandled so
+ * the route 500s and Stripe redelivers. Otherwise the subscription genuinely
+ * isn't ours (a Dashboard-created sub, another environment sharing the
+ * account) → ack it, or we'd 500 on every retry for three days.
+ */
+async function deferWhenLinkPending(
+  customerId: string | null,
+  ackDetail: string,
+): Promise<SubscriptionEventResult> {
+  if (!customerId) return { handled: true, detail: `${ackDetail}:no-customer` };
+  const linkPending = await prisma.userSubscription.findFirst({
+    where: { stripeCustomerId: customerId, stripeSubscriptionId: null },
+    select: { id: true },
+  });
+  return linkPending
+    ? { handled: false, detail: "link-pending" }
+    : { handled: true, detail: ackDetail };
+}
 
 async function onCheckoutCompleted(
   event: MinimalStripeEvent,
@@ -166,7 +214,7 @@ async function onSubscriptionSynced(
   const sub = await prisma.userSubscription.findUnique({
     where: { stripeSubscriptionId },
   });
-  if (!sub) return { handled: true, detail: "sub-not-found" };
+  if (!sub) return deferWhenLinkPending(str(obj.customer), "sub-not-found");
 
   const stripeStatus = mapStripeStatus(str(obj.status));
   const cancelAtPeriodEnd = Boolean(obj.cancel_at_period_end);
@@ -209,7 +257,7 @@ async function onSubscriptionDeleted(
   const sub = await prisma.userSubscription.findUnique({
     where: { stripeSubscriptionId },
   });
-  if (!sub) return { handled: true, detail: "sub-not-found" };
+  if (!sub) return deferWhenLinkPending(str(event.data.object.customer), "sub-not-found");
   await prisma.userSubscription.update({
     where: { id: sub.id },
     data: { status: "CANCELED", canceledAt: sub.canceledAt ?? new Date() },
@@ -224,40 +272,55 @@ async function onSubscriptionDeleted(
   return { handled: true, detail: "canceled" };
 }
 
-async function onInvoicePaid(event: MinimalStripeEvent): Promise<SubscriptionEventResult> {
-  const inv = event.data.object;
-  const stripeSubscriptionId = resolveInvoiceSubscriptionId(inv);
-  const billingReason = str(inv.billing_reason);
-  if (!stripeSubscriptionId || !isGrantingReason(billingReason)) {
+/**
+ * A paid subscription invoice → grant + mirror + notify. The ONE place that
+ * turns money into an ACTIVE membership, shared by the webhook handler and the
+ * provider-sync fallback (`syncSubscriptionFromProvider`) so a sync can never
+ * drift from what a webhook would have done. Idempotent via the period key.
+ */
+export async function applyPaidInvoice(input: {
+  stripeSubscriptionId: string;
+  billingReason: string | null;
+  amountPaidCents: number;
+  periodStart: Date | null;
+  periodEnd: Date | null;
+  stripeInvoiceId: string;
+  number?: string | null;
+  currency?: string | null;
+  taxCents?: number | null;
+  hostedInvoiceUrl?: string | null;
+  pdfUrl?: string | null;
+  status?: string | null;
+}): Promise<SubscriptionEventResult> {
+  if (!isGrantingReason(input.billingReason)) {
     return { handled: true, detail: "non-granting-invoice" };
   }
-  const amountPaid = num(inv.amount_paid) ?? 0;
-  const { periodStart, periodEnd } = resolveInvoicePeriod(inv);
+  const { periodStart, periodEnd } = input;
   if (!periodStart || !periodEnd) {
     return { handled: true, detail: "no-period" };
   }
 
   const grant = await processInvoicePaid({
-    stripeSubscriptionId,
+    stripeSubscriptionId: input.stripeSubscriptionId,
     periodStart,
     periodEnd,
-    billingReason: billingReason as BillingReason,
-    amountPaid,
+    billingReason: input.billingReason as BillingReason,
+    amountPaid: input.amountPaidCents,
   });
 
   // Mirror the Stripe-hosted invoice for the account page (§38.1).
   if (grant.subscriptionId) {
     await writeSubscriptionInvoice({
       userSubscriptionId: grant.subscriptionId,
-      stripeInvoiceId: str(inv.id) ?? `${event.id}-inv`,
-      number: str(inv.number),
-      amountPaidCents: amountPaid,
-      currency: str(inv.currency) ?? "eur",
-      taxCents: num(inv.tax) ?? 0,
+      stripeInvoiceId: input.stripeInvoiceId,
+      number: input.number ?? null,
+      amountPaidCents: input.amountPaidCents,
+      currency: input.currency ?? "eur",
+      taxCents: input.taxCents ?? 0,
       periodStart,
-      hostedInvoiceUrl: str(inv.hosted_invoice_url),
-      pdfUrl: str(inv.invoice_pdf),
-      status: str(inv.status),
+      hostedInvoiceUrl: input.hostedInvoiceUrl ?? null,
+      pdfUrl: input.pdfUrl ?? null,
+      status: input.status ?? null,
     });
   }
 
@@ -265,9 +328,30 @@ async function onInvoicePaid(event: MinimalStripeEvent): Promise<SubscriptionEve
 
   if (grant.granted && grant.subscriptionId && grant.userId) {
     fireGrantAudits(grant.subscriptionId, grant.userId, grant);
-    fireSubscriptionEmails(grant.subscriptionId, billingReason, grant);
+    fireSubscriptionEmails(grant.subscriptionId, input.billingReason, grant);
   }
   return { handled: true, detail: grant.granted ? "granted" : "duplicate-period" };
+}
+
+async function onInvoicePaid(event: MinimalStripeEvent): Promise<SubscriptionEventResult> {
+  const inv = event.data.object;
+  const stripeSubscriptionId = resolveInvoiceSubscriptionId(inv);
+  if (!stripeSubscriptionId) return { handled: true, detail: "non-granting-invoice" };
+  const { periodStart, periodEnd } = resolveInvoicePeriod(inv);
+  return applyPaidInvoice({
+    stripeSubscriptionId,
+    billingReason: str(inv.billing_reason),
+    amountPaidCents: num(inv.amount_paid) ?? 0,
+    periodStart,
+    periodEnd,
+    stripeInvoiceId: str(inv.id) ?? `${event.id}-inv`,
+    number: str(inv.number),
+    currency: str(inv.currency),
+    taxCents: num(inv.tax),
+    hostedInvoiceUrl: str(inv.hosted_invoice_url),
+    pdfUrl: str(inv.invoice_pdf),
+    status: str(inv.status),
+  });
 }
 
 /**
@@ -334,7 +418,7 @@ async function onInvoiceFailed(event: MinimalStripeEvent): Promise<SubscriptionE
   const sub = await prisma.userSubscription.findUnique({
     where: { stripeSubscriptionId },
   });
-  if (!sub) return { handled: true, detail: "sub-not-found" };
+  if (!sub) return deferWhenLinkPending(str(event.data.object.customer), "sub-not-found");
   // PAST_DUE, no credits. Stripe owns dunning (§38.5). Benefits persist to
   // currentPeriodEnd (Q5=A) — handled by the eligibility predicate.
   if (sub.status === "ACTIVE" || sub.status === "INCOMPLETE") {

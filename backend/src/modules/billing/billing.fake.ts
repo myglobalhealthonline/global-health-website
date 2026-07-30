@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type {
+  BillingInvoiceView,
   BillingPort,
   BillingPriceRef,
   BillingProductRef,
@@ -130,6 +131,20 @@ export class FakeBillingPort implements BillingPort {
     subscriptionId: string,
   ): Promise<BillingSubscriptionView | null> {
     return this.subscriptions.get(subscriptionId) ?? null;
+  }
+
+  async findLatestSubscriptionIdForCustomer(
+    customerId: string,
+  ): Promise<string | null> {
+    for (const sub of this.subscriptions.values()) {
+      if (sub.customerId === customerId) return sub.id;
+    }
+    return null;
+  }
+
+  /** No provider invoices in the fake driver — sync has nothing to replay. */
+  async retrieveLatestPaidInvoice(): Promise<BillingInvoiceView | null> {
+    return null;
   }
 
   /** Test helper: register a known subscription for reconciliation paths. */

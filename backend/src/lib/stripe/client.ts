@@ -35,6 +35,9 @@ type StripeInstance = InstanceType<typeof Stripe>;
 
 export type StripeAccountId = "ie" | "pt" | "cz";
 
+/** The account `getStripeClient()` uses when no country is passed. */
+export const DEFAULT_STRIPE_ACCOUNT: StripeAccountId = "ie";
+
 interface StripeAccountConfig {
   secretKey?: string;
   webhookSecret?: string;

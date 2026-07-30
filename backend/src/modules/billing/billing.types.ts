@@ -132,4 +132,31 @@ export interface BillingPort {
   retrieveSubscription(
     subscriptionId: string,
   ): Promise<BillingSubscriptionView | null>;
+
+  /**
+   * Newest subscription id on a customer, or null. Recovers the link when
+   * `checkout.session.completed` never arrived and our row has no
+   * `stripeSubscriptionId` — the only handle we still hold is the customer.
+   */
+  findLatestSubscriptionIdForCustomer(customerId: string): Promise<string | null>;
+
+  /** Most recent PAID invoice on a subscription (provider-sync fallback). */
+  retrieveLatestPaidInvoice(
+    subscriptionId: string,
+  ): Promise<BillingInvoiceView | null>;
+}
+
+/** A paid invoice, normalised for `applyPaidInvoice`. */
+export interface BillingInvoiceView {
+  id: string;
+  billingReason: string | null;
+  amountPaidCents: number;
+  currency: string | null;
+  number: string | null;
+  taxCents: number;
+  hostedInvoiceUrl: string | null;
+  pdfUrl: string | null;
+  status: string | null;
+  periodStart: Date | null;
+  periodEnd: Date | null;
 }

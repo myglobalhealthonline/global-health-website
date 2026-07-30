@@ -117,6 +117,15 @@ export function getSubscription(): Promise<MeResult<SubscriptionView>> {
   return meRequest(`subscription?locale=${readClientLocale().toUpperCase()}`);
 }
 
+/** Pull the subscription's true state from Stripe and apply it. The membership
+ *  poller calls this (not just a DB read) so a lost or slow webhook can't leave
+ *  a paid membership stuck on INCOMPLETE. Idempotent. */
+export function syncSubscription(): Promise<
+  MeResult<{ status: string; changed: boolean; detail: string }>
+> {
+  return meRequest("subscription/sync", { method: "POST" });
+}
+
 export function getRedemptions(): Promise<MeResult<RedemptionsView>> {
   return meRequest("redemptions");
 }
