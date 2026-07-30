@@ -18,6 +18,7 @@ import {
   serializeReport,
   type ReportTable,
 } from "../modules/reports/report-formatters.js";
+import { resolvePayoutStatementLocale } from "../modules/reports/payout-statement-content.js";
 
 /**
  * GET /api/admin/reports/export?dataset=services|patients|appointments
@@ -66,6 +67,10 @@ const querySchema = z.object({
       "CANCELLED",
     ])
     .optional(),
+  /** Language to render the export in. Only `dataset=payout` honours this —
+   *  the admin picks it explicitly from the report panel, so finance can hand
+   *  a doctor a statement in the doctor's own language. */
+  locale: z.string().trim().min(2).max(8).optional(),
 });
 
 function resolveRange(from?: string, to?: string): { from?: Date; to?: Date } {
@@ -173,6 +178,7 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
             iban,
             bic: bankRow?.bic ?? null,
           },
+          resolvePayoutStatementLocale(q.locale),
         );
       } else {
         table = await adminAppointmentsReport(filters);
@@ -185,7 +191,12 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
       }
 
       const stamp = new Date().toISOString().slice(0, 10);
-      const base = `admin-${q.dataset}-${stamp}`;
+      // Payout statements carry their language in the filename — finance often
+      // pulls the same month in two languages and the files must not collide.
+      const base =
+        q.dataset === "payout"
+          ? `admin-payout-${resolvePayoutStatementLocale(q.locale)}-${stamp}`
+          : `admin-${q.dataset}-${stamp}`;
       const out = await serializeReport(table, q.format);
       return reply
         .header("Content-Type", out.contentType)
