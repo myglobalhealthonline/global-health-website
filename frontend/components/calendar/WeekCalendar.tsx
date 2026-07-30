@@ -651,12 +651,12 @@ export function WeekCalendar({
                       </>
                     ) : (
                       <>
-                        <span className="flex items-center gap-1 text-portal-thead font-bold leading-tight">
+                        <span className="flex items-center justify-center gap-1 text-portal-thead font-bold leading-tight">
                           {statusIcon(p.item.status)}
                           <span className="truncate">{timeLabel}</span>
                         </span>
                         {showDoctorName && doctorName && showSecond ? (
-                          <span className="mt-0.5 block truncate text-portal-micro font-medium leading-tight opacity-80">
+                          <span className="mt-0.5 block truncate text-center text-portal-micro font-medium leading-tight opacity-80">
                             {doctorName}
                           </span>
                         ) : null}
@@ -729,6 +729,15 @@ export function WeekCalendar({
                           })()
                         : null;
 
+                    const cornerCount =
+                      (onBlockSlot && p.item.status === "OPEN" ? 1 : 0) +
+                      (onSelectBlockedSlot && p.item.status === "BLOCKED" ? 1 : 0) +
+                      (onRemoveSlot ? 1 : 0);
+                    const contentInset: CSSProperties = {
+                      paddingLeft: selectBox ? 24 : undefined,
+                      paddingRight: cornerCount > 0 ? cornerCount * 22 + 2 : undefined,
+                    };
+
                     const cornerActions =
                       p.item.kind === "slot" &&
                       (p.item.status === "OPEN" || p.item.status === "BLOCKED") &&
@@ -786,6 +795,7 @@ export function WeekCalendar({
                                   position: "absolute",
                                   inset: 0,
                                   ...toneStyle(p.item),
+                                  ...contentInset,
                                 }
                               : style
                           }
@@ -822,7 +832,12 @@ export function WeekCalendar({
                           className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105 disabled:opacity-60"
                           style={
                             cornerActions || selectBox
-                              ? { position: "absolute", inset: 0, ...toneStyle(p.item) }
+                              ? {
+                                  position: "absolute",
+                                  inset: 0,
+                                  ...toneStyle(p.item),
+                                  ...contentInset,
+                                }
                               : style
                           }
                         >
@@ -868,7 +883,12 @@ export function WeekCalendar({
                         className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1"
                         style={
                           cornerActions || selectBox
-                            ? { position: "absolute", inset: 0, ...toneStyle(p.item) }
+                            ? {
+                                position: "absolute",
+                                inset: 0,
+                                ...toneStyle(p.item),
+                                ...contentInset,
+                              }
                             : style
                         }
                       >
