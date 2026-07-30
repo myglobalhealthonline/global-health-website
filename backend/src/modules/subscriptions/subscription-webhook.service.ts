@@ -292,10 +292,33 @@ export async function applyPaidInvoice(input: {
   pdfUrl?: string | null;
   status?: string | null;
 }): Promise<SubscriptionEventResult> {
-  if (!isGrantingReason(input.billingReason)) {
-    return { handled: true, detail: "non-granting-invoice" };
-  }
   const { periodStart, periodEnd } = input;
+
+  // An immediate UPGRADE bills a prorated `subscription_update` invoice. The
+  // plan swap, perk unlock and credit delta were already applied synchronously
+  // by changePlan, so this must NOT grant — but it still has to appear in the
+  // patient's invoice history, which the old blanket early-return skipped.
+  if (!isGrantingReason(input.billingReason)) {
+    const sub = await prisma.userSubscription.findUnique({
+      where: { stripeSubscriptionId: input.stripeSubscriptionId },
+      select: { id: true },
+    });
+    if (!sub) return { handled: true, detail: "non-granting-invoice" };
+    await writeSubscriptionInvoice({
+      userSubscriptionId: sub.id,
+      stripeInvoiceId: input.stripeInvoiceId,
+      number: input.number ?? null,
+      amountPaidCents: input.amountPaidCents,
+      currency: input.currency ?? "eur",
+      taxCents: input.taxCents ?? 0,
+      periodStart: periodStart ?? new Date(),
+      hostedInvoiceUrl: input.hostedInvoiceUrl ?? null,
+      pdfUrl: input.pdfUrl ?? null,
+      status: input.status ?? null,
+    });
+    return { handled: true, detail: "mirrored-not-granted" };
+  }
+
   if (!periodStart || !periodEnd) {
     return { handled: true, detail: "no-period" };
   }

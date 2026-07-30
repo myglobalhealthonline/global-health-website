@@ -146,7 +146,12 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
     }
     try {
       const result = await changePlan(user.id, body.data.planId);
-      return okResponse({ pendingChangeEffectiveAt: result.pendingChangeEffectiveAt?.toISOString() ?? null });
+      return okResponse({
+        pendingChangeEffectiveAt: result.pendingChangeEffectiveAt?.toISOString() ?? null,
+        // true = upgrade, already live and charged. false = downgrade, lands
+        // at pendingChangeEffectiveAt with nothing charged today.
+        applied: result.applied,
+      });
     } catch (err) {
       return handleError(reply, err, app);
     }

@@ -5,7 +5,12 @@ import { isResourceMissing } from "../billing/billing.stripe.js";
 import { syncPlanStripePrice } from "../billing/price-sync.service.js";
 import { isSubscriptionsEnabled } from "./feature-gate.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
-import { notifySubscriptionCanceled } from "./subscription-emails.service.js";
+import { applyPlanUpgradeNow } from "./subscription-grant.service.js";
+import { recordAudit } from "../audit/audit.service.js";
+import {
+  notifyPerkUnlocked,
+  notifySubscriptionCanceled,
+} from "./subscription-emails.service.js";
 import { applyPaidInvoice, handleSubscriptionEvent } from "./subscription-webhook.service.js";
 import { ACTIVE_SLOT_STATUSES } from "./subscription-eligibility.js";
 import { emitOpsAlert } from "./ops/ops-alert.js";
@@ -396,11 +401,24 @@ export async function cancelSubscription(
   return { status: sub.status, currentPeriodEnd: sub.currentPeriodEnd };
 }
 
-/** Schedule a next-cycle plan change (Q10=B, no proration). */
+/**
+ * Change plan. Asymmetric, matching how subscription products normally behave:
+ *
+ *   UPGRADE   → applied NOW. Stripe invoices the prorated difference
+ *               immediately and the new plan's benefits (perks + the credit
+ *               difference) land the same second. Waiting up to a month for a
+ *               tier you just chose to pay more for is the single most common
+ *               way to lose the customer at this step.
+ *   DOWNGRADE → deferred to the period end (unchanged). They paid for the
+ *               current tier; they keep it until it runs out, and nothing is
+ *               charged or refunded today.
+ *
+ * `effectiveAt: null` in the result means "already in effect" — an upgrade.
+ */
 export async function changePlan(
   userId: string,
   newPlanId: string,
-): Promise<{ pendingChangeEffectiveAt: Date | null }> {
+): Promise<{ pendingChangeEffectiveAt: Date | null; applied: boolean }> {
   assertBillingConfigured("changePlan");
   const sub = await prisma.userSubscription.findFirst({
     where: { userId, status: { in: ["ACTIVE", "PAST_DUE"] } },
@@ -430,6 +448,44 @@ export async function changePlan(
     ({ stripePriceId: newPriceId } = await syncPlanStripePrice(newPlan.id));
   }
 
+  // Direction decides everything below. Compare against the CURRENT plan's
+  // live price (the snapshot can be stale after an admin edit).
+  const currentPlan = await prisma.pricingPlan.findUnique({
+    where: { id: sub.planId },
+    select: { monthlyPriceCents: true },
+  });
+  const isUpgrade =
+    currentPlan != null && newPlan.monthlyPriceCents > currentPlan.monthlyPriceCents;
+
+  if (isUpgrade) {
+    // Charge the difference first — if Stripe declines, we must not hand over
+    // the better plan. A throw here leaves the subscription untouched.
+    if (sub.stripeSubscriptionId) {
+      await getBillingPort().schedulePlanChange({
+        subscriptionId: sub.stripeSubscriptionId,
+        newPriceId,
+        prorateNow: true,
+      });
+    }
+    const applied = await applyPlanUpgradeNow({
+      subscriptionId: sub.id,
+      newPlanId: newPlan.id,
+      newStripePriceId: newPriceId,
+    });
+    for (const perkKey of applied.newlyUnlockedPerks) {
+      void recordAudit({
+        action: "PERK_UNLOCKED",
+        entityType: "UserSubscription",
+        entityId: sub.id,
+        actorUserId: sub.userId,
+        metadata: { perkKey, via: "plan_upgrade" },
+      });
+      void notifyPerkUnlocked(sub.id, perkKey).catch(() => {});
+    }
+    return { pendingChangeEffectiveAt: null, applied: true };
+  }
+
+  // Downgrade (or same price) — deferred to the period end, nothing charged.
   let scheduleId: string | null = null;
   if (sub.stripeSubscriptionId) {
     ({ scheduleId } = await getBillingPort().schedulePlanChange({
@@ -448,7 +504,7 @@ export async function changePlan(
     },
   });
 
-  return { pendingChangeEffectiveAt: sub.currentPeriodEnd };
+  return { pendingChangeEffectiveAt: sub.currentPeriodEnd, applied: false };
 }
 
 /**

@@ -271,7 +271,14 @@ export class StripeBillingPort implements BillingPort {
     if (itemId) {
       await stripe.subscriptions.update(input.subscriptionId, {
         items: [{ id: itemId, price: input.newPriceId }],
-        proration_behavior: "none",
+        // Upgrade: bill the prorated difference right now, so the better plan
+        // starts today. `always_invoice` finalises AND charges the proration
+        // immediately rather than parking it on the next cycle's invoice — the
+        // resulting `billing_reason: subscription_update` invoice is mirrored
+        // (not granted) by the webhook, since the caller already applied the
+        // plan + credit delta synchronously.
+        // Downgrade: no proration, price lands at the next cycle.
+        proration_behavior: input.prorateNow ? "always_invoice" : "none",
       });
     }
     return { scheduleId: null };

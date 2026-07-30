@@ -66,6 +66,13 @@ export interface BillingPortalInput {
 export interface SchedulePlanChangeInput {
   subscriptionId: string;
   newPriceId: string;
+  /**
+   * UPGRADES only. Swap the price immediately and invoice the prorated
+   * difference now, so the customer gets what they just paid more for today
+   * (industry norm). Downgrades leave this false: the price change lands at the
+   * next cycle and the customer keeps the tier they already paid for.
+   */
+  prorateNow?: boolean;
 }
 
 export interface BillingSubscriptionView {

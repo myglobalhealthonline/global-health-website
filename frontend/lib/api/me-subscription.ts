@@ -263,7 +263,11 @@ export function devActivateSubscription(): Promise<MeResult<{ activated: boolean
   return meRequest("subscription/dev-activate", { method: "POST" });
 }
 
-export function changePlan(planId: string): Promise<MeResult<{ pendingChangeEffectiveAt: string | null }>> {
+/** Upgrades apply immediately (`applied: true`, prorated difference charged);
+ *  downgrades are scheduled for `pendingChangeEffectiveAt` with no charge. */
+export function changePlan(
+  planId: string,
+): Promise<MeResult<{ pendingChangeEffectiveAt: string | null; applied: boolean }>> {
   return meRequest("subscription/change", { method: "POST", body: { planId } });
 }
 

@@ -200,13 +200,21 @@ export function ManagePanel(props: ManagePanelProps) {
   async function confirmChange() {
     setConfirmChangeOpen(false);
     if (!selectedPlan) return;
+    const planName = props.planOptions.find((p) => p.id === selectedPlan)?.name ?? "";
     setBusy("change");
     setNotice(null);
     const res = await changePlan(selectedPlan);
     setBusy(null);
     if (res.ok) {
-      const date = res.data.pendingChangeEffectiveAt ? formatAppDate(res.data.pendingChangeEffectiveAt) : "";
-      setNotice({ kind: "ok", text: interpolate(t.changeScheduled, { date }) });
+      // Upgrades are already live and charged; downgrades are scheduled.
+      const text = res.data.applied
+        ? interpolate(t.upgradeApplied, { plan: planName })
+        : interpolate(t.changeScheduled, {
+            date: res.data.pendingChangeEffectiveAt
+              ? formatAppDate(res.data.pendingChangeEffectiveAt)
+              : "",
+          });
+      setNotice({ kind: "ok", text });
       setSelectedPlan("");
       router.refresh();
     } else {
@@ -215,10 +223,17 @@ export function ManagePanel(props: ManagePanelProps) {
   }
 
   const selectedPlanOption = props.planOptions.find((p) => p.id === selectedPlan);
-  const changeConfirmMsg = interpolate(t.changeConfirm, {
-    plan: selectedPlanOption?.name ?? "",
-    date: props.nextBillingLabel ?? "",
-  });
+  // Upgrade vs downgrade decides what we're allowed to promise: an upgrade is
+  // charged and live immediately, a downgrade is free and deferred. Same
+  // comparison the backend makes to pick the branch.
+  const selectedIsUpgrade =
+    selectedPlanOption != null && selectedPlanOption.priceCents > props.currentPriceCents;
+  const changeConfirmMsg = selectedIsUpgrade
+    ? interpolate(t.upgradeConfirm, { plan: selectedPlanOption?.name ?? "" })
+    : interpolate(t.changeConfirm, {
+        plan: selectedPlanOption?.name ?? "",
+        date: props.nextBillingLabel ?? "",
+      });
 
   async function doCancelChange() {
     setBusy("cancelChange");
@@ -398,7 +413,7 @@ export function ManagePanel(props: ManagePanelProps) {
           <div className="gh-membership-do">
             <div>
               <h3 className="gh-membership-do__title">{t.browseAllPlans}</h3>
-              <p className="gh-membership-do__body">{t.changeNote}</p>
+              <p className="gh-membership-do__body">{t.changeNoteUpgrade}</p>
             </div>
             <div className="gh-membership-do__ctl">
               <Link

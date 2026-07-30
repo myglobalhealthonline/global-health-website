@@ -483,7 +483,22 @@ export interface AdjustCreditsInput {
 export async function adjustCredits(
   input: AdjustCreditsInput,
 ): Promise<{ balance: number }> {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction((tx) => adjustCreditsInTx(tx, input));
+}
+
+/**
+ * Same adjustment, inside a caller-supplied transaction — for flows that must
+ * move credits ATOMICALLY with other state. The immediate plan upgrade uses it
+ * so the new plan, its perk grants and the credit top-up either all land or
+ * none do; a partial apply would leave a subscriber on the new plan without the
+ * credits they just paid for. `actorAdminId` is optional here: the upgrade
+ * top-up is a system action, not an admin one (the field is not persisted).
+ */
+export async function adjustCreditsInTx(
+  tx: Tx,
+  input: Omit<AdjustCreditsInput, "actorAdminId"> & { actorAdminId?: string },
+): Promise<{ balance: number }> {
+  {
     const seen = await terminalKeySeen(tx, input.kind, input.idempotencyKey);
     if (seen) {
       const row = await tx.subscriptionCreditBalance.findUnique({
@@ -530,7 +545,7 @@ export async function adjustCredits(
       idempotencyKey: input.idempotencyKey,
     });
     return { balance: next };
-  });
+  }
 }
 
 /** Build the admin adjustment idempotency key (re-exported for callers). */
