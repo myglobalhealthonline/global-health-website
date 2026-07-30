@@ -4,6 +4,7 @@ import { getBillingPort } from "../billing/billing.factory.js";
 import { isResourceMissing } from "../billing/billing.stripe.js";
 import { syncPlanStripePrice } from "../billing/price-sync.service.js";
 import { isSubscriptionsEnabled } from "./feature-gate.js";
+import { asPlanSnapshot } from "./plan-snapshot.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
 import { applyPlanUpgradeNow } from "./subscription-grant.service.js";
 import { recordAudit } from "../audit/audit.service.js";
@@ -183,6 +184,28 @@ export async function startSubscription(
       },
     }));
 
+  // We only reach here when the user has NO active subscription in our DB, so
+  // any subscription still live on the Stripe customer is an orphan from an
+  // abandoned/duplicate checkout. Cancel it before opening a fresh Checkout so
+  // the customer can never end up paying for two (single-active-sub must hold
+  // at the provider too, not just in our row). No-op on the fake driver.
+  const cleared = await billing.cancelActiveSubscriptionsForCustomer(customer.customerId);
+  // A paid subscription survived the sweep (it refuses to cancel those). Our row
+  // still says INCOMPLETE, so the sync above either failed or hasn't caught up —
+  // either way, opening a second Checkout would charge a customer who has
+  // already paid. Fail closed; the webhook or the next sync reconciles them.
+  // Nothing has been re-pointed yet, so the row is left exactly as it was.
+  if (cleared.skippedPaid > 0) {
+    throw new SubscriptionServiceError(
+      "ALREADY_SUBSCRIBED",
+      "You already have a paid membership that's still being confirmed. " +
+        "Refresh this page in a moment — you have not been charged again.",
+    );
+  }
+
+  // Re-point the reused INCOMPLETE row at the checkout we're about to open.
+  // Runs AFTER the orphan sweep so an aborted re-subscribe leaves the row
+  // untouched.
   if (existing) {
     await prisma.userSubscription.update({
       where: { id: existing.id },
@@ -196,26 +219,17 @@ export async function startSubscription(
         stripeCustomerId: customer.customerId,
         stripePriceId,
         planSnapshot: snapshot as unknown as Prisma.InputJsonValue,
+        // Drop the link to the orphan subscription the sweep just cancelled.
+        // Keeping it meant the `customer.subscription.deleted` webhook for that
+        // orphan — which lands seconds later, while the customer is still on the
+        // new Checkout page — matched THIS row and marked the subscription
+        // they're about to pay for CANCELED, with a false SUBSCRIPTION_CANCELED
+        // audit and a canceledAt that survived the recovery.
+        stripeSubscriptionId: null,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
       },
     });
-  }
-
-  // We only reach here when the user has NO active subscription in our DB, so
-  // any subscription still live on the Stripe customer is an orphan from an
-  // abandoned/duplicate checkout. Cancel it before opening a fresh Checkout so
-  // the customer can never end up paying for two (single-active-sub must hold
-  // at the provider too, not just in our row). No-op on the fake driver.
-  const cleared = await billing.cancelActiveSubscriptionsForCustomer(customer.customerId);
-  // A paid subscription survived the sweep (it refuses to cancel those). Our row
-  // still says INCOMPLETE, so the sync above either failed or hasn't caught up —
-  // either way, opening a second Checkout would charge a customer who has
-  // already paid. Fail closed; the webhook or the next sync reconciles them.
-  if (cleared.skippedPaid > 0) {
-    throw new SubscriptionServiceError(
-      "ALREADY_SUBSCRIBED",
-      "You already have a paid membership that's still being confirmed. " +
-        "Refresh this page in a moment — you have not been charged again.",
-    );
   }
 
   const returnBase = input.returnTo ?? "/account";
@@ -349,7 +363,14 @@ export async function syncSubscriptionFromProvider(
     data: {
       status: nextStatus,
       cancelAtPeriodEnd: live.cancelAtPeriodEnd,
-      ...(live.currentPeriodEnd ? { currentPeriodEnd: live.currentPeriodEnd } : {}),
+      // Same rule as the webhook sync: never advance the period off a provider
+      // read that isn't paid up. Stripe moves current_period_* forward at
+      // renewal before the invoice settles, and the membership poller calls this
+      // endpoint — so a delinquent subscriber could extend their own benefits
+      // just by loading the page.
+      ...(nextStatus === "ACTIVE" && live.currentPeriodEnd
+        ? { currentPeriodEnd: live.currentPeriodEnd }
+        : {}),
     },
   });
 
@@ -448,14 +469,21 @@ export async function changePlan(
     ({ stripePriceId: newPriceId } = await syncPlanStripePrice(newPlan.id));
   }
 
-  // Direction decides everything below. Compare against the CURRENT plan's
-  // live price (the snapshot can be stale after an admin edit).
+  // Direction decides everything below, so it has to be measured against what
+  // the customer is ACTUALLY being charged — the snapshot price. Stripe Prices
+  // are immutable and existing subscribers stay on the one they signed up at
+  // (D22), so comparing against the live plan column meant that after an admin
+  // edit a genuine price CUT could be classified as an upgrade and billed a
+  // prorated "difference" on the spot (and vice versa). The live plan row is
+  // only a fallback for rows with no usable snapshot.
   const currentPlan = await prisma.pricingPlan.findUnique({
     where: { id: sub.planId },
     select: { monthlyPriceCents: true },
   });
+  const currentPriceCents =
+    asPlanSnapshot(sub.planSnapshot)?.monthlyPriceCents ?? currentPlan?.monthlyPriceCents ?? null;
   const isUpgrade =
-    currentPlan != null && newPlan.monthlyPriceCents > currentPlan.monthlyPriceCents;
+    currentPriceCents != null && newPlan.monthlyPriceCents > currentPriceCents;
 
   if (isUpgrade) {
     // Charge the difference first — if Stripe declines, we must not hand over
@@ -467,11 +495,43 @@ export async function changePlan(
         prorateNow: true,
       });
     }
-    const applied = await applyPlanUpgradeNow({
-      subscriptionId: sub.id,
-      newPlanId: newPlan.id,
-      newStripePriceId: newPriceId,
-    });
+    let applied: Awaited<ReturnType<typeof applyPlanUpgradeNow>>;
+    try {
+      applied = await applyPlanUpgradeNow({
+        subscriptionId: sub.id,
+        newPlanId: newPlan.id,
+        newStripePriceId: newPriceId,
+      });
+    } catch (err) {
+      // The proration is already charged and the provider item already sits on
+      // the new price. Leaving it there bills the new tier forever against the
+      // OLD plan — the `subscription_update` invoice is mirrored-not-granted and
+      // every later cycle re-snapshots sub.planId, so nothing self-heals. Put
+      // the price back (best-effort) and page ops.
+      if (sub.stripeSubscriptionId && sub.stripePriceId) {
+        await getBillingPort()
+          .schedulePlanChange({
+            subscriptionId: sub.stripeSubscriptionId,
+            newPriceId: sub.stripePriceId,
+          })
+          .catch(() => {});
+      }
+      void emitOpsAlert({
+        severity: "critical",
+        title: "Plan upgrade charged but NOT applied",
+        detail:
+          `sub ${sub.id} was invoiced the prorated upgrade to plan ${newPlan.id}, but applying it ` +
+          "failed. The provider price was reverted (best-effort) — verify the item price and refund " +
+          "the proration if it stuck. " +
+          (err instanceof Error ? err.message : ""),
+        context: {
+          subscriptionId: sub.id,
+          stripeSubscriptionId: sub.stripeSubscriptionId,
+          newPlanId: newPlan.id,
+        },
+      });
+      throw err;
+    }
     for (const perkKey of applied.newlyUnlockedPerks) {
       void recordAudit({
         action: "PERK_UNLOCKED",

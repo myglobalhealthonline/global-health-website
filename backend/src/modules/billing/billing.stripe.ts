@@ -234,23 +234,44 @@ export class StripeBillingPort implements BillingPort {
     });
   }
 
-  async refundLatestPayment(subscriptionId: string): Promise<{ refunded: boolean }> {
+  async cancelNow(subscriptionId: string): Promise<{ canceled: boolean }> {
     const stripe = getStripeClient();
-    const sub = await stripe.subscriptions.retrieve(subscriptionId, {
-      expand: ["latest_invoice.payment_intent"],
+    try {
+      await stripe.subscriptions.cancel(subscriptionId);
+      return { canceled: true };
+    } catch (err) {
+      // Unknown id (stale/cross-account) — nothing left to bill.
+      if (isResourceMissing(err)) return { canceled: true };
+      // Stripe rejects cancelling a subscription that is already terminal.
+      // Confirm before surfacing, so a retry of an already-done cancel is a
+      // success rather than a permanent error on the refund path.
+      //
+      // Only an EXPLICIT terminal status counts. `retrieveSubscription` swallows
+      // every error and returns null, so treating null as "already gone" would
+      // report success during a Stripe outage and let the caller mark the row
+      // CANCELED while the subscription keeps billing. Fail closed instead.
+      const live = await this.retrieveSubscription(subscriptionId);
+      if (live && (live.status === "canceled" || live.status === "incomplete_expired")) {
+        return { canceled: true };
+      }
+      throw err;
+    }
+  }
+
+  async refundInvoicePayment(stripeInvoiceId: string): Promise<{ refunded: boolean }> {
+    const stripe = getStripeClient();
+    const invoice = await stripe.invoices.retrieve(stripeInvoiceId, {
+      expand: ["payment_intent"],
     });
     // Resolve the charge defensively across Stripe API versions (invoice.charge
     // was removed in favour of payment_intent.latest_charge on newer versions).
-    const inv = (sub as unknown as { latest_invoice?: unknown }).latest_invoice;
+    const i = invoice as unknown as { charge?: unknown; payment_intent?: unknown };
     let chargeId: string | null = null;
-    if (inv && typeof inv === "object") {
-      const i = inv as { charge?: unknown; payment_intent?: unknown };
-      if (typeof i.charge === "string") {
-        chargeId = i.charge;
-      } else if (i.payment_intent && typeof i.payment_intent === "object") {
-        const pi = i.payment_intent as { latest_charge?: unknown };
-        if (typeof pi.latest_charge === "string") chargeId = pi.latest_charge;
-      }
+    if (typeof i.charge === "string") {
+      chargeId = i.charge;
+    } else if (i.payment_intent && typeof i.payment_intent === "object") {
+      const pi = i.payment_intent as { latest_charge?: unknown };
+      if (typeof pi.latest_charge === "string") chargeId = pi.latest_charge;
     }
     if (!chargeId) return { refunded: false };
     await stripe.refunds.create({ charge: chargeId });

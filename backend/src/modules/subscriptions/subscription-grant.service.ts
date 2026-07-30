@@ -7,6 +7,7 @@ import {
   type PlanSnapshot,
 } from "./plan-snapshot.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
+import { emitOpsAlert } from "./ops/ops-alert.js";
 
 type Tx = Prisma.TransactionClient;
 
@@ -234,6 +235,38 @@ export async function processInvoicePaid(
   if (input.amountPaid <= 0) {
     // Trials / €0 coupon invoices never grant or advance paidMonthsCount (§36.2).
     return { handled: true, granted: false, newlyUnlockedPerks: [] };
+  }
+
+  // NEVER resurrect a CANCELED subscription. The grant below writes
+  // `status: "ACTIVE"` unconditionally, so a renewal invoice arriving after a
+  // refund / dispute / cancel-after-grace silently reinstated a membership the
+  // customer had been refunded for — and kept doing so every month. Every local
+  // CANCEL now also cancels at the provider, so a charge landing here means that
+  // cancel didn't stick: refuse the grant and page ops rather than paper over it.
+  const cancelled = await prisma.userSubscription.findUnique({
+    where: { stripeSubscriptionId: input.stripeSubscriptionId },
+    select: { id: true, userId: true, status: true },
+  });
+  if (cancelled?.status === "CANCELED") {
+    void emitOpsAlert({
+      severity: "critical",
+      title: "Paid invoice received for a CANCELED subscription",
+      detail:
+        `sub ${cancelled.id} (${input.stripeSubscriptionId}) is CANCELED but the provider charged ` +
+        `${input.amountPaid} again — the provider subscription is still live. Cancel + refund it.`,
+      context: {
+        subscriptionId: cancelled.id,
+        stripeSubscriptionId: input.stripeSubscriptionId,
+        amountPaid: input.amountPaid,
+      },
+    });
+    return {
+      handled: true,
+      granted: false,
+      subscriptionId: cancelled.id,
+      userId: cancelled.userId,
+      newlyUnlockedPerks: [],
+    };
   }
 
   return prisma.$transaction(

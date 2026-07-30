@@ -118,7 +118,15 @@ export class FakeBillingPort implements BillingPort {
     }
   }
 
-  async refundLatestPayment(_subscriptionId: string): Promise<{ refunded: boolean }> {
+  async cancelNow(subscriptionId: string): Promise<{ canceled: boolean }> {
+    const sub = this.subscriptions.get(subscriptionId);
+    if (sub) {
+      this.subscriptions.set(subscriptionId, { ...sub, status: "canceled" });
+    }
+    return { canceled: true };
+  }
+
+  async refundInvoicePayment(_stripeInvoiceId: string): Promise<{ refunded: boolean }> {
     // No payment provider in the fake driver — the refund service reconciles
     // credits/state inline (no webhook will fire).
     return { refunded: false };

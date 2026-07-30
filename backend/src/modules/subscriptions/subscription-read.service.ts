@@ -60,13 +60,20 @@ export async function getSubscriptionView(
 
   const defaultLocale = sub.plan?.country.defaultLocale ?? LocaleCode.EN;
   const requested = requestedLocale ?? defaultLocale;
+  // Price comes from the SNAPSHOT, not the live plan row. Stripe Prices are
+  // immutable and existing subscribers keep the one they signed up at (D22), so
+  // after an admin price edit the live column is a price this member is not
+  // being charged — the card's "Monthly price" tile and the timeline's
+  // "Renews at {price}" would both quote the wrong number, and the manage
+  // panel's upgrade/downgrade labelling would disagree with the server.
+  const snapshot = asPlanSnapshot(sub.planSnapshot);
   const resolvedPlan = sub.plan
     ? {
         id: sub.plan.id,
         slug: sub.plan.slug,
         name: resolveTranslation(sub.plan.translations, requested, defaultLocale).tr?.name ?? sub.plan.name,
-        monthlyPriceCents: sub.plan.monthlyPriceCents,
-        currencyCode: sub.plan.currencyCode,
+        monthlyPriceCents: snapshot?.monthlyPriceCents ?? sub.plan.monthlyPriceCents,
+        currencyCode: snapshot?.currencyCode ?? sub.plan.currencyCode,
       }
     : null;
 
@@ -85,7 +92,6 @@ export async function getSubscriptionView(
     };
   }
 
-  const snapshot = asPlanSnapshot(sub.planSnapshot);
   const benefitsUnlockAfterPaidMonths = snapshot ? snapshotBenefitsUnlockMonths(snapshot) : 0;
   const benefitEligibleNow = isBenefitEligible({
     status: sub.status,

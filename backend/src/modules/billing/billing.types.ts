@@ -131,10 +131,25 @@ export interface BillingPort {
   /** Flag the subscription to cancel at the end of the current period. */
   cancelAtPeriodEnd(subscriptionId: string): Promise<void>;
 
-  /** Refund the most recent paid invoice's charge for a subscription. Returns
-   *  `{ refunded:false }` when no charge is found or the driver has no provider
-   *  (fake) — the caller then reconciles credits/state inline (§36.5). */
-  refundLatestPayment(subscriptionId: string): Promise<{ refunded: boolean }>;
+  /**
+   * Terminate the subscription NOW at the provider — no further invoices.
+   * Required whenever we mark a row CANCELED for a reason the provider doesn't
+   * know about (refund, dispute, cancel-after-grace): `cancelAtPeriodEnd` is
+   * NOT enough, and a local-only CANCEL leaves Stripe billing the customer every
+   * month against a membership we no longer honour. Idempotent — an already-
+   * canceled or unknown subscription reports `{ canceled:true }`.
+   */
+  cancelNow(subscriptionId: string): Promise<{ canceled: boolean }>;
+
+  /**
+   * Refund the charge behind ONE SPECIFIC invoice. The invoice id is always
+   * supplied by the caller (the mirrored `SubscriptionInvoice` for the period
+   * being refunded) — "the latest invoice" is NOT the period charge once a
+   * mid-cycle upgrade has billed a small `subscription_update` proration on top.
+   * `{ refunded:false }` means no charge could be resolved; on the real driver
+   * the caller MUST treat that as a failure rather than reconcile regardless.
+   */
+  refundInvoicePayment(stripeInvoiceId: string): Promise<{ refunded: boolean }>;
 
   /** Schedule a next-cycle price/plan change (Q10=B, no proration). */
   schedulePlanChange(

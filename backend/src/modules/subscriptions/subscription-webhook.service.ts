@@ -234,16 +234,22 @@ async function onSubscriptionSynced(
   const nextStatus =
     sub.status === "ACTIVE" && stripeStatus === "INCOMPLETE" ? "ACTIVE" : stripeStatus;
 
+  // Only advance the period while the subscription is genuinely paid up. Stripe
+  // rolls current_period_* FORWARD at renewal before the invoice settles, so
+  // writing them off a past_due echo handed a delinquent subscriber a free month:
+  // `isBenefitEligible` keys PAST_DUE on currentPeriodEnd, and no grant ran, so
+  // last month's unused credits were never reset either. It also pushed
+  // cancel-after-grace's 14 days out to ~44. Leave a PAST_DUE row pinned to the
+  // last period it actually paid for; the grant path moves it when money lands.
+  const advancePeriod = nextStatus === "ACTIVE";
+
   await prisma.userSubscription.update({
     where: { id: sub.id },
     data: {
       status: nextStatus,
       cancelAtPeriodEnd,
-      // Write periodStart too (the stale-period guard above already rejects a
-      // rewind, so this only ever moves it forward — the grant path still owns
-      // the authoritative period, this just keeps the sync echo complete).
-      ...(periodStart ? { currentPeriodStart: periodStart } : {}),
-      ...(periodEnd ? { currentPeriodEnd: periodEnd } : {}),
+      ...(advancePeriod && periodStart ? { currentPeriodStart: periodStart } : {}),
+      ...(advancePeriod && periodEnd ? { currentPeriodEnd: periodEnd } : {}),
     },
   });
   return { handled: true, detail: `synced:${nextStatus}` };
