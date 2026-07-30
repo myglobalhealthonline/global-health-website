@@ -3541,25 +3541,13 @@ a.gh-admin-summary-item--link:focus-visible {
   }
 }
 
-.gh-membership-facts dl {
-  display: grid;
-  gap: 16px;
-}
-
-.gh-membership-facts dt {
-  color: var(--portal-muted);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.gh-membership-facts dd {
-  margin: 5px 0 0;
-  color: var(--portal-text);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.015em;
+/* Facts column: three stat tiles stacked beside the card on wide screens,
+ * side by side once the hero collapses to one column so they read as the
+ * dashboard's stat row rather than three stray cards. */
+@media (max-width: 899.98px) {
+  .gh-membership-facts {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  }
 }
 
 /* ── Membership card (Signal) ────────────────────────────────────────────

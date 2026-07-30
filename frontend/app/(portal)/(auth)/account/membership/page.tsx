@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Award, Sparkles, Gift, CheckCircle2 } from "lucide-react";
+import { Activity, Award, BadgeCheck, CalendarClock, CheckCircle2, CreditCard, Gift, Sparkles } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
@@ -13,7 +13,7 @@ import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
-import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { AdminEmptyState, AdminSummaryStrip, PageHeader, StatCard } from "@/components/portal-atoms";
 import { deriveMemberId } from "@/lib/subscription/member-id";
 import { subscriptionStatusLabel } from "@/lib/subscription/status-label";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
@@ -53,7 +53,12 @@ export default async function MembershipPage({
   if (!sub || !sub.plan) {
     return (
       <div className="gh-patient-page gh-patient-membership-page">
-        <PageHeader title={t.title} description={t.subtitle} />
+        <PageHeader
+          eyebrow={a.nav.membership}
+          icon={<BadgeCheck aria-hidden />}
+          title={t.title}
+          description={t.subtitle}
+        />
         <div className="gh-patient-empty-state gh-card max-w-xl p-8">
           <AdminEmptyState
             title={a.membership.noActiveMembership}
@@ -96,6 +101,7 @@ export default async function MembershipPage({
   const ladder = [...plans].sort((x, y) => x.monthlyPriceCents - y.monthlyPriceCents);
   const tier = ladder.findIndex((p) => p.id === sub.plan!.id) + 1;
   const statusLabel = subscriptionStatusLabel(sub.status, t);
+  const live = sub.status === "ACTIVE" && !sub.cancelAtPeriodEnd;
 
   const kits = redemptions?.kits ?? [];
   const livePlan = plans.find((p) => p.id === sub.plan?.id);
@@ -109,7 +115,12 @@ export default async function MembershipPage({
 
   return (
     <div className="gh-patient-page gh-patient-membership-page">
-      <PageHeader title={t.title} description={t.subtitle} />
+      <PageHeader
+        eyebrow={a.nav.membership}
+        icon={<BadgeCheck aria-hidden />}
+        title={t.title}
+        description={t.subtitle}
+      />
       <MembershipTabsClient
         tabMembership={a.nav.membership}
         tabRewards={a.nav.rewards}
@@ -144,22 +155,32 @@ export default async function MembershipPage({
                   motto: common.entryGate.motto,
                 }}
               />
-              <AdminCard className="gh-membership-facts">
-                <dl>
-                  <div>
-                    <dt>{t.monthlyPrice}</dt>
-                    <dd>{priceLabel}</dd>
-                  </div>
-                  <div>
-                    <dt>{t.nextBilling}</dt>
-                    <dd>{nextBillingLabel ?? a.membership.notScheduled}</dd>
-                  </div>
-                  <div>
-                    <dt>{a.membership.sumStatus}</dt>
-                    <dd>{sub.cancelAtPeriodEnd ? a.membership.cancellationScheduled : statusLabel}</dd>
-                  </div>
-                </dl>
-              </AdminCard>
+              {/* Billing facts as the portal's own stat tiles — same anatomy
+                  as the account dashboard, so the tab reads as portal
+                  furniture rather than a bespoke panel. */}
+              <div className="gh-membership-facts grid gap-3">
+                <StatCard
+                  tone="brand"
+                  label={t.monthlyPrice}
+                  value={priceLabel}
+                  hint={a.membership.sumPriceHint}
+                  icon={<CreditCard className="size-5" aria-hidden />}
+                />
+                <StatCard
+                  tone="accent"
+                  label={t.nextBilling}
+                  value={nextBillingLabel ?? a.membership.notScheduled}
+                  hint={a.membership.sumNextBillingHint}
+                  icon={<CalendarClock className="size-5" aria-hidden />}
+                />
+                <StatCard
+                  tone={live ? "success" : "warning"}
+                  label={a.membership.sumStatus}
+                  value={sub.cancelAtPeriodEnd ? a.membership.cancellationScheduled : statusLabel}
+                  hint={a.membership.sumStatusHint}
+                  icon={<Activity className="size-5" aria-hidden />}
+                />
+              </div>
             </div>
             <ManagePanel
               t={t}

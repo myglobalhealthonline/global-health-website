@@ -13,7 +13,7 @@ import {
 } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
 import { interpolate } from "@/lib/subscription/format";
-import { AdminCard, Btn } from "@/components/portal-atoms";
+import { AdminCard, Btn, SectionHeader } from "@/components/portal-atoms";
 import { PortalDialog } from "@/components/PortalDialog";
 
 export interface PlanOption {
@@ -298,64 +298,77 @@ export function ManagePanel(props: ManagePanelProps) {
         </p>
       ) : null}
 
-      {canChange ? (
-        <AdminCard>
-          <p className="text-sm font-semibold" style={{ color: "var(--portal-text)" }}>{t.upgrade}</p>
-          <p className="mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
-            {props.nextBillingLabel
-              ? interpolate(t.changeEffective, { date: props.nextBillingLabel })
-              : t.changeNote}
-          </p>
-          <div className="gh-patient-form-actions mt-4 grid gap-3 sm:grid-cols-[minmax(0,20rem)_auto] sm:items-center">
-            <select
-              value={selectedPlan}
-              onChange={(e) => setSelectedPlan(e.target.value)}
-              className="gh-input w-full"
-              aria-label={t.change}
-            >
-              <option value="">{t.change}…</option>
-              {props.planOptions.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.priceCents > props.currentPriceCents ? t.upgradeLabel : t.downgradeLabel}: {p.name} — {p.priceLabel}
-                </option>
-              ))}
-            </select>
+      {/* One sectioned card for everything you can DO with the membership:
+          switch plan, then the billing actions in its footer. Two separate
+          floating surfaces read as leftovers next to the hero. */}
+      <AdminCard padding={0}>
+        <SectionHeader
+          as="h2"
+          title={canChange ? t.upgrade : t.manageBilling}
+          description={
+            canChange
+              ? props.nextBillingLabel
+                ? interpolate(t.changeEffective, { date: props.nextBillingLabel })
+                : t.changeNote
+              : undefined
+          }
+        />
+        <div className="grid gap-4 p-5">
+          {canChange ? (
+            <div className="gh-patient-form-actions grid gap-3 sm:grid-cols-[minmax(0,20rem)_auto] sm:items-center">
+              <select
+                value={selectedPlan}
+                onChange={(e) => setSelectedPlan(e.target.value)}
+                className="gh-input w-full"
+                aria-label={t.change}
+              >
+                <option value="">{t.change}…</option>
+                {props.planOptions.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.priceCents > props.currentPriceCents ? t.upgradeLabel : t.downgradeLabel}: {p.name} — {p.priceLabel}
+                  </option>
+                ))}
+              </select>
+              <Btn
+                variant="secondary"
+                onClick={doChange}
+                disabled={!selectedPlan || busy === "change"}
+                iconLeft={busy === "change" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
+              >
+                {busy === "change" ? t.changing : t.change}
+              </Btn>
+            </div>
+          ) : null}
+
+          <div
+            className={`gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end${
+              canChange ? " border-t pt-4" : ""
+            }`}
+            style={canChange ? { borderColor: "var(--portal-line)" } : undefined}
+          >
+            <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:mr-auto sm:inline" style={{ color: "var(--portal-primary)" }}>
+              {t.browseAllPlans}
+            </Link>
+            {canCancel ? (
+              <Btn
+                variant="ghost"
+                onClick={doCancel}
+                disabled={busy === "cancel"}
+                iconLeft={busy === "cancel" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
+              >
+                {busy === "cancel" ? t.canceling : t.cancel}
+              </Btn>
+            ) : null}
             <Btn
-              variant="secondary"
-              onClick={doChange}
-              disabled={!selectedPlan || busy === "change"}
-              iconLeft={busy === "change" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
+              variant="primary"
+              onClick={openPortal}
+              disabled={busy === "portal"}
+              iconLeft={busy === "portal" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <CreditCard className="size-4" aria-hidden />}
             >
-              {busy === "change" ? t.changing : t.change}
+              {t.manageBilling}
             </Btn>
           </div>
-        </AdminCard>
-      ) : null}
-
-      {/* Actions sit on their own surface instead of floating under the last
-          card — the row used to read as orphaned chrome. */}
-      <AdminCard className="gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
-        <Btn
-          variant="soft"
-          onClick={openPortal}
-          disabled={busy === "portal"}
-          iconLeft={busy === "portal" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <CreditCard className="size-4" aria-hidden />}
-        >
-          {t.manageBilling}
-        </Btn>
-        {canCancel ? (
-          <Btn
-            variant="danger"
-            onClick={doCancel}
-            disabled={busy === "cancel"}
-            iconLeft={busy === "cancel" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
-          >
-            {busy === "cancel" ? t.canceling : t.cancel}
-          </Btn>
-        ) : null}
-        <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:inline" style={{ color: "var(--portal-primary)" }}>
-          {t.browseAllPlans}
-        </Link>
+        </div>
       </AdminCard>
 
       <PortalDialog
