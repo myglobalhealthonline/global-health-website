@@ -107,9 +107,15 @@ export interface BillingPort {
    *  never accumulate two paid subscriptions (a duplicate or abandoned checkout
    *  otherwise leaves an orphan active subscription at the provider that our DB
    *  never tracks). Returns how many were canceled. No-op on the fake driver. */
+  /**
+   * Clear ABANDONED provider subscriptions before opening a fresh Checkout.
+   * `skippedPaid` counts subscriptions left running because they already have a
+   * paid invoice — cancelling those would forfeit the customer's money, so the
+   * caller must abort the new Checkout instead of charging a second time.
+   */
   cancelActiveSubscriptionsForCustomer(
     customerId: string,
-  ): Promise<{ canceled: number }>;
+  ): Promise<{ canceled: number; skippedPaid: number }>;
 
   createBillingPortalSession(
     input: BillingPortalInput,

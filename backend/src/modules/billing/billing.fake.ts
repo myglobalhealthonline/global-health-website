@@ -100,9 +100,12 @@ export class FakeBillingPort implements BillingPort {
     };
   }
 
-  async cancelActiveSubscriptionsForCustomer(): Promise<{ canceled: number }> {
+  async cancelActiveSubscriptionsForCustomer(): Promise<{
+    canceled: number;
+    skippedPaid: number;
+  }> {
     // No real provider subscriptions to cancel in the in-memory driver.
-    return { canceled: 0 };
+    return { canceled: 0, skippedPaid: 0 };
   }
 
   async cancelAtPeriodEnd(subscriptionId: string): Promise<void> {

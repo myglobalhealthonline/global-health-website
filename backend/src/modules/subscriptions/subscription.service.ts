@@ -107,7 +107,7 @@ export async function startSubscription(
 
   // One active subscription per user (§36.8). An ACTIVE/PAST_DUE sub blocks a
   // second; an INCOMPLETE one (abandoned checkout) is reused.
-  const existing = await prisma.userSubscription.findFirst({
+  let existing = await prisma.userSubscription.findFirst({
     where: { userId: input.userId, status: { in: ["ACTIVE", "PAST_DUE", "INCOMPLETE"] } },
   });
   if (existing && existing.status !== "INCOMPLETE") {
@@ -115,6 +115,29 @@ export async function startSubscription(
       "ALREADY_SUBSCRIBED",
       "You already have an active subscription",
     );
+  }
+
+  // Adopt before re-charging. An INCOMPLETE row is normally an abandoned
+  // checkout, safe to reuse — but it's ALSO what a paid subscription looks like
+  // when the activating webhook never landed. Reusing that one silently
+  // cancelled a settled subscription further down and billed the customer
+  // again. Ask the provider first: if they've actually paid, the sync flips the
+  // row to ACTIVE and the guard above (re-checked below) sends them away.
+  //
+  // Fails OPEN — a Stripe outage shouldn't block new subscribers. The
+  // skippedPaid abort further down is the fail-closed backstop that actually
+  // protects the money.
+  if (existing) {
+    await syncSubscriptionFromProvider(input.userId).catch(() => null);
+    existing = await prisma.userSubscription.findFirst({
+      where: { userId: input.userId, status: { in: ["ACTIVE", "PAST_DUE", "INCOMPLETE"] } },
+    });
+    if (existing && existing.status !== "INCOMPLETE") {
+      throw new SubscriptionServiceError(
+        "ALREADY_SUBSCRIBED",
+        "You already have an active subscription",
+      );
+    }
   }
 
   // Ensure the plan has a Stripe Price. Re-sync when missing OR when it's a
@@ -177,7 +200,18 @@ export async function startSubscription(
   // abandoned/duplicate checkout. Cancel it before opening a fresh Checkout so
   // the customer can never end up paying for two (single-active-sub must hold
   // at the provider too, not just in our row). No-op on the fake driver.
-  await billing.cancelActiveSubscriptionsForCustomer(customer.customerId);
+  const cleared = await billing.cancelActiveSubscriptionsForCustomer(customer.customerId);
+  // A paid subscription survived the sweep (it refuses to cancel those). Our row
+  // still says INCOMPLETE, so the sync above either failed or hasn't caught up —
+  // either way, opening a second Checkout would charge a customer who has
+  // already paid. Fail closed; the webhook or the next sync reconciles them.
+  if (cleared.skippedPaid > 0) {
+    throw new SubscriptionServiceError(
+      "ALREADY_SUBSCRIBED",
+      "You already have a paid membership that's still being confirmed. " +
+        "Refresh this page in a moment — you have not been charged again.",
+    );
+  }
 
   const returnBase = input.returnTo ?? "/account";
   const checkoutParams = {
@@ -241,6 +275,10 @@ export async function syncSubscriptionFromProvider(
     throw new SubscriptionServiceError("NO_ACTIVE_SUBSCRIPTION", "No subscription to sync");
   }
   const unchanged = (detail: string) => ({ status: sub.status, changed: false, detail });
+
+  // Already reconciled — don't spend Stripe reads (and a no-op grant
+  // transaction) re-proving it. `startSubscription` calls this on every retry.
+  if (sub.status === "ACTIVE") return unchanged("already-active");
 
   const billing = getBillingPort();
   // The fake driver has no provider to ask — dev-activate is that path's tool.

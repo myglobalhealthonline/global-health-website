@@ -160,7 +160,7 @@ export class StripeBillingPort implements BillingPort {
 
   async cancelActiveSubscriptionsForCustomer(
     customerId: string,
-  ): Promise<{ canceled: number }> {
+  ): Promise<{ canceled: number; skippedPaid: number }> {
     const stripe = getStripeClient();
     let existing;
     try {
@@ -172,17 +172,47 @@ export class StripeBillingPort implements BillingPort {
     } catch (err) {
       // Customer doesn't exist on this account (stale cross-account id) — nothing
       // to cancel. A fresh customer is minted upstream, so this is a no-op.
-      if (isResourceMissing(err)) return { canceled: 0 };
+      if (isResourceMissing(err)) return { canceled: 0, skippedPaid: 0 };
       throw err;
     }
     const cancelable = existing.data.filter((s) =>
       ["active", "trialing", "past_due", "incomplete", "unpaid"].includes(s.status),
     );
+    let canceled = 0;
+    let skippedPaid = 0;
     for (const s of cancelable) {
+      // NEVER cancel a subscription the customer has already paid for.
+      //
+      // This step exists to clear ABANDONED checkouts, and it assumed anything
+      // it found was unpaid. It wasn't: when the activating webhook goes
+      // missing our row stays INCOMPLETE, the "already subscribed" guard
+      // doesn't fire, and a second subscribe attempt landed here and cancelled
+      // a subscription whose first invoice was already settled. `cancel()` does
+      // not refund, so the money was silently forfeited — one customer paid
+      // €20, €49 and €39 on the same day and kept only the last one.
+      const paid = await stripe.invoices
+        .list({ subscription: s.id, status: "paid", limit: 1 })
+        .catch(() => null);
+      // A failed lookup counts as paid: refusing to cancel is recoverable,
+      // cancelling a paid subscription is not.
+      if (paid === null || paid.data.length > 0) {
+        skippedPaid += 1;
+        void emitOpsAlert({
+          severity: "critical",
+          title: "Refused to cancel a PAID subscription during re-subscribe",
+          detail:
+            `Stripe subscription ${s.id} on customer ${customerId} has a paid invoice ` +
+            "(or the invoice lookup failed) — left running rather than cancelled without refund. " +
+            "The customer's DB row is likely stuck INCOMPLETE from a missing webhook; reconcile it.",
+          context: { customerId, stripeSubscriptionId: s.id },
+        });
+        continue;
+      }
       // Best-effort — a concurrent cancel / natural expiry is fine to swallow.
       await stripe.subscriptions.cancel(s.id).catch(() => {});
+      canceled += 1;
     }
-    return { canceled: cancelable.length };
+    return { canceled, skippedPaid };
   }
 
   async createBillingPortalSession(input: {
