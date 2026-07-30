@@ -34,7 +34,7 @@ import {
 import { ComplianceBanner } from "./_components/compliance-banner";
 import { PortalShell, type PortalNavItem, type PortalNavGroup } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
 import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
@@ -77,7 +77,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
     fetchDoctorComplianceStatus(),
-    getPageLocale(),
+    getPortalLocale(),
     // Minimal page just to find one appointment id to walk the tour through
     // (steps 9-12 below) — no filters, first page is enough.
     fetchDoctorAppointments({ page: "1", pageSize: "5" }),

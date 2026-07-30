@@ -11,7 +11,7 @@ import { ClipboardList, LayoutDashboard, Settings, Users } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { PortalShell, type PortalNavGroup } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
 
@@ -38,7 +38,7 @@ export default async function CorporateLayout({ children }: { children: ReactNod
     redirect("/login?next=/corporate");
   }
 
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { corporate: t } = loadLocaleBundle(locale);
 
   const groups: PortalNavGroup[] = [

@@ -46,7 +46,7 @@ import { PatientContextPanel } from "./_components/patient-context-panel";
 import { ReferringRecordPanel } from "./_components/referring-record-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
 
@@ -65,7 +65,7 @@ type PageProps = {
  */
 export default async function DoctorAppointmentDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   // Same shared lexicon + collapsing logic as the appointments list
   // (lib/api/appointment-status-labels.ts) and the same locale keys

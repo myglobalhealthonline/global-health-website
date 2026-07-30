@@ -3,7 +3,7 @@ import { AdminEmptyState, AdminSummaryStrip, PageHeader, SectionHeader } from "@
 import { CalendarCheck, FileCheck, Receipt, Repeat, Users } from "lucide-react";
 import { ReportsCsvButton } from "./_components/csv-button";
 import { DoctorReportExports } from "./_components/report-exports";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +35,7 @@ export default async function DoctorReportsPage({
 }: {
   searchParams?: Promise<SearchParams>;
 }) {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const sp = searchParams ? await searchParams : {};
   const from = pick(sp, "from");

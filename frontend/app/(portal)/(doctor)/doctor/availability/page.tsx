@@ -5,13 +5,13 @@ import { AdminCard, PageHeader } from "@/components/portal-atoms";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { todayKey } from "@/components/calendar/calendar-utils";
 import { DoctorAvailabilityUI } from "./_components/availability-ui";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorAvailabilityPage() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const [result, appointments] = await Promise.all([
     fetchDoctorAvailability(14),

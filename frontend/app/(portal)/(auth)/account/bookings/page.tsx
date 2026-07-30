@@ -6,7 +6,7 @@ import { SyncOrderPaymentOnReturn } from "@/components/payments/SyncOrderPayment
 import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
 import { syncOrderPaymentServer } from "@/lib/api/cart-server";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { AdminSummaryStrip, Btn, PageHeader } from "@/components/portal-atoms";
 import { CalendarClock, CalendarRange, Clock, CreditCard, Globe, History, Video } from "lucide-react";
@@ -39,7 +39,7 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
   // both the list view and the calendar's CalendarItem mapping.
   const [history, locale] = await Promise.all([
     fetchAccountAppointments(),
-    getPageLocale(),
+    getPortalLocale(),
   ]);
   const { account: a } = loadLocaleBundle(locale);
   const items = history.ok ? history.data.items : [];

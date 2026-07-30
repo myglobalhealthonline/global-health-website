@@ -32,7 +32,7 @@ import { fetchPatientUnreadMessageCount } from "@/lib/api/account-appointments-a
 import { getServerNotifications } from "@/lib/api/me-subscription-server";
 import { fetchMeCorporate } from "@/lib/corporate/corporate-api";
 import type { NotificationPopoverItem } from "@/components/NotificationPopover";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
 import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
@@ -65,7 +65,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   const [bookHref, unreadMessages, locale, notifications, corporateResult] = await Promise.all([
     resolveBookConsultationHref(),
     fetchPatientUnreadMessageCount(),
-    getPageLocale(),
+    getPortalLocale(),
     getServerNotifications(),
     fetchMeCorporate(),
   ]);

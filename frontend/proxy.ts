@@ -460,7 +460,24 @@ export async function proxy(request: NextRequest) {
   // Without this the cookie is only ever written by an explicit language-
   // switcher click, and navigating off a /{country}/{lang} page falls back
   // to Accept-Language (usually English).
-  if (context.pathLocale && context.pathLocale !== request.cookies.get("gh_locale")?.value) {
+  // ...but ONLY on a real top-level navigation. Next's `<Link>` prefetches and
+  // client-side RSC fetches hit this proxy too, and their responses' Set-Cookie
+  // is applied by the browser all the same — so a portal page merely RENDERING
+  // a link into a `/{country}/{lang}` route (e.g. the patient portal's "Book
+  // consultation" CTA, whose lang is the country default) silently retagged the
+  // visitor's language without a single click. Prefetching a link is not a
+  // language choice.
+  const isDocumentNavigation =
+    request.headers.get("sec-fetch-dest") === "document" ||
+    (!request.headers.has("sec-fetch-dest") &&
+      !request.headers.has("rsc") &&
+      !request.headers.has("next-router-prefetch"));
+
+  if (
+    isDocumentNavigation &&
+    context.pathLocale &&
+    context.pathLocale !== request.cookies.get("gh_locale")?.value
+  ) {
     response.cookies.set("gh_locale", context.pathLocale, {
       path: "/",
       maxAge: 31536000,

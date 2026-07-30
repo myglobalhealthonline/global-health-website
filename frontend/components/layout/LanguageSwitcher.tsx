@@ -27,17 +27,22 @@ import { hasAuthHintCookie } from "@/components/layout/PublicAuthContext";
 import { patchCurrentUser, type UserPreferredLocale } from "@/lib/api/auth-api";
 
 /**
- * Persist the switch server-side when the visitor is (plausibly) signed
- * in, so it survives to a new device/browser via the login-seed step
- * (see the login flow). Anonymous visitors are the majority — skip the
- * round-trip entirely unless the auth-hint cookie says otherwise, and
- * silently ignore failures (401 on an already-expired session included):
- * the cookie write above already applied the switch for this device, so
- * nothing user-visible depends on this succeeding.
+ * Persist the switch server-side when the visitor is (plausibly) signed in.
+ * `User.preferredLocale` is not just a cross-device convenience: it IS the
+ * language the portals render in (`lib/i18n/get-portal-locale.ts`), because
+ * the shared `gh_locale` cookie gets rewritten by any public-site URL that
+ * carries a `[lang]` segment. So the portal branch below AWAITS this before
+ * refreshing — refreshing first would re-render from the stale saved value.
+ *
+ * Anonymous public visitors are the majority — skip the round-trip unless the
+ * auth-hint cookie says otherwise (portals are authenticated by definition, so
+ * `mode="refresh"` always tries). Failures are ignored (401 on an expired
+ * session included): the cookie write already applied the switch here.
  */
-function persistPreferredLocale(locale: LocaleCode): void {
-  if (!hasAuthHintCookie()) return;
-  void patchCurrentUser({ preferredLocale: locale.toUpperCase() as UserPreferredLocale }).catch(() => {});
+async function persistPreferredLocale(locale: LocaleCode): Promise<void> {
+  await patchCurrentUser({
+    preferredLocale: locale.toUpperCase() as UserPreferredLocale,
+  }).catch(() => {});
 }
 
 export function LanguageSwitcher({
@@ -132,7 +137,7 @@ export function LanguageSwitcher({
                         hrefLang={loc}
                         onClick={() => {
                           setClientLocaleCookie(loc);
-                          persistPreferredLocale(loc);
+                          if (hasAuthHintCookie()) void persistPreferredLocale(loc);
                           setOpen(false);
                           // No preventDefault: the browser's own navigation is
                           // the hard nav this branch wants.
@@ -153,10 +158,14 @@ export function LanguageSwitcher({
                   <AppMenuItem asChild>
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={async () => {
                         setClientLocaleCookie(loc);
-                        persistPreferredLocale(loc);
                         setOpen(false);
+                        // Portal chrome renders from the SAVED locale, so the
+                        // save has to land before the re-render.
+                        if (mode === "refresh" || hasAuthHintCookie()) {
+                          await persistPreferredLocale(loc);
+                        }
                         router.refresh();
                       }}
                       className={itemClass(isActive)}

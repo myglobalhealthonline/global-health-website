@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, CalendarPlus, Lock, PackageX } from "lucide-react";
 import { fetchDoctorBookingOptions } from "@/lib/api/doctor-api";
 import { AdminEmptyState, PageHeader } from "@/components/portal-atoms";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctorManualBookingForm } from "../_components/doctor-manual-booking-form";
 
@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
  *      to bill, so there is nothing to book.
  */
 export default async function DoctorNewBookingPage() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const m = d.manualBooking;
 

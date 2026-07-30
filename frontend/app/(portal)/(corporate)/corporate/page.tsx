@@ -20,13 +20,13 @@ import {
   requestStatusTone,
   REQUEST_TYPE_LABELS,
 } from "@/app/(portal)/(admin)/admin/corporate/_lib";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function CorporateDashboardPage() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { corporate: t } = loadLocaleBundle(locale);
   const d = t.dashboard;
 

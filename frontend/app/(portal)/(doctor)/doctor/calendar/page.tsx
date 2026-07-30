@@ -6,13 +6,13 @@ import { monthGridRangeIso } from "@/components/calendar/calendar-utils";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import type { DoctorTimeSlotView } from "@/lib/api/doctor-availability-types";
 import { DoctorCalendarUI } from "./ui";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorCalendarPage() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const now = new Date();
   const year = now.getFullYear();

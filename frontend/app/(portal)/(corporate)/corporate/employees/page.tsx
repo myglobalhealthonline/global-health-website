@@ -14,7 +14,7 @@ import {
 import { AdminCard, Btn, PageHeader } from "@/components/portal-atoms";
 import { BulkUploadForm } from "./bulk-upload-form";
 import { EmployeesTable } from "./employees-table";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ function back(params: Record<string, string>) {
 
 async function addEmployeeAction(formData: FormData) {
   "use server";
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { employees: e } = loadLocaleBundle(locale).corporate;
   const read = (key: string) => {
     const value = String(formData.get(key) ?? "").trim();
@@ -66,7 +66,7 @@ async function addEmployeeAction(formData: FormData) {
 
 async function employeeRowAction(formData: FormData) {
   "use server";
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { employees: e } = loadLocaleBundle(locale).corporate;
   const id = String(formData.get("employeeId") ?? "");
   const action = String(formData.get("action") ?? "");
@@ -112,7 +112,7 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
   const sp = searchParams ? await searchParams : {};
   const [result, locale] = await Promise.all([
     fetchCorporateEmployees({ query: sp.query, status: sp.status }),
-    getPageLocale(),
+    getPortalLocale(),
   ]);
   const { employees: e, common } = loadLocaleBundle(locale).corporate;
 

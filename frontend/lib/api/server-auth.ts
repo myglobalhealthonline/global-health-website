@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import type { AuthUser } from "./auth-api";
@@ -15,8 +16,13 @@ import type { AuthUser } from "./auth-api";
  * `AUTH_COOKIE_DOMAIN` on the backend, the site-host fallback would
  * silently start returning null. The backend is the source of truth;
  * call it directly.
+ *
+ * `cache()`-wrapped (React per-request memo): a portal layout, its page and
+ * `getPortalLocale()` all need the session user, and this used to mean three
+ * identical `/api/auth/me` round-trips per navigation. Same request → same
+ * result, so dedupe it.
  */
-export async function getServerAuthUser(): Promise<AuthUser | null> {
+export const getServerAuthUser = cache(async (): Promise<AuthUser | null> => {
   try {
     const cookieHeader = (await cookies())
       .getAll()
@@ -42,4 +48,4 @@ export async function getServerAuthUser(): Promise<AuthUser | null> {
   } catch {
     return null;
   }
-}
+});

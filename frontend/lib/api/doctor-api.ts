@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 
 /**
  * Server-side fetchers for the doctor portal. Each call forwards the
@@ -627,8 +628,8 @@ export type ConsultationServiceLineDto = {
 
 export async function fetchDoctorConsultationServices(consultationId: string) {
   // Service names are translatable; backend resolves against ?locale=, so
-  // thread the doctor's UI language (gh_locale cookie) through.
-  const locale = (await cookies()).get("gh_locale")?.value;
+  // thread the doctor's UI language (their own saved selection) through.
+  const locale = await getPortalLocale();
   const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
   return doctorRequest<{ items: ConsultationServiceLineDto[] }>(
     `/api/doctor/consultations/${consultationId}/services${qs}`,
@@ -811,8 +812,8 @@ export type DoctorServicesPayload = {
 
 export async function fetchDoctorServices() {
   // Service names/summaries are translatable; backend resolves against
-  // ?locale=, so thread the doctor's UI language (gh_locale cookie) through.
-  const locale = (await cookies()).get("gh_locale")?.value;
+  // ?locale=, so thread the doctor's UI language (their own saved selection).
+  const locale = await getPortalLocale();
   const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
   return doctorRequest<DoctorServicesPayload>(`/api/doctor/services${qs}`);
 }

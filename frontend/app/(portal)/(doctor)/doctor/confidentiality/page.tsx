@@ -3,13 +3,13 @@ import { fetchDoctorConfidentialityAgreement } from "@/lib/api/doctor-api";
 import { PageHeader } from "@/components/portal-atoms";
 import { ConfidentialityForm } from "./_components/confidentiality-form";
 import { SignedCopyPanel } from "./_components/signed-copy-panel";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorConfidentialityPage() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const result = await fetchDoctorConfidentialityAgreement();
 

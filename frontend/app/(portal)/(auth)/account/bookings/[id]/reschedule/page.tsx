@@ -4,7 +4,7 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { getDoctorAvailability } from "@/lib/content/get-doctor-availability";
 import { PageHeader, AdminEmptyState, Btn } from "@/components/portal-atoms";
 import { ReschedulePicker } from "./reschedule-picker";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -47,7 +47,7 @@ export default async function RescheduleAppointmentPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const [{ id }, locale] = await Promise.all([params, getPageLocale()]);
+  const [{ id }, locale] = await Promise.all([params, getPortalLocale()]);
   const appointment = await fetchAppointmentForReschedule(id);
   const { account: a } = loadLocaleBundle(locale);
   const r = a.reschedule;

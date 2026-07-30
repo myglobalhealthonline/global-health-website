@@ -8,7 +8,7 @@ import { PatientProfilePanel } from "./_components/patient-profile-panel";
 import { ConsultationHistoryPanel } from "./_components/consultation-history-panel";
 import { PatientSafetyStrip } from "./_components/patient-safety-strip";
 import { PatientRecordTabs } from "./_components/patient-record-tabs";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 // ponytail: cs/de/ro doctor.json don't yet carry the newer patients.* keys
 // (only en/pt/es do), so the unioned bundle type lacks them for those
@@ -25,7 +25,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
   const { email } = await params;
   const decoded = decodeURIComponent(email);
   const result = await fetchDoctorPatientDetail(decoded);
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
 
   if (!result.ok) {
