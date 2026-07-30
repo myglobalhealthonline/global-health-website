@@ -16,7 +16,11 @@ import {
   createAdHocSlots,
   removeSlotForDate,
   resizeSlot,
+  runBulkSlotAction,
 } from "../modules/doctor-availability/doctor-availability.service.js";
+// One schema for both bulk endpoints — the admin route is the doctor route with
+// a country-scope guard in front, and the shapes must not drift apart.
+import { bulkSlotBodySchema } from "./doctor-self-availability.route.js";
 
 /**
  * Admin block/unblock of a single doctor time slot — the admin-side twin of
@@ -178,6 +182,56 @@ export function createAdminDoctorTimeSlotsRoute(
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not add slots"));
+      }
+    });
+
+    /**
+     * Bulk block / unblock / remove for one doctor — the admin twin of
+     * POST /api/doctor/time-slots/bulk, sharing its body schema and dispatcher.
+     * Slots that are BOOKED or HELD are skipped and counted, never mutated.
+     */
+    app.post("/api/admin/doctors/:doctorId/time-slots/bulk", async (request, reply) => {
+      const params = doctorParamsSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      const body = bulkSlotBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid request", body.error.flatten()));
+      }
+
+      const authenticatedAccess = authenticatedRequests.get(request);
+      if (!authenticatedAccess) {
+        return reply
+          .status(503)
+          .send(errorResponse("Admin authorization is temporarily unavailable"));
+      }
+
+      try {
+        const doctor = await prisma.doctor.findUnique({
+          where: { id: params.data.doctorId },
+          select: { id: true, countryId: true },
+        });
+        if (!doctor) return reply.status(404).send(errorResponse("Doctor not found"));
+
+        const scope = await dependencies.verifyCountryScope({
+          request,
+          authenticatedAccess,
+          countryId: doctor.countryId,
+          operation: "bulk_slot_action",
+          resourceType: "DoctorTimeSlot",
+        });
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        const result = await runBulkSlotAction(doctor.id, body.data);
+        return okResponse(result);
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not update slots"));
       }
     });
 

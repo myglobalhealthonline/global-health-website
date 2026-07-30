@@ -94,17 +94,26 @@ export async function resolveDoctorTimeZones(doctorId: string): Promise<string[]
   return zones;
 }
 
+/** A half-open UTC interval the bulk operations act on. */
+export type SlotSpan = { fromUtc: Date; toUtc: Date };
+
+/** Outcome shape shared by every bulk slot operation. Partial success is the
+ *  normal case — a sweep across real working days routinely covers booked
+ *  time — so the caller gets counts rather than an all-or-nothing error. */
+export type BulkSlotResult = {
+  /** Slots actually changed (blocked, unblocked, or removed). */
+  changed: number;
+  /** Slots left alone because they are BOOKED or HELD. */
+  skippedOccupied: number;
+  /** Ids that matched no slot of this doctor (only meaningful for id-based calls). */
+  skippedMissing: number;
+};
+
 /**
  * Bulk block (or unblock) a doctor's slots across a UTC range — the
  * "whole day / vacation" control on the doctor calendar.
  *
- * BLOCK: materialises slots for the range first (so a day with no concrete
- * rows yet still gets blocked), then flips every OPEN slot in [fromUtc, toUtc)
- * to BLOCKED with the given reason. BOOKED/HELD are left untouched — those are
- * real appointments/cart holds and must be cancelled through their own flow.
- *
- * UNBLOCK: flips BLOCKED slots in the range back to OPEN and clears the reason.
- * Returns the number of slots changed.
+ * Thin wrapper over `bulkSetSlotBlockInSpans` for the single-span callers.
  */
 export async function bulkSetSlotBlockInRange(
   doctorId: string,
@@ -113,34 +122,236 @@ export async function bulkSetSlotBlockInRange(
   action: "BLOCK" | "UNBLOCK",
   reason?: string | null,
 ): Promise<{ updated: number }> {
-  if (toUtc <= fromUtc) return { updated: 0 };
+  const result = await bulkSetSlotBlockInSpans(
+    doctorId,
+    [{ fromUtc, toUtc }],
+    action,
+    reason,
+  );
+  return { updated: result.changed };
+}
+
+/**
+ * Block (or unblock) every eligible slot inside each of the given UTC spans.
+ *
+ * A list of spans rather than one range because the UI collects a date range
+ * PLUS a daily time range ("09:00–13:00, Mon to Fri"). Flattening that into a
+ * single Mon-09:00 → Fri-13:00 interval would also swallow the nights and the
+ * afternoons in between, so the caller — which owns the display timezone —
+ * expands it into one span per day and sends them together.
+ *
+ * BLOCK materialises the recurring-window slots for each span first, otherwise
+ * a day whose rows do not exist yet would silently stay bookable. BOOKED/HELD
+ * are never touched: those are real appointments and cart holds, and they come
+ * back in `skippedOccupied` so the UI can say so.
+ */
+export async function bulkSetSlotBlockInSpans(
+  doctorId: string,
+  spans: SlotSpan[],
+  action: "BLOCK" | "UNBLOCK",
+  reason?: string | null,
+): Promise<BulkSlotResult> {
+  const valid = spans.filter((s) => s.toUtc > s.fromUtc);
+  if (valid.length === 0) {
+    return { changed: 0, skippedOccupied: 0, skippedMissing: 0 };
+  }
+
   try {
     if (action === "BLOCK") {
-      // Make sure recurring-window slots exist before we block the span,
-      // otherwise a not-yet-materialised day would silently stay bookable.
-      await ensureSlotsForRange(doctorId, fromUtc, toUtc);
-      const result = await prisma.doctorTimeSlot.updateMany({
-        where: {
-          doctorId,
-          status: "OPEN",
-          startAt: { gte: fromUtc, lt: toUtc },
-        },
-        data: { status: "BLOCKED", blockReason: reason ?? null },
-      });
-      return { updated: result.count };
+      for (const span of valid) {
+        await ensureSlotsForRange(doctorId, span.fromUtc, span.toUtc);
+      }
     }
-    const result = await prisma.doctorTimeSlot.updateMany({
-      where: {
-        doctorId,
-        status: "BLOCKED",
-        startAt: { gte: fromUtc, lt: toUtc },
-      },
-      data: { status: "OPEN", blockReason: null },
+
+    const where = {
+      doctorId,
+      OR: valid.map((s) => ({ startAt: { gte: s.fromUtc, lt: s.toUtc } })),
+    };
+    const skippedOccupied = await prisma.doctorTimeSlot.count({
+      where: { ...where, status: { in: ["BOOKED", "HELD"] } },
     });
-    return { updated: result.count };
+
+    const result = await prisma.doctorTimeSlot.updateMany({
+      where: { ...where, status: action === "BLOCK" ? "OPEN" : "BLOCKED" },
+      data:
+        action === "BLOCK"
+          ? { status: "BLOCKED", blockReason: reason?.trim() || null }
+          : { status: "OPEN", blockReason: null },
+    });
+
+    // Inventory changed either way — an unblocked slot must become bookable now,
+    // not after the read cache's TTL.
+    slotCache.clear();
+    return { changed: result.count, skippedOccupied, skippedMissing: 0 };
   } catch (error) {
     throw normalizeDbError(error, "Could not update availability");
   }
+}
+
+/**
+ * Remove every eligible slot inside the given UTC spans, permanently.
+ *
+ * The batch twin of `removeSlotForDate`: deleting rows alone does not stick,
+ * because the generators re-materialise slots from the recurring windows on the
+ * next availability read. Each removed span is therefore also written as a
+ * `DoctorAvailabilityException`. The weekly windows themselves are untouched.
+ */
+export async function bulkRemoveSlotsInSpans(
+  doctorId: string,
+  spans: SlotSpan[],
+  reason?: string | null,
+): Promise<BulkSlotResult> {
+  const valid = spans.filter((s) => s.toUtc > s.fromUtc);
+  if (valid.length === 0) {
+    return { changed: 0, skippedOccupied: 0, skippedMissing: 0 };
+  }
+
+  try {
+    const where = {
+      doctorId,
+      OR: valid.map((s) => ({ startAt: { gte: s.fromUtc, lt: s.toUtc } })),
+    };
+    const rows = await prisma.doctorTimeSlot.findMany({
+      where,
+      select: { id: true, status: true, startAt: true, endAt: true },
+    });
+    const removable = rows.filter(
+      (r) => r.status === "OPEN" || r.status === "BLOCKED",
+    );
+    const skippedOccupied = rows.length - removable.length;
+    if (removable.length === 0) {
+      return { changed: 0, skippedOccupied, skippedMissing: 0 };
+    }
+
+    const changed = await deleteSlotsWithExceptions(doctorId, removable, reason);
+    slotCache.clear();
+    return { changed, skippedOccupied, skippedMissing: 0 };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not remove slots");
+  }
+}
+
+/**
+ * Block / unblock / remove an explicit set of slots — what the calendar's
+ * multi-select posts. Ids are scoped by `doctorId` in the query, so one
+ * doctor's slot id can never mutate another doctor's calendar even if the
+ * caller is authorized for both.
+ */
+export async function bulkSlotActionByIds(
+  doctorId: string,
+  slotIds: string[],
+  action: "BLOCK" | "UNBLOCK" | "REMOVE",
+  reason?: string | null,
+): Promise<BulkSlotResult> {
+  const ids = [...new Set(slotIds)];
+  if (ids.length === 0) {
+    return { changed: 0, skippedOccupied: 0, skippedMissing: 0 };
+  }
+
+  try {
+    const rows = await prisma.doctorTimeSlot.findMany({
+      where: { id: { in: ids }, doctorId },
+      select: { id: true, status: true, startAt: true, endAt: true },
+    });
+    const skippedMissing = ids.length - rows.length;
+    const eligible = rows.filter(
+      (r) => r.status === "OPEN" || r.status === "BLOCKED",
+    );
+    const skippedOccupied = rows.length - eligible.length;
+    if (eligible.length === 0) {
+      return { changed: 0, skippedOccupied, skippedMissing };
+    }
+
+    if (action === "REMOVE") {
+      const changed = await deleteSlotsWithExceptions(doctorId, eligible, reason);
+      slotCache.clear();
+      return { changed, skippedOccupied, skippedMissing };
+    }
+
+    // Re-assert the source status in the filter: a slot already in the target
+    // state isn't a change, and a booking that landed since the read above must
+    // not be flipped.
+    const result = await prisma.doctorTimeSlot.updateMany({
+      where: {
+        id: { in: eligible.map((r) => r.id) },
+        doctorId,
+        status: action === "BLOCK" ? "OPEN" : "BLOCKED",
+      },
+      data:
+        action === "BLOCK"
+          ? { status: "BLOCKED", blockReason: reason?.trim() || null }
+          : { status: "OPEN", blockReason: null },
+    });
+
+    slotCache.clear();
+    return { changed: result.count, skippedOccupied, skippedMissing };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not update slots");
+  }
+}
+
+/**
+ * Dispatcher behind both bulk endpoints (doctor-scoped and admin-scoped), so
+ * the two routes differ only in how they establish the doctor. Takes the
+ * request body as parsed by the shared zod schema — ISO strings in, counts out.
+ */
+export async function runBulkSlotAction(
+  doctorId: string,
+  input: {
+    action: "BLOCK" | "UNBLOCK" | "REMOVE";
+    spans?: { fromUtc: string; toUtc: string }[];
+    slotIds?: string[];
+    reason?: string;
+  },
+): Promise<BulkSlotResult> {
+  if (input.slotIds) {
+    return bulkSlotActionByIds(doctorId, input.slotIds, input.action, input.reason);
+  }
+  const spans: SlotSpan[] = (input.spans ?? []).map((s) => ({
+    fromUtc: new Date(s.fromUtc),
+    toUtc: new Date(s.toUtc),
+  }));
+  return input.action === "REMOVE"
+    ? bulkRemoveSlotsInSpans(doctorId, spans, input.reason)
+    : bulkSetSlotBlockInSpans(doctorId, spans, input.action, input.reason);
+}
+
+/**
+ * Delete slots and tombstone their spans in one transaction. Shared by the two
+ * bulk removal paths; the exception rows are what stop `ensureSlotsForRange`
+ * putting the slots straight back.
+ */
+async function deleteSlotsWithExceptions(
+  doctorId: string,
+  slots: { id: string; startAt: Date; endAt: Date }[],
+  reason?: string | null,
+): Promise<number> {
+  const note = reason?.trim() || null;
+  return prisma.$transaction(async (tx) => {
+    // Exceptions first: if the delete loses a race the hole is already recorded.
+    await tx.doctorAvailabilityException.deleteMany({
+      where: { doctorId, startAt: { in: slots.map((s) => s.startAt) } },
+    });
+    await tx.doctorAvailabilityException.createMany({
+      data: slots.map((s) => ({
+        doctorId,
+        startAt: s.startAt,
+        endAt: s.endAt,
+        reason: note,
+      })),
+      skipDuplicates: true,
+    });
+    // Status re-asserted here too — a booking claimed between the read and now
+    // keeps its slot rather than losing it to a stale sweep.
+    const deleted = await tx.doctorTimeSlot.deleteMany({
+      where: {
+        id: { in: slots.map((s) => s.id) },
+        doctorId,
+        status: { in: ["OPEN", "BLOCKED"] },
+      },
+    });
+    return deleted.count;
+  });
 }
 
 /**

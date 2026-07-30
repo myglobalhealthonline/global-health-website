@@ -13,6 +13,7 @@ import {
   patchAdminAvailability,
   removeSlotForDate,
   resizeSlot,
+  runBulkSlotAction,
   resolveDoctorTimeZone,
   resolveDoctorTimeZones,
 } from "../modules/doctor-availability/doctor-availability.service.js";
@@ -126,6 +127,33 @@ const slotCreateSchema = z
     durationMinutes: z.number().int().min(5).max(480),
   })
   .strict();
+
+/**
+ * Bulk block / unblock / remove. Two ways to name the slots, exactly one per
+ * request: `spans` (a date range × a daily time range, already expanded into
+ * one UTC span per day by the caller, which owns the display timezone) or
+ * `slotIds` (what the calendar's multi-select collected).
+ */
+export const bulkSlotBodySchema = z
+  .object({
+    action: z.enum(["BLOCK", "UNBLOCK", "REMOVE"]),
+    spans: z
+      .array(
+        z.object({
+          fromUtc: z.string().datetime(),
+          toUtc: z.string().datetime(),
+        }),
+      )
+      .min(1)
+      .max(366)
+      .optional(),
+    slotIds: z.array(z.string().min(1).max(120)).min(1).max(2000).optional(),
+    reason: z.string().trim().max(200).optional(),
+  })
+  .strict()
+  .refine((d) => Boolean(d.spans) !== Boolean(d.slotIds), {
+    message: "Provide either spans or slotIds, not both",
+  });
 
 const slotIdParamSchema = z.object({ slotId: z.string().min(1).max(120) });
 const availabilityIdParamSchema = z.object({
@@ -572,6 +600,32 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not add slots"));
+    }
+  });
+
+  // ── Bulk block / unblock / remove, by span or by id ────────────────
+  // The one endpoint behind both bulk affordances: the Manage panel's date +
+  // time range sweep, and the calendar's multi-select. Slots that are BOOKED or
+  // HELD are skipped and counted, never mutated.
+  app.post("/api/doctor/time-slots/bulk", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    const body = bulkSlotBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid request", body.error.flatten()));
+    }
+
+    try {
+      const result = await runBulkSlotAction(auth.doctorId, body.data);
+      return okResponse(result);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not update slots"));
     }
   });
 

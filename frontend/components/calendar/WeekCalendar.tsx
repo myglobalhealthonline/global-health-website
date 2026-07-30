@@ -11,10 +11,12 @@ import {
 } from "react";
 import {
   Ban,
+  CheckSquare,
   ChevronLeft,
   ChevronRight,
   Clock,
   MoveVertical,
+  Square,
   Trash2,
   User,
 } from "lucide-react";
@@ -77,6 +79,13 @@ type Props = {
   onRemoveSlot?: (item: CalendarItem) => void;
   /** Admin mode: change an OPEN or BLOCKED slot's length on the base grid. */
   onResizeSlot?: (item: CalendarItem) => void;
+  /** Multi-select: while on, clicking an OPEN/BLOCKED slot selects it instead
+   *  of running that slot's normal action, and the corner buttons step aside.
+   *  Booked time is never selectable — bulk actions must not touch it. */
+  selectionMode?: boolean;
+  /** Bare slot ids currently selected (no `s-` prefix). */
+  selectedIds?: Set<string>;
+  onToggleSelect?: (item: CalendarItem) => void;
   /** Disables the block/unblock affordances while a mutation is in flight. */
   slotActionsBusy?: boolean;
   onPrevWeek: () => void;
@@ -99,6 +108,8 @@ type Props = {
     blockThisTime?: string;
     removeThisSlot?: string;
     resizeThisSlot?: string;
+    selectSlot?: string;
+    deselectSlot?: string;
     legendOpen?: string;
     legendBooked?: string;
     legendBlocked?: string;
@@ -266,6 +277,9 @@ export function WeekCalendar({
   onSelectBlockedSlot,
   onRemoveSlot,
   onResizeSlot,
+  selectionMode = false,
+  selectedIds,
+  onToggleSelect,
   slotActionsBusy = false,
   onPrevWeek,
   onNextWeek,
@@ -283,6 +297,8 @@ export function WeekCalendar({
     blockThisTime: labels?.blockThisTime ?? "Block this time (mark unavailable)",
     removeThisSlot: labels?.removeThisSlot ?? "Remove this slot (this date only)",
     resizeThisSlot: labels?.resizeThisSlot ?? "Change this slot's length",
+    selectSlot: labels?.selectSlot ?? "Select this slot",
+    deselectSlot: labels?.deselectSlot ?? "Deselect this slot",
     legendOpen: labels?.legendOpen ?? "Open · click to book",
     legendBooked: labels?.legendBooked ?? "Booked",
     legendBlocked: labels?.legendBlocked ?? "Blocked",
@@ -660,6 +676,49 @@ export function WeekCalendar({
                       : [timeLabel, doctorName, p.item.status]
                           .filter(Boolean)
                           .join(" · ");
+                    // Selection wins over every other click behaviour: while
+                    // picking slots for a bulk action, a stray click must not
+                    // also book, block, or open a dialog.
+                    const selectable =
+                      selectionMode &&
+                      Boolean(onToggleSelect) &&
+                      p.item.kind === "slot" &&
+                      (p.item.status === "OPEN" || p.item.status === "BLOCKED");
+                    if (selectable) {
+                      const bareId = p.item.id.replace(/^s-/, "");
+                      const isSelected = selectedIds?.has(bareId) ?? false;
+                      return (
+                        <button
+                          key={p.item.id}
+                          type="button"
+                          onClick={() => onToggleSelect?.(p.item)}
+                          aria-pressed={isSelected}
+                          title={`${timeLabel} · ${
+                            isSelected ? t.deselectSlot : t.selectSlot
+                          }`}
+                          className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
+                          style={{
+                            ...style,
+                            // Ring rather than a colour change: the status tone
+                            // still has to read while selecting.
+                            outline: isSelected
+                              ? "2px solid var(--portal-info)"
+                              : undefined,
+                            outlineOffset: isSelected ? "-2px" : undefined,
+                            opacity: isSelected ? 1 : 0.75,
+                          }}
+                        >
+                          <span className="flex items-center gap-1">
+                            {isSelected ? (
+                              <CheckSquare className="size-3 shrink-0" aria-hidden />
+                            ) : (
+                              <Square className="size-3 shrink-0 opacity-60" aria-hidden />
+                            )}
+                            <span className="min-w-0 flex-1">{inner}</span>
+                          </span>
+                        </button>
+                      );
+                    }
                     // Doctor mode: click an OPEN/BLOCKED slot to toggle it.
                     const toggleable =
                       onToggleSlot &&

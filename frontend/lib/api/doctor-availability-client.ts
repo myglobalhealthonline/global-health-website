@@ -4,6 +4,7 @@ import type {
   AvailabilityWindow,
   DoctorAvailabilityResponse,
 } from "./doctor-availability-types";
+import type { BulkSlotInput, BulkSlotResult } from "./slot-bulk-types";
 
 type Result<T> =
   | { ok: true; data: T; message?: string }
@@ -166,6 +167,27 @@ export async function createSlots(
   const json = await res.json().catch(() => ({}));
   if (!res.ok || !json?.ok) {
     return { ok: false, message: json?.message ?? "Could not add slots" };
+  }
+  return { ok: true, data: json.data };
+}
+
+/**
+ * Block / unblock / remove many slots in a single request — either a date ×
+ * time sweep (`spans`, already expanded to UTC by the caller, which owns the
+ * display timezone) or an explicit selection (`slotIds`). BOOKED/HELD slots
+ * come back in `skippedOccupied` rather than failing the whole request.
+ */
+export async function bulkSlotAction(
+  input: BulkSlotInput,
+): Promise<Result<BulkSlotResult>> {
+  const res = await fetch("/api/doctor/time-slots/bulk", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.ok) {
+    return { ok: false, message: json?.message ?? "Could not update slots" };
   }
   return { ok: true, data: json.data };
 }

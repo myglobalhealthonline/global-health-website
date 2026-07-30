@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
-import { CalendarDays, Search, Video } from "lucide-react";
+import { CalendarDays, CheckSquare, Search, Square, Video } from "lucide-react";
 import { formatAppTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
 import { dayLabel, todayKey } from "./calendar-utils";
@@ -52,6 +52,13 @@ type Props = {
   canToggleSlot?: (item: CalendarItem) => boolean;
   /** Disables slot chips while a mutation is in flight. */
   slotActionsBusy?: boolean;
+  /** Multi-select: while on, an OPEN/BLOCKED chip toggles into the selection
+   *  instead of running its own action, and `renderSlotAction` is suppressed so
+   *  no stray button competes with the chip. Booked time stays unselectable. */
+  selectionMode?: boolean;
+  /** Bare slot ids currently selected (no `s-` prefix). */
+  selectedIds?: Set<string>;
+  onToggleSelect?: (item: CalendarItem) => void;
   /** Show the doctor name on each row (admin/patient views). */
   showDoctorName?: boolean;
   /** Skip the internal date header — for hosts (day drawer) that already
@@ -108,6 +115,9 @@ export function DayAgenda({
   onSelectSlot,
   canToggleSlot,
   slotActionsBusy = false,
+  selectionMode = false,
+  selectedIds,
+  onToggleSelect,
   showDoctorName,
   hideHeader = false,
   selectDayLabel = "Select a day",
@@ -238,9 +248,16 @@ export function DayAgenda({
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {slots.map((item) => {
+                    // Selection wins: while picking slots for a bulk action, a
+                    // chip must not also toggle or open something.
+                    const selectable =
+                      selectionMode &&
+                      Boolean(onToggleSelect) &&
+                      (item.status === "OPEN" || item.status === "BLOCKED");
                     // Only OPEN/BLOCKED toggle. BOOKED/HELD slots carry a
                     // patient, so clicking them must not block anything.
                     const toggleable =
+                      !selectionMode &&
                       Boolean(onSelectSlot) &&
                       (canToggleSlot
                         ? canToggleSlot(item)
@@ -257,9 +274,40 @@ export function DayAgenda({
                             · {item.meta.doctorName}
                           </span>
                         ) : null}
-                        {renderSlotAction ? renderSlotAction(item) : null}
+                        {/* Per-slot actions would compete with the chip's own
+                            click while selecting — hidden until selection ends. */}
+                        {renderSlotAction && !selectionMode ? renderSlotAction(item) : null}
                       </>
                     );
+
+                    if (selectable) {
+                      const bareId = item.id.replace(/^s-/, "");
+                      const isSelected = selectedIds?.has(bareId) ?? false;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          disabled={slotActionsBusy}
+                          onClick={() => onToggleSelect?.(item)}
+                          aria-pressed={isSelected}
+                          className={`${chipClass} transition hover:brightness-95 disabled:opacity-50`}
+                          style={{
+                            ...slotToneStyle(item.status),
+                            outline: isSelected ? "2px solid var(--portal-info)" : undefined,
+                            outlineOffset: isSelected ? "-2px" : undefined,
+                            opacity: isSelected ? 1 : 0.75,
+                          }}
+                          title={item.meta?.blockReason ?? item.status}
+                        >
+                          {isSelected ? (
+                            <CheckSquare className="size-3 shrink-0" aria-hidden />
+                          ) : (
+                            <Square className="size-3 shrink-0 opacity-60" aria-hidden />
+                          )}
+                          {inner}
+                        </button>
+                      );
+                    }
 
                     if (!toggleable) {
                       return (

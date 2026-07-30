@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { CheckSquare, Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
@@ -20,8 +20,13 @@ import {
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
+import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
+import { SlotManagerPanel } from "@/components/calendar/slot-manager-panel";
+import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
+import { useSlotManager } from "@/lib/calendar/use-slot-manager";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
+  adminBulkSlotAction,
   adminCreateSlots,
   adminRemoveSlot,
   adminResizeSlot,
@@ -66,17 +71,22 @@ export function AvailabilityWeek({
   const [tz, setTz] = useState<string>(clinicTz);
   const [selectedSlot, setSelectedSlot] = useState<CalendarItem | null>(null);
   const [activeConsult, setActiveConsult] = useState<CalendarItem | null>(null);
-  // Block/unblock talks to the API from the client and then refreshes the
-  // server-rendered week — the slot list comes from the page, not local state.
-  const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
-  const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
-  const [resizeTarget, setResizeTarget] = useState<CalendarItem | null>(null);
-  const [addOpen, setAddOpen] = useState(false);
-  // Add reports partial success ("added 20, skipped 4"), which is information,
-  // not an error — it gets its own line rather than the warning banner.
-  const [slotNotice, setSlotNotice] = useState<string | null>(null);
-  const [slotBusy, setSlotBusy] = useState(false);
-  const [slotError, setSlotError] = useState<string | null>(null);
+
+  // Every slot mutation runs through the shared manager; the adapter is the
+  // only admin-specific part (doctor-scoped endpoints + a server refresh).
+  const slotManager = useSlotManager({
+    setStatus: (slotId, status, reason) =>
+      adminToggleSlotStatus(doctorId, slotId, status, reason),
+    resize: (slotId, durationMinutes) =>
+      adminResizeSlot(doctorId, slotId, durationMinutes),
+    remove: (slotId, reason) => adminRemoveSlot(doctorId, slotId, reason),
+    create: (startAtIsos, durationMinutes) =>
+      adminCreateSlots(doctorId, startAtIsos, durationMinutes),
+    bulk: (input) => adminBulkSlotAction(doctorId, input),
+    onChanged: () => router.refresh(),
+    describeAdd: (result) => describeAddResult(result),
+    describeBulk: (action, result) => describeBulkResult(action, result),
+  });
 
   const tzOptions = useMemo(() => {
     const set = new Set<string>([clinicTz, ...CURATED_TIME_ZONES]);
@@ -86,115 +96,53 @@ export function AvailabilityWeek({
   const weekDays = useMemo(() => weekDaysOf(weekAnchor), [weekAnchor]);
   const itemsByDay = useMemo(() => groupItemsByLocalDay(items, tz), [items, tz]);
 
-  // Calendar ids are prefixed ("s-<slotId>") so slots and consultations can't
-  // collide; the API wants the bare slot id.
-  async function setSlotStatus(
-    item: CalendarItem,
-    status: "OPEN" | "BLOCKED",
-    reason?: string,
-  ) {
-    setSlotError(null);
-    setSlotBusy(true);
-    const res = await adminToggleSlotStatus(
-      doctorId,
-      item.id.replace(/^s-/, ""),
-      status,
-      reason,
-    );
-    setSlotBusy(false);
-    if (!res.ok) {
-      setSlotError(res.message);
-      return;
-    }
-    setBlockTarget(null);
-    router.refresh();
-  }
-
-  // Removal deletes the slot for THIS date and records an availability
-  // exception server-side, so the weekly window can't regenerate it.
-  async function removeSlot(item: CalendarItem, reason?: string) {
-    setSlotError(null);
-    setSlotBusy(true);
-    const res = await adminRemoveSlot(
-      doctorId,
-      item.id.replace(/^s-/, ""),
-      reason,
-    );
-    setSlotBusy(false);
-    if (!res.ok) {
-      setSlotError(res.message);
-      return;
-    }
-    setRemoveTarget(null);
-    router.refresh();
-  }
-
-  // One-off slots over a date + time range of the admin's choosing — no weekly
-  // window involved, so they also survive later edits to those windows.
-  async function addSlots(startAtIsos: string[], durationMinutes: number) {
-    setSlotError(null);
-    setSlotBusy(true);
-    const res = await adminCreateSlots(doctorId, startAtIsos, durationMinutes);
-    setSlotBusy(false);
-    if (!res.ok) {
-      setSlotError(res.message);
-      return;
-    }
-    setAddOpen(false);
-    setSlotNotice(describeAddResult(res.data));
-    router.refresh();
-  }
-
-  // Resize keeps the slot's start and moves its end on the base grid.
-  async function resizeSlot(item: CalendarItem, durationMinutes: number) {
-    setSlotError(null);
-    setSlotBusy(true);
-    const res = await adminResizeSlot(
-      doctorId,
-      item.id.replace(/^s-/, ""),
-      durationMinutes,
-    );
-    setSlotBusy(false);
-    if (!res.ok) {
-      setSlotError(res.message);
-      return;
-    }
-    setResizeTarget(null);
-    router.refresh();
-  }
-
   function goToWeek(anchor: string) {
     const params = new URLSearchParams();
     params.set("wk", anchor);
     router.push(`${pathname}?${params.toString()}`);
   }
 
+  const busy = slotManager.busy;
+
   return (
     <div className="grid min-w-0 gap-3">
-      <div className="flex flex-wrap items-center justify-end gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <button
           type="button"
           className="gh-btn gh-btn-outline"
-          onClick={() => {
-            setSlotError(null);
-            setSlotNotice(null);
-            setAddOpen(true);
-          }}
+          onClick={() => slotManager.setSelectionMode(!slotManager.selectionMode)}
         >
-          <Plus className="size-3.5" aria-hidden /> Add slots
+          <CheckSquare className="size-3.5" aria-hidden />{" "}
+          {slotManager.selectionMode ? "Selecting" : "Select"}
         </button>
-        <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            className="gh-btn gh-btn-outline"
+            onClick={() => {
+              slotManager.clearMessages();
+              slotManager.setAddOpen(true);
+            }}
+          >
+            <Plus className="size-3.5" aria-hidden /> Add slots
+          </button>
+          <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />
+        </div>
       </div>
 
       {/* The dialogs render their own copy of the error — don't say it twice. */}
-      {slotError && !blockTarget && !removeTarget && !resizeTarget && !addOpen ? (
+      {slotManager.error &&
+      !slotManager.blockTarget &&
+      !slotManager.removeTarget &&
+      !slotManager.resizeTarget &&
+      !slotManager.addOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
-          {slotError}
+          {slotManager.error}
         </p>
       ) : null}
-      {slotNotice ? (
+      {slotManager.notice ? (
         <p className="gh-status-success rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
-          {slotNotice}
+          {slotManager.notice}
         </p>
       ) : null}
 
@@ -208,24 +156,43 @@ export function AvailabilityWeek({
           onSelectOpenSlot={setSelectedSlot}
           onSelectConsultation={setActiveConsult}
           onBlockSlot={(item) => {
-            setSlotError(null);
-            setBlockTarget(item);
+            slotManager.setError(null);
+            slotManager.setBlockTarget(item);
           }}
-          onSelectBlockedSlot={(item) => void setSlotStatus(item, "OPEN")}
+          onSelectBlockedSlot={(item) => void slotManager.setStatus(item, "OPEN")}
           onRemoveSlot={(item) => {
-            setSlotError(null);
-            setRemoveTarget(item);
+            slotManager.setError(null);
+            slotManager.setRemoveTarget(item);
           }}
           onResizeSlot={(item) => {
-            setSlotError(null);
-            setResizeTarget(item);
+            slotManager.setError(null);
+            slotManager.setResizeTarget(item);
           }}
-          slotActionsBusy={slotBusy}
+          selectionMode={slotManager.selectionMode}
+          selectedIds={slotManager.selected}
+          onToggleSelect={slotManager.toggleSelected}
+          slotActionsBusy={busy}
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
           onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
           onToday={() => goToWeek(todayKey(tz))}
         />
       </div>
+
+      <SelectionActionBar
+        count={slotManager.selected.size}
+        busy={busy}
+        onAction={(action) => void slotManager.bulkSelected(action)}
+        onClear={slotManager.clearSelection}
+      />
+
+      <SlotManagerPanel
+        tz={tz}
+        defaultDate={weekAnchor}
+        busy={busy}
+        onSubmit={(action, spans, reason) =>
+          void slotManager.bulkBySpans(action, spans, reason || undefined)
+        }
+      />
 
       <BookSlotDialog
         key={selectedSlot?.id ?? "none"}
@@ -243,67 +210,70 @@ export function AvailabilityWeek({
       />
 
       <BlockSlotDialog
-        key={blockTarget?.id ?? "no-block"}
-        open={blockTarget !== null}
-        slot={blockTarget}
+        key={slotManager.blockTarget?.id ?? "no-block"}
+        open={slotManager.blockTarget !== null}
+        slot={slotManager.blockTarget}
         tz={tz}
-        busy={slotBusy}
-        error={slotError}
+        busy={busy}
+        error={slotManager.error}
         onClose={() => {
-          setBlockTarget(null);
-          setSlotError(null);
+          slotManager.setBlockTarget(null);
+          slotManager.setError(null);
         }}
         onConfirm={(reason) => {
-          if (blockTarget) void setSlotStatus(blockTarget, "BLOCKED", reason || undefined);
+          const target = slotManager.blockTarget;
+          if (target) void slotManager.setStatus(target, "BLOCKED", reason || undefined);
         }}
       />
 
       <AddSlotDialog
-        key={addOpen ? `add-${weekAnchor}` : "no-add"}
-        open={addOpen}
+        key={slotManager.addOpen ? `add-${weekAnchor}` : "no-add"}
+        open={slotManager.addOpen}
         doctorName={doctorName}
         tz={tz}
         defaultDate={weekAnchor}
-        busy={slotBusy}
-        error={slotError}
+        busy={busy}
+        error={slotManager.error}
         onClose={() => {
-          setAddOpen(false);
-          setSlotError(null);
+          slotManager.setAddOpen(false);
+          slotManager.setError(null);
         }}
         onConfirm={(startAtIsos, durationMinutes) =>
-          void addSlots(startAtIsos, durationMinutes)
+          void slotManager.create(startAtIsos, durationMinutes)
         }
       />
 
       <ResizeSlotDialog
-        key={resizeTarget?.id ?? "no-resize"}
-        open={resizeTarget !== null}
-        slot={resizeTarget}
+        key={slotManager.resizeTarget?.id ?? "no-resize"}
+        open={slotManager.resizeTarget !== null}
+        slot={slotManager.resizeTarget}
         tz={tz}
-        busy={slotBusy}
-        error={slotError}
+        busy={busy}
+        error={slotManager.error}
         onClose={() => {
-          setResizeTarget(null);
-          setSlotError(null);
+          slotManager.setResizeTarget(null);
+          slotManager.setError(null);
         }}
         onConfirm={(durationMinutes) => {
-          if (resizeTarget) void resizeSlot(resizeTarget, durationMinutes);
+          const target = slotManager.resizeTarget;
+          if (target) void slotManager.resize(target, durationMinutes);
         }}
       />
 
       <RemoveSlotDialog
-        key={removeTarget?.id ?? "no-remove"}
-        open={removeTarget !== null}
-        slot={removeTarget}
+        key={slotManager.removeTarget?.id ?? "no-remove"}
+        open={slotManager.removeTarget !== null}
+        slot={slotManager.removeTarget}
         tz={tz}
-        busy={slotBusy}
-        error={slotError}
+        busy={busy}
+        error={slotManager.error}
         onClose={() => {
-          setRemoveTarget(null);
-          setSlotError(null);
+          slotManager.setRemoveTarget(null);
+          slotManager.setError(null);
         }}
         onConfirm={(reason) => {
-          if (removeTarget) void removeSlot(removeTarget, reason || undefined);
+          const target = slotManager.removeTarget;
+          if (target) void slotManager.remove(target, reason || undefined);
         }}
       />
 

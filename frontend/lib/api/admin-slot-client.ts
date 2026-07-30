@@ -1,8 +1,35 @@
 "use client";
 
+import type { BulkSlotInput, BulkSlotResult } from "./slot-bulk-types";
+
 type Result<T> =
   | { ok: true; data: T; message?: string }
   | { ok: false; message: string };
+
+/**
+ * Block / unblock / remove many of one doctor's slots in a single request —
+ * either a date × time sweep (`spans`, already expanded to UTC by the caller,
+ * which owns the display timezone) or an explicit selection (`slotIds`).
+ * BOOKED/HELD slots come back in `skippedOccupied` rather than failing it.
+ */
+export async function adminBulkSlotAction(
+  doctorId: string,
+  input: BulkSlotInput,
+): Promise<Result<BulkSlotResult>> {
+  const res = await fetch(
+    `/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots/bulk`,
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input),
+    },
+  );
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.ok) {
+    return { ok: false, message: json?.message ?? "Could not update slots" };
+  }
+  return { ok: true, data: json.data };
+}
 
 /**
  * Admin block/unblock of one doctor slot. The doctor-side twin lives in
