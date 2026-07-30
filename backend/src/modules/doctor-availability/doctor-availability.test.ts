@@ -235,4 +235,33 @@ describe("selectStaleSlots", () => {
     const rows = [base("2026-08-10T09:00:00.000Z"), base("2026-08-14T09:00:00.000Z")];
     assert.equal(selectStaleSlots(rows, []).length, 2);
   });
+
+  it("keeps a BLOCKED slot whose span drifted but still overlaps a window", () => {
+    // The regression this rule exists for: a 30-min BLOCKED row at 09:00 under
+    // a window that now steps 15 min. The exact-span rule would delete it, and
+    // regeneration only ever mints OPEN — so the doctor's "I'm busy" mark would
+    // come back as bookable time on the next window edit.
+    const blocked = { ...base("2026-08-10T09:00:00.000Z", 30), status: "BLOCKED" as const };
+    const candidates = [base("2026-08-10T09:00:00.000Z"), base("2026-08-10T09:15:00.000Z")];
+    assert.deepEqual(selectStaleSlots([blocked], candidates), []);
+  });
+
+  it("still drops a BLOCKED slot that overlaps no window at all", () => {
+    // A block left on a weekday the doctor no longer works is a true orphan:
+    // nothing lists it, nothing regenerates it, and it draws red forever.
+    const blocked = { ...base("2026-08-14T09:00:00.000Z"), status: "BLOCKED" as const };
+    const candidates = [base("2026-08-10T09:00:00.000Z")];
+    assert.deepEqual(
+      selectStaleSlots([blocked], candidates).map((s) => s.startAt.toISOString()),
+      ["2026-08-14T09:00:00.000Z"],
+    );
+  });
+
+  it("keeps applying the exact-span rule to OPEN slots", () => {
+    // Only BLOCKED gets the lenient rule. A coarse OPEN row must still go, or
+    // the finer candidates die on the overlap exclusion constraint.
+    const open = { ...base("2026-08-10T09:00:00.000Z", 30), status: "OPEN" as const };
+    const candidates = [base("2026-08-10T09:00:00.000Z"), base("2026-08-10T09:15:00.000Z")];
+    assert.equal(selectStaleSlots([open], candidates).length, 1);
+  });
 });
