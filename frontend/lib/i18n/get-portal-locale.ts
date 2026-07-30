@@ -1,33 +1,20 @@
 import "server-only";
 
-import { cache } from "react";
-import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
-import { toSupportedLocale } from "@/lib/i18n/resolve-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 /**
- * Portal UI language — the signed-in user's OWN selection
- * (`User.preferredLocale`, written by the portal language switcher), not the
- * shared `gh_locale` cookie.
+ * Portal UI language. Thin alias for the site-wide chain
+ * (`getSelectedLocale`): the signed-in user's own `User.preferredLocale` first,
+ * the `gh_locale` cookie only as a fallback for an account that never picked a
+ * language.
  *
- * Why the portals can't use `getPageLocale()` (cookie/header chain): that one
- * cookie is shared with the public site, and the public site keeps rewriting
- * it from the URL's `[lang]` segment (`proxy.ts`) or from a country pick
- * (`CountryEntryGate`, `CountrySwitcher`). Every portal→public excursion —
- * even a `<Link>` PREFETCH of the patient portal's "Book consultation" CTA,
- * whose href carries the *country's* default locale — silently retagged the
- * whole portal to that language for a year. Reading the account's explicit
- * choice makes those writes irrelevant to portal chrome.
- *
- * Falls back to `getPageLocale()` only when the account has never chosen a
- * language (preferredLocale null) or the session can't be read.
- *
- * `cache()`-wrapped, and `getServerAuthUser` is cached too, so a layout + its
- * page + nested server components share ONE `/api/auth/me` round-trip.
+ * Kept as its own export because portal callers must never pass an
+ * `explicitLocale` — a portal route has no `[lang]` segment to honour, and the
+ * name documents that the portals deliberately do not trust the shared cookie
+ * (the public site rewrites it from every `/{country}/{lang}` URL, which is
+ * what used to flip the portal to Portuguese mid-session).
  */
-export const getPortalLocale = cache(async (): Promise<LocaleCode> => {
-  const user = await getServerAuthUser();
-  const chosen = toSupportedLocale(user?.preferredLocale);
-  return chosen ?? (await getPageLocale());
-});
+export function getPortalLocale(): Promise<LocaleCode> {
+  return getPageLocale();
+}

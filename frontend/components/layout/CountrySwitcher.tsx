@@ -21,10 +21,12 @@ import { useCart } from "@/components/cart/CartContext";
 import { Flag } from "@/components/ui/Flag";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import { AppMenu, AppMenuItem } from "@/components/AppMenu";
+import { countryLinkLocale } from "@/lib/i18n/country-link-locale";
 
 export function CountrySwitcher({
   activeCountryCode,
   countries,
+  selectedLocale,
   chooseCountryLabel = "Choose country",
   switchConfirmTemplate = "Your cart has {count} {item} from {country}. Switching to a new country will clear it. Continue?",
   itemSingular = "item",
@@ -32,6 +34,9 @@ export function CountrySwitcher({
 }: {
   activeCountryCode: CountryCode | null;
   countries: CountryConfig[];
+  /** The language this visitor chose, resolved server-side. Decides the
+   *  `[lang]` segment of every country link when the target country serves it. */
+  selectedLocale?: string | null;
   chooseCountryLabel?: string;
   switchConfirmTemplate?: string;
   itemSingular?: string;
@@ -109,19 +114,16 @@ export function CountrySwitcher({
               // registry proxy may not be warm for admin-added countries.
           const slug =
             c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase();
-              // Keep the visitor's current language when the target
-              // country supports it; otherwise fall back to the target
-              // country's default locale. This makes country switching
-              // language-stable instead of silently resetting the
-              // visitor's choice on every switch.
+              // The visitor's SELECTED language when the target country serves
+              // it, else that country's default. Falls back to the current
+              // URL's lang only when the server didn't resolve a selection.
+              // Reading the URL first was the bug: a visitor who had chosen
+              // Portuguese while sitting on /ireland/en got /portugal/en.
           const current = pathname || "/";
-          const currentLang = parseSitePath(current).lang;
-          const nextLang = (
-            currentLang &&
-            (c.supportedLocales as string[]).includes(currentLang)
-              ? currentLang
-              : c.defaultLocale
-          ).toLowerCase();
+          const nextLang = countryLinkLocale(
+            selectedLocale ?? parseSitePath(current).lang,
+            c,
+          );
               // On country-scoped paths (/{country}/{lang}/...) swap
               // the country segment in place. On global paths
               // (/about, /blog, /faq, /contact, /) there's nothing to

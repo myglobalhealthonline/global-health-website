@@ -1,11 +1,10 @@
-import { cookies, headers } from "next/headers";
 import type { Metadata } from "next";
 import { CountryEntryGate } from "@/components/sections/CountryEntryGate";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { getCountryDoctors } from "@/lib/content/get-country-collections";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
-import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { getSelectedLocale } from "@/lib/i18n/selected-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,19 +30,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const requestHeaders = await headers();
-  const cookieStore = await cookies();
-
-  // Detect the visitor's language server-side so the entry gate renders in
-  // their browser language with no flicker and no manual language step.
-  // Priority (resolveLocale): x-gh-locale header → gh_locale cookie →
-  // Accept-Language → "en". The edge middleware already stamps x-gh-locale
-  // from Accept-Language for "/", so a Czech browser lands on Czech copy.
-  const detectedLocale = resolveLocale({
-    headerLocale: requestHeaders.get("x-gh-locale"),
-    cookieLocale: cookieStore.get("gh_locale")?.value,
-    acceptLanguageHeader: requestHeaders.get("accept-language"),
-  });
+  // The visitor's own language, resolved server-side so the entry gate renders
+  // in it with no flicker and no manual language step: signed-in
+  // `User.preferredLocale` → gh_locale cookie / x-gh-locale → Accept-Language →
+  // "en". The edge proxy stamps x-gh-locale from Accept-Language for "/", so a
+  // Czech browser with no history still lands on Czech copy.
+  const detectedLocale = await getSelectedLocale();
   const copy = loadLocaleBundle(detectedLocale).common.entryGate;
 
   // getPublicCountriesMerged also warms the slug↔code registry that the
