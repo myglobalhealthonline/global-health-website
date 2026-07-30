@@ -786,22 +786,81 @@ async function windowSlotCandidates(
 export const WINDOW_SWEEP_HORIZON_DAYS = 366;
 
 /**
- * Existing slots no window justifies any more, matched on the exact span.
+ * How far ahead a window change materialises slots up front.
  *
- * Comparing `endAt` as well as `startAt` is what catches duration drift: a
- * legacy 30-min slot at 09:00 shares its start with a 15-min candidate at
- * 09:00, so a start-only match would keep the coarse row — and the 09:15
- * candidate would then die on the overlap exclusion constraint, leaving the
- * doctor on a grid their window no longer describes.
+ * Generation is otherwise lazy — a range only gets rows when something reads
+ * it. That is fine for the booking flow (every read generates first) but it
+ * means a doctor who adds a weekly window has slots ONLY for the weeks somebody
+ * has since opened. Step the calendar to an unvisited week and it draws empty
+ * under an ACTIVE window, which is indistinguishable from a bug and is exactly
+ * the "my availability skipped a week" report. Pre-generating removes the
+ * dependency on who browsed what.
+ *
+ * 120 days matches the calendar routes' own `MAX_RANGE_MS` clamp: no view can
+ * request further out than this, so anything a doctor or patient can navigate to
+ * is already materialised. Beyond it, the lazy path still covers reads.
  */
-export function selectStaleSlots<T extends { startAt: Date; endAt: Date }>(
-  existing: T[],
-  candidates: { startAt: Date; endAt: Date }[],
-): T[] {
+export const WINDOW_PREGENERATE_DAYS = 120;
+
+/** What a generation pass actually wrote. See `ensureSlotsForRange`. */
+export type GenerationResult = { created: number; skippedOverlap: number };
+
+/**
+ * Materialise (and reconcile) a doctor's slots after their windows changed.
+ *
+ * Order matters: reconcile first so stale rows can't occupy a start instant the
+ * new shape needs — `selectMissingSlots` keys on the start, so a leftover row
+ * there would make the fresh candidate look already-present and the new window
+ * would generate nothing at that time. Then generate forward.
+ *
+ * Never throws: a window edit that succeeded must not report failure because
+ * materialisation hiccupped, and the lazy read path regenerates regardless.
+ */
+async function refreshWindowSlots(doctorId: string): Promise<GenerationResult> {
+  try {
+    await reconcileWindowDerivedSlots(doctorId);
+    const now = new Date();
+    return await ensureSlotsForRange(
+      doctorId,
+      now,
+      new Date(now.getTime() + WINDOW_PREGENERATE_DAYS * 24 * 60 * 60 * 1000),
+    );
+  } catch {
+    return { created: 0, skippedOverlap: 0 };
+  }
+}
+
+/**
+ * Existing slots no window justifies any more. Two rules, because the two
+ * statuses cost very different things to get wrong.
+ *
+ * OPEN — matched on the EXACT span. Comparing `endAt` as well as `startAt`
+ * catches duration drift: a legacy 30-min slot at 09:00 shares its start with a
+ * 15-min candidate at 09:00, so a start-only match would keep the coarse row,
+ * and the 09:15 candidate would then die on the overlap exclusion constraint,
+ * leaving the doctor on a grid their window no longer describes. Deleting a
+ * live OPEN slot is cheap: generation re-mints it on the next read.
+ *
+ * BLOCKED — kept if it OVERLAPS any candidate at all, span mismatch included.
+ * A block is the doctor saying "I am busy then", and it does not come back:
+ * regeneration only ever mints OPEN. Applying the exact-span rule here would
+ * mean any window whose step drifted turned the doctor's busy marks into
+ * bookable time on the next window edit — the same silent-loss bug this sweep
+ * exists to prevent, pointed at the doctor instead. Only a block that overlaps
+ * NO live window is a true orphan, and those are what this deletes.
+ */
+export function selectStaleSlots<
+  T extends { startAt: Date; endAt: Date; status?: DoctorSlotStatus },
+>(existing: T[], candidates: { startAt: Date; endAt: Date }[]): T[] {
   const span = (s: { startAt: Date; endAt: Date }) =>
     `${s.startAt.getTime()}:${s.endAt.getTime()}`;
   const owned = new Set(candidates.map(span));
-  return existing.filter((e) => !owned.has(span(e)));
+  return existing.filter((e) => {
+    if (e.status === "BLOCKED") {
+      return !candidates.some((c) => intervalsOverlap(e, c));
+    }
+    return !owned.has(span(e));
+  });
 }
 
 /**
@@ -843,7 +902,8 @@ export async function reconcileWindowDerivedSlots(
           isAdHoc: false,
           startAt: { gte: now, lt: horizonEnd },
         },
-        select: { id: true, startAt: true, endAt: true },
+        // `status` drives which staleness rule applies — see selectStaleSlots.
+        select: { id: true, startAt: true, endAt: true, status: true },
       }),
     ]);
     const stale = selectStaleSlots(existing, candidates);
@@ -873,16 +933,21 @@ export async function reconcileWindowDerivedSlots(
  * availability rows produce zero slots. Spans carrying a
  * `DoctorAvailabilityException` are skipped, which is what makes an admin's
  * one-off slot removal permanent.
+ *
+ * Returns what it did. `skippedOverlap` is the important one: candidates the
+ * exclusion constraint refused are dropped rather than raised (a booked slot
+ * legitimately occupies the span), so without a count in the return the caller
+ * has no way to tell "generated a full week" from "generated nothing, silently".
  */
 export async function ensureSlotsForRange(
   doctorId: string,
   fromUtc: Date,
   toUtc: Date,
-): Promise<void> {
-  if (toUtc <= fromUtc) return;
+): Promise<GenerationResult> {
+  if (toUtc <= fromUtc) return { created: 0, skippedOverlap: 0 };
 
   const generated = await windowSlotCandidates(doctorId, fromUtc, toUtc);
-  if (generated.length === 0) return;
+  if (generated.length === 0) return { created: 0, skippedOverlap: 0 };
 
   // Insert only the candidates that are genuinely missing, and skip the write
   // entirely when none are.
@@ -903,13 +968,14 @@ export async function ensureSlotsForRange(
     generated,
     existingRows.map((r) => r.startAt),
   );
-  if (missing.length === 0) return;
+  if (missing.length === 0) return { created: 0, skippedOverlap: 0 };
 
   try {
     await prisma.doctorTimeSlot.createMany({
       data: missing,
       skipDuplicates: true,
     });
+    return { created: missing.length, skippedOverlap: 0 };
   } catch (error) {
     // A concurrent caller may have created an overlapping slot between the
     // in-process check above and this write, and a longer existing slot can
@@ -918,16 +984,20 @@ export async function ensureSlotsForRange(
     // insert aborts entirely on one conflicting row, so fall back to inserting
     // one at a time and drop just the losers.
     if (isExclusionViolation(error)) {
+      let created = 0;
+      let skippedOverlap = 0;
       for (const row of missing) {
         try {
           await prisma.doctorTimeSlot.create({ data: row });
+          created += 1;
         } catch (rowError) {
           if (!isExclusionViolation(rowError) && !isUniqueViolation(rowError)) {
             throw normalizeDbError(rowError, "Slot generation unavailable");
           }
+          skippedOverlap += 1;
         }
       }
-      return;
+      return { created, skippedOverlap };
     }
     throw normalizeDbError(error, "Slot generation unavailable");
   }
@@ -1605,6 +1675,9 @@ export async function createAdminAvailability(
         effectiveUntil: input.effectiveUntil ?? null,
       },
     });
+    // Materialise the new window's slots now rather than leaving each week to
+    // whoever opens it first — see WINDOW_PREGENERATE_DAYS.
+    await refreshWindowSlots(doctorId);
     // The windows drive generation, so the cached slot views are now stale.
     invalidateAvailabilityCaches();
     return {
@@ -1659,8 +1732,9 @@ export async function patchAdminAvailability(
     // The window moved, narrowed, or paused, so slots minted from its old shape
     // may no longer be justified by any window. Reconcile before returning:
     // leaving it to a later read would mean a patient can book a slot on a day
-    // the doctor just removed. Also invalidates the caches.
-    await reconcileWindowDerivedSlots(doctorId);
+    // the doctor just removed. Then re-materialise the new shape, so widening a
+    // window fills every week in the horizon rather than only the visited ones.
+    await refreshWindowSlots(doctorId);
     // The windows drive generation, so the cached slot views are now stale.
     invalidateAvailabilityCaches();
     return {

@@ -527,6 +527,7 @@ export function DoctorAvailabilityUI({
     blockThisTime: s.slotActionBlock,
     selectSlot: s.selectSlot,
     deselectSlot: s.deselectSlot,
+    dayCount: s.weekDayCount,
   };
 
   return (
@@ -670,6 +671,7 @@ export function DoctorAvailabilityUI({
               block: s.slotActionBlock,
               unblock: s.slotActionReopen,
               remove: s.slotActionRemove,
+              removeConfirm: s.selectionRemoveConfirm,
               clear: s.selectionClear,
               hint: s.selectionHint,
             }}
