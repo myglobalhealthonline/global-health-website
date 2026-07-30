@@ -35,8 +35,14 @@ import {
 // without clipping. Everything longer scales up from there.
 const HOUR_PX = 160;
 const PX_PER_MIN = HOUR_PX / 60;
+// Hour window for a week with NOTHING on it — an empty grid still has to read
+// as a working day. A week that does have content fits the window to that
+// content instead (see the perDay memo), so these are a fallback, not a floor.
 const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 20;
+// Floor on the fitted window, so a single 15-min slot doesn't collapse the grid
+// into one lonely hour row.
+const MIN_SPAN_HOURS = 4;
 const MIN_BLOCK_PX = 34; // floor < a 15-min slot's 40px span, so blocks keep a gap
 // Height tiers: a block only shows what it can render without clipping.
 const TWO_LINE_PX = 38; // time range + name
@@ -111,6 +117,8 @@ type Props = {
     legendOpen?: string;
     legendBooked?: string;
     legendBlocked?: string;
+    /** Sticky day-header count, "{count}" interpolated. */
+    dayCount?: string;
   };
 };
 
@@ -297,6 +305,7 @@ export function WeekCalendar({
     legendOpen: labels?.legendOpen ?? "Open · click to book",
     legendBooked: labels?.legendBooked ?? "Booked",
     legendBlocked: labels?.legendBlocked ?? "Blocked",
+    dayCount: labels?.dayCount ?? "{count} slots",
   };
   // Measure the scroll container so the grid renders only as many day
   // columns as actually fit at a legible width — no forced horizontal
@@ -384,28 +393,67 @@ export function WeekCalendar({
     }
   }
 
-  // Positioned blocks per day + the visible hour window (expands to fit early
-  // / late items so nothing is clipped). Lane count for width purposes comes
-  // from weekMaxLanes above, not from here — this is render data only.
-  const { perDay, startHour, endHour } = useMemo(() => {
-    let minHour = DEFAULT_START_HOUR;
-    let maxHour = DEFAULT_END_HOUR;
+  // Positioned blocks per day + the hour window, FITTED to the week's content.
+  //
+  // This used to seed the window at a fixed 07:00-20:00 and only ever widen it.
+  // At HOUR_PX the body was therefore never shorter than 2080px while the panel
+  // caps at min(76vh, 940px), and the scroll container opens at the top — so a
+  // doctor whose only slots sat at 11:00 got a column of empty 07:00 rows and
+  // read the week as having no availability, while the month view counted the
+  // very same slots. Fitting the window to the content (and scrolling to the
+  // first block below) means a rendered day can never look emptier than it is.
+  const { perDay, startHour, endHour, firstBlockTop } = useMemo(() => {
     const perDay = new Map<string, PositionedItem[]>();
+    let contentMin: number | null = null;
+    let contentMax: number | null = null;
     for (const day of visibleDays) {
       const raw = dropSlotsUnderConsultations(itemsByDay.get(day.key) ?? []);
       const positioned = packDay(raw, tz);
       for (const p of positioned) {
-        minHour = Math.min(minHour, Math.floor(p.top / 60));
-        maxHour = Math.max(maxHour, Math.ceil((p.top + p.height) / 60));
+        contentMin = contentMin === null ? p.top : Math.min(contentMin, p.top);
+        const bottom = p.top + p.height;
+        contentMax = contentMax === null ? bottom : Math.max(contentMax, bottom);
       }
       perDay.set(day.key, positioned);
     }
+    // Empty week — keep the office-hours window so the grid still reads as one.
+    if (contentMin === null || contentMax === null) {
+      return {
+        perDay,
+        startHour: DEFAULT_START_HOUR,
+        endHour: DEFAULT_END_HOUR,
+        firstBlockTop: null,
+      };
+    }
+    const start = Math.max(0, Math.floor(contentMin / 60));
+    const end = Math.min(
+      24,
+      Math.max(Math.ceil(contentMax / 60), start + MIN_SPAN_HOURS),
+    );
     return {
       perDay,
-      startHour: Math.max(0, minHour),
-      endHour: Math.min(24, Math.max(maxHour, minHour + 1)),
+      startHour: start,
+      endHour: end,
+      firstBlockTop: (contentMin - start * 60) * PX_PER_MIN,
     };
   }, [visibleDays, itemsByDay, tz]);
+
+  // Land the grid on the week's first block rather than at the top of the hour
+  // window. The fitted window usually puts them in the same place, but a week
+  // spanning more hours than the panel can show (an early clinic plus a late
+  // one) would still open on empty rows. Keyed on the week + day-window so
+  // blocking a slot mid-week doesn't yank the doctor's scroll position back.
+  const lastScrolledKey = useRef("");
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || firstBlockTop === null) return;
+    const key = `${anchorDayKey}:${windowStart}`;
+    if (lastScrolledKey.current === key) return;
+    lastScrolledKey.current = key;
+    // A quarter-hour of lead so the first block doesn't sit flush under the
+    // sticky day header.
+    el.scrollTop = Math.max(0, firstBlockTop - HOUR_PX / 4);
+  }, [anchorDayKey, windowStart, firstBlockTop]);
 
   // Explicit 24-hour clock (en-GB, hour12:false) so every block reads the same
   // — en-IE, used elsewhere, flips to AM/PM which looked inconsistent.
@@ -484,6 +532,11 @@ export function WeekCalendar({
             <div />
             {visibleDays.map((d) => {
               const isToday = d.key === todayKey;
+              // Count in the STICKY header, mirroring the month grid's dots.
+              // The hour body scrolls; this doesn't. So "8 slots on Saturday"
+              // stays on screen even when every one of them is below the fold,
+              // and a column can never be misread as an empty day.
+              const dayCount = (perDay.get(d.key) ?? []).length;
               return (
                 <div
                   key={d.key}
@@ -506,6 +559,15 @@ export function WeekCalendar({
                   >
                     {d.dayNum}
                   </div>
+                  {dayCount > 0 ? (
+                    <div
+                      className="mt-0.5 text-portal-micro font-semibold"
+                      style={{ color: "var(--portal-muted)" }}
+                      aria-label={t.dayCount.split("{count}").join(String(dayCount))}
+                    >
+                      {t.dayCount.split("{count}").join(String(dayCount))}
+                    </div>
+                  ) : null}
                 </div>
               );
             })}
