@@ -22,6 +22,7 @@ export const MAX_RANGE_DAYS = 366;
 
 export type RangeProblem =
   | "END_DATE_BEFORE_START"
+  | "NO_MATCHING_DAYS"
   | "BAD_TIME"
   | "TOO_SHORT"
   | "TOO_MANY";
@@ -41,6 +42,13 @@ export function eachDate(from: string, to: string): string[] {
   return out;
 }
 
+/** 0 = Sunday … 6 = Saturday for a "YYYY-MM-DD", matching `Date#getDay()` and
+ *  the weekday column on DoctorAvailability. Read in UTC because the string is
+ *  a calendar date, not an instant. */
+export function weekdayOf(date: string): number {
+  return new Date(`${date}T00:00:00Z`).getUTCDay();
+}
+
 /** Minutes since midnight for "HH:mm"; null when unparseable. */
 export function toMinutes(value: string): number | null {
   const m = /^(\d{2}):(\d{2})$/.exec(value);
@@ -58,15 +66,24 @@ type ParsedRange = { dates: string[]; startMin: number; endMin: number };
 
 /** Shared validation for both expansions. `00:00` as an end time means
  *  end-of-day, not minute zero — an evening clinic running to midnight is
- *  legitimate and must not trip the "end after start" guard. */
+ *  legitimate and must not trip the "end after start" guard.
+ *
+ *  `weekdays` narrows the range to particular days of the week ("every Monday
+ *  and Wednesday between these dates"); empty or omitted means every day. */
 function parseRange(
   fromDate: string,
   toDate: string,
   startTime: string,
   endTime: string,
+  weekdays?: number[],
 ): { parsed: ParsedRange } | { problem: RangeProblem } {
-  const dates = eachDate(fromDate, toDate);
-  if (dates.length === 0) return { problem: "END_DATE_BEFORE_START" };
+  const all = eachDate(fromDate, toDate);
+  const dates =
+    weekdays && weekdays.length > 0
+      ? all.filter((d) => weekdays.includes(weekdayOf(d)))
+      : all;
+  if (all.length === 0) return { problem: "END_DATE_BEFORE_START" };
+  if (dates.length === 0) return { problem: "NO_MATCHING_DAYS" };
   const startMin = toMinutes(startTime);
   const rawEnd = toMinutes(endTime);
   if (startMin === null || rawEnd === null) return { problem: "BAD_TIME" };
@@ -84,8 +101,9 @@ export function expandSlotStarts(
   startTime: string,
   endTime: string,
   tz: string,
+  weekdays?: number[],
 ): { instants: string[]; problem: RangeProblem | null } {
-  const result = parseRange(fromDate, toDate, startTime, endTime);
+  const result = parseRange(fromDate, toDate, startTime, endTime, weekdays);
   if ("problem" in result) return { instants: [], problem: result.problem };
   const { dates, startMin, endMin } = result.parsed;
 
@@ -113,8 +131,9 @@ export function expandDaySpans(
   startTime: string,
   endTime: string,
   tz: string,
+  weekdays?: number[],
 ): { spans: { fromUtc: string; toUtc: string }[]; problem: RangeProblem | null } {
-  const result = parseRange(fromDate, toDate, startTime, endTime);
+  const result = parseRange(fromDate, toDate, startTime, endTime, weekdays);
   if ("problem" in result) return { spans: [], problem: result.problem };
   const { dates, startMin, endMin } = result.parsed;
 
@@ -145,8 +164,9 @@ export function countRangeSlots(
   toDate: string,
   startTime: string,
   endTime: string,
+  weekdays?: number[],
 ): number {
-  const result = parseRange(fromDate, toDate, startTime, endTime);
+  const result = parseRange(fromDate, toDate, startTime, endTime, weekdays);
   if ("problem" in result) return 0;
   const { dates, startMin, endMin } = result.parsed;
   const perDay = Math.floor((endMin - startMin) / BASE_SLOT_MINUTES);

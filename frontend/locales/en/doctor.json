@@ -497,7 +497,11 @@
     "noItemsOnDay": "No consultations or slots on this day.",
     "sectionConsultations": "Consultations",
     "sectionSlots": "Slots",
-    "reasonOptional": "Reason (optional)"
+    "reasonOptional": "Reason (optional)",
+    "manageAnyDay": "Every day in the range.",
+    "manageDatesOptionalHint": "Leave the dates blank to use the dates you are looking at ({from} – {to}).",
+    "manageErrorNoMatchingDays": "None of the days you picked fall inside those dates.",
+    "windowSlotsHint": "Block, re-open, or remove the slots this window generates. Pick which dates; the day and hours come from the window above."
   },
   "profile": {
     "eyebrow": "Doctor",

@@ -497,7 +497,11 @@
     "noItemsOnDay": "Sem consultas nem horários neste dia.",
     "sectionConsultations": "Consultas",
     "sectionSlots": "Horários",
-    "reasonOptional": "Motivo (opcional)"
+    "reasonOptional": "Motivo (opcional)",
+    "manageAnyDay": "Todos os dias do intervalo.",
+    "manageDatesOptionalHint": "Deixe as datas em branco para usar as datas que está a ver ({from} – {to}).",
+    "manageErrorNoMatchingDays": "Nenhum dos dias escolhidos cai dentro dessas datas.",
+    "windowSlotsHint": "Bloqueie, reabra ou remova os horários gerados por esta janela. Escolha as datas; o dia e as horas vêm da janela acima."
   },
   "profile": {
     "eyebrow": "Médico",

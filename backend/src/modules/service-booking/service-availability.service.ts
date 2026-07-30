@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
+import { registerAvailabilityCache } from "../doctor-availability/availability-cache-bus.js";
 import {
   listOpenSlotsForDoctorAndService,
   releaseExpiredHeldSlotsForDoctors,
@@ -50,6 +51,9 @@ export type ServiceAggregatedAvailability = {
 // cap just guards against unbounded growth in a long-lived process.
 const CACHE_MAX_ENTRIES = 2000;
 const cache = new TtlCache<ServiceAggregatedAvailability>(CACHE_MAX_ENTRIES);
+// A blocked or removed slot must leave the aggregated view immediately, not
+// after the TTL — the write paths clear every registered cache.
+registerAvailabilityCache(() => cache.clear());
 
 async function resolveCountryTimeZone(countryCode: string): Promise<string> {
   try {

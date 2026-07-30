@@ -19,7 +19,6 @@ import {
 } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
-import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
 import { SlotManagerPanel } from "@/components/calendar/slot-manager-panel";
 import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
@@ -29,7 +28,6 @@ import {
   adminBulkSlotAction,
   adminCreateSlots,
   adminRemoveSlot,
-  adminResizeSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
 import {
@@ -77,8 +75,6 @@ export function AvailabilityWeek({
   const slotManager = useSlotManager({
     setStatus: (slotId, status, reason) =>
       adminToggleSlotStatus(doctorId, slotId, status, reason),
-    resize: (slotId, durationMinutes) =>
-      adminResizeSlot(doctorId, slotId, durationMinutes),
     remove: (slotId, reason) => adminRemoveSlot(doctorId, slotId, reason),
     create: (startAtIsos, durationMinutes) =>
       adminCreateSlots(doctorId, startAtIsos, durationMinutes),
@@ -100,6 +96,9 @@ export function AvailabilityWeek({
     const params = new URLSearchParams();
     params.set("wk", anchor);
     router.push(`${pathname}?${params.toString()}`);
+    // Next caches the RSC payload per URL on the client, so navigating to a
+    // week or month you visited before a mutation would replay the stale one.
+    router.refresh();
   }
 
   const busy = slotManager.busy;
@@ -134,7 +133,6 @@ export function AvailabilityWeek({
       {slotManager.error &&
       !slotManager.blockTarget &&
       !slotManager.removeTarget &&
-      !slotManager.resizeTarget &&
       !slotManager.addOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
           {slotManager.error}
@@ -164,10 +162,6 @@ export function AvailabilityWeek({
             slotManager.setError(null);
             slotManager.setRemoveTarget(item);
           }}
-          onResizeSlot={(item) => {
-            slotManager.setError(null);
-            slotManager.setResizeTarget(item);
-          }}
           selectionMode={slotManager.selectionMode}
           selectedIds={slotManager.selected}
           onToggleSelect={slotManager.toggleSelected}
@@ -187,7 +181,9 @@ export function AvailabilityWeek({
 
       <SlotManagerPanel
         tz={tz}
-        defaultDate={weekAnchor}
+        fallbackFrom={weekDays[0]?.key ?? weekAnchor}
+        fallbackTo={weekDays[weekDays.length - 1]?.key ?? weekAnchor}
+        weekdayLabels={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
         busy={busy}
         onSubmit={(action, spans, reason) =>
           void slotManager.bulkBySpans(action, spans, reason || undefined)
@@ -241,23 +237,6 @@ export function AvailabilityWeek({
         onConfirm={(startAtIsos, durationMinutes) =>
           void slotManager.create(startAtIsos, durationMinutes)
         }
-      />
-
-      <ResizeSlotDialog
-        key={slotManager.resizeTarget?.id ?? "no-resize"}
-        open={slotManager.resizeTarget !== null}
-        slot={slotManager.resizeTarget}
-        tz={tz}
-        busy={busy}
-        error={slotManager.error}
-        onClose={() => {
-          slotManager.setResizeTarget(null);
-          slotManager.setError(null);
-        }}
-        onConfirm={(durationMinutes) => {
-          const target = slotManager.resizeTarget;
-          if (target) void slotManager.resize(target, durationMinutes);
-        }}
       />
 
       <RemoveSlotDialog

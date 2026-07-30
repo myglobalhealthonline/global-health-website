@@ -497,7 +497,11 @@
     "noItemsOnDay": "Sin consultas ni huecos este día.",
     "sectionConsultations": "Consultas",
     "sectionSlots": "Huecos",
-    "reasonOptional": "Motivo (opcional)"
+    "reasonOptional": "Motivo (opcional)",
+    "manageAnyDay": "Todos los días del rango.",
+    "manageDatesOptionalHint": "Deja las fechas en blanco para usar las que estás viendo ({from} – {to}).",
+    "manageErrorNoMatchingDays": "Ninguno de los días elegidos cae dentro de esas fechas.",
+    "windowSlotsHint": "Bloquea, reabre o elimina los huecos que genera esta ventana. Elige las fechas; el día y las horas vienen de la ventana de arriba."
   },
   "profile": {
     "eyebrow": "Médico",

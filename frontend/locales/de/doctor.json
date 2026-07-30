@@ -497,7 +497,11 @@
     "noItemsOnDay": "An diesem Tag gibt es keine Konsultationen oder Termine.",
     "sectionConsultations": "Konsultationen",
     "sectionSlots": "Termine",
-    "reasonOptional": "Grund (optional)"
+    "reasonOptional": "Grund (optional)",
+    "manageAnyDay": "Jeder Tag im Zeitraum.",
+    "manageDatesOptionalHint": "Lassen Sie die Daten leer, um den angezeigten Zeitraum zu verwenden ({from} – {to}).",
+    "manageErrorNoMatchingDays": "Keiner der gewählten Tage liegt in diesem Zeitraum.",
+    "windowSlotsHint": "Blockieren, wieder öffnen oder entfernen Sie die Termine, die dieses Fenster erzeugt. Wählen Sie die Daten; Tag und Uhrzeit stammen aus dem Fenster oben."
   },
   "profile": {
     "eyebrow": "Arzt",

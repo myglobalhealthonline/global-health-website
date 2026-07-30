@@ -5,15 +5,22 @@ import { Ban, Trash2, Unlock } from "lucide-react";
 import { FormSection } from "@/components/FormSection";
 import { BASE_SLOT_MINUTES } from "@/lib/constants";
 import type { BulkSlotAction } from "@/lib/api/slot-bulk-types";
-import { countRangeSlots, expandDaySpans, type RangeProblem } from "@/lib/calendar/expand-range";
+import {
+  countRangeSlots,
+  expandDaySpans,
+  type RangeProblem,
+} from "@/lib/calendar/expand-range";
 
 export type SlotManagerLabels = {
   title: string;
   description: string;
+  days: string;
+  anyDay: string;
   fromDate: string;
   toDate: string;
   fromTime: string;
   toTime: string;
+  datesOptionalHint: string;
   reason: string;
   reasonPlaceholder: string;
   block: string;
@@ -23,6 +30,7 @@ export type SlotManagerLabels = {
   affects: string;
   removeConfirm: string;
   errorEndDate: string;
+  errorNoMatchingDays: string;
   errorTimeFormat: string;
   errorTooShort: string;
   errorTooMany: string;
@@ -31,11 +39,14 @@ export type SlotManagerLabels = {
 const DEFAULT_LABELS: SlotManagerLabels = {
   title: "Manage slots",
   description:
-    "Block, re-open, or remove everything in a stretch of the calendar at once. Booked and held slots are never touched. Times are in {tz}.",
+    "Block, re-open, or remove a stretch of the calendar at once. Booked slots are never touched. Times are in {tz}.",
+  days: "Days",
+  anyDay: "Every day",
   fromDate: "From date",
   toDate: "To date",
   fromTime: "From time",
   toTime: "To time",
+  datesOptionalHint: "Leave the dates blank to use the dates you are looking at ({from} – {to}).",
   reason: "Reason",
   reasonPlaceholder: "Holiday, training, clinic closed…",
   block: "Block",
@@ -46,44 +57,57 @@ const DEFAULT_LABELS: SlotManagerLabels = {
   removeConfirm:
     "Remove every open and blocked slot in that stretch? They will not come back on their own — the weekly windows stay, but these dates are permanently excluded.",
   errorEndDate: "End date must be on or after the start date.",
+  errorNoMatchingDays: "No days of the week you picked fall inside those dates.",
   errorTimeFormat: "Enter times as HH:MM.",
   errorTooShort: "End time must be at least {minutes} minutes after the start time.",
-  errorTooMany: "That range is over {max} slots — do it in smaller batches.",
+  errorTooMany: "That range is too big — do it in smaller batches.",
 };
 
 function problemMessage(problem: RangeProblem, t: SlotManagerLabels): string {
   switch (problem) {
     case "END_DATE_BEFORE_START":
       return t.errorEndDate;
+    case "NO_MATCHING_DAYS":
+      return t.errorNoMatchingDays;
     case "BAD_TIME":
       return t.errorTimeFormat;
     case "TOO_SHORT":
       return t.errorTooShort.split("{minutes}").join(String(BASE_SLOT_MINUTES));
     default:
-      return t.errorTooMany.split("{max}").join("366 days");
+      return t.errorTooMany;
   }
 }
 
 /**
- * The range sweep: pick a stretch of dates and hours, then block / re-open /
- * remove everything in it. This is the "I'm away all next week" path; the
- * calendar's own per-slot actions and multi-select cover the fiddly cases.
+ * The range sweep: block, re-open, or remove a stretch of the calendar in one
+ * go. This is the "I'm away next week" path; the grid's own per-slot actions
+ * and multi-select cover the fiddly cases.
  *
- * The panel only expands the range into UTC day-spans and hands them up — the
- * caller owns the API call, so the same component serves the doctor portal and
- * both admin surfaces.
+ * Both narrowing controls are optional and compose:
+ *   • dates — blank means the range currently on screen, so the panel acts on
+ *     what the doctor is looking at rather than demanding they retype it;
+ *   • days of the week — blank means every day, otherwise "only the Mondays
+ *     and Wednesdays in that stretch".
+ *
+ * The panel only expands the choice into UTC day-spans and hands them up, so
+ * the same component serves the doctor portal and both admin surfaces.
  */
 export function SlotManagerPanel({
   tz,
-  defaultDate,
+  fallbackFrom,
+  fallbackTo,
+  weekdayLabels,
   busy = false,
   labels,
   onSubmit,
   dataTour,
 }: {
   tz: string;
-  /** "YYYY-MM-DD" both date fields start on — usually the visible week. */
-  defaultDate: string;
+  /** "YYYY-MM-DD" used when the date fields are left blank — the visible range. */
+  fallbackFrom: string;
+  fallbackTo: string;
+  /** Sunday-first, matching `Date#getDay()`. */
+  weekdayLabels: string[];
   busy?: boolean;
   labels?: Partial<SlotManagerLabels>;
   onSubmit: (
@@ -93,18 +117,40 @@ export function SlotManagerPanel({
   ) => void;
   dataTour?: string;
 }) {
-  const [fromDate, setFromDate] = useState(defaultDate);
-  const [toDate, setToDate] = useState(defaultDate);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [weekdays, setWeekdays] = useState<number[]>([]);
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const t = { ...DEFAULT_LABELS, ...labels };
-  const affected = countRangeSlots(fromDate, toDate, startTime, endTime);
+  const effectiveFrom = fromDate || fallbackFrom;
+  const effectiveTo = toDate || fallbackTo;
+  const affected = countRangeSlots(
+    effectiveFrom,
+    effectiveTo,
+    startTime,
+    endTime,
+    weekdays,
+  );
+
+  function toggleWeekday(value: number) {
+    setWeekdays((prev) =>
+      prev.includes(value) ? prev.filter((d) => d !== value) : [...prev, value],
+    );
+  }
 
   function submit(action: BulkSlotAction) {
-    const { spans, problem } = expandDaySpans(fromDate, toDate, startTime, endTime, tz);
+    const { spans, problem } = expandDaySpans(
+      effectiveFrom,
+      effectiveTo,
+      startTime,
+      endTime,
+      tz,
+      weekdays,
+    );
     if (problem) {
       setError(problemMessage(problem, t));
       return;
@@ -113,8 +159,8 @@ export function SlotManagerPanel({
       setError(t.errorEndDate);
       return;
     }
-    // Removal is the one irreversible action here, and a mis-set date range is
-    // the easy mistake — confirm before a sweep deletes a week of inventory.
+    // Removal is the one irreversible action here, and a mis-set range is the
+    // easy mistake — confirm before a sweep deletes a week of inventory.
     if (action === "REMOVE" && !window.confirm(t.removeConfirm)) return;
     setError(null);
     onSubmit(action, spans, reason.trim());
@@ -127,6 +173,41 @@ export function SlotManagerPanel({
       className="gh-doctor-panel"
     >
       <div className="gh-form-section__span-2 grid gap-3" data-tour={dataTour}>
+        <fieldset className="grid gap-1.5">
+          <legend className="gh-field-label mb-1">{t.days}</legend>
+          <div className="flex flex-wrap gap-1.5">
+            {weekdayLabels.map((label, value) => {
+              const on = weekdays.includes(value);
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => toggleWeekday(value)}
+                  aria-pressed={on}
+                  className="rounded-[999px] border px-2.5 py-1 text-portal-compact font-semibold transition"
+                  style={
+                    on
+                      ? {
+                          borderColor: "var(--portal-info)",
+                          background: "var(--portal-info)",
+                          color: "#fff",
+                        }
+                      : {
+                          borderColor: "var(--portal-line-strong)",
+                          color: "var(--portal-text)",
+                        }
+                  }
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          {weekdays.length === 0 ? (
+            <span className="text-portal-meta text-[var(--portal-muted)]">{t.anyDay}</span>
+          ) : null}
+        </fieldset>
+
         <div className="grid grid-cols-2 gap-2">
           <label className="flex flex-col gap-1 text-sm">
             <span className="gh-field-label">{t.fromDate}</span>
@@ -136,7 +217,9 @@ export function SlotManagerPanel({
               value={fromDate}
               onChange={(e) => {
                 setFromDate(e.target.value);
-                if (toDate && e.target.value > toDate) setToDate(e.target.value);
+                if (toDate && e.target.value && e.target.value > toDate) {
+                  setToDate(e.target.value);
+                }
               }}
             />
           </label>
@@ -151,6 +234,14 @@ export function SlotManagerPanel({
             />
           </label>
         </div>
+        <p className="text-portal-meta text-[var(--portal-muted)]">
+          {t.datesOptionalHint
+            .split("{from}")
+            .join(fallbackFrom)
+            .split("{to}")
+            .join(fallbackTo)}
+        </p>
+
         <div className="grid grid-cols-2 gap-2">
           <label className="flex flex-col gap-1 text-sm">
             <span className="gh-field-label">{t.fromTime}</span>
@@ -171,6 +262,7 @@ export function SlotManagerPanel({
             />
           </label>
         </div>
+
         <label className="flex flex-col gap-1 text-sm">
           <span className="gh-field-label">{t.reason}</span>
           <input

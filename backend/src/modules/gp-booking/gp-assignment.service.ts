@@ -2,6 +2,7 @@ import { DateTime } from "luxon";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
+import { registerAvailabilityCache } from "../doctor-availability/availability-cache-bus.js";
 import {
   listOpenSlotsForDoctorAndService,
   releaseExpiredHeldSlotsForDoctors,
@@ -53,6 +54,9 @@ const LANGUAGES_TTL_MS = 60_000;
 // just guards against unbounded growth in a long-lived process.
 const CACHE_MAX_ENTRIES = 1000;
 const availabilityCache = new TtlCache<GpAvailabilityResult>(CACHE_MAX_ENTRIES);
+// Same reason as the aggregated cache: a slot taken out of inventory must stop
+// being offered on the quick-book path straight away.
+registerAvailabilityCache(() => availabilityCache.clear());
 const languagesCache = new TtlCache<GpLanguagesResult>(CACHE_MAX_ENTRIES);
 
 export type GpAvailabilitySlot = {

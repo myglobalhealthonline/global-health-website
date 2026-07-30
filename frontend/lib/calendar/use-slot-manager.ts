@@ -30,7 +30,6 @@ export type SlotManagerAdapter = {
     status: "OPEN" | "BLOCKED",
     reason?: string,
   ): Promise<SlotResult<unknown>>;
-  resize(slotId: string, durationMinutes: number): Promise<SlotResult<unknown>>;
   remove(slotId: string, reason?: string): Promise<SlotResult<unknown>>;
   create(
     startAtIsos: string[],
@@ -63,7 +62,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
   // Dialog targets. Null means closed; the surfaces key their dialogs on the
   // target id so each one remounts with fresh field state.
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
-  const [resizeTarget, setResizeTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
 
@@ -102,14 +100,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     async (item: CalendarItem, status: "OPEN" | "BLOCKED", reason?: string) => {
       const ok = await run(() => adapter.setStatus(bareSlotId(item), status, reason));
       if (ok) setBlockTarget(null);
-    },
-    [adapter, run],
-  );
-
-  const resize = useCallback(
-    async (item: CalendarItem, durationMinutes: number) => {
-      const ok = await run(() => adapter.resize(bareSlotId(item), durationMinutes));
-      if (ok) setResizeTarget(null);
     },
     [adapter, run],
   );
@@ -190,8 +180,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
 
     blockTarget,
     setBlockTarget,
-    resizeTarget,
-    setResizeTarget,
     removeTarget,
     setRemoveTarget,
     addOpen,
@@ -204,7 +192,6 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     clearSelection,
 
     setStatus,
-    resize,
     remove,
     create,
     bulkBySpans,

@@ -26,7 +26,6 @@ import {
 } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
-import { ResizeSlotDialog } from "@/components/calendar/resize-slot-dialog";
 import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
 import { SlotManagerPanel } from "@/components/calendar/slot-manager-panel";
@@ -36,7 +35,6 @@ import {
   adminBulkSlotAction,
   adminCreateSlots,
   adminRemoveSlot,
-  adminResizeSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
 
@@ -90,7 +88,6 @@ export function AdminCalendarUI({
   const [slotError, setSlotError] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
-  const [resizeTarget, setResizeTarget] = useState<CalendarItem | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   // Add reports partial success ("added 20, skipped 4") — information, not an
   // error, so it gets its own line rather than the warning banner.
@@ -191,38 +188,6 @@ export function AdminCalendarUI({
     setAddOpen(false);
     setSlotNotice(describeAddResult(res.data));
     router.refresh();
-  }
-
-  // Resize keeps the slot's start and moves its end on the base grid.
-  async function resizeSlot(item: CalendarItem, durationMinutes: number) {
-    const doctorId = item.meta?.doctorId;
-    if (!doctorId) {
-      setSlotError("This slot has no doctor — reload the calendar and try again.");
-      return;
-    }
-    setSlotError(null);
-    setSlotBusy(true);
-    const res = await adminResizeSlot(
-      doctorId,
-      item.id.replace(/^s-/, ""),
-      durationMinutes,
-    );
-    setSlotBusy(false);
-    if (!res.ok) {
-      setSlotError(res.message);
-      return;
-    }
-    setResizeTarget(null);
-    router.refresh();
-  }
-
-  function openResizeDialog(item: CalendarItem) {
-    if (item.kind !== "slot") return;
-    if (item.status !== "OPEN" && item.status !== "BLOCKED") return;
-    if (!item.meta?.doctorId) return;
-    setDaySheetOpen(false);
-    setSlotError(null);
-    setResizeTarget(item);
   }
 
   function openRemoveDialog(item: CalendarItem) {
@@ -328,6 +293,9 @@ export function AdminCalendarUI({
       params.set("wk", next.wk ?? weekAnchor);
     }
     router.push(`${pathname}?${params.toString()}`);
+    // Next caches the RSC payload per URL on the client, so navigating to a
+    // week or month you visited before a mutation would replay the stale one.
+    router.refresh();
   }
 
   // `ym` rides along with the anchor so flipping back to Month lands on the
@@ -349,6 +317,23 @@ export function AdminCalendarUI({
   }
 
   const weekDays = useMemo(() => weekDaysOf(weekAnchor), [weekAnchor]);
+
+  // What the Manage panel sweeps when its date fields are left blank: whatever
+  // stretch is on screen.
+  const visibleRange = useMemo(() => {
+    if (view === "week") {
+      return {
+        from: weekDays[0]?.key ?? weekAnchor,
+        to: weekDays[weekDays.length - 1]?.key ?? weekAnchor,
+      };
+    }
+    const last = new Date(Date.UTC(year, month, 0)).getUTCDate();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return {
+      from: `${year}-${pad(month)}-01`,
+      to: `${year}-${pad(month)}-${pad(last)}`,
+    };
+  }, [view, weekDays, weekAnchor, year, month]);
 
   return (
     <div className="gh-admin-calendar-ui grid gap-4">
@@ -466,7 +451,6 @@ export function AdminCalendarUI({
       {slotError &&
       !blockTarget &&
       !removeTarget &&
-      !resizeTarget &&
       !addOpen &&
       !daySheetOpen ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
@@ -491,7 +475,6 @@ export function AdminCalendarUI({
           onBlockSlot={openBlockDialog}
           onSelectBlockedSlot={onUnblockSlot}
           onRemoveSlot={openRemoveDialog}
-          onResizeSlot={openResizeDialog}
           selectionMode={selectionMode && bulkReady}
           selectedIds={selected}
           onToggleSelect={toggleSelected}
@@ -536,7 +519,9 @@ export function AdminCalendarUI({
       {bulkReady ? (
         <SlotManagerPanel
           tz={tz}
-          defaultDate={view === "week" ? weekAnchor : selectedDay || todayKey(tz)}
+          fallbackFrom={visibleRange.from}
+          fallbackTo={visibleRange.to}
+          weekdayLabels={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
           busy={slotBusy}
           onSubmit={(action, spans, reason) => void runBulk(action, { spans }, reason)}
         />
@@ -638,14 +623,6 @@ export function AdminCalendarUI({
                 <button
                   type="button"
                   disabled={slotBusy}
-                  onClick={() => openResizeDialog(item)}
-                  className={actionClass}
-                >
-                  Length
-                </button>
-                <button
-                  type="button"
-                  disabled={slotBusy}
                   onClick={() => openRemoveDialog(item)}
                   className={actionClass}
                 >
@@ -688,22 +665,6 @@ export function AdminCalendarUI({
         onConfirm={(startAtIsos, durationMinutes) =>
           void addSlots(startAtIsos, durationMinutes)
         }
-      />
-
-      <ResizeSlotDialog
-        key={resizeTarget?.id ?? "no-resize"}
-        open={resizeTarget !== null}
-        slot={resizeTarget}
-        tz={tz}
-        busy={slotBusy}
-        error={slotError}
-        onClose={() => {
-          setResizeTarget(null);
-          setSlotError(null);
-        }}
-        onConfirm={(durationMinutes) => {
-          if (resizeTarget) void resizeSlot(resizeTarget, durationMinutes);
-        }}
       />
 
       <RemoveSlotDialog

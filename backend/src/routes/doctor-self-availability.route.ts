@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { invalidateAvailabilityCaches } from "../modules/doctor-availability/availability-cache-bus.js";
 import {
   BASE_SLOT_MINUTES,
   bulkSetSlotBlockInRange,
@@ -492,6 +493,9 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
           data: { status: body.data.status },
           select: { id: true, status: true },
         });
+        // Same reason as the bulk paths: the slot must leave (or re-enter) the
+        // patient-facing views now, not when the read caches expire.
+        invalidateAvailabilityCaches();
         return okResponse({ id: updated.id, status: updated.status });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

@@ -497,7 +497,11 @@
     "noItemsOnDay": "Nicio consultație și niciun interval în această zi.",
     "sectionConsultations": "Consultații",
     "sectionSlots": "Intervale",
-    "reasonOptional": "Motiv (opțional)"
+    "reasonOptional": "Motiv (opțional)",
+    "manageAnyDay": "Toate zilele din interval.",
+    "manageDatesOptionalHint": "Lasă datele goale pentru a folosi intervalul pe care îl vezi ({from} – {to}).",
+    "manageErrorNoMatchingDays": "Niciuna dintre zilele alese nu se încadrează în acele date.",
+    "windowSlotsHint": "Blochează, redeschide sau elimină intervalele generate de această fereastră. Alege datele; ziua și orele vin din fereastra de mai sus."
   },
   "profile": {
     "eyebrow": "Medic",

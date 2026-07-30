@@ -3,6 +3,10 @@ import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
 import {
+  invalidateAvailabilityCaches,
+  registerAvailabilityCache,
+} from "./availability-cache-bus.js";
+import {
   calendarDayNumber,
   eachClinicLocalDay,
   isValidTimeZone,
@@ -181,7 +185,7 @@ export async function bulkSetSlotBlockInSpans(
 
     // Inventory changed either way — an unblocked slot must become bookable now,
     // not after the read cache's TTL.
-    slotCache.clear();
+    invalidateAvailabilityCaches();
     return { changed: result.count, skippedOccupied, skippedMissing: 0 };
   } catch (error) {
     throw normalizeDbError(error, "Could not update availability");
@@ -224,7 +228,7 @@ export async function bulkRemoveSlotsInSpans(
     }
 
     const changed = await deleteSlotsWithExceptions(doctorId, removable, reason);
-    slotCache.clear();
+    invalidateAvailabilityCaches();
     return { changed, skippedOccupied, skippedMissing: 0 };
   } catch (error) {
     throw normalizeDbError(error, "Could not remove slots");
@@ -264,7 +268,7 @@ export async function bulkSlotActionByIds(
 
     if (action === "REMOVE") {
       const changed = await deleteSlotsWithExceptions(doctorId, eligible, reason);
-      slotCache.clear();
+      invalidateAvailabilityCaches();
       return { changed, skippedOccupied, skippedMissing };
     }
 
@@ -283,7 +287,7 @@ export async function bulkSlotActionByIds(
           : { status: "OPEN", blockReason: null },
     });
 
-    slotCache.clear();
+    invalidateAvailabilityCaches();
     return { changed: result.count, skippedOccupied, skippedMissing };
   } catch (error) {
     throw normalizeDbError(error, "Could not update slots");
@@ -455,7 +459,7 @@ export async function createAdHocSlots(
 
     // New bookable slots must show up in public listings now, not after the
     // read cache's TTL.
-    slotCache.clear();
+    invalidateAvailabilityCaches();
     return { created, skippedOverlap, skippedPast };
   } catch (error) {
     // Lost a race against a concurrent write the pre-flight read missed. The
@@ -497,7 +501,7 @@ async function createAdHocSlotsOneByOne(
       throw normalizeDbError(rowError, "Could not add slots");
     }
   }
-  slotCache.clear();
+  invalidateAvailabilityCaches();
   return { created, skippedOverlap, skippedPast };
 }
 
@@ -607,7 +611,7 @@ export async function resizeSlot(
       return row;
     });
 
-    slotCache.clear();
+    invalidateAvailabilityCaches();
     return { ok: true, slot: updated };
   } catch (error) {
     if (isExclusionViolation(error) || isUniqueViolation(error)) {
@@ -671,7 +675,7 @@ export async function removeSlotForDate(
 
     // The read caches key on doctor + date bucket, so a removed slot would
     // linger in a public listing for up to the TTL otherwise.
-    slotCache.clear();
+    invalidateAvailabilityCaches();
     return { ok: true, startAt: slot.startAt, endAt: slot.endAt };
   } catch (error) {
     if (error instanceof SlotAlreadyTakenError) return { ok: false, code: "OCCUPIED" };
@@ -817,6 +821,9 @@ const SLOT_CACHE_TTL_MS = 45_000;
 // evicts first once the cap is hit (see TtlCache).
 const SLOT_CACHE_MAX_ENTRIES = 2000;
 const slotCache = new TtlCache<PublicSlot[]>(SLOT_CACHE_MAX_ENTRIES);
+// Any write that changes inventory clears every availability cache, not just
+// this one — see availability-cache-bus.
+registerAvailabilityCache(() => slotCache.clear());
 
 function slotCacheKey(
   doctorId: string,
@@ -1464,6 +1471,8 @@ export async function createAdminAvailability(
         effectiveUntil: input.effectiveUntil ?? null,
       },
     });
+    // The windows drive generation, so the cached slot views are now stale.
+    invalidateAvailabilityCaches();
     return {
       id: row.id,
       weekday: row.weekday,
@@ -1513,6 +1522,8 @@ export async function patchAdminAvailability(
         ...(input.isActive !== undefined && { isActive: input.isActive }),
       },
     });
+    // The windows drive generation, so the cached slot views are now stale.
+    invalidateAvailabilityCaches();
     return {
       id: row.id,
       weekday: row.weekday,
@@ -1536,6 +1547,8 @@ export async function deleteAdminAvailability(
     const result = await prisma.doctorAvailability.deleteMany({
       where: { id: availabilityId, doctorId },
     });
+    // The windows drive generation, so the cached slot views are now stale.
+    invalidateAvailabilityCaches();
     return result.count > 0;
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");
