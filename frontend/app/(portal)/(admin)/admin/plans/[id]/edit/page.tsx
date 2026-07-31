@@ -201,11 +201,10 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
    * Reconcile every consultation rule from the two tick-lists in one submit.
    *
    * The plan-level choice is the source of truth: a ticked GP service becomes a
-   * credit rule, a ticked specialist service takes the plan's percent discount
-   * unless that row carries its own fixed price, and an unticked service loses
-   * its rule entirely (so it prices at full price). `unlockAfterPaidMonths` is
-   * always 0 — the resolver takes max(plan floor, rule), so the plan-level
-   * setting is the only timing knob.
+   * credit rule, a ticked specialist service takes its own percent discount or
+   * fixed price, and an unticked service loses its rule entirely (so it prices
+   * at full price). `unlockAfterPaidMonths` is always 0 — the resolver takes
+   * max(plan floor, rule), so the plan-level setting is the only timing knob.
    */
   async function saveConsultationsAction(formData: FormData) {
     "use server";
@@ -216,11 +215,8 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     const gpChecked = new Set(formData.getAll("gpServiceIds").map(String));
     const specialistChecked = new Set(formData.getAll("specialistServiceIds").map(String));
     const creditsPerUse = Number(formData.get("creditsPerUse") ?? 1) || 1;
-    const rawPercent = String(formData.get("specialistDiscountPercent") ?? "").trim();
-    const discountPercent = rawPercent === "" ? null : Number(rawPercent);
 
-    // Per-service fixed price (major units) overrides the plan percentage.
-    // Blank / 0 / junk = "use the percentage".
+    /** Per-service fixed price in cents. Blank / 0 / junk = not set. */
     const fixedPriceCentsFor = (serviceId: string): number | null => {
       const raw = String(formData.get(`fixedPrice_${serviceId}`) ?? "").trim();
       if (raw === "") return null;
@@ -229,13 +225,26 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
       return Math.round(value * 100);
     };
 
-    const needsPercent = Array.from(specialistChecked).some((sid) => fixedPriceCentsFor(sid) === null);
-    if (needsPercent) {
-      if (discountPercent === null || !Number.isFinite(discountPercent) || discountPercent <= 0 || discountPercent > 100) {
-        fail(
-          "Enter a discount between 0 and 100, or give every ticked specialist service its own fixed price.",
-        );
-      }
+    /** Per-service discount percentage. Blank / 0 / out of range = not set. */
+    const discountPercentFor = (serviceId: string): number | null => {
+      const raw = String(formData.get(`discountPercent_${serviceId}`) ?? "").trim();
+      if (raw === "") return null;
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value <= 0 || value > 100) return null;
+      return value;
+    };
+
+    // Every ticked specialist service needs one of the two prices.
+    const unpriced = services.filter(
+      (s) =>
+        specialistChecked.has(s.id) &&
+        fixedPriceCentsFor(s.id) === null &&
+        discountPercentFor(s.id) === null,
+    );
+    if (unpriced.length > 0) {
+      fail(
+        `Set a discount % (1-100) or a fixed price for: ${unpriced.map((s) => s.name).join(", ")}.`,
+      );
     }
 
     // A rule is only rewritten when something actually changed — an unchanged
@@ -256,14 +265,16 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         continue;
       }
 
+      // A fixed price wins over a percentage when both are filled in.
       const fixed = wantsDiscount ? fixedPriceCentsFor(service.id) : null;
+      const percent = wantsDiscount && fixed === null ? discountPercentFor(service.id) : null;
       const body = {
         serviceId: service.id,
         isIncluded: wantsCredit,
         usesCredits: wantsCredit,
         creditsPerUse: wantsCredit ? creditsPerUse : 1,
         discountMode: wantsDiscount ? (fixed !== null ? "FIXED" : "PERCENT") : "NONE",
-        discountPercent: wantsDiscount && fixed === null ? discountPercent : null,
+        discountPercent: percent,
         fixedPriceCents: fixed,
         unlockAfterPaidMonths: 0,
         // Family usage is a plan-level property (Premium-only); the backend

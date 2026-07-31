@@ -35,15 +35,15 @@ function ServiceChecklist({
   rules,
   checkedIds,
   emptyLabel,
-  /** Render a per-service fixed-price override next to each tick box. */
-  withFixedPrice = false,
+  /** Render this row's own discount % + fixed price next to the tick box. */
+  withPricing = false,
 }: {
   name: string;
   services: ServiceOpt[];
   rules: Map<string, AdminConsultationRule>;
   checkedIds: Set<string>;
   emptyLabel: string;
-  withFixedPrice?: boolean;
+  withPricing?: boolean;
 }) {
   if (services.length === 0) {
     return <p className="text-sm text-[var(--color-text-muted)]">{emptyLabel}</p>;
@@ -62,6 +62,10 @@ function ServiceChecklist({
         const fixedMajor =
           rule?.isActive && rule.discountMode === "FIXED" && rule.fixedPriceCents != null
             ? (rule.fixedPriceCents / 100).toFixed(2)
+            : "";
+        const percentValue =
+          rule?.isActive && rule.discountMode === "PERCENT" && rule.discountPercent != null
+            ? String(rule.discountPercent)
             : "";
         return (
           <li
@@ -87,21 +91,38 @@ function ServiceChecklist({
                 )}
               </span>
             </label>
-            {withFixedPrice ? (
-              <label className="flex w-24 shrink-0 flex-col gap-1">
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
-                  Fixed price
-                </span>
-                <input
-                  name={`fixedPrice_${s.id}`}
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  defaultValue={fixedMajor}
-                  placeholder="—"
-                  className="gh-input min-w-0"
-                />
-              </label>
+            {withPricing ? (
+              <div className="flex shrink-0 gap-2">
+                <label className="flex w-20 flex-col gap-1">
+                  <span className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+                    Discount %
+                  </span>
+                  <input
+                    name={`discountPercent_${s.id}`}
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    defaultValue={percentValue}
+                    placeholder="—"
+                    className="gh-input min-w-0"
+                  />
+                </label>
+                <label className="flex w-24 flex-col gap-1">
+                  <span className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+                    Fixed price
+                  </span>
+                  <input
+                    name={`fixedPrice_${s.id}`}
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    defaultValue={fixedMajor}
+                    placeholder="—"
+                    className="gh-input min-w-0"
+                  />
+                </label>
+              </div>
             ) : null}
           </li>
         );
@@ -143,19 +164,6 @@ export function PlanConsultationsFields({ services, rules, benefitsUnlockAfterPa
       ((kindOf.get(r.serviceId) === GP_KIND && !isCreditRule(r)) ||
         (kindOf.get(r.serviceId) === SPECIALIST_KIND && isCreditRule(r))),
   );
-
-  // Seed the single percent field from existing rows. When rows disagree, seed
-  // NOTHING — picking one (say the highest, which is often a legacy 100% "free"
-  // row) would hand every ticked service that discount on the next save.
-  const percents = Array.from(
-    new Set(
-      rules
-        .filter((r) => r.isActive && r.discountMode === "PERCENT" && r.discountPercent != null)
-        .map((r) => r.discountPercent as number),
-    ),
-  );
-  const mixedPercents = percents.length > 1;
-  const seededPercent = mixedPercents ? "" : percents[0] ?? "";
 
   // Rules pointing at a service that is no longer active/listed. They can't be
   // ticked (the service isn't in the picker) and the save pass leaves them
@@ -213,47 +221,25 @@ export function PlanConsultationsFields({ services, rules, benefitsUnlockAfterPa
             Specialist discount
           </h3>
           <p className="text-xs text-[var(--color-text-muted)]">
-            Tick every specialist service the plan discounts. They all use the percentage below
-            unless you type a fixed price next to one — that service is then charged exactly that
-            amount instead. Either way it never spends consultation credits.
+            Tick a specialist service, then set its price: either a{" "}
+            <strong>Discount %</strong> off the normal price, or a <strong>Fixed price</strong> the
+            member pays instead. Fill in one of the two per service — a fixed price wins if you set
+            both. Neither ever spends consultation credits.
           </p>
         </div>
-        {mixedPercents ? (
-          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-xs">
-            This plan currently has different discounts per service ({percents.join("%, ")}%), so the
-            box below starts empty on purpose. Whatever you enter applies to every ticked service
-            that has no fixed price of its own.
-          </p>
-        ) : null}
         {specialistUncovered > 0 ? (
           <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-xs">
             {specialistUncovered} specialist service{specialistUncovered === 1 ? " has" : "s have"} no
             discount on this plan.
           </p>
         ) : null}
-        <label className="flex max-w-[16rem] flex-col gap-1.5">
-          <span className="gh-field-label">Discount %</span>
-          <input
-            name="specialistDiscountPercent"
-            type="number"
-            min="0"
-            max="100"
-            step="0.01"
-            defaultValue={seededPercent}
-            className="gh-input min-w-0"
-            placeholder="e.g. 10"
-          />
-          <span className="text-xs text-[var(--color-text-muted)]">
-            Required for any ticked service that has no fixed price of its own.
-          </span>
-        </label>
         <ServiceChecklist
           name="specialistServiceIds"
           services={specialistServices}
           rules={ruleById}
           checkedIds={specialistChecked}
           emptyLabel="No specialist services exist for this country yet."
-          withFixedPrice
+          withPricing
         />
       </section>
 
