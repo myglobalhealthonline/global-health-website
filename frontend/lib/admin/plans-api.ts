@@ -193,12 +193,6 @@ export async function postAdminPlanReorder(items: Array<{ id: string; displayOrd
 
 // ─── Consultation rules ──────────────────────────────────────────────────────
 
-export async function fetchAdminPlanConsultationRules(planId: string) {
-  return adminRequest<{ rules: AdminConsultationRule[] }>(
-    `/api/admin/plans/${planId}/consultation-rules`,
-  );
-}
-
 export async function postAdminPlanConsultationRule(planId: string, body: unknown) {
   return adminRequest<{ rule: AdminConsultationRule }>(
     `/api/admin/plans/${planId}/consultation-rules`,
@@ -214,17 +208,8 @@ export async function deleteAdminPlanConsultationRule(planId: string, serviceId:
 }
 
 // ─── Perk rules ──────────────────────────────────────────────────────────────
-
-export async function fetchAdminPlanPerks(planId: string) {
-  return adminRequest<{ perks: AdminPerkRule[] }>(`/api/admin/plans/${planId}/perks`);
-}
-
-export async function postAdminPlanPerk(planId: string, body: unknown) {
-  return adminRequest<{ perk: AdminPerkRule }>(`/api/admin/plans/${planId}/perks`, {
-    method: "POST",
-    body,
-  });
-}
+// Perk rules can no longer be created from the admin — only removed. See the
+// "Old benefit rules" block in the plan editor.
 
 export async function deleteAdminPlanPerk(planId: string, perkKey: string) {
   return adminRequest<Record<string, never>>(`/api/admin/plans/${planId}/perks/${perkKey}`, {
@@ -233,12 +218,6 @@ export async function deleteAdminPlanPerk(planId: string, perkKey: string) {
 }
 
 // ─── Health-test redemption rules ────────────────────────────────────────────
-
-export async function fetchAdminPlanHealthTestRules(planId: string) {
-  return adminRequest<{ rules: AdminHealthTestRule[] }>(
-    `/api/admin/plans/${planId}/health-test-rules`,
-  );
-}
 
 export async function postAdminPlanHealthTestRule(planId: string, body: unknown) {
   return adminRequest<{ rule: AdminHealthTestRule }>(
