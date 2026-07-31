@@ -659,7 +659,27 @@ export async function startPrePaymentFlow(
   // For website self-service orders skip all stage-1 notifications (patient + doctor).
   // Manual bookings (portal options always provided) send reservation alerts to both.
   const isManualBooking = Boolean(opts?.portal);
-  if (isManualBooking) {
+  // A "pay by <deadline> or lose your slot" message with no link in it is worse
+  // than no message at all — the patient cannot act on it. If the checkout
+  // session could not be created, tell staff instead of the patient and let an
+  // admin resend once the payment path is healthy.
+  if (isManualBooking && !ctx.paymentLink) {
+    const run = await createAutomationRun({
+      automationKey: stageKey,
+      orderId,
+      channel: "email",
+      recipient: o.email,
+      summary: "Patient stage-1 SUPPRESSED — no payment link could be created",
+      status: "RUNNING",
+    });
+    await finishAutomationRun(run.id, {
+      status: "FAILED",
+      summary: "Patient stage-1 SUPPRESSED — no payment link could be created",
+      error:
+        "resolveOrderPaymentUrl returned empty (Stripe checkout session creation failed) — patient WhatsApp/email withheld rather than sent with a blank payment link",
+    });
+    await notifyDoctorOnBooking(orderId, primary.doctorId, staffCtx, lang);
+  } else if (isManualBooking) {
     await notifyDoctorOnBooking(orderId, primary.doctorId, staffCtx, lang);
     await sendWhatsApp(
       stageKey,
@@ -962,6 +982,24 @@ async function executeReminderStage(
   const stageKey = `${baseKey}_stage_${stage}`;
   // Reminder stages only — the cancel stage is owned by runPrePaymentCancelSweep.
   const kind = stage === prePaymentLastReminderStage(flow) ? "final" : "mid";
+  // Same rule as stage 1: never chase a patient for payment without a link.
+  if (!ctx.paymentLink) {
+    const run = await createAutomationRun({
+      automationKey: stageKey,
+      orderId,
+      channel: "email",
+      recipient: order.email,
+      summary: `Patient reminder ${stage} SUPPRESSED — no payment link could be created`,
+      status: "RUNNING",
+    });
+    await finishAutomationRun(run.id, {
+      status: "FAILED",
+      summary: `Patient reminder ${stage} SUPPRESSED — no payment link could be created`,
+      error:
+        "resolveOrderPaymentUrl returned empty (Stripe checkout session creation failed) — reminder withheld rather than sent with a blank payment link",
+    });
+    return;
+  }
   const emailVariant: PrePaymentEmailVariant = kind === "final" ? "final" : "reminder";
   const msg = reminderMessage(ctx, lang, kind);
   await sendWhatsApp(
@@ -1285,6 +1323,13 @@ export async function resendPrePaymentInitialNotifications(orderId: string) {
   }
 
   const { order: o, primary, lang, ctx, staffCtx, phoneHints, portal } = loaded;
+  // Fail the resend loudly rather than re-sending the same linkless message the
+  // admin is trying to correct.
+  if (!ctx.paymentLink) {
+    throw new Error(
+      "No payment link could be created for this order (Stripe checkout session creation failed) — nothing was sent. Check the backend logs for [order-payment-url].",
+    );
+  }
   const flow = o.prePaymentFlow ?? PrePaymentFlow.WITHIN_48H;
   const baseKey = `${automationBaseKey(flow)}_stage_1_resend`;
 

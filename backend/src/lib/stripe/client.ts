@@ -138,40 +138,33 @@ export type CheckoutPaymentMethodConfig = {
   customer?: string;
   payment_method_types: CheckoutPaymentMethodType[];
   phone_number_collection?: { enabled: boolean };
-  payment_method_options?: {
-    customer_balance: {
-      funding_type: "bank_transfer";
-      bank_transfer: { type: "eu_bank_transfer"; eu_bank_transfer: { country: "PT" } };
-    };
-  };
 };
 
 /**
- * Portugal gets card + MB WAY + Multibanco + EU bank transfer; every other
- * market keeps plain card. Bank transfer (`customer_balance`) requires a
- * Stripe Customer object rather than a bare `customer_email` — Checkout
- * refuses to display the IBAN voucher without one — so PT mints a fresh
- * Customer per session.
+ * Portugal gets card + MB WAY + Multibanco; every other market keeps plain card.
+ *
+ * NO `customer_balance` (EU bank transfer) for PT. Stripe accepts
+ * `eu_bank_transfer` for DE, FR, IE and NL only — passing `country: "PT"` makes
+ * checkout.sessions.create throw outright, which took every PT payment path
+ * down (manual booking, web checkout, and the pay-link resolver) and shipped
+ * patients a payment message with an empty link. The PT account also lacks the
+ * `bank_transfer_payments` capability, so the method could not have worked
+ * regardless. Multibanco already covers the bank-reference habit PT patients
+ * expect. Do not re-add bank transfer without a Stripe-supported country AND
+ * the capability enabled on the PT account.
  */
 export async function resolveCheckoutPaymentMethods(
-  stripe: StripeInstance,
+  _stripe: StripeInstance,
   countryCode: string | null | undefined,
   email: string,
 ): Promise<CheckoutPaymentMethodConfig> {
   if (countryCode?.trim().toLowerCase() !== "pt") {
     return { customer_email: email, payment_method_types: ["card"] };
   }
-  const customer = await stripe.customers.create({ email });
   return {
-    customer: customer.id,
-    payment_method_types: ["card", "mb_way", "multibanco", "customer_balance"],
+    customer_email: email,
+    payment_method_types: ["card", "mb_way", "multibanco"],
     phone_number_collection: { enabled: true },
-    payment_method_options: {
-      customer_balance: {
-        funding_type: "bank_transfer",
-        bank_transfer: { type: "eu_bank_transfer", eu_bank_transfer: { country: "PT" } },
-      },
-    },
   };
 }
 
