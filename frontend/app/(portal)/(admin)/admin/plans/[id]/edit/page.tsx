@@ -212,6 +212,25 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     const fail = (message: string): never =>
       redirect(`/admin/plans/${id}/edit?error=${encodeURIComponent(message)}`);
 
+    // Re-read the plan and the service list instead of closing over the ones
+    // this render already loaded. An inline server action serialises every
+    // captured value into the page's client payload, and capturing `plan` +
+    // `services` here inflated that payload to megabytes. Re-fetching also
+    // means the save acts on current data, not on whatever the tab was
+    // rendered with.
+    const planResult = await fetchAdminPlanById(id);
+    if (!planResult.ok) return fail(`Could not load the plan: ${planResult.message}`);
+    const current = planResult.data.plan;
+    const servicesResult = await fetchAdminServices({
+      countryId: current.countryId,
+      pageSize: "250",
+      isActive: "true",
+    });
+    if (!servicesResult.ok) return fail(`Could not load services: ${servicesResult.message}`);
+    const currentServices = servicesResult.data.items.filter(
+      (s) => s.kind === "GENERAL" || s.kind === "SPECIALIST",
+    );
+
     const gpChecked = new Set(formData.getAll("gpServiceIds").map(String));
     const specialistChecked = new Set(formData.getAll("specialistServiceIds").map(String));
     const creditsPerUse = Number(formData.get("creditsPerUse") ?? 1) || 1;
@@ -235,7 +254,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     };
 
     // Every ticked specialist service needs one of the two prices.
-    const unpriced = services.filter(
+    const unpriced = currentServices.filter(
       (s) =>
         specialistChecked.has(s.id) &&
         fixedPriceCentsFor(s.id) === null &&
@@ -249,10 +268,10 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
 
     // A rule is only rewritten when something actually changed — an unchanged
     // plan saves nothing and existing subscribers' snapshots stay untouched.
-    const existingByService = new Map(plan.consultationRules.map((r) => [r.serviceId, r]));
+    const existingByService = new Map(current.consultationRules.map((r) => [r.serviceId, r]));
     const errors: string[] = [];
 
-    for (const service of services) {
+    for (const service of currentServices) {
       const existing = existingByService.get(service.id);
       const wantsCredit = service.kind === "GENERAL" && gpChecked.has(service.id);
       const wantsDiscount = service.kind === "SPECIALIST" && specialistChecked.has(service.id);
@@ -279,7 +298,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         unlockAfterPaidMonths: 0,
         // Family usage is a plan-level property (Premium-only); the backend
         // forces this false on non-Premium plans anyway.
-        familyUsable: plan.familyEnabled,
+        familyUsable: current.familyEnabled,
         isActive: true,
       };
       const unchanged =
