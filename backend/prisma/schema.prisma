@@ -222,6 +222,10 @@ enum AuditAction {
   DOCTOR_PHOTO_UPDATED
   DOCTOR_PHOTO_REMOVED
   DOCTOR_BANK_VIEWED
+  /// A country director listed every consultation in one of their granted
+  /// markets. Audited like DOCTOR_BANK_VIEWED because it is a cross-doctor
+  /// read of patient names, not a mutation.
+  COUNTRY_CONSULTATIONS_VIEWED
   DOCTOR_PROFILE_CHANGE_REQUESTED
   DOCTOR_PROFILE_CHANGE_CANCELLED
   DOCTOR_PROFILE_CHANGE_REVIEWED
@@ -581,6 +585,13 @@ model Doctor {
   /// who may FULFIL such a request is the `crossBorderRx*` config below.
   /// Default false so existing doctors keep current scope until an admin grants it.
   canRequestCrossJurisdictionRx   Boolean                          @default(false)
+  /// Per-doctor RBAC: this doctor is a country director and may view every
+  /// consultation booked in the markets flagged on their DoctorCountry rows
+  /// (`DoctorCountry.directorAccess`). Master switch — false means no
+  /// country-wide access at all, even if child rows are flagged, mirroring how
+  /// `crossBorderRxEnabled` gates `crossBorderRxCountries`. Grants a read-only,
+  /// money-free consultation list; admin bypasses via role=ADMIN. Default false.
+  isCountryDirector               Boolean                          @default(false)
   /// Review destination for this doctor's completed consultations.
   /// false (default) — the patient gets our own 7-dimension form at
   ///   /reviews/rate, sent immediately on completion. Unchanged behaviour.
@@ -872,6 +883,12 @@ model DoctorCountry {
   /// don't accidentally issue Rx under an unconfirmed credential.
   isVerified           Boolean                    @default(false)
   verifiedAt           DateTime?
+  /// Country-director grant for THIS market. When true AND
+  /// `Doctor.isCountryDirector`, the doctor may view every consultation booked
+  /// in this country, across all doctors. Read-only and money-free — see
+  /// /api/doctor/country-consultations. Untick the market in the admin profile
+  /// form and the row is dropped, which correctly revokes the directorship.
+  directorAccess       Boolean                    @default(false)
   doctor               Doctor                     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   country              Country                    @relation(fields: [countryId], references: [id], onDelete: Cascade)
   translations         DoctorMarketTranslation[]
@@ -887,6 +904,7 @@ model DoctorCountry {
   @@unique([doctorId, countryId])
   @@index([countryId, active])
   @@index([countryId, isVerified])
+  @@index([countryId, directorAccess])
   @@index([doctorId])
 }
 

@@ -16,6 +16,7 @@ import {
   Globe2,
   LayoutDashboard,
   MessagesSquare,
+  Landmark,
   Receipt,
   ScrollText,
   ShieldCheck,
@@ -28,6 +29,7 @@ import {
   fetchDoctorAppointments,
   fetchDoctorComplianceStatus,
   fetchDoctorNotifications,
+  fetchDoctorPermissions,
   fetchDoctorUnreadMessageCount,
 } from "@/lib/api/doctor-api";
 import { ComplianceBanner } from "./_components/compliance-banner";
@@ -72,7 +74,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const [notif, unreadMessages, compliance, locale, tourAppointments] = await Promise.all([
+  const [notif, unreadMessages, compliance, locale, tourAppointments, permissions] = await Promise.all([
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
     fetchDoctorComplianceStatus(),
@@ -80,6 +82,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     // Minimal page just to find one appointment id to walk the tour through
     // (steps 9-12 below) — no filters, first page is enough.
     fetchDoctorAppointments({ page: "1", pageSize: "5" }),
+    // Drives the country-director nav entry below. Cheap single-row query, and
+    // it has to be resolved here rather than on the page: an entry every doctor
+    // can see but only a director can open would just serve 403s.
+    fetchDoctorPermissions(),
   ]);
   const { doctor: d, common } = loadLocaleBundle(locale);
   // The tour prefers an upcoming (not cancelled/completed) appointment so the
@@ -195,6 +201,18 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       items: [
         { href: "/doctor/invoices", label: d.nav.invoices, icon: <Receipt className="size-4" aria-hidden /> },
         { href: "/doctor/reports", label: d.nav.reports, icon: <BarChart3 className="size-4" aria-hidden /> },
+        // Country-director only. `isCountryDirector` is already ANDed with
+        // "has at least one granted market" server-side, so this single check
+        // can't show an entry the endpoint would refuse.
+        ...(permissions.ok && permissions.data.isCountryDirector
+          ? [
+              {
+                href: "/doctor/reports/country",
+                label: d.nav.countryConsultations,
+                icon: <Landmark className="size-4" aria-hidden />,
+              },
+            ]
+          : []),
       ],
     },
     {

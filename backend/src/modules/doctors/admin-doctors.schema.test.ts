@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   adminDoctorCreateBodySchema,
+  adminDoctorUpdateBodySchema,
   adminDoctorsQuerySchema,
   doctorSlugSchema,
   profileImageRefSchema,
@@ -83,6 +84,41 @@ describe("admin doctors validation", () => {
       assert.equal(result.data.isActive, true);
       assert.equal(result.data.search, "smith");
     }
+  });
+
+  it("update round-trips the country-director flag and its per-country grants", () => {
+    const result = adminDoctorUpdateBodySchema.safeParse({
+      isCountryDirector: true,
+      directorCountryIds: ["country-pt", "country-br"],
+    });
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.equal(result.data.isCountryDirector, true);
+      assert.deepEqual(result.data.directorCountryIds, ["country-pt", "country-br"]);
+    }
+  });
+
+  it("update accepts an empty directorCountryIds array (revokes every grant)", () => {
+    // Distinct from omitting the key, which leaves existing grants untouched —
+    // the admin form always sends the array so unticking the last country sticks.
+    const cleared = adminDoctorUpdateBodySchema.safeParse({ directorCountryIds: [] });
+    assert.equal(cleared.success, true);
+    if (cleared.success) assert.deepEqual(cleared.data.directorCountryIds, []);
+
+    const omitted = adminDoctorUpdateBodySchema.safeParse({ isCountryDirector: false });
+    assert.equal(omitted.success, true);
+    if (omitted.success) assert.equal(omitted.data.directorCountryIds, undefined);
+  });
+
+  it("update rejects a non-boolean director flag and blank country ids", () => {
+    assert.equal(
+      adminDoctorUpdateBodySchema.safeParse({ isCountryDirector: "on" }).success,
+      false,
+    );
+    assert.equal(
+      adminDoctorUpdateBodySchema.safeParse({ directorCountryIds: [""] }).success,
+      false,
+    );
   });
 
   it("duplicate slug is enforced by DB unique constraint (countryId + slug), not Zod", () => {

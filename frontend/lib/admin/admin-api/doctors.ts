@@ -248,6 +248,9 @@ export type AdminDoctorDto = {
     countryId: string;
     active: boolean;
     sortOrder: number;
+    /** Country-director grant for this market. Only meaningful when the
+     *  doctor's `isCountryDirector` master flag is also on. */
+    directorAccess?: boolean;
     country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
   }>;
   specialties: AdminDoctorSpecialtyLinkDto[];
@@ -292,6 +295,10 @@ export type AdminDoctorDto = {
     priceCents: number | null;
     payoutCents: number | null;
   }>;
+  /** Country-director master switch. When on, the doctor can view every
+   *  consultation in the markets whose `additionalCountries[].directorAccess`
+   *  is true — read-only, patient names but no contact details, no money. */
+  isCountryDirector?: boolean;
 };
 
 export type AdminDoctorRegistrationDto = {

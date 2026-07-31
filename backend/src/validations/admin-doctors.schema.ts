@@ -188,6 +188,22 @@ const adminDoctorBaseObject = z.object({
     .max(50)
     .optional(),
   /**
+   * Country-director master switch. When on, the doctor can view every
+   * consultation in the markets listed in `directorCountryIds` (read-only, no
+   * financial figures). Off means no country-wide access at all, even if
+   * per-country grants are still on the DoctorCountry rows.
+   */
+  isCountryDirector: z.boolean().optional(),
+  /**
+   * Which of the doctor's markets the directorship covers. Country IDs, not
+   * codes — this matches the checkbox values on the admin form and the
+   * `DoctorCountry.countryId` rows the backend flips. An empty array revokes
+   * every grant; omitted leaves the existing grants untouched. Ids that aren't
+   * one of the doctor's own markets are ignored downstream (the update is scoped
+   * by `doctorId`), so this can't grant a market the doctor doesn't operate in.
+   */
+  directorCountryIds: z.array(z.string().min(1).max(120)).max(50).optional(),
+  /**
    * SEO metadata for the public doctor profile page. Kept admin-managed
    * (not on the doctor's self-edit form) so changes can't break canonical
    * URL signals after the doctor has signed up.
