@@ -147,7 +147,14 @@ export async function resolveOrderPaymentUrl(
     });
 
     return session.url?.trim() ?? "";
-  } catch {
+  } catch (err) {
+    // NEVER swallow this silently: an empty return here is what ships a patient
+    // a payment message with a blank link (see the PT eu_bank_transfer outage).
+    // The caller still degrades to "", but the reason must be in the logs.
+    console.error(
+      `[order-payment-url] Stripe checkout session creation FAILED for order ${orderId} (${order.countryCode}):`,
+      err instanceof Error ? err.message : err,
+    );
     return "";
   }
 }
