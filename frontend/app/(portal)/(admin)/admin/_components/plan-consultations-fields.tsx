@@ -261,8 +261,8 @@ export function PlanConsultationsFields({ services, rules, benefitsUnlockAfterPa
       ) : null}
 
       <p className="text-xs text-[var(--color-text-muted)]">
-        Everything here unlocks after {benefitsUnlockAfterPaidMonths} paid month
-        {benefitsUnlockAfterPaidMonths === 1 ? "" : "s"}, set on the Plan &amp; price tab.
+        Everything here becomes active from paid month {benefitsUnlockAfterPaidMonths}, set on the
+        Plan &amp; price tab. Nothing applies before then.
       </p>
     </div>
   );

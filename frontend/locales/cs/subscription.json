@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "Vybrané výhody se odemknou po {months} zaplacených měsících.",
-    "universalSingular": "Vybrané výhody se odemknou po {months} zaplaceném měsíci.",
+    "universal": "Vybrané výhody jsou aktivní od {months}. zaplaceného měsíce.",
+    "universalSingular": "Vybrané výhody jsou aktivní od {months}. zaplaceného měsíce.",
     "detailed": "Základní kredity na online konzultace platí od 1. měsíce. Vybrané členské výhody se odemknou po {months} úspěšných měsíčních platbách.",
     "detailedSingular": "Základní kredity na online konzultace platí od 1. měsíce. Vybrané členské výhody se odemknou po {months} úspěšné měsíční platbě."
   },

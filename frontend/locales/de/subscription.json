@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "Ausgewählte Vorteile werden nach {months} bezahlten Monaten freigeschaltet.",
-    "universalSingular": "Ausgewählte Vorteile werden nach {months} bezahltem Monat freigeschaltet.",
+    "universal": "Ausgewählte Vorteile sind ab dem {months}. bezahlten Monat aktiv.",
+    "universalSingular": "Ausgewählte Vorteile sind ab dem {months}. bezahlten Monat aktiv.",
     "detailed": "Grundlegende Online-Beratungsguthaben gelten ab dem 1. Monat. Ausgewählte Mitgliedervorteile werden nach {months} erfolgreichen monatlichen Zahlungen freigeschaltet.",
     "detailedSingular": "Grundlegende Online-Beratungsguthaben gelten ab dem 1. Monat. Ausgewählte Mitgliedervorteile werden nach {months} erfolgreicher monatlicher Zahlung freigeschaltet."
   },

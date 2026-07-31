@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "As vantagens selecionadas são desbloqueadas após {months} meses pagos.",
-    "universalSingular": "As vantagens selecionadas são desbloqueadas após {months} mês pago.",
+    "universal": "As vantagens selecionadas ficam ativas a partir do {months}.º mês pago.",
+    "universalSingular": "As vantagens selecionadas ficam ativas a partir do {months}.º mês pago.",
     "detailed": "Os créditos de consulta online incluídos começam a partir do mês 1. As vantagens de membro selecionadas são desbloqueadas após {months} pagamentos mensais bem-sucedidos.",
     "detailedSingular": "Os créditos de consulta online incluídos começam a partir do mês 1. As vantagens de membro selecionadas são desbloqueadas após {months} pagamento mensal bem-sucedido."
   },

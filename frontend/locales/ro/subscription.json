@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "Avantajele selectate se deblochează după {months} luni plătite.",
-    "universalSingular": "Avantajele selectate se deblochează după {months} lună plătită.",
+    "universal": "Avantajele selectate sunt active începând cu luna plătită {months}.",
+    "universalSingular": "Avantajele selectate sunt active începând cu luna plătită {months}.",
     "detailed": "Creditele de consultații online de bază sunt disponibile din prima lună. Avantajele de membru selectate se deblochează după {months} plăți lunare reușite.",
     "detailedSingular": "Creditele de consultații online de bază sunt disponibile din prima lună. Avantajele de membru selectate se deblochează după {months} plată lunară reușită."
   },

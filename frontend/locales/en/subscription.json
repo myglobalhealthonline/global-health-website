@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "Selected perks unlock after {months} paid months.",
-    "universalSingular": "Selected perks unlock after {months} paid month.",
+    "universal": "Selected perks become active from paid month {months}.",
+    "universalSingular": "Selected perks become active from paid month {months}.",
     "detailed": "Core online consultation credits start from month 1. Selected member perks unlock after {months} successful monthly payments.",
     "detailedSingular": "Core online consultation credits start from month 1. Selected member perks unlock after {months} successful monthly payment."
   },

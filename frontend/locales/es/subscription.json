@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "Las ventajas seleccionadas se activan tras {months} meses pagados.",
-    "universalSingular": "Las ventajas seleccionadas se activan tras {months} mes pagado.",
+    "universal": "Las ventajas seleccionadas se activan a partir del mes pagado {months}.",
+    "universalSingular": "Las ventajas seleccionadas se activan a partir del mes pagado {months}.",
     "detailed": "Los créditos de consulta online básicos están disponibles desde el mes 1. Las ventajas de socio seleccionadas se activan tras {months} pagos mensuales realizados con éxito.",
     "detailedSingular": "Los créditos de consulta online básicos están disponibles desde el mes 1. Las ventajas de socio seleccionadas se activan tras {months} pago mensual realizado con éxito."
   },
