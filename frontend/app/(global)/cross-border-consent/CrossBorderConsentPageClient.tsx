@@ -77,6 +77,7 @@ function ConsentForm() {
   const [step, setStep] = useState<"choose" | "details">("choose");
   const [form, setForm] = useState({
     pharmacyName: "",
+    healthIdNumber: "",
     addressLine1: "",
     addressLine2: "",
     addressCity: "",
@@ -102,6 +103,7 @@ function ConsentForm() {
         const p = res.data.prefill;
         setForm({
           pharmacyName: p.pharmacyName ?? "",
+          healthIdNumber: p.healthIdNumber ?? "",
           addressLine1: p.addressLine1 ?? "",
           addressLine2: p.addressLine2 ?? "",
           addressCity: p.addressCity ?? "",
@@ -117,6 +119,7 @@ function ConsentForm() {
     decision: "AGREE" | "DECLINE",
     details?: {
       pharmacyName: string;
+      healthIdNumber: string;
       addressLine1: string;
       addressLine2: string;
       addressCity: string;
@@ -273,9 +276,10 @@ function ConsentForm() {
             Confirm your delivery details
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-body)]">
-            Please enter your <strong>pharmacy name</strong> and confirm your{" "}
-            <strong>delivery address</strong> so {doctorB} can send your prescription to the right
-            place. Everything else is already on file.
+            Please enter your <strong>pharmacy name</strong>, confirm your{" "}
+            <strong>delivery address</strong>, and add your{" "}
+            <strong>{info.healthIdLabel} number</strong> if you have one, so {doctorB} can send
+            your prescription to the right place. Everything else is already on file.
           </p>
 
           <div className="mt-5 grid gap-4">
@@ -288,6 +292,23 @@ function ConsentForm() {
                 placeholder="e.g. Farmácia Central, Lisbon"
                 maxLength={200}
               />
+            </label>
+            <label className="block">
+              <span className={label}>
+                {info.healthIdLabel} number ({info.targetCountryName}) — optional
+              </span>
+              <input
+                className={field}
+                value={form.healthIdNumber}
+                onChange={set("healthIdNumber")}
+                maxLength={60}
+                autoComplete="off"
+              />
+              <span className="mt-1 block text-xs text-[var(--color-text-muted)]">
+                Your {info.healthIdLabel} number in {info.targetCountryName}, if you have
+                one — it is printed on the prescription so the pharmacy can identify you.
+                Leave blank if you don&rsquo;t have one.
+              </span>
             </label>
             <label className="block">
               <span className={label}>Address line 1</span>

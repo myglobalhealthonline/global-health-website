@@ -18,6 +18,8 @@ import { sendEmail } from "../../lib/email/send-email.js";
 import { wrapHtml } from "../../lib/email/templates.js";
 import { orderPayShortLink } from "../orders/order-payment-url.service.js";
 import { resolveGpSameDayService } from "../gp-booking/gp-config.service.js";
+import { decryptPhi, encryptPhi } from "../../lib/crypto/phi-crypto.js";
+import { patientTaxIdLabel } from "../generated-documents/generated-documents-fields.js";
 import {
   notifyPatientCrossBorderConsent,
   notifyPatientCrossBorderPayment,
@@ -595,6 +597,8 @@ async function createAsyncFeeCheckoutForRequest(
 
 export type CrossBorderRxDeliveryDetails = {
   pharmacyName: string | null;
+  /** Health/tax id valid in the TARGET country (PPS for IE, NIF for PT, ...). */
+  healthIdNumber: string | null;
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
@@ -608,6 +612,10 @@ export type CrossBorderRxConsentView = {
   sourceDoctorName: string | null;
   targetDoctorName: string;
   targetCountryName: string;
+  targetCountryCode: string;
+  /** What the target country calls the health/tax id ("PPS", "NIF", ...) —
+   *  resolved server-side so the form label can't drift from the PDF label. */
+  healthIdLabel: string;
   /** Pre-filled patient details for the payment-step form (pharmacy + address).
    *  Everything else the request already knows; the patient only edits these. */
   prefill: CrossBorderRxDeliveryDetails & { phone: string | null };
@@ -641,6 +649,7 @@ async function loadRequestByConsentToken(token: string) {
       orderId: true,
       consentTokenExpiresAt: true,
       pharmacyName: true,
+      patientHealthIdNumber: true,
       patientAddressLine1: true,
       patientAddressLine2: true,
       patientAddressCity: true,
@@ -727,11 +736,18 @@ export async function getCrossBorderRxConsentView(
         addressPostalCode: true,
         addressCountryCode: true,
         preferredPharmacy: true,
+        taxIdNumber: true,
       },
     }),
   ]);
   const pick = <T>(...vals: (T | null | undefined)[]): T | null =>
     vals.find((v) => v !== null && v !== undefined && v !== "") ?? null;
+
+  // Only offer the chart's tax id as a prefill when it already belongs to the
+  // target country — a Brazilian CPF must not land in an Irish PPS field.
+  const chartIdIsLocal =
+    profile?.addressCountryCode?.trim().toLowerCase() ===
+    request.targetCountryCode.trim().toLowerCase();
 
   return {
     status: request.status,
@@ -739,9 +755,15 @@ export async function getCrossBorderRxConsentView(
     sourceDoctorName: parties.sourceDoctorName,
     targetDoctorName: parties.targetDoctorName,
     targetCountryName: parties.targetCountryName,
+    targetCountryCode: request.targetCountryCode,
+    healthIdLabel: patientTaxIdLabel(request.targetCountryCode),
     prefill: {
       phone: pick(srcAppt?.phone, profile?.phone),
       pharmacyName: pick(request.pharmacyName, profile?.preferredPharmacy),
+      healthIdNumber: pick(
+        decryptPhi(request.patientHealthIdNumber),
+        chartIdIsLocal ? decryptPhi(profile?.taxIdNumber ?? null) : null,
+      ),
       addressLine1: pick(request.patientAddressLine1, srcAppt?.addressLine1, profile?.addressLine1),
       addressLine2: pick(request.patientAddressLine2, srcAppt?.addressLine2, profile?.addressLine2),
       addressCity: pick(request.patientAddressCity, srcAppt?.addressCity, profile?.addressCity),
@@ -772,6 +794,8 @@ export async function submitCrossBorderRxConsent(
   const deliveryData = details
     ? {
         pharmacyName: details.pharmacyName?.trim() || null,
+        // Government id → encrypted at rest like every other stored id.
+        patientHealthIdNumber: encryptPhi(details.healthIdNumber?.trim() || null),
         patientAddressLine1: details.addressLine1?.trim() || null,
         patientAddressLine2: details.addressLine2?.trim() || null,
         patientAddressCity: details.addressCity?.trim() || null,
@@ -896,6 +920,7 @@ export async function onCrossBorderRxFeePaid(
       sourceAppointmentId: true,
       sourceDoctorId: true,
       pharmacyName: true,
+      patientHealthIdNumber: true,
       patientAddressLine1: true,
       patientAddressLine2: true,
       patientAddressCity: true,
@@ -930,6 +955,8 @@ export async function onCrossBorderRxFeePaid(
       consultationMode: "ONLINE",
       // Patient-entered delivery details from the payment step.
       pharmacy: request.pharmacyName,
+      // Already encrypted on the request — copied across as-is.
+      patientHealthIdNumber: request.patientHealthIdNumber,
       addressLine1: request.patientAddressLine1,
       addressLine2: request.patientAddressLine2,
       addressCity: request.patientAddressCity,
