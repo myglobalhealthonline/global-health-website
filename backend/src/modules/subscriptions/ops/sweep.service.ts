@@ -1,7 +1,9 @@
 import { prisma } from "../../../db/prisma.js";
+import { getBillingPort } from "../../billing/billing.factory.js";
 import { releaseReservation } from "../../credits/credit-balance.service.js";
 import { releaseRedemption } from "../redemption.service.js";
 import { notifyRenewalReminder } from "../subscription-emails.service.js";
+import { emitOpsAlert } from "./ops-alert.js";
 
 /**
  * Ops sweeps (§28/§39). Fail-CLOSED: any error throws (the repo cron is
@@ -79,17 +81,45 @@ export async function sweepExpiredReservations(now = new Date()): Promise<{
  * Cancel-after-grace (§28): a PAST_DUE subscription whose paid period ended more
  * than CANCEL_GRACE_DAYS ago transitions to CANCELED. Stripe owns dunning — this
  * sends NO customer email.
+ *
+ * The provider subscription is cancelled too. A local-only CANCEL left Stripe
+ * free to keep retrying and eventually settle an invoice for a membership we had
+ * already written off — which then hit `processInvoicePaid` and resurrected it.
+ * A row is only flipped once its provider side is actually gone (fail closed):
+ * a failed provider cancel leaves it PAST_DUE for the next tick and alerts.
  */
 export async function cancelAfterGrace(now = new Date()): Promise<{ canceled: number }> {
   const cutoff = new Date(now.getTime() - CANCEL_GRACE_DAYS * 24 * 60 * 60 * 1000);
-  const result = await prisma.userSubscription.updateMany({
-    where: {
-      status: "PAST_DUE",
-      currentPeriodEnd: { lt: cutoff },
-    },
-    data: { status: "CANCELED", canceledAt: now },
+  const due = await prisma.userSubscription.findMany({
+    where: { status: "PAST_DUE", currentPeriodEnd: { lt: cutoff } },
+    select: { id: true, stripeSubscriptionId: true },
   });
-  return { canceled: result.count };
+
+  const billing = getBillingPort();
+  let canceled = 0;
+  for (const sub of due) {
+    if (sub.stripeSubscriptionId) {
+      try {
+        await billing.cancelNow(sub.stripeSubscriptionId);
+      } catch (err) {
+        void emitOpsAlert({
+          severity: "warning",
+          title: "Cancel-after-grace could not cancel at the provider",
+          detail:
+            `sub ${sub.id} (${sub.stripeSubscriptionId}) stays PAST_DUE for the next sweep — ` +
+            (err instanceof Error ? err.message : ""),
+          context: { subscriptionId: sub.id },
+        });
+        continue;
+      }
+    }
+    await prisma.userSubscription.update({
+      where: { id: sub.id },
+      data: { status: "CANCELED", canceledAt: now },
+    });
+    canceled += 1;
+  }
+  return { canceled };
 }
 
 /**

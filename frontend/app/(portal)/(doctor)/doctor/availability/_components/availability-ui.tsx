@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import * as Dialog from "@radix-ui/react-dialog";
 import {
   Ban,
   CalendarClock,
@@ -9,11 +10,16 @@ import {
   Pencil,
   Plus,
   Trash2,
+  Unlock,
   UserRound,
 } from "lucide-react";
 import {
+  bulkSlotAction,
   createAvailabilityWindow,
+  createSlots,
   deleteAvailabilityWindow,
+  removeSlot as removeSlotRequest,
+  toggleSlotStatus,
   updateAvailabilityWindow,
 } from "@/lib/api/doctor-availability-client";
 import type {
@@ -21,7 +27,31 @@ import type {
   DoctorTimeSlotView,
 } from "@/lib/api/doctor-availability-types";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
-import { DoctorAvailabilityWeekView } from "./availability-week-view";
+import { MonthCalendar } from "@/components/calendar/MonthCalendar";
+import { WeekCalendar } from "@/components/calendar/WeekCalendar";
+import { DayAgenda } from "@/components/calendar/DayAgenda";
+import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
+import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
+import { ViewToggle, type CalendarView } from "@/components/calendar/view-toggle";
+import { AddAvailabilityDialog } from "@/components/calendar/add-availability-dialog";
+import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
+import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
+import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
+import { describeAddResult } from "@/components/calendar/add-slot-dialog";
+import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
+import { useSlotManager } from "@/lib/calendar/use-slot-manager";
+import {
+  addMonths,
+  addWeeksKey,
+  dayLabel,
+  groupItemsByLocalDay,
+  localDayKey,
+  todayKey,
+  weekDaysOf,
+  yearMonthParam,
+} from "@/components/calendar/calendar-utils";
+import { AppSheet } from "@/components/AppSheet";
+import { formatAppTime } from "@/lib/format-datetime";
 import {
   AdminCard,
   AdminEmptyState,
@@ -30,17 +60,20 @@ import {
   Pill,
   SectionHeader,
 } from "@/components/portal-atoms";
-import { FormSection } from "@/components/FormSection";
 import { PortalDialog } from "@/components/PortalDialog";
 import { BASE_SLOT_MINUTES } from "@/lib/constants";
+import { CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
   endTimeToMinutes,
   minutesToTimeInput,
   minutesToTimeLabel,
   timeToMinutes,
 } from "@/lib/time-of-day";
+
 type AvailabilityStrings = Record<string, string>;
 type CommonStrings = Record<string, string>;
+
+const TZ_STORAGE_KEY = "gh-doctor-cal-tz";
 
 // The edit form lives in the dialog body while its submit button lives in the
 // dialog footer — the `form` attribute associates them across that boundary.
@@ -51,15 +84,13 @@ const EDIT_FORM_ID = "gh-edit-window-form";
 const minutesToTime = minutesToTimeLabel;
 
 // Effective dates are stored as UTC instants pinned to the start/end of the
-// chosen day (see onAddWindow), so the ISO date part round-trips straight back
-// into an <input type="date"> value with no timezone shift.
+// chosen day, so the ISO date part round-trips straight back into a date input.
 function isoToDateInput(iso: string | null): string {
   return iso ? iso.slice(0, 10) : "";
 }
 
-// Effective-date ranges overlap when both are unbounded or bounded ends
-// cross; null/"" means "always" on that side. Dates compare fine as
-// YYYY-MM-DD strings.
+// Effective-date ranges overlap when both are unbounded or bounded ends cross;
+// null/"" means "always" on that side. Dates compare fine as YYYY-MM-DD strings.
 function dateRangesOverlap(
   aFrom: string | null,
   aUntil: string | null,
@@ -75,69 +106,93 @@ function dateRangesOverlap(
   return startsBeforeOtherEnds && endsAfterOtherStarts;
 }
 
+/** Slot rows → calendar items. Booked slots keep their patient so the grid can
+ *  render the name and open the detail drawer, same as a consultation block. */
+function slotsToItems(slots: DoctorTimeSlotView[]): CalendarItem[] {
+  return slots.map((s) => ({
+    id: s.id,
+    kind: "slot" as const,
+    startAt: s.startAt,
+    endAt: s.endAt,
+    status: s.status,
+    title: s.status,
+    meta: {
+      blockReason: s.blockReason ?? null,
+      patientName: s.patientName ?? null,
+      consultationType: s.consultationType ?? null,
+      meetingUrl: s.meetingUrl ?? null,
+    },
+  }));
+}
+
 type Props = {
   initialWindows: AvailabilityWindow[];
   initialSlots: DoctorTimeSlotView[];
-  /** Booked consultations (all scheduled appointments) for the week grid. */
+  /** Booked consultations for the visible range. */
   consultations: CalendarItem[];
-  /** Any date inside the initial week ("YYYY-MM-DD"), clinic-local. */
-  initialWeekAnchor: string;
+  view: CalendarView;
+  /** Any date inside the visible week ("YYYY-MM-DD"), clinic-local. */
+  weekAnchor: string;
+  year: number;
+  month: number;
   /** Clinic timezone (Country.bookingSetting.timezone). Window minutes are
    *  wall-clock in this zone and concrete slots render in it. */
   countryTimeZone: string;
+  availableTimezones: string[];
   strings: AvailabilityStrings;
   common: CommonStrings;
-  /** Event detail drawer copy (d.calendar) — shared with the calendar page's dialog. */
-  eventDetailStrings: Record<string, string>;
+  /** Slot/dialog/event-detail copy lives in the calendar namespace — the two
+   *  pages that merged into this one already shared it that way. */
+  calendarStrings: Record<string, string>;
 };
 
 export function DoctorAvailabilityUI({
   initialWindows,
   initialSlots,
   consultations,
-  initialWeekAnchor,
+  view,
+  weekAnchor,
+  year,
+  month,
   countryTimeZone,
+  availableTimezones,
   strings: s,
   common,
-  eventDetailStrings: ed,
+  calendarStrings: c,
 }: Props) {
   const router = useRouter();
-  const WEEKDAYS = [
-    { value: 0, label: s.weekdaySun },
-    { value: 1, label: s.weekdayMon },
-    { value: 2, label: s.weekdayTue },
-    { value: 3, label: s.weekdayWed },
-    { value: 4, label: s.weekdayThu },
-    { value: 5, label: s.weekdayFri },
-    { value: 6, label: s.weekdaySat },
+  const pathname = usePathname();
+
+  // Sunday-first, matching Date#getDay() and the weekday column in the DB.
+  const WEEKDAY_LABELS = [
+    s.weekdaySun,
+    s.weekdayMon,
+    s.weekdayTue,
+    s.weekdayWed,
+    s.weekdayThu,
+    s.weekdayFri,
+    s.weekdaySat,
   ];
-  const [windows, setWindows] = useState(initialWindows);
-  const [slots, setSlots] = useState(initialSlots);
-  const [busy, startTransition] = useTransition();
-  // Single top-of-page banner for API/network failures (05-005 — the week
-  // grid used to keep its own duplicate banner; it now reports up here).
-  const [error, setError] = useState<string | null>(null);
-  // Inline, field-adjacent validation errors for the add-window form
-  // (05-006 — these used to render in the shared top banner, far from the
-  // offending field).
-  const [fieldError, setFieldError] = useState<{ field: "time" | "date"; message: string } | null>(null);
+
+  // Windows and slots both come from the server on every render — every
+  // mutation ends in router.refresh(), so there is no second copy to drift.
+  const windows = initialWindows;
+  const slots = initialSlots;
+
+  const [tz, setTz] = useState(countryTimeZone);
+  const [selectedDay, setSelectedDay] = useState<string>(() => todayKey(countryTimeZone));
+  const [daySheetOpen, setDaySheetOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
+
+  // Window CRUD keeps its own busy/error state: it edits recurring rules, not
+  // slots, so it is not part of the slot manager's state machine.
+  const [windowBusy, setWindowBusy] = useState(false);
+  const [windowError, setWindowError] = useState<string | null>(null);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const deleteTarget = windows.find((w) => w.id === deleteTargetId) ?? null;
   const [editTargetId, setEditTargetId] = useState<string | null>(null);
   const editTarget = windows.find((w) => w.id === editTargetId) ?? null;
 
-  // ── Add-window form state ───────────────────────────────────────
-  const [weekday, setWeekday] = useState(1); // Mon
-  // Times start empty — a prefilled 09:00–17:00 reads as a real choice the
-  // doctor already made, so a stray submit silently books office hours nobody
-  // picked. Empty forces the hours to be entered deliberately.
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  // ISO date strings (YYYY-MM-DD). Empty = "always" / "forever".
-  const [effectiveFromDate, setEffectiveFromDate] = useState("");
-  const [effectiveUntilDate, setEffectiveUntilDate] = useState("");
-
-  // ── Edit-window form state (seeded from the row on dialog open) ──
   const [editWeekday, setEditWeekday] = useState(1);
   const [editStartTime, setEditStartTime] = useState("09:00");
   const [editEndTime, setEditEndTime] = useState("17:00");
@@ -146,78 +201,169 @@ export function DoctorAvailabilityUI({
   const [editActive, setEditActive] = useState(true);
   const [editError, setEditError] = useState<string | null>(null);
 
-  // Non-blocking overlap warning: does the in-progress form conflict with an
-  // existing active window on the same weekday within an overlapping
-  // effective-date range? Doesn't prevent submit — legitimate overlaps
-  // (e.g. a temporary extra evening clinic) do exist.
-  const overlapWindow = useMemo(() => {
-    if (!startTime || !endTime) return null;
-    const startMin = timeToMinutes(startTime);
-    const endMin = endTimeToMinutes(endTime);
-    if (endMin <= startMin) return null;
-    return (
-      windows.find(
-        (w) =>
-          w.isActive &&
-          w.weekday === weekday &&
-          startMin < w.endMinute &&
-          endMin > w.startMinute &&
-          dateRangesOverlap(w.effectiveFrom, w.effectiveUntil, effectiveFromDate, effectiveUntilDate),
-      ) ?? null
-    );
-  }, [windows, weekday, startTime, endTime, effectiveFromDate, effectiveUntilDate]);
+  const tzOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const z of [countryTimeZone, ...availableTimezones, ...CURATED_TIME_ZONES]) {
+      if (z && !seen.has(z)) {
+        seen.add(z);
+        out.push(z);
+      }
+    }
+    return out;
+  }, [countryTimeZone, availableTimezones]);
 
-  function onAddWindow(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setFieldError(null);
-    if (!startTime || !endTime) {
-      setFieldError({ field: "time", message: s.errorTimeRequired });
-      return;
+  // Restore the persisted display timezone after mount — the server always
+  // renders the clinic zone, so a lazy initializer would hydrate mismatched.
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(TZ_STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (saved && tzOptions.includes(saved)) setTz(saved);
+    } catch {
+      /* ignore */
     }
-    const startMin = timeToMinutes(startTime);
-    // Midnight as an end time means end-of-day (1440), not minute 0.
-    const endMin = endTimeToMinutes(endTime);
-    if (endMin <= startMin) {
-      setFieldError({ field: "time", message: s.errorEndAfterStart });
-      return;
+  }, [tzOptions]);
+
+  function onChangeTz(next: string) {
+    setTz(next);
+    try {
+      window.localStorage.setItem(TZ_STORAGE_KEY, next);
+    } catch {
+      /* ignore */
     }
-    if (
-      effectiveFromDate &&
-      effectiveUntilDate &&
-      effectiveFromDate > effectiveUntilDate
-    ) {
-      setFieldError({ field: "date", message: s.errorEndDateAfterStart });
-      return;
-    }
-    startTransition(async () => {
+  }
+
+  // ── Slot mutations ────────────────────────────────────────────────
+  // Everything slot-shaped goes through the shared manager; this adapter is the
+  // only doctor-specific part (its own endpoints, and a server refresh).
+  const bulkLabels = {
+    blocked: s.bulkBlocked,
+    unblocked: s.bulkUnblocked,
+    removed: s.bulkRemoved,
+    skippedOccupied: s.bulkSkippedOccupied,
+    skippedMissing: s.bulkSkippedMissing,
+    nothingToDo: s.bulkNothingToDo,
+  };
+  const addNoticeLabels = {
+    noticeAdded: c.noticeAdded,
+    noticeSkippedOverlap: c.noticeSkippedOverlap,
+    noticeSkippedPast: c.noticeSkippedPast,
+  };
+  const slotManager = useSlotManager({
+    setStatus: (slotId, status) => toggleSlotStatus(slotId, status),
+    remove: (slotId, reason) => removeSlotRequest(slotId, reason),
+    create: (startAtIsos, durationMinutes) => createSlots(startAtIsos, durationMinutes),
+    bulk: (input) => bulkSlotAction(input),
+    onChanged: () => router.refresh(),
+    describeAdd: (result) => describeAddResult(result, addNoticeLabels),
+    describeBulk: (action, result) => describeBulkResult(action, result, bulkLabels),
+  });
+
+  const items = useMemo(
+    () => [...consultations, ...slotsToItems(slots)],
+    [consultations, slots],
+  );
+  const itemsByDay = useMemo(() => groupItemsByLocalDay(items, tz), [items, tz]);
+  const dayItems = selectedDay ? itemsByDay.get(selectedDay) ?? [] : [];
+  const weekDays = useMemo(() => weekDaysOf(weekAnchor), [weekAnchor]);
+
+  // ── URL-driven view state ─────────────────────────────────────────
+  function pushParams(next: { view?: CalendarView; ym?: string; wk?: string }) {
+    const params = new URLSearchParams();
+    const nextView = next.view ?? view;
+    params.set("ym", next.ym ?? yearMonthParam(year, month));
+    if (nextView === "month") params.set("view", "month");
+    else params.set("wk", next.wk ?? weekAnchor);
+    router.push(`${pathname}?${params.toString()}`);
+    // Next caches the RSC payload per URL on the client. Without this, adding
+    // availability and then switching view (or stepping a week) replays the
+    // payload fetched BEFORE the mutation — the slots exist server-side but the
+    // grid you land on is the stale one, which is exactly the "it showed in the
+    // month but not the week" report.
+    router.refresh();
+  }
+
+  // The month rides along with the week anchor so flipping back to Month lands
+  // on the month just being read, not the one the doctor started from.
+  function goToWeek(anchor: string) {
+    pushParams({ view: "week", wk: anchor, ym: anchor.slice(0, 7) });
+  }
+
+  function openDay(key: string) {
+    setSelectedDay(key);
+    setDaySheetOpen(true);
+  }
+
+  function openEvent(item: CalendarItem) {
+    // The detail drawer replaces the day sheet — no stacked overlays.
+    setDaySheetOpen(false);
+    setActiveItem(item);
+  }
+
+  // ── Availability windows ──────────────────────────────────────────
+  async function onAddWeekly(input: {
+    weekdays: number[];
+    startMinute: number;
+    endMinute: number;
+    effectiveFrom: string;
+    effectiveUntil: string;
+  }) {
+    setWindowError(null);
+    slotManager.setError(null);
+    setWindowBusy(true);
+    // One window per weekday: the model is per-weekday, so "Mon, Wed, Fri" is
+    // three rows the doctor can later pause or edit independently.
+    for (const weekday of input.weekdays) {
       const res = await createAvailabilityWindow({
         weekday,
-        startMinute: startMin,
-        endMinute: endMin,
+        startMinute: input.startMinute,
+        endMinute: input.endMinute,
         slotDurationMinutes: BASE_SLOT_MINUTES,
-        effectiveFrom: effectiveFromDate
-          ? new Date(`${effectiveFromDate}T00:00:00.000Z`).toISOString()
+        effectiveFrom: input.effectiveFrom
+          ? new Date(`${input.effectiveFrom}T00:00:00.000Z`).toISOString()
           : undefined,
-        effectiveUntil: effectiveUntilDate
-          ? new Date(`${effectiveUntilDate}T23:59:59.999Z`).toISOString()
+        effectiveUntil: input.effectiveUntil
+          ? new Date(`${input.effectiveUntil}T23:59:59.999Z`).toISOString()
           : undefined,
       });
       if (!res.ok) {
-        setError(res.message);
+        setWindowBusy(false);
+        slotManager.setError(res.message);
         return;
       }
-      setWindows((prev) => [...prev, res.data.availability]);
-      // Reset the whole add-form, not just the dates. Leaving weekday/time
-      // as-is made the non-blocking overlap warning fire against the window
-      // the doctor had just successfully added — a confusing false positive.
-      setWeekday(1);
-      setStartTime("");
-      setEndTime("");
-      setEffectiveFromDate("");
-      setEffectiveUntilDate("");
-      router.refresh();
-    });
+    }
+    setWindowBusy(false);
+    slotManager.setAddOpen(false);
+    slotManager.setNotice(
+      s.addedWeeklyNotice.split("{count}").join(String(input.weekdays.length)),
+    );
+    router.refresh();
+  }
+
+  /** Non-blocking heads-up while the add dialog is open: does this proposal sit
+   *  on top of a window that already exists? Legitimate overlaps do happen
+   *  (a temporary extra evening clinic), so it warns rather than blocks. */
+  function describeConflict(
+    weekdays: number[],
+    startMinute: number,
+    endMinute: number,
+    from: string,
+    until: string,
+  ): string | null {
+    const clash = windows.find(
+      (w) =>
+        w.isActive &&
+        weekdays.includes(w.weekday) &&
+        startMinute < w.endMinute &&
+        endMinute > w.startMinute &&
+        dateRangesOverlap(w.effectiveFrom, w.effectiveUntil, from, until),
+    );
+    if (!clash) return null;
+    return s.overlapWarning
+      .replace("{day}", WEEKDAY_LABELS[clash.weekday] ?? "—")
+      .replace("{start}", minutesToTime(clash.startMinute))
+      .replace("{end}", minutesToTime(clash.endMinute));
   }
 
   function onEditWindow(w: AvailabilityWindow) {
@@ -233,7 +379,7 @@ export function DoctorAvailabilityUI({
     setEditTargetId(w.id);
   }
 
-  function onSaveEdit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSaveEdit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const id = editTargetId;
     if (!id) return;
@@ -248,56 +394,43 @@ export function DoctorAvailabilityUI({
       setEditError(s.errorEndDateAfterStart);
       return;
     }
-    startTransition(async () => {
-      const res = await updateAvailabilityWindow(id, {
-        weekday: editWeekday,
-        startMinute: startMin,
-        endMinute: endMin,
-        // Normalises any legacy window that still carries another grid step.
-        slotDurationMinutes: BASE_SLOT_MINUTES,
-        // null (not undefined) so clearing a date really clears the boundary.
-        effectiveFrom: editFromDate
-          ? new Date(`${editFromDate}T00:00:00.000Z`).toISOString()
-          : null,
-        effectiveUntil: editUntilDate
-          ? new Date(`${editUntilDate}T23:59:59.999Z`).toISOString()
-          : null,
-        isActive: editActive,
-      });
-      if (!res.ok) {
-        setEditError(res.message);
-        return;
-      }
-      setWindows((prev) =>
-        prev.map((w) => (w.id === id ? res.data.availability : w)),
-      );
-      // The window moved — open slots from its old shape are stale server-side
-      // and locally. Drop them; router.refresh() brings back the new grid.
-      setSlots((prev) => prev.filter((sl) => sl.status !== "OPEN"));
-      setEditTargetId(null);
-      router.refresh();
+    setWindowBusy(true);
+    const res = await updateAvailabilityWindow(id, {
+      weekday: editWeekday,
+      startMinute: startMin,
+      endMinute: endMin,
+      // Normalises any legacy window that still carries another grid step.
+      slotDurationMinutes: BASE_SLOT_MINUTES,
+      // null (not undefined) so clearing a date really clears the boundary.
+      effectiveFrom: editFromDate
+        ? new Date(`${editFromDate}T00:00:00.000Z`).toISOString()
+        : null,
+      effectiveUntil: editUntilDate
+        ? new Date(`${editUntilDate}T23:59:59.999Z`).toISOString()
+        : null,
+      isActive: editActive,
     });
+    setWindowBusy(false);
+    if (!res.ok) {
+      setEditError(res.message);
+      return;
+    }
+    setEditTargetId(null);
+    router.refresh();
   }
 
-  function onDeleteWindow(id: string) {
-    setDeleteTargetId(id);
-  }
-
-  function confirmDeleteWindow() {
+  async function confirmDeleteWindow() {
     const id = deleteTargetId;
     if (!id) return;
     setDeleteTargetId(null);
-    startTransition(async () => {
-      const res = await deleteAvailabilityWindow(id);
-      if (!res.ok) {
-        setError(res.message);
-        return;
-      }
-      setWindows((prev) => prev.filter((w) => w.id !== id));
-      // Remove derived OPEN slots from local state
-      setSlots((prev) => prev.filter((s) => s.status !== "OPEN"));
-      router.refresh();
-    });
+    setWindowBusy(true);
+    const res = await deleteAvailabilityWindow(id);
+    setWindowBusy(false);
+    if (!res.ok) {
+      setWindowError(res.message);
+      return;
+    }
+    router.refresh();
   }
 
   const slotCounts = useMemo(
@@ -315,10 +448,8 @@ export function DoctorAvailabilityUI({
     [slots],
   );
 
-  // 05-003: near-duplicate windows on the same weekday (e.g. two "Mon
-  // 09:00–17:00") were indistinguishable at a glance. Group by weekday with
-  // a subheading and sort within it by effective-from date, so identity
-  // lives in structure instead of a barely-legible date sub-line.
+  // Near-duplicate windows on the same weekday are indistinguishable at a
+  // glance, so identity lives in structure: group by weekday, sort by start date.
   const windowGroups = useMemo(() => {
     const sorted = [...windows].sort((a, b) => {
       if (a.weekday !== b.weekday) return a.weekday - b.weekday;
@@ -333,11 +464,82 @@ export function DoctorAvailabilityUI({
     return groups;
   }, [windows]);
 
+  /**
+   * One-off slots on the visible grid, grouped per date.
+   *
+   * Slots added for specific dates have no weekly window behind them, so the
+   * sidebar used to show nothing for them — a Friday full of slots with an
+   * empty "Weekly windows" list, and no way to manage them except slot by slot.
+   * These groups make everything on the grid accounted for, and carry the same
+   * block / re-open / remove actions as a window does.
+   */
+  const oneOffGroups = useMemo(() => {
+    const byDay = new Map<
+      string,
+      { ids: string[]; open: number; blocked: number; taken: number; from: string; to: string }
+    >();
+    for (const slot of slots) {
+      if (!slot.isAdHoc) continue;
+      const day = localDayKey(slot.startAt, tz);
+      const entry = byDay.get(day) ?? {
+        ids: [],
+        open: 0,
+        blocked: 0,
+        taken: 0,
+        from: slot.startAt,
+        to: slot.endAt,
+      };
+      // Booked and held slots are listed in the counts but never handed to a
+      // bulk action — the API would skip them anyway, and offering them here
+      // would imply otherwise.
+      if (slot.status === "OPEN") {
+        entry.open += 1;
+        entry.ids.push(slot.id);
+      } else if (slot.status === "BLOCKED") {
+        entry.blocked += 1;
+        entry.ids.push(slot.id);
+      } else {
+        entry.taken += 1;
+      }
+      if (slot.startAt < entry.from) entry.from = slot.startAt;
+      if (slot.endAt > entry.to) entry.to = slot.endAt;
+      byDay.set(day, entry);
+    }
+    return [...byDay.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([day, v]) => ({ day, ...v }));
+  }, [slots, tz]);
+
+  const busy = windowBusy || slotManager.busy;
+  const error = windowError ?? slotManager.error;
+
+  const weekLabels = {
+    today: s.weekToday,
+    prevWeekAria: s.weekPrevAria,
+    nextWeekAria: s.weekNextAria,
+    clickToBlock: s.weekClickToBlock,
+    clickToReopen: s.weekClickToReopen,
+    bookThisTime: s.weekBookThisTime,
+    legendOpen: s.weekLegendOpen,
+    legendBooked: s.weekLegendBooked,
+    legendBlocked: s.weekLegendBlocked,
+    removeThisSlot: c.removeSlotTitle,
+    blockThisTime: s.slotActionBlock,
+    selectSlot: s.selectSlot,
+    deselectSlot: s.deselectSlot,
+    dayCount: s.weekDayCount,
+  };
+
   return (
     <>
       {error ? (
         <div className="mb-4 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
           {error}
+        </div>
+      ) : null}
+      {slotManager.notice ? (
+        <div className="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+          {slotManager.notice}
         </div>
       ) : null}
 
@@ -375,67 +577,113 @@ export function DoctorAvailabilityUI({
         ]}
       />
 
-      <div className="gh-doctor-detail-grid gh-doctor-availability-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-        {/* ── Week calendar (same grid as the admin availability page) ─── */}
-        <AdminCard padding={0} className="gh-doctor-panel">
-          <div data-tour="availability-week">
-          <SectionHeader
-            title={s.weekCalendarTitle}
-            description={s.weekCalendarDesc}
+      {/* Toolbar — view, selection, adding, timezone. */}
+      <div className="gh-doctor-calendar-toolbar mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <ViewToggle
+            view={view}
+            onChange={(next) =>
+              next === "week"
+                ? goToWeek(selectedDay || todayKey(tz))
+                : pushParams({ view: "month" })
+            }
+            labels={{ month: s.viewMonth, week: s.viewWeek }}
+            ariaLabel={s.viewToggleAria}
           />
-          <div className="p-5">
-            <DoctorAvailabilityWeekView
-              initialSlots={initialSlots}
-              consultations={consultations}
-              clinicTz={countryTimeZone}
-              initialWeekAnchor={initialWeekAnchor}
-              onSlotsChange={setSlots}
-              onError={setError}
-              strings={{
-                weekViewHelp: s.weekViewHelp,
-                weekToday: s.weekToday,
-                weekPrevAria: s.weekPrevAria,
-                weekNextAria: s.weekNextAria,
-                weekClickToBlock: s.weekClickToBlock,
-                weekClickToReopen: s.weekClickToReopen,
-                weekBookThisTime: s.weekBookThisTime,
-                weekLegendOpen: s.weekLegendOpen,
-                weekLegendBooked: s.weekLegendBooked,
-                weekLegendBlocked: s.weekLegendBlocked,
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Btn
+            type="button"
+            size="sm"
+            variant="primary"
+            disabled={busy}
+            onClick={() => {
+              slotManager.clearMessages();
+              setWindowError(null);
+              slotManager.setAddOpen(true);
+            }}
+            iconLeft={<Plus className="size-3.5" />}
+            data-tour="availability-add"
+          >
+            {s.addAvailabilityButton}
+          </Btn>
+          <TimezoneSelect value={tz} options={tzOptions} onChange={onChangeTz} />
+        </div>
+      </div>
+
+      <div className="gh-doctor-detail-grid gh-doctor-availability-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid min-w-0 gap-3" data-tour="availability-week">
+          {view === "week" ? (
+            <WeekCalendar
+              anchorDayKey={weekAnchor}
+              weekDays={weekDays}
+              itemsByDay={itemsByDay}
+              tz={tz}
+              todayKey={todayKey(tz)}
+              // A doctor never books their own slot, so clicking an open one
+              // blocks it. The corner buttons carry block and remove, and a
+              // blocked block clicks back open — same set as the admin grid.
+              onSelectOpenSlot={(item) => void slotManager.setStatus(item, "BLOCKED")}
+              onSelectConsultation={openEvent}
+              onBlockSlot={(item) => {
+                slotManager.setError(null);
+                slotManager.setBlockTarget(item);
               }}
-              eventDetailLabels={{
-                consultation: ed.eventDetailConsultation,
-                close: ed.eventDetailClose,
-                appointment: ed.eventDetailAppointment,
-                type: ed.eventDetailType,
-                doctor: ed.eventDetailDoctor,
-                patient: ed.eventDetailPatient,
-                country: ed.eventDetailCountry,
-                order: ed.eventDetailOrder,
-                timing: ed.eventDetailTiming,
-                start: ed.eventDetailStart,
-                end: ed.eventDetailEnd,
-                timezone: ed.eventDetailTimezone,
-                links: ed.eventDetailLinks,
-                joinVideoCall: ed.eventDetailJoinVideoCall,
-                unconfirmed: ed.eventDetailUnconfirmed,
-                cancelled: ed.eventDetailCancelled,
-                ended: ed.eventDetailEnded,
-                opensAt: ed.eventDetailOpensAt,
-                joinPending: ed.eventDetailJoinPending,
+              onSelectBlockedSlot={(item) => void slotManager.setStatus(item, "OPEN")}
+              onRemoveSlot={(item) => slotManager.setRemoveTarget(item)}
+                  selectedIds={slotManager.selected}
+              onToggleSelect={slotManager.toggleSelected}
+              slotActionsBusy={busy}
+              onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
+              onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
+              onToday={() => goToWeek(todayKey(tz))}
+              labels={weekLabels}
+            />
+          ) : (
+            <MonthCalendar
+              year={year}
+              month={month}
+              itemsByDay={itemsByDay}
+              selectedDay={selectedDay}
+              todayKey={todayKey(tz)}
+              onSelectDay={openDay}
+              onPrevMonth={() => {
+                const prev = addMonths(year, month, -1);
+                pushParams({ ym: yearMonthParam(prev.year, prev.month) });
+              }}
+              onNextMonth={() => {
+                const next = addMonths(year, month, 1);
+                pushParams({ ym: yearMonthParam(next.year, next.month) });
+              }}
+              onToday={() => {
+                const now = new Date();
+                pushParams({ ym: yearMonthParam(now.getFullYear(), now.getMonth() + 1) });
+                setSelectedDay(todayKey(tz));
               }}
             />
-          </div>
-          </div>
-        </AdminCard>
+          )}
 
-        {/* ── Sidebar: windows list + add form ─────────────────── */}
+          <SelectionActionBar
+            count={slotManager.selected.size}
+            busy={busy}
+            labels={{
+              count: s.selectionCount,
+              block: s.slotActionBlock,
+              unblock: s.slotActionReopen,
+              remove: s.slotActionRemove,
+              removeConfirm: s.selectionRemoveConfirm,
+              clear: s.selectionClear,
+              hint: s.selectionHint,
+            }}
+            onAction={(action) => void slotManager.bulkSelected(action)}
+            onClear={slotManager.clearSelection}
+          />
+        </div>
+
+        {/* ── Sidebar: recurring rules, then bulk slot controls ───────── */}
         <aside className="gh-doctor-side-stack grid gap-4 self-start">
           <AdminCard padding={0} className="gh-doctor-panel">
-            <SectionHeader
-              title={s.weeklyWindows}
-              description={s.weeklyWindowsDesc}
-            />
+            <SectionHeader title={s.weeklyWindows} description={s.weeklyWindowsDesc} />
             <div className="p-5">
               {windows.length === 0 ? (
                 <AdminEmptyState
@@ -445,14 +693,14 @@ export function DoctorAvailabilityUI({
                   description={s.noWindowsDesc}
                 />
               ) : (
-                <ul className="gh-doctor-window-list grid gap-2" data-tour="availability-windows">
+                <ul className="gh-doctor-window-list grid gap-2" data-tour="availability-windows" id="gh-availability-windows">
                   {windowGroups.map((group) => {
                     const hasDuplicates = group.items.length > 1;
                     return (
                       <li key={group.weekday} className="grid gap-2">
                         {hasDuplicates ? (
                           <p className="text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-                            {WEEKDAYS.find((d) => d.value === group.weekday)?.label ?? "—"}
+                            {WEEKDAY_LABELS[group.weekday] ?? "—"}
                           </p>
                         ) : null}
                         <ul className="grid gap-2">
@@ -464,10 +712,9 @@ export function DoctorAvailabilityUI({
                               <div className="min-w-0">
                                 <p className="text-sm font-semibold text-[var(--portal-text)]">
                                   {!hasDuplicates
-                                    ? `${WEEKDAYS.find((d) => d.value === w.weekday)?.label ?? "—"} · `
+                                    ? `${WEEKDAY_LABELS[w.weekday] ?? "—"} · `
                                     : ""}
-                                  {minutesToTime(w.startMinute)}–
-                                  {minutesToTime(w.endMinute)}
+                                  {minutesToTime(w.startMinute)}–{minutesToTime(w.endMinute)}
                                 </p>
                                 <p className="text-portal-thead text-[var(--portal-muted)]">
                                   {s.baseGrid.replace("{duration}", String(w.slotDurationMinutes))}
@@ -482,11 +729,17 @@ export function DoctorAvailabilityUI({
                                     }
                                   >
                                     {w.effectiveFrom
-                                      ? s.fromDate.replace("{date}", new Date(w.effectiveFrom).toLocaleDateString("en-IE"))
-                                      : s.fromAlways}
-                                    {" "}·{" "}
+                                      ? s.fromDate.replace(
+                                          "{date}",
+                                          new Date(w.effectiveFrom).toLocaleDateString("en-IE"),
+                                        )
+                                      : s.fromAlways}{" "}
+                                    ·{" "}
                                     {w.effectiveUntil
-                                      ? s.untilDate.replace("{date}", new Date(w.effectiveUntil).toLocaleDateString("en-IE"))
+                                      ? s.untilDate.replace(
+                                          "{date}",
+                                          new Date(w.effectiveUntil).toLocaleDateString("en-IE"),
+                                        )
                                       : s.forever}
                                   </p>
                                 ) : hasDuplicates ? (
@@ -510,7 +763,7 @@ export function DoctorAvailabilityUI({
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={() => onDeleteWindow(w.id)}
+                                  onClick={() => setDeleteTargetId(w.id)}
                                   disabled={busy}
                                   aria-label={s.deleteWindow}
                                   className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-rose-600 hover:bg-rose-50 disabled:opacity-60"
@@ -529,99 +782,60 @@ export function DoctorAvailabilityUI({
             </div>
           </AdminCard>
 
-          <FormSection
-            title={s.addWindow}
-            description={s.addWindowDesc.replace("{tz}", countryTimeZone)}
-            className="gh-doctor-panel"
-          >
-            <form onSubmit={onAddWindow} data-tour="availability-form" className="gh-doctor-availability-form gh-form-section__span-2 grid gap-3">
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">{s.day}</span>
-                <select
-                  className="gh-select"
-                  value={weekday}
-                  onChange={(e) => setWeekday(Number(e.target.value))}
-                >
-                  {WEEKDAYS.map((d) => (
-                    <option key={d.value} value={d.value}>
-                      {d.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="gh-doctor-time-grid grid grid-cols-2 gap-2">
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="gh-field-label">{common.from}</span>
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    required
-                    className="gh-input"
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="gh-field-label">{common.to}</span>
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    required
-                    className="gh-input"
-                  />
-                </label>
-              </div>
-              {fieldError?.field === "time" ? (
-                <p className="text-sm text-rose-700">{fieldError.message}</p>
-              ) : null}
-              {/* Base grid is fixed product-wide — stated, not chosen. */}
-              <p className="text-portal-meta text-[var(--portal-muted)]">
-                {s.baseGrid.replace("{duration}", String(BASE_SLOT_MINUTES))} ·{" "}
-                {s.baseSlotHint}
-              </p>
-
-              {/* Optional effective range — leave blank for "always" */}
-              <div className="gh-doctor-time-grid grid grid-cols-2 gap-2">
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="gh-field-label">{s.startsOptional}</span>
-                  <input
-                    type="date"
-                    value={effectiveFromDate}
-                    onChange={(e) => setEffectiveFromDate(e.target.value)}
-                    className="gh-input"
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="gh-field-label">{s.endsOptional}</span>
-                  <input
-                    type="date"
-                    value={effectiveUntilDate}
-                    onChange={(e) => setEffectiveUntilDate(e.target.value)}
-                    className="gh-input"
-                  />
-                </label>
-              </div>
-              {fieldError?.field === "date" ? (
-                <p className="text-sm text-rose-700">{fieldError.message}</p>
-              ) : null}
-              <p className="text-portal-thead text-[var(--portal-muted)]">
-                {s.datesHint}
-              </p>
-
-              {overlapWindow ? (
-                <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                  {s.overlapWarning
-                    .replace("{day}", WEEKDAYS.find((d) => d.value === overlapWindow.weekday)?.label ?? "—")
-                    .replace("{start}", minutesToTime(overlapWindow.startMinute))
-                    .replace("{end}", minutesToTime(overlapWindow.endMinute))}
-                </p>
-              ) : null}
-
-              <Btn type="submit" variant="primary" size="sm" disabled={busy} iconLeft={<Plus className="size-3.5" />}>
-                {busy ? s.adding : s.addWindow}
-              </Btn>
-            </form>
-          </FormSection>
+          {/* Everything on the grid is accounted for: slots added for one
+              specific date have no weekly window, so they get their own
+              entries rather than existing on the calendar unexplained. */}
+          {oneOffGroups.length > 0 ? (
+            <AdminCard padding={0} className="gh-doctor-panel">
+              <SectionHeader title={s.oneOffTitle} description={s.oneOffDesc} />
+              <ul className="grid gap-2 p-5">
+                {oneOffGroups.map((g) => (
+                  <li
+                    key={g.day}
+                    className="grid gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--portal-text)]">
+                        {dayLabel(g.day)}
+                      </p>
+                      <p className="text-portal-thead text-[var(--portal-muted)]">
+                        {formatAppTime(g.from, tz)}–{formatAppTime(g.to, tz)} ·{" "}
+                        {s.oneOffCounts
+                          .replace("{open}", String(g.open))
+                          .replace("{blocked}", String(g.blocked))
+                          .replace("{taken}", String(g.taken))}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <GroupAction
+                        disabled={busy || g.open === 0}
+                        onClick={() => void slotManager.bulkIds("BLOCK", g.ids)}
+                      >
+                        <Ban className="size-3" aria-hidden /> {s.slotActionBlock}
+                      </GroupAction>
+                      <GroupAction
+                        disabled={busy || g.blocked === 0}
+                        onClick={() => void slotManager.bulkIds("UNBLOCK", g.ids)}
+                      >
+                        <Unlock className="size-3" aria-hidden /> {s.slotActionReopen}
+                      </GroupAction>
+                      <GroupAction
+                        danger
+                        disabled={busy || g.ids.length === 0}
+                        onClick={() => {
+                          if (window.confirm(s.manageRemoveConfirm)) {
+                            void slotManager.bulkIds("REMOVE", g.ids);
+                          }
+                        }}
+                      >
+                        <Trash2 className="size-3" aria-hidden /> {s.slotActionRemove}
+                      </GroupAction>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </AdminCard>
+          ) : null}
 
           <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader title={s.legend} />
@@ -632,11 +846,173 @@ export function DoctorAvailabilityUI({
               <Legend tone="held" label={s.legendHeld} />
             </ul>
             <p className="px-5 pb-5 text-portal-thead text-[var(--portal-muted)]">
-              {s.timesShownIn.replace("{tz}", countryTimeZone)}
+              {s.timesShownIn.replace("{tz}", tz)}
             </p>
           </AdminCard>
         </aside>
       </div>
+
+      {/* Day agenda — month view's way into a single day. */}
+      <AppSheet
+        open={daySheetOpen}
+        onOpenChange={setDaySheetOpen}
+        size="md"
+        theme="portal"
+        header={
+          <div className="gh-record-drawer__title-block">
+            <span className="gh-record-drawer__eyebrow">{s.dayAgendaEyebrow}</span>
+            <Dialog.Title asChild>
+              <h2 className="gh-record-drawer__title">
+                {selectedDay ? dayLabel(selectedDay) : ""}
+              </h2>
+            </Dialog.Title>
+          </div>
+        }
+      >
+        <DayAgenda
+          dayKey={selectedDay}
+          items={dayItems}
+          tz={tz}
+          hideHeader
+          emptyLabel={s.noItemsOnDay}
+          consultationsLabel={s.sectionConsultations}
+          slotsLabel={s.sectionSlots}
+          onSelectConsultation={openEvent}
+          canToggleSlot={() => false}
+          selectedIds={slotManager.selected}
+          onToggleSelect={slotManager.toggleSelected}
+          slotActionsBusy={busy}
+          renderSlotAction={(item) => {
+            if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
+            const actionClass =
+              "ml-0.5 rounded-full border border-current px-1.5 text-portal-micro font-bold uppercase tracking-wide hover:opacity-80 disabled:opacity-50";
+            return (
+              <>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() =>
+                    void slotManager.setStatus(
+                      item,
+                      item.status === "OPEN" ? "BLOCKED" : "OPEN",
+                    )
+                  }
+                  className={actionClass}
+                >
+                  {item.status === "OPEN" ? s.slotActionBlock : s.slotActionReopen}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => {
+                    setDaySheetOpen(false);
+                    slotManager.setRemoveTarget(item);
+                  }}
+                  className={actionClass}
+                >
+                  {s.slotActionRemove}
+                </button>
+              </>
+            );
+          }}
+        />
+      </AppSheet>
+
+      <AddAvailabilityDialog
+        key={slotManager.addOpen ? `add-${weekAnchor}` : "no-add"}
+        open={slotManager.addOpen}
+        tz={tz}
+        defaultDate={weekAnchor}
+        weekdayLabels={WEEKDAY_LABELS}
+        busy={busy}
+        error={slotManager.error}
+        describeConflict={describeConflict}
+        labels={{
+          title: s.addAvailabilityButton,
+          modeWeekly: s.addModeWeekly,
+          modeDates: s.addModeDates,
+          weeklyIntro: s.addWeeklyIntro,
+          datesIntro: s.addDatesIntro,
+          days: s.addDays,
+          fromTime: s.manageFromTime,
+          toTime: s.manageToTime,
+          fromDate: s.manageFromDate,
+          toDate: s.manageToDate,
+          gridHint: s.baseSlotHint,
+          timezoneHint: s.timesShownIn,
+          cancel: s.cancel,
+          confirmWeekly: s.addConfirmWeekly,
+          confirmDates: s.addConfirmDates,
+          busy: s.adding,
+          errorPickDay: s.addErrorPickDay,
+          errorEndAfterStart: s.errorEndAfterStart,
+          errorEndDateAfterStart: s.errorEndDateAfterStart,
+          errorTimeFormat: s.manageErrorTimeFormat,
+          errorTooMany: s.manageErrorTooMany,
+        }}
+        onClose={() => {
+          slotManager.setAddOpen(false);
+          slotManager.setError(null);
+        }}
+        onSubmitWeekly={(input) => void onAddWeekly(input)}
+        onSubmitDates={(isos, duration) => void slotManager.create(isos, duration)}
+      />
+
+      <BlockSlotDialog
+        key={slotManager.blockTarget?.id ?? "no-block"}
+        open={slotManager.blockTarget !== null}
+        slot={slotManager.blockTarget}
+        tz={tz}
+        busy={busy}
+        error={slotManager.error}
+        labels={{
+          title: s.blockSlotTitle,
+          intro: s.blockSlotIntro,
+          reasonLabel: s.reasonOptional,
+          reasonPlaceholder: s.manageReasonPlaceholder,
+          reasonHint: s.blockSlotReasonHint,
+          cancel: c.slotDialogCancel,
+          confirm: s.slotActionBlock,
+          confirmBusy: s.manageBusy,
+        }}
+        onClose={() => {
+          slotManager.setBlockTarget(null);
+          slotManager.setError(null);
+        }}
+        onConfirm={(reason) => {
+          const target = slotManager.blockTarget;
+          if (target) void slotManager.setStatus(target, "BLOCKED", reason || undefined);
+        }}
+      />
+
+      <RemoveSlotDialog
+        key={slotManager.removeTarget?.id ?? "no-remove"}
+        open={slotManager.removeTarget !== null}
+        slot={slotManager.removeTarget}
+        tz={tz}
+        busy={busy}
+        error={slotManager.error}
+        labels={{
+          title: c.removeSlotTitle,
+          blockedSuffix: c.removeSlotBlockedSuffix,
+          intro: c.removeSlotIntro,
+          warning: c.removeSlotWarning,
+          reasonLabel: s.reasonOptional,
+          reasonPlaceholder: c.removeSlotReasonPlaceholder,
+          reasonHint: c.removeSlotReasonHint,
+          cancel: c.slotDialogCancel,
+          confirm: c.removeSlotConfirm,
+          confirmBusy: c.removeSlotBusy,
+        }}
+        onClose={() => {
+          slotManager.setRemoveTarget(null);
+          slotManager.setError(null);
+        }}
+        onConfirm={(reason) => {
+          const target = slotManager.removeTarget;
+          if (target) void slotManager.remove(target, reason || undefined);
+        }}
+      />
 
       <PortalDialog
         open={editTarget !== null}
@@ -644,7 +1020,7 @@ export function DoctorAvailabilityUI({
         title={
           editTarget
             ? s.editWindowTitleNamed
-                .replace("{day}", WEEKDAYS.find((d) => d.value === editTarget.weekday)?.label ?? "—")
+                .replace("{day}", WEEKDAY_LABELS[editTarget.weekday] ?? "—")
                 .replace("{start}", minutesToTime(editTarget.startMinute))
                 .replace("{end}", minutesToTime(editTarget.endMinute))
             : s.editWindowTitle
@@ -668,9 +1044,9 @@ export function DoctorAvailabilityUI({
               value={editWeekday}
               onChange={(e) => setEditWeekday(Number(e.target.value))}
             >
-              {WEEKDAYS.map((d) => (
-                <option key={d.value} value={d.value}>
-                  {d.label}
+              {WEEKDAY_LABELS.map((label, value) => (
+                <option key={value} value={value}>
+                  {label}
                 </option>
               ))}
             </select>
@@ -696,8 +1072,7 @@ export function DoctorAvailabilityUI({
             </label>
           </div>
           <p className="text-portal-meta text-[var(--portal-muted)]">
-            {s.baseGrid.replace("{duration}", String(BASE_SLOT_MINUTES))} ·{" "}
-            {s.baseSlotHint}
+            {s.baseGrid.replace("{duration}", String(BASE_SLOT_MINUTES))} · {s.baseSlotHint}
           </p>
           <div className="grid grid-cols-2 gap-2">
             <label className="flex flex-col gap-1 text-sm">
@@ -728,14 +1103,11 @@ export function DoctorAvailabilityUI({
             />
             <span className="gh-field-label">{s.windowActive}</span>
           </label>
-          <p className="text-portal-thead text-[var(--portal-muted)]">
-            {s.windowActiveHint}
-          </p>
+          <p className="text-portal-thead text-[var(--portal-muted)]">{s.windowActiveHint}</p>
           {editError ? <p className="text-sm text-rose-700">{editError}</p> : null}
-          <p className="text-portal-thead text-[var(--portal-muted)]">
-            {s.editWindowSlotsNote}
-          </p>
+          <p className="text-portal-thead text-[var(--portal-muted)]">{s.editWindowSlotsNote}</p>
         </form>
+
       </PortalDialog>
 
       <PortalDialog
@@ -744,7 +1116,7 @@ export function DoctorAvailabilityUI({
         title={
           deleteTarget
             ? s.removeWindowTitleNamed
-                .replace("{day}", WEEKDAYS.find((d) => d.value === deleteTarget.weekday)?.label ?? "—")
+                .replace("{day}", WEEKDAY_LABELS[deleteTarget.weekday] ?? "—")
                 .replace("{start}", minutesToTime(deleteTarget.startMinute))
                 .replace("{end}", minutesToTime(deleteTarget.endMinute))
             : s.removeWindowTitle
@@ -755,7 +1127,7 @@ export function DoctorAvailabilityUI({
             <Btn variant="ghost" onClick={() => setDeleteTargetId(null)}>
               {s.cancel}
             </Btn>
-            <Btn variant="danger" onClick={confirmDeleteWindow}>
+            <Btn variant="danger" onClick={() => void confirmDeleteWindow()}>
               {s.remove}
             </Btn>
           </>
@@ -780,7 +1152,63 @@ export function DoctorAvailabilityUI({
           {s.removeWindowBody}
         </p>
       </PortalDialog>
+
+      <EventDetailDialog
+        item={activeItem}
+        tz={tz}
+        onClose={() => setActiveItem(null)}
+        viewerRole="doctor"
+        labels={{
+          consultation: c.eventDetailConsultation,
+          close: c.eventDetailClose,
+          appointment: c.eventDetailAppointment,
+          type: c.eventDetailType,
+          doctor: c.eventDetailDoctor,
+          patient: c.eventDetailPatient,
+          country: c.eventDetailCountry,
+          order: c.eventDetailOrder,
+          timing: c.eventDetailTiming,
+          start: c.eventDetailStart,
+          end: c.eventDetailEnd,
+          timezone: c.eventDetailTimezone,
+          links: c.eventDetailLinks,
+          joinVideoCall: c.eventDetailJoinVideoCall,
+          unconfirmed: c.eventDetailUnconfirmed,
+          cancelled: c.eventDetailCancelled,
+          ended: c.eventDetailEnded,
+          opensAt: c.eventDetailOpensAt,
+          joinPending: c.eventDetailJoinPending,
+        }}
+      />
     </>
+  );
+}
+
+/** Compact action button for the one-off date rows in the sidebar. */
+function GroupAction({
+  children,
+  disabled,
+  danger = false,
+  onClick,
+}: {
+  children: React.ReactNode;
+  disabled?: boolean;
+  danger?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-portal-micro font-bold uppercase tracking-wide disabled:opacity-40"
+      style={{
+        borderColor: danger ? "var(--portal-danger)" : "var(--portal-line-strong)",
+        color: danger ? "var(--portal-danger)" : "var(--portal-text)",
+      }}
+    >
+      {children}
+    </button>
   );
 }
 

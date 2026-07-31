@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type {
+  BillingInvoiceView,
   BillingPort,
   BillingPriceRef,
   BillingProductRef,
@@ -99,9 +100,12 @@ export class FakeBillingPort implements BillingPort {
     };
   }
 
-  async cancelActiveSubscriptionsForCustomer(): Promise<{ canceled: number }> {
+  async cancelActiveSubscriptionsForCustomer(): Promise<{
+    canceled: number;
+    skippedPaid: number;
+  }> {
     // No real provider subscriptions to cancel in the in-memory driver.
-    return { canceled: 0 };
+    return { canceled: 0, skippedPaid: 0 };
   }
 
   async cancelAtPeriodEnd(subscriptionId: string): Promise<void> {
@@ -114,7 +118,15 @@ export class FakeBillingPort implements BillingPort {
     }
   }
 
-  async refundLatestPayment(_subscriptionId: string): Promise<{ refunded: boolean }> {
+  async cancelNow(subscriptionId: string): Promise<{ canceled: boolean }> {
+    const sub = this.subscriptions.get(subscriptionId);
+    if (sub) {
+      this.subscriptions.set(subscriptionId, { ...sub, status: "canceled" });
+    }
+    return { canceled: true };
+  }
+
+  async refundInvoicePayment(_stripeInvoiceId: string): Promise<{ refunded: boolean }> {
     // No payment provider in the fake driver — the refund service reconciles
     // credits/state inline (no webhook will fire).
     return { refunded: false };
@@ -130,6 +142,20 @@ export class FakeBillingPort implements BillingPort {
     subscriptionId: string,
   ): Promise<BillingSubscriptionView | null> {
     return this.subscriptions.get(subscriptionId) ?? null;
+  }
+
+  async findLatestSubscriptionIdForCustomer(
+    customerId: string,
+  ): Promise<string | null> {
+    for (const sub of this.subscriptions.values()) {
+      if (sub.customerId === customerId) return sub.id;
+    }
+    return null;
+  }
+
+  /** No provider invoices in the fake driver — sync has nothing to replay. */
+  async retrieveLatestPaidInvoice(): Promise<BillingInvoiceView | null> {
+    return null;
   }
 
   /** Test helper: register a known subscription for reconciliation paths. */

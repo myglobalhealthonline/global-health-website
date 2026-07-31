@@ -209,4 +209,76 @@ describe("subscription webhook lifecycle", () => {
       await fx.cleanup();
     }
   });
+
+  it("renewal invoice on a CANCELED sub does not resurrect it or grant", async (t) => {
+    if (skip()) return t.skip();
+    const subStripeId = `sub_test_${Date.now()}_e`;
+    const fx = await makeSubscriptionFixture(prisma, "wh-cancelled-charge", {
+      status: "CANCELED",
+      paidMonthsCount: 1,
+      consultationBalance: 0,
+      monthlyConsultationCredits: 3,
+      stripeSubscriptionId: subStripeId,
+    });
+    try {
+      const r = await handleSubscriptionEvent(
+        invoicePaid(
+          subStripeId,
+          "2026-07-01T00:00:00Z",
+          "2026-08-01T00:00:00Z",
+          "subscription_cycle",
+          `evt_${subStripeId}_zombie`,
+        ),
+      );
+      assert.ok(r.handled, "acked — retrying would not help");
+      const sub = await prisma.userSubscription.findUnique({ where: { id: fx.subscriptionId } });
+      assert.equal(sub?.status, "CANCELED", "refunded membership must stay canceled");
+      assert.equal(sub?.paidMonthsCount, 1, "tenure not advanced by a charge we refuse");
+      assert.equal(await getBalance(fx.subscriptionId, "CONSULTATION"), 0, "no credits granted");
+    } finally {
+      await fx.cleanup();
+    }
+  });
+
+  it("past_due subscription.updated does not advance the paid period", async (t) => {
+    if (skip()) return t.skip();
+    const subStripeId = `sub_test_${Date.now()}_f`;
+    const paidPeriodEnd = new Date("2026-07-01T00:00:00Z");
+    const fx = await makeSubscriptionFixture(prisma, "wh-pastdue-period", {
+      status: "ACTIVE",
+      stripeSubscriptionId: subStripeId,
+    });
+    try {
+      await prisma.userSubscription.update({
+        where: { id: fx.subscriptionId },
+        data: { currentPeriodEnd: paidPeriodEnd },
+      });
+      const eventId = `evt_${subStripeId}_pastdue`;
+      eventIds.add(eventId);
+      // Stripe rolls current_period_* forward at renewal BEFORE the invoice
+      // settles — writing that off a past_due echo gave a delinquent subscriber
+      // a free month of benefits (PAST_DUE eligibility keys on this field).
+      await handleSubscriptionEvent({
+        id: eventId,
+        type: "customer.subscription.updated",
+        data: {
+          object: {
+            id: subStripeId,
+            status: "past_due",
+            cancel_at_period_end: false,
+            current_period_end: Math.floor(new Date("2026-08-01T00:00:00Z").getTime() / 1000),
+          },
+        },
+      });
+      const sub = await prisma.userSubscription.findUnique({ where: { id: fx.subscriptionId } });
+      assert.equal(sub?.status, "PAST_DUE");
+      assert.equal(
+        sub?.currentPeriodEnd?.toISOString(),
+        paidPeriodEnd.toISOString(),
+        "period pinned to the last period actually paid for",
+      );
+    } finally {
+      await fx.cleanup();
+    }
+  });
 });

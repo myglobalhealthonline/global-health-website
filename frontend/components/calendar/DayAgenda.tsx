@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
-import { CalendarDays, Search, Video } from "lucide-react";
+import { CalendarDays, CheckSquare, Search, Square, Video } from "lucide-react";
 import { formatAppTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
 import { dayLabel, todayKey } from "./calendar-utils";
@@ -52,6 +52,12 @@ type Props = {
   canToggleSlot?: (item: CalendarItem) => boolean;
   /** Disables slot chips while a mutation is in flight. */
   slotActionsBusy?: boolean;
+  /** Multi-select. Supplying this puts a checkbox on every OPEN/BLOCKED chip,
+   *  alongside its own actions — no mode to enter. Booked time stays
+   *  unselectable: bulk actions must not touch it. */
+  onToggleSelect?: (item: CalendarItem) => void;
+  /** Bare slot ids currently selected (no `s-` prefix). */
+  selectedIds?: Set<string>;
   /** Show the doctor name on each row (admin/patient views). */
   showDoctorName?: boolean;
   /** Skip the internal date header — for hosts (day drawer) that already
@@ -108,6 +114,8 @@ export function DayAgenda({
   onSelectSlot,
   canToggleSlot,
   slotActionsBusy = false,
+  selectedIds,
+  onToggleSelect,
   showDoctorName,
   hideHeader = false,
   selectDayLabel = "Select a day",
@@ -238,6 +246,11 @@ export function DayAgenda({
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {slots.map((item) => {
+                    const selectable =
+                      Boolean(onToggleSelect) &&
+                      (item.status === "OPEN" || item.status === "BLOCKED");
+                    const bareId = item.id.replace(/^s-/, "");
+                    const isSelected = selectedIds?.has(bareId) ?? false;
                     // Only OPEN/BLOCKED toggle. BOOKED/HELD slots carry a
                     // patient, so clicking them must not block anything.
                     const toggleable =
@@ -261,6 +274,32 @@ export function DayAgenda({
                       </>
                     );
 
+                    const checkbox = selectable ? (
+                      <button
+                        type="button"
+                        disabled={slotActionsBusy}
+                        onClick={() => onToggleSelect?.(item)}
+                        aria-pressed={isSelected}
+                        aria-label={isSelected ? "Deselect slot" : "Select slot"}
+                        className="mr-0.5 inline-flex size-4 items-center justify-center rounded border disabled:opacity-50"
+                        style={
+                          isSelected
+                            ? {
+                                borderColor: "var(--portal-info)",
+                                background: "var(--portal-info)",
+                                color: "#fff",
+                              }
+                            : { borderColor: "currentColor" }
+                        }
+                      >
+                        {isSelected ? (
+                          <CheckSquare className="size-3" aria-hidden />
+                        ) : (
+                          <Square className="size-3 opacity-60" aria-hidden />
+                        )}
+                      </button>
+                    ) : null;
+
                     if (!toggleable) {
                       return (
                         <span
@@ -269,23 +308,31 @@ export function DayAgenda({
                           style={slotToneStyle(item.status)}
                           title={item.meta?.blockReason ?? item.status}
                         >
+                          {checkbox}
                           {inner}
                         </span>
                       );
                     }
 
+                    // The chip is a container, not a button: the checkbox and
+                    // the toggle are separate controls and buttons can't nest.
                     return (
-                      <button
+                      <span
                         key={item.id}
-                        type="button"
-                        disabled={slotActionsBusy}
-                        onClick={() => onSelectSlot?.(item)}
-                        className={`${chipClass} transition hover:brightness-95 disabled:opacity-50`}
+                        className={chipClass}
                         style={slotToneStyle(item.status)}
                         title={item.meta?.blockReason ?? item.status}
                       >
-                        {inner}
-                      </button>
+                        {checkbox}
+                        <button
+                          type="button"
+                          disabled={slotActionsBusy}
+                          onClick={() => onSelectSlot?.(item)}
+                          className="inline-flex items-center gap-1.5 transition hover:brightness-95 disabled:opacity-50"
+                        >
+                          {inner}
+                        </button>
+                      </span>
                     );
                   })}
                 </div>

@@ -6,7 +6,7 @@ import {
   PageHeader,
 } from "@/components/portal-atoms";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,7 @@ export default async function DoctorPatientsPage({
   const sp = searchParams ? await searchParams : {};
   const q = pick(sp, "q")?.toLowerCase();
   const result = await fetchDoctorPatients();
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
 
   // Filter client-side (deduped patient list is bounded already — the

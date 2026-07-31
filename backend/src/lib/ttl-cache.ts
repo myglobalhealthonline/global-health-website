@@ -32,6 +32,18 @@ export class TtlCache<V> {
     return entry.value;
   }
 
+  /**
+   * Drop every entry. For writes whose effect must be visible immediately
+   * rather than after the TTL — e.g. an admin removing a slot from inventory,
+   * where a stale listing would offer a slot that no longer exists (and cannot
+   * be re-created, unlike a taken slot which simply fails to claim). Coarse on
+   * purpose: keys are bucketed by date range, so there's no cheap way to
+   * invalidate exactly the ranges containing one instant.
+   */
+  clear(): void {
+    this.store.clear();
+  }
+
   set(key: string, value: V, ttlMs: number): void {
     if (!this.store.has(key) && this.store.size >= this.maxEntries) {
       const oldestKey = this.store.keys().next().value;

@@ -60,7 +60,7 @@ const ADMIN_ROUTES: RouteDef[] = [
 const DOCTOR_ROUTES: RouteDef[] = [
   { route: "/doctor/appointments", name: "doctor-appointments" },
   { route: "/doctor/invoices", name: "doctor-invoices" },
-  { route: "/doctor/calendar", name: "doctor-calendar" },
+  { route: "/doctor/availability", name: "doctor-availability" },
 ];
 const PATIENT_ROUTES: RouteDef[] = [
   { route: "/account/bookings", name: "account-bookings" },

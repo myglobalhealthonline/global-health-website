@@ -20,6 +20,7 @@ import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2, Search } from "lucid
 import type { CountryConfig } from "@/data/countries";
 import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
+import { countryLinkLocale } from "@/lib/i18n/country-link-locale";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
 import type { GlobeArc, GlobeMarker } from "@/components/ui/cobe-globe";
 import styles from "./CountryEntryGate.module.css";
@@ -230,14 +231,13 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
   // Real crawlable href per country (real anchor, not JS-only) so search
   // engines can discover /{slug}/{lang} without executing the click handler —
   // fixes zero-outbound-internal-link crawl-depth risk on "/".
+  function langFor(country: CountryConfig): LocaleCode {
+    return countryLinkLocale(detectedLocale, country) as LocaleCode;
+  }
+
   function hrefFor(country: CountryConfig): string {
     const slug = country.slug || countrySlug(country.code);
-    const lang = (
-      country.supportedLocales?.includes(detectedLocale)
-        ? detectedLocale
-        : country.defaultLocale ?? "en"
-    ) as LocaleCode;
-    return `/${slug}/${lang}`;
+    return `/${slug}/${langFor(country)}`;
   }
 
   function enter(country: CountryConfig, event: React.MouseEvent) {
@@ -248,12 +248,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
       return;
     }
     event.preventDefault();
-    const lang = (
-      country.supportedLocales?.includes(detectedLocale)
-        ? detectedLocale
-        : country.defaultLocale ?? "en"
-    ) as LocaleCode;
-    setClientLocaleCookie(lang);
+    setClientLocaleCookie(langFor(country));
     globalThis.location.assign(hrefFor(country));
   }
 

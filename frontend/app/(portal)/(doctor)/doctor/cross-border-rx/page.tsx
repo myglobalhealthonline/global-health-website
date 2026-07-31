@@ -1,6 +1,6 @@
 import { Globe2 } from "lucide-react";
 import { fetchCrossBorderRxInbox } from "@/lib/api/doctor-api";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { CrossBorderRxDecisionPanel } from "./_components/cross-border-rx-decision-panel";
 
@@ -15,7 +15,7 @@ export const metadata = { title: "Doctor · Cross-border requests" };
  * prescription), and the accept / request-info / refuse controls.
  */
 export default async function CrossBorderRxInboxPage() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const copy = d.crossBorderRxInbox;
   const res = await fetchCrossBorderRxInbox();

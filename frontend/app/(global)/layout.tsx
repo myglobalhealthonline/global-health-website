@@ -19,7 +19,7 @@ import {
   resolveSiteLogoAsset,
 } from "@/lib/content/merge-ireland-home-media";
 import { getSiteContext } from "@/lib/content/get-site-context";
-import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { getSelectedLocale } from "@/lib/i18n/selected-locale";
 import type { CountryCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
@@ -66,27 +66,23 @@ export default async function GlobalRootLayout({ children }: { children: ReactNo
       : undefined;
   const runtimeCountryConfig = runtimeCountry ? mergedByCode.get(runtimeCountry) : undefined;
 
-  // Same locale resolution the nav copy uses (URL lang > gh_locale cookie >
-  // Accept-Language). Resolved up front so it can also select the footer/
-  // trust translation below, instead of only driving the header's language
-  // switcher after the fact.
-  const currentLocale = resolveLocale({
-    headerLocale: requestHeaders.get("x-gh-locale"),
-    cookieLocale: cookieStore.get("gh_locale")?.value,
-    acceptLanguageHeader: requestHeaders.get("accept-language"),
-    countryDefaultLocale: runtimeCountryConfig?.defaultLocale,
-  });
+  // The visitor's own language (signed-in preference > cookie/header >
+  // Accept-Language > country default). Resolved up front so it also selects
+  // the footer/trust translation and the nav copy below, instead of only
+  // driving the header's language switcher after the fact.
+  const currentLocale = await getSelectedLocale(runtimeCountryConfig?.defaultLocale);
 
   // runtimeCountry is known here, so the per-country footer fetch can run
   // in the same parallel batch instead of as an extra serial round-trip
   // after it (one less hop on every global page's TTFB).
   const [{ common, navigation }, assets, activeFooter, activeTrust] =
     await Promise.all([
+      // Same locale the rest of this layout renders in — passing the raw
+      // header/cookie again would let a stale gh_locale give the nav a
+      // different language from the page around it.
       getSiteContext({
         explicitCountryCode: runtimeCountry,
-        headerLocale: requestHeaders.get("x-gh-locale"),
-        acceptLanguageHeader: requestHeaders.get("accept-language"),
-        cookieLocale: cookieStore.get("gh_locale")?.value ?? null,
+        explicitLocale: currentLocale,
       }),
       getPublicAssetsNormalized(),
       runtimeCountry ? getCountryFooter(runtimeCountry, currentLocale) : Promise.resolve(null),

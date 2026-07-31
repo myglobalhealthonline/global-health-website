@@ -1,12 +1,13 @@
 import { Prisma, type PerkKey } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
-import { grantMonthlyCredits } from "../credits/credit-balance.service.js";
+import { adjustCreditsInTx, grantMonthlyCredits } from "../credits/credit-balance.service.js";
 import {
   asPlanSnapshot,
   snapshotBenefitsUnlockMonths,
   type PlanSnapshot,
 } from "./plan-snapshot.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
+import { emitOpsAlert } from "./ops/ops-alert.js";
 
 type Tx = Prisma.TransactionClient;
 
@@ -91,6 +92,134 @@ async function upsertGrant(
 }
 
 /**
+ * Credits owed for the REST of the current period when upgrading mid-cycle.
+ *
+ * The month's grant already ran under the old plan and is period-keyed, so it
+ * can't simply re-run — only the difference is issued. Pure so the arithmetic
+ * that moves credits is testable without a database.
+ *
+ * Each side is measured through the same unlock gate the grant path applies, so
+ * an upgrade can never hand out consultation credits the subscriber hasn't
+ * unlocked yet. Clamped at zero: an upgrade must never claw back.
+ */
+export function upgradeCreditDelta(
+  previous: PlanSnapshot | null,
+  next: PlanSnapshot | null,
+  paidMonthsCount: number,
+): { consultation: number; wellness: number } {
+  const entitlement = (snap: PlanSnapshot | null) => {
+    if (!snap) return { consultation: 0, wellness: 0 };
+    const unlocked = paidMonthsCount >= snapshotBenefitsUnlockMonths(snap);
+    return {
+      consultation: unlocked ? snap.monthlyConsultationCredits : 0,
+      wellness: snap.wellnessCreditsPerMonth,
+    };
+  };
+  const before = entitlement(previous);
+  const after = entitlement(next);
+  return {
+    consultation: Math.max(0, after.consultation - before.consultation),
+    wellness: Math.max(0, after.wellness - before.wellness),
+  };
+}
+
+export interface PlanUpgradeResult {
+  newlyUnlockedPerks: PerkKey[];
+  consultationCreditsAdded: number;
+  wellnessCreditsAdded: number;
+}
+
+/**
+ * Apply an UPGRADE immediately, mid-period (industry norm: you get the tier you
+ * just paid more for today, not at the next renewal). Downgrades keep the
+ * deferred `pendingPlanId` path — the customer keeps what they already paid for
+ * until the period ends.
+ *
+ * Tenure is preserved deliberately. `paidMonthsCount` is a property of the
+ * SUBSCRIPTION, not of the plan, so it is NOT touched here: someone who unlocked
+ * their perks over two paid months on Basic keeps them the moment they move to
+ * Premium — they paid for those months. It is also not incremented: an upgrade
+ * is not a completed billing month. The same reasoning applies to the period
+ * bounds, which the next `subscription_cycle` invoice still owns.
+ *
+ * Credits are topped up by the DIFFERENCE only. The month's grant already
+ * happened under the old plan and is period-keyed, so re-running it would be a
+ * no-op — the delta is issued as an ADJUSTMENT instead, in the SAME transaction
+ * as the plan swap so a subscriber can never land on the new plan without the
+ * credits that come with it.
+ */
+export async function applyPlanUpgradeNow(input: {
+  subscriptionId: string;
+  newPlanId: string;
+  newStripePriceId: string;
+}): Promise<PlanUpgradeResult> {
+  return prisma.$transaction(
+    async (tx) => {
+      const sub = await tx.userSubscription.findUniqueOrThrow({
+        where: { id: input.subscriptionId },
+      });
+
+      const previous = asPlanSnapshot(sub.planSnapshot);
+      const snapshotVersion = sub.snapshotVersion + 1;
+      const snapshot = await captureSnapshot(input.newPlanId, snapshotVersion, tx);
+
+      const {
+        consultation: consultationCreditsAdded,
+        wellness: wellnessCreditsAdded,
+      } = upgradeCreditDelta(previous, snapshot, sub.paidMonthsCount);
+
+      await tx.userSubscription.update({
+        where: { id: sub.id },
+        data: {
+          planId: input.newPlanId,
+          stripePriceId: input.newStripePriceId,
+          planSnapshot: snapshot as unknown as Prisma.InputJsonValue,
+          snapshotVersion,
+          // An immediate upgrade supersedes any scheduled change.
+          pendingPlanId: null,
+          pendingStripePriceId: null,
+          pendingChangeEffectiveAt: null,
+          stripeSubscriptionScheduleId: null,
+        },
+      });
+
+      // Carried-over tenure → perks the new plan unlocks at or below the
+      // months already paid flip to AUTO right now.
+      const newlyUnlockedPerks = await syncPerkGrants(
+        tx,
+        sub.id,
+        snapshot,
+        sub.paidMonthsCount,
+      );
+
+      // Keyed on (sub, period, plan) so a retried upgrade tops up once.
+      const periodKey = sub.currentPeriodStart?.toISOString() ?? "no-period";
+      if (consultationCreditsAdded > 0) {
+        await adjustCreditsInTx(tx, {
+          userSubscriptionId: sub.id,
+          kind: "CONSULTATION",
+          delta: consultationCreditsAdded,
+          reason: "ADJUSTMENT",
+          idempotencyKey: `upgrade:${sub.id}:${periodKey}:${input.newPlanId}:consultation`,
+        });
+      }
+      if (wellnessCreditsAdded > 0) {
+        await adjustCreditsInTx(tx, {
+          userSubscriptionId: sub.id,
+          kind: "WELLNESS",
+          delta: wellnessCreditsAdded,
+          reason: "ADJUSTMENT",
+          idempotencyKey: `upgrade:${sub.id}:${periodKey}:${input.newPlanId}:wellness`,
+        });
+      }
+
+      return { newlyUnlockedPerks, consultationCreditsAdded, wellnessCreditsAdded };
+    },
+    { timeout: 20_000 },
+  );
+}
+
+/**
  * Period-keyed invoice grant (§36.2). One atomic tx:
  *   - (cycle) apply any pending plan change + re-snapshot (§36.4/§36.9)
  *   - reset prior unused consultation credits + grant the new month's
@@ -106,6 +235,38 @@ export async function processInvoicePaid(
   if (input.amountPaid <= 0) {
     // Trials / €0 coupon invoices never grant or advance paidMonthsCount (§36.2).
     return { handled: true, granted: false, newlyUnlockedPerks: [] };
+  }
+
+  // NEVER resurrect a CANCELED subscription. The grant below writes
+  // `status: "ACTIVE"` unconditionally, so a renewal invoice arriving after a
+  // refund / dispute / cancel-after-grace silently reinstated a membership the
+  // customer had been refunded for — and kept doing so every month. Every local
+  // CANCEL now also cancels at the provider, so a charge landing here means that
+  // cancel didn't stick: refuse the grant and page ops rather than paper over it.
+  const cancelled = await prisma.userSubscription.findUnique({
+    where: { stripeSubscriptionId: input.stripeSubscriptionId },
+    select: { id: true, userId: true, status: true },
+  });
+  if (cancelled?.status === "CANCELED") {
+    void emitOpsAlert({
+      severity: "critical",
+      title: "Paid invoice received for a CANCELED subscription",
+      detail:
+        `sub ${cancelled.id} (${input.stripeSubscriptionId}) is CANCELED but the provider charged ` +
+        `${input.amountPaid} again — the provider subscription is still live. Cancel + refund it.`,
+      context: {
+        subscriptionId: cancelled.id,
+        stripeSubscriptionId: input.stripeSubscriptionId,
+        amountPaid: input.amountPaid,
+      },
+    });
+    return {
+      handled: true,
+      granted: false,
+      subscriptionId: cancelled.id,
+      userId: cancelled.userId,
+      newlyUnlockedPerks: [],
+    };
   }
 
   return prisma.$transaction(

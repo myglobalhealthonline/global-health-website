@@ -93,6 +93,55 @@ describe("buildPatientIdLine", () => {
     );
   });
 
+  it("uses the issuing-country health id when one was captured", () => {
+    assert.equal(
+      buildPatientIdLine(
+        "IE",
+        { ...baseProfile, taxIdNumber: "078.065.579-62", addressCountryCode: "br" },
+        "1234567T",
+      ),
+      "PPS: 1234567T",
+    );
+  });
+
+  it("prints nothing when the chart id belongs to another country", () => {
+    // Cross-border Rx: a Brazilian CPF must never be labelled "PPS".
+    assert.equal(
+      buildPatientIdLine("IE", {
+        ...baseProfile,
+        taxIdNumber: "078.065.579-62",
+        addressCountryCode: "br",
+      }),
+      null,
+    );
+  });
+
+  it("still uses the chart id when the profile country matches", () => {
+    assert.equal(
+      buildPatientIdLine("IE", {
+        ...baseProfile,
+        taxIdNumber: "1234567T",
+        addressCountryCode: "ie",
+      }),
+      "PPS: 1234567T",
+    );
+  });
+
+  it("treats SP/ES and RM/RO as the same country", () => {
+    assert.equal(
+      buildPatientIdLine("SP", {
+        ...baseProfile,
+        taxIdNumber: "12345678Z",
+        addressCountryCode: "es",
+      }),
+      "DNI: 12345678Z",
+    );
+  });
+
+  it("uses the health id even when no profile exists", () => {
+    assert.equal(buildPatientIdLine("IE", null, "1234567T"), "PPS: 1234567T");
+  });
+
   it("country code is normalized to upper-case", () => {
     assert.equal(
       buildPatientIdLine("pt", { ...baseProfile, taxIdNumber: "1" }),

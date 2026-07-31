@@ -25,7 +25,7 @@ import {
   memberStatusLabel,
   memberStatusTone,
 } from "@/app/(portal)/(admin)/admin/corporate/_lib";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -92,7 +92,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
   const [sp, result, locale] = await Promise.all([
     searchParams ? searchParams : Promise.resolve({} as NonNullable<Awaited<PageProps["searchParams"]>>),
     fetchMeCorporate(),
-    getPageLocale(),
+    getPortalLocale(),
   ]);
   const t = loadLocaleBundle(locale).account.corporate;
 

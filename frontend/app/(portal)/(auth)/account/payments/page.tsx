@@ -5,7 +5,7 @@ import { getServerInvoices } from "@/lib/api/me-subscription-server";
 import type { SubscriptionInvoiceView } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { ReceiptButton } from "./_components/receipt-button";
 import { PayNowButton } from "./_components/pay-now-button";
@@ -47,7 +47,7 @@ export default async function AccountPaymentsPage() {
   const [result, invoicesData, locale] = await Promise.all([
     fetchAccountPayments(),
     getServerInvoices(),
-    getPageLocale(),
+    getPortalLocale(),
   ]);
   const { account: a, subscription } = loadLocaleBundle(locale);
   const items = result.ok ? result.data.items : [];

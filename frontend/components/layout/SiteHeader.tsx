@@ -162,13 +162,15 @@ export function SiteHeader({
     ? (countries.find((c) => c.code === activeCountryCode) ?? null)
     : null;
 
-  // Lang: URL > server-resolved locale (gh_locale cookie / Accept-Language)
-  // > last-country cookie > active country's default > "en". The server
-  // locale keeps the switcher in sync with what the page actually rendered
-  // in on global pages (/about, /blog) where there's no [lang] segment.
+  // Lang: URL segment (authoritative for the page being rendered) > the
+  // person's selected locale resolved by the layout > active country's default.
+  // The `gh-last-country` cookie's `lang` half is deliberately NOT consulted:
+  // it records the language of the last country page visited, which is a
+  // different thing from the language the visitor chose, and mixing the two is
+  // how "I picked Portuguese but the site stayed English" happened.
   const activeLang = (
     parsed.lang ??
-    (urlCountryCode ? null : (currentLocale ?? lastCountry?.lang)) ??
+    (urlCountryCode ? null : currentLocale) ??
     activeCountry?.defaultLocale ??
     "en"
   ) as LocaleCode;
@@ -185,7 +187,7 @@ export function SiteHeader({
   // context AT ALL (URL or cookie). Only show the global IA when the
   // visitor has truly never picked a country yet.
   const effectiveCountrySlug = parsed.country ?? lastCountry?.slug ?? null;
-  const effectiveLang = parsed.lang ?? lastCountry?.lang ?? null;
+  const effectiveLang = parsed.lang ?? (lastCountry ? activeLang : null);
   const sectionItems: SectionNavItem[] =
     activeCountry && effectiveCountrySlug && effectiveLang
       ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures, navigation)
@@ -237,6 +239,7 @@ export function SiteHeader({
           <CountrySwitcher
             activeCountryCode={activeCountryCode}
             countries={countries}
+            selectedLocale={activeLang}
             chooseCountryLabel={navigation.navChooseCountry}
             switchConfirmTemplate={navigation.navCountrySwitchConfirmTemplate}
             itemSingular={navigation.navCartItemSingular}
@@ -291,6 +294,7 @@ export function SiteHeader({
             bookHref={bookHref}
             countries={countries}
             lastCountry={lastCountry}
+            selectedLocale={activeLang}
             a11y={{
               openMenu: a11y.openMenu,
               menuDescription: a11y.mobileMenuDescription,

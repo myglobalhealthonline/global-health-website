@@ -1,6 +1,12 @@
-import { getStripeClient } from "../../lib/stripe/client.js";
+import {
+  DEFAULT_STRIPE_ACCOUNT,
+  getStripeClient,
+  resolveStripeAccount,
+} from "../../lib/stripe/client.js";
+import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import { checkoutBranding } from "./checkout-branding.js";
 import type {
+  BillingInvoiceView,
   BillingPort,
   BillingPriceRef,
   BillingProductRef,
@@ -22,6 +28,38 @@ export function isResourceMissing(err: unknown): boolean {
     typeof err === "object" &&
     err !== null &&
     (err as { code?: string }).code === "resource_missing"
+  );
+}
+
+/**
+ * Every method here uses the DEFAULT (Ireland) Stripe account — customers,
+ * prices, subscriptions and the billing portal all have to live on one account,
+ * and threading a per-country client through the whole port only pays off once a
+ * second market actually sells memberships. One-off payments DO route per
+ * country (`getStripeClient(countryCode)`), so a plan in a PT/CZ country would
+ * silently mint its customer + subscription on the Irish entity while its
+ * one-off orders bill elsewhere. Fail loudly at the entry point instead.
+ *
+ * ponytail: single-account until a second market sells memberships; the upgrade
+ * is `getStripeClient(countryCode)` in every method plus a per-account customer
+ * id on UserSubscription.
+ */
+function assertDefaultStripeAccount(
+  countryCode: string | null | undefined,
+  operation: string,
+): void {
+  const account = resolveStripeAccount(countryCode);
+  if (account === DEFAULT_STRIPE_ACCOUNT) return;
+  void emitOpsAlert({
+    severity: "critical",
+    title: "Subscription blocked — plan country maps to a non-default Stripe account",
+    detail:
+      `${operation} for country "${countryCode}" resolves to the "${account}" Stripe account, ` +
+      `but the subscription billing port only speaks to "${DEFAULT_STRIPE_ACCOUNT}". ` +
+      "Selling memberships in this market needs per-account subscription support first.",
+  });
+  throw new Error(
+    `Subscriptions are not configured for the "${account}" Stripe account (country "${countryCode}").`,
   );
 }
 
@@ -100,6 +138,7 @@ export class StripeBillingPort implements BillingPort {
   async createSubscriptionCheckout(
     input: CreateSubscriptionCheckoutInput,
   ): Promise<{ url: string; sessionId: string }> {
+    assertDefaultStripeAccount(input.countryCode, "subscription checkout");
     const stripe = getStripeClient();
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -121,7 +160,7 @@ export class StripeBillingPort implements BillingPort {
 
   async cancelActiveSubscriptionsForCustomer(
     customerId: string,
-  ): Promise<{ canceled: number }> {
+  ): Promise<{ canceled: number; skippedPaid: number }> {
     const stripe = getStripeClient();
     let existing;
     try {
@@ -133,17 +172,47 @@ export class StripeBillingPort implements BillingPort {
     } catch (err) {
       // Customer doesn't exist on this account (stale cross-account id) — nothing
       // to cancel. A fresh customer is minted upstream, so this is a no-op.
-      if (isResourceMissing(err)) return { canceled: 0 };
+      if (isResourceMissing(err)) return { canceled: 0, skippedPaid: 0 };
       throw err;
     }
     const cancelable = existing.data.filter((s) =>
       ["active", "trialing", "past_due", "incomplete", "unpaid"].includes(s.status),
     );
+    let canceled = 0;
+    let skippedPaid = 0;
     for (const s of cancelable) {
+      // NEVER cancel a subscription the customer has already paid for.
+      //
+      // This step exists to clear ABANDONED checkouts, and it assumed anything
+      // it found was unpaid. It wasn't: when the activating webhook goes
+      // missing our row stays INCOMPLETE, the "already subscribed" guard
+      // doesn't fire, and a second subscribe attempt landed here and cancelled
+      // a subscription whose first invoice was already settled. `cancel()` does
+      // not refund, so the money was silently forfeited — one customer paid
+      // €20, €49 and €39 on the same day and kept only the last one.
+      const paid = await stripe.invoices
+        .list({ subscription: s.id, status: "paid", limit: 1 })
+        .catch(() => null);
+      // A failed lookup counts as paid: refusing to cancel is recoverable,
+      // cancelling a paid subscription is not.
+      if (paid === null || paid.data.length > 0) {
+        skippedPaid += 1;
+        void emitOpsAlert({
+          severity: "critical",
+          title: "Refused to cancel a PAID subscription during re-subscribe",
+          detail:
+            `Stripe subscription ${s.id} on customer ${customerId} has a paid invoice ` +
+            "(or the invoice lookup failed) — left running rather than cancelled without refund. " +
+            "The customer's DB row is likely stuck INCOMPLETE from a missing webhook; reconcile it.",
+          context: { customerId, stripeSubscriptionId: s.id },
+        });
+        continue;
+      }
       // Best-effort — a concurrent cancel / natural expiry is fine to swallow.
       await stripe.subscriptions.cancel(s.id).catch(() => {});
+      canceled += 1;
     }
-    return { canceled: cancelable.length };
+    return { canceled, skippedPaid };
   }
 
   async createBillingPortalSession(input: {
@@ -165,23 +234,44 @@ export class StripeBillingPort implements BillingPort {
     });
   }
 
-  async refundLatestPayment(subscriptionId: string): Promise<{ refunded: boolean }> {
+  async cancelNow(subscriptionId: string): Promise<{ canceled: boolean }> {
     const stripe = getStripeClient();
-    const sub = await stripe.subscriptions.retrieve(subscriptionId, {
-      expand: ["latest_invoice.payment_intent"],
+    try {
+      await stripe.subscriptions.cancel(subscriptionId);
+      return { canceled: true };
+    } catch (err) {
+      // Unknown id (stale/cross-account) — nothing left to bill.
+      if (isResourceMissing(err)) return { canceled: true };
+      // Stripe rejects cancelling a subscription that is already terminal.
+      // Confirm before surfacing, so a retry of an already-done cancel is a
+      // success rather than a permanent error on the refund path.
+      //
+      // Only an EXPLICIT terminal status counts. `retrieveSubscription` swallows
+      // every error and returns null, so treating null as "already gone" would
+      // report success during a Stripe outage and let the caller mark the row
+      // CANCELED while the subscription keeps billing. Fail closed instead.
+      const live = await this.retrieveSubscription(subscriptionId);
+      if (live && (live.status === "canceled" || live.status === "incomplete_expired")) {
+        return { canceled: true };
+      }
+      throw err;
+    }
+  }
+
+  async refundInvoicePayment(stripeInvoiceId: string): Promise<{ refunded: boolean }> {
+    const stripe = getStripeClient();
+    const invoice = await stripe.invoices.retrieve(stripeInvoiceId, {
+      expand: ["payment_intent"],
     });
     // Resolve the charge defensively across Stripe API versions (invoice.charge
     // was removed in favour of payment_intent.latest_charge on newer versions).
-    const inv = (sub as unknown as { latest_invoice?: unknown }).latest_invoice;
+    const i = invoice as unknown as { charge?: unknown; payment_intent?: unknown };
     let chargeId: string | null = null;
-    if (inv && typeof inv === "object") {
-      const i = inv as { charge?: unknown; payment_intent?: unknown };
-      if (typeof i.charge === "string") {
-        chargeId = i.charge;
-      } else if (i.payment_intent && typeof i.payment_intent === "object") {
-        const pi = i.payment_intent as { latest_charge?: unknown };
-        if (typeof pi.latest_charge === "string") chargeId = pi.latest_charge;
-      }
+    if (typeof i.charge === "string") {
+      chargeId = i.charge;
+    } else if (i.payment_intent && typeof i.payment_intent === "object") {
+      const pi = i.payment_intent as { latest_charge?: unknown };
+      if (typeof pi.latest_charge === "string") chargeId = pi.latest_charge;
     }
     if (!chargeId) return { refunded: false };
     await stripe.refunds.create({ charge: chargeId });
@@ -202,10 +292,70 @@ export class StripeBillingPort implements BillingPort {
     if (itemId) {
       await stripe.subscriptions.update(input.subscriptionId, {
         items: [{ id: itemId, price: input.newPriceId }],
-        proration_behavior: "none",
+        // Upgrade: bill the prorated difference right now, so the better plan
+        // starts today. `always_invoice` finalises AND charges the proration
+        // immediately rather than parking it on the next cycle's invoice — the
+        // resulting `billing_reason: subscription_update` invoice is mirrored
+        // (not granted) by the webhook, since the caller already applied the
+        // plan + credit delta synchronously.
+        // Downgrade: no proration, price lands at the next cycle.
+        proration_behavior: input.prorateNow ? "always_invoice" : "none",
       });
     }
     return { scheduleId: null };
+  }
+
+  async findLatestSubscriptionIdForCustomer(
+    customerId: string,
+  ): Promise<string | null> {
+    const stripe = getStripeClient();
+    try {
+      // Stripe returns newest-first; `status: "all"` so a sub that already went
+      // past_due (first payment retried) is still recoverable.
+      const list = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "all",
+        limit: 1,
+      });
+      return list.data[0]?.id ?? null;
+    } catch (err) {
+      if (isResourceMissing(err)) return null;
+      throw err;
+    }
+  }
+
+  async retrieveLatestPaidInvoice(
+    subscriptionId: string,
+  ): Promise<BillingInvoiceView | null> {
+    const stripe = getStripeClient();
+    try {
+      const list = await stripe.invoices.list({
+        subscription: subscriptionId,
+        status: "paid",
+        limit: 1,
+      });
+      const inv = list.data[0];
+      if (!inv) return null;
+      const linePeriod = inv.lines?.data?.[0]?.period;
+      const unix = (v: number | null | undefined) =>
+        typeof v === "number" && v > 0 ? new Date(v * 1000) : null;
+      return {
+        id: inv.id ?? subscriptionId,
+        billingReason: inv.billing_reason ?? null,
+        amountPaidCents: inv.amount_paid ?? 0,
+        currency: inv.currency ?? null,
+        number: inv.number ?? null,
+        taxCents: (inv as unknown as { tax?: number | null }).tax ?? 0,
+        hostedInvoiceUrl: inv.hosted_invoice_url ?? null,
+        pdfUrl: inv.invoice_pdf ?? null,
+        status: inv.status ?? null,
+        periodStart: unix(linePeriod?.start) ?? unix(inv.period_start),
+        periodEnd: unix(linePeriod?.end) ?? unix(inv.period_end),
+      };
+    } catch (err) {
+      if (isResourceMissing(err)) return null;
+      throw err;
+    }
   }
 
   async retrieveSubscription(

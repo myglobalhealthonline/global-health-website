@@ -1,7 +1,7 @@
 import { fetchDoctorMessageThreads } from "@/lib/api/doctor-api";
 import { AdminCard, PageHeader, Pill } from "@/components/portal-atoms";
 import { DoctorMessagesInbox } from "./inbox";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 type Props = { searchParams?: Promise<{ open?: string }> };
 
 export default async function DoctorMessagesPage({ searchParams }: Props) {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const sp = searchParams ? await searchParams : {};
   const result = await fetchDoctorMessageThreads();

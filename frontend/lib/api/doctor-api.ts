@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 
 /**
  * Server-side fetchers for the doctor portal. Each call forwards the
@@ -115,6 +116,11 @@ export type DoctorPermissions = {
   doctorId: string;
   canCreateManualAppointments: boolean;
   canRequestCrossJurisdictionRx: boolean;
+  /** True only when the master flag is on AND at least one market is granted —
+   *  the backend ANDs the two, so this can be trusted to gate the nav entry
+   *  without the caller also checking `directorCountries.length`. */
+  isCountryDirector: boolean;
+  directorCountries: Array<{ code: string; name: string }>;
 };
 
 export async function fetchDoctorPermissions() {
@@ -627,8 +633,8 @@ export type ConsultationServiceLineDto = {
 
 export async function fetchDoctorConsultationServices(consultationId: string) {
   // Service names are translatable; backend resolves against ?locale=, so
-  // thread the doctor's UI language (gh_locale cookie) through.
-  const locale = (await cookies()).get("gh_locale")?.value;
+  // thread the doctor's UI language (their own saved selection) through.
+  const locale = await getPortalLocale();
   const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
   return doctorRequest<{ items: ConsultationServiceLineDto[] }>(
     `/api/doctor/consultations/${consultationId}/services${qs}`,
@@ -749,6 +755,70 @@ export async function fetchDoctorReports(query?: {
   );
 }
 
+// Country-director consultation oversight. Unlike every other fetcher in this
+// file, the rows are NOT this doctor's own — they cover every doctor in the
+// markets an admin granted. Payload is deliberately narrow: patient name only
+// (no email/phone), no clinical content, no money.
+export type DoctorCountryConsultationsDto = {
+  range: { from: string; to: string };
+  filters: {
+    countryCode: string | null;
+    consultationType: string | null;
+    status: string | null;
+    paymentStatus: string | null;
+    doctorId: string | null;
+    search: string | null;
+  };
+  items: Array<{
+    id: string;
+    createdAt: string;
+    scheduledAt: string | null;
+    patientName: string;
+    countryCode: string;
+    consultationType: string;
+    status: string;
+    paymentStatus: string;
+    doctorId: string | null;
+    doctorName: string | null;
+  }>;
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  counts: {
+    byStatus: Array<{ status: string; count: number }>;
+    byPayment: Array<{ paymentStatus: string; count: number }>;
+  };
+  /** The granted markets — drives the country filter, so it stays populated
+   *  even when the current range has no rows. */
+  countries: Array<{ code: string; name: string }>;
+  doctors: Array<{ id: string; fullName: string }>;
+};
+
+export async function fetchDoctorCountryConsultations(query?: {
+  from?: string;
+  to?: string;
+  countryCode?: string;
+  consultationType?: string;
+  status?: string;
+  paymentStatus?: string;
+  doctorId?: string;
+  search?: string;
+  page?: string;
+  pageSize?: string;
+}) {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query ?? {})) {
+    if (value !== undefined && value !== "") params.set(key, value);
+  }
+  const qs = params.toString();
+  return doctorRequest<DoctorCountryConsultationsDto>(
+    qs
+      ? `/api/doctor/country-consultations?${qs}`
+      : "/api/doctor/country-consultations",
+  );
+}
+
 // Notifications
 export type DoctorNotificationDto = {
   id: string;
@@ -811,8 +881,8 @@ export type DoctorServicesPayload = {
 
 export async function fetchDoctorServices() {
   // Service names/summaries are translatable; backend resolves against
-  // ?locale=, so thread the doctor's UI language (gh_locale cookie) through.
-  const locale = (await cookies()).get("gh_locale")?.value;
+  // ?locale=, so thread the doctor's UI language (their own saved selection).
+  const locale = await getPortalLocale();
   const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
   return doctorRequest<DoctorServicesPayload>(`/api/doctor/services${qs}`);
 }

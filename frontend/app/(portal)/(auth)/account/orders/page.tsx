@@ -7,7 +7,7 @@ import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/Colu
 import { formatAppDate, formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { statusTone } from "@/lib/format-order-status";
 
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export default async function AccountOrdersPage() {
   const [result, locale] = await Promise.all([
     fetchAccountOrders(),
-    getPageLocale(),
+    getPortalLocale(),
   ]);
   const { account: a } = loadLocaleBundle(locale);
   const items = result.ok ? result.data.items : [];

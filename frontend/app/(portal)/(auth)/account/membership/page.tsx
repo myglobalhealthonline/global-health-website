@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Award, Activity, CalendarClock, CreditCard, Sparkles, Gift, CheckCircle2 } from "lucide-react";
+import { Activity, Award, BadgeCheck, CalendarClock, CheckCircle2, CreditCard, Gift, Sparkles } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
@@ -9,12 +9,17 @@ import {
   getServerSubscription,
 } from "@/lib/api/me-subscription-server";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
-import { AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, SectionHeader, StatCard } from "@/components/portal-atoms";
+import { deriveMemberId } from "@/lib/subscription/member-id";
+import { subscriptionStatusLabel } from "@/lib/subscription/status-label";
+import { interpolate } from "@/lib/subscription/format";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
+import { MembershipCard } from "../_components/MembershipCard";
+import { MembershipTimeline, type TimelineStep } from "../_components/MembershipTimeline";
 import { MembershipTabsClient } from "./_components/MembershipTabsClient";
 import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 import { RewardsPanel } from "../rewards/_components/RewardsPanel";
@@ -41,16 +46,21 @@ export default async function MembershipPage({
     getServerCredits(),
     getServerRedemptions(),
     getServerAuthUser(),
-    getPageLocale(),
+    getPortalLocale(),
   ]);
-  const { subscription, account: a } = loadLocaleBundle(locale);
+  const { subscription, account: a, common } = loadLocaleBundle(locale);
   const t = subscription.manage;
   const rt = subscription.redeem;
 
   if (!sub || !sub.plan) {
     return (
       <div className="gh-patient-page gh-patient-membership-page">
-        <PageHeader title={t.title} description={t.subtitle} />
+        <PageHeader
+          eyebrow={a.nav.membership}
+          icon={<BadgeCheck aria-hidden />}
+          title={t.title}
+          description={t.subtitle}
+        />
         <div className="gh-patient-empty-state gh-card max-w-xl p-8">
           <AdminEmptyState
             title={a.membership.noActiveMembership}
@@ -88,6 +98,81 @@ export default async function MembershipPage({
     : null;
   const pricingHref = config ? `/${config.slug}/${locale}/pricing` : "/";
 
+  // Tier position inside this country's ladder (cheapest = 1), for the card's
+  // pips. 0 when the plan isn't in the fetched catalogue — pips are dropped.
+  const ladder = [...plans].sort((x, y) => x.monthlyPriceCents - y.monthlyPriceCents);
+  const tier = ladder.findIndex((p) => p.id === sub.plan!.id) + 1;
+  const statusLabel = subscriptionStatusLabel(sub.status, t);
+  const benefitsLive = sub.benefitsUnlocked !== false && sub.status === "ACTIVE";
+  const unlockMonths = sub.benefitsUnlockAfterPaidMonths ?? 2;
+  // "Member since" only exists once a payment has cleared; before that the tile
+  // and the timeline both say so rather than showing an empty slot.
+  // Derived by counting the paid months back from the current period end —
+  // the API carries no start date.
+  const memberSince = (() => {
+    if (sub.paidMonthsCount <= 0 || !sub.currentPeriodEnd) return null;
+    const started = new Date(sub.currentPeriodEnd);
+    started.setMonth(started.getMonth() - sub.paidMonthsCount);
+    return new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(started);
+  })();
+
+  /** Lifecycle steps: what already happened, what is happening, what is next. */
+  const steps: TimelineStep[] = sub.status === "ACTIVE"
+    ? [
+        {
+          state: "done",
+          when: memberSince ?? a.membership.stepWhenNow,
+          title: a.membership.stepStartedTitle,
+          body: a.membership.stepStartedBody,
+        },
+        benefitsLive
+          ? {
+              state: "done" as const,
+              when: interpolate(a.membership.stepWhenAfterMonths, { months: unlockMonths }),
+              title: a.membership.stepUnlockedTitle,
+              body: interpolate(a.membership.stepUnlockedBody, { months: unlockMonths }),
+            }
+          : {
+              state: "todo" as const,
+              when: interpolate(a.membership.stepWhenAfterMonths, { months: unlockMonths }),
+              title: a.membership.stepUnlockTitle,
+              body: a.membership.stepUnlockBody,
+            },
+        sub.cancelAtPeriodEnd
+          ? {
+              state: "now" as const,
+              when: nextBillingLabel ?? a.membership.stepWhenNext,
+              title: a.membership.stepEndsTitle,
+              body: a.membership.stepEndsBody,
+            }
+          : {
+              state: "now" as const,
+              when: nextBillingLabel ?? a.membership.stepWhenNext,
+              title: interpolate(a.membership.stepRenewTitle, { price: priceLabel }),
+              body: a.membership.stepRenewBody,
+            },
+      ]
+    : [
+        {
+          state: "now",
+          when: a.membership.stepWhenNow,
+          title: a.membership.stepWaitingTitle,
+          body: a.membership.stepWaitingBody,
+        },
+        {
+          state: "todo",
+          when: a.membership.stepWhenNext,
+          title: a.membership.stepSwitchOnTitle,
+          body: a.membership.stepSwitchOnBody,
+        },
+        {
+          state: "todo",
+          when: interpolate(a.membership.stepWhenAfterMonths, { months: unlockMonths }),
+          title: a.membership.stepUnlockTitle,
+          body: a.membership.stepUnlockBody,
+        },
+      ];
+
   const kits = redemptions?.kits ?? [];
   const livePlan = plans.find((p) => p.id === sub.plan?.id);
   const unlockByKit = new Map(
@@ -100,27 +185,96 @@ export default async function MembershipPage({
 
   return (
     <div className="gh-patient-page gh-patient-membership-page">
-      <PageHeader title={t.title} description={t.subtitle} />
+      <PageHeader
+        eyebrow={a.nav.membership}
+        icon={<BadgeCheck aria-hidden />}
+        title={t.title}
+        description={t.subtitle}
+      />
       <MembershipTabsClient
         tabMembership={a.nav.membership}
         tabRewards={a.nav.rewards}
         tabsAria={a.membership.tabsAria}
         membershipPanel={
           <>
-            <AdminSummaryStrip
-              className="mb-5"
-              items={[
-                { label: a.membership.sumPlan, value: sub.plan.name, hint: a.membership.sumPlanHint, icon: <Award aria-hidden /> },
-                { label: a.membership.sumStatus, value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? a.membership.cancellationScheduled : a.membership.sumStatusHint, icon: <Activity aria-hidden /> },
-                { label: a.membership.sumNextBilling, value: nextBillingLabel ?? a.membership.notScheduled, hint: a.membership.sumNextBillingHint, icon: <CalendarClock aria-hidden /> },
-                { label: a.membership.sumPrice, value: priceLabel, hint: a.membership.sumPriceHint, icon: <CreditCard aria-hidden /> },
-              ]}
-            />
+            {/* Hero: the card carries identity (plan, holder, member no.,
+                renewal, market, status); the facts panel beside it carries the
+                billing numbers. Nothing repeats — the old summary strip and the
+                manage panel's "Current plan" block said the same things three
+                times over. */}
+            <div className="gh-membership-hero mb-5">
+              <MembershipCard
+                planName={sub.plan.name}
+                cardholderName={user?.fullName ?? ""}
+                memberId={user ? deriveMemberId(user.id) : "—"}
+                validThrough={nextBillingLabel ?? a.membership.notScheduled}
+                countryName={config?.name ?? null}
+                status={sub.status}
+                statusLabel={statusLabel}
+                cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
+                // Short pill copy — "Cancellation scheduled" ellipsises on the
+                // card at column widths; the facts panel spells it out.
+                cancelLabel={a.membership.cardEnding}
+                tier={tier}
+                labels={{
+                  cardholder: a.membership.cardCardholder,
+                  memberId: a.membership.cardMemberId,
+                  validThrough: a.membership.cardValidThrough,
+                  // Brand motto — same string the entry gate prints, kept
+                  // untranslated in every locale bundle by design.
+                  motto: common.entryGate.motto,
+                }}
+              />
+              {/* Billing facts as the portal's own stat tiles — same anatomy
+                  as the account dashboard, so the tab reads as portal
+                  furniture rather than a bespoke panel. */}
+              <div className="gh-membership-facts grid gap-3">
+                <StatCard
+                  tone="brand"
+                  label={t.monthlyPrice}
+                  value={priceLabel}
+                  hint={a.membership.priceHintBilled}
+                  icon={<CreditCard className="size-5" aria-hidden />}
+                />
+                {/* No period end exists until the first payment clears — say
+                    that, instead of the bare "Not scheduled" that read as a
+                    bug. */}
+                <StatCard
+                  tone={nextBillingLabel ? "accent" : "warning"}
+                  label={t.nextBilling}
+                  value={nextBillingLabel ?? a.membership.billingNotSet}
+                  hint={nextBillingLabel ? a.membership.sumNextBillingHint : a.membership.billingNotSetHint}
+                  icon={<CalendarClock className="size-5" aria-hidden />}
+                />
+                <StatCard
+                  tone="neutral"
+                  label={a.membership.memberSince}
+                  value={memberSince ?? a.membership.memberSincePending}
+                  hint={
+                    memberSince
+                      ? interpolate(a.membership.memberSinceHint, { months: sub.paidMonthsCount })
+                      : a.membership.memberSinceHintPending
+                  }
+                  icon={<Activity className="size-5" aria-hidden />}
+                />
+              </div>
+            </div>
+            {/* Benefits (what you get) — rendered by the dashboard in its
+                embedded cut, so credits/wellness/perks stay one source. */}
+            <SubscriptionDashboard locale={locale} embedded />
+
+            <AdminCard padding={0} className="mt-5">
+              <SectionHeader as="h2" title={a.membership.timelineTitle} description={a.membership.timelineDesc} />
+              <div className="p-5">
+                <MembershipTimeline steps={steps} />
+              </div>
+            </AdminCard>
+
+            <div className="mt-5">
             <ManagePanel
               t={t}
+              m={a.membership}
               status={sub.status}
-              planName={sub.plan.name}
-              priceLabel={priceLabel}
               currentPriceCents={sub.plan.monthlyPriceCents}
               nextBillingLabel={nextBillingLabel}
               cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
@@ -133,10 +287,7 @@ export default async function MembershipPage({
               returnState={returnState ?? null}
               pricingHref={pricingHref}
             />
-            {/* Consolidated benefits: GP credits remaining, wellness, discount perks
-                and their unlock conditions (Req 3). Reuses the dashboard widgets;
-                `embedded` hides its plan card since ManagePanel shows that above. */}
-            <SubscriptionDashboard locale={locale} embedded />
+            </div>
           </>
         }
         rewardsPanel={

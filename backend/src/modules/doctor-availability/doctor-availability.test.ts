@@ -1,6 +1,10 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { intervalsOverlap } from "./doctor-availability.service.js";
+import {
+  intervalsOverlap,
+  selectMissingSlots,
+  selectStaleSlots,
+} from "./doctor-availability.service.js";
 import {
   eachClinicLocalDay,
   isValidTimeZone,
@@ -123,5 +127,141 @@ describe("intervalsOverlap", () => {
   it("returns false for zero-length intervals at the boundary", () => {
     // Degenerate but the math still holds — endAt == startAt of the next.
     assert.equal(intervalsOverlap(slot("09:00", "09:00"), slot("09:00", "09:30")), false);
+  });
+});
+
+describe("selectMissingSlots", () => {
+  const at = (iso: string) => new Date(iso);
+  const slot = (iso: string) => ({ startAt: at(iso), endAt: at(iso) });
+
+  it("returns only the candidates whose start is not already on the calendar", () => {
+    const generated = [
+      slot("2026-07-31T09:00:00.000Z"),
+      slot("2026-07-31T09:15:00.000Z"),
+      slot("2026-07-31T09:30:00.000Z"),
+    ];
+    const missing = selectMissingSlots(generated, [at("2026-07-31T09:15:00.000Z")]);
+    assert.deepEqual(
+      missing.map((m) => m.startAt.toISOString()),
+      ["2026-07-31T09:00:00.000Z", "2026-07-31T09:30:00.000Z"],
+    );
+  });
+
+  it("returns nothing when every candidate already exists", () => {
+    const generated = [slot("2026-07-31T09:00:00.000Z"), slot("2026-07-31T09:15:00.000Z")];
+    const missing = selectMissingSlots(
+      generated,
+      generated.map((g) => g.startAt),
+    );
+    assert.equal(missing.length, 0);
+  });
+
+  it("still generates when unrelated slots out-number the candidates", () => {
+    // The regression: a doctor whose week is full of BLOCKED slots left over
+    // from a deleted window adds a new Friday window. The old count-based
+    // short-circuit saw "52 existing >= 4 candidates" and skipped the insert,
+    // so the new window listed in the UI but produced no slots at all.
+    const leftovers = Array.from({ length: 52 }, (_, i) =>
+      at(new Date(Date.UTC(2026, 6, 29, 8, i * 15)).toISOString()),
+    );
+    const generated = [
+      slot("2026-07-31T00:30:00.000Z"),
+      slot("2026-07-31T00:45:00.000Z"),
+      slot("2026-07-31T01:00:00.000Z"),
+      slot("2026-07-31T01:15:00.000Z"),
+    ];
+    const missing = selectMissingSlots(generated, leftovers);
+    assert.equal(missing.length, 4);
+  });
+});
+
+describe("selectStaleSlots", () => {
+  const at = (iso: string) => new Date(iso);
+  /** A 15-min base slot starting at `iso`. */
+  const base = (iso: string, minutes = 15) => ({
+    id: iso,
+    startAt: at(iso),
+    endAt: new Date(at(iso).getTime() + minutes * 60 * 1000),
+  });
+
+  it("keeps slots a live window still generates", () => {
+    const rows = [base("2026-08-10T09:00:00.000Z"), base("2026-08-10T09:15:00.000Z")];
+    assert.deepEqual(selectStaleSlots(rows, rows), []);
+  });
+
+  it("drops slots on a weekday no window covers any more", () => {
+    // The bug: a Friday window was re-pointed at Monday, and the Friday slots
+    // stayed behind — unreachable from the windows list, un-regeneratable, and
+    // still bookable by a patient on a day the doctor no longer works.
+    const monday = [base("2026-08-10T09:00:00.000Z"), base("2026-08-10T09:15:00.000Z")];
+    const friday = [base("2026-08-14T09:00:00.000Z")];
+    const stale = selectStaleSlots([...monday, ...friday], monday);
+    assert.deepEqual(
+      stale.map((s) => s.startAt.toISOString()),
+      ["2026-08-14T09:00:00.000Z"],
+    );
+  });
+
+  it("drops slots outside the window's new hours but keeps the rest", () => {
+    // Window narrowed from 09:00–10:00 to 09:30–10:00.
+    const rows = [
+      base("2026-08-10T09:00:00.000Z"),
+      base("2026-08-10T09:15:00.000Z"),
+      base("2026-08-10T09:30:00.000Z"),
+      base("2026-08-10T09:45:00.000Z"),
+    ];
+    const stale = selectStaleSlots(rows, rows.slice(2));
+    assert.deepEqual(
+      stale.map((s) => s.startAt.toISOString()),
+      ["2026-08-10T09:00:00.000Z", "2026-08-10T09:15:00.000Z"],
+    );
+  });
+
+  it("drops a coarse legacy slot that shares its start with a base candidate", () => {
+    // Duration drift: a 30-min row at 09:00 and a 15-min candidate at 09:00
+    // have the same start. Matching on start alone would keep the coarse row,
+    // and the 09:15 candidate would then die on the overlap exclusion
+    // constraint — the doctor's grid stays on a step no window describes.
+    const legacy = base("2026-08-10T09:00:00.000Z", 30);
+    const candidates = [base("2026-08-10T09:00:00.000Z"), base("2026-08-10T09:15:00.000Z")];
+    assert.deepEqual(
+      selectStaleSlots([legacy], candidates).map((s) => s.endAt.toISOString()),
+      ["2026-08-10T09:30:00.000Z"],
+    );
+  });
+
+  it("treats an empty candidate set as everything being stale", () => {
+    // Last window deleted — nothing justifies any of it.
+    const rows = [base("2026-08-10T09:00:00.000Z"), base("2026-08-14T09:00:00.000Z")];
+    assert.equal(selectStaleSlots(rows, []).length, 2);
+  });
+
+  it("keeps a BLOCKED slot whose span drifted but still overlaps a window", () => {
+    // The regression this rule exists for: a 30-min BLOCKED row at 09:00 under
+    // a window that now steps 15 min. The exact-span rule would delete it, and
+    // regeneration only ever mints OPEN — so the doctor's "I'm busy" mark would
+    // come back as bookable time on the next window edit.
+    const blocked = { ...base("2026-08-10T09:00:00.000Z", 30), status: "BLOCKED" as const };
+    const candidates = [base("2026-08-10T09:00:00.000Z"), base("2026-08-10T09:15:00.000Z")];
+    assert.deepEqual(selectStaleSlots([blocked], candidates), []);
+  });
+
+  it("still drops a BLOCKED slot that overlaps no window at all", () => {
+    // A block left on a weekday the doctor no longer works is a true orphan:
+    // nothing lists it, nothing regenerates it, and it draws red forever.
+    const blocked = { ...base("2026-08-14T09:00:00.000Z"), status: "BLOCKED" as const };
+    const candidates = [base("2026-08-10T09:00:00.000Z")];
+    assert.deepEqual(
+      selectStaleSlots([blocked], candidates).map((s) => s.startAt.toISOString()),
+      ["2026-08-14T09:00:00.000Z"],
+    );
+  });
+
+  it("keeps applying the exact-span rule to OPEN slots", () => {
+    // Only BLOCKED gets the lenient rule. A coarse OPEN row must still go, or
+    // the finer candidates die on the overlap exclusion constraint.
+    const open = { ...base("2026-08-10T09:00:00.000Z", 30), status: "OPEN" as const };
+    const candidates = [base("2026-08-10T09:00:00.000Z"), base("2026-08-10T09:15:00.000Z")];
+    assert.equal(selectStaleSlots([open], candidates).length, 1);
   });
 });

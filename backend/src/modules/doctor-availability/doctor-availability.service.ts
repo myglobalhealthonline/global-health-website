@@ -1,7 +1,11 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, type DoctorSlotStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
+import {
+  invalidateAvailabilityCaches,
+  registerAvailabilityCache,
+} from "./availability-cache-bus.js";
 import {
   calendarDayNumber,
   eachClinicLocalDay,
@@ -29,6 +33,13 @@ import {
  *   `UPDATE … WHERE id=? AND status='OPEN'` so two patients hitting
  *   submit at the same instant can't both grab the same slot.
  */
+
+/**
+ * Product-wide base grid. Recurring windows generate on it and consultations
+ * consume consecutive base slots to fit their real length, so a resize snaps to
+ * it too. Mirrors the frontend's `BASE_SLOT_MINUTES`.
+ */
+export const BASE_SLOT_MINUTES = 15;
 
 export class SlotAlreadyTakenError extends Error {
   constructor() {
@@ -87,17 +98,26 @@ export async function resolveDoctorTimeZones(doctorId: string): Promise<string[]
   return zones;
 }
 
+/** A half-open UTC interval the bulk operations act on. */
+export type SlotSpan = { fromUtc: Date; toUtc: Date };
+
+/** Outcome shape shared by every bulk slot operation. Partial success is the
+ *  normal case — a sweep across real working days routinely covers booked
+ *  time — so the caller gets counts rather than an all-or-nothing error. */
+export type BulkSlotResult = {
+  /** Slots actually changed (blocked, unblocked, or removed). */
+  changed: number;
+  /** Slots left alone because they are BOOKED or HELD. */
+  skippedOccupied: number;
+  /** Ids that matched no slot of this doctor (only meaningful for id-based calls). */
+  skippedMissing: number;
+};
+
 /**
  * Bulk block (or unblock) a doctor's slots across a UTC range — the
  * "whole day / vacation" control on the doctor calendar.
  *
- * BLOCK: materialises slots for the range first (so a day with no concrete
- * rows yet still gets blocked), then flips every OPEN slot in [fromUtc, toUtc)
- * to BLOCKED with the given reason. BOOKED/HELD are left untouched — those are
- * real appointments/cart holds and must be cancelled through their own flow.
- *
- * UNBLOCK: flips BLOCKED slots in the range back to OPEN and clears the reason.
- * Returns the number of slots changed.
+ * Thin wrapper over `bulkSetSlotBlockInSpans` for the single-span callers.
  */
 export async function bulkSetSlotBlockInRange(
   doctorId: string,
@@ -106,48 +126,596 @@ export async function bulkSetSlotBlockInRange(
   action: "BLOCK" | "UNBLOCK",
   reason?: string | null,
 ): Promise<{ updated: number }> {
-  if (toUtc <= fromUtc) return { updated: 0 };
+  const result = await bulkSetSlotBlockInSpans(
+    doctorId,
+    [{ fromUtc, toUtc }],
+    action,
+    reason,
+  );
+  return { updated: result.changed };
+}
+
+/**
+ * Block (or unblock) every eligible slot inside each of the given UTC spans.
+ *
+ * A list of spans rather than one range because the UI collects a date range
+ * PLUS a daily time range ("09:00–13:00, Mon to Fri"). Flattening that into a
+ * single Mon-09:00 → Fri-13:00 interval would also swallow the nights and the
+ * afternoons in between, so the caller — which owns the display timezone —
+ * expands it into one span per day and sends them together.
+ *
+ * BLOCK materialises the recurring-window slots for each span first, otherwise
+ * a day whose rows do not exist yet would silently stay bookable. BOOKED/HELD
+ * are never touched: those are real appointments and cart holds, and they come
+ * back in `skippedOccupied` so the UI can say so.
+ */
+export async function bulkSetSlotBlockInSpans(
+  doctorId: string,
+  spans: SlotSpan[],
+  action: "BLOCK" | "UNBLOCK",
+  reason?: string | null,
+): Promise<BulkSlotResult> {
+  const valid = spans.filter((s) => s.toUtc > s.fromUtc);
+  if (valid.length === 0) {
+    return { changed: 0, skippedOccupied: 0, skippedMissing: 0 };
+  }
+
   try {
     if (action === "BLOCK") {
-      // Make sure recurring-window slots exist before we block the span,
-      // otherwise a not-yet-materialised day would silently stay bookable.
-      await ensureSlotsForRange(doctorId, fromUtc, toUtc);
-      const result = await prisma.doctorTimeSlot.updateMany({
-        where: {
-          doctorId,
-          status: "OPEN",
-          startAt: { gte: fromUtc, lt: toUtc },
-        },
-        data: { status: "BLOCKED", blockReason: reason ?? null },
-      });
-      return { updated: result.count };
+      for (const span of valid) {
+        await ensureSlotsForRange(doctorId, span.fromUtc, span.toUtc);
+      }
     }
-    const result = await prisma.doctorTimeSlot.updateMany({
-      where: {
-        doctorId,
-        status: "BLOCKED",
-        startAt: { gte: fromUtc, lt: toUtc },
-      },
-      data: { status: "OPEN", blockReason: null },
+
+    const where = {
+      doctorId,
+      OR: valid.map((s) => ({ startAt: { gte: s.fromUtc, lt: s.toUtc } })),
+    };
+    const skippedOccupied = await prisma.doctorTimeSlot.count({
+      where: { ...where, status: { in: ["BOOKED", "HELD"] } },
     });
-    return { updated: result.count };
+
+    const result = await prisma.doctorTimeSlot.updateMany({
+      where: { ...where, status: action === "BLOCK" ? "OPEN" : "BLOCKED" },
+      data:
+        action === "BLOCK"
+          ? { status: "BLOCKED", blockReason: reason?.trim() || null }
+          : { status: "OPEN", blockReason: null },
+    });
+
+    // Inventory changed either way — an unblocked slot must become bookable now,
+    // not after the read cache's TTL.
+    invalidateAvailabilityCaches();
+    return { changed: result.count, skippedOccupied, skippedMissing: 0 };
   } catch (error) {
     throw normalizeDbError(error, "Could not update availability");
   }
 }
 
 /**
- * Ensure DoctorTimeSlot rows exist for every window across the requested
- * date range. Idempotent — uses `createMany({ skipDuplicates: true })`
- * against the `@@unique([doctorId, startAt])` index. Doctors with no
- * availability rows produce zero slots.
+ * Remove every eligible slot inside the given UTC spans, permanently.
+ *
+ * The batch twin of `removeSlotForDate`: deleting rows alone does not stick,
+ * because the generators re-materialise slots from the recurring windows on the
+ * next availability read. Each removed span is therefore also written as a
+ * `DoctorAvailabilityException`. The weekly windows themselves are untouched.
  */
-export async function ensureSlotsForRange(
+export async function bulkRemoveSlotsInSpans(
+  doctorId: string,
+  spans: SlotSpan[],
+  reason?: string | null,
+): Promise<BulkSlotResult> {
+  const valid = spans.filter((s) => s.toUtc > s.fromUtc);
+  if (valid.length === 0) {
+    return { changed: 0, skippedOccupied: 0, skippedMissing: 0 };
+  }
+
+  try {
+    const where = {
+      doctorId,
+      OR: valid.map((s) => ({ startAt: { gte: s.fromUtc, lt: s.toUtc } })),
+    };
+    const rows = await prisma.doctorTimeSlot.findMany({
+      where,
+      select: { id: true, status: true, startAt: true, endAt: true },
+    });
+    const removable = rows.filter(
+      (r) => r.status === "OPEN" || r.status === "BLOCKED",
+    );
+    const skippedOccupied = rows.length - removable.length;
+    if (removable.length === 0) {
+      return { changed: 0, skippedOccupied, skippedMissing: 0 };
+    }
+
+    const changed = await deleteSlotsWithExceptions(doctorId, removable, reason);
+    invalidateAvailabilityCaches();
+    return { changed, skippedOccupied, skippedMissing: 0 };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not remove slots");
+  }
+}
+
+/**
+ * Block / unblock / remove an explicit set of slots — what the calendar's
+ * multi-select posts. Ids are scoped by `doctorId` in the query, so one
+ * doctor's slot id can never mutate another doctor's calendar even if the
+ * caller is authorized for both.
+ */
+export async function bulkSlotActionByIds(
+  doctorId: string,
+  slotIds: string[],
+  action: "BLOCK" | "UNBLOCK" | "REMOVE",
+  reason?: string | null,
+): Promise<BulkSlotResult> {
+  const ids = [...new Set(slotIds)];
+  if (ids.length === 0) {
+    return { changed: 0, skippedOccupied: 0, skippedMissing: 0 };
+  }
+
+  try {
+    const rows = await prisma.doctorTimeSlot.findMany({
+      where: { id: { in: ids }, doctorId },
+      select: { id: true, status: true, startAt: true, endAt: true },
+    });
+    const skippedMissing = ids.length - rows.length;
+    const eligible = rows.filter(
+      (r) => r.status === "OPEN" || r.status === "BLOCKED",
+    );
+    const skippedOccupied = rows.length - eligible.length;
+    if (eligible.length === 0) {
+      return { changed: 0, skippedOccupied, skippedMissing };
+    }
+
+    if (action === "REMOVE") {
+      const changed = await deleteSlotsWithExceptions(doctorId, eligible, reason);
+      invalidateAvailabilityCaches();
+      return { changed, skippedOccupied, skippedMissing };
+    }
+
+    // Re-assert the source status in the filter: a slot already in the target
+    // state isn't a change, and a booking that landed since the read above must
+    // not be flipped.
+    const result = await prisma.doctorTimeSlot.updateMany({
+      where: {
+        id: { in: eligible.map((r) => r.id) },
+        doctorId,
+        status: action === "BLOCK" ? "OPEN" : "BLOCKED",
+      },
+      data:
+        action === "BLOCK"
+          ? { status: "BLOCKED", blockReason: reason?.trim() || null }
+          : { status: "OPEN", blockReason: null },
+    });
+
+    invalidateAvailabilityCaches();
+    return { changed: result.count, skippedOccupied, skippedMissing };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not update slots");
+  }
+}
+
+/**
+ * Dispatcher behind both bulk endpoints (doctor-scoped and admin-scoped), so
+ * the two routes differ only in how they establish the doctor. Takes the
+ * request body as parsed by the shared zod schema — ISO strings in, counts out.
+ */
+export async function runBulkSlotAction(
+  doctorId: string,
+  input: {
+    action: "BLOCK" | "UNBLOCK" | "REMOVE";
+    spans?: { fromUtc: string; toUtc: string }[];
+    slotIds?: string[];
+    reason?: string;
+  },
+): Promise<BulkSlotResult> {
+  if (input.slotIds) {
+    return bulkSlotActionByIds(doctorId, input.slotIds, input.action, input.reason);
+  }
+  const spans: SlotSpan[] = (input.spans ?? []).map((s) => ({
+    fromUtc: new Date(s.fromUtc),
+    toUtc: new Date(s.toUtc),
+  }));
+  return input.action === "REMOVE"
+    ? bulkRemoveSlotsInSpans(doctorId, spans, input.reason)
+    : bulkSetSlotBlockInSpans(doctorId, spans, input.action, input.reason);
+}
+
+/**
+ * Delete slots and tombstone their spans in one transaction. Shared by the two
+ * bulk removal paths; the exception rows are what stop `ensureSlotsForRange`
+ * putting the slots straight back.
+ */
+async function deleteSlotsWithExceptions(
+  doctorId: string,
+  slots: { id: string; startAt: Date; endAt: Date }[],
+  reason?: string | null,
+): Promise<number> {
+  const note = reason?.trim() || null;
+  return prisma.$transaction(async (tx) => {
+    // Exceptions first: if the delete loses a race the hole is already recorded.
+    await tx.doctorAvailabilityException.deleteMany({
+      where: { doctorId, startAt: { in: slots.map((s) => s.startAt) } },
+    });
+    await tx.doctorAvailabilityException.createMany({
+      data: slots.map((s) => ({
+        doctorId,
+        startAt: s.startAt,
+        endAt: s.endAt,
+        reason: note,
+      })),
+      skipDuplicates: true,
+    });
+    // Status re-asserted here too — a booking claimed between the read and now
+    // keeps its slot rather than losing it to a stale sweep.
+    const deleted = await tx.doctorTimeSlot.deleteMany({
+      where: {
+        id: { in: slots.map((s) => s.id) },
+        doctorId,
+        status: { in: ["OPEN", "BLOCKED"] },
+      },
+    });
+    return deleted.count;
+  });
+}
+
+/**
+ * Which generated candidates are not already on the calendar, by start instant.
+ *
+ * Extracted and exported for the regression test: this used to be a COUNT
+ * comparison ("the range already holds as many slots as we'd generate, so skip
+ * the insert"), which quietly assumed the existing rows were always a subset of
+ * the candidates. A doctor with leftover BLOCKED slots from a deleted window
+ * breaks that assumption — the leftovers out-number the new window's
+ * candidates, generation skips the write, and the new window produces nothing.
+ */
+export function selectMissingSlots<T extends { startAt: Date }>(
+  generated: T[],
+  existingStarts: Date[],
+): T[] {
+  const taken = new Set(existingStarts.map((d) => d.getTime()));
+  return generated.filter((g) => !taken.has(g.startAt.getTime()));
+}
+
+/**
+ * Single-date holes in the recurring windows (`DoctorAvailabilityException`).
+ * Loaded with a ±1 day pad so a candidate that starts just outside the queried
+ * range but overlaps an exception is still dropped.
+ */
+async function listAvailabilityExceptions(
   doctorId: string,
   fromUtc: Date,
   toUtc: Date,
-): Promise<void> {
-  if (toUtc <= fromUtc) return;
+): Promise<{ startAt: Date; endAt: Date }[]> {
+  const pad = 24 * 60 * 60 * 1000;
+  return prisma.doctorAvailabilityException.findMany({
+    where: {
+      doctorId,
+      startAt: { gte: new Date(fromUtc.getTime() - pad) },
+      endAt: { lte: new Date(toUtc.getTime() + pad) },
+    },
+    select: { startAt: true, endAt: true },
+  });
+}
+
+/**
+ * Add slots at explicit instants, independent of the recurring weekly windows.
+ *
+ * The admin picks a date range and a daily time range; the UI expands that into
+ * the concrete instants (it owns the display timezone) and hands them here. Rows
+ * are flagged `isAdHoc` so the "window changed → drop stale future OPEN slots"
+ * sweeps leave them alone: nothing derives them, so a sweep would delete them
+ * for good. Any `DoctorAvailabilityException` covering an added span is cleared
+ * too — adding a slot back where one was removed is the admin undoing that.
+ *
+ * Partial success is the point: a range almost always crosses times the doctor
+ * already has slots for, and failing the whole request over one collision would
+ * make the feature unusable. Clashes and past instants are skipped and counted,
+ * never an error.
+ */
+export async function createAdHocSlots(
+  doctorId: string,
+  startAts: Date[],
+  durationMinutes: number,
+): Promise<{ created: number; skippedOverlap: number; skippedPast: number }> {
+  const durationMs = durationMinutes * 60 * 1000;
+  const now = Date.now();
+
+  // Dedupe identical instants (a caller expanding overlapping ranges) and sort
+  // so the in-memory overlap test below sees them in time order.
+  const unique = [...new Map(startAts.map((d) => [d.getTime(), d])).values()].sort(
+    (a, b) => a.getTime() - b.getTime(),
+  );
+
+  const future = unique.filter((d) => d.getTime() > now);
+  const skippedPast = unique.length - future.length;
+  if (future.length === 0) return { created: 0, skippedOverlap: 0, skippedPast };
+
+  const rangeStart = future[0];
+  const rangeEnd = new Date(future[future.length - 1].getTime() + durationMs);
+
+  try {
+    // One read for the whole span instead of a query per candidate. Every
+    // status counts: a BOOKED consultation blocks an add just as an OPEN slot
+    // does.
+    const occupied = await prisma.doctorTimeSlot.findMany({
+      where: {
+        doctorId,
+        startAt: { lt: rangeEnd },
+        endAt: { gt: rangeStart },
+      },
+      select: { startAt: true, endAt: true },
+    });
+
+    const accepted: { doctorId: string; startAt: Date; endAt: Date; isAdHoc: true }[] = [];
+    for (const startAt of future) {
+      const endAt = new Date(startAt.getTime() + durationMs);
+      if (occupied.some((row) => intervalsOverlap({ startAt, endAt }, row))) continue;
+      accepted.push({ doctorId, startAt, endAt, isAdHoc: true });
+      // Track it so two candidates in the same request can't overlap each other
+      // (a caller passing a step shorter than the duration).
+      occupied.push({ startAt, endAt });
+    }
+    const skippedOverlap = future.length - accepted.length;
+    if (accepted.length === 0) return { created: 0, skippedOverlap, skippedPast };
+
+    const created = await prisma.$transaction(async (tx) => {
+      await tx.doctorAvailabilityException.deleteMany({
+        where: {
+          doctorId,
+          OR: accepted.map((row) => ({
+            startAt: { lt: row.endAt },
+            endAt: { gt: row.startAt },
+          })),
+        },
+      });
+      const result = await tx.doctorTimeSlot.createMany({
+        data: accepted,
+        skipDuplicates: true,
+      });
+      return result.count;
+    });
+
+    // New bookable slots must show up in public listings now, not after the
+    // read cache's TTL.
+    invalidateAvailabilityCaches();
+    return { created, skippedOverlap, skippedPast };
+  } catch (error) {
+    // Lost a race against a concurrent write the pre-flight read missed. The
+    // batch insert aborts entirely on one conflicting row, so fall back to
+    // inserting one at a time and count the losers as skipped.
+    if (isExclusionViolation(error) || isUniqueViolation(error)) {
+      return createAdHocSlotsOneByOne(doctorId, future, durationMs, skippedPast);
+    }
+    throw normalizeDbError(error, "Could not add slots");
+  }
+}
+
+/** Row-at-a-time fallback for `createAdHocSlots` when the batch lost a race. */
+async function createAdHocSlotsOneByOne(
+  doctorId: string,
+  startAts: Date[],
+  durationMs: number,
+  skippedPast: number,
+): Promise<{ created: number; skippedOverlap: number; skippedPast: number }> {
+  let created = 0;
+  let skippedOverlap = 0;
+  for (const startAt of startAts) {
+    const endAt = new Date(startAt.getTime() + durationMs);
+    try {
+      await prisma.$transaction(async (tx) => {
+        await tx.doctorAvailabilityException.deleteMany({
+          where: { doctorId, startAt: { lt: endAt }, endAt: { gt: startAt } },
+        });
+        await tx.doctorTimeSlot.create({
+          data: { doctorId, startAt, endAt, status: "OPEN", isAdHoc: true },
+        });
+      });
+      created += 1;
+    } catch (rowError) {
+      if (isExclusionViolation(rowError) || isUniqueViolation(rowError)) {
+        skippedOverlap += 1;
+        continue;
+      }
+      throw normalizeDbError(rowError, "Could not add slots");
+    }
+  }
+  invalidateAvailabilityCaches();
+  return { created, skippedOverlap, skippedPast };
+}
+
+/**
+ * Resize an OPEN/BLOCKED slot on the base grid. The start never moves.
+ *
+ * Lengthening swallows the following slots up to the new end: they must all be
+ * OPEN or BLOCKED, because a BOOKED/HELD slot in the way is a real appointment
+ * or a live cart hold. Shortening releases the freed tail back into base-grid
+ * slots carrying the same status (and `isAdHoc`) as the slot they came from, so
+ * a shrunk BLOCKED slot doesn't quietly re-open the time it gave up.
+ *
+ * Any `DoctorAvailabilityException` inside the new span is cleared: explicitly
+ * extending over a previously-removed time is the admin overriding that removal.
+ */
+export async function resizeSlot(
+  doctorId: string,
+  slotId: string,
+  durationMinutes: number,
+): Promise<
+  | { ok: true; slot: { id: string; startAt: Date; endAt: Date } }
+  | { ok: false; code: "NOT_FOUND" | "OCCUPIED" | "BLOCKED_BY_BOOKING" }
+> {
+  const durationMs = durationMinutes * 60 * 1000;
+  try {
+    const slot = await prisma.doctorTimeSlot.findFirst({
+      where: { id: slotId, doctorId },
+      select: {
+        id: true,
+        status: true,
+        startAt: true,
+        endAt: true,
+        blockReason: true,
+        isAdHoc: true,
+      },
+    });
+    if (!slot) return { ok: false, code: "NOT_FOUND" };
+    if (slot.status !== "OPEN" && slot.status !== "BLOCKED") {
+      return { ok: false, code: "OCCUPIED" };
+    }
+
+    const newEnd = new Date(slot.startAt.getTime() + durationMs);
+    if (newEnd.getTime() === slot.endAt.getTime()) {
+      return { ok: true, slot: { id: slot.id, startAt: slot.startAt, endAt: slot.endAt } };
+    }
+
+    // Everything the resize touches, in one read: the slots between the old and
+    // new end (absorbed when growing, irrelevant when shrinking).
+    const neighbours = await prisma.doctorTimeSlot.findMany({
+      where: {
+        doctorId,
+        id: { not: slot.id },
+        startAt: { lt: newEnd },
+        endAt: { gt: slot.startAt },
+      },
+      select: { id: true, status: true },
+    });
+    if (neighbours.some((n) => n.status !== "OPEN" && n.status !== "BLOCKED")) {
+      return { ok: false, code: "BLOCKED_BY_BOOKING" };
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      if (neighbours.length > 0) {
+        await tx.doctorTimeSlot.deleteMany({
+          where: { id: { in: neighbours.map((n) => n.id) } },
+        });
+      }
+      await tx.doctorAvailabilityException.deleteMany({
+        where: { doctorId, startAt: { lt: newEnd }, endAt: { gt: slot.startAt } },
+      });
+      const row = await tx.doctorTimeSlot.update({
+        where: { id: slot.id },
+        data: { endAt: newEnd },
+        select: { id: true, startAt: true, endAt: true },
+      });
+
+      // Shrinking: hand the tail back as base-grid slots rather than leaving a
+      // hole only a recurring window could refill (an ad-hoc slot has none).
+      if (newEnd < slot.endAt) {
+        const freed: {
+          doctorId: string;
+          startAt: Date;
+          endAt: Date;
+          status: DoctorSlotStatus;
+          blockReason: string | null;
+          isAdHoc: boolean;
+        }[] = [];
+        const stepMs = BASE_SLOT_MINUTES * 60 * 1000;
+        for (
+          let t = newEnd.getTime();
+          t + stepMs <= slot.endAt.getTime();
+          t += stepMs
+        ) {
+          freed.push({
+            doctorId,
+            startAt: new Date(t),
+            endAt: new Date(t + stepMs),
+            status: slot.status,
+            blockReason: slot.blockReason,
+            isAdHoc: slot.isAdHoc,
+          });
+        }
+        if (freed.length > 0) {
+          await tx.doctorTimeSlot.createMany({ data: freed, skipDuplicates: true });
+        }
+      }
+      return row;
+    });
+
+    invalidateAvailabilityCaches();
+    return { ok: true, slot: updated };
+  } catch (error) {
+    if (isExclusionViolation(error) || isUniqueViolation(error)) {
+      return { ok: false, code: "BLOCKED_BY_BOOKING" };
+    }
+    throw normalizeDbError(error, "Could not resize slot");
+  }
+}
+
+/**
+ * Remove ONE concrete slot for ONE date, permanently.
+ *
+ * Deleting the row alone would not stick — the generators re-materialise slots
+ * from the recurring windows on every availability read — so this also writes a
+ * `DoctorAvailabilityException` for the slot's exact span. The weekly window is
+ * left completely untouched: the same weekday next week still generates.
+ *
+ * Only OPEN/BLOCKED slots can go: BOOKED/HELD carry a real appointment or a
+ * live cart hold and must be cancelled through their own flow first.
+ */
+export async function removeSlotForDate(
+  doctorId: string,
+  slotId: string,
+  reason?: string | null,
+): Promise<
+  | { ok: true; startAt: Date; endAt: Date }
+  | { ok: false; code: "NOT_FOUND" | "OCCUPIED" }
+> {
+  try {
+    const slot = await prisma.doctorTimeSlot.findFirst({
+      where: { id: slotId, doctorId },
+      select: { id: true, status: true, startAt: true, endAt: true },
+    });
+    if (!slot) return { ok: false, code: "NOT_FOUND" };
+    if (slot.status !== "OPEN" && slot.status !== "BLOCKED") {
+      return { ok: false, code: "OCCUPIED" };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // Exception first, then the delete: if the transaction is retried or the
+      // delete races another writer, the hole is already recorded and the slot
+      // can't come back.
+      await tx.doctorAvailabilityException.upsert({
+        where: { doctorId_startAt: { doctorId, startAt: slot.startAt } },
+        create: {
+          doctorId,
+          startAt: slot.startAt,
+          endAt: slot.endAt,
+          reason: reason?.trim() || null,
+        },
+        update: { endAt: slot.endAt, reason: reason?.trim() || null },
+      });
+      // Re-assert the status in the delete filter: a booking could have claimed
+      // the slot between the read above and here, and a paid appointment must
+      // never lose its slot to a stale Remove click.
+      const deleted = await tx.doctorTimeSlot.deleteMany({
+        where: { id: slot.id, doctorId, status: { in: ["OPEN", "BLOCKED"] } },
+      });
+      if (deleted.count === 0) throw new SlotAlreadyTakenError();
+    });
+
+    // The read caches key on doctor + date bucket, so a removed slot would
+    // linger in a public listing for up to the TTL otherwise.
+    invalidateAvailabilityCaches();
+    return { ok: true, startAt: slot.startAt, endAt: slot.endAt };
+  } catch (error) {
+    if (error instanceof SlotAlreadyTakenError) return { ok: false, code: "OCCUPIED" };
+    throw normalizeDbError(error, "Could not remove slot");
+  }
+}
+
+/**
+ * Every base-grid slot the doctor's recurring windows justify in
+ * [fromUtc, toUtc) — the single definition of "a window-derived slot".
+ *
+ * Shared by generation (`ensureSlotsForRange`) and the window-change reconcile
+ * (`reconcileWindowDerivedSlots`) on purpose: if the two computed candidates
+ * independently they could disagree, and a slot neither side claimed would
+ * either be deleted while still legitimate or linger while orphaned.
+ */
+async function windowSlotCandidates(
+  doctorId: string,
+  fromUtc: Date,
+  toUtc: Date,
+): Promise<{ doctorId: string; startAt: Date; endAt: Date }[]> {
+  if (toUtc <= fromUtc) return [];
 
   const windows = await prisma.doctorAvailability.findMany({
     where: {
@@ -169,9 +737,12 @@ export async function ensureSlotsForRange(
       effectiveUntil: true,
     },
   });
-  if (windows.length === 0) return;
+  if (windows.length === 0) return [];
 
   const tz = await resolveDoctorTimeZone(doctorId);
+  // Admin-removed single dates. A candidate overlapping one of these is never
+  // re-created, which is the whole point of the exception row.
+  const exceptions = await listAvailabilityExceptions(doctorId, fromUtc, toUtc);
   const generated: { doctorId: string; startAt: Date; endAt: Date }[] = [];
 
   // Iterate clinic-local calendar days (not UTC midnights). `startMinute` is
@@ -197,48 +768,236 @@ export async function ensureSlotsForRange(
         const startAt = zonedWallClockToUtc(day, minute, tz);
         const endAt = new Date(startAt.getTime() + duration * 60 * 1000);
         if (startAt < fromUtc || startAt >= toUtc) continue;
+        if (exceptions.some((ex) => intervalsOverlap({ startAt, endAt }, ex))) {
+          continue;
+        }
         generated.push({ doctorId, startAt, endAt });
       }
     }
   }
+  return generated;
+}
 
-  if (generated.length === 0) return;
+/**
+ * How far ahead a window change reconciles. Windows recur forever, so the sweep
+ * needs a horizon; a year matches the frontend bulk tools' `MAX_RANGE_DAYS` and
+ * covers every range the portal or a patient can browse to.
+ */
+export const WINDOW_SWEEP_HORIZON_DAYS = 366;
 
-  // Skip the createMany round-trip + row locks on the hot read path when every
-  // generated slot already exists. Generation is deterministic for the range,
-  // so once the range holds at least as many slots as we'd generate, the
-  // skipDuplicates insert would be a pure no-op. `existing < generated.length`
-  // still runs the write after slots are consumed/collapsed or a new window
-  // widens the set.
-  const existing = await prisma.doctorTimeSlot.count({
-    where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
+/**
+ * How far ahead a window change materialises slots up front.
+ *
+ * Generation is otherwise lazy — a range only gets rows when something reads
+ * it. That is fine for the booking flow (every read generates first) but it
+ * means a doctor who adds a weekly window has slots ONLY for the weeks somebody
+ * has since opened. Step the calendar to an unvisited week and it draws empty
+ * under an ACTIVE window, which is indistinguishable from a bug and is exactly
+ * the "my availability skipped a week" report. Pre-generating removes the
+ * dependency on who browsed what.
+ *
+ * 120 days matches the calendar routes' own `MAX_RANGE_MS` clamp: no view can
+ * request further out than this, so anything a doctor or patient can navigate to
+ * is already materialised. Beyond it, the lazy path still covers reads.
+ */
+export const WINDOW_PREGENERATE_DAYS = 120;
+
+/** What a generation pass actually wrote. See `ensureSlotsForRange`. */
+export type GenerationResult = { created: number; skippedOverlap: number };
+
+/**
+ * Materialise (and reconcile) a doctor's slots after their windows changed.
+ *
+ * Order matters: reconcile first so stale rows can't occupy a start instant the
+ * new shape needs — `selectMissingSlots` keys on the start, so a leftover row
+ * there would make the fresh candidate look already-present and the new window
+ * would generate nothing at that time. Then generate forward.
+ *
+ * Never throws: a window edit that succeeded must not report failure because
+ * materialisation hiccupped, and the lazy read path regenerates regardless.
+ */
+async function refreshWindowSlots(doctorId: string): Promise<GenerationResult> {
+  try {
+    await reconcileWindowDerivedSlots(doctorId);
+    const now = new Date();
+    return await ensureSlotsForRange(
+      doctorId,
+      now,
+      new Date(now.getTime() + WINDOW_PREGENERATE_DAYS * 24 * 60 * 60 * 1000),
+    );
+  } catch {
+    return { created: 0, skippedOverlap: 0 };
+  }
+}
+
+/**
+ * Existing slots no window justifies any more. Two rules, because the two
+ * statuses cost very different things to get wrong.
+ *
+ * OPEN — matched on the EXACT span. Comparing `endAt` as well as `startAt`
+ * catches duration drift: a legacy 30-min slot at 09:00 shares its start with a
+ * 15-min candidate at 09:00, so a start-only match would keep the coarse row,
+ * and the 09:15 candidate would then die on the overlap exclusion constraint,
+ * leaving the doctor on a grid their window no longer describes. Deleting a
+ * live OPEN slot is cheap: generation re-mints it on the next read.
+ *
+ * BLOCKED — kept if it OVERLAPS any candidate at all, span mismatch included.
+ * A block is the doctor saying "I am busy then", and it does not come back:
+ * regeneration only ever mints OPEN. Applying the exact-span rule here would
+ * mean any window whose step drifted turned the doctor's busy marks into
+ * bookable time on the next window edit — the same silent-loss bug this sweep
+ * exists to prevent, pointed at the doctor instead. Only a block that overlaps
+ * NO live window is a true orphan, and those are what this deletes.
+ */
+export function selectStaleSlots<
+  T extends { startAt: Date; endAt: Date; status?: DoctorSlotStatus },
+>(existing: T[], candidates: { startAt: Date; endAt: Date }[]): T[] {
+  const span = (s: { startAt: Date; endAt: Date }) =>
+    `${s.startAt.getTime()}:${s.endAt.getTime()}`;
+  const owned = new Set(candidates.map(span));
+  return existing.filter((e) => {
+    if (e.status === "BLOCKED") {
+      return !candidates.some((c) => intervalsOverlap(e, c));
+    }
+    return !owned.has(span(e));
   });
-  if (existing >= generated.length) return;
+}
+
+/**
+ * Reconcile a doctor's future slots against their CURRENT windows — run after
+ * any window is changed, paused, or deleted.
+ *
+ * Slot rows are materialised, not derived at read time, so a window that moves
+ * (Fri → Mon), narrows, or disappears leaves its old slots behind. Those rows
+ * are unreachable from the UI's "Weekly windows" list, no generator can ever
+ * re-derive them, and an OPEN one is still bookable by a patient — a booking on
+ * a day the doctor no longer works.
+ *
+ * What survives, and why:
+ *   • BOOKED / HELD — a real appointment or a live cart hold. Never touched
+ *     here; those go through cancellation.
+ *   • `isAdHoc` — added for one specific date, with no window behind it. There
+ *     is nothing to reconcile against, so the sweep must not judge them.
+ *   • OPEN / BLOCKED whose exact span a live window still generates. A BLOCKED
+ *     slot inside live hours is the doctor deliberately marking themselves busy
+ *     and is left exactly as it is.
+ *
+ * Everything else in the horizon goes. Regeneration stays lazy: the next range
+ * read calls `ensureSlotsForRange`, which re-mints from the new shape.
+ */
+export async function reconcileWindowDerivedSlots(
+  doctorId: string,
+  now: Date = new Date(),
+): Promise<number> {
+  try {
+    const horizonEnd = new Date(
+      now.getTime() + WINDOW_SWEEP_HORIZON_DAYS * 24 * 60 * 60 * 1000,
+    );
+    const [candidates, existing] = await Promise.all([
+      windowSlotCandidates(doctorId, now, horizonEnd),
+      prisma.doctorTimeSlot.findMany({
+        where: {
+          doctorId,
+          status: { in: ["OPEN", "BLOCKED"] },
+          isAdHoc: false,
+          startAt: { gte: now, lt: horizonEnd },
+        },
+        // `status` drives which staleness rule applies — see selectStaleSlots.
+        select: { id: true, startAt: true, endAt: true, status: true },
+      }),
+    ]);
+    const stale = selectStaleSlots(existing, candidates);
+    if (stale.length === 0) return 0;
+
+    // Re-assert status in the delete filter: a patient could have claimed one of
+    // these between the read and here, and a paid appointment must never lose
+    // its slot to a window edit.
+    const deleted = await prisma.doctorTimeSlot.deleteMany({
+      where: {
+        id: { in: stale.map((s) => s.id) },
+        doctorId,
+        status: { in: ["OPEN", "BLOCKED"] },
+      },
+    });
+    invalidateAvailabilityCaches();
+    return deleted.count;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not reconcile doctor slots");
+  }
+}
+
+/**
+ * Ensure DoctorTimeSlot rows exist for every window across the requested
+ * date range. Idempotent — uses `createMany({ skipDuplicates: true })`
+ * against the `@@unique([doctorId, startAt])` index. Doctors with no
+ * availability rows produce zero slots. Spans carrying a
+ * `DoctorAvailabilityException` are skipped, which is what makes an admin's
+ * one-off slot removal permanent.
+ *
+ * Returns what it did. `skippedOverlap` is the important one: candidates the
+ * exclusion constraint refused are dropped rather than raised (a booked slot
+ * legitimately occupies the span), so without a count in the return the caller
+ * has no way to tell "generated a full week" from "generated nothing, silently".
+ */
+export async function ensureSlotsForRange(
+  doctorId: string,
+  fromUtc: Date,
+  toUtc: Date,
+): Promise<GenerationResult> {
+  if (toUtc <= fromUtc) return { created: 0, skippedOverlap: 0 };
+
+  const generated = await windowSlotCandidates(doctorId, fromUtc, toUtc);
+  if (generated.length === 0) return { created: 0, skippedOverlap: 0 };
+
+  // Insert only the candidates that are genuinely missing, and skip the write
+  // entirely when none are.
+  //
+  // This used to compare COUNTS — "the range already holds at least as many
+  // slots as we'd generate, so the insert would be a no-op". That assumed the
+  // existing rows are always a subset of the candidates, which breaks the
+  // moment the two sets don't line up: a doctor with a week of BLOCKED slots
+  // left over from an old window adds a new window, the leftovers out-number
+  // the new candidates, and generation silently does nothing — the window is
+  // listed but produces no slots, forever. Comparing the actual instants costs
+  // one column instead of a count and cannot be fooled that way.
+  const existingRows = await prisma.doctorTimeSlot.findMany({
+    where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
+    select: { startAt: true },
+  });
+  const missing = selectMissingSlots(
+    generated,
+    existingRows.map((r) => r.startAt),
+  );
+  if (missing.length === 0) return { created: 0, skippedOverlap: 0 };
 
   try {
     await prisma.doctorTimeSlot.createMany({
-      data: generated,
+      data: missing,
       skipDuplicates: true,
     });
+    return { created: missing.length, skippedOverlap: 0 };
   } catch (error) {
-    // A concurrent caller (e.g. a different service for the same doctor) may
-    // have created an overlapping slot between our in-process check above
-    // and this write — the DB-level exclusion constraint
-    // (no_overlapping_doctor_slots) catches what the in-memory `existing`
-    // array can't. Batch insert aborts entirely on one conflicting row, so
-    // fall back to inserting one at a time and drop just the row(s) that
-    // lost the race.
+    // A concurrent caller may have created an overlapping slot between the
+    // in-process check above and this write, and a longer existing slot can
+    // overlap a candidate without sharing its start — either way the DB-level
+    // exclusion constraint (no_overlapping_doctor_slots) catches it. A batch
+    // insert aborts entirely on one conflicting row, so fall back to inserting
+    // one at a time and drop just the losers.
     if (isExclusionViolation(error)) {
-      for (const row of generated) {
+      let created = 0;
+      let skippedOverlap = 0;
+      for (const row of missing) {
         try {
           await prisma.doctorTimeSlot.create({ data: row });
+          created += 1;
         } catch (rowError) {
-          if (!isExclusionViolation(rowError)) {
+          if (!isExclusionViolation(rowError) && !isUniqueViolation(rowError)) {
             throw normalizeDbError(rowError, "Slot generation unavailable");
           }
+          skippedOverlap += 1;
         }
       }
-      return;
+      return { created, skippedOverlap };
     }
     throw normalizeDbError(error, "Slot generation unavailable");
   }
@@ -266,6 +1025,9 @@ const SLOT_CACHE_TTL_MS = 45_000;
 // evicts first once the cap is hit (see TtlCache).
 const SLOT_CACHE_MAX_ENTRIES = 2000;
 const slotCache = new TtlCache<PublicSlot[]>(SLOT_CACHE_MAX_ENTRIES);
+// Any write that changes inventory clears every availability cache, not just
+// this one — see availability-cache-bus.
+registerAvailabilityCache(() => slotCache.clear());
 
 function slotCacheKey(
   doctorId: string,
@@ -319,6 +1081,13 @@ export function intervalsOverlap(
   b: { startAt: Date; endAt: Date },
 ): boolean {
   return a.startAt < b.endAt && a.endAt > b.startAt;
+}
+
+/** Prisma unique-constraint violation — here, @@unique([doctorId, startAt]). */
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"
+  );
 }
 
 /** Postgres exclusion-constraint violation (23P01) — not modeled in the Prisma schema. */
@@ -380,6 +1149,10 @@ export async function ensureServiceSlotsForRange(
     },
     select: { startAt: true, endAt: true },
   });
+
+  // Admin-removed single dates count as occupied for the overlap test below, so
+  // a longer service-duration candidate can't fill a hole the admin punched.
+  existing.push(...(await listAvailabilityExceptions(doctorId, fromUtc, toUtc)));
 
   const generated: { doctorId: string; startAt: Date; endAt: Date }[] = [];
 
@@ -902,6 +1675,11 @@ export async function createAdminAvailability(
         effectiveUntil: input.effectiveUntil ?? null,
       },
     });
+    // Materialise the new window's slots now rather than leaving each week to
+    // whoever opens it first — see WINDOW_PREGENERATE_DAYS.
+    await refreshWindowSlots(doctorId);
+    // The windows drive generation, so the cached slot views are now stale.
+    invalidateAvailabilityCaches();
     return {
       id: row.id,
       weekday: row.weekday,
@@ -951,6 +1729,14 @@ export async function patchAdminAvailability(
         ...(input.isActive !== undefined && { isActive: input.isActive }),
       },
     });
+    // The window moved, narrowed, or paused, so slots minted from its old shape
+    // may no longer be justified by any window. Reconcile before returning:
+    // leaving it to a later read would mean a patient can book a slot on a day
+    // the doctor just removed. Then re-materialise the new shape, so widening a
+    // window fills every week in the horizon rather than only the visited ones.
+    await refreshWindowSlots(doctorId);
+    // The windows drive generation, so the cached slot views are now stale.
+    invalidateAvailabilityCaches();
     return {
       id: row.id,
       weekday: row.weekday,
@@ -974,6 +1760,12 @@ export async function deleteAdminAvailability(
     const result = await prisma.doctorAvailability.deleteMany({
       where: { id: availabilityId, doctorId },
     });
+    // After the row is gone, so the reconcile's candidate set no longer counts
+    // this window. Drops every future OPEN/BLOCKED slot it was the only source
+    // for; slots another window still justifies stay.
+    if (result.count > 0) await reconcileWindowDerivedSlots(doctorId);
+    // The windows drive generation, so the cached slot views are now stale.
+    invalidateAvailabilityCaches();
     return result.count > 0;
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");

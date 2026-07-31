@@ -100,6 +100,8 @@ export function respondToMedicalAccessRequest(token: string, decision: "APPROVE"
 
 export type CrossBorderRxDeliveryDetails = {
   pharmacyName: string | null;
+  /** Health/tax id valid in the prescribing country (PPS for IE, NIF for PT, ...). */
+  healthIdNumber: string | null;
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
@@ -113,6 +115,9 @@ export type CrossBorderRxConsentView = {
   sourceDoctorName: string | null;
   targetDoctorName: string;
   targetCountryName: string;
+  targetCountryCode: string;
+  /** Server-resolved label for the health/tax id field ("PPS", "NIF", ...). */
+  healthIdLabel: string;
   prefill: CrossBorderRxDeliveryDetails & { phone: string | null };
   paymentUrl: string | null;
   gpBookingUrl: string | null;

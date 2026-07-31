@@ -9,7 +9,7 @@ import {
 } from "@/lib/corporate/corporate-api";
 import { AdminCard, Btn, PageHeader } from "@/components/portal-atoms";
 import { RequestsTable } from "./requests-table";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +25,7 @@ function back(params: Record<string, string>) {
 
 async function createRequestAction(formData: FormData) {
   "use server";
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { requests: r } = loadLocaleBundle(locale).corporate;
   const employeeId = String(formData.get("employeeId") ?? "").trim();
   const type = String(formData.get("type") ?? "");
@@ -45,7 +45,7 @@ async function createRequestAction(formData: FormData) {
 
 async function cancelRequestAction(formData: FormData) {
   "use server";
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { requests: r } = loadLocaleBundle(locale).corporate;
   const id = String(formData.get("requestId") ?? "");
   if (!id) back({ error: r.errors.invalidRequest });
@@ -60,7 +60,7 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
   const [requestsResult, employeesResult, locale] = await Promise.all([
     fetchCorporatePortalRequests(sp.status),
     fetchCorporateEmployees(),
-    getPageLocale(),
+    getPortalLocale(),
   ]);
   const { requests: r, common } = loadLocaleBundle(locale).corporate;
   // Requests are only actionable for employees who exist and aren't removed.

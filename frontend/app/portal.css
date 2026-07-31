@@ -3475,54 +3475,599 @@ a.gh-admin-summary-item--link:focus-visible {
   object-position: center;
 }
 
-/* §13 M1 — membership-silk.webp corner accent on the plan-card chrome header,
- * capped at 0.5. Transparent WEBP over Material A; purely decorative. */
-.gh-patient-membership-card__header {
-  position: relative;
+
+/* ── Membership tab sections ──────────────────────────────────────────────
+ * Three repeating shapes below the hero: benefit rows (what you get),
+ * timeline steps (what happens next), manage rows (what you can do). All
+ * three are "explain, then show the control/number" — the tab's whole job. */
+
+.gh-membership-benefit {
+  display: grid;
+  align-items: start;
+  padding: 16px 0;
+  border-top: 1px solid var(--portal-line-soft);
+  gap: 14px;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+}
+
+.gh-membership-benefit:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Locked benefits stay visible — a member has to see what they are waiting
+ * for — but drop back so the active rows read first. */
+.gh-membership-benefit--locked {
+  opacity: 0.62;
+}
+
+.gh-membership-benefit__tile {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--portal-radius);
+  background: var(--portal-well);
+  color: var(--portal-primary);
+  place-items: center;
+}
+
+.gh-membership-benefit__title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.gh-membership-benefit__body {
+  margin: 4px 0 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gh-membership-benefit__amount {
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.gh-membership-benefit__meter {
+  max-width: 320px;
+  height: 6px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: var(--portal-well);
   overflow: hidden;
 }
 
-/* Membership manage panel — the current-plan title row becomes the T2
- * obsidian header band (Material A + lime-silk hairline + silk corner)
- * by bleeding across the AdminCard's 24px padding. CSS-only; markup owns
- * nothing but the class. */
-.gh-membership-manage-head {
-  position: relative;
-  overflow: hidden;
-  margin: -24px -24px 0;
-  padding: 20px 24px;
-  border-radius: calc(var(--portal-radius-lg) - 1px) calc(var(--portal-radius-lg) - 1px) 0 0;
-  background: var(--portal-chrome-solid);
-  border-bottom: 1px solid var(--portal-member);
+.gh-membership-benefit__meter > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--portal-mint), var(--portal-signal));
 }
 
-.gh-membership-manage-head::after {
+.gh-membership-lock {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--portal-well);
+  color: var(--portal-text-2);
+  font-size: 11px;
+  font-weight: 700;
+  gap: 5px;
+}
+
+.gh-membership-step {
+  position: relative;
+  display: grid;
+  padding: 0 0 18px;
+  gap: 14px;
+  grid-template-columns: 26px minmax(0, 1fr);
+}
+
+.gh-membership-step:last-child {
+  padding-bottom: 0;
+}
+
+/* Connector between dots; the last step has nothing left to connect to. */
+.gh-membership-step::before {
   content: "";
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: var(--lux-asset-member, none);
-  background-size: auto 100%;
-  background-position: right center;
-  background-repeat: no-repeat;
-  opacity: 0.5;
+  top: 26px;
+  bottom: 0;
+  left: 12.5px;
+  width: 1px;
+  background: var(--portal-line);
 }
 
-.gh-membership-manage-head > * {
-  position: relative;
+.gh-membership-step:last-child::before {
+  display: none;
+}
+
+.gh-membership-step__dot {
+  display: grid;
   z-index: 1;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--portal-well);
+  color: var(--portal-text-2);
+  font-size: 12px;
+  font-weight: 800;
+  place-items: center;
 }
 
-.gh-patient-membership-card__header::after {
+.gh-membership-step--done .gh-membership-step__dot {
+  background: var(--portal-primary);
+  color: #f4f8f1;
+}
+
+.gh-membership-step--now .gh-membership-step__dot {
+  background: var(--portal-signal);
+  color: #12220f;
+  box-shadow: 0 0 0 4px var(--portal-signal-soft);
+}
+
+.gh-membership-step__when {
+  color: var(--portal-mint-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gh-membership-step__title {
+  margin: 3px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.gh-membership-step__body {
+  margin: 3px 0 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gh-membership-do {
+  display: grid;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid var(--portal-line-soft);
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.gh-membership-do:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.gh-membership-do__title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.gh-membership-do__body {
+  max-width: 62ch;
+  margin: 4px 0 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gh-membership-do__ctl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Below ~640px the control drops under its explanation and right-aligns,
+ * matching every other portal form-actions row. */
+@media (max-width: 640px) {
+  .gh-membership-do {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gh-membership-do__ctl {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+/* Membership hero — card + billing facts, side by side above the actions.
+ * Single column until there is room for a readable card AND a facts column;
+ * the card caps itself at 560px so it never stretches into a banner. */
+.gh-membership-hero {
+  display: grid;
+  align-items: start;
+  gap: clamp(14px, 1.8vw, 22px);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .gh-membership-hero {
+    grid-template-columns: minmax(320px, 560px) minmax(240px, 1fr);
+  }
+}
+
+/* Facts column: three stat tiles stacked beside the card on wide screens,
+ * side by side once the hero collapses to one column so they read as the
+ * dashboard's stat row rather than three stray cards. */
+@media (max-width: 899.98px) {
+  .gh-membership-facts {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  }
+}
+
+/* ── Membership card (Signal) ────────────────────────────────────────────
+ * Physical-card render of the member's subscription, top of the membership
+ * tab. Everything sizes off `cqw` against the card itself (container-type:
+ * inline-size), so the same face holds its proportions at the 560px hero,
+ * inside a narrow column, and on a 320px phone — page-level `vw` clamps
+ * would not. No backdrop-filter here, so it needs no mobile fallback block.
+ * Markup: MembershipCard.tsx. */
+.gh-member-card {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1.586 / 1;
+  overflow: hidden;
+  isolation: isolate;
+  color: #f7faef;
+  border: 1px solid rgba(186, 255, 78, 0.72);
+  border-radius: clamp(14px, 3.2cqw, 24px);
+  background:
+    radial-gradient(circle at 84% 5%, rgba(168, 255, 24, 0.14), transparent 34%),
+    radial-gradient(circle at 12% 100%, rgba(44, 124, 83, 0.3), transparent 38%),
+    linear-gradient(135deg, #021b14 0%, #052c21 54%, #02150f 100%);
+  box-shadow:
+    inset 0 0 0 3px rgba(174, 255, 71, 0.1),
+    inset 0 0 35px rgba(65, 255, 151, 0.08),
+    0 2px 4px rgba(7, 18, 12, 0.1),
+    0 18px 44px rgba(7, 18, 12, 0.22),
+    0 34px 70px rgba(7, 18, 12, 0.14);
+}
+
+/* Guilloche orb — the security-print texture, masked out towards the copy. */
+.gh-member-card::before {
+  content: "";
+  position: absolute;
+  top: 8%;
+  right: -14%;
+  z-index: -1;
+  width: 58%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0.16;
+  background:
+    repeating-radial-gradient(circle, transparent 0 14px, rgba(172, 255, 110, 0.32) 15px 16px),
+    repeating-linear-gradient(90deg, transparent 0 26px, rgba(172, 255, 110, 0.2) 27px 28px);
+  mask-image: linear-gradient(to left, #000 30%, transparent 92%);
+}
+
+/* Sheen + scanline film over the whole face. */
+.gh-member-card::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 4;
   pointer-events: none;
-  background-image: var(--lux-asset-member, none);
-  background-size: auto 100%;
-  background-position: right center;
-  background-repeat: no-repeat;
-  opacity: 0.5;
+  opacity: 0.13;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.08), transparent 22% 68%, rgba(255, 255, 255, 0.04)),
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(255, 255, 255, 0.018) 5px);
+}
+
+.gh-member-card__ring {
+  position: absolute;
+  inset: 9px;
+  z-index: 3;
+  pointer-events: none;
+  border: 1px solid rgba(168, 255, 24, 0.58);
+  border-radius: calc(clamp(14px, 3.2cqw, 24px) - 6px);
+  box-shadow:
+    inset 0 0 16px rgba(168, 255, 24, 0.13),
+    0 0 8px rgba(168, 255, 24, 0.14);
+}
+
+/* Anything not currently active: same face, drained. */
+.gh-member-card--dim {
+  filter: saturate(0.55) brightness(0.9);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.gh-member-card--dim .gh-member-card__ring {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+}
+
+.gh-member-card__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: clamp(16px, 5.4cqw, 40px);
+}
+
+.gh-member-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* The shipped lockup bakes mark + wordmark into one raster and turns to mush
+ * at card scale, so the mark ships alone and the name is set in type. */
+.gh-member-card__lock {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: clamp(7px, 2.2cqw, 13px);
+}
+
+.gh-member-card__mark {
+  display: block;
+  width: clamp(26px, 8.6cqw, 52px);
+  height: auto;
+  filter: drop-shadow(0 0 9px rgba(168, 255, 24, 0.22));
+}
+
+.gh-member-card__brand {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(14px, 4.6cqw, 28px);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  white-space: nowrap;
+}
+
+.gh-member-card__motto {
+  margin: 3px 0 0;
+  color: rgba(247, 250, 239, 0.82);
+  font-size: clamp(6.5px, 1.9cqw, 12px);
+  font-weight: 750;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Shrinks (never overflows) when the status label is long — "Cancellation
+ * scheduled" is longer than the pill's share of the top row. */
+.gh-member-card__pill {
+  flex: 0 1 auto;
+  display: inline-flex;
+  min-width: 0;
+  max-width: 52%;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  padding: clamp(3px, 0.9cqw, 6px) clamp(7px, 2.2cqw, 13px);
+  border: 1px solid rgba(176, 241, 34, 0.45);
+  border-radius: 999px;
+  background: rgba(176, 241, 34, 0.14);
+  color: #d8ff8a;
+  font-size: clamp(7px, 2cqw, 11px);
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.gh-member-card__pill-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-member-card__dot {
+  flex: 0 0 auto;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--portal-signal);
+  box-shadow: 0 0 7px rgba(176, 241, 34, 0.9);
+}
+
+.gh-member-card__pill--warn {
+  border-color: rgba(255, 190, 90, 0.45);
+  background: rgba(255, 190, 90, 0.12);
+  color: #ffd79a;
+}
+
+.gh-member-card__pill--warn .gh-member-card__dot {
+  background: #ffbe5a;
+  box-shadow: 0 0 7px rgba(255, 190, 90, 0.8);
+}
+
+.gh-member-card__pill--muted {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(247, 250, 239, 0.8);
+}
+
+.gh-member-card__pill--muted .gh-member-card__dot {
+  background: rgba(247, 250, 239, 0.7);
+  box-shadow: none;
+}
+
+.gh-member-card__plan {
+  /* Full width: the ECG rule below is a separate row, so nothing sits
+   * beside the title and the two can never collide. */
+  margin: clamp(6px, 2cqw, 12px) 0 0;
+  max-width: 100%;
+  font-size: clamp(15px, 5cqw, 28px);
+  font-weight: 760;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.gh-member-card__pulse {
+  position: relative;
+  height: clamp(17px, 5.4cqw, 31px);
+  margin-top: clamp(5px, 1.7cqw, 10px);
+}
+
+.gh-member-card__pulse::before {
+  content: "";
+  position: absolute;
+  /* Sits on the SVG baseline (y=20 of the 40-unit viewBox). */
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #a8ff18, rgba(168, 255, 24, 0.8) 55%, rgba(168, 255, 24, 0.12));
+  box-shadow: 0 0 10px rgba(168, 255, 24, 0.42);
+}
+
+.gh-member-card__pulse svg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  /* Height drives the size; width follows the beat's own aspect ratio. */
+  width: auto;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 5px rgba(168, 255, 24, 0.35));
+}
+
+.gh-member-card__label {
+  color: rgba(247, 250, 239, 0.8);
+  font-size: clamp(8px, 2.2cqw, 13px);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Cardholder gets its own row above the data slots, per card convention.
+ * Long names ellipsis rather than wrap — a second line would push the
+ * slots into the footer. */
+.gh-member-card__holder {
+  min-width: 0;
+  margin-top: auto;
+  padding-top: clamp(2px, 1cqw, 6px);
+}
+
+.gh-member-card__name {
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
+  font-size: clamp(12px, 4cqw, 22px);
+  font-weight: 560;
+  letter-spacing: clamp(0.02em, 0.35cqw, 0.07em);
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.gh-member-card__slots {
+  display: grid;
+  align-items: center;
+  margin-top: clamp(5px, 1.8cqw, 11px);
+  gap: clamp(10px, 3.2cqw, 28px);
+  grid-template-columns: 1fr 1px 1fr;
+}
+
+.gh-member-card__sep {
+  width: 1px;
+  height: 70%;
+  min-height: 34px;
+  background: linear-gradient(transparent, #a8ff18, transparent);
+}
+
+.gh-member-card__value {
+  display: block;
+  margin-top: 3px;
+  font-size: clamp(13px, 4.4cqw, 25px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 560;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.gh-member-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: clamp(6px, 2cqw, 13px);
+  padding-top: clamp(5px, 1.6cqw, 10px);
+  border-top: 1px solid rgba(170, 255, 84, 0.28);
+  gap: 10px;
+}
+
+.gh-member-card__country {
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(247, 250, 239, 0.9);
+  font-size: clamp(9px, 2.4cqw, 14px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-member-card__marks {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: clamp(6px, 1.8cqw, 10px);
+}
+
+.gh-member-card__pips {
+  display: flex;
+  gap: 4px;
+}
+
+.gh-member-card__pips i {
+  width: clamp(4px, 1.2cqw, 7px);
+  height: clamp(4px, 1.2cqw, 7px);
+  border-radius: 50%;
+  background: rgba(247, 250, 239, 0.22);
+}
+
+.gh-member-card__pips i.is-on {
+  background: linear-gradient(135deg, #b7ff35, #69b71b);
+  box-shadow: 0 0 6px rgba(168, 255, 24, 0.6);
+}
+
+/* Care mark — cross knocked out of a lime tile. Arms are a third of the
+ * mark; thinner arms read as a maths plus at phone sizes. */
+.gh-member-card__care {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(18px, 5cqw, 32px);
+  aspect-ratio: 1;
+  border-radius: clamp(4px, 1.4cqw, 8px);
+  background: linear-gradient(150deg, #c6ff5c, #8fd41e 55%, #6fb016);
+  box-shadow:
+    0 0 12px rgba(168, 255, 24, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.gh-member-card__care::before {
+  content: "";
+  position: absolute;
+  inset: 21%;
+  background: #04261c;
+  clip-path: polygon(
+    37% 0,
+    63% 0,
+    63% 37%,
+    100% 37%,
+    100% 63%,
+    63% 63%,
+    63% 100%,
+    37% 100%,
+    37% 63%,
+    0 63%,
+    0 37%,
+    37% 37%
+  );
 }
 
 .gh-patient-tabs > button {

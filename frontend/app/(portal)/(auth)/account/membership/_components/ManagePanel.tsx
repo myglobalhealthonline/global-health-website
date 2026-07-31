@@ -9,11 +9,11 @@ import {
   cancelSubscription,
   changePlan,
   getBillingPortalUrl,
-  getSubscription,
+  syncSubscription,
 } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
 import { interpolate } from "@/lib/subscription/format";
-import { AdminCard, Btn, Pill, type PillTone } from "@/components/portal-atoms";
+import { AdminCard, Btn, SectionHeader } from "@/components/portal-atoms";
 import { PortalDialog } from "@/components/PortalDialog";
 
 export interface PlanOption {
@@ -30,11 +30,17 @@ type ManageCopy = ReturnType<
   typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
 >["subscription"]["manage"];
 
+// Row copy lives in the account bundle (account.membership.*) — same strings
+// the benefits and timeline sections use.
+type MembershipCopy = ReturnType<
+  typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
+>["account"]["membership"];
+
 export interface ManagePanelProps {
   t: ManageCopy;
+  /** account.membership — the row titles and "when it takes effect" copy. */
+  m: MembershipCopy;
   status: string;
-  planName: string;
-  priceLabel: string;
   /** Current plan monthly price in cents — to classify changes up/down. */
   currentPriceCents: number;
   nextBillingLabel: string | null;
@@ -48,25 +54,8 @@ export interface ManagePanelProps {
   pricingHref: string;
 }
 
-function statusMeta(status: string, t: ManageCopy): { tone: PillTone; label: string } {
-  switch (status) {
-    case "ACTIVE":
-      return { tone: "active", label: t.status_active };
-    case "INCOMPLETE":
-      return { tone: "pending", label: t.status_incomplete };
-    case "PAST_DUE":
-      return { tone: "pending", label: t.status_past_due };
-    case "CANCELED":
-      return { tone: "inactive", label: t.status_canceled };
-    case "PAUSED":
-      return { tone: "neutral", label: t.status_paused };
-    default:
-      return { tone: "neutral", label: status };
-  }
-}
-
 export function ManagePanel(props: ManagePanelProps) {
-  const { t } = props;
+  const { t, m } = props;
   const router = useRouter();
   const [busy, setBusy] = useState<null | "portal" | "cancel" | "change" | "cancelChange">(null);
   const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
@@ -75,7 +64,6 @@ export function ManagePanel(props: ManagePanelProps) {
   const [confirmChangeOpen, setConfirmChangeOpen] = useState(false);
   const [alreadyActiveDismissed, setAlreadyActiveDismissed] = useState(false);
 
-  const meta = statusMeta(props.status, t);
   const canCancel =
     !props.cancelAtPeriodEnd && (props.status === "ACTIVE" || props.status === "PAST_DUE");
   const canChange =
@@ -84,31 +72,59 @@ export function ManagePanel(props: ManagePanelProps) {
   // Webhook race after a successful Stripe return (B4): the page reads status
   // once, server-side, and the activating webhook may not have landed yet — so
   // a freshly-paid subscriber would otherwise see the INCOMPLETE "complete your
-  // payment" scold. When we returned with ?subscription=ok but status isn't yet
-  // ACTIVE, poll GET /api/me/subscription (2s, ~30s cap); on ACTIVE we refresh
-  // the server render (→ success banner); on timeout we show a soft
-  // "still processing" state with a refresh CTA — never the scold.
-  const shouldConfirm =
-    props.returnState === "ok" && props.status !== "ACTIVE" && props.status !== "CANCELED";
+  // payment" scold.
+  //
+  // This used to poll GET /api/me/subscription, which re-reads the SAME row the
+  // server already rendered — if the webhook was lost rather than merely late,
+  // 15 reads returned INCOMPLETE and the customer stayed stranded with no way
+  // out. It now calls POST /api/me/subscription/sync, which asks Stripe and
+  // applies the answer, so a dropped webhook self-heals.
+  //
+  //   "poll" — returned from Checkout: sync every 2s up to ~30s, since the
+  //            subscription may genuinely not exist provider-side for a beat.
+  //   "once" — landed on an already-INCOMPLETE membership (revisit, bookmark,
+  //            e-mail link): one sync attempt. Enough to recover a lost webhook
+  //            without spending Stripe calls on a genuinely abandoned checkout.
+  const confirmMode: "poll" | "once" | "off" =
+    props.status === "ACTIVE" || props.status === "CANCELED"
+      ? "off"
+      : props.returnState === "ok"
+        ? "poll"
+        : props.status === "INCOMPLETE"
+          ? "once"
+          : "off";
   const [confirmPhase, setConfirmPhase] = useState<"idle" | "confirming" | "timeout">(
-    shouldConfirm ? "confirming" : "idle",
+    confirmMode === "poll" ? "confirming" : "idle",
   );
   const deadlineRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!shouldConfirm) {
+    if (confirmMode === "off") {
       // Sync confirm phase back to idle when the triggering prop clears.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setConfirmPhase("idle");
       return;
     }
-    setConfirmPhase("confirming");
-    deadlineRef.current = Date.now() + 30_000;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
+
+    // Single silent attempt — no spinner: the page already shows the
+    // INCOMPLETE banner and flipping to "confirming" on every visit would
+    // flicker. A successful heal refreshes into the active state.
+    if (confirmMode === "once") {
+      void syncSubscription().then((res) => {
+        if (!cancelled && res.ok && res.data.changed) router.refresh();
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setConfirmPhase("confirming");
+    deadlineRef.current = Date.now() + 30_000;
     const poll = async () => {
       if (cancelled) return;
-      const res = await getSubscription();
+      const res = await syncSubscription();
       if (cancelled) return;
       if (res.ok && res.data.status === "ACTIVE") {
         router.refresh(); // server re-render flips to the success banner
@@ -125,7 +141,7 @@ export function ManagePanel(props: ManagePanelProps) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [shouldConfirm, router]);
+  }, [confirmMode, router]);
 
   // Return / status banner (success, SCA action-required, INCOMPLETE, cancelled).
   const banner = (() => {
@@ -184,13 +200,21 @@ export function ManagePanel(props: ManagePanelProps) {
   async function confirmChange() {
     setConfirmChangeOpen(false);
     if (!selectedPlan) return;
+    const planName = props.planOptions.find((p) => p.id === selectedPlan)?.name ?? "";
     setBusy("change");
     setNotice(null);
     const res = await changePlan(selectedPlan);
     setBusy(null);
     if (res.ok) {
-      const date = res.data.pendingChangeEffectiveAt ? formatAppDate(res.data.pendingChangeEffectiveAt) : "";
-      setNotice({ kind: "ok", text: interpolate(t.changeScheduled, { date }) });
+      // Upgrades are already live and charged; downgrades are scheduled.
+      const text = res.data.applied
+        ? interpolate(t.upgradeApplied, { plan: planName })
+        : interpolate(t.changeScheduled, {
+            date: res.data.pendingChangeEffectiveAt
+              ? formatAppDate(res.data.pendingChangeEffectiveAt)
+              : "",
+          });
+      setNotice({ kind: "ok", text });
       setSelectedPlan("");
       router.refresh();
     } else {
@@ -199,10 +223,17 @@ export function ManagePanel(props: ManagePanelProps) {
   }
 
   const selectedPlanOption = props.planOptions.find((p) => p.id === selectedPlan);
-  const changeConfirmMsg = interpolate(t.changeConfirm, {
-    plan: selectedPlanOption?.name ?? "",
-    date: props.nextBillingLabel ?? "",
-  });
+  // Upgrade vs downgrade decides what we're allowed to promise: an upgrade is
+  // charged and live immediately, a downgrade is free and deferred. Same
+  // comparison the backend makes to pick the branch.
+  const selectedIsUpgrade =
+    selectedPlanOption != null && selectedPlanOption.priceCents > props.currentPriceCents;
+  const changeConfirmMsg = selectedIsUpgrade
+    ? interpolate(t.upgradeConfirm, { plan: selectedPlanOption?.name ?? "" })
+    : interpolate(t.changeConfirm, {
+        plan: selectedPlanOption?.name ?? "",
+        date: props.nextBillingLabel ?? "",
+      });
 
   async function doCancelChange() {
     setBusy("cancelChange");
@@ -252,7 +283,9 @@ export function ManagePanel(props: ManagePanelProps) {
             ) : "action" in banner && banner.action === "refresh" ? (
               <button
                 type="button"
-                onClick={() => router.refresh()}
+                // Re-sync from Stripe, not just re-render — a plain refresh
+                // would re-read the same unchanged row the poll gave up on.
+                onClick={() => void syncSubscription().then(() => router.refresh())}
                 className="mt-2 font-semibold underline"
               >
                 {t.return.refresh}
@@ -272,59 +305,37 @@ export function ManagePanel(props: ManagePanelProps) {
         </div>
       ) : null}
 
-      <AdminCard>
-        <div className="gh-membership-manage-head grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
-          <div>
-            <p className="text-portal-thead font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-member)" }}>
-              {t.currentPlan}
+      {/* Scheduled changes only. Plan name, price, renewal and status live on
+          the membership card and its facts panel above — this panel is the
+          actions surface, not a second copy of the plan. */}
+      {(props.cancelAtPeriodEnd && props.nextBillingLabel) ||
+      (props.pendingChangePlanName && props.pendingChangeDate) ? (
+        <AdminCard>
+          {props.cancelAtPeriodEnd && props.nextBillingLabel ? (
+            <p className="text-sm" style={{ color: "var(--portal-warning-text)" }}>
+              {interpolate(t.cancelAtPeriodEnd, { date: props.nextBillingLabel })}
             </p>
-            <h2 className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.4rem", color: "var(--portal-chrome-text-active)" }}>
-              {props.planName}
-            </h2>
-          </div>
-          <Pill tone={meta.tone} withDot>
-            {meta.label}
-          </Pill>
-        </div>
-
-        <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="text-xs" style={{ color: "var(--portal-muted)" }}>{t.monthlyPrice}</dt>
-            <dd className="mt-0.5 font-semibold" style={{ color: "var(--portal-text)" }}>{props.priceLabel}</dd>
-          </div>
-          {props.nextBillingLabel ? (
-            <div>
-              <dt className="text-xs" style={{ color: "var(--portal-muted)" }}>{t.nextBilling}</dt>
-              <dd className="mt-0.5 font-semibold" style={{ color: "var(--portal-text)" }}>{props.nextBillingLabel}</dd>
-            </div>
           ) : null}
-        </dl>
-
-        {props.cancelAtPeriodEnd && props.nextBillingLabel ? (
-          <p className="mt-4 text-sm" style={{ color: "var(--portal-warning-text)" }}>
-            {interpolate(t.cancelAtPeriodEnd, { date: props.nextBillingLabel })}
-          </p>
-        ) : null}
-        {props.pendingChangePlanName && props.pendingChangeDate ? (
-          <div
-            className="mt-4 rounded-[10px] p-3"
-            style={{ background: "var(--portal-well)", border: "1px solid var(--portal-line)" }}
-          >
-            <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
-              {interpolate(t.pendingChange, { plan: props.pendingChangePlanName, date: props.pendingChangeDate })}
-            </p>
-            <button
-              type="button"
-              onClick={doCancelChange}
-              disabled={busy === "cancelChange"}
-              className="mt-2 text-xs font-semibold underline disabled:opacity-60"
-              style={{ color: "var(--portal-primary)" }}
-            >
-              {busy === "cancelChange" ? t.cancelingChange : t.cancelChange}
-            </button>
-          </div>
-        ) : null}
-      </AdminCard>
+          {props.pendingChangePlanName && props.pendingChangeDate ? (
+            <>
+              <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+                {interpolate(t.pendingChange, { plan: props.pendingChangePlanName, date: props.pendingChangeDate })}
+              </p>
+              <div className="gh-patient-form-actions mt-3 flex justify-end">
+                <button
+                  type="button"
+                  onClick={doCancelChange}
+                  disabled={busy === "cancelChange"}
+                  className="text-xs font-semibold underline disabled:opacity-60"
+                  style={{ color: "var(--portal-primary)" }}
+                >
+                  {busy === "cancelChange" ? t.cancelingChange : t.cancelChange}
+                </button>
+              </div>
+            </>
+          ) : null}
+        </AdminCard>
+      ) : null}
 
       {notice ? (
         <p
@@ -340,63 +351,105 @@ export function ManagePanel(props: ManagePanelProps) {
         </p>
       ) : null}
 
-      {canChange ? (
-        <AdminCard>
-          <p className="text-sm font-semibold" style={{ color: "var(--portal-text)" }}>{t.upgrade}</p>
-          <p className="mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
-            {props.nextBillingLabel
-              ? interpolate(t.changeEffective, { date: props.nextBillingLabel })
-              : t.changeNote}
-          </p>
-          <div className="gh-patient-form-actions mt-4 grid gap-3 sm:grid-cols-[minmax(0,20rem)_auto] sm:items-center">
-            <select
-              value={selectedPlan}
-              onChange={(e) => setSelectedPlan(e.target.value)}
-              className="gh-input w-full"
-              aria-label={t.change}
-            >
-              <option value="">{t.change}…</option>
-              {props.planOptions.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.priceCents > props.currentPriceCents ? t.upgradeLabel : t.downgradeLabel}: {p.name} — {p.priceLabel}
-                </option>
-              ))}
-            </select>
-            <Btn
-              variant="secondary"
-              onClick={doChange}
-              disabled={!selectedPlan || busy === "change"}
-              iconLeft={busy === "change" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
-            >
-              {busy === "change" ? t.changing : t.change}
-            </Btn>
-          </div>
-        </AdminCard>
-      ) : null}
+      {/* Everything you can DO, one labelled row each: what it does and when
+          it takes effect, then the control. The old panel showed bare buttons
+          and left the consequences to a confirm dialog. */}
+      <AdminCard padding={0}>
+        <SectionHeader as="h2" title={m.manageTitle} description={m.manageDesc} />
+        <div className="p-5">
+          {canChange ? (
+            <div className="gh-membership-do">
+              <div>
+                <h3 className="gh-membership-do__title">{m.rowSwitchTitle}</h3>
+                <p className="gh-membership-do__body">
+                  {props.nextBillingLabel
+                    ? interpolate(m.rowSwitchBody, { date: props.nextBillingLabel })
+                    : m.rowSwitchBodyPending}
+                </p>
+              </div>
+              <div className="gh-membership-do__ctl">
+                <select
+                  value={selectedPlan}
+                  onChange={(e) => setSelectedPlan(e.target.value)}
+                  className="gh-input"
+                  aria-label={t.change}
+                >
+                  <option value="">{t.change}…</option>
+                  {props.planOptions.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.priceCents > props.currentPriceCents ? t.upgradeLabel : t.downgradeLabel}: {p.name} — {p.priceLabel}
+                    </option>
+                  ))}
+                </select>
+                <Btn
+                  variant="secondary"
+                  onClick={doChange}
+                  disabled={!selectedPlan || busy === "change"}
+                  iconLeft={busy === "change" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
+                >
+                  {busy === "change" ? t.changing : t.change}
+                </Btn>
+              </div>
+            </div>
+          ) : null}
 
-      <div className="gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
-        <Btn
-          variant="soft"
-          onClick={openPortal}
-          disabled={busy === "portal"}
-          iconLeft={busy === "portal" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <CreditCard className="size-4" aria-hidden />}
-        >
-          {t.manageBilling}
-        </Btn>
-        {canCancel ? (
-          <Btn
-            variant="danger"
-            onClick={doCancel}
-            disabled={busy === "cancel"}
-            iconLeft={busy === "cancel" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
-          >
-            {busy === "cancel" ? t.canceling : t.cancel}
-          </Btn>
-        ) : null}
-        <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:inline" style={{ color: "var(--portal-primary)" }}>
-          {t.browseAllPlans}
-        </Link>
-      </div>
+          <div className="gh-membership-do">
+            <div>
+              <h3 className="gh-membership-do__title">{m.rowBillingTitle}</h3>
+              <p className="gh-membership-do__body">{m.rowBillingBody}</p>
+            </div>
+            <div className="gh-membership-do__ctl">
+              <Btn
+                variant="primary"
+                onClick={openPortal}
+                disabled={busy === "portal"}
+                iconLeft={busy === "portal" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <CreditCard className="size-4" aria-hidden />}
+              >
+                {t.manageBilling}
+              </Btn>
+            </div>
+          </div>
+
+          <div className="gh-membership-do">
+            <div>
+              <h3 className="gh-membership-do__title">{t.browseAllPlans}</h3>
+              <p className="gh-membership-do__body">{t.changeNoteUpgrade}</p>
+            </div>
+            <div className="gh-membership-do__ctl">
+              <Link
+                href={props.pricingHref}
+                className="text-sm font-semibold underline"
+                style={{ color: "var(--portal-primary)" }}
+              >
+                {t.browsePlans}
+              </Link>
+            </div>
+          </div>
+
+          {canCancel ? (
+            <div className="gh-membership-do">
+              <div>
+                <h3 className="gh-membership-do__title">{m.rowCancelTitle}</h3>
+                <p className="gh-membership-do__body">
+                  {props.nextBillingLabel
+                    ? interpolate(m.rowCancelBody, { date: props.nextBillingLabel })
+                    : m.rowCancelBodyPending}
+                </p>
+              </div>
+              <div className="gh-membership-do__ctl">
+                <Btn
+                  variant="ghost"
+                  onClick={doCancel}
+                  disabled={busy === "cancel"}
+                  iconLeft={busy === "cancel" ? <Loader2 className="size-4 animate-spin" aria-hidden /> : undefined}
+                >
+                  {busy === "cancel" ? t.canceling : t.cancel}
+                </Btn>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </AdminCard>
 
       <PortalDialog
         open={confirmCancelOpen}

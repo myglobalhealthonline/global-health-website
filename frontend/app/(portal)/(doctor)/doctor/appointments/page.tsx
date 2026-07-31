@@ -34,7 +34,7 @@ import {
   type AppointmentDayBucket,
 } from "@/lib/format-datetime";
 import { groupAppointmentsByDay } from "@/lib/appointment-day-groups";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctorTourDemo } from "@/components/doctor-tour-demo";
 
@@ -93,7 +93,7 @@ export default async function DoctorAppointmentsPage({
 }: {
   searchParams?: Promise<SearchParams>;
 }) {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const viewStatusText: Record<string, string> = {
     waiting_payment: d.appointments.statusWaitingPayment,
@@ -210,7 +210,7 @@ export default async function DoctorAppointmentsPage({
                 {d.manualBooking.newBooking}
               </Link>
             ) : null}
-            <Link href="/doctor/calendar" className="gh-btn gh-btn-soft text-sm">
+            <Link href="/doctor/availability" className="gh-btn gh-btn-soft text-sm">
               {d.appointments.calendarView}
             </Link>
           </span>

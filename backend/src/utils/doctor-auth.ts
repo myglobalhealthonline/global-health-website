@@ -191,6 +191,72 @@ export async function verifyCrossJurisdictionRxPermission(
   return auth;
 }
 
+/**
+ * Country-director gate for the cross-doctor consultation list.
+ *
+ * Success carries `directorCountryCodes` — the LOWERCASE country codes this
+ * caller may read. Callers MUST clamp every query against this list;
+ * `Appointment.countryCode` is a free-text lowercase code, not an FK, so an
+ * unclamped `countryCode` from the query string would let any director read
+ * any market.
+ *
+ * ADMINs pass with `null` codes, meaning "no country restriction" — an empty
+ * array would be indistinguishable from "granted nothing" and silently return
+ * zero rows.
+ *
+ * DOCTORs need BOTH `Doctor.isCountryDirector` (master switch) and at least one
+ * active `DoctorCountry` row with `directorAccess = true`.
+ */
+export type CountryDirectorAuthResult =
+  | {
+      ok: true;
+      userId: string;
+      doctorId: string;
+      email: string;
+      fullName: string;
+      role: "DOCTOR" | "ADMIN";
+      /** Lowercase codes the caller may read; `null` = unrestricted (ADMIN). */
+      directorCountryCodes: string[] | null;
+    }
+  | { ok: false; status: 401 | 403; message: string };
+
+const NOT_A_DIRECTOR_RESULT = {
+  ok: false as const,
+  status: 403 as const,
+  message:
+    "Your account isn't enabled for country-wide consultation reports. Ask an admin to enable it.",
+};
+
+export async function verifyCountryDirectorAccess(
+  request: FastifyRequest,
+): Promise<CountryDirectorAuthResult> {
+  const auth = await verifyDoctorAccess(request);
+  if (!auth.ok) return auth;
+  // Resolve role again — verifyDoctorAccess collapses DOCTOR and ADMIN into the
+  // success branch; ADMIN bypasses the per-doctor flag entirely.
+  const token = request.cookies[env.AUTH_COOKIE_NAME];
+  const payload = token ? verifyAuthToken(token) : null;
+  if (payload?.role === "ADMIN") {
+    return { ...auth, directorCountryCodes: null };
+  }
+  const doctor = await prisma.doctor.findUnique({
+    where: { id: auth.doctorId },
+    select: {
+      isCountryDirector: true,
+      additionalCountries: {
+        where: { directorAccess: true, active: true },
+        select: { country: { select: { code: true } } },
+      },
+    },
+  });
+  if (!doctor?.isCountryDirector) return NOT_A_DIRECTOR_RESULT;
+  const codes = Array.from(
+    new Set(doctor.additionalCountries.map((row) => row.country.code.toLowerCase())),
+  );
+  if (codes.length === 0) return NOT_A_DIRECTOR_RESULT;
+  return { ...auth, directorCountryCodes: codes };
+}
+
 export async function verifyClinicalReadAccess(
   request: FastifyRequest,
 ): Promise<ClinicalReadResult> {

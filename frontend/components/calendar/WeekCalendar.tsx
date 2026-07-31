@@ -1,7 +1,25 @@
 "use client";
 
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
-import { Ban, ChevronLeft, ChevronRight, Clock, User } from "lucide-react";
+import {
+  Fragment,
+  type CSSProperties,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Ban,
+  CheckSquare,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Square,
+  Trash2,
+  Unlock,
+  User,
+} from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
 import {
@@ -17,8 +35,14 @@ import {
 // without clipping. Everything longer scales up from there.
 const HOUR_PX = 160;
 const PX_PER_MIN = HOUR_PX / 60;
+// Hour window for a week with NOTHING on it — an empty grid still has to read
+// as a working day. A week that does have content fits the window to that
+// content instead (see the perDay memo), so these are a fallback, not a floor.
 const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 20;
+// Floor on the fitted window, so a single 15-min slot doesn't collapse the grid
+// into one lonely hour row.
+const MIN_SPAN_HOURS = 4;
 const MIN_BLOCK_PX = 34; // floor < a 15-min slot's 40px span, so blocks keep a gap
 // Height tiers: a block only shows what it can render without clipping.
 const TWO_LINE_PX = 38; // time range + name
@@ -49,6 +73,26 @@ type Props = {
    *  (block / re-open) instead of opening the admin booking dialog. Omit for
    *  the admin booking flow. */
   onToggleSlot?: (item: CalendarItem) => void;
+  /** Admin mode: block an OPEN slot. Renders a small ⃠ button in the block's
+   *  top-right corner — the block's own click stays the booking flow, so
+   *  blocking never costs the admin an extra step to book. */
+  onBlockSlot?: (item: CalendarItem) => void;
+  /** Clicking a BLOCKED slot re-opens it, and it also gets an unlock corner
+   *  button so the action is visible rather than discovered. Without this,
+   *  blocked blocks render as inert divs. */
+  onSelectBlockedSlot?: (item: CalendarItem) => void;
+  /** Admin mode: delete an OPEN or BLOCKED slot outright (that date only).
+   *  Renders a 🗑 corner button beside the block one. */
+  onRemoveSlot?: (item: CalendarItem) => void;
+  /** Multi-select. Supplying this puts a checkbox in the top-left corner of
+   *  every OPEN/BLOCKED block, so picking several slots and acting on them
+   *  together needs no mode switch and leaves the per-slot buttons usable.
+   *  Booked time is never selectable — bulk actions must not touch it. */
+  onToggleSelect?: (item: CalendarItem) => void;
+  /** Bare slot ids currently selected (no `s-` prefix). */
+  selectedIds?: Set<string>;
+  /** Disables the block/unblock affordances while a mutation is in flight. */
+  slotActionsBusy?: boolean;
   onPrevWeek: () => void;
   onNextWeek: () => void;
   onToday: () => void;
@@ -66,9 +110,15 @@ type Props = {
     clickToBlock?: string;
     clickToReopen?: string;
     bookThisTime?: string;
+    blockThisTime?: string;
+    removeThisSlot?: string;
+    selectSlot?: string;
+    deselectSlot?: string;
     legendOpen?: string;
     legendBooked?: string;
     legendBlocked?: string;
+    /** Sticky day-header count, "{count}" interpolated. */
+    dayCount?: string;
   };
 };
 
@@ -229,6 +279,12 @@ export function WeekCalendar({
   onSelectOpenSlot,
   onSelectConsultation,
   onToggleSlot,
+  onBlockSlot,
+  onSelectBlockedSlot,
+  onRemoveSlot,
+  selectedIds,
+  onToggleSelect,
+  slotActionsBusy = false,
   onPrevWeek,
   onNextWeek,
   onToday,
@@ -242,9 +298,14 @@ export function WeekCalendar({
     clickToBlock: labels?.clickToBlock ?? "Click to block (mark busy)",
     clickToReopen: labels?.clickToReopen ?? "Click to re-open",
     bookThisTime: labels?.bookThisTime ?? "Book this time",
+    blockThisTime: labels?.blockThisTime ?? "Block this time (mark unavailable)",
+    removeThisSlot: labels?.removeThisSlot ?? "Remove this slot (this date only)",
+    selectSlot: labels?.selectSlot ?? "Select this slot",
+    deselectSlot: labels?.deselectSlot ?? "Deselect this slot",
     legendOpen: labels?.legendOpen ?? "Open · click to book",
     legendBooked: labels?.legendBooked ?? "Booked",
     legendBlocked: labels?.legendBlocked ?? "Blocked",
+    dayCount: labels?.dayCount ?? "{count} slots",
   };
   // Measure the scroll container so the grid renders only as many day
   // columns as actually fit at a legible width — no forced horizontal
@@ -332,28 +393,67 @@ export function WeekCalendar({
     }
   }
 
-  // Positioned blocks per day + the visible hour window (expands to fit early
-  // / late items so nothing is clipped). Lane count for width purposes comes
-  // from weekMaxLanes above, not from here — this is render data only.
-  const { perDay, startHour, endHour } = useMemo(() => {
-    let minHour = DEFAULT_START_HOUR;
-    let maxHour = DEFAULT_END_HOUR;
+  // Positioned blocks per day + the hour window, FITTED to the week's content.
+  //
+  // This used to seed the window at a fixed 07:00-20:00 and only ever widen it.
+  // At HOUR_PX the body was therefore never shorter than 2080px while the panel
+  // caps at min(76vh, 940px), and the scroll container opens at the top — so a
+  // doctor whose only slots sat at 11:00 got a column of empty 07:00 rows and
+  // read the week as having no availability, while the month view counted the
+  // very same slots. Fitting the window to the content (and scrolling to the
+  // first block below) means a rendered day can never look emptier than it is.
+  const { perDay, startHour, endHour, firstBlockTop } = useMemo(() => {
     const perDay = new Map<string, PositionedItem[]>();
+    let contentMin: number | null = null;
+    let contentMax: number | null = null;
     for (const day of visibleDays) {
       const raw = dropSlotsUnderConsultations(itemsByDay.get(day.key) ?? []);
       const positioned = packDay(raw, tz);
       for (const p of positioned) {
-        minHour = Math.min(minHour, Math.floor(p.top / 60));
-        maxHour = Math.max(maxHour, Math.ceil((p.top + p.height) / 60));
+        contentMin = contentMin === null ? p.top : Math.min(contentMin, p.top);
+        const bottom = p.top + p.height;
+        contentMax = contentMax === null ? bottom : Math.max(contentMax, bottom);
       }
       perDay.set(day.key, positioned);
     }
+    // Empty week — keep the office-hours window so the grid still reads as one.
+    if (contentMin === null || contentMax === null) {
+      return {
+        perDay,
+        startHour: DEFAULT_START_HOUR,
+        endHour: DEFAULT_END_HOUR,
+        firstBlockTop: null,
+      };
+    }
+    const start = Math.max(0, Math.floor(contentMin / 60));
+    const end = Math.min(
+      24,
+      Math.max(Math.ceil(contentMax / 60), start + MIN_SPAN_HOURS),
+    );
     return {
       perDay,
-      startHour: Math.max(0, minHour),
-      endHour: Math.min(24, Math.max(maxHour, minHour + 1)),
+      startHour: start,
+      endHour: end,
+      firstBlockTop: (contentMin - start * 60) * PX_PER_MIN,
     };
   }, [visibleDays, itemsByDay, tz]);
+
+  // Land the grid on the week's first block rather than at the top of the hour
+  // window. The fitted window usually puts them in the same place, but a week
+  // spanning more hours than the panel can show (an early clinic plus a late
+  // one) would still open on empty rows. Keyed on the week + day-window so
+  // blocking a slot mid-week doesn't yank the doctor's scroll position back.
+  const lastScrolledKey = useRef("");
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || firstBlockTop === null) return;
+    const key = `${anchorDayKey}:${windowStart}`;
+    if (lastScrolledKey.current === key) return;
+    lastScrolledKey.current = key;
+    // A quarter-hour of lead so the first block doesn't sit flush under the
+    // sticky day header.
+    el.scrollTop = Math.max(0, firstBlockTop - HOUR_PX / 4);
+  }, [anchorDayKey, windowStart, firstBlockTop]);
 
   // Explicit 24-hour clock (en-GB, hour12:false) so every block reads the same
   // — en-IE, used elsewhere, flips to AM/PM which looked inconsistent.
@@ -432,6 +532,11 @@ export function WeekCalendar({
             <div />
             {visibleDays.map((d) => {
               const isToday = d.key === todayKey;
+              // Count in the STICKY header, mirroring the month grid's dots.
+              // The hour body scrolls; this doesn't. So "8 slots on Saturday"
+              // stays on screen even when every one of them is below the fold,
+              // and a column can never be misread as an empty day.
+              const dayCount = (perDay.get(d.key) ?? []).length;
               return (
                 <div
                   key={d.key}
@@ -454,6 +559,15 @@ export function WeekCalendar({
                   >
                     {d.dayNum}
                   </div>
+                  {dayCount > 0 ? (
+                    <div
+                      className="mt-0.5 text-portal-micro font-semibold"
+                      style={{ color: "var(--portal-muted)" }}
+                      aria-label={t.dayCount.split("{count}").join(String(dayCount))}
+                    >
+                      {t.dayCount.split("{count}").join(String(dayCount))}
+                    </div>
+                  ) : null}
                 </div>
               );
             })}
@@ -540,12 +654,19 @@ export function WeekCalendar({
                     const showPatient = isConsult || isBookedWithPatient;
                     const patientName =
                       p.item.meta?.patientName || p.item.title;
-                    const style: CSSProperties = {
+                    // Geometry is kept separate from the tone so a block that
+                    // needs a corner action (OPEN + admin) can hand the
+                    // position to a wrapper and the colours to the inner
+                    // button — the action button can't nest inside it.
+                    const geometry: CSSProperties = {
                       position: "absolute",
                       top,
                       height,
                       left: `calc(${p.lane * laneWidth}% + 2px)`,
                       width: `calc(${laneWidth}% - 4px)`,
+                    };
+                    const style: CSSProperties = {
+                      ...geometry,
                       ...toneStyle(p.item),
                     };
                     // Draw the SPAN, not just the start: a 45-min consult that
@@ -592,12 +713,12 @@ export function WeekCalendar({
                       </>
                     ) : (
                       <>
-                        <span className="flex items-center gap-1 text-portal-thead font-bold leading-tight">
+                        <span className="flex items-center justify-center gap-1 text-portal-thead font-bold leading-tight">
                           {statusIcon(p.item.status)}
                           <span className="truncate">{timeLabel}</span>
                         </span>
                         {showDoctorName && doctorName && showSecond ? (
-                          <span className="mt-0.5 block truncate text-portal-micro font-medium leading-tight opacity-80">
+                          <span className="mt-0.5 block truncate text-center text-portal-micro font-medium leading-tight opacity-80">
                             {doctorName}
                           </span>
                         ) : null}
@@ -635,18 +756,165 @@ export function WeekCalendar({
                         </button>
                       );
                     }
+                    // Admin corner actions. `null` when this surface passes no
+                    // admin handlers (doctor portal, patient views) — then the
+                    // block renders exactly as it did before.
+                    // The checkbox rides the LEFT corner so it never collides
+                    // with the action buttons on the right, and it shows for
+                    // exactly the statuses a bulk action can touch.
+                    const selectBox =
+                      onToggleSelect &&
+                      p.item.kind === "slot" &&
+                      (p.item.status === "OPEN" || p.item.status === "BLOCKED")
+                        ? (() => {
+                            const bareId = p.item.id.replace(/^s-/, "");
+                            const isSelected = selectedIds?.has(bareId) ?? false;
+                            return (
+                              <span className="absolute left-0.5 top-0.5 z-[2] inline-flex">
+                                <CornerAction
+                                  label={isSelected ? t.deselectSlot : t.selectSlot}
+                                  title={`${timeLabel} · ${
+                                    isSelected ? t.deselectSlot : t.selectSlot
+                                  }`}
+                                  disabled={slotActionsBusy}
+                                  pressed={isSelected}
+                                  onClick={() => onToggleSelect(p.item)}
+                                >
+                                  {isSelected ? (
+                                    <CheckSquare className="size-3" aria-hidden />
+                                  ) : (
+                                    <Square className="size-3" aria-hidden />
+                                  )}
+                                </CornerAction>
+                              </span>
+                            );
+                          })()
+                        : null;
+
+                    const cornerCount =
+                      (onBlockSlot && p.item.status === "OPEN" ? 1 : 0) +
+                      (onSelectBlockedSlot && p.item.status === "BLOCKED" ? 1 : 0) +
+                      (onRemoveSlot ? 1 : 0);
+                    const contentInset: CSSProperties = {
+                      paddingLeft: selectBox ? 24 : undefined,
+                      paddingRight: cornerCount > 0 ? cornerCount * 22 + 2 : undefined,
+                    };
+
+                    const cornerActions =
+                      p.item.kind === "slot" &&
+                      (p.item.status === "OPEN" || p.item.status === "BLOCKED") &&
+                      ((onBlockSlot && p.item.status === "OPEN") ||
+                        (onSelectBlockedSlot && p.item.status === "BLOCKED") ||
+                        onRemoveSlot) ? (
+                        // z-2 keeps the actions above their own block (solid
+                        // tones sit at z-2) but BELOW the sticky day-header row
+                        // (z-3, portal.css) — at z-3 they painted over the
+                        // weekday labels when the grid was scrolled.
+                        <span className="absolute right-0.5 top-0.5 z-[2] inline-flex gap-0.5">
+                          {onBlockSlot && p.item.status === "OPEN" ? (
+                            <CornerAction
+                              label={t.blockThisTime}
+                              title={`${timeLabel} · ${t.blockThisTime}`}
+                              disabled={slotActionsBusy}
+                              onClick={() => onBlockSlot(p.item)}
+                            >
+                              <Ban className="size-3" aria-hidden />
+                            </CornerAction>
+                          ) : null}
+                          {onSelectBlockedSlot && p.item.status === "BLOCKED" ? (
+                            <CornerAction
+                              label={t.clickToReopen}
+                              title={`${timeLabel} · ${t.clickToReopen}`}
+                              disabled={slotActionsBusy}
+                              onClick={() => onSelectBlockedSlot(p.item)}
+                            >
+                              <Unlock className="size-3" aria-hidden />
+                            </CornerAction>
+                          ) : null}
+                          {onRemoveSlot ? (
+                            <CornerAction
+                              label={t.removeThisSlot}
+                              title={`${timeLabel} · ${t.removeThisSlot}`}
+                              disabled={slotActionsBusy}
+                              onClick={() => onRemoveSlot(p.item)}
+                            >
+                              <Trash2 className="size-3" aria-hidden />
+                            </CornerAction>
+                          ) : null}
+                        </span>
+                      ) : null;
+
                     if (bookable) {
-                      return (
+                      const bookButton = (
                         <button
-                          key={p.item.id}
                           type="button"
                           onClick={() => onSelectOpenSlot(p.item)}
                           title={`${timeLabel} · ${t.bookThisTime}`}
                           className="gh-week-block gh-week-block--open overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
-                          style={style}
+                          style={
+                            cornerActions || selectBox
+                              ? {
+                                  position: "absolute",
+                                  inset: 0,
+                                  ...toneStyle(p.item),
+                                  ...contentInset,
+                                }
+                              : style
+                          }
                         >
                           {inner}
                         </button>
+                      );
+                      if (!cornerActions && !selectBox) {
+                        return <Fragment key={p.item.id}>{bookButton}</Fragment>;
+                      }
+                      // Admin: the block itself still books; the corner buttons
+                      // block or remove the slot instead.
+                      return (
+                        <div key={p.item.id} style={geometry}>
+                          {bookButton}
+                          {selectBox}
+                          {cornerActions}
+                        </div>
+                      );
+                    }
+                    if (
+                      onSelectBlockedSlot &&
+                      p.item.kind === "slot" &&
+                      p.item.status === "BLOCKED"
+                    ) {
+                      const reopenButton = (
+                        <button
+                          type="button"
+                          disabled={slotActionsBusy}
+                          onClick={() => onSelectBlockedSlot(p.item)}
+                          title={`${timeLabel} · ${
+                            p.item.meta?.blockReason ?? t.legendBlocked
+                          } · ${t.clickToReopen}`}
+                          className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105 disabled:opacity-60"
+                          style={
+                            cornerActions || selectBox
+                              ? {
+                                  position: "absolute",
+                                  inset: 0,
+                                  ...toneStyle(p.item),
+                                  ...contentInset,
+                                }
+                              : style
+                          }
+                        >
+                          {inner}
+                        </button>
+                      );
+                      if (!cornerActions && !selectBox) {
+                        return <Fragment key={p.item.id}>{reopenButton}</Fragment>;
+                      }
+                      return (
+                        <div key={p.item.id} style={geometry}>
+                          {reopenButton}
+                          {selectBox}
+                          {cornerActions}
+                        </div>
                       );
                     }
                     if (isConsult || isBookedWithPatient) {
@@ -663,18 +931,40 @@ export function WeekCalendar({
                         </button>
                       );
                     }
-                    return (
+                    // Anything left over: HELD, a past OPEN slot, a BLOCKED
+                    // one on a surface with no re-open handler. Still gets its
+                    // corner actions when the surface offers them — a slot the
+                    // doctor can see is a slot they should be able to manage.
+                    const inertBlock = (
                       <div
-                        key={p.item.id}
                         title={
                           p.item.meta?.blockReason
                             ? `${timeLabel} · ${p.item.meta.blockReason}`
                             : fullTitle
                         }
                         className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1"
-                        style={style}
+                        style={
+                          cornerActions || selectBox
+                            ? {
+                                position: "absolute",
+                                inset: 0,
+                                ...toneStyle(p.item),
+                                ...contentInset,
+                              }
+                            : style
+                        }
                       >
                         {inner}
+                      </div>
+                    );
+                    if (!cornerActions && !selectBox) {
+                      return <Fragment key={p.item.id}>{inertBlock}</Fragment>;
+                    }
+                    return (
+                      <div key={p.item.id} style={geometry}>
+                        {inertBlock}
+                        {selectBox}
+                        {cornerActions}
                       </div>
                     );
                   })}
@@ -695,6 +985,55 @@ export function WeekCalendar({
         <LegendDot tone="var(--portal-danger)" label={t.legendBlocked} />
       </div>
     </div>
+  );
+}
+
+/** Small solid-red icon button riding in a slot block's top-right corner —
+ *  the admin's block/remove affordances. Deliberately tiny (20px) so it fits
+ *  even a 15-min block's 40px span without covering the time label. */
+function CornerAction({
+  label,
+  title,
+  disabled,
+  pressed,
+  onClick,
+  children,
+}: {
+  label: string;
+  title: string;
+  disabled?: boolean;
+  /** Set for the selection checkbox — a ticked box has to look ticked. */
+  pressed?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      aria-label={label}
+      aria-pressed={pressed}
+      title={title}
+      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border opacity-90 shadow-sm transition hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40"
+      // Neutral surface, not another red fill: a danger-toned button on a
+      // BLOCKED block's danger-toned fill was a red square on red.
+      style={
+        pressed
+          ? {
+              borderColor: "var(--portal-info)",
+              background: "var(--portal-info)",
+              color: "#fff",
+            }
+          : {
+              borderColor: "var(--portal-line-strong)",
+              background: "var(--portal-surface)",
+              color: "var(--portal-danger)",
+            }
+      }
+    >
+      {children}
+    </button>
   );
 }
 

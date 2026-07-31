@@ -480,8 +480,23 @@ export async function previewServiceBenefit(input: {
     basePriceCents: base,
   };
 
+  // Country scope (§18): plans are per-country and `reserveAndPriceConsultations`
+  // filters on it, so an unscoped preview here promised an Irish member a €0
+  // "use plan credit" on a Portuguese service — then checkout, correctly, priced
+  // it NORMAL and charged full price. Scope to the SERVICE's country so the
+  // booking step and checkout always agree.
+  const service = await prisma.service.findUnique({
+    where: { id: input.serviceId },
+    select: { country: { select: { code: true } } },
+  });
+  if (!service) return payNormalOnly;
+
   const sub = await prisma.userSubscription.findFirst({
-    where: { userId: input.userId, status: { in: ["ACTIVE", "PAST_DUE"] } },
+    where: {
+      userId: input.userId,
+      countryCode: service.country.code,
+      status: { in: ["ACTIVE", "PAST_DUE"] },
+    },
     orderBy: { createdAt: "desc" },
     include: { plan: { select: { name: true, translations: true, country: { select: { defaultLocale: true } } } } },
   });

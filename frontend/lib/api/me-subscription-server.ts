@@ -2,6 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import type {
   CreditsView,
   InvoicesView,
@@ -42,8 +43,8 @@ async function meServerGet<T>(path: string): Promise<T | null> {
 }
 
 export async function getServerSubscription(): Promise<SubscriptionView | null> {
-  const locale = (await cookies()).get("gh_locale")?.value?.toUpperCase();
-  return meServerGet<SubscriptionView | null>(locale ? `subscription?locale=${locale}` : "subscription");
+  const locale = (await getPortalLocale()).toUpperCase();
+  return meServerGet<SubscriptionView | null>(`subscription?locale=${locale}`);
 }
 
 export function getServerCredits(): Promise<CreditsView | null> {

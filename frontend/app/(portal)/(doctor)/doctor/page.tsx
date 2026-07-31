@@ -36,7 +36,7 @@ import {
 } from "@/lib/format-datetime";
 import { groupAppointmentsByDay } from "@/lib/appointment-day-groups";
 import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -53,7 +53,7 @@ const DAY_BUCKET_TONE: Record<AppointmentDayBucket | "unscheduled", PillTone> = 
 };
 
 export default async function DoctorOverviewPage() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const NOTIF_TYPE_LABEL: Record<string, string> = {
     APPOINTMENT_ASSIGNED: d.notifications.appointmentAssigned,
@@ -196,11 +196,9 @@ export default async function DoctorOverviewPage() {
                 {d.common.join}
               </Btn>
             ) : null}
-            <Btn href="/doctor/calendar" variant="on-chrome" size="sm">
-              {d.dashboard.calendar}
-            </Btn>
+            {/* Calendar and availability are one page now — one button. */}
             <Btn href="/doctor/availability" variant="on-chrome" size="sm">
-              {d.dashboard.availability}
+              {d.dashboard.calendar}
             </Btn>
           </div>
         }

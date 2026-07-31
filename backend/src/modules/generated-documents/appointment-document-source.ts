@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma.js";
-import { decryptPhiFields } from "../../lib/crypto/phi-crypto.js";
+import { decryptPhi, decryptPhiFields } from "../../lib/crypto/phi-crypto.js";
 import { formatDoctorForDocument } from "../../lib/doctor-name.js";
 import {
   formatRegistrationLine,
@@ -131,7 +131,13 @@ export async function resolveAppointmentDocumentSource(
   // (passthrough on legacy plaintext / when encryption is off).
   const patientProfile = patientProfileRaw ? decryptPhiFields(patientProfileRaw) : null;
 
-  const patientIdLine = buildPatientIdLine(appt.countryCode, patientProfile);
+  // Cross-border Rx captures an id valid in the issuing country; it wins over
+  // the chart id, which belongs to the patient's home country.
+  const patientIdLine = buildPatientIdLine(
+    appt.countryCode,
+    patientProfile,
+    decryptPhi(appt.patientHealthIdNumber),
+  );
   const address = buildAddressBlock(appt, patientProfile);
   const birthDate = formatDateDdMmYyyy(
     appt.dateOfBirth ?? patientProfile?.dateOfBirth ?? null,

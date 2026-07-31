@@ -5,7 +5,7 @@ import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill as
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +21,7 @@ function paymentTone(status: string): PillTone {
 export default async function AccountPrescriptionsPage() {
   const [result, locale, bookHref] = await Promise.all([
     fetchPatientPrescriptions(),
-    getPageLocale(),
+    getPortalLocale(),
     resolveBookConsultationHref(),
   ]);
   const { account: a } = loadLocaleBundle(locale);
