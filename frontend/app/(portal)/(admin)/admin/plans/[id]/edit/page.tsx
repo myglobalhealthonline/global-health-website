@@ -163,6 +163,9 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     monthlyConsultationCredits: plan.monthlyConsultationCredits,
     wellnessCreditsPerMonth: plan.wellnessCreditsPerMonth,
     features: previewTr?.features ?? [],
+    hasSpecialistDiscount: plan.consultationRules.some(
+      (r) => r.isActive && r.discountMode !== "NONE",
+    ),
     perkUnlockMonths: previewUnlockMonths,
     perks: plan.perkRules.map((pk) => ({
       perkKey: pk.perkKey,

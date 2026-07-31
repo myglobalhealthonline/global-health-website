@@ -62,7 +62,9 @@ export function PricingPlanCard({
     creditsLine,
     t.secureLine,
     t.bookingLine,
-    t.specialistLine,
+    // Only claim specialist savings when a rule actually grants them — a plan
+    // with no specialist discount must not advertise one.
+    ...(plan.hasSpecialistDiscount ? [t.specialistLine] : []),
     ...(wellnessLine ? [wellnessLine, t.wellnessRedeemLine] : []),
   ];
   const features = plan.features.length > 0 ? plan.features : autoFeatures;

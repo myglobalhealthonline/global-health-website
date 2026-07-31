@@ -46,6 +46,9 @@ export interface PublicPlan {
   /** Admin-edited "Includes" bullets (resolved locale). Empty → card uses its
    *  auto-generated defaults. */
   features: string[];
+  /** At least one active rule discounts a specialist service. Gates the card's
+   *  default "specialist savings" bullet — see PricingPlanCard. */
+  hasSpecialistDiscount?: boolean;
   /** Soonest "after N paid months" gate; null hides the universal note. */
   perkUnlockMonths: number | null;
   perks: PublicPlanPerk[];
