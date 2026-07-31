@@ -140,6 +140,20 @@ export default async function AdminEditDoctorPage({
       };
     })
     .filter((x): x is NonNullable<typeof x> => x !== null);
+
+  // Markets the country-directorship can cover — the same primary + additional
+  // union as above, since a director can only oversee a country they operate in.
+  // `directorAccess` lives on the DoctorCountry row, and the primary country has
+  // one too (ensurePrimaryDoctorCountry keeps it in sync), so a single lookup
+  // covers both.
+  const directorAccessByCountry = new Map(
+    (doctor.additionalCountries ?? []).map((c) => [c.countryId, Boolean(c.directorAccess)]),
+  );
+  const directorCountries = crossBorderCountries.map((c) => ({
+    id: c.id,
+    name: c.name,
+    granted: directorAccessByCountry.get(c.id) ?? false,
+  }));
   const { locales, defaultLocale } = resolveCountryLocaleTabs(
     countriesResult.data.countries.find((c) => c.id === doctor.countryId),
   );
@@ -183,6 +197,10 @@ export default async function AdminEditDoctorPage({
       trustpilotInviteEnabled: raw.trustpilotInviteEnabled,
       crossBorderRxEnabled: raw.crossBorderRxEnabled,
       crossBorderRxCountries: raw.crossBorderRxCountries,
+      isCountryDirector: raw.isCountryDirector,
+      // Always sent (an empty array revokes every grant) — an omitted key would
+      // leave stale grants in place after the admin unticks the last country.
+      directorCountryIds: raw.directorCountryIds,
     };
 
     const [existingDoctors, validation] = await Promise.all([
@@ -570,6 +588,59 @@ export default async function AdminEditDoctorPage({
                 </div>
               </div>
             </label>
+            {/* Not a <label> wrapper like the flags above: the per-country
+                sub-options are themselves labels, and nesting labels is invalid
+                HTML — a click on a country would toggle the master box instead.
+                The master checkbox gets an explicit htmlFor pairing instead. */}
+            <div className="flex items-start gap-2.5 border-t border-[var(--color-border)] py-3">
+              <input
+                type="checkbox"
+                id="isCountryDirector"
+                form="doctor-edit-form"
+                name="isCountryDirector"
+                defaultChecked={Boolean(doctor.isCountryDirector)}
+                className="mt-0.5 h-5 w-5 cursor-pointer rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
+              />
+              <div className="flex-1">
+                <label
+                  htmlFor="isCountryDirector"
+                  className="m-0 block cursor-pointer text-portal-compact font-bold text-[var(--color-text-primary)]"
+                >
+                  Country director — consultation oversight
+                </label>
+                <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
+                  When on, this doctor gets a &ldquo;Country consultations&rdquo;
+                  report listing <strong>every</strong> consultation booked in the
+                  countries ticked below — across all doctors, cancelled and paid
+                  alike. Read-only: patient names but no contact details, no
+                  clinical notes, and no prices or payouts. Every view is written
+                  to the audit log. Tick the countries this directorship covers;
+                  with the box on and no country ticked, nothing is granted.
+                  {" "}Unrelated to the public &ldquo;Clinical Director&rdquo;
+                  ribbon, which is set per country on the doctor&apos;s detail page.
+                </p>
+                <div className="mt-3 grid gap-2">
+                  {directorCountries.map((c) => (
+                    <label
+                      key={c.id}
+                      className="flex cursor-pointer items-center gap-2.5 rounded-md border border-[var(--color-border)] p-3"
+                    >
+                      <input
+                        type="checkbox"
+                        form="doctor-edit-form"
+                        name="directorCountryIds"
+                        value={c.id}
+                        defaultChecked={c.granted}
+                        className="h-4 w-4 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
+                      />
+                      <span className="text-portal-compact font-semibold text-[var(--color-text-primary)]">
+                        {c.name}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
           </AdminCard>
 
           <AdminCard>

@@ -1296,6 +1296,9 @@ export async function updateAdminDoctor(
           ...(body.canRequestCrossJurisdictionRx !== undefined && {
             canRequestCrossJurisdictionRx: body.canRequestCrossJurisdictionRx,
           }),
+          ...(body.isCountryDirector !== undefined && {
+            isCountryDirector: body.isCountryDirector,
+          }),
           ...(body.trustpilotInviteEnabled !== undefined && {
             trustpilotInviteEnabled: body.trustpilotInviteEnabled,
           }),
@@ -1335,6 +1338,26 @@ export async function updateAdminDoctor(
         effectiveCountryId,
         body.additionalCountryIds,
       );
+
+      // Country-director grants. MUST run after syncAdditionalCountries above —
+      // it creates/removes the DoctorCountry rows this flips, so flipping first
+      // would lose a grant on a market added in the same save.
+      //
+      // Clear-then-set (rather than a diff) so an unticked country is always
+      // revoked, and both updateMany calls are scoped by `doctorId` so a stray
+      // countryId can only ever match a market the doctor actually operates in.
+      if (body.directorCountryIds !== undefined) {
+        await tx.doctorCountry.updateMany({
+          where: { doctorId: id, directorAccess: true },
+          data: { directorAccess: false },
+        });
+        if (body.directorCountryIds.length > 0) {
+          await tx.doctorCountry.updateMany({
+            where: { doctorId: id, countryId: { in: body.directorCountryIds } },
+            data: { directorAccess: true },
+          });
+        }
+      }
 
       // Per-country cross-border prescriber price + payout. Upsert each entry;
       // a row with neither price nor payout is deleted so that country falls out
