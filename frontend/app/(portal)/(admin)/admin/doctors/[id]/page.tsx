@@ -34,6 +34,7 @@ import { DoctorRegistrationsCard } from "../_components/registrations-card";
 import { DoctorCredentialsCard } from "../_components/doctor-credentials-card";
 import { DoctorConfidentialityCard } from "../_components/doctor-confidentiality-card";
 import { DoctorFaqsCard } from "../_components/doctor-faqs-card";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -230,6 +231,7 @@ export default async function AdminDoctorDetailPage({
 
   return (
     <>
+      <SetCrumbTitle label={d.fullName} />
       <Link
         href="/admin/doctors"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

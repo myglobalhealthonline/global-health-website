@@ -15,6 +15,7 @@ import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 import { HealthTestFaqPanel } from "../_components/health-test-faq-panel";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -107,6 +108,7 @@ export default async function AdminHealthTestDetailPage({
 
   return (
     <>
+      <SetCrumbTitle label={test.title} />
       <Link
         href="/admin/health-tests"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

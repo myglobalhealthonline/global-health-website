@@ -26,6 +26,7 @@ import { PlanEditTabs } from "../../../_components/plan-edit-tabs";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { displayNameFrom } from "@/lib/admin/display-name";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -200,10 +201,11 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
    * Reconcile every consultation rule from the two tick-lists in one submit.
    *
    * The plan-level choice is the source of truth: a ticked GP service becomes a
-   * credit rule, a ticked specialist service becomes the plan's single percent
-   * discount, and an unticked service loses its rule entirely (so it prices at
-   * full price). `unlockAfterPaidMonths` is always 0 — the resolver takes
-   * max(plan floor, rule), so the plan-level setting is the only timing knob.
+   * credit rule, a ticked specialist service takes the plan's percent discount
+   * unless that row carries its own fixed price, and an unticked service loses
+   * its rule entirely (so it prices at full price). `unlockAfterPaidMonths` is
+   * always 0 — the resolver takes max(plan floor, rule), so the plan-level
+   * setting is the only timing knob.
    */
   async function saveConsultationsAction(formData: FormData) {
     "use server";
@@ -217,9 +219,22 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     const rawPercent = String(formData.get("specialistDiscountPercent") ?? "").trim();
     const discountPercent = rawPercent === "" ? null : Number(rawPercent);
 
-    if (specialistChecked.size > 0) {
+    // Per-service fixed price (major units) overrides the plan percentage.
+    // Blank / 0 / junk = "use the percentage".
+    const fixedPriceCentsFor = (serviceId: string): number | null => {
+      const raw = String(formData.get(`fixedPrice_${serviceId}`) ?? "").trim();
+      if (raw === "") return null;
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value <= 0) return null;
+      return Math.round(value * 100);
+    };
+
+    const needsPercent = Array.from(specialistChecked).some((sid) => fixedPriceCentsFor(sid) === null);
+    if (needsPercent) {
       if (discountPercent === null || !Number.isFinite(discountPercent) || discountPercent <= 0 || discountPercent > 100) {
-        fail("Enter a discount between 0 and 100 for the ticked specialist services.");
+        fail(
+          "Enter a discount between 0 and 100, or give every ticked specialist service its own fixed price.",
+        );
       }
     }
 
@@ -241,14 +256,15 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         continue;
       }
 
+      const fixed = wantsDiscount ? fixedPriceCentsFor(service.id) : null;
       const body = {
         serviceId: service.id,
         isIncluded: wantsCredit,
         usesCredits: wantsCredit,
         creditsPerUse: wantsCredit ? creditsPerUse : 1,
-        discountMode: wantsDiscount ? "PERCENT" : "NONE",
-        discountPercent: wantsDiscount ? discountPercent : null,
-        fixedPriceCents: null,
+        discountMode: wantsDiscount ? (fixed !== null ? "FIXED" : "PERCENT") : "NONE",
+        discountPercent: wantsDiscount && fixed === null ? discountPercent : null,
+        fixedPriceCents: fixed,
         unlockAfterPaidMonths: 0,
         // Family usage is a plan-level property (Premium-only); the backend
         // forces this false on non-Premium plans anyway.
@@ -263,7 +279,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         existing.creditsPerUse === body.creditsPerUse &&
         existing.discountMode === body.discountMode &&
         (existing.discountPercent ?? null) === body.discountPercent &&
-        existing.fixedPriceCents === null &&
+        (existing.fixedPriceCents ?? null) === body.fixedPriceCents &&
         existing.unlockAfterPaidMonths === 0 &&
         existing.familyUsable === body.familyUsable;
       if (unchanged) continue;
@@ -345,6 +361,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
 
   return (
     <>
+      <SetCrumbTitle label={displayNameFrom(plan.name, plan.translations)} />
       <Link
         href="/admin/plans"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

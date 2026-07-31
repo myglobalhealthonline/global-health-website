@@ -36,6 +36,7 @@ import { IdleLogout } from "@/components/IdleLogout";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
+import { CrumbTitleContext } from "@/components/crumb-title";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { PortalTour, type TourLabels, type TourStep } from "@/components/portal-tour";
 
@@ -138,7 +139,7 @@ function useBreadcrumbs(pathname: string, rootHref: string, rootLabel: string) {
       return [{ label: rootLabel, href: rootHref }];
     }
     const segments = pathname.split("/").filter(Boolean);
-    const crumbs: { label: string; href: string }[] = [];
+    const crumbs: { label: string; href: string | null; isRecord?: boolean }[] = [];
     let acc = "";
     for (let i = 0; i < segments.length; i++) {
       acc += `/${segments[i]}`;
@@ -146,12 +147,15 @@ function useBreadcrumbs(pathname: string, rootHref: string, rootLabel: string) {
         crumbs.push({ label: rootLabel, href: rootHref });
         continue;
       }
+      // Record segments are identifiers, not destinations — /account/bookings/
+      // <id> has no page of its own (only .../reschedule), so linking it 404s.
+      const isRecord = isEmailSegment(segments[i]) || isIdSegment(segments[i]);
       const label = isEmailSegment(segments[i])
         ? PII_SAFE_CRUMB_LABEL
         : isIdSegment(segments[i])
           ? shortIdLabel(segments[i])
           : humanizeSegment(segments[i]);
-      crumbs.push({ label, href: acc });
+      crumbs.push({ label, href: isRecord ? null : acc, isRecord });
     }
     return crumbs;
   }, [pathname, rootHref, rootLabel]);
@@ -229,7 +233,19 @@ export function PortalShell({
   // events afterwards, rather than re-mirroring the prop on every render.
   const [unreadCount, setUnreadCount] = useState(() => notificationsUnreadCount);
   const pathname = usePathname();
-  const breadcrumbs = useBreadcrumbs(pathname, rootHref, rootBreadcrumb);
+  // Detail pages name their own record crumb via <SetCrumbTitle> (same
+  // mechanism as AdminShell), so a record route reads "… / Bookings / Fri 12
+  // Sep, Dr Silva" instead of "… / cmrtif3u…". Null on routes that set none.
+  const [crumbTitle, setCrumbTitle] = useState<string | null>(null);
+  const derivedBreadcrumbs = useBreadcrumbs(pathname, rootHref, rootBreadcrumb);
+  const breadcrumbs = useMemo(() => {
+    if (!crumbTitle || derivedBreadcrumbs.length === 0) return derivedBreadcrumbs;
+    // The id crumb wins over the trailing one: on /bookings/<id>/reschedule the
+    // record name belongs on the id, not on "Reschedule".
+    const idIndex = derivedBreadcrumbs.findIndex((c) => c.isRecord);
+    const target = idIndex === -1 ? derivedBreadcrumbs.length - 1 : idIndex;
+    return derivedBreadcrumbs.map((c, i) => (i === target ? { ...c, label: crumbTitle } : c));
+  }, [derivedBreadcrumbs, crumbTitle]);
   const navRef = useRef<HTMLElement | null>(null);
   const topbarRef = useRef<HTMLElement | null>(null);
   usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
@@ -398,15 +414,19 @@ export function PortalShell({
                   const isLast = i === breadcrumbs.length - 1;
                   return (
                     <span
-                      key={crumb.href}
+                      key={`${crumb.href ?? "label"}-${i}`}
                       className={`min-w-0 items-center gap-1.5 ${
                         isLast ? "flex" : "hidden sm:flex"
                       }`}
                     >
-                      {isLast ? (
+                      {isLast || !crumb.href ? (
                         <span
-                          aria-current="page"
-                          className="truncate font-bold text-[var(--portal-chrome-text-active)]"
+                          aria-current={isLast ? "page" : undefined}
+                          className={
+                            isLast
+                              ? "truncate font-bold text-[var(--portal-chrome-text-active)]"
+                              : "max-w-[16ch] truncate font-medium text-[var(--portal-chrome-text)]"
+                          }
                         >
                           {crumb.label}
                         </span>
@@ -475,7 +495,9 @@ export function PortalShell({
           {banner}
 
           <main id="main-content" className="gh-admin-main gh-portal-main min-w-0 flex-1">
-            {children}
+            <CrumbTitleContext.Provider value={setCrumbTitle}>
+              {children}
+            </CrumbTitleContext.Provider>
           </main>
         </div>
     </div>

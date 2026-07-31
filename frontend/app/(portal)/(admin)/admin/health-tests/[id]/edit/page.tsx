@@ -15,6 +15,7 @@ import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import { HealthTestFields } from "../../_components/health-test-fields";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 import { displayNameFrom } from "@/lib/admin/display-name";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -136,6 +137,7 @@ export default async function AdminEditHealthTestPage({
 
   return (
     <>
+      <SetCrumbTitle label={displayNameFrom(test.title, test.translations, "title")} />
       <Link
         href={`/admin/health-tests/${id}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

@@ -32,6 +32,7 @@ import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
 import { FormSection } from "@/components/FormSection";
 import { displayNameFrom } from "@/lib/admin/display-name";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -435,6 +436,7 @@ export default async function AdminEditServicePage({
 
   return (
     <>
+      <SetCrumbTitle label={displayNameFrom(service.name, service.translations)} />
       <Link
         href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

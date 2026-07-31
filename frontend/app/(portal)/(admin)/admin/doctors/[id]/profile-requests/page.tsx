@@ -14,6 +14,7 @@ import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { revalidateDoctorProfileCache } from "@/lib/server/revalidate-doctor-profile";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -294,6 +295,7 @@ export default async function AdminDoctorProfileRequestsPage({
 
   return (
     <>
+      <SetCrumbTitle label={doctor.fullName} />
       <Link
         href={`/admin/doctors/${id}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

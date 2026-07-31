@@ -18,6 +18,7 @@ import {
 } from "@/app/(portal)/(admin)/admin/corporate/_lib";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -69,6 +70,7 @@ export default async function CorporateEmployeeDetailPage({
 
   return (
     <>
+      <SetCrumbTitle label={`${employee.firstName} ${employee.lastName}`} />
       <PageHeader
         eyebrow={t.eyebrow}
         title={`${employee.firstName} ${employee.lastName}`}

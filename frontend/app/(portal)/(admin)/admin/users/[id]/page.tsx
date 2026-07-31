@@ -19,6 +19,7 @@ import { PhiReasonGate } from "../../_components/phi-reason-gate";
 import { PatientProfileEditor } from "../_components/patient-profile-editor";
 import { FormSection } from "@/components/FormSection";
 import { PhoneField } from "@/components/forms/phone-field";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -219,6 +220,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 
   return (
     <>
+      <SetCrumbTitle label={user.fullName || user.email} />
       <Link
         href="/admin/users"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

@@ -11,6 +11,7 @@ import {
   patchAdminAsset,
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -125,6 +126,7 @@ export default async function AdminEditAssetPage({
 
   return (
     <>
+      <SetCrumbTitle label={asset.key} />
       <Link
         href={`/admin/assets/${id}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

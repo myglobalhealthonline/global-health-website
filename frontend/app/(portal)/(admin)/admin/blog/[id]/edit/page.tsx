@@ -20,6 +20,7 @@ import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button"
 import { BlogFields } from "../../_components/blog-fields";
 import { parseBlogBody, validateBlogBody } from "../../_components/blog-form-parse";
 import { FormSection } from "@/components/FormSection";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -153,6 +154,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
 
   return (
     <>
+      <SetCrumbTitle label={post.title || "(untitled post)"} />
       <Link
         href="/admin/blog"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

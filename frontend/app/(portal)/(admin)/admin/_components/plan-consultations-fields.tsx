@@ -19,11 +19,6 @@ function isCreditRule(r: AdminConsultationRule): boolean {
   return r.isActive && r.isIncluded && r.usesCredits && r.creditsPerUse > 0;
 }
 
-/** A rule that gives money off (either discount shape). */
-function isDiscountRule(r: AdminConsultationRule): boolean {
-  return r.isActive && r.discountMode !== "NONE";
-}
-
 /** Plain-English summary of what a rule currently does, for the row pill. */
 function ruleSummary(r: AdminConsultationRule | undefined): string | null {
   if (!r) return null;
@@ -40,23 +35,40 @@ function ServiceChecklist({
   rules,
   checkedIds,
   emptyLabel,
+  /** Render a per-service fixed-price override next to each tick box. */
+  withFixedPrice = false,
 }: {
   name: string;
   services: ServiceOpt[];
   rules: Map<string, AdminConsultationRule>;
   checkedIds: Set<string>;
   emptyLabel: string;
+  withFixedPrice?: boolean;
 }) {
   if (services.length === 0) {
     return <p className="text-sm text-[var(--color-text-muted)]">{emptyLabel}</p>;
   }
+  // Covered services first — the list is a state view of every service, not an
+  // "add" queue, so what the plan already covers has to read as settled.
+  const ordered = [
+    ...services.filter((s) => checkedIds.has(s.id)),
+    ...services.filter((s) => !checkedIds.has(s.id)),
+  ];
   return (
     <ul className="grid gap-1.5 sm:grid-cols-2">
-      {services.map((s) => {
-        const summary = ruleSummary(rules.get(s.id));
+      {ordered.map((s) => {
+        const rule = rules.get(s.id);
+        const summary = ruleSummary(rule);
+        const fixedMajor =
+          rule?.isActive && rule.discountMode === "FIXED" && rule.fixedPriceCents != null
+            ? (rule.fixedPriceCents / 100).toFixed(2)
+            : "";
         return (
-          <li key={s.id}>
-            <label className="flex items-start gap-2 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-3 py-2 text-sm">
+          <li
+            key={s.id}
+            className="flex items-start gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-3 py-2"
+          >
+            <label className="flex min-w-0 flex-1 items-start gap-2 text-sm">
               <input
                 type="checkbox"
                 name={name}
@@ -67,12 +79,30 @@ function ServiceChecklist({
               <span className="min-w-0">
                 <span className="block font-medium text-[var(--color-text-primary)]">{s.name}</span>
                 {summary ? (
-                  <span className="block text-xs text-[var(--color-text-muted)]">now: {summary}</span>
+                  <span className="block text-xs font-semibold text-[var(--color-text-body)]">
+                    Covered — {summary}
+                  </span>
                 ) : (
-                  <span className="block text-xs text-[var(--color-text-muted)]">not covered</span>
+                  <span className="block text-xs text-[var(--color-text-muted)]">Not covered</span>
                 )}
               </span>
             </label>
+            {withFixedPrice ? (
+              <label className="flex w-24 shrink-0 flex-col gap-1">
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+                  Fixed price
+                </span>
+                <input
+                  name={`fixedPrice_${s.id}`}
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  defaultValue={fixedMajor}
+                  placeholder="—"
+                  className="gh-input min-w-0"
+                />
+              </label>
+            ) : null}
           </li>
         );
       })}
@@ -94,13 +124,29 @@ export function PlanConsultationsFields({ services, rules, benefitsUnlockAfterPa
   const specialistServices = services.filter((s) => s.kind === SPECIALIST_KIND);
   const ruleById = new Map(rules.map((r) => [r.serviceId, r]));
 
-  const gpChecked = new Set(rules.filter(isCreditRule).map((r) => r.serviceId));
+  // A service is ticked when the plan carries ANY active rule for it. Deriving
+  // the tick from the rule's *shape* instead would leave a row reading "Covered"
+  // with an empty box — and the save pass would then delete that rule as if the
+  // admin had unticked it. Each block can only express one shape (GP = credits,
+  // specialist = discount), so a legacy rule of the other shape converts on save.
+  const kindOf = new Map(services.map((s) => [s.id, s.kind]));
+  const activeRuleServiceIds = new Set(rules.filter((r) => r.isActive).map((r) => r.serviceId));
+  const gpChecked = new Set(
+    [...activeRuleServiceIds].filter((sid) => kindOf.get(sid) === GP_KIND),
+  );
   const specialistChecked = new Set(
-    rules.filter((r) => isDiscountRule(r) && !isCreditRule(r)).map((r) => r.serviceId),
+    [...activeRuleServiceIds].filter((sid) => kindOf.get(sid) === SPECIALIST_KIND),
+  );
+  const convertingRules = rules.filter(
+    (r) =>
+      r.isActive &&
+      ((kindOf.get(r.serviceId) === GP_KIND && !isCreditRule(r)) ||
+        (kindOf.get(r.serviceId) === SPECIALIST_KIND && isCreditRule(r))),
   );
 
-  // Seed the single percent field from existing rows. Rows may disagree (legacy
-  // per-service edits) — surface that rather than silently picking one.
+  // Seed the single percent field from existing rows. When rows disagree, seed
+  // NOTHING — picking one (say the highest, which is often a legacy 100% "free"
+  // row) would hand every ticked service that discount on the next save.
   const percents = Array.from(
     new Set(
       rules
@@ -108,9 +154,8 @@ export function PlanConsultationsFields({ services, rules, benefitsUnlockAfterPa
         .map((r) => r.discountPercent as number),
     ),
   );
-  const seededPercent = percents.length > 0 ? Math.max(...percents) : "";
   const mixedPercents = percents.length > 1;
-  const fixedPriceRules = rules.filter((r) => r.isActive && r.discountMode === "FIXED");
+  const seededPercent = mixedPercents ? "" : percents[0] ?? "";
 
   // Rules pointing at a service that is no longer active/listed. They can't be
   // ticked (the service isn't in the picker) and the save pass leaves them
@@ -168,21 +213,16 @@ export function PlanConsultationsFields({ services, rules, benefitsUnlockAfterPa
             Specialist discount
           </h3>
           <p className="text-xs text-[var(--color-text-muted)]">
-            One discount for the whole plan. Tick every specialist service it applies to. Members
-            pay the discounted price — this never spends consultation credits.
+            Tick every specialist service the plan discounts. They all use the percentage below
+            unless you type a fixed price next to one — that service is then charged exactly that
+            amount instead. Either way it never spends consultation credits.
           </p>
         </div>
         {mixedPercents ? (
           <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-xs">
-            This plan currently has different discounts per service ({percents.join("%, ")}%). Saving
-            applies the single percentage below to every ticked service.
-          </p>
-        ) : null}
-        {fixedPriceRules.length > 0 ? (
-          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-xs">
-            {fixedPriceRules.length} service
-            {fixedPriceRules.length === 1 ? " uses" : "s use"} a fixed price. Saving converts ticked
-            services to the percentage below.
+            This plan currently has different discounts per service ({percents.join("%, ")}%), so the
+            box below starts empty on purpose. Whatever you enter applies to every ticked service
+            that has no fixed price of its own.
           </p>
         ) : null}
         {specialistUncovered > 0 ? (
@@ -204,7 +244,7 @@ export function PlanConsultationsFields({ services, rules, benefitsUnlockAfterPa
             placeholder="e.g. 10"
           />
           <span className="text-xs text-[var(--color-text-muted)]">
-            Required when any specialist service is ticked.
+            Required for any ticked service that has no fixed price of its own.
           </span>
         </label>
         <ServiceChecklist
@@ -213,8 +253,18 @@ export function PlanConsultationsFields({ services, rules, benefitsUnlockAfterPa
           rules={ruleById}
           checkedIds={specialistChecked}
           emptyLabel="No specialist services exist for this country yet."
+          withFixedPrice
         />
       </section>
+
+      {convertingRules.length > 0 ? (
+        <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-xs">
+          {convertingRules.length} rule{convertingRules.length === 1 ? "" : "s"} set up in the old
+          editor do not fit this layout ({convertingRules.map((r) => r.service.name).join(", ")}).
+          Saving converts them: GP services become credit-covered, specialist services become
+          discounted. Untick one first if you would rather remove it.
+        </p>
+      ) : null}
 
       {orphanRules.length > 0 ? (
         <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-xs">

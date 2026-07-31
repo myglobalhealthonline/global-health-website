@@ -11,6 +11,7 @@ import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { statusTone } from "@/lib/format-order-status";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
 
   return (
     <div className="gh-patient-page gh-patient-order-detail-page">
+      <SetCrumbTitle label={`#${formatOrderDisplayId(order)}`} />
       <Link
         href="/account/orders"
         className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--portal-muted)] hover:text-[var(--portal-text)]"

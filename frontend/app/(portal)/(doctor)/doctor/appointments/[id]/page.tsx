@@ -49,6 +49,7 @@ import { FormSection } from "@/components/FormSection";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -234,6 +235,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     <div
       className={`gh-doctor-appointment-workspace${isLive ? " gh-doctor-appointment-workspace--calm" : ""}`}
     >
+      <SetCrumbTitle label={appointment.fullName} />
       <Link
         href="/doctor/appointments"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"

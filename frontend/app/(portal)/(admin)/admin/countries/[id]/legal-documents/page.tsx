@@ -25,6 +25,7 @@ import {
 } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
 import { DocumentRow } from "@/components/DocumentRow";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -131,6 +132,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
 
   return (
     <>
+      <SetCrumbTitle label={c.name} />
       <Link
         href={`/admin/countries/${id}`}
         className="mb-4 inline-flex items-center gap-1.5 text-portal-compact text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

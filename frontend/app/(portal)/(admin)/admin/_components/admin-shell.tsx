@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IdleLogout } from "@/components/IdleLogout";
 import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
-import { CrumbTitleContext } from "./crumb-title";
+import { CrumbTitleContext } from "@/components/crumb-title";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import {
   BarChart3,
@@ -267,7 +267,7 @@ function useBreadcrumbs(
     // of its own (e.g. the topbar-selected country isn't a real URL segment)
     // — rendered as plain text instead of a Link, so it doesn't duplicate
     // the "Admin" crumb's target.
-    const crumbs: { label: string; href: string | null }[] = [];
+    const crumbs: { label: string; href: string | null; isRecord?: boolean }[] = [];
     let acc = "";
     // Country-scoped routes (e.g. /admin/page-content) implicitly operate on the
     // topbar-selected country rather than a country segment in the URL —
@@ -283,12 +283,16 @@ function useBreadcrumbs(
         }
         continue;
       }
+      // A record segment (/plans/<id>, /patients/<email>) is an identifier, not
+      // a destination — several of them have no page of their own (the route is
+      // /plans/<id>/edit), so linking it 404s. Rendered as plain text instead.
+      const isRecord = isEmailSegment(segments[i]) || isIdSegment(segments[i]);
       const label = isEmailSegment(segments[i])
         ? PII_SAFE_CRUMB_LABEL
         : isIdSegment(segments[i])
           ? shortIdLabel(segments[i])
           : humanizeSegment(segments[i], countries);
-      crumbs.push({ label, href: acc });
+      crumbs.push({ label, href: isRecord ? null : acc, isRecord });
     }
     return crumbs;
   }, [pathname, countries, activeCountry]);
@@ -326,11 +330,12 @@ export function AdminShell({
   const derivedBreadcrumbs = useBreadcrumbs(pathname, countries, activeCountry);
   const breadcrumbs = useMemo(() => {
     if (!crumbTitle || derivedBreadcrumbs.length === 0) return derivedBreadcrumbs;
-    const last = derivedBreadcrumbs[derivedBreadcrumbs.length - 1];
-    return [
-      ...derivedBreadcrumbs.slice(0, -1),
-      { ...last, label: crumbTitle },
-    ];
+    // Prefer the id crumb over the trailing one: on /plans/<id>/edit the record
+    // name belongs on the id, not on "Edit". Record routes whose id IS the leaf
+    // (/appointments/<id>) resolve to the same crumb either way.
+    const idIndex = derivedBreadcrumbs.findIndex((c) => c.isRecord);
+    const target = idIndex === -1 ? derivedBreadcrumbs.length - 1 : idIndex;
+    return derivedBreadcrumbs.map((c, i) => (i === target ? { ...c, label: crumbTitle } : c));
   }, [derivedBreadcrumbs, crumbTitle]);
   const navRef = useRef<HTMLElement | null>(null);
   const topbarRef = useRef<HTMLElement | null>(null);

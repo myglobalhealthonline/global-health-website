@@ -33,6 +33,7 @@ import {
 } from "@/lib/admin/manual-booking-validation";
 import { AvailabilityWeek } from "./_components/availability-week";
 import { EditWindowButton } from "./_components/edit-window-button";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -399,6 +400,7 @@ export default async function AdminDoctorAvailabilityPage({
 
   return (
     <>
+      <SetCrumbTitle label={doctor.fullName} />
       <Link
         href={`/admin/doctors/${id}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
