@@ -34,12 +34,15 @@ export type AdminBookingAlertContext = {
 export type AdminBookingAlertEvent =
   | "booking_received"
   | "payment_confirmed"
-  | "appointment_updated";
+  | "appointment_updated"
+  /** Website checkout left unpaid for 15 minutes — reservation released. */
+  | "web_checkout_abandoned";
 
 const HEADLINE: Record<AdminBookingAlertEvent, string> = {
   booking_received: "🆕 New booking (payment pending)",
   payment_confirmed: "✅ Booking confirmed — payment received",
   appointment_updated: "✏️ Appointment updated",
+  web_checkout_abandoned: "🚫 Website checkout abandoned — reservation released",
 };
 
 const WITHHELD_PATIENT_LABEL = "Withheld (patient declined WhatsApp updates)";

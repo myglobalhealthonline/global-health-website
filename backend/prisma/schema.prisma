@@ -2000,6 +2000,12 @@ model Appointment {
   filesUploaded                  Boolean                   @default(false)
   manualEntry                    Boolean                   @default(false)
   pharmacy                       String?
+  /// Health / tax identifier valid in THIS appointment's country (PPS in IE,
+  /// NIF in PT, ...). Populated for cross-border prescriptions, where the
+  /// patient's chart id belongs to their home country and must not be printed
+  /// under a local label. Null everywhere else — the chart id is used then.
+  /// AES-256-GCM encrypted (`phi:v1:` envelope).
+  patientHealthIdNumber          String?
   symptoms                       String?
   formResponses                  Json?
   generatedDocuments             GeneratedDocument[]
@@ -2456,6 +2462,9 @@ enum OrderStatus {
 enum PrePaymentFlow {
   WITHIN_48H
   OUTSIDE_48H
+  /// Website self-serve checkout: 15-minute pay window, a single abandonment
+  /// message at T-10min, then cancel. No hours-before-consultation ladder.
+  WEB_CHECKOUT
 }
 
 enum AutomationRunStatus {
@@ -3549,6 +3558,13 @@ model CrossBorderPrescriptionRequest {
   /// confirmed address). Applied to the async Appointment when it's minted so
   /// the prescribing doctor + prescription have the right pharmacy + address.
   pharmacyName             String?
+  /// Health / tax identifier for the TARGET country (PPS in IE, NIF in PT,
+  /// CPF in BR, ...), asked at the payment step. The chart's `taxIdNumber` is
+  /// the patient's HOME-country id, so it must never be printed under a
+  /// foreign label — this is the only value the prescription may use.
+  /// Optional: patients without one still get a prescription, with no id line.
+  /// AES-256-GCM encrypted (`phi:v1:` envelope, same as PatientProfile ids).
+  patientHealthIdNumber    String?
   patientAddressLine1      String?
   patientAddressLine2      String?
   patientAddressCity       String?

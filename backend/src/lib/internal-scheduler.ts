@@ -2,6 +2,7 @@ import { pool } from "../db/prisma.js";
 import {
   runPrePaymentCancelSweep,
   runPrePaymentReminderCron,
+  runWebCheckoutAbandonNudge,
 } from "../modules/automation/pre-payment-flow.service.js";
 import { runPostPaymentReminderCron } from "../modules/automation/post-payment-flow.service.js";
 import {
@@ -161,6 +162,13 @@ async function tickPrePaymentCancel(log: Logger) {
         // Silent on empty sweeps — at 60s this logs 1440x/day otherwise.
         if (r.cancelled > 0) {
           log.info(`[cron] pre-payment cancel: candidates=${r.candidates} cancelled=${r.cancelled}`);
+        }
+        // Website-checkout abandonment rides this tick, not the 15-minute
+        // reminder tick: its whole window is 15 minutes wide. Runs after the
+        // cancels so an already-due order is torn down before we nudge anyone.
+        const nudge = await runWebCheckoutAbandonNudge();
+        if (nudge.sent > 0) {
+          log.info(`[cron] web-checkout abandon: candidates=${nudge.candidates} sent=${nudge.sent}`);
         }
       } catch (err) {
         log.error(
