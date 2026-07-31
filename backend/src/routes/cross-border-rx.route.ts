@@ -60,6 +60,10 @@ const consentBodySchema = z.object({
   details: z
     .object({
       pharmacyName: z.string().trim().max(200).optional(),
+      // Health/tax id for the country the prescription is issued in
+      // (PPS in IE, NIF in PT, ...). Optional — patients without one
+      // still get a prescription; it simply carries no id line.
+      healthIdNumber: z.string().trim().max(60).optional(),
       addressLine1: z.string().trim().max(300).optional(),
       addressLine2: z.string().trim().max(300).optional(),
       addressCity: z.string().trim().max(200).optional(),
