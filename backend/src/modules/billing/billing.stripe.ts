@@ -372,7 +372,7 @@ export class StripeBillingPort implements BillingPort {
       };
       return {
         id: sub.id,
-        status: sub.status,
+        status: sub.status as BillingSubscriptionView["status"],
         customerId:
           typeof sub.customer === "string" ? sub.customer : sub.customer.id,
         priceId: sub.items.data[0]?.price?.id ?? null,
