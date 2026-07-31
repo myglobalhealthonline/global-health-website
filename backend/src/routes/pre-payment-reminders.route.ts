@@ -4,6 +4,7 @@ import { isValidCronSecret } from "../utils/cron-auth.js";
 import {
   runPrePaymentCancelSweep,
   runPrePaymentReminderCron,
+  runWebCheckoutAbandonNudge,
 } from "../modules/automation/pre-payment-flow.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -24,10 +25,16 @@ const prePaymentRemindersRoute: FastifyPluginAsync = async (app) => {
       // cover both jobs, and a cancel must not queue behind a batch of
       // serialized reminder sends.
       const cancels = await runPrePaymentCancelSweep();
+      const abandoned = await runWebCheckoutAbandonNudge();
       const result = await runPrePaymentReminderCron();
       return okResponse(
-        { ...result, cancelled: cancels.cancelled, cancelCandidates: cancels.candidates },
-        `Pre-payment run: ${cancels.cancelled} cancelled, ${result.sent} stage(s) sent.`,
+        {
+          ...result,
+          cancelled: cancels.cancelled,
+          cancelCandidates: cancels.candidates,
+          webCheckoutNudged: abandoned.sent,
+        },
+        `Pre-payment run: ${cancels.cancelled} cancelled, ${abandoned.sent} checkout-abandon nudge(s), ${result.sent} stage(s) sent.`,
       );
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

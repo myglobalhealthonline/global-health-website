@@ -717,7 +717,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           },
         });
 
-        void startPrePaymentFlow(order.id, session.url ?? null).catch((err) => {
+        // Website self-serve checkout: 15-minute pay window, one abandonment
+        // message, then a silent cancel — NOT the hours-before-consultation
+        // ladder that manual and insurance bookings run on.
+        void startPrePaymentFlow(order.id, session.url ?? null, { webCheckout: true }).catch((err) => {
           app.log.warn({ err, orderId: order.id }, "Pre-payment flow start failed");
         });
 

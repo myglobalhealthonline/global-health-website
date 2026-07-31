@@ -14,9 +14,18 @@ export const AUTOMATION_CATALOG: AutomationDefinition[] = [
     name: "Pre-payment — consultation within 48h",
     flow: "Order reserved (not paid)",
     description:
-      "Consultation booked within 48 hours of checkout. Doctor notified on booking. Immediate patient WhatsApp + email, then unpaid reminders at 24h, 12h, 6h, and 2h before the consultation. Payment deadline is 1 hour before the consultation; unpaid orders are cancelled then.",
+      "Consultation booked within 48 hours of checkout. Doctor notified on booking. Immediate patient WhatsApp + email, then unpaid reminders at 24h, 12h, 6h, and 2h before the consultation. Payment deadline is 1 hour before the consultation — 5 minutes before it for urgent bookings made within 2 hours of the slot, and never sooner than 10 minutes after booking. Unpaid orders are cancelled at the deadline.",
     channels: ["whatsapp", "email"],
     maxStages: 6,
+  },
+  {
+    key: "pre_payment_flow_web",
+    name: "Pre-payment — website checkout abandoned",
+    flow: "Order reserved (not paid)",
+    description:
+      "Patient booked on the website and left the Stripe checkout page without paying. They get 15 minutes to pay and exactly one message (WhatsApp + email) ~5 minutes in, asking whether anything went wrong at checkout and stating when the slot is released. At 15 minutes the order is cancelled and the slot released, with an admin alert only — no further patient message and no doctor message. Manual, doctor-portal and insurance bookings keep the full reminder ladder.",
+    channels: ["whatsapp", "email"],
+    maxStages: 3,
   },
   {
     key: "pre_payment_flow_b",

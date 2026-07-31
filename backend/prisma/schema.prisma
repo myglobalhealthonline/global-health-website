@@ -2438,6 +2438,9 @@ enum OrderStatus {
 enum PrePaymentFlow {
   WITHIN_48H
   OUTSIDE_48H
+  /// Website self-serve checkout: 15-minute pay window, a single abandonment
+  /// message at T-10min, then cancel. No hours-before-consultation ladder.
+  WEB_CHECKOUT
 }
 
 enum AutomationRunStatus {
