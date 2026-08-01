@@ -542,6 +542,7 @@
     "bicErrorMsg": "Musí mít 8 nebo 11 znaků, např. AIBKIE2D",
     "ibanErrorLength": "IBAN musí mít 15–34 znaků",
     "ibanErrorFormat": "Musí začínat dvoupísmenným kódem země následovaným číslicemi",
+    "ibanErrorChecksum": "Tento IBAN neprošel kontrolními číslicemi — zkontrolujte každý znak",
     "editingCountry": "Upravujete {country}",
     "defaultDoctorProfile": "Výchozí profil lékaře",
     "verified": "Ověřeno",

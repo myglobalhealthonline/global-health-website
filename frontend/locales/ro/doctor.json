@@ -542,6 +542,7 @@
     "bicErrorMsg": "Trebuie să aibă 8 sau 11 caractere, ex. AIBKIE2D",
     "ibanErrorLength": "IBAN-ul trebuie să aibă 15–34 caractere",
     "ibanErrorFormat": "Trebuie să înceapă cu codul de țară de 2 litere urmat de cifre",
+    "ibanErrorChecksum": "Acest IBAN nu trece de cifrele de control — verificați fiecare caracter",
     "editingCountry": "Editați {country}",
     "defaultDoctorProfile": "Profil implicit de medic",
     "verified": "Verificat",

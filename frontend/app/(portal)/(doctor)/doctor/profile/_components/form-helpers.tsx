@@ -191,11 +191,29 @@ export function bicError(raw: string, strings: ProfileStrings): string | null {
   return BIC_RE.test(v) ? null : strings.bicErrorMsg;
 }
 
+/**
+ * ISO 13616 mod-97 over the rearranged IBAN — must equal 1. Mirrors
+ * `backend/src/utils/iban.ts` so a mistyped IBAN fails on the field instead of
+ * coming back as a generic 400 from the API.
+ */
+function ibanChecksumOk(iban: string): boolean {
+  const rearranged = iban.slice(4) + iban.slice(0, 4);
+  let remainder = 0;
+  for (const ch of rearranged) {
+    const code = ch >= "A" && ch <= "Z" ? (ch.charCodeAt(0) - 55).toString() : ch;
+    for (const digit of code) {
+      remainder = (remainder * 10 + Number(digit)) % 97;
+    }
+  }
+  return remainder === 1;
+}
+
 export function ibanError(raw: string, strings: ProfileStrings): string | null {
-  const v = raw.trim().replace(/\s/g, "");
+  const v = raw.trim().replace(/[\s-]/g, "").toUpperCase();
   if (!v) return null;
   if (v.length < 15 || v.length > 34) return strings.ibanErrorLength;
-  if (!/^[A-Za-z]{2}\d{2}[A-Za-z0-9]+$/.test(v)) return strings.ibanErrorFormat;
+  if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(v)) return strings.ibanErrorFormat;
+  if (!ibanChecksumOk(v)) return strings.ibanErrorChecksum;
   return null;
 }
 

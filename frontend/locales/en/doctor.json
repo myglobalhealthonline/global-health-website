@@ -544,6 +544,7 @@
     "bicErrorMsg": "Must be 8 or 11 characters, e.g. AIBKIE2D",
     "ibanErrorLength": "IBAN must be 15–34 characters",
     "ibanErrorFormat": "Must start with 2-letter country code then digits",
+    "ibanErrorChecksum": "This IBAN failed its check digits — please re-check every character",
     "editingCountry": "Editing {country}",
     "defaultDoctorProfile": "Default doctor profile",
     "verified": "Verified",
