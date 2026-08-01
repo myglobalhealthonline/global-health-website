@@ -31,16 +31,20 @@ import {
  * the doctor IS the axis, so a block's width only ever means duration —
  * adding doctors adds rows, never narrows anything.
  *
- * Actions live in a per-slot menu rather than corner buttons. A 15-minute block
- * is ~40px wide at this scale, which fits two 20px icons and nothing else; the
- * menu works at every width, states each action in words, and keeps the
- * markup free of buttons nested inside buttons.
+ * Actions live in a per-slot menu rather than corner buttons. The shortest
+ * blocks are ~78px wide, which two 20px corner icons would cover entirely; the
+ * menu works at every width, states each action in words, and keeps the markup
+ * free of buttons nested inside buttons.
  */
 
-// Horizontal scale. 15 min = 40px — wide enough to read as a distinct block,
-// and a 12-hour day lands at ~1,920px, which scrolls rather than compressing.
-const HOUR_PX = 160;
-const PX_PER_MIN = HOUR_PX / 60;
+// Horizontal scale is DERIVED, not fixed: it follows the shortest slot in view
+// so that slot is still wide enough to read. A fixed 160px/hour drew a clinic's
+// 15-minute slots at 37px, which truncates "09:00" to "0…" on every block —
+// the same illegibility, one axis over, that this view exists to fix.
+const MIN_SLOT_PX = 78;
+const MIN_HOUR_PX = 160;
+// Ceiling so a stray 5-minute slot can't stretch the day to 40,000px.
+const MAX_HOUR_PX = 400;
 // Hour window for a day with nothing on it — an empty grid still has to read
 // as a working day. A day with content fits the window to that content.
 const DEFAULT_START_HOUR = 8;
@@ -50,8 +54,10 @@ const DEFAULT_END_HOUR = 20;
 const MIN_SPAN_HOURS = 4;
 const MIN_BLOCK_PX = 26;
 // A full "09:00 – 09:30" range needs this much width; narrower blocks show the
-// start time alone rather than a clipped range, which reads as a bug.
-const LABEL_FULL_PX = 118;
+// start time alone, and narrower still show nothing — a clipped label reads as
+// a rendering bug, while colour + icon + the hover title still say everything.
+const LABEL_FULL_PX = 124;
+const LABEL_MIN_PX = 46;
 const NAME_COL_PX = 208;
 const LANE_PX = 46;
 
@@ -115,11 +121,12 @@ export function LaneCalendar({
   onNextDay,
   onToday,
 }: Props) {
-  const { lanes, startHour, endHour, counts } = useMemo(() => {
+  const { lanes, startHour, endHour, counts, hourPx } = useMemo(() => {
     const kept = dropSlotsUnderConsultations(items);
     const byDoctor = new Map<string, DoctorLane>();
     let contentMin: number | null = null;
     let contentMax: number | null = null;
+    let shortestMin: number | null = null;
     const counts = { total: 0, booked: 0, open: 0, blocked: 0 };
     for (const item of kept) {
       const { id, name } = laneOf(item);
@@ -128,14 +135,14 @@ export function LaneCalendar({
       byDoctor.set(id, lane);
 
       const start = zonedMinutesOfDay(item.startAt, tz);
-      const end =
-        start +
-        Math.max(
-          item.endAt ? durationMinutes(item.startAt, item.endAt) : CONSULT_FALLBACK_MIN,
-          1,
-        );
+      const dur = Math.max(
+        item.endAt ? durationMinutes(item.startAt, item.endAt) : CONSULT_FALLBACK_MIN,
+        1,
+      );
+      const end = start + dur;
       contentMin = contentMin === null ? start : Math.min(contentMin, start);
       contentMax = contentMax === null ? end : Math.max(contentMax, end);
+      shortestMin = shortestMin === null ? dur : Math.min(shortestMin, dur);
 
       counts.total += 1;
       if (item.kind === "consultation" || item.status === "BOOKED" || item.status === "HELD") {
@@ -152,16 +159,30 @@ export function LaneCalendar({
     for (const lane of lanes) {
       lane.items.sort((a, b) => a.startAt.localeCompare(b.startAt));
     }
+    // Widen the hour until the shortest slot of the day clears MIN_SLOT_PX.
+    const hourPx = Math.round(
+      Math.min(
+        MAX_HOUR_PX,
+        Math.max(MIN_HOUR_PX, ((shortestMin ?? 60) > 0 ? (MIN_SLOT_PX * 60) / (shortestMin ?? 60) : MIN_HOUR_PX)),
+      ),
+    );
     if (contentMin === null || contentMax === null) {
-      return { lanes, startHour: DEFAULT_START_HOUR, endHour: DEFAULT_END_HOUR, counts };
+      return {
+        lanes,
+        startHour: DEFAULT_START_HOUR,
+        endHour: DEFAULT_END_HOUR,
+        counts,
+        hourPx: MIN_HOUR_PX,
+      };
     }
     const start = Math.max(0, Math.floor(contentMin / 60));
     const end = Math.min(24, Math.max(Math.ceil(contentMax / 60), start + MIN_SPAN_HOURS));
-    return { lanes, startHour: start, endHour: end, counts };
+    return { lanes, startHour: start, endHour: end, counts, hourPx };
   }, [items, tz]);
 
+  const pxPerMin = hourPx / 60;
   const hours = Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
-  const trackWidth = (endHour - startHour) * HOUR_PX;
+  const trackWidth = (endHour - startHour) * hourPx;
 
   const fmtTime = useMemo(
     () =>
@@ -190,15 +211,15 @@ export function LaneCalendar({
     const raf = requestAnimationFrame(() => {
       // A quarter-hour of lead so the first block of the band doesn't sit
       // flush under the sticky doctor column.
-      el.scrollLeft = Math.max(0, (focusHour - startHour) * HOUR_PX - HOUR_PX / 4);
+      el.scrollLeft = Math.max(0, (focusHour - startHour) * hourPx - hourPx / 4);
     });
     return () => cancelAnimationFrame(raf);
-  }, [dayKey, focusHour, startHour, trackWidth]);
+  }, [dayKey, focusHour, startHour, hourPx, trackWidth]);
 
   const now = useNow(tz);
   const nowLeft =
     dayKey === todayKey && now.minutes !== null
-      ? (now.minutes - startHour * 60) * PX_PER_MIN
+      ? (now.minutes - startHour * 60) * pxPerMin
       : null;
 
   return (
@@ -263,7 +284,7 @@ export function LaneCalendar({
                   <span
                     key={h}
                     className="absolute bottom-1.5 text-portal-micro font-bold"
-                    style={{ left: i * HOUR_PX + 4, color: "var(--portal-muted)" }}
+                    style={{ left: i * hourPx + 4, color: "var(--portal-muted)" }}
                   >
                     {String(h).padStart(2, "0")}:00
                   </span>
@@ -309,7 +330,7 @@ export function LaneCalendar({
                         key={h}
                         aria-hidden
                         className="gh-lane-gridline"
-                        style={{ left: i * HOUR_PX }}
+                        style={{ left: i * hourPx }}
                       />
                     ))}
                     {nowLeft !== null && nowLeft >= 0 && nowLeft <= trackWidth ? (
@@ -321,6 +342,7 @@ export function LaneCalendar({
                         key={item.id}
                         item={item}
                         startHour={startHour}
+                        pxPerMin={pxPerMin}
                         tz={tz}
                         fmtTime={fmtTime}
                         nowMs={now.ms}
@@ -360,6 +382,7 @@ export function LaneCalendar({
 function LaneBlock({
   item,
   startHour,
+  pxPerMin,
   tz,
   fmtTime,
   nowMs,
@@ -375,6 +398,8 @@ function LaneBlock({
 }: {
   item: CalendarItem;
   startHour: number;
+  /** Derived from the shortest slot of the day — see MIN_SLOT_PX. */
+  pxPerMin: number;
   tz: string;
   fmtTime: Intl.DateTimeFormat;
   /** Null until the first client tick — a slot can't be judged past or future
@@ -395,8 +420,8 @@ function LaneBlock({
     item.endAt ? durationMinutes(item.startAt, item.endAt) : CONSULT_FALLBACK_MIN,
     1,
   );
-  const left = (start - startHour * 60) * PX_PER_MIN;
-  const width = Math.max(minutes * PX_PER_MIN - 3, MIN_BLOCK_PX);
+  const left = (start - startHour * 60) * pxPerMin;
+  const width = Math.max(minutes * pxPerMin - 3, MIN_BLOCK_PX);
 
   const startLabel = fmtTime.format(new Date(item.startAt));
   const endLabel = item.endAt ? fmtTime.format(new Date(item.endAt)) : null;
@@ -420,12 +445,21 @@ function LaneBlock({
     new Date(item.startAt).getTime() > nowMs;
   const openable = isConsult || (item.status === "BOOKED" && Boolean(patientName));
 
+  // A patient name only earns the block when the block can hold one. Below
+  // that the start time fits exactly and the name stays in the tooltip and the
+  // detail drawer, rather than rendering as "Niam…".
+  const label =
+    width < LABEL_MIN_PX
+      ? null
+      : width >= LABEL_FULL_PX
+        ? patientName || timeLabel
+        : startLabel;
   const body = (
-    <span className="flex min-w-0 items-center gap-1.5">
+    <span
+      className={`flex min-w-0 items-center gap-1 ${label ? "" : "justify-center"}`}
+    >
       {selected ? <CheckSquare className="size-3 shrink-0" aria-hidden /> : statusIcon(item.status)}
-      <span className="truncate">
-        {patientName || (width >= LABEL_FULL_PX ? timeLabel : startLabel)}
-      </span>
+      {label ? <span className="truncate">{label}</span> : null}
     </span>
   );
 
@@ -450,7 +484,7 @@ function LaneBlock({
           type="button"
           title={title}
           onClick={() => onSelectConsultation(item)}
-          className="gh-lane-block overflow-hidden rounded-md border px-2 text-left transition hover:brightness-105"
+          className="gh-lane-block overflow-hidden rounded-md border px-1.5 text-left transition hover:brightness-105"
           style={style}
         >
           {body}
@@ -472,7 +506,7 @@ function LaneBlock({
         <button
           type="button"
           title={`${title} · click for actions`}
-          className="gh-lane-block overflow-hidden rounded-md border px-2 text-left transition hover:brightness-105"
+          className="gh-lane-block overflow-hidden rounded-md border px-1.5 text-left transition hover:brightness-105"
           style={style}
         >
           {body}
