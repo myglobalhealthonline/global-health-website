@@ -543,6 +543,7 @@
     "ibanErrorLength": "IBAN musí mít 15–34 znaků",
     "ibanErrorFormat": "Musí začínat dvoupísmenným kódem země následovaným číslicemi",
     "ibanErrorChecksum": "Tento IBAN neprošel kontrolními číslicemi — zkontrolujte každý znak",
+    "ibanErrorCountryLength": "IBAN {code} má {expected} znaků — zadali jste {actual}",
     "editingCountry": "Upravujete {country}",
     "defaultDoctorProfile": "Výchozí profil lékaře",
     "verified": "Ověřeno",

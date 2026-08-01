@@ -545,6 +545,7 @@
     "ibanErrorLength": "IBAN must be 15–34 characters",
     "ibanErrorFormat": "Must start with 2-letter country code then digits",
     "ibanErrorChecksum": "This IBAN failed its check digits — please re-check every character",
+    "ibanErrorCountryLength": "A {code} IBAN is {expected} characters — you entered {actual}",
     "editingCountry": "Editing {country}",
     "defaultDoctorProfile": "Default doctor profile",
     "verified": "Verified",

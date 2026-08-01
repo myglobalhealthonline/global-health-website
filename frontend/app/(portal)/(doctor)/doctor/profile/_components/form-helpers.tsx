@@ -208,11 +208,32 @@ function ibanChecksumOk(iban: string): boolean {
   return remainder === 1;
 }
 
+/**
+ * Expected IBAN length per country, derived from the examples above so the two
+ * can't drift. Keyed by the IBAN's OWN prefix, not the market — a doctor
+ * practising in Ireland may well be paid into a Portuguese account.
+ */
+const IBAN_LENGTHS: Record<string, number> = Object.fromEntries(
+  Object.values(IBAN_EXAMPLES).map((example) => {
+    const iban = example.iban.replace(/\s/g, "");
+    return [iban.slice(0, 2), iban.length];
+  }),
+);
+
 export function ibanError(raw: string, strings: ProfileStrings): string | null {
   const v = raw.trim().replace(/[\s-]/g, "").toUpperCase();
   if (!v) return null;
   if (v.length < 15 || v.length > 34) return strings.ibanErrorLength;
   if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(v)) return strings.ibanErrorFormat;
+  // A too-short IBAN also fails the checksum, but "you're missing 3 characters"
+  // is something the doctor can act on where "check digits" is not.
+  const expected = IBAN_LENGTHS[v.slice(0, 2)];
+  if (expected && v.length !== expected) {
+    return strings.ibanErrorCountryLength
+      .replace("{code}", v.slice(0, 2))
+      .replace("{expected}", String(expected))
+      .replace("{actual}", String(v.length));
+  }
   if (!ibanChecksumOk(v)) return strings.ibanErrorChecksum;
   return null;
 }

@@ -5,6 +5,7 @@ const strings = {
   ibanErrorLength: "length",
   ibanErrorFormat: "format",
   ibanErrorChecksum: "checksum",
+  ibanErrorCountryLength: "A {code} IBAN is {expected} characters — you entered {actual}",
 } as unknown as Parameters<typeof ibanError>[1];
 
 describe("ibanError", () => {
@@ -13,10 +14,22 @@ describe("ibanError", () => {
     expect(ibanError("ie29aibk93115212345678", strings)).toBeNull();
   });
 
-  it("rejects a mistyped IBAN that passes the shape check", () => {
-    // Real doctor report: PT IBAN with three digits dropped — right shape,
-    // wrong check digits. Used to pass the client and 400 on the API.
-    expect(ibanError("PT50007000000634495123", strings)).toBe("checksum");
+  it("names the missing characters when the country length is known", () => {
+    // Real doctor report: a Novo Banco PT IBAN entered three characters short.
+    // Right shape, wrong length — used to pass the client and 400 on the API.
+    expect(ibanError("PT50007000000634495123", strings)).toBe(
+      "A PT IBAN is 25 characters — you entered 22",
+    );
+  });
+
+  it("falls back to the checksum message for right-length typos", () => {
+    // Correct 25-char PT shape, one digit swapped.
+    expect(ibanError("PT50000201231234567890155", strings)).toBe("checksum");
+  });
+
+  it("checks the IBAN's own country, not the market it is saved under", () => {
+    // Portuguese account, Irish market profile — must not be measured as IE.
+    expect(ibanError("PT50000201231234567890154", strings)).toBeNull();
   });
 
   it("still flags length and format", () => {

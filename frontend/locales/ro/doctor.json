@@ -543,6 +543,7 @@
     "ibanErrorLength": "IBAN-ul trebuie să aibă 15–34 caractere",
     "ibanErrorFormat": "Trebuie să înceapă cu codul de țară de 2 litere urmat de cifre",
     "ibanErrorChecksum": "Acest IBAN nu trece de cifrele de control — verificați fiecare caracter",
+    "ibanErrorCountryLength": "Un IBAN {code} are {expected} caractere — ați introdus {actual}",
     "editingCountry": "Editați {country}",
     "defaultDoctorProfile": "Profil implicit de medic",
     "verified": "Verificat",

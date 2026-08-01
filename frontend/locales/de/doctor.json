@@ -543,6 +543,7 @@
     "ibanErrorLength": "IBAN muss 15–34 Zeichen lang sein",
     "ibanErrorFormat": "Muss mit einem 2-stelligen Ländercode gefolgt von Ziffern beginnen",
     "ibanErrorChecksum": "Diese IBAN hat die Prüfziffern nicht bestanden — bitte jedes Zeichen prüfen",
+    "ibanErrorCountryLength": "Eine {code}-IBAN hat {expected} Zeichen — Sie haben {actual} eingegeben",
     "editingCountry": "Bearbeitung: {country}",
     "defaultDoctorProfile": "Standard-Arztprofil",
     "verified": "Verifiziert",
