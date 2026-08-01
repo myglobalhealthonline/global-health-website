@@ -494,7 +494,8 @@ async function releaseHeldSlotsForItems(
   }
 }
 
-async function mergeCarts(sourceId: string, targetId: string) {
+/** Exported for cart-merge.test.ts — not part of the route surface. */
+export async function mergeCarts(sourceId: string, targetId: string) {
   // One-shot claim on the guest cart. `Cart.cookieToken` is unique AND
   // nullable, so nulling it does double duty: the cart stops being reachable
   // by the guest cookie lookup, and the updateMany count is an atomic "this
