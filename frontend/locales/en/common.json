@@ -185,7 +185,7 @@
     "marketingTitle": "Advertising",
     "marketingBody": "Meta Pixel — tells us which adverts bring patients to us.",
     "thirdPartyTitle": "Third-party content",
-    "thirdPartyBody": "Doctify patient-review widgets, embedded from doctify.com.",
+    "thirdPartyBody": "Doctify patient-review widgets (doctify.com) and the ElevenLabs voice assistant (elevenlabs.io) — the assistant uses your microphone only while you are talking to it.",
     "analyticsTitle": "Analytics — anonymous usage statistics",
     "analyticsBody": "Google Analytics and Microsoft Clarity (session replay) — show us which pages are useful and where the site is confusing. Page addresses are stripped of anything that could identify you, and neither runs on booking, cart, checkout, upload or verification pages.",
     "settingsLink": "Cookie settings",

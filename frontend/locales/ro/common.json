@@ -185,7 +185,7 @@
     "marketingTitle": "Publicitate",
     "marketingBody": "Meta Pixel — ne arată ce reclame aduc pacienți la noi.",
     "thirdPartyTitle": "Conținut de la terți",
-    "thirdPartyBody": "Widget-uri cu recenzii ale pacienților de la Doctify, încorporate de pe doctify.com.",
+    "thirdPartyBody": "Widget-uri cu recenzii ale pacienților de la Doctify (doctify.com) și asistentul vocal ElevenLabs (elevenlabs.io) — asistentul folosește microfonul doar cât timp vorbiți cu el.",
     "analyticsTitle": "Analiză — statistici anonime de utilizare",
     "analyticsBody": "Google Analytics și Microsoft Clarity (înregistrarea sesiunii) — ne arată ce pagini sunt utile și unde site-ul este confuz. Adresele paginilor sunt curățate de orice v-ar putea identifica, iar niciunul dintre ele nu rulează pe paginile de programare, coș, plată, încărcare de fișiere sau verificare.",
     "settingsLink": "Setări cookie",

@@ -13,6 +13,15 @@ export const SITE_NAME = "Global Health";
  */
 export const BASE_SLOT_MINUTES = 15;
 
+/**
+ * Support WhatsApp number, for the floating chat button (components/layout/WhatsAppFab.tsx).
+ *
+ * `WHATSAPP_E164` is digits only — the form wa.me requires (no `+`, no spaces).
+ * Set it to "" to hide the button entirely.
+ */
+export const WHATSAPP_E164 = "353894715849";
+export const WHATSAPP_NUMBER_DISPLAY = "+353 89 471 5849";
+
 /** Brand slogan — use as a brand line, not on every card. */
 export const SLOGAN = "Medicine Anytime Anywhere";
 

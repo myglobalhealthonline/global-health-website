@@ -185,7 +185,7 @@
     "marketingTitle": "Reklama",
     "marketingBody": "Meta Pixel — ukazuje nám, které reklamy k nám přivádějí pacienty.",
     "thirdPartyTitle": "Obsah třetích stran",
-    "thirdPartyBody": "Widgety s hodnoceními pacientů od Doctify, vložené z doctify.com.",
+    "thirdPartyBody": "Widgety s hodnoceními pacientů od Doctify (doctify.com) a hlasový asistent ElevenLabs (elevenlabs.io) — asistent používá váš mikrofon pouze v době, kdy s ním mluvíte.",
     "analyticsTitle": "Analytika — anonymní statistiky používání",
     "analyticsBody": "Google Analytics a Microsoft Clarity (záznam relace) — ukazují nám, které stránky jsou užitečné a kde je web matoucí. Adresy stránek jsou zbaveny všeho, co by vás mohlo identifikovat, a ani jeden neběží na stránkách rezervace, košíku, platby, nahrávání souborů nebo ověření.",
     "settingsLink": "Nastavení cookies",
