@@ -124,7 +124,17 @@ function publicCsp(): string {
     // fetches hit this policy rather than an iframe's — see connect-src/
     // media-src below. Omitting the host fails silently: the custom element
     // stays undefined and NOTHING renders, no visible error.
-    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms https://unpkg.com",
+    //
+    // `blob:` is there for the same widget's AudioWorklet: it builds its
+    // rawAudioProcessor worklet from a Blob URL, and a worklet module fetch is
+    // checked against script-src (worker-src does not cover it). Without it the
+    // launcher renders and looks fine until someone starts a call, which then
+    // fails with "Failed to load the rawAudioProcessor worklet module … you may
+    // need to self-host the worklet files". Loosening: any blob: script may
+    // execute on PUBLIC pages, which already carry 'unsafe-inline' — so this
+    // grants an attacker with script execution nothing new. The portal policy
+    // (nonceCsp, where PHI lives) is deliberately NOT given blob:.
+    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms https://unpkg.com blob:",
     // Tailwind + CMS emit inline <style>; keep permissive (style injection is
     // low value to an attacker relative to the breakage risk).
     "style-src 'self' 'unsafe-inline'",
