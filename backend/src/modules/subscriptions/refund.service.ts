@@ -253,6 +253,17 @@ export async function refundSubscription(input: RefundSubscriptionInput): Promis
   await assertRefundAllowed(sub);
 
   const billing = getBillingPort();
+  // Stripe driver + no provider subscription = a row whose money we cannot
+  // reach: a checkout that never linked, or a legacy member imported from
+  // another platform whose paid months were taken elsewhere. Falling through to
+  // reconcileRefund would CANCEL the membership and claw the credits back while
+  // returning nothing — the customer loses both the money and the plan. Refuse.
+  if (billing.driver === "stripe" && !sub.stripeSubscriptionId) {
+    throw new RefundError(
+      "NO_PAID_PERIOD",
+      "This membership has no charge on file that we can refund",
+    );
+  }
   if (billing.driver === "stripe" && sub.stripeSubscriptionId) {
     // Refund the invoice for the period being reversed, NOT "the latest
     // invoice": after a mid-cycle upgrade the latest invoice is the small

@@ -56,6 +56,16 @@ export interface CreateSubscriptionCheckoutInput {
   metadata: Record<string, string>;
   /** Plan's country — pins the Checkout page language (see checkout-branding.ts). */
   countryCode?: string | null;
+  /**
+   * MIGRATION ONLY (legacy subscribers imported from another platform, §38.9).
+   * First charge is deferred to this instant — Checkout collects and mandates
+   * the card today but takes €0, and Stripe raises the first real invoice at
+   * `trialEnd`. Set it to the date the member's OLD platform would have billed
+   * next, so the import neither double-charges nor gives away a free month.
+   * Must be ≥48h in the future (Stripe constraint). Never used by the normal
+   * patient subscribe flow — v1 has no trials (D23).
+   */
+  trialEnd?: Date | null;
 }
 
 export interface BillingPortalInput {
