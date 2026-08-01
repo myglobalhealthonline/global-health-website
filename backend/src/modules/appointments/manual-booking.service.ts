@@ -312,9 +312,20 @@ function generateTempPassword(): string {
   return randomBytes(12).toString("base64url");
 }
 
+/**
+ * Date of birth is a nice-to-have on a booking, never a reason to fail one.
+ * Anything unparseable — an empty string, the literal text "null"/"undefined"
+ * from a caller that stringified its own null, a half-typed date — becomes an
+ * absent DOB rather than an Invalid Date. Handing Prisma an Invalid Date
+ * throws mid-pipeline and loses the whole booking over a field nothing in the
+ * flow depends on.
+ */
 function parseDateOfBirth(raw: string | null | undefined): Date | null {
-  if (!raw || raw.length === 0) return null;
-  return new Date(`${raw.slice(0, 10)}T00:00:00.000Z`);
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed || /^(null|undefined)$/i.test(trimmed)) return null;
+  const parsed = new Date(`${trimmed.slice(0, 10)}T00:00:00.000Z`);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
 function consultationCartKind(serviceKind: ServiceKind): CartItemKind {
