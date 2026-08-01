@@ -322,11 +322,14 @@ async function resolveActiveCart(
   return { cart: await loadFullCart(cart.id), userId: null, cookieToken };
 }
 
+// upsert, not find-then-create: `Cart.userId` is @unique and the frontend
+// fires several cart requests in parallel right after login — a check-then-
+// create races itself into P2002.
 async function getOrCreateUserCart(userId: string) {
-  const existing = await prisma.cart.findUnique({ where: { userId } });
-  if (existing) return existing;
-  return prisma.cart.create({
-    data: {
+  return prisma.cart.upsert({
+    where: { userId },
+    update: {},
+    create: {
       userId,
       countryCode: "",
       currencyCode: "",
@@ -522,7 +525,7 @@ async function mergeCarts(sourceId: string, targetId: string) {
   // patients from booking the same time.
   if (target.countryCode && source.countryCode !== target.countryCode) {
     await releaseHeldSlotsForItems(source.items);
-    await prisma.cart.delete({ where: { id: sourceId } });
+    await prisma.cart.deleteMany({ where: { id: sourceId } });
     return;
   }
 
@@ -568,55 +571,26 @@ async function mergeCarts(sourceId: string, targetId: string) {
         data: { quantity: merged },
       });
     } else {
-      await prisma.cartItem.create({
+      // Re-parent the existing row instead of copy-then-delete. Copying would
+      // duplicate `timeSlotId`, which is globally @unique on CartItem, and the
+      // source row is not deleted until after this loop → P2002 on every
+      // guest→user merge that carries a consultation.
+      await prisma.cartItem.update({
+        where: { id: item.id },
         data: {
           cartId: target.id,
-          kind: item.kind,
-          healthTestId: item.healthTestId,
-          serviceId: item.serviceId,
-          name: item.name,
-          unitPriceCents: item.unitPriceCents,
-          // Snapshot the per-unit shipping fee too — without this the
-          // checkout total drops the shipping line on merged items.
-          shippingCents: item.shippingCents ?? 0,
-          quantity: item.quantity,
-          timeSlotId: item.timeSlotId,
-          doctorId: item.doctorId,
-          // Consultation lines carry the reservation deadline — drop
-          // it onto the new row so sweep + countdown keep working.
-          heldUntil: item.heldUntil,
-          // Patient intake snapshot — keep so the merged cart still
-          // mints the Appointment with the right data.
-          patientFullName: item.patientFullName,
-          patientEmail: item.patientEmail,
-          patientPhone: item.patientPhone,
-          patientDateOfBirth: item.patientDateOfBirth,
-          patientNotes: item.patientNotes,
-          patientConsentAcceptedAt: item.patientConsentAcceptedAt,
-          bookingForOther: item.bookingForOther,
-          // Carry the per-line benefit choice across the merge. The benefit is
-          // only ever applied for an active subscriber at checkout, so this is
-          // harmless on its own.
-          benefitSelection: item.benefitSelection,
           // SECURITY: never carry a familyMemberId across a merge. The source
           // is a guest cookie cart whose items were added without an
           // authenticated ownership check, so a crafted/foreign id could ride
           // in. The owner can re-select an approved dependent on the cart page.
           familyMemberId: null,
-          // Insurance snapshot — carry it so the merged line keeps its
-          // negotiated price at checkout. Without insuranceCompanyId the
-          // checkout recompute would fall back to peak/base and charge a
-          // different amount than the patient was shown. Re-validated
-          // server-side at checkout, so a stale/forged company just reverts to
-          // the base price (never cheaper).
-          insuranceCompanyId: item.insuranceCompanyId,
-          insurancePolicyNumber: item.insurancePolicyNumber,
-          insurancePriceCents: item.insurancePriceCents,
         },
       });
     }
   }
-  await prisma.cart.delete({ where: { id: sourceId } });
+  // deleteMany, not delete: two parallel post-login requests can both reach
+  // here for the same guest cart, and the loser must not 500 on P2025.
+  await prisma.cart.deleteMany({ where: { id: sourceId } });
 }
 
 function serializeCart(
