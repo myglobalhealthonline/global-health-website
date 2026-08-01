@@ -6705,6 +6705,43 @@ html::-webkit-scrollbar-thumb:hover {
   box-shadow: var(--lux-inset-well);
 }
 
+/* Icon + label rows. The base item is `display: block` (and inherits a
+   button's centred text), which stacks an inline icon above its own label —
+   portal.css loads after Tailwind, so a `flex` utility on the element loses. */
+.gh-portal-menu-item--icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+}
+
+.gh-portal-menu-label {
+  display: block;
+  padding: 6px 8px 4px;
+  color: var(--portal-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gh-portal-menu-separator {
+  height: 1px;
+  margin: 4px 2px;
+  background: var(--portal-line);
+}
+
+/* Why an action is unavailable, stated in place of the action rather than as a
+   disabled row the admin can't interrogate. */
+.gh-portal-menu-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  color: var(--portal-muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
 /* Container-aware list fallback: the available main-column width, rather than
    the viewport, decides when established portal card lists replace tables. */
 @container list (max-width: 960px) {
@@ -6895,6 +6932,104 @@ html::-webkit-scrollbar-thumb:hover {
   .gh-week-now-line {
     transition: none;
   }
+}
+
+/* Capacity grid — week × time-band aggregate. Cells are sized, not measured:
+ * the grid is 7 fluid columns, so it fits any width without the day-count
+ * windowing the per-slot week grid needs. */
+.gh-capacity-grid {
+  display: grid;
+  gap: 4px;
+}
+
+.gh-capacity-cell {
+  position: relative;
+  display: flex;
+  height: 62px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-sm);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+button.gh-capacity-cell:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(16, 23, 19, 0.14);
+}
+
+.gh-capacity-cell--empty {
+  border-color: var(--portal-line);
+  background: var(--portal-well);
+}
+
+/* Lane (resource) grid — one row per doctor, time on the x-axis. Unlike the
+ * week grid this one DOES scroll horizontally: a full clinic day at a legible
+ * scale is wider than the panel, and compressing it is exactly the failure the
+ * lane view exists to avoid. The doctor column sticks so a row never loses its
+ * name mid-scroll. */
+.gh-lane-scroll {
+  overflow: auto;
+  max-height: min(76vh, 940px);
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.gh-lane-ruler {
+  position: sticky;
+  top: 0;
+  /* Above the doctor column, which is itself above the blocks: scrolling the
+     grid must never paint a booked block over a doctor's name or an hour
+     label. Solid-tone blocks carry z-index 2 from their inline style. */
+  z-index: 6;
+  border-bottom: 1px solid var(--portal-line);
+  background: var(--portal-surface);
+}
+
+.gh-lane-name-col {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  flex: 0 0 auto;
+  background: var(--portal-surface);
+  border-right: 1px solid var(--portal-line);
+}
+
+.gh-lane-row + .gh-lane-row .gh-lane-name-col,
+.gh-lane-row + .gh-lane-row .gh-lane-track {
+  border-top: 1px solid var(--portal-line-soft);
+}
+
+.gh-lane-track {
+  flex: 0 0 auto;
+}
+
+.gh-lane-gridline {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--portal-line);
+  opacity: 0.6;
+}
+
+.gh-lane-now-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 4;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--portal-accent);
+  pointer-events: none;
+}
+
+.gh-lane-block {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  line-height: 1.1;
 }
 
 /* Adjacent-month day cells — super light: date number and event chips both

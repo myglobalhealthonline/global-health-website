@@ -12,6 +12,7 @@ import {
   parseWeekAnchor,
   parseYearMonth,
   weekRangeIso,
+  zonedDayRangeUtc,
 } from "@/components/calendar/calendar-utils";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { ADMIN_CALENDAR_DEFAULT_TZ } from "@/lib/timezones";
@@ -23,6 +24,7 @@ type Props = {
   searchParams: Promise<{
     ym?: string;
     wk?: string;
+    d?: string;
     view?: string;
     doctorId?: string;
     type?: string;
@@ -43,25 +45,37 @@ function servesCountry(doctor: AdminDoctorDto, code: string): boolean {
 export default async function AdminCalendarPage({ searchParams }: Props) {
   const sp = await searchParams;
   const { year, month } = parseYearMonth(sp.ym);
-  // Week is the default: it's the view that shows real time-of-day shape, and
-  // it matches the doctor availability grid. Month stays a click away.
-  const view = sp.view === "month" ? "month" : "week";
+  // Lanes is the default: one row per doctor for one day is the only view that
+  // stays readable at "all doctors" scope, where the per-slot week grid packs
+  // every overlap into side-by-side lanes and shreds the columns. Capacity
+  // (week × time-band aggregate), Week, and Month stay a click away.
+  const view =
+    sp.view === "month" || sp.view === "week" || sp.view === "capacity"
+      ? sp.view
+      : "lanes";
   const weekAnchor = parseWeekAnchor(sp.wk, ADMIN_CALENDAR_DEFAULT_TZ);
+  // Same "YYYY-MM-DD or today" contract as the week anchor — a lane day is
+  // just an anchor that happens to name exactly the day it draws.
+  const dayAnchor = parseWeekAnchor(sp.d, ADMIN_CALENDAR_DEFAULT_TZ);
 
-  // Each view fetches only the window it draws. The week window is padded ±1
+  // Each view fetches only the window it draws. Day/week windows are padded ±1
   // day because the range is built in the default tz while the admin can
   // re-read the grid in any other one — the padding covers items that shift a
   // column under that offset (the month grid already pads for the same reason).
+  const padDay = (iso: string, days: number) =>
+    new Date(new Date(iso).getTime() + days * 86400000).toISOString();
   const { fromIso, toIso } =
-    view === "week"
-      ? (() => {
-          const w = weekRangeIso(weekAnchor, ADMIN_CALENDAR_DEFAULT_TZ);
-          return {
-            fromIso: new Date(new Date(w.fromIso).getTime() - 86400000).toISOString(),
-            toIso: new Date(new Date(w.toIso).getTime() + 86400000).toISOString(),
-          };
-        })()
-      : monthGridRangeIso(year, month);
+    view === "month"
+      ? monthGridRangeIso(year, month)
+      : view === "lanes"
+        ? (() => {
+            const d = zonedDayRangeUtc(dayAnchor, dayAnchor, ADMIN_CALENDAR_DEFAULT_TZ);
+            return { fromIso: padDay(d.fromIso, -1), toIso: padDay(d.toIso, 1) };
+          })()
+        : (() => {
+            const w = weekRangeIso(weekAnchor, ADMIN_CALENDAR_DEFAULT_TZ);
+            return { fromIso: padDay(w.fromIso, -1), toIso: padDay(w.toIso, 1) };
+          })();
 
   // The header country picker (cookie scope) is the default country filter, so
   // switching to Spain scopes the grid + the doctor dropdown without touching
@@ -189,6 +203,7 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
           month={month}
           view={view}
           weekAnchor={weekAnchor}
+          dayAnchor={dayAnchor}
           items={items}
           doctorOptions={doctorOptions}
           typeOptions={typeOptions}

@@ -3,7 +3,6 @@
 import {
   Fragment,
   type CSSProperties,
-  type ReactNode,
   useEffect,
   useMemo,
   useRef,
@@ -14,7 +13,6 @@ import {
   CheckSquare,
   ChevronLeft,
   ChevronRight,
-  Clock,
   Square,
   Trash2,
   Unlock,
@@ -22,10 +20,12 @@ import {
 } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
+import { CornerAction, LegendDot, statusIcon, toneStyle } from "./calendar-block-ui";
 import {
   CONSULT_FALLBACK_MIN,
   dropSlotsUnderConsultations,
   durationMinutes,
+  rangeLabel,
   zonedMinutesOfDay,
   type WeekDay,
 } from "./calendar-utils";
@@ -130,47 +130,6 @@ type PositionedItem = {
   lanes: number;
 };
 
-// A solid, elevated block — used for every OCCUPIED state (booked, held,
-// blocked) so it reads as a filled event, not empty space. `tone` is the base
-// hex; text goes white and a shadow lifts it above the pale OPEN slots.
-function solidTone(tone: string): CSSProperties {
-  return {
-    borderColor: tone,
-    background: tone,
-    color: "#fff",
-    boxShadow: "0 1px 4px rgba(16, 23, 19, 0.22)",
-    fontWeight: 600,
-    zIndex: 2,
-  };
-}
-
-// Deep slate for booked appointments — darker than --portal-info so the white
-// patient name reads with strong contrast. Tokenized (portal.css
-// --portal-booked-fill) so it's defined once alongside the other status tones.
-const BOOKED_FILL = "var(--portal-booked-fill)";
-
-function toneStyle(item: CalendarItem): CSSProperties {
-  // Booked consultations are the thing an admin most needs to spot — solid fill.
-  if (item.kind === "consultation") {
-    return solidTone(BOOKED_FILL);
-  }
-  switch (item.status) {
-    case "OPEN":
-      // Available time recedes: pale, outline-forward, so booked blocks pop.
-      return {
-        borderColor: "var(--portal-success)",
-        background: "var(--portal-success-soft)",
-        color: "var(--portal-success-text)",
-      };
-    case "BLOCKED":
-      return solidTone("var(--portal-danger)");
-    case "BOOKED":
-      return solidTone(BOOKED_FILL);
-    default: // HELD
-      return solidTone("var(--portal-warning)");
-  }
-}
-
 /** Minutes-since-midnight "now", ticking every 30s in the given tz — used for
  *  the current-time indicator line. Null on the server (no flash of a wrong
  *  line before hydration). */
@@ -195,46 +154,9 @@ function useNowMinutes(tz: string): number | null {
   return minutes;
 }
 
-/** "23–29 June 2026" (or "30 Jun – 6 Jul 2026" across a month boundary) for
- *  an arbitrary [firstKey, lastKey] range — unlike calendar-utils' weekLabel
- *  (always the full Mon-Sun week), this reflects whatever subset of days is
- *  actually visible, so a windowed 4-day view says "10–13 Aug", not the
- *  underlying week's "10–16 Aug". */
-function rangeLabel(firstKey: string, lastKey: string): string {
-  const first = firstKey.split("-").map(Number);
-  const last = lastKey.split("-").map(Number);
-  const sameMonth = first[1] === last[1] && first[0] === last[0];
-  const fmt = (parts: number[], withMonthYear: boolean) =>
-    new Intl.DateTimeFormat("en-IE", {
-      day: "numeric",
-      ...(withMonthYear ? { month: "short", year: "numeric" } : {}),
-      timeZone: "UTC",
-    }).format(new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])));
-  if (firstKey === lastKey) return fmt(first, true);
-  return sameMonth
-    ? `${first[2]}–${fmt(last, true)}`
-    : `${fmt(first, true)} – ${fmt(last, true)}`;
-}
-
 // 24-hour gutter label, matching the 24-hour block times below.
 function hourLabel(h: number): string {
   return `${String(h).padStart(2, "0")}:00`;
-}
-
-// Slot status isn't color-only: a small glyph rides next to the time so
-// color-blind users can tell BLOCKED/BOOKED/HELD apart without the legend.
-// OPEN has no icon — its pale outline already reads as "empty".
-function statusIcon(status: string) {
-  switch (status) {
-    case "BLOCKED":
-      return <Ban className="size-3 shrink-0" aria-hidden />;
-    case "BOOKED":
-      return <User className="size-3 shrink-0" aria-hidden />;
-    case "HELD":
-      return <Clock className="size-3 shrink-0" aria-hidden />;
-    default:
-      return null;
-  }
 }
 
 /** Greedy lane packing so overlapping blocks sit side-by-side instead of
@@ -988,60 +910,3 @@ export function WeekCalendar({
   );
 }
 
-/** Small solid-red icon button riding in a slot block's top-right corner —
- *  the admin's block/remove affordances. Deliberately tiny (20px) so it fits
- *  even a 15-min block's 40px span without covering the time label. */
-function CornerAction({
-  label,
-  title,
-  disabled,
-  pressed,
-  onClick,
-  children,
-}: {
-  label: string;
-  title: string;
-  disabled?: boolean;
-  /** Set for the selection checkbox — a ticked box has to look ticked. */
-  pressed?: boolean;
-  onClick: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      aria-label={label}
-      aria-pressed={pressed}
-      title={title}
-      className="gh-week-block-action inline-flex size-5 items-center justify-center rounded-md border opacity-90 shadow-sm transition hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40"
-      // Neutral surface, not another red fill: a danger-toned button on a
-      // BLOCKED block's danger-toned fill was a red square on red.
-      style={
-        pressed
-          ? {
-              borderColor: "var(--portal-info)",
-              background: "var(--portal-info)",
-              color: "#fff",
-            }
-          : {
-              borderColor: "var(--portal-line-strong)",
-              background: "var(--portal-surface)",
-              color: "var(--portal-danger)",
-            }
-      }
-    >
-      {children}
-    </button>
-  );
-}
-
-function LegendDot({ tone, label }: { tone: string; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span aria-hidden className="inline-block size-2 rounded-full" style={{ background: tone }} />
-      {label}
-    </span>
-  );
-}

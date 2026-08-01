@@ -7,11 +7,14 @@ import { Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
+import { CapacityCalendar } from "@/components/calendar/CapacityCalendar";
+import { LaneCalendar } from "@/components/calendar/LaneCalendar";
 import { DayAgenda } from "@/components/calendar/DayAgenda";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { AppSheet } from "@/components/AppSheet";
 import {
+  addDaysKey,
   addMonths,
   addWeeksKey,
   dayLabel,
@@ -39,14 +42,17 @@ import {
 
 type Option = { id: string; name: string };
 
-type CalendarView = "month" | "week";
+type CalendarView = "lanes" | "capacity" | "month" | "week";
 
 type Props = {
   year: number;
   month: number;
   view: CalendarView;
-  /** Any calendar date inside the week the week-view renders ("YYYY-MM-DD"). */
+  /** Any calendar date inside the week the week/capacity views render
+   *  ("YYYY-MM-DD"). */
   weekAnchor: string;
+  /** The single day the lane view renders ("YYYY-MM-DD"). */
+  dayAnchor: string;
   items: CalendarItem[];
   doctorOptions: Option[];
   typeOptions: string[];
@@ -70,6 +76,7 @@ export function AdminCalendarUI({
   month,
   view,
   weekAnchor,
+  dayAnchor,
   items,
   doctorOptions,
   typeOptions,
@@ -93,9 +100,13 @@ export function AdminCalendarUI({
   const [slotNotice, setSlotNotice] = useState<string | null>(null);
   // Bulk work is per-doctor: the endpoint is scoped to one calendar, and a
   // sweep across every doctor at once is not a thing an admin should be able to
-  // do by accident. Both affordances therefore need the doctor filter set.
+  // do by accident. The week grid and day agenda therefore need the doctor
+  // filter set; the lane grid names a doctor per row, so there the FIRST
+  // selected slot fixes the doctor and later picks are held to it.
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selectionDoctorId, setSelectionDoctorId] = useState<string | null>(null);
   const bulkReady = Boolean(filters.doctorId);
+  const bulkDoctorId = filters.doctorId || selectionDoctorId;
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
     const eventId = searchParams.get("event");
     return eventId ? items.find((i) => i.id === eventId) ?? null : null;
@@ -197,12 +208,23 @@ export function AdminCalendarUI({
     setRemoveTarget(item);
   }
 
+  function clearSelection() {
+    setSelected(new Set());
+    setSelectionDoctorId(null);
+  }
+
   function toggleSelected(item: CalendarItem) {
     const id = item.id.replace(/^s-/, "");
+    const itemDoctorId = item.meta?.doctorId ?? null;
+    // A selection that outlived its doctor would post slot ids to the wrong
+    // calendar, so the doctor rides along with the set and dies with it.
+    if (selectionDoctorId && itemDoctorId && itemDoctorId !== selectionDoctorId) return;
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+      if (next.size === 0) setSelectionDoctorId(null);
+      else if (itemDoctorId) setSelectionDoctorId(itemDoctorId);
       return next;
     });
   }
@@ -214,10 +236,10 @@ export function AdminCalendarUI({
     payload: { slotIds?: string[]; spans?: { fromUtc: string; toUtc: string }[] },
     reason?: string,
   ) {
-    if (!filters.doctorId) return;
+    if (!bulkDoctorId) return;
     setSlotError(null);
     setSlotBusy(true);
-    const res = await adminBulkSlotAction(filters.doctorId, {
+    const res = await adminBulkSlotAction(bulkDoctorId, {
       action,
       ...payload,
       ...(reason ? { reason } : {}),
@@ -227,7 +249,7 @@ export function AdminCalendarUI({
       setSlotError(res.message);
       return;
     }
-    if (payload.slotIds) setSelected(new Set());
+    if (payload.slotIds) clearSelection();
     setSlotNotice(describeBulkResult(action, res.data));
     router.refresh();
   }
@@ -273,6 +295,7 @@ export function AdminCalendarUI({
       country: string;
       view: CalendarView;
       wk: string;
+      d: string;
     }>,
   ) {
     const params = new URLSearchParams();
@@ -283,11 +306,12 @@ export function AdminCalendarUI({
     if (doctorId) params.set("doctorId", doctorId);
     if (type) params.set("type", type);
     if (country) params.set("country", country);
-    // Week is the default, so only Month is spelled out in the URL.
+    // Lanes is the default, so only the other three are spelled out in the URL.
     const nextView = next.view ?? view;
-    if (nextView === "month") {
-      params.set("view", "month");
-    } else {
+    if (nextView !== "lanes") params.set("view", nextView);
+    if (nextView === "lanes") {
+      params.set("d", next.d ?? dayAnchor);
+    } else if (nextView !== "month") {
       params.set("wk", next.wk ?? weekAnchor);
     }
     router.push(`${pathname}?${params.toString()}`);
@@ -300,6 +324,20 @@ export function AdminCalendarUI({
   // month the admin was just reading, not the one they started from.
   function goToWeek(anchor: string) {
     pushParams({ view: "week", wk: anchor, ym: anchor.slice(0, 7) });
+  }
+
+  function goToCapacity(anchor: string) {
+    pushParams({ view: "capacity", wk: anchor, ym: anchor.slice(0, 7) });
+  }
+
+  // The band the capacity grid was clicked on is remembered in component state
+  // rather than the URL: it only decides where the lane grid scrolls to, and a
+  // link that pins a scroll offset is a link that ages badly.
+  const [laneFocusHour, setLaneFocusHour] = useState<number | null>(null);
+
+  function goToLanes(anchor: string, focusHour: number | null = null) {
+    setLaneFocusHour(focusHour);
+    pushParams({ view: "lanes", d: anchor, ym: anchor.slice(0, 7) });
   }
 
   // Same deep link the day agenda's "Book" action uses: an open slot in the
@@ -390,11 +428,13 @@ export function AdminCalendarUI({
           </button>
           <ViewToggle
             view={view}
-            onChange={(next) =>
-              next === "week"
-                ? goToWeek(selectedDay || todayKey(tz))
-                : pushParams({ view: "month" })
-            }
+            onChange={(next) => {
+              const anchor = selectedDay || todayKey(tz);
+              if (next === "lanes") goToLanes(anchor);
+              else if (next === "capacity") goToCapacity(anchor);
+              else if (next === "week") goToWeek(anchor);
+              else pushParams({ view: "month" });
+            }}
           />
           <TimezoneSelect value={tz} options={tzList} onChange={setTz} />
         </div>
@@ -426,7 +466,38 @@ export function AdminCalendarUI({
         </p>
       ) : null}
 
-      {view === "week" ? (
+      {view === "lanes" ? (
+        <LaneCalendar
+          dayKey={dayAnchor}
+          items={itemsByDay.get(dayAnchor) ?? []}
+          tz={tz}
+          todayKey={todayKey(tz)}
+          focusHour={laneFocusHour}
+          onSelectOpenSlot={startSlotBooking}
+          onSelectConsultation={openEvent}
+          onBlockSlot={openBlockDialog}
+          onUnblockSlot={onUnblockSlot}
+          onRemoveSlot={openRemoveDialog}
+          selectedIds={selected}
+          onToggleSelect={toggleSelected}
+          selectionDoctorId={selectionDoctorId}
+          slotActionsBusy={slotBusy}
+          onPrevDay={() => goToLanes(addDaysKey(dayAnchor, -1))}
+          onNextDay={() => goToLanes(addDaysKey(dayAnchor, 1))}
+          onToday={() => goToLanes(todayKey(tz))}
+        />
+      ) : view === "capacity" ? (
+        <CapacityCalendar
+          weekDays={weekDays}
+          itemsByDay={itemsByDay}
+          tz={tz}
+          todayKey={todayKey(tz)}
+          onSelectCell={(dayKey, startHour) => goToLanes(dayKey, startHour)}
+          onPrevWeek={() => goToCapacity(addWeeksKey(weekAnchor, -1))}
+          onNextWeek={() => goToCapacity(addWeeksKey(weekAnchor, 1))}
+          onToday={() => goToCapacity(todayKey(tz))}
+        />
+      ) : view === "week" ? (
         <WeekCalendar
           anchorDayKey={weekAnchor}
           weekDays={weekDays}
@@ -474,7 +545,7 @@ export function AdminCalendarUI({
         count={selected.size}
         busy={slotBusy}
         onAction={(action) => void runBulk(action, { slotIds: [...selected] })}
-        onClear={() => setSelected(new Set())}
+        onClear={clearSelection}
       />
 
       {/* Day agenda — lux sheet, same skin as the event drawer. */}
@@ -646,8 +717,9 @@ function monthTuple(ym: { year: number; month: number }): [number, number] {
   return [ym.year, ym.month];
 }
 
-/** Month ↔ Week segmented control. The view lives in the URL (`view=week`),
- *  so a week the admin is reading survives a refresh and can be linked to. */
+/** Lanes ↔ Capacity ↔ Week ↔ Month segmented control. The view lives in the
+ *  URL (`view=capacity`), so whatever the admin is reading survives a refresh
+ *  and can be linked to. Lanes is the default and carries no param. */
 function ViewToggle({
   view,
   onChange,
@@ -662,7 +734,7 @@ function ViewToggle({
       className="inline-flex items-center gap-0.5 rounded-[999px] p-0.5"
       style={{ border: "1px solid var(--portal-line-strong)" }}
     >
-      {(["month", "week"] as const).map((v) => {
+      {(["lanes", "capacity", "week", "month"] as const).map((v) => {
         const active = v === view;
         return (
           <button
