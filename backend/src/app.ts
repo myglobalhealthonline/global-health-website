@@ -8,9 +8,10 @@ import compress from "@fastify/compress";
 import helmet from "@fastify/helmet";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
-import Fastify from "fastify";
+import Fastify, { type FastifyError } from "fastify";
 import { env } from "./config/env.js";
 import { buildOriginGuardHook } from "./utils/origin-guard.js";
+import { errorResponse } from "./utils/response.js";
 
 export async function buildApp() {
   // bodyLimit applies to non-multipart payloads. Aligned with the
@@ -264,6 +265,25 @@ export async function buildApp() {
       reply.header("Cache-Control", "private, no-store");
     }
     return payload;
+  });
+
+  // CWE-209: Fastify's default error handler puts `err.message` in the 500
+  // body, and the frontend renders it. An unhandled Prisma error therefore
+  // shipped the ORM name, the model + column that failed, and the absolute
+  // server path (`/app/dist/routes/cart.route.js:441`) straight to the
+  // browser — and Prisma validation errors embed the offending `data`
+  // payload, which on this codebase means patient name/email/DOB. Swallow
+  // every 5xx into a fixed string; the real error still goes to the log.
+  // 4xx (validation, rate-limit, CORS) keep their own client-facing text —
+  // `reply.send(err)` inside an error handler falls through to Fastify's
+  // default serialization, so those response shapes are unchanged.
+  app.setErrorHandler((err: FastifyError, request, reply) => {
+    const status = typeof err.statusCode === "number" ? err.statusCode : 500;
+    if (status < 500) return reply.send(err);
+    request.log.error({ err, url: request.url }, "unhandled route error");
+    return reply
+      .status(500)
+      .send(errorResponse("Something went wrong. Please try again."));
   });
 
   // Auto-register every `*.route.ts` (or `*.route.js` in dist) under

@@ -495,6 +495,18 @@ async function releaseHeldSlotsForItems(
 }
 
 async function mergeCarts(sourceId: string, targetId: string) {
+  // One-shot claim on the guest cart. `Cart.cookieToken` is unique AND
+  // nullable, so nulling it does double duty: the cart stops being reachable
+  // by the guest cookie lookup, and the updateMany count is an atomic "this
+  // request owns the merge" flag. The frontend fires several cart calls in
+  // parallel right after login; without this they all merge the same source
+  // and can interleave (double-counted quantities, half-moved carts).
+  const claim = await prisma.cart.updateMany({
+    where: { id: sourceId, cookieToken: { not: null } },
+    data: { cookieToken: null },
+  });
+  if (claim.count === 0) return;
+
   const target = await prisma.cart.findUnique({
     where: { id: targetId },
     include: { items: true },
@@ -505,16 +517,24 @@ async function mergeCarts(sourceId: string, targetId: string) {
   });
   if (!source || !target) return;
 
+  // Collect the writes and commit them as one unit — a merge that dies
+  // halfway used to leave items split across two carts. Slot releases stay
+  // OUT of the transaction on purpose: releaseSlotsToBaseGrid re-materialises
+  // the base grid and swallows unique/exclusion violations, and in Postgres a
+  // caught constraint error still aborts the enclosing transaction. They run
+  // after the commit, so a failed merge just leaves the slots HELD until the
+  // 10-minute sweep — the safe direction to fail in.
+  const ops: Prisma.PrismaPromise<unknown>[] = [];
+  const slotsToRelease: string[] = [];
+
   // If target is empty, just move country/currency from source.
-  let targetCountry = target.countryCode;
-  let targetCurrency = target.currencyCode;
-  if (!targetCountry && source.countryCode) {
-    targetCountry = source.countryCode;
-    targetCurrency = source.currencyCode;
-    await prisma.cart.update({
-      where: { id: target.id },
-      data: { countryCode: targetCountry, currencyCode: targetCurrency },
-    });
+  if (!target.countryCode && source.countryCode) {
+    ops.push(
+      prisma.cart.update({
+        where: { id: target.id },
+        data: { countryCode: source.countryCode, currencyCode: source.currencyCode },
+      }),
+    );
   }
 
   // If target already has items from a different country, drop the
@@ -545,7 +565,7 @@ async function mergeCarts(sourceId: string, targetId: string) {
     const itemIsInsurance = Boolean(item.insuranceCompanyId);
     if ((itemIsInsurance && targetHasOther) || (!itemIsInsurance && targetHasInsurance)) {
       if (item.timeSlotId) {
-        await releaseSlotsToBaseGrid([item.timeSlotId]);
+        slotsToRelease.push(item.timeSlotId);
       }
       continue;
     }
@@ -566,31 +586,40 @@ async function mergeCarts(sourceId: string, targetId: string) {
         dupe.quantity + item.quantity,
         CART_ITEM_MAX_QTY,
       );
-      await prisma.cartItem.update({
-        where: { id: dupe.id },
-        data: { quantity: merged },
-      });
+      ops.push(
+        prisma.cartItem.update({
+          where: { id: dupe.id },
+          data: { quantity: merged },
+        }),
+      );
     } else {
       // Re-parent the existing row instead of copy-then-delete. Copying would
       // duplicate `timeSlotId`, which is globally @unique on CartItem, and the
       // source row is not deleted until after this loop → P2002 on every
       // guest→user merge that carries a consultation.
-      await prisma.cartItem.update({
-        where: { id: item.id },
-        data: {
-          cartId: target.id,
-          // SECURITY: never carry a familyMemberId across a merge. The source
-          // is a guest cookie cart whose items were added without an
-          // authenticated ownership check, so a crafted/foreign id could ride
-          // in. The owner can re-select an approved dependent on the cart page.
-          familyMemberId: null,
-        },
-      });
+      ops.push(
+        prisma.cartItem.update({
+          where: { id: item.id },
+          data: {
+            cartId: target.id,
+            // SECURITY: never carry a familyMemberId across a merge. The source
+            // is a guest cookie cart whose items were added without an
+            // authenticated ownership check, so a crafted/foreign id could ride
+            // in. The owner can re-select an approved dependent on the cart page.
+            familyMemberId: null,
+          },
+        }),
+      );
     }
   }
-  // deleteMany, not delete: two parallel post-login requests can both reach
-  // here for the same guest cart, and the loser must not 500 on P2025.
-  await prisma.cart.deleteMany({ where: { id: sourceId } });
+
+  // deleteMany, not delete: tolerant if the row is already gone. Items still
+  // sitting in the source cart (the insurance-conflict skips above) cascade
+  // away with it.
+  ops.push(prisma.cart.deleteMany({ where: { id: sourceId } }));
+  await prisma.$transaction(ops);
+
+  if (slotsToRelease.length) await releaseSlotsToBaseGrid(slotsToRelease);
 }
 
 function serializeCart(
