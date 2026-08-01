@@ -42,6 +42,46 @@ function balanceOf(balances: Array<{ kind: CreditKind; balance: number }>, kind:
   return balances.find((b) => b.kind === kind)?.balance ?? 0;
 }
 
+/** en-GB so admins read 26 Aug 2026, not the ambiguous 08/26/2026. */
+function formatDate(iso: string | null): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? null
+    : d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function formatMoney(cents: number, currency: string): string {
+  return new Intl.NumberFormat("en-IE", {
+    style: "currency",
+    currency: (currency || "eur").toUpperCase(),
+  }).format(cents / 100);
+}
+
+/**
+ * What the member is actually charged: the snapshotted price, not the plan's
+ * live column. Stripe Prices are immutable and existing subscribers stay on the
+ * one they signed up at (D22), so after an admin price edit the plan row quotes
+ * a number this member is not paying.
+ */
+function billedPrice(sub: AdminSubscriptionListItem): string {
+  return formatMoney(
+    sub.planSnapshot?.monthlyPriceCents ?? sub.plan.monthlyPriceCents,
+    sub.planSnapshot?.currencyCode ?? sub.plan.currencyCode,
+  );
+}
+
+/**
+ * The date money next moves. A subscription set to cancel still runs to the end
+ * of the paid period, so `currentPeriodEnd` is the ACCESS end date there, not a
+ * charge date — labelling it "next payment" would tell the admin a cancelled
+ * member is about to be billed.
+ */
+function nextPayment(sub: AdminSubscriptionListItem): string | null {
+  if (sub.status === "CANCELED" || sub.cancelAtPeriodEnd) return null;
+  return formatDate(sub.currentPeriodEnd);
+}
+
 const refundConfirmMessage = (sub: AdminSubscriptionListItem) =>
   `This refunds ${sub.user.fullName ?? sub.user.email}'s latest paid period at the provider, claws back unused consultation/wellness credits for that period, and cancels the subscription. This moves real money and cannot be undone from here. Denied if outside the 7-day window or a consultation credit was already used this period.`;
 
@@ -119,6 +159,7 @@ export function AdminSubscriptionsTable({
             <Th>Subscriber</Th>
             <Th>Plan</Th>
             <Th>Status</Th>
+            <Th>Next payment</Th>
             <Th>Credits (GP / wellness)</Th>
             <Th align="right">Actions</Th>
           </Thead>
@@ -151,6 +192,14 @@ export function AdminSubscriptionsTable({
                   ) : null}
                 </Td>
                 <Td>
+                  <span className="block text-[var(--color-text-primary)]">
+                    {nextPayment(sub) ?? "—"}
+                  </span>
+                  <span className="block text-xs text-[var(--color-text-muted)]">
+                    {sub.paidMonthsCount} paid month{sub.paidMonthsCount === 1 ? "" : "s"}
+                  </span>
+                </Td>
+                <Td>
                   <span className="font-semibold text-[var(--color-text-primary)]">
                     {balanceOf(sub.balances, "CONSULTATION")} / {balanceOf(sub.balances, "WELLNESS")}
                   </span>
@@ -174,7 +223,13 @@ export function AdminSubscriptionsTable({
             statusPill={<Pill tone={statusTone(sub.status)}>{sub.status}</Pill>}
             onClick={() => openQuickView(sub.id)}
             meta={[
-              { label: "Plan", value: sub.plan.name },
+              { label: "Plan", value: `${sub.plan.name} · ${billedPrice(sub)}` },
+              {
+                label: sub.cancelAtPeriodEnd ? "Access ends" : "Next payment",
+                value:
+                  (sub.cancelAtPeriodEnd ? formatDate(sub.currentPeriodEnd) : nextPayment(sub)) ?? "—",
+              },
+              { label: "Paid months", value: sub.paidMonthsCount },
               {
                 label: "Balances",
                 value: `GP ${balanceOf(sub.balances, "CONSULTATION")} / wellness ${balanceOf(sub.balances, "WELLNESS")}`,
@@ -218,6 +273,33 @@ export function AdminSubscriptionsTable({
       >
         {quickViewSub ? (
           <>
+            <RecordDetailsSection title="Membership">
+              <RecordDetailsField label="Plan" value={quickViewSub.plan.name} />
+              <RecordDetailsField label="Monthly price" value={billedPrice(quickViewSub)} />
+              <RecordDetailsField label="Member since" value={formatDate(quickViewSub.startedAt)} />
+              <RecordDetailsField label="Paid months" value={quickViewSub.paidMonthsCount} />
+              <RecordDetailsField
+                label="Current period"
+                value={
+                  formatDate(quickViewSub.currentPeriodStart) && formatDate(quickViewSub.currentPeriodEnd)
+                    ? `${formatDate(quickViewSub.currentPeriodStart)} → ${formatDate(quickViewSub.currentPeriodEnd)}`
+                    : null
+                }
+              />
+              <RecordDetailsField
+                label={quickViewSub.cancelAtPeriodEnd ? "Access ends" : "Next payment"}
+                value={
+                  quickViewSub.cancelAtPeriodEnd
+                    ? formatDate(quickViewSub.currentPeriodEnd)
+                    : nextPayment(quickViewSub) &&
+                      `${nextPayment(quickViewSub)} · ${billedPrice(quickViewSub)}`
+                }
+              />
+              {quickViewSub.canceledAt ? (
+                <RecordDetailsField label="Canceled on" value={formatDate(quickViewSub.canceledAt)} />
+              ) : null}
+            </RecordDetailsSection>
+
             <RecordDetailsSection title="Credits">
               <RecordDetailsField
                 label="Consultation balance"
@@ -227,18 +309,72 @@ export function AdminSubscriptionsTable({
                 label="Wellness balance"
                 value={balanceOf(quickViewSub.balances, "WELLNESS")}
               />
+              <RecordDetailsField
+                label="Perks unlocked"
+                value={
+                  quickViewSub.perkGrants.length === 0
+                    ? null
+                    : quickViewSub.perkGrants
+                        .map((p) => `${p.perkKey.replaceAll("_", " ").toLowerCase()} (${p.status.toLowerCase()})`)
+                        .join(", ")
+                }
+              />
               <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
                 <AdminSubscriberLedger subscriptionId={quickViewSub.id} />
               </div>
             </RecordDetailsSection>
 
+            <RecordDetailsSection title="Payment history">
+              {quickViewSub.invoices.length === 0 ? (
+                <p className="text-portal-meta text-[var(--color-text-muted)]">
+                  No payments recorded yet.
+                </p>
+              ) : (
+                <ul className="gh-admin-sub-payments m-0 flex list-none flex-col gap-1 p-0">
+                  {quickViewSub.invoices.map((inv) => (
+                    <li
+                      key={inv.id}
+                      className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 border-b border-[var(--color-border)] py-1.5 last:border-b-0"
+                    >
+                      <span className="text-portal-meta text-[var(--color-text-muted)]">
+                        {formatDate(inv.periodStart) ?? formatDate(inv.createdAt)}
+                        {inv.number ? ` · ${inv.number}` : ""}
+                      </span>
+                      <span className="text-portal-meta font-semibold text-[var(--color-text-primary)]">
+                        {inv.hostedInvoiceUrl ? (
+                          <a
+                            href={inv.hostedInvoiceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
+                          >
+                            {formatMoney(inv.amountPaidCents, inv.currency)}
+                          </a>
+                        ) : (
+                          formatMoney(inv.amountPaidCents, inv.currency)
+                        )}
+                        {inv.status && inv.status !== "paid" ? ` · ${inv.status}` : ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </RecordDetailsSection>
+
             <RecordDetailsSection title="Billing linkage">
-              <RecordDetailsField label="Plan" value={quickViewSub.plan.name} />
               <RecordDetailsField label="Country" value={quickViewSub.countryCode.toUpperCase()} />
               <RecordDetailsField
                 label="Cancels at period end"
                 value={quickViewSub.cancelAtPeriodEnd ? "Yes" : "No"}
               />
+              <RecordDetailsField
+                label="Stripe subscription"
+                // No id = no card on file at the provider yet (a checkout that
+                // never completed, or a member imported from another platform).
+                // Nothing will be charged at the next period end until it links.
+                value={quickViewSub.stripeSubscriptionId ?? "Not linked — no card on file"}
+              />
+              <RecordDetailsField label="Stripe customer" value={quickViewSub.stripeCustomerId} />
               <a
                 href={`/admin/audit-log?entityType=UserSubscription&entityId=${quickViewSub.id}`}
                 className="text-portal-thead font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"

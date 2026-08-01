@@ -21,10 +21,46 @@ export class SubscriptionNotFoundError extends Error {
   }
 }
 
+/**
+ * Payment rows sent with each subscriber. Capped: the list endpoint returns up
+ * to 100 subscribers, and an unbounded invoice join would grow the payload with
+ * every month a member stays subscribed. Two years of history is more than the
+ * drawer ever shows, and Stripe remains the system of record (§38.1) for
+ * anything older.
+ */
+const ADMIN_SUBSCRIPTION_INVOICE_LIMIT = 24;
+
 const adminSubscriptionInclude = {
   user: { select: { id: true, email: true, fullName: true } },
-  plan: { select: { id: true, name: true, slug: true, countryId: true } },
+  plan: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      countryId: true,
+      monthlyPriceCents: true,
+      currencyCode: true,
+    },
+  },
   balances: { select: { kind: true, balance: true } },
+  perkGrants: { select: { perkKey: true, status: true } },
+  invoices: {
+    select: {
+      id: true,
+      number: true,
+      amountPaidCents: true,
+      currency: true,
+      periodStart: true,
+      status: true,
+      hostedInvoiceUrl: true,
+      createdAt: true,
+    },
+    // Newest first, by the period the money covers — `createdAt` orders a
+    // back-filled legacy import by when the row was WRITTEN, which is the same
+    // instant for every row and puts the history in arbitrary order.
+    orderBy: { periodStart: "desc" },
+    take: ADMIN_SUBSCRIPTION_INVOICE_LIMIT,
+  },
 } satisfies Prisma.UserSubscriptionInclude;
 
 export type AdminSubscriptionRecord = Prisma.UserSubscriptionGetPayload<{
