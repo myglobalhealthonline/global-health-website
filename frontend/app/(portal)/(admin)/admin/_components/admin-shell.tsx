@@ -101,6 +101,10 @@ const GLOBAL_HREFS = new Set([
   "/admin/subscriptions",
   "/admin/reports",
   "/admin/audit-log",
+  // Global, not country-scoped: the page works with no country selected
+  // (all patients) and carries its own `?countryCode=all` override. The
+  // topbar picker still narrows it, same as Doctors and Invoices.
+  "/admin/patients",
 ]);
 
 // Sub-groups within the Global section — related admin-wide links clustered
@@ -111,13 +115,12 @@ const GLOBAL_HREFS = new Set([
 const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
   { label: "Overview", hrefs: ["/admin", "/admin/calendar"] },
   { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
-  { label: "People", hrefs: ["/admin/users", "/admin/messages"] },
+  { label: "People", hrefs: ["/admin/users", "/admin/patients", "/admin/messages"] },
   { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
   { label: "System", hrefs: ["/admin/reports", "/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
 ];
 
 const COUNTRY_HREFS = new Set([
-  "/admin/patients",
   "/admin/plans",
   "/admin/country-features",
   "/admin/country-home",

@@ -36,9 +36,15 @@ async function logoutAdminAction() {
   redirect("/login?next=/admin");
 }
 
+/** Empty slug = "All countries" (global scope) — delete the cookie so every
+ *  `getActiveCountry` consumer resolves to null and drops its country filter. */
 async function setCountryPreferenceAction(slug: string) {
   "use server";
   const jar = await cookies();
+  if (!slug) {
+    jar.delete(COUNTRY_PREF_COOKIE);
+    return;
+  }
   jar.set(COUNTRY_PREF_COOKIE, slug, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
@@ -137,8 +143,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       }));
       const jar = await cookies();
       const preferred = jar.get(COUNTRY_PREF_COOKIE)?.value;
-      activeCountry =
-        countryOptions.find((c) => c.slug === preferred) ?? countryOptions[0] ?? null;
+      // No cookie (or an unknown slug) = "All countries". Do NOT fall back to
+      // the first country: that made the global scope unreachable, and it
+      // disagreed with `getActiveCountry`, which every page uses and which
+      // already resolves a missing cookie to null.
+      activeCountry = countryOptions.find((c) => c.slug === preferred) ?? null;
     }
   } catch {
     // ignore — shell still renders
