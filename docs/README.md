@@ -41,7 +41,7 @@ point-in-time snapshot, not a living document.
 | [service-hub-parity-audit.md](audits/service-hub-parity-audit.md) | Service hub parity across countries |
 | [wix-migration-product-audit.md](audits/wix-migration-product-audit.md) | Product-level gaps left by the Wix migration |
 | [multilingual-and-ads-compliance-audit.md](audits/multilingual-and-ads-compliance-audit.md) | Ads-policy and multilingual compliance |
-| [security/](audits/security) | Security round 2, the July go-live audit and its review, PRIV-002 retention table |
+| [security/](audits/security) | Security round 2, the July go-live audit and its review, PRIV-002 retention table, and the 2026-08-02 scanner build-out (SCA/container/SAST/authz-rules/authz-matrix/DAST) — see `security-tooling-audit-2026-08-02.md` for the consolidated summary |
 | [performance/](audits/performance) | Performance round 2 (P-001…P-022) |
 | [portal/doctor/](audits/portal/doctor) · [portal/patient/](audits/portal/patient) | Per-page portal audits: route inventory, IA, a11y, responsive, prioritised plans |
 | [seo/site-audit-2026-07/](audits/seo/site-audit-2026-07) | Generated site audit — full report, action plan, per-category findings |
@@ -81,6 +81,7 @@ point-in-time snapshot, not a living document.
 | [dependency-overrides.md](guides/dependency-overrides.md) | Why `pnpm.overrides` must be mirrored into every service; CI gate |
 | [credential-rotation.md](guides/credential-rotation.md) | Production credential rotation procedure |
 | [subscriptions-runbook.md](guides/subscriptions-runbook.md) | Operating the subscription system |
+| [security-scanning-runbook.md](guides/security-scanning-runbook.md) | Running OSV-Scanner/Trivy/Semgrep/the authz matrix/ZAP locally, suppressing false positives, seeding all 6 roles |
 | [partner-booking-api.md](guides/partner-booking-api.md) | Partner booking API (+ Postman collection alongside) |
 | [synlab-integration-questions.md](guides/synlab-integration-questions.md) | WebLIMS/Synlab protocol and open questions |
 | [country-medical-disclaimers.md](guides/country-medical-disclaimers.md) | Per-country medical disclaimer requirements |

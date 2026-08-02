@@ -72,6 +72,10 @@ export function buildConfidentialityAgreementHtml(input: ConfidentialityPdfInput
   const l = content.labels;
   const version = CONFIDENTIALITY_AGREEMENT_VERSION;
 
+  // S-028 (2026-08-02 Semgrep audit, javascript.express.security.injection.
+  // raw-html-format): every interpolation below goes through esc(); this
+  // renders to a server-side PDF via htmlToPdfBuffer and is never served as
+  // navigable HTML. Triaged as a false positive — see the Phase 3 SAST report.
   const clauses = content.clauses
     .map(
       (clause, index) => `

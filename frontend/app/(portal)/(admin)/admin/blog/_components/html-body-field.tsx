@@ -165,6 +165,7 @@ export function HtmlBodyField({ name, initialValue }: Props) {
           {/* Matches how the public article will render. */}
           <div
             className="gh-article-body"
+            // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
             dangerouslySetInnerHTML={{ __html: scopeBlogHtml(value) }}
           />
         </div>

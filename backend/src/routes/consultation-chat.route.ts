@@ -423,6 +423,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       const obj = await getObject(msg.storageKey);
       reply.header("content-type", msg.mimeType ?? "application/octet-stream");
       reply.header("content-disposition", `inline; filename="${msg.fileName ?? "file"}"`);
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
       return reply.send(streamToNodeReadable(obj.Body));
     } catch (err) {
       app.log.error(err);
@@ -706,6 +707,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       const obj = await getObject(msg.storageKey);
       reply.header("content-type", msg.mimeType ?? "application/octet-stream");
       reply.header("content-disposition", `inline; filename="${msg.fileName ?? "file"}"`);
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
       return reply.send(streamToNodeReadable(obj.Body));
     } catch (err) {
       app.log.error(err);

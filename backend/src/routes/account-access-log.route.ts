@@ -16,6 +16,7 @@ const accountAccessLogRoute: FastifyPluginAsync = async (app) => {
         return reply.status(403).send(errorResponse("Patient access required"));
       }
 
+      // nosemgrep: gh-phi-route-missing-guard -- patient-self endpoint: gated above by role === "PATIENT" and scoped to the caller's own authUser.email; narrow { id: true } select feeds only the MedicalAccessLog audit-trail view below, not clinical content.
       const profile = await prisma.patientProfile.findUnique({
         where: { email: request.authUser.email },
         select: { id: true },
@@ -82,6 +83,7 @@ const accountAccessLogRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid email param"));
       }
 
+      // nosemgrep: gh-phi-route-missing-guard -- admin-authenticated (verifyAdminAccess above); narrow { id: true } select feeds only the MedicalAccessLog audit-trail view, not clinical content. Viewing WHO accessed a record is not itself a PHI content read.
       const profile = await prisma.patientProfile.findUnique({
         where: { email },
         select: { id: true },

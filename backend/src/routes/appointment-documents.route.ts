@@ -554,6 +554,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         reply.header("X-Content-Type-Options", "nosniff");
         reply.header("Content-Security-Policy", "sandbox; default-src 'none'; object-src 'self'");
         reply.header("Cache-Control", "private, no-store");
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- Fastify's typed reply.send() of a binary buffer, not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput). CSP/nosniff headers above are the actual XSS defense for this download.
         return reply.send(buffer);
       } catch (error) {
         if (error instanceof NoSuchKey || error instanceof MediaObjectNotFoundError) {

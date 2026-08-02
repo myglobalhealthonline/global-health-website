@@ -8,11 +8,16 @@
 # scratch (generated PDFs, one-off script output — never committable)
 /tmp
 
+# security scanner output (SARIF/JSON reports — regenerate, never commit)
+*.sarif
+
 # playwright e2e artifacts
 /test-results
 /playwright-report
 /blob-report
 /frontend/test-results
+# per-role authenticated sessions (real cookies) — regenerate via auth.setup.ts, never commit
+/frontend/tests/e2e/.storage
 
 # frontend
 /frontend/.next

@@ -48,3 +48,22 @@ for the rules (z-token scale, height-axis tiers, theme fidelity).
 standalone with `--ignore-workspace`). Mirror every security pin into root,
 `frontend/`, and `backend/` package.json. CI gate: `scripts/check-override-drift.mjs`.
 See `docs/guides/dependency-overrides.md`.
+
+## Security scanning (added 2026-08-02)
+
+CI runs OSV-Scanner (SCA), Trivy (container), Semgrep (generic SAST +
+`.semgrep/rules/`, 5 repo-specific authorization rules), and Playwright
+(`e2e-authz`). Rules and fixtures live in `.semgrep/rules/` /
+`.semgrep/tests/`. **Custom rules must be run per-file, never as one
+multi-file batch** — that combination gives wrong results with this repo's
+`pattern-not-inside` rules in Semgrep 1.172.0 (see
+`docs/guides/security-scanning-runbook.md`). A suppression is always
+`// nosemgrep: <rule-id> -- <specific reason>`, placed on the line
+immediately before Semgrep's *reported* line — never a bare disable, and
+never inside a template literal (the comment becomes literal output there).
+`backend/src/routes/authz-matrix.test.ts` is the integration authorization
+matrix; testing the medical-access guard's actual allow/deny decision
+requires forcing `env.MEDICAL_ACCESS_ENFORCE = true` at runtime (`.env.test`
+defaults to shadow mode). Full findings: `docs/audits/security/
+security-tooling-audit-2026-08-02.md`. Runbook: `docs/guides/
+security-scanning-runbook.md`.

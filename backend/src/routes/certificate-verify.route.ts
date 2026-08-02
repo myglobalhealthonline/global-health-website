@@ -14,6 +14,7 @@ const certificateVerifyRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Certificate ID is required"));
       }
       try {
+        // nosemgrep: gh-phi-route-missing-guard -- deliberately public, token-scoped by an opaque certificateId; narrow select below (no clinical body content). Public certificate verification is the endpoint's whole purpose.
         const doc = await prisma.generatedDocument.findUnique({
           where: { certificateId: id.trim() },
           select: {

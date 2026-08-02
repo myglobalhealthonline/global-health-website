@@ -85,6 +85,7 @@ function ValuePreview({
                 className="gh-article-body text-sm"
                 // Sanitized on submit and again here — the admin precedent on
                 // the doctor detail page does the same for the live bio.
+                // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- sanitizeDoctorBioHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/doctor-bio-format.ts).
                 dangerouslySetInnerHTML={{ __html: sanitizeDoctorBioHtml(t.bio) }}
               />
             ) : (

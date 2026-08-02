@@ -18,6 +18,15 @@
  * deactivate the doctor row so it doesn't keep leaking onto the
  * public roster). After that one cleanup, every subsequent edit
  * the admin makes is respected.
+ *
+ * Security-audit phase 5 (docs/audits/security/audit-authz-matrix-2026-08-02.md)
+ * extended this script with fixtures for the remaining four roles, plus a
+ * second doctor/patient pair unrelated to the first — so a manual tester or
+ * Playwright can log in as any role without hand-crafting rows. The role ×
+ * endpoint pass/fail matrix itself lives in
+ * backend/src/routes/authz-matrix.test.ts, which creates its own ephemeral,
+ * self-cleaning fixtures (the proven pattern from admin-plans.route.test.ts)
+ * rather than depending on this script having been run first.
  */
 import "dotenv/config";
 import bcrypt from "bcryptjs";
@@ -30,6 +39,23 @@ const DOCTOR_PASSWORD = process.env.SEED_DOCTOR_PASSWORD;
 const PATIENT_PASSWORD = process.env.SEED_PATIENT_PASSWORD;
 const DOCTOR_EMAIL = "doctor@globalhealthonline.com";
 const PATIENT_EMAIL = "patient@globalhealthonline.com";
+
+// ---- Phase 5 additions: the remaining four roles + a second, unrelated
+// doctor/patient pair for cross-tenant IDOR testing. Each needs its own
+// distinct password env var so a leaked/committed value can't unlock more
+// than one account.
+const SUPER_ADMIN_PASSWORD = process.env.SEED_SUPER_ADMIN_PASSWORD;
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD;
+const LOCAL_ADMIN_PASSWORD = process.env.SEED_LOCAL_ADMIN_PASSWORD;
+const CORPORATE_ADMIN_PASSWORD = process.env.SEED_CORPORATE_ADMIN_PASSWORD;
+const DOCTOR2_PASSWORD = process.env.SEED_DOCTOR2_PASSWORD;
+const PATIENT2_PASSWORD = process.env.SEED_PATIENT2_PASSWORD;
+const SUPER_ADMIN_EMAIL = "superadmin@globalhealthonline.com";
+const ADMIN_EMAIL = "admin@globalhealthonline.com";
+const LOCAL_ADMIN_EMAIL = "localadmin@globalhealthonline.com";
+const CORPORATE_ADMIN_EMAIL = "corporateadmin@globalhealthonline.com";
+const DOCTOR2_EMAIL = "doctor2@globalhealthonline.com";
+const PATIENT2_EMAIL = "patient2@globalhealthonline.com";
 
 // Refuse to run against a production-looking database host. NODE_ENV is not
 // enough: the documented local workflow points DATABASE_URL at the Railway
@@ -72,17 +98,82 @@ async function main() {
   if (DOCTOR_PASSWORD === PATIENT_PASSWORD) {
     throw new Error("SEED_DOCTOR_PASSWORD and SEED_PATIENT_PASSWORD must be different values.");
   }
+  const phase5Passwords = {
+    SUPER_ADMIN: SUPER_ADMIN_PASSWORD,
+    ADMIN: ADMIN_PASSWORD,
+    LOCAL_ADMIN: LOCAL_ADMIN_PASSWORD,
+    CORPORATE_ADMIN: CORPORATE_ADMIN_PASSWORD,
+    DOCTOR2: DOCTOR2_PASSWORD,
+    PATIENT2: PATIENT2_PASSWORD,
+  };
+  for (const [name, value] of Object.entries(phase5Passwords)) {
+    if (!value) {
+      throw new Error(`SEED_${name}_PASSWORD must be set before seeding test accounts.`);
+    }
+  }
+  const allPasswords = [DOCTOR_PASSWORD, PATIENT_PASSWORD, ...Object.values(phase5Passwords)];
+  if (new Set(allPasswords).size !== allPasswords.length) {
+    throw new Error("All SEED_*_PASSWORD values must be distinct from each other.");
+  }
 
   // Pick the first active country with a slug as the doctor's home
   // market. Ireland is the canonical seed; if it's gone we fall back
   // to whatever's available so this script never wedges on a fresh DB.
-  const country = await prisma.country.findFirst({
+  let country = await prisma.country.findFirst({
     where: { isActive: true },
     orderBy: { createdAt: "asc" },
     select: { id: true, code: true, name: true },
   });
   if (!country) {
-    throw new Error("No active country found — run `prisma db seed` first.");
+    // No generic "seed base data" script exists in this repo (confirmed
+    // while building the phase-5 authz matrix) — a fresh test database has
+    // no countries at all. Create a minimal one rather than wedge, so this
+    // script is fully self-contained for a CI-provisioned database.
+    const currency = await prisma.currency.upsert({
+      where: { code: "EUR" },
+      create: { code: "EUR", symbol: "€", decimals: 2 },
+      update: {},
+    });
+    country = await prisma.country.create({
+      data: {
+        code: "ie",
+        name: "Ireland",
+        slug: "ireland",
+        legacyHomePath: "/ireland",
+        teamPath: "/ireland/team",
+        generalConsultationPath: "/ireland/general-consultation",
+        specialistConsultationPath: "/ireland/specialist-consultation",
+        currencyId: currency.id,
+      },
+      select: { id: true, code: true, name: true },
+    });
+    console.log(`  Created base country: ${country.name} (${country.code}) — none existed.`);
+  }
+  // A second, distinct country so LOCAL_ADMIN's country-scope restriction
+  // (allowedCountryFolders) is actually testable — "can access A, denied B".
+  let countryB = await prisma.country.findFirst({
+    where: { isActive: true, id: { not: country.id } },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, code: true, name: true },
+  });
+  if (!countryB) {
+    const currency =
+      (await prisma.currency.findUnique({ where: { code: "EUR" } })) ??
+      (await prisma.currency.create({ data: { code: "EUR", symbol: "€", decimals: 2 } }));
+    countryB = await prisma.country.create({
+      data: {
+        code: "cz",
+        name: "Czechia",
+        slug: "czechia",
+        legacyHomePath: "/czechia",
+        teamPath: "/czechia/team",
+        generalConsultationPath: "/czechia/general-consultation",
+        specialistConsultationPath: "/czechia/specialist-consultation",
+        currencyId: currency.id,
+      },
+      select: { id: true, code: true, name: true },
+    });
+    console.log(`  Created second country: ${countryB.name} (${countryB.code}) — for LOCAL_ADMIN scope testing.`);
   }
 
   // One-shot legacy cleanup. Only fires on rows that still carry the
@@ -193,12 +284,201 @@ async function main() {
     },
   });
 
+  // ---- Second doctor + Doctor profile, in country B, unrelated to the
+  // first doctor's patients/appointments — needed to test that doctor B
+  // cannot read doctor A's patient records (cross-tenant IDOR).
+  const doctor2Profile = await prisma.doctor.upsert({
+    where: { countryId_slug: { countryId: countryB.id, slug: "global-health-doctor-2" } },
+    create: {
+      countryId: countryB.id,
+      slug: "global-health-doctor-2",
+      fullName: "Dr. Test Account Two",
+      title: "General Practitioner",
+      bio: "Second test doctor account, unrelated to the first — used for cross-tenant authorization testing.",
+      qualifications: ["MB BCh BAO"],
+      languages: ["English"],
+      active: false,
+    },
+    update: {},
+  });
+  const doctor2PasswordHash = await bcrypt.hash(DOCTOR2_PASSWORD!, 12);
+  const doctor2User = await prisma.user.upsert({
+    where: { email: DOCTOR2_EMAIL },
+    create: {
+      email: DOCTOR2_EMAIL,
+      passwordHash: doctor2PasswordHash,
+      fullName: "Dr. Test Account Two",
+      role: "DOCTOR",
+      doctorId: doctor2Profile.id,
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+    update: {
+      passwordHash: doctor2PasswordHash,
+      role: "DOCTOR",
+      doctorId: doctor2Profile.id,
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+  });
+
+  // ---- Second patient, unrelated to the first — same cross-tenant purpose.
+  const patient2PasswordHash = await bcrypt.hash(PATIENT2_PASSWORD!, 12);
+  const patient2User = await prisma.user.upsert({
+    where: { email: PATIENT2_EMAIL },
+    create: {
+      email: PATIENT2_EMAIL,
+      passwordHash: patient2PasswordHash,
+      fullName: "Test Patient Two",
+      role: "PATIENT",
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+    update: {
+      passwordHash: patient2PasswordHash,
+      role: "PATIENT",
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+  });
+
+  // ---- SUPER_ADMIN — same tier as ADMIN, explicit superuser role.
+  const superAdminPasswordHash = await bcrypt.hash(SUPER_ADMIN_PASSWORD!, 12);
+  const superAdminUser = await prisma.user.upsert({
+    where: { email: SUPER_ADMIN_EMAIL },
+    create: {
+      email: SUPER_ADMIN_EMAIL,
+      passwordHash: superAdminPasswordHash,
+      fullName: "Test Super Admin",
+      role: "SUPER_ADMIN",
+      adminScope: "SUPER",
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+    update: {
+      passwordHash: superAdminPasswordHash,
+      role: "SUPER_ADMIN",
+      adminScope: "SUPER",
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+  });
+
+  // ---- ADMIN — global, unscoped.
+  const adminPasswordHash = await bcrypt.hash(ADMIN_PASSWORD!, 12);
+  const adminUser = await prisma.user.upsert({
+    where: { email: ADMIN_EMAIL },
+    create: {
+      email: ADMIN_EMAIL,
+      passwordHash: adminPasswordHash,
+      fullName: "Test Admin",
+      role: "ADMIN",
+      adminScope: "GLOBAL",
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+    update: {
+      passwordHash: adminPasswordHash,
+      role: "ADMIN",
+      adminScope: "GLOBAL",
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+  });
+
+  // ---- LOCAL_ADMIN — scoped to country A only (allowedCountryFolders).
+  // Authorization tests assert this account can read country A but is
+  // denied country B (S-003, the LOCAL_ADMIN escalation finding).
+  const localAdminPasswordHash = await bcrypt.hash(LOCAL_ADMIN_PASSWORD!, 12);
+  const localAdminUser = await prisma.user.upsert({
+    where: { email: LOCAL_ADMIN_EMAIL },
+    create: {
+      email: LOCAL_ADMIN_EMAIL,
+      passwordHash: localAdminPasswordHash,
+      fullName: "Test Local Admin",
+      role: "LOCAL_ADMIN",
+      adminScope: "LOCAL",
+      allowedCountryFolders: [country.code],
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+    update: {
+      passwordHash: localAdminPasswordHash,
+      role: "LOCAL_ADMIN",
+      adminScope: "LOCAL",
+      allowedCountryFolders: [country.code],
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+  });
+
+  // ---- CORPORATE_ADMIN — needs a linked CorporateCompany (1:1 via
+  // CorporateCompany.adminUserId) and a CorporatePlan for that company to
+  // reference. Uses its own "test-corporate-standard" plan rather than the
+  // production "corporate-standard" slug from seed-corporate-plan.ts, so
+  // this script never depends on that one having been run first.
+  const corporateAdminPasswordHash = await bcrypt.hash(CORPORATE_ADMIN_PASSWORD!, 12);
+  const corporateAdminUser = await prisma.user.upsert({
+    where: { email: CORPORATE_ADMIN_EMAIL },
+    create: {
+      email: CORPORATE_ADMIN_EMAIL,
+      passwordHash: corporateAdminPasswordHash,
+      fullName: "Test Corporate Admin",
+      role: "CORPORATE_ADMIN",
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+    update: {
+      passwordHash: corporateAdminPasswordHash,
+      role: "CORPORATE_ADMIN",
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    },
+  });
+  const testCorporatePlan = await prisma.corporatePlan.upsert({
+    where: { slug: "test-corporate-standard" },
+    create: {
+      slug: "test-corporate-standard",
+      name: "Test Corporate Standard",
+      annualPricePerEmployeeCents: 18000,
+      currencyCode: "EUR",
+      maxBeneficiariesPerEmployee: 5,
+      isActive: true,
+    },
+    update: {},
+  });
+  await prisma.corporateCompany.upsert({
+    where: { adminUserId: corporateAdminUser.id },
+    create: {
+      name: "Test Corporate Co",
+      countryCode: country.code,
+      billingEmail: CORPORATE_ADMIN_EMAIL,
+      contactName: "Test Corporate Admin",
+      contactEmail: CORPORATE_ADMIN_EMAIL,
+      planId: testCorporatePlan.id,
+      adminUserId: corporateAdminUser.id,
+    },
+    update: {},
+  });
+
   console.log("Seeded test accounts:");
   console.log(
-    `  DOCTOR  email=${doctorUser.email}  userId=${doctorUser.id}  doctorProfileId=${doctorProfile.id}  country=${country.code}`,
+    `  DOCTOR          email=${doctorUser.email}  userId=${doctorUser.id}  doctorProfileId=${doctorProfile.id}  country=${country.code}`,
+  );
+  console.log(`  PATIENT         email=${patientUser.email}  userId=${patientUser.id}`);
+  console.log(
+    `  DOCTOR2         email=${doctor2User.email}  userId=${doctor2User.id}  doctorProfileId=${doctor2Profile.id}  country=${countryB.code}  (unrelated to DOCTOR, for cross-tenant tests)`,
   );
   console.log(
-    `  PATIENT email=${patientUser.email}  userId=${patientUser.id}`,
+    `  PATIENT2        email=${patient2User.email}  userId=${patient2User.id}  (unrelated to PATIENT, for cross-tenant tests)`,
+  );
+  console.log(`  SUPER_ADMIN     email=${superAdminUser.email}  userId=${superAdminUser.id}`);
+  console.log(`  ADMIN           email=${adminUser.email}  userId=${adminUser.id}`);
+  console.log(
+    `  LOCAL_ADMIN     email=${localAdminUser.email}  userId=${localAdminUser.id}  scopedTo=${country.code}  deniedFor=${countryB.code}`,
+  );
+  console.log(
+    `  CORPORATE_ADMIN email=${corporateAdminUser.email}  userId=${corporateAdminUser.id}`,
   );
 }
 

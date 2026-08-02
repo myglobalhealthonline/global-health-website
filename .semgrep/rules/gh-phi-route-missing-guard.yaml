@@ -1,0 +1,56 @@
+rules:
+  - id: gh-phi-route-missing-guard
+    languages: [typescript]
+    severity: ERROR
+    message: >
+      This route reads a PHI Prisma model (via find*) but the file never calls
+      guardMedicalRead / guardMedicalReadForAppointment. Every clinical or
+      identity-document read that a doctor/admin route performs must go
+      through the central medical-access guard (backend/src/utils/
+      guard-medical-read.ts) so consent, confidentiality, country-scope, and
+      the MedicalAccessLog audit trail are all enforced. If this route is
+      genuinely a patient-self-service endpoint (scoped by the caller's own
+      session, e.g. `where: { email: request.authUser.email }` or
+      `userId: user.id`), or manages the guard's own consent/request inputs,
+      suppress this finding with a `// nosemgrep: gh-phi-route-missing-guard`
+      comment stating which of those two reasons applies.
+    metadata:
+      category: security
+      references:
+        - docs/audits/security/audit-authz-rules-2026-08-02.md
+    patterns:
+      - pattern-inside: |
+          const $ROUTE: FastifyPluginAsync = async ($APP) => {
+            ...
+          }
+      - pattern-either:
+          - pattern: $PRISMA.consultation.$METHOD(...)
+          - pattern: $PRISMA.prescription.$METHOD(...)
+          - pattern: $PRISMA.examResult.$METHOD(...)
+          - pattern: $PRISMA.medicalNote.$METHOD(...)
+          - pattern: $PRISMA.consultationService.$METHOD(...)
+          - pattern: $PRISMA.formSubmission.$METHOD(...)
+          - pattern: $PRISMA.patientProfile.$METHOD(...)
+          - pattern: $PRISMA.patientNationalityDocument.$METHOD(...)
+          - pattern: $PRISMA.medicalDocument.$METHOD(...)
+          - pattern: $PRISMA.generatedDocument.$METHOD(...)
+          - pattern: $PRISMA.appointmentDocument.$METHOD(...)
+          - pattern: $PRISMA.patientUploadLink.$METHOD(...)
+          - pattern: $PRISMA.shareLink.$METHOD(...)
+          - pattern: $PRISMA.consultationMessage.$METHOD(...)
+          - pattern: $PRISMA.crossBorderPrescriptionRequest.$METHOD(...)
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^find(Many|First|Unique|FirstOrThrow|UniqueOrThrow)$
+      - pattern-not-inside: |
+          const $ROUTE2: FastifyPluginAsync = async ($APP2) => {
+            ...
+            guardMedicalRead(...)
+            ...
+          }
+      - pattern-not-inside: |
+          const $ROUTE3: FastifyPluginAsync = async ($APP3) => {
+            ...
+            guardMedicalReadForAppointment(...)
+            ...
+          }

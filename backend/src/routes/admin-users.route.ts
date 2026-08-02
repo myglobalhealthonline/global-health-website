@@ -337,11 +337,13 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           // Both tables carry a unique on email. Check them inside the tx so
           // the answer can't go stale between check and write, and so the
           // admin gets a readable 409 rather than a raw P2002.
+          // nosemgrep: gh-phi-route-missing-guard -- admin-authenticated (verifyGlobalAdminAccess plugin hook); a data-integrity email-collision check on a user-email edit, narrow { id: true } select, not clinical content.
           const [takenByUser, takenByProfile] = await Promise.all([
             tx.user.findFirst({
               where: { email: nextEmail, id: { not: params.data.id } },
               select: { id: true },
             }),
+            // nosemgrep: gh-phi-route-missing-guard -- same data-integrity check as above, narrow { id: true } select, not clinical content.
             tx.patientProfile.findFirst({
               where: { email: nextEmail, userId: { not: params.data.id } },
               select: { id: true },
@@ -354,6 +356,7 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           // and doctor read does findUnique({ where: { email } }). Moving the
           // User without moving the profile would strand the entire clinical
           // chart at the old address, so both move together or neither does.
+          // nosemgrep: gh-phi-route-missing-guard -- admin-authenticated (verifyGlobalAdminAccess plugin hook); moves the linked PatientProfile row(s) to match a user's changed email, narrow { id, globalHealthNumber } select, not clinical content.
           const movedProfiles = await tx.patientProfile.findMany({
             where: { email: before.email },
             select: { id: true, globalHealthNumber: true },

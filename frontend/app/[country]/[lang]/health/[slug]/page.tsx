@@ -149,6 +149,7 @@ export default async function CountryLandingPage({
           {bodyHtml ? (
             <div
               className="gh2-card-ivory gh-article-body mt-8 max-w-[76ch] border-t-2 border-t-[rgba(176,241,34,0.24)] p-6 md:p-8"
+              // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- bodyHtml = scopeBlogHtml(page.bodyHtml), sanitize-html with a controlled allowlist.
               dangerouslySetInnerHTML={{ __html: bodyHtml }}
             />
           ) : null}

@@ -57,6 +57,7 @@ async function requireAdminId(
 }
 
 const adminNotificationsRoute: FastifyPluginAsync = async (app) => {
+  // nosemgrep: gh-admin-route-missing-auth-hook -- requireAdminId() above is a deliberate narrower admin gate (see its docstring): verifyAdminAccess's Bearer-token fallback has no session-bound user id, which this recipientUserId-filtered feature requires.
   app.get("/api/admin/notifications", async (request, reply) => {
     const userId = await requireAdminId(request, reply);
     if (!userId) return;
@@ -96,6 +97,7 @@ const adminNotificationsRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // nosemgrep: gh-admin-route-missing-auth-hook -- requireAdminId() (see the module-level comment above) is the deliberate narrower gate for this recipientUserId-filtered feature.
   app.patch<{ Params: { id: string } }>(
     "/api/admin/notifications/:id/read",
     async (request, reply) => {
@@ -121,6 +123,7 @@ const adminNotificationsRoute: FastifyPluginAsync = async (app) => {
   // an admin actually opens that appointment's thread in the Messages
   // inbox — without it the bell count only ever grows, since nothing else
   // marks admin rows read.
+  // nosemgrep: gh-admin-route-missing-auth-hook -- requireAdminId() (see the module-level comment above) is the deliberate narrower gate for this recipientUserId-filtered feature.
   app.post<{ Params: { appointmentId: string } }>(
     "/api/admin/notifications/appointment/:appointmentId/read",
     async (request, reply) => {
@@ -149,6 +152,7 @@ const adminNotificationsRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
+  // nosemgrep: gh-admin-route-missing-auth-hook -- requireAdminId() (see the module-level comment above) is the deliberate narrower gate for this recipientUserId-filtered feature.
   app.post("/api/admin/notifications/read-all", async (request, reply) => {
     const userId = await requireAdminId(request, reply);
     if (!userId) return;

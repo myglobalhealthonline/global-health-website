@@ -58,14 +58,11 @@
   ],
   "pnpm": {
     "//": "S-004: this service deploys standalone with --ignore-workspace and does NOT inherit the root package.json overrides. Mirror every security pin here by hand — when the root adds/bumps a CVE pin, add it here too or this build ships unpatched. Prefer major-scoped keys (e.g. ws@7) so a floor never becomes a ceiling.",
-    "//auditConfig": "Mirrors root package.json — see the note there. GHSA-mh99-v99m-4gvg's single '<=5.0.7' range cross-matches the patched brace-expansion@1.1.16 that eslint's minimatch@3 (devDependency) pulls in.",
-    "auditConfig": {
-      "ignoreGhsas": ["GHSA-mh99-v99m-4gvg"]
-    },
+    "//auditConfig": "S-028: mirrors root package.json — see the note there. brace-expansion@1 bumped to the real 1.x fix (1.1.17); ignoreGhsas suppression dropped since the pin now actually patches it.",
     "overrides": {
       "sanitize-html": "^2.17.4",
       "postcss": "8.5.23",
-      "brace-expansion@1": "1.1.16",
+      "brace-expansion@1": "1.1.17",
       "brace-expansion@5": "5.0.8",
       "esbuild": "0.28.1",
       "vite": "8.0.16",

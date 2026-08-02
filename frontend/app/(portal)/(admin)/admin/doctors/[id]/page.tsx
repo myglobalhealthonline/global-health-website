@@ -436,6 +436,7 @@ export default async function AdminDoctorDetailPage({
             {d.bio ? (
               <div
                 className="prose prose-sm mt-3 max-w-none text-[var(--color-text-body)]"
+                // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- sanitizeDoctorBioHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/doctor-bio-format.ts) before this renders.
                 dangerouslySetInnerHTML={{ __html: sanitizeDoctorBioHtml(d.bio) }}
               />
             ) : (

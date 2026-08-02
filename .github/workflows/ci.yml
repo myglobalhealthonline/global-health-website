@@ -52,10 +52,14 @@ jobs:
         run: node scripts/check-override-drift.mjs
 
       - name: Audit dependencies (workspace)
-        # --ignore-registry-errors: npm retired the audits/quick + audits
-        # endpoints (410) without a pnpm-side bulk-endpoint migration yet, so
-        # every `pnpm audit` call fails on registry error rather than finding
-        # vulnerabilities. Un-skip once pnpm ships bulk-endpoint support.
+        # S-028 (2026-08-02): the npm audit endpoints this once needed
+        # --ignore-registry-errors to route around (they returned 410) are
+        # responding again as of this date — verified locally, this step ran
+        # clean without the flag. Kept as a defensive no-op in case of a
+        # future registry outage; do not rely on this alone. OSV-Scanner
+        # (below) is the authoritative SCA gate — it reads the lockfiles
+        # directly against the OSV database and doesn't depend on npm's
+        # registry endpoints at all.
         run: pnpm audit --audit-level=high --ignore-registry-errors
 
   # ── Secret scan ──────────────────────────────────────────────────────────
@@ -146,6 +150,117 @@ jobs:
       - name: Run frontend tests
         run: pnpm --filter frontend test
 
+  # ── E2E (Playwright, role-authenticated) ────────────────────────────────────
+  # S-028 (2026-08-02 audit): docs/audits/security/audit-authz-matrix-2026-08-02.md.
+  # E2E was not wired into CI at all before this. Boots a real Postgres +
+  # backend + frontend (Next dev — matches the "reuse existing/dev locally"
+  # path in playwright.config.ts's webServer; CI's own prod-build path there
+  # only starts the frontend, not the backend this job also needs), seeds
+  # all 6 roles via backend/scripts/seed-test-accounts.ts, then runs
+  # auth.setup.ts (produces one storageState per role) and
+  # authz-boundaries.spec.ts (cross-portal boundary checks) via `pnpm e2e`.
+  #
+  # continue-on-error stays true — unlike every other gate in this file, this
+  # one could NOT be dry-run locally (no way to also stand up a live frontend
+  # dev server in this session) — TODO: flip to false once a clean run is
+  # confirmed in Actions.
+  e2e-authz:
+    name: E2E (Playwright, authorization boundaries)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gh_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/gh_e2e
+      NODE_ENV: test
+      CRON_SECRET: ci-cron-placeholder-min-16
+      PORT: "4000"
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      E2E_BASE_URL: http://localhost:3000
+      # Each pair (SEED_* / E2E_*_PASSWORD) must carry the SAME value: the
+      # seed script consumes SEED_*_PASSWORD to create the account; Playwright's
+      # auth.setup.ts consumes E2E_*_PASSWORD to log in as that same account.
+      SEED_DOCTOR_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_1 || 'ci-e2e-doctor-pw-1!' }}
+      SEED_PATIENT_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_2 || 'ci-e2e-patient-pw-2!' }}
+      SEED_SUPER_ADMIN_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_3 || 'ci-e2e-superadmin-pw-3!' }}
+      SEED_ADMIN_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_4 || 'ci-e2e-admin-pw-4!' }}
+      SEED_LOCAL_ADMIN_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_5 || 'ci-e2e-localadmin-pw-5!' }}
+      SEED_CORPORATE_ADMIN_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_6 || 'ci-e2e-corpadmin-pw-6!' }}
+      SEED_DOCTOR2_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_7 || 'ci-e2e-doctor2-pw-7!' }}
+      SEED_PATIENT2_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_8 || 'ci-e2e-patient2-pw-8!' }}
+      E2E_TEST_EMAIL: patient@globalhealthonline.com
+      E2E_TEST_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_2 || 'ci-e2e-patient-pw-2!' }}
+      E2E_DOCTOR_EMAIL: doctor@globalhealthonline.com
+      E2E_DOCTOR_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_1 || 'ci-e2e-doctor-pw-1!' }}
+      E2E_ADMIN_EMAIL: admin@globalhealthonline.com
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_4 || 'ci-e2e-admin-pw-4!' }}
+      E2E_SUPER_ADMIN_EMAIL: superadmin@globalhealthonline.com
+      E2E_SUPER_ADMIN_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_3 || 'ci-e2e-superadmin-pw-3!' }}
+      E2E_LOCAL_ADMIN_EMAIL: localadmin@globalhealthonline.com
+      E2E_LOCAL_ADMIN_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_5 || 'ci-e2e-localadmin-pw-5!' }}
+      E2E_CORPORATE_ADMIN_EMAIL: corporateadmin@globalhealthonline.com
+      E2E_CORPORATE_ADMIN_PASSWORD: ${{ secrets.E2E_SEED_PASSWORD_6 || 'ci-e2e-corpadmin-pw-6!' }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+        with:
+          version: "10.33.2"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm e2e:install
+
+      - name: Apply migrations
+        run: pnpm db:deploy
+
+      - name: Seed all 6 roles + cross-tenant fixtures
+        # SEED_*_PASSWORD vars are already set at job level and inherited here.
+        run: pnpm --filter backend exec node --import tsx scripts/seed-test-accounts.ts
+
+      - name: Start backend
+        run: |
+          pnpm --filter backend build
+          nohup node backend/dist/server.js > backend-ci.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4000/ready > /dev/null; then
+              echo "backend ready"; exit 0
+            fi
+            sleep 1
+          done
+          echo "backend did not become ready in time"; cat backend-ci.log; exit 1
+
+      - name: Run E2E (auth setup + authorization boundaries)
+        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
+        run: pnpm e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+
   # ── Dependency review (PR-only) ───────────────────────────────────────────
   # Diffs the dependency graph on a PR and fails on newly introduced
   # high-severity vulns or disallowed licenses. No-op outside pull_request.
@@ -159,6 +274,133 @@ jobs:
       - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
         with:
           fail-on-severity: high
+
+  # ── SCA (OSV-Scanner) ──────────────────────────────────────────────────────
+  # S-028 (2026-08-02 audit): a lockfile-native scanner reading pnpm-lock.yaml
+  # directly against the OSV database, independent of npm's registry
+  # endpoints entirely (unlike the `pnpm audit` steps above). Recursive scan
+  # from repo root in one pass covers all three lockfiles that matter —
+  # root, frontend/, and backend/ — since the two child services deploy
+  # standalone (--ignore-workspace) and do NOT inherit root pnpm.overrides.
+  # This job calls Google's official reusable workflow (job-level `uses:`,
+  # not a step sequence — a reusable-workflow call cannot be expressed as a
+  # regular pinned-action step) rather than the raw scanner action, matching
+  # upstream's own guidance that the scanner action is not meant to be used
+  # directly. upload-sarif is disabled: it targets GitHub Code Scanning,
+  # which needs GitHub Advanced Security on this private repo — the same
+  # open licensing question flagged for codeql.yml in
+  # docs/audits/security/tooling-images-2026-08-02.md. Re-enable once that
+  # is confirmed, so results also land in the Security tab.
+  sca-osv:
+    name: SCA (OSV-Scanner)
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
+    with:
+      scan-args: |-
+        -r
+        ./
+      upload-sarif: false
+
+  # ── SAST (Semgrep) ─────────────────────────────────────────────────────────
+  # S-028 (2026-08-02 audit): registry rulesets (typescript, nodejs,
+  # owasp-top-ten, secrets, javascript) against backend/src + frontend.
+  # Plain pip install + CLI invocation (not a third-party action) — this
+  # matches how every other gate in this file runs (plain `run:` steps) and
+  # avoids any implicit dependency on Semgrep AppSec Platform login. First
+  # full pass (2026-08-02) found 16 findings; 15 were triaged as false
+  # positives from rules that don't understand this codebase's specific
+  # patterns (Fastify's typed reply.send() streaming S3 objects/buffers vs.
+  # Express's res.write(userInput); sanitize-html-wrapped dangerouslySetInnerHTML;
+  # a deliberate negative-test JWT fixture) and suppressed inline with
+  # `nosemgrep: <rule-id>` comments explaining why at each site — see
+  # docs/audits/security/audit-sast-semgrep-2026-08-02.md for the full triage
+  # ledger. One finding (backend/src/modules/confidentiality/
+  # confidentiality-pdf.ts) could not be suppressed inline because the exact
+  # flagged line sits inside a template literal, where any inline comment
+  # becomes literal PDF output text — it is carried forward via
+  # --baseline-commit on pull requests instead, so it won't block merges but
+  # any genuinely NEW finding will. continue-on-error stays true until a
+  # clean run is confirmed in Actions — TODO: flip to false once verified.
+  sast-semgrep:
+    name: SAST (Semgrep)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Semgrep
+        run: pip install semgrep==1.172.0
+
+      - name: Scan (PR — baseline against base branch, only new findings block)
+        if: github.event_name == 'pull_request'
+        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
+        run: |
+          semgrep --config p/typescript --config p/nodejs --config p/owasp-top-ten \
+            --config p/secrets --config p/javascript \
+            --baseline-commit "${{ github.event.pull_request.base.sha }}" \
+            --error backend/src frontend
+
+      - name: Scan (push — full scan, known baseline findings expected)
+        if: github.event_name != 'pull_request'
+        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
+        run: |
+          semgrep --config p/typescript --config p/nodejs --config p/owasp-top-ten \
+            --config p/secrets --config p/javascript \
+            --error backend/src frontend
+
+  # ── SAST (custom authorization rules) ───────────────────────────────────────
+  # S-028 (2026-08-02 audit): 5 repo-specific rules in .semgrep/rules/ target
+  # the exact defect class SECURITY_AUDIT2's S-005 flagged — routes that
+  # bypass the central medical-access guard, admin routes with no auth hook,
+  # clinical reads missing the doctor-scope filter, raw JWT verification used
+  # for authorization instead of the DB-backed gates, and unguarded cron/
+  # internal endpoints. See docs/audits/security/audit-authz-rules-2026-08-02.md
+  # for the full rule design, fixture coverage, and corpus validation.
+  #
+  # Runs WITHOUT --baseline-commit, unlike sast-semgrep above — known
+  # violations are meant to show as findings here, not be silently carried
+  # forward, per that report's remediation tracking.
+  #
+  # Loops per-file rather than passing the whole backend/src/routes/ tree to
+  # one semgrep invocation: multi-file batches were empirically found to
+  # produce wrong results (both false negatives and false positives) with
+  # these specific pattern-not-inside rules in Semgrep 1.172.0, while
+  # single-file invocation was reliable in every test — see the audit report.
+  # Loading all 5 rules per file (not one invocation per rule per file) keeps
+  # this to 138 semgrep calls rather than 690.
+  #
+  # continue-on-error stays true until a clean run is confirmed in Actions —
+  # separately, 3 files currently have confirmed real findings (tracked in
+  # the audit report) that this phase's scope was to detect, not fix — TODO:
+  # flip to false once those are remediated and a clean run is confirmed.
+  sast-authz-rules:
+    name: SAST (Custom Authorization Rules)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Semgrep
+        run: pip install semgrep==1.172.0
+
+      - name: Run custom authorization rules (per-file)
+        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
+        run: |
+          set -e
+          fail=0
+          for f in backend/src/routes/*.route.ts; do
+            if ! semgrep --config .semgrep/rules/ --error --quiet "$f"; then
+              fail=1
+            fi
+          done
+          exit $fail
 
   # ── SBOM (CycloneDX) ───────────────────────────────────────────────────────
   # Generates a software bill of materials per workspace and uploads as a
@@ -196,6 +438,58 @@ jobs:
           name: sbom
           path: sbom-*.json
           if-no-files-found: warn
+
+  # ── Container scan (Trivy) ─────────────────────────────────────────────────
+  # S-028 (2026-08-02 audit): frontend/Dockerfile builds on node:22-bookworm-slim.
+  # Debian base-layer and npm-bundled-tooling CVEs are invisible to CodeQL,
+  # Dependabot, pnpm audit, and OSV-Scanner alike — none of them look inside a
+  # built image. Two passes: `config` catches Dockerfile/compose
+  # misconfiguration (no Terraform/K8s in this repo, so this is the full IaC
+  # surface); `image` scans the actual built artifact. --ignore-unfixed
+  # because node:22-bookworm-slim carries ~160 Debian CVEs with no upstream
+  # patch yet (verified locally) — failing on those would be permanently red
+  # for a risk this repo has no way to remediate. continue-on-error stays
+  # true until a clean run is confirmed in Actions (this job's image build
+  # step could not be dry-run locally — no container runtime on the audit
+  # host, see docs/audits/security/tooling-images-2026-08-02.md) — TODO: flip
+  # to false once verified green.
+  container-scan:
+    name: Container Scan (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Scan Dockerfile + compose config
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
+        with:
+          scan-type: config
+          scan-ref: .
+          exit-code: "1"
+          severity: "CRITICAL,HIGH"
+
+      - name: Build frontend production image
+        # Placeholder build-time values — this job only needs a representative
+        # image to scan, not a deployable one. Real values are Railway service
+        # variables, injected only at actual deploy time.
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL=https://placeholder.invalid \
+            --build-arg NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS=placeholder.invalid \
+            --build-arg NEXT_PUBLIC_SITE_URL=https://placeholder.invalid \
+            -t gh-frontend-scan:ci \
+            -f frontend/Dockerfile \
+            frontend
+
+      - name: Scan built image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
+        with:
+          scan-type: image
+          image-ref: gh-frontend-scan:ci
+          ignore-unfixed: true
+          exit-code: "1"
+          severity: "CRITICAL,HIGH"
 
   # ── Standalone lockfile drift ─────────────────────────────────────────────
   # Railway deploys backend + frontend as standalone packages using their own
@@ -235,6 +529,8 @@ jobs:
         # inherit root-level pnpm.overrides (--ignore-workspace) — it has its
         # own override block in this package's own package.json. Audit it
         # here directly rather than assuming the root check covers it.
-        # --ignore-registry-errors: see the workspace audit step above — npm
-        # retired the audit endpoints (410) upstream, unrelated to this repo.
+        # S-028 (2026-08-02): see the workspace audit step's comment — the
+        # registry-error condition this flag guards against is not currently
+        # occurring; kept as a defensive no-op. The `sca-osv` job is the
+        # authoritative gate for this repo's actual dependency risk.
         run: pnpm audit --audit-level=high --ignore-workspace --ignore-registry-errors

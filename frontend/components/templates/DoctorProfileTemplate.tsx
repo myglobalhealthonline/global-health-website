@@ -432,6 +432,7 @@ export function DoctorProfileTemplate({
             </h2>
             <div
               className="mt-8 break-words text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-2"
+              // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- safeBio = sanitizeDoctorBioHtml(profile.bio), sanitize-html with a controlled allowlist (frontend/lib/content/doctor-bio-format.ts).
               dangerouslySetInnerHTML={{ __html: safeBio }}
             />
 

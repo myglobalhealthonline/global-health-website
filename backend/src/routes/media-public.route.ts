@@ -56,6 +56,7 @@ const mediaPublicRoute: FastifyPluginAsync = async (app) => {
         "Cache-Control",
         "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
       );
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
       return reply.send(stream);
     } catch (error: unknown) {
       if (error instanceof NoSuchKey || error instanceof MediaObjectNotFoundError) {

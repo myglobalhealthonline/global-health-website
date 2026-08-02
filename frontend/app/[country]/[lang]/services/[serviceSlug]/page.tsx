@@ -529,7 +529,11 @@ export default async function ServiceDetailPage({
               {resolvedLinks.length > 0 ? (
                 <ServiceLinkedBody bodyHtml={bodyHtml} links={resolvedLinks} />
               ) : (
-                <div className="gh-article-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+                <div
+                  className="gh-article-body"
+                  // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- bodyHtml = scopeBlogHtml(detail.detailBody), sanitize-html with a controlled allowlist.
+                  dangerouslySetInnerHTML={{ __html: bodyHtml }}
+                />
               )}
             </div>
           </div>

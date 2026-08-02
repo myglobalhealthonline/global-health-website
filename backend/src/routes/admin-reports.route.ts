@@ -187,6 +187,7 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
       // JSON = the on-screen preview: same builder output the file formats use,
       // so the table shown on screen can never diverge from the download.
       if (q.format === "json") {
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- Fastify's typed reply.send() of a plain JSON object, not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
         return reply.send(table);
       }
 

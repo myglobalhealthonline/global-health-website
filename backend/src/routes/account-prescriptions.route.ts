@@ -69,6 +69,7 @@ const accountPrescriptionsRoute: FastifyPluginAsync = async (app) => {
       // Only show scripts on SIGNED consultations so unfinished
       // drafts don't leak. Scope by appointment.userId so patients
       // see only their own.
+      // nosemgrep: gh-phi-route-missing-guard -- patient-self endpoint, scoped by appointment.userId to the caller's own session (see resolveOptionalAuthUser above).
       const issuedRows = await prisma.prescription.findMany({
         where: {
           consultation: {

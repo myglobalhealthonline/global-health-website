@@ -54,6 +54,7 @@ const adminPayoutInvoicesRoute: FastifyPluginAsync = async (app) => {
       const nameById = new Map(doctors.map((d) => [d.id, d.fullName]));
 
       return reply.send(
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- Fastify's typed reply.send() of a plain JSON object via okResponse(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
         okResponse({
           items: items.map((i) => ({
             ...i,

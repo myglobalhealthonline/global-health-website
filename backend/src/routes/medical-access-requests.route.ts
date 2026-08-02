@@ -78,6 +78,7 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(403).send(errorResponse("Patient access required"));
       }
 
+      // nosemgrep: gh-phi-route-missing-guard -- patient-self endpoint: gated above by role === "PATIENT" and scoped to the caller's own authUser.email; this file manages the guard's own request/grant inputs, not clinical content.
       const profile = await prisma.patientProfile.findUnique({
         where: { email: request.authUser.email },
         select: { id: true },

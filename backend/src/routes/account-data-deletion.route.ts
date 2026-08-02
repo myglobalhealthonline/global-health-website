@@ -32,12 +32,14 @@ const accountDataDeletionRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
       }
 
+      // nosemgrep: gh-phi-route-missing-guard -- patient-self endpoint: gated above by role === "PATIENT" and scoped to the caller's own authUser.email.
       const profile = await prisma.patientProfile.findUnique({
         where: { email: request.authUser.email },
         select: { id: true },
       });
       if (!profile) return reply.status(404).send(errorResponse("Profile not found"));
 
+      // nosemgrep: gh-phi-route-missing-guard -- patient-self endpoint, same profile.id resolved above from the caller's own session.
       const ghnRow = await prisma.patientProfile.findUnique({
         where: { id: profile.id },
         select: { globalHealthNumber: true },
@@ -69,6 +71,7 @@ const accountDataDeletionRoute: FastifyPluginAsync = async (app) => {
         return reply.status(403).send(errorResponse("Patient access required"));
       }
 
+      // nosemgrep: gh-phi-route-missing-guard -- patient-self endpoint: gated above by role === "PATIENT" and scoped to the caller's own authUser.email.
       const profile = await prisma.patientProfile.findUnique({
         where: { email: request.authUser.email },
         select: { id: true },

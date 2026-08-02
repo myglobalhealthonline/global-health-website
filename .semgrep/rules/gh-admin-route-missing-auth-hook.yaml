@@ -1,0 +1,75 @@
+rules:
+  - id: gh-admin-route-missing-auth-hook
+    languages: [typescript]
+    severity: ERROR
+    message: >
+      This file registers an /api/admin/* route but never calls one of the
+      recognized admin-authorization gates anywhere: verifyAdminAccess,
+      verifyGlobalAdminAccess, requireManageSubscriptions, or the
+      dependency-injected `dependencies.verifyAdminAccess` variant. Because
+      routes are auto-loaded (backend/src/app.ts), a new admin route file is
+      live in production the moment it's added, with no separate review gate
+      — the file itself must call one of these on every request, normally
+      via a plugin-scoped `app.addHook("onRequest", ...)`.
+    metadata:
+      category: security
+      references:
+        - docs/audits/security/audit-authz-rules-2026-08-02.md
+    patterns:
+      - pattern-either:
+          - pattern: $APP.get($PATH, ...)
+          - pattern: $APP.post($PATH, ...)
+          - pattern: $APP.put($PATH, ...)
+          - pattern: $APP.patch($PATH, ...)
+          - pattern: $APP.delete($PATH, ...)
+      - metavariable-regex:
+          metavariable: $PATH
+          regex: ^"\/api\/admin(\/|")
+      - pattern-not-inside: |
+          const $ROUTE1: FastifyPluginAsync = async ($APPVAR1) => {
+            ...
+            <... verifyAdminAccess(...) ...>
+            ...
+          }
+      - pattern-not-inside: |
+          const $ROUTE2: FastifyPluginAsync = async ($APPVAR2) => {
+            ...
+            <... verifyGlobalAdminAccess(...) ...>
+            ...
+          }
+      - pattern-not-inside: |
+          const $ROUTE3: FastifyPluginAsync = async ($APPVAR3) => {
+            ...
+            <... requireManageSubscriptions(...) ...>
+            ...
+          }
+      - pattern-not-inside: |
+          const $ROUTE4: FastifyPluginAsync = async ($APPVAR4) => {
+            ...
+            <... dependencies.verifyAdminAccess(...) ...>
+            ...
+          }
+      - pattern-not-inside: |
+          return async ($APPVAR5) => {
+            ...
+            <... verifyAdminAccess(...) ...>
+            ...
+          }
+      - pattern-not-inside: |
+          return async ($APPVAR6) => {
+            ...
+            <... verifyGlobalAdminAccess(...) ...>
+            ...
+          }
+      - pattern-not-inside: |
+          return async ($APPVAR7) => {
+            ...
+            <... requireManageSubscriptions(...) ...>
+            ...
+          }
+      - pattern-not-inside: |
+          return async ($APPVAR8) => {
+            ...
+            <... dependencies.verifyAdminAccess(...) ...>
+            ...
+          }

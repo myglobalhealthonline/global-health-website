@@ -72,7 +72,12 @@ export function decryptPhi(value: string | null | undefined): string | null {
   const iv = buf.subarray(0, IV_BYTES);
   const tag = buf.subarray(IV_BYTES, IV_BYTES + TAG_BYTES);
   const ct = buf.subarray(IV_BYTES + TAG_BYTES);
-  const decipher = createDecipheriv("aes-256-gcm", k, iv);
+  // S-028 (Semgrep gcm-no-tag-length): explicit authTagLength matches the
+  // TAG_BYTES this envelope has always used — Node's GCM default is already
+  // 16, so this doesn't change behavior, it just stops relying on the default.
+  const decipher = createDecipheriv("aes-256-gcm", k, iv, {
+    authTagLength: TAG_BYTES,
+  });
   decipher.setAuthTag(tag);
   return Buffer.concat([decipher.update(ct), decipher.final()]).toString("utf8");
 }

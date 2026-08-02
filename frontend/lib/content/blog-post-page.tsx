@@ -528,6 +528,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             can't bleed into the site. Rendered server-side for SEO. */}
         <div
           className="gh-article-body gh-article-raw"
+          // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
           dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
         />
         {reviewerName ? (

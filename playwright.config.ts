@@ -33,8 +33,22 @@ export default defineConfig({
   },
   projects: [
     {
+      // Security-audit phase 5: produces one storageState file per role
+      // (frontend/tests/e2e/.storage/<role>.json) so authz-boundaries.spec.ts
+      // can start already-authenticated. Matched only by *.setup.ts — the
+      // "chromium" project below uses Playwright's default testMatch, which
+      // does not pick up .setup.ts files, so existing specs are unaffected.
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      // Ensures storageState files exist before authz-boundaries.spec.ts
+      // (or any future role-authenticated spec) runs. A no-op for every
+      // existing spec, which doesn't reference storageState at all.
+      dependencies: ["setup"],
     },
   ],
   webServer: process.env.E2E_NO_WEBSERVER

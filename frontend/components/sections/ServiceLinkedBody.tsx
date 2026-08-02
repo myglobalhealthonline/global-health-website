@@ -43,6 +43,7 @@ export function ServiceLinkedBody({
           <div
             key={`frag-${i}`}
             className="gh-article-body"
+            // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- part is a split fragment of bodyHtml, which callers already sanitize via scopeBlogHtml() before passing in (see this file's module docstring).
             dangerouslySetInnerHTML={{ __html: part }}
           />,
         );
