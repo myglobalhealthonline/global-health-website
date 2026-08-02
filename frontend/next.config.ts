@@ -225,8 +225,20 @@ const nextConfig: NextConfig = {
       // cache hit. Deliberately EXCLUDES `/pricing` (reads the visitor's auth
       // session + active subscription — genuinely personalized, confirmed via
       // `getServerAuthUser`/`getServerSubscription`) and `/book`, `/cart`,
-      // `/checkout*`, `/legal*` (unverified / auth-adjacent) — those keep the
-      // default no-store behavior.
+      // `/checkout*` — those keep the default no-store behavior.
+      //
+      // 2026-08-03 (SEO audit follow-up): `/legal*` was previously on that
+      // excluded list as "unverified / auth-adjacent". It has now been
+      // verified and moved onto the cacheable list below. All three legal
+      // pages (`legal/page.tsx`, `legal/[type]/page.tsx`,
+      // `legal/subscription-terms/page.tsx`) and every module in their import
+      // trees (GH2PagePrimitives, JsonLd, get-country-legal,
+      // sanitize-page-body, load-locale, country-slug, hreflang, page-seo,
+      // structured-data) contain zero `cookies()`/`headers()`/`searchParams`/
+      // `draftMode()` reads, and the `[country]/[lang]` layout above them is
+      // already documented as static-generation-safe. The response is
+      // byte-for-byte identical per visitor. Published legal documents also
+      // change far less often than the 60s window.
       {
         source: "/:country/:lang",
         headers: [
@@ -242,6 +254,18 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/:country/:lang/(lab-tests|doctors|blog|services)/:slug",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
+        ],
+      },
+      {
+        source: "/:country/:lang/legal",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
+        ],
+      },
+      {
+        source: "/:country/:lang/legal/:type",
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],

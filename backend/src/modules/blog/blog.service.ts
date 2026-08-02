@@ -526,9 +526,18 @@ export async function getPublicBlogPosts(
         isActive: true,
         ...(locale ? { locale } : {}),
         // No countryCode (the bare, no-country-context /blog route) means
-        // "global posts only" — country-specific posts only ever surface
-        // under their own /[country]/[lang]/blog.
-        ...(countryCode ? countryVisibilityWhere(countryCode) : { countries: { none: {} } }),
+        // UNFILTERED — same semantics as getPublicBlogPostBySlug below.
+        //
+        // This previously read `{ countries: { none: {} } }` ("global posts
+        // only"). Because every published post is assigned to at least one
+        // country, that made the bare /blog hub permanently render "No
+        // articles published yet" — while sitting in the main nav of every
+        // page, in the XML sitemap, and as the one blog URL /llms.txt points
+        // AI crawlers at (SEO audit 2026-08-03). Canonicalization is
+        // unaffected: /blog/{slug} still redirects a country-specific post to
+        // /{country}/{lang}/blog/{slug} (resolveBlogPostRoute), so the bare
+        // hub is an index, never a second home for the content.
+        ...(countryCode ? countryVisibilityWhere(countryCode) : {}),
       },
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
       take: PUBLIC_BLOG_LIST_CAP,

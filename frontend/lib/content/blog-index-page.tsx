@@ -44,6 +44,7 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
   // country-picker logo lockup below the header, which reads as a
   // duplicate logo). Only the bare (lang-less) route needs the cookie read.
   let homeHref = "/";
+  let cookieCountrySlug: string | undefined;
   if (countrySlug && lang) {
     homeHref = `/${countrySlug}/${lang}`;
   } else {
@@ -51,9 +52,26 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
     const lastCountryRaw = cookieStore.get("gh-last-country")?.value;
     const [lastSlug, lastLang] = lastCountryRaw?.split(":") ?? [];
     homeHref = lastSlug && lastLang ? `/${lastSlug}/${lastLang}` : "/";
+    cookieCountrySlug = lastSlug || undefined;
   }
 
   const blogHref = countrySlug && lang ? `/${countrySlug}/${lang}/blog` : "/blog";
+
+  /* Every post has exactly ONE canonical URL: bare `/blog/{slug}` when global
+   * (no countries assigned), `/{country}/{lang}/blog/{slug}` when
+   * country-specific — the same rule resolveBlogPostRoute() enforces with a
+   * redirect. Link straight at it so the bare index, which is in the main nav
+   * and the sitemap, never points at a URL that immediately redirects.
+   * Country choice mirrors resolveBlogPostRoute: the visitor's remembered
+   * country when the post is published there, else lowest country code. */
+  const blogPostHref = (post: { slug: string; locale: string; countries: Array<{ code: string; slug: string }> }) => {
+    if (post.countries.length === 0) return `/blog/${post.slug}`;
+    if (countrySlug && lang) return `/${countrySlug}/${lang}/blog/${post.slug}`;
+    const target =
+      post.countries.find((c) => c.slug === cookieCountrySlug) ??
+      [...post.countries].sort((a, b) => a.code.localeCompare(b.code))[0];
+    return `/${target.slug}/${post.locale.toLowerCase()}/blog/${post.slug}`;
+  };
 
   return (
     <>
@@ -121,15 +139,11 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 [&>*:first-child]:lg:col-span-2">
               {ordered.map((post) => {
-                // Global posts (no countries assigned) are always canonical
-                // at the bare URL, even inside a country index — the
-                // country index legitimately mixes country-specific and
-                // global posts (see blog.service.ts's OR filter), so this
-                // must be decided per-post, not once for the whole page.
-                const href =
-                  post.countries.length > 0 && countrySlug && lang
-                    ? `/${countrySlug}/${lang}/blog/${post.slug}`
-                    : `/blog/${post.slug}`;
+                // Per-post, not once per page: a country index legitimately
+                // mixes country-specific and global posts (blog.service.ts's
+                // OR filter), and a global post stays canonical at the bare
+                // URL even when listed inside a country index.
+                const href = blogPostHref(post);
                 return (
                   <BlogCard
                     key={post.slug}

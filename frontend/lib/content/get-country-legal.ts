@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { apiRequest } from "@/lib/api/client";
 import { PUBLIC_CONTENT_FETCH_TIMEOUT_MS } from "@/lib/content/public-content-source";
 
@@ -161,31 +162,43 @@ export async function getCountryDisclaimer(
   return { short, fullParagraphs: disclaimerParagraphs(full) };
 }
 
-export async function getCountryLegal(code: string): Promise<PublicCountryLegal | null> {
-  const result = await apiRequest<PublicCountryLegal>(
-    `/api/countries/${encodeURIComponent(code)}/legal`,
-    {
-      timeoutMs: PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [countryLegalCacheTag(code)],
-    },
-  );
-  return result.ok ? result.data : null;
-}
+/* `cache()`-wrapped (same pattern as get-country-collections.ts) so a route's
+ * `generateMetadata` and its page component share ONE in-flight request per
+ * render instead of racing two. That matters here beyond the saved round-trip:
+ * this segment renders dynamically, and when `generateMetadata` resolves slower
+ * than the shell, React streams <title>/<link rel=canonical>/<meta description>
+ * into the BODY instead of <head> — and Google ignores a canonical in <body>.
+ * Reproduced on ~30% of /legal/* and /doctors/* URLs under a cold-cache
+ * concurrent burst (SEO audit 2026-08-03, myglobalhealth.online-audit/). */
+export const getCountryLegal = cache(
+  async (code: string): Promise<PublicCountryLegal | null> => {
+    const result = await apiRequest<PublicCountryLegal>(
+      `/api/countries/${encodeURIComponent(code)}/legal`,
+      {
+        timeoutMs: PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+        revalidate: REVALIDATE_SECONDS,
+        tags: [countryLegalCacheTag(code)],
+      },
+    );
+    return result.ok ? result.data : null;
+  },
+);
 
-export async function getCountryLegalDocument(
-  code: string,
-  type: LegalDocumentType,
-  locale: string,
-): Promise<PublicLegalDocument | null> {
-  const slug = LEGAL_TYPE_SLUGS[type];
-  const result = await apiRequest<PublicLegalDocument>(
-    `/api/countries/${encodeURIComponent(code)}/legal-documents/${slug}?locale=${encodeURIComponent(locale)}`,
-    {
-      timeoutMs: PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [countryLegalCacheTag(code)],
-    },
-  );
-  return result.ok ? result.data : null;
-}
+export const getCountryLegalDocument = cache(
+  async (
+    code: string,
+    type: LegalDocumentType,
+    locale: string,
+  ): Promise<PublicLegalDocument | null> => {
+    const slug = LEGAL_TYPE_SLUGS[type];
+    const result = await apiRequest<PublicLegalDocument>(
+      `/api/countries/${encodeURIComponent(code)}/legal-documents/${slug}?locale=${encodeURIComponent(locale)}`,
+      {
+        timeoutMs: PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+        revalidate: REVALIDATE_SECONDS,
+        tags: [countryLegalCacheTag(code)],
+      },
+    );
+    return result.ok ? result.data : null;
+  },
+);

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   getPublicDoctorBySlug,
   normalizePublicDoctorRecord,
@@ -126,7 +127,14 @@ export function getDoctorProfileData(
   };
 }
 
-export async function resolveDoctorProfilePageData(
+/* `cache()`-wrapped so `buildDoctorProfileMetadata` and `renderDoctorProfilePage`
+ * share ONE resolve per render. Without it each side fired its own three
+ * parallel backend fetches, and when the metadata copy resolved slower than the
+ * page shell React streamed <title>/<link rel=canonical>/<meta description>
+ * into the BODY instead of <head> — Google ignores a canonical in <body>.
+ * Reproduced on ~30% of /doctors/* and /legal/* URLs under a cold-cache
+ * concurrent burst (SEO audit 2026-08-03, myglobalhealth.online-audit/). */
+export const resolveDoctorProfilePageData = cache(async function resolveDoctorProfilePageData(
   doctorSlug: string,
   locale?: string,
   countryCode?: string,
@@ -204,4 +212,4 @@ export async function resolveDoctorProfilePageData(
   }
 
   return out;
-}
+});

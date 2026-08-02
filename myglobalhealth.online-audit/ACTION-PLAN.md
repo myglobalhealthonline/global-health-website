@@ -11,8 +11,18 @@ opportunity. **Low** = backlog.
 
 ## Phase 1 — Critical fixes (Week 1)
 
-### 1.1 Restore Google API access · Critical · 5 min
-**Blocker on everything else.** GSC, GA4 and the Indexing API are all returning
+**Status as of 2026-08-03 — Phase 1 executed on `Dev-hassaan`, not yet deployed.**
+
+| Item | Status |
+|---|---|
+| 1.1 Restore Google API access | **Blocked — needs you.** Interactive browser OAuth; cannot be done headless. |
+| 1.2 Metadata streaming race | **Done** (code). Both fixes applied. Was mis-diagnosed in v1 — see below. |
+| 1.3 Locale leak on non-English pages | **Done + verified** against a live local render. |
+| 1.4 €29/€39 price | **Code done, production DB write pending your go-ahead.** |
+| 1.5 Global `/blog` hub | **Done** (backend + frontend). Query verified 0 → 10 posts; full render blocked on deploy. |
+
+### 1.1 Restore Google API access · Critical · needs you
+**Blocker on measurement.** GSC, GA4 and the Indexing API all return
 `invalid_grant`. Until this is fixed there is no way to measure whether any
 other fix in this plan worked.
 
@@ -20,7 +30,9 @@ other fix in this plan worked.
 claude-seo run google_auth.py --auth
 ```
 
-Then re-run the audit's Google pass to capture a baseline before making changes.
+This opens a browser consent screen, so it has to be run by you. Then re-run the
+audit's Google pass to capture a baseline before the Phase 1 changes deploy —
+otherwise the before/after is lost.
 
 ### 1.2 Stop metadata losing the streaming race on legal + doctor routes · High · needs a decision
 **Corrected 2026-08-03.** This item originally read "add `generateMetadata`".
@@ -38,20 +50,44 @@ Same URLs in small unloaded batches → 1 broken. Warm ISR hits → 0.
 - `/{country}/{locale}/doctors/[slug]` — 91 URLs on ISR, exposed only on the
   revalidation miss.
 
-Two candidate fixes, not yet chosen:
-1. **Prerender `/legal/*`** (drop `no-store`, add ISR like the country routes).
-   Removes the permanent exposure and is a one-line route config. Legal content
-   changes rarely, so caching it is safe. Does not help doctor profiles.
-2. **Share one cached fetch between `generateMetadata` and the page component**
-   (React `cache()` / `unstable_cache`) so the metadata promise is already
-   settled when the shell flushes. Fixes both segments but is a real change to
-   the data path on two routes.
+**Trigger refined during the fix.** It is cold *cache*, not user-agent: a repeat
+burst once the app was warm dropped to 1/127 for a generic crawler UA **and**
+1/127 for Googlebot's UA. So Next's `htmlLimitedBots` stream-blocking does not
+shield Googlebot here, and the exposure window is a cold boot or a fresh deploy
+— which is exactly when Google re-crawls.
 
-Recommend doing 1 now and 2 as a follow-up.
+**DONE — both fixes applied.**
 
-**Verify:** re-run the burst test — all 127 URLs, 5 concurrent, cache-busted —
-and assert `<title>`, `rel=canonical` and `meta description` all appear before
-`</head>` on every one.
+1. **`/legal*` moved onto the CDN-cacheable header list** in `next.config.ts`.
+   It had been excluded there as "unverified / auth-adjacent"; it is now
+   verified — all three legal pages and every module in their import trees read
+   zero `cookies()`/`headers()`/`searchParams`/`draftMode()`, and the
+   `[country]/[lang]` layout above them is already documented static-safe. Those
+   36 URLs now get `public, max-age=0, s-maxage=60, stale-while-revalidate=300`
+   instead of `no-store`, which also removes the full origin round-trip they were
+   paying per request.
+2. **Shared `cache()` fetch on both segments.** `getCountryLegal` and
+   `getCountryLegalDocument` (`lib/content/get-country-legal.ts`) and
+   `resolveDoctorProfilePageData` (`lib/content/doctor-profile-data.ts`) are now
+   React-`cache()` wrapped, matching the pattern already used in
+   `get-country-collections.ts`. `generateMetadata` and the page component share
+   one in-flight request per render instead of racing two — the doctor path was
+   previously firing six backend fetches per request where three would do.
+
+Note this does **not** make the segment statically generated. `next build` still
+classifies all of `[country]/[lang]` as dynamic — a known platform-level
+classification quirk documented in `next.config.ts` and not in scope here.
+
+**Verified so far:** `tsc` clean; `/ireland/en/legal/privacy-policy`,
+`/spain/es/legal/terms-of-service`, `/ireland/en/legal`,
+`/spain/en/doctors/dr-syed-tahir` and
+`/ireland/en/doctors/silvia-alexandre-fernandes` all render `200` with `<title>`,
+`rel=canonical` **and** `meta description` inside `<head>`.
+
+**Still to verify after deploy:** re-run the burst test — all 127 URLs, 5–8
+concurrent, cache-busted, immediately after a fresh deploy so the cache is cold —
+and assert all three tags appear before `</head>` on every one. That is the
+condition that reproduced it; a warm origin will pass either way.
 
 ### 1.3 Wire the shared CTA/cross-sell component to the active locale · Critical · 1 component
 50 of 66 sampled non-English pages (76% of a 912-URL non-English inventory)
@@ -64,26 +100,81 @@ Reproduce on `/ireland/de/services/acute-medical-consultation`,
 The body copy around these strings is correctly translated, so this is a single
 component that never received the locale — not a translation backlog.
 
-**Verify:** re-run the leak scan across a 60+ URL non-English sample; expect 0 hits.
+**DONE.** It turned out to be three components, not one: `DoctorCard` (the
+`Languages` label plus the `ctaLabel`/`bookLabel` English defaults), the
+`/{country}/{locale}/health/{slug}` template (six strings), and `LinkCallout`
+(its four variant labels). Almost every translation already existed — only
+`doctors.languagesLabel`, `healthPage.seeAllLanguageDoctors` and the
+`linkCallout` namespace were new, added across all 6 bundles.
 
-### 1.4 Reconcile the €29 / €39 price contradiction · Critical · 2 strings
+**Verified:** `tsc` clean, locale key parity across all 6 bundles, and a local
+render against the production API returned **0** leaked strings on
+`/ireland/de/health/diabetes`, `/ireland/cs/health/diabetes`,
+`/ireland/de/services/acute-medical-consultation`, `/ireland/ro/health/migraine`
+and `/czechia/cs`, with the translations rendering in their place — `/czechia/cs`
+now serves 8× *Jazyky*, 8× *Vybrat čas*, 9× *Zobrazit profil*, 6× *Rezervovat
+konzultaci* where it previously served the English.
+
+### 1.4 Reconcile the €29 / €39 price contradiction · Critical · needs a prod DB write
 ```
 /ireland/en                        meta: "same-day appointments from €29"
 /ireland/en/gp-consultation-online meta: "same-day appointments from €39"
 ```
-Live and verified. Pick the correct figure (project history indicates €39 is
-current), then audit every other market's hub-vs-service meta for the same
-divergence. Also surface a single-consultation price on `/ireland/en/pricing`,
-which is currently subscription-first while the SERP trains searchers to expect
-a per-consult number.
+
+**Not a bug — both numbers are real.** Live Ireland prices are repeat
+prescription €29, GP consultation €39, sick cert €45. The problem is the word
+*appointments*: "same-day appointments from €29" reads as a €29 GP slot, so a
+searcher who clicks the snippet lands on €39 and sees a price rise. The same
+page's own hero badge already says "GP consultations from €39".
+
+**Decision taken:** reword to **"consultations from €29"** — accurate, keeps the
+cheaper hook, and matches the visible on-page line *"Consultations at Global
+Health cost from €29.00"*. The GP page keeps €39, which now reads as a service
+tier rather than a contradiction.
+
+**Code done, apply pending.** The live string lives in a CMS-managed
+`PageContentTranslation` row, not in code. `backend/scripts/patch-home-meta-descriptions.ts`
+has been updated with the new wording, but **the production DB has not been
+touched.** To apply:
+
+```bash
+node --env-file=.env --import tsx scripts/patch-home-meta-descriptions.ts
+```
+
+That is the dry run. Re-run with `--apply` to write. `backend/.env` points at
+**production** — review the dry-run diff before applying.
+
+Still outstanding from this item: audit the other five markets' hub-vs-service
+meta for the same divergence, and surface a single-consultation price on
+`/ireland/en/pricing` (currently subscription-first).
 
 ### 1.5 Fix the global `/blog` hub · Critical · 1 query
 `/blog` renders "No articles published yet" while 44 country-scoped article URLs
 serve full 2,400–3,800-word content. It is in the main navigation of every page,
 in the sitemap, and is the URL `llms.txt` points AI crawlers at.
 
-Root cause is a locale/country filter that excludes everything at the unscoped
-route.
+**DONE.** Root cause was not a bug but a deliberate rule: `getPublicBlogPosts`
+filtered the bare route to `{ countries: { none: {} } }` — "global posts only" —
+and every published post is assigned to at least one country, so the hub was
+structurally guaranteed to be empty. Per your call it is now a real global index:
+the no-country case is unfiltered, matching the semantics
+`getPublicBlogPostBySlug` already used.
+
+Canonicalization is unchanged — `/blog/{slug}` still redirects a country-specific
+post to `/{country}/{lang}/blog/{slug}`, so the hub is an index and never a
+second home for the content. The index now links **straight** at each post's
+canonical country URL instead of at `/blog/{slug}`, so a nav- and sitemap-linked
+hub no longer points at URLs that immediately redirect.
+
+**Verified:** a read-only count against the live DB shows the bare hub going
+**0 → 10** published posts while `/ireland/en/blog` stays at 4 (unchanged), and
+all four sampled derived hrefs resolve `200`
+(`/brazil/pt/blog/diabetes-doenca-silenciosa`,
+`/portugal/pt/blog/compreendendo-a-hipercolesterolemia`,
+`/romania/ro/blog/diabetul-boala-tacuta`,
+`/ireland/en/blog/when-to-see-a-gp-online-vs-in-person`). The rendered hub itself
+cannot be confirmed until the backend deploys — a local frontend still reads the
+production API, which is running the old query.
 
 ---
 
