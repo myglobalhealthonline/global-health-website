@@ -43,6 +43,7 @@ const i18n = {
   featuredClinician: "Featured clinician",
   registrationLabel: "Registration",
   verifiedSuffix: "Verified",
+  languagesLabel: "Languages",
 };
 
 const gpService = "svc-gp";

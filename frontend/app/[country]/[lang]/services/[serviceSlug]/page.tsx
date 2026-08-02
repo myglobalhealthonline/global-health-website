@@ -527,7 +527,11 @@ export default async function ServiceDetailPage({
               className="gh2-card-ivory mt-8 border-t-2 border-t-[rgba(176,241,34,0.24)] p-6 md:p-8"
             >
               {resolvedLinks.length > 0 ? (
-                <ServiceLinkedBody bodyHtml={bodyHtml} links={resolvedLinks} />
+                <ServiceLinkedBody
+                  bodyHtml={bodyHtml}
+                  links={resolvedLinks}
+                  labels={{ upgrade: t.eyebrowSpecialist, ...c.linkCallout }}
+                />
               ) : (
                 <div
                   className="gh-article-body"

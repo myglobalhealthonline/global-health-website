@@ -9,11 +9,34 @@ import { ArrowRight } from "lucide-react";
  */
 export type LinkCalloutVariant = "UPGRADE" | "ENTRY" | "REFERRAL" | "COMPLEMENTARY";
 
-const ACCENT: Record<LinkCalloutVariant, { border: string; bg: string; label: string }> = {
-  UPGRADE: { border: "rgba(29,75,54,0.28)", bg: "rgba(29,75,54,0.05)", label: "Specialist care" },
-  ENTRY: { border: "rgba(180,120,10,0.30)", bg: "rgba(180,120,10,0.06)", label: "Start here" },
-  REFERRAL: { border: "rgba(27,79,138,0.28)", bg: "rgba(27,79,138,0.05)", label: "Next step" },
-  COMPLEMENTARY: { border: "rgba(120,120,120,0.28)", bg: "rgba(120,120,120,0.05)", label: "Related care" },
+/** Variant eyebrow labels — localised, threaded from the (server) caller.
+ *  English defaults so any caller that hasn't been updated yet still compiles. */
+export type LinkCalloutLabels = {
+  upgrade?: string;
+  entry?: string;
+  referral?: string;
+  complementary?: string;
+};
+
+const DEFAULT_LABELS: Required<LinkCalloutLabels> = {
+  upgrade: "Specialist care",
+  entry: "Start here",
+  referral: "Next step",
+  complementary: "Related care",
+};
+
+const ACCENT: Record<LinkCalloutVariant, { border: string; bg: string }> = {
+  UPGRADE: { border: "rgba(29,75,54,0.28)", bg: "rgba(29,75,54,0.05)" },
+  ENTRY: { border: "rgba(180,120,10,0.30)", bg: "rgba(180,120,10,0.06)" },
+  REFERRAL: { border: "rgba(27,79,138,0.28)", bg: "rgba(27,79,138,0.05)" },
+  COMPLEMENTARY: { border: "rgba(120,120,120,0.28)", bg: "rgba(120,120,120,0.05)" },
+};
+
+const LABEL_KEY: Record<LinkCalloutVariant, keyof LinkCalloutLabels> = {
+  UPGRADE: "upgrade",
+  ENTRY: "entry",
+  REFERRAL: "referral",
+  COMPLEMENTARY: "complementary",
 };
 
 export function LinkCallout({
@@ -22,14 +45,18 @@ export function LinkCallout({
   body,
   ctaLabel,
   href,
+  labels,
 }: {
   variant: LinkCalloutVariant;
   heading: string;
   body: string | null;
   ctaLabel: string;
   href: string;
+  labels?: LinkCalloutLabels;
 }) {
   const accent = ACCENT[variant];
+  const labelKey = LABEL_KEY[variant];
+  const label = labels?.[labelKey] ?? DEFAULT_LABELS[labelKey];
   return (
     <aside
       className="my-6 rounded-[14px] border p-5"
@@ -39,7 +66,7 @@ export function LinkCallout({
         className="m-0 text-[10.5px] font-bold uppercase tracking-[0.18em]"
         style={{ color: "var(--color-brand-primary)" }}
       >
-        {accent.label}
+        {label}
       </p>
       <p className="mt-1.5 text-[16px] font-bold text-[var(--color-text-primary)]">{heading}</p>
       {body ? (

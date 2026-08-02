@@ -125,8 +125,8 @@ export function DoctorCard({
   imageZoom = 1,
   href,
   bookingHref,
-  ctaLabel = "View profile",
-  bookLabel = "Pick a time",
+  ctaLabel,
+  bookLabel,
   /** Override the primary button label (default: "Book with {firstName}"). */
   primaryLabel,
   dark = false,
@@ -134,6 +134,11 @@ export function DoctorCard({
   cardI18n,
   titleAs: NameHeading = "h3",
 }: DoctorCardProps) {
+  // cardI18n is a required prop; the English fallback only guards a caller
+  // that skips TS (or an older call site mid-migration) from crashing.
+  const resolvedCtaLabel = ctaLabel ?? cardI18n?.viewProfileLabel ?? "View profile";
+  const resolvedBookLabel = bookLabel ?? cardI18n?.pickTimeLabel ?? "Pick a time";
+
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
   const src = trimmedImage ?? "";
@@ -373,7 +378,7 @@ export function DoctorCard({
                   className="text-[10.5px] font-bold uppercase tracking-[0.13em]"
                   style={{ color: "var(--dc-muted)" }}
                 >
-                  Languages
+                  {cardI18n?.languagesLabel ?? "Languages"}
                 </p>
                 <p
                   className="text-[13px] font-semibold leading-snug"
@@ -399,7 +404,7 @@ export function DoctorCard({
                     : "gh2-btn-compact-secondary border-[color:var(--dc-line)] text-[color:var(--dc-ink)]"
                 }`}
               >
-                {ctaLabel}
+                {resolvedCtaLabel}
               </Link>
             ) : null}
             <Link
@@ -437,7 +442,7 @@ export function DoctorCard({
                 }
               >
                 <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
-                {primaryLabel ?? bookLabel ?? `Book with ${firstName}`}
+                {primaryLabel ?? resolvedBookLabel}
                 <ArrowRight
                   className="size-[15px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                   strokeWidth={1.8}
@@ -454,7 +459,7 @@ export function DoctorCard({
                     : "relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
                 }
               >
-                {ctaLabel}
+                {resolvedCtaLabel}
                 <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
               </Link>
             ) : null}

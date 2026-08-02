@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { LinkCallout, type LinkCalloutVariant } from "./LinkCallout";
+import { LinkCallout, type LinkCalloutVariant, type LinkCalloutLabels } from "./LinkCallout";
 
 export type ResolvedServiceLink = {
   id: string;
@@ -24,9 +24,13 @@ export type ResolvedServiceLink = {
 export function ServiceLinkedBody({
   bodyHtml,
   links,
+  labels,
 }: {
   bodyHtml: string;
   links: ResolvedServiceLink[];
+  /** LinkCallout eyebrow labels, localised by the (server) caller from
+   *  `common.linkCallout` + `common.serviceDetailPage.eyebrowSpecialist`. */
+  labels?: LinkCalloutLabels;
 }) {
   const bySlot = new Map(
     links.filter((l) => l.anchorSlot).map((l) => [l.anchorSlot as string, l]),
@@ -61,6 +65,7 @@ export function ServiceLinkedBody({
           body={link.body}
           ctaLabel={link.ctaLabel}
           href={link.href}
+          labels={labels}
         />,
       );
     }
@@ -81,6 +86,7 @@ export function ServiceLinkedBody({
               body={l.body}
               ctaLabel={l.ctaLabel}
               href={l.href}
+              labels={labels}
             />
           ))}
         </div>

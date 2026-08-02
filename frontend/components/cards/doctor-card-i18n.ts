@@ -9,13 +9,28 @@ export type DoctorCardI18n = {
   registrationLabel: string;
   verifiedSuffix: string;
   verifyRegistrationAria: string;
+  languagesLabel: string;
+  viewProfileLabel: string;
+  pickTimeLabel: string;
 };
 
-/** Narrow `common.doctors` to the strings the card needs. */
-export function doctorCardI18n(d: DoctorCardI18n): DoctorCardI18n {
+/** Narrow `common.doctors` to the strings the card needs. Source keys are
+ *  named `viewProfile`/`pickTime` in the locale bundle (shared with other
+ *  doctors-namespace consumers); the card prop names spell out `*Label`. */
+export function doctorCardI18n(d: {
+  registrationLabel: string;
+  verifiedSuffix: string;
+  verifyRegistrationAria: string;
+  languagesLabel: string;
+  viewProfile: string;
+  pickTime: string;
+}): DoctorCardI18n {
   return {
     registrationLabel: d.registrationLabel,
     verifiedSuffix: d.verifiedSuffix,
     verifyRegistrationAria: d.verifyRegistrationAria,
+    languagesLabel: d.languagesLabel,
+    viewProfileLabel: d.viewProfile,
+    pickTimeLabel: d.pickTime,
   };
 }

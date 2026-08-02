@@ -7,14 +7,14 @@
     "pages_crawled": 500,
     "sitemap_urls": 1153,
     "top_findings": [
-      "127 URLs (11% of the site) ship zero <head> metadata — all /{country}/{locale}/legal/* (36) and /doctors/{slug} (91) return no title, no meta description, no canonical, no robots, no Open Graph. Verified by direct curl.",
+      "CORRECTED: metadata is present on all routes, but on cold renders under concurrent load the shell flushes before generateMetadata resolves, so title/canonical/description stream into <body> 80-230KB past </head> on /legal/* (36 URLs) and /doctors/{slug} (91 URLs). Google ignores rel=canonical in <body>. 38 of 127 reproduced in one 5-concurrent burst, 1 of 127 unloaded.",
       "English UI strings leak onto 76% of non-English pages (50 of 66 sampled across 912 non-EN URLs) — 'Languages' x43, 'Pick a time' x40, 'Specialist care' x14. A shared CTA component never received the locale.",
       "46% of titles (232 of 500) exceed 60 characters and truncate in the SERP; 99 exceed 70. 32 of 33 country-home pages are over-length, losing the trust signal in the truncated tail.",
       "The root entry gate is 114 words, 6 internal links, no hreflang, no breadcrumb, and is served no-store without prerendering — every brand search pays a full origin round-trip. CrUX phone TTFB 2,618ms (Poor).",
       "No page exists for the sick-certificate commercial cluster, which competitors own with dedicated transactional pages. Anxious same-day-cert persona scores 35/100."
     ],
     "quick_wins": [
-      "Add generateMetadata to the legal/[slug] and doctors/[slug] route segments — 2 files, fixes 127 URLs.",
+      "Prerender /legal/* instead of serving it no-store, so its metadata never loses the streaming race — 1 route config, 36 URLs.",
       "Drop the '| Global Health' suffix from the title template above ~48 chars — 1 template, fixes ~200 truncated titles.",
       "Wire the shared CTA/cross-sell component to the active locale — 1 component, fixes ~690 non-English pages.",
       "Reconcile the EUR 29 / EUR 39 price contradiction between /ireland/en and /ireland/en/gp-consultation-online — 2 strings.",
@@ -40,10 +40,10 @@
       ],
       "findings": [
         {
-          "title": "127 URLs emit no <head> metadata whatsoever",
-          "severity": "Critical",
-          "description": "All /{country}/{locale}/legal/* (36 URLs) and /{country}/{locale}/doctors/{slug} (91 URLs) return HTML with no <title>, no meta description, no rel=canonical, no meta robots, no Open Graph and no twitter:card. Verified by direct curl, not a crawler artifact. These are not thin pages — legal pages run 2,700-8,200 words and doctor profiles 900-1,500 words with full Physician + EducationalOccupationalCredential + FAQPage + BreadcrumbList JSON-LD. The structured data is excellent and the metadata is entirely absent, pointing at a missing generateMetadata export on those two route segments. The 91 doctor profiles are the site's strongest E-E-A-T asset and its most brand-searchable URLs.",
-          "recommendation": "Add generateMetadata to the legal/[slug] and doctors/[slug] route segments, reusing the per-locale metadata helper the service routes already use. Emit title, description, self-referencing canonical, robots, the og:* and twitter:* set, and the hreflang cluster (legal routes are also missing hreflang on 21 of 32 crawled). Verify by re-crawling and asserting a non-empty <title> on all 127 URLs."
+          "title": "Metadata streams into <body> instead of <head> on cold renders under load",
+          "severity": "High",
+          "description": "CORRECTED 2026-08-03: the first version of this audit claimed 127 URLs shipped no metadata and lacked generateMetadata. Both claims were wrong — generateMetadata exists and is correct on /{country}/{locale}/legal/[slug] and /doctors/[slug]. The real defect is a streaming race: on a cold, uncached render under concurrent load the HTML shell flushes before generateMetadata resolves, so React streams <title>, rel=canonical and meta description into <body> 80-230KB past </head> (e.g. /portugal/pt/legal/terms-of-service closes head at byte 1,758 and emits <title> at byte 226,198). Load-dependent, not route-dependent: all 127 URLs in one 5-concurrent cache-busted burst reproduced it on 38; the same URLs in small unloaded batches reproduced it on 1; warm ISR hits never show it. It matters because Google ignores rel=canonical placed in <body>, Googlebot crawls in bursts, and stricter consumers (Bing, social scrapers, LLM crawlers) are less forgiving than Google about late metadata. /legal/* is served no-store with no prerendering so every request is a cold render and permanently exposed; doctor profiles are ISR and exposed only on the revalidation miss.",
+          "recommendation": "Not \"add generateMetadata\" — it is already there. Either (1) prerender /legal/* instead of serving it no-store (one route config, removes the permanent exposure, safe because legal content changes rarely), or (2) share one cached fetch between generateMetadata and the page component via React cache() so the metadata promise is already settled when the shell flushes (fixes both segments). Recommend 1 now, 2 as follow-up. Verify with a 5-concurrent cache-busted burst over all 127 URLs asserting title/canonical/description all precede </head>."
         },
         {
           "title": "The root entry gate, legal pages and global pages are served no-store and unprerendered",
@@ -363,7 +363,7 @@
         "timeframe": "Week 1",
         "items": [
           "Restore Google API access — GSC, GA4 and the Indexing API all return invalid_grant. Run `claude-seo run google_auth.py --auth`. Blocker on measuring every other fix.",
-          "Add generateMetadata to the legal/[slug] and doctors/[slug] route segments — fixes 127 URLs (11% of the site) that currently ship no title, description, canonical or Open Graph.",
+          "Fix the metadata streaming race on /legal/* and /doctors/{slug} — generateMetadata already exists; prerender /legal/* (currently no-store, so every request is a cold render) and share one cached fetch between generateMetadata and the page component.",
           "Wire the shared CTA/cross-sell component to the active locale — fixes English UI strings leaking onto ~690 non-English pages.",
           "Reconcile the EUR 29 / EUR 39 price contradiction between /ireland/en and /ireland/en/gp-consultation-online, and audit every other market for the same divergence.",
           "Fix the global /blog hub, which renders 'No articles published yet' while 44 country-scoped articles serve full content."

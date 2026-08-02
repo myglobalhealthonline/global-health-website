@@ -144,6 +144,7 @@
     "viewProfile": "Profil ansehen",
     "bookAppointment": "Termin buchen",
     "pickTime": "Zeit wählen",
+    "languagesLabel": "Sprachen",
     "bookWithTemplate": "Buchen mit {name}",
     "viewDoctors": "Ärzte anzeigen",
     "trustCard1Title": "Zugelassen in {country}",
@@ -849,5 +850,13 @@
   },
   "doctify": {
     "body": "Unabhängige, verifizierte Bewertungen, die Doctify bei Patientinnen und Patienten unserer Ärzte erhebt."
+  },
+  "linkCallout": {
+    "entry": "Hier starten",
+    "referral": "Nächster Schritt",
+    "complementary": "Verwandte Leistungen"
+  },
+  "healthPage": {
+    "seeAllLanguageDoctors": "Alle Ärzte anzeigen, die {language} sprechen"
   }
 }

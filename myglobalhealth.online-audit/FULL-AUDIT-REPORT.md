@@ -36,21 +36,46 @@ fixes move this site into the mid-80s.
 
 ## Top 5 critical issues
 
-### 1. 127 URLs (11% of the site) ship **zero** `<head>` metadata
+### 1. Under load, metadata is streamed into `<body>` instead of `<head>`
 
-Every `/{country}/{locale}/legal/*` page (36) and every
-`/{country}/{locale}/doctors/{slug}` profile (91) returns HTML with **no
-`<title>`, no meta description, no canonical, no `meta robots`, no Open Graph
-and no `twitter:card`**. Verified by direct `curl`, not a crawler artifact.
+> **Corrected 2026-08-03.** The first version of this report claimed 127 URLs
+> shipped *no* metadata at all and were missing `generateMetadata`. That was
+> wrong on both counts — `generateMetadata` is present and correct on both route
+> segments, and the metadata is always emitted. The real, narrower defect is
+> below. The correction is kept visible rather than silently edited.
 
-These are not thin pages. Legal pages run 2,700–8,200 words; doctor profiles run
-900–1,500 words and carry full `Physician` + `EducationalOccupationalCredential`
-+ `FAQPage` + `BreadcrumbList` JSON-LD. The structured data is excellent and the
-metadata is entirely missing — which points at a missing `generateMetadata`
-export on those two route segments rather than any content problem.
+On `/{country}/{locale}/legal/*` (36 URLs) and `/{country}/{locale}/doctors/{slug}`
+(91 URLs), a **cold, uncached render under concurrent load** flushes the HTML
+shell before `generateMetadata` resolves. React then streams the `<title>`,
+`<link rel=canonical>` and `<meta name=description>` into the **body**, roughly
+80–230 KB past `</head>`:
 
-The 91 doctor profiles are the site's single strongest E-E-A-T asset and its most
-brand-searchable URLs ("Dr Syed Tahir"), and they are shipping without titles.
+```
+/portugal/pt/legal/terms-of-service   </head> at 1,758   <title> at 226,198
+/czechia/cs/legal/complaints-procedure </head> at 1,758   <title> at 118,741
+/ireland/cs/doctors/dr-ahmed-maklad    </head> at 3,403   <title> at 154,536
+```
+
+It is **load-dependent, not route-dependent**. Hitting all 127 URLs in one burst
+(5 concurrent, cache-busted) reproduced it on 38; running the same URLs in
+smaller unloaded batches reproduced it on 1. Warm ISR hits never show it.
+
+Why it still matters:
+
+- **Google ignores `rel=canonical` placed in `<body>`** — that is documented,
+  unambiguous behaviour, not a maybe. So these URLs intermittently have no
+  canonical at all.
+- Googlebot crawls in bursts, which is exactly the condition that triggers it.
+- Stricter consumers (Bing, social scrapers, LLM crawlers) are less forgiving
+  than Google about late metadata.
+- `/legal/*` is served `no-store` with no prerendering, so **every** legal
+  request is a cold render and permanently exposed to the race. Doctor profiles
+  are ISR, so only the revalidation miss is exposed.
+
+The fix is not "add `generateMetadata`" — it is to stop the metadata resolving
+slower than the shell: have the page and `generateMetadata` share one cached
+data fetch so the metadata promise is already settled, and/or prerender the
+`/legal/*` routes instead of serving them `no-store`.
 
 ### 2. The English UI leaks onto 76% of non-English pages
 
@@ -120,7 +145,7 @@ weakest journey on the site, against one of its highest-intent queries.
 
 | # | Fix | Effort | Impact |
 |---|---|---|---|
-| 1 | Add `generateMetadata` to the `legal/[slug]` and `doctors/[slug]` route segments | ~1 file each | 127 URLs go from unmanaged to optimised |
+| 1 | Prerender `/legal/*` instead of serving it `no-store`, so its metadata never loses the streaming race | 1 route config | Removes the permanent exposure on 36 URLs |
 | 2 | Drop `\| Global Health` from the title template when the title already exceeds ~48 chars | 1 template | Fixes ~200 truncated titles at once |
 | 3 | Wire the shared CTA/cross-sell component to the active locale | 1 component | Fixes ~690 non-English pages |
 | 4 | Reconcile the €29 / €39 price contradiction between `/ireland/en` and `/ireland/en/gp-consultation-online` | 2 strings | Removes a live trust break on the money page |
@@ -151,8 +176,8 @@ Security headers are complete: HSTS with `preload`, an enforcing CSP with
 
 **Problems.**
 
-- **The 127 metadata-less URLs** (issue #1 above) also means 127 URLs with no
-  self-referencing canonical.
+- **The metadata streaming race** (issue #1 above) intermittently pushes the
+  self-referencing canonical into `<body>` on 127 URLs, where Google ignores it.
 - **Caching is inverted on the pages that need it most.** Content pages are
   correctly ISR-cached (`public, s-maxage=60, stale-while-revalidate=300`,
   `x-nextjs-prerender: 1`). But `/`, the 7 root-level global pages and the 36

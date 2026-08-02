@@ -180,7 +180,7 @@ export function LanguageFilteredDoctors({
                   at: at ?? null,
                 })}
                 primaryLabel={bp.continue}
-                ctaLabel="View"
+                ctaLabel={cardI18n.viewProfileLabel}
                 dark
               />
             </li>

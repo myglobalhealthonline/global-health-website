@@ -144,6 +144,7 @@
     "viewProfile": "Ver perfil",
     "bookAppointment": "Reservar cita",
     "pickTime": "Elegir hora",
+    "languagesLabel": "Idiomas",
     "bookWithTemplate": "Reservar con {name}",
     "viewDoctors": "Ver médicos",
     "trustCard1Title": "Licenciado en {country}",
@@ -849,5 +850,13 @@
   },
   "doctify": {
     "body": "Opiniones independientes y verificadas, recogidas por Doctify de pacientes atendidos por nuestros médicos."
+  },
+  "linkCallout": {
+    "entry": "Empieza aquí",
+    "referral": "Siguiente paso",
+    "complementary": "Atención relacionada"
+  },
+  "healthPage": {
+    "seeAllLanguageDoctors": "Ver todos los médicos que hablan {language}"
   }
 }

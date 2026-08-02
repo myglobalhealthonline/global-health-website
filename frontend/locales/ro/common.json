@@ -144,6 +144,7 @@
     "viewProfile": "Vezi profil",
     "bookAppointment": "Programează consultație",
     "pickTime": "Alegeți o oră",
+    "languagesLabel": "Limbi",
     "bookWithTemplate": "Rezervă cu {name}",
     "viewDoctors": "Vezi medicii",
     "trustCard1Title": "Licențiat în {country}",
@@ -849,5 +850,13 @@
   },
   "doctify": {
     "body": "Recenzii independente și verificate, colectate de Doctify de la pacienți tratați de medicii noștri."
+  },
+  "linkCallout": {
+    "entry": "Începeți aici",
+    "referral": "Pasul următor",
+    "complementary": "Îngrijire conexă"
+  },
+  "healthPage": {
+    "seeAllLanguageDoctors": "Vezi toți medicii care vorbesc {language}"
   }
 }

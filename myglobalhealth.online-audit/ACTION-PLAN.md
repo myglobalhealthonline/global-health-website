@@ -22,23 +22,36 @@ claude-seo run google_auth.py --auth
 
 Then re-run the audit's Google pass to capture a baseline before making changes.
 
-### 1.2 Add `generateMetadata` to the legal and doctor route segments · Critical · ~2 files
-127 URLs (11% of the site) ship no `<title>`, no meta description, no canonical,
-no `meta robots`, no OG and no `twitter:card`.
+### 1.2 Stop metadata losing the streaming race on legal + doctor routes · High · needs a decision
+**Corrected 2026-08-03.** This item originally read "add `generateMetadata`".
+That was wrong — `generateMetadata` already exists and is correct on both
+segments. The real defect: on a cold, uncached render under concurrent load the
+HTML shell flushes before `generateMetadata` resolves, so `<title>`,
+`rel=canonical` and `meta description` stream into `<body>` 80–230 KB past
+`</head>`. Google ignores a canonical in `<body>` outright.
 
-- `/{country}/{locale}/legal/[slug]` — 36 URLs
-- `/{country}/{locale}/doctors/[slug]` — 91 URLs
+Reproduction: all 127 URLs in one burst (5 concurrent, cache-busted) → 38 broken.
+Same URLs in small unloaded batches → 1 broken. Warm ISR hits → 0.
 
-Doctor profiles are the site's strongest E-E-A-T asset and its most
-brand-searchable pages; they already carry excellent `Physician` JSON-LD. Reuse
-the existing per-locale metadata helper the service routes use.
+- `/{country}/{locale}/legal/[slug]` — 36 URLs, served `no-store` with no
+  prerendering, so **every** request is a cold render and permanently exposed.
+- `/{country}/{locale}/doctors/[slug]` — 91 URLs on ISR, exposed only on the
+  revalidation miss.
 
-Emit for each: `title`, `description`, self-referencing `canonical`,
-`robots: index, follow`, `og:title`/`og:description`/`og:image`/`og:locale`,
-`twitter:card`, and the hreflang cluster (the legal routes are also missing
-hreflang — 21 of 32 crawled).
+Two candidate fixes, not yet chosen:
+1. **Prerender `/legal/*`** (drop `no-store`, add ISR like the country routes).
+   Removes the permanent exposure and is a one-line route config. Legal content
+   changes rarely, so caching it is safe. Does not help doctor profiles.
+2. **Share one cached fetch between `generateMetadata` and the page component**
+   (React `cache()` / `unstable_cache`) so the metadata promise is already
+   settled when the shell flushes. Fixes both segments but is a real change to
+   the data path on two routes.
 
-**Verify:** re-crawl and assert `<title>` is non-empty on all 127 URLs.
+Recommend doing 1 now and 2 as a follow-up.
+
+**Verify:** re-run the burst test — all 127 URLs, 5 concurrent, cache-busted —
+and assert `<title>`, `rel=canonical` and `meta description` all appear before
+`</head>` on every one.
 
 ### 1.3 Wire the shared CTA/cross-sell component to the active locale · Critical · 1 component
 50 of 66 sampled non-English pages (76% of a 912-URL non-English inventory)

@@ -108,6 +108,9 @@ export type CommonLocale = {
     viewProfile: string;
     bookAppointment: string;
     pickTime: string;
+    /** Card metadata label, e.g. "Languages" — same value as
+     *  doctorProfile.languagesLabel. */
+    languagesLabel: string;
     viewDoctors?: string;
     trustCard1Title?: string;
     trustCard1Subtitle?: string;
@@ -881,5 +884,16 @@ export type CommonLocale = {
   reports: {
     noRowsInRange: string;
     truncatedNotice: string;
+  };
+  /** LinkCallout variant labels (internal-linking spec). eyebrowSpecialist
+   *  above (serviceDetailPage) covers the UPGRADE variant. */
+  linkCallout: {
+    entry: string;
+    referral: string;
+    complementary: string;
+  };
+  /** /{country}/{lang}/health/{slug} landing pages. */
+  healthPage: {
+    seeAllLanguageDoctors: string;
   };
 };

@@ -81,6 +81,7 @@ export default async function CountryLandingPage({
   const bodyHtml = page.bodyHtml ? scopeBlogHtml(page.bodyHtml) : null;
   const template = page.template;
   const pageUrl = `${getSiteUrl()}/${country}/${lang}/health/${slug}`;
+  const c = loadLocaleBundle(lang as LocaleCode).common;
 
   let doctors: Awaited<ReturnType<typeof getCountryDoctors>> = [];
   if (template?.doctorLanguage || (template?.doctorSlugs && template.doctorSlugs.length > 0)) {
@@ -155,7 +156,7 @@ export default async function CountryLandingPage({
           ) : null}
           <div className="mt-8">
             <Link href={ctaHref} className="gh2-btn-lime inline-flex items-center gap-2">
-              Book a consultation
+              {c.doctorProfile.bookConsultation}
               <ArrowRight className="size-4" aria-hidden />
             </Link>
           </div>
@@ -167,13 +168,13 @@ export default async function CountryLandingPage({
           <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <h2 className="max-w-[20ch] text-[clamp(1.9rem,3.5vw,2.8rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]">
-              Doctors who can help
+              {c.gpPage.doctorsSectionTitle.replace("{country}", config.name)}
             </h2>
             <ul className="mt-10 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {doctors.map((d) => (
                 <li key={d.id}>
                   <DoctorCard
-                    cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode).common.doctors)}
+                    cardI18n={doctorCardI18n(c.doctors)}
                     name={d.fullName}
                     title={d.title}
                     bio={d.bio ?? ""}
@@ -195,7 +196,7 @@ export default async function CountryLandingPage({
                 href={`/${country}/${lang}/doctors?lang=${encodeURIComponent(template.doctorLanguage)}`}
                 className="mt-6 inline-block text-[14px] font-semibold text-[var(--color-brand-accent)] underline underline-offset-2"
               >
-                See all {template.doctorLanguage}-speaking doctors
+                {c.healthPage.seeAllLanguageDoctors.replace("{language}", template.doctorLanguage)}
               </Link>
             ) : null}
           </div>
@@ -203,7 +204,7 @@ export default async function CountryLandingPage({
       ) : null}
 
       {page.faq && page.faq.length > 0 ? (
-        <FAQSection title="Frequently asked questions" items={page.faq} theme="light" />
+        <FAQSection title={c.serviceDetailPage.faqTitle} items={page.faq} theme="light" />
       ) : null}
 
       {template?.related && template.related.length > 0 ? (
@@ -211,7 +212,7 @@ export default async function CountryLandingPage({
           <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <h2 className="text-[clamp(1.2rem,2vw,1.6rem)] font-bold tracking-[-0.02em] text-[var(--color-text-primary)]">
-              You might also need
+              {c.serviceDetailPage.relatedTopicsTitle}
             </h2>
             <ul className="mt-4 space-y-2">
               {template.related.map((item, idx) => (
@@ -237,7 +238,7 @@ export default async function CountryLandingPage({
           <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
-                Ready when you are
+                {c.serviceDetailPage.readyEyebrow}
               </p>
               <h2 className="mt-5 max-w-[18ch] text-[clamp(2rem,4vw,3.4rem)] font-extrabold leading-[1.0] tracking-[-0.035em] text-white/95">
                 {page.title}
@@ -245,7 +246,7 @@ export default async function CountryLandingPage({
             </div>
             <div className="flex lg:justify-end">
               <Link href={ctaHref} className="gh2-btn-lime gh-focus-on-dark">
-                Book a consultation
+                {c.doctorProfile.bookConsultation}
                 <ArrowRight className="size-4" aria-hidden />
               </Link>
             </div>

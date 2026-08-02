@@ -144,6 +144,7 @@
     "viewProfile": "Zobrazit profil",
     "bookAppointment": "Rezervovat konzultaci",
     "pickTime": "Vybrat čas",
+    "languagesLabel": "Jazyky",
     "bookWithTemplate": "Rezervovat s {name}",
     "viewDoctors": "Zobrazit lékaře",
     "trustCard1Title": "Licencováno v {country}",
@@ -849,5 +850,13 @@
   },
   "doctify": {
     "body": "Nezávislá ověřená hodnocení, která Doctify sbírá od pacientů ošetřených našimi lékaři."
+  },
+  "linkCallout": {
+    "entry": "Začněte zde",
+    "referral": "Další krok",
+    "complementary": "Související péče"
+  },
+  "healthPage": {
+    "seeAllLanguageDoctors": "Zobrazit všechny lékaře, kteří mluví jazykem {language}"
   }
 }
