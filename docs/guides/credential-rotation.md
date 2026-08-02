@@ -6,6 +6,11 @@ All items below must be done in Railway dashboard + local `.env` update.
 Credentials were potentially exposed in dev `.env` files shared with local
 developers who pointed at the production Railway DB.
 
+**2026-08-02**: production Postgres password was pasted in plaintext into an
+agent chat session to run the `DoctorCrossBorderRxCountry` FK migration (see
+[doctor-cross-border-rx-country-fk-drift.md](doctor-cross-border-rx-country-fk-drift.md)).
+Another reason the Postgres password rotation below isn't optional.
+
 ---
 
 ## Railway dashboard (https://railway.app → project settings)
