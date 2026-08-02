@@ -88,41 +88,42 @@ Two iteration lessons surfaced while building these fixtures, both now baked int
 
 ## Findings
 
-### Finding S-031: Admin invoice search/lookup reads a patient's tax ID with no medical-access guard
+### Finding S-031: Admin invoice search/lookup reads a patient's tax ID with no medical-access guard — **FIXED 2026-08-02**
 
 - **Severity:** High
 - **Category:** authorization / PHI access control
 - **Affected files:** `backend/src/routes/admin-invoices.route.ts:209-213, 514-517`
 - **Problem:** `taxIdNumber` (one of four AES-256-GCM `PHI_ENCRYPTED_FIELDS`) is searched via `contains` and read via direct lookup by an authenticated ADMIN, with no `guardMedicalRead` call — no confidentiality check, no consent-level enforcement, no `MedicalAccessLog` audit row for this specific read.
 - **Why it is dangerous:** Government tax ID is exactly the class of field the guard exists to protect; this route lets any authenticated admin search across all patients' tax IDs with zero audit trail of who looked up whose ID and why.
-- **Safe fix:** Wrap both reads in `guardMedicalRead` with `resourceType: "SENSITIVE_PROFILE"` (or a new dedicated resource type), or — if this is judged low-risk enough for invoice-generation purposes — explicitly document and suppress with a written justification matching the pattern used elsewhere in this file for genuinely narrow ID-resolution reads.
-- **Difficulty:** Medium (requires resolving the actor identity from `verifyAdminAccess` into the guard's expected `GuardActor` shape, matching the pattern in `admin-patient-profile.route.ts`)
-- **Production urgency:** Should fix soon
-- **Priority:** P1
+- **Resolution (2026-08-02):** Split into two distinct fixes, since the flagged code is two structurally different reads:
+  - **Single-invoice lookup (line ~514):** now wrapped in `guardMedicalRead` with `resourceType: "SENSITIVE_PROFILE"`, `accessAction: "VIEWED"`, matching the exact pattern in `admin-patient-profile.route.ts:229`. Break-glass reason resolution (`x-phi-reason`/`gh_phi_reason`) is automatic — no per-route threading needed.
+  - **Fan-out search (line ~209, up to 200 rows):** the guard is designed for one-resource-at-a-time access, not bulk search — per-row guarding would be slow and is the wrong tool. Instead, the search itself is now logged as one `recordAudit` event (new `AuditAction.PATIENT_TAX_ID_SEARCHED` enum value, additive migration `20260802040127_add_patient_tax_id_searched_audit_action`), logging the actor and search-term *length* only — never the raw tax ID or which patients matched.
+  - `backend/src/routes/admin-patient-profile.route.ts:399` had the identical unguarded search pattern — flagged as a follow-up task, and now fixed the same way: the search's `recordAudit` call with `action: "PATIENT_TAX_ID_SEARCHED"` sits right after the query (line ~430-443), logging actor + search-term length + match count, never the raw term or which patients matched.
+- **Verification:** `backend/src/routes/authz-matrix.test.ts` — "S-031 fix" tests confirm an admin can still read (200) and that a `MedicalAccessLog` row is now written where previously none was.
+- **Difficulty:** Medium (as predicted)
+- **Priority:** P1 → resolved
 
-### Finding S-032: Doctor patient-documents route reads four PHI models with no medical-access guard
+### Finding S-032: Doctor patient-documents route reads four PHI models with no medical-access guard — **FIXED 2026-08-02**
 
 - **Severity:** High
 - **Category:** authorization / PHI access control
 - **Affected files:** `backend/src/routes/doctor-patient-documents.route.ts:48, 53, 91, 105`
 - **Problem:** `verifyDoctorAccess` authenticates the caller, but none of the `patientProfile`, `medicalDocument`, `appointmentDocument`, or `generatedDocument` reads that follow call `guardMedicalRead`.
 - **Why it is dangerous:** This is the exact S-005 pattern from the prior audit — a doctor route authenticated but not authorized for the specific patient record, bypassing confidentiality/consent/country-scope checks and leaving no `MedicalAccessLog` trail.
-- **Safe fix:** Add `guardMedicalRead` calls matching the pattern already used correctly in `doctor-patient-profile.route.ts` in the same directory.
-- **Difficulty:** Medium
-- **Production urgency:** Should fix soon
-- **Priority:** P1
+- **Resolution (2026-08-02):** One `guardMedicalRead` call added right after the existing `patientProfile` lookup, covering all four reads that follow (`resourceType: "MEDICAL_DOC"`). Note this handler already bounces any non-ADMIN role before reaching the guard (`if (auth.role !== "ADMIN") return 403`), so the only caller who ever exercises this guard call is an ADMIN with a linked Doctor profile — the guard's ADMIN branch is close to unconditional unless `ADMIN_PHI_REQUIRE_REASON` is on, so the fix's main observable effect is that a `MedicalAccessLog` row is now written for a read that previously wrote none at all.
+- **Verification:** `authz-matrix.test.ts` — "S-032 fix" tests confirm regression-safe reads (200), a new `MedicalAccessLog` row, and a real 403 when `ADMIN_PHI_REQUIRE_REASON` is forced on with no reason supplied.
+- **Difficulty:** Medium (as predicted)
+- **Priority:** P1 → resolved
 
-### Finding S-033: Patient-upload route (doctor/admin side) reads PHI with no medical-access guard
+### Finding S-033: Patient-upload route (doctor/admin side) reads PHI with no medical-access guard — **RECLASSIFIED 2026-08-02: false positive**
 
-- **Severity:** High
-- **Category:** authorization / PHI access control
+- **Severity:** ~~High~~ N/A
+- **Category:** ~~authorization / PHI access control~~ Semgrep false positive
 - **Affected files:** `backend/src/routes/patient-upload.route.ts:51, 133`
-- **Problem:** Same pattern as S-032 — `verifyDoctorAccess`/`verifyAdminAccess` authenticate, but the `patientProfile` and `generatedDocument` reads that follow have no `guardMedicalRead` call.
-- **Why it is dangerous:** Same as S-032.
-- **Safe fix:** Same as S-032.
-- **Difficulty:** Medium
-- **Production urgency:** Should fix soon
-- **Priority:** P1
+- **Original problem statement (incorrect):** "Same pattern as S-032 — `verifyDoctorAccess`/`verifyAdminAccess` authenticate, but the `patientProfile` and `generatedDocument` reads that follow have no `guardMedicalRead` call."
+- **Why this was wrong:** Deeper investigation (2026-08-02) found both flagged lines are inside `/api/public/patient-upload` — a public, single-use **capability-token** flow (`verifyPatientUploadToken`), not a staff-authenticated route at all. There is no `verifyDoctorAccess`/`verifyAdminAccess` anywhere in either handler, and no session-bound actor to construct a `GuardActor` from. The token — minted by a doctor, single-use, scoped to a specific appointment/email — is the authorization mechanism here, structurally different from the session-based medical-access guard `gh-phi-route-missing-guard` checks for.
+- **Resolution:** No code/behavior change. Both flagged lines now carry `// nosemgrep: gh-phi-route-missing-guard` with this reasoning, so future scans don't re-flag a route that was never actually guardable this way.
+- **Priority:** Closed, no further action.
 
 ### Finding S-034: Admin chat surface reimplements admin authorization instead of using the centralized gate
 

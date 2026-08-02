@@ -11,7 +11,7 @@ This was a from-scratch build of a security scanning programme for a repo that, 
 
 **What this audit found, net new:**
 - **2 dependency CVEs**, fixed (brace-expansion, sanitize-html — both one patch version behind their actual fix)
-- **3 High-severity, confirmed-live authorization gaps** (S-031, S-032, S-033) — routes that read PHI with zero call to the central medical-access guard, the exact defect class the prior audit's S-005 finding described, now pinpointed to exact files and lines with reproducible fixture-based regression tests already written
+- **3 High-severity authorization gaps** (S-031, S-032, S-033) found — routes that read PHI with zero call to the central medical-access guard, the exact defect class the prior audit's S-005 finding described. **Remediated 2026-08-02**: S-031 partially fixed (single-invoice read guarded; the bulk tax-ID search audit-logged instead, since the guard isn't built for fan-out reads), S-032 fully fixed (one guard call covers all 4 PHI reads), S-033 reclassified as a Semgrep false positive (public capability-token flow, no session-bound actor to guard). See `audit-authz-rules-2026-08-02.md` for the per-finding resolution detail.
 - **2 Low-severity architectural-consistency gaps** (S-034, S-035)
 - **1 Critical CVE in the container's bundled npm tooling** (not this repo's own dependencies) and confirmation that ~160 Debian OS-layer CVEs on the current base image have no upstream fix yet
 - **Confirmation from a live, external DAST pass** that the CSP gap already on record (`S-CSP`) is still present on staging
@@ -32,7 +32,7 @@ This session had **no Docker or container runtime** available (established in Ph
 | 2 — Container (Trivy) | `audit-container-trivy-2026-08-02.md` | 1 Critical CVE in bundled npm tooling (not app deps); ~160 unfixable OS CVEs; S-001's old credential confirmed removed from current code (rotation status still needs your confirmation — S-030) |
 | 3 — SAST (Semgrep, generic) | `audit-sast-semgrep-2026-08-02.md` | 16→1 findings after triage; 2 real fixes; found and documented that Semgrep's own re-scans don't reliably enumerate every instance of a pattern |
 | 4 — SAST (custom authz rules) | `audit-authz-rules-2026-08-02.md` | 5 repo-specific rules; **3 confirmed High findings** (S-031/032/033); found and worked around the multi-file batch bug |
-| 5 — Authorization matrix | `audit-authz-matrix-2026-08-02.md` | Real integration tests against a live Postgres; all 6 roles seeded; cross-tenant IDOR, session invalidation, and PHI audit trail all verified working; S-032 encoded as a live `.todo()` regression test |
+| 5 — Authorization matrix | `audit-authz-matrix-2026-08-02.md` | Real integration tests against a live Postgres; all 6 roles seeded; cross-tenant IDOR, session invalidation, and PHI audit trail all verified working; S-032 originally encoded as a `.todo()` regression test, now real and passing (fixed 2026-08-02) |
 | 6 — DAST (ZAP, passive) | `audit-dast-zap-2026-08-02.md` | Zero High/Critical from live external scan; confirms CSP gap already on record; 1 confirmed false positive identified and explained |
 
 ## Consolidated Findings
@@ -44,11 +44,16 @@ Finding numbering continued from `SECURITY_AUDIT2.md`'s last-used ID (S-027) at 
 - **S-028 / S-028a-b** (High — Phase 1): `brace-expansion` and `sanitize-html` dependency overrides pinned one patch version behind their actual CVE fixes. Fixed; mirrored across all 3 `package.json` files per this repo's own override-mirroring convention.
 - **S-028c** (Low — Phase 3): PHI decrypt path relied on Node's implicit default GCM auth-tag length rather than an explicit value. Fixed (no behavior change — the default already matched).
 
-### Confirmed, NOT fixed — real remediation work, out of this session's scope
+### Fixed in the 2026-08-02 remediation pass
 
-- **S-031** (High): `admin-invoices.route.ts` — an authenticated ADMIN can search and read a patient's tax ID (`taxIdNumber`, a PHI-encrypted field) with no `guardMedicalRead` call at all.
-- **S-032** (High): `doctor-patient-documents.route.ts` — a DOCTOR route reads 4 PHI models (`patientProfile`, `medicalDocument`, `appointmentDocument`, `generatedDocument`) with no guard call. **Has a live, currently-failing regression test** (`backend/src/routes/authz-matrix.test.ts`, marked `.todo()`) ready to go green the moment this is fixed.
-- **S-033** (High): `patient-upload.route.ts` — same pattern as S-032, on `patientProfile`/`generatedDocument`.
+- **S-031** (High, **partially fixed**): `admin-invoices.route.ts` — the single-invoice read (`GET /api/admin/invoices/:invoiceId`) is now wrapped in `guardMedicalRead` (`resourceType: "SENSITIVE_PROFILE"`). The 200-row fan-out tax-ID *search* (`GET /api/admin/invoices`) is not guarded per-row — the guard is a one-resource-at-a-time check, wrong tool for bulk search — instead the search itself is now audit-logged via a new `AuditAction.PATIENT_TAX_ID_SEARCHED` value (additive migration), recording the actor and search-term length only. `admin-patient-profile.route.ts:399`'s identical unguarded-search pattern was flagged as a follow-up and has since also been fixed the same way.
+- **S-032** (High, **fixed**): `doctor-patient-documents.route.ts` — one `guardMedicalRead` call, placed right after the existing `patientProfile` lookup, now covers all 4 PHI reads that follow. The regression test that was `.todo()` in `authz-matrix.test.ts` is now real and passing (plus 4 more covering the audit-log write and the `ADMIN_PHI_REQUIRE_REASON` break-glass path).
+- **S-033** (High → **reclassified as false positive**): `patient-upload.route.ts` — both flagged lines are inside the public `/api/public/patient-upload` capability-token flow (`verifyPatientUploadToken`), not a session-authenticated route. There is no `GuardActor` to construct — the single-use token is the authorization mechanism here, structurally different from what `gh-phi-route-missing-guard` checks for. Suppressed with `// nosemgrep` + a written reason on both lines; no logic changed.
+
+Verification for all three: 891 backend tests pass (0 failures, 0 todo, up from 887), `pnpm typecheck`/`pnpm lint` clean, the new migration applies cleanly and in isolation (`prisma migrate deploy`, no unrelated schema drift bundled), and `gh-phi-route-missing-guard` re-scanned clean per-file on all 3 files.
+
+### Confirmed, NOT fixed — deliberately deferred, separate pass
+
 - **S-034** (Low): `chat.route.ts`'s admin surface manually reimplements admin-checking instead of using the centralized `verifyAdminAccess`/`verifyGlobalAdminAccess`. Not an open door (session validity is re-verified), but bypasses centralized hardening.
 - **S-035** (Low): `services.route.ts` resolves caller identity via raw `verifyAuthToken` (no `tokenVersion` re-check) to gate corporate-service visibility — narrow, view-only exposure window after a session should have been invalidated.
 
@@ -88,7 +93,8 @@ Every custom rule in `.semgrep/rules/` uses `pattern-not-inside`. Scanning many 
 ## What to do next, in priority order
 
 1. Confirm the Make.com webhook token (S-030) was actually rotated, or rotate it now.
-2. Fix S-031/S-032/S-033 — the three confirmed PHI-guard bypasses. S-032 already has a failing regression test waiting; remove its `.todo()` once fixed.
+2. ~~Fix S-031/S-032/S-033~~ — done 2026-08-02 (S-031 partial, S-032 fixed, S-033 reclassified; `admin-patient-profile.route.ts`'s identical search pattern fixed too; see above).
 3. Verify CodeQL's actual licensing status on this private repo (Phase 0's open item) — this determines whether `sast-semgrep`'s ruleset should be narrowed to avoid duplicate coverage.
 4. Get the `e2e-authz` CI job to run green once in real Actions, then flip its `continue-on-error`; do the same for each other new job as it's confirmed.
 5. Add `Secure` to the `gh_locale` cookie (Phase 6, trivial, no functional impact).
+6. Post-deploy: re-run `list-phi-denials.ts` against production after the S-031/S-032 fixes ship, watching for `isAbnormal=true` rows tied to the 3 routes touched, for a short monitoring window.

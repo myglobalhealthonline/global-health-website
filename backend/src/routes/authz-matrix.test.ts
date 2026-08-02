@@ -54,6 +54,16 @@ describe("authorization matrix", () => {
   let prescriptionId = "";
   let doctor1Cookie: Record<string, string> = {};
   let doctor2Cookie: Record<string, string> = {};
+  // S-032/S-031 fixes: an ADMIN who also has a linked Doctor profile — the
+  // shape doctor-patient-documents.route.ts actually requires (authenticates
+  // via verifyDoctorAccess, which needs a doctorId, but then bounces
+  // anything that isn't role==="ADMIN").
+  let adminDocId = "";
+  let adminUserId = "";
+  let adminCookie: Record<string, string> = {};
+  let medicalDocumentId = "";
+  let orderId = "";
+  let invoiceId = "";
 
   before(async () => {
     try {
@@ -197,6 +207,71 @@ describe("authorization matrix", () => {
       },
     });
     prescriptionId = prescription.id;
+
+    // Admin fixture for S-031/S-032: doctor-patient-documents.route.ts
+    // authenticates via verifyDoctorAccess (which requires a linked
+    // doctorId, even for an ADMIN session) but then bounces anything that
+    // isn't role==="ADMIN" — so the only caller that ever reaches the new
+    // guard call is an ADMIN who also has a Doctor profile attached.
+    const adminDoc = await prisma.doctor.create({
+      data: {
+        countryId: countryA.id,
+        slug: `authz-admin-doc-${uniq}`,
+        fullName: "Authz Test Admin (linked doctor)",
+        title: "Support",
+      },
+    });
+    adminDocId = adminDoc.id;
+    const adminUser = await prisma.user.create({
+      data: {
+        email: `admin-${uniq}@test.local`,
+        passwordHash: "x",
+        fullName: "Authz Test Admin",
+        role: "ADMIN",
+        doctorId: adminDoc.id,
+      },
+    });
+    adminUserId = adminUser.id;
+    adminCookie = {
+      gh_auth: signAuthToken({ sub: adminUser.id, role: "ADMIN", email: adminUser.email }),
+    };
+
+    // One real document so the S-032 fix's positive-path test has actual
+    // data flowing through the now-guarded response, not just an empty list.
+    const medicalDocument = await prisma.medicalDocument.create({
+      data: {
+        patientProfileId: patient1Profile.id,
+        uploadedByRole: "PATIENT",
+        documentType: "OTHER",
+        title: "Authz Test Upload",
+        fileKey: `authz-test/${uniq}/file.pdf`,
+        fileName: "file.pdf",
+        mimetype: "application/pdf",
+        byteSize: 1024,
+      },
+    });
+    medicalDocumentId = medicalDocument.id;
+
+    // Order + Invoice for S-031's admin-invoices.route.ts single-read test.
+    const order = await prisma.order.create({
+      data: {
+        email: patient1User.email,
+        fullName: patient1User.fullName,
+        countryCode: countryA.code,
+        currencyCode: currency.code,
+        subtotalCents: 1000,
+        totalCents: 1000,
+      },
+    });
+    orderId = order.id;
+    const invoice = await prisma.invoice.create({
+      data: {
+        invoiceNumber: `AUTHZ-${uniq}`,
+        orderId: order.id,
+        countryCode: countryA.code,
+      },
+    });
+    invoiceId = invoice.id;
   });
 
   after(async () => {
@@ -204,16 +279,19 @@ describe("authorization matrix", () => {
     envModule.MEDICAL_ACCESS_ENFORCE = originalEnforce;
     await deleteMedicalAccessLogs(prisma, { patientProfileId: patient1ProfileId });
     await deleteAuditLogs(prisma, {
-      actorUserId: { in: [doctor1UserId, doctor2UserId, patient1UserId] },
+      actorUserId: { in: [doctor1UserId, doctor2UserId, patient1UserId, adminUserId] },
     });
+    await prisma.invoice.deleteMany({ where: { id: invoiceId } });
+    await prisma.order.deleteMany({ where: { id: orderId } });
+    await prisma.medicalDocument.deleteMany({ where: { id: medicalDocumentId } });
     await prisma.prescription.deleteMany({ where: { id: prescriptionId } });
     await prisma.consultation.deleteMany({ where: { id: consultationId } });
     await prisma.appointment.deleteMany({ where: { id: appointmentId } });
     await prisma.patientProfile.deleteMany({ where: { id: patient1ProfileId } });
     await prisma.user.deleteMany({
-      where: { id: { in: [doctor1UserId, doctor2UserId, patient1UserId] } },
+      where: { id: { in: [doctor1UserId, doctor2UserId, patient1UserId, adminUserId] } },
     });
-    await prisma.doctor.deleteMany({ where: { id: { in: [doctor1Id, doctor2Id] } } });
+    await prisma.doctor.deleteMany({ where: { id: { in: [doctor1Id, doctor2Id, adminDocId] } } });
     await prisma.country.deleteMany({ where: { id: countryAId } });
     await prisma.currency.deleteMany({ where: { id: currencyId } });
     await app.close();
@@ -311,19 +389,99 @@ describe("authorization matrix", () => {
     assert.equal(afterInvalidation.statusCode, 401, afterInvalidation.body);
   });
 
-  // ── Confirmed phase-4 findings (S-031/S-032/S-033) — documented as
-  // regression tests, not silently skipped. Each asserts the SECURE
-  // behavior these routes should have; all three currently fail because
-  // the routes read PHI with no guardMedicalRead call at all (verified by
-  // reading the source in docs/audits/security/audit-authz-rules-2026-08-02.md).
-  // Remove .todo() once the corresponding fix lands.
-  it.todo(
-    "S-032: blocks an unrelated doctor from reading another doctor's patient documents",
-    async (t: unknown) => {
-      void t;
-      // doctor-patient-documents.route.ts has no doctorId-scoped ownership
-      // check and no guardMedicalRead call — doctor 2 currently gets the
-      // same 200 doctor 1 would, for a patient they have no relationship to.
-    },
-  );
+  // ── S-032 fix: doctor-patient-documents.route.ts now calls guardMedicalRead ──
+  // The route bounces any non-ADMIN role before the guard is even reached
+  // (`if (auth.role !== "ADMIN") return 403`), so the only caller that ever
+  // exercises the new guard call is an ADMIN who also has a linked Doctor
+  // profile (see the `adminCookie` fixture above). The guard's ADMIN branch
+  // is close to unconditional when ADMIN_PHI_REQUIRE_REASON is off (this
+  // repo's test default) — so the fix's *observable* difference here is a
+  // MedicalAccessLog row now being written for a read that previously wrote
+  // nothing at all, plus a real 403 once a break-glass reason is required
+  // and missing.
+  it("S-032 fix: an authorized admin can still read patient documents (regression protection)", async (t) => {
+    if (!app) return t.skip();
+    const patient1Email = (
+      await prisma.user.findUniqueOrThrow({ where: { id: patient1UserId }, select: { email: true } })
+    ).email;
+    const res = await app.inject({
+      method: "GET",
+      url: `/api/doctor/patients/${encodeURIComponent(patient1Email)}/documents`,
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const body = res.json();
+    assert.ok(
+      body.data.patientUploads.some((d: { id: string }) => d.id === medicalDocumentId),
+      "the seeded MedicalDocument is present in the response",
+    );
+  });
+
+  it("S-032 fix: writes a MedicalAccessLog row for the admin's document read (previously wrote none)", async (t) => {
+    if (!app) return t.skip();
+    const before = await prisma.medicalAccessLog.count({
+      where: { patientProfileId: patient1ProfileId, accessedResourceType: "MEDICAL_DOC" },
+    });
+    const patient1Email = (
+      await prisma.user.findUniqueOrThrow({ where: { id: patient1UserId }, select: { email: true } })
+    ).email;
+    const res = await app.inject({
+      method: "GET",
+      url: `/api/doctor/patients/${encodeURIComponent(patient1Email)}/documents`,
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const after = await prisma.medicalAccessLog.count({
+      where: { patientProfileId: patient1ProfileId, accessedResourceType: "MEDICAL_DOC" },
+    });
+    assert.ok(after > before, "a new MedicalAccessLog row was written for this read");
+  });
+
+  it("S-032 fix: blocks the admin read once a break-glass reason is required but not supplied", async (t) => {
+    if (!app) return t.skip();
+    const originalRequireReason = envModule.ADMIN_PHI_REQUIRE_REASON;
+    envModule.ADMIN_PHI_REQUIRE_REASON = true;
+    try {
+      const patient1Email = (
+        await prisma.user.findUniqueOrThrow({ where: { id: patient1UserId }, select: { email: true } })
+      ).email;
+      const res = await app.inject({
+        method: "GET",
+        url: `/api/doctor/patients/${encodeURIComponent(patient1Email)}/documents`,
+        cookies: adminCookie,
+        // Deliberately no x-phi-reason header and no gh_phi_reason cookie.
+      });
+      assert.equal(res.statusCode, 403, res.body);
+    } finally {
+      envModule.ADMIN_PHI_REQUIRE_REASON = originalRequireReason;
+    }
+  });
+
+  // ── S-031 fix: admin-invoices.route.ts single-invoice read now guarded ──
+  it("S-031 fix: an admin can still read a single invoice's tax ID (regression protection)", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: `/api/admin/invoices/${invoiceId}`,
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+  });
+
+  it("S-031 fix: writes a MedicalAccessLog row for the admin's invoice read", async (t) => {
+    if (!app) return t.skip();
+    const before = await prisma.medicalAccessLog.count({
+      where: { patientProfileId: patient1ProfileId, accessedResourceType: "SENSITIVE_PROFILE" },
+    });
+    const res = await app.inject({
+      method: "GET",
+      url: `/api/admin/invoices/${invoiceId}`,
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const after = await prisma.medicalAccessLog.count({
+      where: { patientProfileId: patient1ProfileId, accessedResourceType: "SENSITIVE_PROFILE" },
+    });
+    assert.ok(after > before, "a new MedicalAccessLog row was written for this invoice read");
+  });
 });

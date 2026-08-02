@@ -226,6 +226,12 @@ enum AuditAction {
   /// markets. Audited like DOCTOR_BANK_VIEWED because it is a cross-doctor
   /// read of patient names, not a mutation.
   COUNTRY_CONSULTATIONS_VIEWED
+  /// An admin ran a fiscal/tax-ID search across all patients (S-031). Audited
+  /// like COUNTRY_CONSULTATIONS_VIEWED because it is a cross-patient read, not
+  /// a mutation — the search term itself is never logged, only that a search
+  /// occurred (the medical-access guard is not used here: this is a 200-row
+  /// fan-out search, not a single-resource read).
+  PATIENT_TAX_ID_SEARCHED
   DOCTOR_PROFILE_CHANGE_REQUESTED
   DOCTOR_PROFILE_CHANGE_CANCELLED
   DOCTOR_PROFILE_CHANGE_REVIEWED

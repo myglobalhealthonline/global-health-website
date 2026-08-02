@@ -427,6 +427,22 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         prisma.patientProfile.count({ where }),
       ]);
 
+      if (taxId) {
+        // S-031: fan-out search across every patient's tax ID — log the
+        // search itself (who, and that a match attempt happened), never the
+        // raw search term (only its length) or which patients matched.
+        // Fire-and-forget: a missing audit row must never fail the search.
+        recordAudit({
+          actorUserId: actor?.userId ?? null,
+          actorRole: actor?.role ?? "ADMIN",
+          action: "PATIENT_TAX_ID_SEARCHED",
+          entityType: "PatientProfile",
+          entityId: "*",
+          metadata: { searchTermLength: taxId.length, matchCount: total },
+          request,
+        });
+      }
+
       return okResponse({ items, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
     } catch (error) {
       app.log.error(error);
