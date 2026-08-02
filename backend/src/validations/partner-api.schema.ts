@@ -58,7 +58,22 @@ export const partnerCreateBookingBodySchema = z
         /^\+[1-9]\d{0,3}[\s-]?\d{6,14}$/,
         "Phone must include a country code, e.g. +353 871234567",
       ),
-    dateOfBirth: z.string().trim().max(40).optional().nullable(),
+    /**
+     * `YYYY-MM-DD` preferred, but never a reason to reject a booking. A
+     * blank value, or the literal text "null"/"undefined" from a caller that
+     * stringified its own null, normalises to absent here; anything else
+     * unparseable is dropped downstream. DOB is recorded for the clinician,
+     * not used by pricing, scheduling or payment.
+     */
+    dateOfBirth: z
+      .string()
+      .trim()
+      .max(40)
+      .optional()
+      .nullable()
+      .transform((value) =>
+        !value || /^(null|undefined)$/i.test(value) ? null : value,
+      ),
     /**
      * Fiscal / taxpayer number, whatever the market calls it — NIF in
      * Portugal and Spain, CPF in Brazil, PPS in Ireland, CNP in Romania,

@@ -118,7 +118,23 @@ function publicCsp(): string {
     // rendering, with nothing surfaced outside the console.
     // Microsoft Clarity loads its recorder from www.clarity.ms/tag/<id>; the
     // wildcard covers the CDN subdomains that tag pulls from.
-    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms",
+    // The ElevenLabs convai widget is loaded from unpkg
+    // (components/integrations/ElevenLabsConvai.tsx). Like Doctify's loader it
+    // renders INTO our DOM (a custom element with a shadow root), so its own
+    // fetches hit this policy rather than an iframe's — see connect-src/
+    // media-src below. Omitting the host fails silently: the custom element
+    // stays undefined and NOTHING renders, no visible error.
+    //
+    // `blob:` is there for the same widget's AudioWorklet: it builds its
+    // rawAudioProcessor worklet from a Blob URL, and a worklet module fetch is
+    // checked against script-src (worker-src does not cover it). Without it the
+    // launcher renders and looks fine until someone starts a call, which then
+    // fails with "Failed to load the rawAudioProcessor worklet module … you may
+    // need to self-host the worklet files". Loosening: any blob: script may
+    // execute on PUBLIC pages, which already carry 'unsafe-inline' — so this
+    // grants an attacker with script execution nothing new. The portal policy
+    // (nonceCsp, where PHI lives) is deliberately NOT given blob:.
+    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms https://unpkg.com blob:",
     // Tailwind + CMS emit inline <style>; keep permissive (style injection is
     // low value to an attacker relative to the breakage risk).
     "style-src 'self' 'unsafe-inline'",
@@ -153,9 +169,19 @@ function publicCsp(): string {
     // bug to fix by adding the host. (Note img-src is already `https:`, so a
     // pixel-shaped beacon cannot be blocked by CSP at all; the real control is
     // ad_Storage:"denied" via consentv2 in MicrosoftClarity.tsx.)
-    `connect-src 'self' https://*.doctify.com https://connect.facebook.net https://www.facebook.com https://www.googletagmanager.com https://*.google-analytics.com https://region1.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://*.clarity.ms${media}`,
-    // Doctify rating strips render in <iframe> from doctify.com.
-    "frame-src 'self' https://*.doctify.com",
+    // ElevenLabs convai: the widget fetches its agent config over https and
+    // then runs the conversation itself over a socket — api.elevenlabs.io for
+    // both, plus the LiveKit cloud edge the WebRTC transport dials. wss: is
+    // listed explicitly because connect-src does NOT treat a wss:// URL as
+    // covered by its https:// host entry.
+    `connect-src 'self' https://*.doctify.com https://connect.facebook.net https://www.facebook.com https://www.googletagmanager.com https://*.google-analytics.com https://region1.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://*.clarity.ms https://api.elevenlabs.io https://*.elevenlabs.io wss://api.elevenlabs.io wss://*.elevenlabs.io https://*.livekit.cloud wss://*.livekit.cloud${media}`,
+    // The widget plays agent speech from a MediaStream / Blob URL. Without an
+    // explicit media-src this fell back to default-src 'self', which blocks
+    // blob: audio — the widget would open, listen, and then be mute.
+    "media-src 'self' blob: data: https://*.elevenlabs.io",
+    // Doctify rating strips render in <iframe> from doctify.com; convai renders
+    // in-page, but some widget builds isolate the session in an iframe.
+    "frame-src 'self' https://*.doctify.com https://*.elevenlabs.io",
     `form-action 'self'${media}`,
     CSP_BASE,
   ].join("; ");

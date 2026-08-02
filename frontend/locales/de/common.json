@@ -185,7 +185,7 @@
     "marketingTitle": "Werbung",
     "marketingBody": "Meta Pixel — zeigt uns, welche Anzeigen Patienten zu uns bringen.",
     "thirdPartyTitle": "Inhalte von Drittanbietern",
-    "thirdPartyBody": "Doctify-Widgets mit Patientenbewertungen, eingebettet von doctify.com.",
+    "thirdPartyBody": "Doctify-Widgets mit Patientenbewertungen (doctify.com) und der ElevenLabs-Sprachassistent (elevenlabs.io) — der Assistent nutzt Ihr Mikrofon nur, während Sie mit ihm sprechen.",
     "analyticsTitle": "Analyse — anonyme Nutzungsstatistiken",
     "analyticsBody": "Google Analytics und Microsoft Clarity (Sitzungsaufzeichnung) — zeigen uns, welche Seiten nützlich sind und wo die Website verwirrend ist. Seitenadressen werden um alles bereinigt, was Sie identifizieren könnte, und keines von beiden läuft auf Buchungs-, Warenkorb-, Kassen-, Upload- oder Verifizierungsseiten.",
     "settingsLink": "Cookie-Einstellungen",

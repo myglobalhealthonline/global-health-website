@@ -111,6 +111,17 @@ export type AdminPlanPreview = {
   plan: AdminPlanDetail;
 };
 
+export type AdminSubscriptionInvoice = {
+  id: string;
+  number: string | null;
+  amountPaidCents: number;
+  currency: string;
+  periodStart: string | null;
+  status: string | null;
+  hostedInvoiceUrl: string | null;
+  createdAt: string;
+};
+
 export type AdminSubscriptionListItem = {
   id: string;
   userId: string;
@@ -118,12 +129,30 @@ export type AdminSubscriptionListItem = {
   countryCode: string;
   status: SubscriptionStatus;
   paidMonthsCount: number;
+  startedAt: string | null;
+  currentPeriodStart: string | null;
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
+  canceledAt: string | null;
+  stripeSubscriptionId: string | null;
+  stripeCustomerId: string | null;
   createdAt: string;
   user: { id: string; email: string; fullName: string | null };
-  plan: { id: string; name: string; slug: string; countryId: string };
+  plan: {
+    id: string;
+    name: string;
+    slug: string;
+    countryId: string;
+    monthlyPriceCents: number;
+    currencyCode: string;
+  };
+  /** Terms captured at subscribe/renewal (D18). The member is billed THIS
+   *  price, which may differ from the plan's current one after an admin edit. */
+  planSnapshot: { monthlyPriceCents?: number; currencyCode?: string } | null;
   balances: Array<{ kind: CreditKind; balance: number }>;
+  perkGrants: Array<{ perkKey: PerkKey; status: "PENDING" | "APPROVED" | "DENIED" | "AUTO" }>;
+  /** Newest first, capped server-side. Mirror rows only — Stripe holds the PDFs. */
+  invoices: AdminSubscriptionInvoice[];
 };
 
 export type AdminPerkGrant = {

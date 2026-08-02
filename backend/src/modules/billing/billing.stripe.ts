@@ -151,9 +151,20 @@ export class StripeBillingPort implements BillingPort {
       // recurring-billing trust line above the subscribe button.
       ...(await checkoutBranding(input.countryCode, "subscription")),
       // SCA + off-session mandate are collected by Checkout in subscription
-      // mode automatically (§38.2). No coupons/trials in v1 (D23).
+      // mode automatically (§38.2). No coupons/trials in v1 (D23) — the only
+      // trial is the legacy-import deferral below, never a promotional one.
       metadata: input.metadata,
-      subscription_data: { metadata: input.metadata },
+      subscription_data: {
+        metadata: input.metadata,
+        ...(input.trialEnd
+          ? { trial_end: Math.floor(input.trialEnd.getTime() / 1000) }
+          : {}),
+      },
+      // With a trial the amount due today is €0, and Checkout's default is to
+      // SKIP card collection for €0 sessions — which would produce a
+      // subscription with no payment method that hard-fails at the first real
+      // invoice. Force collection so the mandate is in place before then.
+      ...(input.trialEnd ? { payment_method_collection: "always" as const } : {}),
     });
     return { url: session.url ?? "", sessionId: session.id };
   }

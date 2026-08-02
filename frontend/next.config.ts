@@ -79,8 +79,15 @@ const SECURITY_HEADERS = [
     value: "max-age=31536000; includeSubDomains; preload",
   },
   {
+    // `microphone=(self)`, NOT `()`: the ElevenLabs convai widget
+    // (components/integrations/ElevenLabsConvai.tsx) calls getUserMedia from our
+    // own document, and `microphone=()` denies it to every origin including
+    // ours — the widget would render and then fail to start a session.
+    // `(self)` grants it to this origin only; cross-origin iframes still get
+    // nothing, so a third-party frame cannot reach the mic. Camera, geolocation
+    // and browsing-topics stay fully denied.
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+    value: "camera=(), microphone=(self), geolocation=(), browsing-topics=()",
   },
 ];
 

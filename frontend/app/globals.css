@@ -3905,6 +3905,65 @@ body.gh-cookie-bar-open {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+ * FLOATING WHATSAPP BUTTON (bottom-LEFT)
+ * ═══════════════════════════════════════════════════════════════
+ * Left corner on purpose: the ElevenLabs convai launcher fixes itself to the
+ * bottom-right from inside its own shadow DOM and can't be moved, so this one
+ * yields the right edge. Same z-layer as the consent bar (--z-fixed-bar); the
+ * mobile bottom offset stays well below the bar's own 6rem so they never
+ * overlap. Solid brand green — no backdrop-filter, so no mobile/@supports
+ * fallback block is needed. */
+.gh-whatsapp-fab {
+  position: fixed;
+  left: 1rem;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: var(--z-fixed-bar);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 999px;
+  background: #25d366;
+  color: #fff;
+  box-shadow:
+    0 8px 24px rgba(37, 211, 102, 0.34),
+    0 2px 6px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+
+.gh-whatsapp-fab:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow:
+    0 12px 30px rgba(37, 211, 102, 0.42),
+    0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.gh-whatsapp-fab:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .gh-whatsapp-fab {
+    left: 1.5rem;
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-whatsapp-fab {
+    transition: none;
+  }
+
+  .gh-whatsapp-fab:hover {
+    transform: none;
+  }
+}
+
 .gh-cookie-title {
   font-size: 1rem;
   font-weight: 700;

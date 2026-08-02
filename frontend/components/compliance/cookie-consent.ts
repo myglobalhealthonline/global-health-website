@@ -5,6 +5,8 @@ import { readCookie, writeCookie, deleteCookie } from "@/lib/utils/cookies";
  *
  *  - `marketing`  → Meta Pixel (components/compliance/MetaPixel.tsx)
  *  - `thirdParty` → Doctify review widgets (components/sections/DoctifyReviews.tsx)
+ *                   and the ElevenLabs voice assistant
+ *                   (components/integrations/ElevenLabsConvai.tsx)
  *  - `analytics`  → Google Analytics (components/compliance/GoogleAnalytics.tsx)
  *
  * "Strictly necessary" (auth session, locale, country) is implied true and
@@ -17,6 +19,12 @@ import { readCookie, writeCookie, deleteCookie } from "@/lib/utils/cookies";
 
 export const CONSENT_COOKIE = "gh-consent";
 /**
+ * v3 → v4 (ElevenLabs voice assistant, 2026-08-02): a NEW PROCESSOR entered the
+ * `thirdParty` category, and a new kind of processing with it — the convai
+ * widget opens a live session to ElevenLabs and captures microphone audio. A
+ * stored `thirdParty: true` was given against copy that named Doctify
+ * review widgets and nothing else, so those visitors are asked again.
+ *
  * v2 → v3 (Microsoft Clarity, 2026-07-28): bumped because the PROCESSING
  * changed, not the schema.
  *
@@ -34,7 +42,7 @@ export const CONSENT_COOKIE = "gh-consent";
  * null, the banner reappears for every returning visitor, and Meta Pixel and
  * Doctify reviews stay dark until each visitor re-consents.
  */
-export const CONSENT_VERSION = 3;
+export const CONSENT_VERSION = 4;
 
 /** Six months, then we ask again. */
 const CONSENT_MAX_AGE = 60 * 60 * 24 * 180;
