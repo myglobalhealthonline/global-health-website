@@ -249,7 +249,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static legal / global pages. `/` is the country entry gate — the domain
   // root, canonical and indexable, so it belongs here at top priority.
   urls.push(
-    { url: `${base}/`, changeFrequency: "monthly", priority: 1 },
+    // No trailing slash: `getPublicUrl("/")` deliberately strips it, so the
+    // gate's own <link rel="canonical"> is the bare origin. Submitting the
+    // slashed form here made the sitemap the one place that disagreed with
+    // the canonical it points at. Google normalises the two, so this is
+    // consistency rather than a bug fix — don't "restore" the slash.
+    { url: base, changeFrequency: "monthly", priority: 1 },
     { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.5 },
