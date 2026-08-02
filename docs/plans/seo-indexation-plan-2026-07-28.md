@@ -232,6 +232,16 @@ point at the new URLs. Outreach work — do **not** buy or build links for a med
   grant looked healthy while every call died on `HTTP 400`. Patched 2026-08-03 to
   attempt the refresh and report the real result. **That file lives in the plugin
   marketplace, outside this repo — a plugin update will revert it.**
+- **GA4 and Clarity collected nothing from 2026-07-28 to 2026-08-03.** Both ids
+  are set on the Railway Frontend service, but `frontend/Dockerfile` only listed
+  three `NEXT_PUBLIC_*` build ARGs — a var missing from that list is not a
+  runtime fallback, it compiles to `""` and the component renders `null` before
+  consent is ever consulted. Confirmed in the served bundle: `NEXT_PUBLIC_SITE_URL`
+  had been substituted for its literal, while `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+  survived as a `process.env` lookup that is `undefined` in the browser. Fixed by
+  adding both ARGs. **The 4 days of GA4 data (07-25 → 07-28, 24 organic sessions)
+  are the entire dataset** — do not read the gap as a traffic collapse, and expect
+  the post-fix baseline to restart from zero history.
 - Two `next dev` processes cannot share `frontend/.next`, and `frontend/package.json`
   hardcodes `next dev -p 3000`. If another session holds the port, local preview will
   die instantly on start.
