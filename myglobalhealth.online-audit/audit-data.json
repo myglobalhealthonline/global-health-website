@@ -1,0 +1,427 @@
+{
+  "summary": {
+    "health_score": 69,
+    "business_type": "Multi-market healthcare service (YMYL telemedicine) — 6 countries x 6 locales",
+    "url": "https://www.myglobalhealth.online",
+    "audit_date": "2026-08-03",
+    "pages_crawled": 500,
+    "sitemap_urls": 1153,
+    "top_findings": [
+      "127 URLs (11% of the site) ship zero <head> metadata — all /{country}/{locale}/legal/* (36) and /doctors/{slug} (91) return no title, no meta description, no canonical, no robots, no Open Graph. Verified by direct curl.",
+      "English UI strings leak onto 76% of non-English pages (50 of 66 sampled across 912 non-EN URLs) — 'Languages' x43, 'Pick a time' x40, 'Specialist care' x14. A shared CTA component never received the locale.",
+      "46% of titles (232 of 500) exceed 60 characters and truncate in the SERP; 99 exceed 70. 32 of 33 country-home pages are over-length, losing the trust signal in the truncated tail.",
+      "The root entry gate is 114 words, 6 internal links, no hreflang, no breadcrumb, and is served no-store without prerendering — every brand search pays a full origin round-trip. CrUX phone TTFB 2,618ms (Poor).",
+      "No page exists for the sick-certificate commercial cluster, which competitors own with dedicated transactional pages. Anxious same-day-cert persona scores 35/100."
+    ],
+    "quick_wins": [
+      "Add generateMetadata to the legal/[slug] and doctors/[slug] route segments — 2 files, fixes 127 URLs.",
+      "Drop the '| Global Health' suffix from the title template above ~48 chars — 1 template, fixes ~200 truncated titles.",
+      "Wire the shared CTA/cross-sell component to the active locale — 1 component, fixes ~690 non-English pages.",
+      "Reconcile the EUR 29 / EUR 39 price contradiction between /ireland/en and /ireland/en/gp-consultation-online — 2 strings.",
+      "Map /post/{slug} legacy Wix redirects to the matching article instead of the blog hub — 1 redirect map, recovers equity from still-ranking URLs.",
+      "Add the country name to the 6 per-country blog-hub meta descriptions (55 pages share 12 descriptions) — 1 template.",
+      "Ship a /favicon.ico — currently 404."
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 70,
+      "weight": 22,
+      "what_works": [
+        "All 500 crawled pages returned 200 with zero fetch errors and zero mid-crawl redirects; a further 73 sampled sitemap URLs were also 100% 200.",
+        "Full server-side rendering — raw HTTP GET returns complete body text, no CSR gap for non-JS crawlers.",
+        "Hreflang is exceptional: 454 pages, 0 missing x-default, 0 malformed codes, self-reference present in 454/454 clusters, and 0 reciprocity failures across 2,267 checked pairs.",
+        "Sitemap is clean: 1,153 URLs, valid urlset, real lastmod dates, genuinely varied priority, zero noindex/redirecting/non-canonical URLs included.",
+        "Security headers complete — HSTS with preload, enforcing CSP with object-src 'none' and base-uri 'self', nosniff, strict-origin-when-cross-origin, restrictive Permissions-Policy.",
+        "robots.txt correct with targeted disallows; HTTP->HTTPS and apex->www are single-hop 301s; nonsense URLs return a hard 404, not a soft one.",
+        "Average response time 316ms (p90 340ms).",
+        "Legacy Wix URLs are redirected server-side rather than left to 404."
+      ],
+      "findings": [
+        {
+          "title": "127 URLs emit no <head> metadata whatsoever",
+          "severity": "Critical",
+          "description": "All /{country}/{locale}/legal/* (36 URLs) and /{country}/{locale}/doctors/{slug} (91 URLs) return HTML with no <title>, no meta description, no rel=canonical, no meta robots, no Open Graph and no twitter:card. Verified by direct curl, not a crawler artifact. These are not thin pages — legal pages run 2,700-8,200 words and doctor profiles 900-1,500 words with full Physician + EducationalOccupationalCredential + FAQPage + BreadcrumbList JSON-LD. The structured data is excellent and the metadata is entirely absent, pointing at a missing generateMetadata export on those two route segments. The 91 doctor profiles are the site's strongest E-E-A-T asset and its most brand-searchable URLs.",
+          "recommendation": "Add generateMetadata to the legal/[slug] and doctors/[slug] route segments, reusing the per-locale metadata helper the service routes already use. Emit title, description, self-referencing canonical, robots, the og:* and twitter:* set, and the hreflang cluster (legal routes are also missing hreflang on 21 of 32 crawled). Verify by re-crawling and asserting a non-empty <title> on all 127 URLs."
+        },
+        {
+          "title": "The root entry gate, legal pages and global pages are served no-store and unprerendered",
+          "severity": "High",
+          "description": "Content pages are correctly ISR-cached (public, max-age=0, s-maxage=60, stale-while-revalidate=300, x-nextjs-prerender: 1). But /, the 7 root-level global pages and the 36 /legal/* pages are all private, no-cache, no-store with no prerendering. The root gate is the URL every brand search and external link hits, and it pays a full origin round-trip every time. CrUX shows TTFB at 2,618ms on phone (Poor) and 1,985ms on desktop in the latest reported week, against a blended 28-day figure of 534ms.",
+          "recommendation": "Scope no-store to the authenticated route groups ((admin), (doctor), (auth), /account, /api) and move /, /legal/* and the root marketing pages onto the same ISR treatment the country pages already use. Note these routes also share the missing-metadata and missing-hreflang symptoms — check for one shared layout or route-group config as the upstream cause before fixing them individually."
+        },
+        {
+          "title": "38.6% of the country-home document is inlined RSC flight payload",
+          "severity": "High",
+          "description": "Median served HTML is 230KB; Irish country homes reach 590KB. 230.5KB of /ireland/en's 596.6KB is inlined Next.js RSC flight payload (self.__next_f.push), roughly 91KB of which is the full GP-availability schedule serialised server-side into the document instead of fetched client-side after hydration. The same pattern appears at 55.2% on service pages and 41.5% on doctor profiles. This lines up with /ireland/en being the worst Lighthouse result measured (49, LCP 4,809ms, TBT 1,515ms).",
+          "recommendation": "Fetch the availability schedule client-side after hydration rather than serialising it into the RSC payload. Largest single byte win available."
+        },
+        {
+          "title": "Legacy /post/* Wix URLs blanket-redirect to the blog hub even when the article exists",
+          "severity": "High",
+          "description": "/post/diabetes-a-silent-disease 308-redirects to /ireland/en/blog rather than /ireland/en/blog/diabetes-a-silent-disease, which is live at 2,385+ words. Same for /post/getting-a-gp-sick-note-online-simplified and /post/hand-foot-and-mouth-disease. Redirecting a specific article to a listing page is the textbook soft-404 pattern; Google routinely treats it as a 404 and drops the legacy URL's accumulated equity. These Wix URLs still hold SERP positions.",
+          "recommendation": "Build a per-article /post/{slug} redirect map to the matching current article, with the hub only as a genuine last-resort fallback. Separately verify /pt/home -> /ireland/pt — on Wix /pt/ was the Portugal market, which would make /portugal/pt the correct target."
+        },
+        {
+          "title": "79 hreflang targets are absent from the XML sitemap",
+          "severity": "Medium",
+          "description": "Mostly locale variants of the /legal hub, e.g. /ireland/pt/legal, /ireland/es/legal. The pages exist and are referenced as alternates but are never submitted in the sitemap.",
+          "recommendation": "Either add them to the sitemap or drop them from the hreflang clusters, so the two sources agree."
+        },
+        {
+          "title": "Trailing-slash URLs take two redirect hops",
+          "severity": "Low",
+          "description": "/ireland/ returns 308 to /ireland, which returns 308 to /ireland/en. Every country prefix has this two-hop chain.",
+          "recommendation": "Normalise the trailing slash and the locale in a single rule so the chain collapses to one hop."
+        },
+        {
+          "title": "/favicon.ico returns 404",
+          "severity": "Low",
+          "description": "Browsers and several crawlers request /favicon.ico unconditionally regardless of any <link rel=\"icon\"> declaration.",
+          "recommendation": "Add the file or a rewrite at the well-known path."
+        },
+        {
+          "title": "Cross-Origin-Opener-Policy header absent",
+          "severity": "Low",
+          "description": "The only missing header in an otherwise complete security set.",
+          "recommendation": "Add Cross-Origin-Opener-Policy: same-origin."
+        }
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 63,
+      "weight": 23,
+      "what_works": [
+        "Blog articles are genuinely YMYL-compliant: 2,385-3,846 words with a visible byline ('Written by Dr Tiago Miguel Figueira, IMC 523449'), a separate clinical reviewer, and reviewedBy/lastReviewed Physician JSON-LD.",
+        "Service pages median 1,901 words; country homes median 2,172 words; doctor profiles median 1,176 words.",
+        "Body-copy translation into German, Czech and Romanian reads as human-quality, not machine output."
+      ],
+      "findings": [
+        {
+          "title": "English UI strings leak onto 76% of non-English pages",
+          "severity": "Critical",
+          "description": "912 of 1,153 sitemap URLs are non-English. Sampling 66, 50 (76%) render hard-coded English UI strings inside otherwise well-translated pages: 'Languages' on 43, 'Pick a time' on 40, 'Specialist care' on 14, 'Book a consultation' on 6, 'Ready when you are' on 6. Reproducible on /ireland/de/services/acute-medical-consultation, /ireland/cs/health/diabetes and /czechia/cs. The surrounding body copy is correctly translated, so this is one shared cross-sell/CTA component that never received the locale — not a translation backlog. It sits directly on the booking CTA.",
+          "recommendation": "Wire the shared CTA/cross-sell component to the active locale. Verify by re-running a leak scan across a 60+ URL non-English sample and expecting zero hits."
+        },
+        {
+          "title": "~90 /health/ condition pages are thin against national health authorities",
+          "severity": "High",
+          "description": "290-486 words with 4-5 H2s each and a unique H1 per page, competing on 'diabetes', 'migraine' and 'hypertension' against HSE, NHS and Mayo. They lack the named-clinician byline and reviewer depth the blog articles already have. Examples: /ireland/en/health/diabetes 298w, /ireland/en/health/migraine 290w, /ireland/en/health/hypertension 323w.",
+          "recommendation": "Pick one path deliberately. Either deepen to 1,200+ words with the same byline/reviewer/lastReviewed treatment the blog uses, or reposition as service-intent pages ('Diabetes care in Ireland — book an online GP') and stop competing with national health bodies on informational intent. The current middle ground is the worst outcome for a YMYL site."
+        },
+        {
+          "title": "The global /blog hub renders 'No articles published yet'",
+          "severity": "Critical",
+          "description": "/blog is 232 words and shows no articles, while 44 country-scoped article URLs serve full 2,400-3,800 word content. It sits in the main navigation of every page, in the sitemap, and is the URL llms.txt points AI crawlers at.",
+          "recommendation": "Fix the locale/country filter that excludes everything at the unscoped route."
+        },
+        {
+          "title": "Cross-country service pages are near-duplicates",
+          "severity": "Medium",
+          "description": "Sampling the mental-health service across ES/PT/BR found an identical section template with near-verbatim sub-headers and bullet lists, with the country name and local details swapped.",
+          "recommendation": "Add genuine per-market substance: local regulator, local pricing, local referral pathways, local clinician names."
+        },
+        {
+          "title": "Two competing sets of legal pages, both indexable",
+          "severity": "Medium",
+          "description": "/terms (687 words) and /privacy (547 words) at the root coexist with /{country}/{locale}/legal/terms-of-service (6,414-8,207 words) and /legal/privacy-policy (3,496-4,358 words). This is both a duplication problem and a compliance ambiguity about which document governs.",
+          "recommendation": "Decide which set is canonical, then redirect or noindex the other."
+        },
+        {
+          "title": "Per-country blog index pages are thin",
+          "severity": "Low",
+          "description": "230-430 words each. Less critical than the /health/ pages since these are index pages by design.",
+          "recommendation": "Add an intro paragraph and topic groupings per country."
+        }
+      ]
+    },
+    {
+      "name": "On-Page SEO",
+      "score": 62,
+      "weight": 20,
+      "what_works": [
+        "Zero pages without an <h1> across all 500 crawled — a perfect result.",
+        "Of the 461 meta descriptions present, 100% sit in the 70-160 character band. Zero too short, zero too long.",
+        "Zero titles under 30 characters; keyword-bearing content is consistently placed at the front of the title.",
+        "Internal linking within each country silo is strong — median 53 links per page, max 128, only one page under 20."
+      ],
+      "findings": [
+        {
+          "title": "46% of titles exceed 60 characters and truncate in the SERP",
+          "severity": "High",
+          "description": "232 of 500 titles exceed 60 characters; 99 exceed 70. The template appends both a qualifier and the brand, so the truncated tail is exactly the trust signal that earns the click ('IMC-Registered', 'Colegiados', 'CLK Registered'). 32 of 33 country-home pages — the highest-value commercial pages on the site — are over-length. Worst case is 91 characters. Two separators (| and ·) are also mixed inconsistently across page types.",
+          "recommendation": "Drop the '| Global Health' / '· Global Health' suffix when the title already exceeds ~48 characters — Google appends the site name from WebSite schema, which is present on all 500 pages. Shorten the middle qualifier. Standardise on one separator. Target 60 characters / ~575px."
+        },
+        {
+          "title": "Blog article titles are set in ALL CAPS",
+          "severity": "Medium",
+          "description": "e.g. 'HAND, FOOT AND MOUTH DISEASE: SIGNS AND TREATMENT · Global Health'. Google frequently rewrites all-caps titles, and they read as low-quality in a YMYL SERP.",
+          "recommendation": "Convert blog article titles to sentence case."
+        },
+        {
+          "title": "Wrong title mapped to a Romanian service page",
+          "severity": "High",
+          "description": "/romania/en/services/controlul-greutatii — slug means 'weight control' — carries the title 'Men's Health Online | Romania | Confidential English Doctor'. This is a genuine content bug, not just a duplicate title.",
+          "recommendation": "Fix the title and audit neighbouring Romanian service slugs for the same mis-mapping."
+        },
+        {
+          "title": "55 pages share 12 meta descriptions",
+          "severity": "Medium",
+          "description": "All per-country blog hubs sharing one description per language — e.g. 'Evidence-based guides written and reviewed by our medical team. No ads, no fluff.' on 7 pages, with Spanish, Portuguese, Czech and Romanian equivalents on 5-6 each.",
+          "recommendation": "Insert the country name into the template. One-line change that makes six SERP listings distinct instead of identical."
+        },
+        {
+          "title": "Cross-country blog syndication produces identical titles",
+          "severity": "Low",
+          "description": "/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment and /portugal/en/blog/hand-foot-and-mouth-disease-signs-and-treatment carry the same title with no country differentiation. Same for /portugal/en/see-a-specialist and one other page.",
+          "recommendation": "Add the country to syndicated article titles."
+        },
+        {
+          "title": "Five blog articles emit two <h1> elements",
+          "severity": "Low",
+          "description": "Page title and article title both rendering as h1 in the blog article template. Google handles multiple H1s, so severity is low.",
+          "recommendation": "Demote one to h2 in the blog article template."
+        },
+        {
+          "title": "The root entry gate is the weakest page on the site structurally",
+          "severity": "High",
+          "description": "114 words, 6 internal links, one h1, no hreflang, no BreadcrumbList. Every external link, brand search and all crawl equity lands here and distributes through exactly six anchors. There is also no cross-silo linking, so authority earned by an Irish article cannot reach its Spanish equivalent. Gating by country is legitimate for a multi-jurisdiction medical service, but the gate does not need to be thin, hreflang-less and breadcrumb-less to do that job.",
+          "recommendation": "Add hreflang and a BreadcrumbList to /. Add trust signals and a short description of the service with links to /about and the doctor hubs, without breaking country selection. Add a visible 'also available in' row site-wide to create cross-silo links — the hreflang clusters already know the mapping."
+        }
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 82,
+      "weight": 10,
+      "what_works": [
+        "Zero JSON-LD parse errors across all 500 pages.",
+        "The site-wide MedicalOrganization + WebSite block is on all 500 pages and well built — real sameAs covering Wikidata, LinkedIn, YouTube, Instagram, TikTok plus 12+ regulatory bodies (Medical Council, HSE, HIQA, HPRA, RCPI, ICGP), ImageObject logo with dimensions, PropertyValue registrations, correct @id cross-linking.",
+        "176 Physician blocks carry solid credential and regulator linkage.",
+        "Article markup has all required fields.",
+        "Broad type coverage: BreadcrumbList 325, FAQPage 293, Organization 255, ReserveAction 196, MedicalProcedure 172, MedicalClinic 144, Service 52, Article 50, ItemList 39, Offer 34."
+      ],
+      "findings": [
+        {
+          "title": "Product/Brand schema misused on 6 pricing pages",
+          "severity": "High",
+          "description": "Care-plan subscriptions on /ireland/*/pricing are typed as Product and are missing the required itemCondition, so they are not eligible for Merchant listings even as currently typed.",
+          "recommendation": "Switch to Service + Offer — the pattern already used correctly in 52 other places on the site. Corrected JSON-LD is in findings/schema.md."
+        },
+        {
+          "title": "No AggregateRating or Review markup anywhere on the site",
+          "severity": "High",
+          "description": "Zero rating or review structured data across 500 pages, despite live Doctify review widgets running on the site. Star ratings in the SERP are one of the largest CTR levers available to a medical service.",
+          "recommendation": "Add AggregateRating/Review markup reflecting genuinely collected Doctify reviews."
+        },
+        {
+          "title": "MedicalBusiness vs MedicalClinic type conflict on the same entity",
+          "severity": "Medium",
+          "description": "'Global Health · Ireland' is typed as MedicalClinic on the country home and MedicalBusiness on service pages, with neither carrying address, geo or @id. Both are LocalBusiness subtypes, which give a virtual-only provider no local-business eligibility anyway.",
+          "recommendation": "Collapse to MedicalOrganization with a country-scoped @id."
+        },
+        {
+          "title": "BreadcrumbList generator gap on localised service pages",
+          "severity": "Medium",
+          "description": "175 of 500 pages lack BreadcrumbList. Most are legitimate (legal and utility pages), but non-English and non-Ireland localised service pages are missing it while their Irish English equivalents have it.",
+          "recommendation": "Extend the breadcrumb generator to all localised service routes."
+        },
+        {
+          "title": "Missing high-value schema for a telemedicine site",
+          "severity": "Medium",
+          "description": "No WebSite.potentialAction (SearchAction), no MedicalCondition entity typing on blog 'about', per-country pricing schema exists only for Ireland, and lab-test detail pages have no per-test MedicalTest or Offer.",
+          "recommendation": "Add each; they map directly to the site's existing content."
+        },
+        {
+          "title": "Minor property corrections",
+          "severity": "Low",
+          "description": "Article.image should be an ImageObject with explicit width and height. Physician should carry a structured medicalSpecialty rather than free text. MedicalClinic.reviewedBy is not a valid schema.org property on that type — Google ignores it silently, so no benefit is being gained from it.",
+          "recommendation": "Correct all three."
+        },
+        {
+          "title": "293 FAQPage blocks no longer earn a SERP feature",
+          "severity": "Info",
+          "description": "Google retired FAQ rich results for non-authoritative sites. The content is well-scoped and contextual, so there is no reason to remove it — just no reason to expand it either.",
+          "recommendation": "No action. Do not invest further in FAQ markup expansion."
+        }
+      ]
+    },
+    {
+      "name": "Performance (Core Web Vitals)",
+      "score": 62,
+      "weight": 10,
+      "what_works": [
+        "Origin-level CrUX field data passes every Core Web Vital: LCP 1,539ms, INP 137ms, CLS 0.00, TTFB 534ms, FCP 1,115ms.",
+        "CLS is 0.00 in both lab and field across every page tested — a genuine non-issue.",
+        "25-week trend is improving on LCP (-27.5%), TTFB (-36.9%), FCP (-29.6%) and CLS (-100%).",
+        "Doctor profile pages score 91 in Lighthouse with LCP 2,988ms and TBT 87ms.",
+        "Average raw HTML response time 316ms (p90 340ms)."
+      ],
+      "findings": [
+        {
+          "title": "Per-device field data is materially worse than the blended origin figure",
+          "severity": "High",
+          "description": "In the latest week each segment reported, LCP is 3,098ms on phone and 3,097ms on desktop (both Needs Improvement), and TTFB is 2,618ms on phone (Poor) and 1,985ms on desktop (Needs Improvement) — against a blended 28-day origin TTFB of 534ms.",
+          "recommendation": "Fix the no-store/unprerendered entry gate and the RSC payload bloat, then re-run crux_history.py --form-factor PHONE once CrUX rolls past the current collection period to confirm the phone figure is not a small-sample artifact."
+        },
+        {
+          "title": "/ireland/en scores 49 in Lighthouse with LCP 4,809ms and TBT 1,515ms",
+          "severity": "High",
+          "description": "The worst page measured, against 91/2,988ms/87ms on a doctor profile, 78 on the entry gate and 76 on a service page. Root cause identified: 230.5KB of the 596.6KB document is inlined RSC flight payload, ~91KB of which is the full GP-availability schedule serialised server-side.",
+          "recommendation": "Fetch the availability schedule client-side after hydration."
+        },
+        {
+          "title": "INP is the one Core Web Vital trending the wrong way",
+          "severity": "Medium",
+          "description": "Origin INP is up 33.9% over 25 weeks (91ms to 122ms) and desktop INP up 16.9%. Both remain inside the 'Good' band, so this is a watch-item rather than a live problem — but it is the metric most likely to be driven by third-party scripts, which could not be measured this run.",
+          "recommendation": "Monitor, and re-measure third-party cost with consent accepted."
+        },
+        {
+          "title": "Third-party script cost could not be measured",
+          "severity": "Info",
+          "description": "GTM, Doctify, Meta, Microsoft Clarity and ElevenLabs all measured zero transferred bytes because every one is consent-gated and none fired in the headless Lighthouse session. This is a measurement gap, not evidence that they are free.",
+          "recommendation": "Run Lighthouse with consent accepted, or use production RUM, to quantify. Relevant because INP is the degrading metric."
+        },
+        {
+          "title": "LCP element identity and subparts unavailable",
+          "severity": "Info",
+          "description": "The LCP element, LCP subparts and render-blocking-resources audits all returned empty from Lighthouse 13.4.1 — a known insight-audit migration gap in that version. Hero and logo images are the inferred candidates but this is unconfirmed.",
+          "recommendation": "Confirm the LCP element with a different tool or a newer Lighthouse before optimising for it specifically."
+        }
+      ]
+    },
+    {
+      "name": "AI Search Readiness (GEO)",
+      "score": 74,
+      "weight": 10,
+      "what_works": [
+        "AI crawler access is fully open and explicit — robots.txt names GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, Google-Extended, Gemini-Deep-Research, PerplexityBot and Perplexity-User, all permissive, with a permissive wildcard covering the rest.",
+        "llms.txt is present, returns 200, is well-formed, and lists 30+ country and service links with direct-answer descriptions.",
+        "Every page is fully server-rendered, so there is no JS gap for AI crawlers.",
+        "Strong authority signals via the MedicalOrganization sameAs block covering Wikidata, major social profiles and 12+ regulatory bodies.",
+        "Blog articles carry Article + Physician schema, named physician author with IMC credential and memberOf, a separate clinical reviewer byline, and datePublished/dateModified — exactly the E-E-A-T pattern YMYL content needs."
+      ],
+      "findings": [
+        {
+          "title": "llms.txt points AI crawlers at the broken /blog hub and omits individual articles",
+          "severity": "High",
+          "description": "The site's strongest and most citable content — the 44 full-length blog articles — is undiscoverable from the one file specifically intended to advertise it, because llms.txt links only the hub, and the hub renders 'No articles published yet'.",
+          "recommendation": "Fix the /blog hub, list individual articles in llms.txt, and add an ## Optional section."
+        },
+        {
+          "title": "Clinician bylines and reviewer schema exist only on blog articles",
+          "severity": "Medium",
+          "description": "Service pages — where commercial queries land and where YMYL trust matters most — have no named author or medical reviewer attribution.",
+          "recommendation": "Extend the byline/reviewer/lastReviewed pattern from blog articles to service pages."
+        },
+        {
+          "title": "Hub and /about H2s are marketing copy rather than question-form headings",
+          "severity": "Medium",
+          "description": "Question-shaped H2s are one of the strongest passage-extraction signals for AI answer engines.",
+          "recommendation": "Rewrite hub and /about H2s into question form."
+        },
+        {
+          "title": "Long article paragraphs are not chunked for passage extraction",
+          "severity": "Medium",
+          "description": "Articles run 2,400-3,800 words in long paragraph blocks rather than self-contained answer units.",
+          "recommendation": "Chunk into self-contained ~140-160 word blocks that answer one question each."
+        },
+        {
+          "title": "No Wikipedia entity",
+          "severity": "Low",
+          "description": "Expected for a brand founded in 2023. Wikidata is already present in sameAs.",
+          "recommendation": "Backlog — pursue once independent coverage supports notability."
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "score": 95,
+      "weight": 5,
+      "what_works": [
+        "Across 6,186 <img> elements on 500 pages, zero are missing an alt attribute — an exceptional result at this scale.",
+        "408 images (6.6%) carry alt=\"\", which is the correct treatment for decorative imagery.",
+        "Images are served through next/image with responsive srcset and WebP.",
+        "Hero images are rel=preload'ed with explicit imageSrcSet and imageSizes."
+      ],
+      "findings": [
+        {
+          "title": "No image issues found",
+          "severity": "Info",
+          "description": "Alt coverage, format, responsive sizing and preload hints are all correctly implemented. No action required.",
+          "recommendation": "Maintain the current next/image pipeline."
+        }
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {
+        "name": "Phase 1: Critical Fixes",
+        "timeframe": "Week 1",
+        "items": [
+          "Restore Google API access — GSC, GA4 and the Indexing API all return invalid_grant. Run `claude-seo run google_auth.py --auth`. Blocker on measuring every other fix.",
+          "Add generateMetadata to the legal/[slug] and doctors/[slug] route segments — fixes 127 URLs (11% of the site) that currently ship no title, description, canonical or Open Graph.",
+          "Wire the shared CTA/cross-sell component to the active locale — fixes English UI strings leaking onto ~690 non-English pages.",
+          "Reconcile the EUR 29 / EUR 39 price contradiction between /ireland/en and /ireland/en/gp-consultation-online, and audit every other market for the same divergence.",
+          "Fix the global /blog hub, which renders 'No articles published yet' while 44 country-scoped articles serve full content."
+        ]
+      },
+      {
+        "name": "Phase 2: High-Impact Improvements",
+        "timeframe": "Weeks 2-3",
+        "items": [
+          "Fix the title template — drop the brand suffix above ~48 chars, shorten the middle qualifier, standardise the separator, convert blog titles from ALL CAPS. Fixes ~200 truncated titles.",
+          "Move the RSC availability payload client-side — 230.5KB of /ireland/en's 596.6KB is inlined flight payload driving a Lighthouse score of 49.",
+          "Make the entry gate cacheable and linkable — move /, the root global pages and /legal/* onto ISR, and add hreflang and a BreadcrumbList to /. Check for one shared route-group config as the upstream cause of the metadata, hreflang and caching symptoms.",
+          "Build a dedicated sick-certificate page per market — an entire commercial cluster the site structurally cannot compete for today. Promote and expand the existing 486-word /ireland/en/health/sick-cert-online.",
+          "Map legacy /post/{slug} redirects to the matching article instead of the blog hub, and verify /pt/home targets the right market.",
+          "Fix Product/Brand schema on the 6 Ireland pricing pages — switch to Service + Offer.",
+          "Add the country name to the 6 per-country blog-hub meta descriptions (55 pages share 12 descriptions).",
+          "Fix the wrong title on /romania/en/services/controlul-greutatii and audit neighbouring Romanian slugs."
+        ]
+      },
+      {
+        "name": "Phase 3: Content & Authority",
+        "timeframe": "Month 2",
+        "items": [
+          "Deepen or reposition the ~90 /health/ condition pages (290-486 words competing against HSE/NHS/Mayo) — either take them to 1,200+ words with full medical-review treatment, or reframe them as service-intent pages.",
+          "Add AggregateRating/Review schema — the highest-value schema gap, with live Doctify review widgets already on the site.",
+          "Extend clinician bylines and reviewer schema from blog articles to service pages.",
+          "Differentiate cross-country service copy with local regulator, pricing, referral pathways and clinician names.",
+          "Resolve the duplicate legal-page sets — decide which of /terms + /privacy or /{country}/{locale}/legal/* is canonical, then redirect or noindex the other.",
+          "Improve AI citability — list individual articles in llms.txt, rewrite hub H2s into question form, chunk long paragraphs into self-contained answer blocks.",
+          "Add cross-silo internal linking using the hreflang cluster mapping the site already computes.",
+          "Add a doctor-language filter facet on /{country}/{locale}/doctors to capture own-language queries."
+        ]
+      },
+      {
+        "name": "Phase 4: Monitoring & Iteration",
+        "timeframe": "Ongoing",
+        "items": [
+          "Batch the small fixes: /favicon.ico 404, trailing-slash double redirect, 79 hreflang targets missing from the sitemap, Cross-Origin-Opener-Policy header, double h1 on 5 blog articles, BreadcrumbList generator gap on localised service pages, MedicalBusiness/MedicalClinic type conflict, Article.image as ImageObject, structured Physician.medicalSpecialty.",
+          "Address the cookie-consent modal covering 55-60% of the mobile viewport on first paint — not a ranking penalty since consent notices are exempt, but it buries the H1 and CTA.",
+          "Add free Moz and Bing Webmaster API keys to unlock DA/PA, anchor-text distribution, toxicity scoring and referring-domain counts — none of which are currently measurable.",
+          "Re-measure third-party script cost with consent accepted (GTM, Doctify, Meta, Clarity, ElevenLabs all measured zero bytes because they are consent-gated).",
+          "Confirm the 2,618ms phone TTFB figure once CrUX rolls past the current collection period.",
+          "Watch INP (+33.9% origin, +16.9% desktop over 25 weeks, still 'Good') and phone TTFB (+23.3%).",
+          "Baseline a drift snapshot now and re-run after Phases 1 and 2 ship: `claude-seo run drift_baseline.py https://www.myglobalhealth.online`."
+        ]
+      }
+    ]
+  },
+  "data_limitations": [
+    "Google Search Console, GA4 and the Indexing API were all unavailable — the OAuth refresh token returns HTTP 400 invalid_grant, confirmed independently across all three services. There is therefore no clicks/impressions/CTR/position data, no top-query or top-page data, no indexation counts and no organic traffic trend in this audit. Those sections are unavailable, not zero.",
+    "CrUX authenticates by API key and did work, so field Core Web Vitals data is present and real.",
+    "Backlink analysis is limited to Common Crawl — no Moz or Bing Webmaster keys are configured, so there is no DA/PA, anchor-text distribution, toxicity scoring or full referring-domain count. Both keys are free. No backlink health score was produced because fewer than 4 of 7 scoring factors had a data source. What Common Crawl (cc-main-2026-jan-feb-mar) does show: myglobalhealth.online PageRank rank 8,396,221 / harmonic centrality rank 7,515,428 with 1 crawled host, versus webdoctor.ie at 2,747,412 / 3,371,283 with 6 hosts (clearly stronger) and videodoc.ie at 12,955,079 / 12,481,292 (same rough tier). Domain registered 2024-12-16 via Tucows, ~1.6 years old, no prior-use signal — so the brand's accumulated authority sits on the legacy Wix URLs, which makes the /post/* blanket-redirect a link-equity loss and not merely a technical defect.",
+    "OpenSEO/DataForSEO returned 0 remaining credits, so live SERP positions and keyword volumes could not be pulled.",
+    "500 of 1,153 sitemap URLs were crawled in full; the remaining 653 were status-sampled (73 URLs, all 200). Per-page metadata findings are projections onto route groups, not a full census.",
+    "Readability scoring, third-party script cost, and LCP element identity were each attempted and are explicitly marked 'not measured' rather than estimated."
+  ],
+  "artifacts": {
+    "findings_dir": "findings/",
+    "screenshots_dir": "screenshots/"
+  }
+}

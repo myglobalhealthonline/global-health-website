@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 18mm 25mm 18mm;
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 9pt;
+      color: #6b7280;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+    @bottom-left {
+      content: "Confidential";
+      font-size: 7pt;
+      color: #d6d3cc;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+    @bottom-right {
+      content: "myglobalhealth.online Google SEO Report";
+      font-size: 8pt;
+      color: #cbd5e1;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+  }
+
+  @page :first {
+    margin: 0;
+    @bottom-left { content: none; }
+    @bottom-center { content: none; }
+    @bottom-right { content: none; }
+  }
+
+  @page toc {
+    @bottom-center {
+      content: counter(page);
+      font-size: 9pt;
+      color: #6b7280;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Times New Roman', 'DejaVu Serif', Georgia, serif;
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #1e293b;
+    background: white;
+  }
+
+  /* ─── Title Page (Clean White) ─── */
+  .title-page {
+    page: first;
+    width: 210mm;
+    height: 297mm;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #1a1a2e;
+    position: relative;
+    padding: 50mm 30mm 40mm 30mm;
+    border-top: 6mm solid #1e3a5f;
+  }
+
+  .title-page .badge {
+    background: #f7f6f3;
+    border: 1px solid #d6d3cc;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 9pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 15mm;
+    color: #1e3a5f;
+  }
+
+  .title-page h1 {
+    font-size: 28pt;
+    font-weight: bold;
+    margin-bottom: 5mm;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    color: #1a1a2e;
+  }
+
+  .title-page .subtitle {
+    font-size: 13pt;
+    color: #6b7280;
+    margin-bottom: 12mm;
+    font-weight: 300;
+  }
+
+  .title-page .url {
+    font-size: 12pt;
+    color: #1e3a5f;
+    margin-bottom: 15mm;
+    padding: 4mm 8mm;
+    border: 1px solid #d6d3cc;
+    border-radius: 6px;
+    background: #faf9f7;
+  }
+
+  .title-page .score-box {
+    background: #faf9f7;
+    border: 2px solid #d6d3cc;
+    border-radius: 12px;
+    padding: 6mm 12mm;
+    margin-bottom: 15mm;
+  }
+
+  .title-page .score-number {
+    font-size: 42pt;
+    font-weight: bold;
+    color: #1e3a5f;
+    line-height: 1;
+  }
+
+  .title-page .score-label {
+    font-size: 10pt;
+    color: #6b7280;
+    margin-top: 2mm;
+  }
+
+  .title-page .meta {
+    font-size: 9pt;
+    color: #6b7280;
+    margin-top: 8mm;
+    padding-top: 5mm;
+    border-top: 1px solid #d6d3cc;
+  }
+
+  .title-page .meta span {
+    margin: 0 8px;
+  }
+
+  /* ─── Table of Contents ─── */
+  .toc-page {
+    page: toc;
+    page-break-before: always;
+  }
+
+  .toc-page h2 {
+    font-size: 18pt;
+    color: #1e3a5f;
+    margin-bottom: 8mm;
+    padding-bottom: 3mm;
+    border-bottom: 2px solid #1e3a5f;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .toc-list li {
+    padding: 2mm 0;
+    border-bottom: 1px solid #f1f5f9;
+    overflow: hidden;
+  }
+
+  .toc-list li.toc-section {
+    font-weight: bold;
+    font-size: 11pt;
+    padding-top: 4mm;
+    color: #0f172a;
+  }
+
+  .toc-list li.toc-sub {
+    padding-left: 8mm;
+    font-size: 9.5pt;
+    color: #475569;
+  }
+
+  .toc-score {
+    display: inline-block;
+    float: right;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 9pt;
+    font-weight: bold;
+    color: white;
+  }
+
+  .score-good { background: #2d6a4f; }
+  .score-warn { background: #d4740e; }
+  .score-bad { background: #c53030; }
+
+  /* ─── Section Styles ─── */
+  div.section {
+    page-break-before: always;
+  }
+
+  .section-header {
+    background: #faf9f7;
+    border-left: 4px solid #1e3a5f;
+    padding: 5mm 6mm;
+    margin-bottom: 6mm;
+    page-break-after: avoid;
+  }
+
+  .section-header h2 {
+    font-size: 16pt;
+    color: #0f172a;
+    margin-bottom: 1mm;
+  }
+
+  .section-header .section-score {
+    font-size: 12pt;
+    font-weight: bold;
+    float: right;
+    margin-top: -6mm;
+  }
+
+  h3 {
+    font-size: 12pt;
+    color: #1e3a5f;
+    margin-top: 6mm;
+    margin-bottom: 3mm;
+    padding-bottom: 1.5mm;
+    border-bottom: 1px solid #d6d3cc;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 10.5pt;
+    color: #334155;
+    margin-top: 4mm;
+    margin-bottom: 2mm;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin-bottom: 3mm;
+    color: #334155;
+  }
+
+  .highlight {
+    background: #fef3c7;
+    border-left: 3px solid #d4740e;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .critical-box {
+    background: #fef2f2;
+    border-left: 3px solid #c53030;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .success-box {
+    background: #f0fdf4;
+    border-left: 3px solid #2d6a4f;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  /* ─── Tables ─── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4mm 0 6mm 0;
+    font-size: 9pt;
+  }
+
+  thead th {
+    background: #f7f6f3;
+    color: #0f172a;
+    font-weight: bold;
+    padding: 3mm 4mm;
+    text-align: left;
+    border-bottom: 2px solid #d6d3cc;
+    font-size: 9pt;
+  }
+
+  tbody td {
+    padding: 2.5mm 3mm;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fdfcfa;
+  }
+
+  .status-pass {
+    color: #2d6a4f;
+    font-weight: bold;
+  }
+
+  .status-fail {
+    color: #c53030;
+    font-weight: bold;
+  }
+
+  .status-warn {
+    color: #d4740e;
+    font-weight: bold;
+  }
+
+  .status-partial {
+    color: #4a5568;
+    font-weight: bold;
+  }
+
+  /* ─── Charts ─── */
+  .chart-container {
+    text-align: center;
+    margin: 4mm 0;
+  }
+
+  .chart-container img {
+    max-width: 100%;
+    max-height: 120mm;
+    height: auto;
+  }
+
+  .chart-caption {
+    font-size: 8.5pt;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 2mm;
+    text-align: center;
+  }
+
+  .chart-half {
+    display: inline-block;
+    width: 48%;
+    vertical-align: top;
+    text-align: center;
+    margin: 2mm 0;
+  }
+
+  .chart-half img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ─── Two column layout ─── */
+  .two-col {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin: 3mm 0;
+  }
+
+  .two-col .col {
+    display: table-cell;
+    vertical-align: top;
+    padding: 0 2mm;
+  }
+
+  .four-col {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin: 3mm 0;
+  }
+
+  .four-col .col {
+    display: table-cell;
+    vertical-align: top;
+    padding: 0 1.5mm;
+  }
+
+  /* ─── Metric Cards ─── */
+  .metric-card {
+    background: #faf9f7;
+    border: 1px solid #d6d3cc;
+    border-radius: 6px;
+    padding: 2.5mm 3mm;
+    text-align: center;
+    margin: 2mm 0;
+  }
+
+  .metric-card .value {
+    font-size: 14pt;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+
+  .metric-card .label {
+    font-size: 7.5pt;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 1mm;
+  }
+
+  /* ─── Action Plan ─── */
+  .action-item {
+    background: #faf9f7;
+    border-radius: 4px;
+    padding: 3mm 4mm;
+    margin: 3mm 0;
+    border-left: 3px solid #cbd5e1;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .action-item.critical {
+    border-left-color: #c53030;
+    background: #fdf2f2;
+  }
+
+  .action-item.high {
+    border-left-color: #d4740e;
+    background: #fdf8ef;
+  }
+
+  .action-item.medium {
+    border-left-color: #1e3a5f;
+    background: #f0f4f8;
+  }
+
+  .action-item.low {
+    border-left-color: #94a3b8;
+  }
+
+  .action-item h4 {
+    margin-top: 0;
+    margin-bottom: 1.5mm;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .action-item .effort {
+    font-size: 8.5pt;
+    color: #64748b;
+    float: right;
+  }
+
+  .priority-tag {
+    display: inline-block;
+    padding: 0.5mm 3mm;
+    border-radius: 3px;
+    font-size: 8pt;
+    font-weight: bold;
+    color: white;
+    margin-right: 2mm;
+    vertical-align: middle;
+  }
+
+  .priority-critical { background: #c53030; }
+  .priority-high { background: #d4740e; }
+  .priority-medium { background: #1e3a5f; }
+  .priority-low { background: #94a3b8; }
+
+  /* ─── Code blocks ─── */
+  .code-block {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 3mm 4mm;
+    border-radius: 4px;
+    font-family: 'DejaVu Sans Mono', monospace;
+    font-size: 8pt;
+    line-height: 1.6;
+    margin: 3mm 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  /* ─── Divider ─── */
+  .divider {
+    border: none;
+    border-top: 1px solid #d6d3cc;
+    margin: 5mm 0;
+  }
+
+  /* ─── Roadmap ─── */
+  .roadmap-phase {
+    background: #faf9f7;
+    border-radius: 6px;
+    padding: 4mm 5mm;
+    margin: 4mm 0;
+    border: 1px solid #d6d3cc;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .roadmap-phase h4 {
+    margin-top: 0;
+    border-bottom: none;
+    color: #1e3a5f;
+  }
+
+  .roadmap-phase ul {
+    margin: 2mm 0 0 5mm;
+    padding: 0;
+  }
+
+  .roadmap-phase li {
+    margin-bottom: 1.5mm;
+    font-size: 9.5pt;
+    color: #334155;
+  }
+
+  /* ─── Lists ─── */
+  ul {
+    margin-left: 5mm;
+    margin-bottom: 3mm;
+  }
+
+  li {
+    margin-bottom: 1.5mm;
+  }
+
+  /* ─── Data freshness ─── */
+  .data-freshness {
+    font-size: 8pt;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 4mm;
+    padding-top: 2mm;
+    border-top: 1px solid #d6d3cc;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ======================================================= TITLE PAGE === -->
+<div class="title-page">
+  <div class="badge">Full SEO Audit Report</div>
+  <h1>myglobalhealth.online</h1>
+  <div class="subtitle">Prepared by Claude SEO</div>
+  <div class="score-box">
+    <div class="score-number">69<span style="font-size: 20pt; color: #94a3b8;">/100</span></div>
+    <div class="score-label">SEO Health Score</div>
+  </div>
+  <div class="meta">
+    <span>August 03, 2026</span>
+    <span>Full Audit</span>
+  </div>
+</div>
+
+
+<!-- ======================================================= TABLE OF CONTENTS === -->
+<div class="toc-page">
+  <h2>Table of Contents</h2>
+  <ul class="toc-list">
+    <li class="toc-section"><span>1. Executive Summary</span></li>
+    <li class="toc-sub"><span>Key Metrics, Critical Issues &amp; Quick Wins</span></li>
+    <li class="toc-section"><span>2. Audit Categories</span></li>
+    <li class="toc-sub"><span>What Works</span></li>
+    <li class="toc-sub"><span>Findings by Severity</span></li>
+    <li class="toc-section"><span>3. Action Plan</span></li>
+    <li class="toc-sub"><span>Phased Roadmap</span></li>
+    <li class="toc-section"><span>4. Data Sources &amp; Methodology</span></li>
+  </ul>
+</div>
+
+
+<!-- ======================================================= 1. EXECUTIVE SUMMARY === -->
+<div class="section">
+  <div class="section-header">
+    <h2>1. Executive Summary</h2>
+  </div>
+
+  <p>This report presents a comprehensive SEO audit of <strong>myglobalhealth.online</strong> for a <strong>Multi-market healthcare service (YMYL telemedicine) — 6 countries x 6 locales</strong> site, generated on August 03, 2026. Findings combine technical, content, schema, performance, visual, and search-readiness evidence as available.</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="metric-card">
+        <div class="value" style="color: #d4740e;">69/100</div>
+        <div class="label">SEO Health Score</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="critical-box">
+    <strong>Critical Issues Found:</strong>
+    <ol>
+      <li><strong>Info:</strong> 127 URLs (11% of the site) ship zero &lt;head&gt; metadata — all /{country}/{locale}/legal/* (36) and /doctors/{slug} (91) return no title, no meta description, no canonical, no robots, no Open Graph. Verified by direct curl.</li>
+      <li><strong>Info:</strong> English UI strings leak onto 76% of non-English pages (50 of 66 sampled across 912 non-EN URLs) — &#x27;Languages&#x27; x43, &#x27;Pick a time&#x27; x40, &#x27;Specialist care&#x27; x14. A shared CTA component never received the locale.</li>
+      <li><strong>Info:</strong> 46% of titles (232 of 500) exceed 60 characters and truncate in the SERP; 99 exceed 70. 32 of 33 country-home pages are over-length, losing the trust signal in the truncated tail.</li>
+      <li><strong>Info:</strong> The root entry gate is 114 words, 6 internal links, no hreflang, no breadcrumb, and is served no-store without prerendering — every brand search pays a full origin round-trip. CrUX phone TTFB 2,618ms (Poor).</li>
+      <li><strong>Info:</strong> No page exists for the sick-certificate commercial cluster, which competitors own with dedicated transactional pages. Anxious same-day-cert persona scores 35/100.</li>
+    </ol>
+  </div>
+
+  <div class="success-box">
+    <strong>Quick Wins:</strong>
+    <ol>
+      <li>Add generateMetadata to the legal/[slug] and doctors/[slug] route segments — 2 files, fixes 127 URLs.</li>
+      <li>Drop the &#x27;| Global Health&#x27; suffix from the title template above ~48 chars — 1 template, fixes ~200 truncated titles.</li>
+      <li>Wire the shared CTA/cross-sell component to the active locale — 1 component, fixes ~690 non-English pages.</li>
+      <li>Reconcile the EUR 29 / EUR 39 price contradiction between /ireland/en and /ireland/en/gp-consultation-online — 2 strings.</li>
+      <li>Map /post/{slug} legacy Wix redirects to the matching article instead of the blog hub — 1 redirect map, recovers equity from still-ranking URLs.</li>
+    </ol>
+  </div>
+
+</div>
+
+<!-- ======================================================= 2. AUDIT CATEGORIES === -->
+<div class="section">
+  <div class="section-header">
+    <h2>2. Audit Categories</h2>
+  </div>
+
+  <h3>2.1 Technical SEO</h3>
+  <p><strong>Score:</strong> <span class="status-warn">70/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>All 500 crawled pages returned 200 with zero fetch errors and zero mid-crawl redirects; a further 73 sampled sitemap URLs were also 100% 200.</li>
+    <li>Full server-side rendering — raw HTTP GET returns complete body text, no CSR gap for non-JS crawlers.</li>
+    <li>Hreflang is exceptional: 454 pages, 0 missing x-default, 0 malformed codes, self-reference present in 454/454 clusters, and 0 reciprocity failures across 2,267 checked pairs.</li>
+    <li>Sitemap is clean: 1,153 URLs, valid urlset, real lastmod dates, genuinely varied priority, zero noindex/redirecting/non-canonical URLs included.</li>
+    <li>Security headers complete — HSTS with preload, enforcing CSP with object-src &#x27;none&#x27; and base-uri &#x27;self&#x27;, nosniff, strict-origin-when-cross-origin, restrictive Permissions-Policy.</li>
+    <li>robots.txt correct with targeted disallows; HTTP-&gt;HTTPS and apex-&gt;www are single-hop 301s; nonsense URLs return a hard 404, not a soft one.</li>
+    <li>Average response time 316ms (p90 340ms).</li>
+    <li>Legacy Wix URLs are redirected server-side rather than left to 404.</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>127 URLs emit no &lt;head&gt; metadata whatsoever <span class="status-warn">Critical</span></h4>
+    <p>All /{country}/{locale}/legal/* (36 URLs) and /{country}/{locale}/doctors/{slug} (91 URLs) return HTML with no &lt;title&gt;, no meta description, no rel=canonical, no meta robots, no Open Graph and no twitter:card. Verified by direct curl, not a crawler artifact. These are not thin pages — legal pages run 2,700-8,200 words and doctor profiles 900-1,500 words with full Physician + EducationalOccupationalCredential + FAQPage + BreadcrumbList JSON-LD. The structured data is excellent and the metadata is entirely absent, pointing at a missing generateMetadata export on those two route segments. The 91 doctor profiles are the site&#x27;s strongest E-E-A-T asset and its most brand-searchable URLs.</p>
+    <p><strong>Recommendation:</strong> Add generateMetadata to the legal/[slug] and doctors/[slug] route segments, reusing the per-locale metadata helper the service routes already use. Emit title, description, self-referencing canonical, robots, the og:* and twitter:* set, and the hreflang cluster (legal routes are also missing hreflang on 21 of 32 crawled). Verify by re-crawling and asserting a non-empty &lt;title&gt; on all 127 URLs.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>The root entry gate, legal pages and global pages are served no-store and unprerendered <span class="status-warn">High</span></h4>
+    <p>Content pages are correctly ISR-cached (public, max-age=0, s-maxage=60, stale-while-revalidate=300, x-nextjs-prerender: 1). But /, the 7 root-level global pages and the 36 /legal/* pages are all private, no-cache, no-store with no prerendering. The root gate is the URL every brand search and external link hits, and it pays a full origin round-trip every time. CrUX shows TTFB at 2,618ms on phone (Poor) and 1,985ms on desktop in the latest reported week, against a blended 28-day figure of 534ms.</p>
+    <p><strong>Recommendation:</strong> Scope no-store to the authenticated route groups ((admin), (doctor), (auth), /account, /api) and move /, /legal/* and the root marketing pages onto the same ISR treatment the country pages already use. Note these routes also share the missing-metadata and missing-hreflang symptoms — check for one shared layout or route-group config as the upstream cause before fixing them individually.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>38.6% of the country-home document is inlined RSC flight payload <span class="status-warn">High</span></h4>
+    <p>Median served HTML is 230KB; Irish country homes reach 590KB. 230.5KB of /ireland/en&#x27;s 596.6KB is inlined Next.js RSC flight payload (self.__next_f.push), roughly 91KB of which is the full GP-availability schedule serialised server-side into the document instead of fetched client-side after hydration. The same pattern appears at 55.2% on service pages and 41.5% on doctor profiles. This lines up with /ireland/en being the worst Lighthouse result measured (49, LCP 4,809ms, TBT 1,515ms).</p>
+    <p><strong>Recommendation:</strong> Fetch the availability schedule client-side after hydration rather than serialising it into the RSC payload. Largest single byte win available.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Legacy /post/* Wix URLs blanket-redirect to the blog hub even when the article exists <span class="status-warn">High</span></h4>
+    <p>/post/diabetes-a-silent-disease 308-redirects to /ireland/en/blog rather than /ireland/en/blog/diabetes-a-silent-disease, which is live at 2,385+ words. Same for /post/getting-a-gp-sick-note-online-simplified and /post/hand-foot-and-mouth-disease. Redirecting a specific article to a listing page is the textbook soft-404 pattern; Google routinely treats it as a 404 and drops the legacy URL&#x27;s accumulated equity. These Wix URLs still hold SERP positions.</p>
+    <p><strong>Recommendation:</strong> Build a per-article /post/{slug} redirect map to the matching current article, with the hub only as a genuine last-resort fallback. Separately verify /pt/home -&gt; /ireland/pt — on Wix /pt/ was the Portugal market, which would make /portugal/pt the correct target.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>79 hreflang targets are absent from the XML sitemap <span class="status-warn">Medium</span></h4>
+    <p>Mostly locale variants of the /legal hub, e.g. /ireland/pt/legal, /ireland/es/legal. The pages exist and are referenced as alternates but are never submitted in the sitemap.</p>
+    <p><strong>Recommendation:</strong> Either add them to the sitemap or drop them from the hreflang clusters, so the two sources agree.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Trailing-slash URLs take two redirect hops <span class="status-warn">Low</span></h4>
+    <p>/ireland/ returns 308 to /ireland, which returns 308 to /ireland/en. Every country prefix has this two-hop chain.</p>
+    <p><strong>Recommendation:</strong> Normalise the trailing slash and the locale in a single rule so the chain collapses to one hop.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>/favicon.ico returns 404 <span class="status-warn">Low</span></h4>
+    <p>Browsers and several crawlers request /favicon.ico unconditionally regardless of any &lt;link rel=&quot;icon&quot;&gt; declaration.</p>
+    <p><strong>Recommendation:</strong> Add the file or a rewrite at the well-known path.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Cross-Origin-Opener-Policy header absent <span class="status-warn">Low</span></h4>
+    <p>The only missing header in an otherwise complete security set.</p>
+    <p><strong>Recommendation:</strong> Add Cross-Origin-Opener-Policy: same-origin.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.2 Content Quality</h3>
+  <p><strong>Score:</strong> <span class="status-warn">63/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Blog articles are genuinely YMYL-compliant: 2,385-3,846 words with a visible byline (&#x27;Written by Dr Tiago Miguel Figueira, IMC 523449&#x27;), a separate clinical reviewer, and reviewedBy/lastReviewed Physician JSON-LD.</li>
+    <li>Service pages median 1,901 words; country homes median 2,172 words; doctor profiles median 1,176 words.</li>
+    <li>Body-copy translation into German, Czech and Romanian reads as human-quality, not machine output.</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>English UI strings leak onto 76% of non-English pages <span class="status-warn">Critical</span></h4>
+    <p>912 of 1,153 sitemap URLs are non-English. Sampling 66, 50 (76%) render hard-coded English UI strings inside otherwise well-translated pages: &#x27;Languages&#x27; on 43, &#x27;Pick a time&#x27; on 40, &#x27;Specialist care&#x27; on 14, &#x27;Book a consultation&#x27; on 6, &#x27;Ready when you are&#x27; on 6. Reproducible on /ireland/de/services/acute-medical-consultation, /ireland/cs/health/diabetes and /czechia/cs. The surrounding body copy is correctly translated, so this is one shared cross-sell/CTA component that never received the locale — not a translation backlog. It sits directly on the booking CTA.</p>
+    <p><strong>Recommendation:</strong> Wire the shared CTA/cross-sell component to the active locale. Verify by re-running a leak scan across a 60+ URL non-English sample and expecting zero hits.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>~90 /health/ condition pages are thin against national health authorities <span class="status-warn">High</span></h4>
+    <p>290-486 words with 4-5 H2s each and a unique H1 per page, competing on &#x27;diabetes&#x27;, &#x27;migraine&#x27; and &#x27;hypertension&#x27; against HSE, NHS and Mayo. They lack the named-clinician byline and reviewer depth the blog articles already have. Examples: /ireland/en/health/diabetes 298w, /ireland/en/health/migraine 290w, /ireland/en/health/hypertension 323w.</p>
+    <p><strong>Recommendation:</strong> Pick one path deliberately. Either deepen to 1,200+ words with the same byline/reviewer/lastReviewed treatment the blog uses, or reposition as service-intent pages (&#x27;Diabetes care in Ireland — book an online GP&#x27;) and stop competing with national health bodies on informational intent. The current middle ground is the worst outcome for a YMYL site.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>The global /blog hub renders &#x27;No articles published yet&#x27; <span class="status-warn">Critical</span></h4>
+    <p>/blog is 232 words and shows no articles, while 44 country-scoped article URLs serve full 2,400-3,800 word content. It sits in the main navigation of every page, in the sitemap, and is the URL llms.txt points AI crawlers at.</p>
+    <p><strong>Recommendation:</strong> Fix the locale/country filter that excludes everything at the unscoped route.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Cross-country service pages are near-duplicates <span class="status-warn">Medium</span></h4>
+    <p>Sampling the mental-health service across ES/PT/BR found an identical section template with near-verbatim sub-headers and bullet lists, with the country name and local details swapped.</p>
+    <p><strong>Recommendation:</strong> Add genuine per-market substance: local regulator, local pricing, local referral pathways, local clinician names.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Two competing sets of legal pages, both indexable <span class="status-warn">Medium</span></h4>
+    <p>/terms (687 words) and /privacy (547 words) at the root coexist with /{country}/{locale}/legal/terms-of-service (6,414-8,207 words) and /legal/privacy-policy (3,496-4,358 words). This is both a duplication problem and a compliance ambiguity about which document governs.</p>
+    <p><strong>Recommendation:</strong> Decide which set is canonical, then redirect or noindex the other.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Per-country blog index pages are thin <span class="status-warn">Low</span></h4>
+    <p>230-430 words each. Less critical than the /health/ pages since these are index pages by design.</p>
+    <p><strong>Recommendation:</strong> Add an intro paragraph and topic groupings per country.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.3 On-Page SEO</h3>
+  <p><strong>Score:</strong> <span class="status-warn">62/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Zero pages without an &lt;h1&gt; across all 500 crawled — a perfect result.</li>
+    <li>Of the 461 meta descriptions present, 100% sit in the 70-160 character band. Zero too short, zero too long.</li>
+    <li>Zero titles under 30 characters; keyword-bearing content is consistently placed at the front of the title.</li>
+    <li>Internal linking within each country silo is strong — median 53 links per page, max 128, only one page under 20.</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>46% of titles exceed 60 characters and truncate in the SERP <span class="status-warn">High</span></h4>
+    <p>232 of 500 titles exceed 60 characters; 99 exceed 70. The template appends both a qualifier and the brand, so the truncated tail is exactly the trust signal that earns the click (&#x27;IMC-Registered&#x27;, &#x27;Colegiados&#x27;, &#x27;CLK Registered&#x27;). 32 of 33 country-home pages — the highest-value commercial pages on the site — are over-length. Worst case is 91 characters. Two separators (| and ·) are also mixed inconsistently across page types.</p>
+    <p><strong>Recommendation:</strong> Drop the &#x27;| Global Health&#x27; / &#x27;· Global Health&#x27; suffix when the title already exceeds ~48 characters — Google appends the site name from WebSite schema, which is present on all 500 pages. Shorten the middle qualifier. Standardise on one separator. Target 60 characters / ~575px.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Blog article titles are set in ALL CAPS <span class="status-warn">Medium</span></h4>
+    <p>e.g. &#x27;HAND, FOOT AND MOUTH DISEASE: SIGNS AND TREATMENT · Global Health&#x27;. Google frequently rewrites all-caps titles, and they read as low-quality in a YMYL SERP.</p>
+    <p><strong>Recommendation:</strong> Convert blog article titles to sentence case.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Wrong title mapped to a Romanian service page <span class="status-warn">High</span></h4>
+    <p>/romania/en/services/controlul-greutatii — slug means &#x27;weight control&#x27; — carries the title &#x27;Men&#x27;s Health Online | Romania | Confidential English Doctor&#x27;. This is a genuine content bug, not just a duplicate title.</p>
+    <p><strong>Recommendation:</strong> Fix the title and audit neighbouring Romanian service slugs for the same mis-mapping.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>55 pages share 12 meta descriptions <span class="status-warn">Medium</span></h4>
+    <p>All per-country blog hubs sharing one description per language — e.g. &#x27;Evidence-based guides written and reviewed by our medical team. No ads, no fluff.&#x27; on 7 pages, with Spanish, Portuguese, Czech and Romanian equivalents on 5-6 each.</p>
+    <p><strong>Recommendation:</strong> Insert the country name into the template. One-line change that makes six SERP listings distinct instead of identical.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Cross-country blog syndication produces identical titles <span class="status-warn">Low</span></h4>
+    <p>/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment and /portugal/en/blog/hand-foot-and-mouth-disease-signs-and-treatment carry the same title with no country differentiation. Same for /portugal/en/see-a-specialist and one other page.</p>
+    <p><strong>Recommendation:</strong> Add the country to syndicated article titles.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Five blog articles emit two &lt;h1&gt; elements <span class="status-warn">Low</span></h4>
+    <p>Page title and article title both rendering as h1 in the blog article template. Google handles multiple H1s, so severity is low.</p>
+    <p><strong>Recommendation:</strong> Demote one to h2 in the blog article template.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>The root entry gate is the weakest page on the site structurally <span class="status-warn">High</span></h4>
+    <p>114 words, 6 internal links, one h1, no hreflang, no BreadcrumbList. Every external link, brand search and all crawl equity lands here and distributes through exactly six anchors. There is also no cross-silo linking, so authority earned by an Irish article cannot reach its Spanish equivalent. Gating by country is legitimate for a multi-jurisdiction medical service, but the gate does not need to be thin, hreflang-less and breadcrumb-less to do that job.</p>
+    <p><strong>Recommendation:</strong> Add hreflang and a BreadcrumbList to /. Add trust signals and a short description of the service with links to /about and the doctor hubs, without breaking country selection. Add a visible &#x27;also available in&#x27; row site-wide to create cross-silo links — the hreflang clusters already know the mapping.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.4 Schema / Structured Data</h3>
+  <p><strong>Score:</strong> <span class="status-pass">82/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Zero JSON-LD parse errors across all 500 pages.</li>
+    <li>The site-wide MedicalOrganization + WebSite block is on all 500 pages and well built — real sameAs covering Wikidata, LinkedIn, YouTube, Instagram, TikTok plus 12+ regulatory bodies (Medical Council, HSE, HIQA, HPRA, RCPI, ICGP), ImageObject logo with dimensions, PropertyValue registrations, correct @id cross-linking.</li>
+    <li>176 Physician blocks carry solid credential and regulator linkage.</li>
+    <li>Article markup has all required fields.</li>
+    <li>Broad type coverage: BreadcrumbList 325, FAQPage 293, Organization 255, ReserveAction 196, MedicalProcedure 172, MedicalClinic 144, Service 52, Article 50, ItemList 39, Offer 34.</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Product/Brand schema misused on 6 pricing pages <span class="status-warn">High</span></h4>
+    <p>Care-plan subscriptions on /ireland/*/pricing are typed as Product and are missing the required itemCondition, so they are not eligible for Merchant listings even as currently typed.</p>
+    <p><strong>Recommendation:</strong> Switch to Service + Offer — the pattern already used correctly in 52 other places on the site. Corrected JSON-LD is in findings/schema.md.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>No AggregateRating or Review markup anywhere on the site <span class="status-warn">High</span></h4>
+    <p>Zero rating or review structured data across 500 pages, despite live Doctify review widgets running on the site. Star ratings in the SERP are one of the largest CTR levers available to a medical service.</p>
+    <p><strong>Recommendation:</strong> Add AggregateRating/Review markup reflecting genuinely collected Doctify reviews.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>MedicalBusiness vs MedicalClinic type conflict on the same entity <span class="status-warn">Medium</span></h4>
+    <p>&#x27;Global Health · Ireland&#x27; is typed as MedicalClinic on the country home and MedicalBusiness on service pages, with neither carrying address, geo or @id. Both are LocalBusiness subtypes, which give a virtual-only provider no local-business eligibility anyway.</p>
+    <p><strong>Recommendation:</strong> Collapse to MedicalOrganization with a country-scoped @id.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>BreadcrumbList generator gap on localised service pages <span class="status-warn">Medium</span></h4>
+    <p>175 of 500 pages lack BreadcrumbList. Most are legitimate (legal and utility pages), but non-English and non-Ireland localised service pages are missing it while their Irish English equivalents have it.</p>
+    <p><strong>Recommendation:</strong> Extend the breadcrumb generator to all localised service routes.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Missing high-value schema for a telemedicine site <span class="status-warn">Medium</span></h4>
+    <p>No WebSite.potentialAction (SearchAction), no MedicalCondition entity typing on blog &#x27;about&#x27;, per-country pricing schema exists only for Ireland, and lab-test detail pages have no per-test MedicalTest or Offer.</p>
+    <p><strong>Recommendation:</strong> Add each; they map directly to the site&#x27;s existing content.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Minor property corrections <span class="status-warn">Low</span></h4>
+    <p>Article.image should be an ImageObject with explicit width and height. Physician should carry a structured medicalSpecialty rather than free text. MedicalClinic.reviewedBy is not a valid schema.org property on that type — Google ignores it silently, so no benefit is being gained from it.</p>
+    <p><strong>Recommendation:</strong> Correct all three.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>293 FAQPage blocks no longer earn a SERP feature <span class="status-warn">Info</span></h4>
+    <p>Google retired FAQ rich results for non-authoritative sites. The content is well-scoped and contextual, so there is no reason to remove it — just no reason to expand it either.</p>
+    <p><strong>Recommendation:</strong> No action. Do not invest further in FAQ markup expansion.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.5 Performance (Core Web Vitals)</h3>
+  <p><strong>Score:</strong> <span class="status-warn">62/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Origin-level CrUX field data passes every Core Web Vital: LCP 1,539ms, INP 137ms, CLS 0.00, TTFB 534ms, FCP 1,115ms.</li>
+    <li>CLS is 0.00 in both lab and field across every page tested — a genuine non-issue.</li>
+    <li>25-week trend is improving on LCP (-27.5%), TTFB (-36.9%), FCP (-29.6%) and CLS (-100%).</li>
+    <li>Doctor profile pages score 91 in Lighthouse with LCP 2,988ms and TBT 87ms.</li>
+    <li>Average raw HTML response time 316ms (p90 340ms).</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Per-device field data is materially worse than the blended origin figure <span class="status-warn">High</span></h4>
+    <p>In the latest week each segment reported, LCP is 3,098ms on phone and 3,097ms on desktop (both Needs Improvement), and TTFB is 2,618ms on phone (Poor) and 1,985ms on desktop (Needs Improvement) — against a blended 28-day origin TTFB of 534ms.</p>
+    <p><strong>Recommendation:</strong> Fix the no-store/unprerendered entry gate and the RSC payload bloat, then re-run crux_history.py --form-factor PHONE once CrUX rolls past the current collection period to confirm the phone figure is not a small-sample artifact.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>/ireland/en scores 49 in Lighthouse with LCP 4,809ms and TBT 1,515ms <span class="status-warn">High</span></h4>
+    <p>The worst page measured, against 91/2,988ms/87ms on a doctor profile, 78 on the entry gate and 76 on a service page. Root cause identified: 230.5KB of the 596.6KB document is inlined RSC flight payload, ~91KB of which is the full GP-availability schedule serialised server-side.</p>
+    <p><strong>Recommendation:</strong> Fetch the availability schedule client-side after hydration.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>INP is the one Core Web Vital trending the wrong way <span class="status-warn">Medium</span></h4>
+    <p>Origin INP is up 33.9% over 25 weeks (91ms to 122ms) and desktop INP up 16.9%. Both remain inside the &#x27;Good&#x27; band, so this is a watch-item rather than a live problem — but it is the metric most likely to be driven by third-party scripts, which could not be measured this run.</p>
+    <p><strong>Recommendation:</strong> Monitor, and re-measure third-party cost with consent accepted.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Third-party script cost could not be measured <span class="status-warn">Info</span></h4>
+    <p>GTM, Doctify, Meta, Microsoft Clarity and ElevenLabs all measured zero transferred bytes because every one is consent-gated and none fired in the headless Lighthouse session. This is a measurement gap, not evidence that they are free.</p>
+    <p><strong>Recommendation:</strong> Run Lighthouse with consent accepted, or use production RUM, to quantify. Relevant because INP is the degrading metric.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>LCP element identity and subparts unavailable <span class="status-warn">Info</span></h4>
+    <p>The LCP element, LCP subparts and render-blocking-resources audits all returned empty from Lighthouse 13.4.1 — a known insight-audit migration gap in that version. Hero and logo images are the inferred candidates but this is unconfirmed.</p>
+    <p><strong>Recommendation:</strong> Confirm the LCP element with a different tool or a newer Lighthouse before optimising for it specifically.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.6 AI Search Readiness (GEO)</h3>
+  <p><strong>Score:</strong> <span class="status-warn">74/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>AI crawler access is fully open and explicit — robots.txt names GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, Google-Extended, Gemini-Deep-Research, PerplexityBot and Perplexity-User, all permissive, with a permissive wildcard covering the rest.</li>
+    <li>llms.txt is present, returns 200, is well-formed, and lists 30+ country and service links with direct-answer descriptions.</li>
+    <li>Every page is fully server-rendered, so there is no JS gap for AI crawlers.</li>
+    <li>Strong authority signals via the MedicalOrganization sameAs block covering Wikidata, major social profiles and 12+ regulatory bodies.</li>
+    <li>Blog articles carry Article + Physician schema, named physician author with IMC credential and memberOf, a separate clinical reviewer byline, and datePublished/dateModified — exactly the E-E-A-T pattern YMYL content needs.</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>llms.txt points AI crawlers at the broken /blog hub and omits individual articles <span class="status-warn">High</span></h4>
+    <p>The site&#x27;s strongest and most citable content — the 44 full-length blog articles — is undiscoverable from the one file specifically intended to advertise it, because llms.txt links only the hub, and the hub renders &#x27;No articles published yet&#x27;.</p>
+    <p><strong>Recommendation:</strong> Fix the /blog hub, list individual articles in llms.txt, and add an ## Optional section.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Clinician bylines and reviewer schema exist only on blog articles <span class="status-warn">Medium</span></h4>
+    <p>Service pages — where commercial queries land and where YMYL trust matters most — have no named author or medical reviewer attribution.</p>
+    <p><strong>Recommendation:</strong> Extend the byline/reviewer/lastReviewed pattern from blog articles to service pages.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Hub and /about H2s are marketing copy rather than question-form headings <span class="status-warn">Medium</span></h4>
+    <p>Question-shaped H2s are one of the strongest passage-extraction signals for AI answer engines.</p>
+    <p><strong>Recommendation:</strong> Rewrite hub and /about H2s into question form.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Long article paragraphs are not chunked for passage extraction <span class="status-warn">Medium</span></h4>
+    <p>Articles run 2,400-3,800 words in long paragraph blocks rather than self-contained answer units.</p>
+    <p><strong>Recommendation:</strong> Chunk into self-contained ~140-160 word blocks that answer one question each.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>No Wikipedia entity <span class="status-warn">Low</span></h4>
+    <p>Expected for a brand founded in 2023. Wikidata is already present in sameAs.</p>
+    <p><strong>Recommendation:</strong> Backlog — pursue once independent coverage supports notability.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.7 Images</h3>
+  <p><strong>Score:</strong> <span class="status-pass">95/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Across 6,186 &lt;img&gt; elements on 500 pages, zero are missing an alt attribute — an exceptional result at this scale.</li>
+    <li>408 images (6.6%) carry alt=&quot;&quot;, which is the correct treatment for decorative imagery.</li>
+    <li>Images are served through next/image with responsive srcset and WebP.</li>
+    <li>Hero images are rel=preload&#x27;ed with explicit imageSrcSet and imageSizes.</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>No image issues found <span class="status-warn">Info</span></h4>
+    <p>Alt coverage, format, responsive sizing and preload hints are all correctly implemented. No action required.</p>
+    <p><strong>Recommendation:</strong> Maintain the current next/image pipeline.</p>
+  </div>
+  <hr class="divider">
+</div>
+
+<!-- ======================================================= 3. ACTION PLAN === -->
+<div class="section">
+  <div class="section-header">
+    <h2>3. Action Plan</h2>
+  </div>
+
+  <div class="roadmap-phase">
+    <h4>Phase 1: Critical Fixes <span class="effort">Week 1</span></h4>
+    <ul>
+      <li>Restore Google API access — GSC, GA4 and the Indexing API all return invalid_grant. Run `claude-seo run google_auth.py --auth`. Blocker on measuring every other fix.</li>
+      <li>Add generateMetadata to the legal/[slug] and doctors/[slug] route segments — fixes 127 URLs (11% of the site) that currently ship no title, description, canonical or Open Graph.</li>
+      <li>Wire the shared CTA/cross-sell component to the active locale — fixes English UI strings leaking onto ~690 non-English pages.</li>
+      <li>Reconcile the EUR 29 / EUR 39 price contradiction between /ireland/en and /ireland/en/gp-consultation-online, and audit every other market for the same divergence.</li>
+      <li>Fix the global /blog hub, which renders &#x27;No articles published yet&#x27; while 44 country-scoped articles serve full content.</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 2: High-Impact Improvements <span class="effort">Weeks 2-3</span></h4>
+    <ul>
+      <li>Fix the title template — drop the brand suffix above ~48 chars, shorten the middle qualifier, standardise the separator, convert blog titles from ALL CAPS. Fixes ~200 truncated titles.</li>
+      <li>Move the RSC availability payload client-side — 230.5KB of /ireland/en&#x27;s 596.6KB is inlined flight payload driving a Lighthouse score of 49.</li>
+      <li>Make the entry gate cacheable and linkable — move /, the root global pages and /legal/* onto ISR, and add hreflang and a BreadcrumbList to /. Check for one shared route-group config as the upstream cause of the metadata, hreflang and caching symptoms.</li>
+      <li>Build a dedicated sick-certificate page per market — an entire commercial cluster the site structurally cannot compete for today. Promote and expand the existing 486-word /ireland/en/health/sick-cert-online.</li>
+      <li>Map legacy /post/{slug} redirects to the matching article instead of the blog hub, and verify /pt/home targets the right market.</li>
+      <li>Fix Product/Brand schema on the 6 Ireland pricing pages — switch to Service + Offer.</li>
+      <li>Add the country name to the 6 per-country blog-hub meta descriptions (55 pages share 12 descriptions).</li>
+      <li>Fix the wrong title on /romania/en/services/controlul-greutatii and audit neighbouring Romanian slugs.</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 3: Content &amp; Authority <span class="effort">Month 2</span></h4>
+    <ul>
+      <li>Deepen or reposition the ~90 /health/ condition pages (290-486 words competing against HSE/NHS/Mayo) — either take them to 1,200+ words with full medical-review treatment, or reframe them as service-intent pages.</li>
+      <li>Add AggregateRating/Review schema — the highest-value schema gap, with live Doctify review widgets already on the site.</li>
+      <li>Extend clinician bylines and reviewer schema from blog articles to service pages.</li>
+      <li>Differentiate cross-country service copy with local regulator, pricing, referral pathways and clinician names.</li>
+      <li>Resolve the duplicate legal-page sets — decide which of /terms + /privacy or /{country}/{locale}/legal/* is canonical, then redirect or noindex the other.</li>
+      <li>Improve AI citability — list individual articles in llms.txt, rewrite hub H2s into question form, chunk long paragraphs into self-contained answer blocks.</li>
+      <li>Add cross-silo internal linking using the hreflang cluster mapping the site already computes.</li>
+      <li>Add a doctor-language filter facet on /{country}/{locale}/doctors to capture own-language queries.</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 4: Monitoring &amp; Iteration <span class="effort">Ongoing</span></h4>
+    <ul>
+      <li>Batch the small fixes: /favicon.ico 404, trailing-slash double redirect, 79 hreflang targets missing from the sitemap, Cross-Origin-Opener-Policy header, double h1 on 5 blog articles, BreadcrumbList generator gap on localised service pages, MedicalBusiness/MedicalClinic type conflict, Article.image as ImageObject, structured Physician.medicalSpecialty.</li>
+      <li>Address the cookie-consent modal covering 55-60% of the mobile viewport on first paint — not a ranking penalty since consent notices are exempt, but it buries the H1 and CTA.</li>
+      <li>Add free Moz and Bing Webmaster API keys to unlock DA/PA, anchor-text distribution, toxicity scoring and referring-domain counts — none of which are currently measurable.</li>
+      <li>Re-measure third-party script cost with consent accepted (GTM, Doctify, Meta, Clarity, ElevenLabs all measured zero bytes because they are consent-gated).</li>
+      <li>Confirm the 2,618ms phone TTFB figure once CrUX rolls past the current collection period.</li>
+      <li>Watch INP (+33.9% origin, +16.9% desktop over 25 weeks, still &#x27;Good&#x27;) and phone TTFB (+23.3%).</li>
+      <li>Baseline a drift snapshot now and re-run after Phases 1 and 2 ship: `claude-seo run drift_baseline.py https://www.myglobalhealth.online`.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ======================================================= DATA SOURCES & METHODOLOGY === -->
+<div class="section" style="text-align: center; padding-top: 15mm;">
+  <hr class="divider">
+  <h3 style="text-align: left;">Data Sources &amp; Methodology</h3>
+  <table>
+    <thead>
+      <tr><th>Source</th><th>Description</th><th>Update Frequency</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PageSpeed Insights API</td>
+          <td>Lighthouse lab audit (mobile emulation, Moto G Power, slow 4G)</td>
+          <td>Real-time</td></tr>
+      <tr><td>Chrome UX Report (CrUX)</td>
+          <td>28-day rolling field data from real Chrome users</td>
+          <td>Daily ~04:00 UTC</td></tr>
+      <tr><td>CrUX History API</td>
+          <td>25-week p75 trend data per metric</td>
+          <td>Weekly</td></tr>
+      <tr><td>Google Search Console</td>
+          <td>Search Analytics (clicks, impressions, CTR, position)</td>
+          <td>2-3 day lag</td></tr>
+      <tr><td>URL Inspection API</td>
+          <td>Per-URL index status, coverage state, crawl info</td>
+          <td>Real-time (2,000/day)</td></tr>
+    </tbody>
+  </table>
+  <p style="color: #94a3b8; font-size: 9pt; margin-top: 5mm;">
+    Report generated by Claude SEO &mdash; Google SEO Intelligence Skill &mdash; August 03, 2026<br>
+    Methodology based on Google Web Vitals thresholds, Search Console documentation, and Lighthouse scoring algorithms.
+  </p>
+</div>
+
+</body>
+</html>
