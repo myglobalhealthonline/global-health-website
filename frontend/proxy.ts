@@ -4,6 +4,7 @@ import { jwtVerify, importSPKI, type JWTPayload } from "jose";
 import { getRequestContext } from "@/lib/routing/get-request-context";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { PROD_SITE_URL } from "@/lib/seo/site-url";
+import { countries } from "@/data/countries";
 
 /**
  * Frontend edge proxy.
@@ -28,6 +29,9 @@ import { PROD_SITE_URL } from "@/lib/seo/site-url";
  *      headers so downstream RSCs can read locale context.
  */
 const PUBLIC_FILE = /\.(.*)$/;
+
+// SEO audit Phase 4 #2 — bare `/{country}/` with a trailing slash.
+const COUNTRY_TRAILING_SLASH_RE = /^\/([a-z0-9-]+)\/$/;
 
 // Railway keeps its auto-generated `*.up.railway.app` domain publicly reachable
 // even after a custom domain is attached, and site-url.ts self-canonicalizes to
@@ -338,6 +342,45 @@ export async function proxy(request: NextRequest) {
     PUBLIC_FILE.test(pathname)
   ) {
     return NextResponse.next();
+  }
+
+  // Trailing-slash handling, reimplemented here now that `skipTrailingSlashRedirect`
+  // (next.config.ts) turns off Next's own automatic redirect. That redirect used
+  // to fire BEFORE this proxy ever ran — confirmed empirically, `/ireland/` never
+  // even reached this function — which made it impossible to collapse the
+  // country-home case (`/ireland/` -> `/ireland` -> `/ireland/en`, 2 hops) into
+  // one hop from either `next.config.ts` `redirects()` or here. Every other
+  // trailing-slash path gets the same 308-strip Next used to do automatically
+  // (below), so this is a "who handles it" change, not a behavior change, for
+  // everything except the country-home case.
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    const countryMatch = COUNTRY_TRAILING_SLASH_RE.exec(pathname);
+    const country = countryMatch ? countries.find((c) => c.slug === countryMatch[1]) : null;
+    if (country) {
+      // Mirrors `app/(redirect)/[country]/page.tsx`'s own `?lang=` handling:
+      // an explicit request for a supported locale is a temporary (307)
+      // redirect (the target varies per visitor), the plain country ->
+      // default-locale mapping is permanent (308). Only covers the
+      // statically seeded markets (`data/countries.ts`) — admin-added
+      // countries have no bare `/{slug}/` link anywhere on the site to
+      // trigger this and fall through to the generic strip below, same
+      // 2-hop result as before.
+      const requested = request.nextUrl.searchParams.get("lang")?.toLowerCase() ?? null;
+      const requestedSupported =
+        !!requested && country.supportedLocales.some((l) => l.toLowerCase() === requested);
+      const lang = requestedSupported ? requested! : (country.defaultLocale ?? "EN").toLowerCase();
+      // Built via `new URL()` rather than `request.nextUrl.clone()` +
+      // `.pathname =` — NextURL silently re-appends the trailing slash it
+      // was carrying from the original request when serialized (confirmed
+      // empirically: `.pathname` reads back correctly but `.toString()` /
+      // the Location header still has it), which is the whole reason this
+      // block exists. A plain WHATWG URL doesn't carry that state.
+      const oneHopUrl = new URL(`/${country.slug}/${lang}`, request.url);
+      return NextResponse.redirect(oneHopUrl, requestedSupported ? 307 : 308);
+    }
+    const strippedPath = pathname.replace(/\/+$/, "") || "/";
+    const strippedUrl = new URL(strippedPath + request.nextUrl.search, request.url);
+    return NextResponse.redirect(strippedUrl, 308);
   }
 
   // Server Action invocations (sign-out, form submits, etc.) POST to the

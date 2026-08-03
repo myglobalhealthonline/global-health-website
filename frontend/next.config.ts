@@ -89,6 +89,16 @@ const SECURITY_HEADERS = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(self), geolocation=(), browsing-topics=()",
   },
+  // SEO audit Phase 4 #3 — the one missing header from an otherwise complete
+  // set. `same-origin` (not `same-origin-allow-popups`) is safe here: Stripe
+  // checkout is a full top-level `window.location.assign()` redirect, not a
+  // popup (app/[country]/[lang]/checkout/_components/CheckoutPageClient.tsx);
+  // every `window.open()` call in the app already passes `noopener` and only
+  // opens PDFs/external report links that never read back `window.opener`;
+  // the ElevenLabs convai widget is an embedded custom element, not a popup,
+  // so COOP (which only isolates `window.open()` opener relationships)
+  // doesn't touch it. There is no OAuth-popup flow anywhere in the frontend.
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
 /**
@@ -119,6 +129,18 @@ if (buildCpus * buildApiConcurrency >= BACKEND_POOL_MAX) {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // SEO audit Phase 4 #2 — by default Next's trailingSlash:false behavior
+  // 308-redirects a trailing-slash request BEFORE `proxy.ts` (middleware) or
+  // this file's own `redirects()` ever run — confirmed empirically (neither
+  // could intercept `/ireland/`; no request even reached proxy.ts). This
+  // opts out of that automatic, un-interceptable redirect so `proxy.ts` can
+  // own trailing-slash handling and collapse the country-home case straight
+  // to `/{country}/{lang}` in one hop instead of two. See the trailing-slash
+  // block at the top of `proxy()` for the reimplementation — every other
+  // trailing-slash path still gets the same 308-strip Next used to do
+  // automatically, so this is a "who handles it" change, not a behavior
+  // change, for everything except the country-home case.
+  skipTrailingSlashRedirect: true,
   // `/api/og` imports sharp. Under pnpm, sharp's native binding lives in
   // `@img/sharp-<platform>` and the libvips shared object in a SEPARATE
   // sibling package (`@img/sharp-libvips-<platform>`); standalone file
@@ -567,6 +589,14 @@ const nextConfig: NextConfig = {
     const IE_ONLY = "(ireland)";
     const HAS_TESTS = "(ireland|romania)";
     const HAS_SPECIALIST = "(ireland|portugal|spain|romania)";
+    // NOTE — the trailing-slash double redirect (SEO audit Phase 4 #2,
+    // `/ireland/` -> `/ireland` -> `/ireland/en`) is fixed in `proxy.ts`, not
+    // here. A rule added here (`source: "/ireland/"`) never fires: Next's own
+    // trailingSlash:false normalization strips the slash and 308s BEFORE this
+    // redirects() config is ever evaluated (verified — a matching rule here
+    // produced zero effect, confirmed via dev-server request logs showing no
+    // custom-redirect hit for the slashed path). Middleware runs earlier in
+    // the pipeline than that internal normalization, so the fix lives there.
     return [
       ...localizedSlugRedirects,
       // Retired /health/ landing pages (SEO audit, 2026-08-03). Placed FIRST

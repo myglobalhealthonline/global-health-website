@@ -169,6 +169,66 @@ status change — is a regression from this work and should be treated as one.
 
 ---
 
+## 2b. NEW FINDING — legal pages return a hard 404 when a backend fetch fails
+
+Found 2026-08-03 while verifying the Phase 4 sitemap change. **Not in the
+original audit.** Not yet fixed — it changes error semantics on legal pages, so
+it needs a deliberate decision.
+
+Checking all 231 legal URLs at 6 concurrent requests, **20 returned 404**. The
+same 231 checked sequentially returned **0 failures**, and all of them return
+200 in production. So the URLs are fine; the failure is load-dependent.
+
+The mechanism, in `lib/content/get-country-legal.ts`:
+
+```ts
+return result.ok ? result.data : null;   // any failure -> null
+```
+
+`getCountryLegalDocument` collapses *every* outcome into `null` — a genuine
+"no such document", a timeout, a 500, a rate-limit. The page then does:
+
+```ts
+if (!result && disclaimerParagraphs.length === 0) notFound();   // -> hard 404
+```
+
+So a transient backend hiccup makes a legal page serve **404 Not Found** rather
+than a 5xx. That distinction matters a lot to a crawler: a 404 says *this page
+is gone, drop it from the index*; a 503 says *retry later*. Googlebot crawls in
+bursts, which is exactly the condition that triggers it.
+
+This is the same class of defect as the metadata streaming race (§1.2) —
+invisible when you test one URL at a time, reproducible under concurrency — but
+with a worse consequence, and it applies to the 36 pages that carry the site's
+data-controller and DPO information.
+
+**Suggested fix:** distinguish "not found" from "fetch failed" in the content
+layer. On a failed request, throw so Next serves a 5xx; reserve `notFound()`
+for a successful response that genuinely has no document. The same pattern is
+worth auditing across the other `get-country-*.ts` fetchers, which use the same
+`result.ok ? … : null` idiom.
+
+**Verify after any fix** by re-running the concurrent check:
+
+```bash
+node -e '
+const B="https://www.myglobalhealth.online";
+(async()=>{
+  const sm = await (await fetch(B+"/sitemap.xml")).text();
+  const urls=[...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]).filter(u=>/\/legal/.test(u));
+  let bad=0,n=0; const q=urls.slice();
+  await Promise.all(Array.from({length:6}, async()=>{
+    while(q.length){ const u=q.shift();
+      try{ const r=await fetch(u,{redirect:"manual"}); if(r.status!==200) bad++; }catch(e){ bad++ } n++; }
+  }));
+  console.log(`checked ${n} legal URLs at 6 concurrent · non-200: ${bad}`);
+})()'
+```
+
+Expect 0. It was 20 of 231 when found.
+
+---
+
 ## 3. Watch-items
 
 None of these are broken today. They are the things trending in a direction
