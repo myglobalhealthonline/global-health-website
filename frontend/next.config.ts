@@ -253,7 +253,12 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/:country/:lang/(lab-tests|doctors|blog|services)/:slug",
+        // `health` added 2026-08-03 (SEO audit 2.4b/2.4c follow-up): the
+        // route dropped `force-dynamic` after its whole import tree
+        // (getCountryLandingPage/getCountryDoctors/getCountryTrust, same
+        // cache()-wrapped fetches the already-cacheable routes above use)
+        // was verified free of cookies()/headers()/searchParams/draftMode().
+        source: "/:country/:lang/(lab-tests|doctors|blog|services|health)/:slug",
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],

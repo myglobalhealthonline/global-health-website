@@ -17,7 +17,8 @@ import {
   countryMedicalOrganizationJsonLd,
   faqJsonLd,
 } from "@/lib/seo/structured-data";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { getPublicUrl, getSiteUrl } from "@/lib/seo/site-url";
+import { resolveHealthCanonicalServiceSlug } from "@/lib/seo/health-service-canonical";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
@@ -25,8 +26,6 @@ import { DoctorCard } from "@/components/cards/DoctorCard";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { ArrowRight } from "lucide-react";
-
-export const dynamic = "force-dynamic";
 
 type Params = { country: string; lang: string; slug: string };
 
@@ -43,7 +42,7 @@ export async function generateMetadata({
   if (!page) return { title: SITE_NAME };
   const title = page.seoTitle ?? page.title;
   const description = page.seoDescription ?? `Learn about ${page.title} in ${config?.name ?? country}.`;
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/health/${slug}`,
     title,
     description,
@@ -54,6 +53,20 @@ export async function generateMetadata({
     locale: config ? ogLocales(config, lang).locale : undefined,
     languages: config ? hreflangAlternates(config, `/health/${slug}`) : undefined,
   });
+
+  // SEO audit 2.4b — canonical the pages that cannibalise a topically
+  // identical /services/ page onto that page instead (see
+  // lib/seo/health-service-canonical.ts for the mapping + reasoning per
+  // slug). Everything else stays self-canonical.
+  const canonicalServiceSlug = resolveHealthCanonicalServiceSlug(country, slug);
+  if (canonicalServiceSlug) {
+    metadata.alternates = {
+      ...metadata.alternates,
+      canonical: getPublicUrl(`/${country}/${lang}/services/${canonicalServiceSlug}`),
+    };
+  }
+
+  return metadata;
 }
 
 /**

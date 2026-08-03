@@ -31,6 +31,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
+  consultationServiceOffersJsonLd,
   faqJsonLd,
   medicalClinicServiceJsonLd,
   medicalSpecialtyForService,
@@ -231,6 +232,29 @@ export default async function ServiceDetailPage({
       : null;
   const bookLabel = detail.ctaLabel ?? t.bookLabel;
 
+  // SEO audit 2.4 — `Offer`/price structured data. Never emitted with a
+  // default/guessed price or currency — a wrong price on a medical service
+  // is a consumer-protection problem, not just an SEO gap.
+  const offerJsonLd =
+    detail.basePriceCents != null && detail.basePriceCents > 0 && detail.currencyCode
+      ? consultationServiceOffersJsonLd({
+          name: detail.name,
+          description: stripHtml(detail.heroDescription) ?? stripHtml(detail.summary) ?? detail.name,
+          serviceType: medicalSpecialtyForService(detail.kind, detail.slug),
+          countryName: config.name,
+          url: `/${country}/${lang}/services/${serviceSlug}`,
+          offers: [
+            {
+              name: detail.name,
+              url: `/${country}/${lang}/services/${serviceSlug}`,
+              priceCents: detail.basePriceCents,
+              currencyCode: detail.currencyCode,
+              durationMinutes: detail.durationMinutes,
+            },
+          ],
+        })
+      : null;
+
   return (
     <>
       {detail.faqs.length > 0 ? (
@@ -250,6 +274,12 @@ export default async function ServiceDetailPage({
           dateModified: detail.lastReviewedAt,
         })}
       />
+
+      {/* SEO audit 2.4 — `Offer`/price structured data. Only emitted when a
+       *  real price exists for this service in this country (never a
+       *  default/guessed price or currency — wrong price markup on a medical
+       *  service is a consumer-protection problem, not just an SEO gap). */}
+      {offerJsonLd ? <JsonLd data={offerJsonLd} /> : null}
 
       {/* ── Hero — 50/50 split: image left, content + booking right ── */}
       <section
