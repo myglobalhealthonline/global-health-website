@@ -1,8 +1,13 @@
 {
+  "summaryNotice": {
+    "badge": "Resumo",
+    "text": "Esta página é um resumo em linguagem simples. Não é o documento legal vinculativo — esse documento é mantido por país, juntamente com o responsável pelo tratamento de dados aplicável e a versão atual.",
+    "linkIntro": "Documento vinculativo para o seu país"
+  },
   "privacy": {
     "eyebrow": "Legal",
     "title": "Aviso de privacidade",
-    "lastUpdated": "Última atualização: 16 de maio de 2026",
+    "summaryLabel": "Resumo geral",
     "s1_h": "Quem somos",
     "s1_p": "A Global Health presta consultas médicas online em vários países europeus. A entidade jurídica que actua como responsável pelo tratamento de dados depende do país em que faz a reserva — consulte as nossas páginas de país para detalhes locais.",
     "s2_h": "O que recolhemos",
@@ -29,7 +34,7 @@
   "terms": {
     "eyebrow": "Legal",
     "title": "Termos de serviço",
-    "lastUpdated": "Última atualização: 9 de junho de 2026",
+    "summaryLabel": "Resumo geral",
     "intro": "Estes termos aplicam-se quando utiliza a Global Health para marcar ou realizar uma consulta online. Ao fazer uma reserva, concorda com eles. São termos gerais de utilização e não substituem o consentimento específico e as informações clínicas que recebe no momento da consulta.",
     "s1_h": "O que é o serviço",
     "s1_p": "A Global Health liga-o a médicos registados para exercer no país em que faz a reserva, para consultas realizadas online. A relação clínica é entre si e o clínico tratante, que é responsável pelas suas próprias decisões clínicas no âmbito do seu registo.",

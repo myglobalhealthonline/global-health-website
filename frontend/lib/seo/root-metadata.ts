@@ -40,4 +40,14 @@ export const rootMetadata: Metadata = {
     template: `%s · ${SITE_NAME}`,
   },
   description: DESCRIPTION,
+  // `app/icon.png` / `app/apple-icon.png` already emit these via Next's file
+  // convention — declared explicitly too so the <link rel="icon"> tags are
+  // guaranteed to render (SEO audit Phase 4 #1). `app/favicon.ico` covers the
+  // literal /favicon.ico request browsers/crawlers make regardless of the
+  // <link> tags.
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    shortcut: [{ url: "/favicon.ico" }],
+    apple: [{ url: "/apple-icon.png" }],
+  },
 };

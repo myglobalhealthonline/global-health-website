@@ -124,10 +124,21 @@ export function scopeBlogHtml(html: string): string {
     allowedSchemes: ["http", "https", "mailto", "tel"],
     allowedSchemesByTag: { img: ["http", "https", "data"] },
     allowProtocolRelative: false,
-    // Defence-in-depth: force rel="noopener noreferrer" on every link so a
-    // target="_blank" in admin-authored HTML can't reverse-tabnab the opener.
     transformTags: {
+      // Defence-in-depth: force rel="noopener noreferrer" on every link so a
+      // target="_blank" in admin-authored HTML can't reverse-tabnab the opener.
       a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }, true),
+      // SEO audit Phase 4 #4 — the page template already renders the post
+      // title as the page's one <h1> (blog-post-page.tsx). An admin-authored
+      // body that also opens with its own <h1> (rich-text paste, or a
+      // designed article's own heading) produces two <h1>s per page. Demote
+      // every body h1 to h2 at render time — attributes/classes carry over
+      // unchanged, and globals.css already styles `.gh-article-body h1, h2`
+      // identically for unclassed content, so this is a semantic fix only,
+      // never a visual one. All 5 flagged articles are on the same shared
+      // template, so fixing it here (not per-article content) prevents any
+      // future admin-authored post from reintroducing it.
+      h1: sanitizeHtml.simpleTransform("h2", {}, true),
     },
   });
 

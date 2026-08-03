@@ -13,6 +13,7 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getCountryLegal, LEGAL_TYPE_SLUGS } from "@/lib/content/get-country-legal";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { newestTimestamp } from "@/lib/seo/newest-timestamp";
+import { isRetiredHealthSlug } from "@/lib/seo/health-service-canonical";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -172,6 +173,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           ? country.supportedLocales.map((l) => l.toLowerCase())
           : [defaultLang];
       for (const page of res.data.landingPages) {
+        // A retired landing page still exists in the CMS but is 301'd in
+        // next.config.ts, so submitting it would put a redirecting URL in the
+        // sitemap — the one defect this sitemap currently doesn't have.
+        if (isRetiredHealthSlug(country.slug || countrySlug(country.code), page.slug)) continue;
         bump(country.code, "landing", page.updatedAt);
         const languages: Record<string, string> = {};
         for (const lang of langs) {
@@ -215,19 +220,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (winner) stampByType.set(d.type, winner);
         bump(country.code, "legal", d.updatedAt);
       }
-      // Default locale ONLY. Legal pages were 231 of 1353 sitemap URLs — 17%
-      // of the crawl budget — for boilerplate that answers no query (nothing
-      // legal appears anywhere in Search Console's query report) and that
-      // Google was already declining: 65% indexed, 71 of them sharing 17
-      // titles because "Cookie Policy · Ireland" is identical in all six
-      // locales. Submitting six near-duplicates per document spends crawl on
-      // the pages that earn nothing, while real content still waits.
-      //
-      // Every locale variant stays live, linked from the footer, and fully
-      // indexable — this drops them from the SUBMITTED set, nothing more.
-      // Compliance needs these reachable, not searchable.
-      const legalLangs = [countryLangs(country)[0]];
-      pushLocalized(country, "/legal", 0.3, dated(newest(country.code, "legal")), legalLangs);
+      // SEO audit Phase 4 #6 (2026-08-03): every locale variant, not just the
+      // default. This used to submit the default locale ONLY — deliberately,
+      // to save crawl budget on near-duplicate boilerplate (231/1353 URLs at
+      // the time). But `/legal` and `/legal/{type}` emit full hreflang
+      // `alternates.languages` for every supported locale via
+      // `hreflangAlternates()` (see legal/page.tsx, legal/[type]/page.tsx) —
+      // so the non-default locale URLs were referenced as hreflang targets
+      // without ever being submitted, 79 of them per the audit. Every one of
+      // those URLs is live and 200 (`getCountryLegal`/`getCountryLegalDocument`
+      // fall back exact-locale → "en" → any published row, so a type with any
+      // published document resolves for every locale — verified against
+      // app/[country]/[lang]/legal/[type]/page.tsx's notFound() condition),
+      // and `/legal*` is now on the CDN-cacheable route list in
+      // next.config.ts (commit a104a910), so the crawl-budget cost that
+      // motivated the restriction is smaller than it was. Submit the full set
+      // instead of dropping the hreflang alternates.
+      pushLocalized(country, "/legal", 0.3, dated(newest(country.code, "legal")));
       const types = new Set((legal?.documents ?? []).map((d) => d.type));
       // The profile-only MEDICAL_DISCLAIMER fallback carries no timestamp of
       // its own — it stays undated rather than borrowing an unrelated one.
@@ -238,7 +247,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           `/legal/${LEGAL_TYPE_SLUGS[type]}`,
           0.3,
           dated(stampByType.get(type)),
-          legalLangs,
         );
       }
     } catch {

@@ -31,6 +31,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
+  breadcrumbJsonLd,
   consultationServiceOffersJsonLd,
   faqJsonLd,
   medicalClinicServiceJsonLd,
@@ -291,6 +292,18 @@ export default async function ServiceDetailPage({
       {detail.faqs.length > 0 ? (
         <JsonLd data={faqJsonLd(detail.faqs.map((f) => ({ question: f.question, answer: f.answer })))} />
       ) : null}
+      {/* SEO audit Phase 4 #5 — service detail pages emitted zero
+       * BreadcrumbList (verified in prod for both /ireland/en and non-EN
+       * locales like /portugal/pt — broader than the audit's original
+       * "non-English localised pages only" framing). Mirrors the same
+       * 3-level shape health/[slug]/page.tsx already uses. */}
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: config.name, url: `/${country}/${lang}` },
+          { name: back.label, url: back.href },
+          { name: detail.name, url: `/${country}/${lang}/services/${serviceSlug}` },
+        ])}
+      />
       <JsonLd
         data={medicalClinicServiceJsonLd({
           serviceName: detail.name,
