@@ -72,11 +72,22 @@ export async function buildDoctorProfileMetadata(
   const slug = routeCountrySlug ?? countryNameToSlug[data.profile.country] ?? "ireland";
   const routeLang = lang ?? "en";
   const canonical = `/${slug}/${routeLang}/doctors/${doctorSlug}`;
+  const { common: metaCommon } = loadLocaleBundle(routeLang as LocaleCode);
+  const metaDp = metaCommon.doctorProfile;
+  const fillProfileTemplate = (template: string) =>
+    template
+      .replace("{name}", data.profile.name)
+      .replace("{title}", data.profile.title)
+      .replace("{country}", data.profile.country)
+      .replace("{languages}", data.profile.languages.join(", ") || "English");
   const title =
     data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${data.profile.country}`;
   const description =
     data.profile.seoDescription ??
-    `Book an online consultation with ${data.profile.name}, ${data.profile.title} in ${data.profile.country}. Languages: ${data.profile.languages.join(", ") || "English"}.`;
+    fillProfileTemplate(
+      metaDp.metaDescriptionTemplate ??
+        "Book an online consultation with {name}, {title} in {country}. Languages: {languages}.",
+    );
   const resolvedCode = countryCodeFromSlug(slug);
   const config = resolvedCode ? getCountryByCode(resolvedCode) : null;
   return buildPublicMetadata({
@@ -84,7 +95,10 @@ export async function buildDoctorProfileMetadata(
     title,
     description,
     socialTitle: `${data.profile.name} | ${data.profile.title}`,
-    socialDescription: `Meet ${data.profile.name}, ${data.profile.title} serving patients in ${data.profile.country}. View credentials, languages and appointment options.`,
+    socialDescription: fillProfileTemplate(
+      metaDp.metaSocialDescriptionTemplate ??
+        "Meet {name}, {title} serving patients in {country}. View credentials, languages and appointment options.",
+    ),
     imageTitle: data.profile.name,
     type: "profile",
     kind: "doctor",
@@ -239,9 +253,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             bio: data.profile.bio,
           }),
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
+            { name: c.navigation.home, url: "/" },
             { name: data.profile.country, url: `/${slug}/${lang}` },
-            { name: "Doctors", url: teamHref },
+            { name: c.navigation.doctors, url: teamHref },
             { name: data.profile.name, url: profileHref },
           ]),
           // FAQPage schema mirrors the visible FAQ accordion — only emitted
@@ -307,7 +321,11 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                     href={consultHref}
                     title={service.name}
                     description={service.summary ?? ""}
-                    duration={service.durationMinutes != null ? `${service.durationMinutes} min` : undefined}
+                    duration={
+                      service.durationMinutes != null
+                        ? `${service.durationMinutes} ${c.extra.minSuffix}`
+                        : undefined
+                    }
                     startingPrice={startingPrice}
                     ctaLabel={dp.pickSlot}
                     imageSrc={service.imageSrc}
@@ -386,10 +404,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
         theme="forest"
         variant="carousel"
         language={lang}
-        eyebrow="Patient reviews"
-        headline="What patients say about"
-        headlineAccent="our doctors"
-        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+        headline={c.doctify.patientsSayHeadline ?? "What patients say about"}
+        headlineAccent={c.doctify.patientsSayAccent ?? "our doctors"}
       />
       <StickyBookingCTA href={fallbackBookHref} label={dp.bookWithDoctor.replace("{name}", firstName ?? data.profile.name)} />
     </>

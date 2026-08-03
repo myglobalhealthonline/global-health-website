@@ -322,6 +322,11 @@
     "fallbackBio": "Acest clinician susține consultații online și îndrumări de urmărire prin Global Health.",
     "fallbackQualification1": "Calificările și detaliile de înregistrare sunt afișate atunci când sunt verificate de echipa clinicii.",
     "fallbackQualification2": "Pacienții pot confirma potrivirea clinicianului în timpul procesului de programare.",
+    "fallbackSpecialty1": "Consultație generală",
+    "fallbackSpecialty2": "Îndrumare către specialist",
+    "fallbackSpecialty3": "Sprijin pentru monitorizare",
+    "metaDescriptionTemplate": "Programați o consultație online cu {name}, {title} în {country}. Limbi: {languages}.",
+    "metaSocialDescriptionTemplate": "Faceți cunoștință cu {name}, {title} care tratează pacienți în {country}. Vedeți acreditările, limbile și opțiunile de programare.",
     "nextStep": "Pasul următor",
     "patientReviews": "Recenzii ale pacienților"
   },
@@ -849,7 +854,9 @@
     "truncatedNotice": "Listă trunchiată la limita de rânduri a exportului — restrângeți intervalul de date sau filtrele pentru un export complet."
   },
   "doctify": {
-    "body": "Recenzii independente și verificate, colectate de Doctify de la pacienți tratați de medicii noștri."
+    "body": "Recenzii independente și verificate, colectate de Doctify de la pacienți tratați de medicii noștri.",
+    "patientsSayHeadline": "Ce spun pacienții despre",
+    "patientsSayAccent": "medicii noștri"
   },
   "linkCallout": {
     "entry": "Începeți aici",

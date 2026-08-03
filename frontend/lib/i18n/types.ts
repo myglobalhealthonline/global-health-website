@@ -333,6 +333,12 @@ export type CommonLocale = {
     fallbackBio?: string;
     fallbackQualification1?: string;
     fallbackQualification2?: string;
+    fallbackSpecialty1?: string;
+    fallbackSpecialty2?: string;
+    fallbackSpecialty3?: string;
+    /** Meta description fallbacks — "{name}", "{title}", "{country}", "{languages}". */
+    metaDescriptionTemplate?: string;
+    metaSocialDescriptionTemplate?: string;
     nextStep: string;
     patientReviews: string;
   };
@@ -874,7 +880,12 @@ export type CommonLocale = {
     trustSecureSubtitle: string;
   };
   /** Doctify reviews section lede (the eyebrow reuses a11y.patientReviews). */
-  doctify: { body: string };
+  doctify: {
+    body: string;
+    /** Doctor-facing reviews headline, split so the accent half can be styled. */
+    patientsSayHeadline?: string;
+    patientsSayAccent?: string;
+  };
   /** Shared day-agenda calendar (admin / doctor / patient portals). */
   calendar: {
     selectDay: string;

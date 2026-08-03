@@ -322,6 +322,11 @@
     "fallbackBio": "Tento klinik podporuje online konzultace a následné poradenství prostřednictvím Global Health.",
     "fallbackQualification1": "Kvalifikace a registrační údaje jsou zobrazeny po ověření týmem kliniky.",
     "fallbackQualification2": "Pacienti mohou potvrdit vhodnost klinika během procesu rezervace.",
+    "fallbackSpecialty1": "Obecná konzultace",
+    "fallbackSpecialty2": "Doporučení ke specialistovi",
+    "fallbackSpecialty3": "Následná péče",
+    "metaDescriptionTemplate": "Objednejte se na online konzultaci s {name}, {title} v {country}. Jazyky: {languages}.",
+    "metaSocialDescriptionTemplate": "Seznamte se s {name}, {title} pečující o pacienty v {country}. Prohlédněte si kvalifikaci, jazyky a možnosti objednání.",
     "nextStep": "Další krok",
     "patientReviews": "Hodnocení pacientů"
   },
@@ -849,7 +854,9 @@
     "truncatedNotice": "Seznam zkrácen na limit řádků exportu — zužte rozsah dat nebo filtry pro úplný výpis."
   },
   "doctify": {
-    "body": "Nezávislá ověřená hodnocení, která Doctify sbírá od pacientů ošetřených našimi lékaři."
+    "body": "Nezávislá ověřená hodnocení, která Doctify sbírá od pacientů ošetřených našimi lékaři.",
+    "patientsSayHeadline": "Co pacienti říkají o",
+    "patientsSayAccent": "našich lékařích"
   },
   "linkCallout": {
     "entry": "Začněte zde",

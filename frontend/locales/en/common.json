@@ -322,6 +322,11 @@
     "fallbackBio": "This clinician supports online consultations and follow-up guidance through Global Health.",
     "fallbackQualification1": "Qualifications and registration details are shown when verified by the clinic team.",
     "fallbackQualification2": "Patients can confirm clinician fit during the booking intake.",
+    "fallbackSpecialty1": "General consultation",
+    "fallbackSpecialty2": "Specialist referral guidance",
+    "fallbackSpecialty3": "Follow-up support",
+    "metaDescriptionTemplate": "Book an online consultation with {name}, {title} in {country}. Languages: {languages}.",
+    "metaSocialDescriptionTemplate": "Meet {name}, {title} serving patients in {country}. View credentials, languages and appointment options.",
     "nextStep": "Next step",
     "patientReviews": "Patient reviews"
   },
@@ -849,7 +854,9 @@
     "truncatedNotice": "List truncated at the export row limit — narrow the date range or filters for a complete pull."
   },
   "doctify": {
-    "body": "Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+    "body": "Independent, verified reviews collected by Doctify from patients treated by our clinicians.",
+    "patientsSayHeadline": "What patients say about",
+    "patientsSayAccent": "our doctors"
   },
   "linkCallout": {
     "entry": "Start here",

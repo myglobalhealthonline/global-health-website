@@ -322,6 +322,11 @@
     "fallbackBio": "Este clínico apoya consultas en línea y orientación de seguimiento a través de Global Health.",
     "fallbackQualification1": "Las calificaciones y detalles de registro se muestran cuando son verificados por el equipo de la clínica.",
     "fallbackQualification2": "Los pacientes pueden confirmar la idoneidad del clínico durante la recopilación de información para la reserva.",
+    "fallbackSpecialty1": "Consulta general",
+    "fallbackSpecialty2": "Orientación para derivación a especialista",
+    "fallbackSpecialty3": "Seguimiento",
+    "metaDescriptionTemplate": "Reserve una consulta en línea con {name}, {title} en {country}. Idiomas: {languages}.",
+    "metaSocialDescriptionTemplate": "Conozca a {name}, {title} que atiende a pacientes en {country}. Consulte credenciales, idiomas y opciones de cita.",
     "nextStep": "Siguiente paso",
     "patientReviews": "Opiniones de pacientes"
   },
@@ -849,7 +854,9 @@
     "truncatedNotice": "Lista truncada en el límite de filas de exportación — reduzca el intervalo de fechas o los filtros para obtener todo."
   },
   "doctify": {
-    "body": "Opiniones independientes y verificadas, recogidas por Doctify de pacientes atendidos por nuestros médicos."
+    "body": "Opiniones independientes y verificadas, recogidas por Doctify de pacientes atendidos por nuestros médicos.",
+    "patientsSayHeadline": "Lo que dicen los pacientes sobre",
+    "patientsSayAccent": "nuestros médicos"
   },
   "linkCallout": {
     "entry": "Empieza aquí",

@@ -102,7 +102,11 @@ export function getDoctorProfileData(
           "Qualifications and registration details are shown when verified by the clinic team.",
         dp.fallbackQualification2 ?? "Patients can confirm clinician fit during the booking intake.",
       ],
-      specialties: ["General consultation", "Specialist referral guidance", "Follow-up support"],
+      specialties: [
+        dp.fallbackSpecialty1 ?? "General consultation",
+        dp.fallbackSpecialty2 ?? "Specialist referral guidance",
+        dp.fallbackSpecialty3 ?? "Follow-up support",
+      ],
       imageLabel: fallbackName,
     };
 
@@ -140,6 +144,10 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
   countryCode?: string,
 ): Promise<DoctorProfilePageData> {
   const base = getDoctorProfileData(doctorSlug, locale);
+  const { common } = loadLocaleBundle(
+    locale && isSupportedLocale(locale) ? (locale as LocaleCode) : "en",
+  );
+  const backToTeam = common.doctorProfile.backToTeam;
   const [countryScopedDoctor, globalDoctor, profileImageSrc] = await Promise.all([
     countryCode
       ? fetchDoctorByCountryAndSlug(countryCode, doctorSlug, locale).then((res) =>
@@ -166,7 +174,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
       ...base.hero,
       title: backend.fullName,
       secondaryCta: {
-        label: `Back to ${backend.countryName} team`,
+        label: backToTeam.replace("{country}", backend.countryName),
         href: backend.teamPath,
       },
     },
