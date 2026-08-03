@@ -709,6 +709,37 @@ const nextConfig: NextConfig = {
       { source: "/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
       { source: "/booking-calendar", destination: "/ireland/en/book", permanent: true },
       // Wix appended the service name as a path segment (…/consulta-de-urologia).
+      // 195 live wix.to redirect links still point at these; Wix prefixed the
+      // non-Irish services with a market code (ro-, pt-, cz-, sp-), so route
+      // those to their own market's booking page instead of dumping every
+      // market's inbound link on /ireland/en/book. MUST stay above the generic
+      // /booking-calendar/:slug rule below — first match wins.
+      { source: "/booking-calendar/:slug(ro-.*)", destination: "/romania/ro/book", permanent: true },
+      { source: "/booking-calendar/:slug(pt-.*)", destination: "/portugal/pt/book", permanent: true },
+      { source: "/booking-calendar/:slug(cz-.*)", destination: "/czechia/cs/book", permanent: true },
+      { source: "/booking-calendar/:slug(sp-.*)", destination: "/spain/es/book", permanent: true },
+      {
+        source: "/:locale(cs|es|pt|ro)/booking-calendar/:slug(ro-.*)",
+        destination: "/romania/ro/book",
+        permanent: true,
+      },
+      {
+        source: "/:locale(cs|es|pt|ro)/booking-calendar/:slug(pt-.*)",
+        destination: "/portugal/pt/book",
+        permanent: true,
+      },
+      {
+        source: "/:locale(cs|es|pt|ro)/booking-calendar/:slug(cz-.*)",
+        destination: "/czechia/cs/book",
+        permanent: true,
+      },
+      {
+        source: "/:locale(cs|es|pt|ro)/booking-calendar/:slug(sp-.*)",
+        destination: "/spain/es/book",
+        permanent: true,
+      },
+      // Unprefixed slugs are Wix's original Irish/Spanish/Czech service names
+      // with no reliable market marker — they keep the Ireland fallback.
       { source: "/booking-calendar/:slug", destination: "/ireland/en/book", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/booking-calendar/:slug", destination: "/ireland/en/book", permanent: true },
       // Legacy country hubs
