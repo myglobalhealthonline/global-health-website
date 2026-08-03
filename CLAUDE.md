@@ -42,6 +42,40 @@ for the rules (z-token scale, height-axis tiers, theme fidelity).
 - Heavy skills (full seo-audit crawl etc.): invoke only for genuinely full runs.
   Narrow verification/fix tasks get a plain instruction instead.
 
+## Analytics / SEO services connected (2026-08-03)
+
+No credentials here — handles only. The tooling finds its own tokens.
+
+| Service | Handle | Notes |
+| --- | --- | --- |
+| Search Console | `sc-domain:myglobalhealth.online` | OAuth. **Token dies ~2026-08-10** — the consent screen is still in Testing, which caps refresh tokens at 7 days. Publish it to stop the weekly re-auth. |
+| GA4 | property `547083375` | Data API enabled 2026-08-03. Consent-gated tag; **only 07-25 → 07-28 has data** (see the Dockerfile ARG bug in the plan doc's §7). |
+| CrUX + PageSpeed | API key | Key-based, so unaffected by the OAuth expiry. |
+| openseo MCP | tool list | SERP, keywords, backlinks, site audit. Announces itself — nothing to configure. |
+
+Config `~/.config/claude-seo/google-api.json` · scripts
+`~/.claude/plugins/marketplaces/agricidaniel-claude-seo/scripts/` · check auth
+with `py .../google_auth.py --check`.
+
+Traps that have each cost a wasted round already:
+
+- **`py`, never `python`** — `python` on PATH is a broken WindowsApps stub.
+- **URL Inspection results nest `index_status.coverage_state`.** There is no
+  top-level `verdict`; a flat read reports every row as UNKNOWN.
+- **`--check` reporting `[OK]` proved nothing** until it was patched on
+  2026-08-03 to actually attempt the refresh. It lives in the plugin
+  marketplace, outside this repo, so a plugin update reverts it.
+- **The plugin's "add the service account as Viewer" error is hardcoded** and
+  fires on any 403. In practice it has meant a disabled API, not missing access.
+  Call the API raw before acting on that message.
+- **Grepping served HTML for `hreflang` returns zero** — it is emitted as
+  camelCase `hrefLang`.
+- Quotas: URL Inspection ~7.5 s/URL, 2,000/day. Indexing API 200/day and
+  officially JobPosting/BroadcastEvent-only — do not mass-submit.
+
+Standing SEO plan and its scheduled checks:
+`docs/plans/seo-indexation-plan-2026-07-28.md`.
+
 ## Dependency overrides
 
 `pnpm.overrides` are NOT inherited by the deployed services (each builds
