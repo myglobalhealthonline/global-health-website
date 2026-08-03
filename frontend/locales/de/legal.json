@@ -1,8 +1,13 @@
 {
+  "summaryNotice": {
+    "badge": "Zusammenfassung",
+    "text": "Diese Seite ist eine Zusammenfassung in einfacher Sprache. Sie ist nicht das rechtsverbindliche Dokument — dieses wird für jedes Land geführt, zusammen mit dem jeweils zuständigen Datenverantwortlichen und der aktuellen Version.",
+    "linkIntro": "Rechtsverbindliches Dokument für Ihr Land"
+  },
   "privacy": {
     "eyebrow": "Rechtliches",
     "title": "Datenschutzerklärung",
-    "lastUpdated": "Zuletzt aktualisiert: 16. Mai 2026",
+    "summaryLabel": "Allgemeine Zusammenfassung",
     "s1_h": "Wer wir sind",
     "s1_p": "Global Health bietet Online-Arztkonsultationen in mehreren europäischen Ländern an. Die juristische Person, die als Datenverantwortlicher handelt, hängt von dem Land ab, in dem Sie buchen — weitere Einzelheiten finden Sie auf unseren Länderseiten.",
     "s2_h": "Was wir erheben",
@@ -29,7 +34,7 @@
   "terms": {
     "eyebrow": "Rechtliches",
     "title": "Nutzungsbedingungen",
-    "lastUpdated": "Zuletzt aktualisiert: 9. Juni 2026",
+    "summaryLabel": "Allgemeine Zusammenfassung",
     "intro": "Diese Bedingungen gelten, wenn Sie Global Health nutzen, um eine Online-Konsultation zu buchen oder daran teilzunehmen. Mit der Buchung stimmen Sie diesen Bedingungen zu. Es handelt sich um allgemeine Nutzungsbedingungen, die weder das spezifische Einverständnis noch die klinischen Informationen ersetzen, die Sie zum Zeitpunkt Ihrer Konsultation erhalten.",
     "s1_h": "Was der Service ist",
     "s1_p": "Global Health verbindet Sie mit Ärzten, die für die Praxis in dem Land registriert sind, in dem Sie buchen, für Online-Konsultationen. Die klinische Beziehung besteht zwischen Ihnen und dem behandelnden Arzt, der innerhalb der Grenzen seiner Zulassung für seine eigenen klinischen Entscheidungen verantwortlich ist.",

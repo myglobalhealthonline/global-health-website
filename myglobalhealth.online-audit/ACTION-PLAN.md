@@ -360,12 +360,60 @@ near-verbatim sub-headers and bullet lists, country name swapped. Add genuine
 per-market substance: local regulator, local pricing, local referral pathways,
 local clinician names.
 
-### 3.5 Resolve the duplicate legal-page sets · Medium
-`/terms` (687 words) and `/privacy` (547 words) coexist with
-`/{country}/{locale}/legal/terms-of-service` (6,414–8,207 words) and
-`/legal/privacy-policy` (3,496–4,358 words). Both sets are indexable. This is
-both an SEO duplication issue and a compliance ambiguity about which document
-governs. Decide which is canonical and either redirect or `noindex` the other.
+### 3.5 Legal-page tiering · Medium · CORRECTED 2026-08-03
+
+> **The original item was wrong and its recommended fix would have caused harm.**
+> It read: "`/terms` and `/privacy` coexist with the country legal documents.
+> Both sets are indexable. This is both an SEO duplication issue and a
+> compliance ambiguity about which document governs. Decide which is canonical
+> and either redirect or `noindex` the other."
+>
+> They are **not duplicates**. They are a deliberate two-tier structure, and
+> the root pages state their own subordinate status in their own copy. The
+> correction is kept visible rather than silently edited.
+
+Verified live:
+
+| | Root | Country |
+|---|---|---|
+| URL | `/terms`, `/privacy` | `/{country}/{locale}/legal/{type}` |
+| Length | 704 / 571 words | 3,496–8,207 words |
+| Source | hardcoded in static page files | CMS-managed, versioned |
+| Stamp | "Last updated: 9 June 2026" / "16 May 2026" | "Version 3 · Last updated 18 July 2026" |
+| Legal identifiers | none | data controller (Global Guest s.r.o., IČO 19071680), lead supervisory authority, DPC/CNPD registrations, named DPO |
+
+Root `/privacy` already says: *"The legal entity acting as data controller
+depends on the country you book in — see our country pages for local details."*
+Root `/terms` already says: *"They are general terms of use and are not a
+substitute for the specific consent and clinical information you receive at the
+time of your consultation."*
+
+So there is no ambiguity to resolve — the hierarchy is stated in the documents
+themselves. And the recommended fix would have been actively harmful:
+cross-canonicalling or redirecting would point a general summary at one
+country's specific policy, or delete a genuinely useful plain-language entry
+point. **Both sets stay indexable and self-canonical. No redirect, no
+cross-canonical, no noindex.**
+
+The three defects that are real:
+
+1. **The deferral is prose-only and links nowhere.** The only legal links on
+   root `/privacy` and `/terms` are to `/privacy` and `/terms` — themselves.
+   "See our country pages" resolves to nothing. Dead end for users and
+   crawlers, and a wasted internal-linking opportunity from two pages that
+   carry site-wide footer links.
+2. **Stale-date trap.** The root dates are ~2 months behind the governing
+   documents and are hand-written in static files, so they will rot again. The
+   mechanism needs fixing, not just the value.
+3. **No semantic pairing.** Nothing signals to a reader or to Google that these
+   are a summary/full-document pair — which is the mild duplicate-signal risk
+   the original finding half-detected before misdiagnosing it.
+
+**Fix:** real server-rendered links from each root page to the country legal
+documents, a visible "this is a summary, the governing document for your country
+is here" line from the locale bundles in all 6 languages, and a freshness signal
+derived from the newest governing document instead of a hardcoded date. No legal
+decision required — this is signposting, not interpretation.
 
 ### 3.6 Improve AI citability · Medium
 - List individual blog articles in `llms.txt` and add an `## Optional` section

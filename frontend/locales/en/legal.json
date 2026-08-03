@@ -1,8 +1,13 @@
 {
+  "summaryNotice": {
+    "badge": "Summary",
+    "text": "This page is a plain-language summary. It is not the governing legal document — that document is maintained for each country, together with the applicable data controller and the current version.",
+    "linkIntro": "Governing document for your country"
+  },
   "privacy": {
     "eyebrow": "Legal",
     "title": "Privacy notice",
-    "lastUpdated": "Last updated: 16 May 2026",
+    "summaryLabel": "General summary",
     "s1_h": "Who we are",
     "s1_p": "Global Health provides online medical consultations across several European countries. The legal entity acting as data controller depends on the country you book in — see our country pages for local details.",
     "s2_h": "What we collect",
@@ -29,7 +34,7 @@
   "terms": {
     "eyebrow": "Legal",
     "title": "Terms of service",
-    "lastUpdated": "Last updated: 9 June 2026",
+    "summaryLabel": "General summary",
     "intro": "These terms apply when you use Global Health to book or attend an online consultation. By booking, you agree to them. They are general terms of use and are not a substitute for the specific consent and clinical information you receive at the time of your consultation.",
     "s1_h": "What the service is",
     "s1_p": "Global Health connects you with doctors registered to practise in the country you book in, for consultations held online. The clinical relationship is between you and the treating clinician, who is responsible for their own clinical decisions within the limits of their registration.",

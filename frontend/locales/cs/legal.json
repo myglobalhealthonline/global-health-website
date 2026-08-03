@@ -1,8 +1,13 @@
 {
+  "summaryNotice": {
+    "badge": "Souhrn",
+    "text": "Tato stránka je souhrn v jednoduchém jazyce. Není závazným právním dokumentem — ten je veden pro každou zemi zvlášť, spolu s příslušným správcem údajů a aktuální verzí.",
+    "linkIntro": "Závazný dokument pro vaši zemi"
+  },
   "privacy": {
     "eyebrow": "Právní",
     "title": "Zásady ochrany soukromí",
-    "lastUpdated": "Poslední aktualizace: 16. května 2026",
+    "summaryLabel": "Obecný souhrn",
     "s1_h": "Kdo jsme",
     "s1_p": "Společnost Global Health poskytuje online lékařské konzultace v několika evropských zemích. Právní subjekt vystupující jako správce údajů závisí na zemi, ve které provádíte rezervaci — podrobnosti naleznete na stránkách jednotlivých zemí.",
     "s2_h": "Co shromažďujeme",
@@ -29,7 +34,7 @@
   "terms": {
     "eyebrow": "Právní",
     "title": "Podmínky služby",
-    "lastUpdated": "Poslední aktualizace: 9. června 2026",
+    "summaryLabel": "Obecný souhrn",
     "intro": "Tyto podmínky se vztahují na využívání služby Global Health k rezervaci nebo účasti na online konzultaci. Rezervací s nimi souhlasíte. Jedná se o obecné podmínky použití a nenahrazují specifický souhlas a klinické informace, které obdržíte v době konzultace.",
     "s1_h": "Co je tato služba",
     "s1_p": "Global Health vás spojuje s lékaři registrovanými k výkonu praxe v zemi, ve které provádíte rezervaci, pro konzultace prováděné online. Klinický vztah je mezi vámi a ošetřujícím lékařem, který odpovídá za svá vlastní klinická rozhodnutí v mezích své registrace.",

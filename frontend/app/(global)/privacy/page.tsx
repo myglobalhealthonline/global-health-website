@@ -7,6 +7,7 @@ import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CookieSettingsButton } from "@/components/compliance/CookieSettingsButton";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { GH2LegalSummaryNotice } from "@/components/legal/GH2LegalSummaryNotice";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getPageLocale();
@@ -18,14 +19,14 @@ export async function generateMetadata(): Promise<Metadata> {
     description: privacy.s1_p,
     locale,
     kind: "legal",
-    subtitle: privacy.lastUpdated,
+    subtitle: privacy.summaryLabel,
     imageAlt: `${privacy.title} - Global Health`,
   });
 }
 
 export default async function PrivacyPage() {
   const locale = await getPageLocale();
-  const { privacy } = loadLocaleBundle(locale).legal;
+  const { privacy, summaryNotice } = loadLocaleBundle(locale).legal;
   const { cookie } = getCommonLocale(locale);
 
   return (
@@ -35,7 +36,7 @@ export default async function PrivacyPage() {
         title={privacy.title}
         accent=""
         watermark="Privacy"
-        meta={<p className="gh2-index">{privacy.lastUpdated}</p>}
+        meta={<p className="gh2-index">{privacy.summaryLabel}</p>}
       />
 
       {/* Prose body — full-bleed ivory wrapper; body{} is dark forest
@@ -54,6 +55,13 @@ export default async function PrivacyPage() {
             </h2>
             <p className="mt-2">{privacy.s1_p}</p>
           </section>
+
+          <GH2LegalSummaryNotice
+            locale={locale}
+            badge={summaryNotice.badge}
+            text={summaryNotice.text}
+            linkIntro={summaryNotice.linkIntro}
+          />
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
