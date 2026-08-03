@@ -569,6 +569,27 @@ const nextConfig: NextConfig = {
     const HAS_SPECIALIST = "(ireland|portugal|spain|romania)";
     return [
       ...localizedSlugRedirects,
+      // Retired /health/ landing pages (SEO audit, 2026-08-03). Placed FIRST
+      // among the /:country/:lang rules so no broader pattern below can shadow
+      // them — rule order is load-bearing here and has silently killed precise
+      // rules in this file before.
+      //
+      // Keep in sync with HEALTH_RETIRED_REDIRECTS in
+      // lib/seo/health-service-canonical.ts, which app/sitemap.ts reads to keep
+      // the retired URLs out of the sitemap. The map cannot be imported here:
+      // next.config.ts is evaluated before the module graph, so the paths are
+      // written out literally and the map is the documented source of truth.
+      //
+      // ireland/international-students -> gp-consultation-online. The page held
+      // position 4.8, the best of any /health/ page, but on 5 impressions and
+      // 0 clicks in 90 days — a good position for a query almost nobody types.
+      // An international student arriving in Ireland needs a GP, which the GP
+      // consultation page serves far better than a 297-word explainer.
+      {
+        source: `/ireland/:lang${LANG}/health/international-students`,
+        destination: "/ireland/:lang/gp-consultation-online",
+        permanent: true,
+      },
       // No services index page exists — only /services/:slug. Send the bare
       // section URL to the country home instead of a 404.
       {

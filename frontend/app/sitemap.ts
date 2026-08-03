@@ -13,6 +13,7 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getCountryLegal, LEGAL_TYPE_SLUGS } from "@/lib/content/get-country-legal";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { newestTimestamp } from "@/lib/seo/newest-timestamp";
+import { isRetiredHealthSlug } from "@/lib/seo/health-service-canonical";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -172,6 +173,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           ? country.supportedLocales.map((l) => l.toLowerCase())
           : [defaultLang];
       for (const page of res.data.landingPages) {
+        // A retired landing page still exists in the CMS but is 301'd in
+        // next.config.ts, so submitting it would put a redirecting URL in the
+        // sitemap — the one defect this sitemap currently doesn't have.
+        if (isRetiredHealthSlug(country.slug || countrySlug(country.code), page.slug)) continue;
         bump(country.code, "landing", page.updatedAt);
         const languages: Record<string, string> = {};
         for (const lang of langs) {

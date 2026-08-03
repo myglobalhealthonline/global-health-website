@@ -27,7 +27,6 @@ export const HEALTH_SERVICE_CANONICAL: Record<string, string> = {
   //   ireland:diabetes                    (condition, no twin)
   //   ireland:expat-healthcare            (audience page)
   //   ireland:hypertension                (condition, no twin)
-  //   ireland:international-students      (audience page)
   //   ireland:migraine                    (condition, no twin)
   //   ireland:online-prescription-ireland (no dedicated prescription service
   //                                         detail page exists — /prescriptions
@@ -48,4 +47,31 @@ export function resolveHealthCanonicalServiceSlug(
   healthSlug: string,
 ): string | null {
   return HEALTH_SERVICE_CANONICAL[`${countrySlug}:${healthSlug}`] ?? null;
+}
+
+/**
+ * `/health/[slug]` pages RETIRED behind a 301, keyed the same way. Unlike the
+ * canonical map above — which keeps a page live and merely consolidates its
+ * ranking signals — an entry here means the URL no longer serves content.
+ *
+ * The redirect itself lives in `next.config.ts` (it has to: redirects are
+ * resolved before routing). This table is the single source of truth that
+ * `app/sitemap.ts` reads so a retired URL is never submitted, which is what
+ * keeps the sitemap's "zero redirecting URLs" property intact.
+ *
+ * Values are the destination path WITHOUT the `/{country}/{lang}` prefix.
+ */
+export const HEALTH_RETIRED_REDIRECTS: Record<string, string> = {
+  // Retired 2026-08-03 on the user's call. The page held position 4.8 — the
+  // best of any /health/ page — but on 5 impressions and 0 clicks in 90 days,
+  // which is a good position for something almost nobody searches. An
+  // international student arriving in Ireland needs a GP, and the GP
+  // consultation page serves that intent far better than a 297-word explainer.
+  "ireland:international-students": "gp-consultation-online",
+};
+
+/** True when this `/health/` page has been retired behind a 301 and must be
+ *  omitted from the sitemap. */
+export function isRetiredHealthSlug(countrySlug: string, healthSlug: string): boolean {
+  return `${countrySlug}:${healthSlug}` in HEALTH_RETIRED_REDIRECTS;
 }
