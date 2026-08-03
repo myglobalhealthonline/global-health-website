@@ -169,15 +169,24 @@ status change — is a regression from this work and should be treated as one.
 
 ---
 
-## 2b. NEW FINDING — legal pages return a hard 404 when a backend fetch fails
+## 2b. Legal pages 404 on fetch failure — DID NOT REPRODUCE IN PRODUCTION
+
+> **Downgraded 2026-08-03, after deploy.** This was raised as a new finding
+> based on a local test. Re-run against production at *higher* concurrency, it
+> did not reproduce: 289 legal + doctor URLs at 8 concurrent, cache-busted, all
+> returned **200**. The original 20/231 failures were almost certainly the local
+> dev server being rate-limited by the production API it was proxying to — an
+> artifact of the test rig, not a site defect. Recorded rather than deleted,
+> because the underlying code path is still real and worth knowing about.
+
+The latent issue, which remains true but is not currently firing:
 
 Found 2026-08-03 while verifying the Phase 4 sitemap change. **Not in the
-original audit.** Not yet fixed — it changes error semantics on legal pages, so
-it needs a deliberate decision.
+original audit.**
 
-Checking all 231 legal URLs at 6 concurrent requests, **20 returned 404**. The
-same 231 checked sequentially returned **0 failures**, and all of them return
-200 in production. So the URLs are fine; the failure is load-dependent.
+Checking all 231 legal URLs at 6 concurrent requests against a LOCAL dev server
+reading the production API, **20 returned 404**. The same 231 checked
+sequentially returned **0 failures**, and all of them return 200 in production.
 
 The mechanism, in `lib/content/get-country-legal.ts`:
 
