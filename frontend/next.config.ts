@@ -270,6 +270,29 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],
       },
+      // 2026-08-03 (SEO audit 2.3 follow-up): the 7 root-level global pages
+      // (`/`, `/about`, `/faq`, `/blog`, `/contact`, `/terms`, `/privacy` —
+      // `app/(global)/*`) were investigated for the same treatment and
+      // DELIBERATELY EXCLUDED — unlike `/:country/:lang*` above, they are
+      // genuinely visitor-varying, not just flagged dynamic by the
+      // build. Every one of them has no `[lang]` URL segment, so every call
+      // to `getPageLocale()` in their render tree (page + metadata) falls
+      // through with no `explicitLocale` straight into `getSelectedLocale()`
+      // (`lib/i18n/selected-locale.ts`), which reads the `gh_locale` cookie,
+      // the `x-gh-locale`/`Accept-Language` headers, and — for signed-in
+      // visitors — `User.preferredLocale` from the DB, on every request. The
+      // rendered HTML (hero copy, headings, FAQ answers, everything) is in
+      // that resolved language, so two visitors hitting the same URL
+      // genuinely get different bytes back. `/blog` additionally reads the
+      // `gh-last-country` cookie to pick its "back to home" link. A shared
+      // CDN cache keyed on the URL alone would serve one visitor's language
+      // (or a stale signed-out visitor's copy to a signed-in one) to
+      // everyone else. This is the opposite case from the country pages
+      // above, where the `[lang]` URL segment IS the explicit locale, so
+      // `getPageLocale(lang)` short-circuits before ever touching
+      // `cookies()`/`headers()` and the HTML is byte-for-byte identical per
+      // visitor. Do not add a Cache-Control override for these routes
+      // without first removing or gating the `getSelectedLocale()` call.
       // Unhashed /public assets (icons, hero images, stock photos — see
       // public/) are NOT content-hashed: a redeploy can overwrite
       // public/foo.png at the same URL. `immutable` previously cached these
@@ -969,6 +992,21 @@ const nextConfig: NextConfig = {
 
       // -- misc content families -------------------------------------------
       { source: "/home-health-tests-1/:slug", destination: "/ireland/en/lab-tests", permanent: true },
+      // Per-article legacy blog redirects (SEO audit 2026-08-03, §2.5). Every
+      // /post/:slug used to blanket-redirect to the hub even when the exact
+      // article survived the migration — a soft-404 pattern that drops the
+      // legacy URL's accumulated SERP equity. These MUST sit above the
+      // `/post/:slug` catch-all below (rule order — first match wins), or the
+      // catch-all shadows them silently. Only two slugs cleared the bar: an
+      // exact slug match (diabetes) and an unambiguous single-candidate topic
+      // match (hand-foot-and-mouth, old slug lacks the new "-signs-and-
+      // treatment" suffix). Every other checked legacy /post/ slug — the 7
+      // that still carry GSC impressions in the last 90 days, plus
+      // getting-a-gp-sick-note-online-simplified from the technical audit
+      // sample — had no confident current-article match and falls through to
+      // the hub on purpose; see the redirect audit report for the full list.
+      { source: "/post/diabetes-a-silent-disease", destination: "/ireland/en/blog/diabetes-a-silent-disease", permanent: true },
+      { source: "/post/hand-foot-and-mouth-disease", destination: "/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment", permanent: true },
       { source: "/post/:slug", destination: "/ireland/en/blog", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/post/:slug", destination: "/ireland/en/blog", permanent: true },
       { source: "/blog/categories/:slug", destination: "/ireland/en/blog", permanent: true },

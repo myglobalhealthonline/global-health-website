@@ -90,6 +90,14 @@
     "description": "Access your local clinic hub, team profiles, and consultations.",
     "enterClinic": "Enter clinic"
   },
+  "countryNames": {
+    "ie": "Ireland",
+    "cz": "Czechia",
+    "pt": "Portugal",
+    "es": "Spain",
+    "ro": "Romania",
+    "br": "Brazil"
+  },
   "entryGate": {
     "eyebrow": "Online Medical Clinic",
     "headline": "Licensed doctors and online care,",
@@ -837,13 +845,15 @@
     "heroTitleLead": "Health Guides from",
     "heroTitleAccent": "Registered Doctors.",
     "heroLede": "Evidence-based guides written and reviewed by our medical team. No ads, no fluff.",
+    "heroLedeCountryTemplate": "Evidence-based health guides for {country}, written and reviewed by our medical team. No ads, no fluff.",
     "heroCta": "Browse articles",
     "heroSecondary": "Back to home",
     "articleSingular": "article",
     "articlePlural": "articles",
     "loadingArticleAriaLabel": "Loading article…",
     "categoryFallback": "Health guide",
-    "readArticle": "Read article"
+    "readArticle": "Read article",
+    "heroTitleCountryTemplate": "{title} in {country}"
   },
   "calendar": {
     "selectDay": "Select a day",

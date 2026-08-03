@@ -90,6 +90,14 @@
     "description": "Zugang zu Ihrem lokalen Kliniken-Hub, Teamprofile und Beratungen.",
     "enterClinic": "Zur Klinik"
   },
+  "countryNames": {
+    "ie": "Irland",
+    "cz": "Tschechien",
+    "pt": "Portugal",
+    "es": "Spanien",
+    "ro": "Rumänien",
+    "br": "Brasilien"
+  },
   "entryGate": {
     "eyebrow": "Online-Arztpraxis",
     "headline": "Zugelassene Ärzte und Online-Versorgung,",
@@ -837,13 +845,15 @@
     "heroTitleLead": "Gesundheitsleitfäden von",
     "heroTitleAccent": "zugelassenen Ärzten.",
     "heroLede": "Evidenzbasierte Leitfäden, die von unserem medizinischen Team verfasst und überprüft wurden. Keine Werbung, kein Schnickschnack.",
+    "heroLedeCountryTemplate": "Evidenzbasierte Gesundheitsleitfäden für {country}, verfasst und geprüft von unserem medizinischen Team.",
     "heroCta": "Artikel durchsuchen",
     "heroSecondary": "Zurück zur Startseite",
     "articleSingular": "Artikel",
     "articlePlural": "Artikel",
     "loadingArticleAriaLabel": "Artikel wird geladen…",
     "categoryFallback": "Gesundheitsleitfaden",
-    "readArticle": "Artikel lesen"
+    "readArticle": "Artikel lesen",
+    "heroTitleCountryTemplate": "{title} in {country}"
   },
   "calendar": {
     "selectDay": "Wählen Sie einen Tag",

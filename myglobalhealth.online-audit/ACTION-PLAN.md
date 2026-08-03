@@ -223,19 +223,78 @@ These three routes sharing all of *metadata missing*, *hreflang missing* and
 *no-store* strongly suggests one shared layout or route-group config is the
 single upstream cause. Check that before fixing them individually.
 
-### 2.4 Build a dedicated sick-certificate page per market · High · new page
-The Irish "sick cert online" SERP is owned by single-purpose transactional pages
-(doconcall.ie, getsickcert.ie, sicknote.com) — price-forward, with legal-validity
-FAQ and DSP caveats. Global Health has no equivalent; sick certs are one bullet
-inside `/ireland/en/gp-consultation-online`.
+### 2.4 Sick-certificate cluster · High · RE-SCOPED 2026-08-03
 
-Anxious same-day-cert patient scores **35/100**, the weakest journey on the site
-against one of its highest-intent queries.
+> **Corrected.** The original item said "Global Health has no equivalent" and
+> called for building a new transactional page per market. **That was wrong.**
+> Five of six markets already have a substantial sick-certificate service page.
+> The correction is kept visible rather than silently edited.
 
-Ship `/ireland/en/sick-cert-online` as a transactional page: price above the
-fold, turnaround time, employer/DSP legal validity, one CTA. Then replicate per
-market. Note `/ireland/en/health/sick-cert-online` already exists at 486 words —
-promote and expand it rather than starting over.
+What actually exists:
+
+| Market | Service page | Words | FAQPage | `Offer` schema |
+|---|---|---|---|---|
+| Ireland | `/services/sick-certificate-ireland` | 1,261 | yes | **no** |
+| Portugal | `/services/baixa-medica` | 1,609 | yes | **no** |
+| Spain | `/services/justificante-medico-online` | 1,491 | yes | **no** |
+| Czechia | `/services/neschopenka-online` | 1,617 | yes | **no** |
+| Brazil | `/services/atestado-medico-online` | 1,675 | yes | **no** |
+| **Romania** | **none** | — | — | — |
+
+So the real problems are three, and none of them is "write a new page":
+
+1. **No `Offer`/price in structured data on any of them.** Every competitor
+   anchors a price in the SERP. These pages carry the price as on-page text but
+   emit nothing machine-readable. This is a schema fix, not content work, and it
+   is the likeliest single reason they underperform against
+   doconcall.ie / getsickcert.ie / sicknote.com.
+2. **Keyword cannibalisation with `/health/`.** Ireland, Portugal and Czechia
+   each run a thin 373–486-word `/health/` page on the *same topic* as their
+   1,261–1,617-word `/services/` page — two URLs splitting one query. GSC
+   confirms the thin one loses:
+   `/portugal/pt/health/atestado-medico-online` sits at position 14.5 while
+   `/portugal/en/services/baixa-medica` sits at 7.6. See the `/health/` decision
+   below.
+3. **Romania has no sick-certificate page at all** — 17 services, no
+   `adeverință medicală` equivalent. The one genuine content gap. Romanian
+   sick-leave law differs from the Irish DSP rules, so this needs clinical/legal
+   input rather than a translation of the Irish page.
+
+**Decision taken:** do (1) and (2) now — both are engineering. Hold (3) pending
+clinical input.
+
+This also means the SXO pass's "entire commercial keyword cluster the site
+structurally cannot compete for" finding was overstated: the pages exist and are
+substantial. What they lack is price markup and a clean canonical story. The
+35/100 persona score stands, but the fix is much cheaper than that framing
+implied.
+
+### 2.4b `/health/` section — consolidate · High · decided 2026-08-03
+
+`/health/` is 15 distinct slugs across Ireland, Portugal and Czechia, rendered at
+6 locales each = 90 live URLs, all `export const dynamic = "force-dynamic"` so
+none can be edge-cached.
+
+GSC, trailing 90 days:
+
+| | URLs with impressions | Clicks | Impressions |
+|---|---|---|---|
+| `/health/` | 27 of 90 | **5** | 363 |
+| `/services/` | 297 | **64** | 3,590 |
+
+The `/health/` pages that rank at all are the ones cannibalising `/services/`;
+the remainder sit at positions 56–77, i.e. not competing. 90 uncacheable pages
+returning 5 clicks a quarter.
+
+**Decision:** canonical the overlapping pages onto their `/services/` twin,
+leave the non-overlapping ones live, and drop `force-dynamic`. Nothing is
+deleted and it is fully reversible.
+
+Only **one** exact slug collision exists
+(`/czechia/*/health/neschopenka-online` → `/czechia/*/services/neschopenka-online`).
+The other overlaps are by topic, not slug, so each needs a judgment call — e.g.
+`/ireland/*/health/sick-cert-online` → `/ireland/*/services/sick-certificate-ireland`,
+`/portugal/*/health/atestado-medico-online` → `/portugal/*/services/baixa-medica`.
 
 ### 2.5 Map legacy `/post/*` redirects to real articles · High · 1 redirect map
 ```

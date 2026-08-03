@@ -90,6 +90,14 @@
     "description": "Aceda ao hub da sua clínica local, perfis da equipa e consultas.",
     "enterClinic": "Entrar na clínica"
   },
+  "countryNames": {
+    "ie": "Irlanda",
+    "cz": "Chéquia",
+    "pt": "Portugal",
+    "es": "Espanha",
+    "ro": "Roménia",
+    "br": "Brasil"
+  },
   "entryGate": {
     "eyebrow": "Clínica Médica Online",
     "headline": "Médicos licenciados e cuidados online,",
@@ -837,13 +845,15 @@
     "heroTitleLead": "Guias de saúde de",
     "heroTitleAccent": "médicos registados.",
     "heroLede": "Guias baseados em evidências escritos e revistos pela nossa equipa médica. Sem anúncios, sem exageros.",
+    "heroLedeCountryTemplate": "Guias de saúde baseados em evidências para {country}, escritos e revistos pela nossa equipa médica. Sem anúncios.",
     "heroCta": "Explorar artigos",
     "heroSecondary": "Voltar ao início",
     "articleSingular": "artigo",
     "articlePlural": "artigos",
     "loadingArticleAriaLabel": "A carregar artigo…",
     "categoryFallback": "Guia de saúde",
-    "readArticle": "Ler artigo"
+    "readArticle": "Ler artigo",
+    "heroTitleCountryTemplate": "{title} em {country}"
   },
   "calendar": {
     "selectDay": "Selecione um dia",

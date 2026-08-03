@@ -90,6 +90,14 @@
     "description": "Přistupte k vašemu místnímu centru kliniky, profilům týmu a konzultacím.",
     "enterClinic": "Vstoupit do kliniky"
   },
+  "countryNames": {
+    "ie": "Irsko",
+    "cz": "Česko",
+    "pt": "Portugalsko",
+    "es": "Španělsko",
+    "ro": "Rumunsko",
+    "br": "Brazílie"
+  },
   "entryGate": {
     "eyebrow": "Online lékařská klinika",
     "headline": "Licencovaní lékaři a online péče,",
@@ -837,13 +845,15 @@
     "heroTitleLead": "Zdravotní příručky od",
     "heroTitleAccent": "registrovaných lékařů.",
     "heroLede": "Příručky založené na důkazech, které napsal a zkontroloval náš lékařský tým. Žádné reklamy, žádné zbytečnosti.",
+    "heroLedeCountryTemplate": "Zdravotní příručky založené na důkazech pro {country}, které napsal a zkontroloval náš lékařský tým.",
     "heroCta": "Procházet články",
     "heroSecondary": "Zpět na domovskou stránku",
     "articleSingular": "článek",
     "articlePlural": "články",
     "loadingArticleAriaLabel": "Načítání článku…",
     "categoryFallback": "Zdravotní příručka",
-    "readArticle": "Přečíst článek"
+    "readArticle": "Přečíst článek",
+    "heroTitleCountryTemplate": "{title} – {country}"
   },
   "calendar": {
     "selectDay": "Vyberte den",

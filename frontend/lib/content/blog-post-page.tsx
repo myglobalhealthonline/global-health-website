@@ -17,6 +17,7 @@ import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
+import { sentenceCaseIfShouting } from "@/lib/text/sentence-case";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -130,15 +131,16 @@ export async function buildBlogPostMetadata(
   const metadataPath = isTranslatedVariant
     ? canonicalUrl
     : `/${routeParams.countrySlug}/${postLanguage}/blog/${post.slug}`;
+  const displayTitle = sentenceCaseIfShouting(post.title);
   return buildPublicMetadata({
     path: metadataPath,
-    title: post.seoTitle ?? post.title,
+    title: sentenceCaseIfShouting(post.seoTitle ?? post.title),
     description: post.seoDescription ?? post.excerpt,
     type: "article",
     kind: "article",
     subtitle: post.category,
     sourceImage: post.coverImageSrc ?? undefined,
-    imageAlt: post.coverImageAlt ?? post.title,
+    imageAlt: post.coverImageAlt ?? displayTitle,
     locale: config
       ? ogLocales(config, language).locale
       : `${language}_${nativeRegion[language] ?? language.toUpperCase()}`,
@@ -154,6 +156,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   if (resolved.kind === "redirect") redirect(resolved.redirectTo);
   const { post, canonicalUrl, backHref } = resolved;
   const routeCode = routeParams.countrySlug ? countryCodeFromSlug(routeParams.countrySlug) : undefined;
+  const displayTitle = sentenceCaseIfShouting(post.title);
 
   const locale = await getPageLocale(post.locale);
   const { home } = loadLocaleBundle(locale);
@@ -209,7 +212,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
       <JsonLd
         data={[
           articleJsonLd({
-            title: post.title,
+            title: displayTitle,
             description: post.seoDescription ?? post.excerpt,
             url: `${getSiteUrl()}${canonicalUrl}`,
             datePublished: post.publishedAt,
@@ -227,7 +230,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           breadcrumbJsonLd([
             { name: "Home", url: "/" },
             { name: "Blog", url: backHref },
-            { name: post.title, url: canonicalUrl },
+            { name: displayTitle, url: canonicalUrl },
           ]),
         ]}
       />
@@ -285,7 +288,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
               />
               <Image
                 src={post.coverImageSrc}
-                alt={post.coverImageAlt ?? post.title}
+                alt={post.coverImageAlt ?? displayTitle}
                 fill
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -408,7 +411,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                 style={{
                   // Blog titles run far longer than service-hero titles, so the
                   // fitter is tuned to a 60-char budget instead of ~22.
-                  fontSize: fitHeadingFontSize(post.title, {
+                  fontSize: fitHeadingFontSize(displayTitle, {
                     minRem: 2.4,
                     maxRem: 4.2,
                     viewportTerm: "2.2vw + 1.7rem",
@@ -420,7 +423,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                   maxWidth: "20ch",
                 }}
               >
-                {post.title}
+                {displayTitle}
               </h1>
 
               {post.excerpt ? (
@@ -614,7 +617,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                     className="mt-3 text-[17px] font-bold leading-snug"
                     style={{ color: "rgba(255,255,255,0.92)" }}
                   >
-                    {p.title}
+                    {sentenceCaseIfShouting(p.title)}
                   </h3>
                   <p
                     className="mt-3 line-clamp-4 text-[13px] leading-relaxed"

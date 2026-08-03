@@ -32,7 +32,7 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import {
   breadcrumbJsonLd,
-  medicalBusinessJsonLd,
+  countryMedicalOrganizationJsonLd,
   faqJsonLd,
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
@@ -519,8 +519,9 @@ export default async function CountryLangHomePage({
     <>
       <JsonLd
         data={[
-          medicalBusinessJsonLd({
+          countryMedicalOrganizationJsonLd({
             name: config.name,
+            slug,
             url: countryUrl,
             identifier: countryTrust?.providerRegistration?.number
               ? {

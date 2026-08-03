@@ -90,6 +90,14 @@
     "description": "Accesați hub-ul clinicii locale, profilurile echipei și consultațiile.",
     "enterClinic": "Intră în clinică"
   },
+  "countryNames": {
+    "ie": "Irlanda",
+    "cz": "Cehia",
+    "pt": "Portugalia",
+    "es": "Spania",
+    "ro": "România",
+    "br": "Brazilia"
+  },
   "entryGate": {
     "eyebrow": "Clinică medicală online",
     "headline": "Medici autorizați și îngrijire online,",
@@ -837,13 +845,15 @@
     "heroTitleLead": "Ghiduri de sănătate de la",
     "heroTitleAccent": "medici înregistrați.",
     "heroLede": "Ghiduri bazate pe dovezi, scrise și revizuite de echipa noastră medicală. Fără reclame, fără exagerări.",
+    "heroLedeCountryTemplate": "Ghiduri de sănătate bazate pe dovezi pentru {country}, scrise și revizuite de echipa noastră medicală.",
     "heroCta": "Răsfoiește articolele",
     "heroSecondary": "Înapoi la început",
     "articleSingular": "articol",
     "articlePlural": "articole",
     "loadingArticleAriaLabel": "Se încarcă articolul…",
     "categoryFallback": "Ghid de sănătate",
-    "readArticle": "Citește articolul"
+    "readArticle": "Citește articolul",
+    "heroTitleCountryTemplate": "{title} în {country}"
   },
   "calendar": {
     "selectDay": "Selectați o zi",

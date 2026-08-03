@@ -45,15 +45,28 @@ export type PublicMetadataInput = {
 // is worth shortening ourselves — a card is better ending on a whole word than
 // mid-syllable.
 //
-// The DOCUMENT title is not truncated at all. Google clips titles visually by
-// pixel width but INDEXES the whole string, so cutting at a character budget
-// only deletes keywords from the index — it buys no display benefit. Doing it
-// cost us the tail of 531 of 1353 titles, worst in the translated locales,
-// where the same copy runs longer than the English it was budgeted against.
+// UPDATE (2026-08-03 SEO audit, 2.1): the DOCUMENT title used to pass through
+// untouched on the theory that Google indexes the whole string regardless of
+// display truncation. That held titles that carried ONLY a brand suffix, but
+// most titles here carry a trust-signal qualifier ("IMC-Registered",
+// "Colegiados", "ČLK Registered") AFTER the brand suffix — 232/500 crawled
+// titles ran past 60 chars and the qualifier, not the brand, was what SERP
+// truncation ate. The brand itself is redundant in the raw title anyway:
+// Google appends the site name from `WebSite` schema (present on all 500
+// pages), so dropping our own trailing brand before truncating is free —
+// compactSearchTitle below does that, then only word-safe-truncates if the
+// title is still over budget without it.
 const SOCIAL_TITLE_LIMIT = 74;
+const SEARCH_TITLE_LIMIT = 60;
 const SEARCH_DESCRIPTION_LIMIT = 155;
 const SOCIAL_DESCRIPTION_LIMIT = 125;
 const BRAND_SEPARATOR = " | ";
+
+// Shared by compactSocialTitle and compactSearchTitle — matches a trailing
+// " | Global Health", " · Global Health", " — Global Health" (and locale
+// suffixes like "Global Health España") so it can be dropped before the
+// title is truncated.
+const BRAND_PATTERN = /\s*(?:[|·—-]\s*)?global health\s*[\p{L}]*\s*$/iu;
 
 function normalizeCopy(value: string): string {
   return value.replace(/\s+/gu, " ").trim();
@@ -75,13 +88,57 @@ function compactSocialTitle(value: string): string {
   const normalized = normalizeCopy(value);
   if (Array.from(normalized).length <= SOCIAL_TITLE_LIMIT) return normalized;
 
-  const brandPattern = /\s*(?:[|·—-]\s*)?global health\s*$/iu;
-  if (!brandPattern.test(normalized)) return wordSafeLimit(normalized, SOCIAL_TITLE_LIMIT);
+  if (!BRAND_PATTERN.test(normalized)) return wordSafeLimit(normalized, SOCIAL_TITLE_LIMIT);
 
-  const unbranded = normalized.replace(brandPattern, "").trim();
+  const unbranded = normalized.replace(BRAND_PATTERN, "").trim();
   const suffix = `${BRAND_SEPARATOR}${SITE_NAME}`;
   const body = wordSafeLimit(unbranded, SOCIAL_TITLE_LIMIT - suffix.length);
   return `${body}${suffix}`;
+}
+
+/** What the root layout's `title.template` appends (lib/seo/root-metadata.ts). */
+const TITLE_TEMPLATE_SUFFIX = ` · ${SITE_NAME}`;
+
+/**
+ * Shorten a SEARCH (document <title>) title to Google's ~60-char display
+ * budget, and return the EXACT string that should be emitted — brand included
+ * or deliberately omitted.
+ *
+ * The caller must pass the result through as `{ absolute }`. That is
+ * load-bearing, not stylistic: the root layout sets
+ * `title.template = "%s · Global Health"`, so any non-absolute title gets 16
+ * characters bolted on AFTER this function has finished budgeting. Before this
+ * was accounted for, dropping the brand to save space accomplished nothing —
+ * the template put it straight back and the title ended up longer than it
+ * started, with an ellipsis stranded mid-string:
+ *
+ *   in   "Online Doctors Ireland | IMC-Registered GPs & Specialists · Global Health"  (72)
+ *   out  "Online Doctors Ireland | IMC-Registered GPs & Specialists"                  (56)
+ *   emitted, after the template re-appended the brand                                 (72)
+ *
+ * Order of preference:
+ *   1. Fits as-is, brand already present  → emit unchanged.
+ *   2. Fits once the brand suffix is added → add it, so short titles stay branded.
+ *   3. Over budget → drop the trailing brand. Google appends the site name
+ *      itself from `WebSite` schema, so that space is better spent on the
+ *      trust-signal qualifier ("IMC-Registered", "Colegiados", …).
+ *   4. Still over budget unbranded → word-safe truncate.
+ */
+function compactSearchTitle(value: string): string {
+  const normalized = normalizeCopy(value);
+  const len = (s: string) => Array.from(s).length;
+  const hasBrand = BRAND_PATTERN.test(normalized);
+
+  if (len(normalized) <= SEARCH_TITLE_LIMIT) {
+    if (hasBrand) return normalized;
+    const branded = `${normalized}${TITLE_TEMPLATE_SUFFIX}`;
+    return len(branded) <= SEARCH_TITLE_LIMIT ? branded : normalized;
+  }
+
+  const unbranded = hasBrand ? normalized.replace(BRAND_PATTERN, "").trim() : normalized;
+  if (len(unbranded) <= SEARCH_TITLE_LIMIT) return unbranded;
+
+  return wordSafeLimit(unbranded, SEARCH_TITLE_LIMIT);
 }
 
 function normalizeCustomImage(url: string): string | undefined {
@@ -100,7 +157,7 @@ function normalizeCustomImage(url: string): string | undefined {
 /** Build one complete, conflict-free metadata object for any public route. */
 export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
   const canonical = getPublicUrl(input.path);
-  const title = normalizeCopy(input.title);
+  const title = compactSearchTitle(input.title);
   const socialTitle = compactSocialTitle(input.socialTitle ?? input.title);
   const description = wordSafeLimit(input.description, SEARCH_DESCRIPTION_LIMIT);
   const socialDescription = wordSafeLimit(
@@ -128,7 +185,12 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
   };
 
   return {
-    title: input.brandSuffix === false ? { absolute: title } : resolveBrandTitle(title),
+    // Always absolute: `compactSearchTitle` has already decided whether the
+    // brand belongs in this title and budgeted the 60-char limit around that
+    // decision. Letting the root layout's `%s · Global Health` template append
+    // afterwards would blow the budget it just enforced — see the comment on
+    // compactSearchTitle.
+    title: { absolute: title },
     description,
     keywords: input.keywords,
     alternates: {

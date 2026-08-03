@@ -6,10 +6,35 @@ import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { getSelectedLocale } from "@/lib/i18n/selected-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { hreflangRegion } from "@/lib/seo/hreflang";
+import { countrySlug } from "@/lib/routing/country-slug";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getPageLocale();
   const { hero } = loadLocaleBundle(locale).home;
+
+  // Hreflang cluster for the gate: `/` is not country-specific (one URL,
+  // content-negotiated by cookie/Accept-Language, not a `[country]/[lang]`
+  // segment), so `hreflangAlternates(country, suffix)` — built for a single
+  // country's full locale set — doesn't apply directly. Instead this is a
+  // one-row-per-market cluster: each live country's own DEFAULT-locale
+  // homepage is its regional alternate (e.g. `pt-PT` → `/portugal/pt`,
+  // `en-IE` → `/ireland/en`), and `/` itself is `x-default` — the gate is
+  // where every visitor with no established country/locale preference should
+  // land, exactly as it behaves today. A full cross-product (every country ×
+  // every locale it supports) would be technically valid too, but it would
+  // hreflang the gate to, e.g., a Czech-language Brazil page that no
+  // navigation on the gate itself links to — the default-locale set matches
+  // what a visitor actually reaches from here.
+  const countries = await getPublicCountriesMerged();
+  const languages: Record<string, string> = { "x-default": "/" };
+  for (const country of countries) {
+    const region = hreflangRegion(country.code);
+    const lang = (country.defaultLocale ?? "en").toLowerCase();
+    languages[`${lang}-${region}`] = `/${countrySlug(country.code)}/${lang}`;
+  }
 
   // The visible hero sells the promise; the SERP snippet has to answer the
   // query. `/` is the country picker, but Google ranks it for the commercial
@@ -26,6 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
     kind: "page",
     subtitle: hero.eyebrow,
     imageAlt: `${hero.title} - Global Health`,
+    languages,
   });
 }
 
@@ -53,11 +79,14 @@ export default async function HomePage() {
   const doctorCount = doctorCounts.reduce((sum, list) => sum + list.length, 0);
 
   return (
-    <CountryEntryGate
-      countries={countries}
-      detectedLocale={detectedLocale}
-      copy={copy}
-      doctorCount={doctorCount}
-    />
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "Home", url: "/" }])} />
+      <CountryEntryGate
+        countries={countries}
+        detectedLocale={detectedLocale}
+        copy={copy}
+        doctorCount={doctorCount}
+      />
+    </>
   );
 }

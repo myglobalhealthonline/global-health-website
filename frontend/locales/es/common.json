@@ -90,6 +90,14 @@
     "description": "Accede al hub de tu clínica local, perfiles del equipo y consultas.",
     "enterClinic": "Entrar a la clínica"
   },
+  "countryNames": {
+    "ie": "Irlanda",
+    "cz": "Chequia",
+    "pt": "Portugal",
+    "es": "España",
+    "ro": "Rumanía",
+    "br": "Brasil"
+  },
   "entryGate": {
     "eyebrow": "Clínica Médica Online",
     "headline": "Médicos colegiados y atención online,",
@@ -837,13 +845,15 @@
     "heroTitleLead": "Guías de salud de",
     "heroTitleAccent": "médicos colegiados.",
     "heroLede": "Guías basadas en evidencia escritas y revisadas por nuestro equipo médico. Sin anuncios, sin relleno.",
+    "heroLedeCountryTemplate": "Guías de salud basadas en evidencia para {country}, escritas y revisadas por nuestro equipo médico. Sin anuncios.",
     "heroCta": "Explorar artículos",
     "heroSecondary": "Volver a inicio",
     "articleSingular": "artículo",
     "articlePlural": "artículos",
     "loadingArticleAriaLabel": "Cargando artículo…",
     "categoryFallback": "Guía de salud",
-    "readArticle": "Leer artículo"
+    "readArticle": "Leer artículo",
+    "heroTitleCountryTemplate": "{title} en {country}"
   },
   "calendar": {
     "selectDay": "Seleccione un día",

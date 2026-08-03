@@ -144,6 +144,9 @@ export type CommonLocale = {
     registrationLabel: string;
     verifiedSuffix: string;
   };
+  /** Localised country display names, keyed by lowercase country code.
+   *  data/countries.ts carries English names only. */
+  countryNames?: Record<string, string>;
   countrySelector: {
     title: string;
     description: string;
@@ -855,6 +858,9 @@ export type CommonLocale = {
     heroTitleLead?: string;
     heroTitleAccent?: string;
     heroLede?: string;
+    /** Per-country meta description. "{country}" placeholder. */
+    heroLedeCountryTemplate?: string;
+    heroTitleCountryTemplate?: string;
     heroCta?: string;
     heroSecondary?: string;
     articleSingular?: string;

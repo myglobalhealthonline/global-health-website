@@ -22,12 +22,22 @@ export async function generateMetadata({
   const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const blog = loadLocaleBundle(lang as LocaleCode).common.blogPage;
+  const common = loadLocaleBundle(lang as LocaleCode).common;
+  const blog = common.blogPage;
+  // The country name must come from the locale bundle, not `config.name` —
+  // that field is English-only (data/countries.ts), so a Spanish hub read
+  // "Guías de salud … para Spain".
+  const countryName = common.countryNames?.[code.toLowerCase() as keyof typeof common.countryNames] ?? config.name;
   const heroTitle = `${blog.heroTitleLead ?? blog.heroWatermark ?? "Blog"} ${blog.heroTitleAccent ?? ""}`
     .trim()
     .replace(/\.$/, "");
-  const title = `${heroTitle} in ${config.name}`;
-  const description = blog.heroLede ?? "Evidence-based health guides written and reviewed by our medical team.";
+  const title = (blog.heroTitleCountryTemplate ?? "{title} in {country}")
+    .replace("{title}", heroTitle)
+    .replace("{country}", countryName);
+  const description =
+    blog.heroLedeCountryTemplate?.replace("{country}", countryName) ??
+    blog.heroLede ??
+    "Evidence-based health guides written and reviewed by our medical team.";
   return buildPublicMetadata({
     path: `/${country}/${lang}/blog`,
     title,

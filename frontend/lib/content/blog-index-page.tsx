@@ -13,6 +13,7 @@ import type { CommonLocale } from "@/lib/i18n/types";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { sentenceCaseIfShouting } from "@/lib/text/sentence-case";
 
 type BlogIndexRouteParams = {
   /** Country slug from the route (e.g. "ireland"). Absent on the bare
@@ -147,7 +148,7 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
                 return (
                   <BlogCard
                     key={post.slug}
-                    title={post.title}
+                    title={sentenceCaseIfShouting(post.title)}
                     excerpt={post.excerpt}
                     href={href}
                     category={post.category}

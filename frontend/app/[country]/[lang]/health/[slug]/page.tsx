@@ -14,8 +14,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import {
   articleJsonLd,
   breadcrumbJsonLd,
+  countryMedicalOrganizationJsonLd,
   faqJsonLd,
-  medicalBusinessJsonLd,
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -117,8 +117,9 @@ export default async function CountryLandingPage({
         ])}
       />
       <JsonLd
-        data={medicalBusinessJsonLd({
+        data={countryMedicalOrganizationJsonLd({
           name: config.name,
+          slug: country,
           url: `${getSiteUrl()}/${country}/${lang}`,
           identifier: countryTrust?.providerRegistration?.number
             ? {
