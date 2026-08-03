@@ -37,8 +37,8 @@
   },
   "team": {
     "eyebrow": "A equipa",
-    "headline": "O clínico que escolhe é",
-    "headlineAccent": "o clínico que o atende.",
+    "headline": "Vou ver sempre",
+    "headlineAccent": "o mesmo médico?",
     "body": "Cada consulta é com alguém licenciado no seu país. Sem call centres, sem rotatividade de desconhecidos — o médico no ecrã é o médico no perfil.",
     "registeredSingular": "clínico registado",
     "registeredPlural": "clínicos registados",
@@ -61,8 +61,8 @@
   },
   "howItWorks": {
     "eyebrow": "Como funciona",
-    "headlineMain": "Três passos.",
-    "headlineAccent": "Um caminho mais claro.",
+    "headlineMain": "Como",
+    "headlineAccent": "funciona?",
     "subtitle": "Desde a escolha de um serviço até à confirmação da consulta — selecione um clínico, escolha um horário e receba cuidados de qualquer lugar.",
     "step1Title": "Escolha o seu serviço",
     "step1Body": "Consulte serviços de médico geral, referências a especialistas e testes em casa. Filtre por idioma, urgência ou preço.",

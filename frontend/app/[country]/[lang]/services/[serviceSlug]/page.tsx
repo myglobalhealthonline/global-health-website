@@ -38,6 +38,7 @@ import {
   physicianJsonLd,
 } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
+import { AlsoAvailableIn } from "@/components/sections/AlsoAvailableIn";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
@@ -660,6 +661,13 @@ export default async function ServiceDetailPage({
           </div>
         </section>
       ) : null}
+
+      <AlsoAvailableIn
+        country={config}
+        lang={lang}
+        suffix={`/services/${serviceSlug}`}
+        title={c.alsoAvailableIn.title}
+      />
 
       {/* Doctify social proof — compact verified-rating strip */}
       <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">

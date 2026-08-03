@@ -875,5 +875,8 @@
   },
   "healthPage": {
     "seeAllLanguageDoctors": "Ver todos os médicos que falam {language}"
+  },
+  "alsoAvailableIn": {
+    "title": "Também disponível em"
   }
 }

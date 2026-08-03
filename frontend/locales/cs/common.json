@@ -875,5 +875,8 @@
   },
   "healthPage": {
     "seeAllLanguageDoctors": "Zobrazit všechny lékaře, kteří mluví jazykem {language}"
+  },
+  "alsoAvailableIn": {
+    "title": "Také dostupné v jazyce"
   }
 }

@@ -913,4 +913,8 @@ export type CommonLocale = {
   healthPage: {
     seeAllLanguageDoctors: string;
   };
+  /** Cross-silo "also available in <language>" link row (SEO audit 3.7). */
+  alsoAvailableIn: {
+    title: string;
+  };
 };

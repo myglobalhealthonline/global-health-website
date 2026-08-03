@@ -875,5 +875,8 @@
   },
   "healthPage": {
     "seeAllLanguageDoctors": "Vezi toți medicii care vorbesc {language}"
+  },
+  "alsoAvailableIn": {
+    "title": "Disponibil și în"
   }
 }

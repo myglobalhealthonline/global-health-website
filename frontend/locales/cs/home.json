@@ -37,8 +37,8 @@
   },
   "team": {
     "eyebrow": "Tým",
-    "headline": "Lékař, kterého si vyberete, je",
-    "headlineAccent": "lékař, se kterým se poradíte.",
+    "headline": "Uvidím pokaždé",
+    "headlineAccent": "stejného lékaře?",
     "body": "Každá konzultace probíhá s někým registrovaným tam, kde se nacházíte. Žádná call centra, žádné neznámé tváře — lékař na obrazovce je lékař z profilu.",
     "registeredSingular": "registrovaný lékař",
     "registeredPlural": "registrovaní lékaři",
@@ -61,8 +61,8 @@
   },
   "howItWorks": {
     "eyebrow": "Jak to funguje",
-    "headlineMain": "Tři kroky.",
-    "headlineAccent": "Jasnější cesta.",
+    "headlineMain": "Jak to",
+    "headlineAccent": "funguje?",
     "subtitle": "Od výběru služby k potvrzené schůzce — vyberte lékaře, zvolte čas a získejte péči odkudkoli.",
     "step1Title": "Vyberte svou službu",
     "step1Body": "Procházejte konzultace praktického lékaře, doporučení ke specialistům a domácí testovací služby. Filtrujte podle jazyka, naléhavosti nebo ceny.",

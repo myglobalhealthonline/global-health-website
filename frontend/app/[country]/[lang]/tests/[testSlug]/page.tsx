@@ -31,6 +31,7 @@ import {
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FAQSection } from "@/components/sections/FAQSection";
+import { AlsoAvailableIn } from "@/components/sections/AlsoAvailableIn";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { KitRedemptionCallout } from "@/components/subscription/KitRedemptionCallout";
@@ -503,6 +504,13 @@ export default async function HealthTestDetailPage({
           items={detail.faqs}
         />
       ) : null}
+
+      <AlsoAvailableIn
+        country={config}
+        lang={lang}
+        suffix={`/lab-tests/${testSlug}`}
+        title={c.alsoAvailableIn.title}
+      />
 
       {/* Closing CTA band — mirror of the service detail booking band. */}
       <section

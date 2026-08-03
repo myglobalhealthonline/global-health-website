@@ -24,6 +24,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { FAQSection } from "@/components/sections/FAQSection";
+import { AlsoAvailableIn } from "@/components/sections/AlsoAvailableIn";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { ArrowRight } from "lucide-react";
 
@@ -243,6 +244,8 @@ export default async function CountryLandingPage({
           </div>
         </section>
       ) : null}
+
+      <AlsoAvailableIn country={config} lang={lang} suffix={`/health/${slug}`} title={c.alsoAvailableIn.title} />
 
       {/* Closing booking band — visual parity with the service page's
           closing CTA. */}
