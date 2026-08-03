@@ -101,6 +101,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/corporate", label: "Corporate" },
     { href: "/admin/reports", label: "Reports" },
     { href: "/admin/audit-log", label: "Audit log" },
+    { href: "/admin/settings/reviews", label: "Reviews" },
     // Country-scoped — "Pages" first as the visibility controller.
     // Three sidebar entries were removed as redundant:
     //   - /admin/services was a cross-kind catalogue listing; General

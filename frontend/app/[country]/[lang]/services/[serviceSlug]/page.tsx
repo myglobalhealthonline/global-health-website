@@ -187,7 +187,25 @@ export default async function ServiceDetailPage({
   // flag the /doctors spotlight uses), never a fabricated name. Renders
   // nothing when the country has no featured doctor set.
   const reviewer = allDoctors.find((d) => d.isFeatured) ?? null;
-  const reviewerTrust = reviewer ? await getCountryTrust(code, lang as LocaleCode) : null;
+  // SEO audit 3.3 — this SERVICE's own linked author/reviewer doctor
+  // (Service.authorDoctorId/reviewerDoctorId), distinct from the country
+  // "Clinical Director" fallback above. Looked up against the same
+  // already-fetched per-country doctor list — a doctor linked from a
+  // different country simply won't resolve here and nothing is emitted
+  // (fail closed, never a guessed profile).
+  const contentAuthor = detail.authorDoctorId
+    ? (allDoctors.find((d) => d.id === detail.authorDoctorId) ?? null)
+    : null;
+  const contentReviewer = detail.reviewerDoctorId
+    ? (allDoctors.find((d) => d.id === detail.reviewerDoctorId) ?? null)
+    : null;
+  const trust =
+    reviewer || contentAuthor || contentReviewer
+      ? await getCountryTrust(code, lang as LocaleCode)
+      : null;
+  const regulator = trust?.regulator?.name
+    ? { name: trust.regulator.name, url: trust.regulator.url }
+    : null;
   const reviewerHref = reviewer ? `/${country}/${lang}/doctors/${reviewer.slug}` : null;
   const reviewerPhysician = reviewer
     ? physicianJsonLd({
@@ -197,11 +215,23 @@ export default async function ServiceDetailPage({
         url: reviewerHref!,
         registrationNumber: reviewer.registrationNumber,
         chamber: reviewer.registrationChamber,
-        regulator: reviewerTrust?.regulator?.name
-          ? { name: reviewerTrust.regulator.name, url: reviewerTrust.regulator.url }
-          : null,
+        regulator,
       })
     : null;
+  const toContentPhysician = (doc: typeof allDoctors[number] | null) =>
+    doc
+      ? physicianJsonLd({
+          name: doc.fullName,
+          title: doc.title,
+          countryName: config.name,
+          url: `/${country}/${lang}/doctors/${doc.slug}`,
+          registrationNumber: doc.registrationNumber,
+          chamber: doc.registrationChamber,
+          regulator,
+        })
+      : null;
+  const authorPhysician = toContentPhysician(contentAuthor);
+  const reviewedByPhysician = toContentPhysician(contentReviewer);
 
   const back = listingPath(detail.kind, country, lang, {
     specialist: t.backSpecialist,
@@ -272,6 +302,8 @@ export default async function ServiceDetailPage({
           url: `/${country}/${lang}/services/${serviceSlug}`,
           bookingUrl: bookHref,
           reviewerPhysician,
+          authorPhysician,
+          reviewedByPhysician,
           dateModified: detail.lastReviewedAt,
         })}
       />

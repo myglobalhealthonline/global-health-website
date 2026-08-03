@@ -7,6 +7,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { buildOgImageUrl, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from "@/lib/seo/og-image";
+import type { AggregateSnapshot } from "@/lib/api/reviews-config";
 
 const SITE_URL = getSiteUrl();
 
@@ -40,7 +41,46 @@ const BASE_SAME_AS = [
   "https://www.wikidata.org/wiki/Q140363271",
 ];
 
-export function organizationJsonLd(sameAs: string[] = []) {
+// How long a saved rating snapshot is trusted before it's treated as stale
+// and dropped from the schema — roughly 13 months. A rating an admin hasn't
+// touched in over a year is more likely wrong than right; better to emit
+// nothing than a number nobody has verified in a long time.
+const AGGREGATE_STALE_DAYS = 400;
+
+/**
+ * Build a schema.org `AggregateRating` node from a stored provider snapshot
+ * (`review.<provider>.aggregate` in Settings — see settings.service.ts).
+ *
+ * FAILS CLOSED: returns `undefined` (emit nothing) unless the aggregate is a
+ * real, positive, non-stale rating. A fabricated or defaulted AggregateRating
+ * on a medical site risks a Google structured-data manual action and is a
+ * consumer-protection problem — never relax these checks to "make ratings
+ * show up". See structured-data.test.ts for the guard test.
+ */
+export function aggregateRatingJsonLd(
+  aggregate: AggregateSnapshot | null | undefined,
+): Record<string, unknown> | undefined {
+  if (!aggregate) return undefined;
+  const { rating, count, updatedAt } = aggregate;
+  if (!Number.isFinite(rating) || rating <= 0 || rating > 5) return undefined;
+  if (!Number.isFinite(count) || count <= 0 || !Number.isInteger(count)) return undefined;
+  const updated = new Date(updatedAt);
+  if (Number.isNaN(updated.getTime())) return undefined;
+  const ageDays = (Date.now() - updated.getTime()) / (1000 * 60 * 60 * 24);
+  if (ageDays > AGGREGATE_STALE_DAYS) return undefined;
+  return {
+    "@type": "AggregateRating",
+    ratingValue: rating,
+    reviewCount: count,
+    bestRating: 5,
+    worstRating: 1,
+  };
+}
+
+export function organizationJsonLd(
+  sameAs: string[] = [],
+  aggregateRating?: Record<string, unknown>,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "MedicalOrganization",
@@ -63,6 +103,9 @@ export function organizationJsonLd(sameAs: string[] = []) {
     // regulator URLs are populated per active country from CountryAuthorityLink
     // rows (showInSchema) and merged on top of the base social profiles.
     sameAs: [...BASE_SAME_AS, ...sameAs],
+    // SEO audit 3.2 — only emitted when the caller resolved a real, fresh
+    // aggregate (see aggregateRatingJsonLd's fail-closed guard above).
+    ...(aggregateRating ? { aggregateRating } : {}),
     areaServed: [
       { "@type": "Country", name: "Ireland" },
       { "@type": "Country", name: "Portugal" },
@@ -544,6 +587,16 @@ export function medicalClinicServiceJsonLd(input: {
    *  vocabulary, same precedent as the blog Article schema) — omitted
    *  entirely when the service has no review date set. */
   dateModified?: string | null;
+  /** SEO audit 3.3 — named author / clinical reviewer for THIS service's
+   *  content (Service.authorDoctorId / reviewerDoctorId), distinct from
+   *  `reviewerPhysician` above (the country's general "Clinical Director"
+   *  fallback, surfaced as `employee`). Attached directly as `author` /
+   *  `reviewedBy` on this node — the same non-strict-but-widely-adopted
+   *  E-E-A-T convention `articleJsonLd` already uses for blog posts (not a
+   *  Google rich-result requirement, but valuable for AI-search citation).
+   *  Omitted entirely when the service has no doctor linked. */
+  authorPhysician?: ReturnType<typeof physicianJsonLd> | null;
+  reviewedByPhysician?: ReturnType<typeof physicianJsonLd> | null;
 }) {
   return {
     "@context": "https://schema.org",
@@ -555,6 +608,8 @@ export function medicalClinicServiceJsonLd(input: {
     medicalSpecialty: input.specialty,
     areaServed: { "@type": "Country", name: input.countryName },
     ...(input.reviewerPhysician ? { employee: input.reviewerPhysician } : {}),
+    ...(input.authorPhysician ? { author: input.authorPhysician } : {}),
+    ...(input.reviewedByPhysician ? { reviewedBy: input.reviewedByPhysician } : {}),
     ...(input.dateModified ? { dateModified: input.dateModified, lastReviewed: input.dateModified } : {}),
     availableService: {
       "@type": "MedicalProcedure",

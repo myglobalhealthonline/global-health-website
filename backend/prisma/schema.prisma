@@ -638,6 +638,11 @@ model Doctor {
   /// Article author/reviewedBy Physician schema for E-E-A-T.
   authoredBlogPosts               BlogPost[]                       @relation("BlogAuthorDoctor")
   reviewedBlogPosts               BlogPost[]                       @relation("BlogReviewerDoctor")
+  /// Services where this doctor is the named author / clinical reviewer
+  /// (inverse of Service.authorDoctorId / reviewerDoctorId). Same E-E-A-T
+  /// pattern as the blog relations above, applied to service pages (§3.3).
+  authoredServices                 Service[]                        @relation("ServiceAuthorDoctor")
+  reviewedServices                 Service[]                        @relation("ServiceReviewerDoctor")
   /// Medical notes this doctor has authored on patient appointments.
   authoredMedicalNotes            MedicalNote[]                    @relation("MedicalNoteAuthor")
   confidentialityAgreements       DoctorConfidentialityAgreement[]
@@ -1092,6 +1097,18 @@ model Service {
   /// Clinical review date shown on the service page as "Last reviewed"
   /// (E-E-A-T signal). Nullable, no backfill — set by admins going forward.
   lastReviewedAt           DateTime?
+  /// Named author / clinical reviewer for THIS service's content — mirrors
+  /// BlogPost's authorDisplayName/reviewerDisplayName/authorDoctorId/
+  /// reviewerDoctorId shape. Free-text display names are the fallback when
+  /// no doctor is linked; linking a real Doctor drives the public Physician
+  /// author/reviewedBy JSON-LD (E-E-A-T / AI-search citation), same as the
+  /// Article schema already does for blog posts. Ships empty everywhere —
+  /// no doctor is auto-assigned; a clinician review is a deliberate,
+  /// per-service editorial action, not a migration default.
+  authorDisplayName        String?
+  reviewerDisplayName      String?
+  authorDoctorId           String?
+  reviewerDoctorId         String?
   /// Who may see/book this service. PUBLIC keeps today's behaviour.
   /// CORPORATE_ONLY = corporate employee onboarding (pre-assessment);
   /// CORPORATE_REQUEST_ONLY = bookable only against an open
@@ -1105,6 +1122,8 @@ model Service {
   consultationSetting      Json?
   bookingSetting           Json?
   country                  Country                        @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  authorDoctor              Doctor?                       @relation("ServiceAuthorDoctor", fields: [authorDoctorId], references: [id], onDelete: SetNull)
+  reviewerDoctor            Doctor?                       @relation("ServiceReviewerDoctor", fields: [reviewerDoctorId], references: [id], onDelete: SetNull)
   assets                   Asset[]
   /// Inverse of `ServiceDoctor.serviceId`. Admin-controlled M:N — which
   /// doctors are bookable for this service.

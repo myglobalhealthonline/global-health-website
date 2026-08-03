@@ -46,6 +46,15 @@ const nullableTrimmedString = (max: number) =>
     .nullable()
     .transform((v) => (v === "" || v === undefined ? null : v));
 
+/** Accept "", undefined, null, or an ISO/date string → Date | null. Mirrors
+ *  admin-blog.schema.ts's optionalNullableDate. */
+const optionalNullableDate = z
+  .preprocess(
+    (v) => (v === "" || v === undefined || v === null ? null : v),
+    z.coerce.date().nullable(),
+  )
+  .optional();
+
 const imagePathFieldSchema = z.preprocess(
   (val) => (val === "" || val === undefined ? null : val),
   z.union([z.null(), z.string().trim().max(500)]),
@@ -187,6 +196,17 @@ const adminServiceBodyShape = {
   heroDescription: nullableTrimmedString(2000),
   detailBody: nullableTrimmedString(100000),
   ctaLabel: nullableTrimmedString(120),
+  /** Clinical review date shown on the service page as "Last reviewed"
+   *  (E-E-A-T signal). */
+  lastReviewedAt: optionalNullableDate,
+  /** Named author / clinical reviewer for this service's content — mirrors
+   *  admin-blog.schema.ts's authorDisplayName/reviewerDisplayName/
+   *  authorDoctorId/reviewerDoctorId. Linking a real Doctor drives the
+   *  public Physician author/reviewedBy JSON-LD. */
+  authorDisplayName: nullableTrimmedString(160),
+  reviewerDisplayName: nullableTrimmedString(160),
+  authorDoctorId: nullableTrimmedString(64),
+  reviewerDoctorId: nullableTrimmedString(64),
   /** Per-locale display content (name, summary, SEO, hero, detail, CTA).
    *  When present the default-locale entry should mirror the top-level
    *  fields above; backend upserts one ServiceTranslation row per entry. */

@@ -30,6 +30,13 @@ type Props = {
   }> | null;
 };
 
+/** yyyy-mm-dd for a native date input's defaultValue. */
+function toDateInputValue(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
+}
+
 export function ServiceFields({
   countries,
   kind,
@@ -199,6 +206,85 @@ export function ServiceFields({
             max={12}
           />
         </div>
+      </FormSection>
+
+      {/* Clinical attribution — E-E-A-T byline. Mirrors the blog editor's
+          "Clinical attribution" section (BlogFields). Linking a real doctor
+          drives the public Physician author/reviewedBy JSON-LD; free-text
+          names are a display-only fallback with no schema effect. Ships
+          empty by design — no doctor is auto-assigned here. */}
+      <FormSection
+        title="Clinical attribution"
+        description="Named author / clinical reviewer for this service's content. Linking a registered doctor drives the Physician author/reviewedBy schema (E-E-A-T)."
+      >
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Author (display name)</span>
+          <input
+            name="authorDisplayName"
+            className="gh-input min-w-0"
+            maxLength={160}
+            placeholder="Global Health Editorial Team"
+            defaultValue={initial?.authorDisplayName ?? ""}
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Reviewer (display name)</span>
+          <input
+            name="reviewerDisplayName"
+            className="gh-input min-w-0"
+            maxLength={160}
+            defaultValue={initial?.reviewerDisplayName ?? ""}
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Author doctor</span>
+          <select
+            name="authorDoctorId"
+            className="gh-select min-w-0"
+            defaultValue={initial?.authorDoctorId ?? ""}
+          >
+            <option value="">— None —</option>
+            {(doctorOptions ?? [])
+              .slice()
+              .sort((a, b) => a.fullName.localeCompare(b.fullName))
+              .map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.fullName}
+                </option>
+              ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Reviewer doctor</span>
+          <select
+            name="reviewerDoctorId"
+            className="gh-select min-w-0"
+            defaultValue={initial?.reviewerDoctorId ?? ""}
+          >
+            <option value="">— None —</option>
+            {(doctorOptions ?? [])
+              .slice()
+              .sort((a, b) => a.fullName.localeCompare(b.fullName))
+              .map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.fullName}
+                </option>
+              ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Last reviewed</span>
+          <input
+            type="date"
+            name="lastReviewedAt"
+            className="gh-input min-w-0"
+            defaultValue={toDateInputValue(initial?.lastReviewedAt)}
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Shown on the page as &quot;Last reviewed&quot; and feeds the schema
+            dateModified/lastReviewed fields. Leave blank to clear.
+          </span>
+        </label>
       </FormSection>
 
       {/* Doctor assignment — the public consult flow lists doctors filtered

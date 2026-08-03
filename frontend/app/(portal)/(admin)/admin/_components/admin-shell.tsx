@@ -24,6 +24,7 @@ import {
   Newspaper,
   ReceiptText,
   ShoppingBag,
+  Star,
   Stethoscope,
   Tags,
   UserRound,
@@ -76,6 +77,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/invoices": ReceiptText,
   "/admin/automation": Workflow,
   "/admin/reports": BarChart3,
+  "/admin/settings/reviews": Star,
   "/admin/page-content": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
@@ -101,6 +103,7 @@ const GLOBAL_HREFS = new Set([
   "/admin/subscriptions",
   "/admin/reports",
   "/admin/audit-log",
+  "/admin/settings/reviews",
   // Global, not country-scoped: the page works with no country selected
   // (all patients) and carries its own `?countryCode=all` override. The
   // topbar picker still narrows it, same as Doctors and Invoices.
@@ -117,7 +120,16 @@ const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
   { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
   { label: "People", hrefs: ["/admin/users", "/admin/patients", "/admin/messages"] },
   { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
-  { label: "System", hrefs: ["/admin/reports", "/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
+  {
+    label: "System",
+    hrefs: [
+      "/admin/reports",
+      "/admin/newsletter",
+      "/admin/automation",
+      "/admin/audit-log",
+      "/admin/settings/reviews",
+    ],
+  },
 ];
 
 const COUNTRY_HREFS = new Set([

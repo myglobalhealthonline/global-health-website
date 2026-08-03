@@ -31,6 +31,12 @@ type ParsedServiceBody = {
   detailBody: string;
   ctaLabel: string;
   translations: ParsedServiceTranslation[];
+  /** ISO date string (from a native date input) or "" (unset/cleared). */
+  lastReviewedAt: string;
+  authorDisplayName: string;
+  reviewerDisplayName: string;
+  authorDoctorId: string;
+  reviewerDoctorId: string;
   legacyPath: string;
   sortOrder: number | undefined;
   durationMinutes: number | undefined;
@@ -191,6 +197,11 @@ export function parseServiceBodyFromForm(
         detailBody: base?.detailBody ?? "",
         ctaLabel: base?.ctaLabel ?? "",
         translations,
+        lastReviewedAt: String(formData.get("lastReviewedAt") ?? "").trim(),
+        authorDisplayName: String(formData.get("authorDisplayName") ?? "").trim(),
+        reviewerDisplayName: String(formData.get("reviewerDisplayName") ?? "").trim(),
+        authorDoctorId: String(formData.get("authorDoctorId") ?? "").trim(),
+        reviewerDoctorId: String(formData.get("reviewerDoctorId") ?? "").trim(),
         legacyPath: String(formData.get("legacyPath") ?? "").trim(),
         sortOrder: optionalInt(formData, "sortOrder"),
         durationMinutes: optionalInt(formData, "durationMinutes"),

@@ -294,6 +294,10 @@ const adminServiceInclude = {
   },
   // Per-locale CMS content for the admin translation tabs (form pre-fill).
   translations: { orderBy: { locale: "asc" as const } },
+  // Named author / clinical reviewer doctor (E-E-A-T) — the admin form's
+  // doctor pickers need name to display the current selection.
+  authorDoctor: { select: { id: true, fullName: true } },
+  reviewerDoctor: { select: { id: true, fullName: true } },
   // Insurance: which active companies cover this service, and the doctor↔insurer
   // network rows. Lets the manual-booking form offer an insurer + narrow the
   // doctor list without extra round-trips (mirrors the public payload).
@@ -897,6 +901,13 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
           detailBody: input.detailBody === null ? null : sanitizeRichHtml(input.detailBody),
         }),
         ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
+        ...(input.lastReviewedAt !== undefined && { lastReviewedAt: input.lastReviewedAt }),
+        ...(input.authorDisplayName !== undefined && { authorDisplayName: input.authorDisplayName }),
+        ...(input.reviewerDisplayName !== undefined && {
+          reviewerDisplayName: input.reviewerDisplayName,
+        }),
+        ...(input.authorDoctorId !== undefined && { authorDoctorId: input.authorDoctorId }),
+        ...(input.reviewerDoctorId !== undefined && { reviewerDoctorId: input.reviewerDoctorId }),
         ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
         ...(input.durationMinutes !== undefined && { durationMinutes: input.durationMinutes }),
@@ -974,6 +985,13 @@ export async function updateAdminService(
           detailBody: body.detailBody === null ? null : sanitizeRichHtml(body.detailBody),
         }),
         ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
+        ...(body.lastReviewedAt !== undefined && { lastReviewedAt: body.lastReviewedAt }),
+        ...(body.authorDisplayName !== undefined && { authorDisplayName: body.authorDisplayName }),
+        ...(body.reviewerDisplayName !== undefined && {
+          reviewerDisplayName: body.reviewerDisplayName,
+        }),
+        ...(body.authorDoctorId !== undefined && { authorDoctorId: body.authorDoctorId }),
+        ...(body.reviewerDoctorId !== undefined && { reviewerDoctorId: body.reviewerDoctorId }),
         ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
         ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
         ...(body.durationMinutes !== undefined && { durationMinutes: body.durationMinutes }),

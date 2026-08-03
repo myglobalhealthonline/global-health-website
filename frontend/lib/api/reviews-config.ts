@@ -21,3 +21,21 @@ export async function fetchPublicReviewConfig() {
     tags: ["reviews-config"],
   });
 }
+
+/** Pick the aggregate for whichever provider admin has marked
+ *  `primaryProvider` — the single source of truth for the site-wide
+ *  `AggregateRating` JSON-LD (structured-data.ts). `null` when no primary
+ *  provider is configured or that provider has no aggregate saved yet. */
+export function resolvePrimaryAggregate(config: ReviewConfig | null): AggregateSnapshot | null {
+  if (!config) return null;
+  switch (config.primaryProvider) {
+    case "TRUSTPILOT":
+      return config.trustpilot.aggregate;
+    case "GOOGLE":
+      return config.google.aggregate;
+    case "DOCTIFY":
+      return config.doctify.aggregate;
+    default:
+      return null;
+  }
+}

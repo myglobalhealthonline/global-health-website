@@ -23,7 +23,8 @@ import { getSelectedLocale } from "@/lib/i18n/selected-locale";
 import type { CountryCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
-import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
+import { aggregateRatingJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
+import { fetchPublicReviewConfig, resolvePrimaryAggregate } from "@/lib/api/reviews-config";
 import { rootMetadata } from "@/lib/seo/root-metadata";
 
 /**
@@ -75,7 +76,7 @@ export default async function GlobalRootLayout({ children }: { children: ReactNo
   // runtimeCountry is known here, so the per-country footer fetch can run
   // in the same parallel batch instead of as an extra serial round-trip
   // after it (one less hop on every global page's TTFB).
-  const [{ common, navigation }, assets, activeFooter, activeTrust] =
+  const [{ common, navigation }, assets, activeFooter, activeTrust, reviewConfigResult] =
     await Promise.all([
       // Same locale the rest of this layout renders in — passing the raw
       // header/cookie again would let a stale gh_locale give the nav a
@@ -87,6 +88,7 @@ export default async function GlobalRootLayout({ children }: { children: ReactNo
       getPublicAssetsNormalized(),
       runtimeCountry ? getCountryFooter(runtimeCountry, currentLocale) : Promise.resolve(null),
       runtimeCountry ? getCountryTrust(runtimeCountry, currentLocale) : Promise.resolve(null),
+      fetchPublicReviewConfig().catch(() => null),
     ]);
 
   // Organization `sameAs` — the active country's official authorities (IMC,
@@ -95,6 +97,15 @@ export default async function GlobalRootLayout({ children }: { children: ReactNo
   const organizationSameAs = activeTrust
     ? activeTrust.authorityLinks.filter((l) => l.showInSchema).map((l) => l.url)
     : [];
+
+  // SEO audit 3.2 — AggregateRating on the site-wide MedicalOrganization
+  // node. Fails closed: undefined unless admin has configured a
+  // primaryProvider AND that provider has a real, fresh aggregate saved
+  // (see aggregateRatingJsonLd's guard) — renders nothing until an admin
+  // enters real numbers at /admin/settings/reviews.
+  const aggregateRating = aggregateRatingJsonLd(
+    resolvePrimaryAggregate(reviewConfigResult && reviewConfigResult.ok ? reviewConfigResult.data : null),
+  );
 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
@@ -157,7 +168,9 @@ export default async function GlobalRootLayout({ children }: { children: ReactNo
             parsed={parsed}
             isGatewayHome={isGatewayHome}
           >
-            <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
+            <JsonLd
+              data={[organizationJsonLd(organizationSameAs, aggregateRating), websiteJsonLd()]}
+            />
             {children}
           </SiteChrome>
         </CartProvider>

@@ -18,3 +18,4 @@ export * from "./admin-api/lab-requisitions";
 export * from "./admin-api/assets";
 export * from "./admin-api/page-content";
 export * from "./admin-api/blog";
+export * from "./admin-api/settings";

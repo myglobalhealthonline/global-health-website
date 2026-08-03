@@ -141,6 +141,13 @@ export type CountryServiceDetail = {
   insuranceSeoLine: string | null;
   /** ISO timestamp — admin-set clinical review date. Null when unset. */
   lastReviewedAt: string | null;
+  /** Named author / clinical reviewer for this service's content — free-text
+   *  fallback plus the linked Doctor id (when set), driving the public
+   *  Physician author/reviewedBy JSON-LD (see structured-data.ts). */
+  authorDisplayName: string | null;
+  reviewerDisplayName: string | null;
+  authorDoctorId: string | null;
+  reviewerDoctorId: string | null;
 };
 
 export type HealthTestFaqItem = { id: string; question: string; answer: string };
@@ -648,6 +655,10 @@ export const getCountryServiceDetail = cache(async (
     insuranceOptions: parseInsuranceOptions(r.insuranceOptions),
     insuranceSeoLine: typeof r.insuranceSeoLine === "string" ? r.insuranceSeoLine : null,
     lastReviewedAt: typeof r.lastReviewedAt === "string" ? r.lastReviewedAt : null,
+    authorDisplayName: typeof r.authorDisplayName === "string" ? r.authorDisplayName : null,
+    reviewerDisplayName: typeof r.reviewerDisplayName === "string" ? r.reviewerDisplayName : null,
+    authorDoctorId: typeof r.authorDoctorId === "string" ? r.authorDoctorId : null,
+    reviewerDoctorId: typeof r.reviewerDoctorId === "string" ? r.reviewerDoctorId : null,
   };
 });
 
