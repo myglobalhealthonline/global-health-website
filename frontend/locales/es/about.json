@@ -83,7 +83,7 @@
     "trustLanguagesTitle": "Idiomas de consulta",
     "trustBaseTitle": "Sede social",
     "trustOnlineTitle": "Dónde operamos",
-    "trustOnlineSubtitle": "Online en todo el país: {country}",
+    "trustOnlineSubtitle": "Consultas online — {country}",
     "ctaBook": "Reservar consulta",
     "ctaDoctors": "Conocer a los médicos",
     "ctaContact": "Contactar",
@@ -103,6 +103,21 @@
     "lang_es": "Español",
     "lang_cs": "Checo",
     "lang_ro": "Rumano",
-    "lang_de": "Alemán"
+    "lang_de": "Alemán",
+    "offerEyebrow": "Qué puede reservar",
+    "languagesEyebrow": "Su idioma",
+    "whoEyebrow": "Quiénes somos",
+    "factsEyebrow": "En resumen",
+    "factsHeading": "Global Health {country} en resumen",
+    "factRegulator": "Registro médico",
+    "factOffice": "Sede social",
+    "factOnlineLabel": "Dónde operamos",
+    "factLanguages": "Idiomas de consulta",
+    "factPhone": "Teléfono",
+    "factEmail": "Correo electrónico",
+    "factOperator": "Operada por",
+    "heroImageAlt": "Consultas médicas online para pacientes en {country}",
+    "entityBase": "{company}, inscrita en Chequia",
+    "entityBranch": "{branch}, la sucursal inscrita en Irlanda de {company}"
   }
 }

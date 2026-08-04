@@ -83,7 +83,7 @@
     "trustLanguagesTitle": "Sprachen der Sprechstunde",
     "trustBaseTitle": "Eingetragener Sitz",
     "trustOnlineTitle": "Wo wir tätig sind",
-    "trustOnlineSubtitle": "Online im ganzen Land: {country}",
+    "trustOnlineSubtitle": "Online-Sprechstunden — {country}",
     "ctaBook": "Termin buchen",
     "ctaDoctors": "Ärztinnen und Ärzte ansehen",
     "ctaContact": "Kontakt aufnehmen",
@@ -103,6 +103,21 @@
     "lang_es": "Spanisch",
     "lang_cs": "Tschechisch",
     "lang_ro": "Rumänisch",
-    "lang_de": "Deutsch"
+    "lang_de": "Deutsch",
+    "offerEyebrow": "Was Sie buchen können",
+    "languagesEyebrow": "Ihre Sprache",
+    "whoEyebrow": "Wer wir sind",
+    "factsEyebrow": "Auf einen Blick",
+    "factsHeading": "Global Health {country} auf einen Blick",
+    "factRegulator": "Ärzteregister",
+    "factOffice": "Eingetragener Sitz",
+    "factOnlineLabel": "Wo wir tätig sind",
+    "factLanguages": "Sprachen der Sprechstunde",
+    "factPhone": "Telefon",
+    "factEmail": "E-Mail",
+    "factOperator": "Betrieben von",
+    "heroImageAlt": "Ärztliche Online-Sprechstunden für Patientinnen und Patienten in {country}",
+    "entityBase": "{company}, eingetragen in Tschechien",
+    "entityBranch": "{branch}, die in Irland eingetragene Niederlassung von {company}"
   }
 }

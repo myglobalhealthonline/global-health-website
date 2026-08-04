@@ -83,7 +83,7 @@
     "trustLanguagesTitle": "Limbile consultațiilor",
     "trustBaseTitle": "Sediu social",
     "trustOnlineTitle": "Unde funcționăm",
-    "trustOnlineSubtitle": "Online în toată țara: {country}",
+    "trustOnlineSubtitle": "Consultații online — {country}",
     "ctaBook": "Programați o consultație",
     "ctaDoctors": "Cunoașteți medicii",
     "ctaContact": "Contactați-ne",
@@ -103,6 +103,21 @@
     "lang_es": "spaniolă",
     "lang_cs": "cehă",
     "lang_ro": "română",
-    "lang_de": "germană"
+    "lang_de": "germană",
+    "offerEyebrow": "Ce puteți programa",
+    "languagesEyebrow": "Limba dumneavoastră",
+    "whoEyebrow": "Cine suntem",
+    "factsEyebrow": "Pe scurt",
+    "factsHeading": "Global Health {country} pe scurt",
+    "factRegulator": "Registru medical",
+    "factOffice": "Sediu social",
+    "factOnlineLabel": "Unde funcționăm",
+    "factLanguages": "Limbile consultațiilor",
+    "factPhone": "Telefon",
+    "factEmail": "E-mail",
+    "factOperator": "Operată de",
+    "heroImageAlt": "Consultații medicale online pentru pacienți din {country}",
+    "entityBase": "{company}, înregistrată în Cehia",
+    "entityBranch": "{branch}, sucursala înregistrată în Irlanda a {company}"
   }
 }

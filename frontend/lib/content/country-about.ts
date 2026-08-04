@@ -18,8 +18,8 @@ import { fillTemplate, getCountryContact, type CountryContact } from "@/lib/cont
  * from there. Only About-specific facts are added below.
  *
  * ONLY VERIFIABLE CLAIMS
- * `entity` carries registry numbers that already appear on the global /about
- * page. Nothing here asserts doctor counts, consultation volumes or premises
+ * The operator sentence carries registry numbers that already appear on the
+ * global /about page. Nothing here asserts doctor counts, volumes or premises
  * for a market — an invented locality or capacity signal on a medical domain
  * is a site-wide risk.
  *
@@ -54,23 +54,32 @@ export type CountryAbout = {
    * the active locale's bundle, so the list reads translated everywhere.
    */
   consultLanguages: string[];
-  /** Legal entity serving the market. Registry numbers only, no marketing. */
-  entity: string;
+  /**
+   * Locally registered branch serving this market, where one exists. Only the
+   * registered name and number — the sentence around it is translated in the
+   * locale bundle, so "registered in Czechia" never leaks into a Spanish page.
+   */
+  branch?: string;
 };
 
-const CZ_ENTITY = "Global Guest s.r.o. (IČO: 19071680), registered in Czechia";
+/** Operating company behind every market. Registry data, never translated. */
+const COMPANY = "Global Guest s.r.o. (IČO: 19071680)";
 
 export const COUNTRY_ABOUT: Record<string, CountryAbout> = {
-  ie: {
-    consultLanguages: ["en"],
-    entity: `Global Health, the Irish-registered branch (CRO 910267) of ${CZ_ENTITY}`,
-  },
-  cz: { consultLanguages: ["cs", "en"], entity: CZ_ENTITY },
-  pt: { consultLanguages: ["pt", "en"], entity: CZ_ENTITY },
-  es: { consultLanguages: ["es", "en"], entity: CZ_ENTITY },
-  ro: { consultLanguages: ["ro", "en"], entity: CZ_ENTITY },
-  br: { consultLanguages: ["pt", "en"], entity: CZ_ENTITY },
+  ie: { consultLanguages: ["en"], branch: "Global Health (CRO 910267)" },
+  cz: { consultLanguages: ["cs", "en"] },
+  pt: { consultLanguages: ["pt", "en"] },
+  es: { consultLanguages: ["es", "en"] },
+  ro: { consultLanguages: ["ro", "en"] },
+  br: { consultLanguages: ["pt", "en"] },
 };
+
+/** The operator sentence, in the active locale, with registry data injected. */
+export function entitySentence(about: CountryAbout, t: AboutCopyTemplates): string {
+  return about.branch
+    ? fillTemplate(t.entityBranch, { branch: about.branch, company: COMPANY })
+    : fillTemplate(t.entityBase, { company: COMPANY });
+}
 
 export function getCountryAbout(code: string): CountryAbout | null {
   return COUNTRY_ABOUT[code.toLowerCase()] ?? null;
@@ -96,6 +105,8 @@ export type AboutCopyTemplates = {
   languagesBodyTemplate: string;
   whoHeading: string;
   whoBodyTemplate: string;
+  entityBase: string;
+  entityBranch: string;
   globalLinkLabel: string;
   trustDoctorsTitle: string;
   trustLanguagesTitle: string;
@@ -169,7 +180,7 @@ export function resolveAboutCopy(
     emergency: contact.facts.emergency,
     benefitBody: contact.facts.benefitBody,
     certificate: contact.facts.certificateNoun,
-    entity: about.entity,
+    entity: entitySentence(about, t),
     email: contact.email,
   };
 

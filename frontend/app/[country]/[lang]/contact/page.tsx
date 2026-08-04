@@ -278,10 +278,10 @@ export default async function CountryContactPage({ params }: { params: Promise<P
               </p>
 
               <div className="mt-10 flex flex-wrap gap-3">
-                <Link href={bookHref} className="gh2-btn gh2-btn-primary">
+                <Link href={bookHref} className="gh-btn gh-btn-primary">
                   {t.ctaBook}
                 </Link>
-                <Link href={`/${country}/${lang}/doctors`} className="gh2-btn gh2-btn-ghost">
+                <Link href={`/${country}/${lang}/doctors`} className="gh-btn gh-btn-outline">
                   {t.ctaDoctors}
                 </Link>
               </div>

@@ -103,6 +103,21 @@
     "lang_es": "Spanish",
     "lang_cs": "Czech",
     "lang_ro": "Romanian",
-    "lang_de": "German"
+    "lang_de": "German",
+    "offerEyebrow": "What you can book",
+    "languagesEyebrow": "Your language",
+    "whoEyebrow": "Who we are",
+    "factsEyebrow": "At a glance",
+    "factsHeading": "Global Health {country} at a glance",
+    "factRegulator": "Medical register",
+    "factOffice": "Registered office",
+    "factOnlineLabel": "Where we operate",
+    "factLanguages": "Consultation languages",
+    "factPhone": "Phone",
+    "factEmail": "Email",
+    "factOperator": "Operated by",
+    "heroImageAlt": "Online doctor consultations for patients in {country}",
+    "entityBase": "{company}, registered in Czechia",
+    "entityBranch": "{branch}, the Irish-registered branch of {company}"
   }
 }

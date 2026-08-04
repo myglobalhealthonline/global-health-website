@@ -83,7 +83,7 @@
     "trustLanguagesTitle": "Jazyky konzultací",
     "trustBaseTitle": "Sídlo",
     "trustOnlineTitle": "Kde působíme",
-    "trustOnlineSubtitle": "Online po celé zemi: {country}",
+    "trustOnlineSubtitle": "Online konzultace — {country}",
     "ctaBook": "Objednat konzultaci",
     "ctaDoctors": "Poznat naše lékaře",
     "ctaContact": "Kontaktujte nás",
@@ -103,6 +103,21 @@
     "lang_es": "španělština",
     "lang_cs": "čeština",
     "lang_ro": "rumunština",
-    "lang_de": "němčina"
+    "lang_de": "němčina",
+    "offerEyebrow": "Co si můžete objednat",
+    "languagesEyebrow": "Váš jazyk",
+    "whoEyebrow": "Kdo jsme",
+    "factsEyebrow": "Ve zkratce",
+    "factsHeading": "Global Health {country} ve zkratce",
+    "factRegulator": "Lékařský registr",
+    "factOffice": "Sídlo",
+    "factOnlineLabel": "Kde působíme",
+    "factLanguages": "Jazyky konzultací",
+    "factPhone": "Telefon",
+    "factEmail": "E-mail",
+    "factOperator": "Provozuje",
+    "heroImageAlt": "Online lékařské konzultace pro pacienty v zemi {country}",
+    "entityBase": "{company}, zapsaná v Česku",
+    "entityBranch": "{branch}, irská pobočka společnosti {company}"
   }
 }

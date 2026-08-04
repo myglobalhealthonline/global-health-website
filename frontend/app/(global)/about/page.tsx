@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
-import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { AboutArchPanel, Pillar } from "@/components/sections/AboutBlocks";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -131,7 +131,29 @@ export default async function AboutPage() {
             subtitle: about.trust_card3_subtitle,
           },
         ]}
-        rightSlot={<AboutArchPanel locale={about} />}
+        rightSlot={
+          <AboutArchPanel
+            src="/images/stock/about.jpg"
+            alt="Global Health telemedicine platform — online doctor consultations across multiple markets"
+            floats={[
+              {
+                icon: <Globe2 className="size-4" strokeWidth={2} aria-hidden />,
+                title: about.float1_title,
+                subtitle: about.float1_subtitle,
+              },
+              {
+                icon: <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />,
+                title: about.float2_title,
+                subtitle: about.float2_subtitle,
+              },
+              {
+                icon: <Users className="size-4" strokeWidth={2} aria-hidden />,
+                title: about.float3_title,
+                subtitle: about.float3_subtitle,
+              },
+            ]}
+          />
+        }
         mobileBgSrc="/images/stock/about.jpg"
       />
 
@@ -344,97 +366,6 @@ export default async function AboutPage() {
         headlineAccent={about.doctify_headline_accent}
       />
     </section>
-  );
-}
-
-function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_subtitle: string; float2_title: string; float2_subtitle: string; float3_title: string; float3_subtitle: string } }) {
-  return (
-    <div className="relative mx-auto aspect-square w-full max-w-[600px]">
-      <HeroPlusImage
-        src="/images/stock/about.jpg"
-        alt="Global Health telemedicine platform — online doctor consultations across multiple markets"
-      />
-
-      {/* Floating — Five countries */}
-      <div
-        className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0s]"
-      >
-        <span
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
-        >
-          <Globe2 className="size-4" strokeWidth={2} aria-hidden />
-        </span>
-        <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float1_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float1_subtitle}</span>
-        </span>
-      </div>
-
-      {/* Floating — Verified doctors */}
-      <div
-        className="gh-glass-emerald gh-floaty absolute -right-6 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
-      >
-        <span
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
-        >
-          <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
-        </span>
-        <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float2_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float2_subtitle}</span>
-        </span>
-      </div>
-
-      {/* Floating — No waiting rooms */}
-      <div
-        className="gh-glass-emerald gh-floaty absolute -left-6 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
-      >
-        <span
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
-        >
-          <Users className="size-4" strokeWidth={2} aria-hidden />
-        </span>
-        <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float3_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float3_subtitle}</span>
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function Pillar({
-  icon,
-  eyebrow,
-  title,
-  body,
-}: {
-  icon: React.ReactNode;
-  eyebrow: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <article>
-      <div className="flex items-center gap-3">
-        <span
-          className="inline-flex size-10 items-center justify-center rounded-full border border-[rgba(29,75,54,0.20)] bg-[rgba(29,75,54,0.08)] text-[var(--color-brand-primary)]"
-        >
-          {icon}
-        </span>
-        <span
-          className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-text-muted)] [font-variant-numeric:tabular-nums]"
-        >
-          {eyebrow}
-        </span>
-      </div>
-      <h3 className="mt-5 text-xl font-extrabold tracking-[-0.015em] text-[var(--color-text-primary)]">
-        {title}
-      </h3>
-      <p className="mt-3 max-w-[42ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-muted)]">
-        {body}
-      </p>
-    </article>
   );
 }
 
