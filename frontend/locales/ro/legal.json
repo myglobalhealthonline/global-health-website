@@ -1,8 +1,13 @@
 {
+  "summaryNotice": {
+    "badge": "Rezumat",
+    "text": "Această pagină este un rezumat în limbaj simplu. Nu este documentul juridic obligatoriu — acel document este menținut pentru fiecare țară, împreună cu operatorul de date aplicabil și versiunea curentă.",
+    "linkIntro": "Documentul obligatoriu pentru țara dumneavoastră"
+  },
   "privacy": {
     "eyebrow": "Legal",
     "title": "Politică de confidențialitate",
-    "lastUpdated": "Ultima actualizare: 16 mai 2026",
+    "summaryLabel": "Rezumat general",
     "s1_h": "Cine suntem",
     "s1_p": "Global Health oferă consultații medicale online în mai multe țări europene. Entitatea juridică care acționează ca operator de date depinde de țara în care efectuați rezervarea — consultați paginile noastre de țară pentru detalii locale.",
     "s2_h": "Ce colectăm",
@@ -29,7 +34,7 @@
   "terms": {
     "eyebrow": "Legal",
     "title": "Termeni și condiții",
-    "lastUpdated": "Ultima actualizare: 9 iunie 2026",
+    "summaryLabel": "Rezumat general",
     "intro": "Acești termeni se aplică atunci când utilizați Global Health pentru a rezerva sau a participa la o consultație online. Prin rezervare, acceptați acești termeni. Sunt termeni generali de utilizare și nu înlocuiesc consimțământul specific și informațiile clinice pe care le primiți la momentul consultației.",
     "s1_h": "Ce este serviciul",
     "s1_p": "Global Health vă conectează cu medici înregistrați pentru a practica în țara în care efectuați rezervarea, pentru consultații desfășurate online. Relația clinică este între dumneavoastră și medicul curant, care este responsabil pentru propriile decizii clinice în limitele înregistrării sale.",

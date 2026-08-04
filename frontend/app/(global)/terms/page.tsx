@@ -5,6 +5,7 @@ import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { GH2LegalSummaryNotice } from "@/components/legal/GH2LegalSummaryNotice";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getPageLocale();
@@ -16,14 +17,14 @@ export async function generateMetadata(): Promise<Metadata> {
     description: terms.intro,
     locale,
     kind: "legal",
-    subtitle: terms.lastUpdated,
+    subtitle: terms.summaryLabel,
     imageAlt: `${terms.title} - Global Health`,
   });
 }
 
 export default async function TermsPage() {
   const locale = await getPageLocale();
-  const { terms } = loadLocaleBundle(locale).legal;
+  const { terms, summaryNotice } = loadLocaleBundle(locale).legal;
 
   return (
     <>
@@ -32,7 +33,7 @@ export default async function TermsPage() {
         title={terms.title}
         accent=""
         watermark="Terms"
-        meta={<p className="gh2-index">{terms.lastUpdated}</p>}
+        meta={<p className="gh2-index">{terms.summaryLabel}</p>}
       />
 
       {/* Prose body — full-bleed ivory wrapper; body{} is dark forest
@@ -48,6 +49,13 @@ export default async function TermsPage() {
           <section>
             <p>{terms.intro}</p>
           </section>
+
+          <GH2LegalSummaryNotice
+            locale={locale}
+            badge={summaryNotice.badge}
+            text={summaryNotice.text}
+            linkIntro={summaryNotice.linkIntro}
+          />
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
