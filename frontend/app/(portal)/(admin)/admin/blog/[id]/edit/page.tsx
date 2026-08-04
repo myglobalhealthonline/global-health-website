@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag, revalidatePath } from "next/cache";
-import { ArrowLeft, ExternalLink, Languages, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Languages, Trash2 } from "lucide-react";
 import {
   fetchAdminBlogPostById,
   fetchAdminCountries,
@@ -13,6 +13,7 @@ import {
   putAdminBlogTranslation,
   deleteAdminBlogTranslation,
   putAdminBlogPostCountries,
+  ADMIN_BLOG_LOCALES,
 } from "@/lib/admin/admin-api";
 import { PUBLIC_BLOG_TAG } from "@/lib/content/get-public-blog";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
@@ -76,6 +77,24 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
   const assignedCountryIds = new Set(post.countries.map((c) => c.countryId));
   const translations = post.translations;
   const editTranslation = editLocale ? translations.find((t) => t.locale === editLocale) ?? null : null;
+
+  /* One row per locale the site actually serves, so the editor can see at a
+   * glance which languages exist, which are missing, and which have a title
+   * but no body (the state the public renderer refuses to serve). The post's
+   * own locale is shown as "Original" — it is edited by the form above, not
+   * as a translation of itself. */
+  const localeRows = ADMIN_BLOG_LOCALES.map((locale) => {
+    const isOriginal = locale === post.locale;
+    const translation = translations.find((t) => t.locale.toUpperCase() === locale) ?? null;
+    return {
+      locale,
+      isOriginal,
+      translation,
+      title: isOriginal ? post.title : translation?.title ?? "",
+      slug: isOriginal ? post.slug : translation?.slug ?? "",
+      hasBody: isOriginal ? Boolean(post.body?.trim()) : Boolean(translation?.content?.trim()),
+    };
+  });
 
   async function updateBlogAction(formData: FormData) {
     "use server";
@@ -227,44 +246,89 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         description="Add locale-specific title, slug, and content for this post."
         right={translations.length > 0 ? <Pill tone="brand">{translations.length}</Pill> : null}
       >
-        {translations.length > 0 ? (
-          <div className="gh-admin-blog-translation-list gh-form-section__span-2 mt-3">
-            {translations.map((t) => (
-              <div
-                key={t.locale}
-                className="gh-admin-blog-translation-row"
-              >
-                <div>
-                  <span className="inline-block font-mono text-portal-meta font-bold text-[var(--color-text-primary)]">
-                    {t.locale.toUpperCase()}
-                  </span>
-                  <span className="ml-2 text-portal-compact text-[var(--color-text-body)]">{t.title}</span>
-                </div>
-                <div className="gh-admin-blog-actions">
-                  <Link
-                    href={`/admin/blog/${id}/edit?editLocale=${t.locale}`}
-                    className="gh-btn gh-btn-soft text-portal-meta"
-                  >
-                    Edit
-                  </Link>
-                  <form action={deleteTranslationAction} className="inline">
-                    <input type="hidden" name="locale" value={t.locale} />
-                    <button
-                      type="submit"
-                      className="gh-btn gh-btn-danger text-portal-meta"
-                      aria-label={`Delete ${t.locale} translation`}
-                    >
-                      <Trash2 className="size-3" aria-hidden />
-                    </button>
-                  </form>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : null}
+        {/* Every supported locale is a row, translated or not. Previously only
+            existing translations were listed and a new one meant typing a
+            locale code into a free-text box — so the six locales the site
+            actually serves were invisible until you guessed them. */}
+        <div className="gh-form-section__span-2 mt-3 overflow-x-auto">
+          <table className="gh-admin-table gh-admin-blog-locale-table">
+            <thead>
+              <tr>
+                <th scope="col">Language</th>
+                <th scope="col">Title</th>
+                <th scope="col">Slug</th>
+                <th scope="col">Body</th>
+                <th scope="col" className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {localeRows.map((row) => (
+                <tr key={row.locale} data-active={row.locale === editLocale ? "true" : undefined}>
+                  <th scope="row">
+                    <span className="font-mono font-bold">{row.locale}</span>
+                    {row.isOriginal ? <Pill tone="brand">Original</Pill> : null}
+                  </th>
+                  <td>
+                    {row.title ? (
+                      <span className="line-clamp-1">{row.title}</span>
+                    ) : (
+                      <span className="text-[var(--color-text-muted)]">Not translated</span>
+                    )}
+                  </td>
+                  <td className="font-mono text-portal-meta text-[var(--color-text-muted)]">
+                    {row.slug || "—"}
+                  </td>
+                  <td>
+                    {row.hasBody ? (
+                      <Pill tone="published">Ready</Pill>
+                    ) : row.translation ? (
+                      <Pill tone="draft">No body</Pill>
+                    ) : (
+                      <span className="text-[var(--color-text-muted)]">—</span>
+                    )}
+                  </td>
+                  <td className="text-right">
+                    <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
+                      {row.isOriginal ? (
+                        <span className="text-portal-meta text-[var(--color-text-muted)]">
+                          Edit above
+                        </span>
+                      ) : (
+                        <>
+                          <Link
+                            href={`/admin/blog/${id}/edit?editLocale=${row.locale}#translation-editor`}
+                            className="gh-btn gh-btn-soft text-portal-meta"
+                          >
+                            {row.translation ? "Edit" : "Add"}
+                          </Link>
+                          {row.translation ? (
+                            <form action={deleteTranslationAction} className="inline">
+                              <input type="hidden" name="locale" value={row.locale} />
+                              <button
+                                type="submit"
+                                className="gh-btn gh-btn-danger text-portal-meta"
+                                aria-label={`Delete ${row.locale} translation`}
+                              >
+                                <Trash2 className="size-3" aria-hidden />
+                              </button>
+                            </form>
+                          ) : null}
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {editLocale ? (
-          <form action={saveTranslationAction} className="gh-admin-blog-translation-form gh-form-section__span-2 mt-4">
+          <form
+            id="translation-editor"
+            action={saveTranslationAction}
+            className="gh-admin-blog-translation-form gh-form-section__span-2 mt-4"
+          >
             <input type="hidden" name="locale" value={editLocale} />
             <h4 className="m-0 text-portal-body font-bold text-[var(--color-text-primary)]">
               {editTranslation ? "Edit" : "Add"} translation: {editLocale.toUpperCase()}
@@ -303,29 +367,9 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
             </div>
           </form>
         ) : (
-          <div className="gh-form-section__span-2 mt-4">
-            <p className="mb-2 text-portal-meta text-[var(--color-text-muted)]">
-              Add a new locale (e.g. <code>fr</code>, <code>de</code>, <code>pt</code>):
-            </p>
-            {/* Plain GET form — submitting reloads this page with ?editLocale=<value>,
-                which opens the translation editor for that locale. */}
-            <form action={`/admin/blog/${id}/edit`} method="get" className="gh-admin-blog-actions">
-              <input
-                type="text"
-                name="editLocale"
-                placeholder="fr"
-                maxLength={10}
-                pattern="[a-zA-Z]{2}(-[a-zA-Z]{2})?"
-                title="Locale code, e.g. fr or pt-br"
-                required
-                className="gh-input w-24"
-              />
-              <button type="submit" className="gh-btn gh-btn-soft inline-flex items-center gap-1">
-                <Plus className="size-3" aria-hidden />
-                Add locale
-              </button>
-            </form>
-          </div>
+          <p className="gh-form-section__span-2 mt-4 text-portal-meta text-[var(--color-text-muted)]">
+            Pick a language above to add or edit its translation.
+          </p>
         )}
       </FormSection>
 
