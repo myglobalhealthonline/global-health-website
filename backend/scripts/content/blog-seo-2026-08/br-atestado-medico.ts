@@ -279,6 +279,430 @@ const pt: LocalePost = {
   } satisfies Article,
 };
 
+const en: LocalePost = {
+  locale: "EN",
+  slug: "online-medical-certificate-brazil",
+  title: "Online medical certificate in Brazil: when it counts and what it must contain",
+  excerpt:
+    "An atestado issued in a teleconsultation counts at work when there was a real consultation, a doctor registered with the CRM and a verifiable digital signature. What the document must contain, how HR checks it, and when a teleconsultation should not issue one.",
+  seoTitle: "Online medical certificate in Brazil: is it valid?",
+  seoDescription:
+    "Online medical certificate in Brazil: when it counts at work, what it must contain, how employers check the digital signature and when it does not apply.",
+  category: "Telemedicine",
+  article: {
+    lang: "en-GB",
+    tagline: "Medical care anytime, anywhere",
+    categoryLabel: "Telemedicine",
+    categoryHref: href("en", "/blog"),
+    eyebrow: "Brazil · Guide for employees",
+    h1: "The online medical certificate",
+    deck: "The document counts because there was a consultation. The consultation does not exist to justify the document — and that order changes everything.",
+    intro:
+      "A <strong>medical certificate issued in a teleconsultation</strong> — an <em>atestado médico</em> — carries the same weight as one issued in person, provided it meets the same conditions: a <strong>genuine medical consultation</strong>, a doctor properly registered with the <strong>CRM</strong>, a document carrying the required details and a <strong>verifiable digital signature</strong>. The Federal Council of Medicine even runs its own platform for issuing certificates. What an employer checks is not a rubber stamp: it is the digital signature, and anyone can validate it on a public government website. What does <strong>not</strong> exist is a certificate without a clinical assessment — that is not telemedicine, it is document forgery, with consequences for whoever issues it and whoever uses it.",
+    facts: [
+      "Valid when there is a real consultation",
+      "Digital signature, not a stamp",
+      "The ICD code only with your consent",
+    ],
+    primaryCta: { label: "Online medical consultation", href: href("en", "/services/atestado-medico-online") },
+    secondaryCta: { label: "Validate a digital signature", href: ITI_VALIDAR },
+    panelChip: "What this guide covers",
+    panelParas: [
+      "What makes a certificate valid, and what an employer may and may not require.",
+      "What the document must contain, including the rule about the ICD code.",
+      "When a teleconsultation should not issue a certificate — and why that protects you.",
+      "The number of days, the point at which an absence becomes a matter for the INSS and each company's internal deadlines all change. No figures appear here: each point refers to the INSS or to your employer.",
+    ],
+    author: {
+      initials: "RS",
+      name: "Dr. Renato Sarmento",
+      line: "Family and Community Physician · Global Health Brazil",
+    },
+    navLabel: "In this article",
+    sections: [
+      {
+        id: "vale",
+        nav: "Is it valid?",
+        eyebrow: "The main question",
+        h2: "Is a certificate issued online valid?",
+        blocks: [
+          lead("It is — and the reason is simple: what makes a certificate valid is the medical act, not the medium through which it happened."),
+          p("Telemedicine is regulated in Brazil, and remote care is medical care like any other. If the doctor assessed you, concluded that time off was needed and issued the document with the required details and a digital signature, the certificate is the same document that would have come out of a consulting room."),
+          ul([
+            "<strong>A doctor registered with the CRM</strong>, identifiable by name and registration number.",
+            "<strong>A consultation actually carried out</strong> — by video, with an assessment of your condition.",
+            "<strong>A digital signature</strong> with a valid certificate, verifiable by anyone.",
+            "<strong>Complete details</strong> on the document, including the date and the period of absence.",
+          ]),
+          p("The Federal Council of Medicine runs its own platforms for electronic prescriptions and certificates, which is a measure of how settled the format now is. The document reaches you as a PDF, by email or messaging app, and you forward it to your employer."),
+          cite(`Official platforms: <a href="${CFM_ATESTA}" rel="nofollow noopener" target="_blank">Atesta CFM</a> · <a href="${CFM_PRESCRICAO}" rel="nofollow noopener" target="_blank">CFM Electronic Prescription</a>.`),
+        ],
+      },
+      {
+        id: "conteudo",
+        nav: "What it contains",
+        eyebrow: "Content",
+        h2: "What the certificate must contain",
+        blocks: [
+          lead("A rejected certificate is almost never a fake one. It is an incomplete one."),
+          ul([
+            "<strong>Identification of the patient</strong>.",
+            "<strong>Date of issue</strong> and the recommended <strong>period of absence</strong>.",
+            "<strong>The doctor's name and CRM number</strong>, with the state of registration.",
+            "<strong>A signature</strong> — digital, in the case of an electronic document.",
+            "<strong>The ICD code only with the patient's express consent</strong>. The diagnosis is your information; the doctor does not add it unprompted.",
+          ]),
+          warn("About the ICD code", "You are not obliged to authorise its inclusion, and the certificate remains valid without it. Some companies ask, and there are situations — assessments, benefits, specific requirements — where disclosing helps your own case. The decision is yours, made with the facts in hand, and not an automatic demand from HR."),
+          p("Check the document as soon as you receive it. A wrong name, a mistyped date or an incomplete period takes minutes to correct with the doctor who issued it, and becomes a problem if you only notice on the day you hand it in."),
+        ],
+      },
+      {
+        id: "empresa",
+        nav: "How employers check",
+        eyebrow: "The other side",
+        h2: "How the employer verifies the certificate",
+        blocks: [
+          lead("This part tends to cause friction through misinformation, on both sides."),
+          p("A digital certificate is verified through its <strong>electronic signature</strong>. The PDF can be checked at <strong>validar.iti.gov.br</strong>, the public digital-signature validation service: it shows whether the signature is valid and who the certificate belongs to. Many documents also carry a QR code or verification code leading to the same result."),
+          ul([
+            "The employer may <strong>verify the authenticity</strong> of the document and the doctor's CRM registration.",
+            "The employer <strong>has no right to your diagnosis</strong> — what they receive is the existence and duration of the absence.",
+            "The employer <strong>may not condition</strong> acceptance on a particular paper format when the digital document is authentic.",
+            "Internal <strong>submission deadlines</strong> vary: check your company's and hand it in as early as you can.",
+          ]),
+          p(`Any doctor's registration can be checked in the <a href="${CFM_BUSCA}" rel="nofollow noopener" target="_blank">CFM doctor search</a> — ours as readily as any other service's.`),
+          cite(`Digital signature validation: <a href="${ITI_VALIDAR}" rel="nofollow noopener" target="_blank">validar.iti.gov.br</a>.`),
+        ],
+      },
+      {
+        id: "quando-nao",
+        nav: "When it does not apply",
+        eyebrow: "Transparency",
+        h2: "When a teleconsultation should not issue a certificate",
+        blocks: [
+          lead("We say this before selling anything, because it is the part that protects you."),
+          p("Not every complaint can be settled by video. There are situations where the right answer is referral for an in-person assessment, and issuing a certificate in those circumstances would mean putting in writing something the doctor was unable to examine."),
+          ul([
+            "Conditions requiring a <strong>physical examination</strong> — undiagnosed abdominal pain, suspected fracture, neurological change.",
+            "<strong>Prolonged absences</strong>, which involve a different pathway and different paperwork.",
+            "Situations calling for a <strong>formal medical assessment</strong> of fitness for work.",
+            "Serious presentations, where the destination is the emergency department and not a document.",
+            "Requests for a <strong>backdated</strong> certificate covering a period the doctor did not assess.",
+          ]),
+          p(`When an absence extends, it stops being a matter solely between you and your employer and starts to involve the <strong>INSS</strong>, with its own rules and deadlines. Confirm the current procedure and time limits directly at <a href="${GOV_INSS}" rel="nofollow noopener" target="_blank">gov.br/inss</a>, because they change.`),
+          warn("No consultation guarantees a certificate", "A doctor who guarantees the document before assessing you is not practising medicine. The consultation may end with a certificate, with treatment and no time off, or with a referral — and all three are legitimate answers."),
+        ],
+      },
+      {
+        id: "fraude",
+        nav: "Fake certificates",
+        eyebrow: "What we do not do",
+        h2: "Fake certificates: what is really at stake",
+        blocks: [
+          lead("There is an enormous volume of searches for ready-made certificates, PDF templates and «stamps». It is worth saying plainly what that is."),
+          p("Filling in, buying or presenting a certificate that does not correspond to a real consultation is <strong>document forgery</strong>. For the person presenting it the risk is not merely administrative: it is grounds for dismissal for cause and can carry criminal consequences. For the person issuing it, it is a serious ethical breach, with proceedings before the Regional Council of Medicine."),
+          ul([
+            "PDF templates and online generators <strong>are not medical documents</strong> — no doctor, no assessment, no responsibility.",
+            "The digital signature is precisely what makes fraud <strong>easy to detect</strong>: a document without a valid signature fails verification.",
+            "A genuine certificate costs one consultation and a few minutes. A fake one costs your job.",
+          ]),
+          p("That is why a consultation here starts with the assessment and not with the document. If your condition justifies time off, the certificate follows. If it does not, you get advice and treatment — and we can still look you in the eye at the next consultation."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "Do not wait",
+        eyebrow: "Safety",
+        h2: "When the problem is not the document",
+        blocks: [
+          lead("There are signs in the face of which sorting out paperwork is the last priority."),
+          ul([
+            "Chest pain or tightness, especially with breathlessness, cold sweats or pain spreading to the arm or jaw.",
+            "Sudden weakness on one side of the body, a drooping mouth, difficulty speaking or a sudden, very severe headache.",
+            "Breathlessness at rest, or blue lips and face.",
+            "Skin marks that do not fade under pressure, with fever, neck stiffness or confusion.",
+            "Significant bleeding or vomiting blood.",
+            "Any thought of harming yourself.",
+          ]),
+          p("In these cases call <strong>192</strong> (SAMU) or go to the nearest emergency department. The certificate gets sorted afterwards — and it always does."),
+          cite(`Public health information: <a href="${GOV_SAUDE}" rel="nofollow noopener" target="_blank">gov.br/saude</a>.`),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Brazil",
+    linksH2: "Next steps",
+    linksLead:
+      "Our doctors in Brazil assess by video and tell you plainly what the consultation can settle today and what needs to be seen in person.",
+    links: [
+      { label: "Consultation with medical certificate", href: href("en", "/services/atestado-medico-online") },
+      { label: "Our doctors in Brazil", href: href("en", "/doctors") },
+      { label: "Talk to Global Health Brazil", href: href("en", "/contact") },
+    ],
+    ctaBox: {
+      h3: "Need an assessment today?",
+      text: "A video consultation assesses your condition, starts treatment where indicated and issues the certificate if time off is justified — with a verifiable digital signature.",
+      primary: { label: "Book a consultation", href: href("en", "/services/atestado-medico-online") },
+      secondary: { label: "See our doctors", href: href("en", "/doctors") },
+    },
+    sourcesEyebrow: "Official sources",
+    sourcesH2: "Where to confirm",
+    sourcesLead: "Absence rules, deadlines and INSS procedures change. Always check at source.",
+    sources: [
+      { label: "Atesta CFM", href: CFM_ATESTA },
+      { label: "Electronic Prescription — CFM", href: CFM_PRESCRICAO },
+      { label: "Doctor search — CFM", href: CFM_BUSCA },
+      { label: "Digital signature validation — ITI", href: ITI_VALIDAR },
+      { label: "INSS", href: GOV_INSS },
+      { label: "Ministry of Health", href: GOV_SAUDE },
+    ],
+    sourcesNote:
+      "The links open third-party and government websites. Global Health does not sell certificates: it issues medical documents only as the outcome of a consultation actually carried out.",
+    faqEyebrow: "FAQ",
+    faqH2: "Common questions",
+    faqs: [
+      {
+        q: "Is an online medical certificate valid for work in Brazil?",
+        a: "Yes, when it results from a consultation actually carried out, is issued by a doctor registered with the CRM, carries the required details and has a verifiable digital signature. What makes a certificate valid is the medical act, not the medium through which the consultation took place.",
+      },
+      {
+        q: "Must the employer accept a digital certificate?",
+        a: "An authentic certificate does not stop counting because it is digital. The employer may verify the electronic signature and the doctor's CRM registration, but may not demand a particular paper format when the digital document is authentic, nor demand your diagnosis.",
+      },
+      {
+        q: "Does the certificate have to carry the ICD code?",
+        a: "No. The ICD code is included only with the patient's express consent, and the certificate remains valid without it. There are situations — formal assessments, benefits — where disclosing helps your case, but the decision is yours.",
+      },
+      {
+        q: "How does the employer check whether a certificate is genuine?",
+        a: "Through the digital signature. The PDF can be checked at validar.iti.gov.br, the public signature validation service, which shows whether the signature is valid and who holds the certificate. Many documents also carry a QR code or verification code.",
+      },
+      {
+        q: "Can I get a certificate without a consultation?",
+        a: "No, and no serious service offers that. A document without a clinical assessment is forgery, carrying the risk of dismissal for cause for whoever presents it and ethics proceedings for whoever issues it. A consultation may end with a certificate, with treatment and no time off, or with a referral.",
+      },
+      {
+        q: "How many days off can a certificate cover?",
+        a: "The period follows the clinical assessment of the case. When an absence extends, it stops being a matter only between you and your employer and starts to involve the INSS, with its own rules and deadlines — confirm the current ones at gov.br/inss.",
+      },
+    ],
+    disclaimerTitle: "Medical Disclaimer",
+    disclaimer:
+      "Written by Dr. Renato Sarmento, Family and Community Physician at Global Health Brazil. This article contains general information about medical certificates and telemedicine in Brazil. It is not personalised medical advice, nor legal or employment guidance. Issuing any medical document depends on the clinical assessment carried out in the consultation. Absence rules and INSS procedures are set by the competent bodies. In an emergency, call 192 or go to the nearest emergency department.",
+  } satisfies Article,
+};
+
+const es: LocalePost = {
+  locale: "ES",
+  slug: "certificado-medico-online-brasil",
+  title: "Certificado médico online en Brasil: cuándo vale y qué debe contener",
+  excerpt:
+    "El atestado emitido en teleconsulta vale ante la empresa cuando hay consulta real, médico inscrito en el CRM y firma digital verificable. Qué debe contener el documento, cómo lo comprueba la empresa y cuándo la teleconsulta no debe emitirlo.",
+  seoTitle: "Certificado médico online en Brasil: ¿es válido?",
+  seoDescription:
+    "Certificado médico online en Brasil: cuándo vale ante la empresa, qué debe contener, cómo se comprueba la firma digital y cuándo no procede emitirlo.",
+  category: "Telemedicina",
+  article: {
+    lang: "es-ES",
+    tagline: "Atención médica a cualquier hora, en cualquier lugar",
+    categoryLabel: "Telemedicina",
+    categoryHref: href("es", "/blog"),
+    eyebrow: "Brasil · Guía para trabajadores",
+    h1: "El certificado médico online",
+    deck: "El documento vale porque hubo consulta. La consulta no existe para justificar el documento, y ese orden cambia por completo el resto.",
+    intro:
+      "Un <strong>certificado médico emitido en teleconsulta</strong> —el <em>atestado médico</em>— tiene la misma validez que uno emitido presencialmente, siempre que cumpla las mismas condiciones: <strong>consulta médica real</strong>, médico debidamente inscrito en el <strong>CRM</strong>, documento con los datos exigidos y <strong>firma digital verificable</strong>. El Consejo Federal de Medicina mantiene incluso su propia plataforma para emitir certificados. Lo que la empresa comprueba no es un sello: es la firma digital, y cualquiera puede validarla en una web pública del gobierno. Lo que <strong>no</strong> existe es un certificado sin valoración clínica: eso no es telemedicina, es falsificación de documento, con consecuencias para quien lo emite y para quien lo usa.",
+    facts: [
+      "Vale cuando hay consulta real",
+      "Firma digital, no sello",
+      "El CIE solo con su autorización",
+    ],
+    primaryCta: { label: "Consulta médica online", href: href("es", "/services/atestado-medico-online") },
+    secondaryCta: { label: "Validar la firma digital", href: ITI_VALIDAR },
+    panelChip: "Qué cubre esta guía",
+    panelParas: [
+      "Qué hace válido un certificado y qué puede y qué no puede exigir la empresa.",
+      "Qué debe contener el documento, incluida la regla sobre el código de diagnóstico.",
+      "Cuándo la teleconsulta no debe emitir certificado, y por qué eso le protege.",
+      "El número de días, el punto en que la baja pasa a ser asunto del INSS y los plazos internos de cada empresa cambian. Aquí no hay cifras: cada punto remite al INSS o a su empleador.",
+    ],
+    author: {
+      initials: "RS",
+      name: "Dr. Renato Sarmento",
+      line: "Médico de Familia y Comunidad · Global Health Brasil",
+    },
+    navLabel: "En este artículo",
+    sections: [
+      {
+        id: "vale",
+        nav: "¿Tiene validez?",
+        eyebrow: "La pregunta principal",
+        h2: "¿El certificado emitido online tiene validez?",
+        blocks: [
+          lead("La tiene, y la razón es sencilla: lo que da validez al certificado es el acto médico, no el medio por el que ocurrió."),
+          p("La telemedicina está regulada en Brasil y la atención a distancia es atención médica como cualquier otra. Si el médico le valoró, concluyó que procedía la baja y emitió el documento con los datos exigidos y firma digital, el certificado es el mismo documento que habría salido de una consulta presencial."),
+          ul([
+            "<strong>Médico inscrito en el CRM</strong>, identificable por nombre y número de registro.",
+            "<strong>Consulta efectivamente realizada</strong>, por vídeo y con valoración de su cuadro.",
+            "<strong>Firma digital</strong> con certificado válido, verificable por cualquier persona.",
+            "<strong>Datos completos</strong> en el documento, incluidas la fecha y el periodo de baja.",
+          ]),
+          p("El Consejo Federal de Medicina mantiene plataformas propias de receta y certificado electrónicos, lo que da la medida de lo asentado que está el formato. El documento le llega en PDF, por correo o aplicación de mensajería, y usted lo remite a la empresa."),
+          cite(`Plataformas oficiales: <a href="${CFM_ATESTA}" rel="nofollow noopener" target="_blank">Atesta CFM</a> · <a href="${CFM_PRESCRICAO}" rel="nofollow noopener" target="_blank">Receta Electrónica del CFM</a>.`),
+        ],
+      },
+      {
+        id: "conteudo",
+        nav: "Qué contiene",
+        eyebrow: "Contenido",
+        h2: "Qué debe contener el certificado",
+        blocks: [
+          lead("Un certificado rechazado casi nunca es un certificado falso. Es un certificado incompleto."),
+          ul([
+            "<strong>Identificación del paciente</strong>.",
+            "<strong>Fecha de emisión</strong> y <strong>periodo de baja</strong> recomendado.",
+            "<strong>Nombre del médico y número de CRM</strong>, con el estado de inscripción.",
+            "<strong>Firma</strong>: digital, en el caso del documento electrónico.",
+            "<strong>El código de diagnóstico solo con autorización expresa del paciente</strong>. El diagnóstico es información suya; el médico no lo incluye por su cuenta.",
+          ]),
+          warn("Sobre el código de diagnóstico", "No está obligado a autorizar su inclusión, y el certificado sigue siendo válido sin él. Algunas empresas lo piden, y hay situaciones —valoraciones, prestaciones, requisitos concretos— en las que informarlo ayuda a su propio caso. La decisión es suya, tomada con la información delante, y no una exigencia automática de recursos humanos."),
+          p("Revise el documento en cuanto lo reciba. Un nombre mal escrito, una fecha equivocada o un periodo incompleto se corrigen en minutos con el médico que lo emitió, y se convierten en un problema si solo lo advierte el día que lo entrega."),
+        ],
+      },
+      {
+        id: "empresa",
+        nav: "Cómo lo comprueba la empresa",
+        eyebrow: "El otro lado",
+        h2: "Cómo verifica la empresa el certificado",
+        blocks: [
+          lead("Esta parte suele generar fricción por desinformación, por ambos lados."),
+          p("La verificación de un certificado digital se hace por la <strong>firma electrónica</strong>. El PDF puede comprobarse en <strong>validar.iti.gov.br</strong>, el servicio público de validación de firmas digitales: muestra si la firma es válida y a quién pertenece el certificado. Muchos documentos llevan además un código QR o un código de verificación que lleva al mismo resultado."),
+          ul([
+            "La empresa puede <strong>verificar la autenticidad</strong> del documento y la inscripción del médico en el CRM.",
+            "La empresa <strong>no tiene derecho a su diagnóstico</strong>: recibe la existencia y el periodo de la baja.",
+            "La empresa <strong>no puede condicionar</strong> la aceptación a un formato de papel concreto cuando el documento digital es auténtico.",
+            "Las normas internas de <strong>plazo de entrega</strong> varían: consulte las de su empresa y entréguelo cuanto antes.",
+          ]),
+          p(`La inscripción de cualquier médico puede consultarse en la <a href="${CFM_BUSCA}" rel="nofollow noopener" target="_blank">búsqueda de médicos del CFM</a>, con nosotros igual que con cualquier otro servicio.`),
+          cite(`Validación de firma digital: <a href="${ITI_VALIDAR}" rel="nofollow noopener" target="_blank">validar.iti.gov.br</a>.`),
+        ],
+      },
+      {
+        id: "quando-nao",
+        nav: "Cuándo no procede",
+        eyebrow: "Transparencia",
+        h2: "Cuándo la teleconsulta no debe emitir certificado",
+        blocks: [
+          lead("Lo decimos antes de vender nada, porque es la parte que le protege."),
+          p("No toda molestia se resuelve por vídeo. Hay situaciones en las que lo correcto es derivar a valoración presencial, y emitir un certificado en esas condiciones sería firmar algo que el médico no pudo explorar."),
+          ul([
+            "Cuadros que exigen <strong>exploración física</strong>: dolor abdominal por aclarar, sospecha de fractura, alteración neurológica.",
+            "<strong>Bajas prolongadas</strong>, que implican otro circuito y otra documentación.",
+            "Situaciones que exigen <strong>valoración pericial</strong> de la capacidad laboral.",
+            "Cuadros graves, en los que el destino es urgencias y no un documento.",
+            "Peticiones de certificado <strong>retroactivo</strong> por un periodo que el médico no valoró.",
+          ]),
+          p(`Cuando la baja se prolonga, deja de ser un asunto exclusivo entre usted y la empresa y pasa a implicar al <strong>INSS</strong> brasileño, con reglas y plazos propios. Confirme el procedimiento y los plazos vigentes directamente en <a href="${GOV_INSS}" rel="nofollow noopener" target="_blank">gov.br/inss</a>, porque cambian.`),
+          warn("Ninguna consulta garantiza un certificado", "Un médico que garantice el documento antes de valorarle no está ejerciendo la medicina. La consulta puede terminar con certificado, con tratamiento sin baja o con una derivación, y las tres son respuestas legítimas."),
+        ],
+      },
+      {
+        id: "fraude",
+        nav: "Certificados falsos",
+        eyebrow: "Lo que no hacemos",
+        h2: "Certificado falso: qué está realmente en juego",
+        blocks: [
+          lead("Hay un volumen enorme de búsquedas de certificados listos, plantillas en PDF y «sellos». Conviene decir con claridad qué es eso."),
+          p("Rellenar, comprar o presentar un certificado que no corresponde a una consulta real es <strong>falsificación de documento</strong>. Para quien lo presenta, el riesgo no es solo administrativo: es causa de despido procedente y puede tener consecuencias penales. Para quien lo emite, es una infracción ética grave, con expediente ante el Consejo Regional de Medicina."),
+          ul([
+            "Las plantillas en PDF y los generadores online <strong>no son documentos médicos</strong>: no hay médico, no hay valoración, no hay responsabilidad.",
+            "La firma digital es justamente lo que hace el fraude <strong>fácil de detectar</strong>: un documento sin firma válida no supera la verificación.",
+            "Un certificado auténtico cuesta una consulta y unos minutos. Uno falso cuesta el empleo.",
+          ]),
+          p("Por eso una consulta aquí empieza por la valoración y no por el documento. Si su cuadro justifica la baja, el certificado sale. Si no la justifica, recibe orientación y tratamiento, y seguimos pudiendo mirarle a los ojos en la próxima consulta."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "No espere",
+        eyebrow: "Seguridad",
+        h2: "Cuando el problema no es el documento",
+        blocks: [
+          lead("Hay señales ante las cuales resolver el papeleo es la última prioridad."),
+          ul([
+            "Dolor u opresión en el pecho, especialmente con falta de aire, sudor frío o dolor que irradia al brazo o a la mandíbula.",
+            "Debilidad brusca en un lado del cuerpo, boca torcida, dificultad para hablar o dolor de cabeza súbito y muy intenso.",
+            "Falta de aire en reposo, o labios y cara amoratados.",
+            "Manchas en la piel que no desaparecen al presionar, con fiebre, rigidez de nuca o confusión.",
+            "Sangrado importante o vómito con sangre.",
+            "Cualquier pensamiento de hacerse daño.",
+          ]),
+          p("En esos casos llame al <strong>192</strong> (SAMU) o acuda al servicio de urgencias más cercano. El certificado se resuelve después, y siempre se resuelve."),
+          cite(`Información de salud pública: <a href="${GOV_SAUDE}" rel="nofollow noopener" target="_blank">gov.br/saude</a>.`),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Brasil",
+    linksH2: "Siguientes pasos",
+    linksLead:
+      "Nuestros médicos en Brasil valoran por vídeo y dicen con claridad qué puede resolver la consulta hoy y qué necesita valoración presencial.",
+    links: [
+      { label: "Consulta con certificado médico", href: href("es", "/services/atestado-medico-online") },
+      { label: "Nuestros médicos en Brasil", href: href("es", "/doctors") },
+      { label: "Hablar con Global Health Brasil", href: href("es", "/contact") },
+    ],
+    ctaBox: {
+      h3: "¿Necesita una valoración hoy?",
+      text: "Una consulta por vídeo valora su cuadro, inicia tratamiento cuando está indicado y emite el certificado si la baja se justifica, con firma digital verificable.",
+      primary: { label: "Reservar consulta", href: href("es", "/services/atestado-medico-online") },
+      secondary: { label: "Ver nuestros médicos", href: href("es", "/doctors") },
+    },
+    sourcesEyebrow: "Fuentes oficiales",
+    sourcesH2: "Dónde confirmar",
+    sourcesLead: "Las reglas de baja, los plazos y los procedimientos del INSS brasileño cambian. Confirme siempre en la fuente.",
+    sources: [
+      { label: "Atesta CFM", href: CFM_ATESTA },
+      { label: "Receta Electrónica — CFM", href: CFM_PRESCRICAO },
+      { label: "Búsqueda de médicos — CFM", href: CFM_BUSCA },
+      { label: "Validación de firma digital — ITI", href: ITI_VALIDAR },
+      { label: "INSS", href: GOV_INSS },
+      { label: "Ministerio de Salud de Brasil", href: GOV_SAUDE },
+    ],
+    sourcesNote:
+      "Los enlaces abren sitios de terceros y de organismos públicos. Global Health no vende certificados: emite documentos médicos únicamente como resultado de una consulta efectivamente realizada.",
+    faqEyebrow: "FAQ",
+    faqH2: "Preguntas frecuentes",
+    faqs: [
+      {
+        q: "¿Un certificado médico online vale para el trabajo en Brasil?",
+        a: "Sí, cuando resulta de una consulta efectivamente realizada, lo emite un médico inscrito en el CRM, lleva los datos exigidos y tiene firma digital verificable. Lo que da validez al certificado es el acto médico, no el medio por el que se realizó la consulta.",
+      },
+      {
+        q: "¿La empresa está obligada a aceptar un certificado digital?",
+        a: "Un certificado auténtico no deja de valer por ser digital. La empresa puede verificar la firma electrónica y la inscripción del médico en el CRM, pero no puede exigir un formato de papel concreto cuando el documento digital es auténtico, ni exigir su diagnóstico.",
+      },
+      {
+        q: "¿El certificado debe llevar el código de diagnóstico?",
+        a: "No. Solo se incluye con autorización expresa del paciente, y el certificado sigue siendo válido sin él. Hay situaciones —valoraciones periciales, prestaciones— en las que informarlo ayuda a su caso, pero la decisión es suya.",
+      },
+      {
+        q: "¿Cómo comprueba la empresa si el certificado es verdadero?",
+        a: "Por la firma digital. El PDF puede verificarse en validar.iti.gov.br, el servicio público de validación de firmas, que muestra si la firma es válida y a quién pertenece el certificado. Muchos documentos llevan además código QR o código de verificación.",
+      },
+      {
+        q: "¿Puedo conseguir un certificado sin pasar por consulta?",
+        a: "No, y ningún servicio serio lo ofrece. Un documento sin valoración clínica es falsificación, con riesgo de despido procedente para quien lo presenta y expediente ético para quien lo emite. La consulta puede terminar con certificado, con tratamiento sin baja o con una derivación.",
+      },
+      {
+        q: "¿Cuántos días de baja puede cubrir el certificado?",
+        a: "El periodo lo define la valoración clínica del caso. Cuando la baja se prolonga, deja de ser un asunto solo entre usted y la empresa y pasa a implicar al INSS brasileño, con reglas y plazos propios: confirme los vigentes en gov.br/inss.",
+      },
+    ],
+    disclaimerTitle: "Aviso Médico",
+    disclaimer:
+      "Escrito por el Dr. Renato Sarmento, médico de familia y comunidad de Global Health Brasil. Este artículo contiene información general sobre certificados médicos y telemedicina en Brasil. No constituye asesoramiento médico personalizado ni orientación jurídica o laboral. La emisión de cualquier documento médico depende de la valoración clínica realizada en consulta. Las reglas de baja y los procedimientos del INSS los definen los organismos competentes. En caso de emergencia, llame al 192 o acuda al servicio de urgencias más cercano.",
+  } satisfies Article,
+};
+
 export const BR_ATESTADO_MEDICO: PostSet = {
   key: "br-atestado-medico",
   countryCode: "br",
@@ -290,5 +714,5 @@ export const BR_ATESTADO_MEDICO: PostSet = {
   serviceSlug: "atestado-medico-online",
   authorDoctorId: "cmqyzr0fb000o01lu9deh6mf5",
   authorDisplayName: "Dr. Renato Sarmento",
-  posts: [pt],
+  posts: [pt, en, es],
 };

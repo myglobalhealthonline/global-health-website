@@ -268,6 +268,426 @@ const pt: LocalePost = {
   } satisfies Article,
 };
 
+const en: LocalePost = {
+  locale: "EN",
+  slug: "laboratory-test-request-brazil",
+  title: "Requesting laboratory tests in Brazil: how the medical request works",
+  excerpt:
+    "A test request exists so that the result means something. What the request must contain, which tests a laboratory will run without one, how the digital request works, and why testing without an indication hinders more than it helps.",
+  seoTitle: "Laboratory test requests in Brazil: how they work",
+  seoDescription:
+    "Requesting laboratory tests in Brazil: what the medical request must contain, how a digitally signed PDF works and when tests are done without a request.",
+  category: "Tests and diagnosis",
+  article: {
+    lang: "en-GB",
+    tagline: "Medical care anytime, anywhere",
+    categoryLabel: "Tests and diagnosis",
+    categoryHref: href("en", "/blog"),
+    eyebrow: "Brazil · Patient guide",
+    h1: "Requesting laboratory tests",
+    deck: "A test is only useful when somebody knows what they will do with the result. That is what the medical request documents.",
+    intro:
+      "The <strong>test request</strong> is the document in which a doctor records which tests should be done and why. It can be issued on paper or <strong>as a PDF with a digital signature</strong>, accepted by laboratories in the same way — the Federal Council of Medicine runs its own platform for exactly this. The request serves three purposes at once: telling the laboratory <strong>what to collect</strong>, giving the health plan the <strong>clinical indication</strong> where one is required, and ensuring there is <strong>a doctor responsible for interpreting the result</strong>. Some routine tests can be arranged directly at a private laboratory, but that settles the collection, not the interpretation.",
+    facts: [
+      "Valid as a digitally signed PDF",
+      "The clinical indication is part of it",
+      "A result without interpretation is not a diagnosis",
+    ],
+    primaryCta: { label: "Consultation and test request", href: href("en", "/services/solicitacao-exames-online") },
+    secondaryCta: { label: "Test requests — CFM", href: CFM_EXAMES },
+    panelChip: "What this guide covers",
+    panelParas: [
+      "What the request must contain for the laboratory and the health plan to accept it.",
+      "How the digital request works and how anyone can check the signature.",
+      "When a test can be done without a request — and why that is rarely the best idea.",
+      "Prices, turnaround times, preparation and authorisation rules vary by laboratory and by plan. No figures appear here: confirm with the laboratory and with your plan.",
+    ],
+    author: {
+      initials: "RS",
+      name: "Dr. Renato Sarmento",
+      line: "Family and Community Physician · Global Health Brazil",
+    },
+    navLabel: "In this article",
+    sections: [
+      {
+        id: "para-que",
+        nav: "What it is for",
+        eyebrow: "Starting point",
+        h2: "What the medical request is for",
+        blocks: [
+          lead("The question that matters is not «which tests should I have», but «which question do these tests answer»."),
+          p("Every test has a range of normal results built from a population. That means that in any large panel run on a healthy person, it is statistically expected that something will come back slightly outside the range. Without a clinical question behind it, that finding is not information: it is a fright, and it usually generates further tests, further appointments and sometimes procedures that would not have been necessary."),
+          ul([
+            "It tells the <strong>laboratory</strong> exactly what to collect and under what conditions.",
+            "It records the <strong>clinical indication</strong>, which health plans generally require in order to authorise.",
+            "It establishes <strong>who interprets</strong> the result — and who answers for it.",
+            "It avoids repeating tests done recently that are still valid.",
+          ]),
+          p("That is why the consultation comes first. Not as a formality, but because choosing the tests <em>is</em> a clinical act: it depends on what you feel, what has already been investigated, what you take and your history."),
+        ],
+      },
+      {
+        id: "conteudo",
+        nav: "What it contains",
+        eyebrow: "Content",
+        h2: "What the request must contain",
+        blocks: [
+          lead("A request turned away at the desk almost always has the same defect: a field is missing."),
+          ul([
+            "<strong>Identification of the patient</strong>.",
+            "<strong>The date</strong> of issue — many laboratories and plans observe how long a request stays valid.",
+            "<strong>The list of tests</strong> under their correct names, without ambiguous abbreviations.",
+            "<strong>The clinical indication</strong> or working diagnosis, where the plan requires it.",
+            "<strong>The doctor's name and CRM number</strong>, with the state of registration.",
+            "<strong>A signature</strong> — digital, in the case of an electronic document.",
+          ]),
+          p("Check the document before you leave the consultation. A half-written test name takes seconds to correct with the doctor and becomes a second trip to the laboratory if you only notice at the collection desk."),
+          warn("A digital request carries the same weight", "A digitally signed PDF is a valid document and laboratories receive it by email or messaging app. Authenticity is confirmed by the electronic signature, not by the paper. If the laboratory has any doubt, verification is public and takes under a minute."),
+          cite(`How to receive and use an electronic request: <a href="${CFM_EXAMES}" rel="nofollow noopener" target="_blank">CFM — Electronic Prescription</a>. Signature verification: <a href="${ITI_VALIDAR}" rel="nofollow noopener" target="_blank">validar.iti.gov.br</a>.`),
+        ],
+      },
+      {
+        id: "sem-pedido",
+        nav: "Tests without a request",
+        eyebrow: "The common question",
+        h2: "Can tests be done without a medical request?",
+        blocks: [
+          lead("Partly yes, and the honest answer has two halves."),
+          p("At a <strong>private laboratory</strong>, a proportion of routine tests can be arranged on the patient's own initiative, according to each laboratory's rules and the nature of the test. Within the <strong>SUS</strong> and within <strong>health plans</strong>, the medical request is the rule, because it is what underpins coverage — and, in the case of plans, the prior authorisation of many procedures."),
+          ul([
+            "Without a request you settle the <strong>collection</strong>; you are still without the <strong>interpretation</strong>.",
+            "An abnormal result discovered alone generates anxiety and, often, the consultation that would have come anyway.",
+            "Self-ordered tests tend to be the wrong ones for the complaint — and the right ones are left out.",
+            "Repeating a recent test without a reason adds no new information.",
+          ]),
+          p("The practical rule: if you have a complaint, start with the consultation. If you simply want a <strong>check-up</strong>, the consultation is still the shorter route, because the right set of tests for you depends on age, sex, family history and risk factors — not on a standard package."),
+        ],
+      },
+      {
+        id: "online",
+        nav: "Online request",
+        eyebrow: "How it works",
+        h2: "How a request through a teleconsultation works",
+        blocks: [
+          lead("The circuit is simple and fits into an afternoon."),
+          ul([
+            "<strong>Video consultation</strong>: the doctor hears the complaint, reviews history and medication and defines the clinical question.",
+            "<strong>Issue of the request</strong> as a digitally signed PDF, sent to you.",
+            "<strong>Collection</strong> at the laboratory of your choice, with whatever preparation it specifies.",
+            "<strong>Follow-up</strong> with the results, for interpretation and a plan.",
+          ]),
+          p("The part usually underestimated is the last one. The aim was never the request: it was knowing what to do with the result. A follow-up consultation with the results in hand is what turns numbers into a decision — treat, investigate further, or reassure on solid grounds."),
+          p("On what an online consultation does <strong>not</strong> do, so there is no doubt: we do not collect samples, we are not a laboratory, we do not report imaging studies and we do not decide coverage. If your plan requires prior authorisation, the plan authorises it; if the test is through the <strong>SUS</strong>, the pathway is that of the health unit you are registered with."),
+          p(`Any doctor's registration can be checked in the <a href="${CFM_BUSCA}" rel="nofollow noopener" target="_blank">CFM doctor search</a> — ours as readily as any other service's.`),
+        ],
+      },
+      {
+        id: "resultados",
+        nav: "Results",
+        eyebrow: "After collection",
+        h2: "What to do when the result arrives",
+        blocks: [
+          lead("The worst way to read a test result is alone, at night, with a search engine open."),
+          p("Reference values differ between laboratories, depend on the technique used and are interpreted alongside your history, your medication and your previous tests. A value slightly outside the range may mean nothing in your case, and a value inside the range can be concerning if it used to be very different."),
+          ul([
+            "Bring <strong>all the results</strong>, including old ones: the trend is worth more than the isolated point.",
+            "Report <strong>medicines and supplements</strong> — many of them alter test results.",
+            "Say if the <strong>preparation was broken</strong> — fasting, physical exertion, alcohol the night before.",
+            "Keep the reports in one place. You will need them next year.",
+          ]),
+          warn("A critical result does not wait for a booked appointment", "Some findings require immediate action, and laboratories usually flag them. If a result comes back marked as critical, or if you have significant symptoms, seek care the same day rather than waiting for the follow-up."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "Do not wait",
+        eyebrow: "Safety",
+        h2: "When it is not a case for testing but for emergency care",
+        blocks: [
+          lead("No outpatient test is the right answer to these signs."),
+          ul([
+            "Chest pain or tightness, especially with breathlessness, cold sweats or pain spreading to the arm or jaw.",
+            "Sudden weakness on one side of the body, a drooping mouth, difficulty speaking or a sudden, very severe headache.",
+            "Breathlessness at rest, or blue lips and face.",
+            "Skin marks that do not fade under pressure, with fever, neck stiffness or confusion.",
+            "Significant bleeding, vomiting blood, or severe continuous abdominal pain.",
+          ]),
+          p("In these cases call <strong>192</strong> (SAMU) or go to the emergency department. Investigating later is always possible; recovering lost time is not."),
+          cite(`Public health information: <a href="${GOV_SAUDE}" rel="nofollow noopener" target="_blank">gov.br/saude</a>.`),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Brazil",
+    linksH2: "Next steps",
+    linksLead:
+      "Our doctors in Brazil work out with you which tests make sense, issue the digitally signed request and interpret the results at follow-up.",
+    links: [
+      { label: "Consultation and test request", href: href("en", "/services/solicitacao-exames-online") },
+      { label: "Our doctors in Brazil", href: href("en", "/doctors") },
+      { label: "Talk to Global Health Brazil", href: href("en", "/contact") },
+    ],
+    ctaBox: {
+      h3: "Not sure which tests you need?",
+      text: "A video consultation defines the clinical question, issues the request with the right tests for your case and books the follow-up to interpret the results.",
+      primary: { label: "Book a consultation", href: href("en", "/services/solicitacao-exames-online") },
+      secondary: { label: "See our doctors", href: href("en", "/doctors") },
+    },
+    sourcesEyebrow: "Official sources",
+    sourcesH2: "Where to confirm",
+    sourcesLead:
+      "Coverage, authorisation and preparation rules vary by plan and by laboratory. Always check at source.",
+    sources: [
+      { label: "Test requests — CFM", href: CFM_EXAMES },
+      { label: "Doctor search — CFM", href: CFM_BUSCA },
+      { label: "Digital signature validation — ITI", href: ITI_VALIDAR },
+      { label: "Ministry of Health", href: GOV_SAUDE },
+    ],
+    sourcesNote:
+      "The links open third-party and government websites. Global Health is not a laboratory: it does not collect samples, does not report imaging studies and does not decide health plan or SUS coverage.",
+    faqEyebrow: "FAQ",
+    faqH2: "Common questions",
+    faqs: [
+      {
+        q: "What is a laboratory test request?",
+        a: "It is the document in which a doctor records which tests should be carried out and the clinical indication that justifies them. It serves the laboratory, which collects what is requested, the health plan, which usually requires the indication in order to authorise, and you, by ensuring a doctor is responsible for interpreting the result.",
+      },
+      {
+        q: "Is a test request in PDF form valid?",
+        a: "Yes. A digitally signed request carries the same weight as a printed one and is accepted by laboratories; it can arrive by email or messaging app. Authenticity is confirmed through the electronic signature, which anyone can validate at validar.iti.gov.br.",
+      },
+      {
+        q: "Can I have a blood test without a medical request?",
+        a: "At a private laboratory, some routine tests can be arranged on the patient's own initiative, according to each laboratory's rules. Within the SUS and health plans the medical request is the rule, because it underpins coverage. Without a request you settle the collection but are still without the interpretation.",
+      },
+      {
+        q: "What must the request contain for the plan to accept it?",
+        a: "Identification of the patient, the date, the list of tests under their correct names, the clinical indication or working diagnosis where required, the doctor's name and CRM number, and a signature. Several procedures still depend on prior authorisation, which the plan decides.",
+      },
+      {
+        q: "Can I get a test request through a teleconsultation?",
+        a: "Yes, where there is a clinical reason for the tests. The consultation defines the question to be answered, the request is issued as a digitally signed PDF and you attend the laboratory of your choice. The follow-up with the results is part of the process — that is where numbers become a plan.",
+      },
+      {
+        q: "I have an abnormal result. What should I do?",
+        a: "Bring all the results, including old ones, and report medicines, supplements and any break in preparation. Reference values vary between laboratories and methods, and interpretation depends on your history. If the report is marked as critical or you have significant symptoms, seek care the same day.",
+      },
+    ],
+    disclaimerTitle: "Medical Disclaimer",
+    disclaimer:
+      "Written by Dr. Renato Sarmento, Family and Community Physician at Global Health Brazil. This article contains general information about requesting and interpreting tests in Brazil and is not personalised medical advice. Which tests are indicated depends on the clinical assessment carried out in the consultation. Global Health does not collect samples, does not report imaging studies and does not decide health plan or SUS coverage. In an emergency, call 192 or go to the nearest emergency department.",
+  } satisfies Article,
+};
+
+const es: LocalePost = {
+  locale: "ES",
+  slug: "solicitud-analisis-laboratorio-brasil",
+  title: "Solicitud de análisis de laboratorio en Brasil: cómo funciona el volante médico",
+  excerpt:
+    "La solicitud de análisis existe para que el resultado signifique algo. Qué debe contener el volante, qué análisis acepta el laboratorio sin él, cómo funciona la solicitud digital y por qué analizarse sin indicación estorba más que ayuda.",
+  seoTitle: "Solicitud de análisis en Brasil: cómo funciona",
+  seoDescription:
+    "Solicitud de análisis de laboratorio en Brasil: qué debe contener el volante médico, cómo funciona en PDF firmado y cuándo se analiza sin solicitud.",
+  category: "Pruebas y diagnóstico",
+  article: {
+    lang: "es-ES",
+    tagline: "Atención médica a cualquier hora, en cualquier lugar",
+    categoryLabel: "Pruebas y diagnóstico",
+    categoryHref: href("es", "/blog"),
+    eyebrow: "Brasil · Guía para pacientes",
+    h1: "Solicitud de análisis de laboratorio",
+    deck: "Un análisis solo es útil cuando alguien sabe qué va a hacer con el resultado. Eso es lo que documenta el volante médico.",
+    intro:
+      "La <strong>solicitud de análisis</strong> es el documento en el que el médico registra qué pruebas deben hacerse y por qué. Puede emitirse en papel o <strong>en PDF con firma digital</strong>, aceptado igualmente por los laboratorios: el Consejo Federal de Medicina mantiene una plataforma propia para ello. El volante sirve a tres cosas a la vez: decirle al laboratorio <strong>qué extraer</strong>, dar al plan de salud la <strong>indicación clínica</strong> cuando se exige, y garantizar que exista <strong>un médico responsable de interpretar el resultado</strong>. Algunos análisis de rutina pueden hacerse por cuenta propia en un laboratorio privado, pero eso resuelve la extracción, no la interpretación.",
+    facts: [
+      "Vale en PDF con firma digital",
+      "La indicación clínica forma parte",
+      "Un resultado sin interpretación no es diagnóstico",
+    ],
+    primaryCta: { label: "Consulta y solicitud de análisis", href: href("es", "/services/solicitacao-exames-online") },
+    secondaryCta: { label: "Solicitud de análisis — CFM", href: CFM_EXAMES },
+    panelChip: "Qué cubre esta guía",
+    panelParas: [
+      "Qué debe contener el volante para que el laboratorio y el plan de salud lo acepten.",
+      "Cómo funciona la solicitud digital y cómo cualquiera comprueba la firma.",
+      "Cuándo puede hacerse un análisis sin volante, y por qué rara vez es la mejor idea.",
+      "Precios, plazos, preparación y reglas de autorización varían por laboratorio y por plan. Aquí no hay cifras: confírmelas en el laboratorio y en su plan.",
+    ],
+    author: {
+      initials: "RS",
+      name: "Dr. Renato Sarmento",
+      line: "Médico de Familia y Comunidad · Global Health Brasil",
+    },
+    navLabel: "En este artículo",
+    sections: [
+      {
+        id: "para-que",
+        nav: "Para qué sirve",
+        eyebrow: "Punto de partida",
+        h2: "Para qué sirve el volante médico",
+        blocks: [
+          lead("La pregunta que importa no es «qué análisis me hago», sino «qué pregunta responden esos análisis»."),
+          p("Cada prueba tiene un margen de resultados normales construido a partir de una población. Eso significa que en cualquier batería amplia hecha a una persona sana es estadísticamente esperable que algo salga algo fuera del rango. Sin una pregunta clínica detrás, ese hallazgo no es información: es un susto, que suele generar más pruebas, más consultas y a veces procedimientos que no habrían sido necesarios."),
+          ul([
+            "Le dice al <strong>laboratorio</strong> exactamente qué extraer y en qué condiciones.",
+            "Registra la <strong>indicación clínica</strong>, que el plan de salud suele exigir para autorizar.",
+            "Establece <strong>quién interpreta</strong> el resultado y quién responde por él.",
+            "Evita repetir pruebas hechas hace poco y todavía válidas.",
+          ]),
+          p("Por eso la consulta va primero. No como formalidad, sino porque elegir las pruebas <em>es</em> un acto clínico: depende de lo que siente, de lo que ya se ha investigado, de lo que toma y de sus antecedentes."),
+        ],
+      },
+      {
+        id: "conteudo",
+        nav: "Qué contiene",
+        eyebrow: "Contenido",
+        h2: "Qué debe contener la solicitud",
+        blocks: [
+          lead("Un volante rechazado en el mostrador casi siempre tiene el mismo defecto: falta un campo."),
+          ul([
+            "<strong>Identificación del paciente</strong>.",
+            "<strong>Fecha</strong> de emisión: muchos laboratorios y planes atienden a la vigencia del volante.",
+            "<strong>Lista de las pruebas</strong> con su nombre correcto, sin abreviaturas ambiguas.",
+            "<strong>Indicación clínica</strong> o sospecha diagnóstica, cuando la exige el plan.",
+            "<strong>Nombre del médico y número de CRM</strong>, con el estado de inscripción.",
+            "<strong>Firma</strong>: digital, en el caso del documento electrónico.",
+          ]),
+          p("Revise el documento antes de salir de la consulta. Una prueba escrita a medias se corrige en segundos con el médico y se convierte en un segundo viaje al laboratorio si solo lo advierte en la extracción."),
+          warn("El volante digital tiene el mismo valor", "Un PDF firmado digitalmente es un documento válido y los laboratorios lo reciben por correo o aplicación de mensajería. La autenticidad se comprueba por la firma electrónica, no por el papel. Si el laboratorio duda, la verificación es pública y lleva menos de un minuto."),
+          cite(`Cómo recibir y usar la solicitud electrónica: <a href="${CFM_EXAMES}" rel="nofollow noopener" target="_blank">CFM — Receta Electrónica</a>. Verificación de firma: <a href="${ITI_VALIDAR}" rel="nofollow noopener" target="_blank">validar.iti.gov.br</a>.`),
+        ],
+      },
+      {
+        id: "sem-pedido",
+        nav: "Análisis sin volante",
+        eyebrow: "La duda frecuente",
+        h2: "¿Se pueden hacer análisis sin volante médico?",
+        blocks: [
+          lead("En parte sí, y la respuesta honesta tiene dos mitades."),
+          p("En un <strong>laboratorio privado</strong>, parte de los análisis de rutina puede realizarse por iniciativa del propio paciente, según las reglas de cada laboratorio y la naturaleza de la prueba. En el <strong>SUS</strong> y en los <strong>planes de salud</strong>, en cambio, la solicitud médica es la regla, porque es la que fundamenta la cobertura y, en el caso de los planes, la autorización previa de muchos procedimientos."),
+          ul([
+            "Sin volante resuelve la <strong>extracción</strong>; sigue sin la <strong>interpretación</strong>.",
+            "Un resultado alterado descubierto en solitario genera ansiedad y, a menudo, la consulta que habría llegado igualmente.",
+            "Las pruebas pedidas por cuenta propia suelen ser las equivocadas para la molestia, y las adecuadas quedan fuera.",
+            "Repetir una prueba reciente sin motivo no aporta información nueva.",
+          ]),
+          p("La regla práctica: si tiene una molestia, empiece por la consulta. Si solo quiere un <strong>chequeo</strong>, la consulta sigue siendo el camino más corto, porque el conjunto adecuado de pruebas depende de la edad, el sexo, los antecedentes familiares y los factores de riesgo, no de un paquete estándar."),
+        ],
+      },
+      {
+        id: "online",
+        nav: "Solicitud online",
+        eyebrow: "Cómo funciona",
+        h2: "Cómo funciona la solicitud por teleconsulta",
+        blocks: [
+          lead("El circuito es sencillo y cabe en una tarde."),
+          ul([
+            "<strong>Consulta por vídeo</strong>: el médico escucha la molestia, revisa antecedentes y medicación y define la pregunta clínica.",
+            "<strong>Emisión del volante</strong> en PDF, firmado digitalmente y enviado a usted.",
+            "<strong>Extracción</strong> en el laboratorio que elija, con la preparación que este indique.",
+            "<strong>Revisión</strong> con los resultados, para interpretación y plan de actuación.",
+          ]),
+          p("La parte que suele subestimarse es la última. El objetivo nunca fue el volante: era saber qué hacer con el resultado. Una consulta de revisión con las pruebas delante es lo que convierte los números en decisión: tratar, seguir investigando o tranquilizar con fundamento."),
+          p("Sobre lo que una consulta online <strong>no</strong> hace, para que no queden dudas: no realizamos extracciones, no somos laboratorio, no emitimos informes de pruebas de imagen y no decidimos la cobertura. Si su plan exige autorización previa, quien autoriza es el plan; si la prueba es por el <strong>SUS</strong>, el circuito es el del centro de salud al que está vinculado."),
+          p(`La inscripción de cualquier médico puede consultarse en la <a href="${CFM_BUSCA}" rel="nofollow noopener" target="_blank">búsqueda de médicos del CFM</a>, con nosotros igual que con cualquier otro servicio.`),
+        ],
+      },
+      {
+        id: "resultados",
+        nav: "Resultados",
+        eyebrow: "Después de la extracción",
+        h2: "Qué hacer cuando llega el resultado",
+        blocks: [
+          lead("La peor forma de leer un análisis es a solas, de noche, con un buscador abierto."),
+          p("Los valores de referencia cambian entre laboratorios, dependen de la técnica empleada y se interpretan junto con su historia, su medicación y las pruebas anteriores. Un valor ligeramente fuera de rango puede no significar nada en su caso, y un valor dentro del rango puede preocupar si antes era muy distinto."),
+          ul([
+            "Lleve <strong>todos los resultados</strong>, incluidos los antiguos: la tendencia vale más que el punto aislado.",
+            "Informe de <strong>medicamentos y suplementos</strong>: muchos alteran las pruebas.",
+            "Diga si hubo <strong>fallo en la preparación</strong>: ayuno, esfuerzo físico, alcohol la víspera.",
+            "Guarde los informes en un solo sitio. Los necesitará el año que viene.",
+          ]),
+          warn("Un resultado crítico no espera a la cita programada", "Algunos hallazgos exigen actuación inmediata, y el laboratorio suele señalarlos. Si el resultado viene marcado como crítico, o si tiene síntomas importantes, busque atención el mismo día en lugar de esperar a la revisión."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "No espere",
+        eyebrow: "Seguridad",
+        h2: "Cuando no es caso de análisis, sino de urgencia",
+        blocks: [
+          lead("Ninguna prueba ambulatoria es la respuesta correcta ante estas señales."),
+          ul([
+            "Dolor u opresión en el pecho, especialmente con falta de aire, sudor frío o dolor que irradia al brazo o a la mandíbula.",
+            "Debilidad brusca en un lado del cuerpo, boca torcida, dificultad para hablar o dolor de cabeza súbito y muy intenso.",
+            "Falta de aire en reposo, o labios y cara amoratados.",
+            "Manchas en la piel que no desaparecen al presionar, con fiebre, rigidez de nuca o confusión.",
+            "Sangrado importante, vómito con sangre o dolor abdominal intenso y continuo.",
+          ]),
+          p("En esos casos llame al <strong>192</strong> (SAMU) o acuda a urgencias. Investigar después siempre es posible; recuperar el tiempo perdido no siempre."),
+          cite(`Información de salud pública: <a href="${GOV_SAUDE}" rel="nofollow noopener" target="_blank">gov.br/saude</a>.`),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Brasil",
+    linksH2: "Siguientes pasos",
+    linksLead:
+      "Nuestros médicos en Brasil deciden con usted qué pruebas tienen sentido, emiten la solicitud firmada digitalmente e interpretan los resultados en la revisión.",
+    links: [
+      { label: "Consulta y solicitud de análisis", href: href("es", "/services/solicitacao-exames-online") },
+      { label: "Nuestros médicos en Brasil", href: href("es", "/doctors") },
+      { label: "Hablar con Global Health Brasil", href: href("es", "/contact") },
+    ],
+    ctaBox: {
+      h3: "¿No sabe qué análisis necesita?",
+      text: "Una consulta por vídeo define la pregunta clínica, emite la solicitud con las pruebas adecuadas para su caso y programa la revisión para interpretar los resultados.",
+      primary: { label: "Reservar consulta", href: href("es", "/services/solicitacao-exames-online") },
+      secondary: { label: "Ver nuestros médicos", href: href("es", "/doctors") },
+    },
+    sourcesEyebrow: "Fuentes oficiales",
+    sourcesH2: "Dónde confirmar",
+    sourcesLead:
+      "Las reglas de cobertura, autorización y preparación varían por plan y por laboratorio. Confirme siempre en la fuente.",
+    sources: [
+      { label: "Solicitud de análisis — CFM", href: CFM_EXAMES },
+      { label: "Búsqueda de médicos — CFM", href: CFM_BUSCA },
+      { label: "Validación de firma digital — ITI", href: ITI_VALIDAR },
+      { label: "Ministerio de Salud de Brasil", href: GOV_SAUDE },
+    ],
+    sourcesNote:
+      "Los enlaces abren sitios de terceros y de organismos públicos. Global Health no es un laboratorio: no realiza extracciones, no emite informes de pruebas de imagen y no decide la cobertura del plan de salud ni del SUS.",
+    faqEyebrow: "FAQ",
+    faqH2: "Preguntas frecuentes",
+    faqs: [
+      {
+        q: "¿Qué es la solicitud de análisis de laboratorio?",
+        a: "Es el documento en el que el médico registra qué pruebas deben realizarse y la indicación clínica que las justifica. Sirve al laboratorio, que extrae lo solicitado, al plan de salud, que suele exigir la indicación para autorizar, y a usted, garantizando que haya un médico responsable de interpretar el resultado.",
+      },
+      {
+        q: "¿El volante de análisis en PDF es válido?",
+        a: "Sí. Una solicitud firmada digitalmente tiene el mismo valor que la impresa y la aceptan los laboratorios; puede llegar por correo o aplicación de mensajería. La autenticidad se comprueba por la firma electrónica, que cualquiera valida en validar.iti.gov.br.",
+      },
+      {
+        q: "¿Puedo hacerme un análisis de sangre sin volante médico?",
+        a: "En laboratorio privado, parte de los análisis de rutina puede hacerse por iniciativa del paciente, según las reglas de cada laboratorio. En el SUS y en los planes de salud la solicitud médica es la regla, porque es la que fundamenta la cobertura. Sin volante resuelve la extracción, pero sigue sin la interpretación.",
+      },
+      {
+        q: "¿Qué debe contener la solicitud para que el plan la acepte?",
+        a: "Identificación del paciente, fecha, lista de las pruebas con su nombre correcto, indicación clínica o sospecha diagnóstica cuando se exija, nombre y CRM del médico y firma. Varios procedimientos siguen dependiendo de autorización previa, que decide el plan.",
+      },
+      {
+        q: "¿Puedo conseguir la solicitud de análisis por teleconsulta?",
+        a: "Sí, cuando hay razón clínica para las pruebas. La consulta define la pregunta que hay que responder, el volante se emite en PDF firmado digitalmente y usted acude al laboratorio que elija. La revisión con los resultados forma parte del proceso: es ahí donde los números se convierten en decisión.",
+      },
+      {
+        q: "He recibido un resultado alterado. ¿Qué hago?",
+        a: "Lleve todos los resultados, incluidos los antiguos, e informe de medicamentos, suplementos y cualquier fallo en la preparación. Los valores de referencia varían entre laboratorios y métodos, y la interpretación depende de su historia. Si el informe viene marcado como crítico o hay síntomas importantes, busque atención el mismo día.",
+      },
+    ],
+    disclaimerTitle: "Aviso Médico",
+    disclaimer:
+      "Escrito por el Dr. Renato Sarmento, médico de familia y comunidad de Global Health Brasil. Este artículo contiene información general sobre la solicitud e interpretación de análisis en Brasil y no constituye asesoramiento médico personalizado. La indicación de pruebas depende de la valoración clínica realizada en consulta. Global Health no realiza extracciones, no emite informes de pruebas de imagen y no decide la cobertura del plan de salud ni del SUS. En caso de emergencia, llame al 192 o acuda al servicio de urgencias más cercano.",
+  } satisfies Article,
+};
+
 export const BR_PEDIDO_EXAMES: PostSet = {
   key: "br-pedido-exames",
   countryCode: "br",
@@ -279,5 +699,5 @@ export const BR_PEDIDO_EXAMES: PostSet = {
   serviceSlug: "solicitacao-exames-online",
   authorDoctorId: "cmqyzr0fb000o01lu9deh6mf5",
   authorDisplayName: "Dr. Renato Sarmento",
-  posts: [pt],
+  posts: [pt, en, es],
 };
