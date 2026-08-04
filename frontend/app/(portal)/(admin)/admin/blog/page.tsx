@@ -23,6 +23,17 @@ const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
 });
 
+/** Every language a post exists in, English first — admins read the English
+ *  row before the market one, so it leads regardless of what the article was
+ *  authored in. The authored locale keeps its "original" styling wherever it
+ *  lands. */
+function orderedLocales(p: AdminBlogDto): Array<{ locale: string; isOriginal: boolean }> {
+  const original = p.locale.toUpperCase();
+  return [original, ...p.translations.map((t) => t.locale.toUpperCase())]
+    .sort((a, b) => (a === "EN" ? -1 : b === "EN" ? 1 : a.localeCompare(b)))
+    .map((locale) => ({ locale, isOriginal: locale === original }));
+}
+
 function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
   const fields: ColumnPriorityField<AdminBlogDto>[] = [
     {
@@ -77,16 +88,15 @@ function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
       priority: 2,
       render: (p) => (
         <span className="gh-admin-blog-chips">
-          <span className="gh-admin-blog-chip gh-admin-blog-chip--original" title="Original language">
-            {p.locale}
-          </span>
-          {[...p.translations]
-            .sort((a, b) => a.locale.localeCompare(b.locale))
-            .map((t) => (
-              <span key={t.id} className="gh-admin-blog-chip">
-                {t.locale.toUpperCase()}
-              </span>
-            ))}
+          {orderedLocales(p).map(({ locale, isOriginal }) => (
+            <span
+              key={locale}
+              className={`gh-admin-blog-chip${isOriginal ? " gh-admin-blog-chip--original" : ""}`}
+              title={isOriginal ? "Original language" : undefined}
+            >
+              {locale}
+            </span>
+          ))}
         </span>
       ),
     },

@@ -15,8 +15,8 @@ export type BlogTranslationInitial = {
 };
 
 type Props = {
-  /** Every locale the site serves, the post's own included — that one is
-   *  rendered first and marked as the original. */
+  /** Every locale the site serves, the post's own included. English leads the
+   *  strip; the post's own locale is marked as the original. */
   locales: string[];
   /** The post's own language. Its tab writes the post's own columns
    *  (title, slug, body …) rather than a translation row, because a post is
@@ -41,9 +41,9 @@ function localeLabel(code: string): string {
 
 /**
  * Every language of a blog post in one tab strip, the same pattern as
- * DoctorTranslationTabs. The post's own language is the first tab and posts
- * back the post's own field names (`title`, `slug`, `body`, …); the others
- * post `tr_<LOCALE>_<field>` and become BlogTranslation rows. All panels stay
+ * DoctorTranslationTabs. The post's own language posts back the post's own
+ * field names (`title`, `slug`, `body`, …); the others post
+ * `tr_<LOCALE>_<field>` and become BlogTranslation rows. All panels stay
  * mounted, so one submit saves the article and every translation together.
  *
  * Keeping the original in the strip is the point: an editor should not have
@@ -51,10 +51,14 @@ function localeLabel(code: string): string {
  */
 export function BlogTranslationTabs({ locales, originalLocale, original, initialTranslations }: Props) {
   const upperOriginal = originalLocale.toUpperCase();
-  // Original first: it is the language the article was written in, and the
-  // one an editor reaches for most.
-  const ordered = [upperOriginal, ...locales.filter((l) => l.toUpperCase() !== upperOriginal)];
-  const [active, setActive] = useState(upperOriginal);
+  // English first, then the rest alphabetically. The admin team works in
+  // English, so it leads and opens by default even when the article was
+  // authored in the market's language — that one keeps its "original" label
+  // wherever it sits in the strip.
+  const ordered = [...new Set([upperOriginal, ...locales.map((l) => l.toUpperCase())])].sort(
+    (a, b) => (a === "EN" ? -1 : b === "EN" ? 1 : a.localeCompare(b)),
+  );
+  const [active, setActive] = useState(ordered[0]);
 
   function valuesFor(code: string): Omit<BlogTranslationInitial, "locale"> {
     if (code === upperOriginal) return original;
