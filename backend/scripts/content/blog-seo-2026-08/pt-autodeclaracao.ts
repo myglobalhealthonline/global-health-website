@@ -608,6 +608,575 @@ const es: LocalePost = {
   } satisfies Article,
 };
 
+const cs: LocalePost = {
+  locale: "CS",
+  slug: "autodeklarace-nemoci-portugalsko",
+  title: "Autodeklarace nemoci nebo neschopenka v Portugalsku: co kdy potřebujete",
+  excerpt:
+    "Autodeklaraci nemoci podáváte sami na Segurança Social Direta a omlouvá krátkou absenci. Baixa médica je jiný nástroj, vystavuje ji lékař a je to ona, kdo otevírá nemocenskou dávku. Vysvětlujeme rozdíl a co dělat v obou případech.",
+  seoTitle: "Autodeklarace nemoci nebo neschopenka v Portugalsku",
+  seoDescription:
+    "Autodeklarace nemoci nebo baixa médica v Portugalsku: kdo co vystavuje, jak se podává na Segurança Social Direta a co otevírá nemocenskou dávku.",
+  category: "Praktické lékařství",
+  article: {
+    lang: "cs-CZ",
+    tagline: "Medicína kdykoli a kdekoli",
+    categoryLabel: "Praktické lékařství",
+    categoryHref: href("cs", "/blog"),
+    eyebrow: "Portugalsko · Průvodce pro zaměstnance",
+    h1: "Autodeklarace nemoci, nebo neschopenka?",
+    deck: "Jsou to dva různé nástroje, s různými vystavovateli a různými účinky. Zvolit ten špatný je nejčastější důvod, proč absence nakonec zůstane neomluvená.",
+    intro:
+      "<strong>Autodeklaraci nemoci</strong> (autodeclaração de doença) vyplňujete a podáváte <em>vy sami</em>, na Segurança Social Direta, čestným prohlášením, a slouží k omluvení krátké nepřítomnosti v práci. Nejde přes lékaře a <strong>nezakládá nárok na nemocenskou dávku</strong>. <strong>Baixa médica</strong> je něco jiného: stojí na <strong>Certificado de Incapacidade Temporária (CIT)</strong>, který vystavuje lékař přes systém SNS. Právě ten hlásí pracovní neschopnost správě sociálního zabezpečení a právě ten může otevřít nemocenskou dávku. Praktické pravidlo: velmi krátká absence bez klinické potřeby vyšetření znamená autodeklaraci; nemoc, která vám brání pracovat déle, znamená lékaře.",
+    facts: ["Autodeklaraci podáváte sami", "Baixa médica: vystavuje lékař", "Dávku otevírá jen CIT"],
+    primaryCta: { label: "Objednat lékařskou konzultaci", href: href("cs", "/services/baixa-medica") },
+    secondaryCta: { label: "Baixa médica na SNS 24", href: SNS24_BAIXA },
+    panelChip: "Co v článku najdete",
+    panelParas: [
+      "Kdo vystavuje který dokument, co každý z nich dokládá a co nedokládá.",
+      "Kde a jak se autodeklarace podává a proč vůbec existuje ověření ze strany zaměstnavatele.",
+      "Počet dnů, kolikrát ročně ji lze použít, čekací doba i výše dávky jsou dány zákonem a mění se. Nejsou zde uvedeny: každý z těchto údajů odkazuje na Segurança Social.",
+    ],
+    author: { initials: "RR", name: "Dr Rui Diogo Rodrigues", line: "Praktický lékař · Global Health Portugalsko" },
+    reviewLine: "Klinicky zkontrolovala Dra. Margarida Domingues e Andrade, praktická lékařka, Global Health Portugalsko.",
+    navLabel: "Obsah článku",
+    sections: [
+      {
+        id: "autodeclaracao",
+        nav: "Autodeklarace",
+        eyebrow: "Nástroj 1",
+        h2: "Co je autodeklarace nemoci",
+        blocks: [
+          lead("Je to vaše vlastní prohlášení, čestným slovem, že jste byli nemocní a krátkou dobu neschopní pracovat."),
+          p("Podává se na <strong>Segurança Social Direta</strong>, ve vlastní sekci zaměstnance, a je určena pro lehká onemocnění, u kterých není klinická potřeba být vyšetřen lékařem. Vznikla právě proto, aby lidé nemuseli chodit do zdravotnického zařízení jen kvůli papíru."),
+          ul([
+            "Vyplňuje a podává ji <strong>zaměstnanec</strong> — ne lékař a ne zaměstnavatel.",
+            "Slouží k <strong>omluvení absence</strong> vůči zaměstnavateli.",
+            "<strong>Nezakládá</strong> nárok na nemocenskou dávku, protože neexistuje klinické potvrzení pracovní neschopnosti.",
+            "Kolik dnů pokrývá a kolikrát ročně ji lze použít je stanoveno zákonem a uvedeno přímo ve formuláři na Segurança Social Direta.",
+          ]),
+          warn("Je to prohlášení čestným slovem", "Není to formulář bez následků. Nepravdivé prohlášení o nemoci má disciplinární i právní důsledky. Autodeklarace existuje proto, aby zjednodušila doložení skutečné nemoci, ne aby vytvářela dny volna."),
+        ],
+      },
+      {
+        id: "validar",
+        nav: "Ověření",
+        eyebrow: "Na straně firmy",
+        h2: "Jak zaměstnavatel autodeklaraci ověří",
+        blocks: [
+          lead("Zaměstnavatel vám nemusí věřit na slovo — a zároveň nemá právo žádat po vás klinické vysvětlení."),
+          p("Podání na Segurança Social Direta vytvoří potvrzení, které lze dohledat a ověřit. Tento mechanismus nahrazuje podepsaný papír: firma potvrdí, že prohlášení existuje a jakého období se týká, aniž by získala jakoukoli informaci o vašem zdravotním stavu."),
+          p("Zaměstnavatel <strong>nemá právo znát vaši diagnózu</strong>, ani u autodeklarace, ani u baixa médica. Sděluje se mu existence a období omluvené absence, nikoli proč. Klinická informace je chráněna lékařským tajemstvím a pravidly ochrany zdravotních údajů."),
+          p("V praxi z toho plyne jedna užitečná věc: pokud po vás někdo v práci chce lékařskou zprávu, popis příznaků nebo jméno diagnózy, žádá něco, na co nemá nárok. Doložit máte to, že absence byla omluvena a v jakém období — a to systém udělá za vás. Zbytek zůstává mezi vámi a lékařem."),
+          cite(`Podání a ověření: <a href="${SEG_SOCIAL}" rel="nofollow noopener" target="_blank">Segurança Social</a>.`),
+        ],
+      },
+      {
+        id: "baixa",
+        nav: "Baixa médica",
+        eyebrow: "Nástroj 2",
+        h2: "Co je baixa médica a CIT",
+        blocks: [
+          lead("Když nemoc přesáhne rozsah autodeklarace, nastupuje Certificado de Incapacidade Temporária."),
+          p("<strong>CIT</strong> vystavuje lékař přes systém SNS a předává se elektronicky správě sociálního zabezpečení. Je to dokument, který klinicky potvrzuje, že jste dočasně neschopni práce, a na jeho základě se posuzuje nárok na <strong>nemocenskou dávku</strong>."),
+          ul([
+            "O tom, zda pracovní neschopnost existuje a na jak dlouho, rozhoduje <strong>lékař</strong> — ne pacient a ne zaměstnavatel.",
+            "CIT putuje elektronicky; pacient ho nikam nenosí.",
+            "Pokud neschopnost trvá déle, následuje lékařské přehodnocení; za určitých okolností může být svolána lékařská komise.",
+            "Čekací doba před začátkem výplaty i způsob výpočtu dávky jsou dány zákonem a uvedeny na portálu Segurança Social.",
+          ]),
+          warn("Žádná konzultace nezaručuje neschopenku", "Vystavení potvrzení o pracovní neschopnosti závisí na tom, co ukáže klinické vyšetření. Služba, která slibuje neschopenku dřív, než vás lékař vyšetří, slibuje něco, co lékař eticky zaručit nemůže."),
+          cite(`Oficiální informace o baixa médica: <a href="${SNS24_BAIXA}" rel="nofollow noopener" target="_blank">SNS 24</a>.`),
+        ],
+      },
+      {
+        id: "privado",
+        nav: "Soukromá konzultace",
+        eyebrow: "Transparentnost",
+        h2: "Co soukromá konzultace vystavit může a co ne",
+        blocks: [
+          lead("Tohle je část, kterou většina webů říká nerada, proto ji říkáme jako první."),
+          p("Při soukromé konzultaci, včetně videokonzultace, vás lékař vyšetří a může vystavit <strong>lékařské potvrzení omlouvající nepřítomnost v práci</strong>. To je služba, kterou poskytujeme, a takto se jmenuje. Slouží k omluvení absence vůči zaměstnavateli."),
+          p("Čím soukromá konzultace sama o sobě <strong>není</strong>, je cesta k nemocenské dávce. Ta závisí na CIT vystaveném přes systém SNS. Pokud vaše situace vyžaduje nemocenskou dávku, vede cesta přes SNS, a úlohou soukromé konzultace je vyšetřit vás rychle a nasměrovat s klinickým závěrem, nikoli tento okruh nahradit."),
+          ul([
+            "Potřebujete jen omluvit absenci u zaměstnavatele: lékařské potvrzení tento účel splní.",
+            "Potřebujete nemocenskou dávku: potřebujete CIT, a tedy okruh SNS.",
+            "Nevíte, který z obou případů je ten váš: přesně to konzultace vyřeší během několika minut.",
+          ]),
+          p(`Registraci kteréhokoli lékaře si ověříte u <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a>, u nás stejně jako kdekoli jinde.`),
+        ],
+      },
+      {
+        id: "qual-escolher",
+        nav: "Co si vybrat",
+        eyebrow: "Rozhodnutí",
+        h2: "Který z obou nástrojů platí pro váš případ",
+        blocks: [
+          lead("Tři otázky vyřeší téměř každou situaci."),
+          ul([
+            "<strong>Jak dlouho budete chybět?</strong> Velmi krátká absence, v rozsahu, který zákon umožňuje deklarovat, a bez klinické potřeby vyšetření: autodeklarace.",
+            "<strong>Potřebujete být během absence placeni ze sociálního zabezpečení?</strong> Pokud ano, potřebujete CIT, a tedy lékaře.",
+            "<strong>Potřebuje nemoc vyšetřit?</strong> Pokud nevíte, co vám je, pokud se příznaky zhoršují, nebo pokud jste už vyčerpali, co autodeklarace umožňuje, odpovědí je konzultace — potvrzení je vedlejší produkt, ne cíl.",
+          ]),
+          p("Existuje i čtvrtá situace, na kterou se často zapomíná: nemoc závislého člena rodiny, péče o dítě a další absence ze zdravotních důvodů třetích osob se řídí vlastními pravidly, odlišnými od obou nástrojů výše. Ta najdete na portálu Segurança Social."),
+          p("A ještě jedno doporučení, které ušetří nejvíc komplikací: rozhodněte se hned první den, ne až po víkendu. Autodeklarace se podává za probíhající nebo právě skončenou krátkou absenci, zatímco lékař posuzuje váš stav v době, kdy vás vidí. Čím později se do toho pustíte, tím hůř se doloží období, které chcete omluvit."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "Kdy nečekat",
+        eyebrow: "Bezpečnost",
+        h2: "Když problémem není papír",
+        blocks: [
+          lead("Jsou situace, kdy je řešení omluvenky to poslední, co má smysl dělat."),
+          ul([
+            "Bolest nebo tlak na hrudi, zvlášť s dušností, pocením nebo bolestí vystřelující do paže či čelisti.",
+            "Náhlá slabost poloviny těla, pokleslý koutek, porucha řeči nebo náhlá krutá bolest hlavy.",
+            "Dušnost v klidu, nebo promodrávání rtů a obličeje.",
+            "Skvrny na kůži, které po stlačení nemizí, s horečkou, ztuhlou šíjí nebo zmateností.",
+            "Silné krvácení nebo zvracení krve.",
+            "Jakákoli myšlenka na sebepoškození.",
+          ]),
+          p("V těchto případech volejte <strong>112</strong>, případně kontaktujte <strong>SNS 24</strong>, pokud si nejste jisti závažností. Omluvení absence se vyřeší potom — a vyřeší se vždy."),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Portugalsko",
+    linksH2: "Další kroky",
+    linksLead: "Naši lékaři v Portugalsku vás vyšetří přes video a jasně vám řeknou, která ze dvou cest je ta vaše.",
+    links: [
+      { label: "Konzultace a lékařské potvrzení nepřítomnosti v práci", href: href("cs", "/services/baixa-medica") },
+      { label: "Naši lékaři v Portugalsku", href: href("cs", "/doctors") },
+      { label: "Kontaktovat Global Health Portugalsko", href: href("cs", "/contact") },
+    ],
+    ctaBox: {
+      h3: "Nevíte, jestli potřebujete lékaře?",
+      text: "Krátká konzultace vyjasní, zda se vaše situace vyřeší autodeklarací, nebo skutečně potřebuje klinické vyšetření — a když je to na místě, vystaví lékařské potvrzení absence.",
+      primary: { label: "Objednat konzultaci", href: href("cs", "/services/baixa-medica") },
+      secondary: { label: "Zobrazit naše lékaře", href: href("cs", "/doctors") },
+    },
+    sourcesEyebrow: "Oficiální zdroje",
+    sourcesH2: "Kde si pravidla ověříte",
+    sourcesLead: "Pokryté dny, počet použití za rok, čekací doba i výše dávky jsou dány zákonem a mění se. Ověřujte vždy u zdroje.",
+    sources: [
+      { label: "Segurança Social", href: SEG_SOCIAL },
+      { label: "SNS 24 — baixa médica", href: SNS24_BAIXA },
+      { label: "Ordem dos Médicos", href: ORDEM_MEDICOS },
+    ],
+    sourcesNote:
+      "Odkazy vedou na weby příslušných institucí. Global Health není součástí Segurança Social ani SNS, nevystavuje Certificados de Incapacidade Temporária a nemůže o žádné sociální dávce rozhodnout, urychlit ji ani ji zaručit.",
+    faqEyebrow: "FAQ",
+    faqH2: "Časté dotazy",
+    faqs: [
+      {
+        q: "Zakládá autodeklarace nemoci nárok na nemocenskou dávku?",
+        a: "Ne. Omlouvá absenci vůči zaměstnavateli, ale neobsahuje klinické potvrzení pracovní neschopnosti. Nemocenská dávka závisí na Certificado de Incapacidade Temporária, který vystavuje lékař přes systém SNS.",
+      },
+      {
+        q: "Kde se autodeklarace nemoci podává?",
+        a: "Na Segurança Social Direta, ve vlastní sekci zaměstnance, čestným prohlášením. Podání vytvoří potvrzení, které si zaměstnavatel může ověřit, aniž by získal jakoukoli klinickou informaci o vás.",
+      },
+      {
+        q: "Kolik dnů pokrývá a kolikrát ročně ji mohu použít?",
+        a: "Limity jsou dány zákonem a uvedeny přímo ve formuláři na Segurança Social Direta v okamžiku podání. Protože se mění, ověřte si je na portálu Segurança Social, ne v článku.",
+      },
+      {
+        q: "Může zaměstnavatel vyžadovat, abych řekl, co mi je?",
+        a: "Ne. U autodeklarace i u baixa médica se sděluje existence a období omluvené absence. Diagnóza je klinická informace chráněná lékařským tajemstvím a pravidly ochrany zdravotních údajů.",
+      },
+      {
+        q: "Může mi soukromá online konzultace vystavit baixa médica?",
+        a: "Soukromá konzultace může vystavit lékařské potvrzení, které omlouvá nepřítomnost v práci. Certificado de Incapacidade Temporária, který otevírá nemocenskou dávku, se vystavuje přes systém SNS. Pokud potřebujete dávku, vede cesta tudy.",
+      },
+      {
+        q: "Autodeklaraci jsem už použil a jsem stále nemocný. Co teď?",
+        a: "Objednejte se ke konzultaci. Jakmile nemoc přesáhne rozsah autodeklarace, přestává být věcí administrativní a stává se klinickou: je potřeba zjistit, co vám je, rozhodnout o léčbě a případně potvrdit pracovní neschopnost.",
+      },
+    ],
+    disclaimerTitle: "Lékařské upozornění",
+    disclaimer:
+      "Napsal Dr Rui Diogo Rodrigues, praktický lékař Global Health Portugalsko, klinicky zkontrolovala Dra. Margarida Domingues e Andrade, praktická lékařka. Článek obsahuje obecné informace o omlouvání absence pro nemoc v Portugalsku. Nejde o personalizované lékařské, právní ani pracovněprávní poradenství. O nároku na sociální dávky rozhoduje výhradně Segurança Social. V případě lékařské pohotovosti volejte okamžitě 112.",
+  } satisfies Article,
+};
+
+const roPost: LocalePost = {
+  locale: "RO",
+  slug: "autodeclaratie-de-boala-portugalia",
+  title: "Autodeclarație de boală sau concediu medical în Portugalia: de care aveți nevoie",
+  excerpt:
+    "Autodeclarația de boală o depuneți dumneavoastră pe Segurança Social Direta și justifică absențe scurte. Baixa médica este alt instrument, emis de medic, și este cea care deschide indemnizația de boală. Explicăm diferența și ce faceți în fiecare caz.",
+  seoTitle: "Autodeclarație sau concediu medical în Portugalia",
+  seoDescription:
+    "Autodeclarație de boală sau baixa médica în Portugalia: cine emite fiecare document, cum se depune pe Segurança Social Direta și ce deschide indemnizația.",
+  category: "Medicină de familie",
+  article: {
+    lang: "ro-RO",
+    tagline: "Îngrijire medicală oricând, oriunde",
+    categoryLabel: "Medicină de familie",
+    categoryHref: href("ro", "/blog"),
+    eyebrow: "Portugalia · Ghid pentru angajați",
+    h1: "Autodeclarație de boală sau concediu medical?",
+    deck: "Sunt două instrumente diferite, cu emitenți diferiți și efecte diferite. Alegerea greșită este cel mai frecvent motiv pentru care o absență rămâne, în final, nejustificată.",
+    intro:
+      "<strong>Autodeclarația de boală</strong> (autodeclaração de doença) este completată și depusă <em>de dumneavoastră</em>, pe Segurança Social Direta, pe propria răspundere, și justifică o absență scurtă de la muncă. Nu trece prin medic și <strong>nu dă dreptul la indemnizație de boală</strong>. <strong>Baixa médica</strong> este altceva: se bazează pe un <strong>Certificado de Incapacidade Temporária (CIT)</strong> emis de medic prin sistemul SNS, este cel care comunică incapacitatea către Segurança Social și cel care poate deschide indemnizația de boală. Regulă practică: absență foarte scurtă, fără nevoie clinică de a fi consultat, autodeclarație; boală care vă împiedică să munciți mai mult timp, consultație medicală.",
+    facts: ["Autodeclarația: o depuneți singur", "Baixa médica: o emite medicul", "Doar CIT deschide indemnizația"],
+    primaryCta: { label: "Programați o consultație medicală", href: href("ro", "/services/baixa-medica") },
+    secondaryCta: { label: "Baixa médica pe SNS 24", href: SNS24_BAIXA },
+    panelChip: "Ce acoperă acest ghid",
+    panelParas: [
+      "Cine emite fiecare document, ce dovedește fiecare și ce nu dovedește.",
+      "Unde și cum se depune autodeclarația și de ce există verificarea de către angajator.",
+      "Numărul de zile, de câte ori pe an poate fi folosită, perioada de așteptare și valorile indemnizației sunt stabilite prin lege și se modifică. Nu sunt citate aici: fiecare trimite la Segurança Social.",
+    ],
+    author: { initials: "RR", name: "Dr Rui Diogo Rodrigues", line: "Medic de familie · Global Health Portugalia" },
+    reviewLine: "Revizuit clinic de Dra. Margarida Domingues e Andrade, medic de familie, Global Health Portugalia.",
+    navLabel: "În acest articol",
+    sections: [
+      {
+        id: "autodeclaracao",
+        nav: "Autodeclarația",
+        eyebrow: "Instrumentul 1",
+        h2: "Ce este autodeclarația de boală",
+        blocks: [
+          lead("Este o declarație a dumneavoastră, pe propria răspundere, că ați fost bolnav și în imposibilitate de a munci pentru o perioadă scurtă."),
+          p("Se depune pe <strong>Segurança Social Direta</strong>, în zona proprie a angajatului, și este destinată situațiilor de boală ușoară în care nu există nevoie clinică de a fi consultat de un medic. A fost creată tocmai pentru a evita deplasările la o unitate sanitară doar pentru a obține o hârtie."),
+          ul([
+            "<strong>Angajatul</strong> este cel care o completează și o depune — nu medicul, nu angajatorul.",
+            "Servește la <strong>justificarea absenței</strong> față de angajator.",
+            "<strong>Nu</strong> generează indemnizație de boală, pentru că nu există certificare clinică a incapacității.",
+            "Câte zile acoperă și de câte ori pe an poate fi folosită sunt stabilite prin lege și indicate chiar în formularul de pe Segurança Social Direta.",
+          ]),
+          warn("Este o declarație pe propria răspundere", "Nu este un formular fără consecințe. Declararea falsă a unei situații de boală are implicații disciplinare și legale. Autodeclarația există pentru a simplifica justificarea unei boli reale, nu pentru a crea zile libere."),
+        ],
+      },
+      {
+        id: "validar",
+        nav: "Verificarea",
+        eyebrow: "Partea angajatorului",
+        h2: "Cum confirmă angajatorul autodeclarația",
+        blocks: [
+          lead("Angajatorul nu trebuie să vă creadă pe cuvânt — și nici nu are dreptul să vă ceară explicații clinice."),
+          p("Depunerea pe Segurança Social Direta generează o dovadă care poate fi consultată și confirmată. Acest mecanism înlocuiește hârtia semnată: firma confirmă că declarația există și la ce perioadă se referă, fără să aibă acces la vreo informație despre starea dumneavoastră de sănătate."),
+          p("Angajatorul <strong>nu are dreptul să vă cunoască diagnosticul</strong>, nici la autodeclarație, nici la baixa médica. I se comunică existența și perioada absenței justificate, nu motivul. Informația clinică este protejată de secretul medical și de regulile privind protecția datelor de sănătate."),
+          cite(`Depunere și consultare: <a href="${SEG_SOCIAL}" rel="nofollow noopener" target="_blank">Segurança Social</a>.`),
+        ],
+      },
+      {
+        id: "baixa",
+        nav: "Baixa médica",
+        eyebrow: "Instrumentul 2",
+        h2: "Ce sunt baixa médica și CIT",
+        blocks: [
+          lead("Când boala depășește sfera autodeclarației, ceea ce apare este un Certificado de Incapacidade Temporária."),
+          p("<strong>CIT</strong> este emis de medic, prin sistemul SNS, și este transmis electronic către Segurança Social. Este documentul care atestă clinic că sunteți temporar incapabil de muncă și de la care se evaluează dreptul la <strong>indemnizația de boală</strong>."),
+          ul([
+            "<strong>Medicul</strong> decide dacă există incapacitate și pentru ce perioadă — nu pacientul și nu angajatorul.",
+            "CIT circulă electronic; pacientul nu îl transportă.",
+            "Dacă incapacitatea se prelungește, are loc o reevaluare medicală; în anumite situații poate interveni o comisie medicală.",
+            "Perioada de așteptare până la începerea plății și modul de calcul al indemnizației sunt definite prin lege și apar pe portalul Segurança Social.",
+          ]),
+          warn("Nicio consultație nu garantează un concediu medical", "Emiterea unui certificat de incapacitate depinde de ce arată evaluarea clinică. Orice serviciu care promite concediul înainte ca medicul să vă consulte promite ceva ce un medic nu poate garanta deontologic."),
+          cite(`Informații oficiale despre baixa médica: <a href="${SNS24_BAIXA}" rel="nofollow noopener" target="_blank">SNS 24</a>.`),
+        ],
+      },
+      {
+        id: "privado",
+        nav: "Consultația privată",
+        eyebrow: "Transparență",
+        h2: "Ce poate și ce nu poate emite o consultație privată",
+        blocks: [
+          lead("Aceasta este partea pe care majoritatea site-urilor evită să o spună clar, așa că o spunem prima."),
+          p("Într-o consultație privată, inclusiv video, medicul vă evaluează și poate emite o <strong>declarație medicală de justificare a absenței de la muncă</strong>. Acesta este serviciul pe care îl oferim și așa se numește. Servește la justificarea absenței față de angajator."),
+          p("Ceea ce o consultație privată <strong>nu</strong> este, prin ea însăși, este calea către indemnizația de boală. Aceasta depinde de CIT emis prin sistemul SNS. Dacă situația dumneavoastră cere indemnizație, drumul trece prin SNS, iar rolul unei consultații private este să vă evalueze rapid și să vă îndrume cu o concluzie clinică, nu să înlocuiască acel circuit."),
+          ul([
+            "Aveți nevoie doar să justificați absența față de angajator: o declarație medicală îndeplinește acest efect.",
+            "Aveți nevoie de indemnizație de boală: aveți nevoie de CIT și, prin urmare, de circuitul SNS.",
+            "Nu știți care dintre cele două este cazul dumneavoastră: exact asta lămurește o consultație în câteva minute.",
+          ]),
+          p(`Puteți confirma înscrierea oricărui medic la <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a>, la noi ca oriunde altundeva.`),
+        ],
+      },
+      {
+        id: "qual-escolher",
+        nav: "Care se aplică",
+        eyebrow: "Decizie",
+        h2: "Care dintre cele două se aplică în cazul dumneavoastră",
+        blocks: [
+          lead("Trei întrebări rezolvă aproape toate situațiile."),
+          ul([
+            "<strong>Cât timp veți lipsi?</strong> Absență foarte scurtă, în limita a ceea ce legea permite să declarați, și fără nevoie clinică de a fi consultat: autodeclarație.",
+            "<strong>Aveți nevoie să fiți plătit de Segurança Social pe durata absenței?</strong> Dacă da, aveți nevoie de CIT și, prin urmare, de un medic.",
+            "<strong>Boala trebuie evaluată?</strong> Dacă există dubii despre ce aveți, dacă simptomele se agravează sau dacă ați epuizat deja ce permite autodeclarația, răspunsul este consultația — justificarea este produsul secundar, nu obiectivul.",
+          ]),
+          p("Mai există o a patra situație, adesea uitată: boala unui membru de familie aflat în întreținere, îngrijirea unui copil și alte absențe din motive de sănătate ale terților urmează reguli proprii, diferite de ambele instrumente de mai sus. Acestea se găsesc pe portalul Segurança Social."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "Când nu așteptați",
+        eyebrow: "Siguranță",
+        h2: "Când problema nu este hârtia",
+        blocks: [
+          lead("Există situații în care rezolvarea justificării este ultimul lucru de făcut."),
+          ul([
+            "Durere sau apăsare în piept, mai ales cu lipsă de aer, transpirații sau durere care iradiază în braț ori în mandibulă.",
+            "Slăbiciune bruscă pe o parte a corpului, gură strâmbă, tulburare de vorbire sau durere de cap bruscă și intensă.",
+            "Dificultate de respirație în repaus, ori buze și față vinete.",
+            "Pete pe piele care nu dispar la apăsare, cu febră, redoare de ceafă sau confuzie.",
+            "Sângerare abundentă sau vărsături cu sânge.",
+            "Orice gând de a vă face rău.",
+          ]),
+          p("În aceste cazuri sunați la <strong>112</strong> sau contactați <strong>SNS 24</strong> dacă aveți dubii privind gravitatea. Justificarea absenței se rezolvă după — și se rezolvă întotdeauna."),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Portugalia",
+    linksH2: "Pașii următori",
+    linksLead: "Medicii noștri din Portugalia vă evaluează prin video și vă spun clar care dintre cele două drumuri este al dumneavoastră.",
+    links: [
+      { label: "Consultație și justificare medicală a absenței de la muncă", href: href("ro", "/services/baixa-medica") },
+      { label: "Medicii noștri din Portugalia", href: href("ro", "/doctors") },
+      { label: "Contactați Global Health Portugalia", href: href("ro", "/contact") },
+    ],
+    ctaBox: {
+      h3: "Nu știți dacă aveți nevoie de medic?",
+      text: "O consultație scurtă lămurește dacă situația dumneavoastră se rezolvă prin autodeclarație sau are nevoie de evaluare clinică — iar când este cazul, emite justificarea medicală a absenței.",
+      primary: { label: "Programați o consultație", href: href("ro", "/services/baixa-medica") },
+      secondary: { label: "Vedeți medicii noștri", href: href("ro", "/doctors") },
+    },
+    sourcesEyebrow: "Surse oficiale",
+    sourcesH2: "Unde verificați regulile",
+    sourcesLead: "Zilele acoperite, utilizările pe an, perioada de așteptare și valorile indemnizației sunt definite prin lege și se modifică. Verificați întotdeauna la sursă.",
+    sources: [
+      { label: "Segurança Social", href: SEG_SOCIAL },
+      { label: "SNS 24 — baixa médica", href: SNS24_BAIXA },
+      { label: "Ordem dos Médicos", href: ORDEM_MEDICOS },
+    ],
+    sourcesNote:
+      "Linkurile deschid site-urile instituțiilor competente. Global Health nu face parte din Segurança Social sau SNS, nu emite Certificados de Incapacidade Temporária și nu poate decide, accelera sau garanta vreo prestație socială.",
+    faqEyebrow: "Întrebări frecvente",
+    faqH2: "Întrebări frecvente",
+    faqs: [
+      {
+        q: "Autodeclarația de boală dă dreptul la indemnizație de boală?",
+        a: "Nu. Justifică absența față de angajator, dar nu implică certificare clinică a incapacității. Indemnizația de boală depinde de un Certificado de Incapacidade Temporária emis de medic prin sistemul SNS.",
+      },
+      {
+        q: "Unde se depune autodeclarația de boală?",
+        a: "Pe Segurança Social Direta, în zona proprie a angajatului, pe propria răspundere. Depunerea generează o dovadă pe care angajatorul o poate confirma, fără a avea acces la vreo informație clinică despre dumneavoastră.",
+      },
+      {
+        q: "Câte zile acoperă și de câte ori pe an o pot folosi?",
+        a: "Limitele sunt stabilite prin lege și indicate chiar în formularul de pe Segurança Social Direta în momentul depunerii. Pentru că se modifică, verificați-le pe portalul Segurança Social, nu într-un articol.",
+      },
+      {
+        q: "Angajatorul poate cere să știe ce am?",
+        a: "Nu. Atât la autodeclarație, cât și la baixa médica, se comunică existența și perioada absenței justificate. Diagnosticul este informație clinică protejată de secretul medical și de regulile privind protecția datelor de sănătate.",
+      },
+      {
+        q: "O consultație privată online îmi poate da baixa médica?",
+        a: "O consultație privată poate emite o declarație medicală care justifică absența de la muncă. Certificado de Incapacidade Temporária, cel care deschide indemnizația de boală, se emite prin sistemul SNS. Dacă aveți nevoie de indemnizație, acela este circuitul.",
+      },
+      {
+        q: "Am folosit deja autodeclarația și sunt tot bolnav. Ce fac?",
+        a: "Programați o consultație. Când boala depășește sfera autodeclarației, situația încetează să fie administrativă și devine clinică: trebuie evaluat ce aveți, decis tratamentul și, dacă este cazul, certificată incapacitatea.",
+      },
+    ],
+    disclaimerTitle: "Aviz medical",
+    disclaimer:
+      "Scris de Dr Rui Diogo Rodrigues, medic de familie la Global Health Portugalia, și revizuit clinic de Dra. Margarida Domingues e Andrade, medic de familie. Articolul conține informații generale despre justificarea absențelor pentru boală în Portugalia. Nu constituie sfat medical personalizat și nici consultanță juridică sau de dreptul muncii. Dreptul la prestații sociale este decis exclusiv de Segurança Social. În caz de urgență medicală, sunați imediat la 112.",
+  } satisfies Article,
+};
+
+const de: LocalePost = {
+  locale: "DE",
+  slug: "krankmeldung-selbsterklaerung-portugal",
+  title: "Selbsterklärung oder ärztliche Krankmeldung in Portugal: was Sie brauchen",
+  excerpt:
+    "Die autodeclaração de doença reichen Sie selbst über Segurança Social Direta ein; sie entschuldigt kurze Fehlzeiten. Die baixa médica ist ein anderes Instrument, wird ärztlich ausgestellt und ist die, die Krankengeld eröffnet. Hier der Unterschied und das Vorgehen.",
+  seoTitle: "Selbsterklärung oder Krankmeldung in Portugal?",
+  seoDescription:
+    "Autodeclaração de doença oder baixa médica in Portugal: wer was ausstellt, wie die Einreichung bei Segurança Social Direta läuft, was Krankengeld eröffnet.",
+  category: "Allgemeinmedizin",
+  article: {
+    lang: "de-DE",
+    tagline: "Medizin jederzeit und überall",
+    categoryLabel: "Allgemeinmedizin",
+    categoryHref: href("de", "/blog"),
+    eyebrow: "Portugal · Leitfaden für Beschäftigte",
+    h1: "Selbsterklärung oder ärztliche Krankmeldung?",
+    deck: "Zwei verschiedene Instrumente, von verschiedenen Stellen ausgestellt, mit verschiedenen Wirkungen. Das falsche zu wählen ist der häufigste Grund, warum eine Fehlzeit am Ende unentschuldigt bleibt.",
+    intro:
+      "Die <strong>autodeclaração de doença</strong> füllen und reichen <em>Sie selbst</em> über Segurança Social Direta ein, auf Ehrenwort, und sie entschuldigt eine kurze Abwesenheit von der Arbeit. Sie läuft nicht über eine Praxis und <strong>eröffnet kein Krankengeld</strong>. Die <strong>baixa médica</strong> ist etwas anderes: sie beruht auf einem <strong>Certificado de Incapacidade Temporária (CIT)</strong>, das ärztlich über das SNS-System ausgestellt wird. Dieses meldet die Arbeitsunfähigkeit an die Sozialversicherung und dieses kann Krankengeld eröffnen. Faustregel: sehr kurze Abwesenheit ohne klinische Notwendigkeit einer Untersuchung — Selbsterklärung; Krankheit, die Sie länger an der Arbeit hindert — ärztliche Sprechstunde.",
+    facts: ["Selbsterklärung: Sie reichen sie ein", "Baixa médica: ärztlich ausgestellt", "Nur das CIT eröffnet Krankengeld"],
+    primaryCta: { label: "Ärztliche Sprechstunde buchen", href: href("de", "/services/baixa-medica") },
+    secondaryCta: { label: "Baixa médica bei SNS 24", href: SNS24_BAIXA },
+    panelChip: "Was dieser Leitfaden abdeckt",
+    panelParas: [
+      "Wer welches Dokument ausstellt, was jedes belegt und was nicht.",
+      "Wo und wie die Selbsterklärung eingereicht wird und warum es die Prüfung durch den Arbeitgeber überhaupt gibt.",
+      "Die Zahl der Tage, wie oft pro Jahr sie genutzt werden darf, die Wartezeit und die Höhe des Krankengeldes sind gesetzlich festgelegt und ändern sich. Sie stehen hier nicht: jeder Punkt verweist auf Segurança Social.",
+    ],
+    author: { initials: "RR", name: "Dr Rui Diogo Rodrigues", line: "Allgemeinmediziner · Global Health Portugal" },
+    reviewLine: "Fachlich geprüft von Dra. Margarida Domingues e Andrade, Allgemeinmedizinerin, Global Health Portugal.",
+    navLabel: "In diesem Artikel",
+    sections: [
+      {
+        id: "autodeclaracao",
+        nav: "Selbsterklärung",
+        eyebrow: "Instrument 1",
+        h2: "Was die autodeclaração de doença ist",
+        blocks: [
+          lead("Es ist Ihre eigene Erklärung, auf Ehrenwort, dass Sie krank und für einen kurzen Zeitraum arbeitsunfähig waren."),
+          p("Eingereicht wird sie über <strong>Segurança Social Direta</strong>, im eigenen Bereich der beschäftigten Person, und sie ist für leichte Erkrankungen gedacht, bei denen keine klinische Notwendigkeit besteht, ärztlich untersucht zu werden. Sie wurde gerade dafür geschaffen, damit niemand nur wegen eines Papiers eine Gesundheitseinrichtung aufsuchen muss."),
+          ul([
+            "Ausgefüllt und eingereicht wird sie von <strong>der beschäftigten Person</strong> — nicht ärztlich, nicht vom Arbeitgeber.",
+            "Sie dient dazu, die <strong>Fehlzeit gegenüber dem Arbeitgeber zu entschuldigen</strong>.",
+            "Sie erzeugt <strong>kein</strong> Krankengeld, weil keine klinische Feststellung der Arbeitsunfähigkeit vorliegt.",
+            "Wie viele Tage sie abdeckt und wie oft pro Jahr sie genutzt werden darf, ist gesetzlich geregelt und im Formular auf Segurança Social Direta selbst angegeben.",
+          ]),
+          warn("Es ist eine Erklärung auf Ehrenwort", "Das ist kein folgenloses Formular. Eine wahrheitswidrige Krankheitserklärung hat arbeitsrechtliche und rechtliche Folgen. Die Selbsterklärung existiert, um den Nachweis echter Krankheit zu vereinfachen, nicht um freie Tage zu erzeugen."),
+        ],
+      },
+      {
+        id: "validar",
+        nav: "Prüfung",
+        eyebrow: "Auf Arbeitgeberseite",
+        h2: "Wie der Arbeitgeber die Selbsterklärung bestätigt",
+        blocks: [
+          lead("Ihr Arbeitgeber muss Ihnen nicht aufs Wort glauben — und darf Sie ebenso wenig um klinische Erklärungen bitten."),
+          p("Die Einreichung über Segurança Social Direta erzeugt einen Nachweis, der abgerufen und bestätigt werden kann. Dieser Mechanismus ersetzt das unterschriebene Papier: das Unternehmen bestätigt, dass die Erklärung existiert und welchen Zeitraum sie betrifft, ohne jeden Zugang zu Informationen über Ihren Gesundheitszustand."),
+          p("Ihr Arbeitgeber hat <strong>kein Recht auf Ihre Diagnose</strong>, weder bei der Selbsterklärung noch bei der baixa médica. Mitgeteilt werden Bestehen und Zeitraum der entschuldigten Abwesenheit, nicht der Grund. Klinische Informationen sind durch die ärztliche Schweigepflicht und die Regeln zum Schutz von Gesundheitsdaten geschützt."),
+          cite(`Einreichung und Abruf: <a href="${SEG_SOCIAL}" rel="nofollow noopener" target="_blank">Segurança Social</a>.`),
+        ],
+      },
+      {
+        id: "baixa",
+        nav: "Baixa médica",
+        eyebrow: "Instrument 2",
+        h2: "Was baixa médica und CIT sind",
+        blocks: [
+          lead("Übersteigt die Krankheit den Rahmen der Selbsterklärung, tritt an ihre Stelle ein Certificado de Incapacidade Temporária."),
+          p("Das <strong>CIT</strong> wird ärztlich über das SNS-System ausgestellt und elektronisch an die Sozialversicherung übermittelt. Es ist das Dokument, das klinisch bescheinigt, dass Sie vorübergehend arbeitsunfähig sind, und auf dessen Grundlage der Anspruch auf <strong>Krankengeld</strong> beurteilt wird."),
+          ul([
+            "Ob Arbeitsunfähigkeit besteht und für welchen Zeitraum, entscheidet <strong>die Ärztin oder der Arzt</strong> — nicht die Patientin und nicht der Arbeitgeber.",
+            "Das CIT läuft elektronisch; es wird nicht von der Patientin getragen.",
+            "Dauert die Arbeitsunfähigkeit an, folgt eine ärztliche Neubeurteilung; unter bestimmten Umständen kann eine Begutachtungskommission hinzutreten.",
+            "Die Wartezeit bis zum Zahlungsbeginn und die Berechnung des Krankengeldes sind gesetzlich definiert und auf dem Portal der Segurança Social veröffentlicht.",
+          ]),
+          warn("Keine Sprechstunde garantiert eine Krankmeldung", "Ob eine Arbeitsunfähigkeitsbescheinigung ausgestellt wird, hängt vom Befund ab. Ein Dienst, der die Krankmeldung verspricht, bevor eine ärztliche Untersuchung stattgefunden hat, verspricht etwas, das ärztlich nicht vertretbar zugesagt werden kann."),
+          cite(`Offizielle Informationen zur baixa médica: <a href="${SNS24_BAIXA}" rel="nofollow noopener" target="_blank">SNS 24</a>.`),
+        ],
+      },
+      {
+        id: "privado",
+        nav: "Privatsprechstunde",
+        eyebrow: "Transparenz",
+        h2: "Was eine Privatsprechstunde ausstellen kann — und was nicht",
+        blocks: [
+          lead("Das ist der Teil, den die meisten Anbieter ungern klar sagen, deshalb sagen wir ihn zuerst."),
+          p("In einer Privatsprechstunde, auch per Video, wird ärztlich beurteilt und kann eine <strong>ärztliche Bescheinigung zur Entschuldigung der Abwesenheit von der Arbeit</strong> ausgestellt werden. Genau das ist unser Dienst, und genau so heißt er. Er dient dazu, die Fehlzeit gegenüber dem Arbeitgeber zu entschuldigen."),
+          p("Was eine Privatsprechstunde für sich genommen <strong>nicht</strong> ist, ist der Weg zum Krankengeld. Das hängt am CIT über das SNS-System. Wenn Ihre Situation Krankengeld erfordert, führt der Weg über das SNS, und die Rolle einer Privatsprechstunde besteht darin, Sie rasch zu beurteilen und mit einer klinischen Einschätzung weiterzuleiten — nicht darin, diesen Weg zu ersetzen."),
+          ul([
+            "Sie müssen nur die Fehlzeit beim Arbeitgeber entschuldigen: eine ärztliche Bescheinigung erfüllt das.",
+            "Sie brauchen Krankengeld: Sie brauchen ein CIT und damit den SNS-Weg.",
+            "Sie wissen nicht, welcher der beiden Fälle Ihrer ist: genau das klärt eine Sprechstunde in wenigen Minuten.",
+          ]),
+          p(`Die Registrierung jeder Ärztin und jedes Arztes können Sie bei der <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a> prüfen, bei uns wie überall sonst.`),
+        ],
+      },
+      {
+        id: "qual-escolher",
+        nav: "Was gilt",
+        eyebrow: "Entscheidung",
+        h2: "Welches der beiden für Sie gilt",
+        blocks: [
+          lead("Drei Fragen klären fast jede Situation."),
+          ul([
+            "<strong>Wie lange fehlen Sie?</strong> Sehr kurze Abwesenheit, im gesetzlich erklärbaren Rahmen, ohne klinische Notwendigkeit einer Untersuchung: Selbsterklärung.",
+            "<strong>Brauchen Sie während der Abwesenheit Zahlungen der Sozialversicherung?</strong> Wenn ja, brauchen Sie ein CIT und damit eine ärztliche Beurteilung.",
+            "<strong>Muss die Krankheit beurteilt werden?</strong> Wenn unklar ist, was Sie haben, wenn die Beschwerden schlimmer werden, oder wenn Sie ausgeschöpft haben, was die Selbsterklärung erlaubt, ist die Antwort eine Sprechstunde — die Bescheinigung ist das Nebenprodukt, nicht das Ziel.",
+          ]),
+          p("Es gibt noch eine vierte, oft vergessene Situation: Krankheit eines unterhaltsberechtigten Familienmitglieds, Betreuung eines Kindes und andere Fehlzeiten wegen der Gesundheit Dritter folgen eigenen Regeln, die sich von beiden Instrumenten oben unterscheiden. Diese stehen auf dem Portal der Segurança Social."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "Nicht warten",
+        eyebrow: "Sicherheit",
+        h2: "Wenn das Papier nicht das Problem ist",
+        blocks: [
+          lead("Es gibt Situationen, in denen die Entschuldigung das Letzte ist, worum man sich kümmert."),
+          ul([
+            "Schmerz oder Enge in der Brust, besonders mit Atemnot, Schweißausbruch oder Ausstrahlung in Arm oder Kiefer.",
+            "Plötzliche Schwäche einer Körperhälfte, hängender Mundwinkel, Sprachstörung oder plötzlicher heftiger Kopfschmerz.",
+            "Atemnot in Ruhe, oder bläuliche Lippen und Gesichtshaut.",
+            "Hautflecken, die sich nicht wegdrücken lassen, mit Fieber, Nackensteife oder Verwirrtheit.",
+            "Starke Blutung oder Bluterbrechen.",
+            "Jeder Gedanke, sich selbst zu verletzen.",
+          ]),
+          p("Rufen Sie in diesen Fällen <strong>112</strong> an oder wenden Sie sich an <strong>SNS 24</strong>, wenn Sie den Schweregrad nicht einschätzen können. Die Entschuldigung der Fehlzeit wird danach geregelt — und sie wird immer geregelt."),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Portugal",
+    linksH2: "Nächste Schritte",
+    linksLead: "Unsere Ärztinnen und Ärzte in Portugal beurteilen Sie per Video und sagen Ihnen klar, welcher der beiden Wege Ihrer ist.",
+    links: [
+      { label: "Sprechstunde und ärztliche Bescheinigung der Fehlzeit", href: href("de", "/services/baixa-medica") },
+      { label: "Unsere Ärztinnen und Ärzte in Portugal", href: href("de", "/doctors") },
+      { label: "Global Health Portugal kontaktieren", href: href("de", "/contact") },
+    ],
+    ctaBox: {
+      h3: "Unsicher, ob Sie ärztlichen Rat brauchen?",
+      text: "Eine kurze Sprechstunde klärt, ob sich Ihre Situation mit der Selbsterklärung erledigt oder wirklich eine klinische Beurteilung braucht — und stellt, wo angezeigt, die ärztliche Bescheinigung der Fehlzeit aus.",
+      primary: { label: "Termin buchen", href: href("de", "/services/baixa-medica") },
+      secondary: { label: "Unsere Ärztinnen und Ärzte", href: href("de", "/doctors") },
+    },
+    sourcesEyebrow: "Offizielle Quellen",
+    sourcesH2: "Wo Sie die Regeln prüfen",
+    sourcesLead: "Abgedeckte Tage, Nutzungen pro Jahr, Wartezeit und Höhe des Krankengeldes sind gesetzlich festgelegt und ändern sich. Prüfen Sie immer an der Quelle.",
+    sources: [
+      { label: "Segurança Social", href: SEG_SOCIAL },
+      { label: "SNS 24 — baixa médica", href: SNS24_BAIXA },
+      { label: "Ordem dos Médicos", href: ORDEM_MEDICOS },
+    ],
+    sourcesNote:
+      "Die Links führen auf die Seiten der zuständigen Stellen. Global Health ist weder Teil der Segurança Social noch des SNS, stellt keine Certificados de Incapacidade Temporária aus und kann keine Sozialleistung entscheiden, beschleunigen oder garantieren.",
+    faqEyebrow: "FAQ",
+    faqH2: "Häufige Fragen",
+    faqs: [
+      {
+        q: "Eröffnet die Selbsterklärung einen Anspruch auf Krankengeld?",
+        a: "Nein. Sie entschuldigt die Fehlzeit gegenüber dem Arbeitgeber, enthält aber keine klinische Feststellung der Arbeitsunfähigkeit. Krankengeld hängt an einem Certificado de Incapacidade Temporária, das ärztlich über das SNS-System ausgestellt wird.",
+      },
+      {
+        q: "Wo wird die autodeclaração de doença eingereicht?",
+        a: "Über Segurança Social Direta, im eigenen Bereich der beschäftigten Person, auf Ehrenwort. Die Einreichung erzeugt einen Nachweis, den der Arbeitgeber bestätigen kann, ohne Zugang zu klinischen Informationen über Sie.",
+      },
+      {
+        q: "Wie viele Tage deckt sie ab und wie oft pro Jahr darf ich sie nutzen?",
+        a: "Die Grenzen sind gesetzlich festgelegt und werden im Formular auf Segurança Social Direta bei der Einreichung angezeigt. Da sie sich ändern, prüfen Sie sie auf dem Portal der Segurança Social und nicht in einem Artikel.",
+      },
+      {
+        q: "Darf mein Arbeitgeber verlangen zu erfahren, was mir fehlt?",
+        a: "Nein. Sowohl bei der Selbsterklärung als auch bei der baixa médica werden Bestehen und Zeitraum der entschuldigten Abwesenheit mitgeteilt. Die Diagnose ist klinische Information und durch die ärztliche Schweigepflicht sowie den Schutz von Gesundheitsdaten geschützt.",
+      },
+      {
+        q: "Kann mir eine private Online-Sprechstunde eine baixa médica ausstellen?",
+        a: "Eine Privatsprechstunde kann eine ärztliche Bescheinigung ausstellen, die die Fehlzeit entschuldigt. Das Certificado de Incapacidade Temporária, das Krankengeld eröffnet, wird über das SNS-System ausgestellt. Wenn Sie Krankengeld brauchen, ist das der Weg.",
+      },
+      {
+        q: "Ich habe die Selbsterklärung bereits genutzt und bin weiter krank. Was nun?",
+        a: "Buchen Sie eine Sprechstunde. Sobald die Krankheit den Rahmen der Selbsterklärung übersteigt, ist die Lage nicht mehr administrativ, sondern klinisch: es muss beurteilt werden, was Sie haben, die Behandlung entschieden und gegebenenfalls die Arbeitsunfähigkeit bescheinigt werden.",
+      },
+    ],
+    disclaimerTitle: "Medizinischer Hinweis",
+    disclaimer:
+      "Verfasst von Dr Rui Diogo Rodrigues, Allgemeinmediziner bei Global Health Portugal, fachlich geprüft von Dra. Margarida Domingues e Andrade, Allgemeinmedizinerin. Der Artikel enthält allgemeine Informationen zur Entschuldigung krankheitsbedingter Fehlzeiten in Portugal. Er ist keine persönliche ärztliche Beratung und keine Rechts- oder Arbeitsrechtsberatung. Über Ansprüche auf Sozialleistungen entscheidet allein die Segurança Social. Rufen Sie im medizinischen Notfall sofort 112 an.",
+  } satisfies Article,
+};
+
 export const PT_AUTODECLARACAO: PostSet = {
   key: "pt-autodeclaracao",
   countryCode: "pt",
@@ -621,5 +1190,5 @@ export const PT_AUTODECLARACAO: PostSet = {
   authorDisplayName: "Dr Rui Diogo Rodrigues",
   reviewerDoctorId: "cmqwnkoqe000c7gju26jtb7qt",
   reviewerDisplayName: "Dra. Margarida Domingues e Andrade",
-  posts: [pt, en, es],
+  posts: [pt, en, es, cs, roPost, de],
 };
