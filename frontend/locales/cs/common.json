@@ -853,7 +853,11 @@
     "loadingArticleAriaLabel": "Načítání článku…",
     "categoryFallback": "Zdravotní příručka",
     "readArticle": "Přečíst článek",
-    "heroTitleCountryTemplate": "{title} – {country}"
+    "heroTitleCountryTemplate": "{title} – {country}",
+    "globalGroupLabel": "Globální",
+    "paginationLabel": "Stránkování",
+    "paginationPrevious": "Předchozí",
+    "paginationNext": "Další"
   },
   "calendar": {
     "selectDay": "Vyberte den",

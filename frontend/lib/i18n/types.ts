@@ -868,6 +868,12 @@ export type CommonLocale = {
     loadingArticleAriaLabel?: string;
     categoryFallback?: string;
     readArticle?: string;
+    /** Heading for posts with no country assignment on the bare /blog hub. */
+    globalGroupLabel?: string;
+    /** Accessible name for the index's pagination nav, and its two controls. */
+    paginationLabel?: string;
+    paginationPrevious?: string;
+    paginationNext?: string;
   };
   /** Country-home <head> fallback title/description when no CMS override
    *  exists. "{country}" placeholder. */

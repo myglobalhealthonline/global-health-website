@@ -21,6 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function BlogIndexPage() {
-  return renderBlogIndexPage({});
+export default async function BlogIndexPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page } = await searchParams;
+  return renderBlogIndexPage({ page: Number(page) || 1 });
 }

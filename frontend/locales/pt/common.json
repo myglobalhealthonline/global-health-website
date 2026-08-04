@@ -853,7 +853,11 @@
     "loadingArticleAriaLabel": "A carregar artigo…",
     "categoryFallback": "Guia de saúde",
     "readArticle": "Ler artigo",
-    "heroTitleCountryTemplate": "{title} em {country}"
+    "heroTitleCountryTemplate": "{title} em {country}",
+    "globalGroupLabel": "Global",
+    "paginationLabel": "Paginação",
+    "paginationPrevious": "Anterior",
+    "paginationNext": "Seguinte"
   },
   "calendar": {
     "selectDay": "Selecione um dia",

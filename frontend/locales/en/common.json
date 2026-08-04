@@ -853,7 +853,11 @@
     "loadingArticleAriaLabel": "Loading article…",
     "categoryFallback": "Health guide",
     "readArticle": "Read article",
-    "heroTitleCountryTemplate": "{title} in {country}"
+    "heroTitleCountryTemplate": "{title} in {country}",
+    "globalGroupLabel": "Global",
+    "paginationLabel": "Pagination",
+    "paginationPrevious": "Previous",
+    "paginationNext": "Next"
   },
   "calendar": {
     "selectDay": "Select a day",

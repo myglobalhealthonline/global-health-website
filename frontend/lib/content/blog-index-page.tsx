@@ -11,6 +11,7 @@ import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { CommonLocale } from "@/lib/i18n/types";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { sentenceCaseIfShouting } from "@/lib/text/sentence-case";
@@ -21,9 +22,15 @@ type BlogIndexRouteParams = {
   countrySlug?: string;
   /** Locale code from the route (e.g. "en"). Absent on the bare route. */
   lang?: string;
+  /** 1-based page from `?page=`. Out-of-range values clamp to a real page. */
+  page?: number;
 };
 
-export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteParams) {
+/** Cards per page. The index used to render every post in one grid, which
+ *  does not survive a catalogue of one article per market per locale. */
+const PAGE_SIZE = 12;
+
+export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndexRouteParams) {
   const countryCode = countrySlug ? countryCodeFromSlug(countrySlug) : null;
   // `lang` is passed as the explicit locale so a `[country]/[lang]/blog`
   // call resolves it from the URL segment already in hand instead of
@@ -31,7 +38,9 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
   // invoking them (even unused) forces the whole route to render dynamically,
   // defeating static generation on what should be a static country page.
   const [ordered, locale] = await Promise.all([
-    listBlogPosts(countryCode ?? undefined),
+    // Ask for the route's locale so a post translated into it is listed with
+    // its translated title, excerpt and slug rather than its original ones.
+    listBlogPosts(countryCode ?? undefined, lang),
     getPageLocale(lang),
   ]);
   const common = getCommonLocale(locale);
@@ -57,6 +66,41 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
   }
 
   const blogHref = countrySlug && lang ? `/${countrySlug}/${lang}/blog` : "/blog";
+
+  const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
+  const currentPage = Math.min(Math.max(1, page ?? 1), totalPages);
+  const visible = ordered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const pageHref = (n: number) => (n <= 1 ? blogHref : `${blogHref}?page=${n}`);
+
+  /* The bare hub lists every market at once, so it is grouped by country —
+   * a reader arriving at /blog should see "Ireland", "Portugal", … and not a
+   * single undifferentiated wall of cards. A country index is already scoped
+   * to one market, so it renders one unlabelled group. A post assigned to
+   * several countries is listed under the first of them by country code, so
+   * it appears exactly once. */
+  const groups: Array<{ key: string; label: string | null; posts: typeof visible }> = (() => {
+    if (countrySlug) return [{ key: "all", label: null, posts: visible }];
+    const byCountry = new Map<string, { label: string; posts: typeof visible }>();
+    const global: typeof visible = [];
+    for (const post of visible) {
+      const primary = [...post.countries].sort((a, b) => a.code.localeCompare(b.code))[0];
+      if (!primary) {
+        global.push(post);
+        continue;
+      }
+      const label = getCountryByCode(primary.code as CountryCode)?.name ?? primary.slug;
+      const bucket = byCountry.get(primary.code) ?? { label, posts: [] };
+      bucket.posts.push(post);
+      byCountry.set(primary.code, bucket);
+    }
+    const out = [...byCountry.entries()]
+      .sort((a, b) => a[1].label.localeCompare(b[1].label))
+      .map(([code, v]) => ({ key: code, label: v.label, posts: v.posts }));
+    if (global.length > 0) {
+      out.push({ key: "global", label: bp.globalGroupLabel ?? "Global", posts: global });
+    }
+    return out;
+  })();
 
   /* Every post has exactly ONE canonical URL: bare `/blog/{slug}` when global
    * (no countries assigned), `/{country}/{lang}/blog/{slug}` when
@@ -138,29 +182,72 @@ export async function renderBlogIndexPage({ countrySlug, lang }: BlogIndexRouteP
               </Link>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 [&>*:first-child]:lg:col-span-2">
-              {ordered.map((post) => {
-                // Per-post, not once per page: a country index legitimately
-                // mixes country-specific and global posts (blog.service.ts's
-                // OR filter), and a global post stays canonical at the bare
-                // URL even when listed inside a country index.
-                const href = blogPostHref(post);
-                return (
-                  <BlogCard
-                    key={post.slug}
-                    title={sentenceCaseIfShouting(post.title)}
-                    excerpt={post.excerpt}
-                    href={href}
-                    category={post.category}
-                    publishedAt={post.publishedAt}
-                    coverImageSrc={post.coverImageSrc}
-                    coverImageAlt={post.coverImageAlt}
-                    categoryFallback={bp.categoryFallback}
-                    readArticleLabel={bp.readArticle}
-                  />
-                );
-              })}
-            </div>
+            <>
+              {groups.map((group) => (
+                <div key={group.key} className="mb-12 last:mb-0">
+                  {/* The bare hub mixes every market, so it is grouped and
+                      labelled by country. A country index is already scoped
+                      to one market and gets no redundant heading. */}
+                  {group.label ? (
+                    <h2 className="mb-6 text-xl font-extrabold tracking-[-0.02em] text-[var(--color-text-primary)]">
+                      {group.label}
+                    </h2>
+                  ) : null}
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 [&>*:first-child]:lg:col-span-2">
+                    {group.posts.map((post) => {
+                      // Per-post, not once per page: a country index legitimately
+                      // mixes country-specific and global posts (blog.service.ts's
+                      // OR filter), and a global post stays canonical at the bare
+                      // URL even when listed inside a country index.
+                      const href = blogPostHref(post);
+                      return (
+                        <BlogCard
+                          key={`${post.locale}:${post.slug}`}
+                          title={sentenceCaseIfShouting(post.title)}
+                          excerpt={post.excerpt}
+                          href={href}
+                          category={post.category}
+                          publishedAt={post.publishedAt}
+                          coverImageSrc={post.coverImageSrc}
+                          coverImageAlt={post.coverImageAlt}
+                          categoryFallback={bp.categoryFallback}
+                          readArticleLabel={bp.readArticle}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              {totalPages > 1 ? (
+                <nav
+                  aria-label={bp.paginationLabel ?? "Pagination"}
+                  className="mt-14 flex items-center justify-center gap-3"
+                >
+                  {currentPage > 1 ? (
+                    <Link
+                      href={pageHref(currentPage - 1)}
+                      rel="prev"
+                      className="rounded-full border border-[rgba(29,75,54,0.25)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-primary)] hover:bg-[rgba(29,75,54,0.06)]"
+                    >
+                      {bp.paginationPrevious ?? "Previous"}
+                    </Link>
+                  ) : null}
+                  <span className="text-sm text-[var(--color-text-muted)]">
+                    {currentPage} / {totalPages}
+                  </span>
+                  {currentPage < totalPages ? (
+                    <Link
+                      href={pageHref(currentPage + 1)}
+                      rel="next"
+                      className="rounded-full border border-[rgba(29,75,54,0.25)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-primary)] hover:bg-[rgba(29,75,54,0.06)]"
+                    >
+                      {bp.paginationNext ?? "Next"}
+                    </Link>
+                  ) : null}
+                </nav>
+              ) : null}
+            </>
           )}
         </div>
       </section>

@@ -365,6 +365,12 @@ export type PublicBlogPost = {
   excerpt: string | null;
   body: string;
   locale: LocaleCode;
+  /** Every locale this post can be served in, each with the slug that locale
+   *  is published under: the post's own authored locale first, then one entry
+   *  per BlogTranslation. The public renderer uses this to serve a translated
+   *  body under its own URL, and sitemap.ts to emit one URL per locale — a
+   *  post is no longer limited to the single locale it was authored in. */
+  localeVariants: Array<{ locale: string; slug: string }>;
   /** Countries this post is explicitly scoped to. Empty = global (shown
    *  in every country) — see the admin "Country visibility" checkboxes. */
   countries: Array<{ code: string; slug: string }>;
@@ -412,12 +418,28 @@ function toBlogDoctor(row: BlogDoctorRow | null): PublicBlogDoctor | null {
   };
 }
 
+/** One authored translation of a post, as stored in BlogTranslation. */
+type BlogTranslationRow = {
+  locale: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string | null;
+  seoTitle: string | null;
+  seoDesc: string | null;
+};
+
+/** A translation only counts as servable when it actually has a body — a row
+ *  with title and slug but no content would otherwise render an empty page. */
+const isServable = (t: BlogTranslationRow): boolean => Boolean(t.content && t.content.trim());
+
 function toPublicBlogPost(row: {
   slug: string;
   title: string;
   excerpt: string | null;
   body: string;
   locale: LocaleCode;
+  translations: BlogTranslationRow[];
   countries: Array<{ country: { code: string; slug: string } }>;
   category: string | null;
   authorDisplayName: string | null;
@@ -431,13 +453,26 @@ function toPublicBlogPost(row: {
   authorDoctor: BlogDoctorRow | null;
   reviewerDoctor: BlogDoctorRow | null;
   ctaService: { slug: string; name: string; isActive: boolean; country: { slug: string } | null } | null;
-}): PublicBlogPost {
+}, displayLocale?: string): PublicBlogPost {
+  const servable = row.translations.filter(isServable);
+  // Serve the requested locale when a translation exists for it. The post's
+  // own locale always wins for itself, so a post authored in PT is never
+  // shadowed by a PT translation row.
+  const wanted = displayLocale?.toUpperCase();
+  const active = wanted && wanted !== row.locale ? servable.find((t) => t.locale.toUpperCase() === wanted) : undefined;
+  const localeVariants = [
+    { locale: row.locale as string, slug: row.slug },
+    ...servable
+      .filter((t) => t.locale.toUpperCase() !== row.locale)
+      .map((t) => ({ locale: t.locale.toUpperCase(), slug: t.slug })),
+  ];
   return {
-    slug: row.slug,
-    title: row.title,
-    excerpt: row.excerpt,
-    body: row.body,
-    locale: row.locale,
+    slug: active?.slug ?? row.slug,
+    title: active?.title ?? row.title,
+    excerpt: active ? active.excerpt : row.excerpt,
+    body: active?.content ?? row.body,
+    locale: (active ? (active.locale.toUpperCase() as LocaleCode) : row.locale),
+    localeVariants,
     countries: row.countries.map((c) => ({ code: c.country.code, slug: c.country.slug })),
     category: row.category,
     author: row.authorDisplayName,
@@ -446,8 +481,8 @@ function toPublicBlogPost(row: {
     lastReviewedAt: row.lastReviewedAt ? row.lastReviewedAt.toISOString() : null,
     coverImageUrl: row.coverAsset?.path ?? null,
     coverImageAlt: row.coverAsset?.altText ?? null,
-    seoTitle: row.seoTitle,
-    seoDescription: row.seoDescription,
+    seoTitle: active?.seoTitle ?? row.seoTitle,
+    seoDescription: active?.seoDesc ?? row.seoDescription,
     authorDoctor: toBlogDoctor(row.authorDoctor),
     reviewerDoctor: toBlogDoctor(row.reviewerDoctor),
     ctaService:
@@ -479,6 +514,10 @@ const publicBlogSelect = {
   excerpt: true,
   body: true,
   locale: true,
+  translations: {
+    select: { locale: true, title: true, slug: true, excerpt: true, content: true, seoTitle: true, seoDesc: true },
+    orderBy: { locale: "asc" as const },
+  },
   countries: { select: { country: { select: { code: true, slug: true } } } },
   category: true,
   authorDisplayName: true,
@@ -524,7 +563,16 @@ export async function getPublicBlogPosts(
       where: {
         status: PublishStatus.PUBLISHED,
         isActive: true,
-        ...(locale ? { locale } : {}),
+        // Both the locale filter and country visibility are OR-shaped, so they
+        // are composed under AND — spreading two `OR` keys into one object
+        // would silently drop the first.
+        AND: [
+          // A locale filter matches the post's OWN locale or any locale it has
+          // a translation for: a Spanish country index must list the posts that
+          // market authored in Czech but translated into Spanish.
+          ...(locale ? [{ OR: [{ locale }, { translations: { some: { locale } } }] }] : []),
+          ...(countryCode ? [countryVisibilityWhere(countryCode)] : []),
+        ],
         // No countryCode (the bare, no-country-context /blog route) means
         // UNFILTERED — same semantics as getPublicBlogPostBySlug below.
         //
@@ -537,13 +585,12 @@ export async function getPublicBlogPosts(
         // unaffected: /blog/{slug} still redirects a country-specific post to
         // /{country}/{lang}/blog/{slug} (resolveBlogPostRoute), so the bare
         // hub is an index, never a second home for the content.
-        ...(countryCode ? countryVisibilityWhere(countryCode) : {}),
       },
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
       take: PUBLIC_BLOG_LIST_CAP,
       select: publicBlogSelect,
     });
-    return rows.map(toPublicBlogPost);
+    return rows.map((row) => toPublicBlogPost(row, locale));
   } catch (error) {
     throw normalizeDbError(error, "Blog data is unavailable");
   }
@@ -557,21 +604,32 @@ export async function getPublicBlogPostBySlug(
   try {
     const row = await prisma.blogPost.findFirst({
       where: {
-        slug,
         status: PublishStatus.PUBLISHED,
         isActive: true,
-        ...(locale ? { locale } : {}),
-        // Unlike the list function, no countryCode here means UNFILTERED
-        // (not global-only) — the bare /blog/[slug] page needs to fetch a
-        // country-specific post regardless of its assignment so it can
-        // decide where to redirect. Only a country-scoped route passes
-        // countryCode, and only then do we gate on country visibility.
-        ...(countryCode ? countryVisibilityWhere(countryCode) : {}),
+        // Both branches below are OR-shaped, so they compose under AND —
+        // two `OR` keys in one object would silently drop the first.
+        AND: [
+          // The URL slug may belong to the post itself or to one of its
+          // translations: each locale is published under its own native slug.
+          { OR: [{ slug }, { translations: { some: { slug } } }] },
+          // Unlike the list function, no countryCode here means UNFILTERED
+          // (not global-only) — the bare /blog/[slug] page needs to fetch a
+          // country-specific post regardless of its assignment so it can
+          // decide where to redirect. Only a country-scoped route passes
+          // countryCode, and only then do we gate on country visibility.
+          ...(countryCode ? [countryVisibilityWhere(countryCode)] : []),
+        ],
       },
       orderBy: [{ publishedAt: "desc" }],
       select: publicBlogSelect,
     });
-    return row ? toPublicBlogPost(row) : null;
+    if (!row) return null;
+    // Which locale to render: the one explicitly asked for, else the locale
+    // whose translation owns the slug that was requested. Without the second
+    // rule, hitting a translation's own URL would serve the post's original
+    // language back — the exact bug this refactor removes.
+    const slugLocale = row.slug === slug ? row.locale : row.translations.find((t) => t.slug === slug)?.locale;
+    return toPublicBlogPost(row, locale ?? slugLocale);
   } catch (error) {
     throw normalizeDbError(error, "Blog data is unavailable");
   }

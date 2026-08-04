@@ -51,11 +51,14 @@ export async function generateMetadata({
 }
 export default async function CountryLangBlogIndexPage({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const { country, lang } = await params;
   if (!countryCodeFromSlug(country)) notFound();
   if (!isSupportedLocale(lang)) notFound();
-  return renderBlogIndexPage({ countrySlug: country, lang });
+  const { page } = await searchParams;
+  return renderBlogIndexPage({ countrySlug: country, lang, page: Number(page) || 1 });
 }

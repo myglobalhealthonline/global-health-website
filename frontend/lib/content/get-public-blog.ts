@@ -18,10 +18,14 @@ export type BlogListItem = {
   coverImageAlt: string | null;
   /** Countries this post is scoped to. Empty = global (shown everywhere). */
   countries: Array<{ code: string; slug: string }>;
-  /** The post's own authored locale (raw Prisma enum casing, e.g. "PT") — see
-   *  BlogPostFull.locale. Used by sitemap.ts to emit only the locale the
-   *  content is actually written in (no per-locale translation rows exist). */
+  /** The locale this row was served in (raw Prisma enum casing, e.g. "PT").
+   *  Equals the post's authored locale unless a BlogTranslation for the
+   *  requested locale was served in its place. */
   locale: string;
+  /** Every locale this post is published in, each with that locale's own
+   *  slug — the authored locale first, then one entry per translation.
+   *  sitemap.ts emits one URL per entry. */
+  localeVariants: Array<{ locale: string; slug: string }>;
 };
 
 /** Named clinician linked as a post's author / clinical reviewer. */
@@ -57,6 +61,7 @@ type ApiBlogPost = {
   body?: unknown;
   locale?: unknown;
   countries?: unknown;
+  localeVariants?: unknown;
   category?: unknown;
   author?: unknown;
   reviewer?: unknown;
@@ -99,6 +104,20 @@ function normalizeCtaService(raw: unknown): { slug: string; name: string; countr
   return { slug, name, countrySlug };
 }
 
+function normalizeLocaleVariants(raw: unknown, fallback: { locale: string; slug: string }): Array<{ locale: string; slug: string }> {
+  if (!Array.isArray(raw)) return [fallback];
+  const out = raw
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const r = entry as Record<string, unknown>;
+      const locale = str(r.locale).toUpperCase();
+      const slug = str(r.slug);
+      return locale && slug ? { locale, slug } : null;
+    })
+    .filter((v): v is { locale: string; slug: string } => v !== null);
+  return out.length > 0 ? out : [fallback];
+}
+
 function normalizeCountries(raw: unknown): Array<{ code: string; slug: string }> {
   if (!Array.isArray(raw)) return [];
   return raw
@@ -132,6 +151,10 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     excerpt: str(raw.excerpt),
     body,
     locale: str(raw.locale) || "EN",
+    localeVariants: normalizeLocaleVariants(raw.localeVariants, {
+      locale: str(raw.locale) || "EN",
+      slug,
+    }),
     countries: normalizeCountries(raw.countries),
     category: str(raw.category) || "Health guide",
     author: str(raw.author) || "Global Health Editorial Team",
@@ -152,8 +175,11 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
 /** All published, admin-managed posts (newest-first). [] when unavailable.
  *  No countryCode = global posts only (see blog.service.ts's
  *  countryVisibilityWhere) — the bare, no-country-context /blog route. */
-const fetchPublishedPosts = cache(async (countryCode?: string): Promise<BlogPostFull[]> => {
-  const qs = countryCode ? `?countryCode=${encodeURIComponent(countryCode)}` : "";
+const fetchPublishedPosts = cache(async (countryCode?: string, locale?: string): Promise<BlogPostFull[]> => {
+  const params = new URLSearchParams();
+  if (countryCode) params.set("countryCode", countryCode);
+  if (locale) params.set("locale", locale.toUpperCase());
+  const qs = params.size > 0 ? `?${params.toString()}` : "";
   const res = await apiRequest<{ posts?: ApiBlogPost[] }>(`/api/blog${qs}`, {
     revalidate: 60,
     tags: [PUBLIC_BLOG_TAG],
@@ -167,8 +193,8 @@ const fetchPublishedPosts = cache(async (countryCode?: string): Promise<BlogPost
 });
 
 /** Card list for the blog index. */
-export async function listBlogPosts(countryCode?: string): Promise<BlogListItem[]> {
-  const posts = await fetchPublishedPosts(countryCode);
+export async function listBlogPosts(countryCode?: string, locale?: string): Promise<BlogListItem[]> {
+  const posts = await fetchPublishedPosts(countryCode, locale);
   return posts.map((p) => ({
     slug: p.slug,
     title: p.title,
@@ -181,6 +207,7 @@ export async function listBlogPosts(countryCode?: string): Promise<BlogListItem[
     coverImageAlt: p.coverImageAlt,
     countries: p.countries,
     locale: p.locale,
+    localeVariants: p.localeVariants,
   }));
 }
 
@@ -190,8 +217,11 @@ export async function listBlogPosts(countryCode?: string): Promise<BlogListItem[
  *  country-scoped route passes `countryCode` to gate visibility; the bare
  *  route omits it to fetch the post regardless of country assignment (it
  *  needs `post.countries` to decide whether to redirect). */
-export async function getBlogPost(slug: string, countryCode?: string): Promise<BlogPostFull | null> {
-  const qs = countryCode ? `?countryCode=${encodeURIComponent(countryCode)}` : "";
+export async function getBlogPost(slug: string, countryCode?: string, locale?: string): Promise<BlogPostFull | null> {
+  const params = new URLSearchParams();
+  if (countryCode) params.set("countryCode", countryCode);
+  if (locale) params.set("locale", locale.toUpperCase());
+  const qs = params.size > 0 ? `?${params.toString()}` : "";
   const res = await apiRequest<{ post?: ApiBlogPost }>(`/api/blog/${encodeURIComponent(slug)}${qs}`, {
     revalidate: 300,
     tags: [PUBLIC_BLOG_TAG],
@@ -199,8 +229,8 @@ export async function getBlogPost(slug: string, countryCode?: string): Promise<B
   if (!res.ok) {
     // Fall back to the all-posts list (handles the case where the backend
     // supports listing but the single-post endpoint is unavailable).
-    const posts = await fetchPublishedPosts(countryCode);
-    return posts.find((p) => p.slug === slug) ?? null;
+    const posts = await fetchPublishedPosts(countryCode, locale);
+    return posts.find((p) => p.slug === slug || p.localeVariants.some((v) => v.slug === slug)) ?? null;
   }
   return res.data?.post ? normalizeApiPost(res.data.post) : null;
 }

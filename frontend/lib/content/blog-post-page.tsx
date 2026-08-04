@@ -67,13 +67,22 @@ async function resolveBlogPostRoute(params: BlogPostRouteParams): Promise<Resolv
   const code = countrySlug ? countryCodeFromSlug(countrySlug) : null;
 
   if (countrySlug) {
-    // Country-scoped route: fetch gated to (assigned-to-this-country OR global).
-    const post = await getBlogPost(slug, code ?? undefined);
+    // Country-scoped route: fetch gated to (assigned-to-this-country OR
+    // global), asking for the route's locale so a BlogTranslation is served
+    // when one exists for it.
+    const post = await getBlogPost(slug, code ?? undefined, lang);
     if (!post) return { kind: "not-found" };
     if (post.countries.length === 0) {
       // Actually global — bounce to its true canonical home instead of
       // letting the same content live at N country URLs.
       return { kind: "redirect", redirectTo: `/blog/${slug}` };
+    }
+    // Each locale is published under its own native slug. If this route was
+    // reached by another locale's slug, the served content now belongs to a
+    // different URL — send the visitor to it rather than serving one locale's
+    // body at another locale's address.
+    if (post.slug !== slug) {
+      return { kind: "redirect", redirectTo: `/${countrySlug}/${lang}/blog/${post.slug}` };
     }
     return {
       kind: "render",
@@ -119,14 +128,13 @@ export async function buildBlogPostMetadata(
     ro: "RO",
     de: "DE",
   };
-  // Blog posts have exactly one authored locale (post.locale) — there's no
-  // per-locale translation row like the CMS content-page/doctor tables. A
-  // country-scoped visitor hitting a locale that ISN'T the post's own locale
-  // (e.g. .../pt/blog/x when the post was written in EN) is served the same
-  // English body verbatim: canonicalize to the post's real-content URL and
-  // noindex the untranslated variant instead of self-canonicalizing a
-  // duplicate. Bare `/blog/[slug]` has no route lang, so it's always "its
-  // own" URL.
+  // A post is served in the route's locale when it was authored in it OR has
+  // a BlogTranslation for it — `post.locale` is the locale actually served,
+  // so comparing it to the route language answers both cases. A locale with
+  // no content of its own still falls back to the post's own language body;
+  // that variant is canonicalized to the real-content URL and noindexed
+  // rather than self-canonicalizing a duplicate. Bare `/blog/[slug]` has no
+  // route lang, so it is always "its own" URL.
   const postLanguage = post.locale.toLowerCase();
   const isTranslatedVariant = !routeParams.countrySlug || !routeParams.lang || language === postLanguage;
   const metadataPath = isTranslatedVariant

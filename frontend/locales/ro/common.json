@@ -853,7 +853,11 @@
     "loadingArticleAriaLabel": "Se încarcă articolul…",
     "categoryFallback": "Ghid de sănătate",
     "readArticle": "Citește articolul",
-    "heroTitleCountryTemplate": "{title} în {country}"
+    "heroTitleCountryTemplate": "{title} în {country}",
+    "globalGroupLabel": "Global",
+    "paginationLabel": "Paginare",
+    "paginationPrevious": "Anterior",
+    "paginationNext": "Următor"
   },
   "calendar": {
     "selectDay": "Selectați o zi",
