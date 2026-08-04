@@ -22,7 +22,7 @@ import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import {
   ChecklistSection,
   WhyChooseSection,
@@ -122,6 +122,15 @@ export default async function HealthTestDetailPage({
 
   return (
     <>
+      {/* The FAQs render visually below but emitted no FAQPage schema, unlike
+          the /services/ pages that use the same FAQSection — so the answers
+          were invisible to rich results. Same guard and shape as the service
+          route (see services/[serviceSlug]/page.tsx). */}
+      {detail.faqs.length > 0 ? (
+        <JsonLd
+          data={faqJsonLd(detail.faqs.map((f) => ({ question: f.question, answer: f.answer })))}
+        />
+      ) : null}
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
