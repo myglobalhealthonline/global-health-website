@@ -396,6 +396,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       pushLocalized(country, "/pricing", 0.6, dated(newest(code, "plan")));
     }
     pushLocalized(country, "/blog", 0.6, dated(newest(code, "blog")));
+    // Country contact pages carry the market's NAP (where premises exist),
+    // registration and regulatory FAQs. Undated — the copy is code-resident,
+    // not CMS content, so there is no child timestamp to derive from.
+    pushLocalized(country, "/contact", 0.5);
   }
 
   return urls;

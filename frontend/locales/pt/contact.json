@@ -42,5 +42,20 @@
   "form_sending": "A enviar…",
   "form_send": "Enviar mensagem",
   "form_generic_error": "Algo correu mal. Por favor, tente novamente.",
-  "form_network_error": "Não foi possível contactar o servidor. Por favor, tente novamente."
+  "form_network_error": "Não foi possível contactar o servidor. Por favor, tente novamente.",
+  "country": {
+    "breadcrumb": "Contactos",
+    "watermark": "Contactos",
+    "detailsHeading": "Dados de contacto",
+    "phoneLabel": "Telefone",
+    "emailLabel": "E-mail",
+    "registeredOfficeLabel": "Sede social",
+    "noWalkIn": "Apenas sede social — não é um consultório de atendimento presencial. As consultas são por videochamada.",
+    "onlineOnlyLabel": "Onde atuamos",
+    "onlineOnlyBody": "Atendemos {country} como clínica online. A nossa sede social fica na Irlanda.",
+    "emergencyNote": "A Global Health não é um serviço de urgência. Em caso de sintomas urgentes, contacte o número de emergência local.",
+    "ctaBook": "Marcar consulta",
+    "ctaDoctors": "Conhecer os médicos",
+    "faqEyebrow": "Perguntas"
+  }
 }

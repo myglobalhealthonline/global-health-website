@@ -353,6 +353,25 @@ export function countryMedicalOrganizationJsonLd(country: {
   identifier?: { label?: string | null; value: string } | null;
   sameAs?: string[];
   regulator?: SchemaRegulator | null;
+  /**
+   * Registered office. Deliberately emitted on MedicalOrganization and NOT
+   * LocalBusiness/MedicalClinic: those assert a location the public can
+   * attend, and these addresses are registered offices with no walk-in
+   * service (confirmed 2026-08-04). Omit for markets with no premises —
+   * an address the business does not hold is a fabricated locality signal.
+   */
+  address?: {
+    streetAddress: string;
+    addressLocality: string;
+    postalCode: string;
+    addressCountry: string;
+  } | null;
+  contactPoint?: {
+    telephone: string;
+    email?: string | null;
+    availableLanguage?: string[];
+    contactType?: string;
+  } | null;
 }) {
   return {
     "@context": "https://schema.org",
@@ -373,6 +392,31 @@ export function countryMedicalOrganizationJsonLd(country: {
         }
       : {}),
     ...(country.sameAs && country.sameAs.length > 0 ? { sameAs: country.sameAs } : {}),
+    ...(country.address
+      ? {
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: country.address.streetAddress,
+            addressLocality: country.address.addressLocality,
+            postalCode: country.address.postalCode,
+            addressCountry: country.address.addressCountry,
+          },
+        }
+      : {}),
+    ...(country.contactPoint
+      ? {
+          contactPoint: {
+            "@type": "ContactPoint",
+            contactType: country.contactPoint.contactType ?? "customer support",
+            telephone: country.contactPoint.telephone,
+            ...(country.contactPoint.email ? { email: country.contactPoint.email } : {}),
+            ...(country.contactPoint.availableLanguage &&
+            country.contactPoint.availableLanguage.length > 0
+              ? { availableLanguage: country.contactPoint.availableLanguage }
+              : {}),
+          },
+        }
+      : {}),
     ...(country.regulator
       ? {
           memberOf: {

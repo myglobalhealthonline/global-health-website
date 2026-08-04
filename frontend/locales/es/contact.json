@@ -42,5 +42,20 @@
   "form_sending": "Enviando…",
   "form_send": "Enviar mensaje",
   "form_generic_error": "Algo salió mal. Por favor, inténtalo de nuevo.",
-  "form_network_error": "No se pudo conectar con el servidor. Por favor, inténtalo de nuevo."
+  "form_network_error": "No se pudo conectar con el servidor. Por favor, inténtalo de nuevo.",
+  "country": {
+    "breadcrumb": "Contacto",
+    "watermark": "Contacto",
+    "detailsHeading": "Datos de contacto",
+    "phoneLabel": "Teléfono",
+    "emailLabel": "Correo electrónico",
+    "registeredOfficeLabel": "Domicilio social",
+    "noWalkIn": "Solo domicilio social: no es una consulta con atención presencial. Las consultas son por videollamada.",
+    "onlineOnlyLabel": "Dónde operamos",
+    "onlineOnlyBody": "Atendemos {country} como clínica online. Nuestro domicilio social está en Irlanda.",
+    "emergencyNote": "Global Health no es un servicio de urgencias. Si sus síntomas son urgentes, llame al número de emergencias local.",
+    "ctaBook": "Reservar consulta",
+    "ctaDoctors": "Conocer a los médicos",
+    "faqEyebrow": "Preguntas"
+  }
 }

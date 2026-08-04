@@ -42,5 +42,20 @@
   "form_sending": "Se trimite…",
   "form_send": "Trimite mesaj",
   "form_generic_error": "Ceva a mers prost. Vă rugăm să încercați din nou.",
-  "form_network_error": "Nu s-a putut conecta la server. Vă rugăm să încercați din nou."
+  "form_network_error": "Nu s-a putut conecta la server. Vă rugăm să încercați din nou.",
+  "country": {
+    "breadcrumb": "Contact",
+    "watermark": "Contact",
+    "detailsHeading": "Date de contact",
+    "phoneLabel": "Telefon",
+    "emailLabel": "E-mail",
+    "registeredOfficeLabel": "Sediu social",
+    "noWalkIn": "Doar sediu social — nu este un cabinet cu program de vizite. Consultațiile au loc prin apel video.",
+    "onlineOnlyLabel": "Unde operăm",
+    "onlineOnlyBody": "Deservim {country} ca o clinică online. Sediul nostru social este în Irlanda.",
+    "emergencyNote": "Global Health nu este un serviciu de urgență. Dacă simptomele sunt urgente, sunați la numărul local de urgență.",
+    "ctaBook": "Programați o consultație",
+    "ctaDoctors": "Medicii noștri",
+    "faqEyebrow": "Întrebări"
+  }
 }

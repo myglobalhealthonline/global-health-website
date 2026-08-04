@@ -42,5 +42,20 @@
   "form_sending": "Odesílání…",
   "form_send": "Odeslat zprávu",
   "form_generic_error": "Něco se pokazilo. Zkuste to prosím znovu.",
-  "form_network_error": "Nelze se připojit k serveru. Zkuste to prosím znovu."
+  "form_network_error": "Nelze se připojit k serveru. Zkuste to prosím znovu.",
+  "country": {
+    "breadcrumb": "Kontakt",
+    "watermark": "Kontakt",
+    "detailsHeading": "Kontaktní údaje",
+    "phoneLabel": "Telefon",
+    "emailLabel": "E-mail",
+    "registeredOfficeLabel": "Sídlo",
+    "noWalkIn": "Pouze sídlo společnosti — nejde o ordinaci pro osobní návštěvy. Konzultace probíhají videohovorem.",
+    "onlineOnlyLabel": "Kde působíme",
+    "onlineOnlyBody": "V zemi {country} působíme jako online klinika. Naše sídlo je v Irsku.",
+    "emergencyNote": "Global Health není záchranná služba. Při naléhavých potížích volejte místní tísňovou linku.",
+    "ctaBook": "Objednat konzultaci",
+    "ctaDoctors": "Naši lékaři",
+    "faqEyebrow": "Dotazy"
+  }
 }

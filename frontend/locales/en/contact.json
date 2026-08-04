@@ -42,5 +42,20 @@
   "form_sending": "Sending…",
   "form_send": "Send message",
   "form_generic_error": "Something went wrong. Please try again.",
-  "form_network_error": "Could not reach the server. Please try again."
+  "form_network_error": "Could not reach the server. Please try again.",
+  "country": {
+    "breadcrumb": "Contact",
+    "watermark": "Contact",
+    "detailsHeading": "Contact details",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "registeredOfficeLabel": "Registered office",
+    "noWalkIn": "Registered office only — not a walk-in clinic. Consultations take place by video call.",
+    "onlineOnlyLabel": "Where we operate",
+    "onlineOnlyBody": "We serve {country} as an online clinic. Our registered office is in Ireland.",
+    "emergencyNote": "Global Health is not an emergency service. If your symptoms are urgent, contact your local emergency number.",
+    "ctaBook": "Book a consultation",
+    "ctaDoctors": "Meet the doctors",
+    "faqEyebrow": "Questions"
+  }
 }

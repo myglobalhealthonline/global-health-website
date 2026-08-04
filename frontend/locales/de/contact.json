@@ -42,5 +42,20 @@
   "form_sending": "Wird gesendet…",
   "form_send": "Nachricht senden",
   "form_generic_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-  "form_network_error": "Konnte den Server nicht erreichen. Bitte versuchen Sie es erneut."
+  "form_network_error": "Konnte den Server nicht erreichen. Bitte versuchen Sie es erneut.",
+  "country": {
+    "breadcrumb": "Kontakt",
+    "watermark": "Kontakt",
+    "detailsHeading": "Kontaktdaten",
+    "phoneLabel": "Telefon",
+    "emailLabel": "E-Mail",
+    "registeredOfficeLabel": "Eingetragener Sitz",
+    "noWalkIn": "Nur eingetragener Sitz — keine Praxis mit Publikumsverkehr. Beratungen finden per Videoanruf statt.",
+    "onlineOnlyLabel": "Wo wir tätig sind",
+    "onlineOnlyBody": "Wir betreuen {country} als Online-Klinik. Unser eingetragener Sitz ist in Irland.",
+    "emergencyNote": "Global Health ist kein Notdienst. Bei akuten Beschwerden wählen Sie die örtliche Notrufnummer.",
+    "ctaBook": "Beratung buchen",
+    "ctaDoctors": "Unsere Ärzte",
+    "faqEyebrow": "Fragen"
+  }
 }

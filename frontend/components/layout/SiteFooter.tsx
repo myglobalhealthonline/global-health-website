@@ -155,7 +155,10 @@ export function SiteFooter({
     { label: navigation.navBlog, href: careBase ? `${careBase}/blog` : "/blog" },
     { label: navigation.navFaq, href: "/faq" },
     { label: navigation.navAbout, href: "/about" },
-    { label: navigation.footerContactUs, href: "/contact" },
+    // Inside a country scope, link that market's own contact page (its NAP,
+    // registration and regulatory FAQs) rather than the global one — this is
+    // the only internal link those pages get. Global pages keep /contact.
+    { label: navigation.footerContactUs, href: careBase ? `${careBase}/contact` : "/contact" },
     { label: navigation.footerPrivacyPolicy, href: "/privacy" },
     { label: navigation.footerTermsOfService, href: "/terms" },
     // Country-scoped legal hub (admin-authored CountryLegalDocument pages).
