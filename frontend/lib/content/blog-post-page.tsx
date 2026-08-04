@@ -9,7 +9,8 @@ import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type Bl
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { articleJsonLd, breadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { articleJsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
+import { extractArticleFaqs } from "@/lib/seo/article-faqs";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -202,6 +203,10 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         year: "numeric",
       })
     : formatted;
+  // Designed articles render their FAQs as visible <details> blocks; mirror
+  // them into FAQPage schema. Never fabricated — if the body has no FAQ
+  // markup, no FAQPage node is emitted.
+  const articleFaqs = extractArticleFaqs(post.body);
   const relatedHrefFor = (p: BlogListItem) =>
     routeParams.countrySlug && routeParams.lang
       ? `/${routeParams.countrySlug}/${routeParams.lang}/blog/${p.slug}`
@@ -232,6 +237,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             { name: "Blog", url: backHref },
             { name: displayTitle, url: canonicalUrl },
           ]),
+          ...(articleFaqs.length > 0 ? [faqJsonLd(articleFaqs)] : []),
         ]}
       />
       {/* ── Article hero — matches the PageHero atmosphere (layered forest

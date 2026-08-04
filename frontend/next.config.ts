@@ -1094,6 +1094,12 @@ const nextConfig: NextConfig = {
       // the hub on purpose; see the redirect audit report for the full list.
       { source: "/post/diabetes-a-silent-disease", destination: "/ireland/en/blog/diabetes-a-silent-disease", permanent: true },
       { source: "/post/hand-foot-and-mouth-disease", destination: "/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment", permanent: true },
+      // 2026-08-04: two more exact slug matches the original pass missed —
+      // both articles are PUBLISHED under these very slugs, so the catch-all
+      // below was sending readers (and the sick-cert article's own in-body
+      // "companion guide" link) to the hub instead of the article that exists.
+      { source: "/post/when-to-see-a-gp-online-vs-in-person", destination: "/ireland/en/blog/when-to-see-a-gp-online-vs-in-person", permanent: true },
+      { source: "/post/sick-certificate-ireland-employee-rights", destination: "/ireland/en/blog/sick-certificate-ireland-employee-rights", permanent: true },
       { source: "/post/:slug", destination: "/ireland/en/blog", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/post/:slug", destination: "/ireland/en/blog", permanent: true },
       { source: "/blog/categories/:slug", destination: "/ireland/en/blog", permanent: true },
