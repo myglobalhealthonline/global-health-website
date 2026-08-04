@@ -21,11 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function BlogIndexPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  const { page } = await searchParams;
-  return renderBlogIndexPage({ page: Number(page) || 1 });
+export default async function BlogIndexPage() {
+  // Page 1 only. Deeper pages live at /blog/page/[n] so that reading
+  // searchParams never forces this route to render dynamically.
+  return renderBlogIndexPage({});
 }

@@ -70,7 +70,11 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
   const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
   const currentPage = Math.min(Math.max(1, page ?? 1), totalPages);
   const visible = ordered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-  const pageHref = (n: number) => (n <= 1 ? blogHref : `${blogHref}?page=${n}`);
+  // Path-based, not `?page=`: reading searchParams is a Dynamic API and would
+  // opt this route out of static generation — the very thing the comment at
+  // the top of this function exists to protect. `/blog/page/2` is a static
+  // route segment, so every page stays prerenderable.
+  const pageHref = (n: number) => (n <= 1 ? blogHref : `${blogHref}/page/${n}`);
 
   /* The bare hub lists every market at once, so it is grouped by country —
    * a reader arriving at /blog should see "Ireland", "Portugal", … and not a

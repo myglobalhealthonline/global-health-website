@@ -230,6 +230,384 @@ const pt: LocalePost = {
   } satisfies Article,
 };
 
+const en: LocalePost = {
+  locale: "EN",
+  slug: "self-certification-sick-leave-portugal",
+  title: "Self-certification or a medical certificate: which one you need in Portugal",
+  excerpt:
+    "The autodeclaração de doença is submitted by you on Segurança Social Direta and justifies a short absence. A baixa médica is a different instrument, issued by a doctor, and it is the one that opens sickness benefit. Here is the difference and what to do in each case.",
+  seoTitle: "Self-certification or sick note in Portugal?",
+  seoDescription:
+    "Autodeclaração de doença or baixa médica in Portugal: who issues each, how to submit on Segurança Social Direta and which one opens sickness benefit.",
+  category: "General Practice",
+  article: {
+    lang: "en-GB",
+    tagline: "Medicine Anytime, Anywhere",
+    categoryLabel: "General Practice",
+    categoryHref: href("en", "/blog"),
+    eyebrow: "Portugal · Employee guide",
+    h1: "Self-certification or a medical certificate?",
+    deck: "Two different instruments, issued by different people, with different effects. Choosing the wrong one is the most common reason an absence ends up unjustified.",
+    intro:
+      "The <strong>autodeclaração de doença</strong> is completed and submitted <em>by you</em>, on Segurança Social Direta, on your word of honour, and justifies a short absence from work. No doctor is involved and it <strong>does not open sickness benefit</strong>. The <strong>baixa médica</strong> is something else: it rests on a <strong>Certificado de Incapacidade Temporária (CIT)</strong> issued by a doctor through the SNS system, and that is what reports the incapacity to Segurança Social and what can open sickness benefit. Rule of thumb: a very short absence with no clinical need to be examined, self-certify; illness that keeps you off work longer, see a doctor.",
+    facts: ["Self-certification: you submit it", "Baixa médica: a doctor issues it", "Only the CIT opens sickness benefit"],
+    primaryCta: { label: "Book a medical consultation", href: href("en", "/services/baixa-medica") },
+    secondaryCta: { label: "Baixa médica on SNS 24", href: SNS24_BAIXA },
+    panelChip: "What this guide covers",
+    panelParas: [
+      "Who issues each document, what each one proves, and what each one does not.",
+      "Where and how the self-certification is submitted, and why employer verification exists at all.",
+      "The number of days, how many times a year it may be used, the waiting period and benefit amounts are set by law and change. They are not quoted here: each one points at Segurança Social.",
+    ],
+    author: { initials: "RR", name: "Dr Rui Diogo Rodrigues", line: "General Practitioner · Global Health Portugal" },
+    reviewLine: "Clinically reviewed by Dra. Margarida Domingues e Andrade, General Practitioner, Global Health Portugal.",
+    navLabel: "In this article",
+    sections: [
+      {
+        id: "autodeclaracao",
+        nav: "Self-certification",
+        eyebrow: "Instrument 1",
+        h2: "What the autodeclaração de doença is",
+        blocks: [
+          lead("It is your own declaration, on your word of honour, that you were ill and unable to work for a short period."),
+          p("It is submitted on <strong>Segurança Social Direta</strong>, in your own worker area, and is meant for mild illness where there is no clinical need to be seen by a doctor. It was created precisely to stop people travelling to a health unit purely to obtain a piece of paper."),
+          ul([
+            "It is <strong>the worker</strong> who completes and submits it — not the doctor, not the employer.",
+            "It serves to <strong>justify the absence</strong> to your employer.",
+            "It does <strong>not</strong> generate sickness benefit, because there is no clinical certification of incapacity.",
+            "How many days it covers, and how often per year it may be used, are set in law and shown on the Segurança Social Direta form itself.",
+          ]),
+          warn("It is a declaration on your word of honour", "This is not a consequence-free form. Falsely declaring illness has disciplinary and legal implications. Self-certification exists to simplify justifying real illness, not to manufacture days off."),
+        ],
+      },
+      {
+        id: "validar",
+        nav: "Verification",
+        eyebrow: "The employer's side",
+        h2: "How your employer confirms the self-certification",
+        blocks: [
+          lead("Your employer does not have to take your word for it — and equally does not get to ask you for clinical explanations."),
+          p("Submitting on Segurança Social Direta produces a receipt that can be looked up and confirmed. That mechanism replaces the signed paper: the company confirms the declaration exists and which period it covers, without any access to information about your health."),
+          p("Your employer has <strong>no right to know your diagnosis</strong>, neither for a self-certification nor for a baixa médica. What is communicated is the existence and the period of the justified absence. Clinical information is protected by medical confidentiality and by health-data protection rules."),
+          cite(`Submission and lookup: <a href="${SEG_SOCIAL}" rel="nofollow noopener" target="_blank">Segurança Social</a>.`),
+        ],
+      },
+      {
+        id: "baixa",
+        nav: "Baixa médica",
+        eyebrow: "Instrument 2",
+        h2: "What a baixa médica and the CIT are",
+        blocks: [
+          lead("When illness goes beyond the scope of self-certification, what exists instead is a Certificado de Incapacidade Temporária."),
+          p("The <strong>CIT</strong> is issued by a doctor, through the SNS system, and transmitted electronically to Segurança Social. It is the document that clinically attests that you are temporarily unfit for work, and it is the basis on which entitlement to <strong>sickness benefit</strong> is assessed."),
+          ul([
+            "It is <strong>the doctor</strong> who decides whether incapacity exists and for how long — not the patient and not the employer.",
+            "The CIT travels electronically; the patient does not carry it.",
+            "If incapacity continues, there is medical reassessment; in certain circumstances a medical board may be involved.",
+            "The waiting period before payment starts and how the benefit is calculated are defined in law and published on the Segurança Social portal.",
+          ]),
+          warn("No consultation guarantees a baixa", "Issuing a certificate of incapacity depends on what the clinical assessment shows. Any service promising the baixa before a doctor has examined you is promising what a doctor cannot ethically guarantee."),
+          cite(`Official information on baixa médica: <a href="${SNS24_BAIXA}" rel="nofollow noopener" target="_blank">SNS 24</a>.`),
+        ],
+      },
+      {
+        id: "privado",
+        nav: "Private consultation",
+        eyebrow: "Transparency",
+        h2: "What a private consultation can — and cannot — issue",
+        blocks: [
+          lead("This is the part most sites avoid saying clearly, so we say it first."),
+          p("In a private consultation, including by video, the doctor assesses you and may issue a <strong>medical declaration justifying absence from work</strong>. That is the service we provide, and that is what it is called. It serves to justify the absence to your employer."),
+          p("What a private consultation is <strong>not</strong>, on its own, is the route to sickness benefit. That depends on the CIT issued through the SNS system. If your situation requires sickness benefit, the path runs through the SNS, and the role of a private consultation is to assess you quickly and direct you with a clinical opinion — not to replace that circuit."),
+          ul([
+            "You only need to justify the absence to your employer: a medical declaration achieves that.",
+            "You need sickness benefit: you need a CIT, and therefore the SNS circuit.",
+            "You do not know which of the two applies to you: that is exactly what a consultation settles in a few minutes.",
+          ]),
+          p(`You can confirm any doctor's registration with the <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a>, with us as anywhere else.`),
+        ],
+      },
+      {
+        id: "qual-escolher",
+        nav: "Which applies",
+        eyebrow: "Decision",
+        h2: "Which of the two applies to your case",
+        blocks: [
+          lead("Three questions settle almost every situation."),
+          ul([
+            "<strong>How long will you be off?</strong> A very short absence, within what the law allows you to declare, with no clinical need to be seen: self-certification.",
+            "<strong>Do you need to be paid by Segurança Social while absent?</strong> If so, you need a CIT, and therefore a doctor.",
+            "<strong>Does the illness need assessing?</strong> If there is doubt about what you have, if symptoms are worsening, or if you have already used up what self-certification allows, the answer is a consultation — the justification is the by-product, not the objective.",
+          ]),
+          p("There is a fourth situation people often forget: illness of a dependent family member, care of a child and other absences for someone else's health follow their own rules, distinct from both instruments above. Those are set out on the Segurança Social portal."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "When not to wait",
+        eyebrow: "Safety",
+        h2: "When the paperwork is not the problem",
+        blocks: [
+          lead("There are situations where sorting out the justification is the last thing to do."),
+          ul([
+            "Chest pain or tightness, especially with breathlessness, sweating, or pain radiating to the arm or jaw.",
+            "Sudden weakness on one side of the body, facial droop, difficulty speaking, or a sudden severe headache.",
+            "Difficulty breathing at rest, or blue lips or face.",
+            "Skin blotches that do not fade under pressure, with fever, neck stiffness or confusion.",
+            "Heavy bleeding or vomiting blood.",
+            "Any thought of harming yourself.",
+          ]),
+          p("In these cases call <strong>112</strong>, or contact <strong>SNS 24</strong> if you are unsure how serious it is. The absence gets justified afterwards — and it always does."),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Portugal",
+    linksH2: "Next steps",
+    linksLead: "Our doctors in Portugal assess you by video and tell you plainly which of the two routes is yours.",
+    links: [
+      { label: "Consultation and medical justification of absence from work", href: href("en", "/services/baixa-medica") },
+      { label: "Our doctors in Portugal", href: href("en", "/doctors") },
+      { label: "Contact Global Health Portugal", href: href("en", "/contact") },
+    ],
+    ctaBox: {
+      h3: "Not sure whether you need a doctor?",
+      text: "A short consultation clarifies whether your situation is settled by self-certification or genuinely needs clinical assessment — and, where it applies, issues the medical justification for the absence.",
+      primary: { label: "Book a consultation", href: href("en", "/services/baixa-medica") },
+      secondary: { label: "See our doctors", href: href("en", "/doctors") },
+    },
+    sourcesEyebrow: "Official sources",
+    sourcesH2: "Where to confirm the rules",
+    sourcesLead: "Days covered, uses per year, the waiting period and benefit amounts are defined in law and change. Always confirm at the source.",
+    sources: [
+      { label: "Segurança Social", href: SEG_SOCIAL },
+      { label: "SNS 24 — baixa médica", href: SNS24_BAIXA },
+      { label: "Ordem dos Médicos", href: ORDEM_MEDICOS },
+    ],
+    sourcesNote:
+      "Links open on the competent bodies' own websites. Global Health is not part of Segurança Social or the SNS, does not issue Certificados de Incapacidade Temporária, and cannot decide, expedite or guarantee any social benefit.",
+    faqEyebrow: "FAQ",
+    faqH2: "Common questions",
+    faqs: [
+      {
+        q: "Does the autodeclaração de doença entitle me to sickness benefit?",
+        a: "No. It justifies the absence to your employer, but involves no clinical certification of incapacity. Sickness benefit depends on a Certificado de Incapacidade Temporária issued by a doctor through the SNS system.",
+      },
+      {
+        q: "Where is the autodeclaração de doença submitted?",
+        a: "On Segurança Social Direta, in your own worker area, on your word of honour. Submitting produces a receipt your employer can confirm, without any access to clinical information about you.",
+      },
+      {
+        q: "How many days does it cover and how often can I use it?",
+        a: "The limits are set in law and shown on the Segurança Social Direta form at the moment of submission. Because they change, confirm them on the Segurança Social portal rather than in an article.",
+      },
+      {
+        q: "Can my employer require me to say what is wrong with me?",
+        a: "No. For both self-certification and a baixa médica, what is communicated is the existence and period of the justified absence. The diagnosis is clinical information protected by medical confidentiality and health-data protection rules.",
+      },
+      {
+        q: "Can a private online consultation give me a baixa médica?",
+        a: "A private consultation can issue a medical declaration justifying absence from work. The Certificado de Incapacidade Temporária, which is what opens sickness benefit, is issued through the SNS system. If you need sickness benefit, that is the route.",
+      },
+      {
+        q: "I have already used self-certification and I am still ill. What now?",
+        a: "Book a consultation. Once illness goes beyond the scope of self-certification the situation stops being administrative and becomes clinical: what you have needs assessing, treatment deciding, and incapacity certifying if that is warranted.",
+      },
+    ],
+    disclaimerTitle: "Medical Disclaimer",
+    disclaimer:
+      "Written by Dr Rui Diogo Rodrigues, General Practitioner at Global Health Portugal, and clinically reviewed by Dra. Margarida Domingues e Andrade, General Practitioner. This article contains general information about justifying absence through illness in Portugal. It is not personalised medical advice, nor legal or employment advice. Entitlement to social benefits is decided solely by Segurança Social. In a medical emergency, call 112 immediately.",
+  } satisfies Article,
+};
+
+const es: LocalePost = {
+  locale: "ES",
+  slug: "autodeclaracion-enfermedad-portugal",
+  title: "Autodeclaración de enfermedad o baja médica en Portugal: cuál necesita",
+  excerpt:
+    "La autodeclaração de doença la presenta usted mismo en la Segurança Social Direta y justifica ausencias cortas. La baja médica es otro instrumento, la emite un médico y es la que abre el subsidio de enfermedad. Explicamos la diferencia y qué hacer en cada caso.",
+  seoTitle: "Autodeclaración o baja médica en Portugal",
+  seoDescription:
+    "Autodeclaração de doença o baixa médica en Portugal: quién emite cada una, cómo se presenta en la Segurança Social Direta y cuál da derecho a subsidio.",
+  category: "Medicina General",
+  article: {
+    lang: "es-ES",
+    tagline: "Medicina en cualquier momento y lugar",
+    categoryLabel: "Medicina General",
+    categoryHref: href("es", "/blog"),
+    eyebrow: "Portugal · Guía para trabajadores",
+    h1: "¿Autodeclaración de enfermedad o baja médica?",
+    deck: "Son dos instrumentos distintos, con emisores distintos y efectos distintos. Elegir el equivocado es el motivo más frecuente de que una ausencia acabe sin justificar.",
+    intro:
+      "La <strong>autodeclaração de doença</strong> la rellena y presenta <em>usted mismo</em>, en la Segurança Social Direta, bajo declaración de honor, y sirve para justificar una ausencia corta al trabajo. No pasa por un médico y <strong>no da derecho a subsidio de enfermedad</strong>. La <strong>baixa médica</strong> es otra cosa: se apoya en un <strong>Certificado de Incapacidade Temporária (CIT)</strong> emitido por un médico a través del sistema del SNS, es el que comunica la incapacidad a la Segurança Social y el que puede abrir el subsidio. Regla práctica: ausencia muy corta y sin necesidad clínica de ser visto, autodeclaración; enfermedad que le impide trabajar más tiempo, consulta médica.",
+    facts: ["Autodeclaración: la presenta usted", "Baja médica: la emite un médico", "Solo el CIT abre el subsidio"],
+    primaryCta: { label: "Reservar consulta médica", href: href("es", "/services/baixa-medica") },
+    secondaryCta: { label: "Baixa médica en SNS 24", href: SNS24_BAIXA },
+    panelChip: "Qué cubre esta guía",
+    panelParas: [
+      "Quién emite cada documento, qué prueba cada uno y qué no prueba.",
+      "Dónde y cómo se presenta la autodeclaración, y por qué existe la verificación por parte de la empresa.",
+      "El número de días, las veces que puede usarse al año, el periodo de espera y los importes del subsidio los fija la ley y cambian. No se citan aquí: cada uno remite a la Segurança Social.",
+    ],
+    author: { initials: "RR", name: "Dr Rui Diogo Rodrigues", line: "Médico de familia · Global Health Portugal" },
+    reviewLine: "Revisado clínicamente por la Dra. Margarida Domingues e Andrade, médica de familia, Global Health Portugal.",
+    navLabel: "En este artículo",
+    sections: [
+      {
+        id: "autodeclaracao",
+        nav: "Autodeclaración",
+        eyebrow: "Instrumento 1",
+        h2: "Qué es la autodeclaração de doença",
+        blocks: [
+          lead("Es una declaración suya, bajo declaración de honor, de que estuvo enfermo e imposibilitado para trabajar durante un periodo corto."),
+          p("Se presenta en la <strong>Segurança Social Direta</strong>, en el área del propio trabajador, y está pensada para enfermedad leve en la que no hay necesidad clínica de ser visto por un médico. Se creó precisamente para evitar desplazamientos a un centro de salud solo para conseguir un papel."),
+          ul([
+            "Es <strong>el trabajador</strong> quien la rellena y la presenta: ni el médico ni la empresa.",
+            "Sirve para <strong>justificar la falta</strong> ante la empresa.",
+            "<strong>No</strong> genera subsidio de enfermedad, porque no hay certificación clínica de incapacidad.",
+            "Cuántos días cubre, y cuántas veces al año puede usarse, están fijados en la ley y se indican en el propio formulario de la Segurança Social Direta.",
+          ]),
+          warn("Es una declaración bajo palabra de honor", "No es un formulario sin consecuencias. Declarar falsamente una situación de enfermedad tiene implicaciones disciplinarias y legales. La autodeclaración existe para simplificar la justificación de una enfermedad real, no para fabricar días libres."),
+        ],
+      },
+      {
+        id: "validar",
+        nav: "Verificación",
+        eyebrow: "El lado de la empresa",
+        h2: "Cómo confirma la empresa la autodeclaración",
+        blocks: [
+          lead("La empresa no tiene que creerle bajo palabra, y tampoco tiene derecho a pedirle explicaciones clínicas."),
+          p("La presentación en la Segurança Social Direta genera un comprobante que puede consultarse y confirmarse. Ese mecanismo sustituye al papel firmado: la empresa confirma que la declaración existe y a qué periodo corresponde, sin acceso alguno a información sobre su salud."),
+          p("La empresa <strong>no tiene derecho a conocer su diagnóstico</strong>, ni en la autodeclaración ni en la baja médica. Lo que se le comunica es la existencia y el periodo de la ausencia justificada. La información clínica está protegida por el secreto médico y por las normas de protección de datos de salud."),
+          cite(`Presentación y consulta: <a href="${SEG_SOCIAL}" rel="nofollow noopener" target="_blank">Segurança Social</a>.`),
+        ],
+      },
+      {
+        id: "baixa",
+        nav: "Baja médica",
+        eyebrow: "Instrumento 2",
+        h2: "Qué es la baixa médica y el CIT",
+        blocks: [
+          lead("Cuando la enfermedad supera el ámbito de la autodeclaración, lo que existe es un Certificado de Incapacidade Temporária."),
+          p("El <strong>CIT</strong> lo emite un médico, a través del sistema del SNS, y se transmite electrónicamente a la Segurança Social. Es el documento que acredita clínicamente que está temporalmente incapacitado para trabajar, y a partir de él se evalúa el derecho al <strong>subsidio de enfermedad</strong>."),
+          ul([
+            "Es <strong>el médico</strong> quien decide si existe incapacidad y por cuánto tiempo: no el paciente ni la empresa.",
+            "El CIT viaja por vía electrónica; no lo transporta el paciente.",
+            "Si la incapacidad se prolonga hay reevaluación médica; en determinadas circunstancias puede intervenir un tribunal médico.",
+            "El periodo de espera antes del inicio del pago y la forma de cálculo del subsidio están definidos por ley y figuran en el portal de la Segurança Social.",
+          ]),
+          warn("Ninguna consulta garantiza una baja", "La emisión de un certificado de incapacidad depende de lo que muestre la valoración clínica. Cualquier servicio que prometa la baja antes de que un médico le explore está prometiendo algo que un médico no puede garantizar deontológicamente."),
+          cite(`Información oficial sobre baixa médica: <a href="${SNS24_BAIXA}" rel="nofollow noopener" target="_blank">SNS 24</a>.`),
+        ],
+      },
+      {
+        id: "privado",
+        nav: "Consulta privada",
+        eyebrow: "Transparencia",
+        h2: "Qué puede y qué no puede emitir una consulta privada",
+        blocks: [
+          lead("Esta es la parte que la mayoría de los sitios evita decir con claridad, así que la decimos primero."),
+          p("En una consulta privada, incluida la de vídeo, el médico le evalúa y puede emitir una <strong>declaración médica de justificación de falta al trabajo</strong>. Ese es el servicio que prestamos y así se llama. Sirve para justificar la ausencia ante la empresa."),
+          p("Lo que una consulta privada <strong>no</strong> es, por sí sola, es la vía al subsidio de enfermedad. Ese depende del CIT emitido a través del sistema del SNS. Si su situación exige subsidio, el camino pasa por el SNS, y el papel de una consulta privada es valorarle rápido y orientarle con criterio clínico, no sustituir ese circuito."),
+          ul([
+            "Solo necesita justificar la falta ante la empresa: una declaración médica cumple ese efecto.",
+            "Necesita subsidio de enfermedad: necesita CIT y, por tanto, el circuito del SNS.",
+            "No sabe cuál de los dos es su caso: eso es exactamente lo que una consulta resuelve en pocos minutos.",
+          ]),
+          p(`Puede confirmar la colegiación de cualquier médico en la <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a>, con nosotros y con cualquier otro.`),
+        ],
+      },
+      {
+        id: "qual-escolher",
+        nav: "Cuál elegir",
+        eyebrow: "Decisión",
+        h2: "Cuál de los dos se aplica a su caso",
+        blocks: [
+          lead("Tres preguntas resuelven casi todas las situaciones."),
+          ul([
+            "<strong>¿Cuánto tiempo va a faltar?</strong> Ausencia muy corta, dentro de lo que la ley permite declarar, y sin necesidad clínica de ser visto: autodeclaración.",
+            "<strong>¿Necesita cobrar de la Segurança Social durante la ausencia?</strong> Si es así, necesita CIT y, por tanto, un médico.",
+            "<strong>¿La enfermedad necesita valorarse?</strong> Si hay dudas sobre lo que tiene, si los síntomas empeoran, o si ya agotó lo que la autodeclaración permite, la respuesta es consulta: la justificación es el subproducto, no el objetivo.",
+          ]),
+          p("Hay además una cuarta situación que se olvida a menudo: la enfermedad de un familiar a cargo, la asistencia a un hijo y otras faltas por motivos de salud de terceros siguen reglas propias, distintas de ambos instrumentos anteriores. Están en el portal de la Segurança Social."),
+        ],
+      },
+      {
+        id: "urgencia",
+        nav: "Cuándo no esperar",
+        eyebrow: "Seguridad",
+        h2: "Cuando el problema no es el papel",
+        blocks: [
+          lead("Hay situaciones en las que gestionar la justificación es lo último que hay que hacer."),
+          ul([
+            "Dolor u opresión en el pecho, especialmente con falta de aire, sudoración o dolor irradiado al brazo o a la mandíbula.",
+            "Debilidad súbita de un lado del cuerpo, desviación de la boca, dificultad para hablar o dolor de cabeza súbito e intenso.",
+            "Dificultad para respirar en reposo, o labios y cara azulados.",
+            "Manchas en la piel que no desaparecen al presionar, con fiebre, rigidez de nuca o confusión.",
+            "Sangrado abundante o vómito con sangre.",
+            "Cualquier idea de hacerse daño.",
+          ]),
+          p("En estos casos llame al <strong>112</strong>, o contacte con <strong>SNS 24</strong> si tiene dudas sobre la gravedad. La justificación de la falta se resuelve después, y se resuelve siempre."),
+        ],
+      },
+    ],
+    linksEyebrow: "Global Health Portugal",
+    linksH2: "Siguientes pasos",
+    linksLead: "Nuestros médicos en Portugal le valoran por vídeo y le dicen con claridad cuál de los dos caminos es el suyo.",
+    links: [
+      { label: "Consulta y justificación médica de falta al trabajo", href: href("es", "/services/baixa-medica") },
+      { label: "Nuestros médicos en Portugal", href: href("es", "/doctors") },
+      { label: "Contactar con Global Health Portugal", href: href("es", "/contact") },
+    ],
+    ctaBox: {
+      h3: "¿No sabe si necesita un médico?",
+      text: "Una consulta breve aclara si su situación se resuelve con autodeclaración o si necesita realmente valoración clínica y, cuando procede, emite la justificación médica de la falta.",
+      primary: { label: "Reservar consulta", href: href("es", "/services/baixa-medica") },
+      secondary: { label: "Ver nuestros médicos", href: href("es", "/doctors") },
+    },
+    sourcesEyebrow: "Fuentes oficiales",
+    sourcesH2: "Dónde confirmar las reglas",
+    sourcesLead: "Días cubiertos, usos por año, periodo de espera e importes del subsidio los define la ley y cambian. Confirme siempre en la fuente.",
+    sources: [
+      { label: "Segurança Social", href: SEG_SOCIAL },
+      { label: "SNS 24 — baixa médica", href: SNS24_BAIXA },
+      { label: "Ordem dos Médicos", href: ORDEM_MEDICOS },
+    ],
+    sourcesNote:
+      "Los enlaces abren en los sitios de los organismos competentes. Global Health no forma parte de la Segurança Social ni del SNS, no emite Certificados de Incapacidade Temporária y no puede decidir, acelerar ni garantizar ninguna prestación social.",
+    faqEyebrow: "FAQ",
+    faqH2: "Preguntas frecuentes",
+    faqs: [
+      {
+        q: "¿La autodeclaración de enfermedad da derecho a subsidio?",
+        a: "No. Justifica la falta ante la empresa, pero no implica certificación clínica de incapacidad. El subsidio de enfermedad depende de un Certificado de Incapacidade Temporária emitido por un médico a través del sistema del SNS.",
+      },
+      {
+        q: "¿Dónde se presenta la autodeclaração de doença?",
+        a: "En la Segurança Social Direta, en el área del propio trabajador, bajo declaración de honor. La presentación genera un comprobante que la empresa puede confirmar, sin acceso a información clínica sobre usted.",
+      },
+      {
+        q: "¿Cuántos días cubre y cuántas veces al año puedo usarla?",
+        a: "Los límites los fija la ley y se indican en el propio formulario de la Segurança Social Direta al presentarla. Como cambian, confírmelos en el portal de la Segurança Social y no en un artículo.",
+      },
+      {
+        q: "¿Puede mi empresa exigir saber qué tengo?",
+        a: "No. Tanto en la autodeclaración como en la baja médica, lo que se comunica es la existencia y el periodo de la ausencia justificada. El diagnóstico es información clínica protegida por el secreto médico y por las normas de protección de datos de salud.",
+      },
+      {
+        q: "¿Una consulta privada online puede darme una baja médica?",
+        a: "Una consulta privada puede emitir una declaración médica que justifica la falta al trabajo. El Certificado de Incapacidade Temporária, que es el que abre el subsidio, se emite a través del sistema del SNS. Si necesita subsidio, ese es el circuito.",
+      },
+      {
+        q: "Ya usé la autodeclaración y sigo enfermo. ¿Qué hago?",
+        a: "Pida consulta. Cuando la enfermedad supera el ámbito de la autodeclaración, la situación deja de ser administrativa y pasa a ser clínica: hay que valorar qué tiene, decidir tratamiento y, si procede, certificar la incapacidad.",
+      },
+    ],
+    disclaimerTitle: "Aviso Médico",
+    disclaimer:
+      "Escrito por el Dr Rui Diogo Rodrigues, médico de familia de Global Health Portugal, y revisado clínicamente por la Dra. Margarida Domingues e Andrade, médica de familia. Este artículo contiene información general sobre la justificación de faltas por enfermedad en Portugal. No constituye asesoramiento médico personalizado, ni asesoramiento jurídico o laboral. El derecho a prestaciones sociales lo decide exclusivamente la Segurança Social. En caso de emergencia médica, llame inmediatamente al 112.",
+  } satisfies Article,
+};
+
 export const PT_AUTODECLARACAO: PostSet = {
   key: "pt-autodeclaracao",
   countryCode: "pt",
@@ -243,5 +621,5 @@ export const PT_AUTODECLARACAO: PostSet = {
   authorDisplayName: "Dr Rui Diogo Rodrigues",
   reviewerDoctorId: "cmqwnkoqe000c7gju26jtb7qt",
   reviewerDisplayName: "Dra. Margarida Domingues e Andrade",
-  posts: [pt],
+  posts: [pt, en, es],
 };
