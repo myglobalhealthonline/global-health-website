@@ -101,10 +101,10 @@ function sectionNavForCountryLang(
     items.push({ href: `${base}/pricing`, label: nav.navPlans });
   }
   items.push({ href: `${base}/blog`, label: nav.navBlog });
-  items.push({ href: "/about", label: nav.navAbout });
-  // In-country: the market's own contact page (local NAP, register,
-  // regulatory FAQs). /about stays global — one strong page beats six thin
-  // ones. The global nav below keeps /contact.
+  // In-country: the market's own About and contact pages (local NAP,
+  // register, languages, offering, regulatory FAQs). Both link on to the
+  // global /about and /contact. The global nav below keeps those.
+  items.push({ href: `${base}/about`, label: nav.navAbout });
   items.push({ href: `${base}/contact`, label: nav.navContact });
   return items;
 }

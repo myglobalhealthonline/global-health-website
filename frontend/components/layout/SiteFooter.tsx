@@ -154,10 +154,11 @@ export function SiteFooter({
   const companyLinks = [
     { label: navigation.navBlog, href: careBase ? `${careBase}/blog` : "/blog" },
     { label: navigation.navFaq, href: "/faq" },
-    { label: navigation.navAbout, href: "/about" },
-    // Inside a country scope, link that market's own contact page (its NAP,
-    // registration and regulatory FAQs) rather than the global one — this is
-    // the only internal link those pages get. Global pages keep /contact.
+    // Inside a country scope, link that market's own About and contact pages
+    // (its NAP, registration, languages and regulatory FAQs) rather than the
+    // global ones — these are the main internal links those pages get. Global
+    // pages keep /about and /contact.
+    { label: navigation.navAbout, href: careBase ? `${careBase}/about` : "/about" },
     { label: navigation.footerContactUs, href: careBase ? `${careBase}/contact` : "/contact" },
     { label: navigation.footerPrivacyPolicy, href: "/privacy" },
     { label: navigation.footerTermsOfService, href: "/terms" },

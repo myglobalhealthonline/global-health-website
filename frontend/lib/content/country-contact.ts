@@ -644,9 +644,14 @@ export type ContactCopyTemplates = {
   faq5A: string;
 };
 
-function fill(template: string, vars: Record<string, string>): string {
+/** `{placeholder}` substitution. Unknown keys are left as-is, deliberately —
+ *  a visible `{foo}` in a preview is easier to spot than a silent blank.
+ *  Shared with the country About pages. */
+export function fillTemplate(template: string, vars: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/gu, (match, key: string) => vars[key] ?? match);
 }
+
+const fill = fillTemplate;
 
 /**
  * Builds a market's copy from the active locale's templates. This is what

@@ -155,8 +155,8 @@ export function MobileNav({
               ]
             : []),
           { href: `/${navCountrySlug}/${navLang}/blog`, label: navigation.navBlog },
-          { href: "/about", label: navigation.navAbout },
           // Country-scoped, matching SiteHeader/SiteFooter.
+          { href: `/${navCountrySlug}/${navLang}/about`, label: navigation.navAbout },
           { href: `/${navCountrySlug}/${navLang}/contact`, label: navigation.navContact },
         ]
       : [

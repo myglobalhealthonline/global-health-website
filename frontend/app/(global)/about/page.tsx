@@ -32,16 +32,17 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-// Six live markets, each linked to its market home so the About page passes
-// PageRank down the hierarchy (SEO brief item 22). Flag code ≠ market name for
-// Czech Republic (flag "cz").
+// Six live markets, each linked to its own country About page — which states
+// that market's languages, offering and register, and links on to its market
+// home. This page passes PageRank down the hierarchy (SEO brief item 22).
+// Flag code ≠ market name for Czech Republic (flag "cz").
 const MARKETS: ReadonlyArray<{ code: string; name: string; href: string }> = [
-  { code: "ie", name: "Ireland", href: "/ireland/en" },
-  { code: "pt", name: "Portugal", href: "/portugal/pt" },
-  { code: "es", name: "Spain", href: "/spain/es" },
-  { code: "cz", name: "Czech Republic", href: "/czechia/cs" },
-  { code: "ro", name: "Romania", href: "/romania/ro" },
-  { code: "br", name: "Brazil", href: "/brazil/pt" },
+  { code: "ie", name: "Ireland", href: "/ireland/en/about" },
+  { code: "pt", name: "Portugal", href: "/portugal/pt/about" },
+  { code: "es", name: "Spain", href: "/spain/es/about" },
+  { code: "cz", name: "Czech Republic", href: "/czechia/cs/about" },
+  { code: "ro", name: "Romania", href: "/romania/ro/about" },
+  { code: "br", name: "Brazil", href: "/brazil/pt/about" },
 ];
 
 // Verifiable company facts for journalists/investors hitting /about (brief

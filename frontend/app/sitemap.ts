@@ -400,6 +400,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // registration and regulatory FAQs. Undated — the copy is code-resident,
     // not CMS content, so there is no child timestamp to derive from.
     pushLocalized(country, "/contact", 0.5);
+    // Country About pages: the market's languages, offering and registration.
+    // Undated for the same reason — the copy is code-resident, not CMS.
+    pushLocalized(country, "/about", 0.5);
   }
 
   return urls;
