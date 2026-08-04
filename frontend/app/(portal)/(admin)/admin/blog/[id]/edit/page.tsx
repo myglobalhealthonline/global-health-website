@@ -79,9 +79,9 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
   const assignedCountryIds = new Set(post.countries.map((c) => c.countryId));
   const translations = post.translations;
 
-  /* Tabs cover every locale the site serves except the post's own — a post is
-   * not a translation of itself, and its original text is edited by the form
-   * above. */
+  /* Tabs cover every locale the site serves, the post's own included: its tab
+   * writes the post itself, the others write BlogTranslation rows. */
+  const allLocales = [...ADMIN_BLOG_LOCALES];
   const translatableLocales = ADMIN_BLOG_LOCALES.filter((locale) => locale !== post.locale);
   const existingLocales = new Set(translations.map((t) => t.locale.toUpperCase()));
   const readyCount = translations.filter((t) => t.content?.trim()).length;
@@ -98,45 +98,22 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
     if (!updated.ok) {
       redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(updated.message)}`);
     }
-    bustBlogCaches(updated.data.post.slug);
-    redirect(`/admin/blog/${id}/edit?success=${encodeURIComponent("Post saved")}`);
-  }
 
-  async function deleteBlogAction() {
-    "use server";
-    await requireAdminAction();
-    const before = await fetchAdminBlogPostById(id);
-    const deleted = await purgeAdminBlogPost(id);
-    if (!deleted.ok) {
-      redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(deleted.message)}`);
-    }
-    if (before.ok) bustBlogCaches(before.data.post.slug);
-    redirect(`/admin/blog?success=${encodeURIComponent("Post deleted")}`);
-  }
-
-  /** Saves every language in one submit, the way the doctor bio tabs do.
-   *  A tab left entirely blank is skipped; clearing the title and slug of a
-   *  language that already exists deletes it. Half-filled tabs are rejected
-   *  by locale rather than silently dropped. */
-  async function saveTranslationsAction(formData: FormData) {
-    "use server";
-    await requireAdminAction();
+    // The same submit carries every other language, so the article and its
+    // translations are written together rather than in two separate saves.
     const saved: string[] = [];
     const removed: string[] = [];
-    // Slugs whose public URL this save touches — the new ones written here
-    // plus the old ones being replaced or removed.
-    const touchedSlugs: string[] = [post.slug, ...translations.map((t) => t.slug)];
+    const touchedSlugs: string[] = [post.slug, updated.data.post.slug, ...translations.map((t) => t.slug)];
 
     for (const code of translatableLocales) {
       const title = (formData.get(`tr_${code}_title`) as string)?.trim() ?? "";
       const slug = (formData.get(`tr_${code}_slug`) as string)?.trim() ?? "";
-      const existed = existingLocales.has(code);
 
       if (!title && !slug) {
-        if (!existed) continue;
-        const removedResult = await deleteAdminBlogTranslation(id, code);
-        if (!removedResult.ok) {
-          redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${code}: ${removedResult.message}`)}`);
+        if (!existingLocales.has(code)) continue;
+        const dropped = await deleteAdminBlogTranslation(id, code);
+        if (!dropped.ok) {
+          redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${code}: ${dropped.message}`)}`);
         }
         removed.push(code);
         continue;
@@ -164,15 +141,27 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
 
     bustBlogCaches(...touchedSlugs);
     revalidatePath(`/admin/blog/${id}/edit`);
-    const parts = [
+    const extra = [
       saved.length > 0 ? `saved ${saved.join(", ")}` : null,
       removed.length > 0 ? `removed ${removed.join(", ")}` : null,
     ].filter(Boolean);
     redirect(
       `/admin/blog/${id}/edit?success=${encodeURIComponent(
-        parts.length > 0 ? `Translations: ${parts.join(" · ")}` : "No translation changes",
+        extra.length > 0 ? `Saved · ${extra.join(" · ")}` : "Saved",
       )}`,
     );
+  }
+
+  async function deleteBlogAction() {
+    "use server";
+    await requireAdminAction();
+    const before = await fetchAdminBlogPostById(id);
+    const deleted = await purgeAdminBlogPost(id);
+    if (!deleted.ok) {
+      redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(deleted.message)}`);
+    }
+    if (before.ok) bustBlogCaches(before.data.post.slug);
+    redirect(`/admin/blog?success=${encodeURIComponent("Post deleted")}`);
   }
 
   async function saveCountriesAction(formData: FormData) {
@@ -240,41 +229,37 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
       ) : null}
 
       <form action={updateBlogAction} className="gh-admin-blog-form mt-6">
-        <BlogFields post={post} doctors={doctors} services={services} />
-        <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
-          <Btn href="/admin/blog" variant="ghost" size="md">
-            Cancel
-          </Btn>
-          <Btn type="submit" variant="primary" size="md">
-            Save post
-          </Btn>
-        </div>
-      </form>
-
-      {/* Translations — one tab per language, same pattern as the doctor
-          bio editor. All panels submit together, so a post is translated in
-          one save instead of one page reload per locale. */}
-      <form action={saveTranslationsAction} className="gh-admin-blog-form mt-6">
+        {/* Every language, original included, in one tab strip — the same
+            shape as the doctor bio editor. The original tab posts the post's
+            own fields; the others post tr_<LOCALE>_*. One submit saves all. */}
         <FormSection
           title={
             <span className="inline-flex items-center gap-2">
               <Languages className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-              Translations
+              Languages
             </span>
           }
-          description="Each language has its own title, slug and body, published at its own URL."
+          description="Title, slug, excerpt, body and SEO for each language this article is published in."
           right={
             translations.length > 0 ? (
               <Pill tone={readyCount === translations.length ? "published" : "draft"}>
-                {readyCount}/{translations.length} ready
+                {readyCount}/{translations.length} translated
               </Pill>
             ) : null
           }
         >
           <div className="gh-form-section__span-2">
             <BlogTranslationTabs
-              locales={translatableLocales}
+              locales={allLocales}
               originalLocale={post.locale}
+              original={{
+                title: post.title,
+                slug: post.slug,
+                excerpt: post.excerpt,
+                content: post.body,
+                seoTitle: post.seoTitle,
+                seoDesc: post.seoDescription,
+              }}
               initialTranslations={translations.map((t) => ({
                 locale: t.locale,
                 title: t.title,
@@ -285,13 +270,18 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
                 seoDesc: t.seoDesc,
               }))}
             />
-            <div className="gh-admin-blog-actions gh-admin-blog-actions--end mt-4">
-              <Btn type="submit" variant="primary" size="md">
-                Save translations
-              </Btn>
-            </div>
           </div>
         </FormSection>
+
+        <BlogFields post={post} doctors={doctors} services={services} languageFields={false} />
+        <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
+          <Btn href="/admin/blog" variant="ghost" size="md">
+            Cancel
+          </Btn>
+          <Btn type="submit" variant="primary" size="md">
+            Save article
+          </Btn>
+        </div>
       </form>
 
       {/* Countries multi-select */}

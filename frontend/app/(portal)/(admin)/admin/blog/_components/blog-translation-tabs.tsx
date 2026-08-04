@@ -15,12 +15,15 @@ export type BlogTranslationInitial = {
 };
 
 type Props = {
-  /** Locales offered as tabs — the post's own locale is excluded by the
-   *  caller, because a post is not a translation of itself. */
+  /** Every locale the site serves, the post's own included — that one is
+   *  rendered first and marked as the original. */
   locales: string[];
-  /** The post's own language, named in the helper text so the editor knows
-   *  where the original is edited. */
+  /** The post's own language. Its tab writes the post's own columns
+   *  (title, slug, body …) rather than a translation row, because a post is
+   *  not a translation of itself. */
   originalLocale: string;
+  /** Current values of the post's own language, shown in its tab. */
+  original: Omit<BlogTranslationInitial, "locale">;
   initialTranslations: BlogTranslationInitial[];
 };
 
@@ -37,51 +40,69 @@ function localeLabel(code: string): string {
 }
 
 /**
- * Per-locale title, slug, excerpt, body and SEO for a blog post — the same
- * tab pattern as DoctorTranslationTabs, so the two admin screens behave
- * alike. Every panel stays mounted (inactive ones hidden) and the fields are
- * named `tr_<LOCALE>_<field>`, so one submit saves every language at once
- * instead of the old flow of one page reload per locale.
+ * Every language of a blog post in one tab strip, the same pattern as
+ * DoctorTranslationTabs. The post's own language is the first tab and posts
+ * back the post's own field names (`title`, `slug`, `body`, …); the others
+ * post `tr_<LOCALE>_<field>` and become BlogTranslation rows. All panels stay
+ * mounted, so one submit saves the article and every translation together.
  *
- * A tab left entirely blank is skipped on save; clearing the title and slug
- * of a language that already exists is what removes it, and the panel says so
- * rather than leaving deletion to a separate button.
+ * Keeping the original in the strip is the point: an editor should not have
+ * to know that one language lives in the form above and five live below.
  */
-export function BlogTranslationTabs({ locales, originalLocale, initialTranslations }: Props) {
-  const [active, setActive] = useState(locales[0] ?? "");
+export function BlogTranslationTabs({ locales, originalLocale, original, initialTranslations }: Props) {
+  const upperOriginal = originalLocale.toUpperCase();
+  // Original first: it is the language the article was written in, and the
+  // one an editor reaches for most.
+  const ordered = [upperOriginal, ...locales.filter((l) => l.toUpperCase() !== upperOriginal)];
+  const [active, setActive] = useState(upperOriginal);
 
-  function valuesFor(code: string): BlogTranslationInitial {
-    const found = initialTranslations.find((t) => t.locale.toUpperCase() === code);
+  function valuesFor(code: string): Omit<BlogTranslationInitial, "locale"> {
+    if (code === upperOriginal) return original;
     return (
-      found ?? { locale: code, title: "", slug: "", excerpt: null, content: null, seoTitle: null, seoDesc: null }
+      initialTranslations.find((t) => t.locale.toUpperCase() === code) ?? {
+        title: "",
+        slug: "",
+        excerpt: null,
+        content: null,
+        seoTitle: null,
+        seoDesc: null,
+      }
     );
   }
 
-  if (locales.length === 0) return null;
+  /** Field names differ for the original: it is the post itself. */
+  function fieldName(code: string, field: "title" | "slug" | "excerpt" | "body" | "seoTitle" | "seoDesc") {
+    if (code !== upperOriginal) {
+      return `tr_${code}_${field === "body" ? "content" : field}`;
+    }
+    return field === "seoDesc" ? "seoDescription" : field;
+  }
 
   return (
     <div className="gh-admin-blog-translation-tabs flex flex-col gap-4">
       <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
-        The post itself is written in{" "}
-        <span className="font-semibold">{localeLabel(originalLocale)}</span> and is edited in the
-        form above. Each tab below is a full translation with its own title, slug and body — the
-        slug is the URL that language is published under.
+        Every language of this article, including the original. Each one has its own title, slug
+        and body — the slug is the URL that language is published at. Saving writes them all at
+        once.
       </p>
 
       <PortalTabs
-        ariaLabel="Blog translations"
+        ariaLabel="Article languages"
         value={active}
         onChange={setActive}
-        items={locales.map((code) => ({
-          value: code,
-          label: `${localeLabel(code)}${
-            initialTranslations.some((t) => t.locale.toUpperCase() === code) ? " ·" : ""
-          }`,
-        }))}
+        items={ordered.map((code) => {
+          const isOriginal = code === upperOriginal;
+          const exists = initialTranslations.some((t) => t.locale.toUpperCase() === code);
+          return {
+            value: code,
+            label: `${localeLabel(code)}${isOriginal ? " · original" : exists ? " ·" : ""}`,
+          };
+        })}
       />
 
-      {locales.map((code) => {
+      {ordered.map((code) => {
         const v = valuesFor(code);
+        const isOriginal = code === upperOriginal;
         const exists = initialTranslations.some((t) => t.locale.toUpperCase() === code);
         return (
           <div
@@ -92,22 +113,28 @@ export function BlogTranslationTabs({ locales, originalLocale, initialTranslatio
           >
             <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two">
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Title</span>
+                <span className="gh-field-label">Title{isOriginal ? " *" : ""}</span>
                 <input
                   type="text"
-                  name={`tr_${code}_title`}
+                  name={fieldName(code, "title")}
                   defaultValue={v.title}
                   className="gh-input min-w-0"
-                  placeholder="Leave blank to skip this language"
+                  maxLength={240}
+                  required={isOriginal}
+                  placeholder={isOriginal ? undefined : "Leave blank to skip this language"}
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Slug</span>
+                <span className="gh-field-label">Slug{isOriginal ? " *" : ""}</span>
                 <input
                   type="text"
-                  name={`tr_${code}_slug`}
+                  name={fieldName(code, "slug")}
                   defaultValue={v.slug}
                   className="gh-input min-w-0"
+                  maxLength={160}
+                  pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+                  title="Lowercase letters, numbers and hyphens only"
+                  required={isOriginal}
                   placeholder="native-language-url"
                 />
               </label>
@@ -116,8 +143,9 @@ export function BlogTranslationTabs({ locales, originalLocale, initialTranslatio
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Excerpt</span>
               <textarea
-                name={`tr_${code}_excerpt`}
+                name={fieldName(code, "excerpt")}
                 rows={2}
+                maxLength={600}
                 defaultValue={v.excerpt ?? ""}
                 className="gh-input"
               />
@@ -125,7 +153,7 @@ export function BlogTranslationTabs({ locales, originalLocale, initialTranslatio
 
             <div className="flex flex-col gap-1">
               <span className="gh-field-label">Body (HTML)</span>
-              <HtmlBodyFieldLazy name={`tr_${code}_content`} initialValue={v.content ?? ""} />
+              <HtmlBodyFieldLazy name={fieldName(code, "body")} initialValue={v.content ?? ""} />
             </div>
 
             <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two">
@@ -133,26 +161,30 @@ export function BlogTranslationTabs({ locales, originalLocale, initialTranslatio
                 <span className="gh-field-label">SEO title</span>
                 <input
                   type="text"
-                  name={`tr_${code}_seoTitle`}
+                  name={fieldName(code, "seoTitle")}
                   defaultValue={v.seoTitle ?? ""}
                   className="gh-input min-w-0"
+                  maxLength={180}
                 />
               </label>
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">SEO description</span>
                 <input
                   type="text"
-                  name={`tr_${code}_seoDesc`}
+                  name={fieldName(code, "seoDesc")}
                   defaultValue={v.seoDesc ?? ""}
                   className="gh-input min-w-0"
+                  maxLength={320}
                 />
               </label>
             </div>
 
             <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
-              {exists
-                ? "Clearing both the title and the slug removes this language when you save."
-                : "Title and slug are both required to create this language. A body is needed before it can be served."}
+              {isOriginal
+                ? "This is the article itself. Changing its language is done under Publish below."
+                : exists
+                  ? "Clearing both the title and the slug removes this language when you save."
+                  : "Title and slug are both required to create this language. A body is needed before it can be served."}
             </p>
           </div>
         );

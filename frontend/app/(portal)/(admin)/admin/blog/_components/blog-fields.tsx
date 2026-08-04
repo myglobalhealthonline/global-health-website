@@ -6,6 +6,11 @@ import { HtmlBodyFieldLazy as HtmlBodyField } from "./html-body-field-lazy";
 type Props = {
   post?: AdminBlogDto | null;
   isCreate?: boolean;
+  /** When false, the per-language fields (title, slug, excerpt, body, SEO)
+   *  are omitted because the caller renders them inside the language tabs —
+   *  the edit screen keeps every language in one place, the original
+   *  included. The create screen has no tabs yet, so it keeps them here. */
+  languageFields?: boolean;
   /** Doctors selectable as the article's named author / clinical reviewer.
    *  Linking a doctor emits the Article author/reviewedBy Physician schema. */
   doctors?: Array<{ id: string; fullName: string }>;
@@ -18,47 +23,55 @@ const inputClass =
 
 const labelClass = "block text-portal-meta font-semibold text-[var(--color-text-muted)]";
 
-export function BlogFields({ post, isCreate, doctors = [], services = [] }: Props) {
+export function BlogFields({ post, isCreate, doctors = [], services = [], languageFields = true }: Props) {
   return (
     <div className="gh-admin-blog-fields flex flex-col gap-5">
       <FormSection
         title="Article"
-        description="Title, URL slug and the short summary shown on cards."
+        description={
+          languageFields
+            ? "Title, URL slug and the short summary shown on cards."
+            : "Details that stay the same in every language."
+        }
       >
-          <label className={labelClass}>
-            Title
-            <input
-              name="title"
-              required
-              maxLength={240}
-              defaultValue={post?.title ?? ""}
-              className={inputClass}
-            />
-          </label>
-          <label className={labelClass}>
-            Slug
-            <input
-              name="slug"
-              required
-              maxLength={160}
-              pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-              title="Lowercase letters, numbers and hyphens only"
-              placeholder="my-article-title"
-              defaultValue={post?.slug ?? ""}
-              className={inputClass}
-            />
-          </label>
-          <label className={`${labelClass} sm:col-span-2`}>
-            Excerpt
-            <textarea
-              name="excerpt"
-              rows={2}
-              maxLength={600}
-              defaultValue={post?.excerpt ?? ""}
-              placeholder="One or two sentences shown on the blog index card."
-              className={inputClass}
-            />
-          </label>
+          {languageFields ? (
+            <>
+              <label className={labelClass}>
+                Title
+                <input
+                  name="title"
+                  required
+                  maxLength={240}
+                  defaultValue={post?.title ?? ""}
+                  className={inputClass}
+                />
+              </label>
+              <label className={labelClass}>
+                Slug
+                <input
+                  name="slug"
+                  required
+                  maxLength={160}
+                  pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+                  title="Lowercase letters, numbers and hyphens only"
+                  placeholder="my-article-title"
+                  defaultValue={post?.slug ?? ""}
+                  className={inputClass}
+                />
+              </label>
+              <label className={`${labelClass} sm:col-span-2`}>
+                Excerpt
+                <textarea
+                  name="excerpt"
+                  rows={2}
+                  maxLength={600}
+                  defaultValue={post?.excerpt ?? ""}
+                  placeholder="One or two sentences shown on the blog index card."
+                  className={inputClass}
+                />
+              </label>
+            </>
+          ) : null}
           <label className={labelClass}>
             Category
             <input
@@ -146,36 +159,37 @@ export function BlogFields({ post, isCreate, doctors = [], services = [] }: Prop
           </label>
         </FormSection>
 
-      <FormSection
-        title="Body (HTML)"
-        description="Upload an .html file or paste article HTML. Sanitized on save."
-      >
-          <HtmlBodyField name="body" initialValue={post?.body ?? ""} />
-        </FormSection>
+      {languageFields ? (
+        <>
+          <FormSection
+            title="Body (HTML)"
+            description="Upload an .html file or paste article HTML. Sanitized on save."
+          >
+            <HtmlBodyField name="body" initialValue={post?.body ?? ""} />
+          </FormSection>
 
-      <FormSection
-        title="SEO"
-        description="Optional — falls back to title/excerpt."
-      >
-          <label className={labelClass}>
-            SEO title
-            <input
-              name="seoTitle"
-              maxLength={180}
-              defaultValue={post?.seoTitle ?? ""}
-              className={inputClass}
-            />
-          </label>
-          <label className={labelClass}>
-            SEO description
-            <input
-              name="seoDescription"
-              maxLength={320}
-              defaultValue={post?.seoDescription ?? ""}
-              className={inputClass}
-            />
-          </label>
-        </FormSection>
+          <FormSection title="SEO" description="Optional — falls back to title/excerpt.">
+            <label className={labelClass}>
+              SEO title
+              <input
+                name="seoTitle"
+                maxLength={180}
+                defaultValue={post?.seoTitle ?? ""}
+                className={inputClass}
+              />
+            </label>
+            <label className={labelClass}>
+              SEO description
+              <input
+                name="seoDescription"
+                maxLength={320}
+                defaultValue={post?.seoDescription ?? ""}
+                className={inputClass}
+              />
+            </label>
+          </FormSection>
+        </>
+      ) : null}
 
       <FormSection
         title="Publish"
