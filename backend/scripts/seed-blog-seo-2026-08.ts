@@ -193,17 +193,18 @@ async function main() {
   // resolution arbitrary. Check the whole live slug space, not just this batch.
   {
     const batchSlugs = new Set(prepared.map((p) => p.post.slug));
-    const setKeys = new Set(sets.map((s) => s.key));
     const live = await prisma.blogPost.findMany({
       select: { slug: true, editorialChecklist: true, translations: { select: { slug: true } } },
     });
     for (const row of live) {
-      const checklist = (row.editorialChecklist ?? null) as { seededBy?: string; targetKeyword?: string } | null;
-      // Rows this run is about to rewrite are not collisions with themselves.
-      const isOurs = checklist?.seededBy === SEEDED_BY;
+      const checklist = (row.editorialChecklist ?? null) as { seededBy?: string } | null;
+      // Rows this script owns are the ones it is about to rewrite — a slug
+      // matching one of those is this batch recognising itself, not a clash.
+      // Duplicates *within* the batch are caught separately by the
+      // slug+locale map above.
+      if (checklist?.seededBy === SEEDED_BY) continue;
       for (const slug of [row.slug, ...row.translations.map((t) => t.slug)]) {
         if (!batchSlugs.has(slug)) continue;
-        if (isOurs && setKeys.size > 0) continue;
         errors.push(`slug "${slug}" already exists on another post — URL resolution would be ambiguous`);
       }
     }

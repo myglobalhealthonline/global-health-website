@@ -153,9 +153,34 @@ export async function buildBlogPostMetadata(
     locale: config
       ? ogLocales(config, language).locale
       : `${language}_${nativeRegion[language] ?? language.toUpperCase()}`,
-    languages: config ? hreflangAlternates(config, `/blog/${post.slug}`) : undefined,
+    // Each locale is published under its OWN native slug, so a single-suffix
+    // hreflang map would advertise every language at one slug and point most
+    // of them at a redirect. Build the map from the post's actual locale
+    // variants instead, falling back to the served slug for locales that have
+    // no content of their own (those pages are noindexed anyway).
+    languages: config ? blogHreflangAlternates(config, post) : undefined,
     noindex: !isTranslatedVariant,
   });
+}
+
+/** Per-locale hreflang for a blog post: `{lang}-{REGION}` → the URL that
+ *  language is actually published at. */
+function blogHreflangAlternates(
+  config: NonNullable<ReturnType<typeof getCountryByCode>>,
+  post: BlogPostFull,
+): Record<string, string> {
+  const slugFor = new Map(post.localeVariants.map((v) => [v.locale.toUpperCase(), v.slug]));
+  const base = hreflangAlternates(config, `/blog/${post.slug}`);
+  const out: Record<string, string> = {};
+  const defaultLang = (config.defaultLocale ?? "en").toUpperCase();
+  for (const [key, path] of Object.entries(base)) {
+    // Keys are `{lang}-{REGION}` plus `x-default`, which names the default
+    // locale's URL rather than a language of its own.
+    const lang = key === "x-default" ? defaultLang : key.split("-")[0]?.toUpperCase() ?? "";
+    const slug = slugFor.get(lang);
+    out[key] = slug ? path.replace(`/blog/${post.slug}`, `/blog/${slug}`) : path;
+  }
+  return out;
 }
 
 export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {

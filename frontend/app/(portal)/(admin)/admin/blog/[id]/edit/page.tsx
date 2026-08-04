@@ -31,10 +31,12 @@ type PageProps = {
   searchParams?: Promise<{ error?: string; success?: string }>;
 };
 
-function bustBlogCaches(slug: string) {
+/** Each locale is published under its own slug, so busting only the post's
+ *  own path leaves every translated URL serving stale HTML. Pass them all. */
+function bustBlogCaches(...slugs: string[]) {
   revalidateTag(PUBLIC_BLOG_TAG, "max");
   revalidatePath("/blog");
-  revalidatePath(`/blog/${slug}`);
+  for (const slug of new Set(slugs.filter(Boolean))) revalidatePath(`/blog/${slug}`);
 }
 
 export default async function AdminEditBlogPage({ params, searchParams }: PageProps) {
@@ -121,6 +123,9 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
     await requireAdminAction();
     const saved: string[] = [];
     const removed: string[] = [];
+    // Slugs whose public URL this save touches — the new ones written here
+    // plus the old ones being replaced or removed.
+    const touchedSlugs: string[] = [post.slug, ...translations.map((t) => t.slug)];
 
     for (const code of translatableLocales) {
       const title = (formData.get(`tr_${code}_title`) as string)?.trim() ?? "";
@@ -154,9 +159,10 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${code}: ${result.message}`)}`);
       }
       saved.push(code);
+      touchedSlugs.push(slug);
     }
 
-    bustBlogCaches(post.slug);
+    bustBlogCaches(...touchedSlugs);
     revalidatePath(`/admin/blog/${id}/edit`);
     const parts = [
       saved.length > 0 ? `saved ${saved.join(", ")}` : null,

@@ -284,11 +284,16 @@ export async function upsertBlogTranslation(
     seoDesc?: string | null;
   },
 ) {
+  // Translation bodies are rendered on the public site exactly like a post
+  // body (publicBlogSelect serves them per locale), so they must go through
+  // the same sanitizer. Before translations were served this row was inert
+  // and the omission was harmless; it is not harmless now.
+  const safe = { ...data, ...(data.content !== undefined && { content: sanitizeBlogHtml(data.content) }) };
   try {
     return await prisma.blogTranslation.upsert({
       where: { postId_locale: { postId, locale } },
-      create: { postId, locale, ...data },
-      update: data,
+      create: { postId, locale, ...safe },
+      update: safe,
     });
   } catch (error) {
     throw normalizeDbError(error, "Could not save blog translation");
