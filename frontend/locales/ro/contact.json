@@ -56,6 +56,24 @@
     "emergencyNote": "Global Health nu este un serviciu de urgență. Dacă simptomele sunt urgente, sunați la numărul local de urgență.",
     "ctaBook": "Programați o consultație",
     "ctaDoctors": "Medicii noștri",
-    "faqEyebrow": "Întrebări"
+    "faqEyebrow": "Întrebări",
+    "titleTemplate": "Contact Global Health {place} | Medic Online",
+    "descriptionTemplate": "Contactați Global Health {country}: {phone}, {email}. Consultații online prin apel video cu medici înregistrați la {regulator}.",
+    "h1Template": "Contact — Global Health {place}",
+    "introOffice": "Global Health este o clinică online. Consultațiile au loc prin apel video securizat cu medici înregistrați la {regulator}, iar sediul nostru social este în {city}.",
+    "introOnline": "Global Health deservește {country} exclusiv ca o clinică online: consultațiile au loc prin apel video securizat cu medici înregistrați la {regulator}. Nu avem spații în {country}.",
+    "reachBodyTemplate": "Programarea unei consultații este cea mai rapidă cale către un medic. Linia telefonică se ocupă de programări, facturare și cont, nu de sfaturi clinice, și este preluată în {languages}. Pentru urgențe sunați la {emergency}.",
+    "regulatoryBodyTemplate": "Medicii care consultă prin Global Health {country} sunt înregistrați la {regulator}. {certificate} este emisă de medicul care v-a evaluat. Dreptul la indemnizație este stabilit separat de {benefitBody}, conform propriilor reguli.",
+    "faq1Q": "Unde sunteți situați?",
+    "faq1AOffice": "Adresa din {city} este sediul social, nu un cabinet cu program de vizite. Toate consultațiile au loc prin apel video securizat.",
+    "faq1AOnline": "Deservim {country} exclusiv online, așa că nu există o adresă de vizitat. Sediul nostru social este în Irlanda, iar consultațiile au loc prin apel video.",
+    "faq2Q": "Medicii sunt înregistrați în {country}?",
+    "faq2A": "Da. Medicii care consultă pacienți din {country} sunt înregistrați la {regulator}, iar profilul fiecărui medic indică înregistrarea.",
+    "faq3Q": "Va fi acceptată {certificate}?",
+    "faq3A": "Este emisă de un medic înregistrat după evaluare și are aceeași valoare ca una emisă în cabinet. Angajatorii au propriile reguli, iar dreptul la indemnizație este stabilit de {benefitBody}.",
+    "faq4Q": "În ce limbi pot fi consultat?",
+    "faq4A": "Linia telefonică este preluată în {languages}, iar profilul fiecărui medic indică limbile în care consultă.",
+    "faq5Q": "Ce fac într-o urgență?",
+    "faq5A": "Global Health nu este un serviciu de urgență, iar linia telefonică nu este monitorizată pentru urgențe. Sunați la {emergency} sau mergeți la cea mai apropiată unitate de primiri urgențe."
   }
 }

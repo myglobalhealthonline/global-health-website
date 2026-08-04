@@ -56,6 +56,24 @@
     "emergencyNote": "A Global Health não é um serviço de urgência. Em caso de sintomas urgentes, contacte o número de emergência local.",
     "ctaBook": "Marcar consulta",
     "ctaDoctors": "Conhecer os médicos",
-    "faqEyebrow": "Perguntas"
+    "faqEyebrow": "Perguntas",
+    "titleTemplate": "Contactos Global Health {place} | Médico Online",
+    "descriptionTemplate": "Contacte a Global Health {country}: {phone}, {email}. Consultas online por videochamada com médicos inscritos na {regulator}.",
+    "h1Template": "Contactos — Global Health {place}",
+    "introOffice": "A Global Health é uma clínica online. As consultas decorrem por videochamada segura com médicos inscritos na {regulator} e a nossa sede social fica em {city}.",
+    "introOnline": "A Global Health atende {country} exclusivamente como clínica online: as consultas decorrem por videochamada segura com médicos inscritos na {regulator}. Não temos instalações em {country}.",
+    "reachBodyTemplate": "Marcar uma consulta é a forma mais rápida de falar com um médico. A linha telefónica trata de marcações, pagamentos e conta, não de aconselhamento clínico, e é atendida em {languages}. Em emergências, ligue {emergency}.",
+    "regulatoryBodyTemplate": "Os médicos que consultam através da Global Health {country} estão inscritos na {regulator}. O {certificate} é emitido pelo médico que fez a avaliação. O direito a subsídio de doença é decidido separadamente por {benefitBody}, segundo as suas próprias regras.",
+    "faq1Q": "Onde estão sediados?",
+    "faq1AOffice": "A morada em {city} é a sede social e não um consultório de atendimento presencial. Todas as consultas são feitas por videochamada segura.",
+    "faq1AOnline": "Atendemos {country} exclusivamente como clínica online, pelo que não há morada para visitar. A nossa sede social fica na Irlanda e as consultas são por videochamada.",
+    "faq2Q": "Os médicos estão inscritos em {country}?",
+    "faq2A": "Sim. Os médicos que atendem doentes em {country} estão inscritos na {regulator}, e o perfil de cada médico indica a sua inscrição.",
+    "faq3Q": "O meu {certificate} será aceite?",
+    "faq3A": "É emitido por um médico inscrito após avaliação e tem a mesma validade de um emitido presencialmente. Cada entidade patronal define as suas regras e o direito ao subsídio é decidido por {benefitBody}, segundo os seus critérios.",
+    "faq4Q": "Em que línguas posso ser atendido?",
+    "faq4A": "A linha telefónica é atendida em {languages} e o perfil de cada médico indica as línguas em que consulta.",
+    "faq5Q": "E se precisar de ajuda urgente?",
+    "faq5A": "A Global Health não é um serviço de urgência e a linha telefónica não está preparada para emergências. Ligue {emergency} ou dirija-se ao serviço de urgência mais próximo."
   }
 }

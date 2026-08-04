@@ -64,6 +64,27 @@ export type CountryContact = {
   office: ContactOffice | null;
   /** Medical register the market's clinicians hold. */
   regulator: { name: string; url: string };
+  /**
+   * Facts injected into the per-locale templates in `contact.json`. This is
+   * what gives every locale real translated copy instead of an English
+   * fallback: the sentences are translated once per language, the facts that
+   * differ per market are substituted in.
+   */
+  facts: {
+    /** City for the H1/title in markets with an office; null when online-only. */
+    city: string | null;
+    /** Local emergency number, e.g. "112", "155", "192". */
+    emergency: string;
+    /** Body that decides sick-leave benefit — ČSSZ, INSS, DSP, CNAS… */
+    benefitBody: string;
+    /** Word for the certificate in-market: sick cert, neschopenka, atestado… */
+    certificateNoun: string;
+  };
+  /**
+   * Optional hand-written override per locale. Where present it wins over the
+   * templates — used for the markets whose regulatory nuance does not survive
+   * templating. Absent locales render from the templates, fully translated.
+   */
   copy: Partial<Record<LocaleCode, MarketCopy>>;
 };
 
@@ -83,6 +104,12 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
       countryName: "Ireland",
     },
     regulator: { name: "Irish Medical Council", url: "https://www.medicalcouncil.ie/" },
+    facts: {
+      city: "Dublin",
+      emergency: "112 / 999",
+      benefitBody: "Department of Social Protection",
+      certificateNoun: "sick certificate",
+    },
     copy: {
       en: {
         title: "Contact Global Health Dublin | Online GP Ireland",
@@ -137,6 +164,12 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
       countryName: "Czechia",
     },
     regulator: { name: "Česká lékařská komora", url: "https://www.lkcr.cz/" },
+    facts: {
+      city: "Praha",
+      emergency: "155",
+      benefitBody: "ČSSZ",
+      certificateNoun: "neschopenka",
+    },
     copy: {
       cs: {
         title: "Kontakt | Online lékař Praha | Global Health",
@@ -228,6 +261,12 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
       countryName: "Portugal",
     },
     regulator: { name: "Ordem dos Médicos", url: "https://ordemdosmedicos.pt/" },
+    facts: {
+      city: "Sintra",
+      emergency: "112",
+      benefitBody: "Segurança Social",
+      certificateNoun: "atestado médico",
+    },
     copy: {
       pt: {
         title: "Contactos | Médico Online Sintra | Global Health",
@@ -316,6 +355,12 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
       name: "Colegio Oficial de Médicos",
       url: "https://www.cgcom.es/",
     },
+    facts: {
+      city: null,
+      emergency: "112",
+      benefitBody: "INSS",
+      certificateNoun: "justificante médico",
+    },
     copy: {
       es: {
         title: "Contacto | Médico Online España | Global Health",
@@ -400,6 +445,12 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
     phoneLanguages: ["Romanian", "English"],
     office: null,
     regulator: { name: "Colegiul Medicilor din România", url: "https://www.cmr.ro/" },
+    facts: {
+      city: null,
+      emergency: "112",
+      benefitBody: "CNAS",
+      certificateNoun: "adeverință medicală",
+    },
     copy: {
       ro: {
         title: "Contact | Medic Online România | Global Health",
@@ -484,6 +535,12 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
     phoneLanguages: ["Portuguese", "English"],
     office: null,
     regulator: { name: "Conselho Federal de Medicina", url: "https://portal.cfm.org.br/" },
+    facts: {
+      city: null,
+      emergency: "192",
+      benefitBody: "INSS",
+      certificateNoun: "atestado médico",
+    },
     copy: {
       pt: {
         title: "Contato | Médico Online Brasil | Global Health",
@@ -562,17 +619,99 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
   },
 };
 
+/** Locale-bundle shape the templates arrive in (contact.json → `country`). */
+export type ContactCopyTemplates = {
+  titleTemplate: string;
+  descriptionTemplate: string;
+  h1Template: string;
+  introOffice: string;
+  introOnline: string;
+  reachHeading: string;
+  reachBodyTemplate: string;
+  regulatoryHeading: string;
+  regulatoryBodyTemplate: string;
+  faqHeading: string;
+  faq1Q: string;
+  faq1AOffice: string;
+  faq1AOnline: string;
+  faq2Q: string;
+  faq2A: string;
+  faq3Q: string;
+  faq3A: string;
+  faq4Q: string;
+  faq4A: string;
+  faq5Q: string;
+  faq5A: string;
+};
+
+function fill(template: string, vars: Record<string, string>): string {
+  return template.replace(/\{(\w+)\}/gu, (match, key: string) => vars[key] ?? match);
+}
+
 /**
- * Resolves the copy for a locale: exact match → the market's default locale →
- * English. Never machine-translates; an unwritten locale shows the English
- * copy inside fully localised page chrome.
+ * Builds a market's copy from the active locale's templates. This is what
+ * gives all six locales real translated prose: the sentences are translated
+ * once per language and the per-market facts are substituted in, rather than
+ * every locale falling back to English.
+ *
+ * A hand-written `copy[locale]` override still wins — see `resolveContactCopy`.
+ */
+export function buildContactCopyFromTemplates(
+  contact: CountryContact,
+  countryName: string,
+  t: ContactCopyTemplates,
+): MarketCopy {
+  const { facts, office } = contact;
+  const vars: Record<string, string> = {
+    country: countryName,
+    // Markets with premises lead with the city (it is what people search);
+    // online-only markets lead with the country and claim no locality.
+    place: facts.city ?? countryName,
+    city: facts.city ?? countryName,
+    regulator: contact.regulator.name,
+    phone: contact.phoneDisplay,
+    email: contact.email,
+    languages: contact.phoneLanguages.join(" / "),
+    emergency: facts.emergency,
+    benefitBody: facts.benefitBody,
+    certificate: facts.certificateNoun,
+  };
+
+  return {
+    title: fill(t.titleTemplate, vars),
+    description: fill(t.descriptionTemplate, vars),
+    h1: fill(t.h1Template, vars),
+    intro: fill(office ? t.introOffice : t.introOnline, vars),
+    reachHeading: t.reachHeading,
+    reachBody: fill(t.reachBodyTemplate, vars),
+    regulatoryHeading: t.regulatoryHeading,
+    regulatoryBody: fill(t.regulatoryBodyTemplate, vars),
+    faqHeading: t.faqHeading,
+    faqs: [
+      {
+        question: fill(t.faq1Q, vars),
+        answer: fill(office ? t.faq1AOffice : t.faq1AOnline, vars),
+      },
+      { question: fill(t.faq2Q, vars), answer: fill(t.faq2A, vars) },
+      { question: fill(t.faq3Q, vars), answer: fill(t.faq3A, vars) },
+      { question: fill(t.faq4Q, vars), answer: fill(t.faq4A, vars) },
+      { question: fill(t.faq5Q, vars), answer: fill(t.faq5A, vars) },
+    ],
+  };
+}
+
+/**
+ * Hand-written copy for this exact locale wins; otherwise the locale's own
+ * templates are filled with this market's facts. Nothing is machine
+ * translated and no locale falls back to another language.
  */
 export function resolveContactCopy(
   contact: CountryContact,
   lang: LocaleCode,
-  defaultLocale: LocaleCode,
-): MarketCopy | null {
-  return contact.copy[lang] ?? contact.copy[defaultLocale] ?? contact.copy.en ?? null;
+  countryName: string,
+  templates: ContactCopyTemplates,
+): MarketCopy {
+  return contact.copy[lang] ?? buildContactCopyFromTemplates(contact, countryName, templates);
 }
 
 export function getCountryContact(code: string): CountryContact | null {

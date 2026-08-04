@@ -56,6 +56,24 @@
     "emergencyNote": "Global Health is not an emergency service. If your symptoms are urgent, contact your local emergency number.",
     "ctaBook": "Book a consultation",
     "ctaDoctors": "Meet the doctors",
-    "faqEyebrow": "Questions"
+    "faqEyebrow": "Questions",
+    "titleTemplate": "Contact Global Health {place} | Online Doctor",
+    "descriptionTemplate": "Contact Global Health {country}: {phone}, {email}. Online video consultations with doctors registered with {regulator}.",
+    "h1Template": "Contact Global Health {place}",
+    "introOffice": "Global Health is an online clinic. Consultations take place by secure video with doctors registered with {regulator}, and our registered office is in {city}.",
+    "introOnline": "Global Health serves {country} as an online-only clinic: consultations take place by secure video with doctors registered with {regulator}. We hold no premises in {country}.",
+    "reachBodyTemplate": "Booking a consultation is the fastest route to a doctor. The phone line covers bookings, billing and account questions rather than clinical advice, and is answered in {languages}. For emergencies call {emergency}.",
+    "regulatoryBodyTemplate": "Doctors consulting through Global Health {country} are registered with {regulator}. A {certificate} is issued by the doctor who assessed you. Entitlement to sick-leave benefit is decided separately by {benefitBody} under its own rules.",
+    "faq1Q": "Where are you based?",
+    "faq1AOffice": "Our {city} address is a registered office, not a walk-in clinic. Every consultation happens by secure video call.",
+    "faq1AOnline": "We operate in {country} as an online-only clinic, so there is no address to visit. Our registered office is in Ireland and consultations happen by video call.",
+    "faq2Q": "Are your doctors registered in {country}?",
+    "faq2A": "Yes. Doctors seeing patients in {country} hold registration with {regulator}, and each doctor's profile states their registration.",
+    "faq3Q": "Will my {certificate} be accepted?",
+    "faq3A": "It is issued by a registered doctor after assessing you and carries the same standing as one issued in person. Employers set their own policies, and benefit entitlement is decided by {benefitBody} against its own criteria.",
+    "faq4Q": "Which languages can I be seen in?",
+    "faq4A": "The phone line is answered in {languages}, and each doctor's profile lists the languages they consult in.",
+    "faq5Q": "What if I need urgent care?",
+    "faq5A": "Global Health is not an emergency service and the phone line is not monitored for emergencies. Call {emergency} or attend your nearest emergency department."
   }
 }

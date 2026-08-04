@@ -56,6 +56,24 @@
     "emergencyNote": "Global Health ist kein Notdienst. Bei akuten Beschwerden wählen Sie die örtliche Notrufnummer.",
     "ctaBook": "Beratung buchen",
     "ctaDoctors": "Unsere Ärzte",
-    "faqEyebrow": "Fragen"
+    "faqEyebrow": "Fragen",
+    "titleTemplate": "Kontakt Global Health {place} | Online-Arzt",
+    "descriptionTemplate": "Kontaktieren Sie Global Health {country}: {phone}, {email}. Online-Videosprechstunden mit bei {regulator} registrierten Ärzten.",
+    "h1Template": "Kontakt — Global Health {place}",
+    "introOffice": "Global Health ist eine Online-Klinik. Die Beratungen finden per sicherem Videoanruf mit bei {regulator} registrierten Ärzten statt, unser eingetragener Sitz ist in {city}.",
+    "introOnline": "Global Health betreut {country} ausschließlich als Online-Klinik: Die Beratungen finden per sicherem Videoanruf mit bei {regulator} registrierten Ärzten statt. Wir unterhalten keine Räumlichkeiten in {country}.",
+    "reachBodyTemplate": "Der schnellste Weg zu einem Arzt ist eine Terminbuchung. Die Telefonleitung ist für Buchungen, Abrechnung und Kontofragen da, nicht für medizinische Beratung, und wird auf {languages} bedient. Im Notfall wählen Sie {emergency}.",
+    "regulatoryBodyTemplate": "Ärzte, die über Global Health {country} beraten, sind bei {regulator} registriert. Die {certificate} stellt der behandelnde Arzt nach der Untersuchung aus. Über den Anspruch auf Krankengeld entscheidet {benefitBody} nach eigenen Regeln.",
+    "faq1Q": "Wo sind Sie ansässig?",
+    "faq1AOffice": "Die Adresse in {city} ist ein eingetragener Sitz, keine Praxis mit Publikumsverkehr. Alle Beratungen finden per sicherem Videoanruf statt.",
+    "faq1AOnline": "Wir sind in {country} ausschließlich online tätig, es gibt also keine Adresse zum Besuchen. Unser eingetragener Sitz ist in Irland, die Beratungen finden per Videoanruf statt.",
+    "faq2Q": "Sind Ihre Ärzte in {country} registriert?",
+    "faq2A": "Ja. Ärzte, die Patienten in {country} behandeln, sind bei {regulator} registriert; das Profil jedes Arztes nennt die Registrierung.",
+    "faq3Q": "Wird meine {certificate} anerkannt?",
+    "faq3A": "Sie wird nach der Untersuchung von einem registrierten Arzt ausgestellt und ist einer persönlich ausgestellten gleichgestellt. Arbeitgeber haben eigene Regeln, über Leistungen entscheidet {benefitBody}.",
+    "faq4Q": "In welchen Sprachen werde ich beraten?",
+    "faq4A": "Die Telefonleitung wird auf {languages} bedient; das Profil jedes Arztes nennt die Beratungssprachen.",
+    "faq5Q": "Was tue ich im Notfall?",
+    "faq5A": "Global Health ist kein Notdienst und die Telefonleitung wird nicht für Notfälle überwacht. Wählen Sie {emergency} oder suchen Sie die nächste Notaufnahme auf."
   }
 }

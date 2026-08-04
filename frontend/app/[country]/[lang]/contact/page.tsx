@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { BadgeCheck, Building2, Mail, MapPin, Phone, ShieldCheck, Video } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
@@ -9,9 +9,11 @@ import {
   formatOffice,
   getCountryContact,
   resolveContactCopy,
+  type ContactCopyTemplates,
 } from "@/lib/content/country-contact";
 import { SITE_NAME } from "@/lib/constants";
-import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import { PageHero } from "@/components/sections/PageHero";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
@@ -29,16 +31,17 @@ export const revalidate = 300;
 
 type Params = { country: string; lang: string };
 
-/** Resolves the route params to a country config + its contact record. */
+/** Route params → country config, contact facts and locale-resolved copy. */
 function resolve(country: string, lang: string) {
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return null;
   const contact = getCountryContact(code);
   if (!contact) return null;
-  const copy = resolveContactCopy(contact, lang as LocaleCode, config.defaultLocale);
-  if (!copy) return null;
-  return { code, config, contact, copy };
+  const bundle = loadLocaleBundle(lang as LocaleCode).contact;
+  const t = bundle.country as unknown as ContactCopyTemplates & Record<string, string>;
+  const copy = resolveContactCopy(contact, lang as LocaleCode, config.name, t);
+  return { code, config, contact, copy, t };
 }
 
 export async function generateMetadata({
@@ -49,14 +52,14 @@ export async function generateMetadata({
   const { country, lang } = await params;
   const resolved = resolve(country, lang);
   if (!resolved) return { title: SITE_NAME };
-  const { code, config, copy } = resolved;
+  const { config, copy } = resolved;
 
   return buildPublicMetadata({
     path: `/${country}/${lang}/contact`,
     title: copy.title,
     description: copy.description,
-    // copy.title already carries the brand, so the layout's " · Global Health"
-    // suffix would push it past the ~60-char display budget for no gain.
+    // The title already carries the brand; the layout suffix would push it
+    // past the ~60-char display budget for no gain.
     brandSuffix: false,
     type: "website",
     kind: "page",
@@ -67,7 +70,7 @@ export async function generateMetadata({
   });
 }
 
-function ContactRow({
+function DetailRow({
   icon: Icon,
   label,
   children,
@@ -77,19 +80,40 @@ function ContactRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex gap-3">
-      <Icon
-        className="mt-0.5 size-5 shrink-0 text-[var(--color-brand-primary)]"
-        strokeWidth={1.75}
-        aria-hidden
-      />
-      <div>
-        <p className="m-0 text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+    <li
+      className="gh2-glass-forest flex items-start gap-3"
+      style={{
+        border: "1px solid rgba(255,255,255,0.14)",
+        borderRadius: "var(--radius-card)",
+        padding: "1rem",
+      }}
+    >
+      <span
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-full"
+        style={{
+          background: "rgba(176,241,34,0.10)",
+          border: "1px solid rgba(176,241,34,0.18)",
+        }}
+      >
+        <Icon
+          className="size-4"
+          style={{ color: "var(--color-brand-accent)" }}
+          strokeWidth={1.5}
+          aria-hidden
+        />
+      </span>
+      <div className="min-w-0">
+        <p
+          className="text-[length:var(--text-meta)] font-semibold"
+          style={{ color: "rgba(255,255,255,0.92)" }}
+        >
           {label}
         </p>
-        <div className="mt-1 text-[15px] text-[var(--color-text-body)]">{children}</div>
+        <div className="mt-0.5 text-sm" style={{ color: "rgba(255,255,255,0.72)" }}>
+          {children}
+        </div>
       </div>
-    </div>
+    </li>
   );
 }
 
@@ -97,24 +121,21 @@ export default async function CountryContactPage({ params }: { params: Promise<P
   const { country, lang } = await params;
   const resolved = resolve(country, lang);
   if (!resolved) notFound();
-  const { code, config, contact, copy } = resolved;
+  const { config, contact, copy, t } = resolved;
 
-  // `contact.json` merges the English bundle underneath every locale, so a
-  // key that has not been translated yet renders in English rather than blank.
-  const t = loadLocaleBundle(lang as LocaleCode).contact.country;
   const office = contact.office;
   const bookHref = buildBookHref({ country, lang });
+  const accent = { color: "var(--color-brand-accent)" };
 
   return (
-    <>
+    <section>
       <JsonLd
         data={countryMedicalOrganizationJsonLd({
           name: config.name,
           slug: config.slug || country,
           url: `/${country}/${lang}/contact`,
           regulator: contact.regulator,
-          // Registered office only — see the note on the helper. Markets with
-          // no premises pass null and emit no address at all.
+          // Registered office only, never LocalBusiness — see the helper.
           address: office
             ? {
                 streetAddress: office.streetLines.join(", "),
@@ -139,30 +160,73 @@ export default async function CountryContactPage({ params }: { params: Promise<P
         ])}
       />
 
-      <GH2CompactHero
-        eyebrow={config.name}
-        title={copy.h1}
-        body={copy.intro}
+      {/* DARK — hero, same primitive and rhythm as the global /contact page */}
+      <PageHero
+        countryCode={config.code}
+        countryLabel={`${SITE_NAME} · ${config.name}`}
         watermark={t.watermark}
-        backHref={`/${country}/${lang}`}
-        backLabel={config.name}
+        titleLead={copy.h1}
+        titleAccent=""
+        lede={copy.intro}
+        ctaLabel={t.ctaBook}
+        ctaHref={bookHref}
+        secondaryLabel={t.ctaDoctors}
+        secondaryHref={`/${country}/${lang}/doctors`}
+        trustCards={[
+          {
+            icon: <Phone className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: t.phoneLabel,
+            subtitle: contact.phoneDisplay,
+          },
+          {
+            icon: <Mail className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: t.emailLabel,
+            subtitle: contact.email,
+          },
+          office
+            ? {
+                icon: <Building2 className="size-[18px]" strokeWidth={2} aria-hidden />,
+                title: t.registeredOfficeLabel,
+                subtitle: `${office.locality}, ${office.countryName}`,
+              }
+            : {
+                icon: <Video className="size-[18px]" strokeWidth={2} aria-hidden />,
+                title: t.onlineOnlyLabel,
+                subtitle: config.name,
+              },
+        ]}
+        mobileBgSrc="/images/stock/contact.jpg"
       />
 
-      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel relative overflow-hidden">
-        <div className="gh2-container py-14 md:py-20">
-          <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:gap-14">
+      {/* LIGHT — reach + registration, with the contact card alongside */}
+      <section className="relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <SectionSeam theme="light" />
+        <div className="mx-auto max-w-[var(--container-width)] gh-section px-5 md:px-10">
+          <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr]">
             <div>
-              <h2 className="text-2xl font-extrabold tracking-[-0.015em] text-[var(--color-text-primary)]">
+              <h2
+                className="text-2xl font-extrabold tracking-[-0.015em]"
+                style={{ color: "var(--color-text-primary)" }}
+              >
                 {copy.reachHeading}
               </h2>
-              <p className="mt-4 max-w-[62ch] text-[16px] leading-[1.7] text-[var(--color-text-body)]">
+              <p
+                className="mt-4 max-w-[62ch] text-[16px] leading-[1.7]"
+                style={{ color: "var(--color-text-body)" }}
+              >
                 {copy.reachBody}
               </p>
 
-              <h2 className="mt-10 text-2xl font-extrabold tracking-[-0.015em] text-[var(--color-text-primary)]">
+              <h2
+                className="mt-10 text-2xl font-extrabold tracking-[-0.015em]"
+                style={{ color: "var(--color-text-primary)" }}
+              >
                 {copy.regulatoryHeading}
               </h2>
-              <p className="mt-4 max-w-[62ch] text-[16px] leading-[1.7] text-[var(--color-text-body)]">
+              <p
+                className="mt-4 max-w-[62ch] text-[16px] leading-[1.7]"
+                style={{ color: "var(--color-text-body)" }}
+              >
                 {copy.regulatoryBody}
               </p>
               <p className="mt-3 text-[15px]">
@@ -170,8 +234,10 @@ export default async function CountryContactPage({ params }: { params: Promise<P
                   href={contact.regulator.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
+                  className="inline-flex items-center gap-2 font-medium underline underline-offset-2"
+                  style={{ color: "var(--color-brand-primary)" }}
                 >
+                  <BadgeCheck className="size-4" strokeWidth={1.75} aria-hidden />
                   {contact.regulator.name}
                 </a>
               </p>
@@ -186,49 +252,46 @@ export default async function CountryContactPage({ params }: { params: Promise<P
               </div>
             </div>
 
-            <aside className="gh2-card-ivory h-fit rounded-[22px] p-6 md:p-7">
-              <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
+            <aside>
+              <h2
+                className="text-xl font-extrabold tracking-[-0.015em]"
+                style={{ color: "var(--color-text-primary)" }}
+              >
                 {t.detailsHeading}
               </h2>
-              <div className="mt-5 space-y-5">
-                <ContactRow icon={Phone} label={t.phoneLabel}>
-                  <a
-                    href={`tel:${contact.phoneE164}`}
-                    className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
-                  >
+              <ul className="mt-6 space-y-3">
+                <DetailRow icon={Phone} label={t.phoneLabel}>
+                  <a href={`tel:${contact.phoneE164}`} className="hover:underline" style={accent}>
                     {contact.phoneDisplay}
                   </a>
-                </ContactRow>
-                <ContactRow icon={Mail} label={t.emailLabel}>
-                  <a
-                    href={`mailto:${contact.email}`}
-                    className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
-                  >
+                </DetailRow>
+                <DetailRow icon={Mail} label={t.emailLabel}>
+                  <a href={`mailto:${contact.email}`} className="hover:underline" style={accent}>
                     {contact.email}
                   </a>
-                </ContactRow>
+                </DetailRow>
                 {office ? (
-                  <ContactRow icon={MapPin} label={t.registeredOfficeLabel}>
+                  <DetailRow icon={MapPin} label={t.registeredOfficeLabel}>
                     <address className="not-italic">{formatOffice(office)}</address>
-                    <p className="m-0 mt-2 text-[13px] text-[var(--color-text-muted)]">
+                    <p className="mt-2 text-[13px]" style={{ color: "rgba(255,255,255,0.55)" }}>
                       {t.noWalkIn}
                     </p>
-                  </ContactRow>
+                  </DetailRow>
                 ) : (
-                  <ContactRow icon={MapPin} label={t.onlineOnlyLabel}>
-                    <p className="m-0">{t.onlineOnlyBody.replace("{country}", config.name)}</p>
-                  </ContactRow>
+                  <DetailRow icon={Video} label={t.onlineOnlyLabel}>
+                    {t.onlineOnlyBody.replace("{country}", config.name)}
+                  </DetailRow>
                 )}
-              </div>
-              <p className="mt-6 border-t border-[color-mix(in_srgb,var(--color-text-muted)_25%,transparent)] pt-4 text-[13px] leading-[1.6] text-[var(--color-text-muted)]">
-                {t.emergencyNote}
-              </p>
+                <DetailRow icon={ShieldCheck} label={t.faqEyebrow}>
+                  {t.emergencyNote}
+                </DetailRow>
+              </ul>
             </aside>
           </div>
         </div>
       </section>
 
       <FAQSection title={copy.faqHeading} items={copy.faqs} theme="dark" eyebrow={t.faqEyebrow} />
-    </>
+    </section>
   );
 }
