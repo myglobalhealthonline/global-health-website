@@ -94,6 +94,19 @@ function buildAdminBlogWhere(query: AdminBlogQuery): Prisma.BlogPostWhereInput {
       { title: { contains: term, mode: "insensitive" } },
       { slug: { contains: term, mode: "insensitive" } },
       { category: { contains: term, mode: "insensitive" } },
+      // The admin list shows a post's English title when it has one, so the
+      // search box has to match the translations too — otherwise typing the
+      // title you can see on screen returns nothing.
+      {
+        translations: {
+          some: {
+            OR: [
+              { title: { contains: term, mode: "insensitive" } },
+              { slug: { contains: term, mode: "insensitive" } },
+            ],
+          },
+        },
+      },
     ];
   }
   return where;

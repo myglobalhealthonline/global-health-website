@@ -34,18 +34,31 @@ function orderedLocales(p: AdminBlogDto): Array<{ locale: string; isOriginal: bo
     .map((locale) => ({ locale, isOriginal: locale === original }));
 }
 
+/** The title and slug to list a post under: its English ones when an English
+ *  translation exists, otherwise the language it was authored in. Same reason
+ *  English leads the chips — the admin team reads the list in English, even
+ *  though the article itself is written for its market. */
+function listedTitle(p: AdminBlogDto): { title: string; slug: string } {
+  if (p.locale === "EN") return { title: p.title, slug: p.slug };
+  const en = p.translations.find((t) => t.locale.toUpperCase() === "EN" && t.title);
+  return en ? { title: en.title, slug: en.slug } : { title: p.title, slug: p.slug };
+}
+
 function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
   const fields: ColumnPriorityField<AdminBlogDto>[] = [
     {
       key: "title",
       label: "Title",
       priority: 1,
-      render: (p) => (
-        <>
-          <span className="line-clamp-1 max-w-[280px] font-semibold">{p.title}</span>
-          <span className="block font-mono text-portal-thead text-[var(--color-text-muted)]">{p.slug}</span>
-        </>
-      ),
+      render: (p) => {
+        const { title, slug } = listedTitle(p);
+        return (
+          <>
+            <span className="line-clamp-1 max-w-[280px] font-semibold">{title}</span>
+            <span className="block font-mono text-portal-thead text-[var(--color-text-muted)]">{slug}</span>
+          </>
+        );
+      },
     },
     {
       key: "category",
