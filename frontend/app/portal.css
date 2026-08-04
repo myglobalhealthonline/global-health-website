@@ -1630,17 +1630,17 @@ a.gh-admin-summary-item--link:focus-visible {
   color: var(--color-text-primary);
 }
 
-/* Per-locale table on the edit screen: one row per supported language,
-   translated or not, so adding a language is a button and never a guess. */
-.gh-admin-blog-locale-table th[scope="row"] {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+/* Per-locale translation tabs on the blog edit screen. Panels stay mounted
+   so every language submits together; only the active one is visible. */
+.gh-admin-blog-translation-tabs {
+  border: 1px solid var(--portal-line, var(--color-border));
+  border-radius: var(--portal-radius);
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.9);
 }
 
-.gh-admin-blog-locale-table tr[data-active="true"] {
-  background: rgba(29, 75, 54, 0.06);
+.gh-admin-blog-tab-panel[hidden] {
+  display: none;
 }
 
 @media (max-width: 1180px) {

@@ -19,6 +19,7 @@ import { PUBLIC_BLOG_TAG } from "@/lib/content/get-public-blog";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { BlogFields } from "../../_components/blog-fields";
+import { BlogTranslationTabs } from "../../_components/blog-translation-tabs";
 import { parseBlogBody, validateBlogBody } from "../../_components/blog-form-parse";
 import { FormSection } from "@/components/FormSection";
 import { SetCrumbTitle } from "@/components/crumb-title";
@@ -27,7 +28,7 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string; success?: string; editLocale?: string }>;
+  searchParams?: Promise<{ error?: string; success?: string }>;
 };
 
 function bustBlogCaches(slug: string) {
@@ -39,7 +40,6 @@ function bustBlogCaches(slug: string) {
 export default async function AdminEditBlogPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
-  const editLocale = messages.editLocale?.trim() ?? null;
 
   const [result, countriesResult, doctorsResult, allServices] = await Promise.all([
     fetchAdminBlogPostById(id),
@@ -76,25 +76,13 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
   const allCountries = countriesResult.ok ? countriesResult.data.countries : [];
   const assignedCountryIds = new Set(post.countries.map((c) => c.countryId));
   const translations = post.translations;
-  const editTranslation = editLocale ? translations.find((t) => t.locale === editLocale) ?? null : null;
 
-  /* One row per locale the site actually serves, so the editor can see at a
-   * glance which languages exist, which are missing, and which have a title
-   * but no body (the state the public renderer refuses to serve). The post's
-   * own locale is shown as "Original" — it is edited by the form above, not
-   * as a translation of itself. */
-  const localeRows = ADMIN_BLOG_LOCALES.map((locale) => {
-    const isOriginal = locale === post.locale;
-    const translation = translations.find((t) => t.locale.toUpperCase() === locale) ?? null;
-    return {
-      locale,
-      isOriginal,
-      translation,
-      title: isOriginal ? post.title : translation?.title ?? "",
-      slug: isOriginal ? post.slug : translation?.slug ?? "",
-      hasBody: isOriginal ? Boolean(post.body?.trim()) : Boolean(translation?.content?.trim()),
-    };
-  });
+  /* Tabs cover every locale the site serves except the post's own — a post is
+   * not a translation of itself, and its original text is edited by the form
+   * above. */
+  const translatableLocales = ADMIN_BLOG_LOCALES.filter((locale) => locale !== post.locale);
+  const existingLocales = new Set(translations.map((t) => t.locale.toUpperCase()));
+  const readyCount = translations.filter((t) => t.content?.trim()).length;
 
   async function updateBlogAction(formData: FormData) {
     "use server";
@@ -124,38 +112,61 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
     redirect(`/admin/blog?success=${encodeURIComponent("Post deleted")}`);
   }
 
-  async function saveTranslationAction(formData: FormData) {
+  /** Saves every language in one submit, the way the doctor bio tabs do.
+   *  A tab left entirely blank is skipped; clearing the title and slug of a
+   *  language that already exists deletes it. Half-filled tabs are rejected
+   *  by locale rather than silently dropped. */
+  async function saveTranslationsAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    const locale = (formData.get("locale") as string)?.trim();
-    const title = (formData.get("tr_title") as string)?.trim();
-    const slug = (formData.get("tr_slug") as string)?.trim();
-    const excerpt = (formData.get("tr_excerpt") as string)?.trim() || null;
-    const content = (formData.get("tr_content") as string)?.trim() || null;
-    const seoTitle = (formData.get("tr_seoTitle") as string)?.trim() || null;
-    const seoDesc = (formData.get("tr_seoDesc") as string)?.trim() || null;
-    if (!locale || !title || !slug) {
-      redirect(`/admin/blog/${id}/edit?error=Locale%2C+title+and+slug+required`);
-    }
-    const result = await putAdminBlogTranslation(id, locale, { title, slug, excerpt, content, seoTitle, seoDesc });
-    if (!result.ok) {
-      redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(result.message)}`);
-    }
-    revalidatePath(`/admin/blog/${id}/edit`);
-    redirect(`/admin/blog/${id}/edit?success=${encodeURIComponent(`Translation (${locale}) saved`)}`);
-  }
+    const saved: string[] = [];
+    const removed: string[] = [];
 
-  async function deleteTranslationAction(formData: FormData) {
-    "use server";
-    await requireAdminAction();
-    const locale = (formData.get("locale") as string)?.trim();
-    if (!locale) redirect(`/admin/blog/${id}/edit?error=Missing+locale`);
-    const result = await deleteAdminBlogTranslation(id, locale);
-    if (!result.ok) {
-      redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    for (const code of translatableLocales) {
+      const title = (formData.get(`tr_${code}_title`) as string)?.trim() ?? "";
+      const slug = (formData.get(`tr_${code}_slug`) as string)?.trim() ?? "";
+      const existed = existingLocales.has(code);
+
+      if (!title && !slug) {
+        if (!existed) continue;
+        const removedResult = await deleteAdminBlogTranslation(id, code);
+        if (!removedResult.ok) {
+          redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${code}: ${removedResult.message}`)}`);
+        }
+        removed.push(code);
+        continue;
+      }
+      if (!title || !slug) {
+        redirect(
+          `/admin/blog/${id}/edit?error=${encodeURIComponent(`${code} needs both a title and a slug`)}`,
+        );
+      }
+
+      const result = await putAdminBlogTranslation(id, code, {
+        title,
+        slug,
+        excerpt: (formData.get(`tr_${code}_excerpt`) as string)?.trim() || null,
+        content: (formData.get(`tr_${code}_content`) as string)?.trim() || null,
+        seoTitle: (formData.get(`tr_${code}_seoTitle`) as string)?.trim() || null,
+        seoDesc: (formData.get(`tr_${code}_seoDesc`) as string)?.trim() || null,
+      });
+      if (!result.ok) {
+        redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${code}: ${result.message}`)}`);
+      }
+      saved.push(code);
     }
+
+    bustBlogCaches(post.slug);
     revalidatePath(`/admin/blog/${id}/edit`);
-    redirect(`/admin/blog/${id}/edit?success=${encodeURIComponent(`Translation (${locale}) deleted`)}`);
+    const parts = [
+      saved.length > 0 ? `saved ${saved.join(", ")}` : null,
+      removed.length > 0 ? `removed ${removed.join(", ")}` : null,
+    ].filter(Boolean);
+    redirect(
+      `/admin/blog/${id}/edit?success=${encodeURIComponent(
+        parts.length > 0 ? `Translations: ${parts.join(" · ")}` : "No translation changes",
+      )}`,
+    );
   }
 
   async function saveCountriesAction(formData: FormData) {
@@ -234,144 +245,48 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         </div>
       </form>
 
-      {/* Translations section */}
-      <FormSection
-        className="mt-6"
-        title={
-          <span className="inline-flex items-center gap-2">
-            <Languages className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-            Translations
-          </span>
-        }
-        description="Add locale-specific title, slug, and content for this post."
-        right={translations.length > 0 ? <Pill tone="brand">{translations.length}</Pill> : null}
-      >
-        {/* Every supported locale is a row, translated or not. Previously only
-            existing translations were listed and a new one meant typing a
-            locale code into a free-text box — so the six locales the site
-            actually serves were invisible until you guessed them. */}
-        <div className="gh-form-section__span-2 mt-3 overflow-x-auto">
-          <table className="gh-admin-table gh-admin-blog-locale-table">
-            <thead>
-              <tr>
-                <th scope="col">Language</th>
-                <th scope="col">Title</th>
-                <th scope="col">Slug</th>
-                <th scope="col">Body</th>
-                <th scope="col" className="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {localeRows.map((row) => (
-                <tr key={row.locale} data-active={row.locale === editLocale ? "true" : undefined}>
-                  <th scope="row">
-                    <span className="font-mono font-bold">{row.locale}</span>
-                    {row.isOriginal ? <Pill tone="brand">Original</Pill> : null}
-                  </th>
-                  <td>
-                    {row.title ? (
-                      <span className="line-clamp-1">{row.title}</span>
-                    ) : (
-                      <span className="text-[var(--color-text-muted)]">Not translated</span>
-                    )}
-                  </td>
-                  <td className="font-mono text-portal-meta text-[var(--color-text-muted)]">
-                    {row.slug || "—"}
-                  </td>
-                  <td>
-                    {row.hasBody ? (
-                      <Pill tone="published">Ready</Pill>
-                    ) : row.translation ? (
-                      <Pill tone="draft">No body</Pill>
-                    ) : (
-                      <span className="text-[var(--color-text-muted)]">—</span>
-                    )}
-                  </td>
-                  <td className="text-right">
-                    <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
-                      {row.isOriginal ? (
-                        <span className="text-portal-meta text-[var(--color-text-muted)]">
-                          Edit above
-                        </span>
-                      ) : (
-                        <>
-                          <Link
-                            href={`/admin/blog/${id}/edit?editLocale=${row.locale}#translation-editor`}
-                            className="gh-btn gh-btn-soft text-portal-meta"
-                          >
-                            {row.translation ? "Edit" : "Add"}
-                          </Link>
-                          {row.translation ? (
-                            <form action={deleteTranslationAction} className="inline">
-                              <input type="hidden" name="locale" value={row.locale} />
-                              <button
-                                type="submit"
-                                className="gh-btn gh-btn-danger text-portal-meta"
-                                aria-label={`Delete ${row.locale} translation`}
-                              >
-                                <Trash2 className="size-3" aria-hidden />
-                              </button>
-                            </form>
-                          ) : null}
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {editLocale ? (
-          <form
-            id="translation-editor"
-            action={saveTranslationAction}
-            className="gh-admin-blog-translation-form gh-form-section__span-2 mt-4"
-          >
-            <input type="hidden" name="locale" value={editLocale} />
-            <h4 className="m-0 text-portal-body font-bold text-[var(--color-text-primary)]">
-              {editTranslation ? "Edit" : "Add"} translation: {editLocale.toUpperCase()}
-            </h4>
-            <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two">
-              <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Title *</span>
-                <input type="text" name="tr_title" defaultValue={editTranslation?.title ?? ""} className="gh-input" required />
-              </label>
-              <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Slug *</span>
-                <input type="text" name="tr_slug" defaultValue={editTranslation?.slug ?? ""} className="gh-input" required />
-              </label>
+      {/* Translations — one tab per language, same pattern as the doctor
+          bio editor. All panels submit together, so a post is translated in
+          one save instead of one page reload per locale. */}
+      <form action={saveTranslationsAction} className="gh-admin-blog-form mt-6">
+        <FormSection
+          title={
+            <span className="inline-flex items-center gap-2">
+              <Languages className="size-4 text-[var(--color-text-muted)]" aria-hidden />
+              Translations
+            </span>
+          }
+          description="Each language has its own title, slug and body, published at its own URL."
+          right={
+            translations.length > 0 ? (
+              <Pill tone={readyCount === translations.length ? "published" : "draft"}>
+                {readyCount}/{translations.length} ready
+              </Pill>
+            ) : null
+          }
+        >
+          <div className="gh-form-section__span-2">
+            <BlogTranslationTabs
+              locales={translatableLocales}
+              originalLocale={post.locale}
+              initialTranslations={translations.map((t) => ({
+                locale: t.locale,
+                title: t.title,
+                slug: t.slug,
+                excerpt: t.excerpt,
+                content: t.content,
+                seoTitle: t.seoTitle,
+                seoDesc: t.seoDesc,
+              }))}
+            />
+            <div className="gh-admin-blog-actions gh-admin-blog-actions--end mt-4">
+              <Btn type="submit" variant="primary" size="md">
+                Save translations
+              </Btn>
             </div>
-            <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Excerpt</span>
-              <textarea name="tr_excerpt" rows={2} defaultValue={editTranslation?.excerpt ?? ""} className="gh-input" />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Content (HTML)</span>
-              <textarea name="tr_content" rows={12} defaultValue={editTranslation?.content ?? ""} className="gh-input resize-y font-mono text-portal-meta" />
-            </label>
-            <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two">
-              <label className="flex flex-col gap-1">
-                <span className="gh-field-label">SEO title</span>
-                <input type="text" name="tr_seoTitle" defaultValue={editTranslation?.seoTitle ?? ""} className="gh-input" />
-              </label>
-              <label className="flex flex-col gap-1">
-                <span className="gh-field-label">SEO description</span>
-                <input type="text" name="tr_seoDesc" defaultValue={editTranslation?.seoDesc ?? ""} className="gh-input" />
-              </label>
-            </div>
-            <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
-              <Link href={`/admin/blog/${id}/edit`} className="gh-btn gh-btn-soft">Cancel</Link>
-              <button type="submit" className="gh-btn gh-btn-primary">Save translation</button>
-            </div>
-          </form>
-        ) : (
-          <p className="gh-form-section__span-2 mt-4 text-portal-meta text-[var(--color-text-muted)]">
-            Pick a language above to add or edit its translation.
-          </p>
-        )}
-      </FormSection>
+          </div>
+        </FormSection>
+      </form>
 
       {/* Countries multi-select */}
       {allCountries.length > 0 ? (
