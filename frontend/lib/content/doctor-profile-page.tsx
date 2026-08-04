@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, CalendarClock } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
@@ -115,6 +116,20 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   const { doctorSlug, countrySlug: routeCountrySlug, lang: routeLang } = await params;
   const routeCode = routeCountrySlug ? countryCodeFromSlug(routeCountrySlug) : null;
   const data = await resolveDoctorProfilePageData(doctorSlug, routeLang, routeCode ?? undefined);
+
+  // A slug that only matches de-accented (legacy Wix URLs kept the diacritics)
+  // redirects to the live ASCII slug rather than rendering a second URL for
+  // the same clinician.
+  if (data.canonicalSlug && routeCountrySlug && routeLang) {
+    permanentRedirect(`/${routeCountrySlug}/${routeLang}/doctors/${data.canonicalSlug}`);
+  }
+  // No such clinician, confirmed by the backend (not an outage): 404 rather
+  // than render a profile fabricated from the URL slug. Those placeholders
+  // were noindexed, but legacy redirects still landed real visitors on a
+  // page describing a doctor who does not exist, carrying Physician schema.
+  if (data.missingConfirmed) {
+    notFound();
+  }
   const countryNameToSlug: Record<string, string> = {
     Ireland: "ireland",
     Portugal: "portugal",

@@ -46,7 +46,75 @@ export type DoctorProfilePageData = {
   profileImageZoom?: number;
   /** Optional image shown inside the booking CTA banner. */
   bookingCtaImage?: { src: string; alt: string };
+  /**
+   * Whether a real clinician record backs this page. False means every field
+   * above is placeholder copy derived from the URL slug — see
+   * `resolveDoctorProfilePageData`.
+   */
+  recordFound: boolean;
+  /**
+   * True only when the backend positively answered "no such doctor" (404).
+   * A transport failure or 5xx leaves this false, so an outage degrades to
+   * the placeholder rather than 404ing every real clinician on the site.
+   */
+  missingConfirmed: boolean;
+  /**
+   * Set when the requested slug did not resolve but its de-accented form did
+   * (e.g. `mudr-vojtěch-černý` → `mudr-vojtech-cerny`). The route redirects
+   * to this slug instead of rendering.
+   */
+  canonicalSlug?: string;
 };
+
+/**
+ * Slug as the CMS stores it: percent-decoded, de-accented, lowercase.
+ * Legacy Wix URLs carried Czech and Portuguese diacritics; the live slugs are
+ * ASCII, so a straight lookup misses and used to fall through to a fabricated
+ * profile.
+ */
+/** Honorifics that drifted between the Wix slugs and the CMS ones. */
+const DOCTOR_SLUG_HONORIFICS = [
+  "mudr-",
+  "mudr.-",
+  "dr-",
+  "dr.-",
+  "dra-",
+  "dra.-",
+  "prof-",
+  "mgr-",
+  "physiotherapeut-",
+];
+
+/**
+ * Alternative slugs to try when the requested one misses, in priority order:
+ * de-accented, honorific stripped, and honorific normalised to `dr-`. Returns
+ * only candidates that differ from the input, deduplicated.
+ */
+export function doctorSlugCandidates(slug: string): string[] {
+  const ascii = asciiDoctorSlug(slug);
+  const honorific = DOCTOR_SLUG_HONORIFICS.find((h) => ascii.startsWith(h));
+  const bare = honorific ? ascii.slice(honorific.length) : ascii;
+  const out: string[] = [];
+  for (const candidate of [ascii, bare, `dr-${bare}`]) {
+    if (candidate && candidate !== slug && !out.includes(candidate)) out.push(candidate);
+  }
+  return out;
+}
+
+export function asciiDoctorSlug(slug: string): string {
+  let decoded = slug;
+  try {
+    decoded = decodeURIComponent(slug);
+  } catch {
+    // Malformed percent-encoding — fall back to the raw value.
+  }
+  return decoded
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/gu, "-")
+    .replace(/^-+|-+$/gu, "");
+}
 
 function toLabel(slug: string) {
   return slug
@@ -55,7 +123,12 @@ function toLabel(slug: string) {
     .join(" ");
 }
 
-const doctorSeed: Record<string, Omit<DoctorProfilePageData, "hero" | "bottomCta">> = {
+// Seeded copy only — the resolution flags are set by
+// `resolveDoctorProfilePageData`, never by a seed entry.
+const doctorSeed: Record<
+  string,
+  Omit<DoctorProfilePageData, "hero" | "bottomCta" | "recordFound" | "missingConfirmed">
+> = {
   "dr-khoiamul-islam": {
     profile: {
       name: "Dr. Khoiamul Islam",
@@ -111,6 +184,9 @@ export function getDoctorProfileData(
     };
 
   return {
+    // Placeholder until `resolveDoctorProfilePageData` confirms a real record.
+    recordFound: false,
+    missingConfirmed: false,
     hero: {
       title: profile.name,
       description:
@@ -148,11 +224,16 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     locale && isSupportedLocale(locale) ? (locale as LocaleCode) : "en",
   );
   const backToTeam = common.doctorProfile.backToTeam;
+  // `status` distinguishes a real 404 from an outage — only the former may
+  // 404 the page (see `missingConfirmed`).
+  let countryFetchStatus: number | undefined;
   const [countryScopedDoctor, globalDoctor, profileImageSrc] = await Promise.all([
     countryCode
-      ? fetchDoctorByCountryAndSlug(countryCode, doctorSlug, locale).then((res) =>
-          res.ok ? normalizePublicDoctorRecord(res.data.doctor) : undefined,
-        )
+      ? fetchDoctorByCountryAndSlug(countryCode, doctorSlug, locale).then((res) => {
+          if (res.ok) return normalizePublicDoctorRecord(res.data.doctor);
+          countryFetchStatus = res.status;
+          return undefined;
+        })
       : Promise.resolve(undefined),
     getPublicDoctorBySlug(doctorSlug, locale),
     resolveDoctorProfileImageUrl(doctorSlug),
@@ -164,11 +245,34 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     if (profileImageSrc) {
       out.bookingCtaImage = { src: profileImageSrc, alt: base.profile.name };
     }
+    out.recordFound = false;
+    out.missingConfirmed = countryFetchStatus === 404;
+
+    // Legacy Wix URLs differ from the live slugs in two mechanical ways:
+    // diacritics (`…/mudr-vojtěch-černý` vs `mudr-vojtech-cerny`) and
+    // honorific drift (`mudr-ahmed-maklad` vs `dr-ahmed-maklad`,
+    // `dra-beatriz-carvalho` vs `beatriz-carvalho`). Try those variants before
+    // 404ing so the inbound links land on the real clinician. A genuine
+    // rename or a departed doctor still 404s — that is correct.
+    for (const candidate of doctorSlugCandidates(doctorSlug)) {
+      const retry = countryCode
+        ? await fetchDoctorByCountryAndSlug(countryCode, candidate, locale).then((res) =>
+            res.ok ? normalizePublicDoctorRecord(res.data.doctor) : undefined,
+          )
+        : await getPublicDoctorBySlug(candidate, locale);
+      if (retry) {
+        out.canonicalSlug = candidate;
+        out.missingConfirmed = false;
+        break;
+      }
+    }
     return out;
   }
 
   const out: DoctorProfilePageData = {
     ...base,
+    recordFound: true,
+    missingConfirmed: false,
     ...(profileImageSrc ? { profileImageSrc } : {}),
     hero: {
       ...base.hero,
