@@ -181,6 +181,13 @@ export default async function AdminBlogListPage({
   const posts = result.ok ? result.data.items : [];
   const publishedCount = posts.filter((p) => p.status === "PUBLISHED" && p.isActive).length;
   const translatedCount = posts.filter((p) => p.translations.length > 0).length;
+  const groups = groupByCountry(posts);
+  /* An article visible in several countries is listed under each of them,
+   * because that is what "articles in Ireland" means to whoever is looking.
+   * The consequence is that the group counts can sum higher than the number
+   * of articles, so the summary says which number it is rather than leaving
+   * the two silently disagreeing. */
+  const listings = groups.reduce((n, g) => n + g.posts.length, 0);
 
   return (
     <>
@@ -289,9 +296,12 @@ export default async function AdminBlogListPage({
                 <AdminSummaryStrip
                   items={[
                     {
-                      label: "Posts shown",
+                      label: "Articles",
                       value: posts.length,
-                      hint: "Matching filters",
+                      hint:
+                        listings > posts.length
+                          ? `${listings} listings — some serve several countries`
+                          : "Matching filters",
                       tone: "brand",
                     },
                     {
@@ -314,7 +324,7 @@ export default async function AdminBlogListPage({
             {/* One section per country. Articles are the unit of work here,
                 and an article belongs to a market — grouping by language put
                 the same article in six places and hid which market owns it. */}
-            {groupByCountry(posts).map((group) => (
+            {groups.map((group) => (
               <AdminCard key={group.key} padding={0} className="mt-4">
                 <div className="gh-admin-blog-group-head">
                   <h2 className="gh-admin-blog-group-title">{group.name}</h2>
