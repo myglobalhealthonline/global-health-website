@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BadgeCheck, Building2, Mail, MapPin, Phone, ShieldCheck, Video } from "lucide-react";
+import {
+  BadgeCheck,
+  Building2,
+  Languages,
+  Mail,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  Video,
+} from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
@@ -13,6 +22,7 @@ import {
 } from "@/lib/content/country-contact";
 import { SITE_NAME } from "@/lib/constants";
 import { PageHero } from "@/components/sections/PageHero";
+import { ContactArchPanel } from "@/components/sections/ContactArchPanel";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -195,6 +205,31 @@ export default async function CountryContactPage({ params }: { params: Promise<P
                 subtitle: config.name,
               },
         ]}
+        rightSlot={
+          <ContactArchPanel
+            alt={t.heroImageAlt}
+            floats={[
+              // Ping dot, matching the global page's first badge.
+              { icon: null, title: t.floatRegistered, subtitle: contact.regulator.name },
+              {
+                icon: <Languages className="size-4" strokeWidth={2} aria-hidden />,
+                title: t.floatLanguages,
+                subtitle: contact.phoneLanguages.join(" / "),
+              },
+              office
+                ? {
+                    icon: <MapPin className="size-4" strokeWidth={2} aria-hidden />,
+                    title: t.registeredOfficeLabel,
+                    subtitle: `${office.locality}, ${office.countryName}`,
+                  }
+                : {
+                    icon: <Video className="size-4" strokeWidth={2} aria-hidden />,
+                    title: t.onlineOnlyLabel,
+                    subtitle: config.name,
+                  },
+            ]}
+          />
+        }
         mobileBgSrc="/images/stock/contact.jpg"
       />
 

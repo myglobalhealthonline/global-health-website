@@ -74,6 +74,9 @@
     "faq4Q": "Which languages can I be seen in?",
     "faq4A": "The phone line is answered in {languages}, and each doctor's profile lists the languages they consult in.",
     "faq5Q": "What if I need urgent care?",
-    "faq5A": "Global Health is not an emergency service and the phone line is not monitored for emergencies. Call {emergency} or attend your nearest emergency department."
+    "faq5A": "Global Health is not an emergency service and the phone line is not monitored for emergencies. Call {emergency} or attend your nearest emergency department.",
+    "floatRegistered": "Registered doctors",
+    "floatLanguages": "Consultations in",
+    "heroImageAlt": "Doctor speaking with a patient during an online consultation"
   }
 }

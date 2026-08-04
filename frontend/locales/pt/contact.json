@@ -74,6 +74,9 @@
     "faq4Q": "Em que línguas posso ser atendido?",
     "faq4A": "A linha telefónica é atendida em {languages} e o perfil de cada médico indica as línguas em que consulta.",
     "faq5Q": "E se precisar de ajuda urgente?",
-    "faq5A": "A Global Health não é um serviço de urgência e a linha telefónica não está preparada para emergências. Ligue {emergency} ou dirija-se ao serviço de urgência mais próximo."
+    "faq5A": "A Global Health não é um serviço de urgência e a linha telefónica não está preparada para emergências. Ligue {emergency} ou dirija-se ao serviço de urgência mais próximo.",
+    "floatRegistered": "Médicos inscritos",
+    "floatLanguages": "Consultas em",
+    "heroImageAlt": "Médico a falar com um doente durante uma consulta online"
   }
 }

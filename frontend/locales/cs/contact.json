@@ -74,6 +74,9 @@
     "faq4Q": "V jakých jazycích mě mohou ošetřit?",
     "faq4A": "Telefonní linku obsluhujeme v jazycích: {languages}. Jazyky každého lékaře najdete na jeho profilu.",
     "faq5Q": "Co když potřebuji pomoc okamžitě?",
-    "faq5A": "Global Health není záchranná služba a telefonní linka není určena pro naléhavé stavy. Volejte {emergency} nebo navštivte nejbližší pohotovost."
+    "faq5A": "Global Health není záchranná služba a telefonní linka není určena pro naléhavé stavy. Volejte {emergency} nebo navštivte nejbližší pohotovost.",
+    "floatRegistered": "Registrovaní lékaři",
+    "floatLanguages": "Konzultace v jazycích",
+    "heroImageAlt": "Lékař mluví s pacientem během online konzultace"
   }
 }

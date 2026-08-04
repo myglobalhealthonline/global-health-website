@@ -74,6 +74,9 @@
     "faq4Q": "În ce limbi pot fi consultat?",
     "faq4A": "Linia telefonică este preluată în {languages}, iar profilul fiecărui medic indică limbile în care consultă.",
     "faq5Q": "Ce fac într-o urgență?",
-    "faq5A": "Global Health nu este un serviciu de urgență, iar linia telefonică nu este monitorizată pentru urgențe. Sunați la {emergency} sau mergeți la cea mai apropiată unitate de primiri urgențe."
+    "faq5A": "Global Health nu este un serviciu de urgență, iar linia telefonică nu este monitorizată pentru urgențe. Sunați la {emergency} sau mergeți la cea mai apropiată unitate de primiri urgențe.",
+    "floatRegistered": "Medici înregistrați",
+    "floatLanguages": "Consultații în",
+    "heroImageAlt": "Medic discutând cu un pacient în timpul unei consultații online"
   }
 }

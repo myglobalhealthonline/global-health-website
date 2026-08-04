@@ -74,6 +74,9 @@
     "faq4Q": "In welchen Sprachen werde ich beraten?",
     "faq4A": "Die Telefonleitung wird auf {languages} bedient; das Profil jedes Arztes nennt die Beratungssprachen.",
     "faq5Q": "Was tue ich im Notfall?",
-    "faq5A": "Global Health ist kein Notdienst und die Telefonleitung wird nicht für Notfälle überwacht. Wählen Sie {emergency} oder suchen Sie die nächste Notaufnahme auf."
+    "faq5A": "Global Health ist kein Notdienst und die Telefonleitung wird nicht für Notfälle überwacht. Wählen Sie {emergency} oder suchen Sie die nächste Notaufnahme auf.",
+    "floatRegistered": "Registrierte Ärzte",
+    "floatLanguages": "Beratung auf",
+    "heroImageAlt": "Arzt im Gespräch mit einer Patientin während einer Online-Sprechstunde"
   }
 }
