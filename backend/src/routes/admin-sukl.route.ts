@@ -1,8 +1,9 @@
 import type { FastifyPluginAsync } from "fastify";
 
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { recordCriticalAudit } from "../modules/audit/audit.service.js";
+import { recordAudit, recordCriticalAudit } from "../modules/audit/audit.service.js";
 import {
+  fetchSuklWsdl,
   getSuklHealthStatus,
   listSuklDoctorIdentities,
   revokeSuklDoctorIdentity,
@@ -16,6 +17,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import {
   suklDoctorIdentityBodySchema,
   suklDoctorParamsSchema,
+  suklWsdlQuerySchema,
 } from "../validations/admin-sukl.schema.js";
 
 /**
@@ -113,6 +115,40 @@ const adminSuklRoute: FastifyPluginAsync = async (app) => {
           })),
           errorCode: result.errorCode,
           durationMs: result.durationMs,
+        },
+      });
+      return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  // Reads a service's WSDL over mutual TLS. The deployed backend is the only
+  // thing that can reach SÚKL, so this is how the interface inventory gets
+  // filled in. A GET — nothing is sent, nothing is created.
+  app.get("/api/admin/sukl/wsdl", async (request, reply) => {
+    const query = suklWsdlQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid WSDL request", query.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await fetchSuklWsdl(query.data.service, query.data.path);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklFacilityIntegration",
+        entityId: query.data.service,
+        request,
+        metadata: {
+          kind: "wsdl-fetch",
+          url: result.requestedUrl,
+          httpStatus: result.httpStatus,
+          looksLikeWsdl: result.summary.looksLikeWsdl,
+          operations: result.summary.operations.length,
         },
       });
       return okResponse(result);

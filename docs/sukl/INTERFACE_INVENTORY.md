@@ -82,10 +82,26 @@ The **cross-border pharmacist endpoint is deliberately not configured** and must
 not be added until SÚKL confirms which cross-border workflow an outpatient
 workplace may perform (Q7).
 
-#### Reachability, verified 2026-08-04
+#### Reachability — RESOLVED 2026-08-05
 
-Both hostnames are genuine and resolve. Neither was reachable from the
-development machine:
+**Mutual TLS succeeds from Railway against both services** (CUEP 135 ms, COMMON
+141 ms), presenting the workplace certificate. SÚKL accepted it.
+
+Two consequences:
+
+1. **There is no source-IP allowlist blocking us** — Q14 is answered. The
+   earlier failure was the development network only.
+2. **SÚKL's server certificate is issued by a public CA** (`C=US, O=DigiCert
+   Inc, CN=RapidSSL TLS RSA CA G1`), so it validates against Node's built-in
+   trust store. No custom `ca` bundle is needed, and `rejectUnauthorized` stays
+   on with no special configuration.
+
+A successful handshake proves the TLS channel and the credential. It does NOT
+prove any ePoukaz operation is permitted, and no request has been sent.
+
+##### Original finding, kept for the record (2026-08-04)
+
+Neither host was reachable from the development machine:
 
 - **DNS is resolver-dependent.** `sukl.cz` and both service hosts resolve
   correctly via Google (`8.8.8.8`), but the system resolver returns

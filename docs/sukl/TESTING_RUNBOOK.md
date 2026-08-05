@@ -12,7 +12,7 @@ SÚKL (Czech ePoukaz) integration. Read `SECURITY_MODEL.md` first if you have no
 | The certificate parses, the password is correct, a private key is present | Yes |
 | Certificate subject / issuer / expiry / fingerprint are read correctly | Yes |
 | Mutual TLS works against a server that demands a client certificate | Yes, against a local TLS server in the test suite |
-| Mutual TLS works **against SÚKL** | **No** — hosts are configured and resolve, but TCP 443 times out from our network (question Q14) |
+| Mutual TLS works **against SÚKL** | **YES — proven from Railway 2026-08-05.** Both services, ~135–141 ms. Not reachable from the office network; that was a local-network limit, not a SÚKL allowlist. |
 | An ePoukaz can be created | No — not implemented, and the operation paths still need reading from the ePoukaz v19 WSDL |
 
 Do not report the integration as working end to end. The honest statement is: the

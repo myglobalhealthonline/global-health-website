@@ -13,6 +13,9 @@ import {
   suklMissingConfig,
   suklServiceUrl,
   suklWorkplaceCode,
+  suklGet,
+  summariseWsdl,
+  addressToPath,
   SuklError,
   SuklNotConfiguredError,
   isSuklError,
@@ -420,6 +423,70 @@ export async function runSuklConnectionTest(): Promise<SuklConnectionTestResult>
       ? `${firstFailure.label}: ${firstFailure.errorMessage}`
       : "The handshake with SÚKL failed.",
   });
+}
+
+// ─── WSDL discovery ──────────────────────────────────────────────────────────
+
+export interface SuklWsdlResult {
+  service: SuklService;
+  label: string;
+  requestedUrl: string;
+  httpStatus: number;
+  contentType: string | null;
+  durationMs: number;
+  summary: ReturnType<typeof summariseWsdl>;
+  /** Published addresses mapped to the `path` suklPost() would need. */
+  suggestedPaths: Array<{ address: string; path: string | null }>;
+  /** The document itself. The summary is a convenience; this is the evidence. */
+  raw: string;
+}
+
+/**
+ * Retrieves a service's WSDL over the mutual-TLS channel.
+ *
+ * Exists because SÚKL's hosts are reachable only from the deployed backend, so
+ * this is the one place that can read the document that unblocks
+ * docs/sukl/INTERFACE_INVENTORY.md. It is a READ: a GET, no SOAP body, nothing
+ * created, nothing sent that could be mistaken for a prescription.
+ *
+ * It does not probe. The caller names the path; the default is the single
+ * conventional `?wsdl` location. The full response is returned alongside the
+ * parsed summary so a human checks the source rather than trusting a regex —
+ * see the note at the top of lib/sukl/wsdl.ts.
+ */
+export async function fetchSuklWsdl(
+  service: SuklService,
+  path = "/?wsdl",
+): Promise<SuklWsdlResult> {
+  if (!isSuklConfigured()) {
+    throw new SuklNotConfiguredError(
+      `SÚKL is not configured — missing: ${suklMissingConfig().join(", ")}`,
+    );
+  }
+  const host = suklServiceUrl(service);
+  if (!host) {
+    throw new SuklNotConfiguredError(
+      `${SUKL_SERVICE_LABELS[service]} is not configured — set ${SUKL_SERVICE_ENV_VARS[service]}.`,
+    );
+  }
+
+  const response = await suklGet(service, path, { maxBytes: 4 * 1024 * 1024 });
+  const summary = summariseWsdl(response.body);
+
+  return {
+    service,
+    label: SUKL_SERVICE_LABELS[service],
+    requestedUrl: `${host}${path.startsWith("/") ? path : `/${path}`}`,
+    httpStatus: response.httpStatus,
+    contentType: response.contentType,
+    durationMs: response.durationMs,
+    summary,
+    suggestedPaths: summary.addresses.map((address) => ({
+      address,
+      path: addressToPath(address, host),
+    })),
+    raw: response.body,
+  };
 }
 
 // ─── Doctor identity mappings ────────────────────────────────────────────────

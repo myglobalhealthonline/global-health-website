@@ -17,9 +17,12 @@ export const dynamic = "force-dynamic";
 
 function isAllowed(method: string, segments: string[]): boolean {
   if (method === "GET") {
-    // ["status"] | ["doctor-identities"]
+    // ["status"] | ["doctor-identities"] | ["wsdl"]
     return (
-      segments.length === 1 && (segments[0] === "status" || segments[0] === "doctor-identities")
+      segments.length === 1 &&
+      (segments[0] === "status" ||
+        segments[0] === "doctor-identities" ||
+        segments[0] === "wsdl")
     );
   }
   if (method === "POST") {

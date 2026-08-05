@@ -39,7 +39,15 @@ export {
   SUKL_EXPIRY_WARN_DAYS,
 } from "./certificate-validator.js";
 
-export { suklPost, suklRequest, suklHandshake, suklHandshakeProbe } from "./transport.js";
+export {
+  suklPost,
+  suklGet,
+  suklRequest,
+  suklHandshake,
+  suklHandshakeProbe,
+} from "./transport.js";
+export { summariseWsdl, addressToPath } from "./wsdl.js";
+export type { WsdlSummary } from "./wsdl.js";
 export type {
   SuklResponse,
   SuklPostOptions,

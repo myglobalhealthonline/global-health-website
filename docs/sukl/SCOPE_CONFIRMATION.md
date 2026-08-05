@@ -65,11 +65,11 @@ Numbered so replies can cite them.
   `https://common-soap.test-erecept.sukl.cz/`. Both configured. Still to confirm:
   the per-operation **paths**, which must come from the `soap:address` values in
   the ePoukaz **v19** WSDL — the hosts alone are not endpoints.
-- **Q14** Does SÚKL restrict test access by source IP? Both hosts resolve
-  (`46.30.92.209`, `46.30.92.210`) but TCP 443 times out from our network, so the
-  handshake is still unproven. If an allowlist exists, which IP must be
-  registered — and note it must be **Railway's egress IP**, since that is what
-  will call SÚKL in the hosted product, not a developer machine.
+- **Q14** ~~Does SÚKL restrict test access by source IP?~~ **ANSWERED
+  2026-08-05 — no.** Mutual TLS succeeds from Railway against both services and
+  SÚKL accepts the workplace certificate. The earlier timeouts were the office
+  network, not an allowlist. Developer machines may still be unable to reach the
+  hosts; test from the deployed backend.
 - **Q2** Which ePoukaz operations may an **ambulance / outpatient** workplace
   call? Specifically: create, read/status, amend, cancel, and code-list retrieval.
   Some published documentation is written for pharmacy information systems.
@@ -78,11 +78,11 @@ Numbered so replies can cite them.
   handshake only, because none is known. **Lead:** the older `201704` doctor
   eRecept WSDL exposes `AppPing`, `AppPingZEP` and `GetAppInfo` — ask whether
   ePoukaz has equivalents and whether an ambulance workplace may call them.
-- **Q3b** What is the certificate's PKCS#12 **export password**? The value we
-  were given does not open either downloaded `.pfx` (`Mac verify error: invalid
-  password?` under both the modern and legacy OpenSSL providers), which suggests
-  it may be the test-portal login password rather than the file's export
-  password. Blocks all local verification.
+- **Q3b** ~~What is the certificate's PKCS#12 export password?~~ **RESOLVED
+  2026-08-05.** The password was correct; the certificate simply could not be
+  opened by Node because SÚKL exports with legacy RC2. Converted to
+  AES-256/PBKDF2 — see `TESTING_RUNBOOK.md`. Worth telling SÚKL that their export
+  format is unreadable by modern OpenSSL 3 runtimes.
 - **Q4** Which interface version should we target — `202601A` or `202601B` — and
   do they differ in the operations available to an outpatient workplace?
 

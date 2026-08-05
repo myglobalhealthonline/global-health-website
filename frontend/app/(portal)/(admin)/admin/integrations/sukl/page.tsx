@@ -2,6 +2,7 @@ import { fetchSuklStatus } from "@/lib/admin/admin-api";
 import { AdminCard, PageHeader, Pill, StatCard } from "../../_components/atoms";
 import { SuklConnectionPanel } from "./_components/sukl-connection-panel";
 import { SuklDoctorIdentities } from "./_components/sukl-doctor-identities";
+import { SuklWsdlPanel } from "./_components/sukl-wsdl-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -183,6 +184,10 @@ export default async function AdminSuklPage() {
 
       <AdminCard>
         <SuklConnectionPanel configured={status.configured} />
+      </AdminCard>
+
+      <AdminCard>
+        <SuklWsdlPanel configured={status.configured} />
       </AdminCard>
 
       <AdminCard>

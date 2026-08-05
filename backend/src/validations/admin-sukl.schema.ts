@@ -14,6 +14,26 @@ export const suklDoctorParamsSchema = z.object({
   doctorUserId: z.string().trim().min(1).max(120),
 });
 
+/**
+ * WSDL retrieval. `path` is a PATH on the already-configured service host —
+ * never a full URL, so this endpoint cannot be turned into a general-purpose
+ * fetcher that reaches arbitrary hosts using our client certificate. It must
+ * start with "/" and may not contain a scheme or authority.
+ */
+export const suklWsdlQuerySchema = z.object({
+  service: z.enum(["cuep", "common"]),
+  path: z
+    .string()
+    .trim()
+    .min(1)
+    .max(300)
+    .startsWith("/", "path must start with /")
+    .refine((v) => !v.includes("//") && !/^\/\//.test(v), "path may not contain an authority")
+    .refine((v) => !/[a-z][a-z0-9+.-]*:/i.test(v), "path may not contain a scheme")
+    .optional()
+    .default("/?wsdl"),
+});
+
 export const suklDoctorIdentityBodySchema = z
   .object({
     suklProfessionalIdentifier: z

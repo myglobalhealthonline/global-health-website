@@ -128,15 +128,21 @@ export const categoriseNetworkErrorForTest = categoriseNetworkError;
 export interface SuklRequestOptions {
   baseUrl: string;
   path: string;
-  body: string;
+  /** Omitted for GET (WSDL retrieval). */
+  body?: string;
+  method?: "POST" | "GET";
   pfx: Buffer;
   passphrase: string;
-  /** Extra trust anchors. Needed if SÚKL's chain is not in Node's store. */
+  /** Extra trust anchors. Proven unnecessary against SÚKL — their server
+   *  certificate is issued by a public CA (DigiCert/RapidSSL) and validates
+   *  against Node's built-in store. Kept for the local test server. */
   ca?: Array<Buffer | string>;
   timeoutMs: number;
   /** SOAPAction header value. Comes from the WSDL — never invent one. */
   soapAction?: string;
   contentType?: string;
+  /** Hard cap on the response we will buffer. Guards against a huge document. */
+  maxBytes?: number;
 }
 
 /**
@@ -152,6 +158,9 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
     options.path.startsWith("/") ? `${base}${options.path}` : `${base}/${options.path}`,
   );
   const timeout = options.timeoutMs;
+  const method = options.method ?? "POST";
+  const body = options.body ?? "";
+  const maxBytes = options.maxBytes ?? 8 * 1024 * 1024;
   const startedAt = Date.now();
 
   return new Promise<SuklResponse>((resolve, reject) => {
@@ -169,7 +178,7 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
 
     const request = https.request(
       {
-        method: "POST",
+        method,
         host: url.hostname,
         port: url.port || 443,
         path: `${url.pathname}${url.search}`,
@@ -182,16 +191,32 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
         rejectUnauthorized: true,
         timeout,
         headers: {
-          "content-type": options.contentType ?? "text/xml; charset=utf-8",
-          "content-length": Buffer.byteLength(options.body).toString(),
-          accept: "text/xml, application/soap+xml",
+          accept: "text/xml, application/soap+xml, application/wsdl+xml, */*",
+          ...(method === "POST"
+            ? {
+                "content-type": options.contentType ?? "text/xml; charset=utf-8",
+                "content-length": Buffer.byteLength(body).toString(),
+              }
+            : {}),
           ...(options.soapAction ? { soapaction: `"${options.soapAction}"` } : {}),
         },
       },
       (response) => {
         const chunks: Buffer[] = [];
-        response.on("data", (c: Buffer) => chunks.push(c));
+        let received = 0;
+        let truncated = false;
+        response.on("data", (c: Buffer) => {
+          if (received >= maxBytes) return;
+          received += c.byteLength;
+          if (received > maxBytes) {
+            truncated = true;
+            response.destroy();
+            return;
+          }
+          chunks.push(c);
+        });
         response.on("end", () => {
+          void truncated;
           const status = response.statusCode ?? 0;
           const durationMs = Date.now() - startedAt;
 
@@ -232,7 +257,34 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
     });
     request.on("error", (cause) => fail(categoriseNetworkError(cause)));
 
-    request.end(options.body);
+    if (method === "POST") request.end(body);
+    else request.end();
+  });
+}
+
+/**
+ * GET over the same mutual-TLS channel. Exists for WSDL retrieval.
+ *
+ * `path` is supplied by the caller — this does NOT probe a list of candidate
+ * locations. Sweeping a national health authority's host looking for documents
+ * is not something to do speculatively, so the admin names the path and the
+ * default is the single conventional one (`/?wsdl`).
+ */
+export async function suklGet(
+  service: SuklService,
+  path: string,
+  options: { timeoutMs?: number; maxBytes?: number } = {},
+): Promise<SuklResponse> {
+  if (!isSuklServiceConfigured(service)) throw notConfigured(service);
+  const { pfx, passphrase } = loadSuklPfx();
+  return suklRequest({
+    baseUrl: suklServiceUrl(service)!,
+    path,
+    method: "GET",
+    pfx,
+    passphrase,
+    timeoutMs: options.timeoutMs ?? suklTimeoutMs(),
+    ...(options.maxBytes ? { maxBytes: options.maxBytes } : {}),
   });
 }
 
