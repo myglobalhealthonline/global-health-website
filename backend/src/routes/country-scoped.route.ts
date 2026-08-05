@@ -76,7 +76,7 @@ const serviceAvailabilityParamsSchema = z.object({
 });
 
 const serviceAvailabilityQuerySchema = z.object({
-  days: z.coerce.number().int().min(1).max(60).default(14),
+  days: z.coerce.number().int().min(1).max(120).default(14),
   /** Booking under an insurer → only that insurer's in-network doctors. */
   insurance: z.string().trim().min(1).max(64).optional(),
 });

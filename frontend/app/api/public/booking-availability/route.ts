@@ -15,7 +15,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const service = searchParams.get("service")?.trim();
   const doctor = searchParams.get("doctor")?.trim();
   const daysRaw = Number(searchParams.get("days") ?? 14);
-  const days = Math.min(30, Math.max(1, Number.isFinite(daysRaw) ? daysRaw : 14));
+  const days = Math.min(120, Math.max(1, Number.isFinite(daysRaw) ? daysRaw : 14));
 
   if (!country || !service || !doctor) {
     return NextResponse.json(
