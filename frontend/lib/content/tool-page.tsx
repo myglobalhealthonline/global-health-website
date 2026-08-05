@@ -22,6 +22,7 @@ import { suggestionForBand, type ServiceSuggestion } from "@/lib/tools/service-s
 import { applyMarketBands, applyMarketToolCopy, getMarketFaq } from "@/lib/tools/market-copy";
 import { fillPlaceholders } from "@/lib/tools/placeholders";
 import { breadcrumbJsonLd, faqJsonLd, healthToolJsonLd } from "@/lib/seo/structured-data";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 
 /**
  * Server renderer for a free health-tool page, in every market and locale.
@@ -442,7 +443,7 @@ function buildBandNudges(
       ? {
           text: line[band],
           label: match.slot === "gp" ? copy.gpTitle : match.title,
-          href: match.href,
+          href: match.detailHref,
         }
       : null;
   }
@@ -452,9 +453,12 @@ function buildBandNudges(
 function SuggestionsSection({
   suggestions,
   copy,
+  bookLabel,
 }: {
   suggestions: ServiceSuggestion[];
   copy: ToolsSuggestionsCopy;
+  /** Locale's "Book appointment" — same string the service pages pass. */
+  bookLabel: string;
 }) {
   if (suggestions.length === 0) return null;
   return (
@@ -480,8 +484,10 @@ function SuggestionsSection({
         <div className="mt-9 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {suggestions.map((suggestion) => (
             <ServiceCard
-              key={suggestion.href}
-              href={suggestion.href}
+              key={suggestion.detailHref}
+              detailHref={suggestion.detailHref}
+              bookHref={suggestion.bookHref}
+              bookLabel={bookLabel}
               title={suggestion.slot === "gp" ? copy.gpTitle : suggestion.title}
               description={
                 suggestion.slot === "gp"
@@ -489,6 +495,8 @@ function SuggestionsSection({
                   : (suggestion.summary ?? copy.gpSummary)
               }
               imageSrc={suggestion.imageSrc ?? undefined}
+              duration={suggestion.duration}
+              startingPrice={suggestion.startingPrice}
               ctaLabel={copy.viewLabel}
               dark
             />
@@ -586,7 +594,11 @@ export function ToolPage({
         );
       })}
 
-      <SuggestionsSection suggestions={suggestions} copy={bundle.suggestions} />
+      <SuggestionsSection
+        suggestions={suggestions}
+        copy={bundle.suggestions}
+        bookLabel={getCommonLocale(ctx.lang).doctors.bookAppointment}
+      />
 
       {/* Related-tools strip goes here once a second tool ships — see
           `registry.ts`. With one tool it would link only to itself. */}

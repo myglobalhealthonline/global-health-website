@@ -200,9 +200,15 @@ describe("adhdScore", () => {
 });
 
 describe("suggestionForBand", () => {
-  const weight: ServiceSuggestion = { slot: "weight", title: "W", href: "/w" };
-  const nutrition: ServiceSuggestion = { slot: "nutrition", title: "N", href: "/n" };
-  const gp: ServiceSuggestion = { slot: "gp", title: "", href: "/gp" };
+  const card = (slot: ServiceSuggestion["slot"], title: string, path: string): ServiceSuggestion => ({
+    slot,
+    title,
+    detailHref: path,
+    bookHref: `${path}/book`,
+  });
+  const weight = card("weight", "W", "/w");
+  const nutrition = card("nutrition", "N", "/n");
+  const gp = card("gp", "", "/gp");
   const all = [weight, nutrition, gp];
 
   it("never upsells weight or nutrition to an underweight result", () => {

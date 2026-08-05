@@ -2,6 +2,8 @@ import type { CountryCode, CountryConfig } from "@/data/countries";
 import { getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
+import { formatPriceRounded } from "@/lib/format-currency";
+import { buildBookHref } from "@/lib/routing/book-href";
 import type { BmiBandKey } from "@/lib/tools/calc";
 
 /**
@@ -21,13 +23,26 @@ import type { BmiBandKey } from "@/lib/tools/calc";
 
 export type SuggestionSlot = "weight" | "nutrition" | "gp";
 
+/**
+ * Shaped to match what the service pages feed `ServiceCard` — two CTAs plus
+ * price and duration meta. A reduced single-CTA card here would have been the
+ * same component wearing a different face to the one people see on
+ * /services and /gp-consultation-online.
+ */
 export type ServiceSuggestion = {
   slot: SuggestionSlot;
   title: string;
   summary?: string;
-  href: string;
-  /** Service hero image, resolved to a servable URL. Absent for the GP hub. */
+  /** "Learn more" target — the read-only service detail page. */
+  detailHref: string;
+  /** "Book" target — the cart-first booking flow, pre-selecting this service. */
+  bookHref: string;
+  /** Service hero image, resolved to a servable URL. */
   imageSrc?: string | null;
+  /** e.g. "20 min". Absent when the service has no duration set. */
+  duration?: string;
+  /** e.g. "From EUR 45". Absent when the service has no price set. */
+  startingPrice?: string;
 };
 
 /** Substrings, matched case-insensitively against slug + name, per language. */
@@ -106,8 +121,14 @@ export async function getBmiServiceSuggestions(input: {
       slot,
       title: service.name,
       summary: service.summary ?? undefined,
-      href: `${base}/services/${service.slug}`,
+      detailHref: `${base}/services/${service.slug}`,
+      bookHref: buildBookHref({ country, lang, service: service.slug }),
       imageSrc: service.imagePath ? (resolveTrustedAssetUrl(service.imagePath) ?? null) : null,
+      duration: service.durationMinutes == null ? undefined : `${service.durationMinutes} min`,
+      startingPrice:
+        service.basePriceCents == null
+          ? undefined
+          : formatPriceRounded(service.basePriceCents, service.currencyCode),
     });
 
     if (weight) out.push(toSuggestion(weight, "weight"));
@@ -123,11 +144,12 @@ export async function getBmiServiceSuggestions(input: {
     out.push({
       slot: "gp",
       title: "",
-      href: `${base}/gp-consultation-online`,
-      // The GP entry is a hub route, not a Service row, so it has no CMS image.
-      // Without one `ServiceCard` renders its no-image layout and the card
-      // would sit shorter than the two beside it — the shared stock GP photo
-      // keeps the row consistent.
+      detailHref: `${base}/gp-consultation-online`,
+      bookHref: buildBookHref({ country, lang }),
+      // The GP entry is a hub route, not a Service row, so it has no CMS image,
+      // price or duration. Without an image `ServiceCard` falls to its no-image
+      // layout and the card sits shorter than the two beside it — the shared
+      // stock GP photo keeps the row consistent.
       imageSrc: "/images/stock/gp.jpg",
     });
   }
