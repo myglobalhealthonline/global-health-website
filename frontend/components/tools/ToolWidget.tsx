@@ -357,8 +357,8 @@ function BmiWidget({ copy, nudges }: { copy: WidgetCopy; nudges: BandNudges }) {
             </p>
             <a
               href={nudge.href}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-[13px] font-bold transition-colors"
-              style={{ background: "var(--color-brand-accent)", color: "#0F2E25" }}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-[13px] font-bold text-white transition-colors"
+              style={{ background: "var(--color-brand-primary)" }}
             >
               {nudge.label}
               <span aria-hidden>→</span>

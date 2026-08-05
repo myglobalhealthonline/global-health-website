@@ -46,22 +46,27 @@ export const TONE_DARK: Record<ToneKey, TonePalette> = {
 
 export const TONE: Record<ToneKey, TonePalette> = {
   good: {
-    dot: "#1D4B36",
+    // Brand forest (#1D4B36) reads as near-black at dot size — the healthy
+    // band was indistinguishable from the alert one at a glance. The dot is
+    // therefore a lighter, unmistakably GREEN green; the text stays forest,
+    // which is what needs the contrast against the fill.
+    dot: "#2E9E63",
     text: "#1D4B36",
-    bg: "rgba(29, 75, 54, 0.07)",
-    border: "rgba(29, 75, 54, 0.22)",
+    bg: "rgba(46, 158, 99, 0.10)",
+    border: "rgba(46, 158, 99, 0.30)",
   },
   warn: {
-    dot: "#B0761A",
+    // Pushed towards orange, away from the brown #B0761A read as at 8px.
+    dot: "#E08A1E",
     text: "#8A5B12",
-    bg: "rgba(176, 118, 26, 0.09)",
-    border: "rgba(176, 118, 26, 0.28)",
+    bg: "rgba(224, 138, 30, 0.12)",
+    border: "rgba(224, 138, 30, 0.32)",
   },
   alert: {
-    dot: "#A8321F",
+    dot: "#D33C22",
     text: "#8E2A1A",
-    bg: "rgba(168, 50, 31, 0.08)",
-    border: "rgba(168, 50, 31, 0.26)",
+    bg: "rgba(211, 60, 34, 0.10)",
+    border: "rgba(211, 60, 34, 0.30)",
   },
   muted: {
     dot: "#8A8F88",

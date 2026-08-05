@@ -1,28 +1,27 @@
 import type { ReactNode } from "react";
-import { TONE_DARK } from "@/lib/tools/tone";
+import { TONE } from "@/lib/tools/tone";
 import type { ToneKey } from "@/lib/tools/registry";
 
 /**
- * Shared chrome for the free health tools: the forest-glass instrument panel
- * that sits on the dark hero, plus the field/segmented/result primitives the
- * widgets are assembled from. Ivory (`TONE`) is still used by the
- * server-rendered chart tables on light sections; everything in here is on
- * glass and uses `TONE_DARK`.
+ * Shared chrome for the free health tools: the ivory instrument panel that
+ * sits on the dark hero, plus the field/segmented/result primitives the
+ * widgets are assembled from.
+ *
+ * The panel is deliberately WHITE, not the forest glass the service cards
+ * use. The result gauge and the category dots are a red/amber/green scale,
+ * and on a forest surface green-on-green collapsed — the band colour was
+ * unreadable, which is the whole signal the tool exists to give. A white
+ * instrument against the dark hero also gives the calculator the focus it
+ * should have. `TONE_DARK` is still used by the chart tables that sit on the
+ * page's forest sections.
  *
  * No hooks here — the file carries no "use client" of its own so the server
  * renderer can reuse `ToolNote` without pulling in a client boundary.
  */
 
-/**
- * The instrument panel. `gh2-glass-forest` + `gh2-dark-content` because it
- * sits on the dark hero — same glass material as ServiceCard, DoctorCard and
- * the dark FAQ accordion, so the tool reads as part of the site rather than an
- * ivory card dropped onto forest. `gh2-dark-content` re-points the
- * --color-text-* tokens the fields inside consume.
- */
 export function ToolCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="gh2-glass-forest gh2-dark-content p-6 sm:p-7">
+    <div className="gh2-card-ivory p-6 sm:p-7">
       <p
         className="text-[11px] font-bold uppercase tracking-[0.2em]"
         style={{ color: "var(--color-text-muted)" }}
@@ -79,14 +78,13 @@ export function ToolField({
 
 /** Shared input styling — 16px font size so iOS Safari never zooms on focus. */
 export const TOOL_INPUT_CLASS =
-  "w-full rounded-xl border px-3.5 py-2.5 text-[16px] font-semibold outline-none transition-colors focus:border-[var(--color-brand-accent)] focus:ring-2 focus:ring-[rgba(176,241,34,0.22)]";
+  "w-full rounded-xl border bg-white px-3.5 py-2.5 text-[16px] font-semibold outline-none transition-colors focus:border-[var(--color-brand-primary)] focus:ring-2 focus:ring-[rgba(29,75,54,0.18)]";
 
 /** Inline unit tag inside an input — used where two fields share one label. */
 export const UNIT_SUFFIX_CLASS =
   'pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)]';
 
 export const TOOL_INPUT_STYLE = {
-  background: "var(--color-background-page)",
   borderColor: "var(--color-border)",
   color: "var(--color-text-primary)",
 } as const;
@@ -113,7 +111,7 @@ export function ToolSegmented<T extends string>({
         className="grid gap-1 rounded-xl p-1"
         style={{
           gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`,
-          background: "var(--color-background-soft)",
+          background: "rgba(29, 75, 54, 0.06)",
         }}
       >
         {options.map((option) => {
@@ -123,8 +121,8 @@ export function ToolSegmented<T extends string>({
               key={option.value}
               className="cursor-pointer rounded-lg px-2 py-2 text-center text-[13px] font-bold transition-colors"
               style={{
-                background: active ? "var(--color-brand-accent)" : "transparent",
-                color: active ? "#0F2E25" : "var(--color-text-body)",
+                background: active ? "var(--color-brand-primary)" : "transparent",
+                color: active ? "#FFFFFF" : "var(--color-text-body)",
               }}
             >
               <input
@@ -166,9 +164,7 @@ export function ToolResult({
   placeholder: string;
   children?: ReactNode;
 }) {
-  // The panel is glass-forest, so the dark palette — the ivory one would put
-  // forest text on a forest fill.
-  const palette = TONE_DARK[tone];
+  const palette = TONE[tone];
   const hasValue = value !== undefined && value !== null && value !== "";
 
   return (
@@ -176,7 +172,7 @@ export function ToolResult({
       aria-live="polite"
       className="rounded-2xl border p-5"
       style={{
-        background: hasValue ? palette.bg : "var(--color-background-soft)",
+        background: hasValue ? palette.bg : "rgba(45, 59, 54, 0.04)",
         borderColor: hasValue ? palette.border : "var(--color-border)",
       }}
     >
@@ -302,20 +298,20 @@ export function ToolGauge({
             <span
               aria-hidden
               className="block size-0 border-x-[6px] border-t-[7px] border-x-transparent"
-              style={{ borderTopColor: "#FFFFFF" }}
+              style={{ borderTopColor: "var(--color-text-primary)" }}
             />
           </div>
         ) : null}
 
-        <div className="flex h-2.5 gap-0.5 overflow-hidden rounded-full" style={{ background: "var(--color-background-soft)" }}>
+        <div className="flex h-2.5 gap-0.5 overflow-hidden rounded-full">
           {segments.map((segment) => (
             <span
               key={`${segment.from}-${segment.to}`}
               className="block h-full"
               style={{
                 width: `${pct(segment.to) - pct(segment.from)}%`,
-                background: TONE_DARK[segment.tone].dot,
-                opacity: 0.85,
+                background: TONE[segment.tone].dot,
+                opacity: 1,
               }}
             />
           ))}
