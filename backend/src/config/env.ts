@@ -38,6 +38,16 @@ const optionalPem = z
   )
   .transform((v) => (typeof v === "string" ? v.replace(/\\n/g, "\n") : v));
 
+/** Wraps any optional string rule so a blank var counts as unset.
+ *
+ *  `optionalSecret` already does this for plain strings, but a var with its own
+ *  shape rule — `.url()`, a regex — cannot reuse it. Without this, a documented
+ *  blank placeholder (`SUKL_EPOUKAZ_CUEP_TEST_URL=`) fails validation and the process
+ *  refuses to BOOT, which is a far worse outcome than the var simply being
+ *  absent. Blank and missing must mean the same thing. */
+const blankAsUnset = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), schema);
+
 const envSchema = z.object({
   // Railway (and a few other PaaS) export NODE_ENV as the empty string
   // when no value is set, which bypasses Zod's `.default()` (that only
@@ -183,6 +193,61 @@ const envSchema = z.object({
    *  until insurance-billed exams are supported. */
   WEBLIMS_SELFPAY_INSURANCE_CODE: z.string().trim().min(1).optional(),
 
+  /** SÚKL (Czech State Institute for Drug Control) — ePoukaz / eRecept.
+   *  See docs/sukl/SECURITY_MODEL.md and docs/sukl/INTERFACE_INVENTORY.md.
+   *
+   *  Authentication is mutual TLS with a *workplace* communication certificate
+   *  issued to Global Guest s.r.o. — NOT a doctor's personal signing key. SÚKL
+   *  confirmed no per-doctor qualified signature is required, which is why no
+   *  doctor key material is accepted or stored anywhere in this integration.
+   *
+   *  Everything here is optional so the feature ships dark: with the gate
+   *  unsatisfied `isSuklConfigured()` is false, the admin console renders a red
+   *  status card and no SÚKL call can fire. See lib/sukl/index.ts.
+   *
+   *  Certificate source, checked in this order:
+   *    SUKL_TEST_PFX_BASE64 — Railway. Decoded in backend memory, never to disk.
+   *    SUKL_TEST_PFX_PATH   — local dev. Absolute path OUTSIDE the repo.
+   *  BASE64 wins when both are set, so a Railway service cannot accidentally
+   *  fall through to a stale path baked into an image. */
+  /** Every var here is wrapped so a blank placeholder means "unset" rather than
+   *  a validation failure — these are documented as blank in .env.example, and a
+   *  blank value must never stop the process booting. */
+  SUKL_ENVIRONMENT: blankAsUnset(z.enum(["test", "production"]).optional()),
+  SUKL_TEST_PFX_PATH: optionalSecret,
+  SUKL_TEST_PFX_BASE64: optionalSecret,
+  SUKL_TEST_PFX_PASSWORD: optionalSecret,
+  /** Test workplace code assigned by SÚKL (case SUKL206641/2026). */
+  SUKL_TEST_WORKPLACE_CODE: optionalSecret,
+  /** IČO of the legal entity that owns the workplace. Exactly 8 digits. */
+  SUKL_TEST_ENTITY_ICO: blankAsUnset(
+    z
+      .string()
+      .trim()
+      .regex(/^\d{8}$/, "SUKL_TEST_ENTITY_ICO must be 8 digits")
+      .optional(),
+  ),
+  /** SÚKL exposes ePoukaz as TWO separate SOAP services, not one base URL with
+   *  paths: CUEP is the voucher service itself, COMMON carries the shared
+   *  operations (code lists, versions, ping). Each has its own host, so they are
+   *  configured independently and gated independently.
+   *
+   *  MUST be reconciled against the `soap:address` values in the current ePoukaz
+   *  v19 WSDL before any request is sent — the host is only half of an endpoint
+   *  and the path comes from the WSDL. See docs/sukl/INTERFACE_INVENTORY.md.
+   *
+   *  No defaults: an unset service is reported as unconfigured rather than
+   *  silently pointed at nothing (same reasoning as WEBLIMS_BASE_URL).
+   *
+   *  Deliberately absent: the cross-border pharmacist endpoint. It is not
+   *  configured until SÚKL confirms which cross-border workflow an outpatient
+   *  workplace may perform — see docs/sukl/SCOPE_CONFIRMATION.md Q7. */
+  SUKL_EPOUKAZ_CUEP_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
+  SUKL_EPOUKAZ_COMMON_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
+  SUKL_REQUEST_TIMEOUT_MS: blankAsUnset(
+    z.coerce.number().int().min(1_000).max(120_000).default(30_000),
+  ),
+
   /** Subscription billing provider. `fake` (default) = in-memory port, no
    *  Stripe keys needed (dev/test). `stripe` = real Stripe Subscriptions —
    *  only honoured when STRIPE_SECRET_KEY is also set, else falls back to
@@ -246,6 +311,11 @@ const envSchema = z.object({
   /** Comma-separated staff inboxes that receive the same admin booking alert by
    *  email. Unset → the email leg is skipped. */
   ADMIN_NOTIFY_EMAILS: z.string().trim().optional(),
+
+  /** Minutes to suppress repeat "doctor has sent a text" support-chat emails on
+   *  the same thread. The window is cleared the moment an admin replies, so an
+   *  answered thread always alerts again immediately. */
+  SUPPORT_ALERT_THROTTLE_MINUTES: z.coerce.number().int().min(0).max(1440).default(15),
 
   BRAZIL_BOOKING_URL: z.string().trim().url().optional(),
   BRAZIL_CONSENT_NOTIFY_EMAIL: z.string().trim().email().optional(),
@@ -551,6 +621,18 @@ if (
   throw new Error(
     "ADMIN_TOKEN_FALLBACK_ENABLED must not be true in production — session-based admin auth must be " +
       "the sole path. Remove this env var from Railway.",
+  );
+}
+
+// SÚKL production is not approved. Switching environments is NOT a URL swap:
+// production needs a different communication certificate, production endpoints,
+// production workplace identifiers, doctor mappings, written SÚKL permission and
+// a security review. Refuse to boot rather than let a one-line env flip send
+// real prescription data to the live national eRecept system.
+if (parsed.SUKL_ENVIRONMENT === "production") {
+  throw new Error(
+    "SUKL_ENVIRONMENT=production is not approved — only the SÚKL test environment is " +
+      "implemented. See docs/sukl/SECURITY_MODEL.md for the production checklist.",
   );
 }
 

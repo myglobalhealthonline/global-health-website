@@ -148,6 +148,9 @@ const COUNTRY_HREFS = new Set([
   "/admin/insurance",
   "/admin/test-centers",
   "/admin/lab-requisitions",
+  // Czech-only in practice (SÚKL is the Czech drug authority), so it sits with
+  // the country-scoped items rather than in the global list.
+  "/admin/integrations/sukl",
 ]);
 
 /** Map sidebar href → feature key stored in `Country.enabledFeatures`.
@@ -196,6 +199,7 @@ const ORDER: Record<string, number> = {
   "/admin/insurance": 8.5,
   "/admin/test-centers": 8.6,
   "/admin/lab-requisitions": 8.7,
+  "/admin/integrations/sukl": 8.8,
   "/admin/footer": 9,
 };
 

@@ -126,6 +126,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/insurance", label: "Insurance" },
     { href: "/admin/test-centers", label: "Test centers" },
     { href: "/admin/lab-requisitions", label: "Lab requisitions" },
+    { href: "/admin/integrations/sukl", label: "SÚKL ePoukaz" },
   ];
 
   // Country options for the topbar picker. Pulled best-effort; if backend is

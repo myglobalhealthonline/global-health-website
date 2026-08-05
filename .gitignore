@@ -41,6 +41,19 @@
 /backend/scripts/data/doctor-credentials.json
 /backend/scripts/out/
 
+# SÚKL communication certificates (Czech eRecept/ePoukaz mTLS) and any other
+# private-key material. Test or production, the file never belongs in git —
+# the real certificate lives outside the repo and SUKL_TEST_PFX_PATH points at
+# it. CI gitleaks catches the regression if someone force-adds one.
+/.secrets
+**/*.pfx
+**/*.p12
+**/*.key
+# Exception: throwaway self-signed keypairs used by the SÚKL cert-loader tests.
+# Disposable, generated locally, no relation to the SÚKL certificate — same
+# precedent as the committed test RS256 keypair in backend/.env.test.
+!/backend/src/lib/sukl/__fixtures__/*.p12
+
 # editor
 .vscode
 

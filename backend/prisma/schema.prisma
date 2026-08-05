@@ -319,6 +319,16 @@ enum AuditAction {
   CROSS_BORDER_RX_REQUESTED
   /// Doctor B accepted / asked for more info / refused a request.
   CROSS_BORDER_RX_DECIDED
+  // --- SÚKL (Czech ePoukaz / eRecept) ---
+  /// An admin ran the SÚKL connection test: certificate validation and, once the
+  /// endpoint is known, a mutual-TLS handshake. Audited because it exercises the
+  /// facility's national-authority credential.
+  SUKL_CONNECTION_TESTED
+  /// A doctor's SÚKL professional identity mapping was created or changed.
+  SUKL_DOCTOR_IDENTITY_UPDATED
+  /// A doctor's SÚKL mapping was revoked, ending their ability to prescribe
+  /// under the facility's workplace code.
+  SUKL_DOCTOR_IDENTITY_REVOKED
 }
 
 enum CountryAccessModel {
@@ -5468,4 +5478,138 @@ model LabResultFile {
   @@index([matchStatus, receivedAt])
   @@index([requisitionId])
   @@index([patientIdBlindIndex])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SÚKL — Czech ePoukaz / eRecept integration
+//
+// Authentication to SÚKL is mutual TLS with a WORKPLACE communication
+// certificate issued to the legal entity, which SÚKL confirmed is sufficient —
+// no doctor personal qualified signature. Consequently NOTHING here stores key
+// material, a national personal identifier (rodné číslo), or a personal signing
+// certificate. Only the certificate's public metadata and the doctor's
+// professional identifiers are persisted.
+//
+// The ePoukaz voucher table is deliberately absent: its columns (identifier
+// format, status enumeration, validity fields) are dictated by the ePoukaz XSD,
+// which has not been supplied yet. Inventing them now would guarantee a
+// rewrite. See docs/sukl/INTERFACE_INVENTORY.md.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Health of the facility's SÚKL connection. TEST_ONLY until SÚKL grants
+/// production permissions; DISABLED is the explicit off switch.
+enum SuklIntegrationStatus {
+  NOT_CONFIGURED
+  TEST_ONLY
+  ACTIVE
+  ERROR
+  DISABLED
+}
+
+/// A doctor's mapping to SÚKL. UNVERIFIED until a SÚKL call has actually
+/// succeeded under that identifier — we never assume a pasted code is real.
+enum SuklDoctorIdentityStatus {
+  UNVERIFIED
+  VERIFIED
+  REJECTED
+  REVOKED
+}
+
+/// One workplace's SÚKL connection, plus the observed state of the certificate
+/// it authenticates with.
+///
+/// This row is a mirror, not a source of truth: the certificate itself lives in
+/// SUKL_TEST_PFX_BASE64 / SUKL_TEST_PFX_PATH and is refreshed here by the
+/// expiry-monitor job. `secretReference` records WHICH environment variable
+/// holds it — never the value.
+///
+/// One row per (environment, workplaceCode), so a test and a future production
+/// registration for the same workplace coexist without either overwriting the
+/// other's status.
+model SuklFacilityIntegration {
+  id            String @id @default(cuid())
+  /// Lowercase app country code. "cz" for every row today; present so the table
+  /// does not have to be renamed if another national eRecept system is added.
+  countryCode   String @default("cz")
+  /// "test" | "production", mirroring SUKL_ENVIRONMENT. Part of the unique key
+  /// precisely so a test row can never be mistaken for a production one.
+  environment   String
+  /// IČO of the legal entity (Global Guest s.r.o. = 19071680). 8 digits.
+  ico           String
+  /// Workplace code assigned by SÚKL.
+  workplaceCode String
+  /// e.g. "AMBULANCE". Determines which SÚKL operations are permitted to us, so
+  /// it is recorded rather than assumed.
+  workplaceType String @default("AMBULANCE")
+
+  // ─── Certificate mirror (public metadata only) ─────────────────────────────
+  /// Full SHA-256 fingerprint. Only its last 8 characters are ever returned by
+  /// the API; the whole value stays server-side for rotation comparisons.
+  certificateFingerprint String?
+  certificateSubject     String?
+  certificateIssuer      String?
+  certificateExpiresAt   DateTime?
+  /// Which env var supplied the certificate: "SUKL_TEST_PFX_BASE64" or
+  /// "SUKL_TEST_PFX_PATH". A NAME, never a value, never a filesystem path.
+  secretReference        String?
+
+  status              SuklIntegrationStatus @default(NOT_CONFIGURED)
+  /// Last time a TLS handshake with SÚKL actually succeeded.
+  lastConnectionAt    DateTime?
+  /// Normalised code from lib/sukl/errors.ts, e.g. SUKL_TLS_HANDSHAKE_FAILED.
+  lastErrorCode       String?
+  /// Redacted message that accompanied `lastErrorCode`. Safe to show an admin.
+  lastErrorMessage    String?
+  lastErrorAt         DateTime?
+  /// Highest expiry threshold already alerted on (60/30/14/7), so the ops alert
+  /// fires once per band instead of daily.
+  lastExpiryAlertDays Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([environment, workplaceCode])
+  @@index([countryCode, status])
+}
+
+/// Links a platform doctor to their SÚKL professional identity for one
+/// environment.
+///
+/// `doctorUserId` is a plain id column, not a relation: this is an audit record
+/// of a registration with a national authority and must outlive an account
+/// deletion. Explicitly NOT stored — the doctor's rodné číslo, their national
+/// identity key, or any personal signing certificate. Those are forbidden by
+/// the integration's security model and are not needed, because authentication
+/// runs on the facility certificate.
+model SuklDoctorIdentity {
+  id                         String  @id @default(cuid())
+  doctorUserId               String
+  /// Doctor.id when the practitioner also has a public profile row.
+  doctorId                   String?
+  environment                String
+  /// SÚKL's identifier for the prescriber. Format unconfirmed — SÚKL has not
+  /// yet told us whether this is an IČP, a KRZP code, or their own value, so it
+  /// is stored as opaque text and validated only for length.
+  suklProfessionalIdentifier String
+  /// Any username / account reference SÚKL issues alongside the identifier.
+  suklUsernameOrReference    String?
+  /// Workplace the doctor prescribes under. Must match a
+  /// SuklFacilityIntegration.workplaceCode for the same environment.
+  workplaceCode              String
+  /// Medical speciality code (odbornost), when the interface requires one.
+  specialityCode             String?
+
+  status          SuklDoctorIdentityStatus @default(UNVERIFIED)
+  /// Set when a real SÚKL call succeeded under this identifier.
+  verifiedAt      DateTime?
+  /// User.id of the admin who created or last changed the mapping.
+  updatedByUserId String?
+  notes           String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([doctorUserId, environment])
+  @@index([environment, workplaceCode])
+  @@index([status])
 }

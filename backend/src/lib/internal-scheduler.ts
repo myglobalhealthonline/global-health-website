@@ -20,6 +20,7 @@ import { purgeExpiredAccountDeletions } from "../modules/auth/auth.service.js";
 import { runOutboxDispatch } from "../modules/outbox/outbox.js";
 import { runRetentionSweepReport } from "../modules/data-policy/country-data-policy.service.js";
 import { dispatchDueTrustpilotInvites } from "../modules/review-invites/review-invite.service.js";
+import { runSuklCertificateMonitor } from "../modules/sukl/sukl-certificate-monitor.service.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
@@ -41,6 +42,10 @@ const DATA_RETENTION_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h — Task 1d repor
 // elapsed. The delay lives on the ReviewInvite row, so this interval only sets
 // how punctually a due invite goes out, never whether it does.
 const TRUSTPILOT_INVITES_INTERVAL_MS = 60 * 60 * 1000;
+// 24h — SÚKL communication-certificate expiry watch. Daily is plenty: the
+// warn bands are 60/30/14/7 days out and the job is a no-op when the
+// integration is unconfigured.
+const SUKL_CERTIFICATE_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 // Distinct advisory-lock keys, one per job, so only one replica runs a given
 // tick when horizontally scaled. Single-replica (today) always acquires → no
@@ -55,6 +60,7 @@ const LOCK_OUTBOX = 4010007;
 const LOCK_PRE_PAYMENT_CANCEL = 4010008;
 const LOCK_DATA_RETENTION = 4010009;
 const LOCK_TRUSTPILOT_INVITES = 4010010;
+const LOCK_SUKL_CERTIFICATE = 4010011;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -346,6 +352,32 @@ async function tickTrustpilotInvites(log: Logger) {
   );
 }
 
+async function tickSuklCertificate(log: Logger) {
+  // Read-only: validates the SÚKL certificate, refreshes the facility mirror row
+  // and raises an ops alert as it crosses 60/30/14/7 days. The alert is deduped
+  // per band on the row itself, so a duplicate run cannot double-alert. Fail
+  // OPEN — certificate monitoring must never take the scheduler down.
+  await withAdvisoryLock(
+    LOCK_SUKL_CERTIFICATE,
+    async () => {
+      try {
+        const r = await runSuklCertificateMonitor();
+        // Silent when the integration is dark, which is every non-CZ deployment.
+        if (r.ran) {
+          log.info(
+            `[cron] sukl-certificate: daysUntilExpiry=${r.daysUntilExpiry ?? "n/a"} alerted=${r.alerted ?? false} problem=${r.problemCode ?? "none"}`,
+          );
+        }
+      } catch (err) {
+        log.error(
+          `[cron] sukl-certificate error: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    { failClosed: false },
+  );
+}
+
 /** No-op stop handle — returned when the scheduler never actually started
  *  (RUN_SCHEDULER=false), so callers can unconditionally invoke the
  *  returned function on shutdown without an extra null check. */
@@ -369,7 +401,7 @@ export function startInternalScheduler(log: Logger): () => void {
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
-    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, trustpilot-invites 60m",
+    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, trustpilot-invites 60m, sukl-certificate 24h",
   );
 
   const timers: NodeJS.Timeout[] = [];
@@ -395,6 +427,9 @@ export function startInternalScheduler(log: Logger): () => void {
       // and the advisory lock keeps a rolling deploy's overlapping processes
       // from both dispatching it.
       void tickTrustpilotInvites(log);
+      // Safe on boot and useful there: a deploy that ships a bad certificate
+      // should say so immediately rather than 24h later.
+      void tickSuklCertificate(log);
     }, startupJitterMs),
   );
 
@@ -412,6 +447,7 @@ export function startInternalScheduler(log: Logger): () => void {
   timers.push(
     setInterval(() => void tickTrustpilotInvites(log), TRUSTPILOT_INVITES_INTERVAL_MS),
   );
+  timers.push(setInterval(() => void tickSuklCertificate(log), SUKL_CERTIFICATE_INTERVAL_MS));
 
   return () => {
     for (const t of timers) clearTimeout(t);
