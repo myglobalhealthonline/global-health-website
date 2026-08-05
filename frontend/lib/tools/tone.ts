@@ -9,7 +9,42 @@ import type { ToneKey } from "@/lib/tools/registry";
  * Plain data (no JSX) so both the server-rendered chart tables and the client
  * widgets can import it.
  */
-export const TONE: Record<ToneKey, { dot: string; text: string; bg: string; border: string }> = {
+export type TonePalette = { dot: string; text: string; bg: string; border: string };
+
+/**
+ * Same semantics on a dark surface. The instrument panel is `gh2-glass-forest`,
+ * so the ivory palette below would put forest text on a forest fill — the
+ * result number would vanish. Dots stay saturated (they read fine on dark),
+ * text goes light, fills go translucent-white-plus-hue.
+ */
+export const TONE_DARK: Record<ToneKey, TonePalette> = {
+  good: {
+    dot: "#B0F122",
+    text: "#D6F98A",
+    bg: "rgba(176, 241, 34, 0.10)",
+    border: "rgba(176, 241, 34, 0.28)",
+  },
+  warn: {
+    dot: "#F2C14E",
+    text: "#F5D48A",
+    bg: "rgba(242, 193, 78, 0.12)",
+    border: "rgba(242, 193, 78, 0.30)",
+  },
+  alert: {
+    dot: "#F08A75",
+    text: "#F6B3A3",
+    bg: "rgba(240, 138, 117, 0.13)",
+    border: "rgba(240, 138, 117, 0.32)",
+  },
+  muted: {
+    dot: "rgba(255, 255, 255, 0.45)",
+    text: "rgba(255, 255, 255, 0.72)",
+    bg: "rgba(255, 255, 255, 0.06)",
+    border: "rgba(255, 255, 255, 0.14)",
+  },
+};
+
+export const TONE: Record<ToneKey, TonePalette> = {
   good: {
     dot: "#1D4B36",
     text: "#1D4B36",

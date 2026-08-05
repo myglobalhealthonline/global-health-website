@@ -4412,3 +4412,27 @@ body.gh-cookie-bar-open {
     transition: none;
   }
 }
+
+/* Slider on a dark surface (the tool panel is `gh2-glass-forest`). The track
+ * tint and thumb ring above are forest-on-ivory and disappear there. */
+.gh2-dark-content .gh-tool-range::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    var(--color-brand-accent) 0 var(--gh-tool-range-fill),
+    rgba(255, 255, 255, 0.16) var(--gh-tool-range-fill) 100%
+  );
+}
+.gh2-dark-content .gh-tool-range::-moz-range-track {
+  background: rgba(255, 255, 255, 0.16);
+}
+.gh2-dark-content .gh-tool-range::-moz-range-progress {
+  background: var(--color-brand-accent);
+}
+.gh2-dark-content .gh-tool-range::-webkit-slider-thumb {
+  background: #ffffff;
+  border-color: var(--color-brand-accent);
+}
+.gh2-dark-content .gh-tool-range::-moz-range-thumb {
+  background: #ffffff;
+  border-color: var(--color-brand-accent);
+}

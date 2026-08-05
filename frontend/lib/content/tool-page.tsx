@@ -566,7 +566,7 @@ export function ToolPage({
           `registry.ts`. With one tool it would link only to itself. */}
 
       <FAQSection
-        theme="light"
+        theme="dark"
         eyebrow={bundle.ui.questionsEyebrow}
         title={`${copy.cardTitle} — ${bundle.ui.faqSuffix}`}
         items={faq}

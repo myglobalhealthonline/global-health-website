@@ -64,7 +64,9 @@ export const TOOLS: ToolMeta[] = [
       },
       { id: "formula", theme: "forest" },
       { id: "limits", theme: "ivory" },
-      { id: "next", theme: "ivory" },
+      // Alternating dark/light is the site rhythm — three ivory bands in a row
+      // read as one undifferentiated slab.
+      { id: "next", theme: "forest" },
     ],
     related: [],
     ctaPath: "/gp-consultation-online",
