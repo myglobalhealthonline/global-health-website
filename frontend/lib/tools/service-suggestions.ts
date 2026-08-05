@@ -1,6 +1,7 @@
 import type { CountryCode, CountryConfig } from "@/data/countries";
 import { getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
+import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import type { BmiBandKey } from "@/lib/tools/calc";
 
 /**
@@ -25,6 +26,8 @@ export type ServiceSuggestion = {
   title: string;
   summary?: string;
   href: string;
+  /** Service hero image, resolved to a servable URL. Absent for the GP hub. */
+  imageSrc?: string | null;
 };
 
 /** Substrings, matched case-insensitively against slug + name, per language. */
@@ -96,22 +99,19 @@ export async function getBmiServiceSuggestions(input: {
     const nutrition = pick(NUTRITION_TERMS);
     const weight = pick(WEIGHT_TERMS, nutrition ? [nutrition.slug] : []);
 
-    if (weight) {
-      out.push({
-        slot: "weight",
-        title: weight.name,
-        summary: weight.summary ?? undefined,
-        href: `${base}/services/${weight.slug}`,
-      });
-    }
-    if (nutrition) {
-      out.push({
-        slot: "nutrition",
-        title: nutrition.name,
-        summary: nutrition.summary ?? undefined,
-        href: `${base}/services/${nutrition.slug}`,
-      });
-    }
+    const toSuggestion = (
+      service: (typeof services)[number],
+      slot: SuggestionSlot,
+    ): ServiceSuggestion => ({
+      slot,
+      title: service.name,
+      summary: service.summary ?? undefined,
+      href: `${base}/services/${service.slug}`,
+      imageSrc: service.imagePath ? (resolveTrustedAssetUrl(service.imagePath) ?? null) : null,
+    });
+
+    if (weight) out.push(toSuggestion(weight, "weight"));
+    if (nutrition) out.push(toSuggestion(nutrition, "nutrition"));
   } catch {
     // Service list unavailable — the GP entry below still renders.
   }
@@ -120,7 +120,16 @@ export async function getBmiServiceSuggestions(input: {
   // and footer use, so a market with GP consultations switched off does not get
   // a link to a 404.
   if (isCountryFeatureEnabled(config, "general-consultations")) {
-    out.push({ slot: "gp", title: "", href: `${base}/gp-consultation-online` });
+    out.push({
+      slot: "gp",
+      title: "",
+      href: `${base}/gp-consultation-online`,
+      // The GP entry is a hub route, not a Service row, so it has no CMS image.
+      // Without one `ServiceCard` renders its no-image layout and the card
+      // would sit shorter than the two beside it — the shared stock GP photo
+      // keeps the row consistent.
+      imageSrc: "/images/stock/gp.jpg",
+    });
   }
 
   return out;

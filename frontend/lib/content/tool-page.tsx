@@ -4,7 +4,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { ToolWidget } from "@/components/tools/ToolWidget";
-import { TONE } from "@/lib/tools/tone";
+import { ServiceCard } from "@/components/cards/ServiceCard";
+import { TONE, TONE_DARK } from "@/lib/tools/tone";
 import {
   getToolMeta,
   getToolsCopy,
@@ -171,16 +172,58 @@ function ToolTableBlock({
   rowTones?: ToneKey[];
   dark: boolean;
 }) {
+  const border = dark ? "rgba(255,255,255,0.12)" : "rgba(29,75,54,0.12)";
+  const rowBorder = dark ? "rgba(255,255,255,0.07)" : "rgba(29,75,54,0.07)";
+  const headText = dark ? "rgba(255,255,255,0.55)" : "var(--color-text-muted)";
+  const bodyText = dark ? "rgba(255,255,255,0.82)" : "var(--color-text-body)";
+
   return (
     <figure className="mt-8">
+      {/* Phones get stacked rows, not a 520px-wide table in a scroller. A
+       *  horizontal scrollbar on a reference chart hides the very columns
+       *  people came to read. One source of copy, two layouts. */}
+      <div className="grid gap-3 sm:hidden">
+        {table.rows.map((cells, rowIndex) => {
+          const palette = (dark ? TONE_DARK : TONE)[rowTones?.[rowIndex] ?? "muted"];
+          return (
+            <div
+              key={cells.join("|")}
+              className="rounded-2xl border p-4"
+              style={{ borderColor: border, background: dark ? "rgba(255,255,255,0.03)" : "#FFFFFF" }}
+            >
+              <p className="flex items-center gap-2.5 text-[15px] font-bold" style={{ color: bodyText }}>
+                <span
+                  aria-hidden
+                  className="inline-block size-2 shrink-0 rounded-full"
+                  style={{ background: palette.dot }}
+                />
+                {cells[0]}
+              </p>
+              <dl className="mt-3 grid gap-2">
+                {table.columns.slice(1).map((column, index) => (
+                  <div key={column} className="grid gap-0.5">
+                    <dt
+                      className="text-[10.5px] font-bold uppercase tracking-[0.16em]"
+                      style={{ color: headText }}
+                    >
+                      {column}
+                    </dt>
+                    <dd className="text-[14px] leading-snug" style={{ color: bodyText }}>
+                      {cells[index + 1]}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          );
+        })}
+      </div>
+
       <div
-        className="overflow-x-auto rounded-2xl border"
-        style={{
-          borderColor: dark ? "rgba(255,255,255,0.12)" : "rgba(29,75,54,0.12)",
-          background: dark ? "rgba(255,255,255,0.03)" : "#FFFFFF",
-        }}
+        className="hidden overflow-x-auto rounded-2xl border sm:block"
+        style={{ borderColor: border, background: dark ? "rgba(255,255,255,0.03)" : "#FFFFFF" }}
       >
-        <table className="w-full min-w-[520px] border-collapse text-left">
+        <table className="w-full border-collapse text-left">
           <caption className="sr-only">{table.caption}</caption>
           <thead>
             <tr>
@@ -188,10 +231,10 @@ function ToolTableBlock({
                 <th
                   key={column}
                   scope="col"
-                  className="whitespace-nowrap px-4 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em]"
+                  className="px-4 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em]"
                   style={{
-                    color: dark ? "rgba(255,255,255,0.55)" : "var(--color-text-muted)",
-                    borderBottom: `1px solid ${dark ? "rgba(255,255,255,0.12)" : "rgba(29,75,54,0.10)"}`,
+                    color: headText,
+                    borderBottom: `1px solid ${border}`,
                     // First column's cells are indented by the tone dot (8px +
                     // 10px gap); without the same indent the header sat left of
                     // its own column.
@@ -205,17 +248,14 @@ function ToolTableBlock({
           </thead>
           <tbody>
             {table.rows.map((cells, rowIndex) => {
-              const palette = TONE[rowTones?.[rowIndex] ?? "muted"];
+              const palette = (dark ? TONE_DARK : TONE)[rowTones?.[rowIndex] ?? "muted"];
               return (
                 <tr key={cells.join("|")}>
                   {cells.map((cell, index) => (
                     <td
                       key={`${cell}-${index}`}
-                      className={`px-4 py-3.5 text-[14px] leading-snug ${index === 0 ? "font-bold" : ""}`}
-                      style={{
-                        color: dark ? "rgba(255,255,255,0.82)" : "var(--color-text-body)",
-                        borderBottom: `1px solid ${dark ? "rgba(255,255,255,0.07)" : "rgba(29,75,54,0.07)"}`,
-                      }}
+                      className={`px-4 py-3.5 text-[14px] leading-snug ${index === 0 ? "whitespace-nowrap font-bold" : ""}`}
+                      style={{ color: bodyText, borderBottom: `1px solid ${rowBorder}` }}
                     >
                       {index === 0 ? (
                         <span className="flex items-center gap-2.5">
@@ -439,35 +479,19 @@ function SuggestionsSection({
 
         <div className="mt-9 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {suggestions.map((suggestion) => (
-            <Link
+            <ServiceCard
               key={suggestion.href}
               href={suggestion.href}
-              className="gh2-glass-forest gh2-glass-hover gh2-dark-content group flex h-full flex-col justify-between gap-6 p-6"
-            >
-              <div>
-                <h3
-                  className="text-[17px] font-extrabold leading-snug tracking-[-0.02em] text-white"
-                >
-                  {suggestion.slot === "gp" ? copy.gpTitle : suggestion.title}
-                </h3>
-                <p
-                  className="mt-2.5 text-[14px] leading-relaxed"
-                  style={{ color: "var(--color-text-body)" }}
-                >
-                  {suggestion.slot === "gp" ? copy.gpSummary : (suggestion.summary ?? copy.gpSummary)}
-                </p>
-              </div>
-              <span
-                className="inline-flex items-center gap-1.5 text-[13px] font-bold text-[var(--color-brand-accent)]"
-              >
-                {copy.viewLabel}
-                <ArrowUpRight
-                  className="size-4 transition-transform group-hover:translate-x-0.5"
-                  strokeWidth={2}
-                  aria-hidden
-                />
-              </span>
-            </Link>
+              title={suggestion.slot === "gp" ? copy.gpTitle : suggestion.title}
+              description={
+                suggestion.slot === "gp"
+                  ? copy.gpSummary
+                  : (suggestion.summary ?? copy.gpSummary)
+              }
+              imageSrc={suggestion.imageSrc ?? undefined}
+              ctaLabel={copy.viewLabel}
+              dark
+            />
           ))}
         </div>
       </div>
