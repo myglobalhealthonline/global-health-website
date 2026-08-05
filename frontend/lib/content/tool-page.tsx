@@ -5,7 +5,7 @@ import { FAQSection } from "@/components/sections/FAQSection";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { ToolWidget } from "@/components/tools/ToolWidget";
 import { ServiceCard } from "@/components/cards/ServiceCard";
-import { TONE, TONE_DARK } from "@/lib/tools/tone";
+import { TONE_DARK } from "@/lib/tools/tone";
 import {
   getToolMeta,
   getToolsCopy,
@@ -173,10 +173,15 @@ function ToolTableBlock({
   rowTones?: ToneKey[];
   dark: boolean;
 }) {
-  const border = dark ? "rgba(255,255,255,0.12)" : "rgba(29,75,54,0.12)";
-  const rowBorder = dark ? "rgba(255,255,255,0.07)" : "rgba(29,75,54,0.07)";
-  const headText = dark ? "rgba(255,255,255,0.55)" : "var(--color-text-muted)";
-  const bodyText = dark ? "rgba(255,255,255,0.82)" : "var(--color-text-body)";
+  // The chart renders as forest glass on EVERY band, light or dark — it is an
+  // instrument like the calculator chassis, not page furniture, and a dark
+  // panel is where the red/amber/green scale reads best. Only the footnote,
+  // which sits outside the panel, follows the section theme.
+  const border = "rgba(255,255,255,0.12)";
+  const rowBorder = "rgba(255,255,255,0.07)";
+  const headText = "rgba(255,255,255,0.55)";
+  const bodyText = "rgba(255,255,255,0.82)";
+  const surface = "gh2-glass-forest gh2-dark-content";
 
   return (
     <figure className="mt-8">
@@ -185,13 +190,9 @@ function ToolTableBlock({
        *  people came to read. One source of copy, two layouts. */}
       <div className="grid gap-3 sm:hidden">
         {table.rows.map((cells, rowIndex) => {
-          const palette = (dark ? TONE_DARK : TONE)[rowTones?.[rowIndex] ?? "muted"];
+          const palette = TONE_DARK[rowTones?.[rowIndex] ?? "muted"];
           return (
-            <div
-              key={cells.join("|")}
-              className="rounded-2xl border p-4"
-              style={{ borderColor: border, background: dark ? "rgba(255,255,255,0.03)" : "#FFFFFF" }}
-            >
+            <div key={cells.join("|")} className={`${surface} rounded-2xl p-4`}>
               <p className="flex items-center gap-2.5 text-[15px] font-bold" style={{ color: bodyText }}>
                 <span
                   aria-hidden
@@ -220,10 +221,7 @@ function ToolTableBlock({
         })}
       </div>
 
-      <div
-        className="hidden overflow-x-auto rounded-2xl border sm:block"
-        style={{ borderColor: border, background: dark ? "rgba(255,255,255,0.03)" : "#FFFFFF" }}
-      >
+      <div className={`${surface} hidden overflow-x-auto rounded-2xl sm:block`}>
         <table className="w-full border-collapse text-left">
           <caption className="sr-only">{table.caption}</caption>
           <thead>
@@ -249,7 +247,7 @@ function ToolTableBlock({
           </thead>
           <tbody>
             {table.rows.map((cells, rowIndex) => {
-              const palette = (dark ? TONE_DARK : TONE)[rowTones?.[rowIndex] ?? "muted"];
+              const palette = TONE_DARK[rowTones?.[rowIndex] ?? "muted"];
               return (
                 <tr key={cells.join("|")}>
                   {cells.map((cell, index) => (
@@ -463,20 +461,20 @@ function SuggestionsSection({
   if (suggestions.length === 0) return null;
   return (
     <section
-      className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden"
+      className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel relative overflow-hidden"
       style={{ padding: "clamp(56px,7vw,96px) 0" }}
     >
-      <SectionSeam theme="dark" />
+      <SectionSeam theme="light" />
       <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <h2
-          className="font-extrabold tracking-[-0.03em] text-white"
-          style={{ fontSize: "clamp(1.5rem, 2.4vw + 0.5rem, 2.25rem)" }}
+          className="font-extrabold tracking-[-0.03em]"
+          style={{ fontSize: "clamp(1.5rem, 2.4vw + 0.5rem, 2.25rem)", color: "var(--color-brand-primary)" }}
         >
           {copy.heading}
         </h2>
         <p
-          className="mt-4 max-w-[62ch] leading-relaxed text-white/65"
-          style={{ fontSize: "var(--text-body-lg)" }}
+          className="mt-4 max-w-[62ch] leading-relaxed"
+          style={{ fontSize: "var(--text-body-lg)", color: "var(--color-text-body, #2D3B36)" }}
         >
           {copy.intro}
         </p>
@@ -604,7 +602,7 @@ export function ToolPage({
           `registry.ts`. With one tool it would link only to itself. */}
 
       <FAQSection
-        theme="light"
+        theme="dark"
         eyebrow={bundle.ui.questionsEyebrow}
         title={`${copy.cardTitle} — ${bundle.ui.faqSuffix}`}
         items={faq}
