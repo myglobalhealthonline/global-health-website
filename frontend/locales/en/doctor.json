@@ -31,7 +31,8 @@
     "profile": "Profile",
     "profileCountry": "Profile ({country})",
     "security": "Security",
-    "confidentiality": "Confidentiality"
+    "confidentiality": "Confidentiality",
+    "support": "Support"
   },
   "notifications": {
     "appointmentAssigned": "Appointment assigned",
@@ -42,7 +43,8 @@
     "formSubmitted": "Form submitted",
     "crossBorderRxRequested": "Cross-border prescription request",
     "crossBorderRxUpdated": "Cross-border prescription update",
-    "emptyMessage": "No notifications yet."
+    "emptyMessage": "No notifications yet.",
+    "supportReply": "Support replied"
   },
   "common": {
     "apply": "Apply",
@@ -1803,5 +1805,28 @@
     "sending": "Sending…",
     "sendFailed": "Could not send the document.",
     "sentTo": "Sent to"
+  },
+  "supportPage": {
+    "eyebrow": "Support",
+    "title": "Support",
+    "description": "Chat directly with the Global Health operations team. Any admin may reply — you will see their first name.",
+    "loadError": "Could not load support messages: {message}"
+  },
+  "supportChat": {
+    "loadingSr": "Loading messages…",
+    "emptyTitle": "No messages yet.",
+    "emptyBody": "Describe your issue below — you can attach a screenshot or PDF.",
+    "placeholder": "Type a message…",
+    "send": "Send",
+    "sendFailed": "Failed to send message",
+    "loadFailed": "Failed to load messages",
+    "attachFileLabel": "Attach a file (PDF / image)",
+    "upload": "Upload",
+    "uploading": "Uploading…",
+    "uploadFailed": "Upload failed",
+    "removeFileAria": "Remove file",
+    "attachmentFallback": "Attachment",
+    "me": "Me",
+    "pasteHint": "You can paste a screenshot straight into the box."
   }
 }

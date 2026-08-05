@@ -106,6 +106,15 @@ enum InternalMessageAuthorRole {
   ADMIN
 }
 
+/// Author side of the doctor ↔ support (admin team) thread. Deliberately
+/// separate from `InternalMessageAuthorRole` / `ChatAuthorRole` so the three
+/// threads can never be mixed. SUPER_ADMIN authors stamp as ADMIN here; the
+/// real role is preserved on the AuditLog row.
+enum SupportMessageAuthorRole {
+  DOCTOR
+  ADMIN
+}
+
 /// Doctor portal notification kinds. Add new values here as we wire
 /// more trigger points; the payload Json field carries the per-event
 /// context (appointmentId, internalMessageId, etc.).
@@ -149,6 +158,12 @@ enum NotificationType {
   // the staff bell or { title, body, href } for the patient bell.
   CROSS_BORDER_RX_REQUESTED
   CROSS_BORDER_RX_UPDATED
+  // Doctor ↔ support (admin team) chat. SUPPORT_MESSAGE notifies every global
+  // admin when a doctor writes in; SUPPORT_REPLY notifies the doctor when an
+  // admin replies. Payload carries { threadId, snippet, byUserName, byRole } —
+  // NOT appointmentId, since this thread isn't appointment-scoped.
+  SUPPORT_MESSAGE
+  SUPPORT_REPLY
 }
 
 /// Exam lifecycle.
@@ -329,6 +344,11 @@ enum AuditAction {
   /// A doctor's SÚKL mapping was revoked, ending their ability to prescribe
   /// under the facility's workplace code.
   SUKL_DOCTOR_IDENTITY_REVOKED
+  // --- Doctor ↔ admin support chat ---
+  /// A message was posted to a doctor's support thread, by either side. The
+  /// actor's real role (ADMIN vs SUPER_ADMIN) is recorded here even though the
+  /// message row stamps both as ADMIN.
+  SUPPORT_MESSAGE_POSTED
 }
 
 enum CountryAccessModel {
@@ -561,6 +581,9 @@ model Doctor {
   profileChangeRequests           DoctorProfileChangeRequest[]
   /// Inverse of `User.doctorId`. When set, that User logs in as this doctor.
   loginUser                       User?                            @relation("DoctorUserLink")
+  /// The doctor's standing support conversation with the admin team. Created
+  /// lazily on first visit to /doctor/support.
+  supportThread                   SupportThread?                   @relation("DoctorSupportThread")
   /// Inverse of `Appointment.doctorId`. Populated when admin assigns
   /// the doctor on the scheduling form.
   appointments                    Appointment[]                    @relation("AppointmentDoctor")
@@ -2996,6 +3019,11 @@ model User {
   /// messages live on `Message.authorUserId` which is unrelated to
   /// this relation name.
   internalMessages             InternalMessage[]            @relation("InternalMessageAuthor")
+  /// Support-chat messages this user authored (doctor ↔ admin team thread).
+  /// Distinct from `internalMessages`, which is per-appointment.
+  supportMessages              SupportMessage[]             @relation("SupportMessageAuthor")
+  /// This admin's per-thread read cursors for the doctor support inbox.
+  supportThreadReads           SupportThreadRead[]          @relation("SupportThreadReader")
   /// Doctor portal notifications routed to this user.
   notifications                Notification[]
   /// Share links this user created (signed consultation URLs etc.).
@@ -3867,6 +3895,77 @@ model ConsultationMessage {
   createdAt     DateTime       @default(now())
 
   @@index([appointmentId, createdAt])
+}
+
+/// One support conversation per doctor, shared by the whole admin team.
+///
+/// Deliberately NOT appointment-scoped — that's `InternalMessage`. This is the
+/// doctor's standing line to operations ("my payout looks wrong", "I can't set
+/// availability"), so it has no appointment to hang off.
+model SupportThread {
+  id               String                    @id @default(cuid())
+  doctorId         String                    @unique
+  doctor           Doctor                    @relation("DoctorSupportThread", fields: [doctorId], references: [id], onDelete: Cascade)
+  /// Denormalised so the admin inbox can order threads without a correlated
+  /// subquery per row.
+  lastMessageAt    DateTime?
+  lastMessageRole  SupportMessageAuthorRole?
+  /// Throttle stamp for the "doctor has sent a text" admin email fan-out.
+  /// Claimed atomically (conditional updateMany) before each send, and reset
+  /// to null when an admin replies so the next doctor message alerts at once.
+  lastAdminEmailAt DateTime?
+  messages         SupportMessage[]
+  readStates       SupportThreadRead[]
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+
+  @@index([lastMessageAt])
+}
+
+/// One message in a doctor's support thread. `body` is nullable so a message
+/// can be attachment-only (same shape as `ConsultationMessage`); the route
+/// rejects rows carrying neither body nor storageKey.
+model SupportMessage {
+  id           String                   @id @default(cuid())
+  threadId     String
+  thread       SupportThread            @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  authorRole   SupportMessageAuthorRole
+  /// Null only if the author account is later deleted. Required on ADMIN rows
+  /// so the UI can name the replying admin — and so the viewing admin's own
+  /// replies can render as "Me".
+  authorUserId String?
+  author       User?                    @relation("SupportMessageAuthor", fields: [authorUserId], references: [id], onDelete: SetNull)
+  body         String?
+  /// Object-storage key for an attached file. Null when text-only.
+  storageKey   String?
+  fileName     String?
+  mimeType     String?
+  byteSize     Int?
+  /// Doctor-side read flag, meaningful only on ADMIN-authored rows. The doctor
+  /// is a single reader, so a boolean suffices on this side; the admin side
+  /// needs `SupportThreadRead` instead.
+  readByDoctor Boolean                  @default(false)
+  createdAt    DateTime                 @default(now())
+
+  @@index([threadId, createdAt])
+  @@index([threadId, authorRole, readByDoctor])
+}
+
+/// Per-admin read cursor. The admin side of a support thread has N readers, so
+/// read state can't live on the message row — that limitation is why
+/// `InternalMessage` has to derive "unread" from Notification rows
+/// (internal-messages.route.ts). A cursor keeps the badge exact and
+/// independent of the bell.
+model SupportThreadRead {
+  id          String        @id @default(cuid())
+  threadId    String
+  adminUserId String
+  lastReadAt  DateTime
+  thread      SupportThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  admin       User          @relation("SupportThreadReader", fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, adminUserId])
+  @@index([adminUserId])
 }
 
 /// Per-service FAQ entries managed by admin. Distinct from the global country-scoped Faq model

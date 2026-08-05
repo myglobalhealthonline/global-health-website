@@ -101,6 +101,42 @@ export async function sendDoctorInviteEmail(opts: {
   });
 }
 
+/**
+ * A doctor wrote into their support thread → alert the admin team.
+ *
+ * One email per recipient. Throttling lives upstream in
+ * `alertAdminsOfSupportMessage` (SupportThread.lastAdminEmailAt) so a doctor
+ * firing ten messages in a row doesn't fan out ten emails per admin.
+ */
+export async function sendSupportMessageAlertEmail(opts: {
+  to: string;
+  doctorName: string;
+  /** Absolute `/admin/support?open=<threadId>` URL. */
+  threadUrl: string;
+  /** First ~140 chars of the message, or "Sent a file: …". Optional. */
+  snippet?: string | null;
+}) {
+  const snippet = opts.snippet?.trim() || null;
+  const subject = `${opts.doctorName} has sent a text`;
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `${opts.doctorName} has sent a text${snippet ? `:\n\n"${snippet}"` : "."}\n\nOpen the support chat:\n${opts.threadUrl}\n\n— Global Health`,
+    html: wrapHtml(
+      "New support message",
+      `<p><strong>${escapeHtml(opts.doctorName)}</strong> has sent a text.</p>
+       ${
+         snippet
+           ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
+           : ""
+       }
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>
+       <p style="font-size:13px;color:#737373;">Any admin can reply — your first name is shown to the doctor so they know who answered.</p>`,
+    ),
+  });
+}
+
 export async function sendEmailVerificationEmail(opts: {
   to: string;
   fullName: string;

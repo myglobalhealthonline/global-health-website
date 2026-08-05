@@ -3,6 +3,9 @@ import { adminRequest } from "./core";
 // ── Admin notifications (bell) ─────────────────────────────────────────
 export type AdminNotificationPayload = {
   appointmentId?: string;
+  /** SupportThread id for SUPPORT_MESSAGE / SUPPORT_REPLY — those bells are
+   *  doctor-scoped and carry no appointmentId. */
+  threadId?: string;
   snippet?: string;
   byUserName?: string;
   byRole?: string;

@@ -31,7 +31,8 @@
     "profileCountry": "Profil ({country})",
     "security": "Sicherheit",
     "confidentiality": "Vertraulichkeit",
-    "crossBorderRx": "Cross-border requests"
+    "crossBorderRx": "Cross-border requests",
+    "support": "Support"
   },
   "notifications": {
     "appointmentAssigned": "Termin zugewiesen",
@@ -42,7 +43,8 @@
     "formSubmitted": "Formular eingereicht",
     "emptyMessage": "Noch keine Benachrichtigungen.",
     "crossBorderRxRequested": "Cross-border prescription request",
-    "crossBorderRxUpdated": "Cross-border prescription update"
+    "crossBorderRxUpdated": "Cross-border prescription update",
+    "supportReply": "Support-Antwort"
   },
   "common": {
     "apply": "Anwenden",
@@ -1802,5 +1804,28 @@
     "sending": "Wird gesendet…",
     "sendFailed": "Das Dokument konnte nicht gesendet werden.",
     "sentTo": "Gesendet an"
+  },
+  "supportPage": {
+    "eyebrow": "Support",
+    "title": "Support",
+    "description": "Chatten Sie direkt mit dem Global-Health-Betriebsteam. Jeder Administrator kann antworten — Sie sehen jeweils den Vornamen.",
+    "loadError": "Support-Nachrichten konnten nicht geladen werden: {message}"
+  },
+  "supportChat": {
+    "loadingSr": "Nachrichten werden geladen…",
+    "emptyTitle": "Noch keine Nachrichten.",
+    "emptyBody": "Beschreiben Sie Ihr Anliegen unten — Sie können einen Screenshot oder ein PDF anhängen.",
+    "placeholder": "Nachricht eingeben…",
+    "send": "Senden",
+    "sendFailed": "Nachricht konnte nicht gesendet werden",
+    "loadFailed": "Nachrichten konnten nicht geladen werden",
+    "attachFileLabel": "Datei anhängen (PDF / Bild)",
+    "upload": "Hochladen",
+    "uploading": "Wird hochgeladen…",
+    "uploadFailed": "Upload fehlgeschlagen",
+    "removeFileAria": "Datei entfernen",
+    "attachmentFallback": "Anhang",
+    "me": "Ich",
+    "pasteHint": "Sie können einen Screenshot direkt in das Feld einfügen."
   }
 }

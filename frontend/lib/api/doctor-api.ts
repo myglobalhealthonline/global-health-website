@@ -2,6 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
+import type { SupportMessage } from "@/lib/api/support-chat-api";
 
 /**
  * Server-side fetchers for the doctor portal. Each call forwards the
@@ -259,6 +260,21 @@ export type DoctorAppointment = {
 export async function fetchDoctorUnreadMessageCount(): Promise<number> {
   const result = await doctorRequest<{ unreadCount: number }>("/api/doctor/messages/unread");
   return result.ok && typeof result.data.unreadCount === "number" ? result.data.unreadCount : 0;
+}
+
+/** Unread admin replies in the doctor's support thread — drives the Account
+ *  nav badge. Returns 0 on any failure so a nav render never breaks. */
+export async function fetchDoctorSupportUnread(): Promise<number> {
+  const result = await doctorRequest<{ unreadCount: number }>("/api/doctor/support/unread");
+  return result.ok && typeof result.data.unreadCount === "number" ? result.data.unreadCount : 0;
+}
+
+/** Server-side first paint of the support thread. The client component keeps it
+ *  fresh by polling the same-origin proxy afterwards. */
+export async function fetchDoctorSupportThread() {
+  return doctorRequest<{ threadId: string; items: SupportMessage[] }>(
+    "/api/doctor/support/thread",
+  );
 }
 
 export type DoctorMessageThread = {

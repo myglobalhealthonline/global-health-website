@@ -20,6 +20,9 @@ export type NotificationPayload = {
   byRole?: "DOCTOR" | "ADMIN" | "PATIENT";
   /** Which chat thread this notification refers to. */
   channel?: "clinic" | "doctor";
+  /** SupportThread id for SUPPORT_MESSAGE / SUPPORT_REPLY. These bells carry
+   *  no appointmentId — the support thread is doctor-scoped, not per-visit. */
+  threadId?: string;
   /** Pre-localized fields for patient-facing bells (title/body/href). */
   title?: string;
   body?: string;

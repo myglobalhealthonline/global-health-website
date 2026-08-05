@@ -31,7 +31,8 @@
     "profileCountry": "Perfil ({country})",
     "security": "Segurança",
     "confidentiality": "Confidencialidade",
-    "crossBorderRx": "Cross-border requests"
+    "crossBorderRx": "Cross-border requests",
+    "support": "Apoio"
   },
   "notifications": {
     "appointmentAssigned": "Consulta atribuída",
@@ -42,7 +43,8 @@
     "formSubmitted": "Formulário submetido",
     "emptyMessage": "Ainda não há notificações.",
     "crossBorderRxRequested": "Cross-border prescription request",
-    "crossBorderRxUpdated": "Cross-border prescription update"
+    "crossBorderRxUpdated": "Cross-border prescription update",
+    "supportReply": "Resposta do apoio"
   },
   "common": {
     "apply": "Aplicar",
@@ -1802,5 +1804,28 @@
     "sending": "A enviar…",
     "sendFailed": "Não foi possível enviar o documento.",
     "sentTo": "Enviado para"
+  },
+  "supportPage": {
+    "eyebrow": "Apoio",
+    "title": "Apoio",
+    "description": "Converse diretamente com a equipa de operações da Global Health. Qualquer administrador pode responder — verá o primeiro nome da pessoa.",
+    "loadError": "Não foi possível carregar as mensagens de apoio: {message}"
+  },
+  "supportChat": {
+    "loadingSr": "A carregar mensagens…",
+    "emptyTitle": "Ainda não há mensagens.",
+    "emptyBody": "Descreva o seu problema abaixo — pode anexar uma captura de ecrã ou PDF.",
+    "placeholder": "Escreva uma mensagem…",
+    "send": "Enviar",
+    "sendFailed": "Falha ao enviar a mensagem",
+    "loadFailed": "Falha ao carregar as mensagens",
+    "attachFileLabel": "Anexar um ficheiro (PDF / imagem)",
+    "upload": "Carregar",
+    "uploading": "A carregar…",
+    "uploadFailed": "Falha ao carregar o ficheiro",
+    "removeFileAria": "Remover ficheiro",
+    "attachmentFallback": "Anexo",
+    "me": "Eu",
+    "pasteHint": "Pode colar uma captura de ecrã diretamente na caixa."
   }
 }
