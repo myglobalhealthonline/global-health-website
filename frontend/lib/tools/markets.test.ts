@@ -1,7 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { isToolMarket, toolHreflangAlternates, toolMarkets } from "./markets";
 import { applyMarketBands, applyMarketToolCopy, getMarketFaq } from "./market-copy";
-import { getToolCopy, getToolsCopy } from "./registry";
+import { TOOL_SLUGS, getToolCopy, getToolsCopy } from "./registry";
+
+/** Every market/locale pair that has hand-written market copy. */
+const MARKETS: Record<string, string[]> = {
+  ie: ["en"],
+  pt: ["pt", "en"],
+  es: ["es", "en"],
+  cz: ["cs", "en"],
+  ro: ["ro", "en"],
+  br: ["pt", "en"],
+};
 
 describe("toolMarkets", () => {
   it("covers every seeded market and each of its locales", () => {
@@ -82,11 +92,32 @@ describe("getMarketFaq", () => {
 
   it("keeps each tool's market FAQ to its own page", () => {
     // One tool's national FAQ landing on another was the failure mode the
-    // slug key exists to prevent.
-    expect(JSON.stringify(getMarketFaq("ie", "en", BMI))).not.toBe(
-      JSON.stringify(getMarketFaq("ie", "en", "blood-pressure-chart")),
-    );
+    // slug key exists to prevent. Checked across ALL six tools, not just the
+    // pair that happened to exist when this was written: two sessions adding
+    // a tool each is exactly how a duplicated block gets registered twice.
+    for (const [code, langs] of Object.entries(MARKETS)) {
+      for (const lang of langs) {
+        const seen = new Map<string, string>();
+        for (const slug of TOOL_SLUGS) {
+          const json = JSON.stringify(getMarketFaq(code, lang, slug));
+          expect(seen.get(json), `${code}/${lang}: ${slug} repeats ${seen.get(json)}`).toBeUndefined();
+          seen.set(json, slug);
+        }
+      }
+    }
     expect(getMarketFaq("ie", "en", "not-a-tool")).toEqual([]);
+  });
+
+  it("gives every tool a market FAQ in every market and locale", () => {
+    for (const [code, langs] of Object.entries(MARKETS)) {
+      for (const lang of langs) {
+        for (const slug of TOOL_SLUGS) {
+          expect(getMarketFaq(code, lang, slug).length, `${code}/${lang}/${slug}`).toBeGreaterThan(
+            0,
+          );
+        }
+      }
+    }
   });
 
   it("falls back to nothing for combinations with no market copy", () => {
@@ -95,8 +126,8 @@ describe("getMarketFaq", () => {
   });
 
   it("never leaves a placeholder unfilled — these are hand-written, not templated", () => {
-    for (const slug of ["bmi-calculator", "blood-pressure-chart"]) {
-      for (const [code, langs] of Object.entries({ ie: ["en"], pt: ["pt", "en"], es: ["es", "en"], cz: ["cs", "en"], ro: ["ro", "en"], br: ["pt", "en"] })) {
+    for (const slug of TOOL_SLUGS) {
+      for (const [code, langs] of Object.entries(MARKETS)) {
         for (const lang of langs) {
           const items = getMarketFaq(code, lang, slug);
           expect(items.length).toBeGreaterThan(0);

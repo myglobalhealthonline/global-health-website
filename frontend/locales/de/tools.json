@@ -1,13 +1,6 @@
 {
   "hub": {
-    "navLabel": "Kostenlose Gesundheits-Tools",
-    "eyebrow": "Kostenlose Gesundheits-Tools",
-    "h1Lead": "Kostenlose",
-    "h1Accent": "Gesundheitsrechner",
-    "h1Trail": "{country}",
-    "metaTitle": "Kostenlose Gesundheitsrechner {country} | Werte Prüfen",
-    "metaDescription": "Kostenlose Rechner, die in Ihrem Browser laufen — Body-Mass-Index, Tageskalorien, Blutdruck und Geburtstermin — jeweils mit der Bedeutung des Ergebnisses und dem, was ärztlich als Nächstes geprüft würde.",
-    "lede": "Schnelle, private Rechner ohne Konto. Zu jedem Ergebnis steht, was es bedeutet und was ärztlich als Nächstes geprüft würde.",
+    "navLabel": "Gesundheits-Tools",
     "openLabel": "Rechner öffnen",
     "relatedHeading": "Weitere kostenlose Rechner"
   },

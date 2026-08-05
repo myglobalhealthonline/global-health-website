@@ -1,13 +1,6 @@
 {
   "hub": {
-    "navLabel": "Instrumente medicale gratuite",
-    "eyebrow": "Instrumente medicale gratuite",
-    "h1Lead": "Calculatoare medicale",
-    "h1Accent": "gratuite",
-    "h1Trail": "{country}",
-    "metaTitle": "Calculatoare Medicale Gratuite {country} | Verifică-ți Cifrele",
-    "metaDescription": "Calculatoare gratuite care rulează în browserul tău — indicele de masă corporală, caloriile zilnice, tensiunea arterială și data probabilă a nașterii — fiecare cu explicația rezultatului și cu ce ar verifica un medic mai departe.",
-    "lede": "Calculatoare rapide și private, fără cont. Fiecare rezultat vine cu explicația lui și cu ce ar verifica un medic mai departe.",
+    "navLabel": "Instrumente de sănătate",
     "openLabel": "Deschide calculatorul",
     "relatedHeading": "Alte calculatoare gratuite"
   },

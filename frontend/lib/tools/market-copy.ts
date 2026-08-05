@@ -1392,6 +1392,8 @@ const BR_PT_DUE_DATE: DeepPartial<ToolCopy> = {
     "Datas dos trimestres e a janela de termo (37–42 semanas)",
     "Roda no seu navegador — nada é enviado nem salvo",
   ],
+  suggestionsIntro:
+    "Uma data estimada é onde o pré-natal começa, não tudo o que ele é. Estas são as consultas que dão o passo seguinte.",
   widget: {
     title: "Sua data provável do parto",
     placeholder: "Informe o primeiro dia da última menstruação para ver a data provável do parto.",
@@ -1697,6 +1699,8 @@ const BR_PT_ADHD: DeepPartial<ToolCopy> = {
     "Pontuada pergunta a pergunta, como a escala foi feita",
     "Roda no seu navegador — nada é enviado nem salvo",
   ],
+  suggestionsIntro:
+    "Um resultado de triagem é motivo para buscar avaliação, não um diagnóstico. Estas são as consultas que podem dar o passo seguinte.",
   widget: {
     title: "Suas respostas",
     instructions: "Em cada pergunta, escolha com que frequência isso aconteceu nos últimos seis meses.",

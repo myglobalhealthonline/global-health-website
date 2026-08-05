@@ -1,13 +1,6 @@
 {
   "hub": {
-    "navLabel": "Herramientas de salud gratuitas",
-    "eyebrow": "Herramientas de salud gratuitas",
-    "h1Lead": "Calculadoras de",
-    "h1Accent": "salud gratuitas",
-    "h1Trail": "{country}",
-    "metaTitle": "Calculadoras de Salud Gratuitas {country} | Revisa Tus Cifras",
-    "metaDescription": "Calculadoras gratuitas que funcionan en tu navegador — índice de masa corporal, calorías diarias, tensión arterial y fecha probable de parto — cada una con lo que significa el resultado y lo que revisaría un médico después.",
-    "lede": "Calculadoras rápidas y privadas, sin necesidad de cuenta. Cada resultado viene con lo que significa y con lo que miraría un médico después.",
+    "navLabel": "Herramientas de salud",
     "openLabel": "Abrir calculadora",
     "relatedHeading": "Más calculadoras gratuitas"
   },

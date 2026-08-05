@@ -1,13 +1,6 @@
 {
   "hub": {
-    "navLabel": "Bezplatné zdravotní nástroje",
-    "eyebrow": "Bezplatné zdravotní nástroje",
-    "h1Lead": "Bezplatné zdravotní",
-    "h1Accent": "kalkulačky",
-    "h1Trail": "{country}",
-    "metaTitle": "Bezplatné Zdravotní Kalkulačky {country} | Spočítejte Si Hodnoty",
-    "metaDescription": "Bezplatné kalkulačky, které běží ve vašem prohlížeči — index tělesné hmotnosti, denní příjem kalorií, krevní tlak a termín porodu — u každé je vysvětleno, co výsledek znamená a co by lékař zkontroloval dál.",
-    "lede": "Rychlé a soukromé kalkulačky, které použijete bez registrace. U každého výsledku najdete, co znamená a na co by se lékař podíval dál.",
+    "navLabel": "Zdravotní nástroje",
     "openLabel": "Otevřít kalkulačku",
     "relatedHeading": "Další bezplatné kalkulačky"
   },

@@ -1,13 +1,6 @@
 {
   "hub": {
-    "navLabel": "Free health tools",
-    "eyebrow": "Free health tools",
-    "h1Lead": "Free health",
-    "h1Accent": "calculators",
-    "h1Trail": "{country}",
-    "metaTitle": "Free Health Calculators {country} | Check Your Numbers",
-    "metaDescription": "Free calculators that run in your browser — body mass index, daily calories, blood pressure and pregnancy due date — each with what the result means and what a doctor would check next.",
-    "lede": "Quick, private calculators you can use without an account. Every result comes with what it means and what a doctor would look at next.",
+    "navLabel": "Health tools",
     "openLabel": "Open calculator",
     "relatedHeading": "More free calculators"
   },

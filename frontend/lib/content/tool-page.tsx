@@ -390,8 +390,7 @@ function ToolSectionBlock({
 }
 
 /**
- * One tool, as a link card. Used by the `/tools` index and by the related
- * strip on each tool page, so the two can never drift apart.
+ * One tool, as a link card in the related strip at the foot of a tool page.
  */
 function ToolLinkCard({
   href,
@@ -760,5 +759,3 @@ export function ToolPage({
     </>
   );
 }
-
-/* ----------------------------------------------------------------- /tools */

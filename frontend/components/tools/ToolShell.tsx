@@ -23,9 +23,11 @@ import type { ToneKey } from "@/lib/tools/registry";
 export function ToolCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="gh2-glass-forest gh2-dark-content p-6 sm:p-7">
+      {/* Eyebrow, lime like every other eyebrow on the page. The panel used
+          muted grey here, which is what made the accent colour look arbitrary. */}
       <p
         className="text-[11px] font-bold uppercase tracking-[0.2em]"
-        style={{ color: "var(--color-text-muted)" }}
+        style={{ color: "var(--color-brand-accent)" }}
       >
         {title}
       </p>
@@ -80,6 +82,15 @@ export function ToolField({
 /** Shared input styling — 16px font size so iOS Safari never zooms on focus. */
 export const TOOL_INPUT_CLASS =
   "w-full rounded-xl border px-3.5 py-2.5 text-[16px] font-semibold outline-none transition-colors focus:border-[var(--color-brand-accent)] focus:ring-2 focus:ring-[rgba(176,241,34,0.22)]";
+
+/**
+ * Selects need their own class: the native popup is drawn by the OS, and it
+ * inherited the control's white text onto a white system list — the options
+ * were there but invisible. `color-scheme: dark` makes the platform draw a
+ * dark popup instead; the explicit option colours in globals.css are the
+ * fallback for engines that ignore it.
+ */
+export const TOOL_SELECT_CLASS = "gh-tool-select";
 
 /** Inline unit tag inside an input — used where two fields share one label. */
 export const UNIT_SUFFIX_CLASS =
@@ -292,7 +303,10 @@ export function ToolGauge({
 
   return (
     <div className="mt-5">
-      <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
+      <p
+        className="text-[11px] font-bold uppercase tracking-[0.16em]"
+        style={{ color: "var(--color-brand-accent)" }}
+      >
         {label}
       </p>
       <div className="relative mt-3 pt-6">

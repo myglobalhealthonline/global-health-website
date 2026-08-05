@@ -11,11 +11,13 @@
  * (KD 11), `bmi kalkulačka` 40,500/mo in Czechia (KD 5), against 2,900/mo for
  * `bmi calculator ireland`. Hence: every country, every locale.
  *
- * SHIPPING ONE TOOL AT A TIME. BMI and the due-date calculator are live; the
- * calorie, blood-pressure and ADHD tools followed; ovulation is planned next
- * and its maths already sits (tested) in `calc.ts`. Adding one means: a `ToolMeta`
- * entry here, a widget branch in `ToolWidget.tsx`, and its copy block in the
- * six `tools.json` files. Nothing else — the renderer is generic.
+ * All six are live: BMI, calorie, blood-pressure, due-date, ovulation and the
+ * ADHD screener. There is deliberately NO `/tools` index — an index page would
+ * compete with the six for the same queries and rank for none of them. The
+ * header dropdown and the footer link straight to each calculator. Adding one
+ * means: a `ToolMeta` entry here, a widget branch in `ToolWidget.tsx`, and its
+ * copy block in the six `tools.json` files. Nothing else — the renderer is
+ * generic.
  *
  * Due date is the biggest of the set by demand: `calculadora gestacional` is
  * 135,000/mo in Brazil at KD 0, `těhotenská kalkulačka` 8,100 in Czechia,
@@ -241,7 +243,10 @@ export type ToolCopy = {
 export type ToolsUiCopy = typeof enTools.ui;
 export type ToolsBandsCopy = typeof enTools.bands;
 export type ToolsSuggestionsCopy = typeof enTools.suggestions;
-/** Copy for the `/tools` index and the related strip on each tool page. */
+/**
+ * The nav dropdown's label plus the related strip's heading and link label —
+ * what survived the `/tools` index. Not a page's worth of copy any more.
+ */
 export type ToolsHubCopy = typeof enTools.hub;
 
 export type ToolsBundle = {

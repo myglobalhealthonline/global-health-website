@@ -56,6 +56,7 @@ import { fillPlaceholders } from "@/lib/tools/placeholders";
 import type { ToolsBandsCopy, ToolsUiCopy, WidgetKey } from "@/lib/tools/registry";
 import {
   TOOL_INPUT_CLASS,
+  TOOL_SELECT_CLASS,
   UNIT_SUFFIX_CLASS,
   TOOL_INPUT_STYLE,
   ToolCard,
@@ -454,7 +455,7 @@ function BloodPressureWidget({ copy }: { copy: WidgetCopy }) {
         <ToolField label={ui.systolic} htmlFor={`${id}-sys`} suffix={ui.mmHg}>
           <input
             id={`${id}-sys`}
-            className={TOOL_INPUT_CLASS}
+            className={`${TOOL_INPUT_CLASS} ${TOOL_SELECT_CLASS}`}
             style={TOOL_INPUT_STYLE}
             inputMode="numeric"
             value={systolic}
@@ -473,7 +474,7 @@ function BloodPressureWidget({ copy }: { copy: WidgetCopy }) {
         <ToolField label={ui.diastolic} htmlFor={`${id}-dia`} suffix={ui.mmHg}>
           <input
             id={`${id}-dia`}
-            className={TOOL_INPUT_CLASS}
+            className={`${TOOL_INPUT_CLASS} ${TOOL_SELECT_CLASS}`}
             style={TOOL_INPUT_STYLE}
             inputMode="numeric"
             value={diastolic}
@@ -948,7 +949,7 @@ function CalorieWidget({ copy }: { copy: WidgetCopy }) {
       <ToolField label={ui.activity} htmlFor={`${id}-activity`} hint={level.summary}>
         <select
           id={`${id}-activity`}
-          className={TOOL_INPUT_CLASS}
+          className={`${TOOL_INPUT_CLASS} ${TOOL_SELECT_CLASS}`}
           style={TOOL_INPUT_STYLE}
           value={activity}
           onChange={(event) => setActivity(event.target.value as ActivityKey)}
@@ -1028,7 +1029,7 @@ function AdhdWidget({ copy }: { copy: WidgetCopy }) {
         >
           <select
             id={`${id}-${question.id}`}
-            className={TOOL_INPUT_CLASS}
+            className={`${TOOL_INPUT_CLASS} ${TOOL_SELECT_CLASS}`}
             style={TOOL_INPUT_STYLE}
             value={answers[index]}
             onChange={(event) => {
