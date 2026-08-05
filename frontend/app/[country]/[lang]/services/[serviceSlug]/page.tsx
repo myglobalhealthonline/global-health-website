@@ -45,6 +45,10 @@ import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
+import { toolSlugsForService } from "@/lib/tools/service-suggestions";
+import { getToolCopy } from "@/lib/tools/registry";
+import { applyMarketToolCopy } from "@/lib/tools/market-copy";
+import { isToolMarket } from "@/lib/tools/markets";
 import { listRelatedBlogPosts } from "@/lib/content/get-public-blog";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -196,6 +200,29 @@ export default async function ServiceDetailPage({
       href: `/${country}/${lang}/blog/${p.slug}`,
       title: p.title,
     })),
+    // The free calculators relevant to THIS service. Same reason the landing
+    // pages are here: the tools are otherwise linked only from the header
+    // dropdown and the footer, which Google treats as site-wide boilerplate —
+    // on 2026-08-06 every one of the 198 tool URLs was "Discovered - currently
+    // not indexed" with the sitemap as its sole referring URL. Anchor text is
+    // the tool's own `cardTitle`, which is already the market's head term
+    // (Brazil's due-date card reads "Calculadora gestacional"), so this must go
+    // through `applyMarketToolCopy` rather than reading the locale file raw.
+    ...(isToolMarket(code, lang)
+      ? toolSlugsForService({ slug: serviceSlug, name: serviceCard?.name ?? "" }).flatMap(
+          (toolSlug) => {
+            const copy = getToolCopy(lang as LocaleCode, toolSlug);
+            if (!copy) return [];
+            return [
+              {
+                key: `tool-${toolSlug}`,
+                href: `/${country}/${lang}/tools/${toolSlug}`,
+                title: applyMarketToolCopy(code, lang, toolSlug, copy).cardTitle,
+              },
+            ];
+          },
+        )
+      : []),
   ];
 
   // Named clinical reviewer for the E-E-A-T byline + schema — the country's

@@ -12,9 +12,14 @@ import type { BmiBandKey } from "@/lib/tools/calc";
  * Resolved from the LIVE per-country service list rather than a hardcoded map,
  * because every market names the same service differently — Ireland sells
  * `weight-management-consultation`, Portugal `perda-de-peso`, Spain
- * `control-peso-online`, Brazil `controle-peso-online`, and Czechia and
- * Romania have no weight service at all today. A static table would be wrong
- * the first time an admin adds or renames one.
+ * `control-peso-online`, Brazil `controle-peso-online`, Czechia
+ * `kontrola-vahy-online` and Romania `controlul-greutatii`. A static table
+ * would be wrong the first time an admin adds or renames one.
+ *
+ * (This comment used to say Czechia and Romania had no weight service. They
+ * do — the term list carried dictionary forms, not stems, so neither slug
+ * matched and both markets' BMI pages fell through to the GP link. Fixed
+ * 2026-08-06; `service-suggestions.test.ts` pins the inflected forms.)
  *
  * Kinds are restricted to GENERAL and SPECIALIST: PRESCRIPTION and
  * HOME_DELIVERY are deliberately hidden from the public site for Ads
@@ -56,10 +61,15 @@ const WEIGHT_TERMS = [
   "weight",
   "peso",
   "obes",
-  "vaha",
-  "váha",
+  // Stems, not dictionary forms. The live Czech service is
+  // `kontrola-vahy-online` / "Hubnutí s lékařem online" and the Romanian one is
+  // `controlul-greutatii` / "Managementul greutății" — full forms ("vaha",
+  // "greutate") matched neither, which is why both markets appeared to have no
+  // weight service and their BMI pages fell through to the GP link.
+  "vah",
+  "hubnut",
   "hmotnost",
-  "greutate",
+  "greut",
   "slabire",
   "slăbire",
   "gewicht",
@@ -82,7 +92,12 @@ const CARDIO_TERMS = ["cardio", "coraz", "coraç", "inima", "inimă", "srdc", "h
 const MENTAL_TERMS = [
   "psych",
   "mental",
-  "psihiatr",
+  // Romanian writes it "mintal" (`sanatate-mintala-online`), and the Iberian
+  // psychology services are `psicologo-online` / `consulta-de-psicologia` —
+  // "psych" is the English/Czech spelling and matched none of them.
+  "mintal",
+  "psic",
+  "psih",
   "psiquiatr",
   "duševn",
   "psychiatr",
@@ -138,6 +153,32 @@ const matches = (haystack: string, terms: string[]) => {
   const flat = norm(haystack);
   return terms.some((term) => flat.includes(norm(term)));
 };
+
+/**
+ * The reverse of `TOOL_SLOTS`: which calculators belong on a given SERVICE
+ * page. Same term matching as the forward direction, driven off each tool's
+ * FIRST slot, so a tool's topic never has to be declared in two places — add a
+ * calculator to `TOOL_SLOTS` and its service pages start linking it.
+ *
+ * Why this exists: the calculators were reachable only from the header
+ * dropdown and the footer, which Google discounts as site-wide boilerplate. On
+ * 2026-08-06 all 198 tool URLs sat at "Discovered - currently not indexed"
+ * with the sitemap as their only referring URL. This is the same fix the 90
+ * `/health/*` landing pages needed — see the `fetchLandingSlugs` comment on
+ * the service page — a real in-content link from a page Google already crawls.
+ *
+ * Capped at two so a service page gains a related link, not a link dump.
+ */
+export function toolSlugsForService(input: { slug: string; name: string }): string[] {
+  const haystack = `${input.slug} ${input.name}`;
+  const out: string[] = [];
+  for (const [tool, slots] of Object.entries(TOOL_SLOTS)) {
+    const primary = slots[0];
+    if (!primary || primary === "gp") continue;
+    if (matches(haystack, TERMS_FOR_SLOT[primary])) out.push(tool);
+  }
+  return out.slice(0, 2);
+}
 
 /**
  * Look up this market's weight / nutrition consultations plus its GP entry

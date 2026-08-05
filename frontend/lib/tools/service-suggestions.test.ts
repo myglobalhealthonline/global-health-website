@@ -1,0 +1,74 @@
+import { describe, expect, it } from "vitest";
+import { toolSlugsForService } from "@/lib/tools/service-suggestions";
+
+/**
+ * Guards the service-page → calculator links. If this breaks, the tools go
+ * back to being reachable only from the header dropdown and the footer, which
+ * is what left all 198 of them "Discovered - currently not indexed".
+ *
+ * Slugs below are the real ones from the live per-country catalogue.
+ */
+describe("toolSlugsForService", () => {
+  it("links BMI from each market's weight service", () => {
+    for (const slug of [
+      "weight-management-consultation", // ie/en
+      "perda-de-peso", // pt
+      "control-peso-online", // es
+      "controle-peso-online", // br
+    ]) {
+      expect(toolSlugsForService({ slug, name: "" })).toContain("bmi-calculator");
+    }
+  });
+
+  /**
+   * These four were silently unmatched until 2026-08-06: the tables carried
+   * dictionary forms ("vaha", "greutate", "psych") that none of the live
+   * inflected slugs contain. Czechia and Romania therefore looked like they
+   * had no weight service at all, and their BMI pages fell through to the GP
+   * link. Both directions read the same tables, so this covers the tool-page
+   * suggestions too.
+   */
+  it("matches inflected, non-English service names", () => {
+    const cases: Array<[string, string, string]> = [
+      ["kontrola-vahy-online", "Hubnutí s lékařem online", "bmi-calculator"], // cz
+      ["controlul-greutatii", "Managementul greutății", "bmi-calculator"], // ro
+      ["sanatate-mintala-online", "Evaluare de sănătate mintală", "adhd-test"], // ro
+      ["psicologo-online", "Psicología Clínica", "adhd-test"], // es
+    ];
+    for (const [slug, name, expected] of cases) {
+      expect(toolSlugsForService({ slug, name })).toContain(expected);
+    }
+  });
+
+  it("links both pregnancy tools from a women's health service", () => {
+    expect(toolSlugsForService({ slug: "womens-health-consultation", name: "" })).toEqual([
+      "due-date-calculator",
+      "ovulation-calculator",
+    ]);
+  });
+
+  it("matches on the service NAME when the slug carries no topic term", () => {
+    expect(
+      toolSlugsForService({ slug: "consulta-online-123", name: "Consulta de cardiologia" }),
+    ).toEqual(["blood-pressure-chart"]);
+  });
+
+  it("is accent-insensitive", () => {
+    expect(toolSlugsForService({ slug: "consulta-nutricao", name: "Nutrição" })).toContain(
+      "calorie-calculator",
+    );
+  });
+
+  it("returns nothing for an unrelated service, rather than a default link", () => {
+    expect(toolSlugsForService({ slug: "dermatology-consultation", name: "" })).toEqual([]);
+  });
+
+  it("never returns more than two links", () => {
+    // Matches weight, nutrition, cardio and mental terms at once.
+    const many = toolSlugsForService({
+      slug: "weight-nutrition-cardio-psych",
+      name: "",
+    });
+    expect(many.length).toBeLessThanOrEqual(2);
+  });
+});
