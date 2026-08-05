@@ -1,6 +1,7 @@
 {
   "hub": {
     "navLabel": "Gesundheits-Tools",
+    "navLabelShort": "Tools",
     "openLabel": "Rechner öffnen",
     "relatedHeading": "Weitere kostenlose Rechner"
   },

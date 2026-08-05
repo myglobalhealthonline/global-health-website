@@ -1,6 +1,7 @@
 {
   "hub": {
     "navLabel": "Zdravotní nástroje",
+    "navLabelShort": "Nástroje",
     "openLabel": "Otevřít kalkulačku",
     "relatedHeading": "Další bezplatné kalkulačky"
   },

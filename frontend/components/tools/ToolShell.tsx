@@ -84,11 +84,15 @@ export const TOOL_INPUT_CLASS =
   "w-full rounded-xl border px-3.5 py-2.5 text-[16px] font-semibold outline-none transition-colors focus:border-[var(--color-brand-accent)] focus:ring-2 focus:ring-[rgba(176,241,34,0.22)]";
 
 /**
- * Selects need their own class: the native popup is drawn by the OS, and it
- * inherited the control's white text onto a white system list — the options
- * were there but invisible. `color-scheme: dark` makes the platform draw a
- * dark popup instead; the explicit option colours in globals.css are the
- * fallback for engines that ignore it.
+ * Selects render as a LIGHT control, unlike the other inputs on the dark
+ * chassis.
+ *
+ * The option list is drawn by the OS, not by us, and `color-scheme: dark` was
+ * not honoured reliably — the popup stayed white while the options inherited
+ * white text, so the list read as an empty box. Rather than keep fighting the
+ * platform, the control itself is white with forest text, which is the state
+ * every engine renders a legible popup from. It also matches the white
+ * read-out directly below it.
  */
 export const TOOL_SELECT_CLASS = "gh-tool-select";
 
@@ -303,9 +307,12 @@ export function ToolGauge({
 
   return (
     <div className="mt-5">
+      {/* Forest, NOT lime: the gauge lives inside the white read-out, where
+          lime on white is close to invisible. Lime is for eyebrows on the dark
+          chassis; on the light instrument face the accent is brand forest. */}
       <p
         className="text-[11px] font-bold uppercase tracking-[0.16em]"
-        style={{ color: "var(--color-brand-accent)" }}
+        style={{ color: "var(--color-brand-primary)" }}
       >
         {label}
       </p>

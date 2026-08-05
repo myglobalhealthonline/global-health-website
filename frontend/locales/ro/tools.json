@@ -1,6 +1,7 @@
 {
   "hub": {
     "navLabel": "Instrumente de sănătate",
+    "navLabelShort": "Instrumente",
     "openLabel": "Deschide calculatorul",
     "relatedHeading": "Alte calculatoare gratuite"
   },

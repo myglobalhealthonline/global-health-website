@@ -124,8 +124,12 @@ function sectionNavForCountryLang(
   if (toolsChildren.length > 0) {
     // No hub row: there is no /tools index. Each calculator is its own page,
     // which is the point — one page per query, not an index competing with them.
+    const hub = getToolsCopy(lang as LocaleCode).hub;
     items.push({
-      label: getToolsCopy(lang as LocaleCode).hub.navLabel,
+      // Short in the bar so the pill never wraps to two lines; the open menu
+      // carries the full name.
+      label: hub.navLabelShort,
+      menuHeading: hub.navLabel,
       children: toolsChildren,
     });
   }

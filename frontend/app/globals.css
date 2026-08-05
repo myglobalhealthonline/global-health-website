@@ -4437,15 +4437,18 @@ body.gh-cookie-bar-open {
   border-color: var(--color-brand-accent);
 }
 
-/* Native <select> inside the dark tool panel. The option list is drawn by the
- * OS, and it inherited the control's white text onto a white system popup —
- * the options were present but invisible. `color-scheme: dark` makes the
- * platform draw a dark list; the explicit option colours are the fallback for
- * engines that ignore it (and for Firefox on Linux). */
+/* Native <select> in the tool panel. The option list is drawn by the OS, and
+ * a dark control gave a white popup with white text — an empty-looking box.
+ * color-scheme:dark was not honoured reliably enough to depend on, so the
+ * control is light instead: every engine draws a legible dark-on-white list
+ * from that, and it matches the white read-out below it. */
 .gh-tool-select {
-  color-scheme: dark;
+  color-scheme: light;
+  background-color: #ffffff !important;
+  color: var(--color-brand-primary) !important;
+  border-color: rgba(29, 75, 54, 0.18) !important;
 }
 .gh-tool-select option {
-  background-color: #0e3125;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #1d4b36;
 }

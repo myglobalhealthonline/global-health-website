@@ -1,6 +1,7 @@
 {
   "hub": {
     "navLabel": "Herramientas de salud",
+    "navLabelShort": "Herramientas",
     "openLabel": "Abrir calculadora",
     "relatedHeading": "Más calculadoras gratuitas"
   },

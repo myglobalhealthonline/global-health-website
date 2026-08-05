@@ -1,6 +1,7 @@
 {
   "hub": {
     "navLabel": "Health tools",
+    "navLabelShort": "Tools",
     "openLabel": "Open calculator",
     "relatedHeading": "More free calculators"
   },

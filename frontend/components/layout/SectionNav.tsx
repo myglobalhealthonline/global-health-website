@@ -25,6 +25,9 @@ export type SectionNavItem = {
   /** When set, the item renders as a dropdown trigger; clicking shows
    *  these children in a Radix DropdownMenu popover. */
   children?: Array<{ href: string; label: string; description?: string }>;
+  /** Heading shown above the children. Lets the trigger stay short ("Tools")
+   *  while the open menu says what it is ("Health tools"). */
+  menuHeading?: string;
 };
 
 const PILL_BASE =
@@ -100,7 +103,7 @@ export function SectionNav({
                 className={pillClass(active, isDark)}
                 aria-label={`${item.label} submenu`}
               >
-                {item.label}
+                <span className="whitespace-nowrap">{item.label}</span>
                 <ChevronDown
                   className="size-3.5 opacity-70 transition-transform duration-200 group-data-[state=open]/navitem:rotate-180 motion-reduce:transition-none"
                   strokeWidth={2}
@@ -118,6 +121,17 @@ export function SectionNav({
                       : "z-[var(--z-dropdown)] min-w-[280px] rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] p-2 shadow-[var(--shadow-elevated)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
                   }
                 >
+                  {item.menuHeading ? (
+                    <DropdownMenu.Label
+                      className={
+                        isDark
+                          ? "px-3 pb-1.5 pt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]"
+                          : "px-3 pb-1.5 pt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]"
+                      }
+                    >
+                      {item.menuHeading}
+                    </DropdownMenu.Label>
+                  ) : null}
                   {item.children.map((c) => {
                     const childActive =
                       pathname === c.href || pathname.startsWith(`${c.href}/`);
