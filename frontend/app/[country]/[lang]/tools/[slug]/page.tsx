@@ -38,7 +38,7 @@ function resolve(country: string, lang: string, slug: string) {
   if (!meta || !languageCopy) return null;
   // Same market override the renderer applies, so <title>/description match
   // the page body (Brazilian Portuguese on /brazil/pt).
-  const copy = applyMarketToolCopy(code, locale, languageCopy);
+  const copy = applyMarketToolCopy(code, locale, slug, languageCopy);
 
   return {
     code,
@@ -80,13 +80,20 @@ export default async function CountryToolPage({ params }: { params: Promise<Para
 
   // This market's own weight / nutrition / GP services, read from the live
   // catalogue so the links stay right when an admin renames or adds one.
-  const suggestions = await getBmiServiceSuggestions({
-    code: resolved.code,
-    config: resolved.config,
-    country,
-    lang,
-    locale: resolved.locale,
-  });
+  //
+  // Not on the due-date page: putting weight management in front of someone
+  // reading a pregnancy result would be wrong, and no market sells an antenatal
+  // service, so that page converts through its CTA band instead.
+  const suggestions =
+    slug === "due-date-calculator"
+      ? []
+      : await getBmiServiceSuggestions({
+          code: resolved.code,
+          config: resolved.config,
+          country,
+          lang,
+          locale: resolved.locale,
+        });
 
   return (
     <ToolPage

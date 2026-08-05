@@ -152,17 +152,16 @@ export function SiteFooter({
     { label: navigation.footerMyAccount, href: "/account" },
   ];
 
-  // Free BMI calculator. Label comes from the tools bundle rather than
+  // Free calculators. Label comes from the tools bundle rather than
   // SiteNavigationData because that is where the rest of the tools copy lives;
-  // it is translated in all six locales. Points at the tool itself — there is
-  // no /tools hub until a second calculator ships.
-  const bmiLabel = loadLocaleBundle(resolveLocale({ explicitLocale: parsed.lang })).tools.tools[
-    "bmi-calculator"
-  ].cardTitle;
+  // it is translated in all six locales. Points at the `/tools` index, which is
+  // what stops the individual calculators from being orphaned URLs.
+  const toolsLabel = loadLocaleBundle(resolveLocale({ explicitLocale: parsed.lang })).tools.hub
+    .navLabel;
 
   const companyLinks = [
     { label: navigation.navBlog, href: careBase ? `${careBase}/blog` : "/blog" },
-    { label: bmiLabel, href: `${careScope}/tools/bmi-calculator` },
+    { label: toolsLabel, href: `${careScope}/tools` },
     { label: navigation.navFaq, href: "/faq" },
     // Inside a country scope, link that market's own About and contact pages
     // (its NAP, registration, languages and regulatory FAQs) rather than the

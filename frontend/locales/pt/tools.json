@@ -1,5 +1,20 @@
 {
+  "hub": {
+    "navLabel": "Ferramentas de saúde gratuitas",
+    "eyebrow": "Ferramentas de saúde gratuitas",
+    "h1Lead": "Calculadoras de",
+    "h1Accent": "saúde gratuitas",
+    "h1Trail": "{country}",
+    "metaTitle": "Calculadoras de Saúde Gratuitas {country} | Veja os Seus Valores",
+    "metaDescription": "Calculadoras gratuitas que funcionam no seu navegador — índice de massa corporal, calorias diárias, tensão arterial e data provável do parto — cada uma com o significado do resultado e o que um médico verificaria a seguir.",
+    "lede": "Calculadoras rápidas e privadas, sem necessidade de conta. Cada resultado vem com o que significa e com aquilo que um médico veria a seguir.",
+    "openLabel": "Abrir calculadora",
+    "relatedHeading": "Mais calculadoras gratuitas"
+  },
   "ui": {
+    "systolic": "Sistólica (número de cima)",
+    "diastolic": "Diastólica (número de baixo)",
+    "mmHg": "mmHg",
     "questionsEyebrow": "Perguntas",
     "faqSuffix": "Perguntas frequentes",
     "units": "Unidades",
@@ -13,7 +28,14 @@
     "inchesLabel": "Polegadas",
     "stoneLabel": "Peso (stone)",
     "poundsLabel": "Libras",
-    "poundsOnlyHint": "Deixe stone vazio para usar apenas libras."
+    "poundsOnlyHint": "Deixe stone vazio para usar apenas libras.",
+    "sex": "Sexo",
+    "male": "Homem",
+    "female": "Mulher",
+    "age": "Idade",
+    "years": "anos",
+    "activity": "Nível de atividade",
+    "kcalPerDay": "kcal / dia"
   },
   "suggestions": {
     "heading": "O passo seguinte",
@@ -27,6 +49,40 @@
     "nudgeObese": "Neste nível, a gestão do peso com acompanhamento médico funciona bastante melhor do que fazer dieta sozinho."
   },
   "bands": {
+    "bp": {
+      "low": {
+        "label": "Tensão baixa",
+        "summary": "Abaixo do intervalo habitual em adultos. Muitas vezes não tem importância, mas merece a opinião de um médico se sentir tonturas, desmaios ou cansaço fora do normal."
+      },
+      "optimal": {
+        "label": "Ótima",
+        "summary": "O intervalo de menor risco em adultos. Não há nada a fazer só por causa desta leitura."
+      },
+      "normal": {
+        "label": "Normal",
+        "summary": "Dentro do intervalo normal em adultos. Vale a pena voltar a medir de vez em quando, sobretudo se tem vindo a subir."
+      },
+      "high-normal": {
+        "label": "Normal-alta",
+        "summary": "Acima do normal, mas ainda não é hipertensão. É a fase em que o sal, o álcool, o peso e a atividade física fazem mais diferença."
+      },
+      "grade-1": {
+        "label": "Hipertensão de grau 1",
+        "summary": "Ligeiramente elevada. Faça uma semana de medições em casa e leve-as a um médico — o diagnóstico precisa do padrão, não de um valor isolado."
+      },
+      "isolated-systolic": {
+        "label": "Hipertensão sistólica isolada",
+        "summary": "O número de cima está elevado e o de baixo é normal. É o padrão mais frequente a partir dos 60 anos e ainda assim exige avaliação médica."
+      },
+      "grade-2": {
+        "label": "Hipertensão de grau 2",
+        "summary": "Bastante elevada. Marque uma avaliação médica em breve, sem esperar por uma consulta de rotina."
+      },
+      "grade-3": {
+        "label": "Hipertensão de grau 3",
+        "summary": "Muito elevada. Esta leitura tem de ser vista por um médico ainda hoje."
+      }
+    },
     "bmi": {
       "underweight": {
         "label": "Baixo peso",
@@ -52,9 +108,193 @@
         "label": "Obesidade grau III",
         "summary": "Recomenda-se avaliação especializada em gestão do peso."
       }
+    },
+    "activity": {
+      "sedentary": {
+        "label": "Sedentário",
+        "summary": "Trabalho sentado, pouco ou nenhum exercício"
+      },
+      "light": {
+        "label": "Pouco ativo",
+        "summary": "Exercício ligeiro 1–3 dias por semana"
+      },
+      "moderate": {
+        "label": "Moderadamente ativo",
+        "summary": "Exercício moderado 3–5 dias por semana"
+      },
+      "very": {
+        "label": "Muito ativo",
+        "summary": "Exercício intenso 6–7 dias por semana"
+      },
+      "extra": {
+        "label": "Extremamente ativo",
+        "summary": "Trabalho físico ou treino intenso duas vezes por dia"
+      }
     }
   },
   "tools": {
+    "blood-pressure-chart": {
+      "cardTitle": "Tabela de tensão arterial",
+      "cardBlurb": "O que os seus dois números significam na tabela europeia de tensão arterial para adultos.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Tabela de",
+      "h1Accent": "tensão arterial",
+      "h1Trail": "{country}",
+      "metaTitle": "Tabela de Tensão Arterial {country} | O Que Significa a Sua Leitura",
+      "metaDescription": "Compare os seus valores de tensão sistólica e diastólica com a tabela europeia para adultos. Veja a categoria, o que significa e que leituras exigem cuidados médicos no próprio dia.",
+      "lede": "Introduza os dois números do seu medidor para ver onde fica a leitura na tabela europeia para adultos — e o que fazer, se houver alguma coisa a fazer.",
+      "trustPoints": [
+        "Categorias europeias (ESC/ESH) para adultos",
+        "Sinaliza as leituras que precisam de cuidados no próprio dia",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "suggestionsIntro": "Uma leitura da tensão é um alerta, não um plano. Estas são as consultas que os nossos médicos fazem para o que ela sinaliza.",
+      "widget": {
+        "title": "A sua leitura",
+        "placeholder": "O número de cima tem de ser maior do que o de baixo — confirme os dois valores no seu medidor.",
+        "note": "Esta tabela é uma referência de rastreio, não um diagnóstico. A hipertensão é diagnosticada com leituras repetidas, normalmente uma semana de medições em casa ou um registo de 24 horas, nunca com um valor isolado.",
+        "scaleLabel": "Onde se situa o seu valor sistólico",
+        "optimalLabel": "Ótima para a maioria dos adultos",
+        "optimalValue": "Abaixo de {systolic}/{diastolic} mmHg",
+        "urgentTitle": "Procure ajuda médica hoje",
+        "urgentBody": "Uma leitura tão alta deve ser avaliada no próprio dia. Fique sentado e calmo durante cinco minutos e volte a medir — se continuar assim, contacte um médico ainda hoje.",
+        "urgentSymptoms": "Ligue já para o número de emergência se tiver também dor no peito, fraqueza ou falta de sensibilidade num dos lados do corpo, dificuldade em falar ou uma alteração súbita da visão."
+      },
+      "sections": [
+        {
+          "heading": "A tabela de tensão arterial para adultos",
+          "body": [
+            "A tensão arterial escreve-se com dois números: a pressão sistólica, enquanto o coração contrai, sobre a pressão diastólica, enquanto relaxa entre batimentos. Ambas são medidas em milímetros de mercúrio (mmHg).",
+            "As categorias abaixo são as europeias (ESC/ESH). Quando os dois números caem em categorias diferentes, vale a mais alta: 128/95 é hipertensão de grau 1, e não uma tensão normal."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Categorias europeias de tensão arterial em adultos",
+            "columns": [
+              "Categoria",
+              "Sistólica (mmHg)",
+              "Diastólica (mmHg)"
+            ],
+            "rows": [
+              [
+                "Baixa",
+                "Menos de 90",
+                "ou menos de 60"
+              ],
+              [
+                "Ótima",
+                "Menos de 120",
+                "e menos de 80"
+              ],
+              [
+                "Normal",
+                "120 – 129",
+                "e/ou 80 – 84"
+              ],
+              [
+                "Normal-alta",
+                "130 – 139",
+                "e/ou 85 – 89"
+              ],
+              [
+                "Hipertensão de grau 1",
+                "140 – 159",
+                "e/ou 90 – 99"
+              ],
+              [
+                "Hipertensão de grau 2",
+                "160 – 179",
+                "e/ou 100 – 109"
+              ],
+              [
+                "Hipertensão de grau 3",
+                "180 ou mais",
+                "e/ou 110 ou mais"
+              ],
+              [
+                "Sistólica isolada",
+                "140 ou mais",
+                "e menos de 90"
+              ]
+            ],
+            "footnote": "Limiares de consultório para adultos. Os medidores domésticos e os registos de 24 horas dão valores mais baixos, pelo que em casa a hipertensão começa em 135/85 e não em 140/90. A gravidez, a infância e a diálise têm objetivos diferentes."
+          }
+        },
+        {
+          "heading": "Como fazer uma medição em que se possa confiar",
+          "body": [
+            "A maioria das leituras alarmantes é um problema de medição. A tensão varia ao longo do dia e sobe se chegar a correr, se tiver a bexiga cheia ou se falar com a braçadeira insuflada, por isso a forma de medir muda o número mais do que se pensa."
+          ],
+          "bullets": [
+            "Fique sentado e quieto cinco minutos antes, com as costas apoiadas, os pés assentes no chão e as pernas sem cruzar.",
+            "Nada de café, comida, exercício ou tabaco nos 30 minutos anteriores, e esvazie a bexiga.",
+            "Apoie o braço numa mesa para que a braçadeira fique ao nível do coração, sobre a pele nua.",
+            "Use uma braçadeira do tamanho certo. Uma pequena demais dá valores altos e é o erro mais comum em casa.",
+            "Não fale enquanto mede: falar acrescenta vários mmHg.",
+            "Faça duas leituras com um minuto de intervalo e use a segunda, ou a média das duas.",
+            "Meça de manhã e à noite durante sete dias e leve a série completa a um médico."
+          ]
+        },
+        {
+          "heading": "O que uma única leitura não lhe pode dizer",
+          "body": [
+            "Uma leitura é uma fotografia de um momento, num braço. Chega para sinalizar um problema, mas não para lhe dar um nome, e é por isso que o diagnóstico assenta em leituras repetidas e não no primeiro valor que assusta."
+          ],
+          "bullets": [
+            "Hipertensão da bata branca: alta no consultório e normal em casa. É frequente e só se distingue medindo em casa ou com um registo de 24 horas.",
+            "Hipertensão mascarada: normal no consultório e alta o resto do tempo. É a mais perigosa das duas e fica invisível sem medições em casa.",
+            "Os braços diferem. Uma diferença superior a 10 mmHg entre eles importa, e daí em diante usa-se sempre o braço com o valor mais alto.",
+            "Um pulso irregular, incluindo a fibrilhação auricular, torna pouco fiáveis a maioria dos medidores automáticos.",
+            "Nem todos os aparelhos domésticos estão validados clinicamente, e um aparelho não validado pode desviar-se bastante.",
+            "A gravidez tem limiares e riscos próprios: a tensão alta na gravidez precisa de avaliação obstétrica, não desta tabela."
+          ]
+        },
+        {
+          "heading": "Quando falar com um médico e quando pedir ajuda já",
+          "body": [
+            "A maioria das tensões altas resolve-se numa consulta normal. Algumas não."
+          ],
+          "bullets": [
+            "Ligue já para o número de emergência se uma leitura muito alta vier acompanhada de dor no peito, fraqueza ou falta de sensibilidade num dos lados do corpo, dificuldade em falar ou uma alteração súbita da visão. São sinais de enfarte ou de AVC.",
+            "Procure cuidados médicos no próprio dia perante uma leitura de 180/120 ou superior, mesmo sem qualquer sintoma.",
+            "Marque uma avaliação nas semanas seguintes se as leituras estiverem repetidamente em 140/90 ou acima.",
+            "Fale com um médico se as leituras estiverem repetidamente abaixo de 90/60 e sentir tonturas, desmaios ou cansaço fora do normal.",
+            "Leve à consulta as suas medições e também o aparelho. O que se trata é o padrão, não o pior valor."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é a tensão arterial normal num adulto?",
+          "answer": "Abaixo de 120/80 mmHg é ótima, e entre 120–129 sobre 80–84 continua a ser considerada normal. A partir de 130/85 a leitura é normal-alta, e 140/90 ou mais medida no consultório é hipertensão. Os medidores domésticos dão valores mais baixos, por isso em casa o limiar é 135/85."
+        },
+        {
+          "question": "Que número conta mais, o de cima ou o de baixo?",
+          "answer": "Os dois. A categoria é definida pelo número pior, por isso 128/95 conta como hipertensão de grau 1 só pelo valor de baixo. A sistólica prevê melhor o risco cardiovascular a partir dos 50 anos e a diastólica antes dessa idade."
+        },
+        {
+          "question": "O que significa uma tensão sistólica isolada?",
+          "answer": "Uma sistólica de 140 ou mais com uma diastólica abaixo de 90. É o padrão mais frequente de hipertensão a partir dos 60 anos, resulta do endurecimento das artérias com a idade e acarreta risco cardiovascular real — não é uma particularidade inofensiva do número de cima."
+        },
+        {
+          "question": "Uma única leitura alta significa que tenho hipertensão?",
+          "answer": "Não. A hipertensão é diagnosticada com leituras altas repetidas, normalmente apoiadas por uma semana de medições em casa ou por um registo de 24 horas. Uma leitura alta isolada é motivo para voltar a medir bem, não um diagnóstico."
+        },
+        {
+          "question": "Que tensão arterial é perigosa?",
+          "answer": "Uma leitura de 180/120 ou superior precisa de atenção médica no próprio dia. Se vier com dor no peito, fraqueza ou falta de sensibilidade num dos lados, dificuldade em falar ou uma alteração súbita da visão, ligue imediatamente para o número de emergência — são sintomas de enfarte ou de AVC."
+        },
+        {
+          "question": "Esta tabela de tensão arterial guarda a minha leitura?",
+          "answer": "Não. A comparação é feita inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Quer que um médico veja as suas leituras?",
+        "body": "Marque uma videoconsulta com um médico registado, leve uma semana de medições em casa e receba um plano construído a partir do padrão e não de um valor isolado.",
+        "label": "Marcar consulta"
+      }
+    },
     "bmi-calculator": {
       "cardTitle": "Calculadora de IMC",
       "cardBlurb": "Índice de massa corporal a partir da sua altura e peso, na escala da OMS para adultos.",
@@ -192,6 +432,301 @@
       "cta": {
         "heading": "Quer discutir o seu resultado?",
         "body": "Marque uma videoconsulta com um médico registado e receba um plano construído a partir do seu historial, não de um número.",
+        "label": "Marcar consulta"
+      }
+    },
+    "calorie-calculator": {
+      "cardTitle": "Calculadora de calorias",
+      "cardBlurb": "Quantas calorias por dia precisa para manter, perder ou ganhar peso.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Calculadora",
+      "h1Accent": "de calorias",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculadora de Calorias {country} | Calorias Diárias",
+      "metaDescription": "Calcule quantas calorias precisa por dia para manter, perder ou ganhar peso. Equação de Mifflin-St Jeor, cinco níveis de atividade e o que os números significam na prática.",
+      "lede": "Introduza o sexo, a idade, a altura, o peso e o seu nível de atividade para ver quantas calorias gasta por dia — e quantas comer para manter, perder ou ganhar peso.",
+      "trustPoints": [
+        "Equação de Mifflin-St Jeor, a que os clínicos utilizam",
+        "Manutenção, perda e ganho numa só vista",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "suggestionsIntro": "Um número de calorias é um ponto de partida, não um plano. Estas são as consultas que os nossos médicos fazem para o peso, a nutrição e os exames que um número não lhe dá.",
+      "widget": {
+        "title": "As suas calorias diárias",
+        "placeholder": "Introduza os seus dados para ver quantas calorias gasta por dia.",
+        "note": "Estimativas para adultos saudáveis e uma ferramenta de orientação, não um diagnóstico nem um plano alimentar prescrito. Fale com um médico antes de alterar a sua ingestão se estiver grávida ou a amamentar, tiver menos de 18 anos ou estiver a ser tratado por alguma doença.",
+        "noteFloored": "O seu objetivo de perda foi mantido em 1.200 kcal, a ingestão diária mais baixa que esta calculadora propõe. Comer abaixo disso só deve ser feito com acompanhamento médico.",
+        "resultLabel": "Calorias de manutenção",
+        "resultSummary": "O que gasta num dia normal com este nível de atividade, tudo incluído.",
+        "bmrLabel": "Metabolismo basal",
+        "mildLossLabel": "Perder cerca de 0,25 kg por semana",
+        "lossLabel": "Perder cerca de 0,5 kg por semana",
+        "gainLabel": "Ganhar cerca de 0,25 kg por semana"
+      },
+      "sections": [
+        {
+          "heading": "O que significam os seus números de calorias",
+          "body": [
+            "O número principal é o seu nível de manutenção: aproximadamente o que gasta num dia, já com a atividade contada. Se comer isso, o peso mantém-se onde está.",
+            "Os objetivos abaixo são o mesmo número com um défice ou um excedente aplicado. Um défice diário de 500 kcal corresponde a cerca de meio quilo por semana, que é o ritmo em que a maioria das recomendações assenta — rápido o suficiente para se notar e lento o suficiente para se aguentar."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Objetivos diários de calorias a partir da sua manutenção",
+            "columns": [
+              "Objetivo",
+              "Ingestão diária",
+              "O que esperar"
+            ],
+            "rows": [
+              [
+                "Manter",
+                "O seu valor de manutenção",
+                "O peso mantém-se ao longo de semanas, não de dias"
+              ],
+              [
+                "Perda ligeira",
+                "Manutenção − 250 kcal",
+                "Cerca de 0,25 kg por semana"
+              ],
+              [
+                "Perda constante",
+                "Manutenção − 500 kcal",
+                "Cerca de 0,5 kg por semana"
+              ],
+              [
+                "Ganho",
+                "Manutenção + 300 kcal",
+                "Cerca de 0,25 kg por semana, de preferência com treino de força"
+              ]
+            ],
+            "footnote": "Aqui os objetivos de perda nunca descem abaixo de 1.200 kcal por dia. Abaixo desse valor é difícil cobrir com alimentos as necessidades de proteína, vitaminas e minerais, e uma ingestão tão baixa deve ser acompanhada por um médico."
+          }
+        },
+        {
+          "heading": "Como escolher o seu nível de atividade",
+          "body": [
+            "O multiplicador de atividade é a maior alavanca deste cálculo: para o mesmo corpo, a diferença entre sedentário e extremamente ativo passa das 700 kcal por dia. Conta tudo o que faz, não só o treino — estar de pé, andar, as tarefas de casa e o seu trabalho entram na conta.",
+            "A maioria das pessoas escolhe um nível acima do real. Se treina três vezes por semana e passa o resto do tempo sentado, é pouco a moderadamente ativo, não muito ativo."
+          ],
+          "bullets": [
+            "Sedentário — trabalho sentado e pouco ou nenhum exercício deliberado.",
+            "Pouco ativo — exercício ligeiro ou desporto de um a três dias por semana.",
+            "Moderadamente ativo — exercício moderado de três a cinco dias por semana.",
+            "Muito ativo — exercício intenso seis ou sete dias por semana.",
+            "Extremamente ativo — trabalho fisicamente exigente ou treino intenso duas vezes por dia."
+          ]
+        },
+        {
+          "heading": "Como funciona o cálculo",
+          "body": [
+            "O seu metabolismo basal — o que o corpo gasta em repouso completo — vem da equação de Mifflin-St Jeor: 10 × peso em kg, mais 6,25 × altura em cm, menos 5 × idade, e depois mais 5 nos homens ou menos 161 nas mulheres.",
+            "Esse valor é multiplicado pelo seu nível de atividade, de 1,2 para sedentário até 1,9 para extremamente ativo. O resultado é o gasto energético total diário — o número de manutenção que aparece no topo.",
+            "Exemplo prático: um homem de 30 anos, com 180 cm e 80 kg, tem um metabolismo basal de 1.780 kcal. Pouco ativo (× 1,375) são cerca de 2.448 kcal por dia para manter o peso."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "O que uma calculadora de calorias não lhe diz",
+          "body": [
+            "Todas as equações aqui usadas são médias populacionais ajustadas a dados medidos, e as pessoas ficam de um lado ou do outro. Encare o número como uma estimativa para testar na balança durante três ou quatro semanas, não como um facto sobre o seu corpo."
+          ],
+          "bullets": [
+            "Na maioria dos adultos a estimativa costuma ficar dentro de cerca de 10 % — são 200 kcal para cada lado num dia de 2.000 kcal.",
+            "Não diz nada sobre de que são feitas essas calorias, e são a proteína, a fibra e os micronutrientes que decidem se a alimentação se aguenta.",
+            "Doenças da tiroide, alguns medicamentos e um longo historial de dietas afastam o gasto real da estimativa.",
+            "Não foi pensada para crianças, para a gravidez ou a amamentação, nem para atletas em blocos de treino exigentes.",
+            "Subestima pessoas muito musculadas, porque a equação usa o peso total e não a massa magra."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quantas calorias devo comer por dia?",
+          "answer": "As que gasta, se o seu peso já estiver onde quer. Na maioria dos adultos isso fica entre 1.800 e 2.800 kcal, mas o intervalo é largo porque depende do tamanho, da idade e da atividade. A calculadora acima dá-lhe o seu próprio valor em vez da média."
+        },
+        {
+          "question": "Quantas calorias preciso de comer para emagrecer?",
+          "answer": "Cerca de 500 kcal por dia abaixo da manutenção dão sensivelmente meio quilo por semana, e 250 abaixo dão cerca de um quarto de quilo. Défices maiores não funcionam de forma fiável mais depressa — são apenas mais difíceis de manter e mais perda vem do músculo."
+        },
+        {
+          "question": "1.200 calorias por dia é seguro?",
+          "answer": "É a ingestão mais baixa que esta calculadora propõe e é um limite mínimo, não uma recomendação. Abaixo desse nível torna-se difícil obter proteína, vitaminas e minerais suficientes através dos alimentos, por isso uma ingestão menor só deve ser seguida com acompanhamento médico."
+        },
+        {
+          "question": "Que fórmula usa esta calculadora de calorias?",
+          "answer": "Mifflin-St Jeor para o metabolismo basal e depois um multiplicador de atividade padrão. Substituiu a antiga equação de Harris-Benedict na prática clínica por ser mais exata para as composições corporais atuais, normalmente dentro de cerca de 10 % em adultos saudáveis."
+        },
+        {
+          "question": "Tenho de contar calorias para emagrecer?",
+          "answer": "Não. Contar é apenas uma forma de manter um défice, e muitas pessoas conseguem o mesmo mudando o que comem em vez de o pesarem. Saber onde fica aproximadamente a sua manutenção é útil de qualquer maneira, porque mostra o tamanho real da mudança que está a fazer."
+        },
+        {
+          "question": "Esta calculadora de calorias guarda os meus dados?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Quer um plano e não só um número?",
+        "body": "Marque uma videoconsulta com um médico registado e perceba o que o número significa para o seu peso, as suas análises e o seu historial.",
+        "label": "Marcar consulta"
+      }
+    },
+    "due-date-calculator": {
+      "cardTitle": "Calculadora da data do parto",
+      "cardBlurb": "A data provável do parto, em que semana está e as semanas que contam pelo meio.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Calculadora da",
+      "h1Accent": "data do parto",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculadora da Data do Parto {country} | Semanas de Gravidez",
+      "metaDescription": "Calcule a data provável do parto e de quantas semanas está a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com as 40 semanas em detalhe.",
+      "lede": "Indique o primeiro dia da última menstruação para ver a data provável do parto, em que semana está hoje e quando começa cada trimestre.",
+      "trustPoints": [
+        "Ajusta-se a ciclos de 20 a 45 dias",
+        "Datas dos trimestres e a janela de termo (37–42 semanas)",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "widget": {
+        "title": "A sua data provável do parto",
+        "placeholder": "Indique o primeiro dia da última menstruação para ver a data provável do parto.",
+        "note": "É uma estimativa a partir das datas que indicar, não um diagnóstico. A ecografia de datação mede o bebé diretamente e substitui-a.",
+        "lmpLabel": "Primeiro dia da última menstruação",
+        "lmpHint": "O dia em que o sangramento começou, não o dia em que terminou.",
+        "cycleLabel": "Duração do ciclo",
+        "cycleHint": "Dias entre o início de uma menstruação e o início da seguinte. Se não souber, deixe 28.",
+        "daysUnit": "dias",
+        "gestationalAgeLabel": "Semanas de gravidez hoje",
+        "daysToGoLabel": "Dias que faltam",
+        "secondTrimesterLabel": "Início do segundo trimestre",
+        "thirdTrimesterLabel": "Início do terceiro trimestre",
+        "termWindowLabel": "Janela de termo (37–42 semanas)",
+        "trimester1": "Primeiro trimestre",
+        "trimester1Note": "Semanas 1 a 13. É quando se marca a vigilância da gravidez e se faz a ecografia de datação.",
+        "trimester2": "Segundo trimestre",
+        "trimester2Note": "Semanas 14 a 27. A ecografia morfológica é habitualmente feita por volta das 20 semanas.",
+        "trimester3": "Terceiro trimestre",
+        "trimester3Note": "Da semana 28 em diante. As avaliações de crescimento e de tensão arterial ficam mais próximas à medida que se aproxima o termo.",
+        "outOfRangeNote": "Verifique a data — está no futuro ou há mais de 42 semanas, fora do intervalo que esta calculadora consegue datar."
+      },
+      "sections": [
+        {
+          "heading": "A sua gravidez semana a semana",
+          "body": [
+            "A gravidez é datada a partir do primeiro dia da última menstruação, não a partir da conceção, e conta 40 semanas desde aí. Antes das 37 semanas é pré-termo, às 42 semanas ou mais é pós-termo, e é entre essas semanas que praticamente todos os bebés nascem.",
+            "A tabela abaixo são as 40 semanas inteiras, divididas como as divide a vigilância da gravidez."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Fases da gravidez em semanas a partir da última menstruação",
+            "columns": [
+              "Semanas",
+              "Fase",
+              "O que costuma acontecer"
+            ],
+            "rows": [
+              [
+                "1 – 13",
+                "Primeiro trimestre",
+                "Marcação da vigilância, primeiras análises e ecografia de datação"
+              ],
+              [
+                "14 – 27",
+                "Segundo trimestre",
+                "A ecografia morfológica, habitualmente por volta das 20 semanas"
+              ],
+              [
+                "28 – 36",
+                "Terceiro trimestre",
+                "As avaliações de crescimento, tensão arterial e posição ficam mais próximas"
+              ],
+              [
+                "37 – 38",
+                "Termo precoce",
+                "A partir daqui o parto já não é pré-termo"
+              ],
+              [
+                "39 – 40",
+                "Termo completo",
+                "A data provável do parto situa-se no fim da semana 40"
+              ],
+              [
+                "41",
+                "Termo tardio",
+                "A vigilância aumenta e discute-se habitualmente a indução"
+              ],
+              [
+                "42 ou mais",
+                "Pós-termo",
+                "O parto é normalmente induzido em vez de se esperar"
+              ]
+            ],
+            "footnote": "As últimas quatro linhas são todas o fim do terceiro trimestre — a partir das 37 semanas conta-se em intervalos mais curtos porque é isso que muda o plano. Apenas cerca de uma gravidez em vinte termina na data prevista."
+          }
+        },
+        {
+          "heading": "Como se calcula a data do parto",
+          "body": [
+            "A estimativa é a regra de Naegele: 280 dias, ou 40 semanas, a partir do primeiro dia da última menstruação. Assume um ciclo de 28 dias com ovulação por volta do dia 14.",
+            "Se os seus ciclos forem mais longos ou mais curtos, a ovulação acompanha-os, por isso a calculadora desloca a data pela diferença. Um ciclo de 32 dias adia a estimativa quatro dias; um ciclo de 24 dias antecipa-a quatro dias.",
+            "Exemplo prático: uma última menstruação iniciada a 1 de janeiro com um ciclo de 28 dias dá 8 de outubro. A mesma menstruação com um ciclo de 32 dias dá 12 de outubro."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Por que motivo a ecografia de datação substitui esta estimativa",
+          "body": [
+            "Uma calculadora só pode trabalhar com as datas que lhe der. A ecografia mede o bebé, e é por isso que a data dela passa a ser a usada pela equipa que a acompanha."
+          ],
+          "bullets": [
+            "Depende de recordar com exatidão o primeiro dia da última menstruação.",
+            "Assume que ovulou a meio do ciclo, o que não acontece a todas as pessoas.",
+            "Ciclos irregulares, contraceção interrompida há pouco tempo e amamentação tornam a última menstruação uma referência fraca.",
+            "A ecografia do primeiro trimestre mede o bebé, habitualmente entre as 11 e as 14 semanas, com uma margem de poucos dias.",
+            "Depois de uma FIV a datação parte da data da transferência e não de uma menstruação, pelo que esta estimativa não se aplica."
+          ]
+        },
+        {
+          "heading": "Quando contactar um médico",
+          "body": [],
+          "bullets": [
+            "Pensa que está grávida e ainda não marcou a vigilância da gravidez — a primeira consulta e a ecografia de datação são ambas precoces.",
+            "Tem hemorragia, cólicas ou dor de um só lado no início da gravidez.",
+            "Tem vómitos intensos ou persistentes, ou não consegue manter líquidos.",
+            "Tem uma doença crónica ou toma medicação regular — alguns medicamentos precisam de ser revistos assim que a gravidez é confirmada.",
+            "Chegou às 41 semanas, ou passou a data prevista e os movimentos do bebé mudaram."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é a precisão de uma calculadora da data do parto?",
+          "answer": "A conta é exata; os pressupostos não. Apenas cerca de uma gravidez em vinte termina na data prevista e a grande maioria dos partos acontece nas semanas em torno dela. A ecografia do primeiro trimestre é a versão precisa e, depois de a fazer, é essa data que passa a ser usada."
+        },
+        {
+          "question": "De quantas semanas estou grávida?",
+          "answer": "As semanas contam-se a partir do primeiro dia da última menstruação, não da conceção — é por isso que já está com cerca de quatro semanas quando um teste dá positivo pela primeira vez. A conceção ocorre cerca de duas semanas depois desse primeiro dia, pelo que a gravidez é sempre datada cerca de duas semanas mais «velha» do que o embrião."
+        },
+        {
+          "question": "O que significa 9w 3d?",
+          "answer": "Nove semanas completas e três dias desde o primeiro dia da última menstruação. Os registos de obstetrícia usam esta forma porque uma semana inteira é demasiado grosseira quando uma ecografia ou uma análise tem de ser feita numa janela concreta."
+        },
+        {
+          "question": "Posso usar isto se tiver ciclos irregulares?",
+          "answer": "Pode, e indicar a duração habitual do ciclo aproxima o resultado mais do que os 28 dias por omissão. Mas um ciclo irregular é precisamente o caso em que a última menstruação é uma referência fraca, por isso trate o resultado como orientação até fazer a ecografia."
+        },
+        {
+          "question": "A data do parto muda depois da ecografia?",
+          "answer": "Muitas vezes sim, normalmente alguns dias. A ecografia mede o bebé em vez de contar a partir de uma data recordada, por isso é a dela que fica. Uma diferença de uma semana ou mais é comum quando a data da última menstruação era incerta."
+        },
+        {
+          "question": "Esta calculadora guarda os meus dados?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Dúvidas no início da gravidez?",
+        "body": "Fale por vídeo com um médico registado sobre sintomas, a medicação que já toma ou aquilo que preferir não deixar para a primeira consulta.",
         "label": "Marcar consulta"
       }
     }

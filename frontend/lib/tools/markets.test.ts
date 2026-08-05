@@ -60,36 +60,49 @@ describe("isToolMarket", () => {
 });
 
 describe("getMarketFaq", () => {
+  const BMI = "bmi-calculator";
+
   it("gives each market its own entries in its own language", () => {
-    expect(getMarketFaq("ie", "en")[0].question).toContain("HSE");
-    expect(getMarketFaq("br", "pt")[0].question).toContain("SUS");
-    expect(getMarketFaq("pt", "pt")[0].question).toContain("SNS");
-    expect(getMarketFaq("cz", "cs")[0].question).toContain("BMI");
+    expect(getMarketFaq("ie", "en", BMI)[0].question).toContain("HSE");
+    expect(getMarketFaq("br", "pt", BMI)[0].question).toContain("SUS");
+    expect(getMarketFaq("pt", "pt", BMI)[0].question).toContain("SNS");
+    expect(getMarketFaq("cz", "cs", BMI)[0].question).toContain("BMI");
   });
 
   it("keeps same-language markets distinct — the whole point of the override", () => {
     // /portugal/pt and /brazil/pt share a language file; these must differ.
-    const pt = JSON.stringify(getMarketFaq("pt", "pt"));
-    const br = JSON.stringify(getMarketFaq("br", "pt"));
+    const pt = JSON.stringify(getMarketFaq("pt", "pt", BMI));
+    const br = JSON.stringify(getMarketFaq("br", "pt", BMI));
     expect(pt).not.toBe(br);
     // Same for the six English variants.
-    expect(JSON.stringify(getMarketFaq("ie", "en"))).not.toBe(
-      JSON.stringify(getMarketFaq("es", "en")),
+    expect(JSON.stringify(getMarketFaq("ie", "en", BMI))).not.toBe(
+      JSON.stringify(getMarketFaq("es", "en", BMI)),
     );
   });
 
+  it("keeps each tool's market FAQ to its own page", () => {
+    // One tool's national FAQ landing on another was the failure mode the
+    // slug key exists to prevent.
+    expect(JSON.stringify(getMarketFaq("ie", "en", BMI))).not.toBe(
+      JSON.stringify(getMarketFaq("ie", "en", "blood-pressure-chart")),
+    );
+    expect(getMarketFaq("ie", "en", "not-a-tool")).toEqual([]);
+  });
+
   it("falls back to nothing for combinations with no market copy", () => {
-    expect(getMarketFaq("ie", "cs")).toEqual([]);
-    expect(getMarketFaq("xx", "en")).toEqual([]);
+    expect(getMarketFaq("ie", "cs", BMI)).toEqual([]);
+    expect(getMarketFaq("xx", "en", BMI)).toEqual([]);
   });
 
   it("never leaves a placeholder unfilled — these are hand-written, not templated", () => {
-    for (const [code, langs] of Object.entries({ ie: ["en"], pt: ["pt", "en"], es: ["es", "en"], cz: ["cs", "en"], ro: ["ro", "en"], br: ["pt", "en"] })) {
-      for (const lang of langs) {
-        const items = getMarketFaq(code, lang);
-        expect(items.length).toBeGreaterThan(0);
-        for (const item of items) {
-          expect(item.question + item.answer).not.toMatch(/\{[a-z]+\}/);
+    for (const slug of ["bmi-calculator", "blood-pressure-chart"]) {
+      for (const [code, langs] of Object.entries({ ie: ["en"], pt: ["pt", "en"], es: ["es", "en"], cz: ["cs", "en"], ro: ["ro", "en"], br: ["pt", "en"] })) {
+        for (const lang of langs) {
+          const items = getMarketFaq(code, lang, slug);
+          expect(items.length).toBeGreaterThan(0);
+          for (const item of items) {
+            expect(item.question + item.answer).not.toMatch(/\{[a-z]+\}/);
+          }
         }
       }
     }
@@ -101,7 +114,7 @@ describe("applyMarketToolCopy / applyMarketBands", () => {
   const ptBands = getToolsCopy("pt").bands;
 
   it("gives Brazil Brazilian Portuguese, not European", () => {
-    const br = applyMarketToolCopy("br", "pt", ptCopy);
+    const br = applyMarketToolCopy("br", "pt", "bmi-calculator", ptCopy);
     expect(br.lede).toContain("Insira");        // pt-PT says "Introduza"
     expect(br.cta.label).toBe("Agendar consulta"); // pt-PT says "Marcar consulta"
     expect(br.widget.note).toContain("triagem"); // pt-PT says "rastreio"
@@ -109,12 +122,12 @@ describe("applyMarketToolCopy / applyMarketBands", () => {
   });
 
   it("leaves Portugal on the shared pt copy", () => {
-    expect(applyMarketToolCopy("pt", "pt", ptCopy)).toBe(ptCopy);
-    expect(applyMarketToolCopy("ie", "en", ptCopy)).toBe(ptCopy);
+    expect(applyMarketToolCopy("pt", "pt", "bmi-calculator", ptCopy)).toBe(ptCopy);
+    expect(applyMarketToolCopy("ie", "en", "bmi-calculator", ptCopy)).toBe(ptCopy);
   });
 
   it("actually differentiates the two Portuguese markets", () => {
-    const br = applyMarketToolCopy("br", "pt", ptCopy);
+    const br = applyMarketToolCopy("br", "pt", "bmi-calculator", ptCopy);
     expect(JSON.stringify(br)).not.toBe(JSON.stringify(ptCopy));
     expect(br.sections).toHaveLength(ptCopy.sections.length);
     expect(br.faq).toHaveLength(ptCopy.faq.length);
@@ -126,8 +139,18 @@ describe("applyMarketToolCopy / applyMarketBands", () => {
     expect(applyMarketBands("pt", "pt", ptBands)).toBe(ptBands);
   });
 
+  it("gives Brazil its own blood-pressure wording and emergency number", () => {
+    const ptBp = getToolCopy("pt", "blood-pressure-chart")!;
+    const br = applyMarketToolCopy("br", "pt", "blood-pressure-chart", ptBp);
+    expect(br.cardTitle).toContain("pressão arterial"); // pt-PT: "tensão arterial"
+    expect(br.widget.urgentSymptoms).toContain("192"); // SAMU, not a generic line
+    expect(br.sections).toHaveLength(ptBp.sections.length);
+    // The BMI override must not leak onto this tool.
+    expect(JSON.stringify(br)).not.toContain("índice de massa corporal");
+  });
+
   it("keeps the interpolation placeholder intact through the merge", () => {
-    const br = applyMarketToolCopy("br", "pt", ptCopy);
+    const br = applyMarketToolCopy("br", "pt", "bmi-calculator", ptCopy);
     expect(br.metaTitle).toContain("{country}");
     expect(br.widget.gapAbove).toContain("{kg}");
   });

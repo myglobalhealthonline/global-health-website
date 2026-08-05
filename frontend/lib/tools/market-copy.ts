@@ -31,7 +31,9 @@ import type { ToolCopy, ToolsBandsCopy } from "@/lib/tools/registry";
 
 type FaqItem = { question: string; answer: string };
 
-export const MARKET_FAQ: Partial<Record<CountryCode, Record<string, FaqItem[]>>> = {
+type MarketFaq = Partial<Record<CountryCode, Record<string, FaqItem[]>>>;
+
+const BMI_MARKET_FAQ: MarketFaq = {
   ie: {
     en: [
       {
@@ -179,12 +181,482 @@ export const MARKET_FAQ: Partial<Record<CountryCode, Record<string, FaqItem[]>>>
 };
 
 /**
- * Market-specific FAQ items for a country/language, or an empty list when
- * that combination has none — the caller then shows the shared language FAQ
- * unchanged.
+ * Same idea for the calorie tool. The market hook here is the reference intake
+ * printed on food labels (2,000 kcal for an average adult in the EU, and on
+ * ANVISA labels in Brazil) plus each country's own healthy-eating guideline —
+ * both true everywhere we sell, and both things people actually search for.
  */
-export function getMarketFaq(code: string, lang: string): Array<{ question: string; answer: string }> {
-  const market = MARKET_FAQ[code.toLowerCase() as CountryCode];
+const CALORIE_MARKET_FAQ: MarketFaq = {
+  ie: {
+    en: [
+      {
+        question: "How many calories a day are recommended in Ireland?",
+        answer:
+          "The figure on Irish food labels is the EU reference intake of 2,000 kcal a day for an average adult, and the healthy eating guidelines are built around roughly 2,000 kcal for women and 2,500 for men. Those are population averages: your own maintenance figure depends on your height, weight, age and how active you are, which is what the calculator above estimates.",
+      },
+      {
+        question: "Can a doctor in Ireland review my calorie target?",
+        answer:
+          "Yes. A GP can check whether a target is sensible for your history and refer you to a dietitian if you need a full eating plan. Our Irish-registered doctors can review your figure by video alongside your blood pressure, cholesterol and blood glucose, which is what tells you whether the number is the thing worth changing.",
+      },
+    ],
+  },
+  pt: {
+    pt: [
+      {
+        question: "Quantas calorias por dia são recomendadas em Portugal?",
+        answer:
+          "O valor de referência inscrito nos rótulos alimentares em Portugal é o europeu: 2.000 kcal por dia para um adulto médio. A Roda dos Alimentos do SNS organiza a alimentação em torno de valores desta ordem, mas trata-se de médias populacionais — as suas necessidades dependem da altura, do peso, da idade e do nível de atividade, que é o que a calculadora acima estima.",
+      },
+      {
+        question: "Um médico pode rever o meu objetivo calórico?",
+        answer:
+          "Sim. Uma consulta permite verificar se o valor faz sentido para o seu historial e encaminhá-lo para nutrição quando é preciso um plano alimentar completo. Os nossos médicos registados podem analisar o número por vídeo, juntamente com a tensão arterial, o colesterol e a glicemia.",
+      },
+    ],
+    en: [
+      {
+        question: "How many calories a day are recommended in Portugal?",
+        answer:
+          "Portuguese food labels carry the EU reference intake of 2,000 kcal a day for an average adult, and the national healthy-eating wheel is built around figures of that order. They are population averages — your own needs depend on height, weight, age and activity, which is what the calculator above estimates.",
+      },
+      {
+        question: "Can a doctor in Portugal review my calorie target?",
+        answer:
+          "Yes. A consultation can check whether the figure suits your history and refer you for a full eating plan when one is needed. Our registered doctors can review it by video alongside your blood pressure, cholesterol and blood glucose.",
+      },
+    ],
+  },
+  es: {
+    es: [
+      {
+        question: "¿Cuántas calorías al día se recomiendan en España?",
+        answer:
+          "El valor que aparece en el etiquetado en España es la ingesta de referencia europea: 2.000 kcal al día para un adulto medio. Las recomendaciones de alimentación saludable de la AESAN se construyen sobre cifras de ese orden, pero son promedios de población: tus necesidades dependen de tu altura, tu peso, tu edad y tu actividad, que es lo que estima la calculadora de arriba.",
+      },
+      {
+        question: "¿Puede un médico revisar mi objetivo de calorías?",
+        answer:
+          "Sí. Una consulta sirve para comprobar si la cifra encaja con tu historia clínica y derivarte a nutrición cuando hace falta un plan completo. Nuestros médicos colegiados pueden valorarla por vídeo junto con tu tensión arterial, tu colesterol y tu glucemia.",
+      },
+    ],
+    en: [
+      {
+        question: "How many calories a day are recommended in Spain?",
+        answer:
+          "Spanish food labels carry the EU reference intake of 2,000 kcal a day for an average adult, and the national healthy-eating advice is built around figures of that order. They are population averages — your own needs depend on height, weight, age and activity, which is what the calculator above estimates.",
+      },
+      {
+        question: "Can a doctor in Spain review my calorie target?",
+        answer:
+          "Yes. A consultation can check whether the figure suits your history and refer you for a full eating plan when one is needed. Our registered doctors can review it by video alongside your blood pressure, cholesterol and blood glucose.",
+      },
+    ],
+  },
+  cz: {
+    cs: [
+      {
+        question: "Kolik kalorií denně se v Česku doporučuje?",
+        answer:
+          "Na obalech potravin v Česku je uvedena evropská referenční hodnota příjmu: 2 000 kcal denně pro průměrného dospělého. Česká výživová doporučení pracují s hodnotami tohoto řádu, jde ale o populační průměry — vaše vlastní potřeba závisí na výšce, hmotnosti, věku a pohybu, což je přesně to, co odhaduje kalkulačka výše.",
+      },
+      {
+        question: "Může mi lékař zkontrolovat kalorický cíl?",
+        answer:
+          "Ano. Na konzultaci lze ověřit, zda hodnota odpovídá vaší anamnéze, a v případě potřeby vás odeslat na nutriční poradenství. Naši registrovaní lékaři ji posoudí po videu spolu s krevním tlakem, cholesterolem a glykemií.",
+      },
+    ],
+    en: [
+      {
+        question: "How many calories a day are recommended in Czechia?",
+        answer:
+          "Czech food labels carry the EU reference intake of 2,000 kcal a day for an average adult, and national nutrition guidance works with figures of that order. They are population averages — your own needs depend on height, weight, age and activity, which is what the calculator above estimates.",
+      },
+      {
+        question: "Can a doctor in Czechia review my calorie target?",
+        answer:
+          "Yes. A consultation can check whether the figure suits your history and refer you for nutrition advice when a full plan is needed. Our registered doctors can review it by video alongside your blood pressure, cholesterol and blood glucose.",
+      },
+    ],
+  },
+  ro: {
+    ro: [
+      {
+        question: "Câte calorii pe zi sunt recomandate în România?",
+        answer:
+          "Valoarea de pe etichetele alimentare din România este referința europeană: 2.000 kcal pe zi pentru un adult obișnuit. Ghidurile de alimentație sănătoasă folosesc cifre de acest ordin, însă sunt medii pe populație — necesarul tău depinde de înălțime, greutate, vârstă și mișcare, adică exact ce estimează calculatorul de mai sus.",
+      },
+      {
+        question: "Poate un medic să îmi verifice ținta calorică?",
+        answer:
+          "Da. O consultație poate verifica dacă valoarea se potrivește cu istoricul tău medical și te poate îndruma către un plan alimentar complet atunci când e nevoie. Medicii noștri înregistrați o pot evalua prin video, împreună cu tensiunea arterială, colesterolul și glicemia.",
+      },
+    ],
+    en: [
+      {
+        question: "How many calories a day are recommended in Romania?",
+        answer:
+          "Romanian food labels carry the EU reference intake of 2,000 kcal a day for an average adult, and national healthy-eating guidance uses figures of that order. They are population averages — your own needs depend on height, weight, age and activity, which is what the calculator above estimates.",
+      },
+      {
+        question: "Can a doctor in Romania review my calorie target?",
+        answer:
+          "Yes. A consultation can check whether the figure suits your history and point you to a full eating plan when one is needed. Our registered doctors can review it by video alongside your blood pressure, cholesterol and blood glucose.",
+      },
+    ],
+  },
+  br: {
+    pt: [
+      {
+        question: "Quantas calorias por dia são recomendadas no Brasil?",
+        answer:
+          "O valor de referência usado na rotulagem no Brasil é de 2.000 kcal por dia para um adulto médio. O Guia Alimentar para a População Brasileira trabalha com valores dessa ordem, mas são médias populacionais — a sua necessidade depende da altura, do peso, da idade e do quanto você se movimenta, que é o que a calculadora acima estima.",
+      },
+      {
+        question: "Um médico pode revisar a minha meta de calorias?",
+        answer:
+          "Pode. Uma consulta serve para checar se o valor faz sentido para o seu histórico e encaminhar para nutrição quando é preciso um plano alimentar completo. Os nossos médicos registrados avaliam o número por vídeo, junto com a sua pressão arterial, o colesterol e a glicemia.",
+      },
+    ],
+    en: [
+      {
+        question: "How many calories a day are recommended in Brazil?",
+        answer:
+          "Brazilian food labels use a reference intake of 2,000 kcal a day for an average adult, and the national dietary guidelines work with figures of that order. They are population averages — your own needs depend on height, weight, age and activity, which is what the calculator above estimates.",
+      },
+      {
+        question: "Can a doctor in Brazil review my calorie target?",
+        answer:
+          "Yes. A consultation can check whether the figure suits your history and refer you for a full eating plan when one is needed. Our registered doctors can review it by video alongside your blood pressure, cholesterol and blood glucose.",
+      },
+    ],
+  },
+};
+
+/**
+ * Blood pressure. The market-specific part is who measures it locally and what
+ * threshold that system works to — the classification itself is the same
+ * European one everywhere we operate, so it is not repeated per market.
+ */
+const BP_MARKET_FAQ: MarketFaq = {
+  ie: {
+    en: [
+      {
+        question: "What counts as high blood pressure in Ireland?",
+        answer:
+          "Irish practice follows the European thresholds: 140/90 mmHg or above measured in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis — a GP will normally ask for a week of home readings, or arrange 24-hour monitoring, before treating anything.",
+      },
+      {
+        question: "Where can I get my blood pressure checked in Ireland?",
+        answer:
+          "Any GP appointment includes it, and most pharmacies will measure it for you. If you already have a home monitor, take a week of morning and evening readings and bring them to a consultation — our Irish-registered doctors can review the set by video alongside your cholesterol and blood glucose.",
+      },
+    ],
+  },
+  pt: {
+    pt: [
+      {
+        question: "O que é considerado tensão alta em Portugal?",
+        answer:
+          "A prática clínica em Portugal segue os limiares europeus: 140/90 mmHg ou mais medidos em consultório, ou 135/85 ou mais num medidor doméstico validado. Uma leitura alta isolada não é um diagnóstico — o médico pede normalmente uma semana de medições em casa, ou um registo de 24 horas, antes de iniciar qualquer tratamento.",
+      },
+      {
+        question: "Onde posso medir a tensão arterial em Portugal?",
+        answer:
+          "Qualquer consulta inclui a medição e a maioria das farmácias mede-a também, no âmbito dos serviços do SNS e privados. Se já tem um medidor em casa, faça uma semana de medições de manhã e à noite e leve-as a uma consulta — os nossos médicos registados analisam o conjunto por vídeo, juntamente com o colesterol e a glicemia.",
+      },
+    ],
+    en: [
+      {
+        question: "What counts as high blood pressure in Portugal?",
+        answer:
+          "Portuguese practice follows the European thresholds: 140/90 mmHg or above in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis — a doctor will normally ask for a week of home readings, or 24-hour monitoring, first.",
+      },
+      {
+        question: "Where can I get my blood pressure checked in Portugal?",
+        answer:
+          "Any medical appointment includes it, and most pharmacies measure it too. Bring a week of home readings to a consultation and our registered doctors can review the whole set by video, alongside your cholesterol and blood glucose.",
+      },
+    ],
+  },
+  es: {
+    es: [
+      {
+        question: "¿Qué se considera tensión alta en España?",
+        answer:
+          "La práctica clínica en España sigue los umbrales europeos: 140/90 mmHg o más medidos en consulta, o 135/85 o más en un tensiómetro doméstico validado. Una única lectura alta no es un diagnóstico: lo habitual es que el médico pida una semana de mediciones en casa, o un registro de 24 horas (MAPA), antes de tratar nada.",
+      },
+      {
+        question: "¿Dónde puedo medirme la tensión en España?",
+        answer:
+          "Cualquier consulta médica la incluye y la mayoría de las farmacias también la toman. Si ya tienes tensiómetro en casa, haz una semana de mediciones de mañana y noche y llévalas a una consulta: nuestros médicos colegiados pueden revisar la serie por vídeo junto con tu colesterol y tu glucemia.",
+      },
+    ],
+    en: [
+      {
+        question: "What counts as high blood pressure in Spain?",
+        answer:
+          "Spanish practice follows the European thresholds: 140/90 mmHg or above in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis — a doctor will normally ask for a week of home readings, or 24-hour monitoring, first.",
+      },
+      {
+        question: "Where can I get my blood pressure checked in Spain?",
+        answer:
+          "Any medical appointment includes it, and most pharmacies will measure it too. Bring a week of home readings to a consultation and our registered doctors can review the whole set by video, alongside your cholesterol and blood glucose.",
+      },
+    ],
+  },
+  cz: {
+    cs: [
+      {
+        question: "Co se v Česku považuje za vysoký krevní tlak?",
+        answer:
+          "Česká praxe se řídí evropskými hranicemi: 140/90 mmHg a více naměřených v ordinaci, nebo 135/85 a více na validovaném domácím tlakoměru. Jedna vysoká hodnota není diagnóza — praktický lékař obvykle nejdřív požádá o týden domácího měření nebo zajistí 24hodinové monitorování.",
+      },
+      {
+        question: "Kde si mohu nechat změřit krevní tlak v Česku?",
+        answer:
+          "Součástí každé preventivní prohlídky u praktického lékaře je změření tlaku a změří vám ho i většina lékáren. Pokud máte tlakoměr doma, měřte týden ráno a večer a hodnoty vezměte na konzultaci — naši registrovaní lékaři je posoudí po videu spolu s cholesterolem a glykemií.",
+      },
+    ],
+    en: [
+      {
+        question: "What counts as high blood pressure in Czechia?",
+        answer:
+          "Czech practice follows the European thresholds: 140/90 mmHg or above in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis — a doctor will normally ask for a week of home readings, or 24-hour monitoring, first.",
+      },
+      {
+        question: "Where can I get my blood pressure checked in Czechia?",
+        answer:
+          "Every routine check-up with a GP includes it, and most pharmacies will measure it too. Bring a week of home readings to a consultation and our registered doctors can review the whole set by video, alongside your cholesterol and blood glucose.",
+      },
+    ],
+  },
+  ro: {
+    ro: [
+      {
+        question: "Ce înseamnă tensiune mare în România?",
+        answer:
+          "Practica medicală din România urmează pragurile europene: 140/90 mmHg sau peste, măsurate în cabinet, ori 135/85 sau peste pe un tensiometru de acasă validat. O singură valoare mare nu este un diagnostic — medicul de familie cere de obicei o săptămână de măsurători acasă sau o monitorizare Holter de 24 de ore înainte de a trata ceva.",
+      },
+      {
+        question: "Unde îmi pot măsura tensiunea în România?",
+        answer:
+          "Orice consultație include măsurarea tensiunii, iar majoritatea farmaciilor o măsoară și ele. Dacă ai deja tensiometru acasă, măsoară o săptămână dimineața și seara și du valorile la o consultație — medicii noștri înregistrați pot analiza toată seria prin video, împreună cu colesterolul și glicemia.",
+      },
+    ],
+    en: [
+      {
+        question: "What counts as high blood pressure in Romania?",
+        answer:
+          "Romanian practice follows the European thresholds: 140/90 mmHg or above in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis — a doctor will normally ask for a week of home readings, or 24-hour monitoring, first.",
+      },
+      {
+        question: "Where can I get my blood pressure checked in Romania?",
+        answer:
+          "Any medical appointment includes it, and most pharmacies will measure it too. Bring a week of home readings to a consultation and our registered doctors can review the whole set by video, alongside your cholesterol and blood glucose.",
+      },
+    ],
+  },
+  br: {
+    pt: [
+      {
+        question: "O que é considerado pressão alta no Brasil?",
+        answer:
+          "A prática clínica no Brasil segue os mesmos limites usados internacionalmente: 140/90 mmHg ou mais aferidos no consultório, ou 135/85 ou mais em um aparelho de uso doméstico validado. Uma medida alta isolada não é diagnóstico — o médico costuma pedir uma semana de aferições em casa, ou uma MAPA de 24 horas, antes de tratar.",
+      },
+      {
+        question: "Onde posso medir a pressão arterial no Brasil?",
+        answer:
+          "Qualquer consulta inclui a aferição, as unidades básicas de saúde do SUS medem a pressão e a maioria das farmácias também. Se você já tem aparelho em casa, afira uma semana de manhã e à noite e leve os valores para a consulta — os nossos médicos registrados avaliam a série por vídeo, junto com o colesterol e a glicemia.",
+      },
+    ],
+    en: [
+      {
+        question: "What counts as high blood pressure in Brazil?",
+        answer:
+          "Brazilian practice follows the same thresholds used internationally: 140/90 mmHg or above measured in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis — a doctor will normally ask for a week of home readings, or 24-hour monitoring, first.",
+      },
+      {
+        question: "Where can I get my blood pressure checked in Brazil?",
+        answer:
+          "Any medical appointment includes it, SUS primary care units measure it, and most pharmacies do too. Bring a week of home readings to a consultation and our registered doctors can review the whole set by video, alongside your cholesterol and blood glucose.",
+      },
+    ],
+  },
+};
+
+/** Keyed by tool slug — each tool's market FAQ is its own hand-written set. */
+/**
+ * Due date. The market-specific part is who runs antenatal care locally and
+ * when the dating scan is offered — the arithmetic is the same everywhere, but
+ * "where do I go now" is not, and it is the question people have after seeing
+ * an estimated date. No waiting times or prices: those go stale.
+ */
+const DUE_DATE_MARKET_FAQ: MarketFaq = {
+  ie: {
+    en: [
+      {
+        question: "How do I arrange antenatal care in Ireland?",
+        answer:
+          "Start with a GP. They confirm the pregnancy, do the first checks and refer you to a maternity unit, and the HSE's Maternity and Infant Care Scheme is what covers that shared GP-and-hospital care. The unit does the dating scan, and from then on its date is the one your notes use.",
+      },
+      {
+        question: "When is the dating scan done in Ireland?",
+        answer:
+          "Irish maternity units normally scan in the first trimester, generally somewhere between about 11 and 14 weeks, with the anomaly scan around 20 weeks. Until then the estimate above is what you have to work with — and our Irish-registered doctors can go through early symptoms or any medicines you already take by video in the meantime.",
+      },
+    ],
+  },
+  pt: {
+    pt: [
+      {
+        question: "Como se marca a vigilância da gravidez em Portugal?",
+        answer:
+          "Pelo centro de saúde: a consulta de saúde materna acompanha a gravidez de baixo risco e faz a articulação com o hospital quando é necessária. É aí que se pedem as primeiras análises e a ecografia, e a data que a ecografia dá passa a ser a usada no boletim de saúde da grávida.",
+      },
+      {
+        question: "Quando se faz a ecografia de datação em Portugal?",
+        answer:
+          "A ecografia do primeiro trimestre é habitualmente feita entre as 11 e as 14 semanas, seguindo-se a morfológica por volta das 20 semanas. Até lá vale a estimativa acima — e os nossos médicos registados podem esclarecer por vídeo sintomas iniciais ou a medicação que já toma.",
+      },
+    ],
+    en: [
+      {
+        question: "How do I arrange antenatal care in Portugal?",
+        answer:
+          "Through your local health centre, where the maternal health consultation follows a low-risk pregnancy and links in with a hospital when that is needed. The first blood tests and the scan are arranged there, and the scan's date is the one your pregnancy record uses afterwards.",
+      },
+      {
+        question: "When is the dating scan done in Portugal?",
+        answer:
+          "The first-trimester scan is usually done between about 11 and 14 weeks, with the anomaly scan around 20 weeks. Until then the estimate above is what you have — and our registered doctors can talk through early symptoms or medicines you already take by video.",
+      },
+    ],
+  },
+  es: {
+    es: [
+      {
+        question: "¿Cómo se organiza el seguimiento del embarazo en España?",
+        answer:
+          "En el centro de salud: la matrona y el médico de familia llevan el seguimiento del embarazo de bajo riesgo y te derivan al hospital cuando hace falta. Ahí se piden las primeras analíticas y la ecografía, y la fecha que da la ecografía es la que queda en tu cartilla de embarazo.",
+      },
+      {
+        question: "¿Cuándo se hace la ecografía de datación en España?",
+        answer:
+          "La ecografía del primer trimestre se hace normalmente entre las semanas 11 y 14, y la morfológica alrededor de la semana 20. Hasta entonces la estimación de arriba es lo que tienes, y nuestros médicos colegiados pueden repasar por vídeo los primeros síntomas o la medicación que ya tomas.",
+      },
+    ],
+    en: [
+      {
+        question: "How do I arrange antenatal care in Spain?",
+        answer:
+          "Through your local health centre, where a midwife and your family doctor follow a low-risk pregnancy and refer you to hospital when needed. The first blood tests and the scan are arranged there, and the scan's date is the one kept in your pregnancy record.",
+      },
+      {
+        question: "When is the dating scan done in Spain?",
+        answer:
+          "The first-trimester scan is normally done between about 11 and 14 weeks, with the anomaly scan around week 20. Until then the estimate above is what you have — and our registered doctors can review early symptoms or medicines you already take by video.",
+      },
+    ],
+  },
+  cz: {
+    cs: [
+      {
+        question: "Jak se v Česku zaregistrovat do prenatální poradny?",
+        answer:
+          "Přes gynekologa: ten těhotenství potvrdí, převezme vás do prenatální poradny a vede těhotenský průkaz. Tam se také objednává první ultrazvuk, a termín, který z něj vyjde, se dál používá jako ten platný.",
+      },
+      {
+        question: "Kdy se v Česku dělá datovací ultrazvuk?",
+        answer:
+          "První ultrazvuk se obvykle provádí mezi 11. a 14. týdnem, screeningový pak okolo 20. týdne. Do té doby máte k dispozici odhad výše — a naši registrovaní lékaři mohou po videu probrat počáteční příznaky nebo léky, které už berete.",
+      },
+    ],
+    en: [
+      {
+        question: "How do I arrange antenatal care in Czechia?",
+        answer:
+          "Through a gynaecologist, who confirms the pregnancy, takes you into antenatal care and keeps your pregnancy record. The first scan is arranged there, and the date it gives is the one used from then on.",
+      },
+      {
+        question: "When is the dating scan done in Czechia?",
+        answer:
+          "The first scan is usually done between about 11 and 14 weeks, with the screening scan around 20 weeks. Until then the estimate above is what you have — and our registered doctors can go through early symptoms or medicines you already take by video.",
+      },
+    ],
+  },
+  ro: {
+    ro: [
+      {
+        question: "Cum se începe urmărirea sarcinii în România?",
+        answer:
+          "Fie prin medicul de familie, fie direct la un medic obstetrician-ginecolog: sarcina se confirmă, se ia în evidență și se deschid analizele. Ecografia se programează acolo, iar data pe care o dă ea este cea folosită mai departe în documentele sarcinii.",
+      },
+      {
+        question: "Când se face ecografia de datare în România?",
+        answer:
+          "Ecografia de prim trimestru se face de obicei între săptămânile 11 și 14, iar cea de morfologie fetală în jurul săptămânii 20. Până atunci ai estimarea de mai sus — iar medicii noștri înregistrați pot discuta prin video primele simptome sau medicamentele pe care le iei deja.",
+      },
+    ],
+    en: [
+      {
+        question: "How do I arrange antenatal care in Romania?",
+        answer:
+          "Either through your family doctor or directly with an obstetrician-gynaecologist: the pregnancy is confirmed, you are taken onto their list and the first tests are ordered. The scan is arranged there, and the date it gives is the one used in your pregnancy records afterwards.",
+      },
+      {
+        question: "When is the dating scan done in Romania?",
+        answer:
+          "The first-trimester scan is usually done between about 11 and 14 weeks, with the fetal anomaly scan around week 20. Until then the estimate above is what you have — and our registered doctors can discuss early symptoms or medicines you already take by video.",
+      },
+    ],
+  },
+  br: {
+    pt: [
+      {
+        question: "Como começar o pré-natal no Brasil?",
+        answer:
+          "Pela unidade básica de saúde: o pré-natal é aberto ali, com as primeiras consultas, os exames e a caderneta da gestante. O ultrassom é solicitado nesse acompanhamento, e a data que ele indica passa a ser a usada no lugar da conta pela última menstruação.",
+      },
+      {
+        question: "Quando se faz o ultrassom para datar a gravidez no Brasil?",
+        answer:
+          "O ultrassom de primeiro trimestre costuma ser feito entre 11 e 14 semanas, e o morfológico por volta das 20 semanas. Até lá, o que você tem é a estimativa acima — e os nossos médicos registrados podem conversar por vídeo sobre sintomas do início da gravidez ou sobre remédios que você já toma.",
+      },
+    ],
+    en: [
+      {
+        question: "How do I start antenatal care in Brazil?",
+        answer:
+          "At a primary health unit, which opens your antenatal care with the first appointments, blood tests and pregnancy record. The scan is requested as part of that follow-up, and the date it gives replaces the one counted from your last period.",
+      },
+      {
+        question: "When is the dating scan done in Brazil?",
+        answer:
+          "The first-trimester scan is usually done between about 11 and 14 weeks, with the anomaly scan around 20 weeks. Until then the estimate above is what you have — and our registered doctors can talk through early-pregnancy symptoms or medicines you already take by video.",
+      },
+    ],
+  },
+};
+
+const MARKET_FAQ: Record<string, MarketFaq> = {
+  "bmi-calculator": BMI_MARKET_FAQ,
+  "calorie-calculator": CALORIE_MARKET_FAQ,
+  "blood-pressure-chart": BP_MARKET_FAQ,
+  "due-date-calculator": DUE_DATE_MARKET_FAQ,
+};
+
+/**
+ * Market-specific FAQ items for a tool in a country/language, or an empty list
+ * when that combination has none — the caller then shows the shared language
+ * FAQ unchanged.
+ */
+export function getMarketFaq(
+  code: string,
+  lang: string,
+  slug: string,
+): Array<{ question: string; answer: string }> {
+  const market = MARKET_FAQ[slug]?.[code.toLowerCase() as CountryCode];
   return market?.[lang.toLowerCase()] ?? [];
 }
 
@@ -208,7 +680,7 @@ export function getMarketFaq(code: string, lang: string): Array<{ question: stri
  * `faq` and `trustPoints` are given in full. Anything omitted falls back to
  * the shared `pt` copy.
  */
-const BR_PT_TOOL: DeepPartial<ToolCopy> = {
+const BR_PT_BMI: DeepPartial<ToolCopy> = {
   metaDescription:
     "Calcule seu índice de massa corporal em segundos. Sistema métrico ou imperial, categorias da OMS para adultos e o que o resultado significa na prática.",
   lede: "Insira sua altura e seu peso para ver o índice de massa corporal e onde ele se situa na escala da Organização Mundial da Saúde para adultos.",
@@ -321,7 +793,483 @@ const BR_PT_TOOL: DeepPartial<ToolCopy> = {
   },
 };
 
+/** Same treatment for the calorie tool: `déficit`/`superávit`, not `défice`. */
+const BR_PT_CALORIE: DeepPartial<ToolCopy> = {
+  cardBlurb: "Quantas calorias por dia você precisa para manter, perder ou ganhar peso.",
+  metaDescription:
+    "Calcule quantas calorias você precisa por dia para manter, perder ou ganhar peso. Equação de Mifflin-St Jeor, cinco níveis de atividade e o que os números significam na prática.",
+  lede: "Insira sexo, idade, altura, peso e o quanto você se movimenta para ver quantas calorias gasta por dia — e quantas comer para manter, perder ou ganhar peso.",
+  trustPoints: [
+    "Equação de Mifflin-St Jeor, a que os médicos usam",
+    "Manutenção, perda e ganho numa única tela",
+    "Roda no seu navegador — nada é enviado nem salvo",
+  ],
+  suggestionsIntro:
+    "Um número de calorias é um ponto de partida, não um plano. Estas são as consultas que os nossos médicos fazem para peso, nutrição e os exames que um número não dá.",
+  widget: {
+    placeholder: "Insira seus dados para ver quantas calorias você gasta por dia.",
+    note: "Estimativas para adultos saudáveis e uma ferramenta de orientação, não um diagnóstico nem uma dieta prescrita. Fale com um médico antes de mudar a sua ingestão se estiver grávida ou amamentando, tiver menos de 18 anos ou estiver em tratamento de alguma doença.",
+    noteFloored:
+      "A sua meta de perda foi mantida em 1.200 kcal, a menor ingestão diária que esta calculadora sugere. Comer abaixo disso só com acompanhamento médico.",
+    resultSummary: "O que você gasta num dia comum nesse nível de atividade, tudo incluído.",
+    mildLossLabel: "Perder cerca de 0,25 kg por semana",
+    lossLabel: "Perder cerca de 0,5 kg por semana",
+    gainLabel: "Ganhar cerca de 0,25 kg por semana",
+  },
+  sections: [
+    {
+      heading: "O que significam seus números de calorias",
+      body: [
+        "O número principal é a sua manutenção: aproximadamente o que você gasta num dia, já contando a atividade. Se comer isso, o peso fica onde está.",
+        "As metas abaixo dele são o mesmo número com um déficit ou um superávit aplicado. Um déficit diário de 500 kcal dá cerca de meio quilo por semana, que é o ritmo em que a maioria das recomendações se apoia — rápido o bastante para aparecer e lento o bastante para sustentar.",
+      ],
+      bullets: [],
+      table: {
+        caption: "Metas diárias de calorias a partir da sua manutenção",
+        columns: ["Objetivo", "Ingestão diária", "O que esperar"],
+        rows: [
+          ["Manter", "O seu valor de manutenção", "O peso se mantém ao longo de semanas, não de dias"],
+          ["Perda leve", "Manutenção − 250 kcal", "Cerca de 0,25 kg por semana"],
+          ["Perda constante", "Manutenção − 500 kcal", "Cerca de 0,5 kg por semana"],
+          [
+            "Ganho",
+            "Manutenção + 300 kcal",
+            "Cerca de 0,25 kg por semana, de preferência com treino de força",
+          ],
+        ],
+        footnote:
+          "Aqui as metas de perda nunca descem abaixo de 1.200 kcal por dia. Abaixo disso fica difícil cobrir com comida as necessidades de proteína, vitaminas e minerais, e uma ingestão tão baixa deve ter acompanhamento médico.",
+      },
+    },
+    {
+      heading: "Como escolher seu nível de atividade",
+      body: [
+        "O multiplicador de atividade é a maior alavanca desse cálculo: para o mesmo corpo, a diferença entre sedentário e extremamente ativo passa de 700 kcal por dia. Entra tudo o que você faz, não só o treino — ficar em pé, caminhar, as tarefas de casa e o seu trabalho contam.",
+        "A maioria das pessoas escolhe um nível acima do real. Se você treina três vezes por semana e passa o resto do tempo sentado, está entre levemente e moderadamente ativo, não muito ativo.",
+      ],
+      bullets: [
+        "Sedentário — trabalho sentado e pouco ou nenhum exercício proposital.",
+        "Levemente ativo — exercício leve ou esporte de um a três dias por semana.",
+        "Moderadamente ativo — exercício moderado de três a cinco dias por semana.",
+        "Muito ativo — exercício intenso seis ou sete dias por semana.",
+        "Extremamente ativo — trabalho fisicamente pesado ou treino intenso duas vezes por dia.",
+      ],
+    },
+    {
+      heading: "Como o cálculo funciona",
+      body: [
+        "O seu metabolismo basal — o que o corpo gasta em repouso completo — vem da equação de Mifflin-St Jeor: 10 × peso em kg, mais 6,25 × altura em cm, menos 5 × idade, e depois mais 5 nos homens ou menos 161 nas mulheres.",
+        "Esse valor é multiplicado pelo seu nível de atividade, de 1,2 para sedentário até 1,9 para extremamente ativo. O resultado é o gasto energético total diário — o número de manutenção que aparece no topo.",
+        "Exemplo prático: um homem de 30 anos, com 180 cm e 80 kg, tem metabolismo basal de 1.780 kcal. Levemente ativo (× 1,375) são cerca de 2.448 kcal por dia para manter o peso.",
+      ],
+      bullets: [],
+    },
+    {
+      heading: "O que uma calculadora de calorias não diz",
+      body: [
+        "Toda equação aqui é uma média populacional ajustada a dados medidos, e as pessoas ficam de um lado ou do outro dela. Trate o número como uma estimativa para testar na balança por três ou quatro semanas, não como um fato sobre o seu corpo.",
+      ],
+      bullets: [
+        "Na maioria dos adultos a estimativa costuma ficar dentro de uns 10 % — são 200 kcal para cada lado num dia de 2.000 kcal.",
+        "Ela não diz nada sobre do que essas calorias são feitas, e são a proteína, as fibras e os micronutrientes que decidem se a alimentação se sustenta.",
+        "Doenças da tireoide, alguns medicamentos e um longo histórico de dietas afastam o gasto real da estimativa.",
+        "Não foi pensada para crianças, para gravidez ou amamentação, nem para atletas em blocos pesados de treino.",
+        "Subestima pessoas muito musculosas, porque a equação usa o peso total e não a massa magra.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: "Quantas calorias devo comer por dia?",
+      answer:
+        "As que você gasta, se o seu peso já está onde você quer. Na maioria dos adultos isso cai entre 1.800 e 2.800 kcal, mas a faixa é larga porque depende do seu tamanho, da idade e do quanto você se movimenta. A calculadora acima dá o seu número em vez da média.",
+    },
+    {
+      question: "Quantas calorias preciso comer para emagrecer?",
+      answer:
+        "Cerca de 500 kcal por dia abaixo da manutenção dão mais ou menos meio quilo por semana, e 250 abaixo dão cerca de um quarto de quilo. Déficits maiores não funcionam de forma confiável mais rápido — são só mais difíceis de manter, e uma parte maior da perda vem do músculo.",
+    },
+    {
+      question: "1.200 calorias por dia é seguro?",
+      answer:
+        "É a menor ingestão que esta calculadora sugere e funciona como piso, não como recomendação. Abaixo desse nível fica difícil obter proteína, vitaminas e minerais suficientes pela comida, então uma ingestão menor só deve ser seguida com acompanhamento médico.",
+    },
+    {
+      question: "Qual fórmula esta calculadora de calorias usa?",
+      answer:
+        "Mifflin-St Jeor para o metabolismo basal e depois um multiplicador de atividade padrão. Ela substituiu a antiga equação de Harris-Benedict na prática clínica por ser mais precisa para as composições corporais atuais, normalmente dentro de uns 10 % em adultos saudáveis.",
+    },
+    {
+      question: "Preciso contar calorias para emagrecer?",
+      answer:
+        "Não. Contar é só um jeito de manter um déficit, e muita gente consegue o mesmo mudando o que come em vez de pesar. Saber mais ou menos onde está a sua manutenção ajuda de qualquer forma, porque mostra o tamanho real da mudança que você está fazendo.",
+    },
+    {
+      question: "Esta calculadora de calorias guarda meus dados?",
+      answer:
+        "Não. O cálculo roda inteiramente no seu navegador. Nada do que você digitar é enviado aos nossos servidores nem salvo.",
+    },
+  ],
+  cta: {
+    heading: "Quer um plano, não só um número?",
+    body: "Agende uma teleconsulta com um médico registrado e veja o que o número significa para o seu peso, seus exames e seu histórico.",
+    label: "Agendar consulta",
+  },
+};
+
+/**
+ * Blood pressure is the sharpest pt-PT/pt-BR split of the set: Portugal says
+ * "tensão arterial" and "medir", Brazil says "pressão arterial" and "aferir",
+ * and `tabela pressão arterial` is a 2,400/mo Brazilian query that the
+ * European wording would not rank for at all. The emergency number is also
+ * market-specific — SAMU 192 — so the urgent copy is rewritten, not merged.
+ */
+const BR_PT_BP: DeepPartial<ToolCopy> = {
+  cardTitle: "Tabela de pressão arterial",
+  cardBlurb:
+    "O que os seus dois números significam na tabela de pressão arterial para adultos.",
+  h1Lead: "Tabela de",
+  h1Accent: "pressão arterial",
+  metaTitle: "Tabela de Pressão Arterial {country} | O Que Significa Sua Medida",
+  metaDescription:
+    "Compare sua pressão sistólica e diastólica com a tabela para adultos. Veja a categoria, o que ela significa e quais medidas exigem atendimento médico no mesmo dia.",
+  lede: "Insira os dois números do seu aparelho para ver onde a medida se encaixa na tabela para adultos — e o que fazer, se houver algo a fazer.",
+  trustPoints: [
+    "Categorias europeias (ESC/ESH) para adultos",
+    "Sinaliza as medidas que precisam de atendimento no mesmo dia",
+    "Roda no seu navegador — nada é enviado nem salvo",
+  ],
+  suggestionsIntro:
+    "Uma medida de pressão é um sinal, não um plano. Estas são as consultas que os nossos médicos fazem para o que ela aponta.",
+  widget: {
+    title: "Sua medida",
+    placeholder:
+      "O número de cima precisa ser maior que o de baixo — confira os dois valores no seu aparelho.",
+    note: "Esta tabela é uma referência de triagem, não um diagnóstico. A hipertensão é diagnosticada com medidas repetidas, normalmente uma semana de aferições em casa ou uma MAPA de 24 horas, nunca com um valor isolado.",
+    scaleLabel: "Onde está o seu valor sistólico",
+    optimalLabel: "Ótima para a maioria dos adultos",
+    optimalValue: "Abaixo de {systolic}/{diastolic} mmHg",
+    urgentTitle: "Procure atendimento médico hoje",
+    urgentBody:
+      "Uma medida tão alta precisa ser avaliada no mesmo dia. Sente-se, fique cinco minutos em repouso e afira de novo — se continuar assim, procure um médico ainda hoje.",
+    urgentSymptoms:
+      "Ligue agora para o SAMU (192) se você também tiver dor no peito, fraqueza ou dormência em um lado do corpo, dificuldade para falar ou uma alteração súbita da visão.",
+  },
+  sections: [
+    {
+      heading: "A tabela de pressão arterial para adultos",
+      body: [
+        "A pressão arterial é escrita com dois números: a pressão sistólica, enquanto o coração se contrai, sobre a pressão diastólica, enquanto ele relaxa entre os batimentos. As duas são medidas em milímetros de mercúrio (mmHg).",
+        "As categorias abaixo são as europeias (ESC/ESH). Quando os dois números caem em categorias diferentes, vale a mais alta: 128/95 é hipertensão grau 1, e não pressão normal.",
+      ],
+      bullets: [],
+      table: {
+        caption: "Categorias de pressão arterial em adultos",
+        columns: ["Categoria", "Sistólica (mmHg)", "Diastólica (mmHg)"],
+        rows: [
+          ["Baixa", "Menos de 90", "ou menos de 60"],
+          ["Ótima", "Menos de 120", "e menos de 80"],
+          ["Normal", "120 – 129", "e/ou 80 – 84"],
+          ["Normal-alta", "130 – 139", "e/ou 85 – 89"],
+          ["Hipertensão grau 1", "140 – 159", "e/ou 90 – 99"],
+          ["Hipertensão grau 2", "160 – 179", "e/ou 100 – 109"],
+          ["Hipertensão grau 3", "180 ou mais", "e/ou 110 ou mais"],
+          ["Sistólica isolada", "140 ou mais", "e menos de 90"],
+        ],
+        footnote:
+          "Limites para a aferição em consultório, em adultos. Aparelhos de uso doméstico e a MAPA de 24 horas registram valores mais baixos, então em casa a hipertensão começa em 135/85 e não em 140/90. Gravidez, infância e diálise têm alvos totalmente diferentes.",
+      },
+    },
+    {
+      heading: "Como aferir a pressão de um jeito confiável",
+      body: [
+        "A maior parte das medidas assustadoras é erro de aferição. A pressão muda ao longo do dia e sobe se você chega correndo, está com a bexiga cheia ou conversa com o manguito no braço, então o jeito de medir muda o número mais do que as pessoas imaginam.",
+      ],
+      bullets: [
+        "Fique sentado em repouso por cinco minutos antes — costas apoiadas, pés no chão, pernas descruzadas.",
+        "Nada de café, comida, exercício ou cigarro nos 30 minutos anteriores, e esvazie a bexiga.",
+        "Apoie o braço na mesa para que o manguito fique na altura do coração, sobre a pele.",
+        "Use um manguito do tamanho certo. Um manguito pequeno demais mede alto e é o erro mais comum em casa.",
+        "Não fale durante a aferição: falar acrescenta vários mmHg.",
+        "Faça duas medidas com um minuto de intervalo e use a segunda, ou a média das duas.",
+        "Afira de manhã e à noite por sete dias e leve a série inteira ao médico.",
+      ],
+    },
+    {
+      heading: "O que uma única medida não diz",
+      body: [
+        "Uma medida é uma fotografia de um momento, em um braço. Serve para sinalizar um problema, mas não para dar nome a ele, e é por isso que o diagnóstico se apoia em medidas repetidas e não no primeiro número que assusta.",
+      ],
+      bullets: [
+        "Hipertensão do avental branco: alta no consultório e normal em casa. É comum, e só a aferição em casa ou a MAPA separam uma coisa da outra.",
+        "Hipertensão mascarada: normal no consultório e alta no resto do tempo. É a mais arriscada das duas e fica invisível sem aferições em casa.",
+        "Os braços diferem. Uma diferença maior que 10 mmHg entre eles importa, e a partir daí usa-se sempre o braço de valor mais alto.",
+        "Pulso irregular, inclusive fibrilação atrial, torna a maioria dos aparelhos automáticos pouco confiável.",
+        "Nem todo aparelho doméstico é validado clinicamente, e um aparelho não validado pode errar bastante.",
+        "A gravidez tem limites e riscos próprios: pressão alta na gestação precisa de avaliação obstétrica, não desta tabela.",
+      ],
+    },
+    {
+      heading: "Quando procurar um médico e quando pedir ajuda agora",
+      body: ["A maior parte das medidas altas se resolve em uma consulta comum. Algumas não."],
+      bullets: [
+        "Ligue agora para o SAMU (192) se uma medida muito alta vier com dor no peito, fraqueza ou dormência em um lado do corpo, dificuldade para falar ou alteração súbita da visão. São sinais de infarto ou de AVC.",
+        "Procure atendimento no mesmo dia diante de uma medida de 180/120 ou mais, mesmo sem nenhum sintoma.",
+        "Marque uma avaliação nas semanas seguintes se as medidas ficarem repetidamente em 140/90 ou acima.",
+        "Converse com um médico se as medidas ficarem repetidamente abaixo de 90/60 e você sentir tontura, desmaio ou cansaço fora do comum.",
+        "Leve à consulta as suas aferições e também o aparelho. O que se trata é o padrão, não o pior número.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: "Qual é a pressão arterial normal de um adulto?",
+      answer:
+        "Abaixo de 120/80 mmHg é ótima, e 120–129 sobre 80–84 ainda é considerada normal. A partir de 130/85 a medida é normal-alta, e 140/90 ou mais aferidos no consultório indicam hipertensão. Aparelhos domésticos registram valores mais baixos, então em casa o limite é 135/85.",
+    },
+    {
+      question: "Qual número importa mais, o de cima ou o de baixo?",
+      answer:
+        "Os dois. A categoria é definida pelo pior deles, então 128/95 conta como hipertensão grau 1 só pelo número de baixo. A sistólica prevê melhor o risco cardiovascular depois dos 50 anos, e a diastólica antes disso.",
+    },
+    {
+      question: "O que significa uma pressão sistólica isolada?",
+      answer:
+        "Uma sistólica de 140 ou mais com a diastólica abaixo de 90. É o padrão mais comum de pressão alta depois dos 60 anos, vem do enrijecimento das artérias com a idade e traz risco cardiovascular real — não é uma peculiaridade inofensiva do número de cima.",
+    },
+    {
+      question: "Uma única medida alta significa que eu tenho hipertensão?",
+      answer:
+        "Não. A hipertensão é diagnosticada com medidas altas repetidas, normalmente apoiadas por uma semana de aferições em casa ou por uma MAPA de 24 horas. Uma medida alta isolada é motivo para aferir de novo com calma, não um diagnóstico.",
+    },
+    {
+      question: "Qual pressão arterial é perigosa?",
+      answer:
+        "Uma medida de 180/120 ou mais precisa de atendimento médico no mesmo dia. Se vier com dor no peito, fraqueza ou dormência em um lado, dificuldade para falar ou alteração súbita da visão, ligue imediatamente para o SAMU (192) — são sintomas de infarto ou de AVC.",
+    },
+    {
+      question: "Esta tabela de pressão arterial guarda a minha medida?",
+      answer:
+        "Não. A comparação roda inteiramente no seu navegador. Nada do que você digitar é enviado aos nossos servidores nem salvo.",
+    },
+  ],
+  cta: {
+    heading: "Quer que um médico veja as suas medidas?",
+    body: "Agende uma teleconsulta com um médico registrado, leve uma semana de aferições em casa e receba um plano construído a partir do padrão, não de um número isolado.",
+    label: "Agendar consulta",
+  },
+};
+
+/**
+ * Due date, Brazilian Portuguese. The biggest single tool opportunity we have:
+ * `calculadora gestacional` is 135,000/mo in Brazil at KD 0 — so the Brazilian
+ * page leads on that name rather than on Portugal's "calculadora da data do
+ * parto", and swaps the European clinical vocabulary throughout ("ultrassom"
+ * for "ecografia", "pré-natal" for "vigilância da gravidez", "bebê", "vômitos",
+ * "pressão arterial", "concepção").
+ */
+const BR_PT_DUE_DATE: DeepPartial<ToolCopy> = {
+  cardTitle: "Calculadora gestacional",
+  cardBlurb:
+    "A data provável do parto, quantas semanas de gestação você tem e as semanas que importam no caminho.",
+  h1Lead: "Calculadora",
+  h1Accent: "gestacional",
+  metaTitle: "Calculadora Gestacional {country} | Data Provável do Parto",
+  metaDescription:
+    "Calcule a data provável do parto e quantas semanas de gestação você tem a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com as 40 semanas detalhadas.",
+  lede: "Informe o primeiro dia da última menstruação para ver a data provável do parto, em qual semana você está hoje e quando começa cada trimestre.",
+  trustPoints: [
+    "Ajusta-se a ciclos de 20 a 45 dias",
+    "Datas dos trimestres e a janela de termo (37–42 semanas)",
+    "Roda no seu navegador — nada é enviado nem salvo",
+  ],
+  widget: {
+    title: "Sua data provável do parto",
+    placeholder: "Informe o primeiro dia da última menstruação para ver a data provável do parto.",
+    note: "É uma estimativa a partir das datas que você informa, não um diagnóstico. O ultrassom de datação mede o bebê diretamente e substitui essa conta.",
+    lmpLabel: "Primeiro dia da última menstruação",
+    lmpHint: "O dia em que o sangramento começou, não o dia em que terminou.",
+    cycleLabel: "Duração do ciclo",
+    cycleHint:
+      "Dias do início de uma menstruação até o início da seguinte. Se não souber, deixe 28.",
+    daysUnit: "dias",
+    gestationalAgeLabel: "Semanas de gestação hoje",
+    daysToGoLabel: "Dias que faltam",
+    secondTrimesterLabel: "Início do segundo trimestre",
+    thirdTrimesterLabel: "Início do terceiro trimestre",
+    termWindowLabel: "Janela de termo (37–42 semanas)",
+    trimester1: "Primeiro trimestre",
+    trimester1Note:
+      "Semanas 1 a 13. É quando o pré-natal é aberto e se faz o ultrassom de datação.",
+    trimester2: "Segundo trimestre",
+    trimester2Note:
+      "Semanas 14 a 27. O ultrassom morfológico costuma ser feito por volta das 20 semanas.",
+    trimester3: "Terceiro trimestre",
+    trimester3Note:
+      "Da semana 28 em diante. As avaliações de crescimento e de pressão arterial ficam mais próximas conforme o termo se aproxima.",
+    outOfRangeNote:
+      "Confira a data — ela está no futuro ou há mais de 42 semanas, fora do intervalo que esta calculadora consegue datar.",
+  },
+  sections: [
+    {
+      heading: "Sua gestação semana a semana",
+      body: [
+        "A gestação é datada a partir do primeiro dia da última menstruação, e não da concepção, e conta 40 semanas de lá. Antes de 37 semanas o parto é prematuro, de 42 semanas em diante é pós-termo, e é entre essas semanas que praticamente todos os bebês nascem.",
+        "A tabela abaixo são as 40 semanas inteiras, divididas como o pré-natal as divide.",
+      ],
+      bullets: [],
+      table: {
+        caption: "Fases da gestação em semanas a partir da última menstruação",
+        columns: ["Semanas", "Fase", "O que costuma acontecer"],
+        rows: [
+          [
+            "1 – 13",
+            "Primeiro trimestre",
+            "Abertura do pré-natal, primeiros exames e ultrassom de datação",
+          ],
+          [
+            "14 – 27",
+            "Segundo trimestre",
+            "O ultrassom morfológico, normalmente por volta das 20 semanas",
+          ],
+          [
+            "28 – 36",
+            "Terceiro trimestre",
+            "As avaliações de crescimento, pressão e posição ficam mais próximas",
+          ],
+          ["37 – 38", "Termo precoce", "Daqui em diante o parto já não é prematuro"],
+          ["39 – 40", "Termo completo", "A data provável do parto fica no fim da semana 40"],
+          ["41", "Termo tardio", "O acompanhamento aumenta e costuma-se discutir a indução"],
+          ["42 ou mais", "Pós-termo", "O parto normalmente é induzido em vez de se esperar"],
+        ],
+        footnote:
+          "As últimas quatro linhas são todas o fim do terceiro trimestre — a partir de 37 semanas conta-se em intervalos mais curtos porque é isso que muda a conduta. Só cerca de uma gestação em vinte termina exatamente na data prevista.",
+      },
+    },
+    {
+      heading: "Como a data do parto é calculada",
+      body: [
+        "A estimativa é a regra de Naegele: 280 dias, ou 40 semanas, a partir do primeiro dia da última menstruação. Ela pressupõe um ciclo de 28 dias com ovulação por volta do dia 14.",
+        "Se os seus ciclos são mais longos ou mais curtos, a ovulação acompanha, então a calculadora desloca a data pela mesma diferença. Um ciclo de 32 dias joga a estimativa quatro dias para frente; um de 24 dias traz quatro dias para trás.",
+        "Exemplo prático: uma última menstruação começando em 1º de janeiro com ciclo de 28 dias dá 8 de outubro. A mesma menstruação com ciclo de 32 dias dá 12 de outubro.",
+      ],
+      bullets: [],
+    },
+    {
+      heading: "Por que o ultrassom substitui esta estimativa",
+      body: [
+        "Uma calculadora só trabalha com as datas que você dá. O ultrassom mede o bebê, e é por isso que a data dele passa a valer no pré-natal.",
+      ],
+      bullets: [
+        "Depende de lembrar com exatidão o primeiro dia da última menstruação.",
+        "Pressupõe que você ovulou no meio do ciclo, o que não acontece com todas as pessoas.",
+        "Ciclos irregulares, anticoncepcional interrompido há pouco tempo e amamentação deixam a última menstruação como referência fraca.",
+        "O ultrassom de primeiro trimestre mede o bebê, em geral entre 11 e 14 semanas, com margem de poucos dias.",
+        "Depois de uma FIV a datação parte da data da transferência, e não de uma menstruação, então esta estimativa não se aplica.",
+      ],
+    },
+    {
+      heading: "Quando procurar um médico",
+      body: [],
+      bullets: [
+        "Você acha que está grávida e ainda não abriu o pré-natal — a primeira consulta e o ultrassom de datação são as duas coisas do começo.",
+        "Você tem sangramento, cólica ou dor de um lado só no início da gestação.",
+        "Você tem vômitos intensos ou constantes, ou não consegue segurar líquidos.",
+        "Você tem uma doença crônica ou usa medicamento de uso contínuo — alguns precisam ser revistos assim que a gestação é confirmada.",
+        "Você chegou às 41 semanas, ou passou da data prevista e os movimentos do bebê mudaram.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: "Qual é a precisão de uma calculadora gestacional?",
+      answer:
+        "A conta é exata; as suposições atrás dela não. Só cerca de uma gestação em vinte termina exatamente na data prevista, e a grande maioria dos partos acontece nas semanas em torno dela. A versão precisa é o ultrassom de primeiro trimestre e, depois de fazê-lo, é a data dele que vale.",
+    },
+    {
+      question: "De quantas semanas eu estou?",
+      answer:
+        "As semanas são contadas do primeiro dia da última menstruação, não da concepção — é por isso que você já está com cerca de quatro semanas quando o teste dá positivo pela primeira vez. A concepção acontece cerca de duas semanas depois daquele primeiro dia, então a gestação é sempre datada cerca de duas semanas mais «velha» do que o embrião.",
+    },
+    {
+      question: "O que significa 9w 3d?",
+      answer:
+        "Nove semanas completas e três dias desde o primeiro dia da última menstruação. A caderneta da gestante e os laudos usam essa forma porque uma semana inteira é grosseira demais quando um ultrassom ou um exame precisa ser feito em uma janela específica.",
+    },
+    {
+      question: "Posso usar se meus ciclos são irregulares?",
+      answer:
+        "Pode, e informar a duração habitual do seu ciclo chega mais perto do que os 28 dias padrão. Mas ciclo irregular é justamente o caso em que a última menstruação é uma referência fraca, então trate o resultado como orientação até fazer o ultrassom.",
+    },
+    {
+      question: "A data do parto muda depois do ultrassom?",
+      answer:
+        "Muitas vezes sim, normalmente alguns dias. O ultrassom mede o bebê em vez de contar a partir de uma data lembrada, então é a dele que fica. Diferença de uma semana ou mais é comum quando a data da última menstruação era incerta.",
+    },
+    {
+      question: "Esta calculadora guarda meus dados?",
+      answer:
+        "Não. O cálculo roda inteiramente no seu navegador. Nada do que você digitar é enviado aos nossos servidores nem salvo.",
+    },
+  ],
+  cta: {
+    heading: "Dúvidas no início da gestação?",
+    body: "Fale por vídeo com um médico registrado sobre sintomas, os remédios que você já usa ou o que preferir não deixar para a primeira consulta.",
+    label: "Agendar consulta",
+  },
+};
+
 const BR_PT_BANDS: DeepPartial<ToolsBandsCopy> = {
+  bp: {
+    low: {
+      label: "Pressão baixa",
+      summary:
+        "Abaixo da faixa habitual em adultos. Muitas vezes não tem importância, mas vale a opinião de um médico se você sentir tontura, desmaio ou cansaço fora do comum.",
+    },
+    optimal: {
+      label: "Ótima",
+      summary: "A faixa de menor risco em adultos. Não há nada a fazer só por causa desta medida.",
+    },
+    normal: {
+      label: "Normal",
+      summary:
+        "Dentro da faixa normal para adultos. Vale aferir de novo de vez em quando, principalmente se vem subindo.",
+    },
+    "high-normal": {
+      label: "Normal-alta",
+      summary:
+        "Acima do normal, mas ainda não é hipertensão. É a fase em que sal, álcool, peso e atividade física fazem mais diferença.",
+    },
+    "grade-1": {
+      label: "Hipertensão grau 1",
+      summary:
+        "Levemente elevada. Afira uma semana em casa e leve os valores ao médico — o diagnóstico precisa do padrão, não de um número isolado.",
+    },
+    "isolated-systolic": {
+      label: "Hipertensão sistólica isolada",
+      summary:
+        "O número de cima está elevado e o de baixo está normal. É o padrão mais comum depois dos 60 anos e mesmo assim exige avaliação médica.",
+    },
+    "grade-2": {
+      label: "Hipertensão grau 2",
+      summary:
+        "Bastante elevada. Marque uma avaliação médica em breve, sem esperar por uma consulta de rotina.",
+    },
+    "grade-3": {
+      label: "Hipertensão grau 3",
+      summary: "Muito elevada. Esta medida precisa ser avaliada por um médico ainda hoje.",
+    },
+  },
+  activity: {
+    sedentary: { label: "Sedentário", summary: "Trabalho sentado, pouco ou nenhum exercício" },
+    light: { label: "Levemente ativo", summary: "Exercício leve 1–3 dias por semana" },
+    moderate: { label: "Moderadamente ativo", summary: "Exercício moderado 3–5 dias por semana" },
+    very: { label: "Muito ativo", summary: "Exercício intenso 6–7 dias por semana" },
+    extra: {
+      label: "Extremamente ativo",
+      summary: "Trabalho físico ou treino intenso duas vezes por dia",
+    },
+  },
   bmi: {
     underweight: {
       label: "Baixo peso",
@@ -356,7 +1304,8 @@ const BR_PT_BANDS: DeepPartial<ToolsBandsCopy> = {
 type DeepPartial<T> = T extends object ? { [K in keyof T]?: DeepPartial<T[K]> } : T;
 
 type MarketCopyOverride = {
-  tool?: DeepPartial<ToolCopy>;
+  /** Keyed by tool slug — a BMI override must never land on another tool. */
+  tools?: Record<string, DeepPartial<ToolCopy>>;
   bands?: DeepPartial<ToolsBandsCopy>;
 };
 
@@ -366,12 +1315,28 @@ type MarketCopyOverride = {
  * without adding a locale.
  */
 const MARKET_COPY: Partial<Record<CountryCode, Record<string, MarketCopyOverride>>> = {
-  br: { pt: { tool: BR_PT_TOOL, bands: BR_PT_BANDS } },
+  br: {
+    pt: {
+      tools: {
+        "bmi-calculator": BR_PT_BMI,
+        "calorie-calculator": BR_PT_CALORIE,
+        "blood-pressure-chart": BR_PT_BP,
+        "due-date-calculator": BR_PT_DUE_DATE,
+      },
+      bands: BR_PT_BANDS,
+    },
+  },
 };
 
 /** Language copy for a tool, with this market's overrides applied. */
-export function applyMarketToolCopy(code: string, lang: string, copy: ToolCopy): ToolCopy {
-  const override = MARKET_COPY[code.toLowerCase() as CountryCode]?.[lang.toLowerCase()]?.tool;
+export function applyMarketToolCopy(
+  code: string,
+  lang: string,
+  slug: string,
+  copy: ToolCopy,
+): ToolCopy {
+  const override =
+    MARKET_COPY[code.toLowerCase() as CountryCode]?.[lang.toLowerCase()]?.tools?.[slug];
   return override ? deepMergeLocale(copy, override as ToolCopy) : copy;
 }
 

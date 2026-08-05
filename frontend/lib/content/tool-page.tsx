@@ -7,9 +7,11 @@ import { ToolWidget } from "@/components/tools/ToolWidget";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import { TONE_DARK } from "@/lib/tools/tone";
 import {
+  TOOLS,
   getToolMeta,
   getToolsCopy,
   type ToolCopy,
+  type ToolMeta,
   type ToolSectionCopy,
   type ToolsSuggestionsCopy,
   type ToolTableCopy,
@@ -47,6 +49,10 @@ const base = (ctx: ToolCtx) => `/${ctx.country}/${ctx.lang}`;
 
 export function toolPath(ctx: ToolCtx, slug: string): string {
   return `${base(ctx)}/tools/${slug}`;
+}
+
+export function toolsHubPath(ctx: ToolCtx): string {
+  return `${base(ctx)}/tools`;
 }
 
 /* ------------------------------------------------------------ shared bits */
@@ -385,6 +391,126 @@ function ToolSectionBlock({
   );
 }
 
+/**
+ * One tool, as a link card. Used by the `/tools` index and by the related
+ * strip on each tool page, so the two can never drift apart.
+ */
+function ToolLinkCard({
+  href,
+  title,
+  blurb,
+  label,
+  dark,
+}: {
+  href: string;
+  title: string;
+  blurb: string;
+  label: string;
+  dark: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`${
+        dark ? "gh2-glass-forest gh2-dark-content" : "gh2-card-ivory"
+      } flex flex-col gap-3 rounded-2xl p-6 transition-transform hover:-translate-y-0.5`}
+    >
+      <h3
+        className="font-extrabold tracking-[-0.02em]"
+        style={{
+          fontSize: "1.125rem",
+          color: dark ? "#FFFFFF" : "var(--color-brand-primary)",
+        }}
+      >
+        {title}
+      </h3>
+      <p
+        className="text-[14px] leading-relaxed"
+        style={{ color: dark ? "rgba(255,255,255,0.68)" : "var(--color-text-body, #2D3B36)" }}
+      >
+        {blurb}
+      </p>
+      <span
+        className="mt-auto inline-flex items-center gap-1.5 pt-1 text-[13px] font-bold"
+        style={{ color: dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)" }}
+      >
+        {label}
+        <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+      </span>
+    </Link>
+  );
+}
+
+/**
+ * The other calculators, at the foot of a tool page. An empty `related` list in
+ * the registry means "every other tool", so shipping a new one cross-links it
+ * from the existing pages without editing their entries.
+ */
+function RelatedToolsSection({
+  ctx,
+  slug,
+  meta,
+  bundle,
+  theme,
+}: {
+  ctx: ToolCtx;
+  slug: string;
+  meta: ToolMeta;
+  bundle: ToolsBundle;
+  theme: "ivory" | "forest";
+}) {
+  const slugs =
+    meta.related.length > 0
+      ? meta.related
+      : TOOLS.map((tool) => tool.slug).filter((other) => other !== slug);
+  const items = slugs
+    .map((other) => ({ slug: other, copy: bundle.tools[other] }))
+    .filter((item): item is { slug: string; copy: ToolCopy } => Boolean(item.copy))
+    // Brazil reads its own Portuguese here too, not Portugal's.
+    .map((item) => ({
+      slug: item.slug,
+      copy: applyMarketToolCopy(ctx.code, ctx.lang, item.slug, item.copy),
+    }));
+  if (items.length === 0) return null;
+
+  const dark = theme === "forest";
+  return (
+    <section
+      className={
+        dark
+          ? "gh2-section-forest gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden"
+          : "gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel relative overflow-hidden"
+      }
+      style={{ padding: "clamp(48px,6vw,80px) 0" }}
+    >
+      <SectionSeam theme={dark ? "dark" : "light"} />
+      <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+        <h2
+          className="font-extrabold tracking-[-0.03em]"
+          style={{
+            fontSize: "clamp(1.4rem, 2vw + 0.5rem, 1.875rem)",
+            color: dark ? "#FFFFFF" : "var(--color-brand-primary)",
+          }}
+        >
+          {bundle.hub.relatedHeading}
+        </h2>
+        <div className="mt-8 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <ToolLinkCard
+              key={item.slug}
+              href={toolPath(ctx, item.slug)}
+              title={item.copy.cardTitle}
+              blurb={item.copy.cardBlurb}
+              label={bundle.hub.openLabel}
+              dark={dark}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function CtaBand({ copy, href }: { copy: ToolCopy["cta"]; href: string }) {
   return (
     <section
@@ -530,17 +656,22 @@ export function ToolPage({
   if (!meta || !languageCopy) return null;
   // Brazil overrides the shared `pt` copy with Brazilian Portuguese; every
   // other market falls through unchanged. See `market-copy.ts`.
-  const copy = applyMarketToolCopy(ctx.code, ctx.lang, languageCopy);
+  const copy = applyMarketToolCopy(ctx.code, ctx.lang, slug, languageCopy);
   const bands = applyMarketBands(ctx.code, ctx.lang, bundle.bands);
+  // The shared suggestions intro names BMI, so any other tool supplies its own.
+  const suggestionsCopy = copy.suggestionsIntro
+    ? { ...bundle.suggestions, intro: copy.suggestionsIntro }
+    : bundle.suggestions;
 
   const url = toolPath(ctx, slug);
+  const hubUrl = toolsHubPath(ctx);
   // `{country}` stands alone in the H1 trail — never after a preposition, since
   // cs/pt decline there and `countryLabel` is nominative only.
   const h1Trail = fillPlaceholders(copy.h1Trail, { country: ctx.countryLabel });
   // Shared language FAQ + this market's own entries (HSE, SNS, SUS…). Both the
   // rendered accordion and the FAQPage schema use the combined list, so they
   // can never disagree.
-  const faq = [...copy.faq, ...getMarketFaq(ctx.code, ctx.lang)];
+  const faq = [...copy.faq, ...getMarketFaq(ctx.code, ctx.lang, slug)];
 
   return (
     <>
@@ -554,6 +685,7 @@ export function ToolPage({
           faqJsonLd(faq),
           breadcrumbJsonLd([
             { name: ctx.countryLabel, url: base(ctx) },
+            { name: bundle.hub.navLabel, url: hubUrl },
             { name: copy.cardTitle, url },
           ]),
         ]}
@@ -568,6 +700,7 @@ export function ToolPage({
         trustPoints={copy.trustPoints}
         breadcrumbs={[
           { name: ctx.countryLabel, href: base(ctx) },
+          { name: bundle.hub.navLabel, href: hubUrl },
           { name: copy.cardTitle },
         ]}
         aside={
@@ -579,7 +712,7 @@ export function ToolPage({
               widget: copy.widget,
               formatLocale: ctx.formatLocale,
             }}
-            nudges={buildBandNudges(suggestions, bundle.suggestions)}
+            nudges={buildBandNudges(suggestions, suggestionsCopy)}
           />
         }
       />
@@ -601,12 +734,25 @@ export function ToolPage({
 
       <SuggestionsSection
         suggestions={suggestions}
-        copy={bundle.suggestions}
+        copy={suggestionsCopy}
         bookLabel={getCommonLocale(ctx.lang).doctors.bookAppointment}
       />
 
-      {/* Related-tools strip goes here once a second tool ships — see
-          `registry.ts`. With one tool it would link only to itself. */}
+      {/* Keeps the ivory/forest alternation going whether or not this tool
+          rendered a suggestions band (that one is always ivory). */}
+      <RelatedToolsSection
+        ctx={ctx}
+        slug={slug}
+        meta={meta}
+        bundle={bundle}
+        theme={
+          (suggestions.length > 0
+            ? "ivory"
+            : meta.sections[meta.sections.length - 1]?.theme) === "ivory"
+            ? "forest"
+            : "ivory"
+        }
+      />
 
       <FAQSection
         theme="dark"
@@ -616,6 +762,75 @@ export function ToolPage({
       />
 
       <CtaBand copy={copy.cta} href={`${base(ctx)}${meta.ctaPath}`} />
+    </>
+  );
+}
+
+/* ----------------------------------------------------------------- /tools */
+
+/**
+ * The `/{country}/{lang}/tools` index.
+ *
+ * Deliberately thin: a hero and the cards. It exists so the calculators have a
+ * crawlable parent (the footer links here, and every tool page breadcrumbs back
+ * to it) rather than sitting as a set of unlinked leaves — orphaned URLs are
+ * the recurring cause of our indexation gaps.
+ */
+export function ToolsHubPage({ ctx }: { ctx: ToolCtx }) {
+  const bundle: ToolsBundle = getToolsCopy(ctx.lang);
+  const hub = bundle.hub;
+  const url = toolsHubPath(ctx);
+  // `{country}` stands alone here, as in the tool H1s — never after a
+  // preposition, which cs and pt would decline.
+  const h1Trail = fillPlaceholders(hub.h1Trail, { country: ctx.countryLabel });
+
+  const items = TOOLS.map((tool) => ({ slug: tool.slug, copy: bundle.tools[tool.slug] }))
+    .filter((item): item is { slug: string; copy: ToolCopy } => Boolean(item.copy))
+    .map((item) => ({
+      slug: item.slug,
+      copy: applyMarketToolCopy(ctx.code, ctx.lang, item.slug, item.copy),
+    }));
+
+  return (
+    <>
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: ctx.countryLabel, url: base(ctx) },
+            { name: hub.navLabel, url },
+          ]),
+        ]}
+      />
+
+      <ToolHero
+        eyebrow={hub.eyebrow}
+        titleLead={hub.h1Lead}
+        titleAccent={hub.h1Accent}
+        titleTrail={h1Trail || undefined}
+        lede={hub.lede}
+        breadcrumbs={[{ name: ctx.countryLabel, href: base(ctx) }, { name: hub.navLabel }]}
+      />
+
+      <section
+        className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel relative overflow-hidden"
+        style={{ padding: "clamp(56px,7vw,96px) 0" }}
+      >
+        <SectionSeam theme="light" />
+        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map((item) => (
+              <ToolLinkCard
+                key={item.slug}
+                href={toolPath(ctx, item.slug)}
+                title={item.copy.cardTitle}
+                blurb={item.copy.cardBlurb}
+                label={hub.openLabel}
+                dark={false}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

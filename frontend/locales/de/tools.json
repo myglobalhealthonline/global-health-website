@@ -1,5 +1,20 @@
 {
+  "hub": {
+    "navLabel": "Kostenlose Gesundheits-Tools",
+    "eyebrow": "Kostenlose Gesundheits-Tools",
+    "h1Lead": "Kostenlose",
+    "h1Accent": "Gesundheitsrechner",
+    "h1Trail": "{country}",
+    "metaTitle": "Kostenlose Gesundheitsrechner {country} | Werte Prüfen",
+    "metaDescription": "Kostenlose Rechner, die in Ihrem Browser laufen — Body-Mass-Index, Tageskalorien, Blutdruck und Geburtstermin — jeweils mit der Bedeutung des Ergebnisses und dem, was ärztlich als Nächstes geprüft würde.",
+    "lede": "Schnelle, private Rechner ohne Konto. Zu jedem Ergebnis steht, was es bedeutet und was ärztlich als Nächstes geprüft würde.",
+    "openLabel": "Rechner öffnen",
+    "relatedHeading": "Weitere kostenlose Rechner"
+  },
   "ui": {
+    "systolic": "Systolisch (oberer Wert)",
+    "diastolic": "Diastolisch (unterer Wert)",
+    "mmHg": "mmHg",
     "questionsEyebrow": "Fragen",
     "faqSuffix": "Häufige Fragen",
     "units": "Einheiten",
@@ -13,7 +28,14 @@
     "inchesLabel": "Zoll",
     "stoneLabel": "Gewicht (Stone)",
     "poundsLabel": "Pfund",
-    "poundsOnlyHint": "Lassen Sie Stone leer, um nur Pfund einzugeben."
+    "poundsOnlyHint": "Lassen Sie Stone leer, um nur Pfund einzugeben.",
+    "sex": "Geschlecht",
+    "male": "Männlich",
+    "female": "Weiblich",
+    "age": "Alter",
+    "years": "Jahre",
+    "activity": "Aktivitätsniveau",
+    "kcalPerDay": "kcal / Tag"
   },
   "suggestions": {
     "heading": "Wie es weitergeht",
@@ -27,6 +49,40 @@
     "nudgeObese": "Auf dieser Stufe wirkt ärztlich begleitetes Gewichtsmanagement deutlich besser als Diäten allein."
   },
   "bands": {
+    "bp": {
+      "low": {
+        "label": "Niedriger Blutdruck",
+        "summary": "Unterhalb des üblichen Bereichs für Erwachsene. Oft harmlos, aber eine ärztliche Einschätzung lohnt sich, wenn Ihnen schwindelig wird, Sie ohnmächtig werden oder ungewöhnlich müde sind."
+      },
+      "optimal": {
+        "label": "Optimal",
+        "summary": "Der Bereich mit dem geringsten Risiko für Erwachsene. Allein aufgrund dieses Wertes ist nichts zu tun."
+      },
+      "normal": {
+        "label": "Normal",
+        "summary": "Im normalen Bereich für Erwachsene. Gelegentlich nachmessen lohnt sich, vor allem wenn die Werte langsam steigen."
+      },
+      "high-normal": {
+        "label": "Hochnormal",
+        "summary": "Über dem Normalbereich, aber noch keine Hypertonie. In dieser Phase bewirken Salz, Alkohol, Gewicht und Bewegung am meisten."
+      },
+      "grade-1": {
+        "label": "Hypertonie Grad 1",
+        "summary": "Leicht erhöht. Messen Sie eine Woche lang zu Hause und bringen Sie die Werte zur Ärztin oder zum Arzt — für eine Diagnose zählt das Muster, nicht ein einzelner Wert."
+      },
+      "isolated-systolic": {
+        "label": "Isolierte systolische Hypertonie",
+        "summary": "Der obere Wert ist erhöht, der untere normal. Das ist das häufigste Muster ab 60 und braucht trotzdem eine ärztliche Abklärung."
+      },
+      "grade-2": {
+        "label": "Hypertonie Grad 2",
+        "summary": "Deutlich erhöht. Vereinbaren Sie bald eine ärztliche Abklärung, statt auf einen Routinetermin zu warten."
+      },
+      "grade-3": {
+        "label": "Hypertonie Grad 3",
+        "summary": "Stark erhöht. Dieser Wert muss noch heute ärztlich abgeklärt werden."
+      }
+    },
     "bmi": {
       "underweight": {
         "label": "Untergewicht",
@@ -52,9 +108,193 @@
         "label": "Adipositas Grad III",
         "summary": "Eine fachärztliche Abklärung zum Gewichtsmanagement wird empfohlen."
       }
+    },
+    "activity": {
+      "sedentary": {
+        "label": "Sitzend",
+        "summary": "Bürojob, wenig oder kein Sport"
+      },
+      "light": {
+        "label": "Leicht aktiv",
+        "summary": "Leichte Bewegung an 1–3 Tagen pro Woche"
+      },
+      "moderate": {
+        "label": "Mäßig aktiv",
+        "summary": "Moderate Bewegung an 3–5 Tagen pro Woche"
+      },
+      "very": {
+        "label": "Sehr aktiv",
+        "summary": "Intensives Training an 6–7 Tagen pro Woche"
+      },
+      "extra": {
+        "label": "Extrem aktiv",
+        "summary": "Körperliche Arbeit oder zweimal täglich hartes Training"
+      }
     }
   },
   "tools": {
+    "blood-pressure-chart": {
+      "cardTitle": "Blutdrucktabelle",
+      "cardBlurb": "Was Ihre beiden Werte in der europäischen Blutdrucktabelle für Erwachsene bedeuten.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Blutdruck",
+      "h1Accent": "tabelle",
+      "h1Trail": "{country}",
+      "metaTitle": "Blutdrucktabelle {country} | Was Ihr Wert Bedeutet",
+      "metaDescription": "Vergleichen Sie Ihren systolischen und diastolischen Wert mit der europäischen Blutdrucktabelle für Erwachsene. Kategorie, Bedeutung und welche Werte noch am selben Tag ärztlich abgeklärt gehören.",
+      "lede": "Geben Sie die beiden Werte von Ihrem Messgerät ein und sehen Sie, wo die Messung in der europäischen Tabelle für Erwachsene liegt — und was gegebenenfalls zu tun ist.",
+      "trustPoints": [
+        "Europäische Kategorien (ESC/ESH) für Erwachsene",
+        "Weist auf Werte hin, die noch am selben Tag abgeklärt gehören",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Ein Blutdruckwert ist ein Hinweis, kein Plan. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte für das anbieten, worauf er hinweist.",
+      "widget": {
+        "title": "Ihr Messwert",
+        "placeholder": "Der obere Wert muss höher sein als der untere — prüfen Sie beide Zahlen auf Ihrem Messgerät.",
+        "note": "Diese Tabelle ist eine Orientierung zum Screening, keine Diagnose. Bluthochdruck wird aus wiederholten Messungen diagnostiziert, meist aus einer Woche Heimmessung oder einer 24-Stunden-Messung, nie aus einem einzelnen Wert.",
+        "scaleLabel": "Wo Ihr systolischer Wert liegt",
+        "optimalLabel": "Optimal für die meisten Erwachsenen",
+        "optimalValue": "Unter {systolic}/{diastolic} mmHg",
+        "urgentTitle": "Holen Sie sich noch heute ärztliche Hilfe",
+        "urgentBody": "Ein so hoher Wert gehört noch am selben Tag abgeklärt. Sitzen Sie fünf Minuten ruhig und messen Sie erneut — bleibt der Wert so hoch, wenden Sie sich noch heute an eine Ärztin oder einen Arzt.",
+        "urgentSymptoms": "Rufen Sie sofort den Rettungsdienst, wenn zusätzlich Brustschmerzen, Schwäche oder Taubheit einer Körperhälfte, Sprachstörungen oder eine plötzliche Sehstörung auftreten."
+      },
+      "sections": [
+        {
+          "heading": "Die Blutdrucktabelle für Erwachsene",
+          "body": [
+            "Der Blutdruck wird mit zwei Zahlen angegeben: dem systolischen Druck, während sich das Herz zusammenzieht, über dem diastolischen Druck, während es sich zwischen den Schlägen entspannt. Beide werden in Millimeter Quecksilbersäule (mmHg) gemessen.",
+            "Die Kategorien unten sind die europäischen (ESC/ESH). Fallen die beiden Werte in unterschiedliche Kategorien, zählt die höhere: 128/95 ist eine Hypertonie Grad 1 und kein normaler Blutdruck."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Europäische Blutdruckkategorien für Erwachsene",
+            "columns": [
+              "Kategorie",
+              "Systolisch (mmHg)",
+              "Diastolisch (mmHg)"
+            ],
+            "rows": [
+              [
+                "Niedrig",
+                "Unter 90",
+                "oder unter 60"
+              ],
+              [
+                "Optimal",
+                "Unter 120",
+                "und unter 80"
+              ],
+              [
+                "Normal",
+                "120 – 129",
+                "und/oder 80 – 84"
+              ],
+              [
+                "Hochnormal",
+                "130 – 139",
+                "und/oder 85 – 89"
+              ],
+              [
+                "Hypertonie Grad 1",
+                "140 – 159",
+                "und/oder 90 – 99"
+              ],
+              [
+                "Hypertonie Grad 2",
+                "160 – 179",
+                "und/oder 100 – 109"
+              ],
+              [
+                "Hypertonie Grad 3",
+                "180 oder mehr",
+                "und/oder 110 oder mehr"
+              ],
+              [
+                "Isoliert systolisch",
+                "140 oder mehr",
+                "und unter 90"
+              ]
+            ],
+            "footnote": "Grenzwerte für die Messung in der Praxis bei Erwachsenen. Heimmessgeräte und 24-Stunden-Messungen liefern niedrigere Werte, zu Hause beginnt Bluthochdruck deshalb bei 135/85 statt bei 140/90. In Schwangerschaft, Kindesalter und Dialyse gelten völlig andere Zielwerte."
+          }
+        },
+        {
+          "heading": "So messen Sie einen Wert, der etwas aussagt",
+          "body": [
+            "Die meisten erschreckenden Werte sind Messfehler. Der Blutdruck schwankt über den Tag und steigt, wenn Sie gehetzt ankommen, die Blase voll ist oder Sie mit angelegter Manschette sprechen — die Art zu messen verändert die Zahl also stärker, als die meisten erwarten."
+          ],
+          "bullets": [
+            "Sitzen Sie zuerst fünf Minuten ruhig — Rücken angelehnt, Füße flach auf dem Boden, Beine nicht überschlagen.",
+            "30 Minuten vorher kein Kaffee, kein Essen, kein Sport, keine Zigaretten, und entleeren Sie die Blase.",
+            "Legen Sie den Arm so auf den Tisch, dass die Manschette auf Herzhöhe und auf der bloßen Haut liegt.",
+            "Verwenden Sie eine passende Manschette. Eine zu kleine misst zu hoch und ist der häufigste Fehler bei der Heimmessung.",
+            "Sprechen Sie während der Messung nicht: Reden addiert mehrere mmHg.",
+            "Messen Sie zweimal im Abstand von einer Minute und nehmen Sie den zweiten Wert oder den Mittelwert.",
+            "Messen Sie sieben Tage lang morgens und abends und bringen Sie die ganze Reihe zur Ärztin oder zum Arzt."
+          ]
+        },
+        {
+          "heading": "Was eine einzelne Messung nicht sagen kann",
+          "body": [
+            "Ein Messwert ist eine Momentaufnahme an einem Arm. Das reicht, um ein Problem zu erkennen, aber nicht, um es zu benennen — deshalb stützt sich eine Diagnose auf wiederholte Messungen und nicht auf den ersten erschreckenden Wert."
+          ],
+          "bullets": [
+            "Weißkittelhypertonie: in der Praxis erhöht, zu Hause normal. Häufig, und nur Heimmessung oder eine 24-Stunden-Messung trennt sie ab.",
+            "Maskierte Hypertonie: in der Praxis normal, die übrige Zeit erhöht. Die riskantere der beiden und ohne Heimmessung unsichtbar.",
+            "Die Arme unterscheiden sich. Ein Unterschied von mehr als 10 mmHg ist bedeutsam, und ab dann gilt immer der Arm mit dem höheren Wert.",
+            "Ein unregelmäßiger Puls, auch Vorhofflimmern, macht die meisten automatischen Geräte unzuverlässig.",
+            "Nicht jedes Heimgerät ist klinisch validiert, und ein nicht validiertes kann deutlich danebenliegen.",
+            "Die Schwangerschaft hat eigene Grenzwerte und eigene Risiken: erhöhter Blutdruck in der Schwangerschaft gehört in die geburtshilfliche Betreuung, nicht in diese Tabelle."
+          ]
+        },
+        {
+          "heading": "Wann zur Ärztin oder zum Arzt — und wann sofort",
+          "body": [
+            "Die meisten erhöhten Werte lassen sich in einem normalen Termin klären. Einige nicht."
+          ],
+          "bullets": [
+            "Rufen Sie sofort den Rettungsdienst, wenn ein sehr hoher Wert mit Brustschmerzen, Schwäche oder Taubheit einer Körperhälfte, Sprachstörungen oder einer plötzlichen Sehstörung einhergeht. Das sind Anzeichen eines Herzinfarkts oder eines Schlaganfalls.",
+            "Suchen Sie bei einem Wert von 180/120 oder höher noch am selben Tag ärztliche Hilfe, auch ganz ohne Beschwerden.",
+            "Vereinbaren Sie innerhalb weniger Wochen einen Termin, wenn die Werte wiederholt bei 140/90 oder darüber liegen.",
+            "Sprechen Sie mit einer Ärztin oder einem Arzt, wenn die Werte wiederholt unter 90/60 liegen und Ihnen schwindelig ist, Sie ohnmächtig werden oder ungewöhnlich müde sind.",
+            "Bringen Sie Ihre Heimmesswerte und das Gerät selbst mit. Behandelt wird das Muster, nicht der schlechteste Einzelwert."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Was ist ein normaler Blutdruck für Erwachsene?",
+          "answer": "Unter 120/80 mmHg ist optimal, 120–129 zu 80–84 gilt weiterhin als normal. Ab 130/85 ist ein Wert hochnormal, und 140/90 oder höher, in der Praxis gemessen, bedeutet Bluthochdruck. Heimmessgeräte liefern niedrigere Werte, zu Hause liegt die Grenze deshalb bei 135/85."
+        },
+        {
+          "question": "Welcher Wert zählt mehr, der obere oder der untere?",
+          "answer": "Beide. Die Kategorie richtet sich nach dem schlechteren Wert, deshalb gilt 128/95 allein wegen der unteren Zahl als Hypertonie Grad 1. Der systolische Wert sagt das Herz-Kreislauf-Risiko ab etwa 50 besser voraus, der diastolische davor."
+        },
+        {
+          "question": "Was bedeutet ein isoliert systolischer Wert?",
+          "answer": "Ein systolischer Wert von 140 oder mehr bei einem diastolischen unter 90. Das ist ab 60 die häufigste Form von Bluthochdruck, sie entsteht durch die mit dem Alter steifer werdenden Arterien und bringt ein echtes Herz-Kreislauf-Risiko mit sich — es ist keine harmlose Eigenart des oberen Wertes."
+        },
+        {
+          "question": "Bedeutet ein einzelner hoher Wert, dass ich Bluthochdruck habe?",
+          "answer": "Nein. Bluthochdruck wird aus wiederholt erhöhten Werten diagnostiziert, in der Regel gestützt auf eine Woche Heimmessung oder eine 24-Stunden-Messung. Ein einzelner hoher Wert ist ein Grund, sauber nachzumessen, keine Diagnose."
+        },
+        {
+          "question": "Welcher Blutdruck ist gefährlich?",
+          "answer": "Ein Wert von 180/120 oder höher braucht noch am selben Tag ärztliche Hilfe. Kommen Brustschmerzen, Schwäche oder Taubheit einer Körperhälfte, Sprachstörungen oder eine plötzliche Sehstörung hinzu, rufen Sie sofort den Rettungsdienst — das sind Anzeichen eines Herzinfarkts oder eines Schlaganfalls."
+        },
+        {
+          "question": "Speichert diese Blutdrucktabelle meinen Wert?",
+          "answer": "Nein. Der Vergleich läuft vollständig in Ihrem Browser. Nichts von dem, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Sollen Ihre Werte ärztlich angesehen werden?",
+        "body": "Buchen Sie eine Videosprechstunde bei einer registrierten Ärztin oder einem registrierten Arzt, bringen Sie eine Woche Heimmesswerte mit und erhalten Sie einen Plan, der auf dem Muster beruht und nicht auf einer einzelnen Zahl.",
+        "label": "Termin buchen"
+      }
+    },
     "bmi-calculator": {
       "cardTitle": "BMI-Rechner",
       "cardBlurb": "Body-Mass-Index aus Ihrer Größe und Ihrem Gewicht, auf der WHO-Skala für Erwachsene.",
@@ -192,6 +432,301 @@
       "cta": {
         "heading": "Möchten Sie Ihr Ergebnis besprechen?",
         "body": "Buchen Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt und erhalten Sie einen Plan, der auf Ihrer Krankengeschichte beruht — nicht auf einer Zahl.",
+        "label": "Termin buchen"
+      }
+    },
+    "calorie-calculator": {
+      "cardTitle": "Kalorienrechner",
+      "cardBlurb": "Wie viele Kalorien Sie täglich brauchen, um Ihr Gewicht zu halten, abzunehmen oder zuzunehmen.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Kostenloser",
+      "h1Accent": "Kalorienrechner",
+      "h1Trail": "{country}",
+      "metaTitle": "Kalorienrechner {country} | Täglichen Kalorienbedarf Berechnen",
+      "metaDescription": "Berechnen Sie, wie viele Kalorien Sie täglich brauchen, um Ihr Gewicht zu halten, abzunehmen oder zuzunehmen. Mifflin-St-Jeor-Formel, fünf Aktivitätsstufen und was die Zahlen wirklich bedeuten.",
+      "lede": "Geben Sie Geschlecht, Alter, Größe, Gewicht und Ihr Aktivitätsniveau ein und sehen Sie, wie viele Kalorien Sie am Tag verbrauchen — und wie viel Sie essen sollten, um zu halten, abzunehmen oder zuzunehmen.",
+      "trustPoints": [
+        "Mifflin-St-Jeor-Formel, die auch in der Praxis verwendet wird",
+        "Erhalt, Abnahme und Zunahme auf einen Blick",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Eine Kalorienzahl ist ein Ausgangspunkt, kein Plan. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte zu Gewicht, Ernährung und den Untersuchungen anbieten, die eine Zahl nicht liefert.",
+      "widget": {
+        "title": "Ihre Kalorien pro Tag",
+        "placeholder": "Geben Sie Ihre Angaben ein, um Ihren Tagesverbrauch zu sehen.",
+        "note": "Schätzwerte für gesunde Erwachsene und ein Orientierungswerkzeug, keine Diagnose und kein verordneter Ernährungsplan. Sprechen Sie vor einer Umstellung mit einer Ärztin oder einem Arzt, wenn Sie schwanger sind oder stillen, unter 18 sind oder wegen einer Erkrankung behandelt werden.",
+        "noteFloored": "Ihr Abnehmziel wurde bei 1.200 kcal gehalten — der niedrigsten Tagesmenge, die dieser Rechner vorschlägt. Weniger sollte nur unter ärztlicher Aufsicht gegessen werden.",
+        "resultLabel": "Kalorien zum Halten",
+        "resultSummary": "Was Sie an einem durchschnittlichen Tag auf diesem Aktivitätsniveau verbrauchen, alles eingerechnet.",
+        "bmrLabel": "Grundumsatz",
+        "mildLossLabel": "Etwa 0,25 kg pro Woche abnehmen",
+        "lossLabel": "Etwa 0,5 kg pro Woche abnehmen",
+        "gainLabel": "Etwa 0,25 kg pro Woche zunehmen"
+      },
+      "sections": [
+        {
+          "heading": "Was Ihre Kalorienzahlen bedeuten",
+          "body": [
+            "Die große Zahl ist Ihr Erhaltungsbedarf: ungefähr das, was Sie an einem Tag inklusive Bewegung verbrauchen. Essen Sie so viel, bleibt Ihr Gewicht, wo es ist.",
+            "Die Ziele darunter sind dieselbe Zahl mit einem Defizit oder einem Überschuss. Ein tägliches Defizit von 500 kcal entspricht etwa einem halben Kilo pro Woche — auf dieses Tempo laufen die meisten Empfehlungen hinaus: schnell genug, um es zu merken, langsam genug, um es zu halten."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Tägliche Kalorienziele ausgehend von Ihrem Erhaltungsbedarf",
+            "columns": [
+              "Ziel",
+              "Tagesmenge",
+              "Was zu erwarten ist"
+            ],
+            "rows": [
+              [
+                "Halten",
+                "Ihr Erhaltungsbedarf",
+                "Das Gewicht bleibt über Wochen stabil, nicht über Tage"
+              ],
+              [
+                "Leichte Abnahme",
+                "Erhaltungsbedarf − 250 kcal",
+                "Etwa 0,25 kg pro Woche"
+              ],
+              [
+                "Stetige Abnahme",
+                "Erhaltungsbedarf − 500 kcal",
+                "Etwa 0,5 kg pro Woche"
+              ],
+              [
+                "Zunahme",
+                "Erhaltungsbedarf + 300 kcal",
+                "Etwa 0,25 kg pro Woche, am besten mit Krafttraining"
+              ]
+            ],
+            "footnote": "Die Abnehmziele fallen hier nie unter 1.200 kcal pro Tag. Darunter lassen sich Eiweiß-, Vitamin- und Mineralstoffbedarf kaum noch über die Nahrung decken, und eine so niedrige Zufuhr gehört unter ärztliche Aufsicht."
+          }
+        },
+        {
+          "heading": "Das richtige Aktivitätsniveau wählen",
+          "body": [
+            "Der Aktivitätsfaktor ist der größte Hebel in dieser Rechnung: Zwischen sitzend und extrem aktiv liegen beim selben Körper über 700 kcal pro Tag. Er umfasst alles, nicht nur das Training — Stehen, Gehen, Haushalt und Ihre Arbeit zählen mit.",
+            "Die meisten Menschen greifen eine Stufe zu hoch. Wer dreimal die Woche trainiert und sonst sitzt, ist leicht bis mäßig aktiv, nicht sehr aktiv."
+          ],
+          "bullets": [
+            "Sitzend — Bürojob und wenig oder kein bewusster Sport.",
+            "Leicht aktiv — leichte Bewegung oder Sport an ein bis drei Tagen pro Woche.",
+            "Mäßig aktiv — moderate Bewegung an drei bis fünf Tagen pro Woche.",
+            "Sehr aktiv — intensives Training an sechs oder sieben Tagen pro Woche.",
+            "Extrem aktiv — körperlich fordernde Arbeit oder zweimal täglich hartes Training."
+          ]
+        },
+        {
+          "heading": "So wird gerechnet",
+          "body": [
+            "Ihr Grundumsatz — was der Körper in völliger Ruhe verbraucht — stammt aus der Mifflin-St-Jeor-Formel: 10 × Gewicht in kg plus 6,25 × Größe in cm minus 5 × Alter, dann plus 5 bei Männern oder minus 161 bei Frauen.",
+            "Dieser Wert wird mit dem Aktivitätsfaktor multipliziert, von 1,2 für sitzend bis 1,9 für extrem aktiv. Das Ergebnis ist der Gesamtenergieumsatz — die Erhaltungszahl oben im Ergebnis.",
+            "Rechenbeispiel: Ein 30-jähriger Mann mit 180 cm und 80 kg hat einen Grundumsatz von 1.780 kcal. Leicht aktiv (× 1,375) sind das rund 2.448 kcal pro Tag, um sein Gewicht zu halten."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Was ein Kalorienrechner nicht sagen kann",
+          "body": [
+            "Jede Formel hier ist ein an Messdaten angepasster Bevölkerungsdurchschnitt, und Einzelne liegen darüber oder darunter. Nehmen Sie die Zahl als Schätzung, die Sie drei bis vier Wochen lang an der Waage überprüfen, nicht als Tatsache über Ihren Körper."
+          ],
+          "bullets": [
+            "Bei den meisten Erwachsenen liegt die Schätzung meist innerhalb von rund 10 % — das sind 200 kcal in beide Richtungen bei 2.000 kcal am Tag.",
+            "Sie sagt nichts darüber, woraus diese Kalorien bestehen, dabei entscheiden Eiweiß, Ballaststoffe und Mikronährstoffe darüber, ob eine Ernährung durchzuhalten ist.",
+            "Schilddrüsenerkrankungen, manche Medikamente und eine lange Diätgeschichte verschieben den tatsächlichen Verbrauch gegenüber der Schätzung.",
+            "Sie ist nicht für Kinder, für Schwangerschaft und Stillzeit oder für Sportlerinnen und Sportler in harten Trainingsphasen gedacht.",
+            "Sehr muskulöse Menschen werden unterschätzt, weil die Formel mit dem Gesamtgewicht statt mit der Magermasse rechnet."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wie viele Kalorien sollte ich am Tag essen?",
+          "answer": "So viele, wie Sie verbrauchen, wenn Ihr Gewicht dort ist, wo Sie es haben wollen. Bei den meisten Erwachsenen liegt das zwischen 1.800 und 2.800 kcal, doch die Spanne ist groß, weil Körpergröße, Alter und Bewegung mitspielen. Der Rechner oben gibt Ihnen Ihren eigenen Wert statt des Durchschnitts."
+        },
+        {
+          "question": "Wie viele Kalorien brauche ich zum Abnehmen?",
+          "answer": "Etwa 500 kcal pro Tag unter dem Erhaltungsbedarf ergeben rund ein halbes Kilo pro Woche, 250 kcal darunter etwa ein Viertelkilo. Größere Defizite wirken nicht verlässlich schneller — sie sind nur schwerer durchzuhalten, und ein größerer Teil des Verlusts geht auf Muskulatur."
+        },
+        {
+          "question": "Sind 1.200 Kalorien pro Tag sicher?",
+          "answer": "Das ist die niedrigste Menge, die dieser Rechner vorschlägt, und eine Untergrenze, keine Empfehlung. Darunter wird es schwierig, Eiweiß, Vitamine und Mineralstoffe über die Nahrung zu decken, deshalb gehört eine geringere Zufuhr unter ärztliche Aufsicht."
+        },
+        {
+          "question": "Welche Formel verwendet dieser Kalorienrechner?",
+          "answer": "Mifflin-St Jeor für den Grundumsatz und danach einen üblichen Aktivitätsfaktor. Sie hat die ältere Harris-Benedict-Formel in der Praxis weitgehend abgelöst, weil sie für heutige Körperzusammensetzungen genauer ist — bei gesunden Erwachsenen meist auf rund 10 % genau."
+        },
+        {
+          "question": "Muss ich Kalorien zählen, um abzunehmen?",
+          "answer": "Nein. Zählen ist nur eine Methode, ein Defizit zu halten, und viele erreichen dasselbe, indem sie ändern, was sie essen, statt es zu wiegen. Zu wissen, wo Ihr Erhaltungsbedarf ungefähr liegt, hilft trotzdem: Es zeigt, wie groß die Änderung tatsächlich ist."
+        },
+        {
+          "question": "Speichert dieser Kalorienrechner meine Angaben?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Sie wollen einen Plan, nicht nur eine Zahl?",
+        "body": "Buchen Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt und besprechen Sie, was die Zahl für Ihr Gewicht, Ihre Blutwerte und Ihre Krankengeschichte bedeutet.",
+        "label": "Termin buchen"
+      }
+    },
+    "due-date-calculator": {
+      "cardTitle": "Geburtstermin-Rechner",
+      "cardBlurb": "Ihr errechneter Geburtstermin, die aktuelle Schwangerschaftswoche und die Wochen, die dazwischen zählen.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Geburtstermin",
+      "h1Accent": "berechnen",
+      "h1Trail": "{country}",
+      "metaTitle": "Geburtstermin Berechnen {country} | Schwangerschaftswochen",
+      "metaDescription": "Berechnen Sie Ihren errechneten Geburtstermin und die aktuelle Schwangerschaftswoche ab dem ersten Tag der letzten Periode. Berücksichtigt Ihre Zykluslänge, mit allen 40 Wochen im Überblick.",
+      "lede": "Geben Sie den ersten Tag Ihrer letzten Periode ein und Sie sehen den errechneten Geburtstermin, die heutige Schwangerschaftswoche und den Beginn jedes Trimesters.",
+      "trustPoints": [
+        "Berücksichtigt Zykluslängen von 20 bis 45 Tagen",
+        "Trimester-Daten und das Terminfenster (37–42 Wochen)",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "widget": {
+        "title": "Ihr Geburtstermin",
+        "placeholder": "Geben Sie den ersten Tag Ihrer letzten Periode ein, um den errechneten Geburtstermin zu sehen.",
+        "note": "Das ist eine Schätzung aus den eingegebenen Daten, keine Diagnose. Der Ultraschall zur Terminbestimmung misst das Kind direkt und ersetzt sie.",
+        "lmpLabel": "Erster Tag der letzten Periode",
+        "lmpHint": "Der Tag, an dem die Blutung begonnen hat, nicht der Tag, an dem sie endete.",
+        "cycleLabel": "Zykluslänge",
+        "cycleHint": "Tage vom Beginn einer Periode bis zum Beginn der nächsten. Wenn Sie unsicher sind, lassen Sie 28 stehen.",
+        "daysUnit": "Tage",
+        "gestationalAgeLabel": "Heutige Schwangerschaftswoche",
+        "daysToGoLabel": "Tage bis zum Termin",
+        "secondTrimesterLabel": "Beginn des zweiten Trimesters",
+        "thirdTrimesterLabel": "Beginn des dritten Trimesters",
+        "termWindowLabel": "Terminfenster (37–42 Wochen)",
+        "trimester1": "Erstes Trimester",
+        "trimester1Note": "Woche 1 bis 13. In dieser Zeit wird die Vorsorge angemeldet und der Ultraschall zur Terminbestimmung gemacht.",
+        "trimester2": "Zweites Trimester",
+        "trimester2Note": "Woche 14 bis 27. Der große Organultraschall wird üblicherweise um die 20. Woche angeboten.",
+        "trimester3": "Drittes Trimester",
+        "trimester3Note": "Ab Woche 28. Wachstums- und Blutdruckkontrollen rücken näher zusammen, je näher der Termin kommt.",
+        "outOfRangeNote": "Prüfen Sie das Datum — es liegt in der Zukunft oder mehr als 42 Wochen zurück und damit außerhalb des Bereichs, den dieser Rechner datieren kann."
+      },
+      "sections": [
+        {
+          "heading": "Ihre Schwangerschaft Woche für Woche",
+          "body": [
+            "Eine Schwangerschaft wird ab dem ersten Tag der letzten Periode datiert, nicht ab der Empfängnis, und dauert von dort an 40 Wochen. Vor 37 Wochen ist eine Geburt eine Frühgeburt, ab 42 Wochen eine Übertragung — und dazwischen kommen praktisch alle Kinder zur Welt.",
+            "Die Tabelle unten sind die vollen 40 Wochen, aufgeteilt so, wie die Schwangerenvorsorge sie aufteilt."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Phasen der Schwangerschaft in Wochen ab der letzten Periode",
+            "columns": [
+              "Wochen",
+              "Phase",
+              "Was üblicherweise passiert"
+            ],
+            "rows": [
+              [
+                "1 – 13",
+                "Erstes Trimester",
+                "Anmeldung zur Vorsorge, erste Blutwerte und Terminbestimmung per Ultraschall"
+              ],
+              [
+                "14 – 27",
+                "Zweites Trimester",
+                "Der große Organultraschall, meist um die 20. Woche"
+              ],
+              [
+                "28 – 36",
+                "Drittes Trimester",
+                "Kontrollen von Wachstum, Blutdruck und Lage rücken näher zusammen"
+              ],
+              [
+                "37 – 38",
+                "Früher Termin",
+                "Ab hier ist eine Geburt keine Frühgeburt mehr"
+              ],
+              [
+                "39 – 40",
+                "Voller Termin",
+                "Der errechnete Termin liegt am Ende der 40. Woche"
+              ],
+              [
+                "41",
+                "Späterer Termin",
+                "Die Überwachung nimmt zu, und eine Einleitung wird üblicherweise besprochen"
+              ],
+              [
+                "42 und mehr",
+                "Übertragung",
+                "Die Geburt wird in der Regel eingeleitet statt weiter abgewartet"
+              ]
+            ],
+            "footnote": "Die letzten vier Zeilen sind alle das Ende des dritten Trimesters — ab 37 Wochen wird in kürzeren Abschnitten gezählt, weil sich genau dort das Vorgehen ändert. Nur etwa eine von zwanzig Schwangerschaften endet genau am errechneten Termin."
+          }
+        },
+        {
+          "heading": "Wie der Geburtstermin berechnet wird",
+          "body": [
+            "Die Schätzung ist die Naegele-Regel: 280 Tage, also 40 Wochen, ab dem ersten Tag der letzten Periode. Sie setzt einen 28-Tage-Zyklus mit Eisprung um Tag 14 voraus.",
+            "Sind Ihre Zyklen länger oder kürzer, verschiebt sich der Eisprung mit — der Rechner verschiebt den Termin daher um genau diese Differenz. Ein 32-Tage-Zyklus legt die Schätzung vier Tage später, ein 24-Tage-Zyklus vier Tage früher.",
+            "Beispiel: eine letzte Periode ab dem 1. Januar ergibt bei einem 28-Tage-Zyklus den 8. Oktober. Dieselbe Periode ergibt bei einem 32-Tage-Zyklus den 12. Oktober."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Warum der Ultraschall diese Schätzung ersetzt",
+          "body": [
+            "Ein Rechner kann nur mit den Daten arbeiten, die Sie ihm geben. Der Ultraschall misst das Kind — deshalb ist sein Termin der, mit dem Ihre Betreuung anschließend weiterarbeitet."
+          ],
+          "bullets": [
+            "Er hängt davon ab, dass Sie den ersten Tag der letzten Periode genau erinnern.",
+            "Er setzt einen Eisprung in der Zyklusmitte voraus, den nicht jede Person hat.",
+            "Unregelmäßige Zyklen, kürzlich abgesetzte Verhütung und Stillen machen die letzte Periode zu einem schwachen Anker.",
+            "Ein Ultraschall im ersten Trimester misst das Kind, meist zwischen der 11. und 14. Woche, und ist auf wenige Tage genau.",
+            "Nach einer IVF wird ab dem Transfertag datiert und nicht ab einer Periode — diese Schätzung gilt dann nicht."
+          ]
+        },
+        {
+          "heading": "Wann Sie ärztlichen Rat einholen sollten",
+          "body": [],
+          "bullets": [
+            "Sie vermuten eine Schwangerschaft und haben noch keine Vorsorge angemeldet — der erste Termin und die Terminbestimmung gehören beide früh.",
+            "Sie haben in der Frühschwangerschaft Blutungen, Krämpfe oder einseitige Schmerzen.",
+            "Sie erbrechen stark oder ständig oder können keine Flüssigkeit bei sich behalten.",
+            "Sie haben eine chronische Erkrankung oder nehmen regelmäßig Medikamente — manche müssen überprüft werden, sobald eine Schwangerschaft bestätigt ist.",
+            "Sie haben 41 Wochen erreicht, oder Sie sind über dem Termin und die Bewegungen des Kindes haben sich verändert."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wie genau ist ein Geburtstermin-Rechner?",
+          "answer": "Die Rechnung ist exakt, die Annahmen dahinter sind es nicht. Nur etwa eine von zwanzig Schwangerschaften endet genau am errechneten Termin, und die große Mehrheit der Geburten liegt in den Wochen darum herum. Die genaue Variante ist der Ultraschall im ersten Trimester, und sobald er gemacht ist, gilt sein Termin."
+        },
+        {
+          "question": "In welcher Schwangerschaftswoche bin ich?",
+          "answer": "Gezählt wird ab dem ersten Tag der letzten Periode, nicht ab der Empfängnis — deshalb sind Sie schon rund vier Wochen schwanger, wenn ein Test zum ersten Mal positiv ist. Die Empfängnis liegt etwa zwei Wochen nach diesem ersten Tag, die Schwangerschaft wird also immer rund zwei Wochen „älter“ datiert als der Embryo."
+        },
+        {
+          "question": "Was bedeutet 9w 3d?",
+          "answer": "Neun vollendete Wochen und drei Tage seit dem ersten Tag der letzten Periode. Im Mutterpass wird so geschrieben, weil eine ganze Woche zu grob ist, wenn ein Ultraschall oder eine Blutuntersuchung in einem bestimmten Fenster stattfinden muss."
+        },
+        {
+          "question": "Kann ich ihn bei unregelmäßigem Zyklus nutzen?",
+          "answer": "Ja, und Ihre übliche Zykluslänge einzugeben bringt Sie näher als die voreingestellten 28 Tage. Ein unregelmäßiger Zyklus ist aber genau der Fall, in dem die letzte Periode ein schwacher Anker ist — nehmen Sie das Ergebnis daher als Orientierung, bis ein Ultraschall gemacht wurde."
+        },
+        {
+          "question": "Ändert sich der Geburtstermin nach dem Ultraschall?",
+          "answer": "Häufig ja, meist um einige Tage. Der Ultraschall misst das Kind, statt von einem erinnerten Datum zu zählen, deshalb bleibt sein Termin stehen. Eine Abweichung von einer Woche oder mehr ist üblich, wenn das Datum der letzten Periode unsicher war."
+        },
+        {
+          "question": "Speichert dieser Rechner meine Angaben?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts von dem, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Fragen in der Frühschwangerschaft?",
+        "body": "Sprechen Sie per Video mit einer registrierten Ärztin oder einem registrierten Arzt über Beschwerden, Medikamente, die Sie schon nehmen, oder alles, was nicht bis zum ersten Vorsorgetermin warten soll.",
         "label": "Termin buchen"
       }
     }

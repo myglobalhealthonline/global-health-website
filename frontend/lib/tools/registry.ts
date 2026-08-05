@@ -11,12 +11,15 @@
  * (KD 11), `bmi kalkulačka` 40,500/mo in Czechia (KD 5), against 2,900/mo for
  * `bmi calculator ireland`. Hence: every country, every locale.
  *
- * SHIPPING ONE TOOL AT A TIME. BMI is live; the calorie, blood-pressure,
- * due-date, ovulation and ADHD tools are planned next and their maths already
- * sits (tested) in `calc.ts`. Adding one means: a `ToolMeta` entry here, a
- * widget branch in `ToolWidget.tsx`, and its copy block in the six
- * `tools.json` files. Nothing else — the renderer is generic. Once a second
- * tool lands, restore the `/tools` hub route and the related-tools strip.
+ * SHIPPING ONE TOOL AT A TIME. BMI and the due-date calculator are live; the
+ * calorie, blood-pressure, ovulation and ADHD tools are planned next and their
+ * maths already sits (tested) in `calc.ts`. Adding one means: a `ToolMeta`
+ * entry here, a widget branch in `ToolWidget.tsx`, and its copy block in the
+ * six `tools.json` files. Nothing else — the renderer is generic.
+ *
+ * Due date is the biggest of the set by demand: `calculadora gestacional` is
+ * 135,000/mo in Brazil at KD 0, `těhotenská kalkulačka` 8,100 in Czechia,
+ * `calculator sarcina` 8,100 in Romania.
  *
  * This file must stay in lock-step with `tools.json`: the `sections` entries
  * here are positional, matching each tool's `sections` array in the JSON, and
@@ -28,7 +31,7 @@ import enTools from "@/locales/en/tools.json";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
-export type WidgetKey = "bmi";
+export type WidgetKey = "bmi" | "calorie" | "blood-pressure" | "due-date";
 
 /** Row tone drives the colour dot in the rendered chart tables. */
 export type ToneKey = "good" | "warn" | "alert" | "muted";
@@ -46,7 +49,12 @@ export type ToolMeta = {
   slug: string;
   widget: WidgetKey;
   sections: SectionMeta[];
-  /** Other tool slugs to cross-link. Empty until a second tool ships. */
+  /**
+   * Other tool slugs to cross-link in the related strip. EMPTY MEANS EVERY
+   * OTHER TOOL — with a handful of calculators that is what you want, and it
+   * means adding a tool cross-links it from the existing pages automatically.
+   * Fill it in only to narrow the list.
+   */
   related: string[];
   /** Country-relative CTA path; the renderer prefixes `/{country}/{lang}`. */
   ctaPath: string;
@@ -67,6 +75,64 @@ export const TOOLS: ToolMeta[] = [
       },
       { id: "formula", theme: "forest" },
       { id: "limits", theme: "ivory" },
+      { id: "next", theme: "forest" },
+    ],
+    related: [],
+    ctaPath: "/gp-consultation-online",
+  },
+  {
+    slug: "calorie-calculator",
+    widget: "calorie",
+    sections: [
+      // Same alternation as BMI: first band ivory off the dark hero. The
+      // targets table is the one chart, and it renders forest-glass on the
+      // ivory band like every other tool table.
+      {
+        id: "targets",
+        theme: "ivory",
+        rowTones: ["good", "good", "warn", "muted"],
+      },
+      { id: "activity", theme: "forest" },
+      { id: "formula", theme: "ivory" },
+      { id: "limits", theme: "forest" },
+    ],
+    related: [],
+    ctaPath: "/gp-consultation-online",
+  },
+  {
+    slug: "blood-pressure-chart",
+    widget: "blood-pressure",
+    sections: [
+      // Row order and tones follow `bpCategory` in `calc.ts`: the eight ESC/ESH
+      // adult categories, isolated systolic last because the guideline lists it
+      // as a pattern rather than a step on the ladder.
+      {
+        id: "chart",
+        theme: "ivory",
+        rowTones: ["muted", "good", "good", "warn", "warn", "alert", "alert", "warn"],
+      },
+      { id: "measuring", theme: "forest" },
+      { id: "limits", theme: "ivory" },
+      { id: "urgent", theme: "forest" },
+    ],
+    related: [],
+    ctaPath: "/gp-consultation-online",
+  },
+  {
+    slug: "due-date-calculator",
+    widget: "due-date",
+    sections: [
+      // The 40-week breakdown is the chart. Row tones are the term ladder, not
+      // a risk scale: the three trimester rows are neutral, full term is the
+      // good one, early and late term are the "watch this" rows and post-term
+      // is the one that gets acted on.
+      {
+        id: "timeline",
+        theme: "ivory",
+        rowTones: ["muted", "muted", "muted", "warn", "good", "warn", "alert"],
+      },
+      { id: "dating", theme: "forest" },
+      { id: "scan", theme: "ivory" },
       { id: "next", theme: "forest" },
     ],
     related: [],
@@ -114,6 +180,11 @@ export type ToolCopy = {
   metaDescription: string;
   lede: string;
   trustPoints: string[];
+  /**
+   * Overrides the shared `suggestions.intro` on this tool's page. The shared
+   * line names BMI, which would be wrong copy on any other tool.
+   */
+  suggestionsIntro?: string;
   widget: Record<string, string>;
   sections: ToolSectionCopy[];
   faq: Array<{ question: string; answer: string }>;
@@ -123,11 +194,14 @@ export type ToolCopy = {
 export type ToolsUiCopy = typeof enTools.ui;
 export type ToolsBandsCopy = typeof enTools.bands;
 export type ToolsSuggestionsCopy = typeof enTools.suggestions;
+/** Copy for the `/tools` index and the related strip on each tool page. */
+export type ToolsHubCopy = typeof enTools.hub;
 
 export type ToolsBundle = {
   ui: ToolsUiCopy;
   bands: ToolsBandsCopy;
   suggestions: ToolsSuggestionsCopy;
+  hub: ToolsHubCopy;
   tools: Record<string, ToolCopy>;
 };
 

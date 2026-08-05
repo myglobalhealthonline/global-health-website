@@ -1,5 +1,20 @@
 {
+  "hub": {
+    "navLabel": "Instrumente medicale gratuite",
+    "eyebrow": "Instrumente medicale gratuite",
+    "h1Lead": "Calculatoare medicale",
+    "h1Accent": "gratuite",
+    "h1Trail": "{country}",
+    "metaTitle": "Calculatoare Medicale Gratuite {country} | Verifică-ți Cifrele",
+    "metaDescription": "Calculatoare gratuite care rulează în browserul tău — indicele de masă corporală, caloriile zilnice, tensiunea arterială și data probabilă a nașterii — fiecare cu explicația rezultatului și cu ce ar verifica un medic mai departe.",
+    "lede": "Calculatoare rapide și private, fără cont. Fiecare rezultat vine cu explicația lui și cu ce ar verifica un medic mai departe.",
+    "openLabel": "Deschide calculatorul",
+    "relatedHeading": "Alte calculatoare gratuite"
+  },
   "ui": {
+    "systolic": "Sistolică (numărul de sus)",
+    "diastolic": "Diastolică (numărul de jos)",
+    "mmHg": "mmHg",
     "questionsEyebrow": "Întrebări",
     "faqSuffix": "Întrebări frecvente",
     "units": "Unități",
@@ -13,7 +28,14 @@
     "inchesLabel": "Inci",
     "stoneLabel": "Greutate (stone)",
     "poundsLabel": "Livre",
-    "poundsOnlyHint": "Lasă stone gol dacă vrei să introduci doar livre."
+    "poundsOnlyHint": "Lasă stone gol dacă vrei să introduci doar livre.",
+    "sex": "Sex",
+    "male": "Bărbat",
+    "female": "Femeie",
+    "age": "Vârstă",
+    "years": "ani",
+    "activity": "Nivel de activitate",
+    "kcalPerDay": "kcal / zi"
   },
   "suggestions": {
     "heading": "Care e pasul următor",
@@ -27,6 +49,40 @@
     "nudgeObese": "La acest nivel, managementul greutății sub supraveghere medicală funcționează considerabil mai bine decât o dietă ținută singur."
   },
   "bands": {
+    "bp": {
+      "low": {
+        "label": "Tensiune mică",
+        "summary": "Sub intervalul obișnuit la adulți. De multe ori nu înseamnă nimic, dar merită părerea unui medic dacă ai amețeli, leșini sau o oboseală neobișnuită."
+      },
+      "optimal": {
+        "label": "Optimă",
+        "summary": "Intervalul cu cel mai mic risc la adulți. Nu e nimic de făcut doar pe baza acestei valori."
+      },
+      "normal": {
+        "label": "Normală",
+        "summary": "În intervalul normal pentru adulți. Merită măsurată din nou din când în când, mai ales dacă a tot crescut."
+      },
+      "high-normal": {
+        "label": "Normal-înaltă",
+        "summary": "Peste normal, dar încă nu hipertensiune. Este etapa în care sarea, alcoolul, greutatea și mișcarea contează cel mai mult."
+      },
+      "grade-1": {
+        "label": "Hipertensiune grad 1",
+        "summary": "Ușor crescută. Măsoară o săptămână acasă și du valorile la medic — diagnosticul are nevoie de tipar, nu de o singură cifră."
+      },
+      "isolated-systolic": {
+        "label": "Hipertensiune sistolică izolată",
+        "summary": "Numărul de sus este crescut, iar cel de jos este normal. Este tiparul cel mai frecvent după 60 de ani și tot necesită evaluare medicală."
+      },
+      "grade-2": {
+        "label": "Hipertensiune grad 2",
+        "summary": "Considerabil crescută. Programează-te la medic în curând, fără să aștepți o consultație de rutină."
+      },
+      "grade-3": {
+        "label": "Hipertensiune grad 3",
+        "summary": "Foarte crescută. Această valoare trebuie văzută de un medic chiar astăzi."
+      }
+    },
     "bmi": {
       "underweight": {
         "label": "Subponderal",
@@ -52,9 +108,193 @@
         "label": "Obezitate grad III",
         "summary": "Se recomandă evaluare de specialitate pentru managementul greutății."
       }
+    },
+    "activity": {
+      "sedentary": {
+        "label": "Sedentar",
+        "summary": "Muncă de birou, puțină mișcare sau deloc"
+      },
+      "light": {
+        "label": "Ușor activ",
+        "summary": "Mișcare ușoară 1–3 zile pe săptămână"
+      },
+      "moderate": {
+        "label": "Moderat activ",
+        "summary": "Mișcare moderată 3–5 zile pe săptămână"
+      },
+      "very": {
+        "label": "Foarte activ",
+        "summary": "Antrenament intens 6–7 zile pe săptămână"
+      },
+      "extra": {
+        "label": "Extrem de activ",
+        "summary": "Muncă fizică sau antrenament intens de două ori pe zi"
+      }
     }
   },
   "tools": {
+    "blood-pressure-chart": {
+      "cardTitle": "Tabel tensiune arterială",
+      "cardBlurb": "Ce înseamnă cele două valori ale tale în tabelul european al tensiunii arteriale pentru adulți.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Tabel",
+      "h1Accent": "tensiune arterială",
+      "h1Trail": "{country}",
+      "metaTitle": "Tabel Tensiune Arterială {country} | Ce Înseamnă Valorile Tale",
+      "metaDescription": "Compară tensiunea sistolică și diastolică cu tabelul european pentru adulți. Vezi categoria, ce înseamnă și ce valori au nevoie de îngrijire medicală în aceeași zi.",
+      "lede": "Introdu cele două numere de pe tensiometru ca să vezi unde se încadrează valoarea în tabelul european pentru adulți — și ce ai de făcut, dacă ai ceva de făcut.",
+      "trustPoints": [
+        "Categorii europene (ESC/ESH) pentru adulți",
+        "Semnalează valorile care cer îngrijire în aceeași zi",
+        "Rulează în browserul tău — nimic nu este trimis sau salvat"
+      ],
+      "suggestionsIntro": "O valoare a tensiunii este un semnal, nu un plan. Acestea sunt consultațiile pe care le oferă medicii noștri pentru lucrurile pe care le semnalează.",
+      "widget": {
+        "title": "Valoarea ta",
+        "placeholder": "Numărul de sus trebuie să fie mai mare decât cel de jos — verifică ambele cifre pe tensiometru.",
+        "note": "Acest tabel este un reper de screening, nu un diagnostic. Hipertensiunea se diagnostichează din măsurători repetate, de obicei o săptămână de măsurători acasă sau o monitorizare de 24 de ore, niciodată dintr-o singură cifră.",
+        "scaleLabel": "Unde se încadrează valoarea ta sistolică",
+        "optimalLabel": "Optimă pentru majoritatea adulților",
+        "optimalValue": "Sub {systolic}/{diastolic} mmHg",
+        "urgentTitle": "Cere ajutor medical astăzi",
+        "urgentBody": "O valoare atât de mare trebuie verificată în aceeași zi. Stai liniștit cinci minute și măsoară din nou — dacă rămâne la fel de mare, contactează un medic astăzi.",
+        "urgentSymptoms": "Sună imediat la 112 dacă ai și durere în piept, slăbiciune sau amorțeală pe o parte a corpului, dificultăți de vorbire sau o schimbare bruscă a vederii."
+      },
+      "sections": [
+        {
+          "heading": "Tabelul tensiunii arteriale la adulți",
+          "body": [
+            "Tensiunea arterială se scrie cu două numere: presiunea sistolică, în timp ce inima se contractă, peste presiunea diastolică, în timp ce se relaxează între bătăi. Ambele se măsoară în milimetri coloană de mercur (mmHg).",
+            "Categoriile de mai jos sunt cele europene (ESC/ESH). Când cele două numere cad în categorii diferite, contează cea mai mare: 128/95 este hipertensiune grad 1, nu tensiune normală."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Categoriile europene de tensiune arterială la adulți",
+            "columns": [
+              "Categorie",
+              "Sistolică (mmHg)",
+              "Diastolică (mmHg)"
+            ],
+            "rows": [
+              [
+                "Mică",
+                "Sub 90",
+                "sau sub 60"
+              ],
+              [
+                "Optimă",
+                "Sub 120",
+                "și sub 80"
+              ],
+              [
+                "Normală",
+                "120 – 129",
+                "și/sau 80 – 84"
+              ],
+              [
+                "Normal-înaltă",
+                "130 – 139",
+                "și/sau 85 – 89"
+              ],
+              [
+                "Hipertensiune grad 1",
+                "140 – 159",
+                "și/sau 90 – 99"
+              ],
+              [
+                "Hipertensiune grad 2",
+                "160 – 179",
+                "și/sau 100 – 109"
+              ],
+              [
+                "Hipertensiune grad 3",
+                "180 sau peste",
+                "și/sau 110 sau peste"
+              ],
+              [
+                "Sistolică izolată",
+                "140 sau peste",
+                "și sub 90"
+              ]
+            ],
+            "footnote": "Praguri pentru măsurarea în cabinet, la adulți. Tensiometrele de acasă și monitorizarea pe 24 de ore dau valori mai mici, așa că acasă hipertensiunea începe la 135/85, nu la 140/90. Sarcina, copilăria și dializa au ținte complet diferite."
+          }
+        },
+        {
+          "heading": "Cum măsori o tensiune în care poți avea încredere",
+          "body": [
+            "Cele mai multe valori alarmante sunt erori de măsurare. Tensiunea se schimbă pe parcursul zilei și urcă dacă ajungi în grabă, dacă ai vezica plină sau dacă vorbești cu manșeta pe braț, așa că felul în care măsori schimbă cifra mai mult decât se așteaptă lumea."
+          ],
+          "bullets": [
+            "Stai liniștit cinci minute înainte — cu spatele sprijinit, tălpile pe podea, picioarele neîncrucișate.",
+            "Fără cafea, mâncare, efort fizic sau țigări cu 30 de minute înainte, și golește-ți vezica.",
+            "Sprijină brațul pe masă, astfel încât manșeta să fie la nivelul inimii, pe pielea goală.",
+            "Folosește o manșetă potrivită ca mărime. Una prea mică arată valori mai mari și este cea mai frecventă eroare acasă.",
+            "Nu vorbi în timpul măsurării: vorbitul adaugă câțiva mmHg.",
+            "Măsoară de două ori, la un minut distanță, și folosește a doua valoare sau media celor două.",
+            "Măsoară dimineața și seara timp de șapte zile, apoi du toată seria la medic."
+          ]
+        },
+        {
+          "heading": "Ce nu îți poate spune o singură măsurătoare",
+          "body": [
+            "O valoare este o fotografie a unui moment, pe un singur braț. Este suficient ca să semnaleze o problemă, dar nu ca să îi dea un nume, și de aceea diagnosticul se sprijină pe măsurători repetate, nu pe prima cifră care sperie."
+          ],
+          "bullets": [
+            "Hipertensiunea de halat alb: mare în cabinet, normală acasă. Este frecventă și se separă doar prin măsurători acasă sau prin monitorizare pe 24 de ore.",
+            "Hipertensiunea mascată: normală în cabinet, mare în restul timpului. Este cea mai riscantă dintre cele două și rămâne invizibilă fără măsurători acasă.",
+            "Brațele diferă. O diferență mai mare de 10 mmHg între ele contează, iar de atunci se folosește brațul cu valoarea mai mare.",
+            "Un puls neregulat, inclusiv fibrilația atrială, face nesigure majoritatea tensiometrelor automate.",
+            "Nu orice aparat de acasă este validat clinic, iar unul nevalidat poate greși cu mult.",
+            "Sarcina are praguri și riscuri proprii: tensiunea mare în sarcină are nevoie de evaluare obstetricală, nu de acest tabel."
+          ]
+        },
+        {
+          "heading": "Când mergi la medic și când ceri ajutor imediat",
+          "body": [
+            "Cele mai multe valori crescute se rezolvă la o consultație obișnuită. Câteva nu."
+          ],
+          "bullets": [
+            "Sună imediat la 112 dacă o valoare foarte mare vine cu durere în piept, slăbiciune sau amorțeală pe o parte a corpului, dificultăți de vorbire sau o schimbare bruscă a vederii. Sunt semne de infarct sau de accident vascular cerebral.",
+            "Cere îngrijire medicală în aceeași zi pentru o valoare de 180/120 sau peste, chiar și fără niciun simptom.",
+            "Programează o evaluare în câteva săptămâni dacă valorile sunt în mod repetat la 140/90 sau peste.",
+            "Discută cu un medic dacă valorile sunt în mod repetat sub 90/60 și ai amețeli, leșini sau o oboseală neobișnuită.",
+            "Du la consultație măsurătorile de acasă și aparatul în sine. Se tratează tiparul, nu cea mai proastă cifră."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Care este tensiunea arterială normală la un adult?",
+          "answer": "Sub 120/80 mmHg este optimă, iar 120–129 pe 80–84 este încă normală. De la 130/85 valoarea este normal-înaltă, iar 140/90 sau peste, măsurată în cabinet, înseamnă hipertensiune. Tensiometrele de acasă arată valori mai mici, așa că acasă pragul este 135/85."
+        },
+        {
+          "question": "Care număr contează mai mult, cel de sus sau cel de jos?",
+          "answer": "Amândouă. Categoria este dată de numărul mai prost, așa că 128/95 înseamnă hipertensiune grad 1 doar din cauza valorii de jos. Tensiunea sistolică prezice mai bine riscul cardiovascular după aproximativ 50 de ani, iar cea diastolică înainte de această vârstă."
+        },
+        {
+          "question": "Ce înseamnă o tensiune sistolică izolată?",
+          "answer": "O sistolică de 140 sau peste, cu o diastolică sub 90. Este cel mai frecvent tipar de hipertensiune după 60 de ani, apare din rigidizarea arterelor odată cu vârsta și implică un risc cardiovascular real — nu este o ciudățenie inofensivă a numărului de sus."
+        },
+        {
+          "question": "O singură valoare mare înseamnă că am hipertensiune?",
+          "answer": "Nu. Hipertensiunea se diagnostichează din valori crescute repetate, de obicei susținute de o săptămână de măsurători acasă sau de o monitorizare pe 24 de ore. O singură valoare mare este un motiv să măsori din nou corect, nu un diagnostic."
+        },
+        {
+          "question": "Ce tensiune arterială este periculoasă?",
+          "answer": "O valoare de 180/120 sau peste are nevoie de îngrijire medicală în aceeași zi. Dacă vine cu durere în piept, slăbiciune sau amorțeală pe o parte, dificultăți de vorbire sau o schimbare bruscă a vederii, sună imediat la 112 — sunt simptome de infarct sau de accident vascular cerebral."
+        },
+        {
+          "question": "Acest tabel al tensiunii arteriale îmi salvează valorile?",
+          "answer": "Nu. Comparația se face integral în browserul tău. Nimic din ce introduci nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei ca un medic să îți vadă valorile?",
+        "body": "Programează o consultație video cu un medic înregistrat, adu o săptămână de măsurători de acasă și pleacă cu un plan construit pe tipar, nu pe o singură cifră.",
+        "label": "Programează o consultație"
+      }
+    },
     "bmi-calculator": {
       "cardTitle": "Calculator IMC",
       "cardBlurb": "Indicele de masă corporală din înălțimea și greutatea ta, pe scala OMS pentru adulți.",
@@ -192,6 +432,301 @@
       "cta": {
         "heading": "Vrei să discuți rezultatul?",
         "body": "Programează o consultație video cu un medic înregistrat și primește un plan construit pe istoricul tău, nu pe un număr.",
+        "label": "Programează o consultație"
+      }
+    },
+    "calorie-calculator": {
+      "cardTitle": "Calculator calorii",
+      "cardBlurb": "De câte calorii ai nevoie pe zi ca să îți menții, să scazi sau să crești greutatea.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Calculator",
+      "h1Accent": "calorii",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculator Calorii {country} | Necesarul Zilnic de Calorii",
+      "metaDescription": "Calculează de câte calorii ai nevoie pe zi ca să îți menții, să scazi sau să crești greutatea. Ecuația Mifflin-St Jeor, cinci niveluri de activitate și ce înseamnă de fapt cifrele.",
+      "lede": "Introdu sexul, vârsta, înălțimea, greutatea și cât de activ ești ca să vezi câte calorii arzi într-o zi — și cât să mănânci ca să îți menții, să scazi sau să crești greutatea.",
+      "trustPoints": [
+        "Ecuația Mifflin-St Jeor, cea folosită în practica medicală",
+        "Menținere, slăbire și creștere într-o singură vedere",
+        "Rulează în browserul tău — nimic nu este trimis sau salvat"
+      ],
+      "suggestionsIntro": "O cifră de calorii este un punct de plecare, nu un plan. Acestea sunt consultațiile pe care le oferă medicii noștri pentru greutate, nutriție și analizele pe care un număr nu ți le poate da.",
+      "widget": {
+        "title": "Caloriile tale zilnice",
+        "placeholder": "Introdu datele tale ca să vezi câte calorii arzi într-o zi.",
+        "note": "Estimări pentru adulți sănătoși și un instrument de orientare, nu un diagnostic sau o dietă prescrisă. Discută cu un medic înainte să îți schimbi aportul dacă ești însărcinată sau alăptezi, ai sub 18 ani sau ești în tratament pentru o afecțiune.",
+        "noteFloored": "Ținta ta de slăbire a fost menținută la 1.200 kcal, cel mai mic aport zilnic pe care îl propune acest calculator. Sub această valoare se merge doar sub supraveghere medicală.",
+        "resultLabel": "Calorii de menținere",
+        "resultSummary": "Cât arzi într-o zi obișnuită la acest nivel de activitate, cu totul inclus.",
+        "bmrLabel": "Metabolism bazal",
+        "mildLossLabel": "Slăbește circa 0,25 kg pe săptămână",
+        "lossLabel": "Slăbește circa 0,5 kg pe săptămână",
+        "gainLabel": "Crește circa 0,25 kg pe săptămână"
+      },
+      "sections": [
+        {
+          "heading": "Ce înseamnă cifrele tale de calorii",
+          "body": [
+            "Cifra principală este nivelul tău de menținere: aproximativ cât arzi într-o zi, cu activitatea inclusă. Dacă mănânci atât, greutatea rămâne unde este.",
+            "Țintele de sub ea sunt aceeași cifră cu un deficit sau un surplus aplicat. Un deficit zilnic de 500 kcal înseamnă aproximativ o jumătate de kilogram pe săptămână, ritmul pe care îl recomandă majoritatea ghidurilor — destul de rapid ca să se vadă și destul de lent ca să poată fi ținut."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Ținte zilnice de calorii pornind de la valoarea ta de menținere",
+            "columns": [
+              "Obiectiv",
+              "Aport zilnic",
+              "La ce să te aștepți"
+            ],
+            "rows": [
+              [
+                "Menținere",
+                "Valoarea ta de menținere",
+                "Greutatea se menține în săptămâni, nu în zile"
+              ],
+              [
+                "Slăbire ușoară",
+                "Menținere − 250 kcal",
+                "Circa 0,25 kg pe săptămână"
+              ],
+              [
+                "Slăbire constantă",
+                "Menținere − 500 kcal",
+                "Circa 0,5 kg pe săptămână"
+              ],
+              [
+                "Creștere",
+                "Menținere + 300 kcal",
+                "Circa 0,25 kg pe săptămână, ideal împreună cu antrenament de forță"
+              ]
+            ],
+            "footnote": "Aici țintele de slăbire nu coboară niciodată sub 1.200 kcal pe zi. Sub această valoare este greu să îți acoperi din alimente nevoia de proteine, vitamine și minerale, iar un aport atât de mic ar trebui ținut sub supraveghere medicală."
+          }
+        },
+        {
+          "heading": "Cum îți alegi nivelul de activitate",
+          "body": [
+            "Multiplicatorul de activitate este cea mai mare pârghie din acest calcul: pentru același corp, diferența dintre sedentar și extrem de activ trece de 700 kcal pe zi. Include tot ce faci, nu doar antrenamentul — statul în picioare, mersul, treburile casei și munca ta intră la socoteală.",
+            "Cei mai mulți oameni aleg un nivel prea sus. Dacă te antrenezi de trei ori pe săptămână și în rest stai jos, ești ușor sau moderat activ, nu foarte activ."
+          ],
+          "bullets": [
+            "Sedentar — muncă de birou și puțină mișcare intenționată sau deloc.",
+            "Ușor activ — mișcare ușoară sau sport una până la trei zile pe săptămână.",
+            "Moderat activ — mișcare moderată trei până la cinci zile pe săptămână.",
+            "Foarte activ — antrenament intens șase sau șapte zile pe săptămână.",
+            "Extrem de activ — muncă fizică solicitantă sau antrenament intens de două ori pe zi."
+          ]
+        },
+        {
+          "heading": "Cum se face calculul",
+          "body": [
+            "Metabolismul bazal — cât arde corpul în repaus complet — vine din ecuația Mifflin-St Jeor: 10 × greutatea în kg, plus 6,25 × înălțimea în cm, minus 5 × vârsta, apoi plus 5 la bărbați sau minus 161 la femei.",
+            "Valoarea este înmulțită cu nivelul tău de activitate, de la 1,2 pentru sedentar până la 1,9 pentru extrem de activ. Rezultatul este consumul energetic total zilnic — cifra de menținere din capul rezultatului.",
+            "Exemplu concret: un bărbat de 30 de ani, cu 180 cm și 80 kg, are un metabolism bazal de 1.780 kcal. Ușor activ (× 1,375) înseamnă circa 2.448 kcal pe zi ca să își mențină greutatea."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Ce nu îți poate spune un calculator de calorii",
+          "body": [
+            "Fiecare ecuație de aici este o medie pe populație potrivită pe date măsurate, iar oamenii se așază de o parte sau de alta a ei. Ia cifra ca pe o estimare pe care o verifici pe cântar timp de trei-patru săptămâni, nu ca pe un adevăr despre corpul tău."
+          ],
+          "bullets": [
+            "La majoritatea adulților estimarea se încadrează de obicei în circa 10 % — adică 200 kcal în plus sau în minus la o zi de 2.000 kcal.",
+            "Nu spune nimic despre din ce sunt făcute caloriile, iar proteina, fibrele și micronutrienții decid dacă o alimentație se poate ține.",
+            "Bolile tiroidiene, unele medicamente și un istoric lung de diete mută consumul real față de estimare.",
+            "Nu este gândit pentru copii, pentru sarcină sau alăptare și nici pentru sportivi în perioade grele de antrenament.",
+            "Subestimează persoanele foarte musculoase, pentru că ecuația folosește greutatea totală, nu masa slabă."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Câte calorii ar trebui să mănânc pe zi?",
+          "answer": "Cât consumi, dacă greutatea ta este deja unde vrei. La majoritatea adulților asta înseamnă undeva între 1.800 și 2.800 kcal, dar intervalul este larg pentru că depinde de gabarit, vârstă și mișcare. Calculatorul de mai sus îți dă cifra ta, nu media."
+        },
+        {
+          "question": "Câte calorii trebuie să mănânc ca să slăbesc?",
+          "answer": "Cu aproximativ 500 kcal pe zi sub valoarea de menținere obții cam o jumătate de kilogram pe săptămână, iar cu 250 sub ea, cam un sfert. Deficitele mai mari nu funcționează sigur mai repede — sunt doar mai greu de ținut, iar o parte mai mare din pierdere vine din mușchi."
+        },
+        {
+          "question": "Sunt 1.200 de calorii pe zi sigure?",
+          "answer": "Este cel mai mic aport pe care îl propune acest calculator și este o limită de jos, nu o recomandare. Sub acest nivel devine greu să obții din alimente destule proteine, vitamine și minerale, așa că un aport mai mic ar trebui urmat doar sub supraveghere medicală."
+        },
+        {
+          "question": "Ce formulă folosește acest calculator de calorii?",
+          "answer": "Mifflin-St Jeor pentru metabolismul bazal, apoi un multiplicator de activitate standard. A înlocuit vechea ecuație Harris-Benedict în practica clinică pentru că este mai exactă pentru compozițiile corporale de azi, de obicei cu o abatere de circa 10 % la adulții sănătoși."
+        },
+        {
+          "question": "Trebuie să număr caloriile ca să slăbesc?",
+          "answer": "Nu. Numărarea este doar o metodă de a ține un deficit, iar mulți oameni obțin același lucru schimbând ce mănâncă, nu cântărind. Să știi aproximativ unde îți stă menținerea ajută oricum, pentru că îți arată cât de mare este de fapt schimbarea pe care o faci."
+        },
+        {
+          "question": "Acest calculator de calorii îmi salvează datele?",
+          "answer": "Nu. Calculul se face în întregime în browserul tău. Nimic din ce scrii nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei un plan, nu doar o cifră?",
+        "body": "Programează o consultație video cu un medic înregistrat și discută ce înseamnă cifra pentru greutatea ta, analizele tale și istoricul tău.",
+        "label": "Programează o consultație"
+      }
+    },
+    "due-date-calculator": {
+      "cardTitle": "Calculator de sarcină",
+      "cardBlurb": "Data probabilă a nașterii, în ce săptămână ești și săptămânile care contează pe drum.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Calculator",
+      "h1Accent": "de sarcină",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculator de Sarcină {country} | Data Nașterii și Săptămâni",
+      "metaDescription": "Află data probabilă a nașterii și în ce săptămână de sarcină ești, pornind de la prima zi a ultimei menstruații. Se ajustează după durata ciclului tău, cu toate cele 40 de săptămâni detaliate.",
+      "lede": "Introdu prima zi a ultimei menstruații ca să vezi data probabilă a nașterii, în ce săptămână ești astăzi și când începe fiecare trimestru.",
+      "trustPoints": [
+        "Se ajustează pentru cicluri de la 20 la 45 de zile",
+        "Datele trimestrelor și intervalul la termen (37–42 de săptămâni)",
+        "Rulează în browserul tău — nimic nu se trimite și nu se salvează"
+      ],
+      "widget": {
+        "title": "Data probabilă a nașterii",
+        "placeholder": "Introdu prima zi a ultimei menstruații ca să vezi data probabilă a nașterii.",
+        "note": "Este o estimare pornind de la datele introduse, nu un diagnostic. Ecografia de datare măsoară direct bebelușul și o înlocuiește.",
+        "lmpLabel": "Prima zi a ultimei menstruații",
+        "lmpHint": "Ziua în care a început sângerarea, nu ziua în care s-a oprit.",
+        "cycleLabel": "Durata ciclului",
+        "cycleHint": "Zile de la începutul unei menstruații până la începutul următoarei. Dacă nu știi, lasă 28.",
+        "daysUnit": "zile",
+        "gestationalAgeLabel": "În ce săptămână ești astăzi",
+        "daysToGoLabel": "Zile rămase",
+        "secondTrimesterLabel": "Începutul trimestrului doi",
+        "thirdTrimesterLabel": "Începutul trimestrului trei",
+        "termWindowLabel": "Interval la termen (37–42 de săptămâni)",
+        "trimester1": "Primul trimestru",
+        "trimester1Note": "Săptămânile 1–13. Atunci se începe urmărirea sarcinii și se face ecografia de datare.",
+        "trimester2": "Al doilea trimestru",
+        "trimester2Note": "Săptămânile 14–27. Ecografia de morfologie fetală se face de obicei în jurul săptămânii 20.",
+        "trimester3": "Al treilea trimestru",
+        "trimester3Note": "De la săptămâna 28. Controalele de creștere și de tensiune arterială se apropie unul de altul pe măsură ce vine termenul.",
+        "outOfRangeNote": "Verifică data — este în viitor sau mai veche de 42 de săptămâni, deci în afara intervalului pe care acest calculator îl poate data."
+      },
+      "sections": [
+        {
+          "heading": "Sarcina ta, săptămână cu săptămână",
+          "body": [
+            "Sarcina se datează de la prima zi a ultimei menstruații, nu de la concepție, și durează 40 de săptămâni de acolo. Înainte de 37 de săptămâni nașterea este prematură, de la 42 de săptămâni este postmatură, iar între aceste limite se nasc practic toți copiii.",
+            "Tabelul de mai jos sunt toate cele 40 de săptămâni, împărțite așa cum le împarte îngrijirea prenatală."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Etapele sarcinii în săptămâni de la ultima menstruație",
+            "columns": [
+              "Săptămâni",
+              "Etapă",
+              "Ce se întâmplă de obicei"
+            ],
+            "rows": [
+              [
+                "1 – 13",
+                "Primul trimestru",
+                "Prima consultație, primele analize și ecografia de datare"
+              ],
+              [
+                "14 – 27",
+                "Al doilea trimestru",
+                "Ecografia de morfologie fetală, de obicei în jurul săptămânii 20"
+              ],
+              [
+                "28 – 36",
+                "Al treilea trimestru",
+                "Controalele de creștere, tensiune și poziție devin mai dese"
+              ],
+              [
+                "37 – 38",
+                "Termen precoce",
+                "De aici înainte nașterea nu mai este prematură"
+              ],
+              [
+                "39 – 40",
+                "Termen complet",
+                "Data probabilă a nașterii este la sfârșitul săptămânii 40"
+              ],
+              [
+                "41",
+                "Termen tardiv",
+                "Monitorizarea crește și se discută de obicei inducerea nașterii"
+              ],
+              [
+                "42 și peste",
+                "Postmatur",
+                "Nașterea se induce de obicei, în loc să se mai aștepte"
+              ]
+            ],
+            "footnote": "Ultimele patru rânduri sunt toate sfârșitul trimestrului trei — de la 37 de săptămâni se numără în intervale mai scurte, pentru că asta schimbă planul. Doar aproximativ una din douăzeci de sarcini se încheie exact la data estimată."
+          }
+        },
+        {
+          "heading": "Cum se calculează data nașterii",
+          "body": [
+            "Estimarea este regula lui Naegele: 280 de zile, adică 40 de săptămâni, de la prima zi a ultimei menstruații. Presupune un ciclu de 28 de zile, cu ovulație în jurul zilei 14.",
+            "Dacă ciclurile tale sunt mai lungi sau mai scurte, ovulația se mută cu ele, așa că calculatorul deplasează data cu aceeași diferență. Un ciclu de 32 de zile împinge estimarea cu patru zile mai târziu; unul de 24 de zile o aduce cu patru zile mai devreme.",
+            "Exemplu: o ultimă menstruație începută pe 1 ianuarie, cu un ciclu de 28 de zile, dă 8 octombrie. Aceeași menstruație cu un ciclu de 32 de zile dă 12 octombrie."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "De ce ecografia de datare înlocuiește această estimare",
+          "body": [
+            "Un calculator poate lucra doar cu datele pe care i le dai. Ecografia măsoară bebelușul, motiv pentru care data ei este cea folosită mai departe de medicul care te urmărește."
+          ],
+          "bullets": [
+            "Depinde de cât de exact îți amintești prima zi a ultimei menstruații.",
+            "Presupune că ai ovulat la mijlocul ciclului, ceea ce nu se întâmplă la toată lumea.",
+            "Ciclurile neregulate, contracepția oprită recent și alăptarea fac din ultima menstruație un reper slab.",
+            "Ecografia din primul trimestru măsoară bebelușul, de obicei între săptămânile 11 și 14, cu o eroare de câteva zile.",
+            "După FIV datarea pornește de la data transferului, nu de la o menstruație, așa că estimarea de aici nu se aplică."
+          ]
+        },
+        {
+          "heading": "Când să contactezi un medic",
+          "body": [],
+          "bullets": [
+            "Crezi că ești însărcinată și încă nu ai început urmărirea sarcinii — prima consultație și ecografia de datare se fac amândouă devreme.",
+            "Ai sângerare, crampe sau durere pe o singură parte la începutul sarcinii.",
+            "Ai vărsături severe sau continue, ori nu reușești să reții lichide.",
+            "Ai o boală cronică sau iei medicamente în mod regulat — unele trebuie reevaluate imediat ce sarcina este confirmată.",
+            "Ai ajuns la 41 de săptămâni, sau ai trecut de termen și mișcările bebelușului s-au schimbat."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Cât de exact este un calculator de sarcină?",
+          "answer": "Calculul este exact; presupunerile din spatele lui nu sunt. Doar aproximativ una din douăzeci de sarcini se încheie exact la data estimată, iar marea majoritate a nașterilor au loc în săptămânile din jurul ei. Versiunea precisă este ecografia din primul trimestru, iar odată făcută, data ei este cea care se folosește."
+        },
+        {
+          "question": "În ce săptămână de sarcină sunt?",
+          "answer": "Săptămânile se numără de la prima zi a ultimei menstruații, nu de la concepție — de aceea ești deja la aproximativ patru săptămâni când un test iese pozitiv pentru prima dată. Concepția are loc cam două săptămâni după acea primă zi, așa că sarcina este mereu datată cu vreo două săptămâni „mai mare” decât embrionul."
+        },
+        {
+          "question": "Ce înseamnă 9w 3d?",
+          "answer": "Nouă săptămâni complete și trei zile de la prima zi a ultimei menstruații. Documentele de sarcină se scriu așa pentru că o săptămână întreagă este prea imprecisă atunci când o ecografie sau o analiză trebuie făcută într-o fereastră anume."
+        },
+        {
+          "question": "Îl pot folosi dacă am cicluri neregulate?",
+          "answer": "Poți, iar introducerea duratei tale obișnuite a ciclului te apropie mai mult decât valoarea implicită de 28 de zile. Dar un ciclu neregulat este exact cazul în care ultima menstruație e un reper slab, așa că ia rezultatul ca orientare până la ecografie."
+        },
+        {
+          "question": "Se schimbă data nașterii după ecografie?",
+          "answer": "Deseori da, de obicei cu câteva zile. Ecografia măsoară bebelușul în loc să numere de la o dată reținută din memorie, așa că data ei este cea păstrată. O diferență de o săptămână sau mai mult este frecventă atunci când data ultimei menstruații era incertă."
+        },
+        {
+          "question": "Acest calculator păstrează datele mele?",
+          "answer": "Nu. Calculul se face integral în browserul tău. Nimic din ce introduci nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Întrebări la începutul sarcinii?",
+        "body": "Discută prin video cu un medic înregistrat despre simptome, medicamentele pe care le iei deja sau orice nu vrei să aștepte până la prima consultație.",
         "label": "Programează o consultație"
       }
     }
