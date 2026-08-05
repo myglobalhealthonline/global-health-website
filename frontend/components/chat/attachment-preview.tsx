@@ -26,6 +26,19 @@ export function AttachmentPreview({
   const isImage = mimeType?.startsWith("image/");
   const label = fileName ?? fallbackLabel;
 
+  // Images render as an actual thumbnail inline (WhatsApp-style) — a filename
+  // chip for something the recipient can already see is a wasted tap. The
+  // download route is same-origin and cookie-authed, so a plain <img src>
+  // works without any signed-URL plumbing.
+  if (isImage && downloadUrl) {
+    return (
+      <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="gh-chat-attachment-image-link">
+        {/* eslint-disable-next-line @next/next/no-img-element -- authenticated same-origin route, not a Next-optimizable remote asset */}
+        <img src={downloadUrl} alt={label} className="gh-chat-attachment-image" loading="lazy" />
+      </a>
+    );
+  }
+
   const inner = (
     <div
       className={`gh-chat-attachment flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${

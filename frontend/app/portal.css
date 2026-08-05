@@ -2586,6 +2586,22 @@ a.gh-admin-summary-item--link:focus-visible {
   color: var(--portal-text, #263b34) !important;
 }
 
+.gh-chat-attachment-image-link {
+  display: block;
+  line-height: 0;
+}
+
+.gh-chat-attachment-image {
+  display: block;
+  max-width: 240px;
+  max-height: 240px;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+  cursor: zoom-in;
+}
+
 /* Author name on the first bubble of a run. Only the support chat uses it —
  * that thread has several admins on one side, so "who replied" has to be on
  * the bubble. The viewing admin's own replies read "Me". */
