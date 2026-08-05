@@ -86,16 +86,29 @@ const DOCTOR_SLUG_HONORIFICS = [
 ];
 
 /**
+ * Doctors whose slug changed by more than spelling — a different surname, so
+ * no amount of de-accenting or honorific stripping below can bridge it. Keys
+ * are de-accented (`asciiDoctorSlug`) legacy slugs that still earn Search
+ * Console clicks; values are the live profile slug. Resolution reuses the
+ * normal candidate path, so a hit 308s to the canonical URL like any other.
+ */
+const DOCTOR_SLUG_RENAMES: Record<string, string> = {
+  // 16 clicks/quarter at position ~3 on the legacy surname (GSC 2026-08).
+  "dr-mohamed-fadzly-mustafar": "dr-mohamed-fadzly-bin-mohamed",
+};
+
+/**
  * Alternative slugs to try when the requested one misses, in priority order:
- * de-accented, honorific stripped, and honorific normalised to `dr-`. Returns
- * only candidates that differ from the input, deduplicated.
+ * an explicit rename, then de-accented, honorific stripped, and honorific
+ * normalised to `dr-`. Returns only candidates that differ from the input,
+ * deduplicated.
  */
 export function doctorSlugCandidates(slug: string): string[] {
   const ascii = asciiDoctorSlug(slug);
   const honorific = DOCTOR_SLUG_HONORIFICS.find((h) => ascii.startsWith(h));
   const bare = honorific ? ascii.slice(honorific.length) : ascii;
   const out: string[] = [];
-  for (const candidate of [ascii, bare, `dr-${bare}`]) {
+  for (const candidate of [DOCTOR_SLUG_RENAMES[ascii], ascii, bare, `dr-${bare}`]) {
     if (candidate && candidate !== slug && !out.includes(candidate)) out.push(candidate);
   }
   return out;

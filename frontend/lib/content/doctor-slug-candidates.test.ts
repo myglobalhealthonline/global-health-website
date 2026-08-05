@@ -30,6 +30,15 @@ describe("doctorSlugCandidates", () => {
     expect(doctorSlugCandidates(input)).toContain(expected);
   });
 
+  // A surname change, so no de-accenting or honorific rule can bridge it —
+  // only the explicit rename map can. Ranked ~3 on the legacy slug.
+  it.each([
+    ["dr.-mohamed-fadzly-mustafar", "dr-mohamed-fadzly-bin-mohamed"],
+    ["dr-mohamed-fadzly-mustafar", "dr-mohamed-fadzly-bin-mohamed"],
+  ])("maps the renamed %s → %s ahead of the generic candidates", (input, expected) => {
+    expect(doctorSlugCandidates(input)[0]).toBe(expected);
+  });
+
   it("never offers the requested slug back, which would loop the redirect", () => {
     expect(doctorSlugCandidates("dr-grainne-ahern")).not.toContain("dr-grainne-ahern");
   });
