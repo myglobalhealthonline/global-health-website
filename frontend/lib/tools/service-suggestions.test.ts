@@ -53,6 +53,30 @@ describe("toolSlugsForService", () => {
     ).toEqual(["blood-pressure-chart"]);
   });
 
+  /**
+   * A tool may legitimately have more than one host. `blood-pressure-chart` is
+   * `["chronic", "cardio", "gp"]` — hypertension is managed in long-term
+   * condition care and referred on to cardiology — and it belongs on both
+   * pages. Reading only the first slot silently dropped every cardiology page
+   * the moment "chronic" was put in front of it.
+   */
+  it("links a tool from every one of its slots, not just the primary", () => {
+    for (const slug of ["chronic-disease-consultation", "cardiology-specialist-consultation"]) {
+      expect(toolSlugsForService({ slug, name: "" })).toContain("blood-pressure-chart");
+    }
+  });
+
+  it("ranks a primary-slot match above a fallback-slot match", () => {
+    // Nutrition is calorie's slot 0 and BMI's slot 1, so calorie leads.
+    expect(toolSlugsForService({ slug: "nutrition-specialist-consultation", name: "" })[0]).toBe(
+      "calorie-calculator",
+    );
+    // Weight is BMI's slot 0 and calorie's slot 1, so BMI leads.
+    expect(toolSlugsForService({ slug: "weight-management-consultation", name: "" })[0]).toBe(
+      "bmi-calculator",
+    );
+  });
+
   it("is accent-insensitive", () => {
     expect(toolSlugsForService({ slug: "consulta-nutricao", name: "Nutrição" })).toContain(
       "calorie-calculator",

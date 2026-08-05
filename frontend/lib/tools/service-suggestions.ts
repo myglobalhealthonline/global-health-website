@@ -29,6 +29,7 @@ import type { BmiBandKey } from "@/lib/tools/calc";
 export type SuggestionSlot =
   | "weight"
   | "nutrition"
+  | "chronic"
   | "cardio"
   | "mental"
   | "women"
@@ -89,8 +90,31 @@ const NUTRITION_TERMS = [
 
 const CARDIO_TERMS = ["cardio", "coraz", "coraç", "inima", "inimă", "srdc", "herz"];
 
+/**
+ * Long-term condition management, which is where a raised blood-pressure
+ * reading actually goes. Ireland's `chronic-disease-consultation` was losing
+ * to `cardiology-specialist-consultation` on the blood-pressure page: sending
+ * everyone with a high reading to a cardiologist is both the wrong first step
+ * clinically and the wrong price point. Cardiology stays as the fallback for
+ * markets with no chronic-care service.
+ */
+const CHRONIC_TERMS = ["chronic", "cronic", "chronisch", "dlouhodob", "long-term"];
+
+// ORDER IS PREFERENCE — `pick` walks these in sequence and takes the first
+// term that matches anything, so the most specific spelling goes first.
+// Ireland sells `mental-health-consultation`, `psychiatry-specialist-` and
+// `psychology-specialist-`; the ADHD screener says in its own copy that only a
+// psychiatrist or clinical psychologist can diagnose, so it must not land on
+// the general mental-health consultation just because the catalogue lists it
+// first.
 const MENTAL_TERMS = [
-  "psych",
+  "psychiatr",
+  "psiquiatr",
+  "psihiatr",
+  "psycholog",
+  "psicolog",
+  "psiholog",
+  "duševn",
   "mental",
   // Romanian writes it "mintal" (`sanatate-mintala-online`), and the Iberian
   // psychology services are `psicologo-online` / `consulta-de-psicologia` —
@@ -98,9 +122,7 @@ const MENTAL_TERMS = [
   "mintal",
   "psic",
   "psih",
-  "psiquiatr",
-  "duševn",
-  "psychiatr",
+  "psych",
 ];
 
 const WOMEN_TERMS = [
@@ -129,7 +151,9 @@ const WOMEN_TERMS = [
 const TOOL_SLOTS: Record<string, SuggestionSlot[]> = {
   "bmi-calculator": ["weight", "nutrition", "gp"],
   "calorie-calculator": ["nutrition", "weight", "gp"],
-  "blood-pressure-chart": ["cardio", "gp"],
+  // Chronic care before cardiology: hypertension is managed in long-term
+  // condition care, and only referred onwards from there.
+  "blood-pressure-chart": ["chronic", "cardio", "gp"],
   "due-date-calculator": ["women", "gp"],
   "ovulation-calculator": ["women", "gp"],
   "adhd-test": ["mental", "gp"],
@@ -138,6 +162,7 @@ const TOOL_SLOTS: Record<string, SuggestionSlot[]> = {
 const TERMS_FOR_SLOT: Record<Exclude<SuggestionSlot, "gp">, string[]> = {
   weight: WEIGHT_TERMS,
   nutrition: NUTRITION_TERMS,
+  chronic: CHRONIC_TERMS,
   cardio: CARDIO_TERMS,
   mental: MENTAL_TERMS,
   women: WOMEN_TERMS,
@@ -156,9 +181,17 @@ const matches = (haystack: string, terms: string[]) => {
 
 /**
  * The reverse of `TOOL_SLOTS`: which calculators belong on a given SERVICE
- * page. Same term matching as the forward direction, driven off each tool's
- * FIRST slot, so a tool's topic never has to be declared in two places — add a
- * calculator to `TOOL_SLOTS` and its service pages start linking it.
+ * page. Same term matching as the forward direction and the same table, so a
+ * tool's topic never has to be declared in two places — add a calculator to
+ * `TOOL_SLOTS` and its service pages start linking it.
+ *
+ * Matches on ANY of a tool's non-GP slots, ranked by position so the tool whose
+ * PRIMARY slot matches sorts above one that matched a fallback slot. It read
+ * `slots[0]` only until 2026-08-06, which broke the moment a tool legitimately
+ * had two hosts: `blood-pressure-chart` became `["chronic", "cardio", "gp"]`
+ * and every cardiology page silently stopped linking it. A blood-pressure
+ * chart belongs on both, and this direction has no reason to be pickier than
+ * the forward one.
  *
  * Why this exists: the calculators were reachable only from the header
  * dropdown and the footer, which Google discounts as site-wide boilerplate. On
@@ -171,13 +204,17 @@ const matches = (haystack: string, terms: string[]) => {
  */
 export function toolSlugsForService(input: { slug: string; name: string }): string[] {
   const haystack = `${input.slug} ${input.name}`;
-  const out: string[] = [];
+  const ranked: Array<{ tool: string; rank: number }> = [];
   for (const [tool, slots] of Object.entries(TOOL_SLOTS)) {
-    const primary = slots[0];
-    if (!primary || primary === "gp") continue;
-    if (matches(haystack, TERMS_FOR_SLOT[primary])) out.push(tool);
+    const rank = slots.findIndex(
+      (slot) => slot !== "gp" && matches(haystack, TERMS_FOR_SLOT[slot]),
+    );
+    if (rank !== -1) ranked.push({ tool, rank });
   }
-  return out.slice(0, 2);
+  return ranked
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, 2)
+    .map((entry) => entry.tool);
 }
 
 /**
@@ -204,11 +241,22 @@ export async function getToolServiceSuggestions(input: {
       (service) => service.kind === "GENERAL" || service.kind === "SPECIALIST",
     );
 
-    const pick = (terms: string[], exclude: string[] = []) =>
-      services.find((service) => {
-        const haystack = `${service.slug} ${service.name}`;
-        return matches(haystack, terms) && !matches(haystack, exclude);
-      });
+    // Walk the TERMS in order and take the first that hits, rather than
+    // walking the SERVICES and taking the first that matches any term. The
+    // old shape let catalogue order decide: Ireland lists
+    // `mental-health-consultation` before `psychiatry-specialist-consultation`,
+    // so the ADHD screener pointed at the general mental-health consultation
+    // however the term list was sorted. Now the term list is the preference.
+    const pick = (terms: string[], exclude: string[] = []) => {
+      for (const term of terms) {
+        const hit = services.find((service) => {
+          const haystack = `${service.slug} ${service.name}`;
+          return matches(haystack, [term]) && !matches(haystack, exclude);
+        });
+        if (hit) return hit;
+      }
+      return undefined;
+    };
 
 
     const toSuggestion = (
