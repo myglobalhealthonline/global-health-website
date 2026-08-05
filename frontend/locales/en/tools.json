@@ -1,0 +1,199 @@
+{
+  "ui": {
+    "questionsEyebrow": "Questions",
+    "faqSuffix": "FAQs",
+    "units": "Units",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "height": "Height",
+    "weight": "Weight",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Height (feet)",
+    "inchesLabel": "Inches",
+    "stoneLabel": "Weight (stone)",
+    "poundsLabel": "Pounds",
+    "poundsOnlyHint": "Leave stone empty to enter pounds only."
+  },
+  "suggestions": {
+    "heading": "Where to go from here",
+    "intro": "BMI is a starting point, not a plan. These are the consultations our doctors run for the things it flags.",
+    "viewLabel": "View service",
+    "gpTitle": "Online GP consultation",
+    "gpSummary": "Talk any result through with a registered doctor by video, and get the checks that BMI cannot give you.",
+    "nudgeUnderweight": "A result below the healthy range is worth a doctor's opinion, especially if it was not intentional.",
+    "nudgeHealthy": "Want to keep it there? Our clinicians can help you build habits that hold.",
+    "nudgeOverweight": "Small, supervised changes work better than another diet. Here is where to start.",
+    "nudgeObese": "At this level, medically supervised weight management works considerably better than dieting alone."
+  },
+  "bands": {
+    "bmi": {
+      "underweight": {
+        "label": "Underweight",
+        "summary": "Below the healthy range. Worth a GP conversation, especially if the weight loss was not intentional."
+      },
+      "healthy": {
+        "label": "Healthy weight",
+        "summary": "Within the range the WHO classes as healthy for adults."
+      },
+      "overweight": {
+        "label": "Overweight",
+        "summary": "Above the healthy range. A blood pressure and cholesterol check is a sensible next step."
+      },
+      "obese-1": {
+        "label": "Obesity class I",
+        "summary": "Structured weight management is usually offered at this level."
+      },
+      "obese-2": {
+        "label": "Obesity class II",
+        "summary": "Medical review is recommended, including screening for weight-related conditions."
+      },
+      "obese-3": {
+        "label": "Obesity class III",
+        "summary": "Specialist weight management review is recommended."
+      }
+    }
+  },
+  "tools": {
+    "bmi-calculator": {
+      "cardTitle": "BMI calculator",
+      "cardBlurb": "Body mass index from your height and weight, on the WHO adult scale.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "BMI",
+      "h1Accent": "calculator",
+      "h1Trail": "{country}",
+      "metaTitle": "BMI Calculator {country} | Free Body Mass Index Check",
+      "metaDescription": "Work out your body mass index in seconds. Metric or imperial, WHO adult categories, and what your result actually means — with registered doctors if you want to go further.",
+      "lede": "Enter your height and weight to see your body mass index and where it sits on the World Health Organization adult scale.",
+      "trustPoints": [
+        "Metric and imperial (kg, stone, pounds)",
+        "WHO adult weight categories",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "widget": {
+        "title": "Your BMI",
+        "placeholder": "Enter your height and weight to see your body mass index.",
+        "note": "BMI is a screening measure, not a diagnosis. It cannot tell muscle from fat and is not valid during pregnancy or for under-18s.",
+        "healthyRangeLabel": "Healthy weight for your height",
+        "gapAbove": "{kg} kg above the healthy range",
+        "gapBelow": "{kg} kg below the healthy range",
+        "gapInside": "Inside the healthy range",
+        "gapLabel": "Distance to the healthy range",
+        "scaleLabel": "Where your BMI sits on the WHO scale"
+      },
+      "sections": [
+        {
+          "heading": "What your BMI result means",
+          "body": [
+            "The World Health Organization groups adult BMI into the bands below. They describe a population, not a person: two people with the same BMI can be in very different health."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "WHO adult BMI categories",
+            "columns": [
+              "BMI",
+              "Category",
+              "What it usually prompts"
+            ],
+            "rows": [
+              [
+                "Under 18.5",
+                "Underweight",
+                "Worth a doctor's conversation, especially if unintentional"
+              ],
+              [
+                "18.5 – 24.9",
+                "Healthy weight",
+                "No action needed on BMI grounds alone"
+              ],
+              [
+                "25.0 – 29.9",
+                "Overweight",
+                "Lifestyle review; check blood pressure and cholesterol"
+              ],
+              [
+                "30.0 – 34.9",
+                "Obesity class I",
+                "Structured weight management is usually offered"
+              ],
+              [
+                "35.0 – 39.9",
+                "Obesity class II",
+                "Medical review; screening for related conditions"
+              ],
+              [
+                "40.0 and over",
+                "Obesity class III",
+                "Specialist weight management referral"
+              ]
+            ],
+            "footnote": "People of South Asian, Chinese and some other Asian backgrounds carry higher cardiometabolic risk at a lower BMI. The WHO suggests 23.0 and 27.5 as additional action points for those populations."
+          }
+        },
+        {
+          "heading": "How BMI is calculated",
+          "body": [
+            "BMI is your weight in kilograms divided by the square of your height in metres. That is the whole formula — there is no age, sex or body-composition term in it.",
+            "Worked example: someone 1.75 m tall weighing 78 kg has a BMI of 78 ÷ (1.75 × 1.75) = 25.5, which falls in the overweight band.",
+            "Imperial entries are converted first (1 stone = 6.35 kg, 1 inch = 2.54 cm), so the result is identical either way."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "What BMI does not tell you",
+          "body": [
+            "BMI is a screening number, not a diagnosis. It is useful precisely because it is crude — it needs only a tape measure and a scales — but that is also its limit."
+          ],
+          "bullets": [
+            "It cannot separate muscle from fat. Well-muscled people are routinely classed as overweight.",
+            "It ignores where fat sits. Waist circumference predicts cardiometabolic risk better than BMI does.",
+            "It is not validated for pregnancy — use your pre-pregnancy BMI for maternity care planning.",
+            "Children and teenagers need age-and-sex centile charts, not the adult bands above.",
+            "In adults over 65 a BMI slightly above 25 is not consistently linked to worse outcomes."
+          ]
+        },
+        {
+          "heading": "When to talk to a doctor about your weight",
+          "body": [],
+          "bullets": [
+            "You have lost or gained weight without trying to.",
+            "Your BMI is 30 or above, or 25 and above alongside high blood pressure, high cholesterol or raised blood sugar.",
+            "You are being investigated for, or already treated for, type 2 diabetes, sleep apnoea, PCOS or fatty liver disease.",
+            "You want to discuss medically supervised weight management rather than another diet."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "What is a healthy BMI for an adult?",
+          "answer": "For most adults aged 18 to 65, the World Health Organization considers a BMI between 18.5 and 24.9 to be the healthy range. Above 25 is classed as overweight and 30 or above as obesity. These are population thresholds, so a single reading is a prompt to look further, not a verdict."
+        },
+        {
+          "question": "Is BMI calculated differently for men and women?",
+          "answer": "No. The formula and the adult categories are identical. Women generally carry a higher proportion of body fat than men at the same BMI, which is one of the reasons the number is only a starting point."
+        },
+        {
+          "question": "How accurate is a BMI calculator?",
+          "answer": "The arithmetic is exact — the uncertainty is in what BMI measures. It correlates reasonably well with body fat across a population but can misclassify individuals, particularly athletes, older adults and people with a lot of muscle."
+        },
+        {
+          "question": "What should I do if my BMI is in the obese range?",
+          "answer": "Have your blood pressure, cholesterol and blood glucose checked, and talk to a doctor about a plan you can actually sustain. Weight management that includes medical review works considerably better than dieting alone."
+        },
+        {
+          "question": "Does this BMI calculator store my details?",
+          "answer": "No. The calculation runs entirely in your browser. Nothing you type is sent to our servers or saved."
+        },
+        {
+          "question": "Do I need a BMI to get weight-loss treatment?",
+          "answer": "Clinicians normally use BMI as one of the entry criteria for weight management programmes, usually alongside your medical history and any weight-related conditions. Your doctor will confirm what applies to you."
+        }
+      ],
+      "cta": {
+        "heading": "Want to talk your result through?",
+        "body": "Book a video consultation with a registered doctor and get a plan built around your history, not a number.",
+        "label": "Book a consultation"
+      }
+    }
+  }
+}

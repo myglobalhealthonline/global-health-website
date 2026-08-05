@@ -579,6 +579,34 @@ export function catalogueItemListJsonLd(items: Array<{ name: string; url: string
   };
 }
 
+/**
+ * A free calculator / screening tool page (`/{country}/{lang}/tools/...`).
+ *
+ * WebApplication rather than MedicalWebPage: the page's primary entity is the
+ * interactive tool, and `isAccessibleForFree` + a zero-price offer is what
+ * makes the "free tool" claim machine-readable. The explanatory copy around
+ * it is covered by the FAQPage block the same page emits.
+ */
+export function healthToolJsonLd(input: {
+  name: string;
+  description: string;
+  url: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: input.name,
+    description: truncateForSchema(input.description, 300),
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    applicationCategory: "HealthApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
 /** Best-guess Schema.org MedicalSpecialty for a service, from its slug/kind.
  *  Falls back to PrimaryCare for general GP services. */
 export function medicalSpecialtyForService(kind: string, slug: string): string {

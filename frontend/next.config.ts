@@ -286,6 +286,17 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Free health tools. Same treatment as the routes above and for the
+        // same reason: the copy is code-resident, the render reads route
+        // params only (no cookies()/headers()/searchParams), and the
+        // interactive part runs client-side — so the HTML is byte-for-byte
+        // identical per visitor.
+        source: "/:country/:lang/tools/:slug",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
+        ],
+      },
+      {
         source: "/:country/:lang/legal",
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },

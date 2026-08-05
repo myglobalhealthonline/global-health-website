@@ -86,6 +86,13 @@ import csCorporate from "@/locales/cs/corporate.json";
 import roCorporate from "@/locales/ro/corporate.json";
 import deCorporate from "@/locales/de/corporate.json";
 
+import enTools from "@/locales/en/tools.json";
+import ptTools from "@/locales/pt/tools.json";
+import esTools from "@/locales/es/tools.json";
+import csTools from "@/locales/cs/tools.json";
+import roTools from "@/locales/ro/tools.json";
+import deTools from "@/locales/de/tools.json";
+
 const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;
 const servicesByLocale = { en: enServices, pt: ptServices, es: esServices, cs: csServices, ro: roServices, de: deServices } as const;
 const faqByLocale = { en: enFaq, pt: ptFaq, es: esFaq, cs: csFaq, ro: roFaq, de: deFaq } as const;
@@ -98,6 +105,7 @@ const accountByLocale = { en: enAccount, pt: ptAccount, es: esAccount, cs: csAcc
 const subscriptionByLocale = { en: enSubscription, pt: ptSubscription, es: esSubscription, cs: csSubscription, ro: roSubscription, de: deSubscription } as const;
 const doctorByLocale = { en: enDoctor, pt: ptDoctor, es: esDoctor, cs: csDoctor, ro: roDoctor, de: deDoctor } as const;
 const corporateByLocale = { en: enCorporate, pt: ptCorporate, es: esCorporate, cs: csCorporate, ro: roCorporate, de: deCorporate } as const;
+const toolsByLocale = { en: enTools, pt: ptTools, es: esTools, cs: csTools, ro: roTools, de: deTools } as const;
 
 function buildLocaleBundle(locale: LocaleCode) {
   return {
@@ -117,6 +125,9 @@ function buildLocaleBundle(locale: LocaleCode) {
     doctor: deepMergeLocale(enDoctor, doctorByLocale[locale] ?? doctorByLocale.en) as typeof enDoctor,
     // en corporate.json is the schema source of truth, same pattern as doctor.
     corporate: deepMergeLocale(enCorporate, corporateByLocale[locale] ?? corporateByLocale.en) as typeof enCorporate,
+    // en tools.json is the schema source of truth — the free health tools ship
+    // in every market, so an untranslated key must fall back rather than blank.
+    tools: deepMergeLocale(enTools, toolsByLocale[locale] ?? toolsByLocale.en) as typeof enTools,
   };
 }
 

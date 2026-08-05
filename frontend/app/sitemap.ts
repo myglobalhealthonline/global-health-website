@@ -14,6 +14,8 @@ import { getCountryLegal, LEGAL_TYPE_SLUGS } from "@/lib/content/get-country-leg
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { newestTimestamp } from "@/lib/seo/newest-timestamp";
 import { isRetiredHealthSlug } from "@/lib/seo/health-service-canonical";
+import { TOOL_SLUGS } from "@/lib/tools/registry";
+import { toolHreflangAlternates, toolMarkets } from "@/lib/tools/markets";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -407,6 +409,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Country About pages: the market's languages, offering and registration.
     // Undated for the same reason — the copy is code-resident, not CMS.
     pushLocalized(country, "/about", 0.5);
+
+  }
+
+  // Free health tools. Emitted OUTSIDE the per-country loop above, because
+  // `pushLocalized` builds hreflang alternates from one country's locales and
+  // the tools need a single cross-market cluster instead — the same page
+  // translated per market, not six unrelated pages. See `lib/tools/markets.ts`.
+  // Undated: the copy is code-resident, so there is no child timestamp.
+  for (const tool of TOOL_SLUGS) {
+    // Absolute: sitemap alternates must be full URLs, unlike the metadata
+    // ones, which `buildPublicMetadata` absolutises for us.
+    const languages = Object.fromEntries(
+      Object.entries(toolHreflangAlternates(`/tools/${tool}`)).map(([tag, path]) => [
+        tag,
+        `${base}${path}`,
+      ]),
+    );
+    for (const market of toolMarkets()) {
+      urls.push({
+        url: `${base}/${market.slug}/${market.lang}/tools/${tool}`,
+        changeFrequency: "monthly",
+        priority: 0.7,
+        alternates: { languages },
+      });
+    }
   }
 
   return urls;

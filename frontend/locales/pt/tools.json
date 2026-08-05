@@ -1,0 +1,199 @@
+{
+  "ui": {
+    "questionsEyebrow": "Perguntas",
+    "faqSuffix": "Perguntas frequentes",
+    "units": "Unidades",
+    "metric": "Métrico",
+    "imperial": "Imperial",
+    "height": "Altura",
+    "weight": "Peso",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Altura (pés)",
+    "inchesLabel": "Polegadas",
+    "stoneLabel": "Peso (stone)",
+    "poundsLabel": "Libras",
+    "poundsOnlyHint": "Deixe stone vazio para usar apenas libras."
+  },
+  "suggestions": {
+    "heading": "O passo seguinte",
+    "intro": "O IMC é um ponto de partida, não um plano. Estas são as consultas que os nossos médicos fazem para o que ele sinaliza.",
+    "viewLabel": "Ver serviço",
+    "gpTitle": "Consulta médica online",
+    "gpSummary": "Discuta qualquer resultado por vídeo com um médico registado e faça os exames que o IMC não lhe dá.",
+    "nudgeUnderweight": "Um resultado abaixo do intervalo saudável merece a opinião de um médico, sobretudo se não foi intencional.",
+    "nudgeHealthy": "Quer manter-se assim? Os nossos clínicos ajudam-no a criar hábitos que se aguentam.",
+    "nudgeOverweight": "Mudanças pequenas e acompanhadas funcionam melhor do que mais uma dieta. Comece por aqui.",
+    "nudgeObese": "Neste nível, a gestão do peso com acompanhamento médico funciona bastante melhor do que fazer dieta sozinho."
+  },
+  "bands": {
+    "bmi": {
+      "underweight": {
+        "label": "Baixo peso",
+        "summary": "Abaixo do intervalo saudável. Vale a pena falar com um médico, sobretudo se a perda de peso não foi intencional."
+      },
+      "healthy": {
+        "label": "Peso saudável",
+        "summary": "Dentro do intervalo que a OMS classifica como saudável para adultos."
+      },
+      "overweight": {
+        "label": "Excesso de peso",
+        "summary": "Acima do intervalo saudável. Avaliar a pressão arterial e o colesterol é um passo sensato."
+      },
+      "obese-1": {
+        "label": "Obesidade grau I",
+        "summary": "A este nível costuma ser proposto um programa estruturado de gestão do peso."
+      },
+      "obese-2": {
+        "label": "Obesidade grau II",
+        "summary": "Recomenda-se avaliação médica, incluindo rastreio de doenças associadas ao peso."
+      },
+      "obese-3": {
+        "label": "Obesidade grau III",
+        "summary": "Recomenda-se avaliação especializada em gestão do peso."
+      }
+    }
+  },
+  "tools": {
+    "bmi-calculator": {
+      "cardTitle": "Calculadora de IMC",
+      "cardBlurb": "Índice de massa corporal a partir da sua altura e peso, na escala da OMS para adultos.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Calculadora",
+      "h1Accent": "de IMC",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculadora de IMC {country} | Calcular o IMC Online",
+      "metaDescription": "Calcule o seu índice de massa corporal em segundos. Sistema métrico ou imperial, categorias da OMS para adultos e o que o resultado significa na prática.",
+      "lede": "Introduza a sua altura e o seu peso para ver o índice de massa corporal e onde se situa na escala da Organização Mundial de Saúde para adultos.",
+      "trustPoints": [
+        "Métrico e imperial (kg, stone, libras)",
+        "Categorias de peso da OMS para adultos",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "widget": {
+        "title": "O seu IMC",
+        "placeholder": "Introduza a altura e o peso para ver o seu índice de massa corporal.",
+        "note": "O IMC é uma medida de rastreio, não um diagnóstico. Não distingue músculo de gordura e não é válido na gravidez nem para menores de 18 anos.",
+        "healthyRangeLabel": "Peso saudável para a sua altura",
+        "gapAbove": "{kg} kg acima do intervalo saudável",
+        "gapBelow": "{kg} kg abaixo do intervalo saudável",
+        "gapInside": "Dentro do intervalo saudável",
+        "gapLabel": "Distância ao intervalo saudável",
+        "scaleLabel": "Onde o seu IMC se situa na escala da OMS"
+      },
+      "sections": [
+        {
+          "heading": "O que significa o seu resultado de IMC",
+          "body": [
+            "A Organização Mundial de Saúde agrupa o IMC dos adultos nas faixas abaixo. Descrevem uma população, não uma pessoa: duas pessoas com o mesmo IMC podem ter estados de saúde muito diferentes."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Categorias de IMC da OMS para adultos",
+            "columns": [
+              "IMC",
+              "Categoria",
+              "O que costuma implicar"
+            ],
+            "rows": [
+              [
+                "Inferior a 18,5",
+                "Baixo peso",
+                "Vale uma conversa médica, sobretudo se não for intencional"
+              ],
+              [
+                "18,5 – 24,9",
+                "Peso saudável",
+                "Nenhuma ação necessária apenas com base no IMC"
+              ],
+              [
+                "25,0 – 29,9",
+                "Excesso de peso",
+                "Rever estilo de vida; avaliar pressão arterial e colesterol"
+              ],
+              [
+                "30,0 – 34,9",
+                "Obesidade grau I",
+                "Costuma ser proposta gestão estruturada do peso"
+              ],
+              [
+                "35,0 – 39,9",
+                "Obesidade grau II",
+                "Avaliação médica; rastreio de doenças associadas"
+              ],
+              [
+                "40,0 ou mais",
+                "Obesidade grau III",
+                "Referenciação para gestão especializada do peso"
+              ]
+            ],
+            "footnote": "Pessoas de origem do Sul da Ásia, chinesa e de algumas outras origens asiáticas apresentam maior risco cardiometabólico com um IMC mais baixo. A OMS sugere 23,0 e 27,5 como pontos de ação adicionais nessas populações."
+          }
+        },
+        {
+          "heading": "Como se calcula o IMC",
+          "body": [
+            "O IMC é o seu peso em quilogramas dividido pelo quadrado da sua altura em metros. É esta a fórmula completa — não entra a idade, o sexo nem a composição corporal.",
+            "Exemplo prático: alguém com 1,75 m e 78 kg tem um IMC de 78 ÷ (1,75 × 1,75) = 25,5, o que cai na faixa de excesso de peso.",
+            "Os valores imperiais são convertidos primeiro (1 stone = 6,35 kg, 1 polegada = 2,54 cm), pelo que o resultado é idêntico em qualquer sistema."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "O que o IMC não lhe diz",
+          "body": [
+            "O IMC é um número de rastreio, não um diagnóstico. É útil precisamente por ser simples — basta uma fita métrica e uma balança — mas é aí que também está o seu limite."
+          ],
+          "bullets": [
+            "Não separa músculo de gordura. Pessoas muito musculadas são frequentemente classificadas com excesso de peso.",
+            "Ignora onde a gordura se localiza. O perímetro abdominal prevê melhor o risco cardiometabólico do que o IMC.",
+            "Não está validado para a gravidez — use o IMC anterior à gravidez para o planeamento dos cuidados.",
+            "Crianças e adolescentes precisam de curvas de percentis por idade e sexo, não das faixas de adulto acima.",
+            "Em adultos com mais de 65 anos, um IMC ligeiramente acima de 25 não está consistentemente associado a piores resultados."
+          ]
+        },
+        {
+          "heading": "Quando falar com um médico sobre o seu peso",
+          "body": [],
+          "bullets": [
+            "Perdeu ou ganhou peso sem o ter procurado.",
+            "O seu IMC é 30 ou mais, ou 25 ou mais acompanhado de pressão arterial elevada, colesterol alto ou glicemia aumentada.",
+            "Está a ser investigado, ou já é tratado, por diabetes tipo 2, apneia do sono, SOP ou fígado gordo.",
+            "Quer discutir gestão do peso com acompanhamento médico em vez de mais uma dieta."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é um IMC saudável para um adulto?",
+          "answer": "Para a maioria dos adultos entre os 18 e os 65 anos, a Organização Mundial de Saúde considera saudável um IMC entre 18,5 e 24,9. Acima de 25 é classificado como excesso de peso e 30 ou mais como obesidade. São limiares populacionais, por isso um único valor é um convite a investigar mais, não um veredicto."
+        },
+        {
+          "question": "O IMC calcula-se de forma diferente para homens e mulheres?",
+          "answer": "Não. A fórmula e as categorias de adulto são idênticas. As mulheres têm geralmente uma proporção de massa gorda superior à dos homens para o mesmo IMC, o que é uma das razões pelas quais o número é apenas um ponto de partida."
+        },
+        {
+          "question": "Qual é a precisão de uma calculadora de IMC?",
+          "answer": "A aritmética é exata — a incerteza está no que o IMC mede. Correlaciona-se razoavelmente com a gordura corporal ao nível de uma população, mas pode classificar mal indivíduos, sobretudo atletas, pessoas mais velhas e pessoas com muita massa muscular."
+        },
+        {
+          "question": "O que devo fazer se o meu IMC estiver na faixa de obesidade?",
+          "answer": "Avalie a pressão arterial, o colesterol e a glicemia, e fale com um médico sobre um plano que consiga manter. A gestão do peso com acompanhamento médico funciona consideravelmente melhor do que fazer dieta sozinho."
+        },
+        {
+          "question": "Esta calculadora de IMC guarda os meus dados?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        },
+        {
+          "question": "Preciso de um IMC para aceder a tratamento para perda de peso?",
+          "answer": "Os clínicos usam habitualmente o IMC como um dos critérios de entrada em programas de gestão do peso, normalmente em conjunto com o seu historial médico e eventuais doenças associadas ao peso. O seu médico confirmará o que se aplica ao seu caso."
+        }
+      ],
+      "cta": {
+        "heading": "Quer discutir o seu resultado?",
+        "body": "Marque uma videoconsulta com um médico registado e receba um plano construído a partir do seu historial, não de um número.",
+        "label": "Marcar consulta"
+      }
+    }
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "ui": {
+    "questionsEyebrow": "Fragen",
+    "faqSuffix": "Häufige Fragen",
+    "units": "Einheiten",
+    "metric": "Metrisch",
+    "imperial": "Imperial",
+    "height": "Größe",
+    "weight": "Gewicht",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Größe (Fuß)",
+    "inchesLabel": "Zoll",
+    "stoneLabel": "Gewicht (Stone)",
+    "poundsLabel": "Pfund",
+    "poundsOnlyHint": "Lassen Sie Stone leer, um nur Pfund einzugeben."
+  },
+  "suggestions": {
+    "heading": "Wie es weitergeht",
+    "intro": "Der BMI ist ein Ausgangspunkt, kein Plan. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte für das anbieten, worauf er hinweist.",
+    "viewLabel": "Leistung ansehen",
+    "gpTitle": "Ärztliche Online-Sprechstunde",
+    "gpSummary": "Besprechen Sie jedes Ergebnis per Video mit einer registrierten Ärztin oder einem registrierten Arzt und erhalten Sie die Untersuchungen, die der BMI nicht liefert.",
+    "nudgeUnderweight": "Ein Ergebnis unter dem gesunden Bereich verdient eine ärztliche Einschätzung, besonders wenn es unbeabsichtigt war.",
+    "nudgeHealthy": "Wollen Sie das halten? Unsere Behandelnden helfen Ihnen, Gewohnheiten aufzubauen, die tragen.",
+    "nudgeOverweight": "Kleine, begleitete Veränderungen wirken besser als die nächste Diät. Hier fangen Sie an.",
+    "nudgeObese": "Auf dieser Stufe wirkt ärztlich begleitetes Gewichtsmanagement deutlich besser als Diäten allein."
+  },
+  "bands": {
+    "bmi": {
+      "underweight": {
+        "label": "Untergewicht",
+        "summary": "Unterhalb des gesunden Bereichs. Ein ärztliches Gespräch lohnt sich, besonders wenn die Gewichtsabnahme unbeabsichtigt war."
+      },
+      "healthy": {
+        "label": "Normalgewicht",
+        "summary": "Innerhalb des Bereichs, den die WHO für Erwachsene als gesund einstuft."
+      },
+      "overweight": {
+        "label": "Übergewicht",
+        "summary": "Oberhalb des gesunden Bereichs. Eine Kontrolle von Blutdruck und Cholesterin ist ein sinnvoller nächster Schritt."
+      },
+      "obese-1": {
+        "label": "Adipositas Grad I",
+        "summary": "Auf dieser Stufe wird in der Regel ein strukturiertes Gewichtsmanagement angeboten."
+      },
+      "obese-2": {
+        "label": "Adipositas Grad II",
+        "summary": "Eine ärztliche Abklärung wird empfohlen, einschließlich Screening auf gewichtsbedingte Erkrankungen."
+      },
+      "obese-3": {
+        "label": "Adipositas Grad III",
+        "summary": "Eine fachärztliche Abklärung zum Gewichtsmanagement wird empfohlen."
+      }
+    }
+  },
+  "tools": {
+    "bmi-calculator": {
+      "cardTitle": "BMI-Rechner",
+      "cardBlurb": "Body-Mass-Index aus Ihrer Größe und Ihrem Gewicht, auf der WHO-Skala für Erwachsene.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "BMI",
+      "h1Accent": "Rechner",
+      "h1Trail": "{country}",
+      "metaTitle": "BMI-Rechner {country} | BMI Kostenlos Berechnen",
+      "metaDescription": "Berechnen Sie Ihren Body-Mass-Index in Sekunden. Metrisch oder imperial, WHO-Kategorien für Erwachsene und was Ihr Ergebnis tatsächlich bedeutet.",
+      "lede": "Geben Sie Größe und Gewicht ein, um Ihren Body-Mass-Index zu sehen und wo er auf der Erwachsenenskala der Weltgesundheitsorganisation liegt.",
+      "trustPoints": [
+        "Metrisch und imperial (kg, Stone, Pfund)",
+        "WHO-Gewichtskategorien für Erwachsene",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "widget": {
+        "title": "Ihr BMI",
+        "placeholder": "Geben Sie Größe und Gewicht ein, um Ihren Body-Mass-Index zu sehen.",
+        "note": "Der BMI ist ein Screening-Wert, keine Diagnose. Er unterscheidet nicht zwischen Muskeln und Fett und gilt weder in der Schwangerschaft noch für unter 18-Jährige.",
+        "healthyRangeLabel": "Gesundes Gewicht für Ihre Größe",
+        "gapAbove": "{kg} kg über dem gesunden Bereich",
+        "gapBelow": "{kg} kg unter dem gesunden Bereich",
+        "gapInside": "Innerhalb des gesunden Bereichs",
+        "gapLabel": "Abstand zum gesunden Bereich",
+        "scaleLabel": "Wo Ihr BMI auf der WHO-Skala liegt"
+      },
+      "sections": [
+        {
+          "heading": "Was Ihr BMI-Ergebnis bedeutet",
+          "body": [
+            "Die Weltgesundheitsorganisation ordnet den BMI Erwachsener den unten stehenden Bereichen zu. Sie beschreiben eine Bevölkerung, nicht eine Person: Zwei Menschen mit demselben BMI können sehr unterschiedlich gesund sein."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "WHO-BMI-Kategorien für Erwachsene",
+            "columns": [
+              "BMI",
+              "Kategorie",
+              "Was daraus meist folgt"
+            ],
+            "rows": [
+              [
+                "Unter 18,5",
+                "Untergewicht",
+                "Ein ärztliches Gespräch lohnt sich, besonders wenn unbeabsichtigt"
+              ],
+              [
+                "18,5 – 24,9",
+                "Normalgewicht",
+                "Allein aufgrund des BMI ist nichts zu unternehmen"
+              ],
+              [
+                "25,0 – 29,9",
+                "Übergewicht",
+                "Lebensstil prüfen; Blutdruck und Cholesterin kontrollieren"
+              ],
+              [
+                "30,0 – 34,9",
+                "Adipositas Grad I",
+                "Strukturiertes Gewichtsmanagement wird meist angeboten"
+              ],
+              [
+                "35,0 – 39,9",
+                "Adipositas Grad II",
+                "Ärztliche Abklärung; Screening auf Begleiterkrankungen"
+              ],
+              [
+                "40,0 und mehr",
+                "Adipositas Grad III",
+                "Überweisung zum fachärztlichen Gewichtsmanagement"
+              ]
+            ],
+            "footnote": "Menschen südasiatischer, chinesischer und einiger weiterer asiatischer Herkunft haben schon bei niedrigerem BMI ein höheres kardiometabolisches Risiko. Die WHO schlägt für diese Bevölkerungsgruppen 23,0 und 27,5 als zusätzliche Handlungsschwellen vor."
+          }
+        },
+        {
+          "heading": "Wie der BMI berechnet wird",
+          "body": [
+            "Der BMI ist Ihr Gewicht in Kilogramm geteilt durch das Quadrat Ihrer Größe in Metern. Das ist die vollständige Formel — Alter, Geschlecht und Körperzusammensetzung kommen darin nicht vor.",
+            "Rechenbeispiel: Eine 1,75 m große Person mit 78 kg hat einen BMI von 78 ÷ (1,75 × 1,75) = 25,5 und fällt damit in den Bereich Übergewicht.",
+            "Imperiale Eingaben werden zuerst umgerechnet (1 Stone = 6,35 kg, 1 Zoll = 2,54 cm), das Ergebnis ist also in beiden Systemen identisch."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Was der BMI Ihnen nicht sagt",
+          "body": [
+            "Der BMI ist eine Screening-Zahl, keine Diagnose. Er ist gerade deshalb nützlich, weil er grob ist — es braucht nur ein Maßband und eine Waage — doch genau darin liegt auch seine Grenze."
+          ],
+          "bullets": [
+            "Er trennt Muskeln nicht von Fett. Sehr muskulöse Menschen werden regelmäßig als übergewichtig eingestuft.",
+            "Er ignoriert, wo das Fett sitzt. Der Taillenumfang sagt das kardiometabolische Risiko besser voraus als der BMI.",
+            "Er ist für die Schwangerschaft nicht validiert — nutzen Sie für die Betreuungsplanung den BMI vor der Schwangerschaft.",
+            "Kinder und Jugendliche brauchen alters- und geschlechtsspezifische Perzentilkurven, nicht die obigen Erwachsenenbereiche.",
+            "Bei Erwachsenen über 65 Jahren ist ein BMI leicht über 25 nicht durchgängig mit schlechteren Ergebnissen verbunden."
+          ]
+        },
+        {
+          "heading": "Wann Sie Ihr Gewicht ärztlich besprechen sollten",
+          "body": [],
+          "bullets": [
+            "Sie haben ungewollt ab- oder zugenommen.",
+            "Ihr BMI liegt bei 30 oder darüber, oder bei 25 und darüber zusammen mit hohem Blutdruck, hohem Cholesterin oder erhöhtem Blutzucker.",
+            "Sie werden auf Typ-2-Diabetes, Schlafapnoe, PCOS oder eine Fettleber abgeklärt oder bereits behandelt.",
+            "Sie möchten ein ärztlich begleitetes Gewichtsmanagement besprechen statt der nächsten Diät."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Welcher BMI ist für Erwachsene gesund?",
+          "answer": "Für die meisten Erwachsenen zwischen 18 und 65 Jahren gilt bei der Weltgesundheitsorganisation ein BMI zwischen 18,5 und 24,9 als gesunder Bereich. Über 25 gilt als Übergewicht, ab 30 als Adipositas. Das sind Bevölkerungsschwellen — ein einzelner Wert ist also ein Anlass, genauer hinzusehen, kein Urteil."
+        },
+        {
+          "question": "Wird der BMI bei Männern und Frauen unterschiedlich berechnet?",
+          "answer": "Nein. Formel und Erwachsenenkategorien sind identisch. Frauen haben bei gleichem BMI in der Regel einen höheren Körperfettanteil als Männer — einer der Gründe, warum die Zahl nur ein Ausgangspunkt ist."
+        },
+        {
+          "question": "Wie genau ist ein BMI-Rechner?",
+          "answer": "Die Rechnung ist exakt — die Unsicherheit liegt darin, was der BMI misst. Auf Bevölkerungsebene korreliert er recht gut mit dem Körperfett, kann Einzelne aber falsch einordnen, vor allem Sportlerinnen und Sportler, ältere Menschen und Personen mit viel Muskelmasse."
+        },
+        {
+          "question": "Was tun, wenn mein BMI im Adipositas-Bereich liegt?",
+          "answer": "Lassen Sie Blutdruck, Cholesterin und Blutzucker kontrollieren und besprechen Sie mit einer Ärztin oder einem Arzt einen Plan, den Sie durchhalten können. Gewichtsmanagement mit ärztlicher Begleitung wirkt deutlich besser als Diäten allein."
+        },
+        {
+          "question": "Speichert dieser BMI-Rechner meine Daten?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts von dem, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        },
+        {
+          "question": "Brauche ich einen BMI für eine Abnehmbehandlung?",
+          "answer": "In der Regel nutzen Behandelnde den BMI als eines der Aufnahmekriterien für Gewichtsmanagement-Programme, meist zusammen mit Ihrer Krankengeschichte und etwaigen gewichtsbedingten Erkrankungen. Ihre Ärztin oder Ihr Arzt sagt Ihnen, was in Ihrem Fall gilt."
+        }
+      ],
+      "cta": {
+        "heading": "Möchten Sie Ihr Ergebnis besprechen?",
+        "body": "Buchen Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt und erhalten Sie einen Plan, der auf Ihrer Krankengeschichte beruht — nicht auf einer Zahl.",
+        "label": "Termin buchen"
+      }
+    }
+  }
+}

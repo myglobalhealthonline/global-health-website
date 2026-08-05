@@ -1,0 +1,199 @@
+{
+  "ui": {
+    "questionsEyebrow": "Otázky",
+    "faqSuffix": "Časté dotazy",
+    "units": "Jednotky",
+    "metric": "Metrické",
+    "imperial": "Imperiální",
+    "height": "Výška",
+    "weight": "Hmotnost",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Výška (stopy)",
+    "inchesLabel": "Palce",
+    "stoneLabel": "Hmotnost (stone)",
+    "poundsLabel": "Libry",
+    "poundsOnlyHint": "Nechte stone prázdné, chcete-li zadat jen libry."
+  },
+  "suggestions": {
+    "heading": "Kam dál",
+    "intro": "BMI je výchozí bod, ne plán. Tohle jsou konzultace, které naši lékaři vedou k tomu, na co upozorňuje.",
+    "viewLabel": "Zobrazit službu",
+    "gpTitle": "Online konzultace s lékařem",
+    "gpSummary": "Proberte jakýkoli výsledek po videu s registrovaným lékařem a nechte si udělat vyšetření, která vám BMI dát nemůže.",
+    "nudgeUnderweight": "Výsledek pod zdravým rozmezím stojí za názor lékaře, zvlášť pokud nebyl záměrný.",
+    "nudgeHealthy": "Chcete si to udržet? Naši lékaři vám pomohou nastavit návyky, které vydrží.",
+    "nudgeOverweight": "Malé změny pod dohledem fungují lépe než další dieta. Začněte tady.",
+    "nudgeObese": "Na této úrovni funguje řízení hmotnosti pod lékařským dohledem výrazně lépe než dieta o samotě."
+  },
+  "bands": {
+    "bmi": {
+      "underweight": {
+        "label": "Podváha",
+        "summary": "Pod zdravým rozmezím. Stojí za to to probrat s lékařem, zvlášť pokud úbytek hmotnosti nebyl záměrný."
+      },
+      "healthy": {
+        "label": "Zdravá hmotnost",
+        "summary": "V rozmezí, které WHO označuje u dospělých za zdravé."
+      },
+      "overweight": {
+        "label": "Nadváha",
+        "summary": "Nad zdravým rozmezím. Rozumným dalším krokem je kontrola krevního tlaku a cholesterolu."
+      },
+      "obese-1": {
+        "label": "Obezita I. stupně",
+        "summary": "Na této úrovni se obvykle nabízí strukturovaný program řízení hmotnosti."
+      },
+      "obese-2": {
+        "label": "Obezita II. stupně",
+        "summary": "Doporučuje se lékařské vyšetření včetně screeningu onemocnění spojených s hmotností."
+      },
+      "obese-3": {
+        "label": "Obezita III. stupně",
+        "summary": "Doporučuje se specializované vyšetření v oblasti řízení hmotnosti."
+      }
+    }
+  },
+  "tools": {
+    "bmi-calculator": {
+      "cardTitle": "BMI kalkulačka",
+      "cardBlurb": "Index tělesné hmotnosti z vaší výšky a hmotnosti podle škály WHO pro dospělé.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "BMI",
+      "h1Accent": "kalkulačka",
+      "h1Trail": "{country}",
+      "metaTitle": "BMI Kalkulačka {country} | Výpočet BMI Online",
+      "metaDescription": "Spočítejte si index tělesné hmotnosti během několika sekund. Metrické i imperiální jednotky, kategorie WHO pro dospělé a co váš výsledek ve skutečnosti znamená.",
+      "lede": "Zadejte svou výšku a hmotnost a uvidíte svůj index tělesné hmotnosti a jeho místo na škále Světové zdravotnické organizace pro dospělé.",
+      "trustPoints": [
+        "Metrické i imperiální jednotky (kg, stone, libry)",
+        "Hmotnostní kategorie WHO pro dospělé",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "widget": {
+        "title": "Vaše BMI",
+        "placeholder": "Zadejte výšku a hmotnost a uvidíte svůj index tělesné hmotnosti.",
+        "note": "BMI je screeningová hodnota, nikoli diagnóza. Nerozliší sval od tuku a neplatí v těhotenství ani pro osoby mladší 18 let.",
+        "healthyRangeLabel": "Zdravá hmotnost pro vaši výšku",
+        "gapAbove": "{kg} kg nad zdravým rozmezím",
+        "gapBelow": "{kg} kg pod zdravým rozmezím",
+        "gapInside": "Ve zdravém rozmezí",
+        "gapLabel": "Vzdálenost od zdravého rozmezí",
+        "scaleLabel": "Kde se vaše BMI nachází na škále WHO"
+      },
+      "sections": [
+        {
+          "heading": "Co váš výsledek BMI znamená",
+          "body": [
+            "Světová zdravotnická organizace řadí BMI dospělých do níže uvedených pásem. Popisují populaci, nikoli jednotlivce: dva lidé se stejným BMI mohou být ve velmi odlišném zdravotním stavu."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Kategorie BMI podle WHO pro dospělé",
+            "columns": [
+              "BMI",
+              "Kategorie",
+              "Co z toho obvykle plyne"
+            ],
+            "rows": [
+              [
+                "Méně než 18,5",
+                "Podváha",
+                "Stojí za rozhovor s lékařem, zvlášť pokud nebyla záměrná"
+              ],
+              [
+                "18,5 – 24,9",
+                "Zdravá hmotnost",
+                "Jen na základě BMI není potřeba nic řešit"
+              ],
+              [
+                "25,0 – 29,9",
+                "Nadváha",
+                "Revize životního stylu; kontrola krevního tlaku a cholesterolu"
+              ],
+              [
+                "30,0 – 34,9",
+                "Obezita I. stupně",
+                "Obvykle se nabízí strukturované řízení hmotnosti"
+              ],
+              [
+                "35,0 – 39,9",
+                "Obezita II. stupně",
+                "Lékařské vyšetření; screening souvisejících onemocnění"
+              ],
+              [
+                "40,0 a více",
+                "Obezita III. stupně",
+                "Odeslání ke specializovanému řízení hmotnosti"
+              ]
+            ],
+            "footnote": "Lidé jihoasijského, čínského a některých dalších asijských původů mají vyšší kardiometabolické riziko už při nižším BMI. WHO pro tyto populace navrhuje jako další body pro zásah hodnoty 23,0 a 27,5."
+          }
+        },
+        {
+          "heading": "Jak se BMI počítá",
+          "body": [
+            "BMI je vaše hmotnost v kilogramech dělená druhou mocninou výšky v metrech. To je celý vzorec — nevstupuje do něj věk, pohlaví ani tělesné složení.",
+            "Praktický příklad: člověk vysoký 1,75 m s hmotností 78 kg má BMI 78 ÷ (1,75 × 1,75) = 25,5, což spadá do pásma nadváhy.",
+            "Imperiální hodnoty se nejprve převedou (1 stone = 6,35 kg, 1 palec = 2,54 cm), takže výsledek je v obou systémech stejný."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Co vám BMI neřekne",
+          "body": [
+            "BMI je screeningové číslo, nikoli diagnóza. Je užitečné právě proto, že je jednoduché — stačí metr a váha — ale právě v tom je i jeho hranice."
+          ],
+          "bullets": [
+            "Neoddělí sval od tuku. Lidé s velkým podílem svalové hmoty bývají běžně zařazeni do nadváhy.",
+            "Nebere v úvahu, kde je tuk uložen. Obvod pasu předpovídá kardiometabolické riziko lépe než BMI.",
+            "Není validováno pro těhotenství — pro plánování péče použijte BMI před otěhotněním.",
+            "Děti a dospívající potřebují percentilové grafy podle věku a pohlaví, ne výše uvedená pásma pro dospělé.",
+            "U dospělých nad 65 let není BMI mírně nad 25 konzistentně spojeno s horšími výsledky."
+          ]
+        },
+        {
+          "heading": "Kdy se o hmotnosti poradit s lékařem",
+          "body": [],
+          "bullets": [
+            "Zhubli jste nebo přibrali, aniž byste o to usilovali.",
+            "Vaše BMI je 30 a více, nebo 25 a více spolu s vysokým krevním tlakem, vysokým cholesterolem či zvýšenou glykemií.",
+            "Jste vyšetřováni nebo již léčeni pro diabetes 2. typu, spánkovou apnoe, syndrom polycystických ovarií nebo ztukovatění jater.",
+            "Chcete probrat řízení hmotnosti pod lékařským dohledem místo další diety."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Jaké BMI je u dospělého zdravé?",
+          "answer": "U většiny dospělých ve věku 18 až 65 let považuje Světová zdravotnická organizace za zdravé BMI mezi 18,5 a 24,9. Nad 25 se hodnotí jako nadváha a 30 a více jako obezita. Jde o populační hranice, takže jediná hodnota je podnětem k dalšímu zkoumání, ne verdiktem."
+        },
+        {
+          "question": "Počítá se BMI jinak u mužů a u žen?",
+          "answer": "Ne. Vzorec i kategorie pro dospělé jsou stejné. Ženy mají při stejném BMI obvykle vyšší podíl tělesného tuku než muži, což je jeden z důvodů, proč je toto číslo jen výchozím bodem."
+        },
+        {
+          "question": "Jak přesná je BMI kalkulačka?",
+          "answer": "Výpočet je přesný — nejistota je v tom, co BMI měří. S tělesným tukem koreluje na úrovni populace přiměřeně dobře, ale jednotlivce může zařadit špatně, zvlášť sportovce, starší lidi a osoby s velkým množstvím svalové hmoty."
+        },
+        {
+          "question": "Co mám dělat, když je moje BMI v pásmu obezity?",
+          "answer": "Nechte si zkontrolovat krevní tlak, cholesterol a glykemii a proberte s lékařem plán, který dokážete udržet. Řízení hmotnosti s lékařským dohledem funguje výrazně lépe než dieta o samotě."
+        },
+        {
+          "question": "Ukládá tato BMI kalkulačka moje údaje?",
+          "answer": "Ne. Výpočet probíhá výhradně ve vašem prohlížeči. Nic, co zadáte, se neodesílá na naše servery ani neukládá."
+        },
+        {
+          "question": "Potřebuji BMI, abych získal léčbu na snížení hmotnosti?",
+          "answer": "Lékaři obvykle používají BMI jako jedno ze vstupních kritérií programů řízení hmotnosti, zpravidla spolu s vaší anamnézou a případnými onemocněními spojenými s hmotností. Váš lékař potvrdí, co platí právě pro vás."
+        }
+      ],
+      "cta": {
+        "heading": "Chcete výsledek probrat?",
+        "body": "Objednejte se na videokonzultaci s registrovaným lékařem a získejte plán postavený na vaší anamnéze, ne na jednom čísle.",
+        "label": "Objednat konzultaci"
+      }
+    }
+  }
+}

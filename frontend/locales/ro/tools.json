@@ -1,0 +1,199 @@
+{
+  "ui": {
+    "questionsEyebrow": "Întrebări",
+    "faqSuffix": "Întrebări frecvente",
+    "units": "Unități",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "height": "Înălțime",
+    "weight": "Greutate",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Înălțime (picioare)",
+    "inchesLabel": "Inci",
+    "stoneLabel": "Greutate (stone)",
+    "poundsLabel": "Livre",
+    "poundsOnlyHint": "Lasă stone gol dacă vrei să introduci doar livre."
+  },
+  "suggestions": {
+    "heading": "Care e pasul următor",
+    "intro": "IMC este un punct de plecare, nu un plan. Acestea sunt consultațiile pe care le oferă medicii noștri pentru lucrurile pe care le semnalează.",
+    "viewLabel": "Vezi serviciul",
+    "gpTitle": "Consultație medicală online",
+    "gpSummary": "Discută orice rezultat prin video cu un medic înregistrat și fă-ți analizele pe care IMC nu ți le poate da.",
+    "nudgeUnderweight": "Un rezultat sub intervalul sănătos merită opinia unui medic, mai ales dacă nu a fost intenționat.",
+    "nudgeHealthy": "Vrei să îl menții? Medicii noștri te ajută să construiești obiceiuri care rezistă.",
+    "nudgeOverweight": "Schimbările mici și supravegheate funcționează mai bine decât încă o dietă. De aici poți începe.",
+    "nudgeObese": "La acest nivel, managementul greutății sub supraveghere medicală funcționează considerabil mai bine decât o dietă ținută singur."
+  },
+  "bands": {
+    "bmi": {
+      "underweight": {
+        "label": "Subponderal",
+        "summary": "Sub intervalul sănătos. Merită discutat cu un medic, mai ales dacă scăderea în greutate nu a fost intenționată."
+      },
+      "healthy": {
+        "label": "Greutate sănătoasă",
+        "summary": "În intervalul pe care OMS îl consideră sănătos la adulți."
+      },
+      "overweight": {
+        "label": "Supraponderal",
+        "summary": "Peste intervalul sănătos. Un pas rezonabil este verificarea tensiunii arteriale și a colesterolului."
+      },
+      "obese-1": {
+        "label": "Obezitate grad I",
+        "summary": "La acest nivel se propune de obicei un program structurat de management al greutății."
+      },
+      "obese-2": {
+        "label": "Obezitate grad II",
+        "summary": "Se recomandă evaluare medicală, inclusiv screening pentru bolile asociate greutății."
+      },
+      "obese-3": {
+        "label": "Obezitate grad III",
+        "summary": "Se recomandă evaluare de specialitate pentru managementul greutății."
+      }
+    }
+  },
+  "tools": {
+    "bmi-calculator": {
+      "cardTitle": "Calculator IMC",
+      "cardBlurb": "Indicele de masă corporală din înălțimea și greutatea ta, pe scala OMS pentru adulți.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Calculator",
+      "h1Accent": "IMC",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculator IMC {country} | Calculează-ți IMC",
+      "metaDescription": "Calculează-ți indicele de masă corporală în câteva secunde. Sistem metric sau imperial, categoriile OMS pentru adulți și ce înseamnă cu adevărat rezultatul tău.",
+      "lede": "Introdu înălțimea și greutatea ca să vezi indicele de masă corporală și unde se situează pe scala Organizației Mondiale a Sănătății pentru adulți.",
+      "trustPoints": [
+        "Metric și imperial (kg, stone, livre)",
+        "Categoriile de greutate ale OMS pentru adulți",
+        "Rulează în browserul tău — nimic nu este trimis sau salvat"
+      ],
+      "widget": {
+        "title": "IMC-ul tău",
+        "placeholder": "Introdu înălțimea și greutatea ca să vezi indicele de masă corporală.",
+        "note": "IMC este o măsură de screening, nu un diagnostic. Nu deosebește mușchiul de grăsime și nu este valabil în sarcină sau sub 18 ani.",
+        "healthyRangeLabel": "Greutate sănătoasă pentru înălțimea ta",
+        "gapAbove": "{kg} kg peste intervalul sănătos",
+        "gapBelow": "{kg} kg sub intervalul sănătos",
+        "gapInside": "În intervalul sănătos",
+        "gapLabel": "Distanța până la intervalul sănătos",
+        "scaleLabel": "Unde se situează IMC-ul tău pe scala OMS"
+      },
+      "sections": [
+        {
+          "heading": "Ce înseamnă rezultatul tău IMC",
+          "body": [
+            "Organizația Mondială a Sănătății grupează IMC-ul adulților în intervalele de mai jos. Ele descriu o populație, nu o persoană: două persoane cu același IMC pot avea stări de sănătate foarte diferite."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Categoriile de IMC ale OMS pentru adulți",
+            "columns": [
+              "IMC",
+              "Categorie",
+              "Ce presupune de obicei"
+            ],
+            "rows": [
+              [
+                "Sub 18,5",
+                "Subponderal",
+                "Merită o discuție cu medicul, mai ales dacă nu a fost intenționat"
+              ],
+              [
+                "18,5 – 24,9",
+                "Greutate sănătoasă",
+                "Nu e nevoie de nicio măsură doar pe baza IMC"
+              ],
+              [
+                "25,0 – 29,9",
+                "Supraponderal",
+                "Revizuirea stilului de viață; verificarea tensiunii și a colesterolului"
+              ],
+              [
+                "30,0 – 34,9",
+                "Obezitate grad I",
+                "De obicei se propune management structurat al greutății"
+              ],
+              [
+                "35,0 – 39,9",
+                "Obezitate grad II",
+                "Evaluare medicală; screening pentru boli asociate"
+              ],
+              [
+                "40,0 și peste",
+                "Obezitate grad III",
+                "Trimitere către management specializat al greutății"
+              ]
+            ],
+            "footnote": "Persoanele de origine sud-asiatică, chineză și din alte câteva origini asiatice au un risc cardiometabolic mai mare la un IMC mai scăzut. OMS sugerează 23,0 și 27,5 ca praguri suplimentare de acțiune pentru aceste populații."
+          }
+        },
+        {
+          "heading": "Cum se calculează IMC",
+          "body": [
+            "IMC este greutatea ta în kilograme împărțită la pătratul înălțimii în metri. Aceasta este toată formula — nu intervin vârsta, sexul sau compoziția corporală.",
+            "Exemplu concret: o persoană de 1,75 m care cântărește 78 kg are un IMC de 78 ÷ (1,75 × 1,75) = 25,5, ceea ce se încadrează la supraponderal.",
+            "Valorile imperiale sunt convertite mai întâi (1 stone = 6,35 kg, 1 inch = 2,54 cm), așa că rezultatul este identic în oricare sistem."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Ce nu îți spune IMC",
+          "body": [
+            "IMC este un număr de screening, nu un diagnostic. Este util tocmai pentru că este simplu — sunt suficiente o ruletă și un cântar — dar aici este și limita lui."
+          ],
+          "bullets": [
+            "Nu separă mușchiul de grăsime. Persoanele foarte musculoase sunt clasificate frecvent ca supraponderale.",
+            "Ignoră locul unde se depune grăsimea. Circumferința taliei prezice riscul cardiometabolic mai bine decât IMC.",
+            "Nu este validat pentru sarcină — folosește IMC-ul dinainte de sarcină pentru planificarea îngrijirii.",
+            "Copiii și adolescenții au nevoie de curbe de percentile în funcție de vârstă și sex, nu de intervalele pentru adulți de mai sus.",
+            "La adulții peste 65 de ani, un IMC ușor peste 25 nu este asociat în mod constant cu rezultate mai slabe."
+          ]
+        },
+        {
+          "heading": "Când să discuți cu un medic despre greutatea ta",
+          "body": [],
+          "bullets": [
+            "Ai slăbit sau te-ai îngrășat fără să îți propui.",
+            "IMC-ul tău este 30 sau peste, ori 25 și peste împreună cu tensiune arterială mare, colesterol crescut sau glicemie crescută.",
+            "Ești în curs de investigare, sau deja tratat, pentru diabet de tip 2, apnee în somn, sindromul ovarelor polichistice sau ficat gras.",
+            "Vrei să discuți despre management al greutății sub supraveghere medicală, în locul unei alte diete."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Care este un IMC sănătos pentru un adult?",
+          "answer": "Pentru majoritatea adulților între 18 și 65 de ani, Organizația Mondială a Sănătății consideră sănătos un IMC între 18,5 și 24,9. Peste 25 se încadrează la supraponderal, iar 30 sau peste la obezitate. Sunt praguri populaționale, așa că o singură valoare este un motiv să analizezi mai departe, nu un verdict."
+        },
+        {
+          "question": "IMC se calculează diferit la bărbați și la femei?",
+          "answer": "Nu. Formula și categoriile pentru adulți sunt identice. Femeile au în general un procent mai mare de grăsime corporală decât bărbații la același IMC, iar acesta este unul dintre motivele pentru care cifra este doar un punct de plecare."
+        },
+        {
+          "question": "Cât de precis este un calculator IMC?",
+          "answer": "Calculul în sine este exact — incertitudinea ține de ceea ce măsoară IMC. Se corelează rezonabil cu grăsimea corporală la nivel de populație, dar poate încadra greșit indivizi, în special sportivi, vârstnici și persoane cu multă masă musculară."
+        },
+        {
+          "question": "Ce fac dacă IMC-ul meu este în intervalul de obezitate?",
+          "answer": "Verifică-ți tensiunea arterială, colesterolul și glicemia și discută cu un medic despre un plan pe care îl poți susține. Managementul greutății cu evaluare medicală funcționează considerabil mai bine decât o dietă ținută pe cont propriu."
+        },
+        {
+          "question": "Acest calculator IMC îmi stochează datele?",
+          "answer": "Nu. Calculul se face integral în browserul tău. Nimic din ce introduci nu este trimis către serverele noastre și nu este salvat."
+        },
+        {
+          "question": "Am nevoie de un IMC ca să primesc tratament pentru scădere în greutate?",
+          "answer": "Medicii folosesc de obicei IMC ca unul dintre criteriile de intrare în programele de management al greutății, de regulă alături de istoricul tău medical și de eventualele afecțiuni asociate greutății. Medicul tău îți va confirma ce se aplică în cazul tău."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei să discuți rezultatul?",
+        "body": "Programează o consultație video cu un medic înregistrat și primește un plan construit pe istoricul tău, nu pe un număr.",
+        "label": "Programează o consultație"
+      }
+    }
+  }
+}

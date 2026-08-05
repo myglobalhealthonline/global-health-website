@@ -20,6 +20,7 @@ import {
 } from "@/lib/routing/country-slug";
 import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 import { buildBookHref } from "@/lib/routing/book-href";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 import type { SiteNavigationData } from "@/data/navigation";
 import {
@@ -151,8 +152,17 @@ export function SiteFooter({
     { label: navigation.footerMyAccount, href: "/account" },
   ];
 
+  // Free BMI calculator. Label comes from the tools bundle rather than
+  // SiteNavigationData because that is where the rest of the tools copy lives;
+  // it is translated in all six locales. Points at the tool itself — there is
+  // no /tools hub until a second calculator ships.
+  const bmiLabel = loadLocaleBundle(resolveLocale({ explicitLocale: parsed.lang })).tools.tools[
+    "bmi-calculator"
+  ].cardTitle;
+
   const companyLinks = [
     { label: navigation.navBlog, href: careBase ? `${careBase}/blog` : "/blog" },
+    { label: bmiLabel, href: `${careScope}/tools/bmi-calculator` },
     { label: navigation.navFaq, href: "/faq" },
     // Inside a country scope, link that market's own About and contact pages
     // (its NAP, registration, languages and regulatory FAQs) rather than the
