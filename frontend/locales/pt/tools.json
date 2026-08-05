@@ -308,7 +308,7 @@
       "h1Lead": "Tabela de",
       "h1Accent": "tensão arterial",
       "h1Trail": "{country}",
-      "metaTitle": "Tabela de Tensão Arterial {country} | O Que Significa",
+      "metaTitle": "Tensão Arterial Normal {country} | Tabela de Valores",
       "metaDescription": "Compare os seus valores de tensão sistólica e diastólica com a tabela europeia para adultos. Veja a categoria, o que significa e que leituras exigem cuidados médicos no próprio dia.",
       "lede": "Introduza os dois números do seu medidor para ver onde fica a leitura na tabela europeia para adultos — e o que fazer, se houver alguma coisa a fazer.",
       "trustPoints": [
@@ -470,7 +470,7 @@
       "h1Lead": "Calculadora",
       "h1Accent": "de IMC",
       "h1Trail": "{country}",
-      "metaTitle": "Calculadora de IMC {country} | Calcular o IMC Online",
+      "metaTitle": "Calculadora IMC {country} | Calcular IMC Online",
       "metaDescription": "Calcule o seu índice de massa corporal em segundos. Sistema métrico ou imperial, categorias da OMS para adultos e o que o resultado significa na prática.",
       "lede": "Introduza a sua altura e o seu peso para ver o índice de massa corporal e onde se situa na escala da Organização Mundial de Saúde para adultos.",
       "trustPoints": [
@@ -610,7 +610,7 @@
       "h1Lead": "Calculadora",
       "h1Accent": "de calorias",
       "h1Trail": "{country}",
-      "metaTitle": "Calculadora de Calorias {country} | Calorias Diárias",
+      "metaTitle": "Calculadora Calorias {country} | Calorias Diárias",
       "metaDescription": "Calcule quantas calorias precisa por dia para manter, perder ou ganhar peso. Equação de Mifflin-St Jeor, cinco níveis de atividade e o que os números significam na prática.",
       "lede": "Introduza o sexo, a idade, a altura, o peso e o seu nível de atividade para ver quantas calorias gasta por dia — e quantas comer para manter, perder ou ganhar peso.",
       "trustPoints": [
@@ -747,7 +747,7 @@
       "h1Lead": "Calculadora da",
       "h1Accent": "data do parto",
       "h1Trail": "{country}",
-      "metaTitle": "Calculadora da Data do Parto {country} | Semanas de Gravidez",
+      "metaTitle": "Calculadora de Gravidez {country} | Semanas e Data do Parto",
       "metaDescription": "Calcule a data provável do parto e de quantas semanas está a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com as 40 semanas em detalhe.",
       "lede": "Indique o primeiro dia da última menstruação para ver a data provável do parto, em que semana está hoje e quando começa cada trimestre.",
       "trustPoints": [
@@ -906,7 +906,7 @@
       "h1Lead": "Calculadora de",
       "h1Accent": "ovulação",
       "h1Trail": "{country}",
-      "metaTitle": "Calculadora de Ovulação {country} | Dias Férteis e Ovulação",
+      "metaTitle": "Período Fértil {country} | Calculadora de Ovulação",
       "metaDescription": "Calcule os seus dias férteis e o dia previsto de ovulação a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com os seis dias mais férteis em detalhe.",
       "lede": "Indique o primeiro dia da última menstruação para ver os seis dias com maior probabilidade de engravidar, o dia previsto de ovulação e quando é esperada a próxima menstruação.",
       "trustPoints": [

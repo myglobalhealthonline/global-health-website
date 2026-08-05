@@ -130,6 +130,12 @@ const WOMEN_TERMS = [
   "gyn",
   "mulher",
   "mujer",
+  // Spain sells `salud-femenina-online`, which "femei" (Romanian, for
+  // `sanatatea-femeii-online`) does not cover — "femenina" has an n where
+  // "femei" has an i. Spain was the one market whose women's-health page
+  // linked neither pregnancy calculator. "femen" covers es/pt feminina and
+  // "femei" stays for Romanian.
+  "femen",
   "femei",
   "žen",
   "frauen",

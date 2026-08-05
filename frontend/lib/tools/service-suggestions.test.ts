@@ -47,6 +47,25 @@ describe("toolSlugsForService", () => {
     ]);
   });
 
+  /**
+   * One entry per market's live women's-health slug. Spain's
+   * `salud-femenina-online` matched nothing until 2026-08-06 — "femei" is the
+   * Romanian stem and has an i where Spanish has an n — so Spain was the only
+   * market linking neither pregnancy calculator.
+   */
+  it("matches every market's women's-health service", () => {
+    for (const slug of [
+      "womens-health-consultation", // ie
+      "saude-da-mulher-online", // br
+      "saude-da-mulher", // pt
+      "salud-femenina-online", // es
+      "zenske-zdravi-online", // cz
+      "sanatatea-femeii-online", // ro
+    ]) {
+      expect(toolSlugsForService({ slug, name: "" })).toContain("due-date-calculator");
+    }
+  });
+
   it("matches on the service NAME when the slug carries no topic term", () => {
     expect(
       toolSlugsForService({ slug: "consulta-online-123", name: "Consulta de cardiologia" }),
