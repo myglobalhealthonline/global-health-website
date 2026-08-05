@@ -1,5 +1,9 @@
 import { env } from "../../config/env.js";
-import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
+import {
+  sendWhatsAppText,
+  sendWhatsAppGroupText,
+  formatWhatsAppSendError,
+} from "../../lib/whatsapp/wasender.js";
 import { wrapHtml } from "../../lib/email/templates.js";
 import { createAutomationRun, finishAutomationRun } from "./automation-run.service.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
@@ -46,6 +50,9 @@ const HEADLINE: Record<AdminBookingAlertEvent, string> = {
 };
 
 const WITHHELD_PATIENT_LABEL = "Withheld (patient declined WhatsApp updates)";
+
+/** Extra WhatsApp group that mirrors the booking-confirmed alert only. */
+const BOOKING_CONFIRMED_GROUP_JID = "120363413688325038@g.us";
 
 function parseRecipients(raw: string | undefined): string[] {
   if (!raw?.trim()) return [];
@@ -178,6 +185,44 @@ export async function sendAdminBookingAlert(
         summary,
         error: err instanceof Error ? err.message : String(err),
       }).catch(() => undefined);
+    }
+  }
+
+  if (event === "payment_confirmed") {
+    const run = await createAutomationRun({
+      automationKey: `${automationKeyPrefix}_admin_whatsapp_group`,
+      orderId,
+      channel: "whatsapp",
+      recipient: BOOKING_CONFIRMED_GROUP_JID,
+      summary,
+      status: "RUNNING",
+    }).catch(() => null);
+    try {
+      const result = await sendWhatsAppGroupText({ to: BOOKING_CONFIRMED_GROUP_JID, message: text });
+      if (run) {
+        if (!result.ok && !result.skipped) {
+          await finishAutomationRun(run.id, {
+            status: "FAILED",
+            summary,
+            error: formatWhatsAppSendError(result),
+            recipient: BOOKING_CONFIRMED_GROUP_JID,
+          });
+        } else {
+          await finishAutomationRun(run.id, {
+            status: result.skipped ? "SKIPPED" : "SUCCESS",
+            summary: result.skipped ? `${summary} (WhatsApp not configured)` : summary,
+            recipient: BOOKING_CONFIRMED_GROUP_JID,
+          });
+        }
+      }
+    } catch (err) {
+      if (run) {
+        await finishAutomationRun(run.id, {
+          status: "FAILED",
+          summary,
+          error: err instanceof Error ? err.message : String(err),
+        }).catch(() => undefined);
+      }
     }
   }
 
