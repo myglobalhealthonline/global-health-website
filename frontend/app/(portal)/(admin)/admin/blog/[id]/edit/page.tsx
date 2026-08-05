@@ -131,6 +131,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         content: (formData.get(`tr_${code}_content`) as string)?.trim() || null,
         seoTitle: (formData.get(`tr_${code}_seoTitle`) as string)?.trim() || null,
         seoDesc: (formData.get(`tr_${code}_seoDesc`) as string)?.trim() || null,
+        coverImageAlt: (formData.get(`tr_${code}_coverImageAlt`) as string)?.trim() || null,
       });
       if (!result.ok) {
         redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${code}: ${result.message}`)}`);
@@ -259,6 +260,9 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
                 content: post.body,
                 seoTitle: post.seoTitle,
                 seoDesc: post.seoDescription,
+                // The original's cover alt is the asset's own altText, edited
+                // with the image up in the cover field — not repeated here.
+                coverImageAlt: post.coverAsset?.altText ?? null,
               }}
               initialTranslations={translations.map((t) => ({
                 locale: t.locale,
@@ -268,6 +272,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
                 content: t.content,
                 seoTitle: t.seoTitle,
                 seoDesc: t.seoDesc,
+                coverImageAlt: t.coverImageAlt,
               }))}
             />
           </div>

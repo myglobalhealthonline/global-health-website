@@ -18,12 +18,14 @@
  * broken image with no error anywhere — the trap that cost a round on the
  * service-image seed (see scripts/applied/seed-service-images.ts).
  *
- * Alt text is per-ASSET, not per-translation: BlogTranslation has no image
- * fields, so all six locale variants of an article share one alt string. It is
- * written in the article's own authored locale — the variant with the market's
- * search demand behind it. Where alt is null the public page falls back to the
- * displayed title (blog-post-page.tsx), so the other locales degrade to
- * something correct rather than to nothing.
+ * Alt text is per LOCALE. One image serves all six languages of an article,
+ * but its description is prose and belongs in the language of the page around
+ * it. The article's authored locale reads Asset.altText (set here, edited with
+ * the image in the admin); every other locale reads
+ * BlogTranslation.coverImageAlt, whose strings live in
+ * scripts/data/blog-cover-alts-2026-08.ts. Missing either one, the public page
+ * falls back to the asset's alt and then to the displayed title
+ * (blog-post-page.tsx), so a gap degrades to something correct.
  *
  * Existing covers are never replaced: a post that already has a cover this
  * script did not set is reported and skipped, so an admin's choice wins.
@@ -32,6 +34,7 @@ import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import { prisma } from "../src/db/prisma.js";
 import { isMediaStorageConfigured, putObject } from "../src/services/object-storage.js";
+import { COVER_ALTS } from "./data/blog-cover-alts-2026-08.js";
 import type { LocaleCode } from "@prisma/client";
 
 const APPLY = process.argv.includes("--apply");
@@ -265,7 +268,7 @@ async function main(): Promise<void> {
 
   // ---- resolve everything before writing anything ----
   const errors: string[] = [];
-  const prepared: Array<{ cover: Cover; postId: string; postTitle: string; webp: Buffer; source: number; width: number; height: number; existingCover: { key: string } | null }> = [];
+  const prepared: Array<{ cover: Cover; postId: string; postTitle: string; webp: Buffer | null; source: number; width: number; height: number; existingCover: { key: string } | null }> = [];
 
   for (const cover of targets) {
     const post = await prisma.blogPost.findFirst({
@@ -277,29 +280,41 @@ async function main(): Promise<void> {
       continue;
     }
 
-    let source: Buffer;
+    // The generated PNGs live outside the repo and get cleared out of
+    // Downloads eventually. Once an image is in the bucket the source is no
+    // longer needed: a re-run then refreshes the metadata and the per-locale
+    // alt text without re-uploading. Only a cover that exists in NEITHER place
+    // is an error.
+    let source: Buffer | null = null;
     try {
       source = await readFile(`${SOURCE_DIR}/${cover.file}`);
     } catch {
-      errors.push(`${cover.file}: file not found in ${SOURCE_DIR}`);
-      continue;
+      const existingAsset = await prisma.asset.findUnique({
+        where: { kind_key: { kind: "IMAGE", key: assetKey(cover.name) } },
+        select: { id: true },
+      });
+      if (!existingAsset) {
+        errors.push(`${cover.file}: not in ${SOURCE_DIR} and never uploaded — nothing to seed`);
+        continue;
+      }
     }
 
-    const pipeline = sharp(source, { animated: false }).resize({
-      width: MAX_WIDTH,
-      withoutEnlargement: true,
-    });
-    const webp = await pipeline.webp({ quality: WEBP_QUALITY }).toBuffer();
-    const meta = await sharp(webp).metadata();
+    const webp = source
+      ? await sharp(source, { animated: false })
+          .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+          .webp({ quality: WEBP_QUALITY })
+          .toBuffer()
+      : null;
+    const meta = webp ? await sharp(webp).metadata() : null;
 
     prepared.push({
       cover,
       postId: post.id,
       postTitle: post.title,
       webp,
-      source: source.length,
-      width: meta.width ?? 0,
-      height: meta.height ?? 0,
+      source: source?.length ?? 0,
+      width: meta?.width ?? 0,
+      height: meta?.height ?? 0,
       existingCover: post.coverAsset,
     });
   }
@@ -312,7 +327,7 @@ async function main(): Promise<void> {
   }
 
   // ---- report + write ----
-  let created = 0, updated = 0, skipped = 0;
+  let created = 0, updated = 0, skipped = 0, altsWritten = 0;
 
   for (const item of prepared) {
     const { cover, postId, postTitle, webp, source, width, height, existingCover } = item;
@@ -322,8 +337,13 @@ async function main(): Promise<void> {
 
     console.log(`${cover.file} → ${cover.postLocale} ${cover.postSlug}`);
     console.log(`    "${postTitle}"`);
-    console.log(`    ${width}×${height} · ${kb(source)} PNG → ${kb(webp.length)} WebP · /api/media/${key}`);
-    console.log(`    alt: ${cover.altText}`);
+    console.log(
+      webp
+        ? `    ${width}×${height} · ${kb(source)} PNG → ${kb(webp.length)} WebP · /api/media/${key}`
+        : `    already uploaded, source gone — metadata and alt text only · /api/media/${key}`,
+    );
+    console.log(`    alt (${cover.postLocale}): ${cover.altText}`);
+    console.log(`    per-locale alt: ${Object.keys(COVER_ALTS[cover.name] ?? {}).join(", ") || "none"}`);
     if (foreignCover) {
       console.log(`    ! post already has a different cover (${existingCover.key}) — leaving it alone`);
     }
@@ -339,7 +359,7 @@ async function main(): Promise<void> {
       continue;
     }
 
-    await putObject(key, webp, "image/webp");
+    if (webp) await putObject(key, webp, "image/webp");
 
     const assetData = {
       path: `/api/media/${key}`,
@@ -359,6 +379,26 @@ async function main(): Promise<void> {
 
     await prisma.blogPost.update({ where: { id: postId }, data: { coverAssetId: asset.id } });
     if (existingCover) updated++; else created++;
+
+    // Per-locale alt text. The asset's own altText covers the article's
+    // authored locale; every other locale reads BlogTranslation.coverImageAlt,
+    // so a Czech reader gets a Czech description of the same photograph.
+    // A locale with no translation row yet is skipped rather than created —
+    // the article seeder owns those rows.
+    const alts = COVER_ALTS[cover.name] ?? {};
+    for (const [locale, alt] of Object.entries(alts)) {
+      if (locale === cover.postLocale) continue;
+      const translation = await prisma.blogTranslation.findUnique({
+        where: { postId_locale: { postId, locale } },
+        select: { id: true },
+      });
+      if (!translation) {
+        console.log(`    ! no ${locale} translation row — alt text skipped`);
+        continue;
+      }
+      await prisma.blogTranslation.update({ where: { id: translation.id }, data: { coverImageAlt: alt } });
+      altsWritten++;
+    }
     console.log("");
   }
 

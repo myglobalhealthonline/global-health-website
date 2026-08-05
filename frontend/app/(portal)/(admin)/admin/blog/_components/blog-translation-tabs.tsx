@@ -12,6 +12,8 @@ export type BlogTranslationInitial = {
   content: string | null;
   seoTitle: string | null;
   seoDesc: string | null;
+  /** Alt text for the shared cover image, in this locale. */
+  coverImageAlt: string | null;
 };
 
 type Props = {
@@ -70,12 +72,16 @@ export function BlogTranslationTabs({ locales, originalLocale, original, initial
         content: null,
         seoTitle: null,
         seoDesc: null,
+        coverImageAlt: null,
       }
     );
   }
 
   /** Field names differ for the original: it is the post itself. */
-  function fieldName(code: string, field: "title" | "slug" | "excerpt" | "body" | "seoTitle" | "seoDesc") {
+  function fieldName(
+    code: string,
+    field: "title" | "slug" | "excerpt" | "body" | "seoTitle" | "seoDesc" | "coverImageAlt",
+  ) {
     if (code !== upperOriginal) {
       return `tr_${code}_${field === "body" ? "content" : field}`;
     }
@@ -183,9 +189,32 @@ export function BlogTranslationTabs({ locales, originalLocale, original, initial
               </label>
             </div>
 
+            {/* The cover image is one asset shared by every language, but its
+                alt text is prose and has to be read in the language of the
+                page around it. The original's alt lives with the image itself,
+                up in the cover field — this is the same string for the other
+                languages. Left blank, the page falls back to the original's
+                alt and then to the displayed title. */}
+            {!isOriginal && (
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Cover image alt text</span>
+                <input
+                  type="text"
+                  name={fieldName(code, "coverImageAlt")}
+                  defaultValue={v.coverImageAlt ?? ""}
+                  className="gh-input min-w-0"
+                  maxLength={300}
+                  placeholder={`Describe the cover image in ${localeLabel(code)}`}
+                />
+                <span className="text-portal-meta text-[var(--color-text-muted)]">
+                  Same image, described in this language. Blank falls back to the original.
+                </span>
+              </label>
+            )}
+
             <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
               {isOriginal
-                ? "This is the article itself. Changing its language is done under Publish below."
+                ? "This is the article itself. Its cover image and alt text are set above, under the cover field."
                 : exists
                   ? "Clearing both the title and the slug removes this language when you save."
                   : "Title and slug are both required to create this language. A body is needed before it can be served."}

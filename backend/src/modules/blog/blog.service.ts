@@ -295,6 +295,7 @@ export async function upsertBlogTranslation(
     content?: string | null;
     seoTitle?: string | null;
     seoDesc?: string | null;
+    coverImageAlt?: string | null;
   },
 ) {
   // Translation bodies are rendered on the public site exactly like a post
@@ -445,6 +446,7 @@ type BlogTranslationRow = {
   content: string | null;
   seoTitle: string | null;
   seoDesc: string | null;
+  coverImageAlt: string | null;
 };
 
 /** A translation only counts as servable when it actually has a body — a row
@@ -498,7 +500,11 @@ function toPublicBlogPost(row: {
     publishedAt: (row.publishedAt ?? row.createdAt).toISOString(),
     lastReviewedAt: row.lastReviewedAt ? row.lastReviewedAt.toISOString() : null,
     coverImageUrl: row.coverAsset?.path ?? null,
-    coverImageAlt: row.coverAsset?.altText ?? null,
+    // The cover image is one asset shared by every locale, but its alt text
+    // is prose: serve the active locale's own string, fall back to the
+    // asset's (written in the article's authored language), then to null —
+    // where the public page substitutes the displayed title.
+    coverImageAlt: active?.coverImageAlt ?? row.coverAsset?.altText ?? null,
     seoTitle: active?.seoTitle ?? row.seoTitle,
     seoDescription: active?.seoDesc ?? row.seoDescription,
     authorDoctor: toBlogDoctor(row.authorDoctor),
@@ -533,7 +539,7 @@ const publicBlogSelect = {
   body: true,
   locale: true,
   translations: {
-    select: { locale: true, title: true, slug: true, excerpt: true, content: true, seoTitle: true, seoDesc: true },
+    select: { locale: true, title: true, slug: true, excerpt: true, content: true, seoTitle: true, seoDesc: true, coverImageAlt: true },
     orderBy: { locale: "asc" as const },
   },
   countries: { select: { country: { select: { code: true, slug: true } } } },

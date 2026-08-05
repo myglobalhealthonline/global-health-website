@@ -3174,6 +3174,11 @@ model BlogTranslation {
   content   String?
   seoTitle  String?
   seoDesc   String?
+  /// Alt text for the post's cover image, in THIS locale. The image itself is
+  /// shared across every locale (BlogPost.coverAssetId), but its description
+  /// is prose and has to be read in the language of the page around it.
+  /// Falls back to Asset.altText, then to the displayed title.
+  coverImageAlt String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
