@@ -305,10 +305,10 @@
       "cardTitle": "Tabla de tensión arterial",
       "cardBlurb": "Qué significan tus dos números en la tabla europea de tensión arterial para adultos.",
       "eyebrow": "Herramienta gratuita",
-      "h1Lead": "Tabla de",
-      "h1Accent": "tensión arterial",
+      "h1Lead": "Tensión arterial",
+      "h1Accent": "normal",
       "h1Trail": "{country}",
-      "metaTitle": "Tabla de Tensión Arterial {country} | Qué Significa Tu Lectura",
+      "metaTitle": "Tensión Arterial Normal {country} | Tabla de Valores",
       "metaDescription": "Compara tus valores de tensión sistólica y diastólica con la tabla europea para adultos. Descubre la categoría, qué significa y qué lecturas necesitan atención médica el mismo día.",
       "lede": "Introduce los dos números de tu tensiómetro para ver dónde queda la lectura en la tabla europea para adultos y qué conviene hacer, si es que hay que hacer algo.",
       "trustPoints": [
@@ -468,9 +468,9 @@
       "cardBlurb": "Índice de masa corporal a partir de tu altura y tu peso, en la escala de la OMS para adultos.",
       "eyebrow": "Herramienta gratuita",
       "h1Lead": "Calculadora",
-      "h1Accent": "de IMC",
+      "h1Accent": "IMC",
       "h1Trail": "{country}",
-      "metaTitle": "Calculadora de IMC {country} | Calcular tu IMC",
+      "metaTitle": "Calculadora IMC {country} | Calcular tu Índice de Masa Corporal",
       "metaDescription": "Calcula tu índice de masa corporal en segundos. Sistema métrico o imperial, categorías de la OMS para adultos y qué significa realmente tu resultado.",
       "lede": "Introduce tu altura y tu peso para ver tu índice de masa corporal y en qué punto de la escala de la Organización Mundial de la Salud para adultos se sitúa.",
       "trustPoints": [
@@ -741,13 +741,13 @@
       }
     },
     "due-date-calculator": {
-      "cardTitle": "Calculadora de la fecha de parto",
+      "cardTitle": "Calculadora de embarazo",
       "cardBlurb": "Tu fecha probable de parto, de cuántas semanas estás y las semanas que cuentan por el camino.",
       "eyebrow": "Herramienta gratuita",
-      "h1Lead": "Calculadora de la",
-      "h1Accent": "fecha de parto",
+      "h1Lead": "Calculadora de",
+      "h1Accent": "embarazo",
       "h1Trail": "{country}",
-      "metaTitle": "Calculadora de la Fecha de Parto {country} | Semanas de Embarazo",
+      "metaTitle": "Calculadora de Embarazo {country} | Fecha de Parto y Semanas",
       "metaDescription": "Calcula tu fecha probable de parto y de cuántas semanas estás a partir del primer día de tu última regla. Se ajusta a la duración de tu ciclo, con las 40 semanas al detalle.",
       "lede": "Indica el primer día de tu última regla para ver tu fecha probable de parto, en qué semana estás hoy y cuándo empieza cada trimestre.",
       "trustPoints": [

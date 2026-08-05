@@ -305,10 +305,10 @@
       "cardTitle": "Tabulka krevního tlaku",
       "cardBlurb": "Co vaše dvě čísla znamenají v evropské tabulce krevního tlaku pro dospělé.",
       "eyebrow": "Bezplatný nástroj",
-      "h1Lead": "Tabulka",
-      "h1Accent": "krevního tlaku",
+      "h1Lead": "Normální",
+      "h1Accent": "krevní tlak",
       "h1Trail": "{country}",
-      "metaTitle": "Tabulka Krevního Tlaku {country} | Co Znamená Vaše Hodnota",
+      "metaTitle": "Normální Krevní Tlak {country} | Tabulka Hodnot pro Dospělé",
       "metaDescription": "Porovnejte systolický a diastolický tlak s evropskou tabulkou pro dospělé. Zjistěte kategorii, co znamená a které hodnoty vyžadují lékařskou péči ještě týž den.",
       "lede": "Zadejte dvě čísla ze svého tlakoměru a uvidíte, kam hodnota patří v evropské tabulce pro dospělé — a co s tím případně dělat.",
       "trustPoints": [
@@ -741,13 +741,13 @@
       }
     },
     "due-date-calculator": {
-      "cardTitle": "Kalkulačka termínu porodu",
+      "cardTitle": "Těhotenská kalkulačka",
       "cardBlurb": "Předpokládaný termín porodu, v kolikátém týdnu jste a týdny, na kterých mezitím záleží.",
       "eyebrow": "Bezplatný nástroj",
-      "h1Lead": "Kalkulačka",
-      "h1Accent": "termínu porodu",
+      "h1Lead": "Těhotenská",
+      "h1Accent": "kalkulačka",
       "h1Trail": "{country}",
-      "metaTitle": "Kalkulačka Termínu Porodu {country} | Týdny Těhotenství",
+      "metaTitle": "Těhotenská Kalkulačka {country} | Termín Porodu a Týdny",
       "metaDescription": "Spočítejte si předpokládaný termín porodu a v kolikátém týdnu těhotenství jste, podle prvního dne poslední menstruace. Zohledňuje délku vašeho cyklu, včetně přehledu všech 40 týdnů.",
       "lede": "Zadejte první den poslední menstruace a uvidíte předpokládaný termín porodu, v kolikátém týdnu jste dnes a kdy začíná každý trimestr.",
       "trustPoints": [

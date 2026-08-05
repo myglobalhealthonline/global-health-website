@@ -305,10 +305,10 @@
       "cardTitle": "Tabel tensiune arterială",
       "cardBlurb": "Ce înseamnă cele două valori ale tale în tabelul european al tensiunii arteriale pentru adulți.",
       "eyebrow": "Instrument gratuit",
-      "h1Lead": "Tabel",
-      "h1Accent": "tensiune arterială",
+      "h1Lead": "Tensiune arterială",
+      "h1Accent": "normală",
       "h1Trail": "{country}",
-      "metaTitle": "Tabel Tensiune Arterială {country} | Ce Înseamnă Valorile Tale",
+      "metaTitle": "Tensiune Arterială Normală {country} | Tabel de Valori",
       "metaDescription": "Compară tensiunea sistolică și diastolică cu tabelul european pentru adulți. Vezi categoria, ce înseamnă și ce valori au nevoie de îngrijire medicală în aceeași zi.",
       "lede": "Introdu cele două numere de pe tensiometru ca să vezi unde se încadrează valoarea în tabelul european pentru adulți — și ce ai de făcut, dacă ai ceva de făcut.",
       "trustPoints": [

@@ -990,6 +990,10 @@ export function getMarketFaq(
  * the shared `pt` copy.
  */
 const BR_PT_BMI: DeepPartial<ToolCopy> = {
+  // `calculadora imc` is 246,000/mo in Brazil against 49,500 for `calculadora
+  // DE imc` — the shared `pt` copy targets the smaller of the two variants.
+  h1Accent: "IMC",
+  metaTitle: "Calculadora IMC {country} | Calcular o IMC Online",
   metaDescription:
     "Calcule seu índice de massa corporal em segundos. Sistema métrico ou imperial, categorias da OMS para adultos e o que o resultado significa na prática.",
   lede: "Insira sua altura e seu peso para ver o índice de massa corporal e onde ele se situa na escala da Organização Mundial da Saúde para adultos.",
@@ -1237,9 +1241,13 @@ const BR_PT_BP: DeepPartial<ToolCopy> = {
   cardTitle: "Tabela de pressão arterial",
   cardBlurb:
     "O que os seus dois números significam na tabela de pressão arterial para adultos.",
-  h1Lead: "Tabela de",
-  h1Accent: "pressão arterial",
-  metaTitle: "Tabela de Pressão Arterial {country} | O Que Significa Sua Medida",
+  // `pressão arterial normal` is 22,200/mo at KD 1 in Brazil against 2,900 for
+  // `tabela de pressão arterial` — and the SERP for it is exactly this page
+  // type (explainer carrying a value table), not a calculator. The chart stays
+  // in the tail and in `cardTitle`, which is what the nav and breadcrumb use.
+  h1Lead: "Pressão arterial",
+  h1Accent: "normal",
+  metaTitle: "Pressão Arterial Normal {country} | Tabela de Valores",
   metaDescription:
     "Compare sua pressão sistólica e diastólica com a tabela para adultos. Veja a categoria, o que ela significa e quais medidas exigem atendimento médico no mesmo dia.",
   lede: "Insira os dois números do seu aparelho para ver onde a medida se encaixa na tabela para adultos — e o que fazer, se houver algo a fazer.",
@@ -1383,9 +1391,13 @@ const BR_PT_DUE_DATE: DeepPartial<ToolCopy> = {
     "A data provável do parto, quantas semanas de gestação você tem e as semanas que importam no caminho.",
   h1Lead: "Calculadora",
   h1Accent: "gestacional",
-  metaTitle: "Calculadora Gestacional {country} | Data Provável do Parto",
+  // `calculadora gestacional` is 135,000/mo at KD 0 and the SERP is full of
+  // single-clinic domains, so this is the most winnable page we have. Seven of
+  // the top twenty title themselves "calculadora de IDADE gestacional" — the
+  // phrase belongs in the tail rather than only in the body copy.
+  metaTitle: "Calculadora Gestacional {country} | Idade Gestacional e DPP",
   metaDescription:
-    "Calcule a data provável do parto e quantas semanas de gestação você tem a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com as 40 semanas detalhadas.",
+    "Calcule a idade gestacional e a data provável do parto (DPP) a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com as 40 semanas detalhadas.",
   lede: "Informe o primeiro dia da última menstruação para ver a data provável do parto, em qual semana você está hoje e quando começa cada trimestre.",
   trustPoints: [
     "Ajusta-se a ciclos de 20 a 45 dias",
@@ -1540,7 +1552,12 @@ const BR_PT_DUE_DATE: DeepPartial<ToolCopy> = {
 const BR_PT_OVULATION: DeepPartial<ToolCopy> = {
   cardBlurb:
     "Seu período fértil, o dia previsto da ovulação e quando a próxima menstruação deve vir.",
-  metaTitle: "Calculadora de Ovulação {country} | Período Fértil e Dia da Ovulação",
+  // `período fértil` is 90,500/mo at KD 1 in Brazil; `calculadora de ovulação`
+  // has no measurable volume there. The tool keeps its name in `cardTitle` for
+  // the nav and the related strip — only the search-facing surfaces flip.
+  h1Lead: "Período",
+  h1Accent: "fértil",
+  metaTitle: "Período Fértil {country} | Calculadora de Ovulação",
   metaDescription:
     "Calcule seu período fértil e o dia previsto da ovulação a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com os seis dias mais férteis detalhados.",
   lede: "Insira o primeiro dia da última menstruação para ver os seis dias com maior chance de engravidar, o dia previsto da ovulação e quando a próxima menstruação deve vir.",
