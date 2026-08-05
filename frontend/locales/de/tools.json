@@ -304,7 +304,8 @@
         "heading": "Möchten Sie Ihr Ergebnis besprechen?",
         "body": "Buchen Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt, gehen Sie Ihre Vorgeschichte und die Erkrankungen durch, die wie ADHS aussehen können, und erfahren Sie, was eine Abklärung bedeutet.",
         "label": "Termin buchen"
-      }
+      },
+      "suggestionsIntro": "Ein Screening-Ergebnis ist ein Grund für eine Abklärung, keine Diagnose. Diese Sprechstunden gehen den nächsten Schritt."
     },
     "blood-pressure-chart": {
       "cardTitle": "Blutdrucktabelle",
@@ -901,7 +902,8 @@
         "heading": "Fragen in der Frühschwangerschaft?",
         "body": "Sprechen Sie per Video mit einer registrierten Ärztin oder einem registrierten Arzt über Beschwerden, Medikamente, die Sie schon nehmen, oder alles, was nicht bis zum ersten Vorsorgetermin warten soll.",
         "label": "Termin buchen"
-      }
+      },
+      "suggestionsIntro": "Ein errechneter Termin ist der Anfang der Schwangerschaftsvorsorge, nicht das Ganze. Diese Sprechstunden gehen den nächsten Schritt."
     },
     "ovulation-calculator": {
       "cardTitle": "Eisprungrechner",

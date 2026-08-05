@@ -304,7 +304,8 @@
         "heading": "Vrei să discuți rezultatul?",
         "body": "Programează o consultație video cu un medic înregistrat, parcurge-ți istoricul și afecțiunile care pot semăna cu ADHD-ul și află ce ar presupune o evaluare.",
         "label": "Programează o consultație"
-      }
+      },
+      "suggestionsIntro": "Un rezultat de screening este un motiv să faci o evaluare, nu un diagnostic. Acestea sunt consultațiile care pot duce lucrurile mai departe."
     },
     "blood-pressure-chart": {
       "cardTitle": "Tabel tensiune arterială",
@@ -901,7 +902,8 @@
         "heading": "Întrebări la începutul sarcinii?",
         "body": "Discută prin video cu un medic înregistrat despre simptome, medicamentele pe care le iei deja sau orice nu vrei să aștepte până la prima consultație.",
         "label": "Programează o consultație"
-      }
+      },
+      "suggestionsIntro": "O dată estimată este începutul îngrijirii prenatale, nu toată îngrijirea. Acestea sunt consultațiile care duc lucrurile mai departe."
     },
     "ovulation-calculator": {
       "cardTitle": "Calculator de ovulație",

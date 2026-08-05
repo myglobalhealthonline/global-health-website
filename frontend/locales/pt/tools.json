@@ -304,7 +304,8 @@
         "heading": "Quer discutir o seu resultado?",
         "body": "Marque uma videoconsulta com um médico registado, reveja a sua história e as situações que podem parecer PHDA, e perceba o que envolveria uma avaliação.",
         "label": "Marcar consulta"
-      }
+      },
+      "suggestionsIntro": "Um resultado de rastreio é um motivo para ser avaliado, não um diagnóstico. Estas são as consultas que podem dar o passo seguinte."
     },
     "blood-pressure-chart": {
       "cardTitle": "Tabela de tensão arterial",
@@ -901,7 +902,8 @@
         "heading": "Dúvidas no início da gravidez?",
         "body": "Fale por vídeo com um médico registado sobre sintomas, a medicação que já toma ou aquilo que preferir não deixar para a primeira consulta.",
         "label": "Marcar consulta"
-      }
+      },
+      "suggestionsIntro": "Uma data estimada é o início da vigilância da gravidez, não o seu todo. Estas são as consultas que dão o passo seguinte."
     },
     "ovulation-calculator": {
       "cardTitle": "Calculadora de ovulação",

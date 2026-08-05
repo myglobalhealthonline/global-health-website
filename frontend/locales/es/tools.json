@@ -304,7 +304,8 @@
         "heading": "¿Quieres comentar tu resultado?",
         "body": "Reserva una videoconsulta con un médico colegiado, repasa tu historia y las condiciones que pueden parecerse al TDAH, y descubre en qué consistiría una evaluación.",
         "label": "Reservar consulta"
-      }
+      },
+      "suggestionsIntro": "Un resultado de cribado es un motivo para hacerse una valoración, no un diagnóstico. Estas son las consultas que pueden dar el siguiente paso."
     },
     "blood-pressure-chart": {
       "cardTitle": "Tabla de tensión arterial",
@@ -901,7 +902,8 @@
         "heading": "¿Dudas al principio del embarazo?",
         "body": "Habla por vídeo con un médico colegiado sobre síntomas, la medicación que ya tomas o lo que prefieras no dejar para la primera cita.",
         "label": "Reservar consulta"
-      }
+      },
+      "suggestionsIntro": "Una fecha estimada es el comienzo del seguimiento del embarazo, no todo él. Estas son las consultas que dan el siguiente paso."
     },
     "ovulation-calculator": {
       "cardTitle": "Calculadora de ovulación",

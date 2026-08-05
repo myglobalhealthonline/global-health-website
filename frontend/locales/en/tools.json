@@ -304,7 +304,8 @@
         "heading": "Want to talk your result through?",
         "body": "Book a video consultation with a registered doctor, go through your history and the conditions that can look like ADHD, and find out what an assessment would involve.",
         "label": "Book a consultation"
-      }
+      },
+      "suggestionsIntro": "A screening result is a reason to get assessed, not a diagnosis. These are the consultations that can take it further."
     },
     "blood-pressure-chart": {
       "cardTitle": "Blood pressure chart",
@@ -901,7 +902,8 @@
         "heading": "Questions in early pregnancy?",
         "body": "Talk to a registered doctor by video about symptoms, the medicines you already take, or anything you would rather not sit on until your first appointment.",
         "label": "Book a consultation"
-      }
+      },
+      "suggestionsIntro": "An estimated date is where antenatal care starts, not the whole of it. These are the consultations that take it further."
     },
     "ovulation-calculator": {
       "cardTitle": "Ovulation calculator",
