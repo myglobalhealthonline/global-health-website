@@ -20,7 +20,6 @@ import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2, Search } from "lucid
 import type { CountryConfig } from "@/data/countries";
 import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
-import { countryLinkLocale } from "@/lib/i18n/country-link-locale";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
 import type { GlobeArc, GlobeMarker } from "@/components/ui/cobe-globe";
 import styles from "./CountryEntryGate.module.css";
@@ -231,8 +230,24 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
   // Real crawlable href per country (real anchor, not JS-only) so search
   // engines can discover /{slug}/{lang} without executing the click handler —
   // fixes zero-outbound-internal-link crawl-depth risk on "/".
+  //
+  // The lang segment is the COUNTRY's default, not the visitor's detected
+  // locale. This is the one place that rule differs from `countryLinkLocale`
+  // (which the in-site switchers still use, where honouring the reader's
+  // language IS right). Reason: "/" is the site's highest-authority page and
+  // its only outbound internal links are these six. Googlebot crawls with no
+  // Accept-Language, so a detected-locale href handed it `/{country}/en` six
+  // times and passed nothing to `/czechia/cs`, `/spain/es`, `/brazil/pt` or
+  // `/romania/ro` — the trees carrying the real search demand. They were left
+  // reachable only from the footer locale row, one hop deeper and through
+  // boilerplate. These six defaults are exactly the URLs "/" already declares
+  // in its own hreflang block, so the page is now self-consistent.
+  //
+  // Trade-off accepted 2026-08-06: a Czech-browser visitor clicking Ireland
+  // now lands on `/ireland/en` rather than `/ireland/cs`. The country home's
+  // language switcher covers them from there.
   function langFor(country: CountryConfig): LocaleCode {
-    return countryLinkLocale(detectedLocale, country) as LocaleCode;
+    return (country.defaultLocale ?? "en").toLowerCase() as LocaleCode;
   }
 
   function hrefFor(country: CountryConfig): string {
