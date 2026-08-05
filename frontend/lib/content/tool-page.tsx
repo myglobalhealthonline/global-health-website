@@ -112,11 +112,11 @@ function ToolHero({
         <div
           className={
             aside
-              ? "grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,480px)] lg:gap-16"
+              ? "grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,480px)] lg:gap-16"
               : ""
           }
         >
-          <div className={aside ? "lg:pt-4" : ""}>
+          <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
               {eyebrow}
             </p>
@@ -125,7 +125,7 @@ function ToolHero({
               style={{
                 lineHeight: 1.02,
                 maxWidth: "15ch",
-                fontSize: "clamp(2.25rem, 4.4vw + 0.5rem, 3.75rem)",
+                fontSize: "clamp(2.25rem, 4.6vw + 0.6rem, 4.5rem)",
                 color: "rgba(255,255,255,0.95)",
               }}
             >
@@ -134,21 +134,28 @@ function ToolHero({
             </h1>
             <p
               className="mt-6 leading-relaxed"
-              style={{ maxWidth: "48ch", fontSize: "var(--text-body-lg)", color: "rgba(255,255,255,0.62)" }}
+              style={{
+                maxWidth: "46ch",
+                fontSize: "clamp(1.0625rem, 0.55vw + 0.9rem, 1.3125rem)",
+                color: "rgba(255,255,255,0.66)",
+              }}
             >
               {lede}
             </p>
 
             {trustPoints && trustPoints.length > 0 ? (
-              <ul className="mt-8 grid gap-2.5">
+              <ul className="mt-10 grid max-w-[46ch] gap-3">
                 {trustPoints.map((point) => (
-                  <li key={point} className="flex items-start gap-2.5 text-[13.5px] text-white/70">
+                  <li
+                    key={point}
+                    className="gh-glass-emerald flex items-center gap-3.5 rounded-2xl px-4 py-3.5 text-[14.5px] leading-snug text-white/80"
+                  >
                     <span
                       aria-hidden
-                      className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full"
-                      style={{ background: "rgba(176,241,34,0.16)" }}
+                      className="inline-flex size-7 shrink-0 items-center justify-center rounded-xl"
+                      style={{ background: "rgba(176,241,34,0.14)" }}
                     >
-                      <Check className="size-2.5 text-[var(--color-brand-accent)]" strokeWidth={3} />
+                      <Check className="size-3.5 text-[var(--color-brand-accent)]" strokeWidth={3} />
                     </span>
                     {point}
                   </li>
