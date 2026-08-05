@@ -36,7 +36,7 @@
     "intro": "BMI je výchozí bod, ne plán. Tohle jsou konzultace, které naši lékaři vedou k tomu, na co upozorňuje.",
     "viewLabel": "Zobrazit službu",
     "gpTitle": "Online konzultace s lékařem",
-    "gpSummary": "Proberte jakýkoli výsledek po videu s registrovaným lékařem a nechte si udělat vyšetření, která vám BMI dát nemůže.",
+    "gpSummary": "Proberte jakýkoli výsledek po videu s registrovaným lékařem a nechte si udělat vyšetření, která vám kalkulačka dát nemůže.",
     "nudgeUnderweight": "Výsledek pod zdravým rozmezím stojí za názor lékaře, zvlášť pokud nebyl záměrný.",
     "nudgeHealthy": "Chcete si to udržet? Naši lékaři vám pomohou nastavit návyky, které vydrží.",
     "nudgeOverweight": "Malé změny pod dohledem fungují lépe než další dieta. Začněte tady.",
@@ -501,33 +501,33 @@
             "columns": [
               "BMI",
               "Kategorie",
-              "Co z toho obvykle plyne"
+              "Co to obvykle znamená"
             ],
             "rows": [
               [
                 "Méně než 18,5",
                 "Podváha",
-                "Stojí za rozhovor s lékařem, zvlášť pokud nebyla záměrná"
+                "Stojí za rozhovor s lékařem, hlavně pokud jste nehubli záměrně"
               ],
               [
                 "18,5 – 24,9",
                 "Zdravá hmotnost",
-                "Jen na základě BMI není potřeba nic řešit"
+                "Jen kvůli tomuhle číslu není potřeba nic měnit"
               ],
               [
                 "25,0 – 29,9",
                 "Nadváha",
-                "Revize životního stylu; kontrola krevního tlaku a cholesterolu"
+                "Dobrá chvíle nechat si změřit krevní tlak a cholesterol"
               ],
               [
                 "30,0 – 34,9",
                 "Obezita I. stupně",
-                "Obvykle se nabízí strukturované řízení hmotnosti"
+                "Odtud se obvykle nabízí strukturované řízení hmotnosti"
               ],
               [
                 "35,0 – 39,9",
                 "Obezita II. stupně",
-                "Lékařské vyšetření; screening souvisejících onemocnění"
+                "Lékařské vyšetření a screening onemocnění, která s nadváhou chodí ruku v ruce"
               ],
               [
                 "40,0 a více",

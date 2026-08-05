@@ -1021,14 +1021,14 @@ const BR_PT_BMI: DeepPartial<ToolCopy> = {
       bullets: [],
       table: {
         caption: "Categorias de IMC da OMS para adultos",
-        columns: ["IMC", "Categoria", "O que costuma indicar"],
+        columns: ["IMC", "Categoria", "O que costuma significar"],
         rows: [
-          ["Abaixo de 18,5", "Baixo peso", "Vale uma conversa médica, principalmente se não for intencional"],
-          ["18,5 – 24,9", "Peso saudável", "Nenhuma ação necessária apenas com base no IMC"],
-          ["25,0 – 29,9", "Sobrepeso", "Revisar hábitos; checar pressão arterial e colesterol"],
-          ["30,0 – 34,9", "Obesidade grau I", "Costuma ser indicado acompanhamento estruturado do peso"],
-          ["35,0 – 39,9", "Obesidade grau II", "Avaliação médica; rastreamento de doenças associadas"],
-          ["40,0 ou mais", "Obesidade grau III", "Encaminhamento para acompanhamento especializado do peso"],
+          ["Abaixo de 18,5", "Baixo peso", "Vale uma conversa com um médico, principalmente se a perda não foi procurada"],
+          ["18,5 – 24,9", "Peso saudável", "Nada que precise mudar só por causa desse número"],
+          ["25,0 – 29,9", "Sobrepeso", "Bom momento para checar a pressão arterial e o colesterol"],
+          ["30,0 – 34,9", "Obesidade grau I", "Daqui em diante costuma ser oferecido acompanhamento estruturado do peso"],
+          ["35,0 – 39,9", "Obesidade grau II", "Uma avaliação médica, e rastreamento das doenças que costumam vir junto"],
+          ["40,0 ou mais", "Obesidade grau III", "Um encaminhamento para acompanhamento especializado do peso"],
         ],
         footnote:
           "Pessoas de origem sul-asiática, chinesa e de algumas outras origens asiáticas têm risco cardiometabólico maior com um IMC mais baixo. A OMS sugere 23,0 e 27,5 como pontos de ação adicionais nessas populações.",

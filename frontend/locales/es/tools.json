@@ -36,7 +36,7 @@
     "intro": "El IMC es un punto de partida, no un plan. Estas son las consultas que ofrecen nuestros médicos para lo que señala.",
     "viewLabel": "Ver servicio",
     "gpTitle": "Consulta médica online",
-    "gpSummary": "Comenta cualquier resultado por vídeo con un médico colegiado y hazte las pruebas que el IMC no puede darte.",
+    "gpSummary": "Comenta cualquier resultado por vídeo con un médico colegiado y hazte las pruebas que una calculadora no puede darte.",
     "nudgeUnderweight": "Un resultado por debajo del rango saludable merece la opinión de un médico, sobre todo si no fue intencionado.",
     "nudgeHealthy": "¿Quieres mantenerlo? Nuestros profesionales te ayudan a construir hábitos que duran.",
     "nudgeOverweight": "Los cambios pequeños y supervisados funcionan mejor que otra dieta. Empieza por aquí.",
@@ -501,38 +501,38 @@
             "columns": [
               "IMC",
               "Categoría",
-              "Qué suele implicar"
+              "Qué suele significar"
             ],
             "rows": [
               [
                 "Menos de 18,5",
                 "Bajo peso",
-                "Conviene hablarlo con un médico, sobre todo si no fue intencionado"
+                "Conviene hablarlo con un médico, sobre todo si la pérdida no fue buscada"
               ],
               [
                 "18,5 – 24,9",
                 "Peso saludable",
-                "No hace falta ninguna acción solo por el IMC"
+                "Nada que haya que cambiar solo por esta cifra"
               ],
               [
                 "25,0 – 29,9",
                 "Sobrepeso",
-                "Revisar hábitos; comprobar tensión arterial y colesterol"
+                "Buen momento para revisar la tensión arterial y el colesterol"
               ],
               [
                 "30,0 – 34,9",
                 "Obesidad grado I",
-                "Suele ofrecerse un control estructurado del peso"
+                "A partir de aquí suele ofrecerse un control estructurado del peso"
               ],
               [
                 "35,0 – 39,9",
                 "Obesidad grado II",
-                "Valoración médica; cribado de enfermedades asociadas"
+                "Una valoración médica, y cribado de las enfermedades que suelen acompañarlo"
               ],
               [
                 "40,0 o más",
                 "Obesidad grado III",
-                "Derivación a control especializado del peso"
+                "Una derivación al control especializado del peso"
               ]
             ],
             "footnote": "Las personas de origen surasiático, chino y de algunos otros orígenes asiáticos presentan mayor riesgo cardiometabólico con un IMC más bajo. La OMS propone 23,0 y 27,5 como puntos de acción adicionales en esas poblaciones."

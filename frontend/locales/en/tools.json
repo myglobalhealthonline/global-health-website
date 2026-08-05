@@ -36,7 +36,7 @@
     "intro": "BMI is a starting point, not a plan. These are the consultations our doctors run for the things it flags.",
     "viewLabel": "View service",
     "gpTitle": "Online GP consultation",
-    "gpSummary": "Talk any result through with a registered doctor by video, and get the checks that BMI cannot give you.",
+    "gpSummary": "Talk any result through with a registered doctor by video, and get the checks a calculator cannot give you.",
     "nudgeUnderweight": "A result below the healthy range is worth a doctor's opinion, especially if it was not intentional.",
     "nudgeHealthy": "Want to keep it there? Our clinicians can help you build habits that hold.",
     "nudgeOverweight": "Small, supervised changes work better than another diet. Here is where to start.",
@@ -501,38 +501,38 @@
             "columns": [
               "BMI",
               "Category",
-              "What it usually prompts"
+              "What it usually means"
             ],
             "rows": [
               [
                 "Under 18.5",
                 "Underweight",
-                "Worth a doctor's conversation, especially if unintentional"
+                "Worth a conversation with a doctor, especially if the weight came off on its own"
               ],
               [
                 "18.5 – 24.9",
                 "Healthy weight",
-                "No action needed on BMI grounds alone"
+                "Nothing that needs acting on from this number alone"
               ],
               [
                 "25.0 – 29.9",
                 "Overweight",
-                "Lifestyle review; check blood pressure and cholesterol"
+                "A good moment to have blood pressure and cholesterol checked"
               ],
               [
                 "30.0 – 34.9",
                 "Obesity class I",
-                "Structured weight management is usually offered"
+                "Structured weight management is usually offered from here"
               ],
               [
                 "35.0 – 39.9",
                 "Obesity class II",
-                "Medical review; screening for related conditions"
+                "A medical review, and screening for the conditions that travel with it"
               ],
               [
                 "40.0 and over",
                 "Obesity class III",
-                "Specialist weight management referral"
+                "A referral into specialist weight management"
               ]
             ],
             "footnote": "People of South Asian, Chinese and some other Asian backgrounds carry higher cardiometabolic risk at a lower BMI. The WHO suggests 23.0 and 27.5 as additional action points for those populations."

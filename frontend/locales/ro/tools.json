@@ -36,7 +36,7 @@
     "intro": "IMC este un punct de plecare, nu un plan. Acestea sunt consultațiile pe care le oferă medicii noștri pentru lucrurile pe care le semnalează.",
     "viewLabel": "Vezi serviciul",
     "gpTitle": "Consultație medicală online",
-    "gpSummary": "Discută orice rezultat prin video cu un medic înregistrat și fă-ți analizele pe care IMC nu ți le poate da.",
+    "gpSummary": "Discută orice rezultat prin video cu un medic înregistrat și fă-ți analizele pe care un calculator nu ți le poate da.",
     "nudgeUnderweight": "Un rezultat sub intervalul sănătos merită opinia unui medic, mai ales dacă nu a fost intenționat.",
     "nudgeHealthy": "Vrei să îl menții? Medicii noștri te ajută să construiești obiceiuri care rezistă.",
     "nudgeOverweight": "Schimbările mici și supravegheate funcționează mai bine decât încă o dietă. De aici poți începe.",
@@ -501,38 +501,38 @@
             "columns": [
               "IMC",
               "Categorie",
-              "Ce presupune de obicei"
+              "Ce înseamnă de obicei"
             ],
             "rows": [
               [
                 "Sub 18,5",
                 "Subponderal",
-                "Merită o discuție cu medicul, mai ales dacă nu a fost intenționat"
+                "Merită o discuție cu medicul, mai ales dacă slăbirea nu a fost intenționată"
               ],
               [
                 "18,5 – 24,9",
                 "Greutate sănătoasă",
-                "Nu e nevoie de nicio măsură doar pe baza IMC"
+                "Nu e nimic de schimbat doar din cauza acestei cifre"
               ],
               [
                 "25,0 – 29,9",
                 "Supraponderal",
-                "Revizuirea stilului de viață; verificarea tensiunii și a colesterolului"
+                "Un moment bun să îți verifici tensiunea și colesterolul"
               ],
               [
                 "30,0 – 34,9",
                 "Obezitate grad I",
-                "De obicei se propune management structurat al greutății"
+                "De aici se propune de obicei management structurat al greutății"
               ],
               [
                 "35,0 – 39,9",
                 "Obezitate grad II",
-                "Evaluare medicală; screening pentru boli asociate"
+                "O evaluare medicală și screening pentru bolile care vin de obicei cu ea"
               ],
               [
                 "40,0 și peste",
                 "Obezitate grad III",
-                "Trimitere către management specializat al greutății"
+                "O trimitere către management specializat al greutății"
               ]
             ],
             "footnote": "Persoanele de origine sud-asiatică, chineză și din alte câteva origini asiatice au un risc cardiometabolic mai mare la un IMC mai scăzut. OMS sugerează 23,0 și 27,5 ca praguri suplimentare de acțiune pentru aceste populații."

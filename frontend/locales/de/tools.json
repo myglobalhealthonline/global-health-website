@@ -36,7 +36,7 @@
     "intro": "Der BMI ist ein Ausgangspunkt, kein Plan. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte für das anbieten, worauf er hinweist.",
     "viewLabel": "Leistung ansehen",
     "gpTitle": "Ärztliche Online-Sprechstunde",
-    "gpSummary": "Besprechen Sie jedes Ergebnis per Video mit einer registrierten Ärztin oder einem registrierten Arzt und erhalten Sie die Untersuchungen, die der BMI nicht liefert.",
+    "gpSummary": "Besprechen Sie jedes Ergebnis per Video mit einer registrierten Ärztin oder einem registrierten Arzt und erhalten Sie die Untersuchungen, die ein Rechner nicht liefert.",
     "nudgeUnderweight": "Ein Ergebnis unter dem gesunden Bereich verdient eine ärztliche Einschätzung, besonders wenn es unbeabsichtigt war.",
     "nudgeHealthy": "Wollen Sie das halten? Unsere Behandelnden helfen Ihnen, Gewohnheiten aufzubauen, die tragen.",
     "nudgeOverweight": "Kleine, begleitete Veränderungen wirken besser als die nächste Diät. Hier fangen Sie an.",
@@ -501,38 +501,38 @@
             "columns": [
               "BMI",
               "Kategorie",
-              "Was daraus meist folgt"
+              "Was das meist bedeutet"
             ],
             "rows": [
               [
                 "Unter 18,5",
                 "Untergewicht",
-                "Ein ärztliches Gespräch lohnt sich, besonders wenn unbeabsichtigt"
+                "Ein ärztliches Gespräch lohnt sich, vor allem wenn die Abnahme ungewollt war"
               ],
               [
                 "18,5 – 24,9",
                 "Normalgewicht",
-                "Allein aufgrund des BMI ist nichts zu unternehmen"
+                "Nichts, was allein wegen dieser Zahl zu ändern wäre"
               ],
               [
                 "25,0 – 29,9",
                 "Übergewicht",
-                "Lebensstil prüfen; Blutdruck und Cholesterin kontrollieren"
+                "Ein guter Moment, Blutdruck und Cholesterin prüfen zu lassen"
               ],
               [
                 "30,0 – 34,9",
                 "Adipositas Grad I",
-                "Strukturiertes Gewichtsmanagement wird meist angeboten"
+                "Ab hier wird meist strukturiertes Gewichtsmanagement angeboten"
               ],
               [
                 "35,0 – 39,9",
                 "Adipositas Grad II",
-                "Ärztliche Abklärung; Screening auf Begleiterkrankungen"
+                "Eine ärztliche Abklärung und ein Screening auf die Begleiterkrankungen"
               ],
               [
                 "40,0 und mehr",
                 "Adipositas Grad III",
-                "Überweisung zum fachärztlichen Gewichtsmanagement"
+                "Eine Überweisung zum fachärztlichen Gewichtsmanagement"
               ]
             ],
             "footnote": "Menschen südasiatischer, chinesischer und einiger weiterer asiatischer Herkunft haben schon bei niedrigerem BMI ein höheres kardiometabolisches Risiko. Die WHO schlägt für diese Bevölkerungsgruppen 23,0 und 27,5 als zusätzliche Handlungsschwellen vor."
