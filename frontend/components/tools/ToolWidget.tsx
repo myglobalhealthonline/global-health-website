@@ -276,12 +276,7 @@ function BmiWidget({ copy, nudges }: { copy: WidgetCopy; nudges: BandNudges }) {
             />
           </ToolField>
 
-          <ToolField
-            label={ui.weight}
-            htmlFor={`${id}-st`}
-            suffix="st / lb"
-            hint={ui.poundsOnlyHint}
-          >
+          <ToolField label={ui.weight} htmlFor={`${id}-st`} suffix="st / lb">
             <div className="grid grid-cols-2 gap-3">
               <div className="relative">
                 <input
@@ -320,6 +315,15 @@ function BmiWidget({ copy, nudges }: { copy: WidgetCopy; nudges: BandNudges }) {
               }}
             />
           </ToolField>
+
+          {/* Full-width, so neither column is taller than the other and the
+              two sliders stay on the same line. */}
+          <p
+            className="text-[12px] leading-snug sm:col-span-2"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            {ui.poundsOnlyHint}
+          </p>
         </div>
       )}
 
