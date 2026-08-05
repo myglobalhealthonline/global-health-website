@@ -167,6 +167,24 @@ export function ManualBookingForm({
   const [slotsError, setSlotsError] = useState<string | null>(null);
   const [clinicTimezone, setClinicTimezone] = useState<string>("Europe/Dublin");
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  // Which calendar month the admin is browsing for slots — 0 = this month, 1 =
+  // next month, etc. Drives both the `days` fetched (far enough to reach the
+  // end of that month) and which of the fetched days are actually shown.
+  const [monthOffset, setMonthOffset] = useState(0);
+  // Furthest month the admin can browse to — matches the backend's 120-day
+  // pregeneration/availability horizon (doctor-availability.service.ts).
+  const MONTH_OPTIONS = useMemo(() => {
+    const now = new Date();
+    return Array.from({ length: 4 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      return {
+        offset: i,
+        year: d.getFullYear(),
+        month: d.getMonth(),
+        label: d.toLocaleDateString("en-GB", { month: "long", year: "numeric" }),
+      };
+    });
+  }, []);
   const [selectedSlotId, setSelectedSlotId] = useState<string>("");
 
   const [errors, setErrors] = useState<ManualBookingErrors>({});
@@ -254,10 +272,16 @@ export function ManualBookingForm({
   useEffect(() => {
     if (!selectedService || !selectedDoctor) return;
     const controller = new AbortController();
+    const target = MONTH_OPTIONS[monthOffset] ?? MONTH_OPTIONS[0]!;
+    const monthEnd = new Date(target.year, target.month + 1, 0);
+    const daysUntilMonthEnd = Math.max(
+      1,
+      Math.ceil((monthEnd.getTime() - Date.now()) / (24 * 60 * 60 * 1000)) + 1,
+    );
     const url =
       `/api/public/booking-availability?country=${encodeURIComponent(countryCode)}` +
       `&service=${encodeURIComponent(selectedService.slug)}` +
-      `&doctor=${encodeURIComponent(selectedDoctor.slug)}&days=21`;
+      `&doctor=${encodeURIComponent(selectedDoctor.slug)}&days=${daysUntilMonthEnd}`;
     void (async () => {
       setSlotsLoading(true);
       setSlotsError(null);
@@ -297,19 +321,30 @@ export function ManualBookingForm({
       }
     })();
     return () => controller.abort();
-  }, [selectedService, selectedDoctor, countryCode]);
+  }, [selectedService, selectedDoctor, countryCode, monthOffset, MONTH_OPTIONS]);
+
+  function handleMonthChange(offset: number) {
+    setMonthOffset(offset);
+    setSelectedSlotId("");
+    setSelectedDay(null);
+  }
 
   // Group slots by clinic-local day for the date-pills + time-grid picker.
+  // Slots are fetched out to the end of the selected month, so filter down to
+  // just that month's days (the fetch range can span earlier months too).
   const grouped = useMemo(() => {
+    const target = MONTH_OPTIONS[monthOffset] ?? MONTH_OPTIONS[0]!;
     const map = new Map<string, Slot[]>();
     for (const s of slots) {
+      const d = new Date(s.startAt);
+      if (d.getFullYear() !== target.year || d.getMonth() !== target.month) continue;
       const day = formatAppDate(s.startAt, clinicTimezone);
       const list = map.get(day) ?? [];
       list.push(s);
       map.set(day, list);
     }
     return map;
-  }, [slots, clinicTimezone]);
+  }, [slots, clinicTimezone, monthOffset, MONTH_OPTIONS]);
 
   // Debounced substring lookup of existing patients as the admin types the
   // email. Fires once there are at least 2 characters; aborts in-flight
@@ -912,6 +947,26 @@ export function ManualBookingForm({
             ) : null}
           </div>
 
+          {serviceId && doctorId ? (
+            <div className="mt-2 flex items-center gap-2">
+              <label htmlFor="manual-booking-month" className="gh-field-label !mb-0">
+                Month
+              </label>
+              <select
+                id="manual-booking-month"
+                className="gh-input w-auto"
+                value={monthOffset}
+                onChange={(e) => handleMonthChange(Number(e.target.value))}
+              >
+                {MONTH_OPTIONS.map((m) => (
+                  <option key={m.offset} value={m.offset}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+
           {!serviceId || !doctorId ? (
             <p className="mt-2 text-portal-compact text-[var(--color-text-muted)]">
               Choose a service and doctor to load open slots.
@@ -926,7 +981,8 @@ export function ManualBookingForm({
             </p>
           ) : slots.length === 0 ? (
             <p className="mt-2 text-portal-compact text-[var(--color-text-muted)]">
-              No open slots for this doctor and service in the next 21 days.
+              No open slots for this doctor and service in{" "}
+              {(MONTH_OPTIONS[monthOffset] ?? MONTH_OPTIONS[0])!.label}.
             </p>
           ) : (
             <SlotPicker
