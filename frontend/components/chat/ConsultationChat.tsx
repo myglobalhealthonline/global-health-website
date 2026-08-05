@@ -8,13 +8,13 @@ import {
   Lock,
   Unlock,
   FileText,
-  ImageIcon,
   X,
 } from "lucide-react";
 import type { ChatMessage } from "@/lib/api/consultation-chat-api";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { Btn } from "@/components/portal-atoms";
 import { groupChatMessages } from "@/lib/chat-grouping";
+import { AttachmentPreview } from "@/components/chat/attachment-preview";
 
 type ViewerRole = "PATIENT" | "DOCTOR";
 
@@ -61,47 +61,6 @@ type ConsultationChatProps = {
     attachmentFallback?: string;
   };
 };
-
-function AttachmentPreview({
-  fileName,
-  mimeType,
-  downloadUrl,
-  own,
-  fallbackLabel = "Attachment",
-}: {
-  fileName: string | null;
-  mimeType: string | null;
-  downloadUrl: string | null;
-  own: boolean;
-  fallbackLabel?: string;
-}) {
-  const isImage = mimeType?.startsWith("image/");
-  const label = fileName ?? fallbackLabel;
-
-  const inner = (
-    <div
-      className={`gh-chat-attachment flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${
-        own ? "gh-chat-attachment-own" : "gh-chat-attachment-other"
-      }`}
-    >
-      {isImage ? (
-        <ImageIcon className="size-4 shrink-0" aria-hidden />
-      ) : (
-        <FileText className="size-4 shrink-0" aria-hidden />
-      )}
-      <span className="max-w-[200px] truncate" title={label}>{label}</span>
-    </div>
-  );
-
-  if (downloadUrl) {
-    return (
-      <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
-        {inner}
-      </a>
-    );
-  }
-  return inner;
-}
 
 export function ConsultationChat({
   appointmentId,

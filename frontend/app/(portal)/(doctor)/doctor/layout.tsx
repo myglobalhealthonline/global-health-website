@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   MessagesSquare,
   Landmark,
+  LifeBuoy,
   Receipt,
   ScrollText,
   ShieldCheck,
@@ -30,6 +31,7 @@ import {
   fetchDoctorComplianceStatus,
   fetchDoctorNotifications,
   fetchDoctorPermissions,
+  fetchDoctorSupportUnread,
   fetchDoctorUnreadMessageCount,
 } from "@/lib/api/doctor-api";
 import { ComplianceBanner } from "./_components/compliance-banner";
@@ -74,9 +76,18 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const [notif, unreadMessages, compliance, locale, tourAppointments, permissions] = await Promise.all([
+  const [
+    notif,
+    unreadMessages,
+    unreadSupport,
+    compliance,
+    locale,
+    tourAppointments,
+    permissions,
+  ] = await Promise.all([
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
+    fetchDoctorSupportUnread(),
     fetchDoctorComplianceStatus(),
     getPortalLocale(),
     // Minimal page just to find one appointment id to walk the tour through
@@ -144,6 +155,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     FORM_SUBMITTED: d.notifications.formSubmitted,
     CROSS_BORDER_RX_REQUESTED: d.notifications.crossBorderRxRequested,
     CROSS_BORDER_RX_UPDATED: d.notifications.crossBorderRxUpdated,
+    SUPPORT_REPLY: d.notifications.supportReply,
   };
   if (notif.ok) {
     unreadCount = notif.data.unreadCount;
@@ -224,6 +236,12 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
           icon: <Bell className="size-4" aria-hidden />,
           badge: unreadCount,
         },
+        {
+          href: "/doctor/support",
+          label: d.nav.support,
+          icon: <LifeBuoy className="size-4" aria-hidden />,
+          badge: unreadSupport,
+        },
         ...profileItems,
         { href: "/doctor/security", label: d.nav.security, icon: <ShieldCheck className="size-4" aria-hidden /> },
         { href: "/doctor/confidentiality", label: d.nav.confidentiality, icon: <ScrollText className="size-4" aria-hidden /> },
@@ -289,6 +307,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
  *  the doctor Messages inbox; internal notes and clinical events live on the
  *  appointment workspace, so send those there instead. */
 function doctorNotificationHref(type: string, appointmentId?: string): string {
+  // Support replies are doctor-scoped, not per-appointment — they carry a
+  // threadId, no appointmentId. Must be handled BEFORE the guard below, or the
+  // guard swallows them into a dead-end link.
+  if (type === "SUPPORT_REPLY") return "/doctor/support";
   if (!appointmentId) return "/doctor/notifications";
   switch (type) {
     case "PATIENT_MESSAGE":

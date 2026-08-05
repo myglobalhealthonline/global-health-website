@@ -93,6 +93,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/assets", label: "Assets" },
     { href: "/admin/users", label: "Users" },
     { href: "/admin/messages", label: "Messages" },
+    { href: "/admin/support", label: "Doctor support" },
     { href: "/admin/orders", label: "Orders" },
     { href: "/admin/automation", label: "Automation" },
     { href: "/admin/invoices", label: "Invoices" },
@@ -278,7 +279,17 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 /** Where a notification of `type` should land. Chat threads open in place
  *  inside the Messages inbox (patient tab or internal tab); everything else
  *  is a clinical event that belongs on the appointment record. */
-function adminNotificationHref(type: string, appointmentId?: string): string {
+function adminNotificationHref(
+  type: string,
+  appointmentId?: string,
+  threadId?: string,
+): string {
+  // Support messages are doctor-scoped, not per-appointment — they carry a
+  // threadId, no appointmentId. Must be handled BEFORE the guard below, or the
+  // guard sends them to /admin/appointments.
+  if (type === "SUPPORT_MESSAGE") {
+    return threadId ? `/admin/support?open=${threadId}` : "/admin/support";
+  }
   if (!appointmentId) {
     return type === "PATIENT_MESSAGE" || type === "MESSAGE_REPLY"
       ? "/admin/messages"
@@ -314,9 +325,20 @@ function actorRoleLabel(role?: string): string | null {
  *  actually renders the event. */
 function mapAdminNotification(n: AdminNotificationDto): NotificationPopoverItem {
   const p = n.payload ?? {};
-  const href = adminNotificationHref(n.type, p.appointmentId);
+  const href = adminNotificationHref(n.type, p.appointmentId, p.threadId);
   const who = p.byUserName?.trim() || null;
   const role = actorRoleLabel(p.byRole);
+
+  if (n.type === "SUPPORT_MESSAGE") {
+    return {
+      id: n.id,
+      title: who ? `${who} sent a support message` : "New support message",
+      body: p.snippet ?? null,
+      href,
+      createdAt: n.createdAt,
+      readAt: n.readAt,
+    };
+  }
 
   if (n.type === "PATIENT_MESSAGE" || n.type === "MESSAGE_REPLY") {
     const channel = p.channel === "doctor" ? "doctor chat" : "clinic chat";
@@ -378,6 +400,10 @@ function notificationTypeLabel(type: string): string {
       return "Exam requested";
     case "EXAM_LOGGED":
       return "Exam result logged";
+    case "SUPPORT_MESSAGE":
+      return "New support message";
+    case "SUPPORT_REPLY":
+      return "Support reply";
     default:
       return "New notification";
   }

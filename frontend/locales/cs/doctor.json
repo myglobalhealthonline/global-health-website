@@ -31,7 +31,8 @@
     "profileCountry": "Profil ({country})",
     "security": "Zabezpečení",
     "confidentiality": "Mlčenlivost",
-    "crossBorderRx": "Cross-border requests"
+    "crossBorderRx": "Cross-border requests",
+    "support": "Podpora"
   },
   "notifications": {
     "appointmentAssigned": "Přiřazený termín",
@@ -42,7 +43,8 @@
     "formSubmitted": "Formulář odeslán",
     "emptyMessage": "Zatím žádná oznámení.",
     "crossBorderRxRequested": "Cross-border prescription request",
-    "crossBorderRxUpdated": "Cross-border prescription update"
+    "crossBorderRxUpdated": "Cross-border prescription update",
+    "supportReply": "Odpověď podpory"
   },
   "common": {
     "apply": "Použít",
@@ -1802,5 +1804,28 @@
     "sending": "Odesílá se…",
     "sendFailed": "Dokument se nepodařilo odeslat.",
     "sentTo": "Odesláno na"
+  },
+  "supportPage": {
+    "eyebrow": "Podpora",
+    "title": "Podpora",
+    "description": "Pište přímo s provozním týmem Global Health. Odpovědět může kterýkoli administrátor — uvidíte jeho křestní jméno.",
+    "loadError": "Zprávy podpory se nepodařilo načíst: {message}"
+  },
+  "supportChat": {
+    "loadingSr": "Načítání zpráv…",
+    "emptyTitle": "Zatím žádné zprávy.",
+    "emptyBody": "Popište svůj problém níže — můžete přiložit snímek obrazovky nebo PDF.",
+    "placeholder": "Napište zprávu…",
+    "send": "Odeslat",
+    "sendFailed": "Zprávu se nepodařilo odeslat",
+    "loadFailed": "Zprávy se nepodařilo načíst",
+    "attachFileLabel": "Přiložit soubor (PDF / obrázek)",
+    "upload": "Nahrát",
+    "uploading": "Nahrávání…",
+    "uploadFailed": "Nahrávání souboru selhalo",
+    "removeFileAria": "Odebrat soubor",
+    "attachmentFallback": "Příloha",
+    "me": "Já",
+    "pasteHint": "Snímek obrazovky můžete vložit přímo do pole."
   }
 }

@@ -31,7 +31,8 @@
     "profileCountry": "Profil ({country})",
     "security": "Securitate",
     "confidentiality": "Confidențialitate",
-    "crossBorderRx": "Cross-border requests"
+    "crossBorderRx": "Cross-border requests",
+    "support": "Asistență"
   },
   "notifications": {
     "appointmentAssigned": "Programare alocată",
@@ -42,7 +43,8 @@
     "formSubmitted": "Formular trimis",
     "emptyMessage": "Încă nu există notificări.",
     "crossBorderRxRequested": "Cross-border prescription request",
-    "crossBorderRxUpdated": "Cross-border prescription update"
+    "crossBorderRxUpdated": "Cross-border prescription update",
+    "supportReply": "Răspuns de la asistență"
   },
   "common": {
     "apply": "Aplică",
@@ -1802,5 +1804,28 @@
     "sending": "Se trimite…",
     "sendFailed": "Documentul nu a putut fi trimis.",
     "sentTo": "Trimis către"
+  },
+  "supportPage": {
+    "eyebrow": "Asistență",
+    "title": "Asistență",
+    "description": "Discutați direct cu echipa de operațiuni Global Health. Orice administrator poate răspunde — veți vedea prenumele acestuia.",
+    "loadError": "Mesajele de asistență nu au putut fi încărcate: {message}"
+  },
+  "supportChat": {
+    "loadingSr": "Se încarcă mesajele…",
+    "emptyTitle": "Încă nu există mesaje.",
+    "emptyBody": "Descrieți problema mai jos — puteți atașa o captură de ecran sau un PDF.",
+    "placeholder": "Scrieți un mesaj…",
+    "send": "Trimite",
+    "sendFailed": "Trimiterea mesajului a eșuat",
+    "loadFailed": "Încărcarea mesajelor a eșuat",
+    "attachFileLabel": "Atașați un fișier (PDF / imagine)",
+    "upload": "Încarcă",
+    "uploading": "Se încarcă…",
+    "uploadFailed": "Încărcarea fișierului a eșuat",
+    "removeFileAria": "Elimină fișierul",
+    "attachmentFallback": "Atașament",
+    "me": "Eu",
+    "pasteHint": "Puteți lipi o captură de ecran direct în casetă."
   }
 }

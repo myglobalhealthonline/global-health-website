@@ -247,6 +247,11 @@ const envSchema = z.object({
    *  email. Unset → the email leg is skipped. */
   ADMIN_NOTIFY_EMAILS: z.string().trim().optional(),
 
+  /** Minutes to suppress repeat "doctor has sent a text" support-chat emails on
+   *  the same thread. The window is cleared the moment an admin replies, so an
+   *  answered thread always alerts again immediately. */
+  SUPPORT_ALERT_THROTTLE_MINUTES: z.coerce.number().int().min(0).max(1440).default(15),
+
   BRAZIL_BOOKING_URL: z.string().trim().url().optional(),
   BRAZIL_CONSENT_NOTIFY_EMAIL: z.string().trim().email().optional(),
   BRAZIL_CONSENT_DOCTOR_PHONE: z.string().trim().optional(),
