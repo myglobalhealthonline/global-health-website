@@ -64,6 +64,8 @@ type PatientOption = {
   addressState: string | null;
   addressPostalCode: string | null;
   addressCountryCode: string | null;
+  insuranceProviderName: string | null;
+  insurancePolicyNumber: string | null;
 };
 
 type Slot = {
@@ -147,6 +149,16 @@ export function ManualBookingForm({
   const [lookupLoading, setLookupLoading] = useState(false);
   const [showPatientMenu, setShowPatientMenu] = useState(false);
 
+  // Insurance card already on file for the selected existing patient. When
+  // set, the service list narrows to services that card covers (the card is
+  // already verified — no need to re-collect it), and the insurer is
+  // pre-selected once a service is chosen. Admin can still opt back into the
+  // full service list via `showAllServices`.
+  const [cardOnFile, setCardOnFile] = useState<{ name: string; policyNumber: string } | null>(
+    null,
+  );
+  const [showAllServices, setShowAllServices] = useState(false);
+
   const [serviceId, setServiceId] = useState("");
   const [doctorId, setDoctorId] = useState("");
   // Insurance choice for this booking ("" = standard price). Picked after the
@@ -193,6 +205,31 @@ export function ManualBookingForm({
   // load that still contains it (it may have been booked in the meantime).
   const pendingSlotRef = useRef<string | null>(initialSlotId ?? null);
 
+  // Services this patient's insurance card covers (matched by insurer name —
+  // insurance companies are per-country, so name is the stable join key here).
+  const cardServices = useMemo(() => {
+    if (!cardOnFile) return services;
+    return services.filter((s) =>
+      s.insuranceOptions.some(
+        (o) => o.name.trim().toLowerCase() === cardOnFile.name.trim().toLowerCase(),
+      ),
+    );
+  }, [services, cardOnFile]);
+  const visibleServices = cardOnFile && !showAllServices ? cardServices : services;
+
+  // If the filtered list no longer contains the selected service (e.g. the
+  // admin toggled "show all" off), drop the stale selection.
+  useEffect(() => {
+    if (serviceId && !visibleServices.some((s) => s.id === serviceId)) {
+      setServiceId("");
+      setInsuranceCompanyId("");
+      setDoctorId("");
+      setSelectedSlotId("");
+      setSelectedDay(null);
+      setSlots([]);
+    }
+  }, [visibleServices, serviceId]);
+
   const selectedService = useMemo(
     () => services.find((s) => s.id === serviceId) ?? null,
     [services, serviceId],
@@ -230,8 +267,17 @@ export function ManualBookingForm({
   // don't trigger cascading setState-in-effect renders.
   function handleServiceChange(value: string) {
     setServiceId(value);
-    // Insurers are per-service — the previous pick can't carry over.
-    setInsuranceCompanyId("");
+    // Insurers are per-service — the previous pick can't carry over, except
+    // to re-apply the patient's own card if this service covers it.
+    const cardMatch = cardOnFile
+      ? services
+          .find((s) => s.id === value)
+          ?.insuranceOptions.find(
+            (o) => o.name.trim().toLowerCase() === cardOnFile.name.trim().toLowerCase(),
+          )
+      : null;
+    setInsuranceCompanyId(cardMatch?.companyId ?? "");
+    setInsurancePolicyNumber(cardMatch ? cardOnFile!.policyNumber : "");
     setDoctorId((cur) => {
       if (cur && doctors.find((d) => d.id === cur)?.serviceIds.includes(value)) return cur;
       // Calendar deep link: auto-pick the clicked doctor once a service they
@@ -408,6 +454,18 @@ export function ManualBookingForm({
     setAddressState(p.addressState ?? "");
     setAddressPostalCode(p.addressPostalCode ?? "");
     setAddressCountryCode(p.addressCountryCode ?? "");
+    setCardOnFile(
+      p.insuranceProviderName && p.insurancePolicyNumber
+        ? { name: p.insuranceProviderName, policyNumber: p.insurancePolicyNumber }
+        : null,
+    );
+    setShowAllServices(false);
+    // The service pick (if any) predates this card — force a reselect so
+    // the filtered list and insurer auto-apply take effect.
+    setServiceId("");
+    setInsuranceCompanyId("");
+    setInsurancePolicyNumber("");
+    setDoctorId("");
     setShowPatientMenu(false);
   }
 
@@ -706,7 +764,7 @@ export function ManualBookingForm({
               <option value="" disabled>
                 Select…
               </option>
-              {services.map((s) => (
+              {visibleServices.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                   {s.basePriceCents != null && s.currencyCode
@@ -718,6 +776,19 @@ export function ManualBookingForm({
             {services.length === 0 ? (
               <span className="text-portal-meta text-[var(--color-text-muted)]">
                 No active services for this country.
+              </span>
+            ) : cardOnFile ? (
+              <span className="text-portal-meta text-[var(--color-text-muted)] flex items-center gap-2">
+                {showAllServices
+                  ? `Showing all services.`
+                  : `Showing only services covered by the ${cardOnFile.name} card on file.`}
+                <button
+                  type="button"
+                  className="underline"
+                  onClick={() => setShowAllServices((v) => !v)}
+                >
+                  {showAllServices ? "Show covered only" : "Show all services"}
+                </button>
               </span>
             ) : null}
             {errors.serviceId ? <FieldError msg={errors.serviceId} /> : null}
@@ -754,7 +825,9 @@ export function ManualBookingForm({
               </select>
               <span className="text-portal-meta text-[var(--color-text-muted)]">
                 {selectedInsurance
-                  ? "Charged at the insurance price. Only doctors in this insurer's network are listed."
+                  ? cardOnFile && selectedInsurance.companyId === insuranceCompanyId
+                    ? "Pre-filled from the card on file. Only doctors in this insurer's network are listed."
+                    : "Charged at the insurance price. Only doctors in this insurer's network are listed."
                   : "Optional — pick an insurer to use its negotiated price."}
               </span>
             </label>

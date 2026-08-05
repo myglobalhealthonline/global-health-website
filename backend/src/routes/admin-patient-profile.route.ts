@@ -497,6 +497,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
             addressState: true,
             addressPostalCode: true,
             addressCountryCode: true,
+            insuranceProviderName: true,
+            insurancePolicyNumber: true,
           },
           take: 50,
         }),
@@ -517,6 +519,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           addressState: string | null;
           addressPostalCode: string | null;
           addressCountryCode: string | null;
+          insuranceProviderName: string | null;
+          insurancePolicyNumber: string | null;
         }
       >();
       // The booking picker must NEVER blank out just because one matched
@@ -545,6 +549,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           addressState: profile.addressState ?? null,
           addressPostalCode: profile.addressPostalCode ?? null,
           addressCountryCode: profile.addressCountryCode ?? null,
+          insuranceProviderName: profile.insuranceProviderName ?? null,
+          insurancePolicyNumber: safeDecrypt(profile.insurancePolicyNumber),
         });
       }
 
@@ -611,6 +617,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         addressState: null,
         addressPostalCode: null,
         addressCountryCode: null,
+        insuranceProviderName: null,
+        insurancePolicyNumber: null,
       };
       const patients = [...byKey.values()]
         .sort((a, b) => (b.lastBookedAt?.getTime() ?? 0) - (a.lastBookedAt?.getTime() ?? 0))
