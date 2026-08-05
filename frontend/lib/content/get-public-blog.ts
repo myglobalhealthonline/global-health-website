@@ -211,6 +211,35 @@ export async function listBlogPosts(countryCode?: string, locale?: string): Prom
   }));
 }
 
+/** A blog link-back rendered on a service or lab-test page. `slug` is already
+ *  the requested locale's own slug (the API swaps it), so the href is
+ *  `/{country}/{lang}/blog/{slug}` with no further mapping. */
+export type RelatedBlogLink = { slug: string; title: string; excerpt: string };
+
+/**
+ * Published posts to link back to from a commercial page. The articles link
+ * DOWN to their market's service page, `/doctors` and `/contact`; without this
+ * nothing links back UP into them, so a new article's only inbound link is the
+ * sitemap.
+ *
+ * With `serviceSlug` this is an exact match on the post's CTA service — the
+ * article that was written for THIS page. Without it (the lab-test hub, which
+ * is not a Service), it is the market's newest posts.
+ */
+export async function listRelatedBlogPosts(
+  countryCode: string,
+  locale: string,
+  opts: { serviceSlug?: string; limit?: number } = {},
+): Promise<RelatedBlogLink[]> {
+  const posts = await fetchPublishedPosts(countryCode, locale);
+  const matched = opts.serviceSlug
+    ? posts.filter((p) => p.ctaService?.slug === opts.serviceSlug)
+    : posts;
+  return matched
+    .slice(0, opts.limit ?? 3)
+    .map((p) => ({ slug: p.slug, title: p.title, excerpt: p.excerpt }));
+}
+
 /** Full post for the detail page; null when the slug is unknown or unavailable.
  *  Fetches the single post directly via /api/blog/:slug so the detail page
  *  has its own Data-Cache entry independent of the all-posts list. A

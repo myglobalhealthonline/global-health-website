@@ -45,6 +45,7 @@ import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
+import { listRelatedBlogPosts } from "@/lib/content/get-public-blog";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
@@ -156,7 +157,7 @@ export default async function ServiceDetailPage({
   // Country-specific short medical disclaimer (admin-authored, per country);
   // falls back to the generic translated line when not set. Independent of
   // the doctor/service reads below — started together instead of sequentially.
-  const [{ short: shortDisclaimer }, generals, specialists, allDoctors, landingRes] =
+  const [{ short: shortDisclaimer }, generals, specialists, allDoctors, landingRes, relatedPosts] =
     await Promise.all([
       getCountryDisclaimer(code, lang),
       // Clinicians assigned to this service — surfaced as a credibility strip
@@ -168,6 +169,9 @@ export default async function ServiceDetailPage({
       // and the service hub by design (Rule 6), so this is their only internal
       // inbound link — without it Google left all 90 of them unindexed.
       fetchLandingSlugs(code, lang).catch(() => null),
+      // Blog articles written FOR this service (BlogPost.ctaService). They link
+      // down here; without this section nothing links back up into them.
+      listRelatedBlogPosts(code, lang, { serviceSlug }),
     ]);
   const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", config.name);
   const serviceCard =
@@ -179,9 +183,20 @@ export default async function ServiceDetailPage({
 
   // Capped at 4 to match the spec's max-boxes rule — a link dump would defeat
   // the point of keeping these pages off the hub in the first place.
-  const relatedTopics = (landingRes?.ok ? landingRes.data.landingPages : [])
-    .filter((p) => p.title && p.serviceSlugs.includes(serviceSlug))
-    .slice(0, 4);
+  const relatedTopics: Array<{ key: string; href: string; title: string }> = [
+    ...(landingRes?.ok ? landingRes.data.landingPages : [])
+      .filter((p) => p.title && p.serviceSlugs.includes(serviceSlug))
+      .slice(0, 4)
+      .map((p) => ({ key: `health-${p.slug}`, href: `/${country}/${lang}/health/${p.slug}`, title: p.title! })),
+    // Blog articles written FOR this service (BlogPost.ctaService). They link
+    // down here; without this nothing linked back up into them, leaving the
+    // sitemap as a new article's only inbound link.
+    ...relatedPosts.map((p) => ({
+      key: `blog-${p.slug}`,
+      href: `/${country}/${lang}/blog/${p.slug}`,
+      title: p.title,
+    })),
+  ];
 
   // Named clinical reviewer for the E-E-A-T byline + schema — the country's
   // admin-flagged "Clinical Director" (CountryDoctorCard.isFeatured, same
@@ -693,9 +708,9 @@ export default async function ServiceDetailPage({
             </h2>
             <ul className="mt-4 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
               {relatedTopics.map((topic) => (
-                <li key={topic.slug}>
+                <li key={topic.key}>
                   <Link
-                    href={`/${country}/${lang}/health/${topic.slug}`}
+                    href={topic.href}
                     className="inline-flex min-h-11 items-center font-semibold text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
                   >
                     {topic.title}

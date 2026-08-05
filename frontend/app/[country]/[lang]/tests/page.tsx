@@ -35,6 +35,8 @@ import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { RelatedArticles } from "@/components/sections/RelatedArticles";
+import { listRelatedBlogPosts } from "@/lib/content/get-public-blog";
 
 type Params = { country: string; lang: string };
 
@@ -96,9 +98,14 @@ export default async function HealthTestsPage({
   const [
     items,
     { record: rawPage, disabled: pageDisabled },
+    relatedPosts,
   ] = await Promise.all([
     getCountryHealthTests(code, lang),
     getPageContent(code, "HEALTH_TESTS", lang as PublicLocale),
+    // The hub is not a Service, so there is no ctaService to match on — link
+    // the market's newest articles instead. Purely a link-back: the articles
+    // already point down here, nothing pointed up.
+    listRelatedBlogPosts(code, lang),
   ]);
 
   // Structured PageContent self-gates via publish status; legacy "pages"
@@ -307,6 +314,12 @@ export default async function HealthTestsPage({
       ) : (
         <FAQSection title={t.watermark} items={hub.faq} />
       )}
+
+      <RelatedArticles
+        title={c.serviceDetailPage.relatedTopicsTitle}
+        posts={relatedPosts}
+        basePath={`/${slug}/${lang}`}
+      />
 
       <DoctifyReviewsSection
         theme="ivory"
