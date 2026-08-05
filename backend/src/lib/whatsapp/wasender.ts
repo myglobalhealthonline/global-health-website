@@ -142,6 +142,38 @@ async function postWhatsAppMessage(
 }
 
 /**
+ * Send a WhatsApp text straight to a group JID (e.g. `120363...@g.us`) —
+ * no phone normalization, since group JIDs aren't phone numbers. Shares the
+ * same send lock/queue as `sendWhatsAppText`.
+ */
+export async function sendWhatsAppGroupText(opts: {
+  to: string;
+  message: string;
+}): Promise<SendWhatsAppResult> {
+  const auth = resolveAuthHeader();
+  if (!auth) {
+    return { ok: true, skipped: true, raw: opts.to };
+  }
+  const sendOnce = (): Promise<SendWhatsAppResult> =>
+    withWhatsAppSendLock(() =>
+      postWhatsAppMessage(auth, opts.to, opts.message, opts.to, opts.to, null),
+    );
+  try {
+    let result = await sendOnce();
+    if (!result.ok && result.message && isRateLimitMessage(result.message)) {
+      result = await sendOnce();
+    }
+    return result;
+  } catch (err) {
+    return {
+      ok: false,
+      message: err instanceof Error ? err.message : "WaSender request failed",
+      raw: opts.to,
+    };
+  }
+}
+
+/**
  * Send a WhatsApp text via WaSender. All sends share one global queue with a
  * 6-second minimum gap so doctor + patient messages never overlap.
  */
