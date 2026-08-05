@@ -130,9 +130,182 @@
         "label": "Extremadamente activo",
         "summary": "Trabajo físico o entrenamiento intenso dos veces al día"
       }
+    },
+    "adhdFrequencies": [
+      "Nunca",
+      "Rara vez",
+      "A veces",
+      "A menudo",
+      "Muy a menudo"
+    ],
+    "adhdQuestions": [
+      "¿Con qué frecuencia dejas sin terminar los últimos detalles de un proyecto cuando ya has superado la parte difícil?",
+      "¿Con qué frecuencia te cuesta poner las cosas en orden cuando una tarea exige organización?",
+      "¿Con qué frecuencia olvidas citas o compromisos que habías aceptado?",
+      "¿Con qué frecuencia aplazas o evitas empezar algo que exige pensar mucho?",
+      "¿Con qué frecuencia mueves las manos o los pies cuando tienes que estar sentado mucho rato?",
+      "¿Con qué frecuencia te sientes empujado a seguir haciendo cosas, como si algo tirara de ti?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Resultado del cribado: positivo",
+        "summary": "Tus respuestas coinciden con el patrón que busca este cuestionario, así que merece la pena organizar una evaluación completa. No es un diagnóstico: el TDAH solo lo diagnostica un psiquiatra o un psicólogo clínico, y lo hace a partir de toda tu historia, no de seis preguntas."
+      },
+      "negative": {
+        "label": "Resultado del cribado: negativo",
+        "summary": "Tus respuestas no coinciden con el patrón que busca este cuestionario. Eso no descarta el TDAH — seis preguntas cubren solo una parte —, así que si estas dificultades están afectando a tu trabajo, tus estudios o tus relaciones, coméntalo igualmente con un médico."
+      }
     }
   },
   "tools": {
+    "adhd-test": {
+      "cardTitle": "Test de TDAH",
+      "cardBlurb": "El cribado de TDAH en adultos de seis preguntas, puntuado como está diseñada la escala.",
+      "eyebrow": "Herramienta gratuita",
+      "h1Lead": "Test de",
+      "h1Accent": "TDAH",
+      "h1Trail": "{country}",
+      "metaTitle": "Test de TDAH {country} | Cribado Gratuito para Adultos",
+      "metaDescription": "Haz el cribado de TDAH en adultos de seis preguntas (ASRS v1.1, parte A) y descubre qué significan tus respuestas. Un cribado no es un diagnóstico: solo un psiquiatra o un psicólogo clínico puede hacerlo.",
+      "lede": "Responde a seis preguntas sobre los últimos seis meses para ver si tus respuestas coinciden con el patrón que busca el cribado de TDAH en adultos.",
+      "trustPoints": [
+        "El cribado ASRS v1.1, parte A — seis preguntas",
+        "Puntuado pregunta a pregunta, como está diseñada la escala",
+        "Funciona en tu navegador: no se envía ni se guarda nada"
+      ],
+      "widget": {
+        "title": "Tus respuestas",
+        "instructions": "En cada pregunta, elige con qué frecuencia te ha ocurrido en los últimos seis meses.",
+        "placeholder": "Responde a las seis preguntas para ver tu resultado del cribado.",
+        "note": "Esto es un cuestionario de cribado, no un diagnóstico. El TDAH solo lo diagnostica un psiquiatra o un psicólogo clínico, tras una evaluación completa. Nada de lo que hay aquí es una recomendación de medicación.",
+        "thresholdLabel": "Cribado positivo",
+        "thresholdValue": "{count} o más de {total}"
+      },
+      "sections": [
+        {
+          "heading": "Cómo se puntúa el cribado",
+          "body": [
+            "Las preguntas son la parte A de la Adult ADHD Self-Report Scale de la Organización Mundial de la Salud: la versión corta que sirve para decidir si merece la pena organizar una evaluación completa, no la evaluación en sí.",
+            "Se puntúa pregunta a pregunta, no como una suma. Cada ítem tiene su propio umbral, y cuatro o más ítems que alcanzan su umbral son un cribado positivo. El error habitual es tratarlo como una regla plana de «cuatro respuestas de A menudo»: así se escapa la presentación inatenta, que es justo la que más se pasa por alto en adultos."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Las seis preguntas del cribado y la respuesta desde la que cuenta cada una",
+            "columns": [
+              "Pregunta",
+              "De qué trata",
+              "Cuenta desde"
+            ],
+            "rows": [
+              [
+                "1",
+                "Terminar los últimos detalles de un proyecto",
+                "A veces"
+              ],
+              [
+                "2",
+                "Poner las cosas en orden para una tarea",
+                "A veces"
+              ],
+              [
+                "3",
+                "Recordar citas y compromisos",
+                "A veces"
+              ],
+              [
+                "4",
+                "Aplazar tareas que exigen pensar mucho",
+                "A menudo"
+              ],
+              [
+                "5",
+                "Moverse cuando hay que estar sentado mucho rato",
+                "A menudo"
+              ],
+              [
+                "6",
+                "Sentirse empujado a seguir sin parar",
+                "A menudo"
+              ]
+            ],
+            "footnote": "Cuatro o más preguntas en su propio umbral o por encima son un cribado positivo. La escala se desarrolló para adultos a partir de 18 años y no es un cribado infantil."
+          }
+        },
+        {
+          "heading": "Cómo se ve el TDAH en la edad adulta",
+          "body": [
+            "El TDAH adulto rara vez se parece a la estampa del aula. La hiperactividad suele volverse hacia dentro — inquietud, una cabeza que no se apaga — mientras la inatención se queda y empieza a salir cara: plazos que se pasan, papeleo sin abrir, una memoria de trabajo a la que se le caen las cosas.",
+            "Para un diagnóstico importa que las dificultades vengan de lejos, aparezcan en más de un ámbito de la vida y causen una limitación real. Todo el mundo pierde las llaves alguna vez; no es eso lo que se pregunta aquí."
+          ],
+          "bullets": [
+            "Empezar las tareas que importan y terminar las que han dejado de resultar interesantes.",
+            "El tiempo: subestimarlo, perderlo, llegar tarde por mucho que lo intentes.",
+            "La organización — papeles, facturas, citas — cuesta mucho más esfuerzo del que parece costarles a los demás.",
+            "Inquietud, o una necesidad constante y sorda de estar haciendo algo.",
+            "Interrumpir, soltar lo primero que se piensa o actuar antes de terminar de pensar la idea.",
+            "Emociones que llegan rápido y se van rápido, a menudo desproporcionadas para lo que las provocó."
+          ]
+        },
+        {
+          "heading": "Lo que este cribado no puede decirte",
+          "body": [
+            "Un cuestionario de seis preguntas es una herramienta de clasificación. Es deliberadamente rápido y deliberadamente amplio, porque su trabajo es decidir a quién conviene evaluar en condiciones, no quién tiene TDAH."
+          ],
+          "bullets": [
+            "No es un diagnóstico: un resultado positivo, por sí solo, significa únicamente «merece una evaluación».",
+            "Un resultado negativo no descarta el TDAH, sobre todo en la presentación inatenta y sobre todo en mujeres, que reciben el diagnóstico más tarde y con menos frecuencia.",
+            "La ansiedad, la depresión, dormir mal, la enfermedad tiroidea, el dolor crónico y el consumo elevado de alcohol producen las mismas respuestas.",
+            "No separa el TDAH del autismo, de una dificultad específica de aprendizaje ni de los efectos de una temporada larga de estrés.",
+            "Se diseñó y validó para adultos. Niños y adolescentes necesitan una evaluación completamente distinta.",
+            "No dice nada sobre el tratamiento. La medicación es una opción entre varias y solo se plantea después de un diagnóstico."
+          ]
+        },
+        {
+          "heading": "Cómo llegar a una evaluación de verdad",
+          "body": [
+            "El diagnóstico de TDAH lo hace un psiquiatra o un psicólogo clínico. La evaluación es una entrevista clínica estructurada sobre tu historia desde la infancia, normalmente con escalas y, cuando es posible, con el relato de alguien que te conoce desde hace mucho."
+          ],
+          "bullets": [
+            "Empieza por un médico. Repasará tu historia, descartará las condiciones que se parecen al TDAH y te derivará para la evaluación.",
+            "Lleva datos concretos en lugar de una puntuación: boletines del colegio, evaluaciones del trabajo, lo que se tuerce una y otra vez y desde cuándo.",
+            "Cuenta qué más hay — sueño, ánimo, alcohol, tiroides, algún traumatismo craneal antiguo. Eso cambia la evaluación y el orden en que se hace.",
+            "Un resultado de cribado es el punto de partida de esa conversación, no su sustituto. Llévate el tuyo.",
+            "Si no puedes con la situación o tienes pensamientos de hacerte daño, contacta ahora con un médico o con los servicios de emergencia en lugar de esperar a una evaluación."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Un test de TDAH online puede diagnosticar TDAH?",
+          "answer": "No, y ningún cuestionario online puede hacerlo. Esto es un cribado: clasifica a las personas en «conviene evaluarlo en condiciones» y «con estas respuestas, no». El diagnóstico lo hace un psiquiatra o un psicólogo clínico, a partir de una entrevista completa sobre tu historia y no de seis preguntas."
+        },
+        {
+          "question": "¿Qué es la ASRS?",
+          "answer": "La Adult ADHD Self-Report Scale, desarrollada con la Organización Mundial de la Salud. La parte A es el cribado de seis preguntas que usamos aquí; la escala completa tiene dieciocho ítems. Es el instrumento de cribado de TDAH adulto más extendido, y por eso el resultado que lleves resulta reconocible en consulta."
+        },
+        {
+          "question": "¿Qué se considera un resultado positivo?",
+          "answer": "Cuatro o más de las seis preguntas respondidas en su propio umbral o por encima. Las tres primeras cuentan desde «A veces» y las tres últimas solo desde «A menudo»: los umbrales cambian porque las preguntas cambian, y un único corte plano dejaría fuera la presentación inatenta."
+        },
+        {
+          "question": "¿Puedo tener TDAH con un resultado negativo?",
+          "answer": "Sí. Seis preguntas no pueden cubrir un cuadro que se manifiesta de forma distinta según la edad y la persona, y la presentación inatenta en particular se detecta poco: es una de las razones por las que las mujeres reciben el diagnóstico más tarde y con menos frecuencia. Si las dificultades te están afectando, un cribado negativo no es motivo para dejar de preguntar."
+        },
+        {
+          "question": "¿Quién puede diagnosticar el TDAH?",
+          "answer": "Un psiquiatra o un psicólogo clínico, según el país. El camino suele empezar en atención primaria: allí se recoge la historia, se descartan los cuadros que imitan al TDAH — tiroides, trastornos del sueño, ansiedad, depresión — y se deriva para la evaluación propiamente dicha."
+        },
+        {
+          "question": "¿Este test de TDAH guarda mis respuestas?",
+          "answer": "No. La puntuación se calcula íntegramente en tu navegador. Nada de lo que selecciones se envía a nuestros servidores ni se guarda."
+        }
+      ],
+      "cta": {
+        "heading": "¿Quieres comentar tu resultado?",
+        "body": "Reserva una videoconsulta con un médico colegiado, repasa tu historia y las condiciones que pueden parecerse al TDAH, y descubre en qué consistiría una evaluación.",
+        "label": "Reservar consulta"
+      }
+    },
     "blood-pressure-chart": {
       "cardTitle": "Tabla de tensión arterial",
       "cardBlurb": "Qué significan tus dos números en la tabla europea de tensión arterial para adultos.",
@@ -727,6 +900,158 @@
       "cta": {
         "heading": "¿Dudas al principio del embarazo?",
         "body": "Habla por vídeo con un médico colegiado sobre síntomas, la medicación que ya tomas o lo que prefieras no dejar para la primera cita.",
+        "label": "Reservar consulta"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Calculadora de ovulación",
+      "cardBlurb": "Tus días fértiles, el día estimado de ovulación y cuándo te toca la próxima regla.",
+      "eyebrow": "Herramienta gratuita",
+      "h1Lead": "Calculadora de",
+      "h1Accent": "ovulación",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculadora de Ovulación {country} | Días Fértiles y Ovulación",
+      "metaDescription": "Calcula tus días fértiles y el día estimado de ovulación a partir del primer día de tu última regla. Se ajusta a la duración de tu ciclo, con los seis días más fértiles al detalle.",
+      "lede": "Indica el primer día de tu última regla para ver los seis días con más probabilidad de embarazo, tu día estimado de ovulación y cuándo te toca la próxima regla.",
+      "trustPoints": [
+        "Se cuenta hacia atrás desde tu próxima regla, así los ciclos largos cuadran",
+        "La ventana fértil completa de seis días, no un único día",
+        "Funciona en tu navegador: no se envía ni se guarda nada"
+      ],
+      "suggestionsIntro": "Una estimación de la ovulación es una guía de fechas, no un estudio de fertilidad. Estas son las consultas que hacen nuestros médicos cuando quieres que alguien mire el cuadro completo.",
+      "widget": {
+        "title": "Tus días fértiles",
+        "placeholder": "Indica el primer día de tu última regla para ver tus días fértiles.",
+        "note": "Es una estimación a partir de las fechas que introduces, no un diagnóstico, y no es un método anticonceptivo. La ovulación se mueve de un ciclo a otro y el embarazo es posible en días fuera de la ventana que se muestra.",
+        "lmpLabel": "Primer día de tu última regla",
+        "lmpHint": "El día en que empezó el sangrado, no el día en que terminó.",
+        "cycleLabel": "Duración del ciclo",
+        "cycleHint": "Días desde el inicio de una regla hasta el inicio de la siguiente. Si no lo sabes, déjalo en 28.",
+        "daysUnit": "días",
+        "resultLabel": "Ovulación estimada",
+        "resultSummary": "Contada 14 días hacia atrás desde tu próxima regla prevista, que es lo que mantiene bien las fechas en ciclos que no duran 28 días.",
+        "fertileWindowLabel": "Ventana fértil (6 días)",
+        "daysToOvulationLabel": "Días hasta la ovulación",
+        "nextPeriodLabel": "Próxima regla prevista",
+        "testFromLabel": "Test a partir de"
+      },
+      "sections": [
+        {
+          "heading": "Tu ciclo, día a día",
+          "body": [
+            "El ciclo se cuenta desde el primer día de sangrado. La ovulación no está fijada al día 14: ocurre unos 14 días antes de tu PRÓXIMA regla, así que en un ciclo de 35 días cae alrededor del día 21 y en uno de 24 días alrededor del día 10. Por eso contar 14 días hacia delante desde la última regla falla en todos los ciclos que no son de 28 días.",
+            "Los días de abajo son un ciclo de 28 días. La calculadora de arriba los desplaza a la duración que hayas indicado."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Días fértiles en un ciclo de 28 días",
+            "columns": [
+              "Día del ciclo",
+              "Qué está pasando",
+              "Probabilidad de embarazo"
+            ],
+            "rows": [
+              [
+                "Día 1",
+                "Empieza el sangrado: el ciclo se cuenta desde aquí",
+                "Muy baja"
+              ],
+              [
+                "Días 2 – 8",
+                "Un óvulo está madurando; la ventana aún no se ha abierto",
+                "Baja"
+              ],
+              [
+                "Días 9 – 13",
+                "Ventana fértil: los espermatozoides sobreviven hasta cinco días",
+                "Alta"
+              ],
+              [
+                "Día 14",
+                "Ovulación: se libera el óvulo",
+                "La más alta"
+              ],
+              [
+                "Días 15 – 16",
+                "El óvulo sobrevive menos de un día tras liberarse",
+                "Cae rápido"
+              ],
+              [
+                "Día 28",
+                "Toca la próxima regla: si no llega, haz el test a partir de aquí",
+                "Muy baja"
+              ]
+            ],
+            "footnote": "Los espermatozoides sobreviven hasta cinco días en el aparato reproductor y el óvulo menos de uno, y por eso la ventana fértil se abre bastante antes de la ovulación y se cierra casi inmediatamente después."
+          }
+        },
+        {
+          "heading": "Señales de que has ovulado de verdad",
+          "body": [
+            "La calculadora predice; estas señales confirman. Seguir una o dos durante un par de ciclos te dice si tu ovulación coincide con la estimación, y eso conviene saberlo antes de organizar nada alrededor."
+          ],
+          "bullets": [
+            "El moco cervical se vuelve transparente, elástico y resbaladizo, como la clara de huevo cruda, en los días previos a la ovulación.",
+            "Los test de ovulación detectan el pico de LH en la orina, que aparece entre 24 y 36 horas antes de que se libere el óvulo. Empieza a hacerlos unos días antes de la fecha estimada.",
+            "La temperatura basal sube unos 0,3 °C después de ovular, así que lo confirma a posteriori en lugar de predecirlo.",
+            "Algunas personas notan un dolor en un solo lado a mitad del ciclo, y otras tensión mamaria o un cambio en la libido.",
+            "Un ciclo puede pasar sin ovulación. Le ocurre a casi todo el mundo de forma puntual y por sí solo no significa que haya un problema."
+          ]
+        },
+        {
+          "heading": "Lo que esta calculadora no puede hacer",
+          "body": [
+            "Trabaja solo con dos cosas: la fecha que introduces y el supuesto de que tu fase lútea dura los 14 días habituales. Ambas son razonables, ninguna está garantizada."
+          ],
+          "bullets": [
+            "No es un método anticonceptivo. Los ciclos se mueven, los espermatozoides sobreviven días y el embarazo es posible en días fuera de la ventana que aquí se muestra.",
+            "Los ciclos irregulares, la anticoncepción hormonal recién retirada, la lactancia, el SOP y los problemas de tiroides debilitan la predicción.",
+            "La anticoncepción hormonal suprime la ovulación, así que mientras la usas no hay nada que predecir.",
+            "El estrés, una enfermedad, los viajes y el entrenamiento intenso pueden retrasar la ovulación en un ciclo concreto.",
+            "Es una herramienta de planificación, no una prueba de fertilidad: no dice nada sobre la calidad ovocitaria, el semen ni las trompas."
+          ]
+        },
+        {
+          "heading": "Cuándo hablar con un médico",
+          "body": [],
+          "bullets": [
+            "Llevas 12 meses buscando el embarazo, o 6 meses si tienes más de 35 años.",
+            "Tus ciclos duran menos de 21 días, más de 35 o son imprevisibles de un mes a otro.",
+            "Se te ha retirado la regla o sangras entre reglas.",
+            "Tienes reglas dolorosas, dolor en las relaciones o un diagnóstico de SOP, endometriosis o alteración tiroidea.",
+            "Quieres consejo preconcepcional: el ácido fólico, la medicación que ya tomas, las vacunas y una toma de tensión van antes del embarazo, no después."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Cuándo soy más fértil?",
+          "answer": "El día de la ovulación y los dos días previos. La ventana completa cubre unos seis días: los cinco anteriores a la ovulación más el propio día. Los espermatozoides sobreviven hasta cinco días y el óvulo menos de uno, por eso la ventana se abre pronto y se cierra deprisa."
+        },
+        {
+          "question": "¿La ovulación es siempre el día 14?",
+          "answer": "No. El día 14 solo vale para el ciclo de manual de 28 días. La ovulación ocurre unos 14 días antes de la siguiente regla, así que en un ciclo de 32 días cae hacia el día 18 y en uno de 24 días hacia el día 10. Contar 14 días desde la última regla es la forma más habitual de equivocarse con las fechas."
+        },
+        {
+          "question": "¿Cómo calculo la ovulación con ciclos irregulares?",
+          "answer": "Introduce tu duración habitual y toma el resultado como una franja amplia, no como una fecha. Si tus ciclos varían más de unos pocos días, los test de ovulación o el moco cervical te dirán mucho más que cualquier cálculo de calendario, y los ciclos que quedan siempre por debajo de 21 días o por encima de 35 merecen una consulta médica."
+        },
+        {
+          "question": "¿Puedo usar una calculadora de ovulación como anticonceptivo?",
+          "answer": "No. No es un método anticonceptivo y nunca debe usarse como tal. La ovulación se desplaza entre ciclos, los espermatozoides sobreviven hasta cinco días y el embarazo es posible en días que esta calculadora marca fuera de la ventana fértil. Si quieres evitar un embarazo, usa un método anticonceptivo reconocido."
+        },
+        {
+          "question": "¿Cuándo puedo hacerme un test de embarazo tras ovular?",
+          "answer": "La mayoría de los test caseros son fiables desde el día en que te tocaría la regla, unos 14 días después de la ovulación: la fecha «Test a partir de» del resultado. Hacerlo antes puede dar negativo aun estando embarazada, porque todavía no hay suficiente hCG en la orina."
+        },
+        {
+          "question": "¿Esta calculadora de ovulación guarda mis datos?",
+          "answer": "No. El cálculo se hace por completo en tu navegador. Nada de lo que escribas se envía a nuestros servidores ni se guarda."
+        }
+      ],
+      "cta": {
+        "heading": "¿Buscando el embarazo?",
+        "body": "Habla por vídeo con un médico colegiado sobre ciclos irregulares, revisiones preconcepcionales o la medicación que ya tomas.",
         "label": "Reservar consulta"
       }
     }

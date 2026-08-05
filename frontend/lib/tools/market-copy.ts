@@ -639,11 +639,320 @@ const DUE_DATE_MARKET_FAQ: MarketFaq = {
   },
 };
 
+/**
+ * Ovulation. The market-specific part is who to see locally when the cycle
+ * itself is the problem, and where ovulation tests are actually sold — the
+ * arithmetic and the "this is not contraception" line are the same everywhere,
+ * so neither is repeated per market.
+ */
+const OVULATION_MARKET_FAQ: MarketFaq = {
+  ie: {
+    en: [
+      {
+        question: "Where do I get fertility advice in Ireland?",
+        answer:
+          "Start with a GP. They can check the basics — cycles, thyroid, rubella immunity, and bloods for both partners — and refer on to a fertility service when that is the next step. Our Irish-registered doctors can go through irregular cycles and preconception checks by video first, which is often enough to know whether a referral is what you need.",
+      },
+      {
+        question: "Can I buy ovulation tests in Ireland?",
+        answer:
+          "Yes. Ovulation predictor kits are sold over the counter in Irish pharmacies and supermarkets, with no prescription needed. They detect the LH surge 24 to 36 hours before the egg is released, so start testing a few days before the date this calculator estimates.",
+      },
+    ],
+  },
+  pt: {
+    pt: [
+      {
+        question: "A quem me dirijo em Portugal para aconselhamento sobre fertilidade?",
+        answer:
+          "Comece pelo centro de saúde: o médico de família faz a avaliação inicial do casal e as primeiras análises, e encaminha para a consulta de ginecologia ou de medicina da reprodução quando é esse o passo seguinte. Os nossos médicos registados podem, entretanto, rever por vídeo ciclos irregulares e a preparação para engravidar.",
+      },
+      {
+        question: "Onde compro testes de ovulação em Portugal?",
+        answer:
+          "Nas farmácias e parafarmácias, sem receita. Detetam o pico de LH na urina 24 a 36 horas antes de o óvulo ser libertado, por isso comece a testar alguns dias antes da data que esta calculadora estima.",
+      },
+    ],
+    en: [
+      {
+        question: "Where do I get fertility advice in Portugal?",
+        answer:
+          "Start at your local health centre: the family doctor does the first assessment and blood tests for both partners and refers on to gynaecology or a reproductive medicine service when that is the next step. Our registered doctors can review irregular cycles and preconception checks by video in the meantime.",
+      },
+      {
+        question: "Where can I buy ovulation tests in Portugal?",
+        answer:
+          "In pharmacies and parapharmacies, without a prescription. They detect the LH surge in urine 24 to 36 hours before the egg is released, so start testing a few days before the date estimated above.",
+      },
+    ],
+  },
+  es: {
+    es: [
+      {
+        question: "¿A quién acudo en España para consultar sobre fertilidad?",
+        answer:
+          "Al centro de salud: el médico de familia hace la primera valoración de la pareja y las analíticas iniciales, y deriva a ginecología o a una unidad de reproducción cuando ese es el siguiente paso. Mientras tanto, nuestros médicos colegiados pueden revisar por vídeo los ciclos irregulares y las revisiones previas al embarazo.",
+      },
+      {
+        question: "¿Dónde compro test de ovulación en España?",
+        answer:
+          "En farmacias y parafarmacias, sin receta. Detectan el pico de LH en la orina entre 24 y 36 horas antes de que se libere el óvulo, así que empieza a hacerlos unos días antes de la fecha que estima esta calculadora.",
+      },
+    ],
+    en: [
+      {
+        question: "Where do I get fertility advice in Spain?",
+        answer:
+          "Through your local health centre: the family doctor makes the first assessment of both partners and orders the initial blood tests, referring on to gynaecology or a reproductive unit when that is the next step. Our registered doctors can review irregular cycles and preconception checks by video in the meantime.",
+      },
+      {
+        question: "Where can I buy ovulation tests in Spain?",
+        answer:
+          "In pharmacies and parapharmacies, without a prescription. They detect the LH surge in urine 24 to 36 hours before the egg is released, so start testing a few days before the date estimated above.",
+      },
+    ],
+  },
+  cz: {
+    cs: [
+      {
+        question: "Na koho se v Česku obrátit ohledně plodnosti?",
+        answer:
+          "Na svého gynekologa — ten udělá základní vyšetření, doplní hormonální odběry a ultrazvuk a v případě potřeby odešle do centra asistované reprodukce. Praktický lékař zvládne štítnou žlázu a základní krevní testy. Naši registrovaní lékaři mohou zatím po videu probrat nepravidelné cykly a přípravu na těhotenství.",
+      },
+      {
+        question: "Kde koupím ovulační testy v Česku?",
+        answer:
+          "V lékárnách a drogeriích, bez receptu. Zachytí v moči vzestup LH 24 až 36 hodin před uvolněním vajíčka, takže začněte testovat několik dnů před datem, které tato kalkulačka odhaduje.",
+      },
+    ],
+    en: [
+      {
+        question: "Who do I see about fertility in Czechia?",
+        answer:
+          "Your gynaecologist, who does the basic assessment, hormone bloods and an ultrasound, and refers to an assisted-reproduction centre when that is the next step. A GP covers thyroid and general blood tests. Our registered doctors can talk through irregular cycles and preconception checks by video in the meantime.",
+      },
+      {
+        question: "Where can I buy ovulation tests in Czechia?",
+        answer:
+          "In pharmacies and drugstores, without a prescription. They detect the LH surge in urine 24 to 36 hours before the egg is released, so start testing a few days before the date estimated above.",
+      },
+    ],
+  },
+  ro: {
+    ro: [
+      {
+        question: "La cine merg în România pentru probleme de fertilitate?",
+        answer:
+          "Fie la medicul de familie, care face evaluarea inițială și trimiterile pentru analize, fie direct la un medic obstetrician-ginecolog, care completează cu ecografie și analize hormonale și îndrumă spre reproducere asistată atunci când e cazul. Medicii noștri înregistrați pot discuta între timp prin video ciclurile neregulate și pregătirea pentru sarcină.",
+      },
+      {
+        question: "De unde cumpăr teste de ovulație în România?",
+        answer:
+          "Din farmacii, fără rețetă. Detectează creșterea LH în urină cu 24–36 de ore înainte de eliberarea ovulului, așa că începe testarea cu câteva zile înainte de data estimată de acest calculator.",
+      },
+    ],
+    en: [
+      {
+        question: "Who do I see about fertility in Romania?",
+        answer:
+          "Either your family doctor, who does the first assessment and orders blood tests, or an obstetrician-gynaecologist directly, who adds an ultrasound and hormone tests and refers on to assisted reproduction when that is the next step. Our registered doctors can discuss irregular cycles and preconception checks by video in the meantime.",
+      },
+      {
+        question: "Where can I buy ovulation tests in Romania?",
+        answer:
+          "In pharmacies, without a prescription. They detect the LH surge in urine 24 to 36 hours before the egg is released, so start testing a few days before the date estimated above.",
+      },
+    ],
+  },
+  br: {
+    pt: [
+      {
+        question: "A quem procurar no Brasil para tratar de fertilidade?",
+        answer:
+          "Comece pela unidade básica de saúde ou por um ginecologista: é lá que se avaliam os ciclos, se pedem os exames hormonais e a ultrassonografia e se encaminha para reprodução humana quando esse é o passo seguinte. Os nossos médicos registrados podem, enquanto isso, conversar por vídeo sobre ciclos irregulares e sobre o que checar antes de engravidar.",
+      },
+      {
+        question: "Onde comprar teste de ovulação no Brasil?",
+        answer:
+          "Nas farmácias, sem receita. Eles detectam o pico de LH na urina de 24 a 36 horas antes de o óvulo ser liberado, então comece a testar alguns dias antes da data que esta calculadora estima.",
+      },
+    ],
+    en: [
+      {
+        question: "Who do I see about fertility in Brazil?",
+        answer:
+          "Start at a primary health unit or with a gynaecologist: cycles are assessed there, hormone tests and an ultrasound are ordered, and a referral to a reproductive medicine service follows when that is the next step. Our registered doctors can talk through irregular cycles and preconception checks by video in the meantime.",
+      },
+      {
+        question: "Where can I buy ovulation tests in Brazil?",
+        answer:
+          "In pharmacies, without a prescription. They detect the LH surge in urine 24 to 36 hours before the egg is released, so start testing a few days before the date estimated above.",
+      },
+    ],
+  },
+};
+
+/**
+ * ADHD. The screener is the same instrument everywhere, so the market-specific
+ * part is the only thing that genuinely differs: who is allowed to diagnose
+ * adult ADHD locally, and how you reach them. Every entry also says the same
+ * two things, because they hold in all six systems — a questionnaire is not a
+ * diagnosis, and no medicine is started from one.
+ */
+const ADHD_MARKET_FAQ: MarketFaq = {
+  ie: {
+    en: [
+      {
+        question: "How do I get assessed for ADHD in Ireland?",
+        answer:
+          "Through a GP first. Adult ADHD is assessed by psychiatrists and clinical psychologists, whether that happens in the public mental health services or privately, and a GP referral is what starts either route. The GP also checks the things that look like ADHD — thyroid function, sleep, anxiety, depression — before anyone assesses for it.",
+      },
+      {
+        question: "Can I be prescribed ADHD medication from an online test?",
+        answer:
+          "No, and be wary of anywhere that offers it. ADHD medicines are controlled drugs, started only after a full assessment and a diagnosis by a specialist, and prescribing afterwards is normally shared between that specialist and your GP. Our Irish-registered doctors can review a screening result, rule out the conditions that mimic ADHD and refer you on — they cannot diagnose it in a video call.",
+      },
+    ],
+  },
+  pt: {
+    pt: [
+      {
+        question: "Como se faz a avaliação de PHDA em adultos em Portugal?",
+        answer:
+          "Começa no médico de família, que revê a história clínica, exclui o que se parece com PHDA — tiroide, sono, ansiedade, depressão — e encaminha para consulta de psiquiatria. O diagnóstico é feito por psiquiatra ou por psicólogo clínico, nunca a partir de um questionário.",
+      },
+      {
+        question: "Posso ter medicação para a PHDA a partir de um teste online?",
+        answer:
+          "Não, e desconfie de quem o ofereça. Os medicamentos para a PHDA estão sujeitos a controlo especial e só são iniciados depois de uma avaliação completa e de um diagnóstico feito por um especialista. Os nossos médicos registados podem rever o resultado do rastreio, excluir as situações que o imitam e encaminhá-lo — diagnosticar por videoconsulta, não.",
+      },
+    ],
+    en: [
+      {
+        question: "How is adult ADHD assessed in Portugal?",
+        answer:
+          "It starts with your family doctor, who reviews your history, rules out the conditions that look like ADHD — thyroid, sleep, anxiety, depression — and refers you to psychiatry. The diagnosis is made by a psychiatrist or a clinical psychologist, never from a questionnaire.",
+      },
+      {
+        question: "Can an online test get me ADHD medication in Portugal?",
+        answer:
+          "No. ADHD medicines are controlled and are started only after a full specialist assessment and a diagnosis. Our registered doctors can review a screening result, check for the conditions that mimic ADHD and refer you onwards, but a diagnosis is not something a video consultation can give you.",
+      },
+    ],
+  },
+  es: {
+    es: [
+      {
+        question: "¿Cómo se evalúa el TDAH en adultos en España?",
+        answer:
+          "Se empieza en atención primaria: tu médico de familia repasa la historia, descarta lo que se parece al TDAH — tiroides, sueño, ansiedad, depresión — y deriva a salud mental. El diagnóstico lo hace un psiquiatra o un psicólogo clínico, nunca un cuestionario.",
+      },
+      {
+        question: "¿Puedo conseguir medicación para el TDAH con un test online?",
+        answer:
+          "No, y desconfía de quien te la ofrezca. Los fármacos para el TDAH están sometidos a control especial y solo se inician tras una evaluación completa y un diagnóstico del especialista. Nuestros médicos colegiados pueden revisar tu cribado, descartar los cuadros que lo imitan y derivarte, pero diagnosticar por vídeo no.",
+      },
+    ],
+    en: [
+      {
+        question: "How is adult ADHD assessed in Spain?",
+        answer:
+          "It starts in primary care: your family doctor reviews your history, rules out the conditions that look like ADHD — thyroid, sleep, anxiety, depression — and refers you to mental health services. The diagnosis is made by a psychiatrist or a clinical psychologist, never by a questionnaire.",
+      },
+      {
+        question: "Can an online test get me ADHD medication in Spain?",
+        answer:
+          "No. ADHD medicines are controlled and are started only after a full specialist assessment and a diagnosis. Our registered doctors can review a screening result, check for the conditions that mimic ADHD and refer you onwards; a diagnosis is not something a video consultation can give you.",
+      },
+    ],
+  },
+  cz: {
+    cs: [
+      {
+        question: "Kde se v Česku vyšetřuje ADHD u dospělých?",
+        answer:
+          "V psychiatrické ambulanci pro dospělé nebo u klinického psychologa — to jsou odbornosti, které diagnózu stanoví. Praktický lékař bývá prvním krokem: projde s vámi anamnézu, vyloučí stavy, které ADHD připomínají (štítná žláza, spánek, úzkost, deprese), a odešle vás dál.",
+      },
+      {
+        question: "Můžu dostat léky na ADHD na základě online testu?",
+        answer:
+          "Ne, a od nikoho, kdo to nabízí, to neberte. Léky na ADHD podléhají zvláštnímu režimu a nasazují se až po úplném vyšetření a stanovení diagnózy odborníkem. Naši registrovaní lékaři mohou výsledek screeningu probrat, vyloučit stavy, které ho napodobují, a odeslat vás dál — diagnózu po videu nestanoví.",
+      },
+    ],
+    en: [
+      {
+        question: "Where is adult ADHD assessed in Czechia?",
+        answer:
+          "In adult psychiatric outpatient care or with a clinical psychologist — those are the specialties that make the diagnosis. A GP is the usual first step: they go through your history, rule out the conditions that resemble ADHD (thyroid, sleep, anxiety, depression) and refer you on.",
+      },
+      {
+        question: "Can an online test get me ADHD medication in Czechia?",
+        answer:
+          "No. ADHD medicines are subject to special controls and are started only after a full assessment and a specialist diagnosis. Our registered doctors can talk a screening result through, rule out what mimics it and refer you onwards, but they cannot diagnose ADHD in a video call.",
+      },
+    ],
+  },
+  ro: {
+    ro: [
+      {
+        question: "Cum se face evaluarea pentru ADHD la adulți în România?",
+        answer:
+          "Diagnosticul îl pune un medic psihiatru sau un psiholog clinician. Drumul obișnuit începe la medicul de familie: îți ia istoricul, exclude ce seamănă cu ADHD-ul — tiroidă, somn, anxietate, depresie — și îți dă trimitere mai departe.",
+      },
+      {
+        question: "Pot primi medicație pentru ADHD pe baza unui test online?",
+        answer:
+          "Nu, iar dacă cineva îți oferă asta, ferește-te. Medicamentele pentru ADHD se eliberează sub regim special și se încep doar după o evaluare completă și un diagnostic pus de specialist. Medicii noștri înregistrați pot discuta rezultatul screeningului, pot exclude afecțiunile care îl imită și te pot îndruma — un diagnostic prin video, nu.",
+      },
+    ],
+    en: [
+      {
+        question: "How is adult ADHD assessed in Romania?",
+        answer:
+          "The diagnosis is made by a psychiatrist or a clinical psychologist. The usual route starts with your family doctor, who takes the history, rules out what resembles ADHD — thyroid, sleep, anxiety, depression — and gives you the referral onwards.",
+      },
+      {
+        question: "Can an online test get me ADHD medication in Romania?",
+        answer:
+          "No. ADHD medicines are dispensed under special controls and are started only after a full assessment and a specialist diagnosis. Our registered doctors can review a screening result, rule out the conditions that imitate it and point you to an assessment; they cannot diagnose ADHD by video.",
+      },
+    ],
+  },
+  br: {
+    pt: [
+      {
+        question: "Como é feita a avaliação de TDAH em adultos no Brasil?",
+        answer:
+          "O diagnóstico é feito por psiquiatra ou por psicólogo clínico, numa avaliação que percorre a sua história desde a infância. O caminho costuma começar na atenção básica ou numa consulta clínica, que revisa o histórico, afasta o que se parece com TDAH — tireoide, sono, ansiedade, depressão — e encaminha.",
+      },
+      {
+        question: "Dá para conseguir remédio para TDAH com um teste online?",
+        answer:
+          "Não, e desconfie de quem oferecer. Os medicamentos para TDAH são de controle especial e só entram depois de uma avaliação completa e de um diagnóstico feito por especialista. Os nossos médicos registrados podem revisar o resultado da triagem, afastar o que imita o quadro e encaminhar você — diagnosticar por vídeo, não.",
+      },
+    ],
+    en: [
+      {
+        question: "How is adult ADHD assessed in Brazil?",
+        answer:
+          "The diagnosis is made by a psychiatrist or a clinical psychologist, from an assessment that goes through your history from childhood onwards. The route usually starts in primary care or a general consultation, which reviews your history, rules out what looks like ADHD — thyroid, sleep, anxiety, depression — and refers you on.",
+      },
+      {
+        question: "Can an online test get me ADHD medication in Brazil?",
+        answer:
+          "No. ADHD medicines are controlled and are started only after a full assessment and a specialist diagnosis. Our registered doctors can review a screening result, rule out the conditions that imitate it and refer you onwards; a diagnosis is not something a video consultation can give you.",
+      },
+    ],
+  },
+};
+
 const MARKET_FAQ: Record<string, MarketFaq> = {
   "bmi-calculator": BMI_MARKET_FAQ,
   "calorie-calculator": CALORIE_MARKET_FAQ,
   "blood-pressure-chart": BP_MARKET_FAQ,
   "due-date-calculator": DUE_DATE_MARKET_FAQ,
+  "ovulation-calculator": OVULATION_MARKET_FAQ,
+  "adhd-test": ADHD_MARKET_FAQ,
 };
 
 /**
@@ -1219,7 +1528,312 @@ const BR_PT_DUE_DATE: DeepPartial<ToolCopy> = {
   },
 };
 
+/**
+ * Ovulation, Brazilian Portuguese. `calculadora de ovulação` is 2,900/mo in
+ * Brazil, and the European copy would land wrong on most of it: Brazil says
+ * "período fértil" rather than "janela fértil", "anticoncepcional" rather than
+ * "contraceção", "contraceptivo" rather than "contracetivo", and "Insira"
+ * rather than "Indique".
+ */
+const BR_PT_OVULATION: DeepPartial<ToolCopy> = {
+  cardBlurb:
+    "Seu período fértil, o dia previsto da ovulação e quando a próxima menstruação deve vir.",
+  metaTitle: "Calculadora de Ovulação {country} | Período Fértil e Dia da Ovulação",
+  metaDescription:
+    "Calcule seu período fértil e o dia previsto da ovulação a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com os seis dias mais férteis detalhados.",
+  lede: "Insira o primeiro dia da última menstruação para ver os seis dias com maior chance de engravidar, o dia previsto da ovulação e quando a próxima menstruação deve vir.",
+  trustPoints: [
+    "Conta de trás para frente a partir da próxima menstruação, então ciclos longos ficam certos",
+    "O período fértil inteiro, de seis dias, e não um único dia",
+    "Roda no seu navegador — nada é enviado nem salvo",
+  ],
+  suggestionsIntro:
+    "Uma estimativa de ovulação é uma orientação de datas, não uma avaliação de fertilidade. Estas são as consultas que os nossos médicos fazem quando você quer que alguém olhe o quadro completo.",
+  widget: {
+    title: "Seu período fértil",
+    placeholder: "Insira o primeiro dia da última menstruação para ver o seu período fértil.",
+    note: "É uma estimativa a partir das datas que você informa, não um diagnóstico — e não é método anticoncepcional. A ovulação muda de um ciclo para outro e é possível engravidar em dias fora do período mostrado.",
+    lmpLabel: "Primeiro dia da última menstruação",
+    lmpHint: "O dia em que o sangramento começou, não o dia em que terminou.",
+    cycleLabel: "Duração do ciclo",
+    cycleHint:
+      "Dias do início de uma menstruação até o início da seguinte. Se não souber, deixe 28.",
+    daysUnit: "dias",
+    resultLabel: "Ovulação prevista",
+    resultSummary:
+      "Contada 14 dias antes da próxima menstruação esperada, que é o que mantém as datas certas em ciclos que não têm 28 dias.",
+    fertileWindowLabel: "Período fértil (6 dias)",
+    daysToOvulationLabel: "Dias até a ovulação",
+    nextPeriodLabel: "Próxima menstruação",
+    testFromLabel: "Teste a partir de",
+  },
+  sections: [
+    {
+      heading: "Seu ciclo, dia a dia",
+      body: [
+        "O ciclo é contado a partir do primeiro dia de sangramento. A ovulação não é fixa no dia 14: ela acontece cerca de 14 dias antes da PRÓXIMA menstruação, então num ciclo de 35 dias cai por volta do dia 21 e num de 24 dias por volta do dia 10. É por isso que contar 14 dias para a frente a partir da última menstruação erra em todo ciclo que não tem 28 dias.",
+        "Os dias abaixo são um ciclo de 28 dias. A calculadora acima desloca tudo para a duração que você informar.",
+      ],
+      bullets: [],
+      table: {
+        caption: "Dias férteis em um ciclo de 28 dias",
+        columns: ["Dia do ciclo", "O que está acontecendo", "Chance de engravidar"],
+        rows: [
+          ["Dia 1", "Começa o sangramento — o ciclo é contado daqui", "Muito baixa"],
+          ["Dias 2 – 8", "Um óvulo está amadurecendo; o período fértil ainda não abriu", "Baixa"],
+          [
+            "Dias 9 – 13",
+            "Período fértil: os espermatozoides sobrevivem até cinco dias",
+            "Alta",
+          ],
+          ["Dia 14", "Ovulação — o óvulo é liberado", "A mais alta"],
+          ["Dias 15 – 16", "O óvulo sobrevive menos de um dia depois de liberado", "Cai rápido"],
+          [
+            "Dia 28",
+            "A próxima menstruação é esperada — se não vier, teste a partir daqui",
+            "Muito baixa",
+          ],
+        ],
+        footnote:
+          "Os espermatozoides sobrevivem até cinco dias no trato reprodutivo e o óvulo menos de um, e é por isso que o período fértil abre bem antes da ovulação e fecha quase logo depois dela.",
+      },
+    },
+    {
+      heading: "Sinais de que você ovulou mesmo",
+      body: [
+        "A calculadora prevê; estes sinais confirmam. Acompanhar um ou dois deles por alguns ciclos mostra se a sua ovulação bate com a estimativa — e isso vale saber antes de organizar qualquer coisa em cima dela.",
+      ],
+      bullets: [
+        "O muco cervical fica transparente, elástico e escorregadio, parecido com clara de ovo crua, nos dias logo antes da ovulação.",
+        "Os testes de ovulação detectam o pico de LH na urina, que vem de 24 a 36 horas antes de o óvulo ser liberado. Comece a testar alguns dias antes da data prevista.",
+        "A temperatura basal sobe cerca de 0,3 °C depois da ovulação, então ela confirma depois, em vez de prever antes.",
+        "Algumas pessoas sentem uma dor de um lado só no meio do ciclo, outras notam os seios sensíveis ou uma mudança na libido.",
+        "Um ciclo pode passar sem ovulação. Isso acontece de vez em quando com a maioria das pessoas e, sozinho, não quer dizer que algo esteja errado.",
+      ],
+    },
+    {
+      heading: "O que esta calculadora não faz",
+      body: [
+        "Ela trabalha com duas coisas apenas: a data que você informa e a suposição de que a sua fase lútea dura os 14 dias de sempre. As duas são razoáveis, nenhuma é garantida.",
+      ],
+      bullets: [
+        "Não é método anticoncepcional. Os ciclos mudam, os espermatozoides sobrevivem por dias e é possível engravidar em dias fora do período mostrado aqui.",
+        "Ciclos irregulares, anticoncepcional hormonal interrompido há pouco, amamentação, SOP e problemas de tireoide enfraquecem a previsão.",
+        "O anticoncepcional hormonal suprime a ovulação, então enquanto você o usa não há nada a prever.",
+        "Estresse, doença, viagem e treino pesado podem atrasar a ovulação em um ciclo.",
+        "É uma ferramenta de planejamento, não um exame de fertilidade: não diz nada sobre a qualidade dos óvulos, sobre o espermograma ou sobre as trompas.",
+      ],
+    },
+    {
+      heading: "Quando procurar um médico",
+      body: [],
+      bullets: [
+        "Você está tentando engravidar há 12 meses, ou há 6 meses se tem mais de 35 anos.",
+        "Seus ciclos são mais curtos que 21 dias, mais longos que 35 ou imprevisíveis de um mês para o outro.",
+        "A menstruação parou, ou você tem sangramento entre as menstruações.",
+        "Você tem cólicas fortes, dor na relação sexual ou diagnóstico de SOP, endometriose ou doença da tireoide.",
+        "Você quer orientação antes de engravidar — ácido fólico, os remédios que já usa, vacinas e a medida da pressão arterial ficam antes da gestação, não depois.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: "Quando estou mais fértil?",
+      answer:
+        "No dia da ovulação e nos dois dias antes dele. O período fértil inteiro cobre cerca de seis dias: os cinco antes da ovulação mais o próprio dia. Os espermatozoides sobrevivem até cinco dias e o óvulo menos de um, por isso o período abre cedo e fecha rápido.",
+    },
+    {
+      question: "A ovulação é sempre no dia 14?",
+      answer:
+        "Não. O dia 14 só vale para o ciclo de livro, de 28 dias. A ovulação fica cerca de 14 dias antes da menstruação seguinte, então num ciclo de 32 dias cai por volta do dia 18 e num de 24 dias por volta do dia 10. Contar 14 dias para a frente a partir da última menstruação é o jeito mais comum de errar a conta.",
+    },
+    {
+      question: "Como calcular a ovulação com ciclo irregular?",
+      answer:
+        "Informe a duração habitual do seu ciclo e trate o resultado como um intervalo largo, não como uma data. Se os seus ciclos variam mais do que alguns dias, os testes de ovulação ou a observação do muco cervical dizem muito mais do que qualquer conta de calendário, e ciclos sempre abaixo de 21 ou acima de 35 dias merecem avaliação médica.",
+    },
+    {
+      question: "Posso usar a calculadora de ovulação como anticoncepcional?",
+      answer:
+        "Não. Ela não é método anticoncepcional e nunca deve ser usada assim. A ovulação muda de um ciclo para outro, os espermatozoides sobrevivem até cinco dias e é possível engravidar em dias que a calculadora marca como fora do período fértil. Se você quer evitar a gravidez, use um método anticoncepcional reconhecido.",
+    },
+    {
+      question: "Quando posso fazer o teste de gravidez depois da ovulação?",
+      answer:
+        "A maioria dos testes de farmácia é confiável a partir do dia em que a menstruação deveria vir, cerca de 14 dias depois da ovulação — a data «Teste a partir de» no resultado. Testar antes pode dar negativo mesmo você estando grávida, porque ainda não há hCG suficiente na urina.",
+    },
+    {
+      question: "Esta calculadora de ovulação guarda meus dados?",
+      answer:
+        "Não. O cálculo roda inteiramente no seu navegador. Nada do que você digitar é enviado aos nossos servidores nem salvo.",
+    },
+  ],
+  cta: {
+    heading: "Tentando engravidar?",
+    body: "Fale por vídeo com um médico registrado sobre ciclos irregulares, os exames de antes da gestação ou os remédios que você já usa.",
+    label: "Agendar consulta",
+  },
+};
+
+/**
+ * ADHD, Brazilian Portuguese — the sharpest terminology split of the whole set.
+ * Portugal says PHDA (perturbação de hiperatividade e défice de atenção),
+ * Brazil says TDAH, and `teste tdah` is the query with the volume there; a page
+ * written in European Portuguese would not rank for it at all. Everything else
+ * follows the same swaps as the other tools ("triagem" for "rastreio", "você",
+ * "salvo" for "guardado", "Agendar consulta" for "Marcar consulta").
+ */
+const BR_PT_ADHD: DeepPartial<ToolCopy> = {
+  cardTitle: "Teste de TDAH",
+  cardBlurb: "A triagem de TDAH em adultos com seis perguntas, pontuada como a escala foi feita.",
+  h1Lead: "Teste de",
+  h1Accent: "TDAH",
+  metaTitle: "Teste de TDAH {country} | Triagem Gratuita para Adultos",
+  metaDescription:
+    "Faça a triagem de TDAH em adultos com seis perguntas (ASRS v1.1, parte A) e veja o que as suas respostas significam. Uma triagem não é diagnóstico — quem diagnostica é o psiquiatra ou o psicólogo clínico.",
+  lede: "Responda a seis perguntas sobre os últimos seis meses para ver se as suas respostas seguem o padrão que a triagem de TDAH em adultos procura.",
+  trustPoints: [
+    "A triagem ASRS v1.1, parte A — seis perguntas",
+    "Pontuada pergunta a pergunta, como a escala foi feita",
+    "Roda no seu navegador — nada é enviado nem salvo",
+  ],
+  widget: {
+    title: "Suas respostas",
+    instructions: "Em cada pergunta, escolha com que frequência isso aconteceu nos últimos seis meses.",
+    placeholder: "Responda às seis perguntas para ver o resultado da triagem.",
+    note: "Este é um questionário de triagem, não um diagnóstico. O TDAH só é diagnosticado por psiquiatra ou psicólogo clínico, depois de uma avaliação completa. Nada aqui é recomendação de medicamento.",
+    thresholdLabel: "Triagem positiva",
+    thresholdValue: "{count} ou mais de {total}",
+  },
+  sections: [
+    {
+      heading: "Como a triagem é pontuada",
+      body: [
+        "As perguntas são a parte A da Adult ADHD Self-Report Scale da Organização Mundial da Saúde — a versão curta que serve para decidir se vale a pena marcar uma avaliação completa. A avaliação em si ela não é.",
+        "A pontuação é feita pergunta a pergunta, e não como soma. Cada item tem o seu próprio limiar, e quatro ou mais itens que atingem o limiar deles dão uma triagem positiva. O erro comum é tratar isso como uma regra fixa de «quatro respostas Frequentemente»: assim escapa a apresentação desatenta, justamente a que mais passa batida em adultos.",
+      ],
+      bullets: [],
+      table: {
+        caption: "As seis perguntas da triagem e a resposta a partir da qual cada uma conta",
+        columns: ["Pergunta", "Sobre o que é", "Conta a partir de"],
+        rows: [
+          ["1", "Terminar os últimos detalhes de um projeto", "Às vezes"],
+          ["2", "Colocar as coisas em ordem para uma tarefa", "Às vezes"],
+          ["3", "Lembrar de compromissos e combinados", "Às vezes"],
+          ["4", "Adiar tarefas que exigem pensar muito", "Frequentemente"],
+          ["5", "Se mexer quando precisa ficar sentado muito tempo", "Frequentemente"],
+          ["6", "Sensação de estar sendo empurrado a continuar", "Frequentemente"],
+        ],
+        footnote:
+          "Quatro ou mais perguntas no limiar delas ou acima dele dão uma triagem positiva. A escala foi feita para adultos a partir dos 18 anos e não é uma triagem para crianças.",
+      },
+    },
+    {
+      heading: "Como o TDAH aparece no adulto",
+      body: [
+        "O TDAH no adulto raramente se parece com a cena da sala de aula. A hiperatividade costuma virar para dentro — inquietação, uma cabeça que não desliga — enquanto a desatenção fica e começa a custar caro: prazos que passam, papelada sem abrir, uma memória de trabalho que deixa cair as coisas.",
+        "Para o diagnóstico, o que conta é que as dificuldades venham de longe, apareçam em mais de uma área da vida e atrapalhem de verdade. Todo mundo perde a chave de vez em quando; não é disso que se está falando.",
+      ],
+      bullets: [
+        "Começar as tarefas que importam e terminar as que deixaram de ser interessantes.",
+        "O tempo: subestimar, perder, chegar atrasado mesmo tentando de verdade.",
+        "Organização — papéis, contas, consultas — custando muito mais esforço do que parece custar aos outros.",
+        "Inquietação, ou uma necessidade constante e surda de estar fazendo alguma coisa.",
+        "Interromper, falar sem pensar ou agir antes de fechar a ideia.",
+        "Emoções que chegam rápido e passam rápido, muitas vezes maiores do que o motivo.",
+      ],
+    },
+    {
+      heading: "O que esta triagem não diz",
+      body: [
+        "Um questionário de seis perguntas é uma ferramenta de separação. Ele é rápido de propósito e amplo de propósito, porque a função dele é decidir quem precisa ser avaliado direito — e não quem tem TDAH.",
+      ],
+      bullets: [
+        "Não é diagnóstico: sozinho, um resultado positivo significa apenas «vale uma avaliação».",
+        "Um resultado negativo não descarta o TDAH, principalmente na apresentação desatenta e principalmente em mulheres, que recebem o diagnóstico mais tarde e com menos frequência.",
+        "Ansiedade, depressão, sono ruim, doença da tireoide, dor crônica e consumo alto de álcool produzem as mesmas respostas.",
+        "Não separa TDAH de autismo, de um transtorno específico de aprendizagem nem dos efeitos de um período longo de estresse.",
+        "Foi feito e validado para adultos. Crianças e adolescentes precisam de uma avaliação totalmente diferente.",
+        "Não diz nada sobre tratamento. Medicamento é uma opção entre outras e só entra na conversa depois do diagnóstico.",
+      ],
+    },
+    {
+      heading: "Como chegar a uma avaliação de verdade",
+      body: [
+        "O diagnóstico de TDAH é feito por psiquiatra ou por psicólogo clínico. A avaliação é uma entrevista clínica estruturada sobre a sua história desde a infância, normalmente com escalas e, quando dá, com o relato de alguém que convive com você há muito tempo.",
+      ],
+      bullets: [
+        "Comece por um médico. Ele revisa a sua história, afasta os quadros que se parecem com TDAH e encaminha para a avaliação.",
+        "Leve coisas concretas em vez de uma pontuação: boletins, avaliações do trabalho, o que dá errado sempre e há quanto tempo.",
+        "Conte o que mais está acontecendo — sono, humor, álcool, tireoide, traumatismo de crânio antigo. Isso muda a avaliação e a ordem dela.",
+        "O resultado da triagem é o começo dessa conversa, não o substituto dela. Leve o seu.",
+        "Se você não está dando conta, ou tem pensamentos de se machucar, procure um médico agora ou ligue para o SAMU (192) em vez de esperar por uma avaliação.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: "Um teste de TDAH online pode dar diagnóstico?",
+      answer:
+        "Não, e nenhum questionário online consegue. Isto é uma triagem: separa quem vale avaliar direito de quem, por essas respostas, não. O diagnóstico é feito por psiquiatra ou psicólogo clínico, a partir de uma entrevista completa sobre a sua história, e não de seis perguntas.",
+    },
+    {
+      question: "O que é a ASRS?",
+      answer:
+        "A Adult ADHD Self-Report Scale, criada junto com a Organização Mundial da Saúde. A parte A é a triagem de seis perguntas usada aqui; a escala completa tem dezoito itens. É o instrumento de triagem de TDAH em adultos mais usado no mundo, e por isso o resultado que você leva é reconhecido na consulta.",
+    },
+    {
+      question: "O que conta como resultado positivo?",
+      answer:
+        "Quatro ou mais das seis perguntas respondidas no limiar delas ou acima dele. As três primeiras contam a partir de «Às vezes» e as três últimas só a partir de «Frequentemente» — os limiares mudam porque as perguntas mudam, e um corte único deixaria a apresentação desatenta de fora.",
+    },
+    {
+      question: "Posso ter TDAH com resultado negativo?",
+      answer:
+        "Pode. Seis perguntas não cobrem um quadro que aparece de formas diferentes em idades e pessoas diferentes, e a apresentação desatenta em especial é pouco detectada — um dos motivos de as mulheres receberem o diagnóstico mais tarde e com menos frequência. Se as dificuldades atrapalham a sua vida, uma triagem negativa não é motivo para parar de investigar.",
+    },
+    {
+      question: "Quem pode diagnosticar TDAH?",
+      answer:
+        "Psiquiatra ou psicólogo clínico. O caminho costuma começar numa consulta clínica: o médico levanta a história, afasta os quadros que imitam o TDAH — tireoide, distúrbios do sono, ansiedade, depressão — e encaminha para a avaliação propriamente dita.",
+    },
+    {
+      question: "Este teste de TDAH guarda minhas respostas?",
+      answer:
+        "Não. A pontuação roda inteiramente no seu navegador. Nada do que você escolher é enviado aos nossos servidores nem salvo.",
+    },
+  ],
+  cta: {
+    heading: "Quer conversar sobre seu resultado?",
+    body: "Agende uma teleconsulta com um médico registrado, revise sua história e os quadros que podem parecer TDAH, e entenda o que uma avaliação envolve.",
+    label: "Agendar consulta",
+  },
+};
+
 const BR_PT_BANDS: DeepPartial<ToolsBandsCopy> = {
+  // pt-PT calls the condition PHDA and pt-BR calls it TDAH, so the result
+  // read-out has to be swapped wholesale, not just re-worded.
+  adhd: {
+    positive: {
+      label: "Resultado da triagem: positivo",
+      summary:
+        "Suas respostas seguem o padrão que esta triagem procura, então vale marcar uma avaliação completa. Diagnóstico não é: o TDAH só é diagnosticado por psiquiatra ou psicólogo clínico, a partir de toda a sua história e não de seis perguntas.",
+    },
+    negative: {
+      label: "Resultado da triagem: negativo",
+      summary:
+        "Suas respostas não seguem o padrão que esta triagem procura. Isso não descarta o TDAH — seis perguntas cobrem só uma parte — então, se essas dificuldades atrapalham seu trabalho, seus estudos ou suas relações, converse com um médico mesmo assim.",
+    },
+  },
+  adhdFrequencies: ["Nunca", "Raramente", "Às vezes", "Frequentemente", "Muito frequentemente"],
+  adhdQuestions: [
+    "Com que frequência você deixa os últimos detalhes de um projeto sem terminar depois de passar a parte difícil?",
+    "Com que frequência você tem dificuldade de colocar as coisas em ordem quando a tarefa exige organização?",
+    "Com que frequência você esquece compromissos ou coisas que combinou?",
+    "Com que frequência você adia ou evita começar algo que exige pensar muito?",
+    "Com que frequência você mexe as mãos ou os pés quando precisa ficar sentado muito tempo?",
+    "Com que frequência você se sente empurrado a continuar fazendo coisas, como se algo estivesse te tocando para frente?",
+  ],
   bp: {
     low: {
       label: "Pressão baixa",
@@ -1322,6 +1936,8 @@ const MARKET_COPY: Partial<Record<CountryCode, Record<string, MarketCopyOverride
         "calorie-calculator": BR_PT_CALORIE,
         "blood-pressure-chart": BR_PT_BP,
         "due-date-calculator": BR_PT_DUE_DATE,
+        "ovulation-calculator": BR_PT_OVULATION,
+        "adhd-test": BR_PT_ADHD,
       },
       bands: BR_PT_BANDS,
     },

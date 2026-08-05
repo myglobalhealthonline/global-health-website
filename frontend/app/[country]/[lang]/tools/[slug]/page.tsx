@@ -81,11 +81,13 @@ export default async function CountryToolPage({ params }: { params: Promise<Para
   // This market's own weight / nutrition / GP services, read from the live
   // catalogue so the links stay right when an admin renames or adds one.
   //
-  // Not on the due-date page: putting weight management in front of someone
-  // reading a pregnancy result would be wrong, and no market sells an antenatal
-  // service, so that page converts through its CTA band instead.
+  // Not on the due-date or ADHD pages: the suggestion set is the weight and
+  // nutrition catalogue, and putting weight management in front of someone
+  // reading a pregnancy or ADHD screening result would be wrong. Neither market
+  // sells an antenatal or a psychiatric service, so both pages convert through
+  // their CTA band instead.
   const suggestions =
-    slug === "due-date-calculator"
+    slug === "due-date-calculator" || slug === "adhd-test"
       ? []
       : await getBmiServiceSuggestions({
           code: resolved.code,

@@ -49,6 +49,7 @@ export function MobileNav({
   countries,
   lastCountry,
   selectedLocale,
+  toolLinks = [],
   a11y,
 }: {
   siteName: string;
@@ -64,6 +65,8 @@ export function MobileNav({
    *  `[lang]` of country links — the remembered cookie's `lang` records where
    *  they've been, not what they picked. */
   selectedLocale?: string | null;
+  /** Free-calculator links, resolved server-side by SiteHeader (see above). */
+  toolLinks?: Array<{ href: string; label: string }>;
   /** Localized drawer a11y strings, resolved server-side by SiteHeader. */
   a11y: { openMenu: string; menuDescription: string; chooseLanguage: string };
 }) {
@@ -154,6 +157,10 @@ export function MobileNav({
                 },
               ]
             : []),
+          // Free calculators, resolved server-side and passed in: this is a
+          // client component, and importing the tool registry here would drag
+          // all six locale bundles into the browser.
+          ...toolLinks,
           { href: `/${navCountrySlug}/${navLang}/blog`, label: navigation.navBlog },
           // Country-scoped, matching SiteHeader/SiteFooter.
           { href: `/${navCountrySlug}/${navLang}/about`, label: navigation.navAbout },

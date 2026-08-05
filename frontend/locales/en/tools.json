@@ -130,9 +130,182 @@
         "label": "Extremely active",
         "summary": "Physical job, or hard training twice a day"
       }
+    },
+    "adhdFrequencies": [
+      "Never",
+      "Rarely",
+      "Sometimes",
+      "Often",
+      "Very often"
+    ],
+    "adhdQuestions": [
+      "How often do you leave the last details of a project unfinished once the hard part is behind you?",
+      "How often do you struggle to get things in order when a task needs organising?",
+      "How often do you forget appointments or commitments you had agreed to?",
+      "How often do you put off or avoid starting something that will take a lot of thought?",
+      "How often do you fidget with your hands or feet when you have to stay seated for a long time?",
+      "How often do you feel restlessly driven to keep doing things, as though something were pushing you along?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Screening result: positive",
+        "summary": "Your answers match the pattern this screener looks for, which means a full assessment is worth arranging. It is not a diagnosis: only a psychiatrist or a clinical psychologist can diagnose ADHD, and they do it from your whole history, not from six questions."
+      },
+      "negative": {
+        "label": "Screening result: negative",
+        "summary": "Your answers do not match the pattern this screener looks for. That does not rule ADHD out — six questions cover only part of it — so if these difficulties are affecting your work, your studies or your relationships, talk to a doctor anyway."
+      }
     }
   },
   "tools": {
+    "adhd-test": {
+      "cardTitle": "ADHD test",
+      "cardBlurb": "The six-question adult ADHD screener, scored the way the scale is designed.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "ADHD",
+      "h1Accent": "test",
+      "h1Trail": "{country}",
+      "metaTitle": "ADHD Test {country} | Free Adult ADHD Screening",
+      "metaDescription": "Take the six-question adult ADHD screener (ASRS v1.1 Part A) and see what your answers mean. A screening result is not a diagnosis — only a psychiatrist or clinical psychologist can make one.",
+      "lede": "Answer six questions about the last six months to see whether your answers match the pattern the adult ADHD screener looks for.",
+      "trustPoints": [
+        "The six-question ASRS v1.1 Part A screener",
+        "Scored per question, the way the scale is designed",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "widget": {
+        "title": "Your answers",
+        "instructions": "For each question, choose how often it has applied to you over the past six months.",
+        "placeholder": "Answer the six questions to see your screening result.",
+        "note": "This is a screening questionnaire, not a diagnosis. ADHD is diagnosed only by a psychiatrist or a clinical psychologist, after a full assessment. Nothing here is a recommendation for medication.",
+        "thresholdLabel": "Positive screen",
+        "thresholdValue": "{count} or more of {total}"
+      },
+      "sections": [
+        {
+          "heading": "How the screen is scored",
+          "body": [
+            "The questions are Part A of the World Health Organization's Adult ADHD Self-Report Scale — the short form used to decide whether a full assessment is worth arranging, rather than the assessment itself.",
+            "Scoring is per question, not a running total. Each item has its own threshold, and four or more items reaching their own threshold is a positive screen. Treating it as a flat \"four answers of Often\" rule is the usual mistake, and it misses the inattentive presentation, which is the one most often overlooked in adults."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "The six screening questions and the answer each one counts from",
+            "columns": [
+              "Question",
+              "What it asks about",
+              "Counts from"
+            ],
+            "rows": [
+              [
+                "1",
+                "Finishing the last details of a project",
+                "Sometimes"
+              ],
+              [
+                "2",
+                "Getting things in order for a task",
+                "Sometimes"
+              ],
+              [
+                "3",
+                "Remembering appointments and commitments",
+                "Sometimes"
+              ],
+              [
+                "4",
+                "Putting off tasks that take a lot of thought",
+                "Often"
+              ],
+              [
+                "5",
+                "Fidgeting when you have to stay seated",
+                "Often"
+              ],
+              [
+                "6",
+                "Feeling restlessly driven to keep going",
+                "Often"
+              ]
+            ],
+            "footnote": "Four or more questions at or above their own threshold is a positive screen. The scale was developed for adults from 18 onwards and is not a children's screener."
+          }
+        },
+        {
+          "heading": "What ADHD looks like in adults",
+          "body": [
+            "Adult ADHD rarely looks like the classroom picture. Hyperactivity often turns inward — restlessness, a mind that will not settle — while the inattentive side stays and gets expensive: missed deadlines, unopened admin, a working memory that keeps dropping things.",
+            "What matters for a diagnosis is that the difficulties are long-standing, show up in more than one part of life, and cause real impairment. Everyone loses their keys occasionally; that is not what is being asked."
+          ],
+          "bullets": [
+            "Starting tasks that matter, and finishing the ones that have stopped being interesting.",
+            "Time: underestimating it, losing it, arriving late despite genuinely trying not to.",
+            "Organisation — paperwork, bills, appointments — costing far more effort than it seems to cost other people.",
+            "Restlessness, or a constant low-level need to be doing something.",
+            "Interrupting, blurting things out, or acting on an idea before thinking it through.",
+            "Emotions that arrive fast and pass fast, often out of proportion to what caused them."
+          ]
+        },
+        {
+          "heading": "What this screen cannot tell you",
+          "body": [
+            "A six-question screener is a sorting tool. It is deliberately quick and deliberately over-inclusive, because its job is to decide who should be assessed properly — not to decide who has ADHD."
+          ],
+          "bullets": [
+            "It is not a diagnosis, and a positive result on its own means no more than \"worth assessing\".",
+            "A negative result does not rule ADHD out, particularly for the inattentive presentation and particularly in women, who are diagnosed later and less often.",
+            "Anxiety, depression, poor sleep, thyroid disease, chronic pain and heavy drinking all produce the same answers.",
+            "It cannot separate ADHD from autism, from a specific learning difficulty, or from the effects of a long stretch of stress.",
+            "It was designed and validated for adults. Children and teenagers need a different assessment entirely.",
+            "It says nothing about treatment. Medication is one option among several, and it is only ever considered after a diagnosis."
+          ]
+        },
+        {
+          "heading": "Getting properly assessed",
+          "body": [
+            "A diagnosis of ADHD is made by a psychiatrist or a clinical psychologist. The assessment is a structured clinical interview covering your history from childhood onwards, usually with rating scales and, where possible, an account from someone who has known you a long time."
+          ],
+          "bullets": [
+            "Start with a doctor. They will go through your history, check for the conditions that look like ADHD, and refer you for assessment.",
+            "Bring specifics rather than a score: school reports, work reviews, the things that keep going wrong and how long they have been going wrong for.",
+            "Say what else is going on — sleep, mood, alcohol, thyroid, a past head injury. Those change both the assessment and the order it happens in.",
+            "A screening result is a starting point for that conversation, not a substitute for it. Take yours with you.",
+            "If you are struggling to cope, or having thoughts of harming yourself, contact a doctor or the emergency services now rather than waiting for an assessment."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Can an online ADHD test diagnose ADHD?",
+          "answer": "No, and no online questionnaire can. This is a screener: it sorts people into \"worth assessing properly\" and \"not on these answers\". A diagnosis is made by a psychiatrist or a clinical psychologist, from a full interview about your history rather than from six questions."
+        },
+        {
+          "question": "What is the ASRS?",
+          "answer": "The Adult ADHD Self-Report Scale, developed with the World Health Organization. Part A is the six-question screener used here; the full scale has eighteen items. It is the most widely used adult ADHD screening instrument, which is why clinicians recognise the result you bring them."
+        },
+        {
+          "question": "What counts as a positive result?",
+          "answer": "Four or more of the six questions answered at or above that question's own threshold. The first three count from \"Sometimes\", the last three only from \"Often\" — the thresholds differ because the questions do, and a single flat cut-off would miss the inattentive presentation."
+        },
+        {
+          "question": "Can I have ADHD if my result is negative?",
+          "answer": "Yes. Six questions cannot cover a condition that presents differently at different ages and in different people, and the inattentive presentation in particular is under-detected — one reason women are diagnosed later and less often. If the difficulties are affecting your life, a negative screen is not a reason to stop asking."
+        },
+        {
+          "question": "Who can diagnose ADHD?",
+          "answer": "A psychiatrist or a clinical psychologist, depending on the country. A GP is normally where the process starts: they take the history, rule out the conditions that mimic ADHD — thyroid problems, sleep disorders, anxiety, depression — and refer you on for the assessment itself."
+        },
+        {
+          "question": "Does this ADHD test store my answers?",
+          "answer": "No. The scoring runs entirely in your browser. Nothing you select is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Want to talk your result through?",
+        "body": "Book a video consultation with a registered doctor, go through your history and the conditions that can look like ADHD, and find out what an assessment would involve.",
+        "label": "Book a consultation"
+      }
+    },
     "blood-pressure-chart": {
       "cardTitle": "Blood pressure chart",
       "cardBlurb": "What your two numbers mean on the European adult blood pressure chart.",
@@ -727,6 +900,158 @@
       "cta": {
         "heading": "Questions in early pregnancy?",
         "body": "Talk to a registered doctor by video about symptoms, the medicines you already take, or anything you would rather not sit on until your first appointment.",
+        "label": "Book a consultation"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Ovulation calculator",
+      "cardBlurb": "Your fertile window, your estimated ovulation day and when your next period is due.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "Ovulation",
+      "h1Accent": "calculator",
+      "h1Trail": "{country}",
+      "metaTitle": "Ovulation Calculator {country} | Fertile Window And Ovulation Day",
+      "metaDescription": "Work out your fertile window and estimated ovulation day from the first day of your last period. Adjusts for your own cycle length, with the six most fertile days set out day by day.",
+      "lede": "Enter the first day of your last period to see the six days you are most likely to conceive, your estimated ovulation day and when your next period is due.",
+      "trustPoints": [
+        "Counted back from your next period, so longer cycles are timed correctly",
+        "The whole six-day fertile window, not a single day",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "suggestionsIntro": "An ovulation estimate is a timing guide, not a fertility assessment. These are the consultations our doctors run when you want someone to look at the whole picture.",
+      "widget": {
+        "title": "Your fertile window",
+        "placeholder": "Enter the first day of your last period to see your fertile window.",
+        "note": "An estimate from the dates you enter, not a diagnosis — and not a method of contraception. Ovulation moves from cycle to cycle, and pregnancy is possible on days outside the window shown.",
+        "lmpLabel": "First day of your last period",
+        "lmpHint": "The day bleeding started, not the day it stopped.",
+        "cycleLabel": "Cycle length",
+        "cycleHint": "Days from the start of one period to the start of the next. Leave it at 28 if you are not sure.",
+        "daysUnit": "days",
+        "resultLabel": "Estimated ovulation",
+        "resultSummary": "Counted back 14 days from your next expected period, which is what keeps the timing right on cycles that are not 28 days long.",
+        "fertileWindowLabel": "Fertile window (6 days)",
+        "daysToOvulationLabel": "Days to ovulation",
+        "nextPeriodLabel": "Next period due",
+        "testFromLabel": "Test from"
+      },
+      "sections": [
+        {
+          "heading": "Your cycle, day by day",
+          "body": [
+            "A cycle is counted from the first day of bleeding. Ovulation is not pinned to day 14: it happens about 14 days before your NEXT period, so a 35-day cycle ovulates around day 21 and a 24-day cycle around day 10. That is why counting forward from your last period mis-times every cycle that is not 28 days.",
+            "The days below are one 28-day cycle. The calculator above shifts them to the cycle length you entered."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Fertile days across a 28-day cycle",
+            "columns": [
+              "Cycle day",
+              "What is happening",
+              "Chance of conceiving"
+            ],
+            "rows": [
+              [
+                "Day 1",
+                "Bleeding starts — the cycle is counted from here",
+                "Very low"
+              ],
+              [
+                "Days 2 – 8",
+                "An egg is maturing; the window has not opened yet",
+                "Low"
+              ],
+              [
+                "Days 9 – 13",
+                "Fertile window: sperm can survive up to five days",
+                "High"
+              ],
+              [
+                "Day 14",
+                "Ovulation — the egg is released",
+                "Highest"
+              ],
+              [
+                "Days 15 – 16",
+                "The egg survives less than a day after release",
+                "Falling fast"
+              ],
+              [
+                "Day 28",
+                "The next period is due — test from here if it does not arrive",
+                "Very low"
+              ]
+            ],
+            "footnote": "Sperm survive up to five days in the reproductive tract and an egg for under one, which is why the fertile window opens well before ovulation and shuts almost immediately after it."
+          }
+        },
+        {
+          "heading": "Signs you have actually ovulated",
+          "body": [
+            "A calculator predicts; these confirm. Tracking one or two of them across a couple of cycles tells you whether your own ovulation matches the estimate — and that is worth knowing before you plan anything around it."
+          ],
+          "bullets": [
+            "Cervical mucus turns clear, stretchy and slippery, like raw egg white, in the days just before ovulation.",
+            "Ovulation predictor kits detect the LH surge in urine, which comes 24 to 36 hours before the egg is released. Start testing a few days before the estimated date.",
+            "Basal body temperature rises by around 0.3 °C after ovulation, so it confirms it afterwards rather than predicting it.",
+            "Some people feel a one-sided ache mid-cycle, and some notice breast tenderness or a shift in libido.",
+            "A cycle can pass without ovulation at all. That happens to most people occasionally and does not by itself mean anything is wrong."
+          ]
+        },
+        {
+          "heading": "What this calculator cannot do",
+          "body": [
+            "It works from two things only: the date you enter and the assumption that your luteal phase is a standard 14 days. Both are reasonable, neither is guaranteed."
+          ],
+          "bullets": [
+            "It is not a method of contraception. Cycles move, sperm survive for days, and pregnancy is possible on days outside the window shown here.",
+            "Irregular cycles, recently stopped hormonal contraception, breastfeeding, PCOS and thyroid conditions all weaken the prediction.",
+            "Hormonal contraception suppresses ovulation, so there is nothing here to predict while you are using it.",
+            "Stress, illness, travel and heavy training can all delay ovulation in a given cycle.",
+            "It is a planning tool, not a fertility test: it says nothing about egg quality, sperm or the fallopian tubes."
+          ]
+        },
+        {
+          "heading": "When to talk to a doctor",
+          "body": [],
+          "bullets": [
+            "You have been trying to conceive for 12 months, or for 6 months if you are over 35.",
+            "Your cycles are shorter than 21 days, longer than 35 days, or unpredictable from one month to the next.",
+            "Your periods have stopped, or you are bleeding between them.",
+            "You have painful periods, pain during sex, or a diagnosis of PCOS, endometriosis or a thyroid condition.",
+            "You want preconception advice — folic acid, the medicines you already take, vaccinations and a blood pressure check all belong before a pregnancy rather than after it."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "When am I most fertile?",
+          "answer": "On the day of ovulation and the two days before it. The window as a whole covers about six days: the five before ovulation plus the day itself. Sperm survive up to five days and the egg under one, which is why the window opens early and closes fast."
+        },
+        {
+          "question": "Does ovulation always happen on day 14?",
+          "answer": "No. Day 14 is only true of a textbook 28-day cycle. Ovulation sits roughly 14 days before your next period, so on a 32-day cycle it lands around day 18 and on a 24-day cycle around day 10. Counting 14 days forward from your last period is the commonest way to get the timing wrong."
+        },
+        {
+          "question": "How do I work out ovulation with irregular cycles?",
+          "answer": "Enter your usual cycle length and treat the result as a wide estimate rather than a date. If your cycles vary by more than a few days, ovulation predictor kits or tracking cervical mucus will tell you far more than any calendar calculation, and cycles that are consistently under 21 or over 35 days are worth a doctor's opinion."
+        },
+        {
+          "question": "Can I use an ovulation calculator as contraception?",
+          "answer": "No. It is not a contraceptive method and should never be used as one. Ovulation shifts between cycles, sperm can survive up to five days, and pregnancy is possible on days this calculator marks as outside the fertile window. If you are avoiding pregnancy, use a recognised method of contraception."
+        },
+        {
+          "question": "When can I take a pregnancy test after ovulation?",
+          "answer": "Most home tests are reliable from the day your period is due, which is about 14 days after ovulation — the \"test from\" date in the read-out. Testing earlier can give a negative result even when you are pregnant, because there is not yet enough hCG in urine to detect."
+        },
+        {
+          "question": "Does this ovulation calculator store my details?",
+          "answer": "No. The calculation runs entirely in your browser. Nothing you type is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Trying to conceive?",
+        "body": "Talk to a registered doctor by video about irregular cycles, preconception checks or the medicines you already take.",
         "label": "Book a consultation"
       }
     }

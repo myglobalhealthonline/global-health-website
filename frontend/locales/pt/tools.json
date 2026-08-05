@@ -130,9 +130,182 @@
         "label": "Extremamente ativo",
         "summary": "Trabalho físico ou treino intenso duas vezes por dia"
       }
+    },
+    "adhdFrequencies": [
+      "Nunca",
+      "Raramente",
+      "Às vezes",
+      "Frequentemente",
+      "Muito frequentemente"
+    ],
+    "adhdQuestions": [
+      "Com que frequência deixa por acabar os últimos pormenores de um projeto, depois de passada a parte difícil?",
+      "Com que frequência lhe custa pôr as coisas em ordem quando uma tarefa exige organização?",
+      "Com que frequência se esquece de compromissos ou de coisas que combinou?",
+      "Com que frequência adia ou evita começar algo que exige pensar muito?",
+      "Com que frequência mexe as mãos ou os pés quando tem de ficar sentado muito tempo?",
+      "Com que frequência se sente empurrado a continuar a fazer coisas, como se algo o impelisse?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Resultado do rastreio: positivo",
+        "summary": "As suas respostas correspondem ao padrão que este questionário procura, pelo que vale a pena marcar uma avaliação completa. Não é um diagnóstico: a PHDA só é diagnosticada por um psiquiatra ou um psicólogo clínico, a partir de toda a sua história e não de seis perguntas."
+      },
+      "negative": {
+        "label": "Resultado do rastreio: negativo",
+        "summary": "As suas respostas não correspondem ao padrão que este questionário procura. Isso não exclui a PHDA — seis perguntas cobrem apenas uma parte — por isso, se estas dificuldades afetam o seu trabalho, os seus estudos ou as suas relações, fale na mesma com um médico."
+      }
     }
   },
   "tools": {
+    "adhd-test": {
+      "cardTitle": "Teste de PHDA",
+      "cardBlurb": "O rastreio de PHDA no adulto com seis perguntas, pontuado como a escala foi desenhada.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Teste de",
+      "h1Accent": "PHDA",
+      "h1Trail": "{country}",
+      "metaTitle": "Teste de PHDA {country} | Rastreio Gratuito para Adultos",
+      "metaDescription": "Faça o rastreio de PHDA no adulto com seis perguntas (ASRS v1.1, parte A) e veja o que as suas respostas significam. Um rastreio não é um diagnóstico — esse só pode ser feito por um psiquiatra ou um psicólogo clínico.",
+      "lede": "Responda a seis perguntas sobre os últimos seis meses para ver se as suas respostas correspondem ao padrão que o rastreio de PHDA no adulto procura.",
+      "trustPoints": [
+        "O rastreio ASRS v1.1, parte A — seis perguntas",
+        "Pontuado pergunta a pergunta, como a escala foi desenhada",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "widget": {
+        "title": "As suas respostas",
+        "instructions": "Em cada pergunta, escolha com que frequência isso lhe aconteceu nos últimos seis meses.",
+        "placeholder": "Responda às seis perguntas para ver o resultado do rastreio.",
+        "note": "Este é um questionário de rastreio, não um diagnóstico. A PHDA só é diagnosticada por um psiquiatra ou um psicólogo clínico, após uma avaliação completa. Nada aqui é uma recomendação de medicação.",
+        "thresholdLabel": "Rastreio positivo",
+        "thresholdValue": "{count} ou mais de {total}"
+      },
+      "sections": [
+        {
+          "heading": "Como o rastreio é pontuado",
+          "body": [
+            "As perguntas são a parte A da Adult ADHD Self-Report Scale da Organização Mundial da Saúde — a forma curta que serve para decidir se vale a pena marcar uma avaliação completa, e não a avaliação em si.",
+            "A pontuação é feita pergunta a pergunta, não como um total. Cada item tem o seu próprio limiar, e quatro ou mais itens a atingir o respetivo limiar são um rastreio positivo. O erro habitual é tratar isto como uma regra fixa de «quatro respostas Frequentemente»: assim escapa a apresentação desatenta, que é justamente a mais vezes ignorada nos adultos."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "As seis perguntas do rastreio e a resposta a partir da qual cada uma conta",
+            "columns": [
+              "Pergunta",
+              "Sobre o que é",
+              "Conta a partir de"
+            ],
+            "rows": [
+              [
+                "1",
+                "Terminar os últimos pormenores de um projeto",
+                "Às vezes"
+              ],
+              [
+                "2",
+                "Pôr as coisas em ordem para uma tarefa",
+                "Às vezes"
+              ],
+              [
+                "3",
+                "Lembrar-se de compromissos e combinações",
+                "Às vezes"
+              ],
+              [
+                "4",
+                "Adiar tarefas que exigem pensar muito",
+                "Frequentemente"
+              ],
+              [
+                "5",
+                "Mexer-se quando é preciso ficar sentado muito tempo",
+                "Frequentemente"
+              ],
+              [
+                "6",
+                "Sentir-se empurrado a continuar sem parar",
+                "Frequentemente"
+              ]
+            ],
+            "footnote": "Quatro ou mais perguntas no respetivo limiar ou acima dele são um rastreio positivo. A escala foi desenvolvida para adultos a partir dos 18 anos e não é um rastreio para crianças."
+          }
+        },
+        {
+          "heading": "Como a PHDA se apresenta no adulto",
+          "body": [
+            "A PHDA no adulto raramente se parece com a imagem da sala de aula. A hiperatividade vira-se muitas vezes para dentro — inquietação, uma cabeça que não assenta — enquanto a desatenção fica e começa a sair cara: prazos que passam, papelada por abrir, uma memória de trabalho a quem caem coisas.",
+            "Para um diagnóstico, o que conta é que as dificuldades venham de longe, apareçam em mais do que uma área da vida e causem uma limitação real. Toda a gente perde as chaves de vez em quando; não é isso que se está a perguntar."
+          ],
+          "bullets": [
+            "Começar as tarefas que importam e acabar as que deixaram de ser interessantes.",
+            "O tempo: subestimá-lo, perdê-lo, chegar atrasado por muito que se tente.",
+            "A organização — papéis, contas, marcações — custar muito mais esforço do que parece custar aos outros.",
+            "Inquietação, ou uma necessidade constante e surda de estar a fazer alguma coisa.",
+            "Interromper, dizer o que vem à cabeça ou agir antes de pensar a ideia até ao fim.",
+            "Emoções que chegam depressa e passam depressa, muitas vezes desproporcionadas em relação ao que as provocou."
+          ]
+        },
+        {
+          "heading": "O que este rastreio não lhe pode dizer",
+          "body": [
+            "Um questionário de seis perguntas é uma ferramenta de triagem. É propositadamente rápido e propositadamente abrangente, porque a função dele é decidir quem deve ser avaliado como deve ser — e não quem tem PHDA."
+          ],
+          "bullets": [
+            "Não é um diagnóstico: por si só, um resultado positivo significa apenas «vale uma avaliação».",
+            "Um resultado negativo não exclui a PHDA, sobretudo na apresentação desatenta e sobretudo nas mulheres, diagnosticadas mais tarde e com menos frequência.",
+            "Ansiedade, depressão, mau sono, doença da tiroide, dor crónica e consumo elevado de álcool produzem as mesmas respostas.",
+            "Não separa a PHDA do autismo, de uma dificuldade específica de aprendizagem, nem dos efeitos de um período longo de stress.",
+            "Foi desenhado e validado para adultos. Crianças e adolescentes precisam de uma avaliação completamente diferente.",
+            "Não diz nada sobre o tratamento. A medicação é uma opção entre várias e só se coloca depois de um diagnóstico."
+          ]
+        },
+        {
+          "heading": "Como chegar a uma avaliação a sério",
+          "body": [
+            "O diagnóstico de PHDA é feito por um psiquiatra ou por um psicólogo clínico. A avaliação é uma entrevista clínica estruturada sobre a sua história desde a infância, habitualmente com escalas e, quando possível, com o relato de alguém que o conhece há muito tempo."
+          ],
+          "bullets": [
+            "Comece por um médico. Vai rever a sua história, excluir as situações que se parecem com PHDA e encaminhá-lo para avaliação.",
+            "Leve factos concretos em vez de uma pontuação: registos da escola, avaliações de trabalho, o que corre mal repetidamente e há quanto tempo.",
+            "Diga o que mais se passa — sono, humor, álcool, tiroide, um traumatismo craniano antigo. Isso muda a avaliação e a ordem em que é feita.",
+            "Um resultado de rastreio é o ponto de partida dessa conversa, não o substituto dela. Leve o seu consigo.",
+            "Se não está a conseguir lidar com a situação, ou se tem pensamentos de se magoar, contacte já um médico ou os serviços de emergência em vez de esperar por uma avaliação."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Um teste de PHDA online pode dar um diagnóstico?",
+          "answer": "Não, e nenhum questionário online pode. Isto é um rastreio: separa as pessoas entre «vale a pena avaliar a sério» e «com estas respostas, não». O diagnóstico é feito por um psiquiatra ou um psicólogo clínico, a partir de uma entrevista completa sobre a sua história e não de seis perguntas."
+        },
+        {
+          "question": "O que é a ASRS?",
+          "answer": "A Adult ADHD Self-Report Scale, desenvolvida com a Organização Mundial da Saúde. A parte A é o rastreio de seis perguntas usado aqui; a escala completa tem dezoito itens. É o instrumento de rastreio de PHDA no adulto mais usado no mundo, e por isso o resultado que levar é reconhecido em consulta."
+        },
+        {
+          "question": "O que conta como resultado positivo?",
+          "answer": "Quatro ou mais das seis perguntas respondidas no respetivo limiar ou acima dele. As três primeiras contam a partir de «Às vezes» e as três últimas só a partir de «Frequentemente» — os limiares diferem porque as perguntas diferem, e um único corte fixo deixaria de fora a apresentação desatenta."
+        },
+        {
+          "question": "Posso ter PHDA com um resultado negativo?",
+          "answer": "Pode. Seis perguntas não cobrem um quadro que se manifesta de maneira diferente em idades e pessoas diferentes, e a apresentação desatenta em particular é pouco detetada — uma das razões pelas quais as mulheres são diagnosticadas mais tarde e com menos frequência. Se as dificuldades lhe estão a afetar a vida, um rastreio negativo não é motivo para deixar de perguntar."
+        },
+        {
+          "question": "Quem pode diagnosticar PHDA?",
+          "answer": "Um psiquiatra ou um psicólogo clínico, conforme o país. O caminho começa normalmente num médico de família: recolhe a história, exclui as situações que imitam a PHDA — tiroide, perturbações do sono, ansiedade, depressão — e encaminha para a avaliação propriamente dita."
+        },
+        {
+          "question": "Este teste de PHDA guarda as minhas respostas?",
+          "answer": "Não. A pontuação é calculada inteiramente no seu navegador. Nada do que selecionar é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Quer discutir o seu resultado?",
+        "body": "Marque uma videoconsulta com um médico registado, reveja a sua história e as situações que podem parecer PHDA, e perceba o que envolveria uma avaliação.",
+        "label": "Marcar consulta"
+      }
+    },
     "blood-pressure-chart": {
       "cardTitle": "Tabela de tensão arterial",
       "cardBlurb": "O que os seus dois números significam na tabela europeia de tensão arterial para adultos.",
@@ -727,6 +900,158 @@
       "cta": {
         "heading": "Dúvidas no início da gravidez?",
         "body": "Fale por vídeo com um médico registado sobre sintomas, a medicação que já toma ou aquilo que preferir não deixar para a primeira consulta.",
+        "label": "Marcar consulta"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Calculadora de ovulação",
+      "cardBlurb": "Os seus dias férteis, o dia previsto de ovulação e quando é esperada a próxima menstruação.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Calculadora de",
+      "h1Accent": "ovulação",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculadora de Ovulação {country} | Dias Férteis e Ovulação",
+      "metaDescription": "Calcule os seus dias férteis e o dia previsto de ovulação a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com os seis dias mais férteis em detalhe.",
+      "lede": "Indique o primeiro dia da última menstruação para ver os seis dias com maior probabilidade de engravidar, o dia previsto de ovulação e quando é esperada a próxima menstruação.",
+      "trustPoints": [
+        "Conta para trás a partir da próxima menstruação, por isso os ciclos longos batem certo",
+        "A janela fértil completa de seis dias, e não um único dia",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "suggestionsIntro": "Uma estimativa de ovulação é uma orientação de datas, não uma avaliação da fertilidade. Estas são as consultas que os nossos médicos fazem quando quer que alguém olhe para o quadro completo.",
+      "widget": {
+        "title": "Os seus dias férteis",
+        "placeholder": "Indique o primeiro dia da última menstruação para ver os seus dias férteis.",
+        "note": "É uma estimativa a partir das datas que indicar, não um diagnóstico — e não é um método contracetivo. A ovulação muda de ciclo para ciclo e é possível engravidar em dias fora da janela apresentada.",
+        "lmpLabel": "Primeiro dia da última menstruação",
+        "lmpHint": "O dia em que o sangramento começou, não o dia em que terminou.",
+        "cycleLabel": "Duração do ciclo",
+        "cycleHint": "Dias entre o início de uma menstruação e o início da seguinte. Se não souber, deixe 28.",
+        "daysUnit": "dias",
+        "resultLabel": "Ovulação prevista",
+        "resultSummary": "Contada 14 dias para trás a partir da próxima menstruação esperada, que é o que mantém as datas certas em ciclos que não têm 28 dias.",
+        "fertileWindowLabel": "Janela fértil (6 dias)",
+        "daysToOvulationLabel": "Dias até à ovulação",
+        "nextPeriodLabel": "Próxima menstruação prevista",
+        "testFromLabel": "Teste a partir de"
+      },
+      "sections": [
+        {
+          "heading": "O seu ciclo, dia a dia",
+          "body": [
+            "O ciclo conta-se a partir do primeiro dia de sangramento. A ovulação não está fixada ao dia 14: acontece cerca de 14 dias antes da PRÓXIMA menstruação, por isso num ciclo de 35 dias cai por volta do dia 21 e num de 24 dias por volta do dia 10. É por isso que contar 14 dias para a frente a partir da última menstruação falha em todos os ciclos que não são de 28 dias.",
+            "Os dias abaixo correspondem a um ciclo de 28 dias. A calculadora acima desloca-os para a duração que indicar."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Dias férteis num ciclo de 28 dias",
+            "columns": [
+              "Dia do ciclo",
+              "O que está a acontecer",
+              "Probabilidade de engravidar"
+            ],
+            "rows": [
+              [
+                "Dia 1",
+                "Começa o sangramento — o ciclo conta-se a partir daqui",
+                "Muito baixa"
+              ],
+              [
+                "Dias 2 – 8",
+                "Um óvulo está a amadurecer; a janela ainda não abriu",
+                "Baixa"
+              ],
+              [
+                "Dias 9 – 13",
+                "Janela fértil: os espermatozoides sobrevivem até cinco dias",
+                "Alta"
+              ],
+              [
+                "Dia 14",
+                "Ovulação — o óvulo é libertado",
+                "A mais alta"
+              ],
+              [
+                "Dias 15 – 16",
+                "O óvulo sobrevive menos de um dia depois de libertado",
+                "Cai depressa"
+              ],
+              [
+                "Dia 28",
+                "É esperada a próxima menstruação — se não vier, faça o teste a partir daqui",
+                "Muito baixa"
+              ]
+            ],
+            "footnote": "Os espermatozoides sobrevivem até cinco dias no aparelho reprodutor e o óvulo menos de um, e é por isso que a janela fértil abre bastante antes da ovulação e fecha quase imediatamente a seguir."
+          }
+        },
+        {
+          "heading": "Sinais de que ovulou mesmo",
+          "body": [
+            "A calculadora prevê; estes sinais confirmam. Acompanhar um ou dois durante alguns ciclos diz-lhe se a sua ovulação corresponde à estimativa — e isso convém saber antes de organizar seja o que for à volta dela."
+          ],
+          "bullets": [
+            "O muco cervical fica transparente, elástico e escorregadio, parecido com clara de ovo crua, nos dias imediatamente antes da ovulação.",
+            "Os testes de ovulação detetam o pico de LH na urina, que surge 24 a 36 horas antes de o óvulo ser libertado. Comece a testar alguns dias antes da data prevista.",
+            "A temperatura basal sobe cerca de 0,3 °C depois da ovulação, por isso confirma-a a posteriori em vez de a prever.",
+            "Há quem sinta uma dor de um só lado a meio do ciclo, e quem note os seios mais sensíveis ou uma alteração da libido.",
+            "Um ciclo pode passar sem ovulação. Acontece pontualmente à maioria das pessoas e, por si só, não quer dizer que algo esteja errado."
+          ]
+        },
+        {
+          "heading": "O que esta calculadora não consegue fazer",
+          "body": [
+            "Trabalha apenas com duas coisas: a data que indicar e o pressuposto de que a sua fase lútea dura os habituais 14 dias. Ambas são razoáveis, nenhuma é garantida."
+          ],
+          "bullets": [
+            "Não é um método contracetivo. Os ciclos mudam, os espermatozoides sobrevivem vários dias e é possível engravidar em dias fora da janela aqui apresentada.",
+            "Ciclos irregulares, contraceção hormonal parada há pouco tempo, amamentação, SOP e doenças da tiroide enfraquecem a previsão.",
+            "A contraceção hormonal suprime a ovulação, por isso enquanto a usar não há nada para prever.",
+            "Stress, doença, viagens e treino intenso podem atrasar a ovulação num determinado ciclo.",
+            "É uma ferramenta de planeamento, não um exame de fertilidade: nada diz sobre a qualidade dos óvulos, sobre o esperma ou sobre as trompas."
+          ]
+        },
+        {
+          "heading": "Quando falar com um médico",
+          "body": [],
+          "bullets": [
+            "Está a tentar engravidar há 12 meses, ou há 6 meses se tiver mais de 35 anos.",
+            "Os seus ciclos são mais curtos do que 21 dias, mais longos do que 35 ou imprevisíveis de mês para mês.",
+            "A menstruação parou, ou tem perdas de sangue entre menstruações.",
+            "Tem menstruações dolorosas, dor nas relações sexuais ou diagnóstico de SOP, endometriose ou doença da tiroide.",
+            "Quer aconselhamento pré-concecional — o ácido fólico, a medicação que já toma, as vacinas e a medição da tensão arterial pertencem ao antes da gravidez e não ao depois."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quando estou mais fértil?",
+          "answer": "No dia da ovulação e nos dois dias anteriores. A janela no seu conjunto cobre cerca de seis dias: os cinco antes da ovulação mais o próprio dia. Os espermatozoides sobrevivem até cinco dias e o óvulo menos de um, e é por isso que a janela abre cedo e fecha depressa."
+        },
+        {
+          "question": "A ovulação acontece sempre ao dia 14?",
+          "answer": "Não. O dia 14 só é verdade no ciclo de manual, de 28 dias. A ovulação fica cerca de 14 dias antes da menstruação seguinte, por isso num ciclo de 32 dias cai por volta do dia 18 e num de 24 dias por volta do dia 10. Contar 14 dias para a frente a partir da última menstruação é a forma mais comum de errar as datas."
+        },
+        {
+          "question": "Como calcular a ovulação com ciclos irregulares?",
+          "answer": "Indique a duração habitual do seu ciclo e trate o resultado como um intervalo largo, não como uma data. Se os seus ciclos variam mais do que alguns dias, os testes de ovulação ou a observação do muco cervical dizem-lhe muito mais do que qualquer cálculo de calendário, e ciclos sempre abaixo de 21 dias ou acima de 35 merecem a opinião de um médico."
+        },
+        {
+          "question": "Posso usar uma calculadora de ovulação como contraceção?",
+          "answer": "Não. Não é um método contracetivo e nunca deve ser usada como tal. A ovulação desloca-se entre ciclos, os espermatozoides sobrevivem até cinco dias e é possível engravidar em dias que esta calculadora marca como fora da janela fértil. Se quer evitar uma gravidez, use um método contracetivo reconhecido."
+        },
+        {
+          "question": "Quando posso fazer um teste de gravidez depois da ovulação?",
+          "answer": "A maioria dos testes caseiros é fiável a partir do dia em que a menstruação era esperada, cerca de 14 dias depois da ovulação — a data «Teste a partir de» no resultado. Testar antes disso pode dar negativo mesmo estando grávida, porque ainda não há hCG suficiente na urina."
+        },
+        {
+          "question": "Esta calculadora de ovulação guarda os meus dados?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "A tentar engravidar?",
+        "body": "Fale por vídeo com um médico registado sobre ciclos irregulares, exames antes de engravidar ou a medicação que já toma.",
         "label": "Marcar consulta"
       }
     }

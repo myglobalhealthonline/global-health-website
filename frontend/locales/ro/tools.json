@@ -130,9 +130,182 @@
         "label": "Extrem de activ",
         "summary": "Muncă fizică sau antrenament intens de două ori pe zi"
       }
+    },
+    "adhdFrequencies": [
+      "Niciodată",
+      "Rar",
+      "Uneori",
+      "Des",
+      "Foarte des"
+    ],
+    "adhdQuestions": [
+      "Cât de des lași neterminate ultimele detalii ale unui proiect, după ce ai trecut de partea grea?",
+      "Cât de des îți e greu să pui lucrurile în ordine când o sarcină cere organizare?",
+      "Cât de des uiți întâlniri sau lucruri pe care le-ai promis?",
+      "Cât de des amâni sau eviți să începi ceva care cere multă gândire?",
+      "Cât de des te foiești cu mâinile sau cu picioarele când trebuie să stai mult timp jos?",
+      "Cât de des te simți împins să tot faci ceva, ca și cum te-ar mâna ceva din spate?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Rezultatul screeningului: pozitiv",
+        "summary": "Răspunsurile tale se potrivesc cu tiparul pe care îl caută acest chestionar, deci merită să îți programezi o evaluare completă. Nu este un diagnostic: ADHD-ul îl pune doar un medic psihiatru sau un psiholog clinician, pornind de la întregul tău istoric, nu de la șase întrebări."
+      },
+      "negative": {
+        "label": "Rezultatul screeningului: negativ",
+        "summary": "Răspunsurile tale nu se potrivesc cu tiparul căutat. Asta nu exclude ADHD-ul — șase întrebări acoperă doar o parte — așa că, dacă aceste dificultăți îți afectează munca, studiile sau relațiile, discută oricum cu un medic."
+      }
     }
   },
   "tools": {
+    "adhd-test": {
+      "cardTitle": "Test ADHD",
+      "cardBlurb": "Chestionarul de screening ADHD pentru adulți, cu șase întrebări, punctat așa cum e construită scala.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Test",
+      "h1Accent": "ADHD",
+      "h1Trail": "{country}",
+      "metaTitle": "Test ADHD {country} | Screening Gratuit pentru Adulți",
+      "metaDescription": "Completează testul de screening ADHD pentru adulți, cu șase întrebări (ASRS v1.1, partea A), și vezi ce înseamnă răspunsurile tale. Un screening nu este un diagnostic — acesta poate fi pus doar de un medic psihiatru sau de un psiholog clinician.",
+      "lede": "Răspunde la șase întrebări despre ultimele șase luni ca să vezi dacă răspunsurile tale se potrivesc cu tiparul pe care îl caută screeningul ADHD la adulți.",
+      "trustPoints": [
+        "Screeningul ASRS v1.1, partea A — șase întrebări",
+        "Punctat pe fiecare întrebare, așa cum e construită scala",
+        "Rulează în browserul tău — nimic nu se trimite și nu se salvează"
+      ],
+      "widget": {
+        "title": "Răspunsurile tale",
+        "instructions": "La fiecare întrebare, alege cât de des ți s-a întâmplat în ultimele șase luni.",
+        "placeholder": "Răspunde la cele șase întrebări ca să vezi rezultatul screeningului.",
+        "note": "Acesta este un chestionar de screening, nu un diagnostic. ADHD-ul este diagnosticat doar de un medic psihiatru sau de un psiholog clinician, după o evaluare completă. Nimic de aici nu este o recomandare de tratament medicamentos.",
+        "thresholdLabel": "Screening pozitiv",
+        "thresholdValue": "{count} sau mai multe din {total}"
+      },
+      "sections": [
+        {
+          "heading": "Cum se punctează screeningul",
+          "body": [
+            "Întrebările sunt partea A din Adult ADHD Self-Report Scale a Organizației Mondiale a Sănătății — forma scurtă folosită ca să se decidă dacă merită programată o evaluare completă. Evaluarea propriu-zisă nu este.",
+            "Punctarea se face pe fiecare întrebare, nu ca total. Fiecare item are pragul lui, iar patru sau mai mulți itemi care își ating pragul înseamnă un screening pozitiv. Greșeala obișnuită este regula plată «patru răspunsuri de Des»: așa scapă prezentarea cu neatenție, exact cea care e cel mai des trecută cu vederea la adulți."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Cele șase întrebări de screening și răspunsul de la care contează fiecare",
+            "columns": [
+              "Întrebarea",
+              "Despre ce este",
+              "Contează de la"
+            ],
+            "rows": [
+              [
+                "1",
+                "Terminarea ultimelor detalii ale unui proiect",
+                "Uneori"
+              ],
+              [
+                "2",
+                "Punerea lucrurilor în ordine pentru o sarcină",
+                "Uneori"
+              ],
+              [
+                "3",
+                "Ținerea minte a întâlnirilor și a promisiunilor",
+                "Uneori"
+              ],
+              [
+                "4",
+                "Amânarea sarcinilor care cer multă gândire",
+                "Des"
+              ],
+              [
+                "5",
+                "Foiala când trebuie să stai mult timp jos",
+                "Des"
+              ],
+              [
+                "6",
+                "Senzația că ceva te împinge să tot faci",
+                "Des"
+              ]
+            ],
+            "footnote": "Patru sau mai multe întrebări la pragul propriu ori peste el înseamnă un screening pozitiv. Scala a fost dezvoltată pentru adulți de la 18 ani în sus și nu este un screening pentru copii."
+          }
+        },
+        {
+          "heading": "Cum arată ADHD-ul la adulți",
+          "body": [
+            "ADHD-ul la adult arată rareori ca imaginea din clasă. Hiperactivitatea se întoarce adesea spre interior — neliniște, o minte care nu se așază — în timp ce neatenția rămâne și începe să coste: termene ratate, hârtii nedeschise, o memorie de lucru din care cad lucruri.",
+            "Pentru un diagnostic contează ca dificultățile să vină de departe, să apară în mai multe zone ale vieții și să producă o limitare reală. Toată lumea își rătăcește cheile din când în când; nu despre asta se întreabă aici."
+          ],
+          "bullets": [
+            "Începerea sarcinilor care contează și terminarea celor care au încetat să fie interesante.",
+            "Timpul: subestimat, pierdut, întârzieri în ciuda efortului real de a nu întârzia.",
+            "Organizarea — hârtii, facturi, programări — cere mult mai mult efort decât pare să le ceară altora.",
+            "Neliniște sau o nevoie constantă și surdă de a face ceva.",
+            "Întreruperi, vorbe spuse pe nepusă masă sau acțiuni pornite înainte ca ideea să fie dusă până la capăt.",
+            "Emoții care vin repede și trec repede, adesea mai puternice decât ar cere situația."
+          ]
+        },
+        {
+          "heading": "Ce nu îți poate spune acest screening",
+          "body": [
+            "Un chestionar de șase întrebări este un instrument de triere. Este intenționat rapid și intenționat larg, pentru că treaba lui e să decidă cine ar trebui evaluat ca lumea — nu cine are ADHD."
+          ],
+          "bullets": [
+            "Nu este un diagnostic: în sine, un rezultat pozitiv înseamnă doar «merită o evaluare».",
+            "Un rezultat negativ nu exclude ADHD-ul, mai ales în prezentarea cu neatenție și mai ales la femei, diagnosticate mai târziu și mai rar.",
+            "Anxietatea, depresia, somnul prost, bolile tiroidiene, durerea cronică și consumul mare de alcool dau aceleași răspunsuri.",
+            "Nu separă ADHD-ul de autism, de o tulburare specifică de învățare sau de urmările unei perioade lungi de stres.",
+            "A fost construit și validat pentru adulți. Copiii și adolescenții au nevoie de o cu totul altă evaluare.",
+            "Nu spune nimic despre tratament. Medicația este una dintre opțiuni și se discută abia după un diagnostic."
+          ]
+        },
+        {
+          "heading": "Cum ajungi la o evaluare adevărată",
+          "body": [
+            "Diagnosticul de ADHD este pus de un medic psihiatru sau de un psiholog clinician. Evaluarea este un interviu clinic structurat despre istoricul tău începând din copilărie, de obicei cu scale de evaluare și, când se poate, cu relatarea cuiva care te cunoaște de mult."
+          ],
+          "bullets": [
+            "Începe cu un medic. Îți parcurge istoricul, verifică afecțiunile care seamănă cu ADHD-ul și te trimite mai departe pentru evaluare.",
+            "Du cu tine lucruri concrete, nu un scor: rezultate de la școală, evaluări de la muncă, ce iese prost în mod repetat și de cât timp.",
+            "Spune ce mai este în joc — somn, dispoziție, alcool, tiroidă, un traumatism cranian mai vechi. Astea schimbă evaluarea și ordinea ei.",
+            "Rezultatul unui screening este începutul acelei discuții, nu înlocuitorul ei. Ia-l cu tine.",
+            "Dacă nu mai faci față sau ai gânduri de a-ți face rău, contactează acum un medic sau serviciile de urgență, fără să aștepți o evaluare."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Poate un test ADHD online să pună un diagnostic?",
+          "answer": "Nu, și niciun chestionar online nu poate. Acesta este un screening: împarte oamenii în «merită evaluat ca lumea» și «după aceste răspunsuri, nu». Diagnosticul îl pune un medic psihiatru sau un psiholog clinician, dintr-un interviu complet despre istoricul tău, nu din șase întrebări."
+        },
+        {
+          "question": "Ce este ASRS?",
+          "answer": "Adult ADHD Self-Report Scale, dezvoltată împreună cu Organizația Mondială a Sănătății. Partea A este screeningul cu șase întrebări folosit aici; scala completă are optsprezece itemi. Este cel mai răspândit instrument de screening pentru ADHD la adulți, motiv pentru care rezultatul pe care îl duci la consultație este recunoscut."
+        },
+        {
+          "question": "Ce înseamnă un rezultat pozitiv?",
+          "answer": "Patru sau mai multe dintre cele șase întrebări răspunse la pragul propriu ori peste el. Primele trei contează de la «Uneori», ultimele trei abia de la «Des» — pragurile diferă pentru că întrebările diferă, iar un singur prag plat ar rata prezentarea cu neatenție."
+        },
+        {
+          "question": "Pot avea ADHD dacă rezultatul e negativ?",
+          "answer": "Da. Șase întrebări nu pot acoperi o tulburare care se manifestă diferit la vârste și la oameni diferiți, iar prezentarea cu neatenție e detectată prea rar — unul dintre motivele pentru care femeile primesc diagnosticul mai târziu și mai rar. Dacă dificultățile îți afectează viața, un screening negativ nu e un motiv să te oprești din întrebat."
+        },
+        {
+          "question": "Cine poate diagnostica ADHD?",
+          "answer": "Un medic psihiatru sau un psiholog clinician, în funcție de țară. Drumul începe de obicei la medicul de familie: ia istoricul, exclude afecțiunile care imită ADHD-ul — tiroidă, tulburări de somn, anxietate, depresie — și trimite mai departe pentru evaluarea propriu-zisă."
+        },
+        {
+          "question": "Acest test ADHD îmi salvează răspunsurile?",
+          "answer": "Nu. Punctarea rulează în întregime în browserul tău. Nimic din ce alegi nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei să discuți rezultatul?",
+        "body": "Programează o consultație video cu un medic înregistrat, parcurge-ți istoricul și afecțiunile care pot semăna cu ADHD-ul și află ce ar presupune o evaluare.",
+        "label": "Programează o consultație"
+      }
+    },
     "blood-pressure-chart": {
       "cardTitle": "Tabel tensiune arterială",
       "cardBlurb": "Ce înseamnă cele două valori ale tale în tabelul european al tensiunii arteriale pentru adulți.",
@@ -727,6 +900,158 @@
       "cta": {
         "heading": "Întrebări la începutul sarcinii?",
         "body": "Discută prin video cu un medic înregistrat despre simptome, medicamentele pe care le iei deja sau orice nu vrei să aștepte până la prima consultație.",
+        "label": "Programează o consultație"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Calculator de ovulație",
+      "cardBlurb": "Zilele tale fertile, ziua estimată a ovulației și când urmează următoarea menstruație.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Calculator",
+      "h1Accent": "de ovulație",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculator Ovulație {country} | Zile Fertile și Ziua Ovulației",
+      "metaDescription": "Află zilele fertile și ziua estimată a ovulației pornind de la prima zi a ultimei menstruații. Se ajustează după durata ciclului tău, cu cele șase zile cele mai fertile detaliate.",
+      "lede": "Introdu prima zi a ultimei menstruații ca să vezi cele șase zile cu cea mai mare șansă de concepție, ziua estimată a ovulației și când urmează următoarea menstruație.",
+      "trustPoints": [
+        "Se numără înapoi de la următoarea menstruație, deci și ciclurile lungi ies corect",
+        "Toată fereastra fertilă de șase zile, nu o singură zi",
+        "Rulează în browserul tău — nimic nu se trimite și nu se salvează"
+      ],
+      "suggestionsIntro": "O estimare a ovulației este un reper de calendar, nu o evaluare a fertilității. Acestea sunt consultațiile pe care le fac medicii noștri când vrei ca cineva să se uite la tot tabloul.",
+      "widget": {
+        "title": "Zilele tale fertile",
+        "placeholder": "Introdu prima zi a ultimei menstruații ca să vezi zilele fertile.",
+        "note": "Este o estimare pornind de la datele introduse, nu un diagnostic — și nu este o metodă contraceptivă. Ovulația se mută de la un ciclu la altul, iar sarcina este posibilă și în zile din afara intervalului afișat.",
+        "lmpLabel": "Prima zi a ultimei menstruații",
+        "lmpHint": "Ziua în care a început sângerarea, nu ziua în care s-a oprit.",
+        "cycleLabel": "Durata ciclului",
+        "cycleHint": "Zile de la începutul unei menstruații până la începutul următoarei. Dacă nu știi, lasă 28.",
+        "daysUnit": "zile",
+        "resultLabel": "Ovulație estimată",
+        "resultSummary": "Numărată cu 14 zile înainte de următoarea menstruație așteptată — exact asta ține calendarul corect și la ciclurile care nu au 28 de zile.",
+        "fertileWindowLabel": "Fereastră fertilă (6 zile)",
+        "daysToOvulationLabel": "Zile până la ovulație",
+        "nextPeriodLabel": "Următoarea menstruație",
+        "testFromLabel": "Test de la"
+      },
+      "sections": [
+        {
+          "heading": "Ciclul tău, zi cu zi",
+          "body": [
+            "Ciclul se numără din prima zi de sângerare. Ovulația nu este fixată în ziua 14: apare cu aproximativ 14 zile înainte de URMĂTOAREA menstruație, așa că într-un ciclu de 35 de zile cade în jurul zilei 21, iar într-unul de 24 de zile în jurul zilei 10. De aceea numărarea a 14 zile înainte de la ultima menstruație greșește la orice ciclu care nu are 28 de zile.",
+            "Zilele de mai jos sunt un ciclu de 28 de zile. Calculatorul de mai sus le mută pe durata ciclului pe care ai introdus-o."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Zilele fertile într-un ciclu de 28 de zile",
+            "columns": [
+              "Ziua ciclului",
+              "Ce se întâmplă",
+              "Șansa de concepție"
+            ],
+            "rows": [
+              [
+                "Ziua 1",
+                "Începe sângerarea — de aici se numără ciclul",
+                "Foarte mică"
+              ],
+              [
+                "Zilele 2 – 8",
+                "Un ovul se maturează; fereastra nu s-a deschis încă",
+                "Mică"
+              ],
+              [
+                "Zilele 9 – 13",
+                "Fereastra fertilă: spermatozoizii supraviețuiesc până la cinci zile",
+                "Mare"
+              ],
+              [
+                "Ziua 14",
+                "Ovulația — ovulul este eliberat",
+                "Cea mai mare"
+              ],
+              [
+                "Zilele 15 – 16",
+                "Ovulul supraviețuiește mai puțin de o zi după eliberare",
+                "Scade rapid"
+              ],
+              [
+                "Ziua 28",
+                "Urmează menstruația — dacă nu vine, testează de aici",
+                "Foarte mică"
+              ]
+            ],
+            "footnote": "Spermatozoizii supraviețuiesc până la cinci zile în tractul reproducător, iar ovulul mai puțin de o zi, și de aceea fereastra fertilă se deschide cu mult înainte de ovulație și se închide aproape imediat după."
+          }
+        },
+        {
+          "heading": "Semne că ai ovulat cu adevărat",
+          "body": [
+            "Calculatorul prezice; aceste semne confirmă. Dacă urmărești unul-două timp de câteva cicluri, afli dacă ovulația ta se potrivește cu estimarea — și e bine de știut înainte să construiești ceva pe ea."
+          ],
+          "bullets": [
+            "Mucusul cervical devine clar, elastic și alunecos, ca albușul de ou crud, în zilele dinaintea ovulației.",
+            "Testele de ovulație detectează creșterea LH în urină, care apare cu 24–36 de ore înainte de eliberarea ovulului. Începe testarea cu câteva zile înainte de data estimată.",
+            "Temperatura bazală crește cu aproximativ 0,3 °C după ovulație, deci o confirmă ulterior, nu o anunță dinainte.",
+            "Unele persoane simt o durere pe o singură parte la mijlocul ciclului, altele observă sâni sensibili sau o schimbare a libidoului.",
+            "Un ciclu poate trece fără ovulație. Se întâmplă ocazional la majoritatea oamenilor și, în sine, nu înseamnă că e ceva în neregulă."
+          ]
+        },
+        {
+          "heading": "Ce nu poate face acest calculator",
+          "body": [
+            "Lucrează doar cu două lucruri: data pe care o introduci și presupunerea că faza luteală durează cele 14 zile obișnuite. Ambele sunt rezonabile, niciuna nu e garantată."
+          ],
+          "bullets": [
+            "Nu este o metodă contraceptivă. Ciclurile se mută, spermatozoizii supraviețuiesc zile întregi, iar sarcina este posibilă și în zile din afara ferestrei arătate aici.",
+            "Ciclurile neregulate, contracepția hormonală oprită recent, alăptarea, sindromul ovarelor polichistice și bolile tiroidiene slăbesc predicția.",
+            "Contracepția hormonală suprimă ovulația, deci cât timp o folosești nu este nimic de prezis.",
+            "Stresul, o boală, călătoriile și antrenamentele intense pot întârzia ovulația într-un ciclu.",
+            "Este un instrument de planificare, nu un test de fertilitate: nu spune nimic despre calitatea ovulelor, despre spermă sau despre trompe."
+          ]
+        },
+        {
+          "heading": "Când să vorbești cu un medic",
+          "body": [],
+          "bullets": [
+            "Încerci să rămâi însărcinată de 12 luni, sau de 6 luni dacă ai peste 35 de ani.",
+            "Ciclurile tale sunt mai scurte de 21 de zile, mai lungi de 35 sau imprevizibile de la o lună la alta.",
+            "Menstruația s-a oprit sau ai sângerări între menstruații.",
+            "Ai menstruații dureroase, durere la contact sexual sau un diagnostic de sindrom al ovarelor polichistice, endometrioză ori boală tiroidiană.",
+            "Vrei sfat înainte de concepție — acidul folic, medicamentele pe care le iei deja, vaccinurile și o măsurare a tensiunii arteriale țin de perioada dinainte de sarcină, nu de după."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Când sunt cel mai fertilă?",
+          "answer": "În ziua ovulației și în cele două zile dinaintea ei. Fereastra în ansamblu acoperă aproximativ șase zile: cele cinci dinainte de ovulație plus ziua în sine. Spermatozoizii supraviețuiesc până la cinci zile, iar ovulul mai puțin de una, de aceea fereastra se deschide devreme și se închide repede."
+        },
+        {
+          "question": "Ovulația are loc întotdeauna în ziua 14?",
+          "answer": "Nu. Ziua 14 este valabilă doar pentru ciclul de manual, de 28 de zile. Ovulația apare cu circa 14 zile înainte de următoarea menstruație, deci într-un ciclu de 32 de zile cade în jurul zilei 18, iar într-unul de 24 de zile în jurul zilei 10. Numărarea a 14 zile de la ultima menstruație este cea mai frecventă greșeală de calendar."
+        },
+        {
+          "question": "Cum calculez ovulația dacă am cicluri neregulate?",
+          "answer": "Introdu durata obișnuită a ciclului și tratează rezultatul ca pe un interval larg, nu ca pe o dată fixă. Dacă ciclurile îți variază cu mai mult de câteva zile, testele de ovulație sau urmărirea mucusului cervical îți spun mult mai mult decât orice calcul de calendar, iar ciclurile constant sub 21 sau peste 35 de zile merită o consultație."
+        },
+        {
+          "question": "Pot folosi un calculator de ovulație pe post de contracepție?",
+          "answer": "Nu. Nu este o metodă contraceptivă și nu ar trebui folosit niciodată așa. Ovulația se deplasează de la un ciclu la altul, spermatozoizii supraviețuiesc până la cinci zile, iar sarcina este posibilă și în zile pe care acest calculator le arată în afara ferestrei fertile. Dacă vrei să eviți o sarcină, folosește o metodă contraceptivă recunoscută."
+        },
+        {
+          "question": "Când pot face un test de sarcină după ovulație?",
+          "answer": "Majoritatea testelor de casă sunt fiabile din ziua în care ar trebui să vină menstruația, adică la aproximativ 14 zile după ovulație — data „Test de la” din rezultat. Un test mai devreme poate ieși negativ chiar dacă ești însărcinată, pentru că în urină nu este încă suficient hCG."
+        },
+        {
+          "question": "Acest calculator de ovulație păstrează datele mele?",
+          "answer": "Nu. Calculul se face integral în browserul tău. Nimic din ce introduci nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Încerci să rămâi însărcinată?",
+        "body": "Discută prin video cu un medic înregistrat despre cicluri neregulate, analizele dinaintea sarcinii sau medicamentele pe care le iei deja.",
         "label": "Programează o consultație"
       }
     }

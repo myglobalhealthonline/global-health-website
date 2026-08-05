@@ -130,9 +130,182 @@
         "label": "Extrem aktiv",
         "summary": "Körperliche Arbeit oder zweimal täglich hartes Training"
       }
+    },
+    "adhdFrequencies": [
+      "Nie",
+      "Selten",
+      "Manchmal",
+      "Oft",
+      "Sehr oft"
+    ],
+    "adhdQuestions": [
+      "Wie oft lassen Sie die letzten Details eines Projekts liegen, sobald der schwierige Teil geschafft ist?",
+      "Wie oft fällt es Ihnen schwer, Ordnung in eine Aufgabe zu bringen, die Organisation verlangt?",
+      "Wie oft vergessen Sie Termine oder Zusagen, die Sie gemacht haben?",
+      "Wie oft schieben Sie etwas auf oder vermeiden es, wenn es viel Nachdenken erfordert?",
+      "Wie oft zappeln Ihre Hände oder Füße, wenn Sie lange sitzen bleiben müssen?",
+      "Wie oft fühlen Sie sich rastlos angetrieben, immer weiterzumachen, als würde Sie etwas vorwärtsschieben?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Screening-Ergebnis: auffällig",
+        "summary": "Ihre Antworten entsprechen dem Muster, auf das dieser Screener anspricht — eine vollständige Abklärung ist also sinnvoll. Eine Diagnose ist das nicht: ADHS diagnostizieren nur Psychiaterinnen und Psychiater oder klinische Psychologinnen und Psychologen, und zwar aus Ihrer gesamten Vorgeschichte, nicht aus sechs Fragen."
+      },
+      "negative": {
+        "label": "Screening-Ergebnis: unauffällig",
+        "summary": "Ihre Antworten entsprechen dem gesuchten Muster nicht. Ausgeschlossen ist ADHS damit nicht — sechs Fragen decken nur einen Teil ab. Wenn diese Schwierigkeiten Ihre Arbeit, Ihr Studium oder Ihre Beziehungen belasten, sprechen Sie trotzdem ärztlich darüber."
+      }
     }
   },
   "tools": {
+    "adhd-test": {
+      "cardTitle": "ADHS-Test",
+      "cardBlurb": "Der Sechs-Fragen-Screener für ADHS bei Erwachsenen, ausgewertet wie die Skala es vorsieht.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "ADHS",
+      "h1Accent": "Test",
+      "h1Trail": "{country}",
+      "metaTitle": "ADHS Test {country} | Kostenloser Selbsttest für Erwachsene",
+      "metaDescription": "Machen Sie den Sechs-Fragen-Screener für ADHS bei Erwachsenen (ASRS v1.1, Teil A) und sehen Sie, was Ihre Antworten bedeuten. Ein Screening ist keine Diagnose — die stellen nur Psychiatrie oder klinische Psychologie.",
+      "lede": "Beantworten Sie sechs Fragen zu den letzten sechs Monaten und sehen Sie, ob Ihre Antworten dem Muster entsprechen, auf das der ADHS-Screener für Erwachsene anspricht.",
+      "trustPoints": [
+        "Der Sechs-Fragen-Screener ASRS v1.1, Teil A",
+        "Pro Frage ausgewertet, wie die Skala es vorsieht",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "widget": {
+        "title": "Ihre Antworten",
+        "instructions": "Wählen Sie zu jeder Frage, wie oft das in den letzten sechs Monaten auf Sie zutraf.",
+        "placeholder": "Beantworten Sie die sechs Fragen, um Ihr Screening-Ergebnis zu sehen.",
+        "note": "Dies ist ein Screening-Fragebogen, keine Diagnose. ADHS diagnostizieren ausschließlich Psychiaterinnen und Psychiater oder klinische Psychologinnen und Psychologen nach einer vollständigen Abklärung. Nichts hier ist eine Empfehlung für Medikamente.",
+        "thresholdLabel": "Auffälliges Screening",
+        "thresholdValue": "{count} oder mehr von {total}"
+      },
+      "sections": [
+        {
+          "heading": "Wie das Screening ausgewertet wird",
+          "body": [
+            "Die Fragen sind Teil A der Adult ADHD Self-Report Scale der Weltgesundheitsorganisation — die Kurzform, mit der entschieden wird, ob eine vollständige Abklärung sinnvoll ist. Die Abklärung selbst ist sie nicht.",
+            "Ausgewertet wird pro Frage, nicht als Summe. Jede Frage hat ihre eigene Schwelle, und vier oder mehr Fragen, die ihre Schwelle erreichen, ergeben ein auffälliges Screening. Die übliche Verwechslung ist die starre Regel „viermal Oft“ — sie übersieht den unaufmerksamen Typ, der bei Erwachsenen am häufigsten übersehen wird."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Die sechs Screening-Fragen und die Antwort, ab der sie zählen",
+            "columns": [
+              "Frage",
+              "Worum es geht",
+              "Zählt ab"
+            ],
+            "rows": [
+              [
+                "1",
+                "Die letzten Details eines Projekts abschließen",
+                "Manchmal"
+              ],
+              [
+                "2",
+                "Ordnung in eine Aufgabe bringen",
+                "Manchmal"
+              ],
+              [
+                "3",
+                "Termine und Zusagen behalten",
+                "Manchmal"
+              ],
+              [
+                "4",
+                "Aufgaben aufschieben, die viel Nachdenken verlangen",
+                "Oft"
+              ],
+              [
+                "5",
+                "Zappeln, wenn man lange sitzen bleiben muss",
+                "Oft"
+              ],
+              [
+                "6",
+                "Sich rastlos angetrieben fühlen",
+                "Oft"
+              ]
+            ],
+            "footnote": "Vier oder mehr Fragen auf oder über ihrer eigenen Schwelle ergeben ein auffälliges Screening. Die Skala wurde für Erwachsene ab 18 entwickelt und ist kein Screener für Kinder."
+          }
+        },
+        {
+          "heading": "Wie ADHS bei Erwachsenen aussieht",
+          "body": [
+            "ADHS im Erwachsenenalter sieht selten aus wie das Bild aus dem Klassenzimmer. Die Hyperaktivität wandert oft nach innen — Unruhe, ein Kopf, der nicht zur Ruhe kommt —, während die Unaufmerksamkeit bleibt und teuer wird: verpasste Fristen, ungeöffnete Post, ein Arbeitsgedächtnis, das ständig etwas fallen lässt.",
+            "Für eine Diagnose zählt, dass die Schwierigkeiten lange bestehen, in mehr als einem Lebensbereich auftreten und tatsächlich belasten. Schlüssel verlegt jeder einmal; danach wird hier nicht gefragt."
+          ],
+          "bullets": [
+            "Aufgaben anfangen, die wichtig sind — und die zu Ende bringen, die nicht mehr interessant sind.",
+            "Zeit: sie unterschätzen, sie verlieren, trotz ehrlicher Mühe zu spät kommen.",
+            "Organisation — Papierkram, Rechnungen, Termine — kostet weit mehr Kraft, als sie andere zu kosten scheint.",
+            "Unruhe oder ein dauerndes leises Bedürfnis, irgendetwas zu tun.",
+            "Unterbrechen, herausplatzen oder handeln, bevor die Idee zu Ende gedacht ist.",
+            "Gefühle, die schnell kommen und schnell wieder gehen, oft heftiger, als der Anlass hergibt."
+          ]
+        },
+        {
+          "heading": "Was dieses Screening nicht leisten kann",
+          "body": [
+            "Ein Screener mit sechs Fragen ist ein Sortierwerkzeug. Er ist absichtlich schnell und absichtlich großzügig, denn seine Aufgabe ist zu entscheiden, wer richtig abgeklärt werden sollte — nicht, wer ADHS hat."
+          ],
+          "bullets": [
+            "Er ist keine Diagnose. Ein auffälliges Ergebnis bedeutet für sich genommen nur „eine Abklärung lohnt sich“.",
+            "Ein unauffälliges Ergebnis schließt ADHS nicht aus, besonders nicht beim unaufmerksamen Typ und besonders nicht bei Frauen, die später und seltener diagnostiziert werden.",
+            "Angst, Depression, schlechter Schlaf, Schilddrüsenerkrankungen, chronische Schmerzen und starker Alkoholkonsum führen zu denselben Antworten.",
+            "Er trennt ADHS nicht von Autismus, von einer Lernstörung oder von den Folgen einer langen Belastungsphase.",
+            "Er wurde für Erwachsene entwickelt und validiert. Kinder und Jugendliche brauchen eine ganz andere Abklärung.",
+            "Er sagt nichts über die Behandlung. Medikamente sind eine Möglichkeit unter mehreren und kommen erst nach einer Diagnose überhaupt zur Sprache."
+          ]
+        },
+        {
+          "heading": "Eine richtige Abklärung bekommen",
+          "body": [
+            "Die Diagnose ADHS stellen Psychiaterinnen und Psychiater oder klinische Psychologinnen und Psychologen. Die Abklärung ist ein strukturiertes klinisches Gespräch über Ihre Vorgeschichte ab der Kindheit, meist mit Fragebögen und, wenn möglich, mit der Schilderung einer Person, die Sie lange kennt."
+          ],
+          "bullets": [
+            "Fangen Sie ärztlich an. Dort werden Ihre Vorgeschichte durchgegangen, die Erkrankungen geprüft, die wie ADHS aussehen, und die Überweisung zur Abklärung ausgestellt.",
+            "Bringen Sie Konkretes statt einer Punktzahl mit: Zeugnisse, Beurteilungen, das, was immer wieder schiefgeht, und seit wann.",
+            "Sagen Sie, was sonst noch läuft — Schlaf, Stimmung, Alkohol, Schilddrüse, ein früheres Schädel-Hirn-Trauma. Das verändert die Abklärung und ihre Reihenfolge.",
+            "Ein Screening-Ergebnis ist der Einstieg in dieses Gespräch, nicht sein Ersatz. Nehmen Sie Ihres mit.",
+            "Wenn Sie den Alltag nicht mehr bewältigen oder Gedanken haben, sich etwas anzutun, wenden Sie sich sofort ärztlich oder an den Notruf, statt auf eine Abklärung zu warten."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Kann ein Online-ADHS-Test eine Diagnose stellen?",
+          "answer": "Nein, und kein Online-Fragebogen kann das. Dies ist ein Screener: Er sortiert in „lohnt eine richtige Abklärung“ und „nach diesen Antworten nicht“. Die Diagnose stellen Psychiatrie oder klinische Psychologie, aus einem vollständigen Gespräch über Ihre Vorgeschichte und nicht aus sechs Fragen."
+        },
+        {
+          "question": "Was ist die ASRS?",
+          "answer": "Die Adult ADHD Self-Report Scale, entwickelt mit der Weltgesundheitsorganisation. Teil A ist der hier verwendete Screener mit sechs Fragen; die vollständige Skala hat achtzehn. Sie ist das am weitesten verbreitete Screening-Instrument für ADHS bei Erwachsenen — deshalb ist das Ergebnis, das Sie mitbringen, in der Praxis bekannt."
+        },
+        {
+          "question": "Was gilt als auffälliges Ergebnis?",
+          "answer": "Vier oder mehr der sechs Fragen, beantwortet auf oder über der jeweils eigenen Schwelle. Die ersten drei zählen ab „Manchmal“, die letzten drei erst ab „Oft“ — die Schwellen unterscheiden sich, weil die Fragen sich unterscheiden, und ein einziger starrer Grenzwert würde den unaufmerksamen Typ übersehen."
+        },
+        {
+          "question": "Kann ich ADHS haben, obwohl das Ergebnis unauffällig ist?",
+          "answer": "Ja. Sechs Fragen können ein Störungsbild nicht abdecken, das sich in verschiedenen Lebensaltern und bei verschiedenen Menschen unterschiedlich zeigt. Gerade der unaufmerksame Typ wird zu selten erkannt — einer der Gründe, warum Frauen später und seltener diagnostiziert werden. Wenn die Schwierigkeiten Ihr Leben belasten, ist ein unauffälliges Screening kein Grund aufzuhören."
+        },
+        {
+          "question": "Wer darf ADHS diagnostizieren?",
+          "answer": "Je nach Land Psychiaterinnen und Psychiater oder klinische Psychologinnen und Psychologen. Der Weg beginnt in der Regel hausärztlich: Dort werden die Vorgeschichte erhoben, die Erkrankungen mit ähnlichem Bild ausgeschlossen — Schilddrüse, Schlafstörungen, Angst, Depression — und die Überweisung zur eigentlichen Abklärung ausgestellt."
+        },
+        {
+          "question": "Speichert dieser ADHS-Test meine Antworten?",
+          "answer": "Nein. Die Auswertung läuft vollständig in Ihrem Browser. Nichts, was Sie auswählen, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Möchten Sie Ihr Ergebnis besprechen?",
+        "body": "Buchen Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt, gehen Sie Ihre Vorgeschichte und die Erkrankungen durch, die wie ADHS aussehen können, und erfahren Sie, was eine Abklärung bedeutet.",
+        "label": "Termin buchen"
+      }
+    },
     "blood-pressure-chart": {
       "cardTitle": "Blutdrucktabelle",
       "cardBlurb": "Was Ihre beiden Werte in der europäischen Blutdrucktabelle für Erwachsene bedeuten.",
@@ -727,6 +900,158 @@
       "cta": {
         "heading": "Fragen in der Frühschwangerschaft?",
         "body": "Sprechen Sie per Video mit einer registrierten Ärztin oder einem registrierten Arzt über Beschwerden, Medikamente, die Sie schon nehmen, oder alles, was nicht bis zum ersten Vorsorgetermin warten soll.",
+        "label": "Termin buchen"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Eisprungrechner",
+      "cardBlurb": "Ihre fruchtbaren Tage, der errechnete Eisprung und der Termin Ihrer nächsten Periode.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Eisprung",
+      "h1Accent": "berechnen",
+      "h1Trail": "{country}",
+      "metaTitle": "Eisprung Berechnen {country} | Fruchtbare Tage Und Eisprung",
+      "metaDescription": "Berechnen Sie Ihre fruchtbaren Tage und den voraussichtlichen Eisprung ab dem ersten Tag der letzten Periode. Berücksichtigt Ihre Zykluslänge, mit den sechs fruchtbarsten Tagen im Detail.",
+      "lede": "Geben Sie den ersten Tag Ihrer letzten Periode ein und Sie sehen die sechs Tage mit der höchsten Chance auf eine Schwangerschaft, den voraussichtlichen Eisprung und den Termin der nächsten Periode.",
+      "trustPoints": [
+        "Wird von der nächsten Periode zurückgerechnet, damit auch lange Zyklen stimmen",
+        "Das ganze sechstägige fruchtbare Fenster, nicht nur ein Tag",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Ein errechneter Eisprung ist eine zeitliche Orientierung, keine Fruchtbarkeitsuntersuchung. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte anbieten, wenn jemand das ganze Bild ansehen soll.",
+      "widget": {
+        "title": "Ihre fruchtbaren Tage",
+        "placeholder": "Geben Sie den ersten Tag Ihrer letzten Periode ein, um Ihre fruchtbaren Tage zu sehen.",
+        "note": "Eine Schätzung aus den eingegebenen Daten, keine Diagnose — und keine Verhütungsmethode. Der Eisprung verschiebt sich von Zyklus zu Zyklus, und eine Schwangerschaft ist auch an Tagen außerhalb des angezeigten Fensters möglich.",
+        "lmpLabel": "Erster Tag der letzten Periode",
+        "lmpHint": "Der Tag, an dem die Blutung begonnen hat, nicht der Tag, an dem sie endete.",
+        "cycleLabel": "Zykluslänge",
+        "cycleHint": "Tage vom Beginn einer Periode bis zum Beginn der nächsten. Wenn Sie unsicher sind, lassen Sie 28 stehen.",
+        "daysUnit": "Tage",
+        "resultLabel": "Voraussichtlicher Eisprung",
+        "resultSummary": "14 Tage vor der nächsten erwarteten Periode zurückgerechnet — genau das hält die Zeitrechnung auch bei Zyklen richtig, die nicht 28 Tage dauern.",
+        "fertileWindowLabel": "Fruchtbares Fenster (6 Tage)",
+        "daysToOvulationLabel": "Tage bis zum Eisprung",
+        "nextPeriodLabel": "Nächste Periode fällig",
+        "testFromLabel": "Test ab"
+      },
+      "sections": [
+        {
+          "heading": "Ihr Zyklus, Tag für Tag",
+          "body": [
+            "Ein Zyklus wird ab dem ersten Tag der Blutung gezählt. Der Eisprung ist nicht auf Tag 14 festgelegt: Er liegt etwa 14 Tage vor der NÄCHSTEN Periode, also bei einem 35-Tage-Zyklus um Tag 21 und bei einem 24-Tage-Zyklus um Tag 10. Deshalb geht das Vorwärtszählen von 14 Tagen ab der letzten Periode bei jedem Zyklus daneben, der nicht 28 Tage hat.",
+            "Die Tage unten sind ein 28-Tage-Zyklus. Der Rechner oben verschiebt sie auf die von Ihnen eingegebene Zykluslänge."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Fruchtbare Tage in einem 28-Tage-Zyklus",
+            "columns": [
+              "Zyklustag",
+              "Was passiert",
+              "Chance auf eine Schwangerschaft"
+            ],
+            "rows": [
+              [
+                "Tag 1",
+                "Die Blutung beginnt — ab hier wird gezählt",
+                "Sehr gering"
+              ],
+              [
+                "Tag 2 – 8",
+                "Eine Eizelle reift heran; das Fenster ist noch zu",
+                "Gering"
+              ],
+              [
+                "Tag 9 – 13",
+                "Fruchtbares Fenster: Spermien überleben bis zu fünf Tage",
+                "Hoch"
+              ],
+              [
+                "Tag 14",
+                "Eisprung — die Eizelle wird freigesetzt",
+                "Am höchsten"
+              ],
+              [
+                "Tag 15 – 16",
+                "Die Eizelle überlebt nach dem Eisprung weniger als einen Tag",
+                "Fällt schnell"
+              ],
+              [
+                "Tag 28",
+                "Die nächste Periode ist fällig — ab hier testen, wenn sie ausbleibt",
+                "Sehr gering"
+              ]
+            ],
+            "footnote": "Spermien überleben im Genitaltrakt bis zu fünf Tage, eine Eizelle weniger als einen — deshalb öffnet sich das fruchtbare Fenster lange vor dem Eisprung und schließt sich fast unmittelbar danach."
+          }
+        },
+        {
+          "heading": "Woran Sie merken, dass der Eisprung wirklich stattgefunden hat",
+          "body": [
+            "Ein Rechner sagt voraus, diese Zeichen bestätigen. Wer ein oder zwei davon über ein paar Zyklen verfolgt, weiß, ob der eigene Eisprung zur Schätzung passt — und das ist gut zu wissen, bevor man etwas darauf aufbaut."
+          ],
+          "bullets": [
+            "Der Zervixschleim wird in den Tagen vor dem Eisprung klar, spinnbar und glitschig, ähnlich wie rohes Eiweiß.",
+            "Ovulationstests messen den LH-Anstieg im Urin, der 24 bis 36 Stunden vor der Freisetzung der Eizelle kommt. Beginnen Sie ein paar Tage vor dem errechneten Termin.",
+            "Die Basaltemperatur steigt nach dem Eisprung um etwa 0,3 °C und bestätigt ihn damit im Nachhinein, statt ihn vorherzusagen.",
+            "Manche spüren mitten im Zyklus ein einseitiges Ziehen, andere bemerken empfindliche Brüste oder eine veränderte Libido.",
+            "Ein Zyklus kann auch ganz ohne Eisprung verlaufen. Das kommt bei den meisten gelegentlich vor und bedeutet für sich genommen nicht, dass etwas nicht stimmt."
+          ]
+        },
+        {
+          "heading": "Was dieser Rechner nicht kann",
+          "body": [
+            "Er arbeitet mit genau zwei Dingen: dem eingegebenen Datum und der Annahme, dass Ihre Lutealphase die üblichen 14 Tage dauert. Beides ist plausibel, keines davon sicher."
+          ],
+          "bullets": [
+            "Er ist keine Verhütungsmethode. Zyklen verschieben sich, Spermien überleben tagelang, und eine Schwangerschaft ist auch an Tagen außerhalb des hier gezeigten Fensters möglich.",
+            "Unregelmäßige Zyklen, kürzlich abgesetzte hormonelle Verhütung, Stillzeit, PCOS und Schilddrüsenerkrankungen schwächen die Vorhersage.",
+            "Hormonelle Verhütung unterdrückt den Eisprung — solange Sie sie anwenden, gibt es hier nichts vorherzusagen.",
+            "Stress, Krankheit, Reisen und hartes Training können den Eisprung in einem Zyklus verzögern.",
+            "Es ist ein Planungswerkzeug, kein Fruchtbarkeitstest: Es sagt nichts über Eizellqualität, Spermien oder die Eileiter."
+          ]
+        },
+        {
+          "heading": "Wann Sie ärztlichen Rat suchen sollten",
+          "body": [],
+          "bullets": [
+            "Sie versuchen seit 12 Monaten schwanger zu werden, oder seit 6 Monaten, wenn Sie über 35 sind.",
+            "Ihre Zyklen sind kürzer als 21 Tage, länger als 35 Tage oder von Monat zu Monat nicht vorhersehbar.",
+            "Ihre Periode bleibt aus, oder Sie bluten zwischen den Perioden.",
+            "Sie haben schmerzhafte Perioden, Schmerzen beim Sex oder eine Diagnose wie PCOS, Endometriose oder eine Schilddrüsenerkrankung.",
+            "Sie möchten eine Beratung vor der Schwangerschaft — Folsäure, Ihre bestehenden Medikamente, Impfungen und eine Blutdruckmessung gehören davor und nicht danach."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wann bin ich am fruchtbarsten?",
+          "answer": "Am Tag des Eisprungs und an den zwei Tagen davor. Das Fenster insgesamt umfasst rund sechs Tage: die fünf vor dem Eisprung plus den Tag selbst. Spermien überleben bis zu fünf Tage, die Eizelle weniger als einen — deshalb öffnet sich das Fenster früh und schließt sich schnell."
+        },
+        {
+          "question": "Ist der Eisprung immer an Tag 14?",
+          "answer": "Nein. Tag 14 gilt nur für den Lehrbuch-Zyklus von 28 Tagen. Der Eisprung liegt etwa 14 Tage vor der nächsten Periode, bei einem 32-Tage-Zyklus also um Tag 18 und bei einem 24-Tage-Zyklus um Tag 10. 14 Tage ab der letzten Periode vorwärtszuzählen ist der häufigste Fehler bei der Zeitrechnung."
+        },
+        {
+          "question": "Wie berechne ich den Eisprung bei unregelmäßigem Zyklus?",
+          "answer": "Geben Sie Ihre übliche Zykluslänge ein und behandeln Sie das Ergebnis als groben Bereich, nicht als Datum. Schwanken Ihre Zyklen um mehr als ein paar Tage, sagen Ovulationstests oder der Zervixschleim weit mehr als jede Kalenderrechnung. Zyklen dauerhaft unter 21 oder über 35 Tagen gehören ärztlich abgeklärt."
+        },
+        {
+          "question": "Kann ich einen Eisprungrechner zur Verhütung nutzen?",
+          "answer": "Nein. Er ist keine Verhütungsmethode und sollte nie als solche verwendet werden. Der Eisprung verschiebt sich zwischen Zyklen, Spermien überleben bis zu fünf Tage, und eine Schwangerschaft ist auch an Tagen möglich, die dieser Rechner außerhalb des fruchtbaren Fensters zeigt. Wenn Sie eine Schwangerschaft vermeiden wollen, nutzen Sie eine anerkannte Verhütungsmethode."
+        },
+        {
+          "question": "Wann kann ich nach dem Eisprung einen Schwangerschaftstest machen?",
+          "answer": "Die meisten Heimtests sind ab dem Tag zuverlässig, an dem die Periode fällig wäre — etwa 14 Tage nach dem Eisprung, also das Datum „Test ab“ im Ergebnis. Früher getestet kann das Ergebnis negativ ausfallen, obwohl Sie schwanger sind, weil im Urin noch zu wenig hCG ist."
+        },
+        {
+          "question": "Speichert dieser Eisprungrechner meine Angaben?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts von dem, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Kinderwunsch?",
+        "body": "Sprechen Sie per Video mit einer registrierten Ärztin oder einem registrierten Arzt über unregelmäßige Zyklen, Untersuchungen vor der Schwangerschaft oder Medikamente, die Sie schon nehmen.",
         "label": "Termin buchen"
       }
     }

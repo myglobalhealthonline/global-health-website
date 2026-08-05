@@ -130,9 +130,182 @@
         "label": "Extrémně aktivní",
         "summary": "Fyzická práce nebo náročný trénink dvakrát denně"
       }
+    },
+    "adhdFrequencies": [
+      "Nikdy",
+      "Zřídka",
+      "Někdy",
+      "Často",
+      "Velmi často"
+    ],
+    "adhdQuestions": [
+      "Jak často necháte poslední detaily projektu nedodělané, jakmile máte tu těžkou část za sebou?",
+      "Jak často pro vás bývá těžké dát věci do pořádku, když si úkol žádá organizaci?",
+      "Jak často zapomenete na schůzku nebo na to, co jste slíbili?",
+      "Jak často odkládáte nebo se vyhýbáte něčemu, co vyžaduje hodně přemýšlení?",
+      "Jak často vrtíte rukama nebo nohama, když musíte dlouho sedět?",
+      "Jak často se cítíte neklidně hnaní dál, jako by vás něco pohánělo?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Výsledek screeningu: pozitivní",
+        "summary": "Vaše odpovědi odpovídají vzorci, který tento dotazník hledá — má tedy smysl domluvit si úplné vyšetření. Diagnóza to není: ADHD diagnostikuje pouze psychiatr nebo klinický psycholog, a to z celé vaší anamnézy, ne ze šesti otázek."
+      },
+      "negative": {
+        "label": "Výsledek screeningu: negativní",
+        "summary": "Vaše odpovědi hledanému vzorci neodpovídají. ADHD to nevylučuje — šest otázek pokrývá jen část — takže pokud vám tyto potíže komplikují práci, studium nebo vztahy, promluvte si s lékařem i tak."
+      }
     }
   },
   "tools": {
+    "adhd-test": {
+      "cardTitle": "ADHD test",
+      "cardBlurb": "Screeningový dotazník ADHD pro dospělé o šesti otázkách, vyhodnocený tak, jak je škála postavená.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "ADHD",
+      "h1Accent": "test",
+      "h1Trail": "{country}",
+      "metaTitle": "ADHD Test {country} | Bezplatný Screening Pro Dospělé",
+      "metaDescription": "Vyplňte screeningový test ADHD pro dospělé o šesti otázkách (ASRS v1.1, část A) a zjistěte, co vaše odpovědi znamenají. Výsledek screeningu není diagnóza — tu stanoví jen psychiatr nebo klinický psycholog.",
+      "lede": "Odpovězte na šest otázek o posledním půlroce a zjistěte, zda vaše odpovědi odpovídají vzorci, který screening ADHD u dospělých hledá.",
+      "trustPoints": [
+        "Screening ASRS v1.1, část A — šest otázek",
+        "Vyhodnocení po jednotlivých otázkách, jak je škála postavená",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "widget": {
+        "title": "Vaše odpovědi",
+        "instructions": "U každé otázky zvolte, jak často to na vás v posledním půlroce platilo.",
+        "placeholder": "Odpovězte na šest otázek a uvidíte výsledek screeningu.",
+        "note": "Jde o screeningový dotazník, nikoli o diagnózu. ADHD diagnostikuje pouze psychiatr nebo klinický psycholog po úplném vyšetření. Nic z toho zde není doporučení k užívání léků.",
+        "thresholdLabel": "Pozitivní screening",
+        "thresholdValue": "{count} a více z {total}"
+      },
+      "sections": [
+        {
+          "heading": "Jak se screening vyhodnocuje",
+          "body": [
+            "Otázky jsou částí A škály Adult ADHD Self-Report Scale Světové zdravotnické organizace — krátkou formou, podle které se rozhoduje, zda má smysl domluvit úplné vyšetření. Samotné vyšetření to není.",
+            "Vyhodnocuje se po jednotlivých otázkách, ne jako součet. Každá položka má vlastní hranici a čtyři a více položek, které svou hranici dosáhnou, znamenají pozitivní screening. Obvyklá chyba je brát to jako plošné „čtyřikrát často“ — takové pravidlo přehlédne nepozorný typ, tedy ten, který u dospělých uniká nejčastěji."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Šest screeningových otázek a odpověď, od které se každá počítá",
+            "columns": [
+              "Otázka",
+              "Čeho se týká",
+              "Počítá se od"
+            ],
+            "rows": [
+              [
+                "1",
+                "Dodělat poslední detaily projektu",
+                "Někdy"
+              ],
+              [
+                "2",
+                "Dát věci do pořádku kvůli úkolu",
+                "Někdy"
+              ],
+              [
+                "3",
+                "Udržet v hlavě schůzky a sliby",
+                "Někdy"
+              ],
+              [
+                "4",
+                "Odkládání úkolů, které vyžadují hodně přemýšlení",
+                "Často"
+              ],
+              [
+                "5",
+                "Vrtění, když musíte dlouho sedět",
+                "Často"
+              ],
+              [
+                "6",
+                "Pocit neklidného hnaní dál",
+                "Často"
+              ]
+            ],
+            "footnote": "Čtyři a více otázek na vlastní hranici nebo nad ní znamenají pozitivní screening. Škála vznikla pro dospělé od 18 let a není screeningem pro děti."
+          }
+        },
+        {
+          "heading": "Jak ADHD vypadá u dospělých",
+          "body": [
+            "ADHD v dospělosti málokdy vypadá jako obrázek ze školní lavice. Hyperaktivita se často obrací dovnitř — neklid, hlava, která se nezastaví — zatímco nepozornost zůstává a začíná něco stát: zmeškané termíny, neotevřená úřední pošta, pracovní paměť, které pořád něco vypadne.",
+            "Pro diagnózu je podstatné, že potíže trvají dlouho, projevují se ve více oblastech života a skutečně omezují. Klíče někam založí každý; na to se tu neptáme."
+          ],
+          "bullets": [
+            "Začít úkoly, na kterých záleží, a dokončit ty, které přestaly být zajímavé.",
+            "Čas: podceňovat ho, ztrácet ho, chodit pozdě navzdory upřímné snaze.",
+            "Organizace — papíry, faktury, termíny — stojí mnohem víc sil, než se zdá, že stojí ostatní.",
+            "Neklid nebo trvalá tichá potřeba něco dělat.",
+            "Skákat do řeči, vyhrknout něco nebo jednat dřív, než je nápad domyšlený.",
+            "Emoce, které přijdou rychle a rychle odejdou, často silněji, než by odpovídalo podnětu."
+          ]
+        },
+        {
+          "heading": "Co vám tento screening říct nemůže",
+          "body": [
+            "Dotazník o šesti otázkách je třídicí nástroj. Je záměrně rychlý a záměrně velkorysý, protože jeho úkolem je rozhodnout, kdo by měl projít pořádným vyšetřením — ne kdo má ADHD."
+          ],
+          "bullets": [
+            "Není to diagnóza. Pozitivní výsledek sám o sobě znamená jen „stojí za vyšetření“.",
+            "Negativní výsledek ADHD nevylučuje, zvlášť u nepozorného typu a zvlášť u žen, které bývají diagnostikovány později a méně často.",
+            "Úzkost, deprese, špatný spánek, onemocnění štítné žlázy, chronická bolest i vyšší konzumace alkoholu vedou ke stejným odpovědím.",
+            "Neodliší ADHD od autismu, od specifické poruchy učení ani od následků dlouhého zátěžového období.",
+            "Vznikl a byl ověřen pro dospělé. Děti a dospívající potřebují úplně jiné vyšetření.",
+            "O léčbě neříká nic. Léky jsou jednou z možností a přicházejí na řadu až po diagnóze."
+          ]
+        },
+        {
+          "heading": "Jak se dostat k pořádnému vyšetření",
+          "body": [
+            "Diagnózu ADHD stanoví psychiatr nebo klinický psycholog. Vyšetření je strukturovaný klinický rozhovor o vaší anamnéze od dětství, obvykle s dotazníky a pokud možno i s popisem od někoho, kdo vás dlouho zná."
+          ],
+          "bullets": [
+            "Začněte u lékaře. Projde s vámi anamnézu, vyloučí stavy, které ADHD připomínají, a odešle vás na vyšetření.",
+            "Vezměte s sebou konkrétní věci, ne skóre: vysvědčení, hodnocení z práce, to, co se opakovaně nedaří, a jak dlouho už to trvá.",
+            "Řekněte, co dalšího se děje — spánek, nálada, alkohol, štítná žláza, dřívější úraz hlavy. Mění to vyšetření i jeho pořadí.",
+            "Výsledek screeningu je začátek toho rozhovoru, ne jeho náhrada. Vezměte si ten svůj s sebou.",
+            "Pokud to nezvládáte nebo máte myšlenky na sebepoškození, obraťte se hned na lékaře nebo na tísňovou linku a nečekejte na vyšetření."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Může online ADHD test stanovit diagnózu?",
+          "answer": "Ne, a nedokáže to žádný online dotazník. Tohle je screening: rozdělí lidi na ty, u kterých má smysl pořádné vyšetření, a na ty, u kterých to podle těchto odpovědí neplatí. Diagnózu stanoví psychiatr nebo klinický psycholog z úplného rozhovoru o vaší anamnéze, ne ze šesti otázek."
+        },
+        {
+          "question": "Co je ASRS?",
+          "answer": "Adult ADHD Self-Report Scale, vytvořená ve spolupráci se Světovou zdravotnickou organizací. Část A je zdejší screening o šesti otázkách, celá škála jich má osmnáct. Je to nejrozšířenější screeningový nástroj pro ADHD u dospělých, takže výsledek, který přinesete, lékař zná."
+        },
+        {
+          "question": "Jaký výsledek se počítá jako pozitivní?",
+          "answer": "Čtyři a více z šesti otázek zodpovězených na vlastní hranici nebo nad ní. První tři se počítají od odpovědi „někdy“, poslední tři až od „často“ — hranice se liší, protože se liší otázky, a jediná plošná mez by nepozorný typ přehlédla."
+        },
+        {
+          "question": "Můžu mít ADHD, i když je výsledek negativní?",
+          "answer": "Ano. Šest otázek nepokryje stav, který se v různém věku a u různých lidí projevuje jinak. Zvlášť nepozorný typ bývá zachycen málo — je to jeden z důvodů, proč ženy dostávají diagnózu později a méně často. Pokud vám potíže komplikují život, negativní screening není důvod přestat se ptát."
+        },
+        {
+          "question": "Kdo může diagnostikovat ADHD?",
+          "answer": "Psychiatr nebo klinický psycholog, podle země. Cesta obvykle začíná u praktického lékaře: sebere anamnézu, vyloučí stavy, které ADHD napodobují — štítnou žlázu, poruchy spánku, úzkost, depresi — a odešle vás na samotné vyšetření."
+        },
+        {
+          "question": "Ukládá tento ADHD test moje odpovědi?",
+          "answer": "Ne. Vyhodnocení běží celé ve vašem prohlížeči. Nic z toho, co zvolíte, se neodesílá na naše servery ani se neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Chcete výsledek probrat?",
+        "body": "Objednejte se na videokonzultaci s registrovaným lékařem, projděte svou anamnézu i stavy, které mohou ADHD připomínat, a zjistěte, co vyšetření obnáší.",
+        "label": "Objednat konzultaci"
+      }
+    },
     "blood-pressure-chart": {
       "cardTitle": "Tabulka krevního tlaku",
       "cardBlurb": "Co vaše dvě čísla znamenají v evropské tabulce krevního tlaku pro dospělé.",
@@ -727,6 +900,158 @@
       "cta": {
         "heading": "Otázky na začátku těhotenství?",
         "body": "Proberte po videu s registrovaným lékařem příznaky, léky, které už berete, nebo cokoli, s čím nechcete čekat na první prohlídku.",
+        "label": "Objednat konzultaci"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Ovulační kalkulačka",
+      "cardBlurb": "Vaše plodné dny, odhadovaný den ovulace a termín příští menstruace.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "Ovulační",
+      "h1Accent": "kalkulačka",
+      "h1Trail": "{country}",
+      "metaTitle": "Ovulační Kalkulačka {country} | Plodné Dny a Den Ovulace",
+      "metaDescription": "Spočítejte si plodné dny a odhadovaný den ovulace podle prvního dne poslední menstruace. Zohledňuje délku vašeho cyklu a šest nejplodnějších dnů rozepisuje den po dni.",
+      "lede": "Zadejte první den poslední menstruace a uvidíte šest dnů s nejvyšší pravděpodobností otěhotnění, odhadovaný den ovulace a termín příští menstruace.",
+      "trustPoints": [
+        "Počítá se zpětně od příští menstruace, takže i delší cykly sedí",
+        "Celé šestidenní plodné období, ne jediný den",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "suggestionsIntro": "Odhad ovulace je vodítko k načasování, nikoli vyšetření plodnosti. Toto jsou konzultace, které naši lékaři vedou, když chcete, aby se někdo podíval na celý obrázek.",
+      "widget": {
+        "title": "Vaše plodné dny",
+        "placeholder": "Zadejte první den poslední menstruace a uvidíte svoje plodné dny.",
+        "note": "Jde o odhad z dat, která zadáte, nikoli o diagnózu — a není to antikoncepční metoda. Ovulace se cyklus od cyklu posouvá a otěhotnět lze i ve dnech mimo zobrazené období.",
+        "lmpLabel": "První den poslední menstruace",
+        "lmpHint": "Den, kdy krvácení začalo, ne kdy skončilo.",
+        "cycleLabel": "Délka cyklu",
+        "cycleHint": "Počet dnů od začátku jedné menstruace do začátku další. Pokud si nejste jistá, nechte 28.",
+        "daysUnit": "dnů",
+        "resultLabel": "Odhadovaná ovulace",
+        "resultSummary": "Odečteno 14 dnů od očekávané příští menstruace — právě to udrží načasování správné i u cyklů, které nemají 28 dnů.",
+        "fertileWindowLabel": "Plodné období (6 dnů)",
+        "daysToOvulationLabel": "Dnů do ovulace",
+        "nextPeriodLabel": "Termín příští menstruace",
+        "testFromLabel": "Test od"
+      },
+      "sections": [
+        {
+          "heading": "Váš cyklus den po dni",
+          "body": [
+            "Cyklus se počítá od prvního dne krvácení. Ovulace není napevno 14. den: nastává zhruba 14 dnů před PŘÍŠTÍ menstruací, takže při 35denním cyklu vychází okolo 21. dne a při 24denním okolo 10. dne. Proto počítání 14 dnů dopředu od poslední menstruace mine u každého cyklu, který nemá 28 dnů.",
+            "Dny níže odpovídají jednomu 28dennímu cyklu. Kalkulačka nahoře je posune podle délky cyklu, kterou zadáte."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Plodné dny v rámci 28denního cyklu",
+            "columns": [
+              "Den cyklu",
+              "Co se děje",
+              "Šance na otěhotnění"
+            ],
+            "rows": [
+              [
+                "1. den",
+                "Začíná krvácení — odtud se cyklus počítá",
+                "Velmi nízká"
+              ],
+              [
+                "2.–8. den",
+                "Zraje vajíčko, plodné období ještě nezačalo",
+                "Nízká"
+              ],
+              [
+                "9.–13. den",
+                "Plodné období: spermie přežívají až pět dnů",
+                "Vysoká"
+              ],
+              [
+                "14. den",
+                "Ovulace — vajíčko se uvolňuje",
+                "Nejvyšší"
+              ],
+              [
+                "15.–16. den",
+                "Vajíčko po uvolnění přežívá necelý den",
+                "Rychle klesá"
+              ],
+              [
+                "28. den",
+                "Má přijít další menstruace — odtud testujte, pokud nepřijde",
+                "Velmi nízká"
+              ]
+            ],
+            "footnote": "Spermie přežívají v pohlavních cestách až pět dnů a vajíčko necelý jeden, a proto se plodné období otevírá dlouho před ovulací a téměř okamžitě po ní se zavírá."
+          }
+        },
+        {
+          "heading": "Podle čeho poznáte, že ovulace opravdu proběhla",
+          "body": [
+            "Kalkulačka předpovídá, tyto známky potvrzují. Když jednu dvě z nich pár cyklů sledujete, zjistíte, jestli vaše ovulace odpovídá odhadu — a to se hodí vědět dřív, než na tom cokoli postavíte."
+          ],
+          "bullets": [
+            "Hlen děložního hrdla je v dnech těsně před ovulací čirý, tažný a kluzký, podobný syrovému vaječnému bílku.",
+            "Ovulační testy zachytí v moči vzestup LH, který přichází 24 až 36 hodin před uvolněním vajíčka. Začněte testovat několik dnů před odhadovaným datem.",
+            "Bazální tělesná teplota po ovulaci stoupne asi o 0,3 °C, takže ji potvrzuje zpětně, nikoli dopředu.",
+            "Někdo v polovině cyklu cítí jednostrannou bolest, jiná žena vnímá citlivost prsou nebo změnu libida.",
+            "Cyklus může proběhnout i bez ovulace. Občas se to stane většině žen a samo o sobě to neznamená, že je něco v nepořádku."
+          ]
+        },
+        {
+          "heading": "Co tato kalkulačka neumí",
+          "body": [
+            "Pracuje jen se dvěma věcmi: s datem, které zadáte, a s předpokladem, že vaše luteální fáze trvá standardních 14 dnů. Obojí je rozumné, ani jedno není jisté."
+          ],
+          "bullets": [
+            "Není to antikoncepční metoda. Cykly se posouvají, spermie přežívají několik dnů a otěhotnět lze i ve dnech mimo zde zobrazené období.",
+            "Nepravidelné cykly, nedávno vysazená hormonální antikoncepce, kojení, syndrom polycystických ovarií a onemocnění štítné žlázy předpověď oslabují.",
+            "Hormonální antikoncepce ovulaci potlačuje, takže během jejího užívání není co předpovídat.",
+            "Stres, nemoc, cestování i tvrdý trénink mohou ovulaci v daném cyklu oddálit.",
+            "Je to nástroj k plánování, ne test plodnosti: nic neříká o kvalitě vajíček, o spermiích ani o vejcovodech."
+          ]
+        },
+        {
+          "heading": "Kdy se obrátit na lékaře",
+          "body": [],
+          "bullets": [
+            "Snažíte se otěhotnět 12 měsíců, nebo 6 měsíců, pokud je vám přes 35 let.",
+            "Vaše cykly jsou kratší než 21 dnů, delší než 35 dnů, nebo se měsíc od měsíce nedají odhadnout.",
+            "Menstruace se zastavila, nebo krvácíte i mezi menstruacemi.",
+            "Máte bolestivou menstruaci, bolest při sexu nebo diagnózu syndromu polycystických ovarií, endometriózy či onemocnění štítné žlázy.",
+            "Chcete poradit před otěhotněním — kyselina listová, léky, které už berete, očkování i změření krevního tlaku patří před těhotenství, ne až po něm."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Kdy jsem nejplodnější?",
+          "answer": "V den ovulace a dva dny před ním. Celé plodné období trvá zhruba šest dnů: pět dnů před ovulací a den samotné ovulace. Spermie přežívají až pět dnů a vajíčko necelý jeden, proto plodné období začíná brzy a rychle končí."
+        },
+        {
+          "question": "Nastává ovulace vždy 14. den?",
+          "answer": "Ne. Čtrnáctý den platí jen pro učebnicový 28denní cyklus. Ovulace přichází zhruba 14 dnů před příští menstruací, takže u 32denního cyklu vychází okolo 18. dne a u 24denního okolo 10. dne. Počítat 14 dnů dopředu od poslední menstruace je nejčastější způsob, jak se v načasování splést."
+        },
+        {
+          "question": "Jak spočítat ovulaci při nepravidelném cyklu?",
+          "answer": "Zadejte svou obvyklou délku cyklu a výsledek berte spíš jako široký odhad než jako přesné datum. Pokud se vám cykly liší o víc než pár dnů, řeknou vám ovulační testy nebo sledování hlenu mnohem víc než jakýkoli výpočet z kalendáře. Cykly trvale kratší než 21 dnů nebo delší než 35 dnů stojí za konzultaci s lékařem."
+        },
+        {
+          "question": "Můžu ovulační kalkulačku používat jako antikoncepci?",
+          "answer": "Ne. Není to antikoncepční metoda a nikdy by se tak neměla používat. Ovulace se mezi cykly posouvá, spermie přežívají až pět dnů a otěhotnět lze i ve dnech, které kalkulačka označí jako mimo plodné období. Pokud otěhotnět nechcete, používejte uznávanou antikoncepci."
+        },
+        {
+          "question": "Kdy si po ovulaci můžu udělat těhotenský test?",
+          "answer": "Většina domácích testů je spolehlivá ode dne, kdy měla přijít menstruace, tedy asi 14 dnů po ovulaci — to je datum „Test od“ ve výsledku. Dřívější test může vyjít negativní, i když těhotná jste, protože v moči ještě není dost hCG."
+        },
+        {
+          "question": "Ukládá tato ovulační kalkulačka moje údaje?",
+          "answer": "Ne. Výpočet probíhá výhradně ve vašem prohlížeči. Nic, co zadáte, se neodesílá na naše servery ani neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Snažíte se otěhotnět?",
+        "body": "Proberte po videu s registrovaným lékařem nepravidelné cykly, vyšetření před otěhotněním nebo léky, které už berete.",
         "label": "Objednat konzultaci"
       }
     }

@@ -12,8 +12,8 @@
  * `bmi calculator ireland`. Hence: every country, every locale.
  *
  * SHIPPING ONE TOOL AT A TIME. BMI and the due-date calculator are live; the
- * calorie, blood-pressure, ovulation and ADHD tools are planned next and their
- * maths already sits (tested) in `calc.ts`. Adding one means: a `ToolMeta`
+ * calorie, blood-pressure and ADHD tools followed; ovulation is planned next
+ * and its maths already sits (tested) in `calc.ts`. Adding one means: a `ToolMeta`
  * entry here, a widget branch in `ToolWidget.tsx`, and its copy block in the
  * six `tools.json` files. Nothing else — the renderer is generic.
  *
@@ -31,7 +31,13 @@ import enTools from "@/locales/en/tools.json";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
-export type WidgetKey = "bmi" | "calorie" | "blood-pressure" | "due-date";
+export type WidgetKey =
+  | "bmi"
+  | "calorie"
+  | "blood-pressure"
+  | "due-date"
+  | "adhd"
+  | "ovulation";
 
 /** Row tone drives the colour dot in the rendered chart tables. */
 export type ToneKey = "good" | "warn" | "alert" | "muted";
@@ -133,6 +139,47 @@ export const TOOLS: ToolMeta[] = [
       },
       { id: "dating", theme: "forest" },
       { id: "scan", theme: "ivory" },
+      { id: "next", theme: "forest" },
+    ],
+    related: [],
+    ctaPath: "/gp-consultation-online",
+  },
+  {
+    slug: "adhd-test",
+    widget: "adhd",
+    sections: [
+      // The chart is the six ASRS Part A items with the answer each one counts
+      // from. Row tones are the THRESHOLD TIER, not a severity scale: the first
+      // three items count from "Sometimes", the last three only from "Often",
+      // and that difference is the whole reason the scale is not a flat
+      // cut-off. Nothing here says one symptom is worse than another.
+      {
+        id: "scoring",
+        theme: "ivory",
+        rowTones: ["warn", "warn", "warn", "alert", "alert", "alert"],
+      },
+      { id: "symptoms", theme: "forest" },
+      { id: "limits", theme: "ivory" },
+      { id: "assessment", theme: "forest" },
+    ],
+    related: [],
+    ctaPath: "/gp-consultation-online",
+  },
+  {
+    slug: "ovulation-calculator",
+    widget: "ovulation",
+    sections: [
+      // The chart is one 28-day cycle, day by day. Row tones are FERTILITY, not
+      // risk: the two fertile rows are the good ones, the day after ovulation is
+      // the warn row because the window has effectively shut, and the rest of
+      // the cycle is neutral.
+      {
+        id: "window",
+        theme: "ivory",
+        rowTones: ["muted", "muted", "good", "good", "warn", "muted"],
+      },
+      { id: "signs", theme: "forest" },
+      { id: "limits", theme: "ivory" },
       { id: "next", theme: "forest" },
     ],
     related: [],

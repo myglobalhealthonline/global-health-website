@@ -42,6 +42,8 @@ import { HeaderScrollShell } from "@/components/layout/HeaderScrollShell";
 import { RememberCountryOnMount } from "@/components/layout/RememberCountryOnMount";
 import { HeaderAuthActions } from "@/components/layout/HeaderAuthActions";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
+import { TOOLS, getToolsCopy } from "@/lib/tools/registry";
+import { isToolMarket } from "@/lib/tools/markets";
 import { ArrowUpRight } from "lucide-react";
 
 function sectionNavForCountryLang(
@@ -49,6 +51,7 @@ function sectionNavForCountryLang(
   lang: string,
   features: string[] | undefined,
   nav: SiteNavigationData,
+  countryCode: string,
 ): SectionNavItem[] {
   const base = `/${countrySlug}/${lang}`;
   const enabled = (key: string) =>
@@ -88,12 +91,51 @@ function sectionNavForCountryLang(
     });
   }
 
+  // Free calculators, sitting beside Services. Built from the tool registry
+  // rather than a hand-kept list, so shipping a calculator puts it in the nav —
+  // there is no second place to remember. Labels come from that locale's
+  // tools.json, and the market gate is the same `isToolMarket` the routes and
+  // the sitemap use, so the nav can never offer a URL that 404s.
+  const toolsChildren = isToolMarket(countryCode, lang)
+    ? (() => {
+        const tools = getToolsCopy(lang as LocaleCode);
+        return TOOLS.flatMap((tool) => {
+          const copy = tools.tools[tool.slug];
+          return copy
+            ? [
+                {
+                  href: `${base}/tools/${tool.slug}`,
+                  label: copy.cardTitle,
+                  description: copy.cardBlurb,
+                },
+              ]
+            : [];
+        });
+      })()
+    : [];
+
   const items: SectionNavItem[] = [
     { href: base, label: nav.navHome, exact: true },
     { href: `${base}/doctors`, label: nav.navDoctors },
   ];
   if (servicesChildren.length > 0) {
     items.push({ label: nav.navServices, children: servicesChildren });
+  }
+  if (toolsChildren.length > 0) {
+    const tools = getToolsCopy(lang as LocaleCode);
+    items.push({
+      label: tools.hub.navLabel,
+      // First entry is the hub itself — the dropdown trigger has no href of
+      // its own, so without this there is no way into /tools from the nav.
+      children: [
+        {
+          href: `${base}/tools`,
+          label: tools.hub.navLabel,
+          description: tools.hub.lede,
+        },
+        ...toolsChildren,
+      ],
+    });
   }
   // Strict opt-in (not the loose `enabled`): only show Plans where the country
   // explicitly enabled subscriptions, else the link would 404 (§36.15).
@@ -193,8 +235,26 @@ export function SiteHeader({
   const effectiveLang = parsed.lang ?? (lastCountry ? activeLang : null);
   const sectionItems: SectionNavItem[] =
     activeCountry && effectiveCountrySlug && effectiveLang
-      ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures, navigation)
+      ? sectionNavForCountryLang(
+          effectiveCountrySlug,
+          effectiveLang,
+          activeFeatures,
+          navigation,
+          activeCountryCode ?? activeCountry.code,
+        )
       : sectionNavGlobal(navigation);
+
+  // Same calculator links the desktop dropdown uses, flattened for the mobile
+  // drawer (which expands services inline rather than nesting a dropdown).
+  const mobileToolLinks =
+    activeCountry && effectiveCountrySlug && effectiveLang && isToolMarket(activeCountry.code, effectiveLang)
+      ? [
+          {
+            href: `/${effectiveCountrySlug}/${effectiveLang}/tools`,
+            label: getToolsCopy(effectiveLang as LocaleCode).hub.navLabel,
+          },
+        ]
+      : [];
 
   // Cart-first booking: the header "Book" CTA opens the guided /book page
   // (service → doctor → time → details in one flow). Outside a country we
@@ -298,6 +358,7 @@ export function SiteHeader({
             countries={countries}
             lastCountry={lastCountry}
             selectedLocale={activeLang}
+            toolLinks={mobileToolLinks}
             a11y={{
               openMenu: a11y.openMenu,
               menuDescription: a11y.mobileMenuDescription,

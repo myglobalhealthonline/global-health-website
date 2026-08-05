@@ -26,6 +26,8 @@ import type { BmiBandKey } from "@/lib/tools/calc";
 import type { ActivityKey, Sex } from "@/lib/tools/calc";
 import {
   ACTIVITY_LEVELS,
+  ADHD_QUESTIONS,
+  adhdScore,
   BMI_GAUGE_MAX,
   BMI_GAUGE_MIN,
   CM_PER_FOOT,
@@ -42,6 +44,7 @@ import {
   daysBetween,
   dueDateFromLmp,
   healthyWeightRange,
+  ovulationFromLmp,
   parseISODate,
   todayUTC,
   weightToHealthyRange,
@@ -125,6 +128,10 @@ export function ToolWidget({
       return <DueDateWidget copy={copy} />;
     case "calorie":
       return <CalorieWidget copy={copy} />;
+    case "adhd":
+      return <AdhdWidget copy={copy} />;
+    case "ovulation":
+      return <OvulationWidget copy={copy} />;
   }
 }
 
@@ -977,6 +984,201 @@ function CalorieWidget({ copy }: { copy: WidgetCopy }) {
       {/* Hitting the 1,200 kcal floor changes what the small print has to say:
           at that point the tool is no longer describing a self-managed deficit. */}
       <ToolNote>{targets?.floored ? w.noteFloored : w.note}</ToolNote>
+    </ToolCard>
+  );
+}
+
+/* ------------------------------------------------------------------ ADHD */
+
+/** Every item starts at "Never" — a constant, and a real (negative) result. */
+const ADHD_DEFAULT_ANSWERS = ADHD_QUESTIONS.map(() => 0);
+/** Positives needed for a positive screen; `adhdScore` owns the rule. */
+const ADHD_POSITIVE_THRESHOLD = 4;
+
+/**
+ * The six ASRS v1.1 Part A items. A select per question rather than a
+ * segmented control or a slider: the frequency labels are full words in every
+ * language, five of them would not survive one row, and a Likert answer is a
+ * named choice rather than a quantity to drag.
+ *
+ * A screen is not a diagnosis, and the read-out says so on both outcomes — see
+ * `bands.adhd` in `tools.json`. The result routes to a consultation and never
+ * to medication.
+ */
+function AdhdWidget({ copy }: { copy: WidgetCopy }) {
+  const id = useId();
+  const { bands } = copy;
+  const { number } = useFormatters(copy.formatLocale);
+  const w = copy.widget;
+
+  const [answers, setAnswers] = useState<number[]>(ADHD_DEFAULT_ANSWERS);
+
+  const result = adhdScore(answers);
+  const bandCopy = bands.adhd[result.screenPositive ? "positive" : "negative"];
+
+  return (
+    <ToolCard title={w.title}>
+      <ToolNote>{w.instructions}</ToolNote>
+
+      {ADHD_QUESTIONS.map((question, index) => (
+        <ToolField
+          key={question.id}
+          label={bands.adhdQuestions[index]}
+          htmlFor={`${id}-${question.id}`}
+        >
+          <select
+            id={`${id}-${question.id}`}
+            className={TOOL_INPUT_CLASS}
+            style={TOOL_INPUT_STYLE}
+            value={answers[index]}
+            onChange={(event) => {
+              const next = Number(event.target.value);
+              setAnswers((current) =>
+                current.map((value, position) => (position === index ? next : value)),
+              );
+            }}
+          >
+            {bands.adhdFrequencies.map((label, frequency) => (
+              <option key={label} value={frequency}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </ToolField>
+      ))}
+
+      <ToolResult
+        placeholder={w.placeholder}
+        value={`${number.format(result.positives)} / ${number.format(ADHD_QUESTIONS.length)}`}
+        label={bandCopy.label}
+        summary={bandCopy.summary}
+        tone={result.screenPositive ? "warn" : "muted"}
+      >
+        <ToolStatRow
+          items={[
+            {
+              label: w.thresholdLabel,
+              value: fillPlaceholders(w.thresholdValue, {
+                count: number.format(ADHD_POSITIVE_THRESHOLD),
+                total: number.format(ADHD_QUESTIONS.length),
+              }),
+            },
+          ]}
+        />
+      </ToolResult>
+
+      <ToolNote>{w.note}</ToolNote>
+    </ToolCard>
+  );
+}
+
+/* ------------------------------------------------------------- Ovulation */
+
+/**
+ * Same hydration contract as the due-date widget: a CONSTANT anchor date, so
+ * the server and the first client render agree, replaced by "a week ago" —
+ * mid-cycle for most people, and so a window that is still ahead — once the
+ * client knows what today is.
+ */
+const OVULATION_LMP_ANCHOR = "2026-01-01";
+const OVULATION_LOOKBACK_DAYS = 7;
+const OVULATION_DEFAULT_CYCLE = "28";
+/** `ovulationFromLmp` clamps to the same window; the slider states it. */
+const OVULATION_CYCLE_MIN = 20;
+const OVULATION_CYCLE_MAX = 45;
+
+function OvulationWidget({ copy }: { copy: WidgetCopy }) {
+  const id = useId();
+  const w = copy.widget;
+  const { number } = useFormatters(copy.formatLocale);
+  const { full, dayMonth } = useDateFormatters(copy.formatLocale);
+
+  const todayIso = useSyncExternalStore<string | null>(
+    NO_SUBSCRIPTION,
+    clientTodayIso,
+    serverTodayIso,
+  );
+  const today = todayIso === null ? null : parseISODate(todayIso);
+
+  const [entered, setEntered] = useState<string | null>(null);
+  const [cycle, setCycle] = useState(OVULATION_DEFAULT_CYCLE);
+  const lmp =
+    entered ??
+    (today === null ? OVULATION_LMP_ANCHOR : isoOf(addDays(today, -OVULATION_LOOKBACK_DAYS)));
+
+  const lmpDate = parseISODate(lmp);
+  const cycleDays = num(cycle);
+  // Anchored to the NEXT period rather than counted forward from the LMP: the
+  // luteal phase is roughly fixed at 14 days, so a 35-day cycle ovulates around
+  // day 21, not day 14. See `ovulationFromLmp`.
+  const result = lmpDate
+    ? ovulationFromLmp(lmpDate, Number.isFinite(cycleDays) ? cycleDays : 28)
+    : null;
+
+  // Only shown while ovulation is still ahead. Once it has passed, the window
+  // above belongs to the cycle that started on the date entered, and a negative
+  // countdown would read as a fault rather than as history.
+  const daysToOvulation = result && today ? daysBetween(today, result.ovulation) : null;
+
+  const stats = result
+    ? [
+        {
+          label: w.fertileWindowLabel,
+          value: `${dayMonth.format(result.fertileStart)} – ${dayMonth.format(result.fertileEnd)}`,
+        },
+        ...(daysToOvulation !== null && daysToOvulation >= 0
+          ? [{ label: w.daysToOvulationLabel, value: number.format(daysToOvulation) }]
+          : []),
+        { label: w.nextPeriodLabel, value: full.format(result.nextPeriod) },
+        { label: w.testFromLabel, value: full.format(result.testFrom) },
+      ]
+    : [];
+
+  return (
+    <ToolCard title={w.title}>
+      {/* Native date input on purpose: it already speaks the visitor's locale
+       *  and gives phones the platform date picker. */}
+      <ToolField label={w.lmpLabel} hint={w.lmpHint} htmlFor={`${id}-lmp`}>
+        <input
+          id={`${id}-lmp`}
+          type="date"
+          className={TOOL_INPUT_CLASS}
+          style={TOOL_INPUT_STYLE}
+          value={lmp}
+          onChange={(event) => setEntered(event.target.value)}
+        />
+      </ToolField>
+
+      <ToolField label={w.cycleLabel} hint={w.cycleHint} htmlFor={`${id}-cycle`} suffix={w.daysUnit}>
+        <input
+          id={`${id}-cycle`}
+          className={TOOL_INPUT_CLASS}
+          style={TOOL_INPUT_STYLE}
+          inputMode="numeric"
+          value={cycle}
+          onChange={(event) => setCycle(event.target.value)}
+        />
+        <ToolSlider
+          id={`${id}-cycle-range`}
+          ariaLabel={w.cycleLabel}
+          min={OVULATION_CYCLE_MIN}
+          max={OVULATION_CYCLE_MAX}
+          value={cycleDays}
+          onChange={(next) => setCycle(String(next))}
+        />
+      </ToolField>
+
+      <ToolResult
+        placeholder={w.placeholder}
+        value={result ? full.format(result.ovulation) : null}
+        label={w.resultLabel}
+        summary={w.resultSummary}
+        tone="good"
+      >
+        {stats.length > 0 ? <ToolStatRow items={stats} /> : null}
+      </ToolResult>
+
+      <ToolNote>{w.note}</ToolNote>
     </ToolCard>
   );
 }
