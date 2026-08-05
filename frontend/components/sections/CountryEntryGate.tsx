@@ -20,6 +20,7 @@ import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2, Search } from "lucid
 import type { CountryConfig } from "@/data/countries";
 import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
+import { countryLinkLocale } from "@/lib/i18n/country-link-locale";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
 import type { GlobeArc, GlobeMarker } from "@/components/ui/cobe-globe";
 import styles from "./CountryEntryGate.module.css";
@@ -227,32 +228,54 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
     // ResizeObserver on the panel catches list-length/content changes itself.
   }, []);
 
-  // Real crawlable href per country (real anchor, not JS-only) so search
-  // engines can discover /{slug}/{lang} without executing the click handler —
-  // fixes zero-outbound-internal-link crawl-depth risk on "/".
+  // The lang segment differs between the ANCHOR and the CLICK, on purpose.
   //
-  // The lang segment is the COUNTRY's default, not the visitor's detected
-  // locale. This is the one place that rule differs from `countryLinkLocale`
-  // (which the in-site switchers still use, where honouring the reader's
-  // language IS right). Reason: "/" is the site's highest-authority page and
-  // its only outbound internal links are these six. Googlebot crawls with no
-  // Accept-Language, so a detected-locale href handed it `/{country}/en` six
-  // times and passed nothing to `/czechia/cs`, `/spain/es`, `/brazil/pt` or
-  // `/romania/ro` — the trees carrying the real search demand. They were left
-  // reachable only from the footer locale row, one hop deeper and through
-  // boilerplate. These six defaults are exactly the URLs "/" already declares
-  // in its own hreflang block, so the page is now self-consistent.
+  // `crawlLangFor` — the country's own default, used for the real `href`.
+  // "/" is the site's highest-authority page and these six cards are its only
+  // outbound internal links. Googlebot crawls with no Accept-Language, so a
+  // detected-locale href handed it `/{country}/en` six times and passed
+  // nothing to `/czechia/cs`, `/spain/es`, `/brazil/pt`, `/romania/ro` or
+  // `/portugal/pt` — the trees carrying the real search demand. Those six
+  // defaults are exactly the URLs "/" already declares in its own hreflang
+  // block, so the anchor and the hreflang now agree.
   //
-  // Trade-off accepted 2026-08-06: a Czech-browser visitor clicking Ireland
-  // now lands on `/ireland/en` rather than `/ireland/cs`. The country home's
-  // language switcher covers them from there.
-  function langFor(country: CountryConfig): LocaleCode {
+  // `visitorLangFor` — the reader's language, used for the actual navigation.
+  // Ireland serves en/pt/es/cs/ro/de because the audience is foreign-language
+  // speakers living in that market; sending a Czech browser to `/ireland/en`
+  // instead of `/ireland/cs` degrades exactly the people those locales exist
+  // for. Same rule the in-site switchers use (`countryLinkLocale`).
+  //
+  // Not cloaking: the HTML is identical for every requester, and both targets
+  // are real, mutually hreflang-linked alternates. A JS-less visitor simply
+  // follows the anchor to the market's default locale, which is a valid page.
+  //
+  // Known race: a click landing BEFORE React hydrates follows the raw anchor,
+  // so that visitor gets the market's default locale rather than their own.
+  // Accepted — hydration finishes long before someone reads the list and picks
+  // a country, and the failure mode is a valid page with a language switcher
+  // on it. Do NOT "fix" this by rewriting the href in an effect: Google renders
+  // JS, so the rewritten href would be what it indexes and the crawl fix above
+  // would be silently undone.
+  //
+  // These two paths must stay split. Verified 2026-08-06 with Playwright
+  // across cs/pt/ro/en: anchor constant at the six market defaults, landing
+  // locale following the reader every time.
+  function crawlLangFor(country: CountryConfig): LocaleCode {
     return (country.defaultLocale ?? "en").toLowerCase() as LocaleCode;
+  }
+
+  function visitorLangFor(country: CountryConfig): LocaleCode {
+    return countryLinkLocale(detectedLocale, country) as LocaleCode;
   }
 
   function hrefFor(country: CountryConfig): string {
     const slug = country.slug || countrySlug(country.code);
-    return `/${slug}/${langFor(country)}`;
+    return `/${slug}/${crawlLangFor(country)}`;
+  }
+
+  function visitorHrefFor(country: CountryConfig): string {
+    const slug = country.slug || countrySlug(country.code);
+    return `/${slug}/${visitorLangFor(country)}`;
   }
 
   function enter(country: CountryConfig, event: React.MouseEvent) {
@@ -263,8 +286,8 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
       return;
     }
     event.preventDefault();
-    setClientLocaleCookie(langFor(country));
-    globalThis.location.assign(hrefFor(country));
+    setClientLocaleCookie(visitorLangFor(country));
+    globalThis.location.assign(visitorHrefFor(country));
   }
 
   const trust = [
