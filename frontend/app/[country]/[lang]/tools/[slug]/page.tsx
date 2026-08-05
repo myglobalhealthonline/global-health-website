@@ -8,7 +8,7 @@ import { hreflangRegion, ogLocales } from "@/lib/seo/hreflang";
 import { isToolMarket, toolHreflangAlternates } from "@/lib/tools/markets";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { ToolPage } from "@/lib/content/tool-page";
-import { getBmiServiceSuggestions } from "@/lib/tools/service-suggestions";
+import { getToolServiceSuggestions } from "@/lib/tools/service-suggestions";
 import { applyMarketToolCopy } from "@/lib/tools/market-copy";
 import { TOOL_SLUGS, fillPlaceholders, getToolCopy, getToolMeta } from "@/lib/tools/registry";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -78,24 +78,18 @@ export default async function CountryToolPage({ params }: { params: Promise<Para
   const resolved = resolve(country, lang, slug);
   if (!resolved) notFound();
 
-  // This market's own weight / nutrition / GP services, read from the live
-  // catalogue so the links stay right when an admin renames or adds one.
-  //
-  // Not on the due-date or ADHD pages: the suggestion set is the weight and
-  // nutrition catalogue, and putting weight management in front of someone
-  // reading a pregnancy or ADHD screening result would be wrong. Neither market
-  // sells an antenatal or a psychiatric service, so both pages convert through
-  // their CTA band instead.
-  const suggestions =
-    slug === "due-date-calculator" || slug === "adhd-test"
-      ? []
-      : await getBmiServiceSuggestions({
-          code: resolved.code,
-          config: resolved.config,
-          country,
-          lang,
-          locale: resolved.locale,
-        });
+  // Services relevant to THIS tool, from the live catalogue: weight and
+  // nutrition for BMI/calories, cardiology for blood pressure, women's health
+  // for the pregnancy tools, mental health for the ADHD screener. Markets that
+  // do not sell the ideal category fall through to GP.
+  const suggestions = await getToolServiceSuggestions({
+    slug,
+    code: resolved.code,
+    config: resolved.config,
+    country,
+    lang,
+    locale: resolved.locale,
+  });
 
   return (
     <ToolPage

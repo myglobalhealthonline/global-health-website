@@ -122,19 +122,11 @@ function sectionNavForCountryLang(
     items.push({ label: nav.navServices, children: servicesChildren });
   }
   if (toolsChildren.length > 0) {
-    const tools = getToolsCopy(lang as LocaleCode);
+    // No hub row: there is no /tools index. Each calculator is its own page,
+    // which is the point — one page per query, not an index competing with them.
     items.push({
-      label: tools.hub.navLabel,
-      // First entry is the hub itself — the dropdown trigger has no href of
-      // its own, so without this there is no way into /tools from the nav.
-      children: [
-        {
-          href: `${base}/tools`,
-          label: tools.hub.navLabel,
-          description: tools.hub.lede,
-        },
-        ...toolsChildren,
-      ],
+      label: getToolsCopy(lang as LocaleCode).hub.navLabel,
+      children: toolsChildren,
     });
   }
   // Strict opt-in (not the loose `enabled`): only show Plans where the country
@@ -244,16 +236,19 @@ export function SiteHeader({
         )
       : sectionNavGlobal(navigation);
 
-  // Same calculator links the desktop dropdown uses, flattened for the mobile
-  // drawer (which expands services inline rather than nesting a dropdown).
+  // The calculators, flattened for the mobile drawer (which expands sections
+  // inline rather than nesting a dropdown). Every calculator, no index.
   const mobileToolLinks =
     activeCountry && effectiveCountrySlug && effectiveLang && isToolMarket(activeCountry.code, effectiveLang)
-      ? [
-          {
-            href: `/${effectiveCountrySlug}/${effectiveLang}/tools`,
-            label: getToolsCopy(effectiveLang as LocaleCode).hub.navLabel,
-          },
-        ]
+      ? (() => {
+          const tools = getToolsCopy(effectiveLang as LocaleCode);
+          return TOOLS.flatMap((tool) => {
+            const copy = tools.tools[tool.slug];
+            return copy
+              ? [{ href: `/${effectiveCountrySlug}/${effectiveLang}/tools/${tool.slug}`, label: copy.cardTitle }]
+              : [];
+          });
+        })()
       : [];
 
   // Cart-first booking: the header "Book" CTA opens the guided /book page

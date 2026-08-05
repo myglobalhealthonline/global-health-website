@@ -21,6 +21,8 @@ import {
 import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { TOOLS } from "@/lib/tools/registry";
+import { isToolMarket } from "@/lib/tools/markets";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 import type { SiteNavigationData } from "@/data/navigation";
 import {
@@ -152,16 +154,24 @@ export function SiteFooter({
     { label: navigation.footerMyAccount, href: "/account" },
   ];
 
-  // Free calculators. Label comes from the tools bundle rather than
-  // SiteNavigationData because that is where the rest of the tools copy lives;
-  // it is translated in all six locales. Points at the `/tools` index, which is
-  // what stops the individual calculators from being orphaned URLs.
-  const toolsLabel = loadLocaleBundle(resolveLocale({ explicitLocale: parsed.lang })).tools.hub
-    .navLabel;
+  // Free calculators, listed individually — there is no /tools index, and the
+  // footer is the crawlable path into each of them. Labels come from the tools
+  // bundle (translated in all six locales), gated by the same `isToolMarket`
+  // the routes and sitemap use.
+  const toolsCopy = loadLocaleBundle(resolveLocale({ explicitLocale: parsed.lang })).tools;
+  const toolLinks =
+    activeCountryCode && parsed.lang && isToolMarket(activeCountryCode, parsed.lang)
+      ? TOOLS.flatMap((tool) => {
+          const copy = (toolsCopy.tools as Record<string, { cardTitle: string } | undefined>)[
+            tool.slug
+          ];
+          return copy ? [{ label: copy.cardTitle, href: `${careScope}/tools/${tool.slug}` }] : [];
+        })
+      : [];
 
   const companyLinks = [
     { label: navigation.navBlog, href: careBase ? `${careBase}/blog` : "/blog" },
-    { label: toolsLabel, href: `${careScope}/tools` },
+    ...toolLinks,
     { label: navigation.navFaq, href: "/faq" },
     // Inside a country scope, link that market's own About and contact pages
     // (its NAP, registration, languages and regulatory FAQs) rather than the

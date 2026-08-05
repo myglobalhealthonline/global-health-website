@@ -21,7 +21,13 @@ import type { BmiBandKey } from "@/lib/tools/calc";
  * compliance, and a BMI page must not become the back door to them.
  */
 
-export type SuggestionSlot = "weight" | "nutrition" | "gp";
+export type SuggestionSlot =
+  | "weight"
+  | "nutrition"
+  | "cardio"
+  | "mental"
+  | "women"
+  | "gp";
 
 /**
  * Shaped to match what the service pages feed `ServiceCard` — two CTAs plus
@@ -71,6 +77,57 @@ const NUTRITION_TERMS = [
   "alimenta",
 ];
 
+const CARDIO_TERMS = ["cardio", "coraz", "coraç", "inima", "inimă", "srdc", "herz"];
+
+const MENTAL_TERMS = [
+  "psych",
+  "mental",
+  "psihiatr",
+  "psiquiatr",
+  "duševn",
+  "psychiatr",
+];
+
+const WOMEN_TERMS = [
+  "women",
+  "gyn",
+  "mulher",
+  "mujer",
+  "femei",
+  "žen",
+  "frauen",
+  "obstet",
+  "pregnan",
+  "gravid",
+  "fertil",
+];
+
+/**
+ * Which service categories each tool should point at, best first.
+ *
+ * Every calculator used to fall through to the same weight/nutrition/GP set,
+ * which was right for BMI and wrong for everything else — an ovulation result
+ * suggesting weight management, a blood-pressure reading suggesting a
+ * dietitian. Markets that do not sell the ideal category fall down the list
+ * and land on GP, which every market has.
+ */
+const TOOL_SLOTS: Record<string, SuggestionSlot[]> = {
+  "bmi-calculator": ["weight", "nutrition", "gp"],
+  "calorie-calculator": ["nutrition", "weight", "gp"],
+  "blood-pressure-chart": ["cardio", "gp"],
+  "due-date-calculator": ["women", "gp"],
+  "ovulation-calculator": ["women", "gp"],
+  "adhd-test": ["mental", "gp"],
+};
+
+const TERMS_FOR_SLOT: Record<Exclude<SuggestionSlot, "gp">, string[]> = {
+  weight: WEIGHT_TERMS,
+  nutrition: NUTRITION_TERMS,
+  cardio: CARDIO_TERMS,
+  mental: MENTAL_TERMS,
+  women: WOMEN_TERMS,
+};
+
 const norm = (value: string) =>
   value
     .toLowerCase()
@@ -87,14 +144,17 @@ const matches = (haystack: string, terms: string[]) => {
  * point. Never throws: a backend hiccup degrades to the GP link, which is a
  * static route.
  */
-export async function getBmiServiceSuggestions(input: {
+export async function getToolServiceSuggestions(input: {
+  /** Tool slug — decides which service categories are relevant. */
+  slug: string;
   code: CountryCode;
   config: CountryConfig;
   country: string;
   lang: string;
   locale: string;
 }): Promise<ServiceSuggestion[]> {
-  const { code, config, country, lang, locale } = input;
+  const { slug, code, config, country, lang, locale } = input;
+  const slots = TOOL_SLOTS[slug] ?? ["gp"];
   const base = `/${country}/${lang}`;
   const out: ServiceSuggestion[] = [];
 
@@ -109,10 +169,6 @@ export async function getBmiServiceSuggestions(input: {
         return matches(haystack, terms) && !matches(haystack, exclude);
       });
 
-    // Nutrition first, so a service named "Nutrition & Weight" is not claimed
-    // by the weight slot and then missing from the nutrition one.
-    const nutrition = pick(NUTRITION_TERMS);
-    const weight = pick(WEIGHT_TERMS, nutrition ? [nutrition.slug] : []);
 
     const toSuggestion = (
       service: (typeof services)[number],
@@ -131,8 +187,17 @@ export async function getBmiServiceSuggestions(input: {
           : formatPriceRounded(service.basePriceCents, service.currencyCode),
     });
 
-    if (weight) out.push(toSuggestion(weight, "weight"));
-    if (nutrition) out.push(toSuggestion(nutrition, "nutrition"));
+    // Claim in the tool's own preference order, and never let one service
+    // fill two slots — a "Nutrition & Weight" listing belongs to whichever
+    // slot this tool asked for first.
+    const claimed: string[] = [];
+    for (const slot of slots) {
+      if (slot === "gp") continue;
+      const match = pick(TERMS_FOR_SLOT[slot], claimed);
+      if (!match) continue;
+      claimed.push(match.slug);
+      out.push(toSuggestion(match, slot));
+    }
   } catch {
     // Service list unavailable — the GP entry below still renders.
   }

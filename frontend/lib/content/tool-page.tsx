@@ -51,10 +51,6 @@ export function toolPath(ctx: ToolCtx, slug: string): string {
   return `${base(ctx)}/tools/${slug}`;
 }
 
-export function toolsHubPath(ctx: ToolCtx): string {
-  return `${base(ctx)}/tools`;
-}
-
 /* ------------------------------------------------------------ shared bits */
 
 function Breadcrumbs({ items }: { items: Array<{ name: string; href?: string }> }) {
@@ -118,7 +114,9 @@ function ToolHero({
         <div
           className={
             aside
-              ? "grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,480px)] lg:gap-16"
+              // items-START, not center: the panel is much taller than the
+              // copy, and centring pushed the H1 far below the breadcrumb.
+              ? "grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,480px)] lg:gap-16"
               : ""
           }
         >
@@ -664,7 +662,6 @@ export function ToolPage({
     : bundle.suggestions;
 
   const url = toolPath(ctx, slug);
-  const hubUrl = toolsHubPath(ctx);
   // `{country}` stands alone in the H1 trail — never after a preposition, since
   // cs/pt decline there and `countryLabel` is nominative only.
   const h1Trail = fillPlaceholders(copy.h1Trail, { country: ctx.countryLabel });
@@ -685,7 +682,6 @@ export function ToolPage({
           faqJsonLd(faq),
           breadcrumbJsonLd([
             { name: ctx.countryLabel, url: base(ctx) },
-            { name: bundle.hub.navLabel, url: hubUrl },
             { name: copy.cardTitle, url },
           ]),
         ]}
@@ -700,7 +696,6 @@ export function ToolPage({
         trustPoints={copy.trustPoints}
         breadcrumbs={[
           { name: ctx.countryLabel, href: base(ctx) },
-          { name: bundle.hub.navLabel, href: hubUrl },
           { name: copy.cardTitle },
         ]}
         aside={
@@ -767,70 +762,3 @@ export function ToolPage({
 }
 
 /* ----------------------------------------------------------------- /tools */
-
-/**
- * The `/{country}/{lang}/tools` index.
- *
- * Deliberately thin: a hero and the cards. It exists so the calculators have a
- * crawlable parent (the footer links here, and every tool page breadcrumbs back
- * to it) rather than sitting as a set of unlinked leaves — orphaned URLs are
- * the recurring cause of our indexation gaps.
- */
-export function ToolsHubPage({ ctx }: { ctx: ToolCtx }) {
-  const bundle: ToolsBundle = getToolsCopy(ctx.lang);
-  const hub = bundle.hub;
-  const url = toolsHubPath(ctx);
-  // `{country}` stands alone here, as in the tool H1s — never after a
-  // preposition, which cs and pt would decline.
-  const h1Trail = fillPlaceholders(hub.h1Trail, { country: ctx.countryLabel });
-
-  const items = TOOLS.map((tool) => ({ slug: tool.slug, copy: bundle.tools[tool.slug] }))
-    .filter((item): item is { slug: string; copy: ToolCopy } => Boolean(item.copy))
-    .map((item) => ({
-      slug: item.slug,
-      copy: applyMarketToolCopy(ctx.code, ctx.lang, item.slug, item.copy),
-    }));
-
-  return (
-    <>
-      <JsonLd
-        data={[
-          breadcrumbJsonLd([
-            { name: ctx.countryLabel, url: base(ctx) },
-            { name: hub.navLabel, url },
-          ]),
-        ]}
-      />
-
-      <ToolHero
-        eyebrow={hub.eyebrow}
-        titleLead={hub.h1Lead}
-        titleAccent={hub.h1Accent}
-        titleTrail={h1Trail || undefined}
-        lede={hub.lede}
-        breadcrumbs={[{ name: ctx.countryLabel, href: base(ctx) }, { name: hub.navLabel }]}
-      />
-
-      <section
-        className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel relative overflow-hidden"
-        style={{ padding: "clamp(56px,7vw,96px) 0" }}
-      >
-        <SectionSeam theme="light" />
-        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((item) => (
-              <ToolLinkCard
-                key={item.slug}
-                href={toolPath(ctx, item.slug)}
-                title={item.copy.cardTitle}
-                blurb={item.copy.cardBlurb}
-                label={hub.openLabel}
-                dark={false}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
