@@ -463,20 +463,20 @@ function SuggestionsSection({
   if (suggestions.length === 0) return null;
   return (
     <section
-      className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel relative overflow-hidden"
+      className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden"
       style={{ padding: "clamp(56px,7vw,96px) 0" }}
     >
-      <SectionSeam theme="light" />
+      <SectionSeam theme="dark" />
       <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <h2
-          className="font-extrabold tracking-[-0.03em]"
-          style={{ fontSize: "clamp(1.5rem, 2.4vw + 0.5rem, 2.25rem)", color: "var(--color-brand-primary)" }}
+          className="font-extrabold tracking-[-0.03em] text-white"
+          style={{ fontSize: "clamp(1.5rem, 2.4vw + 0.5rem, 2.25rem)" }}
         >
           {copy.heading}
         </h2>
         <p
-          className="mt-4 max-w-[62ch] leading-relaxed"
-          style={{ fontSize: "var(--text-body-lg)", color: "var(--color-text-body, #2D3B36)" }}
+          className="mt-4 max-w-[62ch] leading-relaxed text-white/65"
+          style={{ fontSize: "var(--text-body-lg)" }}
         >
           {copy.intro}
         </p>
@@ -604,7 +604,7 @@ export function ToolPage({
           `registry.ts`. With one tool it would link only to itself. */}
 
       <FAQSection
-        theme="dark"
+        theme="light"
         eyebrow={bundle.ui.questionsEyebrow}
         title={`${copy.cardTitle} — ${bundle.ui.faqSuffix}`}
         items={faq}

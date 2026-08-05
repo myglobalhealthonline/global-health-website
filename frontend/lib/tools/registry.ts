@@ -57,16 +57,18 @@ export const TOOLS: ToolMeta[] = [
     slug: "bmi-calculator",
     widget: "bmi",
     sections: [
+      // "What your BMI result means" is the section people actually came for,
+      // so it gets the forest band. Everything after it alternates from there;
+      // the ivory/forest pattern is the site rhythm and three same-tone bands
+      // in a row read as one undifferentiated slab.
       {
         id: "categories",
-        theme: "ivory",
+        theme: "forest",
         rowTones: ["warn", "good", "warn", "alert", "alert", "alert"],
       },
-      { id: "formula", theme: "forest" },
-      { id: "limits", theme: "ivory" },
-      // Alternating dark/light is the site rhythm — three ivory bands in a row
-      // read as one undifferentiated slab.
-      { id: "next", theme: "forest" },
+      { id: "formula", theme: "ivory" },
+      { id: "limits", theme: "forest" },
+      { id: "next", theme: "ivory" },
     ],
     related: [],
     ctaPath: "/gp-consultation-online",
