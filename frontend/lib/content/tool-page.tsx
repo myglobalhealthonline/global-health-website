@@ -184,7 +184,7 @@ function ToolTableBlock({
           <caption className="sr-only">{table.caption}</caption>
           <thead>
             <tr>
-              {table.columns.map((column) => (
+              {table.columns.map((column, index) => (
                 <th
                   key={column}
                   scope="col"
@@ -192,6 +192,10 @@ function ToolTableBlock({
                   style={{
                     color: dark ? "rgba(255,255,255,0.55)" : "var(--color-text-muted)",
                     borderBottom: `1px solid ${dark ? "rgba(255,255,255,0.12)" : "rgba(29,75,54,0.10)"}`,
+                    // First column's cells are indented by the tone dot (8px +
+                    // 10px gap); without the same indent the header sat left of
+                    // its own column.
+                    paddingLeft: index === 0 ? "calc(1rem + 18px)" : undefined,
                   }}
                 >
                   {column}
@@ -433,17 +437,16 @@ function SuggestionsSection({
           {copy.intro}
         </p>
 
-        <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-9 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {suggestions.map((suggestion) => (
             <Link
               key={suggestion.href}
               href={suggestion.href}
-              className="gh2-card-ivory gh2-card-hover group flex flex-col justify-between gap-6 p-6"
+              className="gh2-glass-forest gh2-glass-hover gh2-dark-content group flex h-full flex-col justify-between gap-6 p-6"
             >
               <div>
                 <h3
-                  className="text-[17px] font-extrabold leading-snug tracking-[-0.02em]"
-                  style={{ color: "var(--color-brand-primary)" }}
+                  className="text-[17px] font-extrabold leading-snug tracking-[-0.02em] text-white"
                 >
                   {suggestion.slot === "gp" ? copy.gpTitle : suggestion.title}
                 </h3>
@@ -455,8 +458,7 @@ function SuggestionsSection({
                 </p>
               </div>
               <span
-                className="inline-flex items-center gap-1.5 text-[13px] font-bold"
-                style={{ color: "var(--color-brand-primary)" }}
+                className="inline-flex items-center gap-1.5 text-[13px] font-bold text-[var(--color-brand-accent)]"
               >
                 {copy.viewLabel}
                 <ArrowUpRight

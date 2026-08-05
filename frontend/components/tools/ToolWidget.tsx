@@ -40,6 +40,7 @@ import { fillPlaceholders } from "@/lib/tools/placeholders";
 import type { ToolsBandsCopy, ToolsUiCopy, WidgetKey } from "@/lib/tools/registry";
 import {
   TOOL_INPUT_CLASS,
+  UNIT_SUFFIX_CLASS,
   TOOL_INPUT_STYLE,
   ToolCard,
   ToolField,
@@ -231,51 +232,94 @@ function BmiWidget({ copy, nudges }: { copy: WidgetCopy; nudges: BandNudges }) {
           </ToolField>
         </div>
       ) : (
+        /* Imperial gets the same treatment as metric: one slider per
+         * measurement, driving the ft/in and st/lb pair together. Four bare
+         * number boxes read as a form; the sliders make it an instrument. */
         <div className="grid gap-5 sm:grid-cols-2">
-          <div className="grid grid-cols-2 gap-3">
-            <ToolField label={ui.feetLabel} htmlFor={`${id}-ft`}>
-              <input
-                id={`${id}-ft`}
-                className={TOOL_INPUT_CLASS}
-                style={TOOL_INPUT_STYLE}
-                inputMode="numeric"
-                value={feet}
-                onChange={(event) => setFeet(event.target.value)}
-              />
-            </ToolField>
-            <ToolField label={ui.inchesLabel} htmlFor={`${id}-in`}>
-              <input
-                id={`${id}-in`}
-                className={TOOL_INPUT_CLASS}
-                style={TOOL_INPUT_STYLE}
-                inputMode="numeric"
-                value={inches}
-                onChange={(event) => setInches(event.target.value)}
-              />
-            </ToolField>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <ToolField label={ui.stoneLabel} htmlFor={`${id}-st`}>
-              <input
-                id={`${id}-st`}
-                className={TOOL_INPUT_CLASS}
-                style={TOOL_INPUT_STYLE}
-                inputMode="numeric"
-                value={stone}
-                onChange={(event) => setStone(event.target.value)}
-              />
-            </ToolField>
-            <ToolField label={ui.poundsLabel} htmlFor={`${id}-lb`} hint={ui.poundsOnlyHint}>
-              <input
-                id={`${id}-lb`}
-                className={TOOL_INPUT_CLASS}
-                style={TOOL_INPUT_STYLE}
-                inputMode="numeric"
-                value={pounds}
-                onChange={(event) => setPounds(event.target.value)}
-              />
-            </ToolField>
-          </div>
+          <ToolField label={ui.height} htmlFor={`${id}-ft`} suffix="ft / in">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="relative">
+                <input
+                  id={`${id}-ft`}
+                  className={`${TOOL_INPUT_CLASS} pr-8`}
+                  style={TOOL_INPUT_STYLE}
+                  inputMode="numeric"
+                  aria-label={ui.feetLabel}
+                  value={feet}
+                  onChange={(event) => setFeet(event.target.value)}
+                />
+                <span className={UNIT_SUFFIX_CLASS}>ft</span>
+              </div>
+              <div className="relative">
+                <input
+                  id={`${id}-in`}
+                  className={`${TOOL_INPUT_CLASS} pr-8`}
+                  style={TOOL_INPUT_STYLE}
+                  inputMode="numeric"
+                  aria-label={ui.inchesLabel}
+                  value={inches}
+                  onChange={(event) => setInches(event.target.value)}
+                />
+                <span className={UNIT_SUFFIX_CLASS}>in</span>
+              </div>
+            </div>
+            <ToolSlider
+              id={`${id}-height-range`}
+              ariaLabel={ui.height}
+              min={48}
+              max={84}
+              value={(num(feet) || 0) * 12 + (num(inches) || 0)}
+              onChange={(total) => {
+                setFeet(String(Math.floor(total / 12)));
+                setInches(String(total % 12));
+              }}
+            />
+          </ToolField>
+
+          <ToolField
+            label={ui.weight}
+            htmlFor={`${id}-st`}
+            suffix="st / lb"
+            hint={ui.poundsOnlyHint}
+          >
+            <div className="grid grid-cols-2 gap-3">
+              <div className="relative">
+                <input
+                  id={`${id}-st`}
+                  className={`${TOOL_INPUT_CLASS} pr-8`}
+                  style={TOOL_INPUT_STYLE}
+                  inputMode="numeric"
+                  aria-label={ui.stoneLabel}
+                  value={stone}
+                  onChange={(event) => setStone(event.target.value)}
+                />
+                <span className={UNIT_SUFFIX_CLASS}>st</span>
+              </div>
+              <div className="relative">
+                <input
+                  id={`${id}-lb`}
+                  className={`${TOOL_INPUT_CLASS} pr-8`}
+                  style={TOOL_INPUT_STYLE}
+                  inputMode="numeric"
+                  aria-label={ui.poundsLabel}
+                  value={pounds}
+                  onChange={(event) => setPounds(event.target.value)}
+                />
+                <span className={UNIT_SUFFIX_CLASS}>lb</span>
+              </div>
+            </div>
+            <ToolSlider
+              id={`${id}-weight-range`}
+              ariaLabel={ui.weight}
+              min={70}
+              max={440}
+              value={(num(stone) || 0) * 14 + (num(pounds) || 0)}
+              onChange={(total) => {
+                setStone(String(Math.floor(total / 14)));
+                setPounds(String(total % 14));
+              }}
+            />
+          </ToolField>
         </div>
       )}
 

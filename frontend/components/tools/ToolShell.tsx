@@ -81,6 +81,10 @@ export function ToolField({
 export const TOOL_INPUT_CLASS =
   "w-full rounded-xl border px-3.5 py-2.5 text-[16px] font-semibold outline-none transition-colors focus:border-[var(--color-brand-accent)] focus:ring-2 focus:ring-[rgba(176,241,34,0.22)]";
 
+/** Inline unit tag inside an input — used where two fields share one label. */
+export const UNIT_SUFFIX_CLASS =
+  'pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)]';
+
 export const TOOL_INPUT_STYLE = {
   background: "var(--color-background-page)",
   borderColor: "var(--color-border)",
