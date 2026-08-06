@@ -387,8 +387,11 @@ Notes:
   gains `carts Cart[]` for the `Cart.membershipEnrollment` relation. Run
   `prisma validate` before generating any SQL — the snippets in this doc show
   only the new-model side.
-- `@@unique([planId, email])` blocks the same person twice in one plan; multiple
-  plans are allowed (§19).
+- **No `@@unique([planId, email])` in the schema.** The real constraint is the
+  raw-SQL partial index on `(planId, lower(email)) WHERE status <> 'REMOVED'`
+  (§3.8) — a plain Prisma unique would be case-sensitive *and* would block
+  re-adding a removed member, and leaving it declared would make every future
+  `migrate diff` try to re-add it. Same treatment as `membershipId`.
 - `membershipId` is unique globally per decision 5. Dependents also need one —
   the import supplies theirs, and the member-added path generates
   `<primaryMembershipId>-D1`, `-D2`, … (checked for collision).
@@ -525,14 +528,22 @@ member page reads through `OrderItem`.
 `prisma migrate dev` is broken in this repo (shadow-DB issue). Follow the documented
 workaround:
 
+**Baseline database: `backend/.env.dev`** (`hayabusa…:49401/railway`) — a
+separate Railway instance from production (`trolley…:31877`). Never diff or
+deploy against `backend/.env`, which is production, until dev is verified.
+
+0. **Confirm dev is schema-current with production first.** The diff baseline
+   must match prod, or the generated script will carry drift DDL and fail to
+   apply. Compare the tail of `_prisma_migrations` on both; if dev is behind,
+   bring it up to date before generating anything.
 1. Edit `schema.prisma`, including the inverse relations (§3.4 note), then
    `prisma validate`.
-2. `prisma migrate diff --from-url <live DB> --to-schema-datamodel schema.prisma --script`
+2. `prisma migrate diff --from-url <dev DB> --to-schema-datamodel schema.prisma --script`
    → save as `backend/prisma/migrations/<timestamp>_membership_plans/migration.sql`.
-   **Drift guard:** the live DB is a mutable baseline, so review the generated
-   script line-by-line and delete any DDL not belonging to this feature (an
-   unrelated hotfix or manual change on prod would otherwise ride along).
-   The reviewed script is what gets committed and deployed — never a re-generated one.
+   **Drift guard:** review the generated script line-by-line and delete any DDL
+   not belonging to this feature. The reviewed script is what gets committed and
+   deployed — never a re-generated one.
+3b. `prisma migrate deploy` against **dev**, then exercise the feature there.
 3. Append the raw-SQL pieces Prisma cannot express:
    - composite FK `MembershipLevel(planId, countryId) → MembershipPlan(id, countryId)`;
    - composite FK `MembershipBenefit(serviceId, countryId) → Service(id, countryId)`;
@@ -544,11 +555,27 @@ workaround:
      the plain `@@unique([planId, email])` is dropped in favour of it);
    - unique index on `lower("membershipId")` on `MembershipEnrollment` — the
      case-insensitive global uniqueness §3.4 relies on;
-   - **backfill `UPDATE "Cart" SET "benefitSource" = 'NONE'`** for rows existing
-     at migration time — otherwise every in-flight cart sits at `UNSET` and §6.4
-     rejects its checkout with "benefit step not completed". New carts start at
-     `UNSET` via the column default.
-4. `prisma migrate deploy` against staging, verify, then production.
+   - partial unique index on `MembershipLevel("planId") WHERE "isDefault"` —
+     enforces the "exactly one default level per plan" rule §3.2 states but
+     Prisma cannot express;
+   - `ALTER TYPE "AuditAction" ADD VALUE …` for this phase's actions (§4.2).
+     Precedent: migration `20260802040127_…`. Postgres will not let an enum
+     value be added and used in the same transaction, so these go in their own
+     migration step ahead of anything referencing them;
+4. Production deploy only after dev is verified, and **only on the user's
+   explicit go-ahead** — never as part of a phase's own work.
+
+**Two migrations, not one.** The membership tables ship in Phase 1; the
+`Cart` / `OrderItem` columns and `CartBenefitSource` ship in a **second
+migration in Phase 4**, next to the code that reads them. Splitting them keeps
+Phase 1 free of columns nothing uses yet, and matches §17.
+
+`Cart.benefitSource` defaults to `UNSET`, so the **Phase 5 deploy runs
+`UPDATE "Cart" SET "benefitSource" = 'NONE' WHERE "benefitSource" = 'UNSET'`** —
+not the Phase 4 migration. A Phase-4-time backfill would only cover carts that
+existed then; every cart created between Phase 4 and Phase 5 would still be
+`UNSET` when the §6.4 switch goes live. See §6.4 for the belt-and-braces
+runtime rule that makes a missed backfill non-fatal.
 
 ⚠ `backend/.env` points at **production**. Any script run with `--env-file=.env`
 writes live data. Every membership script gets a `--dry-run` default and requires
@@ -601,8 +628,10 @@ New files under `backend/src/routes/`:
 | `me-benefit-options.route.ts` | eligible benefit options priced for a service/slot |
 | `me-cart-benefit.route.ts` | set / clear the cart-level benefit choice |
 
-Register each in the same place the existing routes are registered (`src/app.ts` /
-route index), following the surrounding order.
+No registration step: `app.ts` autoloads every `**/*.route.ts` via
+`@fastify/autoload`. Dropping the file in `src/routes/` is enough — which is
+precisely why the Semgrep authorization rule in §14 exists, since a new route
+file is live the moment it lands.
 
 #### Admin API
 
@@ -686,6 +715,13 @@ New guard `backend/src/utils/manage-memberships-auth.ts`, modelled exactly on
 Every mutation calls `recordAudit` with the actor, entity type
 (`MembershipPlan` / `MembershipLevel` / `MembershipBenefit` / `MembershipEnrollment`),
 entity id, and a diff of the changed fields.
+
+**`AuditAction` is a Prisma enum**, so each phase's actions must be added to it
+by migration (§3.8) before any code references them. Phase 1:
+`MEMBERSHIP_PLAN_CREATED` / `_UPDATED` / `_DEACTIVATED`,
+`MEMBERSHIP_LEVEL_CREATED` / `_UPDATED` / `_DELETED`,
+`MEMBERSHIP_BENEFIT_CREATED` / `_UPDATED` / `_DELETED`. Later phases add their
+own (enrollment lifecycle, import commit, allowance adjust, report access).
 
 ---
 
@@ -841,10 +877,16 @@ It becomes a single switch on `cart.benefitSource`:
 NONE      → no engine runs. Full (peak) price on every line.
               Corporate's automatic discount is SUPPRESSED here — this is the
               only behavioural change to an existing engine.
-UNSET     → treated as NONE for pricing, but the API rejects checkout with
-              "benefit step not completed" so the patient always sees the price
-              they will be charged. (Guests and non-benefit carts are set to
-              NONE by the booking flow when the step is skipped.)
+UNSET     → resolve the patient's eligible sources server-side:
+              none eligible → treat as NONE and proceed (guest, no insurers,
+                              no memberships — the benefit step never ran, and
+                              there was nothing to choose anyway)
+              some eligible → reject checkout with "benefit step not completed",
+                              so the patient never pays a price they were not shown.
+            This runtime rule — not the backfill — is what guarantees no cart
+            can be bricked by reaching checkout without passing the step
+            (cart created before the Phase 5 deploy, added from a surface that
+            skips the wizard, or a missed backfill).
 MEMBERSHIP→ membership engine only. Subscription and corporate engines skipped.
 CORPORATE → existing corporate engine only.
 PUBLIC_PLAN → existing subscription engine only.
@@ -1039,8 +1081,15 @@ a partner actually needs more.
 
 ## 9. Admin portal
 
-New section at `frontend/app/(portal)/(admin)/admin/memberships/`, listed in the admin
-nav next to **Plans** and **Corporate**.
+New section at `frontend/app/(portal)/(admin)/admin/memberships/`.
+
+**Nav placement** (`admin/_components/admin-shell.tsx`): membership plans are
+per-country (decision 9), so the entry goes in `COUNTRY_HREFS` with
+`ORDER["/admin/memberships"] = 7.5` — beside country-scoped **Plans**, not
+global **Corporate**. Deliberately **no** `HREF_TO_FEATURE_KEY` entry: that map
+hides an item unless the country's `enabledFeatures` contains the key, and no
+existing country's array can contain a key that did not exist when it was
+written, so an entry would hide the section everywhere.
 
 ```
 memberships/
@@ -1297,6 +1346,14 @@ Repo-specific gates that must pass:
 - `.semgrep/rules/` — the five repo authorization rules. New admin routes must use
   the guard helpers, not ad-hoc role checks. Run custom rules **per-file, never as
   one multi-file batch** (see the security runbook).
+- **`gh-admin-route-missing-auth-hook` must be extended, not suppressed.** The
+  rule recognises exactly four gates (`verifyAdminAccess`,
+  `verifyGlobalAdminAccess`, `requireManageSubscriptions`,
+  `dependencies.verifyAdminAccess`), so every new membership route would fire it.
+  Add a `pattern-not-inside` arm for `requireManageMemberships` and extend
+  `.semgrep/tests/gh-admin-route-missing-auth-hook.ts` with a passing and a
+  failing fixture. A `nosemgrep` here would blind the rule to genuinely
+  unguarded membership routes — the exact thing it exists to catch.
 - `backend/src/routes/authz-matrix.test.ts` — add every new endpoint with its
   expected allow/deny per role.
 - Playwright `e2e-authz` — add a membership admin route and a member route.
@@ -1394,11 +1451,11 @@ Both read the ledger joined to `OrderItem` — no separate aggregation table.
 
 | Phase | Contents | Ships behind |
 | --- | --- | --- |
-| 1 | Schema + migration, `memberships` module, admin plan/level/benefit CRUD, translations | admin-only, no patient impact |
+| 1 | Membership tables migration (+ `AuditAction` values, Semgrep rule extension), `memberships` module, admin plan/level/benefit CRUD + those admin screens, translations | admin-only, no patient impact |
 | 2 | Enrollment CRUD, linking on login/signup, CSV import, invite email | admin-only |
 | 3 | Member portal page + card, claim form, enrollment-confirmed email | member-visible; still no pricing effect |
-| 4 | Pricing resolver, benefit-options endpoint, cart benefit column | API only, not wired into the UI |
-| 5 | Booking benefit step (replaces the insurance step), checkout switch, €0 path, allowance ledger, allowance-exhausted email | **the behavioural change** — corporate's silent discount becomes selection-driven |
+| 4 | Pricing resolver, benefit-options endpoint, **second migration**: `Cart` / `OrderItem` columns + `CartBenefitSource` | API only, not wired into the UI |
+| 5 | Booking benefit step (replaces the insurance step), checkout switch, €0 path, allowance ledger, allowance-exhausted email, **`UNSET → NONE` cart backfill at deploy** | **the behavioural change** — corporate's silent discount becomes selection-driven |
 | 6 | Admin manual booking + override, usage reporting, expiry cron | — |
 
 Phase 5 is the one that changes an existing flow for existing users. Ship it with a
