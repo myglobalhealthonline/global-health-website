@@ -238,7 +238,12 @@ export function CountryTrustBar({
       className="relative overflow-hidden border-y border-[rgba(29,75,54,0.14)] bg-[linear-gradient(180deg,#fffdf1_0%,#f6f8f1_52%,#edf2e2_100%)] gh-medical-pattern gh-medical-pattern-panel"
     >
       <div className="relative z-[1] mx-auto max-w-[var(--container-width)] px-5 py-[clamp(48px,6vw,78px)] md:px-10">
-        <div className="overflow-hidden rounded-[32px] border border-[rgba(29,75,54,0.14)] bg-[rgba(255,253,241,0.84)] shadow-[0_24px_70px_rgba(29,75,54,0.12)] backdrop-blur-md">
+        {/* ponytail: no backdrop-blur. The fill is 0.84 opaque over a smooth
+            ivory gradient + a 3%-opacity pattern, so blur(12px) resolved to
+            ~0.5% of an already-flat backdrop — invisible — while costing a
+            1200x511 backdrop snapshot + blur every scroll frame, right where
+            the footer's own (larger) blur enters the viewport. */}
+        <div className="overflow-hidden rounded-[32px] border border-[rgba(29,75,54,0.14)] bg-[rgba(255,253,241,0.84)] shadow-[0_24px_70px_rgba(29,75,54,0.12)]">
           <div className="grid items-stretch gap-0 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
             <div className="border-b border-[rgba(29,75,54,0.12)] bg-[linear-gradient(145deg,rgba(29,75,54,0.08),rgba(255,255,255,0.30))] p-6 sm:p-8 lg:border-b-0 lg:border-r lg:border-r-[rgba(29,75,54,0.12)]">
               <div className="flex flex-wrap items-center gap-3">

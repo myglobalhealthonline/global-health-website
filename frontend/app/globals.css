@@ -696,12 +696,17 @@ img {
   color: rgba(255, 255, 255, 0.7);
   padding: clamp(56px, 7vw, 88px) 0 0;
   /* Unified glass chrome — identical recipe to the navbar (both states):
-   * translucent --gh-chrome fill + blur + lime hairline + layered shadow.
+   * translucent --gh-chrome fill + lime hairline + layered shadow.
    * Overrides the .gh-site-shell forest gradient (defined later, equal
    * specificity). */
   background: var(--gh-chrome);
-  -webkit-backdrop-filter: var(--gh-chrome-filter);
-  backdrop-filter: var(--gh-chrome-filter);
+  /* ponytail: NO backdrop-filter, unlike the navbar. The navbar is sticky, so
+   * page content genuinely scrolls under it; the footer is position:relative
+   * at the end of the document — its only backdrop is body's flat #0f2e25.
+   * blur(18px) of a solid colour is a no-op, and this element is 1428x1170
+   * (1.67M px², 58% of every backdrop-filter on the page) so the compositor
+   * paid for that no-op every scroll frame. Composite delta from dropping it
+   * is ~1/255 per channel. Restore only if content ever paints behind it. */
   border-top: var(--gh-chrome-border);
   box-shadow: var(--gh-chrome-shadow);
 }
