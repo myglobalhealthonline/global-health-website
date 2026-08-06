@@ -14,10 +14,15 @@ import {
   mergeHealthTestFaqTranslation,
 } from "./health-test-faq.service.js";
 
-/** Scalar display fields a HealthTestTranslation overrides. Array/JSON
- *  fields stay on the base row for now (no public detail page yet). */
+/** Display fields a HealthTestTranslation overrides. Includes the array and
+ *  JSON fields: the public detail page renders `whatThisTestCovers`,
+ *  `whyGetTested` and `extraSections`, so leaving them on the base row shipped
+ *  a page with a translated title above English body copy. */
 const healthTestTranslationSelect = {
   locale: true,
+  whatThisTestCovers: true,
+  whyGetTested: true,
+  extraSections: true,
   title: true,
   shortDescription: true,
   sampleType: true,
@@ -37,6 +42,9 @@ type HealthTestDisplayBase = {
   detailIntro: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
+  whatThisTestCovers: string[];
+  whyGetTested: string[];
+  extraSections: Prisma.JsonValue;
 };
 
 type HealthTestTranslationRow = HealthTestDisplayBase & { locale: LocaleCode };
@@ -58,6 +66,17 @@ function mergeHealthTestTranslation<
     detailIntro: tr?.detailIntro ?? test.detailIntro,
     seoTitle: tr?.seoTitle ?? test.seoTitle,
     seoDescription: tr?.seoDescription ?? test.seoDescription,
+    // Only override when the translation actually carries content — a
+    // translation row created for the scalar fields alone defaults these to
+    // empty, and an empty override would blank the section outright.
+    whatThisTestCovers: tr?.whatThisTestCovers?.length
+      ? tr.whatThisTestCovers
+      : test.whatThisTestCovers,
+    whyGetTested: tr?.whyGetTested?.length ? tr.whyGetTested : test.whyGetTested,
+    extraSections:
+      Array.isArray(tr?.extraSections) && tr.extraSections.length > 0
+        ? tr.extraSections
+        : test.extraSections,
     resolvedLocale,
   };
 }
