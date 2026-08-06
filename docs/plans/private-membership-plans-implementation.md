@@ -52,7 +52,7 @@ columns), and the checkout price composition.
 | 18 | Consultations only (`GENERAL`, `SPECIALIST`) |
 | 19 | A person may hold multiple private memberships |
 | 20 | Member page + digital card. Verification is staff/admin-only, no public URL |
-| 21 | `SUPER_ADMIN` edits plans/levels/benefits; `MANAGE_MEMBERSHIPS` enrolls/suspends/imports |
+| 21 | `MEMBERSHIP_CONFIG` (a real `SUPER_ADMIN` **or** `ADMIN` session) edits plans/levels/benefits; `MANAGE_MEMBERSHIPS` enrolls/suspends/imports. Revised 2026-08-07: requiring a super admin for every price rule made routine setup unusable. `LOCAL_ADMIN` and the master token stay out of both |
 | 22 | CSV import with preview-then-commit |
 | 23 | Plan and level names + descriptions translated per locale |
 | 24 | A benefit row carries an allowance plus an optional fallback (percent or fixed) used once the allowance is exhausted |
@@ -637,22 +637,22 @@ file is live the moment it lands.
 
 ```
 GET    /api/admin/membership-plans?countryId=&includeInactive=
-POST   /api/admin/membership-plans                       [SUPER_ADMIN]
+POST   /api/admin/membership-plans                       [MEMBERSHIP_CONFIG]
 GET    /api/admin/membership-plans/:planId
-PATCH  /api/admin/membership-plans/:planId               [SUPER_ADMIN]
-POST   /api/admin/membership-plans/:planId/deactivate    [SUPER_ADMIN]
+PATCH  /api/admin/membership-plans/:planId               [MEMBERSHIP_CONFIG]
+POST   /api/admin/membership-plans/:planId/deactivate    [MEMBERSHIP_CONFIG]
 GET    /api/admin/membership-plans/:planId/translations/:locale
-PUT    /api/admin/membership-plans/:planId/translations/:locale   [SUPER_ADMIN]
+PUT    /api/admin/membership-plans/:planId/translations/:locale   [MEMBERSHIP_CONFIG]
 
-POST   /api/admin/membership-plans/:planId/levels        [SUPER_ADMIN]
-PATCH  /api/admin/membership-levels/:levelId             [SUPER_ADMIN]
-DELETE /api/admin/membership-levels/:levelId             [SUPER_ADMIN]  # only when 0 enrollments
-PUT    /api/admin/membership-levels/:levelId/translations/:locale [SUPER_ADMIN]
+POST   /api/admin/membership-plans/:planId/levels        [MEMBERSHIP_CONFIG]
+PATCH  /api/admin/membership-levels/:levelId             [MEMBERSHIP_CONFIG]
+DELETE /api/admin/membership-levels/:levelId             [MEMBERSHIP_CONFIG]  # only when 0 enrollments
+PUT    /api/admin/membership-levels/:levelId/translations/:locale [MEMBERSHIP_CONFIG]
 
 GET    /api/admin/membership-levels/:levelId/benefits
-POST   /api/admin/membership-levels/:levelId/benefits    [SUPER_ADMIN]
-PATCH  /api/admin/membership-benefits/:benefitId         [SUPER_ADMIN]
-DELETE /api/admin/membership-benefits/:benefitId         [SUPER_ADMIN]
+POST   /api/admin/membership-levels/:levelId/benefits    [MEMBERSHIP_CONFIG]
+PATCH  /api/admin/membership-benefits/:benefitId         [MEMBERSHIP_CONFIG]
+DELETE /api/admin/membership-benefits/:benefitId         [MEMBERSHIP_CONFIG]
 
 GET    /api/admin/membership-enrollments?planId=&status=&q=&page=
 POST   /api/admin/membership-enrollments                 [MANAGE_MEMBERSHIPS]
@@ -663,6 +663,8 @@ POST   /api/admin/membership-enrollments/:id/remove      [MANAGE_MEMBERSHIPS]
 POST   /api/admin/membership-enrollments/:id/invite      [MANAGE_MEMBERSHIPS]
 POST   /api/admin/membership-enrollments/:id/dependents  [MANAGE_MEMBERSHIPS]
 POST   /api/admin/membership-enrollments/:id/allowance-adjust  [SUPER_ADMIN, reason required]
+       ↑ Phase 5, with the ledger. Nothing spends allowance before then, so in
+         Phase 2 its only possible effect is creating an empty balance row.
 
 POST   /api/admin/membership-imports                     [MANAGE_MEMBERSHIPS]  # multipart CSV → PREVIEW
 GET    /api/admin/membership-imports/:batchId
@@ -708,9 +710,13 @@ New guard `backend/src/utils/manage-memberships-auth.ts`, modelled exactly on
 - `LOCAL_ADMIN` **denied** (membership config and member PII span the whole plan);
 - `requireManageMemberships(request, reply)` returns the resolved actor for audit
   stamping, or sends the error and returns `null`;
-- a second helper `requireSuperAdminForMembershipConfig(auth, reply)` for the
-  plan/level/benefit writes and the allowance override, checking
-  `auth.actorRole === "SUPER_ADMIN"`.
+- a second helper `requireMembershipConfigRole(auth, reply)` for the
+  plan/level/benefit writes, checking `method === "session"` and
+  `actorRole` in { `SUPER_ADMIN`, `ADMIN` }. The session requirement is the part
+  that matters: the master-token fallback resolves to `ADMIN` with no named
+  actor, and a shared token must not be able to rewrite what members pay.
+  The allowance override (Phase 5) keeps its own `SUPER_ADMIN` check - it
+  moves money on a live member, which plan setup does not.
 
 Every mutation calls `recordAudit` with the actor, entity type
 (`MembershipPlan` / `MembershipLevel` / `MembershipBenefit` / `MembershipEnrollment`),
@@ -763,9 +769,15 @@ Called from three places:
    `emailVerifiedAt` is set, run the linker for that user.
 2. **Signup** — only when the created account is already verified by
    construction (e.g. invite-token flows that flip `emailVerifiedAt`).
-3. **Login** — cheap lookup on every successful login **of a verified user**,
-   guarded by a short-lived cache so it is not a query per request. This is the
-   backstop for enrollments imported *after* the user verified.
+3. **Login** — one lookup on every successful login **of a verified user**. This
+   is the backstop for enrollments imported *after* the user verified. No cache:
+   it is a single `findMany` on an indexed `email` column, once per successful
+   login, which is not a hot path.
+
+Every place that sets `emailVerifiedAt` must call the linker, not just the
+signup/verify pair — currently `auth.service.ts` (`consumeEmailVerificationToken`,
+invite-token reset), `corporate-invite.service.ts`, and the admin patient-profile
+route. A member verified through any other path would otherwise never link.
 
 Logic:
 
@@ -775,9 +787,20 @@ findMany MembershipEnrollment where
   email == lower(user.email)
   AND userId IS NULL
   AND status == PENDING
-→ for each: set userId, linkedAt, status = ACTIVE (if within term, else EXPIRED)
+→ for each: set userId, linkedAt
+            status = (endDate != null && endDate < now) ? EXPIRED : ACTIVE
 → send the "enrollment confirmed" email once per enrollment
 ```
+
+**A future `startDate` links as `ACTIVE`, not `EXPIRED`.** Only a passed
+`endDate` expires a row. `EXPIRED` is terminal — nothing walks it back — so
+treating "term has not started yet" as expired would permanently kill a
+correctly-imported future membership. The benefit itself is still withheld,
+because pricing re-checks `startDate <= now` live (§5.1/§6.2); the member page
+shows "starts on <date>" for that window.
+
+The linker is idempotent by its own query: once `userId` is set the row is no
+longer returned, so neither the link nor the email can repeat.
 
 A dependent links the same way, with its own email. Tests must cover: an
 unverified account never links on signup or login; verification links
@@ -1042,8 +1065,26 @@ A row with `primaryMembershipId` set is a dependent; its `level`, `startDate` an
    to `MembershipEnrollment` yet.**
 3. The response drives the preview table: per row an outcome of
    `CREATE` / `REVIVE` (a `REMOVED` row for this email exists) /
-   `LINK` (an account with that email already exists — will go straight to `ACTIVE`) /
-   `REJECT` with a reason.
+   `LINK` / `REJECT` with a reason.
+
+   **`LINK` requires a *verified* account.** An existing account whose
+   `emailVerifiedAt` is null imports as `PENDING` like any other row and links
+   on verification. Linking an unverified account here would be a hole straight
+   through the gate §5.2 exists to build — the import is exactly the path an
+   attacker would use, since they choose the email.
+
+   **`REVIVE` precedence.** Matching is within the plan, on `lower(email)`,
+   against the **most recent** `REMOVED` row (the partial unique index permits
+   several). Revive is an update, not just a status flip: the CSV's
+   `membershipId`, names, level and term overwrite the old row's, and the status
+   becomes `PENDING` (or `ACTIVE` if the account is already verified). This
+   matters because a returning member usually comes back with a *new* partner
+   membership id, and the old id must stop being theirs.
+
+   Independently of that: reject the row when its `membershipId` is already held
+   by **any other** enrollment, `REMOVED` or not — `lower(membershipId)` is
+   globally unique with no status exclusion (§3.8), so a removed row still owns
+   its id until something overwrites it.
 4. `POST /.../commit` first **claims the batch atomically**:
    `UPDATE MembershipImportBatch SET status = 'COMMITTED', committedAt = now()
    WHERE id = ? AND status = 'PREVIEW'` — 0 rows means another request (a
@@ -1057,6 +1098,9 @@ A row with `primaryMembershipId` set is a dependent; its `level`, `startDate` an
    never cancel a batch that a concurrent commit already claimed. Both endpoints
    are idempotent: repeating a terminal transition returns the existing result.
 
+Commit applies **primary rows before dependent rows**, since a dependent's
+primary may be created by the same file.
+
 A batch older than 24 hours in `PREVIEW` is re-validated on commit (services,
 levels and emails may have changed underneath).
 
@@ -1067,7 +1111,9 @@ levels and emails may have changed underneath).
 - duplicate `membershipId` or `email` **within the same file**;
 - email already enrolled in this plan and not `REMOVED`;
 - `primaryMembershipId` not found in this plan or in the same file;
-- dependent when the target level has `familyEnabled = false`, or over `maxDependents`;
+- dependent when the target level has `familyEnabled = false`, or over
+  `maxDependents` — counted as **existing enrollments plus rows in this file**,
+  not file rows alone;
 - `endDate` before `startDate`;
 - unknown `level` slug.
 
@@ -1281,6 +1327,12 @@ translated for Ireland's configured locales with English fallback:
 3. **Allowance exhausted** — sent when a spend takes remaining to `0`. Explains what
    applies from now on (the fallback discount, or full price).
 
+**Locale resolution.** A `PENDING` enrollment has no `User`, so there is no
+`preferredLocale` to read: the **invite** email uses the plan's country
+`defaultLocale`, English fallback. The **enrollment-confirmed** and
+**allowance-exhausted** emails go to a linked account, so they use
+`User.preferredLocale`, falling back to the country default then English.
+
 Send through the existing outbox/`sendEmail` path so retries and the capture hook
 behave as they do elsewhere. No expiry-warning email.
 
@@ -1336,7 +1388,7 @@ displayed.
 | Forged enrollment/level/benefit ids in cart or checkout | Everything re-resolved server-side; ownership re-checked; failure = full price or `400`, never cheaper |
 | Allowance double-spend (double-click, retried webhook) | Conditional `used < allocated` update + unique `idempotencyKey` on the ledger |
 | Cross-country benefit leakage | Composite FKs pin level/benefit/enrollment to the plan's country; the resolver re-checks `service.countryId` |
-| Privilege creep | `LOCAL_ADMIN` denied outright; config writes and allowance overrides are `SUPER_ADMIN` |
+| Privilege creep | `LOCAL_ADMIN` denied outright; config writes need a real admin session (never the master token); the allowance override stays `SUPER_ADMIN` |
 | PHI adjacency in usage reports | Reports carry booking metadata only (date, service, doctor, price, benefit). No clinical content. Access is audit-logged (§32) |
 | Import as a bulk-write weapon | Preview-then-commit, server-side `previewData`, 2,000-row cap, full audit row with file name and counts |
 | Goodwill override abuse | `SUPER_ADMIN` only, mandatory reason, audit row, separated in reporting |
@@ -1413,7 +1465,8 @@ Both read the ledger joined to `OrderItem` — no separate aggregation table.
 ### 16.2 Integration
 
 - `admin-membership-plans.route.test.ts` — the auth matrix (401 / 403 / 200) for
-  `MANAGE_MEMBERSHIPS` and the `SUPER_ADMIN` config split; validation errors.
+  `MANAGE_MEMBERSHIPS` and the config split (ADMIN allowed, master token not);
+  validation errors.
 - `admin-membership-enrollments.route.test.ts` — suspend, remove, revive,
   dependents over the cap, allowance adjust requires `SUPER_ADMIN` + reason.
 - `orders.route.membership.test.ts` — the §6.4 switch: exactly one engine runs;
@@ -1452,8 +1505,8 @@ Both read the ledger joined to `OrderItem` — no separate aggregation table.
 | Phase | Contents | Ships behind |
 | --- | --- | --- |
 | 1 | Membership tables migration (+ `AuditAction` values, Semgrep rule extension), `memberships` module, admin plan/level/benefit CRUD + those admin screens, translations | admin-only, no patient impact |
-| 2 | Enrollment CRUD, linking on login/signup, CSV import, invite email | admin-only |
-| 3 | Member portal page + card, claim form, enrollment-confirmed email | member-visible; still no pricing effect |
+| 2 | Enrollment CRUD, verified-email linking, CSV import, invite email, **enrollment-confirmed email** (it is the linker's own side effect — §5.2 — so it ships with the linker, not in Phase 3) | admin-only |
+| 3 | Member portal page + card, claim form | member-visible; still no pricing effect |
 | 4 | Pricing resolver, benefit-options endpoint, **second migration**: `Cart` / `OrderItem` columns + `CartBenefitSource` | API only, not wired into the UI |
 | 5 | Booking benefit step (replaces the insurance step), checkout switch, €0 path, allowance ledger, allowance-exhausted email, **`UNSET → NONE` cart backfill at deploy** | **the behavioural change** — corporate's silent discount becomes selection-driven |
 | 6 | Admin manual booking + override, usage reporting, expiry cron | — |
