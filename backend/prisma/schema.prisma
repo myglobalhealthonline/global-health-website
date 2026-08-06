@@ -349,6 +349,19 @@ enum AuditAction {
   /// actor's real role (ADMIN vs SUPER_ADMIN) is recorded here even though the
   /// message row stamps both as ADMIN.
   SUPPORT_MESSAGE_POSTED
+  // --- Private membership plans (phase 1 — config only) ---
+  /// Plan/level/benefit configuration is SUPER_ADMIN-only, so every write is
+  /// audited with the actor and a diff of the changed fields. Enrollment,
+  /// import and allowance actions are added by their own phases.
+  MEMBERSHIP_PLAN_CREATED
+  MEMBERSHIP_PLAN_UPDATED
+  MEMBERSHIP_PLAN_DEACTIVATED
+  MEMBERSHIP_LEVEL_CREATED
+  MEMBERSHIP_LEVEL_UPDATED
+  MEMBERSHIP_LEVEL_DELETED
+  MEMBERSHIP_BENEFIT_CREATED
+  MEMBERSHIP_BENEFIT_UPDATED
+  MEMBERSHIP_BENEFIT_DELETED
 }
 
 enum CountryAccessModel {
@@ -490,6 +503,10 @@ model Country {
   /// lists the exams it offers (from the global ExamType catalog) with our
   /// cost + a markup → the patient price. See TestCenter.
   testCenters                 TestCenter[]
+  /// Private membership plans (partner programmes) for this market. A plan
+  /// belongs to exactly one country and is never shown on the public site.
+  /// See MembershipPlan.
+  membershipPlans             MembershipPlan[]
   createdAt                   DateTime                     @default(now())
   updatedAt                   DateTime                     @updatedAt
 }
@@ -1191,6 +1208,9 @@ model Service {
   targetLinks              ServiceLink[]                  @relation("TargetLinks")
   /// Subscription plan rules that reference this service (§20).
   planConsultationRules    PlanConsultationRule[]
+  /// Private-membership benefit rows pinned to this exact service (rare —
+  /// most rows target a ServiceKind). See MembershipBenefit.
+  membershipBenefits       MembershipBenefit[]
   /// Corporate benefit rules pinned to this exact service (rare — most
   /// rules match by kind).
   corporateBenefitRules    CorporateBenefitRule[]
@@ -3072,6 +3092,11 @@ model User {
   corporateCompanyAdmin        CorporateCompany?            @relation("CorporateCompanyAdmin")
   corporateEmployees           CorporateEmployee[]
   corporateBeneficiaries       CorporateBeneficiary[]
+  /// Private membership enrollments linked to this account. Linking happens
+  /// on email verification and requires `emailVerifiedAt` — a bare email
+  /// match is not proof of mailbox ownership (§5.2). One person may hold
+  /// several memberships (§19). See MembershipEnrollment.
+  membershipEnrollments        MembershipEnrollment[]
   createdAt                    DateTime                     @default(now())
   updatedAt                    DateTime                     @updatedAt
 }
@@ -5711,4 +5736,349 @@ model SuklDoctorIdentity {
   @@unique([doctorUserId, environment])
   @@index([environment, workplaceCode])
   @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Private membership plans — docs/plans/private-membership-plans-implementation.md
+// Benefit source #4. Admin-created partner programmes, never shown on the
+// public site, usable only by the people an admin enrolled. No billing of any
+// kind: the payer fields are metadata, never charged (§15). Deliberately
+// SEPARATE from PricingPlan/UserSubscription (monthly Stripe credits),
+// CorporatePlan (company-billed auto-discount) and InsuranceCompany
+// (negotiated flat price) — decision 1, no reuse. The only shared surfaces
+// are the booking flow, the cart/order tables and checkout price composition.
+// ---------------------------------------------------------------------------
+
+enum MembershipEnrollmentStatus {
+  PENDING /// imported, no account linked yet — grants nothing
+  ACTIVE
+  SUSPENDED /// admin-paused, benefits off, row and history retained
+  EXPIRED /// endDate passed
+  REMOVED /// soft delete; re-import of the same email revives this row
+}
+
+enum MembershipMemberType {
+  PRIMARY
+  DEPENDENT
+}
+
+enum MembershipAllowancePool {
+  SHARED /// one pool for the primary + all their dependents
+  PER_PERSON /// each covered person gets their own pool
+}
+
+enum MembershipBenefitType {
+  ALLOWANCE /// N included consultations, then the fallback
+  PERCENT
+  FIXED
+  EXCLUDED /// explicitly no benefit — carves a service out of a kind rule
+}
+
+enum MembershipFallbackType {
+  NONE
+  PERCENT
+  FIXED
+}
+
+enum MembershipLedgerReason {
+  SPEND
+  REFUND
+  ADMIN_ADJUST
+}
+
+enum MembershipImportStatus {
+  PREVIEW
+  COMMITTED
+  CANCELLED
+}
+
+/// One partner programme in one country (e.g. "MEMS Ireland"). A plan belongs
+/// to exactly one country (decision 9) and is invisible to the public site.
+model MembershipPlan {
+  id            String  @id @default(cuid())
+  countryId     String
+  country       Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  slug          String
+  /// Internal/default name; patient-facing copy comes from the translations.
+  name          String
+  internalNotes String?
+  isActive      Boolean @default(true)
+
+  // Payer metadata (§15) — all optional. Never charged, never invoiced, never
+  // surfaced to patients. Recorded so ops know who the programme is billed to
+  // outside this system.
+  payerName        String?
+  payerEmail       String?
+  payerPhone       String?
+  payerAmountCents Int?
+  payerCurrency    String?
+  payerNotes       String?
+
+  levels        MembershipLevel[]
+  translations  MembershipPlanTranslation[]
+  enrollments   MembershipEnrollment[]
+  importBatches MembershipImportBatch[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([countryId, slug])
+  /// FK target for the (planId, countryId) composite FK added in raw SQL —
+  /// pins every level (and through it every benefit and enrollment) to the
+  /// plan's own country, so a benefit can never leak across markets.
+  @@unique([id, countryId])
+  @@index([countryId, isActive])
+}
+
+model MembershipPlanTranslation {
+  id          String         @id @default(cuid())
+  planId      String
+  plan        MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  locale      LocaleCode
+  name        String
+  description String?
+
+  @@unique([planId, locale])
+}
+
+/// A tier inside a plan (Gold, Silver). Every plan has at least one; a plan
+/// without tiers gets an auto-created default level (decision 2).
+model MembershipLevel {
+  id        String         @id @default(cuid())
+  planId    String
+  plan      MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  /// Always == plan.countryId. App-enforced and composite-FK enforced.
+  countryId String
+  slug      String
+  name      String
+  sortOrder Int            @default(0)
+  /// Exactly one level per plan carries true — enforced by the partial unique
+  /// index MembershipLevel_one_default_per_plan (raw SQL; Prisma cannot
+  /// express a WHERE clause on a unique). Auto-created for tier-less plans and
+  /// used as the import default when the CSV has no `level` column.
+  isDefault Boolean        @default(false)
+  isActive  Boolean        @default(true)
+
+  // Family (§11). maxDependents > 0 requires familyEnabled.
+  familyEnabled Boolean                 @default(false)
+  maxDependents Int                     @default(0)
+  allowancePool MembershipAllowancePool @default(PER_PERSON)
+
+  benefits     MembershipBenefit[]
+  translations MembershipLevelTranslation[]
+  enrollments  MembershipEnrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([planId, slug])
+  /// FK target for MembershipEnrollment(levelId, countryId).
+  @@unique([id, countryId])
+  @@index([planId, isActive])
+}
+
+model MembershipLevelTranslation {
+  id          String          @id @default(cuid())
+  levelId     String
+  level       MembershipLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  locale      LocaleCode
+  name        String
+  description String?
+
+  @@unique([levelId, locale])
+}
+
+/// What a level gives. Targets EITHER a service kind (GENERAL / SPECIALIST
+/// only) OR one specific service in the plan's country. A service row always
+/// beats a kind row for that service (§6.2). The invariants below are checked
+/// at the API AND by CHECK constraints in the migration.
+model MembershipBenefit {
+  id        String          @id @default(cuid())
+  levelId   String
+  level     MembershipLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  /// Always == level.countryId (composite FK against Service).
+  countryId String
+
+  /// GENERAL | SPECIALIST only — consultations only (§18).
+  serviceKind ServiceKind?
+  serviceId   String?
+  service     Service?     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  benefitType     MembershipBenefitType
+  /// ALLOWANCE only: included consultations for the term.
+  allowanceCount  Int?
+  /// PERCENT only: 0 < percentOff <= 100. Applies to the peak-adjusted price (§29).
+  percentOff      Float?
+  /// FIXED only: what the member pays, in the service's currency. Overrides peak.
+  fixedPriceCents Int?
+
+  /// Used once the allowance hits zero (ALLOWANCE rows only) — §24.
+  fallbackType       MembershipFallbackType @default(NONE)
+  fallbackPercent    Float?
+  fallbackFixedCents Int?
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  balances MembershipAllowanceBalance[]
+
+  @@unique([levelId, serviceKind])
+  @@unique([levelId, serviceId])
+  @@index([levelId, isActive])
+}
+
+/// One person on one level. Only ACTIVE grants benefits, and only while
+/// startDate <= now AND (endDate IS NULL OR endDate >= now).
+model MembershipEnrollment {
+  id        String          @id @default(cuid())
+  planId    String
+  plan      MembershipPlan  @relation(fields: [planId], references: [id], onDelete: Cascade)
+  levelId   String
+  level     MembershipLevel @relation(fields: [levelId], references: [id])
+  /// Always == plan.countryId.
+  countryId String
+
+  /// Partner-supplied, globally unique (decision 5). NO `@unique` here —
+  /// PostgreSQL's plain unique is case-sensitive, so `ABC1` and `abc1` could
+  /// coexist while lookups compare case-insensitively. Uniqueness is the raw
+  /// unique index on lower("membershipId"); every lookup queries via lower().
+  membershipId String
+  /// Lowercased + trimmed at write time. The linking key (assumption 5).
+  /// Uniqueness within a plan is the partial index
+  /// MembershipEnrollment_plan_email_active_key (planId, lower(email))
+  /// WHERE status <> 'REMOVED' — deliberately NOT a Prisma @@unique, so a
+  /// removed row does not block a re-add.
+  email        String
+  firstName    String
+  lastName     String
+  phone        String?
+  dateOfBirth  DateTime?
+
+  /// Set when the account is linked (verified-email match, or claim form).
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  linkedAt  DateTime?
+  /// Set only when linked via the manual claim form, for audit.
+  claimedAt DateTime?
+
+  memberType          MembershipMemberType   @default(PRIMARY)
+  primaryEnrollmentId String?
+  primaryEnrollment   MembershipEnrollment?  @relation("MembershipDependents", fields: [primaryEnrollmentId], references: [id], onDelete: Cascade)
+  dependents          MembershipEnrollment[] @relation("MembershipDependents")
+  relationship        String?
+
+  status    MembershipEnrollmentStatus @default(PENDING)
+  startDate DateTime
+  /// null = open-ended. A past date kills benefits (live check + daily cron).
+  endDate   DateTime?
+
+  importBatchId    String?
+  importBatch      MembershipImportBatch? @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  createdByAdminId String?
+  /// Free-text admin note (why suspended, partner reference, …).
+  adminNotes       String?
+
+  balances      MembershipAllowanceBalance[]
+  ledgerEntries MembershipUsageLedger[]
+  inviteLogs    MembershipInviteLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([userId, status])
+  @@index([planId, status])
+  @@index([primaryEnrollmentId])
+}
+
+/// One counter per (benefit row, holder). The holder owns the pool: self under
+/// PER_PERSON, the primary enrollment under SHARED (§11). Created lazily on
+/// first use; `allocated` is snapshotted from the benefit row at creation so a
+/// later admin edit does not silently change a live term.
+model MembershipAllowanceBalance {
+  id                 String               @id @default(cuid())
+  benefitId          String
+  benefit            MembershipBenefit    @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+  holderEnrollmentId String
+  holderEnrollment   MembershipEnrollment @relation(fields: [holderEnrollmentId], references: [id], onDelete: Cascade)
+  allocated          Int
+  used               Int                  @default(0)
+  /// Term this counter belongs to — copied from the holder's startDate. A term
+  /// renewal (new startDate) creates a NEW balance row rather than resetting.
+  termStart          DateTime
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  ledgerEntries MembershipUsageLedger[]
+
+  @@unique([benefitId, holderEnrollmentId, termStart])
+}
+
+/// Append-only audit trail of every allowance movement. `used` on the balance
+/// is the authority; both are written in the same transaction, and
+/// `idempotencyKey` makes a retried checkout a clean no-op (§7).
+model MembershipUsageLedger {
+  id           String                     @id @default(cuid())
+  balanceId    String
+  balance      MembershipAllowanceBalance @relation(fields: [balanceId], references: [id], onDelete: Cascade)
+  /// WHO consumed it (may be a dependent while the balance holder is the primary).
+  enrollmentId String
+  enrollment   MembershipEnrollment       @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  /// -1 spend, +1 refund, ± admin adjust.
+  delta        Int
+  reason       MembershipLedgerReason
+
+  orderId       String?
+  orderItemId   String?
+  appointmentId String?
+  /// ADMIN_ADJUST only.
+  actorAdminId  String?
+  note          String?
+
+  /// `${orderItemId}:SPEND` / `${orderItemId}:REFUND` — makes retries safe.
+  idempotencyKey String   @unique
+  createdAt      DateTime @default(now())
+
+  @@index([balanceId, reason])
+  @@index([enrollmentId])
+  @@index([orderId])
+}
+
+/// CSV import batch. Preview-then-commit (§22): the commit step re-reads
+/// `previewData` server-side and never trusts a client payload.
+model MembershipImportBatch {
+  id                String                 @id @default(cuid())
+  planId            String
+  plan              MembershipPlan         @relation(fields: [planId], references: [id], onDelete: Cascade)
+  fileName          String
+  uploadedByAdminId String?
+  status            MembershipImportStatus @default(PREVIEW)
+  rowCount          Int                    @default(0)
+  createdCount      Int                    @default(0)
+  revivedCount      Int                    @default(0)
+  rejectedCount     Int                    @default(0)
+  /// Server-side parse result. The commit step reads THIS.
+  previewData       Json
+  committedAt       DateTime?
+  createdAt         DateTime               @default(now())
+
+  enrollments MembershipEnrollment[]
+
+  @@index([planId, status])
+}
+
+/// A nudge email only — linking is by verified email, so there is no token to
+/// redeem and the link is the ordinary signup/login URL (§12).
+model MembershipInviteLog {
+  id            String               @id @default(cuid())
+  enrollmentId  String
+  enrollment    MembershipEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  email         String
+  sentByAdminId String?
+  sentAt        DateTime?
+  error         String?
+  createdAt     DateTime             @default(now())
+
+  @@index([enrollmentId])
 }

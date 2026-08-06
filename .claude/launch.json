@@ -19,6 +19,19 @@
       "port": 4000
     },
     {
+      "name": "backend-dev-db",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--watch",
+        "--env-file=.env.dev",
+        "--import",
+        "tsx",
+        "src/server.ts"
+      ],
+      "cwd": "backend",
+      "port": 4000
+    },
+    {
       "name": "frontend-prod-api",
       "runtimeExecutable": "npx",
       "runtimeArgs": [

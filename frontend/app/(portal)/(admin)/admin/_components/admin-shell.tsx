@@ -137,6 +137,10 @@ const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
 
 const COUNTRY_HREFS = new Set([
   "/admin/plans",
+  // Private membership programmes belong to exactly one country, so they sit
+  // with the country-scoped items. Deliberately absent from
+  // HREF_TO_FEATURE_KEY below — see the note there.
+  "/admin/memberships",
   "/admin/country-features",
   "/admin/country-home",
   "/admin/country-content",
@@ -172,6 +176,11 @@ const HREF_TO_FEATURE_KEY: Record<string, string> = {
   "/admin/health-tests": "health-tests",
   "/admin/plans": "subscriptions",
   "/admin/appointments": "appointments",
+  // NOTE: "/admin/memberships" is intentionally NOT listed. An entry here
+  // hides the item unless the country's `enabledFeatures` array contains the
+  // key, and no existing Country row's array can contain a key that did not
+  // exist when it was written — so adding one would hide the section in every
+  // market. Unmapped country-scoped items are always shown.
 };
 
 const ORDER: Record<string, number> = {
@@ -197,6 +206,7 @@ const ORDER: Record<string, number> = {
   "/admin/online-prescriptions": 5,
   "/admin/health-tests": 6,
   "/admin/plans": 7,
+  "/admin/memberships": 7.5,
   "/admin/appointments": 8,
   "/admin/patients": 8.2,
   "/admin/insurance": 8.5,

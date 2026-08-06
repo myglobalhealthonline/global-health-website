@@ -16,6 +16,7 @@
         "db:seed": "node --import tsx scripts/seed-test-accounts.ts",
         "db:seed:subscriptions": "node --import tsx scripts/seed-subscription-plans.ts",
         "sukl:check": "node --import tsx scripts/sukl-check.ts",
+        "membership:ddl-check": "node --import tsx scripts/membership-ddl-check.ts",
         "db:generate": "prisma generate",
         "db:migrate": "prisma migrate dev",
         "db:deploy": "prisma migrate deploy",

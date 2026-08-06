@@ -5,7 +5,8 @@ rules:
     message: >
       This file registers an /api/admin/* route but never calls one of the
       recognized admin-authorization gates anywhere: verifyAdminAccess,
-      verifyGlobalAdminAccess, requireManageSubscriptions, or the
+      verifyGlobalAdminAccess, requireManageSubscriptions,
+      requireManageMemberships, or the
       dependency-injected `dependencies.verifyAdminAccess` variant. Because
       routes are auto-loaded (backend/src/app.ts), a new admin route file is
       live in production the moment it's added, with no separate review gate
@@ -47,6 +48,15 @@ rules:
           const $ROUTE4: FastifyPluginAsync = async ($APPVAR4) => {
             ...
             <... dependencies.verifyAdminAccess(...) ...>
+            ...
+          }
+      # Private membership plans admin surface (admin-membership-*.route.ts).
+      # requireManageMemberships resolves through verifyAdminAccess the same way
+      # requireManageSubscriptions does, and additionally denies LOCAL_ADMIN.
+      - pattern-not-inside: |
+          const $ROUTE9: FastifyPluginAsync = async ($APPVAR9) => {
+            ...
+            <... requireManageMemberships(...) ...>
             ...
           }
       - pattern-not-inside: |
