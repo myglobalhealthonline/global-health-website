@@ -1552,10 +1552,10 @@ img {
  * visitors never render this. Same forest-glass material as the wizard
  * chrome so it reads as part of the flow, not a bolted-on banner. */
 .gh-portal-return-band {
+  /* ponytail: NO backdrop-filter — 0.92 fill, same call as
+   * .gh2-glass-forest above. */
   background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.92);
   border-bottom: var(--gh-chrome-border);
-  -webkit-backdrop-filter: var(--gh-chrome-filter);
-  backdrop-filter: var(--gh-chrome-filter);
 }
 .gh-portal-return-band__link {
   display: inline-flex;
@@ -3146,10 +3146,14 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
 }
 
 .gh-app-sheet--public {
+  /* ponytail: NO backdrop-filter. The fill is 0.94 opaque and its backdrop is
+   * .gh-app-sheet-overlay--public — a near-flat dark scrim — so the blur had
+   * nothing to resolve. It also mattered more here than on a static card: the
+   * sheet slides in on transform, and a moving element re-samples its own
+   * backdrop every frame, so this ran the full 18px+saturate+brightness chain
+   * on every frame of every open and close. */
   background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.94);
   border: var(--gh-chrome-border);
-  -webkit-backdrop-filter: var(--gh-chrome-filter);
-  backdrop-filter: var(--gh-chrome-filter);
   box-shadow: var(--liquid-specular), 0 18px 40px -18px rgba(4, 24, 18, 0.55);
   color: #eef7ef;
 }
@@ -3484,19 +3488,22 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
   background-size: 22px 22px;
 }
 
-/* Soft idle float for hero info cards — slower + shorter travel than
- * .animate-float so overlapping cards drift gently out of phase via
- * per-card animation-delay. Killed under reduced-motion. */
-@keyframes gh-floaty {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-9px); }
-}
-.gh-floaty {
-  animation: gh-floaty 5.5s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .gh-floaty { animation: none; }
-}
+/* Idle float for hero info cards — RETIRED 2026-08-06, same call as the
+ * perpetual headline pulse below.
+ *
+ * ponytail: every .gh-floaty call site in the repo sits on the same element
+ * as .gh-glass-emerald, which carries backdrop-filter. A moving element
+ * re-samples its own backdrop, so this ran blur(22px) + saturate + brightness
+ * on 3 cards per page at 60fps FOREVER — idle, not just on scroll — across
+ * pricing / contact / about / doctors hero / blog index / ContactArchPanel.
+ * There is no markup arrangement that keeps both: wrapping the badge in an
+ * animated parent still moves the glass child. So it is the float or the
+ * material, and the material is what you see at rest. (pointer: coarse) has
+ * always disabled this animation, so touch devices never had it either.
+ *
+ * The class is kept as an inert hook rather than stripped from 6 files; if a
+ * float is ever wanted back, put it on an element WITHOUT backdrop-filter. */
+.gh-floaty { }
 
 /* Hero accent glow — the lime headline word gets a soft, static bloom.
  * Spec §9: perpetual pulse removed (was distracting); glow kept static. */
@@ -4312,7 +4319,8 @@ body.gh-cookie-bar-open {
   .gh-command-band::before {
     animation: none;
   }
-  .gh-floaty,
+  /* .gh-floaty is no longer listed here — it carries no animation at all now
+   * (see its rule), so there is nothing left for this block to switch off. */
   .animate-float,
   .animate-pulse-glow {
     animation: none;

@@ -4842,9 +4842,15 @@ a.gh-appointment-card:hover {
 
 .gh-portal-sidebar {
   overflow: hidden;
+  /* ponytail: NO backdrop-filter. --lux-chrome-fill runs 0.92-0.94 opaque, so
+   * at most 8% of any backdrop survived it; and at lg+ there is no backdrop to
+   * speak of — the main column carries lg:pl-[--portal-sidebar-w], so content
+   * never passes under this element and its only backdrop is the flat
+   * --portal-canvas. blur(32px) is the largest kernel in the repo and this is
+   * full-height fixed chrome on every portal page. Below lg it becomes a
+   * drawer over content, but (pointer: coarse) already kills all
+   * backdrop-filter there. Restore only if the fill drops below ~0.8. */
   background: var(--lux-chrome-fill);
-  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
-  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
   color: var(--portal-chrome-text);
   border-right: 1px solid var(--portal-chrome-border);
   box-shadow: var(--lux-elev-chrome);
@@ -4939,9 +4945,13 @@ a.gh-appointment-card:hover {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 .gh-portal-topbar {
+  /* ponytail: NO backdrop-filter. Unlike the sidebar this IS sticky over
+   * scrolling content, so there is a real backdrop — but --lux-chrome-fill is
+   * 0.92-0.94 opaque, so only 6-8% of it ever showed, and blur(32px) of that
+   * 6-8% every scroll frame is not a look anyone can see. Same fill, same
+   * seam; the scrolled content behind now reads sharp instead of smeared at
+   * 6% alpha. Restore only if the fill drops below ~0.8. */
   background: var(--lux-chrome-fill);
-  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
-  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
   border-bottom: 1px solid var(--portal-chrome-border);
   box-shadow: var(--lux-elev-chrome);
   transition: border-color 200ms ease-out;
@@ -4955,13 +4965,9 @@ a.gh-appointment-card:hover {
   background-size: 100% 100%, 100% 1px;
 }
 
-@supports not (backdrop-filter: blur(1px))  {
-  .gh-portal-topbar {
-    background-color: var(--portal-chrome-solid);
-  }
-}
-
-
+/* No @supports-not block for .gh-portal-topbar: it no longer declares a
+ * backdrop-filter, so there is nothing for a no-support fallback to undo.
+ * The reduced-transparency block below is a separate, real a11y request. */
 
 @media (prefers-reduced-transparency: reduce)  {
   .gh-portal-topbar {
@@ -5747,15 +5753,12 @@ a.gh-appointment-card:hover {
   z-index: var(--z-sticky);
   margin: 0 calc(-1 * var(--portal-pad-x));
   padding: 8px var(--portal-pad-x) 10px;
+  /* ponytail: NO backdrop-filter. --portal-bg is #fafbf7 — an opaque hex, no
+   * alpha channel — so nothing could ever show through to be blurred. The
+   * @supports-not fallback that used to sit here set this same background,
+   * which is the proof: the fill was always doing the whole job. Sticky, so
+   * the compositor re-ran that no-op every scroll frame. */
   background: var(--portal-bg);
-  -webkit-backdrop-filter: blur(var(--portal-blur-overlay));
-  backdrop-filter: blur(var(--portal-blur-overlay));
-}
-
-@supports not (backdrop-filter: blur(1px))  {
-  .gh-portal-tabs-sticky {
-    background: var(--portal-bg);
-  }
 }
 
 @media (pointer: coarse)  {
