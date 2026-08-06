@@ -470,7 +470,10 @@
     "ctaHeading": "Comandă {title} astăzi",
     "goodToKnow": "Bine de știut",
     "disclaimer": "Rezultatele testelor sunt verificate de un medic înregistrat pentru a profesa în {country}. Această pagină conține informații generale și nu înlocuiește sfatul, diagnosticul sau tratamentul medical profesional.",
-    "faqTitle": "Întrebări frecvente"
+    "faqTitle": "Întrebări frecvente",
+    "markersCount": "{count} markeri",
+    "howItWorksEyebrow": "Cum funcționează",
+    "beforeTestingEyebrow": "Înainte de testare"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Medici care gestionează rețetele repetate",

@@ -684,104 +684,219 @@ export const IRELAND_RANDOX_KITS: RandoxKit[] = [
  * The seed script renders these into `extraSections`, which the detail page
  * already renders as titled prose blocks (ImportantInfoSection).
  */
-const STEPS: Record<KitFlow, string[]> = {
+/**
+ * Each entry serialises to "Heading\nBody". The frontend splits on the first
+ * newline so a step or note renders with its own heading rather than as a
+ * wall of prose.
+ */
+type TitledNote = { heading: string; body: string };
+
+const ORDER_STEP: TitledNote = {
+  heading: "Order your kit",
+  body: "It is posted to your address with everything you need in the box — collection device, instructions and a prepaid return envelope.",
+};
+const POST_STEP: TitledNote = {
+  heading: "Activate and post it back",
+  body: "Register your kit online so the laboratory can match your sample to you, then seal the prepaid envelope and drop it at any post box.",
+};
+const RESULTS_STEP: TitledNote = {
+  heading: "Get your results",
+  body: "Randox delivers them to you digitally once the laboratory has finished. A doctor consultation to talk them through is optional, from €45.",
+};
+
+const STEPS: Record<KitFlow, TitledNote[]> = {
   quickdraw: [
-    "Order your kit. It is dispatched to your address, with everything you need in the box.",
-    "Collect your sample. Place the QuickDraw device on your upper arm and follow the instructions — no finger-pricking, and it takes a few minutes.",
-    "Activate and post it back. Register your kit, seal the prepaid envelope and drop it at any post box the same day you collect.",
-    "Get your results. Randox delivers them digitally once the laboratory has analysed your sample.",
+    ORDER_STEP,
+    {
+      heading: "Collect your sample",
+      body: "Place the QuickDraw device on your upper arm and follow the instructions. No finger-pricking, and the collection itself takes a few minutes.",
+    },
+    POST_STEP,
+    RESULTS_STEP,
   ],
   saliva: [
-    "Order your kit. It is dispatched to your address, with everything you need in the box.",
-    "Collect your sample. Swab the inside of your cheek as the instructions describe — no blood and no needle.",
-    "Activate and post it back. Register your kit, seal the prepaid envelope and drop it at any post box.",
-    "Get your results. Randox delivers them digitally once the laboratory has analysed your sample.",
+    ORDER_STEP,
+    {
+      heading: "Collect your sample",
+      body: "Swab the inside of your cheek as the instructions describe. No blood, no needle, and nothing to time.",
+    },
+    POST_STEP,
+    RESULTS_STEP,
   ],
   stool: [
-    "Order your kit. It is dispatched to your address, with everything you need in the box.",
-    "Collect your sample at home using the collection container and instructions provided.",
-    "Activate and post it back. Register your kit, seal the prepaid packaging and post it as soon as you have collected.",
-    "Get your results. Randox delivers them digitally once sequencing is complete.",
+    ORDER_STEP,
+    {
+      heading: "Collect your sample",
+      body: "Use the collection container and the step-by-step instructions provided. Everything is done at home, in your own time.",
+    },
+    { ...POST_STEP, body: "Register your kit online, then seal the prepaid packaging and post it the same day you collect." },
+    { ...RESULTS_STEP, body: "Randox delivers them to you digitally once sequencing is complete. A doctor consultation to talk them through is optional, from €45." },
   ],
   nail: [
-    "Order your kit. It is dispatched to your address, with everything you need in the box.",
-    "Collect your sample by clipping your fingernails into the container provided — no blood and no needle.",
-    "Activate and post it back. Register your kit, seal the prepaid envelope and drop it at any post box.",
-    "Get your results. Randox delivers them digitally once the laboratory has analysed your sample.",
+    ORDER_STEP,
+    {
+      heading: "Collect your sample",
+      body: "Clip your fingernails into the container provided. No blood, no needle — a nail clipper is the only thing you need.",
+    },
+    POST_STEP,
+    RESULTS_STEP,
   ],
 };
 
-const HYDRATE =
-  "On the morning of collection, drink plenty of water. Being well hydrated improves circulation and makes it easier to collect a clean sample.";
-const FASTING =
-  "Fast for 8 hours before collecting your sample. Water is fine throughout. Eat a light meal before the fast starts and avoid alcohol.";
-const BIOTIN =
-  "If you take biotin (vitamin B7), whether on its own or in a multivitamin, stop 48 hours before testing — it interferes with several laboratory results. If it was prescribed, speak to your doctor before stopping anything.";
-const CYCLE =
-  "Collect your sample two to five days after your period starts, ideally on day three.";
-const PILL =
-  "Hormonal contraception affects these results. If you have recently stopped the pill, wait until your cycle has settled back into its normal rhythm before testing.";
-
-export const KIT_PREP: Record<string, { flow: KitFlow; beforeTesting: string[] }> = {
-  "general-health-test": { flow: "quickdraw", beforeTesting: [FASTING, HYDRATE, BIOTIN] },
-  "heart-health-cholesterol-test": { flow: "quickdraw", beforeTesting: [FASTING, HYDRATE] },
-  "female-hormone-test": { flow: "quickdraw", beforeTesting: [CYCLE, PILL, HYDRATE, BIOTIN,
-    "If you use HRT as a gel, spray or cream, keep taking it as usual — but wear gloves to apply it, and never apply it to the arm you collect from.",
-  ] },
-  "male-hormone-test": { flow: "quickdraw", beforeTesting: [
-    "Collect your sample in the morning, before 10am. Testosterone is highest early in the day, so a later sample can read misleadingly low.",
-    FASTING, HYDRATE,
-    "If you use hormone gels, creams or patches, apply them after collecting — never before — and do not collect from an arm you apply them to.",
-    BIOTIN,
-  ] },
-  "thyroid-function-test": { flow: "quickdraw", beforeTesting: [HYDRATE, BIOTIN] },
-  "psa-prostate-test": { flow: "quickdraw", beforeTesting: [
-    "Avoid vigorous exercise, cycling and sexual activity for 48 hours before collecting — each raises PSA temporarily.",
-    "Wait at least 48 hours after a digital rectal examination, and six weeks after a prostate biopsy or urinary infection.",
-    HYDRATE,
-  ] },
-  "amh-fertility-test": { flow: "quickdraw", beforeTesting: [CYCLE, PILL, HYDRATE, BIOTIN] },
-  "vitamin-d-test": { flow: "quickdraw", beforeTesting: [HYDRATE,
-    "Keep taking your usual supplement if you want to know whether the dose is working, and note the dose when you read your result.",
-  ] },
-  "vitamin-b12-test": { flow: "quickdraw", beforeTesting: [HYDRATE,
-    "Recent B12 supplements raise the reading. If you want a baseline rather than a check on your supplement, speak to a doctor about timing first.",
-  ] },
-  "type-1-diabetes-risk-test": { flow: "quickdraw", beforeTesting: [HYDRATE] },
-  "gut-microbiome-test": { flow: "stool", beforeTesting: [
-    "Eat normally in the days before collecting — an unusual diet gives an unrepresentative picture of your gut.",
-    "If you have recently finished a course of antibiotics, wait at least four weeks so your microbiome has settled.",
-    "Post your sample the same day you collect it.",
-  ] },
-  "nutrition-lifestyle-dna-test": { flow: "saliva", beforeTesting: [
-    "Do not eat, drink, smoke or chew gum for 30 minutes before collecting your saliva sample.",
-  ] },
-  "genetic-haemochromatosis-test": { flow: "saliva", beforeTesting: [
-    "Do not eat, drink, smoke or chew gum for 30 minutes before collecting your saliva sample.",
-  ] },
-  "genetic-coeliac-disease-test": { flow: "saliva", beforeTesting: [
-    "Do not eat, drink, smoke or chew gum for 30 minutes before collecting your saliva sample.",
-    "You do not need to be eating gluten for this test. Unlike an antibody blood test, a genetic result is unaffected by your diet.",
-  ] },
-  "genetic-lactose-intolerance-test": { flow: "saliva", beforeTesting: [
-    "Do not eat, drink, smoke or chew gum for 30 minutes before collecting your saliva sample.",
-    "There is nothing to drink and no symptoms to sit through — this reads the genetic markers, not your reaction to lactose.",
-  ] },
-  "fracture-risk-assessment-test": { flow: "nail", beforeTesting: [
-    "Grow your fingernails for a few days beforehand — the laboratory needs enough clipping to work with.",
-    "Remove nail polish and any gel or acrylic before collecting.",
-  ] },
+const HYDRATE: TitledNote = {
+  heading: "Drink water beforehand",
+  body: "On the morning of collection, drink plenty of water. Being well hydrated improves circulation and makes it easier to collect a clean sample.",
+};
+const FASTING: TitledNote = {
+  heading: "Fast for 8 hours",
+  body: "No food for 8 hours before collecting — water is fine throughout. Eat a light meal before the fast starts and avoid alcohol.",
+};
+const BIOTIN: TitledNote = {
+  heading: "Pause biotin supplements",
+  body: "Biotin (vitamin B7), on its own or inside a multivitamin, interferes with several laboratory results. Stop 48 hours before testing — unless it was prescribed, in which case speak to your doctor first.",
+};
+const CYCLE: TitledNote = {
+  heading: "Time it to your cycle",
+  body: "Collect your sample two to five days after your period starts, ideally on day three.",
+};
+const PILL: TitledNote = {
+  heading: "Hormonal contraception affects this",
+  body: "The pill changes these results. If you have recently stopped it, wait until your cycle has settled back into its normal rhythm before testing.",
+};
+const SALIVA_PREP: TitledNote = {
+  heading: "Nothing by mouth for 30 minutes",
+  body: "Do not eat, drink, smoke or chew gum in the 30 minutes before collecting your saliva sample.",
 };
 
-/** Build the two `extraSections` blocks the detail page renders. */
-export function buildExtraSections(slug: string): Array<{ title: string; body: string }> {
+export const KIT_PREP: Record<string, { flow: KitFlow; beforeTesting: TitledNote[] }> = {
+  "general-health-test": { flow: "quickdraw", beforeTesting: [FASTING, HYDRATE, BIOTIN] },
+  "heart-health-cholesterol-test": { flow: "quickdraw", beforeTesting: [FASTING, HYDRATE] },
+  "female-hormone-test": {
+    flow: "quickdraw",
+    beforeTesting: [CYCLE, PILL, HYDRATE, BIOTIN, {
+      heading: "Applying HRT gel, spray or cream",
+      body: "Keep taking it as usual, but wear gloves to apply it and never apply it to the arm you collect from — residue on the skin contaminates the sample.",
+    }],
+  },
+  "male-hormone-test": {
+    flow: "quickdraw",
+    beforeTesting: [
+      {
+        heading: "Collect before 10am",
+        body: "Testosterone follows a daily rhythm and is highest early in the day, so a later sample can read misleadingly low.",
+      },
+      FASTING,
+      HYDRATE,
+      {
+        heading: "Applying hormone gel or cream",
+        body: "Apply it after collecting, never before, and do not collect from an arm you apply it to.",
+      },
+      BIOTIN,
+    ],
+  },
+  "thyroid-function-test": { flow: "quickdraw", beforeTesting: [HYDRATE, BIOTIN] },
+  "psa-prostate-test": {
+    flow: "quickdraw",
+    beforeTesting: [
+      {
+        heading: "Rest for 48 hours first",
+        body: "Avoid vigorous exercise, cycling and sexual activity for 48 hours before collecting — each raises PSA temporarily and can push a normal result over the line.",
+      },
+      {
+        heading: "After an examination or infection",
+        body: "Wait at least 48 hours after a digital rectal examination, and six weeks after a prostate biopsy or urinary infection.",
+      },
+      HYDRATE,
+    ],
+  },
+  "amh-fertility-test": { flow: "quickdraw", beforeTesting: [CYCLE, PILL, HYDRATE, BIOTIN] },
+  "vitamin-d-test": {
+    flow: "quickdraw",
+    beforeTesting: [HYDRATE, {
+      heading: "Keep taking your supplement",
+      body: "If you want to know whether your current dose is working, carry on as normal and note the dose when you read your result.",
+    }],
+  },
+  "vitamin-b12-test": {
+    flow: "quickdraw",
+    beforeTesting: [HYDRATE, {
+      heading: "Recent supplements raise the reading",
+      body: "A result taken while supplementing reflects the supplement, not your baseline. If you want a true baseline, speak to a doctor about timing before stopping anything.",
+    }],
+  },
+  "type-1-diabetes-risk-test": { flow: "quickdraw", beforeTesting: [HYDRATE] },
+  "gut-microbiome-test": {
+    flow: "stool",
+    beforeTesting: [
+      {
+        heading: "Eat normally beforehand",
+        body: "An unusual diet in the days before collecting gives an unrepresentative picture of your gut.",
+      },
+      {
+        heading: "Wait after antibiotics",
+        body: "If you have recently finished a course, leave at least four weeks so your microbiome has settled.",
+      },
+      {
+        heading: "Post it the same day",
+        body: "Collect and send on the same day so the sample reaches the laboratory in good condition.",
+      },
+    ],
+  },
+  "nutrition-lifestyle-dna-test": { flow: "saliva", beforeTesting: [SALIVA_PREP] },
+  "genetic-haemochromatosis-test": { flow: "saliva", beforeTesting: [SALIVA_PREP] },
+  "genetic-coeliac-disease-test": {
+    flow: "saliva",
+    beforeTesting: [SALIVA_PREP, {
+      heading: "No need to eat gluten",
+      body: "Unlike an antibody blood test, a genetic result is unaffected by your diet — this test is valid even if you already avoid gluten.",
+    }],
+  },
+  "genetic-lactose-intolerance-test": {
+    flow: "saliva",
+    beforeTesting: [SALIVA_PREP, {
+      heading: "Nothing to drink, no symptoms",
+      body: "This reads the genetic markers rather than your reaction to lactose, so there is no lactose drink and no waiting through symptoms.",
+    }],
+  },
+  "fracture-risk-assessment-test": {
+    flow: "nail",
+    beforeTesting: [
+      {
+        heading: "Grow your nails a few days",
+        body: "The laboratory needs enough clipping to work with, so leave them a little longer than usual before collecting.",
+      },
+      {
+        heading: "Remove polish and gels",
+        body: "Take off nail polish, gel and acrylic before clipping — coatings interfere with the protein analysis.",
+      },
+    ],
+  },
+};
+
+/**
+ * Build the two `extraSections` blocks the detail page renders.
+ *
+ * `kind` picks the frontend layout — "steps" renders the numbered rail,
+ * "notes" the prep cards. Anything without a kind falls back to plain prose,
+ * so admin-authored sections keep working untouched.
+ */
+const serialize = (notes: TitledNote[]): string =>
+  notes.map((n) => `${n.heading}\n${n.body}`).join("\n\n");
+
+export function buildExtraSections(
+  slug: string,
+): Array<{ title: string; body: string; kind: string }> {
   const prep = KIT_PREP[slug];
   if (!prep) return [];
   const sections = [
-    { title: "How it works", body: STEPS[prep.flow].join("\n\n") },
+    { title: "How it works", kind: "steps", body: serialize(STEPS[prep.flow]) },
   ];
   if (prep.beforeTesting.length > 0) {
-    sections.push({ title: "What to know before testing", body: prep.beforeTesting.join("\n\n") });
+    sections.push({
+      title: "What to know before testing",
+      kind: "notes",
+      body: serialize(prep.beforeTesting),
+    });
   }
   return sections;
 }

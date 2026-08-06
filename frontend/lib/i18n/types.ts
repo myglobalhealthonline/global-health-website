@@ -478,8 +478,11 @@ export type CommonLocale = {
     addToCart: string;
     whatCoversEyebrow: string;
     insideTitle: string;
+    markersCount: string;
     whyEyebrow: string;
     whyTitle: string;
+    howItWorksEyebrow: string;
+    beforeTestingEyebrow: string;
     ctaHeading: string;
     goodToKnow: string;
     disclaimer: string;

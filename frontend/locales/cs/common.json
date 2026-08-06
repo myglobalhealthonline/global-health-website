@@ -470,7 +470,10 @@
     "ctaHeading": "Objednejte si {title} ještě dnes",
     "goodToKnow": "Dobré vědět",
     "disclaimer": "Výsledky testů posuzuje lékař registrovaný k výkonu praxe v {country}. Tato stránka obsahuje obecné informace a nenahrazuje odbornou lékařskou radu, diagnózu ani léčbu.",
-    "faqTitle": "Časté otázky"
+    "faqTitle": "Časté otázky",
+    "markersCount": "Počet markerů: {count}",
+    "howItWorksEyebrow": "Jak to funguje",
+    "beforeTestingEyebrow": "Před testováním"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Lékaři vyřizující opakované předpisy",

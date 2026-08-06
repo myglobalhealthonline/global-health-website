@@ -470,7 +470,10 @@
     "ctaHeading": "Bestellen Sie {title} noch heute",
     "goodToKnow": "Gut zu wissen",
     "disclaimer": "Die Testergebnisse werden von einem in {country} zur Berufsausübung zugelassenen Arzt geprüft. Diese Seite enthält allgemeine Informationen und ersetzt keine professionelle medizinische Beratung, Diagnose oder Behandlung.",
-    "faqTitle": "Häufig gestellte Fragen"
+    "faqTitle": "Häufig gestellte Fragen",
+    "markersCount": "{count} Marker",
+    "howItWorksEyebrow": "So funktioniert es",
+    "beforeTestingEyebrow": "Vor dem Test"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Ärzte für Folgerezepte",

@@ -153,6 +153,10 @@ export type CountryServiceDetail = {
 export type HealthTestFaqItem = { id: string; question: string; answer: string };
 
 /** Full health-test detail (admin CMS content) for the public test page. */
+/** One "extra section" block. `kind` selects a richer layout on the health
+ *  test detail page; absent means plain prose. */
+export type ExtraSection = { title: string; body: string; kind?: "steps" | "notes" };
+
 export type CountryHealthTestDetail = {
   id: string;
   slug: string;
@@ -172,7 +176,7 @@ export type CountryHealthTestDetail = {
   whatThisTestCovers: string[];
   whyGetTested: string[];
   /** Admin "extra sections" JSON — array of { title, body } when authored. */
-  extraSections: Array<{ title: string; body: string }>;
+  extraSections: ExtraSection[];
   faqs: HealthTestFaqItem[];
 };
 
@@ -578,10 +582,12 @@ function resolveGallery(value: unknown): string[] {
 
 /** Parse the admin `extraSections` JSON into a list of titled prose blocks.
  *  Tolerates either { title, body } or { heading, content } shapes; skips
- *  entries without renderable text. */
-function readExtraSections(value: unknown): Array<{ title: string; body: string }> {
+ *  entries without renderable text. An optional `kind` ("steps" | "notes")
+ *  lets a seeded section pick a richer layout; admin-authored sections have
+ *  no kind and keep rendering as plain prose. */
+function readExtraSections(value: unknown): ExtraSection[] {
   if (!Array.isArray(value)) return [];
-  const out: Array<{ title: string; body: string }> = [];
+  const out: ExtraSection[] = [];
   for (const entry of value) {
     if (!entry || typeof entry !== "object") continue;
     const r = entry as Record<string, unknown>;
@@ -590,7 +596,8 @@ function readExtraSections(value: unknown): Array<{ title: string; body: string 
     const body =
       typeof r.body === "string" ? r.body : typeof r.content === "string" ? r.content : "";
     if (!body.trim() && !title.trim()) continue;
-    out.push({ title, body });
+    const kind = r.kind === "steps" || r.kind === "notes" ? r.kind : undefined;
+    out.push({ title, body, kind });
   }
   return out;
 }

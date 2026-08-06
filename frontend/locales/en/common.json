@@ -470,7 +470,10 @@
     "ctaHeading": "Order your {title} today",
     "goodToKnow": "Good to know",
     "disclaimer": "Test results are reviewed by a doctor registered to practise in {country}. This page is general information and is not a substitute for professional medical advice, diagnosis or treatment.",
-    "faqTitle": "Frequently asked questions"
+    "faqTitle": "Frequently asked questions",
+    "markersCount": "{count} markers",
+    "howItWorksEyebrow": "How it works",
+    "beforeTestingEyebrow": "Before you test"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Doctors handling repeat prescriptions",

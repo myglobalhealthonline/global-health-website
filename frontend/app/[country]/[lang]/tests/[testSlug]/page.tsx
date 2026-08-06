@@ -23,11 +23,14 @@ import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
+import { ImportantInfoSection } from "@/components/sections/ServiceContentSections";
 import {
-  ChecklistSection,
-  WhyChooseSection,
-  ImportantInfoSection,
-} from "@/components/sections/ServiceContentSections";
+  BiomarkerManifestSection,
+  KitPrepSection,
+  KitStepsSection,
+  ReasonsToTestSection,
+  parseTitledNotes,
+} from "@/components/sections/HealthTestSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -478,33 +481,62 @@ export default async function HealthTestDetailPage({
       />
 
       {detail.whatThisTestCovers.length > 0 ? (
-        <ChecklistSection
+        <BiomarkerManifestSection
           eyebrow={t.whatCoversEyebrow}
           title={t.insideTitle.replace("{title}", detail.title)}
           items={detail.whatThisTestCovers}
-          theme="light"
+          // Single-marker kits (vitamin D, PSA) would read "1 markers" — the
+          // count only earns its chip on a panel anyway.
+          countLabel={
+            detail.whatThisTestCovers.length > 1
+              ? t.markersCount.replace("{count}", String(detail.whatThisTestCovers.length))
+              : undefined
+          }
         />
       ) : null}
 
       {detail.whyGetTested.length > 0 ? (
-        <WhyChooseSection
+        <ReasonsToTestSection
           eyebrow={t.whyEyebrow}
           title={t.whyTitle}
           items={detail.whyGetTested}
-          theme="soft"
         />
       ) : null}
 
-      {detail.extraSections.map((sec, i) =>
-        sec.body.trim() ? (
+      {/* `kind` picks the layout. Sections written by an admin carry no kind
+          and keep the plain-prose rendering they had. */}
+      {detail.extraSections.map((sec, i) => {
+        if (!sec.body.trim()) return null;
+        const key = `${sec.title}-${i}`;
+        if (sec.kind === "steps") {
+          return (
+            <KitStepsSection
+              key={key}
+              eyebrow={t.howItWorksEyebrow}
+              title={sec.title || t.howItWorksEyebrow}
+              steps={parseTitledNotes(sec.body)}
+            />
+          );
+        }
+        if (sec.kind === "notes") {
+          return (
+            <KitPrepSection
+              key={key}
+              eyebrow={t.beforeTestingEyebrow}
+              title={sec.title || t.goodToKnow}
+              notes={parseTitledNotes(sec.body)}
+            />
+          );
+        }
+        return (
           <ImportantInfoSection
-            key={`${sec.title}-${i}`}
+            key={key}
             title={sec.title || t.goodToKnow}
             paragraphs={sec.body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)}
             theme={i % 2 === 0 ? "soft" : "light"}
           />
-        ) : null,
-      )}
+        );
+      })}
 
       {detail.faqs.length > 0 ? (
         <FAQSection

@@ -470,7 +470,10 @@
     "ctaHeading": "Encomende o seu {title} hoje",
     "goodToKnow": "Bom saber",
     "disclaimer": "Os resultados das análises são revistos por um médico registado para exercer em {country}. Esta página contém informação geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional.",
-    "faqTitle": "Perguntas frequentes"
+    "faqTitle": "Perguntas frequentes",
+    "markersCount": "{count} marcadores",
+    "howItWorksEyebrow": "Como funciona",
+    "beforeTestingEyebrow": "Antes de fazer o teste"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Médicos que tratam prescrições renováveis",
