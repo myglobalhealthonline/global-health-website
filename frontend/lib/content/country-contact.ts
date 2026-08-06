@@ -346,8 +346,8 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
   },
 
   es: {
-    phoneDisplay: "+353 89 471 5849",
-    phoneE164: "+353894715849",
+    phoneDisplay: "+34 692 722 898",
+    phoneE164: "+34692722898",
     email: EMAIL,
     phoneLanguages: ["Spanish", "English"],
     office: null,
