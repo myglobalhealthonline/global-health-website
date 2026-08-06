@@ -107,10 +107,6 @@ function GlobeImpl({
   // loop keeps running (a bare callback is effectively free) so resuming
   // needs no separate wake-up wiring.
   const isIntersectingRef = useRef(true);
-  // ponytail: coarse-pointer (mobile/touch) devices redrew WebGL 60fps
-  // continuously with no way to ever stop — draw once so the canvas isn't
-  // blank, then gate future draws off like the other checks above.
-  const coarsePointerRef = useRef(false);
   const hasDrawnOnceRef = useRef(false);
   // Anchor-positioning fallback: our label element per marker id, plus the
   // cobe-created anchor element we copy left/top off. See the comment on
@@ -184,13 +180,6 @@ function GlobeImpl({
 
   useEffect(() => {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const coarseQuery = window.matchMedia("(pointer: coarse)");
-    coarsePointerRef.current = coarseQuery.matches;
-    const handleCoarseChange = (e: MediaQueryListEvent) => {
-      coarsePointerRef.current = e.matches;
-    };
-    coarseQuery.addEventListener("change", handleCoarseChange);
-    return () => coarseQuery.removeEventListener("change", handleCoarseChange);
   }, []);
 
   useEffect(() => {
@@ -262,16 +251,14 @@ function GlobeImpl({
 
       // Skip the actual WebGL draw (not the rAF loop itself, which stays
       // primed so resuming needs no extra wiring) when: the tab is hidden,
-      // the globe is scrolled offscreen, or the scene is static
-      // (reduced-motion or coarse pointer) and it has already painted once.
-      // The first paint must NEVER be skipped for reduced-motion/coarse —
-      // that left the canvas permanently blank on devices with
-      // "remove animations" enabled. Dragging always draws.
-      const staticScene = reducedMotionRef.current || coarsePointerRef.current;
+      // the globe is scrolled offscreen, or reduced-motion froze rotation
+      // after the scene already painted once. The first paint must NEVER be
+      // skipped — a fully blocked draw left the canvas permanently blank on
+      // devices with "remove animations" enabled. Dragging always draws.
       const shouldDraw =
         !document.hidden &&
         isIntersectingRef.current &&
-        (!hasDrawnOnceRef.current || pointerInteracting.current !== null || !staticScene);
+        (!hasDrawnOnceRef.current || pointerInteracting.current !== null || !reducedMotionRef.current);
       if (shouldDraw) {
         hasDrawnOnceRef.current = true;
         globe.update({
@@ -335,7 +322,7 @@ function GlobeImpl({
 
     // Mobile browsers evict WebGL contexts on backgrounding/memory pressure.
     // Without these handlers the canvas stays blank forever after eviction
-    // (the coarse-pointer gate above only ever drew once). preventDefault on
+    // (nothing redrew after eviction). preventDefault on
     // "lost" is required for "restored" to fire; on restore, tear down and
     // rebuild the scene against the revived context.
     const handleContextLost = (e: Event) => e.preventDefault();
