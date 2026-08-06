@@ -262,13 +262,16 @@ function GlobeImpl({
 
       // Skip the actual WebGL draw (not the rAF loop itself, which stays
       // primed so resuming needs no extra wiring) when: the tab is hidden,
-      // the globe is scrolled offscreen, or reduced-motion is on and
-      // nothing is being dragged — there is nothing new to show.
+      // the globe is scrolled offscreen, or the scene is static
+      // (reduced-motion or coarse pointer) and it has already painted once.
+      // The first paint must NEVER be skipped for reduced-motion/coarse —
+      // that left the canvas permanently blank on devices with
+      // "remove animations" enabled. Dragging always draws.
+      const staticScene = reducedMotionRef.current || coarsePointerRef.current;
       const shouldDraw =
         !document.hidden &&
         isIntersectingRef.current &&
-        (!reducedMotionRef.current || pointerInteracting.current !== null) &&
-        (!coarsePointerRef.current || !hasDrawnOnceRef.current);
+        (!hasDrawnOnceRef.current || pointerInteracting.current !== null || !staticScene);
       if (shouldDraw) {
         hasDrawnOnceRef.current = true;
         globe.update({
@@ -330,6 +333,26 @@ function GlobeImpl({
       }, 120);
     }
 
+    // Mobile browsers evict WebGL contexts on backgrounding/memory pressure.
+    // Without these handlers the canvas stays blank forever after eviction
+    // (the coarse-pointer gate above only ever drew once). preventDefault on
+    // "lost" is required for "restored" to fire; on restore, tear down and
+    // rebuild the scene against the revived context.
+    const handleContextLost = (e: Event) => e.preventDefault();
+    const handleContextRestored = () => {
+      try {
+        globe?.destroy();
+      } catch {
+        // destroy against a lost context can throw — scene is gone either way
+      }
+      globe = null;
+      // init() starts a fresh render loop — kill the old one or two loops race
+      window.cancelAnimationFrame(animationId);
+      init();
+    };
+    canvas.addEventListener("webglcontextlost", handleContextLost);
+    canvas.addEventListener("webglcontextrestored", handleContextRestored);
+
     if (canvas.offsetWidth > 0) {
       init();
     } else {
@@ -357,6 +380,8 @@ function GlobeImpl({
       globe?.destroy();
       globe = null;
       canvas.removeEventListener("pointerdown", handlePointerDown);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+      canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       if (canvas.isConnected) {
         canvas.remove();
       }
