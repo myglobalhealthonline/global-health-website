@@ -485,13 +485,10 @@ export default async function HealthTestDetailPage({
           eyebrow={t.whatCoversEyebrow}
           title={t.insideTitle.replace("{title}", detail.title)}
           items={detail.whatThisTestCovers}
-          // Single-marker kits (vitamin D, PSA) would read "1 markers" — the
-          // count only earns its chip on a panel anyway.
-          countLabel={
-            detail.whatThisTestCovers.length > 1
-              ? t.markersCount.replace("{count}", String(detail.whatThisTestCovers.length))
-              : undefined
-          }
+          // The section counts markers inside panels itself, and drops the
+          // chip on single-marker kits (vitamin D, PSA) so it never reads
+          // "1 markers".
+          countTemplate={t.markersCount}
         />
       ) : null}
 

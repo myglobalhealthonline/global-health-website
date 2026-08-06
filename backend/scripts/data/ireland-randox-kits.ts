@@ -99,15 +99,18 @@ export const IRELAND_RANDOX_KITS: RandoxKit[] = [
     sampleType: QUICKDRAW_SAMPLE,
     resultsTimeline: BLOOD_TIMELINE,
     detailIntro: `The General Health Test is a single home blood test that gives you a wide baseline picture of how your body is working. One sample, collected from your upper arm with the QuickDraw device supplied in the kit, covers up to 24 biomarkers grouped into eight areas of health. Post it back to the Randox laboratory in the freepost envelope included. ${FOLLOW_UP}`,
+    // "Panel: marker, marker" — the frontend splits on the first colon and
+    // renders the markers inside an expandable row. An entry without a colon
+    // renders as a plain line, which is what every single-panel kit uses.
     whatThisTestCovers: [
-      "Heart health — cholesterol and related lipid markers",
-      "Diabetes health — blood sugar control markers",
-      "Liver health",
-      "Kidney health",
-      "Thyroid health",
-      "Iron status",
-      "Nutritional health",
-      "Muscle health",
+      "Heart health: Total Cholesterol, HDL Cholesterol, HDL Percentage, LDL Cholesterol, Non-HDL Cholesterol, Total Cholesterol / HDL Cholesterol Ratio, Triglycerides",
+      "Diabetes health: HbA1c",
+      "Liver health: Alanine Aminotransferase (ALT), Albumin, Alkaline Phosphatase (ALP), Gamma-Glutamyltransferase (GGT)",
+      "Kidney health: Creatinine, eGFR",
+      "Thyroid health: Thyroid Stimulating Hormone (TSH), Free Thyroxine (FT4), Free Tri-iodothyronine (FT3)",
+      "Iron status: Iron, Total Iron Binding Capacity (TIBC), Transferrin Saturation",
+      "Nutritional health: Vitamin B12, Vitamin D",
+      "Muscle health: Creatine Kinase",
     ],
     whyGetTested: [
       "A general baseline check when you have no specific symptoms",
@@ -409,9 +412,9 @@ export const IRELAND_RANDOX_KITS: RandoxKit[] = [
     resultsTimeline: LONG_TIMELINE,
     detailIntro: `Your gut microbiome influences digestion, immunity and mood. This kit sequences the organisms present in a stool sample you collect at home and returns a profile of your microbial composition with insights you can act on. It is a wellbeing profile, not a diagnostic test for gut disease. ${FOLLOW_UP}`,
     whatThisTestCovers: [
-      "Bacterial composition",
-      "Viral composition",
-      "Archaeal composition",
+      "Bacterial composition: Bacteria that break down fibre, Bacteria with probiotic properties, Butyric acid producing bacteria, Hydrogen sulphide producing bacteria, Pathogenic bacteria, Oxalate-degrading bacteria, Microbiome weight gain conditions, The Firmicutes/Bacteroidetes (F/B) ratio",
+      "Viral composition: Bacteriophages",
+      "Archaeal composition: Archaea present in your gut",
       "Personalised dietary insights based on your profile",
     ],
     whyGetTested: [
@@ -453,9 +456,9 @@ export const IRELAND_RANDOX_KITS: RandoxKit[] = [
     resultsTimeline: LONG_TIMELINE,
     detailIntro: `Genetics influence how you process caffeine, lactose, fats and vitamins, and how your body responds to different kinds of training. This kit analyses up to 40 genes from a saliva sample and turns them into practical guidance on diet, exercise and wellbeing. Your DNA does not change, so this is a one-off test. ${FOLLOW_UP}`,
     whatThisTestCovers: [
-      "Diet and nutrition — including caffeine, lactose and vitamin metabolism",
-      "Athletic performance — endurance, power, and recovery traits",
-      "Health and wellbeing traits",
+      "Diet and nutrition: Lactose Intolerance, Gluten Intolerance, Saturated Fats Response, Omega 3 and Omega 6 Benefit, Fasting Response, Bitter Taste Perception, Sweet Taste Perception, Vitamin A Deficiency Risk, Vitamin B12 Deficiency Risk, Vitamin C Deficiency Risk, Vitamin D Deficiency Risk, Folate Deficiency Risk, Calcium Deficiency Risk, Magnesium Deficiency Risk, Selenium Deficiency Risk, Zinc Deficiency Risk",
+      "Athletic performance: Muscle Composition, Muscle Mass, Muscle Recovery, Creatine Conversion, Injury Risk",
+      "Health and wellbeing: Caffeine Metabolism, Sleep, Mental Health, Hypertension Risk, Genetic Obesity Risk, Genetic Type II Diabetes Risk, High Cholesterol and Cardiovascular Disease Risk, Familial Hypercholesterolaemia Risk",
     ],
     whyGetTested: [
       "Tailoring a diet to how your body actually processes food",

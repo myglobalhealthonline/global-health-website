@@ -13,6 +13,7 @@
 import type { ReactNode } from "react";
 import {
   Ban,
+  ChevronDown,
   Clock,
   Droplet,
   FlaskConical,
@@ -73,18 +74,36 @@ function Heading({ dark, children }: { dark?: boolean; children: ReactNode }) {
  * A measured-marker list reads as a specification, not a list of benefits, so
  * it gets hairline rows and a monospace index instead of ticks in cards.
  */
+/** "Panel: marker, marker" splits into an expandable row; anything without a
+ *  colon is a single line. Only a colon followed by a space counts, so a
+ *  marker written as "Ratio: total:HDL" is not mistaken for a panel. */
+function parsePanel(entry: string): { name: string; markers: string[] } {
+  const at = entry.indexOf(": ");
+  if (at < 0) return { name: entry, markers: [] };
+  const markers = entry
+    .slice(at + 2)
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean);
+  return markers.length > 0 ? { name: entry.slice(0, at), markers } : { name: entry, markers: [] };
+}
+
 export function BiomarkerManifestSection({
   eyebrow,
   title,
   items,
-  countLabel,
+  countTemplate,
 }: {
   eyebrow: string;
   title: string;
   items: string[];
-  /** Small chip beside the heading, e.g. "8 markers". */
-  countLabel?: string;
+  /** Chip template beside the heading, e.g. "{count} markers". Counts the
+   *  markers inside panels, not the number of rows. */
+  countTemplate?: string;
 }) {
+  const rows = items.map(parsePanel);
+  const total = rows.reduce((n, r) => n + Math.max(1, r.markers.length), 0);
+  const countLabel = countTemplate && total > 1 ? countTemplate.replace("{count}", String(total)) : undefined;
   return (
     <section
       className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel relative overflow-hidden"
@@ -113,24 +132,74 @@ export function BiomarkerManifestSection({
         </div>
 
         <ul className="mt-10 grid gap-x-12 sm:grid-cols-2">
-          {items.map((item, i) => (
+          {rows.map((row, i) => (
             <li
-              key={item}
-              className="flex items-baseline gap-4 border-t py-4"
+              key={row.name}
+              className="border-t"
               style={{ borderColor: "rgba(29,75,54,0.14)" }}
             >
-              <span
-                className="shrink-0 text-[12px] font-bold [font-variant-numeric:tabular-nums]"
-                style={{ color: "rgba(29,75,54,0.42)" }}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span
-                className="text-[15.5px] leading-relaxed"
-                style={{ color: "var(--color-text-body)" }}
-              >
-                {item}
-              </span>
+              {row.markers.length > 0 ? (
+                /* Native <details> — a disclosure needs no JavaScript, stays
+                   keyboard-operable, and is findable by in-page search when
+                   closed in browsers that support hidden-content matching. */
+                <details>
+                  <summary className="flex cursor-pointer list-none items-baseline gap-4 py-4 [&::-webkit-details-marker]:hidden">
+                    <span
+                      className="shrink-0 text-[12px] font-bold [font-variant-numeric:tabular-nums]"
+                      style={{ color: "rgba(29,75,54,0.42)" }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className="flex-1 text-[15.5px] leading-relaxed"
+                      style={{ color: "var(--color-text-body)" }}
+                    >
+                      {row.name}
+                      <span className="ml-2 text-[13px]" style={{ color: "rgba(29,75,54,0.50)" }}>
+                        ({row.markers.length})
+                      </span>
+                    </span>
+                    <ChevronDown
+                      /* Rotation lives in globals.css — Tailwind's group-open
+                         variant emits no rotation in this setup. */
+                      className="gh-manifest-chevron mt-1 size-4 shrink-0"
+                      style={{ color: "var(--color-brand-primary)" }}
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                  </summary>
+                  <ul className="flex flex-wrap gap-2 pb-5 pl-9">
+                    {row.markers.map((m) => (
+                      <li
+                        key={m}
+                        className="rounded-full px-3 py-1.5 text-[13px]"
+                        style={{
+                          background: "rgba(29,75,54,0.06)",
+                          border: "1px solid rgba(29,75,54,0.14)",
+                          color: "var(--color-text-body)",
+                        }}
+                      >
+                        {m}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ) : (
+                <div className="flex items-baseline gap-4 py-4">
+                  <span
+                    className="shrink-0 text-[12px] font-bold [font-variant-numeric:tabular-nums]"
+                    style={{ color: "rgba(29,75,54,0.42)" }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className="text-[15.5px] leading-relaxed"
+                    style={{ color: "var(--color-text-body)" }}
+                  >
+                    {row.name}
+                  </span>
+                </div>
+              )}
             </li>
           ))}
         </ul>

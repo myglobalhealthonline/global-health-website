@@ -4465,3 +4465,16 @@ body.gh-cookie-bar-open {
   background-color: #ffffff;
   color: #1d4b36;
 }
+
+/* ── Health-test "What's included" manifest ──────────────────────────
+ * Panel rows are native <details>. Tailwind's group-open variant does not
+ * emit a rotation in this setup, so the chevron flip lives here.
+ */
+.gh-manifest-chevron {
+  transition: transform 200ms ease;
+}
+details[open] > summary .gh-manifest-chevron {
+  /* `transform`, not the standalone `rotate` property — the latter does not
+   * apply to SVG elements, same as the other icon flips in this file. */
+  transform: rotate(180deg);
+}
