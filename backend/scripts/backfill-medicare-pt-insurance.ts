@@ -29,6 +29,7 @@ import "dotenv/config";
 import { readFileSync } from "node:fs";
 import { prisma } from "../src/db/prisma.js";
 import { encryptPhi } from "../src/lib/crypto/phi-crypto.js";
+import { VerificationStatus } from "@prisma/client";
 
 const CSV_PATH = process.argv[2] ?? "C:\\Users\\nauma\\Downloads\\pt-insurance.csv";
 
@@ -86,6 +87,7 @@ async function main(): Promise<void> {
       where: { id: profile.id },
       data: {
         insuranceProviderName: "Medicare",
+        insuranceDocumentStatus: VerificationStatus.VERIFIED,
         ...(row.planNumber ? { insurancePolicyNumber: encryptPhi(row.planNumber) } : {}),
         ...(row.utenteNumber ? { utenteNumber: encryptPhi(row.utenteNumber) } : {}),
       },
