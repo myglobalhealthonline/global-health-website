@@ -26,6 +26,19 @@ const TAG_BYTES = 16;
 function key(): Buffer | null {
   const raw = env.PHI_ENCRYPTION_KEY?.trim();
   if (!raw) return null;
+  // A raw `${{...}}` means the Railway secret template was never resolved —
+  // typically a local checkout's .env carrying the template literal instead
+  // of the real value (Railway only resolves it in `railway run` / deploy).
+  // Hashing that literal instead of the real secret produces ciphertext the
+  // real key can never decrypt, and it fails SILENTLY (decrypt just returns
+  // null per-field) — this happened once already (2026-08-06). Fail loud
+  // instead of writing unrecoverable garbage.
+  if (raw.startsWith("${{")) {
+    throw new Error(
+      "PHI_ENCRYPTION_KEY is an unresolved Railway template placeholder, not the " +
+        "real secret. Run this process via `railway run` instead of a plain local .env.",
+    );
+  }
   // Derive a fixed 32-byte key from the configured secret so any
   // sufficiently-long passphrase works as the key material.
   return createHash("sha256").update(raw).digest();
