@@ -21,8 +21,16 @@
  * insurer is already set to something OTHER than Medicare is skipped and
  * reported — never silently overwritten.
  *
+ * MUST run via `railway run` (not a plain local `.env`): a local checkout's
+ * PHI_ENCRYPTION_KEY is often an unresolved Railway template placeholder
+ * (literally "${{secret(...)}}"), not the real secret. Encrypting with that
+ * placeholder produces ciphertext the real deployed key can never decrypt —
+ * it happened once already (2026-08-06), silently, because decrypt failures
+ * degrade to null instead of throwing. The guard below refuses to run
+ * against the placeholder so this can't happen again unnoticed.
+ *
  * Run once:
- *   npx tsx scripts/backfill-medicare-pt-insurance.ts [csvPath]
+ *   railway run npx tsx scripts/backfill-medicare-pt-insurance.ts [csvPath]
  *   (defaults to C:\Users\nauma\Downloads\pt-insurance.csv)
  */
 import "dotenv/config";
@@ -30,6 +38,16 @@ import { readFileSync } from "node:fs";
 import { prisma } from "../src/db/prisma.js";
 import { encryptPhi } from "../src/lib/crypto/phi-crypto.js";
 import { VerificationStatus } from "@prisma/client";
+
+if ((process.env.PHI_ENCRYPTION_KEY ?? "").startsWith("${{")) {
+  console.error(
+    "[backfill-medicare-pt-insurance] PHI_ENCRYPTION_KEY is an unresolved Railway " +
+      "template placeholder, not the real secret. Run this via `railway run` instead " +
+      "of a plain local .env, or every PHI field written here will be unreadable in " +
+      "production. Aborting.",
+  );
+  process.exit(1);
+}
 
 const CSV_PATH = process.argv[2] ?? "C:\\Users\\nauma\\Downloads\\pt-insurance.csv";
 
