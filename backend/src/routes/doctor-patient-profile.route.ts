@@ -31,6 +31,7 @@ function stripIdentityFields<T extends Record<string, unknown> | null>(profile: 
     taxIdNumber: _taxIdNumber,
     passportNumber: _passportNumber,
     utenteNumber: _utenteNumber,
+    insurancePolicyNumber: _insurancePolicyNumber,
     ...rest
   } = profile as Record<string, unknown>;
   return rest as T;

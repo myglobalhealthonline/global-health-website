@@ -92,6 +92,7 @@ export function PatientProfileEditor({
       nationalIdNumber: text("nationalIdNumber"),
       taxIdNumber: text("taxIdNumber"),
       passportNumber: text("passportNumber"),
+      utenteNumber: text("utenteNumber"),
       addressLine1: text("addressLine1"),
       addressLine2: text("addressLine2"),
       addressCity: text("addressCity"),
@@ -101,6 +102,8 @@ export function PatientProfileEditor({
       preferredPharmacy: text("preferredPharmacy"),
       statusAlert: text("statusAlert"),
       clinicAlert: text("clinicAlert"),
+      insuranceProviderName: text("insuranceProviderName"),
+      insurancePolicyNumber: text("insurancePolicyNumber"),
     };
 
     if (listErrors.length > 0) {
@@ -193,7 +196,37 @@ export function PatientProfileEditor({
               defaultValue={profile?.passportNumber ?? ""}
               maxLength={64}
             />
+            <Field
+              label="Número de Utente"
+              name="utenteNumber"
+              defaultValue={profile?.utenteNumber ?? ""}
+              maxLength={64}
+              hint="Portuguese SNS healthcare number."
+            />
           </div>
+        </section>
+
+        <section className="gh-admin-patient-profile-section">
+          <h4 style={sectionTitleStyle}>Insurance</h4>
+          <div className="gh-admin-support-field-grid grid gap-3 sm:grid-cols-2">
+            <Field
+              label="Insurance provider"
+              name="insuranceProviderName"
+              defaultValue={profile?.insuranceProviderName ?? ""}
+              maxLength={200}
+            />
+            <Field
+              label="Policy / card number"
+              name="insurancePolicyNumber"
+              defaultValue={profile?.insurancePolicyNumber ?? ""}
+              maxLength={200}
+            />
+          </div>
+          {profile?.insuranceDocumentStatus ? (
+            <p className="mt-2 text-portal-meta text-[var(--color-text-muted)]">
+              Card verification status: {profile.insuranceDocumentStatus}
+            </p>
+          ) : null}
         </section>
 
         <section className="gh-admin-patient-profile-section">

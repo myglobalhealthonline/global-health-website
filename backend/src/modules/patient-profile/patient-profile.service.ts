@@ -242,6 +242,8 @@ export type ProfileWriteFields = {
   addressCountryCode?: string | null;
   preferredPharmacy?: string | null;
   pricingPlanId?: string | null;
+  insuranceProviderName?: string | null;
+  insurancePolicyNumber?: string | null;
 };
 
 export type ProfileWriteFieldsWithAlerts = ProfileWriteFields & {

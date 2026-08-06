@@ -26,6 +26,7 @@ export type AdminPatientProfileDto = {
   nationalIdNumber: string | null;
   taxIdNumber: string | null;
   passportNumber: string | null;
+  utenteNumber: string | null;
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
@@ -43,6 +44,7 @@ export type AdminPatientProfileDto = {
   idDocumentKey: string | null;
   idDocumentType: string | null;
   insuranceProviderName: string | null;
+  insurancePolicyNumber: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -145,6 +147,7 @@ export async function patchAdminPatientProfile(
       | "nationalIdNumber"
       | "taxIdNumber"
       | "passportNumber"
+      | "utenteNumber"
       | "addressLine1"
       | "addressLine2"
       | "addressCity"
@@ -155,6 +158,8 @@ export async function patchAdminPatientProfile(
       | "statusAlert"
       | "clinicAlert"
       | "pricingPlanId"
+      | "insuranceProviderName"
+      | "insurancePolicyNumber"
     >
   >,
 ) {

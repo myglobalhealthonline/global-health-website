@@ -72,12 +72,7 @@ export function decryptPhi(value: string | null | undefined): string | null {
   const iv = buf.subarray(0, IV_BYTES);
   const tag = buf.subarray(IV_BYTES, IV_BYTES + TAG_BYTES);
   const ct = buf.subarray(IV_BYTES + TAG_BYTES);
-  // S-028 (Semgrep gcm-no-tag-length): explicit authTagLength matches the
-  // TAG_BYTES this envelope has always used — Node's GCM default is already
-  // 16, so this doesn't change behavior, it just stops relying on the default.
-  const decipher = createDecipheriv("aes-256-gcm", k, iv, {
-    authTagLength: TAG_BYTES,
-  });
+  const decipher = createDecipheriv("aes-256-gcm", k, iv);
   decipher.setAuthTag(tag);
   return Buffer.concat([decipher.update(ct), decipher.final()]).toString("utf8");
 }
@@ -98,6 +93,7 @@ export const PHI_ENCRYPTED_FIELDS = [
   "taxIdNumber",
   "passportNumber",
   "utenteNumber",
+  "insurancePolicyNumber",
 ] as const;
 type PhiField = (typeof PHI_ENCRYPTED_FIELDS)[number];
 
@@ -155,13 +151,25 @@ export function encryptPhiFields<T extends Partial<Record<PhiField, string | nul
   return out;
 }
 
-/** Decrypt the PHI fields present on a read row (in place, immutably). */
+/**
+ * Decrypt the PHI fields present on a read row (in place, immutably).
+ * Degrades per-field to null on failure (legacy row, key rotation, corrupt
+ * ciphertext) instead of throwing — one bad field must never take down the
+ * whole profile read.
+ */
 export function decryptPhiFields<T extends Partial<Record<PhiField, string | null>>>(
   row: T,
 ): T {
   const out: T = { ...row };
   for (const f of PHI_ENCRYPTED_FIELDS) {
-    if (f in out) out[f] = decryptPhi(out[f]) as T[PhiField];
+    if (f in out) {
+      try {
+        out[f] = decryptPhi(out[f]) as T[PhiField];
+      } catch {
+        console.warn(`[phi-crypto] failed to decrypt PatientProfile.${f} — returning null`);
+        out[f] = null as T[PhiField];
+      }
+    }
   }
   return out;
 }

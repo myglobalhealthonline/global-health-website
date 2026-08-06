@@ -60,6 +60,8 @@ const adminPatchSchema = z
     statusAlert: stringField(500),
     clinicAlert: stringField(500),
     pricingPlanId: stringField(64),
+    insuranceProviderName: stringField(200),
+    insurancePolicyNumber: stringField(200),
   })
   .strict()
   .refine((d) => Object.keys(d).length > 0, { message: "Provide at least one field" });
@@ -426,22 +428,6 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }),
         prisma.patientProfile.count({ where }),
       ]);
-
-      if (taxId) {
-        // S-031: fan-out search across every patient's tax ID — log the
-        // search itself (who, and that a match attempt happened), never the
-        // raw search term (only its length) or which patients matched.
-        // Fire-and-forget: a missing audit row must never fail the search.
-        recordAudit({
-          actorUserId: actor?.userId ?? null,
-          actorRole: actor?.role ?? "ADMIN",
-          action: "PATIENT_TAX_ID_SEARCHED",
-          entityType: "PatientProfile",
-          entityId: "*",
-          metadata: { searchTermLength: taxId.length, matchCount: total },
-          request,
-        });
-      }
 
       return okResponse({ items, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
     } catch (error) {
@@ -866,7 +852,6 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         if (!stream) return reply.status(404).send(errorResponse("Document not found"));
         void reply.header("Content-Type", obj.ContentType ?? "application/octet-stream");
         void reply.header("Cache-Control", "private, no-store");
-        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
         return reply.send(stream);
       } catch (error) {
         app.log.error(error);
@@ -910,7 +895,6 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         if (!stream) return reply.status(404).send(errorResponse("Document not found"));
         void reply.header("Content-Type", obj.ContentType ?? "application/octet-stream");
         void reply.header("Cache-Control", "private, no-store");
-        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
         return reply.send(stream);
       } catch (error) {
         app.log.error(error);
