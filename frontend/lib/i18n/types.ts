@@ -80,6 +80,10 @@ export type CommonLocale = {
     newsletterDesc: string;
     subscribe: string;
     newsletterSuccess: string;
+    /** Reassurance line under the newsletter form. */
+    newsletterPrivacy: string;
+    /** Heading above the social ribbon. */
+    followUs: string;
     disclaimer: string;
     copyrightSuffix: string;
     privacyLink: string;
@@ -823,6 +827,8 @@ export type CommonLocale = {
     chooseLanguage: string;
     searchLanguages: string;
     sectionNavigation: string;
+    /** aria-label on the footer's link-group <nav>. */
+    footerNavigation: string;
     sections: string;
     bookAnAppointment: string;
     patientReviews: string;

@@ -67,6 +67,8 @@ export type SiteNavigationData = {
   footerNewsletterDesc: string;
   footerSubscribe: string;
   footerNewsletterSuccess: string;
+  footerNewsletterPrivacy: string;
+  footerFollowUs: string;
   footerDisclaimer: string;
   footerCopyrightSuffix: string;
   footerPrivacyLink: string;
@@ -198,6 +200,8 @@ export function buildSiteNavigationData(
     footerNewsletterDesc: copy.footer.newsletterDesc,
     footerSubscribe: copy.footer.subscribe,
     footerNewsletterSuccess: copy.footer.newsletterSuccess,
+    footerNewsletterPrivacy: copy.footer.newsletterPrivacy,
+    footerFollowUs: copy.footer.followUs,
     footerDisclaimer: copy.footer.disclaimer,
     footerCopyrightSuffix: copy.footer.copyrightSuffix,
     footerPrivacyLink: copy.footer.privacyLink,
