@@ -31,7 +31,6 @@ import {
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FAQSection } from "@/components/sections/FAQSection";
-import { AlsoAvailableIn } from "@/components/sections/AlsoAvailableIn";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { KitRedemptionCallout } from "@/components/subscription/KitRedemptionCallout";
@@ -514,12 +513,10 @@ export default async function HealthTestDetailPage({
         />
       ) : null}
 
-      <AlsoAvailableIn
-        country={config}
-        lang={lang}
-        suffix={`/lab-tests/${testSlug}`}
-        title={c.alsoAvailableIn.title}
-      />
+      {/* No AlsoAvailableIn here by design (owner call, 2026-08-06): the kit
+          copy is English-only, so the locale links led to pages showing the
+          same English text under a Portuguese/Spanish/Czech heading. The
+          hreflang alternates in generateMetadata still cover it for search. */}
 
       {/* Closing CTA band — mirror of the service detail booking band. */}
       <section
