@@ -1126,9 +1126,10 @@
   },
   "patientUploadLinkCard": {
     "title": "Enviar link de carregamento ao paciente",
-    "description": "Gera um link seguro que o paciente pode usar para carregar ficheiros diretamente para esta consulta. Enviar um novo link invalida o anterior.",
-    "sendWhatsapp": "Enviar por WhatsApp",
-    "sendEmail": "Enviar por email",
+    "description": "Gera um link seguro que o paciente pode usar para carregar ficheiros diretamente para esta consulta. Enviar de novo substitui-o — qualquer link já enviado deixa de funcionar, por isso escolha todos os canais antes de enviar.",
+    "sendWhatsapp": "WhatsApp",
+    "sendEmail": "Email",
+    "send": "Enviar",
     "sending": "A enviar…",
     "copyLink": "Copiar link",
     "copied": "Link copiado",
@@ -1138,6 +1139,7 @@
     "failedEmail": "Falha no envio por email.",
     "noPhone": "Esta consulta não tem número de telefone — não foi possível usar o WhatsApp.",
     "failed": "Não foi possível enviar o link de carregamento.",
+    "pickChannel": "Escolha pelo menos um canal.",
     "expiresAt": "O link expira em {date}"
   },
   "documentsList": {

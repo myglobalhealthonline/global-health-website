@@ -1126,9 +1126,10 @@
   },
   "patientUploadLinkCard": {
     "title": "Upload-Link an Patient senden",
-    "description": "Erzeugt einen sicheren Link, über den der Patient Dateien direkt zu diesem Termin hochladen kann. Ein neuer Link macht den vorherigen ungültig.",
-    "sendWhatsapp": "Per WhatsApp senden",
-    "sendEmail": "Per E-Mail senden",
+    "description": "Erzeugt einen sicheren Link, über den der Patient Dateien direkt zu diesem Termin hochladen kann. Erneutes Senden ersetzt ihn — ein bereits verschickter Link funktioniert dann nicht mehr, also vor dem Senden alle gewünschten Kanäle auswählen.",
+    "sendWhatsapp": "WhatsApp",
+    "sendEmail": "E-Mail",
+    "send": "Senden",
     "sending": "Wird gesendet…",
     "copyLink": "Link kopieren",
     "copied": "Link kopiert",
@@ -1138,6 +1139,7 @@
     "failedEmail": "E-Mail-Versand fehlgeschlagen.",
     "noPhone": "Für diesen Termin ist keine Telefonnummer hinterlegt — WhatsApp konnte nicht genutzt werden.",
     "failed": "Der Upload-Link konnte nicht gesendet werden.",
+    "pickChannel": "Mindestens einen Kanal auswählen.",
     "expiresAt": "Link läuft am {date} ab"
   },
   "documentsList": {

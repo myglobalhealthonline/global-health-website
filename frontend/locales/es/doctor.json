@@ -1126,9 +1126,10 @@
   },
   "patientUploadLinkCard": {
     "title": "Enviar enlace de subida al paciente",
-    "description": "Genera un enlace seguro que el paciente puede usar para subir archivos directamente a esta cita. Enviar un enlace nuevo invalida el anterior.",
-    "sendWhatsapp": "Enviar por WhatsApp",
-    "sendEmail": "Enviar por correo",
+    "description": "Genera un enlace seguro que el paciente puede usar para subir archivos directamente a esta cita. Enviar de nuevo lo sustituye — cualquier enlace ya enviado deja de funcionar, así que elige todos los canales antes de enviar.",
+    "sendWhatsapp": "WhatsApp",
+    "sendEmail": "Correo",
+    "send": "Enviar",
     "sending": "Enviando…",
     "copyLink": "Copiar enlace",
     "copied": "Enlace copiado",
@@ -1138,6 +1139,7 @@
     "failedEmail": "Falló el envío por correo.",
     "noPhone": "Esta cita no tiene número de teléfono — no se pudo usar WhatsApp.",
     "failed": "No se pudo enviar el enlace de subida.",
+    "pickChannel": "Elige al menos un canal.",
     "expiresAt": "El enlace caduca el {date}"
   },
   "documentsList": {
