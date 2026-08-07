@@ -174,6 +174,7 @@ export default async function AdminMembershipLevelPage({ params, searchParams }:
 
   return (
     <>
+      <SetCrumbTitle segment={planId} label={displayNameFrom(plan.name, plan.translations)} />
       <SetCrumbTitle label={levelTitle} />
       <Link
         href={`/admin/memberships/${planId}`}

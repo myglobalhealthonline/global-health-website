@@ -17,6 +17,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -35,8 +36,15 @@ import { PortalUserMenu } from "@/components/PortalUserMenu";
 import { IdleLogout } from "@/components/IdleLogout";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
-import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
-import { CrumbTitleContext } from "@/components/crumb-title";
+import {
+  applyCrumbTitles,
+  isEmailSegment,
+  isIdSegment,
+  PII_SAFE_CRUMB_LABEL,
+  shortIdLabel,
+  type Crumb,
+} from "@/lib/breadcrumb-utils";
+import { CrumbTitleContext, type CrumbTitleSetter } from "@/components/crumb-title";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { PortalTour, type TourLabels, type TourStep } from "@/components/portal-tour";
 
@@ -139,7 +147,7 @@ function useBreadcrumbs(pathname: string, rootHref: string, rootLabel: string) {
       return [{ label: rootLabel, href: rootHref }];
     }
     const segments = pathname.split("/").filter(Boolean);
-    const crumbs: { label: string; href: string | null; isRecord?: boolean }[] = [];
+    const crumbs: Crumb[] = [];
     let acc = "";
     for (let i = 0; i < segments.length; i++) {
       acc += `/${segments[i]}`;
@@ -155,7 +163,7 @@ function useBreadcrumbs(pathname: string, rootHref: string, rootLabel: string) {
         : isIdSegment(segments[i])
           ? shortIdLabel(segments[i])
           : humanizeSegment(segments[i]);
-      crumbs.push({ label, href: isRecord ? null : acc, isRecord });
+      crumbs.push({ label, href: isRecord ? null : acc, isRecord, segment: segments[i] });
     }
     return crumbs;
   }, [pathname, rootHref, rootLabel]);
@@ -233,19 +241,28 @@ export function PortalShell({
   // events afterwards, rather than re-mirroring the prop on every render.
   const [unreadCount, setUnreadCount] = useState(() => notificationsUnreadCount);
   const pathname = usePathname();
-  // Detail pages name their own record crumb via <SetCrumbTitle> (same
+  // Detail pages name their own record crumbs via <SetCrumbTitle> (same
   // mechanism as AdminShell), so a record route reads "… / Bookings / Fri 12
-  // Sep, Dr Silva" instead of "… / cmrtif3u…". Null on routes that set none.
-  const [crumbTitle, setCrumbTitle] = useState<string | null>(null);
+  // Sep, Dr Silva" instead of "… / cmrtif3u…". Keyed by path segment (or the
+  // empty trailing key); empty on routes that set none.
+  const [crumbTitles, setCrumbTitles] = useState<Record<string, string>>({});
+  const setCrumbTitle = useCallback<CrumbTitleSetter>((key, label) => {
+    setCrumbTitles((prev) => {
+      if (label === null) {
+        if (!(key in prev)) return prev;
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      if (prev[key] === label) return prev;
+      return { ...prev, [key]: label };
+    });
+  }, []);
   const derivedBreadcrumbs = useBreadcrumbs(pathname, rootHref, rootBreadcrumb);
-  const breadcrumbs = useMemo(() => {
-    if (!crumbTitle || derivedBreadcrumbs.length === 0) return derivedBreadcrumbs;
-    // The id crumb wins over the trailing one: on /bookings/<id>/reschedule the
-    // record name belongs on the id, not on "Reschedule".
-    const idIndex = derivedBreadcrumbs.findIndex((c) => c.isRecord);
-    const target = idIndex === -1 ? derivedBreadcrumbs.length - 1 : idIndex;
-    return derivedBreadcrumbs.map((c, i) => (i === target ? { ...c, label: crumbTitle } : c));
-  }, [derivedBreadcrumbs, crumbTitle]);
+  const breadcrumbs = useMemo(
+    () => applyCrumbTitles(derivedBreadcrumbs, crumbTitles),
+    [derivedBreadcrumbs, crumbTitles],
+  );
   const navRef = useRef<HTMLElement | null>(null);
   const topbarRef = useRef<HTMLElement | null>(null);
   usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);

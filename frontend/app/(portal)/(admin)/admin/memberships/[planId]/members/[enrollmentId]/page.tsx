@@ -18,6 +18,7 @@ import {
   parseMembershipDependentForm,
   parseMembershipEnrollmentForm,
 } from "@/lib/admin/membership-form-parse";
+import { displayNameFrom } from "@/lib/admin/display-name";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../../_components/confirm-delete-button";
 import { MembershipEnrollmentFields } from "../../../_components/membership-enrollment-form";
@@ -64,6 +65,9 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
   const backTo = `/admin/memberships/${planId}/members/${enrollmentId}`;
   const listUrl = `/admin/memberships/${planId}/members`;
   const memberName = `${enrollment.firstName} ${enrollment.lastName}`;
+  const planTitle = planResult.ok
+    ? displayNameFrom(planResult.data.plan.name, planResult.data.plan.translations)
+    : null;
   const canHaveDependents =
     enrollment.memberType === "PRIMARY" &&
     enrollment.level.familyEnabled &&
@@ -121,6 +125,7 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
 
   return (
     <>
+      {planTitle ? <SetCrumbTitle segment={planId} label={planTitle} /> : null}
       <SetCrumbTitle label={memberName} />
       <Link
         href={listUrl}

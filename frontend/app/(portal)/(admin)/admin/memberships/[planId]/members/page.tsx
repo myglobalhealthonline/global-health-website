@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { ArrowLeft, Upload } from "lucide-react";
+import { SetCrumbTitle } from "@/components/crumb-title";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
   createMembershipEnrollment,
@@ -130,6 +131,7 @@ export default async function AdminMembershipMembersPage({ params, searchParams 
 
   return (
     <>
+      <SetCrumbTitle segment={planId} label={planTitle} />
       <Link
         href={`/admin/memberships/${planId}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

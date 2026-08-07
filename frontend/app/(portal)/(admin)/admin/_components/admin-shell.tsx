@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IdleLogout } from "@/components/IdleLogout";
-import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
-import { CrumbTitleContext } from "@/components/crumb-title";
+import {
+  applyCrumbTitles,
+  isEmailSegment,
+  isIdSegment,
+  PII_SAFE_CRUMB_LABEL,
+  shortIdLabel,
+  type Crumb,
+} from "@/lib/breadcrumb-utils";
+import { CrumbTitleContext, type CrumbTitleSetter } from "@/components/crumb-title";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import {
   BarChart3,
@@ -299,7 +306,7 @@ function useBreadcrumbs(
     // of its own (e.g. the topbar-selected country isn't a real URL segment)
     // — rendered as plain text instead of a Link, so it doesn't duplicate
     // the "Admin" crumb's target.
-    const crumbs: { label: string; href: string | null; isRecord?: boolean }[] = [];
+    const crumbs: Crumb[] = [];
     let acc = "";
     // Country-scoped routes (e.g. /admin/page-content) implicitly operate on the
     // topbar-selected country rather than a country segment in the URL —
@@ -324,7 +331,7 @@ function useBreadcrumbs(
         : isIdSegment(segments[i])
           ? shortIdLabel(segments[i])
           : humanizeSegment(segments[i], countries);
-      crumbs.push({ label, href: isRecord ? null : acc, isRecord });
+      crumbs.push({ label, href: isRecord ? null : acc, isRecord, segment: segments[i] });
     }
     return crumbs;
   }, [pathname, countries, activeCountry]);
@@ -355,20 +362,28 @@ export function AdminShell({
 }) {
   const [navOpen, setNavOpen] = useState(false);
   const pathname = usePathname();
-  // Detail pages (rendered inside <main>) can name their own trailing crumb
-  // via <SetCrumbTitle>, so a record route reads "… / Appointments / Thomas
-  // Lubbe" instead of "… / cmrtif3u…". Null on every route that doesn't set one.
-  const [crumbTitle, setCrumbTitle] = useState<string | null>(null);
+  // Detail pages (rendered inside <main>) can name their own crumbs via
+  // <SetCrumbTitle>, so a record route reads "… / Appointments / Thomas
+  // Lubbe" instead of "… / cmrtif3u…". Keyed by path segment (or the empty
+  // trailing key); empty on every route that sets none.
+  const [crumbTitles, setCrumbTitles] = useState<Record<string, string>>({});
+  const setCrumbTitle = useCallback<CrumbTitleSetter>((key, label) => {
+    setCrumbTitles((prev) => {
+      if (label === null) {
+        if (!(key in prev)) return prev;
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      if (prev[key] === label) return prev;
+      return { ...prev, [key]: label };
+    });
+  }, []);
   const derivedBreadcrumbs = useBreadcrumbs(pathname, countries, activeCountry);
-  const breadcrumbs = useMemo(() => {
-    if (!crumbTitle || derivedBreadcrumbs.length === 0) return derivedBreadcrumbs;
-    // Prefer the id crumb over the trailing one: on /plans/<id>/edit the record
-    // name belongs on the id, not on "Edit". Record routes whose id IS the leaf
-    // (/appointments/<id>) resolve to the same crumb either way.
-    const idIndex = derivedBreadcrumbs.findIndex((c) => c.isRecord);
-    const target = idIndex === -1 ? derivedBreadcrumbs.length - 1 : idIndex;
-    return derivedBreadcrumbs.map((c, i) => (i === target ? { ...c, label: crumbTitle } : c));
-  }, [derivedBreadcrumbs, crumbTitle]);
+  const breadcrumbs = useMemo(
+    () => applyCrumbTitles(derivedBreadcrumbs, crumbTitles),
+    [derivedBreadcrumbs, crumbTitles],
+  );
   const navRef = useRef<HTMLElement | null>(null);
   const topbarRef = useRef<HTMLElement | null>(null);
   usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
