@@ -34,6 +34,9 @@ const EXPECTED_CONSTRAINTS = [
   "MembershipBenefit_fallback_allowance_only",
   "MembershipEnrollment_dependent_has_primary",
   "MembershipEnrollment_term_dates_ordered",
+  // Phase 6 (§11.7) — the goodwill override's two invariants.
+  "OrderItem_membership_override_needs_benefit",
+  "OrderItem_membership_override_spends_no_allowance",
 ];
 
 const EXPECTED_INDEXES = [
@@ -83,30 +86,70 @@ async function expectReject(
   }
 }
 
-async function main(): Promise<void> {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) throw new Error("DATABASE_URL is not set");
-  const pool = new Pool({ connectionString, max: 1 });
-  const client = await pool.connect();
+/**
+ * The two §11.7 override CHECKs live on `OrderItem`, not on a membership table,
+ * so they are exercised here rather than in the fixture block below — that block
+ * bails out the moment ANY membership table holds a row, which is true of every
+ * database worth checking. Asserting only their existence, or asserting their
+ * behaviour behind that bail-out, would leave them unproven exactly where it
+ * matters and let a passing run be cited as evidence they hold.
+ *
+ * Nothing is inserted: an existing row is UPDATEd inside a savepoint, and the
+ * whole block rolls back.
+ */
+async function checkOverrideConstraints(client: Client): Promise<void> {
+  await client.query("BEGIN");
+  try {
+    const row = await client.query<{ id: string }>(`SELECT id FROM "OrderItem" LIMIT 1`);
+    const orderItemId = row.rows[0]?.id;
+    if (!orderItemId) throw new Error("no OrderItem row to exercise the override CHECKs against");
 
-  const constraints = await client.query<{ conname: string }>(
-    `SELECT conname FROM pg_constraint WHERE conname = ANY($1)`,
-    [EXPECTED_CONSTRAINTS],
-  );
-  const foundConstraints = new Set(constraints.rows.map((row) => row.conname));
-  for (const name of EXPECTED_CONSTRAINTS) {
-    check(`constraint ${name}`, foundConstraints.has(name));
+    await expectReject(
+      client,
+      "override reason with no benefit row behind it",
+      `UPDATE "OrderItem"
+          SET "membershipOverrideReason" = 'ddl-check',
+              "membershipBenefitId" = NULL
+        WHERE id = $1`,
+      [orderItemId],
+    );
+
+    await expectReject(
+      client,
+      "override reason together with a spent allowance unit",
+      `UPDATE "OrderItem"
+          SET "membershipOverrideReason" = 'ddl-check',
+              "membershipBenefitId" = 'ddlchk_benefit',
+              "membershipAllowanceUsed" = true
+        WHERE id = $1`,
+      [orderItemId],
+    );
+
+    // …and not so tight that a legitimate override bounces.
+    await client.query(
+      `UPDATE "OrderItem"
+          SET "membershipOverrideReason" = 'ddl-check',
+              "membershipBenefitId" = 'ddlchk_benefit',
+              "membershipAllowanceUsed" = false
+        WHERE id = $1`,
+      [orderItemId],
+    );
+    check("valid override (reason + benefit, no allowance unit) accepted", true);
+  } catch (error) {
+    check("override CHECK behaviour", false, error instanceof Error ? error.message : String(error));
+  } finally {
+    await client.query("ROLLBACK");
   }
+}
 
-  const indexes = await client.query<{ indexname: string }>(
-    `SELECT indexname FROM pg_indexes WHERE schemaname = 'public' AND indexname = ANY($1)`,
-    [EXPECTED_INDEXES],
-  );
-  const foundIndexes = new Set(indexes.rows.map((row) => row.indexname));
-  for (const name of EXPECTED_INDEXES) {
-    check(`index ${name}`, foundIndexes.has(name));
-  }
-
+/**
+ * The membership-table fixtures. Its own function because the "database already
+ * holds memberships" bail-out below is a `return`: while this lived inline in
+ * `main`, that return skipped `client.release()` / `pool.end()`, so on any
+ * populated database the script hung with an open pool and never printed its
+ * own PASS/FAIL summary — the run looked like a timeout rather than a result.
+ */
+async function checkMembershipFixtures(client: Client): Promise<void> {
   await client.query("BEGIN");
   try {
     // Refuse to write fixtures into a database that already holds real
@@ -316,6 +359,34 @@ async function main(): Promise<void> {
   } finally {
     await client.query("ROLLBACK");
   }
+}
+
+async function main(): Promise<void> {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error("DATABASE_URL is not set");
+  const pool = new Pool({ connectionString, max: 1 });
+  const client = await pool.connect();
+
+  const constraints = await client.query<{ conname: string }>(
+    `SELECT conname FROM pg_constraint WHERE conname = ANY($1)`,
+    [EXPECTED_CONSTRAINTS],
+  );
+  const foundConstraints = new Set(constraints.rows.map((row) => row.conname));
+  for (const name of EXPECTED_CONSTRAINTS) {
+    check(`constraint ${name}`, foundConstraints.has(name));
+  }
+
+  const indexes = await client.query<{ indexname: string }>(
+    `SELECT indexname FROM pg_indexes WHERE schemaname = 'public' AND indexname = ANY($1)`,
+    [EXPECTED_INDEXES],
+  );
+  const foundIndexes = new Set(indexes.rows.map((row) => row.indexname));
+  for (const name of EXPECTED_INDEXES) {
+    check(`index ${name}`, foundIndexes.has(name));
+  }
+
+  await checkOverrideConstraints(client);
+  await checkMembershipFixtures(client);
 
   client.release();
   await pool.end();
