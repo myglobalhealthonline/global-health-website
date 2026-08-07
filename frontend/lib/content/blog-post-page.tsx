@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck, ArrowUpRight, RefreshCw } from "lucide-react";
@@ -52,7 +52,9 @@ async function blogPhysicianInput(doctor: BlogDoctor | null, locale: LocaleCode)
 
 type ResolvedBlogRoute =
   | { kind: "not-found" }
-  | { kind: "redirect"; redirectTo: string }
+  /** `permanent` → 308 rather than 307. Set for the bare `/blog/{slug}` →
+   *  country-canonical hop: that URL is never coming back as a content home. */
+  | { kind: "redirect"; redirectTo: string; permanent?: boolean }
   | { kind: "render"; post: BlogPostFull; canonicalUrl: string; backHref: string };
 
 /**
@@ -103,7 +105,16 @@ async function resolveBlogPostRoute(params: BlogPostRouteParams): Promise<Resolv
       post.countries.find((c) => c.slug === cookieSlug) ??
       [...post.countries].sort((a, b) => a.code.localeCompare(b.code))[0];
     const targetLang = post.locale.toLowerCase();
-    return { kind: "redirect", redirectTo: `/${target.slug}/${targetLang}/blog/${slug}` };
+    // `post.slug` — NOT the requested one. The backend resolved this post by a
+    // slug that may belong to one of its translations, and returned that
+    // locale's row; targeting `post.slug` under `post.locale` lands on the
+    // country route's own canonical in ONE hop, instead of arriving at a URL
+    // that route would immediately redirect again.
+    return {
+      kind: "redirect",
+      redirectTo: `/${target.slug}/${targetLang}/blog/${post.slug}`,
+      permanent: true,
+    };
   }
   return { kind: "render", post, canonicalUrl: `/blog/${slug}`, backHref: "/blog" };
 }
@@ -113,6 +124,18 @@ export async function buildBlogPostMetadata(
 ): Promise<Metadata> {
   const routeParams = await params;
   const resolved = await resolveBlogPostRoute(routeParams);
+  // Redirect from generateMetadata, not only from the page body. `redirect()`
+  // thrown inside the page is raised BEHIND the route's Suspense boundary
+  // (`loading.tsx`), by which point the 200 and the <head> have already been
+  // flushed — the response Google saw was a 200 shell titled "Global Health",
+  // with no article body and a canonical pointing at the homepage, because this
+  // function used to answer `{}` (root metadata) for exactly this case.
+  // generateMetadata runs before anything is flushed, so the redirect is a real
+  // HTTP one.
+  if (resolved.kind === "redirect") {
+    if (resolved.permanent) permanentRedirect(resolved.redirectTo);
+    redirect(resolved.redirectTo);
+  }
   if (resolved.kind !== "render") return {};
   const { post, canonicalUrl } = resolved;
   const countryCode = post.countries.find(
@@ -187,7 +210,10 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   const routeParams = await params;
   const resolved = await resolveBlogPostRoute(routeParams);
   if (resolved.kind === "not-found") notFound();
-  if (resolved.kind === "redirect") redirect(resolved.redirectTo);
+  if (resolved.kind === "redirect") {
+    if (resolved.permanent) permanentRedirect(resolved.redirectTo);
+    redirect(resolved.redirectTo);
+  }
   const { post, canonicalUrl, backHref } = resolved;
   const routeCode = routeParams.countrySlug ? countryCodeFromSlug(routeParams.countrySlug) : undefined;
   const displayTitle = sentenceCaseIfShouting(post.title);

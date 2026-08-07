@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { getPublicDoctorBySlug, getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { getPublicDoctorsForMarket } from "@/lib/content/get-public-doctors";
 import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
 import { getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
@@ -13,7 +13,10 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getCountryLegal, LEGAL_TYPE_SLUGS } from "@/lib/content/get-country-legal";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { newestTimestamp } from "@/lib/seo/newest-timestamp";
-import { isRetiredHealthSlug } from "@/lib/seo/health-service-canonical";
+import {
+  isRetiredHealthSlug,
+  resolveHealthCanonicalServiceSlug,
+} from "@/lib/seo/health-service-canonical";
 import { TOOL_SLUGS } from "@/lib/tools/registry";
 import { toolHreflangAlternates, toolMarkets } from "@/lib/tools/markets";
 
@@ -179,6 +182,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // next.config.ts, so submitting it would put a redirecting URL in the
         // sitemap — the one defect this sitemap currently doesn't have.
         if (isRetiredHealthSlug(country.slug || countrySlug(country.code), page.slug)) continue;
+        // A `/health/` page that canonicalizes onto a `/services/` twin is an
+        // alias, not an independent URL: submitting it asks Google to index a
+        // page whose own <link rel=canonical> points elsewhere. The service
+        // page is already in the sitemap and owns the hreflang cluster (see
+        // app/[country]/[lang]/health/[slug]/page.tsx). The canonical decision
+        // itself is unchanged — this only makes the sitemap agree with it.
+        if (
+          resolveHealthCanonicalServiceSlug(country.slug || countrySlug(country.code), page.slug)
+        ) {
+          continue;
+        }
         bump(country.code, "landing", page.updatedAt);
         const languages: Record<string, string> = {};
         for (const lang of langs) {
@@ -285,6 +299,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const posts = await listBlogPosts();
     for (const p of posts) {
       newestPostAt = newestTimestamp(newestPostAt, p.publishedAt);
+      // The bare list is UNFILTERED (it backs the global /blog hub — see
+      // getPublicBlogPosts), so it also returns country-assigned posts. Those
+      // do NOT live at `/blog/{slug}`: that URL 308s to the post's country
+      // canonical (resolveBlogPostRoute). Submitting it put 16 redirecting
+      // URLs in the sitemap — before the redirect was made a real one, they
+      // were worse still: indexable 200 shells canonicalized to the homepage.
+      // Only a genuinely global post (no country assignment) canonicalizes to
+      // the bare URL, and only those are submitted.
+      if (p.countries.length > 0) continue;
       urls.push({
         url: `${base}/blog/${p.slug}`,
         lastModified: p.publishedAt,
@@ -331,32 +354,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // "noindex in sitemap" penalty, so we apply the identical predicate here
   // (`isPublicDoctorRecordIndexable`, same helper the page uses) before
   // listing a locale.
-  try {
-    const byCode = new Map(countries.map((c) => [c.code, c]));
-    const allDoctors = await getPublicDoctorsNormalized();
-    for (const d of allDoctors) {
-      const country = byCode.get(d.countryCode);
-      if (!country) continue;
-      const indexableLangs = (
-        await Promise.all(
-          countryLangs(country).map(async (lang) => {
-            const localized = await getPublicDoctorBySlug(d.slug, lang);
-            return localized && isPublicDoctorRecordIndexable(localized) ? lang : null;
-          }),
-        )
-      ).filter((lang): lang is string => lang !== null);
-      if (indexableLangs.length === 0) continue;
-      bump(country.code, "doctor", d.updatedAt);
-      pushLocalized(
-        country,
-        `/doctors/${d.slug}`,
-        0.7,
-        dated(d.updatedAt ?? undefined),
-        indexableLangs,
-      );
+  //
+  // Read per MARKET (`getPublicDoctorsForMarket`), never from the global
+  // `/api/doctors` roster: that roster omits the `additionalCountries` join, so
+  // every row is missing the per-market registration number the validator
+  // requires — which silently withheld 14 live, indexable Ireland doctors from
+  // this sitemap while their pages rendered index,follow. The market list is
+  // the list form of the very endpoint the profile page resolves from, and it
+  // also returns the doctors rostered into the market via an active
+  // DoctorCountry link, so genuine multi-market clinicians get an entry under
+  // each market they are actually published in — and only those (the backend
+  // filters on the link, so no foreign-country duplicates are possible).
+  for (const country of countries) {
+    try {
+      const langs = countryLangs(country);
+      // slug → the locales whose market record renders index,follow.
+      const indexableLangsBySlug = new Map<string, string[]>();
+      const updatedAtBySlug = new Map<string, string | undefined>();
+      for (const lang of langs) {
+        for (const doctor of await getPublicDoctorsForMarket(country.code, lang)) {
+          if (!isPublicDoctorRecordIndexable(doctor)) continue;
+          const langsForSlug = indexableLangsBySlug.get(doctor.slug) ?? [];
+          langsForSlug.push(lang);
+          indexableLangsBySlug.set(doctor.slug, langsForSlug);
+          updatedAtBySlug.set(
+            doctor.slug,
+            newestTimestamp(updatedAtBySlug.get(doctor.slug), doctor.updatedAt) ?? undefined,
+          );
+        }
+      }
+      for (const [slug, indexableLangs] of indexableLangsBySlug) {
+        const updatedAt = updatedAtBySlug.get(slug);
+        bump(country.code, "doctor", updatedAt);
+        pushLocalized(country, `/doctors/${slug}`, 0.7, dated(updatedAt), indexableLangs);
+      }
+    } catch {
+      // Doctor list unavailable for this country — keep the rest of the sitemap.
     }
-  } catch {
-    // Doctor list unavailable — sitemap still emits the country tree.
   }
 
   // Plan rows back-date /pricing only; the plans themselves have no public

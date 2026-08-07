@@ -61,8 +61,12 @@ export async function generateMetadata({
   // slug). Everything else stays self-canonical.
   const canonicalServiceSlug = resolveHealthCanonicalServiceSlug(country, slug);
   if (canonicalServiceSlug) {
+    // Canonical only — the `languages` map is DROPPED, not merged. A page that
+    // canonicalizes elsewhere must not also advertise itself (and its sibling
+    // locales) as hreflang targets: that names URLs Google has been told are
+    // not canonical, and it contradicts the cluster the `/services/` twin
+    // already emits for the same locales. The service page owns the cluster.
     metadata.alternates = {
-      ...metadata.alternates,
       canonical: getPublicUrl(`/${country}/${lang}/services/${canonicalServiceSlug}`),
     };
   }

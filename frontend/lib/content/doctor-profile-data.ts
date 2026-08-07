@@ -5,6 +5,7 @@ import {
   parseLanguagesFromDoctorBio,
 } from "@/lib/content/get-public-doctors";
 import { fetchDoctorByCountryAndSlug } from "@/lib/api/site-content-api";
+import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
 import { resolveDoctorProfileImageUrl } from "@/lib/content/get-public-assets";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -52,6 +53,14 @@ export type DoctorProfilePageData = {
    * `resolveDoctorProfilePageData`.
    */
   recordFound: boolean;
+  /**
+   * Whether this profile renders `index,follow`. Computed HERE, from the
+   * normalized backend record, so `buildDoctorProfileMetadata` and
+   * `app/sitemap.ts` cannot disagree about it — the sitemap feeds the same
+   * country-scoped record through the same `isPublicDoctorRecordIndexable`
+   * predicate. A placeholder profile (no record) is never indexable.
+   */
+  indexable: boolean;
   /**
    * True only when the backend positively answered "no such doctor" (404).
    * A transport failure or 5xx leaves this false, so an outage degrades to
@@ -140,7 +149,10 @@ function toLabel(slug: string) {
 // `resolveDoctorProfilePageData`, never by a seed entry.
 const doctorSeed: Record<
   string,
-  Omit<DoctorProfilePageData, "hero" | "bottomCta" | "recordFound" | "missingConfirmed">
+  Omit<
+    DoctorProfilePageData,
+    "hero" | "bottomCta" | "recordFound" | "missingConfirmed" | "indexable"
+  >
 > = {
   "dr-khoiamul-islam": {
     profile: {
@@ -200,6 +212,7 @@ export function getDoctorProfileData(
     // Placeholder until `resolveDoctorProfilePageData` confirms a real record.
     recordFound: false,
     missingConfirmed: false,
+    indexable: false,
     hero: {
       title: profile.name,
       description:
@@ -286,6 +299,19 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     ...base,
     recordFound: true,
     missingConfirmed: false,
+    // The global roster (`getPublicDoctorBySlug`) carries no per-market
+    // registration fields at all, so it can NEVER satisfy the credentials rule.
+    // When we are on that record only because the country-scoped read failed
+    // for a non-404 reason, judging indexability from it stamps
+    // `noindex,nofollow` on a live, self-canonical profile for the duration of
+    // a backend blip — the same "temporary problem, permanent signal" mistake
+    // `PublicContentUnavailableError` exists to prevent, and it is exactly what
+    // an 8-concurrent crawl reproduced on six doctor URLs. A transient failure
+    // leaves the profile indexable; a confirmed 404 for this market does not.
+    indexable:
+      countryScopedDoctor || !countryCode
+        ? isPublicDoctorRecordIndexable(backend)
+        : countryFetchStatus !== 404,
     ...(profileImageSrc ? { profileImageSrc } : {}),
     hero: {
       ...base.hero,

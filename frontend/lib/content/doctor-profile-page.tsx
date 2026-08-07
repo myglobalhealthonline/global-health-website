@@ -8,7 +8,6 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { DoctorSharePageLink } from "@/components/sections/DoctorSharePageLink";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
-import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
 import { getCountryByCode } from "@/data/countries";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
@@ -51,17 +50,10 @@ export async function buildDoctorProfileMetadata(
   const { doctorSlug, countrySlug: routeCountrySlug, lang } = await params;
   const code = routeCountrySlug ? countryCodeFromSlug(routeCountrySlug) : null;
   const data = await resolveDoctorProfilePageData(doctorSlug, lang, code ?? undefined);
-  const indexable = isPublicDoctorRecordIndexable({
-    fullName: data.profile.name,
-    title: data.profile.title,
-    bio: data.profile.bio,
-    languages: data.profile.languages,
-    specialties: data.profile.specialties,
-    imcRegistration: data.profile.imcRegistration,
-    medicalRegistrationUrl: data.profile.medicalRegistrationUrl,
-    qualifications: data.profile.qualifications,
-    editorialChecklist: data.profile.editorialChecklist,
-  });
+  // `data.indexable` is computed in resolveDoctorProfilePageData from the
+  // country-scoped backend record — the SAME value app/sitemap.ts derives, so a
+  // page that renders index,follow can never be missing from the sitemap.
+  const indexable = data.indexable;
   const countryNameToSlug: Record<string, string> = {
     Ireland: "ireland",
     Portugal: "portugal",

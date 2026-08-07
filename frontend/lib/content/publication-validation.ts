@@ -1,21 +1,12 @@
 import type { AdminDoctorDto, AdminServiceDto } from "@/lib/admin/admin-api";
 import type { PublicDoctorRecord } from "@/lib/content/get-public-doctors";
 import type { PublicServiceRecord } from "@/lib/content/get-public-services";
+import { INTERNAL_COPY_PATTERNS } from "@/lib/content/publication-guard";
 
-const BLOCKED_PATTERNS = [
-  /\bTODO\b/i,
-  /\bplaceholder\b/i,
-  /\bmigration\b/i,
-  /\badapter\b/i,
-  /\btemplate-driven\b/i,
-  /\badmin-managed\b/i,
-  /\bfuture-managed\b/i,
-  /\bseeded\b/i,
-  /\bfallback\b/i,
-  /\bmock\b/i,
-  /\bpending\b/i,
-  /\blegacy compatibility\b/i,
-];
+// Same list the runtime copy guard sanitizes against — a string that would be
+// replaced on render must also fail validation, and vice versa. See
+// `publication-guard.ts` for why `TODO` alone is case-sensitive.
+const BLOCKED_PATTERNS = INTERNAL_COPY_PATTERNS;
 
 function hasBlockedCopy(value: string | null | undefined) {
   if (!value) return false;
