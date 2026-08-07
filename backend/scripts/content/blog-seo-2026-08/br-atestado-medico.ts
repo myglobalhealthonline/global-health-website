@@ -27,8 +27,10 @@
  * government apps, at difficulties well over the ceiling.
  *
  * SERP read (get_serp_results, br/2076, 2026-08-04): rank 1 is the CFM's own
- * Prescrição Eletrônica FAQ, rank 3 is Atesta CFM — the CFM's official
- * atestado platform, which cites Resolução CFM 2.382/2024 — and rank 2 is a
+ * Prescrição Eletrônica FAQ, rank 3 is Atesta CFM — the CFM's atestado
+ * platform, NOT CITED HERE: it is announced but not in operation, suspended
+ * over a federal court injunction about control of medical certificates
+ * (clinician correction, 2026-08-07). Rank 2 is a
  * state health department service page. The rest of page one is telemedicine
  * vendors (clicksaude, medvitta, picdoc, telereceita, drconsulta, oladoutor)
  * and telemedicine-company blogs. The vendors sell speed; the CFM pages
@@ -36,9 +38,10 @@
  * should NOT produce an atestado, which is where this article sits.
  *
  * Note on link verification: the CFM hosts (portal.cfm.org.br,
- * prescricaoeletronica.cfm.org.br, atestacfm.org.br) sit behind a WAF that
- * refuses automated requests, so they cannot be curl-checked. All three were
- * verified through the live SERP above (ranks 1, 3 and 17) on 2026-08-04.
+ * prescricaoeletronica.cfm.org.br) sit behind a WAF that refuses automated
+ * requests, so they cannot be curl-checked. Both were verified through the
+ * live SERP above (ranks 1 and 17) on 2026-08-04. atestacfm.org.br is no
+ * longer linked at all — see the SERP note above.
  * validar.iti.gov.br, gov.br/saude and gov.br/inss were curl-verified 200.
  *
  * HONESTY CONSTRAINT. Our Brazilian service is "atestado-medico-online"
@@ -56,7 +59,6 @@
 import { cite, lead, p, renderArticle, ul, warn, type Article } from "./template.js";
 import type { LocalePost, PostSet } from "./types.js";
 
-const CFM_ATESTA = "https://atestacfm.org.br/";
 const CFM_PRESCRICAO = "https://prescricaoeletronica.cfm.org.br/faq_pacientes/teste-pacientes-2/";
 const CFM_BUSCA = "https://portal.cfm.org.br/busca-medicos";
 const ITI_VALIDAR = "https://validar.iti.gov.br/";
@@ -84,7 +86,7 @@ const pt: LocalePost = {
     h1: "Atestado médico online",
     deck: "O documento vale porque houve consulta. Não é a consulta que existe para justificar o documento — e essa ordem muda tudo.",
     intro:
-      "Um <strong>atestado médico emitido em teleconsulta</strong> tem a mesma validade de um emitido presencialmente, desde que atenda às mesmas condições: <strong>consulta médica de verdade</strong>, médico regularmente inscrito no <strong>CRM</strong>, documento com os dados exigidos e <strong>assinatura digital verificável</strong>. O Conselho Federal de Medicina mantém inclusive plataforma própria para emissão de atestados. O que a empresa confere não é o carimbo: é a assinatura digital, e qualquer pessoa pode validá-la em um site público do governo. O que <strong>não</strong> existe é atestado sem avaliação clínica — isso não é telemedicina, é falsificação de documento, com consequências para quem emite e para quem usa.",
+      "Um <strong>atestado médico emitido em teleconsulta</strong> tem a mesma validade de um emitido presencialmente, desde que atenda às mesmas condições: <strong>consulta médica de verdade</strong>, médico regularmente inscrito no <strong>CRM</strong>, documento com os dados exigidos e <strong>assinatura digital verificável</strong>. O que a empresa confere não é o carimbo: é a assinatura digital, e qualquer pessoa pode validá-la em um site público do governo. O que <strong>não</strong> existe é atestado sem avaliação clínica — isso não é telemedicina, é falsificação de documento, com consequências para quem emite e para quem usa.",
     facts: [
       "Vale quando há consulta de verdade",
       "Assinatura digital, não carimbo",
@@ -120,8 +122,8 @@ const pt: LocalePost = {
             "<strong>Assinatura digital</strong> com certificado válido, verificável por qualquer pessoa.",
             "<strong>Dados completos</strong> no documento, incluindo data e período de afastamento.",
           ]),
-          p("O Conselho Federal de Medicina mantém plataformas próprias para prescrição e atestado eletrônicos, o que dá a medida de quão consolidado o formato está. O documento chega a você em PDF, por e-mail ou aplicativo de mensagens, e é encaminhado por você ao empregador."),
-          cite(`Plataformas oficiais: <a href="${CFM_ATESTA}" rel="nofollow noopener" target="_blank">Atesta CFM</a> · <a href="${CFM_PRESCRICAO}" rel="nofollow noopener" target="_blank">Prescrição Eletrônica CFM</a>.`),
+          p("Não existe hoje uma plataforma central obrigatória para validar atestados: a plataforma do CFM foi anunciada, mas ainda não está em uso. O que sustenta o documento é a <strong>assinatura digital</strong> do médico, e essa qualquer pessoa verifica. Já a prescrição eletrônica do CFM está em funcionamento. O atestado chega a você em PDF, por e-mail ou aplicativo de mensagens, e é encaminhado por você ao empregador."),
+          cite(`Prescrição eletrônica do CFM: <a href="${CFM_PRESCRICAO}" rel="nofollow noopener" target="_blank">Prescrição Eletrônica CFM</a>.`),
         ],
       },
       {
@@ -236,7 +238,6 @@ const pt: LocalePost = {
     sourcesLead:
       "Regras de afastamento, prazos e procedimentos do INSS mudam. Confirme sempre na fonte.",
     sources: [
-      { label: "Atesta CFM", href: CFM_ATESTA },
       { label: "Prescrição Eletrônica — CFM", href: CFM_PRESCRICAO },
       { label: "Busca de médicos — CFM", href: CFM_BUSCA },
       { label: "Validação de assinatura digital — ITI", href: ITI_VALIDAR },
@@ -298,7 +299,7 @@ const en: LocalePost = {
     h1: "The online medical certificate",
     deck: "The document counts because there was a consultation. The consultation does not exist to justify the document — and that order changes everything.",
     intro:
-      "A <strong>medical certificate issued in a teleconsultation</strong> — an <em>atestado médico</em> — carries the same weight as one issued in person, provided it meets the same conditions: a <strong>genuine medical consultation</strong>, a doctor properly registered with the <strong>CRM</strong>, a document carrying the required details and a <strong>verifiable digital signature</strong>. The Federal Council of Medicine even runs its own platform for issuing certificates. What an employer checks is not a rubber stamp: it is the digital signature, and anyone can validate it on a public government website. What does <strong>not</strong> exist is a certificate without a clinical assessment — that is not telemedicine, it is document forgery, with consequences for whoever issues it and whoever uses it.",
+      "A <strong>medical certificate issued in a teleconsultation</strong> — an <em>atestado médico</em> — carries the same weight as one issued in person, provided it meets the same conditions: a <strong>genuine medical consultation</strong>, a doctor properly registered with the <strong>CRM</strong>, a document carrying the required details and a <strong>verifiable digital signature</strong>. What an employer checks is not a rubber stamp: it is the digital signature, and anyone can validate it on a public government website. What does <strong>not</strong> exist is a certificate without a clinical assessment — that is not telemedicine, it is document forgery, with consequences for whoever issues it and whoever uses it.",
     facts: [
       "Valid when there is a real consultation",
       "Digital signature, not a stamp",
@@ -334,8 +335,8 @@ const en: LocalePost = {
             "<strong>A digital signature</strong> with a valid certificate, verifiable by anyone.",
             "<strong>Complete details</strong> on the document, including the date and the period of absence.",
           ]),
-          p("The Federal Council of Medicine runs its own platforms for electronic prescriptions and certificates, which is a measure of how settled the format now is. The document reaches you as a PDF, by email or messaging app, and you forward it to your employer."),
-          cite(`Official platforms: <a href="${CFM_ATESTA}" rel="nofollow noopener" target="_blank">Atesta CFM</a> · <a href="${CFM_PRESCRICAO}" rel="nofollow noopener" target="_blank">CFM Electronic Prescription</a>.`),
+          p("There is no compulsory central platform for validating certificates today: the Federal Council of Medicine's platform has been announced but is not yet in use. What holds the document up is the doctor's <strong>digital signature</strong>, and anyone can verify that. The Council's electronic prescription service, by contrast, is running. The certificate reaches you as a PDF, by email or messaging app, and you forward it to your employer."),
+          cite(`The Council's electronic prescription service: <a href="${CFM_PRESCRICAO}" rel="nofollow noopener" target="_blank">CFM Electronic Prescription</a>.`),
         ],
       },
       {
@@ -448,7 +449,6 @@ const en: LocalePost = {
     sourcesH2: "Where to confirm",
     sourcesLead: "Absence rules, deadlines and INSS procedures change. Always check at source.",
     sources: [
-      { label: "Atesta CFM", href: CFM_ATESTA },
       { label: "Electronic Prescription — CFM", href: CFM_PRESCRICAO },
       { label: "Doctor search — CFM", href: CFM_BUSCA },
       { label: "Digital signature validation — ITI", href: ITI_VALIDAR },
@@ -510,7 +510,7 @@ const es: LocalePost = {
     h1: "El certificado médico online",
     deck: "El documento vale porque hubo consulta. La consulta no existe para justificar el documento, y ese orden cambia por completo el resto.",
     intro:
-      "Un <strong>certificado médico emitido en teleconsulta</strong> —el <em>atestado médico</em>— tiene la misma validez que uno emitido presencialmente, siempre que cumpla las mismas condiciones: <strong>consulta médica real</strong>, médico debidamente inscrito en el <strong>CRM</strong>, documento con los datos exigidos y <strong>firma digital verificable</strong>. El Consejo Federal de Medicina mantiene incluso su propia plataforma para emitir certificados. Lo que la empresa comprueba no es un sello: es la firma digital, y cualquiera puede validarla en una web pública del gobierno. Lo que <strong>no</strong> existe es un certificado sin valoración clínica: eso no es telemedicina, es falsificación de documento, con consecuencias para quien lo emite y para quien lo usa.",
+      "Un <strong>certificado médico emitido en teleconsulta</strong> —el <em>atestado médico</em>— tiene la misma validez que uno emitido presencialmente, siempre que cumpla las mismas condiciones: <strong>consulta médica real</strong>, médico debidamente inscrito en el <strong>CRM</strong>, documento con los datos exigidos y <strong>firma digital verificable</strong>. Lo que la empresa comprueba no es un sello: es la firma digital, y cualquiera puede validarla en una web pública del gobierno. Lo que <strong>no</strong> existe es un certificado sin valoración clínica: eso no es telemedicina, es falsificación de documento, con consecuencias para quien lo emite y para quien lo usa.",
     facts: [
       "Vale cuando hay consulta real",
       "Firma digital, no sello",
@@ -546,8 +546,8 @@ const es: LocalePost = {
             "<strong>Firma digital</strong> con certificado válido, verificable por cualquier persona.",
             "<strong>Datos completos</strong> en el documento, incluidas la fecha y el periodo de baja.",
           ]),
-          p("El Consejo Federal de Medicina mantiene plataformas propias de receta y certificado electrónicos, lo que da la medida de lo asentado que está el formato. El documento le llega en PDF, por correo o aplicación de mensajería, y usted lo remite a la empresa."),
-          cite(`Plataformas oficiales: <a href="${CFM_ATESTA}" rel="nofollow noopener" target="_blank">Atesta CFM</a> · <a href="${CFM_PRESCRICAO}" rel="nofollow noopener" target="_blank">Receta Electrónica del CFM</a>.`),
+          p("Hoy no existe una plataforma central obligatoria para validar certificados: la del Consejo Federal de Medicina está anunciada, pero todavía no está en uso. Lo que sostiene el documento es la <strong>firma digital</strong> del médico, y esa la verifica cualquiera. La receta electrónica del Consejo, en cambio, sí está en funcionamiento. El certificado le llega en PDF, por correo o aplicación de mensajería, y usted lo remite a la empresa."),
+          cite(`Receta electrónica del CFM: <a href="${CFM_PRESCRICAO}" rel="nofollow noopener" target="_blank">Receta Electrónica del CFM</a>.`),
         ],
       },
       {
@@ -660,7 +660,6 @@ const es: LocalePost = {
     sourcesH2: "Dónde confirmar",
     sourcesLead: "Las reglas de baja, los plazos y los procedimientos del INSS brasileño cambian. Confirme siempre en la fuente.",
     sources: [
-      { label: "Atesta CFM", href: CFM_ATESTA },
       { label: "Receta Electrónica — CFM", href: CFM_PRESCRICAO },
       { label: "Búsqueda de médicos — CFM", href: CFM_BUSCA },
       { label: "Validación de firma digital — ITI", href: ITI_VALIDAR },
@@ -710,7 +709,7 @@ export const BR_ATESTADO_MEDICO: PostSet = {
   searchVolume: 1600,
   keywordDifficulty: 12,
   evidence:
-    "br/2076 expansion 2026-08-04. Head term 1,600 KD 12, unchanged. In-scope cluster: atestado médico online pdf 590 KD 1, telemedicina consulta online 1,000 KD 12, telemedicina barata 590 KD 0, telemedicina primeira consulta grátis 480 KD 7. Rejected as targets — fraud intent, same call as the Spanish 'justificante medico' rejection: melhor desculpa para pegar atestado médico 1,600 KD 0, melhor desculpa para pegar atestado médico de 3 dias 1,600 KD 0, atestado médico pdf grátis 880 KD 0, atestado médico online grátis com carimbo 590 KD 0, atestado médico sus pdf download 590 KD 0. The article answers that demand honestly in a dedicated section instead of chasing it. Also rejected: the SUS-navigational mass (meu sus digital 201,000 KD 68, conecte sus 74,000 KD 36, atestado online sus 1,600 KD 50), all far above the difficulty ceiling. SERP 2026-08-04: rank 1 CFM Prescrição Eletrônica FAQ, rank 3 Atesta CFM (citing Resolução CFM 2.382/2024), rank 2 a state health department; the rest are telemedicine vendors and their blogs. None explains when a teleconsultation should not produce an atestado. CFM hosts sit behind a WAF and cannot be curl-checked; verified via the live SERP.",
+    "br/2076 expansion 2026-08-04. Head term 1,600 KD 12, unchanged. In-scope cluster: atestado médico online pdf 590 KD 1, telemedicina consulta online 1,000 KD 12, telemedicina barata 590 KD 0, telemedicina primeira consulta grátis 480 KD 7. Rejected as targets — fraud intent, same call as the Spanish 'justificante medico' rejection: melhor desculpa para pegar atestado médico 1,600 KD 0, melhor desculpa para pegar atestado médico de 3 dias 1,600 KD 0, atestado médico pdf grátis 880 KD 0, atestado médico online grátis com carimbo 590 KD 0, atestado médico sus pdf download 590 KD 0. The article answers that demand honestly in a dedicated section instead of chasing it. Also rejected: the SUS-navigational mass (meu sus digital 201,000 KD 68, conecte sus 74,000 KD 36, atestado online sus 1,600 KD 50), all far above the difficulty ceiling. SERP 2026-08-04: rank 1 CFM Prescrição Eletrônica FAQ, rank 3 Atesta CFM (cited by the SERP but NOT by this article — the platform is not in operation, suspended over a federal court injunction; clinician correction 2026-08-07), rank 2 a state health department; the rest are telemedicine vendors and their blogs. None explains when a teleconsultation should not produce an atestado. CFM hosts sit behind a WAF and cannot be curl-checked; verified via the live SERP.",
   serviceSlug: "atestado-medico-online",
   authorDoctorId: "cmqyzr0fb000o01lu9deh6mf5",
   authorDisplayName: "Dr. Renato Sarmento",
