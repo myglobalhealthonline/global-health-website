@@ -2939,6 +2939,24 @@ model OrderItem {
   /// True when an allowance unit paid for this line (unit price is then 0).
   /// Reporting separates allowance usage from discounted usage on this.
   membershipAllowanceUsed           Boolean          @default(false)
+  /// The SUPER_ADMIN's written reason when this line was priced by the §26
+  /// goodwill override — a benefit the patient is not entitled to, applied by
+  /// hand on an admin manual booking. Non-null IS the override flag and the
+  /// SOLE discriminator: reporting splits goodwill from real usage on this
+  /// column alone, never by inferring it from a missing id.
+  ///
+  /// `membershipEnrollmentId` is still set whenever the patient holds an
+  /// enrollment — expired, suspended or allowance-exhausted included, which are
+  /// the common override cases — because dropping it would discard the
+  /// attribution per-member reporting needs. It is null only for a goodwill
+  /// grant to someone with no membership at all.
+  ///
+  /// Two CHECK constraints enforce the rest (migration
+  /// 20260807220200, invisible to `migrate diff` — keep them): a reason implies
+  /// `membershipBenefitId` (a real benefit row governed the price, so it is
+  /// reproducible) and implies `membershipAllowanceUsed = false` (goodwill is
+  /// our cost, not the partner's consumption).
+  membershipOverrideReason          String?
   /// Approved dependent this order line was booked for (Premium family
   /// usage). Copied from the CartItem at checkout for audit + portal.
   familyMemberId                    String?

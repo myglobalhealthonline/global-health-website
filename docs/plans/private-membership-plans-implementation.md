@@ -1557,6 +1557,33 @@ still rides the URL.
   not hold. It requires a written reason, writes an `AuditLog` row, and stamps the
   order line so reporting can separate real usage from goodwill.
 
+**Override data model** (decided 2026-08-07):
+
+- the line references `membershipBenefitId` — the *level's* rule — so the price is
+  derived from a real configured benefit rather than a typed-in number, and the
+  audit shows which rule was applied;
+- `membershipEnrollmentId` is set **whenever the patient actually holds one**, even
+  if it is expired, suspended or its allowance is exhausted — those are the common
+  override cases, and nulling it would throw away the attribution that makes
+  per-member reporting answer "which of their visits were overrides". It is null
+  only for a true goodwill grant to someone holding no enrollment at all;
+- `membershipOverrideReason IS NOT NULL` is therefore the **sole** discriminator
+  between goodwill and real usage — not the presence or absence of an enrollment id;
+- **no allowance unit is ever spent under an override**, so ledger-derived totals
+  can never be inflated by goodwill, and an exhausted member does not go further
+  negative;
+- an `ALLOWANCE`-type benefit still resolves at its €0 member price under override.
+  Falling through to the fallback discount would make "give them the member price"
+  silently mean something else.
+
+Enforce in the migration: `membershipOverrideReason IS NOT NULL` implies
+`membershipBenefitId IS NOT NULL` and `membershipAllowanceUsed = false`.
+
+**Reporting (§15) treats overrides as a separate line.** They are excluded from
+"allowance used" and from the partner's usage totals — goodwill is our cost, not
+the partner's consumption — but they must still appear, with their reasons, so the
+total value given away is visible rather than hidden between two categories.
+
 ---
 
 ## 12. Emails (§27)
@@ -1678,12 +1705,18 @@ Repo-specific gates that must pass:
 - consultations booked in the date range, split by benefit type;
 - allowance units used vs allocated across the plan;
 - total discount given, in cents;
+- **goodwill overrides as their own line** (§26): count and total value, listed
+  with their reasons. Excluded from allowance-used and from the plan's usage
+  totals — goodwill is our cost, not the partner's consumption — but never
+  hidden, because a number that appears in neither category is a number nobody
+  reviews. `membershipOverrideReason IS NOT NULL` is the whole predicate;
 - CSV export.
 
 **Per-member drill-down** (`/admin/memberships/[planId]/members/[id]`):
 
 - each booking: date, service, doctor, list price, price paid, benefit applied,
-  allowance unit consumed y/n, order number;
+  allowance unit consumed y/n, **whether it was an override and its reason**,
+  order number;
 - **no clinical content**;
 - viewing writes an `AuditLog` row (actor, enrollment id, timestamp).
 
