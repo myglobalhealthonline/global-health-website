@@ -28,6 +28,41 @@
 -- only thing that proves the composite FKs and CHECKs actually survived.
 -- ─────────────────────────────────────────────────────────────────────────────
 
+-- ═══ 0. PREFLIGHT — refuse before touching anything ══════════════════════════
+--
+-- §21.3 forbids an allowance on a service-specific benefit row: a shared pool
+-- cannot be pinned to one country's Service, because Service rows are
+-- per-country and there is no reliable mapping between a Czech service and its
+-- Irish counterpart. Existing rows CAN violate it — the shape was legal for
+-- all of phases 1-6.
+--
+-- This runs FIRST, and that position is the whole point. Prisma does not wrap
+-- a migration file in a transaction, so a failure part-way through leaves
+-- every preceding statement applied. When this check sat at the end (where the
+-- constraint it guards lives), a database with one offending row took eight
+-- steps of irreversible DDL and only then refused, leaving a half-migrated
+-- schema that `migrate resolve --rolled-back` does not undo — it only rewrites
+-- the bookkeeping. Checking here makes the refusal clean.
+--
+-- Deliberately NOT auto-converted: turning a service-scoped allowance into a
+-- kind-scoped one WIDENS what every member of that level gets, from one
+-- service to every consultation of that kind. A migration must not decide that
+-- on an admin's behalf.
+DO $$
+DECLARE
+  offending text;
+BEGIN
+  SELECT string_agg(id, ', ') INTO offending
+    FROM "MembershipBenefit"
+   WHERE "benefitType" = 'ALLOWANCE' AND "serviceKind" IS NULL;
+
+  IF offending IS NOT NULL THEN
+    RAISE EXCEPTION
+      'Phase 7 (spec 21.3) forbids an allowance on a service-specific benefit row: a shared pool cannot be pinned to one country''s Service. Offending MembershipBenefit ids: %. Fix each one in the level editor before deploying - either move the allowance to a GENERAL/SPECIALIST kind row, or change the service row to PERCENT/FIXED - then re-run this migration. Nothing has been altered.',
+      offending;
+  END IF;
+END $$;
+
 -- ═══ 1. Drop the composite FKs that depend on uniques about to disappear ═════
 --
 -- `MembershipBenefit_service_country_fkey` is deliberately NOT dropped: it
@@ -182,28 +217,8 @@ ALTER TABLE "MembershipEnrollment"
 -- (not NULL) for the row it is meant to reject — the NULL hole that bit
 -- `MembershipBenefit_value_matches_type` in phase 1.
 --
--- Existing rows can violate this: it is a NEW rule, and the shape it forbids
--- was legal for all of phases 1-6. Rather than let Postgres emit a bare
--- `23514 ... is violated by some row`, fail with the ids and a usable
--- instruction. Deliberately NOT auto-converted: turning a service-scoped
--- allowance into a kind-scoped one silently WIDENS what every member of that
--- level gets, from one service to every consultation of that kind, and a
--- migration must not decide that on an admin's behalf.
-DO $$
-DECLARE
-  offending text;
-BEGIN
-  SELECT string_agg(id, ', ') INTO offending
-    FROM "MembershipBenefit"
-   WHERE "benefitType" = 'ALLOWANCE' AND "serviceKind" IS NULL;
-
-  IF offending IS NOT NULL THEN
-    RAISE EXCEPTION
-      'Phase 7 (spec 21.3) forbids an allowance on a service-specific benefit row: a shared pool cannot be pinned to one country''s Service. Offending MembershipBenefit ids: %. Fix each one in the level editor before deploying - either move the allowance to a GENERAL/SPECIALIST kind row, or change the service row to PERCENT/FIXED - then re-run this migration.',
-      offending;
-  END IF;
-END $$;
-
+-- Step 0 has already refused if any existing row violates this, so by the time
+-- the constraint is added there is nothing left for it to reject.
 ALTER TABLE "MembershipBenefit"
   ADD CONSTRAINT "MembershipBenefit_allowance_on_kind_rows_only"
   CHECK ("benefitType" <> 'ALLOWANCE' OR "serviceKind" IS NOT NULL);
