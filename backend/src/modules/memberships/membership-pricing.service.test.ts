@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   enrollmentGrantsBenefits,
   resolveMembershipPrice,
+  resolvePoolBenefit,
   selectBenefitRow,
   type PricingBenefitRow,
   type PricingEnrollment,
@@ -23,6 +24,7 @@ const NOW = new Date("2026-08-07T12:00:00.000Z");
 function benefit(over: Partial<PricingBenefitRow> = {}): PricingBenefitRow {
   return {
     id: "ben_1",
+    countryId: "ie",
     serviceKind: "GENERAL",
     serviceId: null,
     benefitType: "PERCENT",
@@ -50,11 +52,22 @@ function enrollment(
     memberType: "PRIMARY",
     primaryEnrollmentId: null,
     ...over,
+    plan: { primaryCountryId: "ie", countries: [{ countryId: "ie" }], ...(over.plan ?? {}) },
     level: { allowancePool: "PER_PERSON", benefits, ...(over.level ?? {}) },
   };
 }
 
+/** A plan whose primary is Ireland and which also covers Czechia (§21.1). */
+function multiCountry(over: Partial<PricingEnrollment["plan"]> = {}): PricingEnrollment["plan"] {
+  return {
+    primaryCountryId: "ie",
+    countries: [{ countryId: "ie" }, { countryId: "cz" }],
+    ...over,
+  };
+}
+
 const SERVICE: PricingService = { id: "svc_1", countryId: "ie", kind: "GENERAL" };
+const CZ_SERVICE: PricingService = { id: "svc_cz", countryId: "cz", kind: "GENERAL" };
 
 describe("membership pricing — eligibility", () => {
   it("only ACTIVE enrollments grant benefits", () => {
@@ -340,6 +353,198 @@ describe("membership pricing — allowance", () => {
         enrollment: enrollment([allowance]),
         service: SERVICE,
         fullPriceCents: 6000,
+        now: NOW,
+      }),
+      null,
+    );
+  });
+});
+
+/**
+ * §27 — phase 7. A plan covers several countries, benefits are configured per
+ * country, and one shared pool defined on the PRIMARY country's row is
+ * spendable in every configured covered country.
+ *
+ * The cases that carry money here are the two "no" answers. Both must suppress
+ * the UNIT as well as the discount, or a pool defined in one country quietly
+ * pays for consultations in a country that was never configured for it.
+ */
+describe("membership pricing — multi-country coverage", () => {
+  const iePercent = benefit({ id: "ben_ie", countryId: "ie", percentOff: 20 });
+  const czPercent = benefit({ id: "ben_cz", countryId: "cz", percentOff: 50 });
+
+  it("a benefit resolves in a non-primary covered country, on THAT country's rule", () => {
+    const price = resolveMembershipPrice({
+      enrollment: enrollment([iePercent, czPercent], { plan: multiCountry() }),
+      service: CZ_SERVICE,
+      fullPriceCents: 6000,
+      now: NOW,
+    });
+    // Czechia's own 50%, not Ireland's 20% — the booking country governs.
+    assert.equal(price?.unitPriceCents, 3000);
+    assert.equal(price?.benefitId, "ben_cz");
+  });
+
+  it("a country the plan does not cover gets nothing, even with a row for it", () => {
+    // The row exists but the coverage row does not. Coverage is the gate.
+    assert.equal(
+      resolveMembershipPrice({
+        enrollment: enrollment([iePercent, czPercent], {
+          plan: { primaryCountryId: "ie", countries: [{ countryId: "ie" }] },
+        }),
+        service: CZ_SERVICE,
+        fullPriceCents: 6000,
+        now: NOW,
+      }),
+      null,
+    );
+  });
+
+  it("a COVERED country with no benefit rows gets nothing — coverage is not configuration", () => {
+    assert.equal(
+      resolveMembershipPrice({
+        enrollment: enrollment([iePercent], { plan: multiCountry() }),
+        service: CZ_SERVICE,
+        fullPriceCents: 6000,
+        now: NOW,
+      }),
+      null,
+    );
+  });
+
+  it("a percent applies to the booking country's PEAK price, not the base one", () => {
+    const price = resolveMembershipPrice({
+      enrollment: enrollment([iePercent, czPercent], { plan: multiCountry() }),
+      service: CZ_SERVICE,
+      fullPriceCents: 8000, // peak-adjusted by the caller
+      now: NOW,
+    });
+    assert.equal(price?.unitPriceCents, 4000);
+  });
+
+  it("a fixed price is the booking country's own figure, in its own currency", () => {
+    // No conversion anywhere (§39): the CZ row's 800 is 800 CZK-worth of cents
+    // and is never compared against, or converted from, Ireland's euro row.
+    const price = resolveMembershipPrice({
+      enrollment: enrollment(
+        [
+          benefit({ id: "ben_ie", countryId: "ie", benefitType: "FIXED", percentOff: null, fixedPriceCents: 4500 }),
+          benefit({ id: "ben_cz", countryId: "cz", benefitType: "FIXED", percentOff: null, fixedPriceCents: 80000 }),
+        ],
+        { plan: multiCountry() },
+      ),
+      service: CZ_SERVICE,
+      fullPriceCents: 120000,
+      now: NOW,
+    });
+    assert.equal(price?.unitPriceCents, 80000);
+    assert.equal(price?.benefitId, "ben_cz");
+  });
+});
+
+describe("membership pricing — the shared pool", () => {
+  const iePool = benefit({
+    id: "pool_ie",
+    countryId: "ie",
+    benefitType: "ALLOWANCE",
+    percentOff: null,
+    allowanceCount: 6,
+  });
+  const czPercent = benefit({ id: "ben_cz", countryId: "cz", percentOff: 50 });
+  const holder = (benefits: PricingBenefitRow[]) =>
+    enrollment(benefits, { plan: multiCountry() });
+
+  it("resolves the pool from the PRIMARY country's row, whatever country is booked", () => {
+    assert.equal(resolvePoolBenefit(holder([iePool, czPercent]), "GENERAL")?.id, "pool_ie");
+  });
+
+  it("returns null for a kind with no primary allowance", () => {
+    assert.equal(resolvePoolBenefit(holder([iePool, czPercent]), "SPECIALIST"), null);
+  });
+
+  it("never treats a NON-primary allowance row as a pool — one pool, not one per country", () => {
+    const czPool = benefit({
+      id: "pool_cz",
+      countryId: "cz",
+      benefitType: "ALLOWANCE",
+      percentOff: null,
+      allowanceCount: 99,
+    });
+    assert.equal(resolvePoolBenefit(holder([czPool]), "GENERAL"), null);
+  });
+
+  it("a unit spends in a non-primary country and reports the PRIMARY row as the pool", () => {
+    const price = resolveMembershipPrice({
+      enrollment: holder([iePool, czPercent]),
+      service: CZ_SERVICE,
+      fullPriceCents: 6000,
+      allowanceRemaining: 2,
+      now: NOW,
+    });
+    assert.equal(price?.unitPriceCents, 0);
+    assert.equal(price?.allowanceUsed, true);
+    assert.equal(price?.poolBenefitId, "pool_ie", "the counter is the primary country's");
+    // …while the row recorded on the OrderItem is the governing one (§21.5b).
+    assert.equal(price?.benefitId, "ben_cz");
+  });
+
+  it("an exhausted pool falls to the BOOKING country's own rule", () => {
+    const price = resolveMembershipPrice({
+      enrollment: holder([iePool, czPercent]),
+      service: CZ_SERVICE,
+      fullPriceCents: 6000,
+      allowanceRemaining: 0,
+      now: NOW,
+    });
+    assert.equal(price?.unitPriceCents, 3000);
+    assert.equal(price?.basis, "PERCENT");
+    assert.equal(price?.allowanceUsed, false);
+  });
+
+  it("declining the unit prices the country's rule and spends nothing (decision 44)", () => {
+    const price = resolveMembershipPrice({
+      enrollment: holder([iePool, czPercent]),
+      service: CZ_SERVICE,
+      fullPriceCents: 6000,
+      allowanceRemaining: 2,
+      declineUnit: true,
+      now: NOW,
+    });
+    assert.equal(price?.unitPriceCents, 3000);
+    assert.equal(price?.allowanceUsed, false, "a declined unit is not spent");
+    assert.equal(price?.allowanceRemaining, 2, "and the counter is untouched");
+  });
+
+  it("EXCLUDED in the booking country suppresses the unit too, not just the discount", () => {
+    // Otherwise a pool defined in Ireland routes around the one row whose
+    // entire job is carving a service out of Czechia's rule.
+    const czExcluded = benefit({
+      id: "ben_cz_excl",
+      countryId: "cz",
+      serviceKind: null,
+      serviceId: CZ_SERVICE.id,
+      benefitType: "EXCLUDED",
+      percentOff: null,
+    });
+    assert.equal(
+      resolveMembershipPrice({
+        enrollment: holder([iePool, czPercent, czExcluded]),
+        service: CZ_SERVICE,
+        fullPriceCents: 6000,
+        allowanceRemaining: 5,
+        now: NOW,
+      }),
+      null,
+    );
+  });
+
+  it("an unconfigured covered country cannot spend a unit either", () => {
+    assert.equal(
+      resolveMembershipPrice({
+        enrollment: holder([iePool]),
+        service: CZ_SERVICE,
+        fullPriceCents: 6000,
+        allowanceRemaining: 5,
         now: NOW,
       }),
       null,

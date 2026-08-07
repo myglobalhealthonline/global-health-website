@@ -402,6 +402,16 @@ enum AuditAction {
   /// Usage report opened (§32). Both the per-plan view and the per-member
   /// drill-down write one — the latter lists a named member's bookings.
   MEMBERSHIP_REPORT_VIEWED
+  /// A country was added to a plan's coverage (§26). An admin-visible COST
+  /// event: it grants benefits to every existing member of the plan
+  /// immediately, with no per-member action.
+  MEMBERSHIP_PLAN_COUNTRY_ADDED
+  /// A country was removed from a plan's coverage. New bookings only —
+  /// anything already booked keeps its price (decision 17).
+  MEMBERSHIP_PLAN_COUNTRY_REMOVED
+  /// The card + welcome email went out for an enrollment (decision 41).
+  /// `cardIssuedAt` is the dedupe; this is the trail of when and to whom.
+  MEMBERSHIP_CARD_ISSUED
 }
 
 enum CountryAccessModel {
@@ -543,10 +553,12 @@ model Country {
   /// lists the exams it offers (from the global ExamType catalog) with our
   /// cost + a markup → the patient price. See TestCenter.
   testCenters                 TestCenter[]
-  /// Private membership plans (partner programmes) for this market. A plan
-  /// belongs to exactly one country and is never shown on the public site.
-  /// See MembershipPlan.
+  /// Private membership plans whose PRIMARY country is this one (decision 34).
+  /// Never shown on the public site. See MembershipPlan.
   membershipPlans             MembershipPlan[]
+  /// Plans that COVER this market, primary or not. A plan reaches a country
+  /// through here, so this is the list to read for "which plans work here".
+  membershipPlanCountries     MembershipPlanCountry[]
   createdAt                   DateTime                     @default(now())
   updatedAt                   DateTime                     @updatedAt
 }
@@ -2631,6 +2643,12 @@ model Cart {
   /// Display-only: checkout re-resolves it and re-checks ownership (§13.2).
   membershipEnrollmentId String?
   membershipEnrollment   MembershipEnrollment? @relation(fields: [membershipEnrollmentId], references: [id], onDelete: SetNull)
+  /// Decision 44: the member deliberately declined the allowance unit and wants
+  /// the booking country's own percent/fixed rule instead. Per CART, matching
+  /// decision 25 — one benefit choice applied to every eligible line. `false`
+  /// is "take the unit", which is also where cheapest-first pre-selection
+  /// lands. Checkout reads this as WHICH RULE, never as a price.
+  membershipDeclineUnit  Boolean    @default(false)
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
 
@@ -2968,6 +2986,12 @@ model OrderItem {
   /// this line (§3.7). `unitPriceCents` is ALREADY the member price; these
   /// record how it got there. Bare ids like `corporateCompanyId`, no relation.
   membershipEnrollmentId            String?
+  /// The GOVERNING row — the one for the BOOKING's country — never the pool
+  /// row (§21.5b). Under phase 7's shared pool those differ for any allowance
+  /// line outside the plan's primary country, and both readings look plausible.
+  /// This one wins because §23's per-country split and the two override CHECKs
+  /// below both read this column, while the ledger already reaches the pool
+  /// through `balanceId`. Silently wrong either way — nothing catches it.
   membershipBenefitId               String?
   membershipDiscountCents           Int?
   /// True when an allowance unit paid for this line (unit price is then 0).
@@ -5911,13 +5935,23 @@ enum MembershipImportStatus {
   CANCELLED
 }
 
-/// One partner programme in one country (e.g. "MEMS Ireland"). A plan belongs
-/// to exactly one country (decision 9) and is invisible to the public site.
+/// One partner programme (e.g. "MEMS"). Invisible to the public site.
+///
+/// Phase 7 (decision 34) made a plan MULTI-country: it has one PRIMARY country,
+/// fixed at creation and the source of the shared allowance pool (§21.4), plus a
+/// `MembershipPlanCountry` row per covered country — including the primary's own.
+/// A country being covered is not the same as it being configured: benefits come
+/// from `MembershipBenefit` rows keyed to that country, and a covered country
+/// with none gives NO benefit at all, allowance units included (§20).
 model MembershipPlan {
-  id            String  @id @default(cuid())
-  countryId     String
-  country       Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  slug          String
+  id               String  @id @default(cuid())
+  primaryCountryId String
+  primaryCountry   Country @relation(fields: [primaryCountryId], references: [id], onDelete: Cascade)
+  /// Every covered country, the primary included. Existence of the row is what
+  /// makes a country selectable when configuring benefits, and the FK target
+  /// that proves a benefit row's country is actually covered (§21.1).
+  countries        MembershipPlanCountry[]
+  slug             String
   /// Internal/default name; patient-facing copy comes from the translations.
   name          String
   internalNotes String?
@@ -5941,12 +5975,34 @@ model MembershipPlan {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([countryId, slug])
-  /// FK target for the (planId, countryId) composite FK added in raw SQL —
-  /// pins every level (and through it every benefit and enrollment) to the
-  /// plan's own country, so a benefit can never leak across markets.
-  @@unique([id, countryId])
-  @@index([countryId, isActive])
+  @@unique([primaryCountryId, slug])
+  /// FK target for MembershipEnrollment(planId, countryId) — the raw-SQL
+  /// composite FK that pins an enrollment's reporting country to its plan's
+  /// primary one (§21.2). Before phase 7 that pinning came from the level's
+  /// countryId, which no longer exists.
+  @@unique([id, primaryCountryId])
+  @@index([primaryCountryId, isActive])
+}
+
+/// One covered country, INCLUDING the primary (§21.1). Its existence is what
+/// makes a country configurable; `MembershipBenefit(planId, countryId)` points
+/// here via a raw-SQL composite FK, so a benefit row for an uncovered country
+/// is structurally impossible.
+///
+/// App-enforced: the primary country's row always exists and cannot be deleted
+/// while the plan lives.
+model MembershipPlanCountry {
+  id        String         @id @default(cuid())
+  planId    String
+  plan      MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  countryId String
+  country   Country        @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now())
+
+  /// FK target for MembershipBenefit(planId, countryId). A two-column FK needs
+  /// a two-column unique — this one is it.
+  @@unique([planId, countryId])
+  @@index([countryId])
 }
 
 model MembershipPlanTranslation {
@@ -5966,8 +6022,6 @@ model MembershipLevel {
   id        String         @id @default(cuid())
   planId    String
   plan      MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
-  /// Always == plan.countryId. App-enforced and composite-FK enforced.
-  countryId String
   slug      String
   name      String
   sortOrder Int            @default(0)
@@ -5983,6 +6037,12 @@ model MembershipLevel {
   maxDependents Int                     @default(0)
   allowancePool MembershipAllowancePool @default(PER_PERSON)
 
+  /// Card background, admin-set per level (decision 45). Hex, validated
+  /// `^#[0-9a-fA-F]{6}$`. Null = the default card face. The FOREGROUND is
+  /// derived from this colour's relative luminance and never stored (§24.2),
+  /// so an admin cannot produce white-on-pale.
+  cardBackgroundHex String?
+
   benefits     MembershipBenefit[]
   translations MembershipLevelTranslation[]
   enrollments  MembershipEnrollment[]
@@ -5991,8 +6051,10 @@ model MembershipLevel {
   updatedAt DateTime @updatedAt
 
   @@unique([planId, slug])
-  /// FK target for MembershipEnrollment(levelId, countryId).
-  @@unique([id, countryId])
+  /// FK target for MembershipEnrollment(levelId, planId) — a level now spans
+  /// the plan's countries, so the enrollment FK pins it to the PLAN rather
+  /// than to a country (§21.2).
+  @@unique([id, planId])
   @@index([planId, isActive])
 }
 
@@ -6015,7 +6077,14 @@ model MembershipBenefit {
   id        String          @id @default(cuid())
   levelId   String
   level     MembershipLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
-  /// Always == level.countryId (composite FK against Service).
+  /// Denormalised from the level so the raw-SQL composite FK
+  /// (planId, countryId) -> MembershipPlanCountry can prove the country this
+  /// row configures is one the plan actually covers. No Prisma relation: a
+  /// single-column FK here would be redundant with the composite one.
+  planId    String
+  /// WHICH covered country this row configures (§21.3). Before phase 7 this
+  /// was "the level's country" and there was only ever one; the column and its
+  /// values are unchanged, only the meaning widened.
   countryId String
 
   /// GENERAL | SPECIALIST only — consultations only (§18).
@@ -6042,9 +6111,9 @@ model MembershipBenefit {
 
   balances MembershipAllowanceBalance[]
 
-  @@unique([levelId, serviceKind])
-  @@unique([levelId, serviceId])
-  @@index([levelId, isActive])
+  @@unique([levelId, countryId, serviceKind])
+  @@unique([levelId, countryId, serviceId])
+  @@index([levelId, countryId, isActive])
 }
 
 /// One person on one level. Only ACTIVE grants benefits, and only while
@@ -6055,14 +6124,23 @@ model MembershipEnrollment {
   plan      MembershipPlan  @relation(fields: [planId], references: [id], onDelete: Cascade)
   levelId   String
   level     MembershipLevel @relation(fields: [levelId], references: [id])
-  /// Always == plan.countryId.
+  /// Always == plan.primaryCountryId. Attribution for per-country reporting
+  /// (§23), NOT a restriction on where benefits apply (decision 38). Pinned by
+  /// the raw-SQL composite FK to MembershipPlan(id, primaryCountryId) — before
+  /// phase 7 that pinning came from the level's countryId (§21.2).
   countryId String
 
-  /// Partner-supplied, globally unique (decision 5). NO `@unique` here —
-  /// PostgreSQL's plain unique is case-sensitive, so `ABC1` and `abc1` could
-  /// coexist while lookups compare case-insensitively. Uniqueness is the raw
-  /// unique index on lower("membershipId"); every lookup queries via lower().
+  /// GENERATED (decision 40): `<PLANPREFIX>-<8 crypto-random base32 chars>`.
+  /// Unguessable by design — it is half of what the claim form checks. NO
+  /// `@unique` here: PostgreSQL's plain unique is case-sensitive, so `ABC1`
+  /// and `abc1` could coexist while lookups compare case-insensitively.
+  /// Uniqueness is the raw unique index on lower("membershipId"); every
+  /// lookup queries via lower().
   membershipId String
+  /// The partner's own member number, when they supply one (decision 40).
+  /// Searchable in admin, NOT a key — duplicates across plans are possible
+  /// and permitted.
+  partnerReference String?
   /// Lowercased + trimmed at write time. The linking key (assumption 5).
   /// Uniqueness within a plan is the partial index
   /// MembershipEnrollment_plan_email_active_key (planId, lower(email))
@@ -6092,6 +6170,10 @@ model MembershipEnrollment {
   /// null = open-ended. A past date kills benefits (live check + daily cron).
   endDate   DateTime?
 
+  /// Set when the card + welcome email went out (decision 41). THE dedupe: a
+  /// re-import must email nobody twice.
+  cardIssuedAt DateTime?
+
   importBatchId    String?
   importBatch      MembershipImportBatch? @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
   createdByAdminId String?
@@ -6111,6 +6193,7 @@ model MembershipEnrollment {
   @@index([userId, status])
   @@index([planId, status])
   @@index([primaryEnrollmentId])
+  @@index([planId, partnerReference])
 }
 
 /// One counter per (benefit row, holder). The holder owns the pool: self under

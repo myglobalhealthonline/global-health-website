@@ -3,14 +3,20 @@ import "dotenv/config";
 import { Pool } from "pg";
 
 /**
- * Phase-1 membership DDL preflight, for a human at a terminal:
+ * Membership DDL preflight, for a human at a terminal:
  *
  *   node --env-file=.env.dev --import tsx scripts/membership-ddl-check.ts
  *
- * Proves that migration `20260807120100_membership_plans` actually landed its
- * raw-SQL section — the composite FKs, the §3.3 CHECK invariants and the three
- * partial / expression unique indexes that Prisma cannot express and that
- * therefore have no other test covering them.
+ * Proves that `20260807120100_membership_plans` and
+ * `20260808100100_membership_multi_country` actually landed their raw-SQL
+ * sections — the composite FKs, the CHECK invariants and the partial /
+ * expression unique indexes that Prisma cannot express and that therefore have
+ * no other test covering them.
+ *
+ * This matters more after phase 7 than before it. `migrate diff` proposes
+ * dropping all four composite FKs on EVERY run, so the only thing standing
+ * between them and a regenerated migration is a human cutting those lines —
+ * and this script is the only thing that says whether the human got it right.
  *
  * Existence alone is not enough, so each rule is also exercised with a row that
  * must be rejected. That is how the NULL hole in the original
@@ -25,9 +31,15 @@ import { Pool } from "pg";
  */
 
 const EXPECTED_CONSTRAINTS = [
-  "MembershipLevel_plan_country_fkey",
   "MembershipBenefit_service_country_fkey",
-  "MembershipEnrollment_level_country_fkey",
+  // Phase 7 (§21) — the multi-country replacements. `MembershipLevel_plan_
+  // country_fkey` and `MembershipEnrollment_level_country_fkey` are GONE:
+  // a level no longer carries a country, so both had to be re-targeted.
+  "MembershipBenefit_plan_country_fkey",
+  "MembershipEnrollment_level_plan_fkey",
+  "MembershipEnrollment_plan_country_fkey",
+  "MembershipBenefit_allowance_on_kind_rows_only",
+  "MembershipLevel_card_background_hex_format",
   "MembershipBenefit_target_exactly_one",
   "MembershipBenefit_kind_consultations_only",
   "MembershipBenefit_value_matches_type",
@@ -54,6 +66,7 @@ const MEMBERSHIP_TABLES = [
   "MembershipBenefit",
   "MembershipLevelTranslation",
   "MembershipLevel",
+  "MembershipPlanCountry",
   "MembershipPlanTranslation",
   "MembershipPlan",
 ];
@@ -190,115 +203,148 @@ async function checkMembershipFixtures(client: Client): Promise<void> {
     const planId = "ddlchk_plan";
     const levelId = "ddlchk_level";
     await client.query(
-      `INSERT INTO "MembershipPlan" ("id","countryId","slug","name","updatedAt")
+      `INSERT INTO "MembershipPlan" ("id","primaryCountryId","slug","name","updatedAt")
        VALUES ($1,$2,'ddl-check','DDL check',now())`,
       [planId, countryId],
     );
+    // The plan's own coverage row. Without it nothing below can be configured:
+    // every benefit row's (planId, countryId) points here (§21.1).
     await client.query(
-      `INSERT INTO "MembershipLevel" ("id","planId","countryId","slug","name","isDefault","updatedAt")
-       VALUES ($1,$2,$3,'default','Default',true,now())`,
-      [levelId, planId, countryId],
+      `INSERT INTO "MembershipPlanCountry" ("id","planId","countryId")
+       VALUES ('ddlchk_mpc',$1,$2)`,
+      [planId, countryId],
     );
-    check("baseline plan + default level insert", true);
+    await client.query(
+      `INSERT INTO "MembershipLevel" ("id","planId","slug","name","isDefault","updatedAt")
+       VALUES ($1,$2,'default','Default',true,now())`,
+      [levelId, planId],
+    );
+    check("baseline plan + coverage row + default level insert", true);
 
     await expectReject(
       client,
       "second default level per plan",
-      `INSERT INTO "MembershipLevel" ("id","planId","countryId","slug","name","isDefault","updatedAt")
-       VALUES ('ddlchk_level2',$1,$2,'second','Second',true,now())`,
-      [planId, countryId],
+      `INSERT INTO "MembershipLevel" ("id","planId","slug","name","isDefault","updatedAt")
+       VALUES ('ddlchk_level2',$1,'second','Second',true,now())`,
+      [planId],
     );
 
     await expectReject(
       client,
-      "level in a different country than its plan",
-      `INSERT INTO "MembershipLevel" ("id","planId","countryId","slug","name","updatedAt")
-       VALUES ('ddlchk_level3',$1,$2,'wrong-country','Wrong',now())`,
-      [planId, foreignCountryId],
+      "second coverage row for the same country",
+      `INSERT INTO "MembershipPlanCountry" ("id","planId","countryId")
+       VALUES ('ddlchk_mpc2',$1,$2)`,
+      [planId, countryId],
+    );
+
+    // The phase-7 replacement for "level in a different country than its
+    // plan": a benefit row may only configure a country the plan COVERS.
+    await expectReject(
+      client,
+      "benefit for a country the plan does not cover",
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","benefitType","percentOff","updatedAt")
+       VALUES ('ddlchk_b0',$1,$2,$3,'GENERAL','PERCENT',20,now())`,
+      [levelId, planId, foreignCountryId],
+    );
+
+    // §21.3: a shared pool cannot be pinned to one country's Service row.
+    await expectReject(
+      client,
+      "ALLOWANCE on a service-specific row",
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceId","benefitType","allowanceCount","updatedAt")
+       VALUES ('ddlchk_b10',$1,$2,$3,$4,'ALLOWANCE',4,now())`,
+      [levelId, planId, countryId, serviceId],
+    );
+
+    await expectReject(
+      client,
+      "malformed card background hex",
+      `UPDATE "MembershipLevel" SET "cardBackgroundHex" = 'ff0000' WHERE id = $1`,
+      [levelId],
     );
 
     await expectReject(
       client,
       "benefit targeting both a kind and a service",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceKind","serviceId","benefitType","percentOff","updatedAt")
-       VALUES ('ddlchk_b1',$1,$2,'GENERAL',$3,'PERCENT',20,now())`,
-      [levelId, countryId, serviceId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","serviceId","benefitType","percentOff","updatedAt")
+       VALUES ('ddlchk_b1',$1,$2,$3,'GENERAL',$4,'PERCENT',20,now())`,
+      [levelId, planId, countryId, serviceId],
     );
 
     await expectReject(
       client,
       "benefit targeting neither",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","benefitType","percentOff","updatedAt")
-       VALUES ('ddlchk_b2',$1,$2,'PERCENT',20,now())`,
-      [levelId, countryId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","benefitType","percentOff","updatedAt")
+       VALUES ('ddlchk_b2',$1,$2,$3,'PERCENT',20,now())`,
+      [levelId, planId, countryId],
     );
 
     await expectReject(
       client,
       "benefit on a non-consultation kind",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceKind","benefitType","percentOff","updatedAt")
-       VALUES ('ddlchk_b3',$1,$2,'HEALTH_TEST','PERCENT',20,now())`,
-      [levelId, countryId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","benefitType","percentOff","updatedAt")
+       VALUES ('ddlchk_b3',$1,$2,$3,'HEALTH_TEST','PERCENT',20,now())`,
+      [levelId, planId, countryId],
     );
 
     await expectReject(
       client,
       "PERCENT benefit over 100",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceKind","benefitType","percentOff","updatedAt")
-       VALUES ('ddlchk_b4',$1,$2,'GENERAL','PERCENT',120,now())`,
-      [levelId, countryId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","benefitType","percentOff","updatedAt")
+       VALUES ('ddlchk_b4',$1,$2,$3,'GENERAL','PERCENT',120,now())`,
+      [levelId, planId, countryId],
     );
 
     await expectReject(
       client,
       "ALLOWANCE benefit with no count",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceKind","benefitType","updatedAt")
-       VALUES ('ddlchk_b5',$1,$2,'GENERAL','ALLOWANCE',now())`,
-      [levelId, countryId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","benefitType","updatedAt")
+       VALUES ('ddlchk_b5',$1,$2,$3,'GENERAL','ALLOWANCE',now())`,
+      [levelId, planId, countryId],
     );
 
     await expectReject(
       client,
       "PERCENT benefit with a NULL percentOff",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceKind","benefitType","updatedAt")
-       VALUES ('ddlchk_b6',$1,$2,'GENERAL','PERCENT',now())`,
-      [levelId, countryId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","benefitType","updatedAt")
+       VALUES ('ddlchk_b6',$1,$2,$3,'GENERAL','PERCENT',now())`,
+      [levelId, planId, countryId],
     );
 
     await expectReject(
       client,
       "ALLOWANCE benefit whose PERCENT fallback has no percent",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceKind","benefitType","allowanceCount","fallbackType","updatedAt")
-       VALUES ('ddlchk_b7',$1,$2,'GENERAL','ALLOWANCE',4,'PERCENT',now())`,
-      [levelId, countryId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","benefitType","allowanceCount","fallbackType","updatedAt")
+       VALUES ('ddlchk_b7',$1,$2,$3,'GENERAL','ALLOWANCE',4,'PERCENT',now())`,
+      [levelId, planId, countryId],
     );
 
     await expectReject(
       client,
       "fallback on a PERCENT (non-allowance) benefit",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceKind","benefitType","percentOff","fallbackType","fallbackPercent","updatedAt")
-       VALUES ('ddlchk_b8',$1,$2,'GENERAL','PERCENT',20,'PERCENT',10,now())`,
-      [levelId, countryId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","benefitType","percentOff","fallbackType","fallbackPercent","updatedAt")
+       VALUES ('ddlchk_b8',$1,$2,$3,'GENERAL','PERCENT',20,'PERCENT',10,now())`,
+      [levelId, planId, countryId],
     );
 
     await expectReject(
       client,
       "benefit pinned to another country's service",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceId","benefitType","percentOff","updatedAt")
-       VALUES ('ddlchk_b9',$1,$2,$3,'PERCENT',20,now())`,
-      [levelId, countryId, foreignServiceId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceId","benefitType","percentOff","updatedAt")
+       VALUES ('ddlchk_b9',$1,$2,$3,$4,'PERCENT',20,now())`,
+      [levelId, planId, countryId, foreignServiceId],
     );
 
     // The constraints must not be so tight that valid configuration bounces.
     await client.query(
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceKind","benefitType","allowanceCount","fallbackType","fallbackPercent","updatedAt")
-       VALUES ('ddlchk_ok1',$1,$2,'GENERAL','ALLOWANCE',4,'PERCENT',20,now())`,
-      [levelId, countryId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceKind","benefitType","allowanceCount","fallbackType","fallbackPercent","updatedAt")
+       VALUES ('ddlchk_ok1',$1,$2,$3,'GENERAL','ALLOWANCE',4,'PERCENT',20,now())`,
+      [levelId, planId, countryId],
     );
     await client.query(
-      `INSERT INTO "MembershipBenefit" ("id","levelId","countryId","serviceId","benefitType","fixedPriceCents","updatedAt")
-       VALUES ('ddlchk_ok2',$1,$2,$3,'FIXED',4500,now())`,
-      [levelId, countryId, serviceId],
+      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceId","benefitType","fixedPriceCents","updatedAt")
+       VALUES ('ddlchk_ok2',$1,$2,$3,$4,'FIXED',4500,now())`,
+      [levelId, planId, countryId, serviceId],
     );
     check("valid allowance-with-fallback + fixed-service benefits accepted", true);
 

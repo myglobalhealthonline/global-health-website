@@ -490,6 +490,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               ? await planMembershipCheckout(tx, {
                   userId,
                   enrollmentId: cart.membershipEnrollmentId,
+                  // Decision 44: the member may have declined the included
+                  // visit to keep it for later. WHICH RULE, not a price —
+                  // every figure is still re-derived inside.
+                  declineUnit: cart.membershipDeclineUnit,
                   items: cart.items.map((i) => ({ id: i.id, serviceId: i.serviceId })),
                   fullPriceByItemId: new Map(
                     cart.items.map((i) => [i.id, effectiveUnitPrice(i)]),
@@ -676,11 +680,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           if (membershipPlan) {
             for (const ci of cart.items) {
               const line = membershipPlan.lines.get(ci.id);
-              if (!line?.allowanceUsed) continue;
+              if (!line?.allowanceUsed || !line.poolBenefit) continue;
               const orderItemId = cartToOrderItem.get(ci.id);
               if (!orderItemId) continue;
+              // The POOL row, not the governing one (§21.4): one counter,
+              // spendable in every configured covered country. Spending
+              // against the booking country's row would split the pool.
               const spend = await spendAllowanceUnit(tx, {
-                benefit: line.benefit,
+                benefit: line.poolBenefit,
                 enrollment: membershipPlan.enrollment,
                 orderId: created.id,
                 orderItemId,
@@ -702,7 +709,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               if (spend.remainingAfter === 0) {
                 exhausted.push({
                   enrollmentId: membershipPlan.enrollment.id,
-                  benefitId: line.benefit.id,
+                  benefitId: line.poolBenefit.id,
                 });
               }
             }

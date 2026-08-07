@@ -129,7 +129,7 @@ describe("admin membership plan routes", () => {
     });
     const countryIds = [countryAId, countryBId, commissionCountryId];
     // Plan cascade removes levels, benefits and translations.
-    await prisma.membershipPlan.deleteMany({ where: { countryId: { in: countryIds } } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: { in: countryIds } } });
     await prisma.service.deleteMany({ where: { countryId: { in: countryIds } } });
     await prisma.user.deleteMany({
       where: { id: { in: [superAdminId, genericAdminId, localAdminId, patientId] } },
@@ -156,6 +156,62 @@ describe("admin membership plan routes", () => {
     const plan = res.json().data.plan;
     return { planId: plan.id as string, defaultLevelId: plan.levels[0].id as string };
   }
+
+  /**
+   * The admin plan pages render `plan.primaryCountry.name` and read
+   * `plan.countries` for the coverage list. `tsc` proves the TYPES line up but
+   * says nothing about what the route actually serialises, and a missing
+   * relation renders as a blank field rather than an error — so the render
+   * contract is pinned here, against the real route and a real database.
+   */
+  it("serves the primary country and the covered-country list on the detail payload", async (t) => {
+    if (!app) return t.skip();
+    const { planId } = await createPlan(`shape-${uniq}`);
+    const res = await app.inject({
+      method: "GET",
+      url: `/api/admin/membership-plans/${planId}`,
+      cookies: superCookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const plan = res.json().data.plan;
+    assert.equal(plan.primaryCountryId, countryAId);
+    assert.equal(plan.primaryCountry?.id, countryAId, "the page renders primaryCountry.name");
+    assert.deepEqual(
+      plan.countries.map((c: { countryId: string }) => c.countryId),
+      [countryAId],
+      "a new plan covers exactly its primary country",
+    );
+    assert.ok(plan.countries[0].country?.code, "the country relation is expanded, not just its id");
+  });
+
+  it("scopes the plan list by COVERAGE, not by which country is primary", async (t) => {
+    if (!app) return t.skip();
+    const { planId } = await createPlan(`coverage-${uniq}`);
+    // Country B is not covered yet, so the plan must not appear under it.
+    const before = await app.inject({
+      method: "GET",
+      url: `/api/admin/membership-plans?countryId=${countryBId}`,
+      cookies: superCookie,
+    });
+    assert.equal(
+      before.json().data.plans.some((p: { id: string }) => p.id === planId),
+      false,
+    );
+
+    await prisma!.membershipPlanCountry.create({
+      data: { planId, countryId: countryBId },
+    });
+    const after = await app.inject({
+      method: "GET",
+      url: `/api/admin/membership-plans?countryId=${countryBId}`,
+      cookies: superCookie,
+    });
+    assert.equal(
+      after.json().data.plans.some((p: { id: string }) => p.id === planId),
+      true,
+      "a plan covering B belongs on B's list even though its primary is A",
+    );
+  });
 
   // ─── Authorization matrix (§4.2) ───────────────────────────────────────────
 
@@ -220,7 +276,15 @@ describe("admin membership plan routes", () => {
     assert.equal(levels.length, 1, "one implicit level");
     assert.equal(levels[0].id, defaultLevelId);
     assert.equal(levels[0].isDefault, true);
-    assert.equal(levels[0].countryId, countryAId, "level inherits the plan's country");
+    // A level no longer carries a country — it spans the plan's covered ones
+    // (§21.2). What the plan DOES get at creation is a coverage row for its
+    // primary country, which is what makes it configurable at all (§21.1).
+    const covered = await prisma.membershipPlanCountry.findMany({ where: { planId } });
+    assert.deepEqual(
+      covered.map((c) => c.countryId),
+      [countryAId],
+      "the primary country's coverage row is created with the plan",
+    );
     const audit = await prisma.auditLog.findFirst({
       where: { action: "MEMBERSHIP_PLAN_CREATED", entityId: planId },
     });
@@ -278,7 +342,7 @@ describe("admin membership plan routes", () => {
 
   // ─── Levels ────────────────────────────────────────────────────────────────
 
-  it("creates a sibling level that inherits the plan's country", async (t) => {
+  it("creates a sibling level, which spans the plan's countries rather than one", async (t) => {
     if (!app) return t.skip();
     const { planId } = await createPlan(`levels-${uniq}`);
     const res = await app.inject({
@@ -289,7 +353,10 @@ describe("admin membership plan routes", () => {
     });
     assert.equal(res.statusCode, 200, res.body);
     const level = res.json().data.level;
-    assert.equal(level.countryId, countryAId);
+    // Phase 7: a level carries no country at all — its BENEFIT rows are what
+    // is per-country (§21.2/§21.3).
+    assert.equal(level.countryId, undefined);
+    assert.equal(level.planId, planId);
     assert.equal(level.isDefault, false, "only the implicit level is the default");
   });
 

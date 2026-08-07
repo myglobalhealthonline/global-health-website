@@ -10,9 +10,10 @@ import { resolveCorporateDiscount } from "../corporate/corporate-benefit.service
 import { previewServiceBenefit } from "../subscriptions/checkout-pricing.service.js";
 import {
   pricingEnrollmentSelect,
-  priceMembershipLine,
+  priceMembershipOptions,
 } from "../memberships/membership-pricing.service.js";
 import type {
+  MembershipPrice,
   MembershipPriceBasis,
   PricingService,
 } from "../memberships/membership-pricing.service.js";
@@ -55,6 +56,11 @@ export type BenefitOptionNote =
   | { key: "PLAN_CREDIT"; remaining: number }
   /** The allowance is gone and the row's fallback discount applied instead. */
   | { key: "ALLOWANCE_EXHAUSTED" }
+  /**
+   * Decision 44's second option: the booking country's own percent/fixed rule,
+   * offered beside the unit so the member can keep a scarce visit for later.
+   */
+  | { key: "COUNTRY_RULE" }
   /** Insurance is verified by an admin and charged later, not at checkout (§33). */
   | { key: "INSURANCE_DEFERRED" };
 
@@ -152,7 +158,17 @@ function isPercentBasis(basis: MembershipPriceBasis): boolean {
   return basis === "PERCENT" || basis === "FALLBACK_PERCENT";
 }
 
-/** Every membership this account holds is priced separately (§19). */
+/**
+ * Every membership this account holds is priced separately (§19), and since
+ * phase 7 an enrollment can produce TWO options rather than one (decision 44):
+ * the included visit, and the booking country's own rule offered beside it so
+ * the member can decline the unit and keep a scarce visit for later.
+ *
+ * The pair is emitted only when both genuinely exist — a unit is available AND
+ * the country's own rule beats full price. The `:unit` / `:discount` suffix on
+ * the `refId` is how add-to-cart says which one was chosen; it selects a RULE,
+ * never a price, and checkout re-derives both sides regardless (§22).
+ */
 async function membershipOptions(args: {
   userId: string;
   service: PricingService;
@@ -172,31 +188,46 @@ async function membershipOptions(args: {
 
   const out: BenefitOption[] = [];
   for (const enrollment of enrollments) {
-    const price = await priceMembershipLine({
+    const { withUnit, withoutUnit } = await priceMembershipOptions({
       enrollment,
       service: args.service,
       fullPriceCents: args.fullPriceCents,
       now: args.now,
     });
-    if (!price || price.discountCents <= 0) continue;
 
     const planName = translatedName(enrollment.plan.translations, args.locale, enrollment.plan.name);
     const levelName = translatedName(enrollment.level.translations, args.locale, enrollment.level.name);
-    out.push({
+    const label = `${planName} — ${levelName}`;
+
+    // Both sides on offer: two options, suffixed so the choice survives
+    // add-to-cart. A single option keeps the bare enrollment id, so nothing
+    // that existed before phase 7 changes shape.
+    const pair = withUnit && withoutUnit && withoutUnit.discountCents > 0;
+
+    const toOption = (price: MembershipPrice, refId: string): BenefitOption => ({
       source: "MEMBERSHIP",
-      refId: enrollment.id,
-      label: `${planName} — ${levelName}`,
+      refId,
+      label,
       unitPriceCents: price.unitPriceCents,
       discountCents: price.discountCents,
       note:
         price.allowanceUsed && price.allowanceRemaining != null
           ? { key: "ALLOWANCE_UNIT", remaining: price.allowanceRemaining }
-          : price.basis === "FALLBACK_PERCENT" || price.basis === "FALLBACK_FIXED"
-            ? { key: "ALLOWANCE_EXHAUSTED" }
-            : null,
+          : pair
+            ? { key: "COUNTRY_RULE" }
+            : price.basis === "FALLBACK_PERCENT" || price.basis === "FALLBACK_FIXED"
+              ? { key: "ALLOWANCE_EXHAUSTED" }
+              : null,
       indicative: !args.slotPriced && isPercentBasis(price.basis),
       recommended: false,
     });
+
+    if (withUnit && withUnit.discountCents > 0) {
+      out.push(toOption(withUnit, pair ? `${enrollment.id}:unit` : enrollment.id));
+    }
+    if (pair && withoutUnit) {
+      out.push(toOption(withoutUnit, `${enrollment.id}:discount`));
+    }
   }
   return out;
 }

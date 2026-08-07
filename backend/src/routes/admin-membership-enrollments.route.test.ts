@@ -66,19 +66,18 @@ describe("admin membership enrollment routes", () => {
     });
     countryId = country.id;
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `enr-plan-${uniq}`, name: "Enrollment Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `enr-plan-${uniq}`, name: "Enrollment Plan" },
     });
     planId = plan.id;
     defaultLevelId = (
       await prisma.membershipLevel.create({
-        data: { planId, countryId, slug: "standard", name: "Standard", isDefault: true },
+        data: { planId, slug: "standard", name: "Standard", isDefault: true },
       })
     ).id;
     familyLevelId = (
       await prisma.membershipLevel.create({
         data: {
           planId,
-          countryId,
           slug: "family",
           name: "Family",
           familyEnabled: true,
@@ -119,7 +118,7 @@ describe("admin membership enrollment routes", () => {
     await deleteAuditLogs(prisma, { actorUserId: { in: [adminId, localAdminId, patientId] } });
     await prisma.membershipInviteLog.deleteMany({ where: { enrollment: { planId } } });
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.user.deleteMany({
       where: { id: { in: [adminId, localAdminId, patientId, ...extraUserIds] } },
     });
@@ -274,12 +273,11 @@ describe("admin membership enrollment routes", () => {
   it("rejects a level from another plan → 400", async (t) => {
     if (!app) return t.skip();
     const otherPlan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `other-plan-${uniq}`, name: "Other Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `other-plan-${uniq}`, name: "Other Plan" },
     });
     const otherLevel = await prisma.membershipLevel.create({
       data: {
         planId: otherPlan.id,
-        countryId,
         slug: "standard",
         name: "Standard",
         isDefault: true,

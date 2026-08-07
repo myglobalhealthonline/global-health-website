@@ -47,7 +47,7 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
   }
   const plan = planResult.data.plan;
 
-  const countryResult = await fetchAdminCountryById(plan.countryId);
+  const countryResult = await fetchAdminCountryById(plan.primaryCountryId);
   const country = countryResult.ok ? countryResult.data.country : null;
   const defaultLocale = (country?.defaultLocale ?? "EN").toUpperCase();
   // Tabs come from the country's own enabled locales, so a market that turns on
@@ -116,7 +116,7 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
       <PageHeader
         eyebrow="Memberships"
         title={title}
-        description={`${plan.country.name} · ${plan._count.enrollments} member${
+        description={`${plan.primaryCountry.name} · ${plan._count.enrollments} member${
           plan._count.enrollments === 1 ? "" : "s"
         }`}
         actions={plan.isActive ? <Pill tone="active">Active</Pill> : <Pill tone="inactive">Inactive</Pill>}
@@ -255,7 +255,7 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
         {/* Settings + payer metadata last: set once, rarely revisited. */}
         <AdminCard>
           <form action={savePlanAction} className="flex flex-col gap-8">
-            <MembershipPlanFields countries={[plan.country]} initial={plan} />
+            <MembershipPlanFields countries={[plan.primaryCountry]} initial={plan} />
             <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save programme

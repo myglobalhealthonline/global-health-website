@@ -41,10 +41,10 @@ export async function upsertMembershipPlanTranslation(
 ) {
   const plan = await prisma.membershipPlan.findUnique({
     where: { id: planId },
-    select: { countryId: true },
+    select: { primaryCountryId: true },
   });
   if (!plan) throw new MembershipPlanNotFoundError();
-  await assertLocaleSupported(plan.countryId, locale);
+  await assertLocaleSupported(plan.primaryCountryId, locale);
 
   const data = { name: body.name, description: body.description };
   try {
@@ -78,14 +78,15 @@ export async function upsertMembershipLevelTranslation(
   locale: LocaleCode,
   body: MembershipTranslationBody,
 ) {
-  // The level's own countryId is the plan's country (composite FK), so it is
-  // the right thing to validate the locale against without a second hop.
+  // A level spans the plan`s countries since phase 7, so the locale is
+  // validated against the plan`s PRIMARY country — the one whose default
+  // locale the member-facing copy falls back to (§25).
   const level = await prisma.membershipLevel.findUnique({
     where: { id: levelId },
-    select: { countryId: true },
+    select: { plan: { select: { primaryCountryId: true } } },
   });
   if (!level) throw new MembershipLevelNotFoundError();
-  await assertLocaleSupported(level.countryId, locale);
+  await assertLocaleSupported(level.plan.primaryCountryId, locale);
 
   const data = { name: body.name, description: body.description };
   try {

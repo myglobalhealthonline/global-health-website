@@ -147,15 +147,16 @@ describe("benefit options — end to end", () => {
     userId = user.id;
 
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `benefit-plan-${uniq}`, name: "Benefit Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `benefit-plan-${uniq}`, name: "Benefit Plan" },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
-      data: { planId, countryId, slug: "gold", name: "Gold", isDefault: true },
+      data: { planId, slug: "gold", name: "Gold", isDefault: true },
     });
     await prisma.membershipBenefit.create({
       data: {
         levelId: level.id,
+        planId,
         countryId,
         serviceKind: "GENERAL",
         benefitType: "ALLOWANCE",
@@ -184,7 +185,7 @@ describe("benefit options — end to end", () => {
   after(async () => {
     if (!prisma || !countryId) return;
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.service.deleteMany({ where: { countryId } });
     await prisma.user.deleteMany({ where: { id: userId } });
     await prisma.country.deleteMany({ where: { id: countryId } });
@@ -206,6 +207,36 @@ describe("benefit options — end to end", () => {
     assert.deepEqual(membership.note, { key: "ALLOWANCE_UNIT", remaining: 2 });
     // A €0 allowance line is a flat outcome — no slot can change it.
     assert.equal(membership.indicative, false);
+  });
+
+  /**
+   * Decision 44. A member with units left is offered both the included visit
+   * and what the line costs if they keep the visit for later, cheapest
+   * pre-selected. The suffix on the refId is how add-to-cart says which.
+   *
+   * Note what "the country's own rule" means when the booking IS in the
+   * primary country: the per-country uniqueness is (levelId, countryId,
+   * serviceKind), so a country that already has an ALLOWANCE kind row cannot
+   * also have a PERCENT one for the same kind. The row's own fallback is
+   * therefore the only "what if I don't spend a unit" price available there —
+   * and using it means a member can decline a visit in their home market too,
+   * rather than only when travelling.
+   */
+  it("offers the unit and the declined-unit price as a suffixed pair", async (t) => {
+    if (!prisma) return t.skip();
+    const result = await svc.listBenefitOptions({ userId, serviceId });
+    const memberships = result?.options.filter((o) => o.source === "MEMBERSHIP") ?? [];
+    assert.equal(memberships.length, 2, "a unit and a decline option");
+
+    const unit = memberships.find((o) => o.refId.endsWith(":unit"));
+    const decline = memberships.find((o) => o.refId.endsWith(":discount"));
+    assert.ok(unit && decline);
+    assert.equal(unit.unitPriceCents, 0);
+    assert.equal(decline.unitPriceCents, 4800, "20% off, the unit kept");
+    assert.deepEqual(decline.note, { key: "COUNTRY_RULE" });
+    // Cheapest pre-selected, so the unit wins unless the member says otherwise.
+    assert.equal(unit.recommended, true);
+    assert.equal(decline.recommended, false);
   });
 
   it("falls to the row's fallback discount once the allowance is spent", async (t) => {

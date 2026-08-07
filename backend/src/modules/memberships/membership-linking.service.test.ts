@@ -59,11 +59,11 @@ describe("membership linking", () => {
     });
     countryId = country.id;
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `link-plan-${uniq}`, name: "Link Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `link-plan-${uniq}`, name: "Link Plan" },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
-      data: { planId, countryId, slug: "standard", name: "Standard", isDefault: true },
+      data: { planId, slug: "standard", name: "Standard", isDefault: true },
     });
     levelId = level.id;
   });
@@ -72,7 +72,7 @@ describe("membership linking", () => {
     if (!prisma) return;
     restoreEmail?.();
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.user.deleteMany({ where: { id: { in: userIds } } });
     await prisma.country.deleteMany({ where: { id: countryId } });
     await prisma.currency.deleteMany({ where: { id: currencyId } });
@@ -228,12 +228,11 @@ describe("membership linking", () => {
     if (!prisma) return t.skip();
     const user = await mkUser("multi", true);
     const otherPlan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `link-plan2-${uniq}`, name: "Link Plan 2" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `link-plan2-${uniq}`, name: "Link Plan 2" },
     });
     const otherLevel = await prisma.membershipLevel.create({
       data: {
         planId: otherPlan.id,
-        countryId,
         slug: "standard",
         name: "Standard",
         isDefault: true,

@@ -123,7 +123,7 @@ const enrollmentSelect = {
       name: true,
       // Currency lives on the related Currency row, not on Country — a
       // `currencyCode` select here type-checks and then fails at runtime.
-      country: {
+      primaryCountry: {
         select: { code: true, defaultLocale: true, currency: { select: { code: true } } },
       },
       translations: { select: { locale: true, name: true } },
@@ -223,7 +223,7 @@ async function toView(
     endDate: row.endDate?.toISOString() ?? null,
     memberType: row.memberType,
     holderName: `${row.firstName} ${row.lastName}`.trim(),
-    countryCode: row.plan.country.code,
+    countryCode: row.plan.primaryCountry.code,
     family: row.level.familyEnabled
       ? {
           enabled: true,
@@ -244,7 +244,7 @@ async function toView(
         benefitType: b.benefitType,
         percentOff: b.percentOff,
         fixedPriceCents: b.fixedPriceCents,
-        currencyCode: row.plan.country.currency?.code ?? null,
+        currencyCode: row.plan.primaryCountry.currency?.code ?? null,
         fallbackType: b.fallbackType,
         fallbackPercent: b.fallbackPercent,
         fallbackFixedCents: b.fallbackFixedCents,
@@ -326,7 +326,7 @@ export async function verifyMembershipForStaff(
       status: true,
       startDate: true,
       endDate: true,
-      plan: { select: { name: true, country: { select: { code: true } } } },
+      plan: { select: { name: true, primaryCountry: { select: { code: true } } } },
       level: { select: { name: true } },
     },
   });
@@ -343,7 +343,7 @@ export async function verifyMembershipForStaff(
     termState: state,
     startDate: row.startDate.toISOString(),
     endDate: row.endDate?.toISOString() ?? null,
-    countryCode: row.plan.country.code,
+    countryCode: row.plan.primaryCountry.code,
     // Both conditions, because either alone is misleading: an ACTIVE row whose
     // term has not opened grants nothing, and an in-term SUSPENDED row is off.
     benefitsActive: row.status === "ACTIVE" && state === "IN_TERM",

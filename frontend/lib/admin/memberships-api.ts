@@ -27,6 +27,8 @@ export type MembershipTranslation = {
 export type MembershipBenefit = {
   id: string;
   levelId: string;
+  planId: string;
+  /** Which covered country this row configures. Fixed once created. */
   countryId: string;
   serviceKind: MembershipServiceKind | null;
   serviceId: string | null;
@@ -51,7 +53,13 @@ export type MembershipBenefit = {
 export type MembershipLevel = {
   id: string;
   planId: string;
-  countryId: string;
+  /**
+   * Card background, admin-set per level. Hex or null; the foreground is
+   * DERIVED from its luminance and never stored, so an admin cannot produce
+   * white-on-pale. A level no longer carries a country — it spans the plan's
+   * covered ones, and the per-country configuration lives on its benefits.
+   */
+  cardBackgroundHex: string | null;
   slug: string;
   name: string;
   sortOrder: number;
@@ -66,18 +74,25 @@ export type MembershipLevel = {
 
 export type MembershipPlanListItem = {
   id: string;
-  countryId: string;
+  /** Where the plan was created and where its shared allowance pool lives. */
+  primaryCountryId: string;
   slug: string;
   name: string;
   internalNotes: string | null;
   isActive: boolean;
   payerName: string | null;
-  country: MembershipPlanCountry;
+  primaryCountry: MembershipPlanCountry;
   translations: { locale: string; name: string }[];
   _count: { levels: number; enrollments: number };
 };
 
 export type MembershipPlanDetail = Omit<MembershipPlanListItem, "translations" | "_count"> & {
+  /**
+   * Every covered country, primary included. Coverage is not configuration —
+   * a country listed here with no benefit rows gives members nothing at all,
+   * allowance units included, which is why the level editor badges it.
+   */
+  countries: { countryId: string; country: MembershipPlanCountry }[];
   payerEmail: string | null;
   payerPhone: string | null;
   payerAmountCents: number | null;
@@ -286,7 +301,7 @@ export type MembershipEnrollment = {
   claimedAt: string | null;
   adminNotes: string | null;
   createdAt: string;
-  plan: { id: string; name: string; slug: string; countryId: string };
+  plan: { id: string; name: string; slug: string; primaryCountryId: string };
   level: {
     id: string;
     name: string;

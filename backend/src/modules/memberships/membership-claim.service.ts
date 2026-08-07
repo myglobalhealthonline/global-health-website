@@ -85,7 +85,7 @@ export async function requestMembershipClaim(opts: {
       email: true,
       firstName: true,
       membershipId: true,
-      plan: { select: { name: true, countryId: true } },
+      plan: { select: { name: true, primaryCountryId: true } },
       level: { select: { name: true } },
     },
   });
@@ -123,7 +123,7 @@ export async function requestMembershipClaim(opts: {
     planName: enrollment.plan.name,
     levelName: enrollment.level.name,
     membershipId: enrollment.membershipId,
-    countryId: enrollment.plan.countryId,
+    countryId: enrollment.plan.primaryCountryId,
     requesterEmail: user.email,
     token,
   }).catch(() => undefined);
@@ -157,7 +157,7 @@ export async function confirmMembershipClaim(opts: {
           planId: true,
           membershipId: true,
           firstName: true,
-          plan: { select: { name: true, countryId: true } },
+          plan: { select: { name: true, primaryCountryId: true } },
           level: { select: { name: true } },
         },
       },
@@ -244,7 +244,7 @@ export async function confirmMembershipClaim(opts: {
       planName: row.enrollment.plan.name,
       levelName: row.enrollment.level.name,
       membershipId: row.enrollment.membershipId,
-      countryId: row.enrollment.plan.countryId,
+      countryId: row.enrollment.plan.primaryCountryId,
       preferredLocale: user.preferredLocale,
     }).catch(() => undefined);
   }

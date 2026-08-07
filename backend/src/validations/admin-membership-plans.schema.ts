@@ -140,6 +140,18 @@ export const membershipLevelLocaleParamsSchema = z.object({
 // ─── Benefits ────────────────────────────────────────────────────────────────
 
 const membershipBenefitBase = z.object({
+  /**
+   * Which covered country this row configures (§21.3). Omitted means the
+   * plan's primary country, so every caller written before phase 7 keeps
+   * behaving identically. An uncovered country is refused by the service.
+   */
+  countryId: z
+    .string()
+    .trim()
+    .min(1)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
   serviceKind: membershipServiceKindSchema.optional().nullable(),
   serviceId: z
     .string()
@@ -176,6 +188,15 @@ export function refineBenefit<T extends z.ZodTypeAny>(schema: T) {
     .refine((d: BenefitShape) => d.benefitType !== "ALLOWANCE" || d.allowanceCount != null, {
       message: "An allowance benefit needs allowanceCount",
       path: ["allowanceCount"],
+    })
+    // §21.3, and a CHECK backs it. A service-scoped pool cannot be shared
+    // across countries: `Service` rows are per-country and there is no
+    // reliable mapping between a Czech service and its Irish counterpart.
+    // Slug matching is the silent-failure mode the design rejected outright.
+    .refine((d: BenefitShape) => d.benefitType !== "ALLOWANCE" || d.serviceKind != null, {
+      message:
+        "An allowance covers a service kind, not one service — a shared pool cannot be pinned to a single country's service",
+      path: ["benefitType"],
     })
     .refine((d: BenefitShape) => d.benefitType !== "PERCENT" || d.percentOff != null, {
       message: "A percent benefit needs percentOff",

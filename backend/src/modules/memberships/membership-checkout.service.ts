@@ -3,7 +3,7 @@ import {
   enrollmentGrantsBenefits,
   pricingEnrollmentSelect,
   resolveMembershipPrice,
-  selectBenefitRow,
+  resolvePoolBenefit,
 } from "./membership-pricing.service.js";
 import type {
   MembershipPriceBasis,
@@ -33,13 +33,22 @@ import { balanceKey } from "./membership-allowance.service.js";
  */
 
 export type MembershipLinePrice = {
+  /**
+   * The GOVERNING row (the booking country's), which is what lands on
+   * `OrderItem.membershipBenefitId` — NOT the pool row (§21.5b).
+   */
   benefitId: string;
   unitPriceCents: number;
   discountCents: number;
   basis: MembershipPriceBasis;
   allowanceUsed: boolean;
-  /** The row that governed this line — the spend pass needs it for the counter. */
-  benefit: PricingBenefitRow;
+  /**
+   * The row whose counter this line's unit comes off: the primary country's
+   * ALLOWANCE row (§21.4). The spend pass needs THIS one, not the governing
+   * one — using the governing row would split one shared pool into a counter
+   * per country, and it would do so silently.
+   */
+  poolBenefit: PricingBenefitRow | null;
   /** Carried so a lost allowance race can re-price without re-reading. */
   service: PricingService;
 };
@@ -84,6 +93,11 @@ export async function planMembershipCheckout(
     items: CheckoutItem[];
     /** Peak-resolved price per CART item id — what the line costs without a benefit. */
     fullPriceByItemId: Map<string, number>;
+    /**
+     * `Cart.membershipDeclineUnit` (decision 44). Read as WHICH RULE applies,
+     * never as a price: every figure below is still re-derived here.
+     */
+    declineUnit?: boolean;
     now?: Date;
   },
 ): Promise<MembershipCheckoutPlan> {
@@ -140,23 +154,25 @@ export async function planMembershipCheckout(
     const fullPriceCents = args.fullPriceByItemId.get(item.id);
     if (fullPriceCents == null) continue;
 
-    const benefit = selectBenefitRow(enrollment.level.benefits, service);
-    if (!benefit) continue;
-    const allowanceRemaining = await remainingFor(benefit);
+    // The counter is the PRIMARY country's row, whatever country this line is
+    // booked in (§21.4). The governing row is resolved inside the resolver.
+    const pool = resolvePoolBenefit(enrollment, service.kind);
+    const allowanceRemaining = pool ? await remainingFor(pool) : 0;
     const price = resolveMembershipPrice({
       enrollment,
       service,
       fullPriceCents,
       allowanceRemaining,
+      declineUnit: args.declineUnit,
       now,
     });
     if (!price) continue;
-    if (price.allowanceUsed) {
+    if (price.allowanceUsed && pool) {
       // One unit per LINE, not per unit of quantity: the ledger's
       // `${orderItemId}:SPEND` key structurally allows exactly one, and the
       // booking flow cannot produce a consultation line with quantity > 1
       // (each carries its own unique time slot).
-      projected.set(benefit.id, Math.max(0, allowanceRemaining - 1));
+      projected.set(pool.id, Math.max(0, allowanceRemaining - 1));
     }
     lines.set(item.id, {
       benefitId: price.benefitId,
@@ -164,7 +180,7 @@ export async function planMembershipCheckout(
       discountCents: price.discountCents,
       basis: price.basis,
       allowanceUsed: price.allowanceUsed,
-      benefit,
+      poolBenefit: pool,
       service,
     });
   }

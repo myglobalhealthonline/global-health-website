@@ -216,7 +216,7 @@ export async function buildMembershipUsageReport(
       id: true,
       name: true,
       slug: true,
-      country: { select: { code: true } },
+      primaryCountry: { select: { code: true } },
       levels: { select: { benefits: { select: { id: true, benefitType: true } } } },
     },
   });
@@ -301,7 +301,7 @@ export async function buildMembershipUsageReport(
   });
 
   return {
-    plan: { id: plan.id, name: plan.name, slug: plan.slug, countryCode: plan.country.code },
+    plan: { id: plan.id, name: plan.name, slug: plan.slug, countryCode: plan.primaryCountry.code },
     range: { from: filters.from ?? null, to: filters.to ?? null },
     membersByStatus,
     usage: {

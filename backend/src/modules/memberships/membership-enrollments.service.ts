@@ -58,7 +58,7 @@ export class MembershipPlanLevelMismatchError extends Error {
 type Tx = Prisma.TransactionClient | PrismaClient;
 
 export const enrollmentInclude = {
-  plan: { select: { id: true, name: true, slug: true, countryId: true } },
+  plan: { select: { id: true, name: true, slug: true, primaryCountryId: true } },
   level: {
     select: {
       id: true,
@@ -147,7 +147,7 @@ export async function resolveLevel(tx: Tx, planId: string, levelId?: string | nu
   if (levelId) {
     const level = await tx.membershipLevel.findUnique({
       where: { id: levelId },
-      select: { id: true, planId: true, countryId: true, familyEnabled: true, maxDependents: true },
+      select: { id: true, planId: true, familyEnabled: true, maxDependents: true },
     });
     if (!level) throw new MembershipPlanLevelMismatchError();
     if (level.planId !== planId) throw new MembershipPlanLevelMismatchError();
@@ -155,7 +155,7 @@ export async function resolveLevel(tx: Tx, planId: string, levelId?: string | nu
   }
   const fallback = await tx.membershipLevel.findFirst({
     where: { planId, isDefault: true },
-    select: { id: true, planId: true, countryId: true, familyEnabled: true, maxDependents: true },
+    select: { id: true, planId: true, familyEnabled: true, maxDependents: true },
   });
   if (!fallback) throw new MembershipPlanLevelMismatchError();
   return fallback;
@@ -365,7 +365,7 @@ export async function createMembershipEnrollment(
 ) {
   const plan = await prisma.membershipPlan.findUnique({
     where: { id: body.planId },
-    select: { id: true, countryId: true },
+    select: { id: true, primaryCountryId: true },
   });
   if (!plan) throw new MembershipEnrollmentConflictError("Membership plan not found");
   const level = await resolveLevel(prisma, plan.id, body.levelId ?? null);
@@ -375,7 +375,7 @@ export async function createMembershipEnrollment(
     const result = await upsertEnrollmentRow(prisma, {
       planId: plan.id,
       levelId: level.id,
-      countryId: plan.countryId,
+      countryId: plan.primaryCountryId,
       membershipId: body.membershipId,
       email: body.email,
       firstName: body.firstName,
@@ -659,7 +659,7 @@ export async function sendMembershipEnrollmentInvite(id: string, actorAdminId: s
   const enrollment = await prisma.membershipEnrollment.findUnique({
     where: { id },
     include: {
-      plan: { select: { name: true, countryId: true } },
+      plan: { select: { name: true, primaryCountryId: true } },
       level: { select: { name: true } },
     },
   });
@@ -674,7 +674,7 @@ export async function sendMembershipEnrollmentInvite(id: string, actorAdminId: s
     planName: enrollment.plan.name,
     levelName: enrollment.level.name,
     membershipId: enrollment.membershipId,
-    countryId: enrollment.plan.countryId,
+    countryId: enrollment.plan.primaryCountryId,
   }).catch((error: unknown) => ({
     ok: false as const,
     message: error instanceof Error ? error.message : "Send failed",

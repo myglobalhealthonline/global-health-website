@@ -89,17 +89,18 @@ describe("membership reports — usage, overrides, drill-down", () => {
     userId = user.id;
 
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `report-plan-${uniq}`, name: "Report Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `report-plan-${uniq}`, name: "Report Plan" },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
-      data: { planId, countryId, slug: "gold", name: "Gold", isDefault: true },
+      data: { planId, slug: "gold", name: "Gold", isDefault: true },
     });
     levelId = level.id;
     allowanceBenefitId = (
       await prisma.membershipBenefit.create({
         data: {
           levelId,
+          planId,
           countryId,
           serviceKind: "GENERAL",
           benefitType: "ALLOWANCE",
@@ -111,7 +112,7 @@ describe("membership reports — usage, overrides, drill-down", () => {
     ).id;
     percentBenefitId = (
       await prisma.membershipBenefit.create({
-        data: { levelId, countryId, serviceId, benefitType: "PERCENT", percentOff: 25 },
+        data: { levelId, planId, countryId, serviceId, benefitType: "PERCENT", percentOff: 25 },
       })
     ).id;
 
@@ -224,7 +225,7 @@ describe("membership reports — usage, overrides, drill-down", () => {
     });
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
     await prisma.membershipBenefit.deleteMany({ where: { levelId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.service.deleteMany({ where: { countryId } });
     await prisma.user.deleteMany({ where: { id: userId } });
     await prisma.country.deleteMany({ where: { id: countryId } });

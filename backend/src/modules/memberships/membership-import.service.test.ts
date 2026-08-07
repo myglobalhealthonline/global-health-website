@@ -127,17 +127,16 @@ describe("membership import (database)", () => {
     });
     countryId = country.id;
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `import-plan-${uniq}`, name: "Import Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `import-plan-${uniq}`, name: "Import Plan" },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
-      data: { planId, countryId, slug: "standard", name: "Standard", isDefault: true },
+      data: { planId, slug: "standard", name: "Standard", isDefault: true },
     });
     defaultLevelId = level.id;
     const family = await prisma.membershipLevel.create({
       data: {
         planId,
-        countryId,
         slug: "family",
         name: "Family",
         familyEnabled: true,
@@ -152,7 +151,7 @@ describe("membership import (database)", () => {
     (await import("../../lib/email/send-email.js")).setEmailCaptureHook(null);
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
     await prisma.membershipImportBatch.deleteMany({ where: { planId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.user.deleteMany({ where: { id: { in: userIds } } });
     await prisma.country.deleteMany({ where: { id: countryId } });
     await prisma.currency.deleteMany({ where: { id: currencyId } });

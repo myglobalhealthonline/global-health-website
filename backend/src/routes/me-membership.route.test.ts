@@ -116,19 +116,18 @@ describe("member membership routes", () => {
     countryId = country.id;
     planId = (
       await prisma.membershipPlan.create({
-        data: { countryId, slug: `mem-plan-${uniq}`, name: "Member Plan" },
+        data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `mem-plan-${uniq}`, name: "Member Plan" },
       })
     ).id;
     levelId = (
       await prisma.membershipLevel.create({
-        data: { planId, countryId, slug: "standard", name: "Standard", isDefault: true },
+        data: { planId, slug: "standard", name: "Standard", isDefault: true },
       })
     ).id;
     familyLevelId = (
       await prisma.membershipLevel.create({
         data: {
           planId,
-          countryId,
           slug: "family",
           name: "Family",
           familyEnabled: true,
@@ -145,7 +144,7 @@ describe("member membership routes", () => {
     await deleteAuditLogs(prisma, { actorUserId: { in: userIds } });
     await prisma.membershipClaimToken.deleteMany({ where: { enrollment: { planId } } });
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.user.deleteMany({ where: { id: { in: userIds } } });
     await prisma.country.deleteMany({ where: { id: countryId } });
     await prisma.currency.deleteMany({ where: { id: currencyId } });

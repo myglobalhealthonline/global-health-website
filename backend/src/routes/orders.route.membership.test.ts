@@ -47,6 +47,9 @@ describe("checkout — benefit source switch (§6.4)", () => {
   let corporateCompanyId = "";
   let otherUserId = "";
   let otherEnrollmentId = "";
+  let awayCountryId = "";
+  let awayServiceId = "";
+  let awayBenefitId = "";
   let cookie: Record<string, string> = {};
 
   const checkoutBody = {
@@ -56,7 +59,12 @@ describe("checkout — benefit source switch (§6.4)", () => {
 
   async function seedCart(
     benefitSource: CartBenefitSource,
-    opts: { lines?: number; membershipEnrollmentId?: string | null } = {},
+    opts: {
+      lines?: number;
+      membershipEnrollmentId?: string | null;
+      declineUnit?: boolean;
+      serviceId?: string;
+    } = {},
   ) {
     await prisma.cartItem.deleteMany({ where: { cartId } });
     await prisma.cart.update({
@@ -66,6 +74,7 @@ describe("checkout — benefit source switch (§6.4)", () => {
         currencyCode,
         benefitSource,
         membershipEnrollmentId: opts.membershipEnrollmentId ?? null,
+        membershipDeclineUnit: opts.declineUnit ?? false,
       },
     });
     for (let n = 0; n < (opts.lines ?? 1); n += 1) {
@@ -73,7 +82,7 @@ describe("checkout — benefit source switch (§6.4)", () => {
         data: {
           cartId,
           kind: "GENERAL_CONSULTATION",
-          serviceId,
+          serviceId: opts.serviceId ?? serviceId,
           name: `Consultation ${n}`,
           unitPriceCents: PRICE,
           quantity: 1,
@@ -166,15 +175,16 @@ describe("checkout — benefit source switch (§6.4)", () => {
 
     // Membership: one included consultation, then 20% off.
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `checkout-plan-${uniq}`, name: "Checkout Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `checkout-plan-${uniq}`, name: "Checkout Plan" },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
-      data: { planId, countryId, slug: "gold", name: "Gold", isDefault: true },
+      data: { planId, slug: "gold", name: "Gold", isDefault: true },
     });
     const benefit = await prisma.membershipBenefit.create({
       data: {
         levelId: level.id,
+        planId,
         countryId,
         serviceKind: "GENERAL",
         benefitType: "ALLOWANCE",
@@ -229,6 +239,49 @@ describe("checkout — benefit source switch (§6.4)", () => {
     });
     otherEnrollmentId = otherEnrollment.id;
 
+    // A SECOND covered country (§21.1) with its own rule — 50% off, no
+    // allowance of its own. This is what makes the pool/governing split
+    // observable end to end: in the primary country the two rows are the same
+    // row, so nothing here can tell them apart.
+    const away = await prisma.country.create({
+      data: {
+        code: `w${uniq}`.slice(0, 8).toLowerCase(),
+        name: `Checkout Away ${uniq}`,
+        slug: `checkout-away-${uniq}`.toLowerCase(),
+        legacyHomePath: `/whg-${uniq}`,
+        teamPath: `/wtm-${uniq}`,
+        generalConsultationPath: `/wgn-${uniq}`,
+        specialistConsultationPath: `/wsp-${uniq}`,
+        currencyId,
+      },
+    });
+    awayCountryId = away.id;
+    const awayService = await prisma.service.create({
+      data: {
+        countryId: awayCountryId,
+        kind: "GENERAL",
+        name: "Away GP",
+        slug: `away-gp-${uniq}`.toLowerCase(),
+        basePriceCents: PRICE,
+        currencyCode,
+      },
+    });
+    awayServiceId = awayService.id;
+    await prisma.membershipPlanCountry.create({
+      data: { planId, countryId: awayCountryId },
+    });
+    const awayBenefit = await prisma.membershipBenefit.create({
+      data: {
+        levelId: level.id,
+        planId,
+        countryId: awayCountryId,
+        serviceKind: "GENERAL",
+        benefitType: "PERCENT",
+        percentOff: 50,
+      },
+    });
+    awayBenefitId = awayBenefit.id;
+
     // Corporate: the same patient is also an active employee with a 25% rule.
     const corporatePlan = await prisma.corporatePlan.create({
       data: {
@@ -280,7 +333,9 @@ describe("checkout — benefit source switch (§6.4)", () => {
       await prisma.orderItem.deleteMany({ where: { orderId: { in: ids } } });
       await prisma.order.deleteMany({ where: { id: { in: ids } } });
     }
-    await prisma.membershipAllowanceBalance.deleteMany({ where: { benefitId } });
+    await prisma.membershipAllowanceBalance.deleteMany({
+      where: { benefitId: { in: [benefitId, awayBenefitId] } },
+    });
   });
 
   after(async () => {
@@ -290,7 +345,9 @@ describe("checkout — benefit source switch (§6.4)", () => {
     await prisma.membershipUsageLedger.deleteMany({ where: { orderId: { in: ids } } });
     await prisma.orderItem.deleteMany({ where: { orderId: { in: ids } } });
     await prisma.order.deleteMany({ where: { id: { in: ids } } });
-    await prisma.membershipAllowanceBalance.deleteMany({ where: { benefitId } });
+    await prisma.membershipAllowanceBalance.deleteMany({
+      where: { benefitId: { in: [benefitId, awayBenefitId] } },
+    });
     await prisma.cartItem.deleteMany({ where: { cartId } });
     await prisma.cart.deleteMany({ where: { id: cartId } });
     await prisma.corporateEmployee.deleteMany({ where: { companyId: corporateCompanyId } });
@@ -298,10 +355,10 @@ describe("checkout — benefit source switch (§6.4)", () => {
     await prisma.corporateBenefitRule.deleteMany({ where: { corporatePlanId } });
     await prisma.corporatePlan.deleteMany({ where: { id: corporatePlanId } });
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
-    await prisma.service.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
+    await prisma.service.deleteMany({ where: { countryId: { in: [countryId, awayCountryId] } } });
     await prisma.user.deleteMany({ where: { id: { in: [userId, otherUserId] } } });
-    await prisma.country.deleteMany({ where: { id: countryId } });
+    await prisma.country.deleteMany({ where: { id: { in: [countryId, awayCountryId] } } });
     // EUR is shared with whatever else the database holds — never delete it.
     await app.close();
   });
@@ -370,6 +427,66 @@ describe("checkout — benefit source switch (§6.4)", () => {
     assert.equal(order!.items.filter((i) => i.membershipAllowanceUsed).length, 1);
     const balance = await prisma.membershipAllowanceBalance.findFirst({ where: { benefitId } });
     assert.equal(balance?.used, 1);
+  });
+
+  /**
+   * §21.4 end to end, and the single most valuable case in phase 7: the member
+   * books ABROAD, in a covered country whose own rule is 50% off, while the
+   * included visit is defined on the plan's PRIMARY country.
+   *
+   * Two things have to be true at once, and they involve two different benefit
+   * rows. Get them the wrong way round and nothing errors — the pool silently
+   * becomes one counter per country, which is exactly what the design exists
+   * to prevent.
+   */
+  it("spends the PRIMARY country's counter for a booking in another covered country", async (t) => {
+    if (!app) return t.skip();
+    await seedCart("MEMBERSHIP", {
+      membershipEnrollmentId: enrollmentId,
+      serviceId: awayServiceId,
+    });
+    const { status } = await checkout();
+    assert.equal(status, 200);
+
+    const order = await latestOrder();
+    const line = order?.items[0];
+    assert.equal(line?.unitPriceCents, 0, "the included visit travels (decision 38)");
+    assert.equal(line?.membershipAllowanceUsed, true);
+    // The GOVERNING row — the away country's — is what the line records (§21.5b).
+    assert.equal(line?.membershipBenefitId, awayBenefitId);
+
+    // …while the counter that moved is the PRIMARY country's row, and the away
+    // country has no counter of its own.
+    const primaryBalance = await prisma.membershipAllowanceBalance.findFirst({
+      where: { benefitId },
+    });
+    assert.equal(primaryBalance?.used, 1, "one shared pool, spent abroad");
+    const awayBalance = await prisma.membershipAllowanceBalance.findFirst({
+      where: { benefitId: awayBenefitId },
+    });
+    assert.equal(awayBalance, null, "no second counter was created per country");
+  });
+
+  it("declining the unit abroad charges that country's rule and spends nothing", async (t) => {
+    if (!app) return t.skip();
+    await seedCart("MEMBERSHIP", {
+      membershipEnrollmentId: enrollmentId,
+      serviceId: awayServiceId,
+      declineUnit: true,
+    });
+    const { status } = await checkout();
+    assert.ok(status === 200 || status === 503, `unexpected ${status}`);
+
+    const order = await latestOrder();
+    const line = order?.items[0];
+    assert.equal(line?.unitPriceCents, PRICE / 2, "the away country's own 50%");
+    assert.equal(line?.membershipAllowanceUsed, false);
+    assert.equal(line?.membershipBenefitId, awayBenefitId);
+    const primaryBalance = await prisma.membershipAllowanceBalance.findFirst({
+      where: { benefitId },
+    });
+    // Either no counter yet, or one that never moved — the visit is still theirs.
+    assert.equal(primaryBalance?.used ?? 0, 0);
   });
 
   it("rejects a membership that belongs to someone else — never a silent downgrade", async (t) => {

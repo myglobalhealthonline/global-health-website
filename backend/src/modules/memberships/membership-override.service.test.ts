@@ -112,11 +112,11 @@ describe("membership override — goodwill pricing and attribution", () => {
     specialistServiceId = specialist.id;
 
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `override-plan-${uniq}`, name: "Override Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `override-plan-${uniq}`, name: "Override Plan" },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
-      data: { planId, countryId, slug: "gold", name: "Gold", isDefault: true },
+      data: { planId, slug: "gold", name: "Gold", isDefault: true },
     });
     levelId = level.id;
 
@@ -126,6 +126,7 @@ describe("membership override — goodwill pricing and attribution", () => {
       await prisma.membershipBenefit.create({
         data: {
           levelId,
+          planId,
           countryId,
           serviceKind: "GENERAL",
           benefitType: "ALLOWANCE",
@@ -141,6 +142,7 @@ describe("membership override — goodwill pricing and attribution", () => {
       await prisma.membershipBenefit.create({
         data: {
           levelId,
+          planId,
           countryId,
           serviceId,
           benefitType: "PERCENT",
@@ -152,6 +154,7 @@ describe("membership override — goodwill pricing and attribution", () => {
       await prisma.membershipBenefit.create({
         data: {
           levelId,
+          planId,
           countryId,
           serviceKind: "SPECIALIST",
           benefitType: "FIXED",
@@ -163,6 +166,7 @@ describe("membership override — goodwill pricing and attribution", () => {
       await prisma.membershipBenefit.create({
         data: {
           levelId,
+          planId,
           countryId,
           serviceId: specialistServiceId,
           benefitType: "PERCENT",
@@ -193,7 +197,7 @@ describe("membership override — goodwill pricing and attribution", () => {
     if (!prisma || !countryId) return;
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
     await prisma.membershipBenefit.deleteMany({ where: { levelId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.service.deleteMany({ where: { countryId } });
     await prisma.country.deleteMany({ where: { id: { in: [countryId, otherCountryId] } } });
     await prisma.currency.deleteMany({ where: { id: currencyId } });

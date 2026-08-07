@@ -58,7 +58,7 @@ export default async function AdminMembershipLevelPage({ params, searchParams }:
 
   const [benefitsResult, countryResult] = await Promise.all([
     fetchMembershipBenefits(levelId),
-    fetchAdminCountryById(plan.countryId),
+    fetchAdminCountryById(plan.primaryCountryId),
   ]);
   const benefits = benefitsResult.ok ? benefitsResult.data.benefits : [];
 
@@ -66,8 +66,8 @@ export default async function AdminMembershipLevelPage({ params, searchParams }:
   // the same two rules the backend enforces (§18, cross-country leakage), so an
   // admin can't pick something that will bounce.
   const [generalResult, specialistResult] = await Promise.all([
-    fetchAdminServices({ countryId: plan.countryId, kind: "GENERAL", pageSize: "100" }),
-    fetchAdminServices({ countryId: plan.countryId, kind: "SPECIALIST", pageSize: "100" }),
+    fetchAdminServices({ countryId: plan.primaryCountryId, kind: "GENERAL", pageSize: "100" }),
+    fetchAdminServices({ countryId: plan.primaryCountryId, kind: "SPECIALIST", pageSize: "100" }),
   ]);
   const services: ServiceOption[] = [
     ...(generalResult.ok ? generalResult.data.items : []),
@@ -185,7 +185,7 @@ export default async function AdminMembershipLevelPage({ params, searchParams }:
       <PageHeader
         eyebrow="Membership level"
         title={levelTitle}
-        description={`${plan.country.name} · ${level._count.enrollments} member${
+        description={`${plan.primaryCountry.name} · ${level._count.enrollments} member${
           level._count.enrollments === 1 ? "" : "s"
         } on this level`}
         actions={

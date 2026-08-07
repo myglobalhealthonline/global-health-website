@@ -29,7 +29,7 @@ export function MembershipPlanFields({
   initial?: MembershipPlanDetail | null;
   pinnedCountryId?: string;
 }) {
-  const pinId = pinnedCountryId ?? initial?.countryId;
+  const pinId = pinnedCountryId ?? initial?.primaryCountryId;
   const pinned = pinId ? countries.find((c) => c.id === pinId) : undefined;
   const payerAmountMajor =
     initial?.payerAmountCents != null ? (initial.payerAmountCents / 100).toFixed(2) : "";

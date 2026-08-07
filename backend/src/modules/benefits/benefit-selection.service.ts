@@ -42,6 +42,31 @@ const PLAN_REF_TO_SELECTION = {
 } as const;
 
 /**
+ * Split a MEMBERSHIP `refId` into the enrollment and decision 44's choice.
+ *
+ * The options endpoint suffixes the id `:unit` / `:discount` only when both
+ * are genuinely on offer (§22), so a bare id is the ordinary single-option
+ * case and means "whatever the resolver decides" — which is the unit when one
+ * is available, matching cheapest-first pre-selection.
+ *
+ * An unrecognised suffix is treated as no suffix rather than rejected: the
+ * fallback is the cheaper side, so a stale client can only ever cost the
+ * member less than they expected, never more.
+ */
+export function parseMembershipRefId(refId: string): {
+  enrollmentId: string;
+  declineUnit: boolean;
+} {
+  const at = refId.lastIndexOf(":");
+  if (at === -1) return { enrollmentId: refId, declineUnit: false };
+  const suffix = refId.slice(at + 1);
+  if (suffix !== "unit" && suffix !== "discount") {
+    return { enrollmentId: refId, declineUnit: false };
+  }
+  return { enrollmentId: refId.slice(0, at), declineUnit: suffix === "discount" };
+}
+
+/**
  * Record the patient's choice on their cart. Called from `POST /api/cart/items`
  * before the line is created (§11.4), so a rejected benefit never leaves a
  * half-written cart.
@@ -56,14 +81,17 @@ export async function setCartBenefit(
   now: Date = new Date(),
 ): Promise<SetCartBenefitSuccess | SetCartBenefitFailure> {
   let membershipEnrollmentId: string | null = null;
+  let membershipDeclineUnit = false;
   let lineSelection: "PAY_NORMAL" | "USE_PLAN_CREDIT" | "USE_PLAN_DISCOUNT" = "PAY_NORMAL";
 
   if (input.source === "MEMBERSHIP") {
     if (!input.refId) {
       return { ok: false, status: 400, message: "A membership must be chosen" };
     }
+    const parsed = parseMembershipRefId(input.refId);
+    membershipDeclineUnit = parsed.declineUnit;
     const enrollment = await prisma.membershipEnrollment.findUnique({
-      where: { id: input.refId },
+      where: { id: parsed.enrollmentId },
       select: { id: true, userId: true, status: true, startDate: true, endDate: true },
     });
     // Same response for "not yours" and "does not exist": the id is
@@ -96,7 +124,7 @@ export async function setCartBenefit(
   await prisma.$transaction(async (tx) => {
     await tx.cart.update({
       where: { id: cart.id },
-      data: { benefitSource: input.source, membershipEnrollmentId },
+      data: { benefitSource: input.source, membershipEnrollmentId, membershipDeclineUnit },
     });
     // Keep the per-line selection consistent with the cart-level one. Switching
     // away from PUBLIC_PLAN must clear USE_PLAN_CREDIT off the lines, or the
@@ -154,5 +182,5 @@ export async function hasEligibleBenefitSources(args: {
  * every future order, with no UI anywhere showing why.
  */
 export function clearedCartBenefitFields(): Prisma.CartUncheckedUpdateInput {
-  return { benefitSource: "UNSET", membershipEnrollmentId: null };
+  return { benefitSource: "UNSET", membershipEnrollmentId: null, membershipDeclineUnit: false };
 }

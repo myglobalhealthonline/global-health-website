@@ -97,13 +97,22 @@ export class MembershipBenefitServiceError extends Error {
 }
 
 const planListInclude = {
-  country: { select: { id: true, code: true, name: true } },
+  primaryCountry: { select: { id: true, code: true, name: true } },
   translations: { select: { locale: true, name: true }, orderBy: { locale: "asc" as const } },
   _count: { select: { levels: true, enrollments: true } },
 } satisfies Prisma.MembershipPlanInclude;
 
 const planDetailInclude = {
-  country: { select: { id: true, code: true, name: true } },
+  primaryCountry: { select: { id: true, code: true, name: true } },
+  /**
+   * Every covered country, primary included (§21.1). Coverage is not
+   * configuration: a country listed here with no benefit rows gives members
+   * nothing (§20), which is why the level editor badges it (§26).
+   */
+  countries: {
+    select: { countryId: true, country: { select: { id: true, code: true, name: true } } },
+    orderBy: { createdAt: "asc" as const },
+  },
   translations: { orderBy: { locale: "asc" as const } },
   levels: {
     orderBy: [{ sortOrder: "asc" as const }, { createdAt: "asc" as const }],
@@ -126,7 +135,14 @@ export async function listMembershipPlans(query: {
   try {
     return await prisma.membershipPlan.findMany({
       where: {
-        ...(query.countryId ? { countryId: query.countryId } : {}),
+        // "Plans for this country" now means plans that COVER it, not plans
+        // whose PRIMARY it is — otherwise a Czech-primary plan covering
+        // Ireland would be invisible on the Irish admin list, which is the
+        // whole point of decision 34.
+        //
+        // Note the spread hides this from `tsc`: the object widens, so a stale
+        // `countryId` here would have type-checked and thrown at runtime.
+        ...(query.countryId ? { countries: { some: { countryId: query.countryId } } } : {}),
         ...(query.includeInactive ? {} : { isActive: true }),
       },
       include: planListInclude,
@@ -166,7 +182,7 @@ export async function createMembershipPlan(body: AdminMembershipPlanCreateBody) 
     return await prisma.$transaction(async (tx) => {
       const plan = await tx.membershipPlan.create({
         data: {
-          countryId: body.countryId,
+          primaryCountryId: body.countryId,
           slug: body.slug,
           name: body.name,
           internalNotes: body.internalNotes,
@@ -179,10 +195,15 @@ export async function createMembershipPlan(body: AdminMembershipPlanCreateBody) 
           payerNotes: body.payerNotes,
         },
       });
+      // The primary country's coverage row, created with the plan and never
+      // deletable while it lives (§21.1). Benefit rows point at this table, so
+      // without it the plan could not be configured for its own country.
+      await tx.membershipPlanCountry.create({
+        data: { planId: plan.id, countryId: plan.primaryCountryId },
+      });
       await tx.membershipLevel.create({
         data: {
           planId: plan.id,
-          countryId: plan.countryId,
           slug: "standard",
           name: "Standard",
           isDefault: true,
@@ -243,18 +264,17 @@ export async function deactivateMembershipPlan(planId: string) {
 export async function createMembershipLevel(planId: string, body: AdminMembershipLevelCreateBody) {
   const plan = await prisma.membershipPlan.findUnique({
     where: { id: planId },
-    select: { id: true, countryId: true },
+    select: { id: true, primaryCountryId: true },
   });
   if (!plan) throw new MembershipPlanNotFoundError();
 
   try {
-    // countryId is copied from the plan, never taken from the request — the
-    // composite FK would reject a mismatch anyway, but this keeps the caller
-    // from having to know the rule.
+    // A level no longer carries a country: since phase 7 it spans every
+    // country the plan covers, and it is the BENEFIT rows underneath it that
+    // are per-country (§21.2).
     return await prisma.membershipLevel.create({
       data: {
         planId: plan.id,
-        countryId: plan.countryId,
         slug: body.slug,
         name: body.name,
         sortOrder: body.sortOrder,
@@ -356,9 +376,10 @@ export async function listMembershipBenefits(levelId: string) {
 
 /**
  * The service-targeting rules that need a lookup: the service must live in the
- * level's country and be a consultation. The composite FK covers the country
- * half at the storage layer; this returns a 400 with a usable message instead
- * of a foreign-key error.
+ * country the BENEFIT ROW configures (§21.3, no longer "the level's country" —
+ * a level spans countries now) and be a consultation. The composite FK covers
+ * the country half at the storage layer; this returns a 400 with a usable
+ * message instead of a foreign-key error.
  */
 async function assertBenefitService(countryId: string, serviceId: string | null): Promise<void> {
   if (!serviceId) return;
@@ -368,7 +389,9 @@ async function assertBenefitService(countryId: string, serviceId: string | null)
   });
   if (!service) throw new MembershipBenefitServiceError("Service not found");
   if (service.countryId !== countryId) {
-    throw new MembershipBenefitServiceError("Service belongs to a different country than this plan");
+    throw new MembershipBenefitServiceError(
+      "Service belongs to a different country than this benefit row",
+    );
   }
   if (service.kind !== "GENERAL" && service.kind !== "SPECIALIST") {
     throw new MembershipBenefitServiceError(
@@ -395,17 +418,46 @@ function benefitData(body: AdminMembershipBenefitBody) {
   };
 }
 
+/**
+ * Which covered country a benefit row configures (§21.3). Defaults to the
+ * plan's primary, so a caller that does not care — and every caller written
+ * before phase 7 — keeps configuring the primary country exactly as it did.
+ *
+ * An uncovered country is refused here with a usable message; the composite FK
+ * would reject it anyway, but as a foreign-key error nobody can act on.
+ */
+async function resolveBenefitCountry(
+  planId: string,
+  primaryCountryId: string,
+  requested: string | null | undefined,
+): Promise<string> {
+  if (!requested || requested === primaryCountryId) return primaryCountryId;
+  const covered = await prisma.membershipPlanCountry.findUnique({
+    where: { planId_countryId: { planId, countryId: requested } },
+    select: { countryId: true },
+  });
+  if (!covered) {
+    throw new MembershipBenefitServiceError("This plan does not cover that country");
+  }
+  return covered.countryId;
+}
+
 export async function createMembershipBenefit(levelId: string, body: AdminMembershipBenefitBody) {
   const level = await prisma.membershipLevel.findUnique({
     where: { id: levelId },
-    select: { id: true, countryId: true },
+    select: { id: true, planId: true, plan: { select: { primaryCountryId: true } } },
   });
   if (!level) throw new MembershipLevelNotFoundError();
-  await assertBenefitService(level.countryId, body.serviceId ?? null);
+  const countryId = await resolveBenefitCountry(
+    level.planId,
+    level.plan.primaryCountryId,
+    body.countryId,
+  );
+  await assertBenefitService(countryId, body.serviceId ?? null);
 
   try {
     return await prisma.membershipBenefit.create({
-      data: { levelId: level.id, countryId: level.countryId, ...benefitData(body) },
+      data: { levelId: level.id, planId: level.planId, countryId, ...benefitData(body) },
       include: benefitInclude,
     });
   } catch (error) {
@@ -419,6 +471,9 @@ export async function updateMembershipBenefit(benefitId: string, body: AdminMemb
     select: { id: true, countryId: true },
   });
   if (!existing) throw new MembershipBenefitNotFoundError();
+  // The row's country is fixed once created: moving a row between countries
+  // would silently re-point whichever pool or rule it participates in. The
+  // editor deletes and re-adds instead.
   await assertBenefitService(existing.countryId, body.serviceId ?? null);
 
   try {

@@ -152,7 +152,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
         action: "MEMBERSHIP_PLAN_CREATED",
         entityType: "MembershipPlan",
         entityId: plan.id,
-        metadata: { slug: plan.slug, countryId: plan.countryId },
+        metadata: { slug: plan.slug, countryId: plan.primaryCountryId },
         request,
       }).catch(() => {});
       return okResponse({ plan }, "Membership plan created");

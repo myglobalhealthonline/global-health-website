@@ -61,7 +61,7 @@ export async function linkMembershipsForUser(userId: string): Promise<LinkResult
       endDate: true,
       membershipId: true,
       firstName: true,
-      plan: { select: { name: true, countryId: true } },
+      plan: { select: { name: true, primaryCountryId: true } },
       level: { select: { name: true } },
     },
   });
@@ -98,7 +98,7 @@ export async function linkMembershipsForUser(userId: string): Promise<LinkResult
       planName: candidate.plan.name,
       levelName: candidate.level.name,
       membershipId: candidate.membershipId,
-      countryId: candidate.plan.countryId,
+      countryId: candidate.plan.primaryCountryId,
       preferredLocale: user.preferredLocale,
     }).catch(() => undefined);
   }

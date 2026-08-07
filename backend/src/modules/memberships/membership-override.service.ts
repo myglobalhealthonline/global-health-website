@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import { resolveMembershipPrice } from "./membership-pricing.service.js";
 import type {
+  PricingBenefitRow,
   MembershipPriceBasis,
   PricingEnrollment,
   PricingService,
@@ -73,6 +74,37 @@ export class MembershipOverrideError extends Error {}
 const ATTRIBUTABLE_STATUSES = ["ACTIVE", "SUSPENDED", "EXPIRED", "PENDING"] as const;
 
 /**
+ * A synthetic holder for pricing ONE named benefit row: ACTIVE, in term
+ * (`startDate` in the past), holding only that row and exactly one allowance
+ * unit. The override is a goodwill grant to someone who may hold no enrollment
+ * at all, so there is no real one to price from.
+ *
+ * Phase 7: the resolver now tests the SERVICE's country against the plan's
+ * covered set rather than against a single enrollment country, so the synthetic
+ * holder has to carry one. The row's own country is both the primary and the
+ * only covered country — which keeps the override scoped to the service's
+ * market exactly as before, and lets `resolvePoolBenefit` find the row when it
+ * is an allowance one. Without this every override would resolve to "does not
+ * apply to this service".
+ */
+function syntheticOverrideHolder(benefit: PricingBenefitRow): PricingEnrollment {
+  return {
+    id: "override",
+    status: "ACTIVE",
+    countryId: benefit.countryId,
+    startDate: new Date(0),
+    endDate: null,
+    memberType: "PRIMARY",
+    primaryEnrollmentId: null,
+    plan: {
+      primaryCountryId: benefit.countryId,
+      countries: [{ countryId: benefit.countryId }],
+    },
+    level: { allowancePool: "PER_PERSON", benefits: [benefit] },
+  };
+}
+
+/**
  * Every level rule a SUPER_ADMIN could apply to this booking, priced. Without
  * this the override would be a free-text benefit id, and the "derived from a
  * real configured benefit rather than a typed-in number" property of §11.7
@@ -140,18 +172,9 @@ export async function listMembershipOverrideOptions(args: {
 
   const options: MembershipOverrideOption[] = [];
   for (const candidate of candidates) {
-    const { level, countryId, ...benefitRow } = candidate;
+    const { level, ...benefitRow } = candidate;
     const price = resolveMembershipPrice({
-      enrollment: {
-        id: "override",
-        status: "ACTIVE",
-        countryId,
-        startDate: new Date(0),
-        endDate: null,
-        memberType: "PRIMARY",
-        primaryEnrollmentId: null,
-        level: { allowancePool: "PER_PERSON", benefits: [benefitRow] },
-      },
+      enrollment: syntheticOverrideHolder(benefitRow),
       service: args.service,
       fullPriceCents: args.fullPriceCents,
       allowanceRemaining: 1,
@@ -213,20 +236,8 @@ export async function resolveMembershipOverride(args: {
     throw new MembershipOverrideError("That membership benefit is no longer active");
   }
 
-  const { level, countryId, ...benefitRow } = benefit;
-
-  // A synthetic holder: ACTIVE, in term, holding only the named row and exactly
-  // one allowance unit. `startDate` is in the past so the term check passes.
-  const syntheticEnrollment: PricingEnrollment = {
-    id: "override",
-    status: "ACTIVE",
-    countryId,
-    startDate: new Date(0),
-    endDate: null,
-    memberType: "PRIMARY",
-    primaryEnrollmentId: null,
-    level: { allowancePool: "PER_PERSON", benefits: [benefitRow] },
-  };
+  const { level, ...benefitRow } = benefit;
+  const syntheticEnrollment = syntheticOverrideHolder(benefitRow);
 
   const price = resolveMembershipPrice({
     enrollment: syntheticEnrollment,

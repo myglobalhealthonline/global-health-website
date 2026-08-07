@@ -98,13 +98,12 @@ describe("membership allowance — spend, refund, races", () => {
     userId = user.id;
 
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `allowance-plan-${uniq}`, name: "Allowance Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `allowance-plan-${uniq}`, name: "Allowance Plan" },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
       data: {
         planId,
-        countryId,
         slug: "gold",
         name: "Gold",
         isDefault: true,
@@ -117,6 +116,7 @@ describe("membership allowance — spend, refund, races", () => {
     const benefitRow = await prisma.membershipBenefit.create({
       data: {
         levelId,
+        planId,
         countryId,
         serviceKind: "GENERAL",
         benefitType: "ALLOWANCE",
@@ -204,7 +204,7 @@ describe("membership allowance — spend, refund, races", () => {
     await prisma.order.deleteMany({ where: { id: orderId } });
     await prisma.membershipAllowanceBalance.deleteMany({ where: { benefitId } });
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.service.deleteMany({ where: { countryId } });
     await prisma.user.deleteMany({ where: { id: userId } });
     await prisma.country.deleteMany({ where: { id: countryId } });

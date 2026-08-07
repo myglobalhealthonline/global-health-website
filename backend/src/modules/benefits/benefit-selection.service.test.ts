@@ -81,11 +81,11 @@ describe("cart benefit selection", () => {
     cartId = cart.id;
 
     const plan = await prisma.membershipPlan.create({
-      data: { countryId, slug: `selection-plan-${uniq}`, name: "Selection Plan" },
+      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `selection-plan-${uniq}`, name: "Selection Plan" },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
-      data: { planId, countryId, slug: "gold", name: "Gold", isDefault: true },
+      data: { planId, slug: "gold", name: "Gold", isDefault: true },
     });
     const enrollment = await prisma.membershipEnrollment.create({
       data: {
@@ -146,7 +146,7 @@ describe("cart benefit selection", () => {
     await prisma.cartItem.deleteMany({ where: { cartId } });
     await prisma.cart.deleteMany({ where: { id: cartId } });
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
-    await prisma.membershipPlan.deleteMany({ where: { countryId } });
+    await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
     await prisma.service.deleteMany({ where: { countryId } });
     await prisma.user.deleteMany({ where: { id: userId } });
     await prisma.country.deleteMany({ where: { id: countryId } });
@@ -159,6 +159,7 @@ describe("cart benefit selection", () => {
       select: {
         benefitSource: true,
         membershipEnrollmentId: true,
+        membershipDeclineUnit: true,
         items: { select: { benefitSelection: true } },
       },
     });
@@ -173,6 +174,57 @@ describe("cart benefit selection", () => {
     const cart = await cartState();
     assert.equal(cart?.benefitSource, "MEMBERSHIP");
     assert.equal(cart?.membershipEnrollmentId, enrollmentId);
+  });
+
+  /**
+   * Decision 44. The suffix travels on the refId and lands in a column,
+   * because without one the choice dies between add-to-cart and checkout —
+   * and checkout, which re-derives every price, would always take the unit.
+   */
+  it("records a declined allowance unit from the :discount suffix", async (t) => {
+    if (!prisma) return t.skip();
+    const result = await svc.setCartBenefit(userId, {
+      source: "MEMBERSHIP",
+      refId: `${enrollmentId}:discount`,
+    });
+    assert.equal(result.ok, true);
+    const cart = await cartState();
+    assert.equal(cart?.membershipEnrollmentId, enrollmentId, "the suffix is not part of the id");
+    assert.equal(cart?.membershipDeclineUnit, true);
+  });
+
+  it("the :unit suffix takes the unit, and clears a previously declined one", async (t) => {
+    if (!prisma) return t.skip();
+    await svc.setCartBenefit(userId, { source: "MEMBERSHIP", refId: `${enrollmentId}:discount` });
+    const result = await svc.setCartBenefit(userId, {
+      source: "MEMBERSHIP",
+      refId: `${enrollmentId}:unit`,
+    });
+    assert.equal(result.ok, true);
+    const cart = await cartState();
+    assert.equal(cart?.membershipEnrollmentId, enrollmentId);
+    assert.equal(cart?.membershipDeclineUnit, false, "switching back must not stick on declined");
+  });
+
+  it("an unrecognised suffix falls back to taking the unit, never to the pricier side", () => {
+    assert.deepEqual(svc.parseMembershipRefId("enr_1"), {
+      enrollmentId: "enr_1",
+      declineUnit: false,
+    });
+    assert.deepEqual(svc.parseMembershipRefId("enr_1:unit"), {
+      enrollmentId: "enr_1",
+      declineUnit: false,
+    });
+    assert.deepEqual(svc.parseMembershipRefId("enr_1:discount"), {
+      enrollmentId: "enr_1",
+      declineUnit: true,
+    });
+    // A stale client sending something else must cost the member LESS than
+    // they expected, never more — so it reads as "take the unit".
+    assert.deepEqual(svc.parseMembershipRefId("enr_1:bogus"), {
+      enrollmentId: "enr_1:bogus",
+      declineUnit: false,
+    });
   });
 
   it("refuses an enrollment whose term has ended", async (t) => {
@@ -220,11 +272,14 @@ describe("cart benefit selection", () => {
 
   it("drops the enrollment when the patient switches away from MEMBERSHIP", async (t) => {
     if (!prisma) return t.skip();
-    await svc.setCartBenefit(userId, { source: "MEMBERSHIP", refId: enrollmentId });
+    await svc.setCartBenefit(userId, { source: "MEMBERSHIP", refId: `${enrollmentId}:discount` });
     await svc.setCartBenefit(userId, { source: "NONE" });
     const cart = await cartState();
     assert.equal(cart?.benefitSource, "NONE");
     assert.equal(cart?.membershipEnrollmentId, null);
+    // The declined-unit flag has to go with it: a stale `true` would price
+    // the next membership booking on the country rule with no UI saying why.
+    assert.equal(cart?.membershipDeclineUnit, false);
   });
 
   it("hasEligibleBenefitSources is false for a guest", async (t) => {

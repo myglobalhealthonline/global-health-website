@@ -178,7 +178,7 @@ export async function previewMembershipImport(input: {
 }) {
   const plan = await prisma.membershipPlan.findUnique({
     where: { id: input.planId },
-    select: { id: true, countryId: true },
+    select: { id: true, primaryCountryId: true },
   });
   if (!plan) throw new MembershipImportError("Membership plan not found");
 
@@ -459,7 +459,7 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
 
   const plan = await prisma.membershipPlan.findUnique({
     where: { id: batch.planId },
-    select: { id: true, countryId: true },
+    select: { id: true, primaryCountryId: true },
   });
   if (!plan) throw new MembershipImportError("Membership plan not found");
 
@@ -508,7 +508,7 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
         const outcome = await upsertEnrollmentRow(tx, {
           planId: plan.id,
           levelId: row.levelId!,
-          countryId: plan.countryId,
+          countryId: plan.primaryCountryId,
           membershipId: row.membershipId,
           email: row.email,
           firstName: row.firstName,
