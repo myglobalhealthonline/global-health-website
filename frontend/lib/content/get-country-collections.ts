@@ -8,7 +8,11 @@ import {
   fetchServicesByCountry,
   fetchSpecialtiesByCountry,
 } from "@/lib/api/site-content-api";
-import { logPublicContentFallback } from "@/lib/content/public-content-source";
+import {
+  assertAbsenceConfirmed,
+  logPublicContentFallback,
+  missingRecordOn200,
+} from "@/lib/content/public-content-source";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 
 /**
@@ -619,22 +623,26 @@ function readFaqs(value: unknown): ServiceFaq[] {
 }
 
 /** Single service detail (admin CMS content) for the public service page.
- *  Returns null when the slug doesn't resolve for this country. */
+ *  Returns null ONLY when the backend confirmed the slug doesn't resolve for
+ *  this country; throws `PublicContentUnavailableError` when it couldn't
+ *  answer (see public-content-source.ts). */
 export const getCountryServiceDetail = cache(async (
   countryCode: string,
   slug: string,
   locale?: string,
 ): Promise<CountryServiceDetail | null> => {
+  const entity = `service-detail:${countryCode}:${slug}`;
   const res = await fetchServiceDetail(slug, countryCode, locale);
   if (!res.ok) {
-    logPublicContentFallback(`service-detail:${countryCode}:${slug}`, res.message);
+    assertAbsenceConfirmed(entity, res);
+    logPublicContentFallback(entity, res.message);
     return null;
   }
   const row = res.data.service;
-  if (!row || typeof row !== "object") return null;
+  if (!row || typeof row !== "object") missingRecordOn200(entity);
   const r = row as Record<string, unknown>;
   if (typeof r.id !== "string" || typeof r.slug !== "string" || typeof r.name !== "string") {
-    return null;
+    missingRecordOn200(entity);
   }
   const kind = typeof r.kind === "string" ? r.kind : "GENERAL";
   return {
@@ -731,15 +739,17 @@ export const getCountryLandingPage = cache(async (
   slug: string,
   locale?: string,
 ): Promise<CountryLandingPage | null> => {
+  const entity = `landing:${countryCode}:${slug}`;
   const res = await fetchLandingPage(slug, countryCode, locale);
   if (!res.ok) {
-    logPublicContentFallback(`landing:${countryCode}:${slug}`, res.message);
+    assertAbsenceConfirmed(entity, res);
+    logPublicContentFallback(entity, res.message);
     return null;
   }
   const p = res.data.page;
-  if (!p || typeof p !== "object") return null;
+  if (!p || typeof p !== "object") missingRecordOn200(entity);
   const r = p as Record<string, unknown>;
-  if (typeof r.slug !== "string" || typeof r.title !== "string") return null;
+  if (typeof r.slug !== "string" || typeof r.title !== "string") missingRecordOn200(entity);
   return {
     slug: r.slug,
     title: r.title,
@@ -752,22 +762,26 @@ export const getCountryLandingPage = cache(async (
 });
 
 /** Single health-test detail (admin CMS content) for the public test page.
- *  Returns null when the slug doesn't resolve for this country. */
+ *  Returns null ONLY when the backend confirmed the slug doesn't resolve for
+ *  this country; throws `PublicContentUnavailableError` when it couldn't
+ *  answer (see public-content-source.ts). */
 export const getCountryHealthTestDetail = cache(async (
   countryCode: string,
   slug: string,
   locale?: string,
 ): Promise<CountryHealthTestDetail | null> => {
+  const entity = `health-test-detail:${countryCode}:${slug}`;
   const res = await fetchHealthTestDetail(slug, countryCode, locale);
   if (!res.ok) {
-    logPublicContentFallback(`health-test-detail:${countryCode}:${slug}`, res.message);
+    assertAbsenceConfirmed(entity, res);
+    logPublicContentFallback(entity, res.message);
     return null;
   }
   const row = res.data.healthTest;
-  if (!row || typeof row !== "object") return null;
+  if (!row || typeof row !== "object") missingRecordOn200(entity);
   const r = row as Record<string, unknown>;
   if (typeof r.id !== "string" || typeof r.slug !== "string" || typeof r.title !== "string") {
-    return null;
+    missingRecordOn200(entity);
   }
   const imagePath = typeof r.productImagePath === "string" ? r.productImagePath : null;
   return {
