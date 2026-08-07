@@ -1126,9 +1126,10 @@
   },
   "patientUploadLinkCard": {
     "title": "Trimite pacientului linkul de încărcare",
-    "description": "Generează un link securizat prin care pacientul poate încărca fișiere direct în această programare. Trimiterea unui link nou îl invalidează pe cel anterior.",
-    "sendWhatsapp": "Trimite prin WhatsApp",
-    "sendEmail": "Trimite prin e-mail",
+    "description": "Generează un link securizat prin care pacientul poate încărca fișiere direct în această programare. Retrimiterea îl înlocuiește — orice link deja trimis încetează să funcționeze, așa că alege toate canalele înainte de trimitere.",
+    "sendWhatsapp": "WhatsApp",
+    "sendEmail": "E-mail",
+    "send": "Trimite",
     "sending": "Se trimite…",
     "copyLink": "Copiază linkul",
     "copied": "Link copiat",
@@ -1138,6 +1139,7 @@
     "failedEmail": "Trimiterea prin e-mail a eșuat.",
     "noPhone": "Această programare nu are număr de telefon — WhatsApp nu a putut fi folosit.",
     "failed": "Linkul de încărcare nu a putut fi trimis.",
+    "pickChannel": "Alege cel puțin un canal.",
     "expiresAt": "Linkul expiră la {date}"
   },
   "documentsList": {

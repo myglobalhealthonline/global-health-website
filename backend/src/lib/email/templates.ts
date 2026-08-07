@@ -137,6 +137,71 @@ export async function sendSupportMessageAlertEmail(opts: {
   });
 }
 
+/**
+ * A patient wrote into their clinic (admin) message thread → alert the admin
+ * team. Throttling lives upstream in `alertAdminsOfPatientMessage`
+ * (Appointment.lastPatientMsgAdminAlertAt) so a burst of patient messages
+ * doesn't fan out one email per message.
+ */
+export async function sendPatientMessageAdminAlertEmail(opts: {
+  to: string;
+  patientName: string;
+  /** Absolute `/admin/appointments/<id>/messages` (or admin inbox) URL. */
+  threadUrl: string;
+  snippet?: string | null;
+}) {
+  const snippet = opts.snippet?.trim() || null;
+  const subject = `${opts.patientName} sent a message`;
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `${opts.patientName} sent a message in the clinic chat${snippet ? `:\n\n"${snippet}"` : "."}\n\nOpen the conversation:\n${opts.threadUrl}\n\n— Global Health`,
+    html: wrapHtml(
+      "New patient message",
+      `<p><strong>${escapeHtml(opts.patientName)}</strong> sent a message in the clinic chat.</p>
+       ${
+         snippet
+           ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
+           : ""
+       }
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>`,
+    ),
+  });
+}
+
+/**
+ * A patient wrote into their doctor's consultation chat → alert the doctor.
+ * Throttling lives upstream in `alertDoctorOfPatientMessage`
+ * (Appointment.lastPatientMsgDoctorAlertAt).
+ */
+export async function sendPatientMessageDoctorAlertEmail(opts: {
+  to: string;
+  patientName: string;
+  /** Absolute `/doctor/appointments/<id>?tab=chat` URL. */
+  threadUrl: string;
+  snippet?: string | null;
+}) {
+  const snippet = opts.snippet?.trim() || null;
+  const subject = `${opts.patientName} sent you a message`;
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `${opts.patientName} sent you a message${snippet ? `:\n\n"${snippet}"` : "."}\n\nOpen the conversation:\n${opts.threadUrl}\n\n— Global Health`,
+    html: wrapHtml(
+      "New patient message",
+      `<p><strong>${escapeHtml(opts.patientName)}</strong> sent you a message.</p>
+       ${
+         snippet
+           ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
+           : ""
+       }
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>`,
+    ),
+  });
+}
+
 export async function sendEmailVerificationEmail(opts: {
   to: string;
   fullName: string;

@@ -52,7 +52,9 @@ const HEADLINE: Record<AdminBookingAlertEvent, string> = {
 const WITHHELD_PATIENT_LABEL = "Withheld (patient declined WhatsApp updates)";
 
 /** Extra WhatsApp group that mirrors the booking-confirmed alert only. */
-const BOOKING_CONFIRMED_GROUP_JID = "120363413688325038@g.us";
+function bookingConfirmedGroupJid(): string | undefined {
+  return env.ADMIN_NOTIFY_WHATSAPP_GROUP_JID?.trim() || undefined;
+}
 
 function parseRecipients(raw: string | undefined): string[] {
   if (!raw?.trim()) return [];
@@ -189,39 +191,42 @@ export async function sendAdminBookingAlert(
   }
 
   if (event === "payment_confirmed") {
-    const run = await createAutomationRun({
-      automationKey: `${automationKeyPrefix}_admin_whatsapp_group`,
-      orderId,
-      channel: "whatsapp",
-      recipient: BOOKING_CONFIRMED_GROUP_JID,
-      summary,
-      status: "RUNNING",
-    }).catch(() => null);
-    try {
-      const result = await sendWhatsAppGroupText({ to: BOOKING_CONFIRMED_GROUP_JID, message: text });
-      if (run) {
-        if (!result.ok && !result.skipped) {
+    const groupJid = bookingConfirmedGroupJid();
+    if (groupJid) {
+      const run = await createAutomationRun({
+        automationKey: `${automationKeyPrefix}_admin_whatsapp_group`,
+        orderId,
+        channel: "whatsapp",
+        recipient: groupJid,
+        summary,
+        status: "RUNNING",
+      }).catch(() => null);
+      try {
+        const result = await sendWhatsAppGroupText({ to: groupJid, message: text });
+        if (run) {
+          if (!result.ok && !result.skipped) {
+            await finishAutomationRun(run.id, {
+              status: "FAILED",
+              summary,
+              error: formatWhatsAppSendError(result),
+              recipient: groupJid,
+            });
+          } else {
+            await finishAutomationRun(run.id, {
+              status: result.skipped ? "SKIPPED" : "SUCCESS",
+              summary: result.skipped ? `${summary} (WhatsApp not configured)` : summary,
+              recipient: groupJid,
+            });
+          }
+        }
+      } catch (err) {
+        if (run) {
           await finishAutomationRun(run.id, {
             status: "FAILED",
             summary,
-            error: formatWhatsAppSendError(result),
-            recipient: BOOKING_CONFIRMED_GROUP_JID,
-          });
-        } else {
-          await finishAutomationRun(run.id, {
-            status: result.skipped ? "SKIPPED" : "SUCCESS",
-            summary: result.skipped ? `${summary} (WhatsApp not configured)` : summary,
-            recipient: BOOKING_CONFIRMED_GROUP_JID,
-          });
+            error: err instanceof Error ? err.message : String(err),
+          }).catch(() => undefined);
         }
-      }
-    } catch (err) {
-      if (run) {
-        await finishAutomationRun(run.id, {
-          status: "FAILED",
-          summary,
-          error: err instanceof Error ? err.message : String(err),
-        }).catch(() => undefined);
       }
     }
   }

@@ -20,6 +20,8 @@ function isAdminOrderRow(v: unknown): v is AdminOrderRow {
     typeof o.fullName === "string" &&
     typeof o.countryCode === "string" &&
     typeof o.currencyCode === "string" &&
+    typeof o.bookingSource === "string" &&
+    typeof o.isFirstOrder === "boolean" &&
     typeof o.totalCents === "number" &&
     typeof o.itemCount === "number" &&
     (o.meetingUrl === null || typeof o.meetingUrl === "string") &&

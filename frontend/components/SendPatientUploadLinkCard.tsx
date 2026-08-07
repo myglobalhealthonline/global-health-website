@@ -17,6 +17,7 @@ export type SendPatientUploadLinkCopy = {
   description: string;
   sendWhatsapp: string;
   sendEmail: string;
+  send: string;
   sending: string;
   copyLink: string;
   copied: string;
@@ -26,15 +27,17 @@ export type SendPatientUploadLinkCopy = {
   failedEmail: string;
   noPhone: string;
   failed: string;
+  pickChannel: string;
   expiresAt: string;
 };
 
 export const DEFAULT_SEND_PATIENT_UPLOAD_LINK_COPY: SendPatientUploadLinkCopy = {
   title: "Send upload link to patient",
   description:
-    "Generates a secure link the patient can use to upload files straight into this appointment. Any previous link for this appointment stops working.",
-  sendWhatsapp: "Send by WhatsApp",
-  sendEmail: "Send by email",
+    "Generates a secure link the patient can use to upload files straight into this appointment. Sending again replaces it — any link already out stops working, so pick every channel you want before sending.",
+  sendWhatsapp: "WhatsApp",
+  sendEmail: "Email",
+  send: "Send",
   sending: "Sending…",
   copyLink: "Copy link",
   copied: "Link copied",
@@ -44,6 +47,7 @@ export const DEFAULT_SEND_PATIENT_UPLOAD_LINK_COPY: SendPatientUploadLinkCopy = 
   failedEmail: "Email delivery failed.",
   noPhone: "No phone number on this appointment — WhatsApp could not be used.",
   failed: "Could not send the upload link.",
+  pickChannel: "Pick at least one channel.",
   expiresAt: "Link expires {date}",
 };
 
@@ -75,8 +79,27 @@ export function SendPatientUploadLinkCard({
   const [notes, setNotes] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  // Both channels selected by default — a single send mints one token and
+  // delivers it everywhere at once. Picking channels separately used to mint
+  // (and silently revoke the prior) token per click, so a WhatsApp send
+  // followed by an email send left the patient's WhatsApp link dead.
+  const [channels, setChannels] = useState<Record<"email" | "whatsapp", boolean>>({
+    email: true,
+    whatsapp: true,
+  });
 
-  function send(channel: "email" | "whatsapp") {
+  function toggleChannel(channel: "email" | "whatsapp") {
+    setChannels((prev) => ({ ...prev, [channel]: !prev[channel] }));
+  }
+
+  function send() {
+    const selected = (Object.keys(channels) as Array<"email" | "whatsapp">).filter(
+      (c) => channels[c],
+    );
+    if (!selected.length) {
+      setError(copy.pickChannel);
+      return;
+    }
     setError(null);
     setNotes([]);
     setCopied(false);
@@ -86,7 +109,7 @@ export function SendPatientUploadLinkCard({
         const res = await fetch(endpoint, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ channels: [channel] }),
+          body: JSON.stringify({ channels: selected }),
         });
         const json = (await res.json().catch(() => ({}))) as SendResponse;
         if (!res.ok || !json.ok || !json.data?.link) {
@@ -136,24 +159,34 @@ export function SendPatientUploadLinkCard({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="flex items-center gap-1.5 text-sm text-[var(--portal-text)]">
+          <input
+            type="checkbox"
+            checked={channels.whatsapp}
+            disabled={pending}
+            onChange={() => toggleChannel("whatsapp")}
+          />
+          <MessageCircle className="size-3.5" aria-hidden />
+          {copy.sendWhatsapp}
+        </label>
+        <label className="flex items-center gap-1.5 text-sm text-[var(--portal-text)]">
+          <input
+            type="checkbox"
+            checked={channels.email}
+            disabled={pending}
+            onChange={() => toggleChannel("email")}
+          />
+          <Mail className="size-3.5" aria-hidden />
+          {copy.sendEmail}
+        </label>
         <button
           type="button"
           disabled={pending}
-          onClick={() => send("whatsapp")}
+          onClick={() => send()}
           className="gh-btn gh-btn-primary text-sm"
         >
-          <MessageCircle className="size-3.5" aria-hidden />
-          {pending ? copy.sending : copy.sendWhatsapp}
-        </button>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => send("email")}
-          className="gh-btn gh-btn-soft text-sm"
-        >
-          <Mail className="size-3.5" aria-hidden />
-          {pending ? copy.sending : copy.sendEmail}
+          {pending ? copy.sending : copy.send}
         </button>
         {link ? (
           <button

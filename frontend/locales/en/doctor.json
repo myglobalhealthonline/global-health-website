@@ -1191,9 +1191,10 @@
   },
   "patientUploadLinkCard": {
     "title": "Send upload link to patient",
-    "description": "Generates a secure link the patient can use to upload files straight into this appointment. Sending a new link stops the previous one from working.",
-    "sendWhatsapp": "Send by WhatsApp",
-    "sendEmail": "Send by email",
+    "description": "Generates a secure link the patient can use to upload files straight into this appointment. Sending again replaces it — any link already out stops working, so pick every channel you want before sending.",
+    "sendWhatsapp": "WhatsApp",
+    "sendEmail": "Email",
+    "send": "Send",
     "sending": "Sending…",
     "copyLink": "Copy link",
     "copied": "Link copied",
@@ -1203,6 +1204,7 @@
     "failedEmail": "Email delivery failed.",
     "noPhone": "No phone number on this appointment — WhatsApp could not be used.",
     "failed": "Could not send the upload link.",
+    "pickChannel": "Pick at least one channel.",
     "expiresAt": "Link expires {date}"
   },
   "documentsList": {
