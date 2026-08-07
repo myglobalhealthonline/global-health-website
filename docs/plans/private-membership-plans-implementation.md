@@ -43,7 +43,7 @@ columns), and the checkout price composition.
 | 9 | A plan belongs to exactly one country |
 | 10 | Import pre-enrolls as `PENDING`, auto-links on login/signup. Invite email is a manual admin action |
 | 11 | Family optional per level: dependents from the import *or* member-added up to `maxDependents`. Pool `SHARED` or `PER_PERSON` |
-| 12 | Booking gets one benefit step, placed where the insurance step sits today, covering all four sources |
+| 12 | ~~Booking gets one benefit step, placed where the insurance step sits today, covering all four sources~~ **Superseded (§11):** the benefit is a toggle + dropdown inside the booking form. Insurance alone keeps the early step, because the insurer decides slot price *and* which doctors are bookable |
 | 13 | Eligible benefits auto-detected and pre-selected. Toggle off = full price |
 | 14 | Every eligible source is priced and listed with its resulting price. Allowance options labelled "uses 1 of your N" |
 | 15 | Payer fields are optional metadata. No payer login, no invoices, no charging |
@@ -169,8 +169,11 @@ enum CartBenefitSource {
 }
 ```
 
-`UNSET` matters: it distinguishes "patient has not reached the benefit step" from
-"patient explicitly declined". Only `NONE` suppresses corporate's automatic discount.
+`UNSET` matters: it distinguishes "patient was never asked" from "patient explicitly
+declined". Only `NONE` suppresses corporate's automatic discount. Since the choice
+rides on the add-to-cart request (§11.4), a cart reaches `UNSET` only when it predates
+this feature, was filled from a surface that does not send `benefit`, or belongs to a
+guest.
 
 ### 3.2 Plan and level
 
@@ -499,7 +502,7 @@ New nullable columns only — nothing existing changes shape.
 ```prisma
 model Cart {
   // …
-  /// Cart-level benefit choice (§25). UNSET until the benefit step runs.
+  /// Cart-level benefit choice (§25). UNSET until add-to-cart records one (§11.4).
   benefitSource           CartBenefitSource     @default(UNSET)
   membershipEnrollmentId  String?
   membershipEnrollment    MembershipEnrollment? @relation(fields: [membershipEnrollmentId], references: [id], onDelete: SetNull)
@@ -703,22 +706,24 @@ DELETE /api/me/memberships/dependents/:id
 GET /api/me/benefit-options?serviceId=&doctorId=&locale=[&timeSlotId=]
     → { options: [{ source, refId, label, unitPriceCents, allowanceRemaining, note, recommended }] }
 
-    `timeSlotId` is OPTIONAL, because the benefit step runs BEFORE time selection
-    (§11.2) and there is usually no slot yet. Without one, prices are derived from
-    `service.basePriceCents` (standard, no peak adjustment) — the same thing the
-    insurance step does today. Consequences that must be handled in the UI:
-      · percent options are labelled as indicative ("evening and weekend slots
-        cost more"); fixed-price options are exact regardless, since they override peak
-      · once a slot is chosen, the details step re-prices with `timeSlotId` and
-        shows the exact figure, so the number the patient confirms is the number charged
-    `locale` selects the translated plan/level labels, matching `/api/me/benefit-preview`.
+    `timeSlotId` is OPTIONAL. The booking form always has a slot by the time it
+    asks (§11.2), so in practice every option is priced exactly; the parameter stays
+    optional for callers that price before a slot exists (admin manual booking mid-
+    entry). Without one, prices derive from `service.basePriceCents` (standard, no
+    peak adjustment) and percent-based options must be labelled indicative — fixed-
+    price options are exact regardless, since they override peak.
+    `doctorId` also narrows the INSURANCE options to that doctor's network (§11.3).
+    `locale` selects the translated plan/level labels.
 
-PUT /api/me/cart/benefit
-    body { source: NONE|MEMBERSHIP|CORPORATE|PUBLIC_PLAN|INSURANCE, refId?: string }
+POST /api/cart/items
+    … existing body …, benefit?: { source: NONE|MEMBERSHIP|CORPORATE|PUBLIC_PLAN|INSURANCE,
+                                   refId?: string }
+    The cart-level choice rides on add-to-cart rather than a separate call (§11.4),
+    so there is no window in which a line exists without the benefit that prices it.
 ```
 
-`GET /api/me/benefit-options` requires auth and returns `401` for guests — the UI
-then renders "log in to use a membership or plan", matching how
+`GET /api/me/benefit-options` requires auth and returns `401` for guests — the form
+then simply offers no benefit toggle (decision 6), matching how
 `/api/me/cart-preview` already behaves.
 
 ### 4.2 Permissions
@@ -908,8 +913,9 @@ missed run cannot leak a benefit.
 
 Three call sites, one implementation:
 
-1. `GET /api/me/benefit-options` — the booking step's list.
-2. `PUT /api/me/cart/benefit` + cart preview — keeps displayed totals honest.
+1. `GET /api/me/benefit-options` — the booking form's dropdown.
+2. `POST /api/cart/items` (the `benefit` field) + cart preview — keeps displayed
+   totals honest.
 3. Checkout in `orders.route.ts` — **authoritative**. Everything is recomputed here;
    client input is display-only.
 
@@ -965,10 +971,9 @@ member more than declining it.
 
 Each option carries `{ source, refId, label, unitPriceCents, allowanceRemaining?, note, badge }`.
 
-- **`/api/me/benefit-preview` is superseded.** It already prices a two-source
-  subset and must be retired in Phase 5 once the booking step reads
-  `/api/me/benefit-options`, or the codebase carries two price sources that will
-  drift.
+- **`/api/me/benefit-preview` was superseded and deleted in Phase 5.** It priced a
+  two-source subset; leaving it alongside `/api/me/benefit-options` would have given
+  the codebase two price sources that drift.
 - **Insurance options are not peak-adjusted**: `loadValidatedInsurancePrice`
   derives from `service.basePriceCents` internally. A sorted list therefore
   compares a peak-adjusted membership price against a peak-blind insurance one,
@@ -995,14 +1000,16 @@ NONE      → no engine runs. Full (peak) price on every line.
               only behavioural change to an existing engine.
 UNSET     → resolve the patient's eligible sources server-side:
               none eligible → treat as NONE and proceed (guest, no insurers,
-                              no memberships — the benefit step never ran, and
-                              there was nothing to choose anyway)
-              some eligible → reject checkout with "benefit step not completed",
-                              so the patient never pays a price they were not shown.
-            This runtime rule — not the backfill — is what guarantees no cart
-            can be bricked by reaching checkout without passing the step
-            (cart created before the Phase 5 deploy, added from a surface that
-            skips the wizard, or a missed backfill).
+                              no memberships — there was nothing to choose)
+              some eligible → reject checkout (wire code BENEFIT_STEP_INCOMPLETE,
+                              kept for compatibility; the message no longer names
+                              a step — see §11.4), so the patient never pays a
+                              price they were not shown.
+            This runtime rule — not the backfill — is what guarantees no cart can
+            be bricked by reaching checkout undecided (cart created before the
+            deploy, added from a surface that does not send `benefit`, or a missed
+            backfill). Since the choice now rides on add-to-cart, the booking UI
+            cannot reach this reject: it is a pure server-side backstop.
 MEMBERSHIP→ membership engine only. Subscription and corporate engines skipped.
 CORPORATE → existing corporate engine only.
 PUBLIC_PLAN → existing subscription engine only.
@@ -1367,47 +1374,100 @@ logs in.
 does (`insuranceOffset`). The chosen insurer rides in `?insurance=<companyId|none>`
 and reaches `consultation-booking-form.tsx` as `selectedInsurance`.
 
-### 11.2 Target
+Phase 5 replaced that step with a four-source **benefit step**. That is reverted here:
+the insurance step returns to being an insurance step, and the other three sources
+move into the details form. What follows is the design as it now stands.
 
-The insurance step becomes the **benefit step**, in the same position (before time
-selection, because a fixed member price and an insurance price both change what each
-slot costs).
+### 11.2 Target — a toggle in the details form, not a step
 
-**When the step appears:**
+The benefit is chosen inside the booking form, at the same moment as the rest of the
+patient's details:
 
-```
-showBenefitStep =
-     insuranceOptions.length > 0
-  || (loggedIn && eligibleBenefitSourceCount > 0)
-```
+1. A toggle: *"I have a membership, insurance or plan."*
+2. Toggled on, the fields appear.
+3. A dropdown picks the benefit type / specific plan.
+4. The benefit applies to the booking.
 
-A guest booking a service with no insurance options sees exactly the flow they see
-today — no extra click. `eligibleBenefitSourceCount` comes from a small server-side
-call on the `/book` page render.
+For a logged-in patient the dropdown is simply the benefits they already hold, from
+`GET /api/me/benefit-options`. No identifiers to type — that is the main case and the
+one that must be smooth. The list is priced against the **real slot**, so every figure
+shown is exact and the "indicative price" caveat a pre-slot step needed disappears.
 
-**URL param:** `?benefit=<source>:<refId>`, e.g. `benefit=membership:enr_123`,
-`benefit=insurance:cmp_9`, `benefit=corporate`, `benefit=plan`, `benefit=none`.
-The legacy `?insurance=` param is still accepted and mapped
-(`insurance=X` → `benefit=insurance:X`, `insurance=none` → `benefit=none`) so live
-links and any indexed URLs keep working.
+**The toggle defaults ON when the patient holds an eligible benefit** (decision 13):
+auto-detect and pre-select, cheapest first. This is what stops a corporate member
+silently losing the discount they get today — `NONE` suppresses the corporate engine
+(§6.4), so an off-by-default toggle would be a price rise disguised as a UI change.
+Toggling off is an explicit "pay the standard price" and sets `NONE`.
 
-**Step UI:**
+**A patient with nothing found** sees a link to **link a membership to your account**,
+pointing at the claim page (§5.3), with a line explaining the benefit applies once
+they confirm by email. The two-step claim is **not** inlined into checkout: the
+emailed confirm link is the control that proves the claimant owns the enrolled
+address, and a booking flow is exactly the place someone would want it weakened.
 
-1. Toggle: *"I have a membership, insurance or plan"*. Off → `benefit=none`, full price.
-2. On → the options list from `GET /api/me/benefit-options`, each showing its label
-   and its resulting price for this service, cheapest first, cheapest pre-selected
-   (§13/§14).
-3. Allowance options show "uses 1 of your N remaining".
-4. Insurance options show the deferred-charge notice (§33) and, once picked, the
-   existing policy-number field.
-5. Guests see "Log in to use a membership, plan or corporate benefit" with a login
-   link that returns to the same step, plus the insurance options (which do not
-   require an account today).
+**Guests** see no toggle for membership/plan/corporate — benefits require login
+(decision 6). They keep the insurance step, which never needed an account.
 
-**Selection is persisted** to the cart via `PUT /api/me/cart/benefit` when the
-patient continues, so the cart, the preview and the checkout all agree.
+**Why no step.** A step is the wrong shape for this decision: it interrupts every
+booking to ask a question most patients answer "no" to, it prices before a slot
+exists (so percent-based options can only be indicative), and it needs its own
+server-side eligibility count on `/book` render purely to decide whether to render
+itself. The form already knows the patient, the service, the doctor and the slot.
 
-### 11.3 Downstream behaviour by source
+### 11.3 Insurance keeps its early picker — deliberately
+
+Insurance is the exception and stays where it is, **before** doctor/time selection,
+because choosing an insurer changes two things a later prompt could not:
+
+- **slot pricing** — the negotiated rate replaces the list price, and
+- **which doctors are bookable at all** — a doctor joins an insurer's network by
+  having a `ServiceDoctorInsurancePayout` for that (company, service). Doctors
+  without one are filtered out of the availability query.
+
+So insurance appears **twice**: at its existing early step, and in the form's
+dropdown alongside everything else. The two must not be able to contradict each
+other, so:
+
+- `listBenefitOptions` filters its `INSURANCE` options through
+  `isDoctorInInsuranceNetwork` whenever a `doctorId` is in play. An insurer the
+  chosen doctor is not in network for is never offered — offering it would show a
+  price that evaporates when checkout re-derives it.
+- Picking a *different* insurer in the form is a link back to the insurance step
+  rather than an in-place swap, because the change invalidates the doctor and slot
+  already chosen.
+
+### 11.4 Where the choice is written
+
+**Folded into the add-to-cart request.** `POST /api/cart/items` already carries the
+per-line `benefitSelection` and `insuranceCompanyId`; it now also carries the
+cart-level `benefit: { source, refId? }`, validated and persisted by the same
+`setCartBenefit` service before the line is created.
+
+`PUT /api/me/cart/benefit` is **deleted**. It was Phase 5's second call, and a
+second call is a window: a cart whose item was created but whose benefit write failed
+sits at `UNSET` with eligible sources, which §6.4 rejects at checkout — a broken cart
+with no UI anywhere to repair it. One request removes the window instead of adding a
+recovery path for it, and §6.4's reject goes back to being a pure server-side backstop
+the UI cannot reach.
+
+`UNSET` therefore now means one of: a cart created before this ships, a cart filled
+from a surface that does not send `benefit`, or a guest cart. Its `refId` semantics
+are unchanged (enrollment id for `MEMBERSHIP`; `credit` / `discount` for
+`PUBLIC_PLAN`; none for `CORPORATE`; display-only for `INSURANCE`, where the per-line
+`insuranceCompanyId` stays authoritative).
+
+**`BENEFIT_STEP_INCOMPLETE` keeps its wire code** — anything switching on the string
+keeps working — but its human-facing message must stop naming a step that no longer
+exists. It now reads to the effect of *"we couldn't confirm which benefit to apply —
+please reopen the booking"*.
+
+**URL param.** `?benefit=<source>:<refId>` survives, because insurance still has to
+ride the URL between the early step and the form, and because `?benefit=` is also how
+the form's initial selection is seeded. The legacy `?insurance=` param is still
+accepted and mapped (`insurance=X` → `benefit=insurance:X`, `insurance=none` →
+`benefit=none`), so live links and indexed URLs keep working.
+
+### 11.5 Downstream behaviour by source
 
 | Source | Cart rule | Payment |
 | --- | --- | --- |
@@ -1417,33 +1477,58 @@ patient continues, so the cart, the preview and the checkout all agree.
 | `PUBLIC_PLAN` | normal | Stripe (existing credit rules) |
 | `INSURANCE` | **alone in cart** (existing rule) | **no charge at checkout**; admin verifies, then charges |
 
-### 11.4 Files touched
+### 11.6 Files touched
 
-- `frontend/app/[country]/[lang]/book/page.tsx` — step computation, param mapping,
-  benefit step render.
-- `frontend/app/[country]/[lang]/book/_components/` — new `benefit-step.tsx`
-  (replaces the insurance-only step component), plus the options list.
-- `frontend/app/[country]/[lang]/consult/[serviceSlug]/_components/consultation-booking-form.tsx`
-  — **the largest single piece of Phase 5, not a read-only tweak.** This form is
-  the sole consumer of `/api/me/benefit-preview` and renders today's plan
-  credit/discount picker plus the corporate line, and it serves **both** `/book`'s
-  details step **and** `/consult/[serviceSlug]` direct booking. Retiring
-  `benefit-preview` (§6.3) therefore means rewriting its selector onto
-  `benefit-options`.
+Frontend:
 
-  **It must also *write* the choice, not just read it.** A patient booking
-  straight from `/consult/[serviceSlug]` never passes `/book`'s benefit step, so
-  without a `PUT /api/me/cart/benefit` from this form their cart stays `UNSET`;
-  under §6.4 a member with eligible sources would then find checkout rejected
-  with no UI anywhere to resolve it. Both entry points must set the choice.
-- `frontend/lib/content/get-country-collections.ts` — extend the option type used by
-  the step (currently `InsuranceOption`) into a general `BenefitOption`.
-- `backend/src/routes/cart.route.ts` — accept and validate the cart-level benefit;
-  keep the existing per-line insurance handling untouched.
-- `backend/src/routes/orders.route.ts` — the §6.4 switch.
-- `backend/src/routes/me-cart-preview.route.ts` — include membership lines.
+- `frontend/app/[country]/[lang]/book/page.tsx` — the step gate reverts to
+  `insuranceOptions.length > 0`. The server-side eligibility fetch, the
+  `eligibleBenefitCount`, and the membership/plan/corporate arms of `benefitChosen`
+  all go; `?benefit=` parsing and the legacy `?insurance=` mapping stay.
+- `book/_components/benefit-step.tsx` → `insurance-step.tsx` — insurance options plus
+  "pay the standard price". The guest login prompt, allowance and plan-credit notes,
+  the `recommended` badge and the indicative-price line all belong to the form now.
+- `consult/[serviceSlug]/_components/consultation-booking-form.tsx` — the bulk of the
+  work. The pill row becomes the toggle + dropdown, the claim link renders when
+  nothing is found, and the cart-level benefit rides out on the add-to-cart request.
+  It serves **both** `/book`'s details step and `/consult/[serviceSlug]` direct
+  booking, so there is exactly one write path and the two entry points cannot
+  disagree.
+- `frontend/lib/api/me-benefit-options-server.ts` — **deleted**. Its only caller was
+  the step gate. It also could not tell a `401` (guest, correctly silent) from a
+  timeout (transient, wrongly silent), so a blip dropped the benefit UI by omission;
+  deleting the sole caller removes the bug rather than patching it. The equivalent
+  distinction is now made at the form's client fetch: `401` stays silent, any other
+  failure surfaces a visible "couldn't load your benefits" with a retry, never a
+  silently absent selector.
+- `frontend/lib/api/me-subscription.ts` — `setCartBenefit` removed; the cart POST
+  helper carries `benefit` instead.
+- `frontend/app/api/me/[...path]/route.ts` — `cart/benefit` drops out of the PUT
+  allowlist.
+- `frontend/lib/i18n/types.ts` + `locales/{en,cs,de,es,pt,ro}/common.json` — toggle,
+  dropdown and claim-link copy in; the step-only keys out.
 
-### 11.5 Admin manual booking (§26)
+Backend:
+
+- `backend/src/routes/cart.route.ts` — `addItemBodySchema` accepts
+  `benefit: { source, refId? }`; the route calls `setCartBenefit` before creating the
+  line, so a rejected benefit never leaves a half-written cart. A logged-in patient's
+  cart is resolved by `userId` on both sides, so both writes hit the same cart.
+- `backend/src/modules/benefits/benefit-options.service.ts` — `insuranceOptions()`
+  filters by the chosen doctor's network (§11.3).
+- `backend/src/routes/me-cart-benefit.route.ts`,
+  `backend/src/validations/me-cart-benefit.schema.ts` — **deleted**, with their
+  `authz-matrix` and `e2e-authz` cases moved onto the cart-items payload (a benefit
+  naming another user's enrollment must still 404).
+- `backend/src/modules/benefits/benefit-selection.service.ts` — unchanged behaviour;
+  comments that describe "the benefit step" corrected.
+
+Unchanged: `orders.route.ts` (§6.4 switch), the pricing resolver, the allowance
+ledger, `me-cart-preview.route.ts`, and the wizard's link-carrying components
+(`service-time-picker`, `slot-picker-step`, `language-filtered-doctors`) — insurance
+still rides the URL.
+
+### 11.7 Admin manual booking (§26)
 
 `frontend/app/(portal)/(admin)/admin/appointments/new/` +
 `backend/src/modules/appointments/manual-booking.service.ts`:
@@ -1640,9 +1725,10 @@ Both read the ledger joined to `OrderItem` — no separate aggregation table.
 - Member logs in, books a consultation, allowance applies, price is €0, order
   confirms without a Stripe redirect, allowance drops by one on the membership page.
 - Member with an exhausted allowance gets the fallback discount, and the price shown
-  on the benefit step equals the price charged.
-- Guest books the same service and pays full price; the benefit step shows the login
-  prompt.
+  in the booking form equals the price charged.
+- Guest books the same service and pays full price; no benefit toggle is offered.
+- Member with no linked membership sees the "link a membership" claim link, and
+  following it lands on the two-step claim page rather than an inline form.
 - Admin imports a CSV, sees the preview counts, commits, and the member appears.
 - `e2e-authz`: a non-admin cannot reach the membership admin routes; a member cannot
   read another member's enrollment.
@@ -1653,8 +1739,8 @@ Both read the ledger joined to `OrderItem` — no separate aggregation table.
   (**not** root `pnpm typecheck` — it fails on pre-existing locale drift).
 - Backend test suite green.
 - Semgrep custom rules, run per-file.
-- A browser pass over the booking benefit step and the admin level editor, with
-  screenshots.
+- A browser pass over the booking form's benefit toggle and the admin level editor,
+  with screenshots.
 
 ---
 
@@ -1666,7 +1752,8 @@ Both read the ledger joined to `OrderItem` — no separate aggregation table.
 | 2 | Enrollment CRUD, verified-email linking, CSV import, invite email, **enrollment-confirmed email** (it is the linker's own side effect — §5.2 — so it ships with the linker, not in Phase 3) | admin-only |
 | 3 | Member portal page + card, two-step email-confirmed claim (+ `MembershipClaimToken`), member-added dependents, staff verify lookup. Preceded by its own commit moving the subscription page to `/account/plans` (§10) | member-visible; still no pricing effect |
 | 4 | Pricing resolver, benefit-options endpoint, **second migration**: `Cart` / `OrderItem` columns + `CartBenefitSource` | API only, not wired into the UI |
-| 5 | Booking benefit step (replaces the insurance step), checkout switch, €0 path, allowance ledger, allowance-exhausted email, **`UNSET → NONE` cart backfill at deploy** | **the behavioural change** — corporate's silent discount becomes selection-driven |
+| 5 | Booking benefit step (replaced the insurance step), checkout switch, €0 path, allowance ledger, allowance-exhausted email, **`UNSET → NONE` cart backfill at deploy** | **the behavioural change** — corporate's silent discount becomes selection-driven |
+| 5b | **Benefit UI rework (§11)**: the step comes out, the toggle + dropdown goes into the booking form, insurance keeps its early picker, the cart-level choice folds into add-to-cart | no pricing change — same resolver, same checkout switch |
 | 6 | Admin manual booking + override, usage reporting, expiry cron | — |
 
 Phase 5 is the one that changes an existing flow for existing users. Ship it with a
