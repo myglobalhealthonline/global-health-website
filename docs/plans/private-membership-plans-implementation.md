@@ -543,6 +543,14 @@ deploy against `backend/.env`, which is production, until dev is verified.
    **Drift guard:** review the generated script line-by-line and delete any DDL
    not belonging to this feature. The reviewed script is what gets committed and
    deployed — never a re-generated one.
+
+   ⚠ **Every membership migration from Phase 2 onward will propose dropping the
+   three raw-SQL composite FKs** added in the first one
+   (`MembershipLevel(planId, countryId)`, `MembershipBenefit(serviceId, countryId)`,
+   `MembershipEnrollment(levelId, countryId)`). Prisma cannot express them, so
+   `migrate diff` sees them as drift and emits `DROP CONSTRAINT` forever. Cut
+   those lines by hand every time, and say so in the migration's header comment
+   — they are what make cross-country corruption structurally impossible.
 3b. `prisma migrate deploy` against **dev**, then exercise the feature there.
 3. Append the raw-SQL pieces Prisma cannot express:
    - composite FK `MembershipLevel(planId, countryId) → MembershipPlan(id, countryId)`;
@@ -690,8 +698,18 @@ DELETE /api/me/memberships/dependents/:id
 #### Booking API
 
 ```
-GET /api/me/benefit-options?serviceId=&timeSlotId=&doctorId=
+GET /api/me/benefit-options?serviceId=&doctorId=&locale=[&timeSlotId=]
     → { options: [{ source, refId, label, unitPriceCents, allowanceRemaining, note, recommended }] }
+
+    `timeSlotId` is OPTIONAL, because the benefit step runs BEFORE time selection
+    (§11.2) and there is usually no slot yet. Without one, prices are derived from
+    `service.basePriceCents` (standard, no peak adjustment) — the same thing the
+    insurance step does today. Consequences that must be handled in the UI:
+      · percent options are labelled as indicative ("evening and weekend slots
+        cost more"); fixed-price options are exact regardless, since they override peak
+      · once a slot is chosen, the details step re-prices with `timeSlotId` and
+        shows the exact figure, so the number the patient confirms is the number charged
+    `locale` selects the translated plan/level labels, matching `/api/me/benefit-preview`.
 
 PUT /api/me/cart/benefit
     body { source: NONE|MEMBERSHIP|CORPORATE|PUBLIC_PLAN|INSURANCE, refId?: string }
@@ -844,7 +862,14 @@ createdAt }`.
   ("if those details match a membership, we've sent a confirmation link to the
   email on file"), so neither existence nor status leaks.
 
-`GET /api/me/memberships/claim/confirm?token=…` — step 2, attach:
+`POST /api/me/memberships/claim/confirm { token }` — step 2, attach.
+
+**POST, not GET** (revised 2026-08-07 during implementation): corporate mail
+scanners — SafeLinks, Proofpoint and friends — fetch every URL in an inbound
+message. A single-use token on a GET endpoint is therefore burned by the scanner
+before the member ever clicks, turning every valid claim at a corporate domain
+into a dead link. The confirm *page* reads the token from the URL and posts it
+behind a button, so "openable only by the session that requested it" still holds.
 
 - token must be unused, unexpired, and opened **by the same session user who
   requested it** (`token.userId === session.user.id`) — a leaked link is then
@@ -899,7 +924,7 @@ input: enrollment, service, doctor, timeSlot
    none found, or benefitType == EXCLUDED               → no benefit
 5. peakPrice = computeSlotPrice(...)   // existing peak-pricing service
 6. by benefitType:
-     PERCENT → round(peakPrice * (100 - percentOff) / 100)          (§29)
+     PERCENT → peakPrice - percentDiscountAmountCents(peakPrice, percentOff)   (§29)
      FIXED   → fixedPriceCents                                       (overrides peak)
      ALLOWANCE →
         remaining = balance.allocated - balance.used
@@ -910,8 +935,20 @@ input: enrollment, service, doctor, timeSlot
              NONE    → peakPrice (no benefit)
 ```
 
-Rounding: `Math.round`, half-up, to whole cents — same as the corporate engine, so
-member and corporate discounts round identically.
+**Rounding — reuse `percentDiscountAmountCents` (`pricing-resolver.ts`), do not
+re-derive.** Rounding the *discount* and subtracting is not the same as rounding
+the discounted price: at peak 110 with 15% off, `peak - round(peak*pct/100)` = 93
+while `round(peak*(100-pct)/100)` = 94. Both are half-up `Math.round`; only the
+target differs. The corporate engine already uses the former, so membership uses
+the same helper — one implementation, and the two engines can never drift a cent
+apart on the same input. (Corrected 2026-08-07; the earlier wording specified one
+formula while requiring parity with the other.)
+
+**A benefit may never cost more than paying normally.** A `FIXED` price overrides
+peak, so on an off-peak slot it can land *above* the full price. The resolver
+returns `min(benefitPrice, fullPrice)`, and such an option is never marked
+`recommended` (§6.3). Without the clamp, choosing a membership could charge a
+member more than declining it.
 
 ### 6.3 Cross-source options list
 
@@ -921,11 +958,24 @@ member and corporate discounts round identically.
 | --- | --- |
 | `MEMBERSHIP` | one option **per active enrollment** (§19), priced by §6.2 |
 | `CORPORATE` | existing `resolveCorporateDiscountsForItems` on a single synthetic line |
-| `PUBLIC_PLAN` | existing `previewConsultationPricing` (credit or discount) |
+| `PUBLIC_PLAN` | existing `previewServiceBenefit` — **up to two** options, `refId` `credit` \| `discount`, since a plan credit is a scarce unit exactly like an allowance and deserves the same "uses 1 of your N" labelling rather than being silently chosen for the patient. Phase 5 records which one in the existing per-line `CartItem.benefitSelection` (`USE_PLAN_CREDIT` / `USE_PLAN_DISCOUNT`); the cart-level source stays `PUBLIC_PLAN`, so no new column is needed |
 | `INSURANCE` | one option per insurer covering the service, via `loadValidatedInsurancePrice` |
 
 Each option carries `{ source, refId, label, unitPriceCents, allowanceRemaining?, note, badge }`.
 
+- **`/api/me/benefit-preview` is superseded.** It already prices a two-source
+  subset and must be retired in Phase 5 once the booking step reads
+  `/api/me/benefit-options`, or the codebase carries two price sources that will
+  drift.
+- **Insurance options are not peak-adjusted**: `loadValidatedInsurancePrice`
+  derives from `service.basePriceCents` internally. A sorted list therefore
+  compares a peak-adjusted membership price against a peak-blind insurance one,
+  and `recommended` can land on the wrong side at peak times. Left as-is —
+  §33 keeps the insurance path unchanged — but note it in code so the next
+  person does not read it as a bug in the options service.
+- Only enrollments whose `userId` is the session user are considered. Booking on
+  behalf of a dependent (`familyMemberId`) is out of scope: dependents hold their
+  own accounts and book for themselves (§11).
 - Sorted ascending by `unitPriceCents`. Ties broken by a stable source order
   (`MEMBERSHIP`, `CORPORATE`, `PUBLIC_PLAN`, `INSURANCE`) then by label.
 - `recommended: true` on the cheapest (§13/§14). The UI pre-selects it.
