@@ -26,11 +26,20 @@
  * The value must equal the host the command would actually reach, so it cannot
  * be satisfied by a habitual `=1` and cannot be left exported in a shell
  * profile without pinning one specific database.
+ *
+ * The guard is scoped to machines that HAVE `backend/.env`. Where that file is
+ * absent — a deploy container, CI — the URL was supplied deliberately and there
+ * is nothing to fall into, so the guard steps aside rather than crash-looping
+ * a service whose pre-deploy step is `prisma migrate deploy`.
  */
 
 import { config as loadEnv } from "dotenv";
+import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+
+/** `backend/.env` — the file that makes an unnamed target possible at all. */
+const ENV_FILE = join(dirname(dirname(fileURLToPath(import.meta.url))), ".env");
 
 /** Local databases are always fine — they are nobody's production. */
 const DEFAULT_ALLOWED = new Set(["localhost", "127.0.0.1", "::1", "[::1]", "postgres-test"]);
@@ -71,11 +80,29 @@ function hostOf(url) {
 /**
  * @param {string | undefined} databaseUrl the URL the CLI is about to use
  * @param {string[]} argv `process.argv` of the Prisma CLI process
+ * @param {{ hasEnvFile?: boolean }} [opts] `hasEnvFile` is injectable for tests
+ *   only; production always reads the real `backend/.env`.
  * @throws when the command mutates and the target is not allowlisted
  */
-export function assertSafeDatabaseTarget(databaseUrl, argv = process.argv) {
+export function assertSafeDatabaseTarget(databaseUrl, argv = process.argv, opts = {}) {
   const command = commandFromArgv(argv);
   if (!command) return;
+
+  const hasEnvFile = opts.hasEnvFile ?? existsSync(ENV_FILE);
+
+  // No `backend/.env` on disk means there is no ambient production URL for a
+  // bare command to fall into: DATABASE_URL is whatever the operator or the
+  // platform deliberately supplied, which is the "name it deliberately" bar
+  // this guard exists to enforce. That is a deploy container (Railway injects
+  // DATABASE_URL per environment and ships no .env) or a CI job.
+  //
+  // Without this, Railway's pre-deploy `prisma migrate deploy` is refused and
+  // the service crash-loops — which is exactly what happened to the dev
+  // backend on 2026-08-07, five deploys in a row, until someone pinned
+  // DB_GUARD_ALLOW_HOST on the service. That pin is the habitual bypass this
+  // file's own docstring warns against, and it re-breaks the day the database
+  // host changes.
+  if (!hasEnvFile) return;
 
   const host = hostOf(databaseUrl ?? "");
   // No URL at all means no connection will be made (or Prisma will fail on its
