@@ -48,8 +48,15 @@ test.describe("Patient session cannot reach other portals", () => {
   // it must reject a membership the session does not hold rather than quietly
   // recording it and surprising the patient at checkout.
   test("patient cannot attach a membership they do not hold", async ({ page }) => {
-    const response = await page.request.put("/api/me/cart/benefit", {
-      data: { source: "MEMBERSHIP", refId: "enr-e2e-not-mine" },
+    // The choice rides on add-to-cart (§11.4), so this is where the gate lives.
+    // An unknown health test id would 404 first, so the probe uses a bad benefit
+    // on a request that is otherwise shaped like a real add.
+    const response = await page.request.post("/api/cart/items", {
+      data: {
+        kind: "HEALTH_TEST",
+        healthTestId: "ht-e2e-probe",
+        benefit: { source: "MEMBERSHIP", refId: "enr-e2e-not-mine" },
+      },
     });
     expect(response.status(), "a foreign enrollment must not be attachable").toBeGreaterThanOrEqual(400);
   });

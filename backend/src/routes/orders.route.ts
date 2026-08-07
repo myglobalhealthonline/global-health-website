@@ -345,7 +345,12 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             // shown a chance to save.
             return reply.status(400).send(
               errorResponse(
-                "Please choose how you'd like to pay for this booking before checking out.",
+                // The wire code is unchanged for compatibility, but there is no
+                // benefit step any more (§11) — the choice rides on add-to-cart,
+                // so a cart in this state was filled before that shipped or from
+                // a surface that does not send one. Reopening the booking is the
+                // repair, and it is the only one the patient can perform.
+                "We couldn't confirm which benefit to apply to this booking. Please reopen the booking to continue.",
                 { code: "BENEFIT_STEP_INCOMPLETE" },
               ),
             );

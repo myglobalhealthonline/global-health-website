@@ -7,6 +7,24 @@ export type CartItemKind =
 /** Per-consultation-line subscription benefit choice (§ appointment-claim). */
 export type BenefitSelection = "PAY_NORMAL" | "USE_PLAN_CREDIT" | "USE_PLAN_DISCOUNT";
 
+/**
+ * Cart-level benefit choice (§11.4) — exactly one source per cart, so checkout
+ * runs exactly one pricing engine. `UNSET` is not settable by a client: it means
+ * "never asked", and restoring it would re-open §6.4's checkout reject.
+ *
+ * `refId` is the enrollment id for MEMBERSHIP and `credit` / `discount` for
+ * PUBLIC_PLAN. CORPORATE needs none; for INSURANCE it is display state only,
+ * since the per-line `insuranceCompanyId` stays authoritative.
+ */
+export type CartBenefitSource =
+  | "NONE"
+  | "MEMBERSHIP"
+  | "CORPORATE"
+  | "PUBLIC_PLAN"
+  | "INSURANCE";
+
+export type CartBenefitInput = { source: CartBenefitSource; refId?: string };
+
 export type CartItem = {
   id: string;
   kind: CartItemKind;

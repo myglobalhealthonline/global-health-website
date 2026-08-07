@@ -350,10 +350,17 @@ export type CommonLocale = {
     patientReviews: string;
   };
   bookingForm: {
-    /** Booking-step plan benefit selector (B6). */
+    /** Benefit selector (§11.2) — the toggle, then the dropdown's own label. */
+    benefitToggleLabel: string;
     benefitHeading: string;
+    /** No benefit found on the account — precedes the claim link. */
+    benefitNoneFound: string;
+    benefitClaimCta: string;
+    benefitClaimHint: string;
+    /** Non-401 options failure. Visible, never a silently missing selector. */
+    benefitLoadError: string;
+    benefitLoadRetry: string;
     corporateOffAtCheckout: string;
-    benefitPayNormal: string;
     /** "Uses 1 of your {count} remaining" — allowance units and plan credits. */
     benefitScarcityNote: string;
     benefitUseCredit: string;
@@ -726,10 +733,10 @@ export type CommonLocale = {
     stepTime: string;
     stepDetails: string;
     /**
-     * Insurance step — kept for the insurance-only copy the details step and
-     * the doctor filter still use. The STEP itself is now the benefit step
-     * (§11.2), which covers insurance alongside memberships, plans and
-     * corporate.
+     * The insurance step (§11.3). Insurance and only insurance: it must be
+     * chosen before doctor/time because the insurer decides both the slot price
+     * and which doctors are bookable. Memberships, plans and corporate benefits
+     * are chosen in the booking form instead.
      */
     stepInsurance: string;
     insuranceTitle: string;
@@ -737,22 +744,10 @@ export type CommonLocale = {
     insuranceStandard: string;
     insuranceNone: string;
     noInsuranceDoctors: string;
-    /** Benefit step (§11.2) — one step for all four benefit sources. */
-    stepBenefit: string;
-    benefitTitle: string;
-    benefitDesc: string;
-    benefitNone: string;
-    benefitNoneDesc: string;
-    benefitRecommended: string;
-    /** "Uses 1 of your {count} remaining" — a scarce allowance unit (§14). */
-    benefitAllowanceNote: string;
-    benefitPlanCreditNote: string;
-    benefitAllowanceExhausted: string;
+    /** Deferred-charge notice on each insurer (§33). */
     benefitInsuranceNote: string;
-    /** Shown when the price will move once a real slot is chosen. */
-    benefitIndicative: string;
-    benefitGuestPrompt: string;
-    benefitGuestCta: string;
+    /** "Memberships and plans are asked for later, once you've picked a time." */
+    insuranceBenefitLater: string;
     title: string;
     subtitle: string;
     bookingSteps: string;

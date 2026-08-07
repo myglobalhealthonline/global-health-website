@@ -2,7 +2,10 @@ import type { LocaleCode, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { resolveDoctorTimeZone } from "../doctor-availability/doctor-availability.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
-import { loadValidatedInsurancePrice } from "../pricing/insurance-pricing.service.js";
+import {
+  isDoctorInInsuranceNetwork,
+  loadValidatedInsurancePrice,
+} from "../pricing/insurance-pricing.service.js";
 import { resolveCorporateDiscount } from "../corporate/corporate-benefit.service.js";
 import { previewServiceBenefit } from "../subscriptions/checkout-pricing.service.js";
 import {
@@ -17,8 +20,8 @@ import type {
 /**
  * Cross-source benefit options (§6.3) — the one place that knows about all four
  * benefit sources. It prices EVERY source the patient is eligible for against
- * the same service, so the booking step can show real numbers side by side
- * instead of asking the patient to guess which benefit is worth using.
+ * the same service, so the booking form's dropdown can show real numbers side by
+ * side instead of asking the patient to guess which benefit is worth using.
  *
  * It calls the existing subscription, corporate and insurance services rather
  * than reimplementing them; only the membership resolver is new. Nothing here
@@ -32,10 +35,10 @@ import type {
  *     from `service.basePriceCents` internally, and §33 keeps the insurance
  *     path unchanged, so at peak times an insurance option is compared against
  *     peak-adjusted membership/corporate ones. Noted rather than fixed.
- *   - Without a `timeSlotId` (the benefit step runs BEFORE time selection,
- *     §11.2) prices come off the base price. Percent-based options are then
- *     marked `indicative`; fixed prices are exact either way, since they
- *     override peak.
+ *   - Without a `timeSlotId` prices come off the base price and percent-based
+ *     options are marked `indicative`; fixed prices are exact either way, since
+ *     they override peak. The booking form always has a slot by the time it
+ *     asks (§11.2), so this now only affects callers that price mid-entry.
  */
 
 export type BenefitOptionSource = "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN" | "INSURANCE";
@@ -58,10 +61,10 @@ export type BenefitOptionNote =
 export type BenefitOption = {
   source: BenefitOptionSource;
   /**
-   * What `PUT /api/me/cart/benefit` sends back to identify the choice:
-   * enrollment id, company id, insurer id, or `credit` / `discount` for a
-   * public plan (the cart-level source stays PUBLIC_PLAN and phase 5 records
-   * which one in the existing per-line `CartItem.benefitSelection`).
+   * What add-to-cart sends back to identify the choice (§11.4): enrollment id,
+   * company id, insurer id, or `credit` / `discount` for a public plan (the
+   * cart-level source stays PUBLIC_PLAN and phase 5 records which one in the
+   * existing per-line `CartItem.benefitSelection`).
    */
   refId: string;
   label: string;
@@ -260,7 +263,7 @@ export async function listBenefitOptions(args: {
       locale,
       slotPriced,
     }),
-    insuranceOptions({ serviceId: service.id, fullPriceCents }),
+    insuranceOptions({ serviceId: service.id, fullPriceCents, doctorId: args.doctorId }),
   ]);
 
   const options = sortAndRecommend(
@@ -360,10 +363,20 @@ async function planOptions(args: {
     }));
 }
 
-/** One option per insurer that actually covers this service. */
+/**
+ * One option per insurer that actually covers this service — and, once a doctor
+ * is in play, only the insurers that doctor is in network for (§11.3).
+ *
+ * The network filter is not cosmetic. A doctor joins an insurer's network by
+ * having a payout row for that (company, service); without one the availability
+ * query drops them entirely. Listing such an insurer beside a doctor the patient
+ * has already chosen would offer a price that evaporates the moment either the
+ * slot query or checkout re-derives it.
+ */
 async function insuranceOptions(args: {
   serviceId: string;
   fullPriceCents: number;
+  doctorId?: string | null;
 }): Promise<BenefitOption[]> {
   const coverages = await prisma.insuranceServiceCoverage.findMany({
     where: { serviceId: args.serviceId, company: { isActive: true } },
@@ -372,6 +385,12 @@ async function insuranceOptions(args: {
 
   const out: BenefitOption[] = [];
   for (const coverage of coverages) {
+    if (
+      args.doctorId &&
+      !(await isDoctorInInsuranceNetwork(args.serviceId, args.doctorId, coverage.company.id))
+    ) {
+      continue;
+    }
     // Priced through the same validated loader checkout uses, so an option can
     // never show a price the money path would refuse to honour.
     const price = await loadValidatedInsurancePrice(args.serviceId, coverage.company.id);

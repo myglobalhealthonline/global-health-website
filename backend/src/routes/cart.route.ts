@@ -8,7 +8,10 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
-import { clearedCartBenefitFields } from "../modules/benefits/benefit-selection.service.js";
+import {
+  clearedCartBenefitFields,
+  setCartBenefit,
+} from "../modules/benefits/benefit-selection.service.js";
 import { resolveTranslation } from "../modules/shared/resolve-translation.js";
 import {
   holdConsecutiveSlots,
@@ -113,6 +116,26 @@ const addItemBodySchema = z.object({
    */
   insuranceCompanyId: z.string().min(1).max(120).optional(),
   insurancePolicyNumber: z.string().trim().max(120).optional().or(z.literal("")),
+  /**
+   * Cart-level benefit choice (§11.4). Carried here rather than by a separate
+   * call, so there is no window in which a line exists without the benefit that
+   * prices it — a cart in that state sits at UNSET with eligible sources and is
+   * rejected at checkout (§6.4) with no UI anywhere to repair it.
+   *
+   * `refId` is the enrollment id for MEMBERSHIP and `credit` / `discount` for
+   * PUBLIC_PLAN. CORPORATE needs none (at most one membership), and for
+   * INSURANCE it is display state only — the per-line `insuranceCompanyId`
+   * above is what the insurance lifecycle actually reads (§33).
+   *
+   * `UNSET` is deliberately not accepted: it is the initial state, and letting a
+   * client set it back would re-open §6.4's reject path on a decided cart.
+   */
+  benefit: z
+    .object({
+      source: z.enum(["NONE", "MEMBERSHIP", "CORPORATE", "PUBLIC_PLAN", "INSURANCE"]),
+      refId: z.string().trim().min(1).max(80).optional(),
+    })
+    .optional(),
   /**
    * Patient intake snapshot. REQUIRED for consultation kinds (the cart
    * route below enforces presence + consent). Ignored for product
@@ -730,7 +753,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
       const queryParse = cartQuerySchema.safeParse(request.query);
       const requestedLocale = queryParse.success ? queryParse.data.locale : undefined;
-      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber } =
+      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber, benefit } =
         body.data;
       const qty = quantity ?? 1;
       const insuranceCompanyIdValue = insuranceCompanyId?.trim() || null;
@@ -1157,6 +1180,23 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             { conflict: "cart_has_insurance" },
           ),
         );
+      }
+
+      // Cart-level benefit (§11.4), recorded BEFORE the line is created so a
+      // rejected benefit — an enrollment that is not this patient's, or one
+      // whose term has lapsed — never leaves a half-written cart behind.
+      //
+      // Guests are ignored rather than rejected: they hold no benefits
+      // (decision 6), and their one legitimate source, insurance, is a per-line
+      // concept that travels in `insuranceCompanyId` above.
+      if (benefit && userId) {
+        const saved = await setCartBenefit(userId, {
+          source: benefit.source,
+          refId: benefit.refId ?? null,
+        });
+        if (!saved.ok) {
+          return reply.status(saved.status).send(errorResponse(saved.message));
+        }
       }
 
       // Stamp country/currency on first item

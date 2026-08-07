@@ -1,6 +1,12 @@
 "use client";
 
-import type { BenefitSelection, Cart, CartItemKind, CartItemPatientInput } from "./cart-types";
+import type {
+  BenefitSelection,
+  Cart,
+  CartBenefitInput,
+  CartItemKind,
+  CartItemPatientInput,
+} from "./cart-types";
 
 type Result<T> =
   | { ok: true; data: T; message?: string }
@@ -49,6 +55,12 @@ export type AddItemInput = {
   insuranceCompanyId?: string;
   /** The patient's insurance card / policy number (stored encrypted). */
   insurancePolicyNumber?: string;
+  /**
+   * Cart-level benefit choice (§11.4) — which pricing engine checkout runs.
+   * Sent here rather than by a separate call so a line can never exist without
+   * the benefit that prices it. Ignored for guests, who hold none.
+   */
+  benefit?: CartBenefitInput;
 };
 
 export async function addToCart(input: AddItemInput): Promise<Result<Cart>> {

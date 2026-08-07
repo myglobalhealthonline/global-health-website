@@ -42,9 +42,13 @@ const PLAN_REF_TO_SELECTION = {
 } as const;
 
 /**
- * Record the patient's choice on their cart. The cart is created if it does
- * not exist yet: the benefit step runs BEFORE time selection (§11.2), so at
- * that point there is usually nothing in the cart at all.
+ * Record the patient's choice on their cart. Called from `POST /api/cart/items`
+ * before the line is created (§11.4), so a rejected benefit never leaves a
+ * half-written cart.
+ *
+ * The cart is still upserted rather than required. It resolves by `userId`, the
+ * same key `getOrCreateUserCart` uses on the caller's side, so both writes land
+ * on one cart; the upsert only matters for a first add that races cart creation.
  */
 export async function setCartBenefit(
   userId: string,
@@ -109,13 +113,11 @@ export async function setCartBenefit(
 /**
  * Does this patient have any benefit worth showing them for these services?
  *
- * Used for two things:
- *   - whether `/book` shows the benefit step at all (§11.2), and
- *   - §6.4's `UNSET` runtime rule: no eligible sources means the step had
- *     nothing to offer, so checkout treats the cart as `NONE` and proceeds
- *     rather than bricking it.
+ * Used for §6.4's `UNSET` runtime rule: no eligible sources means there was
+ * nothing to ask about, so checkout treats the cart as `NONE` and proceeds
+ * rather than bricking it.
  *
- * It asks `listBenefitOptions` — the same thing the step itself renders —
+ * It asks `listBenefitOptions` — the same thing the booking form renders —
  * instead of re-deriving eligibility, so the two can never disagree about
  * whether the patient "should have" chosen something. Options that do not beat
  * the full price are already dropped there, which is the correct reading here

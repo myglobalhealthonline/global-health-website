@@ -65,6 +65,8 @@ describe("authorization matrix", () => {
   let medicalDocumentId = "";
   let orderId = "";
   let invoiceId = "";
+  /** Cheapest cart line that needs no slot — carries the benefit probes below. */
+  let healthTestId = "";
 
   before(async () => {
     try {
@@ -276,6 +278,21 @@ describe("authorization matrix", () => {
       },
     });
     invoiceId = invoice.id;
+
+    // A product line for the cart-benefit probes (§11.4). A consultation would
+    // need a doctor assignment, an availability window and a held slot, none of
+    // which the benefit gate reads.
+    const healthTest = await prisma.healthTest.create({
+      data: {
+        countryId: countryA.id,
+        slug: `authz-kit-${uniq}`.toLowerCase(),
+        title: `Authz Kit ${uniq}`,
+        priceCents: 5000,
+        currencyCode: currency.code,
+        productImagePath: "/authz-kit.png",
+      },
+    });
+    healthTestId = healthTest.id;
   });
 
   after(async () => {
@@ -287,6 +304,9 @@ describe("authorization matrix", () => {
     });
     await prisma.invoice.deleteMany({ where: { id: invoiceId } });
     await prisma.order.deleteMany({ where: { id: orderId } });
+    await prisma.cartItem.deleteMany({ where: { cart: { userId: patient1UserId } } });
+    await prisma.cart.deleteMany({ where: { userId: patient1UserId } });
+    await prisma.healthTest.deleteMany({ where: { id: healthTestId } });
     await prisma.medicalDocument.deleteMany({ where: { id: medicalDocumentId } });
     await prisma.prescription.deleteMany({ where: { id: prescriptionId } });
     await prisma.consultation.deleteMany({ where: { id: consultationId } });
@@ -791,79 +811,83 @@ describe("authorization matrix", () => {
     assert.equal(res.statusCode, 400, res.body);
   });
 
-  // ── Cart benefit choice (§25) ─────────────────────────────────────
+  // ── Cart benefit choice (§11.4) ───────────────────────────────────
   // The write that decides which pricing engine runs at checkout, so the gate
   // matters as much as the read above: anyone who could set it for another
-  // account could change what that account pays.
+  // account could change what that account pays. It rides on add-to-cart, so
+  // the gate is exercised there.
 
-  it("cart benefit: unauthenticated write → 401", async (t) => {
-    if (!app) return t.skip();
-    const res = await app.inject({
-      method: "PUT",
-      url: "/api/me/cart/benefit",
-      payload: { source: "NONE" },
-    });
-    assert.equal(res.statusCode, 401, res.body);
-  });
-
-  it("cart benefit: a doctor session is not a patient → 401", async (t) => {
-    if (!app) return t.skip();
-    const res = await app.inject({
-      method: "PUT",
-      url: "/api/me/cart/benefit",
-      payload: { source: "NONE" },
-      cookies: doctor2Cookie,
-    });
-    assert.equal(res.statusCode, 401, res.body);
-  });
-
-  it("cart benefit: an admin session is not a patient either → 401", async (t) => {
-    if (!app) return t.skip();
-    const res = await app.inject({
-      method: "PUT",
-      url: "/api/me/cart/benefit",
-      payload: { source: "NONE" },
-      cookies: adminCookie,
-    });
-    assert.equal(res.statusCode, 401, res.body);
-  });
-
-  it("cart benefit: a patient may set their own choice → 200", async (t) => {
-    if (!app) return t.skip();
-    const res = await app.inject({
-      method: "PUT",
-      url: "/api/me/cart/benefit",
-      payload: { source: "NONE" },
-      cookies: patient1Cookie,
-    });
-    assert.equal(res.statusCode, 200, res.body);
+  const addKit = (benefit?: Record<string, unknown>, cookies?: Record<string, string>) => ({
+    method: "POST" as const,
+    url: "/api/cart/items",
+    payload: { kind: "HEALTH_TEST", healthTestId, ...(benefit ? { benefit } : {}) },
+    ...(cookies ? { cookies } : {}),
   });
 
   it("cart benefit: another patient's membership id is not found → 404", async (t) => {
     if (!app) return t.skip();
     // Same answer as "no such enrollment": the id is partner-supplied and
-    // potentially sequential, so the endpoint must not confirm which ones
+    // potentially sequential, so the route must not confirm which ones
     // exist (§14, enumeration).
+    const res = await app.inject(
+      addKit({ source: "MEMBERSHIP", refId: "enr-authz-probe" }, patient1Cookie),
+    );
+    assert.equal(res.statusCode, 404, res.body);
+    // And the line is NOT created. A rejected benefit that still added the item
+    // would leave the cart at UNSET with the line already in it — the exact
+    // half-written state folding the write into add-to-cart exists to prevent.
+    const items = await prisma.cartItem.count({ where: { cart: { userId: patient1UserId } } });
+    assert.equal(items, 0);
+  });
+
+  it("cart benefit: UNSET cannot be set by a client → 400", async (t) => {
+    if (!app) return t.skip();
+    // UNSET means "never asked". Letting a client restore it would re-open
+    // §6.4's reject path on a cart that had already been decided.
+    const res = await app.inject(addKit({ source: "UNSET" }, patient1Cookie));
+    assert.equal(res.statusCode, 400, res.body);
+  });
+
+  it("cart benefit: a patient may set their own choice → 200", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject(addKit({ source: "NONE" }, patient1Cookie));
+    assert.equal(res.statusCode, 200, res.body);
+    const cart = await prisma.cart.findUnique({
+      where: { userId: patient1UserId },
+      select: { benefitSource: true },
+    });
+    assert.equal(cart?.benefitSource, "NONE");
+  });
+
+  it("cart benefit: a guest's benefit field is ignored, not honoured → 200 at UNSET", async (t) => {
+    if (!app) return t.skip();
+    // Guests hold no benefits (decision 6). The field is ignored rather than
+    // rejected so a guest insurance booking — whose source is the per-line
+    // insuranceCompanyId — is not broken by a stray body field.
+    const res = await app.inject(addKit({ source: "CORPORATE" }));
+    assert.equal(res.statusCode, 200, res.body);
+    const token = String(res.headers["set-cookie"] ?? "").match(/gh_cart=([^;]+)/)?.[1];
+    assert.ok(token, "guest cart cookie");
+    const cart = await prisma.cart.findUnique({
+      where: { cookieToken: decodeURIComponent(token!) },
+      select: { id: true, benefitSource: true },
+    });
+    assert.equal(cart?.benefitSource, "UNSET");
+    await prisma.cartItem.deleteMany({ where: { cartId: cart!.id } });
+    await prisma.cart.delete({ where: { id: cart!.id } });
+  });
+
+  it("cart benefit: the retired PUT endpoint is gone (§11.4)", async (t) => {
+    if (!app) return t.skip();
+    // A second call was a window in which a line could exist without the
+    // benefit that prices it. A 404 for a PATIENT session is the retirement.
     const res = await app.inject({
       method: "PUT",
       url: "/api/me/cart/benefit",
-      payload: { source: "MEMBERSHIP", refId: "enr-authz-probe" },
+      payload: { source: "NONE" },
       cookies: patient1Cookie,
     });
     assert.equal(res.statusCode, 404, res.body);
-  });
-
-  it("cart benefit: UNSET cannot be set back by a client → 400", async (t) => {
-    if (!app) return t.skip();
-    // UNSET means "the benefit step has not run". Letting a client restore it
-    // would re-open §6.4's reject path on a cart that had already been decided.
-    const res = await app.inject({
-      method: "PUT",
-      url: "/api/me/cart/benefit",
-      payload: { source: "UNSET" },
-      cookies: patient1Cookie,
-    });
-    assert.equal(res.statusCode, 400, res.body);
   });
 
   it("benefit preview: the retired endpoint is gone (§6.3)", async (t) => {

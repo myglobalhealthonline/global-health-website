@@ -33,9 +33,8 @@ import { ConsultationBookingForm } from "../consult/[serviceSlug]/_components/co
 import { SlotPickerStep } from "../consult/[serviceSlug]/_components/slot-picker-step";
 import { LanguageFilteredDoctors } from "./_components/language-filtered-doctors";
 import { PortalReturnBand } from "./_components/portal-return-band";
-import { BenefitStep } from "./_components/benefit-step";
+import { InsuranceStep } from "./_components/insurance-step";
 import { BookingSectionHeader } from "./_components/booking-section-header";
-import { getServerBenefitOptions } from "@/lib/api/me-benefit-options-server";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
@@ -190,15 +189,16 @@ export default async function CountryLangBookPage({
     ? `${formatAppDate(atParam)} · ${formatAppTime(atParam)}`
     : null;
 
-  // ── Benefit step (§11.2) ────────────────────────────────────────────────
-  // One step for all four benefit sources, standing where the insurance-only
-  // step used to. Chosen BEFORE time/doctor because a member price and an
-  // insurance price both change what each slot costs — and because the insurer
-  // decides which doctors exist at all: only doctors with a payout set for
-  // that insurer take its patients.
+  // ── Insurance step (§11.3) ──────────────────────────────────────────────
+  // Insurance only. Memberships, corporate benefits and public plans are chosen
+  // in the booking form (§11.2), where the slot is known and the price is exact.
+  //
+  // Insurance is the exception because the insurer changes both what each slot
+  // costs and which doctors are bookable at all: only doctors with a payout set
+  // for that insurer take its patients, so the choice has to precede the doctor.
   //
   // The legacy `?insurance=` param is still accepted and mapped, so live links
-  // and any indexed URLs keep working (§11.2).
+  // and any indexed URLs keep working.
   const insuranceOptions = selectedService?.insuranceOptions ?? [];
   const legacyInsuranceParam = firstParam(sp.insurance);
   const benefitParam =
@@ -212,48 +212,35 @@ export default async function CountryLangBookPage({
     ? [benefitParam.split(":")[0] ?? null, benefitParam.split(":").slice(1).join(":") || null]
     : [null, null];
 
-  // Options are only fetched once a service is picked (there is nothing to
-  // price before that) and only for logged-in patients — the endpoint 401s for
-  // guests, which is exactly the signal the step needs to show a login prompt.
-  const benefitOptions = selectedService
-    ? await getServerBenefitOptions({ serviceId: selectedService.id, locale: lang })
-    : null;
-  const eligibleBenefitCount = benefitOptions?.options.length ?? 0;
-
-  // A guest booking a service with no insurance options sees exactly the flow
-  // they see today — no extra click for a step that would be empty.
-  const hasBenefitStep =
-    Boolean(selectedService) && (insuranceOptions.length > 0 || eligibleBenefitCount > 0);
+  // A service with no bookable insurer keeps exactly the flow it has today —
+  // no extra click for a step that would be empty.
+  const hasBenefitStep = Boolean(selectedService) && insuranceOptions.length > 0;
 
   const insuranceCompanyId =
     benefitSourceParam === "insurance" && benefitRefParam ? benefitRefParam : null;
   const selectedInsurance = insuranceCompanyId
     ? insuranceOptions.find((o) => o.companyId === insuranceCompanyId) ?? null
     : null;
-  // A stale/forged reference (insurer delisted, membership expired) counts as
-  // "not chosen" so the patient re-picks, rather than booking on a price the
-  // server would reject at checkout.
-  const benefitChosen =
-    benefitParam === "none" ||
-    Boolean(selectedInsurance) ||
-    (benefitSourceParam != null &&
-      benefitSourceParam !== "insurance" &&
-      benefitOptions?.options.some(
-        (o) => o.source.toLowerCase() === benefitSourceParam && (!benefitRefParam || o.refId === benefitRefParam),
-      ) === true);
+  // A stale/forged reference (insurer delisted) counts as "not chosen" so the
+  // patient re-picks, rather than booking on a price the server would reject at
+  // checkout. Non-insurance sources are also "not chosen" HERE — they are the
+  // form's business, and a `?benefit=membership:…` arriving at this step must
+  // not skip the insurance question it was never an answer to.
+  const benefitChosen = benefitParam === "none" || Boolean(selectedInsurance);
   const needsBenefitChoice = hasBenefitStep && !benefitChosen;
-  // The param to carry on every downstream link.
-  const benefitHrefParam = hasBenefitStep && benefitChosen ? benefitParam : null;
-  const chosenBenefitOption = benefitOptions?.options.find(
-    (o) => o.source.toLowerCase() === benefitSourceParam && o.refId === benefitRefParam,
-  );
+  // The param to carry on every downstream link. Membership/plan/corporate
+  // values pass through untouched on services with no insurance step, so a link
+  // built elsewhere can still seed the form's selection.
+  const benefitHrefParam = hasBenefitStep
+    ? benefitChosen
+      ? benefitParam
+      : null
+    : benefitParam;
   const benefitValue = selectedInsurance
     ? selectedInsurance.name
-    : chosenBenefitOption
-      ? chosenBenefitOption.label
-      : benefitParam === "none"
-        ? bp.benefitNone
-        : null;
+    : benefitParam === "none"
+      ? bp.insuranceStandard
+      : null;
 
   const stepValues: (string | null)[] = doctorFirst
     ? [
@@ -274,13 +261,13 @@ export default async function CountryLangBookPage({
     ? [
         bp.stepDoctor,
         bp.stepService,
-        ...(hasBenefitStep ? [bp.stepBenefit] : []),
+        ...(hasBenefitStep ? [bp.stepInsurance] : []),
         bp.stepTime,
         bp.stepDetails,
       ]
     : [
         bp.stepService,
-        ...(hasBenefitStep ? [bp.stepBenefit] : []),
+        ...(hasBenefitStep ? [bp.stepInsurance] : []),
         bp.stepTime,
         bp.stepDoctor,
         bp.stepDetails,
@@ -446,18 +433,14 @@ export default async function CountryLangBookPage({
                   minSuffix={c.extra.minSuffix}
                 />
               ) : needsBenefitChoice ? (
-                <BenefitStep
+                <InsuranceStep
                   country={slug}
                   lang={lang}
                   serviceSlug={selectedService.slug}
                   doctorSlug={doctorFirst ? requestedDoctor?.slug ?? null : null}
                   basePriceCents={selectedService.basePriceCents}
                   currencyCode={selectedService.currencyCode}
-                  benefits={benefitOptions}
-                  insuranceFallback={insuranceOptions}
-                  loginHref={`/login?next=${encodeURIComponent(
-                    buildBookHref({ country: slug, lang, service: selectedService.slug }),
-                  )}`}
+                  insuranceOptions={insuranceOptions}
                   bp={bp}
                 />
               ) : (
@@ -789,7 +772,7 @@ async function SelectedServiceFlow({
                 }
                 className="gh2-btn-lime mt-5"
               >
-                {selectedInsurance ? bp.stepBenefit : bp.changeService}
+                {selectedInsurance ? bp.stepInsurance : bp.changeService}
               </Link>
             </div>
           ) : (
@@ -870,7 +853,7 @@ async function SelectedServiceFlow({
               }
               className="gh2-btn-lime mt-5"
             >
-              {selectedInsurance ? bp.stepBenefit : bp.pickAnotherClinician}
+              {selectedInsurance ? bp.stepInsurance : bp.pickAnotherClinician}
             </Link>
           </div>
         ) : !slotConfirmed ? (

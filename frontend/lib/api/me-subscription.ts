@@ -251,24 +251,9 @@ export function getBenefitOptions(
   return meRequest(`benefit-options?${params.toString()}`);
 }
 
-/**
- * Persist the cart-level benefit choice (§25) — one source per cart, so
- * checkout runs exactly one engine (§6.4).
- *
- * Written at add-to-cart rather than at the benefit step, so the wizard and
- * the `/consult` page (which has no benefit step) go through the SAME call.
- * A cart that reaches checkout without one is rejected when the patient had
- * something to choose, which is exactly the state this prevents.
- */
-export function setCartBenefit(input: {
-  source: "NONE" | "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN" | "INSURANCE";
-  refId?: string | null;
-}): Promise<MeResult<{ source: string; membershipEnrollmentId: string | null }>> {
-  return meRequest("cart/benefit", {
-    method: "PUT",
-    body: { source: input.source, ...(input.refId ? { refId: input.refId } : {}) },
-  });
-}
+// The cart-level benefit choice used to live here as a PUT. It now rides on
+// `POST /api/cart/items` (§11.4) — see `AddItemInput.benefit` in cart-client —
+// so a line can never exist without the benefit that prices it.
 
 /** Patient in-app notifications (§30). Payload carries pre-localized copy. */
 export interface NotificationItem {
