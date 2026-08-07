@@ -16,7 +16,11 @@ import {
   serializeReport,
   type ReportTable,
 } from "../modules/reports/report-formatters.js";
-import { resolvePayoutStatementLocale } from "../modules/reports/payout-statement-content.js";
+import {
+  payoutStatementLabelsFor,
+  resolvePayoutStatementLocale,
+} from "../modules/reports/payout-statement-content.js";
+import { renderPayoutStatementPdfBuffer } from "../modules/reports/payout-statement-pdf.js";
 
 /**
  * GET /api/doctor/reports/export?dataset=services|patients|appointments
@@ -120,6 +124,7 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
       };
 
       let table: ReportTable;
+      const payoutLocale = resolvePayoutStatementLocale(q.locale);
       if (q.dataset === "services") {
         // Service assignments aren't time-bounded — ignore the range.
         table = await doctorServicesReport(auth.doctorId, doctorName);
@@ -142,7 +147,7 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
             iban,
             bic: bankRow?.bic ?? null,
           },
-          resolvePayoutStatementLocale(q.locale),
+          payoutLocale,
         );
       } else {
         table = await doctorAppointmentsReport(auth.doctorId, doctorName, filters);
@@ -157,7 +162,17 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
 
       const stamp = new Date().toISOString().slice(0, 10);
       const base = `doctor-${q.dataset}-${stamp}`;
-      const out = await serializeReport(table, q.format);
+      // The payout statement's PDF follows the patient invoice's visual
+      // structure (masthead/parties/items/totals) instead of the generic
+      // report layout — CSV/Excel/JSON are unaffected, same ReportTable.
+      const out =
+        q.dataset === "payout" && q.format === "pdf"
+          ? {
+              body: await renderPayoutStatementPdfBuffer(table, payoutStatementLabelsFor(payoutLocale)),
+              contentType: "application/pdf",
+              ext: "pdf",
+            }
+          : await serializeReport(table, q.format);
       return reply
         .header("Content-Type", out.contentType)
         .header("Content-Disposition", `attachment; filename="${base}.${out.ext}"`)

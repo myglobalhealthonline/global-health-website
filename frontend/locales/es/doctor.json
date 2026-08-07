@@ -707,7 +707,9 @@
     "step3Title": "3 · Sus facturas cargadas",
     "loadingEllipsis": "Cargando…",
     "nothingUploaded": "Aún no hay nada cargado.",
-    "download": "Descargar"
+    "download": "Descargar",
+    "view": "Ver",
+    "viewTitle": "Extracto de pago"
   },
   "forms": {
     "eyebrow": "Plantillas clínicas",

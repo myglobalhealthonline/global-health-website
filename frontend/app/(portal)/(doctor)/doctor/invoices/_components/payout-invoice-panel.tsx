@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Download,
+  Eye,
   FileSpreadsheet,
   FileText,
   Loader2,
@@ -10,6 +11,18 @@ import {
   Upload,
 } from "lucide-react";
 import { fetchDownload } from "@/lib/download";
+import { PortalDialog } from "@/components/PortalDialog";
+
+type ReportCellValue = string | number | boolean | null | undefined;
+type ReportRow = Record<string, ReportCellValue> & { _total?: boolean; _section?: string };
+type ReportTable = {
+  title: string;
+  subtitle?: string;
+  summary?: Array<{ label: string; value: string }>;
+  columns: Array<{ key: string; label: string; align?: "left" | "right" }>;
+  rows: ReportRow[];
+  truncated?: boolean;
+};
 
 // ponytail: ro/cs/de doctor.json "invoices" sections don't have the panel
 // keys yet (only en/pt/es do) — explicit shape here instead of deriving
@@ -33,6 +46,8 @@ export type InvoiceStrings = {
   loadingEllipsis: string;
   nothingUploaded: string;
   download: string;
+  view: string;
+  viewTitle: string;
 };
 
 /** Native display name — shown regardless of the doctor's portal UI locale,
@@ -109,6 +124,8 @@ export function PayoutInvoicePanel({
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [viewTable, setViewTable] = useState<ReportTable | null>(null);
+  const [viewLoading, setViewLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function refresh() {
@@ -131,20 +148,39 @@ export function PayoutInvoicePanel({
     void refresh();
   }, []);
 
-  async function downloadStatement(format: "excel" | "pdf") {
-    setError(null);
+  function statementParams(format: "excel" | "pdf" | "json") {
     const { from, to } = monthRange(statementMonth);
-    const params = new URLSearchParams({
+    return new URLSearchParams({
       dataset: "payout",
       format,
       from,
       to,
       locale: statementLocale,
     });
+  }
+
+  async function downloadStatement(format: "excel" | "pdf") {
+    setError(null);
     try {
-      await fetchDownload(`/api/doctor/reports/export?${params.toString()}`);
+      await fetchDownload(`/api/doctor/reports/export?${statementParams(format).toString()}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Download failed");
+    }
+  }
+
+  async function viewStatement() {
+    setError(null);
+    setViewLoading(true);
+    try {
+      const res = await fetch(`/api/doctor/reports/export?${statementParams("json").toString()}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("View failed");
+      setViewTable((await res.json()) as ReportTable);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "View failed");
+    } finally {
+      setViewLoading(false);
     }
   }
 
@@ -221,6 +257,9 @@ export function PayoutInvoicePanel({
               ))}
             </select>
           </label>
+          <button type="button" onClick={viewStatement} disabled={viewLoading} className="gh-btn gh-btn-soft text-sm disabled:opacity-50">
+            {viewLoading ? <Loader2 className="size-3.5 animate-spin" /> : <Eye className="size-3.5" />} {strings.view}
+          </button>
           <button type="button" onClick={() => downloadStatement("excel")} className="gh-btn gh-btn-soft text-sm">
             <FileSpreadsheet className="size-3.5" /> {strings.excel}
           </button>
@@ -229,6 +268,67 @@ export function PayoutInvoicePanel({
           </button>
         </div>
       </div>
+
+      <PortalDialog
+        open={viewTable !== null}
+        onClose={() => setViewTable(null)}
+        title={strings.viewTitle}
+        width="lg"
+      >
+        {viewTable ? (
+          <div>
+            <p className="text-sm font-medium text-[var(--portal-text)]">{viewTable.title}</p>
+            {viewTable.subtitle ? (
+              <p className="mt-0.5 text-xs text-[var(--portal-muted)]">{viewTable.subtitle}</p>
+            ) : null}
+            {viewTable.summary?.length ? (
+              <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-3">
+                {viewTable.summary.map((s) => (
+                  <div key={s.label}>
+                    <dt className="text-[var(--portal-muted)]">{s.label}</dt>
+                    <dd className="font-medium text-[var(--portal-text)]">{s.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-[var(--portal-line)]">
+                    {viewTable.columns.map((c) => (
+                      <th
+                        key={c.key}
+                        className={`whitespace-nowrap py-1.5 pr-3 font-medium text-[var(--portal-muted)] ${c.align === "right" ? "text-right" : ""}`}
+                      >
+                        {c.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {viewTable.rows.map((row, i) =>
+                    row._section ? (
+                      <tr key={i}>
+                        <td colSpan={viewTable.columns.length} className="pt-3 pb-1 font-medium text-[var(--portal-text)]">
+                          {row._section}
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr key={i} className={`border-b border-[var(--portal-line)] ${row._total ? "font-semibold" : ""}`}>
+                        {viewTable.columns.map((c) => (
+                          <td key={c.key} className={`whitespace-nowrap py-1.5 pr-3 ${c.align === "right" ? "text-right" : ""}`}>
+                            {row[c.key] ?? "—"}
+                          </td>
+                        ))}
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : null}
+      </PortalDialog>
 
       {/* 2. Upload */}
       <form onSubmit={onUpload} className="mb-5 border-t border-[var(--portal-line)] pt-5">

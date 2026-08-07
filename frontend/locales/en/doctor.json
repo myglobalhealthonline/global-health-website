@@ -709,7 +709,9 @@
     "step3Title": "3 · Your uploaded invoices",
     "loadingEllipsis": "Loading…",
     "nothingUploaded": "Nothing uploaded yet.",
-    "download": "Download"
+    "download": "Download",
+    "view": "View",
+    "viewTitle": "Payout statement"
   },
   "forms": {
     "eyebrow": "Clinical templates",

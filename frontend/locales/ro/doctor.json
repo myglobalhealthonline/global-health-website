@@ -707,7 +707,9 @@
     "step3Title": "3 · Facturile dvs. încărcate",
     "loadingEllipsis": "Se încarcă…",
     "nothingUploaded": "Nimic încărcat încă.",
-    "download": "Descarcă"
+    "download": "Descarcă",
+    "view": "Vizualizează",
+    "viewTitle": "Extras de plată"
   },
   "forms": {
     "eyebrow": "Șabloane clinice",

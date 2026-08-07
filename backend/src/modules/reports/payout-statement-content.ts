@@ -58,6 +58,19 @@ export type PayoutStatementLabels = {
   colInsurer: string;
   colPayout: string;
   notSet: string;
+  /** Service-column label for async cross-border prescription consultations,
+   *  which have no catalogue Service to fall back on. */
+  crossBorderPrescriptionLabel: string;
+  // — Invoice-style PDF layout (mirrors the patient invoice's Variant K design) —
+  from: string;
+  payTo: string;
+  issued: string;
+  statementNo: string;
+  colIdx: string;
+  /** `\n\n`-separated paragraphs, same convention as the patient invoice's
+   *  legalFooter — NOT a VAT/fiscal claim, just what this document is. */
+  footerNote: string;
+  tagline: string;
   /** `{market}` placeholder. */
   marketSection: string;
   /** `{market}` placeholder. */
@@ -85,6 +98,15 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     colInsurer: "Insurer",
     colPayout: "Payout",
     notSet: "Not set",
+    crossBorderPrescriptionLabel: "Cross-border prescription",
+    from: "From",
+    payTo: "Pay to",
+    issued: "Issued",
+    statementNo: "Statement",
+    colIdx: "Nº",
+    footerNote:
+      "This is a payout statement, not a VAT invoice — it lists consultations you finalised in the period, valued at your per-service payout rate. Use it as the basis for your own invoice or receipt to Global Health, where your local law requires one.\n\nGlobal Health is a trading name registered under Global Guest.",
+    tagline: "Medicine Anytime Anywhere",
     marketSection: "Market — {market}",
     subtotalPrefix: "Subtotal — {market}",
     totalToPayCaps: "TOTAL TO PAY",
@@ -117,6 +139,15 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     colInsurer: "Seguradora",
     colPayout: "Pagamento",
     notSet: "Não definido",
+    crossBorderPrescriptionLabel: "Receita transfronteiriça",
+    from: "De",
+    payTo: "A pagar a",
+    issued: "Emitido",
+    statementNo: "Extrato",
+    colIdx: "Nº",
+    footerNote:
+      "Este é um extrato de pagamento, não uma fatura de IVA — lista as consultas que finalizou no período, valorizadas ao seu pagamento por serviço. Utilize-o como base para a sua própria fatura ou recibo à Global Health, quando exigido pela legislação local.\n\nA Global Health é uma marca comercial registada sob a Global Guest.",
+    tagline: "Medicine Anytime Anywhere",
     marketSection: "Mercado — {market}",
     subtotalPrefix: "Subtotal — {market}",
     totalToPayCaps: "TOTAL A PAGAR",
@@ -149,6 +180,15 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     colInsurer: "Aseguradora",
     colPayout: "Pago",
     notSet: "No establecido",
+    crossBorderPrescriptionLabel: "Receta transfronteriza",
+    from: "De",
+    payTo: "Pagar a",
+    issued: "Emitido",
+    statementNo: "Extracto",
+    colIdx: "Nº",
+    footerNote:
+      "Este es un extracto de pago, no una factura de IVA — enumera las consultas que finalizó en el periodo, valoradas según su pago por servicio. Utilícelo como base para su propia factura o recibo a Global Health, cuando la legislación local lo exija.\n\nGlobal Health es un nombre comercial registrado bajo Global Guest.",
+    tagline: "Medicine Anytime Anywhere",
     marketSection: "Mercado — {market}",
     subtotalPrefix: "Subtotal — {market}",
     totalToPayCaps: "TOTAL A PAGAR",
@@ -181,6 +221,15 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     colInsurer: "Pojišťovna",
     colPayout: "Výplata",
     notSet: "Nenastaveno",
+    crossBorderPrescriptionLabel: "Přeshraniční předpis",
+    from: "Od",
+    payTo: "K výplatě",
+    issued: "Vystaveno",
+    statementNo: "Výpis",
+    colIdx: "Č.",
+    footerNote:
+      "Toto je výplatní výpis, nikoli daňový doklad — uvádí konzultace, které jste v daném období dokončili, oceněné podle vaší výplaty za službu. Použijte jej jako podklad pro vlastní fakturu nebo účtenku vůči Global Health, pokud to vyžaduje místní právo.\n\nGlobal Health je obchodní značka registrovaná pod společností Global Guest.",
+    tagline: "Medicine Anytime Anywhere",
     marketSection: "Trh — {market}",
     subtotalPrefix: "Mezisoučet — {market}",
     totalToPayCaps: "CELKEM K VÝPLATĚ",
@@ -213,6 +262,15 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     colInsurer: "Asigurător",
     colPayout: "Plată",
     notSet: "Nesetat",
+    crossBorderPrescriptionLabel: "Rețetă transfrontalieră",
+    from: "De la",
+    payTo: "Plătibil către",
+    issued: "Emis",
+    statementNo: "Extras",
+    colIdx: "Nr.",
+    footerNote:
+      "Acesta este un extras de plată, nu o factură cu TVA — listează consultațiile finalizate de dvs. în perioada respectivă, evaluate la plata dvs. per serviciu. Folosiți-l ca bază pentru propria factură sau chitanță către Global Health, acolo unde legislația locală o impune.\n\nGlobal Health este un nume comercial înregistrat sub Global Guest.",
+    tagline: "Medicine Anytime Anywhere",
     marketSection: "Piață — {market}",
     subtotalPrefix: "Subtotal — {market}",
     totalToPayCaps: "TOTAL DE PLATĂ",
@@ -245,6 +303,15 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     colInsurer: "Versicherer",
     colPayout: "Auszahlung",
     notSet: "Nicht festgelegt",
+    crossBorderPrescriptionLabel: "Grenzüberschreitendes Rezept",
+    from: "Von",
+    payTo: "Auszahlung an",
+    issued: "Erstellt",
+    statementNo: "Übersicht",
+    colIdx: "Nr.",
+    footerNote:
+      "Dies ist eine Auszahlungsübersicht, keine Umsatzsteuerrechnung — sie listet die von Ihnen im Zeitraum abgeschlossenen Konsultationen auf, bewertet zu Ihrem Auszahlungsbetrag pro Leistung. Nutzen Sie sie als Grundlage für Ihre eigene Rechnung oder Quittung an Global Health, sofern nach örtlichem Recht erforderlich.\n\nGlobal Health ist ein Handelsname, der unter Global Guest registriert ist.",
+    tagline: "Medicine Anytime Anywhere",
     marketSection: "Markt — {market}",
     subtotalPrefix: "Zwischensumme — {market}",
     totalToPayCaps: "GESAMTBETRAG",

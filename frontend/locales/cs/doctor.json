@@ -707,7 +707,9 @@
     "step3Title": "3 · Vaše nahrané faktury",
     "loadingEllipsis": "Načítání…",
     "nothingUploaded": "Zatím nic nenahráno.",
-    "download": "Stáhnout"
+    "download": "Stáhnout",
+    "view": "Zobrazit",
+    "viewTitle": "Výplatní výpis"
   },
   "forms": {
     "eyebrow": "Klinické šablony",

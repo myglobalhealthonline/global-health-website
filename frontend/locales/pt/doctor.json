@@ -707,7 +707,9 @@
     "step3Title": "3 · As suas faturas carregadas",
     "loadingEllipsis": "A carregar…",
     "nothingUploaded": "Ainda não há nada carregado.",
-    "download": "Descarregar"
+    "download": "Descarregar",
+    "view": "Ver",
+    "viewTitle": "Extrato de pagamento"
   },
   "forms": {
     "eyebrow": "Modelos clínicos",

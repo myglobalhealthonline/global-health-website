@@ -707,7 +707,9 @@
     "step3Title": "3 · Ihre hochgeladenen Rechnungen",
     "loadingEllipsis": "Wird geladen…",
     "nothingUploaded": "Noch nichts hochgeladen.",
-    "download": "Herunterladen"
+    "download": "Herunterladen",
+    "view": "Ansehen",
+    "viewTitle": "Auszahlungsübersicht"
   },
   "forms": {
     "eyebrow": "Klinische Vorlagen",

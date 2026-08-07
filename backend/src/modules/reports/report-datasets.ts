@@ -429,16 +429,21 @@ export async function doctorPayoutStatementReport(
       // patient, so it drops off the payout regardless of everything else.
       paymentStatus: { not: "REFUNDED" },
       AND: [
-        // Payable when the patient PAID, OR the consultation was delivered
-        // (explicit COMPLETED status, or a set `consultationCompletedAt` — some
-        // concluded consultations, e.g. legacy/finalize flows, keep a
-        // REQUEST_RECEIVED status while their completed-timestamp is set, and an
-        // insurance consultation is delivered without the patient ever paying).
+        // Payable ONLY once the doctor has confirmed they actually took the
+        // consultation — payment or a status change alone is not enough.
+        // Regular/insurance consultations: doctor calls the finalize action
+        // (`finalizeDoctorAppointment`), which sets `finalized: true`.
+        // Cross-border async prescriptions have their own finalise step
+        // (`crossBorderPrescriptionRequest.finalisedAt`), which is what sets
+        // `consultationCompletedAt` on the appointment — so that timestamp is
+        // the finalization signal for this type.
         {
           OR: [
-            { paymentStatus: "PAID" },
-            { status: "COMPLETED" },
-            { consultationCompletedAt: { not: null } },
+            { finalized: true },
+            {
+              consultationType: "cross-border-prescription",
+              consultationCompletedAt: { not: null },
+            },
           ],
         },
         // Consultation date = scheduledAt, else consultationCompletedAt, else
@@ -601,7 +606,10 @@ export async function doctorPayoutStatementReport(
       rows.push({
         date: fmtDate(effDate(a), htmlLang),
         patient: a.fullName,
-        service: a.service?.name ?? "—",
+        service:
+          a.consultationType === "cross-border-prescription"
+            ? t.crossBorderPrescriptionLabel
+            : (a.service?.name ?? "—"),
         insurer,
         payout: payout == null ? t.notSet : fmtMoney(payout, currency, htmlLang),
       });
