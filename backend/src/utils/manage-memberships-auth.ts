@@ -130,3 +130,40 @@ export function requireMembershipConfigRole(
   }
   return true;
 }
+
+export const MEMBERSHIP_SUPER_ADMIN_FORBIDDEN =
+  "This action requires a super admin session";
+
+/**
+ * Pure rule (unit-testable) for the third and narrowest tier: SUPER_ADMIN, in a
+ * real session, only.
+ *
+ * Two phase 6 writes sit here, and both share a shape the config tier does not:
+ * they move money on a live member by hand, outside the rules an admin
+ * configured. The allowance adjust rewrites a counter the member paid for
+ * (§7); the manual-booking override applies a benefit the patient is not
+ * entitled to (§26). Neither is derivable from plan setup, so neither can be
+ * reviewed by looking at the plan afterwards — the only trail is the audit row
+ * and the written reason, which is exactly why the named actor is mandatory
+ * and the shared master token (`method === "token_fallback"`, actorRole
+ * "ADMIN", no actor id) can never reach them.
+ */
+export function holdsMembershipSuperAdminRole(auth: ManageMembershipsAuthOk): boolean {
+  return auth.method === "session" && auth.actorRole === "SUPER_ADMIN";
+}
+
+/**
+ * Third-stage guard for the allowance adjust (§7) and the goodwill override
+ * (§26). Call it with the result of `requireManageMemberships`; on failure it
+ * sends the 403 and returns false.
+ */
+export function requireMembershipSuperAdmin(
+  auth: ManageMembershipsAuthOk,
+  reply: FastifyReply,
+): boolean {
+  if (!holdsMembershipSuperAdminRole(auth)) {
+    reply.status(403).send(errorResponse(MEMBERSHIP_SUPER_ADMIN_FORBIDDEN));
+    return false;
+  }
+  return true;
+}

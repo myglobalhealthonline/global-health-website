@@ -408,4 +408,117 @@ describe("membership allowance — spend, refund, races", () => {
     await svc.releaseOrderMembershipAllowance(orderId);
     assert.deepEqual(await usedNow(), { used: 0, allocated: ALLOCATED });
   });
+
+  // ── Admin adjust (§7, phase 6) ────────────────────────────────────────
+
+  it("an admin adjust hands units back and writes an audited ledger row", async (t) => {
+    if (!prisma) return t.skip();
+    await prisma.$transaction(async (tx) => {
+      await svc.spendAllowanceUnit(tx, {
+        benefit: benefit(),
+        enrollment: enrollment(enrollmentId),
+        orderId,
+        orderItemId: orderItemIds[0]!,
+      });
+    });
+    assert.deepEqual(await usedNow(), { used: 1, allocated: ALLOCATED });
+
+    const result = await svc.adjustEnrollmentAllowance({
+      enrollmentId,
+      benefitId,
+      delta: 1,
+      reason: "Goodwill after a cancelled clinic session",
+      actorAdminId: null,
+    });
+    assert.equal(result.appliedDelta, 1);
+    assert.deepEqual(await usedNow(), { used: 0, allocated: ALLOCATED });
+
+    const row = await prisma.membershipUsageLedger.findFirst({
+      where: { reason: "ADMIN_ADJUST", enrollmentId },
+      select: { delta: true, note: true },
+    });
+    // The reason is the only record of WHY a member's units moved — it is not
+    // derivable from any plan configuration, so losing it loses the audit.
+    assert.equal(row?.delta, 1);
+    assert.equal(row?.note, "Goodwill after a cancelled clinic session");
+  });
+
+  it("an adjust clamps into [0, allocated] and reports what it actually applied", async (t) => {
+    if (!prisma) return t.skip();
+    // Nothing spent: asking for 5 units back can only give 0. Letting `used` go
+    // negative would hand out free consultations forever.
+    const over = await svc.adjustEnrollmentAllowance({
+      enrollmentId,
+      benefitId,
+      delta: 5,
+      reason: "over-refund probe",
+      actorAdminId: null,
+    });
+    assert.equal(over.appliedDelta, 0);
+    assert.deepEqual(await usedNow(), { used: 0, allocated: ALLOCATED });
+
+    // And the other direction cannot consume more than the member was sold.
+    const under = await svc.adjustEnrollmentAllowance({
+      enrollmentId,
+      benefitId,
+      delta: -99,
+      reason: "over-consume probe",
+      actorAdminId: null,
+    });
+    assert.equal(under.appliedDelta, -ALLOCATED);
+    assert.deepEqual(await usedNow(), { used: ALLOCATED, allocated: ALLOCATED });
+
+    // A clamped-to-nothing adjust still leaves a ledger row: "an admin tried"
+    // is what a later dispute needs to see.
+    const rows = await prisma.membershipUsageLedger.count({
+      where: { reason: "ADMIN_ADJUST", enrollmentId },
+    });
+    assert.ok(rows >= 2, `expected both adjust rows, saw ${rows}`);
+  });
+
+  it("an adjust refuses a benefit belonging to another level", async (t) => {
+    if (!prisma) return t.skip();
+    // Otherwise an admin could mint a counter against a plan the member is not
+    // on — invisible to pricing, but counted as consumption in that plan's report.
+    await assert.rejects(
+      () =>
+        svc.adjustEnrollmentAllowance({
+          enrollmentId,
+          benefitId: "not-this-members-benefit",
+          delta: 1,
+          reason: "wrong level probe",
+          actorAdminId: null,
+        }),
+      /does not belong/,
+    );
+  });
+
+  // ── Reconciliation backstop (§7, phase 6) ─────────────────────────────
+
+  it("reconciliation returns units still held against a CANCELLED order", async (t) => {
+    if (!prisma) return t.skip();
+    const job = await import("./membership-expiry.job.js");
+    await prisma.membershipAllowanceBalance.updateMany({ where: { benefitId }, data: { used: 0 } });
+    await prisma.membershipUsageLedger.deleteMany({ where: { enrollmentId } });
+
+    await prisma.$transaction(async (tx) => {
+      await svc.spendAllowanceUnit(tx, {
+        benefit: benefit(),
+        enrollment: enrollment(enrollmentId),
+        orderId,
+        orderItemId: orderItemIds[0]!,
+      });
+    });
+    assert.deepEqual(await usedNow(), { used: 1, allocated: ALLOCATED });
+
+    // The order is cancelled but no release ran — exactly the leak the five
+    // §7 release sites exist to prevent, and the state this backstop repairs.
+    await prisma.order.update({ where: { id: orderId }, data: { status: "CANCELLED" } });
+    assert.equal(await job.reconcileCancelledOrderAllowance(), 1);
+    assert.deepEqual(await usedNow(), { used: 0, allocated: ALLOCATED });
+
+    // Idempotent: the second sweep finds the REFUND row and does nothing.
+    assert.equal(await job.reconcileCancelledOrderAllowance(), 0);
+    assert.deepEqual(await usedNow(), { used: 0, allocated: ALLOCATED });
+  });
 });

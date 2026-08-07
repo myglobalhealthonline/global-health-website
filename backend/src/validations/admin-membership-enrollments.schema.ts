@@ -139,6 +139,27 @@ export const membershipEnrollmentIdParamsSchema = z.object({
   id: z.string().trim().min(1),
 });
 
+/**
+ * `POST /membership-enrollments/:id/allowance-adjust` (§7, SUPER_ADMIN).
+ *
+ * `reason` is REQUIRED and cannot be whitespace: this write moves what a live
+ * member pays and is not derivable from any plan configuration, so the reason
+ * is the only thing a later dispute has to read. `delta` excludes 0 — a
+ * no-change adjustment is a mis-click, and the route should say so rather than
+ * write an audit row claiming something happened.
+ */
+export const adminMembershipAllowanceAdjustBodySchema = z.object({
+  benefitId: z.string().trim().min(1),
+  delta: z.number().int().min(-999).max(999).refine((n) => n !== 0, {
+    message: "Choose how many units to add or take back",
+  }),
+  reason: z.string().trim().min(3).max(1000),
+});
+
+export type AdminMembershipAllowanceAdjustBody = z.infer<
+  typeof adminMembershipAllowanceAdjustBodySchema
+>;
+
 export type AdminMembershipEnrollmentsQuery = z.infer<
   typeof adminMembershipEnrollmentsQuerySchema
 >;

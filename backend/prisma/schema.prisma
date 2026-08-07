@@ -392,6 +392,16 @@ enum AuditAction {
   MEMBERSHIP_DEPENDENT_REMOVED
   /// Staff card lookup. Reads member PII, so it is audited like a report view.
   MEMBERSHIP_VERIFY_LOOKUP
+  /// SUPER_ADMIN hand-correction of an allowance counter (§7). Metadata carries
+  /// the requested delta AND the applied one — the counter clamps into
+  /// [0, allocated], so the two can differ and the row must say what happened.
+  MEMBERSHIP_ALLOWANCE_ADJUSTED
+  /// SUPER_ADMIN goodwill override on an admin manual booking (§26): a benefit
+  /// the patient is not entitled to, priced by a real benefit row's rule.
+  MEMBERSHIP_BENEFIT_OVERRIDDEN
+  /// Usage report opened (§32). Both the per-plan view and the per-member
+  /// drill-down write one — the latter lists a named member's bookings.
+  MEMBERSHIP_REPORT_VIEWED
 }
 
 enum CountryAccessModel {

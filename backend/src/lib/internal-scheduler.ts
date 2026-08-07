@@ -18,6 +18,7 @@ import {
 } from "../modules/subscriptions/ops/ops-alert.js";
 import { purgeExpiredAccountDeletions } from "../modules/auth/auth.service.js";
 import { runOutboxDispatch } from "../modules/outbox/outbox.js";
+import { runMembershipExpiryJob } from "../modules/memberships/membership-expiry.job.js";
 import { runRetentionSweepReport } from "../modules/data-policy/country-data-policy.service.js";
 import { dispatchDueTrustpilotInvites } from "../modules/review-invites/review-invite.service.js";
 import { runSuklCertificateMonitor } from "../modules/sukl/sukl-certificate-monitor.service.js";
@@ -61,6 +62,7 @@ const LOCK_PRE_PAYMENT_CANCEL = 4010008;
 const LOCK_DATA_RETENTION = 4010009;
 const LOCK_TRUSTPILOT_INVITES = 4010010;
 const LOCK_SUKL_CERTIFICATE = 4010011;
+const LOCK_MEMBERSHIP_EXPIRY = 4010012;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -288,6 +290,42 @@ async function tickAccountPurge(log: Logger) {
   );
 }
 
+async function tickMembershipExpiry(log: Logger) {
+  // Idempotent: the expiry pass is an updateMany filtered on status ACTIVE, and
+  // the reconciliation pass releases through refundAllowanceUnit, whose
+  // `${orderItemId}:REFUND` key makes a second run a no-op. No customer email.
+  // Fail OPEN — pricing re-checks term dates live (§5.4), so a skipped run
+  // cannot leak a benefit; it only leaves a stale badge for a day.
+  await withAdvisoryLock(
+    LOCK_MEMBERSHIP_EXPIRY,
+    async () => {
+      try {
+        const r = await runMembershipExpiryJob();
+        if (r.expired > 0 || r.reconciledUnits > 0) {
+          log.info(
+            `[cron] membership-expiry: expired=${r.expired} dependents=${r.dependentsExpired} reconciled=${r.reconciledUnits}`,
+          );
+        }
+        // A non-zero count means one of §7's release sites leaked a unit and
+        // the backstop had to repair it. The repair is safe; the leak is not,
+        // and it will keep happening until someone looks.
+        if (r.reconciledUnits > 0) {
+          void emitOpsAlert({
+            severity: "warning",
+            title: "Membership allowance units released by reconciliation",
+            detail: `${r.reconciledUnits} allowance unit(s) were still held against CANCELLED orders and have been returned. One of the release paths in §7 is not firing.`,
+          });
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        log.error(`[cron] membership-expiry error: ${msg}`);
+        void emitOpsAlert({ severity: "warning", title: "Membership expiry job failed", detail: msg });
+      }
+    },
+    { failClosed: false },
+  );
+}
+
 async function tickOutboxDispatch(log: Logger) {
   // Idempotent by construction: each row's dispatch is claimed via an atomic
   // PENDING->PROCESSING updateMany inside runOutboxDispatch, so even a
@@ -430,6 +468,9 @@ export function startInternalScheduler(log: Logger): () => void {
       // Safe on boot and useful there: a deploy that ships a bad certificate
       // should say so immediately rather than 24h later.
       void tickSuklCertificate(log);
+      // Safe on boot: idempotent, and a deploy is exactly when a stale ACTIVE
+      // badge or a leaked allowance unit is most likely to be noticed.
+      void tickMembershipExpiry(log);
     }, startupJitterMs),
   );
 
@@ -448,6 +489,7 @@ export function startInternalScheduler(log: Logger): () => void {
     setInterval(() => void tickTrustpilotInvites(log), TRUSTPILOT_INVITES_INTERVAL_MS),
   );
   timers.push(setInterval(() => void tickSuklCertificate(log), SUKL_CERTIFICATE_INTERVAL_MS));
+  timers.push(setInterval(() => void tickMembershipExpiry(log), DAILY_INTERVAL_MS));
 
   return () => {
     for (const t of timers) clearTimeout(t);
