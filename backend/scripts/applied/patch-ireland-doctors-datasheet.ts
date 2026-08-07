@@ -32,6 +32,7 @@
  */
 import { LocaleCode } from "@prisma/client";
 import { prisma } from "../../src/db/prisma.js";
+import { isRetiredDoctorSlug } from "../../src/lib/retired-doctors.js";
 import { IRELAND_DOCTORS, type DoctorSheet } from "../data/ireland-doctors-datasheet.js";
 
 const APPLY = process.argv.includes("--apply");
@@ -55,6 +56,17 @@ const MARKET_ONLY_SLUGS = new Set(["khoiamul-islam"]);
 
 async function patchDoctor(sheet: DoctorSheet) {
   note(`\n== ${sheet.displayName} (${sheet.dbSlug}) ==`);
+
+  // Retired clinician — bail out BEFORE the lookup, so no read, create, update
+  // or upsert can happen for this slug. The datasheet entry stays as the
+  // historical record; this just stops a re-run from resurrecting the profile
+  // after it was deliberately removed from the site. See
+  // src/lib/retired-doctors.ts.
+  if (isRetiredDoctorSlug(sheet.dbSlug)) {
+    note("  ⛔ RETIRED — intentionally skipped, no create/update/upsert performed");
+    stats.skipped++;
+    return;
+  }
 
   const doctor = await prisma.doctor.findFirst({
     where: { slug: sheet.dbSlug },
