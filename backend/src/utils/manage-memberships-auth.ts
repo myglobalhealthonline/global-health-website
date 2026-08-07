@@ -16,9 +16,9 @@ import { errorResponse } from "./response.js";
  *     it; LOCAL_ADMIN is denied outright, because a plan spans a whole market's
  *     member PII and the config it exposes is not country-scoped the way
  *     LOCAL_ADMIN's other surfaces are.
- *   - `requireSuperAdminForMembershipConfig` gates plan/level/benefit writes
- *     and the allowance override. Those change what every member is charged,
- *     so they sit with SUPER_ADMIN only.
+ *   - `requireMembershipConfigRole` gates plan/level/benefit writes. Those
+ *     change what every member is charged, so they require a real admin
+ *     *session* — SUPER_ADMIN or ADMIN, never the shared master token.
  *
  * On success the result carries the resolved admin actor so handlers can stamp
  * `recordAudit` without re-querying.
@@ -29,7 +29,7 @@ export type ManageMembershipsResult =
 
 export const MANAGE_MEMBERSHIPS_FORBIDDEN = "Admin access is required";
 export const MEMBERSHIP_CONFIG_FORBIDDEN =
-  "Membership plan configuration requires a super admin";
+  "Membership plan configuration requires an admin session";
 
 /**
  * Pure elevation rule (unit-testable): any successful admin base decision
@@ -97,22 +97,30 @@ export async function requireManageMemberships(
 }
 
 /**
- * Pure rule (unit-testable) for the SUPER_ADMIN config tier.
+ * Pure rule (unit-testable) for the config tier.
  *
- * The master-token fallback resolves to actorRole "ADMIN", so it is NOT enough
- * on its own — a leaked master token must not be able to rewrite what every
- * member pays. Config writes require a real SUPER_ADMIN session.
+ * SUPER_ADMIN and ADMIN both hold it (user decision 2026-08-07 — day-to-day
+ * membership setup is admin work, and requiring a super admin for every price
+ * rule made the surface unusable). LOCAL_ADMIN never reaches here: the first
+ * stage already denied it.
+ *
+ * What stays excluded is the master-token fallback. It resolves to actorRole
+ * "ADMIN", so without the `method === "session"` check a leaked shared token
+ * could rewrite what every member pays. Config writes need a real session, with
+ * a named actor to stamp on the audit row.
  */
 export function holdsMembershipConfigRole(auth: ManageMembershipsAuthOk): boolean {
-  return auth.method === "session" && auth.actorRole === "SUPER_ADMIN";
+  return (
+    auth.method === "session" &&
+    (auth.actorRole === "SUPER_ADMIN" || auth.actorRole === "ADMIN")
+  );
 }
 
 /**
- * Second-stage guard for plan/level/benefit writes and the allowance override.
- * Call it with the result of `requireManageMemberships`; on failure it sends
- * the 403 and returns false.
+ * Second-stage guard for plan/level/benefit writes. Call it with the result of
+ * `requireManageMemberships`; on failure it sends the 403 and returns false.
  */
-export function requireSuperAdminForMembershipConfig(
+export function requireMembershipConfigRole(
   auth: ManageMembershipsAuthOk,
   reply: FastifyReply,
 ): boolean {

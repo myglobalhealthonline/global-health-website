@@ -50,7 +50,7 @@ import {
 } from "../validations/admin-membership-plans.schema.js";
 import {
   requireManageMemberships,
-  requireSuperAdminForMembershipConfig,
+  requireMembershipConfigRole,
 } from "../utils/manage-memberships-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -58,10 +58,11 @@ import { errorResponse, okResponse } from "../utils/response.js";
  * Private membership plans — admin configuration surface
  * (docs/plans/private-membership-plans-implementation.md §4.1).
  *
- * Reads need MANAGE_MEMBERSHIPS; every write additionally needs a real
- * SUPER_ADMIN session, because plan/level/benefit rows decide what members are
- * charged (§4.2). Enrollment, import, reporting and verification endpoints
- * arrive in later phases as their own route files.
+ * Reads need MANAGE_MEMBERSHIPS; every write additionally needs a real admin
+ * session (SUPER_ADMIN or ADMIN, never the master token), because
+ * plan/level/benefit rows decide what members are charged (§4.2). Enrollment,
+ * import, reporting and verification endpoints arrive in later phases as their
+ * own route files.
  */
 
 function handleMembershipError(
@@ -136,7 +137,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/admin/membership-plans", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const body = adminMembershipPlanCreateBodySchema.safeParse(request.body);
     if (!body.success) {
       return reply
@@ -163,7 +164,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.patch("/api/admin/membership-plans/:planId", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipPlanIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid plan id"));
     const body = adminMembershipPlanUpdateBodySchema.safeParse(request.body);
@@ -195,7 +196,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/admin/membership-plans/:planId/deactivate", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipPlanIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid plan id"));
     try {
@@ -231,7 +232,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.put("/api/admin/membership-plans/:planId/translations/:locale", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipPlanLocaleParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid plan or locale"));
     const body = membershipTranslationBodySchema.safeParse(request.body);
@@ -264,7 +265,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/admin/membership-plans/:planId/levels", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipPlanIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid plan id"));
     const body = adminMembershipLevelCreateBodySchema.safeParse(request.body);
@@ -291,7 +292,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.patch("/api/admin/membership-levels/:levelId", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipLevelIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid level id"));
     const body = adminMembershipLevelUpdateBodySchema.safeParse(request.body);
@@ -321,7 +322,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.delete("/api/admin/membership-levels/:levelId", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipLevelIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid level id"));
     try {
@@ -345,7 +346,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.put("/api/admin/membership-levels/:levelId/translations/:locale", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipLevelLocaleParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid level or locale"));
     const body = membershipTranslationBodySchema.safeParse(request.body);
@@ -404,7 +405,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/admin/membership-levels/:levelId/benefits", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipLevelIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid level id"));
     const body = adminMembershipBenefitCreateBodySchema.safeParse(request.body);
@@ -436,7 +437,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.patch("/api/admin/membership-benefits/:benefitId", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipBenefitIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid benefit id"));
     const body = adminMembershipBenefitUpdateBodySchema.safeParse(request.body);
@@ -463,7 +464,7 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
   app.delete("/api/admin/membership-benefits/:benefitId", async (request, reply) => {
     const auth = await requireManageMemberships(request, reply);
     if (!auth) return;
-    if (!requireSuperAdminForMembershipConfig(auth, reply)) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
     const params = membershipBenefitIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid benefit id"));
     try {

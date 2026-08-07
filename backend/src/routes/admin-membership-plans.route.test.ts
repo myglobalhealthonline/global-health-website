@@ -11,8 +11,8 @@ loadEnv({ path: join(__dirname, "../..", ".env") });
 /**
  * Private membership plans — admin route integration (§16.2).
  *
- * Covers the two-tier authorization split (MANAGE_MEMBERSHIPS to read,
- * SUPER_ADMIN to write), the rules that need a database and therefore cannot
+ * Covers the two-tier authorization split (MANAGE_MEMBERSHIPS to read, a real
+ * admin session to write), the rules that need a database and therefore cannot
  * live in the Zod schema — plan country lookup, the §6.6 commission-market
  * block, a benefit pinned to a foreign or non-consultation service, the level
  * delete guards — and the audit trail.
@@ -195,19 +195,20 @@ describe("admin membership plan routes", () => {
     assert.equal(res.statusCode, 200, res.body);
   });
 
-  it("denies a plain ADMIN any config write → 403", async (t) => {
+  it("allows a plain ADMIN a config write — SUPER_ADMIN is not required (§4.2)", async (t) => {
     if (!app) return t.skip();
+    const slug = `admin-allowed-${uniq}`;
     const res = await app.inject({
       method: "POST",
       url: "/api/admin/membership-plans",
       cookies: adminCookie,
-      payload: planPayload(`admin-blocked-${uniq}`),
+      payload: planPayload(slug),
     });
-    assert.equal(res.statusCode, 403, res.body);
-    const leaked = await prisma.membershipPlan.findFirst({
-      where: { slug: `admin-blocked-${uniq}` },
-    });
-    assert.equal(leaked, null, "no plan written on a denied request");
+    // 200, not 201 — okResponse() is the convention for every admin write here.
+    assert.equal(res.statusCode, 200, res.body);
+    const written = await prisma.membershipPlan.findFirst({ where: { slug } });
+    assert.ok(written, "the plan is written");
+    await prisma.membershipPlan.deleteMany({ where: { slug } });
   });
 
   // ─── Plans ─────────────────────────────────────────────────────────────────

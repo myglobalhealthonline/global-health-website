@@ -12,6 +12,7 @@ import {
   fetchMembershipBenefits,
   fetchMembershipPlan,
   putMembershipLevelTranslation,
+  updateMembershipBenefit,
   updateMembershipLevel,
 } from "@/lib/admin/memberships-api";
 import {
@@ -21,7 +22,8 @@ import {
 import { displayNameFrom } from "@/lib/admin/display-name";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../../_components/confirm-delete-button";
-import { MembershipBenefitTable, type ServiceOption } from "../../../_components/membership-benefit-table";
+import { MembershipBenefitTable } from "../../../_components/membership-benefit-table";
+import type { ServiceOption } from "../../../_components/membership-benefit-fields";
 import { MembershipLevelFields } from "../../../_components/membership-level-form";
 import { MembershipTranslationTabs } from "../../../_components/membership-translation-tabs";
 
@@ -131,6 +133,21 @@ export default async function AdminMembershipLevelPage({ params, searchParams }:
     redirect(`${backTo}?success=${encodeURIComponent("Benefit added")}`);
   }
 
+  // PATCH takes the whole row, not a patch (the invariants are cross-field), so
+  // the edit dialog posts exactly what the add form posts plus the id.
+  async function editBenefitAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const benefitId = String(formData.get("benefitId") ?? "");
+    if (!benefitId) redirect(`${backTo}?error=${encodeURIComponent("Missing benefit")}`);
+    const parsed = parseMembershipBenefitForm(formData);
+    if (!parsed.ok) redirect(`${backTo}?error=${encodeURIComponent(parsed.error)}`);
+    const result = await updateMembershipBenefit(benefitId, parsed.data);
+    if (!result.ok) redirect(`${backTo}?error=${encodeURIComponent(result.message)}`);
+    revalidatePath(backTo);
+    redirect(`${backTo}?success=${encodeURIComponent("Benefit saved")}`);
+  }
+
   async function removeBenefitAction(formData: FormData) {
     "use server";
     await requireAdminAction();
@@ -200,6 +217,7 @@ export default async function AdminMembershipLevelPage({ params, searchParams }:
               benefits={benefits}
               services={services}
               createBenefitAction={addBenefitAction}
+              updateBenefitAction={editBenefitAction}
               deleteBenefitAction={removeBenefitAction}
             />
           </div>

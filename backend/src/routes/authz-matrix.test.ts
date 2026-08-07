@@ -486,12 +486,13 @@ describe("authorization matrix", () => {
   });
 
   // ── Private membership plans (admin-membership-plans.route.ts) ──────────────
-  // Two tiers: MANAGE_MEMBERSHIPS to read, a real SUPER_ADMIN session to write
-  // (§4.2). LOCAL_ADMIN denial and the SUPER_ADMIN allow path are covered
-  // end-to-end in admin-membership-plans.route.test.ts; what belongs here is
-  // the deny-by-default matrix for the roles this suite already has fixtures
-  // for. Reads are asserted on status alone — the fixtures create no
-  // membership plans, so an empty list is the expected 200.
+  // Two tiers: MANAGE_MEMBERSHIPS to read, a real admin *session* to write —
+  // SUPER_ADMIN or ADMIN, never the master token (§4.2). LOCAL_ADMIN denial and
+  // the master-token denial are covered end-to-end in
+  // admin-membership-plans.route.test.ts; what belongs here is the
+  // deny-by-default matrix for the roles this suite already has fixtures for.
+  // Reads are asserted on status alone — the fixtures create no membership
+  // plans, so an empty list is the expected 200.
 
   it("membership plans: unauthenticated read → 401", async (t) => {
     if (!app) return t.skip();
@@ -529,12 +530,12 @@ describe("authorization matrix", () => {
     assert.equal(res.statusCode, 200, res.body);
   });
 
-  it("membership plans: a non-super admin cannot create a plan → 403 (§4.2)", async (t) => {
+  it("membership plans: a doctor session cannot create a plan → 403", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({
       method: "POST",
       url: "/api/admin/membership-plans",
-      cookies: adminCookie,
+      cookies: doctor1Cookie,
       payload: { countryId: countryAId, slug: "authz-probe", name: "Authz probe" },
     });
     assert.equal(res.statusCode, 403, res.body);
@@ -542,16 +543,31 @@ describe("authorization matrix", () => {
     assert.equal(leaked, null, "nothing written on a denied config write");
   });
 
-  it("membership benefits: a non-super admin cannot create a benefit → 403 (§4.2)", async (t) => {
+  // 200, not 201: every admin write in this codebase returns okResponse(), and
+  // admin-membership-plans.route.test.ts asserts 200 on this same endpoint.
+  it("membership plans: an ADMIN session may create a plan → 200 (§4.2)", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/admin/membership-plans",
+      cookies: adminCookie,
+      payload: { countryId: countryAId, slug: "authz-admin-write", name: "Authz admin write" },
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    // Cascades to the auto-created default level; nothing else references it.
+    await prisma.membershipPlan.deleteMany({ where: { slug: "authz-admin-write" } });
+  });
+
+  it("membership benefits: a doctor session cannot create a benefit → 403 (§4.2)", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({
       method: "POST",
       url: "/api/admin/membership-levels/any-level/benefits",
-      cookies: adminCookie,
+      cookies: doctor1Cookie,
       payload: { serviceKind: "GENERAL", benefitType: "PERCENT", percentOff: 20 },
     });
-    // 403 from the config gate, NOT 404 from the level lookup — authorization
-    // must be decided before the route reveals whether the level exists.
+    // 403 from the gate, NOT 404 from the level lookup — authorization must be
+    // decided before the route reveals whether the level exists.
     assert.equal(res.statusCode, 403, res.body);
   });
 });

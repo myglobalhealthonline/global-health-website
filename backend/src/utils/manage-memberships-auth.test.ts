@@ -53,7 +53,7 @@ describe("elevateToManageMemberships", () => {
   });
 });
 
-describe("holdsMembershipConfigRole (SUPER_ADMIN config tier)", () => {
+describe("holdsMembershipConfigRole (config tier: any real admin session)", () => {
   let holds: typeof import("./manage-memberships-auth.js")["holdsMembershipConfigRole"];
 
   before(async () => {
@@ -67,9 +67,16 @@ describe("holdsMembershipConfigRole (SUPER_ADMIN config tier)", () => {
     );
   });
 
-  it("denies a plain ADMIN session — config changes what members are charged", () => {
+  it("grants a plain ADMIN session — membership setup is admin work", () => {
     assert.equal(
       holds({ ok: true, method: "session", actorUserId: "a-2", actorRole: "ADMIN" }),
+      true,
+    );
+  });
+
+  it("still denies LOCAL_ADMIN if one ever reaches the second stage", () => {
+    assert.equal(
+      holds({ ok: true, method: "session", actorUserId: "a-3", actorRole: "LOCAL_ADMIN" }),
       false,
     );
   });
