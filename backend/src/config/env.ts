@@ -312,6 +312,10 @@ const envSchema = z.object({
    *  email. Unset → the email leg is skipped. */
   ADMIN_NOTIFY_EMAILS: z.string().trim().optional(),
 
+  /** WhatsApp group JID that mirrors the payment_confirmed admin alert
+   *  (e.g. "120363413688325038@g.us"). Unset → that group leg is skipped. */
+  ADMIN_NOTIFY_WHATSAPP_GROUP_JID: z.string().trim().optional(),
+
   /** Minutes to suppress repeat "doctor has sent a text" support-chat emails on
    *  the same thread. The window is cleared the moment an admin replies, so an
    *  answered thread always alerts again immediately. */

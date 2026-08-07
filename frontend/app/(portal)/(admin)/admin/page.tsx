@@ -10,6 +10,7 @@ import {
   Globe2,
   Layers,
   Plus,
+  Star,
   Stethoscope,
   UserRound,
 } from "lucide-react";
@@ -79,6 +80,7 @@ type ActivityItem = {
   verb: string;
   target: string; // bold trailing text
   bookingSource?: string;
+  isFirstBooking?: boolean;
 };
 
 export default async function AdminDashboardPage() {
@@ -203,6 +205,7 @@ export default async function AdminDashboardPage() {
       verb: "booked",
       target: a.consultationType,
       bookingSource: a.bookingSource,
+      isFirstBooking: a.isFirstBooking,
     });
   }
   // ponytail: page-content list overview has no per-row updatedAt/locale, so
@@ -409,8 +412,14 @@ export default async function AdminDashboardPage() {
                     )}
                     <div className="min-w-0 flex-1">
                       <p className="m-0 truncate text-portal-compact text-[var(--color-text-body)]">
-                        <strong className="font-bold text-[var(--color-text-primary)]">
+                        <strong className="inline-flex items-center gap-1 font-bold text-[var(--color-text-primary)]">
                           {row.primary}
+                          {row.isFirstBooking ? (
+                            <Star
+                              className="gh-admin-order-firstorder-star size-3 shrink-0 fill-current"
+                              aria-label="New patient — first booking"
+                            />
+                          ) : null}
                         </strong>{" "}
                         <span className="text-[var(--color-text-muted)]">{row.verb}</span>{" "}
                         <strong className="font-bold text-[var(--color-text-primary)]">
