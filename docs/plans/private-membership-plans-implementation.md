@@ -1908,3 +1908,369 @@ Resolved during code review (2026-08-07):
   "no-show keeps the unit" (§7).
 - Shared order-completion path is `completeOrderPayment` — the €0 branch calls it (§6.5).
 - `Service` carries `@@unique([id, countryId])`, so the §3.8 composite FKs are valid.
+
+---
+
+# Phase 7 — multi-country memberships, generated IDs, issued cards
+
+**Status:** requirements agreed 2026-08-07, not started
+**Depends on:** phases 1–6, shipped and live
+**Reverses:** decision 9 (single-country plans) and decision 5 (partner-supplied IDs)
+
+## 19. Why
+
+A partner based in one market has members who travel. A Czech programme's members
+need their benefits when they book in Ireland or Portugal. Phase 1–6 pinned a plan
+to exactly one country — structurally, via composite foreign keys — so this reopens
+the country model rather than extending it.
+
+At the same time, membership IDs move from partner-supplied to system-generated, and
+every enrolled member is issued a card and a welcome email automatically.
+
+**Timing luck:** production holds **zero** membership enrollments. Reversing the ID
+scheme therefore costs no data migration. Had members been enrolled first, every card
+in circulation would have been invalidated.
+
+## 20. Decisions
+
+| # | Decision |
+| --- | --- |
+| 34 | A plan is multi-country: one **primary** country (where it is created) plus assigned countries. Reverses decision 9 |
+| 35 | Benefits are configured **per country**. A country is covered exactly when it has a benefit set — there is no separate country list to maintain |
+| 36 | Allowance remains optional. When present it is **one shared pool** across every covered country |
+| 37 | The pool size comes from the **primary country's** configuration |
+| 38 | Included visits are spendable in **every** covered country |
+| 39 | Reporting is **per-country, each in its own currency**. No exchange rates, no single headline figure |
+| 40 | **The system generates the membership ID.** The partner's own number is retained as a searchable reference. Reverses decision 5 |
+| 41 | Card + welcome email **auto-send at import commit**, with the recipient count shown on the preview first. Deduped, so a re-import never emails twice |
+| 42 | **PDF card attached**, benefits listed per country in the email body, plus a line pointing at the portal for current terms |
+| 43 | Dependents receive their **own** generated ID, card and email |
+| 44 | Included visit **and** the country's own rule are both offered with prices, cheapest pre-selected; the member may decline the unit |
+| 45 | The card reuses the public-plan card's visual system, with an admin-settable background colour **per level** |
+
+Carried assumptions:
+
+- a covered country with no benefit set gives full price;
+- removing a country from a plan stops benefits for **new bookings only** — anything
+  already booked keeps its price, mirroring decision 17;
+- the primary country is **fixed at creation** (like `PricingPlan.planType`);
+- adding a country to a live plan grants benefits to existing members **immediately**,
+  with no per-member action — an admin-visible cost event, so the form says so;
+- the welcome email uses the **primary** country's default locale, English fallback,
+  because a `PENDING` member has no `User.preferredLocale` yet.
+
+## 21. Data model
+
+### 21.1 Plan and covered countries
+
+```prisma
+model MembershipPlan {
+  // countryId is RENAMED to primaryCountryId. Fixed at creation.
+  primaryCountryId String
+  primaryCountry   Country @relation(fields: [primaryCountryId], references: [id], onDelete: Cascade)
+  countries        MembershipPlanCountry[]
+  // …unchanged fields
+  @@unique([primaryCountryId, slug])
+  @@unique([id, primaryCountryId])
+}
+
+/// One row per covered country, INCLUDING the primary. Existence of the row is
+/// what makes a country selectable when configuring benefits (§35), and the FK
+/// target that proves a benefit row's country is actually covered.
+model MembershipPlanCountry {
+  id        String         @id @default(cuid())
+  planId    String
+  plan      MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  countryId String
+  country   Country        @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now())
+
+  @@unique([planId, countryId])
+  /// FK target for MembershipBenefit.(planId, countryId).
+  @@unique([id, planId, countryId])
+  @@index([countryId])
+}
+```
+
+App-enforced (plus a migration CHECK where expressible): a row for
+`primaryCountryId` always exists and cannot be deleted while the plan lives.
+
+### 21.2 Level
+
+`MembershipLevel.countryId` is **dropped** — a level now spans the plan's countries.
+Its `@@unique([id, countryId])` goes with it; the composite FK from
+`MembershipEnrollment` re-targets `@@unique([id, planId])`.
+
+Gains:
+
+```prisma
+  /// Card background, admin-set per level (§45). Hex, validated. Null = the
+  /// default card face. The foreground is DERIVED, never stored — see §24.2.
+  cardBackgroundHex String?
+```
+
+### 21.3 Benefit rows become per-country
+
+```prisma
+model MembershipBenefit {
+  levelId   String
+  /// Denormalised so the composite FK can prove the country is covered.
+  planId    String
+  /// WHICH covered country this row configures (§35).
+  countryId String
+  // …benefitType, allowanceCount, percentOff, fixedPriceCents, fallback* unchanged
+
+  @@unique([levelId, countryId, serviceKind])
+  @@unique([levelId, countryId, serviceId])
+  @@index([levelId, countryId, isActive])
+}
+```
+
+Raw-SQL composite FKs (Prisma cannot express them, and `migrate diff` will propose
+dropping them forever — §3.8):
+
+- `(planId, countryId) → MembershipPlanCountry(planId, countryId)` — a benefit row
+  can only exist for a country the plan actually covers;
+- `(serviceId, countryId) → Service(id, countryId)` — unchanged in shape, and still
+  what makes a cross-country service reference impossible.
+
+**New constraint, and it matters: an allowance may only be defined on a service-KIND
+row, never a service-specific one.** A service-scoped pool cannot be shared across
+countries, because `Service` rows are per-country and there is no reliable mapping
+between a Czech service and its Irish counterpart — slug matching is exactly the
+silent-failure mode §9 rejected in the original design. Service-specific rows may
+therefore be `PERCENT`, `FIXED` or `EXCLUDED` only. Enforce with a CHECK:
+`benefitType <> 'ALLOWANCE' OR serviceKind IS NOT NULL`.
+
+### 21.4 The shared pool, without re-keying the counter
+
+Decision 36 (one shared pool) and decision 35 (per-country rows) appear to conflict:
+each country has its own row, but there must be one counter.
+
+Resolved by **the primary country's row being the pool definition**. The balance
+still keys on `benefitId`, unchanged from phase 1 — that id is simply always the
+primary country's row. A spend in any covered country resolves the pool by looking up
+the same level's row for the **primary** country with the **same `serviceKind`**.
+
+So `MembershipAllowanceBalance` needs **no migration**. What changes is one lookup in
+`membership-allowance.service.ts`:
+
+```
+resolvePoolBenefit(level, serviceKind)
+  → MembershipBenefit where levelId = level.id
+      AND countryId = plan.primaryCountryId
+      AND serviceKind = <kind>
+      AND benefitType = 'ALLOWANCE'
+  → null means this level has no allowance for that kind; the country's own row
+    (percent/fixed) applies instead
+```
+
+This is the cheapest correct shape available and preserves the ledger, the
+idempotency keys and every phase-5 concurrency guarantee untouched.
+
+### 21.5 Enrollment
+
+```prisma
+  /// Now GENERATED (§40). Format `<PLANPREFIX>-<8 crypto-random base32 chars>`,
+  /// e.g. MEMS-7K4QP2X9. Unguessable by design: it is half of what the claim
+  /// form checks, and partner numbering is typically sequential.
+  membershipId     String
+  /// The partner's own member number, when they supply one. Searchable in admin,
+  /// NOT a key — duplicates across plans are possible and permitted.
+  partnerReference String?
+  /// Always the plan's primaryCountryId. Attribution for reporting; NOT a
+  /// restriction on where benefits apply (§38).
+  countryId        String
+  /// Set when the card + welcome email went out. The dedupe for §41.
+  cardIssuedAt     DateTime?
+
+  @@index([planId, partnerReference])
+```
+
+`membershipId` keeps its raw-SQL unique index on `lower(membershipId)`. Generation
+retries on collision (vanishingly unlikely at 8 base32 chars, but a loop is one line).
+
+### 21.6 Migration
+
+Its own migration, hand-reviewed per §3.8, and it must **preserve** the composite FKs
+and CHECK constraints `migrate diff` will propose dropping.
+
+1. `MembershipPlan.countryId` → `primaryCountryId` (rename, not drop/add).
+2. Create `MembershipPlanCountry`; backfill one row per existing plan for its primary
+   country — every existing plan becomes a one-country multi-country plan.
+3. `MembershipBenefit`: add `planId` + `countryId`, backfill from the level's plan and
+   the plan's primary country, then make them `NOT NULL`; swap the unique indexes.
+4. `MembershipLevel`: drop `countryId` and its unique; add `cardBackgroundHex`.
+5. `MembershipEnrollment`: add `partnerReference`, `cardIssuedAt`. Existing rows keep
+   their `membershipId` — no regeneration (dev only; production has none).
+6. Re-create the three composite FKs against their new targets.
+7. Add the allowance-on-kind-rows-only CHECK.
+8. New `AuditAction` values in **their own migration ahead of the code**:
+   `MEMBERSHIP_PLAN_COUNTRY_ADDED`, `MEMBERSHIP_PLAN_COUNTRY_REMOVED`,
+   `MEMBERSHIP_CARD_ISSUED`.
+
+## 22. Pricing
+
+`membership-pricing.service.ts`:
+
+- the country check inverts from `service.countryId === enrollment.countryId` to
+  **`service.countryId ∈ plan's covered countries`**;
+- the benefit row is selected for the **booking's** country (service row beats kind
+  row, as today);
+- an allowance is resolved through `resolvePoolBenefit` against the **primary**
+  country (§21.4), so units spend anywhere;
+- the `min(benefit, full)` clamp and the live term/status checks are unchanged.
+
+`benefit-options.service.ts` — decision 44. When a member has units remaining **and**
+the booking's country carries its own percent/fixed rule, emit **two** options for
+that one enrollment:
+
+```
+{ source: MEMBERSHIP, refId: `${enrollmentId}:unit`,     unitPriceCents: 0,
+  note: ALLOWANCE_UNIT,     allowanceRemaining: n }
+{ source: MEMBERSHIP, refId: `${enrollmentId}:discount`, unitPriceCents: <country rule>,
+  note: COUNTRY_RULE }
+```
+
+Cheapest is pre-selected as always, so the unit wins by default and the member can
+deliberately decline it to save a scarce visit. `benefit-selection.service.ts` and the
+checkout switch must carry the `:unit` / `:discount` suffix through — the checkout
+re-derives everything, so the suffix only selects *which* rule, never a price.
+
+**Currency:** a `FIXED` price is per-country and stored in that country's currency;
+there is no conversion anywhere (§39). The admin form shows the currency beside the
+field so nobody types 800 expecting CZK into a EUR row.
+
+## 23. Reporting
+
+§15's per-plan usage view splits into **per-country sections**, each in its own
+currency, driven from `OrderItem.membershipEnrollmentId` joined to the order's country
+(the ledger still only counts allowance units — §15's corrected data source).
+
+- no summed total across countries, and no exchange rate anywhere;
+- allowance units remain a single figure, since the pool is shared;
+- overrides keep their own line, per country;
+- CSV export gains a `country` column.
+
+## 24. The card
+
+### 24.1 Visual system
+
+Reuse the public-plan card, `account/_components/MembershipCard.tsx` — a
+presentational, server-rendered component whose chrome (guilloche, ring, ECG rule,
+care mark) lives in `portal.css` under `.gh-member-card*` and which takes every value
+as a pre-formatted string. Phase 3's `MembershipDigitalCard.tsx` is replaced by a
+private-membership variant of it, so both card types read as one family.
+
+Fields: plan + level name (translated), cardholder, membership ID, valid-through,
+covered countries, status.
+
+### 24.2 Admin-set background colour (decision 45)
+
+`MembershipLevel.cardBackgroundHex`, set in the level editor with a colour picker and
+a live card preview. Per level rather than per plan, so Gold and Silver can differ.
+
+**The foreground is derived, never stored.** Compute relative luminance from the
+chosen colour and pick the light or dark text treatment, so an admin cannot produce
+white-on-pale. The picker warns below the WCAG AA threshold (4.5:1 for the card's body
+text) rather than blocking — but the derived foreground means even a warned-past colour
+stays legible.
+
+Validate as `^#[0-9a-fA-F]{6}$` server-side. Null falls back to today's default face.
+
+### 24.3 PDF
+
+Generated through the existing document pipeline (`backend/src/lib/pdf`, the same
+route `GeneratedDocument` uses). Card **content** comes from one shared builder so the
+web and PDF renderings cannot drift on what they say; chrome may differ slightly
+between the two renderers and that is accepted.
+
+Attached to the welcome email. Not stored as a `GeneratedDocument` row — it is
+reproducible from the enrollment at any time, and storing it would create a stale
+artefact the moment a level's colour or name changes.
+
+## 25. Emails
+
+A **fifth** template (§12 had four): **welcome + card**.
+
+- **Trigger:** import commit (§41), and any single manual enrollment. Never on
+  re-import — `cardIssuedAt` is the dedupe.
+- **Recipient:** the enrollment's own address. Dependents get their own (§43).
+- **Locale:** the plan's primary-country default, English fallback — a `PENDING`
+  member has no `User.preferredLocale`.
+- **Body:** welcome, membership ID, then benefits **grouped by country**, then a line
+  stating that current terms live in the member portal — so the email does not become
+  the contract when a partner later changes a country's benefits.
+- **Attachment:** the PDF card.
+- **Shared-pool wording (§43):** a dependent's copy must say included visits are shared
+  with their primary, never "you have 6 visits". The primary may already have spent them.
+
+The import **preview** gains a recipient count — "committing will email 187 members" —
+so the blast radius is visible before the send, which is the whole safety argument for
+choosing B over A in decision 41.
+
+## 26. Admin UI
+
+**Plan form:** primary country (fixed after creation, shown read-only thereafter) and
+a covered-countries manager. Adding a country warns that it grants benefits to all
+existing members immediately; removing warns that existing bookings keep their price.
+Both write audit rows.
+
+**Level editor:** a country tab strip, primary tab badged. Each tab holds that
+country's benefit table, unchanged in shape from phase 1 except that the allowance
+option is disabled on service-specific rows (§21.3), with the reason shown. Plus the
+card colour picker and live preview.
+
+**Member list/detail:** `partnerReference` searchable alongside the membership ID;
+detail shows the generated ID, the partner's number, and card-issued state with a
+resend action.
+
+Primitives per `CLAUDE.md`: `ColumnPriorityTable`, `AppMenu`, `PortalDialog`; portal
+CSS in `portal.css` only; form actions right-aligned.
+
+## 27. Testing
+
+- **Pricing:** benefit resolves in a non-primary covered country; no benefit in an
+  uncovered one; units spend from the primary-defined pool regardless of booking
+  country; a country's percent applies to that country's peak price; fixed prices stay
+  in their own currency; the `min(benefit, full)` clamp still holds.
+- **Options:** the unit/discount pair is emitted only when both exist; cheapest
+  pre-selected; declining the unit prices the country rule and spends nothing.
+- **Allowance:** a shared pool spent across two countries decrements one counter; the
+  phase-5 concurrency case still passes unchanged; `resolvePoolBenefit` returns null
+  for a kind with no primary allowance.
+- **Constraints:** an allowance on a service-specific row is rejected; a benefit row
+  for an uncovered country is rejected by the composite FK; removing the primary
+  country's `MembershipPlanCountry` row is refused.
+- **IDs:** generated, unique case-insensitively, collision retry; `partnerReference`
+  is not unique and is searchable.
+- **Card/email:** issued once per enrollment; a re-import sends nothing; dependents get
+  their own; locale falls back to English; derived foreground flips on a light
+  background; an invalid hex is rejected.
+- **Reporting:** two countries produce two sections with their own currencies and no
+  summed total; overrides stay on their own line per country.
+
+## 28. Rollout
+
+| Step | Contents |
+| --- | --- |
+| 7a | Migrations (rename, join table, benefit country, level colour, enrollment columns, FK re-creation, CHECKs) + the audit-action migration ahead of them |
+| 7b | Pricing + options + allowance pool resolution, with tests. No UI |
+| 7c | Generated IDs + `partnerReference`, import changes, preview recipient count |
+| 7d | Card component, colour picker, PDF, welcome email in six locales |
+| 7e | Admin UI: covered countries, level country tabs, member-list search |
+| 7f | Per-country reporting |
+
+7a and 7b change live pricing behaviour and should ship together, verified before 7c
+onward. Nothing here is risky in isolation; the risk is the composite FKs being lost
+in a generated migration, which is why every step re-runs `membership-ddl-check.ts`.
+
+## 29. Open items
+
+1. Whether "Repeat Prescription Online" (`ie/treatment-review`, kind `GENERAL`) stays
+   discountable — unchanged from phase 6, still Hassaan's call. An `EXCLUDED` row
+   carves it out with no code.
+2. Per-country caps on the shared pool are explicitly **not** built. If cost-shifting
+   into an expensive market becomes real, that is the fix — not a redesign.
+3. Commission-model markets remain blocked (§6.6). Multi-country makes this likelier to
+   surface: a plan covering Brazil would hit it.
