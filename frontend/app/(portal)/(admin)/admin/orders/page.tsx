@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { ShoppingBag } from "lucide-react";
 import { fetchAdminOrders } from "@/lib/api/cart-server";
-import { fetchAdminDoctors } from "@/lib/admin/admin-api";
+import { fetchAdminCountries, fetchAdminDoctors } from "@/lib/admin/admin-api";
+import { COUNTRY_PREF_COOKIE } from "../_components/country-picker-constants";
 import { AdminCard, AdminEmptyState, PageHeader } from "@/components/portal-atoms";
 import { AdminOrdersTable } from "./_components/admin-orders-table";
 import { OrderFilters } from "./_components/order-filters";
@@ -29,12 +31,25 @@ export default async function AdminOrdersPage({
   }
   const hasActiveFilter = ORDER_FILTER_KEYS.some((key) => Boolean(filters[key]));
 
+  // Scope to the topbar country picker, same cookie the dashboard and other
+  // sidebar routes read — no country selected = unscoped (all countries).
+  const countriesRes = await fetchAdminCountries();
+  const countries = countriesRes.ok ? countriesRes.data.countries : [];
+  const jar = await cookies();
+  const activeCountrySlug = jar.get(COUNTRY_PREF_COOKIE)?.value ?? null;
+  const activeCountry = activeCountrySlug
+    ? countries.find((c) => c.slug === activeCountrySlug) ?? null
+    : null;
+
   // No `active` filter on the doctor list — deactivated doctors still own
   // historical orders, and dropping them would make those unfilterable.
   // The doctor list only feeds the filter dropdown — its failure must never
   // take down the orders list, so it degrades to an empty option set.
   const [result, doctorsResult] = await Promise.all([
-    fetchAdminOrders(cursor, filters),
+    fetchAdminOrders(cursor, {
+      ...filters,
+      ...(activeCountry ? { countryCode: activeCountry.code } : {}),
+    }),
     fetchAdminDoctors({ pageSize: "250" }).catch(
       () => ({ ok: false as const, message: "Doctors unavailable" }),
     ),
