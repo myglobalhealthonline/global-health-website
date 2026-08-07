@@ -23,7 +23,10 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "redemptions",
     "invoices",
     "cart-preview",
-    "benefit-preview",
+    // `benefit-preview` was retired in phase 5 (§6.3): `benefit-options` prices
+    // all four benefit sources, and keeping both would have meant two price
+    // sources for the same booking.
+    "benefit-options",
     "notifications",
     // Private membership plans (§10). Reads normally happen server-side via
     // me-memberships-server.ts, but the claim-confirm page refreshes through
@@ -43,6 +46,8 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "memberships/claim",
     "memberships/claim/confirm",
   ]),
+  // The cart-level benefit choice (§25) — the only PUT on this proxy.
+  PUT: new Set(["cart/benefit"]),
 };
 
 /** Dynamic (id-bearing) paths allowed per method, matched by pattern. */
@@ -119,6 +124,12 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ path: 
 }
 
 export async function PATCH(request: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
+  const { path } = await ctx.params;
+  return proxyMe(request, path ?? []);
+}
+
+/** Added for the cart-level benefit choice (§25) — the first PUT here. */
+export async function PUT(request: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
   const { path } = await ctx.params;
   return proxyMe(request, path ?? []);
 }

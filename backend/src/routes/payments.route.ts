@@ -23,6 +23,7 @@ import {
   releaseRedemption,
 } from "../modules/subscriptions/redemption.service.js";
 import { releaseOrderCreditReservations } from "../modules/subscriptions/checkout-pricing.service.js";
+import { releaseOrderMembershipAllowance } from "../modules/memberships/membership-allowance.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
 import {
@@ -524,6 +525,12 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                 // abandoned order (RESERVED → RELEASED, credit restored).
                 await releaseOrderCreditReservations(orderId).catch((err) => {
                   app.log.error({ err, orderId }, "Release order credit reservations failed");
+                });
+                // Same for membership allowance units (§7): spent at checkout,
+                // and this abandoned-order path is one of the two crons that
+                // hand them back when the payment never arrives.
+                await releaseOrderMembershipAllowance(orderId).catch((err) => {
+                  app.log.error({ err, orderId }, "Release membership allowance failed");
                 });
                 // Cancel the consultation appointment(s) — release BOOKED slots
                 // + drop the events off the admin/doctor calendars.

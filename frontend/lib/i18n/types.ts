@@ -354,6 +354,8 @@ export type CommonLocale = {
     benefitHeading: string;
     corporateOffAtCheckout: string;
     benefitPayNormal: string;
+    /** "Uses 1 of your {count} remaining" — allowance units and plan credits. */
+    benefitScarcityNote: string;
     benefitUseCredit: string;
     benefitUseDiscount: string;
     /** Caption under the benefit selector: "{plan}" = subscriber's plan name. */
@@ -723,13 +725,34 @@ export type CommonLocale = {
     stepDoctor: string;
     stepTime: string;
     stepDetails: string;
-    /** Insurance step — only shown for services with a bookable insurer. */
+    /**
+     * Insurance step — kept for the insurance-only copy the details step and
+     * the doctor filter still use. The STEP itself is now the benefit step
+     * (§11.2), which covers insurance alongside memberships, plans and
+     * corporate.
+     */
     stepInsurance: string;
     insuranceTitle: string;
     insuranceDesc: string;
     insuranceStandard: string;
     insuranceNone: string;
     noInsuranceDoctors: string;
+    /** Benefit step (§11.2) — one step for all four benefit sources. */
+    stepBenefit: string;
+    benefitTitle: string;
+    benefitDesc: string;
+    benefitNone: string;
+    benefitNoneDesc: string;
+    benefitRecommended: string;
+    /** "Uses 1 of your {count} remaining" — a scarce allowance unit (§14). */
+    benefitAllowanceNote: string;
+    benefitPlanCreditNote: string;
+    benefitAllowanceExhausted: string;
+    benefitInsuranceNote: string;
+    /** Shown when the price will move once a real slot is chosen. */
+    benefitIndicative: string;
+    benefitGuestPrompt: string;
+    benefitGuestCta: string;
     title: string;
     subtitle: string;
     bookingSteps: string;

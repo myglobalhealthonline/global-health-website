@@ -3,6 +3,7 @@ import { prisma } from "../../db/prisma.js";
 import { releaseSlotsToBaseGrid } from "../doctor-availability/doctor-availability.service.js";
 import { cancelOrderAppointments } from "../appointments/appointments.service.js";
 import { releaseOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
+import { releaseOrderMembershipAllowance } from "../memberships/membership-allowance.service.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
 import { wrapHtml } from "../../lib/email/templates.js";
@@ -1140,6 +1141,10 @@ export async function cancelPrePaymentOrder(orderId: string): Promise<boolean> {
   // after the TTL — release them now rather than leaving the patient short of a
   // credit for a booking that no longer exists.
   await releaseOrderCreditReservations(orderId).catch(() => undefined);
+  // Same for private-membership allowance units, which are spent at checkout
+  // and have no TTL of their own — this cron and the abandoned-order cleanup
+  // are the only things that give them back on a never-paid order (§7).
+  await releaseOrderMembershipAllowance(orderId).catch(() => undefined);
 
   return true;
 }

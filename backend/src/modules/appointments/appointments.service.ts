@@ -18,6 +18,7 @@ import {
   UnrecognizedAppointmentStatusError,
 } from "./appointment-status-transitions.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { releaseMembershipAllowanceForSlot } from "../memberships/membership-allowance.service.js";
 import { mapAppointmentOrderNumbers, mapAppointmentOrders } from "../orders/appointment-order-number.js";
 import {
   claimConsecutiveSlots,
@@ -784,6 +785,10 @@ export async function cancelAppointmentForPatient(
   }
 
   assertValidStatusTransition(owned.status as AppointmentStatus, "CANCELLED");
+
+  // Before the slot is released: the release nulls `timeSlotId`, which is the
+  // only link from this appointment back to its order line (§7).
+  await releaseMembershipAllowanceForSlot(owned.timeSlotId).catch(() => undefined);
 
   if (owned.timeSlotId) {
     await releaseAppointmentSlot(id).catch(() => undefined);

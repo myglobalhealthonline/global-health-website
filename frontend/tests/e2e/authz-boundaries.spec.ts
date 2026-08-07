@@ -25,12 +25,34 @@ test.describe("Patient session cannot reach other portals", () => {
   test.skip(!process.env.E2E_TEST_EMAIL || !process.env.E2E_TEST_PASSWORD, "Set E2E_TEST_EMAIL/E2E_TEST_PASSWORD");
   test.use({ storageState: storageStatePath("patient") });
 
-  for (const route of ["/admin", "/doctor", "/corporate"]) {
+  // `/admin/memberships` is listed explicitly rather than left to the
+  // `/admin` check: membership routes are auto-loaded, so a new one is live
+  // the moment its file lands, and member PII plus what people pay both sit
+  // behind this section (§14).
+  for (const route of ["/admin", "/doctor", "/corporate", "/admin/memberships"]) {
     test(`patient session hitting ${route} is blocked or redirected`, async ({ page }) => {
       const response = await page.goto(route, { waitUntil: "domcontentloaded" });
       expect(blockedOrRedirected(response?.status(), page.url()), `${route} must not render for a patient session`).toBeTruthy();
     });
   }
+
+  // A member may only read their OWN enrollment (§16.3). The id here belongs
+  // to nobody, so anything other than a 404/403 — in particular a 200 with
+  // somebody's card on it — is the failure this guards.
+  test("patient cannot read another member's enrollment", async ({ page }) => {
+    const response = await page.request.get("/api/me/memberships/enr-e2e-not-mine");
+    expect(response.status(), "a foreign enrollment id must not resolve").toBeGreaterThanOrEqual(400);
+  });
+
+  // The cart-level benefit choice decides which pricing engine runs (§6.4), so
+  // it must reject a membership the session does not hold rather than quietly
+  // recording it and surprising the patient at checkout.
+  test("patient cannot attach a membership they do not hold", async ({ page }) => {
+    const response = await page.request.put("/api/me/cart/benefit", {
+      data: { source: "MEMBERSHIP", refId: "enr-e2e-not-mine" },
+    });
+    expect(response.status(), "a foreign enrollment must not be attachable").toBeGreaterThanOrEqual(400);
+  });
 });
 
 test.describe("Doctor session cannot reach admin/corporate portals", () => {

@@ -790,4 +790,91 @@ describe("authorization matrix", () => {
     });
     assert.equal(res.statusCode, 400, res.body);
   });
+
+  // ── Cart benefit choice (§25) ─────────────────────────────────────
+  // The write that decides which pricing engine runs at checkout, so the gate
+  // matters as much as the read above: anyone who could set it for another
+  // account could change what that account pays.
+
+  it("cart benefit: unauthenticated write → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "PUT",
+      url: "/api/me/cart/benefit",
+      payload: { source: "NONE" },
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("cart benefit: a doctor session is not a patient → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "PUT",
+      url: "/api/me/cart/benefit",
+      payload: { source: "NONE" },
+      cookies: doctor2Cookie,
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("cart benefit: an admin session is not a patient either → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "PUT",
+      url: "/api/me/cart/benefit",
+      payload: { source: "NONE" },
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("cart benefit: a patient may set their own choice → 200", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "PUT",
+      url: "/api/me/cart/benefit",
+      payload: { source: "NONE" },
+      cookies: patient1Cookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+  });
+
+  it("cart benefit: another patient's membership id is not found → 404", async (t) => {
+    if (!app) return t.skip();
+    // Same answer as "no such enrollment": the id is partner-supplied and
+    // potentially sequential, so the endpoint must not confirm which ones
+    // exist (§14, enumeration).
+    const res = await app.inject({
+      method: "PUT",
+      url: "/api/me/cart/benefit",
+      payload: { source: "MEMBERSHIP", refId: "enr-authz-probe" },
+      cookies: patient1Cookie,
+    });
+    assert.equal(res.statusCode, 404, res.body);
+  });
+
+  it("cart benefit: UNSET cannot be set back by a client → 400", async (t) => {
+    if (!app) return t.skip();
+    // UNSET means "the benefit step has not run". Letting a client restore it
+    // would re-open §6.4's reject path on a cart that had already been decided.
+    const res = await app.inject({
+      method: "PUT",
+      url: "/api/me/cart/benefit",
+      payload: { source: "UNSET" },
+      cookies: patient1Cookie,
+    });
+    assert.equal(res.statusCode, 400, res.body);
+  });
+
+  it("benefit preview: the retired endpoint is gone (§6.3)", async (t) => {
+    if (!app) return t.skip();
+    // Two price sources for one booking would drift. A 404 here — for a
+    // PATIENT session, which used to be served — is the retirement.
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/me/benefit-preview?serviceId=authz-probe&basePriceCents=1000",
+      cookies: patient1Cookie,
+    });
+    assert.equal(res.statusCode, 404, res.body);
+  });
 });

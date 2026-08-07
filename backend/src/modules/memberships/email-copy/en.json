@@ -30,5 +30,17 @@
     "note": "If it was not you, ignore this email. Nothing changes and your membership stays where it is.",
     "cta": "Confirm the claim",
     "signoff": "— The Global Health team"
+  },
+  "exhausted": {
+    "subject": "You've used your last included consultation",
+    "heading": "Your included consultations are used up",
+    "greeting": "Hi {firstName},",
+    "lead": "You have now used all {allocated} included consultations on your <strong>{planName}</strong> membership ({levelName}) for this term.",
+    "onwardsPercent": "From now on you get <strong>{fallbackPercent}% off</strong> these consultations instead.",
+    "onwardsFixed": "From now on these consultations cost you <strong>{fallbackPrice}</strong>.",
+    "onwardsNone": "From now on these consultations are charged at the standard price.",
+    "action": "Nothing else changes — the rest of your membership benefits are unaffected, and the price is always shown before you pay.",
+    "cta": "View your membership",
+    "signoff": "— The Global Health team"
   }
 }

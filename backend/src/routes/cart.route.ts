@@ -8,6 +8,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
+import { clearedCartBenefitFields } from "../modules/benefits/benefit-selection.service.js";
 import { resolveTranslation } from "../modules/shared/resolve-translation.js";
 import {
   holdConsecutiveSlots,
@@ -1451,7 +1452,15 @@ const cartRoute: FastifyPluginAsync = async (app) => {
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
     await prisma.cart.update({
       where: { id: cart.id },
-      data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
+      data: {
+        countryCode: "",
+        currencyCode: "",
+        abandonedEmailSentAt: null,
+        // An emptied cart has no benefit choice. Leaving one behind means the
+        // next cart silently inherits it — and a stale NONE would suppress a
+        // corporate member's discount from then on, invisibly.
+        ...clearedCartBenefitFields(),
+      },
     });
     return okResponse(EMPTY_CART);
   });

@@ -30,5 +30,17 @@
     "note": "Se não foi você, ignore este e-mail. Nada muda e a sua adesão mantém-se onde está.",
     "cta": "Confirmar",
     "signoff": "— A equipa da Global Health"
+  },
+  "exhausted": {
+    "subject": "Usou a sua última consulta incluída",
+    "heading": "As suas consultas incluídas esgotaram",
+    "greeting": "Olá {firstName},",
+    "lead": "Já usou as {allocated} consultas incluídas na sua adesão <strong>{planName}</strong> ({levelName}) neste período.",
+    "onwardsPercent": "A partir de agora passa a ter <strong>{fallbackPercent}% de desconto</strong> nestas consultas.",
+    "onwardsFixed": "A partir de agora estas consultas custam-lhe <strong>{fallbackPrice}</strong>.",
+    "onwardsNone": "A partir de agora estas consultas são cobradas ao preço normal.",
+    "action": "Nada mais muda — os restantes benefícios da sua adesão mantêm-se, e o preço é sempre mostrado antes de pagar.",
+    "cta": "Ver a minha adesão",
+    "signoff": "— A equipa Global Health"
   }
 }

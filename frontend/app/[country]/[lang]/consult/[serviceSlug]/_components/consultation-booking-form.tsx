@@ -7,9 +7,9 @@ import Link from "next/link";
 import { useCart } from "@/components/cart/CartContext";
 import type { CartItemKind, BenefitSelection } from "@/lib/api/cart-types";
 import {
-  getBenefitPreview,
-  type CorporateDiscountInfo,
-  type ServiceBenefitOption,
+  getBenefitOptions,
+  setCartBenefit,
+  type BenefitOption,
 } from "@/lib/api/me-subscription";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { listFamilyMembers, type FamilyMember } from "@/lib/api/family-client";
@@ -83,6 +83,16 @@ type Props = {
    *  doctors in that insurer's network take its patients, so by the time we get
    *  here it's fixed — this form just collects the card number for it. */
   selectedInsurance?: InsuranceOption | null;
+  /**
+   * The `?benefit=` value the wizard's benefit step produced, as
+   * `<source>:<refId>` or `none` (§11.2). Pre-selects the matching option here
+   * so the details step shows the price the patient already agreed to.
+   *
+   * Absent on `/consult/[serviceSlug]`, which has no benefit step — that entry
+   * point picks here instead, and this form is what writes the choice to the
+   * cart either way. One write path, so the two cannot disagree.
+   */
+  benefitParam?: string | null;
 };
 
 /** Saved patient profile fields we prefill on the details step (req #2). */
@@ -128,6 +138,7 @@ export function ConsultationBookingForm({
   i18n,
   bookingRequirements,
   selectedInsurance = null,
+  benefitParam = null,
 }: Props) {
   const requirePhone = bookingRequirements?.requirePhone ?? false;
   const requireDob = bookingRequirements?.requireDateOfBirth ?? false;
@@ -203,14 +214,17 @@ export function ConsultationBookingForm({
   // usage). Only those approved to use plan benefits (canUseCredits) appear.
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [selectedFamilyId, setSelectedFamilyId] = useState("");
-  // Booking-step plan benefit selector (B6) — for SELF bookings, the resolved
-  // price for each eligible option (credit / discount / pay normally) so the
-  // subscriber can choose here instead of only in the cart. Pre-selected to the
-  // cheapest eligible option; written onto the line at add-to-cart.
-  const [benefitOptions, setBenefitOptions] = useState<ServiceBenefitOption[]>([]);
-  const [benefitPlanName, setBenefitPlanName] = useState<string | null>(null);
-  const [benefitSelection, setBenefitSelection] = useState<BenefitSelection>("PAY_NORMAL");
-  const [corporateDiscount, setCorporateDiscount] = useState<CorporateDiscountInfo | null>(null);
+  // Benefit selector (§6.3) — every source the patient can use for this
+  // service, priced against the REAL slot, so the figure here is the figure
+  // charged. The benefit step (when there was one) priced without a slot and
+  // flagged percent options indicative; this is where that resolves.
+  //
+  // `null` selection means "pay the standard price" (cart source NONE).
+  const [benefitOptions, setBenefitOptions] = useState<BenefitOption[]>([]);
+  const [benefitChoice, setBenefitChoice] = useState<{ source: string; refId: string } | null>(null);
+  // True once the wizard's `?benefit=` has been honoured, so the recommended
+  // option does not overwrite a deliberate choice on a later re-fetch.
+  const benefitPreselected = useRef(false);
   // Saved profile (address + national ID) so we don't ask for it again (req #2).
   const [profile, setProfile] = useState<ProfileAddress | null>(null);
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -279,35 +293,43 @@ export function ConsultationBookingForm({
     };
   }, []);
 
-  // Fetch the per-service benefit preview once we know the signed-in patient +
-  // the slot price. Pre-select the cheapest eligible option (prefer a plan
-  // credit on a tie) so the best deal is the default; the user can still switch.
+  // Price every benefit source once we know the signed-in patient and the
+  // chosen slot. With the slot, percent-based options are exact rather than
+  // indicative — this is the price the patient confirms and the price checkout
+  // re-derives.
   const slotPriceCents = selectedSlot?.priceCents;
   const meId = me?.id;
   useEffect(() => {
-    if (!meId || slotPriceCents == null) return;
+    if (!meId) return;
     let cancelled = false;
-    void getBenefitPreview(serviceId, slotPriceCents).then((res) => {
+    void getBenefitOptions(serviceId, { doctorId, timeSlotId: selectedSlotId }).then((res) => {
       if (cancelled || !res.ok) return;
       const opts = res.data.options;
       setBenefitOptions(opts);
-      setBenefitPlanName(res.data.planName ?? null);
-      setCorporateDiscount(res.data.corporateDiscount ?? null);
-      if (opts.length > 1) {
-        const best = [...opts].sort((a, b) =>
-          a.unitPriceCents !== b.unitPriceCents
-            ? a.unitPriceCents - b.unitPriceCents
-            : a.selection === "USE_PLAN_CREDIT"
-              ? -1
-              : 1,
-        )[0];
-        if (best) setBenefitSelection(best.selection);
+      if (benefitPreselected.current) return;
+      benefitPreselected.current = true;
+      // The wizard's choice wins; otherwise pre-select the cheapest (§13/§14).
+      const [wizardSource, ...wizardRest] = (benefitParam ?? "").split(":");
+      const wizardRef = wizardRest.join(":");
+      const fromWizard =
+        benefitParam === "none"
+          ? null
+          : opts.find(
+              (o) =>
+                o.source.toLowerCase() === wizardSource &&
+                (!wizardRef || o.refId === wizardRef),
+            );
+      if (fromWizard) {
+        setBenefitChoice({ source: fromWizard.source, refId: fromWizard.refId });
+      } else if (benefitParam !== "none") {
+        const best = opts.find((o) => o.recommended);
+        if (best) setBenefitChoice({ source: best.source, refId: best.refId });
       }
     });
     return () => {
       cancelled = true;
     };
-  }, [meId, serviceId, slotPriceCents]);
+  }, [meId, serviceId, doctorId, selectedSlotId, benefitParam]);
 
   // Scroll the newly revealed "patient being treated" section into view so the
   // patient notices it appeared instead of scrolling past a section that grew
@@ -482,6 +504,34 @@ export function ConsultationBookingForm({
         }
       }
 
+      // Persist the cart-level benefit BEFORE adding the line (§25). Checkout
+      // runs exactly one engine off this (§6.4), and a cart that reaches
+      // checkout still UNSET with eligible sources is rejected — so this call
+      // is what keeps a booking from that state, on both entry points.
+      //
+      // Guests get a 401 here and that is correct: they have no benefit to
+      // record, their cart stays UNSET, and checkout resolves that to NONE
+      // because nothing is eligible for them.
+      if (me) {
+        const cartBenefit: { source: "NONE" | "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN" | "INSURANCE"; refId?: string } =
+          insuranceActive
+            ? { source: "INSURANCE", refId: selectedInsurance!.companyId }
+            : selectedMember
+              ? // Booking for a dependent draws on the public plan's credit.
+                { source: "PUBLIC_PLAN", refId: "credit" }
+              : benefitChoice
+                ? {
+                    source: benefitChoice.source as "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN" | "INSURANCE",
+                    refId: benefitChoice.refId,
+                  }
+                : { source: "NONE" };
+        const saved = await setCartBenefit(cartBenefit);
+        if (!saved.ok && saved.status !== 401) {
+          setError(saved.message ?? i18n.addToCartError ?? "Could not add to cart");
+          return;
+        }
+      }
+
       const res = await add({
         kind,
         serviceId: useServiceId,
@@ -500,8 +550,15 @@ export function ConsultationBookingForm({
             }
           : selectedMember
             ? { familyMemberId: selectedMember.id, benefitSelection: "USE_PLAN_CREDIT" as const }
-            : !treatingOther && benefitSelection !== "PAY_NORMAL"
-              ? { benefitSelection }
+            : !treatingOther && benefitChoice?.source === "PUBLIC_PLAN"
+              ? {
+                  // The cart-level source is PUBLIC_PLAN; WHICH plan benefit
+                  // still rides on the line, in the column that already
+                  // carries it (§6.3) — no new column needed.
+                  benefitSelection: (benefitChoice.refId === "credit"
+                    ? "USE_PLAN_CREDIT"
+                    : "USE_PLAN_DISCOUNT") as BenefitSelection,
+                }
               : {}),
         patient: {
           fullName: patientName,
@@ -751,56 +808,59 @@ export function ConsultationBookingForm({
           </p>
         ) : null}
 
-        {/* Plan benefit selector (B6) — self bookings with an eligible plan pick
-          * credit / discount / pay-normally here, pre-set to the best deal. */}
-        {me && !treatingOther && benefitOptions.length > 1 ? (
+        {/* Benefit selector (§6.3) — every source the patient can use for this
+          * service, cheapest pre-selected, plus paying the standard price.
+          *
+          * Insurance is excluded from the list here: it was already fixed at
+          * the benefit step (the insurer decides which doctors exist), and its
+          * price only reveals once the card number is entered below (§33). */}
+        {me && !treatingOther && !insuranceActive && benefitOptions.length > 0 ? (
           <div className="mt-3">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
               {i18n.benefitHeading}
             </span>
-            {benefitPlanName ? (
-              <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
-                {i18n.benefitExplainer.replace("{plan}", benefitPlanName)}
-              </p>
-            ) : null}
             <div role="radiogroup" aria-label={i18n.benefitHeading} className="mt-1.5 flex flex-wrap gap-1.5">
-              {benefitOptions.map((opt) => {
-                const active = benefitSelection === opt.selection;
-                const label =
-                  opt.selection === "USE_PLAN_CREDIT"
-                    ? i18n.benefitUseCredit
-                    : opt.selection === "USE_PLAN_DISCOUNT"
-                      ? i18n.benefitUseDiscount
-                      : i18n.benefitPayNormal;
-                return (
-                  <button
-                    key={opt.selection}
-                    type="button"
-                    role="radio"
-                    aria-checked={active}
-                    data-selected={active}
-                    onClick={() => setBenefitSelection(opt.selection)}
-                    className="gh2-selectable rounded-full px-3 text-[12px] font-semibold"
-                  >
-                    {label} — {formatPriceRounded(opt.unitPriceCents, selectedSlot?.currencyCode ?? "EUR")}
-                  </button>
-                );
-              })}
+              {benefitOptions
+                .filter((opt) => opt.source !== "INSURANCE")
+                .map((opt) => {
+                  const active =
+                    benefitChoice?.source === opt.source && benefitChoice.refId === opt.refId;
+                  return (
+                    <button
+                      key={`${opt.source}:${opt.refId}`}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      data-selected={active}
+                      onClick={() => setBenefitChoice({ source: opt.source, refId: opt.refId })}
+                      className="gh2-selectable rounded-full px-3 text-[12px] font-semibold"
+                    >
+                      {opt.label} —{" "}
+                      {formatPriceRounded(opt.unitPriceCents, selectedSlot?.currencyCode ?? "EUR")}
+                    </button>
+                  );
+                })}
+              <button
+                type="button"
+                role="radio"
+                aria-checked={benefitChoice === null}
+                data-selected={benefitChoice === null}
+                onClick={() => setBenefitChoice(null)}
+                className="gh2-selectable rounded-full px-3 text-[12px] font-semibold"
+              >
+                {i18n.benefitPayNormal}
+                {slotPriceCents != null
+                  ? ` — ${formatPriceRounded(slotPriceCents, selectedSlot?.currencyCode ?? "EUR")}`
+                  : ""}
+              </button>
             </div>
+            <BenefitScarcityNote
+              option={benefitOptions.find(
+                (o) => o.source === benefitChoice?.source && o.refId === benefitChoice?.refId,
+              )}
+              template={i18n.benefitScarcityNote}
+            />
           </div>
-        ) : null}
-
-        {/* Automatic corporate-membership discount — applied at checkout,
-          * shown here so the member knows the price they'll actually pay. */}
-        {me && !treatingOther && corporateDiscount && benefitSelection === "PAY_NORMAL" ? (
-          <p
-            className="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold"
-            style={{ background: "var(--color-brand-mint-dim)", color: "var(--color-brand-primary)" }}
-          >
-            {corporateDiscount.planName} −{corporateDiscount.percent}% ·{" "}
-            {formatPriceRounded(corporateDiscount.amountCents, selectedSlot?.currencyCode ?? "EUR")}{" "}
-            {i18n.corporateOffAtCheckout}
-          </p>
         ) : null}
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -1223,6 +1283,28 @@ export function ConsultationBookingForm({
         {pending ? i18n.addingToCart : i18n.continueToCart}
       </button>
     </form>
+  );
+}
+
+/**
+ * "Uses 1 of your N remaining" (§14) for the two scarce options — a membership
+ * allowance unit and a plan credit. Both are countable and both are gone once
+ * spent, which is exactly what a patient needs told BEFORE they spend one; a
+ * percentage discount needs no such warning.
+ */
+function BenefitScarcityNote({
+  option,
+  template,
+}: {
+  option: BenefitOption | undefined;
+  template: string;
+}) {
+  const note = option?.note;
+  if (!note || (note.key !== "ALLOWANCE_UNIT" && note.key !== "PLAN_CREDIT")) return null;
+  return (
+    <p className="mt-1.5 text-xs text-[var(--color-text-muted)]">
+      {template.replace("{count}", String(note.remaining))}
+    </p>
   );
 }
 

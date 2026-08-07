@@ -95,10 +95,13 @@ export function PlanCoverage({
   const v = state.view;
   const currency = v.currencyCode ?? "EUR";
   const corporateLine = v.lines.find((l) => l.corporateDiscount);
+  const membershipLine = v.lines.find((l) => l.membership);
 
-  // Logged-in but no active subscription → upsell. Corporate members are
-  // exempt — their automatic membership discount renders below instead.
-  if (!v.subscriptionId && !corporateLine) {
+  // Logged-in but no active subscription → upsell. Corporate and private
+  // membership members are exempt — their benefit renders below instead. A
+  // private member with no public plan would otherwise be shown a plan upsell
+  // while their €0 line sat unexplained beside the list price.
+  if (!v.subscriptionId && !corporateLine && !membershipLine) {
     return (
       <div className={shell} style={{ borderColor: onDarkBorder }}>
         <p className={headerRow}>
@@ -118,6 +121,11 @@ export function PlanCoverage({
   }
 
   const badge = (line: CartCoverageView["lines"][number]): { label: string; tone: string } => {
+    if (line.membership) {
+      // The plan + level name, so the patient recognises the benefit they
+      // picked at the benefit step rather than an unexplained price drop.
+      return { label: line.membership.label, tone: "var(--color-brand-accent)" };
+    }
     if (line.corporateDiscount) {
       return {
         label: `${line.corporateDiscount.planName} −${line.corporateDiscount.percent}%`,
@@ -149,7 +157,10 @@ export function PlanCoverage({
       <p className={headerRow}>
         <Award className="size-4 shrink-0" style={iconStyle} aria-hidden />
         <span className="text-sm font-bold" style={{ color: onDarkPrimary }}>
-          {v.planName ?? corporateLine?.corporateDiscount?.planName ?? t.title}
+          {v.planName ??
+            corporateLine?.corporateDiscount?.planName ??
+            membershipLine?.membership?.label ??
+            t.title}
         </span>
       </p>
 

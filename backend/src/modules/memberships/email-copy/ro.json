@@ -30,5 +30,17 @@
     "note": "Dacă nu ați fost dumneavoastră, ignorați acest e-mail. Nu se schimbă nimic, iar calitatea dumneavoastră de membru rămâne unde este.",
     "cta": "Confirmați revendicarea",
     "signoff": "— Echipa Global Health"
+  },
+  "exhausted": {
+    "subject": "Ați folosit ultima consultație inclusă",
+    "heading": "Consultațiile incluse s-au epuizat",
+    "greeting": "Bună ziua, {firstName},",
+    "lead": "Ați folosit toate cele {allocated} consultații incluse în calitatea dumneavoastră de membru <strong>{planName}</strong> ({levelName}) pentru această perioadă.",
+    "onwardsPercent": "De acum înainte beneficiați de <strong>{fallbackPercent}% reducere</strong> la aceste consultații.",
+    "onwardsFixed": "De acum înainte aceste consultații vă costă <strong>{fallbackPrice}</strong>.",
+    "onwardsNone": "De acum înainte aceste consultații se taxează la prețul standard.",
+    "action": "Nimic altceva nu se schimbă — celelalte beneficii rămân valabile, iar prețul este afișat întotdeauna înainte de plată.",
+    "cta": "Vedeți calitatea de membru",
+    "signoff": "— Echipa Global Health"
   }
 }

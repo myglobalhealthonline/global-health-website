@@ -8,6 +8,7 @@ import {
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
 import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
+import { releaseMembershipAllowanceForSlot } from "../modules/memberships/membership-allowance.service.js";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
@@ -471,7 +472,9 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     try {
       const before = await prisma.appointment.findUnique({
         where: { id: params.data.id },
-        select: { status: true, doctorId: true, fullName: true },
+        // timeSlotId is read here because the slot release below nulls it, and
+        // it is the only link from this appointment to its order line (§7).
+        select: { status: true, doctorId: true, fullName: true, timeSlotId: true },
       });
       const appointment = await updateAppointmentStatus(params.data.id, body.data.status);
       if (!appointment) {
@@ -486,6 +489,12 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         before &&
         before.status !== "CANCELLED"
       ) {
+        // A membership allowance unit paid for a €0 consultation; cancelling
+        // it must give the unit back (decision 16) — the member consumed
+        // nothing. Idempotent, and a no-op for every non-membership booking.
+        await releaseMembershipAllowanceForSlot(before.timeSlotId).catch((err) => {
+          app.log.warn({ err }, "Allowance release failed on admin cancel");
+        });
         const releasedSlotId = await releaseAppointmentSlot(params.data.id).catch(
           (err) => {
             app.log.warn({ err }, "Slot release failed on admin cancel");

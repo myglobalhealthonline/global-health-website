@@ -580,7 +580,9 @@ Phase 1 free of columns nothing uses yet, and matches §17.
 
 `Cart.benefitSource` defaults to `UNSET`, so the **Phase 5 deploy runs
 `UPDATE "Cart" SET "benefitSource" = 'NONE' WHERE "benefitSource" = 'UNSET'`** —
-not the Phase 4 migration. A Phase-4-time backfill would only cover carts that
+not the Phase 4 migration. It ships **as a migration file**, since
+`prisma migrate deploy` is already the deploy step; a standalone script is
+something a future deploy forgets to run. A Phase-4-time backfill would only cover carts that
 existed then; every cart created between Phase 4 and Phase 5 would still be
 `UNSET` when the §6.4 switch goes live. See §6.4 for the belt-and-braces
 runtime rule that makes a missed backfill non-fatal.
@@ -1005,7 +1007,11 @@ MEMBERSHIP→ membership engine only. Subscription and corporate engines skipped
 CORPORATE → existing corporate engine only.
 PUBLIC_PLAN → existing subscription engine only.
 INSURANCE → existing insurance path, unchanged (alone-in-cart, no Stripe charge,
-              admin verification) — §33.
+              admin verification) — §33. **The per-line `cartItem.insuranceCompanyId`
+              stays authoritative**: checkout keys off it exactly as today, and
+              `benefitSource = INSURANCE` is display state only. Two sources of
+              truth for the same decision is how the deferred-charge path gets
+              broken by accident.
 ```
 
 This preserves "no stacking" structurally: exactly one engine can run per order.
@@ -1030,10 +1036,12 @@ If the recomputed order total is `0`:
 
 - skip the Stripe session entirely (Stripe rejects zero-amount sessions anyway);
 - mark the order paid/confirmed inline, in the same transaction;
-- mint the appointment by calling the existing shared completion path,
-  `completeOrderPayment` (`modules/orders/complete-order-payment.service.ts`) —
-  the same function the Stripe webhook, manual booking and corporate invoice
-  flows already call. One appointment-creation implementation, not two;
+- **this branch already exists** — `orders.route.ts:560` tests `totalCents === 0`
+  and calls `commitOrderCreditReservations` then
+  `completeOrderPaymentFromCheckoutSession` with a synthetic `free_<orderId>`
+  session. (Earlier drafts of this doc named a `completeOrderPayment` export;
+  there is no such export.) A membership €0 order falls into it for free —
+  Phase 5 adds only the allowance ledger writes and the tests;
 - send the normal order-confirmation email;
 - the allowance ledger rows are written in that same transaction.
 
@@ -1102,28 +1110,48 @@ transaction; the conditional `WHERE used < allocated` is what makes concurrent
 checkouts safe without a table lock.
 
 **The Stripe boundary.** The checkout commits its order transaction *before*
-calling Stripe, so the allowance is spent while the order is still unpaid. Every
-path where the payment never materialises must release the unit:
+calling Stripe, so the allowance is spent while the order is still unpaid.
 
-- **Session-creation failure** (Stripe error, missing config, network): the
-  catch block around the Stripe call runs `refund` for the order's membership
-  lines immediately — a compensating write, since the spend's transaction has
-  already committed;
-- **abandoned/never-paid orders**: the existing pre-payment cancel cron
-  (`pre-payment-flow.service.ts`, stage-3 cancel) and the abandoned-order
-  cleanup in `payments.route.ts` both call `refund` when they cancel — the
-  same places that release reserved subscription credits today;
-- **reconciliation backstop**: a check in the membership expiry job flags any
-  SPEND ledger row whose order is CANCELLED with no matching REFUND row.
+⚠ **There is no existing catch to hang this on.** The whole handler is one
+`try` returning 500 (`orders.route.ts:735`), and there is a second, earlier leak
+an earlier draft of this section missed: `orders.route.ts:628` returns **503 when
+Stripe is unconfigured, after the order transaction has already committed**. So
+Phase 5 must add a narrow `try`/`catch` around the entire post-transaction block
+and release before **every** non-success exit, not just the Stripe call's own
+failure.
+
+**Release call sites — mirror `releaseOrderCreditReservations` exactly.** That
+function is the existing map of "this order will never be paid", and the real
+list is longer than earlier drafts of this section said. All five:
+
+| Site | What it is |
+| --- | --- |
+| `pre-payment-flow.service.ts:1142` | stage-3 abandoned-checkout cancel |
+| `payments.route.ts:525` | abandoned / expired session cleanup |
+| `orders.route.ts:1491` | bulk admin status change |
+| `orders.route.ts:1580` | single `PATCH` → CANCELLED |
+| `orders.route.ts:1686` | refund |
+
+Plus a **reconciliation backstop** in the membership expiry job: flag any SPEND
+ledger row whose order is CANCELLED with no matching REFUND row.
+
+**Appointment-level cancellation also releases the unit** (`admin-appointments`,
+`doctor-actions`, patient-initiated), even though the order stays PAID and
+subscription credits are *not* released there today. Decision 16 says the unit
+comes back on cancellation, and an allowance line was charged €0 — the member
+consumed nothing, so keeping the unit spent would be taking something for
+nothing. Note the resulting asymmetry with plan credits: whether subscriptions
+should behave the same way is a product question, deliberately not decided here.
 
 The `${orderItemId}:REFUND` idempotency key makes it harmless when two of these
 paths race.
 
-**Other refund call sites** (paid orders that later cancel):
-
-- order cancellation / refund in the admin order flow;
-- appointment cancellation paths (`admin-appointments.route.ts`,
-  `doctor-actions.route.ts`, patient-initiated cancellation).
+**Reset the cart's benefit choice wherever the cart is cleared or reused.** The
+existing clear-cart sites blank `countryCode` / `currencyCode` but nothing
+resets `benefitSource` / `membershipEnrollmentId`, so the next cart inherits a
+stale choice — and a stale `NONE` would silently suppress a corporate member's
+discount on every future booking. Reset at all three sites and on
+`DELETE /api/cart`.
 
 A no-show does **not** refund (§16). Verified: `AppointmentStatus` has no
 `NO_SHOW` value (`REQUEST_RECEIVED / UNDER_REVIEW / CONTACTED / CANCELLED /
@@ -1396,8 +1424,18 @@ patient continues, so the cart, the preview and the checkout all agree.
 - `frontend/app/[country]/[lang]/book/_components/` — new `benefit-step.tsx`
   (replaces the insurance-only step component), plus the options list.
 - `frontend/app/[country]/[lang]/consult/[serviceSlug]/_components/consultation-booking-form.tsx`
-  — the details step reads the resolved benefit instead of only `selectedInsurance`;
-  the price summary line explains which benefit applied.
+  — **the largest single piece of Phase 5, not a read-only tweak.** This form is
+  the sole consumer of `/api/me/benefit-preview` and renders today's plan
+  credit/discount picker plus the corporate line, and it serves **both** `/book`'s
+  details step **and** `/consult/[serviceSlug]` direct booking. Retiring
+  `benefit-preview` (§6.3) therefore means rewriting its selector onto
+  `benefit-options`.
+
+  **It must also *write* the choice, not just read it.** A patient booking
+  straight from `/consult/[serviceSlug]` never passes `/book`'s benefit step, so
+  without a `PUT /api/me/cart/benefit` from this form their cart stays `UNSET`;
+  under §6.4 a member with eligible sources would then find checkout rejected
+  with no UI anywhere to resolve it. Both entry points must set the choice.
 - `frontend/lib/content/get-country-collections.ts` — extend the option type used by
   the step (currently `InsuranceOption`) into a general `BenefitOption`.
 - `backend/src/routes/cart.route.ts` — accept and validate the cart-level benefit;
@@ -1432,7 +1470,10 @@ translated for Ireland's configured locales with English fallback:
    link is the ordinary signup/login URL, because linking is by email.
    Result logged to `MembershipInviteLog`.
 3. **Allowance exhausted** — sent when a spend takes remaining to `0`. Explains what
-   applies from now on (the fallback discount, or full price).
+   applies from now on (the fallback discount, or full price). **Collected during
+   the checkout transaction and sent after it commits**, never inside it — and
+   deduped to one send per (enrollment, benefit) even when two lines in the same
+   cart exhaust the same pool.
 4. **Claim confirmation** (added 2026-08-07 with the two-step claim, §5.3) — sent
    to the **enrolled** address, never the requester's, carrying the single-use
    confirm link. Locale: the plan's country `defaultLocale` with English

@@ -11,8 +11,8 @@ import deCopy from "./email-copy/de.json";
 
 /**
  * Membership emails (§12): the manual invite and the enrollment-confirmed
- * notice (phase 2), plus the claim confirmation (phase 3). The
- * allowance-exhausted mail ships with the ledger in phase 5.
+ * notice (phase 2), the claim confirmation (phase 3), and the
+ * allowance-exhausted notice (phase 5, with the ledger).
  *
  * Both go through `wrapHtml` (the Clinical Editorial shell) and `sendEmail`, so
  * the outbox, retries and the test capture hook behave exactly as everywhere
@@ -71,6 +71,16 @@ async function countryDefaultLocale(countryId: string): Promise<LocaleCode> {
 
 function bundleFor(locale: LocaleCode | string | null | undefined): EmailBundle {
   return COPY[String(locale ?? "").toUpperCase()] ?? COPY.EN;
+}
+
+/** Money in the plan country's currency, for the fallback-price line. */
+async function formatCents(cents: number, countryId: string): Promise<string> {
+  const country = await prisma.country.findUnique({
+    where: { id: countryId },
+    select: { currency: { select: { code: true } } },
+  });
+  const code = country?.currency?.code ?? "EUR";
+  return new Intl.NumberFormat("en-IE", { style: "currency", currency: code }).format(cents / 100);
 }
 
 /**
@@ -143,6 +153,81 @@ export async function sendMembershipEnrollmentConfirmedEmail(opts: {
   return sendEmail({
     to: opts.to,
     subject: interpolate(copy.subject, { ...vars, planName: opts.planName }),
+    text: [interpolate(copy.greeting, vars), ...lines.map(toPlain), link, copy.signoff].join("\n\n"),
+    html: wrapHtml(
+      interpolate(copy.heading, vars),
+      `<p>${interpolate(copy.greeting, vars)}</p>
+       ${lines.map((line) => `<p>${line}</p>`).join("\n       ")}
+       ${button(link, copy.cta)}`,
+    ),
+  });
+}
+
+/**
+ * Allowance exhausted (§12.3) — sent when a spend takes a counter to zero.
+ *
+ * Fired by checkout AFTER its transaction commits, and deduped there per
+ * (enrollment, benefit): a cart whose two lines empty the same counter is one
+ * event, not two. Sending from inside the transaction would mail the member
+ * even when the checkout rolled back.
+ *
+ * The whole point is to say what happens NEXT time, because that is the part
+ * the member cannot see: the benefit row's fallback discount, or the standard
+ * price. Resolved from the row itself rather than described generically.
+ */
+export async function sendMembershipAllowanceExhaustedEmail(opts: {
+  enrollmentId: string;
+  benefitId: string;
+}) {
+  const enrollment = await prisma.membershipEnrollment.findUnique({
+    where: { id: opts.enrollmentId },
+    select: {
+      firstName: true,
+      email: true,
+      countryId: true,
+      plan: { select: { name: true } },
+      level: { select: { name: true } },
+      user: { select: { email: true, preferredLocale: true } },
+    },
+  });
+  if (!enrollment) return null;
+  const benefit = await prisma.membershipBenefit.findUnique({
+    where: { id: opts.benefitId },
+    select: {
+      allowanceCount: true,
+      fallbackType: true,
+      fallbackPercent: true,
+      fallbackFixedCents: true,
+    },
+  });
+  if (!benefit) return null;
+
+  const locale = enrollment.user?.preferredLocale ?? (await countryDefaultLocale(enrollment.countryId));
+  const copy = bundleFor(locale).exhausted;
+  const to = enrollment.user?.email ?? enrollment.email;
+
+  const vars = {
+    firstName: escapeHtml(enrollment.firstName),
+    planName: escapeHtml(enrollment.plan.name),
+    levelName: escapeHtml(enrollment.level.name),
+    allocated: String(benefit.allowanceCount ?? 0),
+    fallbackPercent: String(benefit.fallbackPercent ?? 0),
+    fallbackPrice: escapeHtml(
+      await formatCents(benefit.fallbackFixedCents ?? 0, enrollment.countryId),
+    ),
+  };
+  const onwards =
+    benefit.fallbackType === "PERCENT"
+      ? copy.onwardsPercent
+      : benefit.fallbackType === "FIXED"
+        ? copy.onwardsFixed
+        : copy.onwardsNone;
+  const link = absoluteSiteUrl("/account/membership");
+  const lines = [copy.lead, onwards, copy.action].map((line) => interpolate(line, vars));
+
+  return sendEmail({
+    to,
+    subject: interpolate(copy.subject, { ...vars, planName: enrollment.plan.name }),
     text: [interpolate(copy.greeting, vars), ...lines.map(toPlain), link, copy.signoff].join("\n\n"),
     html: wrapHtml(
       interpolate(copy.heading, vars),

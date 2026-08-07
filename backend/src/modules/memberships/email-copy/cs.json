@@ -30,5 +30,17 @@
     "note": "Pokud jste to nebyli vy, tento e-mail ignorujte. Nic se nezmění a vaše členství zůstává tam, kde je.",
     "cta": "Potvrdit převzetí",
     "signoff": "— Tým Global Health"
+  },
+  "exhausted": {
+    "subject": "Vyčerpali jste poslední zahrnutou konzultaci",
+    "heading": "Zahrnuté konzultace jsou vyčerpané",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "V tomto období jste využili všech {allocated} konzultací zahrnutých ve vašem členství <strong>{planName}</strong> ({levelName}).",
+    "onwardsPercent": "Od teď máte na tyto konzultace <strong>slevu {fallbackPercent} %</strong>.",
+    "onwardsFixed": "Od teď vás tyto konzultace stojí <strong>{fallbackPrice}</strong>.",
+    "onwardsNone": "Od teď se tyto konzultace účtují za běžnou cenu.",
+    "action": "Nic dalšího se nemění — ostatní výhody členství platí dál a cenu vždy uvidíte před platbou.",
+    "cta": "Zobrazit členství",
+    "signoff": "— Tým Global Health"
   }
 }

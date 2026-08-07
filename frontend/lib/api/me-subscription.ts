@@ -81,7 +81,7 @@ export interface InvoicesView {
 
 async function meRequest<T>(
   path: string,
-  options: { method?: "GET" | "POST" | "PATCH"; body?: unknown } = {},
+  options: { method?: "GET" | "POST" | "PATCH" | "PUT"; body?: unknown } = {},
 ): Promise<MeResult<T>> {
   try {
     const hasBody = options.body !== undefined;
@@ -169,6 +169,12 @@ export interface CartCoverageLine {
   savedCents: number;
   /** Present when the member's corporate plan discounted this line. */
   corporateDiscount?: CorporateDiscountInfo | null;
+  /**
+   * Present when a private membership priced this line (§6.2). Without it a €0
+   * allowance line looks identical to any other uncovered line, and the cart
+   * would show the list price next to a charge of nothing.
+   */
+  membership?: { label: string; savedCents: number; allowanceUsed: boolean } | null;
   /** The benefit currently selected on this line. */
   selection: BenefitSelection;
   /** Why this line resolved as it did (drives warning chips). */
@@ -198,32 +204,70 @@ export function getCartPreview(): Promise<MeResult<CartCoverageView>> {
   return meRequest(`cart-preview?locale=${readClientLocale().toUpperCase()}`);
 }
 
-export interface ServiceBenefitOption {
-  selection: BenefitSelection;
+/**
+ * Cross-source benefit options (§6.3). Replaced `/api/me/benefit-preview`,
+ * which priced only the plan + corporate subset: two price sources for the
+ * same booking would have drifted the first time either engine changed.
+ */
+export type BenefitOptionSource = "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN" | "INSURANCE";
+
+export type BenefitOptionNote =
+  | { key: "ALLOWANCE_UNIT"; remaining: number }
+  | { key: "PLAN_CREDIT"; remaining: number }
+  | { key: "ALLOWANCE_EXHAUSTED" }
+  | { key: "INSURANCE_DEFERRED" };
+
+export interface BenefitOption {
+  source: BenefitOptionSource;
+  /** Enrollment id, company id, insurer id, or `credit` / `discount`. */
+  refId: string;
+  label: string;
   unitPriceCents: number;
-  creditsToReserve: number;
+  discountCents: number;
+  note: BenefitOptionNote | null;
+  indicative: boolean;
+  recommended: boolean;
 }
 
-export interface ServiceBenefitPreview {
-  subscriptionId: string | null;
-  planName: string | null;
-  benefitsUnlocked: boolean;
-  consultationCreditsRemaining: number;
-  eligibleSelections: BenefitSelection[];
-  options: ServiceBenefitOption[];
-  basePriceCents: number;
-  /** Automatic corporate-membership discount for this service, if any. */
-  corporateDiscount?: CorporateDiscountInfo | null;
+export interface BenefitOptionsView {
+  fullPriceCents: number;
+  currencyCode: string;
+  slotPriced: boolean;
+  options: BenefitOption[];
 }
 
-/** Per-service benefit preview for the booking step (B6). Guests get 401 →
- *  the form simply omits the selector. */
-export function getBenefitPreview(
+/** Every benefit source the patient can use for this service, priced.
+ *  Guests get 401 → the form shows the standard price only. */
+export function getBenefitOptions(
   serviceId: string,
-  basePriceCents: number,
-): Promise<MeResult<ServiceBenefitPreview>> {
-  const qs = `?serviceId=${encodeURIComponent(serviceId)}&basePriceCents=${basePriceCents}&locale=${readClientLocale().toUpperCase()}`;
-  return meRequest(`benefit-preview${qs}`);
+  opts: { doctorId?: string | null; timeSlotId?: string | null } = {},
+): Promise<MeResult<BenefitOptionsView>> {
+  const params = new URLSearchParams({
+    serviceId,
+    locale: readClientLocale().toUpperCase(),
+  });
+  if (opts.doctorId) params.set("doctorId", opts.doctorId);
+  if (opts.timeSlotId) params.set("timeSlotId", opts.timeSlotId);
+  return meRequest(`benefit-options?${params.toString()}`);
+}
+
+/**
+ * Persist the cart-level benefit choice (§25) — one source per cart, so
+ * checkout runs exactly one engine (§6.4).
+ *
+ * Written at add-to-cart rather than at the benefit step, so the wizard and
+ * the `/consult` page (which has no benefit step) go through the SAME call.
+ * A cart that reaches checkout without one is rejected when the patient had
+ * something to choose, which is exactly the state this prevents.
+ */
+export function setCartBenefit(input: {
+  source: "NONE" | "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN" | "INSURANCE";
+  refId?: string | null;
+}): Promise<MeResult<{ source: string; membershipEnrollmentId: string | null }>> {
+  return meRequest("cart/benefit", {
+    method: "PUT",
+    body: { source: input.source, ...(input.refId ? { refId: input.refId } : {}) },
+  });
 }
 
 /** Patient in-app notifications (§30). Payload carries pre-localized copy. */

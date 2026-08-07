@@ -30,5 +30,17 @@
     "note": "Waren Sie das nicht, ignorieren Sie diese E-Mail. Es ändert sich nichts und Ihre Mitgliedschaft bleibt, wo sie ist.",
     "cta": "Übernahme bestätigen",
     "signoff": "— Ihr Global-Health-Team"
+  },
+  "exhausted": {
+    "subject": "Sie haben Ihre letzte enthaltene Beratung genutzt",
+    "heading": "Ihre enthaltenen Beratungen sind aufgebraucht",
+    "greeting": "Hallo {firstName},",
+    "lead": "Sie haben in diesem Zeitraum alle {allocated} in Ihrer Mitgliedschaft <strong>{planName}</strong> ({levelName}) enthaltenen Beratungen genutzt.",
+    "onwardsPercent": "Ab jetzt erhalten Sie stattdessen <strong>{fallbackPercent}% Rabatt</strong> auf diese Beratungen.",
+    "onwardsFixed": "Ab jetzt kosten Sie diese Beratungen <strong>{fallbackPrice}</strong>.",
+    "onwardsNone": "Ab jetzt werden diese Beratungen zum regulären Preis berechnet.",
+    "action": "Sonst ändert sich nichts — Ihre übrigen Mitgliedsvorteile bleiben bestehen, und der Preis wird immer vor der Zahlung angezeigt.",
+    "cta": "Mitgliedschaft ansehen",
+    "signoff": "— Ihr Global-Health-Team"
   }
 }

@@ -30,5 +30,17 @@
     "note": "Si no ha sido usted, ignore este correo. No cambia nada y su membresía sigue donde está.",
     "cta": "Confirmar la reclamación",
     "signoff": "— El equipo de Global Health"
+  },
+  "exhausted": {
+    "subject": "Ha usado su última consulta incluida",
+    "heading": "Sus consultas incluidas se han agotado",
+    "greeting": "Hola {firstName},",
+    "lead": "Ya ha usado las {allocated} consultas incluidas en su membresía <strong>{planName}</strong> ({levelName}) en este periodo.",
+    "onwardsPercent": "A partir de ahora tiene un <strong>{fallbackPercent}% de descuento</strong> en estas consultas.",
+    "onwardsFixed": "A partir de ahora estas consultas le cuestan <strong>{fallbackPrice}</strong>.",
+    "onwardsNone": "A partir de ahora estas consultas se cobran al precio estándar.",
+    "action": "No cambia nada más: el resto de las ventajas de su membresía siguen igual y el precio se muestra siempre antes de pagar.",
+    "cta": "Ver mi membresía",
+    "signoff": "— El equipo de Global Health"
   }
 }

@@ -33,6 +33,9 @@ import { ConsultationBookingForm } from "../consult/[serviceSlug]/_components/co
 import { SlotPickerStep } from "../consult/[serviceSlug]/_components/slot-picker-step";
 import { LanguageFilteredDoctors } from "./_components/language-filtered-doctors";
 import { PortalReturnBand } from "./_components/portal-return-band";
+import { BenefitStep } from "./_components/benefit-step";
+import { BookingSectionHeader } from "./_components/booking-section-header";
+import { getServerBenefitOptions } from "@/lib/api/me-benefit-options-server";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
@@ -50,6 +53,7 @@ type SearchParams = {
   /** Insurance choice made right after the service: a company id, or "none"
    *  for "pay the standard price". Absent = the patient still owes the choice. */
   insurance?: string | string[];
+  benefit?: string | string[];
   /** Portal-return chrome (04-001/04-002): set on every "Book consultation"
    *  CTA inside `/account` via `resolveBookConsultationHref`. */
   from?: string | string[];
@@ -186,45 +190,82 @@ export default async function CountryLangBookPage({
     ? `${formatAppDate(atParam)} · ${formatAppTime(atParam)}`
     : null;
 
-  // ── Insurance step ──────────────────────────────────────────────────────
-  // Offered only for services that have at least one BOOKABLE insurer — the
-  // public payload already drops insurers with no in-network doctor for the
-  // service, so an empty list means "no insurance path here" and the wizard
-  // keeps its usual 4 steps. Chosen BEFORE time/doctor because the insurer
-  // decides which doctors exist: only doctors with a payout set for that
-  // insurer take its patients.
-  const insuranceParam = firstParam(sp.insurance);
+  // ── Benefit step (§11.2) ────────────────────────────────────────────────
+  // One step for all four benefit sources, standing where the insurance-only
+  // step used to. Chosen BEFORE time/doctor because a member price and an
+  // insurance price both change what each slot costs — and because the insurer
+  // decides which doctors exist at all: only doctors with a payout set for
+  // that insurer take its patients.
+  //
+  // The legacy `?insurance=` param is still accepted and mapped, so live links
+  // and any indexed URLs keep working (§11.2).
   const insuranceOptions = selectedService?.insuranceOptions ?? [];
-  const hasInsuranceStep = Boolean(selectedService) && insuranceOptions.length > 0;
+  const legacyInsuranceParam = firstParam(sp.insurance);
+  const benefitParam =
+    firstParam(sp.benefit) ??
+    (legacyInsuranceParam
+      ? legacyInsuranceParam === "none"
+        ? "none"
+        : `insurance:${legacyInsuranceParam}`
+      : null);
+  const [benefitSourceParam, benefitRefParam] = benefitParam
+    ? [benefitParam.split(":")[0] ?? null, benefitParam.split(":").slice(1).join(":") || null]
+    : [null, null];
+
+  // Options are only fetched once a service is picked (there is nothing to
+  // price before that) and only for logged-in patients — the endpoint 401s for
+  // guests, which is exactly the signal the step needs to show a login prompt.
+  const benefitOptions = selectedService
+    ? await getServerBenefitOptions({ serviceId: selectedService.id, locale: lang })
+    : null;
+  const eligibleBenefitCount = benefitOptions?.options.length ?? 0;
+
+  // A guest booking a service with no insurance options sees exactly the flow
+  // they see today — no extra click for a step that would be empty.
+  const hasBenefitStep =
+    Boolean(selectedService) && (insuranceOptions.length > 0 || eligibleBenefitCount > 0);
+
   const insuranceCompanyId =
-    insuranceParam && insuranceParam !== "none" ? insuranceParam : null;
+    benefitSourceParam === "insurance" && benefitRefParam ? benefitRefParam : null;
   const selectedInsurance = insuranceCompanyId
     ? insuranceOptions.find((o) => o.companyId === insuranceCompanyId) ?? null
     : null;
-  // A stale/forged id (insurer delisted, or it lost its last in-network doctor)
-  // is treated as "not chosen" so the patient re-picks rather than booking on a
-  // price the server would reject.
-  const insuranceChosen = insuranceParam === "none" || Boolean(selectedInsurance);
-  const needsInsuranceChoice = hasInsuranceStep && !insuranceChosen;
-  // The param to carry on every downstream link (null once the patient opted out).
-  const insuranceHrefParam = hasInsuranceStep && insuranceChosen ? insuranceParam : null;
-  const insuranceValue = selectedInsurance
+  // A stale/forged reference (insurer delisted, membership expired) counts as
+  // "not chosen" so the patient re-picks, rather than booking on a price the
+  // server would reject at checkout.
+  const benefitChosen =
+    benefitParam === "none" ||
+    Boolean(selectedInsurance) ||
+    (benefitSourceParam != null &&
+      benefitSourceParam !== "insurance" &&
+      benefitOptions?.options.some(
+        (o) => o.source.toLowerCase() === benefitSourceParam && (!benefitRefParam || o.refId === benefitRefParam),
+      ) === true);
+  const needsBenefitChoice = hasBenefitStep && !benefitChosen;
+  // The param to carry on every downstream link.
+  const benefitHrefParam = hasBenefitStep && benefitChosen ? benefitParam : null;
+  const chosenBenefitOption = benefitOptions?.options.find(
+    (o) => o.source.toLowerCase() === benefitSourceParam && o.refId === benefitRefParam,
+  );
+  const benefitValue = selectedInsurance
     ? selectedInsurance.name
-    : insuranceParam === "none"
-      ? bp.insuranceNone
-      : null;
+    : chosenBenefitOption
+      ? chosenBenefitOption.label
+      : benefitParam === "none"
+        ? bp.benefitNone
+        : null;
 
   const stepValues: (string | null)[] = doctorFirst
     ? [
         requestedDoctor?.fullName ?? null,
         selectedService?.name ?? null,
-        ...(hasInsuranceStep ? [insuranceValue] : []),
+        ...(hasBenefitStep ? [benefitValue] : []),
         timeValue,
         null,
       ]
     : [
         selectedService?.name ?? null,
-        ...(hasInsuranceStep ? [insuranceValue] : []),
+        ...(hasBenefitStep ? [benefitValue] : []),
         timeValue,
         requestedDoctor?.fullName ?? null,
         null,
@@ -233,13 +274,13 @@ export default async function CountryLangBookPage({
     ? [
         bp.stepDoctor,
         bp.stepService,
-        ...(hasInsuranceStep ? [bp.stepInsurance] : []),
+        ...(hasBenefitStep ? [bp.stepBenefit] : []),
         bp.stepTime,
         bp.stepDetails,
       ]
     : [
         bp.stepService,
-        ...(hasInsuranceStep ? [bp.stepInsurance] : []),
+        ...(hasBenefitStep ? [bp.stepBenefit] : []),
         bp.stepTime,
         bp.stepDoctor,
         bp.stepDetails,
@@ -248,14 +289,14 @@ export default async function CountryLangBookPage({
   // service" / "Edit doctor" / "Change time" ghost buttons used, now
   // surfaced as clickable rows in the sidebar instead (only completed
   // steps get one; the current/future steps aren't reachable yet).
-  const insuranceStepHref = selectedService
+  const benefitStepHref = selectedService
     ? buildBookHref({ country: slug, lang, service: selectedService.slug })
     : null;
   const stepHrefs: (string | null)[] = doctorFirst
     ? [
         buildBookHref({ country: slug, lang }),
         requestedDoctor ? buildBookHref({ country: slug, lang, doctor: requestedDoctor.slug }) : null,
-        ...(hasInsuranceStep
+        ...(hasBenefitStep
           ? [
               selectedService
                 ? buildBookHref({
@@ -273,20 +314,20 @@ export default async function CountryLangBookPage({
               lang,
               doctor: requestedDoctor?.slug,
               service: selectedService.slug,
-              insurance: insuranceHrefParam,
+              benefit: benefitHrefParam,
             })
           : null,
         null,
       ]
     : [
         buildBookHref({ country: slug, lang }),
-        ...(hasInsuranceStep ? [insuranceStepHref] : []),
+        ...(hasBenefitStep ? [benefitStepHref] : []),
         selectedService
           ? buildBookHref({
               country: slug,
               lang,
               service: selectedService.slug,
-              insurance: insuranceHrefParam,
+              benefit: benefitHrefParam,
             })
           : null,
         selectedService
@@ -294,25 +335,25 @@ export default async function CountryLangBookPage({
               country: slug,
               lang,
               service: selectedService.slug,
-              insurance: insuranceHrefParam,
+              benefit: benefitHrefParam,
               at: atParam,
             })
           : null,
         null,
       ];
-  // Step numbers shift by one once the insurance step exists.
-  const insuranceOffset = hasInsuranceStep ? 1 : 0;
+  // Step numbers shift by one once the benefit step exists.
+  const benefitOffset = hasBenefitStep ? 1 : 0;
   let currentStep: number;
   if (doctorFirst) {
     // Doctor(1) → Service(2) → [Insurance] → Time → Details.
     if (!selectedService) currentStep = 2;
-    else if (needsInsuranceChoice) currentStep = 3;
-    else currentStep = (slotParam ? 4 : 3) + insuranceOffset;
+    else if (needsBenefitChoice) currentStep = 3;
+    else currentStep = (slotParam ? 4 : 3) + benefitOffset;
   } else {
     // Service(1) → [Insurance] → Time → Doctor → Details.
     if (!selectedService) currentStep = 1;
-    else if (needsInsuranceChoice) currentStep = 2;
-    else currentStep = (slotParam ? 4 : atParam ? 3 : 2) + insuranceOffset;
+    else if (needsBenefitChoice) currentStep = 2;
+    else currentStep = (slotParam ? 4 : atParam ? 3 : 2) + benefitOffset;
   }
   const itemKind =
     selectedService?.kind === "SPECIALIST"
@@ -404,15 +445,20 @@ export default async function CountryLangBookPage({
                   bp={bp}
                   minSuffix={c.extra.minSuffix}
                 />
-              ) : needsInsuranceChoice ? (
-                <InsurancePicker
+              ) : needsBenefitChoice ? (
+                <BenefitStep
                   country={slug}
                   lang={lang}
-                  service={selectedService}
+                  serviceSlug={selectedService.slug}
                   doctorSlug={doctorFirst ? requestedDoctor?.slug ?? null : null}
-                  options={insuranceOptions}
-                  bp={bp}
+                  basePriceCents={selectedService.basePriceCents}
                   currencyCode={selectedService.currencyCode}
+                  benefits={benefitOptions}
+                  insuranceFallback={insuranceOptions}
+                  loginHref={`/login?next=${encodeURIComponent(
+                    buildBookHref({ country: slug, lang, service: selectedService.slug }),
+                  )}`}
+                  bp={bp}
                 />
               ) : (
                 <SelectedServiceFlow
@@ -430,7 +476,7 @@ export default async function CountryLangBookPage({
                   bookingRequirements={bookingRequirements}
                   insuranceCompanyId={insuranceCompanyId}
                   selectedInsurance={selectedInsurance}
-                  insuranceHrefParam={insuranceHrefParam}
+                  benefitHrefParam={benefitHrefParam}
                 />
               )}
             </div>
@@ -620,7 +666,7 @@ async function SelectedServiceFlow({
   bookingRequirements,
   insuranceCompanyId,
   selectedInsurance,
-  insuranceHrefParam,
+  benefitHrefParam,
 }: {
   code: string;
   country: string;
@@ -637,8 +683,8 @@ async function SelectedServiceFlow({
   /** Chosen insurer (null = paying the standard price). */
   insuranceCompanyId: string | null;
   selectedInsurance: import("@/lib/content/get-country-collections").InsuranceOption | null;
-  /** The `insurance` value to carry on downstream links (id or "none"). */
-  insuranceHrefParam: string | null;
+  /** The `benefit` value to carry on downstream links (`<source>:<refId>` or "none"). */
+  benefitHrefParam: string | null;
 }) {
   const assignedDoctorIds = new Set(service.assignedDoctorIds);
   const serviceDoctors =
@@ -686,7 +732,7 @@ async function SelectedServiceFlow({
                   country,
                   lang,
                   service: service.slug,
-                  insurance: insuranceHrefParam,
+                  benefit: benefitHrefParam,
                 })}
                 className="gh2-btn-lime mt-4"
               >
@@ -703,7 +749,7 @@ async function SelectedServiceFlow({
               at={at}
               bp={bp}
               cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode).common.doctors)}
-              insurance={insuranceHrefParam}
+              benefit={benefitHrefParam}
             />
           )}
         </div>
@@ -743,7 +789,7 @@ async function SelectedServiceFlow({
                 }
                 className="gh2-btn-lime mt-5"
               >
-                {selectedInsurance ? bp.stepInsurance : bp.changeService}
+                {selectedInsurance ? bp.stepBenefit : bp.changeService}
               </Link>
             </div>
           ) : (
@@ -755,7 +801,7 @@ async function SelectedServiceFlow({
                 slots={agg.slots}
                 clinicTimezone={agg.clinicTimezone}
                 i18n={bf}
-                insurance={insuranceHrefParam}
+                benefit={benefitHrefParam}
               />
             </div>
           )}
@@ -824,7 +870,7 @@ async function SelectedServiceFlow({
               }
               className="gh2-btn-lime mt-5"
             >
-              {selectedInsurance ? bp.stepInsurance : bp.pickAnotherClinician}
+              {selectedInsurance ? bp.stepBenefit : bp.pickAnotherClinician}
             </Link>
           </div>
         ) : !slotConfirmed ? (
@@ -838,7 +884,7 @@ async function SelectedServiceFlow({
               slots={slots}
               clinicTimezone={clinicTimezone}
               i18n={bf}
-              insurance={insuranceHrefParam}
+              benefit={benefitHrefParam}
             />
           </div>
         ) : (
@@ -861,7 +907,7 @@ async function SelectedServiceFlow({
                       country,
                       lang,
                       service: service.slug,
-                      insurance: insuranceHrefParam,
+                      benefit: benefitHrefParam,
                     })
                   : // Doctor-first: back to this doctor's time picker.
                     buildBookHref({
@@ -869,13 +915,14 @@ async function SelectedServiceFlow({
                       lang,
                       service: service.slug,
                       doctor: selectedDoctor.slug,
-                      insurance: insuranceHrefParam,
+                      benefit: benefitHrefParam,
                     })
               }
               countryCode={code}
               i18n={bf}
               bookingRequirements={bookingRequirements}
               selectedInsurance={selectedInsurance}
+              benefitParam={benefitHrefParam}
             />
           </div>
         )}
@@ -884,87 +931,6 @@ async function SelectedServiceFlow({
   );
 }
 
-/**
- * Insurance step — shown right after the service, BEFORE time + doctor.
- *
- * The insurer decides which doctors exist: only doctors the admin gave a payout
- * for that insurer take its patients. Choosing here lets the time + doctor steps
- * be filtered to that network. Insurers with no in-network doctor for the
- * service never reach this list (the public payload drops them), so every option
- * shown is bookable.
- */
-function InsurancePicker({
-  country,
-  lang,
-  service,
-  doctorSlug,
-  options,
-  bp,
-  currencyCode,
-}: {
-  country: string;
-  lang: string;
-  service: CountryServiceCard;
-  doctorSlug: string | null;
-  options: import("@/lib/content/get-country-collections").InsuranceOption[];
-  bp: BookT;
-  currencyCode: string | null;
-}) {
-  const hrefFor = (insurance: string) =>
-    buildBookHref({ country, lang, service: service.slug, doctor: doctorSlug, insurance });
-
-  return (
-    <div className="grid gap-6">
-      <BookingSectionHeader
-        eyebrow={bp.stepInsurance}
-        title={bp.insuranceTitle}
-        description={bp.insuranceDesc}
-      />
-      <div className="gh2-glass-forest gh2-dark-content min-w-0 p-5 sm:p-6">
-        <ul className="grid gap-3">
-          {options.map((option) => (
-            <li key={option.companyId}>
-              <Link
-                href={hrefFor(option.companyId)}
-                className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)]"
-              >
-                <ShieldCheck className="size-5 shrink-0 text-[var(--color-brand-accent)]" aria-hidden />
-                <span className="min-w-0 flex-1">
-                  <span className="block font-semibold text-[var(--color-text-primary)]">
-                    {option.name}
-                  </span>
-                  <span className="block text-sm text-[var(--color-text-muted)]">
-                    {formatPriceRounded(option.insurancePriceCents, currencyCode)}
-                  </span>
-                </span>
-                <ArrowRight className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
-              </Link>
-            </li>
-          ))}
-          <li>
-            <Link
-              href={hrefFor("none")}
-              className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)]"
-            >
-              <UserRound className="size-5 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
-              <span className="min-w-0 flex-1">
-                <span className="block font-semibold text-[var(--color-text-primary)]">
-                  {bp.insuranceStandard}
-                </span>
-                <span className="block text-sm text-[var(--color-text-muted)]">
-                  {service.basePriceCents != null
-                    ? formatPriceRounded(service.basePriceCents, currencyCode)
-                    : ""}
-                </span>
-              </span>
-              <ArrowRight className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
-            </Link>
-          </li>
-        </ul>
-      </div>
-    </div>
-  );
-}
 
 function ServicePicker({
   country,
@@ -1212,29 +1178,6 @@ function StepIndicator({
   );
 }
 
-function BookingSectionHeader({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <header>
-      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
-        {eyebrow}
-      </p>
-      <h2 className="mt-2 max-w-[18ch] text-[clamp(2rem,4vw,3.2rem)] font-extrabold leading-[1.02] tracking-[-0.035em] text-[var(--color-text-primary)]">
-        {title}
-      </h2>
-      <p className="mt-3 max-w-[58ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-muted)]">
-        {description}
-      </p>
-    </header>
-  );
-}
 
 function InlineNotice({ notice }: { notice: NonNullable<Notice> }) {
   const isWarning = notice.tone === "warning";
