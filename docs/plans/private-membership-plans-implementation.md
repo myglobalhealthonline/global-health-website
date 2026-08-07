@@ -833,10 +833,16 @@ Called from three places:
    it is a single `findMany` on an indexed `email` column, once per successful
    login, which is not a hot path.
 
-Every place that sets `emailVerifiedAt` must call the linker, not just the
+Every place that sets **`User.emailVerifiedAt`** must call the linker, not just the
 signup/verify pair — currently `auth.service.ts` (`consumeEmailVerificationToken`,
-invite-token reset), `corporate-invite.service.ts`, and the admin patient-profile
-route. A member verified through any other path would otherwise never link.
+invite-token reset) and `corporate-invite.service.ts`. A member verified through any
+other path would otherwise never link.
+
+**Not the admin patient-profile route** (corrected 2026-08-07: an earlier draft
+listed it). That route writes `PatientProfile.emailVerifiedAt`, a different column
+from the `User.emailVerifiedAt` the linker gates on — and deliberately so. An admin
+ticking a box is not proof that the patient controls the mailbox, which is the whole
+basis of the gate.
 
 Logic:
 
