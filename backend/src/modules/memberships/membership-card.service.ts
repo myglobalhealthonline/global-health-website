@@ -198,6 +198,13 @@ async function toView(
         where: {
           benefitId: { in: allowanceRows.map((b) => b.id) },
           holderEnrollmentId: holderEnrollmentId(row),
+          // The counter is per TERM (§3.5): a renewal creates a new balance row
+          // rather than resetting the old one, so an unfiltered read returns
+          // several rows per benefit and the map below silently keeps whichever
+          // came last. `row.startDate` is the holder's own start date — a
+          // dependent inherits it from its primary (§3.4), so this is the right
+          // key under SHARED too.
+          termStart: row.startDate,
         },
         select: { benefitId: true, allocated: true, used: true },
       })
