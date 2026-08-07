@@ -4,6 +4,7 @@ import { jwtVerify, importSPKI, type JWTPayload } from "jose";
 import { getRequestContext } from "@/lib/routing/get-request-context";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { PROD_SITE_URL } from "@/lib/seo/site-url";
+import { isGonePath } from "@/lib/seo/gone-content";
 import { countries } from "@/data/countries";
 
 /**
@@ -32,6 +33,13 @@ const PUBLIC_FILE = /\.(.*)$/;
 
 // SEO audit Phase 4 #2 — bare `/{country}/` with a trailing slash.
 const COUNTRY_TRAILING_SLASH_RE = /^\/([a-z0-9-]+)\/$/;
+
+// Permanently removed entities (410 Gone). The list and the matcher that keeps
+// `next.config.ts` from 308ing these onto a dead URL both live in one place —
+// see lib/seo/gone-content.ts for why they have to agree.
+const GONE_BODY = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="robots" content="noindex"><title>Page removed</title></head>
+<body><h1>Page removed</h1><p>This profile is no longer available.</p></body></html>`;
 
 // Railway keeps its auto-generated `*.up.railway.app` domain publicly reachable
 // even after a custom domain is attached, and site-url.ts self-canonicalizes to
@@ -342,6 +350,30 @@ export async function proxy(request: NextRequest) {
     PUBLIC_FILE.test(pathname)
   ) {
     return NextResponse.next();
+  }
+
+  // Permanently removed content — answer 410 Gone here and stop.
+  //
+  // Must run BEFORE the trailing-slash block and before `next.config.ts`
+  // `redirects()`, because the broad `/{country}-doctors/:slug` rule would
+  // otherwise 308 a retired profile onto a URL that then 404s:
+  //     /ireland-doctors/<slug>  ->  308  ->  /ireland/en/doctors/<slug>  ->  404
+  // Two hops to say "gone", and the 308 asserts a live successor that does not
+  // exist. A direct 410 says it once, and Google drops a 410 faster than a 404.
+  //
+  // Middleware runs earlier in the pipeline than `redirects()` — the same
+  // ordering the trailing-slash block below relies on, verified empirically
+  // (see next.config.ts `skipTrailingSlashRedirect`).
+  if (isGonePath(pathname)) {
+    return new NextResponse(GONE_BODY, {
+      status: 410,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        // Never let a CDN hold a 410 open longer than a correction would take.
+        "cache-control": "public, max-age=300",
+        "x-robots-tag": "noindex",
+      },
+    });
   }
 
   // Trailing-slash handling, reimplemented here now that `skipTrailingSlashRedirect`

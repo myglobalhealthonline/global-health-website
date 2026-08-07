@@ -1,6 +1,7 @@
 ﻿import path from "node:path";
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { slugMatcherExcludingGone } from "./lib/seo/gone-content";
 
 /**
  * Bundle analyzer — opt-in via `ANALYZE=true pnpm --filter frontend build`.
@@ -827,8 +828,43 @@ const nextConfig: NextConfig = {
       { source: "/romania-team", destination: "/romania/ro/doctors", permanent: true },
       { source: "/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
       { source: "/specialty-rm", destination: "/romania/ro/see-a-specialist", permanent: true },
+      // ── Legacy doctor slugs that did NOT carry over 1:1 ────────────────
+      //
+      // These MUST stay above the `/:country-doctors/:slug` rules below (and
+      // above their `/:locale/...` twins further down). Next matches in array
+      // order, so a broad rule placed first would rewrite the slug unchanged
+      // and land on a 404 — which is exactly what was happening.
+      //
+      // Verified 2026-08-08 against a 90-day GSC page export + the live public
+      // roster API. Each target was re-checked live: HTTP 200, `index, follow`,
+      // self-canonical, same market. Only same-person slug corrections are
+      // here; a departed clinician is NOT redirected to a listing page (see
+      // docs/audits/seo/legacy-redirect-recovery-2026-08-08.md for the ones
+      // deliberately left 404ing pending a human decision).
+      //
+      // dr-miraim-faiz -> dr-mariam-faiz: transposed vowels in the Wix slug
+      // for the same doctor, "Dr Mariam Faiz". 9 clicks / 227 impressions.
+      { source: "/ireland-doctors/dr-miraim-faiz", destination: "/ireland/en/doctors/dr-mariam-faiz", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/ireland-doctors/dr-miraim-faiz", destination: "/ireland/en/doctors/dr-mariam-faiz", permanent: true },
+      // silvia-alexandra-raminhos-fernandes -> silvia-alexandre-fernandes:
+      // same clinician, "Silvia Alexandre Fernandes"; the shortened slug is
+      // what the platform publishes. 0 clicks / 40 impressions.
+      { source: "/ireland-doctors/silvia-alexandra-raminhos-fernandes", destination: "/ireland/en/doctors/silvia-alexandre-fernandes", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/ireland-doctors/silvia-alexandra-raminhos-fernandes", destination: "/ireland/en/doctors/silvia-alexandre-fernandes", permanent: true },
+
       // Legacy Wix doctor profiles — slugs carried over 1:1.
-      { source: "/ireland-doctors/:slug", destination: "/ireland/en/doctors/:slug", permanent: true },
+      //
+      // `slugMatcherExcludingGone` makes this rule REFUSE to match a removed
+      // clinician, so the request falls through to `proxy.ts`'s 410 instead.
+      // Without that, this rule wins: Next evaluates `redirects()` BEFORE
+      // middleware, so a departed doctor 308'd onto a URL that then answered
+      // 410 — two hops, the first of which claims a live successor that does
+      // not exist. Verified empirically 2026-08-08.
+      {
+        source: `/ireland-doctors/${slugMatcherExcludingGone("ireland-doctors")}`,
+        destination: "/ireland/en/doctors/:slug",
+        permanent: true,
+      },
       { source: "/czechia-doctors/:slug", destination: "/czechia/cs/doctors/:slug", permanent: true },
       { source: "/pt/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
       { source: "/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
@@ -886,7 +922,12 @@ const nextConfig: NextConfig = {
 
       // -- locale-prefixed doctor listings: slug carried over 1:1 --------
       { source: "/:locale(cs|es|pt|ro)/czechia-doctors/:slug", destination: "/czechia/cs/doctors/:slug", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/ireland-doctors/:slug", destination: "/ireland/en/doctors/:slug", permanent: true },
+      // Same gone-slug exclusion as the bare rule above.
+      {
+        source: `/:locale(cs|es|pt|ro)/ireland-doctors/${slugMatcherExcludingGone("ireland-doctors")}`,
+        destination: "/ireland/en/doctors/:slug",
+        permanent: true,
+      },
       { source: "/:locale(cs|es|pt|ro)/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/romania-doctors/:slug", destination: "/romania/ro/doctors/:slug", permanent: true },
