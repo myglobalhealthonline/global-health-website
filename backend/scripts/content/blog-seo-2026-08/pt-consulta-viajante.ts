@@ -56,6 +56,15 @@ const CVI_ALGARVE = "https://www.arsalgarve.min-saude.pt/saude-publica/consulta-
 const SNS_ESTRANGEIRO = "https://www.sns.gov.pt/cuidados-de-saude-no-estrangeiro/";
 const WHO_TRAVEL = "https://www.who.int/travel-advice";
 const DGS = "https://www.dgs.pt/";
+/** IHMT (NOVA) — the reference centre for tropical medicine in Portugal; its
+ *  traveller clinic is where complex or high-risk itineraries end up. */
+const IHMT_VIAJANTE = "https://www.ihmt.unl.pt/consulta-do-viajante/";
+/** NaTHNaC's TravelHealthPro — UK guidance, but the best country-by-country
+ *  reference in English and updated constantly. */
+const TRAVELHEALTHPRO = "https://travelhealthpro.org.uk/countries";
+/** Ministry of Foreign Affairs traveller registry — lets the consulate reach
+ *  you if something happens where you are going. */
+const REGISTO_VIAJANTE = "https://portaldascomunidades.mne.gov.pt/pt/vai-viajar/registo-do-viajante";
 const ORDEM_MEDICOS = "https://ordemdosmedicos.pt/";
 
 const href = (lang: string, path: string) => `https://www.myglobalhealth.online/portugal/${lang}${path}`;
@@ -92,7 +101,7 @@ const pt: LocalePost = {
       "O que é avaliado numa consulta do viajante e por que razão o destino muda tudo.",
       "Onde se faz — CVI, unidades de saúde pública, privado — e que documentos levar consigo.",
       "A fronteira entre o que uma consulta por vídeo resolve e o que obriga a deslocação.",
-      "A antecedência recomendada, as vacinas exigidas por cada país e os tempos de espera mudam com o destino e com a época do ano. Não são citados aqui: cada um remete para o SNS 24, para o CVI ou para a OMS.",
+      "A antecedência recomendada, as vacinas exigidas por cada país e os tempos de espera mudam com o destino e com a época do ano. Não são citados aqui: cada um remete para o SNS 24, para o CVI, para o IHMT ou para a OMS.",
     ],
     author: {
       initials: "VP",
@@ -119,7 +128,7 @@ const pt: LocalePost = {
             "<strong>O seu estado de saúde</strong> — gravidez, idade, doença crónica, imunossupressão, medicação habitual.",
             "<strong>Histórico de vacinação</strong> — o que já tem, o que caducou, o que falta.",
           ]),
-          cite(`Descrição oficial: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — consulta do viajante</a>.`),
+          cite(`Descrição oficial: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24</a>. Para itinerários complexos, o <a href="${IHMT_VIAJANTE}" rel="nofollow noopener" target="_blank">IHMT</a> é o centro de referência; por país, o <a href="${TRAVELHEALTHPRO}" rel="nofollow noopener" target="_blank">TravelHealthPro</a>.`),
         ],
       },
       {
@@ -211,7 +220,7 @@ const pt: LocalePost = {
             "Confirme se o destino exige certificado internacional de vacinação e, em caso afirmativo, marque o CVI cedo.",
             "Leve a medicação habitual na <strong>bagagem de mão</strong>, na embalagem original, com a receita ou declaração médica.",
             "Verifique a cobertura de saúde no destino, incluindo repatriamento, e leve os contactos de emergência.",
-            "Guarde o contacto do consulado ou embaixada e saiba como pedir ajuda médica no país onde vai estar.",
+            "Guarde o contacto do consulado ou embaixada e inscreva-se no <strong>Registo do Viajante</strong> do MNE, que permite às autoridades chegar até si numa emergência.",
           ]),
           p("Nada disto exige uma tarde inteira. Exige apenas ser feito antes, e não a caminho do aeroporto — que é quando, na prática, a maioria das pessoas se lembra."),
         ],
@@ -243,6 +252,9 @@ const pt: LocalePost = {
       { label: "SNS — cuidados de saúde no estrangeiro", href: SNS_ESTRANGEIRO },
       { label: "OMS — travel advice", href: WHO_TRAVEL },
       { label: "Direção-Geral da Saúde", href: DGS },
+      { label: "IHMT — consulta do viajante", href: IHMT_VIAJANTE },
+      { label: "TravelHealthPro — informação por país", href: TRAVELHEALTHPRO },
+      { label: "Registo do Viajante — MNE", href: REGISTO_VIAJANTE },
     ],
     sourcesNote:
       "As ligações abrem nos sites das entidades competentes. A Global Health não é um Centro de Vacinação Internacional, não administra vacinas e não emite certificados internacionais de vacinação.",
@@ -308,7 +320,7 @@ const en: LocalePost = {
       "What a travel consultation actually assesses, and why the destination changes everything.",
       "Where it is done — CVI, public health units, private — and which documents to bring.",
       "The line between what a video consultation settles and what requires travelling to a centre.",
-      "Recommended lead time, the vaccines each country requires and waiting times all change by destination and season. They are not quoted here: each points at SNS 24, the CVI or the WHO.",
+      "Recommended lead time, the vaccines each country requires and waiting times all change by destination and season. They are not quoted here: each points at SNS 24, the CVI, the IHMT or the WHO.",
     ],
     author: {
       initials: "VP",
@@ -334,7 +346,7 @@ const en: LocalePost = {
             "<strong>Your health</strong> — pregnancy, age, chronic illness, immunosuppression, regular medication.",
             "<strong>Vaccination history</strong> — what you already have, what has lapsed, what is missing.",
           ]),
-          cite(`Official description: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — consulta do viajante</a>.`),
+          cite(`Official description: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — consulta do viajante</a>. For complex itineraries or higher-risk destinations the <a href="${IHMT_VIAJANTE}" rel="nofollow noopener" target="_blank">IHMT</a> is Portugal's reference centre for tropical medicine, and the fullest country-by-country guidance in English is on <a href="${TRAVELHEALTHPRO}" rel="nofollow noopener" target="_blank">TravelHealthPro</a>.`),
         ],
       },
       {
@@ -426,7 +438,7 @@ const en: LocalePost = {
             "Check whether the destination requires an international certificate of vaccination and, if so, book the CVI early.",
             "Carry regular medication in your <strong>hand luggage</strong>, in its original packaging, with the prescription or a medical letter.",
             "Check your health cover at the destination, including repatriation, and carry emergency contacts.",
-            "Keep the consulate or embassy contact details and know how to seek medical help in the country you are visiting.",
+            "Keep the consulate or embassy contact details, know how to seek medical help in the country you are visiting, and sign up to the Portuguese Ministry of Foreign Affairs <strong>traveller registry</strong>, which lets the consulate reach you in an emergency.",
           ]),
           p("None of this takes an afternoon. It only has to be done beforehand, rather than on the way to the airport — which is, in practice, when most people remember."),
         ],
@@ -458,6 +470,9 @@ const en: LocalePost = {
       { label: "SNS — healthcare abroad", href: SNS_ESTRANGEIRO },
       { label: "WHO — travel advice", href: WHO_TRAVEL },
       { label: "Direção-Geral da Saúde", href: DGS },
+      { label: "IHMT — consulta do viajante", href: IHMT_VIAJANTE },
+      { label: "TravelHealthPro — informação por país", href: TRAVELHEALTHPRO },
+      { label: "Registo do Viajante — MNE", href: REGISTO_VIAJANTE },
     ],
     sourcesNote:
       "Links open on the competent bodies' own websites. Global Health is not an International Vaccination Centre, does not administer vaccines and does not issue international certificates of vaccination.",
@@ -523,7 +538,7 @@ const es: LocalePost = {
       "Qué se evalúa realmente en una consulta del viajero y por qué el destino determina el resto.",
       "Dónde se hace —CVI, unidades de salud pública, privado— y qué documentos llevar.",
       "La frontera entre lo que resuelve una consulta por vídeo y lo que obliga a desplazarse.",
-      "La antelación recomendada, las vacunas que exige cada país y los tiempos de espera cambian según el destino y la época. Aquí no se citan: cada punto remite a SNS 24, al CVI o a la OMS.",
+      "La antelación recomendada, las vacunas que exige cada país y los tiempos de espera cambian según el destino y la época. Aquí no se citan: cada punto remite a SNS 24, al CVI, al IHMT o a la OMS.",
     ],
     author: {
       initials: "VP",
@@ -549,7 +564,7 @@ const es: LocalePost = {
             "<strong>Su estado de salud</strong> — embarazo, edad, enfermedad crónica, inmunosupresión, medicación habitual.",
             "<strong>Historial de vacunación</strong> — lo que ya tiene, lo que ha caducado, lo que falta.",
           ]),
-          cite(`Descripción oficial: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — consulta do viajante</a>.`),
+          cite(`Descripción oficial: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — consulta do viajante</a>. Para itinerarios complejos o destinos de mayor riesgo, el <a href="${IHMT_VIAJANTE}" rel="nofollow noopener" target="_blank">IHMT</a> es el centro de referencia portugués en medicina tropical, y la información por país más completa en inglés está en <a href="${TRAVELHEALTHPRO}" rel="nofollow noopener" target="_blank">TravelHealthPro</a>.`),
         ],
       },
       {
@@ -641,7 +656,7 @@ const es: LocalePost = {
             "Confirme si el destino exige certificado internacional de vacunación y, en tal caso, pida cita pronto en el CVI.",
             "Lleve la medicación habitual en el <strong>equipaje de mano</strong>, en su envase original, con la receta o un justificante médico.",
             "Compruebe la cobertura sanitaria en el destino, incluida la repatriación, y lleve los contactos de emergencia.",
-            "Guarde el contacto del consulado o embajada y sepa cómo pedir ayuda médica en el país donde va a estar.",
+            "Guarde el contacto del consulado o embajada, sepa cómo pedir ayuda médica en el país donde va a estar e inscríbase en el <strong>registro del viajero</strong> del Ministerio de Asuntos Exteriores portugués, que permite al consulado localizarle en una emergencia.",
           ]),
           p("Nada de esto exige una tarde entera. Solo exige hacerlo antes, y no camino del aeropuerto, que es cuando en la práctica se acuerda la mayoría."),
         ],
@@ -673,6 +688,9 @@ const es: LocalePost = {
       { label: "SNS — asistencia sanitaria en el extranjero", href: SNS_ESTRANGEIRO },
       { label: "OMS — travel advice", href: WHO_TRAVEL },
       { label: "Direção-Geral da Saúde", href: DGS },
+      { label: "IHMT — consulta do viajante", href: IHMT_VIAJANTE },
+      { label: "TravelHealthPro — informação por país", href: TRAVELHEALTHPRO },
+      { label: "Registo do Viajante — MNE", href: REGISTO_VIAJANTE },
     ],
     sourcesNote:
       "Los enlaces abren en los sitios de los organismos competentes. Global Health no es un Centro de Vacunación Internacional, no administra vacunas y no emite certificados internacionales de vacunación.",
@@ -738,7 +756,7 @@ const cs: LocalePost = {
       "Co se v cestovní konzultaci skutečně posuzuje a proč destinace mění všechno.",
       "Kde se dělá — CVI, jednotky veřejného zdraví, soukromě — a jaké doklady si vzít.",
       "Hranici mezi tím, co vyřeší videokonzultace, a tím, co vyžaduje osobní návštěvu.",
-      "Doporučený předstih, očkování vyžadovaná jednotlivými zeměmi i čekací doby se liší podle destinace a ročního období. Nejsou zde uvedeny: každý údaj odkazuje na SNS 24, na CVI nebo na WHO.",
+      "Doporučený předstih, očkování vyžadovaná jednotlivými zeměmi i čekací doby se liší podle destinace a ročního období. Nejsou zde uvedeny: každý údaj odkazuje na SNS 24, na CVI, na IHMT nebo na WHO.",
     ],
     author: {
       initials: "VP",
@@ -764,7 +782,7 @@ const cs: LocalePost = {
             "<strong>Váš zdravotní stav</strong> — těhotenství, věk, chronické onemocnění, imunosuprese, pravidelné léky.",
             "<strong>Očkovací historie</strong> — co už máte, čemu vypršela platnost, co chybí.",
           ]),
-          cite(`Oficiální popis: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — cestovní konzultace</a>.`),
+          cite(`Oficiální popis: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — cestovní konzultace</a>. U složitých itinerářů a rizikovějších destinací je referenčním pracovištěm portugalské tropické medicíny <a href="${IHMT_VIAJANTE}" rel="nofollow noopener" target="_blank">IHMT</a>; nejpodrobnější informace po jednotlivých zemích v angličtině najdete na <a href="${TRAVELHEALTHPRO}" rel="nofollow noopener" target="_blank">TravelHealthPro</a>.`),
         ],
       },
       {
@@ -856,7 +874,7 @@ const cs: LocalePost = {
             "Ověřte, zda destinace vyžaduje mezinárodní očkovací průkaz, a pokud ano, objednejte se do CVI včas.",
             "Pravidelné léky si vezměte do <strong>příručního zavazadla</strong>, v originálním balení, s receptem nebo lékařským potvrzením.",
             "Zkontrolujte zdravotní krytí v destinaci včetně repatriace a mějte s sebou nouzové kontakty.",
-            "Uložte si kontakt na konzulát nebo velvyslanectví a zjistěte, jak v dané zemi požádat o lékařskou pomoc.",
+            "Uložte si kontakt na konzulát nebo velvyslanectví, zjistěte, jak v dané zemi požádat o lékařskou pomoc, a zaregistrujte se do <strong>registru cestovatelů</strong> portugalského ministerstva zahraničí, díky němuž vás konzulát v nouzi dohledá.",
           ]),
           p("Nic z toho nezabere celé odpoledne. Vyžaduje to jen udělat to předem, a ne cestou na letiště — což je v praxi okamžik, kdy si na to většina lidí vzpomene."),
         ],
@@ -888,6 +906,9 @@ const cs: LocalePost = {
       { label: "SNS — zdravotní péče v zahraničí", href: SNS_ESTRANGEIRO },
       { label: "WHO — travel advice", href: WHO_TRAVEL },
       { label: "Direção-Geral da Saúde", href: DGS },
+      { label: "IHMT — consulta do viajante", href: IHMT_VIAJANTE },
+      { label: "TravelHealthPro — informação por país", href: TRAVELHEALTHPRO },
+      { label: "Registo do Viajante — MNE", href: REGISTO_VIAJANTE },
     ],
     sourcesNote:
       "Odkazy vedou na weby příslušných institucí. Global Health není Centrum mezinárodního očkování, nepodává očkovací látky a nevystavuje mezinárodní očkovací průkazy.",
@@ -953,7 +974,7 @@ const roPost: LocalePost = {
       "Ce se evaluează într-o consultație a călătorului și de ce destinația schimbă totul.",
       "Unde se face — CVI, unități de sănătate publică, privat — și ce documente luați.",
       "Granița dintre ce rezolvă o consultație video și ce cere deplasare.",
-      "Timpul recomandat înainte de plecare, vaccinurile cerute de fiecare țară și timpii de așteptare diferă după destinație și sezon. Nu sunt citate aici: fiecare trimite la SNS 24, la CVI sau la OMS.",
+      "Timpul recomandat înainte de plecare, vaccinurile cerute de fiecare țară și timpii de așteptare diferă după destinație și sezon. Nu sunt citate aici: fiecare trimite la SNS 24, la CVI, la IHMT sau la OMS.",
     ],
     author: {
       initials: "VP",
@@ -979,7 +1000,7 @@ const roPost: LocalePost = {
             "<strong>Starea dumneavoastră de sănătate</strong> — sarcină, vârstă, boală cronică, imunosupresie, medicație curentă.",
             "<strong>Istoricul de vaccinare</strong> — ce aveți deja, ce a expirat, ce lipsește.",
           ]),
-          cite(`Descriere oficială: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — consultația călătorului</a>.`),
+          cite(`Descriere oficială: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — consultația călătorului</a>. Pentru itinerarii complexe sau destinații cu risc mai mare, <a href="${IHMT_VIAJANTE}" rel="nofollow noopener" target="_blank">IHMT</a> este centrul portughez de referință în medicină tropicală, iar informația pe țări cea mai detaliată în engleză se află pe <a href="${TRAVELHEALTHPRO}" rel="nofollow noopener" target="_blank">TravelHealthPro</a>.`),
         ],
       },
       {
@@ -1071,7 +1092,7 @@ const roPost: LocalePost = {
             "Verificați dacă destinația cere certificat internațional de vaccinare și, dacă da, programați-vă devreme la CVI.",
             "Luați medicația curentă în <strong>bagajul de mână</strong>, în ambalajul original, cu rețeta sau o adeverință medicală.",
             "Verificați acoperirea medicală la destinație, inclusiv repatrierea, și aveți la dumneavoastră contactele de urgență.",
-            "Păstrați contactul consulatului sau al ambasadei și aflați cum se cere ajutor medical în țara unde mergeți.",
+            "Păstrați contactul consulatului sau al ambasadei, aflați cum se cere ajutor medical în țara unde mergeți și înscrieți-vă în <strong>registrul călătorilor</strong> al Ministerului de Externe portughez, care permite consulatului să vă găsească în caz de urgență.",
           ]),
           p("Nimic din toate acestea nu cere o după-amiază întreagă. Cere doar să fie făcut înainte, nu pe drumul spre aeroport — care este, în practică, momentul în care își amintesc cei mai mulți."),
         ],
@@ -1103,6 +1124,9 @@ const roPost: LocalePost = {
       { label: "SNS — îngrijiri medicale în străinătate", href: SNS_ESTRANGEIRO },
       { label: "OMS — travel advice", href: WHO_TRAVEL },
       { label: "Direção-Geral da Saúde", href: DGS },
+      { label: "IHMT — consulta do viajante", href: IHMT_VIAJANTE },
+      { label: "TravelHealthPro — informação por país", href: TRAVELHEALTHPRO },
+      { label: "Registo do Viajante — MNE", href: REGISTO_VIAJANTE },
     ],
     sourcesNote:
       "Linkurile deschid site-urile instituțiilor competente. Global Health nu este Centru de Vaccinare Internațională, nu administrează vaccinuri și nu emite certificate internaționale de vaccinare.",
@@ -1168,7 +1192,7 @@ const de: LocalePost = {
       "Was in einer Reiseberatung tatsächlich beurteilt wird und warum das Reiseziel alles verändert.",
       "Wo sie stattfindet — CVI, öffentlicher Gesundheitsdienst, privat — und welche Unterlagen Sie mitbringen.",
       "Die Grenze zwischen dem, was eine Videosprechstunde klärt, und dem, was einen Weg vor Ort verlangt.",
-      "Empfohlener Vorlauf, die von einzelnen Ländern verlangten Impfungen und Wartezeiten ändern sich je nach Ziel und Jahreszeit. Sie stehen hier nicht: jeder Punkt verweist auf SNS 24, das CVI oder die WHO.",
+      "Empfohlener Vorlauf, die von einzelnen Ländern verlangten Impfungen und Wartezeiten ändern sich je nach Ziel und Jahreszeit. Sie stehen hier nicht: jeder Punkt verweist auf SNS 24, das CVI, das IHMT oder die WHO.",
     ],
     author: {
       initials: "VP",
@@ -1194,7 +1218,7 @@ const de: LocalePost = {
             "<strong>Ihr Gesundheitszustand</strong> — Schwangerschaft, Alter, chronische Erkrankung, Immunsuppression, Dauermedikation.",
             "<strong>Impfhistorie</strong> — was vorhanden ist, was abgelaufen ist, was fehlt.",
           ]),
-          cite(`Offizielle Beschreibung: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — Reiseberatung</a>.`),
+          cite(`Offizielle Beschreibung: <a href="${SNS24_VIAJANTE}" rel="nofollow noopener" target="_blank">SNS 24 — Reiseberatung</a>. Für komplexe Reiserouten und Ziele mit höherem Risiko ist das <a href="${IHMT_VIAJANTE}" rel="nofollow noopener" target="_blank">IHMT</a> Portugals Referenzzentrum für Tropenmedizin; die ausführlichsten länderweisen Hinweise auf Englisch stehen bei <a href="${TRAVELHEALTHPRO}" rel="nofollow noopener" target="_blank">TravelHealthPro</a>.`),
         ],
       },
       {
@@ -1286,7 +1310,7 @@ const de: LocalePost = {
             "Prüfen Sie, ob das Reiseziel einen internationalen Impfausweis verlangt, und buchen Sie in dem Fall früh im CVI.",
             "Nehmen Sie Dauermedikamente ins <strong>Handgepäck</strong>, in der Originalverpackung, mit Rezept oder ärztlicher Bescheinigung.",
             "Prüfen Sie den Versicherungsschutz am Reiseziel einschließlich Rückholung und führen Sie Notfallkontakte mit.",
-            "Speichern Sie den Kontakt des Konsulats oder der Botschaft und informieren Sie sich, wie man im Reiseland ärztliche Hilfe anfordert.",
+            "Speichern Sie den Kontakt des Konsulats oder der Botschaft, informieren Sie sich, wie man im Reiseland ärztliche Hilfe anfordert, und tragen Sie sich in das <strong>Reisendenregister</strong> des portugiesischen Außenministeriums ein, über das Sie das Konsulat im Notfall erreicht.",
           ]),
           p("Nichts davon kostet einen ganzen Nachmittag. Es muss nur vorher geschehen und nicht auf dem Weg zum Flughafen — was in der Praxis der Moment ist, in dem es den meisten einfällt."),
         ],
@@ -1318,6 +1342,9 @@ const de: LocalePost = {
       { label: "SNS — Gesundheitsversorgung im Ausland", href: SNS_ESTRANGEIRO },
       { label: "WHO — travel advice", href: WHO_TRAVEL },
       { label: "Direção-Geral da Saúde", href: DGS },
+      { label: "IHMT — consulta do viajante", href: IHMT_VIAJANTE },
+      { label: "TravelHealthPro — informação por país", href: TRAVELHEALTHPRO },
+      { label: "Registo do Viajante — MNE", href: REGISTO_VIAJANTE },
     ],
     sourcesNote:
       "Die Links führen auf die Seiten der zuständigen Stellen. Global Health ist kein Internationales Impfzentrum, verabreicht keine Impfungen und stellt keine internationalen Impfausweise aus.",

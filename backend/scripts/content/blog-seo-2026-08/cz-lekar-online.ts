@@ -51,7 +51,7 @@ const cs: LocalePost = {
     h1: "Lékař online 24/7",
     deck: "Dostupnost je jen polovina odpovědi. Ta druhá je, které potíže lze na dálku bezpečně posoudit — a které rozhodně ne.",
     intro:
-      "Online lékař je lékař, se kterým mluvíte přes video nebo telefon místo v ordinaci. Vyřeší dobře <strong>akutní běžné potíže</strong>, u kterých rozhoduje popis obtíží a anamnéza — respirační infekty, střevní potíže, kožní projevy, které lze ukázat, migréna, úzkostné stavy, opakovaná recept na dlouhodobou léčbu. Nevyřeší nic, k čemu je potřeba <strong>fyzikální vyšetření</strong>: poslech plic, pohmat břicha, vyšetření ucha, kloubu nebo akutní odběry. A nenahrazuje registraci u praktického lékaře, ke které patří preventivní prohlídky a sledování chronických nemocí.",
+      "Online lékař je lékař, se kterým mluvíte přes video nebo telefon místo v ordinaci. Vyřeší dobře <strong>akutní běžné potíže</strong>, u kterých rozhoduje popis obtíží a anamnéza — respirační infekty, střevní potíže, kožní projevy, které lze ukázat, migréna, úzkostné stavy, opakovaná recept na dlouhodobou léčbu. Nevyřeší to, co vyžaduje <strong>ruce lékaře</strong> — poklep, vyšetření per rectum, pohmat břicha lékařem — a bez přístroje ani poslech plic a srdce. Zobrazení a laboratorní vyšetření umíme indikovat, s domácí zdravotní sadou zvládneme i měření. A nenahrazuje registraci u praktického lékaře, ke které patří preventivní prohlídky s fyzikálním vyšetřením.",
     facts: ["Rychlá dostupnost", "Vhodné pro běžné akutní potíže", "Nenahrazuje registraci u praktika"],
     primaryCta: { label: "Objednat videokonzultaci", href: href("cs", "/services/lekar-online-praha") },
     secondaryCta: { label: "Naši čeští lékaři", href: href("cs", "/doctors") },
@@ -103,16 +103,15 @@ const cs: LocalePost = {
         eyebrow: "Limity",
         h2: "Co online konzultace nevyřeší",
         blocks: [
-          lead("Tady nejde o neochotu. Jde o to, že bez vyšetření by závěr byl dohad."),
+          lead("Hranice nevede mezi „na dálku“ a „v ordinaci“. Vede mezi tím, co lze posoudit z anamnézy, obrazu a přístrojů, které máte doma, a tím, co vyžaduje ruce lékaře."),
+          p("Řada věcí, které se za limit považují, limitem není. Pacienta lze krok za krokem navést, aby si sám prohmatal břicho nebo předvedl rozsah pohybu v kloubu, a popis bolesti spolu s tím obvykle stačí k rozhodnutí, co dál. Zobrazení i laboratorní vyšetření umíme indikovat a poslat vás na ně. A pokud máte doma <strong>domácí zdravotní sadu</strong> — tlakoměr, teploměr, oxymetr, případně otoskop nebo digitální stetoskop — dostaneme z konzultace prakticky tolik co z ordinace."),
           ul([
-            "<strong>Bolest břicha</strong>, u které je potřeba pohmat — od apendicitidy po žlučník.",
-            "<strong>Dušnost a poslechový nález na plicích.</strong>",
-            "<strong>Bolest ucha</strong> — bez otoskopu nelze rozhodnout, co se za bubínkem děje.",
-            "<strong>Úrazy, otoky a bolesti kloubů</strong> vyžadující vyšetření pohybu nebo zobrazení.",
-            "<strong>Měření tlaku, EKG, akutní odběry</strong> a cokoli dalšího, co potřebuje přístroj.",
-            "<strong>Preventivní prohlídky</strong> a povinná posouzení, u nichž je fyzické vyšetření součástí výkonu.",
+            "<strong>Poklep</strong> a <strong>vyšetření per rectum</strong> — na dálku je provést nelze.",
+            "<strong>Pohmat břicha rukou lékaře</strong>, když nález vedený pacientem nestačí nebo je podezření na náhlou příhodu břišní.",
+            "<strong>Poslech plic a srdce</strong> — pokud nemáte digitální stetoskop; s ním posloucháme.",
+            "<strong>Povinná posouzení</strong>, u nichž je fyzické vyšetření ze zákona součástí výkonu.",
           ]),
-          p("Odpovědný lékař vám v těchto případech řekne, že konzultace nestačí, a nasměruje vás do ordinace nebo na urgentní příjem. To je správný výsledek konzultace, ne její selhání."),
+          p("Na dálku proto nese <strong>anamnéza</strong> mnohem větší váhu než v ordinaci: čas, průběh, souvislosti, léky, co bolest zhoršuje a co ji tiší. Když z toho vyjde, že chybí vyšetření nebo přístroj, řekneme vám to a nasměrujeme vás do ordinace nebo na urgentní příjem. To je správný výsledek konzultace, ne její selhání."),
         ],
       },
       {
@@ -141,7 +140,7 @@ const cs: LocalePost = {
         h2: "Nahradí online lékař praktického lékaře?",
         blocks: [
           lead("Ne. A služba, která tvrdí opak, vám neříká pravdu."),
-          p("Registrující praktický lékař plní role, které na dálku plnit nelze: <strong>preventivní prohlídky</strong> s fyzikálním vyšetřením, <strong>dispenzarizaci</strong> chronických onemocnění, očkování, návaznost na specialisty a vedení zdravotnické dokumentace v čase. Registrace u praktika je také to, co vám dává lékaře, který zná vaši historii, nikoli jednu epizodu."),
+          p("Registrující praktický lékař plní role, které na dálku plnit nelze: <strong>preventivní prohlídky</strong> a povinná posouzení s fyzikálním vyšetřením, očkování a vedení zdravotnické dokumentace v čase. <strong>Dispenzarizaci</strong> chronických onemocnění naopak z velké části na dálku vést lze — kontroly, titraci léčby, hodnocení hodnot z domácích měření — chybí jen ta část, kterou tvoří samotné fyzikální vyšetření. Registrace u praktika je také to, co vám dává lékaře, který zná vaši historii, nikoli jednu epizodu."),
           p("Online konzultace k tomu dobře doplňuje rychlost: večer, o víkendu, na cestách, nebo když je objednací lhůta delší než trvání potíží. Nejlepší uspořádání je obojí — registrace u praktika a online konzultace pro akutní věci mezi tím."),
           ul([
             "Ověřte si, že lékař, se kterým mluvíte, je oprávněn vykonávat povolání v Česku — členství v ČLK je veřejně dohledatelné.",
@@ -157,7 +156,7 @@ const cs: LocalePost = {
         eyebrow: "Zvláštní opatrnost",
         h2: "Děti a konzultace na dálku",
         blocks: [
-          lead("U dětí je hranice mezi „lze posoudit na dálku“ a „patří k lékaři“ posunutá výrazně blíž k ordinaci."),
+          lead("Většinu dětských potíží na dálku posoudit lze. Posunuté je něco jiného: práh, při kterém dítě posíláme k vyšetření, je nižší než u dospělých."),
           p("Malé děti se zhoršují rychleji než dospělí a jejich stav se posuzuje z celkového dojmu — jak dýchají, jak reagují, jak pijí, jaká je barva kůže. Část toho je přes kameru vidět, část rozhodně ne. Videokonzultace u dítěte proto slouží hlavně k tomu, aby lékař rozhodl, jak rychle a kam je potřeba dojet."),
           ul([
             "<strong>Novorozenec nebo kojenec s teplotou</strong> patří k lékaři vždy, bez výjimky a bez čekání na konzultaci.",
@@ -219,11 +218,11 @@ const cs: LocalePost = {
       },
       {
         q: "Co online konzultace vyřešit nemůže?",
-        a: "Cokoli, co vyžaduje fyzikální vyšetření nebo přístroj: pohmat břicha, poslech plic, vyšetření ucha otoskopem, posouzení úrazu a kloubu, měření tlaku, EKG, odběry. Také preventivní prohlídky, jejichž součástí je vyšetření.",
+        a: "Poklep, vyšetření per rectum a pohmat břicha rukou lékaře. Bez digitálního stetoskopu ani poslech plic a srdce. Zbytek jde většinou vyřešit: pacienta navedeme, aby si potřebné úkony provedl sám, odběry i zobrazení indikujeme a s domácí zdravotní sadou měříme tlak, saturaci i teplotu. Fyzikální vyšetření zůstává u povinných prohlídek, kde je ze zákona součástí výkonu.",
       },
       {
         q: "Nahradí online lékař registraci u praktického lékaře?",
-        a: "Nenahradí. Registrující praktický lékař zajišťuje preventivní prohlídky, dispenzarizaci chronických onemocnění, očkování a vedení dokumentace v čase. Online konzultace je doplněk pro akutní situace, ne náhrada této péče.",
+        a: "Nenahradí. Registrující praktický lékař zajišťuje preventivní prohlídky s fyzikálním vyšetřením, očkování a vedení dokumentace v čase. Sledování chronických onemocnění přitom z velké části na dálku vést lze. Online konzultace je doplněk, ne náhrada registrace.",
       },
       {
         q: "Co si mám na videokonzultaci připravit?",
@@ -263,7 +262,7 @@ const en: LocalePost = {
     h1: "Online doctor 24/7",
     deck: "Availability is only half the answer. The other half is which problems can be assessed safely at a distance — and which certainly cannot.",
     intro:
-      "An online doctor is a doctor you speak to by video or phone instead of in a surgery. It works well for <strong>common acute problems</strong> where the history and your description carry the decision — respiratory infections, gastrointestinal upsets, skin problems that can be shown, migraine, anxiety, repeat prescriptions for long-term treatment. It solves nothing that needs a <strong>physical examination</strong>: listening to the chest, palpating an abdomen, looking in an ear, examining a joint, taking bloods the same day. And it does not replace registration with a GP, which covers preventive check-ups and the long-term follow-up of chronic disease.",
+      "An online doctor is a doctor you speak to by video or phone instead of in a surgery. It works well for <strong>common acute problems</strong> where the history and your description carry the decision — respiratory infections, gastrointestinal upsets, skin problems that can be shown, migraine, anxiety, repeat prescriptions for long-term treatment. What it cannot do is what needs <strong>a doctor's hands</strong> — percussion, rectal examination, the doctor's own palpation of an abdomen — and, without a device, listening to the chest and heart. Imaging and laboratory tests we can request, and with a home health kit the measurements come too. It does not replace registration with a GP, which covers preventive check-ups with a physical examination.",
     facts: ["Fast to reach", "Suited to common acute problems", "Not a substitute for a registered GP"],
     primaryCta: { label: "Book a video consultation", href: href("en", "/services/lekar-online-praha") },
     secondaryCta: { label: "Our Czech doctors", href: href("en", "/doctors") },
@@ -315,16 +314,15 @@ const en: LocalePost = {
         eyebrow: "Limits",
         h2: "What an online consultation cannot solve",
         blocks: [
-          lead("This is not reluctance. It is that without an examination the conclusion would be guesswork."),
+          lead("The line does not run between «remote» and «in the surgery». It runs between what can be judged from the history, the camera and the devices you have at home, and what needs a doctor's hands."),
+          p("A good deal of what gets treated as a limit is not one. A patient can be talked step by step through pressing on their own abdomen or showing the range of movement in a joint, and that, with a description of the pain, is usually enough to decide what comes next. Imaging and laboratory tests we can request and send you for. And if you have a <strong>home health kit</strong> — blood pressure monitor, thermometer, oximeter, sometimes an otoscope or a digital stethoscope — a consultation gets close to what a room would give."),
           ul([
-            "<strong>Abdominal pain</strong> where palpation is needed — from appendicitis to gallstones.",
-            "<strong>Breathlessness and findings on listening to the chest.</strong>",
-            "<strong>Earache</strong> — without an otoscope there is no deciding what is happening behind the eardrum.",
-            "<strong>Injuries, swelling and joint pain</strong> that need movement examined or imaging.",
-            "<strong>Blood pressure, ECG, same-day bloods</strong> and anything else requiring equipment.",
-            "<strong>Preventive check-ups</strong> and statutory assessments where the physical examination is part of the act itself.",
+            "<strong>Percussion</strong> and <strong>rectal examination</strong> — neither can be done at a distance.",
+            "<strong>Abdominal palpation by the doctor's own hand</strong>, where patient-guided findings are not enough or an acute abdomen is suspected.",
+            "<strong>Listening to the chest and heart</strong> — unless you have a digital stethoscope, in which case we listen.",
+            "<strong>Statutory assessments</strong> where the physical examination is legally part of the act.",
           ]),
-          p("In these cases a responsible doctor will tell you the consultation is not enough and will direct you to a surgery or to emergency care. That is a correct outcome of the consultation, not a failure of it."),
+          p("Remotely, then, the <strong>history</strong> carries far more weight than it does in a room: timing, course, context, medication, what makes the pain worse and what settles it. Where that shows an examination or a device is missing, we say so and direct you to a surgery or to emergency care. That is a correct outcome of the consultation, not a failure of it."),
         ],
       },
       {
@@ -353,7 +351,7 @@ const en: LocalePost = {
         h2: "Does an online doctor replace a GP?",
         blocks: [
           lead("No. And a service claiming otherwise is not telling you the truth."),
-          p("A registering GP fills roles that cannot be filled remotely: <strong>preventive check-ups</strong> with physical examination, <strong>structured follow-up</strong> of chronic disease, vaccination, onward referral to specialists and keeping medical records over time. Registration is also what gives you a doctor who knows your history rather than a single episode."),
+          p("A registering GP fills roles that cannot be filled remotely: <strong>preventive check-ups</strong> and statutory assessments with a physical examination, vaccination, and keeping medical records over time. <strong>Structured follow-up</strong> of chronic disease, by contrast, largely can run remotely — reviews, adjusting treatment, reading the numbers you measure at home — what is missing is only the physical examination itself. Registration is also what gives you a doctor who knows your history rather than a single episode."),
           p("An online consultation complements that with speed: in the evening, at the weekend, while travelling, or when the waiting time is longer than the illness. The best arrangement is both — registered with a GP, and an online consultation for acute matters in between."),
           ul([
             "Check that the doctor you are speaking to is licensed to practise in Czechia — Chamber membership is publicly searchable.",
@@ -369,7 +367,7 @@ const en: LocalePost = {
         eyebrow: "Extra caution",
         h2: "Children and remote consultations",
         blocks: [
-          lead("With children the line between “can be assessed remotely” and “belongs with a doctor” sits markedly closer to the surgery."),
+          lead("Most children's problems can be handled remotely. What is different is the threshold: with a child we send for an examination sooner than we would with an adult."),
           p("Small children deteriorate faster than adults, and their state is judged from an overall impression — how they breathe, how they respond, how they drink, the colour of their skin. Part of that is visible through a camera; part of it certainly is not. A video consultation for a child therefore mainly serves to decide how quickly and where you need to go."),
           ul([
             "<strong>A newborn or infant with a fever</strong> belongs with a doctor every time, without exception and without waiting for a consultation.",
@@ -431,11 +429,11 @@ const en: LocalePost = {
       },
       {
         q: "What can an online consultation not solve?",
-        a: "Anything requiring a physical examination or equipment: palpating an abdomen, listening to the chest, examining an ear with an otoscope, assessing an injury or a joint, blood pressure, ECG, blood tests. Also preventive check-ups, where the examination is part of the act.",
+        a: "Percussion, rectal examination and the doctor's own palpation of an abdomen. Without a digital stethoscope, listening to the chest and heart. Most of the rest can be worked around: we talk you through examining yourself, we request bloods and imaging, and with a home health kit we get blood pressure, saturation and temperature. The physical examination remains for statutory check-ups, where it is legally part of the act.",
       },
       {
         q: "Does an online doctor replace registration with a GP?",
-        a: "No. A registering GP provides preventive check-ups, structured follow-up of chronic disease, vaccination and continuous medical records. An online consultation is a complement for acute situations, not a replacement for that care.",
+        a: "No. A registering GP provides preventive check-ups with a physical examination, vaccination and continuous medical records. Follow-up of chronic disease, on the other hand, largely can run remotely. An online consultation is a complement, not a replacement for registration.",
       },
       {
         q: "What should I prepare for a video consultation?",
@@ -475,7 +473,7 @@ const pt: LocalePost = {
     h1: "Médico online 24/7",
     deck: "A disponibilidade é só metade da resposta. A outra metade é saber que queixas podem ser avaliadas à distância com segurança — e quais definitivamente não podem.",
     intro:
-      "Um médico online é um médico com quem fala por vídeo ou telefone em vez de no consultório. Resolve bem <strong>queixas agudas comuns</strong>, em que decidem a história clínica e a descrição dos sintomas — infeções respiratórias, gastroenterites, lesões de pele que se conseguem mostrar, enxaqueca, ansiedade, renovação de terapêutica prolongada. Não resolve nada que exija <strong>exame físico</strong>: auscultar o tórax, palpar o abdómen, observar um ouvido ou uma articulação, colher análises no próprio dia. E não substitui a inscrição num médico de família, a quem pertencem os exames de rotina e o seguimento das doenças crónicas.",
+      "Um médico online é um médico com quem fala por vídeo ou telefone em vez de no consultório. Resolve bem <strong>queixas agudas comuns</strong>, em que decidem a história clínica e a descrição dos sintomas — infeções respiratórias, gastroenterites, lesões de pele que se conseguem mostrar, enxaqueca, ansiedade, renovação de terapêutica prolongada. O que não resolve é o que exige <strong>as mãos do médico</strong> — percussão, toque rectal, palpação do abdómen pelo médico — e, sem aparelho, a auscultação do tórax e do coração. Exames de imagem e análises podemos pedi-los, e com um kit de saúde em casa também as medições. Não substitui a inscrição num médico de família, a quem pertencem os exames de rotina com observação física.",
     facts: ["Disponibilidade rápida", "Adequado a queixas agudas comuns", "Não substitui o médico de família"],
     primaryCta: { label: "Marcar videoconsulta", href: href("pt", "/services/lekar-online-praha") },
     secondaryCta: { label: "Os nossos médicos checos", href: href("pt", "/doctors") },
@@ -527,16 +525,15 @@ const pt: LocalePost = {
         eyebrow: "Limites",
         h2: "O que a consulta online não resolve",
         blocks: [
-          lead("Não é falta de vontade. É que, sem observação, a conclusão seria um palpite."),
+          lead("A fronteira não é entre «à distância» e «no consultório». É entre o que se consegue avaliar pela história, pela câmara e pelos aparelhos que tem em casa, e o que exige as mãos do médico."),
+          p("Boa parte do que se toma por limite não o é. O doente pode ser guiado passo a passo a palpar o próprio abdómen ou a mostrar a amplitude de movimento de uma articulação, e isso, com a descrição da dor, costuma bastar para decidir o passo seguinte. Exames de imagem e análises podemos pedi-los e encaminhá-lo para os fazer. E se tiver em casa um <strong>kit de saúde</strong> — medidor de tensão, termómetro, oxímetro, por vezes otoscópio ou estetoscópio digital — a consulta aproxima-se muito do que daria o consultório."),
           ul([
-            "<strong>Dor abdominal</strong> em que é necessária a palpação — da apendicite à vesícula.",
-            "<strong>Dificuldade respiratória e achados na auscultação pulmonar.</strong>",
-            "<strong>Dor de ouvido</strong> — sem otoscópio não é possível decidir o que se passa atrás do tímpano.",
-            "<strong>Traumatismos, edemas e dores articulares</strong> que exijam avaliar o movimento ou imagiologia.",
-            "<strong>Medição da tensão, ECG, colheitas urgentes</strong> e tudo o resto que exija equipamento.",
-            "<strong>Exames de rotina</strong> e avaliações obrigatórias em que a observação faz parte do próprio ato.",
+            "<strong>Percussão</strong> e <strong>toque rectal</strong> — nenhum se faz à distância.",
+            "<strong>Palpação do abdómen pela mão do médico</strong>, quando o exame guiado pelo doente não chega ou há suspeita de abdómen agudo.",
+            "<strong>Auscultação do tórax e do coração</strong> — salvo se tiver um estetoscópio digital, caso em que auscultamos.",
+            "<strong>Avaliações obrigatórias</strong> em que a observação física faz parte do ato por imposição legal.",
           ]),
-          p("Nestes casos, um médico responsável dir-lhe-á que a consulta não chega e encaminhá-lo-á para o consultório ou para a urgência. Esse é o resultado correto da consulta, não a sua falha."),
+          p("À distância, a <strong>história clínica</strong> pesa por isso muito mais do que no consultório: tempo, evolução, contexto, medicação, o que agrava a dor e o que a alivia. Quando daí resulta que falta uma observação ou um aparelho, dizemo-lo e encaminhamo-lo para o consultório ou para a urgência. Esse é o resultado correto da consulta, não a sua falha."),
         ],
       },
       {
@@ -565,7 +562,7 @@ const pt: LocalePost = {
         h2: "O médico online substitui o médico de família?",
         blocks: [
           lead("Não. E um serviço que afirme o contrário não lhe está a dizer a verdade."),
-          p("O médico de família em que está inscrito desempenha funções que não podem ser cumpridas à distância: <strong>exames de rotina</strong> com observação, <strong>vigilância</strong> das doenças crónicas, vacinação, articulação com especialistas e manutenção do registo clínico ao longo do tempo. A inscrição é também o que lhe dá um médico que conhece a sua história, e não um episódio isolado."),
+          p("O médico de família em que está inscrito desempenha funções que não podem ser cumpridas à distância: <strong>exames de rotina</strong> e avaliações obrigatórias com observação física, vacinação e manutenção do registo clínico ao longo do tempo. A <strong>vigilância das doenças crónicas</strong>, essa, pode em boa parte ser feita à distância — consultas de controlo, ajuste da terapêutica, leitura dos valores que mede em casa —; falta apenas a observação física em si. A inscrição é também o que lhe dá um médico que conhece a sua história, e não um episódio isolado."),
           p("A consulta online complementa isso com rapidez: à noite, ao fim de semana, em viagem, ou quando o prazo de marcação é maior do que a duração da queixa. O melhor arranjo é ter ambos — inscrição num médico de família e consulta online para o que é agudo pelo meio."),
           ul([
             "Confirme que o médico com quem fala está habilitado a exercer na Chéquia — a inscrição na Ordem é pública.",
@@ -581,7 +578,7 @@ const pt: LocalePost = {
         eyebrow: "Especial cuidado",
         h2: "Crianças e consultas à distância",
         blocks: [
-          lead("Nas crianças, a fronteira entre «pode ser avaliado à distância» e «tem de ser visto» está muito mais próxima do consultório."),
+          lead("A maioria das queixas das crianças resolve-se à distância. O que muda é o limiar: numa criança encaminhamos para observação mais cedo do que num adulto."),
           p("As crianças pequenas agravam-se mais depressa do que os adultos e o seu estado avalia-se pela impressão global — como respiram, como reagem, como bebem, a cor da pele. Parte disso vê-se pela câmara; parte, decididamente, não. A videoconsulta numa criança serve, sobretudo, para o médico decidir com que rapidez e para onde é preciso ir."),
           ul([
             "<strong>Recém-nascido ou lactente com febre</strong> tem de ser sempre observado, sem exceção e sem esperar por consulta.",
@@ -643,7 +640,7 @@ const pt: LocalePost = {
       },
       {
         q: "O que é que a consulta online não resolve?",
-        a: "Tudo o que exija exame físico ou equipamento: palpar o abdómen, auscultar o tórax, observar o ouvido com otoscópio, avaliar traumatismos e articulações, medir a tensão, ECG, colheitas. Também os exames de rotina, em que a observação faz parte do ato.",
+        a: "Percussão, toque rectal e a palpação do abdómen pela mão do médico. Sem estetoscópio digital, também a auscultação do tórax e do coração. O resto costuma resolver-se: guiamos o doente para fazer ele próprio o que é preciso, pedimos análises e imagiologia e, com um kit de saúde em casa, medimos tensão, saturação e temperatura. A observação física mantém-se nas avaliações obrigatórias, em que a lei a exige.",
       },
       {
         q: "O médico online substitui a inscrição num médico de família?",
@@ -687,7 +684,7 @@ const es: LocalePost = {
     h1: "Médico online 24/7",
     deck: "La disponibilidad es solo la mitad de la respuesta. La otra mitad es qué molestias pueden valorarse a distancia con seguridad, y cuáles desde luego no.",
     intro:
-      "Un médico online es un médico con el que habla por vídeo o teléfono en lugar de en la consulta. Resuelve bien las <strong>molestias agudas habituales</strong>, en las que deciden la historia clínica y su descripción de los síntomas: infecciones respiratorias, cuadros digestivos, lesiones de piel que puedan mostrarse, migraña, ansiedad, renovación de un tratamiento prolongado. No resuelve nada que exija <strong>exploración física</strong>: auscultar el tórax, palpar el abdomen, mirar un oído, explorar una articulación o extraer sangre el mismo día. Y no sustituye estar registrado con un médico de familia, a quien corresponden las revisiones preventivas y el seguimiento de las enfermedades crónicas.",
+      "Un médico online es un médico con el que habla por vídeo o teléfono en lugar de en la consulta. Resuelve bien las <strong>molestias agudas habituales</strong>, en las que deciden la historia clínica y su descripción de los síntomas: infecciones respiratorias, cuadros digestivos, lesiones de piel que puedan mostrarse, migraña, ansiedad, renovación de un tratamiento prolongado. Lo que no resuelve es lo que exige <strong>las manos del médico</strong>: percusión, tacto rectal, la palpación del abdomen por el propio médico y, sin aparato, la auscultación pulmonar y cardiaca. Las pruebas de imagen y los análisis podemos indicarlos, y con un kit de salud en casa también las mediciones. No sustituye estar registrado con un médico de familia, a quien corresponden las revisiones preventivas con exploración física.",
     facts: ["Disponibilidad rápida", "Adecuado para molestias agudas habituales", "No sustituye al médico de familia"],
     primaryCta: { label: "Reservar videoconsulta", href: href("es", "/services/lekar-online-praha") },
     secondaryCta: { label: "Nuestros médicos checos", href: href("es", "/doctors") },
@@ -739,16 +736,15 @@ const es: LocalePost = {
         eyebrow: "Límites",
         h2: "Qué no resuelve la consulta online",
         blocks: [
-          lead("No es falta de voluntad. Es que sin exploración la conclusión sería una suposición."),
+          lead("La frontera no está entre «a distancia» y «en consulta». Está entre lo que puede valorarse por la historia, la cámara y los aparatos que tenga en casa, y lo que exige las manos del médico."),
+          p("Buena parte de lo que se da por límite no lo es. Al paciente se le puede guiar paso a paso para que se palpe el propio abdomen o muestre el recorrido de una articulación, y eso, junto con la descripción del dolor, suele bastar para decidir el siguiente paso. Las pruebas de imagen y los análisis podemos indicarlos y derivarle a hacerlos. Y si tiene en casa un <strong>kit de salud</strong> — tensiómetro, termómetro, pulsioxímetro, a veces otoscopio o estetoscopio digital — la consulta se acerca mucho a lo que daría el gabinete."),
           ul([
-            "<strong>Dolor abdominal</strong> en el que hace falta palpar: de la apendicitis a la vesícula.",
-            "<strong>Dificultad respiratoria y hallazgos en la auscultación pulmonar.</strong>",
-            "<strong>Dolor de oído</strong>: sin otoscopio no se puede decidir qué ocurre detrás del tímpano.",
-            "<strong>Traumatismos, hinchazón y dolor articular</strong> que exijan explorar el movimiento o pruebas de imagen.",
-            "<strong>Medir la tensión, ECG, extracciones urgentes</strong> y cualquier cosa que requiera aparato.",
-            "<strong>Revisiones preventivas</strong> y valoraciones obligatorias en las que la exploración forma parte del acto.",
+            "<strong>Percusión</strong> y <strong>tacto rectal</strong>: ninguno se hace a distancia.",
+            "<strong>Palpación del abdomen con la mano del médico</strong>, cuando la exploración guiada por el paciente no basta o se sospecha un abdomen agudo.",
+            "<strong>Auscultación pulmonar y cardiaca</strong>, salvo que disponga de estetoscopio digital, en cuyo caso auscultamos.",
+            "<strong>Valoraciones obligatorias</strong> en las que la exploración física forma parte del acto por exigencia legal.",
           ]),
-          p("En estos casos un médico responsable le dirá que la consulta no basta y le dirigirá a consulta presencial o a urgencias. Ese es el resultado correcto de la consulta, no su fracaso."),
+          p("A distancia, por tanto, la <strong>historia clínica</strong> pesa mucho más que en el gabinete: tiempo, evolución, contexto, medicación, qué empeora el dolor y qué lo calma. Cuando de ahí sale que falta una exploración o un aparato, se lo decimos y le dirigimos a consulta presencial o a urgencias. Ese es el resultado correcto de la consulta, no su fracaso."),
         ],
       },
       {
@@ -777,7 +773,7 @@ const es: LocalePost = {
         h2: "¿Sustituye el médico online al médico de familia?",
         blocks: [
           lead("No. Y un servicio que afirme lo contrario no le está diciendo la verdad."),
-          p("El médico de familia con el que está registrado cumple funciones que no pueden cumplirse a distancia: <strong>revisiones preventivas</strong> con exploración física, <strong>seguimiento estructurado</strong> de las enfermedades crónicas, vacunación, coordinación con especialistas y llevar la historia clínica a lo largo del tiempo. Estar registrado es además lo que le da un médico que conoce su historia, no un episodio suelto."),
+          p("El médico de familia con el que está registrado cumple funciones que no pueden cumplirse a distancia: <strong>revisiones preventivas</strong> y valoraciones obligatorias con exploración física, vacunación y llevar la historia clínica a lo largo del tiempo. El <strong>seguimiento de las enfermedades crónicas</strong>, en cambio, sí puede llevarse en buena parte a distancia — controles, ajuste del tratamiento, lectura de las cifras que usted mide en casa —; lo único que falta es la exploración física en sí. Estar registrado es además lo que le da un médico que conoce su historia, no un episodio suelto."),
           p("La consulta online complementa eso con rapidez: por la tarde, el fin de semana, de viaje, o cuando la demora de cita es mayor que la duración de la molestia. Lo mejor es tener ambas cosas: registro con médico de familia y consulta online para lo agudo mientras tanto."),
           ul([
             "Compruebe que el médico con el que habla está habilitado para ejercer en Chequia: la pertenencia al Colegio es públicamente consultable.",
@@ -793,7 +789,7 @@ const es: LocalePost = {
         eyebrow: "Precaución especial",
         h2: "Los niños y la consulta a distancia",
         blocks: [
-          lead("En niños, la frontera entre «se puede valorar a distancia» y «hay que verlo» está mucho más cerca de la consulta presencial."),
+          lead("La mayoría de las molestias infantiles se resuelven a distancia. Lo que cambia es el umbral: en un niño derivamos a exploración antes que en un adulto."),
           p("Los niños pequeños empeoran más rápido que los adultos y su estado se valora por la impresión global: cómo respiran, cómo reaccionan, cómo beben, el color de la piel. Parte de eso se ve por la cámara; parte desde luego no. Por eso la videoconsulta en un niño sirve principalmente para que el médico decida con qué rapidez y adónde hay que acudir."),
           ul([
             "<strong>Recién nacido o lactante con fiebre</strong>: siempre hay que verlo, sin excepción y sin esperar a una consulta.",
@@ -899,7 +895,7 @@ const roPost: LocalePost = {
     h1: "Medic online 24/7",
     deck: "Disponibilitatea este doar jumătate din răspuns. Cealaltă jumătate este care acuze pot fi evaluate la distanță în siguranță — și care sigur nu.",
     intro:
-      "Un medic online este un medic cu care vorbiți prin video sau telefon în loc de cabinet. Rezolvă bine <strong>acuzele acute obișnuite</strong>, la care decid anamneza și descrierea simptomelor — infecții respiratorii, tulburări digestive, leziuni cutanate care pot fi arătate, migrenă, anxietate, continuarea unui tratament de durată. Nu rezolvă nimic din ce cere <strong>examinare fizică</strong>: auscultația plămânilor, palparea abdomenului, examinarea urechii sau a unei articulații, analize în aceeași zi. Și nu înlocuiește înscrierea la un medic de familie, de care țin controalele preventive și urmărirea bolilor cronice.",
+      "Un medic online este un medic cu care vorbiți prin video sau telefon în loc de cabinet. Rezolvă bine <strong>acuzele acute obișnuite</strong>, la care decid anamneza și descrierea simptomelor — infecții respiratorii, tulburări digestive, leziuni cutanate care pot fi arătate, migrenă, anxietate, continuarea unui tratament de durată. Nu rezolvă ce cere <strong>mâinile medicului</strong> — percuția, tușeul rectal, palparea abdomenului de către medic — și, fără aparat, ascultația plămânilor și a inimii. Imagistica și analizele le putem recomanda, iar cu un kit medical acasă și măsurătorile. Nu înlocuiește înscrierea la un medic de familie, de care țin controalele preventive cu examinare fizică.",
     facts: ["Disponibilitate rapidă", "Potrivit pentru acuze acute obișnuite", "Nu înlocuiește medicul de familie"],
     primaryCta: { label: "Programați o consultație video", href: href("ro", "/services/lekar-online-praha") },
     secondaryCta: { label: "Medicii noștri cehi", href: href("ro", "/doctors") },
@@ -951,16 +947,15 @@ const roPost: LocalePost = {
         eyebrow: "Limite",
         h2: "Ce nu rezolvă consultația online",
         blocks: [
-          lead("Nu este vorba de reavoință. Fără examinare, concluzia ar fi o presupunere."),
+          lead("Granița nu trece între „la distanță” și „în cabinet”. Trece între ce se poate aprecia din anamneză, din imagine și din aparatele pe care le aveți acasă și ce cere mâinile medicului."),
+          p("O bună parte din ce trece drept limită nu este. Pacientul poate fi ghidat pas cu pas să își palpeze singur abdomenul sau să arate amplitudinea mișcării unei articulații, iar asta, împreună cu descrierea durerii, ajunge de obicei pentru a decide pasul următor. Imagistica și analizele le putem recomanda și vă trimitem să le faceți. Iar dacă aveți acasă un <strong>kit medical</strong> — tensiometru, termometru, pulsoximetru, uneori otoscop sau stetoscop digital — consultația se apropie mult de ce ar da cabinetul."),
           ul([
-            "<strong>Durerea abdominală</strong> la care este nevoie de palpare — de la apendicită la colecist.",
-            "<strong>Dificultatea de respirație și ascultația plămânilor.</strong>",
-            "<strong>Durerea de ureche</strong> — fără otoscop nu se poate decide ce se întâmplă în spatele timpanului.",
-            "<strong>Traumatismele, umflăturile și durerile articulare</strong> care cer examinarea mișcării sau imagistică.",
-            "<strong>Măsurarea tensiunii, EKG, analize urgente</strong> și orice altceva care cere aparatură.",
-            "<strong>Controalele preventive</strong> și evaluările obligatorii în care examinarea fizică face parte din act.",
+            "<strong>Percuția</strong> și <strong>tușeul rectal</strong> — niciunul nu se face la distanță.",
+            "<strong>Palparea abdomenului cu mâna medicului</strong>, când examinarea ghidată de pacient nu ajunge sau se suspectează un abdomen acut.",
+            "<strong>Ascultația plămânilor și a inimii</strong> — dacă nu aveți stetoscop digital; cu el ascultăm.",
+            "<strong>Evaluările obligatorii</strong> în care examinarea fizică face parte din act prin lege.",
           ]),
-          p("În aceste cazuri, un medic responsabil vă spune că o consultație nu este suficientă și vă îndrumă spre cabinet sau spre urgențe. Acesta este rezultatul corect al consultației, nu eșecul ei."),
+          p("La distanță, <strong>anamneza</strong> cântărește mult mai mult decât în cabinet: momentul, evoluția, contextul, medicamentele, ce agravează durerea și ce o calmează. Când din ea reiese că lipsește o examinare sau un aparat, v-o spunem și vă îndrumăm spre cabinet ori spre urgențe. Acesta este rezultatul corect al consultației, nu eșecul ei."),
         ],
       },
       {
@@ -989,7 +984,7 @@ const roPost: LocalePost = {
         h2: "Înlocuiește medicul online medicul de familie?",
         blocks: [
           lead("Nu. Iar un serviciu care susține contrariul nu vă spune adevărul."),
-          p("Medicul de familie la care sunteți înscris îndeplinește roluri care nu pot fi îndeplinite la distanță: <strong>controale preventive</strong> cu examinare fizică, <strong>urmărirea</strong> bolilor cronice, vaccinare, legătura cu specialiștii și ținerea documentației medicale în timp. Înscrierea este și cea care vă dă un medic care vă cunoaște istoricul, nu o singură episodă."),
+          p("Medicul de familie la care sunteți înscris îndeplinește roluri care nu pot fi îndeplinite la distanță: <strong>controale preventive</strong> și evaluări obligatorii cu examinare fizică, vaccinare și ținerea documentației medicale în timp. <strong>Urmărirea bolilor cronice</strong>, în schimb, se poate face în bună măsură la distanță — controale, ajustarea tratamentului, citirea valorilor măsurate acasă —; lipsește doar examinarea fizică propriu-zisă. Înscrierea este și cea care vă dă un medic care vă cunoaște istoricul, nu o singură episodă."),
           p("Consultația online completează asta cu rapiditate: seara, în weekend, în deplasare sau când termenul de programare este mai lung decât durata acuzei. Cea mai bună variantă este să le aveți pe amândouă — înscris la medicul de familie și consultație online pentru acut, între timp."),
           ul([
             "Verificați că medicul cu care vorbiți are drept de liberă practică în Cehia — apartenența la Camera Medicilor este publică.",
@@ -1005,7 +1000,7 @@ const roPost: LocalePost = {
         eyebrow: "Prudență sporită",
         h2: "Copiii și consultația la distanță",
         blocks: [
-          lead("La copii, granița dintre „se poate evalua la distanță” și „trebuie văzut” este mult mai aproape de cabinet."),
+          lead("Cele mai multe acuze ale copiilor se pot rezolva la distanță. Ce diferă este pragul: la un copil trimitem la examinare mai devreme decât la un adult."),
           p("Copiii mici se agravează mai repede decât adulții, iar starea lor se apreciază din impresia generală — cum respiră, cum reacționează, cum beau, ce culoare are pielea. O parte se vede prin cameră; o parte sigur nu. De aceea consultația video la un copil servește mai ales pentru ca medicul să decidă cât de repede și unde trebuie mers."),
           ul([
             "<strong>Nou-născutul sau sugarul cu febră</strong> trebuie văzut întotdeauna, fără excepție și fără să așteptați o consultație.",
@@ -1067,7 +1062,7 @@ const roPost: LocalePost = {
       },
       {
         q: "Ce nu poate rezolva consultația online?",
-        a: "Tot ce cere examinare fizică sau aparatură: palparea abdomenului, ascultația plămânilor, examinarea urechii cu otoscopul, evaluarea unui traumatism sau a unei articulații, măsurarea tensiunii, EKG, analize. De asemenea controalele preventive, în care examinarea face parte din act.",
+        a: "Percuția, tușeul rectal și palparea abdomenului cu mâna medicului. Fără stetoscop digital, și ascultația plămânilor și a inimii. Restul se rezolvă de obicei: ghidăm pacientul să facă singur ce e nevoie, recomandăm analize și imagistică, iar cu un kit medical acasă măsurăm tensiunea, saturația și temperatura. Examinarea fizică rămâne la evaluările obligatorii, unde legea o cere.",
       },
       {
         q: "Înlocuiește medicul online înscrierea la un medic de familie?",
@@ -1111,7 +1106,7 @@ const de: LocalePost = {
     h1: "Arzt online 24/7",
     deck: "Erreichbarkeit ist nur die halbe Antwort. Die andere Hälfte ist, welche Beschwerden sich aus der Ferne sicher beurteilen lassen — und welche ganz sicher nicht.",
     intro:
-      "Eine Online-Praxis ist eine Praxis, mit der Sie per Video oder Telefon sprechen statt vor Ort. Gut gelöst werden <strong>häufige akute Beschwerden</strong>, bei denen Vorgeschichte und Ihre Schilderung entscheiden — Atemwegsinfekte, Magen-Darm-Beschwerden, zeigbare Hautveränderungen, Migräne, Angstzustände, Folgerezepte für eine Dauertherapie. Nicht gelöst wird alles, was eine <strong>körperliche Untersuchung</strong> braucht: Abhören der Lunge, Abtasten des Bauchs, Blick ins Ohr, Untersuchung eines Gelenks, eine Blutentnahme am selben Tag. Und sie ersetzt nicht die Einschreibung bei einer Hausarztpraxis, zu der Vorsorgeuntersuchungen und die Begleitung chronischer Erkrankungen gehören.",
+      "Eine Online-Praxis ist eine Praxis, mit der Sie per Video oder Telefon sprechen statt vor Ort. Gut gelöst werden <strong>häufige akute Beschwerden</strong>, bei denen Vorgeschichte und Ihre Schilderung entscheiden — Atemwegsinfekte, Magen-Darm-Beschwerden, zeigbare Hautveränderungen, Migräne, Angstzustände, Folgerezepte für eine Dauertherapie. Nicht gelöst wird, was <strong>die Hände der Ärztin</strong> braucht — Perkussion, rektale Untersuchung, das ärztliche Abtasten des Bauchs — und ohne Gerät das Abhören von Lunge und Herz. Bildgebung und Laborwerte können wir veranlassen, mit einem Gesundheitsset zu Hause auch die Messungen. Sie ersetzt nicht die Einschreibung bei einer Hausarztpraxis, zu der Vorsorgeuntersuchungen mit körperlicher Untersuchung gehören.",
     facts: ["Schnell erreichbar", "Für häufige akute Beschwerden geeignet", "Kein Ersatz für die Hausarztpraxis"],
     primaryCta: { label: "Videosprechstunde buchen", href: href("de", "/services/lekar-online-praha") },
     secondaryCta: { label: "Unsere tschechischen Ärztinnen und Ärzte", href: href("de", "/doctors") },
@@ -1163,16 +1158,15 @@ const de: LocalePost = {
         eyebrow: "Grenzen",
         h2: "Was eine Online-Sprechstunde nicht löst",
         blocks: [
-          lead("Das ist keine Unwilligkeit. Ohne Untersuchung wäre die Einschätzung geraten."),
+          lead("Die Grenze verläuft nicht zwischen «aus der Ferne» und «in der Praxis». Sie verläuft zwischen dem, was sich aus Vorgeschichte, Kamerabild und den Geräten bei Ihnen zu Hause beurteilen lässt, und dem, was die Hände einer Ärztin braucht."),
+          p("Vieles, was als Grenze gilt, ist keine. Man kann Patientinnen Schritt für Schritt anleiten, den eigenen Bauch abzutasten oder den Bewegungsumfang eines Gelenks zu zeigen; zusammen mit der Schilderung des Schmerzes reicht das meist, um das weitere Vorgehen zu entscheiden. Bildgebung und Laborwerte können wir veranlassen und Sie dorthin schicken. Und wenn Sie ein <strong>Gesundheitsset</strong> zu Hause haben — Blutdruckmessgerät, Thermometer, Pulsoximeter, mitunter Otoskop oder digitales Stethoskop — kommt die Sprechstunde dem Praxisbesuch sehr nahe."),
           ul([
-            "<strong>Bauchschmerzen</strong>, bei denen abgetastet werden muss — von der Blinddarmentzündung bis zur Gallenblase.",
-            "<strong>Atemnot und der Auskultationsbefund der Lunge.</strong>",
-            "<strong>Ohrenschmerzen</strong> — ohne Otoskop lässt sich nicht entscheiden, was hinter dem Trommelfell vorgeht.",
-            "<strong>Verletzungen, Schwellungen und Gelenkschmerzen</strong>, die eine Bewegungsprüfung oder Bildgebung brauchen.",
-            "<strong>Blutdruckmessung, EKG, kurzfristige Blutentnahmen</strong> und alles Weitere, wofür Geräte nötig sind.",
-            "<strong>Vorsorgeuntersuchungen</strong> und Pflichtbegutachtungen, bei denen die körperliche Untersuchung Teil der Leistung ist.",
+            "<strong>Perkussion</strong> und <strong>rektale Untersuchung</strong> — beides ist aus der Ferne nicht möglich.",
+            "<strong>Abtasten des Bauchs durch die Hand der Ärztin</strong>, wenn der patientengeführte Befund nicht ausreicht oder ein akutes Abdomen im Raum steht.",
+            "<strong>Abhören von Lunge und Herz</strong> — sofern Sie kein digitales Stethoskop haben; mit einem hören wir ab.",
+            "<strong>Pflichtbegutachtungen</strong>, bei denen die körperliche Untersuchung gesetzlich Teil der Leistung ist.",
           ]),
-          p("Verantwortungsvoll wird Ihnen in diesen Fällen gesagt, dass die Sprechstunde nicht genügt, und Sie werden in eine Praxis oder in die Notaufnahme geschickt. Das ist das richtige Ergebnis der Sprechstunde, nicht ihr Scheitern."),
+          p("Aus der Ferne wiegt die <strong>Vorgeschichte</strong> deshalb weit schwerer als im Sprechzimmer: Zeitpunkt, Verlauf, Zusammenhänge, Medikamente, was den Schmerz verstärkt und was ihn lindert. Zeigt sich dabei, dass eine Untersuchung oder ein Gerät fehlt, sagen wir das und schicken Sie in eine Praxis oder in die Notaufnahme. Das ist das richtige Ergebnis der Sprechstunde, nicht ihr Scheitern."),
         ],
       },
       {
@@ -1201,7 +1195,7 @@ const de: LocalePost = {
         h2: "Ersetzt eine Online-Praxis die Hausarztpraxis?",
         blocks: [
           lead("Nein. Und ein Dienst, der das Gegenteil behauptet, sagt Ihnen nicht die Wahrheit."),
-          p("Die Hausarztpraxis, bei der Sie eingeschrieben sind, erfüllt Aufgaben, die aus der Ferne nicht erfüllbar sind: <strong>Vorsorgeuntersuchungen</strong> mit körperlicher Untersuchung, die <strong>strukturierte Begleitung</strong> chronischer Erkrankungen, Impfungen, die Anbindung an Fachpraxen und die Führung der Dokumentation über die Zeit. Die Einschreibung gibt Ihnen außerdem eine Praxis, die Ihre Geschichte kennt und nicht nur eine Episode."),
+          p("Die Hausarztpraxis, bei der Sie eingeschrieben sind, erfüllt Aufgaben, die aus der Ferne nicht erfüllbar sind: <strong>Vorsorgeuntersuchungen</strong> und Pflichtbegutachtungen mit körperlicher Untersuchung, Impfungen und die Führung der Dokumentation über die Zeit. Die <strong>Begleitung chronischer Erkrankungen</strong> lässt sich dagegen zu großen Teilen aus der Ferne führen — Kontrollen, Anpassung der Therapie, Beurteilung der zu Hause gemessenen Werte —; es fehlt allein die körperliche Untersuchung selbst. Die Einschreibung gibt Ihnen außerdem eine Praxis, die Ihre Geschichte kennt und nicht nur eine Episode."),
           p("Die Online-Sprechstunde ergänzt das um Tempo: abends, am Wochenende, unterwegs, oder wenn die Wartezeit länger ist als die Beschwerden dauern. Am besten haben Sie beides — eingeschrieben in einer Hausarztpraxis, dazwischen die Online-Sprechstunde für Akutes."),
           ul([
             "Prüfen Sie, ob die Praxis, mit der Sie sprechen, in Tschechien zur Berufsausübung berechtigt ist — die Kammermitgliedschaft ist öffentlich abfragbar.",
@@ -1217,7 +1211,7 @@ const de: LocalePost = {
         eyebrow: "Besondere Vorsicht",
         h2: "Kinder und Fernsprechstunden",
         blocks: [
-          lead("Bei Kindern liegt die Grenze zwischen „aus der Ferne beurteilbar“ und „gehört gesehen“ deutlich näher an der Praxis."),
+          lead("Die meisten Beschwerden von Kindern lassen sich aus der Ferne klären. Anders ist die Schwelle: Bei einem Kind schicken wir früher zur Untersuchung als bei Erwachsenen."),
           p("Kleine Kinder verschlechtern sich schneller als Erwachsene, und ihr Zustand wird aus dem Gesamteindruck beurteilt — wie sie atmen, wie sie reagieren, wie sie trinken, welche Hautfarbe sie haben. Ein Teil davon ist über die Kamera sichtbar, ein Teil ganz sicher nicht. Eine Videosprechstunde beim Kind dient deshalb vor allem der Entscheidung, wie schnell und wohin Sie fahren müssen."),
           ul([
             "<strong>Ein Neugeborenes oder ein Säugling mit Fieber</strong> gehört immer ärztlich gesehen, ausnahmslos und ohne auf eine Sprechstunde zu warten.",
@@ -1279,7 +1273,7 @@ const de: LocalePost = {
       },
       {
         q: "Was kann eine Online-Sprechstunde nicht lösen?",
-        a: "Alles, was körperliche Untersuchung oder Geräte braucht: Abtasten des Bauchs, Abhören der Lunge, Ohruntersuchung mit dem Otoskop, Beurteilung von Verletzungen und Gelenken, Blutdruck, EKG, Blutentnahmen. Ebenso Vorsorgeuntersuchungen, bei denen die Untersuchung Teil der Leistung ist.",
+        a: "Perkussion, rektale Untersuchung und das Abtasten des Bauchs durch die Hand der Ärztin. Ohne digitales Stethoskop auch das Abhören von Lunge und Herz. Das meiste Übrige lässt sich lösen: Wir leiten Sie an, das Nötige selbst zu tun, veranlassen Labor und Bildgebung, und mit einem Gesundheitsset messen wir Blutdruck, Sättigung und Temperatur. Die körperliche Untersuchung bleibt bei Pflichtuntersuchungen, wo sie gesetzlich zur Leistung gehört.",
       },
       {
         q: "Ersetzt eine Online-Praxis die Einschreibung bei einer Hausarztpraxis?",

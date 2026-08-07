@@ -61,7 +61,7 @@ const pt: LocalePost = {
     h1: "Autodeclaração de doença ou baixa médica?",
     deck: "São dois instrumentos diferentes, com emissores diferentes e efeitos diferentes. Escolher o errado é a razão mais comum para uma falta acabar por não ser justificada.",
     intro:
-      "A <strong>autodeclaração de doença</strong> é preenchida e submetida <em>por si</em>, na Segurança Social Direta, sob compromisso de honra, e serve para justificar uma ausência curta ao trabalho. Não passa por médico e <strong>não dá direito a subsídio de doença</strong>. A <strong>baixa médica</strong> é outra coisa: assenta num <strong>Certificado de Incapacidade Temporária (CIT)</strong> emitido por médico através do sistema do SNS, é essa que comunica a incapacidade à Segurança Social e é essa que pode abrir o subsídio de doença. Regra prática: ausência muito curta e sem necessidade clínica de ser observado, autodeclaração; doença que o impede de trabalhar mais tempo, consulta médica.",
+      "A <strong>autodeclaração de doença</strong> é preenchida e submetida <em>por si</em>, na Segurança Social Direta, sob compromisso de honra, e serve para justificar uma ausência curta ao trabalho. Não passa por médico e <strong>não dá direito a subsídio de doença</strong>. A <strong>baixa médica</strong> é outra coisa: assenta num <strong>Certificado de Incapacidade Temporária (CIT)</strong> emitido por médico — no SNS ou no privado — e comunicado à Segurança Social, é essa que comunica a incapacidade à Segurança Social e é essa que pode abrir o subsídio de doença. Regra prática: ausência muito curta e sem necessidade clínica de ser observado, autodeclaração; doença que o impede de trabalhar mais tempo, consulta médica.",
     facts: ["Autodeclaração: submete você mesmo", "Baixa médica: emitida por médico", "Só o CIT abre subsídio de doença"],
     primaryCta: { label: "Marcar consulta médica", href: href("pt", "/services/baixa-medica") },
     secondaryCta: { label: "Baixa médica no SNS 24", href: SNS24_BAIXA },
@@ -111,11 +111,11 @@ const pt: LocalePost = {
         h2: "O que é a baixa médica e o CIT",
         blocks: [
           lead("Quando a doença ultrapassa o âmbito da autodeclaração, o que passa a existir é um Certificado de Incapacidade Temporária."),
-          p("O <strong>CIT</strong> é emitido por médico, através do sistema do SNS, e é transmitido eletronicamente à Segurança Social. É esse documento que atesta clinicamente que está temporariamente incapaz para o trabalho, e é a partir dele que se avalia o direito ao <strong>subsídio de doença</strong>."),
+          p("O <strong>CIT</strong> é emitido por médico — no SNS ou no privado, nós também o emitimos — e comunicado à Segurança Social. É esse documento que atesta clinicamente que está temporariamente incapaz para o trabalho, e é a partir dele que se avalia o direito ao <strong>subsídio de doença</strong>."),
           ul([
             "É <strong>o médico</strong> que decide se existe incapacidade e qual o período — não o utente e não a entidade patronal.",
-            "O CIT segue por via eletrónica; não é o utente que o transporta.",
-            "Se a incapacidade se prolongar, há reavaliação médica; em determinadas circunstâncias pode haver junta médica.",
+            "Na maioria dos casos o CIT segue por via eletrónica e o utente não o transporta; existem ainda CIT em papel, que é o próprio utente que entrega na Segurança Social.",
+            "Se a incapacidade se prolongar, há reavaliação médica e o período pode ser prorrogado pelo médico que o acompanha.",
             "O período de espera antes do início do pagamento e a forma de cálculo do subsídio são definidos por lei e constam do portal da Segurança Social.",
           ]),
           warn("Nenhuma consulta garante uma baixa", "A emissão de um certificado de incapacidade depende do que a avaliação clínica mostrar. Qualquer serviço que prometa a baixa antes de o médico o observar está a prometer o que um médico não pode, deontologicamente, garantir."),
@@ -130,7 +130,7 @@ const pt: LocalePost = {
         blocks: [
           lead("Esta é a parte que a maioria dos sites evita dizer com clareza, por isso dizemo-la primeiro."),
           p("Numa consulta privada, incluindo por vídeo, o médico avalia-o e pode emitir uma <strong>declaração médica de justificação de falta ao trabalho</strong>. É esse o serviço que prestamos, e é assim que se chama. Serve para justificar a ausência perante a entidade patronal."),
-          p("O que uma consulta privada <strong>não</strong> é, por si só, é a via para o subsídio de doença. Esse depende do CIT emitido através do sistema do SNS. Se a sua situação exigir subsídio de doença, o caminho passa pelo SNS, e o papel de uma consulta privada é avaliá-lo depressa e encaminhá-lo com indicação clínica, não substituir esse circuito."),
+          p("Uma consulta privada <strong>pode emitir CIT</strong> — nós emitimos. O que decide qual dos dois documentos faz sentido é a duração provável da doença: o subsídio de doença só começa a ser pago depois de um período de espera fixado por lei, pelo que uma ausência de dois ou três dias raramente justifica um CIT, e uma declaração médica resolve o que a entidade patronal precisa. Quando a doença se prolonga para lá desse período, o CIT é o instrumento certo."),
           ul([
             "Precisa apenas de justificar a falta perante a entidade patronal: uma declaração médica cumpre esse efeito.",
             "Precisa de subsídio de doença: precisa de CIT, e portanto do circuito do SNS.",
@@ -151,7 +151,7 @@ const pt: LocalePost = {
             "<strong>Precisa de ser pago durante a ausência pela Segurança Social?</strong> Se sim, precisa de CIT, e portanto de médico.",
             "<strong>A doença precisa de ser avaliada?</strong> Se há dúvida sobre o que tem, se os sintomas se agravam, ou se já esgotou o que a autodeclaração permite, a resposta é consulta — a justificação é o subproduto, não o objetivo.",
           ]),
-          p("Há ainda uma quarta situação, frequentemente esquecida: doença de familiar a cargo, assistência a filho e outras faltas por motivo de saúde de terceiros seguem regras próprias, distintas de ambos os instrumentos acima. Essas constam do portal da Segurança Social."),
+          p("Há ainda uma quarta situação, frequentemente esquecida: doença de familiar a cargo, assistência a filho e outras faltas por motivo de saúde de terceiros. Têm designação e regras próprias, distintas de ambos os instrumentos acima, mas emitem-se no mesmo sistema do CIT — e nós também as emitimos. As condições constam do portal da Segurança Social."),
         ],
       },
       {
@@ -201,7 +201,7 @@ const pt: LocalePost = {
     faqs: [
       {
         q: "A autodeclaração de doença dá direito a subsídio de doença?",
-        a: "Não. A autodeclaração justifica a falta perante a entidade patronal, mas não envolve certificação clínica de incapacidade. O subsídio de doença depende de um Certificado de Incapacidade Temporária emitido por médico através do sistema do SNS.",
+        a: "Não. A autodeclaração justifica a falta perante a entidade patronal, mas não envolve certificação clínica de incapacidade. O subsídio de doença depende de um Certificado de Incapacidade Temporária emitido por médico, no SNS ou no privado.",
       },
       {
         q: "Onde se submete a autodeclaração de doença?",
@@ -217,7 +217,7 @@ const pt: LocalePost = {
       },
       {
         q: "Uma consulta privada online pode passar-me uma baixa médica?",
-        a: "Uma consulta privada pode emitir uma declaração médica que justifica a falta ao trabalho. O Certificado de Incapacidade Temporária, que é o que abre o subsídio de doença, é emitido através do sistema do SNS. Se precisar de subsídio de doença, o circuito é esse.",
+        a: "Sim. Uma consulta privada pode emitir uma declaração médica que justifica a falta ao trabalho e pode também emitir o Certificado de Incapacidade Temporária, que é o que abre o subsídio de doença. Para ausências curtas emitimos habitualmente a declaração, porque o subsídio só começa a ser pago depois do período de espera previsto na lei; quando a doença se prolonga, emitimos o CIT.",
       },
       {
         q: "Já usei a autodeclaração e continuo doente. O que faço?",
@@ -249,7 +249,7 @@ const en: LocalePost = {
     h1: "Self-certification or a medical certificate?",
     deck: "Two different instruments, issued by different people, with different effects. Choosing the wrong one is the most common reason an absence ends up unjustified.",
     intro:
-      "The <strong>autodeclaração de doença</strong> is completed and submitted <em>by you</em>, on Segurança Social Direta, on your word of honour, and justifies a short absence from work. No doctor is involved and it <strong>does not open sickness benefit</strong>. The <strong>baixa médica</strong> is something else: it rests on a <strong>Certificado de Incapacidade Temporária (CIT)</strong> issued by a doctor through the SNS system, and that is what reports the incapacity to Segurança Social and what can open sickness benefit. Rule of thumb: a very short absence with no clinical need to be examined, self-certify; illness that keeps you off work longer, see a doctor.",
+      "The <strong>autodeclaração de doença</strong> is completed and submitted <em>by you</em>, on Segurança Social Direta, on your word of honour, and justifies a short absence from work. No doctor is involved and it <strong>does not open sickness benefit</strong>. The <strong>baixa médica</strong> is something else: it rests on a <strong>Certificado de Incapacidade Temporária (CIT)</strong> issued by a doctor — in the SNS or in private practice — and sent to Segurança Social, and that is what reports the incapacity to Segurança Social and what can open sickness benefit. Rule of thumb: a very short absence with no clinical need to be examined, self-certify; illness that keeps you off work longer, see a doctor.",
     facts: ["Self-certification: you submit it", "Baixa médica: a doctor issues it", "Only the CIT opens sickness benefit"],
     primaryCta: { label: "Book a medical consultation", href: href("en", "/services/baixa-medica") },
     secondaryCta: { label: "Baixa médica on SNS 24", href: SNS24_BAIXA },
@@ -299,11 +299,11 @@ const en: LocalePost = {
         h2: "What a baixa médica and the CIT are",
         blocks: [
           lead("When illness goes beyond the scope of self-certification, what exists instead is a Certificado de Incapacidade Temporária."),
-          p("The <strong>CIT</strong> is issued by a doctor, through the SNS system, and transmitted electronically to Segurança Social. It is the document that clinically attests that you are temporarily unfit for work, and it is the basis on which entitlement to <strong>sickness benefit</strong> is assessed."),
+          p("The <strong>CIT</strong> is issued by a doctor — in the SNS or in private practice, ours included — and sent to Segurança Social. It is the document that clinically attests that you are temporarily unfit for work, and it is the basis on which entitlement to <strong>sickness benefit</strong> is assessed."),
           ul([
             "It is <strong>the doctor</strong> who decides whether incapacity exists and for how long — not the patient and not the employer.",
-            "The CIT travels electronically; the patient does not carry it.",
-            "If incapacity continues, there is medical reassessment; in certain circumstances a medical board may be involved.",
+            "Most CITs travel electronically and the patient carries nothing; paper CITs still exist, and those the patient files with Segurança Social themselves.",
+            "If incapacity continues, there is medical reassessment and the period can be extended by the doctor treating you.",
             "The waiting period before payment starts and how the benefit is calculated are defined in law and published on the Segurança Social portal.",
           ]),
           warn("No consultation guarantees a baixa", "Issuing a certificate of incapacity depends on what the clinical assessment shows. Any service promising the baixa before a doctor has examined you is promising what a doctor cannot ethically guarantee."),
@@ -318,7 +318,7 @@ const en: LocalePost = {
         blocks: [
           lead("This is the part most sites avoid saying clearly, so we say it first."),
           p("In a private consultation, including by video, the doctor assesses you and may issue a <strong>medical declaration justifying absence from work</strong>. That is the service we provide, and that is what it is called. It serves to justify the absence to your employer."),
-          p("What a private consultation is <strong>not</strong>, on its own, is the route to sickness benefit. That depends on the CIT issued through the SNS system. If your situation requires sickness benefit, the path runs through the SNS, and the role of a private consultation is to assess you quickly and direct you with a clinical opinion — not to replace that circuit."),
+          p("A private consultation <strong>can issue a CIT</strong> — we do. What decides which of the two documents makes sense is how long the illness is likely to last: sickness benefit only starts to be paid after a waiting period set in law, so an absence of two or three days rarely justifies a CIT, and a medical declaration covers what the employer needs. When the illness runs past that period, the CIT is the right instrument."),
           ul([
             "You only need to justify the absence to your employer: a medical declaration achieves that.",
             "You need sickness benefit: you need a CIT, and therefore the SNS circuit.",
@@ -339,7 +339,7 @@ const en: LocalePost = {
             "<strong>Do you need to be paid by Segurança Social while absent?</strong> If so, you need a CIT, and therefore a doctor.",
             "<strong>Does the illness need assessing?</strong> If there is doubt about what you have, if symptoms are worsening, or if you have already used up what self-certification allows, the answer is a consultation — the justification is the by-product, not the objective.",
           ]),
-          p("There is a fourth situation people often forget: illness of a dependent family member, care of a child and other absences for someone else's health follow their own rules, distinct from both instruments above. Those are set out on the Segurança Social portal."),
+          p("There is a fourth situation people often forget: illness of a dependent family member, care of a child and other absences for someone else's health. They have their own name and their own rules, distinct from both instruments above, but they are issued through the same system as the CIT — and we issue them too. The conditions are set out on the Segurança Social portal."),
         ],
       },
       {
@@ -390,7 +390,7 @@ const en: LocalePost = {
     faqs: [
       {
         q: "Does the autodeclaração de doença entitle me to sickness benefit?",
-        a: "No. It justifies the absence to your employer, but involves no clinical certification of incapacity. Sickness benefit depends on a Certificado de Incapacidade Temporária issued by a doctor through the SNS system.",
+        a: "No. It justifies the absence to your employer, but involves no clinical certification of incapacity. Sickness benefit depends on a Certificado de Incapacidade Temporária issued by a doctor, in the SNS or in private practice.",
       },
       {
         q: "Where is the autodeclaração de doença submitted?",
@@ -406,7 +406,7 @@ const en: LocalePost = {
       },
       {
         q: "Can a private online consultation give me a baixa médica?",
-        a: "A private consultation can issue a medical declaration justifying absence from work. The Certificado de Incapacidade Temporária, which is what opens sickness benefit, is issued through the SNS system. If you need sickness benefit, that is the route.",
+        a: "Yes. A private consultation can issue a medical declaration justifying absence from work, and it can also issue the Certificado de Incapacidade Temporária, which is what opens sickness benefit. For short absences we usually issue the declaration, because the benefit only starts after the waiting period set in law; when the illness runs longer, we issue the CIT.",
       },
       {
         q: "I have already used self-certification and I am still ill. What now?",
@@ -438,7 +438,7 @@ const es: LocalePost = {
     h1: "¿Autodeclaración de enfermedad o baja médica?",
     deck: "Son dos instrumentos distintos, con emisores distintos y efectos distintos. Elegir el equivocado es el motivo más frecuente de que una ausencia acabe sin justificar.",
     intro:
-      "La <strong>autodeclaração de doença</strong> la rellena y presenta <em>usted mismo</em>, en la Segurança Social Direta, bajo declaración de honor, y sirve para justificar una ausencia corta al trabajo. No pasa por un médico y <strong>no da derecho a subsidio de enfermedad</strong>. La <strong>baixa médica</strong> es otra cosa: se apoya en un <strong>Certificado de Incapacidade Temporária (CIT)</strong> emitido por un médico a través del sistema del SNS, es el que comunica la incapacidad a la Segurança Social y el que puede abrir el subsidio. Regla práctica: ausencia muy corta y sin necesidad clínica de ser visto, autodeclaración; enfermedad que le impide trabajar más tiempo, consulta médica.",
+      "La <strong>autodeclaração de doença</strong> la rellena y presenta <em>usted mismo</em>, en la Segurança Social Direta, bajo declaración de honor, y sirve para justificar una ausencia corta al trabajo. No pasa por un médico y <strong>no da derecho a subsidio de enfermedad</strong>. La <strong>baixa médica</strong> es otra cosa: se apoya en un <strong>Certificado de Incapacidade Temporária (CIT)</strong> emitido por un médico — en el SNS o en la privada — y remitido a la Segurança Social, es el que comunica la incapacidad a la Segurança Social y el que puede abrir el subsidio. Regla práctica: ausencia muy corta y sin necesidad clínica de ser visto, autodeclaración; enfermedad que le impide trabajar más tiempo, consulta médica.",
     facts: ["Autodeclaración: la presenta usted", "Baja médica: la emite un médico", "Solo el CIT abre el subsidio"],
     primaryCta: { label: "Reservar consulta médica", href: href("es", "/services/baixa-medica") },
     secondaryCta: { label: "Baixa médica en SNS 24", href: SNS24_BAIXA },
@@ -488,11 +488,11 @@ const es: LocalePost = {
         h2: "Qué es la baixa médica y el CIT",
         blocks: [
           lead("Cuando la enfermedad supera el ámbito de la autodeclaración, lo que existe es un Certificado de Incapacidade Temporária."),
-          p("El <strong>CIT</strong> lo emite un médico, a través del sistema del SNS, y se transmite electrónicamente a la Segurança Social. Es el documento que acredita clínicamente que está temporalmente incapacitado para trabajar, y a partir de él se evalúa el derecho al <strong>subsidio de enfermedad</strong>."),
+          p("El <strong>CIT</strong> lo emite un médico — en el SNS o en la privada, nosotros también — y se remite a la Segurança Social. Es el documento que acredita clínicamente que está temporalmente incapacitado para trabajar, y a partir de él se evalúa el derecho al <strong>subsidio de enfermedad</strong>."),
           ul([
             "Es <strong>el médico</strong> quien decide si existe incapacidad y por cuánto tiempo: no el paciente ni la empresa.",
-            "El CIT viaja por vía electrónica; no lo transporta el paciente.",
-            "Si la incapacidad se prolonga hay reevaluación médica; en determinadas circunstancias puede intervenir un tribunal médico.",
+            "La mayoría de los CIT viajan por vía electrónica y el paciente no transporta nada; siguen existiendo CIT en papel, que el propio paciente entrega en la Segurança Social.",
+            "Si la incapacidad se prolonga hay reevaluación médica y el periodo puede prorrogarlo el médico que le atiende.",
             "El periodo de espera antes del inicio del pago y la forma de cálculo del subsidio están definidos por ley y figuran en el portal de la Segurança Social.",
           ]),
           warn("Ninguna consulta garantiza una baja", "La emisión de un certificado de incapacidad depende de lo que muestre la valoración clínica. Cualquier servicio que prometa la baja antes de que un médico le explore está prometiendo algo que un médico no puede garantizar deontológicamente."),
@@ -507,7 +507,7 @@ const es: LocalePost = {
         blocks: [
           lead("Esta es la parte que la mayoría de los sitios evita decir con claridad, así que la decimos primero."),
           p("En una consulta privada, incluida la de vídeo, el médico le evalúa y puede emitir una <strong>declaración médica de justificación de falta al trabajo</strong>. Ese es el servicio que prestamos y así se llama. Sirve para justificar la ausencia ante la empresa."),
-          p("Lo que una consulta privada <strong>no</strong> es, por sí sola, es la vía al subsidio de enfermedad. Ese depende del CIT emitido a través del sistema del SNS. Si su situación exige subsidio, el camino pasa por el SNS, y el papel de una consulta privada es valorarle rápido y orientarle con criterio clínico, no sustituir ese circuito."),
+          p("Una consulta privada <strong>puede emitir un CIT</strong>: nosotros lo hacemos. Lo que decide cuál de los dos documentos tiene sentido es la duración previsible de la enfermedad: el subsidio no empieza a pagarse hasta que transcurre un periodo de espera fijado por ley, así que una ausencia de dos o tres días rara vez justifica un CIT, y una declaración médica cubre lo que la empresa necesita. Cuando la enfermedad se prolonga más allá de ese periodo, el CIT es el instrumento adecuado."),
           ul([
             "Solo necesita justificar la falta ante la empresa: una declaración médica cumple ese efecto.",
             "Necesita subsidio de enfermedad: necesita CIT y, por tanto, el circuito del SNS.",
@@ -528,7 +528,7 @@ const es: LocalePost = {
             "<strong>¿Necesita cobrar de la Segurança Social durante la ausencia?</strong> Si es así, necesita CIT y, por tanto, un médico.",
             "<strong>¿La enfermedad necesita valorarse?</strong> Si hay dudas sobre lo que tiene, si los síntomas empeoran, o si ya agotó lo que la autodeclaración permite, la respuesta es consulta: la justificación es el subproducto, no el objetivo.",
           ]),
-          p("Hay además una cuarta situación que se olvida a menudo: la enfermedad de un familiar a cargo, la asistencia a un hijo y otras faltas por motivos de salud de terceros siguen reglas propias, distintas de ambos instrumentos anteriores. Están en el portal de la Segurança Social."),
+          p("Hay además una cuarta situación que se olvida a menudo: la enfermedad de un familiar a cargo, la asistencia a un hijo y otras faltas por motivos de salud de terceros. Tienen nombre y reglas propias, distintas de ambos instrumentos anteriores, pero se emiten en el mismo sistema que el CIT, y nosotros también las emitimos. Las condiciones están en el portal de la Segurança Social."),
         ],
       },
       {
@@ -579,7 +579,7 @@ const es: LocalePost = {
     faqs: [
       {
         q: "¿La autodeclaración de enfermedad da derecho a subsidio?",
-        a: "No. Justifica la falta ante la empresa, pero no implica certificación clínica de incapacidad. El subsidio de enfermedad depende de un Certificado de Incapacidade Temporária emitido por un médico a través del sistema del SNS.",
+        a: "No. Justifica la falta ante la empresa, pero no implica certificación clínica de incapacidad. El subsidio de enfermedad depende de un Certificado de Incapacidade Temporária emitido por un médico, en el SNS o en la privada.",
       },
       {
         q: "¿Dónde se presenta la autodeclaração de doença?",
@@ -595,7 +595,7 @@ const es: LocalePost = {
       },
       {
         q: "¿Una consulta privada online puede darme una baja médica?",
-        a: "Una consulta privada puede emitir una declaración médica que justifica la falta al trabajo. El Certificado de Incapacidade Temporária, que es el que abre el subsidio, se emite a través del sistema del SNS. Si necesita subsidio, ese es el circuito.",
+        a: "Sí. Una consulta privada puede emitir una declaración médica que justifica la falta al trabajo y también puede emitir el Certificado de Incapacidade Temporária, que es el que abre el subsidio. En ausencias cortas solemos emitir la declaración, porque el subsidio no empieza a pagarse hasta que pasa el periodo de espera fijado por ley; si la enfermedad se prolonga, emitimos el CIT.",
       },
       {
         q: "Ya usé la autodeclaración y sigo enfermo. ¿Qué hago?",
@@ -627,7 +627,7 @@ const cs: LocalePost = {
     h1: "Autodeklarace nemoci, nebo neschopenka?",
     deck: "Jsou to dva různé nástroje, s různými vystavovateli a různými účinky. Zvolit ten špatný je nejčastější důvod, proč absence nakonec zůstane neomluvená.",
     intro:
-      "<strong>Autodeklaraci nemoci</strong> (autodeclaração de doença) vyplňujete a podáváte <em>vy sami</em>, na Segurança Social Direta, čestným prohlášením, a slouží k omluvení krátké nepřítomnosti v práci. Nejde přes lékaře a <strong>nezakládá nárok na nemocenskou dávku</strong>. <strong>Baixa médica</strong> je něco jiného: stojí na <strong>Certificado de Incapacidade Temporária (CIT)</strong>, který vystavuje lékař přes systém SNS. Právě ten hlásí pracovní neschopnost správě sociálního zabezpečení a právě ten může otevřít nemocenskou dávku. Praktické pravidlo: velmi krátká absence bez klinické potřeby vyšetření znamená autodeklaraci; nemoc, která vám brání pracovat déle, znamená lékaře.",
+      "<strong>Autodeklaraci nemoci</strong> (autodeclaração de doença) vyplňujete a podáváte <em>vy sami</em>, na Segurança Social Direta, čestným prohlášením, a slouží k omluvení krátké nepřítomnosti v práci. Nejde přes lékaře a <strong>nezakládá nárok na nemocenskou dávku</strong>. <strong>Baixa médica</strong> je něco jiného: stojí na <strong>Certificado de Incapacidade Temporária (CIT)</strong>, který vystavuje lékař — ve veřejném systému i v soukromé praxi — a předává správě sociálního zabezpečení. Právě ten hlásí pracovní neschopnost správě sociálního zabezpečení a právě ten může otevřít nemocenskou dávku. Praktické pravidlo: velmi krátká absence bez klinické potřeby vyšetření znamená autodeklaraci; nemoc, která vám brání pracovat déle, znamená lékaře.",
     facts: ["Autodeklaraci podáváte sami", "Baixa médica: vystavuje lékař", "Dávku otevírá jen CIT"],
     primaryCta: { label: "Objednat lékařskou konzultaci", href: href("cs", "/services/baixa-medica") },
     secondaryCta: { label: "Baixa médica na SNS 24", href: SNS24_BAIXA },
@@ -678,11 +678,11 @@ const cs: LocalePost = {
         h2: "Co je baixa médica a CIT",
         blocks: [
           lead("Když nemoc přesáhne rozsah autodeklarace, nastupuje Certificado de Incapacidade Temporária."),
-          p("<strong>CIT</strong> vystavuje lékař přes systém SNS a předává se elektronicky správě sociálního zabezpečení. Je to dokument, který klinicky potvrzuje, že jste dočasně neschopni práce, a na jeho základě se posuzuje nárok na <strong>nemocenskou dávku</strong>."),
+          p("<strong>CIT</strong> vystavuje lékař — ve veřejném systému i v soukromé praxi, tedy i my — a předává se správě sociálního zabezpečení. Je to dokument, který klinicky potvrzuje, že jste dočasně neschopni práce, a na jeho základě se posuzuje nárok na <strong>nemocenskou dávku</strong>."),
           ul([
             "O tom, zda pracovní neschopnost existuje a na jak dlouho, rozhoduje <strong>lékař</strong> — ne pacient a ne zaměstnavatel.",
-            "CIT putuje elektronicky; pacient ho nikam nenosí.",
-            "Pokud neschopnost trvá déle, následuje lékařské přehodnocení; za určitých okolností může být svolána lékařská komise.",
+            "Většina CIT putuje elektronicky a pacient nic nenosí; stále existují i papírové CIT, které na správu sociálního zabezpečení odevzdá sám pacient.",
+            "Pokud neschopnost trvá déle, následuje lékařské přehodnocení a ošetřující lékař může dobu prodloužit.",
             "Čekací doba před začátkem výplaty i způsob výpočtu dávky jsou dány zákonem a uvedeny na portálu Segurança Social.",
           ]),
           warn("Žádná konzultace nezaručuje neschopenku", "Vystavení potvrzení o pracovní neschopnosti závisí na tom, co ukáže klinické vyšetření. Služba, která slibuje neschopenku dřív, než vás lékař vyšetří, slibuje něco, co lékař eticky zaručit nemůže."),
@@ -697,7 +697,7 @@ const cs: LocalePost = {
         blocks: [
           lead("Tohle je část, kterou většina webů říká nerada, proto ji říkáme jako první."),
           p("Při soukromé konzultaci, včetně videokonzultace, vás lékař vyšetří a může vystavit <strong>lékařské potvrzení omlouvající nepřítomnost v práci</strong>. To je služba, kterou poskytujeme, a takto se jmenuje. Slouží k omluvení absence vůči zaměstnavateli."),
-          p("Čím soukromá konzultace sama o sobě <strong>není</strong>, je cesta k nemocenské dávce. Ta závisí na CIT vystaveném přes systém SNS. Pokud vaše situace vyžaduje nemocenskou dávku, vede cesta přes SNS, a úlohou soukromé konzultace je vyšetřit vás rychle a nasměrovat s klinickým závěrem, nikoli tento okruh nahradit."),
+          p("Soukromá konzultace <strong>CIT vystavit může</strong> — my jej vystavujeme. O tom, který z obou dokumentů dává smysl, rozhoduje předpokládaná délka nemoci: nemocenská dávka se začíná vyplácet až po zákonem stanovené čekací době, takže dvou- až třídenní absenci CIT málokdy odpovídá a zaměstnavateli stačí lékařské potvrzení. Jakmile nemoc tuto dobu přesáhne, správným nástrojem je CIT."),
           ul([
             "Potřebujete jen omluvit absenci u zaměstnavatele: lékařské potvrzení tento účel splní.",
             "Potřebujete nemocenskou dávku: potřebujete CIT, a tedy okruh SNS.",
@@ -718,7 +718,7 @@ const cs: LocalePost = {
             "<strong>Potřebujete být během absence placeni ze sociálního zabezpečení?</strong> Pokud ano, potřebujete CIT, a tedy lékaře.",
             "<strong>Potřebuje nemoc vyšetřit?</strong> Pokud nevíte, co vám je, pokud se příznaky zhoršují, nebo pokud jste už vyčerpali, co autodeklarace umožňuje, odpovědí je konzultace — potvrzení je vedlejší produkt, ne cíl.",
           ]),
-          p("Existuje i čtvrtá situace, na kterou se často zapomíná: nemoc závislého člena rodiny, péče o dítě a další absence ze zdravotních důvodů třetích osob se řídí vlastními pravidly, odlišnými od obou nástrojů výše. Ta najdete na portálu Segurança Social."),
+          p("Existuje i čtvrtá situace, na kterou se často zapomíná: nemoc závislého člena rodiny, péče o dítě a další absence ze zdravotních důvodů třetích osob. Mají vlastní název i pravidla, odlišná od obou nástrojů výše, ale vystavují se ve stejném systému jako CIT — a vystavujeme je také. Podmínky najdete na portálu Segurança Social."),
           p("A ještě jedno doporučení, které ušetří nejvíc komplikací: rozhodněte se hned první den, ne až po víkendu. Autodeklarace se podává za probíhající nebo právě skončenou krátkou absenci, zatímco lékař posuzuje váš stav v době, kdy vás vidí. Čím později se do toho pustíte, tím hůř se doloží období, které chcete omluvit."),
         ],
       },
@@ -770,7 +770,7 @@ const cs: LocalePost = {
     faqs: [
       {
         q: "Zakládá autodeklarace nemoci nárok na nemocenskou dávku?",
-        a: "Ne. Omlouvá absenci vůči zaměstnavateli, ale neobsahuje klinické potvrzení pracovní neschopnosti. Nemocenská dávka závisí na Certificado de Incapacidade Temporária, který vystavuje lékař přes systém SNS.",
+        a: "Ne. Omlouvá absenci vůči zaměstnavateli, ale neobsahuje klinické potvrzení pracovní neschopnosti. Nemocenská dávka závisí na Certificado de Incapacidade Temporária, který vystavuje lékař ve veřejném systému i v soukromé praxi.",
       },
       {
         q: "Kde se autodeklarace nemoci podává?",
@@ -786,7 +786,7 @@ const cs: LocalePost = {
       },
       {
         q: "Může mi soukromá online konzultace vystavit baixa médica?",
-        a: "Soukromá konzultace může vystavit lékařské potvrzení, které omlouvá nepřítomnost v práci. Certificado de Incapacidade Temporária, který otevírá nemocenskou dávku, se vystavuje přes systém SNS. Pokud potřebujete dávku, vede cesta tudy.",
+        a: "Ano. Soukromá konzultace může vystavit lékařské potvrzení, které omlouvá nepřítomnost v práci, a může vystavit i Certificado de Incapacidade Temporária, který otevírá nemocenskou dávku. U krátkých absencí vystavujeme obvykle potvrzení, protože dávka se začíná vyplácet až po zákonné čekací době; když se nemoc protáhne, vystavíme CIT.",
       },
       {
         q: "Autodeklaraci jsem už použil a jsem stále nemocný. Co teď?",
@@ -818,7 +818,7 @@ const roPost: LocalePost = {
     h1: "Autodeclarație de boală sau concediu medical?",
     deck: "Sunt două instrumente diferite, cu emitenți diferiți și efecte diferite. Alegerea greșită este cel mai frecvent motiv pentru care o absență rămâne, în final, nejustificată.",
     intro:
-      "<strong>Autodeclarația de boală</strong> (autodeclaração de doença) este completată și depusă <em>de dumneavoastră</em>, pe Segurança Social Direta, pe propria răspundere, și justifică o absență scurtă de la muncă. Nu trece prin medic și <strong>nu dă dreptul la indemnizație de boală</strong>. <strong>Baixa médica</strong> este altceva: se bazează pe un <strong>Certificado de Incapacidade Temporária (CIT)</strong> emis de medic prin sistemul SNS, este cel care comunică incapacitatea către Segurança Social și cel care poate deschide indemnizația de boală. Regulă practică: absență foarte scurtă, fără nevoie clinică de a fi consultat, autodeclarație; boală care vă împiedică să munciți mai mult timp, consultație medicală.",
+      "<strong>Autodeclarația de boală</strong> (autodeclaração de doença) este completată și depusă <em>de dumneavoastră</em>, pe Segurança Social Direta, pe propria răspundere, și justifică o absență scurtă de la muncă. Nu trece prin medic și <strong>nu dă dreptul la indemnizație de boală</strong>. <strong>Baixa médica</strong> este altceva: se bazează pe un <strong>Certificado de Incapacidade Temporária (CIT)</strong> emis de medic — în SNS sau în privat — și transmis către Segurança Social, este cel care comunică incapacitatea către Segurança Social și cel care poate deschide indemnizația de boală. Regulă practică: absență foarte scurtă, fără nevoie clinică de a fi consultat, autodeclarație; boală care vă împiedică să munciți mai mult timp, consultație medicală.",
     facts: ["Autodeclarația: o depuneți singur", "Baixa médica: o emite medicul", "Doar CIT deschide indemnizația"],
     primaryCta: { label: "Programați o consultație medicală", href: href("ro", "/services/baixa-medica") },
     secondaryCta: { label: "Baixa médica pe SNS 24", href: SNS24_BAIXA },
@@ -868,11 +868,11 @@ const roPost: LocalePost = {
         h2: "Ce sunt baixa médica și CIT",
         blocks: [
           lead("Când boala depășește sfera autodeclarației, ceea ce apare este un Certificado de Incapacidade Temporária."),
-          p("<strong>CIT</strong> este emis de medic, prin sistemul SNS, și este transmis electronic către Segurança Social. Este documentul care atestă clinic că sunteți temporar incapabil de muncă și de la care se evaluează dreptul la <strong>indemnizația de boală</strong>."),
+          p("<strong>CIT</strong> este emis de medic — în SNS sau în privat, inclusiv de noi — și transmis către Segurança Social. Este documentul care atestă clinic că sunteți temporar incapabil de muncă și de la care se evaluează dreptul la <strong>indemnizația de boală</strong>."),
           ul([
             "<strong>Medicul</strong> decide dacă există incapacitate și pentru ce perioadă — nu pacientul și nu angajatorul.",
-            "CIT circulă electronic; pacientul nu îl transportă.",
-            "Dacă incapacitatea se prelungește, are loc o reevaluare medicală; în anumite situații poate interveni o comisie medicală.",
+            "Majoritatea CIT circulă electronic și pacientul nu duce nimic; există însă și CIT pe hârtie, pe care pacientul le depune el însuși la Segurança Social.",
+            "Dacă incapacitatea se prelungește, are loc o reevaluare medicală, iar medicul curant poate prelungi perioada.",
             "Perioada de așteptare până la începerea plății și modul de calcul al indemnizației sunt definite prin lege și apar pe portalul Segurança Social.",
           ]),
           warn("Nicio consultație nu garantează un concediu medical", "Emiterea unui certificat de incapacitate depinde de ce arată evaluarea clinică. Orice serviciu care promite concediul înainte ca medicul să vă consulte promite ceva ce un medic nu poate garanta deontologic."),
@@ -887,7 +887,7 @@ const roPost: LocalePost = {
         blocks: [
           lead("Aceasta este partea pe care majoritatea site-urilor evită să o spună clar, așa că o spunem prima."),
           p("Într-o consultație privată, inclusiv video, medicul vă evaluează și poate emite o <strong>declarație medicală de justificare a absenței de la muncă</strong>. Acesta este serviciul pe care îl oferim și așa se numește. Servește la justificarea absenței față de angajator."),
-          p("Ceea ce o consultație privată <strong>nu</strong> este, prin ea însăși, este calea către indemnizația de boală. Aceasta depinde de CIT emis prin sistemul SNS. Dacă situația dumneavoastră cere indemnizație, drumul trece prin SNS, iar rolul unei consultații private este să vă evalueze rapid și să vă îndrume cu o concluzie clinică, nu să înlocuiască acel circuit."),
+          p("O consultație privată <strong>poate emite CIT</strong> — noi emitem. Ce decide care dintre cele două documente are sens este durata probabilă a bolii: indemnizația de boală începe să se plătească abia după o perioadă de așteptare stabilită prin lege, așa că o absență de două-trei zile rareori justifică un CIT, iar o declarație medicală acoperă ce îi trebuie angajatorului. Când boala depășește acea perioadă, CIT este instrumentul potrivit."),
           ul([
             "Aveți nevoie doar să justificați absența față de angajator: o declarație medicală îndeplinește acest efect.",
             "Aveți nevoie de indemnizație de boală: aveți nevoie de CIT și, prin urmare, de circuitul SNS.",
@@ -908,7 +908,7 @@ const roPost: LocalePost = {
             "<strong>Aveți nevoie să fiți plătit de Segurança Social pe durata absenței?</strong> Dacă da, aveți nevoie de CIT și, prin urmare, de un medic.",
             "<strong>Boala trebuie evaluată?</strong> Dacă există dubii despre ce aveți, dacă simptomele se agravează sau dacă ați epuizat deja ce permite autodeclarația, răspunsul este consultația — justificarea este produsul secundar, nu obiectivul.",
           ]),
-          p("Mai există o a patra situație, adesea uitată: boala unui membru de familie aflat în întreținere, îngrijirea unui copil și alte absențe din motive de sănătate ale terților urmează reguli proprii, diferite de ambele instrumente de mai sus. Acestea se găsesc pe portalul Segurança Social."),
+          p("Mai există o a patra situație, adesea uitată: boala unui membru de familie aflat în întreținere, îngrijirea unui copil și alte absențe din motive de sănătate ale terților. Au denumire și reguli proprii, diferite de ambele instrumente de mai sus, dar se emit în același sistem ca CIT — iar noi le emitem la rândul nostru. Condițiile se găsesc pe portalul Segurança Social."),
         ],
       },
       {
@@ -959,7 +959,7 @@ const roPost: LocalePost = {
     faqs: [
       {
         q: "Autodeclarația de boală dă dreptul la indemnizație de boală?",
-        a: "Nu. Justifică absența față de angajator, dar nu implică certificare clinică a incapacității. Indemnizația de boală depinde de un Certificado de Incapacidade Temporária emis de medic prin sistemul SNS.",
+        a: "Nu. Justifică absența față de angajator, dar nu implică certificare clinică a incapacității. Indemnizația de boală depinde de un Certificado de Incapacidade Temporária emis de medic, în SNS sau în privat.",
       },
       {
         q: "Unde se depune autodeclarația de boală?",
@@ -975,7 +975,7 @@ const roPost: LocalePost = {
       },
       {
         q: "O consultație privată online îmi poate da baixa médica?",
-        a: "O consultație privată poate emite o declarație medicală care justifică absența de la muncă. Certificado de Incapacidade Temporária, cel care deschide indemnizația de boală, se emite prin sistemul SNS. Dacă aveți nevoie de indemnizație, acela este circuitul.",
+        a: "Da. O consultație privată poate emite o declarație medicală care justifică absența de la muncă și poate emite și Certificado de Incapacidade Temporária, cel care deschide indemnizația de boală. La absențe scurte emitem de obicei declarația, pentru că indemnizația începe să se plătească abia după perioada de așteptare prevăzută de lege; când boala se prelungește, emitem CIT.",
       },
       {
         q: "Am folosit deja autodeclarația și sunt tot bolnav. Ce fac?",
@@ -1007,7 +1007,7 @@ const de: LocalePost = {
     h1: "Selbsterklärung oder ärztliche Krankmeldung?",
     deck: "Zwei verschiedene Instrumente, von verschiedenen Stellen ausgestellt, mit verschiedenen Wirkungen. Das falsche zu wählen ist der häufigste Grund, warum eine Fehlzeit am Ende unentschuldigt bleibt.",
     intro:
-      "Die <strong>autodeclaração de doença</strong> füllen und reichen <em>Sie selbst</em> über Segurança Social Direta ein, auf Ehrenwort, und sie entschuldigt eine kurze Abwesenheit von der Arbeit. Sie läuft nicht über eine Praxis und <strong>eröffnet kein Krankengeld</strong>. Die <strong>baixa médica</strong> ist etwas anderes: sie beruht auf einem <strong>Certificado de Incapacidade Temporária (CIT)</strong>, das ärztlich über das SNS-System ausgestellt wird. Dieses meldet die Arbeitsunfähigkeit an die Sozialversicherung und dieses kann Krankengeld eröffnen. Faustregel: sehr kurze Abwesenheit ohne klinische Notwendigkeit einer Untersuchung — Selbsterklärung; Krankheit, die Sie länger an der Arbeit hindert — ärztliche Sprechstunde.",
+      "Die <strong>autodeclaração de doença</strong> füllen und reichen <em>Sie selbst</em> über Segurança Social Direta ein, auf Ehrenwort, und sie entschuldigt eine kurze Abwesenheit von der Arbeit. Sie läuft nicht über eine Praxis und <strong>eröffnet kein Krankengeld</strong>. Die <strong>baixa médica</strong> ist etwas anderes: sie beruht auf einem <strong>Certificado de Incapacidade Temporária (CIT)</strong>, das ärztlich ausgestellt wird — im SNS wie in der Privatpraxis — und an die Sozialversicherung geht. Dieses meldet die Arbeitsunfähigkeit an die Sozialversicherung und dieses kann Krankengeld eröffnen. Faustregel: sehr kurze Abwesenheit ohne klinische Notwendigkeit einer Untersuchung — Selbsterklärung; Krankheit, die Sie länger an der Arbeit hindert — ärztliche Sprechstunde.",
     facts: ["Selbsterklärung: Sie reichen sie ein", "Baixa médica: ärztlich ausgestellt", "Nur das CIT eröffnet Krankengeld"],
     primaryCta: { label: "Ärztliche Sprechstunde buchen", href: href("de", "/services/baixa-medica") },
     secondaryCta: { label: "Baixa médica bei SNS 24", href: SNS24_BAIXA },
@@ -1057,11 +1057,11 @@ const de: LocalePost = {
         h2: "Was baixa médica und CIT sind",
         blocks: [
           lead("Übersteigt die Krankheit den Rahmen der Selbsterklärung, tritt an ihre Stelle ein Certificado de Incapacidade Temporária."),
-          p("Das <strong>CIT</strong> wird ärztlich über das SNS-System ausgestellt und elektronisch an die Sozialversicherung übermittelt. Es ist das Dokument, das klinisch bescheinigt, dass Sie vorübergehend arbeitsunfähig sind, und auf dessen Grundlage der Anspruch auf <strong>Krankengeld</strong> beurteilt wird."),
+          p("Das <strong>CIT</strong> wird ärztlich ausgestellt — im SNS wie in der Privatpraxis, auch bei uns — und an die Sozialversicherung übermittelt. Es ist das Dokument, das klinisch bescheinigt, dass Sie vorübergehend arbeitsunfähig sind, und auf dessen Grundlage der Anspruch auf <strong>Krankengeld</strong> beurteilt wird."),
           ul([
             "Ob Arbeitsunfähigkeit besteht und für welchen Zeitraum, entscheidet <strong>die Ärztin oder der Arzt</strong> — nicht die Patientin und nicht der Arbeitgeber.",
-            "Das CIT läuft elektronisch; es wird nicht von der Patientin getragen.",
-            "Dauert die Arbeitsunfähigkeit an, folgt eine ärztliche Neubeurteilung; unter bestimmten Umständen kann eine Begutachtungskommission hinzutreten.",
+            "Die meisten CIT laufen elektronisch, die Patientin trägt nichts; es gibt weiterhin CIT auf Papier, die man selbst bei der Sozialversicherung einreicht.",
+            "Dauert die Arbeitsunfähigkeit an, folgt eine ärztliche Neubeurteilung, und die behandelnde Ärztin kann den Zeitraum verlängern.",
             "Die Wartezeit bis zum Zahlungsbeginn und die Berechnung des Krankengeldes sind gesetzlich definiert und auf dem Portal der Segurança Social veröffentlicht.",
           ]),
           warn("Keine Sprechstunde garantiert eine Krankmeldung", "Ob eine Arbeitsunfähigkeitsbescheinigung ausgestellt wird, hängt vom Befund ab. Ein Dienst, der die Krankmeldung verspricht, bevor eine ärztliche Untersuchung stattgefunden hat, verspricht etwas, das ärztlich nicht vertretbar zugesagt werden kann."),
@@ -1076,7 +1076,7 @@ const de: LocalePost = {
         blocks: [
           lead("Das ist der Teil, den die meisten Anbieter ungern klar sagen, deshalb sagen wir ihn zuerst."),
           p("In einer Privatsprechstunde, auch per Video, wird ärztlich beurteilt und kann eine <strong>ärztliche Bescheinigung zur Entschuldigung der Abwesenheit von der Arbeit</strong> ausgestellt werden. Genau das ist unser Dienst, und genau so heißt er. Er dient dazu, die Fehlzeit gegenüber dem Arbeitgeber zu entschuldigen."),
-          p("Was eine Privatsprechstunde für sich genommen <strong>nicht</strong> ist, ist der Weg zum Krankengeld. Das hängt am CIT über das SNS-System. Wenn Ihre Situation Krankengeld erfordert, führt der Weg über das SNS, und die Rolle einer Privatsprechstunde besteht darin, Sie rasch zu beurteilen und mit einer klinischen Einschätzung weiterzuleiten — nicht darin, diesen Weg zu ersetzen."),
+          p("Eine Privatsprechstunde <strong>kann ein CIT ausstellen</strong> — wir tun es. Welches der beiden Dokumente sinnvoll ist, entscheidet die voraussichtliche Dauer der Erkrankung: Krankengeld wird erst nach einer gesetzlich festgelegten Wartezeit gezahlt, sodass zwei oder drei Fehltage selten ein CIT rechtfertigen und eine ärztliche Bescheinigung dem Arbeitgeber genügt. Zieht sich die Erkrankung über diese Zeit hinaus, ist das CIT das richtige Instrument."),
           ul([
             "Sie müssen nur die Fehlzeit beim Arbeitgeber entschuldigen: eine ärztliche Bescheinigung erfüllt das.",
             "Sie brauchen Krankengeld: Sie brauchen ein CIT und damit den SNS-Weg.",
@@ -1097,7 +1097,7 @@ const de: LocalePost = {
             "<strong>Brauchen Sie während der Abwesenheit Zahlungen der Sozialversicherung?</strong> Wenn ja, brauchen Sie ein CIT und damit eine ärztliche Beurteilung.",
             "<strong>Muss die Krankheit beurteilt werden?</strong> Wenn unklar ist, was Sie haben, wenn die Beschwerden schlimmer werden, oder wenn Sie ausgeschöpft haben, was die Selbsterklärung erlaubt, ist die Antwort eine Sprechstunde — die Bescheinigung ist das Nebenprodukt, nicht das Ziel.",
           ]),
-          p("Es gibt noch eine vierte, oft vergessene Situation: Krankheit eines unterhaltsberechtigten Familienmitglieds, Betreuung eines Kindes und andere Fehlzeiten wegen der Gesundheit Dritter folgen eigenen Regeln, die sich von beiden Instrumenten oben unterscheiden. Diese stehen auf dem Portal der Segurança Social."),
+          p("Es gibt noch eine vierte, oft vergessene Situation: Krankheit eines unterhaltsberechtigten Familienmitglieds, Betreuung eines Kindes und andere Fehlzeiten wegen der Gesundheit Dritter. Sie haben eigene Bezeichnungen und eigene Regeln, die sich von beiden Instrumenten oben unterscheiden, werden aber im selben System wie das CIT ausgestellt — auch von uns. Die Bedingungen stehen auf dem Portal der Segurança Social."),
         ],
       },
       {
@@ -1148,7 +1148,7 @@ const de: LocalePost = {
     faqs: [
       {
         q: "Eröffnet die Selbsterklärung einen Anspruch auf Krankengeld?",
-        a: "Nein. Sie entschuldigt die Fehlzeit gegenüber dem Arbeitgeber, enthält aber keine klinische Feststellung der Arbeitsunfähigkeit. Krankengeld hängt an einem Certificado de Incapacidade Temporária, das ärztlich über das SNS-System ausgestellt wird.",
+        a: "Nein. Sie entschuldigt die Fehlzeit gegenüber dem Arbeitgeber, enthält aber keine klinische Feststellung der Arbeitsunfähigkeit. Krankengeld hängt an einem Certificado de Incapacidade Temporária, das ärztlich ausgestellt wird — im SNS wie in der Privatpraxis.",
       },
       {
         q: "Wo wird die autodeclaração de doença eingereicht?",
@@ -1164,7 +1164,7 @@ const de: LocalePost = {
       },
       {
         q: "Kann mir eine private Online-Sprechstunde eine baixa médica ausstellen?",
-        a: "Eine Privatsprechstunde kann eine ärztliche Bescheinigung ausstellen, die die Fehlzeit entschuldigt. Das Certificado de Incapacidade Temporária, das Krankengeld eröffnet, wird über das SNS-System ausgestellt. Wenn Sie Krankengeld brauchen, ist das der Weg.",
+        a: "Ja. Eine Privatsprechstunde kann eine ärztliche Bescheinigung ausstellen, die die Fehlzeit entschuldigt, und ebenso das Certificado de Incapacidade Temporária, das Krankengeld eröffnet. Bei kurzen Abwesenheiten stellen wir meist die Bescheinigung aus, weil Krankengeld erst nach der gesetzlichen Wartezeit gezahlt wird; zieht sich die Erkrankung hin, stellen wir das CIT aus.",
       },
       {
         q: "Ich habe die Selbsterklärung bereits genutzt und bin weiter krank. Was nun?",
