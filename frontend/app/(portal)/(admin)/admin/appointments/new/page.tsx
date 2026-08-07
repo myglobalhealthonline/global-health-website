@@ -18,6 +18,7 @@ import { getPublicBookingRequirements } from "@/lib/content/get-public-countries
 import {
   hasErrors,
   parseDiscountPercent,
+  parseMembershipSelection,
   validateManualBooking,
 } from "@/lib/admin/manual-booking-validation";
 
@@ -239,6 +240,20 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       );
     }
 
+    // Private membership (§11.7). Same treatment as the discount: a malformed
+    // benefit stops the booking rather than quietly charging the full price
+    // after the admin quoted the member price.
+    const membership = parseMembershipSelection({
+      enrollmentId: readOpt("membershipEnrollmentId"),
+      overrideBenefitId: readOpt("membershipOverrideBenefitId"),
+      overrideReason: readOpt("membershipOverrideReason"),
+    });
+    if (membership.error) {
+      redirect(
+        `/admin/appointments/new?countryCode=${encodeURIComponent(countryCode ?? "")}&error=${encodeURIComponent(membership.error)}`,
+      );
+    }
+
     const result = await postAdminManualBooking({
       patient: {
         email: readStr("email"),
@@ -277,8 +292,13 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       insuranceCompanyId: readOpt("insuranceCompanyId"),
       insurancePolicyNumber: readOpt("insurancePolicyNumber"),
       // Applied by the backend to the price it resolves (base / peak /
-      // insurance); 100 comps the booking and skips the payment link.
+      // insurance); 100 comps the booking and skips the payment link. On a
+      // membership line it lands on the member price, not the list price.
       discountPercent: discount.value,
+      // The backend re-resolves the benefit from the database and refuses one
+      // that is not this patient's, not active, or has no rule for the service.
+      // These ids are an input to validate, never a price to trust.
+      membership: membership.value,
     });
 
     if (!result.ok) {

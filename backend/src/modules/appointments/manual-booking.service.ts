@@ -44,6 +44,23 @@ import { startPrePaymentFlow } from "../automation/pre-payment-flow.service.js";
 import { persistOrderPortalAccess } from "../automation/resolve-order-portal-access.service.js";
 import { createUnpaidInvoiceForOrder } from "../invoices/generate-invoice.service.js";
 import { promoteAppointmentConsents } from "../consents/promote-appointment-consents.js";
+import {
+  loadAllowanceRemaining,
+  pricingEnrollmentSelect,
+  resolveMembershipPrice,
+  selectBenefitRow,
+} from "../memberships/membership-pricing.service.js";
+import type {
+  MembershipPriceBasis,
+  PricingBenefitRow,
+  PricingEnrollment,
+} from "../memberships/membership-pricing.service.js";
+import {
+  refundAllowanceUnit,
+  spendAllowanceUnit,
+} from "../memberships/membership-allowance.service.js";
+import { repriceWithoutAllowance } from "../memberships/membership-checkout.service.js";
+import { resolveMembershipOverride } from "../memberships/membership-override.service.js";
 
 /**
  * Admin walk-in / phone-in booking pipeline. The patient may or may
@@ -149,6 +166,38 @@ export class InsuranceNotCoveredError extends Error {
 }
 
 /**
+ * Insurance and a private membership were both asked for (§11.7). They are
+ * mutually exclusive on the public path — insurance is alone-in-cart and
+ * charged later by an admin, a membership is charged now — and the manual form
+ * carries both fields, so this rejects rather than silently picking one.
+ */
+export class MembershipWithInsuranceError extends Error {
+  constructor() {
+    super(
+      "A booking can use insurance or a membership benefit, not both. Clear one of them.",
+    );
+    this.name = "MembershipWithInsuranceError";
+  }
+}
+
+/**
+ * The chosen membership does not apply to this booking: it is not the patient's,
+ * it is not active, its plan is for another country, or the level has no rule
+ * covering this service. Never downgraded to full price — the admin quoted a
+ * number from the options list, and charging a different one silently is worse
+ * than making them re-pick (§13.2).
+ */
+export class MembershipNotAvailableError extends Error {
+  constructor(message?: string) {
+    super(
+      message ??
+        "That membership benefit is not available for this patient and service. Refresh the benefit list and pick again.",
+    );
+    this.name = "MembershipNotAvailableError";
+  }
+}
+
+/**
  * The chosen DoctorTimeSlot can't be claimed: it doesn't exist, belongs
  * to a different doctor, already in the past, or was taken (HELD/BOOKED)
  * by another booking between the picker loading and submit. Raised so the
@@ -162,6 +211,59 @@ export class SlotNotAvailableError extends Error {
     );
     this.name = "SlotNotAvailableError";
   }
+}
+
+export type MembershipRequestInput = {
+  enrollmentId?: string | null;
+  override?: { benefitId: string; reason: string } | null;
+} | null;
+
+export type MembershipRequest =
+  | { mode: "none" }
+  | { mode: "enrollment"; enrollmentId: string }
+  | { mode: "override"; override: { benefitId: string; reason: string } };
+
+/**
+ * The §11.7 decision table, pulled out as a pure function so the three
+ * previously-undefined interactions are pinned by tests rather than by reading
+ * a 600-line booking pipeline.
+ *
+ * Order matters:
+ *
+ *   1. **Both fields set is a rejection**, not a silent preference. The two mean
+ *      opposite things — one is the patient's entitlement, the other is a
+ *      deliberate grant they are not entitled to — and picking either for the
+ *      admin would record the wrong one in the audit log.
+ *   2. **`amountCentsOverride` suppresses the engine entirely.** It re-charges a
+ *      price already agreed on an earlier consultation (the follow-up flow), so
+ *      discounting it again would silently re-price a follow-up. Checked BEFORE
+ *      the insurance conflict, so a suppressed benefit cannot fail a booking it
+ *      was never going to affect.
+ *   3. **Insurance and membership together is a rejection.** They are mutually
+ *      exclusive on the public path — insurance is alone-in-cart and charged
+ *      later by an admin, a membership is charged now — and the manual form
+ *      carries both fields, so this refuses rather than picking one.
+ */
+export function resolveMembershipRequest(args: {
+  membership: MembershipRequestInput;
+  hasAmountOverride: boolean;
+  hasInsurance: boolean;
+}): MembershipRequest {
+  const override = args.membership?.override ?? null;
+  const enrollmentId = args.membership?.enrollmentId?.trim() || null;
+
+  if (override && enrollmentId) {
+    throw new MembershipNotAvailableError(
+      "Choose either the patient's own membership or a goodwill override, not both.",
+    );
+  }
+  if (!override && !enrollmentId) return { mode: "none" };
+  if (args.hasAmountOverride) return { mode: "none" };
+  if (args.hasInsurance) throw new MembershipWithInsuranceError();
+
+  return override
+    ? { mode: "override", override }
+    : { mode: "enrollment", enrollmentId: enrollmentId as string };
 }
 
 export type CreateManualBookingInput = {
@@ -210,6 +312,20 @@ export type CreateManualBookingInput = {
   insuranceCompanyId?: string | null;
   /** Patient's insurance card/policy number, stored encrypted. */
   insurancePolicyNumber?: string | null;
+  /**
+   * Private-membership benefit for this booking (§11.7). Absent — which is what
+   * the doctor, follow-up and partner-API callers pass — means no benefit, so
+   * those paths are byte-identical to before this shipped.
+   *
+   * Exactly one of the two is honoured. `enrollmentId` is the patient's own
+   * membership; `override` is the SUPER_ADMIN goodwill grant, whose role check
+   * lives at the route (the service is also called by tests and by paths with
+   * no session at all, so it enforces shape, not authority).
+   */
+  membership?: {
+    enrollmentId?: string | null;
+    override?: { benefitId: string; reason: string } | null;
+  } | null;
   /** Path to land the patient back on after Stripe success (e.g.
    *  `/ireland/en`). Cancel URL is built off the same base. */
   returnTo?: string;
@@ -449,6 +565,36 @@ export async function createManualBooking(
       ? encryptPhi(input.insurancePolicyNumber.trim())
       : null;
 
+  // ── Private membership (§11.7) ──────────────────────────────────────────
+  // Resolved here, alongside the insurance checks and for the same reason: both
+  // run BEFORE the slot is held, so a rejected benefit cannot strand a HELD slot
+  // with no appointment to release it.
+  const membershipRequest = resolveMembershipRequest({
+    membership: input.membership ?? null,
+    hasAmountOverride: amountOverride != null,
+    hasInsurance: insuranceCompanyId != null,
+  });
+  const membershipOverride =
+    membershipRequest.mode === "override" ? membershipRequest.override : null;
+  const membershipEnrollmentIdInput =
+    membershipRequest.mode === "enrollment" ? membershipRequest.enrollmentId : null;
+  const membershipRequested = membershipRequest.mode !== "none";
+
+  // The patient's own enrollment is matched on EMAIL, not user id: a manual
+  // booking creates the User during the booking, so there may not be one yet,
+  // and email is the linking key everywhere else (§5, assumption 5).
+  let membershipEnrollment:
+    | (PricingEnrollment & { email: string; userId: string | null })
+    | null = null;
+  if (membershipRequested && membershipEnrollmentIdInput) {
+    const found = await prisma.membershipEnrollment.findUnique({
+      where: { id: membershipEnrollmentIdInput },
+      select: { ...pricingEnrollmentSelect, email: true },
+    });
+    if (!found || found.email !== email) throw new MembershipNotAvailableError();
+    membershipEnrollment = found;
+  }
+
   // Reject IN_PERSON without a venue up-front (route Zod also enforces
   // this, but the service is callable directly by tests + future
   // automation).
@@ -514,8 +660,127 @@ export async function createManualBooking(
     amountCents = insurancePriceCents;
   }
 
+  // Private membership resolution (§11.7). Runs on the peak-resolved price,
+  // because PERCENT applies to the peak price and FIXED overrides it — exactly
+  // as insurance does, and through the same resolver the patient-facing
+  // checkout uses, so the two can never quote different numbers.
+  //
+  // A throw from here has to hand the slot back first: it is already HELD, and
+  // an admin re-picking a benefit would otherwise find the time gone until the
+  // HELD sweep runs. Same treatment DiscountTooLargeError gets below.
+  const orderItemId = randomUUID();
+  const orderId = randomUUID();
+  /** The price without any membership benefit — what a re-price falls back to. */
+  const grossBeforeMembershipCents = amountCents;
+  let membershipLine:
+    | {
+        enrollmentId: string | null;
+        benefitId: string;
+        discountCents: number;
+        allowanceUsed: boolean;
+        basis: MembershipPriceBasis;
+        benefit: PricingBenefitRow | null;
+        overrideReason: string | null;
+      }
+    | null = null;
+  if (membershipRequested) {
+    const pricingService = {
+      id: service.id,
+      countryId: service.countryId,
+      kind: service.kind,
+    };
+    try {
+      if (membershipOverride) {
+        const resolved = await resolveMembershipOverride({
+          benefitId: membershipOverride.benefitId,
+          service: pricingService,
+          fullPriceCents: amountCents,
+          patientEmail: email,
+        });
+        membershipLine = {
+          enrollmentId: resolved.enrollmentId,
+          benefitId: resolved.benefitId,
+          discountCents: resolved.discountCents,
+          // Never under an override, whatever the benefit type resolved to.
+          // The CHECK constraint enforces the same thing at the database.
+          allowanceUsed: false,
+          basis: resolved.basis,
+          benefit: null,
+          overrideReason: membershipOverride.reason.trim(),
+        };
+        amountCents = resolved.unitPriceCents;
+      } else if (membershipEnrollment) {
+        const benefit = selectBenefitRow(membershipEnrollment.level.benefits, pricingService);
+        const allowanceRemaining = benefit
+          ? await loadAllowanceRemaining(membershipEnrollment, benefit)
+          : 0;
+        const price = resolveMembershipPrice({
+          enrollment: membershipEnrollment,
+          service: pricingService,
+          fullPriceCents: amountCents,
+          allowanceRemaining,
+        });
+        if (!price || !benefit) throw new MembershipNotAvailableError();
+        membershipLine = {
+          enrollmentId: membershipEnrollment.id,
+          benefitId: price.benefitId,
+          discountCents: price.discountCents,
+          allowanceUsed: price.allowanceUsed,
+          basis: price.basis,
+          benefit,
+          overrideReason: null,
+        };
+        amountCents = price.unitPriceCents;
+      }
+    } catch (err) {
+      await releaseSlotsToBaseGrid([input.timeSlotId]).catch(() => {});
+      throw err;
+    }
+  }
+
+  // Take the allowance unit now, before anything durable is written, so a lost
+  // race for the last unit is a local re-price rather than a correction spread
+  // across the appointment, the order and its line. `orderItemId` is generated
+  // above precisely so the ledger's `${orderItemId}:SPEND` key exists before the
+  // row it names — the same trick the appointment id already uses here.
+  //
+  // No unit is ever taken under an override (§11.7), so goodwill can never
+  // inflate a ledger-derived total or push an exhausted member further down.
+  let allowanceSpent = false;
+  if (membershipLine?.allowanceUsed && membershipEnrollment && membershipLine.benefit) {
+    const spend = await spendAllowanceUnit(prisma, {
+      benefit: membershipLine.benefit,
+      enrollment: membershipEnrollment,
+      orderId,
+      orderItemId,
+    });
+    if (spend.outcome === "unavailable") {
+      // Another booking took the last unit between the options list loading and
+      // this submit. §6.2 says an exhausted allowance falls to the row's
+      // fallback, so that is what the patient is charged.
+      const repriced = repriceWithoutAllowance({
+        enrollment: membershipEnrollment,
+        service: { id: service.id, countryId: service.countryId, kind: service.kind },
+        fullPriceCents: grossBeforeMembershipCents,
+      });
+      amountCents = repriced.unitPriceCents;
+      membershipLine = {
+        ...membershipLine,
+        allowanceUsed: false,
+        discountCents: repriced.discountCents,
+        basis: repriced.basis ?? membershipLine.basis,
+      };
+    } else {
+      allowanceSpent = true;
+    }
+  }
+
   // Admin discretionary discount — applied LAST, on the resolved price, so the
   // percentage always reads against what the patient would otherwise pay.
+  // On a membership line that means "20% off the member price": an admin
+  // discount is a deliberate, audited act and composes with the benefit rather
+  // than replacing it (§11.7). On a €0 allowance line it is a no-op, correctly —
+  // there is nothing left to discount.
   // The slot is already HELD at this point, so a rejected discount has to hand
   // it back before throwing or the time is stranded until the HELD sweep runs.
   const discountPercent = normalizeDiscountPercent(input.discountPercent);
@@ -621,6 +886,25 @@ export async function createManualBooking(
   );
 
   const appointmentId = randomUUID();
+  // The unit was taken before any of this was written, so every path that
+  // abandons the booking from here to the order's creation has to give it back.
+  // This is a genuine compensating release, unlike the Stripe branch further
+  // down: there the order and appointment survive a failed session and the admin
+  // retries payment, so the consultation the unit paid for still exists.
+  const releaseAllowanceOnFailure = async (err: unknown): Promise<never> => {
+    if (allowanceSpent) {
+      await prisma
+        .$transaction((tx) => refundAllowanceUnit(tx, { orderItemId }))
+        .catch((releaseErr) => {
+          input.request?.log.error(
+            { err: releaseErr, orderItemId, orderId },
+            "[manual-booking] Allowance release after a failed booking failed",
+          );
+        });
+    }
+    throw err;
+  };
+
   try {
     await prisma.appointment.create({
       data: {
@@ -672,7 +956,9 @@ export async function createManualBooking(
       },
     });
   } catch (error) {
-    throw normalizeDbError(error, "Could not create manual appointment");
+    await releaseAllowanceOnFailure(
+      normalizeDbError(error, "Could not create manual appointment"),
+    );
   }
 
   // Manual-booking patients may never log in (promotion normally runs on
@@ -709,8 +995,12 @@ export async function createManualBooking(
       )
     : null;
 
-  const order = await prisma.order.create({
-    data: {
+  const order = await prisma.order
+    .create({
+      data: {
+      // Generated above with the line's id, so the allowance ledger could name
+      // both before either row existed.
+      id: orderId,
       orderNumber,
       userId,
       email,
@@ -739,6 +1029,7 @@ export async function createManualBooking(
       orderAppointments: { create: { appointmentId } },
       items: {
         create: {
+          id: orderItemId,
           kind: consultationCartKind(service.kind),
           serviceId: service.id,
           name: service.name,
@@ -769,10 +1060,21 @@ export async function createManualBooking(
           // Commission-market snapshot (see the block above the order create).
           doctorPayoutCents: commission?.lines[0]?.doctorPayoutCents ?? null,
           commissionCents: commission?.lines[0]?.commissionCents ?? null,
+          // Membership audit trail (§3.7). unitPriceCents above is ALREADY the
+          // member price; these record how it got there. `membershipDiscountCents`
+          // is the BENEFIT's discount only — the admin discount has its own
+          // columns on the order, and folding the two together would make a
+          // partner's usage report bill them for our discretionary generosity.
+          membershipEnrollmentId: membershipLine?.enrollmentId ?? null,
+          membershipBenefitId: membershipLine?.benefitId ?? null,
+          membershipDiscountCents: membershipLine?.discountCents ?? null,
+          membershipAllowanceUsed: membershipLine?.allowanceUsed ?? false,
+          membershipOverrideReason: membershipLine?.overrideReason ?? null,
         },
       },
-    },
-  });
+      },
+    })
+    .catch((error) => releaseAllowanceOnFailure(error));
 
   // Stripe is best-effort. Failures log via the request's pino logger when
   // available and surface to the admin UI via null `paymentUrl` — admin then
@@ -955,6 +1257,16 @@ export async function createManualBooking(
       consultationMode: input.consultationMode,
       orderId: order.id,
       stripeSessionId: paymentSessionId,
+      ...(membershipLine
+        ? {
+            membershipEnrollmentId: membershipLine.enrollmentId,
+            membershipBenefitId: membershipLine.benefitId,
+            membershipBasis: membershipLine.basis,
+            membershipDiscountCents: membershipLine.discountCents,
+            membershipAllowanceUsed: membershipLine.allowanceUsed,
+            membershipOverride: membershipLine.overrideReason != null,
+          }
+        : {}),
       // Discount trail: who discounted, by how much, off what price.
       ...(discountPercent > 0
         ? {
@@ -968,6 +1280,34 @@ export async function createManualBooking(
     },
     request: input.request,
   }).catch(() => {});
+
+  // The override's own audit row (§11.7). Separate from APPOINTMENT_CREATED
+  // because it is the only record of a price given outside every configured
+  // rule: the written reason is the whole trail, and searching one action beats
+  // filtering every booking ever made for a metadata key.
+  if (membershipLine?.overrideReason) {
+    recordAudit({
+      actorUserId: input.adminUserId ?? null,
+      actorRole: input.origin?.actorRole ?? "ADMIN",
+      action: "MEMBERSHIP_BENEFIT_OVERRIDDEN",
+      entityType: "OrderItem",
+      entityId: orderItemId,
+      metadata: {
+        reason: membershipLine.overrideReason,
+        benefitId: membershipLine.benefitId,
+        // Null means a true goodwill grant to someone on no plan; set means the
+        // patient holds an enrollment that simply did not entitle them (§11.7).
+        enrollmentId: membershipLine.enrollmentId,
+        appointmentId,
+        orderId: order.id,
+        listPriceCents: grossBeforeMembershipCents,
+        chargedAmountCents: amountCents,
+        discountCents: membershipLine.discountCents,
+        basis: membershipLine.basis,
+      },
+      request: input.request,
+    }).catch(() => {});
+  }
 
   return {
     appointmentId,

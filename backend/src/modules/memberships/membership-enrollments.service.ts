@@ -1,8 +1,14 @@
-import { Prisma, type PrismaClient } from "@prisma/client";
+import {
+  Prisma,
+  type MembershipAllowancePool,
+  type MembershipMemberType,
+  type PrismaClient,
+} from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { linkMembershipsForEmail } from "./membership-linking.service.js";
 import { sendMembershipInviteEmail } from "./membership-emails.js";
+import { holderEnrollmentId } from "./membership-card.service.js";
 import type {
   AdminMembershipDependentCreateBody,
   AdminMembershipEnrollmentCreateBody,
@@ -53,7 +59,16 @@ type Tx = Prisma.TransactionClient | PrismaClient;
 
 export const enrollmentInclude = {
   plan: { select: { id: true, name: true, slug: true, countryId: true } },
-  level: { select: { id: true, name: true, slug: true, familyEnabled: true, maxDependents: true } },
+  level: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      familyEnabled: true,
+      maxDependents: true,
+      allowancePool: true,
+    },
+  },
   user: { select: { id: true, email: true, fullName: true, emailVerifiedAt: true } },
   dependents: {
     select: {
@@ -261,13 +276,87 @@ export async function listMembershipEnrollments(query: AdminMembershipEnrollment
   }
 }
 
+export type EnrollmentAllowanceView = {
+  benefitId: string;
+  /** What the rule covers, for the admin UI: a service name or a kind. */
+  target: string;
+  allocated: number;
+  used: number;
+  remaining: number;
+};
+
+/**
+ * The member's allowance counters, for the detail page's adjust control (§7).
+ *
+ * Deliberately NOT part of `enrollmentInclude`: that shape is shared with the
+ * member LIST, which renders hundreds of rows and has no use for per-benefit
+ * counters.
+ *
+ * A counter that does not exist yet is reported at its full allocation rather
+ * than omitted — the row is created lazily on first spend (§3.5), so "no row"
+ * means "nothing spent", and an admin looking at a brand-new member must see
+ * the units they have rather than an empty panel.
+ */
+async function loadEnrollmentAllowances(row: {
+  id: string;
+  levelId: string;
+  startDate: Date;
+  memberType: MembershipMemberType;
+  primaryEnrollmentId: string | null;
+  level: { allowancePool: MembershipAllowancePool };
+}): Promise<EnrollmentAllowanceView[]> {
+  const benefits = await prisma.membershipBenefit.findMany({
+    where: { levelId: row.levelId, benefitType: "ALLOWANCE", isActive: true },
+    select: {
+      id: true,
+      allowanceCount: true,
+      serviceKind: true,
+      service: { select: { name: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+  if (benefits.length === 0) return [];
+
+  // The pool a spend by THIS enrollment lands on: its own under PER_PERSON, the
+  // primary's under SHARED. Same key the resolver and the spend both use, so
+  // what the admin adjusts is what the member actually draws from.
+  const holderId = holderEnrollmentId({
+    id: row.id,
+    memberType: row.memberType,
+    primaryEnrollmentId: row.primaryEnrollmentId,
+    level: row.level,
+  });
+  const balances = await prisma.membershipAllowanceBalance.findMany({
+    where: {
+      benefitId: { in: benefits.map((benefit) => benefit.id) },
+      holderEnrollmentId: holderId,
+      termStart: row.startDate,
+    },
+    select: { benefitId: true, allocated: true, used: true },
+  });
+  const balanceByBenefit = new Map(balances.map((balance) => [balance.benefitId, balance]));
+
+  return benefits.map((benefit) => {
+    const balance = balanceByBenefit.get(benefit.id);
+    const allocated = balance?.allocated ?? benefit.allowanceCount ?? 0;
+    const used = balance?.used ?? 0;
+    return {
+      benefitId: benefit.id,
+      target: benefit.service?.name ?? benefit.serviceKind ?? "—",
+      allocated,
+      used,
+      remaining: Math.max(0, allocated - used),
+    };
+  });
+}
+
 export async function getMembershipEnrollmentById(id: string) {
   const row = await prisma.membershipEnrollment.findUnique({
     where: { id },
     include: enrollmentInclude,
   });
   if (!row) throw new MembershipEnrollmentNotFoundError();
-  return row;
+  return { ...row, allowances: await loadEnrollmentAllowances(row) };
 }
 
 export async function createMembershipEnrollment(

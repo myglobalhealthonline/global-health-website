@@ -172,6 +172,14 @@ export type CreateManualAppointmentInput = {
    *  backend to whatever price it resolves (base / peak / insurance); 100 comps
    *  the booking, which is then created already paid with no payment link. */
   discountPercent?: number | null;
+  /** Private-membership benefit (§11.7). Omit for none — the backend treats a
+   *  missing value as "no benefit", so nothing changes for callers that never
+   *  send it. `enrollmentId` is the patient's own membership; `override` is the
+   *  SUPER_ADMIN goodwill grant, rejected with a 403 for anyone else. */
+  membership?: {
+    enrollmentId?: string | null;
+    override?: { benefitId: string; reason: string } | null;
+  } | null;
   returnTo?: string;
 };
 

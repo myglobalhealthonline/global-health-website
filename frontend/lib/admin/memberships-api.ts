@@ -296,6 +296,9 @@ export type MembershipEnrollment = {
   };
   user: { id: string; email: string; fullName: string; emailVerifiedAt: string | null } | null;
   dependents: MembershipEnrollmentDependent[];
+  /** Present on the DETAIL fetch only — the member list renders hundreds of
+   *  rows and has no use for per-benefit counters (§7). */
+  allowances?: MembershipAllowanceView[];
 };
 
 export type MembershipEnrollmentListResult = {
@@ -488,5 +491,122 @@ export type MembershipVerifyResult =
 export async function verifyMembershipId(membershipId: string) {
   return adminRequest<MembershipVerifyResult>(
     `/api/admin/membership-verify?membershipId=${encodeURIComponent(membershipId)}`,
+  );
+}
+
+/* ── Allowance adjust (§7, phase 6) ───────────────────────────────────────────
+   SUPER_ADMIN only, reason mandatory. The delta is CLAMPED server-side into
+   [0, allocated] rather than rejected, and `appliedDelta` reports what actually
+   happened — so the UI must read that back rather than assume it got what it
+   asked for. */
+
+export type MembershipAllowanceView = {
+  benefitId: string;
+  /** What the rule covers: a service name, or a service kind. */
+  target: string;
+  allocated: number;
+  used: number;
+  remaining: number;
+};
+
+export type MembershipAllowanceAdjustResult = {
+  balanceId: string;
+  allocated: number;
+  used: number;
+  remaining: number;
+  requestedDelta: number;
+  appliedDelta: number;
+};
+
+export async function adjustMembershipAllowance(
+  enrollmentId: string,
+  body: { benefitId: string; delta: number; reason: string },
+) {
+  return adminRequest<MembershipAllowanceAdjustResult>(
+    `/api/admin/membership-enrollments/${enrollmentId}/allowance-adjust`,
+    { method: "POST", body },
+  );
+}
+
+/* ── Usage reporting (§15/§32, phase 6) ───────────────────────────────────────
+   MANAGE_MEMBERSHIPS: named members and their bookings are member PII, so these
+   sit with the member list rather than with price configuration. Booking
+   metadata only — no clinical content crosses this boundary. */
+
+export type MembershipBenefitTypeCounts = Record<MembershipBenefitType, number>;
+
+export type MembershipUsageRow = {
+  orderItemId: string;
+  orderId: string;
+  orderNumber: string;
+  bookedAt: string;
+  serviceName: string;
+  doctorName: string | null;
+  listPriceCents: number;
+  pricePaidCents: number;
+  discountCents: number;
+  benefitType: MembershipBenefitType | null;
+  allowanceUsed: boolean;
+  /** Non-null ONLY for a goodwill override — and then it is the reason (§11.7). */
+  overrideReason: string | null;
+  memberName: string | null;
+  membershipId: string | null;
+  enrollmentId: string | null;
+};
+
+export type MembershipUsageReport = {
+  plan: { id: string; name: string; slug: string; countryCode: string };
+  range: { from: string | null; to: string | null };
+  membersByStatus: Record<MembershipEnrollmentStatus, number>;
+  usage: {
+    consultations: number;
+    byBenefitType: MembershipBenefitTypeCounts;
+    totalDiscountCents: number;
+    totalChargedCents: number;
+    rows: MembershipUsageRow[];
+  };
+  allowance: { allocated: number; used: number };
+  /** Excluded from every total above, and never hidden between two (§15). */
+  overrides: { consultations: number; totalValueCents: number; rows: MembershipUsageRow[] };
+  currencyCode: string | null;
+};
+
+export type MembershipMemberUsage = {
+  enrollment: {
+    id: string;
+    membershipId: string;
+    fullName: string;
+    email: string;
+    planId: string;
+    planName: string;
+    levelName: string;
+    status: MembershipEnrollmentStatus;
+  };
+  rows: MembershipUsageRow[];
+  totals: {
+    consultations: number;
+    discountCents: number;
+    allowanceUsed: number;
+    overrides: number;
+  };
+};
+
+export async function fetchMembershipUsageReport(
+  planId: string,
+  query?: { from?: string | null; to?: string | null },
+) {
+  const params = new URLSearchParams();
+  if (query?.from) params.set("from", query.from);
+  if (query?.to) params.set("to", query.to);
+  const qs = params.toString();
+  return adminRequest<MembershipUsageReport>(
+    `/api/admin/membership-reports/${planId}/usage${qs ? `?${qs}` : ""}`,
+  );
+}
+
+/** Writes a `MEMBERSHIP_REPORT_VIEWED` audit row server-side (§32). */
+export async function fetchMemberUsageReport(enrollmentId: string) {
+  return adminRequest<MembershipMemberUsage>(
+    `/api/admin/membership-reports/enrollment/${enrollmentId}/usage`,
   );
 }

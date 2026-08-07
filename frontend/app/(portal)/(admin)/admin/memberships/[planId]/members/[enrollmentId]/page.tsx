@@ -6,6 +6,8 @@ import { SetCrumbTitle } from "@/components/crumb-title";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
   addMembershipDependent,
+  adjustMembershipAllowance,
+  fetchMemberUsageReport,
   fetchMembershipEnrollment,
   fetchMembershipPlan,
   reactivateMembershipEnrollment,
@@ -15,6 +17,7 @@ import {
   updateMembershipEnrollment,
 } from "@/lib/admin/memberships-api";
 import {
+  parseMembershipAllowanceAdjustForm,
   parseMembershipDependentForm,
   parseMembershipEnrollmentForm,
 } from "@/lib/admin/membership-form-parse";
@@ -22,6 +25,8 @@ import { displayNameFrom } from "@/lib/admin/display-name";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../../_components/confirm-delete-button";
 import { MembershipEnrollmentFields } from "../../../_components/membership-enrollment-form";
+import { MembershipAllowanceAdjust } from "../../../_components/membership-allowance-adjust";
+import { MemberUsageTable } from "../../../_components/membership-usage-report";
 
 export const dynamic = "force-dynamic";
 
@@ -43,9 +48,13 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
   const { planId, enrollmentId } = await params;
   const sp = searchParams ? await searchParams : {};
 
-  const [enrollmentResult, planResult] = await Promise.all([
+  // The usage fetch is what writes the §32 audit row — deliberately on the
+  // fetch and not on the render, because this page redirects to itself after
+  // every save and a render-time audit would drown the real signal.
+  const [enrollmentResult, planResult, usageResult] = await Promise.all([
     fetchMembershipEnrollment(enrollmentId),
     fetchMembershipPlan(planId),
+    fetchMemberUsageReport(enrollmentId),
   ]);
   if (!enrollmentResult.ok) {
     if (enrollmentResult.status === 404) notFound();
@@ -73,6 +82,8 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
     enrollment.level.familyEnabled &&
     enrollment.level.maxDependents > 0;
   const liveDependents = enrollment.dependents.filter((d) => d.status !== "REMOVED");
+  // Only the DETAIL fetch carries these; the list endpoint deliberately does not.
+  const allowances = enrollment.allowances ?? [];
 
   async function saveMemberAction(formData: FormData) {
     "use server";
@@ -112,6 +123,25 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
     if (!outcome.result.ok) redirect(`${backTo}?error=${encodeURIComponent(outcome.result.message)}`);
     revalidatePath(backTo);
     redirect(`${backTo}?success=${encodeURIComponent(outcome.message)}`);
+  }
+
+  async function adjustAllowanceAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const parsed = parseMembershipAllowanceAdjustForm(formData);
+    if (!parsed.ok) redirect(`${backTo}?error=${encodeURIComponent(parsed.error)}`);
+    const result = await adjustMembershipAllowance(enrollmentId, parsed.data);
+    if (!result.ok) redirect(`${backTo}?error=${encodeURIComponent(result.message)}`);
+    revalidatePath(backTo);
+    // `appliedDelta` is reported back rather than assumed: the server clamps
+    // into [0, allocated], so an admin asking for +5 on a counter with 3 used
+    // gets 3 — and should be told that, not left to infer it.
+    const { requestedDelta, appliedDelta, remaining, allocated } = result.data;
+    const message =
+      appliedDelta === requestedDelta
+        ? `Allowance adjusted — ${remaining} of ${allocated} left`
+        : `Adjusted by ${appliedDelta} of the ${requestedDelta} requested (clamped to the term) — ${remaining} of ${allocated} left`;
+    redirect(`${backTo}?success=${encodeURIComponent(message)}`);
   }
 
   async function removeMemberAction() {
@@ -285,6 +315,89 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
             </div>
           </AdminCard>
         ) : null}
+
+        {allowances.length > 0 ? (
+          <AdminCard padding={0}>
+            <SectionHeader
+              title="Allowance"
+              description="Included consultations for this term. Adjusting is a super-admin action for goodwill and for correcting a bad import — it moves a counter by hand, outside every rule the plan configures, so the written reason is the whole trail."
+            />
+            <div className="flex flex-col gap-3 px-6 pt-6">
+              {allowances.map((allowance) => {
+                const usedPct =
+                  allowance.allocated > 0
+                    ? Math.min(100, Math.round((allowance.used / allowance.allocated) * 100))
+                    : 0;
+                return (
+                  <div key={allowance.benefitId} className="flex flex-col gap-1.5">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+                        {allowance.target}
+                      </span>
+                      <span className="text-portal-compact text-[var(--color-text-muted)]">
+                        {allowance.remaining} of {allowance.allocated} left
+                      </span>
+                    </div>
+                    <div
+                      className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-muted)]"
+                      role="img"
+                      aria-label={`${allowance.used} of ${allowance.allocated} used`}
+                    >
+                      <div
+                        className="h-full rounded-full bg-[var(--color-accent)]"
+                        style={{ width: `${usedPct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <MembershipAllowanceAdjust allowances={allowances} action={adjustAllowanceAction} />
+          </AdminCard>
+        ) : null}
+
+        <AdminCard padding={0}>
+          <SectionHeader
+            title="Usage"
+            description="Booking metadata only — no clinical content. Goodwill overrides are listed with their reasons; they never consume an allowance unit."
+            right={
+              <Btn href={`/admin/memberships/${planId}/usage`} variant="ghost" size="sm">
+                Plan usage report
+              </Btn>
+            }
+          />
+          {usageResult.ok ? (
+            <>
+              <div className="grid gap-4 p-6 sm:grid-cols-4">
+                <div>
+                  <p className="gh-field-label">Consultations</p>
+                  <p className="text-sm">{usageResult.data.totals.consultations}</p>
+                </div>
+                <div>
+                  <p className="gh-field-label">Allowance used</p>
+                  <p className="text-sm">{usageResult.data.totals.allowanceUsed}</p>
+                </div>
+                <div>
+                  <p className="gh-field-label">Discount given</p>
+                  <p className="text-sm">
+                    {(usageResult.data.totals.discountCents / 100).toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p className="gh-field-label">Overrides</p>
+                  <p className="text-sm">{usageResult.data.totals.overrides}</p>
+                </div>
+              </div>
+              <div className="border-t border-[var(--color-border)]">
+                <MemberUsageTable rows={usageResult.data.rows} currency={null} />
+              </div>
+            </>
+          ) : (
+            <p className="p-6 text-sm text-[var(--color-text-muted)]">
+              Could not load this member&apos;s bookings: {usageResult.message}
+            </p>
+          )}
+        </AdminCard>
 
         <AdminCard padding={0}>
           <SectionHeader title="Member details" />

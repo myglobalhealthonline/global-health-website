@@ -811,6 +811,127 @@ describe("authorization matrix", () => {
     assert.equal(res.statusCode, 400, res.body);
   });
 
+  // ── Phase 6: manual-booking benefit options + reporting ────────────────────
+  //
+  // Three gates, deliberately not the same one:
+  //
+  //   - `membership-benefit-options` is plain `verifyAdminAccess`, NOT
+  //     MANAGE_MEMBERSHIPS (§4.1). It is booking-time pricing for one patient
+  //     an admin is already booking for, and gating it higher would leave
+  //     LOCAL_ADMIN — the role that actually takes phone bookings — unable to
+  //     see why a member's price differs.
+  //   - the reports carry named members and their bookings, so they take
+  //     MANAGE_MEMBERSHIPS with the rest of the member surface (§15).
+  //   - the goodwill override on a manual booking takes SUPER_ADMIN in a real
+  //     session, so a plain ADMIN must be refused even though the booking
+  //     endpoint itself is open to them.
+
+  it("membership benefit options: unauthenticated read → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-benefit-options?email=nobody@test.local&serviceId=authz-probe",
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("membership benefit options: a doctor session cannot price a patient → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-benefit-options?email=nobody@test.local&serviceId=authz-probe",
+      cookies: doctor1Cookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
+  it("membership benefit options: an admin passes the gate → 404 on an unknown service", async (t) => {
+    if (!app) return t.skip();
+    // 404, not 403: the distinction is the assertion. A 403 here would mean
+    // the endpoint is unreachable for the admins whose form depends on it.
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-benefit-options?email=nobody@test.local&serviceId=authz-probe-missing",
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 404, res.body);
+  });
+
+  it("membership reports: unauthenticated plan usage → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-reports/any-plan/usage",
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("membership reports: a doctor session cannot read plan usage → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-reports/any-plan/usage",
+      cookies: doctor1Cookie,
+    });
+    // 403 from the gate, NOT 404 — authorization is decided before the route
+    // reveals whether the plan exists.
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
+  it("membership reports: an admin passes the gate → 404 on an unknown plan", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-reports/any-plan/usage",
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 404, res.body);
+  });
+
+  it("membership reports: a doctor session cannot read a member's bookings → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-reports/enrollment/any-enrollment/usage",
+      cookies: doctor1Cookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
+  it("manual booking: a plain ADMIN cannot apply a goodwill override → 403 (§11.7)", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/admin/appointments",
+      cookies: adminCookie,
+      payload: {
+        // A fully valid payload on purpose: the assertion is that the override
+        // is refused on ROLE, so the body must get past validation first or a
+        // 400 would pass for the wrong reason.
+        patient: {
+          email: "authz-override@test.local",
+          fullName: "Authz Override",
+          phone: "+353 871234567",
+        },
+        serviceId: "authz-probe",
+        doctorId: "authz-probe",
+        timeSlotId: "authz-probe",
+        consultationMode: "ONLINE",
+        countryCode: "ie",
+        membership: {
+          override: { benefitId: "authz-probe", reason: "authz matrix probe" },
+        },
+      },
+    });
+    // 403 from the SUPER_ADMIN check, NOT a 404/422 from the service — the
+    // override is refused before any of the booking's ids are even resolved.
+    assert.equal(res.statusCode, 403, res.body);
+    const leaked = await prisma.user.findFirst({
+      where: { email: "authz-override@test.local" },
+    });
+    assert.equal(leaked, null, "no patient account created by a denied override");
+  });
+
   // ── Cart benefit choice (§11.4) ───────────────────────────────────
   // The write that decides which pricing engine runs at checkout, so the gate
   // matters as much as the read above: anyone who could set it for another

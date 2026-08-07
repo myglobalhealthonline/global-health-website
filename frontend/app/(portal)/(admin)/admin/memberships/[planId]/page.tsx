@@ -144,6 +144,9 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
               {plan._count.enrollments} member{plan._count.enrollments === 1 ? "" : "s"} enrolled
             </span>
             <div className="ml-auto flex gap-2">
+              <Btn href={`/admin/memberships/${planId}/usage`} variant="ghost" size="sm">
+                Usage report
+              </Btn>
               <Btn href={`/admin/memberships/${planId}/import`} variant="ghost" size="sm">
                 Import CSV
               </Btn>

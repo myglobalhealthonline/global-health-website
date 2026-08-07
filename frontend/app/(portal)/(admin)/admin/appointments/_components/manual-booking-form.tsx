@@ -36,6 +36,33 @@ type ServiceOption = {
   insuranceOptions: InsuranceOption[];
 };
 
+/** One priced benefit the patient already holds, from
+ *  `/api/admin/membership-benefit-options` (§11.7). `refId` is the enrollment
+ *  id for a MEMBERSHIP option — what the booking payload sends back. */
+type MembershipBenefitOption = {
+  source: "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN" | "INSURANCE";
+  refId: string;
+  label: string;
+  unitPriceCents: number;
+  discountCents: number;
+  note: { key: string; remaining?: number } | null;
+  indicative: boolean;
+  recommended: boolean;
+};
+
+/** A level rule a SUPER_ADMIN may apply to a patient not entitled to it.
+ *  Present in the response only for a SUPER_ADMIN session. */
+type MembershipOverrideOption = {
+  benefitId: string;
+  planName: string;
+  levelName: string;
+  unitPriceCents: number;
+  discountCents: number;
+  basis: string;
+  enrollmentId: string | null;
+  patientHoldsPlan: boolean;
+};
+
 type DoctorOption = {
   id: string;
   slug: string;
@@ -168,6 +195,18 @@ export function ManualBookingForm({
   // Admin discretionary discount, whole percent. Kept as a string so the field
   // can be empty (= no discount) rather than forcing a 0.
   const [discountPercent, setDiscountPercent] = useState("");
+  // Private membership (§11.7). One control for both cases: the value is
+  // "membership:<enrollmentId>" for the patient's own benefit and
+  // "override:<benefitId>" for the SUPER_ADMIN goodwill grant, so the two can
+  // never both be set — which is exactly what the backend rejects.
+  const [benefitChoice, setBenefitChoice] = useState("");
+  const [overrideReason, setOverrideReason] = useState("");
+  const [benefitOptions, setBenefitOptions] = useState<MembershipBenefitOption[]>([]);
+  const [overrideOptions, setOverrideOptions] = useState<MembershipOverrideOption[] | null>(
+    null,
+  );
+  const [benefitLoading, setBenefitLoading] = useState(false);
+  const [benefitLoadError, setBenefitLoadError] = useState<string | null>(null);
   const [consultationMode, setConsultationMode] = useState<"ONLINE" | "IN_PERSON">(
     "ONLINE",
   );
@@ -471,6 +510,97 @@ export function ManualBookingForm({
 
   const combinedPhone = combinePhone(dialCode, phoneNational);
 
+  // ── Membership benefit options (§11.7) ───────────────────────────────────
+  // Re-fetched whenever the patient, service, doctor or slot changes, because
+  // every one of them moves the price: the options are quoted against the REAL
+  // slot once there is one, so what the admin reads down the phone is what
+  // checkout charges.
+  useEffect(() => {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail.includes("@") || !serviceId) {
+      setBenefitOptions([]);
+      setOverrideOptions(null);
+      setBenefitLoadError(null);
+      return;
+    }
+    const controller = new AbortController();
+    const params = new URLSearchParams({ email: trimmedEmail, serviceId });
+    if (doctorId) params.set("doctorId", doctorId);
+    if (selectedSlotId) params.set("timeSlotId", selectedSlotId);
+
+    setBenefitLoading(true);
+    const timer = setTimeout(() => {
+      fetch(`/api/admin/membership-benefit-options?${params.toString()}`, {
+        signal: controller.signal,
+      })
+        .then(async (res) => {
+          if (!res.ok) throw new Error(`Benefit lookup failed (${res.status})`);
+          return res.json();
+        })
+        .then((body) => {
+          const data = body?.data ?? {};
+          // Membership only. Corporate and public-plan options come back from
+          // the shared resolver, but a manual booking has no column to record
+          // them on and the backend would refuse them — offering one here would
+          // just be a 422 the admin cannot act on.
+          setBenefitOptions(
+            (data.options ?? []).filter(
+              (option: MembershipBenefitOption) => option.source === "MEMBERSHIP",
+            ),
+          );
+          // Absent entirely for anyone below SUPER_ADMIN, so the override
+          // section never renders for them.
+          setOverrideOptions(data.overrideOptions ?? null);
+          setBenefitLoadError(null);
+        })
+        .catch((err: unknown) => {
+          if (controller.signal.aborted) return;
+          // Surfaced rather than swallowed: a silently empty picker looks
+          // identical to "this patient has no benefits", and the admin would
+          // charge full price without knowing the lookup failed.
+          setBenefitOptions([]);
+          setOverrideOptions(null);
+          setBenefitLoadError(
+            err instanceof Error ? err.message : "Could not load this patient's benefits",
+          );
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setBenefitLoading(false);
+        });
+    }, 250);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+      setBenefitLoading(false);
+    };
+  }, [email, serviceId, doctorId, selectedSlotId]);
+
+  const selectedBenefit = useMemo(() => {
+    if (benefitChoice.startsWith("membership:")) {
+      const id = benefitChoice.slice("membership:".length);
+      return benefitOptions.find((option) => option.refId === id) ?? null;
+    }
+    return null;
+  }, [benefitChoice, benefitOptions]);
+  const selectedOverride = useMemo(() => {
+    if (benefitChoice.startsWith("override:")) {
+      const id = benefitChoice.slice("override:".length);
+      return (overrideOptions ?? []).find((option) => option.benefitId === id) ?? null;
+    }
+    return null;
+  }, [benefitChoice, overrideOptions]);
+  const isOverride = selectedOverride != null;
+  const overrideReasonError =
+    isOverride && overrideReason.trim().length < 5
+      ? "A goodwill override needs a written reason of at least 5 characters."
+      : null;
+
+  // Insurance and a membership are mutually exclusive (§11.7) — the backend
+  // rejects the pair, so the form makes it unreachable rather than letting the
+  // admin fill both and meet a 422 after the slot is picked.
+  const benefitBlocksInsurance = selectedBenefit != null || isOverride;
+
   // ── Discount + live price preview ────────────────────────────────────────
   // The backend re-derives the price itself (base → peak → insurance) and
   // applies the discount to that; this preview mirrors the same order so the
@@ -495,11 +625,16 @@ export function ManualBookingForm({
   );
   // Insurance price beats the slot's peak price, which beats the service base —
   // the same precedence the server applies.
-  const grossPriceCents =
+  // A chosen membership benefit replaces that resolved price, and the admin
+  // discount then applies to the member price — the same order the server runs
+  // (base → peak → insurance → membership → discount).
+  const resolvedPriceCents =
     selectedInsurance?.insurancePriceCents ??
     selectedSlot?.priceCents ??
     selectedService?.basePriceCents ??
     null;
+  const memberPriceCents = selectedOverride?.unitPriceCents ?? selectedBenefit?.unitPriceCents ?? null;
+  const grossPriceCents = memberPriceCents ?? resolvedPriceCents;
   const priceCurrency =
     selectedService?.currencyCode ?? selectedSlot?.currencyCode ?? "EUR";
   const netPriceCents =
@@ -519,7 +654,7 @@ export function ManualBookingForm({
       clinicId: consultationMode === "IN_PERSON" ? clinicId : "",
       locationAddress: consultationMode === "IN_PERSON" ? locationAddress : "",
     });
-    if (hasErrors(result) || discountError) {
+    if (hasErrors(result) || discountError || overrideReasonError) {
       e.preventDefault(); // block — no booking, no account, no email
       setErrors(result);
       // Surface the summary so the admin sees what's missing.
@@ -532,7 +667,11 @@ export function ManualBookingForm({
     // Validation passed — let the native submit invoke the server action.
   }
 
-  const errorList = [...Object.values(errors), ...(discountError ? [discountError] : [])];
+  const errorList = [
+    ...Object.values(errors),
+    ...(discountError ? [discountError] : []),
+    ...(overrideReasonError ? [overrideReasonError] : []),
+  ];
 
   return (
     <form action={action} onSubmit={onSubmit} className="gh-admin-manual-booking-form" noValidate>
@@ -852,9 +991,115 @@ export function ManualBookingForm({
             </label>
           ) : null}
 
+          {/* Private membership (§11.7). Rendered once there is a patient email
+            * and a service; the prices firm up against the real slot as soon as
+            * one is picked. Corporate and public-plan benefits are deliberately
+            * absent — a manual booking has no column to record them on. */}
+          {benefitLoadError ? (
+            <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-portal-compact">
+              {benefitLoadError}. The standard price applies until this loads.
+            </p>
+          ) : null}
+
+          {benefitOptions.length > 0 || (overrideOptions?.length ?? 0) > 0 ? (
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Membership benefit</span>
+              <select
+                className="gh-select"
+                value={benefitChoice}
+                onChange={(e) => {
+                  setBenefitChoice(e.target.value);
+                  if (!e.target.value.startsWith("override:")) setOverrideReason("");
+                  // Mutually exclusive with insurance — clear it rather than
+                  // letting the pair reach the server and 422.
+                  if (e.target.value) {
+                    setInsuranceCompanyId("");
+                    setInsurancePolicyNumber("");
+                  }
+                }}
+                disabled={benefitLoading}
+              >
+                <option value="">
+                  No membership benefit
+                  {resolvedPriceCents != null
+                    ? ` — ${(resolvedPriceCents / 100).toFixed(2)} ${priceCurrency}`
+                    : ""}
+                </option>
+                {benefitOptions.map((option) => (
+                  <option key={option.refId} value={`membership:${option.refId}`}>
+                    {option.label} — {(option.unitPriceCents / 100).toFixed(2)} {priceCurrency}
+                    {option.note?.key === "ALLOWANCE_UNIT"
+                      ? ` (uses 1 of ${option.note.remaining})`
+                      : ""}
+                    {option.indicative ? " (indicative until a slot is picked)" : ""}
+                  </option>
+                ))}
+                {(overrideOptions ?? []).map((option) => (
+                  <option key={option.benefitId} value={`override:${option.benefitId}`}>
+                    Override — {option.planName} · {option.levelName} —{" "}
+                    {(option.unitPriceCents / 100).toFixed(2)} {priceCurrency}
+                    {option.patientHoldsPlan ? " (patient is on this plan)" : ""}
+                  </option>
+                ))}
+              </select>
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                {benefitLoading
+                  ? "Checking this patient's benefits…"
+                  : isOverride
+                    ? "Goodwill: this patient is not entitled to this benefit. No allowance unit is used, and the reason is recorded against the booking."
+                    : selectedBenefit
+                      ? "Charged at the member price. Insurance cannot be combined with a membership."
+                      : "Optional — the patient's own benefits, priced for this slot."}
+              </span>
+            </label>
+          ) : null}
+
+          {isOverride ? (
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Override reason</span>
+              <textarea
+                className="gh-input"
+                rows={2}
+                maxLength={500}
+                value={overrideReason}
+                onChange={(e) => setOverrideReason(e.target.value)}
+                placeholder="Why this patient is being given the member price"
+                aria-invalid={Boolean(overrideReasonError)}
+              />
+              {overrideReasonError ? (
+                <FieldError msg={overrideReasonError} />
+              ) : (
+                <span className="text-portal-meta text-[var(--color-text-muted)]">
+                  Written to the audit log with your name. It is the only record of a
+                  price given outside every configured rule.
+                </span>
+              )}
+            </label>
+          ) : null}
+
+          {/* What the server actually reads. Kept as hidden inputs rather than
+            * form-bound controls so the single select above cannot produce both
+            * an enrollment and an override. */}
+          <input
+            type="hidden"
+            name="membershipEnrollmentId"
+            value={selectedBenefit?.refId ?? ""}
+          />
+          <input
+            type="hidden"
+            name="membershipOverrideBenefitId"
+            value={selectedOverride?.benefitId ?? ""}
+          />
+          <input
+            type="hidden"
+            name="membershipOverrideReason"
+            value={isOverride ? overrideReason : ""}
+          />
+
           {/* Discretionary discount. Applied server-side to whatever price the
-            * booking resolves to (base, peak, or insurance), so the percentage
-            * always reads against what the patient would otherwise pay. */}
+            * booking resolves to (base, peak, insurance, or the member price),
+            * so the percentage always reads against what the patient would
+            * otherwise pay. */}
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Discount %</span>
             <input

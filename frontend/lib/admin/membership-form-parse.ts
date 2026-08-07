@@ -316,3 +316,47 @@ export function parseMembershipBenefitForm(fd: FormData): ParseResult<Membership
     },
   };
 }
+
+export type MembershipAllowanceAdjustFormBody = {
+  benefitId: string;
+  delta: number;
+  reason: string;
+};
+
+/**
+ * Allowance adjust (§7). SUPER_ADMIN only, and the reason is required here as
+ * well as in the backend schema — this one produces the message the admin
+ * reads, the backend's is what a crafted request meets.
+ *
+ * A zero delta is rejected rather than treated as a no-op: it would write an
+ * audit row recording that nothing happened, which is noise in the one log that
+ * has to stay readable.
+ */
+export function parseMembershipAllowanceAdjustForm(
+  fd: FormData,
+): ParseResult<MembershipAllowanceAdjustFormBody> {
+  const benefitId = str(fd, "benefitId");
+  if (!benefitId) return { ok: false, error: "Pick the allowance to adjust." };
+
+  const rawDelta = str(fd, "delta");
+  const delta = Number(rawDelta);
+  if (!rawDelta || !Number.isFinite(delta) || !Number.isInteger(delta)) {
+    return { ok: false, error: "Units must be a whole number." };
+  }
+  if (delta === 0) {
+    return { ok: false, error: "Choose how many units to add or take back." };
+  }
+  if (delta < -999 || delta > 999) {
+    return { ok: false, error: "Units must be between -999 and 999." };
+  }
+
+  const reason = str(fd, "reason");
+  if (reason.length < 3) {
+    return { ok: false, error: "Give a reason — it is the only record of this adjustment." };
+  }
+  if (reason.length > 1000) {
+    return { ok: false, error: "Keep the reason under 1000 characters." };
+  }
+
+  return { ok: true, data: { benefitId, delta, reason } };
+}
