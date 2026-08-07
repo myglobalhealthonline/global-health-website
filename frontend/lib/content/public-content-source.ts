@@ -45,14 +45,38 @@ export class PublicContentUnavailableError extends Error {
 }
 
 /**
- * Classifies a failed single-resource read into NOT_FOUND vs TEMPORARY_FAILURE.
+ * A deterministic 4xx from the backend that is NOT a 404: 400 "invalid slug",
+ * 401, 403, 409, 422. Retrying cannot change it, but it is not an answer about
+ * whether the content exists either — it almost always means the frontend and
+ * the backend disagree about the request contract.
  *
- * Returns normally only when the backend gave a settled answer that a retry
- * could not change (404 "not found", 400 "invalid slug", 403) — the caller may
- * then return null and the route may 404. Throws
- * `PublicContentUnavailableError` for anything transient, including the
- * status-less failures (`apiRequest` reports timeouts, aborts and socket
- * errors with no `status` at all).
+ * So it must never become a 404. Rendering "this page does not exist" off a
+ * contract bug both hides the defect and tells Google to drop a URL whose
+ * content is sitting in the database, unharmed.
+ */
+export class PublicContentRequestError extends Error {
+  constructor(entity: string, status: number, detail: string) {
+    super(
+      `[public-content] ${entity}: backend rejected the request with HTTP ${status} (${detail}) — ` +
+        `not a 404, refusing to render one`,
+    );
+    this.name = "PublicContentRequestError";
+  }
+}
+
+/**
+ * Classifies a failed single-resource read.
+ *
+ *   404                        NOT_FOUND — returns normally, so the caller
+ *                              returns null and the route may 404. This is the
+ *                              ONLY status allowed to reach `notFound()`.
+ *   429 / 5xx / no status      TEMPORARY_FAILURE — throws
+ *                              `PublicContentUnavailableError`. (`apiRequest`
+ *                              reports timeouts, aborts and socket errors with
+ *                              no `status` at all.)
+ *   any other 4xx              UPSTREAM_CLIENT_ERROR — throws
+ *                              `PublicContentRequestError`. No retry (it is
+ *                              deterministic), no null, no 404.
  *
  * Exception: with NO backend configured there is nothing to be unavailable —
  * that is the CI compile-smoke build and local dev without an API. Keep the
@@ -60,7 +84,10 @@ export class PublicContentUnavailableError extends Error {
  */
 export function assertAbsenceConfirmed(entity: string, res: ApiResult<unknown>): void {
   if (res.ok || !hasPublicApiBaseUrl()) return;
-  if (res.status !== undefined && !isTransientStatus(res.status)) return;
+  if (res.status === 404) return;
+  if (res.status !== undefined && !isTransientStatus(res.status)) {
+    throw new PublicContentRequestError(entity, res.status, res.message);
+  }
   throw new PublicContentUnavailableError(
     entity,
     res.status !== undefined ? `HTTP ${res.status}` : res.message,

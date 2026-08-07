@@ -11,10 +11,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
  *
  * These tests pin the contract the three single-resource getters now hold:
  *
- *   FOUND              → resolves to the record          → route renders 200
- *   NOT_FOUND          → resolves to `null`              → route calls notFound() → 404
- *   TEMPORARY_FAILURE  → throws PublicContentUnavailableError
- *                        → uncaught in the RSC           → 5xx, never 404
+ *   FOUND                 → resolves to the record       → route renders 200
+ *   NOT_FOUND (404 ONLY)  → resolves to `null`           → notFound() → 404
+ *   TEMPORARY_FAILURE     → throws PublicContentUnavailableError
+ *     (429/5xx/timeout)     after one bounded retry      → 5xx, never 404
+ *   UPSTREAM_CLIENT_ERROR → throws PublicContentRequestError
+ *     (other 4xx)           with no retry                → 5xx, never 404
  *
  * The route side of that mapping is a single `if (!detail) notFound()` in each
  * of the three page files, with nothing catching the throw (no `error.tsx`
@@ -29,13 +31,16 @@ type Source = typeof import("@/lib/content/public-content-source");
 
 let getters: Getters;
 let PublicContentUnavailableError: Source["PublicContentUnavailableError"];
+let PublicContentRequestError: Source["PublicContentRequestError"];
 
 beforeAll(async () => {
   // client.ts reads NEXT_PUBLIC_API_URL at module scope, so it has to be set
   // before the first import — hence the dynamic imports.
   vi.stubEnv("NEXT_PUBLIC_API_URL", API_URL);
   getters = await import("@/lib/content/get-country-collections");
-  ({ PublicContentUnavailableError } = await import("@/lib/content/public-content-source"));
+  ({ PublicContentUnavailableError, PublicContentRequestError } = await import(
+    "@/lib/content/public-content-source"
+  ));
 });
 
 const fetchMock = vi.fn();
@@ -209,9 +214,48 @@ describe("retry mechanics", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it("does not retry a deterministic 4xx", async () => {
-    fetchMock.mockResolvedValue(json(400, { ok: false, message: "Invalid slug" }));
-    await expect(getters.getCountryServiceDetail("ie", "bad-slug", "en")).resolves.toBeNull();
+});
+
+/**
+ * A non-404 4xx is deterministic (so: no retry) but it is NOT an answer about
+ * whether the content exists — it means the frontend and backend disagree
+ * about the request contract. Reading it as "gone" would hide the defect AND
+ * tell Google to drop a URL whose content is sitting in the database.
+ * Only an explicit 404 may reach notFound().
+ */
+describe.each([
+  { status: 400, message: "Invalid slug" },
+  { status: 401, message: "Unauthorized" },
+  { status: 403, message: "Forbidden" },
+  { status: 409, message: "Conflict" },
+  { status: 422, message: "Unprocessable entity" },
+])("upstream client error: HTTP $status", ({ status, message }) => {
+  let n = 0;
+  const slug = () => `client-err-${status}-${(n += 1)}`;
+
+  it.each(FAMILIES)("$name → throws, no retry, never 404", async (family) => {
+    fetchMock.mockResolvedValue(json(status, { ok: false, message }));
+    const call = family.call(slug());
+    // Not the not-found path: it must not resolve to null.
+    await expect(call).rejects.toBeInstanceOf(PublicContentRequestError);
+    // ...and not the transient path either: it must not be retried.
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
+});
+
+describe("only an explicit 404 is NOT_FOUND", () => {
+  it("404 → null (the one status that may reach notFound())", async () => {
+    fetchMock.mockResolvedValue(notFound("Service not found"));
+    await expect(getters.getCountryServiceDetail("ie", "genuinely-gone", "en")).resolves.toBeNull();
+  });
+
+  it.each([400, 401, 403, 409, 422, 429, 500, 503])(
+    "HTTP %i never resolves to null",
+    async (status) => {
+      fetchMock.mockResolvedValue(json(status, { ok: false, message: `HTTP ${status}` }));
+      await expect(
+        getters.getCountryServiceDetail("ie", `non-404-${status}`, "en"),
+      ).rejects.toBeInstanceOf(Error);
+    },
+  );
 });
