@@ -564,6 +564,21 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
       skip: offset,
     });
 
+    // New-patient star: the earliest appointment per email across ALL
+    // appointments (not just this page), same "first order" convention as
+    // the admin orders table (orders.route.ts) but scoped to Appointment
+    // since the dashboard activity feed reads bookings, not orders.
+    const pageEmails = [...new Set(rows.map((r) => r.email))];
+    const earliestAppointments = pageEmails.length
+      ? await prisma.appointment.findMany({
+          where: { email: { in: pageEmails } },
+          orderBy: { createdAt: "asc" },
+          distinct: ["email"],
+          select: { id: true, email: true },
+        })
+      : [];
+    const firstApptIdByEmail = new Map(earliestAppointments.map((a) => [a.email, a.id]));
+
     const items = rows.map((row) => ({
       id: row.id,
       country: row.countryCode,
@@ -578,6 +593,7 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
       doctorId: row.doctorId,
       doctorName: row.doctor?.fullName ?? null,
       bookingSource: row.bookingSource as string,
+      isFirstBooking: firstApptIdByEmail.get(row.email) === row.id,
     }));
 
     return {
