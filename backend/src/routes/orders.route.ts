@@ -1137,6 +1137,20 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       const nextCursor = hasMore ? page[page.length - 1]?.id ?? null : null;
       const consultationCtx = await resolveUnmintedConsultationContext(page.map((o) => o.items));
 
+      // First-order star: the earliest order per customer email across ALL
+      // orders (not just this page), so paging doesn't change who gets the
+      // star. `distinct` + `orderBy: createdAt asc` picks one row per email.
+      const pageEmails = [...new Set(page.map((o) => o.email))];
+      const earliestOrders = pageEmails.length
+        ? await prisma.order.findMany({
+            where: { email: { in: pageEmails } },
+            orderBy: { createdAt: "asc" },
+            distinct: ["email"],
+            select: { id: true, email: true },
+          })
+        : [];
+      const firstOrderIdByEmail = new Map(earliestOrders.map((o) => [o.email, o.id]));
+
       const needingMeet = page.filter((o) =>
         orderNeedsAutoMeetLink({
           meetingUrl: o.meetingUrl,
@@ -1179,6 +1193,8 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           fullName: o.fullName,
           countryCode: o.countryCode,
           currencyCode: o.currencyCode,
+          bookingSource: o.bookingSource,
+          isFirstOrder: firstOrderIdByEmail.get(o.email) === o.id,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
           meetingUrl: meetingUrlById.get(o.id) ?? o.meetingUrl,

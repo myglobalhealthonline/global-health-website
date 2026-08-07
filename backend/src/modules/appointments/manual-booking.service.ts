@@ -665,6 +665,7 @@ export async function createManualBooking(
         currencyCode: service.currencyCode,
         paymentStatus: PaymentStatus.UNPAID,
         manualEntry: true,
+        bookingSource: input.origin?.source === "partner_api" ? "AI_CALL" : "MANUAL",
         // Insurance snapshot for the clinical record — amountCents above is
         // already the negotiated insurance price. Policy stays encrypted.
         insuranceCompanyId,
@@ -718,6 +719,10 @@ export async function createManualBooking(
       phone: input.patient.phone?.trim() || null,
       countryCode: input.countryCode.toLowerCase(),
       currencyCode,
+      // Provenance icon in the admin orders table — the partner API is the
+      // AI phone agent's booking path; every other manual booking is a human
+      // admin taking a call/walk-in. See BookingSource doc comment.
+      bookingSource: input.origin?.source === "partner_api" ? "AI_CALL" : "MANUAL",
       subtotalCents: amountCents,
       totalCents: amountCents,
       commissionTotalCents: commission?.commissionTotalCents ?? null,

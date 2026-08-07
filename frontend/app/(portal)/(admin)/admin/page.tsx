@@ -14,6 +14,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
+import { BookingSourceIcon } from "@/components/BookingSourceIcon";
 import {
   fetchAdminAppointments,
   fetchAdminCountries,
@@ -77,6 +78,7 @@ type ActivityItem = {
   primary: string; // bold lead text
   verb: string;
   target: string; // bold trailing text
+  bookingSource?: string;
 };
 
 export default async function AdminDashboardPage() {
@@ -200,6 +202,7 @@ export default async function AdminDashboardPage() {
       primary: a.fullName?.trim() || a.email,
       verb: "booked",
       target: a.consultationType,
+      bookingSource: a.bookingSource,
     });
   }
   // ponytail: page-content list overview has no per-row updatedAt/locale, so
@@ -415,6 +418,9 @@ export default async function AdminDashboardPage() {
                         </strong>
                       </p>
                     </div>
+                    {row.kind === "booking" && row.bookingSource ? (
+                      <BookingSourceIcon source={row.bookingSource} />
+                    ) : null}
                     <Pill tone={row.kind === "booking" ? "pending" : "neutral"}>
                       {row.kind}
                     </Pill>

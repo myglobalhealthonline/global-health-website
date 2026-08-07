@@ -2064,6 +2064,9 @@ model Appointment {
   notesUploaded                  Boolean                   @default(false)
   filesUploaded                  Boolean                   @default(false)
   manualEntry                    Boolean                   @default(false)
+  /// Provenance icon on the admin dashboard / appointments list — see
+  /// BookingSource doc comment. Set alongside `manualEntry` at creation time.
+  bookingSource                  BookingSource             @default(WEBSITE)
   pharmacy                       String?
   /// Health / tax identifier valid in THIS appointment's country (PPS in IE,
   /// NIF in PT, ...). Populated for cross-border prescriptions, where the
@@ -2516,6 +2519,16 @@ enum CartItemKind {
   LAB_EXAM
 }
 
+/// How a booking/order was created. WEBSITE = self-service checkout
+/// (default). MANUAL = admin console phone/walk-in booking
+/// (manual-booking.service.ts, origin.source "admin_manual"). AI_CALL =
+/// the AI phone agent's partner-API booking (origin.source "partner_api").
+enum BookingSource {
+  WEBSITE
+  MANUAL
+  AI_CALL
+}
+
 enum OrderStatus {
   PENDING
   PAID
@@ -2693,6 +2706,10 @@ model Order {
   doctorPayoutTotalCents        Int?
   status                        OrderStatus           @default(PENDING)
   paymentStatus                 PaymentStatus         @default(UNPAID)
+  /// Provenance of the booking — see BookingSource doc comment. Set at
+  /// creation time by manual-booking.service.ts / partner-booking.service.ts;
+  /// self-service checkout (orders.route.ts) leaves the WEBSITE default.
+  bookingSource                 BookingSource         @default(WEBSITE)
   /// Insurance card manual-verification state. Null = ordinary (non-insurance)
   /// order. PENDING = booked with insurance, awaiting admin card verification
   /// (no Stripe session yet, slot reserved). VERIFIED = admin confirmed the

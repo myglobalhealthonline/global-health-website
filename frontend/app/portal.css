@@ -2343,6 +2343,16 @@ a.gh-admin-summary-item--link:focus-visible {
   overflow-wrap: anywhere;
 }
 
+/* New-customer star (first order by email) + booking-provenance icon —
+   admin orders table + dashboard "Recent activity" feed. */
+.gh-admin-order-firstorder-star {
+  color: #d97706; /* amber-600 */
+}
+
+.gh-booking-source-icon {
+  color: var(--color-text-muted);
+}
+
 @media (max-width: 1024px) {
   .gh-admin-order-detail-layout {
     grid-template-columns: 1fr;

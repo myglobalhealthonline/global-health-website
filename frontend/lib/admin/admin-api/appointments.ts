@@ -16,6 +16,9 @@ type AdminAppointmentsListPayload = {
     scheduledAt: string | null;
     doctorId: string | null;
     doctorName: string | null;
+    /** "WEBSITE" | "MANUAL" | "AI_CALL" — provenance icon on the dashboard
+     *  "Recent activity" feed and appointments list. */
+    bookingSource: string;
   }>;
   pagination: {
     page: number;
