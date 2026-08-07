@@ -561,6 +561,9 @@ deploy against `backend/.env`, which is production, until dev is verified.
    - composite FK `MembershipEnrollment(levelId, countryId) → MembershipLevel(id, countryId)`;
    - CHECK constraints for the §3.3 invariants;
    - CHECK `(memberType = 'DEPENDENT') = (primaryEnrollmentId IS NOT NULL)`;
+   - CHECK `endDate IS NULL OR endDate >= startDate`
+     (`MembershipEnrollment_term_dates_ordered`) — §13.1 requires it of the API,
+     and the migration has always carried it; this list simply omitted it;
    - partial unique index on `MembershipEnrollment(planId, lower(email))
      WHERE status <> 'REMOVED'` (so a removed row does not block a re-add, while
      the plain `@@unique([planId, email])` is dropped in favour of it);
@@ -626,7 +629,7 @@ memberships/
   membership-import.service.ts       # CSV parse → preview → commit
   membership-pricing.service.ts      # price one service for one enrollment
   membership-allowance.service.ts    # balance resolve, spend, refund, ledger
-  membership-reporting.service.ts    # per-plan usage + per-member drill-down
+  membership-reports.service.ts      # per-plan usage + per-member drill-down
   membership-expiry.job.ts           # daily ACTIVE → EXPIRED sweep
   *.test.ts
 ```
@@ -1601,12 +1604,20 @@ by design. Stated here because it otherwise reads as a bug. Everything else
 still runs through the same resolver (a synthetic `ACTIVE` enrollment with one
 allowance unit), so override and real pricing can never diverge.
 
-Three manual-booking interactions, previously undefined:
+Four manual-booking interactions, previously undefined:
 
 - **`amountCentsOverride` suppresses the benefit engine entirely.** It already
   outranks peak and insurance because it re-charges an already-agreed price
   (`follow-up-booking.service.ts`); re-discounting it would silently re-price a
   follow-up.
+- **The admin `discountPercent` stays last, applied on top of the member
+  price** (added 2026-08-07 — the earlier list omitted it). It is already the
+  last link in the base → peak → insurance → override chain, so "20% off" keeps
+  meaning 20% off whatever the patient would otherwise have been charged, and an
+  admin discount composes with the benefit rather than silently replacing it. It
+  is a deliberate, audited act, unlike the benefit, which is automatic. On a €0
+  allowance line it is a no-op, which is correct — there is nothing left to
+  discount.
 - **Insurance and membership together is a 400.** They are mutually exclusive on
   the public path — insurance is alone-in-cart and deferred-charge, membership is
   charge-now — and the manual input has both fields, so reject rather than pick.
@@ -1739,7 +1750,9 @@ Repo-specific gates that must pass:
 - members by status (pending / active / suspended / expired / removed);
 - consultations booked in the date range, split by benefit type;
 - allowance units used vs allocated across the plan;
-- total discount given, in cents;
+- total discount given, in cents — **overrides excluded**, since they are the
+  clinic's goodwill rather than the partner's programme; their value is carried
+  on the override line below (clarified 2026-08-07);
 - **goodwill overrides as their own line** (§26): count and total value, listed
   with their reasons. Excluded from allowance-used and from the plan's usage
   totals — goodwill is our cost, not the partner's consumption — but never
