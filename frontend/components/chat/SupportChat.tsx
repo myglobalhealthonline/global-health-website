@@ -136,10 +136,21 @@ export function SupportChat({
     }
     schedulePoll();
 
+    // Waiting out the full poll interval after switching back to this tab (or
+    // this window) reads as "the chat is stuck — needs a reload". Refetch the
+    // moment it's actually looked at again instead of waiting for the timer.
+    function onFocusOrVisible() {
+      if (!cancelled && document.visibilityState === "visible") void load();
+    }
+    window.addEventListener("focus", onFocusOrVisible);
+    document.addEventListener("visibilitychange", onFocusOrVisible);
+
     return () => {
       cancelled = true;
       clearTimeout(bootstrapTimer);
       if (pollTimer) clearTimeout(pollTimer);
+      window.removeEventListener("focus", onFocusOrVisible);
+      document.removeEventListener("visibilitychange", onFocusOrVisible);
     };
   }, [load, pollIntervalMs]);
 
