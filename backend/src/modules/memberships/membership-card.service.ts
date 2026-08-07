@@ -91,9 +91,10 @@ function termState(startDate: Date, endDate: Date | null, now: Date): Membership
  * primary under `SHARED` (§11). Phase 5's allowance service will own the
  * spend/refund side of this; phase 3 only needs to read the right counter, so
  * the rule lives here rather than pulling a service that does not exist yet
- * into existence early.
+ * into existence early. Phase 4's pricing resolver reads the same counter and
+ * imports this, so the two can never disagree about whose pool applies.
  */
-function holderEnrollmentId(enrollment: {
+export function holderEnrollmentId(enrollment: {
   id: string;
   memberType: "PRIMARY" | "DEPENDENT";
   primaryEnrollmentId: string | null;

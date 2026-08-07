@@ -54,6 +54,7 @@ describe("authorization matrix", () => {
   let prescriptionId = "";
   let doctor1Cookie: Record<string, string> = {};
   let doctor2Cookie: Record<string, string> = {};
+  let patient1Cookie: Record<string, string> = {};
   // S-032/S-031 fixes: an ADMIN who also has a linked Doctor profile — the
   // shape doctor-patient-documents.route.ts actually requires (authenticates
   // via verifyDoctorAccess, which needs a doctorId, but then bounces
@@ -169,6 +170,9 @@ describe("authorization matrix", () => {
       },
     });
     patient1UserId = patient1User.id;
+    patient1Cookie = {
+      gh_auth: signAuthToken({ sub: patient1User.id, role: "PATIENT", email: patient1User.email }),
+    };
     const patient1Profile = await prisma.patientProfile.create({
       data: { email: patient1User.email, userId: patient1User.id, fullName: "Authz Test Patient One" },
     });
@@ -727,5 +731,63 @@ describe("authorization matrix", () => {
     });
     assert.equal(res.statusCode, 200, res.body);
     assert.equal(res.json().data.found, false);
+  });
+
+  // ── Benefit options (phase 4) ──────────────────────────────────────────────
+  //
+  // The endpoint prices a patient's own benefits, so the gate is "a patient
+  // session, and only the caller's own". Guests get 401 rather than an empty
+  // list so the booking step can prompt them to log in (§6.3).
+
+  it("benefit options: unauthenticated read → 401, not an empty list", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/me/benefit-options?serviceId=authz-probe",
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("benefit options: a doctor session is not a patient → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/me/benefit-options?serviceId=authz-probe",
+      cookies: doctor2Cookie,
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("benefit options: an admin session is not a patient either → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/me/benefit-options?serviceId=authz-probe",
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("benefit options: a patient session passes the gate → 404 on an unknown service", async (t) => {
+    if (!app) return t.skip();
+    // 404, not 401/403: the gate let the patient through and the SERVICE
+    // lookup is what failed. Asserting the distinction is the point — a 401
+    // here would mean the endpoint is unreachable for the people it is for.
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/me/benefit-options?serviceId=authz-probe-missing",
+      cookies: patient1Cookie,
+    });
+    assert.equal(res.statusCode, 404, res.body);
+  });
+
+  it("benefit options: a missing serviceId is rejected → 400", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/me/benefit-options",
+      cookies: patient1Cookie,
+    });
+    assert.equal(res.statusCode, 400, res.body);
   });
 });

@@ -2594,10 +2594,34 @@ model Cart {
   /// Stamped when the abandoned-cart reminder has been emailed.
   /// Prevents re-sending. Cleared on checkout / cart-clear.
   abandonedEmailSentAt DateTime?
+  /// Cart-level benefit choice (§25). One source per cart, so benefits can
+  /// never stack. UNSET until the benefit step runs — see `CartBenefitSource`.
+  benefitSource        CartBenefitSource @default(UNSET)
+  /// Which enrollment the patient chose, when `benefitSource = MEMBERSHIP`.
+  /// Display-only: checkout re-resolves it and re-checks ownership (§13.2).
+  membershipEnrollmentId String?
+  membershipEnrollment   MembershipEnrollment? @relation(fields: [membershipEnrollmentId], references: [id], onDelete: SetNull)
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
 
   @@index([updatedAt, abandonedEmailSentAt])
+}
+
+/// Which benefit engine prices a cart (§3.7). Exactly one may run per order,
+/// which is what makes "benefits never stack" structural rather than a rule
+/// someone has to remember.
+///
+/// UNSET vs NONE is the load-bearing distinction: UNSET means the patient has
+/// not reached the benefit step yet, NONE means they got there and declined.
+/// Only NONE suppresses corporate's automatic discount — treating UNSET as a
+/// refusal would silently drop the discount corporate members get today.
+enum CartBenefitSource {
+  NONE
+  UNSET
+  MEMBERSHIP
+  CORPORATE
+  PUBLIC_PLAN
+  INSURANCE
 }
 
 /// Per-consultation-line benefit choice (§ appointment-claim). PAY_NORMAL is the
@@ -2906,6 +2930,15 @@ model OrderItem {
   /// which company, for reconciliation).
   corporateDiscountCents            Int?
   corporateCompanyId                String?
+  /// Private-membership audit trail — set when the membership engine priced
+  /// this line (§3.7). `unitPriceCents` is ALREADY the member price; these
+  /// record how it got there. Bare ids like `corporateCompanyId`, no relation.
+  membershipEnrollmentId            String?
+  membershipBenefitId               String?
+  membershipDiscountCents           Int?
+  /// True when an allowance unit paid for this line (unit price is then 0).
+  /// Reporting separates allowance usage from discounted usage on this.
+  membershipAllowanceUsed           Boolean          @default(false)
   /// Approved dependent this order line was booked for (Premium family
   /// usage). Copied from the CartItem at checkout for audit + portal.
   familyMemberId                    String?
@@ -6017,6 +6050,7 @@ model MembershipEnrollment {
   ledgerEntries MembershipUsageLedger[]
   inviteLogs    MembershipInviteLog[]
   claimTokens   MembershipClaimToken[]
+  carts         Cart[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
