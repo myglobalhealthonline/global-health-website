@@ -1,0 +1,23 @@
+{
+  "invite": {
+    "subject": "Byli jste zaregistrováni do programu {planName}",
+    "heading": "Vaše členství je připraveno",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "Byli jste zaregistrováni do programu <strong>{planName}</strong> ({levelName}).",
+    "idLine": "Vaše členské číslo je <strong>{membershipId}</strong>.",
+    "action": "Zaregistrujte se nebo se přihlaste s touto e-mailovou adresou — <strong>{email}</strong> — a vaše výhody se zobrazí automaticky.",
+    "note": "Výhody platí pouze po přihlášení s touto adresou. Není třeba nic uplatňovat ani zadávat žádný kód.",
+    "cta": "Přihlásit se nebo zaregistrovat",
+    "signoff": "— Tým Global Health"
+  },
+  "confirmed": {
+    "subject": "Vaše členství {planName} je aktivní",
+    "heading": "Vaše členství je aktivní",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "Vaše členství <strong>{planName}</strong> ({levelName}) je nyní propojeno s tímto účtem.",
+    "idLine": "Členské číslo: <strong>{membershipId}</strong>.",
+    "action": "Členské ceny se uplatní automaticky, když si rezervujete termín přihlášeni.",
+    "cta": "Zobrazit členství",
+    "signoff": "— Tým Global Health"
+  }
+}

@@ -134,7 +134,27 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
       ) : null}
 
       <div className="flex flex-col gap-6">
-        {/* Levels first — the thing an admin actually came here to configure. */}
+        <AdminCard padding={0}>
+          <SectionHeader
+            title="Members"
+            description="Who is on this programme, and the partner list import."
+          />
+          <div className="flex flex-wrap items-center gap-3 p-6">
+            <span className="text-sm text-[var(--color-text-muted)]">
+              {plan._count.enrollments} member{plan._count.enrollments === 1 ? "" : "s"} enrolled
+            </span>
+            <div className="ml-auto flex gap-2">
+              <Btn href={`/admin/memberships/${planId}/import`} variant="ghost" size="sm">
+                Import CSV
+              </Btn>
+              <Btn href={`/admin/memberships/${planId}/members`} variant="soft" size="sm">
+                Manage members
+              </Btn>
+            </div>
+          </div>
+        </AdminCard>
+
+        {/* Levels — the thing an admin usually came here to configure. */}
         <AdminCard padding={0}>
           <SectionHeader
             title="Levels"

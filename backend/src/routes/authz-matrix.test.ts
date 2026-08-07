@@ -558,6 +558,87 @@ describe("authorization matrix", () => {
     await prisma.membershipPlan.deleteMany({ where: { slug: "authz-admin-write" } });
   });
 
+  // ── Membership enrollments + import (phase 2) ───────────────────────────────
+  // One tier: MANAGE_MEMBERSHIPS. These carry member PII, so the deny paths
+  // matter more than the allow path (covered in the route suite).
+
+  it("membership enrollments: unauthenticated read → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({ method: "GET", url: "/api/admin/membership-enrollments" });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("membership enrollments: a doctor session cannot read the member list → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-enrollments",
+      cookies: doctor1Cookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
+  it("membership enrollments: an admin may read the member list → 200", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-enrollments",
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+  });
+
+  it("membership enrollments: a doctor cannot enroll anyone → 403, nothing written", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/admin/membership-enrollments",
+      cookies: doctor1Cookie,
+      payload: {
+        planId: "any-plan",
+        membershipId: "AUTHZ-PROBE-1",
+        email: "authz-probe@test.local",
+        firstName: "Authz",
+        lastName: "Probe",
+        startDate: "2026-01-01",
+      },
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    const leaked = await prisma.membershipEnrollment.findFirst({
+      where: { membershipId: "AUTHZ-PROBE-1" },
+    });
+    assert.equal(leaked, null, "nothing written on a denied enrollment write");
+  });
+
+  it("membership enrollments: a doctor cannot suspend a membership → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/admin/membership-enrollments/any-id/suspend",
+      cookies: doctor2Cookie,
+      payload: {},
+    });
+    // 403 from the gate, NOT 404 — authorization is decided before the route
+    // reveals whether the enrollment exists.
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
+  it("membership imports: unauthenticated upload → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({ method: "POST", url: "/api/admin/membership-imports" });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("membership imports: a doctor cannot commit a batch → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/admin/membership-imports/any-batch/commit",
+      cookies: doctor1Cookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
   it("membership benefits: a doctor session cannot create a benefit → 403 (§4.2)", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({

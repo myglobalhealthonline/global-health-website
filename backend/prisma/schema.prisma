@@ -350,9 +350,9 @@ enum AuditAction {
   /// message row stamps both as ADMIN.
   SUPPORT_MESSAGE_POSTED
   // --- Private membership plans (phase 1 — config only) ---
-  /// Plan/level/benefit configuration is SUPER_ADMIN-only, so every write is
-  /// audited with the actor and a diff of the changed fields. Enrollment,
-  /// import and allowance actions are added by their own phases.
+  /// Plan/level/benefit configuration needs a real admin session, so every
+  /// write is audited with the actor and a diff of the changed fields.
+  /// Allowance and report-access actions are added by their own phases.
   MEMBERSHIP_PLAN_CREATED
   MEMBERSHIP_PLAN_UPDATED
   MEMBERSHIP_PLAN_DEACTIVATED
@@ -362,6 +362,18 @@ enum AuditAction {
   MEMBERSHIP_BENEFIT_CREATED
   MEMBERSHIP_BENEFIT_UPDATED
   MEMBERSHIP_BENEFIT_DELETED
+
+  // --- Private membership plans (phase 2 — enrollment, linking, import) ---
+  MEMBERSHIP_ENROLLMENT_CREATED
+  MEMBERSHIP_ENROLLMENT_UPDATED
+  MEMBERSHIP_ENROLLMENT_SUSPENDED
+  MEMBERSHIP_ENROLLMENT_REACTIVATED
+  MEMBERSHIP_ENROLLMENT_REMOVED
+  /// Written by the linker, so the actor is the member themselves, not an admin.
+  MEMBERSHIP_ENROLLMENT_LINKED
+  MEMBERSHIP_ENROLLMENT_INVITED
+  MEMBERSHIP_IMPORT_COMMITTED
+  MEMBERSHIP_IMPORT_CANCELLED
 }
 
 enum CountryAccessModel {

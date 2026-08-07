@@ -1,0 +1,23 @@
+{
+  "invite": {
+    "subject": "Le hemos inscrito en {planName}",
+    "heading": "Su membresía está lista",
+    "greeting": "Hola {firstName}:",
+    "lead": "Le hemos inscrito en <strong>{planName}</strong> ({levelName}).",
+    "idLine": "Su número de miembro es <strong>{membershipId}</strong>.",
+    "action": "Regístrese o inicie sesión con esta dirección de correo — <strong>{email}</strong> — y sus ventajas aparecerán automáticamente.",
+    "note": "Las ventajas solo se aplican con la sesión iniciada en esa dirección. No hay nada que canjear ni ningún código que introducir.",
+    "cta": "Iniciar sesión o registrarse",
+    "signoff": "— El equipo de Global Health"
+  },
+  "confirmed": {
+    "subject": "Su membresía de {planName} está activa",
+    "heading": "Su membresía está activa",
+    "greeting": "Hola {firstName}:",
+    "lead": "Su membresía de <strong>{planName}</strong> ({levelName}) ya está vinculada a esta cuenta.",
+    "idLine": "Número de miembro: <strong>{membershipId}</strong>.",
+    "action": "Sus precios de miembro se aplican automáticamente al reservar con la sesión iniciada.",
+    "cta": "Ver mi membresía",
+    "signoff": "— El equipo de Global Health"
+  }
+}

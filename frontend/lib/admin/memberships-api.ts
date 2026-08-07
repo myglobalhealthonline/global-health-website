@@ -1,5 +1,5 @@
 import "server-only";
-import { adminRequest, type AdminApiResponse } from "./admin-api";
+import { adminPostMultipart, adminRequest, type AdminApiResponse } from "./admin-api";
 
 /**
  * Server-only admin client for the private membership plans surface
@@ -243,4 +243,222 @@ export async function deleteMembershipBenefit(benefitId: string) {
   return adminRequest<{ id: string }>(`/api/admin/membership-benefits/${benefitId}`, {
     method: "DELETE",
   });
+}
+
+// ─── Enrollments (phase 2) ───────────────────────────────────────────────────
+
+export type MembershipEnrollmentStatus =
+  | "PENDING"
+  | "ACTIVE"
+  | "SUSPENDED"
+  | "EXPIRED"
+  | "REMOVED";
+
+export type MembershipEnrollmentDependent = {
+  id: string;
+  membershipId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  relationship: string | null;
+  status: MembershipEnrollmentStatus;
+};
+
+export type MembershipEnrollment = {
+  id: string;
+  planId: string;
+  levelId: string;
+  countryId: string;
+  membershipId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  dateOfBirth: string | null;
+  status: MembershipEnrollmentStatus;
+  memberType: "PRIMARY" | "DEPENDENT";
+  primaryEnrollmentId: string | null;
+  relationship: string | null;
+  startDate: string;
+  endDate: string | null;
+  userId: string | null;
+  linkedAt: string | null;
+  claimedAt: string | null;
+  adminNotes: string | null;
+  createdAt: string;
+  plan: { id: string; name: string; slug: string; countryId: string };
+  level: {
+    id: string;
+    name: string;
+    slug: string;
+    familyEnabled: boolean;
+    maxDependents: number;
+  };
+  user: { id: string; email: string; fullName: string; emailVerifiedAt: string | null } | null;
+  dependents: MembershipEnrollmentDependent[];
+};
+
+export type MembershipEnrollmentListResult = {
+  items: MembershipEnrollment[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
+
+export type MembershipEnrollmentInput = {
+  planId?: string;
+  levelId?: string;
+  membershipId?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string | null;
+  dateOfBirth?: string | null;
+  startDate?: string;
+  endDate?: string | null;
+  adminNotes?: string | null;
+};
+
+export type MembershipDependentInput = {
+  membershipId?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string | null;
+  dateOfBirth?: string | null;
+  relationship?: string | null;
+  adminNotes?: string | null;
+};
+
+export async function fetchMembershipEnrollments(query?: {
+  planId?: string;
+  status?: string;
+  q?: string;
+  page?: string;
+  pageSize?: string;
+}) {
+  return adminRequest<MembershipEnrollmentListResult>(
+    withQuery("/api/admin/membership-enrollments", query),
+  );
+}
+
+export async function fetchMembershipEnrollment(id: string) {
+  return adminRequest<{ enrollment: MembershipEnrollment }>(
+    `/api/admin/membership-enrollments/${id}`,
+  );
+}
+
+export async function createMembershipEnrollment(body: MembershipEnrollmentInput) {
+  return adminRequest<{ enrollment: MembershipEnrollment }>("/api/admin/membership-enrollments", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function updateMembershipEnrollment(id: string, body: MembershipEnrollmentInput) {
+  return adminRequest<{ enrollment: MembershipEnrollment }>(
+    `/api/admin/membership-enrollments/${id}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function suspendMembershipEnrollment(id: string, reason: string | null) {
+  return adminRequest<{ enrollment: MembershipEnrollment }>(
+    `/api/admin/membership-enrollments/${id}/suspend`,
+    { method: "POST", body: { reason } },
+  );
+}
+
+export async function reactivateMembershipEnrollment(id: string) {
+  return adminRequest<{ enrollment: MembershipEnrollment }>(
+    `/api/admin/membership-enrollments/${id}/reactivate`,
+    { method: "POST" },
+  );
+}
+
+export async function removeMembershipEnrollment(id: string) {
+  return adminRequest<{ enrollment: MembershipEnrollment }>(
+    `/api/admin/membership-enrollments/${id}/remove`,
+    { method: "POST" },
+  );
+}
+
+export async function addMembershipDependent(id: string, body: MembershipDependentInput) {
+  return adminRequest<{ enrollment: MembershipEnrollment }>(
+    `/api/admin/membership-enrollments/${id}/dependents`,
+    { method: "POST", body },
+  );
+}
+
+export async function sendMembershipInvite(id: string) {
+  return adminRequest<{ ok: boolean; email: string }>(
+    `/api/admin/membership-enrollments/${id}/invite`,
+    { method: "POST" },
+  );
+}
+
+// ─── CSV import (phase 2) ────────────────────────────────────────────────────
+
+export type MembershipImportOutcome = "CREATE" | "REVIVE" | "LINK" | "REJECT";
+
+export type MembershipImportPreviewRow = {
+  line: number;
+  outcome: MembershipImportOutcome;
+  reason?: string;
+  membershipId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  startDate: string;
+  endDate: string | null;
+  levelId: string | null;
+  levelSlug: string | null;
+  primaryMembershipId: string | null;
+};
+
+export type MembershipImportBatch = {
+  id: string;
+  planId: string;
+  fileName: string;
+  status: "PREVIEW" | "COMMITTED" | "CANCELLED";
+  rowCount: number;
+  createdCount: number;
+  revivedCount: number;
+  rejectedCount: number;
+  previewData: { rows: MembershipImportPreviewRow[]; headers: string[] };
+  committedAt: string | null;
+  createdAt: string;
+};
+
+export async function uploadMembershipImport(planId: string, file: File) {
+  const body = new FormData();
+  body.append("planId", planId);
+  body.append("file", file);
+  return adminPostMultipart<{ batch: MembershipImportBatch }>(
+    "/api/admin/membership-imports",
+    body,
+  );
+}
+
+export async function fetchMembershipImport(batchId: string) {
+  return adminRequest<{ batch: MembershipImportBatch }>(
+    `/api/admin/membership-imports/${batchId}`,
+  );
+}
+
+export async function commitMembershipImport(batchId: string) {
+  return adminRequest<{
+    batch: MembershipImportBatch;
+    applied: boolean;
+    created?: number;
+    revived?: number;
+    skipped?: { line: number; reason: string }[];
+  }>(`/api/admin/membership-imports/${batchId}/commit`, { method: "POST" });
+}
+
+export async function cancelMembershipImport(batchId: string) {
+  return adminRequest<{ batch: MembershipImportBatch; cancelled: boolean }>(
+    `/api/admin/membership-imports/${batchId}/cancel`,
+    { method: "POST" },
+  );
 }

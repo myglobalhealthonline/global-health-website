@@ -12,6 +12,7 @@ import {
 import { deleteObject } from "../../services/object-storage.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
+import { linkMembershipsInBackground } from "../memberships/membership-linking.service.js";
 
 export type SafeUser = {
   id: string;
@@ -272,6 +273,11 @@ export async function loginUser(
       throw new AuthInvalidCredentialsError();
     }
     const twoFactorEnabled = Boolean((user as Record<string, unknown>).twoFactorEnabled);
+    // §5.2 backstop: catches enrollments imported AFTER this user verified.
+    // One indexed query per successful login, deliberately uncached — a login
+    // is not a hot path, and a cache here would only delay a member's benefits.
+    // No-ops immediately for an unverified account.
+    linkMembershipsInBackground(user.id);
     return { user: toSafeUser(user), twoFactorEnabled, tokenVersion: user.tokenVersion };
   } catch (error) {
     if (error instanceof AuthInvalidCredentialsError) throw error;
@@ -789,6 +795,9 @@ export async function consumePasswordResetToken(
         ? { passwordHash, emailVerifiedAt: new Date(), mustChangePassword: false, tokenVersion: { increment: 1 } }
         : { passwordHash, mustChangePassword: false, tokenVersion: { increment: 1 } },
     });
+    // The invite branch flips emailVerifiedAt, so it is one of the §5.2 link
+    // triggers — a member invited through this path would otherwise never link.
+    if (row.isInvite) linkMembershipsInBackground(row.userId);
     return { ok: true, userId: row.userId, isInvite: row.isInvite };
   } catch (error) {
     throw normalizeDbError(error, "Could not reset password");
@@ -843,6 +852,10 @@ export async function consumeEmailVerificationToken(
 
     const claimedAppointments = await claimGuestAppointmentsForUser(user.id, user.email);
     const claimedOrders = await claimGuestOrdersForUser(user.id, user.email);
+    // Membership linking's primary trigger (§5.2): the mailbox is now proven
+    // to be theirs, which is exactly the condition a PENDING enrollment waits
+    // for. Fire-and-forget — a membership must never fail a verification.
+    linkMembershipsInBackground(user.id);
 
     return { userId: user.id, email: user.email, claimedAppointments, claimedOrders };
   } catch (error) {

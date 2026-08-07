@@ -161,6 +161,101 @@ export function parseMembershipLevelForm(fd: FormData): ParseResult<MembershipLe
   };
 }
 
+export type MembershipEnrollmentFormBody = {
+  planId?: string;
+  levelId?: string;
+  membershipId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  dateOfBirth: string | null;
+  startDate: string;
+  endDate: string | null;
+  adminNotes: string | null;
+};
+
+export type MembershipDependentFormBody = {
+  membershipId?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  dateOfBirth: string | null;
+  relationship: string | null;
+  adminNotes: string | null;
+};
+
+/**
+ * Enrollment add/edit form → backend body.
+ *
+ * Only the fields the backend cannot default are required here; the rest of the
+ * rules (global membership-id uniqueness, the (plan, email) collision, term
+ * ordering) belong to the API and are not re-implemented client-side.
+ */
+export function parseMembershipEnrollmentForm(
+  fd: FormData,
+  opts: { includePlan?: boolean } = {},
+): ParseResult<MembershipEnrollmentFormBody> {
+  const membershipId = str(fd, "membershipId");
+  const email = str(fd, "email").toLowerCase();
+  const firstName = str(fd, "firstName");
+  const lastName = str(fd, "lastName");
+  const startDate = str(fd, "startDate");
+
+  if (!membershipId) return { ok: false, error: "Membership ID is required" };
+  if (!email) return { ok: false, error: "Email is required" };
+  if (!firstName || !lastName) return { ok: false, error: "First and last name are required" };
+  if (!startDate) return { ok: false, error: "Start date is required" };
+
+  const body: MembershipEnrollmentFormBody = {
+    membershipId,
+    email,
+    firstName,
+    lastName,
+    phone: nullable(fd, "phone"),
+    dateOfBirth: nullable(fd, "dateOfBirth"),
+    startDate,
+    endDate: nullable(fd, "endDate"),
+    adminNotes: nullable(fd, "adminNotes"),
+  };
+  const levelId = str(fd, "levelId");
+  if (levelId) body.levelId = levelId;
+
+  if (opts.includePlan) {
+    const planId = str(fd, "planId");
+    if (!planId) return { ok: false, error: "Programme is required" };
+    body.planId = planId;
+  }
+  return { ok: true, data: body };
+}
+
+/** A dependent inherits plan, level and term, so none of those appear here. */
+export function parseMembershipDependentForm(
+  fd: FormData,
+): ParseResult<MembershipDependentFormBody> {
+  const email = str(fd, "email").toLowerCase();
+  const firstName = str(fd, "firstName");
+  const lastName = str(fd, "lastName");
+  if (!email) return { ok: false, error: "Email is required" };
+  if (!firstName || !lastName) return { ok: false, error: "First and last name are required" };
+
+  const membershipId = str(fd, "membershipId");
+  return {
+    ok: true,
+    data: {
+      ...(membershipId ? { membershipId } : {}),
+      email,
+      firstName,
+      lastName,
+      phone: nullable(fd, "phone"),
+      dateOfBirth: nullable(fd, "dateOfBirth"),
+      relationship: nullable(fd, "relationship"),
+      adminNotes: nullable(fd, "adminNotes"),
+    },
+  };
+}
+
 const BENEFIT_TYPES: readonly MembershipBenefitType[] = [
   "ALLOWANCE",
   "PERCENT",

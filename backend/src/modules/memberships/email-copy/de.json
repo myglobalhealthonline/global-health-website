@@ -1,0 +1,23 @@
+{
+  "invite": {
+    "subject": "Sie wurden bei {planName} angemeldet",
+    "heading": "Ihre Mitgliedschaft ist bereit",
+    "greeting": "Hallo {firstName},",
+    "lead": "Sie wurden bei <strong>{planName}</strong> ({levelName}) angemeldet.",
+    "idLine": "Ihre Mitgliedsnummer lautet <strong>{membershipId}</strong>.",
+    "action": "Registrieren Sie sich oder melden Sie sich mit dieser E-Mail-Adresse an — <strong>{email}</strong> — und Ihre Vorteile erscheinen automatisch.",
+    "note": "Die Vorteile gelten nur, solange Sie mit dieser Adresse angemeldet sind. Es gibt nichts einzulösen und keinen Code einzugeben.",
+    "cta": "Anmelden oder registrieren",
+    "signoff": "— Ihr Global-Health-Team"
+  },
+  "confirmed": {
+    "subject": "Ihre Mitgliedschaft bei {planName} ist aktiv",
+    "heading": "Ihre Mitgliedschaft ist aktiv",
+    "greeting": "Hallo {firstName},",
+    "lead": "Ihre Mitgliedschaft bei <strong>{planName}</strong> ({levelName}) ist jetzt mit diesem Konto verknüpft.",
+    "idLine": "Mitgliedsnummer: <strong>{membershipId}</strong>.",
+    "action": "Ihre Mitgliedspreise werden automatisch angewendet, wenn Sie angemeldet buchen.",
+    "cta": "Mitgliedschaft ansehen",
+    "signoff": "— Ihr Global-Health-Team"
+  }
+}

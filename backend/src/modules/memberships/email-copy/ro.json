@@ -1,0 +1,23 @@
+{
+  "invite": {
+    "subject": "Ați fost înscris în programul {planName}",
+    "heading": "Abonamentul dumneavoastră este pregătit",
+    "greeting": "Bună ziua, {firstName},",
+    "lead": "Ați fost înscris în programul <strong>{planName}</strong> ({levelName}).",
+    "idLine": "Numărul dumneavoastră de membru este <strong>{membershipId}</strong>.",
+    "action": "Înregistrați-vă sau autentificați-vă cu această adresă de e-mail — <strong>{email}</strong> — iar beneficiile apar automat.",
+    "note": "Beneficiile se aplică doar când sunteți autentificat cu acea adresă. Nu aveți nimic de revendicat și niciun cod de introdus.",
+    "cta": "Autentificare sau înregistrare",
+    "signoff": "— Echipa Global Health"
+  },
+  "confirmed": {
+    "subject": "Abonamentul {planName} este activ",
+    "heading": "Abonamentul dumneavoastră este activ",
+    "greeting": "Bună ziua, {firstName},",
+    "lead": "Abonamentul <strong>{planName}</strong> ({levelName}) este acum asociat acestui cont.",
+    "idLine": "Număr de membru: <strong>{membershipId}</strong>.",
+    "action": "Prețurile de membru se aplică automat când faceți o programare fiind autentificat.",
+    "cta": "Vedeți abonamentul",
+    "signoff": "— Echipa Global Health"
+  }
+}

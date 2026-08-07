@@ -1,0 +1,23 @@
+{
+  "invite": {
+    "subject": "You've been enrolled in {planName}",
+    "heading": "Your membership is ready",
+    "greeting": "Hi {firstName},",
+    "lead": "You have been enrolled in <strong>{planName}</strong> ({levelName}).",
+    "idLine": "Your membership number is <strong>{membershipId}</strong>.",
+    "action": "Register or log in with this email address — <strong>{email}</strong> — and your membership benefits appear automatically.",
+    "note": "Your benefits only apply once you are signed in with that address. There is nothing to redeem and no code to enter.",
+    "cta": "Log in or register",
+    "signoff": "— The Global Health team"
+  },
+  "confirmed": {
+    "subject": "Your {planName} membership is active",
+    "heading": "Your membership is active",
+    "greeting": "Hi {firstName},",
+    "lead": "Your <strong>{planName}</strong> membership ({levelName}) is now linked to this account.",
+    "idLine": "Membership number: <strong>{membershipId}</strong>.",
+    "action": "Your member prices are applied automatically when you book while signed in.",
+    "cta": "View your membership",
+    "signoff": "— The Global Health team"
+  }
+}
