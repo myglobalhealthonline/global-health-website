@@ -136,7 +136,7 @@ export async function SubscriptionDashboard({
             : ""}
         </p>
         <Link
-          href="/account/membership"
+          href="/account/plans"
           className="mt-2 inline-flex text-sm font-semibold underline"
           style={{ color: "var(--portal-primary)" }}
         >

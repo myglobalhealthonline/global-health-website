@@ -170,14 +170,14 @@ export async function notifySubscriptionConfirmed(subscriptionId: string, credit
     subject: interpolate(c.confirmed.subject, { plan: r.planName }),
     title: interpolate(c.confirmed.title, { plan: r.planName }),
     paragraphs: [greetingParagraph(c, r.fullName), c.confirmed.p1, creditLine, c.common.signoff],
-    cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
+    cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/plans") },
   });
   await writeInApp(
     r.userId,
     "SUBSCRIPTION_CONFIRMED",
     interpolate(c.confirmed.title, { plan: r.planName }),
     creditLine,
-    "/account/membership",
+    "/account/plans",
   );
 }
 
@@ -224,14 +224,14 @@ export async function notifyPerkUnlocked(subscriptionId: string, perkKey: string
     subject: c.perkUnlocked.subject,
     title: c.perkUnlocked.title,
     paragraphs: [greetingParagraph(c, r.fullName), p1, c.perkUnlocked.p2, c.common.signoff],
-    cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
+    cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/plans") },
   });
   await writeInApp(
     r.userId,
     "SUBSCRIPTION_PERK_UNLOCKED",
     c.perkUnlocked.title,
     p1,
-    "/account/membership",
+    "/account/plans",
   );
 }
 
@@ -305,14 +305,14 @@ export async function notifyRenewalReminder(subscriptionId: string, renewalDate:
       c.reminder.p2,
       c.common.signoff,
     ],
-    cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
+    cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/plans") },
   });
   await writeInApp(
     r.userId,
     "SUBSCRIPTION_RENEWAL_REMINDER",
     c.reminder.title,
     interpolate(c.reminder.p1, { plan: r.planName, date: formatDate(renewalDate, r.locale) }),
-    "/account/membership",
+    "/account/plans",
   );
 }
 
@@ -330,13 +330,13 @@ export async function notifySubscriptionCanceled(subscriptionId: string, periodE
       interpolate(c.canceled.p2, { date: dateStr }),
       c.common.signoff,
     ],
-    cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
+    cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/plans") },
   });
   await writeInApp(
     r.userId,
     "SUBSCRIPTION_CANCELED",
     c.canceled.title,
     interpolate(c.canceled.p1, { plan: r.planName }),
-    "/account/membership",
+    "/account/plans",
   );
 }

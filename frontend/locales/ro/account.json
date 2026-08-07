@@ -17,7 +17,8 @@
     "messages": "Mesaje",
     "calendar": "Calendar",
     "medicalFiles": "Dosare medicale",
-    "membership": "Abonament",
+    "membership": "Membru",
+    "plans": "Planurile mele",
     "rewards": "Recompense",
     "notifications": "Notificări",
     "familyMembers": "Membri ai familiei",
@@ -648,7 +649,7 @@
     "daysAgo": "acum {n}z"
   },
   "membership": {
-    "noActiveMembership": "Niciun abonament activ",
+    "noActiveMembership": "Niciun plan activ",
     "sumPlan": "Plan",
     "sumPlanHint": "Abonamentul curent",
     "sumStatus": "Status",

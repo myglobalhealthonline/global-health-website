@@ -104,7 +104,7 @@
     "error": "We couldn't start your membership. Please try again."
   },
   "manage": {
-    "title": "Your membership",
+    "title": "Your plans",
     "subtitle": "Manage your plan, billing and benefits.",
     "currentPlan": "Current plan",
     "status": "Status",

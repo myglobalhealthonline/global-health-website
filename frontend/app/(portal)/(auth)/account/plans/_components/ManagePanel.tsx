@@ -162,7 +162,7 @@ export function ManagePanel(props: ManagePanelProps) {
   async function openPortal() {
     setBusy("portal");
     setNotice(null);
-    const res = await getBillingPortalUrl("/account/membership");
+    const res = await getBillingPortalUrl("/account/plans");
     if (res.ok && res.data.portalUrl) {
       window.location.assign(res.data.portalUrl);
       return;

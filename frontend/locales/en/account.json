@@ -18,6 +18,7 @@
     "calendar": "Calendar",
     "medicalFiles": "Medical files",
     "membership": "Membership",
+    "plans": "My Plans",
     "rewards": "Rewards",
     "notifications": "Notifications",
     "familyMembers": "Family members",
@@ -648,7 +649,7 @@
     "daysAgo": "{n}d ago"
   },
   "membership": {
-    "noActiveMembership": "No active membership",
+    "noActiveMembership": "No active plan",
     "sumPlan": "Plan",
     "sumPlanHint": "Current membership",
     "sumStatus": "Status",

@@ -355,8 +355,8 @@ export default async function AccountOverviewPage() {
         </div>
       ) : null}
 
-      {/* ── Membership section: plan card only (owner request — everything
-          else, credits/wellness/perks/ledger, lives on /account/membership).
+      {/* ── Plan section: plan card only (owner request — everything
+          else, credits/wellness/perks/ledger, lives on /account/plans).
           Renders nothing for non-subscribers. ── */}
       <SubscriptionDashboard locale={locale} variant="compact" />
 

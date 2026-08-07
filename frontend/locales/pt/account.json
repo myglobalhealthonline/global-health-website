@@ -17,7 +17,8 @@
     "messages": "Mensagens",
     "calendar": "Calendário",
     "medicalFiles": "Ficheiros médicos",
-    "membership": "Subscrição",
+    "membership": "Adesão",
+    "plans": "Os meus planos",
     "rewards": "Recompensas",
     "notifications": "Notificações",
     "familyMembers": "Familiares",
@@ -648,7 +649,7 @@
     "daysAgo": "há {n}d"
   },
   "membership": {
-    "noActiveMembership": "Sem subscrição ativa",
+    "noActiveMembership": "Sem plano ativo",
     "sumPlan": "Plano",
     "sumPlanHint": "Subscrição atual",
     "sumStatus": "Estado",

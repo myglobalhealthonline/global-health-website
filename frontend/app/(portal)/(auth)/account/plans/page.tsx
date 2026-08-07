@@ -24,7 +24,7 @@ import { MembershipTabsClient } from "./_components/MembershipTabsClient";
 import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 import { RewardsPanel } from "../rewards/_components/RewardsPanel";
 
-export const metadata: Metadata = { title: "Your membership", robots: { index: false } };
+export const metadata: Metadata = { title: "Your plans", robots: { index: false } };
 
 type Search = { subscription?: string; redemption?: string; plan?: string; tab?: string };
 
@@ -56,7 +56,7 @@ export default async function MembershipPage({
     return (
       <div className="gh-patient-page gh-patient-membership-page">
         <PageHeader
-          eyebrow={a.nav.membership}
+          eyebrow={a.nav.plans}
           icon={<BadgeCheck aria-hidden />}
           title={t.title}
           description={t.subtitle}
@@ -186,13 +186,13 @@ export default async function MembershipPage({
   return (
     <div className="gh-patient-page gh-patient-membership-page">
       <PageHeader
-        eyebrow={a.nav.membership}
+        eyebrow={a.nav.plans}
         icon={<BadgeCheck aria-hidden />}
         title={t.title}
         description={t.subtitle}
       />
       <MembershipTabsClient
-        tabMembership={a.nav.membership}
+        tabMembership={a.nav.plans}
         tabRewards={a.nav.rewards}
         tabsAria={a.membership.tabsAria}
         membershipPanel={

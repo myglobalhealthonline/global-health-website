@@ -39,7 +39,7 @@ export function PricingPlanCard({
   ctaHref,
   isCurrentPlan = false,
   hasActiveSub = false,
-  manageHref = "/account/membership",
+  manageHref = "/account/plans",
 }: PricingPlanCardProps) {
   const featured = plan.isFeatured;
   const price = formatPrice(plan.monthlyPriceCents, plan.currencyCode, { maximumFractionDigits: 0 });

@@ -35,7 +35,7 @@ export default async function SubscribeConfirmPage({
   // of letting them start a second membership (one active sub per user).
   const existing = await getServerSubscription();
   if (existing && (existing.status === "ACTIVE" || existing.status === "PAST_DUE")) {
-    redirect("/account/membership?subscription=already-active");
+    redirect("/account/plans?subscription=already-active");
   }
 
   const pageLocale = await getPortalLocale();

@@ -18,6 +18,7 @@
     "calendar": "Kalendář",
     "medicalFiles": "Zdravotní dokumenty",
     "membership": "Členství",
+    "plans": "Moje plány",
     "rewards": "Odměny",
     "notifications": "Oznámení",
     "familyMembers": "Rodinní příslušníci",
@@ -648,7 +649,7 @@
     "daysAgo": "před {n} dny"
   },
   "membership": {
-    "noActiveMembership": "Žádné aktivní členství",
+    "noActiveMembership": "Žádný aktivní plán",
     "sumPlan": "Plán",
     "sumPlanHint": "Aktuální členství",
     "sumStatus": "Stav",

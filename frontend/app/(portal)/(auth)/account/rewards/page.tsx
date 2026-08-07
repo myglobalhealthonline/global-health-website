@@ -12,5 +12,5 @@ export default async function RewardsPage({
 }) {
   const { redemption } = await searchParams;
   const qs = redemption ? `&redemption=${encodeURIComponent(redemption)}` : "";
-  redirect(`/account/membership?tab=rewards${qs}`);
+  redirect(`/account/plans?tab=rewards${qs}`);
 }
