@@ -22,6 +22,9 @@ export type PostPaymentMessageContext = {
   totalLabel: string;
   /** Admin-entered reason when an appointment is updated after booking. */
   changeReason?: string;
+  /** Patient-upload link minted for this booking — set only when a token was
+   *  successfully minted (appointmentId + doctorId both resolved). */
+  uploadLink?: string;
 };
 
 export function formatMeetingLinkDisplay(url: string): string {
@@ -378,6 +381,17 @@ Link meeting: ${ctx.meetingLinkDisplay}`,
 Odkaz na setkání: ${ctx.meetingLinkDisplay}`,
     es: `Su consulta con ${ctx.patientName} comienza en 5 minutos.
 Enlace de reunión: ${ctx.meetingLinkDisplay}`,
+  });
+}
+
+/** Appended to the meeting-link WhatsApp when a patient upload link was minted. */
+export function patientUploadLinkWhatsAppBlock(lang: Lang, uploadLink: string): string {
+  return t(lang, {
+    en: `📎 Have any documents or previous reports for the doctor? Upload them securely here:\n${uploadLink}`,
+    pt: `📎 Tem documentos ou relatórios anteriores para o médico? Carregue-os aqui de forma segura:\n${uploadLink}`,
+    ro: `📎 Aveți documente sau rapoarte medicale anterioare pentru medic? Încărcați-le în siguranță aici:\n${uploadLink}`,
+    cs: `📎 Máte pro lékaře nějaké dokumenty nebo dřívější zprávy? Nahrajte je bezpečně zde:\n${uploadLink}`,
+    es: `📎 ¿Tiene documentos o informes médicos anteriores para el doctor? Súbalos de forma segura aquí:\n${uploadLink}`,
   });
 }
 

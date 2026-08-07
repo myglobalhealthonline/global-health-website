@@ -558,6 +558,7 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
         updatedAt: true,
         doctorId: true,
         doctor: { select: { fullName: true } },
+        bookingSource: true,
       },
       orderBy: { createdAt: "desc" },
       take: pageSize,
@@ -577,6 +578,7 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
       scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
       doctorId: row.doctorId,
       doctorName: row.doctor?.fullName ?? null,
+      bookingSource: row.bookingSource as string,
     }));
 
     return {

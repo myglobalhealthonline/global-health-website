@@ -3,7 +3,18 @@
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Check, ExternalLink, Eye, Loader2, X, Copy, Receipt, RotateCcw } from "lucide-react";
+import {
+  Check,
+  ExternalLink,
+  Eye,
+  Loader2,
+  X,
+  Copy,
+  Receipt,
+  RotateCcw,
+  Star,
+} from "lucide-react";
+import { BookingSourceIcon } from "@/components/BookingSourceIcon";
 import {
   AdminEmptyState,
   AdminTable,
@@ -44,6 +55,10 @@ export type AdminOrderRow = {
   fullName: string;
   countryCode: string;
   currencyCode: string;
+  bookingSource: string;
+  /** True when this is the customer's earliest order by email — drives the
+   *  new-customer star badge next to their name. */
+  isFirstOrder: boolean;
   totalCents: number;
   itemCount: number;
   meetingUrl: string | null;
@@ -289,6 +304,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             </Th>
             <Th>Order</Th>
             <Th>Customer</Th>
+            <Th>Source</Th>
             <Th>Doctor</Th>
             <Th>Consultation</Th>
             <Th align="right">Total</Th>
@@ -323,12 +339,21 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                     </Link>
                   </Td>
                   <Td>
-                    <span className="block font-semibold text-[var(--color-text-primary)]">
+                    <span className="gh-admin-order-name inline-flex items-center gap-1.5 font-semibold text-[var(--color-text-primary)]">
                       {o.fullName}
+                      {o.isFirstOrder ? (
+                        <Star
+                          className="gh-admin-order-firstorder-star size-3 shrink-0 fill-current"
+                          aria-label="New customer — first order"
+                        />
+                      ) : null}
                     </span>
                     <span className="block text-xs text-[var(--color-text-muted)]">
                       {o.email}
                     </span>
+                  </Td>
+                  <Td>
+                    <BookingSourceIcon source={o.bookingSource} />
                   </Td>
                   <Td>
                     <span className="text-sm text-[var(--color-text-primary)]">
@@ -390,9 +415,20 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                 #{formatOrderDisplayId(o)}
               </Link>
             }
-            subtitle={`${o.fullName} · ${o.email}`}
+            subtitle={
+              <span className="inline-flex items-center gap-1.5">
+                {o.fullName} · {o.email}
+                {o.isFirstOrder ? (
+                  <Star
+                    className="gh-admin-order-firstorder-star size-3 shrink-0 fill-current"
+                    aria-label="New customer — first order"
+                  />
+                ) : null}
+              </span>
+            }
             statusPill={<Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>}
             meta={[
+              { label: "Source", value: <BookingSourceIcon source={o.bookingSource} /> },
               { label: "Total", value: formatPrice(o.totalCents, o.currencyCode) },
               { label: "Country", value: o.countryCode.toUpperCase() },
               { label: "Items", value: o.itemCount },

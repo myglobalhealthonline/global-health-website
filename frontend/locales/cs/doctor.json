@@ -1126,9 +1126,10 @@
   },
   "patientUploadLinkCard": {
     "title": "Odeslat pacientovi odkaz pro nahrání",
-    "description": "Vytvoří bezpečný odkaz, přes který pacient nahraje soubory přímo k tomuto termínu. Odesláním nového odkazu přestane platit ten předchozí.",
-    "sendWhatsapp": "Odeslat přes WhatsApp",
-    "sendEmail": "Odeslat e-mailem",
+    "description": "Vytvoří bezpečný odkaz, přes který pacient nahraje soubory přímo k tomuto termínu. Opětovné odeslání ho nahradí — už odeslaný odkaz přestane fungovat, proto vyberte všechny kanály předem.",
+    "sendWhatsapp": "WhatsApp",
+    "sendEmail": "E-mail",
+    "send": "Odeslat",
     "sending": "Odesílání…",
     "copyLink": "Kopírovat odkaz",
     "copied": "Odkaz zkopírován",
@@ -1138,6 +1139,7 @@
     "failedEmail": "Odeslání e-mailem se nezdařilo.",
     "noPhone": "U tohoto termínu není telefonní číslo — WhatsApp nebylo možné použít.",
     "failed": "Odkaz pro nahrání se nepodařilo odeslat.",
+    "pickChannel": "Vyberte alespoň jeden kanál.",
     "expiresAt": "Odkaz vyprší {date}"
   },
   "documentsList": {

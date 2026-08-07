@@ -16,6 +16,7 @@ import {
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { notifyDoctor, notifyUser } from "../modules/notifications/notify.service.js";
+import { alertDoctorOfPatientMessage } from "../modules/notifications/patient-message-alert.service.js";
 import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
@@ -287,6 +288,16 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
             byRole: "PATIENT",
             channel: "doctor",
           }).catch((e) => app.log.error(e));
+
+          // Email + WhatsApp alert to the doctor — throttled per appointment
+          // so a burst of patient messages only alerts once.
+          void alertDoctorOfPatientMessage({
+            appointmentId: appt.id,
+            doctorId: appt.doctorId,
+            patientName: user.fullName,
+            snippet: body.data.body.slice(0, 140),
+            log: app.log,
+          });
         }
 
         const items = await listMessages(appt.id, "patient");
@@ -383,6 +394,14 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
             byRole: "PATIENT",
             channel: "doctor",
           }).catch((e) => app.log.error(e));
+
+          void alertDoctorOfPatientMessage({
+            appointmentId: appt.id,
+            doctorId: appt.doctorId,
+            patientName: user.fullName,
+            snippet: `Sent a file: ${safeName}`,
+            log: app.log,
+          });
         }
 
         const items = await listMessages(appt.id, "patient");

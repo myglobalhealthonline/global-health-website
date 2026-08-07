@@ -139,6 +139,20 @@ function labels(lang: Lang) {
       cs: "Začátek",
       es: "Hora de inicio",
     }),
+    uploadLinkLead: t(lang, {
+      en: "Have any documents or previous reports for the doctor? You can upload them securely here:",
+      pt: "Tem documentos ou relatórios anteriores para o médico? Pode carregá-los aqui de forma segura:",
+      ro: "Aveți documente sau rapoarte medicale anterioare pentru medic? Le puteți încărca în siguranță aici:",
+      cs: "Máte pro lékaře nějaké dokumenty nebo dřívější zprávy? Můžete je bezpečně nahrát zde:",
+      es: "¿Tiene documentos o informes médicos anteriores para el doctor? Puede subirlos de forma segura aquí:",
+    }),
+    uploadLinkCta: t(lang, {
+      en: "Upload documents",
+      pt: "Carregar documentos",
+      ro: "Încarcă documente",
+      cs: "Nahrát dokumenty",
+      es: "Subir documentos",
+    }),
   };
 }
 
@@ -224,6 +238,17 @@ function buildMeetLinkRow(lang: Lang, ctx: PostPaymentMessageContext): [string, 
   ];
 }
 
+function buildUploadLinkBlock(lang: Lang, uploadLink: string): string {
+  const L = labels(lang);
+  return `<p style="margin:22px 0 8px;font-size:14px;">${L.uploadLinkLead}</p>
+       <p style="margin:0 0 8px;">
+         <a href="${esc(uploadLink)}"
+            style="color:#1D4B36;font-weight:700;text-decoration:underline;">
+           ${L.uploadLinkCta}
+         </a>
+       </p>`;
+}
+
 function buildJoinButton(lang: Lang, ctx: PostPaymentMessageContext): string {
   const L = labels(lang);
   return `<p style="margin:28px 0;text-align:center;">
@@ -291,6 +316,8 @@ export function buildPostPaymentPatientEmailHtml(
       : "";
 
   const portalBlock = portal ? buildPortalBlock(lang, portal) : "";
+  const uploadLinkBlock =
+    variant === "meeting_link" && ctx.uploadLink ? buildUploadLinkBlock(lang, ctx.uploadLink) : "";
 
   const title = `#${esc(ctx.orderNumber)} · ${statusHeading(lang, variant)}`;
 
@@ -313,6 +340,7 @@ export function buildPostPaymentPatientEmailHtml(
         </table>
         ${actionBlock}
         ${portalBlock}
+        ${uploadLinkBlock}
         <p style="font-size:14px;color:#2D3B36;margin:24px 0 0;">
           ${L.contactLead}
           <a href="mailto:${SUPPORT_EMAIL}" style="color:#1D4B36;">${SUPPORT_EMAIL}</a>
@@ -379,6 +407,9 @@ export function buildPostPaymentPatientEmailText(
   }
   if (portal) {
     lines.push(buildPortalTextBlock(lang, portal));
+  }
+  if (variant === "meeting_link" && ctx.uploadLink) {
+    lines.push("", L.uploadLinkLead, ctx.uploadLink);
   }
   lines.push("", "— Global Health");
   return lines.join("\n");

@@ -42,11 +42,16 @@ import {
   patientEmailSubjectConfirmed,
   patientEmailSubjectOneHour,
   patientEmailSubjectSessionStart,
+  patientUploadLinkWhatsAppBlock,
   patientWhatsAppMeetingLink,
   patientWhatsAppOneHourReminder,
   patientWhatsAppSessionStart,
   type PostPaymentMessageContext,
 } from "./post-payment-messages.js";
+import {
+  createPatientUploadToken,
+  buildPatientUploadUrl,
+} from "../patient-upload/patient-upload-link.service.js";
 
 const MS_MINUTE = 60 * 1000;
 
@@ -391,15 +396,41 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
   });
   if (claimed.count === 0) return;
 
-  const { order, primary, doctorContact, doctorEmail, lang, ctx, staffCtx, phoneHints, portal } =
+  const { order, primary, doctorContact, doctorEmail, lang, staffCtx, phoneHints, portal } =
     loaded;
   const baseKey = "post_payment_meeting_link";
+
+  // Mint the patient's first upload link here — the same (email, appointmentId,
+  // doctorId) scope the admin/doctor "resend" button uses, so a later resend
+  // just supersedes this one (createPatientUploadToken already revokes the
+  // prior active link for that scope — no separate plumbing needed).
+  let uploadLink: string | undefined;
+  if (primary.appointmentId && primary.doctorId) {
+    try {
+      const { token } = await createPatientUploadToken({
+        email: order.email,
+        appointmentId: primary.appointmentId,
+        doctorId: primary.doctorId,
+      });
+      uploadLink = buildPatientUploadUrl(token);
+    } catch (err) {
+      console.error("[automation] could not mint patient upload link for booking confirmation", {
+        orderId,
+        err: err instanceof Error ? err.message : err,
+      });
+    }
+  }
+  const ctx: PostPaymentMessageContext = { ...loaded.ctx, uploadLink };
+
+  const patientWhatsAppMessage = uploadLink
+    ? `${patientWhatsAppMeetingLink(ctx, lang)}\n\n${patientUploadLinkWhatsAppBlock(lang, uploadLink)}`
+    : patientWhatsAppMeetingLink(ctx, lang);
 
   await sendWhatsApp(
     `${baseKey}_patient_whatsapp`,
     orderId,
     order.phone,
-    appendPatientPortalWhatsApp(patientWhatsAppMeetingLink(ctx, lang), portal, lang),
+    appendPatientPortalWhatsApp(patientWhatsAppMessage, portal, lang),
     "Patient WhatsApp — meeting link",
     lang,
     phoneHints,
