@@ -2382,7 +2382,26 @@ in a generated migration, which is why every step re-runs `membership-ddl-check.
    into an expensive market becomes real, that is the fix — not a redesign.
 3. Commission-model markets remain blocked (§6.6). Multi-country makes this likelier to
    surface: a plan covering Brazil would hit it.
-4. `MembershipEnrollment_term_dates_ordered` is `CHECK ("endDate" IS NULL OR "endDate"
+4. **A service-specific allowance is no longer expressible, and that is a real
+   capability loss** — recorded here because it was not called out when §21.3 was
+   written, and it surfaced immediately: the dev database held exactly one such row
+   (`mems-ireland` / `standard` / `acute-medical-consultation`, 6 visits), converted
+   to a `GENERAL` kind row on 2026-08-08 to unblock the migration.
+
+   "Six included visits, but only for *this* service" cannot be said any more.
+   Included visits are always kind-wide. That was the price of refusing to map
+   services across countries — `Service` rows are per-country and slug matching is
+   the silent-failure mode §9 rejected — and for a plan whose members travel it is
+   the right trade. But someone will want it back.
+
+   The coherent way to restore it, if that day comes: allow a **service-scoped
+   allowance only on the primary country**, with that pool spendable **only there**,
+   while kind-scoped pools continue to travel. Two pool semantics rather than one,
+   more code in `resolvePoolBenefit` and in the editor, and no cross-country mapping
+   problem because the service-scoped pool never leaves its own market. Not worth
+   building speculatively — recorded so the option is on record rather than
+   rediscovered as a limitation.
+5. `MembershipEnrollment_term_dates_ordered` is `CHECK ("endDate" IS NULL OR "endDate"
    > "startDate")` in migration `20260807120100_membership_plans`, while §3.8 describes
    it as `>=`. The live constraint is the stricter one, so a same-day term is refused.
    Recorded here so it is not rediscovered as a bug; deliberately **not** changed in
