@@ -701,9 +701,23 @@ GET    /api/admin/membership-imports/:batchId
 POST   /api/admin/membership-imports/:batchId/commit     [MANAGE_MEMBERSHIPS]
 POST   /api/admin/membership-imports/:batchId/cancel     [MANAGE_MEMBERSHIPS]
 
-GET    /api/admin/membership-reports/:planId/usage?from=&to=
-GET    /api/admin/membership-reports/enrollment/:id/usage
+GET    /api/admin/membership-reports/:planId/usage?from=&to=[&format=csv]  [MANAGE_MEMBERSHIPS]
+GET    /api/admin/membership-reports/enrollment/:id/usage                  [MANAGE_MEMBERSHIPS]
 GET    /api/admin/membership-verify?membershipId=         [admin/staff session]
+
+GET    /api/admin/membership-benefit-options?email=&serviceId=&doctorId=[&timeSlotId=]
+       [verifyAdminAccess — same gate as the manual-booking route it serves]
+       Admin-side twin of /api/me/benefit-options, for the manual-booking form.
+       Keyed on EMAIL, not userId: the form identifies the patient through the
+       existing /api/admin/patients/by-email typeahead, which returns no id.
+       Added 2026-08-07 — §11.7 assumed this existed; it did not.
+
+       Deliberately NOT MANAGE_MEMBERSHIPS, unlike every other admin endpoint
+       here: this is booking-time pricing for one patient the admin is already
+       booking for, not plan config and not the member list. Gating it higher
+       would leave LOCAL_ADMIN — the country-scoped role that actually takes
+       phone bookings — unable to see why a member's price differs. Returns only
+       the option labels and prices the booking needs, no other member data.
 ```
 
 #### Member API
@@ -1579,6 +1593,27 @@ still rides the URL.
 Enforce in the migration: `membershipOverrideReason IS NOT NULL` implies
 `membershipBenefitId IS NOT NULL` and `membershipAllowanceUsed = false`.
 
+**The override deliberately bypasses the enrollment-status check.**
+`resolveMembershipPrice` refuses a non-`ACTIVE` enrollment via
+`enrollmentGrantsBenefits`, but the whole point of the override is to serve
+expired, suspended and exhausted members — so the override path skips that gate
+by design. Stated here because it otherwise reads as a bug. Everything else
+still runs through the same resolver (a synthetic `ACTIVE` enrollment with one
+allowance unit), so override and real pricing can never diverge.
+
+Three manual-booking interactions, previously undefined:
+
+- **`amountCentsOverride` suppresses the benefit engine entirely.** It already
+  outranks peak and insurance because it re-charges an already-agreed price
+  (`follow-up-booking.service.ts`); re-discounting it would silently re-price a
+  follow-up.
+- **Insurance and membership together is a 400.** They are mutually exclusive on
+  the public path — insurance is alone-in-cart and deferred-charge, membership is
+  charge-now — and the manual input has both fields, so reject rather than pick.
+- **A brand-new patient has no benefit options.** Manual booking creates the
+  `User` during the booking, so options exist only for an account that already
+  exists; for anyone else, only the override can apply.
+
 **Reporting (§15) treats overrides as a separate line.** They are excluded from
 "allowance used" and from the partner's usage totals — goodwill is our cost, not
 the partner's consumption — but they must still appear, with their reasons, so the
@@ -1720,7 +1755,31 @@ Repo-specific gates that must pass:
 - **no clinical content**;
 - viewing writes an `AuditLog` row (actor, enrollment id, timestamp).
 
-Both read the ledger joined to `OrderItem` — no separate aggregation table.
+**Data source — corrected 2026-08-07.** An earlier draft said "read the ledger
+joined to `OrderItem`". That is wrong and would have made most of the report
+blank: only `ALLOWANCE` spends ever write a ledger row, so every `PERCENT` and
+`FIXED` booking — the majority of member activity — would have been invisible.
+
+- **Primary source is `OrderItem.membershipEnrollmentId`**, scoped to the
+  enrollments belonging to the plan. That captures every benefited line
+  regardless of benefit type.
+- **The ledger is used only for allowance-unit counts** (used vs allocated).
+- **Goodwill overrides carry a null `membershipEnrollmentId`** when the patient
+  holds no enrollment, so they are reached through
+  `membershipBenefitId → level → plan` instead. They are excluded from partner
+  usage totals and from allowance-used, and reported on their own line with
+  reasons (§26).
+- **"Split by benefit type" means `MembershipBenefit.benefitType`**
+  (`ALLOWANCE` / `PERCENT` / `FIXED`), not the cart-level `benefitSource` — a
+  per-plan report has only one source by definition.
+- **CSV export is `&format=csv`** on the same usage endpoint, not a separate route.
+- **Permission: `MANAGE_MEMBERSHIPS`**, not the config tier. These are member PII
+  and belong with the member list, not with price configuration.
+- **The audit row is written on the usage *fetch*, not on page render.** The member
+  detail page is a server component that redirects to itself after every enrollment
+  edit, so a render-time audit would write a row per save and drown the real signal.
+
+No separate aggregation table.
 
 ---
 
