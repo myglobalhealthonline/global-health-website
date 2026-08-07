@@ -7,6 +7,7 @@ import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import type { SafeUser } from "../modules/auth/auth.service.js";
 import { notifyAdmins, notifyUser } from "../modules/notifications/notify.service.js";
+import { alertAdminsOfPatientMessage } from "../modules/notifications/patient-message-alert.service.js";
 import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
 
 /**
@@ -170,6 +171,15 @@ const chatRoute: FastifyPluginAsync = async (app) => {
           byRole: "PATIENT",
           channel: "clinic",
         }).catch((e) => app.log.error(e));
+
+        // Email + WhatsApp alert to the admin team — throttled per
+        // appointment so a burst of patient messages only alerts once.
+        void alertAdminsOfPatientMessage({
+          appointmentId: params.data.id,
+          patientName: user.fullName,
+          snippet: body.data.body.slice(0, 140),
+          log: app.log,
+        });
 
         const items = await listMessages(params.data.id);
         return okResponse({ items });

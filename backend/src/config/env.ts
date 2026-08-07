@@ -317,6 +317,12 @@ const envSchema = z.object({
    *  answered thread always alerts again immediately. */
   SUPPORT_ALERT_THROTTLE_MINUTES: z.coerce.number().int().min(0).max(1440).default(15),
 
+  /** Minutes to suppress repeat "patient sent a message" email+WhatsApp alerts
+   *  (admin clinic thread and doctor consultation thread) on the same
+   *  appointment. A burst of consecutive patient messages only alerts once
+   *  per window; the in-portal bell still fires on every message. */
+  PATIENT_MESSAGE_ALERT_THROTTLE_MINUTES: z.coerce.number().int().min(0).max(1440).default(15),
+
   BRAZIL_BOOKING_URL: z.string().trim().url().optional(),
   BRAZIL_CONSENT_NOTIFY_EMAIL: z.string().trim().email().optional(),
   BRAZIL_CONSENT_DOCTOR_PHONE: z.string().trim().optional(),

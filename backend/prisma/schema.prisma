@@ -2052,6 +2052,13 @@ model Appointment {
   consultationCompletedAt        DateTime?
   /// Doctor can re-open the consultation chat after the 24h window.
   chatReopenedByDoctor           Boolean                   @default(false)
+  /// Throttle stamp for the patient→admin (clinic thread) email/WhatsApp
+  /// alert — consecutive patient messages inside the throttle window don't
+  /// re-fan-out. Claimed via conditional updateMany (see
+  /// patient-message-alert.service.ts), same pattern as SupportThread.lastAdminEmailAt.
+  lastPatientMsgAdminAlertAt     DateTime?
+  /// Same throttle, patient→doctor consultation chat thread.
+  lastPatientMsgDoctorAlertAt    DateTime?
   /// Legacy doctor-dashboard finalize workflow.
   finalized                      Boolean                   @default(false)
   notesUploaded                  Boolean                   @default(false)
