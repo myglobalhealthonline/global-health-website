@@ -590,9 +590,26 @@ existed then; every cart created between Phase 4 and Phase 5 would still be
 `UNSET` when the §6.4 switch goes live. See §6.4 for the belt-and-braces
 runtime rule that makes a missed backfill non-fatal.
 
-⚠ `backend/.env` points at **production**. Any script run with `--env-file=.env`
-writes live data. Every membership script gets a `--dry-run` default and requires
-`--apply` to write.
+⚠ **The Phase 5 backfill has already run against production and will not run
+again.** On 2026-08-07 a bare `npx prisma migrate deploy` from `backend/`
+applied every migration in this series — phases 1 through 6 — to production, and
+the cart flip was reverted immediately afterwards with
+`UPDATE "Cart" SET "benefitSource" = 'UNSET' WHERE "benefitSource" = 'NONE'`
+(92 rows). The schema is therefore live and ahead of the code, which is inert
+while the code is unreleased, but `20260807200000_cart_benefit_source_backfill`
+is recorded as applied in `_prisma_migrations`. **At the real deploy, run the
+`UPDATE` by hand** — the migration will not fire, and no option available at the
+time would have preserved its ability to.
+
+⚠ `backend/.env` points at **production**, and `backend/prisma.config.ts` loads
+it for every Prisma CLI invocation — so a bare `npx prisma migrate deploy` run
+from `backend/`, with no `--env-file` and nothing on the command line naming a
+database, is a production write. That is exactly how the above happened.
+`scripts/guard-db-target.mjs`, called from `prisma.config.ts`, now refuses any
+mutating Prisma command against a host that is not allowlisted; put the dev
+host in `.env.dev`'s `DB_GUARD_ALLOWED_HOSTS` and production needs a deliberate
+`DB_GUARD_ALLOW_HOST=<host>`. The same rule covers scripts: every membership
+script gets a `--dry-run` default and requires `--apply` to write.
 
 ---
 
