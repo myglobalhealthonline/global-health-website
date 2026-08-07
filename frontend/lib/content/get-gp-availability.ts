@@ -1,4 +1,5 @@
 import "server-only";
+import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 /**
@@ -49,7 +50,10 @@ export async function getGpLanguages(countryCode: string): Promise<{
   const url = `${backend}/api/public/gp-languages?country=${encodeURIComponent(countryCode)}`;
   try {
     // Short TTL — bookableLanguages tracks live availability, not just config.
-    const res = await fetch(url, { next: { revalidate: 60 } });
+    const res = await fetch(url, {
+      next: { revalidate: 60 },
+      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+    });
     if (!res.ok) return empty;
     const json = (await res.json()) as {
       ok?: boolean;
@@ -84,7 +88,10 @@ export async function getGpAvailability(
     countryCode,
   )}&language=${encodeURIComponent(languageCode)}&days=${days}`;
   try {
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, {
+      cache: "no-store",
+      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+    });
     if (!res.ok) return empty;
     const json = (await res.json()) as { ok?: boolean; data?: GpAvailabilityResult };
     if (!json.ok || !json.data) return empty;

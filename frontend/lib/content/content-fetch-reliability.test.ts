@@ -160,8 +160,23 @@ describe.each(FAMILIES)("$name", (family) => {
     await expect(family.call(slug())).rejects.toBeInstanceOf(PublicContentUnavailableError);
   });
 
-  it("G. backend 429 then 200 → retries, returns the record", async () => {
+  it("G. backend 429 with no stated wait → does NOT retry, throws (NOT 404)", async () => {
+    // Changed 2026-08-08. A 429 is a quota rejection on a 60s window, and the
+    // runtime retry budget is 1s — measured success rate of that retry was 0%
+    // while it doubled load on the already-saturated backend. So the attempt
+    // is no longer spent. The status stays TEMPORARY_FAILURE either way, which
+    // is the property that actually protects the URL from being read as gone.
     fetchMock.mockResolvedValueOnce(rateLimited()).mockResolvedValueOnce(ok(family.payload));
+    await expect(family.call(slug())).rejects.toBeInstanceOf(PublicContentUnavailableError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("G2. backend 429 naming a 1s wait → still retries, returns the record", async () => {
+    // The tail of a rolling window IS reachable inside the runtime budget, so
+    // that retry is kept. Only waits the budget cannot cover are abandoned.
+    fetchMock
+      .mockResolvedValueOnce(json(429, { ok: false, message: "retry in 1 second" }, { "retry-after": "1" }))
+      .mockResolvedValueOnce(ok(family.payload));
     const result = await family.call(slug());
     expect(result).not.toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(2);
@@ -194,15 +209,30 @@ describe("retry mechanics", () => {
     expect(seen[1].cache).toBe("no-store");
   });
 
-  it("keeps the runtime retry wait sub-second even when told to wait 30s", async () => {
+  it("abandons a 429 that asks for 30s rather than burning the 1s budget on it", async () => {
+    // Previously this clamped the 30s to the 1s runtime cap and retried into
+    // the same still-exhausted window. Measured 2026-08-08: 0% of those
+    // retries succeeded, and each one turned a failing resource into 4 upstream
+    // calls. Now it gives up immediately — same TEMPORARY_FAILURE outcome for
+    // the caller, no added load on a backend that just said "wait".
     fetchMock
       .mockResolvedValueOnce(json(429, { ok: false, message: "Rate limit exceeded" }, { "retry-after": "30" }))
       .mockResolvedValueOnce(ok({ service: { id: "s", slug: "s", name: "S" } }));
     const started = Date.now();
-    await getters.getCountryServiceDetail("ie", "retry-after-cap", "en");
-    // Runtime cap is 1s. A visitor's TTFB is the constraint the build phase
-    // does not have.
-    expect(Date.now() - started).toBeLessThan(1_500);
+    await expect(
+      getters.getCountryServiceDetail("ie", "retry-after-cap", "en"),
+    ).rejects.toBeInstanceOf(PublicContentUnavailableError);
+    // No sleep at all now — a visitor's TTFB pays nothing for a doomed retry.
+    expect(Date.now() - started).toBeLessThan(1_000);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("still retries a 5xx — those clear on their own, unlike a quota", async () => {
+    fetchMock
+      .mockResolvedValueOnce(unavailable())
+      .mockResolvedValueOnce(ok({ service: { id: "s", slug: "s", name: "S" } }));
+    const result = await getters.getCountryServiceDetail("ie", "five-oh-three", "en");
+    expect(result).not.toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 

@@ -292,6 +292,29 @@ const envSchema = z.object({
    *  on request.ip only (previous behaviour). */
   PROXY_CLIENT_IP_SECRET: z.string().min(16).optional(),
 
+  /** Requests per minute for the `gh-ssr` bucket — live server-side public
+   *  content reads from the Next.js frontend (see utils/rate-limit-trust.ts).
+   *  Separate from the build bucket's 20,000/min on purpose: a build is a
+   *  short burst nobody waits on, SSR runs continuously and must stay near
+   *  what this server can actually serve.
+   *
+   *  Default 3,000/min = 50 req/s, chosen from measurement (2026-08-08), not
+   *  guessed:
+   *    - DEMAND. One cold service-page render = 12 backend GETs. A
+   *      concurrency-12 crawl of 59 pages issued 145 backend requests in 28s
+   *      (~311/min) against a dev-mode frontend; a compiled frontend renders
+   *      roughly an order of magnitude faster, so ~3,000/min covers that same
+   *      crawl shape with headroom. Steady-state layout reads across 6 markets
+   *      x 6 locales are ~288/min of that on their own.
+   *    - CAPACITY. With the limiter bypassed this server sustained 110-120
+   *      req/s (6,600-7,200/min) with ZERO 5xx up to 64 concurrent, and the pg
+   *      pool never exceeded its 10 connections. 3,000/min is ~45% of measured
+   *      capacity, leaving the rest for real visitors and deploy-time builds.
+   *  So: 10x the old shared ceiling, less than half of what the box can do,
+   *  and still a real ceiling — an abusive SSR workload hits it. Raise only
+   *  with a measurement that shows sustained legitimate demand above it. */
+  RATE_LIMIT_SSR_MAX: z.coerce.number().int().min(300).max(20_000).default(3_000),
+
   /** Optional ops-alert webhook (Slack/Discord/generic). When set, money/ops
    *  reconciliation findings + subscription webhook failures POST a JSON
    *  {text,severity,...} here. Unset → alerts are logged only (§39). */

@@ -1,4 +1,5 @@
 import "server-only";
+import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 /**
@@ -41,7 +42,10 @@ export async function getDoctorAvailability(
     doctorSlug,
   )}/availability?days=${days}`;
   try {
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, {
+      cache: "no-store",
+      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+    });
     if (!res.ok) return empty;
     const json = (await res.json()) as {
       ok?: boolean;
@@ -97,7 +101,10 @@ export async function getServiceDoctorAvailability(
     doctorSlug,
   )}/availability?days=${days}${insuranceParam}`;
   try {
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, {
+      cache: "no-store",
+      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+    });
     if (!res.ok) return empty;
     const json = (await res.json()) as {
       ok?: boolean;
@@ -136,7 +143,10 @@ export async function getBookingDoctorSummary(
     countryCode,
   )}/doctors/${encodeURIComponent(doctorSlug)}`;
   try {
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, {
+      cache: "no-store",
+      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+    });
     if (!res.ok) return null;
     const json = (await res.json()) as {
       ok?: boolean;

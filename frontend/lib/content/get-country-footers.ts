@@ -1,6 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
+import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { PUBLIC_CONTENT_FETCH_TIMEOUT_MS } from "@/lib/content/public-content-source";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -66,8 +67,14 @@ export const getCountryFooter = cache(
     const timeout = setTimeout(() => controller.abort(), PUBLIC_CONTENT_FETCH_TIMEOUT_MS);
     try {
       const query = locale ? `?locale=${locale.toUpperCase()}` : "";
-      const res = await fetch(`${origin}/api/public/countries/${code}/footer${query}`, {
+      const path = `/api/public/countries/${code}/footer${query}`;
+      const res = await fetch(`${origin}${path}`, {
         method: "GET",
+        // Same `gh-ssr` rate-limit bucket every other server-side public read
+        // uses. Without it this lands in the shared egress-IP bucket, 429s
+        // under crawl load, and the `!res.ok → null` below silently drops the
+        // whole footer instead of failing loudly. See lib/api/client.ts.
+        headers: serverReadAuthHeaders(path, "GET"),
         // Next.js data cache — admin save calls revalidatePath(`/${slug}`, "layout")
         // so we can safely cache here without a TTL. If the layout call ever
         // changes, swap to `cache: "no-store"`.
