@@ -25,6 +25,8 @@ import {
   memberStatusLabel,
   memberStatusTone,
 } from "@/app/(portal)/(admin)/admin/corporate/_lib";
+import { CorporateBenefitCard } from "@/app/(portal)/(auth)/account/_components/CorporateBenefitCard";
+import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -82,19 +84,31 @@ async function beneficiaryRowAction(formData: FormData) {
   back({ success: "Beneficiary removed" });
 }
 
-const CARD_STATUS_STYLE: Record<string, string> = {
-  ACTIVE: "text-lime-300",
-  SUSPENDED: "text-amber-300",
-  EXPIRED: "text-rose-300",
-};
+/** `validUntil` arrives as "YYYY-MM-DD"; render it in the portal locale. Parsed
+ *  as UTC so a negative-offset browser can't roll the date back a day. */
+function formatCardDate(isoDate: string, locale: string) {
+  const parsed = new Date(`${isoDate}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return isoDate;
+  return parsed.toLocaleDateString(locale, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
 
 export default async function AccountCorporatePage({ searchParams }: PageProps) {
-  const [sp, result, locale] = await Promise.all([
+  const [sp, result, locale, user] = await Promise.all([
     searchParams ? searchParams : Promise.resolve({} as NonNullable<Awaited<PageProps["searchParams"]>>),
     fetchMeCorporate(),
     getPortalLocale(),
+    // Request-cached — the portal layout already resolved the session user.
+    getServerAuthUser(),
   ]);
-  const t = loadLocaleBundle(locale).account.corporate;
+  const account = loadLocaleBundle(locale).account;
+  const t = account.corporate;
+  // Card field labels are shared with the private-membership card.
+  const tMembership = account.membership;
 
   if (!result.ok) {
     return (
@@ -212,56 +226,38 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
           </AdminCard>
         ) : null}
 
-        {/* Digital benefit card */}
-        <AdminCard padding={0} className="overflow-hidden">
+        {/* Digital benefit card — full width: the card face is 1.5:1, and the
+            member number is long enough that a half column squeezes it. */}
+        <AdminCard padding={0} className="overflow-hidden lg:col-span-2">
           <SectionHeader as="h2" title={t.cardTitle} description={t.cardDesc} />
           <div className="p-5">
             {card ? (
-              <div
-                className={`relative overflow-hidden rounded-2xl p-6 text-white shadow-lg ${
-                  card.status !== "ACTIVE" ? "opacity-75 grayscale-[35%]" : ""
-                }`}
-                style={{
-                  background:
-                    "linear-gradient(135deg, #101713 0%, #16241c 55%, #0d3a28 100%)",
+              <CorporateBenefitCard
+                planName={membership.planName}
+                planSuffix={t.cardPlanSuffix}
+                cardholderName={user?.fullName ?? ""}
+                memberTypeLabel={
+                  card.memberType === "EMPLOYEE" ? t.employeeMember : t.beneficiaryMember
+                }
+                cardNumber={card.cardNumber}
+                validThrough={formatCardDate(card.validUntil, locale)}
+                status={card.status}
+                labels={{
+                  subtitle: t.cardSubtitle,
+                  cardholder: tMembership.cardCardholder,
+                  memberId: tMembership.cardMemberId,
+                  validThrough: tMembership.cardValidThrough,
                 }}
-              >
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full opacity-20"
-                  style={{ background: "radial-gradient(circle, #b0f122 0%, transparent 70%)" }}
-                />
-                <div className="flex items-start justify-between gap-3">
-                  <p className="text-portal-thead font-bold uppercase tracking-[0.18em] text-lime-200/80">
-                    Global Health · {membership.planName}
-                  </p>
-                  <span
-                    className={`text-portal-thead font-bold uppercase tracking-[0.12em] ${
-                      CARD_STATUS_STYLE[card.status] ?? "text-white/70"
-                    }`}
-                  >
-                    {card.status}
-                  </span>
-                </div>
-                <p className="mt-6 text-lg font-bold tracking-tight">{membership.companyName}</p>
-                <p className="text-sm text-white/70">
-                  {card.memberType === "EMPLOYEE" ? t.employeeMember : t.beneficiaryMember}
-                </p>
-                <p className="mt-5 font-mono text-xl tracking-[0.14em]">{card.cardNumber}</p>
-                <div className="mt-4 flex items-end justify-between gap-3 text-portal-thead text-white/60">
-                  <span>
-                    {t.valid} {card.validFrom} → {card.validUntil}
-                  </span>
-                  <span className="text-right">
-                    {t.verifyAt}
-                    <br />
-                    <span className="font-mono text-white/80">/card-verify/{card.cardNumber}</span>
-                  </span>
-                </div>
-              </div>
+              />
             ) : (
               <p className="text-sm text-[var(--color-text-muted)]">{t.cardPending}</p>
             )}
+            {card ? (
+              <p className="mt-3 text-xs text-[var(--color-text-muted)]">
+                {t.valid} {card.validFrom} → {card.validUntil} · {t.verifyAt}{" "}
+                <span className="font-mono">/card-verify/{card.cardNumber}</span>
+              </p>
+            ) : null}
             {card && card.status !== "ACTIVE" ? (
               <p className="gh-status-warning mt-3 rounded-md border px-4 py-3 text-sm">
                 {t.cardInactive}

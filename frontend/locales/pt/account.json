@@ -517,6 +517,8 @@
     "bookNow": "Marcar",
     "cardTitle": "Cartão digital de benefícios",
     "cardDesc": "Mostre este cartão (ou o seu número) quando lhe pedirem para verificar a sua adesão corporativa.",
+    "cardSubtitle": "Adesão de Saúde Digital",
+    "cardPlanSuffix": "Plano",
     "cardPending": "O seu cartão de benefícios é emitido automaticamente assim que a sua adesão estiver ativa.",
     "cardInactive": "Este cartão está atualmente inativo — os benefícios corporativos não estão disponíveis. Contacte o administrador da sua empresa.",
     "employeeMember": "Colaborador",

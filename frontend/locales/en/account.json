@@ -517,6 +517,8 @@
     "bookNow": "Book now",
     "cardTitle": "Digital benefit card",
     "cardDesc": "Show this card (or its number) when asked to verify your corporate membership.",
+    "cardSubtitle": "Digital Health Membership",
+    "cardPlanSuffix": "Plan",
     "cardPending": "Your benefit card is issued automatically once your membership is active.",
     "cardInactive": "This card is currently inactive — corporate benefits are not available. Contact your company admin.",
     "employeeMember": "Employee member",

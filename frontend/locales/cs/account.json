@@ -517,6 +517,8 @@
     "bookNow": "Objednat",
     "cardTitle": "Digitální benefitní karta",
     "cardDesc": "Touto kartou (nebo jejím číslem) prokážete své firemní členství.",
+    "cardSubtitle": "Digitální zdravotní členství",
+    "cardPlanSuffix": "Plán",
     "cardPending": "Benefitní karta se vystaví automaticky, jakmile bude vaše členství aktivní.",
     "cardInactive": "Tato karta je momentálně neaktivní — firemní benefity nejsou k dispozici. Kontaktujte správce vaší společnosti.",
     "employeeMember": "Zaměstnanec",

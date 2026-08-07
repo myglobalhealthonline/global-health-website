@@ -517,6 +517,8 @@
     "bookNow": "Jetzt buchen",
     "cardTitle": "Digitale Vorteilskarte",
     "cardDesc": "Zeigen Sie diese Karte (oder ihre Nummer) vor, um Ihre Firmenmitgliedschaft nachzuweisen.",
+    "cardSubtitle": "Digitale Gesundheitsmitgliedschaft",
+    "cardPlanSuffix": "Plan",
     "cardPending": "Ihre Vorteilskarte wird automatisch ausgestellt, sobald Ihre Mitgliedschaft aktiv ist.",
     "cardInactive": "Diese Karte ist derzeit inaktiv — Firmenvorteile sind nicht verfügbar. Kontaktieren Sie Ihren Firmenadministrator.",
     "employeeMember": "Mitarbeiter/in",

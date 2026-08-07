@@ -517,6 +517,8 @@
     "bookNow": "Reservar",
     "cardTitle": "Tarjeta digital de beneficios",
     "cardDesc": "Muestre esta tarjeta (o su número) cuando le pidan verificar su membresía corporativa.",
+    "cardSubtitle": "Membresía de Salud Digital",
+    "cardPlanSuffix": "Plan",
     "cardPending": "Su tarjeta de beneficios se emite automáticamente cuando su membresía está activa.",
     "cardInactive": "Esta tarjeta está inactiva actualmente — los beneficios corporativos no están disponibles. Contacte al administrador de su empresa.",
     "employeeMember": "Empleado",

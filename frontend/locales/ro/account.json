@@ -517,6 +517,8 @@
     "bookNow": "Programați",
     "cardTitle": "Card digital de beneficii",
     "cardDesc": "Prezentați acest card (sau numărul lui) când vi se cere să confirmați abonamentul corporativ.",
+    "cardSubtitle": "Abonament digital de sănătate",
+    "cardPlanSuffix": "Plan",
     "cardPending": "Cardul de beneficii se emite automat imediat ce abonamentul devine activ.",
     "cardInactive": "Acest card este momentan inactiv — beneficiile corporative nu sunt disponibile. Contactați administratorul companiei.",
     "employeeMember": "Angajat",
