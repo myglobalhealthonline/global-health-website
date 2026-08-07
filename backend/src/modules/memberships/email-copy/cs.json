@@ -19,5 +19,16 @@
     "action": "Členské ceny se uplatní automaticky, když si rezervujete termín přihlášeni.",
     "cta": "Zobrazit členství",
     "signoff": "— Tým Global Health"
+  },
+  "claim": {
+    "subject": "Potvrďte převzetí členství {planName}",
+    "heading": "Potvrďte své členství",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "Někdo přihlášený jako <strong>{requesterEmail}</strong> požádal o přidání vašeho členství <strong>{planName}</strong> ({levelName}) ke svému účtu.",
+    "idLine": "Číslo členství: <strong>{membershipId}</strong>.",
+    "action": "Pokud jste to byli vy, potvrďte to níže. Odkaz lze použít jednou a platí 24 hodin.",
+    "note": "Pokud jste to nebyli vy, tento e-mail ignorujte. Nic se nezmění a vaše členství zůstává tam, kde je.",
+    "cta": "Potvrdit převzetí",
+    "signoff": "— Tým Global Health"
   }
 }

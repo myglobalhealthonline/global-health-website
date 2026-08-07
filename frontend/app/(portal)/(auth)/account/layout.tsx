@@ -15,6 +15,7 @@ import {
   CreditCard,
   FileText,
   History,
+  IdCard,
   LayoutDashboard,
   MessagesSquare,
   PillBottle,
@@ -116,6 +117,10 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       label: a.nav.groupMembership,
       items: [
         { href: "/account/plans", label: a.nav.plans, icon: <BadgeCheck className="size-4" aria-hidden /> },
+        // Always shown, not gated on holding one: the page is also the way to
+        // the claim form, which is exactly what someone with no membership
+        // linked yet needs to reach.
+        { href: "/account/membership", label: a.nav.membership, icon: <IdCard className="size-4" aria-hidden /> },
         ...(hasCorporateMembership
           ? [{ href: "/account/corporate", label: a.nav.corporate, icon: <Briefcase className="size-4" aria-hidden /> }]
           : []),

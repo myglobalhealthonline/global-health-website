@@ -19,5 +19,16 @@
     "action": "Prețurile de membru se aplică automat când faceți o programare fiind autentificat.",
     "cta": "Vedeți abonamentul",
     "signoff": "— Echipa Global Health"
+  },
+  "claim": {
+    "subject": "Confirmați revendicarea calității de membru {planName}",
+    "heading": "Confirmați calitatea de membru",
+    "greeting": "Bună ziua, {firstName},",
+    "lead": "Cineva autentificat ca <strong>{requesterEmail}</strong> a cerut să adauge calitatea dumneavoastră de membru <strong>{planName}</strong> ({levelName}) în contul său.",
+    "idLine": "Număr de membru: <strong>{membershipId}</strong>.",
+    "action": "Dacă dumneavoastră ați făcut asta, confirmați mai jos. Linkul funcționează o singură dată și expiră în 24 de ore.",
+    "note": "Dacă nu ați fost dumneavoastră, ignorați acest e-mail. Nu se schimbă nimic, iar calitatea dumneavoastră de membru rămâne unde este.",
+    "cta": "Confirmați revendicarea",
+    "signoff": "— Echipa Global Health"
   }
 }

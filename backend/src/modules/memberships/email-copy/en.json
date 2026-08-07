@@ -19,5 +19,16 @@
     "action": "Your member prices are applied automatically when you book while signed in.",
     "cta": "View your membership",
     "signoff": "— The Global Health team"
+  },
+  "claim": {
+    "subject": "Confirm your {planName} membership claim",
+    "heading": "Confirm your membership",
+    "greeting": "Hi {firstName},",
+    "lead": "Someone signed in as <strong>{requesterEmail}</strong> asked to add your <strong>{planName}</strong> membership ({levelName}) to their account.",
+    "idLine": "Membership number: <strong>{membershipId}</strong>.",
+    "action": "If that was you, confirm below. The link works once and expires in 24 hours.",
+    "note": "If it was not you, ignore this email. Nothing changes and your membership stays where it is.",
+    "cta": "Confirm the claim",
+    "signoff": "— The Global Health team"
   }
 }

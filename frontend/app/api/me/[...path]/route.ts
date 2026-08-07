@@ -25,6 +25,10 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "cart-preview",
     "benefit-preview",
     "notifications",
+    // Private membership plans (§10). Reads normally happen server-side via
+    // me-memberships-server.ts, but the claim-confirm page refreshes through
+    // the client after linking, so the list has to be reachable here too.
+    "memberships",
   ]),
   POST: new Set([
     "subscription",
@@ -34,11 +38,18 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "subscription/dev-activate",
     "redemptions",
     "notifications/read-all",
+    // Two-step membership claim (§5.3). `claim` mails the confirmation link;
+    // `claim/confirm` is what the link's landing page posts.
+    "memberships/claim",
+    "memberships/claim/confirm",
   ]),
 };
 
 /** Dynamic (id-bearing) paths allowed per method, matched by pattern. */
 const PATTERN_TABLE: Record<string, RegExp[]> = {
+  GET: [/^memberships\/[^/]+$/],
+  POST: [/^memberships\/[^/]+\/dependents$/],
+  DELETE: [/^memberships\/dependents\/[^/]+$/],
   PATCH: [/^notifications\/[^/]+\/read$/],
 };
 
@@ -108,6 +119,12 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ path: 
 }
 
 export async function PATCH(request: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
+  const { path } = await ctx.params;
+  return proxyMe(request, path ?? []);
+}
+
+/** Added for member-removed dependents (§10) — the first DELETE on this proxy. */
+export async function DELETE(request: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
   const { path } = await ctx.params;
   return proxyMe(request, path ?? []);
 }

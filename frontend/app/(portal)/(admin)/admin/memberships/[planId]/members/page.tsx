@@ -12,6 +12,7 @@ import {
   removeMembershipEnrollment,
   sendMembershipInvite,
   suspendMembershipEnrollment,
+  verifyMembershipId,
 } from "@/lib/admin/memberships-api";
 import { parseMembershipEnrollmentForm } from "@/lib/admin/membership-form-parse";
 import { displayNameFrom } from "@/lib/admin/display-name";
@@ -25,7 +26,15 @@ const STATUSES = ["ACTIVE", "PENDING", "SUSPENDED", "EXPIRED", "REMOVED"] as con
 
 type PageProps = {
   params: Promise<{ planId: string }>;
-  searchParams?: Promise<{ error?: string; success?: string; status?: string; q?: string; page?: string }>;
+  searchParams?: Promise<{
+    error?: string;
+    success?: string;
+    status?: string;
+    q?: string;
+    page?: string;
+    /** Staff card check — a membership number typed into the verify box. */
+    verify?: string;
+  }>;
 };
 
 export default async function AdminMembershipMembersPage({ params, searchParams }: PageProps) {
@@ -60,6 +69,13 @@ export default async function AdminMembershipMembersPage({ params, searchParams 
   const list = listResult.ok
     ? listResult.data
     : { items: [], total: 0, page: 1, pageSize: 25 };
+
+  // Staff card check. Deliberately NOT scoped to this plan — a member can hand
+  // over a card from any programme, and the lookup is by globally-unique
+  // membership id. Every call is audited server-side.
+  const verifyQuery = sp.verify?.trim();
+  const verifyResponse = verifyQuery ? await verifyMembershipId(verifyQuery) : null;
+  const verifyResult = verifyResponse?.ok ? verifyResponse.data : null;
 
   const backTo = `/admin/memberships/${planId}/members`;
   const withParams = (extra: Record<string, string | undefined>) => {
@@ -234,6 +250,66 @@ export default async function AdminMembershipMembersPage({ params, searchParams 
                   </Btn>
                 ) : null}
               </div>
+            ) : null}
+          </div>
+        </AdminCard>
+
+        {/* Staff card check (§10/§20). This is the whole verification story for
+            the digital card — there is deliberately no public verification URL,
+            so a member holding up a card is checked here. Plain GET form: the
+            answer is server-rendered, nothing ships to the client. */}
+        <AdminCard padding={0}>
+          <SectionHeader
+            title="Verify a card"
+            description="Look up a membership number from any programme. Members' cards carry no public verification link, so this is the check."
+          />
+          <div className="flex flex-col gap-4 p-6">
+            <form method="GET" className="flex flex-wrap items-end gap-3">
+              {sp.q ? <input type="hidden" name="q" value={sp.q} /> : null}
+              {sp.status ? <input type="hidden" name="status" value={sp.status} /> : null}
+              <label className="flex flex-col gap-1.5">
+                <span className="gh-field-label">Membership number</span>
+                <input
+                  name="verify"
+                  defaultValue={sp.verify ?? ""}
+                  className="gh-input min-w-[220px]"
+                  placeholder="As printed on the card"
+                />
+              </label>
+              <div className="ml-auto">
+                <Btn type="submit" variant="soft" size="sm">
+                  Check
+                </Btn>
+              </div>
+            </form>
+
+            {verifyResult ? (
+              verifyResult.found ? (
+                <div className="flex flex-col gap-1 text-sm">
+                  <p
+                    className={
+                      verifyResult.benefitsActive ? "gh-status-success" : "gh-status-warning"
+                    }
+                  >
+                    {verifyResult.benefitsActive
+                      ? "Valid — benefits apply today."
+                      : verifyResult.termState === "NOT_STARTED"
+                        ? `Not yet active — the term starts ${verifyResult.startDate.slice(0, 10)}.`
+                        : `Not valid today — status ${verifyResult.status.toLowerCase()}.`}
+                  </p>
+                  <p>
+                    <strong>{verifyResult.holderName}</strong> · {verifyResult.membershipId}
+                  </p>
+                  <p className="text-[var(--color-text-muted)]">
+                    {verifyResult.planName} — {verifyResult.levelName} (
+                    {verifyResult.countryCode.toUpperCase()})
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-[var(--color-text-muted)]">
+                  No membership with that number.
+                </p>
+              )
             ) : null}
           </div>
         </AdminCard>

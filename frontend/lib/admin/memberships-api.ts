@@ -462,3 +462,31 @@ export async function cancelMembershipImport(batchId: string) {
     { method: "POST" },
   );
 }
+
+/* ── Staff card verification (§10/§20) ────────────────────────────────────────
+   The only lookup by membership id, and it is admin-session only: there is no
+   public verification URL, because a partner's sequential ids plus an open
+   endpoint is a member directory. */
+
+export type MembershipVerifyResult =
+  | { found: false }
+  | {
+      found: true;
+      membershipId: string;
+      holderName: string;
+      planName: string;
+      levelName: string;
+      status: "PENDING" | "ACTIVE" | "SUSPENDED" | "EXPIRED" | "REMOVED";
+      termState: "NOT_STARTED" | "IN_TERM" | "ENDED";
+      startDate: string;
+      endDate: string | null;
+      countryCode: string;
+      /** Status AND term together — either alone would mislead staff. */
+      benefitsActive: boolean;
+    };
+
+export async function verifyMembershipId(membershipId: string) {
+  return adminRequest<MembershipVerifyResult>(
+    `/api/admin/membership-verify?membershipId=${encodeURIComponent(membershipId)}`,
+  );
+}

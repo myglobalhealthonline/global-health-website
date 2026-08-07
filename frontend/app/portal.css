@@ -7179,3 +7179,121 @@ button.gh-capacity-cell:hover {
   width: 32px;
   height: 28px;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Private membership — member portal (§10, phase 3)
+
+   The digital card and its two page layouts. Deliberately NO
+   backdrop-filter anywhere in this block: the card is a solid
+   object that has to survive a print, and a glass class would
+   also owe an entry in both fallback blocks in this file for a
+   blur nobody would see behind an opaque fill.
+   ───────────────────────────────────────────────────────────── */
+
+.gh-membership-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-color: #ffffff;
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-card);
+  /* Roughly ID-card proportions without pinning a height — the term line
+     wraps in some locales and a fixed aspect would clip it. */
+  min-width: 0;
+  max-width: 420px;
+}
+
+/* A suspended or expired card must not read as a valid one at a glance. */
+.gh-membership-card[data-status="SUSPENDED"],
+.gh-membership-card[data-status="EXPIRED"] {
+  opacity: 0.72;
+  filter: saturate(0.5);
+}
+
+.gh-membership-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--portal-primary);
+}
+
+.gh-membership-card-plan {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--portal-text-2);
+}
+
+.gh-membership-card-number {
+  font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  word-break: break-all;
+  margin: 0;
+}
+
+.gh-membership-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin: 0;
+}
+
+.gh-membership-card-grid dt {
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--portal-text-2);
+}
+
+.gh-membership-card-grid dd {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* List row: card beside its summary, stacking on narrow viewports. */
+.gh-membership-summary,
+.gh-membership-detail-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.gh-membership-summary {
+  padding: 16px;
+}
+
+@media (min-width: 768px) {
+  .gh-membership-summary,
+  .gh-membership-detail-top {
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  }
+}
+
+/* "Printable" (§10): the browser's own print dialog, with the portal chrome
+   dropped so the card is what comes out. No PDF pipeline, no print route. */
+@media print {
+  .gh-portal-shell__sidebar,
+  .gh-portal-shell__topbar,
+  .gh-patient-page > header,
+  .gh-membership-card ~ * {
+    display: none !important;
+  }
+
+  .gh-membership-card {
+    box-shadow: none;
+    border: 1px solid #d5d9d4;
+    break-inside: avoid;
+  }
+}

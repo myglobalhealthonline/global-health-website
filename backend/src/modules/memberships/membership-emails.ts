@@ -10,9 +10,9 @@ import roCopy from "./email-copy/ro.json";
 import deCopy from "./email-copy/de.json";
 
 /**
- * Membership emails (§12), phase 2: the manual invite and the
- * enrollment-confirmed notice. The allowance-exhausted mail ships with the
- * ledger in phase 5.
+ * Membership emails (§12): the manual invite and the enrollment-confirmed
+ * notice (phase 2), plus the claim confirmation (phase 3). The
+ * allowance-exhausted mail ships with the ledger in phase 5.
  *
  * Both go through `wrapHtml` (the Clinical Editorial shell) and `sendEmail`, so
  * the outbox, retries and the test capture hook behave exactly as everywhere
@@ -139,6 +139,63 @@ export async function sendMembershipEnrollmentConfirmedEmail(opts: {
   };
   const link = absoluteSiteUrl("/account/membership");
   const lines = [copy.lead, copy.idLine, copy.action].map((line) => interpolate(line, vars));
+
+  return sendEmail({
+    to: opts.to,
+    subject: interpolate(copy.subject, { ...vars, planName: opts.planName }),
+    text: [interpolate(copy.greeting, vars), ...lines.map(toPlain), link, copy.signoff].join("\n\n"),
+    html: wrapHtml(
+      interpolate(copy.heading, vars),
+      `<p>${interpolate(copy.greeting, vars)}</p>
+       ${lines.map((line) => `<p>${line}</p>`).join("\n       ")}
+       ${button(link, copy.cta)}`,
+    ),
+  });
+}
+
+/**
+ * Claim confirmation (§12.4) — step 1 of the two-step claim (§5.3).
+ *
+ * Sent to the **enrolled** address, never to the requester's. That is the
+ * whole security property: matching an id + email proves nothing about who is
+ * asking, so the enrollment only moves once someone who can read the enrolled
+ * mailbox opens this link. The copy names the requester so a recipient who did
+ * not ask can recognise a claim attempt on their membership.
+ *
+ * Locale: the plan country's `defaultLocale`, English fallback — the enrolled
+ * person is `PENDING`, has no `User`, and so has no `preferredLocale`. Using
+ * the *requester's* locale here would be wrong twice over: it leaks a
+ * preference of theirs and writes to a stranger in the wrong language.
+ */
+export async function sendMembershipClaimConfirmationEmail(opts: {
+  /** The ENROLLED address. Never pass the session user's. */
+  to: string;
+  firstName: string;
+  planName: string;
+  levelName: string;
+  membershipId: string;
+  countryId: string;
+  /** Shown in the body so an unexpected claim is recognisable. */
+  requesterEmail: string;
+  /** Raw token — only ever in this mail, never persisted (§5.3). */
+  token: string;
+}) {
+  const locale = await countryDefaultLocale(opts.countryId);
+  const copy = bundleFor(locale).claim;
+  const vars = {
+    firstName: escapeHtml(opts.firstName),
+    planName: escapeHtml(opts.planName),
+    levelName: escapeHtml(opts.levelName),
+    membershipId: escapeHtml(opts.membershipId),
+    email: escapeHtml(opts.to),
+    requesterEmail: escapeHtml(opts.requesterEmail),
+  };
+  const link = absoluteSiteUrl(
+    `/account/membership/claim/confirm?token=${encodeURIComponent(opts.token)}`,
+  );
+  const lines = [copy.lead, copy.idLine, copy.action, copy.note].map((line) =>
+    interpolate(line, vars),
+  );
 
   return sendEmail({
     to: opts.to,

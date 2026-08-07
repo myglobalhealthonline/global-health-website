@@ -19,5 +19,16 @@
     "action": "Ihre Mitgliedspreise werden automatisch angewendet, wenn Sie angemeldet buchen.",
     "cta": "Mitgliedschaft ansehen",
     "signoff": "— Ihr Global-Health-Team"
+  },
+  "claim": {
+    "subject": "Bestätigen Sie die Übernahme Ihrer {planName}-Mitgliedschaft",
+    "heading": "Bestätigen Sie Ihre Mitgliedschaft",
+    "greeting": "Hallo {firstName},",
+    "lead": "Jemand, der als <strong>{requesterEmail}</strong> angemeldet ist, möchte Ihre <strong>{planName}</strong>-Mitgliedschaft ({levelName}) seinem Konto hinzufügen.",
+    "idLine": "Mitgliedsnummer: <strong>{membershipId}</strong>.",
+    "action": "Waren Sie das, bestätigen Sie es unten. Der Link funktioniert einmal und läuft nach 24 Stunden ab.",
+    "note": "Waren Sie das nicht, ignorieren Sie diese E-Mail. Es ändert sich nichts und Ihre Mitgliedschaft bleibt, wo sie ist.",
+    "cta": "Übernahme bestätigen",
+    "signoff": "— Ihr Global-Health-Team"
   }
 }

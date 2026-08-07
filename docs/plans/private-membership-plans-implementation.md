@@ -809,17 +809,58 @@ next login.
 
 ### 5.3 Claim form (§7)
 
-`POST /api/me/memberships/claim { membershipId, email }`:
+**Revised 2026-08-07 — claiming is a two-step, email-confirmed flow.** The
+original single-step version checked only that the submitted id and email
+matched a row; it never proved the claimant controlled the *enrolled* mailbox,
+so anyone who had seen a member's card (a colleague, anyone holding the
+partner's list) could attach that membership to their own account, silently.
+The verified-email gate does not help here: it proves the claimant owns *their*
+address, not the enrolled one.
+
+So a claim now sends a confirmation link to the **enrolled** address, and the
+enrollment attaches only when that link is opened. This still solves the case
+the form exists for — the partner enrolled a work address the patient can still
+read, they just registered with a personal one.
+
+Token mechanics follow `PasswordResetToken` / `CorporateInvite` exactly: 32
+crypto-random bytes, **sha256 hash stored, raw token never persisted**, single
+use, short expiry (24h), carrying no PII. New model `MembershipClaimToken
+{ id, enrollmentId, userId, tokenHash @unique, email, expiresAt, usedAt,
+createdAt }`.
+
+`POST /api/me/memberships/claim { membershipId, email }` — step 1, request:
 
 - rate-limited per user and per IP (5/hour), because it is a lookup by a
   partner-supplied, potentially sequential id;
 - the session user's email must be verified (`emailVerifiedAt` set) — same
   gate as §5.2, same reason;
 - both fields must match the **same** enrollment row (membership id compared
-  via `lower()`), which must have `userId IS NULL`;
-- on success: link to the session user, `claimedAt = now`, status → `ACTIVE`, audit row;
-- on failure: one generic message ("we could not find a membership matching those
-  details"), never revealing which field was wrong.
+  via `lower()`), which must have `userId IS NULL` **and `status = PENDING`**.
+  A `SUSPENDED` / `EXPIRED` / `REMOVED` row is never claimable — otherwise a
+  member-facing form could un-suspend an enrollment an admin had just paused;
+- on match: mint a `MembershipClaimToken` for (enrollment, session user) and
+  email the link to the **enrollment's** address, never to the session user's;
+- the response is identical whether or not a row matched — one generic message
+  ("if those details match a membership, we've sent a confirmation link to the
+  email on file"), so neither existence nor status leaks.
+
+`GET /api/me/memberships/claim/confirm?token=…` — step 2, attach:
+
+- token must be unused, unexpired, and opened **by the same session user who
+  requested it** (`token.userId === session.user.id`) — a leaked link is then
+  useless to anyone else;
+- re-check the enrollment is still `userId IS NULL` and `PENDING` (it may have
+  linked or been suspended in between);
+- on success: link to the session user, `claimedAt = now`, `usedAt = now`,
+  status per the §5.2 rule (`endDate < now → EXPIRED`, else `ACTIVE`), audit row.
+
+**Audit.** §14 wants a row on every attempt including failures, but
+`recordAudit` takes a non-null `entityId` and a failed claim matched no
+enrollment. Audit the attempt as its own entity rather than inventing a
+sentinel: `entityType: "MembershipClaimAttempt"`, `entityId` = the submitted
+membership id (lowercased; validation already caps it at 64 chars). That also
+makes the log directly useful — it shows which ids were probed, which is the
+signal enumeration detection needs.
 
 ### 5.4 Expiry job
 
@@ -1201,6 +1242,22 @@ opening it writes an audit row (§32).
 
 ## 10. Member portal
 
+**Route naming, decided 2026-08-07.** `/account/membership` already exists and
+is the *public subscription* page. Rather than stack a second near-identical
+label in the sidebar, the vocabulary is split:
+
+| | Route | Nav label |
+| --- | --- | --- |
+| Public subscription (existing page, moves) | `/account/plans` | **My Plans** |
+| Private membership (new) | `/account/membership` | **Membership** |
+
+Moving the existing page touches `account/layout.tsx`, `account/page.tsx`,
+`account/rewards`, `account/subscribe` and both pricing cards. It belongs to no
+phase, so it lands as **its own commit ahead of Phase 3**. Add a redirect from
+the old path is unnecessary (the new page takes it), but the new page's
+empty state should carry a "looking for your subscription? it's under My Plans"
+line, since old bookmarks land there.
+
 `frontend/app/(portal)/(auth)/account/membership/`:
 
 - `page.tsx` — list of the member's memberships (usually one).
@@ -1326,6 +1383,11 @@ translated for Ireland's configured locales with English fallback:
    Result logged to `MembershipInviteLog`.
 3. **Allowance exhausted** — sent when a spend takes remaining to `0`. Explains what
    applies from now on (the fallback discount, or full price).
+4. **Claim confirmation** (added 2026-08-07 with the two-step claim, §5.3) — sent
+   to the **enrolled** address, never the requester's, carrying the single-use
+   confirm link. Locale: the plan's country `defaultLocale` with English
+   fallback, same as the invite, since the enrolled person may not be the
+   session user.
 
 **Locale resolution.** A `PENDING` enrollment has no `User`, so there is no
 `preferredLocale` to read: the **invite** email uses the plan's country
@@ -1383,7 +1445,8 @@ displayed.
 | --- | --- |
 | Register with someone else's email → steal their membership | Linking (auto and claim) requires `emailVerifiedAt` — proof of mailbox control, not just a matching string (§5.2) |
 | Guessable partner membership ids | Benefits require login (§6). The claim form needs id **and** the enrolled email, is rate-limited, and returns a single generic failure message |
-| Membership enumeration via the claim form | Generic errors, per-user and per-IP rate limits, audit row on every attempt |
+| Claiming someone else's membership (knowing their ID + enrolled email) | The claim only completes via a single-use link sent to the **enrolled** address, openable only by the session that requested it (§5.3) |
+| Membership enumeration via the claim form | Identical response whether or not a row matched, per-user and per-IP rate limits, audit row on every attempt. The per-user bucket must re-verify the cookie inside the `keyGenerator` — rate limiting runs `onRequest`, before `requireAuth`'s `preHandler`, so `request.authUser` is undefined there; fall back to the IP key when there is no valid cookie |
 | Member list exposure | No public verification URL (§20). Staff lookup sits behind an admin session |
 | Forged enrollment/level/benefit ids in cart or checkout | Everything re-resolved server-side; ownership re-checked; failure = full price or `400`, never cheaper |
 | Allowance double-spend (double-click, retried webhook) | Conditional `used < allocated` update + unique `idempotencyKey` on the ledger |
@@ -1473,8 +1536,12 @@ Both read the ledger joined to `OrderItem` — no separate aggregation table.
   `NONE` suppresses the corporate auto-discount; a forged enrollment id is rejected;
   partial allowance across two lines; €0 order skips Stripe and still mints the
   appointment and sends the email.
-- `me-membership.route.test.ts` — claim form success and failure, rate limit,
-  generic error message, no enumeration.
+- `me-membership.route.test.ts` — claim request returns the identical response for
+  a match and a miss; the confirm link is emailed to the **enrolled** address, not
+  the requester's; a token opened by a different session is rejected; expired and
+  reused tokens are rejected; a `SUSPENDED` / `EXPIRED` / `REMOVED` enrollment is
+  never claimable; rate limit buckets per user when a cookie is present and per IP
+  when it is not; a failed attempt still writes its audit row.
 - `authz-matrix.test.ts` — extended with every new endpoint.
 
 ### 16.3 E2E (Playwright)
@@ -1506,7 +1573,7 @@ Both read the ledger joined to `OrderItem` — no separate aggregation table.
 | --- | --- | --- |
 | 1 | Membership tables migration (+ `AuditAction` values, Semgrep rule extension), `memberships` module, admin plan/level/benefit CRUD + those admin screens, translations | admin-only, no patient impact |
 | 2 | Enrollment CRUD, verified-email linking, CSV import, invite email, **enrollment-confirmed email** (it is the linker's own side effect — §5.2 — so it ships with the linker, not in Phase 3) | admin-only |
-| 3 | Member portal page + card, claim form | member-visible; still no pricing effect |
+| 3 | Member portal page + card, two-step email-confirmed claim (+ `MembershipClaimToken`), member-added dependents, staff verify lookup. Preceded by its own commit moving the subscription page to `/account/plans` (§10) | member-visible; still no pricing effect |
 | 4 | Pricing resolver, benefit-options endpoint, **second migration**: `Cart` / `OrderItem` columns + `CartBenefitSource` | API only, not wired into the UI |
 | 5 | Booking benefit step (replaces the insurance step), checkout switch, €0 path, allowance ledger, allowance-exhausted email, **`UNSET → NONE` cart backfill at deploy** | **the behavioural change** — corporate's silent discount becomes selection-driven |
 | 6 | Admin manual booking + override, usage reporting, expiry cron | — |

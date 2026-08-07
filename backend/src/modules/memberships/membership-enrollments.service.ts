@@ -603,3 +603,78 @@ export async function sendMembershipEnrollmentInvite(id: string, actorAdminId: s
   });
   return { ok, email: enrollment.email };
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Member-added dependents (§10, phase 3)
+   ───────────────────────────────────────────────────────────── */
+
+/**
+ * A dependent the MEMBER created, as opposed to one an admin added or a CSV
+ * import produced. There is no flag for it — the distinction is which of the
+ * two provenance columns is set, and neither is for the member path:
+ *
+ *   import      → importBatchId set
+ *   admin add   → createdByAdminId set
+ *   member add  → both null
+ *
+ * That is what makes "remove ones they added" (§10) enforceable without
+ * another column. If a fourth creation path ever appears, it must set one of
+ * these or it silently becomes member-removable.
+ */
+const MEMBER_ADDED = { createdByAdminId: null, importBatchId: null } as const;
+
+/**
+ * Add a dependent to a membership the session user holds. Ownership,
+ * `PRIMARY`-ness, family cover and the cap are all re-checked inside
+ * `addMembershipDependent`; this wrapper only proves the primary is the
+ * caller's before letting them near it.
+ */
+export async function addMemberDependent(
+  userId: string,
+  primaryId: string,
+  body: { email: string; firstName: string; lastName: string; relationship: string | null },
+) {
+  const primary = await prisma.membershipEnrollment.findFirst({
+    where: { id: primaryId, userId, status: { not: "REMOVED" } },
+    select: { id: true },
+  });
+  // Not "yours" and "does not exist" answer identically — a member must not be
+  // able to probe enrollment ids.
+  if (!primary) throw new MembershipEnrollmentNotFoundError();
+
+  return addMembershipDependent(
+    primaryId,
+    {
+      email: body.email,
+      firstName: body.firstName,
+      lastName: body.lastName,
+      relationship: body.relationship,
+    } as AdminMembershipDependentCreateBody,
+    null,
+  );
+}
+
+/**
+ * Remove a dependent the member added themselves. Admin- and import-created
+ * dependents are deliberately out of reach: the member did not put them there,
+ * and an admin removing them is an audited action with a reason.
+ */
+export async function removeMemberDependent(userId: string, dependentId: string) {
+  const dependent = await prisma.membershipEnrollment.findFirst({
+    where: {
+      id: dependentId,
+      memberType: "DEPENDENT",
+      status: { not: "REMOVED" },
+      ...MEMBER_ADDED,
+      primaryEnrollment: { userId },
+    },
+    select: { id: true, primaryEnrollmentId: true, membershipId: true },
+  });
+  if (!dependent) throw new MembershipEnrollmentNotFoundError();
+
+  await prisma.membershipEnrollment.update({
+    where: { id: dependent.id },
+    data: { status: "REMOVED" },
+  });
+  return dependent;
+}

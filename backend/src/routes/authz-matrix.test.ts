@@ -651,4 +651,81 @@ describe("authorization matrix", () => {
     // decided before the route reveals whether the level exists.
     assert.equal(res.statusCode, 403, res.body);
   });
+
+  // ── Private membership: member surface + staff verify (phase 3) ─────────────
+  //
+  // The member routes are session-scoped rather than role-gated, so what the
+  // matrix pins here is the scoping itself: no session at all, and a session
+  // that is not the row's owner. The staff verify endpoint is the one place a
+  // membership id resolves to a person, so it carries the full admin gate.
+
+  it("member memberships: unauthenticated read → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({ method: "GET", url: "/api/me/memberships" });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("member memberships: unauthenticated claim → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/me/memberships/claim",
+      payload: { membershipId: "AUTHZ-CLAIM-1", email: "nobody@example.test" },
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("member memberships: unauthenticated claim confirm → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/me/memberships/claim/confirm",
+      payload: { token: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  // doctor2, not doctor1: the sign-out-all-devices test above deliberately
+  // bumps doctor1's tokenVersion, so its cookie is dead from that point on and
+  // this would assert 401 instead of the scoping it is here to check.
+  it("member memberships: a doctor session sees no memberships, not everyone's", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/me/memberships",
+      cookies: doctor2Cookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    assert.deepEqual(res.json().data, []);
+  });
+
+  it("membership verify: unauthenticated lookup → 401 (no public verification URL, §20)", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-verify?membershipId=AUTHZ-VERIFY-1",
+    });
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  it("membership verify: a doctor session cannot look a member up → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-verify?membershipId=AUTHZ-VERIFY-1",
+      cookies: doctor1Cookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
+  it("membership verify: an admin may look up, and a miss is 200 found:false", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/membership-verify?membershipId=AUTHZ-VERIFY-NONE",
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    assert.equal(res.json().data.found, false);
+  });
 });

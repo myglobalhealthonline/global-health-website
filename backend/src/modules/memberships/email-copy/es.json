@@ -19,5 +19,16 @@
     "action": "Sus precios de miembro se aplican automáticamente al reservar con la sesión iniciada.",
     "cta": "Ver mi membresía",
     "signoff": "— El equipo de Global Health"
+  },
+  "claim": {
+    "subject": "Confirme la reclamación de su membresía {planName}",
+    "heading": "Confirme su membresía",
+    "greeting": "Hola {firstName}:",
+    "lead": "Alguien que ha iniciado sesión como <strong>{requesterEmail}</strong> ha pedido añadir su membresía <strong>{planName}</strong> ({levelName}) a su cuenta.",
+    "idLine": "Número de membresía: <strong>{membershipId}</strong>.",
+    "action": "Si ha sido usted, confírmelo abajo. El enlace funciona una sola vez y caduca en 24 horas.",
+    "note": "Si no ha sido usted, ignore este correo. No cambia nada y su membresía sigue donde está.",
+    "cta": "Confirmar la reclamación",
+    "signoff": "— El equipo de Global Health"
   }
 }

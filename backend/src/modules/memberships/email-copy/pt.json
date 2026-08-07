@@ -19,5 +19,16 @@
     "action": "Os preços de membro são aplicados automaticamente quando marca com sessão iniciada.",
     "cta": "Ver a minha adesão",
     "signoff": "— A equipa Global Health"
+  },
+  "claim": {
+    "subject": "Confirme a associação da sua adesão {planName}",
+    "heading": "Confirme a sua adesão",
+    "greeting": "Olá {firstName},",
+    "lead": "Alguém com sessão iniciada como <strong>{requesterEmail}</strong> pediu para associar a sua adesão <strong>{planName}</strong> ({levelName}) à conta dessa pessoa.",
+    "idLine": "Número de adesão: <strong>{membershipId}</strong>.",
+    "action": "Se foi você, confirme abaixo. A ligação funciona uma vez e expira em 24 horas.",
+    "note": "Se não foi você, ignore este e-mail. Nada muda e a sua adesão mantém-se onde está.",
+    "cta": "Confirmar",
+    "signoff": "— A equipa da Global Health"
   }
 }

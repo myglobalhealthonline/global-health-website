@@ -374,6 +374,24 @@ enum AuditAction {
   MEMBERSHIP_ENROLLMENT_INVITED
   MEMBERSHIP_IMPORT_COMMITTED
   MEMBERSHIP_IMPORT_CANCELLED
+
+  // --- Private membership plans (phase 3 — member portal, claim, card) ---
+  /// Step 1 of the claim, written on EVERY attempt including misses. The
+  /// entity is the attempt itself (`MembershipClaimAttempt`, entityId = the
+  /// submitted membership id, lowercased), not an enrollment — a miss has no
+  /// enrollment to point at, and the probed ids are the signal enumeration
+  /// detection needs (§5.3).
+  MEMBERSHIP_CLAIM_REQUESTED
+  /// Step 2 succeeded: the link sent to the enrolled address was opened by the
+  /// session that asked for it, and the enrollment is now the member's.
+  MEMBERSHIP_CLAIM_CONFIRMED
+  /// Step 2 refused — bad, expired, reused or wrong-session token, or the
+  /// enrollment stopped being claimable in between.
+  MEMBERSHIP_CLAIM_REJECTED
+  MEMBERSHIP_DEPENDENT_ADDED
+  MEMBERSHIP_DEPENDENT_REMOVED
+  /// Staff card lookup. Reads member PII, so it is audited like a report view.
+  MEMBERSHIP_VERIFY_LOOKUP
 }
 
 enum CountryAccessModel {
@@ -3109,6 +3127,10 @@ model User {
   /// match is not proof of mailbox ownership (§5.2). One person may hold
   /// several memberships (§19). See MembershipEnrollment.
   membershipEnrollments        MembershipEnrollment[]
+  /// Outstanding claim confirmations this account has requested (§5.3). The
+  /// link is emailed to the ENROLLED address; this side records who asked, so
+  /// only that session can complete the claim.
+  membershipClaimTokens        MembershipClaimToken[]
   createdAt                    DateTime                     @default(now())
   updatedAt                    DateTime                     @updatedAt
 }
@@ -5994,6 +6016,7 @@ model MembershipEnrollment {
   balances      MembershipAllowanceBalance[]
   ledgerEntries MembershipUsageLedger[]
   inviteLogs    MembershipInviteLog[]
+  claimTokens   MembershipClaimToken[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -6093,4 +6116,29 @@ model MembershipInviteLog {
   createdAt     DateTime             @default(now())
 
   @@index([enrollmentId])
+}
+
+/// Single-use confirmation for a membership claim (§5.3). The claim form's
+/// step 1 mints one and emails the link to the ENROLLED address; step 2
+/// consumes it. Mechanics copy PasswordResetToken exactly: 32 random bytes,
+/// only the sha256 hash stored, single use, short TTL — so a DB leak yields
+/// no usable link. `userId` is the session that requested it, and step 2
+/// checks it, so a forwarded or intercepted link is useless to anyone else.
+model MembershipClaimToken {
+  id           String               @id @default(cuid())
+  enrollmentId String
+  enrollment   MembershipEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  /// The account that asked to claim. Only this session may confirm.
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash    String               @unique
+  /// The enrolled address the link was sent to, kept for audit. Not a lookup
+  /// key — the token hash is.
+  email        String
+  expiresAt    DateTime
+  usedAt       DateTime?
+  createdAt    DateTime             @default(now())
+
+  @@index([enrollmentId])
+  @@index([userId])
 }
