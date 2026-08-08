@@ -1,5 +1,6 @@
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import type {
+  MembershipUsageCountrySection,
   MembershipUsageReport,
   MembershipUsageRow,
 } from "@/lib/admin/memberships-api";
@@ -45,11 +46,22 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
  */
 export function usageFields(
   currency: string | null,
-  options: { showMember: boolean; showReason: boolean },
+  options: { showMember: boolean; showReason: boolean; showCountry?: boolean },
 ): ColumnPriorityField<MembershipUsageRow>[] {
   const fields: ColumnPriorityField<MembershipUsageRow>[] = [
     { key: "date", label: "Date", priority: 1, render: (row) => day(row.bookedAt) },
   ];
+  // Only where rows can span countries — inside a per-country section it would
+  // repeat the section heading on every line. A member who travelled, though,
+  // has rows in several currencies and the country is what tells them apart.
+  if (options.showCountry) {
+    fields.push({
+      key: "country",
+      label: "Country",
+      priority: 2,
+      render: (row) => row.countryCode ?? "—",
+    });
+  }
   if (options.showMember) {
     fields.push({
       key: "member",
@@ -123,17 +135,19 @@ function UsageTable({
   currency,
   showMember,
   showReason,
+  showCountry,
   emptyLabel,
 }: {
   rows: MembershipUsageRow[];
   currency: string | null;
   showMember: boolean;
   showReason: boolean;
+  showCountry?: boolean;
   emptyLabel: string;
 }) {
   return (
     <ColumnPriorityTable
-      fields={usageFields(currency, { showMember, showReason })}
+      fields={usageFields(currency, { showMember, showReason, showCountry })}
       rows={rows}
       getRowKey={(row) => row.orderItemId}
       emptyState={
@@ -156,28 +170,117 @@ export function MemberUsageTable({
   rows: MembershipUsageRow[];
   currency: string | null;
 }) {
+  // A member of a multi-country plan can book abroad, and those rows are in the
+  // booking country's currency. Naming the country is the cheapest way to stop
+  // two different currencies reading as one column of comparable numbers.
+  const spansCountries = new Set(rows.map((row) => row.countryCode)).size > 1;
   return (
     <UsageTable
       rows={rows}
       currency={currency}
       showMember={false}
       showReason
+      showCountry={spansCountries}
       emptyLabel="No bookings on this membership yet."
     />
   );
 }
 
+/**
+ * One country's usage and goodwill (§23, phase 7f). Every money figure inside is
+ * in this section's own currency and none of them is ever added to another
+ * section's — there is no exchange rate anywhere in the product.
+ */
+function CountrySection({
+  section,
+  isPrimary,
+}: {
+  section: MembershipUsageCountrySection;
+  isPrimary: boolean;
+}) {
+  const currency = section.currencyCode;
+  const types = section.usage.byBenefitType;
+  const nothing = section.usage.consultations === 0 && section.overrides.consultations === 0;
+
+  return (
+    <AdminCard padding={0}>
+      <SectionHeader
+        title={`${section.countryCode}${isPrimary ? " — primary" : ""}`}
+        description={
+          nothing
+            ? section.covered
+              ? "Covered, with no bookings in this range."
+              : "No longer covered. Bookings made while it was keep the price they were charged."
+            : `Consultations booked in ${section.countryCode} in the selected range${
+                currency ? `, in ${currency}` : ""
+              }. Goodwill overrides are on their own line below and excluded from these totals.`
+        }
+      />
+      {nothing ? null : (
+        <>
+          <div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4">
+            <Stat label="Consultations" value={String(section.usage.consultations)} />
+            <Stat
+              label="Discount given"
+              value={money(section.usage.totalDiscountCents, currency)}
+              hint="excludes overrides"
+            />
+            <Stat label="Charged" value={money(section.usage.totalChargedCents, currency)} />
+            <Stat
+              label="Goodwill given away"
+              value={money(section.overrides.totalValueCents, currency)}
+              hint={`${section.overrides.consultations} override${
+                section.overrides.consultations === 1 ? "" : "s"
+              }`}
+            />
+          </div>
+          <div className="grid gap-4 border-t border-[var(--color-border)] p-6 sm:grid-cols-3">
+            <Stat label="Allowance bookings" value={String(types.ALLOWANCE)} />
+            <Stat label="Percent bookings" value={String(types.PERCENT)} />
+            <Stat label="Fixed-price bookings" value={String(types.FIXED)} />
+          </div>
+          <div className="border-t border-[var(--color-border)]">
+            <UsageTable
+              rows={section.usage.rows}
+              currency={currency}
+              showMember
+              showReason={false}
+              emptyLabel={`No member bookings in ${section.countryCode} in this range.`}
+            />
+          </div>
+          {section.overrides.consultations > 0 ? (
+            <div className="border-t border-[var(--color-border)]">
+              <p className="px-6 pt-6 text-sm font-semibold text-[var(--color-text-primary)]">
+                Goodwill overrides in {section.countryCode}
+              </p>
+              <p className="px-6 pb-2 text-portal-compact text-[var(--color-text-muted)]">
+                Benefits applied by a super admin to patients not entitled to them. Our cost, not
+                the partner&apos;s consumption, and never charged against anyone&apos;s allowance.
+              </p>
+              <UsageTable
+                rows={section.overrides.rows}
+                currency={currency}
+                showMember
+                showReason
+                emptyLabel=""
+              />
+            </div>
+          ) : null}
+        </>
+      )}
+    </AdminCard>
+  );
+}
+
 export function MembershipUsageReportView({ report }: { report: MembershipUsageReport }) {
-  const currency = report.currencyCode;
   const statuses = report.membersByStatus;
-  const types = report.usage.byBenefitType;
 
   return (
     <div className="flex flex-col gap-6">
       <AdminCard padding={0}>
         <SectionHeader
           title="Members"
-          description="Current state of the programme — not filtered by the date range."
+          description="Current state of the programme — not filtered by the date range, and not split by country: a member belongs to the programme, not to a market."
         />
         <div className="grid gap-4 p-6 sm:grid-cols-3 lg:grid-cols-5">
           <Stat label="Active" value={String(statuses.ACTIVE)} />
@@ -186,65 +289,33 @@ export function MembershipUsageReportView({ report }: { report: MembershipUsageR
           <Stat label="Expired" value={String(statuses.EXPIRED)} />
           <Stat label="Removed" value={String(statuses.REMOVED)} />
         </div>
-      </AdminCard>
-
-      <AdminCard padding={0}>
-        <SectionHeader
-          title="Usage"
-          description="Consultations booked on this programme in the selected range. Goodwill overrides are excluded and shown separately below."
-        />
-        <div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat label="Consultations" value={String(report.usage.consultations)} />
-          <Stat
-            label="Discount given"
-            value={money(report.usage.totalDiscountCents, currency)}
-            hint="excludes overrides"
-          />
-          <Stat label="Charged" value={money(report.usage.totalChargedCents, currency)} />
+        <div className="border-t border-[var(--color-border)] p-6">
           <Stat
             label="Allowance units"
             value={`${report.allowance.used} / ${report.allowance.allocated}`}
-            hint="used of allocated, across the plan"
-          />
-        </div>
-        <div className="grid gap-4 border-t border-[var(--color-border)] p-6 sm:grid-cols-3">
-          <Stat label="Allowance bookings" value={String(types.ALLOWANCE)} />
-          <Stat label="Percent bookings" value={String(types.PERCENT)} />
-          <Stat label="Fixed-price bookings" value={String(types.FIXED)} />
-        </div>
-        <div className="border-t border-[var(--color-border)]">
-          <UsageTable
-            rows={report.usage.rows}
-            currency={currency}
-            showMember
-            showReason={false}
-            emptyLabel="No member bookings in this range."
+            hint="used of allocated — one shared pool, spendable in every configured country"
           />
         </div>
       </AdminCard>
 
-      <AdminCard padding={0}>
-        <SectionHeader
-          title="Goodwill overrides"
-          description="Benefits applied by a super admin to patients not entitled to them. Excluded from the usage and discount totals above — this is our cost, not the partner's consumption — and never charged against anyone's allowance."
+      {/* No cross-country total anywhere, deliberately (§39). Each country is
+          its own currency and there is no exchange rate in the product, so a
+          headline figure could only be wrong — and it is the one number a
+          partner would quote back. */}
+      {report.countries.length > 1 ? (
+        <p className="text-portal-compact text-[var(--color-text-muted)]">
+          Usage is reported per country, each in its own currency. Figures are never added across
+          countries — there is no exchange rate.
+        </p>
+      ) : null}
+
+      {report.countries.map((section) => (
+        <CountrySection
+          key={section.countryCode}
+          section={section}
+          isPrimary={section.countryCode === report.plan.countryCode.toUpperCase()}
         />
-        <div className="grid gap-4 p-6 sm:grid-cols-2">
-          <Stat label="Overrides" value={String(report.overrides.consultations)} />
-          <Stat
-            label="Value given away"
-            value={money(report.overrides.totalValueCents, currency)}
-          />
-        </div>
-        <div className="border-t border-[var(--color-border)]">
-          <UsageTable
-            rows={report.overrides.rows}
-            currency={currency}
-            showMember
-            showReason
-            emptyLabel="No goodwill overrides in this range."
-          />
-        </div>
-      </AdminCard>
+      ))}
     </div>
   );
 }

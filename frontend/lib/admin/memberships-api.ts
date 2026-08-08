@@ -651,12 +651,22 @@ export type MembershipUsageRow = {
   memberName: string | null;
   membershipId: string | null;
   enrollmentId: string | null;
+  /** Where the booking happened — NOT the member's own country. A member of a
+   *  Czech-primary plan booking in Ireland produces an Irish row. */
+  countryCode: string | null;
 };
 
-export type MembershipUsageReport = {
-  plan: { id: string; name: string; slug: string; countryCode: string };
-  range: { from: string | null; to: string | null };
-  membersByStatus: Record<MembershipEnrollmentStatus, number>;
+/**
+ * One country's slice of a plan's usage. `currencyCode` lives here rather than
+ * on the report: a multi-country plan has no single currency and nothing is
+ * ever converted, so two sections are never added together.
+ */
+export type MembershipUsageCountrySection = {
+  countryCode: string;
+  /** Null only for a covered country with no bookings in the range. */
+  currencyCode: string | null;
+  /** False when the rows predate the country being removed from the plan. */
+  covered: boolean;
   usage: {
     consultations: number;
     byBenefitType: MembershipBenefitTypeCounts;
@@ -664,10 +674,22 @@ export type MembershipUsageReport = {
     totalChargedCents: number;
     rows: MembershipUsageRow[];
   };
-  allowance: { allocated: number; used: number };
   /** Excluded from every total above, and never hidden between two (§15). */
   overrides: { consultations: number; totalValueCents: number; rows: MembershipUsageRow[] };
-  currencyCode: string | null;
+};
+
+export type MembershipUsageReport = {
+  /** `countryCode` is the plan's PRIMARY country — its identity, not a usage
+   *  dimension. Usage is split across `countries`. */
+  plan: { id: string; name: string; slug: string; countryCode: string };
+  range: { from: string | null; to: string | null };
+  /** Global: enrollment is pinned to the primary country. */
+  membersByStatus: Record<MembershipEnrollmentStatus, number>;
+  /** Global: one shared pool across every covered country. */
+  allowance: { allocated: number; used: number };
+  /** The union of countries with bookings and covered countries without,
+   *  primary first. There is deliberately no summed total. */
+  countries: MembershipUsageCountrySection[];
 };
 
 export type MembershipMemberUsage = {

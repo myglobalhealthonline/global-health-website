@@ -48,12 +48,35 @@ export type MembershipUsageRow = {
   memberName: string | null;
   membershipId: string | null;
   enrollmentId: string | null;
+  /**
+   * Where the booking happened — `Order.countryCode` (§23). Under a
+   * multi-country plan this is NOT the member's own (reporting) country: a
+   * member enrolled on a Czech-primary plan booking in Ireland produces an
+   * Irish row. That is the whole point of the per-country split, and it is what
+   * the CSV's `country` column carries.
+   */
+  countryCode: string | null;
 };
 
-export type MembershipUsageReport = {
-  plan: { id: string; name: string; slug: string; countryCode: string };
-  range: { from: Date | null; to: Date | null };
-  membersByStatus: Record<MembershipEnrollmentStatus, number>;
+/**
+ * One country's slice of a plan's usage (§23, phase 7f).
+ *
+ * `currencyCode` lives HERE and not on the report, because a multi-country plan
+ * has no single currency and there is no conversion anywhere (§39). Two sections
+ * are never added together, and there is deliberately no headline figure.
+ */
+export type MembershipUsageCountrySection = {
+  /** ISO-2, from `Order.countryCode` — a plain column, no join needed. */
+  countryCode: string;
+  /**
+   * Null only for a covered country with no bookings in the range. Every
+   * section built from real order data has one, since `Order.currencyCode` is
+   * not nullable.
+   */
+  currencyCode: string | null;
+  /** True for a covered country the plan still lists — `false` means the rows
+   *  predate its removal, and §26 promises those bookings keep their price. */
+  covered: boolean;
   /** Real member usage in the range, excluding overrides. */
   usage: {
     consultations: number;
@@ -62,14 +85,35 @@ export type MembershipUsageReport = {
     totalChargedCents: number;
     rows: MembershipUsageRow[];
   };
-  allowance: { allocated: number; used: number };
-  /** Goodwill, on its own line and out of every total above (§15). */
+  /** Goodwill, on its own line per country and out of every total above (§15). */
   overrides: {
     consultations: number;
     totalValueCents: number;
     rows: MembershipUsageRow[];
   };
-  currencyCode: string | null;
+};
+
+export type MembershipUsageReport = {
+  /** `countryCode` here is the plan's PRIMARY country — its identity, not a
+   *  usage dimension. Usage is split across `countries` below. */
+  plan: { id: string; name: string; slug: string; countryCode: string };
+  range: { from: Date | null; to: Date | null };
+  /**
+   * GLOBAL, not per country (§23). Enrollment is pinned to the plan's primary
+   * country by the §21.5 composite FK, so splitting this would invent a
+   * distinction the data model does not have.
+   */
+  membersByStatus: Record<MembershipEnrollmentStatus, number>;
+  /** GLOBAL, and deliberately: the pool is shared across every country (§36). */
+  allowance: { allocated: number; used: number };
+  /**
+   * The UNION of two sets: countries present in the order data, plus covered
+   * countries with no bookings (shown as zero). Covered-only would make a
+   * removed country's rows vanish; data-only would hide that a covered market
+   * is being used by nobody, which is exactly what a partner conversation
+   * needs. Primary first, then alphabetical.
+   */
+  countries: MembershipUsageCountrySection[];
 };
 
 const EMPTY_STATUS_COUNTS: Record<MembershipEnrollmentStatus, number> = {
@@ -106,7 +150,16 @@ const usageItemSelect = {
   membershipDiscountCents: true,
   membershipAllowanceUsed: true,
   membershipOverrideReason: true,
-  order: { select: { orderNumber: true, createdAt: true, currencyCode: true } },
+  // `countryCode` and `currencyCode` are plain columns on `Order` (§23), so the
+  // per-country split needs no join and no country table lookup.
+  order: {
+    select: {
+      orderNumber: true,
+      createdAt: true,
+      currencyCode: true,
+      countryCode: true,
+    },
+  },
 } as const;
 
 type UsageItem = {
@@ -120,7 +173,12 @@ type UsageItem = {
   membershipDiscountCents: number | null;
   membershipAllowanceUsed: boolean;
   membershipOverrideReason: string | null;
-  order: { orderNumber: string; createdAt: Date; currencyCode: string | null } | null;
+  order: {
+    orderNumber: string;
+    createdAt: Date;
+    currencyCode: string | null;
+    countryCode: string | null;
+  } | null;
 };
 
 type MemberIdentity = { firstName: string; lastName: string; membershipId: string };
@@ -191,6 +249,10 @@ function toRow(item: UsageItem, lookups: UsageLookups): MembershipUsageRow {
     memberName: member ? `${member.firstName} ${member.lastName}`.trim() : null,
     membershipId: member?.membershipId ?? null,
     enrollmentId: item.membershipEnrollmentId,
+    // Upper-cased, matching the section keys and every other place an ISO-2
+    // code is rendered. `Country.code` is stored lowercase, so leaving it raw
+    // would make a row's country and its own section's key differ.
+    countryCode: item.order?.countryCode?.toUpperCase() ?? null,
   };
 }
 
@@ -217,6 +279,10 @@ export async function buildMembershipUsageReport(
       name: true,
       slug: true,
       primaryCountry: { select: { code: true } },
+      // Covered countries with no bookings still get a section, shown as zero
+      // (§23) — otherwise "this market is used by nobody" is indistinguishable
+      // from "this market is not covered".
+      countries: { select: { country: { select: { code: true } } } },
       levels: { select: { benefits: { select: { id: true, benefitType: true } } } },
     },
   });
@@ -278,23 +344,9 @@ export async function buildMembershipUsageReport(
 
   const lookups = await loadUsageLookups([...usageItems, ...overrideItems], benefitTypeById);
 
-  const byBenefitType = { ...EMPTY_TYPE_COUNTS };
-  let totalDiscountCents = 0;
-  let totalChargedCents = 0;
-  for (const item of usageItems) {
-    const type = item.membershipBenefitId
-      ? benefitTypeById.get(item.membershipBenefitId)
-      : undefined;
-    if (type) byBenefitType[type] += 1;
-    totalDiscountCents += item.membershipDiscountCents ?? 0;
-    totalChargedCents += item.unitPriceCents;
-  }
-
-  const overrideRows = overrideItems.map((item) => toRow(item, lookups));
-  const overrideValueCents = overrideRows.reduce((sum, row) => sum + row.discountCents, 0);
-
   // Units are read off the counters, not summed from the ledger: the counter is
   // the authority (§7), and an ADMIN_ADJUST moves it without a matching spend.
+  // Global — the pool is shared across every covered country (§36).
   const balances = await prisma.membershipAllowanceBalance.aggregate({
     where: { holderEnrollment: { planId: plan.id } },
     _sum: { allocated: true, used: true },
@@ -304,25 +356,100 @@ export async function buildMembershipUsageReport(
     plan: { id: plan.id, name: plan.name, slug: plan.slug, countryCode: plan.primaryCountry.code },
     range: { from: filters.from ?? null, to: filters.to ?? null },
     membersByStatus,
-    usage: {
-      consultations: usageItems.length,
-      byBenefitType,
-      totalDiscountCents,
-      totalChargedCents,
-      rows: usageItems.map((item) => toRow(item, lookups)),
-    },
     allowance: {
       allocated: balances._sum.allocated ?? 0,
       used: balances._sum.used ?? 0,
     },
-    overrides: {
-      consultations: overrideRows.length,
-      totalValueCents: overrideValueCents,
-      rows: overrideRows,
-    },
-    currencyCode:
-      usageItems[0]?.order?.currencyCode ?? overrideItems[0]?.order?.currencyCode ?? null,
+    countries: buildCountrySections({
+      usageItems,
+      overrideItems,
+      lookups,
+      benefitTypeById,
+      primaryCountryCode: plan.primaryCountry.code,
+      coveredCodes: plan.countries.map((c) => c.country.code),
+    }),
   };
+}
+
+/** An empty section, for a covered country with nothing booked in the range. */
+function emptySection(countryCode: string, covered: boolean): MembershipUsageCountrySection {
+  return {
+    countryCode,
+    currencyCode: null,
+    covered,
+    usage: {
+      consultations: 0,
+      byBenefitType: { ...EMPTY_TYPE_COUNTS },
+      totalDiscountCents: 0,
+      totalChargedCents: 0,
+      rows: [],
+    },
+    overrides: { consultations: 0, totalValueCents: 0, rows: [] },
+  };
+}
+
+/**
+ * Split the plan's lines into per-country sections (§23).
+ *
+ * Nothing is summed across sections and no rate is applied anywhere — a
+ * multi-country plan has no single currency, and a headline figure would be the
+ * one number a partner quotes back.
+ *
+ * A line whose order somehow carries no country lands under `"??"` rather than
+ * being dropped: an unattributable booking that silently disappears from a
+ * usage report is worse than one an admin has to ask about.
+ */
+function buildCountrySections(args: {
+  usageItems: UsageItem[];
+  overrideItems: UsageItem[];
+  lookups: UsageLookups;
+  benefitTypeById: Map<string, MembershipBenefitType>;
+  primaryCountryCode: string;
+  coveredCodes: string[];
+}): MembershipUsageCountrySection[] {
+  const covered = new Set(args.coveredCodes.map((code) => code.toUpperCase()));
+  const sections = new Map<string, MembershipUsageCountrySection>();
+  const sectionFor = (raw: string | null | undefined): MembershipUsageCountrySection => {
+    const code = (raw ?? "??").toUpperCase();
+    let section = sections.get(code);
+    if (!section) {
+      section = emptySection(code, covered.has(code));
+      sections.set(code, section);
+    }
+    return section;
+  };
+
+  for (const item of args.usageItems) {
+    const section = sectionFor(item.order?.countryCode);
+    section.currencyCode ??= item.order?.currencyCode ?? null;
+    const type = item.membershipBenefitId
+      ? args.benefitTypeById.get(item.membershipBenefitId)
+      : undefined;
+    if (type) section.usage.byBenefitType[type] += 1;
+    section.usage.totalDiscountCents += item.membershipDiscountCents ?? 0;
+    section.usage.totalChargedCents += item.unitPriceCents;
+    section.usage.rows.push(toRow(item, args.lookups));
+    section.usage.consultations += 1;
+  }
+
+  for (const item of args.overrideItems) {
+    const section = sectionFor(item.order?.countryCode);
+    section.currencyCode ??= item.order?.currencyCode ?? null;
+    const row = toRow(item, args.lookups);
+    section.overrides.rows.push(row);
+    section.overrides.consultations += 1;
+    section.overrides.totalValueCents += row.discountCents;
+  }
+
+  // The union: every covered country gets a section even with nothing in it.
+  for (const code of covered) if (!sections.has(code)) sections.set(code, emptySection(code, true));
+
+  const primary = args.primaryCountryCode.toUpperCase();
+  return [...sections.values()].sort(
+    (a, b) =>
+      Number(b.countryCode === primary) - Number(a.countryCode === primary) ||
+      a.countryCode.localeCompare(b.countryCode),
+  );
 }
 
 export type MembershipMemberUsage = {
@@ -404,6 +531,9 @@ export function usageReportToCsv(report: MembershipUsageReport): string {
   const header = [
     "order_number",
     "booked_at",
+    // §23. Second column rather than last: it is what a multi-country partner
+    // sorts and filters on first, and a total taken across it is wrong.
+    "country",
     "member",
     "membership_id",
     "service",
@@ -424,6 +554,7 @@ export function usageReportToCsv(report: MembershipUsageReport): string {
     [
       row.orderNumber,
       row.bookedAt.toISOString(),
+      row.countryCode,
       row.memberName,
       row.membershipId,
       row.serviceName,
@@ -443,9 +574,15 @@ export function usageReportToCsv(report: MembershipUsageReport): string {
   // a second export — one row per booking is what a partner reconciles against,
   // and a separate file is one nobody opens. The flag is what keeps them
   // excludable from a total without being hidden from the reader.
+  //
+  // One file across every country, with the country on each row, rather than one
+  // file per section: the sections exist to stop money being ADDED across
+  // currencies, which a spreadsheet column does not do on its own.
   return [
     header.join(","),
-    ...report.usage.rows.map((row) => line(row, false)),
-    ...report.overrides.rows.map((row) => line(row, true)),
+    ...report.countries.flatMap((section) => [
+      ...section.usage.rows.map((row) => line(row, false)),
+      ...section.overrides.rows.map((row) => line(row, true)),
+    ]),
   ].join("\r\n");
 }

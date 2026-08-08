@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { PrismaClient } from "@prisma/client";
+import type * as svcTypes from "./membership-reports.service.js";
 import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 /**
@@ -30,6 +31,19 @@ describe("membership reports — usage, overrides, drill-down", () => {
 
   let currencyId = "";
   let countryId = "";
+  let countryCode = "";
+  // Phase 7f (§23): a second covered country with its OWN currency, plus a
+  // third that is covered and has no bookings at all — the union of both sets
+  // is what gets a section.
+  let currencyBId = "";
+  let currencyBCode = uniqueCurrencyCode();
+  let countryBId = "";
+  let countryBCode = "";
+  let countryCId = "";
+  let countryCCode = "";
+  let serviceBId = "";
+  let percentBenefitBId = "";
+  let orderBId = "";
   let planId = "";
   let levelId = "";
   let allowanceBenefitId = "";
@@ -55,19 +69,34 @@ describe("membership reports — usage, overrides, drill-down", () => {
     });
     currencyId = currency.id;
     currencyCode = currency.code;
-    const country = await prisma.country.create({
-      data: {
-        code: `r${uniq}`.slice(0, 8).toLowerCase(),
-        name: `Report Test ${uniq}`,
-        slug: `report-test-${uniq}`.toLowerCase(),
-        legacyHomePath: `/rhg-${uniq}`,
-        teamPath: `/rtm-${uniq}`,
-        generalConsultationPath: `/rgn-${uniq}`,
-        specialistConsultationPath: `/rsp-${uniq}`,
-        currencyId,
-      },
+    const currencyB = await prisma.currency.create({
+      data: { code: currencyBCode, symbol: "Kč", decimals: 2 },
     });
+    currencyBId = currencyB.id;
+    currencyBCode = currencyB.code;
+
+    const mkCountry = (tag: string, curId: string) =>
+      prisma!.country.create({
+        data: {
+          code: `${tag}${uniq}`.slice(0, 8).toLowerCase(),
+          name: `Report Test ${tag} ${uniq}`,
+          slug: `report-test-${tag}-${uniq}`.toLowerCase(),
+          legacyHomePath: `/rhg-${tag}-${uniq}`,
+          teamPath: `/rtm-${tag}-${uniq}`,
+          generalConsultationPath: `/rgn-${tag}-${uniq}`,
+          specialistConsultationPath: `/rsp-${tag}-${uniq}`,
+          currencyId: curId,
+        },
+      });
+    const country = await mkCountry("r", currencyId);
     countryId = country.id;
+    countryCode = country.code;
+    const countryB = await mkCountry("s", currencyBId);
+    countryBId = countryB.id;
+    countryBCode = countryB.code;
+    const countryC = await mkCountry("t", currencyBId);
+    countryCId = countryC.id;
+    countryCCode = countryC.code;
     const service = await prisma.service.create({
       data: {
         countryId,
@@ -79,6 +108,17 @@ describe("membership reports — usage, overrides, drill-down", () => {
       },
     });
     serviceId = service.id;
+    const serviceB = await prisma.service.create({
+      data: {
+        countryId: countryBId,
+        kind: "GENERAL",
+        name: "Report Test GP B",
+        slug: `report-gp-b-${uniq}`.toLowerCase(),
+        basePriceCents: 80000,
+        currencyCode: currencyBCode,
+      },
+    });
+    serviceBId = serviceB.id;
     const user = await prisma.user.create({
       data: {
         email: `report-${uniq}@test.local`,
@@ -91,7 +131,16 @@ describe("membership reports — usage, overrides, drill-down", () => {
     userId = user.id;
 
     const plan = await prisma.membershipPlan.create({
-      data: { primaryCountryId: countryId, countries: { create: { countryId } }, slug: `report-plan-${uniq}`, name: "Report Plan" },
+      data: {
+        primaryCountryId: countryId,
+        // Three covered countries: the primary, one that gets booked, and one
+        // that never does (§23 — it must still get a zeroed section).
+        countries: {
+          create: [{ countryId }, { countryId: countryBId }, { countryId: countryCId }],
+        },
+        slug: `report-plan-${uniq}`,
+        name: "Report Plan",
+      },
     });
     planId = plan.id;
     const level = await prisma.membershipLevel.create({
@@ -115,6 +164,21 @@ describe("membership reports — usage, overrides, drill-down", () => {
     percentBenefitId = (
       await prisma.membershipBenefit.create({
         data: { levelId, planId, countryId, serviceId, benefitType: "PERCENT", percentOff: 25 },
+      })
+    ).id;
+
+    // Country B's own rule. A kind row, not a service row: services are
+    // per-country, so B cannot reference A's service (§21.3).
+    percentBenefitBId = (
+      await prisma.membershipBenefit.create({
+        data: {
+          levelId,
+          planId,
+          countryId: countryBId,
+          serviceKind: "GENERAL",
+          benefitType: "PERCENT",
+          percentOff: 10,
+        },
       })
     ).id;
 
@@ -216,31 +280,84 @@ describe("membership reports — usage, overrides, drill-down", () => {
       },
     });
     orderId = order.id;
+
+    // The same member, booking in country B. Its own currency, so the two
+    // sections must never be added together (§39).
+    const orderB = await prisma.order.create({
+      data: {
+        orderNumber: `RPB-${uniq}`.slice(0, 30),
+        email: user.email,
+        fullName: "Report Member",
+        countryCode: countryB.code,
+        currencyCode: currencyBCode,
+        subtotalCents: 0,
+        shippingCents: 0,
+        totalCents: 0,
+        userId,
+        items: {
+          create: [
+            {
+              kind: "GENERAL_CONSULTATION",
+              serviceId: serviceBId,
+              name: "Report Test GP B",
+              unitPriceCents: 72000,
+              quantity: 1,
+              lineTotalCents: 72000,
+              membershipEnrollmentId: enrollmentId,
+              membershipBenefitId: percentBenefitBId,
+              membershipDiscountCents: 8000,
+            },
+            {
+              kind: "GENERAL_CONSULTATION",
+              serviceId: serviceBId,
+              name: "Report Test GP B",
+              unitPriceCents: 0,
+              quantity: 1,
+              lineTotalCents: 0,
+              membershipEnrollmentId: enrollmentId,
+              membershipBenefitId: percentBenefitBId,
+              membershipDiscountCents: 80000,
+              membershipOverrideReason: "Goodwill in the second market",
+            },
+          ],
+        },
+      },
+    });
+    orderBId = orderB.id;
   });
 
   after(async () => {
     if (!prisma || !countryId) return;
-    await prisma.membershipUsageLedger.deleteMany({ where: { orderId } });
-    await prisma.order.deleteMany({ where: { id: orderId } });
+    const countryIds = [countryId, countryBId, countryCId];
+    await prisma.membershipUsageLedger.deleteMany({ where: { orderId: { in: [orderId, orderBId] } } });
+    await prisma.order.deleteMany({ where: { id: { in: [orderId, orderBId] } } });
     await prisma.membershipAllowanceBalance.deleteMany({
-      where: { benefitId: { in: [allowanceBenefitId, percentBenefitId] } },
+      where: { benefitId: { in: [allowanceBenefitId, percentBenefitId, percentBenefitBId] } },
     });
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
     await prisma.membershipBenefit.deleteMany({ where: { levelId } });
     await prisma.membershipPlan.deleteMany({ where: { primaryCountryId: countryId } });
-    await prisma.service.deleteMany({ where: { countryId } });
+    await prisma.service.deleteMany({ where: { countryId: { in: countryIds } } });
     await prisma.user.deleteMany({ where: { id: userId } });
-    await prisma.country.deleteMany({ where: { id: countryId } });
-    await prisma.currency.deleteMany({ where: { id: currencyId } });
+    await prisma.country.deleteMany({ where: { id: { in: countryIds } } });
+    await prisma.currency.deleteMany({ where: { id: { in: [currencyId, currencyBId] } } });
   });
+
+  /** The section for one country code, which must exist under the §23 union. */
+  function section(report: svcTypes.MembershipUsageReport, code: string) {
+    const found = report.countries.find((c) => c.countryCode === code.toUpperCase());
+    assert.ok(found, `a section for ${code} exists`);
+    return found;
+  }
 
   it("counts every benefit type, not only the ones with a ledger row", async (t) => {
     if (!prisma) return t.skip();
     const report = await svc.buildMembershipUsageReport({ planId });
     assert.ok(report);
-    assert.equal(report.usage.consultations, 2, "the allowance AND the percent booking");
-    assert.equal(report.usage.byBenefitType.ALLOWANCE, 1);
-    assert.equal(report.usage.byBenefitType.PERCENT, 1);
+    const home = section(report, countryCode);
+    assert.equal(home.usage.consultations, 2, "the allowance AND the percent booking");
+    assert.equal(home.usage.byBenefitType.ALLOWANCE, 1);
+    assert.equal(home.usage.byBenefitType.PERCENT, 1);
   });
 
   it("keeps overrides out of usage, discount and allowance totals", async (t) => {
@@ -249,8 +366,9 @@ describe("membership reports — usage, overrides, drill-down", () => {
     assert.ok(report);
     // 6000 + 1500 from the two real lines. The two override lines carry
     // 1500 + 6000 between them and must not be in here.
-    assert.equal(report.usage.totalDiscountCents, 7500);
-    assert.equal(report.usage.totalChargedCents, 4500);
+    const home = section(report, countryCode);
+    assert.equal(home.usage.totalDiscountCents, 7500);
+    assert.equal(home.usage.totalChargedCents, 4500);
     // Read off the counter, not by counting flagged lines — an ADMIN_ADJUST
     // moves the counter with no booking behind it.
     assert.equal(report.allowance.used, 1);
@@ -261,9 +379,10 @@ describe("membership reports — usage, overrides, drill-down", () => {
     if (!prisma) return t.skip();
     const report = await svc.buildMembershipUsageReport({ planId });
     assert.ok(report);
-    assert.equal(report.overrides.consultations, 2);
-    assert.equal(report.overrides.totalValueCents, 7500, "1500 + 6000 given away");
-    const reasons = report.overrides.rows.map((row) => row.overrideReason);
+    const home = section(report, countryCode);
+    assert.equal(home.overrides.consultations, 2);
+    assert.equal(home.overrides.totalValueCents, 7500, "1500 + 6000 given away");
+    const reasons = home.overrides.rows.map((row) => row.overrideReason);
     assert.ok(reasons.every(Boolean), "every override row carries its reason");
     assert.ok(reasons.some((r) => /Complaint resolution/.test(r ?? "")));
   });
@@ -272,7 +391,9 @@ describe("membership reports — usage, overrides, drill-down", () => {
     if (!prisma) return t.skip();
     const report = await svc.buildMembershipUsageReport({ planId });
     assert.ok(report);
-    const unattributed = report.overrides.rows.find((row) => row.enrollmentId === null);
+    const unattributed = section(report, countryCode).overrides.rows.find(
+      (row) => row.enrollmentId === null,
+    );
     assert.ok(
       unattributed,
       "found through the benefit row — an enrollment-only query would miss it entirely",
@@ -296,8 +417,10 @@ describe("membership reports — usage, overrides, drill-down", () => {
       to: new Date("2020-12-31T23:59:59.999Z"),
     });
     assert.ok(past);
-    assert.equal(past.usage.consultations, 0);
-    assert.equal(past.overrides.consultations, 0);
+    // The covered countries still get their sections — zeroed, not absent.
+    assert.equal(past.countries.length, 3);
+    assert.ok(past.countries.every((c) => c.usage.consultations === 0));
+    assert.ok(past.countries.every((c) => c.overrides.consultations === 0));
     // Members are current state, not range-filtered — a partner asking "who is
     // on this programme" means now, not during the window.
     assert.equal(past.membersByStatus.ACTIVE, 1);
@@ -312,11 +435,21 @@ describe("membership reports — usage, overrides, drill-down", () => {
     if (!prisma) return t.skip();
     const report = await svc.buildMemberUsageReport(enrollmentId);
     assert.ok(report);
-    assert.equal(report.rows.length, 3, "two real lines plus their own override");
-    assert.equal(report.totals.consultations, 2);
-    assert.equal(report.totals.overrides, 1);
+    assert.equal(report.rows.length, 5, "four lines at home plus the second market's two, minus the override that belongs to nobody");
+    assert.equal(report.totals.consultations, 3);
+    assert.equal(report.totals.overrides, 2);
     assert.equal(report.totals.allowanceUsed, 1);
-    assert.equal(report.totals.discountCents, 7500);
+    // Per country, from the rows. `totals.discountCents` adds 6000 + 1500 at
+    // home to 8000 in the second market across two currencies — pinned as a
+    // known limitation of the MEMBER drill-down rather than asserted as a
+    // meaningful figure. The PARTNER report never sums across countries (§23).
+    const byCountry = new Map<string | null, number>();
+    for (const row of report.rows) {
+      if (row.overrideReason) continue;
+      byCountry.set(row.countryCode, (byCountry.get(row.countryCode) ?? 0) + row.discountCents);
+    }
+    assert.equal(byCountry.get(countryCode.toUpperCase()), 7500);
+    assert.equal(byCountry.get(countryBCode.toUpperCase()), 8000);
     assert.equal(report.enrollment.membershipId, `RP-${uniq}`.toUpperCase());
   });
 
@@ -331,12 +464,86 @@ describe("membership reports — usage, overrides, drill-down", () => {
     assert.ok(report);
     const csv = svc.usageReportToCsv(report);
     const lines = csv.split("\r\n");
-    assert.equal(lines.length, 5, "header + 2 usage rows + 2 override rows");
+    assert.equal(lines.length, 7, "header + 3 usage rows + 3 override rows, both markets");
     assert.ok(lines[0].includes("override,override_reason"));
     const overrideLines = lines.slice(1).filter((line) => line.includes(",yes,"));
     assert.ok(overrideLines.length >= 2, "override rows carry the flag");
     // A reason containing a comma must not shift every column after it.
     assert.ok(csv.includes(`"${"Goodwill after a cancelled slot"}"`) || csv.includes("Goodwill after a cancelled slot"));
-    assert.equal(report.currencyCode, currencyCode);
+  });
+
+  // ─── Per-country sections (§23, phase 7f) ──────────────────────────────────
+
+  it("splits usage into per-country sections, each in its own currency", async (t) => {
+    if (!prisma) return t.skip();
+    const report = await svc.buildMembershipUsageReport({ planId });
+    assert.ok(report);
+    const home = section(report, countryCode);
+    const away = section(report, countryBCode);
+    assert.equal(home.currencyCode, currencyCode);
+    assert.equal(away.currencyCode, currencyBCode);
+    assert.notEqual(home.currencyCode, away.currencyCode, "no shared currency to sum into");
+    assert.equal(away.usage.consultations, 1);
+    assert.equal(away.usage.totalChargedCents, 72000);
+    assert.equal(away.usage.totalDiscountCents, 8000);
+    // The report exposes no summed total anywhere — that is the §39 guarantee,
+    // and a top-level figure is what a partner would quote back.
+    assert.equal("usage" in report, false);
+    assert.equal("currencyCode" in report, false);
+  });
+
+  it("keeps overrides on their own line, per country", async (t) => {
+    if (!prisma) return t.skip();
+    const report = await svc.buildMembershipUsageReport({ planId });
+    assert.ok(report);
+    const away = section(report, countryBCode);
+    assert.equal(away.overrides.consultations, 1);
+    assert.equal(away.overrides.totalValueCents, 80000);
+    assert.equal(
+      away.usage.rows.some((row) => row.overrideReason != null),
+      false,
+      "goodwill never lands in the partner's usage rows",
+    );
+  });
+
+  it("gives a covered country with no bookings a zeroed section", async (t) => {
+    if (!prisma) return t.skip();
+    const report = await svc.buildMembershipUsageReport({ planId });
+    assert.ok(report);
+    const quiet = section(report, countryCCode);
+    assert.equal(quiet.covered, true);
+    assert.equal(quiet.usage.consultations, 0);
+    assert.equal(quiet.currencyCode, null, "no orders, so no currency to state");
+    // Data-only sections would hide that a covered market is used by nobody,
+    // which is exactly what a partner conversation needs.
+  });
+
+  it("puts the primary country first and keeps members and allowance global", async (t) => {
+    if (!prisma) return t.skip();
+    const report = await svc.buildMembershipUsageReport({ planId });
+    assert.ok(report);
+    assert.equal(report.countries[0].countryCode, countryCode.toUpperCase());
+    // Enrollment is pinned to the primary country and the pool is shared, so
+    // splitting either would invent a distinction the data model lacks.
+    assert.equal(report.membersByStatus.ACTIVE, 1);
+    assert.equal(report.allowance.allocated, 2);
+    assert.equal(report.allowance.used, 1);
+  });
+
+  it("labels every CSV row with the country the booking happened in", async (t) => {
+    if (!prisma) return t.skip();
+    const report = await svc.buildMembershipUsageReport({ planId });
+    assert.ok(report);
+    const csv = svc.usageReportToCsv(report);
+    assert.ok(csv.split("\r\n")[0].startsWith("order_number,booked_at,country,"));
+    const codes = csv
+      .split("\r\n")
+      .slice(1)
+      .map((line) => line.split(",")[2]);
+    assert.ok(codes.includes(countryCode.toUpperCase()));
+    assert.ok(
+      codes.includes(countryBCode.toUpperCase()),
+      "a member booking abroad is attributed to the BOOKING country, not their own",
+    );
   });
 });
