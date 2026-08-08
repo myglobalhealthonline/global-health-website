@@ -80,6 +80,34 @@ turning a dormant inconsistency into a broken deploy pipeline.
 Landing the directory is only safe with the **original file, byte for byte**,
 from whoever deployed it.
 
+## What was done (2026-08-08)
+
+Option 3's first branch, below — **the model plus a no-op migration**, chosen
+without recovering the original file. The author was not chased: the fix does
+not depend on finding them, and the `DROP TABLE` hazard was live in the
+meantime.
+
+- `schema.prisma` gains a `MemedBooking` model matching production **exactly**,
+  verified read-only against `trolley.proxy.rlwy.net:31877`: all four timestamps
+  `timestamp(3)`, `updatedAt` carrying `DEFAULT CURRENT_TIMESTAMP` (hence
+  `@default(now()) @updatedAt`, which Prisma would not otherwise emit),
+  `orderId` unique with `ON DELETE CASCADE ON UPDATE CASCADE`, and the
+  `(status, "createdAt")` btree.
+- `backend/prisma/migrations/20260808160000_memed_booking_model/` creates it
+  where it is absent. Every statement is idempotent — `CREATE TABLE IF NOT
+  EXISTS`, `CREATE [UNIQUE] INDEX IF NOT EXISTS`, and the FK inside a
+  `pg_constraint` guard because `ADD CONSTRAINT` has no `IF NOT EXISTS`. On
+  production it applies and changes nothing; on dev and test it is the real
+  create.
+
+The orphan row `20260808120000_memed_booking` stays in production's
+`_prisma_migrations` untouched. It is harmless there (see above) and removing it
+would be the checksum problem in reverse.
+
+Still true afterwards: nothing reads or writes the table, and it holds zero
+rows. If the original author surfaces with an integration, the model is already
+in place. If they never do, dropping the table is a separate, reviewed decision.
+
 ## What to do
 
 1. **Find the author.** The Railway dashboard's deploy history for the

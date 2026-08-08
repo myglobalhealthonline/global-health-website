@@ -2869,6 +2869,9 @@ model Order {
   /// Fiscal documents for this order (empty for Portugal / pre-invoice orders).
   /// Normally one invoice/receipt, plus a CREDIT_NOTE if the order was refunded.
   invoices                      Invoice[]
+  /// MEMED hand-off record, if one was ever attempted. Nothing in this repo
+  /// reads or writes it — see the MemedBooking model for why it is here.
+  memedBooking                  MemedBooking?
   /// Set ONLY on synthetic subscription orders minted for a corporate
   /// company's offline annual billing (admin-generated invoice/receipt/
   /// credit note in the corporate Invoices tab). Null on every ordinary
@@ -2903,6 +2906,40 @@ model Order {
   /// postPaymentStage as the leading equality condition.
   @@index([paymentStatus, postPaymentStage], map: "Order_paymentStatus_postPaymentStage_idx")
   @@index([corporateCompanyId])
+}
+
+/// Outbound hand-off record for MEMED, the Brazilian e-prescription platform:
+/// one row per Order, a status, the provider's reference, a response snapshot
+/// and an error field.
+///
+/// **Nothing in this repo reads or writes it, and this model exists only so
+/// that `prisma migrate diff` stops proposing `DROP TABLE "MemedBooking"`.**
+/// The table was created in production on 2026-08-07 by migration
+/// `20260808120000_memed_booking`, which exists in no git ref and could not be
+/// reconstructed (Prisma checksums applied migrations, so hand-written SQL
+/// producing an identical schema still breaks every later `migrate deploy`).
+/// With no model here, production's table read as drift, and a `DROP TABLE`
+/// for a name nobody recognises survives review as legitimate cleanup — that
+/// is the failure this model prevents. Modelled to match production exactly.
+///
+/// Full account: `docs/guides/orphan-migration-memed-booking.md`. Do not
+/// delete this model without also deciding what happens to the table.
+model MemedBooking {
+  id               String    @id
+  orderId          String    @unique
+  order            Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status           String    @default("PENDING")
+  memedReferenceId String?
+  responseSnapshot Json?
+  error            String?
+  requestedAt      DateTime  @default(now())
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  /// `@default(now())` alongside `@updatedAt` because production's column
+  /// carries `DEFAULT CURRENT_TIMESTAMP`; without it the schema drifts again.
+  updatedAt        DateTime  @default(now()) @updatedAt
+
+  @@index([status, createdAt])
 }
 
 /// Relational join between Order and Appointment (code review 2026-07-05,
