@@ -117,6 +117,12 @@ describe("admin membership enrollment routes", () => {
   });
 
   after(async () => {
+    // §24.3 — creating an enrollment can issue a card, and a card is a Chromium
+    // render. A no-op when this file never triggered one; a stopped suite when
+    // it did.
+    await (
+      await import("../modules/generated-documents/html-document-renderer.js")
+    ).closeSharedBrowser();
     if (!app) return;
     (await import("../lib/email/send-email.js")).setEmailCaptureHook(null);
     await deleteAuditLogs(prisma, { actorUserId: { in: [adminId, localAdminId, patientId] } });

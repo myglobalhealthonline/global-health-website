@@ -72,6 +72,11 @@ describe("membership linking", () => {
   });
 
   after(async () => {
+    // §24.3 — linking can issue a card, and a card is a Chromium render. A
+    // no-op when this file never triggered one; a stopped suite when it did.
+    await (
+      await import("../generated-documents/html-document-renderer.js")
+    ).closeSharedBrowser();
     if (!prisma) return;
     restoreEmail?.();
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });

@@ -299,6 +299,11 @@ describe("authorization matrix", () => {
   });
 
   after(async () => {
+    // §24.3 — this matrix hits membership endpoints that can issue a card, and
+    // a card is a Chromium render. A no-op when none was triggered.
+    await (
+      await import("../modules/generated-documents/html-document-renderer.js")
+    ).closeSharedBrowser();
     if (!app) return;
     envModule.MEDICAL_ACCESS_ENFORCE = originalEnforce;
     await deleteMedicalAccessLogs(prisma, { patientProfileId: patient1ProfileId });

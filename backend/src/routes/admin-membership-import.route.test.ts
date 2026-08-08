@@ -88,6 +88,17 @@ describe("membership import routes — recipient count", () => {
   });
 
   after(async () => {
+    // MANDATORY (§24.3), and before the `!app` guard so it runs even when the
+    // fixtures never came up. Committing an import issues cards, and every card
+    // is a Chromium page render — the browser child otherwise holds this worker
+    // open forever. Because node:test runs these files through a single child
+    // here, that does not fail one file: the whole suite stops at this point and
+    // never reaches a summary, which reads as a hang rather than as a leak.
+    // 7d put `issueMembershipCards` on the commit path; this file was written
+    // before that and never got the hook.
+    await (
+      await import("../modules/generated-documents/html-document-renderer.js")
+    ).closeSharedBrowser();
     if (!app) return;
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
     await prisma.membershipImportBatch.deleteMany({ where: { planId } });

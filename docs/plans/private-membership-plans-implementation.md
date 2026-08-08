@@ -2314,6 +2314,20 @@ currency, driven from `OrderItem.membershipEnrollmentId` joined to the order's c
 - overrides keep their own line, per country;
 - CSV export gains a `country` column.
 
+Three points this originally left open, settled 2026-08-08:
+
+1. **Which countries get a section: the union of both sets.** Countries present in
+   the order data, *plus* covered countries with no bookings, the latter shown as
+   zero. Covered-only would make a removed country's rows vanish, and §26 promises
+   those bookings keep their price. Data-only would hide that a covered market is
+   being used by nobody — which is exactly what a partner conversation needs.
+2. **`membersByStatus` and `allowance` stay global**, not per country. Enrollment is
+   pinned to the plan's primary country by the §21.5 FK and the pool is shared, so
+   splitting either would invent a distinction the data model does not have.
+3. **`currencyCode` moves from the report's top level into each section.** A
+   breaking shape change for `membership-usage-report.tsx`, whose only consumer is
+   in this repo.
+
 ## 24. The card
 
 ### 24.1 Visual system
@@ -2325,14 +2339,22 @@ as a pre-formatted string. Phase 3's `MembershipDigitalCard.tsx` is replaced by 
 private-membership variant of it, so both card types read as one family.
 
 Fields: plan + level name (translated), cardholder, membership ID, valid-through,
-covered countries, status.
+the countries the card works in, status.
 
-**Covered countries are ISO-2 codes, primary first** — `IE · CZ · PT` — in the
+**Those countries are ISO-2 codes, primary first** — `IE · CZ · PT` — in the
 footer's existing single country slot, which already ellipsises on overflow. Names
 would not fit and would need translating; the codes are what a member shows at a
 desk. The email body carries the full per-country detail (§25), so the card does not
 have to. A card that does not say where it works misses the point of a multi-country
 plan, which is why this is a card field and not only an email one.
+
+**They are the CONFIGURED countries, not every covered one** — a covered country
+with no benefit rows gives no benefit at all (§20), and §26 badges exactly that
+country in the admin UI as "not configured — members get no benefit here". Listing
+it on the card would have the card promising what the admin UI simultaneously
+flags as broken, and the member would find out at a desk. This paragraph
+originally said "covered"; 7d built it as configured and the wording is corrected
+here rather than the code.
 
 ### 24.2 Admin-set background colour (decision 45)
 
@@ -2502,7 +2524,17 @@ carries the weight: Playwright, unlike Puppeteer, does not expose the browser's 
 process, so it cannot be `unref`d. `closeSharedBrowser()` in an `after` hook is the
 only mechanism, and it only helps tests that know they render.
 
-## 26. Admin UI
+## 26. Admin UI — and the backend it needs
+
+**This section is not UI-only, and §28 mis-budgeted it as such.** Nothing has ever
+written `MembershipPlanCountry` outside plan creation: there is no service function
+and no route for adding or removing a covered country, or for the copy action below.
+7e therefore ships three endpoints on `admin-membership-plans.route.ts` —
+`POST` and `DELETE /api/admin/membership-plans/:planId/countries` and
+`POST /api/admin/membership-plans/:planId/countries/:countryId/copy-primary-rules` —
+plus the enrollment resend route over 7d's `force` flag. No migration: 7a already
+shipped `MEMBERSHIP_PLAN_COUNTRY_ADDED` / `_REMOVED` / `MEMBERSHIP_CARD_ISSUED`, and
+the benefit body schema already carries `countryId`.
 
 **Plan form:** primary country (fixed after creation, shown read-only thereafter) and
 a covered-countries manager. Adding a country warns that it grants benefits to all
@@ -2520,6 +2552,12 @@ get no benefit here" — because coverage without configuration silently gives n
 broken". Alongside it, a one-click **copy the primary country's kind-level rules**
 action: explicit, never automatic, and it skips `FIXED` rows, whose amounts are in
 the primary country's currency and are never converted (§22).
+
+**The copy is additive only.** It inserts a row only where the target country has
+no row for that kind, and it never overwrites or deletes one — a one-click action
+that can silently replace configured benefits is a one-click action someone
+eventually regrets. It reports what it skipped and distinguishes the two reasons:
+`FIXED` (currency, never converted) from already-configured (yours, left alone).
 
 **Member list/detail:** `partnerReference` searchable alongside the membership ID;
 detail shows the generated ID, the partner's number, and card-issued state with a
@@ -2577,7 +2615,7 @@ CSS in `portal.css` only; form actions right-aligned.
 | 7b | Pricing + options + allowance pool resolution, with tests. No UI |
 | 7c | Generated IDs + `partnerReference`, import changes (incl. the optional `locale` column, §25), preview recipient count |
 | 7d | Card component, colour picker, PDF, welcome email in six locales |
-| 7e | Admin UI: covered countries, level country tabs, member-list search |
+| 7e | Covered-country + copy-rules + card-resend routes (§26), then the admin UI over them: covered countries, level country tabs, member-list search. **Not UI-only** — see §26 |
 | 7f | Per-country reporting |
 
 7a and 7b change live pricing behaviour and should ship together, verified before 7c

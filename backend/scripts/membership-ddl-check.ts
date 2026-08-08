@@ -25,9 +25,11 @@ import { Pool } from "pg";
  * row with no allowanceCount.
  *
  * SAFETY: this script needs no `--apply` flag because it never keeps a write.
- * Every INSERT runs inside a transaction that ends in ROLLBACK, and the
- * behavioural section refuses to start unless the membership tables are empty.
- * Read-only against any database, including production.
+ * Every INSERT runs inside a transaction that ends in ROLLBACK — the rollback
+ * is in a `finally`, so it happens on the failure paths too. The behavioural
+ * section refuses to start only if it finds a `ddlchk_*` row already there,
+ * which means an earlier run died mid-transaction. Read-only in effect against
+ * any database, including production.
  */
 
 const EXPECTED_CONSTRAINTS = [
@@ -55,20 +57,6 @@ const EXPECTED_INDEXES = [
   "MembershipLevel_one_default_per_plan",
   "MembershipEnrollment_plan_email_active_key",
   "MembershipEnrollment_membershipId_lower_key",
-];
-
-const MEMBERSHIP_TABLES = [
-  "MembershipUsageLedger",
-  "MembershipAllowanceBalance",
-  "MembershipInviteLog",
-  "MembershipEnrollment",
-  "MembershipImportBatch",
-  "MembershipBenefit",
-  "MembershipLevelTranslation",
-  "MembershipLevel",
-  "MembershipPlanCountry",
-  "MembershipPlanTranslation",
-  "MembershipPlan",
 ];
 
 let failures = 0;
@@ -156,24 +144,45 @@ async function checkOverrideConstraints(client: Client): Promise<void> {
 }
 
 /**
- * The membership-table fixtures. Its own function because the "database already
- * holds memberships" bail-out below is a `return`: while this lived inline in
- * `main`, that return skipped `client.release()` / `pool.end()`, so on any
- * populated database the script hung with an open pool and never printed its
- * own PASS/FAIL summary — the run looked like a timeout rather than a result.
+ * The membership-table fixtures. Its own function because the bail-out below is
+ * a `return`: while this lived inline in `main`, that return skipped
+ * `client.release()` / `pool.end()`, so the script hung with an open pool and
+ * never printed its own PASS/FAIL summary — the run looked like a timeout
+ * rather than a result.
+ *
+ * This used to bail out whenever ANY membership table held a row, which made
+ * the behavioural half unreachable on every database worth checking: dev,
+ * staging and production all hold memberships, and the bar is a PASS on dev.
+ * It was not a skip, it was a permanently dead check.
+ *
+ * What actually protects existing data is the `ROLLBACK` in the `finally`,
+ * which is unconditional — the same argument `checkOverrideConstraints` above
+ * already makes while mutating a populated `OrderItem`. The one hazard a
+ * rollback does not cover is colliding with a row that is already there, so
+ * that is what is asserted instead: no `ddlchk_*` id may exist beforehand.
+ * A leftover one means a previous run died mid-transaction and its rows need
+ * clearing before any result here can be trusted.
  */
+const FIXTURE_TABLES = [
+  "MembershipEnrollment",
+  "MembershipBenefit",
+  "MembershipLevel",
+  "MembershipPlanCountry",
+  "MembershipPlan",
+];
+
 async function checkMembershipFixtures(client: Client): Promise<void> {
   await client.query("BEGIN");
   try {
-    // Refuse to write fixtures into a database that already holds real
-    // memberships, even though everything below is rolled back.
-    for (const table of MEMBERSHIP_TABLES) {
-      const count = await client.query<{ n: number }>(`SELECT count(*)::int AS n FROM "${table}"`);
+    for (const table of FIXTURE_TABLES) {
+      const count = await client.query<{ n: number }>(
+        `SELECT count(*)::int AS n FROM "${table}" WHERE id LIKE 'ddlchk\\_%'`,
+      );
       if (count.rows[0].n !== 0) {
         check(
           "behavioural checks",
           false,
-          `skipped: ${table} holds ${count.rows[0].n} row(s); run this against an empty membership schema`,
+          `skipped: ${table} already holds ${count.rows[0].n} ddlchk_* row(s) from an aborted run; delete them and re-run`,
         );
         return;
       }
