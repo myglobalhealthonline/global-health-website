@@ -679,6 +679,8 @@
     "redirecting": "Redirigiendo a Stripe…",
     "paySecurely": "Paga {amount} de forma segura",
     "redirectNote": "Serás redirigido a Stripe para completar el pago. Nunca almacenamos los datos de tu tarjeta.",
+    "zeroTotalNote": "No es necesario pagar: tus beneficios cubren esta reserva por completo. Al confirmar se completa y no se piden datos de tarjeta.",
+    "confirmZeroTotal": "Confirmar reserva — nada que pagar",
     "orderSummary": "Resumen del pedido",
     "subtotal": "Subtotal",
     "shipping": "Envío",

@@ -679,6 +679,8 @@
     "redirecting": "A redirecionar para a Stripe…",
     "paySecurely": "Pagar {amount} em segurança",
     "redirectNote": "Será redirecionado para a Stripe para concluir o pagamento. Nunca guardamos os dados do seu cartão.",
+    "zeroTotalNote": "Não é necessário pagamento — os seus benefícios cobrem esta marcação na totalidade. Ao confirmar, fica concluída e não são pedidos dados do cartão.",
+    "confirmZeroTotal": "Confirmar marcação — nada a pagar",
     "orderSummary": "Resumo da encomenda",
     "subtotal": "Subtotal",
     "shipping": "Envio",

@@ -161,7 +161,16 @@ const adminMembershipImportRoute: FastifyPluginAsync = async (app) => {
           skipped: result.skipped,
           revalidated: result.revalidated,
         },
-        "Import committed",
+        // The stale flag reaches a human here or nowhere. A preview left open
+        // for a day can have had its levels, emails and ids move underneath it,
+        // and the skipped rows are the visible consequence — without this the
+        // admin sees counts that do not match the screen they approved and has
+        // no reason offered.
+        result.revalidated && result.skipped.length > 0
+          ? `Import committed. This preview was over a day old and ${result.skipped.length} row(s) no longer applied — see the skipped list`
+          : result.skipped.length > 0
+            ? `Import committed, with ${result.skipped.length} row(s) skipped`
+            : "Import committed",
       );
     } catch (error) {
       return handleImportError(app, reply, error);

@@ -62,7 +62,7 @@ import {
   assertOrderCountryScope,
   resolveOrderListCountryScope,
 } from "../utils/order-country-scope.js";
-import { recordCriticalAudit } from "../modules/audit/audit.service.js";
+import { recordAudit, recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
@@ -356,6 +356,44 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             );
           }
           benefitSource = "NONE";
+        } else if (benefitSource === "NONE" && userId) {
+          /**
+           * DIAGNOSTIC ONLY (§26 polish). An eligible patient is checking out
+           * at `NONE`, so they are paying full price while holding something
+           * cheaper. That is a legitimate outcome — decision 44 exists for
+           * exactly it — but nothing recorded it, which made "I should have got
+           * my discount" unanswerable: the order is indistinguishable from a
+           * full-price booking by someone who merely happens to hold a
+           * membership.
+           *
+           * Fire-and-forget, and never awaited: this must not add latency to a
+           * checkout, must not fail one, and nothing downstream branches on it.
+           */
+          void hasEligibleBenefitSources({
+            userId,
+            serviceIds: cart.items
+              .map((i) => i.serviceId)
+              .filter((id): id is string => Boolean(id)),
+          })
+            .then((eligible) => {
+              if (!eligible) return;
+              return recordAudit({
+                actorUserId: userId,
+                action: "MEMBERSHIP_BENEFIT_DECLINED",
+                entityType: "Cart",
+                entityId: cart.id,
+                metadata: {
+                  serviceIds: cart.items.map((i) => i.serviceId).filter(Boolean),
+                  membershipEnrollmentId: cart.membershipEnrollmentId,
+                  // The two readings this row exists to tell apart: a member who
+                  // deliberately declined, and a client that sent NONE without
+                  // ever showing them the choice. Neither is inferable later.
+                  declinedAllowanceUnit: cart.membershipDeclineUnit,
+                },
+                request,
+              });
+            })
+            .catch(() => undefined);
         }
 
         // Anti-manipulation gate: re-derive the price of every consultation

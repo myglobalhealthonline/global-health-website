@@ -702,6 +702,14 @@ export type CommonLocale = {
     redirecting: string;
     paySecurely: string;
     redirectNote: string;
+    /**
+     * The €0 order (§6.5/§31). A benefit can cover a booking in full, and that
+     * order never reaches Stripe — checkout completes it and goes straight to
+     * the success page — so `redirectNote` and `paySecurely` are both untrue
+     * there.
+     */
+    zeroTotalNote: string;
+    confirmZeroTotal: string;
     orderSummary: string;
     subtotal: string;
     shipping: string;

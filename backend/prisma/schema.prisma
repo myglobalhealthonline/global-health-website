@@ -412,6 +412,12 @@ enum AuditAction {
   /// The card + welcome email went out for an enrollment (decision 41).
   /// `cardIssuedAt` is the dedupe; this is the trail of when and to whom.
   MEMBERSHIP_CARD_ISSUED
+  /// An eligible member checked out at `benefitSource = NONE`. DIAGNOSTIC ONLY
+  /// — nothing branches on it and no price changes. Without it, "I should have
+  /// got my discount" is unanswerable: the order looks like a full-price
+  /// booking by someone who happens to hold a membership, and there is no
+  /// record of whether they declined or the client never sent a choice.
+  MEMBERSHIP_BENEFIT_DECLINED
 }
 
 enum CountryAccessModel {

@@ -491,6 +491,39 @@ describe("membership import (database)", () => {
     assert.equal(result.cardsIssued, 1, "and only the row that landed is emailed");
   });
 
+  it("skips a row whose level was deleted under the batch, keeping the rest", async (t) => {
+    if (!prisma) return t.skip();
+    await clearEnrollments();
+    // The other half of the re-validation story (§8.2). `levelId` was written
+    // into the preview and used unchecked, so a level deleted between preview
+    // and commit made the insert throw a foreign-key error — which is not a
+    // MembershipEnrollmentConflictError, so it escaped the per-row skip and
+    // rolled the whole batch back. One deleted level must cost one row.
+    const doomed = await prisma.membershipLevel.create({
+      data: { planId, slug: `doomed-${uniq}`.slice(0, 60), name: "Doomed" },
+    });
+    const csv = [
+      HEADER,
+      row({ email: `keep-${uniq}@test.local`, firstName: "A", lastName: "One" }),
+      row({
+        email: `lost-${uniq}@test.local`,
+        firstName: "B",
+        lastName: "Two",
+        level: doomed.slug,
+      }),
+    ].join("\n");
+    const batch = await preview(csv);
+    assert.equal(rowsOf(batch)[1].levelId, doomed.id, "the preview picked the level");
+
+    await prisma.membershipLevel.delete({ where: { id: doomed.id } });
+
+    const result = await svc.commitMembershipImport(batch.id, null);
+    assert.ok(result.claimed, "the batch still commits");
+    assert.equal(result.created, 1, "the good row lands");
+    assert.equal(result.skipped.length, 1);
+    assert.match(result.skipped[0].reason, /level no longer exists/i);
+  });
+
   it("resolves a named level, and defaults to the plan's default level", async (t) => {
     if (!prisma) return t.skip();
     const csv = [

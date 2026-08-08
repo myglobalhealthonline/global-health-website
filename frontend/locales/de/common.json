@@ -679,6 +679,8 @@
     "redirecting": "Weiterleitung zu Stripe…",
     "paySecurely": "{amount} sicher bezahlen",
     "redirectNote": "Sie werden zu Stripe weitergeleitet, um die Zahlung abzuschließen. Wir speichern niemals Ihre Kartendaten.",
+    "zeroTotalNote": "Es ist keine Zahlung erforderlich — Ihre Leistungen decken diese Buchung vollständig ab. Mit dem Bestätigen wird sie abgeschlossen, Kartendaten werden nicht erfasst.",
+    "confirmZeroTotal": "Buchung bestätigen — nichts zu zahlen",
     "orderSummary": "Bestellübersicht",
     "subtotal": "Zwischensumme",
     "shipping": "Versand",

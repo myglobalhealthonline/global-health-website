@@ -11,7 +11,9 @@ import { benefitOptionsQuerySchema } from "../validations/me-benefit-options.sch
  *
  * Auth required: guests get 401 so the booking step can render "log in to use a
  * membership, plan or corporate benefit" instead of an empty list, matching how
- * `/api/me/cart-preview` and `/api/me/benefit-preview` already behave.
+ * `/api/me/cart-preview` behaves. (`/api/me/benefit-preview` was retired in
+ * phase 5 — this endpoint replaced it, and `authz-matrix.test.ts` asserts the
+ * old path now 404s.)
  *
  * Read-only. Nothing is reserved or spent, and checkout re-derives every price
  * from the DB (§13.2) — so the worst a tampered response can do is cost the

@@ -19,7 +19,14 @@ import {
  */
 
 export const MEMBERSHIP_IMPORT_ROW_CAP = 2000;
-/** Older than this and commit re-validates: levels, emails and ids may have moved. */
+/**
+ * A preview older than this is reported as stale on commit.
+ *
+ * Re-validation itself is NOT gated on it — levels, emails and ids are re-checked
+ * on every commit, because a level can be deleted a minute after a preview as
+ * easily as a day after. The flag exists only to tell an admin why the counts
+ * they were shown and the counts that landed differ.
+ */
 const REVALIDATE_AFTER_MS = 24 * 60 * 60 * 1000;
 
 export class MembershipImportError extends Error {
@@ -596,6 +603,30 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
     let created = 0;
     let revived = 0;
 
+    /**
+     * Re-validate the levels the preview chose, once, against the live plan.
+     *
+     * This is what `REVALIDATE_AFTER_MS` was always about and what the commit
+     * did not actually do: `row.levelId` was written into the preview and used
+     * unchecked, so a level deleted between preview and commit made
+     * `upsertEnrollmentRow` throw a foreign-key error — which is not a
+     * `MembershipEnrollmentConflictError`, so it escaped the per-row skip and
+     * rolled back the whole batch. One deleted level should cost one row, not
+     * 2,000.
+     *
+     * Unconditional rather than gated on `stale`: a level can be deleted a
+     * minute after a preview just as easily as a day after, and a check that
+     * only runs on old batches is a check that is never exercised.
+     */
+    const liveLevelIds = new Set(
+      (
+        await tx.membershipLevel.findMany({
+          where: { planId: plan.id },
+          select: { id: true },
+        })
+      ).map((level) => level.id),
+    );
+
     // Primaries first: a dependent's primary may be created by this same file.
     //
     // The test is "names a primary by EITHER handle". Keying it on
@@ -606,6 +637,14 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
     const ordered = [...applicable.filter((r) => !isDependent(r)), ...applicable.filter(isDependent)];
 
     for (const row of ordered) {
+      if (!row.levelId || !liveLevelIds.has(row.levelId)) {
+        skipped.push({
+          line: row.line,
+          reason: "That level no longer exists on this programme — re-upload to pick a current one",
+        });
+        continue;
+      }
+
       let primaryEnrollmentId: string | null = null;
       if (row.primaryMembershipId || row.primaryEmail) {
         // Resolved here rather than carried from the preview, because a
@@ -632,7 +671,7 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
         const outcome = await upsertEnrollmentRow(tx, {
           planId: plan.id,
           planSlug: plan.slug,
-          levelId: row.levelId!,
+          levelId: row.levelId,
           countryId: plan.primaryCountryId,
           // No membershipId: generated per row inside (§21.5).
           partnerReference: row.partnerReference ?? null,

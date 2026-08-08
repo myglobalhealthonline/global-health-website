@@ -679,6 +679,8 @@
     "redirecting": "Redirecting to Stripe…",
     "paySecurely": "Pay {amount} securely",
     "redirectNote": "You will be redirected to Stripe to complete payment. We never store your card details.",
+    "zeroTotalNote": "No payment is needed — your benefits cover this booking in full. Confirming completes it, and no card details are taken.",
+    "confirmZeroTotal": "Confirm booking — nothing to pay",
     "orderSummary": "Order summary",
     "subtotal": "Subtotal",
     "shipping": "Shipping",

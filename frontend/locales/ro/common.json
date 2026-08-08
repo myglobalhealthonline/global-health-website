@@ -679,6 +679,8 @@
     "redirecting": "Redirecționare către Stripe…",
     "paySecurely": "Plătește {amount} în siguranță",
     "redirectNote": "Vei fi redirecționat către Stripe pentru a finaliza plata. Nu stocăm niciodată datele cardului tău.",
+    "zeroTotalNote": "Nu este necesară nicio plată — beneficiile tale acoperă integral această rezervare. Confirmarea o finalizează și nu se solicită date de card.",
+    "confirmZeroTotal": "Confirmă rezervarea — nimic de plată",
     "orderSummary": "Rezumatul comenzii",
     "subtotal": "Subtotal",
     "shipping": "Livrare",

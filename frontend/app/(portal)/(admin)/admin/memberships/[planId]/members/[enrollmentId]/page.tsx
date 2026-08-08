@@ -27,6 +27,7 @@ import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../../_co
 import { ConfirmDeleteButton } from "../../../../_components/confirm-delete-button";
 import { MembershipEnrollmentFields } from "../../../_components/membership-enrollment-form";
 import { MembershipAllowanceAdjust } from "../../../_components/membership-allowance-adjust";
+import { MembershipTermDateGuard } from "../../../_components/membership-term-date-guard";
 import { MemberUsageTable } from "../../../_components/membership-usage-report";
 
 export const dynamic = "force-dynamic";
@@ -455,9 +456,16 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
           <form action={saveMemberAction} className="flex flex-col gap-6 p-6">
             <MembershipEnrollmentFields levels={levels} enrollment={enrollment} />
             <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
-              <button type="submit" className="gh-btn gh-btn-primary">
+              {/* Re-dating a live term orphans its allowance counter — the
+                  balance is keyed on termStart, so the next spend opens a fresh
+                  one at full allocation. Silent today; named here. */}
+              <MembershipTermDateGuard
+                originalStartDate={enrollment.startDate.slice(0, 10)}
+                peopleAffected={1 + liveDependents.length}
+                unitsSpent={allowances.reduce((sum, row) => sum + row.used, 0)}
+              >
                 Save member
-              </button>
+              </MembershipTermDateGuard>
             </div>
           </form>
         </AdminCard>

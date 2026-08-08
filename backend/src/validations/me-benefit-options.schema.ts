@@ -15,8 +15,8 @@ export const benefitOptionsQuerySchema = z.object({
   doctorId: z.string().trim().min(1).max(80).optional(),
   timeSlotId: z.string().trim().min(1).max(80).optional(),
   // .catch(undefined): an unknown locale falls back to the untranslated plan
-  // name instead of failing the whole query parse. Matches
-  // `/api/me/benefit-preview`.
+  // name instead of failing the whole query parse — carried over from the
+  // retired `/api/me/benefit-preview` this endpoint replaced.
   locale: z
     .preprocess((v) => (typeof v === "string" ? v.toUpperCase() : v), z.nativeEnum(LocaleCode).optional())
     .catch(undefined),

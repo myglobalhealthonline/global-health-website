@@ -75,6 +75,16 @@ export function CheckoutPageClient({
   // amount Stripe charges (server recomputes the same benefits) (B5).
   const [coverageSaved, setCoverageSaved] = useState(0);
   const [coverageLines, setCoverageLines] = useState<CartCoverageLine[]>([]);
+  /**
+   * The preview is a round-trip, and until it lands `coverageSaved` is 0 — so
+   * the pay button reads "Pay €39 securely" for a second or two on an order
+   * that will charge €0, and a fast buyer can press it. The amount it names has
+   * to be an amount, so the button waits rather than showing a placeholder.
+   *
+   * Only the LABEL is at stake, never the charge: the server recomputes every
+   * benefit at checkout (§13.2) and Stripe is handed the amount it derives.
+   */
+  const [previewLoading, setPreviewLoading] = useState(true);
   // Payer contact was already collected on the consult Details step (or comes
   // from the signed-in account) — show it read-only by default instead of
   // re-asking, and only unlock the fields if the buyer explicitly wants to
@@ -98,11 +108,19 @@ export function CheckoutPageClient({
 
   useEffect(() => {
     let cancelled = false;
-    void getCartPreview().then((res) => {
-      if (cancelled) return;
-      setCoverageSaved(res.ok ? res.data.totalSavedCents : 0);
-      setCoverageLines(res.ok ? res.data.lines : []);
-    });
+    void getCartPreview()
+      .then((res) => {
+        if (cancelled) return;
+        setCoverageSaved(res.ok ? res.data.totalSavedCents : 0);
+        setCoverageLines(res.ok ? res.data.lines : []);
+      })
+      // A failed preview must still release the button. Its own error path
+      // already falls back to "no savings", and the server is the authority on
+      // the price either way — leaving the button disabled would strand the
+      // buyer on a working checkout.
+      .finally(() => {
+        if (!cancelled) setPreviewLoading(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -277,6 +295,18 @@ export function CheckoutPageClient({
     payableSaved,
   );
   const planSaved = payableSaved - corporateSaved;
+  /**
+   * A benefit can cover the order in full (§6.5/§31). That order never reaches
+   * Stripe — checkout completes it and lands on the success page — so the
+   * "you will be redirected to Stripe" note and "Pay €0.00 securely" are both
+   * false there. Held behind the preview so it never flips mid-read.
+   */
+  const zeroTotal = !previewLoading && payableTotal === 0;
+  const payLabel = submitting
+    ? t.redirecting
+    : zeroTotal
+      ? t.confirmZeroTotal
+      : t.paySecurely.replace("{amount}", formatPrice(payableTotal, cart.currencyCode));
   // Shipping address gate. HEALTH_TEST kits always ship physically.
   // Other kinds only need it when admin set a non-zero shipping fee.
   const needsShipping = cart.items.some(
@@ -518,15 +548,15 @@ export function CheckoutPageClient({
               <div>
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || previewLoading}
                   className="gh2-btn-lime w-full justify-center disabled:opacity-60 sm:w-auto"
                 >
-                  {submitting ? (
+                  {submitting || previewLoading ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : (
                     <Lock className="size-4" aria-hidden />
                   )}
-                  {submitting ? t.redirecting : t.paySecurely.replace("{amount}", formatPrice(payableTotal, cart.currencyCode))}
+                  {payLabel}
                 </button>
               </div>
             </form>
@@ -649,7 +679,7 @@ export function CheckoutPageClient({
                   {[
                     { icon: ShieldCheck, label: t.trustSecure },
                     { icon: Lock, label: t.trustEncrypted },
-                    { icon: Lock, label: t.redirectNote },
+                    { icon: Lock, label: zeroTotal ? t.zeroTotalNote : t.redirectNote },
                   ].map(({ icon: Icon, label }, idx) => (
                     <li key={`${label}-${idx}`} className="flex items-center gap-2.5">
                       <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
@@ -665,9 +695,9 @@ export function CheckoutPageClient({
       <MobileOrderTotalBar
         totalLabel={t.total}
         formattedTotal={formatPrice(payableTotal, cart.currencyCode)}
-        actionLabel={submitting ? t.redirecting : t.paySecurely.replace("{amount}", formatPrice(payableTotal, cart.currencyCode))}
+        actionLabel={payLabel}
         onAction={() => formRef.current?.requestSubmit()}
-        pending={submitting}
+        pending={submitting || previewLoading}
         watchTargetId="checkout-order-summary"
       />
     </>

@@ -679,6 +679,8 @@
     "redirecting": "Přesměrování na Stripe…",
     "paySecurely": "Zaplatit {amount} bezpečně",
     "redirectNote": "Budete přesměrováni na Stripe k dokončení platby. Nikdy neukládáme údaje o vaší kartě.",
+    "zeroTotalNote": "Platba není potřeba — vaše výhody pokrývají tuto rezervaci v plné výši. Potvrzením ji dokončíte a nezadáváte žádné údaje o kartě.",
+    "confirmZeroTotal": "Potvrdit rezervaci — nic k zaplacení",
     "orderSummary": "Souhrn objednávky",
     "subtotal": "Mezisoučet",
     "shipping": "Doprava",
