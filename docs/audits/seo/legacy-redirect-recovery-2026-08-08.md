@@ -154,3 +154,141 @@ One row worth separating out when the decision is made:
 - **7 legacy URLs terminate on a page that is not self-canonical.**
 - The 160 generic-hub mappings, ambiguous discontinued content, and anything
   requiring an editorial or product decision.
+
+## Batch 2 — re-run + implementation (same day)
+
+Re-pulled the GSC page export via the OpenSEO MCP (90 days, 2026-05-05 →
+2026-08-05, 1,419 page rows total) rather than assuming batch 1's counts still
+held. **490 legacy-shaped URLs this time** (1,329 clicks / 36,560 impressions)
+— both counts higher than batch 1's, consistent with the wider/more recent
+window, not a regression.
+
+| Outcome | URLs | Clicks | Impr |
+| --- | --- | --- | --- |
+| Clean one-hop | 391 | 520 | 24,196 |
+| Multi-hop | 15 | 55 | 528 |
+| Terminal 404 | 29 | 119 | 837 |
+| Terminal 410 (Gráinne, batch 1) | 1 | 74 | 519 |
+| Terminal noindex | 48 | 201 | 3,387 |
+| Live global pages (`/`, `/about`, `/blog`, …) — not a defect | 6 | 360 | 7,093 |
+
+**Terminal-noindex fell from 81 → 48** — not this batch's work; the doctor/
+service indexability alignment done earlier the same day
+(`isPublicDoctorRecordIndexable` / `isPublicServiceRecordIndexable`) already
+recovered part of this bucket as a side effect.
+
+### Implemented — Jana Cyplinska: 410 Gone
+
+Full production-database search (all 8 Czechia doctor rows, active or not,
+by name and slug) found **zero match anywhere** — not an inactive row, no
+row at all. Stronger signal than Gráinne's case lacked an owner statement to
+pair with it: Gráinne's removal was confirmed by the owner directly; Jana's
+is inferred from complete database absence, the strongest evidence available
+without asking. Documented as such in `lib/seo/gone-content.ts` rather than
+presented as equivalent.
+
+`GONE_DOCTORS` (that file) now carries both entities; `slugMatcherExcludingGone`
+already generalizes over `legacyPrefix`, so `czechia-doctors` needed the same
+one-line exclusion `ireland-doctors` already had. All 5 URL shapes (53 clicks /
+244 impressions) plus the pre-emptive `/czechia/{lang}/doctors/…` current-shape
+forms now answer 410 in one hop, verified live.
+
+### Implemented — Vitor Pais: redirect to the live profile
+
+`dr-vitor-pais` (legacy) → `dr-vitor-hugo-de-matos-pais` (live): same OM
+registration pattern of Wix truncating to first+last name that produced the
+Mariam Faiz and Silvia Fernandes corrections in batch 1. Confirmed via the
+country-scoped API: same market (Portugal), same specialty (General
+Practice), long-form bio present, registration 64505. 3 URL shapes (41 clicks
+/ 245 impressions) now 301 in one hop.
+
+**The target page is currently `noindex`** — same root cause found across 15
+other doctors below, not a redirect defect. The redirect fix is complete and
+correct; the clicks will not actually return until that flag is addressed
+(out of scope here, see below).
+
+### Implemented — 5 collapsed 2-hop chains
+
+Each already resolved correctly in 2 hops (broad `/{country}-doctors/:slug`
+rule → the doctor page's own de-accented/alias-slug redirect). Same person,
+same market, both hops individually correct — flattened to 1 per the
+"collapse rather than retain" rule. 55 clicks / 528 impressions moved from
+2-hop to 1-hop; no equity was being lost, this is pure efficiency.
+
+| Old slug | Live slug | Market |
+| --- | --- | --- |
+| `dr.-mohamed-fadzly-mustafar` | `dr-mohamed-fadzly-bin-mohamed` | Ireland |
+| `dr-khoiamul-islam` | `khoiamul-islam` | Ireland |
+| `dr-maristela-ferro-nepomuceno` | `maristela-ferro-nepomuceno` | Ireland |
+| `mudr-ahmed-maklad` | `dr-ahmed-maklad` | Czechia |
+| `javier-villarte-betancor` | `dr-javier-villarte-betancor` | Spain |
+
+(`tomás-ruiz-palacios` → `dr-tomas-ruiz-palacios`, 1 click, was evaluated but
+not implemented — see below.)
+
+### Found, not implemented — root cause of most of the noindex-terminal bucket
+
+Ran a database check across the 22 doctors behind the noindex-terminal rows.
+**15 of them have complete public content — 2,400–4,700-character bios,
+registration numbers, active — held back by nothing except
+`editorialChecklist.readyToIndex` never being set to `true`.** 119 clicks /
+2,269 impressions. Vitor Pais above makes 16.
+
+This is `B. technical publication bug`, not `C. incomplete editorial
+content` — but "the content is obviously fine" is not the same permission as
+"flip the flag", and the batch instructions are explicit: do not set
+`readyToIndex` to recover traffic. Reported, not touched.
+
+The remaining 6 noindex-terminal doctors (82 clicks / 871 impressions) have
+`bio` genuinely empty — `C. incomplete editorial content`, real, no fix
+attempted (would require inventing clinical copy).
+
+The 3 noindex-terminal rows with 0 clicks / 247 impressions pointing at
+`consulta-online-medicina-estetica` and `consulta-salud-vascular-circulatoria`
+are two of the four Spain services this same session correctly noindexed
+earlier (empty `detailBody`) — the redirect is correct, the noindex is
+correct, nothing to do here.
+
+### Investigated, left unresolved — 10 more doctors, precisely classified this time
+
+Full database dump (all rows, any active state, for ie/pt/es/cz) instead of
+the active-only public API used in batch 1:
+
+**Exact slug already exists, `active: false`** — a publication-flag decision
+only, zero redirect ambiguity if/when reactivated. Not touched (same
+restriction as `readyToIndex` — this batch does not flip publication state):
+
+| Old slug | Existing row | Country | Clicks/Impr |
+| --- | --- | --- | --- |
+| `dr-mirza-aun-mohammad` | `dr-mirza-aun-mohammad` (exact) | Ireland | 8 / 134 |
+| `dr-andra-cristea` | `dr-andra-cristea` (exact) | Ireland | 0 / 16 |
+| `irene-galve-moros` | `dr-irene-galve-moros` | Spain | 3 / 9 |
+
+**No matching row anywhere** — same evidentiary tier as Jana, but not named
+in this batch's instructions for individual deep-dive treatment, so left in
+the reporting bucket rather than auto-implementing more 410s beyond what was
+asked:
+
+| Old slug | Country | Clicks/Impr |
+| --- | --- | --- |
+| `dr-julieta-janik` | Ireland | 3 / 49 |
+| `dra-ana-jerónimo` | Portugal | 4 / 20 |
+| `dr-ariana-gonzalvez-garcia` (new this batch, not in the original 13) | Spain | 3 / 13 |
+| `mudr-andrei-lavrov` | Czechia | 2 / 17 |
+| `dr-pablo-esteban-martinez` | Spain | 2 / 5 |
+| `dr-mala-vili-rajan` | Ireland | 0 / 61 |
+| `dr-luis-infante` | Portugal | 0 / 13 |
+| `dr-yliana-muñoz-bravo` | Spain | 0 / 7 |
+| `dr-daniela-stefani-` (trailing hyphen — confirmed truncated Wix slug, no entity) | Spain | 0 / 2 |
+
+`tomás-ruiz-palacios` (1 click) was not added to the collapsed-chain list:
+the accented literal in a `next.config.ts` `source` has no precedent in this
+file and the existing 2-hop alias redirect already lands correctly, so this
+was judged not worth the encoding risk for 1 click.
+
+### Tests
+
+`tests/unit/gone-paths.test.ts` and `tests/unit/legacy-doctor-redirects.test.ts`
+extended with the same rule-order harness batch 1 established — every new
+mapping proven to win over its broad sibling, resolve in one hop, and survive
+reordering back to the broken state. 86 tests in the two files, all passing.

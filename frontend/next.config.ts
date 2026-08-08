@@ -851,6 +851,33 @@ const nextConfig: NextConfig = {
       // what the platform publishes. 0 clicks / 40 impressions.
       { source: "/ireland-doctors/silvia-alexandra-raminhos-fernandes", destination: "/ireland/en/doctors/silvia-alexandre-fernandes", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/ireland-doctors/silvia-alexandra-raminhos-fernandes", destination: "/ireland/en/doctors/silvia-alexandre-fernandes", permanent: true },
+      // dr-vitor-pais -> dr-vitor-hugo-de-matos-pais: same clinician, "Dr Vitor
+      // Hugo de Matos Pais" (OM registration 64505, Portugal General Practice) —
+      // the Wix slug carried only first+last name, matching the same
+      // truncation pattern as the Ireland corrections above. 41 clicks / 245
+      // impressions over 90 days, 2026-08-08.
+      { source: "/portugal-doctors/dr-vitor-pais", destination: "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal-doctors/dr-vitor-pais", destination: "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais", permanent: true },
+      // ── Collapsed 2-hop chains (legacy-redirect-recovery-2026-08-08.md §9) ──
+      //
+      // Each of these already resolved correctly in 2 hops: the broad
+      // `/{country}-doctors/:slug` rule below rewrote the slug unchanged onto
+      // `/{country}/{lang}/doctors/{old-slug}`, which then itself 308'd via the
+      // doctor page's own de-accented/alias-slug redirect (`doctorSlugCandidates`
+      // in `lib/content/doctor-profile-data.ts`) onto the true live slug. Same
+      // person, same market, both hops individually correct — just flattened to
+      // one, per the "collapse rather than retain unnecessary chains" rule.
+      { source: "/ireland-doctors/dr.-mohamed-fadzly-mustafar", destination: "/ireland/en/doctors/dr-mohamed-fadzly-bin-mohamed", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/ireland-doctors/dr.-mohamed-fadzly-mustafar", destination: "/ireland/en/doctors/dr-mohamed-fadzly-bin-mohamed", permanent: true },
+      { source: "/ireland-doctors/dr-khoiamul-islam", destination: "/ireland/en/doctors/khoiamul-islam", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/ireland-doctors/dr-khoiamul-islam", destination: "/ireland/en/doctors/khoiamul-islam", permanent: true },
+      { source: "/ireland-doctors/dr-maristela-ferro-nepomuceno", destination: "/ireland/en/doctors/maristela-ferro-nepomuceno", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/ireland-doctors/dr-maristela-ferro-nepomuceno", destination: "/ireland/en/doctors/maristela-ferro-nepomuceno", permanent: true },
+      { source: "/czechia-doctors/mudr-ahmed-maklad", destination: "/czechia/cs/doctors/dr-ahmed-maklad", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/czechia-doctors/mudr-ahmed-maklad", destination: "/czechia/cs/doctors/dr-ahmed-maklad", permanent: true },
+      { source: "/spain-doctors/javier-villarte-betancor", destination: "/spain/es/doctors/dr-javier-villarte-betancor", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/spain-doctors/javier-villarte-betancor", destination: "/spain/es/doctors/dr-javier-villarte-betancor", permanent: true },
+      { source: "/spain-doctors/tomás-ruiz-palacios", destination: "/spain/es/doctors/dr-tomas-ruiz-palacios", permanent: true },
 
       // Legacy Wix doctor profiles — slugs carried over 1:1.
       //
@@ -865,7 +892,13 @@ const nextConfig: NextConfig = {
         destination: "/ireland/en/doctors/:slug",
         permanent: true,
       },
-      { source: "/czechia-doctors/:slug", destination: "/czechia/cs/doctors/:slug", permanent: true },
+      // Same gone-slug exclusion as ireland-doctors below — mudr-jana-cyplinska
+      // must fall through to the 410 in proxy.ts, not be 308'd onto a dead URL.
+      {
+        source: `/czechia-doctors/${slugMatcherExcludingGone("czechia-doctors")}`,
+        destination: "/czechia/cs/doctors/:slug",
+        permanent: true,
+      },
       { source: "/pt/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
       { source: "/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
       { source: "/romania-doctors/:slug", destination: "/romania/ro/doctors/:slug", permanent: true },
@@ -921,7 +954,11 @@ const nextConfig: NextConfig = {
       // bare (unprefixed) rules above stay as-is.
 
       // -- locale-prefixed doctor listings: slug carried over 1:1 --------
-      { source: "/:locale(cs|es|pt|ro)/czechia-doctors/:slug", destination: "/czechia/cs/doctors/:slug", permanent: true },
+      {
+        source: `/:locale(cs|es|pt|ro)/czechia-doctors/${slugMatcherExcludingGone("czechia-doctors")}`,
+        destination: "/czechia/cs/doctors/:slug",
+        permanent: true,
+      },
       // Same gone-slug exclusion as the bare rule above.
       {
         source: `/:locale(cs|es|pt|ro)/ireland-doctors/${slugMatcherExcludingGone("ireland-doctors")}`,

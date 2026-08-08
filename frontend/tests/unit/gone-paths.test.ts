@@ -48,6 +48,35 @@ const GSC_OBSERVED = [
   "/ireland/ro/doctors/dr-grainne-ahern", // 0 / 4
 ];
 
+/**
+ * MUDr. Jana Cyplinska — legacy-redirect-recovery-2026-08-08.md, batch 2.
+ * Every URL shape she was reachable at, per the 90-day GSC export.
+ */
+const GONE_JANA = [
+  "/czechia-doctors/mudr-jana-cyplinska",
+  "/en/czechia-doctors/mudr-jana-cyplinska",
+  "/pt/czechia-doctors/mudr-jana-cyplinska",
+  "/es/czechia-doctors/mudr-jana-cyplinska",
+  "/cs/czechia-doctors/mudr-jana-cyplinska",
+  "/ro/czechia-doctors/mudr-jana-cyplinska",
+  "/de/czechia-doctors/mudr-jana-cyplinska",
+  "/czechia/en/doctors/mudr-jana-cyplinska",
+  "/czechia/pt/doctors/mudr-jana-cyplinska",
+  "/czechia/es/doctors/mudr-jana-cyplinska",
+  "/czechia/cs/doctors/mudr-jana-cyplinska",
+  "/czechia/ro/doctors/mudr-jana-cyplinska",
+  "/czechia/de/doctors/mudr-jana-cyplinska",
+];
+
+/** The five variants that actually carried traffic. */
+const GSC_OBSERVED_JANA = [
+  "/es/czechia-doctors/mudr-jana-cyplinska", // 44 clicks / 142 impressions
+  "/czechia-doctors/mudr-jana-cyplinska", // 4 / 59
+  "/cs/czechia-doctors/mudr-jana-cyplinska", // 4 / 19
+  "/pt/czechia-doctors/mudr-jana-cyplinska", // 1 / 9
+  "/ro/czechia-doctors/mudr-jana-cyplinska", // 0 / 15
+];
+
 describe("gone paths — departed clinician", () => {
   it.each(GONE)("%s is Gone", (p) => {
     expect(isGonePath(p)).toBe(true);
@@ -67,6 +96,36 @@ describe("gone paths — departed clinician", () => {
   it("does not throw on a malformed escape sequence", () => {
     expect(() => isGonePath("/ireland-doctors/%E0%A4%A")).not.toThrow();
     expect(isGonePath("/ireland-doctors/%E0%A4%A")).toBe(false);
+  });
+});
+
+describe("gone paths — MUDr. Jana Cyplinska", () => {
+  it.each(GONE_JANA)("%s is Gone", (p) => {
+    expect(isGonePath(p)).toBe(true);
+  });
+
+  it.each(GSC_OBSERVED_JANA)("%s (had GSC traffic) is Gone", (p) => {
+    expect(isGonePath(p)).toBe(true);
+  });
+
+  it("does not cross into the Ireland gone-doctor list or vice versa", () => {
+    expect(isGonePath("/czechia-doctors/dr-grainne-ahern")).toBe(false);
+    expect(isGonePath("/ireland-doctors/mudr-jana-cyplinska")).toBe(false);
+  });
+
+  it("does not capture the Vitor Pais redirect mapping", () => {
+    for (const p of [
+      "/portugal-doctors/dr-vitor-pais",
+      "/pt/portugal-doctors/dr-vitor-pais",
+      "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais",
+    ]) {
+      expect(isGonePath(p), p).toBe(false);
+    }
+  });
+
+  it("does not capture a live Czechia doctor", () => {
+    expect(isGonePath("/czechia-doctors/dr-ahmed-maklad")).toBe(false);
+    expect(isGonePath("/czechia/cs/doctors/khoiamul-islam")).toBe(false);
   });
 });
 
@@ -149,7 +208,7 @@ describe("gone paths — no redirect may intercept the 410", () => {
     // non-strict. A `$`-anchored exclusion silently failed to exclude them —
     // `/ireland-doctors/dr-grainne-ahern/` answered 308 while every sibling
     // answered 410. Found live, not by reasoning; keep both forms covered.
-    for (const p of [...GONE, ...GONE.map((g) => `${g}/`)]) {
+    for (const p of [...GONE, ...GONE.map((g) => `${g}/`), ...GONE_JANA, ...GONE_JANA.map((g) => `${g}/`)]) {
       const matching = all.filter((r) => toRegex(r.source).test(p));
       expect(matching.map((r) => r.source), `${p} is intercepted by a redirect`).toEqual([]);
     }
@@ -164,7 +223,14 @@ describe("gone paths — no redirect may intercept the 410", () => {
     expect(hit!.destination).toBe("/ireland/en/doctors/:slug");
   });
 
-  it("the exclusion did not disturb the two slug corrections", async () => {
+  it("the broad Czechia rule still redirects a LIVE doctor", async () => {
+    const all = await rules();
+    const hit = all.find((r) => toRegex(r.source).test("/czechia-doctors/dr-gabriele-felici"));
+    expect(hit, "broad Czechia doctor rule no longer matches live slugs").toBeDefined();
+    expect(hit!.destination).toBe("/czechia/cs/doctors/:slug");
+  });
+
+  it("the exclusion did not disturb the two Ireland slug corrections", async () => {
     const all = await rules();
     for (const p of [
       "/ireland-doctors/dr-miraim-faiz",

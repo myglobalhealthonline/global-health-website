@@ -38,9 +38,19 @@ export type GoneDoctor = {
  * dr-grainne-ahern — confirmed departed 2026-08-08 (owner decision). Was the
  * site's highest-traffic legacy URL: 74 clicks / 600 impressions over 90 days
  * across 4 URL variants, average position 3.8.
+ *
+ * mudr-jana-cyplinska — 2026-08-08, evidentiary basis differs from the row
+ * above: no owner statement, a direct database search (all Czechia doctor
+ * rows, active or not — every one of the 8 currently in that market, checked
+ * by name and slug) found zero match anywhere, not merely an inactive row.
+ * Absence from the roster API alone would only mean unpublished; absence from
+ * the table itself is the strongest signal obtainable without asking a human,
+ * and legacy-redirect-recovery-2026-08-08.md records it as such. 53 clicks /
+ * 244 impressions over 90 days across 5 URL variants.
  */
 export const GONE_DOCTORS: readonly GoneDoctor[] = [
   { country: "ireland", legacyPrefix: "ireland-doctors", slug: "dr-grainne-ahern" },
+  { country: "czechia", legacyPrefix: "czechia-doctors", slug: "mudr-jana-cyplinska" },
 ];
 
 /** Site locales — the `[lang]` segment, and the legacy Wix locale prefix. */

@@ -110,6 +110,35 @@ const CORRECTIONS: Array<[string, string]> = [
   ],
 ];
 
+/**
+ * Legacy-redirect-recovery batch 2 (2026-08-08): the Vitor Pais mapping and
+ * five collapsed 2-hop chains (broad rule -> alias-slug page redirect,
+ * flattened to one). Same "specific rule must win, in one hop" property as
+ * CORRECTIONS above, kept in a separate table because the entities span four
+ * different countries instead of just Ireland.
+ */
+const CORRECTIONS_BATCH2: Array<[string, string]> = [
+  ["/portugal-doctors/dr-vitor-pais", "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"],
+  ["/pt/portugal-doctors/dr-vitor-pais", "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"],
+  ["/cs/portugal-doctors/dr-vitor-pais", "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"],
+  ["/es/portugal-doctors/dr-vitor-pais", "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"],
+  ["/ro/portugal-doctors/dr-vitor-pais", "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"],
+  ["/ireland-doctors/dr.-mohamed-fadzly-mustafar", "/ireland/en/doctors/dr-mohamed-fadzly-bin-mohamed"],
+  ["/pt/ireland-doctors/dr.-mohamed-fadzly-mustafar", "/ireland/en/doctors/dr-mohamed-fadzly-bin-mohamed"],
+  ["/ireland-doctors/dr-khoiamul-islam", "/ireland/en/doctors/khoiamul-islam"],
+  ["/ro/ireland-doctors/dr-khoiamul-islam", "/ireland/en/doctors/khoiamul-islam"],
+  ["/ireland-doctors/dr-maristela-ferro-nepomuceno", "/ireland/en/doctors/maristela-ferro-nepomuceno"],
+  ["/pt/ireland-doctors/dr-maristela-ferro-nepomuceno", "/ireland/en/doctors/maristela-ferro-nepomuceno"],
+  ["/ro/ireland-doctors/dr-maristela-ferro-nepomuceno", "/ireland/en/doctors/maristela-ferro-nepomuceno"],
+  ["/czechia-doctors/mudr-ahmed-maklad", "/czechia/cs/doctors/dr-ahmed-maklad"],
+  ["/cs/czechia-doctors/mudr-ahmed-maklad", "/czechia/cs/doctors/dr-ahmed-maklad"],
+  ["/es/czechia-doctors/mudr-ahmed-maklad", "/czechia/cs/doctors/dr-ahmed-maklad"],
+  ["/ro/czechia-doctors/mudr-ahmed-maklad", "/czechia/cs/doctors/dr-ahmed-maklad"],
+  ["/spain-doctors/javier-villarte-betancor", "/spain/es/doctors/dr-javier-villarte-betancor"],
+  ["/es/spain-doctors/javier-villarte-betancor", "/spain/es/doctors/dr-javier-villarte-betancor"],
+  ["/cs/spain-doctors/javier-villarte-betancor", "/spain/es/doctors/dr-javier-villarte-betancor"],
+];
+
 describe("legacy doctor slug corrections", () => {
   it.each(CORRECTIONS)("%s resolves to the corrected slug", async (from, to) => {
     expect(resolve(await rules(), from)).toBe(to);
@@ -196,5 +225,76 @@ describe("legacy doctor slug corrections", () => {
       "/ireland/en/doctors/dr-raza-khan",
     );
     expect(firstMatch(all, "/ireland-doctors/dr-raza-khan")!.rule.source).toMatch(/:slug/);
+  });
+});
+
+/**
+ * Batch 2 (2026-08-08): Vitor Pais plus five collapsed 2-hop chains. Same
+ * "specific rule wins, one hop, permanent" property as CORRECTIONS above.
+ */
+describe("legacy-redirect-recovery batch 2", () => {
+  it.each(CORRECTIONS_BATCH2)("%s resolves to the corrected slug", async (from, to) => {
+    expect(resolve(await rules(), from)).toBe(to);
+  });
+
+  it("the specific rule wins over its broad sibling, for every entry", async () => {
+    const all = await rules();
+    for (const [from] of CORRECTIONS_BATCH2) {
+      const hit = firstMatch(all, from)!;
+      expect(hit, from).not.toBeNull();
+      expect(hit.rule.source, `${from} was captured by a broad rule`).not.toMatch(/:slug/);
+    }
+  });
+
+  it("every correction sits earlier in the array than every rule that would swallow it", async () => {
+    const all = await rules();
+    for (const [from] of CORRECTIONS_BATCH2) {
+      const specific = firstMatch(all, from)!.index;
+      const broadIndexes = all
+        .map((r, i) => ({ r, i }))
+        .filter(({ r, i }) => i !== specific && /:slug/.test(r.source) && toRegex(r.source).test(from))
+        .map(({ i }) => i);
+      for (const b of broadIndexes) {
+        expect(specific, `${from}: specific rule #${specific} must precede broad rule #${b}`).toBeLessThan(b);
+      }
+    }
+  });
+
+  it("is a single hop — no destination is itself redirected again", async () => {
+    const all = await rules();
+    for (const [, to] of CORRECTIONS_BATCH2) {
+      expect(firstMatch(all, to), `${to} is itself a redirect source — that is a chain`).toBeNull();
+    }
+  });
+
+  it("is permanent and stays within the source URL's own market", async () => {
+    const all = await rules();
+    const marketOf = (path: string) =>
+      /ireland-doctors/.test(path)
+        ? "ireland"
+        : /czechia-doctors/.test(path)
+          ? "czechia"
+          : /spain-doctors/.test(path)
+            ? "spain"
+            : /portugal-doctors/.test(path)
+              ? "portugal"
+              : null;
+    for (const [from, to] of CORRECTIONS_BATCH2) {
+      expect(firstMatch(all, from)!.rule.permanent).toBe(true);
+      const market = marketOf(from);
+      expect(market, from).not.toBeNull();
+      expect(to.startsWith(`/${market}/`), `${from} -> ${to} left its own market`).toBe(true);
+      expect(to).not.toMatch(/:\w+/); // no unsubstituted params
+    }
+  });
+
+  it("does not terminate on the naive slug the broad rule alone would have produced", async () => {
+    const all = await rules();
+    expect(resolve(all, "/czechia-doctors/mudr-ahmed-maklad")).not.toBe(
+      "/czechia/cs/doctors/mudr-ahmed-maklad", // the intermediate hop this batch flattened away
+    );
+    expect(resolve(all, "/portugal-doctors/dr-vitor-pais")).not.toBe(
+      "/portugal/pt/doctors/dr-vitor-pais", // 404 before this batch — no such live slug
+    );
   });
 });
