@@ -840,7 +840,7 @@
     "reviewRateStepSubmit": "Enviar"
   },
   "homeMeta": {
-    "titleTemplate": "Médico Online {country} | Médicos de Cabecera y Especialistas Colegiados | Global Health",
+    "titleTemplate": "Médico Online {country} | Médicos y Especialistas Colegiados | Global Health",
     "descriptionTemplate": "Consulte hoy con un médico colegiado por videollamada — medicina general, certificados médicos, derivaciones a especialistas. Mismo día en {country}."
   },
   "pricingPage": {

@@ -840,7 +840,7 @@
     "reviewRateStepSubmit": "Odeslat"
   },
   "homeMeta": {
-    "titleTemplate": "Online lékař {country} | Registrovaní praktičtí lékaři a specialisté | Global Health",
+    "titleTemplate": "Online lékař {country} | Registrovaní lékaři a specialisté | Global Health",
     "descriptionTemplate": "Promluvte si ještě dnes s registrovaným lékařem přes videohovor — praktický lékař, potvrzení, odeslání ke specialistovi. Tentýž den, {country}."
   },
   "pricingPage": {

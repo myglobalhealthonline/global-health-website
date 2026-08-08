@@ -840,7 +840,7 @@
     "reviewRateStepSubmit": "Enviar"
   },
   "homeMeta": {
-    "titleTemplate": "Médico Online {country} | Clínicos Gerais e Especialistas Registados | Global Health",
+    "titleTemplate": "Médico Online {country} | Clínicos e Especialistas Registados | Global Health",
     "descriptionTemplate": "Consulte hoje um médico registado por videochamada — clínica geral, atestados médicos, referenciações para especialistas. Mesmo dia em {country}."
   },
   "pricingPage": {
