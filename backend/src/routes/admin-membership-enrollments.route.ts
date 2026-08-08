@@ -33,6 +33,7 @@ import {
   adjustEnrollmentAllowance,
   AllowanceAdjustError,
 } from "../modules/memberships/membership-allowance.service.js";
+import { issueMembershipCard } from "../modules/memberships/membership-card-issue.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -275,6 +276,46 @@ const adminMembershipEnrollmentsRoute: FastifyPluginAsync = async (app) => {
       // MembershipInviteLog, which is how an admin tells "never told them" from
       // "told them and they ignored it".
       return okResponse(result, result.ok ? "Invite sent" : "Invite could not be sent");
+    } catch (error) {
+      return handleEnrollmentError(app, reply, error);
+    }
+  });
+
+  /**
+   * Re-issue the card and welcome email (§26). A route over 7d's `force` flag —
+   * the issuer owns the dedupe and the audit row, so this adds neither.
+   *
+   * `force` is unconditional, which is the point: `cardIssuedAt` blocks every
+   * ordinary re-send and a revive deliberately keeps it (§25), so without this
+   * a member whose level was recoloured or renamed has no way to get a current
+   * card. `cardIssuedAt` keeps its first value — the audit row is the per-send
+   * trail.
+   */
+  app.post("/api/admin/membership-enrollments/:id/resend-card", async (request, reply) => {
+    const auth = await requireManageMemberships(request, reply);
+    if (!auth) return;
+    const params = membershipEnrollmentIdParamsSchema.safeParse(request.params);
+    if (!params.success) return reply.status(400).send(errorResponse("Invalid enrollment id"));
+    try {
+      const result = await issueMembershipCard({
+        enrollmentId: params.data.id,
+        force: true,
+        actorAdminId: auth.actorUserId,
+      });
+      if (!result.issued) {
+        // Reported, not thrown: "this member is REMOVED" and "the mail bounced"
+        // are both answers an admin acts on, and neither is a server fault.
+        const message =
+          result.reason === "not-found"
+            ? "Membership not found"
+            : result.reason === "removed"
+              ? "This membership is removed — reactivate it before issuing a card"
+              : "The card could not be sent — check the member's email address";
+        return reply
+          .status(result.reason === "not-found" ? 404 : 400)
+          .send(errorResponse(message));
+      }
+      return okResponse({ to: result.to }, `Card sent to ${result.to}`);
     } catch (error) {
       return handleEnrollmentError(app, reply, error);
     }

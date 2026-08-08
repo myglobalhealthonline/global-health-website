@@ -4,10 +4,13 @@ import { recordAudit } from "../modules/audit/audit.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { LocaleNotSupportedError } from "../modules/shared/locale-support.js";
 import {
+  addPlanCountry,
+  copyPrimaryKindRules,
   createMembershipBenefit,
   createMembershipLevel,
   createMembershipPlan,
   deactivateMembershipPlan,
+  removePlanCountry,
   deleteMembershipBenefit,
   deleteMembershipLevel,
   getLevelPlanId,
@@ -25,6 +28,7 @@ import {
   MembershipLevelFamilyError,
   MembershipLevelInUseError,
   MembershipLevelNotFoundError,
+  MembershipPlanCountryError,
   MembershipPlanNotFoundError,
 } from "../modules/memberships/membership-plans.service.js";
 import {
@@ -44,6 +48,8 @@ import {
   membershipBenefitIdParamsSchema,
   membershipLevelIdParamsSchema,
   membershipLevelLocaleParamsSchema,
+  membershipPlanCountryBodySchema,
+  membershipPlanCountryParamsSchema,
   membershipPlanIdParamsSchema,
   membershipPlanLocaleParamsSchema,
   membershipTranslationBodySchema,
@@ -73,6 +79,7 @@ function handleMembershipError(
   if (
     error instanceof MembershipCountryNotFoundError ||
     error instanceof MembershipBenefitServiceError ||
+    error instanceof MembershipPlanCountryError ||
     error instanceof MembershipLevelFamilyError ||
     error instanceof LocaleNotSupportedError
   ) {
@@ -214,6 +221,109 @@ const adminMembershipPlansRoute: FastifyPluginAsync = async (app) => {
       return handleMembershipError(app, reply, error);
     }
   });
+
+  // ─── Covered countries (§26) ───────────────────────────────────────────────
+  //
+  // Config-tier gated like every other pricing write: adding a country grants
+  // benefits to every existing member of the plan immediately, which is a cost
+  // decision, not member admin.
+
+  app.post("/api/admin/membership-plans/:planId/countries", async (request, reply) => {
+    const auth = await requireManageMemberships(request, reply);
+    if (!auth) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
+    const params = membershipPlanIdParamsSchema.safeParse(request.params);
+    if (!params.success) return reply.status(400).send(errorResponse("Invalid plan id"));
+    const body = membershipPlanCountryBodySchema.safeParse(request.body);
+    if (!body.success) return reply.status(400).send(errorResponse("Invalid country"));
+    try {
+      const plan = await addPlanCountry(params.data.planId, body.data.countryId);
+      recordAudit({
+        actorUserId: auth.actorUserId,
+        actorRole: auth.actorRole,
+        action: "MEMBERSHIP_PLAN_COUNTRY_ADDED",
+        entityType: "MembershipPlan",
+        entityId: plan.id,
+        metadata: { countryId: body.data.countryId },
+        request,
+      }).catch(() => {});
+      return okResponse(
+        { plan },
+        "Country added — existing members get benefits there as soon as it is configured",
+      );
+    } catch (error) {
+      return handleMembershipError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/membership-plans/:planId/countries", async (request, reply) => {
+    const auth = await requireManageMemberships(request, reply);
+    if (!auth) return;
+    if (!requireMembershipConfigRole(auth, reply)) return;
+    const params = membershipPlanIdParamsSchema.safeParse(request.params);
+    if (!params.success) return reply.status(400).send(errorResponse("Invalid plan id"));
+    const body = membershipPlanCountryBodySchema.safeParse(request.body);
+    if (!body.success) return reply.status(400).send(errorResponse("Invalid country"));
+    try {
+      const result = await removePlanCountry(params.data.planId, body.data.countryId);
+      recordAudit({
+        actorUserId: auth.actorUserId,
+        actorRole: auth.actorRole,
+        action: "MEMBERSHIP_PLAN_COUNTRY_REMOVED",
+        entityType: "MembershipPlan",
+        entityId: result.plan.id,
+        // The cascade count belongs in the audit row: it is the only record
+        // that configuration was destroyed alongside the coverage.
+        metadata: { countryId: body.data.countryId, removedBenefits: result.removedBenefits },
+        request,
+      }).catch(() => {});
+      return okResponse(
+        result,
+        result.removedBenefits > 0
+          ? `Country removed, along with ${result.removedBenefits} benefit row(s). Existing bookings keep their price`
+          : "Country removed. Existing bookings keep their price",
+      );
+    } catch (error) {
+      return handleMembershipError(app, reply, error);
+    }
+  });
+
+  app.post(
+    "/api/admin/membership-plans/:planId/countries/:countryId/copy-primary-rules",
+    async (request, reply) => {
+      const auth = await requireManageMemberships(request, reply);
+      if (!auth) return;
+      if (!requireMembershipConfigRole(auth, reply)) return;
+      const params = membershipPlanCountryParamsSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid plan or country"));
+      try {
+        const result = await copyPrimaryKindRules(params.data.planId, params.data.countryId);
+        recordAudit({
+          actorUserId: auth.actorUserId,
+          actorRole: auth.actorRole,
+          action: "MEMBERSHIP_BENEFIT_CREATED",
+          entityType: "MembershipPlan",
+          entityId: params.data.planId,
+          metadata: { copyPrimaryRules: params.data.countryId, ...result },
+          request,
+        }).catch(() => {});
+        const skips = [
+          result.skippedFixed > 0
+            ? `${result.skippedFixed} fixed-price row(s) skipped — amounts are in the primary country's currency`
+            : null,
+          result.skippedExisting > 0
+            ? `${result.skippedExisting} already configured here and left alone`
+            : null,
+        ].filter(Boolean);
+        return okResponse(
+          result,
+          [`Copied ${result.copied} rule(s)`, ...skips].join(". "),
+        );
+      } catch (error) {
+        return handleMembershipError(app, reply, error);
+      }
+    },
+  );
 
   // ─── Plan translations ─────────────────────────────────────────────────────
 

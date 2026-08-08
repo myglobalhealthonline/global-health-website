@@ -51,6 +51,17 @@ export class MembershipPlanNotFoundError extends Error {
   }
 }
 
+/**
+ * Anything wrong with a plan's covered-country list (§26): removing the
+ * primary, adding a country twice, or configuring one the plan does not cover.
+ */
+export class MembershipPlanCountryError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "MembershipPlanCountryError";
+  }
+}
+
 export class MembershipLevelNotFoundError extends Error {
   constructor() {
     super("Membership level not found");
@@ -256,6 +267,197 @@ export async function deactivateMembershipPlan(planId: string) {
     });
   } catch (error) {
     throw normalizeDbError(error, "Membership plans are unavailable");
+  }
+}
+
+// ─── Covered countries (§26) ─────────────────────────────────────────────────
+
+/**
+ * Add a covered country to a live plan (decision 34).
+ *
+ * **Immediate and free:** every existing member of the plan gains benefits in
+ * that country the moment the row lands, with no per-member action — an
+ * admin-visible cost event, which is why the form says so before the call.
+ *
+ * Coverage is still not configuration. Until benefit rows exist for the new
+ * country, members get nothing there (§20) — the level editor badges exactly
+ * that state, and `copyPrimaryKindRules` is the one-click way out of it.
+ *
+ * Commission markets are refused for the same reason plan creation refuses them
+ * (§6.6, open item 3): a €0 allowance line in a commission country clamps the
+ * commission to zero and fires a per-line ops alert. Adding the country is the
+ * other door into that, and it was open.
+ */
+export async function addPlanCountry(planId: string, countryId: string) {
+  const plan = await prisma.membershipPlan.findUnique({
+    where: { id: planId },
+    select: { id: true, primaryCountryId: true },
+  });
+  if (!plan) throw new MembershipPlanNotFoundError();
+
+  const country = await prisma.country.findUnique({
+    where: { id: countryId },
+    select: { id: true, commissionReceiptEnabled: true },
+  });
+  if (!country) throw new MembershipCountryNotFoundError();
+  if (country.commissionReceiptEnabled) throw new MembershipCommissionCountryError();
+
+  const existing = await prisma.membershipPlanCountry.findUnique({
+    where: { planId_countryId: { planId, countryId } },
+    select: { id: true },
+  });
+  if (existing) throw new MembershipPlanCountryError("This plan already covers that country");
+
+  try {
+    await prisma.membershipPlanCountry.create({ data: { planId, countryId } });
+    return await prisma.membershipPlan.findUniqueOrThrow({
+      where: { id: planId },
+      include: planDetailInclude,
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Membership plans are unavailable");
+  }
+}
+
+/**
+ * Stop covering a country. New bookings there get no benefit; anything already
+ * booked keeps its price, because an order line's price is snapshotted on the
+ * `OrderItem` and nothing re-derives it (§26, mirroring decision 17).
+ *
+ * **It also deletes that country's benefit rows** — `MembershipBenefit_plan_
+ * country_fkey` is `ON DELETE CASCADE`, so the configuration goes with the
+ * coverage. The count is returned so the UI can say so rather than leaving an
+ * admin to discover it by re-adding the country to an empty tab.
+ *
+ * No allowance counter is at risk: a pool is always the PRIMARY country's row
+ * (§21.4) and the primary can never be removed, so no `MembershipAllowance
+ * Balance` hangs off anything this deletes.
+ */
+export async function removePlanCountry(planId: string, countryId: string) {
+  const plan = await prisma.membershipPlan.findUnique({
+    where: { id: planId },
+    select: { id: true, primaryCountryId: true },
+  });
+  if (!plan) throw new MembershipPlanNotFoundError();
+  if (countryId === plan.primaryCountryId) {
+    throw new MembershipPlanCountryError(
+      "The primary country cannot be removed — it is fixed at creation and every enrollment is attributed to it",
+    );
+  }
+
+  const existing = await prisma.membershipPlanCountry.findUnique({
+    where: { planId_countryId: { planId, countryId } },
+    select: { id: true },
+  });
+  if (!existing) throw new MembershipPlanCountryError("This plan does not cover that country");
+
+  try {
+    const removedBenefits = await prisma.membershipBenefit.count({
+      where: { planId, countryId },
+    });
+    await prisma.membershipPlanCountry.delete({ where: { id: existing.id } });
+    const updated = await prisma.membershipPlan.findUniqueOrThrow({
+      where: { id: planId },
+      include: planDetailInclude,
+    });
+    return { plan: updated, removedBenefits };
+  } catch (error) {
+    throw normalizeDbError(error, "Membership plans are unavailable");
+  }
+}
+
+export type CopyPrimaryRulesResult = {
+  copied: number;
+  /** `FIXED` rows: the amount is in the primary country's currency (§22). */
+  skippedFixed: number;
+  /** The target country already configures that kind — left alone. */
+  skippedExisting: number;
+};
+
+/**
+ * Copy the primary country's kind-level benefit rules onto a covered country
+ * (§26). Explicit, never automatic — adding a country must not silently start
+ * pricing consultations.
+ *
+ * **Additive only.** A row is inserted only where the target has none for that
+ * kind; nothing is ever overwritten or deleted, because a one-click action that
+ * can silently replace configured benefits is one somebody eventually regrets.
+ *
+ * `FIXED` rows are skipped: their amounts are stored in the primary country's
+ * currency and there is no conversion anywhere (§39). The two skip reasons are
+ * reported separately — "your rules, left alone" and "we cannot convert money"
+ * are different answers and an admin needs to tell them apart.
+ *
+ * `ALLOWANCE` rows ARE copied, and that is correct: the copy is what makes the
+ * country *configured*, so units become spendable there (decision 38). Its own
+ * `allowanceCount` never defines a pool — that is always the primary's row
+ * (§21.4) — but the row has to exist for the country to be reachable at all.
+ */
+export async function copyPrimaryKindRules(
+  planId: string,
+  countryId: string,
+): Promise<CopyPrimaryRulesResult> {
+  const plan = await prisma.membershipPlan.findUnique({
+    where: { id: planId },
+    select: { id: true, primaryCountryId: true },
+  });
+  if (!plan) throw new MembershipPlanNotFoundError();
+  if (countryId === plan.primaryCountryId) {
+    throw new MembershipPlanCountryError("The primary country is the source of this copy");
+  }
+  const covered = await prisma.membershipPlanCountry.findUnique({
+    where: { planId_countryId: { planId, countryId } },
+    select: { id: true },
+  });
+  if (!covered) throw new MembershipPlanCountryError("This plan does not cover that country");
+
+  try {
+    const source = await prisma.membershipBenefit.findMany({
+      where: { planId, countryId: plan.primaryCountryId, serviceKind: { not: null } },
+    });
+    const existing = await prisma.membershipBenefit.findMany({
+      where: { planId, countryId, serviceKind: { not: null } },
+      select: { levelId: true, serviceKind: true },
+    });
+    const taken = new Set(existing.map((r) => `${r.levelId}:${r.serviceKind}`));
+
+    const result: CopyPrimaryRulesResult = { copied: 0, skippedFixed: 0, skippedExisting: 0 };
+    const rows: Prisma.MembershipBenefitCreateManyInput[] = [];
+    for (const row of source) {
+      if (row.benefitType === "FIXED") {
+        result.skippedFixed += 1;
+        continue;
+      }
+      if (taken.has(`${row.levelId}:${row.serviceKind}`)) {
+        result.skippedExisting += 1;
+        continue;
+      }
+      rows.push({
+        levelId: row.levelId,
+        planId,
+        countryId,
+        serviceKind: row.serviceKind,
+        serviceId: null,
+        benefitType: row.benefitType,
+        allowanceCount: row.allowanceCount,
+        percentOff: row.percentOff,
+        fixedPriceCents: row.fixedPriceCents,
+        // A FIXED fallback is money in the primary's currency too, so it is
+        // dropped rather than copied — the row survives with no fallback,
+        // which prices at full once the allowance is out.
+        fallbackType: row.fallbackType === "FIXED" ? "NONE" : row.fallbackType,
+        fallbackPercent: row.fallbackType === "PERCENT" ? row.fallbackPercent : null,
+        fallbackFixedCents: null,
+        isActive: row.isActive,
+      });
+    }
+    if (rows.length > 0) {
+      const created = await prisma.membershipBenefit.createMany({ data: rows });
+      result.copied = created.count;
+    }
+    return result;
+  } catch (error) {
+    throw normalizeDbError(error, "Membership benefits are unavailable");
   }
 }
 

@@ -70,10 +70,18 @@ function centsToMajor(cents: number | null | undefined): string {
 export function MembershipBenefitFields({
   services,
   benefit,
+  currencyCode,
 }: {
   services: ServiceOption[];
   /** Prefill for the edit dialog. Omitted for the add form. */
   benefit?: MembershipBenefit;
+  /**
+   * The currency of the country this row configures. A `FIXED` amount is stored
+   * in it and never converted (§22, §39), so it is named beside every money
+   * field — the alternative is 800 typed into a EUR row by someone thinking in
+   * CZK, which no validation can catch.
+   */
+  currencyCode?: string | null;
 }) {
   const [targetMode, setTargetMode] = useState<"kind" | "service">(
     benefit?.serviceId ? "service" : "kind",
@@ -97,11 +105,19 @@ export function MembershipBenefitFields({
       ? [...services, { ...benefit.service }]
       : services;
 
+  // §21.3: an allowance may only live on a service-KIND row. A service-scoped
+  // pool cannot be shared across countries — `Service` rows are per-country and
+  // there is no reliable mapping between a Czech service and its Irish
+  // counterpart. A CHECK constraint and the Zod refine both reject it, so the
+  // option is disabled here rather than left to bounce after a save.
+  const allowanceBlocked = targetMode === "service";
+
   const pickedService = serviceChoices.find((s) => s.id === serviceId);
   // A kind-targeted row covers many services at different prices, so the
   // preview uses a nominal 60.00 and says so.
   const previewList = (targetMode === "service" && pickedService?.basePriceCents) || 6000;
-  const previewCurrency = pickedService?.currencyCode ?? "EUR";
+  const previewCurrency = pickedService?.currencyCode ?? currencyCode ?? "EUR";
+  const moneyLabel = (currencyCode ?? pickedService?.currencyCode ?? "").toUpperCase();
   const isNominal = !(targetMode === "service" && pickedService?.basePriceCents);
 
   const draft = {
@@ -141,7 +157,13 @@ export function MembershipBenefitFields({
               name="targetMode"
               value="service"
               checked={targetMode === "service"}
-              onChange={() => setTargetMode("service")}
+              onChange={() => {
+                setTargetMode("service");
+                // The type follows the target rather than waiting to be
+                // refused: an allowance on one service is rejected by a CHECK,
+                // by the Zod refine and by the option below.
+                if (benefitType === "ALLOWANCE") setBenefitType("PERCENT");
+              }}
             />
             <span className="text-sm">One specific service</span>
           </label>
@@ -194,11 +216,20 @@ export function MembershipBenefitFields({
           value={benefitType}
           onChange={(ev) => setBenefitType(ev.target.value as MembershipBenefit["benefitType"])}
         >
-          <option value="ALLOWANCE">A number of included consultations</option>
+          <option value="ALLOWANCE" disabled={allowanceBlocked}>
+            A number of included consultations
+          </option>
           <option value="PERCENT">A percentage off</option>
           <option value="FIXED">A fixed member price</option>
           <option value="EXCLUDED">Nothing — carve this out</option>
         </select>
+        {allowanceBlocked ? (
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Included consultations cover a whole consultation type, not one service — the pool is
+            shared across every country the programme covers, and a single country&apos;s service
+            can&apos;t hold it.
+          </span>
+        ) : null}
       </label>
 
       {benefitType === "ALLOWANCE" ? (
@@ -247,7 +278,9 @@ export function MembershipBenefitFields({
           ) : null}
           {fallbackType === "FIXED" ? (
             <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Then price</span>
+              <span className="gh-field-label">
+                Then price{moneyLabel ? ` (${moneyLabel})` : ""}
+              </span>
               <input
                 name="fallbackFixedMajor"
                 className="gh-input max-w-[140px]"
@@ -280,7 +313,9 @@ export function MembershipBenefitFields({
 
       {benefitType === "FIXED" ? (
         <label className="flex flex-col gap-1.5">
-          <span className="gh-field-label">Member price</span>
+          <span className="gh-field-label">
+            Member price{moneyLabel ? ` (${moneyLabel})` : ""}
+          </span>
           <input
             name="fixedPriceMajor"
             className="gh-input max-w-[160px]"
@@ -292,6 +327,9 @@ export function MembershipBenefitFields({
           />
           <span className="text-xs text-[var(--color-text-muted)]">
             Replaces the slot price outright — evening and weekend uplifts do not apply.
+            {moneyLabel
+              ? ` Stored in ${moneyLabel} and never converted, so set it per country.`
+              : ""}
           </span>
         </label>
       ) : null}

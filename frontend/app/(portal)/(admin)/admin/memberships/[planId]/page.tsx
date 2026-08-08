@@ -4,11 +4,13 @@ import { revalidatePath } from "next/cache";
 import { ArrowLeft, Plus } from "lucide-react";
 import { SetCrumbTitle } from "@/components/crumb-title";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
-import { fetchAdminCountryById } from "@/lib/admin/admin-api";
+import { fetchAdminCountries, fetchAdminCountryById } from "@/lib/admin/admin-api";
 import {
+  addMembershipPlanCountry,
   createMembershipLevel,
   fetchMembershipPlan,
   putMembershipPlanTranslation,
+  removeMembershipPlanCountry,
   updateMembershipPlan,
 } from "@/lib/admin/memberships-api";
 import {
@@ -17,6 +19,7 @@ import {
 } from "@/lib/admin/membership-form-parse";
 import { displayNameFrom } from "@/lib/admin/display-name";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../_components/atoms";
+import { MembershipPlanCountries } from "../_components/membership-plan-countries";
 import { MembershipPlanFields } from "../_components/membership-plan-form";
 import { MembershipTranslationTabs } from "../_components/membership-translation-tabs";
 
@@ -57,7 +60,54 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
     .sort((a, b) => Number(b.isDefault) - Number(a.isDefault) || a.code.localeCompare(b.code));
   const tabs = localeTabs.length > 0 ? localeTabs : [{ code: defaultLocale, isDefault: true }];
 
+  // Candidates for the covered-country manager. Commission markets are excluded
+  // here as well as refused by the API (§6.6, open item 3): a €0 allowance line
+  // there clamps the commission to zero and alerts per line, so offering the
+  // country would be offering a 422.
+  const countriesResult = await fetchAdminCountries();
+  const covered = new Set(plan.countries.map((c) => c.countryId));
+  const addableCountries = (countriesResult.ok ? countriesResult.data.countries : [])
+    .filter((c) => c.isActive && !c.commissionReceiptEnabled && !covered.has(c.id))
+    .map((c) => ({ id: c.id, code: c.code, name: c.name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   const backTo = `/admin/memberships/${planId}`;
+
+  async function addCountryAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const countryId = String(formData.get("countryId") ?? "");
+    if (!countryId) redirect(`${backTo}?error=${encodeURIComponent("Select a country")}`);
+    const result = await addMembershipPlanCountry(planId, countryId);
+    if (!result.ok) redirect(`${backTo}?error=${encodeURIComponent(result.message)}`);
+    revalidatePath(backTo);
+    redirect(
+      `${backTo}?success=${encodeURIComponent(
+        "Country added. Set up its benefits — until you do, members get nothing there",
+      )}`,
+    );
+  }
+
+  async function removeCountryAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const countryId = String(formData.get("countryId") ?? "");
+    if (!countryId) redirect(`${backTo}?error=${encodeURIComponent("Select a country")}`);
+    const result = await removeMembershipPlanCountry(planId, countryId);
+    if (!result.ok) redirect(`${backTo}?error=${encodeURIComponent(result.message)}`);
+    revalidatePath(backTo);
+    // The cascade count is surfaced, not buried: removing coverage deletes that
+    // country's benefit rules, and an admin should not discover that by
+    // re-adding the country to an empty tab.
+    const removed = result.data.removedBenefits;
+    redirect(
+      `${backTo}?success=${encodeURIComponent(
+        removed > 0
+          ? `Country removed, along with ${removed} benefit rule${removed === 1 ? "" : "s"}. Existing bookings keep their price`
+          : "Country removed. Existing bookings keep their price",
+      )}`,
+    );
+  }
 
   async function savePlanAction(formData: FormData) {
     "use server";
@@ -155,6 +205,21 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
               </Btn>
             </div>
           </div>
+        </AdminCard>
+
+        {/* Where the programme works. Above levels, because a level's benefit
+            tabs come from this list. */}
+        <AdminCard padding={0}>
+          <SectionHeader
+            title="Countries covered"
+            description="Where members can use this programme. Benefits are configured per country inside each level — a country listed here with no rules gives members nothing."
+          />
+          <MembershipPlanCountries
+            plan={plan}
+            addable={addableCountries}
+            addAction={addCountryAction}
+            removeAction={removeCountryAction}
+          />
         </AdminCard>
 
         {/* Levels — the thing an admin usually came here to configure. */}

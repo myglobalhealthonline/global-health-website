@@ -193,9 +193,11 @@ export default async function AdminMembershipMembersPage({ params, searchParams 
                 <input
                   name="q"
                   defaultValue={sp.q ?? ""}
-                  className="gh-input min-w-[220px]"
-                  placeholder="Name, email or membership ID"
+                  className="gh-input min-w-[260px]"
+                  placeholder="Name, email, membership ID or partner reference"
                 />
+                {/* Both numbers are searchable (§26): staff read our generated
+                    id off a card, while the partner's own desk quotes theirs. */}
               </label>
               <label className="flex flex-col gap-1.5">
                 <span className="gh-field-label">Status</span>

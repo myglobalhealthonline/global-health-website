@@ -130,6 +130,12 @@ export type MembershipLevelInput = {
 };
 
 export type MembershipBenefitInput = {
+  /**
+   * Which covered country this row configures. Create only — a row's country is
+   * fixed once written, because moving it would silently re-point whichever
+   * pool or rule it participates in. Omitted means the plan's primary country.
+   */
+  countryId?: string | null;
   serviceKind: MembershipServiceKind | null;
   serviceId: string | null;
   benefitType: MembershipBenefitType;
@@ -184,6 +190,30 @@ export async function updateMembershipPlan(planId: string, body: MembershipPlanI
 export async function deactivateMembershipPlan(planId: string) {
   return adminRequest<{ plan: MembershipPlanDetail }>(
     `/api/admin/membership-plans/${planId}/deactivate`,
+    { method: "POST" },
+  );
+}
+
+// ─── Covered countries (§26) ─────────────────────────────────────────────────
+
+export async function addMembershipPlanCountry(planId: string, countryId: string) {
+  return adminRequest<{ plan: MembershipPlanDetail }>(
+    `/api/admin/membership-plans/${planId}/countries`,
+    { method: "POST", body: { countryId } },
+  );
+}
+
+/** `removedBenefits` is the cascade count — that country's configuration goes with it. */
+export async function removeMembershipPlanCountry(planId: string, countryId: string) {
+  return adminRequest<{ plan: MembershipPlanDetail; removedBenefits: number }>(
+    `/api/admin/membership-plans/${planId}/countries`,
+    { method: "DELETE", body: { countryId } },
+  );
+}
+
+export async function copyMembershipPrimaryRules(planId: string, countryId: string) {
+  return adminRequest<{ copied: number; skippedFixed: number; skippedExisting: number }>(
+    `/api/admin/membership-plans/${planId}/countries/${countryId}/copy-primary-rules`,
     { method: "POST" },
   );
 }
@@ -424,6 +454,18 @@ export async function addMembershipDependent(id: string, body: MembershipDepende
 export async function sendMembershipInvite(id: string) {
   return adminRequest<{ ok: boolean; email: string }>(
     `/api/admin/membership-enrollments/${id}/invite`,
+    { method: "POST" },
+  );
+}
+
+/**
+ * Re-issue the card + welcome email (§26). Always forces: `cardIssuedAt` blocks
+ * every ordinary send and a revive keeps it, so this is the only escape hatch
+ * after a level is recoloured or renamed.
+ */
+export async function resendMembershipCard(id: string) {
+  return adminRequest<{ to: string }>(
+    `/api/admin/membership-enrollments/${id}/resend-card`,
     { method: "POST" },
   );
 }

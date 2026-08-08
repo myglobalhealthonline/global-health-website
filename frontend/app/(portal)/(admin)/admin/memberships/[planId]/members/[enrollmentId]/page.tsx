@@ -12,6 +12,7 @@ import {
   fetchMembershipPlan,
   reactivateMembershipEnrollment,
   removeMembershipEnrollment,
+  resendMembershipCard,
   sendMembershipInvite,
   suspendMembershipEnrollment,
   updateMembershipEnrollment,
@@ -118,7 +119,17 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
           ? { result: await reactivateMembershipEnrollment(enrollmentId), message: "Membership reactivated" }
           : action === "INVITE"
             ? { result: await sendMembershipInvite(enrollmentId), message: "Invite sent" }
-            : null;
+            : action === "RESEND_CARD"
+              ? {
+                  // §26's resend. Always forces: `cardIssuedAt` blocks every
+                  // ordinary send and a revive keeps it, so this is the only way
+                  // to get a current card out after a level is recoloured or
+                  // renamed. The date is NOT moved — it answers "does this
+                  // person have a card", and the audit row is the per-send trail.
+                  result: await resendMembershipCard(enrollmentId),
+                  message: "Card sent",
+                }
+              : null;
     if (!outcome) redirect(`${backTo}?error=${encodeURIComponent("Unknown action")}`);
     if (!outcome.result.ok) redirect(`${backTo}?error=${encodeURIComponent(outcome.result.message)}`);
     revalidatePath(backTo);
@@ -220,7 +231,40 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
                 </p>
               )}
             </div>
+            <div>
+              <p className="gh-field-label">Partner reference</p>
+              <p className="text-sm">
+                {enrollment.partnerReference ? (
+                  <span className="font-mono">{enrollment.partnerReference}</span>
+                ) : (
+                  <span className="text-[var(--color-text-muted)]">
+                    None — the partner supplied no number of their own
+                  </span>
+                )}
+              </p>
+            </div>
+            <div>
+              {/* Card state, and the resend beside it. A revive keeps
+                  `cardIssuedAt` (§25), so without a resend a member whose level
+                  was recoloured or renamed has no way to get a current card. */}
+              <p className="gh-field-label">Card</p>
+              {enrollment.cardIssuedAt ? (
+                <p className="text-sm">Issued {formatDay(enrollment.cardIssuedAt)}</p>
+              ) : (
+                <p className="text-sm text-[var(--color-text-muted)]">
+                  Not issued yet — it goes out with the welcome email.
+                </p>
+              )}
+            </div>
             <div className="sm:col-span-2 flex flex-wrap justify-end gap-2 border-t border-[var(--color-border)] pt-4">
+              {enrollment.status !== "REMOVED" ? (
+                <form action={lifecycleAction}>
+                  <input type="hidden" name="action" value="RESEND_CARD" />
+                  <Btn type="submit" variant="ghost" size="sm">
+                    {enrollment.cardIssuedAt ? "Resend card" : "Send card now"}
+                  </Btn>
+                </form>
+              ) : null}
               <form action={lifecycleAction}>
                 <input type="hidden" name="action" value="INVITE" />
                 <Btn type="submit" variant="ghost" size="sm">

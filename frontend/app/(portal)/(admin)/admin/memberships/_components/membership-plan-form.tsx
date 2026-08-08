@@ -13,8 +13,11 @@ function Help({ children }: { children: React.ReactNode }) {
  * server component — the parent form's server action reads these through
  * `parseMembershipPlanForm`.
  *
- * The country is fixed: a plan belongs to exactly one country (decision 9), so
- * on create it is carried in from the picker and on edit it is read-only.
+ * The country here is the PRIMARY one and is fixed at creation (§20): it
+ * defines the shared allowance pool and every enrollment is attributed to it.
+ * On create it is carried in from the picker; on edit it is read-only. Extra
+ * countries are added from the covered-countries manager on the plan page, not
+ * here.
  *
  * Payer fields are metadata only (§15). Nothing here bills anyone — the copy
  * says so, because "amount" next to an email address invites the assumption
@@ -39,16 +42,19 @@ export function MembershipPlanFields({
       <FormSection title="Programme">
         {pinId && pinned ? (
           <div>
-            <span className="gh-field-label">Country</span>
+            <span className="gh-field-label">Primary country</span>
             <p className="mt-1 text-[var(--color-text-primary)]">
               {pinned.name} ({pinned.code.toUpperCase()})
             </p>
-            <Help>A programme belongs to one country and can&apos;t be moved later.</Help>
+            <Help>
+              Fixed at creation — the included-visit pool lives here and members are counted
+              against it. Add more countries under “Countries covered”.
+            </Help>
             <input type="hidden" name="countryId" value={pinId} />
           </div>
         ) : (
           <label className="flex flex-col gap-2">
-            <span className="gh-field-label">Country</span>
+            <span className="gh-field-label">Primary country</span>
             <select name="countryId" className="gh-select min-w-0" required defaultValue="">
               <option value="">Select country</option>
               {countries.map((c) => (

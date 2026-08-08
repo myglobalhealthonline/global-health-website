@@ -15,16 +15,18 @@ import type { MembershipBenefit } from "@/lib/admin/memberships-api";
 
 export type { ServiceOption } from "./membership-benefit-fields";
 
-function describeValue(benefit: MembershipBenefit): string {
+// A kind-targeted row has no service to read a currency off, so the country's
+// own currency is the fallback — not EUR, which is what `money` would otherwise
+// assume and would misreport every CZK row.
+function describeValue(benefit: MembershipBenefit, currencyCode?: string | null): string {
+  const currency = benefit.service?.currencyCode ?? currencyCode ?? null;
   switch (benefit.benefitType) {
     case "ALLOWANCE":
       return `${benefit.allowanceCount ?? 0} included`;
     case "PERCENT":
       return `${benefit.percentOff ?? 0}% off`;
     case "FIXED":
-      return benefit.fixedPriceCents == null
-        ? "—"
-        : money(benefit.fixedPriceCents, benefit.service?.currencyCode ?? null);
+      return benefit.fixedPriceCents == null ? "—" : money(benefit.fixedPriceCents, currency);
     case "EXCLUDED":
       return "No benefit";
     default:
@@ -32,12 +34,12 @@ function describeValue(benefit: MembershipBenefit): string {
   }
 }
 
-function describeFallback(benefit: MembershipBenefit): string {
+function describeFallback(benefit: MembershipBenefit, currencyCode?: string | null): string {
   if (benefit.benefitType !== "ALLOWANCE" || benefit.fallbackType === "NONE") return "—";
   if (benefit.fallbackType === "PERCENT") return `then ${benefit.fallbackPercent ?? 0}% off`;
   return benefit.fallbackFixedCents == null
     ? "—"
-    : `then ${money(benefit.fallbackFixedCents, benefit.service?.currencyCode ?? null)}`;
+    : `then ${money(benefit.fallbackFixedCents, benefit.service?.currencyCode ?? currencyCode ?? null)}`;
 }
 
 /**
@@ -57,12 +59,19 @@ function describeFallback(benefit: MembershipBenefit): string {
 export function MembershipBenefitTable({
   benefits,
   services,
+  currencyCode,
   createBenefitAction,
   updateBenefitAction,
   deleteBenefitAction,
 }: {
   benefits: MembershipBenefit[];
   services: ServiceOption[];
+  /**
+   * Currency of the country these rows configure. Money fields are labelled
+   * with it because a `FIXED` amount is stored per country and never converted
+   * (§22, §39).
+   */
+  currencyCode?: string | null;
   createBenefitAction: (formData: FormData) => void;
   updateBenefitAction: (formData: FormData) => void;
   deleteBenefitAction: (formData: FormData) => void;
@@ -98,14 +107,14 @@ export function MembershipBenefitTable({
       key: "value",
       label: "Member gets",
       priority: 1,
-      render: (benefit) => describeValue(benefit),
+      render: (benefit) => describeValue(benefit, currencyCode),
     },
     {
       key: "fallback",
       label: "After the allowance",
       cardLabel: "After the allowance",
       priority: 3,
-      render: (benefit) => describeFallback(benefit),
+      render: (benefit) => describeFallback(benefit, currencyCode),
     },
     {
       key: "status",
@@ -167,7 +176,11 @@ export function MembershipBenefitTable({
           // keeping the previously-opened row's state.
           <form key={editing.id} action={updateBenefitAction} className="flex flex-col gap-4">
             <input type="hidden" name="benefitId" value={editing.id} />
-            <MembershipBenefitFields services={services} benefit={editing} />
+            <MembershipBenefitFields
+              services={services}
+              benefit={editing}
+              currencyCode={currencyCode}
+            />
             <div className="flex justify-end gap-3 border-t border-[var(--color-border)] pt-4">
               <Btn type="button" variant="ghost" onClick={() => setEditing(null)}>
                 Cancel
@@ -180,7 +193,7 @@ export function MembershipBenefitTable({
 
       <form action={createBenefitAction} className="flex flex-col gap-4 border-t border-[var(--color-border)] pt-6">
         <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">Add a benefit</h4>
-        <MembershipBenefitFields services={services} />
+        <MembershipBenefitFields services={services} currencyCode={currencyCode} />
         <div className="flex justify-end">
           <Btn type="submit">Add benefit</Btn>
         </div>

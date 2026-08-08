@@ -84,7 +84,10 @@ const membershipPlanBase = z.object({
 
 export const adminMembershipPlanCreateBodySchema = membershipPlanBase;
 
-/** countryId is immutable — a plan belongs to exactly one country (decision 9). */
+/**
+ * `countryId` is the PRIMARY country and is fixed at creation (§20) — coverage
+ * is widened through the covered-countries endpoints, never by editing this.
+ */
 export const adminMembershipPlanUpdateBodySchema = membershipPlanBase
   .omit({ countryId: true })
   .partial();
@@ -96,6 +99,19 @@ export const membershipPlanIdParamsSchema = z.object({
 export const membershipPlanLocaleParamsSchema = z.object({
   planId: z.string().trim().min(1),
   locale: localeCodeSchema,
+});
+
+/**
+ * Add / remove a covered country (§26). The primary is fixed at creation and
+ * refused here by the service, not by this schema — it needs the plan row.
+ */
+export const membershipPlanCountryBodySchema = z.object({
+  countryId: z.string().trim().min(1),
+});
+
+export const membershipPlanCountryParamsSchema = z.object({
+  planId: z.string().trim().min(1),
+  countryId: z.string().trim().min(1),
 });
 
 export const membershipTranslationBodySchema = z.object({

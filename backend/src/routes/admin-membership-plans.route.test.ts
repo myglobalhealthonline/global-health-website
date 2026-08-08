@@ -622,6 +622,192 @@ describe("admin membership plan routes", () => {
     assert.equal(row!.cardBackgroundHex, null);
   });
 
+  // ─── Covered countries (§26, phase 7e) ─────────────────────────────────────
+
+  it("adds and removes a covered country, with audit rows", async (t) => {
+    if (!app) return t.skip();
+    const { planId } = await createPlan(`cover-${uniq}`);
+
+    const added = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-plans/${planId}/countries`,
+      cookies: superCookie,
+      payload: { countryId: countryBId },
+    });
+    assert.equal(added.statusCode, 200, added.body);
+    assert.deepEqual(
+      added
+        .json()
+        .data.plan.countries.map((c: { countryId: string }) => c.countryId)
+        .sort(),
+      [countryAId, countryBId].sort(),
+    );
+    assert.ok(
+      await waitForAuditRow(() =>
+        prisma.auditLog.findFirst({
+          where: { action: "MEMBERSHIP_PLAN_COUNTRY_ADDED", entityId: planId },
+        }),
+      ),
+      "adding coverage is an audited cost event",
+    );
+
+    // Adding twice is refused rather than silently idempotent — an admin who
+    // clicks again should be told nothing changed.
+    const twice = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-plans/${planId}/countries`,
+      cookies: superCookie,
+      payload: { countryId: countryBId },
+    });
+    assert.equal(twice.statusCode, 400, twice.body);
+
+    const removed = await app.inject({
+      method: "DELETE",
+      url: `/api/admin/membership-plans/${planId}/countries`,
+      cookies: superCookie,
+      payload: { countryId: countryBId },
+    });
+    assert.equal(removed.statusCode, 200, removed.body);
+    assert.deepEqual(
+      removed.json().data.plan.countries.map((c: { countryId: string }) => c.countryId),
+      [countryAId],
+    );
+    assert.ok(
+      await waitForAuditRow(() =>
+        prisma.auditLog.findFirst({
+          where: { action: "MEMBERSHIP_PLAN_COUNTRY_REMOVED", entityId: planId },
+        }),
+      ),
+    );
+  });
+
+  it("refuses to remove the primary country — every enrollment is pinned to it", async (t) => {
+    if (!app) return t.skip();
+    const { planId } = await createPlan(`keepprimary-${uniq}`);
+    const res = await app.inject({
+      method: "DELETE",
+      url: `/api/admin/membership-plans/${planId}/countries`,
+      cookies: superCookie,
+      payload: { countryId: countryAId },
+    });
+    assert.equal(res.statusCode, 400, res.body);
+    const still = await prisma.membershipPlanCountry.findMany({ where: { planId } });
+    assert.equal(still.length, 1);
+  });
+
+  it("refuses to cover a commission-model country (§6.6, open item 3)", async (t) => {
+    if (!app) return t.skip();
+    const { planId } = await createPlan(`nocommission-${uniq}`);
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-plans/${planId}/countries`,
+      cookies: superCookie,
+      payload: { countryId: commissionCountryId },
+    });
+    // Same 422 the create path gives: a €0 allowance line there clamps the
+    // commission to zero and alerts per line.
+    assert.equal(res.statusCode, 422, res.body);
+  });
+
+  it("removing coverage deletes that country's benefit rows and reports the count", async (t) => {
+    if (!app) return t.skip();
+    const { planId, defaultLevelId } = await createPlan(`cascade-${uniq}`);
+    await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-plans/${planId}/countries`,
+      cookies: superCookie,
+      payload: { countryId: countryBId },
+    });
+    const created = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-levels/${defaultLevelId}/benefits`,
+      cookies: superCookie,
+      payload: {
+        countryId: countryBId,
+        serviceKind: "GENERAL",
+        benefitType: "PERCENT",
+        percentOff: 15,
+      },
+    });
+    assert.equal(created.statusCode, 200, created.body);
+
+    const res = await app.inject({
+      method: "DELETE",
+      url: `/api/admin/membership-plans/${planId}/countries`,
+      cookies: superCookie,
+      payload: { countryId: countryBId },
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    assert.equal(res.json().data.removedBenefits, 1, "the cascade count is reported, not silent");
+    const orphans = await prisma.membershipBenefit.findMany({
+      where: { planId, countryId: countryBId },
+    });
+    assert.equal(orphans.length, 0, "MembershipBenefit_plan_country_fkey cascades");
+  });
+
+  it("copies the primary country's kind rules additively, skipping FIXED", async (t) => {
+    if (!app) return t.skip();
+    const { planId, defaultLevelId } = await createPlan(`copyrules-${uniq}`);
+    await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-plans/${planId}/countries`,
+      cookies: superCookie,
+      payload: { countryId: countryBId },
+    });
+
+    // Primary: an allowance on GENERAL and a FIXED price on SPECIALIST.
+    const seededAllowance = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-levels/${defaultLevelId}/benefits`,
+      cookies: superCookie,
+      payload: { serviceKind: "GENERAL", benefitType: "ALLOWANCE", allowanceCount: 4 },
+    });
+    assert.equal(seededAllowance.statusCode, 200, seededAllowance.body);
+    const seededFixed = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-levels/${defaultLevelId}/benefits`,
+      cookies: superCookie,
+      payload: { serviceKind: "SPECIALIST", benefitType: "FIXED", fixedPriceCents: 8000 },
+    });
+    assert.equal(seededFixed.statusCode, 200, seededFixed.body);
+
+    const first = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-plans/${planId}/countries/${countryBId}/copy-primary-rules`,
+      cookies: superCookie,
+    });
+    assert.equal(first.statusCode, 200, first.body);
+    assert.deepEqual(first.json().data, { copied: 1, skippedFixed: 1, skippedExisting: 0 });
+    const copied = await prisma.membershipBenefit.findMany({
+      where: { planId, countryId: countryBId },
+    });
+    assert.deepEqual(
+      copied.map((b) => [b.serviceKind, b.benefitType, b.allowanceCount]),
+      [["GENERAL", "ALLOWANCE", 4]],
+      "the allowance row travels — it is what makes the country configured (decision 38)",
+    );
+
+    // Additive only: a second run overwrites nothing and says so.
+    const second = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-plans/${planId}/countries/${countryBId}/copy-primary-rules`,
+      cookies: superCookie,
+    });
+    assert.equal(second.statusCode, 200, second.body);
+    assert.deepEqual(second.json().data, { copied: 0, skippedFixed: 1, skippedExisting: 1 });
+  });
+
+  it("refuses copy-primary-rules onto an uncovered country", async (t) => {
+    if (!app) return t.skip();
+    const { planId } = await createPlan(`copyuncovered-${uniq}`);
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-plans/${planId}/countries/${countryBId}/copy-primary-rules`,
+      cookies: superCookie,
+    });
+    assert.equal(res.statusCode, 400, res.body);
+  });
+
   it("returns 404 for a level under a plan that does not exist", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({
