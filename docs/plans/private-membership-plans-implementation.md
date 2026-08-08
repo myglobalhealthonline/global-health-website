@@ -2473,10 +2473,34 @@ preview stays the upper bound it was always meant to be.
 flow** (settled 2026-08-08). `linkMembershipsForUser` sends the §12.1
 "enrollment confirmed" email as it attaches a row. On an import whose address already
 belongs to a verified account, that fires and then welcome+card fires a moment later,
-saying overlapping things. Welcome+card is strictly richer, so the linker takes an
-explicit set of enrollment ids whose confirmation to skip — ids, not a global flag,
-because linking by address can attach enrollments in *other* plans that this import
-never touched and whose confirmations must still go out.
+saying overlapping things. Welcome+card is strictly richer, so the linker takes an explicit set of enrollment ids
+whose confirmation to skip — ids, not a global flag, because linking by address can
+attach enrollments in *other* plans that this import never touched and whose
+confirmations must still go out.
+
+**The caller supplies the set; the linker cannot infer it.** Deriving suppression from
+`cardIssuedAt` alone was tried and is wrong: an uncarded row reached by an ordinary
+login has no follow-up caller at all, so treating "uncarded" as "somebody else will
+handle it" leaves that member with no mail of any kind. Only the import commit, the
+admin create and the admin dependent add know they are about to card a row.
+
+| State at link time | What the linker does |
+| --- | --- |
+| Uncarded **member-added dependent** | issues the card — this row's card is the linker's job |
+| Id in the caller's suppression set | nothing; the caller's welcome+card follows |
+| Anything else | the §12.1 confirmation, exactly as before |
+
+**The member-added dependent is the only case that renders, and that is a hard
+constraint.** This function sits on the email-verification and login paths, and a card
+is a Chromium page render — roughly a second, plus a browser launch on a cold process.
+Rendering for every linking member would put that cost on every member's first login,
+and would make every test that touches auth spawn a browser and then hang on it. Every
+other row already holds its card by the time it links, so the hot path stays clear.
+
+There is no library-level escape hatch for the hang, which is why the scoping above
+carries the weight: Playwright, unlike Puppeteer, does not expose the browser's child
+process, so it cannot be `unref`d. `closeSharedBrowser()` in an `after` hook is the
+only mechanism, and it only helps tests that know they render.
 
 ## 26. Admin UI
 
