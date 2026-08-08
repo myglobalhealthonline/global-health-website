@@ -18,19 +18,56 @@ export function MembershipEnrollmentFields({
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
+      {/*
+        The membership ID is generated and read-only. It is printed on the
+        member's card and is half of what the claim form checks, so editing it
+        would invalidate a card already in someone's wallet. Shown, not
+        editable; corrections go to the partner reference beside it.
+      */}
+      {enrollment ? (
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Membership ID</span>
+          <output className="gh-input font-mono bg-[var(--color-surface-muted,transparent)]">
+            {enrollment.membershipId}
+          </output>
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Generated when the member was enrolled, and printed on their card. It cannot be
+            changed.
+          </span>
+        </label>
+      ) : null}
+
       <label className="flex flex-col gap-1.5">
-        <span className="gh-field-label">Membership ID</span>
+        <span className="gh-field-label">Partner reference</span>
         <input
-          name="membershipId"
+          name="partnerReference"
           className="gh-input font-mono"
-          required
-          minLength={3}
           maxLength={64}
-          defaultValue={enrollment?.membershipId ?? ""}
-          placeholder="MEMS-00123"
+          defaultValue={enrollment?.partnerReference ?? ""}
+          placeholder="Their own member number"
         />
         <span className="text-xs text-[var(--color-text-muted)]">
-          The partner&apos;s own number. Unique across every programme.
+          Optional. The number the partner uses for this person — searchable here, and not
+          required to be unique.
+        </span>
+      </label>
+
+      <label className="flex flex-col gap-1.5">
+        <span className="gh-field-label">Welcome email language</span>
+        <select
+          name="preferredLocale"
+          className="gh-select"
+          defaultValue={enrollment?.preferredLocale ?? ""}
+        >
+          <option value="">Use the programme&apos;s country default</option>
+          {["EN", "PT", "ES", "CS", "RO", "DE"].map((locale) => (
+            <option key={locale} value={locale}>
+              {locale}
+            </option>
+          ))}
+        </select>
+        <span className="text-xs text-[var(--color-text-muted)]">
+          Used until the member has an account. After that their own portal setting wins.
         </span>
       </label>
 

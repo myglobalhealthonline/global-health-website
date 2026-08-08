@@ -164,7 +164,9 @@ export function parseMembershipLevelForm(fd: FormData): ParseResult<MembershipLe
 export type MembershipEnrollmentFormBody = {
   planId?: string;
   levelId?: string;
-  membershipId: string;
+  /** No `membershipId`: generated server-side, never taken from a form. */
+  partnerReference: string | null;
+  preferredLocale?: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -177,6 +179,8 @@ export type MembershipEnrollmentFormBody = {
 
 export type MembershipDependentFormBody = {
   membershipId?: string;
+  partnerReference: string | null;
+  preferredLocale?: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -197,19 +201,17 @@ export function parseMembershipEnrollmentForm(
   fd: FormData,
   opts: { includePlan?: boolean } = {},
 ): ParseResult<MembershipEnrollmentFormBody> {
-  const membershipId = str(fd, "membershipId");
   const email = str(fd, "email").toLowerCase();
   const firstName = str(fd, "firstName");
   const lastName = str(fd, "lastName");
   const startDate = str(fd, "startDate");
 
-  if (!membershipId) return { ok: false, error: "Membership ID is required" };
   if (!email) return { ok: false, error: "Email is required" };
   if (!firstName || !lastName) return { ok: false, error: "First and last name are required" };
   if (!startDate) return { ok: false, error: "Start date is required" };
 
   const body: MembershipEnrollmentFormBody = {
-    membershipId,
+    partnerReference: nullable(fd, "partnerReference"),
     email,
     firstName,
     lastName,
@@ -245,6 +247,7 @@ export function parseMembershipDependentForm(
     ok: true,
     data: {
       ...(membershipId ? { membershipId } : {}),
+      partnerReference: nullable(fd, "partnerReference"),
       email,
       firstName,
       lastName,

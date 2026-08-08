@@ -127,9 +127,11 @@ describe("admin membership enrollment routes", () => {
     await app.close();
   });
 
+  // Phase 7c: no `membershipId` — it is generated (§21.5). The partner's own
+  // number rides along as a searchable, non-unique reference.
   const enrollPayload = (suffix: string, overrides: Record<string, unknown> = {}) => ({
     planId,
-    membershipId: `ENR-${suffix}`,
+    partnerReference: `ENR-${suffix}`,
     email: `member-${suffix}-${uniq}@test.local`,
     firstName: "Ada",
     lastName: "Member",
@@ -243,17 +245,33 @@ describe("admin membership enrollment routes", () => {
     assert.equal(row?.userId, null);
   });
 
-  it("refuses a membership id that differs only in case → 400", async (t) => {
+  /**
+   * The partner's number is explicitly NOT a key (§21.5): the same person can
+   * hold the same number in two plans, and the partner may reuse numbers
+   * however they like. Only the generated id is unique, and nothing outside
+   * this service can choose one.
+   */
+  it("accepts a partner reference already used by another enrollment", async (t) => {
     if (!app) return t.skip();
-    await enroll("case1");
+    const first = await enroll("case1");
     const res = await app.inject({
       method: "POST",
       url: "/api/admin/membership-enrollments",
       cookies: adminCookie,
-      payload: enrollPayload("other", { membershipId: "enr-case1" }),
+      payload: enrollPayload("other", { partnerReference: "enr-case1" }),
     });
-    assert.equal(res.statusCode, 400, res.body);
-    assert.match(res.json().message, /already in use/i);
+    assert.equal(res.statusCode, 200, res.body);
+    const second = res.json().data.enrollment;
+    assert.equal(second.partnerReference, "enr-case1");
+    assert.notEqual(second.membershipId, first.membershipId, "but the generated ids differ");
+  });
+
+  it("generates the membership id from the plan slug, unguessably", async (t) => {
+    if (!app) return t.skip();
+    const created = await enroll("gen1");
+    // `enr-plan-<uniq>` → `ENRP`, then 8 base32 chars with no I, L, O or U —
+    // the four a human misreads off a printed card.
+    assert.match(created.membershipId, /^ENRP-[0-9A-HJKMNP-TV-Z]{8}$/);
   });
 
   it("refuses a second live enrollment for the same email in the same plan → 400", async (t) => {
@@ -355,7 +373,7 @@ describe("admin membership enrollment routes", () => {
     assert.equal(res.statusCode, 400, res.body);
   });
 
-  it("removes softly, and re-adding the same email revives that row with the new id", async (t) => {
+  it("removes softly, and re-adding the same email revives that row, id intact", async (t) => {
     if (!app) return t.skip();
     const enrollment = await enroll("revive1");
     const email = (await prisma.membershipEnrollment.findUnique({ where: { id: enrollment.id } }))!
@@ -372,12 +390,15 @@ describe("admin membership enrollment routes", () => {
       method: "POST",
       url: "/api/admin/membership-enrollments",
       cookies: adminCookie,
-      payload: enrollPayload("revive2", { email, membershipId: "ENR-revive-new" }),
+      payload: enrollPayload("revive2", { email, partnerReference: "ENR-revive-new" }),
     });
     assert.equal(readded.statusCode, 200, readded.body);
     const revived = readded.json().data.enrollment;
     assert.equal(revived.id, enrollment.id, "the removed row is revived, not duplicated");
-    assert.equal(revived.membershipId, "ENR-revive-new");
+    // The generated id is the row's identity and survives: the same person is
+    // coming back, and a new id would invalidate a card they may still hold.
+    assert.equal(revived.membershipId, enrollment.membershipId, "the id is kept");
+    assert.equal(revived.partnerReference, "ENR-revive-new", "the partner's number is refreshed");
     assert.equal(revived.status, "PENDING");
   });
 
@@ -400,7 +421,10 @@ describe("admin membership enrollment routes", () => {
     assert.equal(res.statusCode, 200, res.body);
     const dependent = res.json().data.enrollment;
     assert.equal(dependent.memberType, "DEPENDENT");
-    assert.equal(dependent.membershipId, "ENR-fam1-D1");
+    // Decision 43's "own generated id" — derived from the primary's, which is
+    // itself generated. The random part is inherited, so the dependent's id is
+    // exactly as unguessable while a family's two cards still read as a pair.
+    assert.equal(dependent.membershipId, `${primary.membershipId}-D1`);
     assert.equal(dependent.levelId, familyLevelId);
     assert.equal(
       new Date(dependent.endDate).toISOString(),
@@ -597,6 +621,31 @@ describe("admin membership enrollment routes", () => {
     const found = byQuery.json().data.items as { id: string }[];
     assert.equal(found.length, 1);
     assert.equal(found[0].id, enrollment.id);
+  });
+
+  /**
+   * §26. Staff quote the generated id off a card; the partner's own support
+   * desk quotes their number. Both have to find the same person, or one of the
+   * two conversations dead-ends.
+   */
+  it("finds a member by the partner's number as well as by the generated id", async (t) => {
+    if (!app) return t.skip();
+    const enrollment = await enroll("psearch", { partnerReference: "PARTNER-XYZ-42" });
+
+    const search = async (q: string) => {
+      const res = await app!.inject({
+        method: "GET",
+        url: `/api/admin/membership-enrollments?planId=${planId}&q=${encodeURIComponent(q)}`,
+        cookies: adminCookie,
+      });
+      return res.json().data.items as { id: string }[];
+    };
+
+    assert.ok((await search("PARTNER-XYZ-42")).some((r) => r.id === enrollment.id));
+    // Case-insensitively, and on a fragment — an admin reading a number off a
+    // phone call types what they hear, not an exact key.
+    assert.ok((await search("partner-xyz")).some((r) => r.id === enrollment.id));
+    assert.ok((await search(enrollment.membershipId)).some((r) => r.id === enrollment.id));
   });
 
   it("404s an unknown enrollment", async (t) => {

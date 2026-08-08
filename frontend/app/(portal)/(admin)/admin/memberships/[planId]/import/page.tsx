@@ -45,6 +45,9 @@ export default async function AdminMembershipImportPage({ params, searchParams }
 
   const batchResult = sp.batchId ? await fetchMembershipImport(sp.batchId) : null;
   const batch = batchResult?.ok ? batchResult.data.batch : null;
+  // Server-computed, so the number the admin approves is the number the commit
+  // will actually send (§25).
+  const serverCounts = batchResult?.ok ? batchResult.data.counts : null;
 
   async function uploadAction(formData: FormData) {
     "use server";
@@ -183,7 +186,7 @@ export default async function AdminMembershipImportPage({ params, searchParams }
                 ) : null}
               </div>
 
-              <MembershipImportPreview batch={batch} />
+              <MembershipImportPreview batch={batch} counts={serverCounts} />
 
               {batch.status === "PREVIEW" ? (
                 <div className="flex flex-wrap justify-end gap-3 border-t border-[var(--color-border)] pt-4">

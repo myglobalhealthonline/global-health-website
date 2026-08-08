@@ -7,9 +7,11 @@ import {
   commitMembershipImport,
   getMembershipImportBatch,
   previewMembershipImport,
+  summarize,
   MembershipImportError,
   MembershipImportNotFoundError,
 } from "../modules/memberships/membership-import.service.js";
+import type { PreviewRow } from "../modules/memberships/membership-import.service.js";
 import { requireManageMemberships } from "../utils/manage-memberships-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -23,6 +25,17 @@ import { errorResponse, okResponse } from "../utils/response.js";
  */
 
 const batchIdParamsSchema = z.object({ batchId: z.string().trim().min(1) });
+
+/**
+ * The per-outcome tallies plus the recipient count, off the batch's stored
+ * `previewData`. Tolerant of a batch written before phase 7c: `summarize`
+ * reads `willEmail` and `warnings`, both of which are simply absent there, so
+ * an old preview reports zero recipients rather than throwing.
+ */
+function previewCounts(batch: { previewData: unknown }) {
+  const rows = (batch.previewData as { rows?: PreviewRow[] } | null)?.rows;
+  return Array.isArray(rows) ? summarize(rows) : null;
+}
 
 /** 2,000 rows of member data comfortably under the global 10 MB multipart cap. */
 const MAX_CSV_BYTES = 5 * 1024 * 1024;
@@ -86,7 +99,12 @@ const adminMembershipImportRoute: FastifyPluginAsync = async (app) => {
       });
       // No audit row here on purpose: a preview changes nothing. The commit
       // writes one, with the file name and the counts (§14).
-      return okResponse({ batch }, "Import previewed");
+      //
+      // `counts.recipients` is the blast radius — "committing will email N
+      // members" (§25). Computed here rather than in the browser so the number
+      // the admin approves is the server's, not a re-derivation that could
+      // drift from what the commit actually does.
+      return okResponse({ batch, counts: previewCounts(batch) }, "Import previewed");
     } catch (error) {
       return handleImportError(app, reply, error);
     }
@@ -97,7 +115,8 @@ const adminMembershipImportRoute: FastifyPluginAsync = async (app) => {
     const params = batchIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid batch id"));
     try {
-      return okResponse({ batch: await getMembershipImportBatch(params.data.batchId) });
+      const batch = await getMembershipImportBatch(params.data.batchId);
+      return okResponse({ batch, counts: previewCounts(batch) });
     } catch (error) {
       return handleImportError(app, reply, error);
     }

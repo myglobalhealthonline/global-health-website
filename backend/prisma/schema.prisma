@@ -6174,6 +6174,18 @@ model MembershipEnrollment {
   /// re-import must email nobody twice.
   cardIssuedAt DateTime?
 
+  /// What language to write to this person in while the row is still PENDING
+  /// (§25). Supplied by the import CSV's optional `locale` column, because a
+  /// Czech partner enrolling Irish members knows what they read and the plan's
+  /// primary-country default alone would write to all of them in Czech.
+  ///
+  /// PRECEDENCE: this is only the fallback for an unlinked row. The moment an
+  /// account links, `User.preferredLocale` wins for anything member-facing —
+  /// otherwise a member who sets their language in the portal keeps receiving
+  /// email in whatever the CSV said. Null falls back to the plan's primary
+  /// country default, then English.
+  preferredLocale LocaleCode?
+
   importBatchId    String?
   importBatch      MembershipImportBatch? @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
   createdByAdminId String?

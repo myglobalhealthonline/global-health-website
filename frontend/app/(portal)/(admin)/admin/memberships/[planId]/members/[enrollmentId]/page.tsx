@@ -166,7 +166,14 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
       <PageHeader
         eyebrow="Membership member"
         title={memberName}
-        description={`${enrollment.membershipId} · ${enrollment.level.name}`}
+        // Both numbers, because a support call may quote either (§26).
+        description={[
+          enrollment.membershipId,
+          enrollment.partnerReference ? `partner ref ${enrollment.partnerReference}` : null,
+          enrollment.level.name,
+        ]
+          .filter(Boolean)
+          .join(" · ")}
         actions={
           <div className="flex items-center gap-2">
             {enrollment.memberType === "DEPENDENT" ? <Pill tone="info">Dependent</Pill> : null}

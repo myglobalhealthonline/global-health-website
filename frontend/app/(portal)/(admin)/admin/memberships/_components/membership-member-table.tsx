@@ -76,7 +76,21 @@ export function MembershipMemberTable({
       key: "membershipId",
       label: "Membership ID",
       priority: 1,
-      render: (row) => <span className="font-mono text-portal-compact">{row.membershipId}</span>,
+      render: (row) => (
+        <div className="flex flex-col">
+          <span className="font-mono text-portal-compact">{row.membershipId}</span>
+          {/*
+            The partner's own number, under ours. Both are searchable (§26),
+            because staff read the generated id off a card while the partner's
+            support desk quotes theirs.
+          */}
+          {row.partnerReference ? (
+            <span className="font-mono text-xs text-[var(--color-text-muted)]">
+              {row.partnerReference}
+            </span>
+          ) : null}
+        </div>
+      ),
     },
     { key: "email", label: "Email", priority: 2, render: (row) => row.email },
     {

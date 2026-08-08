@@ -284,7 +284,14 @@ export type MembershipEnrollment = {
   planId: string;
   levelId: string;
   countryId: string;
+  /** Generated and immutable — printed on the card, checked by the claim form. */
   membershipId: string;
+  /** The partner's own number. Searchable, non-unique, editable. */
+  partnerReference: string | null;
+  /** Welcome-email language while PENDING; `User.preferredLocale` wins once linked. */
+  preferredLocale: string | null;
+  /** Set when the card + welcome email went out. Null = never issued. */
+  cardIssuedAt: string | null;
   email: string;
   firstName: string;
   lastName: string;
@@ -326,7 +333,9 @@ export type MembershipEnrollmentListResult = {
 export type MembershipEnrollmentInput = {
   planId?: string;
   levelId?: string;
-  membershipId?: string;
+  /** No `membershipId`: generated server-side and never accepted from a form. */
+  partnerReference?: string | null;
+  preferredLocale?: string;
   email?: string;
   firstName?: string;
   lastName?: string;
@@ -339,6 +348,8 @@ export type MembershipEnrollmentInput = {
 
 export type MembershipDependentInput = {
   membershipId?: string;
+  partnerReference?: string | null;
+  preferredLocale?: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -422,8 +433,21 @@ export type MembershipImportOutcome = "CREATE" | "REVIVE" | "LINK" | "REJECT";
 export type MembershipImportPreviewRow = {
   line: number;
   outcome: MembershipImportOutcome;
+  /** Why the row was rejected. Nothing is applied for it. */
   reason?: string;
-  membershipId: string;
+  /**
+   * Non-blocking notes: an unrecognised locale, a partner reference repeated
+   * inside the file. Worth an admin's eye, never worth failing a row over.
+   */
+  warnings?: string[];
+  /**
+   * The partner's own number. There is no membership id to show at preview
+   * time — it is generated at commit.
+   */
+  partnerReference: string | null;
+  preferredLocale: string | null;
+  /** True when committing this row sends a welcome email + card. */
+  willEmail: boolean;
   email: string;
   firstName: string;
   lastName: string;
@@ -432,6 +456,22 @@ export type MembershipImportPreviewRow = {
   levelId: string | null;
   levelSlug: string | null;
   primaryMembershipId: string | null;
+  primaryEmail: string | null;
+};
+
+/**
+ * Server-computed tallies. `recipients` is the blast radius — the number of
+ * emails a commit sends — and is deliberately not the row count: a rejected
+ * row applies nothing, and a revived member who already has their card is not
+ * emailed twice.
+ */
+export type MembershipImportCounts = {
+  create: number;
+  link: number;
+  revive: number;
+  reject: number;
+  warned: number;
+  recipients: number;
 };
 
 export type MembershipImportBatch = {
@@ -452,14 +492,14 @@ export async function uploadMembershipImport(planId: string, file: File) {
   const body = new FormData();
   body.append("planId", planId);
   body.append("file", file);
-  return adminPostMultipart<{ batch: MembershipImportBatch }>(
+  return adminPostMultipart<{ batch: MembershipImportBatch; counts: MembershipImportCounts | null }>(
     "/api/admin/membership-imports",
     body,
   );
 }
 
 export async function fetchMembershipImport(batchId: string) {
-  return adminRequest<{ batch: MembershipImportBatch }>(
+  return adminRequest<{ batch: MembershipImportBatch; counts: MembershipImportCounts | null }>(
     `/api/admin/membership-imports/${batchId}`,
   );
 }

@@ -15,7 +15,9 @@ import {
 
 const base = {
   planId: "plan_1",
-  membershipId: "MEMS-001",
+  // Phase 7c: no `membershipId` — it is generated (§21.5), and the schema no
+  // longer accepts one from a caller at all.
+  partnerReference: "MEMS-001",
   email: "Member@Example.COM",
   firstName: "Ada",
   lastName: "Lovelace",
@@ -53,20 +55,52 @@ describe("membership enrollment create payload", () => {
     assert.equal(result.success, true);
   });
 
-  it("rejects a membership id shorter than 3 characters", () => {
-    const result = adminMembershipEnrollmentCreateBodySchema.safeParse({
+  /**
+   * The partner's number is theirs: any shape, any length, repeated as often
+   * as they like (§21.5). It is not a key, so there is nothing for the schema
+   * to enforce beyond "printable, and not absurdly long".
+   */
+  it("accepts a partner reference of any length, and treats blank as absent", () => {
+    const short = adminMembershipEnrollmentCreateBodySchema.parse({
       ...base,
-      membershipId: "A1",
+      partnerReference: "A1",
     });
-    assert.equal(result.success, false);
+    assert.equal(short.partnerReference, "A1");
+    const blank = adminMembershipEnrollmentCreateBodySchema.parse({
+      ...base,
+      partnerReference: "",
+    });
+    assert.equal(blank.partnerReference, null);
   });
 
-  it("rejects a membership id with non-printable characters", () => {
-    const result = adminMembershipEnrollmentCreateBodySchema.safeParse({
+  it("ignores a membership id a caller tries to supply — it is not theirs to choose", () => {
+    const parsed = adminMembershipEnrollmentCreateBodySchema.parse({
       ...base,
-      membershipId: "MEMS001",
-    });
-    assert.equal(result.success, false);
+      membershipId: "ATTACKER-CHOSEN-1",
+    } as Record<string, unknown>);
+    assert.equal(
+      "membershipId" in parsed,
+      false,
+      "a caller-supplied id must not reach the service, which generates its own",
+    );
+  });
+
+  it("accepts a supported welcome-email locale, and rejects a made-up one", () => {
+    assert.equal(
+      adminMembershipEnrollmentCreateBodySchema.parse({ ...base, preferredLocale: "PT" })
+        .preferredLocale,
+      "PT",
+    );
+    assert.equal(
+      adminMembershipEnrollmentCreateBodySchema.parse({ ...base, preferredLocale: "" })
+        .preferredLocale,
+      undefined,
+    );
+    assert.equal(
+      adminMembershipEnrollmentCreateBodySchema.safeParse({ ...base, preferredLocale: "XX" })
+        .success,
+      false,
+    );
   });
 
   it("rejects a malformed email", () => {

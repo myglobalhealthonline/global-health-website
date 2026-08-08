@@ -58,13 +58,49 @@ describe("parseCsv", () => {
 describe("summarize", () => {
   it("counts each outcome", () => {
     const rows = [
-      { outcome: "CREATE" },
-      { outcome: "CREATE" },
-      { outcome: "LINK" },
-      { outcome: "REVIVE" },
-      { outcome: "REJECT" },
+      { outcome: "CREATE", willEmail: true },
+      { outcome: "CREATE", willEmail: true },
+      { outcome: "LINK", willEmail: true },
+      { outcome: "REVIVE", willEmail: true },
+      { outcome: "REJECT", willEmail: true },
     ] as PreviewData["rows"];
-    assert.deepEqual(summarize(rows), { create: 2, link: 1, revive: 1, reject: 1 });
+    assert.deepEqual(summarize(rows), {
+      create: 2,
+      link: 1,
+      revive: 1,
+      reject: 1,
+      warned: 0,
+      recipients: 4,
+    });
+  });
+
+  /**
+   * §25's whole safety argument is that the admin sees the blast radius before
+   * the send, so this number has to be the number of emails — not the number
+   * of rows. Two things make them differ, and both appear on a re-import.
+   */
+  it("counts recipients, not rows: a REJECT emails nobody and a re-issued card is not re-sent", () => {
+    const rows = [
+      { outcome: "CREATE", willEmail: true },
+      // Already had their card: reviving them must not email them twice.
+      { outcome: "REVIVE", willEmail: false },
+      // Rejected rows apply nothing at all, so they cannot email.
+      { outcome: "REJECT", willEmail: true },
+    ] as PreviewData["rows"];
+    const counts = summarize(rows);
+    assert.equal(counts.recipients, 1, "one email, from three rows");
+  });
+
+  it("counts rows carrying a warning without treating them as failures", () => {
+    const rows = [
+      { outcome: "CREATE", willEmail: true, warnings: ["Locale \"XX\" is not configured"] },
+      { outcome: "CREATE", willEmail: true, warnings: [] },
+      { outcome: "CREATE", willEmail: true },
+    ] as PreviewData["rows"];
+    const counts = summarize(rows);
+    assert.equal(counts.warned, 1);
+    assert.equal(counts.reject, 0, "a warning is not a rejection");
+    assert.equal(counts.recipients, 3, "and it does not stop the email either");
   });
 });
 
@@ -80,10 +116,15 @@ describe("membership import (database)", () => {
   let familyLevelId = "";
   const userIds: string[] = [];
 
-  const HEADER = "membershipId,email,firstName,lastName,level,startDate,endDate,primaryMembershipId,relationship";
+  // Phase 7c: `membershipId` is gone from the required set — it is generated —
+  // and the column name a partner's own export uses aliases onto
+  // `partnerReference`. `primaryEmail` is how a dependent names a primary this
+  // same file creates, since that primary has no id until commit.
+  const HEADER =
+    "partnerReference,email,firstName,lastName,level,startDate,endDate,primaryMembershipId,primaryEmail,relationship,locale";
   const row = (values: Partial<Record<string, string>>): string =>
     [
-      values.membershipId ?? "",
+      values.partnerReference ?? values.membershipId ?? "",
       values.email ?? "",
       values.firstName ?? "",
       values.lastName ?? "",
@@ -91,7 +132,9 @@ describe("membership import (database)", () => {
       values.startDate ?? "2026-01-01",
       values.endDate ?? "",
       values.primaryMembershipId ?? "",
+      values.primaryEmail ?? "",
       values.relationship ?? "",
+      values.locale ?? "",
     ].join(",");
 
   const preview = (csv: string) =>
@@ -170,8 +213,8 @@ describe("membership import (database)", () => {
     await clearEnrollments();
     const csv = [
       HEADER,
-      row({ membershipId: "IMP-1", email: `a-${uniq}@test.local`, firstName: "A", lastName: "One" }),
-      row({ membershipId: "IMP-2", email: `b-${uniq}@test.local`, firstName: "B", lastName: "Two" }),
+      row({ partnerReference: "IMP-1", email: `a-${uniq}@test.local`, firstName: "A", lastName: "One" }),
+      row({ partnerReference: "IMP-2", email: `b-${uniq}@test.local`, firstName: "B", lastName: "Two" }),
     ].join("\n");
 
     const batch = await preview(csv);
@@ -180,40 +223,46 @@ describe("membership import (database)", () => {
     assert.equal(await prisma.membershipEnrollment.count({ where: { planId } }), 0);
   });
 
-  it("rejects a malformed email, a missing name and a short membership id", async (t) => {
+  it("rejects a malformed email and a missing name", async (t) => {
     if (!prisma) return t.skip();
     const csv = [
       HEADER,
-      row({ membershipId: "IMP-3", email: "not-an-email", firstName: "A", lastName: "One" }),
-      row({ membershipId: "IMP-4", email: `c-${uniq}@test.local`, firstName: "", lastName: "Two" }),
-      row({ membershipId: "X", email: `d-${uniq}@test.local`, firstName: "C", lastName: "Three" }),
+      row({ partnerReference: "IMP-3", email: "not-an-email", firstName: "A", lastName: "One" }),
+      row({ partnerReference: "IMP-4", email: `c-${uniq}@test.local`, firstName: "", lastName: "Two" }),
+      // A two-character reference used to be rejected as a too-short id.
+      // Since 7c it is just a short partner number, which is their business.
+      row({ partnerReference: "X", email: `d-${uniq}@test.local`, firstName: "C", lastName: "Three" }),
     ].join("\n");
 
     const rows = rowsOf(await preview(csv));
     assert.deepEqual(
       rows.map((r) => r.outcome),
-      ["REJECT", "REJECT", "REJECT"],
+      ["REJECT", "REJECT", "CREATE"],
     );
     assert.match(rows[0].reason ?? "", /email/i);
     assert.match(rows[1].reason ?? "", /name/i);
-    assert.match(rows[2].reason ?? "", /membership ID/i);
+    assert.equal(rows[2].partnerReference, "X");
   });
 
-  it("rejects duplicate ids and emails within the same file, case-insensitively", async (t) => {
+  it("warns on a duplicate partner reference and rejects a duplicate email, case-insensitively", async (t) => {
     if (!prisma) return t.skip();
     const email = `dup-${uniq}@test.local`;
     const csv = [
       HEADER,
-      row({ membershipId: "DUP-1", email, firstName: "A", lastName: "One" }),
-      // Same id in a different case — the unique index is on lower().
-      row({ membershipId: "dup-1", email: `other-${uniq}@test.local`, firstName: "B", lastName: "Two" }),
-      row({ membershipId: "DUP-2", email: email.toUpperCase(), firstName: "C", lastName: "Three" }),
+      row({ partnerReference: "DUP-1", email, firstName: "A", lastName: "One" }),
+      // A repeated PARTNER REFERENCE is a warning, never a rejection: the same
+      // number legitimately appears in more than one plan (§21.5), so inside
+      // one file it is a likely copy-paste error, not a reason to refuse a row.
+      row({ partnerReference: "dup-1", email: `other-${uniq}@test.local`, firstName: "B", lastName: "Two" }),
+      // A repeated EMAIL still is a rejection — it is the linking key, and two
+      // rows for one address in one plan cannot both be applied.
+      row({ partnerReference: "DUP-2", email: email.toUpperCase(), firstName: "C", lastName: "Three" }),
     ].join("\n");
 
     const rows = rowsOf(await preview(csv));
     assert.equal(rows[0].outcome, "CREATE");
-    assert.equal(rows[1].outcome, "REJECT");
-    assert.match(rows[1].reason ?? "", /membership ID within this file/i);
+    assert.equal(rows[1].outcome, "CREATE", "a duplicate reference does not block the row");
+    assert.match((rows[1].warnings ?? []).join(" "), /more than once in this file/i);
     assert.equal(rows[2].outcome, "REJECT");
     assert.match(rows[2].reason ?? "", /email within this file/i);
   });
@@ -244,12 +293,152 @@ describe("membership import (database)", () => {
     assert.match(rows[1].reason ?? "", /End date/i);
   });
 
+  /**
+   * §25. The plan's primary-country default alone would welcome every Irish
+   * member of a Czech-primary plan in Czech, so the partner gets to say — and
+   * getting it wrong must cost them the language, not the row.
+   */
+  it("takes a supported locale off the row and ignores an unsupported one with a warning", async (t) => {
+    if (!prisma) return t.skip();
+    await clearEnrollments();
+    await prisma.countryLocale.create({ data: { countryId, locale: "PT" } });
+    const csv = [
+      HEADER,
+      row({ email: `loc1-${uniq}@test.local`, firstName: "A", lastName: "One", locale: "PT" }),
+      // Configured nowhere for this country: warn, do not reject.
+      row({ email: `loc2-${uniq}@test.local`, firstName: "B", lastName: "Two", locale: "CS" }),
+      // Not a locale at all.
+      row({ email: `loc3-${uniq}@test.local`, firstName: "C", lastName: "Three", locale: "klingon" }),
+      // Absent: falls back at send time, and carries no warning.
+      row({ email: `loc4-${uniq}@test.local`, firstName: "D", lastName: "Four" }),
+    ].join("\n");
+
+    const rows = rowsOf(await preview(csv));
+    assert.deepEqual(
+      rows.map((r) => r.outcome),
+      ["CREATE", "CREATE", "CREATE", "CREATE"],
+      "an unrecognised language never costs the admin a row",
+    );
+    assert.equal(rows[0].preferredLocale, "PT");
+    assert.equal(rows[1].preferredLocale, null);
+    assert.match((rows[1].warnings ?? []).join(" "), /not configured/i);
+    assert.equal(rows[2].preferredLocale, null);
+    assert.match((rows[2].warnings ?? []).join(" "), /not configured/i);
+    assert.equal(rows[3].preferredLocale, null);
+    assert.deepEqual(rows[3].warnings, [], "no locale asked for is not a problem");
+  });
+
+  it("stores the chosen locale on the enrollment so a later resend can read it", async (t) => {
+    if (!prisma) return t.skip();
+    await clearEnrollments();
+    const email = `locstore-${uniq}@test.local`;
+    const csv = [HEADER, row({ email, firstName: "A", lastName: "One", locale: "EN" })].join("\n");
+    const batch = await preview(csv);
+    await svc.commitMembershipImport(batch.id, null);
+
+    const stored = await prisma.membershipEnrollment.findFirst({ where: { planId, email } });
+    assert.equal(stored?.preferredLocale, "EN");
+  });
+
+  /**
+   * The number §25 exists to show. It is emails, not rows: a rejected row
+   * applies nothing, and reviving someone who already has their card must not
+   * send them a second one (§41's dedupe).
+   */
+  it("reports the recipient count, excluding rejects and already-carded revives", async (t) => {
+    if (!prisma) return t.skip();
+    await clearEnrollments();
+    const carded = `carded-${uniq}@test.local`;
+    const fresh = `freshrevive-${uniq}@test.local`;
+    await prisma.membershipEnrollment.create({
+      data: {
+        planId,
+        levelId: defaultLevelId,
+        countryId,
+        membershipId: `RC1-${uniq}`.toUpperCase(),
+        email: carded,
+        firstName: "Had",
+        lastName: "Card",
+        startDate: new Date("2026-01-01"),
+        status: "REMOVED",
+        cardIssuedAt: new Date("2026-02-01"),
+      },
+    });
+    await prisma.membershipEnrollment.create({
+      data: {
+        planId,
+        levelId: defaultLevelId,
+        countryId,
+        membershipId: `RC2-${uniq}`.toUpperCase(),
+        email: fresh,
+        firstName: "No",
+        lastName: "Card",
+        startDate: new Date("2026-01-01"),
+        status: "REMOVED",
+      },
+    });
+
+    const csv = [
+      HEADER,
+      row({ email: `new-${uniq}@test.local`, firstName: "A", lastName: "One" }),
+      row({ email: carded, firstName: "Had", lastName: "Card" }),
+      row({ email: fresh, firstName: "No", lastName: "Card" }),
+      row({ email: "not-an-email", firstName: "Bad", lastName: "Row" }),
+    ].join("\n");
+
+    const rows = rowsOf(await preview(csv));
+    const counts = svc.summarize(rows);
+    assert.equal(counts.reject, 1);
+    assert.equal(counts.revive, 2);
+    assert.equal(
+      counts.recipients,
+      2,
+      "the new member and the un-carded revive — not the rejected row, not the one already carded",
+    );
+    assert.equal(rows.find((r) => r.email === carded)?.willEmail, false);
+    assert.equal(rows.find((r) => r.email === fresh)?.willEmail, true);
+  });
+
+  it("a re-import of the same file emails nobody the second time", async (t) => {
+    if (!prisma) return t.skip();
+    await clearEnrollments();
+    const email = `reimport-${uniq}@test.local`;
+    const csv = [HEADER, row({ email, firstName: "A", lastName: "One" })].join("\n");
+
+    const first = await preview(csv);
+    assert.equal(svc.summarize(rowsOf(first)).recipients, 1);
+    await svc.commitMembershipImport(first.id, null);
+    // 7d issues the card at commit; 7c only lands the flag it reads.
+    await prisma.membershipEnrollment.updateMany({
+      where: { planId, email },
+      data: { cardIssuedAt: new Date() },
+    });
+
+    // Same file again. The row is now LIVE, so it is rejected outright — the
+    // strongest form of "emails nobody twice".
+    const second = await preview(csv);
+    const secondRows = rowsOf(second);
+    assert.equal(secondRows[0].outcome, "REJECT");
+    assert.equal(svc.summarize(secondRows).recipients, 0);
+
+    // …and if the member is removed and re-imported, the carded flag is what
+    // stops the second send rather than the rejection.
+    await prisma.membershipEnrollment.updateMany({
+      where: { planId, email },
+      data: { status: "REMOVED" },
+    });
+    const third = rowsOf(await preview(csv));
+    assert.equal(third[0].outcome, "REVIVE");
+    assert.equal(third[0].willEmail, false);
+    assert.equal(svc.summarize(third).recipients, 0);
+  });
+
   it("resolves a named level, and defaults to the plan's default level", async (t) => {
     if (!prisma) return t.skip();
     const csv = [
       HEADER,
-      row({ membershipId: "SET-1", email: `s1-${uniq}@test.local`, firstName: "A", lastName: "One", level: "family" }),
-      row({ membershipId: "SET-2", email: `s2-${uniq}@test.local`, firstName: "B", lastName: "Two" }),
+      row({ partnerReference: "SET-1", email: `s1-${uniq}@test.local`, firstName: "A", lastName: "One", level: "family" }),
+      row({ partnerReference: "SET-2", email: `s2-${uniq}@test.local`, firstName: "B", lastName: "Two" }),
     ].join("\n");
 
     const rows = rowsOf(await preview(csv));
@@ -278,8 +467,8 @@ describe("membership import (database)", () => {
 
     const csv = [
       HEADER,
-      row({ membershipId: "LNK-1", email: verifiedEmail, firstName: "A", lastName: "One" }),
-      row({ membershipId: "LNK-2", email: unverifiedEmail, firstName: "B", lastName: "Two" }),
+      row({ partnerReference: "LNK-1", email: verifiedEmail, firstName: "A", lastName: "One" }),
+      row({ partnerReference: "LNK-2", email: unverifiedEmail, firstName: "B", lastName: "Two" }),
     ].join("\n");
 
     const rows = rowsOf(await preview(csv));
@@ -308,27 +497,33 @@ describe("membership import (database)", () => {
 
     const csv = [
       HEADER,
-      row({ membershipId: "CMT-1", email: verifiedEmail, firstName: "A", lastName: "One" }),
-      row({ membershipId: "CMT-2", email: unverifiedEmail, firstName: "B", lastName: "Two" }),
+      row({ partnerReference: "CMT-1", email: verifiedEmail, firstName: "A", lastName: "One" }),
+      row({ partnerReference: "CMT-2", email: unverifiedEmail, firstName: "B", lastName: "Two" }),
     ].join("\n");
     const batch = await preview(csv);
     const result = await svc.commitMembershipImport(batch.id, null);
 
     assert.equal(result.claimed, true);
     assert.equal(result.claimed && result.created, 2);
+    // Found by the PARTNER's number now — ours is generated at commit and is
+    // not knowable from the file (§21.5).
     const linked = await prisma.membershipEnrollment.findFirst({
-      where: { planId, membershipId: "CMT-1" },
+      where: { planId, partnerReference: "CMT-1" },
     });
     const pending = await prisma.membershipEnrollment.findFirst({
-      where: { planId, membershipId: "CMT-2" },
+      where: { planId, partnerReference: "CMT-2" },
     });
+    // Prefixed from the plan slug (`import-plan-…` → `IMPO`) and suffixed with
+    // 8 base32 characters, drawn from an alphabet with no I, L, O or U.
+    assert.match(linked?.membershipId ?? "", /^IMPO-[0-9A-HJKMNP-TV-Z]{8}$/);
+    assert.notEqual(linked?.membershipId, pending?.membershipId);
     assert.equal(linked?.status, "ACTIVE");
     assert.equal(linked?.userId, verified.id);
     assert.equal(pending?.status, "PENDING");
     assert.equal(pending?.userId, null);
   });
 
-  it("rejects an email already enrolled, and an id held by another enrollment", async (t) => {
+  it("rejects an email already enrolled; a reused partner reference is fine", async (t) => {
     if (!prisma) return t.skip();
     await clearEnrollments();
     const taken = `taken-${uniq}@test.local`;
@@ -348,16 +543,18 @@ describe("membership import (database)", () => {
 
     const csv = [
       HEADER,
-      row({ membershipId: "NEW-1", email: taken.toUpperCase(), firstName: "A", lastName: "One" }),
-      row({ membershipId: "held-1", email: `fresh-${uniq}@test.local`, firstName: "B", lastName: "Two" }),
+      row({ partnerReference: "NEW-1", email: taken.toUpperCase(), firstName: "A", lastName: "One" }),
+      row({ partnerReference: "held-1", email: `fresh-${uniq}@test.local`, firstName: "B", lastName: "Two" }),
     ].join("\n");
 
     const rows = rowsOf(await preview(csv));
     assert.match(rows[0].reason ?? "", /already enrolled/i);
-    assert.match(rows[1].reason ?? "", /already belongs to another enrollment/i);
+    // `held-1` matches an existing row's PARTNER reference, which is not a key
+    // and never was globally unique (§21.5) — nothing to collide with.
+    assert.equal(rows[1].outcome, "CREATE");
   });
 
-  it("revives a REMOVED row and overwrites its id, names, level and term", async (t) => {
+  it("revives a REMOVED row, keeping its id while overwriting names, level and term", async (t) => {
     if (!prisma) return t.skip();
     await clearEnrollments();
     const email = `revive-${uniq}@test.local`;
@@ -396,7 +593,12 @@ describe("membership import (database)", () => {
     assert.equal(result.claimed && result.revived, 1);
 
     const after = await prisma.membershipEnrollment.findUnique({ where: { id: removed.id } });
-    assert.equal(after?.membershipId, "NEW-ID-1", "a returning member brings a new partner id");
+    // The generated id is this ROW's identity and survives a revive: the same
+    // person is coming back, and reissuing would invalidate a card they may
+    // still be holding. What a returning member brings is a new PARTNER
+    // number, and that is what gets overwritten (§8.2, restated for 7c).
+    assert.equal(after?.membershipId, "OLD-ID-1", "the generated id is kept");
+    assert.equal(after?.partnerReference, "NEW-ID-1", "the partner's number is refreshed");
     assert.equal(after?.firstName, "New");
     assert.equal(after?.levelId, familyLevelId);
     assert.equal(after?.status, "PENDING");
@@ -421,7 +623,9 @@ describe("membership import (database)", () => {
         email: childEmail,
         firstName: "Kid",
         lastName: "Family",
-        primaryMembershipId: "FAM-1",
+        // Named by EMAIL, because the primary's generated id will not exist
+        // until this same commit creates it (§21.5).
+        primaryEmail,
         relationship: "child",
       }),
       row({
@@ -438,10 +642,10 @@ describe("membership import (database)", () => {
     assert.equal(result.claimed, true);
 
     const primary = await prisma.membershipEnrollment.findFirst({
-      where: { planId, membershipId: "FAM-1" },
+      where: { planId, email: primaryEmail },
     });
     const dependent = await prisma.membershipEnrollment.findFirst({
-      where: { planId, membershipId: "FAM-1-D" },
+      where: { planId, email: childEmail },
     });
     assert.ok(primary);
     assert.equal(dependent?.memberType, "DEPENDENT");
@@ -546,7 +750,7 @@ describe("membership import (database)", () => {
     await clearEnrollments();
     const csv = [
       HEADER,
-      row({ membershipId: "RACE-1", email: `race-${uniq}@test.local`, firstName: "A", lastName: "One" }),
+      row({ partnerReference: "RACE-1", email: `race-${uniq}@test.local`, firstName: "A", lastName: "One" }),
     ].join("\n");
     const batch = await preview(csv);
 
@@ -566,7 +770,7 @@ describe("membership import (database)", () => {
     await clearEnrollments();
     const csv = [
       HEADER,
-      row({ membershipId: "IDEM-1", email: `idem-${uniq}@test.local`, firstName: "A", lastName: "One" }),
+      row({ partnerReference: "IDEM-1", email: `idem-${uniq}@test.local`, firstName: "A", lastName: "One" }),
     ].join("\n");
     const batch = await preview(csv);
     await svc.commitMembershipImport(batch.id, null);
@@ -582,7 +786,7 @@ describe("membership import (database)", () => {
     await clearEnrollments();
     const csv = [
       HEADER,
-      row({ membershipId: "CXL-1", email: `cxl-${uniq}@test.local`, firstName: "A", lastName: "One" }),
+      row({ partnerReference: "CXL-1", email: `cxl-${uniq}@test.local`, firstName: "A", lastName: "One" }),
     ].join("\n");
     const batch = await preview(csv);
 
@@ -602,7 +806,7 @@ describe("membership import (database)", () => {
     await clearEnrollments();
     const csv = [
       HEADER,
-      row({ membershipId: "CXL-2", email: `cxl2-${uniq}@test.local`, firstName: "A", lastName: "One" }),
+      row({ partnerReference: "CXL-2", email: `cxl2-${uniq}@test.local`, firstName: "A", lastName: "One" }),
     ].join("\n");
     const batch = await preview(csv);
     await svc.cancelMembershipImport(batch.id);
@@ -618,7 +822,7 @@ describe("membership import (database)", () => {
     const tooMany = [
       HEADER,
       ...Array.from({ length: svc.MEMBERSHIP_IMPORT_ROW_CAP + 1 }, (_unused, i) =>
-        row({ membershipId: `CAP${i}`, email: `cap${i}-${uniq}@test.local`, firstName: "A", lastName: "B" }),
+        row({ partnerReference: `CAP${i}`, email: `cap${i}-${uniq}@test.local`, firstName: "A", lastName: "B" }),
       ),
     ].join("\n");
     await assert.rejects(() => preview(tooMany), /limit is 2000/i);

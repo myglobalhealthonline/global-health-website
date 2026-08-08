@@ -1,5 +1,6 @@
 import {
   Prisma,
+  type LocaleCode,
   type MembershipAllowancePool,
   type MembershipMemberType,
   type PrismaClient,
@@ -9,6 +10,7 @@ import { normalizeDbError } from "../shared/db-errors.js";
 import { linkMembershipsForEmail } from "./membership-linking.service.js";
 import { sendMembershipInviteEmail } from "./membership-emails.js";
 import { holderEnrollmentId } from "./membership-card.service.js";
+import { generateMembershipId } from "./membership-id.service.js";
 import type {
   AdminMembershipDependentCreateBody,
   AdminMembershipEnrollmentCreateBody,
@@ -177,9 +179,20 @@ export async function upsertEnrollmentRow(
   tx: Tx,
   input: {
     planId: string;
+    /** The plan's slug — the prefix for a generated id (§21.5). */
+    planSlug: string;
     levelId: string;
     countryId: string;
-    membershipId: string;
+    /**
+     * Phase 7c: normally omitted, and generated here. Supplied only where the
+     * caller has a specific id to use — the dependent add, whose `-D1` scheme
+     * derives from the primary's (decision 43).
+     */
+    membershipId?: string;
+    /** The partner's own member number. Searchable, NOT a key (§21.5). */
+    partnerReference?: string | null;
+    /** Locale for the welcome email while PENDING (§25). */
+    preferredLocale?: LocaleCode | null;
     email: string;
     firstName: string;
     lastName: string;
@@ -196,7 +209,6 @@ export async function upsertEnrollmentRow(
   },
 ): Promise<{ id: string; outcome: "CREATE" | "REVIVE" }> {
   const email = normalizeEmail(input.email);
-  const membershipId = input.membershipId.trim();
 
   const live = await findLiveEnrollmentByEmail(tx, input.planId, email);
   if (live) {
@@ -205,13 +217,13 @@ export async function upsertEnrollmentRow(
     );
   }
   const removed = await findRemovedEnrollmentByEmail(tx, input.planId, email);
-  await assertMembershipIdFree(tx, membershipId, removed?.id);
 
   const data = {
     planId: input.planId,
     levelId: input.levelId,
     countryId: input.countryId,
-    membershipId,
+    partnerReference: input.partnerReference ?? null,
+    preferredLocale: input.preferredLocale ?? null,
     email,
     firstName: input.firstName.trim(),
     lastName: input.lastName.trim(),
@@ -230,6 +242,15 @@ export async function upsertEnrollmentRow(
   if (removed) {
     // Reset the link too: the address may now belong to a different person.
     // The linker re-attaches it on the next verified login.
+    //
+    // `membershipId` and `cardIssuedAt` are deliberately NOT in `data`, so a
+    // revive keeps both. Before phase 7c the CSV's id overwrote the old one,
+    // because a returning member came back with a new PARTNER number — that
+    // requirement now lives on `partnerReference`, which does get overwritten
+    // above. The generated id is this row's identity, and reissuing it would
+    // invalidate a card the same person may still be holding. Keeping
+    // `cardIssuedAt` likewise means a revive does not re-email someone who has
+    // already had their card (decision 41's dedupe).
     await tx.membershipEnrollment.update({
       where: { id: removed.id },
       data: { ...data, status: "PENDING", userId: null, linkedAt: null, claimedAt: null },
@@ -237,8 +258,20 @@ export async function upsertEnrollmentRow(
     return { id: removed.id, outcome: "REVIVE" };
   }
 
+  // Generated only on a real create (§21.5). A caller-supplied id is still
+  // honoured for the dependent `-D1` scheme, and is checked for collisions the
+  // same way — the index is global and case-insensitive, and covers REMOVED
+  // rows, so a removed member still owns theirs.
+  let membershipId: string;
+  if (input.membershipId) {
+    membershipId = input.membershipId.trim();
+    await assertMembershipIdFree(tx, membershipId);
+  } else {
+    membershipId = await generateMembershipId(tx, input.planSlug);
+  }
+
   const created = await tx.membershipEnrollment.create({
-    data: { ...data, status: "PENDING" },
+    data: { ...data, membershipId, status: "PENDING" },
     select: { id: true },
   });
   return { id: created.id, outcome: "CREATE" };
@@ -252,6 +285,10 @@ export async function listMembershipEnrollments(query: AdminMembershipEnrollment
       ? {
           OR: [
             { membershipId: { contains: query.q, mode: "insensitive" } },
+            // The partner's own number, searchable alongside the generated id
+            // (§26). Staff and the partner's own support desk quote different
+            // numbers for the same person, so both have to find them.
+            { partnerReference: { contains: query.q, mode: "insensitive" } },
             { email: { contains: query.q, mode: "insensitive" } },
             { firstName: { contains: query.q, mode: "insensitive" } },
             { lastName: { contains: query.q, mode: "insensitive" } },
@@ -365,7 +402,7 @@ export async function createMembershipEnrollment(
 ) {
   const plan = await prisma.membershipPlan.findUnique({
     where: { id: body.planId },
-    select: { id: true, primaryCountryId: true },
+    select: { id: true, slug: true, primaryCountryId: true },
   });
   if (!plan) throw new MembershipEnrollmentConflictError("Membership plan not found");
   const level = await resolveLevel(prisma, plan.id, body.levelId ?? null);
@@ -374,9 +411,13 @@ export async function createMembershipEnrollment(
   try {
     const result = await upsertEnrollmentRow(prisma, {
       planId: plan.id,
+      planSlug: plan.slug,
       levelId: level.id,
       countryId: plan.primaryCountryId,
-      membershipId: body.membershipId,
+      // No membershipId: generated (§21.5). The partner's own number, if they
+      // have one, rides along as a searchable reference instead.
+      partnerReference: body.partnerReference ?? null,
+      preferredLocale: body.preferredLocale ?? null,
       email: body.email,
       firstName: body.firstName,
       lastName: body.lastName,
@@ -426,11 +467,14 @@ export async function updateMembershipEnrollment(
     }
   }
 
+  // `membershipId` is deliberately absent, and the update schema no longer
+  // accepts it (§21.5). It is generated, printed on the member's card and half
+  // of what the claim form checks — editing it invalidates a card already in
+  // someone's wallet. Partner-side corrections go to `partnerReference`, which
+  // is what an admin actually wants to fix.
   const data: Prisma.MembershipEnrollmentUpdateInput = {};
-  if (body.membershipId !== undefined) {
-    await assertMembershipIdFree(prisma, body.membershipId, id);
-    data.membershipId = body.membershipId.trim();
-  }
+  if (body.partnerReference !== undefined) data.partnerReference = body.partnerReference;
+  if (body.preferredLocale !== undefined) data.preferredLocale = body.preferredLocale;
   if (body.email !== undefined) {
     const email = normalizeEmail(body.email);
     const clash = await findLiveEnrollmentByEmail(prisma, existing.planId, email, id);
@@ -604,6 +648,7 @@ export async function addMembershipDependent(
       endDate: true,
       memberType: true,
       status: true,
+      plan: { select: { slug: true } },
       level: { select: { familyEnabled: true, maxDependents: true } },
     },
   });
@@ -629,9 +674,17 @@ export async function addMembershipDependent(
 
   const result = await upsertEnrollmentRow(prisma, {
     planId: primary.planId,
+    planSlug: primary.plan.slug,
     levelId: primary.levelId,
     countryId: primary.countryId,
+    // Decision 43 gives a dependent its OWN generated id, and `-D1` IS
+    // generated: the unguessability comes from the primary's random suffix,
+    // which the dependent inherits. A fully independent id would buy nothing
+    // and would destroy the visible family link that support reads off two
+    // cards side by side.
     membershipId,
+    partnerReference: body.partnerReference ?? null,
+    preferredLocale: body.preferredLocale ?? null,
     email: body.email,
     firstName: body.firstName,
     lastName: body.lastName,

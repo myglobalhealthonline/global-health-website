@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, type LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { linkMembershipsForEmail } from "./membership-linking.service.js";
@@ -40,8 +40,24 @@ export type ImportOutcome = "CREATE" | "REVIVE" | "LINK" | "REJECT";
 export type PreviewRow = {
   line: number;
   outcome: ImportOutcome;
+  /** Why the row was REJECTed. Nothing is applied for it. */
   reason?: string;
-  membershipId: string;
+  /**
+   * Things worth an admin's eye that do NOT stop the row (§25). An
+   * unrecognised locale, a partner reference repeated inside the file — both
+   * are probably data errors, and neither is worth blocking a 200-row import.
+   */
+  warnings?: string[];
+  /**
+   * The partner's own member number, from the CSV. NOT a key (§21.5), and no
+   * longer the id: `membershipId` is generated at commit, so a preview row has
+   * no id to show yet.
+   */
+  partnerReference: string | null;
+  /** Welcome-email language while the row is PENDING (§25). Null = fall back. */
+  preferredLocale: LocaleCode | null;
+  /** True when committing this row will send a welcome email + card (§41). */
+  willEmail: boolean;
   email: string;
   firstName: string;
   lastName: string;
@@ -51,7 +67,16 @@ export type PreviewRow = {
   endDate: string | null;
   levelId: string | null;
   levelSlug: string | null;
+  /**
+   * How a dependent names its primary. `primaryMembershipId` still works for a
+   * primary who is ALREADY enrolled — an admin can copy their generated id out
+   * of the member list — but it cannot name a primary created by this same
+   * file, because that id does not exist until commit (§21.5).
+   * `primaryEmail` covers that case, and is the same key linking uses
+   * everywhere else (§5, assumption 5).
+   */
   primaryMembershipId: string | null;
+  primaryEmail: string | null;
   relationship: string | null;
   adminNotes: string | null;
   /** Set on REVIVE so the commit report can say which row is being reused. */
@@ -130,8 +155,24 @@ export function parseCsv(input: string): string[][] {
 }
 
 const HEADER_ALIASES: Record<string, string> = {
-  membershipid: "membershipId",
-  "membership id": "membershipId",
+  // The partner's own number. `membershipId` aliases onto it deliberately:
+  // every partner file in existence has that column, and since phase 7c the
+  // id is ours to generate, so the number in their export IS their reference
+  // (§8.1). Silently dropping the column would have thrown away the only
+  // thing tying our record back to theirs.
+  partnerreference: "partnerReference",
+  "partner reference": "partnerReference",
+  membershipid: "partnerReference",
+  "membership id": "partnerReference",
+  memberid: "partnerReference",
+  "member id": "partnerReference",
+  reference: "partnerReference",
+  ref: "partnerReference",
+  locale: "locale",
+  language: "locale",
+  lang: "locale",
+  primaryemail: "primaryEmail",
+  "primary email": "primaryEmail",
   email: "email",
   firstname: "firstName",
   "first name": "firstName",
@@ -178,9 +219,25 @@ export async function previewMembershipImport(input: {
 }) {
   const plan = await prisma.membershipPlan.findUnique({
     where: { id: input.planId },
-    select: { id: true, primaryCountryId: true },
+    select: {
+      id: true,
+      slug: true,
+      primaryCountryId: true,
+      primaryCountry: {
+        select: { defaultLocale: true, countryLocales: { select: { locale: true } } },
+      },
+    },
   });
   if (!plan) throw new MembershipImportError("Membership plan not found");
+
+  // Which languages this plan can actually write in: the primary country's
+  // configured locales plus its default (§25). An unrecognised one is a
+  // warning, not a rejection — a mistyped language must not cost the admin a
+  // 200-row import.
+  const supportedLocales = new Set<LocaleCode>([
+    plan.primaryCountry.defaultLocale,
+    ...plan.primaryCountry.countryLocales.map((l) => l.locale),
+  ]);
 
   const levels = await prisma.membershipLevel.findMany({
     where: { planId: plan.id },
@@ -192,7 +249,9 @@ export async function previewMembershipImport(input: {
   const table = parseCsv(input.csv);
   if (table.length < 2) throw new MembershipImportError("The file has no data rows");
   const headers = table[0].map(normalizeHeader);
-  for (const required of ["membershipId", "email", "firstName", "lastName"]) {
+  // `membershipId` is no longer required — it is generated (§21.5). A file
+  // that still carries the column is fine: it aliases onto `partnerReference`.
+  for (const required of ["email", "firstName", "lastName"]) {
     if (!headers.includes(required)) {
       throw new MembershipImportError(`Missing required column: ${required}`);
     }
@@ -210,37 +269,69 @@ export async function previewMembershipImport(input: {
   };
 
   const rows: PreviewRow[] = [];
-  const seenIds = new Set<string>();
   const seenEmails = new Set<string>();
-  // Primaries this file itself creates, so a dependent can point at one.
-  const fileMembershipIds = new Set<string>();
+  const seenReferences = new Set<string>();
+  // Primaries this file itself creates, keyed by EMAIL — the only handle a
+  // dependent can use for a primary whose id does not exist yet (§21.5).
+  const filePrimaryEmails = new Set<string>();
   for (const raw of body) {
-    fileMembershipIds.add(cell(raw, "membershipId").toLowerCase());
+    if (!cell(raw, "primaryMembershipId") && !cell(raw, "primaryEmail")) {
+      filePrimaryEmails.add(normalizeEmail(cell(raw, "email")));
+    }
   }
   // Dependents counted per primary across the file, added to what already exists.
   const dependentTally = new Map<string, number>();
+
+  const isDependentRow = (raw: string[]): boolean =>
+    Boolean(cell(raw, "primaryMembershipId") || cell(raw, "primaryEmail"));
 
   // Validate primaries before dependents regardless of the order they appear
   // in, so a dependent listed above its own primary still resolves — the same
   // ordering the commit uses (§8.2). Rows are sorted back into file order at
   // the end, because that is the order the preview table shows.
   const order = [
-    ...body.map((_row, i) => i).filter((i) => !cell(body[i], "primaryMembershipId")),
-    ...body.map((_row, i) => i).filter((i) => Boolean(cell(body[i], "primaryMembershipId"))),
+    ...body.map((_row, i) => i).filter((i) => !isDependentRow(body[i])),
+    ...body.map((_row, i) => i).filter((i) => isDependentRow(body[i])),
   ];
 
   for (const index of order) {
     const raw = body[index];
     const line = index + 2; // 1-based, plus the header row
-    const membershipId = cell(raw, "membershipId");
     const emailRaw = cell(raw, "email");
     const email = normalizeEmail(emailRaw);
     const primaryMembershipId = cell(raw, "primaryMembershipId") || null;
+    const primaryEmail = normalizeEmail(cell(raw, "primaryEmail")) || null;
     const levelSlug = cell(raw, "level") || null;
+    const partnerReference = cell(raw, "partnerReference") || null;
+
+    const warnings: string[] = [];
+    const localeRaw = cell(raw, "locale").toUpperCase();
+    let preferredLocale: LocaleCode | null = null;
+    if (localeRaw) {
+      const candidate = localeRaw as LocaleCode;
+      if (supportedLocales.has(candidate)) {
+        preferredLocale = candidate;
+      } else {
+        // Ignored rather than rejected (§25): the row is still a perfectly
+        // good member, they just get the plan's default language.
+        warnings.push(
+          `Locale "${localeRaw}" is not configured for this plan's country — falling back to the default`,
+        );
+      }
+    }
+    if (partnerReference && seenReferences.has(partnerReference.toLowerCase())) {
+      // Duplicates ACROSS plans are permitted by design (§21.5); inside one
+      // file they are almost certainly a copy-paste error. Worth surfacing,
+      // not worth blocking the import over.
+      warnings.push("This partner reference appears more than once in this file");
+    }
 
     const base = {
       line,
-      membershipId,
+      partnerReference,
+      preferredLocale,
+      warnings,
+      willEmail: false,
       email,
       firstName: cell(raw, "firstName"),
       lastName: cell(raw, "lastName"),
@@ -251,6 +342,7 @@ export async function previewMembershipImport(input: {
       levelId: null as string | null,
       levelSlug,
       primaryMembershipId,
+      primaryEmail,
       relationship: cell(raw, "relationship") || null,
       adminNotes: cell(raw, "notes") || null,
     };
@@ -258,10 +350,6 @@ export async function previewMembershipImport(input: {
       rows.push({ ...base, startDate: base.startDate || new Date().toISOString(), outcome: "REJECT", reason });
     };
 
-    if (!membershipId || membershipId.length < 3) {
-      reject("Missing or too-short membership ID");
-      continue;
-    }
     if (!emailRaw || !EMAIL_RE.test(emailRaw.trim())) {
       reject("Missing or malformed email");
       continue;
@@ -270,27 +358,28 @@ export async function previewMembershipImport(input: {
       reject("First and last name are both required");
       continue;
     }
-    if (seenIds.has(membershipId.toLowerCase())) {
-      reject("Duplicate membership ID within this file");
-      continue;
-    }
     if (seenEmails.has(email)) {
       reject("Duplicate email within this file");
       continue;
     }
 
     // Dependent rows inherit level and term; the primary decides both.
-    const isDependent = Boolean(primaryMembershipId);
+    const isDependent = Boolean(primaryMembershipId || primaryEmail);
     let levelId = defaultLevel.id;
     let startDate = parseDate(cell(raw, "startDate")) ?? new Date();
     let endDate = parseDate(cell(raw, "endDate"));
 
     if (isDependent) {
+      // Two ways to name a primary, because the generated id does not exist
+      // until commit: `primaryMembershipId` finds someone already enrolled,
+      // `primaryEmail` finds someone this same file is creating.
       const primary = await prisma.membershipEnrollment.findFirst({
         where: {
           planId: plan.id,
-          membershipId: { equals: primaryMembershipId!, mode: "insensitive" },
           status: { not: "REMOVED" },
+          ...(primaryMembershipId
+            ? { membershipId: { equals: primaryMembershipId, mode: "insensitive" } }
+            : { email: { equals: primaryEmail!, mode: "insensitive" } }),
         },
         select: {
           id: true,
@@ -301,15 +390,17 @@ export async function previewMembershipImport(input: {
         },
       });
       if (!primary) {
-        if (!fileMembershipIds.has(primaryMembershipId!.toLowerCase())) {
-          reject("Primary membership ID not found in this plan or this file");
+        if (!primaryEmail || !filePrimaryEmails.has(primaryEmail)) {
+          reject(
+            primaryMembershipId
+              ? "Primary membership ID not found in this plan — use primaryEmail for a primary created by this file"
+              : "Primary email not found in this plan or this file",
+          );
           continue;
         }
         // The primary arrives in this same file. Its level and term are the
         // file's for that row; commit applies primaries first (§8.2).
-        const primaryRow = rows.find(
-          (r) => r.membershipId.toLowerCase() === primaryMembershipId!.toLowerCase(),
-        );
+        const primaryRow = rows.find((r) => r.email === primaryEmail);
         if (!primaryRow || primaryRow.outcome === "REJECT") {
           reject("The primary member's row was rejected");
           continue;
@@ -325,7 +416,10 @@ export async function previewMembershipImport(input: {
         const already = await prisma.membershipEnrollment.count({
           where: { primaryEnrollmentId: primary.id, status: { not: "REMOVED" } },
         });
-        const key = primaryMembershipId!.toLowerCase();
+        // Tallied on the RESOLVED primary, so two dependents naming the same
+        // person by different handles — one by id, one by email — still count
+        // against one cap rather than two.
+        const key = primary.id;
         const inFile = dependentTally.get(key) ?? 0;
         if (already + inFile >= primary.level.maxDependents) {
           reject(`Over the level's limit of ${primary.level.maxDependents} dependent(s)`);
@@ -350,13 +444,11 @@ export async function previewMembershipImport(input: {
       continue;
     }
 
-    // Global, case-insensitive, and NOT limited to live rows: a REMOVED row
-    // still owns its membership id until the revive of that same row
-    // overwrites it (§8.2).
-    const idHolder = await prisma.membershipEnrollment.findFirst({
-      where: { membershipId: { equals: membershipId, mode: "insensitive" } },
-      select: { id: true, planId: true, email: true, status: true },
-    });
+    // No membership-id collision check any more: the id is generated at
+    // commit and checked against the global index there (§21.5), so nothing in
+    // the CSV can clash with an existing one. The two §8.3 rejections that
+    // covered it are gone with it — a duplicate partner reference inside the
+    // file is now a warning, since duplicates are permitted by design.
     const live = await prisma.membershipEnrollment.findFirst({
       where: {
         planId: plan.id,
@@ -368,20 +460,17 @@ export async function previewMembershipImport(input: {
     const removed = await prisma.membershipEnrollment.findFirst({
       where: { planId: plan.id, email: { equals: email, mode: "insensitive" }, status: "REMOVED" },
       orderBy: { updatedAt: "desc" },
-      select: { id: true },
+      // `cardIssuedAt` decides whether reviving this person emails them again.
+      select: { id: true, cardIssuedAt: true },
     });
 
     if (live) {
       reject("This email is already enrolled in this plan");
       continue;
     }
-    if (idHolder && idHolder.id !== removed?.id) {
-      reject("This membership ID already belongs to another enrollment");
-      continue;
-    }
 
-    seenIds.add(membershipId.toLowerCase());
     seenEmails.add(email);
+    if (partnerReference) seenReferences.add(partnerReference.toLowerCase());
 
     // LINK requires a VERIFIED account. An unverified one imports as PENDING
     // and links when it verifies — the import is exactly the path an attacker
@@ -397,6 +486,12 @@ export async function previewMembershipImport(input: {
       startDate: startDate.toISOString(),
       endDate: endDate ? endDate.toISOString() : null,
       outcome: removed ? "REVIVE" : verifiedUser ? "LINK" : "CREATE",
+      // §41's dedupe, read forward at preview time so the blast radius is
+      // honest before the send. A CREATE or LINK row has no enrollment yet, so
+      // it always emails; a REVIVE reuses a row that may already have had its
+      // card, and reviving does not clear `cardIssuedAt` — so that person gets
+      // nothing a second time.
+      willEmail: removed ? removed.cardIssuedAt == null : true,
       ...(removed ? { existingEnrollmentId: removed.id } : {}),
     });
   }
@@ -430,6 +525,15 @@ export function summarize(rows: PreviewRow[]) {
     link: rows.filter((r) => r.outcome === "LINK").length,
     revive: rows.filter((r) => r.outcome === "REVIVE").length,
     reject: rows.filter((r) => r.outcome === "REJECT").length,
+    warned: rows.filter((r) => (r.warnings?.length ?? 0) > 0).length,
+    /**
+     * "Committing will email N members" (§25). NOT the row count: a REJECT
+     * applies nothing, and a REVIVE of someone who already has their card
+     * sends nothing either. Counting rows would overstate it on every
+     * re-import, which is the one number this control exists to get right —
+     * it is the whole safety argument for previewing before the send.
+     */
+    recipients: rows.filter((r) => r.outcome !== "REJECT" && r.willEmail).length,
   };
 }
 
@@ -459,7 +563,7 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
 
   const plan = await prisma.membershipPlan.findUnique({
     where: { id: batch.planId },
-    select: { id: true, primaryCountryId: true },
+    select: { id: true, slug: true, primaryCountryId: true },
   });
   if (!plan) throw new MembershipImportError("Membership plan not found");
 
@@ -481,19 +585,27 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
     let revived = 0;
 
     // Primaries first: a dependent's primary may be created by this same file.
-    const ordered = [
-      ...applicable.filter((r) => !r.primaryMembershipId),
-      ...applicable.filter((r) => r.primaryMembershipId),
-    ];
+    //
+    // The test is "names a primary by EITHER handle". Keying it on
+    // `primaryMembershipId` alone — as it did before `primaryEmail` existed —
+    // sorts an email-linked dependent into the primaries group, so it runs
+    // before its own primary, finds nothing, and is silently skipped.
+    const isDependent = (r: PreviewRow) => Boolean(r.primaryMembershipId || r.primaryEmail);
+    const ordered = [...applicable.filter((r) => !isDependent(r)), ...applicable.filter(isDependent)];
 
     for (const row of ordered) {
       let primaryEnrollmentId: string | null = null;
-      if (row.primaryMembershipId) {
+      if (row.primaryMembershipId || row.primaryEmail) {
+        // Resolved here rather than carried from the preview, because a
+        // primary created earlier in THIS commit only exists now — its
+        // generated id was not knowable when the preview was written.
         const primary = await tx.membershipEnrollment.findFirst({
           where: {
             planId: plan.id,
-            membershipId: { equals: row.primaryMembershipId, mode: "insensitive" },
             status: { not: "REMOVED" },
+            ...(row.primaryMembershipId
+              ? { membershipId: { equals: row.primaryMembershipId, mode: "insensitive" } }
+              : { email: { equals: row.primaryEmail!, mode: "insensitive" } }),
           },
           select: { id: true },
         });
@@ -507,9 +619,12 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
       try {
         const outcome = await upsertEnrollmentRow(tx, {
           planId: plan.id,
+          planSlug: plan.slug,
           levelId: row.levelId!,
           countryId: plan.primaryCountryId,
-          membershipId: row.membershipId,
+          // No membershipId: generated per row inside (§21.5).
+          partnerReference: row.partnerReference ?? null,
+          preferredLocale: row.preferredLocale ?? null,
           email: row.email,
           firstName: row.firstName,
           lastName: row.lastName,

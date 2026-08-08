@@ -2,6 +2,7 @@ import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/Colu
 import { Pill } from "../../_components/atoms";
 import type {
   MembershipImportBatch,
+  MembershipImportCounts,
   MembershipImportPreviewRow,
 } from "@/lib/admin/memberships-api";
 
@@ -24,7 +25,13 @@ const OUTCOME_TONE: Record<string, "active" | "brand" | "info" | "inactive"> = {
  * the commit re-reads that same field, so what an admin approves here is
  * exactly what gets applied.
  */
-export function MembershipImportPreview({ batch }: { batch: MembershipImportBatch }) {
+export function MembershipImportPreview({
+  batch,
+  counts,
+}: {
+  batch: MembershipImportBatch;
+  counts?: MembershipImportCounts | null;
+}) {
   const rows = batch.previewData?.rows ?? [];
 
   const fields: ColumnPriorityField<MembershipImportPreviewRow>[] = [
@@ -49,10 +56,17 @@ export function MembershipImportPreview({ batch }: { batch: MembershipImportBatc
       ),
     },
     {
-      key: "membershipId",
-      label: "Membership ID",
+      // The membership ID is generated at commit, so there is nothing to show
+      // here yet. What the admin can reconcile against their partner's own
+      // spreadsheet is this.
+      key: "partnerReference",
+      label: "Partner ref",
       priority: 2,
-      render: (row) => <span className="font-mono text-portal-compact">{row.membershipId}</span>,
+      render: (row) => (
+        <span className="font-mono text-portal-compact">
+          {row.partnerReference ?? <span className="text-[var(--color-text-muted)]">—</span>}
+        </span>
+      ),
     },
     {
       key: "outcome",
@@ -66,6 +80,17 @@ export function MembershipImportPreview({ batch }: { batch: MembershipImportBatc
           {row.reason ? (
             <span className="text-xs text-[var(--color-text-muted)]">{row.reason}</span>
           ) : null}
+          {/* Warnings never stop a row, so they read as notes, not errors. */}
+          {(row.warnings ?? []).map((warning) => (
+            <span key={warning} className="text-xs text-[var(--color-warning-text,#8a6d1f)]">
+              {warning}
+            </span>
+          ))}
+          {row.outcome !== "REJECT" && !row.willEmail ? (
+            <span className="text-xs text-[var(--color-text-muted)]">
+              Already has a card — will not be emailed again
+            </span>
+          ) : null}
         </div>
       ),
     },
@@ -73,17 +98,45 @@ export function MembershipImportPreview({ batch }: { batch: MembershipImportBatc
       key: "role",
       label: "Role",
       priority: 4,
-      render: (row) =>
-        row.primaryMembershipId ? `Dependent of ${row.primaryMembershipId}` : "Primary",
+      render: (row) => {
+        const primary = row.primaryEmail ?? row.primaryMembershipId;
+        return primary ? `Dependent of ${primary}` : "Primary";
+      },
     },
   ];
 
   return (
-    <ColumnPriorityTable
-      fields={fields}
-      rows={rows}
-      getRowKey={(row) => `${row.line}`}
-      cardTone={(row) => (row.outcome === "REJECT" ? "neutral" : "success")}
-    />
+    <div className="flex flex-col gap-4">
+      {/*
+        The blast radius, before the send (§25). This is the entire safety
+        argument for previewing rather than emailing on upload: an admin sees
+        how many people this reaches while they can still cancel. It is a count
+        of EMAILS, not rows — rejected rows send nothing, and a member who
+        already has their card is not written to twice.
+      */}
+      {counts ? (
+        <p
+          className="gh-portal-note text-sm"
+          data-testid="import-recipient-count"
+          data-recipients={counts.recipients}
+        >
+          <strong>
+            Committing will email {counts.recipients}{" "}
+            {counts.recipients === 1 ? "member" : "members"}
+          </strong>{" "}
+          a welcome message and their card.
+          {counts.reject > 0 ? ` ${counts.reject} skipped row(s) send nothing.` : ""}
+          {counts.warned > 0
+            ? ` ${counts.warned} row(s) have a note worth reading below.`
+            : ""}
+        </p>
+      ) : null}
+      <ColumnPriorityTable
+        fields={fields}
+        rows={rows}
+        getRowKey={(row) => `${row.line}`}
+        cardTone={(row) => (row.outcome === "REJECT" ? "neutral" : "success")}
+      />
+    </div>
   );
 }
