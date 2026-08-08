@@ -44,3 +44,23 @@ export function buildBookHref({
   const query = params.toString();
   return `/${country}/${lang}/book${query ? `?${query}` : ""}`;
 }
+
+/**
+ * True when a booking href already pins BOTH the service and the doctor.
+ *
+ * Those combinations are a cross-product: every doctor x every service they
+ * are assigned to. Rendered as anchors they were ~2,800 crawlable URLs whose
+ * only job is to preselect two wizard fields. Callers render an accessible
+ * button that navigates client-side instead, so the combination never appears
+ * in server-rendered markup. Single-parameter booking links stay real anchors:
+ * they are useful, finite entry points and are deliberately kept crawlable.
+ */
+export function isPreselectionPairHref(href: string | null | undefined): boolean {
+  if (!href) return false;
+  const queryIndex = href.indexOf("?");
+  if (queryIndex === -1) return false;
+  const params = new URLSearchParams(href.slice(queryIndex + 1));
+  const hasService = params.has("service") || params.has("serviceId");
+  const hasDoctor = params.has("doctor");
+  return hasService && hasDoctor;
+}

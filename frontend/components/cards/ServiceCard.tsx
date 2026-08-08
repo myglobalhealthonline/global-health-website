@@ -5,6 +5,9 @@ import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock, Tag, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
+import { isPreselectionPairHref } from "@/lib/routing/book-href";
+import { BookCta, BookNowButton } from "@/components/booking/BookNowButton";
+
 
 type ServiceCardProps = {
   /** Single-CTA mode: whole card links here. Optional when detailHref is set. */
@@ -67,7 +70,7 @@ function TwoActions({
         <span className="sr-only">: {title}</span>
         <ArrowRight className="size-4 shrink-0" aria-hidden />
       </Link>
-      <Link
+      <BookCta
         href={bookHref}
         className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter,box-shadow,background-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 whitespace-nowrap sm:flex-1"
         style={
@@ -87,7 +90,7 @@ function TwoActions({
         <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
         {bookLabel}
         <span className="sr-only">: {title}</span>
-      </Link>
+      </BookCta>
     </div>
   );
 }
@@ -114,13 +117,25 @@ export function ServiceCard({
 
   // Card-wide overlay link — a sibling (not parent) of the footer buttons so
   // there are no nested anchors. In single-CTA mode it is the only link.
+  // In single-CTA mode `overlayHref` is the caller's `href` verbatim, which
+  // can be a service+doctor preselection pair (e.g. doctor-profile-page.tsx's
+  // per-service consultHref) — render a client-side button there instead of
+  // a crawlable anchor, same as every other booking CTA.
   const overlay = overlayHref ? (
-    <Link
-      href={overlayHref}
-      aria-label={`${learnLabel}: ${title}`}
-      className="absolute inset-0 z-[1] rounded-[var(--radius-card)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]"
-      tabIndex={twoButton ? -1 : 0}
-    />
+    isPreselectionPairHref(overlayHref) ? (
+      <BookNowButton
+        href={overlayHref}
+        ariaLabel={`${learnLabel}: ${title}`}
+        className="absolute inset-0 z-[1] rounded-[var(--radius-card)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]"
+      />
+    ) : (
+      <Link
+        href={overlayHref}
+        aria-label={`${learnLabel}: ${title}`}
+        className="absolute inset-0 z-[1] rounded-[var(--radius-card)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]"
+        tabIndex={twoButton ? -1 : 0}
+      />
+    )
   ) : null;
 
   if (dark) {

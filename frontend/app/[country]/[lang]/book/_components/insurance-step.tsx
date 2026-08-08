@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, UserRound } from "lucide-react";
-import { buildBookHref } from "@/lib/routing/book-href";
+import { buildBookHref, isPreselectionPairHref } from "@/lib/routing/book-href";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { InsuranceOption } from "@/lib/content/get-country-collections";
 import { BookingSectionHeader } from "./booking-section-header";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 
 type BookT = import("@/lib/i18n/types").CommonLocale["bookPage"];
 
@@ -48,6 +49,26 @@ export function InsuranceStep({
   const hrefFor = (benefit: string) =>
     buildBookHref({ country, lang, service: serviceSlug, doctor: doctorSlug, benefit });
 
+  // hrefFor always carries `benefit`, but only pins BOTH service and doctor
+  // when a doctor was already chosen upstream — hrefFor(...) with
+  // doctorSlug === null is a service-only link and must stay a real anchor.
+  const choiceCard = (href: string, children: React.ReactNode) =>
+    isPreselectionPairHref(href) ? (
+      <BookNowButton
+        href={href}
+        className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)] w-full text-left"
+      >
+        {children}
+      </BookNowButton>
+    ) : (
+      <Link
+        href={href}
+        className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)]"
+      >
+        {children}
+      </Link>
+    );
+
   return (
     <div className="grid gap-6">
       <BookingSectionHeader
@@ -59,47 +80,47 @@ export function InsuranceStep({
         <ul className="grid gap-3">
           {insuranceOptions.map((option) => (
             <li key={option.companyId}>
-              <Link
-                href={hrefFor(`insurance:${option.companyId}`)}
-                className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)]"
-              >
-                <ShieldCheck
-                  className="size-5 shrink-0 text-[var(--color-brand-accent)]"
-                  aria-hidden
-                />
-                <span className="min-w-0 flex-1">
-                  <span className="block font-semibold text-[var(--color-text-primary)]">
-                    {option.name}
+              {choiceCard(
+                hrefFor(`insurance:${option.companyId}`),
+                <>
+                  <ShieldCheck
+                    className="size-5 shrink-0 text-[var(--color-brand-accent)]"
+                    aria-hidden
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-semibold text-[var(--color-text-primary)]">
+                      {option.name}
+                    </span>
+                    <span className="block text-sm text-[var(--color-text-muted)]">
+                      {formatPriceRounded(option.insurancePriceCents, currencyCode)}
+                    </span>
+                    <span className="mt-1 block text-[13px] text-[var(--color-text-muted)]">
+                      {bp.benefitInsuranceNote}
+                    </span>
                   </span>
-                  <span className="block text-sm text-[var(--color-text-muted)]">
-                    {formatPriceRounded(option.insurancePriceCents, currencyCode)}
-                  </span>
-                  <span className="mt-1 block text-[13px] text-[var(--color-text-muted)]">
-                    {bp.benefitInsuranceNote}
-                  </span>
-                </span>
-                <ArrowRight className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
-              </Link>
+                  <ArrowRight className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
+                </>,
+              )}
             </li>
           ))}
           <li>
-            <Link
-              href={hrefFor("none")}
-              className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)]"
-            >
-              <UserRound className="size-5 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
-              <span className="min-w-0 flex-1">
-                <span className="block font-semibold text-[var(--color-text-primary)]">
-                  {bp.insuranceStandard}
+            {choiceCard(
+              hrefFor("none"),
+              <>
+                <UserRound className="size-5 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold text-[var(--color-text-primary)]">
+                    {bp.insuranceStandard}
+                  </span>
+                  <span className="block text-sm text-[var(--color-text-muted)]">
+                    {basePriceCents != null
+                      ? formatPriceRounded(basePriceCents, currencyCode)
+                      : bp.insuranceNone}
+                  </span>
                 </span>
-                <span className="block text-sm text-[var(--color-text-muted)]">
-                  {basePriceCents != null
-                    ? formatPriceRounded(basePriceCents, currencyCode)
-                    : bp.insuranceNone}
-                </span>
-              </span>
-              <ArrowRight className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
-            </Link>
+                <ArrowRight className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
+              </>,
+            )}
           </li>
         </ul>
         {/* Memberships and plans are not lost, just later — the form asks once

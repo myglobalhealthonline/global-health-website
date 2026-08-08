@@ -22,6 +22,7 @@ import { ServiceTimePicker } from "./_components/service-time-picker";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
+import { BookCta } from "@/components/booking/BookNowButton";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
@@ -1055,13 +1056,17 @@ function ServiceChoiceCard({
             >
               View
             </Link>
-            <Link
+            {/* Doctor-first flow: `href` already pins this doctor AND this
+                service, so an anchor here would re-expose the cross-product one
+                hop behind the crawlable ?doctor= URL. Same client-side control
+                the cards use — see isPreselectionPairHref. */}
+            <BookCta
               href={href}
               className="gh2-btn-compact gh2-btn-compact-primary-dark"
             >
               {bp.continue}
               <ArrowRight className="size-3.5 shrink-0" aria-hidden />
-            </Link>
+            </BookCta>
           </div>
         </div>
       </div>

@@ -13,6 +13,8 @@ import {
 import { Flag } from "@/components/ui/Flag";
 import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
+import { BookCta } from "@/components/booking/BookNowButton";
+
 
 /* ─── Mint icon box ──────────────────────────────────────────────────────── */
 function IconBox({ children }: { children: React.ReactNode }) {
@@ -407,7 +409,7 @@ export function DoctorCard({
                 {resolvedCtaLabel}
               </Link>
             ) : null}
-            <Link
+            <BookCta
               href={bookHref}
               className={`gh2-btn-compact relative z-20 flex-1 gap-1 ${
                 dark ? "gh2-btn-compact-primary-dark" : "gh2-btn-compact-primary"
@@ -415,13 +417,13 @@ export function DoctorCard({
             >
               {primaryLabel}
               <ArrowRight className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
-            </Link>
+            </BookCta>
           </div>
         ) : (
           /* Default stacked layout — full-width buttons for non-booking contexts */
           <div className="mt-auto space-y-2 pt-5">
             {bookHref ? (
-              <Link
+              <BookCta
                 href={bookHref}
                 className={`relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
                   dark
@@ -448,7 +450,7 @@ export function DoctorCard({
                   strokeWidth={1.8}
                   aria-hidden
                 />
-              </Link>
+              </BookCta>
             ) : null}
             {profileHref ? (
               <Link
