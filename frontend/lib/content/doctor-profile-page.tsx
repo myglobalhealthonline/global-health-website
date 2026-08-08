@@ -9,9 +9,8 @@ import { DoctorSharePageLink } from "@/components/sections/DoctorSharePageLink";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
 import { getCountryByCode } from "@/data/countries";
-import { indexableHreflangCluster, ogLocales } from "@/lib/seo/hreflang";
-import { getPublicDoctorsForMarket } from "@/lib/content/get-public-doctors";
-import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
+import { ogLocales } from "@/lib/seo/hreflang";
+import { doctorHreflangCluster } from "@/lib/seo/doctor-hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import {
   breadcrumbJsonLd,
@@ -45,56 +44,6 @@ type DoctorProfileRouteParams = {
   /** Locale code from the route (e.g. "en"). */
   lang?: string;
 };
-
-/**
- * hreflang cluster for a doctor profile, restricted to the locale variants
- * that actually render `index,follow`.
- *
- * The profile page has set `noindex` from the publication rule for a while, but
- * the cluster was still built from `hreflangAlternates(config, …)` — every
- * locale the country supports, whether or not that variant was publishable. So
- * a page said "don't index me" while its five siblings pointed at it as an
- * indexable alternate, and the sitemap (which already filters on the same rule)
- * disagreed with both.
- *
- * Membership comes from the SAME `isPublicDoctorRecordIndexable` decision the
- * robots tag and `app/sitemap.ts` use — there is no second, hreflang-specific
- * publication rule:
- *   • the CURRENT locale is judged by `currentIndexable`, the value this very
- *     page's robots tag was built from, so a page can never advertise itself as
- *     an alternate while telling Google not to index it;
- *   • OTHER locales are judged by the market roster, the identical source
- *     `sitemap.ts` reads, so every advertised target is guaranteed to also be a
- *     submitted URL.
- *
- * Falling out of that, without needing a rule of their own: a retired doctor
- * (410 at the edge, absent from the roster), a slug that only resolves in
- * another market, and a de-accented alias slug are all simply never found in a
- * market's roster and so are never advertised.
- *
- * Returns `undefined` when nothing qualifies — a profile with no publishable
- * variant anywhere advertises no alternates at all.
- */
-export async function indexableDoctorLocales(
-  config: NonNullable<ReturnType<typeof getCountryByCode>>,
-  doctorSlug: string,
-  currentLang: string,
-  currentIndexable: boolean,
-): Promise<string[]> {
-  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
-  const langs = (config.supportedLocales ?? [defaultLocale]).map((l) => l.toLowerCase());
-  const out: string[] = [];
-  for (const alt of langs) {
-    const eligible =
-      alt === currentLang.toLowerCase()
-        ? currentIndexable
-        : (await getPublicDoctorsForMarket(config.code, alt)).some(
-            (d) => d.slug === doctorSlug && isPublicDoctorRecordIndexable(d),
-          );
-    if (eligible) out.push(alt);
-  }
-  return out;
-}
 
 export async function buildDoctorProfileMetadata(
   params: Promise<DoctorProfileRouteParams>,
@@ -151,12 +100,11 @@ export async function buildDoctorProfileMetadata(
     sourceImage: data.profileImageSrc,
     imageAlt: data.profile.imageAltText ?? `${data.profile.name}, ${data.profile.title}`,
     locale: config ? ogLocales(config, routeLang).locale : undefined,
+    // A noindexed profile emits NO alternates: it participates in no cluster,
+    // as neither target nor source. `doctorHreflangCluster` returns early on
+    // that, so noindex pages also do zero market-roster reads.
     languages: config
-      ? indexableHreflangCluster(
-          config,
-          `/doctors/${doctorSlug}`,
-          await indexableDoctorLocales(config, doctorSlug, routeLang, indexable),
-        )
+      ? await doctorHreflangCluster(config, doctorSlug, routeLang, indexable)
       : undefined,
     keywords: data.profile.seoKeywords,
     noindex: !indexable,

@@ -1,33 +1,46 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getCountryByCode } from "@/data/countries";
 import { indexableHreflangCluster } from "@/lib/seo/hreflang";
-import {
-  isPublicDoctorRecordIndexable,
-  type PublicationIssue,
-} from "@/lib/content/publication-validation";
 import type { PublicDoctorRecord } from "@/lib/content/get-public-doctors";
 
 /**
  * Doctor hreflang alignment. The profile page has always set `noindex` from
  * `isPublicDoctorRecordIndexable`, but its hreflang cluster was built from the
  * country's full locale list — so a noindexed variant was still advertised as a
- * publishable alternate by its five siblings, and the sitemap (which does
- * filter on the same rule) disagreed with both.
+ * publishable alternate by its siblings, and the sitemap (which does filter on
+ * the same rule) disagreed with both.
  *
- * These tests cover the two halves of the fix: the shared rule deciding which
- * locales are eligible, and the cluster builder turning that verdict into
- * `alternates.languages`. They deliberately reuse the SAME predicate the robots
- * tag and `app/sitemap.ts` call — a second, hreflang-specific publication rule
- * is exactly what this batch exists to prevent.
+ * The invariant these tests pin:
+ *   • current page indexable → cluster of ONLY indexable locales, itself included
+ *   • current page noindex   → no cluster at all, as neither target nor source
+ *
+ * They reuse the SAME predicate the robots tag and `app/sitemap.ts` call — a
+ * second, hreflang-specific publication rule is what this batch exists to
+ * prevent.
  */
 
+const rosterByLocale = vi.hoisted(() => ({
+  value: {} as Record<string, PublicDoctorRecord[]>,
+}));
+
+vi.mock("@/lib/content/get-public-doctors", () => ({
+  getPublicDoctorsForMarket: vi.fn(async (_code: string, locale?: string) =>
+    rosterByLocale.value[(locale ?? "").toLowerCase()] ?? [],
+  ),
+}));
+
+const { doctorHreflangCluster } = await import("@/lib/seo/doctor-hreflang");
+const { getPublicDoctorsForMarket } = await import("@/lib/content/get-public-doctors");
+
 const IE = getCountryByCode("ie")!;
-const BR = getCountryByCode("br")!;
+const PT = getCountryByCode("pt")!;
 const CZ = getCountryByCode("cz")!;
+const BR = getCountryByCode("br")!;
 
 /** A doctor record that satisfies every publication rule. */
 function doctorRecord(overrides: Partial<PublicDoctorRecord> = {}): PublicDoctorRecord {
   return {
+    slug: "dr-ahmed-maklad",
     fullName: "Dr Ahmed Maklad",
     title: "General Practitioner",
     bio:
@@ -44,132 +57,38 @@ function doctorRecord(overrides: Partial<PublicDoctorRecord> = {}): PublicDoctor
   } as PublicDoctorRecord;
 }
 
-/** Locales of `country` in which `bySlug` reports the doctor indexable. */
-function eligibleLocales(
-  country: typeof IE,
-  perLocale: Record<string, PublicDoctorRecord | undefined>,
-): string[] {
-  return (country.supportedLocales ?? [country.defaultLocale])
-    .map((l) => l.toLowerCase())
-    .filter((l) => {
-      const record = perLocale[l];
-      return record != null && isPublicDoctorRecordIndexable(record);
-    });
+/** Publish `slug` in exactly these locales; every other locale gets an empty roster. */
+function publishIn(locales: string[], overrides: Partial<PublicDoctorRecord> = {}) {
+  rosterByLocale.value = Object.fromEntries(
+    locales.map((l) => [l, [doctorRecord(overrides)]]),
+  );
 }
 
-describe("indexableHreflangCluster", () => {
-  it("advertises an indexable doctor locale", () => {
-    const cluster = indexableHreflangCluster(IE, "/doctors/dr-x", ["en"]);
-    expect(cluster).toEqual({
-      "en-IE": "/ireland/en/doctors/dr-x",
-      "x-default": "/ireland/en/doctors/dr-x",
-    });
-  });
-
-  it("excludes noindex locales — partial cluster only", () => {
-    // The §4 case: en/es/pt publishable, de/cs/ro not.
-    const cluster = indexableHreflangCluster(IE, "/doctors/dr-x", ["en", "es", "pt"]);
-    expect(Object.keys(cluster!).sort()).toEqual(["en-IE", "es-IE", "pt-IE", "x-default"]);
-    expect(cluster).not.toHaveProperty("de-IE");
-    expect(cluster).not.toHaveProperty("cs-IE");
-    expect(cluster).not.toHaveProperty("ro-IE");
-  });
-
-  it("advertises nothing when no locale qualifies (retired, gone or missing)", () => {
-    expect(indexableHreflangCluster(IE, "/doctors/dr-grainne-ahern", [])).toBeUndefined();
-  });
-
-  it("points x-default at the market's own language when it qualifies", () => {
-    const cluster = indexableHreflangCluster(IE, "/doctors/dr-x", ["pt", "en", "es"]);
-    expect(cluster!["x-default"]).toBe("/ireland/en/doctors/dr-x");
-  });
-
-  it("never points x-default at an excluded locale", () => {
-    // Default locale not publishable — x-default falls to the first locale in
-    // the country's CONFIGURED order that is (Ireland: en, pt, es, cs, ro, de),
-    // so `pt` wins over `es` regardless of the order the caller passed them in.
-    const cluster = indexableHreflangCluster(IE, "/doctors/dr-x", ["es", "pt"]);
-    expect(cluster!["x-default"]).toBe("/ireland/pt/doctors/dr-x");
-    expect(Object.values(cluster!)).not.toContain("/ireland/en/doctors/dr-x");
-  });
-
-  it("is deterministic in the country's configured locale order, not the caller's", () => {
-    const a = indexableHreflangCluster(IE, "/doctors/dr-x", ["ro", "es", "pt"]);
-    const b = indexableHreflangCluster(IE, "/doctors/dr-x", ["pt", "ro", "es"]);
-    expect(a).toEqual(b);
-    expect(a!["x-default"]).toBe("/ireland/pt/doctors/dr-x");
-  });
-
-  it("does not invent locales a market does not support", () => {
-    // Brazil runs pt/en/es only — cs/ro/de must never appear even if offered.
-    const cluster = indexableHreflangCluster(BR, "/doctors/dr-renato-sarmento", [
-      "pt",
-      "en",
-      "es",
-      "cs",
-      "ro",
-      "de",
-    ]);
-    expect(Object.keys(cluster!).sort()).toEqual(["en-BR", "es-BR", "pt-BR", "x-default"]);
-    expect(cluster!["x-default"]).toBe("/brazil/pt/doctors/dr-renato-sarmento");
-  });
-
-  it("builds each market's cluster under its own slug and region", () => {
-    // A legitimately cross-market clinician gets an independent cluster per
-    // market — never one market's URLs advertised under the other's region.
-    const cz = indexableHreflangCluster(CZ, "/doctors/dr-ahmed-maklad", ["cs", "en"]);
-    const ie = indexableHreflangCluster(IE, "/doctors/dr-ahmed-maklad", ["en"]);
-    expect(cz!["cs-CZ"]).toBe("/czechia/cs/doctors/dr-ahmed-maklad");
-    expect(ie!["en-IE"]).toBe("/ireland/en/doctors/dr-ahmed-maklad");
-    expect(Object.keys(cz!)).not.toContain("en-IE");
-    expect(Object.keys(ie!)).not.toContain("cs-CZ");
-  });
+beforeEach(() => {
+  rosterByLocale.value = {};
+  vi.mocked(getPublicDoctorsForMarket).mockClear();
 });
 
-describe("eligibility comes from the shared doctor publication rule", () => {
-  it("includes a locale whose market record is indexable", () => {
-    const perLocale = { en: doctorRecord() };
-    expect(eligibleLocales(IE, perLocale)).toEqual(["en"]);
-    expect(indexableHreflangCluster(IE, "/doctors/d", eligibleLocales(IE, perLocale))).toEqual({
-      "en-IE": "/ireland/en/doctors/d",
-      "x-default": "/ireland/en/doctors/d",
-    });
+describe("current page INDEXABLE", () => {
+  it("1. all siblings indexable → full cluster", async () => {
+    publishIn(["en", "pt", "es", "cs", "ro", "de"]);
+    const cluster = await doctorHreflangCluster(IE, "dr-ahmed-maklad", "en", true);
+    expect(Object.keys(cluster!).sort()).toEqual([
+      "cs-IE",
+      "de-IE",
+      "en-IE",
+      "es-IE",
+      "pt-IE",
+      "ro-IE",
+      "x-default",
+    ]);
+    expect(cluster!["en-IE"]).toBe("/ireland/en/doctors/dr-ahmed-maklad");
   });
 
-  it("excludes a locale held back by publication state, not by a second rule", () => {
-    // readyToIndex false is the ONLY difference: the page already noindexes it,
-    // so the cluster must drop it too.
-    const perLocale = {
-      en: doctorRecord(),
-      es: doctorRecord({ editorialChecklist: { readyToIndex: false } }),
-      pt: doctorRecord({ bio: "Too short." }),
-      cs: doctorRecord({ imcRegistration: undefined, medicalRegistrationUrl: undefined }),
-    };
-    expect(eligibleLocales(IE, perLocale)).toEqual(["en"]);
-  });
-
-  it("excludes a locale with no market record at all — invalid country profile", () => {
-    // A slug that resolves only in another market never appears in this
-    // market's roster, so it is simply absent rather than specially handled.
-    expect(eligibleLocales(IE, { en: undefined, es: undefined })).toEqual([]);
-    expect(indexableHreflangCluster(IE, "/doctors/foreign", [])).toBeUndefined();
-  });
-
-  it("keeps a partially published doctor's real locales", () => {
-    // Mirrors the live pt/dr-tiago-miguel-figueira shape: publishable in
-    // pt/en/es/de, held back in cs/ro.
-    const PT = getCountryByCode("pt")!;
-    const perLocale = {
-      pt: doctorRecord(),
-      en: doctorRecord(),
-      es: doctorRecord(),
-      de: doctorRecord(),
-      cs: doctorRecord({ editorialChecklist: { readyToIndex: false } }),
-      ro: doctorRecord({ editorialChecklist: { readyToIndex: false } }),
-    };
-    const eligible = eligibleLocales(PT, perLocale);
-    expect(eligible.sort()).toEqual(["de", "en", "es", "pt"]);
-    const cluster = indexableHreflangCluster(PT, "/doctors/dr-tiago-miguel-figueira", eligible);
+  it("2. some siblings noindex → partial cluster", async () => {
+    // Mirrors the live pt/dr-tiago-miguel-figueira shape.
+    publishIn(["pt", "en", "es", "de"], { slug: "dr-tiago-miguel-figueira" });
+    const cluster = await doctorHreflangCluster(PT, "dr-tiago-miguel-figueira", "pt", true);
     expect(Object.keys(cluster!).sort()).toEqual([
       "de-PT",
       "en-PT",
@@ -177,28 +96,125 @@ describe("eligibility comes from the shared doctor publication rule", () => {
       "pt-PT",
       "x-default",
     ]);
-    expect(cluster!["x-default"]).toBe("/portugal/pt/doctors/dr-tiago-miguel-figueira");
+    expect(cluster).not.toHaveProperty("cs-PT");
+    expect(cluster).not.toHaveProperty("ro-PT");
+  });
+
+  it("includes the current locale without consulting the roster for it", async () => {
+    // The current locale's verdict is the page's own `indexable`, so no roster
+    // read is spent on it — only the five siblings.
+    publishIn([]);
+    const cluster = await doctorHreflangCluster(IE, "dr-ahmed-maklad", "en", true);
+    expect(cluster).toEqual({
+      "en-IE": "/ireland/en/doctors/dr-ahmed-maklad",
+      "x-default": "/ireland/en/doctors/dr-ahmed-maklad",
+    });
+    expect(vi.mocked(getPublicDoctorsForMarket).mock.calls.map((c) => c[1])).toEqual([
+      "pt",
+      "es",
+      "cs",
+      "ro",
+      "de",
+    ]);
+  });
+
+  it("excludes a sibling held back by publication state, not by a second rule", async () => {
+    rosterByLocale.value = {
+      es: [doctorRecord()],
+      pt: [doctorRecord({ editorialChecklist: { readyToIndex: false } })],
+      cs: [doctorRecord({ bio: "Too short." })],
+      ro: [doctorRecord({ imcRegistration: undefined, medicalRegistrationUrl: undefined })],
+      de: [],
+    };
+    const cluster = await doctorHreflangCluster(IE, "dr-ahmed-maklad", "en", true);
+    expect(Object.keys(cluster!).sort()).toEqual(["en-IE", "es-IE", "x-default"]);
+  });
+
+  it("excludes a sibling whose roster holds a different doctor entirely", async () => {
+    rosterByLocale.value = { pt: [doctorRecord({ slug: "someone-else" })] };
+    const cluster = await doctorHreflangCluster(IE, "dr-ahmed-maklad", "en", true);
+    expect(Object.keys(cluster!).sort()).toEqual(["en-IE", "x-default"]);
+  });
+
+  it("5. x-default never points at a noindex locale", async () => {
+    // Default locale (en) is NOT the current page and is not published; the
+    // current page is `pt`, so x-default must land on a published locale.
+    publishIn(["pt", "es"]);
+    const cluster = await doctorHreflangCluster(IE, "dr-ahmed-maklad", "pt", true);
+    expect(cluster!["x-default"]).toBe("/ireland/pt/doctors/dr-ahmed-maklad");
+    expect(Object.values(cluster!)).not.toContain("/ireland/en/doctors/dr-ahmed-maklad");
+  });
+
+  it("prefers the market's own language for x-default when it qualifies", async () => {
+    publishIn(["en", "pt", "es"]);
+    const cluster = await doctorHreflangCluster(IE, "dr-ahmed-maklad", "es", true);
+    expect(cluster!["x-default"]).toBe("/ireland/en/doctors/dr-ahmed-maklad");
+  });
+
+  it("6. legitimate cross-market doctors keep an independent cluster per market", async () => {
+    publishIn(["cs", "en", "pt", "es", "ro", "de"]);
+    const cz = await doctorHreflangCluster(CZ, "dr-ahmed-maklad", "cs", true);
+    const ie = await doctorHreflangCluster(IE, "dr-ahmed-maklad", "en", true);
+    expect(cz!["cs-CZ"]).toBe("/czechia/cs/doctors/dr-ahmed-maklad");
+    expect(cz!["x-default"]).toBe("/czechia/cs/doctors/dr-ahmed-maklad");
+    expect(ie!["en-IE"]).toBe("/ireland/en/doctors/dr-ahmed-maklad");
+    expect(ie!["x-default"]).toBe("/ireland/en/doctors/dr-ahmed-maklad");
+    expect(Object.keys(cz!)).not.toContain("en-IE");
+    expect(Object.keys(ie!)).not.toContain("cs-CZ");
+  });
+
+  it("does not invent locales a market does not support", async () => {
+    publishIn(["pt", "en", "es", "cs", "ro", "de"], { slug: "dr-renato-sarmento" });
+    const cluster = await doctorHreflangCluster(BR, "dr-renato-sarmento", "pt", true);
+    expect(Object.keys(cluster!).sort()).toEqual(["en-BR", "es-BR", "pt-BR", "x-default"]);
   });
 });
 
-describe("cluster is a subset of what the sitemap submits", () => {
-  it("every advertised target is a locale the same rule marks indexable", () => {
-    // The §8 invariant, stated as a property: whatever set of locales the rule
-    // approves, the cluster's keys are exactly those locales plus x-default,
-    // and x-default reuses one of their URLs rather than a seventh URL.
+describe("current page NOINDEX", () => {
+  it("3. valid indexable siblings exist → still zero alternates", async () => {
+    // The live /portugal/cs/doctors/dr-tiago-miguel-figueira case: pt/en/es/de
+    // are genuinely publishable, but this page is noindex so it participates in
+    // no cluster, as neither target nor source.
+    publishIn(["pt", "en", "es", "de"], { slug: "dr-tiago-miguel-figueira" });
+    const cluster = await doctorHreflangCluster(PT, "dr-tiago-miguel-figueira", "cs", false);
+    expect(cluster).toBeUndefined();
+  });
+
+  it("4. no valid siblings → zero alternates", async () => {
+    publishIn([]);
+    expect(await doctorHreflangCluster(IE, "dr-arooj-iqbal-lodhi", "en", false)).toBeUndefined();
+  });
+
+  it("reads no market rosters at all when the page is noindex", async () => {
+    publishIn(["pt", "en", "es", "de"]);
+    await doctorHreflangCluster(PT, "dr-tiago-miguel-figueira", "cs", false);
+    expect(vi.mocked(getPublicDoctorsForMarket)).not.toHaveBeenCalled();
+  });
+
+  it("covers retired, gone and foreign-market slugs without a rule of their own", async () => {
+    // A retired doctor 410s at the edge and a foreign-market slug is absent
+    // from this market's roster; both arrive here as "not indexable".
+    publishIn([]);
+    expect(await doctorHreflangCluster(IE, "dr-grainne-ahern", "en", false)).toBeUndefined();
+    expect(await doctorHreflangCluster(IE, "dr-silvina-irale", "en", false)).toBeUndefined();
+  });
+});
+
+describe("cluster shape", () => {
+  it("advertises exactly the eligible locales plus an x-default reusing one of them", () => {
+    // The §8 invariant as a property of the builder itself.
     for (const eligible of [["en"], ["en", "es"], ["es", "pt", "ro"], ["en", "pt", "cs", "de"]]) {
       const cluster = indexableHreflangCluster(IE, "/doctors/d", eligible)!;
       const targets = Object.entries(cluster)
         .filter(([tag]) => tag !== "x-default")
         .map(([, url]) => url);
       expect(targets.length).toBe(eligible.length);
-      for (const url of targets) {
-        expect(eligible).toContain(url.split("/")[2]);
-      }
+      for (const url of targets) expect(eligible).toContain(url.split("/")[2]);
       expect(targets).toContain(cluster["x-default"]);
     }
   });
-});
 
-// Keeps the import meaningful if the issue shape is ever re-exported.
-export type _Issue = PublicationIssue;
+  it("returns undefined rather than an empty cluster", () => {
+    expect(indexableHreflangCluster(IE, "/doctors/d", [])).toBeUndefined();
+  });
+});
