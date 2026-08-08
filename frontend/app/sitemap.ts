@@ -3,7 +3,10 @@ import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { getPublicDoctorsForMarket } from "@/lib/content/get-public-doctors";
-import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
+import {
+  isPublicDoctorRecordIndexable,
+  isPublicServiceRecordIndexable,
+} from "@/lib/content/publication-validation";
 import { getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
@@ -133,16 +136,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   };
   const dated = (ts: string | undefined) => (ts ? { lastModified: ts } : undefined);
 
-  // Service detail pages — active public GP/specialist services per country.
+  // Service detail pages — active public GP/specialist services per country,
+  // one entry per locale variant that actually renders indexable.
   // (PRESCRIPTION/HOME_DELIVERY kinds stay out: hidden from the public site
   // for Ads compliance.)
+  //
+  // Read PER LOCALE, not once: the unlocalized list merges every row to the
+  // country's default locale, so it cannot see that a service has no real
+  // content in Czech or German. Submitting `service × every supported locale`
+  // regardless is what put 24 empty Spain URLs (`<p><br /></p>` bodies) in the
+  // sitemap while their pages carried no content at all. The membership test is
+  // `isPublicServiceRecordIndexable`, the identical predicate the service page
+  // uses for its robots tag and hreflang cluster — same shape as the doctor
+  // loop further down.
   for (const country of countries) {
     try {
-      const services = await getPublicServicesForCountry(country.code);
-      for (const s of services) {
-        if (s.kind !== "GENERAL" && s.kind !== "SPECIALIST") continue;
-        bump(country.code, "service", s.updatedAt);
-        pushLocalized(country, `/services/${s.slug}`, 0.7, dated(s.updatedAt ?? undefined));
+      const langs = countryLangs(country);
+      const defaultLocale = (country.defaultLocale ?? "en").toLowerCase();
+      // slug → the locales whose merged record renders index,follow.
+      const indexableLangsBySlug = new Map<string, string[]>();
+      const updatedAtBySlug = new Map<string, string | undefined>();
+      for (const lang of langs) {
+        for (const s of await getPublicServicesForCountry(country.code, lang)) {
+          if (!isPublicServiceRecordIndexable(s, lang, defaultLocale)) continue;
+          const forSlug = indexableLangsBySlug.get(s.slug) ?? [];
+          forSlug.push(lang);
+          indexableLangsBySlug.set(s.slug, forSlug);
+          updatedAtBySlug.set(
+            s.slug,
+            newestTimestamp(updatedAtBySlug.get(s.slug), s.updatedAt) ?? undefined,
+          );
+        }
+      }
+      for (const [slug, indexableLangs] of indexableLangsBySlug) {
+        const updatedAt = updatedAtBySlug.get(slug);
+        bump(country.code, "service", updatedAt);
+        pushLocalized(country, `/services/${slug}`, 0.7, dated(updatedAt), indexableLangs);
       }
     } catch {
       // Service list unavailable — keep the rest of the sitemap.

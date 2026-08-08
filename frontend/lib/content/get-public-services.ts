@@ -23,6 +23,15 @@ export type PublicServiceRecord = {
   basePriceCents: number | null;
   currencyCode: string | null;
   imagePath: string | null;
+  /** `PUBLIC` on every row the public API returns; kept so the shared
+   *  indexability rule can assert it rather than trust the endpoint. */
+  visibility: string | null;
+  /** Locale that actually supplied this row's content — see
+   *  `PublicServiceLocaleRecord` in publication-validation.ts. */
+  resolvedLocale: string | null;
+  /** Display fields the requested locale's own translation row supplied.
+   *  `null` when the backend predates the field. */
+  translatedFields: string[] | null;
   editorialChecklist: Record<string, unknown> | null;
   /** ISO timestamp string, when the backend row includes one (Prisma @updatedAt). */
   updatedAt: string | null;
@@ -80,6 +89,11 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
       : null;
   const currencyCode =
     typeof r.currencyCode === "string" && r.currencyCode.length > 0 ? r.currencyCode : null;
+  const visibility = typeof r.visibility === "string" ? r.visibility : null;
+  const resolvedLocale = typeof r.resolvedLocale === "string" ? r.resolvedLocale : null;
+  const translatedFields = Array.isArray(r.translatedFields)
+    ? r.translatedFields.filter((f): f is string => typeof f === "string")
+    : null;
   const editorialChecklist =
     r.editorialChecklist && typeof r.editorialChecklist === "object"
       ? (r.editorialChecklist as Record<string, unknown>)
@@ -112,6 +126,9 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     basePriceCents,
     currencyCode,
     imagePath,
+    visibility,
+    resolvedLocale,
+    translatedFields,
     editorialChecklist,
     updatedAt,
     lastReviewedAt,

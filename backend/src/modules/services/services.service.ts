@@ -124,21 +124,44 @@ type ServiceDisplayBase = {
 
 type ServiceTranslationRow = ServiceDisplayBase & { locale: LocaleCode };
 
+const SERVICE_DISPLAY_FIELDS = [
+  "name",
+  "summary",
+  "seoTitle",
+  "seoDescription",
+  "heroTitle",
+  "heroDescription",
+  "detailBody",
+  "ctaLabel",
+] as const satisfies readonly (keyof ServiceDisplayBase)[];
+
 /**
  * Merge a service's base display columns with the best translation for the
  * requested locale (requested → default → first → base). Returns the row
  * with display fields overwritten by the resolved values, the raw
  * `translations` array stripped, and the locale that actually resolved.
+ *
+ * `translatedFields` names the display fields the resolved translation row
+ * actually supplied. Everything else fell through to the base columns, which
+ * are authored in the country's default locale — so a consumer rendering a
+ * non-default locale can tell "this value is in my language" from "this value
+ * is the market's own language leaking through the fallback". The public site
+ * uses it to decide indexability and to pick a safe localized <title>.
  */
 function mergeServiceTranslation<
   S extends ServiceDisplayBase & { translations: ServiceTranslationRow[] },
 >(service: S, requested: LocaleCode, defaultLocale: LocaleCode): Omit<S, "translations"> & {
   resolvedLocale: LocaleCode;
+  translatedFields: string[];
 } {
   const { tr, resolvedLocale } = resolveTranslation(service.translations, requested, defaultLocale);
   const { translations: _translations, ...rest } = service;
+  const translatedFields = tr
+    ? SERVICE_DISPLAY_FIELDS.filter((field) => tr[field] != null)
+    : [];
   return {
     ...rest,
+    translatedFields,
     name: tr?.name ?? service.name,
     summary: tr?.summary ?? service.summary,
     seoTitle: tr?.seoTitle ?? service.seoTitle,

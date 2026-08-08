@@ -14,7 +14,7 @@ import {
   Stethoscope,
   Video,
 } from "lucide-react";
-import { getCountryByCode } from "@/data/countries";
+import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
@@ -26,7 +26,11 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
-import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import { hreflangRegion, ogLocales } from "@/lib/seo/hreflang";
+import {
+  isPublicServiceRecordIndexable,
+  safeLocalizedServiceMeta,
+} from "@/lib/content/publication-validation";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -82,6 +86,43 @@ function listingPath(
   return { href: `/${country}/${lang}/general-consultation`, label: labels.general };
 }
 
+/**
+ * hreflang cluster for a service, restricted to the locale variants that
+ * actually render `index,follow`.
+ *
+ * hreflang is a reciprocal claim that each listed URL is a publishable
+ * alternate of this page, so advertising a locale this service has no real
+ * content for asks Google to index a page that says noindex about itself. The
+ * membership test is the SAME `isPublicServiceRecordIndexable` the robots tag
+ * and `sitemap.ts` use, so the three can never disagree.
+ *
+ * Returns `undefined` when no locale qualifies (a service with no publishable
+ * version anywhere advertises nothing) — including for the page's own locale,
+ * which is then noindexed too.
+ */
+async function indexableServiceAlternates(
+  config: NonNullable<ReturnType<typeof getCountryByCode>>,
+  code: CountryCode,
+  countrySlugParam: string,
+  serviceSlug: string,
+): Promise<Record<string, string> | undefined> {
+  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
+  const langs = (config.supportedLocales ?? [defaultLocale]).map((l) => l.toLowerCase());
+  const region = hreflangRegion(config.code);
+  const out: Record<string, string> = {};
+  for (const alt of langs) {
+    const record = await getCountryServiceDetail(code, serviceSlug, alt);
+    if (!record) continue;
+    if (!isPublicServiceRecordIndexable(record, alt, defaultLocale)) continue;
+    out[`${alt}-${region}`] = `/${countrySlugParam}/${alt}/services/${serviceSlug}`;
+  }
+  if (Object.keys(out).length === 0) return undefined;
+  // x-default points at the market's own language when that variant qualifies,
+  // otherwise at the first one that does — never at a locale we just excluded.
+  const xDefault = out[`${defaultLocale}-${region}`] ?? Object.values(out)[0];
+  return { ...out, "x-default": xDefault };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -95,6 +136,16 @@ export async function generateMetadata({
   const detail = await getCountryServiceDetail(code, serviceSlug, lang);
   if (!detail) return { title: SITE_NAME };
 
+  // Publication gate — one shared rule for robots, hreflang and the sitemap.
+  // An editorially incomplete locale still serves a real 200 page (legacy
+  // redirects and existing links land on it); it just stops claiming to be an
+  // indexable, hreflang-advertised alternate.
+  const defaultLocale = (config?.defaultLocale ?? "en").toLowerCase();
+  const indexable = config
+    ? isPublicServiceRecordIndexable(detail, lang, defaultLocale)
+    : false;
+  const safeMeta = safeLocalizedServiceMeta(detail, lang, defaultLocale);
+
   // Admin SEO titles here already carry the service AND the country, and the
   // translated locales run 15-35 chars longer than the English they were
   // budgeted against — a prod audit found 747 of 786 service title rows over
@@ -102,15 +153,22 @@ export async function generateMetadata({
   // " · Global Health" suffix on this route only: 15 chars back with zero
   // keyword loss, instead of truncating the tail (see page-seo.ts SOCIAL_TITLE_LIMIT
   // for why truncation is off the table). Social/OG titles keep their own brand.
-  const title = detail.seoTitle ?? detail.name;
+  //
+  // Both slots take the first value that is non-empty AND genuinely in this
+  // locale (`safeLocalizedServiceMeta`). The merge chain behind the API is
+  // translation-row → base columns, and the base columns are authored in the
+  // market's default language — so reading `detail.seoTitle` raw published a
+  // Spanish <title> on the Czech, German and English URLs of any service whose
+  // translation rows carry no seoTitle of their own.
+  const title = safeMeta.title ?? detail.name;
   const baseDescription =
-    detail.seoDescription ?? detail.summary ?? `Learn about ${detail.name} and book a consultation.`;
+    safeMeta.description ?? `Learn about ${title} and book a consultation.`;
   // Append the auto insurance line to the meta description when companies cover
   // this service, capped so the description stays a sensible length for SERPs.
   const description = detail.insuranceSeoLine
     ? `${baseDescription} ${detail.insuranceSeoLine}`.slice(0, 320)
     : baseDescription;
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/services/${serviceSlug}`,
     title,
     description,
@@ -121,9 +179,20 @@ export async function generateMetadata({
     sourceImage: detail.imageSrc ?? undefined,
     imageAlt: `${detail.name} in ${config?.name ?? country}`,
     locale: config ? ogLocales(config, lang).locale : undefined,
-    languages: config ? hreflangAlternates(config, `/services/${serviceSlug}`) : undefined,
+    languages: config
+      ? await indexableServiceAlternates(config, code, country, serviceSlug)
+      : undefined,
+    noindex: !indexable,
     keywords: detail.seoKeywords.length > 0 ? detail.seoKeywords : undefined,
   });
+  if (indexable) return metadata;
+  // `noindex, FOLLOW` — an editorially incomplete service is still a real page
+  // with real internal links (its market's other services, the doctors who
+  // staff it). `buildPublicMetadata`'s shared `noindex` is `noindex, nofollow`,
+  // which is right for the routes that use it but would strand this page's link
+  // equity. Overridden here rather than in the helper so doctor/blog robots are
+  // untouched.
+  return { ...metadata, robots: { index: false, follow: true } };
 }
 
 /**

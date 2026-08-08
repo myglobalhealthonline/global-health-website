@@ -141,6 +141,206 @@ export function isPublicDoctorRecordIndexable(
   return !validation.shouldNoindex && doctor.editorialChecklist?.readyToIndex === true;
 }
 
+/* ------------------------------------------------------------------ *
+ * Per-locale service publication — the single source of truth shared by
+ * the service detail page (robots + hreflang) and the sitemap.
+ * ------------------------------------------------------------------ */
+
+/**
+ * A service as the public API merged it for ONE locale. Every content field is
+ * post-merge (translation row → country-default row → base columns), so the
+ * two locale fields are what make the record interpretable:
+ *
+ *  • `resolvedLocale` — the locale that actually supplied content. When it is
+ *    not the requested locale, no translation row exists for that locale at
+ *    all and the whole page is the market's default language.
+ *  • `translatedFields` — the display fields the requested locale's own
+ *    translation row supplied. Anything absent fell through to the base
+ *    columns, which are authored in the country's default locale.
+ *
+ * `translatedFields: null` means the backend predates the field; treat every
+ * field as in-locale rather than mass-noindexing on a version skew.
+ */
+export type PublicServiceLocaleRecord = {
+  kind: string;
+  slug: string;
+  isActive?: boolean | null;
+  visibility?: string | null;
+  name: string | null;
+  summary: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  resolvedLocale: string | null;
+  translatedFields: string[] | null;
+};
+
+/**
+ * Floor for "this record has public content at all", in plain-text characters
+ * after markup is stripped. Deliberately the same 120 `validatePublicServiceRecord`
+ * already uses for `detailBody`, so the codebase has one number rather than two.
+ *
+ * This is an emptiness check, not an editorial score: `<p><br /></p>`, bare
+ * headings and whitespace normalize to ~0 and fail, while a genuinely concise
+ * two-sentence service passes. Do NOT raise it to enforce depth — that
+ * silently deindexes legitimate short services.
+ */
+const SERVICE_BODY_MIN_CHARS = 120;
+
+/** Display fields that gate indexability. Everything else is presentational. */
+type RequiredServiceField = "name" | "body";
+
+function plainTextLength(value: string | null | undefined): number {
+  if (!value) return 0;
+  return stripBlogHtmlToPlainText(value).length;
+}
+
+/**
+ * Is this field's value actually in `locale`?
+ *
+ * A field the locale's own translation row supplied always is. A field that
+ * fell through to the base columns only is when the requested locale IS the
+ * country's default, because the base columns are authored in that language.
+ */
+function isFieldInLocale(
+  service: PublicServiceLocaleRecord,
+  field: string,
+  locale: string,
+  defaultLocale: string,
+): boolean {
+  if (service.translatedFields == null) return true;
+  if (service.translatedFields.includes(field)) return true;
+  return locale.toLowerCase() === defaultLocale.toLowerCase();
+}
+
+/** First value of `fields` that is both non-empty and genuinely in `locale`. */
+function pickLocalized(
+  service: PublicServiceLocaleRecord,
+  fields: Array<keyof PublicServiceLocaleRecord>,
+  locale: string,
+  defaultLocale: string,
+): string | null {
+  for (const field of fields) {
+    const value = service[field];
+    if (typeof value !== "string" || value.trim().length === 0) continue;
+    if (!isFieldInLocale(service, field, locale, defaultLocale)) continue;
+    return value;
+  }
+  return null;
+}
+
+/**
+ * THE service publication rule. One country-agnostic predicate, used by the
+ * service detail page (`noindex` + which hreflang alternates to advertise) and
+ * by `sitemap.ts` (which locale URLs to submit) so those three can never
+ * disagree. There is no per-country branch here and there must not be one:
+ * a market-specific rule belongs in the country's data, not in this function.
+ *
+ * A `(service, locale)` pair is publishable only when ALL hold:
+ *   1. the service is a public-facing consultation kind (GENERAL/SPECIALIST);
+ *   2. it is active and PUBLIC (belt-and-braces — the public API already
+ *      filters on both, but the sitemap must not depend on that);
+ *   3. it has a slug to build a URL from;
+ *   4. a translation row exists for this exact locale (`resolvedLocale`);
+ *   5. its name is in this locale;
+ *   6. it has substantive body content in this locale — detailBody, else
+ *      summary, else heroDescription (see `SERVICE_BODY_MIN_CHARS`);
+ *   7. no internal/placeholder copy leaked into the public fields.
+ *
+ * Everything else — seoTitle, seoDescription, heroTitle, heroDescription,
+ * summary, duration, price — is optional and never gates indexability. A
+ * missing one degrades through `safeLocalizedServiceMeta`, it does not
+ * deindex a page that otherwise has real content.
+ */
+export function isPublicServiceRecordIndexable(
+  service: PublicServiceLocaleRecord,
+  locale: string,
+  defaultLocale: string,
+): boolean {
+  return publicServiceLocaleIssues(service, locale, defaultLocale).length === 0;
+}
+
+/**
+ * `isPublicServiceRecordIndexable` with its reasons — same rule, used by the
+ * audit script and the tests so a failure says which condition tripped.
+ */
+export function publicServiceLocaleIssues(
+  service: PublicServiceLocaleRecord,
+  locale: string,
+  defaultLocale: string,
+): Array<RequiredServiceField | "kind" | "status" | "slug" | "locale" | "copy"> {
+  const issues: Array<RequiredServiceField | "kind" | "status" | "slug" | "locale" | "copy"> = [];
+
+  if (service.kind !== "GENERAL" && service.kind !== "SPECIALIST") issues.push("kind");
+  if (service.isActive === false) issues.push("status");
+  if (service.visibility != null && service.visibility !== "PUBLIC") issues.push("status");
+  if (!service.slug || service.slug.trim().length === 0) issues.push("slug");
+
+  if (
+    service.resolvedLocale != null &&
+    service.resolvedLocale.toLowerCase() !== locale.toLowerCase()
+  ) {
+    issues.push("locale");
+  }
+
+  const name = pickLocalized(service, ["name"], locale, defaultLocale);
+  if (!name || name.trim().length === 0) issues.push("name");
+
+  const body = pickLocalized(
+    service,
+    ["detailBody", "summary", "heroDescription"],
+    locale,
+    defaultLocale,
+  );
+  if (plainTextLength(body) < SERVICE_BODY_MIN_CHARS) issues.push("body");
+
+  if (
+    hasAnyBlockedCopy([
+      service.name,
+      service.summary,
+      service.heroTitle,
+      service.heroDescription,
+      service.detailBody ? stripBlogHtmlToPlainText(service.detailBody) : null,
+    ])
+  ) {
+    issues.push("copy");
+  }
+
+  return issues;
+}
+
+/**
+ * Safe localized <title>/description for a service page, given the same
+ * per-locale record the indexability rule reads.
+ *
+ * Each slot walks its own preference list and takes the first value that is
+ * non-empty AND genuinely in this locale — so a locale whose translation row
+ * has no `seoTitle` gets its own localized `heroTitle`/`name` instead of the
+ * market's default-language `seoTitle` bleeding through the merge fallback.
+ * `title` falls back to the raw merged `name` as a last resort: such a page is
+ * already noindexed by the rule above, and a foreign-language name still beats
+ * an empty <title> for the humans a legacy redirect lands there.
+ */
+export function safeLocalizedServiceMeta(
+  service: PublicServiceLocaleRecord,
+  locale: string,
+  defaultLocale: string,
+): { title: string | null; description: string | null } {
+  return {
+    title:
+      pickLocalized(service, ["seoTitle", "heroTitle", "name"], locale, defaultLocale) ??
+      service.name,
+    description: pickLocalized(
+      service,
+      ["seoDescription", "heroDescription", "summary"],
+      locale,
+      defaultLocale,
+    ),
+  };
+}
+
 export function validateAdminServicePayload(service: Pick<AdminServiceDto, "kind" | "name" | "summary" | "heroTitle" | "heroDescription" | "detailBody" | "durationMinutes" | "basePriceCents" | "currencyCode" | "isActive">): PublicationValidationResult {
   return validatePublicServiceRecord({
     // The inner ASYNC_PRESCRIPTION service is admin-only and never publicly

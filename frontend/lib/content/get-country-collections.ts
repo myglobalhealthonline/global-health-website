@@ -152,6 +152,13 @@ export type CountryServiceDetail = {
   reviewerDisplayName: string | null;
   authorDoctorId: string | null;
   reviewerDoctorId: string | null;
+  /** `PUBLIC` for anything the public endpoint returns. */
+  visibility: string | null;
+  /** Locale that actually supplied this row's content, and the display fields
+   *  the requested locale's own translation row provided. Both feed the shared
+   *  per-locale publication rule — see `PublicServiceLocaleRecord`. */
+  resolvedLocale: string | null;
+  translatedFields: string[] | null;
 };
 
 export type HealthTestFaqItem = { id: string; question: string; answer: string };
@@ -674,6 +681,11 @@ export const getCountryServiceDetail = cache(async (
     reviewerDisplayName: typeof r.reviewerDisplayName === "string" ? r.reviewerDisplayName : null,
     authorDoctorId: typeof r.authorDoctorId === "string" ? r.authorDoctorId : null,
     reviewerDoctorId: typeof r.reviewerDoctorId === "string" ? r.reviewerDoctorId : null,
+    visibility: typeof r.visibility === "string" ? r.visibility : null,
+    resolvedLocale: typeof r.resolvedLocale === "string" ? r.resolvedLocale : null,
+    translatedFields: Array.isArray(r.translatedFields)
+      ? r.translatedFields.filter((f): f is string => typeof f === "string")
+      : null,
   };
 });
 
