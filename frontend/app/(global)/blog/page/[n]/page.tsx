@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const locale = await getPageLocale();
   const blog = getCommonLocale(locale).blogPage;
   const title = `${blog.heroTitleLead ?? "Health guides"} ${blog.heroTitleAccent ?? "and articles"}`;
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/blog/page/${page}`,
     title: `${title} — ${page}`,
     description:
@@ -38,6 +38,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     // Deeper index pages carry no unique content of their own.
     noindex: true,
   });
+  // See the country-scoped blog pagination page for why this is `noindex,
+  // follow` rather than the shared helper's `noindex, nofollow` — the
+  // prev/next controls and article cards here are the crawl path to older
+  // posts, and `nofollow` would cut it.
+  return { ...metadata, robots: { index: false, follow: true } };
 }
 
 export default async function BlogIndexPagedPage({ params }: { params: Promise<Params> }) {

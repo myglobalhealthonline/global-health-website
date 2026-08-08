@@ -179,7 +179,8 @@
     "showResults": "Ver resultados",
     "featuredClinician": "Médico destacado",
     "registrationLabel": "Registro",
-    "verifiedSuffix": "Verificado"
+    "verifiedSuffix": "Verificado",
+    "allDoctorsHeading": "Todos los médicos en {country}"
   },
   "cookie": {
     "title": "Preferencias de cookies",

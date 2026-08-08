@@ -179,7 +179,8 @@
     "showResults": "Zobrazit výsledky",
     "featuredClinician": "Vybraný lékař",
     "registrationLabel": "Registrace",
-    "verifiedSuffix": "Ověřeno"
+    "verifiedSuffix": "Ověřeno",
+    "allDoctorsHeading": "Všichni lékaři v {country}"
   },
   "cookie": {
     "title": "Nastavení cookies",

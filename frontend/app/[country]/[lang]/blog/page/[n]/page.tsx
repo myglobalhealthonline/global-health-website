@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const title = (blog.heroTitleCountryTemplate ?? "{title} in {country}")
     .replace("{title}", heroTitle)
     .replace("{country}", countryName);
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/blog/page/${page}`,
     title: `${title} — ${page}`,
     description:
@@ -53,6 +53,14 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     // Deeper index pages carry no unique content; only page 1 is submitted.
     noindex: true,
   });
+  // `buildPublicMetadata`'s shared `noindex` is `noindex, nofollow` — right for
+  // most noindex routes, wrong here. This page's only job past page 1 is
+  // discovery: its prev/next controls and article cards are the crawl path to
+  // every older post. `nofollow` tells Googlebot not to follow ANY link on the
+  // page, cutting that path exactly where deep archive pages need it most.
+  // Overridden to `noindex, follow` here rather than in the shared helper so
+  // every other noindex route keeps its stricter default.
+  return { ...metadata, robots: { index: false, follow: true } };
 }
 
 export default async function CountryLangBlogIndexPagedPage({

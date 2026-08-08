@@ -69,6 +69,9 @@ export type DoctorTeamI18n = {
   viewProfileAria?: string;
   /** Card CTA label — was a hardcoded English "View profile" fallback. */
   viewProfile?: string;
+  /** Heading above the always-crawlable full-roster link index below the
+   *  paginated carousel. "{country}" placeholder. */
+  allDoctorsHeading?: string;
 };
 
 type DoctorTeamTemplateProps = {
@@ -254,6 +257,43 @@ export function DoctorTeamTemplate({
                   />
                 </div>
               )}
+
+              {/* The carousel above is a client-side `useState` pager — only
+                  the current page's cards ever mount, so a crawler landing
+                  cold on this route (no JS execution) could only ever reach
+                  the first PAGE_SIZE doctors. This index is plain, always-
+                  rendered content covering the full roster: a real inlink for
+                  every doctor beyond page one, independent of carousel state.
+                  Kept visually modest on purpose — it is a discovery path,
+                  not a second marketing surface. */}
+              {totalPages > 1 ? (
+                <nav
+                  aria-label={i18n?.allDoctorsHeading?.replace("{country}", countryName) ?? countryName}
+                  className="mt-10 border-t border-[rgba(255,255,255,0.12)] pt-8"
+                >
+                  <p className="mb-4 text-xs font-bold tracking-[0.14em] text-white/50 uppercase">
+                    {(i18n?.allDoctorsHeading ?? "All doctors in {country}").replace(
+                      "{country}",
+                      countryName,
+                    )}
+                  </p>
+                  <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                    {doctors
+                      .filter((d) => d.href)
+                      .map((d) => (
+                        <li key={d.href}>
+                          <Link
+                            href={d.href!}
+                            className="text-sm text-white/70 underline decoration-white/25 underline-offset-4 hover:text-white hover:decoration-white/50"
+                          >
+                            {d.name}
+                            {d.title ? ` — ${d.title}` : ""}
+                          </Link>
+                        </li>
+                      ))}
+                  </ul>
+                </nav>
+              ) : null}
             </>
           )}
         </div>

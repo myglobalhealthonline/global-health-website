@@ -147,6 +147,9 @@ export type CommonLocale = {
     featuredClinician: string;
     registrationLabel: string;
     verifiedSuffix: string;
+    /** Heading above the always-crawlable full-roster link index below the
+     *  paginated carousel. "{country}" placeholder. */
+    allDoctorsHeading?: string;
   };
   /** Localised country display names, keyed by lowercase country code.
    *  data/countries.ts carries English names only. */

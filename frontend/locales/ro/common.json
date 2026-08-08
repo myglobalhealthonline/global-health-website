@@ -179,7 +179,8 @@
     "showResults": "Arată rezultatele",
     "featuredClinician": "Medic recomandat",
     "registrationLabel": "Înregistrare",
-    "verifiedSuffix": "Verificat"
+    "verifiedSuffix": "Verificat",
+    "allDoctorsHeading": "Toți medicii din {country}"
   },
   "cookie": {
     "title": "Preferințe cookie",

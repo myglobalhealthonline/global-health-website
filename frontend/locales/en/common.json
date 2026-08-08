@@ -179,7 +179,8 @@
     "showResults": "Show results",
     "featuredClinician": "Featured clinician",
     "registrationLabel": "Registration",
-    "verifiedSuffix": "Verified"
+    "verifiedSuffix": "Verified",
+    "allDoctorsHeading": "All doctors in {country}"
   },
   "cookie": {
     "title": "Cookie preferences",
