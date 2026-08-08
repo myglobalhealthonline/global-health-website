@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, beforeEach, describe, it } from "node:test";
 import type { PrismaClient } from "@prisma/client";
+import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 /**
  * §25 / §16.1 — persisting the cart-level benefit choice.
@@ -18,6 +19,8 @@ describe("cart benefit selection", () => {
   let svc: typeof import("./benefit-selection.service.js");
 
   const uniq = `bs-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryId = "";
   let serviceId = "";
@@ -38,7 +41,7 @@ describe("cart benefit selection", () => {
     svc = await import("./benefit-selection.service.js");
 
     const currency = await prisma.currency.create({
-      data: { code: `S${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({

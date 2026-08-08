@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { PrismaClient } from "@prisma/client";
+import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 /**
  * §5.2 — the verified-email gate, and the statuses linking produces.
@@ -19,6 +20,8 @@ describe("membership linking", () => {
   let restoreEmail: (() => void) | null = null;
 
   const uniq = `link-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryId = "";
   let planId = "";
@@ -42,7 +45,7 @@ describe("membership linking", () => {
     restoreEmail = () => emailModule.setEmailCaptureHook(null);
 
     const currency = await prisma.currency.create({
-      data: { code: `L${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { PrismaClient } from "@prisma/client";
 import { sortAndRecommend, type BenefitOption } from "./benefit-options.service.js";
+import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 /**
  * §6.3 / §16.1 — the cross-source options list.
@@ -91,6 +92,8 @@ describe("benefit options — end to end", () => {
   let svc: typeof import("./benefit-options.service.js");
 
   const uniq = `bo-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryId = "";
   let planId = "";
@@ -108,7 +111,7 @@ describe("benefit options — end to end", () => {
     svc = await import("./benefit-options.service.js");
 
     const currency = await prisma.currency.create({
-      data: { code: `B${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({
@@ -284,7 +287,7 @@ describe("benefit options — end to end", () => {
         name: "Other GP",
         slug: `other-gp-${uniq}`.toLowerCase(),
         basePriceCents: 6000,
-        currencyCode: `B${uniq}`.slice(0, 9),
+        currencyCode: currencyCode,
       },
     });
 

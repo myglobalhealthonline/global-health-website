@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { PrismaClient } from "@prisma/client";
+import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 /**
  * §11.7 / §16.1 — the SUPER_ADMIN goodwill override.
@@ -28,6 +29,8 @@ describe("membership override — goodwill pricing and attribution", () => {
   let svc: typeof import("./membership-override.service.js");
 
   const uniq = `ov-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   const TERM_START = new Date("2026-01-01T00:00:00.000Z");
   const FULL_PRICE = 6000;
 
@@ -58,7 +61,7 @@ describe("membership override — goodwill pricing and attribution", () => {
     svc = await import("./membership-override.service.js");
 
     const currency = await prisma.currency.create({
-      data: { code: `O${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({

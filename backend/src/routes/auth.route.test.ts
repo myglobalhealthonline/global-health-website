@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import { buildApp } from "../app.js";
+import { waitForAuditRow } from "../test-utils/wait-for-audit.js";
 
 /**
  * Login audit hooks (T6). Each /api/auth/login outcome should emit a
@@ -60,13 +61,16 @@ describe("auth route — login audit hooks", () => {
     });
     assert.equal(res.statusCode, 401);
 
-    // recordAudit is fire-and-forget. Give it a moment to land.
-    await new Promise((r) => setTimeout(r, 250));
-    const after = await prisma.auditLog.count({
-      where: { action: "LOGIN_FAILED" },
+    // recordAudit is fire-and-forget, so the 401 arrives before the row does.
+    // This used to wait a flat 250ms, which is plenty on an idle database and
+    // not always enough under a full-suite run — the failure mode being a test
+    // that passes alone and fails roughly one run in five. Poll instead.
+    const after = await waitForAuditRow(async () => {
+      const n = await prisma.auditLog.count({ where: { action: "LOGIN_FAILED" } });
+      return n > before ? n : null;
     });
     assert.ok(
-      after >= before + 1,
+      after !== null && after >= before + 1,
       `expected LOGIN_FAILED count to increase, before=${before} after=${after}`,
     );
   });

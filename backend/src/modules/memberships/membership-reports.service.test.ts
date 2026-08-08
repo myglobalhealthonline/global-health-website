@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { PrismaClient } from "@prisma/client";
+import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 /**
  * §15 / §32 — membership usage reporting.
@@ -24,6 +25,7 @@ describe("membership reports — usage, overrides, drill-down", () => {
   let svc: typeof import("./membership-reports.service.js");
 
   const uniq = `rp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
   const TERM_START = new Date("2026-01-01T00:00:00.000Z");
 
   let currencyId = "";
@@ -36,7 +38,7 @@ describe("membership reports — usage, overrides, drill-down", () => {
   let userId = "";
   let enrollmentId = "";
   let orderId = "";
-  let currencyCode = "";
+  let currencyCode = uniqueCurrencyCode();
 
   before(async () => {
     try {
@@ -49,7 +51,7 @@ describe("membership reports — usage, overrides, drill-down", () => {
     svc = await import("./membership-reports.service.js");
 
     const currency = await prisma.currency.create({
-      data: { code: `R${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     currencyCode = currency.code;

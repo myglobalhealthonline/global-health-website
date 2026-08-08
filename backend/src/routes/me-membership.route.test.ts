@@ -5,6 +5,8 @@ import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import type { PrismaClient } from "@prisma/client";
 import { deleteAuditLogs } from "../test-utils/audit-cleanup.js";
+import { waitForAuditRow } from "../test-utils/wait-for-audit.js";
+import { uniqueCurrencyCode } from "../test-utils/unique-currency-code.js";
 
 loadEnv({ path: join(__dirname, "../..", ".env") });
 
@@ -29,6 +31,8 @@ describe("member membership routes", () => {
   let signAuthToken: typeof import("../utils/auth-session.js")["signAuthToken"];
 
   const uniq = `mem-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryId = "";
   let planId = "";
@@ -98,7 +102,7 @@ describe("member membership routes", () => {
     });
 
     const currency = await prisma.currency.create({
-      data: { code: `M${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({
@@ -331,10 +335,12 @@ describe("member membership routes", () => {
       payload: { membershipId: probed, email: `ghost-${uniq}@test.local` },
     });
 
-    const row = await prisma.auditLog.findFirst({
-      where: { actorUserId: user.id, action: "MEMBERSHIP_CLAIM_REQUESTED" },
-      select: { entityType: true, entityId: true, metadata: true },
-    });
+    const row = await waitForAuditRow(() =>
+      prisma.auditLog.findFirst({
+        where: { actorUserId: user.id, action: "MEMBERSHIP_CLAIM_REQUESTED" },
+        select: { entityType: true, entityId: true, metadata: true },
+      }),
+    );
     assert.ok(row);
     assert.equal(row.entityType, "MembershipClaimAttempt");
     assert.equal(row.entityId, probed.toLowerCase());

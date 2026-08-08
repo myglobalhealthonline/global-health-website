@@ -4,6 +4,7 @@ import { config as loadEnv } from "dotenv";
 import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import type { PrismaClient } from "@prisma/client";
+import { uniqueCurrencyCode } from "../test-utils/unique-currency-code.js";
 
 loadEnv({ path: join(__dirname, "../..", ".env") });
 
@@ -23,6 +24,8 @@ describe("membership import routes — recipient count", () => {
   let signAuthToken: typeof import("../utils/auth-session.js")["signAuthToken"];
 
   const uniq = `imprt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryId = "";
   let planId = "";
@@ -40,7 +43,7 @@ describe("membership import routes — recipient count", () => {
     }
 
     const currency = await prisma.currency.create({
-      data: { code: `M${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({

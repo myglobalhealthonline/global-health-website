@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { PrismaClient } from "@prisma/client";
 import { parseCsv, summarize, type PreviewData } from "./membership-import.service.js";
+import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 /**
  * §8 — CSV import. The parser tests are pure; everything else needs a database
@@ -109,6 +110,8 @@ describe("membership import (database)", () => {
   let svc: typeof import("./membership-import.service.js");
 
   const uniq = `imp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryId = "";
   let planId = "";
@@ -153,7 +156,7 @@ describe("membership import (database)", () => {
     emailModule.setEmailCaptureHook(() => {});
 
     const currency = await prisma.currency.create({
-      data: { code: `I${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({

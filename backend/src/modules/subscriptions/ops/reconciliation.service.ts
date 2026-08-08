@@ -111,17 +111,21 @@ async function checkLedgerBalanceInvariant(): Promise<InvariantAlert[]> {
 
 /** Active plans in subscription-enabled countries must have a Stripe Price. */
 async function checkPriceSyncFailures(): Promise<Array<{ planId: string; slug: string }>> {
+  // Filtered in the query rather than in JS. Selecting `country` and reading
+  // `p.country.enabledFeatures` afterwards loads the relation separately, so a
+  // country deleted between the two reads yields `p.country === null` and a
+  // TypeError — which is exactly what happened intermittently under the test
+  // suite, where teardown hooks drop countries constantly. One query cannot
+  // race itself, and this is less code besides.
   const plans = await prisma.pricingPlan.findMany({
-    where: { isActive: true, stripePriceId: null },
-    select: {
-      id: true,
-      slug: true,
-      country: { select: { enabledFeatures: true } },
+    where: {
+      isActive: true,
+      stripePriceId: null,
+      country: { enabledFeatures: { has: "subscriptions" } },
     },
+    select: { id: true, slug: true },
   });
-  return plans
-    .filter((p) => p.country.enabledFeatures.includes("subscriptions"))
-    .map((p) => ({ planId: p.id, slug: p.slug }));
+  return plans.map((p) => ({ planId: p.id, slug: p.slug }));
 }
 
 /** Expired reservations the sweep should have released (terminal missing). */

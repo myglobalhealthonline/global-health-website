@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, beforeEach, describe, it } from "node:test";
 import type { PrismaClient } from "@prisma/client";
+import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 /**
  * §7 / §16.1 — allowance accounting.
@@ -16,6 +17,8 @@ describe("membership allowance — spend, refund, races", () => {
   let svc: typeof import("./membership-allowance.service.js");
 
   const uniq = `al-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryId = "";
   let planId = "";
@@ -59,7 +62,7 @@ describe("membership allowance — spend, refund, races", () => {
     svc = await import("./membership-allowance.service.js");
 
     const currency = await prisma.currency.create({
-      data: { code: `A${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({

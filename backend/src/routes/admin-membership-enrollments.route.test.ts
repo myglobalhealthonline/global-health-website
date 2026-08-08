@@ -5,6 +5,8 @@ import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import type { PrismaClient } from "@prisma/client";
 import { deleteAuditLogs } from "../test-utils/audit-cleanup.js";
+import { waitForAuditRow } from "../test-utils/wait-for-audit.js";
+import { uniqueCurrencyCode } from "../test-utils/unique-currency-code.js";
 
 loadEnv({ path: join(__dirname, "../..", ".env") });
 
@@ -24,6 +26,8 @@ describe("admin membership enrollment routes", () => {
   let signAuthToken: typeof import("../utils/auth-session.js")["signAuthToken"];
 
   const uniq = `enr-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryId = "";
   let planId = "";
@@ -49,7 +53,7 @@ describe("admin membership enrollment routes", () => {
     (await import("../lib/email/send-email.js")).setEmailCaptureHook(() => {});
 
     const currency = await prisma.currency.create({
-      data: { code: `E${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const country = await prisma.country.create({
@@ -205,9 +209,11 @@ describe("admin membership enrollment routes", () => {
     assert.equal(row?.countryId, countryId, "countryId is stamped from the plan");
     assert.equal(row?.email, `member-a1-${uniq}@test.local`.toLowerCase());
 
-    const audit = await prisma.auditLog.findFirst({
-      where: { entityType: "MembershipEnrollment", entityId: enrollment.id },
-    });
+    const audit = await waitForAuditRow(() =>
+      prisma.auditLog.findFirst({
+        where: { entityType: "MembershipEnrollment", entityId: enrollment.id },
+      }),
+    );
     assert.ok(audit, "the create is audited");
   });
 

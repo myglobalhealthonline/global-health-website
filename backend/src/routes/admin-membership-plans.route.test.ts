@@ -5,6 +5,8 @@ import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import type { PrismaClient } from "@prisma/client";
 import { deleteAuditLogs } from "../test-utils/audit-cleanup.js";
+import { waitForAuditRow } from "../test-utils/wait-for-audit.js";
+import { uniqueCurrencyCode } from "../test-utils/unique-currency-code.js";
 
 loadEnv({ path: join(__dirname, "../..", ".env") });
 
@@ -25,6 +27,8 @@ describe("admin membership plan routes", () => {
   let signAuthToken: typeof import("../utils/auth-session.js")["signAuthToken"];
 
   const uniq = `mem-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryAId = "";
   let countryBId = "";
@@ -52,7 +56,7 @@ describe("admin membership plan routes", () => {
     }
 
     const currency = await prisma.currency.create({
-      data: { code: `M${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const mkCountry = (suffix: string, extra: Record<string, unknown> = {}) =>
@@ -285,9 +289,11 @@ describe("admin membership plan routes", () => {
       [countryAId],
       "the primary country's coverage row is created with the plan",
     );
-    const audit = await prisma.auditLog.findFirst({
-      where: { action: "MEMBERSHIP_PLAN_CREATED", entityId: planId },
-    });
+    const audit = await waitForAuditRow(() =>
+      prisma.auditLog.findFirst({
+        where: { action: "MEMBERSHIP_PLAN_CREATED", entityId: planId },
+      }),
+    );
     assert.ok(audit, "audit row written");
   });
 
@@ -427,9 +433,11 @@ describe("admin membership plan routes", () => {
     const benefit = res.json().data.benefit;
     assert.equal(benefit.countryId, countryAId, "benefit inherits the level's country");
     assert.equal(benefit.allowanceCount, 4);
-    const audit = await prisma.auditLog.findFirst({
-      where: { action: "MEMBERSHIP_BENEFIT_CREATED", entityId: benefit.id },
-    });
+    const audit = await waitForAuditRow(() =>
+      prisma.auditLog.findFirst({
+        where: { action: "MEMBERSHIP_BENEFIT_CREATED", entityId: benefit.id },
+      }),
+    );
     assert.ok(audit, "audit row written");
   });
 

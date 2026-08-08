@@ -5,6 +5,7 @@ import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import type { PrismaClient } from "@prisma/client";
 import { deleteAuditLogs, deleteMedicalAccessLogs } from "../test-utils/audit-cleanup.js";
+import { uniqueCurrencyCode } from "../test-utils/unique-currency-code.js";
 
 loadEnv({ path: join(__dirname, "../..", ".env") });
 
@@ -41,6 +42,8 @@ describe("authorization matrix", () => {
   let originalEnforce: boolean;
 
   const uniq = `authz-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId = "";
   let countryAId = "";
   let doctor1Id = "";
@@ -84,7 +87,7 @@ describe("authorization matrix", () => {
     envModule.MEDICAL_ACCESS_ENFORCE = true;
 
     const currency = await prisma.currency.create({
-      data: { code: `A${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     const countryA = await prisma.country.create({
