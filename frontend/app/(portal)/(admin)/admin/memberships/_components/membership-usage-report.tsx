@@ -22,6 +22,18 @@ function money(cents: number, currency: string | null): string {
   return `${(cents / 100).toFixed(2)}${currency ? ` ${currency}` : ""}`;
 }
 
+/**
+ * Render a currency-keyed total, e.g. `{ EUR: 7500, CZK: 8000 }` → "75.00 EUR ·
+ * 80.00 CZK". Never sums across keys — a member drill-down can hold rows in
+ * more than one currency (§23), and adding them the way a single scalar would
+ * mixes EUR with CZK. Sorted so the same map renders identically every time.
+ */
+export function moneyByCurrency(byCurrency: Record<string, number>): string {
+  const entries = Object.entries(byCurrency).sort(([a], [b]) => a.localeCompare(b));
+  if (entries.length === 0) return "—";
+  return entries.map(([currency, cents]) => money(cents, currency)).join(" · ");
+}
+
 function day(value: string): string {
   return new Date(value).toLocaleDateString("en-IE", {
     day: "2-digit",
@@ -88,14 +100,19 @@ export function usageFields(
       label: "List",
       priority: 4,
       align: "right",
-      render: (row) => money(row.listPriceCents, currency),
+      // The row's OWN currency wins over the table-wide one: inside a
+      // per-country section every row already shares it, so this is a no-op
+      // there — but the member drill-down passes no fixed currency at all
+      // (rows can span markets), and falling back to the table prop there
+      // would print a bare number with no unit, or worse, the wrong one.
+      render: (row) => money(row.listPriceCents, row.currencyCode ?? currency),
     },
     {
       key: "paid",
       label: "Paid",
       priority: 2,
       align: "right",
-      render: (row) => money(row.pricePaidCents, currency),
+      render: (row) => money(row.pricePaidCents, row.currencyCode ?? currency),
     },
     {
       key: "benefit",

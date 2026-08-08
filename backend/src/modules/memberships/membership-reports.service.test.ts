@@ -439,10 +439,15 @@ describe("membership reports — usage, overrides, drill-down", () => {
     assert.equal(report.totals.consultations, 3);
     assert.equal(report.totals.overrides, 2);
     assert.equal(report.totals.allowanceUsed, 1);
-    // Per country, from the rows. `totals.discountCents` adds 6000 + 1500 at
-    // home to 8000 in the second market across two currencies — pinned as a
-    // known limitation of the MEMBER drill-down rather than asserted as a
-    // meaningful figure. The PARTNER report never sums across countries (§23).
+    // `totals.discountByCurrency` is keyed by currency, not summed into one
+    // scalar — a member who books in a second market has rows in a different
+    // currency, and adding them would silently mix EUR with CZK (§23, corrected).
+    assert.equal(report.totals.discountByCurrency[currencyCode], 7500);
+    assert.equal(report.totals.discountByCurrency[currencyBCode], 8000);
+    assert.equal(Object.keys(report.totals.discountByCurrency).length, 2);
+
+    // Cross-checked against the rows directly, by country rather than currency,
+    // to prove the two views agree independently of how the total is grouped.
     const byCountry = new Map<string | null, number>();
     for (const row of report.rows) {
       if (row.overrideReason) continue;

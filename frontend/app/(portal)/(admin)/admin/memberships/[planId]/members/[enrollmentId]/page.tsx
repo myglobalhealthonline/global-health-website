@@ -28,7 +28,7 @@ import { ConfirmDeleteButton } from "../../../../_components/confirm-delete-butt
 import { MembershipEnrollmentFields } from "../../../_components/membership-enrollment-form";
 import { MembershipAllowanceAdjust } from "../../../_components/membership-allowance-adjust";
 import { MembershipTermDateGuard } from "../../../_components/membership-term-date-guard";
-import { MemberUsageTable } from "../../../_components/membership-usage-report";
+import { MemberUsageTable, moneyByCurrency } from "../../../_components/membership-usage-report";
 
 export const dynamic = "force-dynamic";
 
@@ -431,8 +431,11 @@ export default async function AdminMembershipMemberPage({ params, searchParams }
                 </div>
                 <div>
                   <p className="gh-field-label">Discount given</p>
+                  {/* Per currency, never summed — a member who booked in a
+                      second market has rows in a different currency, and
+                      adding them would silently mix EUR with CZK (§23). */}
                   <p className="text-sm">
-                    {(usageResult.data.totals.discountCents / 100).toFixed(2)}
+                    {moneyByCurrency(usageResult.data.totals.discountByCurrency)}
                   </p>
                 </div>
                 <div>

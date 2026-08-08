@@ -654,6 +654,9 @@ export type MembershipUsageRow = {
   /** Where the booking happened — NOT the member's own country. A member of a
    *  Czech-primary plan booking in Ireland produces an Irish row. */
   countryCode: string | null;
+  /** `Order.currencyCode` for this row's own booking — what the member
+   *  drill-down groups `discountByCurrency` by. */
+  currencyCode: string | null;
 };
 
 /**
@@ -706,7 +709,10 @@ export type MembershipMemberUsage = {
   rows: MembershipUsageRow[];
   totals: {
     consultations: number;
-    discountCents: number;
+    /** Keyed by currency, not summed — a member who booked in a second market
+     *  has rows in a different currency, and adding them would mix EUR with
+     *  CZK. No key means no rows in that currency, never a zero. */
+    discountByCurrency: Record<string, number>;
     allowanceUsed: number;
     overrides: number;
   };

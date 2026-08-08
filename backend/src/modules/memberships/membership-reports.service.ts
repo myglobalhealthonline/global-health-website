@@ -56,6 +56,13 @@ export type MembershipUsageRow = {
    * the CSV's `country` column carries.
    */
   countryCode: string | null;
+  /**
+   * `Order.currencyCode` for the row's own booking. Needed by the member
+   * drill-down (§15): unlike the partner report, that view has no per-country
+   * sections to hang currency off, so a total across rows must be keyed by this
+   * or it silently adds a EUR figure to a CZK one.
+   */
+  currencyCode: string | null;
 };
 
 /**
@@ -253,6 +260,7 @@ function toRow(item: UsageItem, lookups: UsageLookups): MembershipUsageRow {
     // code is rendered. `Country.code` is stored lowercase, so leaving it raw
     // would make a row's country and its own section's key differ.
     countryCode: item.order?.countryCode?.toUpperCase() ?? null,
+    currencyCode: item.order?.currencyCode ?? null,
   };
 }
 
@@ -464,7 +472,19 @@ export type MembershipMemberUsage = {
     status: MembershipEnrollmentStatus;
   };
   rows: MembershipUsageRow[];
-  totals: { consultations: number; discountCents: number; allowanceUsed: number; overrides: number };
+  totals: {
+    consultations: number;
+    /**
+     * Keyed by `Order.currencyCode`, NOT a single scalar (§23, corrected).
+     * A member of a multi-country plan can book in more than one country, each
+     * in its own currency, and a summed scalar silently added them — the same
+     * mistake the partner report's per-country sections exist to rule out. A
+     * currency key with no rows never appears; there is no zero-fill here.
+     */
+    discountByCurrency: Record<string, number>;
+    allowanceUsed: number;
+    overrides: number;
+  };
 };
 
 /**
@@ -519,7 +539,14 @@ export async function buildMemberUsageReport(
     rows,
     totals: {
       consultations: real.length,
-      discountCents: real.reduce((sum, row) => sum + row.discountCents, 0),
+      discountByCurrency: real.reduce<Record<string, number>>((byCurrency, row) => {
+        // "??" mirrors the partner report's own fallback for a row whose order
+        // carries no currency — grouped rather than dropped, so it stays visible
+        // instead of silently vanishing from the total.
+        const currency = row.currencyCode ?? "??";
+        byCurrency[currency] = (byCurrency[currency] ?? 0) + row.discountCents;
+        return byCurrency;
+      }, {}),
       allowanceUsed: real.filter((row) => row.allowanceUsed).length,
       overrides: rows.length - real.length,
     },
