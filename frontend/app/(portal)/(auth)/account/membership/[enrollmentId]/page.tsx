@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BadgeCheck } from "lucide-react";
 import { getServerMembership } from "@/lib/api/me-memberships-server";
+import { groupBenefitsByCountry } from "@/lib/api/me-memberships";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { formatAppDate } from "@/lib/format-datetime";
@@ -95,18 +96,38 @@ export default async function MembershipDetailPage({
           {membership.benefits.length === 0 ? (
             <p className="text-sm opacity-70">{t.benefitsNone}</p>
           ) : (
-            <ul className="flex flex-col gap-3">
-              {membership.benefits.map((benefit) => {
-                const fallback = benefitFallback(benefit, t);
-                return (
-                  <li key={benefit.id} className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                    <span className="text-sm font-medium">{benefitTarget(benefit, t)}</span>
-                    <span className="text-sm">— {benefitValue(benefit, t)}</span>
-                    {fallback ? <span className="text-xs opacity-70">{fallback}</span> : null}
-                  </li>
-                );
-              })}
-            </ul>
+            /* Grouped by country (§25). Since 7a a level's rows span every
+             * covered country, and a flat list puts an Irish discount and a
+             * Czech one under one heading with nothing to tell them apart —
+             * which is worse than no list, because it reads as a single set of
+             * terms that applies everywhere. */
+            <div className="flex flex-col gap-5">
+              {groupBenefitsByCountry(membership.benefits).map((group) => (
+                <div key={group.countryCode}>
+                  <h3 className="gh-field-label mb-2">{group.countryName}</h3>
+                  <ul className="flex flex-col gap-3">
+                    {group.benefits.map((benefit) => {
+                      const fallback = benefitFallback(benefit, t);
+                      return (
+                        <li
+                          key={benefit.id}
+                          className="flex flex-wrap items-baseline gap-x-2 gap-y-1"
+                        >
+                          <span className="text-sm font-medium">{benefitTarget(benefit, t)}</span>
+                          <span className="text-sm">— {benefitValue(benefit, t)}</span>
+                          {fallback ? <span className="text-xs opacity-70">{fallback}</span> : null}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  {/* §43: a dependent on a SHARED pool must never read the
+                      allowance as theirs alone — the primary may have spent it. */}
+                  {membership.sharesPool && group.benefits.some((b) => b.allowance) ? (
+                    <p className="mt-2 text-xs opacity-70">{t.benefitsSharedNote}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </AdminCard>

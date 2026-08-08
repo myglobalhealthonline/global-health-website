@@ -8,6 +8,7 @@ import {
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { linkMembershipsForEmail } from "./membership-linking.service.js";
+import { issueMembershipCard } from "./membership-card-issue.js";
 import { sendMembershipInviteEmail } from "./membership-emails.js";
 import { holderEnrollmentId } from "./membership-card.service.js";
 import { generateMembershipId } from "./membership-id.service.js";
@@ -436,7 +437,13 @@ export async function createMembershipEnrollment(
 
   // A row for an address that already belongs to a VERIFIED account activates
   // immediately; an unverified one stays PENDING until it verifies (§8.2).
-  await linkMembershipsForEmail(body.email);
+  // Suppressed: this row's welcome+card goes out on the next line, and it says
+  // everything the §12.1 confirmation would (§25).
+  await linkMembershipsForEmail(body.email, { suppressConfirmationFor: new Set([id]) });
+  // Card + welcome email (§25). AFTER the link, so a row that just attached to
+  // an account is written to in that account's language rather than the one the
+  // admin form supplied.
+  await issueMembershipCard({ enrollmentId: id, actorAdminId }).catch(() => undefined);
   return getMembershipEnrollmentById(id);
 }
 
@@ -635,6 +642,13 @@ export async function addMembershipDependent(
   primaryId: string,
   body: AdminMembershipDependentCreateBody,
   actorAdminId: string | null,
+  /**
+   * Whether adding this dependent mails them their card (§25). True for the
+   * admin path, false for the member-facing one — see `addMemberDependent`.
+   * Explicit rather than inferred from `actorAdminId`, because the member path
+   * also passes null and the two must not be told apart by accident.
+   */
+  issueCard = true,
 ) {
   const primary = await prisma.membershipEnrollment.findUnique({
     where: { id: primaryId },
@@ -700,7 +714,18 @@ export async function addMembershipDependent(
     createdByAdminId: actorAdminId,
   });
 
-  await linkMembershipsForEmail(body.email);
+  // Suppressed only when this call is the one about to card them; the member
+  // path leaves the confirmation alone, because its card waits for linking.
+  await linkMembershipsForEmail(
+    body.email,
+    issueCard ? { suppressConfirmationFor: new Set([result.id]) } : {},
+  );
+  // Dependents get their own card and welcome email (decision 43) — but only
+  // when an admin put them there. See `addMemberDependent` for why the member
+  // path waits for the account to link instead (§25).
+  if (issueCard) {
+    await issueMembershipCard({ enrollmentId: result.id, actorAdminId }).catch(() => undefined);
+  }
   return getMembershipEnrollmentById(result.id);
 }
 
@@ -784,6 +809,14 @@ export async function addMemberDependent(
   // able to probe enrollment ids.
   if (!primary) throw new MembershipEnrollmentNotFoundError();
 
+  // `issueCard: false` — this is the one enrollment path that has passed no
+  // admin (§25). The address is member-typed, unverified and attacker-chosen,
+  // and auto-mailing it would turn the portal into a way to send branded mail
+  // with a PDF attachment to arbitrary addresses; `maxDependents` bounds the
+  // volume but not the shape. Decision 43 still holds — the dependent gets
+  // their own card, issued by the linker the moment they prove they own the
+  // mailbox, which is the same gate §5.2 already applies before the membership
+  // grants anything at all.
   return addMembershipDependent(
     primaryId,
     {
@@ -793,6 +826,7 @@ export async function addMemberDependent(
       relationship: body.relationship,
     } as AdminMembershipDependentCreateBody,
     null,
+    false,
   );
 }
 

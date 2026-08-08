@@ -42,5 +42,41 @@
     "action": "Sonst ändert sich nichts — Ihre übrigen Mitgliedsvorteile bleiben bestehen, und der Preis wird immer vor der Zahlung angezeigt.",
     "cta": "Mitgliedschaft ansehen",
     "signoff": "— Ihr Global-Health-Team"
+  },
+  "card": {
+    "labelCardholder": "Karteninhaber",
+    "labelMemberId": "Mitgliedsnummer",
+    "labelValidThrough": "Gültig bis",
+    "labelCoveredIn": "Gültig in",
+    "motto": "Medicine Anytime Anywhere",
+    "familyOf": "Familienmitglied von {membershipId}",
+    "valueOpenEnded": "Unbefristet",
+    "valueFrom": "Ab {date}",
+    "valueEnded": "Beendet am {date}",
+    "kindGeneral": "allgemeinmedizinische Konsultationen",
+    "kindSpecialist": "fachärztliche Konsultationen",
+    "benefitAllowance": "{count} enthaltene {subject}",
+    "benefitAllowanceShared": "{count} enthaltene {subject}, gemeinsam mit Ihrem Hauptmitglied",
+    "benefitPercent": "{percent}% Rabatt auf {subject}",
+    "benefitFixed": "{subject} für {price}",
+    "benefitExcluded": "{subject} sind nicht abgedeckt",
+    "statusActive": "Aktiv",
+    "statusPending": "Ausstehend",
+    "statusSuspended": "Ausgesetzt",
+    "statusExpired": "Abgelaufen"
+  },
+  "welcome": {
+    "subject": "Ihre {planName} Mitgliedskarte",
+    "heading": "Willkommen bei {planName}",
+    "greeting": "Hallo {firstName},",
+    "lead": "Ihre Mitgliedschaft <strong>{planName}</strong> ({levelName}) ist eingerichtet. Ihre Karte finden Sie im Anhang dieser E-Mail.",
+    "idLine": "Ihre Mitgliedsnummer lautet <strong>{membershipId}</strong>.",
+    "dependentIdLine": "Ihre Mitgliedsnummer lautet <strong>{membershipId}</strong>, innerhalb der Familienmitgliedschaft <strong>{primaryMembershipId}</strong>.",
+    "benefitsHeading": "Was Ihre Mitgliedschaft abdeckt",
+    "sharedNote": "Die enthaltenen Konsultationen gelten gemeinsam für die gesamte Familienmitgliedschaft. Die oben genannte Anzahl gilt also für die Mitgliedschaft insgesamt und nicht nur für Sie.",
+    "termsLine": "Dies sind die heute geltenden Leistungen. Die aktuellen Bedingungen Ihrer Mitgliedschaft finden Sie jederzeit im Mitgliederportal — prüfen Sie sie dort vor einer Buchung.",
+    "action": "Ihre Mitgliederpreise werden automatisch angewendet, wenn Sie mit dieser Adresse angemeldet buchen.",
+    "cta": "Mitgliedschaft ansehen",
+    "signoff": "— Ihr Global Health Team"
   }
 }

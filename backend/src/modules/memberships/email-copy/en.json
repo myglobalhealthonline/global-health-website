@@ -42,5 +42,41 @@
     "action": "Nothing else changes — the rest of your membership benefits are unaffected, and the price is always shown before you pay.",
     "cta": "View your membership",
     "signoff": "— The Global Health team"
+  },
+  "card": {
+    "labelCardholder": "Cardholder",
+    "labelMemberId": "Member ID",
+    "labelValidThrough": "Valid through",
+    "labelCoveredIn": "Covered in",
+    "motto": "Medicine Anytime Anywhere",
+    "familyOf": "Family member of {membershipId}",
+    "valueOpenEnded": "Open-ended",
+    "valueFrom": "From {date}",
+    "valueEnded": "Ended {date}",
+    "kindGeneral": "general consultations",
+    "kindSpecialist": "specialist consultations",
+    "benefitAllowance": "{count} included {subject}",
+    "benefitAllowanceShared": "{count} included {subject}, shared with your primary member",
+    "benefitPercent": "{percent}% off {subject}",
+    "benefitFixed": "{subject} at {price}",
+    "benefitExcluded": "{subject} are not covered",
+    "statusActive": "Active",
+    "statusPending": "Pending",
+    "statusSuspended": "Suspended",
+    "statusExpired": "Expired"
+  },
+  "welcome": {
+    "subject": "Your {planName} membership card",
+    "heading": "Welcome to {planName}",
+    "greeting": "Hi {firstName},",
+    "lead": "Your <strong>{planName}</strong> membership ({levelName}) is set up. Your card is attached to this email.",
+    "idLine": "Your membership number is <strong>{membershipId}</strong>.",
+    "dependentIdLine": "Your membership number is <strong>{membershipId}</strong>, on the family membership of <strong>{primaryMembershipId}</strong>.",
+    "benefitsHeading": "What your membership covers",
+    "sharedNote": "Included consultations are shared across your family membership, so the number above is the allowance for the membership as a whole rather than for you alone.",
+    "termsLine": "These are the benefits as they stand today. The current terms for your membership always live in the member portal — check there before you book.",
+    "action": "Your member prices are applied automatically when you book while signed in with this address.",
+    "cta": "View your membership",
+    "signoff": "— The Global Health team"
   }
 }

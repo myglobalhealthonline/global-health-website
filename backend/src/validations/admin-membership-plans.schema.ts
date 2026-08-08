@@ -113,6 +113,21 @@ const membershipLevelBase = z.object({
   familyEnabled: z.boolean().default(false),
   maxDependents: z.coerce.number().int().min(0).max(20).default(0),
   allowancePool: membershipAllowancePoolSchema.default("PER_PERSON"),
+  /**
+   * The card's background (§24.2, decision 45). Same shape as the DB CHECK —
+   * `^#[0-9a-fA-F]{6}$` — so an invalid value is a 400 rather than a constraint
+   * violation surfacing as a 500. Null clears it back to the default face.
+   *
+   * Only the BACKGROUND is stored. The foreground, the muted label colour and
+   * the chrome tint are all derived from it at render time, which is what stops
+   * an admin producing white-on-pale whatever they pick.
+   */
+  cardBackgroundHex: z
+    .string()
+    .trim()
+    .regex(/^#[0-9a-fA-F]{6}$/, "Must be a 6-digit hex colour, e.g. #0B3D2E")
+    .nullable()
+    .optional(),
 });
 
 /** maxDependents > 0 requires familyEnabled (§13.1). */

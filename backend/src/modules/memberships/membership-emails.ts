@@ -1,7 +1,8 @@
 import { LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
-import { absoluteSiteUrl, sendEmail } from "../../lib/email/send-email.js";
+import { absoluteSiteUrl, sendEmail, type SendEmailAttachment } from "../../lib/email/send-email.js";
 import { wrapHtml } from "../../lib/email/templates.js";
+import { cardStatusLabel, type CardCopy, type MembershipCardContent } from "./membership-card-content.js";
 import enCopy from "./email-copy/en.json";
 import ptCopy from "./email-copy/pt.json";
 import esCopy from "./email-copy/es.json";
@@ -71,6 +72,15 @@ async function countryDefaultLocale(countryId: string): Promise<LocaleCode> {
 
 function bundleFor(locale: LocaleCode | string | null | undefined): EmailBundle {
   return COPY[String(locale ?? "").toUpperCase()] ?? COPY.EN;
+}
+
+/**
+ * The card-and-status strings for one locale (§24). Exported because the card
+ * builder, the PDF and this file must all read the SAME copy — a second bundle
+ * would be exactly the drift §24.3's "one shared builder" exists to prevent.
+ */
+export function membershipCardCopy(locale: LocaleCode): CardCopy {
+  return bundleFor(locale).card;
 }
 
 /** Money in the plan country's currency, for the fallback-price line. */
@@ -292,5 +302,105 @@ export async function sendMembershipClaimConfirmationEmail(opts: {
        ${lines.map((line) => `<p>${line}</p>`).join("\n       ")}
        ${button(link, copy.cta)}`,
     ),
+  });
+}
+
+/**
+ * Welcome + card (§25) — the fifth template, and the only one with an
+ * attachment.
+ *
+ * Everything it says about the membership comes from `MembershipCardContent`,
+ * the same builder the web card and the PDF read (§24.3), so the card in the
+ * attachment and the benefits in the body cannot disagree.
+ *
+ * Three things here are load-bearing and easy to undo by accident:
+ *
+ * - **Benefits are grouped by country.** Since 7a an enrollment's rows span
+ *   every configured country, and a flat list would silently mix an Irish
+ *   discount with a Czech one under a single heading.
+ * - **The terms line.** Without it the email becomes the contract, and a
+ *   partner changing a country's benefits next month leaves every member
+ *   holding a written promise of the old ones.
+ * - **The shared-pool note (§43).** A dependent on a SHARED level must never be
+ *   told "you have 6 visits" — the pool belongs to the primary and may already
+ *   be spent. `content.sharesPool` is already conditioned on the level's pool
+ *   mode, so a PER_PERSON dependent still gets the ordinary count.
+ */
+export async function sendMembershipWelcomeCardEmail(opts: {
+  content: MembershipCardContent;
+  /** The PDF card. Built by the caller so this file never touches Chromium. */
+  attachment: SendEmailAttachment;
+  /** Where to send. The linked account's address wins over the enrolled one. */
+  to?: string;
+}) {
+  const { content } = opts;
+  const bundle = bundleFor(content.locale);
+  const copy = bundle.welcome;
+  const cardCopy: CardCopy = bundle.card;
+
+  const vars = {
+    firstName: escapeHtml(content.firstName),
+    planName: escapeHtml(content.planName),
+    levelName: escapeHtml(content.levelName),
+    membershipId: escapeHtml(content.membershipId),
+    primaryMembershipId: escapeHtml(content.primaryMembershipId ?? ""),
+    status: escapeHtml(cardStatusLabel(content, cardCopy)),
+  };
+
+  // A dependent's own id is `<primary>-D1`, so the family link is already
+  // visible in the number — the copy names it rather than leaving the member to
+  // infer why their id has a suffix.
+  const idLine =
+    content.memberType === "DEPENDENT" && content.primaryMembershipId
+      ? copy.dependentIdLine
+      : copy.idLine;
+
+  const benefitsHtml = content.benefitsByCountry
+    .map(
+      (group) =>
+        `<p style="margin:18px 0 6px;font-weight:700;">${escapeHtml(group.countryName)}</p>
+       <ul style="margin:0;padding-left:20px;">${group.lines
+         .map((line) => `<li style="margin:4px 0;">${escapeHtml(line.text)}</li>`)
+         .join("")}</ul>`,
+    )
+    .join("\n       ");
+
+  const benefitsText = content.benefitsByCountry
+    .map(
+      (group) =>
+        `${group.countryName}\n${group.lines.map((line) => `  - ${line.text}`).join("\n")}`,
+    )
+    .join("\n\n");
+
+  const link = absoluteSiteUrl("/account/membership");
+  const leadLines = [copy.lead, idLine].map((line) => interpolate(line, vars));
+  const tailLines = [
+    ...(content.sharesPool ? [copy.sharedNote] : []),
+    copy.termsLine,
+    copy.action,
+  ].map((line) => interpolate(line, vars));
+
+  return sendEmail({
+    to: opts.to ?? content.email,
+    subject: interpolate(copy.subject, { ...vars, planName: content.planName }),
+    text: [
+      interpolate(copy.greeting, vars),
+      ...leadLines.map(toPlain),
+      copy.benefitsHeading,
+      benefitsText,
+      ...tailLines.map(toPlain),
+      link,
+      copy.signoff,
+    ].join("\n\n"),
+    html: wrapHtml(
+      interpolate(copy.heading, vars),
+      `<p>${interpolate(copy.greeting, vars)}</p>
+       ${leadLines.map((line) => `<p>${line}</p>`).join("\n       ")}
+       <h3 style="margin:26px 0 0;font-size:16px;">${escapeHtml(copy.benefitsHeading)}</h3>
+       ${benefitsHtml}
+       ${tailLines.map((line) => `<p>${line}</p>`).join("\n       ")}
+       ${button(link, copy.cta)}`,
+    ),
+    attachments: [opts.attachment],
   });
 }

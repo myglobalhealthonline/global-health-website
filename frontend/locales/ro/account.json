@@ -983,6 +983,9 @@
     "depRelationship": "Relația",
     "depCancel": "Anulați",
     "depSave": "Adăugați",
-    "depSaving": "Se adaugă…"
+    "depSaving": "Se adaugă…",
+    "cardMotto": "Medicine Anytime Anywhere",
+    "cardFamilyOf": "Membru de familie al {membershipId}",
+    "benefitsSharedNote": "Consultațiile incluse sunt partajate în cadrul întregului abonament de familie, așa că este posibil să fie deja parțial folosite."
   }
 }

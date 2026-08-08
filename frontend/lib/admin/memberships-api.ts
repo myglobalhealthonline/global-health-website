@@ -125,6 +125,8 @@ export type MembershipLevelInput = {
   familyEnabled?: boolean;
   maxDependents?: number;
   allowancePool?: MembershipAllowancePool;
+  /** `#RRGGBB` or null. Only the background is stored; the rest is derived. */
+  cardBackgroundHex?: string | null;
 };
 
 export type MembershipBenefitInput = {

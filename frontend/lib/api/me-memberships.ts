@@ -26,6 +26,10 @@ export type MembershipStatus = "PENDING" | "ACTIVE" | "SUSPENDED" | "EXPIRED" | 
 
 export interface MemberBenefitView {
   id: string;
+  /** Which covered country this row configures — flat before phase 7 (§21.3). */
+  countryCode: string;
+  /** Localised country name, resolved server-side via `Intl` (§25). */
+  countryName: string;
   serviceKind: string | null;
   serviceName: string | null;
   benefitType: "ALLOWANCE" | "PERCENT" | "FIXED" | "EXCLUDED";
@@ -61,10 +65,49 @@ export interface MemberMembershipView {
   endDate: string | null;
   memberType: "PRIMARY" | "DEPENDENT";
   holderName: string;
+  /** The plan's PRIMARY country — attribution, not where benefits apply. */
   countryCode: string;
+  /** Where the card actually works, primary first. Configured countries only. */
+  countryCodes: string[];
+  /** Derived from the level's `cardBackgroundHex`; null = the default face. */
+  cardPalette: {
+    background: string;
+    foreground: string;
+    muted: string;
+    chrome: string;
+    contrast: number;
+    meetsAA: boolean;
+  } | null;
+  primaryMembershipId: string | null;
+  /** DEPENDENT on a SHARED level — drives the §43 wording. */
+  sharesPool: boolean;
   family: { enabled: boolean; maxDependents: number; used: number } | null;
   benefits: MemberBenefitView[];
   dependents: MemberDependentView[];
+}
+
+/**
+ * Benefits by country, in the order the server sent them (primary first).
+ *
+ * A `Map` rather than a sort here on purpose: the server already decided the
+ * order, and re-sorting client-side is how the card, the PDF, the email and the
+ * portal end up listing the same countries four different ways.
+ */
+export function groupBenefitsByCountry(
+  benefits: MemberBenefitView[],
+): { countryCode: string; countryName: string; benefits: MemberBenefitView[] }[] {
+  const groups = new Map<string, { countryCode: string; countryName: string; benefits: MemberBenefitView[] }>();
+  for (const benefit of benefits) {
+    const group = groups.get(benefit.countryCode);
+    if (group) group.benefits.push(benefit);
+    else
+      groups.set(benefit.countryCode, {
+        countryCode: benefit.countryCode,
+        countryName: benefit.countryName,
+        benefits: [benefit],
+      });
+  }
+  return [...groups.values()];
 }
 
 async function meRequest<T>(

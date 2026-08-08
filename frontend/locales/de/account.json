@@ -983,6 +983,9 @@
     "depRelationship": "Beziehung",
     "depCancel": "Abbrechen",
     "depSave": "Hinzufügen",
-    "depSaving": "Wird hinzugefügt…"
+    "depSaving": "Wird hinzugefügt…",
+    "cardMotto": "Medicine Anytime Anywhere",
+    "cardFamilyOf": "Familienmitglied von {membershipId}",
+    "benefitsSharedNote": "Die enthaltenen Konsultationen gelten gemeinsam für die gesamte Familienmitgliedschaft und sind möglicherweise bereits teilweise verbraucht."
   }
 }

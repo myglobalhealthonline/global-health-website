@@ -19,6 +19,26 @@ export interface MembershipCardProps {
   /** Tier position (1-based) inside the country's plan ladder, 0 when unknown. */
   tier?: number;
   labels: { cardholder: string; memberId: string; validThrough: string; motto: string };
+  /**
+   * Admin-chosen face for a private membership level (§24.2, decision 45).
+   *
+   * Absent — which is every public subscription card — keeps the default lime
+   * face untouched. Present, the card switches to `data-tinted` and one scoped
+   * block in `portal.css` repaints the chrome from these variables, because a
+   * fixed lime border on a pale background is the failure mode that makes the
+   * whole picker look broken.
+   *
+   * All four values are DERIVED server-side from one stored hex; only
+   * `background` is ever persisted.
+   */
+  palette?: {
+    background: string;
+    foreground: string;
+    muted: string;
+    chrome: string;
+  } | null;
+  /** Extra line under the ID slots — the family link on a dependent's card. */
+  footnote?: string | null;
 }
 
 /** Statuses that keep the card lit. Anything else desaturates the face. */
@@ -42,6 +62,8 @@ export function MembershipCard({
   cancelLabel,
   tier = 0,
   labels,
+  palette = null,
+  footnote = null,
 }: MembershipCardProps) {
   const live = LIVE.has(status.toUpperCase());
   const pillTone = cancelAtPeriodEnd ? "warn" : live ? "live" : "muted";
@@ -52,6 +74,17 @@ export function MembershipCard({
     <article
       className={`gh-member-card${live && !cancelAtPeriodEnd ? "" : " gh-member-card--dim"}`}
       aria-label={`${planName} — ${labels.memberId} ${memberId}`}
+      data-tinted={palette ? "" : undefined}
+      style={
+        palette
+          ? ({
+              "--gh-card-bg": palette.background,
+              "--gh-card-fg": palette.foreground,
+              "--gh-card-muted": palette.muted,
+              "--gh-card-chrome": palette.chrome,
+            } as React.CSSProperties)
+          : undefined
+      }
     >
       <span aria-hidden className="gh-member-card__ring" />
       <div className="gh-member-card__inner">
@@ -87,7 +120,10 @@ export function MembershipCard({
           <svg viewBox="0 0 96 40" fill="none" preserveAspectRatio="xMaxYMid meet">
             <path
               d="M0 20H18q3-6 6 0h6l4 8 5-21 5 30 4-17h5q5-10 10 0h33"
-              stroke="#a8ff18"
+              // `currentColor`, not a literal: the stroke is chrome, and chrome
+              // has to follow the derived foreground on a tinted card (§24.2).
+              // The default lime is set on the svg's `color` in portal.css.
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -114,6 +150,8 @@ export function MembershipCard({
             <strong className="gh-member-card__value">{validThrough}</strong>
           </div>
         </div>
+
+        {footnote ? <p className="gh-member-card__footnote">{footnote}</p> : null}
 
         <footer className="gh-member-card__foot">
           <span className="gh-member-card__country">{countryName}</span>

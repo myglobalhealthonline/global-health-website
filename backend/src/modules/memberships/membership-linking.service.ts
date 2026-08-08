@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { sendMembershipEnrollmentConfirmedEmail } from "./membership-emails.js";
+import { issueMembershipCard } from "./membership-card-issue.js";
 
 /**
  * Account linking for private membership enrollments
@@ -39,7 +40,27 @@ const EMPTY: LinkResult = { linked: 0, enrollmentIds: [] };
  * makes "send the confirmation email once per enrollment" true without a
  * separate sent-flag.
  */
-export async function linkMembershipsForUser(userId: string): Promise<LinkResult> {
+export type LinkOptions = {
+  /**
+   * Enrollment ids whose §12.1 confirmation this call must NOT send, because
+   * the caller is about to issue their card in the same flow (§25).
+   *
+   * Ids, not a boolean: linking is BY ADDRESS, so one call can attach
+   * enrollments in other plans that the caller never touched, and those
+   * confirmations must still go out.
+   *
+   * The caller has to say so — the linker cannot infer it. An uncarded row on
+   * an ordinary login has no follow-up caller at all, so treating "uncarded"
+   * as "someone else will handle it" would leave that member with no mail of
+   * any kind.
+   */
+  suppressConfirmationFor?: ReadonlySet<string>;
+};
+
+export async function linkMembershipsForUser(
+  userId: string,
+  options: LinkOptions = {},
+): Promise<LinkResult> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, email: true, emailVerifiedAt: true, fullName: true, preferredLocale: true },
@@ -61,6 +82,15 @@ export async function linkMembershipsForUser(userId: string): Promise<LinkResult
       endDate: true,
       membershipId: true,
       firstName: true,
+      // Decides which mail this link sends: welcome+card for someone who has
+      // never had one, the plain confirmation for someone who has (§25).
+      cardIssuedAt: true,
+      // Provenance, to tell a MEMBER-added dependent from every other row.
+      // Both null = the member path (§10), the only one whose card this
+      // function is responsible for issuing.
+      memberType: true,
+      createdByAdminId: true,
+      importBatchId: true,
       plan: { select: { name: true, primaryCountryId: true } },
       level: { select: { name: true } },
     },
@@ -91,16 +121,42 @@ export async function linkMembershipsForUser(userId: string): Promise<LinkResult
       metadata: { planId: candidate.planId, membershipId: candidate.membershipId, status },
     });
 
-    // Best-effort: a mail failure must never undo a successful link.
-    await sendMembershipEnrollmentConfirmedEmail({
-      to: user.email,
-      firstName: candidate.firstName,
-      planName: candidate.plan.name,
-      levelName: candidate.level.name,
-      membershipId: candidate.membershipId,
-      countryId: candidate.plan.primaryCountryId,
-      preferredLocale: user.preferredLocale,
-    }).catch(() => undefined);
+    // ONE mail per link (§25). Which one depends on two questions.
+    //
+    // A MEMBER-added dependent is the single row type whose card is THIS
+    // function's job. `addMemberDependent` deliberately does not mail an
+    // unverified, member-typed address, so the card waits here for the same
+    // proof of ownership §5.2 already demands before the membership grants
+    // anything. `memberType` is part of the test and not just the provenance
+    // columns: only that path creates rows the member owns, and it only ever
+    // creates DEPENDENTs — a PRIMARY with both columns null is an ordinary
+    // enrollment from a path that simply never stamped them.
+    //
+    // This is also the ONLY branch here that renders, and that is load-bearing.
+    // This function is on the email-verification and login paths, and a card is
+    // a Chromium page — roughly a second, plus a browser launch on a cold
+    // process. Rendering for every linking member would put that on every
+    // member's first login. Every other row already holds its card by the time
+    // it links, so the hot path stays clear.
+    const memberAdded =
+      candidate.memberType === "DEPENDENT" &&
+      candidate.createdByAdminId === null &&
+      candidate.importBatchId === null;
+
+    if (candidate.cardIssuedAt === null && memberAdded) {
+      await issueMembershipCard({ enrollmentId: candidate.id }).catch(() => undefined);
+    } else if (!options.suppressConfirmationFor?.has(candidate.id)) {
+      // Best-effort: a mail failure must never undo a successful link.
+      await sendMembershipEnrollmentConfirmedEmail({
+        to: user.email,
+        firstName: candidate.firstName,
+        planName: candidate.plan.name,
+        levelName: candidate.level.name,
+        membershipId: candidate.membershipId,
+        countryId: candidate.plan.primaryCountryId,
+        preferredLocale: user.preferredLocale,
+      }).catch(() => undefined);
+    }
   }
 
   return { linked: linkedIds.length, enrollmentIds: linkedIds };
@@ -112,14 +168,17 @@ export async function linkMembershipsForUser(userId: string): Promise<LinkResult
  * verified account. An unverified account is left alone — it links when it
  * verifies, which is exactly the hole §8.2 closes.
  */
-export async function linkMembershipsForEmail(email: string): Promise<LinkResult> {
+export async function linkMembershipsForEmail(
+  email: string,
+  options: LinkOptions = {},
+): Promise<LinkResult> {
   const normalized = email.trim().toLowerCase();
   const user = await prisma.user.findFirst({
     where: { email: { equals: normalized, mode: "insensitive" }, emailVerifiedAt: { not: null } },
     select: { id: true },
   });
   if (!user) return EMPTY;
-  return linkMembershipsForUser(user.id);
+  return linkMembershipsForUser(user.id, options);
 }
 
 /**

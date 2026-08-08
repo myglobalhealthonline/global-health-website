@@ -2,6 +2,7 @@ import { Prisma, type LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { linkMembershipsForEmail } from "./membership-linking.service.js";
+import { issueMembershipCards } from "./membership-card-issue.js";
 import {
   MembershipEnrollmentConflictError,
   normalizeEmail,
@@ -573,6 +574,17 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
 
   const emails: string[] = [];
   const skipped: { line: number; reason: string }[] = [];
+  /**
+   * Rows that BOTH landed and were flagged `willEmail` on the preview (§25).
+   *
+   * Both conditions matter. `willEmail` alone is the number the admin approved,
+   * so re-deriving eligibility here would let the send drift from the count they
+   * agreed to — the entire safety argument behind decision 41. But the commit
+   * also skips rows the preview could not know about (a primary since removed,
+   * an address taken underneath a stale batch), and mailing a card to someone
+   * whose enrollment does not exist is worse than not mailing at all.
+   */
+  const cardRecipients: string[] = [];
 
   const result = await prisma.$transaction(async (tx) => {
     const claim = await tx.membershipImportBatch.updateMany({
@@ -642,6 +654,7 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
         if (outcome.outcome === "REVIVE") revived += 1;
         else created += 1;
         emails.push(row.email);
+        if (row.willEmail) cardRecipients.push(outcome.id);
       } catch (error) {
         // Re-validation is why this is a skip, not a failure: a batch left in
         // PREVIEW for a day can have had its emails and ids taken underneath it
@@ -666,10 +679,31 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
   }
 
   // Outside the transaction: a row whose address already belongs to a verified
-  // account activates immediately, and that also sends its confirmation email.
+  // account activates immediately, and the linker issues that row's card as
+  // part of linking it (§25).
+  //
+  // The rows this commit is about to card get no §12.1 confirmation from the
+  // linker: welcome+card is strictly richer and lands moments later, and two
+  // emails a minute apart saying overlapping things is noise (§25). Passed as
+  // ids rather than a flag because linking is BY ADDRESS — the same call can
+  // attach an enrollment in another plan that this import never touched, and
+  // that one's confirmation must still go out.
+  const suppressConfirmationFor = new Set(cardRecipients);
   for (const email of emails) {
-    await linkMembershipsForEmail(email).catch(() => undefined);
+    await linkMembershipsForEmail(email, { suppressConfirmationFor }).catch(() => undefined);
   }
+
+  // Cards LAST, and deliberately after the link loop.
+  //
+  // Locale precedence (§25) puts `User.preferredLocale` above the enrollment's
+  // own. Before the loop runs, a LINK row's `userId` is still null, so a send
+  // placed here would fall through to whatever locale the CSV said — inverting
+  // the precedence for exactly the rows it exists to protect. The rule does not
+  // imply the ordering, which is how this gets reintroduced.
+  //
+  // Idempotent by `cardIssuedAt`, so the rows the linker already carded above
+  // are skipped rather than mailed twice.
+  const cards = await issueMembershipCards(cardRecipients, adminId);
 
   return {
     claimed: true as const,
@@ -678,6 +712,7 @@ export async function commitMembershipImport(batchId: string, adminId: string | 
     revived: result.revived,
     skipped,
     revalidated: stale,
+    cardsIssued: cards.issued,
   };
 }
 

@@ -983,6 +983,9 @@
     "depRelationship": "Relationship",
     "depCancel": "Cancel",
     "depSave": "Add",
-    "depSaving": "Adding…"
+    "depSaving": "Adding…",
+    "cardMotto": "Medicine Anytime Anywhere",
+    "cardFamilyOf": "Family member of {membershipId}",
+    "benefitsSharedNote": "Included consultations are shared across your family membership, so they may already be partly used."
   }
 }

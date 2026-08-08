@@ -193,6 +193,10 @@ describe("membership import (database)", () => {
   });
 
   after(async () => {
+    // A commit now issues cards, and every card is a Chromium page render
+    // (§24.3). Without this the browser child holds this worker open until the
+    // runner's timeout, which reads as a new flake rather than as a leak.
+    await (await import("../generated-documents/html-document-renderer.js")).closeSharedBrowser();
     if (!prisma) return;
     (await import("../../lib/email/send-email.js")).setEmailCaptureHook(null);
     await prisma.membershipEnrollment.deleteMany({ where: { planId } });
@@ -410,12 +414,18 @@ describe("membership import (database)", () => {
 
     const first = await preview(csv);
     assert.equal(svc.summarize(rowsOf(first)).recipients, 1);
-    await svc.commitMembershipImport(first.id, null);
-    // 7d issues the card at commit; 7c only lands the flag it reads.
-    await prisma.membershipEnrollment.updateMany({
+    const committed = await svc.commitMembershipImport(first.id, null);
+
+    // The commit itself issues the card and stamps the dedupe (7d). Before 7d
+    // this test had to stamp `cardIssuedAt` by hand to stand in for the send;
+    // asserting the commit did it is what makes the rest of this test mean
+    // something rather than testing its own fixture.
+    assert.equal(committed.claimed && committed.cardsIssued, 1);
+    const carded = await prisma.membershipEnrollment.findFirst({
       where: { planId, email },
-      data: { cardIssuedAt: new Date() },
+      select: { cardIssuedAt: true },
     });
+    assert.ok(carded?.cardIssuedAt, "committing must issue the card");
 
     // Same file again. The row is now LIVE, so it is rejected outright — the
     // strongest form of "emails nobody twice".
@@ -430,10 +440,55 @@ describe("membership import (database)", () => {
       where: { planId, email },
       data: { status: "REMOVED" },
     });
-    const third = rowsOf(await preview(csv));
-    assert.equal(third[0].outcome, "REVIVE");
-    assert.equal(third[0].willEmail, false);
-    assert.equal(svc.summarize(third).recipients, 0);
+    const third = await preview(csv);
+    const thirdRows = rowsOf(third);
+    assert.equal(thirdRows[0].outcome, "REVIVE");
+    assert.equal(thirdRows[0].willEmail, false);
+    assert.equal(svc.summarize(thirdRows).recipients, 0);
+
+    // And committing that revive really does send nothing — the count on the
+    // preview and the number of emails that leave have to be the same number,
+    // which is the entire safety argument behind decision 41.
+    const revived = await svc.commitMembershipImport(third.id, null);
+    assert.equal(revived.claimed && revived.cardsIssued, 0);
+  });
+
+  it("sends only to rows that BOTH willEmail and actually landed", async (t) => {
+    if (!prisma) return t.skip();
+    await clearEnrollments();
+    // The address is taken underneath a batch left sitting in PREVIEW — the
+    // re-validation case §8.2 exists for. The preview counted the row; by the
+    // time the admin commits, that person is already enrolled, so the commit
+    // skips it. Mailing a card for an enrollment this import did not create is
+    // worse than not mailing at all.
+    const good = `landed-${uniq}@test.local`;
+    const taken = `taken-${uniq}@test.local`;
+    const csv = [
+      HEADER,
+      row({ email: good, firstName: "A", lastName: "One" }),
+      row({ email: taken, firstName: "B", lastName: "Two" }),
+    ].join("\n");
+
+    const batch = await preview(csv);
+    assert.equal(svc.summarize(rowsOf(batch)).recipients, 2, "the preview counts both");
+
+    await prisma.membershipEnrollment.create({
+      data: {
+        planId,
+        levelId: defaultLevelId,
+        countryId,
+        membershipId: `GH-TAKEN-${uniq}`.slice(0, 40),
+        email: taken,
+        firstName: "Someone",
+        lastName: "Else",
+        startDate: new Date("2026-01-01"),
+      },
+    });
+
+    const result = await svc.commitMembershipImport(batch.id, null);
+    assert.ok(result.claimed);
+    assert.equal(result.skipped.length, 1, "the taken row is skipped at apply time");
+    assert.equal(result.cardsIssued, 1, "and only the row that landed is emailed");
   });
 
   it("resolves a named level, and defaults to the plan's default level", async (t) => {

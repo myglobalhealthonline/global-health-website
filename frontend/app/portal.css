@@ -4017,6 +4017,9 @@ a.gh-admin-summary-item--link:focus-visible {
   width: auto;
   height: 100%;
   overflow: visible;
+  /* The path strokes `currentColor` so a tinted card can repaint it (§24.2);
+   * this is the default lime it inherits otherwise. */
+  color: #a8ff18;
   filter: drop-shadow(0 0 5px rgba(168, 255, 24, 0.35));
 }
 
@@ -4152,6 +4155,134 @@ a.gh-admin-summary-item--link:focus-visible {
     0 37%,
     37% 37%
   );
+}
+
+/* Family link on a dependent's card — the primary's number, under the slots. */
+.gh-member-card__footnote {
+  margin: clamp(4px, 1.2cqw, 8px) 0 0;
+  overflow: hidden;
+  color: rgba(247, 250, 239, 0.72);
+  font-size: clamp(8px, 2.1cqw, 12px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Admin-tinted face (§24.2, decision 45) ──────────────────────────────────
+ *
+ * ONE scoped block rather than a rewrite of the 37 rules above. The default
+ * card is untouched and keeps its fixed lime chrome; a card with an
+ * admin-chosen `cardBackgroundHex` gets `data-tinted` plus the four derived
+ * variables inline, and everything the lime touched is repainted from them.
+ *
+ * The chrome MUST be in here, not just the text. Left lime, the picker would
+ * only work on dark backgrounds — an admin picks a pale brand colour, gets
+ * lime-on-ivory, and concludes the feature is broken. A branding control that
+ * silently works on half its range is not one.
+ *
+ * Only the BACKGROUND is stored. `--gh-card-fg`, `--gh-card-muted` and
+ * `--gh-card-chrome` are all derived from it server-side, which is what makes
+ * white-on-pale unreachable however the picker is dragged. */
+.gh-member-card[data-tinted] {
+  color: var(--gh-card-fg);
+  border-color: var(--gh-card-chrome);
+  background: var(--gh-card-bg);
+  box-shadow:
+    0 2px 4px rgba(7, 18, 12, 0.1),
+    0 18px 44px rgba(7, 18, 12, 0.22),
+    0 34px 70px rgba(7, 18, 12, 0.14);
+}
+
+/* The guilloche and the sheen are drawn from the foreground, so they stay
+ * visible on a pale face instead of vanishing into it. */
+.gh-member-card[data-tinted]::before {
+  background:
+    repeating-radial-gradient(
+      circle,
+      transparent 0 14px,
+      color-mix(in srgb, var(--gh-card-fg) 32%, transparent) 15px 16px
+    );
+  opacity: 0.12;
+}
+
+.gh-member-card[data-tinted]::after {
+  opacity: 0.08;
+}
+
+.gh-member-card[data-tinted] .gh-member-card__ring {
+  border-color: color-mix(in srgb, var(--gh-card-chrome) 70%, transparent);
+  box-shadow: inset 0 0 16px color-mix(in srgb, var(--gh-card-chrome) 18%, transparent);
+}
+
+.gh-member-card[data-tinted] .gh-member-card__label,
+.gh-member-card[data-tinted] .gh-member-card__motto,
+.gh-member-card[data-tinted] .gh-member-card__country,
+.gh-member-card[data-tinted] .gh-member-card__footnote {
+  color: var(--gh-card-muted);
+}
+
+.gh-member-card[data-tinted] .gh-member-card__pulse svg {
+  color: var(--gh-card-chrome);
+  filter: none;
+}
+
+.gh-member-card[data-tinted] .gh-member-card__pulse::before {
+  background: linear-gradient(
+    90deg,
+    var(--gh-card-chrome),
+    color-mix(in srgb, var(--gh-card-chrome) 55%, transparent) 55%,
+    transparent
+  );
+  box-shadow: none;
+}
+
+.gh-member-card[data-tinted] .gh-member-card__pill {
+  border-color: color-mix(in srgb, var(--gh-card-chrome) 60%, transparent);
+  /* The fill has to move too — a lime wash under dark ink on an ivory card is
+   * the same failure as a lime border, just smaller. */
+  background: color-mix(in srgb, var(--gh-card-chrome) 14%, transparent);
+  color: var(--gh-card-fg);
+}
+
+/* The status variants keep their SEMANTIC hue on the border and the dot —
+ * amber still means "cancelling" — but the text takes the derived foreground,
+ * because `#ffd79a` on an ivory card is unreadable. */
+.gh-member-card[data-tinted] .gh-member-card__pill--warn,
+.gh-member-card[data-tinted] .gh-member-card__pill--muted {
+  color: var(--gh-card-fg);
+}
+
+.gh-member-card[data-tinted] .gh-member-card__pill--muted {
+  border-color: color-mix(in srgb, var(--gh-card-fg) 28%, transparent);
+  background: color-mix(in srgb, var(--gh-card-fg) 7%, transparent);
+}
+
+.gh-member-card[data-tinted] .gh-member-card__pill--muted .gh-member-card__dot {
+  background: color-mix(in srgb, var(--gh-card-fg) 70%, transparent);
+}
+
+.gh-member-card[data-tinted] .gh-member-card__dot,
+.gh-member-card[data-tinted] .gh-member-card__pips i.is-on {
+  background: var(--gh-card-chrome);
+  box-shadow: none;
+}
+
+.gh-member-card[data-tinted] .gh-member-card__pips i {
+  background: color-mix(in srgb, var(--gh-card-fg) 22%, transparent);
+}
+
+.gh-member-card[data-tinted] .gh-member-card__care {
+  background: var(--gh-card-chrome);
+  box-shadow: none;
+}
+
+/* The knocked-out cross has to be the BACKGROUND, not a fixed dark green, or
+ * the mark reads as a solid block on a pale card. */
+.gh-member-card[data-tinted] .gh-member-card__care::before {
+  background: var(--gh-card-bg);
+}
+
+.gh-member-card[data-tinted] .gh-member-card__sep {
+  background: linear-gradient(transparent, var(--gh-card-chrome), transparent);
 }
 
 .gh-patient-tabs > button {

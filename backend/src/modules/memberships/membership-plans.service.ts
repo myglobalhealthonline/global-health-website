@@ -282,6 +282,7 @@ export async function createMembershipLevel(planId: string, body: AdminMembershi
         familyEnabled: body.familyEnabled,
         maxDependents: body.maxDependents,
         allowancePool: body.allowancePool,
+        cardBackgroundHex: body.cardBackgroundHex ?? null,
       },
       include: { translations: true, _count: { select: { benefits: true, enrollments: true } } },
     });

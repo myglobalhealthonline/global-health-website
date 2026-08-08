@@ -983,6 +983,9 @@
     "depRelationship": "Parentesco",
     "depCancel": "Cancelar",
     "depSave": "Adicionar",
-    "depSaving": "A adicionar…"
+    "depSaving": "A adicionar…",
+    "cardMotto": "Medicine Anytime Anywhere",
+    "cardFamilyOf": "Membro da família de {membershipId}",
+    "benefitsSharedNote": "As consultas incluídas são partilhadas por toda a adesão familiar, pelo que podem já estar parcialmente utilizadas."
   }
 }

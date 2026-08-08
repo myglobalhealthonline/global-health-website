@@ -42,5 +42,41 @@
     "action": "No cambia nada más: el resto de las ventajas de su membresía siguen igual y el precio se muestra siempre antes de pagar.",
     "cta": "Ver mi membresía",
     "signoff": "— El equipo de Global Health"
+  },
+  "card": {
+    "labelCardholder": "Titular",
+    "labelMemberId": "N.º de socio",
+    "labelValidThrough": "Válido hasta",
+    "labelCoveredIn": "Cobertura en",
+    "motto": "Medicine Anytime Anywhere",
+    "familyOf": "Miembro de la familia de {membershipId}",
+    "valueOpenEnded": "Sin vencimiento",
+    "valueFrom": "Desde {date}",
+    "valueEnded": "Finalizó el {date}",
+    "kindGeneral": "consultas de medicina general",
+    "kindSpecialist": "consultas de especialista",
+    "benefitAllowance": "{count} {subject} incluidas",
+    "benefitAllowanceShared": "{count} {subject} incluidas, compartidas con el titular principal",
+    "benefitPercent": "{percent}% de descuento en {subject}",
+    "benefitFixed": "{subject} por {price}",
+    "benefitExcluded": "{subject} no están cubiertas",
+    "statusActive": "Activo",
+    "statusPending": "Pendiente",
+    "statusSuspended": "Suspendido",
+    "statusExpired": "Caducado"
+  },
+  "welcome": {
+    "subject": "Tu tarjeta de socio de {planName}",
+    "heading": "Bienvenido a {planName}",
+    "greeting": "Hola {firstName}:",
+    "lead": "Tu membresía <strong>{planName}</strong> ({levelName}) ya está activa. Tu tarjeta va adjunta a este correo.",
+    "idLine": "Tu número de socio es <strong>{membershipId}</strong>.",
+    "dependentIdLine": "Tu número de socio es <strong>{membershipId}</strong>, dentro de la membresía familiar de <strong>{primaryMembershipId}</strong>.",
+    "benefitsHeading": "Qué cubre tu membresía",
+    "sharedNote": "Las consultas incluidas se comparten en toda la membresía familiar, por lo que la cifra anterior corresponde al total de la membresía y no solo a ti.",
+    "termsLine": "Estos son los beneficios vigentes hoy. Las condiciones actuales de tu membresía están siempre en el portal del socio: consúltalas antes de reservar.",
+    "action": "Tus precios de socio se aplican automáticamente cuando reservas con la sesión iniciada en esta dirección.",
+    "cta": "Ver mi membresía",
+    "signoff": "— El equipo de Global Health"
   }
 }

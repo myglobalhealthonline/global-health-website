@@ -565,6 +565,63 @@ describe("admin membership plan routes", () => {
     assert.equal(res.statusCode, 400, res.body);
   });
 
+  /* ── Card colour (§24.2, decision 45) ───────────────────────────────────── */
+
+  it("stores a valid card background on the level", async (t) => {
+    if (!app) return t.skip();
+    const { defaultLevelId } = await createPlan(`cardok-${uniq}`);
+    const res = await app.inject({
+      method: "PATCH",
+      url: `/api/admin/membership-levels/${defaultLevelId}`,
+      cookies: superCookie,
+      payload: { cardBackgroundHex: "#0B3D2E" },
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const row = await prisma.membershipLevel.findUnique({ where: { id: defaultLevelId } });
+    assert.equal(row!.cardBackgroundHex, "#0B3D2E");
+  });
+
+  it("rejects an invalid card background → 400, never a constraint violation", async (t) => {
+    if (!app) return t.skip();
+    // The column carries a CHECK. Without the Zod rule these surface as a 500
+    // from the database rather than a field error the admin can act on.
+    const { defaultLevelId } = await createPlan(`cardbad-${uniq}`);
+    // Bound outside the loop: `app`'s narrowing does not survive into one, and
+    // the self-referential inference that follows is a TS7022, not a real type.
+    const server = app;
+    for (const bad of ["#fff", "0B3D2E", "#12345g", "rebeccapurple", "#0B3D2E00"]) {
+      const res = await server.inject({
+        method: "PATCH",
+        url: `/api/admin/membership-levels/${defaultLevelId}`,
+        cookies: superCookie,
+        payload: { cardBackgroundHex: bad },
+      });
+      assert.equal(res.statusCode, 400, `${bad} should be rejected: ${res.body}`);
+    }
+    const row = await prisma.membershipLevel.findUnique({ where: { id: defaultLevelId } });
+    assert.equal(row!.cardBackgroundHex, null, "a rejected colour must not be written");
+  });
+
+  it("clears the card colour back to the default face with null", async (t) => {
+    if (!app) return t.skip();
+    const { defaultLevelId } = await createPlan(`cardnull-${uniq}`);
+    await app.inject({
+      method: "PATCH",
+      url: `/api/admin/membership-levels/${defaultLevelId}`,
+      cookies: superCookie,
+      payload: { cardBackgroundHex: "#F5F0E6" },
+    });
+    const res = await app.inject({
+      method: "PATCH",
+      url: `/api/admin/membership-levels/${defaultLevelId}`,
+      cookies: superCookie,
+      payload: { cardBackgroundHex: null },
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const row = await prisma.membershipLevel.findUnique({ where: { id: defaultLevelId } });
+    assert.equal(row!.cardBackgroundHex, null);
+  });
+
   it("returns 404 for a level under a plan that does not exist", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({

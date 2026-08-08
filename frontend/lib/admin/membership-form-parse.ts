@@ -36,6 +36,8 @@ export type MembershipLevelFormBody = {
   familyEnabled: boolean;
   maxDependents: number;
   allowancePool: MembershipAllowancePool;
+  /** Card background (§24.2). Null clears it back to the default face. */
+  cardBackgroundHex: string | null;
 };
 
 export type MembershipBenefitFormBody = {
@@ -147,6 +149,19 @@ export function parseMembershipLevelForm(fd: FormData): ParseResult<MembershipLe
   const maxDependents = familyEnabled ? intField(fd, "maxDependents", 0) : 0;
 
   const pool = str(fd, "allowancePool");
+
+  // The colour is only sent when the admin has actually turned a custom face
+  // on. An unticked box clears the column back to null and the default face —
+  // which is why this is a checkbox plus a colour input rather than a colour
+  // input alone: `<input type="color">` has no empty state, so it can never
+  // express "no colour" on its own.
+  const useCustomFace = bool(fd, "useCardBackground");
+  const rawHex = str(fd, "cardBackgroundHex");
+  const cardBackgroundHex = useCustomFace && rawHex ? rawHex.toUpperCase() : null;
+  if (cardBackgroundHex && !/^#[0-9A-F]{6}$/.test(cardBackgroundHex)) {
+    return { ok: false, error: "Card colour must be a 6-digit hex, e.g. #0B3D2E" };
+  }
+
   return {
     ok: true,
     data: {
@@ -157,6 +172,7 @@ export function parseMembershipLevelForm(fd: FormData): ParseResult<MembershipLe
       familyEnabled,
       maxDependents,
       allowancePool: pool === "SHARED" ? "SHARED" : "PER_PERSON",
+      cardBackgroundHex,
     },
   };
 }

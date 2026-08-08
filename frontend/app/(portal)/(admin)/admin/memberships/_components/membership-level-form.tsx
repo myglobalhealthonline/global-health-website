@@ -1,4 +1,5 @@
 import type { MembershipLevel } from "@/lib/admin/memberships-api";
+import { MembershipCardColourField } from "./membership-card-colour";
 
 /** Small muted helper line under a field. */
 function Help({ children }: { children: React.ReactNode }) {
@@ -104,6 +105,8 @@ export function MembershipLevelFields({ level }: { level: MembershipLevel }) {
           </label>
         </div>
       </fieldset>
+
+      <MembershipCardColourField level={level} />
     </div>
   );
 }

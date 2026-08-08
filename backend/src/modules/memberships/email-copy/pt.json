@@ -42,5 +42,41 @@
     "action": "Nada mais muda — os restantes benefícios da sua adesão mantêm-se, e o preço é sempre mostrado antes de pagar.",
     "cta": "Ver a minha adesão",
     "signoff": "— A equipa Global Health"
+  },
+  "card": {
+    "labelCardholder": "Titular",
+    "labelMemberId": "N.º de membro",
+    "labelValidThrough": "Válido até",
+    "labelCoveredIn": "Cobertura em",
+    "motto": "Medicine Anytime Anywhere",
+    "familyOf": "Membro da família de {membershipId}",
+    "valueOpenEnded": "Sem termo",
+    "valueFrom": "A partir de {date}",
+    "valueEnded": "Terminou em {date}",
+    "kindGeneral": "consultas de clínica geral",
+    "kindSpecialist": "consultas de especialidade",
+    "benefitAllowance": "{count} {subject} incluídas",
+    "benefitAllowanceShared": "{count} {subject} incluídas, partilhadas com o titular principal",
+    "benefitPercent": "{percent}% de desconto em {subject}",
+    "benefitFixed": "{subject} por {price}",
+    "benefitExcluded": "{subject} não estão cobertas",
+    "statusActive": "Ativo",
+    "statusPending": "Pendente",
+    "statusSuspended": "Suspenso",
+    "statusExpired": "Expirado"
+  },
+  "welcome": {
+    "subject": "O seu cartão de membro {planName}",
+    "heading": "Bem-vindo à {planName}",
+    "greeting": "Olá {firstName},",
+    "lead": "A sua adesão <strong>{planName}</strong> ({levelName}) está ativa. O seu cartão segue em anexo neste email.",
+    "idLine": "O seu número de membro é <strong>{membershipId}</strong>.",
+    "dependentIdLine": "O seu número de membro é <strong>{membershipId}</strong>, na adesão familiar de <strong>{primaryMembershipId}</strong>.",
+    "benefitsHeading": "O que a sua adesão cobre",
+    "sharedNote": "As consultas incluídas são partilhadas por toda a adesão familiar, pelo que o número acima corresponde ao total da adesão e não apenas a si.",
+    "termsLine": "Estes são os benefícios em vigor hoje. As condições atuais da sua adesão estão sempre no portal do membro — confirme aí antes de marcar.",
+    "action": "Os seus preços de membro são aplicados automaticamente quando marca com sessão iniciada neste endereço.",
+    "cta": "Ver a minha adesão",
+    "signoff": "— A equipa Global Health"
   }
 }

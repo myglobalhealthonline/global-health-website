@@ -983,6 +983,9 @@
     "depRelationship": "Vztah",
     "depCancel": "Zrušit",
     "depSave": "Přidat",
-    "depSaving": "Přidává se…"
+    "depSaving": "Přidává se…",
+    "cardMotto": "Medicine Anytime Anywhere",
+    "cardFamilyOf": "Rodinný člen čísla {membershipId}",
+    "benefitsSharedNote": "Zahrnuté konzultace jsou sdílené v rámci celého rodinného členství, takže mohou být již částečně vyčerpané."
   }
 }

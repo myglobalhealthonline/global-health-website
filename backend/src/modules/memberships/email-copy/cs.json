@@ -42,5 +42,41 @@
     "action": "Nic dalšího se nemění — ostatní výhody členství platí dál a cenu vždy uvidíte před platbou.",
     "cta": "Zobrazit členství",
     "signoff": "— Tým Global Health"
+  },
+  "card": {
+    "labelCardholder": "Držitel karty",
+    "labelMemberId": "Členské číslo",
+    "labelValidThrough": "Platnost do",
+    "labelCoveredIn": "Platí v zemích",
+    "motto": "Medicine Anytime Anywhere",
+    "familyOf": "Rodinný člen čísla {membershipId}",
+    "valueOpenEnded": "Bez omezení",
+    "valueFrom": "Od {date}",
+    "valueEnded": "Ukončeno {date}",
+    "kindGeneral": "praktické konzultace",
+    "kindSpecialist": "odborné konzultace",
+    "benefitAllowance": "{count} zahrnutých konzultací ({subject})",
+    "benefitAllowanceShared": "{count} zahrnutých konzultací ({subject}), sdílených s hlavním členem",
+    "benefitPercent": "Sleva {percent} % na {subject}",
+    "benefitFixed": "{subject} za {price}",
+    "benefitExcluded": "{subject} nejsou zahrnuty",
+    "statusActive": "Aktivní",
+    "statusPending": "Čeká na aktivaci",
+    "statusSuspended": "Pozastaveno",
+    "statusExpired": "Vypršelo"
+  },
+  "welcome": {
+    "subject": "Vaše členská karta {planName}",
+    "heading": "Vítejte v programu {planName}",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "Vaše členství <strong>{planName}</strong> ({levelName}) je připraveno. Kartu najdete v příloze tohoto e-mailu.",
+    "idLine": "Vaše členské číslo je <strong>{membershipId}</strong>.",
+    "dependentIdLine": "Vaše členské číslo je <strong>{membershipId}</strong> v rámci rodinného členství <strong>{primaryMembershipId}</strong>.",
+    "benefitsHeading": "Co vaše členství zahrnuje",
+    "sharedNote": "Zahrnuté konzultace jsou sdílené v rámci celého rodinného členství, uvedený počet tedy platí pro celé členství, nikoli jen pro vás.",
+    "termsLine": "Toto jsou výhody platné k dnešnímu dni. Aktuální podmínky vašeho členství najdete vždy v členském portálu — před objednáním je zkontrolujte tam.",
+    "action": "Členské ceny se uplatní automaticky, pokud se objednáváte přihlášeni pod touto e-mailovou adresou.",
+    "cta": "Zobrazit členství",
+    "signoff": "— Tým Global Health"
   }
 }

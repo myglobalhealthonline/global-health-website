@@ -42,5 +42,41 @@
     "action": "Nimic altceva nu se schimbă — celelalte beneficii rămân valabile, iar prețul este afișat întotdeauna înainte de plată.",
     "cta": "Vedeți calitatea de membru",
     "signoff": "— Echipa Global Health"
+  },
+  "card": {
+    "labelCardholder": "Titular",
+    "labelMemberId": "Număr de membru",
+    "labelValidThrough": "Valabil până la",
+    "labelCoveredIn": "Acoperire în",
+    "motto": "Medicine Anytime Anywhere",
+    "familyOf": "Membru de familie al {membershipId}",
+    "valueOpenEnded": "Fără termen",
+    "valueFrom": "Din {date}",
+    "valueEnded": "Încheiat la {date}",
+    "kindGeneral": "consultații de medicină generală",
+    "kindSpecialist": "consultații de specialitate",
+    "benefitAllowance": "{count} {subject} incluse",
+    "benefitAllowanceShared": "{count} {subject} incluse, partajate cu membrul principal",
+    "benefitPercent": "{percent}% reducere la {subject}",
+    "benefitFixed": "{subject} la {price}",
+    "benefitExcluded": "{subject} nu sunt acoperite",
+    "statusActive": "Activ",
+    "statusPending": "În așteptare",
+    "statusSuspended": "Suspendat",
+    "statusExpired": "Expirat"
+  },
+  "welcome": {
+    "subject": "Cardul dumneavoastră de membru {planName}",
+    "heading": "Bine ați venit în {planName}",
+    "greeting": "Bună ziua, {firstName},",
+    "lead": "Abonamentul dumneavoastră <strong>{planName}</strong> ({levelName}) este activ. Cardul este atașat acestui email.",
+    "idLine": "Numărul dumneavoastră de membru este <strong>{membershipId}</strong>.",
+    "dependentIdLine": "Numărul dumneavoastră de membru este <strong>{membershipId}</strong>, în cadrul abonamentului de familie <strong>{primaryMembershipId}</strong>.",
+    "benefitsHeading": "Ce acoperă abonamentul dumneavoastră",
+    "sharedNote": "Consultațiile incluse sunt partajate în cadrul întregului abonament de familie, așa că numărul de mai sus este pentru abonament în ansamblu, nu doar pentru dumneavoastră.",
+    "termsLine": "Acestea sunt beneficiile valabile astăzi. Condițiile curente ale abonamentului se află întotdeauna în portalul membrilor — verificați-le acolo înainte de programare.",
+    "action": "Prețurile de membru se aplică automat când vă programați autentificat cu această adresă.",
+    "cta": "Vezi abonamentul",
+    "signoff": "— Echipa Global Health"
   }
 }

@@ -1,5 +1,7 @@
 import type { LocaleCode, MembershipEnrollmentStatus, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import { deriveCardPalette, type CardPalette } from "../../lib/card-colour.js";
+import { countryDisplayName } from "./membership-card-content.js";
 
 /**
  * Member-facing read model for the membership page and the digital card
@@ -22,6 +24,15 @@ export type MembershipTermState = "NOT_STARTED" | "IN_TERM" | "ENDED";
 
 export type MemberBenefitView = {
   id: string;
+  /**
+   * WHICH covered country this row configures (§21.3). Flat before phase 7,
+   * when a level had exactly one country; since 7a the rows span every covered
+   * country, and without this the member page would list an Irish discount and
+   * a Czech one under one undifferentiated heading.
+   */
+  countryCode: string;
+  /** Localised via `Intl` — there is no `CountryTranslation` model (§25). */
+  countryName: string;
   /**
    * Exactly one of `serviceKind` / `serviceName` is set, mirroring the benefit
    * row's own invariant. Typed as the full `ServiceKind` rather than
@@ -74,7 +85,25 @@ export type MemberMembershipView = {
   endDate: string | null;
   memberType: "PRIMARY" | "DEPENDENT";
   holderName: string;
+  /** The plan's PRIMARY country — attribution, not where benefits apply. */
   countryCode: string;
+  /**
+   * Where the card actually works, primary first (§24.1). Configured
+   * countries only: a covered country with no benefit rows gives nothing
+   * (§20), and printing its code on the member's card would be a lie they
+   * would only discover at a desk abroad.
+   */
+  countryCodes: string[];
+  /** Derived from the level's `cardBackgroundHex`; null = the default face. */
+  cardPalette: CardPalette | null;
+  /** A dependent's `-D1` number resolves to this. Null on a primary. */
+  primaryMembershipId: string | null;
+  /**
+   * DEPENDENT on a `SHARED` level (§43). Conditioned on the pool mode, not on
+   * `memberType` alone: a dependent on `PER_PERSON` really does hold their own
+   * units, and telling them the allowance is shared would be false.
+   */
+  sharesPool: boolean;
   family: { enabled: boolean; maxDependents: number; used: number } | null;
   benefits: MemberBenefitView[];
   dependents: MemberDependentView[];
@@ -118,13 +147,23 @@ const enrollmentSelect = {
   userId: true,
   planId: true,
   levelId: true,
+  primaryEnrollment: { select: { membershipId: true } },
   plan: {
     select: {
       name: true,
+      primaryCountryId: true,
       // Currency lives on the related Currency row, not on Country — a
       // `currencyCode` select here type-checks and then fails at runtime.
       primaryCountry: {
         select: { code: true, defaultLocale: true, currency: { select: { code: true } } },
+      },
+      // Per-country currencies for the benefit rows: a FIXED price stays in
+      // its own country's currency and is never converted (§22).
+      countries: {
+        select: {
+          countryId: true,
+          country: { select: { code: true, currency: { select: { code: true } } } },
+        },
       },
       translations: { select: { locale: true, name: true } },
     },
@@ -135,11 +174,13 @@ const enrollmentSelect = {
       familyEnabled: true,
       maxDependents: true,
       allowancePool: true,
+      cardBackgroundHex: true,
       translations: { select: { locale: true, name: true } },
       benefits: {
         where: { isActive: true },
         select: {
           id: true,
+          countryId: true,
           serviceKind: true,
           benefitType: true,
           allowanceCount: true,
@@ -212,6 +253,23 @@ async function toView(
     : [];
   const usedByBenefit = new Map(balances.map((b) => [b.benefitId, b]));
 
+  const countryById = new Map(
+    row.plan.countries.map((c) => [
+      c.countryId,
+      { code: c.country.code.toUpperCase(), currency: c.country.currency?.code ?? null },
+    ]),
+  );
+
+  // Primary country first, then alphabetically — the same order the card, the
+  // PDF and the welcome email use, so a member comparing them sees one list.
+  const configuredCountryIds = [...new Set(row.level.benefits.map((b) => b.countryId))]
+    .filter((id) => countryById.has(id))
+    .sort((a, b) => {
+      if (a === row.plan.primaryCountryId) return -1;
+      if (b === row.plan.primaryCountryId) return 1;
+      return (countryById.get(a)?.code ?? "").localeCompare(countryById.get(b)?.code ?? "");
+    });
+
   return {
     id: row.id,
     membershipId: row.membershipId,
@@ -224,6 +282,10 @@ async function toView(
     memberType: row.memberType,
     holderName: `${row.firstName} ${row.lastName}`.trim(),
     countryCode: row.plan.primaryCountry.code,
+    countryCodes: configuredCountryIds.map((id) => countryById.get(id)!.code),
+    cardPalette: deriveCardPalette(row.level.cardBackgroundHex),
+    primaryMembershipId: row.primaryEnrollment?.membershipId ?? null,
+    sharesPool: row.level.allowancePool === "SHARED" && row.memberType === "DEPENDENT",
     family: row.level.familyEnabled
       ? {
           enabled: true,
@@ -237,14 +299,23 @@ async function toView(
       const balance = usedByBenefit.get(b.id);
       const allocated = balance?.allocated ?? b.allowanceCount ?? 0;
       const used = balance?.used ?? 0;
+      const country = countryById.get(b.countryId);
       return {
         id: b.id,
+        countryCode: country?.code ?? row.plan.primaryCountry.code.toUpperCase(),
+        countryName: countryDisplayName(
+          country?.code ?? row.plan.primaryCountry.code,
+          locale ?? row.plan.primaryCountry.defaultLocale,
+        ),
         serviceKind: b.serviceKind,
         serviceName: b.service?.name ?? null,
         benefitType: b.benefitType,
         percentOff: b.percentOff,
         fixedPriceCents: b.fixedPriceCents,
-        currencyCode: row.plan.primaryCountry.currency?.code ?? null,
+        // This row's OWN country's currency, not the plan's. A FIXED price in
+        // Ireland is euro and one in Czechia is koruna; showing both as the
+        // primary country's currency would misquote one of them (§22).
+        currencyCode: country?.currency ?? row.plan.primaryCountry.currency?.code ?? null,
         fallbackType: b.fallbackType,
         fallbackPercent: b.fallbackPercent,
         fallbackFixedCents: b.fallbackFixedCents,
