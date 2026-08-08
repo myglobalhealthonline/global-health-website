@@ -1220,11 +1220,30 @@ Required: `membershipId`, `email`, `firstName`, `lastName`
 Optional: `level`, `phone`, `dateOfBirth`, `startDate`, `endDate`, `notes`
 Dependent rows: `primaryMembershipId`, `relationship`
 
-Phase 7 changes both ends of this list: `membershipId` becomes **generated** and the
-partner's own number moves to an optional `partnerReference` column (§21.5), and an
-optional `locale` column is added for the welcome email (§25).
+**Phase 7c changes both ends of this list.** The required set becomes `email`,
+`firstName`, `lastName` — `membershipId` is generated (§21.5) and is no longer asked
+for. The columns after 7c:
 
-A row with `primaryMembershipId` set is a dependent; its `level`, `startDate` and
+Required: `email`, `firstName`, `lastName`
+Optional: `partnerReference`, `locale`, `level`, `phone`, `dateOfBirth`, `startDate`,
+`endDate`, `notes`
+Dependent rows: `primaryEmail` **or** `primaryMembershipId`, plus `relationship`
+
+- **`membershipId` aliases onto `partnerReference`.** Every partner file in existence
+  has that column, and since the id is ours to generate, the number in their export
+  *is* their reference. Dropping the column silently would throw away the only thing
+  tying our record back to theirs.
+- **`locale`** sets the welcome email's language (§25). Validated against the plan's
+  primary country's configured locales; an unrecognised value is a **preview warning
+  and a fallback**, never a rejected row.
+- **A dependent names its primary by `primaryEmail`** when that primary is created by
+  the same file — its generated id does not exist until commit, so it cannot appear in
+  the CSV. `primaryMembershipId` still works for a primary who is *already* enrolled,
+  since an admin can copy that id out of the member list. A dependent row supplying
+  neither is rejected. (`primaryPartnerReference` was considered and rejected: partner
+  references are non-unique by design, so it could name two people.)
+
+A row with either primary handle set is a dependent; its `level`, `startDate` and
 `endDate` are ignored and inherited from the primary.
 
 ### 8.2 Preview → commit (§22)
@@ -1277,15 +1296,26 @@ levels and emails may have changed underneath).
 ### 8.3 Rejection reasons
 
 - malformed or missing email;
-- `membershipId` already used by a different enrollment (global uniqueness);
-- duplicate `membershipId` or `email` **within the same file**;
+- duplicate `email` **within the same file**;
 - email already enrolled in this plan and not `REMOVED`;
-- `primaryMembershipId` not found in this plan or in the same file;
+- neither `primaryEmail` nor `primaryMembershipId` resolves to a primary in this plan
+  or in the same file;
 - dependent when the target level has `familyEnabled = false`, or over
   `maxDependents` — counted as **existing enrollments plus rows in this file**,
   not file rows alone;
 - `endDate` before `startDate`;
 - unknown `level` slug.
+
+**The two `membershipId` rejections are gone as of 7c** — an id generated at commit
+cannot collide with anything in the file. What replaces them is weaker on purpose:
+a `partnerReference` repeated **inside one file** is a *warning*, not a rejection.
+Duplicates across plans are permitted by design (§21.5), so within a file it is a
+likely copy-paste error rather than a reason to refuse a row — and refusing would
+cost an admin a 200-row import over a number that is not a key.
+
+**Warnings** are the general shape here: things worth an admin's eye that must not
+stop a row. An unrecognised `locale` is the other one. They ride on the preview row
+and are counted separately from rejections.
 
 ### 8.4 Size
 
@@ -1931,9 +1961,21 @@ the country model rather than extending it.
 At the same time, membership IDs move from partner-supplied to system-generated, and
 every enrolled member is issued a card and a welcome email automatically.
 
-**Timing luck:** production holds **zero** membership enrollments. Reversing the ID
-scheme therefore costs no data migration. Had members been enrolled first, every card
-in circulation would have been invalidated.
+**Timing luck:** reversing the ID scheme costs no data migration, because no real
+member has ever been enrolled. Had members been enrolled first, every card in
+circulation would have been invalidated.
+
+⚠ **Corrected 2026-08-08.** This section originally asserted production held *zero*
+enrollments. That was wrong when written: it held **three** — `GH-MEMB-001/002/003`,
+created 2026-08-07 with hand-typed ids, addressed to team members, with zero orders
+and zero ledger rows between them. Smoke tests, but three permanent exceptions to the
+generated-ID format had they survived.
+
+They no longer exist. By the time 7c came to delete them, production's entire
+membership configuration had already been cleared by another session — plans, levels,
+benefits, enrollments and import batches all read zero — so 7c made no production
+write at all. The claim in this section is now true; it simply was not true when it
+was written, and the difference mattered enough to check rather than trust.
 
 ## 20. Decisions
 
@@ -2128,6 +2170,30 @@ idempotency keys and every phase-5 concurrency guarantee untouched.
 `membershipId` keeps its raw-SQL unique index on `lower(membershipId)`. Generation
 retries on collision (vanishingly unlikely at 8 base32 chars, but a loop is one line).
 
+**Resolved during 7c** — the format left three things unsaid:
+
+- **`<PLANPREFIX>` is derived, not stored:** alphanumerics from the plan's slug,
+  uppercased, first four, `MEM` when the slug yields none. `mems-ireland` → `MEMS`.
+  No column to migrate, no decision at plan creation, and no way for the prefix to
+  drift from the plan it names. Prefix collisions between plans are harmless —
+  uniqueness lives in the suffix and the index is on the whole id.
+- **The alphabet is Crockford base32** (digits plus uppercase letters, minus I, L, O
+  and U). Those four are excluded because this is read off a printed card and back
+  over the phone, where `I`/`1` and `O`/`0` are the same character to a human. 32
+  symbols exactly, so `byte & 31` samples it without bias.
+- **A dependent keeps `<primary>-D1`, `-D2`, …** and that IS decision 43's "own
+  generated id": the unguessable part is the primary's random suffix, which the
+  dependent inherits, so nothing is lost by sharing the stem — while a family's two
+  cards still read as a pair, which is what support reads them for.
+
+**The id is immutable once generated.** The update schema does not accept it, because
+it is printed on a card and is half of what the claim form checks; editing it
+invalidates a card already in someone's wallet. Partner-side corrections go to
+`partnerReference`. For the same reason a **revive keeps the row's id** (and its
+`cardIssuedAt`): the same person is coming back, and §8.2's "the old id must stop
+being theirs" was always about the *partner's* number, which is exactly what
+`partnerReference` now carries and what a revive overwrites.
+
 ### 21.5b Cart and OrderItem
 
 Decision 44 lets a member decline the unit, and that choice has to survive from
@@ -2169,7 +2235,16 @@ and CHECK constraints `migrate diff` will propose dropping.
    unique indexes.
 4. `MembershipLevel`: drop `countryId` and its unique; add `cardBackgroundHex`.
 5. `MembershipEnrollment`: add `partnerReference`, `cardIssuedAt`. Existing rows keep
-   their `membershipId` — no regeneration (dev only; production has none).
+   their `membershipId` — no regeneration.
+
+   **Corrected 2026-08-08:** the parenthetical here read "dev only; production has
+   none", and production in fact held three hand-typed ids at the time (§19). They
+   were gone before 7c ran, so nothing was regenerated either way — but the rule
+   stands on its own merits and does not depend on production being empty. A
+   pre-7c id is a perfectly valid id: the generated format is a *generation* rule,
+   never a *validation* one, and `membershipIdSchema` deliberately still accepts
+   anything printable so a legacy holder can still claim their own membership.
+   7c also adds `preferredLocale` in its own migration (§25).
 6. `Cart`: add `membershipDeclineUnit` (§21.5b). It ships here rather than in its own
    migration because 7a and 7b are one commit and the column is what makes decision
    44 work at all.
@@ -2283,13 +2358,22 @@ A **fifth** template (§12 had four): **welcome + card**.
 - **Trigger:** import commit (§41), and any single manual enrollment. Never on
   re-import — `cardIssuedAt` is the dedupe.
 - **Recipient:** the enrollment's own address. Dependents get their own (§43).
-- **Locale:** the row's own imported `locale`, else the plan's primary-country
-  default, else English. A `PENDING` member has no `User.preferredLocale`, and the
+- **Locale — precedence, in order:** `User.preferredLocale` once an account is linked,
+  else the enrollment's own `preferredLocale`, else the plan's primary-country default,
+  else English.
+
+  The stored column exists because a `PENDING` member has no `User` to read, and the
   primary-country default alone would welcome every Irish member of a Czech-primary
-  plan in Czech — so the import CSV gains an **optional `locale` column** (§8.1).
-  The partner enrolling them knows what language they read; this is the cheapest
-  place to ask. Validated against the country's configured locales, ignored with a
+  plan in Czech — so the import CSV gains an **optional `locale` column** (§8.1). The
+  partner enrolling them knows what language they read; this is the cheapest place to
+  ask. Validated against the primary country's configured locales, ignored with a
   preview warning when unrecognised rather than rejecting the row.
+
+  **The linked account wins, and that ordering is the point.** The CSV value is a
+  fallback for a row nobody has claimed yet — never an override. Reading it first
+  would mean a member who sets their language in the portal keeps receiving email in
+  whatever the partner's spreadsheet said, with no way to correct it from the portal
+  they just used.
 - **Body:** welcome, membership ID, then benefits **grouped by country**, then a line
   stating that current terms live in the member portal — so the email does not become
   the contract when a partner later changes a country's benefits.
@@ -2300,6 +2384,19 @@ A **fifth** template (§12 had four): **welcome + card**.
 The import **preview** gains a recipient count — "committing will email 187 members" —
 so the blast radius is visible before the send, which is the whole safety argument for
 choosing B over A in decision 41.
+
+**It counts emails, not rows** (settled in 7c, because the two differ on exactly the
+import an admin is most nervous about — a re-import):
+
+- a `REJECT` row applies nothing, so it emails nobody;
+- a `REVIVE` reuses a row that may already have `cardIssuedAt` set, and reviving does
+  not clear it, so that person is not written to a second time;
+- `CREATE` and `LINK` rows have no enrollment yet, so they always email.
+
+Each preview row therefore carries a `willEmail` flag, computed against the existing
+row's `cardIssuedAt` at preview time, and the count is the sum of it. Counting rows
+would overstate the blast radius on every re-import — the one case the control exists
+to get right.
 
 ## 26. Admin UI
 
@@ -2401,7 +2498,15 @@ in a generated migration, which is why every step re-runs `membership-ddl-check.
    problem because the service-scoped pool never leaves its own market. Not worth
    building speculatively — recorded so the option is on record rather than
    rediscovered as a limitation.
-5. `MembershipEnrollment_term_dates_ordered` is `CHECK ("endDate" IS NULL OR "endDate"
+5. **A partner-chosen id prefix is not built.** `<PLANPREFIX>` is derived from the
+   plan slug (§21.5), so a partner who wants their members' cards to read `ACME-…`
+   has to be given a slug that starts with `acme`. If one ever insists on a prefix
+   that does not follow from the slug, it is a single nullable
+   `MembershipPlan.cardIdPrefix` column that `membershipIdPrefix()` prefers when
+   set — no format change, no re-issuing, since the ids already in circulation keep
+   theirs. Recorded rather than built: nobody has asked, and a column exists for as
+   long as the table does.
+6. `MembershipEnrollment_term_dates_ordered` is `CHECK ("endDate" IS NULL OR "endDate"
    > "startDate")` in migration `20260807120100_membership_plans`, while §3.8 describes
    it as `>=`. The live constraint is the stricter one, so a same-day term is refused.
    Recorded here so it is not rediscovered as a bug; deliberately **not** changed in
