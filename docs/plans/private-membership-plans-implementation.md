@@ -2327,6 +2327,13 @@ private-membership variant of it, so both card types read as one family.
 Fields: plan + level name (translated), cardholder, membership ID, valid-through,
 covered countries, status.
 
+**Covered countries are ISO-2 codes, primary first** — `IE · CZ · PT` — in the
+footer's existing single country slot, which already ellipsises on overflow. Names
+would not fit and would need translating; the codes are what a member shows at a
+desk. The email body carries the full per-country detail (§25), so the card does not
+have to. A card that does not say where it works misses the point of a multi-country
+plan, which is why this is a card field and not only an email one.
+
 ### 24.2 Admin-set background colour (decision 45)
 
 `MembershipLevel.cardBackgroundHex`, set in the level editor with a colour picker and
@@ -2334,11 +2341,29 @@ a live card preview. Per level rather than per plan, so Gold and Silver can diff
 
 **The foreground is derived, never stored.** Compute relative luminance from the
 chosen colour and pick the light or dark text treatment, so an admin cannot produce
-white-on-pale. The picker warns below the WCAG AA threshold (4.5:1 for the card's body
-text) rather than blocking — but the derived foreground means even a warned-past colour
-stays legible.
+white-on-pale. The picker warns below the WCAG AA threshold (4.5:1) rather than
+blocking — but the derived foreground means even a warned-past colour stays legible.
 
-Validate as `^#[0-9a-fA-F]{6}$` server-side. Null falls back to today's default face.
+**The warning is measured against the card's muted label colour, not its primary
+foreground** (corrected 2026-08-08). Against a *derived binary* foreground the
+warning could never fire: `max(contrast vs white, contrast vs black)` bottoms out at
+≈4.58:1 — at relative luminance ≈0.179, where the two are equal — so every hex in the
+sRGB cube clears 4.5:1 by construction. The threshold only bites on what actually
+renders small: `.gh-member-card__label` and `__country`, drawn at 80–90% foreground
+over the background. So the picker composites the muted colour over the chosen
+background and scores *that*. A warning that cannot mathematically fire is worse than
+no warning at all, because it is later cited as evidence contrast was checked.
+
+**The chrome derives too, not just the text.** The card's lime identity — the border,
+the ECG stroke, the guilloche, the pips, the inner glow — is hardcoded in `portal.css`
+and, for the ECG, as an inline SVG `stroke` attribute. Left fixed, the picker only
+works on dark backgrounds: an admin picks a pale brand colour, gets lime-on-ivory, and
+concludes the feature is broken. A branding control that silently works on half its
+range is not one. So `portal.css` drives the chrome off `--gh-card-fg` at the alphas
+it uses today, and the ECG path moves to `currentColor`.
+
+Validate as `^#[0-9a-fA-F]{6}$` server-side. Null falls back to today's default face,
+which keeps its fixed lime chrome — the derivation only engages once a colour is set.
 
 ### 24.3 PDF
 
@@ -2346,6 +2371,14 @@ Generated through the existing document pipeline (`backend/src/lib/pdf`, the sam
 route `GeneratedDocument` uses). Card **content** comes from one shared builder so the
 web and PDF renderings cannot drift on what they say; chrome may differ slightly
 between the two renderers and that is accepted.
+
+The pipeline's `htmlToPdfBuffer` is A4 at zero margin and takes no options, so **the
+card is centred on an A4 page** rather than the renderer being parameterised for a
+card-sized sheet — it is a page someone prints, and a shared helper is the wrong thing
+to widen for one caller. Any test that reaches this path **must call
+`closeSharedBrowser()` in an `after` hook**: the Chromium child otherwise holds the
+`node:test` worker open until the runner's timeout, which reads as a new flake rather
+than as a leak.
 
 Attached to the welcome email. Not stored as a `GeneratedDocument` row — it is
 reproducible from the enrollment at any time, and storing it would create a stale
@@ -2355,8 +2388,20 @@ artefact the moment a level's colour or name changes.
 
 A **fifth** template (§12 had four): **welcome + card**.
 
-- **Trigger:** import commit (§41), and any single manual enrollment. Never on
-  re-import — `cardIssuedAt` is the dedupe.
+- **Trigger:** import commit (§41), and any single **admin** enrollment — the admin
+  create form and the admin dependent add. Never on re-import — `cardIssuedAt` is the
+  dedupe.
+
+  **A member-added dependent (§10) does not auto-mail** (settled 2026-08-08). Its card
+  issues when that dependent links an account instead. Every other trigger has passed
+  an admin: an import through the preview screen, a create form behind
+  `MANAGE_MEMBERSHIPS`. A member-typed address has passed nobody — it is unverified and
+  attacker-chosen, and auto-sending on it turns the member portal into a way to send
+  branded mail with a PDF attachment to arbitrary addresses. `maxDependents` bounds the
+  volume but does not change the shape of that. Decision 43 is unaffected: the
+  dependent still gets their own ID, card and email — just on linking, which is the
+  same proof-of-ownership gate §5.2 already requires before the membership grants
+  anything at all.
 - **Recipient:** the enrollment's own address. Dependents get their own (§43).
 - **Locale — precedence, in order:** `User.preferredLocale` once an account is linked,
   else the enrollment's own `preferredLocale`, else the plan's primary-country default,
@@ -2374,12 +2419,30 @@ A **fifth** template (§12 had four): **welcome + card**.
   would mean a member who sets their language in the portal keeps receiving email in
   whatever the partner's spreadsheet said, with no way to correct it from the portal
   they just used.
+
+  **Which means the send runs AFTER `linkMembershipsForEmail`, not before** (recorded
+  2026-08-08). `commitMembershipImport` links outside its transaction, after the rows
+  land. A card send placed before that loop reads a `LINK` row whose `userId` is still
+  null, falls through to the CSV locale, and silently inverts the precedence above —
+  for exactly the rows the precedence exists to protect. The rule does not imply the
+  ordering, which is how it would get reintroduced by someone reading only the rule.
 - **Body:** welcome, membership ID, then benefits **grouped by country**, then a line
   stating that current terms live in the member portal — so the email does not become
   the contract when a partner later changes a country's benefits.
+
+  Country headings come from **`Intl.DisplayNames(locale, { type: "region" })`** on the
+  ISO code. There is no `CountryTranslation` model — `Country.name` is a single English
+  string — and the platform gives correct names in all six locales for free rather than
+  seeding a translation table for headings.
 - **Attachment:** the PDF card.
 - **Shared-pool wording (§43):** a dependent's copy must say included visits are shared
   with their primary, never "you have 6 visits". The primary may already have spent them.
+
+  **Conditioned on the level's `allowancePool`** (corrected 2026-08-08). §43 as first
+  written applied the wording to every dependent, but a dependent on a `PER_PERSON`
+  level genuinely holds their own units, and "shared with your primary" is then simply
+  false. The rule is: `SHARED` + `DEPENDENT` → the shared wording; anything else → the
+  ordinary count.
 
 The import **preview** gains a recipient count — "committing will email 187 members" —
 so the blast radius is visible before the send, which is the whole safety argument for
@@ -2397,6 +2460,23 @@ Each preview row therefore carries a `willEmail` flag, computed against the exis
 row's `cardIssuedAt` at preview time, and the count is the sum of it. Counting rows
 would overstate the blast radius on every re-import — the one case the control exists
 to get right.
+
+**The commit sends on `willEmail` AND the row actually landing** (added 2026-08-08).
+`commitMembershipImport` skips rows at apply time that the preview could not know
+about — a primary that has since been removed, an address taken underneath a stale
+batch. Honouring `willEmail` alone would mail a card to someone whose enrollment does
+not exist, which is worse than not mailing at all. The send set is therefore the rows
+the commit itself applied, filtered by their preview `willEmail`. The count on the
+preview stays the upper bound it was always meant to be.
+
+**A `LINK` row's confirmation notice is suppressed when its card issues in the same
+flow** (settled 2026-08-08). `linkMembershipsForUser` sends the §12.1
+"enrollment confirmed" email as it attaches a row. On an import whose address already
+belongs to a verified account, that fires and then welcome+card fires a moment later,
+saying overlapping things. Welcome+card is strictly richer, so the linker takes an
+explicit set of enrollment ids whose confirmation to skip — ids, not a global flag,
+because linking by address can attach enrollments in *other* plans that this import
+never touched and whose confirmations must still go out.
 
 ## 26. Admin UI
 
@@ -2420,6 +2500,13 @@ the primary country's currency and are never converted (§22).
 **Member list/detail:** `partnerReference` searchable alongside the membership ID;
 detail shows the generated ID, the partner's number, and card-issued state with a
 resend action.
+
+The resend's **service function ships in 7d**, as a `force` flag on the issuer, even
+though the route and button are 7e. Otherwise 7d leaves a window with no way to
+re-issue a card at all — and a revive deliberately keeps `cardIssuedAt` (§25), so a
+member whose level was recolored or renamed has no other escape hatch. It costs one
+parameter to close, and it makes 7e a route over an existing function rather than both
+at once.
 
 Primitives per `CLAUDE.md`: `ColumnPriorityTable`, `AppMenu`, `PortalDialog`; portal
 CSS in `portal.css` only; form actions right-aligned.
@@ -2450,8 +2537,11 @@ CSS in `portal.css` only; form actions right-aligned.
 - **IDs:** generated, unique case-insensitively, collision retry; `partnerReference`
   is not unique and is searchable.
 - **Card/email:** issued once per enrollment; a re-import sends nothing; dependents get
-  their own; locale falls back to English; derived foreground flips on a light
-  background; an invalid hex is rejected.
+  their own; locale precedence resolves in the documented order (linked account over
+  the enrollment's own over the primary country's default over English); derived
+  foreground flips on a light background; an invalid hex is rejected; benefits group by
+  country; a dependent's copy on a `SHARED` level never promises the primary's units,
+  and on a `PER_PERSON` level still states its own.
 - **Reporting:** two countries produce two sections with their own currencies and no
   summed total; overrides stay on their own line per country.
 
