@@ -39,18 +39,22 @@ export type GoneDoctor = {
  * site's highest-traffic legacy URL: 74 clicks / 600 impressions over 90 days
  * across 4 URL variants, average position 3.8.
  *
- * mudr-jana-cyplinska — 2026-08-08, evidentiary basis differs from the row
- * above: no owner statement, a direct database search (all Czechia doctor
- * rows, active or not — every one of the 8 currently in that market, checked
- * by name and slug) found zero match anywhere, not merely an inactive row.
- * Absence from the roster API alone would only mean unpublished; absence from
- * the table itself is the strongest signal obtainable without asking a human,
- * and legacy-redirect-recovery-2026-08-08.md records it as such. 53 clicks /
- * 244 impressions over 90 days across 5 URL variants.
+ * mudr-jana-cyplinska is deliberately NOT here. 2026-08-08: a same-day 410 was
+ * shipped on database-absence evidence alone (no matching row across every
+ * Czechia doctor, active or not), then reverted the same day after a wider
+ * evidence search — no owner statement, no datasheet (unlike Ireland/Portugal/
+ * Spain, no `czechia-doctors-datasheet.ts` was ever authored, so she may never
+ * have been migrated to this platform's Czechia roster at all, which is a
+ * migration gap, not a departure), and zero `AuditLog` rows mention her name
+ * (860 Doctor-entity rows exist, so the table is populated — the zero is a
+ * real negative, not an empty table). Three independent negatives, still no
+ * positive confirmation. Absence is not evidence of removal on its own — see
+ * legacy-redirect-recovery-2026-08-08.md. Restored to the pre-410 state: her
+ * URLs 404 (308 -> dead slug -> 404) pending a human confirming which of
+ * CONFIRMED RETIRED / LIVE UNDER ANOTHER IDENTITY it actually is.
  */
 export const GONE_DOCTORS: readonly GoneDoctor[] = [
   { country: "ireland", legacyPrefix: "ireland-doctors", slug: "dr-grainne-ahern" },
-  { country: "czechia", legacyPrefix: "czechia-doctors", slug: "mudr-jana-cyplinska" },
 ];
 
 /** Site locales — the `[lang]` segment, and the legacy Wix locale prefix. */

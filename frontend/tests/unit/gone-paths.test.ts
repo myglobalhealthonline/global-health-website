@@ -48,35 +48,6 @@ const GSC_OBSERVED = [
   "/ireland/ro/doctors/dr-grainne-ahern", // 0 / 4
 ];
 
-/**
- * MUDr. Jana Cyplinska — legacy-redirect-recovery-2026-08-08.md, batch 2.
- * Every URL shape she was reachable at, per the 90-day GSC export.
- */
-const GONE_JANA = [
-  "/czechia-doctors/mudr-jana-cyplinska",
-  "/en/czechia-doctors/mudr-jana-cyplinska",
-  "/pt/czechia-doctors/mudr-jana-cyplinska",
-  "/es/czechia-doctors/mudr-jana-cyplinska",
-  "/cs/czechia-doctors/mudr-jana-cyplinska",
-  "/ro/czechia-doctors/mudr-jana-cyplinska",
-  "/de/czechia-doctors/mudr-jana-cyplinska",
-  "/czechia/en/doctors/mudr-jana-cyplinska",
-  "/czechia/pt/doctors/mudr-jana-cyplinska",
-  "/czechia/es/doctors/mudr-jana-cyplinska",
-  "/czechia/cs/doctors/mudr-jana-cyplinska",
-  "/czechia/ro/doctors/mudr-jana-cyplinska",
-  "/czechia/de/doctors/mudr-jana-cyplinska",
-];
-
-/** The five variants that actually carried traffic. */
-const GSC_OBSERVED_JANA = [
-  "/es/czechia-doctors/mudr-jana-cyplinska", // 44 clicks / 142 impressions
-  "/czechia-doctors/mudr-jana-cyplinska", // 4 / 59
-  "/cs/czechia-doctors/mudr-jana-cyplinska", // 4 / 19
-  "/pt/czechia-doctors/mudr-jana-cyplinska", // 1 / 9
-  "/ro/czechia-doctors/mudr-jana-cyplinska", // 0 / 15
-];
-
 describe("gone paths — departed clinician", () => {
   it.each(GONE)("%s is Gone", (p) => {
     expect(isGonePath(p)).toBe(true);
@@ -99,18 +70,35 @@ describe("gone paths — departed clinician", () => {
   });
 });
 
-describe("gone paths — MUDr. Jana Cyplinska", () => {
-  it.each(GONE_JANA)("%s is Gone", (p) => {
-    expect(isGonePath(p)).toBe(true);
+describe("gone paths — MUDr. Jana Cyplinska is deliberately NOT Gone", () => {
+  // A same-day 410 (database-absence evidence only) was shipped and reverted
+  // the same day: no owner statement, no Czechia doctor datasheet was ever
+  // authored (unlike ireland/portugal/spain), and zero AuditLog rows mention
+  // her in a populated table. Three negatives, no positive confirmation —
+  // "no evidence of removal" is not "evidence of removal". She stays a plain
+  // 404 (308 -> dead slug -> 404) until a human confirms which she is.
+  it("her legacy URLs are not treated as Gone", () => {
+    for (const p of [
+      "/czechia-doctors/mudr-jana-cyplinska",
+      "/es/czechia-doctors/mudr-jana-cyplinska",
+      "/cs/czechia-doctors/mudr-jana-cyplinska",
+      "/pt/czechia-doctors/mudr-jana-cyplinska",
+      "/ro/czechia-doctors/mudr-jana-cyplinska",
+      "/czechia/cs/doctors/mudr-jana-cyplinska",
+    ]) {
+      expect(isGonePath(p), p).toBe(false);
+    }
   });
 
-  it.each(GSC_OBSERVED_JANA)("%s (had GSC traffic) is Gone", (p) => {
-    expect(isGonePath(p)).toBe(true);
-  });
-
-  it("does not cross into the Ireland gone-doctor list or vice versa", () => {
-    expect(isGonePath("/czechia-doctors/dr-grainne-ahern")).toBe(false);
-    expect(isGonePath("/ireland-doctors/mudr-jana-cyplinska")).toBe(false);
+  it("the broad Czechia rule carries no gone-exclusion for her slug", async () => {
+    const all = await rules();
+    const broad = all.find((r) => r.source === "/czechia-doctors/:slug");
+    expect(broad, "broad Czechia doctor rule must still exist").toBeDefined();
+    // No negative-lookahead exclusion naming her slug — plain `:slug`,
+    // meaning the rule rewrites hers unchanged same as any other, landing on
+    // the doctor page's own 404 rather than a fabricated 410.
+    expect(broad!.source).not.toMatch(/cyplinska/);
+    expect(broad!.destination).toBe("/czechia/cs/doctors/:slug");
   });
 
   it("does not capture the Vitor Pais redirect mapping", () => {
@@ -208,7 +196,7 @@ describe("gone paths — no redirect may intercept the 410", () => {
     // non-strict. A `$`-anchored exclusion silently failed to exclude them —
     // `/ireland-doctors/dr-grainne-ahern/` answered 308 while every sibling
     // answered 410. Found live, not by reasoning; keep both forms covered.
-    for (const p of [...GONE, ...GONE.map((g) => `${g}/`), ...GONE_JANA, ...GONE_JANA.map((g) => `${g}/`)]) {
+    for (const p of [...GONE, ...GONE.map((g) => `${g}/`)]) {
       const matching = all.filter((r) => toRegex(r.source).test(p));
       expect(matching.map((r) => r.source), `${p} is intercepted by a redirect`).toEqual([]);
     }

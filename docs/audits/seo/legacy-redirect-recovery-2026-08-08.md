@@ -177,21 +177,33 @@ service indexability alignment done earlier the same day
 (`isPublicDoctorRecordIndexable` / `isPublicServiceRecordIndexable`) already
 recovered part of this bucket as a side effect.
 
-### Implemented — Jana Cyplinska: 410 Gone
+### Jana Cyplinska: 410 shipped, then REVERTED same day — insufficient evidence
 
-Full production-database search (all 8 Czechia doctor rows, active or not,
-by name and slug) found **zero match anywhere** — not an inactive row, no
-row at all. Stronger signal than Gráinne's case lacked an owner statement to
-pair with it: Gráinne's removal was confirmed by the owner directly; Jana's
-is inferred from complete database absence, the strongest evidence available
-without asking. Documented as such in `lib/seo/gone-content.ts` rather than
-presented as equivalent.
+Batch 2 originally shipped a 410 on database-absence evidence alone (all 8
+Czechia doctor rows checked, active or not, zero match). That commit reached
+`origin/main`. Before deploying, re-examined the decision per an explicit
+instruction that absence-from-the-database is not by itself sufficient
+evidence of permanent removal — Gráinne's 410 had an owner statement behind
+it; Jana's had only an inference.
 
-`GONE_DOCTORS` (that file) now carries both entities; `slugMatcherExcludingGone`
-already generalizes over `legacyPrefix`, so `czechia-doctors` needed the same
-one-line exclusion `ireland-doctors` already had. All 5 URL shapes (53 clicks /
-244 impressions) plus the pre-emptive `/czechia/{lang}/doctors/…` current-shape
-forms now answer 410 in one hop, verified live.
+Widened the search: git history (`git log --all -S"cyplinska"` across every
+branch — only this project's own audit-doc commits reference her, nothing
+external), historical datasheets (`backend/scripts/data/*-doctors-datasheet.ts`
+exists for Ireland, Portugal and Spain — **no `czechia-doctors-datasheet.ts`
+was ever authored**, so the Czechia roster may never have gone through the
+same migration mechanism the other three markets did, meaning she may simply
+never have been re-entered on this platform rather than having been removed
+from it), and the `AuditLog` table (860 Doctor-entity rows exist, so it is
+populated and not a stub — zero of them mention her name in `metadata`).
+
+Three independent negatives, still no positive confirmation of retirement,
+and one plausible alternative explanation (migration gap, not departure) that
+Gráinne's case never had. Conclusion: **UNKNOWN / NO CURRENT MATCH**, not
+CONFIRMED RETIRED. Reverted — `mudr-jana-cyplinska` removed from
+`GONE_DOCTORS`. Her URLs are back to the pre-batch-2 state: 404 (via the
+unexcluded broad `/czechia-doctors/:slug` rule → the doctor page's own
+`missingConfirmed` 404), not redirected to another clinician or to
+`/doctors`, pending a human decision.
 
 ### Implemented — Vitor Pais: redirect to the live profile
 
