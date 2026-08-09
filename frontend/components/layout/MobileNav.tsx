@@ -102,9 +102,15 @@ export function MobileNav({
   const portalHref = authUser?.role === "ADMIN" ? "/admin" : "/account";
   const portalLabel = authUser?.role === "ADMIN" ? navigation.navAdminPortal : navigation.navAccountPortal;
 
+  // Union across all markets when there's no active country (first-ever
+  // visit, or any client without the gh-last-country cookie — every
+  // crawler): a flag that's off in EVERY market must not fail open into a
+  // guaranteed-dead link. Mirrors the identical fix in SiteHeader/SiteFooter.
   const activeFeatures = activeCountryCode
     ? countryFeatures?.[activeCountryCode]
-    : undefined;
+    : countryFeatures
+      ? [...new Set(Object.values(countryFeatures).flatMap((f) => f ?? []))]
+      : undefined;
   const isFeatureOn = (key: string) =>
     !activeFeatures || activeFeatures.length === 0 || activeFeatures.includes(key);
 

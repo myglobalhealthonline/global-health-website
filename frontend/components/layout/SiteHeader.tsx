@@ -220,9 +220,20 @@ export function SiteHeader({
   // the same locale the header renders its nav labels in.
   const a11y = getCommonLocale(activeLang).a11y;
 
+  // No country context (first-ever visit, or any client without the
+  // gh-last-country cookie — every crawler) used to fall through to
+  // `undefined`, which the nav builder's `enabled()` reads as "show it
+  // regardless." That is correct for a flag that's on somewhere and off
+  // elsewhere, but a flag that's off in EVERY market (e.g.
+  // online-prescriptions, Ads compliance — see next.config.ts) produced a
+  // guaranteed-dead link on every global page. Union across all markets
+  // instead: a flag counts as enabled here only if at least one country
+  // actually has it on.
   const activeFeatures = activeCountryCode
     ? countryFeatures?.[activeCountryCode]
-    : undefined;
+    : countryFeatures
+      ? [...new Set(Object.values(countryFeatures).flatMap((f) => f ?? []))]
+      : undefined;
 
   // Section nav: prefer the in-country IA when we have a country
   // context AT ALL (URL or cookie). Only show the global IA when the

@@ -112,16 +112,24 @@ export function SiteFooter({
   const activeCountryCode = parsed.country
     ? countryCodeFromSlug(parsed.country)
     : null;
+  // Pre-country (careBase null — the gateway page, or any global page like
+  // /about, /cart with no gh-last-country cookie, which every crawler hits)
+  // used to just assume every flag was on. Fine for a flag that varies by
+  // market, but a flag that's off in EVERY country (e.g. online-prescriptions,
+  // Ads compliance — next.config.ts) produced a guaranteed-dead footer link.
+  // Union across all markets instead: only counts as enabled here when at
+  // least one country actually has it on.
   const activeFeatures = activeCountryCode
     ? countryFeatures?.[activeCountryCode]
-    : undefined;
+    : countryFeatures
+      ? [...new Set(Object.values(countryFeatures).flatMap((f) => f ?? []))]
+      : undefined;
   // Admin-managed per-country override. Only applies when visitor is
   // inside a country scope (gateway page + global pages keep defaults).
   const override = activeCountryCode
     ? countryFooters?.[activeCountryCode] ?? null
     : null;
   const isFeatureEnabled = (slug: string) => {
-    if (!careBase) return true; // pre-country: keep links so the gate can route
     if (!activeFeatures) return true; // no toggle data → assume on (legacy default)
     return activeFeatures.includes(slug);
   };
