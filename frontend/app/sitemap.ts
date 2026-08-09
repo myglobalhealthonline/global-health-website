@@ -13,7 +13,11 @@ import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { hreflangRegion } from "@/lib/seo/hreflang";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
-import { getCountryLegal, LEGAL_TYPE_SLUGS } from "@/lib/content/get-country-legal";
+import {
+  exactLocalesForLegalType,
+  getCountryLegal,
+  LEGAL_TYPE_SLUGS,
+} from "@/lib/content/get-country-legal";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { newestTimestamp } from "@/lib/seo/newest-timestamp";
 import {
@@ -286,12 +290,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // The profile-only MEDICAL_DISCLAIMER fallback carries no timestamp of
       // its own — it stays undated rather than borrowing an unrelated one.
       if (legal?.profile?.fullDisclaimer) types.add("MEDICAL_DISCLAIMER");
+      const countryDefaultLocale = (country.defaultLocale ?? "en").toLowerCase();
       for (const type of types) {
+        // International-locale batch (2026-08-09): a type resolving for
+        // EVERY locale (comment above) is exactly the problem — most of
+        // those locales get the exact-locale → "en" → any-published-row
+        // FALLBACK body, not a real translation (verified live: 46 of 297
+        // country x locale x type combinations serve the wrong language,
+        // e.g. /ireland/pt/legal/cookie-policy renders English). Submitting
+        // every locale variant duplicate-indexes the same fallback text
+        // under N URLs and hreflangs them at each other. Only submit —
+        // and only cross-reference via hreflang — locales that actually
+        // have their OWN exact-locale content for this type; the page
+        // itself still 200s for the rest (self-noindex,follow, see
+        // legal/[type]/page.tsx) so UX access isn't affected.
+        const exactLocales = exactLocalesForLegalType(legal, type, countryDefaultLocale);
+        const langsOverride = countryLangs(country).filter((l) => exactLocales.has(l));
+        if (langsOverride.length === 0) continue;
         pushLocalized(
           country,
           `/legal/${LEGAL_TYPE_SLUGS[type]}`,
           0.3,
           dated(stampByType.get(type)),
+          langsOverride,
         );
       }
     } catch {

@@ -6,6 +6,8 @@ import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
+  exactLocalesForLegalType,
+  getCountryLegal,
   getCountryLegalDocument,
   getCountryDisclaimer,
   legalTypeFromSlug,
@@ -15,7 +17,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { indexableHreflangCluster } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const revalidate = 300;
@@ -44,7 +46,10 @@ export async function generateMetadata({
   const legalDescription = c.legalPage.heroBody
     .replace("{site}", SITE_NAME)
     .replace("{country}", config.name);
-  const result = await getCountryLegalDocument(code, legalType, lang);
+  const [result, legal] = await Promise.all([
+    getCountryLegalDocument(code, legalType, lang),
+    getCountryLegal(code),
+  ]);
   let documentTitle: string | null = result?.document.title ?? null;
   if (!result) {
     // Mirror the page's medical-disclaimer fallback so the standalone page
@@ -58,15 +63,27 @@ export async function generateMetadata({
     if (!documentTitle) return { title: SITE_NAME };
   }
   const title = `${documentTitle} · ${config.name}`;
-  return buildPublicMetadata({
+  // International-locale batch (2026-08-09): the exact-locale → "en" → any-
+  // published-row fallback (get-country-legal.ts) lets a type with only ONE
+  // real translation 200 for every supported locale — verified live: 46 of
+  // 297 country x locale x type combinations serve the wrong language. A
+  // page whose OWN route locale isn't in the exact-translation set is
+  // showing fallback content, not a real localized document: noindex,follow
+  // (still crawlable/linkable, just not offered to search as this locale's
+  // page) and the hreflang cluster only advertises the locales that are
+  // actually real, matching the same set sitemap.ts now submits.
+  const exactLocales = exactLocalesForLegalType(legal, legalType, config.defaultLocale);
+  const isExactLocale = exactLocales.has(lang.toLowerCase());
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/legal/${type}`,
     title,
     description: `${documentTitle}. ${legalDescription}`,
     locale: `${lang}_${code.toUpperCase()}`,
     subtitle: config.name,
     imageAlt: `${documentTitle} — ${config.name}`,
-    languages: hreflangAlternates(config, `/legal/${type}`),
+    languages: indexableHreflangCluster(config, `/legal/${type}`, exactLocales),
   });
+  return isExactLocale ? metadata : { ...metadata, robots: { index: false, follow: true } };
 }
 
 export default async function CountryLegalDocumentPage({

@@ -184,6 +184,36 @@ export const getCountryLegal = cache(
   },
 );
 
+/**
+ * Which locales have REAL, exact-locale content for a given legal document
+ * type — as opposed to the API's exact-locale → "en" → any-published-row
+ * fallback chain, which lets every supported locale 200 even when only one
+ * locale was ever actually authored. Shared by sitemap.ts (which locale
+ * variants to submit/hreflang) and legal/[type]/page.tsx (whether the
+ * CURRENT route is serving a real translation or a fallback body).
+ */
+export function exactLocalesForLegalType(
+  legal: Pick<PublicCountryLegal, "documents" | "profile"> | null | undefined,
+  type: LegalDocumentType,
+  countryDefaultLocale: string,
+): Set<string> {
+  const exact = new Set(
+    (legal?.documents ?? [])
+      .filter((d) => d.type === type)
+      .map((d) => d.locale.toLowerCase()),
+  );
+  if (type === "MEDICAL_DISCLAIMER") {
+    for (const t of legal?.profile?.disclaimerTranslations ?? []) {
+      if (t.fullDisclaimer) exact.add(t.locale.toLowerCase());
+    }
+    // The profile's base fullDisclaimer (no per-locale override row) is
+    // authored directly by that country's admin, in that country's own
+    // primary language — mirrors the page's fallback ordering.
+    if (legal?.profile?.fullDisclaimer) exact.add(countryDefaultLocale.toLowerCase());
+  }
+  return exact;
+}
+
 export const getCountryLegalDocument = cache(
   async (
     code: string,
