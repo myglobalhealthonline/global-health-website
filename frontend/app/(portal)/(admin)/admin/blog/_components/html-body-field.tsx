@@ -42,6 +42,22 @@ export function HtmlBodyField({ name, initialValue }: Props) {
     e.target.value = "";
   }
 
+  function readImageDimensions(file: File): Promise<{ width: number; height: number } | null> {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = () => {
+        resolve(null);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    });
+  }
+
   function insertAtCursor(snippet: string) {
     const el = textareaRef.current;
     if (!el) {
@@ -90,7 +106,13 @@ export function HtmlBodyField({ name, initialValue }: Props) {
       if (!res.ok || !json.ok || !src) {
         throw new Error(json.message ?? "Upload failed");
       }
-      insertAtCursor(`\n<img src="${src}" alt="" />\n`);
+      const dims = await readImageDimensions(file);
+      const dimAttrs = dims ? ` width="${dims.width}" height="${dims.height}"` : "";
+      // Alt text is content, not markup — the admin authoring it knows
+      // whether the image is decorative (blank alt) or needs a description,
+      // so ask rather than always shipping an empty alt attribute.
+      const alt = (window.prompt("Alt text for this image (leave blank if purely decorative):", "") ?? "").replace(/"/g, "&quot;");
+      insertAtCursor(`\n<img src="${src}" alt="${alt}"${dimAttrs} />\n`);
     } catch (error) {
       setMsg(error instanceof Error ? error.message : "Image upload failed");
     } finally {

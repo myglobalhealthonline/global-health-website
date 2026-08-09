@@ -167,7 +167,18 @@ export async function generateMetadata({
   // market's default language — so reading `detail.seoTitle` raw published a
   // Spanish <title> on the Czech, German and English URLs of any service whose
   // translation rows carry no seoTitle of their own.
-  const title = safeMeta.title ?? detail.name;
+  // When no seoTitle is set for this locale, safeMeta.title falls back to
+  // the same heroTitle/name value the H1 renders below — append the
+  // country so the <title> reads as more than a bare duplicate of the H1,
+  // without touching the (majority) case where an admin-authored seoTitle
+  // already differentiates it.
+  const h1Fallback = detail.heroTitle ?? detail.name;
+  const title =
+    safeMeta.title && safeMeta.title !== h1Fallback
+      ? safeMeta.title
+      : config?.name
+        ? `${h1Fallback} | ${config.name}`
+        : h1Fallback;
   const baseDescription =
     safeMeta.description ?? `Learn about ${title} and book a consultation.`;
   // Append the auto insurance line to the meta description when companies cover

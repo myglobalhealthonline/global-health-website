@@ -108,6 +108,18 @@ export async function generateMetadata({
   // the page title/description otherwise.
   const ogTitle = extras?.ogTitle ?? title;
   const ogDescription = extras?.ogDescription ?? description;
+  const languages = hreflangAlternates(config, "");
+  // The global gate (`/`) hreflangs to each country's default-locale home
+  // page as a one-row-per-market cluster (see `app/(global)/page.tsx`), so
+  // hreflang reciprocity requires that page to claim `/` back. Only the
+  // default-locale variant is actually in the gate's cluster — other locale
+  // variants of this same country must not claim a return link the gate
+  // never gave them. Tagged with the bare language code, not x-default:
+  // this page already owns x-default for its own within-country cluster.
+  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
+  if (defaultLocale === lang.toLowerCase()) {
+    languages[defaultLocale] = "/";
+  }
   return buildPublicMetadata({
     path,
     title,
@@ -120,7 +132,7 @@ export async function generateMetadata({
     subtitle: config.name,
     sourceImage: page?.ogImageSrc ?? undefined,
     imageAlt: `${ogTitle} — ${config.name}`,
-    languages: hreflangAlternates(config, ""),
+    languages,
   });
 }
 
