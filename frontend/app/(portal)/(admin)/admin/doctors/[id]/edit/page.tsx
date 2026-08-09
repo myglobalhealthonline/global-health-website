@@ -176,6 +176,7 @@ export default async function AdminEditDoctorPage({
       qualifications: raw.qualifications,
       whatsappNumber: raw.whatsappNumber === "" ? null : raw.whatsappNumber,
       languages: raw.languages,
+      lastReviewedAt: raw.lastReviewedAt === "" ? null : raw.lastReviewedAt,
       // Specialties are not edited on this form anymore; omit specialtyIds so
       // the backend preserves the existing assignments (it only re-syncs when
       // specialtyIds is provided or the primary country changes).

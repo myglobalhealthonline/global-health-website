@@ -298,6 +298,7 @@
     "bookWithDoctor": "Reservar con {name}",
     "servicesOffered": "Servicios ofrecidos",
     "viewServiceDetails": "Ver detalles del servicio",
+    "lastReviewedLabel": "Última revisión",
     "pickSlotWith": "Elige un servicio para ver las plazas disponibles con {name}.",
     "pickSlot": "Elegir plaza",
     "pickTimeWith": "Elegir hora con {name}",

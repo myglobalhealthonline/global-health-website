@@ -37,8 +37,11 @@ type BlogPostRouteParams = {
 async function blogPhysicianInput(doctor: BlogDoctor | null, locale: LocaleCode) {
   if (!doctor) return null;
   const trust = doctor.countryCode ? await getCountryTrust(doctor.countryCode, locale) : null;
+  // Ranking-growth batch (2026-08-10): was hardcoded `/en/` regardless of the
+  // ARTICLE's own locale, so a Portuguese post's Physician schema pointed at
+  // an English-locale doctor URL. Use the article's resolved locale.
   const profileUrl =
-    doctor.countrySlug ? `/${doctor.countrySlug}/en/doctors/${doctor.slug}` : `/blog`;
+    doctor.countrySlug ? `/${doctor.countrySlug}/${locale}/doctors/${doctor.slug}` : `/blog`;
   return {
     name: doctor.name,
     url: profileUrl,
@@ -222,8 +225,11 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   const { home } = loadLocaleBundle(locale);
   const blogI18n = home.blog;
 
+  // Ranking-growth batch (2026-08-10): was hardcoded `/en/` regardless of the
+  // article's own locale — a PT/ES/CS/RO article's CTA sent readers to an
+  // English-locale service page. Use the article's resolved locale.
   const ctaHref = post.ctaService
-    ? `/${post.ctaService.countrySlug}/en/services/${post.ctaService.slug}`
+    ? `/${post.ctaService.countrySlug}/${locale}/services/${post.ctaService.slug}`
     : "/";
 
   const formatted = new Date(post.publishedAt).toLocaleDateString(locale, {

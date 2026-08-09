@@ -298,6 +298,7 @@
     "bookWithDoctor": "Rezervă cu {name}",
     "servicesOffered": "Servicii oferite",
     "viewServiceDetails": "Vezi detaliile serviciului",
+    "lastReviewedLabel": "Ultima verificare",
     "pickSlotWith": "Alege un serviciu pentru a vedea intervalele disponibile cu {name}.",
     "pickSlot": "Alege interval",
     "pickTimeWith": "Alege interval cu {name}",

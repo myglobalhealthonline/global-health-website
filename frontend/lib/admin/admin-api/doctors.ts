@@ -237,6 +237,10 @@ export type AdminDoctorDto = {
   languages: string[];
   seoTitle: string | null;
   seoDescription: string | null;
+  /** Clinical review date shown on the public profile as "Last reviewed"
+   *  (E-E-A-T signal, mirrors AdminServiceDto.lastReviewedAt). Admin-set
+   *  only — never auto-populated. */
+  lastReviewedAt: string | null;
   active: boolean;
   createdAt: string;
   updatedAt: string;

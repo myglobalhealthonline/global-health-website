@@ -143,6 +143,8 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       languages: raw.languages,
       seoTitle: raw.seoTitle === "" ? null : raw.seoTitle,
       seoDescription: raw.seoDescription === "" ? null : raw.seoDescription,
+      // Blank by default on the create form — never defaulted to "now".
+      lastReviewedAt: raw.lastReviewedAt === "" ? null : raw.lastReviewedAt,
       translations: raw.translations,
       specialtyIds: raw.specialtyIds,
       // M:N additional country listings (primary stays on Doctor.countryId).

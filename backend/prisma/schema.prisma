@@ -627,6 +627,10 @@ model Doctor {
   bio                             String?
   seoTitle                        String?
   seoDescription                  String?
+  /// Clinical review date shown on the doctor profile as "Last reviewed"
+  /// (E-E-A-T signal, mirrors Service.lastReviewedAt). Nullable, no
+  /// backfill — set by admins going forward, never auto-populated.
+  lastReviewedAt                  DateTime?
   // Phase 2: imcRegistration removed. Per-country registration lives on
   // DoctorCountry.registrationNumber. Public payload computes the
   // display value via `overrideImcRegistrationFromCountry`.

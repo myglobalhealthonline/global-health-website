@@ -298,6 +298,7 @@
     "bookWithDoctor": "Rezervovat s {name}",
     "servicesOffered": "Nabízené služby",
     "viewServiceDetails": "Zobrazit podrobnosti o službě",
+    "lastReviewedLabel": "Naposledy zkontrolováno",
     "pickSlotWith": "Vyberte službu pro zobrazení volných termínů s {name}.",
     "pickSlot": "Vybrat termín",
     "pickTimeWith": "Vybrat termín s {name}",

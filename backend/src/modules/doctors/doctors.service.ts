@@ -1123,6 +1123,10 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           languages: input.languages ?? [],
           seoTitle: input.seoTitle ?? null,
           seoDescription: input.seoDescription ?? null,
+          // Admin-set only — never defaulted to "now" on create. Omitted
+          // entirely (not `?? null`) so a doctor imported without this field
+          // stays null rather than an explicit key setting it.
+          ...(input.lastReviewedAt !== undefined && { lastReviewedAt: input.lastReviewedAt }),
           active: input.active ?? true,
           specialties: {
             create: input.specialtyIds.map((specialtyId) => ({
@@ -1289,6 +1293,7 @@ export async function updateAdminDoctor(
           ...(body.seoDescription !== undefined && {
             seoDescription: body.seoDescription,
           }),
+          ...(body.lastReviewedAt !== undefined && { lastReviewedAt: body.lastReviewedAt }),
           ...(body.active !== undefined && { active: body.active }),
           ...(body.canCreateManualAppointments !== undefined && {
             canCreateManualAppointments: body.canCreateManualAppointments,

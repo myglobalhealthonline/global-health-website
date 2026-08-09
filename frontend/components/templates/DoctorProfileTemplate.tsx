@@ -48,6 +48,11 @@ type DoctorProfileTemplateProps = {
     imageTitle?: string;
     imageCaption?: string;
     imageDescription?: string;
+    /** Pre-formatted, already-localized "Last reviewed" date (e.g.
+     *  "24 July 2026") — caller formats it the same way the blog byline
+     *  does. Absent when the admin hasn't set `lastReviewedAt` — never a
+     *  fabricated fallback. */
+    reviewedDate?: string;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   profileImageSrc?: string;
@@ -63,6 +68,7 @@ type DoctorProfileTemplateProps = {
     registeredIn?: string;
     onlineConsultAvailable?: string;
     verifiedProfile?: string;
+    lastReviewedLabel?: string;
     verifyRegistration?: string;
     primaryCareConsults?: string;
     languagesLabel?: string;
@@ -317,6 +323,16 @@ export function DoctorProfileTemplate({
                   { Icon: ShieldCheck, label: (t?.registeredIn ?? "Registered in {country}").replace("{country}", profile.country) },
                   { Icon: Video, label: t?.onlineConsultAvailable ?? "Online consultation available" },
                   { Icon: BadgeCheck, label: t?.verifiedProfile ?? "Verified profile" },
+                  // Admin-set only (see profile.reviewedDate) — omitted, not a
+                  // fabricated fallback, when no one has reviewed this profile yet.
+                  ...(profile.reviewedDate
+                    ? [
+                        {
+                          Icon: CalendarDays,
+                          label: `${t?.lastReviewedLabel ?? "Last reviewed"} ${profile.reviewedDate}`,
+                        },
+                      ]
+                    : []),
                 ].map(({ Icon, label }, i) => (
                   <span key={label} className="flex items-center">
                     {i > 0 ? (

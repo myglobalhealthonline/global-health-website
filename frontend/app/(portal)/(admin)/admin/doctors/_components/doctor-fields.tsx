@@ -22,6 +22,13 @@ type Props = {
   showSpecialties?: boolean;
 };
 
+/** yyyy-mm-dd for a native date input's defaultValue. */
+function toDateInputValue(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
+}
+
 export function DoctorFields({
   countries,
   specialties,
@@ -165,6 +172,21 @@ export function DoctorFields({
             <span className="text-xs text-[var(--color-text-muted)]">Fallback verify link. Per-country links are set in the <strong>Country profile</strong> card (Registration URL) and win over this one.</span>
           </label>
         </div>
+
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Last reviewed</span>
+          <input
+            type="date"
+            name="lastReviewedAt"
+            className="gh-input min-w-0"
+            defaultValue={toDateInputValue(initial?.lastReviewedAt)}
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Shown on the public profile as &quot;Last reviewed&quot;. Set this only
+            when the profile has genuinely been reviewed — leave blank until
+            then, don&apos;t backdate to today just to have a value.
+          </span>
+        </label>
 
         <p className="gh-form-section__span-2 text-xs text-[var(--color-text-muted)]">
           {showTranslationTabs ? (

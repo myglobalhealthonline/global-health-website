@@ -34,6 +34,9 @@ export type DoctorProfilePageData = {
     seoKeywords?: string[];
     faqs?: Array<{ id: string; question: string; answer: string; category?: string | null }>;
     editorialChecklist?: Record<string, unknown>;
+    /** Admin-set clinical review date (E-E-A-T "Last reviewed" byline).
+     *  Absent until an admin sets it — never auto-populated. */
+    lastReviewedAt?: string;
     imageAltText?: string;
     imageTitle?: string;
     imageCaption?: string;
@@ -341,6 +344,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
       ...(backend.seoKeywords ? { seoKeywords: backend.seoKeywords } : {}),
       ...(backend.faqs ? { faqs: backend.faqs } : {}),
       ...(backend.editorialChecklist ? { editorialChecklist: backend.editorialChecklist } : {}),
+      ...(backend.lastReviewedAt ? { lastReviewedAt: backend.lastReviewedAt } : {}),
       imageAltText: backend.profileImageAltText ?? backend.fullName,
       ...(backend.profileImageTitle ? { imageTitle: backend.profileImageTitle } : {}),
       ...(backend.profileImageCaption ? { imageCaption: backend.profileImageCaption } : {}),

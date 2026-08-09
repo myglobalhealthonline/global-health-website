@@ -63,6 +63,9 @@ export type PublicDoctorRecord = {
   editorialChecklist?: Record<string, unknown>;
   /** ISO timestamp string, when the backend row includes one (Prisma @updatedAt). */
   updatedAt?: string;
+  /** Admin-set clinical review date (E-E-A-T "Last reviewed" byline).
+   *  Absent until an admin sets it — never auto-populated. */
+  lastReviewedAt?: string;
 };
 
 function readCountry(row: unknown): { code: CountryCode; name: string; teamPath: string } | undefined {
@@ -220,6 +223,7 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
       ? (r.editorialChecklist as Record<string, unknown>)
       : undefined;
   const updatedAt = typeof r.updatedAt === "string" ? r.updatedAt : undefined;
+  const lastReviewedAt = typeof r.lastReviewedAt === "string" ? r.lastReviewedAt : undefined;
 
   return {
     id,
@@ -252,6 +256,7 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
     profileImageZoom: profileImage?.zoom ?? 1,
     ...(editorialChecklist ? { editorialChecklist } : {}),
     ...(updatedAt ? { updatedAt } : {}),
+    ...(lastReviewedAt ? { lastReviewedAt } : {}),
   };
 }
 

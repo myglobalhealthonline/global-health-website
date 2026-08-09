@@ -132,15 +132,22 @@ export function ServiceCatalog({
   // you paginate past page 0. Offsets below account for the smaller first page.
   const canFeatureFirst = filter === "all" && allShown.length >= 4;
   const firstPageSize = canFeatureFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
-  const useFeaturedFirst = canFeatureFirst && page === 0;
   const totalPages =
     allShown.length <= firstPageSize
       ? 1
       : 1 + Math.ceil((allShown.length - firstPageSize) / PAGE_SIZE_REGULAR);
-  const start = page === 0 ? 0 : firstPageSize + (page - 1) * PAGE_SIZE_REGULAR;
-  const end = page === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR;
-  const shown = allShown.slice(start, end);
   const showPager = totalPages > 1;
+  // SEO batch (2026-08-10): every page's items, not just the current one —
+  // `shown`/`useFeaturedFirst` used to slice to ONE page, so a crawler's
+  // initial-HTML read (no click interaction) only ever saw page 0. All pages
+  // now render into the DOM; only the current one is visually shown (see
+  // `hidden={idx !== page}` below). Featured-tile styling is structural to
+  // group index 0, independent of which page is currently visible.
+  const pageGroups: ServiceCatalogItem[][] = Array.from({ length: totalPages }, (_, idx) => {
+    const start = idx === 0 ? 0 : firstPageSize + (idx - 1) * PAGE_SIZE_REGULAR;
+    const end = idx === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR;
+    return allShown.slice(start, end);
+  });
 
   function handleFilter(id: FilterId) {
     setFilter(id);
@@ -267,23 +274,36 @@ export function ServiceCatalog({
         </header>
 
         <div {...(showPager ? swipe : {})}>
-          <RevealOnScroll
-            key={`${filter}-${page}`}
-            stagger
-            className={cn(
-              "gh-card-grid",
-              useFeaturedFirst ? "gh-card-grid--featured" : null,
-            )}
-          >
-            {shown.map((s, i) => (
-              <ServiceTile
-                key={`${s.type}-${s.title}-${s.href}`}
-                service={s}
-                variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
-                i18n={i18n}
-              />
-            ))}
-          </RevealOnScroll>
+          {pageGroups.map((group, idx) => (
+            // Plain `hidden` (not client-side slicing) so every group's links
+            // are real DOM anchors in the initial server HTML — a crawler
+            // sees all of them regardless of which page is visually active.
+            // `hidden` removes the inactive groups from the a11y tree/tab
+            // order too, matching how a well-built carousel/panel already
+            // behaves. Trade-off: the fade-up stagger only plays the first
+            // time a group is scrolled to, not on every manual page-flip
+            // back to it (RevealOnScroll's mount-time visibility check reads
+            // a zero-size rect while `hidden`) — cosmetic only, never hides
+            // content or breaks a link.
+            <div key={`${filter}-${idx}`} hidden={idx !== page}>
+              <RevealOnScroll
+                stagger
+                className={cn(
+                  "gh-card-grid",
+                  idx === 0 && canFeatureFirst ? "gh-card-grid--featured" : null,
+                )}
+              >
+                {group.map((s, i) => (
+                  <ServiceTile
+                    key={`${s.type}-${s.title}-${s.href}`}
+                    service={s}
+                    variant={idx === 0 && canFeatureFirst && i === 0 ? "featured" : "default"}
+                    i18n={i18n}
+                  />
+                ))}
+              </RevealOnScroll>
+            </div>
+          ))}
         </div>
 
         {/* Bottom pager — mirrors the header one so paging past row 1

@@ -298,6 +298,7 @@
     "bookWithDoctor": "Marcar com {name}",
     "servicesOffered": "Serviços disponíveis",
     "viewServiceDetails": "Ver detalhes do serviço",
+    "lastReviewedLabel": "Última revisão",
     "pickSlotWith": "Escolha um serviço para ver os horários disponíveis com {name}.",
     "pickSlot": "Escolher horário",
     "pickTimeWith": "Escolher horário com {name}",

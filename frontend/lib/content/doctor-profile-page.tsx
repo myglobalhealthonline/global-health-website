@@ -216,6 +216,18 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       : dp.pickTime
     : data.hero.primaryCta.label;
 
+  // E-E-A-T freshness signal — same "Last reviewed <date>" format the
+  // service page and blog byline already use. Renders nothing (via
+  // DoctorProfileTemplate's conditional trust-badge) when the admin hasn't
+  // set lastReviewedAt — never a fabricated fallback.
+  const reviewedDateFormatted = data.profile.lastReviewedAt
+    ? new Date(data.profile.lastReviewedAt).toLocaleDateString(lang, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : undefined;
+
   const templateData = {
     ...data,
     profile: {
@@ -226,6 +238,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       verificationUrl: verifyUrl,
       credentials: profileDoc?.credentials,
       regulatorName: regulator?.name ?? null,
+      reviewedDate: reviewedDateFormatted,
     },
     hero: {
       ...data.hero,

@@ -298,6 +298,7 @@
     "bookWithDoctor": "Book with {name}",
     "servicesOffered": "Services offered",
     "viewServiceDetails": "View service details",
+    "lastReviewedLabel": "Last reviewed",
     "pickSlotWith": "Pick a service to see open slots with {name}.",
     "pickSlot": "Pick a slot",
     "pickTimeWith": "Pick a time with {name}",

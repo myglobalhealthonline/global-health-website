@@ -32,6 +32,15 @@ export const profileImageRefSchema = z.preprocess(
 export const focalPointSchema = z.coerce.number().int().min(0).max(100);
 export const zoomSchema = z.coerce.number().min(1).max(3);
 
+/** Accept "", undefined, null, or an ISO/date string → Date | null. Mirrors
+ *  admin-services.schema.ts's optionalNullableDate. */
+const optionalNullableDate = z
+  .preprocess(
+    (v) => (v === "" || v === undefined || v === null ? null : v),
+    z.coerce.date().nullable(),
+  )
+  .optional();
+
 export const adminDoctorsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   // Admin duplicate-check UIs fetch up to 250 rows in one country.
@@ -222,6 +231,9 @@ const adminDoctorBaseObject = z.object({
     .optional()
     .nullable()
     .transform((v) => (v === "" || v === undefined ? null : v)),
+  /** Clinical review date shown on the doctor profile as "Last reviewed"
+   *  (E-E-A-T signal). Admin-set only — never auto-populated on create. */
+  lastReviewedAt: optionalNullableDate,
   /** Per-locale CMS content (title, bio, SEO). The default-locale entry
    *  mirrors the base fields above; backend upserts one DoctorTranslation
    *  row per entry. */
