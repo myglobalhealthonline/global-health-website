@@ -90,12 +90,20 @@ export async function generateMetadata({
   const extras = homePageExtras(code, lang);
   const { common: metaCommon } = loadLocaleBundle(lang as LocaleCode);
   const path = `/${country}/${lang}`;
+  // `config.name` is the country's English display name (DB `Country.name`),
+  // not locale-aware — the generic template fallback below must use the
+  // localized name (same `countryNames` map used by about/page.tsx and the
+  // legal-notice component) or a non-English locale's fallback title reads
+  // half-English, e.g. "Médico Online Czechia" instead of "...Chequia".
+  const localizedCountryName = metaCommon.countryNames?.[code] ?? config.name;
   const title =
-    page?.seoTitle ?? extras?.seoTitle ?? metaCommon.homeMeta.titleTemplate.replace("{country}", config.name);
+    page?.seoTitle ??
+    extras?.seoTitle ??
+    metaCommon.homeMeta.titleTemplate.replace("{country}", localizedCountryName);
   const description =
     page?.seoDescription ??
     extras?.seoDescription ??
-    metaCommon.homeMeta.descriptionTemplate.replace("{country}", config.name);
+    metaCommon.homeMeta.descriptionTemplate.replace("{country}", localizedCountryName);
   // OG/Twitter may carry a distinct social-optimised variant; fall back to
   // the page title/description otherwise.
   const ogTitle = extras?.ogTitle ?? title;

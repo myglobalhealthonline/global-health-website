@@ -54,11 +54,22 @@ export type PublicMetadataInput = {
 // truncation ate. The brand itself is redundant in the raw title anyway:
 // Google appends the site name from `WebSite` schema (present on all 500
 // pages), so dropping our own trailing brand before truncating is free —
-// compactSearchTitle below does that, then only word-safe-truncates if the
-// title is still over budget without it.
+// compactSearchTitle below does that.
+//
+// UPDATE (2026-08-09 on-page SEO batch): compactSearchTitle used to fall back
+// to `wordSafeLimit` (a literal "…" appended) when the unbranded title was
+// still over SEARCH_TITLE_LIMIT. That put a truncated, word-chopped string
+// into the actual served `<title>` and `<meta name="description">` — 352
+// pages crawled that way, e.g. a real `<title>` ending
+// "IMC-Registered GPs & Specialist…". 60 chars is Google's own SERP-display
+// guideline, not an HTML validity limit; Google decides how to display a
+// longer title, but the HTML itself must stay a complete, un-chopped phrase.
+// SEARCH title/description no longer truncate past the limit — only the
+// (already-short, brand-aware) drop is applied, then the complete remainder
+// ships as-is. Social (OG/Twitter) titles and descriptions are a real
+// bounded card and still truncate via wordSafeLimit below — unchanged.
 const SOCIAL_TITLE_LIMIT = 74;
 const SEARCH_TITLE_LIMIT = 60;
-const SEARCH_DESCRIPTION_LIMIT = 155;
 const SOCIAL_DESCRIPTION_LIMIT = 125;
 const BRAND_SEPARATOR = " | ";
 
@@ -100,29 +111,29 @@ function compactSocialTitle(value: string): string {
 const TITLE_TEMPLATE_SUFFIX = ` · ${SITE_NAME}`;
 
 /**
- * Shorten a SEARCH (document <title>) title to Google's ~60-char display
- * budget, and return the EXACT string that should be emitted — brand included
- * or deliberately omitted.
+ * Decide the EXACT string that should be emitted as the SEARCH (document
+ * <title>) — brand included or deliberately omitted — using Google's ~60-char
+ * display budget as a preference, never as a hard cut. The HTML `<title>`
+ * must always be the complete, un-chopped phrase; SEARCH_TITLE_LIMIT only
+ * decides whether the brand suffix is worth keeping, never whether to
+ * word-chop the meaningful text (that would be a real, physical truncation
+ * baked into the served HTML — see the 2026-08-09 update above).
  *
  * The caller must pass the result through as `{ absolute }`. That is
  * load-bearing, not stylistic: the root layout sets
  * `title.template = "%s · Global Health"`, so any non-absolute title gets 16
- * characters bolted on AFTER this function has finished budgeting. Before this
+ * characters bolted on AFTER this function has finished deciding. Before this
  * was accounted for, dropping the brand to save space accomplished nothing —
- * the template put it straight back and the title ended up longer than it
- * started, with an ellipsis stranded mid-string:
- *
- *   in   "Online Doctors Ireland | IMC-Registered GPs & Specialists · Global Health"  (72)
- *   out  "Online Doctors Ireland | IMC-Registered GPs & Specialists"                  (56)
- *   emitted, after the template re-appended the brand                                 (72)
+ * the template put it straight back.
  *
  * Order of preference:
  *   1. Fits as-is, brand already present  → emit unchanged.
  *   2. Fits once the brand suffix is added → add it, so short titles stay branded.
  *   3. Over budget → drop the trailing brand. Google appends the site name
  *      itself from `WebSite` schema, so that space is better spent on the
- *      trust-signal qualifier ("IMC-Registered", "Colegiados", …).
- *   4. Still over budget unbranded → word-safe truncate.
+ *      meaningful text ("IMC-Registered", "Colegiados", …).
+ *   4. Still over budget unbranded → keep the complete meaningful title.
+ *      Google may display it truncated in the SERP; the HTML never is.
  */
 function compactSearchTitle(value: string): string {
   const normalized = normalizeCopy(value);
@@ -136,9 +147,7 @@ function compactSearchTitle(value: string): string {
   }
 
   const unbranded = hasBrand ? normalized.replace(BRAND_PATTERN, "").trim() : normalized;
-  if (len(unbranded) <= SEARCH_TITLE_LIMIT) return unbranded;
-
-  return wordSafeLimit(unbranded, SEARCH_TITLE_LIMIT);
+  return unbranded;
 }
 
 function normalizeCustomImage(url: string): string | undefined {
@@ -159,7 +168,11 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
   const canonical = getPublicUrl(input.path);
   const title = compactSearchTitle(input.title);
   const socialTitle = compactSocialTitle(input.socialTitle ?? input.title);
-  const description = wordSafeLimit(input.description, SEARCH_DESCRIPTION_LIMIT);
+  // SEARCH description: normalize only, never word-chop — see the
+  // 2026-08-09 comment above compactSearchTitle. A description this long is
+  // a content-authoring issue to fix at the source, not something the shared
+  // metadata builder should silently truncate into an incomplete sentence.
+  const description = normalizeCopy(input.description);
   const socialDescription = wordSafeLimit(
     input.socialDescription ?? input.description,
     SOCIAL_DESCRIPTION_LIMIT,
