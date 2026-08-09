@@ -174,6 +174,12 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // doctor card; we filter the country's GENERAL + SPECIALIST service
   // pool to that set so the patient sees one card per bookable service.
   const code = countryCodeFromSlug(slug);
+  // `data.profile.country` is the doctor's PRIMARY country (see
+  // get-public-doctors.ts) — on a cross-listed doctor's secondary-market
+  // route it still reads e.g. "Ireland" even under /czechia/*. Everything the
+  // patient reads or a crawler indexes on THIS page must name the market the
+  // route is actually serving — same fix as buildDoctorProfileMetadata above.
+  const routeCountryName = (code ? getCountryByCode(code)?.name : undefined) ?? data.profile.country;
   // Short medical disclaimer (admin-authored, per country). Doctor profiles
   // show the lead line + a link through to the full disclaimer.
   const { short: doctorDisclaimer } = code
@@ -251,6 +257,12 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     ...data,
     profile: {
       ...data.profile,
+      // Override the PRIMARY country with the market this page is actually
+      // serving — every visible badge/label in DoctorProfileTemplate reads
+      // `profile.country` (team link, "Registered in {country}", the country
+      // pill), and on a cross-listed doctor's secondary-market route the raw
+      // field is wrong (see routeCountryName above).
+      country: routeCountryName,
       registrationChamber: profileDoc?.registrationChamber,
       registrationDivision: profileDoc?.registrationDivision,
       registrationVerified: profileDoc?.registrationVerified,
@@ -266,7 +278,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
         href: primaryCtaHref,
       },
       secondaryCta: {
-        label: dp.backToClinicians.replace("{country}", data.profile.country),
+        label: dp.backToClinicians.replace("{country}", routeCountryName),
         href: teamHref,
       },
     },
@@ -283,7 +295,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           physicianJsonLd({
             name: data.profile.name,
             title: data.profile.title,
-            countryName: data.profile.country,
+            countryName: routeCountryName,
             url: profileHref,
             imageSrc: data.profileImageSrc,
             languages: data.profile.languages,
@@ -299,7 +311,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           }),
           breadcrumbJsonLd([
             { name: c.navigation.home, url: "/" },
-            { name: data.profile.country, url: `/${slug}/${lang}` },
+            { name: routeCountryName, url: `/${slug}/${lang}` },
             { name: c.navigation.doctors, url: teamHref },
             { name: data.profile.name, url: profileHref },
           ]),
@@ -415,7 +427,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
               >
                 {dp.notSetupForBookings
                   .replace("{name}", data.profile.name)
-                  .replace("{country}", data.profile.country)}
+                  .replace("{country}", routeCountryName)}
               </p>
               <Link
                 href={buildBookHref({ country: slug, lang, doctor: doctorSlug })}
