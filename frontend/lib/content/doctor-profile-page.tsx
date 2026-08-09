@@ -11,6 +11,7 @@ import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data"
 import { getCountryByCode } from "@/data/countries";
 import { ogLocales } from "@/lib/seo/hreflang";
 import { doctorHreflangCluster } from "@/lib/seo/doctor-hreflang";
+import { doctorIndexableCountryNames, withMarketTitle } from "@/lib/seo/doctor-market-title";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import {
   breadcrumbJsonLd,
@@ -74,16 +75,30 @@ export async function buildDoctorProfileMetadata(
       .replace("{title}", data.profile.title)
       .replace("{country}", data.profile.country)
       .replace("{languages}", data.profile.languages.join(", ") || "English");
-  const title =
+  const baseTitle =
     data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${data.profile.country}`;
+  const resolvedCode = countryCodeFromSlug(slug);
+  const config = resolvedCode ? getCountryByCode(resolvedCode) : null;
+  // `data.profile.country` is the doctor's PRIMARY country (see
+  // get-public-doctors.ts) — on a cross-listed doctor's secondary-market
+  // route it still reads e.g. "Ireland" even under /czechia/*. The market
+  // this <title> must name is the ROUTE the page is actually serving, so use
+  // the route-resolved country config, falling back to the profile country
+  // only when the route didn't resolve (placeholder/legacy path).
+  const routeCountryName = config?.name ?? data.profile.country;
+  // Cross-listed doctors (same clinician, multiple markets) currently share
+  // one admin `seoTitle` across every country page they appear on — a
+  // duplicate-title flag in GSC. Differentiate the SERP title by market only
+  // when the doctor is genuinely indexable in more than one country; single-
+  // market doctors (the vast majority) keep today's title exactly.
+  const marketCountries = indexable ? await doctorIndexableCountryNames(doctorSlug) : [];
+  const title = withMarketTitle(baseTitle, routeCountryName, marketCountries);
   const description =
     data.profile.seoDescription ??
     fillProfileTemplate(
       metaDp.metaDescriptionTemplate ??
         "Book an online consultation with {name}, {title} in {country}. Languages: {languages}.",
     );
-  const resolvedCode = countryCodeFromSlug(slug);
-  const config = resolvedCode ? getCountryByCode(resolvedCode) : null;
   return buildPublicMetadata({
     path: canonical,
     title,
