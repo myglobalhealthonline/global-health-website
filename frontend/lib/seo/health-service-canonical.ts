@@ -11,9 +11,6 @@
  * Keyed by `${countrySlug}:${healthSlug}` → target `/services/` slug.
  */
 export const HEALTH_SERVICE_CANONICAL: Record<string, string> = {
-  // Exact-topic overlap: dedicated 1,261-word sick-cert service page already
-  // covers this query; the health page cannibalises it (position 56-77 range).
-  "ireland:sick-cert-online": "sick-certificate-ireland",
   // "atestado médico" (sick note) — baixa-medica is the dedicated 1,609-word
   // sick-cert service page (chosen over the broader certificados-medicos
   // hub). Confirmed cannibalization: health page pos 14.5 vs service page
@@ -21,6 +18,10 @@ export const HEALTH_SERVICE_CANONICAL: Record<string, string> = {
   "portugal:atestado-medico-online": "baixa-medica",
   // Only exact slug collision in the whole set.
   "czechia:neschopenka-online": "neschopenka-online",
+
+  // ireland:sick-cert-online moved to HEALTH_RETIRED_REDIRECTS below
+  // (2026-08-09 ranking-growth batch) — canonical-only wasn't enough to
+  // drop the ES/RO variants from the index.
 
   // Deliberately left self-canonical — no live /services/ twin:
   //   ireland:arabic-speaking-doctor      (audience page)
@@ -68,6 +69,13 @@ export const HEALTH_RETIRED_REDIRECTS: Record<string, string> = {
   // international student arriving in Ireland needs a GP, and the GP
   // consultation page serves that intent far better than a 297-word explainer.
   "ireland:international-students": "gp-consultation-online",
+  // Retired 2026-08-09 (ranking-growth batch). Canonical-only (see the
+  // history in HEALTH_SERVICE_CANONICAL above) wasn't enough: Google kept
+  // the ES/RO variants independently indexed and ranking for the "sick
+  // cert" cluster (168 impr/pos 28.1, 13 impr/pos 16.3 over 90 days) despite
+  // the foreign canonical. A real redirect is needed to fully consolidate
+  // onto the service page.
+  "ireland:sick-cert-online": "services/sick-certificate-ireland",
 };
 
 /** True when this `/health/` page has been retired behind a 301 and must be

@@ -632,6 +632,18 @@ const nextConfig: NextConfig = {
         destination: "/ireland/:lang/gp-consultation-online",
         permanent: true,
       },
+      // ireland/sick-cert-online -> services/sick-certificate-ireland. The
+      // canonical tag already pointed here (2026-08-03 decision), but Google
+      // kept the ES/RO variants independently indexed and ranking (168 impr /
+      // avg pos 28.1, and 13 impr / avg pos 16.3, over 90 days) despite the
+      // foreign canonical — a real redirect is needed to fully consolidate
+      // the signal onto the service page. All 6 locale variants get the same
+      // treatment for consistency (SEO ranking-growth batch, 2026-08-09).
+      {
+        source: `/ireland/:lang${LANG}/health/sick-cert-online`,
+        destination: "/ireland/:lang/services/sick-certificate-ireland",
+        permanent: true,
+      },
       // No services index page exists — only /services/:slug. Send the bare
       // section URL to the country home instead of a 404.
       {
