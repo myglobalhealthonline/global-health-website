@@ -19,7 +19,7 @@ import {
 } from "@/lib/seo/structured-data";
 
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
-import { buildBookHref } from "@/lib/routing/book-href";
+import { buildBookHref, buildServiceDetailHref } from "@/lib/routing/book-href";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -331,7 +331,14 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                 return (
                   <ServiceCard
                     key={service.id}
-                    href={consultHref}
+                    // Genuine crawlable link to the service's own landing
+                    // page (international-linking batch, 2026-08-09) — doctor
+                    // profiles previously sent every assigned service straight
+                    // into the booking flow with no server-rendered anchor a
+                    // crawler could follow to `/services/{slug}`. Booking stays
+                    // the primary CTA; "View service details" is additive.
+                    detailHref={buildServiceDetailHref(slug, lang, service.slug)}
+                    bookHref={consultHref}
                     title={service.name}
                     description={service.summary ?? ""}
                     duration={
@@ -340,7 +347,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                         : undefined
                     }
                     startingPrice={startingPrice}
-                    ctaLabel={dp.pickSlot}
+                    ctaLabel={dp.viewServiceDetails}
+                    bookLabel={dp.pickSlot}
                     imageSrc={service.imageSrc}
                     dark
                   />

@@ -297,6 +297,7 @@
     "backToClinicians": "Voltar aos clínicos de {country}",
     "bookWithDoctor": "Marcar com {name}",
     "servicesOffered": "Serviços disponíveis",
+    "viewServiceDetails": "Ver detalhes do serviço",
     "pickSlotWith": "Escolha um serviço para ver os horários disponíveis com {name}.",
     "pickSlot": "Escolher horário",
     "pickTimeWith": "Escolher horário com {name}",

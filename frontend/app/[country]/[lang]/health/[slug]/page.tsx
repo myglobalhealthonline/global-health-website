@@ -4,11 +4,16 @@ import { notFound } from "next/navigation";
 import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
-import { getCountryLandingPage, getCountryDoctors } from "@/lib/content/get-country-collections";
+import {
+  getCountryLandingPage,
+  getCountryDoctors,
+  getLandingAvailableLocales,
+} from "@/lib/content/get-country-collections";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
-import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import { indexableHreflangCluster, ogLocales } from "@/lib/seo/hreflang";
+import { eligibleLandingLocales } from "@/lib/seo/landing-locale-eligibility";
 import { SITE_NAME } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
@@ -39,10 +44,22 @@ export async function generateMetadata({
   const code = countryCodeFromSlug(country);
   if (!code || !isSupportedLocale(lang)) return { title: SITE_NAME };
   const config = getCountryByCode(code);
-  const page = await getCountryLandingPage(code, slug, lang);
+  const [page, availableLocales] = await Promise.all([
+    getCountryLandingPage(code, slug, lang),
+    getLandingAvailableLocales(code, slug),
+  ]);
   if (!page) return { title: SITE_NAME };
   const title = page.seoTitle ?? page.title;
   const description = page.seoDescription ?? `Learn about ${page.title} in ${config?.name ?? country}.`;
+  // International-locale batch (2026-08-09): `getCountryLandingPage` falls
+  // back exact-locale -> country-default-locale, so a page with only ONE real
+  // translation 200s for every supported locale. `page.resolvedLocale` is
+  // WHICH locale actually supplied the rendered content — when it doesn't
+  // match the route's own `lang`, this is fallback content, not a genuine
+  // translation of this page. Same class of bug `exactLocalesForLegalType`
+  // fixed for /legal/* — mirrored here via the landing service's
+  // `availableLocales` (the shared source of truth with app/sitemap.ts).
+  const isExactLocale = page.resolvedLocale?.toLowerCase() === lang.toLowerCase();
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/health/${slug}`,
     title,
@@ -52,8 +69,31 @@ export async function generateMetadata({
     subtitle: config?.name,
     imageAlt: `${page.title} — ${config?.name ?? country}`,
     locale: config ? ogLocales(config, lang).locale : undefined,
-    languages: config ? hreflangAlternates(config, `/health/${slug}`) : undefined,
+    // A fallback-locale render advertises NO hreflang cluster at all — it is
+    // about to be marked noindex below, and hreflang is a reciprocal claim
+    // between publishable alternates: a noindexed page has nothing to assert
+    // about its siblings, and the real alternates already advertise each
+    // other via their own indexable render.
+    languages:
+      config && isExactLocale
+        ? indexableHreflangCluster(
+            config,
+            `/health/${slug}`,
+            eligibleLandingLocales(
+              availableLocales,
+              config.supportedLocales ?? [],
+              config.defaultLocale ?? "en",
+            ),
+          )
+        : undefined,
   });
+  if (!isExactLocale) {
+    // `noindex, FOLLOW` — mirrors the service-page pattern: the page still
+    // renders and links normally (existing product behavior — no redirect on
+    // a missing translation), it just stops claiming to be this locale's
+    // indexable variant. Not submitted to the sitemap either (app/sitemap.ts).
+    metadata.robots = { index: false, follow: true };
+  }
 
   // SEO audit 2.4b — canonical the pages that cannibalise a topically
   // identical /services/ page onto that page instead (see

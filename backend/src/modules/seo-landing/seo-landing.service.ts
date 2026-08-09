@@ -215,7 +215,24 @@ export const deleteLandingPage = createDeleteLandingPage();
  * the latter). Returning it lets a service page invert the relation instead of
  * guessing at one. `title` resolves through the country default locale so an
  * untranslated page still yields a usable anchor.
+ *
+ * `availableLocales` — the locales that have a REAL translation row for this
+ * page, straight off the `translations` selection already fetched for `tr`.
+ * This is the single source of truth `app/sitemap.ts` and the `/health/[slug]`
+ * page both need to stop treating `resolveTranslation`'s fallback locale as a
+ * genuine translation (international-locale batch, 2026-08-09 — same class of
+ * bug `exactLocalesForLegalType` fixed for legal pages). Computed from data
+ * already in hand, not an extra query per locale.
  */
+/** Distinct locales that have a real translation row — extracted as a pure
+ *  function so the partial-cluster case (e.g. only en/pt/es authored) is
+ *  unit-testable without a database. */
+export function landingAvailableLocales(
+  translations: readonly { locale: LocaleCode }[],
+): LocaleCode[] {
+  return [...new Set(translations.map((t) => t.locale))];
+}
+
 export async function listPublishedLandingSlugs(countryCode: string, locale?: LocaleCode) {
   try {
     const pages = await prisma.seoLandingPage.findMany({
@@ -241,6 +258,7 @@ export async function listPublishedLandingSlugs(countryCode: string, locale?: Lo
         updatedAt: p.updatedAt.toISOString(),
         title: tr?.title ?? null,
         serviceSlugs: landingServiceSlugs(template, tr?.bodyHtml),
+        availableLocales: landingAvailableLocales(p.translations),
       };
     });
   } catch (error) {
@@ -264,7 +282,11 @@ export async function getPublicLandingPage(
     });
     if (!page) return null;
     const requested = locale ?? page.country.defaultLocale;
-    const { tr } = resolveTranslation(page.translations, requested, page.country.defaultLocale);
+    const { tr, resolvedLocale } = resolveTranslation(
+      page.translations,
+      requested,
+      page.country.defaultLocale,
+    );
     if (!tr) return null;
     return {
       slug: page.slug,
@@ -274,6 +296,10 @@ export async function getPublicLandingPage(
       bodyHtml: tr.bodyHtml,
       template: (page.template as SeoLandingUpsertBody["template"]) ?? null,
       faq: (tr.faq as Array<{ question: string; answer: string }> | null) ?? null,
+      // The locale that ACTUALLY supplied this content — lets the page tell a
+      // real translation apart from `resolveTranslation`'s country-default
+      // fallback (international-locale batch, 2026-08-09).
+      resolvedLocale,
     };
   } catch (error) {
     throw normalizeDbError(error, "Landing page is unavailable");

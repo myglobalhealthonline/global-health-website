@@ -4,6 +4,7 @@ import {
   fetchHealthTestsByCountry,
   fetchHealthTestDetail,
   fetchLandingPage,
+  fetchLandingSlugs,
   fetchServiceDetail,
   fetchServicesByCountry,
   fetchSpecialtiesByCountry,
@@ -707,6 +708,9 @@ export type CountryLandingPage = {
   bodyHtml: string | null;
   template: CountryLandingPageTemplate | null;
   faq: Array<{ question: string; answer: string }> | null;
+  /** Locale that actually supplied this content (see `resolveTranslation`
+   *  backend-side) — `null` only when the backend predates the field. */
+  resolvedLocale: string | null;
 };
 
 function readLandingTemplate(v: unknown): CountryLandingPageTemplate | null {
@@ -770,7 +774,25 @@ export const getCountryLandingPage = cache(async (
     bodyHtml: typeof r.bodyHtml === "string" ? r.bodyHtml : null,
     template: readLandingTemplate(r.template),
     faq: readLandingFaq(r.faq),
+    resolvedLocale: typeof r.resolvedLocale === "string" ? r.resolvedLocale : null,
   };
+});
+
+/**
+ * Which locales have a genuine translation row for a country's landing page —
+ * the same `availableLocales` the sitemap uses, reused here so a single
+ * `/health/[slug]` page's indexability/hreflang decision can never disagree
+ * with what's actually submitted to Google. One request per country (not per
+ * locale), cached per-request like every other collection here.
+ */
+export const getLandingAvailableLocales = cache(async (
+  countryCode: string,
+  slug: string,
+): Promise<string[]> => {
+  const res = await fetchLandingSlugs(countryCode);
+  if (!res.ok) return [];
+  const page = res.data.landingPages.find((p) => p.slug === slug);
+  return page?.availableLocales.map((l) => l.toLowerCase()) ?? [];
 });
 
 /** Single health-test detail (admin CMS content) for the public test page.

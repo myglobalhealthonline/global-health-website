@@ -297,6 +297,7 @@
     "backToClinicians": "Înapoi la clinicienii din {country}",
     "bookWithDoctor": "Rezervă cu {name}",
     "servicesOffered": "Servicii oferite",
+    "viewServiceDetails": "Vezi detaliile serviciului",
     "pickSlotWith": "Alege un serviciu pentru a vedea intervalele disponibile cu {name}.",
     "pickSlot": "Alege interval",
     "pickTimeWith": "Alege interval cu {name}",

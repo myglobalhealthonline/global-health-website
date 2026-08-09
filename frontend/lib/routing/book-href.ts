@@ -46,6 +46,16 @@ export function buildBookHref({
 }
 
 /**
+ * A service's own landing page — the crawlable link a doctor profile's
+ * assigned-service card points at (international-linking batch, 2026-08-09),
+ * distinct from `buildBookHref`'s preselected booking destination. Kept
+ * alongside it since both feed the same `ServiceCard` two-CTA card.
+ */
+export function buildServiceDetailHref(country: string, lang: string, serviceSlug: string): string {
+  return `/${country}/${lang}/services/${serviceSlug}`;
+}
+
+/**
  * True when a booking href already pins BOTH the service and the doctor.
  *
  * Those combinations are a cross-product: every doctor x every service they

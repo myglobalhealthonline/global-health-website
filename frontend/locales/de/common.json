@@ -297,6 +297,7 @@
     "backToClinicians": "Zurück zu den Ärzten in {country}",
     "bookWithDoctor": "Buchen mit {name}",
     "servicesOffered": "Angebotene Leistungen",
+    "viewServiceDetails": "Serviceleistung ansehen",
     "pickSlotWith": "Wählen Sie einen Dienst, um freie Termine mit {name} zu sehen.",
     "pickSlot": "Termin wählen",
     "pickTimeWith": "Zeit wählen mit {name}",

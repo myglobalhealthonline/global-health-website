@@ -307,6 +307,7 @@ export type CommonLocale = {
     backToClinicians: string;
     bookWithDoctor: string;
     servicesOffered: string;
+    viewServiceDetails: string;
     pickSlotWith: string;
     pickSlot: string;
     pickTimeWith: string;

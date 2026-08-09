@@ -19,6 +19,7 @@ import {
   LEGAL_TYPE_SLUGS,
 } from "@/lib/content/get-country-legal";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
+import { eligibleLandingLocales } from "@/lib/seo/landing-locale-eligibility";
 import { newestTimestamp } from "@/lib/seo/newest-timestamp";
 import {
   isRetiredHealthSlug,
@@ -197,8 +198,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // SEO landing pages — published condition/audience pages per country.
   // Indexed here (Rule 6) but deliberately absent from nav + listing pages.
-  // One entry per enabled locale, each carrying hreflang alternates so Google
-  // indexes the translated variants and understands they are the same page.
+  //
+  // International-locale batch (2026-08-09): this used to submit
+  // `landing page × every supported locale` regardless of whether that locale
+  // has a real translation row — the same class of bug `exactLocalesForLegalType`
+  // fixed for /legal/* (46 of 297 country x locale x type combinations served
+  // the wrong language). `page.availableLocales` is the backend's own record
+  // of which locales have a genuine translation for THIS page (seo-landing.service.ts
+  // `listPublishedLandingSlugs`) — the exact same field the page itself now
+  // reads (app/[country]/[lang]/health/[slug]/page.tsx) to decide noindex, so
+  // sitemap eligibility and indexability can never disagree.
   for (const country of countries) {
     try {
       const res = await fetchLandingSlugs(country.code);
@@ -206,10 +215,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const slug = `/${country.slug || countrySlug(country.code)}`;
       const defaultLang = (country.defaultLocale ?? "en").toLowerCase();
       const region = hreflangRegion(country.code);
-      const langs =
-        country.supportedLocales && country.supportedLocales.length > 0
-          ? country.supportedLocales.map((l) => l.toLowerCase())
-          : [defaultLang];
       for (const page of res.data.landingPages) {
         // A retired landing page still exists in the CMS but is 301'd in
         // next.config.ts, so submitting it would put a redirecting URL in the
@@ -226,12 +231,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ) {
           continue;
         }
+        const langs = eligibleLandingLocales(
+          page.availableLocales,
+          country.supportedLocales ?? [],
+          defaultLang,
+        );
+        if (langs.length === 0) continue;
         bump(country.code, "landing", page.updatedAt);
         const languages: Record<string, string> = {};
         for (const lang of langs) {
           languages[`${lang}-${region}`] = `${base}${slug}/${lang}/health/${page.slug}`;
         }
-        languages["x-default"] = `${base}${slug}/${defaultLang}/health/${page.slug}`;
+        languages["x-default"] = `${base}${slug}/${langs[0]}/health/${page.slug}`;
         for (const lang of langs) {
           urls.push({
             url: `${base}${slug}/${lang}/health/${page.slug}`,

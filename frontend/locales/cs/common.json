@@ -297,6 +297,7 @@
     "backToClinicians": "Zpět na lékaře v {country}",
     "bookWithDoctor": "Rezervovat s {name}",
     "servicesOffered": "Nabízené služby",
+    "viewServiceDetails": "Zobrazit podrobnosti o službě",
     "pickSlotWith": "Vyberte službu pro zobrazení volných termínů s {name}.",
     "pickSlot": "Vybrat termín",
     "pickTimeWith": "Vybrat termín s {name}",
