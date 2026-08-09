@@ -264,28 +264,28 @@ export function DoctorTeamTemplate({
                   the first PAGE_SIZE doctors. This index is plain, always-
                   rendered content covering the full roster: a real inlink for
                   every doctor beyond page one, independent of carousel state.
-                  Kept visually modest on purpose — it is a discovery path,
-                  not a second marketing surface. */}
+                  Visually hidden on purpose (2026-08-09) — it's a crawl
+                  discovery path, not a second marketing surface, and the
+                  PageRank/discovery value only needs the `<a href>` present
+                  in server HTML, not seen by visitors. `sr-only` keeps real
+                  anchors plus screen-reader/keyboard access. */}
               {totalPages > 1 ? (
                 <nav
                   aria-label={i18n?.allDoctorsHeading?.replace("{country}", countryName) ?? countryName}
-                  className="mt-10 border-t border-[rgba(255,255,255,0.12)] pt-8"
+                  className="sr-only"
                 >
-                  <p className="mb-4 text-xs font-bold tracking-[0.14em] text-white/50 uppercase">
+                  <p>
                     {(i18n?.allDoctorsHeading ?? "All doctors in {country}").replace(
                       "{country}",
                       countryName,
                     )}
                   </p>
-                  <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                  <ul>
                     {doctors
                       .filter((d) => d.href)
                       .map((d) => (
                         <li key={d.href}>
-                          <Link
-                            href={d.href!}
-                            className="text-sm text-white/70 underline decoration-white/25 underline-offset-4 hover:text-white hover:decoration-white/50"
-                          >
+                          <Link href={d.href!}>
                             {d.name}
                             {d.title ? ` — ${d.title}` : ""}
                           </Link>

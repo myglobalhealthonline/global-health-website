@@ -17,6 +17,12 @@ import { localizedLanguageLabel } from "@/lib/content/languages";
  * map only clusters same-country, same-content, different-language variants —
  * there's no reliable slug-equivalence mapping across separately authored
  * per-country content to link to instead.
+ *
+ * Visually hidden on purpose (2026-08-09): the PageRank-flow value comes
+ * entirely from the `<a href>` being present in server HTML — a crawler
+ * follows it whether or not a human ever sees it rendered. `sr-only` keeps
+ * the real anchor tags (and screen-reader / keyboard access) without a
+ * visible link-dump section on every page.
  */
 export function AlsoAvailableIn({
   country,
@@ -38,28 +44,17 @@ export function AlsoAvailableIn({
   if (links.length === 0) return null;
 
   return (
-    <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
-      <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-        <h2
-          className="font-extrabold tracking-[-0.02em] leading-tight"
-          style={{ fontSize: "clamp(1.25rem, 1.5vw + 0.75rem, 1.75rem)", color: "var(--color-text-primary)" }}
-        >
-          {title}
-        </h2>
-        <ul className="mt-4 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
-          {links.map((l) => (
-            <li key={l.tag}>
-              <Link
-                href={l.href}
-                hrefLang={l.tag}
-                className="inline-flex min-h-11 items-center font-semibold text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
-              >
-                {localizedLanguageLabel(l.targetLang, current)}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+    <nav aria-label={title} className="sr-only">
+      <h2>{title}</h2>
+      <ul>
+        {links.map((l) => (
+          <li key={l.tag}>
+            <Link href={l.href} hrefLang={l.tag}>
+              {localizedLanguageLabel(l.targetLang, current)}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
