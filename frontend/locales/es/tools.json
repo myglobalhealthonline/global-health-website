@@ -29,7 +29,9 @@
     "age": "Edad",
     "years": "años",
     "activity": "Nivel de actividad",
-    "kcalPerDay": "kcal / día"
+    "kcalPerDay": "kcal / día",
+    "yes": "Sí",
+    "no": "No"
   },
   "suggestions": {
     "heading": "Cuál es el siguiente paso",
@@ -148,6 +150,20 @@
       "negative": {
         "label": "Resultado del cribado: negativo",
         "summary": "Tus respuestas no coinciden con el patrón que busca este cuestionario. Eso no descarta el TDAH — seis preguntas cubren solo una parte —, así que si estas dificultades están afectando a tu trabajo, tus estudios o tus relaciones, coméntalo igualmente con un médico."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Evaluación recomendada ahora",
+        "summary": "Tu edad o tus factores de riesgo coinciden con el patrón que las guías utilizan para recomendar una evaluación de osteoporosis. Esto no es un diagnóstico — el siguiente paso es hablar con un médico sobre una densitometría ósea (DXA)."
+      },
+      "discuss-next": {
+        "label": "Vale la pena comentarlo en tu próxima consulta",
+        "summary": "Tienes un factor de riesgo que las guías tienen en cuenta, aunque por sí solo no requiere una evaluación inmediata. Coméntalo la próxima vez que veas a un médico."
+      },
+      "no-flags": {
+        "label": "Ningún factor de riesgo específico señalado",
+        "summary": "Nada de lo que has introducido coincide con los factores de riesgo publicados que las guías utilizan para el cribado de la osteoporosis. Eso es tranquilizador, pero no es una garantía — comenta cualquier fractura o caída nueva a un médico de todos modos."
       }
     }
   },
@@ -898,6 +914,179 @@
         "label": "Reservar consulta"
       },
       "suggestionsIntro": "Una fecha estimada es el comienzo del seguimiento del embarazo, no todo él. Estas son las consultas que dan el siguiente paso."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Evaluación de riesgo de osteoporosis",
+      "cardBlurb": "Qué factores de riesgo publicados de fractura por fragilidad se aplican a ti, y si vale la pena pedir una densitometría ósea.",
+      "eyebrow": "Herramienta de salud gratuita",
+      "h1Lead": "Riesgo de",
+      "h1Accent": "osteoporosis",
+      "h1Trail": "{country}",
+      "metaTitle": "Evaluación de Riesgo de Osteoporosis {country} | ¿Necesito una Densitometría Ósea?",
+      "metaDescription": "Comprueba los factores de riesgo publicados de osteoporosis y fractura por fragilidad, y descubre si las guías clínicas recomiendan que te evalúen. No es el FRAX ni un diagnóstico — una lista de cribado para llevar al médico.",
+      "lede": "Responde preguntas sobre tu edad, sexo y factores de riesgo para ver si las guías clínicas publicadas recomiendan que pidas una evaluación de la densidad ósea.",
+      "trustPoints": [
+        "Basado en las guías de cribado de NICE, no en una puntuación propietaria",
+        "Muestra por separado los factores de riesgo mayores y contribuyentes",
+        "Funciona en tu navegador — nada se envía ni se guarda"
+      ],
+      "suggestionsIntro": "Un factor de riesgo señalado es motivo para preguntar sobre una densitometría ósea, no un diagnóstico. Estas son las consultas que pueden llevarlo más allá.",
+      "widget": {
+        "title": "Tus factores de riesgo",
+        "placeholder": "Responde a las preguntas para ver si vale la pena pedir una evaluación de la densidad ósea.",
+        "note": "Esto identifica a quién deberían evaluar por osteoporosis — no estima tu riesgo de fractura y no es un diagnóstico. Una evaluación completa utiliza una densitometría ósea (DXA) y una herramienta validada como el FRAX, realizada por un médico.",
+        "fractureLabel": "Fractura por fragilidad después de los 50 años",
+        "fractureHint": "Una fractura por una caída desde tu propia altura o menos — muñeca, cadera, columna o brazo.",
+        "glucocorticoidLabel": "Corticoides orales durante 3 meses o más",
+        "parentalHipLabel": "Uno de tus padres se fracturó la cadera",
+        "smokerLabel": "Fumador actual",
+        "alcoholLabel": "3 o más unidades de alcohol al día",
+        "raLabel": "Artritis reumatoide",
+        "secondaryLabel": "Una causa secundaria de pérdida ósea",
+        "secondaryHint": "Como hipertiroidismo, malabsorción, o enfermedad hepática o renal de larga duración.",
+        "fallsLabel": "2 o más caídas en el último año",
+        "menopauseLabel": "Menopausia antes de los 45 años",
+        "majorLabel": "Factores mayores señalados",
+        "contributingLabel": "Factores contribuyentes señalados"
+      },
+      "sections": [
+        {
+          "heading": "Factores de riesgo de fractura por fragilidad",
+          "body": [
+            "La osteoporosis no da síntomas por sí misma — la primera señal suele ser una fractura por una caída que normalmente no rompería un hueso. Por eso las guías clínicas parten de los factores de riesgo para decidir a quién vale la pena evaluar antes de que ocurra una fractura, no después.",
+            "Los diez factores de abajo son los que recoge la guía CG146 de NICE para esa decisión. Dos se consideran mayores por sí solos; el resto suman en vez de actuar por separado."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Factores de riesgo que las guías de cribado de NICE señalan para la evaluación",
+            "columns": [
+              "Factor de riesgo",
+              "Por qué importa",
+              "Mayor o contribuyente"
+            ],
+            "rows": [
+              [
+                "Fractura por fragilidad después de los 50",
+                "Una fractura de muñeca, cadera, columna o brazo por una caída leve es el indicador más fuerte de otra fractura.",
+                "Mayor"
+              ],
+              [
+                "Corticoides orales de larga duración (3+ meses)",
+                "Los glucocorticoides debilitan directamente el hueso, con independencia de cualquier otro factor de esta lista.",
+                "Mayor"
+              ],
+              [
+                "Uno de tus padres se fracturó la cadera",
+                "Apunta a una resistencia ósea heredada, distinta de tu propio estilo de vida.",
+                "Contribuyente"
+              ],
+              [
+                "Fumador actual",
+                "Reduce la densidad ósea y retrasa la curación si llega a haber una fractura.",
+                "Contribuyente"
+              ],
+              [
+                "3+ unidades de alcohol al día",
+                "Reduce la formación ósea y aumenta el propio riesgo de caída.",
+                "Contribuyente"
+              ],
+              [
+                "Artritis reumatoide",
+                "La enfermedad, y a menudo su tratamiento, afectan al recambio óseo.",
+                "Contribuyente"
+              ],
+              [
+                "Una causa secundaria de pérdida ósea",
+                "Afecciones como el hipertiroidismo o la enfermedad hepática o renal de larga duración reducen la densidad ósea por sí solas.",
+                "Contribuyente"
+              ],
+              [
+                "2+ caídas en el último año",
+                "La mayoría de las fracturas por fragilidad ocurren tras una caída desde la propia altura, no de forma aislada.",
+                "Contribuyente"
+              ],
+              [
+                "Menopausia antes de los 45 años",
+                "El estrógeno protege el hueso, así que perderlo antes le da más tiempo a la pérdida ósea.",
+                "Contribuyente"
+              ],
+              [
+                "Bajo peso corporal (IMC por debajo de 18,5)",
+                "Menos masa corporal suele significar menos masa ósea, y menos amortiguación si se produce una caída.",
+                "Contribuyente"
+              ]
+            ],
+            "footnote": "Basado en los factores de riesgo que la guía CG146 de NICE (evaluación del riesgo de fractura por fragilidad) recoge para el cribado. Es una lista de cribado, no una puntuación diagnóstica."
+          }
+        },
+        {
+          "heading": "A quién dicen las guías clínicas que hay que evaluar",
+          "body": [
+            "NICE, el National Osteoporosis Guideline Group (NOGG) del Reino Unido y la European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) marcan un umbral prácticamente igual. Es un criterio de edad más un criterio de factores de riesgo, no un único número."
+          ],
+          "bullets": [
+            "Todas las mujeres de 65 años o más, y todos los hombres de 75 años o más — se recomienda evaluación solo por la edad.",
+            "Personas más jóvenes con un factor de riesgo mayor — una fractura por fragilidad previa o corticoides orales de larga duración — a cualquier edad, incluso antes de los 50 años.",
+            "Cualquier persona de 50 años o más con uno de los factores contribuyentes de la tabla anterior.",
+            "Esta herramienta aplica esa regla publicada a lo que introduzcas. No calcula una probabilidad, y no es el FRAX — el FRAX es una herramienta propietaria distinta que utiliza un médico, y que combina este tipo de factores con una medición de la densidad ósea."
+          ]
+        },
+        {
+          "heading": "Lo que esta evaluación no te dice",
+          "body": [
+            "Una lista de factores de riesgo es una herramienta de cribado, no una medición. Te dice si vale la pena preguntar por una prueba — no te dice qué mostraría esa prueba."
+          ],
+          "bullets": [
+            "No es un diagnóstico. La osteoporosis se diagnostica con una densitometría ósea (DXA), no con un cuestionario.",
+            "No da una probabilidad de fractura. Las herramientas que sí lo hacen — FRAX, el nomograma de Garvan, QFracture — combinan factores de riesgo con una medición de la densidad ósea, y las utiliza un médico.",
+            "No es el FRAX y no utiliza sus coeficientes, que son propiedad de la Universidad de Sheffield.",
+            "Un resultado de \"ningún factor de riesgo específico señalado\" es tranquilizador, pero no es una garantía — comenta cualquier fractura o caída nueva a un médico de todos modos.",
+            "No dice nada sobre el tratamiento. La medicación es una decisión de un médico, tomada después de un diagnóstico, no a partir de una lista de factores de riesgo."
+          ]
+        },
+        {
+          "heading": "Cómo avanzar hacia una evaluación",
+          "body": [],
+          "bullets": [
+            "Empieza por hablar con un médico. Valorará tus factores de riesgo y decidirá si tiene sentido pedir una densitometría ósea.",
+            "Lleva los factores que esta herramienta ha señalado para ti — cuáles, no solo el resultado — para que la consulta sea más rápida.",
+            "Si ya has tenido una fractura por fragilidad, pregunta por una evaluación con independencia de tu edad o del resultado de esta herramienta.",
+            "El calcio, la vitamina D, el ejercicio con carga y dejar de fumar ayudan a la salud ósea mientras esperas cualquier evaluación.",
+            "Busca atención médica cuanto antes ante una nueva fractura por una caída leve, sea cual sea el resultado de esta herramienta — necesita tratarse por sí misma."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Esto es lo mismo que el FRAX?",
+          "answer": "No. El FRAX es una herramienta propietaria distinta, desarrollada por la Universidad de Sheffield, cuyos coeficientes no son públicos — esta herramienta no lo reproduce ni afirma igualar su resultado. Esta es una lista de cribado basada en guías publicadas (NICE CG146): te dice si vale la pena que te evalúen, nunca una probabilidad de fractura."
+        },
+        {
+          "question": "¿Qué es una densitometría ósea (DXA)?",
+          "answer": "Una prueba de absorciometría de rayos X de doble energía — una radiografía de baja dosis que mide la densidad ósea, normalmente en la cadera y la columna. Es la prueba en la que realmente se basa una evaluación; nada en esta página la sustituye."
+        },
+        {
+          "question": "¿Tener factores de riesgo significa que tengo osteoporosis?",
+          "answer": "No. Un factor de riesgo señalado significa que las guías recomiendan que te evalúen, no que tengas la enfermedad. Muchas personas con factores de riesgo tienen una densitometría ósea normal, y la osteoporosis también puede aparecer sin ninguno de los factores aquí indicados."
+        },
+        {
+          "question": "¿Y si mi resultado es 'ningún factor de riesgo específico señalado' pero sigo preocupado?",
+          "answer": "Coméntalo con un médico de todos modos. Esta herramienta cubre los factores de riesgo de una guía clínica; no cubre todo el historial personal o familiar que pueda ser relevante, y una conversación no cuesta nada que esta lista no pueda valorar."
+        },
+        {
+          "question": "¿Quién diagnostica realmente la osteoporosis?",
+          "answer": "Un médico, a partir de una densitometría ósea (DXA) — normalmente un T-score de -2,5 o inferior en la cadera o la columna. Un cuestionario de factores de riesgo como este solo puede sugerir a quién hacerle esa prueba; no puede diagnosticar nada por sí mismo."
+        },
+        {
+          "question": "¿Esta evaluación guarda mis respuestas?",
+          "answer": "No. El cálculo se hace enteramente en tu navegador. Nada de lo que selecciones se envía a nuestros servidores ni se guarda."
+        }
+      ],
+      "cta": {
+        "heading": "¿Quieres hablar sobre tu salud ósea?",
+        "body": "Reserva una videoconsulta con un médico colegiado, repasa tus factores de riesgo y descubre si tiene sentido pedir una densitometría ósea.",
+        "label": "Reservar consulta"
+      }
     },
     "ovulation-calculator": {
       "cardTitle": "Calculadora de ovulación",

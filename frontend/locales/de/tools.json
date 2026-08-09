@@ -29,7 +29,9 @@
     "age": "Alter",
     "years": "Jahre",
     "activity": "Aktivitätsniveau",
-    "kcalPerDay": "kcal / Tag"
+    "kcalPerDay": "kcal / Tag",
+    "yes": "Ja",
+    "no": "Nein"
   },
   "suggestions": {
     "heading": "Wie es weitergeht",
@@ -148,6 +150,20 @@
       "negative": {
         "label": "Screening-Ergebnis: unauffällig",
         "summary": "Ihre Antworten entsprechen dem gesuchten Muster nicht. Ausgeschlossen ist ADHS damit nicht — sechs Fragen decken nur einen Teil ab. Wenn diese Schwierigkeiten Ihre Arbeit, Ihr Studium oder Ihre Beziehungen belasten, sprechen Sie trotzdem ärztlich darüber."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Abklärung jetzt empfohlen",
+        "summary": "Ihr Alter oder Ihre Risikofaktoren entsprechen dem Muster, nach dem Leitlinien eine Osteoporose-Abklärung empfehlen. Das ist keine Diagnose — der nächste Schritt ist ein Gespräch mit einer Ärztin oder einem Arzt über eine Knochendichtemessung (DXA)."
+      },
+      "discuss-next": {
+        "label": "Beim nächsten Termin ansprechen",
+        "summary": "Sie haben einen Risikofaktor, den Leitlinien berücksichtigen, auch wenn er allein noch keine sofortige Abklärung erfordert. Sprechen Sie ihn beim nächsten Arztbesuch an."
+      },
+      "no-flags": {
+        "label": "Keine spezifischen Risikofaktoren festgestellt",
+        "summary": "Nichts von dem, was Sie angegeben haben, entspricht den veröffentlichten Risikofaktoren, die Leitlinien zur Osteoporose-Früherkennung nutzen. Das ist beruhigend, aber keine Garantie — melden Sie jede neue Fraktur oder jeden Sturz trotzdem ärztlich."
       }
     }
   },
@@ -898,6 +914,179 @@
         "label": "Termin buchen"
       },
       "suggestionsIntro": "Ein errechneter Termin ist der Anfang der Schwangerschaftsvorsorge, nicht das Ganze. Diese Sprechstunden gehen den nächsten Schritt."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Osteoporose-Risikocheck",
+      "cardBlurb": "Welche veröffentlichten Risikofaktoren für eine Fragilitätsfraktur auf Sie zutreffen, und ob eine Knochendichtemessung sinnvoll wäre.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Osteoporose-",
+      "h1Accent": "Risikocheck",
+      "h1Trail": "{country}",
+      "metaTitle": "Osteoporose-Risikocheck {country} | Brauche Ich Eine Knochendichtemessung?",
+      "metaDescription": "Prüfen Sie die veröffentlichten Risikofaktoren für Osteoporose und Fragilitätsfrakturen und sehen Sie, ob Leitlinien eine Abklärung empfehlen. Kein FRAX, keine Diagnose — eine Checkliste zur Früherkennung, die Sie zu einem Arzttermin mitnehmen können.",
+      "lede": "Beantworten Sie Fragen zu Alter, Geschlecht und Risikofaktoren, um zu sehen, ob veröffentlichte Leitlinien eine Knochendichtemessung empfehlen.",
+      "trustPoints": [
+        "Basiert auf der NICE-Leitlinie zur Früherkennung, nicht auf einem proprietären Score",
+        "Zeigt schwerwiegende und mitwirkende Risikofaktoren getrennt",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Ein festgestellter Risikofaktor ist ein Grund, nach einer Knochendichtemessung zu fragen, keine Diagnose. Das sind die Sprechstunden, die das weiter abklären können.",
+      "widget": {
+        "title": "Ihre Risikofaktoren",
+        "placeholder": "Beantworten Sie die Fragen, um zu sehen, ob eine Knochendichtemessung sinnvoll wäre.",
+        "note": "Dieses Tool zeigt, wer auf Osteoporose abgeklärt werden sollte — es schätzt nicht Ihr Frakturrisiko und ist keine Diagnose. Eine vollständige Abklärung nutzt eine Knochendichtemessung (DXA) und ein validiertes Instrument wie FRAX, durchgeführt von einer Ärztin oder einem Arzt.",
+        "fractureLabel": "Fragilitätsfraktur nach dem 50. Lebensjahr",
+        "fractureHint": "Ein Bruch durch einen Sturz aus Stehhöhe oder weniger — Handgelenk, Hüfte, Wirbelsäule oder Arm.",
+        "glucocorticoidLabel": "Orale Kortikosteroide für 3 Monate oder länger",
+        "parentalHipLabel": "Ein Elternteil hatte einen Hüftbruch",
+        "smokerLabel": "Aktuell Raucher/in",
+        "alcoholLabel": "3 oder mehr Alkoholeinheiten pro Tag",
+        "raLabel": "Rheumatoide Arthritis",
+        "secondaryLabel": "Eine sekundäre Ursache des Knochenabbaus",
+        "secondaryHint": "Zum Beispiel eine Schilddrüsenüberfunktion, eine Resorptionsstörung oder eine langfristige Leber- oder Nierenerkrankung.",
+        "fallsLabel": "2 oder mehr Stürze im letzten Jahr",
+        "menopauseLabel": "Menopause vor dem 45. Lebensjahr",
+        "majorLabel": "Festgestellte schwerwiegende Faktoren",
+        "contributingLabel": "Festgestellte mitwirkende Faktoren"
+      },
+      "sections": [
+        {
+          "heading": "Risikofaktoren für eine Fragilitätsfraktur",
+          "body": [
+            "Osteoporose selbst verursacht keine Symptome — das erste Anzeichen ist oft ein Bruch nach einem Sturz, der normalerweise keinen Knochen brechen würde. Leitlinien gehen deshalb von Risikofaktoren aus, um zu entscheiden, wer vor einem Bruch abgeklärt werden sollte, statt danach.",
+            "Die zehn Faktoren unten sind die, die die NICE-Leitlinie CG146 für diese Entscheidung nennt. Zwei gelten für sich genommen als schwerwiegend; die übrigen summieren sich, statt allein zu wirken."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Risikofaktoren, die die NICE-Leitlinie zur Früherkennung für eine Abklärung nennt",
+            "columns": [
+              "Risikofaktor",
+              "Warum er wichtig ist",
+              "Schwerwiegend oder mitwirkend"
+            ],
+            "rows": [
+              [
+                "Fragilitätsfraktur nach dem 50. Lebensjahr",
+                "Ein Bruch von Handgelenk, Hüfte, Wirbelsäule oder Arm durch einen leichten Sturz ist der stärkste Hinweis auf einen weiteren Bruch.",
+                "Schwerwiegend"
+              ],
+              [
+                "Langfristige orale Kortikosteroide (3+ Monate)",
+                "Glukokortikoide schwächen den Knochen direkt, unabhängig von jedem anderen Faktor dieser Liste.",
+                "Schwerwiegend"
+              ],
+              [
+                "Ein Elternteil hatte einen Hüftbruch",
+                "Weist auf eine vererbte Knochenfestigkeit hin, unabhängig vom eigenen Lebensstil.",
+                "Mitwirkend"
+              ],
+              [
+                "Aktuell Raucher/in",
+                "Senkt die Knochendichte und verlangsamt die Heilung, falls es zu einem Bruch kommt.",
+                "Mitwirkend"
+              ],
+              [
+                "3+ Alkoholeinheiten pro Tag",
+                "Verringert den Knochenaufbau und erhöht schon das Sturzrisiko selbst.",
+                "Mitwirkend"
+              ],
+              [
+                "Rheumatoide Arthritis",
+                "Die Erkrankung selbst, und oft auch ihre Behandlung, beeinflussen den Knochenstoffwechsel.",
+                "Mitwirkend"
+              ],
+              [
+                "Eine sekundäre Ursache des Knochenabbaus",
+                "Erkrankungen wie eine Schilddrüsenüberfunktion oder eine langfristige Leber- oder Nierenerkrankung senken die Knochendichte für sich genommen.",
+                "Mitwirkend"
+              ],
+              [
+                "2+ Stürze im letzten Jahr",
+                "Die meisten Fragilitätsfrakturen entstehen nach einem Sturz aus Stehhöhe, nicht isoliert.",
+                "Mitwirkend"
+              ],
+              [
+                "Menopause vor dem 45. Lebensjahr",
+                "Östrogen schützt den Knochen, sodass sein früherer Verlust dem Knochenabbau mehr Zeit gibt.",
+                "Mitwirkend"
+              ],
+              [
+                "Niedriges Körpergewicht (BMI unter 18,5)",
+                "Weniger Körpermasse bedeutet in der Regel weniger Knochenmasse und weniger Dämpfung bei einem Sturz.",
+                "Mitwirkend"
+              ]
+            ],
+            "footnote": "Basierend auf den Risikofaktoren, die die NICE-Leitlinie CG146 (Bewertung des Risikos einer Fragilitätsfraktur) zur Früherkennung nennt. Es handelt sich um eine Screening-Liste, keinen Diagnose-Score."
+          }
+        },
+        {
+          "heading": "Wer laut Leitlinien abgeklärt werden sollte",
+          "body": [
+            "NICE, die britische National Osteoporosis Guideline Group (NOGG) und die European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) setzen im Wesentlichen dieselbe Schwelle an. Es ist eine Kombination aus Alters- und Risikofaktoren-Schwelle, keine einzelne Zahl."
+          ],
+          "bullets": [
+            "Alle Frauen ab 65 Jahren und alle Männer ab 75 Jahren — eine Abklärung wird allein aufgrund des Alters empfohlen.",
+            "Jüngere Personen mit einem schwerwiegenden Risikofaktor — einer früheren Fragilitätsfraktur oder langfristigen oralen Kortikosteroiden — in jedem Alter, auch unter 50 Jahren.",
+            "Jede Person ab 50 Jahren mit einem der mitwirkenden Faktoren aus der obigen Tabelle.",
+            "Dieses Tool wendet diese veröffentlichte Regel auf Ihre Angaben an. Es berechnet keine Wahrscheinlichkeit und ist nicht FRAX — FRAX ist ein separates, proprietäres Instrument, das von einer Ärztin oder einem Arzt angewendet wird und diese Art von Faktoren mit einer Knochendichtemessung kombiniert."
+          ]
+        },
+        {
+          "heading": "Was dieser Check Ihnen nicht sagen kann",
+          "body": [
+            "Eine Liste von Risikofaktoren ist ein Sortierinstrument, keine Messung. Sie sagt Ihnen, ob es sich lohnt, nach einer Untersuchung zu fragen — nicht, was diese Untersuchung zeigen würde."
+          ],
+          "bullets": [
+            "Es ist keine Diagnose. Osteoporose wird durch eine Knochendichtemessung (DXA) diagnostiziert, nicht durch einen Fragebogen.",
+            "Es liefert keine Frakturwahrscheinlichkeit. Instrumente, die das tun — FRAX, das Garvan-Nomogramm, QFracture — kombinieren Risikofaktoren mit einer Knochendichtemessung und werden von einer Ärztin oder einem Arzt angewendet.",
+            "Es ist nicht FRAX und verwendet nicht dessen Koeffizienten, die Eigentum der University of Sheffield sind.",
+            "Ein Ergebnis „keine spezifischen Risikofaktoren festgestellt“ ist beruhigend, aber keine Garantie — melden Sie jede neue Fraktur oder jeden Sturz trotzdem ärztlich.",
+            "Es sagt nichts über eine Behandlung aus. Medikamente sind eine Entscheidung einer Ärztin oder eines Arztes, getroffen nach einer Diagnose, nicht anhand einer Risikoliste."
+          ]
+        },
+        {
+          "heading": "So kommen Sie zu einer Abklärung",
+          "body": [],
+          "bullets": [
+            "Beginnen Sie bei einer Ärztin oder einem Arzt. Sie oder er wägt Ihre Risikofaktoren ab und entscheidet, ob eine Überweisung zur Knochendichtemessung sinnvoll ist.",
+            "Nehmen Sie die von diesem Tool festgestellten Faktoren mit — welche genau, nicht nur die Kategorie —, damit das Gespräch schneller geht.",
+            "Wenn Sie bereits eine Fragilitätsfraktur hatten, fragen Sie unabhängig von Ihrem Alter oder dem Ergebnis dieses Tools nach einer Abklärung.",
+            "Kalzium, Vitamin D, Bewegung mit Belastung und Rauchstopp unterstützen die Knochengesundheit, während Sie auf eine Abklärung warten.",
+            "Holen Sie bei einem neuen Bruch durch einen leichten Sturz umgehend ärztliche Hilfe, unabhängig davon, was dieses Tool anzeigt — er muss für sich behandelt werden."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Ist das dasselbe wie FRAX?",
+          "answer": "Nein. FRAX ist ein separates, proprietäres Instrument der University of Sheffield, dessen Koeffizienten nicht veröffentlicht sind — dieses Tool bildet es nicht nach und beansprucht nicht, sein Ergebnis zu erreichen. Dies ist eine Checkliste zur Früherkennung, die auf veröffentlichten Leitlinien beruht (NICE CG146): Sie sagt Ihnen, ob sich eine Abklärung lohnt, niemals eine Frakturwahrscheinlichkeit."
+        },
+        {
+          "question": "Was ist eine Knochendichtemessung (DXA)?",
+          "answer": "Eine Dual-Röntgen-Absorptiometrie — eine niedrig dosierte Röntgenuntersuchung, die die Knochendichte misst, meist an Hüfte und Wirbelsäule. Sie ist die Untersuchung, auf der eine Abklärung tatsächlich beruht; nichts auf dieser Seite ersetzt sie."
+        },
+        {
+          "question": "Bedeuten Risikofaktoren, dass ich Osteoporose habe?",
+          "answer": "Nein. Ein festgestellter Risikofaktor bedeutet, dass Leitlinien eine Abklärung empfehlen, nicht dass die Erkrankung vorliegt. Viele Menschen mit Risikofaktoren haben eine normale Knochendichtemessung, und Osteoporose kann auch ohne einen der hier genannten Faktoren auftreten."
+        },
+        {
+          "question": "Was, wenn mein Ergebnis 'keine spezifischen Risikofaktoren festgestellt' ist, ich mir aber trotzdem Sorgen mache?",
+          "answer": "Sprechen Sie es trotzdem ärztlich an. Dieses Tool deckt die Risikofaktoren einer einzelnen klinischen Leitlinie ab; es deckt nicht die gesamte persönliche oder familiäre Vorgeschichte ab, die relevant sein könnte, und ein Gespräch kostet nichts, was diese Liste nicht abwägen kann."
+        },
+        {
+          "question": "Wer diagnostiziert Osteoporose tatsächlich?",
+          "answer": "Eine Ärztin oder ein Arzt, anhand einer Knochendichtemessung (DXA) — meist ein T-Score von -2,5 oder niedriger an Hüfte oder Wirbelsäule. Ein Risikofaktoren-Fragebogen wie dieser kann nur vorschlagen, wer diese Untersuchung bekommen sollte; er kann selbst nichts diagnostizieren."
+        },
+        {
+          "question": "Speichert dieser Check meine Antworten?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts, was Sie auswählen, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Möchten Sie über Ihre Knochengesundheit sprechen?",
+        "body": "Vereinbaren Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt, gehen Sie Ihre Risikofaktoren durch und finden Sie heraus, ob eine Überweisung zur Knochendichtemessung sinnvoll ist.",
+        "label": "Termin buchen"
+      }
     },
     "ovulation-calculator": {
       "cardTitle": "Eisprungrechner",

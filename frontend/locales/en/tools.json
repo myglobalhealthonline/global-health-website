@@ -29,7 +29,9 @@
     "age": "Age",
     "years": "years",
     "activity": "Activity level",
-    "kcalPerDay": "kcal / day"
+    "kcalPerDay": "kcal / day",
+    "yes": "Yes",
+    "no": "No"
   },
   "suggestions": {
     "heading": "Where to go from here",
@@ -148,6 +150,20 @@
       "negative": {
         "label": "Screening result: negative",
         "summary": "Your answers do not match the pattern this screener looks for. That does not rule ADHD out — six questions cover only part of it — so if these difficulties are affecting your work, your studies or your relationships, talk to a doctor anyway."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Assessment recommended now",
+        "summary": "Your age or your risk factors match the pattern guidelines use to recommend an osteoporosis assessment. This is not a diagnosis — the next step is a conversation with a doctor about a DXA bone density scan."
+      },
+      "discuss-next": {
+        "label": "Worth discussing at your next appointment",
+        "summary": "You have a risk factor that guidelines take into account, even though it does not on its own call for immediate assessment. Mention it next time you see a doctor."
+      },
+      "no-flags": {
+        "label": "No specific risk factors flagged",
+        "summary": "Nothing you entered matches the published risk factors guidelines use for osteoporosis case-finding. That is reassuring, but it is not a guarantee — mention any new fracture or fall to a doctor regardless."
       }
     }
   },
@@ -898,6 +914,179 @@
         "label": "Book a consultation"
       },
       "suggestionsIntro": "An estimated date is where antenatal care starts, not the whole of it. These are the consultations that take it further."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Osteoporosis risk checker",
+      "cardBlurb": "Which published risk factors for a fragility fracture apply to you, and whether it's worth asking for a bone density scan.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "Osteoporosis",
+      "h1Accent": "risk checker",
+      "h1Trail": "{country}",
+      "metaTitle": "Osteoporosis Risk Checker {country} | Should You Get a Bone Density Scan?",
+      "metaDescription": "Check the published risk factors for osteoporosis and fragility fracture, and see whether guidelines recommend you be assessed. Not FRAX, not a diagnosis — a case-finding checklist you can bring to a doctor.",
+      "lede": "Answer questions about your age, sex and risk factors to see whether published guidelines recommend you ask for a bone density assessment.",
+      "trustPoints": [
+        "Based on NICE case-finding guidance, not a proprietary score",
+        "Shows major and contributing risk factors separately",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "suggestionsIntro": "A flagged risk factor is a reason to ask about a bone density scan, not a diagnosis. These are the consultations that can take it further.",
+      "widget": {
+        "title": "Your risk factors",
+        "placeholder": "Answer the questions to see whether it's worth asking for a bone density assessment.",
+        "note": "This identifies who should be assessed for osteoporosis — it does not estimate your fracture risk and is not a diagnosis. A full assessment uses a DXA bone density scan and a validated tool such as FRAX, run by a clinician.",
+        "fractureLabel": "Fragility fracture after age 50",
+        "fractureHint": "A break from a fall from standing height or less — wrist, hip, spine or arm.",
+        "glucocorticoidLabel": "Oral steroids for 3 months or more",
+        "parentalHipLabel": "A parent broke a hip",
+        "smokerLabel": "Current smoker",
+        "alcoholLabel": "3 or more alcohol units a day",
+        "raLabel": "Rheumatoid arthritis",
+        "secondaryLabel": "A secondary cause of bone loss",
+        "secondaryHint": "Such as an overactive thyroid, malabsorption, or long-term liver or kidney disease.",
+        "fallsLabel": "2 or more falls in the past year",
+        "menopauseLabel": "Menopause before age 45",
+        "majorLabel": "Major factors flagged",
+        "contributingLabel": "Contributing factors flagged"
+      },
+      "sections": [
+        {
+          "heading": "Risk factors for a fragility fracture",
+          "body": [
+            "Osteoporosis itself has no symptoms — the first sign is often a fracture from a fall that would not normally break a bone. Guidelines therefore work backwards from risk factors, deciding who is worth assessing before a fracture happens rather than after.",
+            "The ten factors below are the ones NICE guideline CG146 lists for that decision. Two are treated as major on their own; the rest add up rather than acting alone."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Risk factors NICE case-finding guidance flags for assessment",
+            "columns": [
+              "Risk factor",
+              "Why it matters",
+              "Major or contributing"
+            ],
+            "rows": [
+              [
+                "Fragility fracture after 50",
+                "A broken wrist, hip, spine or arm from a low fall is the single strongest predictor of another one.",
+                "Major"
+              ],
+              [
+                "Long-term oral steroids (3+ months)",
+                "Glucocorticoids thin bone directly, independently of any other factor on this list.",
+                "Major"
+              ],
+              [
+                "A parent broke a hip",
+                "Points to inherited bone strength, separate from your own lifestyle.",
+                "Contributing"
+              ],
+              [
+                "Current smoker",
+                "Lowers bone density and slows healing if a fracture does happen.",
+                "Contributing"
+              ],
+              [
+                "3+ alcohol units a day",
+                "Reduces bone formation and raises the risk of a fall in the first place.",
+                "Contributing"
+              ],
+              [
+                "Rheumatoid arthritis",
+                "The condition and often its treatment both affect bone turnover.",
+                "Contributing"
+              ],
+              [
+                "A secondary cause of bone loss",
+                "Conditions such as an overactive thyroid or long-term liver or kidney disease reduce bone density on their own.",
+                "Contributing"
+              ],
+              [
+                "2+ falls in the past year",
+                "Most fragility fractures happen after a fall from standing height, not on their own.",
+                "Contributing"
+              ],
+              [
+                "Menopause before 45",
+                "Oestrogen protects bone, so losing it earlier gives bone loss a longer run.",
+                "Contributing"
+              ],
+              [
+                "Low body weight (BMI under 18.5)",
+                "Less body mass generally means less bone mass, and less cushioning if a fall happens.",
+                "Contributing"
+              ]
+            ],
+            "footnote": "Based on the risk factors NICE guideline CG146 (assessing the risk of fragility fracture) lists for case-finding. This is a screening list, not a diagnostic score."
+          }
+        },
+        {
+          "heading": "Who guidelines say should be assessed",
+          "body": [
+            "NICE, the UK's National Osteoporosis Guideline Group (NOGG) and the European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) set out materially the same threshold. It is an age cut-off plus a risk-factor cut-off, not a single number."
+          ],
+          "bullets": [
+            "All women aged 65 and over, and all men aged 75 and over — assessment is recommended on age alone.",
+            "Anyone younger with a major risk factor — a prior fragility fracture or long-term oral steroids — at any age, including under 50.",
+            "Anyone aged 50 and over with any one of the contributing factors in the table above.",
+            "This tool applies that published rule to what you enter. It does not calculate a probability, and it is not FRAX — FRAX is a separate, proprietary tool a clinician runs, combining these same kinds of factors with a bone density reading."
+          ]
+        },
+        {
+          "heading": "What this checker cannot tell you",
+          "body": [
+            "A risk-factor checklist is a sorting tool, not a measurement. It tells you whether it is worth asking about a scan — it cannot tell you what that scan would show."
+          ],
+          "bullets": [
+            "It is not a diagnosis. Osteoporosis is diagnosed from a DXA (dual-energy X-ray absorptiometry) bone density scan, not from a questionnaire.",
+            "It does not output a fracture probability. Tools that do — FRAX, the Garvan nomogram, QFracture — combine risk factors with a bone density reading, and a clinician runs them.",
+            "It is not FRAX and does not use FRAX's coefficients, which are proprietary to the University of Sheffield.",
+            "A \"no specific risk factors flagged\" result is reassuring, not a guarantee — mention any new fracture or fall to a doctor regardless of what this tool says.",
+            "It says nothing about treatment. Medication is a decision for a clinician, made after a diagnosis, not from a risk checklist."
+          ]
+        },
+        {
+          "heading": "Getting assessed",
+          "body": [],
+          "bullets": [
+            "Start with a doctor. They will weigh up your risk factors and decide whether a DXA scan referral makes sense.",
+            "Bring the factors this tool flagged for you — which ones, not just the tier — to make the conversation faster.",
+            "If you have already had a fragility fracture, ask about assessment regardless of your age or this tool's tier.",
+            "Calcium, vitamin D, weight-bearing exercise and stopping smoking all support bone health while you wait for any assessment.",
+            "Get medical care promptly for a new fracture from a low-energy fall, whatever this tool says — it needs treating in its own right."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is this the same as FRAX?",
+          "answer": "No. FRAX is a separate, proprietary tool developed by the University of Sheffield, and its coefficients are not published — this tool does not reproduce it or claim to match its output. This is a case-finding checklist based on published guidance (NICE CG146): it tells you whether it's worth being assessed, never a fracture probability."
+        },
+        {
+          "question": "What is a DXA scan?",
+          "answer": "A dual-energy X-ray absorptiometry scan — a low-dose X-ray that measures bone density, usually at the hip and spine. It is the test an assessment actually relies on; nothing on this page replaces it."
+        },
+        {
+          "question": "Does having risk factors mean I have osteoporosis?",
+          "answer": "No. A flagged risk factor means guidelines recommend you be assessed, not that you have the condition. Many people with risk factors have a normal bone density scan, and osteoporosis can also occur with none of the factors listed here."
+        },
+        {
+          "question": "What if my result is 'no specific risk factors flagged' but I'm still concerned?",
+          "answer": "Raise it with a doctor anyway. This tool covers the risk factors named in one clinical guideline; it does not cover every personal or family history that might be relevant, and a conversation costs nothing this checklist can weigh."
+        },
+        {
+          "question": "Who actually diagnoses osteoporosis?",
+          "answer": "A doctor, from a DXA bone density scan — usually a T-score of -2.5 or below at the hip or spine. A risk-factor questionnaire like this one can only suggest who should have that scan; it cannot diagnose anything itself."
+        },
+        {
+          "question": "Does this checker store my answers?",
+          "answer": "No. The scoring runs entirely in your browser. Nothing you select is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Want to talk about your bone health?",
+        "body": "Book a video consultation with a registered doctor, go through your risk factors, and find out whether a referral for a DXA scan makes sense.",
+        "label": "Book a consultation"
+      }
     },
     "ovulation-calculator": {
       "cardTitle": "Ovulation calculator",

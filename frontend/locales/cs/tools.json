@@ -29,7 +29,9 @@
     "age": "Věk",
     "years": "let",
     "activity": "Úroveň aktivity",
-    "kcalPerDay": "kcal / den"
+    "kcalPerDay": "kcal / den",
+    "yes": "Ano",
+    "no": "Ne"
   },
   "suggestions": {
     "heading": "Kam dál",
@@ -148,6 +150,20 @@
       "negative": {
         "label": "Výsledek screeningu: negativní",
         "summary": "Vaše odpovědi hledanému vzorci neodpovídají. ADHD to nevylučuje — šest otázek pokrývá jen část — takže pokud vám tyto potíže komplikují práci, studium nebo vztahy, promluvte si s lékařem i tak."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Doporučujeme vyšetření již nyní",
+        "summary": "Váš věk nebo vaše rizikové faktory odpovídají vzorci, na jehož základě doporučení doporučují vyšetření osteoporózy. Nejde o diagnózu — dalším krokem je rozhovor s lékařem o kostní denzitometrii (DXA)."
+      },
+      "discuss-next": {
+        "label": "Stojí za zmínku při příští návštěvě lékaře",
+        "summary": "Máte rizikový faktor, se kterým doporučené postupy počítají, i když sám o sobě k okamžitému vyšetření nevede. Zmiňte ho při příští návštěvě lékaře."
+      },
+      "no-flags": {
+        "label": "Nebyl zjištěn žádný konkrétní rizikový faktor",
+        "summary": "Nic z toho, co jste zadali, neodpovídá zveřejněným rizikovým faktorům, které se používají k vyhledávání osteoporózy. To je uklidňující, ale není to záruka — jakoukoli novou zlomeninu nebo pád vždy zmiňte lékaři."
       }
     }
   },
@@ -898,6 +914,179 @@
         "label": "Objednat konzultaci"
       },
       "suggestionsIntro": "Odhadovaný termín je začátek těhotenské péče, ne celá péče. Tyto konzultace posunou věc dál."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Kontrola rizika osteoporózy",
+      "cardBlurb": "Které zveřejněné rizikové faktory zlomeniny z křehkosti se týkají vás a zda má smysl žádat o vyšetření kostní density.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "Riziko",
+      "h1Accent": "osteoporózy",
+      "h1Trail": "{country}",
+      "metaTitle": "Kontrola Rizika Osteoporózy {country} | Potřebuji Denzitometrii?",
+      "metaDescription": "Zkontrolujte zveřejněné rizikové faktory osteoporózy a zlomeniny z křehkosti a zjistěte, zda doporučené postupy radí nechat se vyšetřit. Nejde o FRAX ani o diagnózu — je to seznam k vyhledání rizika, se kterým můžete jít k lékaři.",
+      "lede": "Odpovězte na otázky o svém věku, pohlaví a rizikových faktorech a zjistěte, zda zveřejněné doporučené postupy radí požádat o vyšetření kostní density.",
+      "trustPoints": [
+        "Založeno na doporučeních NICE pro vyhledávání rizika, ne na proprietárním skóre",
+        "Zvlášť zobrazuje velké a přispívající rizikové faktory",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "suggestionsIntro": "Zjištěný rizikový faktor je důvod zeptat se na vyšetření kostní density, ne diagnóza. Toto jsou konzultace, které mohou jít dál.",
+      "widget": {
+        "title": "Vaše rizikové faktory",
+        "placeholder": "Odpovězte na otázky a zjistěte, zda má smysl žádat o vyšetření kostní density.",
+        "note": "Toto určuje, kdo by měl být vyšetřen na osteoporózu — neodhaduje vaše riziko zlomeniny a není to diagnóza. Úplné vyšetření využívá kostní denzitometrii (DXA) a ověřený nástroj, jako je FRAX, který provádí lékař.",
+        "fractureLabel": "Zlomenina z křehkosti po 50. roce věku",
+        "fractureHint": "Zlomenina způsobená pádem z výšky postavy nebo nižší — zápěstí, kyčel, páteř nebo paže.",
+        "glucocorticoidLabel": "Perorální kortikosteroidy po dobu 3 měsíců nebo déle",
+        "parentalHipLabel": "Rodič měl zlomeninu kyčle",
+        "smokerLabel": "Současný kuřák",
+        "alcoholLabel": "3 nebo více jednotek alkoholu denně",
+        "raLabel": "Revmatoidní artritida",
+        "secondaryLabel": "Sekundární příčina úbytku kostní hmoty",
+        "secondaryHint": "Například zvýšená činnost štítné žlázy, porucha vstřebávání nebo dlouhodobé onemocnění jater či ledvin.",
+        "fallsLabel": "2 nebo více pádů za poslední rok",
+        "menopauseLabel": "Menopauza před 45. rokem věku",
+        "majorLabel": "Zjištěné velké rizikové faktory",
+        "contributingLabel": "Zjištěné přispívající rizikové faktory"
+      },
+      "sections": [
+        {
+          "heading": "Rizikové faktory zlomeniny z křehkosti",
+          "body": [
+            "Osteoporóza sama o sobě nemá příznaky — prvním signálem bývá až zlomenina po pádu, který by normálně kost nezlomil. Doporučené postupy proto vycházejí z rizikových faktorů a rozhodují, u koho má smysl vyšetření provést dřív, než ke zlomenině dojde, ne až potom.",
+            "Deset faktorů níže je těch, které pro toto rozhodnutí uvádí doporučený postup NICE CG146. Dva z nich jsou samy o sobě považovány za velké; ostatní se sčítají, místo aby působily samostatně."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Rizikové faktory, které doporučené postupy NICE pro vyhledávání rizika označují pro vyšetření",
+            "columns": [
+              "Rizikový faktor",
+              "Proč na něm záleží",
+              "Velký nebo přispívající"
+            ],
+            "rows": [
+              [
+                "Zlomenina z křehkosti po 50. roce",
+                "Zlomenina zápěstí, kyčle, páteře nebo paže po mírném pádu je nejsilnějším ukazatelem další zlomeniny.",
+                "Velký"
+              ],
+              [
+                "Dlouhodobé perorální kortikosteroidy (3+ měsíce)",
+                "Glukokortikoidy přímo oslabují kost, nezávisle na kterémkoli jiném faktoru z tohoto seznamu.",
+                "Velký"
+              ],
+              [
+                "Rodič měl zlomeninu kyčle",
+                "Ukazuje na zděděnou pevnost kostí, oddělenou od vašeho vlastního životního stylu.",
+                "Přispívající"
+              ],
+              [
+                "Současný kuřák",
+                "Snižuje kostní hustotu a zpomaluje hojení, pokud ke zlomenině dojde.",
+                "Přispívající"
+              ],
+              [
+                "3+ jednotky alkoholu denně",
+                "Snižuje tvorbu kosti a zvyšuje samotné riziko pádu.",
+                "Přispívající"
+              ],
+              [
+                "Revmatoidní artritida",
+                "Samotné onemocnění, a často i jeho léčba, ovlivňují přestavbu kosti.",
+                "Přispívající"
+              ],
+              [
+                "Sekundární příčina úbytku kostní hmoty",
+                "Stavy jako zvýšená činnost štítné žlázy nebo dlouhodobé onemocnění jater či ledvin samy o sobě snižují kostní hustotu.",
+                "Přispívající"
+              ],
+              [
+                "2+ pády za poslední rok",
+                "Většina zlomenin z křehkosti vzniká po pádu z výšky postavy, ne samostatně.",
+                "Přispívající"
+              ],
+              [
+                "Menopauza před 45. rokem",
+                "Estrogen chrání kost, takže jeho dřívější ztráta dává úbytku kostní hmoty více času.",
+                "Přispívající"
+              ],
+              [
+                "Nízká tělesná hmotnost (BMI pod 18,5)",
+                "Menší tělesná hmota obvykle znamená menší kostní hmotu a menší tlumení nárazu při pádu.",
+                "Přispívající"
+              ]
+            ],
+            "footnote": "Založeno na rizikových faktorech, které pro vyhledávání rizika uvádí doporučený postup NICE CG146 (posouzení rizika zlomeniny z křehkosti). Jde o seznam pro vyhledávání rizika, ne o diagnostické skóre."
+          }
+        },
+        {
+          "heading": "Koho podle doporučených postupů vyšetřit",
+          "body": [
+            "NICE, britská National Osteoporosis Guideline Group (NOGG) a European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) stanovují v podstatě stejnou hranici. Je to kombinace věkové hranice a hranice rizikových faktorů, ne jediné číslo."
+          ],
+          "bullets": [
+            "Všechny ženy od 65 let a všichni muži od 75 let — vyšetření se doporučuje jen na základě věku.",
+            "Mladší lidé s velkým rizikovým faktorem — předchozí zlomeninou z křehkosti nebo dlouhodobými perorálními kortikosteroidy — v jakémkoli věku, i pod 50 let.",
+            "Kdokoli od 50 let s alespoň jedním z přispívajících faktorů uvedených v tabulce výše.",
+            "Tento nástroj toto zveřejněné pravidlo aplikuje na to, co zadáte. Nepočítá pravděpodobnost a není to FRAX — FRAX je samostatný proprietární nástroj, který používá lékař a který kombinuje tento typ faktorů s naměřenou kostní hustotou."
+          ]
+        },
+        {
+          "heading": "Co vám tato kontrola nesdělí",
+          "body": [
+            "Seznam rizikových faktorů je nástroj pro třídění, ne měření. Řekne vám, zda má smysl zeptat se na vyšetření — neřekne vám, co by to vyšetření ukázalo."
+          ],
+          "bullets": [
+            "Není to diagnóza. Osteoporóza se diagnostikuje kostní denzitometrií (DXA), ne dotazníkem.",
+            "Nevydá pravděpodobnost zlomeniny. Nástroje, které to dělají — FRAX, Garvanův nomogram, QFracture — kombinují rizikové faktory s naměřenou kostní hustotou a používá je lékař.",
+            "Není to FRAX a nepoužívá jeho koeficienty, které jsou vlastnictvím Sheffieldské univerzity.",
+            "Výsledek „nebyl zjištěn žádný konkrétní rizikový faktor“ je uklidňující, ale není zárukou — jakoukoli novou zlomeninu nebo pád vždy zmiňte lékaři.",
+            "Neříká nic o léčbě. O lécích rozhoduje lékař, a to až po diagnóze, ne na základě seznamu rizikových faktorů."
+          ]
+        },
+        {
+          "heading": "Jak postupovat k vyšetření",
+          "body": [],
+          "bullets": [
+            "Začněte u lékaře. Zváží vaše rizikové faktory a rozhodne, zda dává smysl žádanka na kostní denzitometrii.",
+            "Vezměte s sebou faktory, které vám tento nástroj označil — které konkrétně, ne jen výsledek — konzultace pak bude rychlejší.",
+            "Pokud jste již měli zlomeninu z křehkosti, zeptejte se na vyšetření bez ohledu na svůj věk nebo výsledek tohoto nástroje.",
+            "Vápník, vitamin D, zátěžové cvičení a odvykání kouření podporují zdraví kostí, zatímco na vyšetření čekáte.",
+            "Při nové zlomenině po pádu z malé výšky vyhledejte lékařskou péči co nejdříve, ať už tento nástroj ukáže cokoli — potřebuje léčbu sama o sobě."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Je to totéž co FRAX?",
+          "answer": "Ne. FRAX je samostatný proprietární nástroj vyvinutý Sheffieldskou univerzitou, jehož koeficienty nejsou zveřejněné — tento nástroj ho nenapodobuje ani netvrdí, že se jeho výsledku rovná. Toto je seznam pro vyhledávání rizika založený na zveřejněných doporučených postupech (NICE CG146): řekne vám, zda má smysl nechat se vyšetřit, nikdy ne pravděpodobnost zlomeniny."
+        },
+        {
+          "question": "Co je kostní denzitometrie (DXA)?",
+          "answer": "Vyšetření duální rentgenovou absorpciometrií — rentgen s nízkou dávkou záření, který měří kostní hustotu, obvykle v oblasti kyčle a páteře. Je to vyšetření, na kterém vyšetření skutečně stojí; nic na této stránce ho nenahrazuje."
+        },
+        {
+          "question": "Znamená mít rizikové faktory, že mám osteoporózu?",
+          "answer": "Ne. Zjištěný rizikový faktor znamená, že doporučené postupy radí nechat se vyšetřit, ne že chorobu máte. Mnoho lidí s rizikovými faktory má normální výsledek kostní denzitometrie a osteoporóza se může objevit i bez jakéhokoli z uvedených faktorů."
+        },
+        {
+          "question": "Co když je můj výsledek 'nebyl zjištěn žádný konkrétní rizikový faktor', ale stále mám obavy?",
+          "answer": "I tak to proberte s lékařem. Tento nástroj pokrývá rizikové faktory z jednoho klinického doporučeného postupu; nepokrývá celou osobní ani rodinnou anamnézu, která může být relevantní, a rozhovor s lékařem vás nic nestojí."
+        },
+        {
+          "question": "Kdo skutečně diagnostikuje osteoporózu?",
+          "answer": "Lékař, na základě kostní denzitometrie (DXA) — obvykle T-skóre -2,5 nebo nižší v oblasti kyčle nebo páteře. Dotazník rizikových faktorů, jako je tento, může jen navrhnout, kdo by toto vyšetření měl podstoupit; sám o sobě nemůže nic diagnostikovat."
+        },
+        {
+          "question": "Ukládá si tato kontrola moje odpovědi?",
+          "answer": "Ne. Výpočet probíhá celý ve vašem prohlížeči. Nic z toho, co vyberete, se neodesílá na naše servery ani se neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Chcete probrat zdraví svých kostí?",
+        "body": "Objednejte si videokonzultaci s registrovaným lékařem, projděte si své rizikové faktory a zjistěte, zda dává smysl žádanka na kostní denzitometrii.",
+        "label": "Objednat konzultaci"
+      }
     },
     "ovulation-calculator": {
       "cardTitle": "Ovulační kalkulačka",

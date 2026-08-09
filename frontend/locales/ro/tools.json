@@ -29,7 +29,9 @@
     "age": "Vârstă",
     "years": "ani",
     "activity": "Nivel de activitate",
-    "kcalPerDay": "kcal / zi"
+    "kcalPerDay": "kcal / zi",
+    "yes": "Da",
+    "no": "Nu"
   },
   "suggestions": {
     "heading": "Care e pasul următor",
@@ -148,6 +150,20 @@
       "negative": {
         "label": "Rezultatul screeningului: negativ",
         "summary": "Răspunsurile tale nu se potrivesc cu tiparul căutat. Asta nu exclude ADHD-ul — șase întrebări acoperă doar o parte — așa că, dacă aceste dificultăți îți afectează munca, studiile sau relațiile, discută oricum cu un medic."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Evaluare recomandată acum",
+        "summary": "Vârsta ta sau factorii tăi de risc se potrivesc cu tiparul pe care ghidurile îl folosesc pentru a recomanda o evaluare a osteoporozei. Nu este un diagnostic — pasul următor este o discuție cu un medic despre o densitometrie osoasă (DXA)."
+      },
+      "discuss-next": {
+        "label": "Merită discutat la următoarea consultație",
+        "summary": "Ai un factor de risc pe care ghidurile îl iau în calcul, chiar dacă, luat singur, nu impune o evaluare imediată. Menționează-l data viitoare când mergi la medic."
+      },
+      "no-flags": {
+        "label": "Niciun factor de risc specific semnalat",
+        "summary": "Nimic din ce ai completat nu se potrivește cu factorii de risc publicați pe care ghidurile îi folosesc pentru identificarea persoanelor cu risc de osteoporoză. Este liniștitor, dar nu este o garanție — menționează oricum unui medic orice fractură sau cădere nouă."
       }
     }
   },
@@ -898,6 +914,179 @@
         "label": "Programează o consultație"
       },
       "suggestionsIntro": "O dată estimată este începutul îngrijirii prenatale, nu toată îngrijirea. Acestea sunt consultațiile care duc lucrurile mai departe."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Verificare risc de osteoporoză",
+      "cardBlurb": "Ce factori de risc publicați pentru fractura de fragilitate ți se aplică și dacă merită să ceri o densitometrie osoasă.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Risc de",
+      "h1Accent": "osteoporoză",
+      "h1Trail": "{country}",
+      "metaTitle": "Verificare Risc de Osteoporoză {country} | Ai Nevoie de o Densitometrie Osoasă?",
+      "metaDescription": "Verifică factorii de risc publicați pentru osteoporoză și fractura de fragilitate și vezi dacă ghidurile clinice recomandă să fii evaluat(ă). Nu este FRAX și nu este un diagnostic — o listă de identificare a riscului pe care o poți duce la medic.",
+      "lede": "Răspunde la întrebări despre vârsta, sexul și factorii tăi de risc pentru a vedea dacă ghidurile clinice publicate recomandă să ceri o evaluare a densității osoase.",
+      "trustPoints": [
+        "Bazat pe ghidul de identificare a riscului NICE, nu pe un scor proprietar",
+        "Arată separat factorii de risc majori și pe cei care contribuie",
+        "Funcționează în browser — nimic nu este trimis sau stocat"
+      ],
+      "suggestionsIntro": "Un factor de risc semnalat este un motiv să întrebi despre o densitometrie osoasă, nu un diagnostic. Acestea sunt consultațiile care pot duce lucrurile mai departe.",
+      "widget": {
+        "title": "Factorii tăi de risc",
+        "placeholder": "Răspunde la întrebări pentru a vedea dacă merită să ceri o evaluare a densității osoase.",
+        "note": "Acest instrument identifică cine ar trebui evaluat pentru osteoporoză — nu estimează riscul tău de fractură și nu este un diagnostic. O evaluare completă folosește o densitometrie osoasă (DXA) și un instrument validat precum FRAX, realizat de un medic.",
+        "fractureLabel": "Fractură de fragilitate după 50 de ani",
+        "fractureHint": "O fractură dintr-o cădere de la înălțimea proprie sau mai mică — încheietură, șold, coloană sau braț.",
+        "glucocorticoidLabel": "Corticosteroizi orali timp de 3 luni sau mai mult",
+        "parentalHipLabel": "Un părinte a suferit o fractură de șold",
+        "smokerLabel": "Fumător în prezent",
+        "alcoholLabel": "3 sau mai multe unități de alcool pe zi",
+        "raLabel": "Artrită reumatoidă",
+        "secondaryLabel": "O cauză secundară de pierdere osoasă",
+        "secondaryHint": "De exemplu hipertiroidism, malabsorbție, sau boală hepatică ori renală de lungă durată.",
+        "fallsLabel": "2 sau mai multe căderi în ultimul an",
+        "menopauseLabel": "Menopauză înainte de 45 de ani",
+        "majorLabel": "Factori majori semnalați",
+        "contributingLabel": "Factori care contribuie, semnalați"
+      },
+      "sections": [
+        {
+          "heading": "Factori de risc pentru fractura de fragilitate",
+          "body": [
+            "Osteoporoza nu are simptome proprii — primul semn este adesea o fractură în urma unei căderi care în mod normal nu ar rupe un os. De aceea, ghidurile pornesc de la factorii de risc, pentru a decide cine merită evaluat înainte să se producă o fractură, nu după.",
+            "Cei zece factori de mai jos sunt cei pe care ghidul NICE CG146 îi enumeră pentru această decizie. Doi dintre ei sunt considerați majori de la sine; ceilalți se adună, nu acționează izolat."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Factorii de risc pe care ghidul de identificare a riscului NICE îi semnalează pentru evaluare",
+            "columns": [
+              "Factor de risc",
+              "De ce contează",
+              "Major sau care contribuie"
+            ],
+            "rows": [
+              [
+                "Fractură de fragilitate după 50 de ani",
+                "O fractură a încheieturii, șoldului, coloanei sau brațului dintr-o cădere ușoară este cel mai puternic semn al unei noi fracturi.",
+                "Major"
+              ],
+              [
+                "Corticosteroizi orali de lungă durată (3+ luni)",
+                "Glucocorticoizii subțiază osul direct, independent de orice alt factor din această listă.",
+                "Major"
+              ],
+              [
+                "Un părinte a suferit o fractură de șold",
+                "Indică o rezistență osoasă moștenită, separată de propriul stil de viață.",
+                "Care contribuie"
+              ],
+              [
+                "Fumător în prezent",
+                "Scade densitatea osoasă și încetinește vindecarea dacă se produce o fractură.",
+                "Care contribuie"
+              ],
+              [
+                "3+ unități de alcool pe zi",
+                "Reduce formarea osoasă și crește chiar riscul de cădere.",
+                "Care contribuie"
+              ],
+              [
+                "Artrită reumatoidă",
+                "Boala în sine, și adesea tratamentul ei, afectează remodelarea osoasă.",
+                "Care contribuie"
+              ],
+              [
+                "O cauză secundară de pierdere osoasă",
+                "Afecțiuni precum hipertiroidismul sau boala hepatică ori renală de lungă durată reduc densitatea osoasă de la sine.",
+                "Care contribuie"
+              ],
+              [
+                "2+ căderi în ultimul an",
+                "Majoritatea fracturilor de fragilitate apar în urma unei căderi de la înălțimea proprie, nu izolat.",
+                "Care contribuie"
+              ],
+              [
+                "Menopauză înainte de 45 de ani",
+                "Estrogenul protejează osul, așa că pierderea lui mai devreme lasă mai mult timp pierderii osoase.",
+                "Care contribuie"
+              ],
+              [
+                "Greutate corporală scăzută (IMC sub 18,5)",
+                "Mai puțină masă corporală înseamnă de obicei mai puțină masă osoasă și mai puțină amortizare la o cădere.",
+                "Care contribuie"
+              ]
+            ],
+            "footnote": "Bazat pe factorii de risc pe care ghidul NICE CG146 (evaluarea riscului de fractură de fragilitate) îi enumeră pentru identificarea riscului. Este o listă de identificare a riscului, nu un scor de diagnostic."
+          }
+        },
+        {
+          "heading": "Cine ar trebui evaluat, conform ghidurilor clinice",
+          "body": [
+            "NICE, National Osteoporosis Guideline Group (NOGG) din Regatul Unit și European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) stabilesc, în esență, același prag. Este o combinație între un prag de vârstă și unul de factori de risc, nu un singur număr."
+          ],
+          "bullets": [
+            "Toate femeile de 65 de ani și peste, și toți bărbații de 75 de ani și peste — evaluarea este recomandată doar pe baza vârstei.",
+            "Persoanele mai tinere cu un factor de risc major — o fractură de fragilitate anterioară sau corticosteroizi orali de lungă durată — la orice vârstă, inclusiv sub 50 de ani.",
+            "Oricine are 50 de ani sau peste, cu unul dintre factorii care contribuie din tabelul de mai sus.",
+            "Acest instrument aplică regula publicată la ce completezi tu. Nu calculează o probabilitate și nu este FRAX — FRAX este un instrument proprietar separat, folosit de un medic, care combină acest tip de factori cu o măsurătoare a densității osoase."
+          ]
+        },
+        {
+          "heading": "Ce nu îți poate spune această verificare",
+          "body": [
+            "O listă de factori de risc este un instrument de triere, nu o măsurătoare. Îți spune dacă merită să întrebi despre o investigație — nu îți spune ce ar arăta acea investigație."
+          ],
+          "bullets": [
+            "Nu este un diagnostic. Osteoporoza se diagnostichează printr-o densitometrie osoasă (DXA), nu printr-un chestionar.",
+            "Nu oferă o probabilitate de fractură. Instrumentele care fac asta — FRAX, nomograma Garvan, QFracture — combină factorii de risc cu o măsurătoare a densității osoase și sunt folosite de un medic.",
+            "Nu este FRAX și nu folosește coeficienții acestuia, care sunt proprietatea Universității Sheffield.",
+            "Un rezultat „niciun factor de risc specific semnalat” este liniștitor, dar nu este o garanție — menționează oricum unui medic orice fractură sau cădere nouă.",
+            "Nu spune nimic despre tratament. Medicația este o decizie a unui medic, luată după un diagnostic, nu pornind de la o listă de factori de risc."
+          ]
+        },
+        {
+          "heading": "Cum ajungi la o evaluare",
+          "body": [],
+          "bullets": [
+            "Începe cu un medic. Acesta îți va analiza factorii de risc și va decide dacă are sens o trimitere pentru densitometrie osoasă.",
+            "Adu factorii pe care i-a semnalat acest instrument pentru tine — care anume, nu doar rezultatul — ca discuția să fie mai rapidă.",
+            "Dacă ai avut deja o fractură de fragilitate, întreabă despre evaluare indiferent de vârstă sau de rezultatul acestui instrument.",
+            "Calciu, vitamina D, exercițiile cu impact și renunțarea la fumat susțin sănătatea osoasă cât timp aștepți orice evaluare.",
+            "Cere asistență medicală rapid pentru o fractură nouă, apărută în urma unei căderi de mică energie, indiferent ce arată acest instrument — trebuie tratată în sine."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Este la fel ca FRAX?",
+          "answer": "Nu. FRAX este un instrument proprietar separat, dezvoltat de Universitatea Sheffield, ale cărui coeficienți nu sunt publicați — acest instrument nu îl reproduce și nu pretinde că îi egalează rezultatul. Aceasta este o listă de identificare a riscului bazată pe ghiduri publicate (NICE CG146): îți spune dacă merită să fii evaluat(ă), niciodată o probabilitate de fractură."
+        },
+        {
+          "question": "Ce este o densitometrie osoasă (DXA)?",
+          "answer": "O investigație de absorbțiometrie cu raze X cu energie duală — o radiografie cu doză mică ce măsoară densitatea osoasă, de obicei la șold și coloană. Este investigația pe care se bazează de fapt o evaluare; nimic din această pagină nu o înlocuiește."
+        },
+        {
+          "question": "Dacă am factori de risc, înseamnă că am osteoporoză?",
+          "answer": "Nu. Un factor de risc semnalat înseamnă că ghidurile recomandă să fii evaluat(ă), nu că ai afecțiunea. Multe persoane cu factori de risc au o densitometrie osoasă normală, iar osteoporoza poate apărea și fără niciunul dintre factorii de aici."
+        },
+        {
+          "question": "Ce fac dacă rezultatul meu este „niciun factor de risc specific semnalat”, dar tot sunt îngrijorat(ă)?",
+          "answer": "Discută oricum cu un medic. Acest instrument acoperă factorii de risc dintr-un singur ghid clinic; nu acoperă tot istoricul personal sau familial care ar putea fi relevant, iar o discuție nu costă nimic ce această listă nu poate cântări."
+        },
+        {
+          "question": "Cine diagnostichează de fapt osteoporoza?",
+          "answer": "Un medic, pe baza unei densitometrii osoase (DXA) — de obicei un scor T de -2,5 sau mai mic la șold sau coloană. Un chestionar de factori de risc precum acesta poate doar sugera cine ar trebui să facă acea investigație; nu poate diagnostica nimic prin el însuși."
+        },
+        {
+          "question": "Această verificare îmi stochează răspunsurile?",
+          "answer": "Nu. Calculul rulează integral în browserul tău. Nimic din ce selectezi nu este trimis către serverele noastre și nu este stocat."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei să discuți despre sănătatea oaselor tale?",
+        "body": "Programează o videoconsultație cu un medic înregistrat, treci în revistă factorii tăi de risc și află dacă are sens o trimitere pentru densitometrie osoasă.",
+        "label": "Programează o consultație"
+      }
     },
     "ovulation-calculator": {
       "cardTitle": "Calculator de ovulație",

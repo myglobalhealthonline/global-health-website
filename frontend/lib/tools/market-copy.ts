@@ -946,6 +946,153 @@ const ADHD_MARKET_FAQ: MarketFaq = {
   },
 };
 
+const OSTEOPOROSIS_MARKET_FAQ: MarketFaq = {
+  ie: {
+    en: [
+      {
+        question: "Does the HSE offer DXA bone density scans?",
+        answer:
+          "Yes. DXA scanning is available through the public hospital system on referral, and privately without one in most clinics. Ireland follows the same NICE-aligned case-finding approach this checker uses — risk factors decide who is assessed, not age or a scan alone.",
+      },
+      {
+        question: "Where can I get assessed for osteoporosis in Ireland?",
+        answer:
+          "Start with a GP appointment. They will go through your risk factors and, where the guideline threshold is met, refer you for a DXA scan through the public system or arrange a private one.",
+      },
+    ],
+  },
+  pt: {
+    pt: [
+      {
+        question: "O SNS faz densitometrias ósseas?",
+        answer:
+          "Sim. A densitometria óssea (DXA) está disponível no SNS mediante referenciação médica, e também no privado sem referenciação na maioria das clínicas. Portugal segue uma abordagem de identificação de risco semelhante à desta ferramenta — são os fatores de risco que decidem quem é avaliado, não a idade nem um exame isolados.",
+      },
+      {
+        question: "Onde posso ser avaliado para a osteoporose em Portugal?",
+        answer:
+          "Comece por uma consulta médica. O médico vai rever os seus fatores de risco e, quando o limiar das orientações clínicas for atingido, referenciá-lo(a) para uma densitometria óssea no SNS ou encaminhá-lo(a) para o privado.",
+      },
+    ],
+    en: [
+      {
+        question: "Does the SNS offer DXA bone density scans?",
+        answer:
+          "Yes. DXA scanning is available through the SNS on referral, and privately without one in most clinics. Portugal follows a risk-factor-led approach similar to this checker's — risk factors decide who is assessed, not age or a scan alone.",
+      },
+      {
+        question: "Where can I get assessed for osteoporosis in Portugal?",
+        answer:
+          "Start with a medical appointment. The doctor will go through your risk factors and, where the guideline threshold is met, refer you for a DXA scan through the SNS or arrange a private one.",
+      },
+    ],
+  },
+  es: {
+    es: [
+      {
+        question: "¿El Sistema Nacional de Salud hace densitometrías óseas?",
+        answer:
+          "Sí. La densitometría ósea (DXA) está disponible en la sanidad pública mediante derivación médica, y también en clínicas privadas sin derivación previa. España sigue un enfoque de identificación de riesgo similar al de esta herramienta — son los factores de riesgo los que deciden a quién evaluar, no la edad ni una prueba aislada.",
+      },
+      {
+        question: "¿Dónde puedo evaluarme por osteoporosis en España?",
+        answer:
+          "Empieza por una consulta médica. El médico revisará tus factores de riesgo y, si se alcanza el umbral de las guías clínicas, te derivará a una densitometría ósea en la sanidad pública o te orientará hacia una privada.",
+      },
+    ],
+    en: [
+      {
+        question: "Does the Spanish health system offer DXA bone density scans?",
+        answer:
+          "Yes. DXA scanning is available through the public health system on referral, and privately without one in most clinics. Spain follows a risk-factor-led approach similar to this checker's — risk factors decide who is assessed, not age or a scan alone.",
+      },
+      {
+        question: "Where can I get assessed for osteoporosis in Spain?",
+        answer:
+          "Start with a medical appointment. The doctor will go through your risk factors and, where the guideline threshold is met, refer you for a DXA scan through the public system or arrange a private one.",
+      },
+    ],
+  },
+  cz: {
+    cs: [
+      {
+        question: "Provádí se v Česku kostní denzitometrie v rámci veřejného zdravotnictví?",
+        answer:
+          "Ano. Kostní denzitometrie (DXA) je dostupná na doporučení lékaře v rámci veřejného zdravotního pojištění a v mnoha klinikách i samoplátcům bez doporučení. Česko se řídí podobným přístupem založeným na rizikových faktorech jako tento nástroj — o vyšetření rozhodují rizikové faktory, ne jen věk nebo samotné vyšetření.",
+      },
+      {
+        question: "Kde se mohu v Česku nechat vyšetřit na osteoporózu?",
+        answer:
+          "Začněte u lékaře. Projde s vámi vaše rizikové faktory a v případě, že je naplněna hranice doporučeného postupu, vás doporučí na kostní denzitometrii v rámci pojištění, nebo vás nasměruje na samoplátecké vyšetření.",
+      },
+    ],
+    en: [
+      {
+        question: "Do Czech doctors offer DXA bone density scans?",
+        answer:
+          "Yes. DXA scanning is available on referral within the public insurance system, and privately without one in many clinics. Czechia follows a similar risk-factor-led approach to this checker — risk factors decide who is assessed, not age or a scan alone.",
+      },
+      {
+        question: "Where can I get assessed for osteoporosis in Czechia?",
+        answer:
+          "Start with a doctor's appointment. They will go through your risk factors and, where the guideline threshold is met, refer you for a DXA scan within the insurance system or point you to a private one.",
+      },
+    ],
+  },
+  ro: {
+    ro: [
+      {
+        question: "Se fac densitometrii osoase în sistemul public din România?",
+        answer:
+          "Da. Densitometria osoasă (DXA) este disponibilă pe bază de trimitere medicală în sistemul asigurărilor de sănătate, iar în multe clinici și fără trimitere, contra cost. România urmează o abordare bazată pe factori de risc similară celei din acest instrument — factorii de risc decid cine este evaluat, nu doar vârsta sau o singură investigație.",
+      },
+      {
+        question: "Unde mă pot evalua pentru osteoporoză în România?",
+        answer:
+          "Începe cu o consultație medicală. Medicul îți va analiza factorii de risc și, dacă este atins pragul din ghidurile clinice, te va trimite pentru o densitometrie osoasă decontată sau te va îndruma către una privată.",
+      },
+    ],
+    en: [
+      {
+        question: "Do doctors in Romania offer DXA bone density scans?",
+        answer:
+          "Yes. DXA scanning is available on referral within the public health insurance system, and privately without one in many clinics. Romania follows a similar risk-factor-led approach to this checker — risk factors decide who is assessed, not age or a scan alone.",
+      },
+      {
+        question: "Where can I get assessed for osteoporosis in Romania?",
+        answer:
+          "Start with a doctor's appointment. They will go through your risk factors and, where the guideline threshold is met, refer you for a covered DXA scan or point you to a private one.",
+      },
+    ],
+  },
+  br: {
+    pt: [
+      {
+        question: "O SUS faz densitometria óssea?",
+        answer:
+          "Sim. A densitometria óssea (DXA) está disponível pelo SUS mediante encaminhamento médico, e também na rede particular sem encaminhamento na maioria das clínicas. O Brasil segue uma abordagem de identificação de risco semelhante à desta ferramenta — são os fatores de risco que decidem quem deve ser avaliado, não a idade ou um exame isolado.",
+      },
+      {
+        question: "Onde posso ser avaliado(a) para osteoporose no Brasil?",
+        answer:
+          "Comece por uma consulta médica. O médico vai revisar seus fatores de risco e, quando o limiar das diretrizes clínicas for atingido, encaminhar você para uma densitometria óssea pelo SUS ou indicar uma na rede particular.",
+      },
+    ],
+    en: [
+      {
+        question: "Does the SUS offer DXA bone density scans?",
+        answer:
+          "Yes. DXA scanning is available through the SUS on referral, and privately without one in most clinics. Brazil follows a risk-factor-led approach similar to this checker's — risk factors decide who should be assessed, not age or a scan alone.",
+      },
+      {
+        question: "Where can I get assessed for osteoporosis in Brazil?",
+        answer:
+          "Start with a medical appointment. The doctor will go through your risk factors and, where the guideline threshold is met, refer you for a DXA scan through the SUS or point you to a private one.",
+      },
+    ],
+  },
+};
+
 const MARKET_FAQ: Record<string, MarketFaq> = {
   "bmi-calculator": BMI_MARKET_FAQ,
   "calorie-calculator": CALORIE_MARKET_FAQ,
@@ -953,6 +1100,7 @@ const MARKET_FAQ: Record<string, MarketFaq> = {
   "due-date-calculator": DUE_DATE_MARKET_FAQ,
   "ovulation-calculator": OVULATION_MARKET_FAQ,
   "adhd-test": ADHD_MARKET_FAQ,
+  "osteoporosis-risk-checker": OSTEOPOROSIS_MARKET_FAQ,
 };
 
 /**
@@ -1831,6 +1979,194 @@ const BR_PT_ADHD: DeepPartial<ToolCopy> = {
   },
 };
 
+/**
+ * Brazilian Portuguese differs from the shared `pt` (Portugal) copy in ways
+ * generic word substitution can't fully smooth over, but the load-bearing
+ * ones are: "anca" (PT hip) → "quadril" (BR hip), "rastreio" → "triagem",
+ * "fumador" → "fumante", "hipertiroidismo"/"estrogénio" → the BR spellings
+ * "hipertireoidismo"/"estrogênio", and "Marcar consulta" → "Agendar
+ * consulta" — the same swap every other BR_PT_* override makes.
+ */
+const BR_PT_OSTEOPOROSIS: DeepPartial<ToolCopy> = {
+  cardTitle: "Avaliação de risco de osteoporose",
+  cardBlurb:
+    "Quais os fatores de risco publicados para fratura de fragilidade que se aplicam a si, e se vale a pena pedir uma densitometria óssea.",
+  eyebrow: "Ferramenta de saúde gratuita",
+  h1Lead: "Risco de",
+  h1Accent: "osteoporose",
+  h1Trail: "{country}",
+  metaTitle: "Avaliação de Risco de Osteoporose {country} | Preciso de uma Densitometria Óssea?",
+  metaDescription:
+    "Verifique os fatores de risco publicados para osteoporose e fratura de fragilidade, e veja se as orientações clínicas recomendam que seja avaliado. Não é o FRAX nem um diagnóstico — uma lista de verificação para levar ao médico.",
+  lede: "Responda a perguntas sobre a sua idade, sexo e fatores de risco para ver se as orientações clínicas publicadas recomendam que peça uma avaliação da densidade óssea.",
+  trustPoints: [
+    "Baseado nas orientações de triagem da NICE, não numa pontuação proprietária",
+    "Mostra separadamente os fatores de risco maiores e contribuintes",
+    "Funciona no seu navegador — nada é enviado nem guardado",
+  ],
+  suggestionsIntro:
+    "Um fator de risco identificado é motivo para perguntar sobre uma densitometria óssea, não um diagnóstico. Estas são as consultas que podem aprofundar o assunto.",
+  widget: {
+    title: "Os seus fatores de risco",
+    placeholder: "Responda às perguntas para ver se vale a pena pedir uma avaliação da densidade óssea.",
+    note: "Isto identifica quem deve ser avaliado para osteoporose — não estima o seu risco de fratura e não é um diagnóstico. Uma avaliação completa utiliza uma densitometria óssea (DXA) e uma ferramenta validada como o FRAX, realizada por um médico.",
+    fractureLabel: "Fratura de fragilidade depois dos 50 anos",
+    fractureHint: "Uma fratura resultante de uma queda de pé ou inferior — pulso, quadril, coluna ou braço.",
+    glucocorticoidLabel: "Corticosteroides orais durante 3 meses ou mais",
+    parentalHipLabel: "Um dos pais fraturou o quadril",
+    smokerLabel: "Fumante atual",
+    alcoholLabel: "3 ou mais unidades de álcool por dia",
+    raLabel: "Artrite reumatoide",
+    secondaryLabel: "Uma causa secundária de perda óssea",
+    secondaryHint: "Como hipertireoidismo, má absorção, ou doença hepática ou renal de longa duração.",
+    fallsLabel: "2 ou mais quedas no último ano",
+    menopauseLabel: "Menopausa antes dos 45 anos",
+    majorLabel: "Fatores maiores identificados",
+    contributingLabel: "Fatores contribuintes identificados",
+  },
+  sections: [
+    {
+      heading: "Fatores de risco de fratura de fragilidade",
+      body: [
+        "A osteoporose não tem sintomas — o primeiro sinal é muitas vezes uma fratura resultante de uma queda que normalmente não partiria um osso. Por isso, as orientações clínicas partem dos fatores de risco para decidir quem vale a pena avaliar antes de a fratura acontecer, e não depois.",
+        "Os dez fatores abaixo são os que a orientação CG146 da NICE indica para essa decisão. Dois são considerados maiores por si só; os restantes somam-se em vez de atuarem isoladamente.",
+      ],
+      bullets: [],
+      table: {
+        caption: "Fatores de risco que as orientações de triagem da NICE assinalam para avaliação",
+        columns: ["Fator de risco", "Porque é importante", "Maior ou contribuinte"],
+        rows: [
+          [
+            "Fratura de fragilidade depois dos 50",
+            "Uma fratura do pulso, quadril, coluna ou braço numa queda ligeira é o indicador mais forte de uma nova fratura.",
+            "Maior",
+          ],
+          [
+            "Corticosteroides orais de longa duração (3+ meses)",
+            "Os glicocorticoides enfraquecem diretamente o osso, independentemente de qualquer outro fator desta lista.",
+            "Maior",
+          ],
+          [
+            "Um dos pais fraturou o quadril",
+            "Aponta para uma predisposição hereditária da resistência óssea, distinta do seu próprio estilo de vida.",
+            "Contribuinte",
+          ],
+          [
+            "Fumante atual",
+            "Reduz a densidade óssea e atrasa a cicatrização caso ocorra uma fratura.",
+            "Contribuinte",
+          ],
+          [
+            "3+ unidades de álcool por dia",
+            "Reduz a formação óssea e aumenta o próprio risco de queda.",
+            "Contribuinte",
+          ],
+          [
+            "Artrite reumatoide",
+            "A doença e, muitas vezes, o seu tratamento afetam o metabolismo ósseo.",
+            "Contribuinte",
+          ],
+          [
+            "Uma causa secundária de perda óssea",
+            "Condições como hipertireoidismo ou doença hepática ou renal de longa duração reduzem a densidade óssea por si só.",
+            "Contribuinte",
+          ],
+          [
+            "2+ quedas no último ano",
+            "A maioria das fraturas de fragilidade acontece depois de uma queda de pé, não isoladamente.",
+            "Contribuinte",
+          ],
+          [
+            "Menopausa antes dos 45 anos",
+            "O estrogênio protege o osso, pelo que a sua perda mais cedo dá mais tempo à perda óssea.",
+            "Contribuinte",
+          ],
+          [
+            "Baixo peso corporal (IMC abaixo de 18,5)",
+            "Menos massa corporal significa geralmente menos massa óssea, e menos amortecimento numa queda.",
+            "Contribuinte",
+          ],
+        ],
+        footnote:
+          "Baseado nos fatores de risco que a orientação CG146 da NICE (avaliação do risco de fratura de fragilidade) indica para a triagem. É uma lista de triagem, não uma pontuação de diagnóstico.",
+      },
+    },
+    {
+      heading: "Quem as orientações clínicas dizem que deve ser avaliado",
+      body: [
+        "A NICE, o National Osteoporosis Guideline Group (NOGG) do Reino Unido e a European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) definem um limiar essencialmente igual. É um critério de idade mais um critério de fatores de risco, não um único número.",
+      ],
+      bullets: [
+        "Todas as mulheres com 65 anos ou mais, e todos os homens com 75 anos ou mais — a avaliação é recomendada só pela idade.",
+        "Pessoas mais jovens com um fator de risco maior — uma fratura de fragilidade anterior ou corticosteroides orais de longa duração — a qualquer idade, incluindo antes dos 50 anos.",
+        "Qualquer pessoa com 50 anos ou mais que tenha um dos fatores contribuintes indicados na tabela acima.",
+        "Esta ferramenta aplica essa regra publicada ao que introduzir. Não calcula uma probabilidade e não é o FRAX — o FRAX é uma ferramenta proprietária distinta, utilizada por um médico, que combina este tipo de fatores com uma medição da densidade óssea.",
+      ],
+    },
+    {
+      heading: "O que esta avaliação não lhe diz",
+      body: [
+        "Uma lista de fatores de risco é um instrumento de triagem, não uma medição. Diz-lhe se vale a pena perguntar sobre um exame — não lhe diz o que esse exame mostraria.",
+      ],
+      bullets: [
+        "Não é um diagnóstico. A osteoporose é diagnosticada através de uma densitometria óssea (DXA), não através de um questionário.",
+        "Não indica uma probabilidade de fratura. As ferramentas que o fazem — FRAX, o nomograma de Garvan, o QFracture — combinam fatores de risco com uma medição da densidade óssea, e são utilizadas por um médico.",
+        "Não é o FRAX e não utiliza os seus coeficientes, que são propriedade da Universidade de Sheffield.",
+        'Um resultado "nenhum fator de risco específico identificado" é tranquilizador, mas não é uma garantia — mencione sempre uma nova fratura ou queda a um médico.',
+        "Não diz nada sobre tratamento. A medicação é uma decisão de um médico, tomada depois de um diagnóstico, e não a partir de uma lista de fatores de risco.",
+      ],
+    },
+    {
+      heading: "Como avançar para uma avaliação",
+      body: [],
+      bullets: [
+        "Comece por falar com um médico. Ele ou ela vai ponderar os seus fatores de risco e decidir se faz sentido pedir uma densitometria óssea.",
+        "Leve os fatores que esta ferramenta identificou para si — quais, e não apenas o resultado — para tornar a consulta mais rápida.",
+        "Se já teve uma fratura de fragilidade, pergunte sobre avaliação independentemente da sua idade ou do resultado desta ferramenta.",
+        "Cálcio, vitamina D, exercício com impacto e deixar de fumar ajudam a saúde óssea enquanto aguarda qualquer avaliação.",
+        "Procure cuidados médicos rapidamente perante uma nova fratura resultante de uma queda ligeira, seja qual for o resultado desta ferramenta — precisa de ser tratada por si só.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: "Isto é o mesmo que o FRAX?",
+      answer:
+        "Não. O FRAX é uma ferramenta proprietária distinta, desenvolvida pela Universidade de Sheffield, cujos coeficientes não são publicados — esta ferramenta não o reproduz nem afirma corresponder ao seu resultado. Esta é uma lista de triagem baseada em orientações publicadas (NICE CG146): diz-lhe se vale a pena ser avaliado, nunca uma probabilidade de fratura.",
+    },
+    {
+      question: "O que é uma densitometria óssea (DXA)?",
+      answer:
+        "Um exame de absorciometria de raios X de dupla energia — um raio X de baixa dose que mede a densidade óssea, normalmente no quadril e na coluna. É o exame em que uma avaliação realmente se baseia; nada nesta página o substitui.",
+    },
+    {
+      question: "Ter fatores de risco significa que tenho osteoporose?",
+      answer:
+        "Não. Um fator de risco identificado significa que as orientações recomendam que seja avaliado, não que tenha a doença. Muitas pessoas com fatores de risco têm uma densitometria óssea normal, e a osteoporose também pode surgir sem nenhum dos fatores aqui listados.",
+    },
+    {
+      question: "E se o meu resultado for 'nenhum fator de risco específico identificado' mas continuo preocupado?",
+      answer:
+        "Fale com um médico na mesma. Esta ferramenta cobre os fatores de risco de uma orientação clínica; não cobre todo o historial pessoal ou familiar que possa ser relevante, e uma conversa não custa nada que esta lista não consiga avaliar.",
+    },
+    {
+      question: "Quem diagnostica efetivamente a osteoporose?",
+      answer:
+        "Um médico, a partir de uma densitometria óssea (DXA) — normalmente um T-score de -2,5 ou inferior no quadril ou na coluna. Um questionário de fatores de risco como este só pode sugerir quem deve fazer esse exame; não pode diagnosticar nada por si próprio.",
+    },
+    {
+      question: "Esta avaliação guarda as minhas respostas?",
+      answer:
+        "Não. O cálculo é feito inteiramente no seu navegador. Nada do que selecionar é enviado para os nossos servidores nem guardado.",
+    },
+  ],
+  cta: {
+    heading: "Quer falar sobre a sua saúde óssea?",
+    body: "Agende uma teleconsulta com um médico registrado, reveja os seus fatores de risco e saiba se faz sentido pedir uma densitometria óssea.",
+    label: "Agendar consulta",
+  },
+};
+
 const BR_PT_BANDS: DeepPartial<ToolsBandsCopy> = {
   // pt-PT calls the condition PHDA and pt-BR calls it TDAH, so the result
   // read-out has to be swapped wholesale, not just re-worded.
@@ -1959,6 +2295,7 @@ const MARKET_COPY: Partial<Record<CountryCode, Record<string, MarketCopyOverride
         "due-date-calculator": BR_PT_DUE_DATE,
         "ovulation-calculator": BR_PT_OVULATION,
         "adhd-test": BR_PT_ADHD,
+        "osteoporosis-risk-checker": BR_PT_OSTEOPOROSIS,
       },
       bands: BR_PT_BANDS,
     },
