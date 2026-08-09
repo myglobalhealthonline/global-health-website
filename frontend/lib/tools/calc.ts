@@ -279,6 +279,101 @@ export function ovulationFromLmp(lmp: Date, cycleLength = 28): OvulationResult {
   };
 }
 
+/* ---------------------------------------------------------- Osteoporosis */
+
+/**
+ * Case-finding tier — NOT a probability, and NOT FRAX. This is who NICE
+ * guideline CG146 ("Osteoporosis: assessing the risk of fragility fracture",
+ * §1.1) says should be assessed for osteoporosis, which NOGG and ESCEO state
+ * in materially the same terms:
+ *
+ *   - all women 65+ and all men 75+ should be assessed;
+ *   - anyone younger should be assessed if they have a risk factor CG146
+ *     lists — a prior fragility fracture or long-term (3+ months) oral
+ *     glucocorticoids are the two the guideline treats as sufficient on
+ *     their own, at any age;
+ *   - the remaining CG146 risk factors (family history, smoking, heavy
+ *     alcohol, rheumatoid arthritis, a secondary cause, recurrent falls,
+ *     early menopause, low body weight) are worth a mention but do not by
+ *     themselves trigger the guideline's assessment threshold.
+ *
+ * That is a simple MAJOR-vs-CONTRIBUTING rule, not a weighted score — there
+ * is deliberately no points total here. A real probability needs a DXA
+ * reading combined in a validated tool (FRAX, run by a clinician; or the
+ * published Garvan nomogram / QFracture, neither implemented here).
+ */
+export type OsteoporosisTierKey = "assess-now" | "discuss-next" | "no-flags";
+
+const OSTEOPOROSIS_AGE_THRESHOLD: Record<Sex, number> = { female: 65, male: 75 };
+/** NICE CG146's own cited cut-off for low body weight as a risk factor. */
+const OSTEOPOROSIS_LOW_BMI = 18.5;
+
+export type OsteoporosisInput = {
+  age: number;
+  sex: Sex;
+  heightCm: number;
+  weightKg: number;
+  /** Wrist, hip, spine or arm, from a fall from standing height or less. */
+  priorFragilityFracture: boolean;
+  /** Oral glucocorticoids for 3 months or more. */
+  glucocorticoids: boolean;
+  parentalHipFracture: boolean;
+  currentSmoker: boolean;
+  /** 3 or more alcohol units a day. */
+  heavyAlcohol: boolean;
+  rheumatoidArthritis: boolean;
+  /** e.g. an overactive thyroid, malabsorption, chronic liver/kidney disease. */
+  secondaryCause: boolean;
+  /** 2 or more falls in the past year. */
+  falls: boolean;
+  /** Only scored for women — see the guideline's own scope. */
+  earlyMenopause: boolean;
+};
+
+export type OsteoporosisResult = {
+  tier: OsteoporosisTierKey;
+  majorCount: number;
+  contributingCount: number;
+  /** Total flagged, out of the 10 factors the chart table lists. */
+  totalCount: number;
+};
+
+/** How many risk-factor rows the chart table renders — keeps the two in step. */
+export const OSTEOPOROSIS_FACTOR_COUNT = 10;
+
+export function osteoporosisRiskTier(input: OsteoporosisInput): OsteoporosisResult {
+  const major = [input.priorFragilityFracture, input.glucocorticoids];
+
+  const bodyMassIndex = bmi(input.weightKg, input.heightCm);
+  const lowBodyWeight = bodyMassIndex !== null && bodyMassIndex < OSTEOPOROSIS_LOW_BMI;
+
+  const contributing = [
+    input.parentalHipFracture,
+    input.currentSmoker,
+    input.heavyAlcohol,
+    input.rheumatoidArthritis,
+    input.secondaryCause,
+    input.falls,
+    input.sex === "female" && input.earlyMenopause,
+    lowBodyWeight,
+  ];
+
+  const majorCount = major.filter(Boolean).length;
+  const contributingCount = contributing.filter(Boolean).length;
+
+  const overAgeThreshold =
+    Number.isFinite(input.age) && input.age >= OSTEOPOROSIS_AGE_THRESHOLD[input.sex];
+
+  const tier: OsteoporosisTierKey =
+    overAgeThreshold || majorCount > 0
+      ? "assess-now"
+      : contributingCount > 0
+        ? "discuss-next"
+        : "no-flags";
+
+  return { tier, majorCount, contributingCount, totalCount: majorCount + contributingCount };
+}
+
 /* ----------------------------------------------------------------- ADHD */
 
 /** Answer scale, low to high. Labels live in `tools.json`. */

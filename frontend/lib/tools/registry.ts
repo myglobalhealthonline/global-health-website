@@ -39,7 +39,8 @@ export type WidgetKey =
   | "blood-pressure"
   | "due-date"
   | "adhd"
-  | "ovulation";
+  | "ovulation"
+  | "osteoporosis";
 
 /** Row tone drives the colour dot in the rendered chart tables. */
 export type ToneKey = "good" | "warn" | "alert" | "muted";
@@ -181,6 +182,37 @@ export const TOOLS: ToolMeta[] = [
         rowTones: ["muted", "muted", "good", "good", "warn", "muted"],
       },
       { id: "signs", theme: "forest" },
+      { id: "limits", theme: "ivory" },
+      { id: "next", theme: "forest" },
+    ],
+    related: [],
+    ctaPath: "/gp-consultation-online",
+  },
+  {
+    slug: "osteoporosis-risk-checker",
+    widget: "osteoporosis",
+    sections: [
+      // The chart IS the risk-factor list, not a category ladder: two major
+      // factors (alert) that trigger assessment on their own, then eight
+      // contributing ones (warn) that only add up. No row is ever "good" —
+      // see `osteoporosisRiskTier` in calc.ts for the source rule.
+      {
+        id: "factors",
+        theme: "ivory",
+        rowTones: [
+          "alert",
+          "alert",
+          "warn",
+          "warn",
+          "warn",
+          "warn",
+          "warn",
+          "warn",
+          "warn",
+          "warn",
+        ],
+      },
+      { id: "guideline", theme: "forest" },
       { id: "limits", theme: "ivory" },
       { id: "next", theme: "forest" },
     ],

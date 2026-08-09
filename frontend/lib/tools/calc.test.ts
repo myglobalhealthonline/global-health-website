@@ -10,6 +10,7 @@ import {
   calorieTargets,
   dueDateFromLmp,
   healthyWeightRange,
+  osteoporosisRiskTier,
   ovulationFromLmp,
   parseISODate,
   tdee,
@@ -196,6 +197,71 @@ describe("adhdScore", () => {
 
   it("keeps the question list and the scorer in step", () => {
     expect(ADHD_QUESTIONS).toHaveLength(6);
+  });
+});
+
+describe("osteoporosisRiskTier", () => {
+  const base = {
+    age: 40,
+    sex: "female" as const,
+    heightCm: 170,
+    weightKg: 70,
+    priorFragilityFracture: false,
+    glucocorticoids: false,
+    parentalHipFracture: false,
+    currentSmoker: false,
+    heavyAlcohol: false,
+    rheumatoidArthritis: false,
+    secondaryCause: false,
+    falls: false,
+    earlyMenopause: false,
+  };
+
+  it("flags nothing for a young adult with no risk factors", () => {
+    const result = osteoporosisRiskTier(base);
+    expect(result.tier).toBe("no-flags");
+    expect(result.majorCount).toBe(0);
+    expect(result.contributingCount).toBe(0);
+  });
+
+  it("recommends assessment now at the guideline age threshold, per sex", () => {
+    expect(osteoporosisRiskTier({ ...base, sex: "female", age: 65 }).tier).toBe("assess-now");
+    expect(osteoporosisRiskTier({ ...base, sex: "female", age: 64 }).tier).toBe("no-flags");
+    expect(osteoporosisRiskTier({ ...base, sex: "male", age: 75 }).tier).toBe("assess-now");
+    expect(osteoporosisRiskTier({ ...base, sex: "male", age: 74 }).tier).toBe("no-flags");
+  });
+
+  it("recommends assessment for a major factor at any age, even under 50", () => {
+    expect(osteoporosisRiskTier({ ...base, age: 25, glucocorticoids: true }).tier).toBe(
+      "assess-now",
+    );
+    expect(osteoporosisRiskTier({ ...base, age: 25, priorFragilityFracture: true }).tier).toBe(
+      "assess-now",
+    );
+  });
+
+  it("only sends a contributing-only case to 'discuss next', never 'assess now'", () => {
+    const result = osteoporosisRiskTier({ ...base, currentSmoker: true, falls: true });
+    expect(result.tier).toBe("discuss-next");
+    expect(result.majorCount).toBe(0);
+    expect(result.contributingCount).toBe(2);
+  });
+
+  it("counts a low BMI as a contributing factor", () => {
+    const result = osteoporosisRiskTier({ ...base, heightCm: 170, weightKg: 50 });
+    expect(result.tier).toBe("discuss-next");
+    expect(result.contributingCount).toBe(1);
+  });
+
+  it("only scores early menopause for women", () => {
+    expect(
+      osteoporosisRiskTier({ ...base, sex: "male", age: 40, earlyMenopause: true })
+        .contributingCount,
+    ).toBe(0);
+    expect(
+      osteoporosisRiskTier({ ...base, sex: "female", age: 40, earlyMenopause: true })
+        .contributingCount,
+    ).toBe(1);
   });
 });
 

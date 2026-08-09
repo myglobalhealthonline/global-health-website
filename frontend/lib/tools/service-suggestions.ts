@@ -33,6 +33,7 @@ export type SuggestionSlot =
   | "cardio"
   | "mental"
   | "women"
+  | "bone"
   | "gp";
 
 /**
@@ -146,6 +147,25 @@ const WOMEN_TERMS = [
 ];
 
 /**
+ * No market sells a dedicated bone-health/DXA service today, so this slot
+ * falls through to `women` and then `gp` on every one of them — see
+ * `TOOL_SLOTS`. Kept as real term matching, not a hardcoded miss, so a market
+ * that adds one starts linking it automatically, the same way `WEIGHT_TERMS`
+ * already works for the six that do sell it.
+ */
+const BONE_TERMS = [
+  "bone",
+  "densitometr",
+  "denzit",
+  "osteoporos",
+  "osteoporoz",
+  "ossea",
+  "osea",
+  "osoas",
+  "knochen",
+];
+
+/**
  * Which service categories each tool should point at, best first.
  *
  * Every calculator used to fall through to the same weight/nutrition/GP set,
@@ -163,6 +183,7 @@ const TOOL_SLOTS: Record<string, SuggestionSlot[]> = {
   "due-date-calculator": ["women", "gp"],
   "ovulation-calculator": ["women", "gp"],
   "adhd-test": ["mental", "gp"],
+  "osteoporosis-risk-checker": ["bone", "women", "gp"],
 };
 
 const TERMS_FOR_SLOT: Record<Exclude<SuggestionSlot, "gp">, string[]> = {
@@ -172,6 +193,7 @@ const TERMS_FOR_SLOT: Record<Exclude<SuggestionSlot, "gp">, string[]> = {
   cardio: CARDIO_TERMS,
   mental: MENTAL_TERMS,
   women: WOMEN_TERMS,
+  bone: BONE_TERMS,
 };
 
 const norm = (value: string) =>

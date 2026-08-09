@@ -34,6 +34,7 @@ import {
   CM_PER_INCH,
   KG_PER_POUND,
   KG_PER_STONE,
+  OSTEOPOROSIS_FACTOR_COUNT,
   addDays,
   bmr,
   calorieTargets,
@@ -44,6 +45,7 @@ import {
   daysBetween,
   dueDateFromLmp,
   healthyWeightRange,
+  osteoporosisRiskTier,
   ovulationFromLmp,
   parseISODate,
   todayUTC,
@@ -133,6 +135,8 @@ export function ToolWidget({
       return <AdhdWidget copy={copy} />;
     case "ovulation":
       return <OvulationWidget copy={copy} />;
+    case "osteoporosis":
+      return <OsteoporosisWidget copy={copy} />;
   }
 }
 
@@ -1177,6 +1181,379 @@ function OvulationWidget({ copy }: { copy: WidgetCopy }) {
         tone="good"
       >
         {stats.length > 0 ? <ToolStatRow items={stats} /> : null}
+      </ToolResult>
+
+      <ToolNote>{w.note}</ToolNote>
+    </ToolCard>
+  );
+}
+
+/* ------------------------------------------------------------ Osteoporosis */
+
+/**
+ * A CASE-FINDING tool, not FRAX: it answers "should you be assessed?", never
+ * "what is your fracture probability?". See `osteoporosisRiskTier` in
+ * `calc.ts` for the published rule and its source. The read-out is therefore
+ * a tier and a flagged-factor count, never a percentage.
+ *
+ * Yes/no risk factors use the segmented pill control (`ToolSegmented`), not
+ * checkboxes, to match the rest of the tool set.
+ */
+function YesNoField({
+  legend,
+  hint,
+  name,
+  value,
+  onChange,
+  ui,
+}: {
+  legend: string;
+  hint?: string;
+  name: string;
+  value: boolean;
+  onChange: (next: boolean) => void;
+  ui: ToolsUiCopy;
+}) {
+  return (
+    <div className="grid gap-2">
+      <ToolSegmented
+        legend={legend}
+        name={name}
+        value={value ? "yes" : "no"}
+        onChange={(next) => onChange(next === "yes")}
+        options={[
+          { value: "yes", label: ui.yes },
+          { value: "no", label: ui.no },
+        ]}
+      />
+      {hint ? (
+        <p className="text-[12px] leading-snug" style={{ color: "var(--color-text-muted)" }}>
+          {hint}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function OsteoporosisWidget({ copy }: { copy: WidgetCopy }) {
+  const id = useId();
+  const { ui, bands } = copy;
+  const { number } = useFormatters(copy.formatLocale);
+  const w = copy.widget;
+
+  const [age, setAge] = useState("55");
+  const [sex, setSex] = useState<Sex>("female");
+  const [units, setUnits] = useState<"metric" | "imperial">("metric");
+  const [cm, setCm] = useState("165");
+  const [kg, setKg] = useState("65");
+  const [feet, setFeet] = useState("5");
+  const [inches, setInches] = useState("5");
+  const [stone, setStone] = useState("10");
+  const [pounds, setPounds] = useState("3");
+
+  const [priorFragilityFracture, setPriorFragilityFracture] = useState(false);
+  const [glucocorticoids, setGlucocorticoids] = useState(false);
+  const [parentalHipFracture, setParentalHipFracture] = useState(false);
+  const [currentSmoker, setCurrentSmoker] = useState(false);
+  const [heavyAlcohol, setHeavyAlcohol] = useState(false);
+  const [rheumatoidArthritis, setRheumatoidArthritis] = useState(false);
+  const [secondaryCause, setSecondaryCause] = useState(false);
+  const [falls, setFalls] = useState(false);
+  const [earlyMenopause, setEarlyMenopause] = useState(false);
+
+  const heightCm =
+    units === "metric"
+      ? num(cm)
+      : (num(feet) || 0) * CM_PER_FOOT + (num(inches) || 0) * CM_PER_INCH;
+  const weightKg =
+    units === "metric"
+      ? num(kg)
+      : (num(stone) || 0) * KG_PER_STONE + (num(pounds) || 0) * KG_PER_POUND;
+
+  /** Carry the current body over when switching units, rather than resetting. */
+  const switchUnits = (next: "metric" | "imperial") => {
+    if (next === units) return;
+    if (next === "imperial" && Number.isFinite(heightCm) && Number.isFinite(weightKg)) {
+      const totalInches = heightCm / CM_PER_INCH;
+      setFeet(String(Math.floor(totalInches / 12)));
+      setInches(String(Math.round(totalInches % 12)));
+      const totalStone = weightKg / KG_PER_STONE;
+      setStone(String(Math.floor(totalStone)));
+      setPounds(String(Math.round((totalStone % 1) * 14)));
+    }
+    if (next === "metric" && Number.isFinite(heightCm) && Number.isFinite(weightKg)) {
+      setCm(String(Math.round(heightCm)));
+      setKg(String(Math.round(weightKg)));
+    }
+    setUnits(next);
+  };
+
+  const result = osteoporosisRiskTier({
+    age: num(age),
+    sex,
+    heightCm,
+    weightKg,
+    priorFragilityFracture,
+    glucocorticoids,
+    parentalHipFracture,
+    currentSmoker,
+    heavyAlcohol,
+    rheumatoidArthritis,
+    secondaryCause,
+    falls,
+    earlyMenopause,
+  });
+  const bandCopy = bands.osteoporosis[result.tier];
+  const tone =
+    result.tier === "assess-now" ? "warn" : result.tier === "discuss-next" ? "muted" : "good";
+
+  return (
+    <ToolCard title={w.title}>
+      <ToolSegmented
+        legend={ui.sex}
+        name={`${id}-sex`}
+        value={sex}
+        onChange={setSex}
+        options={[
+          { value: "male", label: ui.male },
+          { value: "female", label: ui.female },
+        ]}
+      />
+
+      <ToolField label={ui.age} htmlFor={`${id}-age`} suffix={ui.years}>
+        <input
+          id={`${id}-age`}
+          className={TOOL_INPUT_CLASS}
+          style={TOOL_INPUT_STYLE}
+          inputMode="numeric"
+          value={age}
+          onChange={(event) => setAge(event.target.value)}
+        />
+        <ToolSlider
+          id={`${id}-age-range`}
+          ariaLabel={ui.age}
+          min={18}
+          max={100}
+          value={num(age)}
+          onChange={(next) => setAge(String(next))}
+        />
+      </ToolField>
+
+      <ToolSegmented
+        legend={ui.units}
+        name={`${id}-units`}
+        value={units}
+        onChange={switchUnits}
+        options={[
+          { value: "metric", label: ui.metric },
+          { value: "imperial", label: ui.imperial },
+        ]}
+      />
+
+      {units === "metric" ? (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <ToolField label={ui.height} htmlFor={`${id}-cm`} suffix={ui.cm}>
+            <input
+              id={`${id}-cm`}
+              className={TOOL_INPUT_CLASS}
+              style={TOOL_INPUT_STYLE}
+              inputMode="decimal"
+              value={cm}
+              onChange={(event) => setCm(event.target.value)}
+            />
+            <ToolSlider
+              id={`${id}-cm-range`}
+              ariaLabel={ui.height}
+              min={120}
+              max={220}
+              value={num(cm)}
+              onChange={(next) => setCm(String(next))}
+            />
+          </ToolField>
+          <ToolField label={ui.weight} htmlFor={`${id}-kg`} suffix={ui.kg}>
+            <input
+              id={`${id}-kg`}
+              className={TOOL_INPUT_CLASS}
+              style={TOOL_INPUT_STYLE}
+              inputMode="decimal"
+              value={kg}
+              onChange={(event) => setKg(event.target.value)}
+            />
+            <ToolSlider
+              id={`${id}-kg-range`}
+              ariaLabel={ui.weight}
+              min={35}
+              max={200}
+              value={num(kg)}
+              onChange={(next) => setKg(String(next))}
+            />
+          </ToolField>
+        </div>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <ToolField label={ui.height} htmlFor={`${id}-ft`} suffix="ft / in">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="relative">
+                <input
+                  id={`${id}-ft`}
+                  className={`${TOOL_INPUT_CLASS} pr-8`}
+                  style={TOOL_INPUT_STYLE}
+                  inputMode="numeric"
+                  aria-label={ui.feetLabel}
+                  value={feet}
+                  onChange={(event) => setFeet(event.target.value)}
+                />
+                <span className={UNIT_SUFFIX_CLASS}>ft</span>
+              </div>
+              <div className="relative">
+                <input
+                  id={`${id}-in`}
+                  className={`${TOOL_INPUT_CLASS} pr-8`}
+                  style={TOOL_INPUT_STYLE}
+                  inputMode="numeric"
+                  aria-label={ui.inchesLabel}
+                  value={inches}
+                  onChange={(event) => setInches(event.target.value)}
+                />
+                <span className={UNIT_SUFFIX_CLASS}>in</span>
+              </div>
+            </div>
+            <ToolSlider
+              id={`${id}-height-range`}
+              ariaLabel={ui.height}
+              min={48}
+              max={84}
+              value={(num(feet) || 0) * 12 + (num(inches) || 0)}
+              onChange={(total) => {
+                setFeet(String(Math.floor(total / 12)));
+                setInches(String(total % 12));
+              }}
+            />
+          </ToolField>
+
+          <ToolField label={ui.weight} htmlFor={`${id}-st`} suffix="st / lb">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="relative">
+                <input
+                  id={`${id}-st`}
+                  className={`${TOOL_INPUT_CLASS} pr-8`}
+                  style={TOOL_INPUT_STYLE}
+                  inputMode="numeric"
+                  aria-label={ui.stoneLabel}
+                  value={stone}
+                  onChange={(event) => setStone(event.target.value)}
+                />
+                <span className={UNIT_SUFFIX_CLASS}>st</span>
+              </div>
+              <div className="relative">
+                <input
+                  id={`${id}-lb`}
+                  className={`${TOOL_INPUT_CLASS} pr-8`}
+                  style={TOOL_INPUT_STYLE}
+                  inputMode="numeric"
+                  aria-label={ui.poundsLabel}
+                  value={pounds}
+                  onChange={(event) => setPounds(event.target.value)}
+                />
+                <span className={UNIT_SUFFIX_CLASS}>lb</span>
+              </div>
+            </div>
+            <ToolSlider
+              id={`${id}-weight-range`}
+              ariaLabel={ui.weight}
+              min={70}
+              max={440}
+              value={(num(stone) || 0) * 14 + (num(pounds) || 0)}
+              onChange={(total) => {
+                setStone(String(Math.floor(total / 14)));
+                setPounds(String(total % 14));
+              }}
+            />
+          </ToolField>
+        </div>
+      )}
+
+      <YesNoField
+        legend={w.fractureLabel}
+        hint={w.fractureHint}
+        name={`${id}-fracture`}
+        value={priorFragilityFracture}
+        onChange={setPriorFragilityFracture}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.glucocorticoidLabel}
+        name={`${id}-glucocorticoid`}
+        value={glucocorticoids}
+        onChange={setGlucocorticoids}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.parentalHipLabel}
+        name={`${id}-parental-hip`}
+        value={parentalHipFracture}
+        onChange={setParentalHipFracture}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.smokerLabel}
+        name={`${id}-smoker`}
+        value={currentSmoker}
+        onChange={setCurrentSmoker}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.alcoholLabel}
+        name={`${id}-alcohol`}
+        value={heavyAlcohol}
+        onChange={setHeavyAlcohol}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.raLabel}
+        name={`${id}-ra`}
+        value={rheumatoidArthritis}
+        onChange={setRheumatoidArthritis}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.secondaryLabel}
+        hint={w.secondaryHint}
+        name={`${id}-secondary`}
+        value={secondaryCause}
+        onChange={setSecondaryCause}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.fallsLabel}
+        name={`${id}-falls`}
+        value={falls}
+        onChange={setFalls}
+        ui={ui}
+      />
+      {sex === "female" ? (
+        <YesNoField
+          legend={w.menopauseLabel}
+          name={`${id}-menopause`}
+          value={earlyMenopause}
+          onChange={setEarlyMenopause}
+          ui={ui}
+        />
+      ) : null}
+
+      <ToolResult
+        placeholder={w.placeholder}
+        value={`${number.format(result.totalCount)} / ${number.format(OSTEOPOROSIS_FACTOR_COUNT)}`}
+        label={bandCopy.label}
+        summary={bandCopy.summary}
+        tone={tone}
+      >
+        <ToolStatRow
+          items={[
+            { label: w.majorLabel, value: number.format(result.majorCount) },
+            { label: w.contributingLabel, value: number.format(result.contributingCount) },
+          ]}
+        />
       </ToolResult>
 
       <ToolNote>{w.note}</ToolNote>
