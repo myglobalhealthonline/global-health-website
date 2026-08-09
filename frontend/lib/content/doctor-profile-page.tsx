@@ -69,23 +69,27 @@ export async function buildDoctorProfileMetadata(
   const canonical = `/${slug}/${routeLang}/doctors/${doctorSlug}`;
   const { common: metaCommon } = loadLocaleBundle(routeLang as LocaleCode);
   const metaDp = metaCommon.doctorProfile;
-  const fillProfileTemplate = (template: string) =>
-    template
-      .replace("{name}", data.profile.name)
-      .replace("{title}", data.profile.title)
-      .replace("{country}", data.profile.country)
-      .replace("{languages}", data.profile.languages.join(", ") || "English");
-  const baseTitle =
-    data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${data.profile.country}`;
   const resolvedCode = countryCodeFromSlug(slug);
   const config = resolvedCode ? getCountryByCode(resolvedCode) : null;
   // `data.profile.country` is the doctor's PRIMARY country (see
   // get-public-doctors.ts) — on a cross-listed doctor's secondary-market
-  // route it still reads e.g. "Ireland" even under /czechia/*. The market
-  // this <title> must name is the ROUTE the page is actually serving, so use
-  // the route-resolved country config, falling back to the profile country
-  // only when the route didn't resolve (placeholder/legacy path).
+  // route it still reads e.g. "Ireland" even under /czechia/*. Every piece of
+  // metadata below must name the market the page is actually SERVING, so
+  // every `{country}` fill and the OG subtitle use the route-resolved name,
+  // falling back to the profile country only when the route didn't resolve
+  // (placeholder/legacy path). The description/socialDescription FALLBACK
+  // templates were the other leak: an admin `seoDescription` is already
+  // market-scoped by the backend merge, but the code-side template always
+  // substituted the primary country regardless of route.
   const routeCountryName = config?.name ?? data.profile.country;
+  const fillProfileTemplate = (template: string) =>
+    template
+      .replace("{name}", data.profile.name)
+      .replace("{title}", data.profile.title)
+      .replace("{country}", routeCountryName)
+      .replace("{languages}", data.profile.languages.join(", ") || "English");
+  const baseTitle =
+    data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${routeCountryName}`;
   // Cross-listed doctors (same clinician, multiple markets) currently share
   // one admin `seoTitle` across every country page they appear on — a
   // duplicate-title flag in GSC. Differentiate the SERP title by market only
@@ -111,7 +115,7 @@ export async function buildDoctorProfileMetadata(
     imageTitle: data.profile.name,
     type: "profile",
     kind: "doctor",
-    subtitle: `${data.profile.title} · ${data.profile.country}`,
+    subtitle: `${data.profile.title} · ${routeCountryName}`,
     sourceImage: data.profileImageSrc,
     imageAlt: data.profile.imageAltText ?? `${data.profile.name}, ${data.profile.title}`,
     locale: config ? ogLocales(config, routeLang).locale : undefined,
