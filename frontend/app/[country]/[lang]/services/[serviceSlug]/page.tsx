@@ -109,13 +109,20 @@ async function indexableServiceAlternates(
   const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
   const langs = (config.supportedLocales ?? [defaultLocale]).map((l) => l.toLowerCase());
   const region = hreflangRegion(config.code);
+  // Parallel, not sequential — up to 6 locale reads in a row pushed this past
+  // Next's streaming-metadata cutoff (metadata resolving after the initial
+  // <head> flush lands <title>/canonical/hreflang outside <head> for crawlers
+  // not in next.config.ts's `htmlLimitedBots`). Each read is independent.
+  const records = await Promise.all(
+    langs.map((alt) => getCountryServiceDetail(code, serviceSlug, alt)),
+  );
   const out: Record<string, string> = {};
-  for (const alt of langs) {
-    const record = await getCountryServiceDetail(code, serviceSlug, alt);
-    if (!record) continue;
-    if (!isPublicServiceRecordIndexable(record, alt, defaultLocale)) continue;
+  langs.forEach((alt, i) => {
+    const record = records[i];
+    if (!record) return;
+    if (!isPublicServiceRecordIndexable(record, alt, defaultLocale)) return;
     out[`${alt}-${region}`] = `/${countrySlugParam}/${alt}/services/${serviceSlug}`;
-  }
+  });
   if (Object.keys(out).length === 0) return undefined;
   // x-default points at the market's own language when that variant qualifies,
   // otherwise at the first one that does — never at a locale we just excluded.

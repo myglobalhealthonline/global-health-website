@@ -28,10 +28,12 @@ import { indexableHreflangCluster } from "@/lib/seo/hreflang";
  * another market, and a de-accented alias slug are all simply never found in a
  * market's roster and so are never advertised.
  *
- * ponytail: the sibling lookups are sequential, one awaited roster read per
- * extra locale (at most five). Each is `cache()`-wrapped and the rosters are
- * already warm for any market being crawled, so this has not been worth a
- * Promise.all yet — revisit if doctor-page TTFB is ever measured as a problem.
+ * The sibling lookups run in parallel (Promise.all), not sequentially — a
+ * chain of up to five awaited roster reads was slow enough to lose the race
+ * against Next's streaming-metadata head flush, landing <title>/canonical/
+ * hreflang outside <head> for crawlers not covered by next.config.ts's
+ * `htmlLimitedBots` (confirmed via a Screaming Frog "Outside <head>" cluster
+ * on doctor + service pages). Each read is independent and `cache()`-wrapped.
  */
 export async function doctorHreflangCluster(
   config: CountryConfig,
@@ -44,16 +46,15 @@ export async function doctorHreflangCluster(
   const current = currentLang.toLowerCase();
   const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
   const langs = (config.supportedLocales ?? [defaultLocale]).map((l) => l.toLowerCase());
-  const eligible: string[] = [];
-  for (const lang of langs) {
-    if (lang === current) {
-      eligible.push(lang);
-      continue;
-    }
-    const roster = await getPublicDoctorsForMarket(config.code, lang);
-    if (roster.some((d) => d.slug === doctorSlug && isPublicDoctorRecordIndexable(d))) {
-      eligible.push(lang);
-    }
-  }
+  const others = langs.filter((lang) => lang !== current);
+  const rosters = await Promise.all(
+    others.map((lang) => getPublicDoctorsForMarket(config.code, lang)),
+  );
+  const eligibleOthers = new Set(
+    others.filter((_, i) =>
+      rosters[i].some((d) => d.slug === doctorSlug && isPublicDoctorRecordIndexable(d)),
+    ),
+  );
+  const eligible = langs.filter((lang) => lang === current || eligibleOthers.has(lang));
   return indexableHreflangCluster(config, `/doctors/${doctorSlug}`, eligible);
 }
