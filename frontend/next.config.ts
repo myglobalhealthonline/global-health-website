@@ -184,18 +184,16 @@ const nextConfig: NextConfig = {
   },
   // Next streams <title>/<meta>/<link rel=canonical|alternate> after </head>
   // for any generateMetadata() that isn't ready before the shell flushes
-  // (service/doctor pages await per-locale hreflang DB lookups). Browsers and
-  // Googlebot's renderer relocate streamed tags into <head> per the HTML spec,
-  // but Next only forces the safe non-streamed render for UAs matching this
-  // regex — and its built-in default does NOT match plain "Googlebot" (only
-  // suffixed crawlers like AdsBot-Google). Since the CDN cache also doesn't
-  // vary by User-Agent (edge `Vary` omits it), a streamed response served to
-  // any first requester gets cached and handed to Googlebot too. Extending
-  // the default with the real Googlebot + Screaming Frog UAs closes that gap
-  // at the framework level instead of racing to speed up every metadata call.
+  // (service/doctor pages awaited per-locale hreflang DB lookups — now
+  // parallelized, see indexableServiceAlternates / doctorHreflangCluster, cut
+  // 6-locale resolution from ~3.7-4.6s to ~0.7s). Googlebot's renderer parses
+  // per the HTML spec and understands Next's streamed metadata, and nothing
+  // here shows Google itself mis-reading these pages — so it deliberately
+  // stays OUT of this list; only Screaming Frog SEO Spider is appended,
+  // because its head-only extraction doesn't parse streamed tags at all.
   // Default regex this extends: node_modules/next/dist/shared/lib/router/utils/html-bots.js
   htmlLimitedBots:
-    /Googlebot|[\w-]+-Google|Google-[\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight|Screaming Frog SEO Spider/i,
+    /[\w-]+-Google|Google-[\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight|Screaming Frog SEO Spider/i,
   turbopack: {
     root: path.resolve(__dirname, ".."),
   },
