@@ -87,14 +87,44 @@ function listingPath(
 }
 
 /**
+ * Locale codes a service genuinely renders `index,follow` in — the SAME
+ * `isPublicServiceRecordIndexable` membership test the robots tag and
+ * `sitemap.ts` use, so none of those three can disagree. Shared by
+ * `indexableServiceAlternates`'s hreflang map (below) and (2026-08-09) the
+ * page's own `AlsoAvailableIn` link row, so a crawlable "also available in"
+ * link can never point at a locale this service has no real content for.
+ *
+ * Parallel, not sequential — up to 6 locale reads in a row pushed
+ * `generateMetadata` past Next's streaming-metadata cutoff (metadata
+ * resolving after the initial `<head>` flush lands `<title>`/canonical/
+ * hreflang outside `<head>` for crawlers not in next.config.ts's
+ * `htmlLimitedBots`). Each read is independent and `cache()`-wrapped, so
+ * calling this a second time from the page component (for AlsoAvailableIn)
+ * dedupes against the `generateMetadata` call within the same request.
+ */
+async function indexableServiceLocales(
+  config: NonNullable<ReturnType<typeof getCountryByCode>>,
+  code: CountryCode,
+  serviceSlug: string,
+): Promise<string[]> {
+  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
+  const langs = (config.supportedLocales ?? [defaultLocale]).map((l) => l.toLowerCase());
+  const records = await Promise.all(
+    langs.map((alt) => getCountryServiceDetail(code, serviceSlug, alt)),
+  );
+  return langs.filter((alt, i) => {
+    const record = records[i];
+    return record != null && isPublicServiceRecordIndexable(record, alt, defaultLocale);
+  });
+}
+
+/**
  * hreflang cluster for a service, restricted to the locale variants that
  * actually render `index,follow`.
  *
  * hreflang is a reciprocal claim that each listed URL is a publishable
  * alternate of this page, so advertising a locale this service has no real
- * content for asks Google to index a page that says noindex about itself. The
- * membership test is the SAME `isPublicServiceRecordIndexable` the robots tag
- * and `sitemap.ts` use, so the three can never disagree.
+ * content for asks Google to index a page that says noindex about itself.
  *
  * Returns `undefined` when no locale qualifies (a service with no publishable
  * version anywhere advertises nothing) — including for the page's own locale,
@@ -107,23 +137,13 @@ async function indexableServiceAlternates(
   serviceSlug: string,
 ): Promise<Record<string, string> | undefined> {
   const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
-  const langs = (config.supportedLocales ?? [defaultLocale]).map((l) => l.toLowerCase());
   const region = hreflangRegion(config.code);
-  // Parallel, not sequential — up to 6 locale reads in a row pushed this past
-  // Next's streaming-metadata cutoff (metadata resolving after the initial
-  // <head> flush lands <title>/canonical/hreflang outside <head> for crawlers
-  // not in next.config.ts's `htmlLimitedBots`). Each read is independent.
-  const records = await Promise.all(
-    langs.map((alt) => getCountryServiceDetail(code, serviceSlug, alt)),
-  );
+  const eligible = await indexableServiceLocales(config, code, serviceSlug);
+  if (eligible.length === 0) return undefined;
   const out: Record<string, string> = {};
-  langs.forEach((alt, i) => {
-    const record = records[i];
-    if (!record) return;
-    if (!isPublicServiceRecordIndexable(record, alt, defaultLocale)) return;
+  for (const alt of eligible) {
     out[`${alt}-${region}`] = `/${countrySlugParam}/${alt}/services/${serviceSlug}`;
-  });
-  if (Object.keys(out).length === 0) return undefined;
+  }
   // x-default points at the market's own language when that variant qualifies,
   // otherwise at the first one that does — never at a locale we just excluded.
   const xDefault = out[`${defaultLocale}-${region}`] ?? Object.values(out)[0];
@@ -248,22 +268,32 @@ export default async function ServiceDetailPage({
   // Country-specific short medical disclaimer (admin-authored, per country);
   // falls back to the generic translated line when not set. Independent of
   // the doctor/service reads below — started together instead of sequentially.
-  const [{ short: shortDisclaimer }, generals, specialists, allDoctors, landingRes, relatedPosts] =
-    await Promise.all([
-      getCountryDisclaimer(code, lang),
-      // Clinicians assigned to this service — surfaced as a credibility strip
-      // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
-      getCountryServices(code, "GENERAL", lang),
-      getCountryServices(code, "SPECIALIST", lang),
-      getCountryDoctors(code, lang),
-      // SEO landing pages that point AT this service. They are kept out of nav
-      // and the service hub by design (Rule 6), so this is their only internal
-      // inbound link — without it Google left all 90 of them unindexed.
-      fetchLandingSlugs(code, lang).catch(() => null),
-      // Blog articles written FOR this service (BlogPost.ctaService). They link
-      // down here; without this section nothing links back up into them.
-      listRelatedBlogPosts(code, lang, { serviceSlug }),
-    ]);
+  const [
+    { short: shortDisclaimer },
+    generals,
+    specialists,
+    allDoctors,
+    landingRes,
+    relatedPosts,
+    eligibleLocales,
+  ] = await Promise.all([
+    getCountryDisclaimer(code, lang),
+    // Clinicians assigned to this service — surfaced as a credibility strip
+    // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
+    getCountryServices(code, "GENERAL", lang),
+    getCountryServices(code, "SPECIALIST", lang),
+    getCountryDoctors(code, lang),
+    // SEO landing pages that point AT this service. They are kept out of nav
+    // and the service hub by design (Rule 6), so this is their only internal
+    // inbound link — without it Google left all 90 of them unindexed.
+    fetchLandingSlugs(code, lang).catch(() => null),
+    // Blog articles written FOR this service (BlogPost.ctaService). They link
+    // down here; without this section nothing links back up into them.
+    listRelatedBlogPosts(code, lang, { serviceSlug }),
+    // Same eligibility decision generateMetadata's hreflang cluster already
+    // made — feeds AlsoAvailableIn below, cache()-deduped against that call.
+    indexableServiceLocales(config, code, serviceSlug),
+  ]);
   const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", config.name);
   const serviceCard =
     generals.find((s) => s.slug === serviceSlug) ??
@@ -841,6 +871,7 @@ export default async function ServiceDetailPage({
         lang={lang}
         suffix={`/services/${serviceSlug}`}
         title={c.alsoAvailableIn.title}
+        eligibleLocales={eligibleLocales}
       />
 
       {/* Doctify social proof — compact verified-rating strip */}

@@ -130,11 +130,17 @@ export default async function CountryLandingPage({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) notFound();
 
-  const [page, countryTrust] = await Promise.all([
+  const [page, countryTrust, availableLocales] = await Promise.all([
     getCountryLandingPage(code, slug, lang),
     getCountryTrust(code, lang as LocaleCode),
+    getLandingAvailableLocales(code, slug),
   ]);
   if (!page) notFound();
+  const eligibleLocales = eligibleLandingLocales(
+    availableLocales,
+    config.supportedLocales ?? [],
+    config.defaultLocale ?? "en",
+  );
 
   const bodyHtml = page.bodyHtml ? scopeBlogHtml(page.bodyHtml) : null;
   const template = page.template;
@@ -289,7 +295,13 @@ export default async function CountryLandingPage({
         </section>
       ) : null}
 
-      <AlsoAvailableIn country={config} lang={lang} suffix={`/health/${slug}`} title={c.alsoAvailableIn.title} />
+      <AlsoAvailableIn
+        country={config}
+        lang={lang}
+        suffix={`/health/${slug}`}
+        title={c.alsoAvailableIn.title}
+        eligibleLocales={eligibleLocales}
+      />
 
       {/* Closing booking band — visual parity with the service page's
           closing CTA. */}
