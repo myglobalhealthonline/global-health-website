@@ -122,8 +122,11 @@ export function DoctorProfileTemplate({
         {/* Mobile/tablet only — full-bleed tinted portrait behind the text,
          *  same treatment as the team page hero: text sits in front of the
          *  photo instead of the photo being hidden below lg. */}
+        {/* overflow-hidden on the layer: the focal-point style can scale the
+         *  image past 100% width, and the hero itself is overflow-visible, so
+         *  without this clip the zoomed portrait widens the whole document. */}
         {profileImageSrc ? (
-          <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+          <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 overflow-hidden lg:hidden">
             <Image
               src={profileImageSrc}
               alt=""
