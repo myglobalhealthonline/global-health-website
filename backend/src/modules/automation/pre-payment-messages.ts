@@ -217,7 +217,6 @@ Patient: ${ctx.patientName}
 Service: ${ctx.serviceName}
 Date & time: ${ctx.appointmentDate}
 Order: #${ctx.orderNumber}
-Amount: ${ctx.totalLabel}
 Payment deadline: ${ctx.deadline}
 Global Health Team`,
     pt: `Olá ${ctx.doctorName},
@@ -226,7 +225,6 @@ Paciente: ${ctx.patientName}
 Serviço: ${ctx.serviceName}
 Data e hora: ${ctx.appointmentDate}
 Pedido: #${ctx.orderNumber}
-Valor: ${ctx.totalLabel}
 Prazo de pagamento: ${ctx.deadline}
 Equipa Global Health`,
     ro: `Bună ziua ${ctx.doctorName},
@@ -235,7 +233,6 @@ Pacient: ${ctx.patientName}
 Serviciu: ${ctx.serviceName}
 Data și ora: ${ctx.appointmentDate}
 Comandă: #${ctx.orderNumber}
-Sumă: ${ctx.totalLabel}
 Termen plată: ${ctx.deadline}
 Echipa Global Health`,
     cs: `Dobrý den ${ctx.doctorName},
@@ -244,7 +241,6 @@ Pacient: ${ctx.patientName}
 Služba: ${ctx.serviceName}
 Datum a čas: ${ctx.appointmentDate}
 Objednávka: #${ctx.orderNumber}
-Částka: ${ctx.totalLabel}
 Termín platby: ${ctx.deadline}
 Tým Global Health`,
     es: `Hola ${ctx.doctorName},
@@ -253,7 +249,6 @@ Paciente: ${ctx.patientName}
 Servicio: ${ctx.serviceName}
 Fecha y hora: ${ctx.appointmentDate}
 Pedido: #${ctx.orderNumber}
-Importe: ${ctx.totalLabel}
 Fecha límite de pago: ${ctx.deadline}
 Equipo Global Health`,
   });
