@@ -42,6 +42,7 @@ import {
   ConsultationDocumentsTrigger,
 } from "./_components/consultation-documents-section";
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
+import { MedicalAccessDeniedNotice } from "../../_components/medical-access-denied";
 import { PatientContextPanel } from "./_components/patient-context-panel";
 import { ReferringRecordPanel } from "./_components/referring-record-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
@@ -111,9 +112,17 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         >
           <ArrowLeft className="size-3.5" /> {d.appointmentDetail.back}
         </Link>
-        <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
-          {consultRes.message}
-        </p>
+        {consultRes.deniedAccess ? (
+          <MedicalAccessDeniedNotice
+            appointmentId={id}
+            denial={consultRes.deniedAccess}
+            copy={d.medicalAccessDenied}
+          />
+        ) : (
+          <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
+            {consultRes.message}
+          </p>
+        )}
       </div>
     );
   }

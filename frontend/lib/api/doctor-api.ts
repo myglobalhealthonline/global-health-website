@@ -11,9 +11,31 @@ import type { SupportMessage } from "@/lib/api/support-chat-api";
  * leak another doctor's data.
  */
 
+/** Structured deny-reason payload a 403 from the medical-access guard carries
+ *  in `details` (see backend/src/utils/guard-medical-read.ts
+ *  `medicalAccessDeniedResponse`). `remedy` is server-authored English —
+ *  doctor-portal UI should prefer looking up `reasonCode` against
+ *  doctor.json's `medicalAccessDenied` keys and only fall back to `remedy`
+ *  for an uncatalogued code, so the notice stays translatable. */
+export type MedicalAccessDeniedDetails = {
+  reasonCode: string;
+  remedy: string;
+  selfFixable: boolean;
+  canRequestAccess: boolean;
+};
+
 type ApiResult<T> =
   | { ok: true; data: T; message?: string }
-  | { ok: false; message: string; status?: number };
+  | { ok: false; message: string; status?: number; deniedAccess?: MedicalAccessDeniedDetails };
+
+function isMedicalAccessDeniedDetails(v: unknown): v is MedicalAccessDeniedDetails {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    typeof (v as { reasonCode?: unknown }).reasonCode === "string" &&
+    typeof (v as { canRequestAccess?: unknown }).canRequestAccess === "boolean"
+  );
+}
 
 async function doctorRequest<T>(path: string): Promise<ApiResult<T>> {
   const apiUrl = getBackendOrigin();
@@ -31,12 +53,17 @@ async function doctorRequest<T>(path: string): Promise<ApiResult<T>> {
       ok?: boolean;
       data?: T;
       message?: string;
+      details?: unknown;
     };
     if (!res.ok || !json.ok || json.data === undefined) {
       return {
         ok: false,
         status: res.status,
         message: json.message ?? "Doctor portal request failed",
+        deniedAccess:
+          res.status === 403 && isMedicalAccessDeniedDetails(json.details)
+            ? json.details
+            : undefined,
       };
     }
     return { ok: true, data: json.data as T, message: json.message };

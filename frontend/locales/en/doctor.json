@@ -878,6 +878,25 @@
     "openWorkspace": "Open document workspace",
     "generateDocuments": "Generate documents"
   },
+  "medicalAccessDenied": {
+    "title": "You don't have access to this record",
+    "reasonDoctor2faRequired": "Verify two-factor authentication to continue.",
+    "reasonDoctorNoConfidentialityAgreement": "Accept the current confidentiality agreement to continue.",
+    "reasonDoctorNoValidAccessPath": "The patient has not consented to your access. Request access below — the patient will be asked to approve it.",
+    "reasonDefault": "Contact support if you believe this is in error.",
+    "actionConfidentiality": "Accept the confidentiality agreement",
+    "action2fa": "Enable two-factor authentication",
+    "requestAccess": "Request access",
+    "requestAccessDialogTitle": "Request access to this record",
+    "requestAccessReasonLabel": "Reason for the request",
+    "requestAccessReasonPlaceholder": "Explain briefly why you need access to this patient's record…",
+    "requestAccessReasonHint": "10–1000 characters. The patient will see this reason.",
+    "requestAccessSubmit": "Send request",
+    "requestAccessCancel": "Cancel",
+    "requestAccessSubmitted": "Request sent — waiting for the patient to approve.",
+    "requestAccessPending": "Access request pending patient approval.",
+    "requestAccessError": "Could not submit the request. Try again."
+  },
   "complianceBanner": {
     "title": "Complete your compliance setup",
     "description": "Required before patient-record protections are enforced — takes about 5 minutes.",

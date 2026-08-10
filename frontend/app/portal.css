@@ -3043,6 +3043,17 @@ a.gh-admin-summary-item--link:focus-visible {
   background-clip: padding-box, padding-box, border-box;
 }
 
+/* Medical-access denial notice (appointments/[id] page, guard 403) — same
+ * warning-tinted treatment as the compliance banner above. */
+.gh-admin-card.gh-doctor-access-denied {
+  background-image:
+    linear-gradient(180deg, var(--portal-warning-soft), var(--portal-warning-soft)),
+    var(--lux-card-fill),
+    var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, padding-box, border-box;
+}
+
 .gh-doctor-detail-grid,
 .gh-doctor-overview-grid,
 .gh-doctor-availability-grid,
