@@ -288,6 +288,125 @@ describe("medical access guard — route authorization decision", () => {
   });
 });
 
+  // GH-2026-001436: 42 production appointments had userId=null while the
+  // patient's profile had one, so doctorHasTreatmentRelationship's
+  // Appointment.userId -> PatientProfile.userId join could never match. A
+  // doctor with valid direct consent was denied for four days. This locks in
+  // the failure mode (so it's visible here, not just in an incident report)
+  // and then the fix once the appointment is linked to the same user.
+  it("denies a DOCTOR with valid direct consent when Appointment.userId is null (GH-2026-001436)", async () => {
+    const patientProfileId = "patient-profile-null-userid";
+    fixtures.patientProfiles[patientProfileId] = { userId: "user-null-userid" };
+    fixtures.consents.push({
+      patientProfileId,
+      consentType: "MEDICAL_ACCESS_DIRECT",
+      consentValue: true,
+      createdAt: new Date(),
+    });
+    // The appointment exists but carries no userId — exactly the production
+    // shape. doctorId + status match, but the userId join has nothing to
+    // match against, so doctorHasTreatmentRelationship never finds it.
+    fixtures.appointments.push({
+      doctorId: "doc-null-userid",
+      userId: "", // treated as "no userId" by the fake findFirst (never equals profile.userId)
+      status: "COMPLETED",
+    });
+
+    const result = await assertMedicalAccess({
+      actor: {
+        userId: "doctor-null-userid",
+        role: "DOCTOR",
+        name: "Dr NullUserId",
+        doctorId: "doc-null-userid",
+        confidentialityAgreementAccepted: true,
+        twoFactorVerifiedAt: new Date(),
+      },
+      resource: { ...resource, patientProfileId, patientCountryFolder: null },
+    });
+    assert.equal(result.allowed, false);
+    assert.equal(result.denyReason, "DOCTOR_NO_VALID_ACCESS_PATH");
+  });
+
+  it("allows the same DOCTOR once the appointment is linked to the patient's userId", async () => {
+    const patientProfileId = "patient-profile-linked-userid";
+    fixtures.patientProfiles[patientProfileId] = { userId: "user-linked-userid" };
+    fixtures.consents.push({
+      patientProfileId,
+      consentType: "MEDICAL_ACCESS_DIRECT",
+      consentValue: true,
+      createdAt: new Date(),
+    });
+    fixtures.appointments.push({
+      doctorId: "doc-linked-userid",
+      userId: "user-linked-userid",
+      status: "COMPLETED",
+    });
+
+    const result = await assertMedicalAccess({
+      actor: {
+        userId: "doctor-linked-userid",
+        role: "DOCTOR",
+        name: "Dr LinkedUserId",
+        doctorId: "doc-linked-userid",
+        confidentialityAgreementAccepted: true,
+        twoFactorVerifiedAt: new Date(),
+      },
+      resource: { ...resource, patientProfileId, patientCountryFolder: null },
+    });
+    assert.equal(result.allowed, true);
+    assert.equal(result.consentLevelUsed, "DIRECT_ONLY");
+  });
+
+describe("guard-medical-read — 403 body shape (SEC-008 reason surfacing)", () => {
+  it("DOCTOR_2FA_REQUIRED: self-fixable, no request-access path, no patient/clinical detail", async () => {
+    const { describeDenyReason } = await import("./medical-access-guard.js");
+    const info = describeDenyReason("DOCTOR_2FA_REQUIRED");
+    assert.equal(info.selfFixable, true);
+    assert.equal(info.canRequestAccess, false);
+    assert.equal(typeof info.remedy, "string");
+    // Generic reference to the "patient" role in the remedy sentence is fine
+    // ("the patient has not consented") — what must never appear is an actual
+    // identifier or clinical content.
+    const serialized = JSON.stringify(info);
+    assert.ok(
+      !/patient-profile-|globalHealthNumber|diagnos|prescri/i.test(serialized),
+      "no clinical/patient identifier leaks",
+    );
+  });
+
+  it("DOCTOR_NO_VALID_ACCESS_PATH: not self-fixable, offers request-access, no patient/clinical detail", async () => {
+    const { describeDenyReason } = await import("./medical-access-guard.js");
+    const info = describeDenyReason("DOCTOR_NO_VALID_ACCESS_PATH");
+    assert.equal(info.selfFixable, false);
+    assert.equal(info.canRequestAccess, true);
+    assert.equal(typeof info.remedy, "string");
+    // Generic reference to the "patient" role in the remedy sentence is fine
+    // ("the patient has not consented") — what must never appear is an actual
+    // identifier or clinical content.
+    const serialized = JSON.stringify(info);
+    assert.ok(
+      !/patient-profile-|globalHealthNumber|diagnos|prescri/i.test(serialized),
+      "no clinical/patient identifier leaks",
+    );
+  });
+
+  it("medicalAccessDeniedResponse builds the full details envelope with no patient/clinical detail", async () => {
+    const { medicalAccessDeniedResponse } = await import("../utils/guard-medical-read.js");
+    const err = new MedicalAccessDeniedError("DOCTOR_NO_VALID_ACCESS_PATH");
+    const body = medicalAccessDeniedResponse(err);
+    assert.equal(body.ok, false);
+    assert.deepEqual(body.details, {
+      reasonCode: "DOCTOR_NO_VALID_ACCESS_PATH",
+      remedy:
+        "The patient has not consented to your access. Request access — the patient will be asked to approve it.",
+      selfFixable: false,
+      canRequestAccess: true,
+    });
+    const serialized = JSON.stringify(body);
+    assert.ok(!/patient-profile-|patientProfileId|globalHealthNumber/i.test(serialized));
+  });
+});
+
 describe("SEC-008 — audit writes fail closed", () => {
   // These tests flip enforcement + bypass on the shared env object at runtime
   // (env is a plain module singleton, read at call-time inside the guard). Each

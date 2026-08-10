@@ -70,6 +70,19 @@ describe("authorization matrix", () => {
   let invoiceId = "";
   /** Cheapest cart line that needs no slot — carries the benefit probes below. */
   let healthTestId = "";
+  // Write-guard fixtures (§ write-path regression): doctor3 owns appointment2
+  // for patient2, but patient2 has granted NO consent of any kind — the
+  // guard's 4g "all doctor checks failed" path. Doctor3 passes the route's
+  // own doctorId-scoped appointment lookup (so it reaches the guard call at
+  // all) but must still be denied by assertMedicalAccess.
+  let doctor3Id = "";
+  let doctor3UserId = "";
+  let doctor3Cookie: Record<string, string> = {};
+  let patient2UserId = "";
+  let patient2ProfileId = "";
+  let appointment2Id = "";
+  let consultation2Id = "";
+  let prescription2Id = "";
 
   before(async () => {
     try {
@@ -296,6 +309,76 @@ describe("authorization matrix", () => {
       },
     });
     healthTestId = healthTest.id;
+
+    // Write-guard fixtures: doctor3 has 2FA + confidentiality (passes 4a/4b)
+    // and owns appointment2 (so the route's own doctorId-scoped lookup
+    // succeeds and the request reaches the guard call), but patient2 has
+    // granted no consent of any kind and no other doctor has ever treated
+    // them — the guard must deny with DOCTOR_NO_VALID_ACCESS_PATH.
+    const doctor3 = await prisma.doctor.create({
+      data: {
+        countryId: countryA.id,
+        slug: `authz-doctor-3-${uniq}`,
+        fullName: "Authz Test Doctor Three",
+        title: "General Practitioner",
+      },
+    });
+    doctor3Id = doctor3.id;
+    const doctor3User = await prisma.user.create({
+      data: {
+        email: `doctor3-${uniq}@test.local`,
+        passwordHash: "x",
+        fullName: "Authz Test Doctor Three",
+        role: "DOCTOR",
+        doctorId: doctor3.id,
+        twoFactorVerifiedAt: new Date(),
+      },
+    });
+    doctor3UserId = doctor3User.id;
+    await prisma.doctorConfidentialityAgreement.create({
+      data: { doctorId: doctor3.id, agreementVersion: "1.0.0", accepted: true, acceptedAt: new Date() },
+    });
+    doctor3Cookie = {
+      gh_auth: signAuthToken({ sub: doctor3User.id, role: "DOCTOR", email: doctor3User.email }),
+    };
+
+    const patient2User = await prisma.user.create({
+      data: {
+        email: `patient2-${uniq}@test.local`,
+        passwordHash: "x",
+        fullName: "Authz Test Patient Two",
+        role: "PATIENT",
+      },
+    });
+    patient2UserId = patient2User.id;
+    const patient2Profile = await prisma.patientProfile.create({
+      data: { email: patient2User.email, userId: patient2User.id, fullName: "Authz Test Patient Two" },
+    });
+    patient2ProfileId = patient2Profile.id;
+    // Deliberately NO PatientConsent row created for patient2.
+
+    const appointment2 = await prisma.appointment.create({
+      data: {
+        countryCode: countryA.code,
+        consultationType: "GENERAL",
+        fullName: patient2User.fullName,
+        email: patient2User.email,
+        consentAccepted: true,
+        userId: patient2User.id,
+        doctorId: doctor3.id,
+      },
+    });
+    appointment2Id = appointment2.id;
+    const consultation2 = await prisma.consultation.create({
+      data: { appointmentId: appointment2.id, doctorId: doctor3.id, status: "DRAFT" },
+    });
+    consultation2Id = consultation2.id;
+    // Seeded directly (not via the guarded POST) so the DELETE write-guard
+    // test below has something to attempt deleting.
+    const prescription2 = await prisma.prescription.create({
+      data: { consultationId: consultation2.id, doctorId: doctor3.id, drugName: "Authz Seed Drug" },
+    });
+    prescription2Id = prescription2.id;
   });
 
   after(async () => {
@@ -306,9 +389,13 @@ describe("authorization matrix", () => {
     ).closeSharedBrowser();
     if (!app) return;
     envModule.MEDICAL_ACCESS_ENFORCE = originalEnforce;
-    await deleteMedicalAccessLogs(prisma, { patientProfileId: patient1ProfileId });
+    await deleteMedicalAccessLogs(prisma, {
+      patientProfileId: { in: [patient1ProfileId, patient2ProfileId] },
+    });
     await deleteAuditLogs(prisma, {
-      actorUserId: { in: [doctor1UserId, doctor2UserId, patient1UserId, adminUserId] },
+      actorUserId: {
+        in: [doctor1UserId, doctor2UserId, doctor3UserId, patient1UserId, patient2UserId, adminUserId],
+      },
     });
     await prisma.invoice.deleteMany({ where: { id: invoiceId } });
     await prisma.order.deleteMany({ where: { id: orderId } });
@@ -317,13 +404,20 @@ describe("authorization matrix", () => {
     await prisma.healthTest.deleteMany({ where: { id: healthTestId } });
     await prisma.medicalDocument.deleteMany({ where: { id: medicalDocumentId } });
     await prisma.prescription.deleteMany({ where: { id: prescriptionId } });
-    await prisma.consultation.deleteMany({ where: { id: consultationId } });
-    await prisma.appointment.deleteMany({ where: { id: appointmentId } });
-    await prisma.patientProfile.deleteMany({ where: { id: patient1ProfileId } });
+    await prisma.consultationService.deleteMany({ where: { consultationId: consultation2Id } });
+    await prisma.examResult.deleteMany({ where: { appointmentId: appointment2Id } });
+    await prisma.medicalNote.deleteMany({ where: { appointmentId: appointment2Id } }).catch(() => {});
+    await prisma.consultation.deleteMany({ where: { id: { in: [consultationId, consultation2Id] } } });
+    await prisma.appointment.deleteMany({ where: { id: { in: [appointmentId, appointment2Id] } } });
+    await prisma.patientProfile.deleteMany({ where: { id: { in: [patient1ProfileId, patient2ProfileId] } } });
     await prisma.user.deleteMany({
-      where: { id: { in: [doctor1UserId, doctor2UserId, patient1UserId, adminUserId] } },
+      where: {
+        id: {
+          in: [doctor1UserId, doctor2UserId, doctor3UserId, patient1UserId, patient2UserId, adminUserId],
+        },
+      },
     });
-    await prisma.doctor.deleteMany({ where: { id: { in: [doctor1Id, doctor2Id, adminDocId] } } });
+    await prisma.doctor.deleteMany({ where: { id: { in: [doctor1Id, doctor2Id, doctor3Id, adminDocId] } } });
     await prisma.country.deleteMany({ where: { id: countryAId } });
     await prisma.currency.deleteMany({ where: { id: currencyId } });
     await app.close();
@@ -1029,5 +1123,117 @@ describe("authorization matrix", () => {
       cookies: patient1Cookie,
     });
     assert.equal(res.statusCode, 404, res.body);
+  });
+
+  // ── Write-path guard regression (production incident: a doctor locked out
+  // for 4 days combined 4 defects; separately, EVERY write handler below was
+  // completely unguarded until now while reads already were — a doctor
+  // denied all reads could still sign a prescription or close a consult
+  // blind). doctor3 owns appointment2/consultation2 (so the route's own
+  // ownership lookup passes and the request reaches the guard), but
+  // patient2 has granted no consent at all, so assertMedicalAccess denies
+  // with DOCTOR_NO_VALID_ACCESS_PATH. Each test asserts the 403 AND that
+  // nothing was written — a route that let the write through before
+  // guarding would otherwise pass on status code alone.
+
+  it("write guard: a doctor with no valid access path cannot create a medical note → 403, nothing written", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/doctor/appointments/${appointment2Id}/medical-notes`,
+      cookies: doctor3Cookie,
+      payload: { note: "authz probe note" },
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details?.reasonCode, "DOCTOR_NO_VALID_ACCESS_PATH");
+    const count = await prisma.medicalNote.count({ where: { appointmentId: appointment2Id } });
+    assert.equal(count, 0);
+  });
+
+  it("write guard: a doctor with no valid access path cannot issue a prescription → 403, nothing written", async (t) => {
+    if (!app) return t.skip();
+    // prescription2 (seeded in before()) already exists on this consultation,
+    // so assert on the specific drug name rather than a bare zero count.
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/doctor/appointments/${appointment2Id}/prescriptions`,
+      cookies: doctor3Cookie,
+      payload: { drugName: "Authz Probe Drug" },
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details?.reasonCode, "DOCTOR_NO_VALID_ACCESS_PATH");
+    const leaked = await prisma.prescription.findFirst({
+      where: { consultation: { appointmentId: appointment2Id }, drugName: "Authz Probe Drug" },
+    });
+    assert.equal(leaked, null, "the denied prescription was not created");
+  });
+
+  it("write guard: a doctor with no valid access path cannot delete a prescription → 403, still present", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "DELETE",
+      url: `/api/doctor/prescriptions/${prescription2Id}`,
+      cookies: doctor3Cookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details?.reasonCode, "DOCTOR_NO_VALID_ACCESS_PATH");
+    const still = await prisma.prescription.findUnique({ where: { id: prescription2Id } });
+    assert.ok(still, "prescription was not deleted");
+  });
+
+  it("write guard: a doctor with no valid access path cannot save consultation SOAP notes → 403, nothing written", async (t) => {
+    if (!app) return t.skip();
+    const before = await prisma.consultation.findUniqueOrThrow({ where: { id: consultation2Id } });
+    const res = await app.inject({
+      method: "PATCH",
+      url: `/api/doctor/appointments/${appointment2Id}/consultation`,
+      cookies: doctor3Cookie,
+      payload: { assessment: "authz probe assessment" },
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details?.reasonCode, "DOCTOR_NO_VALID_ACCESS_PATH");
+    const after = await prisma.consultation.findUniqueOrThrow({ where: { id: consultation2Id } });
+    assert.equal(after.assessment, before.assessment, "consultation was not modified");
+  });
+
+  it("write guard: a doctor with no valid access path cannot sign the consultation → 403, still DRAFT", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/doctor/appointments/${appointment2Id}/consultation/sign`,
+      cookies: doctor3Cookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details?.reasonCode, "DOCTOR_NO_VALID_ACCESS_PATH");
+    const consult = await prisma.consultation.findUniqueOrThrow({ where: { id: consultation2Id } });
+    assert.equal(consult.status, "DRAFT", "consultation was not signed");
+  });
+
+  it("write guard: a doctor with no valid access path cannot create an exam result → 403, nothing written", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/doctor/appointments/${appointment2Id}/exams`,
+      cookies: doctor3Cookie,
+      payload: { testName: "Authz Probe Test" },
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details?.reasonCode, "DOCTOR_NO_VALID_ACCESS_PATH");
+    const count = await prisma.examResult.count({ where: { appointmentId: appointment2Id } });
+    assert.equal(count, 0);
+  });
+
+  it("write guard: a doctor with no valid access path cannot add a consultation service line → 403, nothing written", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/doctor/consultations/${consultation2Id}/services`,
+      cookies: doctor3Cookie,
+      payload: { customLabel: "Authz Probe Line" },
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details?.reasonCode, "DOCTOR_NO_VALID_ACCESS_PATH");
+    const count = await prisma.consultationService.count({ where: { consultationId: consultation2Id } });
+    assert.equal(count, 0);
   });
 });
