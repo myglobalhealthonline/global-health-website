@@ -23,10 +23,12 @@ import {
   getCountryServices,
 } from "@/lib/content/get-country-collections";
 import { buildBookHref } from "@/lib/routing/book-href";
+import { listingPath } from "@/lib/routing/service-listing-path";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangRegion, ogLocales } from "@/lib/seo/hreflang";
+import { isRetiredHealthSlug } from "@/lib/seo/health-service-canonical";
 import {
   isPublicServiceRecordIndexable,
   safeLocalizedServiceMeta,
@@ -68,22 +70,6 @@ function stripHtml(value: string | null): string | null {
   if (!value) return value;
   const text = value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   return text.length > 0 ? text : null;
-}
-
-/** Back-link target = the listing this service belongs to, by kind. */
-function listingPath(
-  kind: string,
-  country: string,
-  lang: string,
-  labels: { specialist: string; prescription: string; general: string },
-): { href: string; label: string } {
-  if (kind === "SPECIALIST") {
-    return { href: `/${country}/${lang}/specialist-consultation`, label: labels.specialist };
-  }
-  if (kind === "PRESCRIPTION") {
-    return { href: `/${country}/${lang}/prescriptions`, label: labels.prescription };
-  }
-  return { href: `/${country}/${lang}/general-consultation`, label: labels.general };
 }
 
 /**
@@ -306,7 +292,10 @@ export default async function ServiceDetailPage({
   // the point of keeping these pages off the hub in the first place.
   const relatedTopics: Array<{ key: string; href: string; title: string }> = [
     ...(landingRes?.ok ? landingRes.data.landingPages : [])
-      .filter((p) => p.title && p.serviceSlugs.includes(serviceSlug))
+      .filter(
+        (p) =>
+          p.title && p.serviceSlugs.includes(serviceSlug) && !isRetiredHealthSlug(country, p.slug),
+      )
       .slice(0, 4)
       .map((p) => ({ key: `health-${p.slug}`, href: `/${country}/${lang}/health/${p.slug}`, title: p.title! })),
     // Blog articles written FOR this service (BlogPost.ctaService). They link
