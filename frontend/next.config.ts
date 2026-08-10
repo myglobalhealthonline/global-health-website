@@ -864,6 +864,7 @@ const nextConfig: NextConfig = {
       { source: "/romania-team", destination: "/romania/ro/doctors", permanent: true },
       { source: "/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
       { source: "/specialty-rm", destination: "/romania/ro/see-a-specialist", permanent: true },
+      { source: "/home-br", destination: "/brazil/pt", permanent: true },
       // ── Legacy doctor slugs that did NOT carry over 1:1 ────────────────
       //
       // These MUST stay above the `/:country-doctors/:slug` rules below (and
