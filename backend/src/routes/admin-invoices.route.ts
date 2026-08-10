@@ -7,7 +7,7 @@ import {
   assertOrderCountryScope,
   resolveOrderListCountryScope,
 } from "../utils/order-country-scope.js";
-import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
@@ -551,7 +551,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
             if (guardError instanceof MedicalAccessDeniedError) {
               return reply
                 .status(403)
-                .send(errorResponse("Access to this medical record is not permitted"));
+                .send(medicalAccessDeniedResponse(guardError));
             }
             throw guardError;
           }

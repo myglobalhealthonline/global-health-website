@@ -4,7 +4,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { getPatientConsultationHistory } from "../modules/consultation-history/consultation-history.service.js";
 import { prisma } from "../db/prisma.js";
-import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 const doctorConsultationHistoryRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { email: string } }>(
@@ -30,7 +30,7 @@ const doctorConsultationHistoryRoute: FastifyPluginAsync = async (app) => {
             );
           } catch (guardError) {
             if (guardError instanceof MedicalAccessDeniedError) {
-              return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+              return reply.status(403).send(medicalAccessDeniedResponse(guardError));
             }
             throw guardError;
           }

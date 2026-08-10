@@ -18,7 +18,7 @@ import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { notifyDoctor, notifyUser } from "../modules/notifications/notify.service.js";
 import { alertDoctorOfPatientMessage } from "../modules/notifications/patient-message-alert.service.js";
 import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
-import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 /**
  * Patient ↔ doctor consultation chat per appointment.
@@ -474,7 +474,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }
@@ -718,7 +718,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }

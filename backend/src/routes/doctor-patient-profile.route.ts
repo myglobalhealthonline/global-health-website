@@ -11,7 +11,7 @@ import {
 } from "../modules/patient-profile/patient-profile.service.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { resolveAuditActor } from "../utils/request-auth.js";
-import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
@@ -123,7 +123,7 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
             if (guardError instanceof MedicalAccessDeniedError) {
               return reply
                 .status(403)
-                .send(errorResponse("Access to this medical record is not permitted"));
+                .send(medicalAccessDeniedResponse(guardError));
             }
             throw guardError;
           }
@@ -187,7 +187,7 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
           if (guardError instanceof MedicalAccessDeniedError) {
             return reply
               .status(403)
-              .send(errorResponse("Access to this medical record is not permitted"));
+              .send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }

@@ -23,7 +23,7 @@ import {
 } from "../services/patient-nationality.service.js";
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 import { VerificationStatus } from "@prisma/client";
-import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 
 const stringField = (max: number) =>
@@ -246,7 +246,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           if (guardError instanceof MedicalAccessDeniedError) {
             return reply
               .status(403)
-              .send(errorResponse("Access to this medical record is not permitted"));
+              .send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -741,7 +741,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -841,7 +841,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }
@@ -884,7 +884,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }

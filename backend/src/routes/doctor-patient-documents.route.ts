@@ -3,7 +3,7 @@ import { prisma } from "../db/prisma.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 // ponytail: hard cap per collection — this aggregates a patient's WHOLE
 // history across every shared appointment, so unlike a per-appointment
@@ -66,7 +66,7 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
             if (guardError instanceof MedicalAccessDeniedError) {
               return reply
                 .status(403)
-                .send(errorResponse("Access to this medical record is not permitted"));
+                .send(medicalAccessDeniedResponse(guardError));
             }
             throw guardError;
           }

@@ -68,6 +68,77 @@ export type AccessResult = {
 };
 
 // ---------------------------------------------------------------------------
+// Deny-reason catalog — surfaced to callers alongside the generic message
+// ---------------------------------------------------------------------------
+
+export type DenyReasonInfo = {
+  /** Short, actionable sentence for the doctor UI. No patient detail. */
+  remedy: string;
+  /** True when the doctor alone can resolve this (2FA, confidentiality) —
+   *  false means the fix requires patient consent / an access grant. */
+  selfFixable: boolean;
+  /** True when submitting a MedicalAccessGrant request is the offered path. */
+  canRequestAccess: boolean;
+};
+
+const DENY_REASON_INFO: Record<string, DenyReasonInfo> = {
+  DOCTOR_2FA_REQUIRED: {
+    remedy: "Verify two-factor authentication to continue.",
+    selfFixable: true,
+    canRequestAccess: false,
+  },
+  DOCTOR_NO_CONFIDENTIALITY_AGREEMENT: {
+    remedy: "Accept the current confidentiality agreement to continue.",
+    selfFixable: true,
+    canRequestAccess: false,
+  },
+  DOCTOR_NO_VALID_ACCESS_PATH: {
+    remedy:
+      "The patient has not consented to your access. Request access — the patient will be asked to approve it.",
+    selfFixable: false,
+    canRequestAccess: true,
+  },
+  PATIENT_NOT_OWN_RECORD: {
+    remedy: "You can only view your own medical record.",
+    selfFixable: false,
+    canRequestAccess: false,
+  },
+  LOCAL_ADMIN_OUT_OF_SCOPE: {
+    remedy: "This record is outside your administrative scope.",
+    selfFixable: false,
+    canRequestAccess: false,
+  },
+  ADMIN_BREAK_GLASS_REASON_REQUIRED: {
+    remedy: "Provide a reason to access this record.",
+    selfFixable: true,
+    canRequestAccess: false,
+  },
+  ROLE_NOT_PERMITTED: {
+    remedy: "Your account role cannot access medical records.",
+    selfFixable: false,
+    canRequestAccess: false,
+  },
+  AUDIT_UNAVAILABLE: {
+    remedy: "A system error prevented this read from being logged. Try again shortly.",
+    selfFixable: false,
+    canRequestAccess: false,
+  },
+};
+
+const DEFAULT_DENY_REASON_INFO: DenyReasonInfo = {
+  remedy: "Contact support if you believe this is in error.",
+  selfFixable: false,
+  canRequestAccess: false,
+};
+
+/** Look up the actionable remedy for a denyReason code. Unknown codes (should
+ *  not happen — every throw site above uses a catalogued code) fall back to a
+ *  generic, still-safe message rather than leaking the raw code to the UI. */
+export function describeDenyReason(denyReason: string): DenyReasonInfo {
+  return DENY_REASON_INFO[denyReason] ?? DEFAULT_DENY_REASON_INFO;
+}
+
+// ---------------------------------------------------------------------------
 // Error
 // ---------------------------------------------------------------------------
 
@@ -457,9 +528,9 @@ export async function assertMedicalAccess(
       // role deliberately opted in can't silently fall through unverified.
       // Unset/empty flag => identical to the pre-existing denyDecision() path.
       if (env.REQUIRE_2FA_FOR_ROLES.has(actor.role)) {
-        throw new MedicalAccessDeniedError(
-          "DOCTOR_2FA_REQUIRED: enroll and verify TOTP two-factor authentication before accessing medical records.",
-        );
+        // Keep denyReason a plain code (not a sentence) so it stays lookup-able
+        // in DENY_REASON_INFO / describeDenyReason like every other path.
+        throw new MedicalAccessDeniedError("DOCTOR_2FA_REQUIRED");
       }
       return denyDecision(result);
     }
