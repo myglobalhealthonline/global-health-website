@@ -128,8 +128,19 @@ export async function resolveOrCreatePatientProfile(
   userId: string,
   email: string,
 ): Promise<{ id: string; globalHealthNumber: string | null }> {
+  // PatientProfile.email is always stored lowercase (see create() below), but
+  // callers pass whatever case the source record has (Order.email, in
+  // particular, is stored verbatim from checkout and is often not
+  // lowercased). findUnique on `email` is case-sensitive, so an uppercase
+  // caller email silently misses an existing lowercase profile and falls
+  // through to create() below — which then throws on the unique `userId`
+  // constraint (the profile already exists, just under different casing).
+  // That thrown error used to be swallowed by callers' fire-and-forget
+  // .catch(), which is how a patient's consent promotion went missing with
+  // no trace (ORD-000298 / GH-2026-001436).
+  const normalizedEmail = email.toLowerCase();
   const existing = await prisma.patientProfile.findUnique({
-    where: { email },
+    where: { email: normalizedEmail },
     select: { id: true, globalHealthNumber: true },
   });
   if (existing) return existing;
@@ -148,12 +159,12 @@ export async function resolveOrCreatePatientProfile(
 
   return prisma.patientProfile.create({
     data: {
-      email,
+      email: normalizedEmail,
       userId,
       fullName: user?.fullName ?? email,
       phone: user?.phone ?? null,
       globalHealthNumber: ghn,
-      emailHash: computeEmailBlindIndex(email),
+      emailHash: computeEmailBlindIndex(normalizedEmail),
     },
     select: { id: true, globalHealthNumber: true },
   });

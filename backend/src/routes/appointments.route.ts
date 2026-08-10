@@ -134,15 +134,14 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
 
       const created = await createAppointmentWithOptionalOwner(parsed.data, { userId: authUserId });
 
-      // Logged-in booking (not a guest) — promote the medical-access consent
-      // just captured straight into the append-only ledger. Guest bookings
-      // get promoted later, on login/verify, once we can prove email
-      // ownership (see claimGuestAppointmentsForUser callers).
-      if (authUserId) {
-        promoteAppointmentConsents(authUserId, parsed.data.email).catch((err) => {
-          app.log.warn({ err, userId: authUserId }, "Could not promote booking-time medical-access consents");
-        });
-      }
+      // Promote the medical-access consent just captured straight into the
+      // append-only ledger — for logged-in bookings by userId, and for guest
+      // bookings by email (no-op if no PatientProfile exists yet; it will be
+      // promoted later on login/verify or at payment time — see
+      // claimGuestAppointmentsForUser and complete-order-payment.service.ts).
+      promoteAppointmentConsents(authUserId, parsed.data.email).catch((err) => {
+        app.log.warn({ err, userId: authUserId }, "Could not promote booking-time medical-access consents");
+      });
 
       // Resolve the catalogue Service (if a slug was passed) and copy its
       // price + currency onto the appointment. This makes Stripe Checkout
