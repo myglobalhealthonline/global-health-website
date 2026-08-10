@@ -113,4 +113,47 @@ describe("withMarketTitle", () => {
   it("empty market list (defensive): title unchanged", () => {
     expect(withMarketTitle("Dr Ahmed Maklad", "Ireland", [])).toBe("Dr Ahmed Maklad");
   });
+
+  it("base title already names the country in the page's own locale: not appended again", () => {
+    // SEO-002 audit case: admin seoTitle names Czechia in Czech ("Česko"),
+    // the English currentCountry check alone would miss it and double up.
+    const title = withMarketTitle(
+      "MUDr. Ahmed Maklad — Praktický lékař | Global Health Česko",
+      "Czechia",
+      ["Ireland", "Czechia"],
+      "Česko",
+    );
+    expect(title).toBe("MUDr. Ahmed Maklad — Praktický lékař | Global Health Česko");
+  });
+
+  it("localized name absent from title: still appends the English form once", () => {
+    const title = withMarketTitle("Dr Ahmed Maklad", "Czechia", ["Ireland", "Czechia"], "Česko");
+    expect(title).toBe("Dr Ahmed Maklad · Czechia");
+  });
+
+  it("no localizedCountryName provided: behaves exactly as before", () => {
+    const title = withMarketTitle("Dr Ahmed Maklad", "Czechia", ["Ireland", "Czechia"]);
+    expect(title).toBe("Dr Ahmed Maklad · Czechia");
+  });
+
+  it("case-insensitive match on the localized form", () => {
+    const title = withMarketTitle(
+      "Dr Ahmed Maklad — ČESKO praxe",
+      "Czechia",
+      ["Ireland", "Czechia"],
+      "Česko",
+    );
+    expect(title).toBe("Dr Ahmed Maklad — ČESKO praxe");
+  });
+
+  it("does not false-match a localized name inside an unrelated word", () => {
+    // "Česko" must not match inside e.g. "Českosloven" (a different, longer word).
+    const title = withMarketTitle(
+      "Dr Ahmed Maklad — Českoslovenština specialist",
+      "Czechia",
+      ["Ireland", "Czechia"],
+      "Česko",
+    );
+    expect(title).toBe("Dr Ahmed Maklad — Českoslovenština specialist · Czechia");
+  });
 });

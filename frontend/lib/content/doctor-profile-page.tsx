@@ -12,6 +12,7 @@ import { getCountryByCode } from "@/data/countries";
 import { ogLocales } from "@/lib/seo/hreflang";
 import { doctorHreflangCluster } from "@/lib/seo/doctor-hreflang";
 import { doctorIndexableCountryNames, withMarketTitle } from "@/lib/seo/doctor-market-title";
+import { summarizeLanguagesForMetadata } from "@/lib/seo/doctor-language-summary";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import {
   breadcrumbJsonLd,
@@ -87,7 +88,7 @@ export async function buildDoctorProfileMetadata(
       .replace("{name}", data.profile.name)
       .replace("{title}", data.profile.title)
       .replace("{country}", routeCountryName)
-      .replace("{languages}", data.profile.languages.join(", ") || "English");
+      .replace("{languages}", summarizeLanguagesForMetadata(data.profile.languages));
   const baseTitle =
     data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${routeCountryName}`;
   // Cross-listed doctors (same clinician, multiple markets) currently share
@@ -96,7 +97,12 @@ export async function buildDoctorProfileMetadata(
   // when the doctor is genuinely indexable in more than one country; single-
   // market doctors (the vast majority) keep today's title exactly.
   const marketCountries = indexable ? await doctorIndexableCountryNames(doctorSlug) : [];
-  const title = withMarketTitle(baseTitle, routeCountryName, marketCountries);
+  const title = withMarketTitle(
+    baseTitle,
+    routeCountryName,
+    marketCountries,
+    resolvedCode ? metaCommon.countryNames?.[resolvedCode] : null,
+  );
   const description =
     data.profile.seoDescription ??
     fillProfileTemplate(

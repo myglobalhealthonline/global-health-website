@@ -29,7 +29,11 @@ export async function doctorIndexableCountryNames(doctorSlug: string): Promise<s
 
 function titleMentionsCountry(title: string, country: string): boolean {
   const escaped = country.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`\\b${escaped}\\b`, "i").test(title);
+  // Unicode-aware boundary, not `\b`: JS's `\b`/`\w` are ASCII-only, so it
+  // silently never matched diacritic-leading names ("Česko") — invisible
+  // until this function started receiving localized country names, since
+  // every English country name is plain ASCII.
+  return new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, "iu").test(title);
 }
 
 /**
@@ -39,13 +43,28 @@ function titleMentionsCountry(title: string, country: string): boolean {
  * of cross-listed clinicians whose admin `seoTitle` is currently shared
  * verbatim across both country pages. Nothing else about the page (H1, slug,
  * canonical, hreflang, structured data) is touched.
+ *
+ * `localizedCountryName` — the current locale's own translation of the
+ * country (e.g. `common.countryNames.cz` = "Česko" on a `cs` route),
+ * already loaded by every caller for other UI copy. An admin `seoTitle`
+ * written in the page's language sometimes names the country in that
+ * language rather than the site's English `currentCountry` value (SEO-002
+ * audit: "... Global Health Česká republika" already naming Czechia before
+ * this function's English-only check appended "· Czechia" again). Checking
+ * both forms catches that without a translation table — it only matches the
+ * site's own existing per-locale label, not arbitrary free-text phrasing an
+ * admin might use instead.
  */
 export function withMarketTitle(
   baseTitle: string,
   currentCountry: string,
   indexableCountryNames: string[],
+  localizedCountryName?: string | null,
 ): string {
   if (indexableCountryNames.length <= 1) return baseTitle;
   if (titleMentionsCountry(baseTitle, currentCountry)) return baseTitle;
+  if (localizedCountryName && titleMentionsCountry(baseTitle, localizedCountryName)) {
+    return baseTitle;
+  }
   return `${baseTitle} · ${currentCountry}`;
 }
