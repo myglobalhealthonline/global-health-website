@@ -49,8 +49,14 @@ async function preloadDoctors(): Promise<Map<string, string>> {
   return map;
 }
 
-async function preloadEmails(): Promise<Set<string>> {
-  const set = new Set<string>();
+// Maps lowercased email -> PatientProfile.userId (null when the profile has
+// no linked account yet). Used both for the orphan check and — critically —
+// to resolve Appointment.userId at import time so a legacy row whose email
+// matches an already-linked patient doesn't end up with userId=null (that
+// silently breaks the medical-access guard's doctor-treatment-relationship
+// join, which requires Appointment.userId; see backend/scripts/relink-appointment-users.ts).
+async function preloadEmails(): Promise<Map<string, string | null>> {
+  const map = new Map<string, string | null>();
   const take = 1000;
   let cursor: string | undefined;
   for (;;) {
@@ -58,14 +64,14 @@ async function preloadEmails(): Promise<Set<string>> {
       take,
       orderBy: { id: "asc" },
       ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
-      select: { id: true, email: true },
+      select: { id: true, email: true, userId: true },
     });
     if (rows.length === 0) break;
-    for (const r of rows) set.add(r.email.toLowerCase());
+    for (const r of rows) map.set(r.email.toLowerCase(), r.userId);
     cursor = rows[rows.length - 1].id;
     if (rows.length < take) break;
   }
-  return set;
+  return map;
 }
 
 async function main() {
@@ -131,6 +137,7 @@ async function main() {
     }
 
     // Orphan check (informational): does a patient exist for this email?
+    const patientUserId = emailSet.get(email) ?? null;
     if (!emailSet.has(email)) {
       await logUnresolved({
         stage: STAGE,
@@ -165,6 +172,7 @@ async function main() {
       ...appointmentData,
       email,
       doctorId,
+      userId: patientUserId,
       legacyExtra: Object.keys(legacyExtra).length ? (legacyExtra as object) : undefined,
       formResponses: (m.data.formResponses ?? undefined) as object | undefined,
     };
@@ -174,6 +182,11 @@ async function main() {
         status: data.status,
         paymentStatus: data.paymentStatus,
         doctorId,
+        // Same source-of-truth-wins treatment as doctorId above: if the
+        // email now resolves to a linked account, stamp it on re-run too.
+        // Never clears an existing userId back to null (patientUserId is
+        // only ever a resolved id or omitted).
+        ...(patientUserId ? { userId: patientUserId } : {}),
         scheduledAt: data.scheduledAt,
         meetingUrl: data.meetingUrl,
         finalized: data.finalized,
