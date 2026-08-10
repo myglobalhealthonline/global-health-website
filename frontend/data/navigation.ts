@@ -127,7 +127,11 @@ export function buildSiteNavigationData(
     },
     {
       heading: copy.footer.clinics,
-      links: countries.map((c) => ({ label: c.name, href: c.legacyHomePath })),
+      // Modern canonical `/{slug}/{defaultLocale}` homepage, not
+      // `legacyHomePath` (old Wix alias) — the footer renders on every page,
+      // so linking the legacy alias kept Googlebot re-crawling it instead of
+      // letting it age out of the index in favor of the canonical URL.
+      links: countries.map((c) => ({ label: c.name, href: `/${c.slug}/${c.defaultLocale}` })),
     },
     {
       heading: copy.footer.legal,
