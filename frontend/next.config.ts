@@ -656,6 +656,18 @@ const nextConfig: NextConfig = {
         destination: "/ireland/:lang/services/sick-certificate-ireland",
         permanent: true,
       },
+      // portugal/atestado-medico-online -> services/baixa-medica. Same
+      // failure mode as sick-cert-online above: the canonical tag already
+      // pointed here (SEO audit 2.4b), but Google kept the ES/RO variants
+      // independently indexed and ranking Portugal's own "atestado médico
+      // online" query instead of the pt page or the service page (2026-08-11
+      // ranking-growth batch). `:lang` is preserved so each locale redirects
+      // to its own-locale service page, not a single hardcoded destination.
+      {
+        source: `/portugal/:lang${LANG}/health/atestado-medico-online`,
+        destination: "/portugal/:lang/services/baixa-medica",
+        permanent: true,
+      },
       // No services index page exists — only /services/:slug. Send the bare
       // section URL to the country home instead of a 404.
       {

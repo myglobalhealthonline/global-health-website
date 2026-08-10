@@ -141,6 +141,12 @@ export default async function CountryLandingPage({
     config.supportedLocales ?? [],
     config.defaultLocale ?? "en",
   );
+  // Same predicate generateMetadata uses to drop the canonical/hreflang
+  // signal (SEO ranking-growth batch, 2026-08-09 §AlsoAvailableIn leak): a
+  // page that canonicalizes onto a /services/ twin must not ALSO emit real,
+  // crawlable reciprocal links to its own sibling-locale /health/ variants —
+  // that contradicts the canonical tag this same page already sends.
+  const isCanonicalAlias = resolveHealthCanonicalServiceSlug(country, slug) !== null;
 
   const bodyHtml = page.bodyHtml ? scopeBlogHtml(page.bodyHtml) : null;
   const template = page.template;
@@ -295,13 +301,15 @@ export default async function CountryLandingPage({
         </section>
       ) : null}
 
-      <AlsoAvailableIn
-        country={config}
-        lang={lang}
-        suffix={`/health/${slug}`}
-        title={c.alsoAvailableIn.title}
-        eligibleLocales={eligibleLocales}
-      />
+      {isCanonicalAlias ? null : (
+        <AlsoAvailableIn
+          country={config}
+          lang={lang}
+          suffix={`/health/${slug}`}
+          title={c.alsoAvailableIn.title}
+          eligibleLocales={eligibleLocales}
+        />
+      )}
 
       {/* Closing booking band — visual parity with the service page's
           closing CTA. */}

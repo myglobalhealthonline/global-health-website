@@ -11,17 +11,23 @@
  * Keyed by `${countrySlug}:${healthSlug}` → target `/services/` slug.
  */
 export const HEALTH_SERVICE_CANONICAL: Record<string, string> = {
-  // "atestado médico" (sick note) — baixa-medica is the dedicated 1,609-word
-  // sick-cert service page (chosen over the broader certificados-medicos
-  // hub). Confirmed cannibalization: health page pos 14.5 vs service page
-  // pos 7.6 for the same query.
-  "portugal:atestado-medico-online": "baixa-medica",
   // Only exact slug collision in the whole set.
   "czechia:neschopenka-online": "neschopenka-online",
 
   // ireland:sick-cert-online moved to HEALTH_RETIRED_REDIRECTS below
   // (2026-08-09 ranking-growth batch) — canonical-only wasn't enough to
   // drop the ES/RO variants from the index.
+  //
+  // portugal:atestado-medico-online moved to HEALTH_RETIRED_REDIRECTS below
+  // (2026-08-11 ranking-growth batch) — same failure mode as Ireland's
+  // sick-cert-online: canonical-only left the ES alias ranking Portugal's
+  // own "atestado médico online" query instead of the pt page or the
+  // baixa-medica service page it was meant to consolidate onto (~108 PT-
+  // market impressions/3mo on the ES alias alone). "atestado médico" (sick
+  // note) — baixa-medica is the dedicated 1,609-word sick-cert service page
+  // (chosen over the broader certificados-medicos hub). Confirmed
+  // cannibalization: health page pos 14.5 vs service page pos 7.6 for the
+  // same query.
 
   // Deliberately left self-canonical — no live /services/ twin:
   //   ireland:arabic-speaking-doctor      (audience page)
@@ -76,6 +82,9 @@ export const HEALTH_RETIRED_REDIRECTS: Record<string, string> = {
   // the foreign canonical. A real redirect is needed to fully consolidate
   // onto the service page.
   "ireland:sick-cert-online": "services/sick-certificate-ireland",
+  // Retired 2026-08-11 (ranking-growth batch) — see the note in
+  // HEALTH_SERVICE_CANONICAL above for the GSC numbers that forced this.
+  "portugal:atestado-medico-online": "services/baixa-medica",
 };
 
 /** True when this `/health/` page has been retired behind a 301 and must be
