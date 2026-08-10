@@ -13,6 +13,7 @@ import {
   guardMedicalRead,
   guardMedicalReadForAppointment,
   MedicalAccessDeniedError,
+  medicalAccessDeniedResponse,
 } from "../utils/guard-medical-read.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import { getDisclosedCrossBorderRecord } from "../modules/cross-border-rx/cross-border-rx-disclosure.service.js";
@@ -175,7 +176,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -350,6 +351,20 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           return reply.status(404).send(errorResponse("Appointment not found"));
         }
 
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            appt.id,
+            { resourceType: "CONSULT_NOTE", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
+
         const existing = await prisma.consultation.findUnique({
           where: { appointmentId: appt.id },
           select: { id: true, status: true },
@@ -430,6 +445,19 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
         const appt = await findOwnedAppointment(auth.doctorId, request.params.id);
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            appt.id,
+            { resourceType: "CONSULT_NOTE", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
         }
         const existing = await prisma.consultation.findUnique({
           where: { appointmentId: appt.id },

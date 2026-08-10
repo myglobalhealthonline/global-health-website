@@ -15,7 +15,7 @@ import {
   sendGeneratedDocumentUploadLink,
 } from "../modules/generated-documents/generated-documents.service.js";
 import { prisma } from "../db/prisma.js";
-import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { contentDisposition } from "../utils/content-disposition.js";
 
 const baseFields = z.record(z.string()).optional();
@@ -137,7 +137,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -168,6 +168,19 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
       }
       try {
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            request.params.id,
+            { resourceType: "MEDICAL_DOC", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
         const result = await generateAppointmentDocument({
           appointmentId: request.params.id,
           doctorId: auth.doctorId,
@@ -220,6 +233,19 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
       }
       try {
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            request.params.id,
+            { resourceType: "MEDICAL_DOC", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
         const result = await sendGeneratedDocuments(
           auth.doctorId,
           request.params.id,
@@ -258,6 +284,25 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
+        const doc = await prisma.generatedDocument.findUnique({
+          where: { id: request.params.id },
+          select: { appointmentId: true },
+        });
+        if (doc) {
+          try {
+            await guardMedicalReadForAppointment(
+              request,
+              { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+              doc.appointmentId,
+              { resourceType: "MEDICAL_DOC", accessAction: "UPDATED" },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+            }
+            throw guardError;
+          }
+        }
         const result = await sendGeneratedDocumentUploadLink(auth.doctorId, request.params.id);
         if (!result.ok) {
           return reply.status(result.status).send(errorResponse(result.message));
@@ -288,6 +333,25 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
+        const doc = await prisma.generatedDocument.findUnique({
+          where: { id: request.params.id },
+          select: { appointmentId: true },
+        });
+        if (doc) {
+          try {
+            await guardMedicalReadForAppointment(
+              request,
+              { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+              doc.appointmentId,
+              { resourceType: "MEDICAL_DOC", accessAction: "UPDATED" },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+            }
+            throw guardError;
+          }
+        }
         const result = await finalizeGeneratedDocument(auth.doctorId, request.params.id);
         if (!result.ok) {
           return reply.status(result.status).send(errorResponse(result.message));
@@ -325,7 +389,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
             );
           } catch (guardError) {
             if (guardError instanceof MedicalAccessDeniedError) {
-              return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+              return reply.status(403).send(medicalAccessDeniedResponse(guardError));
             }
             throw guardError;
           }
@@ -356,6 +420,25 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
+        const doc = await prisma.generatedDocument.findUnique({
+          where: { id: request.params.id },
+          select: { appointmentId: true },
+        });
+        if (doc) {
+          try {
+            await guardMedicalReadForAppointment(
+              request,
+              { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+              doc.appointmentId,
+              { resourceType: "MEDICAL_DOC", accessAction: "UPDATED" },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+            }
+            throw guardError;
+          }
+        }
         const result = await deleteGeneratedDocument(auth.doctorId, request.params.id);
         if (!result.ok) {
           return reply
