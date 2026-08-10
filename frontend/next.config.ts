@@ -865,6 +865,13 @@ const nextConfig: NextConfig = {
       { source: "/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
       { source: "/specialty-rm", destination: "/romania/ro/see-a-specialist", permanent: true },
       { source: "/home-br", destination: "/brazil/pt", permanent: true },
+      { source: "/brazil-team", destination: "/brazil/pt/doctors", permanent: true },
+      { source: "/general-consultation-br", destination: "/brazil/pt/gp-consultation-online", permanent: true },
+      // Brazil has `specialist-consultations` disabled (see the HAS_SPECIALIST
+      // comment above — it excludes Brazil same as Czechia), so
+      // /brazil/pt/see-a-specialist 404s. Send to the country hub instead,
+      // same pattern as /specialty-cz.
+      { source: "/specialty-br", destination: "/brazil/pt", permanent: true },
       // ── Legacy doctor slugs that did NOT carry over 1:1 ────────────────
       //
       // These MUST stay above the `/:country-doctors/:slug` rules below (and
