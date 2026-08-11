@@ -81,6 +81,17 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
                 .send(errorResponse(`The ${label} you entered is not in the expected format.`));
             }
           }
+          // Brazil: CPF (nationalIdNumber) or, failing that, a passport
+          // number — the prescription needs ONE identifier to print.
+          if (
+            parsed.data.country === "br" &&
+            !(parsed.data.nationalIdNumber ?? "").trim() &&
+            !(parsed.data.passportNumber ?? "").trim()
+          ) {
+            return reply
+              .status(400)
+              .send(errorResponse("Enter your CPF or your passport number to continue."));
+          }
           if (settings.requireAddress) {
             const missing: string[] = [];
             if (!parsed.data.addressLine1) missing.push("street address");

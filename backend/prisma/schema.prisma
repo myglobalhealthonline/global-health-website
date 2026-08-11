@@ -2747,6 +2747,9 @@ model CartItem {
   /// asking again at checkout. Mirrors the new Appointment columns added
   /// in the same migration. Nullable for product items.
   patientNationalIdNumber           String?
+  /// Alternative to `patientNationalIdNumber` — Brazil requires ONE of
+  /// CPF/passport. Plaintext here, encrypted when copied to PatientProfile.
+  patientPassportNumber             String?
   /// PT-only Número de Utente captured at add-to-cart. Stored plaintext
   /// here (like `patientNationalIdNumber`); it is encrypted when the
   /// payment webhook copies it onto the PatientProfile.
@@ -3071,6 +3074,7 @@ model OrderItem {
   /// with the right timezone, address, ID number, and dual GDPR consent
   /// even when the booking is for someone other than the payer.
   patientNationalIdNumber           String?
+  patientPassportNumber             String?
   patientUtenteNumber               String?
   patientTimezone                   String?
   patientAddressLine1               String?
@@ -3848,6 +3852,10 @@ model CrossBorderPrescriptionRequest {
   /// Optional: patients without one still get a prescription, with no id line.
   /// AES-256-GCM encrypted (`phi:v1:` envelope, same as PatientProfile ids).
   patientHealthIdNumber    String?
+  /// Passport number, collected as the alternative to `patientHealthIdNumber`
+  /// for target countries that require ONE of the two (Brazil: CPF or
+  /// passport). AES-256-GCM encrypted, same envelope.
+  patientPassportNumber    String?
   patientAddressLine1      String?
   patientAddressLine2      String?
   patientAddressCity       String?

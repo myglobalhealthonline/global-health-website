@@ -100,6 +100,7 @@ type ProfileAddress = {
   addressState: string | null;
   addressPostalCode: string | null;
   nationalIdNumber: string | null;
+  passportNumber: string | null;
   utenteNumber: string | null;
 };
 
@@ -178,6 +179,9 @@ export function ConsultationBookingForm({
     : tz;
 
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
+  // Brazil needs ONE identifier to print on the prescription: CPF or,
+  // failing that, a passport number.
+  const isBrazil = (params?.country ?? "").toLowerCase().startsWith("brazil");
   const privacyPolicyHref = `/${params?.country ?? ""}/${params?.lang ?? ""}/legal/privacy-policy`;
   const privacyPolicyLink = (
     <Link
@@ -274,6 +278,7 @@ export function ConsultationBookingForm({
                 addressState: p.addressState ?? null,
                 addressPostalCode: p.addressPostalCode ?? null,
                 nationalIdNumber: p.nationalIdNumber ?? null,
+                passportNumber: p.passportNumber ?? null,
                 utenteNumber: p.utenteNumber ?? null,
               });
               // Already on file → nothing new to store, so default the save
@@ -414,6 +419,7 @@ export function ConsultationBookingForm({
       phone: me?.phone ?? "",
       dateOfBirth: me?.dateOfBirth ? me.dateOfBirth.slice(0, 10) : "",
       nationalIdNumber: profile?.nationalIdNumber ?? "",
+      passportNumber: profile?.passportNumber ?? "",
       utenteNumber: profile?.utenteNumber ?? "",
       addressLine1: profile?.addressLine1 ?? "",
       addressLine2: profile?.addressLine2 ?? "",
@@ -446,6 +452,7 @@ export function ConsultationBookingForm({
     const patientOtherPhone = bookingForOther ? String(form.get("patientOtherPhone") ?? "").trim() : "";
     const patientOtherDob = bookingForOther ? String(form.get("patientOtherDob") ?? "").trim() : "";
     const nationalIdNumber = String(form.get("nationalIdNumber") ?? "").trim();
+    const passportNumber = isBrazil ? String(form.get("passportNumber") ?? "").trim() : "";
     // Gated on the flag, not just on the field being absent, so a country that
     // doesn't collect it can never end up storing one.
     const utenteNumber = collectUtente
@@ -482,6 +489,10 @@ export function ConsultationBookingForm({
     }
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setError(i18n.enterValidEmail);
+      return;
+    }
+    if (isBrazil && !nationalIdNumber && !passportNumber) {
+      setError("Enter your CPF or your passport number to continue.");
       return;
     }
     if (!consent) {
@@ -610,6 +621,7 @@ export function ConsultationBookingForm({
           consentAccepted: true,
           bookingForOther: treatingOther,
           nationalIdNumber: nationalIdNumber || undefined,
+          passportNumber: passportNumber || undefined,
           utenteNumber: utenteNumber || undefined,
           patientTimezone,
           addressLine1: addressLine1 || undefined,
@@ -639,6 +651,7 @@ export function ConsultationBookingForm({
       if (me && !treatingOther) {
         const profilePatch: Record<string, string> = {};
         if (nationalIdNumber) profilePatch.nationalIdNumber = nationalIdNumber;
+        if (passportNumber) profilePatch.passportNumber = passportNumber;
         if (utenteNumber) profilePatch.utenteNumber = utenteNumber;
         if (saveAddress && addressLine1) {
           profilePatch.addressLine1 = addressLine1;
@@ -1083,8 +1096,8 @@ export function ConsultationBookingForm({
         ) : null}
 
         <label className="mt-4 block">
-          <span className="text-xs font-semibold text-[var(--color-text-body)]">
-            {i18n.nationalIdOptional.replace("{label}", nationalIdLabel)}
+          <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={isBrazil || undefined}>
+            {isBrazil ? nationalIdLabel : i18n.nationalIdOptional.replace("{label}", nationalIdLabel)}
           </span>
           <input
             type="text"
@@ -1094,9 +1107,29 @@ export function ConsultationBookingForm({
             className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
           />
           <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-            {i18n.nationalIdHint}
+            {isBrazil ? "Enter your CPF, or your passport number below." : i18n.nationalIdHint}
           </p>
         </label>
+
+        {/* Passport — Brazil only. One of CPF / passport is required so the
+          * prescription has an identifier to print. */}
+        {isBrazil ? (
+          <label className="mt-4 block">
+            <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required>
+              Passport number
+            </span>
+            <input
+              type="text"
+              name="passportNumber"
+              maxLength={64}
+              defaultValue={defaults.passportNumber}
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+              Required if you don&rsquo;t have a CPF.
+            </p>
+          </label>
+        ) : null}
 
         {/* Número de Utente — Portugal only, driven by the country's
           * BookingSetting.collectUtenteNumber. Optional by design: visitors and
@@ -1251,7 +1284,10 @@ export function ConsultationBookingForm({
           ) : null}
           <label className="block">
             <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>
-              {addressCopy.postalCode}
+              {addressCopy.postalCode}{" "}
+              {!requireAddress ? (
+                <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
+              ) : null}
             </span>
             <input
               type="text"

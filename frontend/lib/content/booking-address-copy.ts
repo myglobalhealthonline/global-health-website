@@ -15,8 +15,9 @@ import type { CommonLocale } from "@/lib/i18n/types";
  * live in `locales/pt/common.json` — it has to key off the country slug in the
  * URL. Same shape as the `br:pt` overrides in `country-home-copy.ts`.
  *
- * Every non-BR country falls straight through to the locale bundle, so
- * Portugal, Ireland, Spain, etc. are untouched.
+ * Ireland has its own override too (postal code → "Eircode" — the actual name
+ * of the system, not a translation). Every country without an entry in
+ * `COUNTRY_OVERRIDES` falls straight through to the locale bundle unchanged.
  */
 
 export type BookingAddressCopy = {
@@ -31,10 +32,7 @@ export type BookingAddressCopy = {
   statePlaceholder: string;
 };
 
-type Overrides = Partial<Omit<BookingAddressCopy, "state">> & {
-  state: string;
-  statePlaceholder: string;
-};
+type Overrides = Partial<BookingAddressCopy>;
 
 /**
  * Brazil, per language. Only the keys that actually differ are listed; the
@@ -79,6 +77,24 @@ const BRAZIL: Record<string, Overrides> = {
   },
 };
 
+/** Every locale bundle maps to the same override — for terms that don't translate. */
+const SUPPORTED_LANGS = ["en", "pt", "es", "de", "cs", "ro"];
+function sameForAllLangs(overrides: Overrides): Record<string, Overrides> {
+  return Object.fromEntries(SUPPORTED_LANGS.map((lang) => [lang, overrides]));
+}
+
+/**
+ * Ireland — "Eircode" is the actual name of the postal code system there
+ * (not a translated term), so it's the same string in every language.
+ */
+const IRELAND = sameForAllLangs({ postalCode: "Eircode" });
+
+/** Per-country override tables, keyed by lowercase `Country.code`. */
+const COUNTRY_OVERRIDES: Record<string, Record<string, Overrides>> = {
+  br: BRAZIL,
+  ie: IRELAND,
+};
+
 /**
  * The 27 federative units, the two-letter UF being what Brazilian addresses,
  * prescriptions and NF-e records actually carry. Value === label, so the
@@ -112,8 +128,9 @@ export function bookingAddressCopy(
     state: null,
     statePlaceholder: "",
   };
-  if ((country ?? "").trim().toLowerCase() !== "br") return fallthrough;
-  const overrides = BRAZIL[(lang ?? "").trim().toLowerCase()] ?? BRAZIL.en;
+  const table = COUNTRY_OVERRIDES[(country ?? "").trim().toLowerCase()];
+  if (!table) return fallthrough;
+  const overrides = table[(lang ?? "").trim().toLowerCase()] ?? table.en ?? {};
   return { ...fallthrough, ...overrides };
 }
 

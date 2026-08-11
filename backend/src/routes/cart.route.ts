@@ -155,6 +155,8 @@ const addItemBodySchema = z.object({
       // Required-ness is enforced upstream by the appointments route /
       // mint flow based on BookingSetting per country.
       nationalIdNumber: z.string().trim().max(50).optional().or(z.literal("")),
+      // Alternative to nationalIdNumber — Brazil requires ONE of CPF/passport.
+      passportNumber: z.string().trim().max(60).optional().or(z.literal("")),
       // PT-only Número de Utente. Shown when the country's
       // BookingSetting.collectUtenteNumber is on, but never required —
       // patients without an SNS number must still be able to book.
@@ -1034,6 +1036,17 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                   errorResponse("A national ID number is required for bookings in this country."),
                 );
               }
+              // Brazil: CPF (nationalIdNumber) or, failing that, a passport
+              // number — the prescription needs ONE identifier to print.
+              if (
+                svc.country.code.trim().toLowerCase() === "br" &&
+                !patient?.nationalIdNumber?.trim() &&
+                !patient?.passportNumber?.trim()
+              ) {
+                return reply.status(400).send(
+                  errorResponse("Enter your CPF or your passport number to continue."),
+                );
+              }
               if (settings.requireAddress) {
                 const missing: string[] = [];
                 if (!patient?.addressLine1?.trim()) missing.push("street address");
@@ -1314,6 +1327,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             // New booking snapshot — mirrors the Appointment columns the
             // post-payment webhook will write when minting from this row.
             patientNationalIdNumber: patient?.nationalIdNumber || null,
+            patientPassportNumber: patient?.passportNumber || null,
             patientUtenteNumber: patient?.utenteNumber || null,
             patientTimezone: patient?.patientTimezone || null,
             patientAddressLine1: patient?.addressLine1 || null,

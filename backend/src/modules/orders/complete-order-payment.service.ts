@@ -480,6 +480,7 @@ async function fulfillPaidOrderFromCheckoutSession(
       if (
         aptEmail &&
         (item.patientNationalIdNumber ||
+          item.patientPassportNumber ||
           item.patientUtenteNumber ||
           item.patientAddressLine1 ||
           item.patientAddressCity)
@@ -489,6 +490,7 @@ async function fulfillPaidOrderFromCheckoutSession(
           select: {
             nationalIdNumber: true,
             taxIdNumber: true,
+            passportNumber: true,
             utenteNumber: true,
             addressLine1: true,
             addressLine2: true,
@@ -511,6 +513,10 @@ async function fulfillPaidOrderFromCheckoutSession(
             // Encrypted on the way in: `existing` is already ciphertext when a
             // key is configured, so keeping it as-is is correct and only the
             // fresh snapshot value needs wrapping.
+            passportNumber: fill(
+              existing?.passportNumber ?? null,
+              encryptPhi(item.patientPassportNumber),
+            ),
             utenteNumber: fill(
               existing?.utenteNumber ?? null,
               encryptPhi(item.patientUtenteNumber),
@@ -535,6 +541,7 @@ async function fulfillPaidOrderFromCheckoutSession(
             dateOfBirth: aptDob,
             nationalIdNumber: item.patientNationalIdNumber,
             taxIdNumber: item.patientNationalIdNumber,
+            passportNumber: encryptPhi(item.patientPassportNumber),
             utenteNumber: encryptPhi(item.patientUtenteNumber),
             addressLine1: item.patientAddressLine1,
             addressLine2: item.patientAddressLine2,

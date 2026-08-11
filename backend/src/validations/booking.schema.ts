@@ -86,6 +86,11 @@ export const bookingSchema = z.object({
    */
   nationalIdNumber: z.string().trim().min(3).max(50).optional().or(z.literal("")),
   /**
+   * Alternative to `nationalIdNumber` — Brazil requires ONE of CPF/passport
+   * (enforced in the route handler, same as `requireNationalId`).
+   */
+  passportNumber: z.string().trim().min(3).max(60).optional().or(z.literal("")),
+  /**
    * Número de Utente — Portuguese SNS healthcare number. Shown only where
    * `BookingSetting.collectUtenteNumber` is on (PT). Never required: many
    * patients treated in Portugal have no utente number.
