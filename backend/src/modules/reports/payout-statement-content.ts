@@ -329,14 +329,219 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
 
 export function resolvePayoutStatementLocale(
   raw: string | null | undefined,
+  /** Locale to fall back to when `raw` is absent/invalid. The admin payout
+   *  statement (doctor picks explicitly) defaults to English; the commission
+   *  run (Brazil-only, no picker touched yet) defaults to Portuguese. */
+  fallback: PayoutStatementLocale = "en",
 ): PayoutStatementLocale {
-  if (!raw) return "en";
+  if (!raw) return fallback;
   const base = raw.trim().toLowerCase().split(/[-_]/)[0];
   return (PAYOUT_STATEMENT_LOCALES as readonly string[]).includes(base)
     ? (base as PayoutStatementLocale)
-    : "en";
+    : fallback;
 }
 
 export function payoutStatementLabelsFor(locale: PayoutStatementLocale): PayoutStatementLabels {
   return PAYOUT_STATEMENT_CONTENT[locale] ?? PAYOUT_STATEMENT_CONTENT.en;
+}
+
+/**
+ * Locale-keyed labels for the admin "Doctor payouts — commission markets"
+ * export (Brazil bank-transfer worksheet). Separate from
+ * `PayoutStatementLabels` because the two documents share almost no column
+ * set (this one is a multi-doctor worksheet with Order/Charged/Commission
+ * columns, not a single-doctor invoice-style statement) — but they share the
+ * same language list and `chrome` (reused via `payoutStatementLabelsFor`).
+ */
+export type CommissionPayoutLabels = {
+  htmlLang: string;
+  title: string;
+  /** "Paid, non-refunded orders" — first clause of the subtitle. */
+  subtitleScope: string;
+  doctors: string;
+  consultations: string;
+  totalToTransfer: string;
+  commission: string;
+  colPaid: string;
+  colConsultation: string;
+  colOrder: string;
+  colPatient: string;
+  colService: string;
+  colCharged: string;
+  colCommission: string;
+  colPayout: string;
+  /** "Doctor — " section-header prefix; doctor name is appended. */
+  doctorSectionPrefix: string;
+  unassignedDoctor: string;
+  /** "TO TRANSFER — " row-label prefix; doctor name is appended. */
+  toTransferPrefix: string;
+  totalToTransferAll: string;
+  acctHolderPrefix: string;
+  ibanPrefix: string;
+  ibanNotOnFile: string;
+  bicPrefix: string;
+  bankDetailsNotOnFile: string;
+};
+
+export const COMMISSION_PAYOUT_CONTENT: Record<PayoutStatementLocale, CommissionPayoutLabels> = {
+  en: {
+    htmlLang: "en-GB",
+    title: "Doctor payouts — commission markets",
+    subtitleScope: "Paid, non-refunded orders",
+    doctors: "Doctors",
+    consultations: "Consultations",
+    totalToTransfer: "Total to transfer",
+    commission: "Global Health commission",
+    colPaid: "Paid",
+    colConsultation: "Consultation",
+    colOrder: "Order",
+    colPatient: "Patient",
+    colService: "Service",
+    colCharged: "Charged",
+    colCommission: "GH commission",
+    colPayout: "Doctor payout",
+    doctorSectionPrefix: "Doctor — ",
+    unassignedDoctor: "Unassigned",
+    toTransferPrefix: "TO TRANSFER — ",
+    totalToTransferAll: "TOTAL TO TRANSFER (all doctors)",
+    acctHolderPrefix: "Acct holder: ",
+    ibanPrefix: "IBAN: ",
+    ibanNotOnFile: "IBAN: not on file",
+    bicPrefix: "BIC: ",
+    bankDetailsNotOnFile: "Bank details: not on file",
+  },
+  pt: {
+    htmlLang: "pt-PT",
+    title: "Pagamentos aos médicos — mercados de comissão",
+    subtitleScope: "Encomendas pagas, sem reembolso",
+    doctors: "Médicos",
+    consultations: "Consultas",
+    totalToTransfer: "Total a transferir",
+    commission: "Comissão da Global Health",
+    colPaid: "Pago",
+    colConsultation: "Consulta",
+    colOrder: "Pedido",
+    colPatient: "Doente",
+    colService: "Serviço",
+    colCharged: "Cobrado",
+    colCommission: "Comissão GH",
+    colPayout: "Pagamento ao médico",
+    doctorSectionPrefix: "Médico — ",
+    unassignedDoctor: "Não atribuído",
+    toTransferPrefix: "A TRANSFERIR — ",
+    totalToTransferAll: "TOTAL A TRANSFERIR (todos os médicos)",
+    acctHolderPrefix: "Titular da conta: ",
+    ibanPrefix: "IBAN: ",
+    ibanNotOnFile: "IBAN: não registado",
+    bicPrefix: "BIC: ",
+    bankDetailsNotOnFile: "Dados bancários: não registados",
+  },
+  es: {
+    htmlLang: "es-ES",
+    title: "Pagos a médicos — mercados de comisión",
+    subtitleScope: "Pedidos pagados, sin reembolso",
+    doctors: "Médicos",
+    consultations: "Consultas",
+    totalToTransfer: "Total a transferir",
+    commission: "Comisión de Global Health",
+    colPaid: "Pagado",
+    colConsultation: "Consulta",
+    colOrder: "Pedido",
+    colPatient: "Paciente",
+    colService: "Servicio",
+    colCharged: "Cobrado",
+    colCommission: "Comisión GH",
+    colPayout: "Pago al médico",
+    doctorSectionPrefix: "Médico — ",
+    unassignedDoctor: "Sin asignar",
+    toTransferPrefix: "A TRANSFERIR — ",
+    totalToTransferAll: "TOTAL A TRANSFERIR (todos los médicos)",
+    acctHolderPrefix: "Titular de la cuenta: ",
+    ibanPrefix: "IBAN: ",
+    ibanNotOnFile: "IBAN: no registrado",
+    bicPrefix: "BIC: ",
+    bankDetailsNotOnFile: "Datos bancarios: no registrados",
+  },
+  cs: {
+    htmlLang: "cs-CZ",
+    title: "Výplaty lékařům — provizní trhy",
+    subtitleScope: "Zaplacené objednávky bez vrácení peněz",
+    doctors: "Lékaři",
+    consultations: "Konzultace",
+    totalToTransfer: "Celkem k převodu",
+    commission: "Provize Global Health",
+    colPaid: "Zaplaceno",
+    colConsultation: "Konzultace",
+    colOrder: "Objednávka",
+    colPatient: "Pacient",
+    colService: "Služba",
+    colCharged: "Účtováno",
+    colCommission: "Provize GH",
+    colPayout: "Výplata lékaři",
+    doctorSectionPrefix: "Lékař — ",
+    unassignedDoctor: "Nepřiřazeno",
+    toTransferPrefix: "K PŘEVODU — ",
+    totalToTransferAll: "CELKEM K PŘEVODU (všichni lékaři)",
+    acctHolderPrefix: "Majitel účtu: ",
+    ibanPrefix: "IBAN: ",
+    ibanNotOnFile: "IBAN: neuvedeno",
+    bicPrefix: "BIC: ",
+    bankDetailsNotOnFile: "Bankovní údaje: nejsou uvedeny",
+  },
+  ro: {
+    htmlLang: "ro-RO",
+    title: "Plăți către medici — piețe cu comision",
+    subtitleScope: "Comenzi plătite, nerambursate",
+    doctors: "Medici",
+    consultations: "Consultații",
+    totalToTransfer: "Total de transferat",
+    commission: "Comision Global Health",
+    colPaid: "Plătit",
+    colConsultation: "Consultație",
+    colOrder: "Comandă",
+    colPatient: "Pacient",
+    colService: "Serviciu",
+    colCharged: "Facturat",
+    colCommission: "Comision GH",
+    colPayout: "Plată medic",
+    doctorSectionPrefix: "Medic — ",
+    unassignedDoctor: "Neasignat",
+    toTransferPrefix: "DE TRANSFERAT — ",
+    totalToTransferAll: "TOTAL DE TRANSFERAT (toți medicii)",
+    acctHolderPrefix: "Titular de cont: ",
+    ibanPrefix: "IBAN: ",
+    ibanNotOnFile: "IBAN: neînregistrat",
+    bicPrefix: "BIC: ",
+    bankDetailsNotOnFile: "Date bancare: neînregistrate",
+  },
+  de: {
+    htmlLang: "de-DE",
+    title: "Arztauszahlungen — Provisionsmärkte",
+    subtitleScope: "Bezahlte, nicht erstattete Bestellungen",
+    doctors: "Ärzte",
+    consultations: "Konsultationen",
+    totalToTransfer: "Gesamtbetrag zur Überweisung",
+    commission: "Global Health-Provision",
+    colPaid: "Bezahlt",
+    colConsultation: "Konsultation",
+    colOrder: "Bestellung",
+    colPatient: "Patient",
+    colService: "Leistung",
+    colCharged: "Berechnet",
+    colCommission: "GH-Provision",
+    colPayout: "Auszahlung an Arzt",
+    doctorSectionPrefix: "Arzt — ",
+    unassignedDoctor: "Nicht zugewiesen",
+    toTransferPrefix: "ZU ÜBERWEISEN — ",
+    totalToTransferAll: "GESAMTBETRAG ZUR ÜBERWEISUNG (alle Ärzte)",
+    acctHolderPrefix: "Kontoinhaber: ",
+    ibanPrefix: "IBAN: ",
+    ibanNotOnFile: "IBAN: nicht hinterlegt",
+    bicPrefix: "BIC: ",
+    bankDetailsNotOnFile: "Bankdaten: nicht hinterlegt",
+  },
+};
+
+export function commissionPayoutLabelsFor(locale: PayoutStatementLocale): CommissionPayoutLabels {
+  return COMMISSION_PAYOUT_CONTENT[locale] ?? COMMISSION_PAYOUT_CONTENT.pt;
 }

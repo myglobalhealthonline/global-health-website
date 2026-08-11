@@ -9,6 +9,7 @@ import {
   type ReportTable,
 } from "./report-formatters.js";
 import {
+  commissionPayoutLabelsFor,
   payoutStatementLabelsFor,
   type PayoutStatementLocale,
 } from "./payout-statement-content.js";
@@ -706,28 +707,53 @@ export async function doctorPayoutStatementReport(
  * refunding after it has to be recovered by hand (there is no clawback when the
  * money left over a bank rail).
  */
+/** Shared WHERE clause for the commission-payout run — the doctors it will
+ *  cover must be resolvable BEFORE the report body runs, so the route can
+ *  decrypt + audit their bank details up front. Keep both queries in sync. */
+function commissionPayoutWhere(filters: ReportFilters) {
+  const paidAt = rangeWhere(filters);
+  return {
+    doctorId: filters.doctorId ? filters.doctorId : { not: null },
+    // Snapshot present = the order was placed in a commission market. Null
+    // means "not applicable" (standard market, or pre-feature), not zero.
+    doctorPayoutCents: { not: null },
+    order: {
+      paymentStatus: "PAID" as const,
+      // A refunded order is not payable. `status` carries the refund state for
+      // cart orders; paymentStatus alone can lag behind it.
+      status: { not: "REFUNDED" as const },
+      ...(filters.countryCode
+        ? { countryCode: { equals: filters.countryCode, mode: "insensitive" as const } }
+        : {}),
+      ...(paidAt ? { paidAt } : {}),
+    },
+  };
+}
+
+/** Distinct doctor ids the commission-payout run will cover, so the route can
+ *  decrypt + audit their bank details before rendering the report body. */
+export async function resolveCommissionPayoutDoctorIds(
+  filters: ReportFilters,
+): Promise<string[]> {
+  const rows = await prisma.orderItem.findMany({
+    where: commissionPayoutWhere(filters),
+    select: { doctorId: true },
+    distinct: ["doctorId"],
+  });
+  return rows.map((r) => r.doctorId).filter((id): id is string => !!id);
+}
+
 export async function adminCommissionPayoutReport(
   filters: ReportFilters,
+  bankByDoctorId?: Map<string, PayoutBankInfo>,
+  /** Brazil is the only commission market today, so this defaults to
+   *  Portuguese rather than English (contrast `doctorPayoutStatementReport`,
+   *  which the admin picks a language for explicitly). */
+  locale: PayoutStatementLocale = "pt",
 ): Promise<ReportTable> {
-  const paidAt = rangeWhere(filters);
-
+  const t = commissionPayoutLabelsFor(locale);
   const items = await prisma.orderItem.findMany({
-    where: {
-      doctorId: filters.doctorId ? filters.doctorId : { not: null },
-      // Snapshot present = the order was placed in a commission market. Null
-      // means "not applicable" (standard market, or pre-feature), not zero.
-      doctorPayoutCents: { not: null },
-      order: {
-        paymentStatus: "PAID",
-        // A refunded order is not payable. `status` carries the refund state for
-        // cart orders; paymentStatus alone can lag behind it.
-        status: { not: "REFUNDED" },
-        ...(filters.countryCode
-          ? { countryCode: { equals: filters.countryCode, mode: "insensitive" } }
-          : {}),
-        ...(paidAt ? { paidAt } : {}),
-      },
-    },
+    where: commissionPayoutWhere(filters),
     select: {
       id: true,
       name: true,
@@ -792,7 +818,7 @@ export async function adminCommissionPayoutReport(
   // A deleted doctor still owes a reconcilable line — fall back to the id rather
   // than dropping the row or labelling it "Unassigned" misleadingly.
   const doctorName = (key: string) =>
-    key === "unassigned" ? "Unassigned" : (doctorNameById.get(key) ?? key);
+    key === "unassigned" ? t.unassignedDoctor : (doctorNameById.get(key) ?? key);
   const doctorKeys = [...byDoctor.keys()].sort((a, b) =>
     doctorName(a).localeCompare(doctorName(b)),
   );
@@ -803,7 +829,24 @@ export async function adminCommissionPayoutReport(
 
   for (const key of doctorKeys) {
     const list = byDoctor.get(key)!;
-    rows.push({ _section: `Doctor — ${doctorName(key)}` });
+    rows.push({ _section: `${t.doctorSectionPrefix}${doctorName(key)}` });
+
+    // Bank details go straight under the doctor header so finance can run the
+    // transfer from this one worksheet, without pulling each doctor's
+    // individual payout statement first.
+    if (key !== "unassigned") {
+      const bank = bankByDoctorId?.get(key);
+      const bankLine = bank
+        ? [
+            bank.accountHolder ? `${t.acctHolderPrefix}${bank.accountHolder}` : null,
+            bank.iban ? `${t.ibanPrefix}${groupIban(bank.iban)}` : t.ibanNotOnFile,
+            bank.bic ? `${t.bicPrefix}${bank.bic}` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ")
+        : t.bankDetailsNotOnFile;
+      rows.push({ _section: bankLine });
+    }
 
     const subPayout: Record<string, number> = {};
     const subCommission: Record<string, number> = {};
@@ -819,14 +862,14 @@ export async function adminCommissionPayoutReport(
 
       const scheduled = i.appointmentId ? scheduledById.get(i.appointmentId) : null;
       rows.push({
-        date: i.order.paidAt ? fmtDate(i.order.paidAt) : "—",
-        consultation: scheduled ? fmtDate(scheduled) : "—",
+        date: i.order.paidAt ? fmtDate(i.order.paidAt, t.htmlLang) : "—",
+        consultation: scheduled ? fmtDate(scheduled, t.htmlLang) : "—",
         order: i.order.orderNumber ?? "—",
         patient: i.order.fullName,
         service: i.name,
-        gross: fmtMoney(i.lineTotalCents, currency),
-        commission: fmtMoney(commission, currency),
-        payout: fmtMoney(payout, currency),
+        gross: fmtMoney(i.lineTotalCents, currency, t.htmlLang),
+        commission: fmtMoney(commission, currency, t.htmlLang),
+        payout: fmtMoney(payout, currency, t.htmlLang),
       });
     }
 
@@ -837,10 +880,10 @@ export async function adminCommissionPayoutReport(
         consultation: "",
         order: "",
         patient: "",
-        service: `TO TRANSFER — ${doctorName(key)}`,
+        service: `${t.toTransferPrefix}${doctorName(key)}`,
         gross: "",
-        commission: fmtMoney(subCommission[currency] ?? 0, currency),
-        payout: fmtMoney(cents, currency),
+        commission: fmtMoney(subCommission[currency] ?? 0, currency, t.htmlLang),
+        payout: fmtMoney(cents, currency, t.htmlLang),
       });
     }
   }
@@ -852,47 +895,45 @@ export async function adminCommissionPayoutReport(
       consultation: "",
       order: "",
       patient: "",
-      service: "TOTAL TO TRANSFER (all doctors)",
+      service: t.totalToTransferAll,
       gross: "",
-      commission: fmtMoney(grandCommission[currency] ?? 0, currency),
-      payout: fmtMoney(cents, currency),
+      commission: fmtMoney(grandCommission[currency] ?? 0, currency, t.htmlLang),
+      payout: fmtMoney(cents, currency, t.htmlLang),
     });
   }
 
-  const fmtTotals = (t: Record<string, number>) =>
-    Object.entries(t)
-      .map(([currency, cents]) => fmtMoney(cents, currency))
+  const fmtTotals = (totals: Record<string, number>) =>
+    Object.entries(totals)
+      .map(([currency, cents]) => fmtMoney(cents, currency, t.htmlLang))
       .join(" · ") || "—";
 
   const summary: ReportSummaryItem[] = [
-    { label: "Period", value: rangeLabel(filters) },
-    { label: "Doctors", value: String(doctorKeys.length) },
-    { label: "Consultations", value: String(capped.length) },
-    { label: "Total to transfer", value: fmtTotals(grandPayout) },
-    { label: "Global Health commission", value: fmtTotals(grandCommission) },
+    { label: payoutStatementLabelsFor(locale).period, value: rangeLabel(filters) },
+    { label: t.doctors, value: String(doctorKeys.length) },
+    { label: t.consultations, value: String(capped.length) },
+    { label: t.totalToTransfer, value: fmtTotals(grandPayout) },
+    { label: t.commission, value: fmtTotals(grandCommission) },
   ];
 
   const scope = scopeLabels(filters);
 
   return {
-    title: "Doctor payouts — commission markets",
-    subtitle: [
-      "Paid, non-refunded orders",
-      rangeLabel(filters),
-      ...scope,
-    ].join(" · "),
+    title: t.title,
+    subtitle: [t.subtitleScope, rangeLabel(filters), ...scope].join(" · "),
     summary,
     generatedAt: new Date().toISOString(),
     truncated,
+    locale: t.htmlLang,
+    chrome: payoutStatementLabelsFor(locale).chrome,
     columns: [
-      { key: "date", label: "Paid" },
-      { key: "consultation", label: "Consultation" },
-      { key: "order", label: "Order" },
-      { key: "patient", label: "Patient" },
-      { key: "service", label: "Service" },
-      { key: "gross", label: "Charged", align: "right" },
-      { key: "commission", label: "GH commission", align: "right" },
-      { key: "payout", label: "Doctor payout", align: "right" },
+      { key: "date", label: t.colPaid },
+      { key: "consultation", label: t.colConsultation },
+      { key: "order", label: t.colOrder },
+      { key: "patient", label: t.colPatient },
+      { key: "service", label: t.colService },
+      { key: "gross", label: t.colCharged, align: "right" },
+      { key: "commission", label: t.colCommission, align: "right" },
+      { key: "payout", label: t.colPayout, align: "right" },
     ],
     rows,
   };
