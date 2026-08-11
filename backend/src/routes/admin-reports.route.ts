@@ -168,6 +168,59 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
               });
             }
           }
+
+          // Some doctors bank per MARKET (DoctorMarketBankAccount) instead of
+          // globally — a multi-market doctor can have a different account per
+          // country. A doctor missing from the global lookup above isn't
+          // necessarily missing bank details entirely; check their markets
+          // before reporting "not on file". Only fall back when exactly one
+          // market has bank details set — with more than one, which account
+          // to pay into is genuinely ambiguous and guessing wrong risks
+          // sending the transfer to the wrong account.
+          const missingGlobalBank = doctorIds.filter((doctorId) => {
+            const entry = bankByDoctorId.get(doctorId);
+            return !entry || (!entry.iban && !entry.accountHolder && !entry.bic);
+          });
+          if (missingGlobalBank.length > 0) {
+            const marketBankRows = await prisma.doctorCountry.findMany({
+              where: {
+                doctorId: { in: missingGlobalBank },
+                bankAccount: { isNot: null },
+              },
+              select: {
+                doctorId: true,
+                bankAccount: {
+                  select: { accountHolder: true, ibanEncrypted: true, bic: true },
+                },
+              },
+            });
+            const marketBanksByDoctorId = new Map<string, typeof marketBankRows>();
+            for (const row of marketBankRows) {
+              const list = marketBanksByDoctorId.get(row.doctorId) ?? [];
+              list.push(row);
+              marketBanksByDoctorId.set(row.doctorId, list);
+            }
+            for (const [doctorId, rows] of marketBanksByDoctorId) {
+              if (rows.length !== 1) continue;
+              const marketBank = rows[0].bankAccount!;
+              const iban = marketBank.ibanEncrypted ? decryptPhi(marketBank.ibanEncrypted) : null;
+              bankByDoctorId.set(doctorId, {
+                accountHolder: marketBank.accountHolder,
+                iban,
+                bic: marketBank.bic,
+              });
+              if (iban) {
+                await recordCriticalAudit({
+                  actorUserId: actor?.userId ?? null,
+                  actorRole: actor?.role ?? "ADMIN",
+                  action: "DOCTOR_BANK_VIEWED",
+                  entityType: "Doctor",
+                  entityId: doctorId,
+                  request,
+                });
+              }
+            }
+          }
         }
         // Brazil is the only commission market today, so this defaults to
         // Portuguese rather than English — the admin can still override via
@@ -189,14 +242,38 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
           }),
         ]);
 
+        // Some doctors bank per MARKET (DoctorMarketBankAccount) instead of
+        // globally — fall back to it when the global row is empty. Narrowed
+        // by `countryCode` when the admin picked one; unscoped, only fall
+        // back if exactly one market has bank details (more than one is
+        // genuinely ambiguous — guessing wrong risks the wrong account).
+        let effectiveBank = bankRow;
+        if (!bankRow?.ibanEncrypted && !bankRow?.accountHolder && !bankRow?.bic) {
+          const marketRows = await prisma.doctorCountry.findMany({
+            where: {
+              doctorId: q.doctorId!,
+              bankAccount: { isNot: null },
+              ...(q.countryCode
+                ? { country: { code: { equals: q.countryCode, mode: "insensitive" } } }
+                : {}),
+            },
+            select: {
+              bankAccount: { select: { accountHolder: true, ibanEncrypted: true, bic: true } },
+            },
+          });
+          if (marketRows.length === 1) {
+            effectiveBank = marketRows[0].bankAccount;
+          }
+        }
+
         // Finance needs the full IBAN to pay the doctor, so the statement
         // carries it in the clear. A full-IBAN reveal is financial data — audit
         // it (DOCTOR_BANK_VIEWED) exactly as the dedicated bank-reveal route
         // does, and fail the export if the audit write fails rather than emit
         // un-audited account details.
         let iban: string | null = null;
-        if (bankRow?.ibanEncrypted) {
-          iban = decryptPhi(bankRow.ibanEncrypted);
+        if (effectiveBank?.ibanEncrypted) {
+          iban = decryptPhi(effectiveBank.ibanEncrypted);
           const actor = resolveAdminSessionActor(request);
           await recordCriticalAudit({
             actorUserId: actor?.userId ?? null,
@@ -213,9 +290,9 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
           doctor?.fullName ?? "Doctor",
           filters,
           {
-            accountHolder: bankRow?.accountHolder ?? null,
+            accountHolder: effectiveBank?.accountHolder ?? null,
             iban,
-            bic: bankRow?.bic ?? null,
+            bic: effectiveBank?.bic ?? null,
           },
           resolvePayoutStatementLocale(q.locale),
         );
