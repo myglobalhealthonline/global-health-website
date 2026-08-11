@@ -1021,6 +1021,10 @@ const nextConfig: NextConfig = {
       { source: "/:locale(cs|es|pt|ro)/portugal-team", destination: "/portugal/pt/doctors", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/spain-team", destination: "/spain/es/doctors", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/romania-team", destination: "/romania/ro/doctors", permanent: true },
+      // Brazil: same non-locale-preserving convention as the siblings above —
+      // always lands on the pt doctors listing regardless of which legacy
+      // locale prefixed the request (SEO-GROWTH-006).
+      { source: "/:locale(cs|es|pt|ro)/brazil-team", destination: "/brazil/pt/doctors", permanent: true },
 
       // -- locale-prefixed country homepages (/{locale}/home[-suffix]) ---
       // `:locale` is reused in the destination so one rule covers every
@@ -1074,11 +1078,15 @@ const nextConfig: NextConfig = {
       { source: "/:locale(cs|es|pt|ro)/specialty-rm", destination: "/romania/ro/see-a-specialist", permanent: true },
       // Czechia has specialist-consultations disabled — hub, not a 404.
       { source: "/:locale(cs|es|pt|ro)/specialty-cz", destination: "/czechia/cs", permanent: true },
+      // Brazil also has specialist-consultations disabled — same hub
+      // fallback as Czechia, not /brazil/pt/see-a-specialist (SEO-GROWTH-006).
+      { source: "/:locale(cs|es|pt|ro)/specialty-br", destination: "/brazil/pt", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/general-consultation-ie", destination: "/ireland/en/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/general-consultation-pt", destination: "/portugal/pt/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/general-consultation-sp", destination: "/spain/es/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/general-consultation-cz", destination: "/czechia/cs/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/general-consultation-br", destination: "/brazil/pt/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/czechia-team", destination: "/czechia/cs/doctors", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/online-prescription", destination: "/ireland/en/gp-consultation-online", permanent: true },
 

@@ -180,3 +180,70 @@ describe("Brazil legacy redirects do not disturb existing coverage", () => {
     expect(resolve(all, "/home-br")).toBe("/brazil/pt");
   });
 });
+
+/**
+ * SEO-GROWTH-006: locale-prefixed variants of the three families above
+ * (/:locale/brazil-team, /:locale/general-consultation-br,
+ * /:locale/specialty-br) — the sibling markets (Ireland, Portugal, Spain,
+ * Romania, Czechia) already had these under the "Locale-prefixed forms of
+ * country hubs" block; Brazil was missing all three, same class of omission
+ * as SEO-GROWTH-005.
+ *
+ * Unlike /:locale/home-br (which preserves the requested locale — /es/home-br
+ * -> /brazil/es), the team/general-consultation/specialty families do NOT
+ * preserve locale for ANY market: /cs/portugal-team -> /portugal/pt/doctors
+ * regardless of the "cs" prefix. Brazil follows that same fixed-destination
+ * convention, always landing on /brazil/pt/..., which sidesteps the
+ * cs/ro-unsupported-locale question entirely (data/countries.ts:
+ * supportedLocales for "br" is only pt/en/es) — the destination never
+ * echoes the input locale, so there is nothing to normalize.
+ */
+describe("Locale-prefixed Brazil legacy aliases — same fixed-pt-destination convention as sibling markets", () => {
+  it("/:locale/brazil-team resolves to /brazil/pt/doctors for every legacy locale prefix", async () => {
+    const all = await rules();
+    for (const locale of ["cs", "es", "pt", "ro"]) {
+      expect(resolve(all, `/${locale}/brazil-team`)).toBe("/brazil/pt/doctors");
+    }
+  });
+
+  it("/:locale/general-consultation-br resolves to /brazil/pt/gp-consultation-online for every legacy locale prefix", async () => {
+    const all = await rules();
+    for (const locale of ["cs", "es", "pt", "ro"]) {
+      expect(resolve(all, `/${locale}/general-consultation-br`)).toBe("/brazil/pt/gp-consultation-online");
+    }
+  });
+
+  it("/:locale/specialty-br resolves to /brazil/pt (country hub), not /brazil/pt/see-a-specialist", async () => {
+    const all = await rules();
+    for (const locale of ["cs", "es", "pt", "ro"]) {
+      expect(resolve(all, `/${locale}/specialty-br`)).toBe("/brazil/pt");
+    }
+  });
+
+  it("all three are permanent, single-hop, and matched by the exact rule", async () => {
+    const all = await rules();
+    for (const path of ["/pt/brazil-team", "/es/general-consultation-br", "/cs/specialty-br"]) {
+      const hit = firstMatch(all, path)!;
+      expect(hit, path).not.toBeNull();
+      expect(hit.rule.permanent, path).toBe(true);
+    }
+    expect(firstMatch(all, "/brazil/pt/doctors")).toBeNull();
+    expect(firstMatch(all, "/brazil/pt/gp-consultation-online")).toBeNull();
+    expect(firstMatch(all, "/brazil/pt")).toBeNull();
+  });
+
+  it("matches the sibling locale-prefixed redirects unchanged", async () => {
+    const all = await rules();
+    expect(resolve(all, "/cs/portugal-team")).toBe("/portugal/pt/doctors");
+    expect(resolve(all, "/es/general-consultation-ie")).toBe("/ireland/en/gp-consultation-online");
+    expect(resolve(all, "/pt/specialty-cz")).toBe("/czechia/cs");
+  });
+
+  it("does not manufacture an unsupported Brazil locale URL (cs/ro are not in Brazil's supportedLocales)", async () => {
+    const all = await rules();
+    // Destination never echoes :locale for these three families, so a
+    // cs/ro prefix cannot leak into the output the way it could for /home-br.
+    expect(resolve(all, "/cs/brazil-team")).not.toContain("/brazil/cs");
+    expect(resolve(all, "/ro/general-consultation-br")).not.toContain("/brazil/ro");
+  });
+});
