@@ -14,6 +14,7 @@ import {
   decideCrossBorderRxRequest,
   getCrossBorderRxConsentView,
   submitCrossBorderRxConsent,
+  revertCrossBorderRxConsent,
   CrossBorderRxSourceNotFoundError,
   CrossBorderRxTargetNotAvailableError,
   CrossBorderRxServicePriceMissingError,
@@ -23,6 +24,7 @@ import {
   CrossBorderRxMessageRequiredError,
   CrossBorderRxConsentInvalidError,
   CrossBorderRxConsentExpiredError,
+  CrossBorderRxIdentityRequiredError,
 } from "../modules/cross-border-rx/cross-border-rx.service.js";
 
 /**
@@ -64,6 +66,8 @@ const consentBodySchema = z.object({
       // (PPS in IE, NIF in PT, ...). Optional — patients without one
       // still get a prescription; it simply carries no id line.
       healthIdNumber: z.string().trim().max(60).optional(),
+      // Alternative to healthIdNumber — Brazil requires ONE of CPF/passport.
+      passportNumber: z.string().trim().max(60).optional(),
       addressLine1: z.string().trim().max(300).optional(),
       addressLine2: z.string().trim().max(300).optional(),
       addressCity: z.string().trim().max(200).optional(),
@@ -72,6 +76,7 @@ const consentBodySchema = z.object({
     })
     .optional(),
 });
+const revertBodySchema = z.object({ token: z.string().min(10).max(400) });
 
 const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
   // ── Doctor A: target countries + authorised doctors ──────────────
@@ -291,6 +296,9 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
         if (error instanceof CrossBorderRxNotActionableError) {
           return reply.status(409).send(errorResponse(error.message));
         }
+        if (error instanceof CrossBorderRxIdentityRequiredError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
         if (
           error instanceof CrossBorderRxTargetNotAvailableError ||
           error instanceof CrossBorderRxStripeNotConfiguredError
@@ -302,6 +310,37 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not record your choice"));
+      }
+    },
+  );
+
+  // ── Public: patient changes their mind (revert to the choice screen) ─
+  app.post(
+    "/api/public/cross-border-rx-consent/revert",
+    { config: { rateLimit: { max: 20, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const body = revertBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid request", body.error.flatten()));
+      }
+      try {
+        const data = await revertCrossBorderRxConsent(body.data.token);
+        return okResponse(data, "You can choose again");
+      } catch (error) {
+        if (error instanceof CrossBorderRxConsentInvalidError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxConsentExpiredError) {
+          return reply.status(410).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxNotActionableError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not update your choice"));
       }
     },
   );

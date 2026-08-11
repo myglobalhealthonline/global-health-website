@@ -671,6 +671,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   // Carry the new booking snapshot through to the order
                   // item; the payment webhook reads it to mint Appointment.
                   patientNationalIdNumber: i.patientNationalIdNumber,
+                  patientPassportNumber: i.patientPassportNumber,
                   patientUtenteNumber: i.patientUtenteNumber,
                   patientTimezone: i.patientTimezone,
                   patientAddressLine1: i.patientAddressLine1,

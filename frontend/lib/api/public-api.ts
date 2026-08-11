@@ -102,6 +102,8 @@ export type CrossBorderRxDeliveryDetails = {
   pharmacyName: string | null;
   /** Health/tax id valid in the prescribing country (PPS for IE, NIF for PT, ...). */
   healthIdNumber: string | null;
+  /** Alternative to healthIdNumber — Brazil requires ONE of CPF/passport. */
+  passportNumber: string | null;
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
@@ -118,9 +120,18 @@ export type CrossBorderRxConsentView = {
   targetCountryCode: string;
   /** Server-resolved label for the health/tax id field ("PPS", "NIF", ...). */
   healthIdLabel: string;
+  /** True when the target country needs ONE of healthIdNumber / passportNumber
+   *  before the patient can pay (Brazil). */
+  identityRequiresOneOf: boolean;
+  prescriptionFeeCents: number | null;
+  prescriptionFeeCurrency: string | null;
+  gpConsultPriceCents: number | null;
+  gpConsultCurrency: string | null;
   prefill: CrossBorderRxDeliveryDetails & { phone: string | null };
   paymentUrl: string | null;
   gpBookingUrl: string | null;
+  /** Whether `revertCrossBorderRxConsent` can be called from this state. */
+  canChangeDecision: boolean;
 };
 
 export function fetchCrossBorderRxConsent(token: string) {
@@ -138,6 +149,13 @@ export function submitCrossBorderRxConsent(
     "/api/public/cross-border-rx-consent",
     { method: "POST", body: JSON.stringify({ token, decision, details }) },
   );
+}
+
+export function revertCrossBorderRxConsent(token: string) {
+  return publicFetch<{ status: string }>("/api/public/cross-border-rx-consent/revert", {
+    method: "POST",
+    body: JSON.stringify({ token }),
+  });
 }
 
 export function fetchPatientUploadInfo(token: string) {
