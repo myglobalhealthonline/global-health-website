@@ -237,6 +237,8 @@ export function parseMembershipEnrollmentForm(
     endDate: nullable(fd, "endDate"),
     adminNotes: nullable(fd, "adminNotes"),
   };
+  const preferredLocale = str(fd, "preferredLocale");
+  if (preferredLocale) body.preferredLocale = preferredLocale;
   const levelId = str(fd, "levelId");
   if (levelId) body.levelId = levelId;
 
@@ -259,10 +261,12 @@ export function parseMembershipDependentForm(
   if (!firstName || !lastName) return { ok: false, error: "First and last name are required" };
 
   const membershipId = str(fd, "membershipId");
+  const preferredLocale = str(fd, "preferredLocale");
   return {
     ok: true,
     data: {
       ...(membershipId ? { membershipId } : {}),
+      ...(preferredLocale ? { preferredLocale } : {}),
       partnerReference: nullable(fd, "partnerReference"),
       email,
       firstName,
