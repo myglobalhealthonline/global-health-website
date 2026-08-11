@@ -18,7 +18,6 @@ import {
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
 import { useSwipePage } from "@/hooks/use-swipe-page";
@@ -286,8 +285,13 @@ export function ServiceCatalog({
             // a zero-size rect while `hidden`) — cosmetic only, never hides
             // content or breaks a link.
             <div key={`${filter}-${idx}`} hidden={idx !== page}>
-              <RevealOnScroll
-                stagger
+              {/* No RevealOnScroll here: this section is wrapped in
+                  <LazyHydrate>, so it mounts ~600px BEFORE the viewport —
+                  i.e. after its server HTML has already painted. The reveal
+                  effect would then re-hide cards the visitor had already seen
+                  and wait on an IntersectionObserver to un-hide them, which is
+                  exactly the "cards load slow / sometimes never appear" bug. */}
+              <div
                 className={cn(
                   "gh-card-grid",
                   idx === 0 && canFeatureFirst ? "gh-card-grid--featured" : null,
@@ -301,7 +305,7 @@ export function ServiceCatalog({
                     i18n={i18n}
                   />
                 ))}
-              </RevealOnScroll>
+              </div>
             </div>
           ))}
         </div>
