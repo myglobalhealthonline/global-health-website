@@ -30,7 +30,7 @@ const DATASETS: { value: Dataset; label: string; note: string }[] = [
   {
     value: "commission-payouts",
     label: "Doctor payouts — commission markets (Brazil)",
-    note: "What to transfer each doctor, for the manual bank run. Grouped by doctor, with the amount charged, Global Health's commission and the doctor's payout per consultation, plus a TO TRANSFER subtotal each and a grand total. Covers ALL doctors unless you pick one. Only paid, non-refunded orders count, and the figures are the ones frozen on the order at checkout — so the run always reconciles against the receipts actually issued, even if a service's payout was edited since. Defaults to last calendar month.",
+    note: "What to transfer each doctor, for the manual bank run. Grouped by doctor — each header carries the doctor's account holder, IBAN and BIC on file — with the amount charged, Global Health's commission and the doctor's payout per consultation, plus a TO TRANSFER subtotal each and a grand total. Covers ALL doctors unless you pick one. Only paid, non-refunded orders count, and the figures are the ones frozen on the order at checkout — so the run always reconciles against the receipts actually issued, even if a service's payout was edited since. Defaults to last calendar month. Renders in Portuguese by default (Brazil is the only commission market) — pick another statement language to override.",
   },
   {
     value: "services",
@@ -53,8 +53,8 @@ const DATASETS: { value: Dataset; label: string; note: string }[] = [
  * Languages the payout statement can be rendered in — mirrors
  * `PAYOUT_STATEMENT_LOCALES` in backend/src/modules/reports/payout-statement-content.ts.
  * Native display names, shown regardless of the admin's own UI language, so the
- * language the STATEMENT comes out in is never ambiguous. Only the payout
- * dataset is translated; every other export stays English.
+ * language the STATEMENT comes out in is never ambiguous. Only the payout and
+ * commission-payouts datasets are translated; every other export stays English.
  */
 const STATEMENT_LANGUAGES = [
   { code: "en", name: "English" },
@@ -74,6 +74,13 @@ const APPT_STATUSES = [
 ];
 
 const PAYMENT_STATUSES = ["UNPAID", "PENDING", "PAID", "REFUNDED", "FAILED"];
+
+/** Statement language each translated dataset opens with — matches the
+ *  backend's default (`resolvePayoutStatementLocale`'s fallback arg). Brazil
+ *  is the only commission market today, so that one opens in Portuguese. */
+function defaultStatementLocale(d: Dataset): string {
+  return d === "commission-payouts" ? "pt" : "en";
+}
 
 // Mirrors `consultationTypeSchema` in backend/src/validations/shared.schema.ts.
 const CONSULTATION_TYPES = [
@@ -97,7 +104,7 @@ export function AdminReportExports({
   const [consultationType, setConsultationType] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [statementLocale, setStatementLocale] = useState("en");
+  const [statementLocale, setStatementLocale] = useState(defaultStatementLocale("appointments"));
   const [status, setStatus] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [busy, setBusy] = useState(false);
@@ -115,9 +122,10 @@ export function AdminReportExports({
   // Services by doctor now honours an optional From/To (filters by assignment
   // date), so every dataset shows the date range.
   const showDateRange = true;
-  // Only the payout statement is localised (labels, section headings, PDF/CSV
-  // chrome); the other builders emit English headers only.
-  const showLanguage = dataset === "payout";
+  // The payout statement and the commission-payouts worksheet are localised
+  // (labels, section headings, PDF/CSV chrome); the other builders emit
+  // English headers only.
+  const showLanguage = dataset === "payout" || dataset === "commission-payouts";
   const doctorRequired = dataset === "payout";
   const blocked = doctorRequired && !doctorId;
 
@@ -178,7 +186,11 @@ export function AdminReportExports({
           <span className="gh-field-label">Report</span>
           <select
             value={dataset}
-            onChange={(e) => setDataset(e.target.value as Dataset)}
+            onChange={(e) => {
+              const next = e.target.value as Dataset;
+              setDataset(next);
+              setStatementLocale(defaultStatementLocale(next));
+            }}
             className="gh-select"
           >
             {DATASETS.map((d) => (

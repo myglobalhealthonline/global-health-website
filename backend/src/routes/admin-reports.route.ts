@@ -12,6 +12,8 @@ import {
   adminPatientsReport,
   adminServicesReport,
   doctorPayoutStatementReport,
+  resolveCommissionPayoutDoctorIds,
+  type PayoutBankInfo,
   type ReportFilters,
 } from "../modules/reports/report-datasets.js";
 import {
@@ -67,9 +69,10 @@ const querySchema = z.object({
       "CANCELLED",
     ])
     .optional(),
-  /** Language to render the export in. Only `dataset=payout` honours this —
-   *  the admin picks it explicitly from the report panel, so finance can hand
-   *  a doctor a statement in the doctor's own language. */
+  /** Language to render the export in. Honoured by `dataset=payout` (admin
+   *  picks it explicitly, so finance can hand a doctor a statement in the
+   *  doctor's own language — defaults to English) and `dataset=commission-payouts`
+   *  (Brazil-only today, so it defaults to Portuguese instead). */
   locale: z.string().trim().min(2).max(8).optional(),
 });
 
@@ -134,10 +137,46 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
       } else if (q.dataset === "patients") {
         table = await adminPatientsReport(filters);
       } else if (q.dataset === "commission-payouts") {
-        // No bank details on this one, so no DOCTOR_BANK_VIEWED audit: it spans
-        // every doctor and is a "what to transfer" worksheet. Finance reads the
-        // IBAN from the per-doctor payout statement, which does audit the reveal.
-        table = await adminCommissionPayoutReport(filters);
+        // Finance runs the bank transfer straight from this worksheet, so it
+        // carries every covered doctor's bank details in the clear. Same rule
+        // as the single-doctor payout statement: a full-IBAN reveal is
+        // financial data and must be audited (DOCTOR_BANK_VIEWED) per doctor,
+        // failing the export if any audit write fails.
+        const doctorIds = await resolveCommissionPayoutDoctorIds(filters);
+        const bankByDoctorId = new Map<string, PayoutBankInfo>();
+        if (doctorIds.length > 0) {
+          const bankRows = await prisma.doctorBankAccount.findMany({
+            where: { doctorId: { in: doctorIds } },
+            select: { doctorId: true, accountHolder: true, ibanEncrypted: true, bic: true },
+          });
+          const actor = resolveAdminSessionActor(request);
+          for (const b of bankRows) {
+            const iban = b.ibanEncrypted ? decryptPhi(b.ibanEncrypted) : null;
+            bankByDoctorId.set(b.doctorId, {
+              accountHolder: b.accountHolder,
+              iban,
+              bic: b.bic,
+            });
+            if (iban) {
+              await recordCriticalAudit({
+                actorUserId: actor?.userId ?? null,
+                actorRole: actor?.role ?? "ADMIN",
+                action: "DOCTOR_BANK_VIEWED",
+                entityType: "Doctor",
+                entityId: b.doctorId,
+                request,
+              });
+            }
+          }
+        }
+        // Brazil is the only commission market today, so this defaults to
+        // Portuguese rather than English — the admin can still override via
+        // `?locale=`.
+        table = await adminCommissionPayoutReport(
+          filters,
+          bankByDoctorId,
+          resolvePayoutStatementLocale(q.locale, "pt"),
+        );
       } else if (q.dataset === "payout") {
         const [doctor, bankRow] = await Promise.all([
           prisma.doctor.findUnique({
@@ -197,7 +236,9 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
       const base =
         q.dataset === "payout"
           ? `admin-payout-${resolvePayoutStatementLocale(q.locale)}-${stamp}`
-          : `admin-${q.dataset}-${stamp}`;
+          : q.dataset === "commission-payouts"
+            ? `admin-commission-payouts-${resolvePayoutStatementLocale(q.locale, "pt")}-${stamp}`
+            : `admin-${q.dataset}-${stamp}`;
       const out = await serializeReport(table, q.format);
       return reply
         .header("Content-Type", out.contentType)
