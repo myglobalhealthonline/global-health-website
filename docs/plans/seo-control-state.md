@@ -748,50 +748,73 @@ set, or a `marketOk` reference; every `language=` URL param interpolates `${lang
 - No `AggregateRating`/`Review` schema was added, and per the explicit direction above,
   none should be — this is a standing rule for this integration, not a TODO.
 
-### TRUST-METRIC-001 — implemented, 2026-08-12
+### TRUST-METRIC-001 — implemented, 2026-08-12 (boundary revised same day)
 
-**Scope.** Replace every static "45,000 consultations" claim with a live figure:
-`historical base (45,000, previous platform through 2026-06-30) + completed
-appointments on this platform since 2026-07-01`. Follow-up to SEO-GROWTH-015 — same
-principle (one live source of truth instead of a manually-maintained number that
-drifts), applied to the consultation-volume claim instead of the Doctify rating.
+**Scope.** Replace every static "45,000 consultations" claim with a live figure: **45,000
+historical consultations through 2025-12-31; live platform consultations counted from
+2026-01-01 onward.** Follow-up to SEO-GROWTH-015 — same principle (one live source of
+truth instead of a manually-maintained number that drifts), applied to the
+consultation-volume claim instead of the Doctify rating.
+
+**Boundary revision.** First implemented with a 2026-07-01 cutover (guessed from the
+deploy date of this work, not the actual meaning of the 45,000 figure). Corrected same
+day: 45,000 is the total *through end of 2025*, so the live count must start
+2026-01-01 — otherwise every completed January–June 2026 consultation would be counted
+in neither the historical base nor the live query and silently disappear from the
+public figure. `HISTORICAL_BASE` (45,000) is unchanged; `CUTOVER_AT`/
+`completedSinceCutoverWhere` renamed to `LIVE_COUNT_START`/`completedSinceLiveStartWhere`
+throughout code, tests, and this document — no more "cutover" language anywhere in this
+feature.
 
 **Query design.** `backend/src/modules/appointments/consultation-count.service.ts`:
 counts `Appointment` rows where `status: "COMPLETED"` AND `paymentStatus: { not:
-"REFUNDED" }` AND `consultationCompletedAt: { gte: 2026-07-01T00:00:00.000Z UTC }`.
+"REFUNDED" }` AND `consultationCompletedAt: { gte: 2026-01-01T00:00:00.000Z UTC }`.
 `consultationCompletedAt` (not `createdAt`, not `scheduledAt`) is set exactly when an
 appointment moves to `COMPLETED` — confirmed by reading every write site
 (`appointments.service.ts`, `doctor-appointments.service.ts`,
 `cross-border-rx.service.ts`, all three set both fields in the same update) — so a
-June booking for a July slot, or any appointment still pending, doesn't count until it
-has actually happened. No explicit no-show status exists in this schema; an
-unattended appointment is never marked `COMPLETED`, so it's excluded the same way.
-The where-clause logic is pulled into its own pure, exported function
-(`completedSinceCutoverWhere`) specifically so it's unit-testable without a database —
-5 tests cover the status filter, the refund exclusion, the date field choice, the
-exact UTC cutover instant, and an override hook for verification.
+booking made for a future slot, or any appointment still pending, doesn't count until
+it has actually happened. No explicit no-show status exists in this schema; an
+unattended appointment is never marked `COMPLETED`, so it's excluded the same way. The
+where-clause logic is pulled into its own pure, exported function
+(`completedSinceLiveStartWhere`) specifically so it's unit-testable without a
+database — 5 tests cover the status filter, the refund exclusion, the date field
+choice, the exact UTC boundary instant, and an override hook for verification.
 
-**Production verification (direct read-only query, 2026-08-12, per the "don't deploy
-until verified against real statuses" instruction):**
+**Production verification (direct read-only query, re-run 2026-08-12 against the
+2026-01-01 boundary, per the "don't deploy until verified against real statuses"
+instruction):**
 
 | Check | Result |
 | --- | --- |
-| `completedSinceCutover` (the live query) | **55** |
-| `displayTotal` | **45,055** |
-| All-time `COMPLETED` appointments | 1,226 |
-| All-time `COMPLETED` with `consultationCompletedAt` NULL | 1,170 |
-| `COMPLETED` since cutover with `paymentStatus: REFUNDED` (excluded) | 0 |
+| `completedSinceLiveStart` (the live query, 2026-01-01 boundary) | **56** |
+| `displayTotal` | **45,056** |
+| Completed, non-refunded appointments dated *before* 2026-01-01 (would be uncounted by either the base or the live query) | **0** |
+| Earliest `consultationCompletedAt` recorded on this platform, any status | **2026-05-23** |
+| `COMPLETED` since 2026-01-01 with `paymentStatus: REFUNDED` (excluded) | 0 |
 
-The 1,170 legacy-completed rows with a null completion timestamp are exactly what's
-expected — they predate `consultationCompletedAt` being populated (legacy Mongo import
-/ pre-field-existing rows) and are already reflected in the 45,000 historical base, so
-excluding them from the live count is correct, not a bug. **One anomaly found and
-flagged, not actioned**: 19 appointments currently in `REQUEST_RECEIVED` status have a
-non-null `consultationCompletedAt` >= the cutover — status was very likely moved to
-`COMPLETED` and back at some point without clearing the timestamp. The query correctly
-excludes them (it filters on current `status`, not just the timestamp), so this
-doesn't affect the count's correctness, but it's a data-integrity oddity worth
-someone's attention separately.
+**The user's explicit double-count/gap check.** Whether the 45,000 figure itself
+already includes any 2026 consultations is an external fact about the *previous*
+platform's export — nothing in this database can confirm or refute it; that
+confirmation has to come from whoever produced the 45,000 number. What this
+database *can* confirm, and does: this platform has **zero** completed, non-refunded
+consultations dated before 2026-01-01 (the earliest is 2026-05-23), so from this
+platform's side there is no live-query row that could be double-counted against a
+45,000 figure ending anywhere in 2025, and no January–May 2026 data quietly missing
+from the count either — the two figures don't overlap in practice today regardless of
+exactly where in 2025 the historical export was cut. That said, the assumption stated
+by the business (45,000 = through 2025, not into 2026) is the one thing this task
+cannot verify computationally and is taken as given per instruction.
+
+**One anomaly found earlier and still flagged, not actioned** (unaffected by the
+boundary change): 19 appointments currently in `REQUEST_RECEIVED` status have a
+non-null `consultationCompletedAt` — status was very likely moved to `COMPLETED` and
+back at some point without clearing the timestamp. The query correctly excludes them
+(it filters on current `status`, not just the timestamp), so this doesn't affect the
+count's correctness, but it's a data-integrity oddity worth someone's attention
+separately. Historical `COMPLETED`-with-null-`consultationCompletedAt` rows (1,170 of
+1,226 all-time) are expected — they predate the field being populated and are already
+reflected in the 45,000 historical base.
 
 **API + caching.** New route `GET /api/public/consultation-count` (`backend/src/
 routes/consultation-count.route.ts`), `Cache-Control: max-age=3600` (1h) at the edge,
@@ -831,26 +854,26 @@ the existing `reviews-config` entry's documented reasoning.
   reachable. Out of scope for TRUST-METRIC-001 — flagged for a separate look.
 - `CountryTrustBar.tsx`'s pre-existing Ireland-only Doctify gate — unchanged, still an
   open decision from SEO-GROWTH-015.
-- An unexplained, unrelated uncommitted diff was found in
-  `frontend/components/templates/DoctorProfileTemplate.tsx` (a `gh2-glass-forest`
-  restyle of the doctor-profile FAQ/booking card) already sitting in the working tree
-  before this task started. Not touched, not staged, not part of this work —
-  flagged so it isn't silently swept into a future commit.
 
-**Validation:** backend `node --test` on the new pure-logic suite — 6/6 pass, no DB
-required. `pnpm tsc --noEmit` clean (both frontend and backend — 7 pre-existing,
-unrelated backend errors on `patientPassportNumber` in cross-border-rx/orders/cart
-predate this work and don't touch any changed file). `pnpm eslint` clean on every
-changed file. Frontend `pnpm vitest run` — 803/805 (the same 2 pre-existing, unrelated
-failures as every prior pass this session). All 6 locale JSON files valid. Direct
-read-only production query, above.
+(An unrelated `gh2-glass-forest` restyle of `DoctorProfileTemplate.tsx`, initially
+flagged as an unexplained stray diff, turned out to already be its own committed
+change (`94c75229`) landed between sessions — not stray, not part of this work, no
+action needed.)
+
+**Validation:** backend `node --test` on the pure-logic suite (renamed with the
+boundary fix, still 6/6) — pass, no DB required. `pnpm tsc --noEmit` clean (both
+frontend and backend — 7 pre-existing, unrelated backend errors on
+`patientPassportNumber` in cross-border-rx/orders/cart predate this work and don't
+touch any changed file). `pnpm eslint` clean on every changed file. Frontend `pnpm
+vitest run` — 803/805 (the same 2 pre-existing, unrelated failures as every prior pass
+this session). All 6 locale JSON files valid. Direct read-only production query,
+above, re-run against the corrected 2026-01-01 boundary.
 
 ### NOW — one batch
 
-Nothing queued. SEO-GROWTH-015 and TRUST-METRIC-001 are both implemented, tested, and
-awaiting explicit commit authorization — deploying together per the user's own
-sequencing (SEO-GROWTH-015 wasn't pushed yet when TRUST-METRIC-001 was implemented on
-top of it).
+Nothing queued. SEO-GROWTH-015 and TRUST-METRIC-001 (with the corrected 2026-01-01
+boundary) are committed (`013a198f`, on top of `770ee012`) on `Dev-hassaan`, not yet
+pushed.
 
 ### NEXT — up to one, evidence-backed
 

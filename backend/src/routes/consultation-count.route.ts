@@ -4,10 +4,10 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
- * Public global consultation counter — the previous platform's historical
- * total plus every appointment actually completed on this platform since
- * the 2026-07-01 cutover. See consultation-count.service.ts for the exact
- * filter. TRUST-METRIC-001.
+ * Public global consultation counter — 45,000 historical consultations
+ * through 2025-12-31, plus every appointment actually completed on this
+ * platform from 2026-01-01 onward. See consultation-count.service.ts for
+ * the exact filter. TRUST-METRIC-001.
  *
  * Cached 1 hour at the edge — a public trust figure doesn't need
  * per-render precision, and this keeps a Prisma COUNT off the hot path of
