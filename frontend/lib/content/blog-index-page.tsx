@@ -217,6 +217,7 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
                           coverImageAlt={post.coverImageAlt}
                           categoryFallback={bp.categoryFallback}
                           readArticleLabel={bp.readArticle}
+                          locale={locale}
                         />
                       );
                     })}

@@ -4,6 +4,7 @@ import { notFound, permanentRedirect, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck, ArrowUpRight, RefreshCw } from "lucide-react";
+import { BlogCard } from "@/components/cards/BlogCard";
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
@@ -19,6 +20,7 @@ import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { sentenceCaseIfShouting } from "@/lib/text/sentence-case";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -224,6 +226,9 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   const locale = await getPageLocale(post.locale);
   const { home } = loadLocaleBundle(locale);
   const blogI18n = home.blog;
+  // "Read article" lives on common.blogPage, not home.blog — the related-card
+  // grid shares the blog index's card, so it needs the index's label bundle.
+  const blogPageI18n = getCommonLocale(locale).blogPage;
 
   // Ranking-growth batch (2026-08-10): was hardcoded `/en/` regardless of the
   // article's own locale — a PT/ES/CS/RO article's CTA sent readers to an
@@ -272,6 +277,10 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   // them into FAQPage schema. Never fabricated — if the body has no FAQ
   // markup, no FAQPage node is emitted.
   const articleFaqs = extractArticleFaqs(post.body);
+  /** Body ships its own complete design (its own <style> block). */
+  const isDesignedBody = post.body.includes("<style");
+  /** Body closes with its own styled medical-disclaimer panel. */
+  const bodyHasOwnDisclaimer = /class="[^"]*\bdisclaimer\b/.test(post.body);
   const relatedHrefFor = (p: BlogListItem) =>
     routeParams.countrySlug && routeParams.lang
       ? `/${routeParams.countrySlug}/${routeParams.lang}/blog/${p.slug}`
@@ -590,9 +599,9 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           container/padding here squeezes their grid columns. Plain rich-text
           bodies keep the site container + padding. */}
       <section
-        className={post.body.includes("<style") ? undefined : "mx-auto max-w-[var(--container-width)]"}
+        className={isDesignedBody ? undefined : "mx-auto max-w-[var(--container-width)]"}
         style={
-          post.body.includes("<style")
+          isDesignedBody
             ? { background: "var(--color-background-page)" }
             : { background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }
         }
@@ -605,11 +614,20 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
           dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
         />
-        {reviewerName ? (
-          <p className="mx-auto mt-8 max-w-[76ch] text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
-            {blogI18n.clinicallyReviewedBy} {reviewerName}. {blogI18n.lastReviewed} {lastReviewedFormatted}.{" "}
-            {blogI18n.medicalDisclaimer}
-          </p>
+        {/* Designed articles nearly all close with their own styled
+            "Medical Disclaimer" panel; appending this one under it printed the
+            same notice twice (naming a different doctor, since this line reads
+            the linked reviewer and the body names the author). Only render it
+            when the body has no disclaimer of its own. The wrapper carries the
+            side padding — the designed-body section above is deliberately
+            unpadded, which left this paragraph flush to both screen edges. */}
+        {reviewerName && !bodyHasOwnDisclaimer ? (
+          <div className="mx-auto max-w-[var(--container-width)] px-5 pb-2 md:px-10">
+            <p className="mx-auto mt-8 max-w-[76ch] text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
+              {blogI18n.clinicallyReviewedBy} {reviewerName}. {blogI18n.lastReviewed} {lastReviewedFormatted}.{" "}
+              {blogI18n.medicalDisclaimer}
+            </p>
+          </div>
         ) : null}
       </section>
 
@@ -674,36 +692,27 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             >
               {blogI18n.moreArticles}
             </h2>
+            {/* Same card as the blog index, in its stacked orientation — the
+                cover image is already on BlogListItem, so the old text-only
+                tile was dropping an asset the data layer had all along. */}
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:mt-12">
               {relatedPosts.map((p) => (
-                <Link
+                <BlogCard
                   key={p.slug}
+                  orientation="stacked"
+                  headingLevel="h3"
+                  locale={locale}
+                  title={sentenceCaseIfShouting(p.title)}
+                  excerpt={p.excerpt}
                   href={relatedHrefFor(p)}
-                  className="gh2-glass-forest gh2-glass-hover gh-focus-on-dark group flex flex-col p-6"
-                >
-                  <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-accent)]">
-                    {p.category}
-                  </span>
-                  <h3
-                    className="mt-3 text-[17px] font-bold leading-snug"
-                    style={{ color: "rgba(255,255,255,0.92)" }}
-                  >
-                    {sentenceCaseIfShouting(p.title)}
-                  </h3>
-                  <p
-                    className="mt-3 line-clamp-4 text-[13px] leading-relaxed"
-                    style={{ color: "var(--gh2-on-dark-muted)" }}
-                  >
-                    {p.excerpt}
-                  </p>
-                  <span
-                    className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[12px] font-bold uppercase tracking-[0.14em] transition-colors group-hover:text-[var(--color-brand-accent)]"
-                    style={{ color: "var(--gh2-on-dark-faint)" }}
-                  >
-                    {p.readingTime} {blogI18n.minRead}
-                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
-                  </span>
-                </Link>
+                  category={p.category}
+                  publishedAt={p.publishedAt}
+                  coverImageSrc={p.coverImageSrc}
+                  coverImageAlt={p.coverImageAlt}
+                  readingTimeLabel={`${p.readingTime} ${blogI18n.minRead}`}
+                  readArticleLabel={blogPageI18n.readArticle}
+                  categoryFallback={blogPageI18n.categoryFallback}
+                />
               ))}
             </div>
           </div>

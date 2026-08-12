@@ -23,6 +23,21 @@ const DENIED_AT_RULES = new Set(["import", "charset", "namespace"]);
  */
 const KEYFRAME_PREFIX = "ghblog-";
 
+/**
+ * Marker stamped on every `<h1>` the sanitizer demotes to `<h2>` (see
+ * `transformTags` below). Author CSS selectors that target `h1` are rewritten
+ * onto `h2[data-blog-h1]` so the demotion stays invisible: the attribute adds
+ * one specificity point, which beats the author's own generic `h2` rule at the
+ * same class depth regardless of source order.
+ */
+const DEMOTED_H1_ATTR = "data-blog-h1";
+
+/** `h1` used as a TYPE selector — not `.h1`, `#h1`, `[x=h1]` or `h1-foo`. */
+const H1_TYPE_SELECTOR = /(^|[\s>+~,(])h1(?![-\w])/gi;
+/** Non-global twin of {@link H1_TYPE_SELECTOR}; `.test()` on a /g regex is
+ *  stateful via lastIndex and would skip every other match. */
+const H1_TYPE_SELECTOR_TEST = /(^|[\s>+~,(])h1(?![-\w])/i;
+
 // Mirrors the backend's sanitizeBlogHtml allow-list (backend/src/utils/
 // sanitize-html.ts) so a designed article that survives save also survives
 // render. Keep the two lists in sync.
@@ -66,7 +81,7 @@ const SVG_PRESENTATION_ATTRS = [
 
 const BLOG_ALLOWED_ATTRIBUTES: IOptions["allowedAttributes"] = {
   ...sanitizeHtml.defaults.allowedAttributes,
-  "*": ["class", "id", "style", "title", "role", "dir", "lang", "aria-label", "aria-hidden", "aria-labelledby", "aria-describedby"],
+  "*": ["class", "id", "style", "title", "role", "dir", "lang", "aria-label", "aria-hidden", "aria-labelledby", "aria-describedby", DEMOTED_H1_ATTR],
   a: ["class", "id", "href", "name", "target", "rel", "title"],
   img: ["class", "id", "src", "srcset", "sizes", "alt", "title", "width", "height", "loading"],
   source: ["src", "srcset", "sizes", "type", "media"],
@@ -132,13 +147,17 @@ export function scopeBlogHtml(html: string): string {
       // title as the page's one <h1> (blog-post-page.tsx). An admin-authored
       // body that also opens with its own <h1> (rich-text paste, or a
       // designed article's own heading) produces two <h1>s per page. Demote
-      // every body h1 to h2 at render time — attributes/classes carry over
-      // unchanged, and globals.css already styles `.gh-article-body h1, h2`
-      // identically for unclassed content, so this is a semantic fix only,
-      // never a visual one. All 5 flagged articles are on the same shared
-      // template, so fixing it here (not per-article content) prevents any
-      // future admin-authored post from reintroducing it.
-      h1: sanitizeHtml.simpleTransform("h2", {}, true),
+      // every body h1 to h2 at render time. All flagged articles are on the
+      // same shared template, so fixing it here (not per-article content)
+      // prevents any future admin-authored post from reintroducing it.
+      //
+      // The demoted node is stamped with `data-blog-h1`; hardenStyleBlockCss
+      // below rewrites the author's own `h1` selectors onto it. Without that,
+      // a designed article whose CSS says `.gh-blog h1 { color:#FFF }` over a
+      // dark hero fell through to its `h2` rule and rendered forest-on-forest
+      // at 1.36:1 — the demotion is only "semantic, never visual" once the
+      // author's h1 styling follows the element.
+      h1: sanitizeHtml.simpleTransform("h2", { [DEMOTED_H1_ATTR]: "" }, true),
     },
   });
 
@@ -237,6 +256,21 @@ function hardenStyleBlockCss(css: string): string | null {
         .replace(/(^|[\s>+~(])(?::root|html|body)(?![\w-])/gi, "$1:scope")
         .replace(/:scope(\s+:scope)+/g, ":scope"),
     );
+  });
+
+  // 4b. Follow the h1 → h2 demotion (see transformTags) into the author's own
+  //     CSS: every selector with an `h1` type token gains a sibling selector
+  //     matching the demoted node. Additive, never a replacement, so a real
+  //     surviving <h1> keeps its rule. `[data-blog-h1]` adds one specificity
+  //     point, which is what makes the copy outrank the author's generic `h2`
+  //     rule at the same class depth no matter which came first in the source.
+  root.walkRules((rule) => {
+    const parent = rule.parent;
+    if (parent?.type === "atrule" && /^(-\w+-)?keyframes$/i.test((parent as postcss.AtRule).name)) return;
+    const rewritten = rule.selectors
+      .filter((sel) => H1_TYPE_SELECTOR_TEST.test(sel))
+      .map((sel) => sel.replace(H1_TYPE_SELECTOR, `$1h2[${DEMOTED_H1_ATTR}]`));
+    if (rewritten.length > 0) rule.selectors = [...rule.selectors, ...rewritten];
   });
 
   // 5. Value hygiene: drop declarations carrying script/exfil vectors.
