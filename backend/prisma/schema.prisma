@@ -418,6 +418,9 @@ enum AuditAction {
   /// booking by someone who happens to hold a membership, and there is no
   /// record of whether they declined or the client never sent a choice.
   MEMBERSHIP_BENEFIT_DECLINED
+  /// Doctor pressed "notify patient" from the consultation room — patient
+  /// was emailed/WhatsApp'd that the doctor is ready to see them.
+  PATIENT_NOTIFIED_DOCTOR_READY
 }
 
 enum CountryAccessModel {
