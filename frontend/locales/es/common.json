@@ -241,7 +241,7 @@
       "feature3Subtitle": "Reserva citas que se adapten a ti, incluso el mismo día.",
       "stat1Title": "Colegiados en {country}",
       "stat1Subtitle": "Todos los médicos de cabecera están colegiados para ejercer en {country}.",
-      "stat2Title": "45.000 consultas en 2025",
+      "stat2Title": "{count}+ consultas",
       "stat2Subtitle": "Completadas en toda nuestra red de médicos.",
       "stat3Title": "Confianza reconocida",
       "stat3Subtitle": "Únete a pacientes en {country}."
@@ -269,7 +269,7 @@
       "feature3Subtitle": "Privadas, confidenciales y fáciles de reservar.",
       "stat1Title": "Colegiados en {country}",
       "stat1Subtitle": "Todos los especialistas están colegiados para ejercer en {country}.",
-      "stat2Title": "45.000 consultas en 2025",
+      "stat2Title": "{count}+ consultas",
       "stat2Subtitle": "Completadas en toda nuestra red de médicos.",
       "stat3Title": "Confianza reconocida",
       "stat3Subtitle": "Únete a pacientes en {country}."
@@ -452,7 +452,7 @@
       "feature3Subtitle": "Nuestros médicos están colegiados para ejercer en {country}.",
       "stat1Title": "Resultados revisados por médicos",
       "stat1Subtitle": "Cada resultado es revisado por un médico colegiado.",
-      "stat2Title": "45.000 consultas en 2025",
+      "stat2Title": "{count}+ consultas",
       "stat2Subtitle": "La mayoría de los resultados disponibles en 24–48 horas.",
       "stat3Title": "Seguro y privado",
       "stat3Subtitle": "Tu información de salud se trata de forma confidencial."

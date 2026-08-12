@@ -30,7 +30,7 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
     // EU Omnibus: the generic "4.9 rating / 2,000+ reviews" claim is
     // unverifiable and must not appear on the Ireland page.
     trustCard2Title: "Reviewed on Doctify",
-    trustCard2Subtitle: "45,000 consultations in 2025",
+    trustCard2Subtitle: "{count}+ consultations",
   },
   // Same EU Omnibus liability applies regardless of page language — the
   // fabricated "4.9 rating / 2,000+ reviews" claim must not appear on the
@@ -38,23 +38,23 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
   // gpPage/specialistPage.hero.stat2 copy for consistency.
   "ie:es": {
     trustCard2Title: "Valorado en Doctify",
-    trustCard2Subtitle: "45.000 consultas en 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   "ie:pt": {
     trustCard2Title: "Avaliado no Doctify",
-    trustCard2Subtitle: "45.000 consultas em 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   "ie:cs": {
     trustCard2Title: "Hodnoceno na Doctify",
-    trustCard2Subtitle: "45 000 konzultací v roce 2025",
+    trustCard2Subtitle: "{count}+ konzultací",
   },
   "ie:ro": {
     trustCard2Title: "Evaluat pe Doctify",
-    trustCard2Subtitle: "45.000 de consultații în 2025",
+    trustCard2Subtitle: "{count}+ consultații",
   },
   "ie:de": {
     trustCard2Title: "Bewertet auf Doctify",
-    trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
+    trustCard2Subtitle: "{count}+ Konsultationen",
   },
   // Romania — July 2026 SEO brief. "Inregistrati la CMR" is the specific,
   // recognisable trust signal for Romanian patients (more precise than the
@@ -64,27 +64,27 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
   "ro:ro": {
     trustCard1Title: "Înregistrați la CMR",
     trustCard2Title: "Evaluat pe Doctify",
-    trustCard2Subtitle: "45.000 de consultații în 2025",
+    trustCard2Subtitle: "{count}+ consultații",
   },
   "ro:en": {
     trustCard2Title: "Reviewed on Doctify",
-    trustCard2Subtitle: "45,000 consultations in 2025",
+    trustCard2Subtitle: "{count}+ consultations",
   },
   "ro:es": {
     trustCard2Title: "Valorado en Doctify",
-    trustCard2Subtitle: "45.000 consultas en 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   "ro:pt": {
     trustCard2Title: "Avaliado no Doctify",
-    trustCard2Subtitle: "45.000 consultas em 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   "ro:cs": {
     trustCard2Title: "Hodnoceno na Doctify",
-    trustCard2Subtitle: "45 000 konzultací v roce 2025",
+    trustCard2Subtitle: "{count}+ konzultací",
   },
   "ro:de": {
     trustCard2Title: "Bewertet auf Doctify",
-    trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
+    trustCard2Subtitle: "{count}+ Konsultationen",
   },
   // Spain — July 2026 SEO brief. Same EU Omnibus liability as Ireland/Romania:
   // the unverifiable "4.9 rating / 2,000+ reviews" claim must not appear.
@@ -95,7 +95,7 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
   "es:es": {
     trustCard1Title: "Colegiado en España",
     trustCard2Title: "Evaluado en Doctify",
-    trustCard2Subtitle: "45.000 consultas en 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   // Brazil — July 2026 SEO brief. Brazil's default locale is pt, but the
   // shared pt.json bundle is Portugal's own PT-PT market copy ("licenciado",
@@ -112,7 +112,7 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
     trustCard1Title: "Registrado no CRM",
     trustCard1Subtitle: "Clínicos totalmente verificados",
     trustCard2Title: "Avaliado no Doctify",
-    trustCard2Subtitle: "45.000 consultas em 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   // Same EU/Brazilian consumer-protection issue as Ireland/Romania: the
   // fabricated "4.9 rating / 2,000+ reviews" claim must not appear on the
@@ -120,23 +120,23 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
   // Doctify copy.
   "br:en": {
     trustCard2Title: "Reviewed on Doctify",
-    trustCard2Subtitle: "45,000 consultations in 2025",
+    trustCard2Subtitle: "{count}+ consultations",
   },
   "br:es": {
     trustCard2Title: "Valorado en Doctify",
-    trustCard2Subtitle: "45.000 consultas en 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   "br:cs": {
     trustCard2Title: "Hodnoceno na Doctify",
-    trustCard2Subtitle: "45 000 konzultací v roce 2025",
+    trustCard2Subtitle: "{count}+ konzultací",
   },
   "br:ro": {
     trustCard2Title: "Evaluat pe Doctify",
-    trustCard2Subtitle: "45.000 de consultații în 2025",
+    trustCard2Subtitle: "{count}+ consultații",
   },
   "br:de": {
     trustCard2Title: "Bewertet auf Doctify",
-    trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
+    trustCard2Subtitle: "{count}+ Konsultationen",
   },
   // Portugal — July 2026 SEO brief. "Registado" (not "licenciado") is the
   // contemporary PT-PT term for regulator registration, and Portugal's roster
@@ -151,27 +151,27 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
     trustCard1Title: "Registado em Portugal",
     trustCard1Subtitle: "Clínicos totalmente verificados",
     trustCard2Title: "Avaliado no Doctify",
-    trustCard2Subtitle: "45.000 consultas em 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   "pt:en": {
     trustCard2Title: "Reviewed on Doctify",
-    trustCard2Subtitle: "45,000 consultations in 2025",
+    trustCard2Subtitle: "{count}+ consultations",
   },
   "pt:es": {
     trustCard2Title: "Valorado en Doctify",
-    trustCard2Subtitle: "45.000 consultas en 2025",
+    trustCard2Subtitle: "{count}+ consultas",
   },
   "pt:cs": {
     trustCard2Title: "Hodnoceno na Doctify",
-    trustCard2Subtitle: "45 000 konzultací v roce 2025",
+    trustCard2Subtitle: "{count}+ konzultací",
   },
   "pt:ro": {
     trustCard2Title: "Evaluat pe Doctify",
-    trustCard2Subtitle: "45.000 de consultații în 2025",
+    trustCard2Subtitle: "{count}+ consultații",
   },
   "pt:de": {
     trustCard2Title: "Bewertet auf Doctify",
-    trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
+    trustCard2Subtitle: "{count}+ Konsultationen",
   },
 };
 

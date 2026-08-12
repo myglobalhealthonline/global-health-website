@@ -35,6 +35,7 @@ import {
 } from "@/lib/content/doctor-directory";
 import { DoctorDirectoryView } from "./_components/DoctorDirectoryView";
 import { overrideDoctorsBundle } from "@/lib/content/country-doctors-copy";
+import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 import { DoctorsDirectoryClient } from "./_components/DoctorsDirectoryClient";
 
 type Params = { country: string; lang: string };
@@ -111,14 +112,35 @@ export default async function CountryLangDoctorsPage({
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
 
-  const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust, generalServices, specialistServices] = await Promise.all([
+  const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust, generalServices, specialistServices, consultationCountResult] = await Promise.all([
     getCountryDoctors(code, lang),
     getPageContent(code, "DOCTORS_INDEX", lang as PublicLocale),
     getCountryTrust(code, lang as LocaleCode),
     getCountryServices(code, "GENERAL", lang),
     getCountryServices(code, "SPECIALIST", lang),
+    fetchGlobalConsultationCount(),
   ]);
   const verifyUrl = doctorVerificationUrl(countryTrust) ?? undefined;
+
+  // TRUST-METRIC-001: historical base + live completed-appointment count.
+  // Falls back to the historical base alone (still a true figure) if the
+  // backend read fails. Only the markets/locales with a `{count}` template
+  // in their trustCard2Subtitle override (see country-doctors-copy.ts) are
+  // affected — every other locale's copy has no placeholder, so `.replace`
+  // is a no-op there.
+  const consultationCount = consultationCountResult.ok
+    ? consultationCountResult.data.total
+    : 45_000;
+  const doctorsBundle = overrideDoctorsBundle(common.doctors, code, lang);
+  const doctorsI18n = doctorsBundle.trustCard2Subtitle?.includes("{count}")
+    ? {
+        ...doctorsBundle,
+        trustCard2Subtitle: doctorsBundle.trustCard2Subtitle.replace(
+          "{count}",
+          consultationCount.toLocaleString(lang),
+        ),
+      }
+    : doctorsBundle;
 
   // Structured PageContent self-gates via publish status; legacy "pages"
   // country-feature no longer gates it.
@@ -165,7 +187,7 @@ export default async function CountryLangDoctorsPage({
     generalServiceIds: generalServices.map((s) => s.id),
     specialistServiceIds: specialistServices.map((s) => s.id),
     verifyUrl,
-    i18n: overrideDoctorsBundle(common.doctors, code, lang),
+    i18n: doctorsI18n,
   };
 
   return (

@@ -748,10 +748,109 @@ set, or a `marketOk` reference; every `language=` URL param interpolates `${lang
 - No `AggregateRating`/`Review` schema was added, and per the explicit direction above,
   none should be — this is a standing rule for this integration, not a TODO.
 
+### TRUST-METRIC-001 — implemented, 2026-08-12
+
+**Scope.** Replace every static "45,000 consultations" claim with a live figure:
+`historical base (45,000, previous platform through 2026-06-30) + completed
+appointments on this platform since 2026-07-01`. Follow-up to SEO-GROWTH-015 — same
+principle (one live source of truth instead of a manually-maintained number that
+drifts), applied to the consultation-volume claim instead of the Doctify rating.
+
+**Query design.** `backend/src/modules/appointments/consultation-count.service.ts`:
+counts `Appointment` rows where `status: "COMPLETED"` AND `paymentStatus: { not:
+"REFUNDED" }` AND `consultationCompletedAt: { gte: 2026-07-01T00:00:00.000Z UTC }`.
+`consultationCompletedAt` (not `createdAt`, not `scheduledAt`) is set exactly when an
+appointment moves to `COMPLETED` — confirmed by reading every write site
+(`appointments.service.ts`, `doctor-appointments.service.ts`,
+`cross-border-rx.service.ts`, all three set both fields in the same update) — so a
+June booking for a July slot, or any appointment still pending, doesn't count until it
+has actually happened. No explicit no-show status exists in this schema; an
+unattended appointment is never marked `COMPLETED`, so it's excluded the same way.
+The where-clause logic is pulled into its own pure, exported function
+(`completedSinceCutoverWhere`) specifically so it's unit-testable without a database —
+5 tests cover the status filter, the refund exclusion, the date field choice, the
+exact UTC cutover instant, and an override hook for verification.
+
+**Production verification (direct read-only query, 2026-08-12, per the "don't deploy
+until verified against real statuses" instruction):**
+
+| Check | Result |
+| --- | --- |
+| `completedSinceCutover` (the live query) | **55** |
+| `displayTotal` | **45,055** |
+| All-time `COMPLETED` appointments | 1,226 |
+| All-time `COMPLETED` with `consultationCompletedAt` NULL | 1,170 |
+| `COMPLETED` since cutover with `paymentStatus: REFUNDED` (excluded) | 0 |
+
+The 1,170 legacy-completed rows with a null completion timestamp are exactly what's
+expected — they predate `consultationCompletedAt` being populated (legacy Mongo import
+/ pre-field-existing rows) and are already reflected in the 45,000 historical base, so
+excluding them from the live count is correct, not a bug. **One anomaly found and
+flagged, not actioned**: 19 appointments currently in `REQUEST_RECEIVED` status have a
+non-null `consultationCompletedAt` >= the cutover — status was very likely moved to
+`COMPLETED` and back at some point without clearing the timestamp. The query correctly
+excludes them (it filters on current `status`, not just the timestamp), so this
+doesn't affect the count's correctness, but it's a data-integrity oddity worth
+someone's attention separately.
+
+**API + caching.** New route `GET /api/public/consultation-count` (`backend/src/
+routes/consultation-count.route.ts`), `Cache-Control: max-age=3600` (1h) at the edge,
+same pattern as the existing `/api/public/reviews-config`. Frontend fetcher
+(`frontend/lib/api/consultation-count.ts`) uses Next's data cache with
+`revalidate: 3600` + a shared `consultation-count` tag, so every page reads one cached
+value instead of issuing its own DB hit. Both `PUBLIC_READ_PREFIXES` allowlists
+(frontend `client.ts` / backend `rate-limit-trust.ts`) updated in lockstep, matching
+the existing `reviews-config` entry's documented reasoning.
+
+**Every static claim found and replaced** (repo-wide grep for `45,000` / `45.000` /
+`45 000` after the edits returns zero matches):
+- `general-consultation`, `specialist-consultation`, `tests` hero stat strips — the
+  locale `stat2Title` template changed from a year-stamped static number (e.g.
+  "45,000 consultations in 2025") to a `{count}+ consultations`-style template (6
+  locales), filled server-side with the live total formatted in the page's own
+  locale.
+- `(global)/about` page's "Consultations" company fact — was a static English string;
+  now built from the live total at request time, spliced into the otherwise-static
+  `COMPANY_FACTS` list.
+- `lib/content/country-doctors-copy.ts`'s per-country `trustCard2Subtitle` overrides
+  (Ireland, Romania, Brazil, Portugal, and Spain's `es:es` — ~25 entries across 6
+  locales) — same `{count}+ [word]` templating, filled in on the doctors listing page.
+  The **title** half of that same trust card ("Reviewed on Doctify" etc.) is untouched
+  — it's a claim, not a number, out of scope here.
+
+**Not touched, flagged instead:**
+- `frontend/components/sections/DoctorsHero.tsx` has its own hardcoded fallback —
+  `"4.9 patient rating"` / `"From 2,000+ reviews"` — used only if a caller passes no
+  `trustCard2Title`/`trustCard2Subtitle` at all. This is exactly the kind of
+  fabricated, unverifiable rating claim the `country-doctors-copy.ts` comments
+  explicitly say must never appear (EU Omnibus). It appears this fallback is
+  currently unreachable in production (every call site that was traced always passes
+  at least the base locale bundle's values, which are always defined), but that
+  wasn't exhaustively verified against every caller, and the fallback text itself is a
+  real liability sitting in the codebase regardless of whether it's currently
+  reachable. Out of scope for TRUST-METRIC-001 — flagged for a separate look.
+- `CountryTrustBar.tsx`'s pre-existing Ireland-only Doctify gate — unchanged, still an
+  open decision from SEO-GROWTH-015.
+- An unexplained, unrelated uncommitted diff was found in
+  `frontend/components/templates/DoctorProfileTemplate.tsx` (a `gh2-glass-forest`
+  restyle of the doctor-profile FAQ/booking card) already sitting in the working tree
+  before this task started. Not touched, not staged, not part of this work —
+  flagged so it isn't silently swept into a future commit.
+
+**Validation:** backend `node --test` on the new pure-logic suite — 6/6 pass, no DB
+required. `pnpm tsc --noEmit` clean (both frontend and backend — 7 pre-existing,
+unrelated backend errors on `patientPassportNumber` in cross-border-rx/orders/cart
+predate this work and don't touch any changed file). `pnpm eslint` clean on every
+changed file. Frontend `pnpm vitest run` — 803/805 (the same 2 pre-existing, unrelated
+failures as every prior pass this session). All 6 locale JSON files valid. Direct
+read-only production query, above.
+
 ### NOW — one batch
 
-Nothing queued. SEO-GROWTH-015 is implemented, tested, and awaiting explicit commit
-authorization.
+Nothing queued. SEO-GROWTH-015 and TRUST-METRIC-001 are both implemented, tested, and
+awaiting explicit commit authorization — deploying together per the user's own
+sequencing (SEO-GROWTH-015 wasn't pushed yet when TRUST-METRIC-001 was implemented on
+top of it).
 
 ### NEXT — up to one, evidence-backed
 

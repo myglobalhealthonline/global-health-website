@@ -241,7 +241,7 @@
       "feature3Subtitle": "Programează-te când îți convine, inclusiv în aceeași zi.",
       "stat1Title": "Înregistrați în {country}",
       "stat1Subtitle": "Toți medicii de familie sunt înregistrați pentru a profesa în {country}.",
-      "stat2Title": "45.000 de consultații în 2025",
+      "stat2Title": "{count}+ consultații",
       "stat2Subtitle": "Finalizate în întreaga noastră rețea de medici.",
       "stat3Title": "Îngrijire de încredere",
       "stat3Subtitle": "Alătură-te pacienților din {country}."
@@ -269,7 +269,7 @@
       "feature3Subtitle": "Private, confidențiale și ușor de programat.",
       "stat1Title": "Înregistrați în {country}",
       "stat1Subtitle": "Toți specialiștii sunt înregistrați pentru a profesa în {country}.",
-      "stat2Title": "45.000 de consultații în 2025",
+      "stat2Title": "{count}+ consultații",
       "stat2Subtitle": "Finalizate în întreaga noastră rețea de medici.",
       "stat3Title": "Îngrijire de încredere",
       "stat3Subtitle": "Alătură-te pacienților din {country}."
@@ -452,7 +452,7 @@
       "feature3Subtitle": "Medicii noștri sunt înregistrați pentru a profesa în {country}.",
       "stat1Title": "Rezultate verificate de medici",
       "stat1Subtitle": "Fiecare rezultat este verificat de un medic înregistrat.",
-      "stat2Title": "45.000 de consultații în 2025",
+      "stat2Title": "{count}+ consultații",
       "stat2Subtitle": "Majoritatea rezultatelor sunt disponibile în 24–48 de ore.",
       "stat3Title": "Sigur și privat",
       "stat3Subtitle": "Informațiile tale de sănătate sunt tratate confidențial."

@@ -241,7 +241,7 @@
       "feature3Subtitle": "Book appointments that suit you, including same-day slots.",
       "stat1Title": "Registered in {country}",
       "stat1Subtitle": "All GPs are registered to practise in {country}.",
-      "stat2Title": "45,000 consultations in 2025",
+      "stat2Title": "{count}+ consultations",
       "stat2Subtitle": "Completed across our clinician network.",
       "stat3Title": "Trusted care",
       "stat3Subtitle": "Join patients across {country}."
@@ -269,7 +269,7 @@
       "feature3Subtitle": "Private, confidential, and easy to book.",
       "stat1Title": "Registered in {country}",
       "stat1Subtitle": "All specialists are registered to practise in {country}.",
-      "stat2Title": "45,000 consultations in 2025",
+      "stat2Title": "{count}+ consultations",
       "stat2Subtitle": "Completed across our clinician network.",
       "stat3Title": "Trusted care",
       "stat3Subtitle": "Join patients across {country}."
@@ -452,7 +452,7 @@
       "feature3Subtitle": "Our doctors are registered to practise in {country}.",
       "stat1Title": "Home blood test kits",
       "stat1Subtitle": "Clinical-grade kits delivered to your door.",
-      "stat2Title": "45,000 consultations in 2025",
+      "stat2Title": "{count}+ consultations",
       "stat2Subtitle": "Your results are sent to you securely and privately.",
       "stat3Title": "Secure and private",
       "stat3Subtitle": "Your health information is handled confidentially."

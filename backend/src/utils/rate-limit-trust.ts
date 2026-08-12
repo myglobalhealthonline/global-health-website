@@ -60,6 +60,10 @@ export const PUBLIC_READ_PREFIXES = [
   // Same safety class as the rest: anonymous, no auth, no PHI, GET only — the
   // route itself documents "Anyone can fetch this".
   "/api/public/reviews-config",
+  // TRUST-METRIC-001: same read pattern as reviews-config above — a public,
+  // no-auth, no-PHI aggregate figure read by country pages and the doctors
+  // listing across every market.
+  "/api/public/consultation-count",
 ] as const;
 
 /** Correct secret + GET + an allowlisted public content path. */

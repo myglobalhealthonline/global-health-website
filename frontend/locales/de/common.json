@@ -241,7 +241,7 @@
       "feature3Subtitle": "Buchen Sie Termine, die zu Ihnen passen – auch am selben Tag.",
       "stat1Title": "Registriert in {country}",
       "stat1Subtitle": "Alle Hausärzte sind zur Ausübung in {country} registriert.",
-      "stat2Title": "45.000 Konsultationen im Jahr 2025",
+      "stat2Title": "{count}+ Konsultationen",
       "stat2Subtitle": "Abgeschlossen in unserem gesamten Ärztenetzwerk.",
       "stat3Title": "Vertrauenswürdige Versorgung",
       "stat3Subtitle": "Schließen Sie sich Patienten in {country} an."
@@ -269,7 +269,7 @@
       "feature3Subtitle": "Privat, vertraulich und einfach zu buchen.",
       "stat1Title": "Registriert in {country}",
       "stat1Subtitle": "Alle Fachärzte sind zur Ausübung in {country} registriert.",
-      "stat2Title": "45.000 Konsultationen im Jahr 2025",
+      "stat2Title": "{count}+ Konsultationen",
       "stat2Subtitle": "Abgeschlossen in unserem gesamten Ärztenetzwerk.",
       "stat3Title": "Vertrauenswürdige Versorgung",
       "stat3Subtitle": "Schließen Sie sich Patienten in {country} an."
@@ -452,7 +452,7 @@
       "feature3Subtitle": "Unsere Ärzte sind zur Ausübung in {country} registriert.",
       "stat1Title": "Ärztlich geprüfte Ergebnisse",
       "stat1Subtitle": "Jedes Ergebnis wird von einem registrierten Arzt geprüft.",
-      "stat2Title": "45.000 Konsultationen im Jahr 2025",
+      "stat2Title": "{count}+ Konsultationen",
       "stat2Subtitle": "Die meisten Ergebnisse sind innerhalb von 24–48 Stunden verfügbar.",
       "stat3Title": "Sicher und privat",
       "stat3Subtitle": "Ihre Gesundheitsdaten werden vertraulich behandelt."

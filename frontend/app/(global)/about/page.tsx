@@ -13,6 +13,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
 import { getCountryDoctors } from "@/lib/content/get-country-collections";
+import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -47,13 +48,13 @@ const MARKETS: ReadonlyArray<{ code: string; name: string; href: string }> = [
 
 // Verifiable company facts for journalists/investors hitting /about (brief
 // section 6). Registry numbers + names are locale-independent, so this block
-// is authored once in English.
+// is authored once in English. "Consultations" is not in this static list —
+// TRUST-METRIC-001 makes it a live figure, spliced in by AboutPage below.
 const COMPANY_FACTS: ReadonlyArray<{ label: string; value: string }> = [
   { label: "Founded", value: "2023 — Global Guest s.r.o. (IČO: 19071680), Czech Republic" },
   { label: "Ireland branch", value: "2024 — Global Health (CRO 910267), Ireland" },
   { label: "Markets", value: "Ireland · Portugal · Spain · Czech Republic · Romania · Brazil" },
   { label: "Doctors", value: "60+ GPs and specialists across all markets" },
-  { label: "Consultations", value: "45,000+ consultations delivered in 2025" },
   { label: "Headquarters", value: "Prague, Czech Republic" },
   { label: "Operations", value: "Dublin · Lisbon · Prague" },
   { label: "Contact", value: "info@myglobalhealth.online" },
@@ -100,6 +101,22 @@ export default async function AboutPage() {
   const ieDoctors = await getCountryDoctors("IE", locale);
   const reviewer = ieDoctors.find((d) => d.isFeatured) ?? null;
   const reviewerHref = reviewer ? `/ireland/en/doctors/${reviewer.slug}` : null;
+
+  // TRUST-METRIC-001: historical base + live completed-appointment count.
+  // Falls back to the historical base alone (still a true figure) if the
+  // backend read fails. Spliced in after "Doctors" — see COMPANY_FACTS.
+  const consultationCountResult = await fetchGlobalConsultationCount();
+  const consultationCount = consultationCountResult.ok
+    ? consultationCountResult.data.total
+    : 45_000;
+  const companyFacts: ReadonlyArray<{ label: string; value: string }> = [
+    ...COMPANY_FACTS.slice(0, 4),
+    {
+      label: "Consultations",
+      value: `${consultationCount.toLocaleString("en")}+ consultations delivered, and growing`,
+    },
+    ...COMPANY_FACTS.slice(4),
+  ];
 
   return (
     <section>
@@ -317,7 +334,7 @@ export default async function AboutPage() {
             {about.company_headline}
           </h2>
           <dl className="mt-12 grid gap-x-12 sm:grid-cols-2">
-            {COMPANY_FACTS.map((f) => (
+            {companyFacts.map((f) => (
               <div
                 key={f.label}
                 className="grid gap-1 border-t border-[rgba(29,75,54,0.12)] py-5 sm:grid-cols-[9rem_1fr] sm:items-baseline sm:gap-6"

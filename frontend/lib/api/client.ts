@@ -73,6 +73,8 @@ const PUBLIC_READ_PREFIXES = [
   // Read by the root layout of every public page — see the matching note in
   // backend/src/utils/rate-limit-trust.ts for why this one was added.
   "/api/public/reviews-config",
+  // TRUST-METRIC-001 — same class as reviews-config above.
+  "/api/public/consultation-count",
 ];
 
 function isPublicReadPath(path: string): boolean {
