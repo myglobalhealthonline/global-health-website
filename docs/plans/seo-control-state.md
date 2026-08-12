@@ -2097,3 +2097,328 @@ investigation without new evidence.)
 | `frontend/docs/template-route-map.md`, `frontend/docs/public-pages-completeness-audit.md` | Route inventories | 2026-08 | CURRENT for routes; both already carry the `/post/[slug]` correction |
 
 No SEO document has been deleted. Historical files carry a header pointing here.
+
+---
+
+## 10. COUNTRY-WAVE-001 — Ireland + Czechia opportunity investigation (2026-08-13)
+
+**Status: Global Foundation = VERIFIED / MONITOR EXCEPTIONS.** This is the first
+country-wave pass run under that frozen foundation. Investigation only — no code
+changed, nothing deployed, this section not committed as of writing (return for
+review). No global finding (§3–§5, §8) was reopened; nothing here overrides §0's
+"do not rerun the full crawl" rule — both markets were pulled with focused
+OpenSEO/GSC calls only.
+
+**Binding carry-forwards, reaffirmed, not reopened this pass:**
+- Ireland sick-certificate cluster: **CLOSED — MONITOR** (SEO-GROWTH-008). Current
+  numbers below are for context only.
+- Ireland lab-test cluster: **WAIT/MEASURE, frozen until ~2026-09-08** (SEO-GROWTH-016,
+  SEO-FOUNDATION-001-A/F). Not touched.
+
+### 10.1 Fresh baselines (extracted 2026-08-13, `dataState=all`, latest complete day **2026-08-09** in both pulls — 08-10 onward excluded as incomplete)
+
+| Market | Current 28d (07-13→08-09) | Prior 28d (06-15→07-12) | Direction |
+| --- | --- | --- | --- |
+| Ireland | 111 clicks / 9,965 impr / 1.11% CTR / pos 23.5 | 2 / 180 / 1.11% / pos 33.5 | Volume +55x (step-change from new content going live/getting indexed, not a ranking shift); CTR flat; position improved |
+| Czechia | 90 clicks / 2,082 impr / 4.32% CTR / pos 14.3 | 46 / 734 / 6.27% / pos 8.05 | Clicks +96%, impr +184%, but **aggregate CTR/position falling — mix-shift, not confirmed ranking loss.** CZ-SEO-001 ran a matched-query cohort check: none of the 27 queries present in the prior 28d window (06-15→07-12, almost entirely branded doctor-name queries) dropped out or lost position in the current window — those held or improved. The ~184 new queries appearing this window are overwhelmingly low-commercial calculator/tool tail (BMI, ADHD test, ovulation, blood-pressure — 352+ impressions, pos 20-90) diluting the aggregate, same mechanism as SEO-GROWTH-012 sitewide. **Causality resolved for the matched cohort: no ranking deterioration found; decline is new-query-mix dilution.** |
+
+**Correction to §2 country scoreboard:** the "Czechia — best CTR of any market" framing
+(true at the 2026-08-12 snapshot, 4.76%) is now stale — CTR has continued falling to
+4.32% and is trending down, not stable. §2's table is not rewritten here (that table's
+own re-baseline is a separate housekeeping action); flagging so the next refresh
+doesn't re-assert the old framing without checking.
+
+### 10.2 Ireland opportunity map
+
+| Cluster | Demand | Current perf. | Correct page? | SERP difficulty | Commercial value | Bottleneck | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| GP consultation (`gp-consultation-online`) | High | 313 impr / 2 clicks / pos 19.2 | Yes | 15+ dedicated IE telehealth brands own top 20; MGH absent | High | Authority/business-model wall | AUTHORITY-LIMITED |
+| Country homepage | Brand + IMC navigational tail | 406 impr / 12 clicks / 2.96% CTR | Yes (brand only) | IMC/gov-owned for the tail | Brand defense only | None | NO MATERIAL OPPORTUNITY |
+| Doctor profiles (21 active) | Strong, real name-search | 4–11% CTR at pos 2–10 | Yes | N/A (branded) | High — healthiest segment | None found (one CTR anomaly checked and cleared) | MONITOR |
+| Doctor directory | IMC-register informational intent | 76 impr / 0 clicks / pos 13.3 | No — wrong intent | Gov-owned | Low | Intent mismatch, not content-fixable | WRONG PAGE (intent) |
+| Sick-certificate cluster | — | Service 360/0/pos 46.8; blog 1,616/11/pos 15.8 | — | — | — | — | **MONITOR (binding)** |
+| Lab-test cluster | — | Hub 481/3/pos 18.6; details ~0 clicks | — | — | — | — | **WAIT (binding, frozen to 2026-09-08)** |
+| Referral & investigations | Thin, polluted by B2B + GEO-artifact queries | 328/3/pos 17.6 | Yes | Not tested | Low | Query-mix pollution, not page quality | LOW-VALUE TRAFFIC |
+| Specialist pages (cardiology, neurology, psychiatry, etc.) | Very thin per-page | Mostly 0 clicks | Yes | Not tested (insufficient volume) | Low-moderate | Demand size, not page quality | MONITOR |
+| Men's/women's health, dermatology, hair-loss, nutrition, paediatric, travel | 1–34 impr each | 0 clicks | Yes | Not tested | Low | Demand too small for a dedicated hub | MONITOR / NO MATERIAL OPPORTUNITY |
+| Blog: sick-cert article | — | 1,616/11 | — | — | — | — | MONITOR (binding) |
+| Blog: hand-foot-and-mouth-disease | Generic, not IE-differentiated | pos 75–99 | N/A | Not tested | None | Not competitively indexed | LOW-VALUE / DEAD CONTENT |
+| Blog: when-to-see-a-gp-online-vs-in-person | 92/1/pos 17.2, verified linking into GP page + 2 doctors + directory | — | Yes | — | Low but structurally sound | None | SUPPORTIVE CLUSTER |
+| Calculators/tools | High impressions | 0 clicks | N/A informational | — | None | Sitewide-deferred | DEFERRED (unchanged) |
+
+New minor findings (not batch-worthy): Google overrides the declared canonical on
+`/ireland/mental-health-assessment-consultation` (self-selects the legacy URL as
+canonical instead of the current-shape page) — single-digit impressions; and
+`/ireland/migraine-consultation` is a fully orphaned legacy URL with no current-shape
+equivalent, 3 impressions. Doctor directory has zero outbound links to any
+service/specialty page (real gap, low value given 0% directory CTR). Logged for the
+next batch that touches directory or legacy-URL cleanup — not worth a standalone
+batch today.
+
+**Ireland verdict: no first-implementation batch justified.** Every material cluster
+resolves to frozen/monitored, a confirmed authority wall, a healthy segment with no
+defect, or a sub-material finding.
+
+### 10.3 Czechia opportunity map
+
+| Cluster | Demand | Current perf. | Correct page? | SERP difficulty | Commercial value | Bottleneck | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| GP/family doctor (`gp-consultation-online`) | Real, low-KD commercial ("praktický lékař online" family, ~60 impr) | 103 impr / 0 clicks / pos 12.9–14.7 | Yes in GSC's own 90d query×page attribution (GP page owns 100% of impressions for the exact query "praktický lékař online" and its variants; homepage owns 0 for that exact query). One live SERP snapshot showed the homepage at #20 with the GP page absent from top 20 — but the page is 27 days old (first impression 2026-07-17) with daily position swinging 1–45, so a single-day snapshot is not reliable evidence of a stable homepage-over-page pattern | Mixed: physical-clinic bookers + winnable telehealth peers at #5/#7/#20; not a wall | Real | **Ranking immaturity (page too young), not a confirmed on-page or authority defect — see CZ-SEO-001 root-cause pass** | **CANDIDATE — ROOT CAUSE VERIFIED, see 10.5/10.7. No edit justified this wave.** |
+| Country homepage | Brand + thin Czech navigational | 212/7/pos 9.5 | Yes for brand; **unintentionally winning the GP query above** | — | Brand only (plus the GP-query side-effect) | — | MONITOR + feeds 10.5 |
+| Men's health (`muzske-zdravi-online`) | **Zero measured impressions for "mužské zdraví online" itself in 3 months** — its celebrated pos 2.2 / 22% CTR is a long-tail-query artifact (near-nonsense queries), not real demand | 34 impr / 8 clicks page-level | Page exists, metric is misleading | Not tested — no real query | Effectively none currently measured | No real query to convert | **MONITOR — do not rebuild around this metric** |
+| Prague/generic doctor (`lekar-online-praha`) | Mostly non-Czech (expat) demand | cs 21 impr pos 7.1; en 75 impr pos 5.9 | Partially | Local + telehealth mix | Low-medium | Genuinely low Czech-language volume | MONITOR |
+| Travel medicine | `cestovni-medicina-praha` (20 impr/pos 13) **and** `travel-health-prague` (43 impr/pos 11.6) — two live cs-locale URLs for one topic | — | Possible duplicate — unconfirmed | 100% local-pack + vaccination-clinic organic, zero telehealth in top 20 | Low | **Business-model wall** on ranking; duplicate-URL question is separate | WRONG PAGE-TYPE (wall) + INVESTIGATE duplicate |
+| Sick note (`neschopenka-online`) | Real, CZ-specific legal-doc intent | 25/2/pos 17.5 | Yes | Not tested this pass | Real | Position | MONITOR |
+| Prescription renewal, referrals/exams, dermatology | Low volume (19–37 impr), pos 9.9–19.3 | — | Yes | Not tested | Medium | Volume/position | MONITOR |
+| Mental health (`dusevni-zdravi-online`) | cs 3 impr/pos 86 vs. **en sibling 44 impr/pos 7.4 on the same topic** | cs effectively unranked | Yes, page exists | Not tested | Medium | cs authority/content gap vs. its own en version | **CONTENT GAP / IMPROVE candidate — investigate before rewriting** |
+| Women's health (`zenske-zdravi-online`) | de/pt/ro variants exist and get impressions; **cs variant does not exist** — `inspect_urls`: "URL is unknown to Google" | N/A | **No — page missing in the market's own primary language** | Not tested | Unknown | Never built for cs | CONTENT GAP |
+| Second opinion (`druhy-nazor-praha`) | de/es/ro have it; cs exists in sitemap but "Discovered — currently not indexed," referred only by a legacy page + the ES sibling, **zero cs internal links** | N/A | Missing/orphaned for cs | Not tested | Unknown | Not built + orphaned where present | CONTENT GAP |
+| Weight/hair-loss/chronic-illness pages | 3–19 impr, pos 30–99 | Very weak | Yes | Not tested | Low-medium | Low authority/thin demand | WAIT |
+| Tools (BMI, calorie, ovulation, due-date, ADHD, blood-pressure) | 352 impr combined — largest single pool in the market | 3 clicks total, pos 11.5–40 | Correctly non-commercial | Not tested | None | N/A | NO MATERIAL OPPORTUNITY (explains much of §10.1's position erosion) |
+| Doctor directory | Thin | 19/2/pos 10.8 | — | — | Low | — | MONITOR |
+| Doctor profiles | **Real driver of the market** — but nearly all traffic sits on **legacy URL shapes** (`/czechia-doctors/...`, `/cs/czechia-doctors/...`); only 2 of ~10 active profiles have moved to the current `/czechia/cs/doctors/...` shape | Top profile 40 clicks/132 impr/30.3% CTR/pos 4.4 | **Mostly no — legacy shape still winning** | N/A (branded) | High | Migration/consolidation lag, not content | MONITOR + WATCHLIST |
+| Legacy Hlavatý (`/czechia-doctors/mudr-libor-hlavaty`) | 573 impr/2 clicks/pos 11.0 (3mo, matches control-state exactly) | Impressions declining (254→92 across the two 28d windows), 0 clicks | 308 confirmed live, target never picked up a single one of its ~9 name-variant queries in 3 months | — | High (branded) | Consolidation lag exceeding typical window | **WAIT-FOR-GOOGLE (existing watchlist item) — flag for re-check next batch if still unmoved** |
+| Blog (cs) | Only 2 posts with any impressions, both thin | 1 and 9 impr | — | — | Negligible | — | LOW-VALUE / DEAD CONTENT |
+| Blog cross-locale defect | Query "diabetes" (25 impr/pos 37.6, 3mo) resolves only to the **es and pt** diabetes articles — no cs article exists; zero clicks | — | Wrong-language match, no cs equivalent | — | None currently (0 clicks) | Missing cs content | CONTENT GAP (cheap future fix, not urgent) |
+
+**Czechia verdict: one batch justified — see 10.5.**
+
+### 10.4 Cross-country priority ranking
+
+1. **CZ-SEO-001** (below) — real commercial demand, non-wall SERP, striking-distance
+   position. **Root-cause pass complete (§10.7): classification D, ranking ramp — the
+   page is 27 days old and already carries adequate on-page signal. No on-page edit is
+   justified this wave; the action is to wait for ranking maturity, not rewrite
+   metadata.**
+2. Ireland directory→services internal link + two orphaned/mis-canonicalized legacy
+   URLs — real but sub-material (low impression counts); worth folding into a future
+   housekeeping batch, not a standalone one.
+3. Czechia content gaps (`zenske-zdravi-online` cs missing, `druhy-nazor-praha` cs
+   orphaned, `dusevni-zdravi-online` cs underperforming its own en sibling, no cs
+   diabetes article) — real, but each needs a scoping/content decision before it's
+   implementation-ready; none has the immediate evidence density of CZ-SEO-001.
+4. Everything else in both maps: MONITOR, WAIT, AUTHORITY-LIMITED, or BUSINESS-WALL —
+   no action justified this wave.
+
+### 10.5 CZ-SEO-001 candidate — superseded by the §10.7 root-cause pass
+
+This section originally proposed an on-page title/H1/meta rewrite for
+`gp-consultation-online` based on a single live-SERP snapshot showing the homepage at
+#20 for "praktický lékař online" with the GP page absent from the visible top 20.
+**CZ-SEO-001 (§10.7) re-verified this against GSC's own 90-day query×page attribution
+and production HTML and found the premise incomplete**: the GP page already owns 100%
+of GSC-recorded impressions for the exact query family (homepage: 0), already carries
+the exact phrase in title/H1/meta/breadcrumb/schema, and is 27 days old with daily
+position swinging 1–45 — textbook ranking-ramp volatility, not a stable homepage-wins
+pattern. **No implementation is proposed. See §10.7 for the full evidence and the
+revised recommendation (wait for maturity, not rewrite).**
+
+### 10.6 Measurement baseline (preserved for the eventual re-check)
+
+- **Target queries:** "praktický lékař online", "praktik online", "prakticky lekar
+  online", "praktickylekar online" — combined ~61 impressions / 0 clicks / pos
+  12.9–17.5 (28d) on `gp-consultation-online`; 0 impressions on the homepage for these
+  exact queries in the same window.
+- **Target URL:** `/czechia/cs/gp-consultation-online`. **Current homepage URL:**
+  `/czechia/cs` (212 impr / 7 clicks / pos 9.5 market-wide, but not attributed any of
+  the exact GP-family queries in GSC's 90-day query×page data).
+- **Query×page ownership baseline:** GP page owns the full GP-family query set in GSC
+  attribution as of 2026-08-13. Live SERP is volatile (see §10.7.9) — a single-day
+  homepage-at-#20 reading is not baseline-worthy on its own.
+- **Evaluation window:** do not re-open this before the page reaches ranking maturity —
+  remeasure ~**2026-09-08** (aligned with the Ireland labs window; ~7.5 weeks from
+  first impression 2026-07-17), and only with a fresh `inspect_urls`/GSC pull
+  confirming stable (non-volatile) position at that point.
+- **Primary success criterion (if a future edit is ever proposed):** the dedicated GP
+  page increasingly becomes Google's ranking page for the target query family while
+  maintaining or improving total cluster clicks/impressions — not "title changed" or an
+  immediate jump.
+
+---
+
+## 11. CZ-SEO-001 — Czech GP query ownership & on-page root-cause verification (2026-08-13)
+
+**Status: CZ-SEO-001 — RANKING RAMP / WAIT-MEASURE.** `/czechia/cs/gp-consultation-online`.
+No metadata/H1 rewrite justified. Remeasure ~2026-09-08.
+
+**Mode: narrow investigation only. No code changed. No deploy. Nothing committed.**
+
+### 11.1 Matched-cohort correction (Czech market-level, resolves the §10.1 wording issue)
+
+Pulled Czech `/czechia`-scoped query lists for both 28d windows (06-15→07-12 prior,
+27 rows; 07-13→08-09 current, 231 rows) and compared by exact query string. **Zero
+overlap query lost position or impressions** — the 27 prior-window queries are almost
+entirely branded doctor-name searches (ahmed maklad, libor hlavatý, vojtěch černý,
+etc.) and held or improved in the current window. All ~204 net-new queries are a
+broad informational/tool tail (BMI/ADHD/ovulation/blood-pressure calculators — 352+
+impressions alone, pos 20–90) that did not exist in the prior window. **Conclusion:
+the aggregate CTR/position decline is entirely new-query-mix dilution. No matched
+query shows ranking deterioration. Causality resolved, not merely "unresolved" —
+resolved in favor of B (new-query discovery at lower positions), not A (real
+ranking loss).**
+
+### 11.2 GP query family — GSC query×page table (90d, `/czechia` pages only, filtered to lékař/praktick* stems)
+
+| Query | Impr | Clicks | CTR | Avg pos | Ranking URL |
+|---|---|---|---|---|---|
+| praktický lékař online | 35 | 0 | 0% | 14.7 | `/czechia/cs/gp-consultation-online` |
+| praktik online | 13 | 0 | 0% | 14.5 | `/czechia/cs/gp-consultation-online` |
+| prakticky lekar online | 12 | 0 | 0% | 13.8 | `/czechia/cs/gp-consultation-online` |
+| promluvte si s lékařem | 26 | 0 | 0% | 6.8 | `/czechia/cs/gp-consultation-online` (10) + `/czechia/cs` (16, pos 7.5) |
+| online lékař | 3 | 0 | 0% | 15–30 | `/czechia/cs` |
+| lékař online | 3 | 0 | 0% | 14.5–30 | `/czechia/cs/gp-consultation-online` (2) + `/czechia/cs` (1) |
+| konzultace s lékařem online | 3 | 0 | 0% | 7–17 | `/czechia/cs` (2) + `/czechia/services/lekar-online-praha` (1) |
+| praktickylekar online | 1 | 0 | 0% | 13 | `/czechia/cs/gp-consultation-online` |
+| lékaři online / lékaři online 24 | 3 | 0 | 0% | 24–27.5 | `/czechia/cs/gp-consultation-online` + `/czechia/cs` |
+
+Excluded as out of scope per the ticket's own guardrails: doctor-name queries, "kožní
+lékař online" (dermatology intent, wrong cluster), tool/calculator queries. Prior-28d
+comparison for this exact query set: **zero rows existed in the 06-15→07-12 window**
+— the entire cluster is net-new discovery, consistent with §11.8's ramp finding.
+
+### 11.3 Query × page ownership
+
+For the query family above, GSC attributes essentially all commercial-intent
+impressions to `gp-consultation-online`, not the homepage. The homepage only appears
+for broader, more generic strings ("online lékař", "lékař online", "konzultace s
+lékařem online") where it's plausibly the more literally-matching document, and for
+"promluvte si s lékařem" ("talk to a doctor") where both pages get real traffic — a
+genuine but low-severity overlap, not the head-term cannibalization the original
+draft assumed. No legacy URL, no doctor profile, and no unexpected page appears in
+this query set. **Not labeled cannibalization** — one soft overlap on one query,
+otherwise clean ownership.
+
+### 11.4 Legacy URL check — `/general-consultation-cz`
+
+- Live HTTP: `301 → https://www.myglobalhealth.online/czechia/cs/gp-consultation-online`
+  (confirmed via curl).
+- `inspect_urls`: `coverageState: "Submitted and indexed"`, `pageFetchState:
+  SUCCESSFUL`, **`googleCanonical` still self-referential** (Google's last crawl,
+  2026-06-28, predates or hasn't yet processed the redirect being live), while
+  `userCanonical` correctly points to `gp-consultation-online`.
+- GSC impressions: real but fading and non-commercial-relevant — 1–2/day scattered
+  through mid-July, effectively zero since 2026-07-19, 0 clicks in the last 90 days.
+  No overlap with the GP-family query set in §11.2.
+- **Verdict: properly consolidated, no longer materially participating in Google
+  traffic. Closed as a confounder — the head-term ranking question is not explained
+  by legacy-URL interference.**
+
+### 11.5 Live production GP page signals (captured from HTML, not source defaults)
+
+| Field | Value | Source |
+|---|---|---|
+| `<title>` | "Online praktický lékař \| Registrováno u ČLK \| Global Health Česká republika" | CMS `PageContent` override (template default would not carry the ČLK/pricing framing) |
+| Meta description | "Konzultujte s praktickým lékařem registrovaným u ČLK z pohodlí domova. eNeschopenka, elektronický recept, doporučení ke specialistovi. Od 650 Kč. Termín ve stejný den." | CMS `PageContent` |
+| H1 / hero | "Online konzultace s praktickým lékařem v [Česku]" | CMS `PageContent` (matches JSON-LD `name`) |
+| Breadcrumb label | "Konzultace s praktickým lékařem" | CMS `PageContent` (breadcrumb structured data — same source fixed by commit 6d5733bc) |
+| Structured data | `name`: "Online konzultace s praktickým lékařem v Česku"; `serviceType`: "General practitioner (GP) online consultation" | CMS `PageContent` |
+| Canonical | self, `https://www.myglobalhealth.online/czechia/cs/gp-consultation-online` | code (route-level, correct) |
+| hreflang | full 6-locale set + x-default, all pointing at this page's own locale variants | code (correct) |
+| Indexability | `index, follow`, GSC verdict PASS, last crawl 2026-08-11 | — |
+
+All visible/meta fields containing the target phrase are **CMS `PageContent`
+overrides, not hardcoded template defaults and not locale-dictionary strings** — an
+edit here, if one were ever justified, is a content change, not a code change.
+
+### 11.6 Homepage signals vs. GP page
+
+| | Homepage (`/czechia/cs`) | GP page |
+|---|---|---|
+| Title | "Online lékař Česko \| Registrovaní lékaři a specialisté" | "Online praktický lékař \| Registrováno u ČLK \| ..." |
+| H1 | "Online lékařská péče v Česku" (no "praktický" at all) | "Online konzultace s praktickým lékařem v Česku" |
+| Exact-phrase match to "praktický lékař" | **Meta description only** ("praktický lékař" appears once in the description, not in title/H1) | Title + H1 + breadcrumb + schema |
+
+**The GP page's on-page signal is more tightly aligned with the exact query than the
+homepage's.** This directly contradicts the "weak title/H1/meta" hypothesis from
+COUNTRY-WAVE-001 — there is no material on-page gap to fix. Any homepage advantage in
+one live SERP snapshot has to come from something other than on-page topical match
+(most likely raw domain-level authority any homepage accrues over a newer subpage,
+or plain SERP volatility on a young page — see §11.8).
+
+### 11.7 Internal-link support
+
+`gp-consultation-online` is linked from `SiteHeader.tsx`, `MobileNav.tsx`, and
+`SiteFooter.tsx` — i.e. **sitewide template navigation present on every page,
+including the homepage itself.** GSC's `inspect_urls` referring-URL sample (which is
+non-exhaustive) additionally shows a contextual link from the ES general-consultation
+sibling page and the Czechia team page. **Internal link support is already adequate
+— nav-level presence on every page is the strongest internal signal available short
+of dedicated body-copy backlinks from high-traffic pages. No internal-link batch is
+justified.**
+
+### 11.8 Ranking maturity
+
+GSC date-series for `gp-consultation-online` shows **first impression 2026-07-17**
+— 27 days before this investigation. Daily position from 07-17 to 08-09 swings from
+1 to 45 (single-digit-impression days are naturally noisy), but the trend across the
+most recent week (08-03→08-09) tightens to pos 5–17 with the **first-ever click on
+2026-08-04**. This is classic new-page ranking volatility, not a stalled or declining
+page. **Classification: RAMPING.** A page this young should not be judged — let alone
+rewritten — against one competitive live-SERP snapshot.
+
+### 11.9 Targeted live SERP check ("praktický lékař online", cs-CZ, 2026-08-13)
+
+Top 20: #1 praktickylekar.online (informational/professional-only disclaimer site),
+#2 Moje Ambulance (physical clinic network), #4/#12 EUC "Můj praktik online" (physical
+clinic online extension), #5 zpmvcr.cz "Lékař na telefonu" (insurer-run **telehealth**,
+free), #6 znamylekar.cz (directory), #7 Medevio (**telehealth booking platform**, same
+model as this site), #8 smartMED (physical booking), #9 trade-press tag page, #10
+Spotify podcast, #13 Moje Ambulance app, #14 uLékaře.cz (physical scheduling), #16
+solo physical practice, #18 solo physical practice, #19 **konzultacelekare.cz — direct
+telehealth competitor, same business model, ranking #19**, #20 **this site's
+homepage**. GP page itself did not appear in the visible top 20 this specific day. At
+least 3 of the top 20 (zpmvcr.cz, Medevio, konzultacelekare.cz) are genuinely
+comparable online-only GP/telehealth providers, confirming the earlier "winnable
+commercial SERP" read — the SERP is real telehealth demand, not a physical-clinic
+wall, and the peers proving that are ranked both above and below where this site
+currently sits.
+
+### 11.10 On-page gap analysis vs. ranking telehealth peers
+
+Medevio and zpmvcr.cz both lead with a single unambiguous value proposition
+(free/insurer-backed telehealth, same-day) in title and first-screen copy — directionally
+similar to what `gp-consultation-online` already does (ČLK registration, eNeschopenka,
+e-prescription, same-day, price). No material intent-signal gap found: the page already
+states booking intent, clinician registration/trust (ČLK), and Czech-market relevance
+(price in Kč, eNeschopenka — a CZ-specific legal document, not generic content). No
+word-count or generic-grade comparison was used, per the ticket's own constraint.
+
+### 11.11 Root-cause classification: **D — INDEXING/RANKING RAMP**
+
+The dedicated page is canonical, indexed, well-linked (sitewide nav), and already
+carries on-page signal at least as strong as the homepage's for the target phrase. The
+SERP is feasible (real telehealth peers rank both above and below this domain). But
+the page is 27 days old with volatile day-to-day position and only its first click
+eight days ago. **Classification A (on-page defect) is explicitly rejected** — the
+"weak title/H1/meta" hypothesis from COUNTRY-WAVE-001 does not survive inspection of
+the live page. Classification B (authority/ownership) is not supported either — GSC's
+own attribution shows the GP page, not the homepage, owns the query. **Only
+classification D fits the evidence.**
+
+### 11.12 CZ-SEO-002: not proposed
+
+Per the ticket's own rule, only classification A auto-advances to a metadata
+optimization. Classification D does not. **No before/after title, H1, or meta change
+is proposed.** Rewriting already-adequate metadata on a 27-day-old page would remove
+the ability to attribute any future ranking change to either signal, and risks
+resetting whatever crawl/relevance signal Google has already started to accumulate.
+
+### 11.13 Recommendation
+
+**CZ-SEO-001 — RANKING RAMP / WAIT-MEASURE.** No batch, no on-page edit, no further
+investigation needed this wave. Remeasure ~**2026-09-08** (aligned with the Ireland
+labs remeasure window, §10.2, rather than a separate date) — if position is still
+volatile or hasn't improved by then, the next step is a fresh matured-page read (not
+an automatic content rewrite): re-run §11.2/§11.9 and only then decide between
+D→resolved (mature, ranking as expected) or a genuine re-classification.
+
+### 11.14 Control-state carry-forwards (unchanged by this pass)
+
+Ireland = no implementation justified (§10.2). Sick-certificate cluster = MONITOR
+(SEO-GROWTH-008, binding). Lab-test cluster = WAIT, frozen to 2026-09-08
+(SEO-GROWTH-016 / SEO-FOUNDATION-001-A/F, binding). Global Foundation = VERIFIED /
+MONITOR EXCEPTIONS (unchanged, not reopened).
+
+**NO IMPLEMENTATION / NO DEPLOY / NO COMMIT.**
+
+---
