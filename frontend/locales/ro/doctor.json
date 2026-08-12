@@ -154,7 +154,12 @@
     "meeting": "Întâlnire",
     "ready": "Pregătit",
     "joinSession": "Alătură-te sesiunii",
-    "openWorkspace": "Deschide spațiul de lucru"
+    "openWorkspace": "Deschide spațiul de lucru",
+    "notifyReadyButton": "Anunță pacientul",
+    "notifyReadySending": "Se trimite…",
+    "notifyReadySent": "Pacient anunțat",
+    "notifyReadyPartial": "Trimis prin email — WhatsApp netrimis",
+    "notifyReadyFailed": "Pacientul nu a putut fi anunțat"
   },
   "appointmentDetail": {
     "back": "Înapoi la programări",

@@ -6,7 +6,6 @@ import {
   patchAdminPatientProfile,
 } from "@/lib/admin/admin-api";
 import { AdminCard } from "../../_components/atoms";
-import { PhoneField } from "@/components/forms/phone-field";
 
 /**
  * Admin-side editor for the PatientProfile row. Rendered on the user
@@ -74,9 +73,6 @@ export function PatientProfileEditor({
     };
 
     const body = {
-      fullName: text("fullName"),
-      phone: text("phone"),
-      dateOfBirth: text("dateOfBirth"),
       weightKg: num("weightKg"),
       heightM: num("heightM"),
       bmi: num("bmi"),
@@ -154,23 +150,12 @@ export function PatientProfileEditor({
 
         <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Identity</h4>
+          <p className="mb-2 text-portal-meta text-[var(--color-text-muted)]">
+            Full name, phone, and date of birth are edited from
+            &ldquo;Account details&rdquo; above — that&apos;s the source of
+            truth and this chart follows it.
+          </p>
           <div className="gh-admin-support-field-grid grid gap-3 sm:grid-cols-2">
-            <Field
-              label="Full name"
-              name="fullName"
-              defaultValue={profile?.fullName ?? ""}
-              maxLength={200}
-            />
-            <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Phone</span>
-              <PhoneField name="phone" defaultValue={profile?.phone ?? ""} />
-            </label>
-            <Field
-              label="Date of birth (ISO)"
-              name="dateOfBirth"
-              type="datetime-local"
-              defaultValue={profile?.dateOfBirth?.slice(0, 16) ?? ""}
-            />
             <Field
               label="Blood type"
               name="bloodType"

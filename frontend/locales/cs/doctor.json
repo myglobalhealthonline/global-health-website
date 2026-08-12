@@ -154,7 +154,12 @@
     "meeting": "Schůzka",
     "ready": "Připraveno",
     "joinSession": "Připojit se k relaci",
-    "openWorkspace": "Otevřít pracovní prostor"
+    "openWorkspace": "Otevřít pracovní prostor",
+    "notifyReadyButton": "Oznámit připraveno",
+    "notifyReadySending": "Odesílání…",
+    "notifyReadySent": "Pacient byl informován",
+    "notifyReadyPartial": "Odesláno e-mailem — WhatsApp neodeslán",
+    "notifyReadyFailed": "Pacienta se nepodařilo informovat"
   },
   "appointmentDetail": {
     "back": "Zpět na termíny",

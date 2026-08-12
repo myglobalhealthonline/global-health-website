@@ -164,6 +164,9 @@ enum NotificationType {
   // NOT appointmentId, since this thread isn't appointment-scoped.
   SUPPORT_MESSAGE
   SUPPORT_REPLY
+  // A HEALTH_TEST kit order was paid — staff bell. Payload carries a snippet
+  // (customer, kit, address, Memed booking status).
+  HEALTH_TEST_BOOKED
 }
 
 /// Exam lifecycle.
@@ -412,12 +415,18 @@ enum AuditAction {
   /// The card + welcome email went out for an enrollment (decision 41).
   /// `cardIssuedAt` is the dedupe; this is the trail of when and to whom.
   MEMBERSHIP_CARD_ISSUED
+  /// A BR doctor issued a prescription/certificate/exam request through
+  /// Memed's e-prescription widget instead of our own DOCX pipeline.
+  MEMED_DOCUMENT_ISSUED
   /// An eligible member checked out at `benefitSource = NONE`. DIAGNOSTIC ONLY
   /// — nothing branches on it and no price changes. Without it, "I should have
   /// got my discount" is unanswerable: the order looks like a full-price
   /// booking by someone who happens to hold a membership, and there is no
   /// record of whether they declined or the client never sent a choice.
   MEMBERSHIP_BENEFIT_DECLINED
+  /// Doctor pressed "notify patient" from the consultation room — patient
+  /// was emailed/WhatsApp'd that the doctor is ready to see them.
+  PATIENT_NOTIFIED_DOCTOR_READY
 }
 
 enum CountryAccessModel {
@@ -1006,6 +1015,11 @@ model DoctorCountry {
   /// don't accidentally issue Rx under an unconfirmed credential.
   isVerified           Boolean                    @default(false)
   verifiedAt           DateTime?
+  /// Memed's own prescriber id for this doctor+country, once registered
+  /// (lazy-provisioned on first widget session request — see
+  /// lib/memed/prescription-client.ts ensurePrescriber). BR only in
+  /// practice; null everywhere else and until Memed credentials arrive.
+  memedPrescriberId    String?
   /// Country-director grant for THIS market. When true AND
   /// `Doctor.isCountryDirector`, the doctor may view every consultation booked
   /// in this country, across all doctors. Read-only and money-free — see
@@ -1762,6 +1776,8 @@ model HealthTest {
   /// Appointments where the patient picked this specific health test
   /// at booking (`?service=<healthTestSlug>` matched a row here).
   appointments       Appointment[]
+  /// Paid-order lines for this kit — drives the Memed auto-booking hook.
+  orderItems         OrderItem[]
   /// Per-locale CMS content (title, descriptions, SEO, detail copy). The
   /// base columns above stay as the default-locale copy + final fallback;
   /// a translation row overrides them for a given locale. Operational
@@ -2427,6 +2443,13 @@ model GeneratedDocument {
   uploadTokenExpiresAt DateTime?
   /// Unique public ID for certificate verification. CUSTOM_CERTIFICATE only.
   certificateId        String?               @unique
+  /// Set when this document was issued through Memed's e-prescription widget
+  /// (BR doctors) instead of our own DOCX/HTML render pipeline. The PDF is
+  /// still mirrored into our own object storage (storageKey) so download/
+  /// email/WhatsApp sending work unchanged; these two just record where the
+  /// legally-signed original lives.
+  memedDocumentId      String?               @unique
+  memedUrl             String?
   appointment          Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   doctor               Doctor                @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   createdAt            DateTime              @default(now())
@@ -3002,6 +3025,7 @@ model OrderItem {
   order                             Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
   kind                              CartItemKind
   healthTestId                      String?
+  healthTest                        HealthTest?      @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
   serviceId                         String?
   /// Snapshot — independent of source row deletion.
   name                              String

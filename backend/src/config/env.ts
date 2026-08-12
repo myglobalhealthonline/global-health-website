@@ -193,6 +193,33 @@ const envSchema = z.object({
    *  until insurance-billed exams are supported. */
   WEBLIMS_SELFPAY_INSURANCE_CODE: z.string().trim().min(1).optional(),
 
+  /** Memed (doc.memed.com.br) — Brazil prescription/exam-kit partner API.
+   *  No production credentials yet (partner onboarding in progress, see
+   *  parcerias@memed.com.br). All optional so the integration ships dark:
+   *  `isMemedConfigured()` is false until every var below is set, and a paid
+   *  HEALTH_TEST order just logs "Memed not configured" instead of throwing. */
+  MEMED_BASE_URL: z.string().trim().url().optional(),
+  MEMED_CLIENT_ID: optionalSecret,
+  MEMED_CLIENT_SECRET: optionalSecret,
+  MEMED_API_TOKEN: optionalSecret,
+  /** Dr. Tiago's Memed doctor id — every kit booking is attributed to this one
+   *  fixed doctor account. */
+  MEMED_DEFAULT_DOCTOR_ID: z.string().trim().min(1).optional(),
+
+  /** Memed Prescrição — the doctor-facing e-prescription/certificate WIDGET,
+   *  a different Memed product surface from the booking API above (separate
+   *  credentials expected). BR doctors embed this in the doctor portal to
+   *  digitally sign prescriptions/certificates/exam requests themselves —
+   *  see lib/memed/prescription-client.ts. No credentials yet; all optional
+   *  so `isMemedPrescriptionConfigured()` stays false and the doctor portal
+   *  falls back to the existing unsigned DOCX flow until this is live. */
+  MEMED_PRESCRIPTION_BASE_URL: z.string().trim().url().optional(),
+  MEMED_PRESCRIPTION_CLIENT_ID: optionalSecret,
+  MEMED_PRESCRIPTION_SECRET: optionalSecret,
+  /** Memed's widget JS bundle URL — frontend-facing, kept in env so
+   *  sandbox/prod can be swapped without a redeploy. */
+  MEMED_PRESCRIPTION_SCRIPT_URL: z.string().trim().url().optional(),
+
   /** SÚKL (Czech State Institute for Drug Control) — ePoukaz / eRecept.
    *  See docs/sukl/SECURITY_MODEL.md and docs/sukl/INTERFACE_INVENTORY.md.
    *

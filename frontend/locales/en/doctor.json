@@ -154,7 +154,12 @@
     "meeting": "Meeting",
     "ready": "Ready",
     "joinSession": "Join session",
-    "openWorkspace": "Open workspace"
+    "openWorkspace": "Open workspace",
+    "notifyReadyButton": "Notify ready",
+    "notifyReadySending": "Notifying…",
+    "notifyReadySent": "Patient notified",
+    "notifyReadyPartial": "Notified by email — WhatsApp not sent",
+    "notifyReadyFailed": "Could not notify patient"
   },
   "appointmentDetail": {
     "back": "Back to appointments",

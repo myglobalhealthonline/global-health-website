@@ -72,14 +72,30 @@ export async function runSuklCertificateMonitor(): Promise<SuklCertificateMonito
     });
 
     if (shouldAlert) {
+      // SÚKL confirmed (2026-08-07) that a test certificate can only be renewed
+      // within one month of expiry, so the 60-day and 30-day alerts fire before
+      // anything can actually be done. Say so in the alert rather than sending
+      // an operator to a portal that will refuse them.
+      const renewable = cert.daysUntilExpiry <= 31;
       await emitOpsAlert({
         severity: threshold <= 14 ? "critical" : "warning",
         title: `SÚKL ${environment} certificate expires in ${cert.daysUntilExpiry} day(s)`,
         detail:
-          `Workplace ${workplaceCode}, certificate …${suffix}. Request a replacement through ` +
-          "the SÚKL test-access portal and follow the rotation runbook in " +
-          "docs/sukl/TESTING_RUNBOOK.md.",
-        context: { workplaceCode, environment, daysUntilExpiry: cert.daysUntilExpiry },
+          `Workplace ${workplaceCode}, certificate …${suffix}. ` +
+          (renewable
+            ? "Renew now at https://testpristupy.sukl.cz/ (guide: " +
+              "https://testpristupy.sukl.cz/documents/nasledneVydaniCert.pdf), then follow " +
+              "the rotation runbook in docs/sukl/TESTING_RUNBOOK.md — the new .pfx will need " +
+              "the same RC2 conversion."
+            : "SÚKL only permits renewal within ONE MONTH of expiry, so this is advance " +
+              "notice — nothing can be requested yet. Diarise it for " +
+              `${new Date(cert.validTo.getTime() - 30 * 86_400_000).toISOString().slice(0, 10)}.`),
+        context: {
+          workplaceCode,
+          environment,
+          daysUntilExpiry: cert.daysUntilExpiry,
+          renewable,
+        },
       });
     }
 

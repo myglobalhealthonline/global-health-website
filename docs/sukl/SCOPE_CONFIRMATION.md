@@ -54,6 +54,18 @@ any key material may be stored. That would be its own gated phase.
 Steps 3–7 are **not built** — see `INTERFACE_INVENTORY.md`. Steps 1–2 are
 partially built: the identity model and the certificate gate exist.
 
+## How to ask SÚKL
+
+**Technical questions are not answered by email.** Confirmed 2026-08-07: SÚKL
+routes all technical enquiries to the **Kontaktní centrum pro dodavatele SW**
+(Contact Centre for software suppliers). Access must be requested first:
+
+    https://epreskripce.gov.cz/homepage/dodavatel/kontaktni-centrum-pro-dodavatele-sw/
+
+Until that registration exists, none of the questions below can be put to
+anyone — **obtaining Contact Centre access is the current critical path**, ahead
+of every technical item. The general eRecept mailbox will simply redirect.
+
 ## Open questions for SÚKL
 
 Numbered so replies can cite them.
@@ -120,8 +132,11 @@ Numbered so replies can cite them.
 - **Q10** After an ambiguous network failure on a create operation, is there a way
   to ask SÚKL whether the request was accepted? Without one, no create can be
   safely auto-retried.
-- **Q11** What is the test certificate's validity period, and what is the renewal
-  procedure through the test-access portal?
+- **Q11** ~~Renewal procedure?~~ **ANSWERED 2026-08-07** by Petra Zdražilová,
+  Oddělení eRecept. The test certificate may be renewed **at the earliest one
+  month before expiry** — for the current certificate that is **from 5 October
+  2026**. Self-service at https://testpristupy.sukl.cz/ ; guide:
+  https://testpristupy.sukl.cz/documents/nasledneVydaniCert.pdf
 - **Q12** Are there rate limits or maintenance windows on the test environment?
 
 ## Decision record

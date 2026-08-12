@@ -290,9 +290,9 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 
             {user.role === "PATIENT" ? (
               <p className="gh-form-section__span-2 mt-1 text-portal-meta text-[var(--color-text-muted)]">
-                Name / phone / DOB on the clinical chart are stored separately
-                and edited under “Patient profile” below — saving here does not
-                change them.
+                Name / phone / DOB also live on the clinical chart (keyed by
+                email, not this account row) — saving here updates that copy
+                too, when a chart already exists.
               </p>
             ) : null}
 
