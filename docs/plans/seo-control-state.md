@@ -3087,16 +3087,19 @@ because it's noindexed. Nothing wrong with the redirects themselves.
 
 Repo-wide search for any archived/migration source (`czechia-doctors-datasheet.ts`-style
 files, or any other seed/migration record) mentioning any of the three names:
-**no matches outside audit docs and test fixtures.** No first-party authored
-bio content exists anywhere in the repository. The 2026-08-09 Screaming Frog
-audit independently confirms this: "no authored profile content yet" for all
-three. Combined with §15.1's access ceiling (no admin/CMS session to check
-for an unpublished draft):
+**no matches outside audit docs and test fixtures.** The 2026-08-09 Screaming
+Frog audit independently reports the same: "no authored profile content yet"
+for all three. Combined with §15.1's access ceiling (no admin/CMS/database
+session in this pass to check for an unpublished draft), the correct framing
+is a scope limit, not a definitive negative:
 
-**AUTHORITATIVE CONTENT MISSING — OWNER/CLINICIAN INPUT REQUIRED**, for all
-three. This is not "content exists but wasn't surfaced" — three independent
-sources (this pass, the 2026-08-08 audit, the 2026-08-09 audit) over five
-days all found the same empty state. No fabrication from third-party sources
+**No authoritative biography source found in repository-accessible
+first-party data; admin/CMS/owner verification required**, for all three.
+Three independent sources (this pass, the 2026-08-08 audit, the 2026-08-09
+audit) over five days all found the same empty state *within the surfaces
+each could reach* — none had authenticated admin/CMS/database access, so an
+unpublished draft or owner-held record cannot be ruled out from this evidence
+alone. No fabrication from third-party sources
 is proposed or acceptable here, per the ticket's own instruction.
 
 ### 15.8 Commercial relevance
