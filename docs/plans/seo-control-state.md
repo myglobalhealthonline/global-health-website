@@ -187,6 +187,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-008 | Ireland sick-cert consolidation | Legacy routing + ranking | **CLOSED — MONITOR** | 2026-08-12 | Redirects live (`/ireland/sick-leave`, `/ireland/es/health/sick-cert-online` both 308 to current-shape, indexable targets); intent investigation = SUPPORTIVE CLUSTER, no cannibalization; 4 blog→service links live; service title/meta reviewed vs. 6 competitors, no rewrite needed (SEO-GROWTH-008D); 3-step "How it works" block live (SEO-GROWTH-008E, verified) | Two legacy URLs still show "Submitted and indexed" (crawls 2026-07-05 and 2026-07-25, both pre-fix) | None — see §7 MONITOR. Do not reopen without a new specific on-page defect |
 | SEO-GROWTH-009 | Retired `/post/[slug]` route | Legacy routing | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | Route deleted 2026-05-14/17; `/post/*` is now a `next.config.ts` redirect only. `/post/<unknown>` → 308 → `/ireland/en/blog` | n/a | None. Two audit docs already carry the correction header |
 | SEO-GROWTH-010 | Spain market audit | Market analysis | **CLOSED as an audit; findings promoted to the roadmap** | 2026-08-12 | n/a | n/a | See §7 NEXT-1 and NEXT-3. **No standalone Spain audit document exists in the repository** — the audit was conducted in-session; its conclusions are recorded in §6 and §7 |
+| SEO-GROWTH-011 | Spain doctor cross-locale ranking "fragmentation" (Alfredo del Valle) | Indexation / hreflang | **EXPECTED BEHAVIOR — CLOSED, no code change** | 2026-08-12 | All 5 locale URLs (`spain/{es,cs,en,pt,de}/doctors/dr-alfredo-del-valle`) are 200, self-canonical (each declares and Google accepts its own canonical — no consolidation attempted by either side), `index, follow`, in sitemap, carry distinct per-locale `<title>` (Dermatólogo/Dermatolog/Dermatologist/Dermatologista/Dermatologe — real translation, not a duplicate stub), and cross-link each other via the sibling-locale switcher. The one legacy URL in the cluster, `/pt/spain-doctors/dr-alfredo-del-valle`, is "Crawled – currently not indexed" (last crawl 2026-03-08) and draws 1 impression in 90 days — a dead stub, not a participant | Google serves each locale variant as its own PASS result; no `noindex`, no wrong-canonical, no stale-crawl divergence | None. See §7 for the full query×URL matrix and reasoning |
 
 ### Doctor indexability
 
@@ -222,30 +223,78 @@ its fix date and Google's verdict is still wrong.
 
 ## 7. Organic growth roadmap
 
+### SEO-GROWTH-011 — investigated and closed, 2026-08-12
+
+**Query×URL matrix** (28d, `query` × `page`, `contains: montañez` — broader than
+"alfredo" alone, which missed the "moreno montañez" variants):
+
+| Query | URL | Locale | Impr | Clicks | Pos |
+| --- | --- | --- | ---: | ---: | ---: |
+| alfredo del valle moreno montañez | `/spain/es/doctors/dr-alfredo-del-valle` | es | 10 | 0 | 6.3 |
+| alfredo del valle moreno montañez | `/spain/cs/doctors/dr-alfredo-del-valle` | cs | 11 | 0 | 9.6 |
+| alfredo del valle moreno montañez | `/spain/en/doctors/dr-alfredo-del-valle` | en | 2 | 0 | 9.0 |
+| alfredo del valle moreno montañez | `/spain/pt/doctors/dr-alfredo-del-valle` | pt | 2 | 0 | 11.0 |
+| alfredo del valle moreno montañez | `/spain/es/see-a-specialist` | es (hub) | 4 | 0 | 9.5 |
+| **moreno montañez dermatologo** | `/spain/es/doctors/dr-alfredo-del-valle` | es | 4 | **3** | 5.5 |
+| doctor moreno montañez | `/spain/es/see-a-specialist` | es | 4 | 1 | 4.75 |
+| derma dr moreno montañez | `/spain/{de,es,pt}/*` (3 URLs) | mixed | 9 | 0 | 9.5–12 |
+| doctor moreno montañez dermatologo | `/spain/es/doctors/dr-alfredo-del-valle` | es | 1 | 0 | 3.0 |
+| dr moreno montañez(‑dermatologo) | `/spain/es/*` (3 URLs) | es | 12 | 0 | 7–12.7 |
+| 90d only: alfredo del valle moreno montañez | `/pt/spain-doctors/dr-alfredo-del-valle` | legacy | 1 | 0 | 11.0 |
+
+**Per-URL technical audit** (`inspect_urls` + live Googlebot-UA fetch, 2026-08-12), the
+five current-shape locale URLs plus the one legacy stub:
+
+| URL | HTTP | Robots | Self-canonical? | Google's canonical | In sitemap | hreflang cluster | `<title>` (per-locale, real translation) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `/spain/es/doctors/dr-alfredo-del-valle` | 200 | index,follow | yes | matches (no consolidation) | yes | 6 locales + x-default(es) | "Dermatólogo" |
+| `/spain/cs/doctors/dr-alfredo-del-valle` | 200 | index,follow | yes | matches | yes | same cluster | "Dermatolog" |
+| `/spain/en/doctors/dr-alfredo-del-valle` | 200 | index,follow | yes | matches | yes | same cluster | "Dermatologist" |
+| `/spain/pt/doctors/dr-alfredo-del-valle` | 200 | index,follow | yes | matches | yes | same cluster | "Dermatologista" |
+| `/spain/de/doctors/dr-alfredo-del-valle` | 200 | index,follow | yes | matches | yes | same cluster | "Dermatologe" |
+| `/pt/spain-doctors/dr-alfredo-del-valle` (legacy) | — | — | — | — | — | not in cluster | "Crawled – currently not indexed", last crawl 2026-03-08 |
+
+All five current-shape URLs render at 196–202 KB with distinct real per-locale
+`<title>` strings — not a thin duplicate or an untranslated fallback. They cross-link
+each other through the sibling-locale switcher (the same mechanism `b8b96200` made
+crawlable sitewide). The legacy `/pt/spain-doctors/...` stub sits outside the hreflang
+cluster entirely, is not indexed, and drew 1 impression in 90 days — it is not a
+participant in the split.
+
+**Classification: LEGITIMATE LOCALE DISTRIBUTION. Not cannibalization, not a
+wrong-locale ranking, not stale legacy residue, not a technical defect.** Canonical,
+hreflang, indexability, sitemap eligibility and content completeness are all correct
+on every URL Google is choosing between. Google is not confused about which URL is
+canonical — it accepts each URL's own self-declared canonical, meaning it has
+deliberately decided these are five distinct, valid documents, not duplicates to fold
+together.
+
+**The mechanism, evidenced by the matrix itself:** "alfredo del valle moreno montañez"
+is a bare proper name — it carries no language signal, so Google has nothing to key a
+locale choice on and shows impressions across several of the six alternates (2–11
+impressions each, zero clicks on any of them individually). The moment the query
+carries a language-bearing word, Google confidently serves exactly one URL: "moreno
+montañez dermatologo" (Spanish "dermatologo") ranks only on the `es` page, position
+5.5, **75% CTR**; "doctor moreno montañez" ranks only on the `es` hub page, 25% CTR.
+This is the hreflang architecture working as intended, not fragmenting authority — the
+zero-click impressions are Google testing locale variants against a query that gives it
+no basis to pick one, which is expected and not something a canonical/hreflang change
+can fix (collapsing the cluster to one canonical would break the five real, distinct
+translations this doctor already has).
+
+**No code change made or needed.** The prior Spain audit's "CTR anomaly" framing was
+imprecise — CTR is fine wherever the query has language signal — but its underlying
+observation (Alfredo del Valle name-search impressions look scattered) was itself
+correct; this investigation just supplies the mechanism instead of leaving it a
+mystery. Not repeating this check for the other five markets' doctor clusters — the
+mechanism is now understood, and no other doctor's name+specialty query in the current
+data showed the same zero-CTR bare-name pattern to investigate.
+
 ### NOW — one batch
 
-**SEO-GROWTH-011 — Spain doctor cross-locale ranking-fragmentation investigation.**
-
-The query "alfredo del valle moreno montañez" returns roughly **five** MGH URLs for
-the same doctor — `/spain/{cs,en,es,pt}/doctors/dr-alfredo-del-valle` plus
-`/spain/es/see-a-specialist` — for 24+ combined impressions and **zero clicks**, best
-position ~6.3. The same doctor converts at 60–67% CTR when a single URL ranks
-("moreno montañez dermatologo": 3 clicks / 5 impressions). The prior Spain audit
-diagnosed this as a CTR anomaly; that diagnosis is **superseded pending investigation**
-— the fresh query×page pull suggests ranking fragmentation or cross-locale duplication
-instead, but this is not yet confirmed cannibalization.
-
-This is an **investigation, not a fix**. Before any code change, establish: exact URLs
-receiving impressions, their locales, the query distribution across them, canonical
-state, hreflang state, sitemap eligibility, indexability, current internal links,
-whether each URL carries legitimate localized doctor content, and whether Google is
-alternating which URL it serves for the same query. Only once that evidence exists does
-this become a scoped fix (possibly the same defect class as the `/health/` locale
-integrity fix, `db318dfe` — but that is a hypothesis to test, not a conclusion to act
-on). Then audit the other five markets' doctor clusters for the same pattern.
-
-Evidence: GSC query×page pull, 2026-08-12. Effort: investigation, low. Confidence:
-medium — real signal, root cause not yet established.
+No batch is currently queued. Select the next item from NEXT below, or from a fresh
+OpenSEO/GSC pull if one surfaces something with stronger evidence — per §0, priority is
+not fixed in advance.
 
 ### NEXT — up to three, evidence-backed
 
@@ -324,7 +373,8 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
 ### CLOSED — do not reopen without new evidence
 
 SEO-001 through SEO-008, SEO-METADATA-001 through 004, SEO-GROWTH-001 through 006,
-SEO-GROWTH-009, SEO-GROWTH-010, SEO-DOC-001, SEO-DOC-003. See §5 for each.
+SEO-GROWTH-008, SEO-GROWTH-009, SEO-GROWTH-010, SEO-GROWTH-011, SEO-DOC-001,
+SEO-DOC-003. See §5 for each.
 
 ---
 
