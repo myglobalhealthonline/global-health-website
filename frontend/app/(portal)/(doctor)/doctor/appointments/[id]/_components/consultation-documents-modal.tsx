@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { type DocumentContext } from "./document-context-banner";
+import { MemedPrescribePanel } from "./memed-prescribe-panel";
 import { PortalTabs } from "@/components/PortalTabs";
 import { buildExamTypeIdsField } from "@/lib/doctor/exam-type-ids";
 import {
@@ -551,6 +552,11 @@ export function ConsultationDocumentsModal({
             </p>
           ) : context && tab === "overview" ? (
             <div className="mb-4 space-y-2">
+              <MemedPrescribePanel
+                appointmentId={appointmentId}
+                countryCode={context.countryCode}
+                onIssued={() => onDocumentsChange?.()}
+              />
               {!context.hasDocxTemplate ? (
                 <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
                   {copy.noDocxTemplate.replace("{country}", context.countryLabel)}

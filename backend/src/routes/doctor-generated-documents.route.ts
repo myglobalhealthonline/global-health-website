@@ -5,18 +5,38 @@ import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
+  createMemedIssuedDocument,
   deleteGeneratedDocument,
   finalizeGeneratedDocument,
   generateAppointmentDocument,
   getAppointmentDocumentContext,
   getGeneratedDocumentFile,
   listGeneratedDocuments,
+  MemedDocumentAlreadyRecordedError,
   sendGeneratedDocuments,
   sendGeneratedDocumentUploadLink,
 } from "../modules/generated-documents/generated-documents.service.js";
+import {
+  DoctorNotVerifiedForMemedError,
+  DoctorRegistrationMissingError,
+  startWidgetSession,
+} from "../modules/memed/prescription-widget.service.js";
+import { MemedPrescriptionNotConfiguredError } from "../lib/memed/prescription-client.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 import { prisma } from "../db/prisma.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { contentDisposition } from "../utils/content-disposition.js";
+
+const memedDocumentSchema = z.object({
+  type: z.enum([
+    GeneratedDocumentType.PRESCRIPTION,
+    GeneratedDocumentType.ABSENCE_CERTIFICATE,
+    GeneratedDocumentType.CUSTOM_CERTIFICATE,
+    GeneratedDocumentType.EXAMS_PRESCRIPTION,
+  ]),
+  memedDocumentId: z.string().min(1),
+  memedUrl: z.string().url(),
+});
 
 const baseFields = z.record(z.string()).optional();
 
@@ -452,6 +472,98 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not delete document"));
+      }
+    },
+  );
+
+  // ─── Memed Prescrição (BR e-prescription/certificate widget) ────────────────
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/memed/session",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const session = await startWidgetSession({
+          doctorId: auth.doctorId,
+          appointmentId: request.params.id,
+        });
+        return okResponse({
+          token: session.token,
+          expiresAt: session.expiresAt.toISOString(),
+          scriptUrl: session.scriptUrl,
+        });
+      } catch (error) {
+        if (error instanceof MemedPrescriptionNotConfiguredError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        if (error instanceof DoctorRegistrationMissingError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof DoctorNotVerifiedForMemedError) {
+          return reply.status(403).send(errorResponse(error.message));
+        }
+        if (error instanceof Error && error.message === "Appointment not found") {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not start Memed session"));
+      }
+    },
+  );
+
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/memed/document",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      const body = memedDocumentSchema.safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
+      }
+      try {
+        const row = await createMemedIssuedDocument({
+          appointmentId: request.params.id,
+          doctorId: auth.doctorId,
+          documentType: body.data.type,
+          memedDocumentId: body.data.memedDocumentId,
+          memedUrl: body.data.memedUrl,
+        });
+        if (!row) return reply.status(404).send(errorResponse("Appointment not found"));
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "MEMED_DOCUMENT_ISSUED",
+          entityType: "GeneratedDocument",
+          entityId: row.id,
+          metadata: { appointmentId: request.params.id, documentType: row.documentType },
+          request,
+        }).catch(() => {});
+        return reply.status(201).send(
+          okResponse(
+            {
+              document: {
+                id: row.id,
+                documentType: row.documentType,
+                fileName: row.fileName,
+                sentToPatient: row.sentToPatient,
+                createdAt: row.createdAt.toISOString(),
+              },
+            },
+            "Document recorded",
+          ),
+        );
+      } catch (error) {
+        if (error instanceof MemedDocumentAlreadyRecordedError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not record Memed document"));
       }
     },
   );

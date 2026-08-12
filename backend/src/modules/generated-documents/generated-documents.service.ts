@@ -947,3 +947,77 @@ export async function finalizeGeneratedDocument(doctorId: string, documentId: st
   }
   return { ok: true as const };
 }
+
+const MEMED_DOC_TYPE_FILENAME: Record<GeneratedDocumentType, string> = {
+  EXAMS_PRESCRIPTION: "exam-prescription",
+  PRESCRIPTION: "medicine-prescription",
+  ABSENCE_CERTIFICATE: "absence-certificate",
+  OTHER: "document",
+  CUSTOM_CERTIFICATE: "certificate",
+};
+
+export class MemedDocumentAlreadyRecordedError extends Error {
+  constructor() {
+    super("This Memed document has already been recorded");
+    this.name = "MemedDocumentAlreadyRecordedError";
+  }
+}
+
+/**
+ * Record a document a BR doctor issued through the Memed e-prescription
+ * widget (see modules/memed/prescription-widget.service.ts). Memed already
+ * signed and hosts the original — we mirror the PDF into our own object
+ * storage so the existing download/email/WhatsApp-send paths
+ * (getGeneratedDocumentFile, sendGeneratedDocuments) work unchanged, and
+ * keep memedDocumentId/memedUrl as the record of where the legally-signed
+ * original lives.
+ */
+export async function createMemedIssuedDocument(input: {
+  appointmentId: string;
+  doctorId: string;
+  documentType: GeneratedDocumentType;
+  memedDocumentId: string;
+  memedUrl: string;
+}): Promise<GeneratedDocument | null> {
+  const appt = await prisma.appointment.findFirst({
+    where: { id: input.appointmentId, doctorId: input.doctorId },
+    select: { id: true, fullName: true, email: true },
+  });
+  if (!appt) return null;
+
+  const existing = await prisma.generatedDocument.findUnique({
+    where: { memedDocumentId: input.memedDocumentId },
+  });
+  if (existing) throw new MemedDocumentAlreadyRecordedError();
+
+  const res = await fetch(input.memedUrl, { signal: AbortSignal.timeout(20_000) });
+  if (!res.ok) throw new Error(`Could not fetch signed document from Memed (${res.status})`);
+  const pdfBuffer = Buffer.from(await res.arrayBuffer());
+  if (!pdfBuffer.length) throw new Error("Memed document download was empty");
+
+  const patientSlug =
+    appt.fullName
+      .replace(/[^a-zA-Z0-9\s]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .slice(0, 40) || "patient";
+  const docTypeLabel = MEMED_DOC_TYPE_FILENAME[input.documentType] ?? input.documentType.toLowerCase();
+  const fileName = `${patientSlug}-${docTypeLabel}-memed.pdf`;
+  const storageKey = `generated/${input.doctorId}/${appt.id}/${randomUUID()}/${fileName}`;
+
+  await putObject(storageKey, pdfBuffer, "application/pdf");
+
+  return prisma.generatedDocument.create({
+    data: {
+      appointmentId: appt.id,
+      doctorId: input.doctorId,
+      patientEmail: appt.email,
+      documentType: input.documentType,
+      fileName,
+      storageKey,
+      memedDocumentId: input.memedDocumentId,
+      memedUrl: input.memedUrl,
+      metadata: { source: "memed" },
+    },
+  });
+}
