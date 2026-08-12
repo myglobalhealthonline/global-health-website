@@ -2395,7 +2395,10 @@ the live page. Classification B (authority/ownership) is not supported either �
 own attribution shows the GP page, not the homepage, owns the query. **Only
 classification D fits the evidence.**
 
-### 11.12 CZ-SEO-002: not proposed
+### 11.12 GP metadata rewrite: not proposed
+*(the ticket that requested this pass called a would-be next batch "CZ-SEO-002" —
+that ID was never used since classification A was rejected; the actual CZ-SEO-002
+ticket is a separate, later investigation — see §12)*
 
 Per the ticket's own rule, only classification A auto-advances to a metadata
 optimization. Classification D does not. **No before/after title, H1, or meta change
@@ -2420,5 +2423,169 @@ Ireland = no implementation justified (§10.2). Sick-certificate cluster = MONIT
 MONITOR EXCEPTIONS (unchanged, not reopened).
 
 **NO IMPLEMENTATION / NO DEPLOY / NO COMMIT.**
+
+---
+
+## 12. CZ-SEO-002 — Czech mental-health locale ownership investigation (2026-08-13)
+
+**Mode: narrow investigation only. No content changed. No deploy. Uncommitted.**
+**Latest complete GSC date used: 2026-08-09 (`dataState=all`).**
+
+### 12.1 URLs and page family
+
+- Czech: `https://www.myglobalhealth.online/czechia/cs/services/dusevni-zdravi-online`
+- English (Czech market): `https://www.myglobalhealth.online/czechia/en/services/dusevni-zdravi-online`
+- Note: the URL *slug itself stays the Czech string* (`dusevni-zdravi-online`) across
+  every locale variant (en/pt/es/ro/de) — only the `/cs/`, `/en/`, etc. path segment
+  changes. This is consistent with this service's `next.config.ts` rewrite mapping
+  and matches the pattern used for `gp-consultation-online`, `muzske-zdravi-online`,
+  etc. — not a defect specific to this page.
+- Both variants: HTTP 200, self-canonical, `index, follow`, reciprocal 6-locale +
+  x-default hreflang block (verified identical hreflang set on both pages), present in
+  `sitemap.xml` (confirmed by direct fetch — an earlier `inspect_urls` read that
+  omitted the `sitemap` field for the en URL was an API reporting gap, not a real
+  absence). No fallback-locale or noindex condition on either page. No legacy URL
+  found for this specific cluster (not reopening global hreflang architecture — no
+  regression found here).
+
+### 12.2 Locale-level GSC baseline (90d, 2026-05-13→2026-08-09)
+
+| | cs page | en page |
+|---|---|---|
+| Impressions | 3 | 44 |
+| Clicks | 0 | 0 |
+| Avg position | 86.3 (one row: pos **252** on 07-23 — effectively unranked) | 7.36 |
+| First real activity | 2026-07-20 (page indexed 2026-07-19) | 2026-07-19 (spike 07-20/07-21: 17+14 impr) |
+| Recent trajectory | Sparse: 0 most days, single-digit blips | Front-loaded at launch, thin trickle since 07-28 |
+
+### 12.3 Matched-query comparison — the headline 86-vs-7.4 gap does not survive
+
+Filtering `query`×`page` to this page pair returns only **4 rows total** across
+cs/en/pt combined — GSC's per-query privacy threshold suppresses the rest of both
+pages' low-volume impressions (same limitation flagged in §8; expected, not a bug).
+Of the rows that *are* visible:
+
+- en page: 1 impression for **"czech republic crisis line 116 123 official"** and 1
+  for **"czech republic 116 123 linka první psychické pomoci 24/7 official"** — both
+  **English-language**, **informational** (crisis-hotline lookup), from **country=GBR
+  and country=USA** (confirmed via a `country`×`page` pull — the only two decomposable
+  rows for the en page).
+- cs page: 0 individually visible queries (all 3 impressions below the reporting
+  threshold).
+- Broader sweep: queries containing "deprese", "terapeut", "psych", or "zdravi" on any
+  `/czechia` page return **zero rows** in 90 days. **There is currently no observed
+  Czech-language commercial mental-health search demand on this property at all** —
+  for either page.
+
+**The original 86-vs-7.4 comparison compared two non-equivalent populations**: the
+cs page's number is built on 3 near-random impressions (one of which isn't really
+"ranked" at position 252), and the only identifiable slice of the en page's number is
+an English-language informational query from non-Czech countries — unrelated to
+Czech commercial mental-health intent. **The apparent gap does not survive a
+matched-intent comparison, because no matched Czech-intent query volume exists yet
+to compare.**
+
+### 12.4 Wrong-language ownership check
+
+No Czech-language commercial query was found landing on any URL (cs page, en page,
+homepage, doctor profile) in 90 days — there is nothing to misattribute yet. The one
+decomposable English-language query correctly lands on the English page, from
+English-speaking countries. **Classification: EXPECTED LANGUAGE MATCH** for the
+visible data; **LOW-DATA NOISE** for the aggregate position figures themselves (both
+pages have too few impressions for their average position to be a meaningful
+ranking signal).
+
+### 12.5 Maturity
+
+Both pages were crawled and indexed on the same day (2026-07-19) and both show their
+first real activity within the following 1-2 days. **Neither page is more mature than
+the other** — both are ~3.5 weeks old as of this investigation, both **RAMPING /
+INSUFFICIENT DATA**. A maturity mismatch does not explain the gap (there isn't one);
+data insufficiency does.
+
+### 12.6 Content-equivalence (live HTML, both pages)
+
+| | cs | en |
+|---|---|---|
+| Title | "Duševní zdraví online \| Úzkost, deprese, vyhoření \| Lékař na videu" | "Mental Health Online \| Czech Republic \| English Speaking Doctor" |
+| Meta description | Real authored Czech copy — "Diskrétní posouzení úzkosti, deprese a dalších duševních obtíží..." | Real authored English copy — "Confidential support for anxiety, depression, and other mental health concerns..." |
+| Page size (proxy for content depth, not a diagnosis on its own) | 266,488 bytes | 270,217 bytes (near-identical) |
+| Robots | index, follow | index, follow |
+
+Both pages carry distinct, real, locale-appropriate authored copy — **the Czech page
+is a genuine authored equivalent, not thinner, not field-by-field fallback content,
+and not differently positioned** from its English sibling. No content-equivalence
+defect found.
+
+### 12.7 Targeted Czech SERP ("psycholog online" — the closest real Czech mental-health
+commercial term; no GSC-observed query family exists to anchor this to more
+precisely, per §12.3)
+
+MyGlobalHealth (either locale) **does not appear in the top 20** for this query. The
+SERP is dominated end-to-end by Czech **psychotherapy/counseling marketplaces**
+(Mojra.cz, Terapie.cz, Hedepy.cz, Mendora.cz, Terapio.cz, psycholog-online.cz) —
+platforms connecting users to talk-therapists/psychologists — plus a couple of
+crisis-line/nonprofit resources. **This is a structurally different product category**
+than MGH's page, which is a ČLK-registered-**doctor** assessment for anxiety/
+depression (medical, potentially medication-adjacent), not a psychotherapy
+marketplace. This is a real business-model distinction worth flagging for future
+awareness, but **it cannot be scored as the root cause of the cs-vs-en gap** — the
+page doesn't rank for this query in *either* locale, and no Czech demand for it has
+materialized in GSC yet either way.
+
+### 12.8 Internal-link comparison
+
+Neither locale variant is hardcoded into sitewide nav (header/footer/mobile-nav) —
+unlike the flagship `gp-consultation-online`, this specialty page is reached through
+the services directory/hub listing, which is architecturally symmetric between the cs
+and en locale trees (same component, same listing logic, different locale content).
+**No meaningful cs-vs-en internal-link asymmetry found** — not recommending more
+links on the strength of "more are possible."
+
+### 12.9 Legacy / competing-page check
+
+No historical Czech mental-health URL, no duplicate current URL, and no doctor-page
+or blog article competing for this cluster were found. Not a factor.
+
+### 12.10 Root-cause classification: **A — NO REAL ASYMMETRY**
+
+The original position comparison used different, non-comparable query populations:
+the en page's visible signal is English-language, non-Czech-country, informational
+crisis-hotline traffic; the cs page's number is statistical noise from 3 impressions.
+Both pages are equally young, equally well-formed technically, and equally
+content-complete for their locale. **No wrong-language ownership, no content gap, no
+internal-authority gap, and no legacy interference were found.** (Secondary note:
+insufficient real Czech-language demand — bordering on classification D territory —
+further reinforces that this is a data-volume problem, not a defect to fix.)
+
+### 12.11 Implementation gate
+
+**Classification A → WAIT / MONITOR, not a rewrite**, per the ticket's own rule. No
+CZ-SEO-003 implementation is proposed.
+
+### 12.12 Measurement baseline (for a future re-check only)
+
+- **Czech page baseline:** 3 impr / 0 clicks / pos 86.3 (90d), first real activity
+  2026-07-20.
+- **English page baseline:** 44 impr / 0 clicks / pos 7.36 (90d), first real activity
+  2026-07-19.
+- **Target Czech query family:** none currently supported by observed GSC demand —
+  re-derive from a fresh GSC pull at re-check time rather than assuming "psycholog
+  online" / "psychiatr online" will be the eventual real family.
+- **Query×page ownership baseline:** no Czech-commercial-intent query currently
+  attributed to any URL on this property.
+- **Re-check trigger:** not date-driven (no active ramp to time against, unlike
+  CZ-SEO-001) — fold into the next country-wave GSC refresh once real Czech query
+  volume appears for this cluster, rather than a fixed calendar date.
+
+### 12.13 Control-state carry-forwards (unchanged by this pass)
+
+Global Foundation = VERIFIED / MONITOR EXCEPTIONS. Ireland = no current
+implementation (§10.2). Sick-certificate cluster = MONITOR (SEO-GROWTH-008). Ireland
+labs = WAIT until ~2026-09-08 (SEO-GROWTH-016 / SEO-FOUNDATION-001-A/F). Czech GP
+(`gp-consultation-online`) = **CZ-SEO-001 — RANKING RAMP / WAIT-MEASURE**, remeasure
+~2026-09-08 (§11).
+
+**NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-002 UPDATE UNCOMMITTED.**
 
 ---
