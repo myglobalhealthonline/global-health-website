@@ -182,7 +182,7 @@ export default async function CountryLandingPage({
       />
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: config.name, url: `/${country}/${lang}` },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${country}/${lang}` },
           { name: page.title, url: `/${country}/${lang}/health/${slug}` },
         ])}
       />

@@ -195,9 +195,9 @@ export default async function CountryLangDoctorsPage({
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
-            { name: config.name, url: `/${slug}/${lang}` },
-            { name: "Doctors", url: `/${slug}/${lang}/doctors` },
+            { name: common.navigation.home, url: "/" },
+            { name: common.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+            { name: common.navigation.doctors, url: `/${slug}/${lang}/doctors` },
           ]),
           physicianItemListJsonLd,
         ]}

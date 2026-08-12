@@ -131,7 +131,8 @@ export default async function CountryContactPage({ params }: { params: Promise<P
   const { country, lang } = await params;
   const resolved = resolve(country, lang);
   if (!resolved) notFound();
-  const { config, contact, copy, t } = resolved;
+  const { code, config, contact, copy, t } = resolved;
+  const common = loadLocaleBundle(lang as LocaleCode).common;
 
   const office = contact.office;
   const bookHref = buildBookHref({ country, lang });
@@ -164,8 +165,8 @@ export default async function CountryContactPage({ params }: { params: Promise<P
       <JsonLd data={faqJsonLd(copy.faqs)} />
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${country}/${lang}` },
+          { name: common.navigation.home, url: "/" },
+          { name: common.countryNames?.[code] ?? config.name, url: `/${country}/${lang}` },
           { name: t.breadcrumb, url: `/${country}/${lang}/contact` },
         ])}
       />

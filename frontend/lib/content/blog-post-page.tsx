@@ -229,6 +229,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   // "Read article" lives on common.blogPage, not home.blog — the related-card
   // grid shares the blog index's card, so it needs the index's label bundle.
   const blogPageI18n = getCommonLocale(locale).blogPage;
+  const commonNav = getCommonLocale(locale).navigation;
 
   // Ranking-growth batch (2026-08-10): was hardcoded `/en/` regardless of the
   // article's own locale — a PT/ES/CS/RO article's CTA sent readers to an
@@ -307,8 +308,8 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             about: post.category,
           }),
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
-            { name: "Blog", url: backHref },
+            { name: commonNav.home, url: "/" },
+            { name: commonNav.blog, url: backHref },
             { name: displayTitle, url: canonicalUrl },
           ]),
           ...(articleFaqs.length > 0 ? [faqJsonLd(articleFaqs)] : []),

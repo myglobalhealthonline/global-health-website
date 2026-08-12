@@ -60,7 +60,8 @@ export default async function HomePage() {
   // "en". The edge proxy stamps x-gh-locale from Accept-Language for "/", so a
   // Czech browser with no history still lands on Czech copy.
   const detectedLocale = await getSelectedLocale();
-  const copy = loadLocaleBundle(detectedLocale).common.entryGate;
+  const common = loadLocaleBundle(detectedLocale).common;
+  const copy = common.entryGate;
 
   // getPublicCountriesMerged also warms the slug↔code registry that the
   // synchronous countryCodeFromSlug helpers downstream depend on — don't
@@ -78,7 +79,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd([{ name: "Home", url: "/" }])} />
+      <JsonLd data={breadcrumbJsonLd([{ name: common.navigation.home, url: "/" }])} />
       <CountryEntryGate
         countries={countries}
         detectedLocale={detectedLocale}

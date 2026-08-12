@@ -127,9 +127,9 @@ export default async function PrescriptionsPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Repeat prescription request", url: `/${slug}/${lang}/repeat-prescription-request` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+          { name: c.navigation.repeatPrescription, url: `/${slug}/${lang}/repeat-prescription-request` },
         ])}
       />
 

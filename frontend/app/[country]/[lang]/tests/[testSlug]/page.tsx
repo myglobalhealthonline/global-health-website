@@ -135,9 +135,9 @@ export default async function HealthTestDetailPage({
       ) : null}
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${country}/${lang}` },
-          { name: "Lab tests", url: backHref },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${country}/${lang}` },
+          { name: c.testsPage.watermark, url: backHref },
           { name: detail.title, url: `/${country}/${lang}/lab-tests/${testSlug}` },
         ])}
       />

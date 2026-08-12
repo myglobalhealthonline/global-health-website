@@ -205,9 +205,9 @@ export default async function CountryLangGeneralConsultationPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Online GP consultation", url: `/${slug}/${lang}/gp-consultation-online` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+          { name: c.navigation.generalConsultation, url: `/${slug}/${lang}/gp-consultation-online` },
         ])}
       />
       <JsonLd

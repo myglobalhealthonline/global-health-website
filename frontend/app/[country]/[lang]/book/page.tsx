@@ -359,9 +359,9 @@ export default async function CountryLangBookPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Book", url: `/${slug}/${lang}/book` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+          { name: c.navigation.bookShort, url: `/${slug}/${lang}/book` },
         ])}
       />
 

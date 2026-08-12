@@ -447,7 +447,7 @@ export default async function ServiceDetailPage({
        * 3-level shape health/[slug]/page.tsx already uses. */}
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: config.name, url: `/${country}/${lang}` },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${country}/${lang}` },
           { name: back.label, url: back.href },
           { name: detail.name, url: `/${country}/${lang}/services/${serviceSlug}` },
         ])}

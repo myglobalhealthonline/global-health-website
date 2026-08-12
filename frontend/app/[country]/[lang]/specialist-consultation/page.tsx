@@ -201,9 +201,9 @@ export default async function CountryLangSpecialistConsultationPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "See a specialist", url: `/${slug}/${lang}/see-a-specialist` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+          { name: c.navigation.specialistConsultation, url: `/${slug}/${lang}/see-a-specialist` },
         ])}
       />
       <JsonLd data={faqJsonLd(hub.faq)} />

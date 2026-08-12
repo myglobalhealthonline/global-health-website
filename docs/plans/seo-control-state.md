@@ -249,7 +249,7 @@ measurable loss today, and none should be dressed up as one. Full reasoning in �
 | ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | SEO-FOUNDATION-001-A | Lab-test template is the only CMS content family with **no locale-publication gate** | Indexation (latent) | **PARTIAL — LATENT RISK, no current defect** | 2026-08-12 | `tests/[testSlug]/page.tsx` never passes `noindex`; it and `tests/page.tsx` call the unfiltered `hreflangAlternates`, and `app/sitemap.ts` pushes every country locale with no eligibility filter — services, doctors, legal, `/health/*` and blog all gate. Backend `mergeHealthTestTranslation` falls back field-by-field to the English base row and does not expose `resolvedLocale` on the public payload, so the frontend *cannot* gate. **All 14 tests verified genuinely translated in cs/de/ro on production, so nothing is wrong today.** | 84 lab-test URLs indexed normally; no wrong-language page exists to be penalised | **Still open — latent.** Deliberately excluded from `SEO-FOUNDATION-002` (2026-08-13), which shipped regression coverage only. Lab-test indexability, sitemap filtering, hreflang and internal linking stay frozen until the `SEO-GROWTH-016` re-measure on ~2026-09-08 |
-| SEO-FOUNDATION-001-B | `BreadcrumbList` names hardcoded in English on ~10 templates | Structured data | **PARTIAL — CONFIRMED, low severity** | 2026-08-12 | Live JSON-LD: `/czechia/cs` → `Home / Czechia`; `/czechia/cs/doctors` → `… / Doctors`; `/czechia/cs/gp-consultation-online` → `… / Online GP consultation`; `/ireland/cs/lab-tests/general-health-test` → `Home / Ireland / Lab tests / Všeobecný zdravotní test`. Country node uses the English `config.name`, not the localized name. Blog-post trails omit the country node entirely (`Home / Blog / post`), so the trail does not match the URL path. Services, doctors, tools, `/health/*`, contact, about, pricing and legal-index **are** localized | Breadcrumb trails may render English labels in non-English SERPs; no CTR effect isolated | Ranked #2 in §7; not the recommended batch |
+| SEO-FOUNDATION-001-B | `BreadcrumbList` names hardcoded in English on ~10 templates | Structured data | **CLOSED IN CODE — IMPLEMENTED / VERIFIED LOCALLY** via `SEO-FOUNDATION-005`, 2026-08-13 | 2026-08-12 | Live JSON-LD: `/czechia/cs` → `Home / Czechia`; `/czechia/cs/doctors` → `… / Doctors`; `/czechia/cs/gp-consultation-online` → `… / Online GP consultation`; `/ireland/cs/lab-tests/general-health-test` → `Home / Ireland / Lab tests / Všeobecný zdravotní test`. Country node uses the English `config.name`, not the localized name. Blog-post trails omit the country node entirely (`Home / Blog / post`), so the trail does not match the URL path. Services, doctors, tools, `/health/*`, contact, about, pricing and legal-index **are** localized | Breadcrumb trails may render English labels in non-English SERPs; no CTR effect isolated | **Fixed.** See `SEO-FOUNDATION-005` below. Production verification still required |
 | SEO-FOUNDATION-001-C | `/` ↔ country-home hreflang cluster declares a content-negotiated selector as five different languages | Hreflang | **CLOSED — VERIFIED BY PRODUCTION CHECK** via `SEO-FOUNDATION-004`, deployed `cf2e8356` 2026-08-12T20:15Z, verified 20:19Z. Classified **C — semantic/architecture defect** by `SEO-FOUNDATION-003`; no demonstrated ranking impact before the fix | 2026-08-12 | `/` declares `x-default` → `/` plus six region-tagged country homes. Each country's **default-locale** home declares its own six-locale cluster, `x-default` → itself, plus a bare `{lang}` → `/` (`app/[country]/[lang]/page.tsx`, deliberate return link). Result: two `x-default` claims across an overlapping set, the six country homes never name each other, and **`/portugal/pt` and `/brazil/pt` both claim `pt` → `/`**. 7 URLs | No indexing damage: all 7 pages `PASS` / "Submitted and indexed", `googleCanonical == userCanonical` on every one (URL Inspection, 2026-08-13). `/` remains the site's top page — 154 clicks / 1,984 impressions / 7.76% CTR / pos 18.9, queries ~entirely brand | **None.** Live and verified (§7 `SEO-FOUNDATION-004`): `/` emits no alternates; every market keeps its own cluster and `x-default`; no country home points at `/`. Google has not necessarily reprocessed the graph yet — that is a recrawl matter, not an open action |
 | SEO-FOUNDATION-001-D | `app/sitemap.ts` and `app/robots.ts` have **zero** regression tests | Regression coverage | **CLOSED — IMPLEMENTED, VERIFIED LOCALLY** by `SEO-FOUNDATION-002`, 2026-08-13 | 2026-08-12 | No test file in the repo references either module. `sitemap.ts` alone decides all 1,906 submitted URLs, carries a load-bearing ordering rule (section-pages loop must stay last) and documents **four** past regressions in its own comments: 24 empty Spain URLs, 79 unsubmitted legal locale variants, 16 redirecting blog URLs, 14 withheld Ireland doctors. Everything downstream of it *is* tested (hreflang builders, doctor/service indexability predicates, blog-pagination robots, 5 legacy-redirect families, 410 gone-paths, `aggregateRating` fail-closed guard) | n/a | **Done.** `tests/unit/seo/sitemap.test.ts` (22 tests) + `tests/unit/seo/robots.test.ts` (7 tests), 2026-08-13. All four documented past regressions now have a named test. `-A` was **not** bundled — see `SEO-FOUNDATION-002` in §7 |
 | SEO-FOUNDATION-001-F | Lab-test detail pages carry no sibling-test or service internal links | Internal linking | **PARTIAL — CONFIRMED, blocked until 2026-09-08** | 2026-08-12 | `/ireland/en/lab-tests/general-health-test` renders 40 unique internal links — header, footer, the 7 tool links and 2 to the `/lab-tests` hub — and **zero** to the other 13 tests and zero to any service. A service detail page renders 8 sibling service links from the same shell | Cluster is mid-ramp; no attribution possible yet | **Do not act before the SEO-GROWTH-016 re-measure.** Recorded so the option exists if the cluster stalls |
@@ -1627,6 +1627,118 @@ wants `/` to be the universal fallback in search as well as in navigation.
 - `FAQPage` emitted broadly — eligible and useful for AI-search citation; not a policy
   violation and not a defect.
 
+### SEO-FOUNDATION-005 — BreadcrumbList localization & consistency, implemented 2026-08-13
+
+Closes `SEO-FOUNDATION-001-B`. Narrow shared-template fix: `BreadcrumbList` JSON-LD `name`
+values now read from the site's existing locale dictionaries instead of being hardcoded
+English literals. No URL, canonical, hreflang, robots/indexability, title, description or
+visible page content changed.
+
+**Root cause.** The shared builder `breadcrumbJsonLd()` (`lib/seo/structured-data.ts`) is a
+pure passthrough — it never carried the defect. Every one of the ~19 call sites across the
+public route tree built its own `{ name, url }` array inline, and most literally wrote
+`"Home"`, `"Doctors"`, `"Lab tests"`, `"Online GP consultation"`, `"See a specialist"`,
+`"Book"`, `"Repeat prescription request"` as English string literals, and passed the
+country's English-only `config.name` for the country crumb — regardless of the page's own
+locale. Three templates (`about`, `tools/[slug]`, `doctor-profile` partially) had already
+solved this correctly via `getCommonLocale(locale).countryNames?.[code] ?? config.name`;
+every other template had not.
+
+**Fix.** Every hardcoded English breadcrumb-name literal now reads the corresponding
+existing key from the locale bundle already loaded on that page (`c.navigation.home`,
+`.doctors`, `.blog`, `.about`, `.contact`, `.generalConsultation`, `.specialistConsultation`,
+`.bookShort`, `.repeatPrescription`, `c.testsPage.watermark` for "Lab tests") — no new
+translation strings were invented, all were already authored and translated in all 6
+locales (`locales/{en,cs,de,es,pt,ro}/common.json`) but simply unused by these call sites.
+Every country crumb now reads `c.countryNames?.[code] ?? config.name`, the same fallback
+pattern `about`/`tools` already used — never a bare `config.name`.
+
+**Deliberately NOT changed:** `config.name` / `routeCountryName` usages that feed *visible*
+copy (hero titles, PageHero country labels, "Registered in {country}" pills) were left
+exactly as they were. Where a page's existing breadcrumb-adjacent variable was also used
+for visible content (`doctor-profile-page.tsx`'s `routeCountryName`, `contact/page.tsx`'s
+hero `config.name`), a separate `breadcrumbCountryName`/`common` value was introduced
+scoped only to the JSON-LD call, so no visible text on any page changed as a side effect.
+
+**Affected files (16 emitters, all in `frontend/`):**
+`app/[country]/[lang]/page.tsx`, `doctors/page.tsx`, `tests/page.tsx`,
+`tests/[testSlug]/page.tsx`, `specialist-consultation/page.tsx`,
+`general-consultation/page.tsx`, `prescriptions/page.tsx`, `book/page.tsx`,
+`legal/page.tsx`, `contact/page.tsx`, `health/[slug]/page.tsx`,
+`services/[serviceSlug]/page.tsx`; `app/(global)/about/page.tsx`, `app/(global)/page.tsx`;
+`lib/content/blog-post-page.tsx`, `lib/content/blog-index-page.tsx`,
+`lib/content/doctor-profile-page.tsx`. `about/page.tsx` and `tools/[slug]` needed no change
+(already correct). `lib/seo/structured-data.ts` (`breadcrumbJsonLd`) untouched.
+
+**Hierarchy audit (§6/§9 of the ticket).** Compared each template's structured-data trail
+against its visible UI: `components/layout/Breadcrumbs.tsx` (the generic visible-trail
+component) is **dead code** — zero import sites in the repo, confirmed by repo-wide grep.
+The only visible breadcrumb-style UI on the public site is `tools/[slug]`'s own local
+component (already locale-correct) and a single "back" link on `services/[serviceSlug]` and
+blog posts (labels already sourced from the same dict values now feeding the JSON-LD). No
+existing visible trail contradicted a structured-data trail, so no hierarchy shape changed
+— only the `name` strings. `services/[serviceSlug]` and `health/[slug]` keep their existing
+2-node trails (no "Home" node) unchanged; this is pre-existing template behaviour, not
+something this ticket's scope covers changing.
+
+**Blog classification (§7): Option A — existing hierarchy is semantically correct.**
+`blog-post-page.tsx` / `blog-index-page.tsx` keep `Home / Blog [/ Post]` with no country
+node, even under `/[country]/[lang]/blog/...`. Reasoning: no visible breadcrumb exists on
+either blog template to disagree with; blog navigation is not presented anywhere on the site
+as a child of a country hub (the "back to blog" link and nav item are both flat, country-
+agnostic); and the country-scoped blog URL exists for locale/hreflang routing, not as a
+navigable hierarchy level. Adding a synthetic country crumb would assert a page
+(`/{country}/{lang}/blog`) as an intermediate hierarchy node the site's own navigation never
+presents as one — exactly what §6 says not to do. Only the `Home`/`Blog` names were
+localized (`c.navigation.home` / `c.navigation.blog`), not the structure.
+
+**Representative before/after JSON-LD (all locale strings verified directly against the
+`locales/{locale}/common.json` source, see `lib/i18n/breadcrumb-locale.test.ts`):**
+
+`/czechia/cs/doctors` —
+before: `[{"name":"Home",...},{"name":"Czechia",...},{"name":"Doctors",...}]`
+after: `[{"name":"Domů",...},{"name":"Česko",...},{"name":"Lékaři",...}]`
+
+`/ireland/cs/lab-tests/general-health-test` (country crumb + hub crumb only — title crumb
+was already the DB-localized test title) —
+before: `[...,{"name":"Ireland",...},{"name":"Lab tests",...},{"name":"Všeobecný zdravotní test",...}]`
+after: `[...,{"name":"Irsko",...},{"name":"Laboratorní testy",...},{"name":"Všeobecný zdravotní test",...}]`
+
+`/blog` (bare index, `ro` locale) —
+before: `[{"name":"Home",...},{"name":"Blog",...}]`
+after: `[{"name":"Acasă",...},{"name":"Blog",...}]` (unchanged structure, per §7 classification A)
+
+**Tests.** `lib/seo/structured-data.test.ts` — added `breadcrumbJsonLd` coverage (sequential
+`position`, absolute-URL resolution, passthrough of already-absolute URLs). New
+`lib/i18n/breadcrumb-locale.test.ts` (39 assertions) — pins the exact translated string
+every call site now reads, across cs/pt/es/ro/de/en, for the representative pages the ticket
+named (Czech country home/doctors/GP hub, non-English lab detail, pt/es/ro/de pages, English
+control, blog); a country-names sub-suite (`countryNames["cz"|"ro"|"ie"]` across all 6
+locales); and an explicit mutation guard asserting the Czech translations differ from the
+previously-hardcoded English literals (`"Home"`, `"Doctors"`, `"Lab tests"`,
+`"Online GP consultation"`) — this is what would fail if a call site regressed back to a
+hardcoded string. Chose dictionary-level tests over full-page render snapshots (§9 guidance)
+because every call site is a thin, statically-typed lookup into the same dictionaries these
+tests pin directly — a full-page render test would mock away the DB/backend layer these
+pages depend on without adding coverage over the actual defect (the hardcoded string).
+
+**Local verification.** `npx tsc --noEmit` — clean. `npx eslint` on all 19 changed/added
+files — clean, zero warnings. `npx vitest run` (full suite) — 874/876 passing; the 2
+failures (`tests/unit/portal-breadcrumb-routes.test.ts`, a doctor/admin-portal breadcrumb
+route-table test unrelated to public-site JSON-LD; `lib/content/booking-address-copy.test.ts`,
+Brazil-address-field copy) are in files this batch did not touch and pre-exist it. New tests:
+39/39 passing (`structured-data.test.ts` breadcrumb cases + `breadcrumb-locale.test.ts`).
+Full-stack browser render against a live dev server (backend + Postgres) was not performed
+this pass — the change is a typed dictionary-key swap verified against the exact same JSON
+source files the code reads, not a runtime-computed value: **no ranking or CTR improvement
+is claimed; production verification (URL Inspection rich-results check post-deploy) is still
+required**, same as every other item in this ledger.
+
+**Excluded per ticket §10/§2:** homepage hreflang (`-C`, closed), sitemap/robots policy, the
+lab locale gate (`-A`) and lab internal links (`-F`, both frozen until 2026-09-08), lab
+`Product`/`Offer` schema, the dead `ROUTE_SEO` catalogue (`-E`), titles/descriptions, country
+keyword/content optimization, service/doctor copy. Not pushed, not deployed.
+
 ### NOW — one batch
 
 **GLOBAL FOUNDATION. `SEO-FOUNDATION-001` is complete (this document).
@@ -1636,10 +1748,11 @@ wants `/` to be the universal fallback in search as well as in navigation.
 `SEO-FOUNDATION-004` is **deployed (`cf2e8356`, 2026-08-12T20:15Z) and verified in
 production** — the global gate is decoupled from the market hreflang clusters, with
 canonicals, indexability, locale negotiation and navigation unchanged — so `-C` is closed.
-Nothing in the foundation programme is now awaiting a deploy. Remaining findings: `-A`
+`SEO-FOUNDATION-005` (BreadcrumbList localization, closing `-B`) is **implemented and
+verified locally, 2026-08-13 — not yet pushed or deployed.**
+Nothing else in the foundation programme is now awaiting a deploy. Remaining findings: `-A`
 (lab locale gate) and `-F` (lab internal links) stay frozen until the 2026-09-08
-`SEO-GROWTH-016` re-measure; `-B` (BreadcrumbList localization) is open and unscheduled;
-`-E` (dead `ROUTE_SEO` catalogue) is maintenance-only.**
+`SEO-GROWTH-016` re-measure; `-E` (dead `ROUTE_SEO` catalogue) is maintenance-only.**
 
 The old roadmap of isolated `SEO-GROWTH-*` tickets is superseded. The programme is:
 **NOW** global foundation → **NEXT** only the systemic defects this audit confirmed →

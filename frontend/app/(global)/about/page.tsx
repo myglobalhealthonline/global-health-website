@@ -367,8 +367,8 @@ export default async function AboutPage() {
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
-            { name: "About", url: "/about" },
+            { name: common.navigation.home, url: "/" },
+            { name: common.navigation.about, url: "/about" },
           ]),
           faqJsonLd(FAQ_ITEMS.map((f) => ({ question: f.question, answer: f.answer }))),
         ]}

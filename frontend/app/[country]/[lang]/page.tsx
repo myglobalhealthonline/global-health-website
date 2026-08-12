@@ -541,8 +541,8 @@ export default async function CountryLangHomePage({
               : null,
           }),
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
-            { name: config.name, url: `/${slug}/${lang}` },
+            { name: cc.navigation.home, url: "/" },
+            { name: cc.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
           ]),
         ]}
       />

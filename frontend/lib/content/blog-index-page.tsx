@@ -126,8 +126,8 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: "Blog", url: blogHref },
+          { name: common.navigation.home, url: "/" },
+          { name: common.navigation.blog, url: blogHref },
         ])}
       />
       <PageHero

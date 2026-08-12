@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateRatingJsonLd, organizationJsonLd } from "./structured-data";
+import { aggregateRatingJsonLd, breadcrumbJsonLd, organizationJsonLd } from "./structured-data";
 
 const FRESH = new Date().toISOString();
 const STALE = new Date(Date.now() - 500 * 24 * 60 * 60 * 1000).toISOString();
@@ -59,5 +59,32 @@ describe("organizationJsonLd + aggregateRating wiring", () => {
     const org = organizationJsonLd([], aggregateRatingJsonLd({ rating: 4.9, count: 50, updatedAt: FRESH }));
     expect(org).toHaveProperty("aggregateRating");
     expect((org as { aggregateRating?: { ratingValue: number } }).aggregateRating?.ratingValue).toBe(4.9);
+  });
+});
+
+// SEO-FOUNDATION-005 — every page builds its breadcrumb `name` strings from
+// the locale bundle (see breadcrumb-locale.test.ts); this only pins the
+// shared builder's own contract: sequential position, absolute item URLs,
+// and pure passthrough of whatever names it's given.
+describe("breadcrumbJsonLd", () => {
+  it("emits sequential positions and resolves relative URLs against the site", () => {
+    const result = breadcrumbJsonLd([
+      { name: "Domů", url: "/" },
+      { name: "Česko", url: "/czechia/cs" },
+      { name: "Lékaři", url: "/czechia/cs/doctors" },
+    ]);
+    expect(result["@type"]).toBe("BreadcrumbList");
+    const items = result.itemListElement as Array<{ position: number; name: string; item: string }>;
+    expect(items.map((i) => i.position)).toEqual([1, 2, 3]);
+    expect(items.map((i) => i.name)).toEqual(["Domů", "Česko", "Lékaři"]);
+    for (const item of items) {
+      expect(item.item.startsWith("http")).toBe(true);
+    }
+  });
+
+  it("leaves an already-absolute item URL untouched", () => {
+    const result = breadcrumbJsonLd([{ name: "Home", url: "https://example.com/x" }]);
+    const items = result.itemListElement as Array<{ item: string }>;
+    expect(items[0].item).toBe("https://example.com/x");
   });
 });

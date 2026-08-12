@@ -136,9 +136,9 @@ export default async function HealthTestsPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Lab tests", url: `/${slug}/${lang}/lab-tests` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+          { name: c.testsPage.watermark, url: `/${slug}/${lang}/lab-tests` },
         ])}
       />
       <JsonLd data={faqJsonLd(hub.faq)} />

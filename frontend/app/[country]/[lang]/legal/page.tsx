@@ -246,8 +246,8 @@ export default async function CountryLegalIndexPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
           { name: `${t.heroTitle} ${t.heroAccent}`.trim(), url: `/${slug}/${lang}/legal` },
         ])}
       />

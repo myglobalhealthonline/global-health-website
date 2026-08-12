@@ -186,6 +186,10 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // patient reads or a crawler indexes on THIS page must name the market the
   // route is actually serving — same fix as buildDoctorProfileMetadata above.
   const routeCountryName = (code ? getCountryByCode(code)?.name : undefined) ?? data.profile.country;
+  // Breadcrumb-only localized country label — deliberately NOT used for
+  // `routeCountryName` above, which drives visible copy (country pill,
+  // "Registered in {country}") that this ticket does not touch.
+  const breadcrumbCountryName = (code ? c.countryNames?.[code] : undefined) ?? routeCountryName;
   // Short medical disclaimer (admin-authored, per country). Doctor profiles
   // show the lead line + a link through to the full disclaimer.
   const { short: doctorDisclaimer } = code
@@ -317,7 +321,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           }),
           breadcrumbJsonLd([
             { name: c.navigation.home, url: "/" },
-            { name: routeCountryName, url: `/${slug}/${lang}` },
+            { name: breadcrumbCountryName, url: `/${slug}/${lang}` },
             { name: c.navigation.doctors, url: teamHref },
             { name: data.profile.name, url: profileHref },
           ]),
