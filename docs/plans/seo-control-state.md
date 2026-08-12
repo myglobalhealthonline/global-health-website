@@ -248,10 +248,10 @@ measurable loss today, and none should be dressed up as one. Full reasoning in �
 
 | ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| SEO-FOUNDATION-001-A | Lab-test template is the only CMS content family with **no locale-publication gate** | Indexation (latent) | **PARTIAL — LATENT RISK, no current defect** | 2026-08-12 | `tests/[testSlug]/page.tsx` never passes `noindex`; it and `tests/page.tsx` call the unfiltered `hreflangAlternates`, and `app/sitemap.ts` pushes every country locale with no eligibility filter — services, doctors, legal, `/health/*` and blog all gate. Backend `mergeHealthTestTranslation` falls back field-by-field to the English base row and does not expose `resolvedLocale` on the public payload, so the frontend *cannot* gate. **All 14 tests verified genuinely translated in cs/de/ro on production, so nothing is wrong today.** | 84 lab-test URLs indexed normally; no wrong-language page exists to be penalised | Candidate `SEO-FOUNDATION-002` — see §7 |
+| SEO-FOUNDATION-001-A | Lab-test template is the only CMS content family with **no locale-publication gate** | Indexation (latent) | **PARTIAL — LATENT RISK, no current defect** | 2026-08-12 | `tests/[testSlug]/page.tsx` never passes `noindex`; it and `tests/page.tsx` call the unfiltered `hreflangAlternates`, and `app/sitemap.ts` pushes every country locale with no eligibility filter — services, doctors, legal, `/health/*` and blog all gate. Backend `mergeHealthTestTranslation` falls back field-by-field to the English base row and does not expose `resolvedLocale` on the public payload, so the frontend *cannot* gate. **All 14 tests verified genuinely translated in cs/de/ro on production, so nothing is wrong today.** | 84 lab-test URLs indexed normally; no wrong-language page exists to be penalised | **Still open — latent.** Deliberately excluded from `SEO-FOUNDATION-002` (2026-08-13), which shipped regression coverage only. Lab-test indexability, sitemap filtering, hreflang and internal linking stay frozen until the `SEO-GROWTH-016` re-measure on ~2026-09-08 |
 | SEO-FOUNDATION-001-B | `BreadcrumbList` names hardcoded in English on ~10 templates | Structured data | **PARTIAL — CONFIRMED, low severity** | 2026-08-12 | Live JSON-LD: `/czechia/cs` → `Home / Czechia`; `/czechia/cs/doctors` → `… / Doctors`; `/czechia/cs/gp-consultation-online` → `… / Online GP consultation`; `/ireland/cs/lab-tests/general-health-test` → `Home / Ireland / Lab tests / Všeobecný zdravotní test`. Country node uses the English `config.name`, not the localized name. Blog-post trails omit the country node entirely (`Home / Blog / post`), so the trail does not match the URL path. Services, doctors, tools, `/health/*`, contact, about, pricing and legal-index **are** localized | Breadcrumb trails may render English labels in non-English SERPs; no CTR effect isolated | Ranked #2 in §7; not the recommended batch |
 | SEO-FOUNDATION-001-C | `/` ↔ country-home hreflang cluster is non-reciprocal and carries a duplicate language code | Hreflang | **PARTIAL — CONFIRMED, no demonstrated impact** | 2026-08-12 | `/` declares `x-default` → `/` plus six region-tagged country homes. Each country's **default-locale** home declares its own six-locale cluster, `x-default` → itself, plus a bare `{lang}` → `/` (`app/[country]/[lang]/page.tsx`, deliberate return link). Result: two `x-default` claims across an overlapping set, the six country homes never name each other, and **`/portugal/pt` and `/brazil/pt` both claim `pt` → `/`**. 7 URLs | No impact visible: `/` holds the site's best CTR (7.44%) | Ranked #3 in §7. Smallest correct fix is to make `/` an `x-default`-only picker, not to widen the clusters |
-| SEO-FOUNDATION-001-D | `app/sitemap.ts` and `app/robots.ts` have **zero** regression tests | Regression coverage | **GAP — CONFIRMED** | 2026-08-12 | No test file in the repo references either module. `sitemap.ts` alone decides all 1,906 submitted URLs, carries a load-bearing ordering rule (section-pages loop must stay last) and documents **four** past regressions in its own comments: 24 empty Spain URLs, 79 unsubmitted legal locale variants, 16 redirecting blog URLs, 14 withheld Ireland doctors. Everything downstream of it *is* tested (hreflang builders, doctor/service indexability predicates, blog-pagination robots, 5 legacy-redirect families, 410 gone-paths, `aggregateRating` fail-closed guard) | n/a | Pair with -A as the candidate `SEO-FOUNDATION-002` |
+| SEO-FOUNDATION-001-D | `app/sitemap.ts` and `app/robots.ts` have **zero** regression tests | Regression coverage | **CLOSED — IMPLEMENTED, VERIFIED LOCALLY** by `SEO-FOUNDATION-002`, 2026-08-13 | 2026-08-12 | No test file in the repo references either module. `sitemap.ts` alone decides all 1,906 submitted URLs, carries a load-bearing ordering rule (section-pages loop must stay last) and documents **four** past regressions in its own comments: 24 empty Spain URLs, 79 unsubmitted legal locale variants, 16 redirecting blog URLs, 14 withheld Ireland doctors. Everything downstream of it *is* tested (hreflang builders, doctor/service indexability predicates, blog-pagination robots, 5 legacy-redirect families, 410 gone-paths, `aggregateRating` fail-closed guard) | n/a | **Done.** `tests/unit/seo/sitemap.test.ts` (22 tests) + `tests/unit/seo/robots.test.ts` (7 tests), 2026-08-13. All four documented past regressions now have a named test. `-A` was **not** bundled — see `SEO-FOUNDATION-002` in §7 |
 | SEO-FOUNDATION-001-F | Lab-test detail pages carry no sibling-test or service internal links | Internal linking | **PARTIAL — CONFIRMED, blocked until 2026-09-08** | 2026-08-12 | `/ireland/en/lab-tests/general-health-test` renders 40 unique internal links — header, footer, the 7 tool links and 2 to the `/lab-tests` hub — and **zero** to the other 13 tests and zero to any service. A service detail page renders 8 sibling service links from the same shell | Cluster is mid-ramp; no attribution possible yet | **Do not act before the SEO-GROWTH-016 re-measure.** Recorded so the option exists if the cluster stalls |
 | SEO-FOUNDATION-001-E | Dead route-SEO catalogue in `lib/seo/page-seo.ts` | Maintenance trap | **DEAD CODE — no search impact** | 2026-08-12 | `ROUTE_SEO`, `pageMetadata`, `getRouteSeo` and `resolveBrandTitle` (~230 lines of route titles/descriptions) have **no consumer anywhere in the repo** — a repo-wide grep returns only the file itself and its own test. Only `buildPublicMetadata` is live. The dead copy is also stale (says "five countries", has no `/brazil` row) | 0 URLs affected | Delete when convenient. Editing it does **not** change any served title — record that before anyone tries |
 
@@ -1368,18 +1368,69 @@ losses — they are listed in §5 as `SEO-FOUNDATION-001-A` … `-E` and ranked 
 
 #### Recommended `SEO-FOUNDATION-002` — smallest high-confidence batch
 
-**Give the lab-test family the publication gate every other content family already has,
-and pin it with the first regression test `app/sitemap.ts` has ever had.** Roughly:
-expose the backend's already-computed `resolvedLocale` on the public health-test
-payload; add one `isPublicHealthTestRecordIndexable`-style predicate; consume it at the
-three call sites that currently disagree with each other (page robots tag, hreflang
-cluster, sitemap loop); add a test that asserts the sitemap never emits a locale the
-predicate rejects.
+The audit proposed pairing the lab-test locale-publication gate (`-A`) with the missing
+sitemap/robots regression net (`-D`). **On authorization the batch was narrowed to `-D`
+only** — see the delivered scope below. The lab-test gate was not implemented and remains
+an open latent finding.
 
-It is the only finding that can silently create wrong-language indexable URLs, it is the
-smallest diff of the five, and the test it requires doubles as the missing regression
-net for the artefact that decides all 1,906 submitted URLs. **Not implemented — awaiting
-authorization.**
+### SEO-FOUNDATION-002 — implemented, 2026-08-13
+
+**Status: IMPLEMENTED · VERIFIED LOCALLY.** Not verified by a production check — this
+batch has nothing to check in production, because it changed no production SEO behaviour.
+
+**Scope delivered.** Regression coverage for the two shared SEO route artefacts, and
+nothing else:
+
+| File | Content |
+| --- | --- |
+| `frontend/tests/unit/seo/sitemap.test.ts` | 22 tests over `app/sitemap.ts`, driven entirely by fixtures — no backend or DB |
+| `frontend/tests/unit/seo/robots.test.ts` | 7 tests over `app/robots.ts` |
+
+**No production SEO behaviour changed.** `app/sitemap.ts`, `app/robots.ts` and every
+helper they call are byte-identical; the batch adds two test files and nothing else. No
+refactor or extraction was needed to make either module testable. Only the data fetchers
+are mocked, so the real decision helpers (`publication-validation`,
+`landing-locale-eligibility`, `health-service-canonical`, `exactLocalesForLegalType`,
+`country-features`, `hreflang`, `newest-timestamp`) execute under test.
+
+All four regressions `sitemap.ts` documents in its own comments now have a named test
+rather than a happy-path URL count:
+
+- **24 empty Spain service URLs** — a locale whose merged record fell back to the market
+  default with an empty body is not submitted, while its real locale is.
+- **79 unsubmitted legal locale variants** — every legal locale with its own exact-locale
+  row *is* submitted; a locale that would serve the fallback body is not.
+- **16 redirecting blog URLs** — a country-assigned post is absent from the bare
+  `/blog/{slug}` and present under its country/locale canonicals.
+- **14 withheld Ireland doctors** — doctors are read from the per-market endpoint, and a
+  doctor whose editorial checklist is not ready is excluded.
+
+Also pinned: production origin on every URL, bare-origin root with no trailing slash, no
+duplicate URLs, self-referencing hreflang clusters, country-root exclusion, retired and
+canonical-alias `/health/` exclusion, landing-page locale eligibility, feature-gated hub
+routes, and the load-bearing `lastmod` rule — **no emitted `lastModified` may be build
+time**, hubs date from their own children, and code-resident pages stay undated.
+
+Deliberately **not** asserted: a fixed total URL count. Content totals change
+legitimately; the audit's 1,906 is a snapshot, not an invariant.
+
+**Validation.** New files 29/29 pass. Full frontend unit suite 835/837; the two failures
+are pre-existing and unrelated (`lib/content/booking-address-copy.test.ts`,
+`tests/unit/portal-breadcrumb-routes.test.ts`) — they fail identically without this
+batch, which touches no source file. `tsc --noEmit` clean, `eslint` clean. Mutation-
+checked: reverting the blog country-assignment filter and the retired-`/health/` filter
+in `sitemap.ts` fails exactly the two tests that cover them.
+
+**Policy question raised, not decided.** `app/robots.ts` disallows `/api/`, which also
+covers `/api/og` — the OG image endpoint (`lib/seo/og-image.ts`). Crawlers that honour
+robots.txt for image fetches (Twitterbot, facebookexternalhit) may therefore skip social
+preview images. The tests pin the current policy as-is; changing it is a separate
+decision, not part of this batch.
+
+**Still open after this batch:** `-A` lab-test locale-publication gate (latent, frozen
+with the rest of the lab cluster until ~2026-09-08), `-F` lab-test internal links
+(frozen to the same date), `-B` breadcrumb localization, `-C` root/country hreflang seam,
+`-E` dead `ROUTE_SEO` cleanup.
 
 #### Explicitly ruled out this pass (false positives / expected behaviour)
 
@@ -1397,8 +1448,11 @@ authorization.**
 
 ### NOW — one batch
 
-**GLOBAL FOUNDATION. `SEO-FOUNDATION-001` is complete (this document); the only open
-decision is whether to authorize `SEO-FOUNDATION-002` above.**
+**GLOBAL FOUNDATION. `SEO-FOUNDATION-001` is complete (this document).
+`SEO-FOUNDATION-002` is implemented and verified locally — regression coverage only, no
+production SEO behaviour changed, not yet pushed or deployed. The open decision is which
+of the remaining foundation findings (`-A`, `-B`, `-C`, `-E`) becomes
+`SEO-FOUNDATION-003`; `-A` and `-F` stay frozen until the 2026-09-08 re-measure.**
 
 The old roadmap of isolated `SEO-GROWTH-*` tickets is superseded. The programme is:
 **NOW** global foundation → **NEXT** only the systemic defects this audit confirmed →
