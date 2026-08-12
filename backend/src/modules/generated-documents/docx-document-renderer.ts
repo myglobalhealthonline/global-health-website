@@ -15,7 +15,13 @@ import {
   injectProfessionalLayout,
   trimBodyLeadingEmptyParagraphs,
 } from "./docx-xml-builder.js";
-import { applyDocumentFooterLayout, buildCountryAddressFrameXml, buildCountryLegalParagraphXml } from "./docx-footer-inline.js";
+import {
+  applyDocumentFooterLayout,
+  buildCountryAddressFrameXml,
+  buildCountryLegalParagraphXml,
+  buildIrelandControlledMedicationParagraphXml,
+  buildIrelandReferralNoticeParagraphXml,
+} from "./docx-footer-inline.js";
 import { injectQrBlock } from "./docx-qr-inline.js";
 import {
   ensureAlexBrushFont,
@@ -125,6 +131,22 @@ export function fillDocxBuffer(
     const sectIdx = filled.indexOf("<w:sectPr");
     if (sectIdx >= 0) {
       filled = filled.slice(0, sectIdx) + legalPara + filled.slice(sectIdx);
+    }
+  }
+  // IE-only: referral/exam-request correspondence notice (Healthmail/Healthlink, no post).
+  const ieReferralNotice = buildIrelandReferralNoticeParagraphXml(countryCode, documentType);
+  if (ieReferralNotice) {
+    const sectIdx = filled.indexOf("<w:sectPr");
+    if (sectIdx >= 0) {
+      filled = filled.slice(0, sectIdx) + ieReferralNotice + filled.slice(sectIdx);
+    }
+  }
+  // IE-only: controlled-medication notice on every prescription.
+  const ieControlledNotice = buildIrelandControlledMedicationParagraphXml(countryCode, documentType);
+  if (ieControlledNotice) {
+    const sectIdx = filled.indexOf("<w:sectPr");
+    if (sectIdx >= 0) {
+      filled = filled.slice(0, sectIdx) + ieControlledNotice + filled.slice(sectIdx);
     }
   }
   // Reduce gap lines to avoid a blank 2nd page.
