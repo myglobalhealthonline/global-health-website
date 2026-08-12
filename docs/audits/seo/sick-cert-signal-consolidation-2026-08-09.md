@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../plans/seo-control-state.md).** The counts, statuses and priorities below are a record of what was true when this document was written. Do not treat them as current.
+
 # Sick-cert legacy signal consolidation — 2026-08-09
 
 Scoped follow-up to `docs/audits/seo/ranking-growth-batch-2026-08-09.md`,

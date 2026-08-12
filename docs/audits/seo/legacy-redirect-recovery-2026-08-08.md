@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../plans/seo-control-state.md).** The counts, statuses and priorities below are a record of what was true when this document was written. Do not treat them as current.
+
 # Legacy redirect recovery — batch 1 (certain mappings only)
 
 Date: 2026-08-08 · Data: 90-day GSC page export (`sc-domain:myglobalhealth.online`)

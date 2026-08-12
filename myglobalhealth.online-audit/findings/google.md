@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).** This audit predates the 2026-08 remediation batches. Every count, status and priority below is superseded. Kept as evidence only.
+
 # Google SEO API Findings — myglobalhealth.online
 
 Collected: 2026-08-03 | Source: Google API (field data) unless noted

@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).** This audit predates the 2026-08 remediation batches. Every count, status and priority below is superseded. Kept as evidence only.
+
 # Backlink Profile — myglobalhealth.online
 
 **Credential tier: 0** (Common Crawl web graph + verification crawler only). Moz and Bing Webmaster keys are not configured — confirmed via `backlinks_auth.py --check`:

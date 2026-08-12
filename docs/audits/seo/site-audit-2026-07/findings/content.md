@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../../../plans/seo-control-state.md).** Counts and statuses below are a record of what was true when written. Do not treat them as current.
+
 # Content Quality / E-E-A-T Audit — myglobalhealth.online
 
 Fetched via render_page.py (Playwright, rendered mode): homepage, /about, /ireland/en,

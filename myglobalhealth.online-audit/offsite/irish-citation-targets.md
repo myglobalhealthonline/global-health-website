@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).** This audit predates the 2026-08 remediation batches. Every count, status and priority below is superseded. Kept as evidence only.
+
 # Irish citation & link targets — myglobalhealth.online
 
 Generated 2026-08-04 alongside the OpenSEO live-data pass.

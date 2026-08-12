@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../plans/seo-control-state.md).** The counts, statuses and priorities below are a record of what was true when this document was written. Do not treat them as current.
+
 # Ranking-growth batch — structural fixes + legacy-URL consolidation report
 
 Date: 2026-08-10 · Data: production DB reads, live production HTML/API checks, OpenSEO GSC pull, e2e (Playwright, dev server pointed at production API for real content).

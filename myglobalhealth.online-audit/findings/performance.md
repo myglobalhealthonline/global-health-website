@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).** This audit predates the 2026-08 remediation batches. Every count, status and priority below is superseded. Kept as evidence only.
+
 # Performance / Core Web Vitals — myglobalhealth.online
 
 Lab source: Lighthouse 13.4.1 (Node/CLI, mobile default throttling, single run per URL, headless Chrome, 2026-08-02).

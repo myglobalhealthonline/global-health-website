@@ -53,7 +53,7 @@ Status legend: `done` / `needs adapter` / `placeholder` / `needs content`
 | route path | page file | template used | data source/adapter used | status |
 | --- | --- | --- | --- | --- |
 | `/blog` | `app/(site)/blog/page.tsx` | `BlogIndexTemplate` | `getTemplatePageData().blogPosts` | done |
-| `/post/[slug]` | `app/(site)/post/[slug]/page.tsx` | `BlogArticleTemplate` | `routeInventory.blogPosts` | done |
+| `/post/[slug]` | _deleted 2026-05-14/17 ("Purge dormant Phase 1 routes")_ | `BlogArticleTemplate` | — | **removed — not a live route.** `/post/:slug` is now a `next.config.ts` redirect only (specific slugs to their current article, all others to `/{country}/{lang}/blog`). See SEO-GROWTH-009. |
 
 ## LegalPageTemplate
 

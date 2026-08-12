@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../plans/seo-control-state.md).** The counts, statuses and priorities below are a record of what was true when this document was written. Do not treat them as current.
+
 # International-locale + internal-linking batch — `/health/*` locale integrity, doctor→service links
 
 Date: 2026-08-09 · Data: production DB (read-only), tsc/vitest/node:test runs.

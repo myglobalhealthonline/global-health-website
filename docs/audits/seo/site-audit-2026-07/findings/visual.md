@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../../../plans/seo-control-state.md).** Counts and statuses below are a record of what was true when written. Do not treat them as current.
+
 # Visual SEO Audit — myglobalhealth.online
 
 Tool: Playwright (Chromium), captured 2026-07-24. Viewports: Desktop 1920x1080, Mobile 375x812 (iPhone UA). Pages: `/`, `/ireland/en`, `/ireland/en/services/acute-medical-consultation`. 2.5s settle wait used per page to clear entry gate/animation before capture.

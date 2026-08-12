@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../../../plans/seo-control-state.md).** Counts and statuses below are a record of what was true when written. Do not treat them as current.
+
 # Technical SEO Audit — myglobalhealth.online
 Date: 2026-07-24 | Pages sampled: home (/), /ireland/en, /about, /privacy, /terms (declared only),
 /ireland/en/services/acute-medical-consultation, /brazil/pt/doctors/dr-renato-sarmento, robots.txt,

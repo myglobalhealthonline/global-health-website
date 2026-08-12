@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../../plans/seo-control-state.md).** Counts and statuses below are a record of what was true when written. Do not treat them as current.
+
 # Full SEO Audit — myglobalhealth.online
 
 **Date:** 2026-07-24 · **Health Score: 73/100** · Business type: multi-country telehealth / online GP (IE, ES, PT, CZ, BR, RO)

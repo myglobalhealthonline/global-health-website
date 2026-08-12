@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../../../plans/seo-control-state.md).** Counts and statuses below are a record of what was true when written. Do not treat them as current.
+
 # SXO Gap Score — myglobalhealth.online
 
 **SXO Gap Score: 38/100** (separate from SEO Health Score)

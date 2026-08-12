@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../plans/seo-control-state.md).** The counts, statuses and priorities below are a record of what was true when this document was written. Do not treat them as current.
+
 # Commercial search-growth opportunity matrix
 
 Date: 2026-08-10 · Data: OpenSEO/GSC, last 28 days (2026-07-09 → 2026-08-06), query+page dimension pull, cross-referenced against a keyword scan of the full 1,000-row query list for medical/commercial intent terms (538/1000 matched). GA4 not connected to the OpenSEO project — GA4-joined `get_search_opportunities` (business-value scoring) unavailable; this is GSC-only evidence.

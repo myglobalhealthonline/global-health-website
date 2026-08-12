@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../plans/seo-control-state.md).** The counts, statuses and priorities below are a record of what was true when this document was written. Do not treat them as current.
+
 # Ranking-growth batch — 2026-08-09
 
 Continuation of the SEO workstream. Prior batch (`docs/plans/seo-indexation-plan-2026-07-28.md`

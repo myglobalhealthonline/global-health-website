@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../plans/seo-control-state.md).** The counts, statuses and priorities below are a record of what was true when this document was written. Do not treat them as current.
+
 # Doctor publication/indexability — migration-gap backfill, 2026-08-08
 
 Continuation of `legacy-redirect-recovery-2026-08-08.md`: several exact-match

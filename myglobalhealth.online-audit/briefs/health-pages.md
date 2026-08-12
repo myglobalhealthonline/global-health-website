@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).** This audit predates the 2026-08 remediation batches. Every count, status and priority below is superseded. Kept as evidence only.
+
 # Content briefs — the 12 remaining `/health/` pages
 
 Phase 3, item 3.1 of `ACTION-PLAN.md`. Covers the twelve `/health/` slugs that

@@ -73,8 +73,24 @@ Traps that have each cost a wasted round already:
 - Quotas: URL Inspection ~7.5 s/URL, 2,000/day. Indexing API 200/day and
   officially JobPosting/BroadcastEvent-only — do not mass-submit.
 
-Standing SEO plan and its scheduled checks:
-`docs/plans/seo-indexation-plan-2026-07-28.md`.
+**Canonical SEO control file: `docs/plans/seo-control-state.md`.** It holds the
+remediation ledger, the growth roadmap, and the indexation watchlist. Every other
+SEO markdown in the repo is historical evidence and carries a header saying so.
+
+Two rules that override any older SEO document:
+
+- Before starting an SEO remediation or growth batch, refresh the relevant
+  OpenSEO/GSC data and verify live production behaviour. Historical audit counts
+  are context, not the current source of truth.
+- After every implemented/deployed SEO batch, update the ledger and roadmap in
+  `seo-control-state.md` before starting the next batch.
+
+Do not rerun the full ~1,000-page crawl per batch — it is for global technical
+validation, periodic baselines, or post-sitewide-change only. Everything narrower
+gets a focused OpenSEO/GSC pull plus a live production check.
+
+`docs/plans/seo-indexation-plan-2026-07-28.md` is superseded as a status document
+but its §2 design decisions and §5 "explicitly not doing" list are still binding.
 
 ## Dependency overrides
 

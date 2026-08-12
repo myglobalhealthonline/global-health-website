@@ -1,3 +1,5 @@
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../../plans/seo-control-state.md).** Counts and statuses below are a record of what was true when written. Do not treat them as current.
+
 # Action Plan — myglobalhealth.online (2026-07-24)
 
 ## Phase 1 — Critical (Week 1)

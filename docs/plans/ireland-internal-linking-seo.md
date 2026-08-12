@@ -1,3 +1,5 @@
+> **Partially stale.** Current SEO status, priorities and the indexation watchlist live in [`docs/plans/seo-control-state.md`](seo-control-state.md). Treat the plan below as background, not as a live task list.
+
 # Ireland Internal Linking & SEO — Implementation Plan
 
 > Translates the internal doc **GlobalHealth_InternalLinking_Ireland** into concrete

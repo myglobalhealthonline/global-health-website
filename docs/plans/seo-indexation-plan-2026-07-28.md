@@ -1,5 +1,18 @@
 # SEO indexation plan — from 2026-07-28
 
+> **Superseded as a status document.** Current SEO status, priorities and the
+> indexation watchlist live in [`docs/plans/seo-control-state.md`](seo-control-state.md).
+> Every count below (1,304 inspected · 1,353 / 1,153 sitemap URLs · the
+> 514-clicks/15,210-impressions traffic baseline) is historical — the live sitemap
+> is 1,906 URLs as of 2026-08-12. The scheduled checks in §3 were not carried out on
+> their stated dates and have been folded into the canonical roadmap.
+>
+> **Two sections here are still binding and must not be discarded:** the design
+> decisions in §2 (`lastmod` derivation, the section-pages loop staying last, never
+> using build time, legacy Wix slugs deliberately not disallowed in robots.txt,
+> entry-gate strings translated in all six locales) and the "explicitly not doing"
+> list in §5.
+
 Carry-out plan following the full Google Search Console indexation audit of
 `sc-domain:myglobalhealth.online`. Everything below is either **done**, **scheduled**
 (waiting on Google, with a date and a command), or a **decision** someone has to make.
