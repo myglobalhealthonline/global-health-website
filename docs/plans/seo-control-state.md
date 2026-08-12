@@ -3170,3 +3170,220 @@ doctors NORMAL CONSOLIDATION LAG.
 **NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-005 UPDATE UNCOMMITTED.**
 
 ---
+
+## 16. CZ-SEO-006 — Czech active doctor public-supply & first-party content resolution (2026-08-13)
+
+**Mode: read-only investigation.** No doctor-content writing, no database
+writes, no `readyToIndex`/roster/service/schedule/indexability changes, no
+deploy. CZ-SEO-005 closed separately (commit `7f933acc`, pushed to
+`origin/Dev-hassaan`) before this pass began.
+
+### 16.1 Data sources inspected
+
+- **Production database, read-only** — `Doctor`, `DoctorTranslation`,
+  `DoctorCountry`/`DoctorMarketTranslation`, `ServiceDoctor`,
+  `DoctorAvailability`, `DoctorTimeSlot`, `Appointment`, `AuditLog`, queried
+  via Prisma `findMany`/no writes, run with `backend/.env` (production
+  `DATABASE_URL`) through a one-off script kept at
+  `backend/scripts/investigate-cz-doctor-supply.ts` (uncommitted, read-only).
+  This supersedes CZ-SEO-005's "no admin/CMS/database access" ceiling
+  (§15.1) — that ceiling has been lifted for this pass.
+- **Admin API** — not separately queried. The direct DB read already covers
+  every table the admin API surfaces for this question, at higher fidelity
+  (raw `editorialChecklist`, raw `AuditLog.metadata`), so a second read
+  through the API layer would be redundant.
+- **Application code** — `backend/src/modules/doctors/doctors.service.ts`
+  (`listDoctors`, `getDoctorByCountryAndSlug`) read directly to determine the
+  actual roster/detail-page query predicates (§16.4).
+- **GSC 90-day query data** — not re-pulled; CZ-SEO-005 §15.5's 2026-08-13
+  extraction is carried forward unchanged (no production change occurred
+  between the two same-day passes that would move it).
+- **Public site** — not re-scraped separately; CZ-SEO-004/005's 2026-08-13
+  live-pass results (§14.1, §15.4) are the same-day baseline.
+
+### 16.2 Per-doctor business/public-supply state
+
+| Doctor | `active` | `DoctorCountry` (CZ) | `assignedServices` | `DoctorAvailability` rows | Recent `DoctorTimeSlot` rows | Historical appointments |
+|---|---|---|---|---|---|---|
+| Dr Gabriele Felici | `true` | active, verified, ČLK `1170392192` | **0** | **0** | **0** | 1, `COMPLETED`, 2026-01-28 |
+| Dr Michael Nytra | `true` | active, verified, ČLK `1164807191` | **0** | **0** | **0** | 1, `COMPLETED`, 2026-02-17 |
+| MUDr Nataliya Kharlamova | `true` | active, verified, ČLK `5170066188` | **0** | **0** | **0** | 2, `COMPLETED`, 2026-02-16 (×2) |
+
+All three carry `legacyMongoId` (legacy-imported records, not test/native
+placeholders) and a linked `User` login (`DOCTOR_INVITED` AuditLog rows show
+a real `userId` + `emailed: true` for each, 2026-07-17). The completed
+appointments predate the Doctor rows' own `createdAt` (2026-07-15) — they
+were migrated in alongside the doctor record, i.e. **genuine pre-migration
+consultation history**, not fabricated activity.
+
+**Classification: PUBLIC PROFILE, NOT CURRENTLY BOOKABLE, for all three.**
+Zero slots is **not** a temporary scheduling gap — there are zero
+`DoctorAvailability` windows configured at all, so there is nothing to
+generate slots from. This is a structural absence, confirmed by AuditLog:
+each doctor has exactly two `DOCTOR_UPDATED` events (2026-07-17 creation,
+2026-07-26 bulk field-normalization pass) and neither event's `changed`
+field list includes `bio`, `translations`, or anything service/availability
+related — content and scheduling setup were never touched after the initial
+invite, for any of the three.
+
+### 16.3 Biography-source resolution
+
+**C — NO FIRST-PARTY BIO SOURCE FOUND**, for all three, with one residual
+caveat stated below. Database evidence (not just repo evidence, correcting
+CZ-SEO-005 §15.1's access ceiling):
+
+- `Doctor.bio` = empty, `DoctorTranslation` = **0 rows**,
+  `DoctorMarketTranslation` (CZ market row) = **0 rows**, for all three —
+  not merely blank strings, no locale rows exist at all.
+- Every `AuditLog` entry for all three doctors is reproduced in full in
+  §16.2 — no entry's `changed` list ever includes `bio` or `translations`.
+- Direct contrast with Hlavatý (§16.8): his 2026-06-29 `DOCTOR_UPDATED`
+  creation event's `changed` list explicitly includes `"title","bio",
+  ...,"translations"` — i.e. the audit trail shows content *was* actively
+  authored for him at creation time, and shows it *was not* for any of the
+  three CZ-SEO-006 doctors, ever.
+
+**Residual caveat:** a doctor-portal self-edit path or an out-of-band script
+(the `editorialChecklist.readyToIndex` backfill itself left no `AuditLog`
+trail, confirming scripts can write around the audit log) could in
+principle have set and then cleared content without a surviving trace. This
+is why the classification is **C**, not an absolute-zero certainty — but
+every surface actually inspected (repo, DB content columns, DB audit trail)
+agrees on empty, so C is the correct call, not D.
+
+### 16.4 Why these profiles are on the public roster despite noindex / no services / no slots
+
+Roster inclusion, indexability, and bookability are governed by **three
+independent predicates**, confirmed by reading the query code directly:
+
+1. **Roster inclusion** (`listDoctors`, `doctors.service.ts:379-380`) —
+   `where: { active: true }` only. No filter on `readyToIndex`, content
+   completeness, assigned services, or availability.
+2. **Detail-page existence** (`getDoctorByCountryAndSlug`,
+   `doctors.service.ts:660-681`) — same `active: true` gate (+ country
+   active). This is also the exact mechanism behind Hlavatý's current-URL
+   404 — see §16.8.
+3. **Indexability** (`isPublicDoctorRecordIndexable`,
+   `frontend/lib/content/publication-validation.ts`, per CZ-SEO-004 §14.4)
+   — a separate, later check applied at render/sitemap time on top of an
+   already-active, already-existing record.
+4. **Bookability** — a fourth, independent gate enforced by the booking
+   flow: `assignedServices` + `DoctorAvailability` + open `DoctorTimeSlot`
+   rows, unrelated to the other three.
+
+**This is deliberate product architecture** (four orthogonal gates), not a
+routing bug and not stale data. The specific reason these three sit at
+"active + verified + zero content + zero services" is best read as
+**incomplete/stalled onboarding**: `DOCTOR_INVITED` fired for all three on
+2026-07-17 (accounts created, invite emails sent), but no subsequent
+content-authoring, service-assignment, or availability-setup step was ever
+completed — while the sibling cohort onboarded in the same window (Černý,
+Maklad, Pavlů, Holz, Islam, and Hlavatý — see §14.4, §16.8) all did receive
+full content + service + availability setup. That makes this a genuine
+**product/operations state inconsistency** for these three specifically,
+not a defect in the roster/indexability/bookability mechanism itself.
+
+### 16.5 SEO/business priority
+
+Ranking these three by legacy-URL GSC impressions alone (Nytra 140,
+Kharlamova 54, Felici 1 — CZ-SEO-005 §15.5) would reward search visibility
+for pages that currently cannot be booked through, which is exactly the
+mis-prioritization the ticket warns against (§6). Correct framing:
+**bookability-readiness gates priority, not demand.** Demand only becomes
+relevant *after* a doctor is confirmed as intended live supply and
+service/availability setup is completed — at that point Nytra (real, if
+thin, click-through demand: 15 clicks recorded) would be the clear priority
+of the three; Kharlamova and Felici would remain low-priority even then
+(CZ-SEO-005 §15.5: demand at or below GSC's query-reporting noise floor for
+both).
+
+### 16.6 Per-doctor decision
+
+| Doctor | Decision | Basis |
+|---|---|---|
+| Dr Michael Nytra | **D — PRODUCT/OPERATIONS STATE NEEDS RESOLUTION** | Verified, real clinician with real (thin) demand and genuine prior consultation history, but zero services/availability — an onboarding gap, not a content gap. Would become the strongest **B** candidate once onboarding is resolved. |
+| MUDr Nataliya Kharlamova | **D — PRODUCT/OPERATIONS STATE NEEDS RESOLUTION** | Same onboarding gap; demand is effectively noise (§16.5), so even once resolved this borders **E**. |
+| Dr Gabriele Felici | **D — PRODUCT/OPERATIONS STATE NEEDS RESOLUTION** | Same onboarding gap; near-zero demand (1 impression, 0 clicks, 90d), lowest priority of the three even once resolved. |
+
+No doctor reaches **A** or a clean **B** this pass — the immediate blocker
+for all three is the roster-vs-bookability conflict (§16.4), which sits
+upstream of "does a biography source exist."
+
+### 16.7 Implementation gate
+
+**`CZ-SEO-007` is NOT justified this pass.** No doctor lands on A, and B
+would understate the actual blocker: writing a bio alone (even with an
+owner-supplied source) would make a page indexable-eligible while still
+advertising a doctor with zero assigned services and zero booking slots —
+directly conflicting with product intent (a patient could find but never
+book). **Recommended next step, ownership-level, not content or code**:
+confirm for each of the three whether onboarding is meant to be completed
+(intended live supply — then complete content + services + availability
+together, one editorial/ops batch) or whether the record should be paused
+(`active = false`, mirroring Hlavatý's mechanism — an ops decision, not an
+SEO one). Once that ownership decision lands, re-run this ticket's content
+question (§16.3) only for whichever doctor(s) are confirmed as intended
+supply — that is the trigger condition for a future `CZ-SEO-007`.
+
+### 16.8 Hlavatý — new positive disposition evidence
+
+**New evidence found — status changes from CZ-SEO-004/005's "UNRESOLVED
+IDENTITY / DATA STATE."** `AuditLog` (`entityType=Doctor`,
+`entityId=cmqz4zqju007j01luo8hq12bk`) shows:
+
+```
+2026-08-12T10:03:29.828Z  DOCTOR_DEACTIVATED  actorRole=ADMIN  metadata=null
+```
+
+— one day before CZ-SEO-004/005's 2026-08-13 live pass. `Doctor.active` is
+now `false`. Both `listDoctors` and `getDoctorByCountryAndSlug` (§16.4)
+gate on `active: true`, so this single field flip **mechanically explains**
+both his absence from the live roster (§14.1) and his current-shape URL's
+404 (§14.3) — no routing defect, no migration/data gap. His underlying
+record is otherwise fully intact: bio authored in **6 locales**, **13**
+active `assignedServices`, a full 6-day `DoctorAvailability` schedule, and
+`DoctorTimeSlot` rows still `OPEN` as far out as **2026-09-07** — this is
+not what a stale or corrupted record looks like; it is a complete, live-
+ready profile that was deliberately switched off.
+
+**Disposition: does not cleanly match any of the three original candidates**
+(CONFIRMED RETIRED / LIVE UNDER ANOTHER IDENTITY / DATA-MIGRATION GAP —
+ruled out, record is intact). The positive fact established is narrower and
+different: **ADMIN-DEACTIVATED, 2026-08-12, reason not logged**
+(`metadata: null` on the `DOCTOR_DEACTIVATED` row, unlike every other
+`DOCTOR_UPDATED` row for him which does carry a `changed`/`registration`
+payload). This is a real, deliberate, recent business action — not a data
+defect — but *why* (retirement, temporary suspension pending review, or an
+erroneous click) is not established by any source available to this pass.
+
+**No HTTP/roster repair authorized.** Recommended next step: a single
+ownership question to whoever deactivated the record on 2026-08-12 — same
+"cheap check" spirit as CZ-SEO-005's recommendation, now narrowed from
+"was he ever real" (answered: yes, extensively) to "why was he turned off
+one day before this audit, and is it permanent." Legacy-URL equity (573
+impr / 2 clicks, 90d) stays parked either way until that answer lands.
+
+### 16.9 Measurement baseline (carried, unchanged)
+
+Same as CZ-SEO-005 §15.12 — Nytra 140/15, Kharlamova 54/5, Felici 1/0
+(legacy, 90d) — no new GSC pull this pass (§16.1).
+
+### 16.10 Control-state carry-forwards (unchanged by this pass)
+
+Global Foundation = VERIFIED / MONITOR EXCEPTIONS. Ireland = no
+implementation. Ireland labs = WAIT ~2026-09-08. Czech GP = CZ-SEO-001 —
+RANKING RAMP / WAIT-MEASURE, remeasure ~2026-09-08. Czech mental health =
+CZ-SEO-002 — NO REAL ASYMMETRY / MONITOR. Czech women's health = CZ-SEO-003
+— EXISTING PAGE / NO DEMAND / NO ACTION. Czech doctor legacy consolidation =
+CZ-SEO-004 — Andrei Lavrov UNRESOLVED IDENTITY / DATA STATE unchanged (not
+in DB under any searched name spelling this pass — out of this ticket's
+scope), 5 healthy active doctors NORMAL CONSOLIDATION LAG. Hlavatý —
+upgraded from UNRESOLVED IDENTITY / DATA STATE to **ADMIN-DEACTIVATED
+2026-08-12, REASON UNCONFIRMED** (§16.8). Active-doctor content gap =
+CZ-SEO-005 — superseded by this ticket's finer-grained per-doctor D
+classification (§16.6).
+
+**NO DATA WRITES / NO SEO IMPLEMENTATION / NO DEPLOY / CZ-SEO-006 UPDATE
+UNCOMMITTED.**
+
+---
