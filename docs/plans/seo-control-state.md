@@ -2729,3 +2729,239 @@ CZ-SEO-002 — NO REAL ASYMMETRY / MONITOR (§12).
 **NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-003 UPDATE UNCOMMITTED.**
 
 ---
+
+## 14. CZ-SEO-004 — Czech doctor legacy URL consolidation & ownership investigation (2026-08-13)
+
+**Mode: investigation only. No redirect changes. No doctor-profile edits. No
+canonical changes. No schema changes. No deploy.** Extraction date 2026-08-13;
+latest complete GSC date **2026-08-09** (`dataState=all`).
+
+### 14.1 Live Czech doctor roster (current, scraped from production)
+
+8 doctors publicly listed at `/czechia/cs/doctors` today: Vojtěch Černý, Ahmed
+Maklad, Gabriele Felici, Michael Nytra, Khoiamul Islam, Nataliya Kharlamova,
+Romana Pavlů, Yasmin Holz. **Libor Hlavatý is not on this list** — first
+material finding, see §14.3.
+
+| Doctor | Current URL (`/czechia/cs/doctors/…`) | Live status | Live `robots` meta | In sitemap |
+|---|---|---|---|---|
+| Vojtěch Černý | `mudr-vojtech-cerny` | 200 | `index, follow` | Yes |
+| Ahmed Maklad | `dr-ahmed-maklad` | 200 | `index, follow` | Yes |
+| Romana Pavlů | `mudr-romana-pavlu` | 200 | `index, follow` | Yes |
+| Yasmin Holz | `mudr-yasmin-holz` | 200 | `index, follow` | Yes |
+| Khoiamul Islam | `khoiamul-islam` | 200 | `index, follow` | Yes |
+| Michael Nytra | `dr-michael-nytra` | 200 | **`noindex, nofollow`** | **No** |
+| Nataliya Kharlamova | `mudr-nataliya-kharlamova` | 200 | **`noindex, nofollow`** | **No** |
+| Gabriele Felici | `dr-gabriele-felici` | 200 | **`noindex, nofollow`** | **No** |
+| Libor Hlavatý (disposition unresolved — not confirmed retired) | `mudr-libor-hlavaty` | **404**, page carries `noindex` (site's not-found template) | n/a | No |
+| Jana Cyplinská (disposition unresolved) | `mudr-jana-cyplinska` | 404 (broad rule 308s to a dead slug, then middleware 410 — restored to this pending state 2026-08-08, see `gone-content.ts`) | n/a | No |
+| Andrei Lavrov (disposition unresolved — not confirmed retired) | `mudr-andrei-lavrov` | **404** | n/a | No |
+
+### 14.2 Legacy-vs-current GSC ownership, 90d (`sc-domain:myglobalhealth.online`, 2026-05-09→2026-08-09)
+
+All Czech doctor rows, both URL shapes, ranked by impressions:
+
+| Doctor | Legacy shape total (impr/clicks, all locale-prefixed variants) | Current shape total | Ownership |
+|---|---|---|---|
+| Libor Hlavatý | 573 / 2 (bare `/czechia-doctors/…` only; encoded/locale variants add none material) | **0 / 0 — URL never existed in GSC** | **LEGACY URL STILL OWNS (only URL that exists)** |
+| Vojtěch Černý | 194+181+2 = 377 / 32 (cs-prefixed dominant) | 0 / 0 | LEGACY URL STILL OWNS |
+| Michael Nytra | 140 / 15 | 0 / 0 | LEGACY URL STILL OWNS |
+| Ahmed Maklad | 153+60+14+2+2+1 = 232 / 23 | 1 / 1 (single impression) | LEGACY URL STILL OWNS (current barely seen) |
+| Jana Cyplinská | 132(es)+56+17+6+2+15 = 228 / 48 | 0 / 0 | LEGACY URL STILL OWNS — but this is an unresolved-identity case, not a routing defect (§14.1) |
+| Nataliya Kharlamova | 46+7+1 = 54 / 5 | 0 / 0 | LEGACY URL STILL OWNS |
+| Romana Pavlů | 45+2 = 47 / 5 | 0 / 0 | LEGACY URL STILL OWNS |
+| Andrei Lavrov | 18 / 2 | 0 / 0 | LEGACY URL STILL OWNS (trivial volume) |
+| Yasmin Holz | 17 / 2 | 0 / 0 | LEGACY URL STILL OWNS |
+| Gabriele Felici | 1 / 0 | 0 / 0 | NO MATERIAL SEARCH DEMAND |
+| Khoiamul Islam | 0 / 0 (no legacy Czech rows — his legacy history is under `/ireland-doctors/`, a different market) | 3+7+1 = 11 / 3 | CURRENT URL OWNS |
+
+**Every Czech doctor with real query volume is still 100% legacy-shape-owned in
+GSC's reporting.** That reads as one systemic pattern, but §14.4 shows it is
+two unrelated causes layered together.
+
+### 14.3 Hlavatý case study
+
+- **Legacy URL:** `/czechia-doctors/mudr-libor-hlavaty` — live check: `301` (via
+  redirect.pizza edge) → `/czechia/cs/doctors/mudr-libor-hlavaty` (single hop,
+  permanent).
+- **"Current" URL:** `/czechia/cs/doctors/mudr-libor-hlavaty` — live check:
+  **404**, served by the site's own Next.js not-found template (`<title>Global
+  Health</title>`, `<meta name="robots" content="noindex">`), confirmed on the
+  `www` origin directly (not a CDN/redirect-layer artifact). Tried
+  `/czechia/en/…`, `dr-libor-hlavaty`, `libor-hlavaty` slug variants — all 404.
+- **Roster:** Hlavatý is absent from the live 8-doctor Czechia listing (§14.1).
+- **`gone-content.ts` check:** Hlavatý is **not** in `GONE_DOCTORS`. That list
+  currently holds exactly one entry (`dr-grainne-ahern`, Ireland). So he is in
+  neither state the codebase has a mechanism for — not an active roster member
+  (would 200) and not a formally-confirmed departure (would 410 via the
+  documented `GONE_DOCTORS` + `slugMatcherExcludingGone` mechanism). He falls
+  through the broad `/czechia-doctors/:slug` rule, which rewrites the slug
+  unchanged onto a profile that no longer exists.
+- **90d GSC (legacy URL only, current URL has zero rows):** 573 impr / 2
+  clicks / pos 10.98. Query breakdown (13 distinct query rows, ~233 of the 573
+  impressions attributable — the rest fall under GSC's per-query privacy
+  threshold): `mudr libor hlavatý` (87 impr, pos 16.8), `libor hlavatý` (61
+  impr, pos 8.8), `mudr hlavatý české budějovice` (57 impr, pos 9.9 — a
+  location-qualified branded query), plus 10 minor name-spelling variants. All
+  are exact-clinician-name queries; none carry "online consultation" or
+  specialty qualifiers.
+- **URL Inspection (`inspect_urls`, both URLs):** both show
+  `coverageState: "Excluded by 'noindex' tag"`, `indexingState:
+  BLOCKED_BY_META_TAG`, **`googleCanonical` already set to the current URL**
+  on both — Google has already accepted the intended consolidation target
+  signal-wise. Last crawl **2026-07-30** for both — consistent with Google
+  having crawled the current URL *after* it had already gone 404/noindex.
+  `pageFetchState: SUCCESSFUL` on a 404 is expected — the not-found template
+  is a real page that fetches fine and simply declares itself noindex.
+- **Backlinks:** zero external backlinks to the legacy URL (`get_backlinks_profile`,
+  page scope) — rules out external-history residue as an explanation.
+- **Trend:** per the existing audit doc (`doctor-indexability-migration-gap-2026-08-08.md`
+  §10), legacy impressions were already declining (254→92 across two prior 28d
+  windows) before this pass, with 0 clicks in the most recent window —
+  consistent with Google's index gradually purging a page it has already
+  marked noindex, not a page still actively "winning."
+- **Classification: not "stuck," and not implementation-ready either.** The
+  prior "still stuck" framing assumed an alive current-shape profile losing a
+  consolidation race. That premise is false — there is no live successor page
+  to consolidate into. But roster/database absence is **not itself evidence
+  of retirement** — `gone-content.ts`'s own Cyplinská writeup makes exactly
+  this point (410 shipped on absence alone, then reverted same-day once no
+  positive confirmation existed). The same standard applies to Hlavatý.
+- **Assigned status: UNRESOLVED IDENTITY / DATA STATE — SEO terminal state
+  wrong, remediation blocked on identity confirmation.** Confirmed facts: the
+  legacy URL correctly redirects (single hop, permanent) to the historical
+  current-shape identity, and that identity's destination is now absent/404 —
+  a bad terminal state. Not confirmed: *why*. Three dispositions remain open,
+  none positively established by this pass:
+  - **CONFIRMED RETIRED** — would authorize adding him to `GONE_DOCTORS` (410).
+  - **LIVE UNDER ANOTHER IDENTITY** — would authorize a specific redirect to
+    his real current slug (same pattern as the existing `CORRECTIONS` tables).
+  - **DATA / MIGRATION GAP** — would authorize restoring the profile.
+  No HTTP repair is authorized until one of these is positively established.
+  This is deliberately **not** classified against the ticket's A–G routing
+  scale, the same way Cyplinská isn't — the defect is upstream of routing, in
+  unresolved doctor identity/disposition.
+
+### 14.4 Why "legacy still owns" for everyone else: a second, unrelated cause
+
+Live-checking the 5 sitemap-eligible active doctors' current pages (§14.1)
+found **3 of 8 active Czech doctors have their current-shape profile actively
+`noindex, nofollow` right now** — Michael Nytra, Nataliya Kharlamova, Gabriele
+Felici. `isPublicDoctorRecordIndexable()`
+(`frontend/lib/content/publication-validation.ts:126-142`) requires BOTH
+editorial validation to pass AND `editorialChecklist.readyToIndex === true`.
+The `readyToIndex` half is **not** the live cause here — the 2026-08-08
+migration audit (`doctor-indexability-migration-gap-2026-08-08.md` §6)
+already backfilled the checklist for these three (it was `null`
+pre-migration) and explicitly found each has **its own genuine content
+validation failure independent of that flag** — empty bio in every locale,
+logged as "SHOULD REMAIN NOINDEX (needs content)". Live re-verification
+2026-08-13 (rendered profile pages, not the historical doc) confirms this
+still holds: all three show a generic templated meta description, an empty
+"O [Name]" bio section, no specialty title beyond generic "Doctor", **and,
+newly noted, "Dosud nebyly přiřazeny žádné služby" (no services assigned)
+and no online booking slots configured in Czechia** — see §14.9. **Correct
+framing: CONTENT VALIDATION BLOCK (empty bio fails the ≥120-character
+requirement), not an editorial-flag gap** — nothing to route differently,
+nothing to consolidate; the current pages are correctly excluded from the
+index because the underlying profile content is incomplete, and setting
+`readyToIndex` alone would not change that (validation still fails).
+
+For the other 5 (indexable, sitemap-present, `index, follow` live) — Černý,
+Maklad, Pavlů, Holz, Khoiamul Islam — the redirect chain and canonical are
+both correct. Černý's own `inspect_urls` result shows the SAME
+"Excluded by noindex" verdict Google recorded on **2026-08-03/08-07** — i.e.
+crawled *before* his page's indexability was fixed. His live page is
+`index, follow` now. That is exactly what normal recrawl lag looks like: the
+fix is live, Google's cached verdict is stale, and it will clear on the next
+crawl. Ahmed Maklad already shows the target end-state — `inspect_urls`
+verdict `PASS`, `coverageState: "Submitted and indexed"`, last crawl
+**2026-08-12** (fresh), `googleCanonical` = current URL. **This is the
+control case proving the pattern resolves once (a) the page is indexable and
+(b) Google has recrawled since the fix — no redirect change was or is
+needed for these five.**
+
+### 14.5 Sitemap and internal links
+
+`/sitemap.xml` lists exactly 5 Czech doctors × 6 locales = 30 current-shape
+URLs (Černý, Maklad, Pavlů, Holz, Khoiamul Islam) — precisely the 5 that are
+live-indexable. **Zero legacy-shape URLs in the sitemap.** The live doctor
+directory (`/czechia/cs/doctors`) links only to current-shape URLs (verified
+by extracting every `/doctors/` href from the rendered page — 8 links, all
+`/czechia/cs/doctors/…`, matching §14.1's roster exactly, no legacy hrefs).
+**Zero remaining internal legacy links** — confirms SEO-GROWTH-001 (footer)
+plus this pass (doctor directory) between them cover the internal-linking
+surface for this market.
+
+### 14.6 Systemic-vs-isolated assessment
+
+Two independent findings, not one:
+
+1. **Unresolved doctor-identity/data-state gap** (legacy → 404 successor):
+   confirmed for **Hlavatý** (material, 573 impr) and **Andrei Lavrov**
+   (trivial, 18 impr) — both absent from the active roster AND absent from
+   `GONE_DOCTORS`. Shared symptom, but **not yet a shared confirmed cause** —
+   see §14.3, roster absence alone does not establish retirement. **Isolated
+   to these two identities**, not a broad redirect-rule problem — the
+   mechanism itself (`GONE_DOCTORS` + `slugMatcherExcludingGone`) is proven
+   correct (it already works for `dr-grainne-ahern`).
+2. **Content validation block** (current page itself correctly noindexed):
+   confirmed for 3 of 8 active doctors (Nytra, Kharlamova, Felici) — empty
+   bio in every locale, not a `readyToIndex` gap (that was already backfilled
+   2026-08-08). Real, active-supply, content-ops issue — routed to
+   CZ-SEO-005 below rather than folded into this ticket's routing scope.
+
+### 14.7 Root-cause classification
+
+**No A–G routing classification is assigned for Hlavatý.** The redirect
+*mechanics* audited across all 8 active doctors are clean (single-hop,
+permanent, correct slug, no chains, no internal legacy links, clean sitemap),
+but Hlavatý's terminal state (legacy → dead current URL) cannot be assigned a
+routing classification until his disposition is known — see §14.3's
+UNRESOLVED IDENTITY / DATA STATE status. This is a deliberate non-classification,
+mirroring how `gone-content.ts` already treats Cyplinská.
+
+The separate, larger-looking "legacy still owns" pattern across the 5 healthy
+active doctors is **A — NORMAL CONSOLIDATION LAG** (Maklad is the proof case).
+The content-validation block on 3 doctors (§14.4) is real but is a content
+opportunity, not a routing defect — see CZ-SEO-005 (§15 below), opened as a
+separate, higher-priority ticket per reviewer direction.
+
+### 14.8 Implementation gate
+
+**No batch is authorized for Hlavatý / Andrei Lavrov in this pass.** Per the
+Cyplinská precedent, database/roster absence is not positive evidence of
+retirement — adding either to `GONE_DOCTORS` (or writing any other HTTP
+repair) requires first establishing which of CONFIRMED RETIRED / LIVE UNDER
+ANOTHER IDENTITY / DATA-MIGRATION GAP actually applies. **Recommendation:
+WAIT — flag for a cheap identity-evidence check on future passes** (owner
+statement, AuditLog search, cross-market roster search — the same evidence
+classes `gone-content.ts` used for Cyplinská), not a routing/code batch.
+
+The active-doctor content-validation finding (§14.6 item 2) is the batch this
+pass actually authorizes: **CZ-SEO-005 — Active Czech Doctor Indexability &
+Content-Completion Investigation** (see §15) — investigation-only, evaluating
+whether Nytra/Kharlamova/Felici have authoritative first-party content
+available to complete their profiles.
+
+### 14.9 Measurement baseline
+
+- Hlavatý legacy URL: 573 impr / 2 clicks / pos 10.98 (90d to 2026-08-09),
+  trending down (254→92 impr across the two most recent 28d windows per the
+  prior audit). Zero live current-URL competitor to compare against today.
+  No success criterion defined until disposition is resolved — premature to
+  set a target for an unauthorized repair.
+- Andrei Lavrov: 18 impr / 2 clicks (90d) — track only, same disposition gap
+  as Hlavatý, far lower priority.
+
+### 14.10 Control-state carry-forwards (unchanged by this pass)
+
+Global Foundation = VERIFIED / MONITOR EXCEPTIONS. Ireland = no implementation.
+Ireland labs = WAIT ~2026-09-08. Czech GP (`gp-consultation-online`) =
+CZ-SEO-001 — RANKING RAMP / WAIT-MEASURE, remeasure ~2026-09-08. Czech mental
+health = CZ-SEO-002 — NO REAL ASYMMETRY / MONITOR. Czech women's health =
+CZ-SEO-003 — EXISTING PAGE / NO DEMAND / NO ACTION.
+
+**NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-004 UPDATE UNCOMMITTED.**
+
+---
