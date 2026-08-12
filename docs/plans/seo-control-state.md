@@ -184,7 +184,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-005 | Bare Brazil legacy families | Legacy routing | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | `4a5f0fad`; probes 308 correctly | n/a | None. `/brazil-doctors/*` 404s but has **zero** GSC impressions in 90 days — not a defect |
 | SEO-GROWTH-006 | Locale-prefixed Brazil legacy families | Legacy routing | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | `798c7282`; `/pt/home-br`, `/es/home-br`, `/cs/home-br` all 308 to the right locale | n/a | None |
 | SEO-GROWTH-007 | Telmo Coelho indexation | Indexation | **WAITING FOR GOOGLE** | 2026-08-12 | `/portugal/pt/doctors/dr-telmo-coelho` serves `index, follow`, self-canonical, in sitemap | **Stale**: coverage "Excluded by ‘noindex’ tag", last crawl 2026-07-26 — 13 days before the fix | Watchlist. Do not re-investigate before the crawl date advances |
-| SEO-GROWTH-008 | Ireland sick-cert consolidation | Legacy routing + ranking | **PARTIALLY CLOSED / WAITING FOR GOOGLE** | 2026-08-12 | `/ireland/sick-leave` → 308 → `/ireland/en/services/sick-certificate-ireland` (200, `index, follow`); `/ireland/es/health/sick-cert-online` → 308 → the ES service page (`8e69793c`) | Both legacy URLs still show "Submitted and indexed" (crawls 2026-07-05 and 2026-07-25, both pre-fix) | Redirects done; the *ranking* half is open — see NOW batch |
+| SEO-GROWTH-008 | Ireland sick-cert consolidation | Legacy routing + ranking | **CLOSED — MONITOR** | 2026-08-12 | Redirects live (`/ireland/sick-leave`, `/ireland/es/health/sick-cert-online` both 308 to current-shape, indexable targets); intent investigation = SUPPORTIVE CLUSTER, no cannibalization; 4 blog→service links live; service title/meta reviewed vs. 6 competitors, no rewrite needed (SEO-GROWTH-008D); 3-step "How it works" block live (SEO-GROWTH-008E, verified) | Two legacy URLs still show "Submitted and indexed" (crawls 2026-07-05 and 2026-07-25, both pre-fix) | None — see §7 MONITOR. Do not reopen without a new specific on-page defect |
 | SEO-GROWTH-009 | Retired `/post/[slug]` route | Legacy routing | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | Route deleted 2026-05-14/17; `/post/*` is now a `next.config.ts` redirect only. `/post/<unknown>` → 308 → `/ireland/en/blog` | n/a | None. Two audit docs already carry the correction header |
 | SEO-GROWTH-010 | Spain market audit | Market analysis | **CLOSED as an audit; findings promoted to the roadmap** | 2026-08-12 | n/a | n/a | See §7 NEXT-1 and NEXT-3. **No standalone Spain audit document exists in the repository** — the audit was conducted in-session; its conclusions are recorded in §6 and §7 |
 
@@ -224,63 +224,80 @@ its fix date and Google's verdict is still wrong.
 
 ### NOW — one batch
 
-**Ireland sick-cert cluster: earn the clicks the impressions already exist for.**
+**SEO-GROWTH-011 — Spain doctor cross-locale ranking-fragmentation investigation.**
 
-This is the largest single concentrated opportunity in current data.
-`/ireland/en/blog/sick-certificate-ireland-employee-rights` drew **1,616 impressions**
-in the last 28 days at position 15.8 for **11 clicks (0.68% CTR)** — the biggest
-non-homepage impression pool on the site, converting at a tenth of the site average.
-The transactional page that should capture that demand,
-`/ireland/en/services/sick-certificate-ireland`, ranks far deeper (pos 46.9 over 90d,
-0 clicks). Meanwhile "sick cert online" itself shows 52 impressions at position 34.
+The query "alfredo del valle moreno montañez" returns roughly **five** MGH URLs for
+the same doctor — `/spain/{cs,en,es,pt}/doctors/dr-alfredo-del-valle` plus
+`/spain/es/see-a-specialist` — for 24+ combined impressions and **zero clicks**, best
+position ~6.3. The same doctor converts at 60–67% CTR when a single URL ranks
+("moreno montañez dermatologo": 3 clicks / 5 impressions). The prior Spain audit
+diagnosed this as a CTR anomaly; that diagnosis is **superseded pending investigation**
+— the fresh query×page pull suggests ranking fragmentation or cross-locale duplication
+instead, but this is not yet confirmed cannibalization.
 
-The redirect half of this problem is already done (SEO-GROWTH-008). What is left is
-ranking and click-through, both of which are in our control:
+This is an **investigation, not a fix**. Before any code change, establish: exact URLs
+receiving impressions, their locales, the query distribution across them, canonical
+state, hreflang state, sitemap eligibility, indexability, current internal links,
+whether each URL carries legitimate localized doctor content, and whether Google is
+alternating which URL it serves for the same query. Only once that evidence exists does
+this become a scoped fix (possibly the same defect class as the `/health/` locale
+integrity fix, `db318dfe` — but that is a hypothesis to test, not a conclusion to act
+on). Then audit the other five markets' doctor clusters for the same pattern.
 
-1. Rewrite the blog article's title and meta description for click-through against an
-   informational-intent SERP, then re-measure CTR at 2 and 4 weeks.
-2. Strengthen the blog → service internal link so the article routes intent rather than
-   absorbing it.
-3. Re-check whether the service page and the article are competing for the same query
-   set, and if so make the article's target explicitly informational.
+Evidence: GSC query×page pull, 2026-08-12. Effort: investigation, low. Confidence:
+medium — real signal, root cause not yet established.
 
-Evidence: GSC page and query pulls, 2026-08-12. Effort: low. Confidence: high.
-Commercial relevance: highest in the Ireland market.
+### NEXT — up to three, evidence-backed
 
-### NEXT — up to four, evidence-backed
-
-1. **Cross-locale doctor-page cannibalization (Spain first).** The query
-   "alfredo del valle moreno montañez" returns **five** URLs for the same doctor —
-   `/spain/{cs,en,es,pt}/doctors/dr-alfredo-del-valle` plus `/spain/es/see-a-specialist`
-   — for 24 combined impressions and **zero clicks**, best position 6.3. The same
-   doctor converts at 60–67% CTR when a single URL ranks
-   ("moreno montañez dermatologo": 3 clicks / 5 impressions). This is the real content
-   behind what was previously logged as an "Alfredo del Valle CTR anomaly": the CTR is
-   not anomalous, the ranking is split. Same defect class as the `/health/` locale
-   integrity fix (`db318dfe`) — scope the doctor hreflang/inlink cluster to locales
-   that have real translated content, then audit the other five markets.
-2. **Diagnose the impression surge.** Roughly 20,000 additional impressions appeared
+1. **Diagnose the impression surge.** Roughly 20,000 additional impressions appeared
    from 2026-08-06 onward at positions 18–26, with no matching click growth. Determine
    whether this is newly-indexed calculator/tool pages, out-of-market UK/US traffic, or
    a genuine new ranking surface, and decide whether any of it is worth pursuing.
    Investigation only, no code, before it can be prioritised.
-3. **Spain commercial-page underperformance.** "consulta medica online" and its variants
+2. **Spain commercial-page underperformance.** "consulta medica online" and its variants
    split across `/spain/en/services/consulta-medica-online` (504 impr, pos 23.2),
    `/spain/es/services/consulta-medica-online`, and the legacy-shaped
    `/spain/es/gp-consultation-online`. Consolidate internal links onto the ES-locale
    service page. Related: `/spain/es` itself draws 898 impressions at position 29.5 for
    5 clicks.
-4. **The homepage `/`.** 1,984 impressions / 154 clicks / position 18.9 in the current
+3. **The homepage `/`.** 1,984 impressions / 154 clicks / position 18.9 in the current
    window — by far the largest single earning page. The 2026-07-28 plan scheduled a CTR
    check on head terms from 2026-08-04 that was never carried out. It is now overdue,
    and the open product question behind it (is a country-selection interstitial the
    right destination for "global health clinic"?) is still unanswered.
 
+This ranking is not fixed. If a future OpenSEO/GSC refresh surfaces something with
+stronger evidence, it can outrank any of the three above — do not carry this order
+forward by default.
+
 ### MONITOR — waiting on Google or on data
 
 Everything in §6, on the 2–3 week cadence stated there. Plus:
 
-- Ireland sick-cert consolidation, measured after the NOW batch ships.
+- **Ireland sick-cert cluster — MONITOR / MEASURE, not a work item.** Reconciled
+  2026-08-12 against the completed SEO-GROWTH-008 series; do not reopen without a new
+  specific defect. Current state, each point production-verified this pass:
+  - Redirects corrected (SEO-GROWTH-008, live-checked in §6).
+  - Intent investigation concluded **SUPPORTIVE CLUSTER** — the blog article and the
+    service page serve different intent; no genuine current-page cannibalization was
+    confirmed. Not an open problem.
+  - Blog → service internal linking is **already in place**: the live article contains
+    four links to `/ireland/en/services/sick-certificate-ireland` (three relative,
+    one absolute), including contextual in-body linking — verified live 2026-08-12.
+    The original audit undercounted this.
+  - Service title/meta reviewed against six recurring page-1 competitors
+    (SEO-GROWTH-008D): intent-clear, names Ireland explicitly, states IMC
+    registration, same-day service, employer/college usage and €45 price — judged at
+    least as informative as the competition. **No title/meta rewrite recommended.**
+  - The confirmed format gap — a missing visible numbered process — was fixed
+    (SEO-GROWTH-008E): a three-step "How it works" block is live.
+    **VERIFIED BY PRODUCTION CHECK**, 2026-08-12 (three "How It Works"/step-heading
+    matches in raw HTML of `/ireland/en/services/sick-certificate-ireland`).
+  - Authority/housekeeping manual actions remain (see §7 MANUAL).
+  - The blog's 1,616-impression / 0.68% CTR result is useful monitoring data, not
+    on its own justification for another rewrite — no new on-page defect has been
+    established. Do not reopen this cluster until fresh query-level evidence
+    identifies a specific new problem.
 - Czechia's CTR advantage (6.39%, the best of any market) on the smallest impression
   base — watch whether new Czech service coverage sustains it.
 
