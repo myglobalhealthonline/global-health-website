@@ -197,7 +197,8 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
                       {group.label}
                     </h2>
                   ) : null}
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 [&>*:first-child]:lg:col-span-2">
+                  {/* Single column: every card is a long horizontal card. */}
+                  <div className="grid gap-5 sm:gap-6">
                     {group.posts.map((post) => {
                       // Per-post, not once per page: a country index legitimately
                       // mixes country-specific and global posts (blog.service.ts's
