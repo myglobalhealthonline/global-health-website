@@ -302,6 +302,9 @@ enum AuditAction {
   CROSS_BORDER_RX_REQUESTED
   /// Doctor B accepted / asked for more info / refused a request.
   CROSS_BORDER_RX_DECIDED
+  /// Doctor pressed "notify patient" from the consultation room — patient
+  /// was emailed/WhatsApp'd that the doctor is ready to see them.
+  PATIENT_NOTIFIED_DOCTOR_READY
 }
 
 enum CountryAccessModel {

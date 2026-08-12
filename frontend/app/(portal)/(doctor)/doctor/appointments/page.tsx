@@ -27,6 +27,7 @@ import {
 } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { AppointmentCard, type AppointmentCardTone } from "@/components/AppointmentCard";
+import { NotifyDoctorReadyButton } from "@/components/NotifyDoctorReadyButton";
 import {
   formatAppDateTimeShort,
   formatAppDayMonth,
@@ -50,6 +51,16 @@ function isAppointmentLive(a: Pick<DoctorAppointment, "scheduledAt" | "status">)
   const start = new Date(a.scheduledAt).getTime();
   const now = Date.now();
   return start <= now && now <= start + LIVE_WINDOW_MS;
+}
+
+// "Notify ready" stops making sense once the consultation's own time window
+// has closed — `endAt` is the real slot/service span (see
+// resolveConsultationEndAt on the backend); COMPLETED/CANCELLED rows are
+// over regardless of the clock.
+function isConsultationOver(a: Pick<DoctorAppointment, "endAt" | "status">): boolean {
+  if (a.status === "COMPLETED" || a.status === "CANCELLED") return true;
+  if (!a.endAt) return false;
+  return new Date(a.endAt).getTime() < Date.now();
 }
 
 function statusToneForAppointmentCard(status: string): AppointmentCardTone {
@@ -100,6 +111,13 @@ export default async function DoctorAppointmentsPage({
     confirmed: d.appointments.statusConfirmed,
     cancelled: d.appointments.statusCancelled,
     concluded: d.appointments.statusConcluded,
+  };
+  const notifyReadyCopy = {
+    button: d.appointments.notifyReadyButton,
+    sending: d.appointments.notifyReadySending,
+    sent: d.appointments.notifyReadySent,
+    partial: d.appointments.notifyReadyPartial,
+    failed: d.appointments.notifyReadyFailed,
   };
   const sp = searchParams ? await searchParams : {};
   const view = pick(sp, "view");
@@ -422,6 +440,11 @@ export default async function DoctorAppointmentsPage({
                               <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
                                 {d.common.open}
                               </Btn>
+                              <NotifyDoctorReadyButton
+                                appointmentId={a.id}
+                                copy={notifyReadyCopy}
+                                disabled={isConsultationOver(a)}
+                              />
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-2">
@@ -491,6 +514,13 @@ export default async function DoctorAppointmentsPage({
                             >
                               <CalendarDays className="size-3.5" aria-hidden /> {d.appointments.openWorkspace}
                             </Link>
+                            {a.meetingUrl ? (
+                              <NotifyDoctorReadyButton
+                                appointmentId={a.id}
+                                copy={notifyReadyCopy}
+                                disabled={isConsultationOver(a)}
+                              />
+                            ) : null}
                           </>
                         }
                       />

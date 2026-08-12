@@ -151,7 +151,12 @@
     "meeting": "Reunião",
     "ready": "Pronto",
     "joinSession": "Entrar na sessão",
-    "openWorkspace": "Abrir espaço de trabalho"
+    "openWorkspace": "Abrir espaço de trabalho",
+    "notifyReadyButton": "Notificar pronto",
+    "notifyReadySending": "A notificar…",
+    "notifyReadySent": "Paciente notificado",
+    "notifyReadyPartial": "Notificado por email — WhatsApp não enviado",
+    "notifyReadyFailed": "Não foi possível notificar o paciente"
   },
   "appointmentDetail": {
     "back": "Voltar às consultas",

@@ -32,11 +32,13 @@ import {
   ServicePriceMissingError,
   SlotNotAvailableError,
 } from "../modules/appointments/manual-booking.service.js";
+import { notifyPatientDoctorReady } from "../modules/appointments/notify-doctor-ready.service.js";
 
 /**
  * Doctor-side appointment actions + per-patient drilldown + invoices.
  *
  *   PATCH /api/doctor/appointments/:id          — meetingUrl / status
+ *   POST  /api/doctor/appointments/:id/notify-ready — email+WhatsApp patient
  *   GET   /api/doctor/patients/:email           — single-patient detail
  *   GET   /api/doctor/invoices?from=&to=&status= — invoices index
  *
@@ -410,6 +412,54 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not finalize appointment"));
+      }
+    },
+  );
+
+  /**
+   * "Doctor is ready" — one click from the doctor's own appointment row,
+   * fired once they're in the consultation room. Emails + WhatsApps the
+   * patient the join link. Always attempts both channels; WhatsApp is
+   * skipped (not failed) when the patient has no phone or hasn't opted in.
+   */
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/notify-ready",
+    { config: { rateLimit: { max: 20, timeWindow: "1 hour", skipOnError: false } } },
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const result = await notifyPatientDoctorReady({
+          appointmentId: request.params.id,
+          doctorIdScope: auth.doctorId,
+        });
+        if (!result.ok) {
+          return reply.status(result.status).send(errorResponse(result.message));
+        }
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "PATIENT_NOTIFIED_DOCTOR_READY",
+          entityType: "Appointment",
+          entityId: request.params.id,
+          metadata: { sent: result.sent, failed: result.failed },
+          request,
+        }).catch(() => {});
+        return okResponse(
+          {
+            sent: result.sent,
+            failed: result.failed,
+            missingPhone: result.missingPhone,
+            missingConsent: result.missingConsent,
+          },
+          "Patient notified",
+        );
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not notify patient"));
       }
     },
   );
