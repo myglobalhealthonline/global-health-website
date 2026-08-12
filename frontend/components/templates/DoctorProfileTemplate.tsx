@@ -503,7 +503,7 @@ export function DoctorProfileTemplate({
                   {profile.faqs.map((faq) => (
                     <details
                       key={faq.id}
-                      className="rounded-[12px] border border-[var(--color-border)] bg-white p-4"
+                      className="gh2-glass-forest gh2-dark-content rounded-[12px] p-4"
                     >
                       <summary className="cursor-pointer text-[15px] font-bold text-[var(--color-text-primary)]">
                         {faq.question}
@@ -520,10 +520,10 @@ export function DoctorProfileTemplate({
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div
-              className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-8 shadow-[var(--shadow-card)] md:p-10"
+              className="gh2-glass-forest gh2-dark-content p-8 md:p-10"
             >
               <span
-                className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]"
+                className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]"
               >
                 {t?.bookThisClinicianLabel ?? "Book this clinician"}
               </span>
