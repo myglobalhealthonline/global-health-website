@@ -4,7 +4,11 @@
 remediation ledger, the organic-growth roadmap, and the indexation watchlist. Every
 other SEO document in this repository is historical evidence, not current status.
 
-Rebaselined: **2026-08-12** (task `SEO-CONTROL-001`).
+Rebaselined: **2026-08-12** (task `SEO-CONTROL-001`, latest evidence pass
+`SEO-GROWTH-013`) — this date is when the control-state document and its evidence were
+last refreshed, **not** the latest date GSC has data for. GSC lags ~3 days; every GSC
+window in this file ends on the most recent complete date available at extraction time
+(2026-08-09 for the §1/§2 baseline), never on the rebaseline date itself.
 Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth.online`
 
 ---
@@ -192,7 +196,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-008 | Ireland sick-cert consolidation | Legacy routing + ranking | **CLOSED — MONITOR** | 2026-08-12 | Redirects live (`/ireland/sick-leave`, `/ireland/es/health/sick-cert-online` both 308 to current-shape, indexable targets); intent investigation = SUPPORTIVE CLUSTER, no cannibalization; 4 blog→service links live; service title/meta reviewed vs. 6 competitors, no rewrite needed (SEO-GROWTH-008D); 3-step "How it works" block live (SEO-GROWTH-008E, verified) | Two legacy URLs still show "Submitted and indexed" (crawls 2026-07-05 and 2026-07-25, both pre-fix) | None — see §7 MONITOR. Do not reopen without a new specific on-page defect |
 | SEO-GROWTH-009 | Retired `/post/[slug]` route | Legacy routing | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | Route deleted 2026-05-14/17; `/post/*` is now a `next.config.ts` redirect only. `/post/<unknown>` → 308 → `/ireland/en/blog` | n/a | None. Two audit docs already carry the correction header |
 | SEO-GROWTH-010 | Spain market audit | Market analysis | **CLOSED as an audit; findings promoted to the roadmap** | 2026-08-12 | n/a | n/a | See SEO-GROWTH-013 (Spain commercial-service underperformance) and the closed SEO-GROWTH-011 doctor-locale investigation. **No standalone Spain audit document exists in the repository** — the audit was conducted in-session; its conclusions are recorded in §6 and §7 |
-| SEO-GROWTH-013 | Spain commercial-service underperformance | Ranking | **INVESTIGATE** | 2026-08-12 | `/spain/es`, `/spain/es/gp-consultation-online`, `/spain/es/services/consulta-medica-online`, `/spain/en/services/consulta-medica-online` all correctly architected — SEO-GROWTH-010 already found this a SUPPORTIVE CLUSTER / intent split, not confirmed cannibalization | Positions 20–40+ despite valid architecture and internal linking | Fresh query→page and SERP investigation. Determine whether the gap is page format, topical depth, authority, or page-role ambiguity — do not assume consolidation is the fix |
+| SEO-GROWTH-013 | Spain commercial-service underperformance | Ranking | **CLOSED — INVESTIGATED / NO STRUCTURAL DEFECT** | 2026-08-12 | All 6 commercial URLs technically clean (200, index/follow, self-canonical, in sitemap, correctly linked from `/spain/es`). Not cannibalization — page roles are legitimately distinct (homepage brand+generic, `gp-consultation-online` = GP hub/catalog, `services/consulta-medica-online` = GP detail, `services/dermatologia-especialista-online` = specialist detail) | Bottleneck is SERP competitive wall (national insurers + Doctoralia/TopDoctors-scale aggregators dominate the generic cluster; boutique/solo practitioners dominate specialty clusters) plus a verified trust-presentation gap: Doctify reviews render on hub/team pages but not on service detail pages | See §7 SEO-GROWTH-013 for full findings and substantive conclusions. Next: SEO-GROWTH-014, a feasibility investigation only (not an implementation batch) — do not add Doctify UI/schema before that lands |
 | SEO-GROWTH-011 | Spain doctor cross-locale ranking "fragmentation" (Alfredo del Valle) | Indexation / hreflang | **EXPECTED BEHAVIOR — CLOSED, no code change** | 2026-08-12 | All 5 locale URLs (`spain/{es,cs,en,pt,de}/doctors/dr-alfredo-del-valle`) are 200, self-canonical (each declares and Google accepts its own canonical — no consolidation attempted by either side), `index, follow`, in sitemap, carry distinct per-locale `<title>` (Dermatólogo/Dermatolog/Dermatologist/Dermatologista/Dermatologe — real translation, not a duplicate stub), and cross-link each other via the sibling-locale switcher. The one legacy URL in the cluster, `/pt/spain-doctors/dr-alfredo-del-valle`, is "Crawled – currently not indexed" (last crawl 2026-03-08) and draws 1 impression in 90 days — a dead stub, not a participant | Google serves each locale variant as its own PASS result; no `noindex`, no wrong-canonical, no stale-crawl divergence | None. See §7 for the full query×URL matrix and reasoning |
 | SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
 
@@ -364,19 +368,156 @@ sample checked.
 supersedes the Spain-only framing of the pre-existing DEFERRED "calculator/tool long
 tail" entry below — it is now confirmed sitewide, not Spain-specific.
 
+### SEO-GROWTH-013 — investigated, 2026-08-12
+
+**Method.** Fresh `get_search_console_performance` pull, `query`×`page`, current 28d
+(2026-07-12→08-09), filtered `country=esp`, cross-checked against the prior 28d window,
+`inspect_urls` on the six material Spain commercial URLs, four live `get_serp_results`
+pulls (`consulta medica online`, `medico online`, `dermatologia online`, `psiquiatra
+online`, es-ES/Spain), and three `get_domain_overview` pulls (MGH, one generic-cluster
+competitor, one specialty-cluster competitor). Live page checks on MGH's GP and
+dermatology detail pages and one top-ranking competitor page.
+
+**Baseline (commercial queries only — tools, doctor-name searches, and AI-Overview-style
+long conversational strings excluded).** 292 query×page rows, 1,034 impressions, 2
+clicks, weighted position ~30 across the current window. By page:
+
+| Page | Impr | Clicks | Weighted pos | Read |
+| --- | ---: | ---: | ---: | --- |
+| `/spain/es` (homepage) | 493 | 1 | 28.0 | Mix of brand ("global health", 55 impr, pos 6.9) and generic commercial terms |
+| `/spain/en/services/consulta-medica-online` | 194 | 0 | 40.4 | **Wrong-locale**: ranks for Spanish-language queries, no internal referrers found by Google |
+| `/spain/es/services/dermatologia-especialista-online` | 93 | 0 | 42.9 | Specialty detail page |
+| `/spain/es/gp-consultation-online` | 87 | 0 | 32.6 | GP **hub** (multi-service catalog, "45.000 consultas en 2025" trust bar) |
+| `/spain/es/services/consulta-medica-online` | 54 | 0 | 22.1 | GP **detail** page — best-positioned page in the whole cluster |
+| `/spain/es/see-a-specialist` | 29 | 1 | 26.7 | Specialist hub |
+
+**Prior 28d window (2026-06-13→07-11) had zero impressions on any of these six URLs** —
+the query×page rows in that window are almost entirely brand/navigational terms against
+legacy `/es/home*` pages. `inspect_urls` shows first crawl dates of 2026-07-17→07-20 for
+the three service-detail pages — meaning the commercial cluster is genuinely new to
+Google's Spain rankings this window, not a page that has been stuck at position 30 for
+months. Positions 20–40 partly reflect normal post-indexing ramp, not a ceiling.
+
+**Query×URL matrix, flagship term "consulta medica online" and its generic variants
+(medico online, doctor online, online consultation, …):** splits across four pages —
+homepage (pos ~29, brand+generic mixed), `gp-consultation-online` hub (pos ~21–35,
+literally titled "Consulta Médica Online en España"), `services/consulta-medica-online`
+detail (pos ~17–40, the strongest of the three Spanish pages), and the English detail
+page (pos 12–93, erratic, zero internal referrers). Classification: **SUPPORTIVE
+CLUSTER** for hub vs. detail (legitimately different formats: catalog+trust-stats vs.
+single-service FAQ page — not duplicate content) with a **minor INTENT SPLIT** on the
+single highest-value bare query, since hub and detail both target it head-on; the
+English page is **WRONG LOCALE**, weakly linked, and not a meaningful contributor.
+
+**Live SERPs (4 queries, Spain/es).** Neither MGH page appears in the top 20 for
+`consulta medica online`, `medico online`, `dermatologia online`, or `psiquiatra
+online`. Generic cluster ("consulta/medico online") top 20 is dominated by **national
+insurers with built-in telehealth** (Sanitas, DKV, Caser, SegurCaixa Adeslas, Aegon,
+Generali, Línea Directa) plus platform-scale aggregators (Doctoralia, TopDoctors) and
+dedicated telehealth brands (SaludOnNet, ZAVA, mediQuo, Virtual Clínica) — a real
+authority **and** business-model wall (insurers bundle the service free with a policy).
+Specialty clusters (dermatología, psiquiatría) are dominated instead by **boutique/solo
+practitioners** (dermatologia-bagazgoitia.com, madriderma.com, several named
+psychiatrists) plus the same two aggregators — a substantially lower wall.
+
+**Authority spot-check** (`get_domain_overview`, ES market): MGH 5 organic
+traffic/4 keywords · a small generic-cluster competitor (virtualclinica.com) 997/236 ·
+the top specialty competitor (dermatologia-bagazgoitia.com, solo practitioner since
+2015) 21,882/1,751. Classification: **PRIMARY** for the generic cluster, **CONTRIBUTING**
+for specialty — the specialty wall is lower but still real (a decade of content and
+backlinks beats a page that's three weeks old in Google's index).
+
+**Competitor page-format comparison** (MGH dermatología detail vs.
+dermatologia-bagazgoitia.com, the #2 specialty result). MGH's page is not thin —
+condition list, FAQ, pricing, doctor card with collegiate registration number, GDPR/
+Stripe security copy — arguably deeper clinically than the competitor's. The one
+material, verified difference: the competitor displays **4.9/5, 140+ Google reviews,
+with named testimonials inline**; MGH's service detail pages show none. MGH does run
+Doctify (confirmed live: `Doctify` appears in the page's cookie-consent copy — "Doctify
+para mostrar reseñas de pacientes" — and the GP hub page separately shows "45.000
+consultas en 2025 · Valorado en Doctify") but that trust bar does **not** render on the
+service **detail** pages that carry most of the commercial-cluster impressions. This is
+a verified, specific gap — not a copy-the-competitor cosmetic ask.
+
+**Internal linking** (`inspect_urls` referrers): homepage links directly to the
+dermatología and GP detail pages; the GP hub is linked from homepage and other-locale
+hubs. Only the English detail page shows no discovered internal referrers — consistent
+with it being an unintended wrong-locale ranking rather than a linking defect. No new
+internal-link problem found; SEO-GROWTH-010's "structurally healthy" finding holds.
+
+**CTR.** Two clicks on 1,034 impressions, essentially all at position 20+. Per the
+project's own CTR rule, this is not a CTR question — ranking/visibility comes first.
+
+**Bottleneck (Step 13).** Generic cluster: **SERP COMPETITIVE WALL / AUTHORITY**
+(primary) plus a minor **PAGE-ROLE** overlap between homepage, hub and detail on the
+single bare head term, plus the verified **TRUST PRESENTATION** gap. Specialty cluster
+(dermatología, psiquiatría): **TRUST PRESENTATION** is the most concrete, fixable,
+differentiating gap — content depth and price are already competitive; authority is
+CONTRIBUTING, not primary, because the specialty wall is lower and the MGH pages are
+still early in their indexing ramp.
+
+**Ranked opportunities (2 credible, not forced to 5):**
+
+| Rank | Cluster | Page | Impr | Pos | Bottleneck | Next action |
+| --- | --- | --- | ---: | ---: | --- | --- |
+| 1 | Dermatología especialista | `/spain/es/services/dermatologia-especialista-online` | 93 (+dermatología-cluster total 95) | 42.9 | Trust presentation (verified gap) + minor authority | Surface the existing Doctify review signal on the service detail page template |
+| 2 | Médico general / consulta online | `/spain/es/services/consulta-medica-online` | 54 direct (637 cluster-wide) | 22.1 | Authority/business-model wall (insurers) + minor page-role overlap with hub/homepage | No fix recommended now — the wall is structural; monitor only |
+
+Psiquiatría/salud mental (34 impr, pos 62) shows the same boutique-competitor dynamic as
+dermatología but the impression base is too small to justify a standalone batch —
+folded into the dermatología follow-up if that action proves out.
+
+**Classification: CLOSED — INVESTIGATED / NO STRUCTURAL DEFECT.** Substantive
+conclusions:
+
+- Generic Spain commercial cluster ("consulta/medico online") → primarily an
+  authority/business-model wall (national insurers bundle telehealth free with a
+  policy; platform-scale aggregators dominate the rest). Not something a page-level fix
+  moves quickly.
+- Homepage / GP hub / GP detail → **supportive roles**, genuinely different formats
+  (brand+generic landing / catalog+trust-stats / single-service FAQ). No consolidation
+  case.
+- `/spain/en/services/consulta-medica-online` ranking Spanish-language queries →
+  wrong-locale behavior confirmed, but minor (194 impr, zero clicks, no internal
+  referrers) — not the commercial bottleneck.
+- Dermatología → trust presentation (Doctify reviews rendering on hub pages but not
+  service-detail pages) is the clearest fixable gap; content depth and price are
+  already competitive.
+- CTR → not actionable; positions are 20+ almost throughout, and the project's own rule
+  says ranking comes before CTR at that depth.
+- Internal linking → healthy; homepage and hubs link directly to the material pages.
+- Pages are newly indexed for Spain commercial queries (first crawl 07-17→07-20, zero
+  impressions the prior 28d window) — some of the ranking depth is normal post-index
+  ramp-up, not a ceiling.
+
+**Recommended next batch (ONE, not a bundle — investigation only, this task did not
+implement anything):** `SEO-GROWTH-014` — a feasibility investigation into the Doctify
+trust-signal gap, not an implementation batch. Starting point
+`/spain/es/services/dermatologia-especialista-online`, but scoped to the shared
+service-detail template/architecture, not special-cased to dermatology. Open questions
+to resolve before any UI or schema change: what powers the existing Doctify
+integration; whether MGH has real retrievable review/rating data through it, or the
+hub's "Valorado en Doctify" line is CMS copy with no backing data; whether a
+service-detail page can legitimately show practice-level (not service-level) reviews,
+and whether repeating the same practice-level rating on every service page would be
+accurate; whether a reusable component exists or the shared template needs to change;
+locale/consent-loading implications; and whether visible-UI-only is justified where
+`AggregateRating` schema would not be. Target classification: one of READY TO
+IMPLEMENT — EXISTING VERIFIED REVIEW DATA / UI POSSIBLE, SCHEMA NOT JUSTIFIED / MANUAL
+DOCTIFY CONFIGURATION REQUIRED / PRACTICE-LEVEL REVIEWS NOT APPROPRIATE FOR SERVICE
+PAGES / NO ACTION. Implementation, if any, follows only after that classification.
+
 ### NOW — one batch
 
-**SEO-GROWTH-013 — Spain commercial-service underperformance investigation.**
-Investigation only, no implementation. "consulta medica online" and its variants split
-across `/spain/en/services/consulta-medica-online` (504 impr, pos 23.2),
-`/spain/es/services/consulta-medica-online`, the legacy-shaped
-`/spain/es/gp-consultation-online`, and `/spain/es` itself (898 impr, pos 29.5, 5
-clicks). SEO-GROWTH-010 already found this cluster a SUPPORTIVE CLUSTER / intent split,
-not confirmed cannibalization — do not assume link consolidation is the remedy before
-establishing why. Core question: why do valid, correctly-architected Spain commercial
-pages receive meaningful impressions but stay around positions 20–40+? Run a fresh
-query→page and SERP investigation and determine whether the gap is page format, topical
-depth, authority, or page-role ambiguity.
+**SEO-GROWTH-014 — Spain service-detail Doctify trust-signal feasibility
+investigation.** Investigation only, no implementation. Confirm what powers the
+existing Doctify integration, whether MGH has real retrievable review/rating data
+through it, whether a service-detail page can legitimately show practice-level
+reviews, and whether the shared service-detail template can carry the signal without a
+special case for dermatology. See §7 SEO-GROWTH-013 for the target classification set.
+Implementing a Doctify UI/schema change is explicitly **not** authorized by this
+entry — it follows only after SEO-GROWTH-014 lands on READY TO IMPLEMENT or UI
+POSSIBLE, SCHEMA NOT JUSTIFIED.
 
 ### NEXT — up to one, evidence-backed
 
@@ -452,7 +593,10 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
 
 SEO-001 through SEO-008, SEO-METADATA-001 through 004, SEO-GROWTH-001 through 006,
 SEO-GROWTH-008, SEO-GROWTH-009, SEO-GROWTH-010, SEO-GROWTH-011, SEO-GROWTH-012,
-SEO-DOC-001, SEO-DOC-003. See §5 for each.
+SEO-GROWTH-013, SEO-DOC-001, SEO-DOC-003. See §5 for each. (SEO-GROWTH-013 closed
+INVESTIGATED / NO STRUCTURAL DEFECT — its one open thread continues as SEO-GROWTH-014,
+a feasibility investigation, not an implementation batch; do not reopen SEO-GROWTH-013
+itself without new evidence.)
 
 ---
 
