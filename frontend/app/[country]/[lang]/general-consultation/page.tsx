@@ -4,7 +4,7 @@ import Image from "next/image";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { ServiceHero } from "@/components/sections/ServiceHero";
-import { MessageCircle, ShieldCheck, Clock, Star, Lock } from "lucide-react";
+import { MessageCircle, ShieldCheck, Clock, Users, Lock } from "lucide-react";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { DoctorSharePageLink, DOCTOR_SHARE_PAGES } from "@/components/sections/DoctorSharePageLink";
@@ -285,7 +285,7 @@ export default async function CountryLangGeneralConsultationPage({
             subtitle: gp.hero.stat1Subtitle.replace("{country}", config.name),
           },
           {
-            icon: <Star className="size-5" strokeWidth={2} aria-hidden />,
+            icon: <Users className="size-5" strokeWidth={2} aria-hidden />,
             title: gp.hero.stat2Title.replace("{country}", config.name),
             subtitle: gp.hero.stat2Subtitle.replace("{country}", config.name),
           },

@@ -12,7 +12,15 @@ import { useConsent } from "@/components/compliance/use-consent";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 
 /**
- * Doctify review widgets (practice: Global Health Ireland, tenant athena-ie).
+ * Doctify review widgets — the site's single, global MyGlobalHealth review
+ * profile (tenant `athena-ie`, practice slug `global-health-ireland`).
+ * Historically named for Ireland (where the practice was first registered
+ * with Doctify), it is the one review profile the whole site has and is
+ * shown on every market's pages — see SEO-GROWTH-015. Do not gate this on
+ * country: there is only one profile, so there is nothing to pick between.
+ * If a market-specific profile is ever registered with Doctify, that is a
+ * new investigation, not a revival of the old per-market gate.
+ *
  * Three embeddable variants re-skinned to the gh2 design system:
  *
  *  - <DoctifyRatingStrip />  — compact average-rating carousel (iframe),
@@ -26,18 +34,18 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
  * "third-party content" consent category. The gate lives on each leaf rather
  * than on DoctifyReviewsLazy because DoctifyReviewsSection renders
  * DoctifyRatingStrip directly — a wrapper-level gate would miss it.
+ *
+ * The live rating and review count are Doctify's own, rendered inside the
+ * widget itself — that is the UI's source of truth. Do not maintain a
+ * second, manually-entered review count elsewhere to duplicate it (that
+ * value drifts); and do not copy it into this site's `AggregateRating`
+ * JSON-LD (`lib/seo/structured-data.ts`) — Google's review-snippet policy
+ * says not to aggregate another site's reviews into your own markup. See
+ * SEO-GROWTH-015.
  */
 
 const TENANT = "athena-ie";
 const SLUG = "global-health-ireland";
-
-/** Doctify only serves this practice's reviews in English — asking for any
- *  other language returns an empty widget, which reads as a broken section on
- *  the non-EN locales. So every embed is pinned to `en`; the `language` prop
- *  still drives the consent-placeholder copy, which IS translated.
- *  ponytail: pin to en, thread the real locale through once Doctify actually
- *  returns translated reviews. */
-const WIDGET_LANGUAGE = "en";
 
 /** Doctify's widget scripts hijack the single global `window.onresize`
  *  (a plain assignment, not `addEventListener`) to reposition/redraw their
@@ -159,7 +167,7 @@ export function DoctifyRatingStrip({
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
-    `&dotsArrowsColor=${onDark ? "FFFFFF" : "1D4B36"}&language=${WIDGET_LANGUAGE}` +
+    `&dotsArrowsColor=${onDark ? "FFFFFF" : "1D4B36"}&language=${language}` +
     `&profileType=practice&slugs=${SLUG}&tenantId=${TENANT}` +
     `&theme=${onDark ? "ivory" : "transparent"}&widgetName=average-carousel-rating-widget`;
 
@@ -215,7 +223,7 @@ export function DoctifyWidget({
     const script = document.createElement("script");
     script.src =
       `https://www.doctify.com/get-script?widget_container_id=${id}` +
-      `&${VARIANT_QUERY[variant]}&tenant=${TENANT}&language=${WIDGET_LANGUAGE}` +
+      `&${VARIANT_QUERY[variant]}&tenant=${TENANT}&language=${language}` +
       `&profileType=practice&slugs=${SLUG}&background=${theme === "dark" ? "ivory" : "transparent"}`;
     script.async = true;
     script.onload = () => setLoaded(true);
@@ -378,7 +386,7 @@ export function DoctifyInlineRating({
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
-    `&dotsArrowsColor=FFFFFF&language=${WIDGET_LANGUAGE}` +
+    `&dotsArrowsColor=FFFFFF&language=${language}` +
     `&profileType=practice&slugs=${SLUG}&tenantId=${TENANT}` +
     `&theme=transparent&widgetName=average-carousel-rating-widget`;
 

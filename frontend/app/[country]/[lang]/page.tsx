@@ -12,7 +12,6 @@ import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { LazyHydrate } from "@/components/motion/LazyHydrate";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { TrustMarquee, type TrustMarqueeItem } from "@/components/sections/TrustMarquee";
-import { fetchPublicReviewConfig } from "@/lib/api/reviews-config";
 import { localizedLanguageLabel } from "@/lib/content/languages";
 import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
@@ -412,13 +411,11 @@ export default async function CountryLangHomePage({
 
   // Trust marquee — country-specific proof points instead of the old
   // cross-country coverage belt (a visitor in Ireland doesn't care how
-  // many doctors Portugal has). Doctify aggregate is optional: only shown
-  // when the admin has connected a Doctify clinic and a snapshot exists.
-  const reviewConfigResult = await fetchPublicReviewConfig().catch(() => null);
-  const doctifyAggregate =
-    reviewConfigResult && reviewConfigResult.ok
-      ? (reviewConfigResult.data.doctify.aggregate ?? null)
-      : null;
+  // many doctors Portugal has). No Doctify rating/count stat here — the
+  // live widget (DoctifyReviewsSection, below) is Doctify's own current
+  // rating/count and is the source of truth; a separately-fetched number
+  // would be a second, manually-entered value that can silently drift from
+  // it. See SEO-GROWTH-015.
   // Marquee shows only 3 of the full (alphabetical) language pool — bias
   // toward major consultation languages so e.g. Portuguese surfaces ahead
   // of a minority language that happens to sort earlier (Bangla < Portuguese).
@@ -443,15 +440,6 @@ export default async function CountryLangHomePage({
         : gpLanguageNames.join(", ")
       : "";
   const trustMarqueeItems: TrustMarqueeItem[] = [
-    ...(doctifyAggregate
-      ? [
-          {
-            icon: "star" as const,
-            value: `${doctifyAggregate.rating.toFixed(1)}★`,
-            label: `${doctifyAggregate.count} Doctify reviews`,
-          },
-        ]
-      : []),
     {
       icon: "doctor" as const,
       value:

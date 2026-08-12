@@ -197,6 +197,8 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-009 | Retired `/post/[slug]` route | Legacy routing | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | Route deleted 2026-05-14/17; `/post/*` is now a `next.config.ts` redirect only. `/post/<unknown>` → 308 → `/ireland/en/blog` | n/a | None. Two audit docs already carry the correction header |
 | SEO-GROWTH-010 | Spain market audit | Market analysis | **CLOSED as an audit; findings promoted to the roadmap** | 2026-08-12 | n/a | n/a | See SEO-GROWTH-013 (Spain commercial-service underperformance) and the closed SEO-GROWTH-011 doctor-locale investigation. **No standalone Spain audit document exists in the repository** — the audit was conducted in-session; its conclusions are recorded in §6 and §7 |
 | SEO-GROWTH-013 | Spain commercial-service underperformance | Ranking | **CLOSED — INVESTIGATED / NO STRUCTURAL DEFECT** | 2026-08-12 | All 6 commercial URLs technically clean (200, index/follow, self-canonical, in sitemap, correctly linked from `/spain/es`). Not cannibalization — page roles are legitimately distinct (homepage brand+generic, `gp-consultation-online` = GP hub/catalog, `services/consulta-medica-online` = GP detail, `services/dermatologia-especialista-online` = specialist detail) | Bottleneck is SERP competitive wall (national insurers + Doctoralia/TopDoctors-scale aggregators dominate the generic cluster; boutique/solo practitioners dominate specialty clusters) plus a verified trust-presentation gap: Doctify reviews render on hub/team pages but not on service detail pages | See §7 SEO-GROWTH-013 for full findings and substantive conclusions. Next: SEO-GROWTH-014, a feasibility investigation only (not an implementation batch) — do not add Doctify UI/schema before that lands |
+| SEO-GROWTH-014 | Spain service-detail Doctify trust-signal feasibility | Trust presentation / data provenance | **CLOSED — GLOBAL DOCTIFY APPROACH CONFIRMED** | 2026-08-12 | `DoctifyWidget` (`variant="horizontal"`) already renders on every service-detail page (`services/[serviceSlug]/page.tsx:870`) — the widget was never missing. It uses one real Doctify practice (`tenant=athena-ie`, `slugs=global-health-ireland`, `profileType=practice`) | `review.doctify.clinicId` / `review.doctify.aggregate` and every other `review.*` Setting key are **unset in production** (direct read-only DB check, 2026-08-12: zero rows) — confirmed still true, unaffected by SEO-GROWTH-015 | Original finding stands (no per-market Doctify profile exists; the manual `review.*` aggregate system is empty and untouched). The business decision on what to do about it is now made, not deferred: treat the one existing Doctify practice as the site's single **global** MyGlobalHealth review profile and show it everywhere, rather than wait for market-by-market Doctify registrations. See SEO-GROWTH-015 |
+| SEO-GROWTH-015 | Global Doctify trust integration (revised from an Ireland-only gate) | Trust presentation / implementation | **IMPLEMENTED — VERIFIED, NOT DEPLOYED (uncommitted)** | 2026-08-12 | First pass added a per-market gate (`isDoctifyConfiguredForMarket`, Ireland-only) — **reverted** on explicit direction: the Doctify profile is the site's one global review profile, shown on every market's pages, same as before any of this ticket's work, with two real fixes kept: `language` now flows through to Doctify's widget URLs (was hardcoded `"en"`), and the homepage's manually-entered `review.doctify.aggregate` stat (a second, driftable copy of Doctify's number) was removed — the live widget is the UI's only source of truth for the rating/count now | `AggregateRating` JSON-LD explicitly **not** populated from Doctify — Google's review-snippet policy prohibits aggregating another site's reviews into your own markup; schema stays exactly as SEO-GROWTH-014 found it (fail-closed, empty) | See §7 SEO-GROWTH-015 for the full file list and verification. Also fixed the "45.000 consultas/Valorado en Doctify" pairing on the GP and specialist hero stat strips (implied the volume number was a Doctify rating) — volume claim kept, Doctify/rating wording dropped. Awaiting explicit commit authorization |
 | SEO-GROWTH-011 | Spain doctor cross-locale ranking "fragmentation" (Alfredo del Valle) | Indexation / hreflang | **EXPECTED BEHAVIOR — CLOSED, no code change** | 2026-08-12 | All 5 locale URLs (`spain/{es,cs,en,pt,de}/doctors/dr-alfredo-del-valle`) are 200, self-canonical (each declares and Google accepts its own canonical — no consolidation attempted by either side), `index, follow`, in sitemap, carry distinct per-locale `<title>` (Dermatólogo/Dermatolog/Dermatologist/Dermatologista/Dermatologe — real translation, not a duplicate stub), and cross-link each other via the sibling-locale switcher. The one legacy URL in the cluster, `/pt/spain-doctors/dr-alfredo-del-valle`, is "Crawled – currently not indexed" (last crawl 2026-03-08) and draws 1 impression in 90 days — a dead stub, not a participant | Google serves each locale variant as its own PASS result; no `noindex`, no wrong-canonical, no stale-crawl divergence | None. See §7 for the full query×URL matrix and reasoning |
 | SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
 
@@ -507,17 +509,249 @@ IMPLEMENT — EXISTING VERIFIED REVIEW DATA / UI POSSIBLE, SCHEMA NOT JUSTIFIED 
 DOCTIFY CONFIGURATION REQUIRED / PRACTICE-LEVEL REVIEWS NOT APPROPRIATE FOR SERVICE
 PAGES / NO ACTION. Implementation, if any, follows only after that classification.
 
+### SEO-GROWTH-014 — investigated, 2026-08-12
+
+**Method.** Static-code investigation only (no GSC/OpenSEO calls needed) — traced the
+Doctify integration end to end: `frontend/components/sections/DoctifyReviews.tsx` +
+`DoctifyReviewsLazy.tsx` (the widget), `frontend/lib/api/reviews-config.ts` +
+`backend/src/modules/settings/settings.service.ts` +
+`backend/src/routes/admin-settings.route.ts` + `backend/src/validations/
+admin-settings.schema.ts` (the separate schema.org config path), `frontend/lib/seo/
+structured-data.ts` (the `AggregateRating` emitter and its guard test), the two root
+layouts that wire it in, and every call site of the widget components. Then a
+**direct, read-only** query of the production `Setting` table for all seven `review.*`
+keys (deleted immediately after) to check what, if anything, is actually configured —
+no write, no schema change.
+
+**1. What powers the integration, where it renders.** `DoctifyWidget` /
+`DoctifyReviewsSection` / `DoctifyInlineRating` / `DoctifySocialProof` inject a live
+`<script>`/`<iframe>` straight from `doctify.com`'s public widget API — real,
+third-party-hosted data, not fabricated. Module-level constants hardcode
+`TENANT = "athena-ie"` and `SLUG = "global-health-ireland"` (`DoctifyReviews.tsx:31-32`)
+— there is exactly **one** practice profile wired into the whole codebase, and it is
+Ireland's. `DoctifyWidgetLazy` (`variant="horizontal"`) already renders on **every**
+service-detail page, including the Spain dermatología page investigated in
+SEO-GROWTH-013 (`services/[serviceSlug]/page.tsx:870`) — the widget was never missing
+from that page. It is also on doctor-profile pages, every country homepage,
+`CountryTrustBar`, about/contact/pricing/tests/FAQ pages. SEO-GROWTH-013's live check
+didn't surface it only because it's mounted client-side, near-viewport-lazy, and (see
+below) usually shows a consent placeholder instead of content.
+
+**2. Is "Valorado en Doctify" backed by live data or stored copy.** Confirmed **stored
+copy only**. `"stat2Title": "45.000 consultas en 2025"` / `"stat2Subtitle": "Valorado en
+Doctify."` are static translated strings in `frontend/locales/{locale}/common.json`
+(the `CountryTrustBar` stat block) — a marketing claim with no live number behind it,
+disconnected from both the widget and the schema-config system.
+
+**3. Real public Doctify practice identity.** Yes for Ireland — `athena-ie` /
+`global-health-ireland` is a real, live, working Doctify tenant/practice slug (the
+widget calls it directly; there'd be no fallback content to see otherwise). No
+Spain-specific (or any other market's) Doctify practice is configured anywhere in the
+codebase — `TENANT`/`SLUG` are constants, not parameters, so no per-country profile
+could be selected even if one existed today.
+
+**4-5. Practice-level vs. service/doctor-level accuracy.** The widget is
+`profileType=practice` — one aggregate for the whole practice, shown identically across
+every service and every country page (when it renders at all). Practice-level review
+badges shared across multiple service pages are normal in this vertical (Doctoralia and
+TopDoctors both aggregate at clinic/practice level too), so practice-level itself is
+**not** the problem — the problem is that the one practice wired in is Ireland's, being
+shown (or, per point 7, mostly *not* shown) uniformly on Spain, Portugal and Czechia
+pages alike. That is a pre-existing sitewide market-attribution issue, not something
+SEO-GROWTH-013 introduced or something scoped to dermatología — flagged here for the
+record, out of scope to fix under this ticket.
+
+**6. Dynamic vs. manual data.** Two separate, disconnected systems exist:
+- The **widget** (`DoctifyReviews.tsx`) is genuinely dynamic — it fetches live from
+  doctify.com on every page load. No CMS entry involved, but also no way to change
+  which practice it shows without a code change.
+- The **schema.org path** (`reviews-config.ts` → `settings.service.ts` →
+  `structured-data.ts`) is **100% manual**: an admin types a rating and count into
+  `/admin/settings/reviews`, which upserts a JSON blob (`review.doctify.aggregate`,
+  etc.) into a generic key/value `Setting` table. Nothing fetches or refreshes it
+  automatically — confirmed by reading `admin-settings.route.ts` end to end (a plain
+  Prisma upsert of exactly what the form submits, no external API call anywhere in the
+  path).
+
+**Verified current production state (direct read-only DB check, 2026-08-12):** all
+seven `review.*` Setting keys — `trustpilot.businessUnitId/aggregate`,
+`google.placeId/aggregate`, `doctify.clinicId/aggregate`, `primaryProvider` — return
+**zero rows**. Nothing is configured for any provider, in any market. The schema path
+is not "not justified for Spain" — it is not activated at all, anywhere on the site.
+
+**7. Consent/cookie gating and crawlability.** `useDoctifyAllowed()` requires the
+`thirdParty` consent category to be explicitly granted; unresolved or refused consent
+renders `DoctifyPlaceholder` (a "load reviews" prompt) instead of content
+(`DoctifyReviews.tsx:64-124`). Independently, `DoctifyReviewsLazy.tsx` wraps every
+export with `dynamic(..., { ssr: false })` — the widget is **never** part of
+server-rendered HTML, consent or no consent. Combined effect: Googlebot's rendered DOM
+and any non-consenting visitor see the placeholder, not review content; a
+consent-granted visitor sees Ireland's practice, in English, on a Spanish page (see
+point 3's language pin — `WIDGET_LANGUAGE` is hardcoded `"en"` because Doctify returns
+an empty widget for any other language on this practice).
+
+**8. Reusable component.** Yes, fully — `DoctifyWidget`, `DoctifyReviewsSection`,
+`DoctifyInlineRating`, `DoctifySocialProof`, all consent- and lazy-load-aware, already
+used across the site. No new component would be needed for a UI change; only the
+tenant/slug scoping would need to become configurable instead of hardcoded.
+
+**9. All service pages vs. safely scoped.** Currently sitewide and uniform — every
+service-detail page gets the identical Ireland-practice widget instance. Making it
+market-accurate (Spain pages show Spain data, if it existed) is an architecture change
+— `TENANT`/`SLUG` would need to move from module constants to a per-country
+configuration source. Not a per-page/per-service decision; a per-market one.
+
+**10. Is `Review`/`AggregateRating` schema justified by the data.** No — and the code
+already enforces this correctly. `aggregateRatingJsonLd()` fails closed by design
+(`structured-data.ts:50-58`, with its own guard test) specifically to avoid "a
+fabricated or defaulted `AggregateRating` on a medical site" risking a Google
+structured-data manual action. With zero `review.*` rows configured, it emits nothing
+site-wide today — correct, current behavior, not a bug.
+
+**Classification: CLOSED — MANUAL DOCTIFY CONFIGURATION REQUIRED.** Every path to a
+legitimate Spain trust signal — fixing the widget's market scope or activating the
+schema aggregate — is blocked on the same fact: **no one has obtained or entered a
+real, attributable Spain-market rating anywhere in the stack.** This is not a code
+task. A human needs to either register/verify a Spain-market Doctify practice profile
+(then a small code change makes `TENANT`/`SLUG` configurable per country) or obtain a
+verified aggregate rating from any provider and enter it via
+`/admin/settings/reviews` (which the schema path already supports today, fully
+built, currently just empty). No UI or schema change is recommended until one of those
+happens. Also worth the business's attention, separately: the Ireland-practice widget
+currently displays (to consenting visitors) on every market's pages uniformly — a
+pre-existing minor market-attribution issue, unrelated to Spain specifically, not
+actioned here.
+
+### SEO-GROWTH-015 — implemented (revised), 2026-08-12
+
+**Direction change, same day.** The first pass (see git history / prior session
+transcript) added a per-market gate — `isDoctifyConfiguredForMarket()`, Ireland-only —
+that blocked the widget on every non-Ireland market. On review, that was the wrong
+fix: the business decision is to treat the single existing Doctify practice as the
+site's **global** MyGlobalHealth review profile, not an Ireland-exclusive one, and
+show it everywhere. The gate was **reverted** in full; this entry describes the final,
+revised state, not the intermediate gated one.
+
+**Root cause (unchanged from the original framing).** The widget always showed one
+real practice (`tenant=athena-ie`, `slug=global-health-ireland`) on every page
+regardless of market — that is now the *intended* behavior, not a defect, so nothing
+about the widget's sitewide presence needed fixing. What did need fixing: the language
+sent to Doctify was hardcoded regardless of page locale, and a second, manually-typed
+copy of "the current Doctify rating/count" existed on the homepage with no mechanism
+to keep it in sync with Doctify's real number.
+
+**Existing Doctify configuration.** Unchanged — still exactly one real practice,
+`tenant=athena-ie` / `slug=global-health-ireland`. Kept exactly as-is, per instruction
+not to invent new identifiers; if the practice is renamed/reconfigured on Doctify's
+side, that is a Doctify-dashboard action, not a code change.
+
+**Files changed** (uncommitted):
+
+| File | Change |
+| --- | --- |
+| `frontend/components/sections/DoctifyReviews.tsx` | Removed `isDoctifyConfiguredForMarket()`, the `DOCTIFY_CONFIGURED_MARKETS` set, and the `country` prop from every export — full revert of the market gate. Replaced the hardcoded `WIDGET_LANGUAGE = "en"` constant: every `language=` query param on a doctify.com URL now interpolates the actual `language` prop instead. Updated the file-level doc comment to describe the practice as the site's global review profile |
+| `frontend/components/sections/CountryTrustBar.tsx` | Reverted the `country={trust.country.code}` prop addition (prop no longer exists). Its own pre-existing `trust.country.code.toLowerCase() === "ie"` wrapper is **untouched** — flagging this below, it is now the one place still gating Doctify to Ireland only, which is inconsistent with the "global profile, shown everywhere" direction; left alone because it predates this ticket and wasn't named in scope |
+| `frontend/app/[country]/[lang]/{services/[serviceSlug],pricing,tests,specialist-consultation,general-consultation,doctors,prescriptions,page}.tsx`, `frontend/lib/content/doctor-profile-page.tsx` | Reverted the `country={code}` prop addition on each — 9 files, one line each |
+| `frontend/app/[country]/[lang]/page.tsx` (country homepage) | Removed the `fetchPublicReviewConfig()` call and the `doctifyAggregate`-derived `★ rating / N Doctify reviews` marquee stat entirely. That stat sourced from the manually-entered `review.doctify.aggregate` Setting — exactly the "second review count that can drift from Doctify" this revision was told to stop maintaining as UI source of truth. The live `DoctifyReviewsSection` widget lower on the same page is now the only Doctify rating/count shown there |
+| `frontend/locales/{en,es,pt,cs,ro,de}/common.json` | Changed `stat2Subtitle` under `gpConsultationPage.hero` and `specialistPage.hero` (2 of 3 occurrences per file — the `testsPage`/lab-results occurrence, unrelated to Doctify, was left alone) from "Reviewed on Doctify."-style text to a Doctify-free description of the same volume metric (e.g. EN: "Completed across our clinician network."). See Static trust-copy review, below |
+| `frontend/app/[country]/[lang]/general-consultation/page.tsx` | Swapped the `Star` icon (rating-shaped) on that same stat to `Users` — `specialist-consultation/page.tsx`'s equivalent stat already used a neutral `Stethoscope` icon and needed no icon change |
+| `frontend/components/sections/DoctifyReviews.test.ts` | Deleted — tested the now-reverted predicate |
+| `frontend/components/sections/DoctifyReviews.render.test.tsx` | Rewritten: proves the widget renders with no country context on every market (nothing left gating it), proves the source no longer contains the predicate/market-set/hardcoded-`"en"` pattern, proves every `language=` URL param interpolates the `language` prop, and proves `TENANT`/`SLUG` are unchanged |
+
+**Market-scoping behavior (revised):**
+
+| Market | Behavior |
+| --- | --- |
+| Ireland | Renders — unchanged from before any of this ticket's work |
+| Spain | Renders — same global profile, `language={lang}` now passed through as the page's actual locale |
+| Portugal | Renders, same as Spain |
+| Czechia | Renders, same as Spain |
+| Romania | Renders, same as Spain |
+| Brazil | Renders, same as Spain |
+
+Whether Doctify actually has translated review content for a given `language` value is
+Doctify's own data availability, not something this codebase controls or can verify
+without a live check against Doctify — a non-English request may still come back
+empty on Doctify's side. That would show as a lightly-populated/empty carousel, not a
+missing/broken section, and is a genuinely separate question from market-scoping.
+
+**Static trust-copy review.** Two distinct things, per the instruction to only
+edit wording that pretends to be the review count:
+- **Generic organization-level statement** (`frontend/locales/{locale}/{about,
+  contact,tests,home}.json` — "Independent, verified reviews collected by Doctify
+  from patients treated by our clinicians") — does not claim a specific number,
+  **not touched**.
+- **The misleading pairing** — `gpConsultationPage.hero`/`specialistPage.hero`
+  `stat2Title`/`stat2Subtitle`: "45,000 consultations in 2025" paired with "Reviewed
+  on Doctify." under (on the GP page) a star icon. Read together, this reads as "our
+  Doctify rating is backed by 45,000 reviews," which is false — 45,000 is a
+  consultation-volume claim, not a review count, and nothing in the codebase ties that
+  number to Doctify's actual review total. **Fixed**: the volume claim itself stays
+  (a verified company metric per the instruction's own carve-out; not re-verified in
+  this pass, unchanged from before), the Doctify/rating wording is removed from that
+  specific stat, and the GP page's star icon (the rating-implying part of the visual)
+  was swapped to a neutral one. `CountryTrustBar`'s separate `reviewsText` ("Recomendado
+  por pacientes en Doctify" etc.) is a short label directly above the live widget
+  itself, not a number, so it isn't the same "pretending to be the review count"
+  pattern — left alone.
+
+**Schema.** Confirmed unchanged, and confirmed **not** to be done going forward:
+`AggregateRating` JSON-LD is deliberately never populated from Doctify's data, even
+though the live rating/count is now readily visible in the UI. Google's
+review-snippet structured-data guidance prohibits aggregating another site's reviews
+into your own site's markup, and separately restricts self-serving `Organization`/
+`LocalBusiness` review markup — copying Doctify's number into `aggregateRatingJsonLd()`
+would violate that regardless of how accurate the number is. No edits to
+`structured-data.ts`, `reviews-config.ts`, `settings.service.ts`,
+`admin-settings.route.ts`, or `admin-settings.schema.ts`; the guard test suite is
+untouched and still passes. The generic 3-provider admin review-settings feature
+itself is not being deprecated by this ticket — it remains available for a provider
+whose data is legitimately hand-verified — only its former role as the Doctify
+homepage stat's source was removed.
+
+**Consent behavior.** Unchanged and unaffected by this revision — the market gate that
+used to sit in front of the consent check is gone, so behavior for every market is
+now exactly the pre-SEO-GROWTH-015 Ireland behavior: `useConsent()`, the same
+placeholder copy, the same "load reviews" grant flow.
+
+**Locale behavior.** This is the one thing actually fixed here: `language` now flows
+into every doctify.com URL (`DoctifyRatingStrip`, `DoctifyWidget`,
+`DoctifyInlineRating`) instead of a hardcoded `"en"`. Whether Doctify returns
+populated, translated content for a given language is outside this codebase's
+control — see Market-scoping behavior, above.
+
+**Tests.** `DoctifyReviews.render.test.tsx`, rewritten, 4 tests: renders normally with
+no country context (any market); source no longer contains the predicate, the market
+set, or a `marketOk` reference; every `language=` URL param interpolates `${language}`
+(none hardcoded); `TENANT`/`SLUG` unchanged.
+
+**Validation:**
+- `pnpm vitest run components/sections/DoctifyReviews.render.test.tsx` — 4/4 pass.
+- `pnpm vitest run` (full frontend suite) — 803/805 pass; the same 2 pre-existing,
+  unrelated failures as every prior pass in this workstream
+  (`lib/content/booking-address-copy.test.ts`, `tests/unit/
+  portal-breadcrumb-routes.test.ts`).
+- `pnpm tsc --noEmit` — clean.
+- `pnpm eslint` on every changed file — clean.
+- `node -e "JSON.parse(...)"` on all 6 edited locale files — valid JSON.
+
+**Flagged, not resolved in this pass (business/product decisions, not code):**
+- `CountryTrustBar.tsx`'s pre-existing Ireland-only badge is now inconsistent with the
+  "global profile, shown everywhere" direction. Left alone because it predates this
+  ticket and wasn't named in scope — worth an explicit call on whether it should show
+  on every market too.
+- Whether Doctify actually returns non-English review content once `language` is
+  passed through is unverified — would need a live check against Doctify with
+  consent granted, which this session's headless Browser pane could not composite
+  frames to observe (`visibilityState: hidden`, confirmed in the prior session's
+  verification attempt).
+- No `AggregateRating`/`Review` schema was added, and per the explicit direction above,
+  none should be — this is a standing rule for this integration, not a TODO.
+
 ### NOW — one batch
 
-**SEO-GROWTH-014 — Spain service-detail Doctify trust-signal feasibility
-investigation.** Investigation only, no implementation. Confirm what powers the
-existing Doctify integration, whether MGH has real retrievable review/rating data
-through it, whether a service-detail page can legitimately show practice-level
-reviews, and whether the shared service-detail template can carry the signal without a
-special case for dermatology. See §7 SEO-GROWTH-013 for the target classification set.
-Implementing a Doctify UI/schema change is explicitly **not** authorized by this
-entry — it follows only after SEO-GROWTH-014 lands on READY TO IMPLEMENT or UI
-POSSIBLE, SCHEMA NOT JUSTIFIED.
+Nothing queued. SEO-GROWTH-015 is implemented, tested, and awaiting explicit commit
+authorization.
 
 ### NEXT — up to one, evidence-backed
 
@@ -573,6 +807,7 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
 | Write real bios for 5 doctors (26 `noindex` URLs) | Clinical/editorial content, correctly gated. See SEO-DOC-002. |
 | Legacy Wix referrer outreach | `wix.to` alone holds 195 backlinks to old URLs. Ask high-value external referrers to point at current URLs. **Do not buy or build links for a medical site.** |
 | Answer the homepage-destination question | Product call, not an SEO one. See NEXT-1. |
+| Decide whether `CountryTrustBar`'s Ireland-only Doctify badge should show on every market | SEO-GROWTH-015 made the widget global everywhere else on the site; this one pre-existing `=== "ie"` gate is now the only inconsistency. Product/business call, not a code task — see §7 SEO-GROWTH-015. |
 
 ### DEFERRED — low value or blocked
 
@@ -593,10 +828,12 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
 
 SEO-001 through SEO-008, SEO-METADATA-001 through 004, SEO-GROWTH-001 through 006,
 SEO-GROWTH-008, SEO-GROWTH-009, SEO-GROWTH-010, SEO-GROWTH-011, SEO-GROWTH-012,
-SEO-GROWTH-013, SEO-DOC-001, SEO-DOC-003. See §5 for each. (SEO-GROWTH-013 closed
-INVESTIGATED / NO STRUCTURAL DEFECT — its one open thread continues as SEO-GROWTH-014,
-a feasibility investigation, not an implementation batch; do not reopen SEO-GROWTH-013
-itself without new evidence.)
+SEO-GROWTH-013, SEO-GROWTH-014, SEO-DOC-001, SEO-DOC-003. See §5 for each.
+(SEO-GROWTH-013 closed INVESTIGATED / NO STRUCTURAL DEFECT. SEO-GROWTH-014 closed
+GLOBAL DOCTIFY APPROACH CONFIRMED — its finding (no per-market Doctify profile exists)
+stands; the follow-up decision was to use the one existing profile globally, carried
+out in SEO-GROWTH-015, not to wait for per-market configuration. Do not reopen either
+investigation without new evidence.)
 
 ---
 
