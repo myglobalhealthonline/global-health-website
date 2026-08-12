@@ -50,10 +50,15 @@ are 29 days each so that the current and prior periods are directly comparable.
 **Read this correctly.** Clicks grew 76% period-over-period, which is real. Impressions
 grew 181%, which is faster, so CTR fell and average position deepened. The impression
 surge is concentrated in the final days of the window (2026-08-06: 1,477 · 08-07: 1,937 ·
-08-08: 2,099 · 08-09: 2,723) and arrives at positions 18–26, i.e. deep-SERP impressions
-rather than lost rankings. Nothing in the click series suggests a ranking loss. The
-open question is what began serving roughly 20,000 additional deep impressions — see
-roadmap item NEXT-2.
+08-08: 2,099 · 08-09: 2,723). Nothing in the click series suggests a ranking loss.
+
+**Diagnosed and closed (SEO-GROWTH-012, §5/§7):** the surge is 568 pages that had zero
+impressions the week before suddenly earning them — not existing pages ranking
+differently. 75% of that volume is the `/tools/*` calculator cluster (BMI, calorie,
+blood pressure, ovulation, ADHD test, due-date) newly ranking across markets and
+locales; roughly a third of the new impressions land at genuinely good positions
+(top 10–20), not uniformly "deep-SERP" as first assumed. It converts at 0.48% CTR
+because the intent is free-tool, not medical-service — expected, not a defect.
 
 Do not compare these figures against the 2026-07-28 plan's "514 clicks / 15,210
 impressions / 3.38% CTR" baseline as if it were the same measurement; that was a
@@ -186,8 +191,10 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-007 | Telmo Coelho indexation | Indexation | **WAITING FOR GOOGLE** | 2026-08-12 | `/portugal/pt/doctors/dr-telmo-coelho` serves `index, follow`, self-canonical, in sitemap | **Stale**: coverage "Excluded by ‘noindex’ tag", last crawl 2026-07-26 — 13 days before the fix | Watchlist. Do not re-investigate before the crawl date advances |
 | SEO-GROWTH-008 | Ireland sick-cert consolidation | Legacy routing + ranking | **CLOSED — MONITOR** | 2026-08-12 | Redirects live (`/ireland/sick-leave`, `/ireland/es/health/sick-cert-online` both 308 to current-shape, indexable targets); intent investigation = SUPPORTIVE CLUSTER, no cannibalization; 4 blog→service links live; service title/meta reviewed vs. 6 competitors, no rewrite needed (SEO-GROWTH-008D); 3-step "How it works" block live (SEO-GROWTH-008E, verified) | Two legacy URLs still show "Submitted and indexed" (crawls 2026-07-05 and 2026-07-25, both pre-fix) | None — see §7 MONITOR. Do not reopen without a new specific on-page defect |
 | SEO-GROWTH-009 | Retired `/post/[slug]` route | Legacy routing | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | Route deleted 2026-05-14/17; `/post/*` is now a `next.config.ts` redirect only. `/post/<unknown>` → 308 → `/ireland/en/blog` | n/a | None. Two audit docs already carry the correction header |
-| SEO-GROWTH-010 | Spain market audit | Market analysis | **CLOSED as an audit; findings promoted to the roadmap** | 2026-08-12 | n/a | n/a | See §7 NEXT-1 and NEXT-3. **No standalone Spain audit document exists in the repository** — the audit was conducted in-session; its conclusions are recorded in §6 and §7 |
+| SEO-GROWTH-010 | Spain market audit | Market analysis | **CLOSED as an audit; findings promoted to the roadmap** | 2026-08-12 | n/a | n/a | See SEO-GROWTH-013 (Spain commercial-service underperformance) and the closed SEO-GROWTH-011 doctor-locale investigation. **No standalone Spain audit document exists in the repository** — the audit was conducted in-session; its conclusions are recorded in §6 and §7 |
+| SEO-GROWTH-013 | Spain commercial-service underperformance | Ranking | **INVESTIGATE** | 2026-08-12 | `/spain/es`, `/spain/es/gp-consultation-online`, `/spain/es/services/consulta-medica-online`, `/spain/en/services/consulta-medica-online` all correctly architected — SEO-GROWTH-010 already found this a SUPPORTIVE CLUSTER / intent split, not confirmed cannibalization | Positions 20–40+ despite valid architecture and internal linking | Fresh query→page and SERP investigation. Determine whether the gap is page format, topical depth, authority, or page-role ambiguity — do not assume consolidation is the fix |
 | SEO-GROWTH-011 | Spain doctor cross-locale ranking "fragmentation" (Alfredo del Valle) | Indexation / hreflang | **EXPECTED BEHAVIOR — CLOSED, no code change** | 2026-08-12 | All 5 locale URLs (`spain/{es,cs,en,pt,de}/doctors/dr-alfredo-del-valle`) are 200, self-canonical (each declares and Google accepts its own canonical — no consolidation attempted by either side), `index, follow`, in sitemap, carry distinct per-locale `<title>` (Dermatólogo/Dermatolog/Dermatologist/Dermatologista/Dermatologe — real translation, not a duplicate stub), and cross-link each other via the sibling-locale switcher. The one legacy URL in the cluster, `/pt/spain-doctors/dr-alfredo-del-valle`, is "Crawled – currently not indexed" (last crawl 2026-03-08) and draws 1 impression in 90 days — a dead stub, not a participant | Google serves each locale variant as its own PASS result; no `noindex`, no wrong-canonical, no stale-crawl divergence | None. See §7 for the full query×URL matrix and reasoning |
+| SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
 
 ### Doctor indexability
 
@@ -290,33 +297,100 @@ mystery. Not repeating this check for the other five markets' doctor clusters �
 mechanism is now understood, and no other doctor's name+specialty query in the current
 data showed the same zero-CTR bare-name pattern to investigate.
 
+### SEO-GROWTH-012 — investigated and closed, 2026-08-12
+
+**Method.** Pulled the page-dimension GSC report for the 5 days immediately before the
+surge (2026-08-01→08-05, 584 pages earning impressions) and the 4 days of the surge
+itself (2026-08-06→08-09, 946 pages), then diffed the two page sets.
+
+**Finding: this is not existing pages ranking better — it is 568 pages that had zero
+impressions the week before suddenly earning them.** Those newly-surfacing pages
+account for 4,990 impressions of the period's growth; impressions on pages present in
+*both* windows actually fell slightly (−257, unnormalized). The surge is additive, not
+a lift.
+
+**What those pages are:**
+
+| Page type | New-page impressions | Clicks | Distinct pages |
+| --- | ---: | ---: | ---: |
+| `/tools/*` (calculators) | **3,726 (75%)** | 18 | 171 |
+| `/lab-tests/*` | 419 | 1 | 76 |
+| other (mixed, thin) | 351 | 3 | 106 |
+| `/services/*` | 183 | 1 | 100 |
+| `/legal/*` | 136 | 0 | 45 |
+| `/blog/*` | 74 | 0 | 18 |
+| `/doctors/*` | 57 | 1 | 37 |
+| `/health/*` | 44 | 0 | 15 |
+
+Three-quarters of it is the BMI/calorie/blood-pressure/ovulation/ADHD-test/due-date
+calculator cluster, newly ranking across markets and locales it wasn't ranking in
+before — Romanian "calculator calorii" (38 impr, pos 11), Spanish "calculadora de
+calorías" family (dozens of 1–7 impr rows, pos 30–70), Portuguese, Irish English
+("calorie deficit calculator ireland", 17 impr, pos 9.1), and a long non-market tail
+(France, Indonesia, India, Germany, Poland, Honduras, Peru, Chile, Venezuela, Israel,
+Saudi Arabia, Korea — 1 impression each). Real, diverse, human-shaped queries, not a
+bot or scraper pattern.
+
+**Position quality is better than the earlier hypothesis assumed.** The original
+NEXT-1 framing ("positions 18–26") was a guess made before this data existed. The
+actual new-page distribution: 1,643 impressions (33%) at position 1–10, 1,388 (28%) at
+11–20, 673 (13%) at 21–30, 517 (10%) at 31–50, 769 (15%) at 51+. Six in ten of the new
+impressions are top-20. They just aren't converting: 24 clicks on 4,990 impressions
+(0.48% CTR) even where the position is good — expected for free-calculator queries,
+which compete against dedicated tools (Omni Calculator, calculator.net) and carry no
+booking intent.
+
+**Not a code deploy.** The tool pages themselves shipped weeks earlier
+(`244d629e` "free BMI calculator for every market and locale" and the following tools
+commits, all pre-August). Spot-checking 4 representative surging URLs
+(`inspect_urls` + live Googlebot fetch) found no defect: all PASS, `index,follow`,
+self-canonical, in sitemap — and their `lastCrawlTime` clusters tightly at
+2026-08-05→08-08, i.e. Google (re)crawled and started ranking them right when the
+surge starts. This is consistent with — though not proven to be caused by — the
+crawlability/discovery fixes shipped in the 08-08/08-09 SEO batches (sibling-locale
+links, metadata-in-`<head>`, service-catalog crawlability) finally letting Google find
+locale×tool combinations it hadn't reached before.
+
+**Answering the original question list:** queries = diverse global-language calculator
+terms, not brand, not AI-attributable (no evidence found either way); pages = `/tools/*`
+dominant; countries = a mix of real markets (RO, ES, PT, IE) and a long non-market tail,
+consistent with generic worldwide calculator demand rather than market targeting; the
+sitewide average-position decline in §1 is this cluster diluting the mix, not a ranking
+loss on any existing page; commercial value is minimal — these are informational,
+non-transactional pages; no wrong-page/wrong-locale/legacy behavior was found in the
+sample checked.
+
+**Classification: EXPECTED, NOT A DEFECT.** No code change. This generalizes and
+supersedes the Spain-only framing of the pre-existing DEFERRED "calculator/tool long
+tail" entry below — it is now confirmed sitewide, not Spain-specific.
+
 ### NOW — one batch
 
-No batch is currently queued. Select the next item from NEXT below, or from a fresh
-OpenSEO/GSC pull if one surfaces something with stronger evidence — per §0, priority is
-not fixed in advance.
+**SEO-GROWTH-013 — Spain commercial-service underperformance investigation.**
+Investigation only, no implementation. "consulta medica online" and its variants split
+across `/spain/en/services/consulta-medica-online` (504 impr, pos 23.2),
+`/spain/es/services/consulta-medica-online`, the legacy-shaped
+`/spain/es/gp-consultation-online`, and `/spain/es` itself (898 impr, pos 29.5, 5
+clicks). SEO-GROWTH-010 already found this cluster a SUPPORTIVE CLUSTER / intent split,
+not confirmed cannibalization — do not assume link consolidation is the remedy before
+establishing why. Core question: why do valid, correctly-architected Spain commercial
+pages receive meaningful impressions but stay around positions 20–40+? Run a fresh
+query→page and SERP investigation and determine whether the gap is page format, topical
+depth, authority, or page-role ambiguity.
 
-### NEXT — up to three, evidence-backed
+### NEXT — up to one, evidence-backed
 
-1. **Diagnose the impression surge.** Roughly 20,000 additional impressions appeared
-   from 2026-08-06 onward at positions 18–26, with no matching click growth. Determine
-   whether this is newly-indexed calculator/tool pages, out-of-market UK/US traffic, or
-   a genuine new ranking surface, and decide whether any of it is worth pursuing.
-   Investigation only, no code, before it can be prioritised.
-2. **Spain commercial-page underperformance.** "consulta medica online" and its variants
-   split across `/spain/en/services/consulta-medica-online` (504 impr, pos 23.2),
-   `/spain/es/services/consulta-medica-online`, and the legacy-shaped
-   `/spain/es/gp-consultation-online`. Consolidate internal links onto the ES-locale
-   service page. Related: `/spain/es` itself draws 898 impressions at position 29.5 for
-   5 clicks.
-3. **The homepage `/`.** 1,984 impressions / 154 clicks / position 18.9 in the current
-   window — by far the largest single earning page. The 2026-07-28 plan scheduled a CTR
-   check on head terms from 2026-08-04 that was never carried out. It is now overdue,
-   and the open product question behind it (is a country-selection interstitial the
-   right destination for "global health clinic"?) is still unanswered.
+1. **Homepage performance / query-mix investigation.** `/` draws 1,984 impressions /
+   154 clicks / position 18.9 in the current window — by far the largest single earning
+   page. Before calling anything a CTR issue, separate brand, generic "global health,"
+   commercial, wrong-market, and legacy-derived traffic within that query mix. The
+   2026-07-28 plan scheduled a CTR check on head terms from 2026-08-04 that was never
+   carried out; it is now overdue, and the open product question behind it (is a
+   country-selection interstitial the right destination for "global health clinic"?)
+   is still unanswered.
 
 This ranking is not fixed. If a future OpenSEO/GSC refresh surfaces something with
-stronger evidence, it can outrank any of the three above — do not carry this order
+stronger evidence, it can outrank either of the two above — do not carry this order
 forward by default.
 
 ### MONITOR — waiting on Google or on data
@@ -357,14 +431,18 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
 | Publish the Google OAuth consent screen | It is still in Testing, which caps refresh tokens at 7 days. The stated expiry (~2026-08-10) has passed, so the local `claude-seo` scripts may already be dead. OpenSEO MCP authenticates separately and is unaffected — all GSC data in this file came through it. |
 | Write real bios for 5 doctors (26 `noindex` URLs) | Clinical/editorial content, correctly gated. See SEO-DOC-002. |
 | Legacy Wix referrer outreach | `wix.to` alone holds 195 backlinks to old URLs. Ask high-value external referrers to point at current URLs. **Do not buy or build links for a medical site.** |
-| Answer the homepage-destination question | Product call, not an SEO one. See NEXT-4. |
+| Answer the homepage-destination question | Product call, not an SEO one. See NEXT-1. |
 
 ### DEFERRED — low value or blocked
 
-- **Spain calculator/tool long tail.** BMI, calorie, ovulation and due-date calculators
-  rank at positions 40–65 across dozens of Spanish queries with essentially zero clicks.
-  Real impressions, no commercial value, high effort to move. This is a meaningful part
-  of the CTR dilution in §1 and should be understood as such rather than optimised.
+- **Calculator/tool long tail — now confirmed sitewide, not Spain-only** (see
+  SEO-GROWTH-012). BMI, calorie, blood-pressure, ovulation, ADHD-test and due-date
+  calculators draw thousands of impressions across every market and locale, roughly a
+  third of them at genuinely good positions (top 10–20), but convert at 0.48% CTR
+  because the intent is informational/free-tool, not medical-service. Real impressions,
+  no commercial value, high effort to move against dedicated calculator sites. This is
+  the largest single component of the CTR dilution in §1 and should be understood as
+  such rather than optimised.
 - **SEO-METADATA-005**, the CMS title inconsistency.
 - `llms.txt` — optional and ignored by Google Search.
 - Mass submission to the Indexing API — 200/day cap and officially JobPosting/
@@ -373,8 +451,8 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
 ### CLOSED — do not reopen without new evidence
 
 SEO-001 through SEO-008, SEO-METADATA-001 through 004, SEO-GROWTH-001 through 006,
-SEO-GROWTH-008, SEO-GROWTH-009, SEO-GROWTH-010, SEO-GROWTH-011, SEO-DOC-001,
-SEO-DOC-003. See §5 for each.
+SEO-GROWTH-008, SEO-GROWTH-009, SEO-GROWTH-010, SEO-GROWTH-011, SEO-GROWTH-012,
+SEO-DOC-001, SEO-DOC-003. See §5 for each.
 
 ---
 
