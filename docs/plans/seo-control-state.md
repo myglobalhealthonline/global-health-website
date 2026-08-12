@@ -249,7 +249,7 @@ measurable loss today, and none should be dressed up as one. Full reasoning in �
 | ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | SEO-FOUNDATION-001-A | Lab-test template is the only CMS content family with **no locale-publication gate** | Indexation (latent) | **PARTIAL — LATENT RISK, no current defect** | 2026-08-12 | `tests/[testSlug]/page.tsx` never passes `noindex`; it and `tests/page.tsx` call the unfiltered `hreflangAlternates`, and `app/sitemap.ts` pushes every country locale with no eligibility filter — services, doctors, legal, `/health/*` and blog all gate. Backend `mergeHealthTestTranslation` falls back field-by-field to the English base row and does not expose `resolvedLocale` on the public payload, so the frontend *cannot* gate. **All 14 tests verified genuinely translated in cs/de/ro on production, so nothing is wrong today.** | 84 lab-test URLs indexed normally; no wrong-language page exists to be penalised | **Still open — latent.** Deliberately excluded from `SEO-FOUNDATION-002` (2026-08-13), which shipped regression coverage only. Lab-test indexability, sitemap filtering, hreflang and internal linking stay frozen until the `SEO-GROWTH-016` re-measure on ~2026-09-08 |
-| SEO-FOUNDATION-001-B | `BreadcrumbList` names hardcoded in English on ~10 templates | Structured data | **CLOSED IN CODE — IMPLEMENTED / VERIFIED LOCALLY** via `SEO-FOUNDATION-005`, 2026-08-13 | 2026-08-12 | Live JSON-LD: `/czechia/cs` → `Home / Czechia`; `/czechia/cs/doctors` → `… / Doctors`; `/czechia/cs/gp-consultation-online` → `… / Online GP consultation`; `/ireland/cs/lab-tests/general-health-test` → `Home / Ireland / Lab tests / Všeobecný zdravotní test`. Country node uses the English `config.name`, not the localized name. Blog-post trails omit the country node entirely (`Home / Blog / post`), so the trail does not match the URL path. Services, doctors, tools, `/health/*`, contact, about, pricing and legal-index **are** localized | Breadcrumb trails may render English labels in non-English SERPs; no CTR effect isolated | **Fixed.** See `SEO-FOUNDATION-005` below. Production verification still required |
+| SEO-FOUNDATION-001-B | `BreadcrumbList` names hardcoded in English on ~10 templates | Structured data | **CLOSED — VERIFIED BY PRODUCTION CHECK** via `SEO-FOUNDATION-005`, deployed `6d5733bc` (Frontend + Backend, Production, both `SUCCESS`), verified 2026-08-13 | 2026-08-12 | Live JSON-LD **before**: `/czechia/cs` → `Home / Czechia`; `/czechia/cs/doctors` → `… / Doctors`; `/czechia/cs/gp-consultation-online` → `… / Online GP consultation`; `/ireland/cs/lab-tests/general-health-test` → `Home / Ireland / Lab tests / Všeobecný zdravotní test`. Country node used the English `config.name`, not the localized name. Blog-post trails omitted the country node entirely (`Home / Blog / post`). Services, doctors, tools, `/health/*`, contact, about, pricing and legal-index were **already** localized | Breadcrumb trails may render English labels in non-English SERPs; no CTR effect isolated (none claimed post-fix either) | **None — fixed and confirmed live.** See `SEO-FOUNDATION-005` below for the full production verification |
 | SEO-FOUNDATION-001-C | `/` ↔ country-home hreflang cluster declares a content-negotiated selector as five different languages | Hreflang | **CLOSED — VERIFIED BY PRODUCTION CHECK** via `SEO-FOUNDATION-004`, deployed `cf2e8356` 2026-08-12T20:15Z, verified 20:19Z. Classified **C — semantic/architecture defect** by `SEO-FOUNDATION-003`; no demonstrated ranking impact before the fix | 2026-08-12 | `/` declares `x-default` → `/` plus six region-tagged country homes. Each country's **default-locale** home declares its own six-locale cluster, `x-default` → itself, plus a bare `{lang}` → `/` (`app/[country]/[lang]/page.tsx`, deliberate return link). Result: two `x-default` claims across an overlapping set, the six country homes never name each other, and **`/portugal/pt` and `/brazil/pt` both claim `pt` → `/`**. 7 URLs | No indexing damage: all 7 pages `PASS` / "Submitted and indexed", `googleCanonical == userCanonical` on every one (URL Inspection, 2026-08-13). `/` remains the site's top page — 154 clicks / 1,984 impressions / 7.76% CTR / pos 18.9, queries ~entirely brand | **None.** Live and verified (§7 `SEO-FOUNDATION-004`): `/` emits no alternates; every market keeps its own cluster and `x-default`; no country home points at `/`. Google has not necessarily reprocessed the graph yet — that is a recrawl matter, not an open action |
 | SEO-FOUNDATION-001-D | `app/sitemap.ts` and `app/robots.ts` have **zero** regression tests | Regression coverage | **CLOSED — IMPLEMENTED, VERIFIED LOCALLY** by `SEO-FOUNDATION-002`, 2026-08-13 | 2026-08-12 | No test file in the repo references either module. `sitemap.ts` alone decides all 1,906 submitted URLs, carries a load-bearing ordering rule (section-pages loop must stay last) and documents **four** past regressions in its own comments: 24 empty Spain URLs, 79 unsubmitted legal locale variants, 16 redirecting blog URLs, 14 withheld Ireland doctors. Everything downstream of it *is* tested (hreflang builders, doctor/service indexability predicates, blog-pagination robots, 5 legacy-redirect families, 410 gone-paths, `aggregateRating` fail-closed guard) | n/a | **Done.** `tests/unit/seo/sitemap.test.ts` (22 tests) + `tests/unit/seo/robots.test.ts` (7 tests), 2026-08-13. All four documented past regressions now have a named test. `-A` was **not** bundled — see `SEO-FOUNDATION-002` in §7 |
 | SEO-FOUNDATION-001-F | Lab-test detail pages carry no sibling-test or service internal links | Internal linking | **PARTIAL — CONFIRMED, blocked until 2026-09-08** | 2026-08-12 | `/ireland/en/lab-tests/general-health-test` renders 40 unique internal links — header, footer, the 7 tool links and 2 to the `/lab-tests` hub — and **zero** to the other 13 tests and zero to any service. A service detail page renders 8 sibling service links from the same shell | Cluster is mid-ramp; no attribution possible yet | **Do not act before the SEO-GROWTH-016 re-measure.** Recorded so the option exists if the cluster stalls |
@@ -1627,7 +1627,7 @@ wants `/` to be the universal fallback in search as well as in navigation.
 - `FAQPage` emitted broadly — eligible and useful for AI-search citation; not a policy
   violation and not a defect.
 
-### SEO-FOUNDATION-005 — BreadcrumbList localization & consistency, implemented 2026-08-13
+### SEO-FOUNDATION-005 — BreadcrumbList localization & consistency — CLOSED, VERIFIED BY PRODUCTION CHECK, 2026-08-13
 
 Closes `SEO-FOUNDATION-001-B`. Narrow shared-template fix: `BreadcrumbList` JSON-LD `name`
 values now read from the site's existing locale dictionaries instead of being hardcoded
@@ -1728,16 +1728,56 @@ failures (`tests/unit/portal-breadcrumb-routes.test.ts`, a doctor/admin-portal b
 route-table test unrelated to public-site JSON-LD; `lib/content/booking-address-copy.test.ts`,
 Brazil-address-field copy) are in files this batch did not touch and pre-exist it. New tests:
 39/39 passing (`structured-data.test.ts` breadcrumb cases + `breadcrumb-locale.test.ts`).
-Full-stack browser render against a live dev server (backend + Postgres) was not performed
-this pass — the change is a typed dictionary-key swap verified against the exact same JSON
-source files the code reads, not a runtime-computed value: **no ranking or CTR improvement
-is claimed; production verification (URL Inspection rich-results check post-deploy) is still
-required**, same as every other item in this ledger.
+**Production deployment & verification (2026-08-13, `SEO-FOUNDATION-005` deploy ticket).**
+`main` was already at `6d5733bc` (`origin/Dev-hassaan == origin/main`, no merge/push needed
+— a prior session had already fast-forwarded it). Railway Production Frontend + Backend both
+built and deployed commit `6d5733bc` (deployment created `2026-08-12T20:59:24Z`, polled to
+`SUCCESS` on both services 2026-08-13 before any live check). Postgres unaffected (no schema
+change in this batch).
+
+Fetched live HTML (server-rendered, not client-hydrated) and parsed the `BreadcrumbList`
+JSON-LD directly for 11 representative URLs:
+
+| URL | Locale | Breadcrumb names (position order) |
+|---|---|---|
+| `/czechia/cs` | cs (country default) | Domů → Česko |
+| `/czechia/cs/doctors` | cs | Domů → Česko → Lékaři |
+| `/czechia/cs/gp-consultation-online` | cs | Domů → Česko → Konzultace s praktickým lékařem |
+| `/ireland/cs/lab-tests/general-health-test` | cs (secondary) | Domů → Irsko → Laboratorní testy → Všeobecný zdravotní test |
+| `/portugal/pt/doctors` | pt | Início → Portugal → Médicos |
+| `/spain/es/doctors` | es | Inicio → España → Médicos |
+| `/romania/ro/gp-consultation-online` | ro | Acasă → România → Consultație de medicină generală |
+| `/ireland/de/doctors` | de (secondary — Ireland's default locale is `en`) | Startseite → Irland → Ärzte |
+| `/ireland/en/doctors` | en (control) | Home → Ireland → Doctors (unchanged baseline) |
+| `/ireland/en/blog/illness-benefit-ireland-how-to-claim` | en | Home → Blog → *(full localized post title)* |
+| `/ireland/cs/blog/illness-benefit-irsko-jak-zazadat` | cs | Domů → Blog → *(full localized post title)* |
+
+All 11: `@type: BreadcrumbList`, sequential `position` 1…N, every `item` an absolute
+`https://www.myglobalhealth.online/...` URL matching the page's own canonical prefix, no
+English fallback where a real translation exists (the `de`/`cs` secondary-locale cases above
+are the direct proof — Ireland's and Czechia's-as-secondary-market pages localize correctly,
+not just each country's own default locale). Blog hierarchy on both `en` and `cs` posts
+confirmed **Option A**: `Home / Blog / Post`, no country node inserted, matching the
+approved §7 classification — not reassessed, not changed.
+
+Regression spot check, same 11 fetches: every page `HTTP 200`, `robots: index, follow`,
+self-`canonical` unchanged, 7-entry `hrefLang` cluster present and unchanged on every
+country/service page (bare `/czechia/cs` and the blog posts correctly carry no hreflang
+cluster change from this batch — that surface is owned by `SEO-FOUNDATION-004`/blog
+pagination and was not touched here), `<title>`/`<h1>` read as pre-existing content, not
+new copy. No Google Rich Results / third-party schema validator was invoked — not wired
+into the toolchain, and manual JSON-LD parsing already confirms structural correctness
+(§5) without turning this into a broader schema audit.
+
+**No ranking or CTR improvement is claimed.** Google has not necessarily reprocessed these
+pages' rich-result presentation yet — that is a recrawl matter, not something this check
+can observe or accelerate.
 
 **Excluded per ticket §10/§2:** homepage hreflang (`-C`, closed), sitemap/robots policy, the
 lab locale gate (`-A`) and lab internal links (`-F`, both frozen until 2026-09-08), lab
 `Product`/`Offer` schema, the dead `ROUTE_SEO` catalogue (`-E`), titles/descriptions, country
-keyword/content optimization, service/doctor copy. Not pushed, not deployed.
+keyword/content optimization, service/doctor copy. **Code: deployed to Production (`6d5733bc`)
+and verified live, 2026-08-13.**
 
 ### NOW — one batch
 
@@ -1748,11 +1788,15 @@ keyword/content optimization, service/doctor copy. Not pushed, not deployed.
 `SEO-FOUNDATION-004` is **deployed (`cf2e8356`, 2026-08-12T20:15Z) and verified in
 production** — the global gate is decoupled from the market hreflang clusters, with
 canonicals, indexability, locale negotiation and navigation unchanged — so `-C` is closed.
-`SEO-FOUNDATION-005` (BreadcrumbList localization, closing `-B`) is **implemented and
-verified locally, 2026-08-13 — not yet pushed or deployed.**
+`SEO-FOUNDATION-005` (BreadcrumbList localization, closing `-B`) is **deployed (`6d5733bc`,
+Production Frontend + Backend, both `SUCCESS`) and verified in production, 2026-08-13.**
 Nothing else in the foundation programme is now awaiting a deploy. Remaining findings: `-A`
 (lab locale gate) and `-F` (lab internal links) stay frozen until the 2026-09-08
-`SEO-GROWTH-016` re-measure; `-E` (dead `ROUTE_SEO` catalogue) is maintenance-only.**
+`SEO-GROWTH-016` re-measure; `-E` (dead `ROUTE_SEO` catalogue) is maintenance-only.
+**GLOBAL SEO FOUNDATION — VERIFIED / MONITOR EXCEPTIONS**: every foundation defect that was
+actionable now (`-B`, `-C`) is closed and production-verified; the three remaining rows are
+each a deliberate, dated exception (`-A`/`-F` frozen for the lab-cluster measurement window,
+`-E` a zero-impact maintenance note), not open implementation work.**
 
 The old roadmap of isolated `SEO-GROWTH-*` tickets is superseded. The programme is:
 **NOW** global foundation → **NEXT** only the systemic defects this audit confirmed →
