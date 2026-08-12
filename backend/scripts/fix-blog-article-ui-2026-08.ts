@@ -25,7 +25,10 @@
  *
  *   3. STICKY TOC BEHIND THE HEADER. `.article-nav` sticks at top:0 z-20; the
  *      site header sticks at top:0 z-200 and is ~99px tall. Measured: the nav
- *      was 100% covered whenever it stuck.
+ *      was 100% covered whenever it stuck. The nav is now not sticky at all —
+ *      pinning it below the header would stack two bars and eat ~170px of a
+ *      mobile viewport, and the site header should be the only pinned thing
+ *      on a blog page.
  *
  *   4. DEAD RELATED-CARD GRIDS. Some bodies carry their own related-articles
  *      grid whose links point at retired Wix URLs (/post/…, /pt/portugal/blog/
@@ -44,8 +47,10 @@
  * and CSS repairs are APPENDED to the row's own <style> block rather than
  * rewritten in place — the appended rules win on source order at equal
  * specificity, and the original declarations stay readable in the admin
- * editor. Re-running is a no-op: rows already carrying PATCH_MARKER are
- * skipped.
+ * editor. Re-running is idempotent BY RESULT: each row is re-derived from
+ * scratch and only written when it actually differs, and a previously
+ * appended block is replaced rather than duplicated. So revising the CSS
+ * constants below and re-running is the intended way to ship a follow-up.
  *
  * Deliberately NOT done here: re-skinning the six legacy articles (Playfair /
  * Space Mono / terracotta / gold) onto the gh-blog design system. That is a
@@ -65,7 +70,8 @@ const OUT_DIR = (() => {
   return i !== -1 ? process.argv[i + 1] : null;
 })();
 
-/** Presence of this string in a row's HTML means the row is already patched. */
+/** Opens this script's appended CSS block, and is how {@link upsertCss} finds
+ *  a previous revision of it to replace. */
 const PATCH_MARKER = "gh-blog-ui-2026-08-12";
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -114,11 +120,24 @@ function stripLeadingText(html: string): string {
   return lead.trim().length === 0 ? html : html.slice(firstTag);
 }
 
-/** Append CSS to the row's own (single) <style> block. */
-function appendCss(html: string, css: string): string {
+/**
+ * Replace this script's own appended CSS at the tail of the row's <style>
+ * block, or append it if the row has never been patched.
+ *
+ * Idempotence is by RESULT, not by "has it been touched" — a row already
+ * carrying an older revision of the block gets it rewritten in place rather
+ * than skipped, so editing the constants below and re-running is how this
+ * script is meant to be revised. The block is always the tail of the style
+ * content, so everything from the marker comment onwards is ours to replace;
+ * the author's own declarations above it are never read or rewritten.
+ */
+function upsertCss(html: string, css: string): string {
   const close = html.lastIndexOf("</style>");
   if (close === -1) return html;
-  return `${html.slice(0, close)}\n${css}\n${html.slice(close)}`;
+  const head = html.slice(0, close);
+  const marker = head.indexOf(`/* ── ${PATCH_MARKER}`);
+  const authored = marker === -1 ? head : head.slice(0, marker);
+  return `${authored.replace(/\s+$/, "")}\n${css}\n${html.slice(close)}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -164,16 +183,19 @@ const CSS_GH_BLOG = `
    its copy is already written for a dark surface. Its links were the one
    exception: forest green on near-black, 1.70:1. */
 .gh-blog .article-lede .hero-panel a { color: var(--gh-lime); }
-/* Sticky TOC sat at top:0 under a sticky 99px site header (z-index 20 vs 200)
-   and was fully covered whenever it stuck. --header-height is 88px desktop /
-   72px mobile nominal; the rendered header runs 11-19px taller than that, so
-   the offset carries its own clearance rather than trusting the token. */
-.gh-blog .article-nav { top: calc(var(--header-height, 88px) + 20px); z-index: 15; }
+/* The in-article contents nav does not stick. It sat at top:0 under a sticky
+   99px site header (z-index 20 vs 200) and was fully covered whenever it
+   stuck; pinning it below the header instead would stack two sticky bars and
+   eat ~170px of an already short mobile viewport. It stays where the author
+   put it, scrolls away with the lede, and the site header is the only thing
+   pinned to the top of a blog page. */
+.gh-blog .article-nav { position: static; }
 /* The ids the TOC links to live on the '.section-anchor' <hr>, not on the
    section, so the original 'scroll-margin-top' on '.article-section' never
-   applied to anything and every jump landed behind the sticky chrome. */
+   applied to anything and every jump landed behind the site header. Only the
+   header has to be cleared now that the nav scrolls away. */
 .gh-blog .article-section,
-.gh-blog .section-anchor { scroll-margin-top: calc(var(--header-height, 88px) + 96px); }
+.gh-blog .section-anchor { scroll-margin-top: calc(var(--header-height, 88px) + 32px); }
 /* '.section-forest a{color:#FFFFFF}' (0,3,0) outranked '.btn-primary' (0,2,0),
    so every dark-section CTA rendered white-on-lime at 1.36:1. */
 .gh-blog .section-forest .btn-primary { color: #0A1F14; }
@@ -255,7 +277,7 @@ function patchGhBlog(p: Patch): void {
   if (p.html.includes('class="article-intro"')) {
     p.html = p.html.replace('class="article-intro"', 'class="article-intro article-lede"');
     p.steps.push("lede-class");
-  } else {
+  } else if (!p.html.includes("article-lede")) {
     p.steps.push("SKIP lede-class (no exact article-intro class)");
   }
   const withoutBrandline = removeElement(p.html, /<div\b[^>]*class="hero-brandline"[^>]*>/i, "div");
@@ -265,7 +287,7 @@ function patchGhBlog(p: Patch): void {
   }
   dropDuplicateTitle(p);
   dropDeadRelatedGrid(p);
-  p.html = appendCss(p.html, CSS_GH_BLOG);
+  p.html = upsertCss(p.html, CSS_GH_BLOG);
   p.steps.push("css");
 }
 
@@ -286,7 +308,7 @@ function patchLegacyDiabetes(p: Patch): void {
   }
   dropDuplicateTitle(p);
   dropDeadRelatedGrid(p);
-  p.html = appendCss(p.html, CSS_LEGACY_DIABETES);
+  p.html = upsertCss(p.html, CSS_LEGACY_DIABETES);
   p.steps.push("css");
 }
 
@@ -305,7 +327,7 @@ function patchEditorial(p: Patch): void {
   }
   dropDuplicateTitle(p);
   dropDeadRelatedGrid(p);
-  p.html = appendCss(p.html, CSS_EDITORIAL);
+  p.html = upsertCss(p.html, CSS_EDITORIAL);
   p.steps.push("css");
 }
 
@@ -354,13 +376,12 @@ async function main() {
 
   for (const row of rows) {
     if (!row.html) continue;
-    if (row.html.includes(PATCH_MARKER)) {
-      skipped.push(`${row.slug} (${row.locale}) — already patched`);
-      continue;
-    }
+    // No marker short-circuit: every row is re-derived and only written when
+    // the result actually differs. That is what makes revising the CSS blocks
+    // above and re-running the correct way to ship a follow-up fix.
     const { html: next, steps } = patchRow(row.html);
     if (next === row.html) {
-      skipped.push(`${row.slug} (${row.locale}) — no change [${steps.join(", ")}]`);
+      skipped.push(`${row.slug} (${row.locale}) — already current`);
       continue;
     }
     if (steps.some((s) => s.startsWith("SKIP"))) suspicious.push(`${row.slug} (${row.locale}): ${steps.join(", ")}`);
