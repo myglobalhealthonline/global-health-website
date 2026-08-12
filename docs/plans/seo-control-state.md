@@ -2589,3 +2589,143 @@ labs = WAIT until ~2026-09-08 (SEO-GROWTH-016 / SEO-FOUNDATION-001-A/F). Czech G
 **NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-002 UPDATE UNCOMMITTED.**
 
 ---
+
+## 13. CZ-SEO-003 — Czech women's-health demand & primary-locale gap validation (2026-08-13)
+
+**Mode: narrow investigation only. No page created. No translation. No metadata/CMS
+change. No deploy. Uncommitted.** Extraction date 2026-08-13; latest complete GSC
+date 2026-08-09 (`dataState=all`).
+
+### 13.1 Actual current inventory — `zenske-zdravi-online` is NOT missing
+
+Live check reverses the COUNTRY-WAVE-001 §10.3 finding: the Czech page **exists, is
+public, and is correctly authored**.
+
+| | cs | en |
+|---|---|---|
+| URL | `/czechia/cs/services/zenske-zdravi-online` | `/czechia/en/services/zenske-zdravi-online` |
+| HTTP | 200 | 200 |
+| Title | "Zdraví žen online \| Hormony, antikoncepce, menopauza \| Lékař na videu" | "Women's Health Online \| Czech Republic \| English Doctor" |
+| Meta description | Real authored Czech copy (PCOS, hormonal issues, menopause) | Real authored English copy (contraception, hormonal health, menopause) |
+| Robots | index, follow | index, follow |
+| Canonical | self | self |
+| hreflang | full 6-locale + x-default, reciprocal | same |
+| Sitemap | present, `lastmod` 2026-07-19 | present |
+| `inspect_urls` verdict | **NEUTRAL — "URL is unknown to Google"** | PASS — indexed, crawled 2026-07-19 |
+| Page size | 265,811 bytes | 263,045 bytes (near-identical) |
+
+**Root cause of the "cs missing" read: earlier inventory error.** COUNTRY-WAVE-001
+read `inspect_urls`' "URL is unknown to Google" (Google has never crawled it) as "the
+page doesn't exist." Those are different facts — the page has existed, live and
+correctly authored, since the same 2026-07-19 launch batch as every other Czech
+service page in this wave. It is not: missing a translation row, unpublished, service-
+less, route-excluded, on a different slug, or English-only. **It is simply
+un-crawled** — same crawl-discovery lag pattern already established for the GP page
+(§11.8) and the mental-health page (§12.5), consistent with a page not linked from
+sitewide nav (reached via the services hub, like the other specialty pages).
+
+### 13.2 Product / clinician scope (as authored, not invented)
+
+The page's own copy scopes itself to a **GP-led discreet video assessment** for
+"PCOS, hormonal issues, menopause and other women's health concerns" — not a
+gynecological examination or procedure. The two clinicians it links to,
+**MUDr. Romana Pavlů** and **Dr. Ahmed Maklad**, are both listed on their own profile
+pages as **"Praktická lékařka"/"Praktický lékař"** (general practitioner) — **not**
+gynecologists. This is an honestly-scoped page: it doesn't claim gynecology, and the
+service it actually offers (GP consultation, contraception guidance, menopause
+symptom discussion, referral where needed) matches who's actually available.
+
+### 13.3 Fresh GSC demand discovery — none found
+
+Broad Czech-language sweeps across the whole property, 90d:
+
+| Stem searched | Rows found |
+|---|---|
+| "zensk" (ženské) | 0 |
+| "gynek" | 0 |
+| "antikoncep" | 0 |
+| "menopauz" | 0 |
+| "hormon" (any language) | 21 rows, all Ireland English/Portuguese hormone-test queries — none Czech, none on a Czechia page |
+| page contains `zenske-zdravi-online` (any query) | 2 rows: 1 Portuguese ("ginecologista teleconsulta") on the pt variant, 1 German ("online-konsultation frauengesundheit") on the de variant — neither Czech, neither on cs/en |
+
+**There is currently no observed Czech-language search demand — commercial or
+otherwise — for women's health/gynecology/contraception/menopause on this property.**
+The en page itself has only 2 total impressions in 90 days (07-21, 07-29, 1 each),
+effectively no signal either.
+
+### 13.4 Demand classification, ownership, SERP
+
+No query survives filtering to justify a demand table — §13.3 is the complete
+finding. Query×page ownership: **N/A, no eligible query exists to own.** Targeted
+live SERP for the closest real Czech commercial term, **"gynekolog online"**
+(context/product-fit check, not demand-backed): top 20 is **100% dedicated online
+gynecology services** (Gynline.cz, Gynclin, Gynlink, Gynmedico — all staffed by named
+gynecologists, offering e-prescription and gynecological e-consultation) plus a
+directory (znamylekar.cz) and a hospital Q&A page. **MyGlobalHealth does not appear.**
+This is a real, noted business-model/specialty distinction (gynecologist-branded
+demand wants a gynecologist) but it cannot be scored as an active defect — no
+matching Czech demand has materialized either way, and the existing page correctly
+does not claim to be a gynecology service.
+
+### 13.5 English page assessment
+
+Genuinely useful and commercially aligned in principle (correctly scoped to
+contraception/hormonal/menopause GP care, real authored copy, not thin or obsolete)
+— but has no demonstrated demand or performance of its own (2 impressions/90d) to
+point to as evidence a Czech translation is overdue. Translating a page that itself
+has not proven demand is not a defect fix.
+
+### 13.6 Clinician / business feasibility
+
+Current supply (GP-level clinicians) supports exactly the scope the page already
+claims (hormonal/contraception/menopause discussion, not gynecological exams or
+procedures). If genuine Czech demand for a **gynecologist-specific** service were
+ever observed, that would be a **classification D** business/clinician-supply
+question for a future pass — not something to resolve now, since no such demand
+exists yet.
+
+### 13.7 Internal architecture
+
+No change proposed. The page already sits in its natural location (the services
+hub/catalogue, same pattern as every other specialty page) and is already reachable
+from the four linked clinician profiles. Not adding links or a new hub — no
+search/product evidence requires one.
+
+### 13.8 Root-cause classification: **B — EXISTING PAGE ALREADY SATISFIES INTENT**
+
+The apparent missing slug was a misreading of Google's crawl status, not a real
+content gap. **Reinforced by C (no meaningful search demand)**: even setting the
+inventory error aside, there is no Czech-language demand signal on this property to
+build a case around. Neither A, D, E, F, nor G applies — there's no true gap (A), no
+demonstrated demand for D/E to be about, no wrong-page ownership since no query
+exists to misattribute (F), and no publication defect (G) — the page is public,
+indexable, and correctly formed; it is simply new and not yet crawled by Google
+(routine, not a defect).
+
+### 13.9 Implementation gate
+
+**No new page. No CZ-SEO-004.** Per the ticket's own rule, classifications B/C
+recommend no new page. Nothing to repair (ruling out G) — the page is already live
+and correct. The un-crawled status is a passive wait, not an action item.
+
+### 13.10 Measurement baseline (for awareness only — no active target)
+
+- **Target Czech query family:** none currently supported by GSC evidence.
+- **Current ranking URLs:** none — no query owns a ranking on this page yet.
+- **Current cluster performance:** cs page 0 impr/0 clicks (never yet shown for a
+  real query); en page 2 impr/0 clicks/90d.
+- **Trigger for revisiting:** if/when Google crawls the cs page (self-resolving, same
+  as §11.8/§12.5) **and** real Czech-language demand appears in a future GSC pull —
+  re-run §13.3 at that point rather than on a fixed date.
+
+### 13.11 Control-state carry-forwards (unchanged by this pass)
+
+Global Foundation = VERIFIED / MONITOR EXCEPTIONS. Ireland = no implementation
+(§10.2). Ireland labs = WAIT ~2026-09-08 (SEO-GROWTH-016 / SEO-FOUNDATION-001-A/F).
+Czech GP (`gp-consultation-online`) = CZ-SEO-001 — RANKING RAMP / WAIT-MEASURE,
+remeasure ~2026-09-08 (§11). Czech mental health (`dusevni-zdravi-online`) =
+CZ-SEO-002 — NO REAL ASYMMETRY / MONITOR (§12).
+
+**NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-003 UPDATE UNCOMMITTED.**
+
+---
