@@ -107,18 +107,14 @@ export async function generateMetadata({
   // the page title/description otherwise.
   const ogTitle = extras?.ogTitle ?? title;
   const ogDescription = extras?.ogDescription ?? description;
+  // Market-only cluster: this country's supported locales as
+  // `{lang}-{REGION}` rows plus `x-default` → its own default-locale home.
+  // The gate (`/`) is deliberately NOT in it — see `app/(global)/page.tsx`
+  // for why (SEO-FOUNDATION-004). The default-locale variant used to add a
+  // language-only `{defaultLang}` → `/` return link here; that made six
+  // pages each declare the same content-negotiated URL to be a different
+  // language, so it was removed rather than repaired.
   const languages = hreflangAlternates(config, "");
-  // The global gate (`/`) hreflangs to each country's default-locale home
-  // page as a one-row-per-market cluster (see `app/(global)/page.tsx`), so
-  // hreflang reciprocity requires that page to claim `/` back. Only the
-  // default-locale variant is actually in the gate's cluster — other locale
-  // variants of this same country must not claim a return link the gate
-  // never gave them. Tagged with the bare language code, not x-default:
-  // this page already owns x-default for its own within-country cluster.
-  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
-  if (defaultLocale === lang.toLowerCase()) {
-    languages[defaultLocale] = "/";
-  }
   return buildPublicMetadata({
     path,
     title,

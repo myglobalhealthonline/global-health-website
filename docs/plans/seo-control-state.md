@@ -250,7 +250,7 @@ measurable loss today, and none should be dressed up as one. Full reasoning in �
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | SEO-FOUNDATION-001-A | Lab-test template is the only CMS content family with **no locale-publication gate** | Indexation (latent) | **PARTIAL — LATENT RISK, no current defect** | 2026-08-12 | `tests/[testSlug]/page.tsx` never passes `noindex`; it and `tests/page.tsx` call the unfiltered `hreflangAlternates`, and `app/sitemap.ts` pushes every country locale with no eligibility filter — services, doctors, legal, `/health/*` and blog all gate. Backend `mergeHealthTestTranslation` falls back field-by-field to the English base row and does not expose `resolvedLocale` on the public payload, so the frontend *cannot* gate. **All 14 tests verified genuinely translated in cs/de/ro on production, so nothing is wrong today.** | 84 lab-test URLs indexed normally; no wrong-language page exists to be penalised | **Still open — latent.** Deliberately excluded from `SEO-FOUNDATION-002` (2026-08-13), which shipped regression coverage only. Lab-test indexability, sitemap filtering, hreflang and internal linking stay frozen until the `SEO-GROWTH-016` re-measure on ~2026-09-08 |
 | SEO-FOUNDATION-001-B | `BreadcrumbList` names hardcoded in English on ~10 templates | Structured data | **PARTIAL — CONFIRMED, low severity** | 2026-08-12 | Live JSON-LD: `/czechia/cs` → `Home / Czechia`; `/czechia/cs/doctors` → `… / Doctors`; `/czechia/cs/gp-consultation-online` → `… / Online GP consultation`; `/ireland/cs/lab-tests/general-health-test` → `Home / Ireland / Lab tests / Všeobecný zdravotní test`. Country node uses the English `config.name`, not the localized name. Blog-post trails omit the country node entirely (`Home / Blog / post`), so the trail does not match the URL path. Services, doctors, tools, `/health/*`, contact, about, pricing and legal-index **are** localized | Breadcrumb trails may render English labels in non-English SERPs; no CTR effect isolated | Ranked #2 in §7; not the recommended batch |
-| SEO-FOUNDATION-001-C | `/` ↔ country-home hreflang cluster declares a content-negotiated selector as five different languages | Hreflang | **ADVANCED — SEMANTIC / ARCHITECTURE DEFECT (classification C), no demonstrated ranking impact** — re-investigated 2026-08-13 by `SEO-FOUNDATION-003`; see §7 | 2026-08-13 | `/` declares `x-default` → `/` plus six region-tagged country homes. Each country's **default-locale** home declares its own six-locale cluster, `x-default` → itself, plus a bare `{lang}` → `/` (`app/[country]/[lang]/page.tsx`, deliberate return link). Result: two `x-default` claims across an overlapping set, the six country homes never name each other, and **`/portugal/pt` and `/brazil/pt` both claim `pt` → `/`**. 7 URLs | No indexing damage: all 7 pages `PASS` / "Submitted and indexed", `googleCanonical == userCanonical` on every one (URL Inspection, 2026-08-13). `/` remains the site's top page — 154 clicks / 1,984 impressions / 7.76% CTR / pos 18.9, queries ~entirely brand | Proposed `SEO-FOUNDATION-004` (§7): drop the generic-language return link from country homes and stop emitting alternates on `/`. Two-line change, one call site. **Not implemented** |
+| SEO-FOUNDATION-001-C | `/` ↔ country-home hreflang cluster declares a content-negotiated selector as five different languages | Hreflang | **CLOSED IN CODE — IMPLEMENTED, VERIFIED LOCALLY** by `SEO-FOUNDATION-004`, 2026-08-13. Classified **C — semantic/architecture defect** by `SEO-FOUNDATION-003`; no demonstrated ranking impact. Not production-verified — not deployed | 2026-08-13 | `/` declares `x-default` → `/` plus six region-tagged country homes. Each country's **default-locale** home declares its own six-locale cluster, `x-default` → itself, plus a bare `{lang}` → `/` (`app/[country]/[lang]/page.tsx`, deliberate return link). Result: two `x-default` claims across an overlapping set, the six country homes never name each other, and **`/portugal/pt` and `/brazil/pt` both claim `pt` → `/`**. 7 URLs | No indexing damage: all 7 pages `PASS` / "Submitted and indexed", `googleCanonical == userCanonical` on every one (URL Inspection, 2026-08-13). `/` remains the site's top page — 154 clicks / 1,984 impressions / 7.76% CTR / pos 18.9, queries ~entirely brand | **Done in code** (§7 `SEO-FOUNDATION-004`): `/` emits no alternates; every market keeps its own cluster and its own `x-default`; no country home points at `/`. Awaiting deploy, then a production re-check of the same seven pages |
 | SEO-FOUNDATION-001-D | `app/sitemap.ts` and `app/robots.ts` have **zero** regression tests | Regression coverage | **CLOSED — IMPLEMENTED, VERIFIED LOCALLY** by `SEO-FOUNDATION-002`, 2026-08-13 | 2026-08-12 | No test file in the repo references either module. `sitemap.ts` alone decides all 1,906 submitted URLs, carries a load-bearing ordering rule (section-pages loop must stay last) and documents **four** past regressions in its own comments: 24 empty Spain URLs, 79 unsubmitted legal locale variants, 16 redirecting blog URLs, 14 withheld Ireland doctors. Everything downstream of it *is* tested (hreflang builders, doctor/service indexability predicates, blog-pagination robots, 5 legacy-redirect families, 410 gone-paths, `aggregateRating` fail-closed guard) | n/a | **Done.** `tests/unit/seo/sitemap.test.ts` (22 tests) + `tests/unit/seo/robots.test.ts` (7 tests), 2026-08-13. All four documented past regressions now have a named test. `-A` was **not** bundled — see `SEO-FOUNDATION-002` in §7 |
 | SEO-FOUNDATION-001-F | Lab-test detail pages carry no sibling-test or service internal links | Internal linking | **PARTIAL — CONFIRMED, blocked until 2026-09-08** | 2026-08-12 | `/ireland/en/lab-tests/general-health-test` renders 40 unique internal links — header, footer, the 7 tool links and 2 to the `/lab-tests` hub — and **zero** to the other 13 tests and zero to any service. A service detail page renders 8 sibling service links from the same shell | Cluster is mid-ramp; no attribution possible yet | **Do not act before the SEO-GROWTH-016 re-measure.** Recorded so the option exists if the cluster stalls |
 | SEO-FOUNDATION-001-E | Dead route-SEO catalogue in `lib/seo/page-seo.ts` | Maintenance trap | **DEAD CODE — no search impact** | 2026-08-12 | `ROUTE_SEO`, `pageMetadata`, `getRouteSeo` and `resolveBrandTitle` (~230 lines of route titles/descriptions) have **no consumer anywhere in the repo** — a repo-wide grep returns only the file itself and its own test. Only `buildPublicMetadata` is live. The dead copy is also stale (says "five countries", has no `/brazil` row) | 0 URLs affected | Delete when convenient. Editing it does **not** change any served title — record that before anyone tries |
@@ -1501,7 +1501,54 @@ is untrue. Not A (five conflicting language claims on one URL is a real defect, 
 unconventional). Not D (code plus live behaviour fully determine what `/` is — no business
 decision is required to remove a false claim).
 
-#### Proposed `SEO-FOUNDATION-004` — decouple `/` from the market clusters
+### SEO-FOUNDATION-004 — implemented, 2026-08-13
+
+**Status: IMPLEMENTED · VERIFIED LOCALLY.** Not production-verified — the change is
+live nowhere yet. This is an architecture-correctness fix, **not** a response to any
+demonstrated ranking loss: `SEO-FOUNDATION-003` found no indexing damage and `/` remains
+the site's top page.
+
+**What changed.** The global entry gate is decoupled from the market hreflang clusters.
+
+| File | Change |
+| --- | --- |
+| `frontend/app/(global)/page.tsx` | `generateMetadata` no longer builds or passes `alternates.languages`; the per-market row loop and its `getPublicCountriesMerged` call are gone |
+| `frontend/app/[country]/[lang]/page.tsx` | the default-locale-only `languages[defaultLocale] = "/"` return link is removed (it was the only emitter of it repo-wide) |
+| `frontend/tests/unit/seo/home-hreflang.test.ts` | new, 10 tests |
+| `frontend/tests/unit/seo/sitemap.test.ts` | untouched |
+| `frontend/vitest.config.ts` + `frontend/tests/stubs/server-only.ts` | alias `server-only` to an empty module so a unit test can import a server page module |
+
+`lib/seo/hreflang.ts` is unchanged — the whole fix sits at the two emitters.
+
+**Before → after (verified on a local server against the production API):**
+
+- `/` — was `x-default → /` plus six `{defaultLang}-{REGION}` market rows; now emits **no
+  hreflang alternates at all**.
+- `/portugal/pt` — was `pt → /` plus its Portugal cluster; now the Portugal cluster only
+  (`pt-PT`, `cs-PT`, `de-PT`, `en-PT`, `es-PT`, `ro-PT`, `x-default → /portugal/pt`).
+- `/ireland/en` — was `en → /` plus its Ireland cluster; now the Ireland cluster only.
+- Same removal on `/czechia/cs` (`cs`), `/spain/es` (`es`), `/romania/ro` (`ro`),
+  `/brazil/pt` (`pt`).
+- `/ireland/cs` and every other non-default locale variant: unchanged, as they never
+  carried the return link.
+
+**Unchanged and re-verified:** every canonical (`/` still the bare origin with no trailing
+slash), `index, follow` on all eight pages checked, locale negotiation on `/`, and the
+gate's body navigation — all six market links still render.
+
+**Validation.** New file 10/10; the SEO suite 39/39; full frontend unit suite 845/847 with
+the same two pre-existing unrelated failures (`booking-address-copy`,
+`portal-breadcrumb-routes`). `tsc --noEmit` clean, `eslint` clean. Mutation-checked:
+restoring the return link fails 5 of the 10 new tests. Rendered metadata inspected on a
+local Next server for `/`, `/ireland/en`, `/ireland/cs`, `/portugal/pt`, `/brazil/pt`,
+`/czechia/cs`, `/spain/es`, `/romania/ro`.
+
+**Deliberately not enforced by the tests:** any rule that a URL may never carry the same
+hreflang value in more than one cluster. `pt-IE`, `pt-CZ`, `pt-PT` and `pt-BR` are all
+legitimate and all distinct. Only the invariants this architecture actually requires are
+pinned.
+
+#### Original proposal (kept for the record)
 
 Smallest change that removes every finding above:
 
@@ -1550,10 +1597,12 @@ wants `/` to be the universal fallback in search as well as in navigation.
 **GLOBAL FOUNDATION. `SEO-FOUNDATION-001` is complete (this document).
 `SEO-FOUNDATION-002` is implemented, verified locally and pushed to `origin/Dev-hassaan`
 (`9c213b71`) — regression coverage only, no production SEO behaviour changed, not deployed.
-`SEO-FOUNDATION-003` (investigation of `-C`) is complete: classification **C**, fix
-proposed as `SEO-FOUNDATION-004`, nothing implemented. The open decision is whether to
-authorize `SEO-FOUNDATION-004`; `-A` and `-F` stay frozen until the 2026-09-08 re-measure,
-`-B` and `-E` remain unscheduled.**
+`SEO-FOUNDATION-003` (investigation of `-C`) is complete: classification **C**.
+`SEO-FOUNDATION-004` is implemented and verified locally — the global gate is decoupled
+from the market hreflang clusters, canonicals/indexability/navigation unchanged — but is
+**not pushed and not deployed**, so `-C` is closed in code only. Next steps: deploy `-004`,
+then re-check the same seven pages in production. `-A` and `-F` stay frozen until the
+2026-09-08 re-measure; `-B` and `-E` remain unscheduled.**
 
 The old roadmap of isolated `SEO-GROWTH-*` tickets is superseded. The programme is:
 **NOW** global foundation → **NEXT** only the systemic defects this audit confirmed →

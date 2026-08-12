@@ -26,6 +26,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
+      // Next resolves `import "server-only"` through its own bundler
+      // condition; plain Node cannot. See tests/stubs/server-only.ts.
+      "server-only": path.resolve(__dirname, "tests/stubs/server-only.ts"),
     },
   },
 });

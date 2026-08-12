@@ -6,8 +6,6 @@ import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { getSelectedLocale } from "@/lib/i18n/selected-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
-import { hreflangRegion } from "@/lib/seo/hreflang";
-import { countrySlug } from "@/lib/routing/country-slug";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 
@@ -15,26 +13,27 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getPageLocale();
   const { hero } = loadLocaleBundle(locale).home;
 
-  // Hreflang cluster for the gate: `/` is not country-specific (one URL,
-  // content-negotiated by cookie/Accept-Language, not a `[country]/[lang]`
-  // segment), so `hreflangAlternates(country, suffix)` — built for a single
-  // country's full locale set — doesn't apply directly. Instead this is a
-  // one-row-per-market cluster: each live country's own DEFAULT-locale
-  // homepage is its regional alternate (e.g. `pt-PT` → `/portugal/pt`,
-  // `en-IE` → `/ireland/en`), and `/` itself is `x-default` — the gate is
-  // where every visitor with no established country/locale preference should
-  // land, exactly as it behaves today. A full cross-product (every country ×
-  // every locale it supports) would be technically valid too, but it would
-  // hreflang the gate to, e.g., a Czech-language Brazil page that no
-  // navigation on the gate itself links to — the default-locale set matches
-  // what a visitor actually reaches from here.
-  const countries = await getPublicCountriesMerged();
-  const languages: Record<string, string> = { "x-default": "/" };
-  for (const country of countries) {
-    const region = hreflangRegion(country.code);
-    const lang = (country.defaultLocale ?? "en").toLowerCase();
-    languages[`${lang}-${region}`] = `/${countrySlug(country.code)}/${lang}`;
-  }
+  // NO hreflang cluster here, deliberately (SEO-FOUNDATION-004, 2026-08-13).
+  //
+  // `/` used to emit one `{defaultLang}-{REGION}` row per market plus
+  // `x-default` → itself, and each market's default-locale home emitted a
+  // language-only row back (`pt` → `/`, `en` → `/`, …). That made six pages
+  // each declare this single URL to be a different language — `en`, `cs`,
+  // `pt` (twice, from Portugal and Brazil), `es`, `ro` — while `/` declared
+  // itself `x-default`. At most one of those claims can be true.
+  //
+  // The deeper problem is that `/` is not an alternate version of any market
+  // homepage at all: it is a country/language selector at one URL,
+  // content-negotiated by cookie/Accept-Language, with no services, pricing
+  // or market entity behind it. So the relationship is removed rather than
+  // repaired, leaving six clean per-market clusters that each keep their own
+  // `x-default`. Google's model would also permit a selector page to act as
+  // the single global `x-default`, but only as the full country x locale
+  // cross-product, and that would dissolve those per-market clusters.
+  //
+  // The gate still links every market in the page body — that is what
+  // `CountryEntryGate` is. Do not "restore" an alternates map here without
+  // deciding the whole-site cluster shape first.
 
   // The visible hero sells the promise; the SERP snippet has to answer the
   // query. `/` is the country picker, but Google ranks it for the commercial
@@ -51,7 +50,6 @@ export async function generateMetadata(): Promise<Metadata> {
     kind: "page",
     subtitle: hero.eyebrow,
     imageAlt: `${hero.title} - Global Health`,
-    languages,
   });
 }
 
