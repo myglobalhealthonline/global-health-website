@@ -227,10 +227,20 @@ this procedure.
 certificate ever fails to validate. It is a no-op on deployments where the
 integration is unconfigured.
 
+**Renewal window — confirmed by SÚKL 2026-08-07.** A test certificate can be
+renewed **only within one month of expiry**. For the current certificate
+(expires 5 November 2026) that means **not before 5 October 2026**. The 60-day
+and 30-day ops alerts are therefore advance notice only; the alert text says so
+and prints the date renewal opens.
+
+Self-service portal: https://testpristupy.sukl.cz/
+Official guide: https://testpristupy.sukl.cz/documents/nasledneVydaniCert.pdf
+
 **Steps.**
 
-1. Request the replacement through the SÚKL test-access portal well inside the
-   60-day warning.
+1. From one month before expiry, request the replacement at
+   https://testpristupy.sukl.cz/ following SÚKL's `nasledneVydaniCert.pdf`.
+   Earlier attempts will be refused.
 2. Validate the replacement **locally first**, against a scratch `.env` pointing
    `SUKL_TEST_PFX_PATH` at the new file. Confirm the subject, issuer and expiry
    are what you expect and note the new fingerprint suffix.
