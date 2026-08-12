@@ -2965,3 +2965,205 @@ CZ-SEO-003 — EXISTING PAGE / NO DEMAND / NO ACTION.
 **NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-004 UPDATE UNCOMMITTED.**
 
 ---
+
+## 15. CZ-SEO-005 — Active Czech doctor indexability & content-completion investigation (2026-08-13)
+
+**Mode: investigation only.** No bios written, no `readyToIndex` set, no
+credential changes, no manual robots/indexability change, no deploy.
+
+### 15.1 Access ceiling (stated up front)
+
+This pass has **no authenticated admin/CMS/database access** — only the
+public site, GSC, and the repository. "Verify from production API/database"
+in the ticket is answered as far as public evidence reaches: the public
+roster listing, the rendered profile page (title, robots, canonical, visible
+bio/services/booking state), and repo-level archived content (datasheets,
+prior audits). Anything that would require an authenticated admin session
+(raw `editorialChecklist.readyToIndex` DB value, internal "bookable" flag,
+onboarding status) is reported as **inferred from public behavior**, not
+directly read, and flagged as such below.
+
+### 15.2 Current clinician status (public evidence)
+
+All three — **Dr Gabriele Felici, Dr Michael Nytra, MUDr Nataliya Kharlamova**
+— are:
+- listed on the live `/czechia/cs/doctors` roster (8 doctors total, scraped
+  2026-08-13);
+- shown with a "REGISTRACE · OVĚŘENO" (registration verified) badge and a
+  real ČLK number on the listing card (Felici `1170392192`, Nytra
+  `1164807191`, Kharlamova `5170066188`);
+- reachable at a live, 200-status current-shape profile URL with a working
+  "Ověřit registraci" (verify registration) link.
+
+But on the **individual profile page**, all three also show, identically:
+- generic title "Doctor" (not a specific title like the other 5 active
+  doctors' "Praktický lékař"/"Praktická lékařka");
+- an "O [Name]" (About) section with **no body text under it**;
+- **"Dosud nebyly přiřazeny žádné služby."** — no services assigned;
+- **"[Name] momentálně nemá nastavené online rezervace v Czechia."** — no
+  online booking slots configured in Czechia.
+
+**This is the ticket's own distinction in practice: administratively
+verified (real ČLK registration) but not yet complete as a public,
+bookable profile** — no services and no open slots means a patient cannot
+currently book any of these three even by finding the page.
+
+### 15.3 Publication predicate re-run
+
+`isPublicDoctorRecordIndexable()` = validation passes AND
+`editorialChecklist.readyToIndex === true`. Per-doctor, from the union of
+live evidence + the 2026-08-08 migration audit + the 2026-08-09 Screaming
+Frog audit (three independent sources, all agreeing):
+
+| Doctor | `readyToIndex` | Bio failure | Credential failure | Blocked-copy failure | Title/name failure | Final indexability |
+|---|---|---|---|---|---|---|
+| Dr Gabriele Felici | `true` (backfilled 2026-08-08; noindex persists after, so this is confirmed not the blocker) | **Yes — empty** (<120 chars) | No (ČLK verified) | No | No (generic but non-empty) | **noindex — live-confirmed 2026-08-13** |
+| Dr Michael Nytra | `true` (same) | **Yes — empty** | No | No | No | **noindex — live-confirmed 2026-08-13** |
+| MUDr Nataliya Kharlamova | `true` (same) | **Yes — empty** | No | No | No | **noindex — live-confirmed 2026-08-13** |
+
+The 2026-08-08 audit logged all three as "SHOULD REMAIN NOINDEX (needs
+content)" specifically because bio failed independent of the checklist
+backfill. The 2026-08-09 Screaming Frog audit independently confirms the
+same three URLs are blocked by "Thin/generic fallback bio (auto-generated
+'is a Doctor registered in Czechia' description — **no authored profile
+content yet**)". Live check 2026-08-13 (this pass) confirms the bio is
+**still** empty. **The August 8 diagnosis still holds — nothing has changed.**
+No new/different blocker has appeared; this is not case §3's "content
+completed but still noindexed for another reason" scenario.
+
+### 15.4 Live-page verification (detail)
+
+All three, current-shape URL, checked 2026-08-13:
+
+| | Felici | Nytra | Kharlamova |
+|---|---|---|---|
+| HTTP | 200 | 200 | 200 |
+| Canonical | self | self | self |
+| Robots | `noindex, nofollow` | `noindex, nofollow` | `noindex, nofollow` |
+| Sitemap | Absent | Absent | Absent |
+| Title | "Dr Gabriele Felici — Doctor · Global Health" | "Dr Michael Nytra — Doctor · Global Health" | "MUDr Nataliya Kharlamova — Doctor · Global Health" |
+| H1/name | "Dr Gabriele Felici" | "Dr Michael Nytra" | "MUDr Nataliya Kharlamova" |
+| Bio | Empty (no text under "O Dr Gabriele") | Empty (no text under "O Dr Michael") | Empty (no text under "O MUDr Nataliya") |
+| Services | None assigned | None assigned | None assigned |
+| Booking | No online slots in Czechia | No online slots in Czechia | No online slots in Czechia |
+| Registration link | Present, "Ověřený profil" | Present, "Ověřený profil" | Present, "Ověřený profil" |
+
+Not weakening the guard is correct: these are genuinely thin medical-professional
+profiles by any reasonable editorial standard, not a false-positive gate.
+
+### 15.5 GSC demand/equity, 90d (query-level, not just page totals)
+
+Page-level totals (§14.2) understate how thin this actually is — pulling
+query-level rows for each name shows most of the page-total impressions are
+below GSC's per-query reporting threshold (diffuse long tail), not
+concentrated branded-name search:
+
+| Doctor | Page-level total (legacy, 90d) | Query-level rows visible | Query quality | Clicks (any URL, any query) | Tier |
+|---|---|---|---|---|---|
+| Michael Nytra | 140 impr / 15 clicks (`/czechia-doctors/mudr-michael-nytra`, + minor locale variants) | 3 rows, 15 impr total ("dr nytra" 1, "my nytra" 13, "nytra" 1) — genuine but thin name-anchored queries | Real but weak | 15 clicks recorded at page level, **0 at query level** (attribution gap — see note) | **EARLY DISCOVERY** |
+| Nataliya Kharlamova | 46+7+1 = 54 impr / 5 clicks | 1 row, 1 impr ("natalya kharlamova") | Almost entirely below query-reporting threshold — diffuse, not concentrated | 5 at page level, 0 at query level | **NO MATERIAL DEMAND** (page-level clicks don't reconcile to any visible branded query) |
+| Gabriele Felici | 1 impr / 0 clicks | 4 rows, ~5 impr total, all "mudr gabriele felici" variants | Real but negligible volume | 0 | **NO MATERIAL DEMAND** |
+
+Note on the click/query mismatch (Nytra, Kharlamova): GSC's query-level API
+omits rows below its anonymization floor, so page-level clicks can exceed the
+sum of visible query rows — this is a reporting artifact, not evidence the
+clicks are illegitimate. It does mean the "real" query mix is more diffuse
+and less clearly name-branded than the page totals alone suggest, which is
+exactly the caution the ticket's §5 asks for.
+
+### 15.6 Redirect equity
+
+All three: legacy `/czechia-doctors/{slug}` → single-hop `308` → current
+`/czechia/cs/doctors/{slug}` → `200`, `noindex, nofollow`. No chains, no
+locale corruption, no wrong-successor mapping (Felici's legacy slug uses the
+old `mudr-` prefix and correctly resolves to the current `dr-gabriele-felici`
+slug via the dynamic slug-candidate matcher — verified live, not a defect).
+**Exactly the case the ticket names as the significant one**: the redirect
+preserves navigation (a human following the legacy link reaches the real,
+correct, live profile) but the current profile still cannot enter search
+because it's noindexed. Nothing wrong with the redirects themselves.
+
+### 15.7 What content is actually missing, and whether first-party material exists
+
+Repo-wide search for any archived/migration source (`czechia-doctors-datasheet.ts`-style
+files, or any other seed/migration record) mentioning any of the three names:
+**no matches outside audit docs and test fixtures.** No first-party authored
+bio content exists anywhere in the repository. The 2026-08-09 Screaming Frog
+audit independently confirms this: "no authored profile content yet" for all
+three. Combined with §15.1's access ceiling (no admin/CMS session to check
+for an unpublished draft):
+
+**AUTHORITATIVE CONTENT MISSING — OWNER/CLINICIAN INPUT REQUIRED**, for all
+three. This is not "content exists but wasn't surfaced" — three independent
+sources (this pass, the 2026-08-08 audit, the 2026-08-09 audit) over five
+days all found the same empty state. No fabrication from third-party sources
+is proposed or acceptable here, per the ticket's own instruction.
+
+### 15.8 Commercial relevance
+
+All three carry a real, verified ČLK registration and appear on the live
+roster — genuinely real, licensed clinicians associated with the Czechia
+market, not placeholder/test records. But **zero assigned services and zero
+open booking slots** on all three means none is currently bookable through
+the platform regardless of indexability. This is a material caveat the
+ticket specifically asks to surface (§9): completing the bio alone would
+make the page indexable but would **not** make it bookable — service
+assignment and availability setup are a separate, additional prerequisite,
+likely owned by the same person/team who would supply the bio (clinician
+onboarding), but a distinct piece of work from "write the SEO copy."
+
+### 15.9 Per-doctor classification
+
+| Doctor | Classification | Basis |
+|---|---|---|
+| Michael Nytra | **B — CONTENT-COMPLETION BLOCK, SOURCE MISSING** (best of the three on demand signal, still thin) | Real if weak query demand, verified active/registered, bio + services + booking all incomplete, no first-party source found |
+| Nataliya Kharlamova | **B — CONTENT-COMPLETION BLOCK, SOURCE MISSING**, bordering **E — NO MATERIAL SEO VALUE** | Demand is effectively noise at query level; same completeness gap |
+| Gabriele Felici | **B — CONTENT-COMPLETION BLOCK, SOURCE MISSING**, bordering **E — NO MATERIAL SEO VALUE** | Near-zero demand (1 impression, 0 clicks, 90d); same completeness gap |
+
+No doctor qualifies for **A** (source exists, ready to complete) from what is
+verifiable in this environment — that would require an admin/CMS check this
+pass could not perform.
+
+### 15.10 Batch decision: OWNER INPUT REQUIRED
+
+Not "IMPLEMENT EDITORIAL COMPLETION" (would need a confirmed-A case) and not
+"NO SEO IMPLEMENTATION" (Nytra's signal, thin as it is, means C/E does not
+cleanly dominate). **OWNER INPUT REQUIRED**: someone with admin/CMS access
+should (a) confirm no draft bio already sits unpublished in the system before
+assuming content must be authored from scratch, and (b) obtain real bio copy
+and service/availability setup from the clinicians or clinic ops — content
+work, not a code batch. **`CZ-SEO-006` is not proposed in this pass** — the
+implementation gate requires a confirmed A, which this pass could not
+establish. Recommend a cheap follow-up: one admin-panel check for existing
+unpublished draft content on these three records, which would either
+upgrade Nytra to A (propose `CZ-SEO-006` then) or confirm B stands.
+
+### 15.11 Hlavatý — cheap check only, status unchanged
+
+No new authoritative identity/disposition evidence surfaced for Hlavatý in
+this pass (no repo-level datasheet, no additional GSC/backlink signal beyond
+§14.3). Status remains **UNRESOLVED IDENTITY / DATA STATE** — not 410'd, not
+restored, not redirected elsewhere.
+
+### 15.12 Measurement baseline
+
+- Nytra: 140 impr / 15 clicks (legacy, 90d), 0 on current shape. Baseline to
+  beat if content is ever completed: current URL should start owning
+  `nytra`-family queries and total clinician-query volume should hold or grow.
+- Kharlamova: 54 impr / 5 clicks (legacy, 90d), effectively no clean query
+  signal — track, do not prioritise ahead of Nytra.
+- Felici: 1 impr / 0 clicks (legacy, 90d) — lowest priority of the three.
+
+### 15.13 Control-state carry-forwards (unchanged by this pass)
+
+Global Foundation = VERIFIED / MONITOR EXCEPTIONS. Ireland = no implementation.
+Ireland labs = WAIT ~2026-09-08. Czech GP = CZ-SEO-001 — RANKING RAMP /
+WAIT-MEASURE, remeasure ~2026-09-08. Czech mental health = CZ-SEO-002 — NO
+REAL ASYMMETRY / MONITOR. Czech women's health = CZ-SEO-003 — EXISTING PAGE /
+NO DEMAND / NO ACTION. Czech doctor legacy consolidation = CZ-SEO-004 —
+Hlavatý/Lavrov UNRESOLVED IDENTITY / DATA STATE (§14), 5 healthy active
+doctors NORMAL CONSOLIDATION LAG.
+
+**NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-005 UPDATE UNCOMMITTED.**
+
+---
