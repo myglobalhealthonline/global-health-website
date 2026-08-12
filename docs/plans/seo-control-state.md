@@ -4,11 +4,13 @@
 remediation ledger, the organic-growth roadmap, and the indexation watchlist. Every
 other SEO document in this repository is historical evidence, not current status.
 
-Rebaselined: **2026-08-12** (task `SEO-CONTROL-001`, latest evidence pass
-`SEO-GROWTH-013`) — this date is when the control-state document and its evidence were
-last refreshed, **not** the latest date GSC has data for. GSC lags ~3 days; every GSC
-window in this file ends on the most recent complete date available at extraction time
-(2026-08-09 for the §1/§2 baseline), never on the rebaseline date itself.
+Rebaselined: **2026-08-12** (task `SEO-RESET-001`, superseding the same-day
+`SEO-CONTROL-001` pass) — this date is when the control-state document and its evidence
+were last refreshed, **not** the latest date GSC has data for. GSC lags ~3 days; every
+GSC window in this file ends on the most recent date available at extraction time
+(**2026-08-11** for the §1/§2 baseline, `dataState=all`), never on the rebaseline date
+itself. The earlier `SEO-CONTROL-001` windows ended 2026-08-09; that two-day shift is
+why §1 and §2 numbers differ slightly from the versions this document carried before.
 Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth.online`
 
 ---
@@ -41,20 +43,39 @@ Supporting rules:
 
 ## 1. Sitewide organic baseline
 
-Extraction date **2026-08-12**, via `get_search_console_performance` (Search Console
-Search Analytics). GSC lags ~3 days, so the most recent window ends 2026-08-09. Windows
-are 29 days each so that the current and prior periods are directly comparable.
+Re-extracted **2026-08-12** (`SEO-RESET-001`), via `get_search_console_performance`
+(Search Console Search Analytics), `dataState=all`. **Last date with any GSC data:
+2026-08-11.** Windows are 28 days each so that the current and prior periods are
+directly comparable. Sitewide totals are summed from the `date` dimension; the 3-month
+row is summed from the `device` dimension (3 rows) rather than 92 date rows — same
+totals, and it yields the device split noted below. Average position is
+impression-weighted from those rows.
 
 | Window | Dates | Clicks | Impressions | CTR | Avg position |
 | --- | --- | ---: | ---: | ---: | ---: |
-| Current 28d | 2026-07-12 → 2026-08-09 | **718** | **30,387** | **2.36%** | **18.8** |
-| Prior 28d | 2026-06-13 → 2026-07-11 | 407 | 10,819 | 3.76% | 12.4 |
-| Last 3 months | 2026-05-09 → 2026-08-09 | 1,583 | 51,091 | 3.10% | 16.0 |
+| Current 28d | 2026-07-15 → 2026-08-11 | **719** | **33,579** | **2.14%** | **18.5** |
+| Prior 28d | 2026-06-17 → 2026-07-14 | 414 | 10,860 | 3.81% | 13.1 |
+| Last 3 months | 2026-05-12 → 2026-08-11 | 1,617 | 54,877 | 2.95% | 16.1 |
 
-**Read this correctly.** Clicks grew 76% period-over-period, which is real. Impressions
-grew 181%, which is faster, so CTR fell and average position deepened. The impression
-surge is concentrated in the final days of the window (2026-08-06: 1,477 · 08-07: 1,937 ·
-08-08: 2,099 · 08-09: 2,723). Nothing in the click series suggests a ranking loss.
+**Read this correctly.** Clicks grew 74% period-over-period, which is real. Impressions
+grew 209%, which is faster, so CTR fell and average position deepened. Nothing in the
+click series suggests a ranking loss — the mechanism was diagnosed and closed in
+SEO-GROWTH-012 (see below).
+
+**The surge has not reversed, and its worst CTR days have passed.** Daily impressions
+peaked 2026-08-09 (2,723 impressions, 20 clicks, position 25.9) and have since settled
+at 2,491 (08-10) and 2,029 (08-11) with clicks recovering to 35 and 28 and position
+improving to 17.2 and 14.7. The two-day tail is the healthiest part of the window: the
+same volume at materially better positions. Treat 08-10/08-11 as possibly incomplete
+(`dataState=all`).
+
+**Device split, last 3 months (new observation this pass).** Mobile: 1,102 clicks /
+24,693 impressions / 4.46% CTR / position 10.5. Desktop: 501 clicks / 29,785
+impressions / 1.68% CTR / position 20.7. Tablet: 14 / 399 / 3.51% / 15.2. Desktop draws
+*more* impressions than mobile at half the CTR and twice the depth. This is recorded as
+context, not as a work item — the same tool/non-market long tail that explains the
+sitewide CTR fall is plausibly desktop-skewed, and no device-specific defect has been
+investigated or established.
 
 **Diagnosed and closed (SEO-GROWTH-012, §5/§7):** the surge is 568 pages that had zero
 impressions the week before suddenly earning them — not existing pages ranking
@@ -85,20 +106,27 @@ from a stale Wix-era crawl of the old site and has been re-confirmed as noise on
 ## 2. Country scoreboard
 
 Search Console **searcher country**, not page language. Current window
-2026-07-12 → 2026-08-09; prior window 2026-06-13 → 2026-07-11.
+2026-07-15 → 2026-08-11; prior window 2026-06-17 → 2026-07-14. Re-pulled
+`SEO-RESET-001`, 2026-08-12.
 
-| Country | Clicks | Impr | CTR | Avg pos | Trend | Strongest page type | Biggest opportunity |
+| Country | Clicks | Impr | CTR | Avg pos | 28d trend | Strongest page type | Biggest credible opportunity |
 | --- | ---: | ---: | ---: | ---: | --- | --- | --- |
-| Ireland | 186 | 5,355 | 3.47% | 24.0 | clicks +81% (103), impr +297% (1,348), CTR down from 7.64%, pos from 14.4 | Doctor profiles (legacy `/ireland-doctors/*` still out-earning current-shape URLs) | The sick-cert cluster: the blog article holds 1,616 impressions at pos 15.8 / 0.68% CTR while the transactional service page sits far deeper |
-| Portugal | 142 | 3,555 | 3.99% | 19.7 | clicks +43% (99), impr +157% (1,385), CTR from 7.15%, pos from 9.4 | Doctor profiles (`dr-telmo-coelho` at 20–22% CTR) and `/portugal/pt` | Driving-licence and atestado service pages rank 16–45 despite exact intent match |
-| Czechia | 94 | 1,470 | 6.39% | 13.8 | clicks +45% (65), impr +222% (456), CTR from 14.25%, pos from 7.6 | Czech-language service pages (`muzske-zdravi-online` pos 2.0, 23.5% CTR) | Best CTR of any market on the smallest impression base — more Czech service coverage converts efficiently |
-| Spain | 73 | 3,063 | 2.38% | 22.9 | clicks +115% (34), impr +454% (553), CTR from 6.15%, pos from 13.9 | Doctor profiles (`dr-tomas-ruiz-palacios` 50% CTR at pos 2.25) | Commercial pages underperform; cross-locale doctor cannibalization; a large zero-value calculator long tail inflating impressions |
-| Brazil | 26 | 2,466 | 1.05% | 10.5 | clicks +189% (9), impr +191% (848), CTR flat, pos improved from 11.2 | Tools (`/brazil/pt/tools/calorie-calculator`, 803 impressions) | Good positions, almost no clicks — traffic is informational tool traffic with no commercial page behind it |
-| Romania | 16 | 1,095 | 1.46% | 20.5 | clicks +433% (3), impr +1,017% (98), CTR from 3.06%, pos from 10.9 | Tools | Smallest market; no commercial page ranks yet |
+| Ireland | 189 | 6,114 | 3.09% | 22.9 | clicks +78% (106), impr +342% (1,382), CTR down from 7.67%, pos from 15.0 | Doctor profiles; legacy `/ireland-doctors/*` still out-earning current-shape URLs *in GSC's attribution* (Google's own state now shows them correctly as "Page with redirect" — see §6) | **The at-home lab-test cluster** — `/ireland/en/lab-tests` + 16 detail pages, 1,041 impressions / 4 clicks / position 27.1, from **zero impressions** the prior window. Geo-modified queries already rank 11–16 live. See SEO-GROWTH-016 |
+| Portugal | 134 | 3,745 | 3.58% | 19.4 | clicks +22% (110), impr +175% (1,361), CTR from 8.08%, pos from 9.8 | Doctor profiles (`dr-telmo-coelho`, 9.2% CTR at pos 4.9) and `/portugal/pt` | Driving-licence / atestado cluster: `/portugal/pt/services/certificado-medico-carta-de-conducao` holds 460 impressions at position 14.2, but every *visible* head query in it sits at 42–53. Feasibility looks poor — see §7 NEXT |
+| Czechia | 90 | 1,891 | 4.76% | 14.1 | clicks +58% (57), impr +303% (469), CTR from 12.15%, pos from 7.9 | Czech-language service pages (`muzske-zdravi-online` pos 2.2, 22.2% CTR; `lekar-online-praha` pos 5.9, 12% CTR) | Still the best CTR of any market on the smallest base. The current query mix is brand plus informational Czech terms (`diabetes` 37 impr pos 38.9) — no commercial cluster large enough to be a batch yet |
+| Spain | 78 | 3,614 | 2.16% | 23.9 | clicks +160% (30), impr +548% (558), CTR from 5.38%, pos from 13.4 | Doctor profiles (`dr-tomas-ruiz-palacios` 31.8% CTR at pos 3.1; `dr-luz-marina-zuluaga-rios` 25% at pos 1.9) | None new. SEO-GROWTH-013 closed this market as a SERP/business-model wall; `/spain/es` sits at 1,074 impressions / position 30.1. `/spain/en/services/consulta-medica-online` has grown to 518 impr / 7 clicks / pos 23.2 — still wrong-locale, still not the bottleneck |
+| Brazil | 30 | 2,785 | 1.08% | 10.2 | clicks +233% (9), impr +228% (849), CTR flat, pos improved from 11.6 | Tools, plus `/brazil/en/blog/online-medical-certificate-brazil` (146 impr at position 3.6, 1 click) | Good positions, almost no clicks — informational tool/blog traffic with no commercial page behind it. Unchanged diagnosis |
+| Romania | 19 | 1,240 | 1.53% | 21.2 | prior window ≤3 clicks (below the top-12 country cut) | Tools | Smallest market; no commercial page ranks yet. Unchanged |
 
-Non-market traffic worth noting: the United Kingdom draws 2,777 impressions at position
-34.8 for 22 clicks, and the United States 3,604 impressions at position 12.1 for 15
-clicks. Neither is a served market. This is a meaningful share of the impression
+Non-market traffic worth noting, current window: United Kingdom 2,928 impressions at
+position 33.0 for 22 clicks; United States 3,878 impressions at position 11.9 for 14
+clicks; Germany 745 / 8.5 / 12; India 534 / 14.6 / 13. **Pakistan is an outlier worth
+one line:** 348 impressions at position 9.9 for 25 clicks (7.18% CTR) — the highest
+CTR of any non-market country and more clicks than Romania. It is almost certainly
+doctor-name navigational search for the Irish clinicians with Pakistani names, not
+demand for a Pakistani market. Recorded, not actioned.
+
+Taken together the non-market countries are a meaningful share of the impression
 inflation described in §1 and should be treated as noise in CTR calculations, not as a
 CTR problem.
 
@@ -201,6 +229,8 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-015 | Global Doctify trust integration (revised from an Ireland-only gate) | Trust presentation / implementation | **IMPLEMENTED — VERIFIED, NOT DEPLOYED (uncommitted)** | 2026-08-12 | First pass added a per-market gate (`isDoctifyConfiguredForMarket`, Ireland-only) — **reverted** on explicit direction: the Doctify profile is the site's one global review profile, shown on every market's pages, same as before any of this ticket's work, with two real fixes kept: `language` now flows through to Doctify's widget URLs (was hardcoded `"en"`), and the homepage's manually-entered `review.doctify.aggregate` stat (a second, driftable copy of Doctify's number) was removed — the live widget is the UI's only source of truth for the rating/count now | `AggregateRating` JSON-LD explicitly **not** populated from Doctify — Google's review-snippet policy prohibits aggregating another site's reviews into your own markup; schema stays exactly as SEO-GROWTH-014 found it (fail-closed, empty) | See §7 SEO-GROWTH-015 for the full file list and verification. Also fixed the "45.000 consultas/Valorado en Doctify" pairing on the GP and specialist hero stat strips (implied the volume number was a Doctify rating) — volume claim kept, Doctify/rating wording dropped. Awaiting explicit commit authorization |
 | SEO-GROWTH-011 | Spain doctor cross-locale ranking "fragmentation" (Alfredo del Valle) | Indexation / hreflang | **EXPECTED BEHAVIOR — CLOSED, no code change** | 2026-08-12 | All 5 locale URLs (`spain/{es,cs,en,pt,de}/doctors/dr-alfredo-del-valle`) are 200, self-canonical (each declares and Google accepts its own canonical — no consolidation attempted by either side), `index, follow`, in sitemap, carry distinct per-locale `<title>` (Dermatólogo/Dermatolog/Dermatologist/Dermatologista/Dermatologe — real translation, not a duplicate stub), and cross-link each other via the sibling-locale switcher. The one legacy URL in the cluster, `/pt/spain-doctors/dr-alfredo-del-valle`, is "Crawled – currently not indexed" (last crawl 2026-03-08) and draws 1 impression in 90 days — a dead stub, not a participant | Google serves each locale variant as its own PASS result; no `noindex`, no wrong-canonical, no stale-crawl divergence | None. See §7 for the full query×URL matrix and reasoning |
 | SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
+| SEO-GROWTH-016 | Ireland at-home lab-test cluster: 1,041 impressions, 4 clicks, position 27.1, from a zero base | Ranking / content-intent | **INVESTIGATED — BOTTLENECK = INDEXING RAMP. No content, schema, linking or metadata work justified yet** | 2026-08-12 | `/ireland/en/lab-tests` + 16 detail pages all 200, `index, follow`, self-canonical, in sitemap, `richResults` PASS. Hub serves **14 real anchors**. Copy is **independently written, not Randox-duplicated**. Page format already matches what the SERP rewards. No cannibalization. `Product`/`Offer` schema absent but data exists. Hub meta carries a **stale €89 price** (real entry price €57) and a wrong "up to 10 days" turnaround | Detail pages first crawled 2026-08-01 → 08-08 and earned **100% of their 28-day impressions in the final 7 days**, while the hub dropped from ~479 to 11 — a hub→detail hand-off completed inside the measurement window. Cluster position improved 37.5 → 26.3 → 20.3 over 08-09/08-10/08-11 | **WAIT / MEASURE, re-measure 2026-09-08.** Full findings and early-exit triggers in §7 SEO-GROWTH-016 |
+| SEO-GROWTH-017 | `/service-page/ie-medical-consultation` (legacy Wix) still self-canonical and indexed in Google | Legacy routing | **WAITING FOR GOOGLE** | 2026-08-12 | 308 → `/ireland/en/see-a-specialist` (live probe, Googlebot UA) | "Submitted and indexed", **self-canonical**, last crawl **2026-07-08** — predates nothing in particular; Google simply has not recrawled. Referring URLs include `/home` and `booking-services-sitemap.xml`, both Wix-era artefacts | Watchlist only (§6). 147 impressions / 3 clicks / position 24.1 in the current window |
 
 ### Doctor indexability
 
@@ -227,6 +257,17 @@ investigations on these until the last-crawl date advances past the fix date.**
 | `/portugal/es/health/atestado-medico-online` | 308 → `/portugal/es/services/baixa-medica` | Indexed (legacy ES family, last observed crawl 2026-06-04) | **2026-06-04** | 2026-08-10 | WAIT FOR GOOGLE |
 | `/czechia-doctors/mudr-libor-hlavaty` | 308 → `/czechia/cs/doctors/mudr-libor-hlavaty` (200, indexable) | Legacy URL still carries the ranking (573 impr / pos 11.0, 90d) | — | — | WAIT FOR GOOGLE |
 | 28 doctors backfilled to `readyToIndex` | 200, indexable | Recrawl pending | — | 2026-08-08 | WAIT FOR GOOGLE |
+| `/service-page/ie-medical-consultation` (legacy Wix) | 308 → `/ireland/en/see-a-specialist` | **Submitted and indexed, self-canonical** | **2026-07-08** | — | WAIT FOR GOOGLE (added 2026-08-12, SEO-GROWTH-017) |
+| `/pt/about` (legacy) | 308 → `/about` | Still earning 781 impr / 8 clicks / position 8.7 | — | — | WAIT FOR GOOGLE (added 2026-08-12). Query mix is brand and **brand-collision** terms for unrelated entities ("clinic global health", "help global") — no commercial value, do not optimise |
+
+**One watchlist item resolved this pass.** `/ireland-doctors/dr-mohammed-omar`, the
+representative of the legacy Irish doctor family, was re-inspected 2026-08-12: Google
+now reports `coverageState: "Page with redirect"`, verdict NEUTRAL, **last crawl
+2026-08-11**, and `googleCanonical` = `/ireland/en/doctors/dr-mohammed-omar`. Google has
+accepted the consolidation. GSC's *reporting* still attributes clicks to the legacy URL
+(17 clicks vs. 3 on the current-shape URL in the current window), which is attribution
+lag, not a live routing defect. The equivalent Czech row (`mudr-libor-hlavaty`) stays on
+the list until it shows the same verdict.
 
 Recheck cadence: **one `inspect_urls` pass every 2–3 weeks**, not per session. Next
 recheck due **2026-09-01**. Escalate an item only if its crawl date has advanced past
@@ -869,26 +910,490 @@ vitest run` — 803/805 (the same 2 pre-existing, unrelated failures as every pr
 this session). All 6 locale JSON files valid. Direct read-only production query,
 above, re-run against the corrected 2026-01-01 boundary.
 
+### SEO-GROWTH-016 (a) — selection brief, 2026-08-12 (`SEO-RESET-001`)
+
+*Kept as written. This is the evidence that justified opening the batch; the answers are
+in **SEO-GROWTH-016 (b)** below, and where the two disagree, (b) wins — notably on the
+"striking-distance" query band, which (b) shows is substantially supplier-brand search.*
+
+**Issue.** Ireland's at-home lab-test cluster — `/ireland/en/lab-tests` plus 16
+test-detail pages — earned **1,041 impressions and 4 clicks (0.38% CTR) at an
+impression-weighted position of 27.1** in 2026-07-15 → 08-11, from **exactly zero
+impressions** in the prior 28 days. After the sick-cert blog article (closed, monitor
+only) and the brand-driven homepage, this is the largest non-tool, non-brand cluster on
+the site, and it is the only large one that has never been investigated.
+
+**Per-page evidence** (GSC, current window, `page contains /ireland/en/lab-tests`):
+
+| Page | Impr | Clicks | Pos |
+| --- | ---: | ---: | ---: |
+| `/ireland/en/lab-tests` (hub) | 490 | 3 | 18.5 |
+| `…/gut-microbiome-test` | 107 | 1 | 22.2 |
+| `…/full-blood-count` | 76 | 0 | 53.9 |
+| `…/thyroid-function-test` | 66 | 0 | 57.3 |
+| `…/vitamin-d-test` | 58 | 0 | 23.4 |
+| `…/vitamin-b12-test` | 44 | 0 | 22.4 |
+| `…/heart-health-cholesterol-test` | 38 | 0 | 32.5 |
+| `…/amh-fertility-test` | 32 | 0 | 28.9 |
+| `…/female-hormone-test` | 32 | 0 | 33.7 |
+| `…/genetic-lactose-intolerance-test` | 21 | 0 | 14.9 |
+| `…/genetic-coeliac-disease-test` | 19 | 0 | 16.8 |
+| `…/genetic-haemochromatosis-test`, `…/psa-prostate-test` | 18 each | 0 | 48.4 / 58.6 |
+| `…/general-health-test`, `…/nutrition-lifestyle-dna-test`, `…/fracture-risk-assessment-test`, `…/male-hormone-test` | 11 / 8 / 2 / 1 | 0 | 31.7 / 28.0 / 75.5 / 22.0 |
+
+**The single clearest pattern in the query data: geo-modified queries rank, head terms
+do not.** Ireland-country query×page rows, current window —
+
+| Rank band | Example queries (impr, position) |
+| --- | --- |
+| Position 4–20 (striking distance) | `gut testing ireland` (2, 6.0) · `at home b12 test` (1, 8.0) · `haemochromatosis test cost ireland` (2, 9.5) · `at home lactose intolerance test` (1, 10.0) · `heart health test at home` (1, 11.0) · `gut microbiome test ireland` (4, 11.3) · `at home coeliac test` (1, 12.0) · `gut health test ireland` (1, 12.0) · `cholesterol home test kit ireland` (5, 13.0) · `b12 test at home` (3, 14.0) · `home blood tests ireland` (5, 14.2) · `home cholesterol test ireland` (3, 14.7) · `gut microbiome testing kit` (5, 15.8) · `b12 test kit` (7, 18.3) · `gut microbiome test kit` (3, 18.7) · `at home vitamin d test kit` (2, 19.0) · `at home vitamin d test` (5, 19.8) |
+| Position 40–95 (not actionable) | `blood count test` (7, 81.7) · `full blood count` (5, 66.8) · `full blood count test` (7, 51.0) · `fbc blood test` (7, 58.6) · `cholesterol test` (3, 70.7) · `haemochromatosis gene test` (4, 70.5) · `blood test to check thyroid` (1, 95.0) |
+
+**Live SERP verification** (`get_serp_results`, location 2372 Ireland / `en`,
+2026-08-12, 5 keywords) — this is not a GSC-only recommendation:
+
+| Query | MGH live rank | Who owns the top of the SERP |
+| --- | --- | --- |
+| `gut microbiome test ireland` | **#14** — title "Gut Microbiome Test Ireland — Home Stool Test", real snippet | easyDNA.ie (2), thehealthlab.ie (3), dublincfm.com (4), randoxhealth.com (8) — boutique clinics and functional-medicine practices |
+| `cholesterol home test kit ireland` | **#16** — title "Cholesterol Home Test Ireland — Heart Health Blood Test" | webdoctor.ie (1), thenutritionstore.ie (3), letsgetchecked.ie (4), inhealth.ie (5), mccauley.ie (7), randoxhealth.com (8) — telehealth plus pharmacy retail |
+| `home blood tests ireland` | not in top 20 | letsgetchecked.ie (1), randoxhealth.com (2), bloodworks.ie (3), webdoctor.ie (6), thehealthlab.ie (7) |
+| `at home vitamin d test` | not in top 20 | randoxhealth.com holds the **featured snippet**; then letsgetchecked.ie, Boots, pharmacy chains |
+| `b12 test kit` | not in top 20 | Boots, randoxhealth.com, Superdrug, Amazon, Medichecks — UK retail-dominated |
+
+**Why this matters.** These are paid physical products with a real basket value, not
+informational traffic — the exact opposite of the `/tools/*` calculator long tail that
+DEFERRED below correctly refuses to optimise. Two pages are already on page 2 of a live
+Irish SERP for exact commercial intent.
+
+**Why it is feasible.** The competitor set on the geo-modified queries is boutique
+clinics, nutrition practices and pharmacy retail — not the national-insurer/aggregator
+wall that made Spain (SEO-GROWTH-013) structurally hard. The pages are technically
+clean (see the ledger row) and the cluster is in an *active indexing ramp*: zero
+impressions four weeks ago, position 11–16 now. Depth is partly post-index ramp, not a
+ceiling — the same pattern SEO-GROWTH-013 identified for Spain's service pages.
+
+**The one constraint to take seriously.** MGH resells **Randox** kits, and
+`randoxhealth.com` ranks page-1 (and holds a featured snippet) on several of the same
+queries — including position 8 for `gut microbiome test ireland`, where MGH is 14. The
+supplier is the competitor. MGH's own SERP snippet reads "Order a Randox gut microbiome
+home test in Ireland", so product copy overlap is a live risk, not a theoretical one.
+
+**What must be investigated next** (investigation only — nothing below is authorized to
+implement):
+
+1. Real search volume behind the geo-modified variants (`get_keyword_metrics` /
+   `research_keywords`) — the GSC impressions per query are 1–7, so the cluster's size
+   is currently inferred from breadth, not from any single query.
+2. Page-format match: the ranking competitors are e-commerce product pages with price,
+   stock and turnaround above the fold. Compare MGH's detail-page format against two of
+   them (`thehealthlab.ie`, `webdoctor.ie`) rather than assuming a content gap.
+3. Whether `Product`/`Offer` schema is present and legitimately justified (real prices
+   exist, so this is a genuine question, unlike the `AggregateRating` case closed in
+   SEO-GROWTH-015 — **that closure stands and must not be reopened by this work**).
+4. Duplicate/near-duplicate product copy against `randoxhealth.com`'s own IE product
+   pages.
+5. Hub vs. detail page roles: does the hub target `home blood tests ireland` while
+   details take single-test terms, or do they collide? (SEO-GROWTH-013's
+   hub-vs-detail framework applies directly.)
+6. Internal linking from `/ireland/en`: the Ireland homepage did **not** appear in
+   Google's referring-URL sample for the lab-tests hub, whereas it did for
+   `/ireland/en/services/referral-and-investigations`. GSC referring URLs are a sample,
+   so this is a lead to verify against the rendered homepage, **not** a finding — and
+   the hub itself demonstrably links out correctly (14 anchors).
+7. The SERP snippets carry a "5 days ago" / "4 days ago" datestamp on commercial
+   product pages. Worth understanding where Google is sourcing a date from, but
+   classify before acting.
+
+Target classification for the follow-up: one of CONTENT / INTENT · PAGE FORMAT ·
+INTERNAL LINKING · CTR / SNIPPET · AUTHORITY · BUSINESS / SERP WALL · NO ACTION.
+
+### SEO-GROWTH-016 (b) — investigated and classified, 2026-08-12
+
+Investigation carried out the same day the batch was selected. **No code changed.** The
+selection-time framing above stands as the brief; this section is the answer.
+
+**Method.** Fresh GSC `query`×`page` for `country=irl, page contains lab-tests` (160
+rows across two pages of results), per-page 28-day and last-7-day pulls, an 18-day daily
+series, 12 live `get_serp_results` pulls (location 2372 / `en`, 2026-08-12 — 5 from the
+selection pass plus 7 new), 3 `get_domain_overview` pulls scoped to the IE market, raw
+Googlebot-UA fetches of the hub and three detail pages plus the Ireland homepage, a
+browser render of two Randox product pages (their own pages are a client-rendered SPA
+shell, so raw HTML carries no product copy), and the live `sitemap.xml`.
+
+#### 1. The finding that reframes everything: the cluster changed state mid-window
+
+Last 7 days (2026-08-05 → 08-11) vs. the full 28 days:
+
+| Page | 28d impr | **Last 7d impr** | Share earned in the last 7 days |
+| --- | ---: | ---: | ---: |
+| `/ireland/en/lab-tests` (hub) | 490 | **11** | 2% |
+| `…/gut-microbiome-test` | 107 | 107 | **100%** |
+| `…/vitamin-d-test` | 58 | 58 | **100%** |
+| `…/vitamin-b12-test` | 44 | 44 | **100%** |
+| `…/heart-health-cholesterol-test` | 38 | 38 | **100%** |
+| `…/amh-fertility-test`, `…/female-hormone-test` | 32 each | 32 each | **100%** |
+| `…/genetic-lactose-intolerance-test` | 21 | 21 | **100%** |
+| `…/genetic-coeliac-disease-test` | 19 | 19 | **100%** |
+| `…/thyroid-function-test` | 66 | 33 | 50% |
+| `…/full-blood-count` | 76 | 27 | 36% |
+
+**The hub earned ~479 of its 490 impressions in the first three weeks and then stopped;
+the detail pages earned essentially all of theirs in the final week.** This is not a
+decline — it is Google handing specific-test queries from the catalogue page to the
+newly-indexed detail pages, exactly as those pages entered the index (first crawls
+2026-08-01 → 08-08). The detail pages have **one week** of ranking history each.
+
+Daily series for the cluster (all countries) confirms it: 08-04 recorded **zero**
+impressions, 08-05 → 08-07 were 6/10/3 at positions 38–63, then 08-08 47, 08-09 194,
+08-10 121, 08-11 99 — with position improving on each of the last three days
+(37.5 → 26.3 → **20.3**). Nothing here has settled.
+
+#### 2. Query clusters (Ireland searchers, current 28d)
+
+| Cluster | Impr | Clicks | Wtd pos | Main URL | Intent class | IE modifier |
+| --- | ---: | ---: | ---: | --- | --- | --- |
+| **Supplier brand ("randox …")** | ~57 | 0 | ~9 | hub (mostly) | **NON-IRELAND / SUPPLIER-BRAND NOISE** | mixed |
+| Gut microbiome / stool | ~75 | 0 | ~26 | `gut-microbiome-test` | HIGH-INTENT PRODUCT | often |
+| Cholesterol / heart | ~25 | 0 | ~40 | `heart-health-cholesterol-test` | HIGH-INTENT PRODUCT | sometimes |
+| Vitamin D | ~20 | 0 | ~22 | `vitamin-d-test` | HIGH-INTENT PRODUCT | rarely |
+| B12 | ~19 | 0 | ~23 | `vitamin-b12-test` | HIGH-INTENT PRODUCT | rarely |
+| Full blood count / FBC | ~22 | 0 | ~62 | `full-blood-count` | GENERIC INFORMATIONAL | no |
+| Thyroid | ~9 | 0 | ~52 | `thyroid-function-test` | GENERIC INFORMATIONAL | no |
+| PSA / prostate | ~10 | 0 | ~84 | `psa-prostate-test` | GENERIC INFORMATIONAL | rarely |
+| Haemochromatosis | ~11 | 0 | ~70 | `genetic-haemochromatosis-test` | COMMERCIAL RESEARCH | sometimes |
+| Coeliac / lactose (genetic) | ~7 | 0 | ~25 | genetic detail pages | HIGH-INTENT PRODUCT | no |
+| Fertility / hormone (AMH, female) | ~15 | 0 | ~36 | `amh-fertility-test`, `female-hormone-test` | COMMERCIAL RESEARCH | sometimes |
+| Generic "home blood tests" | ~15 | 0 | ~30 | hub | HIGH-INTENT PRODUCT | often |
+| **Public-phlebotomy booking** (`swiftqueue blood test appointments` pos 5.5, `mater hospital blood test` pos 6, `how to book blood test appointment online` pos 5) | ~5 | 0 | ~5 | hub | **WRONG INTENT — HSE/hospital appointment booking, not kits** | yes |
+
+**The supplier-brand cluster is the single most important correction to the selection-time
+read.** Roughly a quarter of the cluster's Ireland impressions and most of the
+"striking-distance" band are people searching **Randox by name**: `randox home test kit`
+(8 impr, pos 6), `randox blood test` (4, 8), `randox blood test ireland` (4, 8.3),
+`randox thyroid test` (5, 10.6), `randox at home blood test` (3, 7), plus ~20 more,
+**every one of them zero-click**. Ranking sixth for someone who typed the supplier's
+name and will click the supplier is expected, not an opportunity. The selection-time
+"~60 impressions at positions 4–20 with zero clicks" figure was real but is now known to
+be substantially supplier-brand and hospital-booking intent, not unmet product demand.
+
+#### 3. Hub vs. detail role mapping
+
+| Query | Currently ranks | Correct page type | Match |
+| --- | --- | --- | --- |
+| `home blood tests ireland` (pos 14.2) | hub | hub | **HUB CORRECT** |
+| `randox home test kit` and family | hub | (no MGH page can satisfy it) | **WRONG INTENT — supplier brand** |
+| `gut microbiome test ireland` (11.3) | `gut-microbiome-test` | detail | **DETAIL CORRECT** |
+| `cholesterol home test kit ireland` (13.0) | `heart-health-cholesterol-test` | detail | **DETAIL CORRECT** |
+| `stool testing ireland` (17.0) | `gut-microbiome-test` | detail | **DETAIL CORRECT** |
+| `lactose intolerance test at home` (13.0) | `genetic-lactose-intolerance-test` | detail | **DETAIL CORRECT** |
+| `swiftqueue blood test appointments` (5.5), `mater hospital blood test` (6) | hub | none — HSE/hospital booking | **WRONG INTENT** |
+| `accredited medical testing labs` (36.2), `home blood test` (49.8) | hub | hub | HUB CORRECT, just deep |
+
+**No cannibalization.** Not one query was found where the hub outranks its own relevant
+detail page, or where both compete for the same specific-test intent. The hand-off in §1
+is the opposite of cannibalization — it is Google resolving the roles correctly and
+unaided.
+
+#### 4. Live SERPs — 12 queries, Ireland/`en`, 2026-08-12
+
+MGH appears in the top 20 for **4 of 12**:
+
+| Query | MGH live rank | Page-1 owners |
+| --- | --- | --- |
+| `gut microbiome test ireland` | **#14** | easyDNA (€149), thehealthlab, dublincfm, Randox #8 (€231) |
+| `microbiome test ireland` | **#15** | same set |
+| `cholesterol home test kit ireland` | **#16** | webdoctor (€89), thenutritionstore, letsgetchecked, mccauley, Randox |
+| `home cholesterol test ireland` | **#18** | thenutritionstore (€19.99), webdoctor (€89), letsgetchecked, pharmacies |
+| `home blood tests ireland` | absent | letsgetchecked #1, Randox #2, bloodworks, webdoctor |
+| `stool testing ireland` | absent | btsireland, HSE bowel screening, GastroLife, **3-result local pack** |
+| `haemochromatosis test cost ireland` | absent | Randox #2 (€91), thehealthlab (€130), genetrack (€300), bloodwise (€150) |
+| `at home coeliac test` | absent | pharmacy self-tests (SELFCheck ~€13–20) hold the featured snippet and #3/#8 |
+| `lactose intolerance test at home` | absent | Randox #6, easyDNA, genetrack, Amazon |
+| `randox home test kit` | absent | **Randox owns 4 of the top 8** |
+| `at home vitamin d test` | absent | Randox featured snippet, letsgetchecked, Boots |
+| `b12 test kit` | absent | Boots, Randox, Superdrug, Medichecks |
+
+GSC's page-1 positions for the `randox …` queries are **not reproducible live** — they
+are averages over 1–8 impressions with high variance. Treat them as noise, not as
+rankings.
+
+#### 5. Winning page format
+
+Two distinct formats win, by query type. Specific-test queries (gut microbiome,
+haemochromatosis, lactose) go to **e-commerce product pages** — Randox, easyDNA,
+genetrack, thehealthlab — with price, sample type and turnaround above the fold.
+Category queries (`home blood tests ireland`) go to **catalogue/brand landing pages**
+(letsgetchecked, Randox "Health at Home"). Generic non-geo consumer queries (`at home
+coeliac test`, `b12 test kit`) go to **pharmacy retail product pages** (Boots, McCauley,
+Hickey's, thenutritionstore) at €10–25 price points. `stool testing ireland` additionally
+returns a **local pack** — physical Irish clinics — which MGH structurally cannot enter.
+
+MGH's detail pages already are the first format: price, sample type, turnaround and a
+marker list above the fold. **Page format is not the gap.**
+
+#### 6. Randox supplier-overlap analysis — the mandatory check
+
+Compared MGH's `gut-microbiome-test` and `vitamin-d-test` against Randox's own product
+pages, rendered.
+
+| Dimension | Randox | MGH |
+| --- | --- | --- |
+| Opening copy | "Understanding your health starts with your gut. The trillions of bacteria living in your gut influence everything from digestion & immunity to mood, skin and even sleep…" | "Your gut microbiome influences digestion, immunity and mood. This kit sequences the organisms present in a stool sample you collect at home and returns a profile of your microbial composition with insights you can act on. **It is a wellbeing profile, not a diagnostic test for gut disease.**" |
+| Marker list | 3 collapsed groups (Archaeal / Bacterial / Viral Composition) | 11 named markers broken out (F/B ratio, butyric-acid producers, oxalate-degrading bacteria, pathogenic bacteria…) |
+| Framing | Sales-led ("Better gut health can lead to more energy, stronger immunity, clearer skin…") | Clinically hedged, plus an explicit "will this diagnose IBS or coeliac disease? **No.**" FAQ |
+| Ireland-specific content | none | IMC registration, GDPR/DPC, HSE/HIQA alignment, 112 emergency guidance |
+
+**Classification: SUPPLIER-DERIVED BUT VALUE-ADDED.** What is shared is *product fact*
+— marker names, 4–6 week turnaround, stool sample, activate-and-post flow — which is
+unavoidable and not duplication. The prose is independently written and, on the clinical
+honesty axis, better than the supplier's. **There is no near-duplicate risk and no copy
+rewrite is warranted.** This closes the largest open question from the selection pass.
+
+#### 7. Commercial differentiation — where the real constraint is
+
+**SEO/content differentiation is fine. The business offer is the problem, and only on
+some products.**
+
+| Product | MGH | Randox direct | Others on the SERP |
+| --- | ---: | ---: | --- |
+| Gut Microbiome | **€254** | **€231** | easyDNA €149 |
+| Genetic Haemochromatosis | **€129** | **€91** | thehealthlab €130, bloodwise €150, genetrack €300 |
+| Vitamin D | €57 | from €40 (QuickDraw total €52) | Boots/pharmacy rapid tests ~€15–25 |
+| Genetic Coeliac | €129 | — | pharmacy antibody self-tests ~€13–20 (different test class) |
+| General Health | **€57** | **€91** | — |
+| Heart Health (Cholesterol) | **€57** | — | webdoctor €89, careoncall €89, strips €19.99 |
+
+MGH is **cheaper** than Randox on the General Health panel and cheaper than the telehealth
+competitors on cholesterol — but **more expensive than its own supplier** on the two
+highest-impression specialist kits (gut microbiome +€23, haemochromatosis +€38), and the
+gut page is the single most expensive result on its SERP. Compounding it, MGH's own page
+states plainly: *"Your results are delivered to you directly by Randox."* The clinician
+value-add — an IMC-registered doctor to interpret results — is **not included**; it is
+"optional, from €45", making the full MGH proposition €299 against Randox's €231 for the
+identical kit.
+
+This is a **BUSINESS / OFFER** finding, not an SEO one, and it caps what any content or
+schema work can achieve on the gut and haemochromatosis pages specifically. It does not
+apply to General Health or Heart Health, where MGH is price-competitive.
+
+#### 8. Structured data
+
+Every lab page emits `BreadcrumbList`, `FAQPage`, `MedicalOrganization`, `WebSite`,
+`ImageObject`, `ContactPoint`, `PropertyValue`; the hub adds `ItemList` with 17
+`ListItem`s. **No `Product`, no `Offer`, no `AggregateOffer` anywhere** — while real
+prices (€57 / €79 / €100 / €129 / €243 / €254), currency, availability, sample type and
+turnaround are all present as visible page content.
+
+**Classification: DATA AVAILABLE BUT NOT EXPOSED.** Genuinely missing and genuinely
+justified by real commercial data — unlike the `AggregateRating` case, which stays closed
+per SEO-GROWTH-015 and must not be revisited by this workstream. Not added in this task;
+see the NOW decision for why it is not the first move either.
+
+#### 9. Metadata and snippet — one verified defect, on the hub
+
+The hub is the only page in the cluster ranking shallow enough to qualify under the
+project's own CTR rule (position 14.7 in the last 7 days). It has two factual errors:
+
+- `<meta name="description">`: *"Order a Randox home blood test kit … **from €89** …
+  Results in **up to 10 days**."* The catalogue's actual entry price is **€57**, and the
+  gut microbiome and DNA tests take **4–6 weeks**, not 10 days.
+- The on-page FAQ repeats the stale figure: *"Is the doctor consultation included in the
+  **€89**? No. The €89 covers the Randox test kit…"* — no product in the catalogue costs
+  €89.
+
+So the SERP snippet **understates MGH's own entry price by 36%** on a SERP where
+competitors advertise price directly (webdoctor "€89", thenutritionstore "€19.99"). This
+is a correctness defect first and an SEO defect second. Detail-page titles and
+descriptions were checked and are accurate, intent-clear and Ireland-explicit — no issue
+there. No metadata recommendation is made for anything ranking 40–90.
+
+#### 10. Content completeness
+
+Checked against the ranking competitors on all twelve of the review's criteria. MGH's
+detail pages state what the test measures, who it is for, the sample type, the process,
+turnaround, what is included, what happens after purchase, how results are delivered, that
+clinical interpretation exists (and that it costs extra), that it is at-home, and that it
+ships anywhere in Ireland. They additionally state **who the test is *not* for** — the
+"not a diagnostic test" framing — which none of the ranking competitors do. **No content
+completeness gap found.**
+
+#### 11. Internal linking
+
+Hub → detail: **14 real anchors**, descriptive ("Learn more : Gut Microbiome Test"),
+direct to canonical URLs. No defect.
+
+Into the hub: the Ireland homepage carries **exactly one** link to `/ireland/en/lab-tests`,
+in the nav/footer structure, anchored **"Lab Test Booking"** — a phrase matching no query
+in the cluster. No in-body contextual link from `/ireland/en`, and no homepage link to any
+detail page. Google's referring-URL sample for the hub lists `/online-prescription`,
+sibling-locale hubs and one doctor profile — not the Ireland homepage. For the detail
+pages the sample lists sibling locales and the sitemap only.
+
+**Real but minor, and explicitly not the bottleneck** — the pages are indexed and
+ranking, so discovery is not blocked. Flagged for the follow-up, per the review's own
+rule that an internal-link problem only counts if the commercially strongest pages are
+genuinely under-supported.
+
+#### 12. Authority
+
+`get_domain_overview`, IE market (2372/`en`), 2026-08-12:
+
+| Domain | Organic traffic | Organic keywords |
+| --- | ---: | ---: |
+| easydna.ie (ranks #2 for `microbiome test ireland`) | 5,249 | 508 |
+| thehealthlab.ie (ranks #3–4) | 3,464 | 523 |
+| **myglobalhealth.online** | **26** | **38** |
+
+The two boutiques beating MGH are **133× and 202×** its Irish organic footprint —
+they are not "modest-authority sites outranking MGH". Randox and LetsGetChecked are
+larger again. This is a genuine **AUTHORITY** gap, though the fact that MGH reached #14
+within one week of indexing shows it is not an absolute wall on the specific-test long
+tail. No outreach recommended or started.
+
+#### 13. The "5 days ago" SERP datestamp — resolved
+
+Not from the page. Ruled out by direct inspection: no `dateModified`/`datePublished` in
+any JSON-LD block, no visible date anywhere in the rendered text, no `Last-Modified`
+HTTP header. Sitemap `lastmod` is also ruled out — every lab URL shares a bulk timestamp
+seconds apart (`2026-08-06T01:56:40Z` … `01:57:00Z`), which would produce the *same*
+displayed date on every page.
+
+The dates match **Google's own last-crawl times exactly**: gut-microbiome crawled
+2026-08-07 → shown "5 days ago"; heart-health crawled 2026-08-08 → shown "4 days ago";
+SERP pulled 2026-08-12.
+
+**Classification: LEGITIMATE FRESHNESS SIGNAL / HARMLESS.** It is Google's normal
+treatment of recently-first-indexed URLs and should fade as the pages age. **Nothing to
+remove** — there is no date on the page to remove.
+
+#### 14. Bottleneck
+
+**Primary: INDEXING RAMP.** The detail pages carry the entire cluster and have exactly
+one week of ranking history; the hub→detail hand-off happened inside the measurement
+window; cluster position improved 37.5 → 26.3 → 20.3 across the last three days. No
+conclusion about a "ceiling" is available yet.
+
+**Secondary, confirmed: SNIPPET / CTR — hub only.** The €89 / "10 days" errors, §9.
+
+**Structural constraints, real but not fixable by this workstream:**
+**AUTHORITY** (§12) and **BUSINESS / OFFER** (§7 — supplier undercuts MGH on the two
+biggest kits and delivers the results itself).
+
+**Also true, deliberately not prioritised now:** PRODUCT STRUCTURED DATA is genuinely
+missing (§8); INTERNAL LINKING into the hub is thin (§11).
+
+**Explicitly ruled out:** SUPPLIER COPY OVERLAP (§6 — independently written), PAGE
+FORMAT (§5 — already the winning format), HUB / DETAIL INTENT and cannibalization
+(§3 — resolving correctly on its own), CONTENT COMPLETENESS (§10).
+
+#### 15. Ranked opportunities
+
+| Rank | Test / query | Page | Impr (28d) | Pos | Bottleneck | Feasibility | Recommended action |
+| ---: | --- | --- | ---: | ---: | --- | --- | --- |
+| 1 | Gut microbiome / stool, Ireland | `…/gut-microbiome-test` | 107 | 22.2 | Indexing ramp, then BUSINESS/OFFER (€254 vs Randox €231, easyDNA €149) | Medium | Measure; the price question is the business's, not SEO's |
+| 2 | `home blood tests ireland` and category terms | hub | 490 (11 in last 7d) | 14.7 (last 7d) | Snippet (€89 / "10 days" both wrong) | High | Correct the two factual errors — see the NOW note |
+| 3 | Cholesterol / heart, Ireland | `…/heart-health-cholesterol-test` | 38 | 32.5 | Indexing ramp | Medium | Measure. MGH is price-competitive here (€57 vs webdoctor €89) |
+| 4 | Vitamin D + B12 | `…/vitamin-d-test`, `…/vitamin-b12-test` | 102 | ~23 | Indexing ramp + retail wall on non-geo terms | Low–medium | Measure only |
+| 5 | Product/Offer schema across the cluster | all 17 pages | 1,041 | — | Structured data absent, data available | High effort-to-value once ranks settle | Queue behind the re-measure |
+
+Coeliac, lactose, haemochromatosis, PSA, thyroid and full-blood-count are **not** listed:
+each is either priced against a different product class (pharmacy antibody strips at
+€13–20 vs MGH's €129 genetic test), undercut by the supplier, or sitting at position
+50–90 on generic non-Irish terms.
+
 ### NOW — one batch
 
-Nothing queued. SEO-GROWTH-015 and TRUST-METRIC-001 (with the corrected 2026-01-01
-boundary) are committed (`013a198f`, on top of `770ee012`) on `Dev-hassaan`, not yet
-pushed.
+**WAIT / MEASURE — SEO-GROWTH-016 re-measure, due 2026-09-08.**
 
-### NEXT — up to one, evidence-backed
+The indexing ramp is the dominant explanation and the cluster changed state seven days
+ago. Every detail page has one week of ranking history; the hub→detail hand-off is still
+in progress; cluster position improved on each of the last three days. Rewriting,
+re-titling or re-structuring anything now would destroy the only clean measurement
+window this cluster will ever have, and would be optimising against positions that are
+still moving.
 
-1. **Homepage performance / query-mix investigation.** `/` draws 1,984 impressions /
-   154 clicks / position 18.9 in the current window — by far the largest single earning
-   page. Before calling anything a CTR issue, separate brand, generic "global health,"
-   commercial, wrong-market, and legacy-derived traffic within that query mix. The
-   2026-07-28 plan scheduled a CTR check on head terms from 2026-08-04 that was never
-   carried out; it is now overdue, and the open product question behind it (is a
-   country-selection interstitial the right destination for "global health clinic"?)
-   is still unanswered.
+Re-measure on **2026-09-08**, which gives a full 28-day window (2026-08-12 → 09-08) in
+which every detail page has been indexed throughout. Pull the same per-page and
+`query`×`page` reports, then compare against the tables in §1–§2 above.
+
+Act early only on these triggers:
+
+| Trigger | Then |
+| --- | --- |
+| A detail page stabilises at position 8–15 on an Ireland-modified query with real impressions and still zero clicks | Snippet/CTR work on that one page |
+| The gut or cholesterol page stalls at position 20–30 for two consecutive weeks | Re-open with the format/schema questions, not with a copy rewrite |
+| Impressions collapse or pages fall out of the index | Technical, treat as an incident |
+| Nothing changes materially | `Product`/`Offer` schema becomes the candidate batch (§8) — it is the only confirmed-missing, data-backed asset |
+
+**Flagged separately, deliberately not bundled into this batch: the hub's €89 price is
+wrong.** Its meta description advertises "from €89" and its FAQ answers a question about
+"the €89" when the real entry price is €57 and no product costs €89; the same description
+claims "results in up to 10 days" while the catalogue contains 4–6 week tests. This is a
+customer-facing factual error about price and turnaround, not an SEO optimisation, and it
+should be judged on those grounds. It needs explicit authorization as its own small
+correctness fix; it is **not** the recommended SEO batch and should not be used as a
+pretext to re-open the cluster's content.
+
+Branch state: `Dev-hassaan` is clean and **pushed** (`8d28b85e`); SEO-GROWTH-015 and
+TRUST-METRIC-001 landed in `013a198f`/`edcfe868`. The earlier note in this file that
+they were unpushed is superseded.
+
+### NEXT — up to four, evidence-backed
+
+1. **`/ireland/en/services/referral-and-investigations` — intent-match investigation.**
+   345 impressions / 3 clicks / 0.87% CTR / position 17.2, and it ranks **positions
+   1–14** for a long list of exact-intent private-referral queries: `how to get a gp
+   referral for private treatment` (pos 1), `cardiologist dublin` (3), `diagnostic
+   appointment meaning` (6), `gp referrals to specialists` (8), `how long is a doctor
+   referral letter valid for` (8), `how to ask for a referral from a doctor` (9),
+   `can my gp refer me to a private specialist` (11), `doctor referral letter` (11),
+   `gp referral letter ireland` (12), `referral letter online` (14, the page's 1 click).
+   The open question is the reverse of the usual one: most of those queries are
+   *informational*, and they are landing on a *transactional* service page. Verified
+   clean technically (200, `index, follow`, self-canonical, sensible title/meta). Per-
+   query impressions are 1–4, so size is unproven — that is the first thing to check.
+2. **Portugal driving-licence / atestado cluster — feasibility check before any work.**
+   `/portugal/pt/services/certificado-medico-carta-de-conducao` holds 460 impressions
+   at position 14.2, but every head query visible in GSC sits deep: `exame medico carta
+   condução` (27 impr, pos 44.6), `atestado medico` (20, 52.3), `atestado médico` (22,
+   52.8), `atestado médico para carta de condução` (8, 42.3). Only the long tail is
+   shallow (`atestado médico para carta de condução online`, pos 11). In Portugal this
+   certificate is a regulated, in-person IMT process — **check for a BUSINESS / SERP
+   WALL before assuming a content fix exists.**
+3. **Czechia coverage.** Best CTR of any market (4.76%) on the smallest base, and the
+   two Czech service pages that rank convert hard (`muzske-zdravi-online` 22.2% at pos
+   2.2). No single cluster is yet big enough to be a batch; revisit if Czech commercial
+   impressions grow.
+4. **`Product` / `Offer` schema for the Ireland lab-test cluster** — promoted into NEXT
+   by SEO-GROWTH-016 §8. Seventeen pages carry real prices, currency, availability,
+   sample type and turnaround as visible content and expose none of it as structured
+   data. Held behind the 2026-09-08 re-measure so it is not implemented against
+   still-moving rankings. **Distinct from `AggregateRating`, which stays permanently
+   closed** (SEO-GROWTH-015) — this is MGH's own first-party commercial data, not
+   another site's reviews.
+
+Dropped from NEXT this pass: *"Ireland lab-test cluster, other locales."* Only the `en`
+cluster earns impressions, and SEO-GROWTH-016 found the `en` bottleneck to be the
+indexing ramp — replicating anything into five more locales before the `en` pages have
+settled would multiply an unmeasured guess.
+
+**Removed from NEXT this pass — the homepage query-mix investigation.** It was NEXT-1
+and is now demoted on fresh evidence, not deferred for lack of time. `/` draws 1,962
+impressions / 146 clicks / 7.44% CTR / position 18.4 — the highest CTR of any material
+page on the site. Its query mix, pulled directly (`page equals /`, current window), is
+essentially all brand and brand-collision: `global health ireland` (12 clicks, 54.5%
+CTR), `global health online` (8, 12.1%), `my global health` (7, 12.5%), `global health`
+(5 clicks, 137 impr, pos 26.4), plus a zero-click tail of other organisations' names
+(`global health care` 64 impr pos 45.0, `clinic global health ms clinic /#/ auth login`
+59 impr pos 7.1, `centre for online health`, `doctors for global health`). There is no
+commercial query cluster on the homepage to optimise, and the 7.44% CTR is not a CTR
+problem. The **product** question the old entry bundled in — whether a country-selection
+interstitial is the right destination for brand search — is unchanged and stays in
+MANUAL. See DEFERRED.
 
 This ranking is not fixed. If a future OpenSEO/GSC refresh surfaces something with
-stronger evidence, it can outrank either of the two above — do not carry this order
-forward by default.
+stronger evidence, it can outrank any of the above — do not carry this order forward by
+default.
 
 ### MONITOR — waiting on Google or on data
 
@@ -918,8 +1423,28 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
     on its own justification for another rewrite — no new on-page defect has been
     established. Do not reopen this cluster until fresh query-level evidence
     identifies a specific new problem.
-- Czechia's CTR advantage (6.39%, the best of any market) on the smallest impression
-  base — watch whether new Czech service coverage sustains it.
+- Czechia's CTR advantage (**4.76%** in the current window, down from 6.39% but still
+  the best of any market) on the smallest impression base — watch whether new Czech
+  service coverage sustains it.
+- **Sitewide CTR and average position** (2.14% / 18.5, from 3.81% / 13.1). Confirmed
+  again this pass as the tool/discovery mix shift of SEO-GROWTH-012, not a ranking
+  loss; 2026-08-10 and 08-11 already show the same impression volume at positions 17.2
+  and 14.7. Do not open metadata work against this number.
+- **Desktop vs. mobile divergence** (desktop: more impressions than mobile, 1.68% CTR,
+  position 20.7). New observation, no investigation run. Watch whether it persists once
+  the tool long tail stabilises before treating it as anything.
+- **Ireland lab-test cluster — the NOW item.** Re-measure 2026-09-08 with the early-exit
+  triggers in §7 SEO-GROWTH-016. Track per-page position and whether the hub→detail
+  hand-off completes. Do not rewrite anything in the meantime.
+- **Randox as both supplier and competitor.** ~57 Ireland impressions in the current
+  window are supplier-brand searches (`randox home test kit`, `randox blood test
+  ireland`, …) that MGH ranks for at GSC positions 6–13 with **zero clicks** and which
+  are not reproducible on the live SERP. Expected, not an opportunity. Watch only for
+  whether Randox's own IE presence displaces MGH on non-brand product terms too.
+- **`/spain/en/services/consulta-medica-online`** — the known wrong-locale page has
+  grown from 194 impressions / 0 clicks to **518 / 7** at position 23.2. Still not the
+  Spain bottleneck (SEO-GROWTH-013 stands), but it is no longer negligible; if it keeps
+  growing it becomes a real WRONG LOCALE item rather than a footnote.
 
 ### MANUAL — needs a business or operator decision
 
@@ -928,7 +1453,9 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
 | Publish the Google OAuth consent screen | It is still in Testing, which caps refresh tokens at 7 days. The stated expiry (~2026-08-10) has passed, so the local `claude-seo` scripts may already be dead. OpenSEO MCP authenticates separately and is unaffected — all GSC data in this file came through it. |
 | Write real bios for 5 doctors (26 `noindex` URLs) | Clinical/editorial content, correctly gated. See SEO-DOC-002. |
 | Legacy Wix referrer outreach | `wix.to` alone holds 195 backlinks to old URLs. Ask high-value external referrers to point at current URLs. **Do not buy or build links for a medical site.** |
-| Answer the homepage-destination question | Product call, not an SEO one. See NEXT-1. |
+| Answer the homepage-destination question | Product call, not an SEO one. The SEO half of the old NEXT-1 is now closed on evidence (see NEXT, "Removed from NEXT this pass"); what remains is purely the product question of whether a country-selection interstitial is the right landing experience for brand search. |
+| Decide the lab-kit pricing position against Randox | SEO-GROWTH-016 §7: MGH sells the **same Randox kits** at €254 (gut microbiome) and €129 (genetic haemochromatosis) where Randox sells them direct at €231 and €91, on SERPs where Randox itself ranks — and MGH's own page states results are delivered by Randox. MGH is cheaper on General Health (€57 vs €91) and on cholesterol vs telehealth rivals, so this is product-specific, not blanket. Whether to reprice, bundle the €45 clinician interpretation into the kit price, or accept the position is a commercial call. No SEO work can offset it. |
+| Fix the hub's stale €89 price and "up to 10 days" turnaround | SEO-GROWTH-016 §9. Customer-facing factual error (real entry price €57; catalogue includes 4–6 week tests), appearing in both the SERP snippet and an on-page FAQ. Small, but it is a correctness decision rather than an SEO optimisation, and it was deliberately **not** bundled into the NOW batch. Needs explicit authorization. |
 | Decide whether `CountryTrustBar`'s Ireland-only Doctify badge should show on every market | SEO-GROWTH-015 made the widget global everywhere else on the site; this one pre-existing `=== "ie"` gate is now the only inconsistency. Product/business call, not a code task — see §7 SEO-GROWTH-015. |
 
 ### DEFERRED — low value or blocked
@@ -941,6 +1468,26 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
   no commercial value, high effort to move against dedicated calculator sites. This is
   the largest single component of the CTR dilution in §1 and should be understood as
   such rather than optimised.
+- **Homepage query-mix / CTR investigation** — demoted from NEXT-1 on 2026-08-12 with
+  the evidence recorded in §7 NEXT. The homepage's traffic is brand plus other
+  organisations' brand collisions; its 7.44% CTR is the site's best. Nothing to
+  optimise. Reopen only if a commercial (non-brand) query cluster appears on `/`.
+- **Brand-collision queries** (`clinic global health`, `clinic.globalhealth`, `help
+  global`, `global health care`) — several hundred impressions across `/`, `/pt/about`
+  and `/about` at positions 7–9 with near-zero CTR. These are navigational searches for
+  *other* organisations. Impressions are real; intent is not ours. Not a CTR defect,
+  not addressable.
+- **Ireland lab-test copy rewrite / supplier-differentiation rewrite** — investigated
+  and rejected on evidence (SEO-GROWTH-016 §6). MGH's product copy is independently
+  written and clinically more careful than Randox's own. There is no duplication to fix.
+  Do not reopen without a specific new duplication finding.
+- **Non-geo consumer test terms** (`b12 test kit`, `at home vitamin d test`, `at home
+  coeliac test`, `cholesterol test`, `full blood count`) — MGH is absent from the top 20
+  live and sits at positions 40–90 in GSC. These SERPs are owned by pharmacy retail at
+  €13–25 price points against MGH's €57–129 lab kits. Different product class, not a
+  ranking problem.
+- **`stool testing ireland` and other local-pack queries** — the SERP returns a
+  three-result local pack of physical Irish clinics. A remote service cannot enter it.
 - **SEO-METADATA-005**, the CMS title inconsistency.
 - `llms.txt` — optional and ignored by Google Search.
 - Mass submission to the Indexing API — 200/day cap and officially JobPosting/
@@ -961,7 +1508,18 @@ investigation without new evidence.)
 
 ## 8. Data limitations
 
-- **GSC lags ~3 days.** No window in this file extends past 2026-08-09.
+- **GSC lags ~3 days.** As of the 2026-08-12 `SEO-RESET-001` pull the last date with
+  any data is **2026-08-11**; no window in this file extends past it. 2026-08-10 and
+  2026-08-11 were pulled with `dataState=all` and may still be incomplete — the
+  position improvement on those two days should be re-read next pass before being
+  relied on.
+- **Adding dimensions to a GSC query changes the totals.** Observed directly this pass:
+  `/portugal/en/services/baixa-medica` returns 196 impressions under `dimensions:
+  ["page"]` but only 21 under `["page","country"]` for the identical window and filter.
+  Single-dimension pulls are the trustworthy ones; treat any multi-dimension row as a
+  lower bound on volume and never mix the two in the same comparison. Query-dimension
+  pulls additionally omit anonymised rare queries, which is why per-page query lists
+  sum to far less than the page's own impression total.
 - **GA4 is not connected to the OpenSEO project.** `get_search_opportunities`, which
   joins GSC positions to GA4 business outcomes, is therefore unavailable. Every
   opportunity here is scored on GSC evidence alone, with no conversion data behind it.
@@ -974,7 +1532,12 @@ investigation without new evidence.)
   at least one confirmed artefact (`brokenPages: 666`).
 - **No full crawl was run this pass**, deliberately. Technical state in §3 comes from
   targeted live checks plus the 2026-08-09 crawl records. A full crawl is due only on
-  the trigger conditions in §0.
+  the trigger conditions in §0. `SEO-RESET-001` added targeted live Googlebot-UA probes
+  of six URLs and `inspect_urls` on seven; nothing in either suggested a global
+  technical problem, which is why no crawl was triggered.
+- **GSC `referringUrls` is a sample, not an inventory.** Three lab-test detail pages
+  omit their own hub from that list while the hub demonstrably links to all 14 of them
+  in raw HTML. Never conclude "not internally linked" from `inspect_urls` alone.
 - **Country windows are searcher country.** Language is not market; a Portuguese-language
   page can serve a Brazilian or a Portuguese searcher.
 
