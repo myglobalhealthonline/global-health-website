@@ -5,7 +5,9 @@ remediation ledger, the organic-growth roadmap, and the indexation watchlist. Ev
 other SEO document in this repository is historical evidence, not current status.
 
 Rebaselined: **2026-08-12** (task `SEO-RESET-001`, superseding the same-day
-`SEO-CONTROL-001` pass) — this date is when the control-state document and its evidence
+`SEO-CONTROL-001` pass; extended the same day by `SEO-FOUNDATION-001`, a
+whole-site technical and shared-template completion audit — see §5 and §7) — this
+date is when the control-state document and its evidence
 were last refreshed, **not** the latest date GSC has data for. GSC lags ~3 days; every
 GSC window in this file ends on the most recent date available at extraction time
 (**2026-08-11** for the §1/§2 baseline, `dataState=all`), never on the rebaseline date
@@ -148,6 +150,11 @@ Verified against production on 2026-08-12 unless noted.
 | Orphan pages | 1 true orphan by inlink-graph measure (the earlier "306 orphans" figure was a measurement artefact and is withdrawn). | `internal-discovery-crawl-depth-2026-08-09.md` |
 | Performance | Healthy at last measurement; no regression signal since. Not re-measured this pass. | `docs/audits/performance/` |
 | Shared CSS/JS | No change required; closed. | prior investigation |
+| Sitemap URL validity | **51-URL stratified sample (every 38th sitemap row) — 51/51 returned 200, `index, follow`, self-canonical.** No redirecting, noindexed or 404 URL in the sample. | live Googlebot-UA probes, `SEO-FOUNDATION-001`, 2026-08-12 |
+| Host / slash / case canonicalisation | Correct. Apex → 301 → `www`; `http` → 301 → `https`; trailing slash → 308 → unslashed; `/Ireland/EN` → 404 (no case-variant duplicates); unknown country, unknown locale and unknown service slug all return real 404s, no soft-404s. | live probes 2026-08-12 |
+| Query-parameter handling | Correct. `?utm_source=…&gclid=…` serves the clean self-canonical. | live probe 2026-08-12 |
+| Utility/auth route indexability | Correct. `/login`, `/access-request`, `/patient-upload`, `/cart`, `/checkout`, `/cross-border-consent` all serve `noindex, nofollow` in addition to the robots.txt disallows. Blog pagination serves `noindex, follow`. Fallback-locale legal pages serve `noindex, follow` **and are excluded from their own hreflang cluster** (verified on `/ireland/pt/legal/cookie-policy`). | live probes 2026-08-12 |
+| Preview-host / retired-URL guards | `proxy.ts` returns a real **410** with `x-robots-tag: noindex` for retired clinician paths, and stamps `X-Robots-Tag: noindex, nofollow, noarchive` on any `*.up.railway.app` host. | `frontend/proxy.ts:367`, `:556` |
 
 ---
 
@@ -231,6 +238,22 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
 | SEO-GROWTH-016 | Ireland at-home lab-test cluster: 1,041 impressions, 4 clicks, position 27.1, from a zero base | Ranking / content-intent | **INVESTIGATED — BOTTLENECK = INDEXING RAMP. No content, schema, linking or metadata work justified yet** | 2026-08-12 | `/ireland/en/lab-tests` + 16 detail pages all 200, `index, follow`, self-canonical, in sitemap, `richResults` PASS. Hub serves **14 real anchors**. Copy is **independently written, not Randox-duplicated**. Page format already matches what the SERP rewards. No cannibalization. `Product`/`Offer` schema absent but data exists. Hub meta carries a **stale €89 price** (real entry price €57) and a wrong "up to 10 days" turnaround | Detail pages first crawled 2026-08-01 → 08-08 and earned **100% of their 28-day impressions in the final 7 days**, while the hub dropped from ~479 to 11 — a hub→detail hand-off completed inside the measurement window. Cluster position improved 37.5 → 26.3 → 20.3 over 08-09/08-10/08-11 | **WAIT / MEASURE, re-measure 2026-09-08.** Full findings and early-exit triggers in §7 SEO-GROWTH-016 |
 | SEO-GROWTH-017 | `/service-page/ie-medical-consultation` (legacy Wix) still self-canonical and indexed in Google | Legacy routing | **WAITING FOR GOOGLE** | 2026-08-12 | 308 → `/ireland/en/see-a-specialist` (live probe, Googlebot UA) | "Submitted and indexed", **self-canonical**, last crawl **2026-07-08** — predates nothing in particular; Google simply has not recrawled. Referring URLs include `/home` and `booking-services-sitemap.xml`, both Wix-era artefacts | Watchlist only (§6). 147 impressions / 3 clicks / position 24.1 in the current window |
+
+### Global foundation audit (`SEO-FOUNDATION-001`, 2026-08-12)
+
+Investigation-only pass across the shared SEO machinery. **No systemic defect with
+demonstrated current search impact was found.** The five rows below are latent risks,
+structured-data polish and a missing regression net — none of them is producing a
+measurable loss today, and none should be dressed up as one. Full reasoning in §7.
+
+| ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| SEO-FOUNDATION-001-A | Lab-test template is the only CMS content family with **no locale-publication gate** | Indexation (latent) | **PARTIAL — LATENT RISK, no current defect** | 2026-08-12 | `tests/[testSlug]/page.tsx` never passes `noindex`; it and `tests/page.tsx` call the unfiltered `hreflangAlternates`, and `app/sitemap.ts` pushes every country locale with no eligibility filter — services, doctors, legal, `/health/*` and blog all gate. Backend `mergeHealthTestTranslation` falls back field-by-field to the English base row and does not expose `resolvedLocale` on the public payload, so the frontend *cannot* gate. **All 14 tests verified genuinely translated in cs/de/ro on production, so nothing is wrong today.** | 84 lab-test URLs indexed normally; no wrong-language page exists to be penalised | Candidate `SEO-FOUNDATION-002` — see §7 |
+| SEO-FOUNDATION-001-B | `BreadcrumbList` names hardcoded in English on ~10 templates | Structured data | **PARTIAL — CONFIRMED, low severity** | 2026-08-12 | Live JSON-LD: `/czechia/cs` → `Home / Czechia`; `/czechia/cs/doctors` → `… / Doctors`; `/czechia/cs/gp-consultation-online` → `… / Online GP consultation`; `/ireland/cs/lab-tests/general-health-test` → `Home / Ireland / Lab tests / Všeobecný zdravotní test`. Country node uses the English `config.name`, not the localized name. Blog-post trails omit the country node entirely (`Home / Blog / post`), so the trail does not match the URL path. Services, doctors, tools, `/health/*`, contact, about, pricing and legal-index **are** localized | Breadcrumb trails may render English labels in non-English SERPs; no CTR effect isolated | Ranked #2 in §7; not the recommended batch |
+| SEO-FOUNDATION-001-C | `/` ↔ country-home hreflang cluster is non-reciprocal and carries a duplicate language code | Hreflang | **PARTIAL — CONFIRMED, no demonstrated impact** | 2026-08-12 | `/` declares `x-default` → `/` plus six region-tagged country homes. Each country's **default-locale** home declares its own six-locale cluster, `x-default` → itself, plus a bare `{lang}` → `/` (`app/[country]/[lang]/page.tsx`, deliberate return link). Result: two `x-default` claims across an overlapping set, the six country homes never name each other, and **`/portugal/pt` and `/brazil/pt` both claim `pt` → `/`**. 7 URLs | No impact visible: `/` holds the site's best CTR (7.44%) | Ranked #3 in §7. Smallest correct fix is to make `/` an `x-default`-only picker, not to widen the clusters |
+| SEO-FOUNDATION-001-D | `app/sitemap.ts` and `app/robots.ts` have **zero** regression tests | Regression coverage | **GAP — CONFIRMED** | 2026-08-12 | No test file in the repo references either module. `sitemap.ts` alone decides all 1,906 submitted URLs, carries a load-bearing ordering rule (section-pages loop must stay last) and documents **four** past regressions in its own comments: 24 empty Spain URLs, 79 unsubmitted legal locale variants, 16 redirecting blog URLs, 14 withheld Ireland doctors. Everything downstream of it *is* tested (hreflang builders, doctor/service indexability predicates, blog-pagination robots, 5 legacy-redirect families, 410 gone-paths, `aggregateRating` fail-closed guard) | n/a | Pair with -A as the candidate `SEO-FOUNDATION-002` |
+| SEO-FOUNDATION-001-F | Lab-test detail pages carry no sibling-test or service internal links | Internal linking | **PARTIAL — CONFIRMED, blocked until 2026-09-08** | 2026-08-12 | `/ireland/en/lab-tests/general-health-test` renders 40 unique internal links — header, footer, the 7 tool links and 2 to the `/lab-tests` hub — and **zero** to the other 13 tests and zero to any service. A service detail page renders 8 sibling service links from the same shell | Cluster is mid-ramp; no attribution possible yet | **Do not act before the SEO-GROWTH-016 re-measure.** Recorded so the option exists if the cluster stalls |
+| SEO-FOUNDATION-001-E | Dead route-SEO catalogue in `lib/seo/page-seo.ts` | Maintenance trap | **DEAD CODE — no search impact** | 2026-08-12 | `ROUTE_SEO`, `pageMetadata`, `getRouteSeo` and `resolveBrandTitle` (~230 lines of route titles/descriptions) have **no consumer anywhere in the repo** — a repo-wide grep returns only the file itself and its own test. Only `buildPublicMetadata` is live. The dead copy is also stale (says "five countries", has no `/brazil` row) | 0 URLs affected | Delete when convenient. Editing it does **not** change any served title — record that before anyone tries |
 
 ### Doctor indexability
 
@@ -1301,11 +1324,90 @@ each is either priced against a different product class (pharmacy antibody strip
 €13–20 vs MGH's €129 genetic test), undercut by the supplier, or sitting at position
 50–90 on generic non-Irish terms.
 
+### SEO-FOUNDATION-001 — whole-site technical and shared-template audit, 2026-08-12
+
+Investigation only. No code changed, nothing deployed. Scope was the **shared SEO
+machinery**, not any market's copy: crawling/indexation, sitemap, canonicals, hreflang,
+legacy routing, the metadata system, the doctor/service/country/blog/lab templates,
+structured data, internal linking, images and automated regression coverage.
+
+**Headline: the shared infrastructure is in good shape and no systemic defect with
+demonstrated current search impact exists.** Eleven of fifteen audited systems pass on
+current production evidence. The four that do not are latent risks and polish, not
+losses — they are listed in §5 as `SEO-FOUNDATION-001-A` … `-E` and ranked below.
+
+#### Completion matrix
+
+| System | Status | Classification | Scope | Search/indexation impact |
+| --- | --- | --- | --- | --- |
+| Robots / indexing directives | **PASS** | NO MATERIAL DEFECT | global | Served robots.txt matches `app/robots.ts` exactly; portal/auth/API disallowed and additionally `noindex, nofollow` in-page; AI crawlers explicitly allowed; no legacy-Wix disallow (deliberate) |
+| Sitemap | **PASS** | NO MATERIAL DEFECT | 1,906 URLs | 51/51 sampled URLs are 200 / `index, follow` / self-canonical. Per-locale eligibility filters in place for services, doctors, legal, `/health/*` and blog; retired and canonicalised-away slugs excluded |
+| Canonicals | **PASS** | NO MATERIAL DEFECT | all templates | Self-canonical everywhere sampled, including non-default locales; query strings, trailing slashes, apex/`http` hosts and case variants all resolve to one form |
+| Hreflang | **PARTIAL** | TECHNICAL | 7 URLs | `SEO-FOUNDATION-001-C`. Within-market clusters are complete and reciprocal (verified on services, doctors, lab tests, legal and the 33-URL cross-market tool cluster); only the `/` ↔ country-home seam is inconsistent |
+| Legacy routing | **PASS** | NO MATERIAL DEFECT | 276 rules | Every legacy family still drawing impressions was re-probed and 308s in **one hop** to a 200 indexable target: `/online-prescriptions/*` (491 impr), `/cs/ireland-partner-clinic/*` (166), `/portugal/medical-certificate-for-driving-license` (132), `/post/*` (309), `/es/home-sp`, `/es/home`, `/home-pt`, `/cs/home-cz`, `/home-rm`, `/ireland-team`, `/home-delivery`, `/blog/{cs-slug}`, `/pt`, `/pt/about` |
+| Metadata system | **PASS** | NO MATERIAL DEFECT | all templates | One correct `<title>`, description, OG and Twitter card per page in every locale sampled (en/cs/de/ro/es/pt). Length behaviour is deliberate and already closed (`SEO-METADATA-001`). Separate dead-code note: `SEO-FOUNDATION-001-E` |
+| Doctor template | **PASS** | NO MATERIAL DEFECT | 343 URLs | Indexability predicate shared by page, hreflang cluster and sitemap; `Physician` schema carries council registration via `hasCredential`/`memberOf` and **only** where a real registration number exists; localized breadcrumbs; market-correct titles |
+| Service templates | **PASS** | NO MATERIAL DEFECT | 642 detail + 57 hub URLs | Own `indexableServiceAlternates` cluster, `noindex, follow` for editorially incomplete rows, `Service`+`Offer`+`MedicalProcedure` schema, localized breadcrumbs, paginated catalogue crawlable (`service-catalog-crawlability.spec.ts`) |
+| Country templates | **PASS** | NO MATERIAL DEFECT | 33 URLs | Localized titles/descriptions per market and locale, `MedicalOrganization` with a country-scoped `@id`, `FAQPage`, 85 unique internal links from the Ireland home |
+| Blog framework | **PASS** | NO MATERIAL DEFECT | 53 + 1 URLs | One canonical per post; bare `/blog/{slug}` 308s to the country canonical; non-authored locale variants canonicalise to the real-content URL and carry `noindex`; per-locale native slugs drive the hreflang map; `Article` schema with `author`/`reviewedBy` Physician; pagination `noindex, follow`; 1–4 commercial links per post across all six markets |
+| Lab/product template | **PARTIAL** | INDEXATION (latent) + STRUCTURED DATA | 84 + 12 URLs | `SEO-FOUNDATION-001-A` (no locale gate) and the already-recorded absent `Product`/`Offer` schema. Content itself is fine — all 14 tests verified genuinely translated |
+| Structured data | **PASS** | NO MATERIAL DEFECT | all templates | Disciplined and fail-closed: `AggregateRating` emits nothing unless a real, positive, non-stale first-party snapshot exists; `LocalBusiness`/`MedicalClinic` deliberately **not** used for a virtual provider; specialty wrapped as a named node rather than asserted as an enum; addresses omitted for markets with no premises. Gaps are `Product`/`Offer` on lab pages and the breadcrumb-language item below |
+| Internal linking | **PARTIAL** | INTERNAL LINKING | 84 URLs | `SEO-FOUNDATION-001-F`: lab-test detail pages ship **zero** sibling-test and zero service links (40 internal links, all nav/footer plus 2 to the hub), where service detail pages ship 8 sibling links. Separately, visible breadcrumb navigation exists only on `/tools/*` although `BreadcrumbList` JSON-LD is emitted on ~14 templates |
+| Images | **PASS** | NO MATERIAL DEFECT | — | Template-level `alt` present on clinician, service and product imagery; decorative layers correctly `alt=""`/`aria-hidden`. No material accessibility or image-search defect found; no cosmetic audit run, by instruction |
+| SEO regression tests | **GAP** | REGRESSION COVERAGE | the 1,906-URL artefact | `SEO-FOUNDATION-001-D`. Downstream helpers are well covered; the sitemap and robots route modules themselves are not covered at all |
+
+#### Ranked findings
+
+| Rank | Finding | Indexation risk | Scale | Likely search impact | Confidence | Effort | Regression risk |
+| ---: | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `-A` lab-test locale gate + `-D` sitemap regression test | High if it fires, zero today | 84 URLs now, unbounded as tests/markets are added | Low today, high if a untranslated test ships | High | Small | Low |
+| 2 | `-B` breadcrumb language | None | ~470 URLs carry an English node, ~390 of them non-English locales | Low | High | Medium (10 call sites) | Low |
+| 3 | `-C` `/` ↔ country-home hreflang seam | Low | 7 URLs | None demonstrated | High on the flaw, low on the impact | Small | Medium — touches the site's two highest-value page families |
+| 4 | `-F` lab-test sibling/service internal links | None | 84 URLs | Unmeasured | High on the gap | Small | Low, but **blocked** until the 2026-09-08 re-measure |
+| 5 | `-E` dead `ROUTE_SEO` catalogue | None | 0 URLs | None | High | Trivial | None |
+
+#### Recommended `SEO-FOUNDATION-002` — smallest high-confidence batch
+
+**Give the lab-test family the publication gate every other content family already has,
+and pin it with the first regression test `app/sitemap.ts` has ever had.** Roughly:
+expose the backend's already-computed `resolvedLocale` on the public health-test
+payload; add one `isPublicHealthTestRecordIndexable`-style predicate; consume it at the
+three call sites that currently disagree with each other (page robots tag, hreflang
+cluster, sitemap loop); add a test that asserts the sitemap never emits a locale the
+predicate rejects.
+
+It is the only finding that can silently create wrong-language indexable URLs, it is the
+smallest diff of the five, and the test it requires doubles as the missing regression
+net for the artefact that decides all 1,906 submitted URLs. **Not implemented — awaiting
+authorization.**
+
+#### Explicitly ruled out this pass (false positives / expected behaviour)
+
+- Soft-404s, crawl traps, indexable auth/account/admin routes, case-variant or
+  trailing-slash duplicates, apex/`http` host duplication — none exist.
+- Redirect chains — every probed legacy family is a single 308.
+- Fallback-locale indexation leakage — legal and blog fallbacks are `noindex` **and**
+  removed from their own hreflang clusters.
+- Missing/duplicate H1 — one `<h1>` per page on every template sampled.
+- Title/description length — closed (`SEO-METADATA-001`), not reopened.
+- Missing translations — services, doctors, lab tests, blog, about and contact all serve
+  genuine per-locale copy, not English fallback, on every locale sampled.
+- `FAQPage` emitted broadly — eligible and useful for AI-search citation; not a policy
+  violation and not a defect.
+
 ### NOW — one batch
 
-**WAIT / MEASURE — SEO-GROWTH-016 re-measure, due 2026-09-08.**
+**GLOBAL FOUNDATION. `SEO-FOUNDATION-001` is complete (this document); the only open
+decision is whether to authorize `SEO-FOUNDATION-002` above.**
 
-The indexing ramp is the dominant explanation and the cluster changed state seven days
+The old roadmap of isolated `SEO-GROWTH-*` tickets is superseded. The programme is:
+**NOW** global foundation → **NEXT** only the systemic defects this audit confirmed →
+**AFTER** the country waves below → **MONITOR** everything waiting on Google.
+
+**Still running underneath it: WAIT / MEASURE — SEO-GROWTH-016 re-measure, due
+2026-09-08.** That item is now a MONITOR row, not the NOW batch, but its embargo is
+unchanged: do not rewrite, re-title or re-structure the Ireland lab-test cluster before
+the re-measure. The indexing ramp is the dominant explanation and the cluster changed state seven days
 ago. Every detail page has one week of ranking history; the hub→detail hand-off is still
 in progress; cluster position improved on each of the last three days. Rewriting,
 re-titling or re-structuring anything now would destroy the only clean measurement
@@ -1334,9 +1436,14 @@ should be judged on those grounds. It needs explicit authorization as its own sm
 correctness fix; it is **not** the recommended SEO batch and should not be used as a
 pretext to re-open the cluster's content.
 
-Branch state: `Dev-hassaan` is clean and **pushed** (`8d28b85e`); SEO-GROWTH-015 and
-TRUST-METRIC-001 landed in `013a198f`/`edcfe868`. The earlier note in this file that
-they were unpushed is superseded.
+Branch state (re-checked 2026-08-12 during `SEO-FOUNDATION-001`): `Dev-hassaan` is
+**one commit ahead of `origin/Dev-hassaan`** — `26d5028c`, the `SEO-RESET-001` /
+`SEO-GROWTH-016` rebaseline of this file, is committed locally and **not pushed**.
+`origin/main` and `origin/Dev-hassaan` are both at `8d28b85e` and identical.
+SEO-GROWTH-015 and TRUST-METRIC-001 landed in `013a198f`/`edcfe868` and are pushed.
+The working tree also holds unrelated in-progress blog-UI work by a concurrent session
+(`BlogCard.tsx`, `blog-index-page.tsx`, `blog-post-page.tsx`, `scope-blog-html.ts` and
+its test, plus two untracked `backend/scripts/` probes) — **left untouched.**
 
 ### NEXT — up to four, evidence-backed
 
@@ -1395,6 +1502,21 @@ This ranking is not fixed. If a future OpenSEO/GSC refresh surfaces something wi
 stronger evidence, it can outrank any of the above — do not carry this order forward by
 default.
 
+### AFTER GLOBAL FOUNDATION — country waves
+
+Country-by-country optimisation starts only once the global foundation work above is
+closed or explicitly waived. Wave order is set by current organic base, evidence quality
+and the presence of a real commercial cluster, not by market size.
+
+| Wave | Markets | Why this pairing | Entry condition |
+| --- | --- | --- | --- |
+| **COUNTRY-WAVE-001** | **Ireland + Czechia** | Ireland is the largest base (189 clicks / 6,114 impr) with the most page-level evidence already gathered; Czechia has the best CTR of any market (4.76%) on the smallest base, so incremental coverage converts hardest there | Global foundation closed **and** the SEO-GROWTH-016 re-measure done (2026-09-08). Ireland's lab cluster stays embargoed until then |
+| **COUNTRY-WAVE-002** | **Portugal + Spain** | Portugal has a real but feasibility-doubtful cluster (atestado/carta de condução — head terms at 42–53, regulated in-person IMT process); Spain is a confirmed SERP/business wall (SEO-GROWTH-013). Both need a feasibility gate **before** any content work | Wave 1 measured. Run the Portugal feasibility check (NEXT-2) as the wave's first task, not after committing to it |
+| **COUNTRY-WAVE-003** | **Brazil + Romania** | Smallest bases, good positions, almost no clicks — informational tool/blog traffic with no commercial page behind it in either market. Needs a commercial-page decision before an SEO batch is meaningful | Wave 2 measured, and a commercial page exists to rank |
+
+Do not start a wave by re-running the full crawl. Each wave opens with a focused
+OpenSEO/GSC pull for its two markets plus live production checks, per §0.
+
 ### MONITOR — waiting on Google or on data
 
 Everything in §6, on the 2–3 week cadence stated there. Plus:
@@ -1433,9 +1555,13 @@ Everything in §6, on the 2–3 week cadence stated there. Plus:
 - **Desktop vs. mobile divergence** (desktop: more impressions than mobile, 1.68% CTR,
   position 20.7). New observation, no investigation run. Watch whether it persists once
   the tool long tail stabilises before treating it as anything.
-- **Ireland lab-test cluster — the NOW item.** Re-measure 2026-09-08 with the early-exit
+- **Ireland lab-test cluster — INDEXING RAMP / WAIT-MEASURE.** Demoted from NOW to
+  MONITOR on 2026-08-12 when `SEO-FOUNDATION-001` took the NOW slot; the classification
+  and the embargo are unchanged. Re-measure **2026-09-08** with the early-exit
   triggers in §7 SEO-GROWTH-016. Track per-page position and whether the hub→detail
-  hand-off completes. Do not rewrite anything in the meantime.
+  hand-off completes. Do not rewrite, re-title or re-link anything in the meantime —
+  that includes `SEO-FOUNDATION-001-F` (the missing sibling/service links), which is
+  recorded but deliberately blocked until this re-measure.
 - **Randox as both supplier and competitor.** ~57 Ireland impressions in the current
   window are supplier-brand searches (`randox home test kit`, `randox blood test
   ireland`, …) that MGH ranks for at GSC positions 6–13 with **zero clicks** and which
@@ -1530,6 +1656,15 @@ investigation without new evidence.)
   those rows about the *site* rather than about *Google* is invalid.
 - **Backlink figures are DataForSEO estimates**, not Search Console link data, and carry
   at least one confirmed artefact (`brokenPages: 666`).
+- **`SEO-FOUNDATION-001` ran no new full crawl either.** It used the live sitemap
+  (1,906 URLs) as the URL inventory, a 51-URL stratified sample of it for status /
+  robots / canonical verification, ~35 further targeted Googlebot-UA probes across every
+  template family and legacy family with impressions, one GSC `["page"]` pull, and
+  direct source inspection of the frontend and backend. That is deliberately **not** a
+  crawl: the sitemap is the artefact under audit, so anything it omits would also be
+  omitted from this sample. A full crawl remains the right instrument for discovering
+  URLs the sitemap does not know about — it was judged unnecessary here because no
+  finding pointed at one.
 - **No full crawl was run this pass**, deliberately. Technical state in §3 comes from
   targeted live checks plus the 2026-08-09 crawl records. A full crawl is due only on
   the trigger conditions in §0. `SEO-RESET-001` added targeted live Googlebot-UA probes
