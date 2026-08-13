@@ -62,15 +62,20 @@ const SERVICE_NAMESPACE: Record<SuklService, string> = {
  */
 export const DEFAULT_ENDPOINT_PATH = "/";
 
-/** Paths worth trying when the default is rejected, derived from the internal
- *  `soap:address` SÚKL publish. Offered to the operator, never auto-swept. */
-export const CANDIDATE_ENDPOINT_PATHS = [
-  "/",
-  "/Endpoints/CommonWebService.asmx",
-  "/LekovyZaznam/Endpoints/CommonWebService.asmx",
-  "/Endpoints/CuepWebService.asmx",
-  "/LekovyZaznam/Endpoints/CuepWebService.asmx",
-] as const;
+/**
+ * Endpoint paths, narrowed by evidence on 2026-08-13.
+ *
+ * Every path derived from the internal `soap:address`
+ * (/Endpoints/…, /LekovyZaznam/Endpoints/…) returned **404**, while "/" returned
+ * 401/403. A 404 means the resource is absent; a 401/403 means it exists and
+ * refused us. So "/" is the endpoint, and the remaining problem is
+ * authorisation — not routing.
+ *
+ * The disproven paths are kept out of the list rather than left as options: a
+ * stale menu of known-404 choices invites a future operator to re-run a
+ * question that has already been answered, against a rate-limited service.
+ */
+export const CANDIDATE_ENDPOINT_PATHS = ["/"] as const;
 
 export interface SuklAppPingResult {
   service: SuklService;
@@ -90,6 +95,8 @@ export interface SuklAppPingResult {
   path: string;
   /** Truncated upstream excerpt, present only for a 401/403. Untrusted text. */
   bodyExcerpt: string | null;
+  /** Selected response headers on a 401/403 — `www-authenticate` above all. */
+  responseHeaders: Record<string, string> | null;
 }
 
 export function buildAppPingRequest(input: {
@@ -221,6 +228,7 @@ export async function suklAppPing(
         errorMessage: error.safeMessage,
         path,
         bodyExcerpt: error.bodyExcerpt ?? null,
+        responseHeaders: error.responseHeaders ?? null,
       };
     }
     throw error;
@@ -244,6 +252,7 @@ export async function suklAppPing(
     errorMessage: verdict.errorMessage,
     path,
     bodyExcerpt: null,
+    responseHeaders: null,
   };
 }
 
