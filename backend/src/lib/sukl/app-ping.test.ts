@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildAppPingRequest, interpretAppPingResponse } from "./app-ping.js";
+import {
+  buildAppPingRequest,
+  interpretAppPingResponse,
+  SUKL_NAMESPACE_COMMON,
+  SUKL_NAMESPACE_CUEP,
+} from "./app-ping.js";
 import { buildSoapEnvelope, el, escapeXml, extractElementText, extractFault } from "./envelope.js";
 
 /**
@@ -55,6 +60,38 @@ test("builds the request exactly as zprava_bez_dotaz_type specifies", () => {
   assert.ok(xml.includes(`<Pracoviste>${INPUT.pracoviste}</Pracoviste>`));
   assert.ok(xml.includes("<Verze>202601B</Verze>"));
   assert.ok(xml.includes("<Odeslano>2026-08-13T10:20:30.000Z</Odeslano>"));
+});
+
+test("AppPing uses the COMMON namespace even on the CUEP service", () => {
+  // Regression. A live call was rejected with:
+  //   S009 - 'http://www.sukl.cz/erp/cuep:AppPingDotaz' element is not expected
+  // because the namespace was mapped to the SERVICE rather than the ELEMENT.
+  // AppPingDotaz is declared once, in the common schema; CuepWebService.wsdl
+  // references it as element="s1:AppPingDotaz" with s1 = .../erp/common, and
+  // cuep.xsd does not declare it at all.
+  //
+  // Asserting the negative matters as much as the positive here: the cuep
+  // namespace on this element is the exact bug SÚKL rejected.
+  const xml = buildAppPingRequest({ ...INPUT, namespace: SUKL_NAMESPACE_COMMON });
+  assert.ok(xml.includes(`<AppPingDotaz xmlns="${SUKL_NAMESPACE_COMMON}">`));
+  assert.ok(!xml.includes(SUKL_NAMESPACE_CUEP));
+});
+
+test("a SÚKL S009 fault is reported with its code and text", () => {
+  // What the live rejection actually looked like. The operator needs the code
+  // AND the message: "S009" alone does not say which element was wrong.
+  const body =
+    "<soap:Envelope><soap:Body><soap:Fault>" +
+    "<faultcode>soap:Server</faultcode>" +
+    "<faultstring>S009 - Chybná funkce vašeho SW: Zaslána nesprávná zpráva. " +
+    "'http://www.sukl.cz/erp/cuep:AppPingDotaz' element is not expected." +
+    "</faultstring>" +
+    "</soap:Fault></soap:Body></soap:Envelope>";
+  const v = interpretAppPingResponse({ httpStatus: 500, body });
+  assert.equal(v.ok, false);
+  assert.equal(v.errorCode, "soap:Server");
+  assert.match(v.errorMessage ?? "", /S009/);
+  assert.match(v.errorMessage ?? "", /AppPingDotaz/);
 });
 
 test("a clean 200 is a pass, and echoes the message id", () => {
