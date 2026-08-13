@@ -964,6 +964,11 @@ export async function createManualBooking(
         // Without a scope the consent promotion job skips this appointment and
         // the medical-access guard denies the booking doctor (DOCTOR_NO_VALID_ACCESS_PATH).
         medicalAccessConsentScope: "DIRECT",
+        // Matches CartItem.patientWhatsappConsent's default (opt-out model) —
+        // Appointment defaults this column to false, which silently broke
+        // WhatsApp sends gated on it (e.g. notifyPatientDoctorReady) for
+        // every manual/AI_CALL booking since the two columns disagreed.
+        whatsappConsent: true,
         status: "REQUEST_RECEIVED",
         serviceId: service.id,
         doctorId: input.doctorId,
