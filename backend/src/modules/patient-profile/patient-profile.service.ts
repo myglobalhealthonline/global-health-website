@@ -419,6 +419,19 @@ export async function applyPatientProfileUpdate(
         },
       });
     }
+    // Push a name change onto the patient's still-active appointments too,
+    // so the name a doctor/admin sees on an upcoming booking matches the
+    // profile. COMPLETED/CANCELLED rows are left alone — those are closed
+    // clinical records and keep the name as it was at that visit.
+    if (input.fullName && profile.userId) {
+      await prisma.appointment.updateMany({
+        where: {
+          userId: profile.userId,
+          status: { notIn: ["COMPLETED", "CANCELLED"] },
+        },
+        data: { fullName: input.fullName.trim() },
+      });
+    }
     return { profile, alertChanges };
   } catch (error) {
     throw normalizeDbError(error, "Patient profile update temporarily unavailable");
