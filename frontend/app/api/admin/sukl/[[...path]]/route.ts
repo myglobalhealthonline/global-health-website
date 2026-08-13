@@ -26,7 +26,10 @@ function isAllowed(method: string, segments: string[]): boolean {
     );
   }
   if (method === "POST") {
-    return segments.length === 1 && segments[0] === "test-connection";
+    return (
+      segments.length === 1 &&
+      (segments[0] === "test-connection" || segments[0] === "app-ping")
+    );
   }
   if (method === "PUT" || method === "DELETE") {
     // ["doctor-identities", "<doctorUserId>"]
