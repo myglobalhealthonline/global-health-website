@@ -4194,3 +4194,299 @@ ticket where the evidence says "wait" or "no."
 **NO COUNTRY-WAVE-002 IMPLEMENTATION / NO DEPLOY / WAVE-2 UPDATE UNCOMMITTED.**
 
 ---
+
+## 20. COUNTRY-WAVE-003 — Brazil + Romania opportunity investigation (2026-08-13)
+
+**Mode: read-only investigation.** No redirects, no canonical/metadata/schema/content
+changes, no deploy, no commits, no database writes. Two read-only Prisma scripts added
+this pass (both untracked, both select-only, modeled on `investigate-cz-doctor-supply.ts`):
+`backend/scripts/investigate-br-market-inventory.ts`,
+`backend/scripts/investigate-ro-market-inventory.ts`. Run via
+`node --env-file=.env --import tsx scripts/<name>.ts` against production `DATABASE_URL`
+(same pattern as the CZ/PT/ES precedent).
+
+Extraction date: **2026-08-13**. Two independent agents (Brazil, Romania) each verified
+the sitewide `dataState=final` settle point separately: both pulls confirm rows stop at
+**2026-08-10**, the same date Wave 2 found — not a per-market artifact.
+
+### 20.1 Closed items — reaffirmed, not reopened
+
+| Item | Status | New evidence found? |
+| --- | --- | --- |
+| SEO-GROWTH-005 (bare Brazil legacy families) | **CLOSED** | None — no legacy Brazil URL pattern surfaced in either agent's GSC pull. Not reopened. |
+| SEO-GROWTH-006 (locale-prefixed Brazil legacy families) | **CLOSED** | None. `/brazil/pt/general-consultation` confirmed still 308→`gp-consultation-online`, correct target, part of the already-closed family. Not reopened. |
+| `readyToIndex` / editorialChecklist publication migration (global, incl. BR/RO) | **CLOSED** | None — the migration itself was not touched. Both markets' doctor findings this pass are pure Google-recrawl-lag ramp cases on top of the already-correct backfill, not new gaps in the migration. |
+| Global systems (robots, sitemap, canonical, hreflang architecture, breadcrumb localization) | Closed via SEO-FOUNDATION-004/005 | None — Romania's hreflang cluster spot-checked as still correct (§20.11); not re-audited otherwise, per scope. |
+
+### 20.2 Fresh normalized GSC baselines (primary-locale page-path scope, matched to Wave 2's definition)
+
+Both markets use the same definition: primary-locale page-path (`/brazil/pt/`,
+`/romania/ro/`), all searcher countries, `dataState=final`, current 28d vs prior 28d
+ending on the shared latest-complete date **2026-08-10**.
+
+**Brazil** (`/brazil/pt/`):
+
+| Window | Dates | Clicks | Impr | CTR | Avg pos (impr-weighted) |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Current 28d | 2026-07-14 → 08-10 | 12 | 1,418 | 0.85% | 11.9 |
+| Prior 28d | 2026-06-16 → 07-13 | 0 | 0 | n/a | n/a |
+| 90d context | 2026-05-14 → 08-10 | 14 | 1,463 | 0.96% | — |
+
+**Romania** (`/romania/ro/`):
+
+| Window | Dates | Clicks | Impr | CTR | Avg pos (impr-weighted) |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Current 28d | 2026-07-14 → 08-10 | 7 | 807 | 0.87% | 18.5 |
+| Prior 28d | 2026-06-16 → 07-13 | 0 | 0 | n/a | n/a |
+| 90d (last_3_months) | 2026-05-10 → 08-10 | 7 | 807 | 0.87% | 18.5 (byte-identical rows to the 28d pull) |
+
+**Both prior-28d windows are a verified hard zero, not "near-zero" — ranking-delta
+conclusions are unavailable for both markets**, exactly as instructed. Brazil's 90-day
+total (14/1,463) is barely above its current-28d total (12/1,418): effectively all
+trailing volume is inside the last 28 days. Romania's 90-day pull returned rows
+identical to the 28-day pull on every one of 167 pages: **100% of Romania's primary-locale
+visibility sits inside the last 28 days**, with a clean discontinuity at the first
+non-zero day (2026-07-19) — the surface simply did not exist in Google's index before
+that date. Both are new-discovery cohorts, not decaying ones.
+
+Both figures differ from §2's stale scoreboard rows (Brazil 30 clicks/2,785 impr/pos
+10.2; Romania 19 clicks/1,240 impr/pos 21.2) because §2 uses a **searcher-country cut
+across the whole property** (any page ranking for BR/RO searchers, including non-market
+pages and non-primary locales), not a page-path cut on the market's own primary-locale
+surface. Both cuts are legitimate; they are not directly comparable, consistent with
+Wave 2's own correction of the same scope mismatch.
+
+### 20.3 Query-mix breakdown
+
+**Brazil** — no concentrated commercial cluster in the current mix: ~85%+ of impressions
+are the sitewide free-tool/calculator pattern (SEO-GROWTH-012, zero clicks across all of
+them), ~10% is brand/brand-collision navigation to `/contact`, and the remaining ~5% is
+scattered 1–2-impression commercial fragments spread across many different service pages
+with no single query exceeding 3 impressions. Zero doctor-branded-name demand in 90 days.
+
+**Romania** — 78% of impressions (629 of 807) are the same tools/calculators pattern
+(real, diverse Romanian queries — `calculator calorii`, `tabel cu valori tensiune
+arteriala` — not bot traffic), ~9% is commercial (`/doctors` 48 impr/3 clicks,
+`medic-online-romania` 3/1), ~6% is brand/homepage, and the rest is informational/legal
+noise. Zero legacy-URL rows and zero doctor-branded-name demand in either market's pull.
+
+### 20.4 Complete Brazil primary-locale inventory
+
+Sitemap: 42 `/brazil/pt/*` URLs. DB (read-only pull, country `br`): **1 doctor**
+(Dr. Renato Sarmento, GP, `active=true`, readyToIndex backfilled 2026-08-08, 8 active
+availability rows, real slots to Nov 2026), assigned to **all 18 active services** (all
+GENERAL kind, 199–299 BRL). **18 inactive services** — 16 SPECIALIST (dermatology,
+cardiology, psychiatry, oncology, endocrinology, gastroenterology, genetics, geriatrics,
+neurology, pediatric-specialist, pneumology, psychology, rheumatology, urology,
+venereology/STI, allergy/immunology), all correctly `isActive=false` with 0 assigned
+doctors, plus 2 inactive corporate services. One anomaly: `corporate-pre-assessment` is
+`isActive=true` with **0 assigned doctors** — a zero-price, non-sitemapped B2B page, not
+a consumer SEO surface. 18 active DB services = 18 sitemapped service URLs exactly, no
+mismatch. Full GP/general-consultation coverage exists (certificates, prescription
+renewal, lab-test requests, general dermatology, general mental health, men's/women's/
+elderly health, travel medicine, weight/smoking/musculoskeletal/chronic-disease) — no
+specialist hub exists or should exist given zero specialist clinician supply.
+
+### 20.5 Complete Romania primary-locale inventory
+
+256 total `/romania/*` URLs (all locales) in the sitemap. DB pull: **3 doctors**
+(Dr. Alexandra Palaga — pediatrics; Dr. Andreea-Lorena Bica — neurology; Dr. Robert
+Gabriel Brînduș — GP/family, carrying 18 of 35 service rows), all `active=true`,
+CMR-registered, real bookable availability. **35 total services**: 15 active +
+RO-translated + bookable (GP/general cluster of 13 + 2 staffed specialist:
+`consultatie-pediatrie`/Palaga, `consultatie-neurologie`/Bica), **1 active + indexed with
+zero assigned doctors** (`evaluare-durere` — a genuine product gap, §20.9), 17 inactive
+with no RO translation and 0 doctors (the specialist roster Romania doesn't staff —
+cardiology, oncology, urology, gastroenterology, endocrinology, geriatrics, genetics,
+pneumology, psychiatry, psychology, rheumatology, venerology, allergy/immunology, plus a
+duplicate SPECIALIST dermatology row), and 4 inactive with a doctor assigned but the
+service itself off (`sick-note-romania`, 3 corporate services). RO-locale service body
+copy runs ~700–900 characters versus the same service's EN-locale body at ~7,600–13,800
+characters — the sitewide thin-secondary-locale pattern, not Romania-specific, but a
+plausible driver of §20.11's EN-outranks-RO finding on several pages. No lab-test detail
+pages exist under Romania's `/lab-tests` hub (unlike Ireland's 16-page cluster).
+
+### 20.6 Brazil doctor ecosystem
+
+| Doctor | Status | Google cached coverage | Live production | 90d branded demand | Classification |
+| --- | --- | --- | --- | --- | --- |
+| Dr. Renato Sarmento (GP, sole BR doctor) | Active, 18/18 services, bookable to Nov 2026 | Excluded by `noindex` tag, last crawl **2026-08-04** (4 days before the 2026-08-08 backfill) | Verified live `index, follow`, self-canonical, 200 | 0 impressions/clicks, any locale, any window | **WAIT FOR GOOGLE** — identical mechanism to Portugal's Telmo/Vitor/Pedro trio (SEO-DOC-001). Not an on-page defect. |
+
+Only one doctor exists for the market — no cross-doctor comparison possible. Brazil
+carries a structural single-doctor supply constraint that caps demand regardless of the
+SERP-wall finding in §20.8.
+
+### 20.7 Romania doctor ecosystem
+
+| Doctor | `DoctorMarketTranslation` bio (RO) | Live production | Google cached coverage | Last crawl | 90d branded demand | Classification |
+| --- | --- | --- | --- | --- | --- | --- |
+| Dr. Alexandra Palaga (pediatrics) | 4,539 chars, real | `index, follow`, self-canonical | Excluded by `noindex` / BLOCKED_BY_META_TAG | 2026-08-03 | 0 | **WAIT FOR GOOGLE** |
+| Dr. Andreea-Lorena Bica (neurology) | 3,621 chars, real | `index, follow`, self-canonical | Excluded by `noindex` / BLOCKED_BY_META_TAG | 2026-07-20 | 0 | **WAIT FOR GOOGLE** |
+| Dr. Robert Gabriel Brînduș (GP) | 3,331 chars, real | `index, follow`, self-canonical | Excluded by `noindex` / BLOCKED_BY_META_TAG | 2026-08-01 | 0 | **WAIT FOR GOOGLE** |
+
+All three carry the same 2026-08-08 `readyToIndex` backfill; Google's cached crawl for
+all three predates or barely brackets the fix. Content is real and substantial (3,300–
+4,500 chars), unlike Czechia's genuinely-empty-bio cases — this is pure recrawl-lag ramp,
+not a content gate failure. No new blocker found. Zero name-branded demand yet is
+expected given the market itself is 25 days old in Google's index (first non-zero
+impression day 2026-07-19).
+
+### 20.8 Commercial-service demand — live SERP findings
+
+**Brazil** — live SERPs pulled (pt-BR) for the 3 strongest candidate query families:
+"atestado medico online", "consulta medica online", "medico online brasil". **MGH absent
+from the top 20 on all three.** Brazil's domestic telehealth SERP is saturated with the
+medical regulator's own certificate platform (CFM's `atestacfm.org.br`), major hospital-
+chain telehealth arms (dr.consulta, Hospital Israelita Albert Einstein, Beneficência
+Portuguesa), state/federal government telehealth, a booking marketplace (Doctoralia), a
+major insurer (Bradesco Seguros), and dozens of dedicated Brazilian-only startups.
+**Classification: SERP-BUSINESS WALL, confirmed** — denser and harder than any wall found
+in Waves 1–2 (no other market's SERP showed a regulator's own competing platform).
+
+**Romania** — live SERPs pulled (ro-RO) for "medic online" (390/mo volume, KD 31) and "a
+doua opinie medicala" (90/mo, KD 0). **MGH absent from the top 20 on both.** Page one for
+"medic online" is 100% dedicated Romanian telehealth platforms (Medic Chat, Medicul
+Online, DeaMedicine, Medicentrum, MedLife's MedLive, Regina Maria's Clinica Virtuală,
+Dr-Online, Docbook, Doctorchat, Clickmed, Ringdoc — 612 doctors/45 specialties, Telios
+Care, Groupama chat, eTeledoc) plus an AI Overview. "A doua opinie medicala" is dominated
+by Romania's two largest private hospital networks (Sanador, MedLife), Anadolu Medical
+Center, a major health publisher (doc.ro), and a dedicated second-opinion platform
+(opiniemedicala.ro). **Classification: SERP-BUSINESS WALL, confirmed** — Romania already
+has a decade-plus mature dedicated telehealth sector plus its two largest private
+hospital networks occupying the same SERPs.
+
+### 20.9 Brazil opportunity table
+
+| Cluster | Demand | Performance | Correct page? | Maturity | Product fit | SERP feasibility | Bottleneck | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GP/consulta médica online | Real but tiny, fragmented, no query >3 impr | No concentration | Yes | New | Yes (Sarmento bookable) | Confirmed wall (§20.8) | SERP-BUSINESS WALL | NO WORK RECOMMENDED |
+| Atestado médico online | Weak, fragmented | Poor | Ambiguous (PT service page vs EN blog both weak) | New | Yes | Confirmed wall, incl. CFM's own platform | SERP-BUSINESS WALL | NO WORK RECOMMENDED |
+| Dermatologia/pele online (general) | Minimal (4 impr, pos 20.5) | Poor | Yes | New | Yes (general only) | Not tested — volume too low | NO MATERIAL DEMAND | MONITOR |
+| Saúde de viagem | Minimal (9 impr) | Modest position, negligible volume | Yes | New | Yes | Not tested | NO MATERIAL DEMAND | MONITOR |
+| 16 unstaffed SPECIALIST services | Not measurable, correctly unindexed | n/a | n/a | n/a | No — zero clinicians | Not tested | PRODUCT-OPERATIONS DEPENDENCY | No SEO work possible until staffed |
+| `corporate-pre-assessment` (active, 0 doctors) | Non-consumer B2B, not sitemapped | n/a | n/a | n/a | Gap exists, out of SEO scope | n/a | PRODUCT-OPERATIONS DEPENDENCY | Not an SEO candidate |
+| CRM/doctor-registry lookups | Real but purely informational, not booking intent | Pos 8–44 on `/doctors` | Wrong intent, harmless | n/a | No | Not tested | INFORMATIONAL, NOT COMMERCIAL | No action |
+| Dr. Renato Sarmento (branded) | None yet | Stale Google index | Yes | Backfilled 08-08, not yet recrawled | Yes | n/a | Google recrawl lag | WAIT FOR GOOGLE |
+| Tools/calculators (7 pages) | Large raw volume (1,074+ impr), zero clicks | Positions weak throughout | Yes (by design) | Established | n/a — non-medical-service | n/a | None — sitewide SEO-GROWTH-012 pattern | DEFERRED, not a candidate |
+
+### 20.10 Romania opportunity table
+
+| Cluster | Demand | Performance | Correct page? | Maturity | Product fit | SERP feasibility | Bottleneck | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| "medic online" generic GP (390/mo, KD 31) | Real, largest head term found | Not ranking (0 impr for the bare term) | Yes | New | Yes (Brînduș bookable) | Confirmed hard wall (§20.8) | SERP-BUSINESS WALL | NO WORK RECOMMENDED |
+| "a doua opinie medicala" (90/mo, KD 0) | Real, modest | RO body only 858 chars vs EN 8,590 | Yes | New | Yes | Confirmed wall, arguably harder | SERP-BUSINESS WALL | NO WORK RECOMMENDED |
+| `consultatie-neurologie` | Weak (17 impr, pos 10.5, 0 clicks) | Reasonable position, negligible volume | Yes | New | Yes (Bica) | Not tested — no measurable RO volume for "neurolog online" | Volume too low | MONITOR |
+| `consultatie-pediatrie` | Very weak (2 impr, pos 22.5) | Poor | Yes | New | Yes (Palaga) | Not tested — no measurable volume | Insufficient data | MONITOR |
+| `evaluare-durere` (pain evaluation) | Untested, real RO body (749 chars) | Indexed, 0 impressions | Yes | Established crawl | **No — 0 assigned doctors** | Not tested — gate fails first | Zero bookable doctors | PRODUCT-OPERATIONS DEPENDENCY |
+| `sick-note-romania` | Zero — 16-month property-wide pull, "concediu medical"/"certificat medical": 0 rows | n/a — inactive, no RO translation | n/a | Not indexed | Doctor assigned, service off | Not tested — demand gate fails first | No RO content + no demand | NO MATERIAL DEMAND |
+| 17 inactive specialist services | Not testable — no RO translation, 0 doctors | n/a | n/a (correctly unindexed) | n/a | No — zero clinicians for any of 17 specialties | Not run | Clinician supply, structural | PRODUCT-OPERATIONS CONSTRAINT |
+| `/lab-tests` hub | Negligible (1 impr, pos 76) | Poor, no detail pages | n/a | Immature | Unclear — no catalogue built | Untested | NO MATERIAL DEMAND | MONITOR |
+| Tools/calculators cluster | Largest raw volume (78% of RO impressions), real diverse queries | Positions 7–75 | Yes (by design) | Established | n/a — non-commercial | n/a | None — expected | HEALTHY, NO ACTION |
+
+### 20.11 Query ownership, homepage role, blog, internal links (both markets)
+
+**Query ownership** — no TRUE CANNIBALIZATION in either market. Brazil's weak commercial
+fragments split thinly across homepage/legacy-redirect-alias/GP-hub at 1–2 impressions
+each: LOW-DATA NOISE. Romania's GP-hub-vs-service-detail pair is CORRECT OWNERSHIP (detail
+page wins its one exact-match query); a `pediatru online` cross-locale/cross-page split
+(RO/CS/ES variants, 1–6 impr each) is LOW-DATA NOISE, not cannibalization.
+
+**Homepage role** — both `/brazil/pt` and `/romania/ro` are healthy: primarily brand/nav,
+absorbing a handful of near-zero-volume generic fragments as fallback because no better
+page has out-ranked them for those specific low-volume queries yet — not wrongly
+outranking a more appropriate page in either case.
+
+**Blog** — Brazil's 3 PT posts and the flagged `/brazil/en/blog/online-medical-certificate-
+brazil` are all negligible; the EN blog post's apparent 146-impression signal is LOW-DATA
+NOISE (dozens of one-off fragment queries like "crm", "atestado?", "alphaville" at a
+favorable but meaningless position) — confirmed **not** wrong-locale ownership of real PT
+demand, since none of the real Portuguese head terms for the concept appear on it at all.
+Romania's one live post (`diabetul-boala-tacuta`) is SUPPORTIVE/INFORMATIONAL; two more are
+DRAFT, not live, not actioned.
+
+**Internal links** — no defect found on any candidate in either market; homepage→services,
+homepage→doctors, hub→detail, and doctor→services links all verified live and correct.
+Confirmatory, not corrective, since neither market has a candidate with real demand to
+link toward.
+
+### 20.12 Product/operations dependencies found
+
+Brazil: 16 unstaffed specialist services + 1 unstaffed active B2B page
+(`corporate-pre-assessment`) — structural, one-doctor market. Romania: `evaluare-durere`
+(active, indexed, internally linked, 0 assigned doctors — a genuine gap flagged for the
+product/ops owner, not proposed as an SEO ticket) + 17 unstaffed specialist services — a
+3-doctor market cannot cover 17 specialties. Neither is an SEO or content task.
+
+### 20.13 Secondary locales
+
+Brazil: no wrong-language ownership of real demand found (the one EN-locale anomaly,
+`solicitacao-exames-online` at pos 1.5/58 impr/0 clicks, reads as generic global-intent
+noise, not Brazil-market booking intent — noted, not actionable). Romania: several
+service pages draw more volume on their EN-locale URL than RO (`gp-consultation-online`
+hub, `medic-online-romania`, `a-doua-opinie-medicala`, `sanatate-mintala-online`), while
+`/doctors` and the homepage favor RO — a mixed, non-displacing pattern most plausibly
+explained by the RO/EN content-depth gap (§20.5), not a routing/hreflang defect (Romania's
+hreflang cluster spot-checked as still correct under SEO-FOUNDATION-004, not re-audited).
+Flagged for awareness only, same treatment as Wave 2's Portugal psychiatry en/pt split.
+
+### 20.14 Cross-market ranking
+
+Nothing in either market clears the bar for **ROOT CAUSE CONFIRMED — IMPLEMENTATION
+READY**, and nothing rises even to **PROMISING — NARROW INVESTIGATION REQUIRED** (every
+top item is either a pure wait, a confirmed wall, or a non-SEO staffing gap — there is no
+open root-cause question left to investigate further). Ranked by remaining signal
+strength, all zero-remaining-code-work items:
+
+1. **Romania's 3-doctor recrawl trio** (Palaga, Bica, Brînduș) — cleanest signal in
+   either market: real 3,300–4,500-char bios in the rendering field, correct internal
+   linking, live production already `index,follow` and sitemapped; sole blocker is
+   Google's own crawl cadence. Zero further implementation.
+2. **Brazil's Dr. Renato Sarmento** — same mechanism, slightly less mature (single doctor
+   vs three, 4-day-stale crawl vs 5–24 days). Zero further implementation.
+3. **Romania `evaluare-durere` / Brazil `corporate-pre-assessment`** — real, narrow
+   product gaps, but non-SEO (clinician-assignment/business decisions).
+4. **Romania "medic online" / "a doua opinie medicala" and Brazil "atestado médico" /
+   "consulta médica"** — the largest theoretical commercial value in both markets, but
+   all four independently confirmed as SERP/business walls this pass, denser than any
+   wall found in Waves 1–2 (Brazil includes the medical regulator's own competing
+   platform; Romania includes a decade-plus dedicated telehealth sector plus its two
+   largest private hospital networks). Ranked above the fully-closed items per this
+   ticket's own instruction that a high-volume wall outranks a dependency with none —
+   but **no content batch recommended** for either.
+5. **16–17 unstaffed specialist services per market, tools/calculator clusters, weak
+   specialist pages (`consultatie-neurologie`, `consultatie-pediatrie`, Brazil
+   dermatologia/travel), `/lab-tests` (Romania), `sick-note-romania`** — resolved
+   exactly, not left open: structural clinician-supply constraints, zero-demand
+   (`sick-note-romania`: 0 rows in a 16-month property-wide pull), or correctly-informational
+   traffic. None is an SEO candidate.
+
+Both markets independently carry a **structural clinician-supply constraint** that would
+cap any SEO-driven demand increase even absent the SERP walls (Brazil: 1 doctor for an
+entire country market; Romania: 3 doctors covering 15 of 35 possible services) — worth
+carrying into future roadmap prioritization as the reason Brazil and Romania are smaller,
+harder markets than Waves 1–2's four, not as a new SEO ticket.
+
+### 20.15 Selected candidate
+
+**NO IMPLEMENTATION JUSTIFIED — MONITOR / MOVE TO NEXT WAVE.**
+
+No BR-SEO-001 or RO-SEO-001 is proposed. Every candidate surfaced this pass in both
+markets is either (a) a confirmed SERP/business wall with no code-side lever, (b) already
+correct and pending Google recrawl/ramp, or (c) blocked on clinician-supply/product
+completeness with no SEO case behind it. This mirrors how Country Wave 1 (§18) and
+Country Wave 2 (§19.15) both closed — no manufactured ticket where the evidence says
+"wait" or "no."
+
+### 20.16 Measurement plan (watchlist additions, apply on next ledger housekeeping pass)
+
+| Item | Target | Success condition | Failure condition | Recheck window |
+| --- | --- | --- | --- | --- |
+| Romania doctor trio (Palaga, Bica, Brînduș) | Current-shape URL `coverageState` via `inspect_urls` | Coverage flips to "Submitted and indexed" / PASS, branded-query impressions begin appearing | Coverage still stale past 2026-09-06 with no recrawl progress | ~2026-09-06 (25 days from first crawl + a normal cycle) |
+| Brazil Dr. Renato Sarmento | Current-shape URL `coverageState` via `inspect_urls` | Coverage flips to PASS, branded-query impressions begin appearing | Coverage still stale past 2026-09-04 with no recrawl progress | ~2026-09-04 |
+| Romania `evaluare-durere` | Doctor assignment (non-SEO) | A clinician is assigned and the service becomes genuinely bookable | Remains unstaffed | Not scheduled — product/ops owner decision, not a recheck |
+| Brazil "atestado/consulta médica" wall, Romania "medic online/a doua opinie" wall | Property-wide GSC + SERP composition | MGH enters top 20 for any head query, or CFM/dominant-hospital-brand SERP composition changes structurally | No movement — treat as confirming the wall | ~2026-11-13 (90 days — walls this dense are not expected to move on a normal cadence) |
+| Brazil single-doctor / Romania 3-doctor supply constraint | Clinician roster size per market | New doctor(s) onboarded to either market | No change | Not scheduled — business/hiring decision, not an SEO check |
+
+**NO COUNTRY-WAVE-003 IMPLEMENTATION / NO DEPLOY / WAVE-3 UPDATE UNCOMMITTED.**
+
+---
