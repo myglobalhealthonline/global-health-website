@@ -4302,9 +4302,13 @@ pneumology, psychiatry, psychology, rheumatology, venerology, allergy/immunology
 duplicate SPECIALIST dermatology row), and 4 inactive with a doctor assigned but the
 service itself off (`sick-note-romania`, 3 corporate services). RO-locale service body
 copy runs ~700–900 characters versus the same service's EN-locale body at ~7,600–13,800
-characters — the sitewide thin-secondary-locale pattern, not Romania-specific, but a
-plausible driver of §20.11's EN-outranks-RO finding on several pages. No lab-test detail
-pages exist under Romania's `/lab-tests` hub (unlike Ireland's 16-page cluster).
+characters. **Correction (RO-SEO-001, §21): Romanian is Romania's primary locale, not a
+secondary one — the "sitewide thin-secondary-locale pattern" label above was wrong
+framing.** The accurate statement is: RO primary-locale content is materially shorter
+than the equivalent EN locale on some pages; SEO significance not yet established at
+the time this section was written — since resolved per-cluster in §21 (2 of the 4 named
+clusters turned out fully RO-equivalent, not thin at all). No lab-test detail pages
+exist under Romania's `/lab-tests` hub (unlike Ireland's 16-page cluster).
 
 ### 20.6 Brazil doctor ecosystem
 
@@ -4424,10 +4428,12 @@ Brazil: no wrong-language ownership of real demand found (the one EN-locale anom
 noise, not Brazil-market booking intent — noted, not actionable). Romania: several
 service pages draw more volume on their EN-locale URL than RO (`gp-consultation-online`
 hub, `medic-online-romania`, `a-doua-opinie-medicala`, `sanatate-mintala-online`), while
-`/doctors` and the homepage favor RO — a mixed, non-displacing pattern most plausibly
-explained by the RO/EN content-depth gap (§20.5), not a routing/hreflang defect (Romania's
-hreflang cluster spot-checked as still correct under SEO-FOUNDATION-004, not re-audited).
-Flagged for awareness only, same treatment as Wave 2's Portugal psychiatry en/pt split.
+`/doctors` and the homepage favor RO — a mixed, non-displacing pattern. **Correction
+(RO-SEO-001, §21): downgraded from "plausible driver" to hypothesis pending matched
+query×page analysis at the time this was written — now resolved.** The content-depth
+gap (§20.5) is real for 2 of the 4 named clusters but not causally linked to EN-outranks-
+RO in the matched query data; see §21 for the per-cluster breakdown. Romania's hreflang
+cluster spot-checked as still correct under SEO-FOUNDATION-004, not re-audited.
 
 ### 20.14 Cross-market ranking
 
@@ -4468,7 +4474,9 @@ harder markets than Waves 1–2's four, not as a new SEO ticket.
 
 ### 20.15 Selected candidate
 
-**NO IMPLEMENTATION JUSTIFIED — MONITOR / MOVE TO NEXT WAVE.**
+**COUNTRY WAVE 3 — OPEN FOR ONE NARROW ROMANIA LOCALE-OWNERSHIP VERIFICATION** at the
+time this section was written (superseded — see §21, RO-SEO-001, which closed this
+verification 2026-08-13 with no implementation).
 
 No BR-SEO-001 or RO-SEO-001 is proposed. Every candidate surfaced this pass in both
 markets is either (a) a confirmed SERP/business wall with no code-side lever, (b) already
@@ -4488,5 +4496,160 @@ Country Wave 2 (§19.15) both closed — no manufactured ticket where the eviden
 | Brazil single-doctor / Romania 3-doctor supply constraint | Clinician roster size per market | New doctor(s) onboarded to either market | No change | Not scheduled — business/hiring decision, not an SEO check |
 
 **NO COUNTRY-WAVE-003 IMPLEMENTATION / NO DEPLOY / WAVE-3 UPDATE UNCOMMITTED.**
+
+---
+
+## 21. RO-SEO-001 — Romanian primary-locale vs English search-ownership verification (2026-08-13)
+
+**Mode: read-only investigation.** No content changes, no metadata/canonical/hreflang
+changes, no redirects, no publication changes, no deploy. Closes the one open item left
+by §20.13/§20.15: whether §20's EN-outranks-RO pattern on 4 named Romania clusters is a
+genuine Romanian-locale content/intent defect, or expected/noise/ramp. Method: matched
+query×page GSC analysis per cluster (not the property-wide/generic pulls §20 used),
+plus live content-equivalence reads and DB provenance checks. Data window: 90d,
+`dataState=final`, 2026-05-13 → 2026-08-10 (same settle point as §20). No new paid
+SERP/keyword credits spent — reused §20.8's already-confirmed wall findings where the
+matched-query step found no new meaningful Romanian volume outside them.
+
+### 21.1 Terminology correction (applies to §20.5 and §20.13 above)
+
+Romanian is Romania's primary locale, not a secondary one. §20's "sitewide
+thin-secondary-locale pattern" label for `/romania/ro/` was wrong framing, corrected
+in place above. §20.13's "plausible driver" language is downgraded to what it actually
+was — an untested hypothesis — and resolved below.
+
+### 21.2 Four cluster URL pairs, technical status, GSC baseline
+
+| Cluster | RO URL | EN URL | HTTP/robots/canonical/hreflang | RO 90d (clicks/impr/pos) | EN 90d (clicks/impr/pos) | Maturity |
+| --- | --- | --- | --- | --- | --- | --- |
+| GP consultation hub | `/romania/ro/gp-consultation-online` | `/romania/en/gp-consultation-online` | Both indexed, self-canonical, `index,follow`, hreflang correct | 0 / 13 / 23.7 | 2 / 13 / 8.2 | RAMPING (first impr. 2026-07-20/21) |
+| `medic-online-romania` | `/romania/ro/services/medic-online-romania` | `/romania/en/services/medic-online-romania` | Both indexed, self-canonical, `index,follow`, hreflang correct | 1 / 3 / 7.0 | 0 / 33 / 5.0 | RAMPING |
+| `a-doua-opinie-medicala` | `/romania/ro/services/a-doua-opinie-medicala` | `/romania/en/services/a-doua-opinie-medicala` | Both indexed, self-canonical, `index,follow`, hreflang correct | 0 / 1 / 7.0 | 0 / 31 / 21.5 | RAMPING — widest visibility gap of the four |
+| `sanatate-mintala-online` | `/romania/ro/services/sanatate-mintala-online` | `/romania/en/services/sanatate-mintala-online` | Both indexed, self-canonical, `index,follow`, hreflang correct | 0 / 1 / — | 0 / 30 / 5.9 | RAMPING (first impr. 2026-07-19/20) |
+
+All 8 URLs are ~3 weeks old in Google's index at extraction time — the same
+2026-07-19/21 discontinuity §20.2 found for Romania's primary-locale surface overall.
+
+### 21.3 Matched query×page findings
+
+- **GP consultation hub** — RO itself already captures the visible Romanian queries
+  ("consultatie medic online", "consultatie online", "consultatii online" — 1–4 impr
+  each, weak position). EN's only visible query is English ("gp online"). No Romanian
+  query found on the EN page. **No wrong-language ownership.**
+- **`medic-online-romania`** — RO's 3 impressions are fully anonymized by GSC's
+  per-query privacy threshold; EN's 33 impressions are 32/33 anonymized, with the one
+  visible row ("evet") not a real Romanian or English commercial term. **INSUFFICIENT
+  DATA at the query level** — the visibility gap cannot be attributed to language
+  ownership from this data.
+- **`a-doua-opinie-medicala`** — the only cluster with visible Romanian-language
+  commercial queries landing on the EN page instead of RO: "obtine a doua opinie
+  medicala" (1 impr — a near-paraphrase of the already wall-tested head term) and
+  "unde pot obtine o a doua opinie internationala pentru un caz de neurochirurgie"
+  (1 impr, long-tail). Both are single-impression, zero-click — at the noise floor, but
+  the only real positive signal found across all 4 clusters.
+- **`sanatate-mintala-online`** — RO's 1 visible query is English ("romania emergency
+  mental health crisis 112 official") and correctly lands on RO. EN's 30 impressions
+  are fully anonymized. **No Romanian-language query evidence either way.**
+
+### 21.4 Content equivalence and provenance (live pages + DB read)
+
+- **GP consultation hub** — **FULL INTENT EQUIVALENT.** Different content model than the
+  3 service pages (`PageContent`/`PageContentTranslation`, key `GENERAL_CONSULTATION`).
+  RO row is `PUBLISHED`, full hero/intro/who-for/why-choose/6-Q&A-FAQ/SEO fields,
+  structurally identical to EN and the other 4 locales. Never actually thin.
+- **`medic-online-romania`** — **FULL INTENT EQUIVALENT.** RO body 7,006 chars vs EN
+  7,804 — near-parity, not the ~700–900-char figure §20.5's blanket statement implied.
+  Full Romanian-system positioning section, categorized what-we-treat list, 6-item
+  inclusions, 6-item why-us, 9-Q&A FAQ. Genuinely, fully authored RO.
+- **`a-doua-opinie-medicala`** — **MATERIALLY INCOMPLETE.** RO has intro + 3-paragraph
+  about + doctor listing + disclaimer only. EN additionally has a 7-reason "when a
+  second opinion makes sense" section, a 7-item "who this is for" list, a 5-item
+  "what's included" list, a Romania-market-context section, an explicit scope/
+  limitations section, a 9-Q&A FAQ (incl. neurology/surgical/mental-health questions),
+  and cross-links to related second-opinion services. RO is fluent, legally accurate,
+  genuinely-authored Romanian — just structurally thinner. This is exactly the missing
+  FAQ/cross-link content that plausibly would have caught the neurosurgery long-tail
+  query in §21.3.
+- **`sanatate-mintala-online`** — **MATERIALLY INCOMPLETE**, same pattern: RO 731 chars
+  (intro + 2-paragraph about + doctor + one related link + disclaimer) vs EN 9,549
+  chars. Genuinely authored, not mistranslated — RO's own text correctly refers complex
+  psychiatric/psychology cases out, consistent with §20.5's staffing (no psychiatrist/
+  psychologist in Romania).
+
+**Provenance verdict for all 4**: genuinely authored Romanian content in every case —
+none is a translation fallback or incomplete-migration artifact. Where RO is shorter, it
+is a content-depth gap, not a data-quality defect.
+
+### 21.5 Product/bookability fit
+
+All 4 clusters correctly route to Dr. Robert Gabriel Brînduș (GP), Romania's only
+GP-level doctor, consistent with §20.7. No product/staffing blocker on any of the 4 —
+distinct from `evaluare-durere`'s 0-doctor gap (§20.10, unchanged, still a product
+dependency, not in scope for this ticket).
+
+### 21.6 SERP feasibility
+
+Reused §20.8 for the head terms these 4 clusters map to — "medic online" (390/mo, KD 31)
+and "a doua opinie medicala" (90/mo, KD 0) — both already confirmed dense SERP-business
+walls (Romania's mature dedicated telehealth sector plus its two largest private
+hospital networks). The matched query×page step (§21.3) found no cluster-specific
+Romanian query volume outside those already-tested head terms large enough to justify a
+fresh paid pull, so none was run. GP consultation hub and `sanatate-mintala-online` have
+no confirmed real Romanian demand signal to test in the first place.
+
+### 21.7 Internal links
+
+No causally-linked asymmetry found on any cluster. `a-doua-opinie-medicala` has a mild
+imbalance (RO gets a contextual link from the RO GP hub; the one related-service inbound
+link sampled for EN was from `sanatate-mintala-online`'s EN sibling, not an equivalent
+hub link) — noted, not treated as a driver given the underlying data is already
+sub-noise-floor.
+
+### 21.8 Per-cluster root-cause classification
+
+| Cluster | Classification | Basis |
+| --- | --- | --- |
+| GP consultation hub | **A — NO REAL ASYMMETRY** | Matched query evidence already demonstrates expected language ownership: content fully equivalent, RO already owns its own Romanian queries, EN's only visible query is English. Pages are also young/ramping, but A is the primary classification — the evidence itself resolves the question, not just age. |
+| `medic-online-romania` | **B — RANKING RAMP / INSUFFICIENT MATURITY** | 32/33 EN impressions and all RO query rows are hidden by GSC anonymization — insufficient matched-query evidence to affirm A or diagnose C/D. Content is near-parity (not thin), but that alone can't stand in for the missing query evidence. |
+| `a-doua-opinie-medicala` | **E — SERP/BUSINESS-MODEL WALL** | The one Romanian-language query observed on EN is N=1, zero-click — insufficient for C (wrong-language ownership). RO is materially less complete than EN, but the exact commercial SERP is already dominated by major Romanian hospital/second-opinion providers (§20.8), so content depth is not demonstrated as the limiting factor. |
+| `sanatate-mintala-online` | **B — RANKING RAMP / INSUFFICIENT MATURITY** | RO is materially less complete than EN, but no Romanian commercial query evidence demonstrates wrong-language ownership or a content-driven ranking deficit — insufficient maturity/data, not a diagnosed content gap. |
+
+### 21.9 Overall Wave 3 decision
+
+**CLOSE WAVE 3 — NO SEO IMPLEMENTATION.** All 4 clusters resolve to A/B/E. No cluster
+reaches C (wrong-language ownership of real demand) or D (Romanian content gap with real
+demand + viable SERP/product fit) — the two real content gaps found
+(`a-doua-opinie-medicala`, `sanatate-mintala-online`) either sit behind a confirmed SERP
+wall or have no measurable Romanian demand to justify content investment yet. No
+RO-SEO-002 is proposed.
+
+This **sharpens, not reverses**, §20.15's original call, via the requested matched-query
+method rather than the property-wide pulls §20 used. It also corrects §20.5's blanket
+"RO thin across all 4 clusters" framing: 2 of the 4 (GP hub, `medic-online-romania`) are
+fully RO-equivalent and were never actually thin; the content-depth gap is real only for
+`a-doua-opinie-medicala` and `sanatate-mintala-online`.
+
+### 21.10 Final six-market program status
+
+**COUNTRY WAVES 1–3 — ALL SIX PRIORITY MARKETS COMPLETE / MONITOR EXCEPTIONS.**
+**NO SEO IMPLEMENTATION CURRENTLY JUSTIFIED.** There is no Wave 4 in the current
+six-market strategy. The next phase is scheduled measurement and evidence refresh —
+the full calendar, superseding §20.16's version with the RO-SEO-001 addition folded
+into the existing Romania recheck rather than a standalone item:
+
+- **~2026-09-01**: Czech travel-medicine redirect lag + Portugal doctor recrawl watchlist
+- **~2026-09-04**: Brazil Sarmento recrawl
+- **~2026-09-06**: Romania doctor recrawl + watch the second-opinion
+  (`a-doua-opinie-medicala`) Romanian-query ownership signal — reopen only if
+  Romanian-language commercial query volume on that cluster rises above
+  single-impression noise
+- **~2026-09-08**: Ireland lab cluster, Czech GP ranking ramp, Spain dermatología
+- **event-driven only**: Czech doctor onboarding/business state, Hlavatý disposition,
+  Spain gated-service content completion
+- **~2026-11-13**: Brazil/Romania generic commercial SERP-wall recheck
+
+Do not reopen any item early absent a genuine production/search regression.
+
+**SIX-MARKET SEO PROGRAM COMPLETE / MONITOR EXCEPTIONS — NO IMPLEMENTATION / NO DEPLOY.**
 
 ---
