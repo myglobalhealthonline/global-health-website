@@ -161,11 +161,16 @@ export function interpretAppPingResponse(input: { httpStatus: number; body: stri
 
   const fault = extractFault(input.body);
   if (fault) {
+    // SÚKL put a structured <Chyba> inside <detail> alongside the human
+    // faultstring. Prefer their own code (S019, S026, …) over the generic
+    // "soap:Server", which is the same for every failure and says nothing.
+    const suklCode = extractElementText(input.body, "Kod");
+    const suklText = extractElementText(input.body, "Popis");
     return {
       ok: false,
       responseMessageId,
-      errorCode: fault.faultCode ?? "SUKL_SOAP_FAULT",
-      errorMessage: fault.faultString ?? "SÚKL returned a SOAP fault.",
+      errorCode: suklCode ?? fault.faultCode ?? "SUKL_SOAP_FAULT",
+      errorMessage: suklText ?? fault.faultString ?? "SÚKL returned a SOAP fault.",
     };
   }
 
