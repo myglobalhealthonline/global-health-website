@@ -509,8 +509,8 @@ export type { SuklAppPingResult } from "../../lib/sukl/index.js";
  * A pass proves the whole stack short of business payloads: mutual TLS, the
  * envelope, the `Zprava` header, the accessing identity, and fault handling.
  */
-export async function runSuklAppPing(service: SuklService) {
-  return suklAppPing(service);
+export async function runSuklAppPing(service: SuklService, path?: string) {
+  return suklAppPing(service, path ? { path } : {});
 }
 
 // ─── Doctor identity mappings ────────────────────────────────────────────────
