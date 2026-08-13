@@ -115,6 +115,10 @@ export type SuklAppPingDto = {
   interfaceVersion: string;
   errorCode: string | null;
   errorMessage: string | null;
+  /** The path used, so a working attempt is reproducible. */
+  path: string;
+  /** Truncated upstream excerpt on a 401/403. Untrusted text — render as text. */
+  bodyExcerpt: string | null;
 };
 
 export async function fetchSuklStatus() {
