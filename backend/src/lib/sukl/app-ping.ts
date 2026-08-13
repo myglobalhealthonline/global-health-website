@@ -44,11 +44,29 @@ import { suklPost } from "./transport.js";
  * here — it needs the signature decision first (SCOPE_CONFIRMATION.md Q15–Q17).
  */
 
-/** Both services expose AppPing, and each has its own namespace. */
-const SERVICE_NAMESPACE: Record<SuklService, string> = {
-  cuep: "http://www.sukl.cz/erp/cuep",
-  common: "http://www.sukl.cz/erp/common",
-};
+/**
+ * The namespace belongs to the ELEMENT, not to the service that hosts it.
+ *
+ * Corrected 2026-08-13 after SÚKL rejected a live call with:
+ *
+ *   S009 — Chybná funkce vašeho SW:
+ *   'http://www.sukl.cz/erp/cuep:AppPingDotaz' element is not expected
+ *
+ * `AppPingDotaz` is declared once, in the COMMON schema, and both services reuse
+ * it. CuepWebService.wsdl makes this explicit — its AppPing input part is
+ * `element="s1:AppPingDotaz"` with `s1 = .../erp/common`, and `cuep.xsd` does
+ * not declare the element at all.
+ *
+ * The earlier code mapped namespace → service, which is the wrong axis: a
+ * service can host elements from several namespaces. Business operations such
+ * as ZalozitPoukaz DO live in the cuep namespace, so this must stay a
+ * per-operation decision rather than a per-service constant.
+ */
+export const SUKL_NAMESPACE_COMMON = "http://www.sukl.cz/erp/common";
+export const SUKL_NAMESPACE_CUEP = "http://www.sukl.cz/erp/cuep";
+
+/** AppPing is a shared operation: COMMON namespace on BOTH services. */
+const APP_PING_NAMESPACE = SUKL_NAMESPACE_COMMON;
 
 /**
  * Default endpoint path. SÚKL's published `soap:address` points at an internal
@@ -203,7 +221,7 @@ export async function suklAppPing(
     swKlienta: suklSwKlienta(),
     idZpravy: requestId,
     odeslano: new Date(),
-    namespace: SERVICE_NAMESPACE[service],
+    namespace: APP_PING_NAMESPACE,
   });
 
   const path = options.path?.trim() || DEFAULT_ENDPOINT_PATH;
