@@ -1,0 +1,361 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "heavy endpoint: status in 200,401": {
+                    "name": "heavy endpoint: status in 200,401",
+                    "path": "::heavy endpoint: status in 200,401",
+                    "id": "b8ef378de8e2cab8cbcc8d3be6bd41c9",
+                    "passes": 60,
+                    "fails": 0
+                },
+                "page /about: status in 200": {
+                    "name": "page /about: status in 200",
+                    "path": "::page /about: status in 200",
+                    "id": "a97560a9cd40daf919124d30aa6a6cf6",
+                    "passes": 554,
+                    "fails": 0
+                },
+                "public api read: status in 200": {
+                    "name": "public api read: status in 200",
+                    "path": "::public api read: status in 200",
+                    "id": "2ab8449af5fca5dccce7c4315eec5dd9",
+                    "passes": 6904,
+                    "fails": 0
+                },
+                "page /ie/en/pricing: status in 200": {
+                    "fails": 0,
+                    "name": "page /ie/en/pricing: status in 200",
+                    "path": "::page /ie/en/pricing: status in 200",
+                    "id": "d2604602d46864a10d4276b3f9d1c1a4",
+                    "passes": 590
+                },
+                "page /pt/pt: status in 200": {
+                    "fails": 0,
+                    "name": "page /pt/pt: status in 200",
+                    "path": "::page /pt/pt: status in 200",
+                    "id": "46118eee21f034e9e903b8295cce29cf",
+                    "passes": 551
+                },
+                "page /faq: status in 200": {
+                    "name": "page /faq: status in 200",
+                    "path": "::page /faq: status in 200",
+                    "id": "f772f6b7327bb260ef0467ba362c9c55",
+                    "passes": 579,
+                    "fails": 0
+                },
+                "page /contact: status in 200": {
+                    "path": "::page /contact: status in 200",
+                    "id": "4bb738a61f27cbe1e6751d07a7c2c047",
+                    "passes": 548,
+                    "fails": 0,
+                    "name": "page /contact: status in 200"
+                },
+                "page /ie/en: status in 200": {
+                    "name": "page /ie/en: status in 200",
+                    "path": "::page /ie/en: status in 200",
+                    "id": "9541b4a1a074172d13d35eca3cce8d90",
+                    "passes": 563,
+                    "fails": 0
+                },
+                "patient read /api/account/appointments: status in 200,401": {
+                    "name": "patient read /api/account/appointments: status in 200,401",
+                    "path": "::patient read /api/account/appointments: status in 200,401",
+                    "id": "8e86a3d3a3f84a5539b55a356c93eaa8",
+                    "passes": 362,
+                    "fails": 0
+                },
+                "page /: status in 200": {
+                    "fails": 0,
+                    "name": "page /: status in 200",
+                    "path": "::page /: status in 200",
+                    "id": "2f41d05bbef036dd54828b2ece454e91",
+                    "passes": 571
+                },
+                "page /es/es: status in 200": {
+                    "passes": 552,
+                    "fails": 0,
+                    "name": "page /es/es: status in 200",
+                    "path": "::page /es/es: status in 200",
+                    "id": "6329c410d832126c5ba26ee019c13bc4"
+                },
+                "patient read /api/me/memberships: status in 200,401": {
+                    "name": "patient read /api/me/memberships: status in 200,401",
+                    "path": "::patient read /api/me/memberships: status in 200,401",
+                    "id": "a39702d9d918e3d250b7cf9c75d8036f",
+                    "passes": 385,
+                    "fails": 0
+                },
+                "page /ie/en/tests: status in 200": {
+                    "id": "a064bb14657f241c1e2ca566f5f361cc",
+                    "passes": 596,
+                    "fails": 0,
+                    "name": "page /ie/en/tests: status in 200",
+                    "path": "::page /ie/en/tests: status in 200"
+                },
+                "page /blog: status in 200": {
+                    "id": "463180f77fdadd7777245a44da2ae22c",
+                    "passes": 604,
+                    "fails": 0,
+                    "name": "page /blog: status in 200",
+                    "path": "::page /blog: status in 200"
+                },
+                "page /ie/en/doctors: status in 200": {
+                    "name": "page /ie/en/doctors: status in 200",
+                    "path": "::page /ie/en/doctors: status in 200",
+                    "id": "c79bab1a3bbfbd58cf452bbf5e811e5d",
+                    "passes": 569,
+                    "fails": 0
+                },
+                "patient read /api/account/profile: status in 200,401": {
+                    "name": "patient read /api/account/profile: status in 200,401",
+                    "path": "::patient read /api/account/profile: status in 200,401",
+                    "id": "deb61788820d9fce67fe19f4dde6b8a1",
+                    "passes": 350,
+                    "fails": 0
+                },
+                "patient read /api/me/notifications: status in 200,401": {
+                    "name": "patient read /api/me/notifications: status in 200,401",
+                    "path": "::patient read /api/me/notifications: status in 200,401",
+                    "id": "9645f67eb0b5ad41c094c4c6b93aee0a",
+                    "passes": 390,
+                    "fails": 0
+                },
+                "page /ie/en/book: status in 200": {
+                    "passes": 627,
+                    "fails": 0,
+                    "name": "page /ie/en/book: status in 200",
+                    "path": "::page /ie/en/book: status in 200",
+                    "id": "67e83e7dd463bd3dfb26212b93e32753"
+                },
+                "patient read /api/account/orders: status in 200,401": {
+                    "fails": 0,
+                    "name": "patient read /api/account/orders: status in 200,401",
+                    "path": "::patient read /api/account/orders: status in 200,401",
+                    "id": "318f8432dd79cc4ffff783e4c23c3e93",
+                    "passes": 377
+                },
+                "patient read /api/me/subscription: status in 200,401": {
+                    "path": "::patient read /api/me/subscription: status in 200,401",
+                    "id": "120a3b03774876151749eb888e5016b6",
+                    "passes": 406,
+                    "fails": 0,
+                    "name": "patient read /api/me/subscription: status in 200,401"
+                },
+                "doctor read /api/doctor/patients: status in 200,401": {
+                    "name": "doctor read /api/doctor/patients: status in 200,401",
+                    "path": "::doctor read /api/doctor/patients: status in 200,401",
+                    "id": "799a3f7cda9a1848cc40bd555b40bc49",
+                    "passes": 148,
+                    "fails": 0
+                },
+                "booking availability: status in 200": {
+                    "id": "7cd0826ce6271448930dfdfa96efee90",
+                    "passes": 1002,
+                    "fails": 0,
+                    "name": "booking availability: status in 200",
+                    "path": "::booking availability: status in 200"
+                },
+                "booking gp-assign: status in 200,409": {
+                    "passes": 1002,
+                    "fails": 0,
+                    "name": "booking gp-assign: status in 200,409",
+                    "path": "::booking gp-assign: status in 200,409",
+                    "id": "fb3a33a1fd2903fcafc771df3bdd40f2"
+                },
+                "doctor read /api/doctor/me: status in 200,401": {
+                    "path": "::doctor read /api/doctor/me: status in 200,401",
+                    "id": "0d0c883af9d5fdc7df4736ac9ccc5db0",
+                    "passes": 154,
+                    "fails": 0,
+                    "name": "doctor read /api/doctor/me: status in 200,401"
+                },
+                "patient read /api/cart: status in 200,401": {
+                    "passes": 397,
+                    "fails": 0,
+                    "name": "patient read /api/cart: status in 200,401",
+                    "path": "::patient read /api/cart: status in 200,401",
+                    "id": "01b5c9c53a085630fe0114119173bdd6"
+                },
+                "doctor read /api/doctor/appointments: status in 200,401": {
+                    "id": "4367c34d002ae21c4dc04b3394c5888a",
+                    "passes": 158,
+                    "fails": 0,
+                    "name": "doctor read /api/doctor/appointments: status in 200,401",
+                    "path": "::doctor read /api/doctor/appointments: status in 200,401"
+                },
+                "doctor read /api/doctor/messages/unread: status in 200,401": {
+                    "name": "doctor read /api/doctor/messages/unread: status in 200,401",
+                    "path": "::doctor read /api/doctor/messages/unread: status in 200,401",
+                    "id": "759e92c6d21dddedfd47aa6f25b3a21a",
+                    "passes": 145,
+                    "fails": 0
+                },
+                "admin read /api/admin/users: status in 200,401": {
+                    "path": "::admin read /api/admin/users: status in 200,401",
+                    "id": "72278e66ffc88ca303e7f6b0f9436db9",
+                    "passes": 147,
+                    "fails": 0,
+                    "name": "admin read /api/admin/users: status in 200,401"
+                },
+                "admin read /api/admin/appointments: status in 200,401": {
+                    "id": "c88d6d89bf1497127b8559d47b6d57c5",
+                    "passes": 132,
+                    "fails": 0,
+                    "name": "admin read /api/admin/appointments: status in 200,401",
+                    "path": "::admin read /api/admin/appointments: status in 200,401"
+                },
+                "doctor read /api/doctor/services: status in 200,401": {
+                    "id": "85727b8d3a1d30532f8d452911b3d938",
+                    "passes": 160,
+                    "fails": 0,
+                    "name": "doctor read /api/doctor/services: status in 200,401",
+                    "path": "::doctor read /api/doctor/services: status in 200,401"
+                },
+                "admin read /api/admin/orders: status in 200,401": {
+                    "path": "::admin read /api/admin/orders: status in 200,401",
+                    "id": "97b5f268d4c1b4d813eeea908f68f442",
+                    "passes": 138,
+                    "fails": 0,
+                    "name": "admin read /api/admin/orders: status in 200,401"
+                },
+                "chat threads poll: status in 200,401": {
+                    "name": "chat threads poll: status in 200,401",
+                    "path": "::chat threads poll: status in 200,401",
+                    "id": "f49c254004b5ad631e9445fe324d498b",
+                    "passes": 147,
+                    "fails": 0
+                }
+            }
+    },
+    "metrics": {
+        "http_req_tls_handshaking": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.6736709784578218,
+            "min": 0,
+            "med": 0,
+            "max": 1127.647
+        },
+        "http_req_receiving": {
+            "min": 0.019,
+            "med": 43.0935,
+            "max": 4838.871,
+            "p(90)": 339.6789,
+            "p(95)": 525.8491999999998,
+            "avg": 128.7550026676066
+        },
+        "http_req_connecting": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.5056228105496274,
+            "min": 0,
+            "med": 0,
+            "max": 157.138
+        },
+        "http_req_failed": {
+            "fails": 19868,
+            "passes": 0,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(90)": 707.3473,
+            "p(95)": 890.2271999999995,
+            "avg": 456.3544365311043,
+            "min": 267.815,
+            "med": 367.423,
+            "max": 5115.857
+        },
+        "http_req_duration": {
+            "p(90)": 707.3473,
+            "p(95)": 890.2271999999995,
+            "avg": 456.3544365311043,
+            "min": 267.815,
+            "med": 367.423,
+            "max": 5115.857
+        },
+        "iterations": {
+            "count": 11962,
+            "rate": 13.229825517281562
+        },
+        "http_req_sending": {
+            "avg": 0.10066463660157095,
+            "min": 0.017,
+            "med": 0.09,
+            "max": 2.488,
+            "p(90)": 0.154,
+            "p(95)": 0.185
+        },
+        "data_sent": {
+            "count": 11263898,
+            "rate": 12457.73325400909
+        },
+        "checks": {
+            "passes": 19868,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.95": false
+            },
+            "value": 1
+        },
+        "iteration_duration": {
+            "max": 9879.689458,
+            "p(90)": 4769.6976167,
+            "p(95)": 5122.82805415,
+            "avg": 3432.115344061703,
+            "min": 1287.927667,
+            "med": 3397.4571665000003
+        },
+        "http_req_duration{name:page:/ie/en}": {
+            "p(90)": 936.1606,
+            "p(95)": 1105.2826,
+            "avg": 641.4084689165186,
+            "min": 344.323,
+            "med": 556.555,
+            "max": 2848.996,
+            "thresholds": {
+                "p(95)<1500": false
+            }
+        },
+        "vus_max": {
+            "value": 55,
+            "min": 55,
+            "max": 55
+        },
+        "data_received": {
+            "count": 3395466559,
+            "rate": 3755344.434487077
+        },
+        "vus": {
+            "value": 1,
+            "min": 0,
+            "max": 53
+        },
+        "http_req_blocked": {
+            "avg": 1.1979406080130939,
+            "min": 0,
+            "med": 0.001,
+            "max": 1284.969,
+            "p(90)": 0.002,
+            "p(95)": 0.002
+        },
+        "http_reqs": {
+            "count": 19868,
+            "rate": 21.973764703005354
+        },
+        "http_req_waiting": {
+            "min": 264.535,
+            "med": 306.745,
+            "max": 1697.523,
+            "p(90)": 369.4436,
+            "p(95)": 423.34689999999983,
+            "avg": 327.49876922689634
+        }
+    }
+}

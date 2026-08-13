@@ -114,3 +114,4 @@ backend/tmp/i18n-drafts/
 loadtest/backups/*.dump
 loadtest/config/secrets.json
 loadtest/results/
+loadtest/config/seed-passwords.json

@@ -1,0 +1,24 @@
+{
+  "_comment": "Non-secret target config, safe to commit. Secrets (proxy secret, cookies) live in config/secrets.json (gitignored) and env vars.",
+  "frontendBaseUrl": "https://myglobalhealth.up.railway.app",
+  "backendBaseUrl": "https://backendmyglobalhealth.up.railway.app",
+  "primaryCountry": "ie",
+  "secondaryCountries": ["pt", "es", "cz"],
+  "sampleDoctorSlug": "dr-abdelrahman-mustafa",
+  "sampleServiceSlug": "acute-medical-consultation",
+  "sampleBlogSlug": null,
+  "pagesToBrowse": [
+    "/ie/en",
+    "/ie/en/pricing",
+    "/ie/en/doctors",
+    "/ie/en/book",
+    "/ie/en/tests",
+    "/pt/pt",
+    "/es/es",
+    "/",
+    "/about",
+    "/blog",
+    "/faq",
+    "/contact"
+  ]
+}
