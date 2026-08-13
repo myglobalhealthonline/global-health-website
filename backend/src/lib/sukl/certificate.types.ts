@@ -48,6 +48,13 @@ export interface SuklHealthStatus {
   ico: string | null;
   /** Per-service endpoint configuration (cuep, common). */
   services: SuklServiceStatus[];
+  /** True when a real SOAP operation can be attempted — certificate AND service
+   *  URL AND the accessing identity/version that every message carries. Kept
+   *  separate from `configured` because a valid certificate that can reach SÚKL
+   *  still cannot send anything without `Uzivatel`. */
+  callable: boolean;
+  /** Env vars still missing before any operation can be called. */
+  missingForCall: string[];
   certificateValid: boolean;
   certificateSource: SuklCertificateSource | null;
   /** Certificate subject as issued. Its O/OU carry SÚKL's own identifiers, whose
