@@ -21,8 +21,21 @@ const SERVICES = [
   { value: "common", label: "Common" },
 ];
 
+/** Candidate paths, from the internal soap:address SÚKL publish. Offered to the
+ *  operator one at a time — never swept automatically, because repeatedly
+ *  probing a national health system's host is exactly what their rate limiting
+ *  is there to stop. */
+const PATHS = [
+  "/",
+  "/Endpoints/CommonWebService.asmx",
+  "/LekovyZaznam/Endpoints/CommonWebService.asmx",
+  "/Endpoints/CuepWebService.asmx",
+  "/LekovyZaznam/Endpoints/CuepWebService.asmx",
+];
+
 export function SuklAppPingPanel({ callable }: { callable: boolean }) {
   const [service, setService] = useState("common");
+  const [path, setPath] = useState("/");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SuklAppPingDto | null>(null);
@@ -32,7 +45,8 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
     setError(null);
     setResult(null);
     try {
-      const res = await fetch(`/api/admin/sukl/app-ping?service=${service}`, { method: "POST" });
+      const qs = new URLSearchParams({ service, path });
+      const res = await fetch(`/api/admin/sukl/app-ping?${qs}`, { method: "POST" });
       const json = (await res.json().catch(() => null)) as
         | { ok?: boolean; message?: string; data?: SuklAppPingDto }
         | null;
@@ -74,6 +88,13 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
               </option>
             ))}
           </select>
+          <select className="gh-input" value={path} onChange={(e) => setPath(e.target.value)}>
+            {PATHS.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
           <Btn onClick={run} disabled={busy || !callable} variant="primary" size="sm">
             {busy ? "Sending…" : "Send AppPing"}
           </Btn>
@@ -104,7 +125,7 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
             </Pill>
             <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
               {result.label} · HTTP {result.httpStatus} · {result.durationMs} ms · interface{" "}
-              {result.interfaceVersion}
+              {result.interfaceVersion} · path <code>{result.path}</code>
             </span>
           </div>
 
@@ -123,6 +144,28 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
               <strong>{result.errorCode}</strong>
               {result.errorMessage ? ` — ${result.errorMessage}` : ""}
             </p>
+          ) : null}
+
+          {result.bodyExcerpt ? (
+            <div className="mt-3">
+              <p
+                className="m-0 mb-1 text-[10.5px] font-bold uppercase tracking-[0.12em]"
+                style={{ color: "var(--portal-muted)" }}
+              >
+                What SÚKL actually returned
+              </p>
+              <pre
+                className="m-0 overflow-auto rounded-md p-3 text-xs"
+                style={{ background: "var(--portal-well)", maxHeight: 220 }}
+              >
+                {result.bodyExcerpt}
+              </pre>
+              <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                Truncated. An HTTP 401/403 usually means the certificate is not mapped to an
+                account for this service, the path is wrong, or a prior Login is expected — try
+                another path above before concluding it is a permissions problem.
+              </p>
+            </div>
           ) : null}
 
           {result.ok ? (
