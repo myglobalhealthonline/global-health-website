@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { CrossBorderConsentPageClient } from "./CrossBorderConsentPageClient";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,5 +19,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CrossBorderConsentPage() {
-  return <CrossBorderConsentPageClient />;
+  // No [lang] URL segment on this route — the language comes from the same
+  // signal the header's LanguageSwitcher writes (gh_locale cookie / signed-in
+  // preferredLocale), same as every other lang-less "global" page. Switching
+  // language here calls router.refresh(), which re-runs this server
+  // component and re-resolves the locale below — no client-side wiring needed.
+  const locale = await getPageLocale();
+  const t = loadLocaleBundle(locale).legal.crossBorderConsent;
+  return <CrossBorderConsentPageClient t={t} />;
 }

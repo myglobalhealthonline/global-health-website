@@ -48,6 +48,11 @@ type DoctorProfileTemplateProps = {
     imageTitle?: string;
     imageCaption?: string;
     imageDescription?: string;
+    /** Pre-formatted, already-localized "Last reviewed" date (e.g.
+     *  "24 July 2026") — caller formats it the same way the blog byline
+     *  does. Absent when the admin hasn't set `lastReviewedAt` — never a
+     *  fabricated fallback. */
+    reviewedDate?: string;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   profileImageSrc?: string;
@@ -63,6 +68,7 @@ type DoctorProfileTemplateProps = {
     registeredIn?: string;
     onlineConsultAvailable?: string;
     verifiedProfile?: string;
+    lastReviewedLabel?: string;
     verifyRegistration?: string;
     primaryCareConsults?: string;
     languagesLabel?: string;
@@ -116,8 +122,11 @@ export function DoctorProfileTemplate({
         {/* Mobile/tablet only — full-bleed tinted portrait behind the text,
          *  same treatment as the team page hero: text sits in front of the
          *  photo instead of the photo being hidden below lg. */}
+        {/* overflow-hidden on the layer: the focal-point style can scale the
+         *  image past 100% width, and the hero itself is overflow-visible, so
+         *  without this clip the zoomed portrait widens the whole document. */}
         {profileImageSrc ? (
-          <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+          <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 overflow-hidden lg:hidden">
             <Image
               src={profileImageSrc}
               alt=""
@@ -317,6 +326,16 @@ export function DoctorProfileTemplate({
                   { Icon: ShieldCheck, label: (t?.registeredIn ?? "Registered in {country}").replace("{country}", profile.country) },
                   { Icon: Video, label: t?.onlineConsultAvailable ?? "Online consultation available" },
                   { Icon: BadgeCheck, label: t?.verifiedProfile ?? "Verified profile" },
+                  // Admin-set only (see profile.reviewedDate) — omitted, not a
+                  // fabricated fallback, when no one has reviewed this profile yet.
+                  ...(profile.reviewedDate
+                    ? [
+                        {
+                          Icon: CalendarDays,
+                          label: `${t?.lastReviewedLabel ?? "Last reviewed"} ${profile.reviewedDate}`,
+                        },
+                      ]
+                    : []),
                 ].map(({ Icon, label }, i) => (
                   <span key={label} className="flex items-center">
                     {i > 0 ? (
@@ -432,6 +451,7 @@ export function DoctorProfileTemplate({
             </h2>
             <div
               className="mt-8 break-words text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-2"
+              // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- safeBio = sanitizeDoctorBioHtml(profile.bio), sanitize-html with a controlled allowlist (frontend/lib/content/doctor-bio-format.ts).
               dangerouslySetInnerHTML={{ __html: safeBio }}
             />
 
@@ -483,7 +503,7 @@ export function DoctorProfileTemplate({
                   {profile.faqs.map((faq) => (
                     <details
                       key={faq.id}
-                      className="rounded-[12px] border border-[var(--color-border)] bg-white p-4"
+                      className="gh2-glass-forest gh2-dark-content rounded-[12px] p-4"
                     >
                       <summary className="cursor-pointer text-[15px] font-bold text-[var(--color-text-primary)]">
                         {faq.question}
@@ -500,10 +520,10 @@ export function DoctorProfileTemplate({
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div
-              className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-8 shadow-[var(--shadow-card)] md:p-10"
+              className="gh2-glass-forest gh2-dark-content p-8 md:p-10"
             >
               <span
-                className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]"
+                className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]"
               >
                 {t?.bookThisClinicianLabel ?? "Book this clinician"}
               </span>

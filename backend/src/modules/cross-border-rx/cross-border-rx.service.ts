@@ -18,6 +18,8 @@ import { sendEmail } from "../../lib/email/send-email.js";
 import { wrapHtml } from "../../lib/email/templates.js";
 import { orderPayShortLink } from "../orders/order-payment-url.service.js";
 import { resolveGpSameDayService } from "../gp-booking/gp-config.service.js";
+import { decryptPhi, encryptPhi } from "../../lib/crypto/phi-crypto.js";
+import { patientTaxIdLabel } from "../generated-documents/generated-documents-fields.js";
 import {
   notifyPatientCrossBorderConsent,
   notifyPatientCrossBorderPayment,
@@ -128,6 +130,12 @@ export class CrossBorderRxConsentExpiredError extends Error {
     this.name = "CrossBorderRxConsentExpiredError";
   }
 }
+export class CrossBorderRxIdentityRequiredError extends Error {
+  constructor(label: string) {
+    super(`Enter your ${label} or your passport number so the prescription can identify you.`);
+    this.name = "CrossBorderRxIdentityRequiredError";
+  }
+}
 
 // ── Target options (Doctor A's picker) ───────────────────────────────────────
 
@@ -222,6 +230,8 @@ type SourceSoap = {
   objective: string | null;
   assessment: string | null;
   plan: string | null;
+  noteFormat: "SOAP" | "FREEFORM";
+  note: string | null;
 } | null;
 
 async function readSourceSoap(sourceAppointmentId: string): Promise<SourceSoap> {
@@ -233,6 +243,8 @@ async function readSourceSoap(sourceAppointmentId: string): Promise<SourceSoap> 
       objective: true,
       assessment: true,
       plan: true,
+      noteFormat: true,
+      note: true,
     },
   });
 }
@@ -244,7 +256,8 @@ function soapHasContent(soap: SourceSoap): boolean {
       soap.subjective?.trim() ||
       soap.objective?.trim() ||
       soap.assessment?.trim() ||
-      soap.plan?.trim(),
+      soap.plan?.trim() ||
+      soap.note?.trim(),
   );
 }
 
@@ -273,6 +286,8 @@ async function refreshSoapSnapshot(requestId: string, sourceAppointmentId: strin
         sourceObjective: soap?.objective ?? null,
         sourceAssessment: soap?.assessment ?? null,
         sourcePlan: soap?.plan ?? null,
+        sourceNoteFormat: soap?.noteFormat ?? "SOAP",
+        sourceNote: soap?.note ?? null,
       },
     });
   } catch {
@@ -365,6 +380,8 @@ export async function createCrossBorderRxRequest(
       sourceObjective: soap?.objective ?? null,
       sourceAssessment: soap?.assessment ?? null,
       sourcePlan: soap?.plan ?? null,
+      sourceNoteFormat: soap?.noteFormat ?? "SOAP",
+      sourceNote: soap?.note ?? null,
       consentTokenHash,
       consentTokenExpiresAt,
       status: "PENDING_CONSENT",
@@ -586,6 +603,11 @@ async function createAsyncFeeCheckoutForRequest(
 
 export type CrossBorderRxDeliveryDetails = {
   pharmacyName: string | null;
+  /** Health/tax id valid in the TARGET country (PPS for IE, NIF for PT, ...). */
+  healthIdNumber: string | null;
+  /** Passport number — the alternative to `healthIdNumber` for target
+   *  countries that require one of the two (Brazil: CPF or passport). */
+  passportNumber: string | null;
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
@@ -599,6 +621,20 @@ export type CrossBorderRxConsentView = {
   sourceDoctorName: string | null;
   targetDoctorName: string;
   targetCountryName: string;
+  targetCountryCode: string;
+  /** What the target country calls the health/tax id ("PPS", "NIF", ...) —
+   *  resolved server-side so the form label can't drift from the PDF label. */
+  healthIdLabel: string;
+  /** Brazil (and any future market requiring one of health id / passport)
+   *  needs ONE of healthIdNumber / passportNumber before the patient can pay. */
+  identityRequiresOneOf: boolean;
+  /** The async prescription fee, in the target country's currency — shown
+   *  alongside the GP consult price so the patient can compare before choosing. */
+  prescriptionFeeCents: number | null;
+  prescriptionFeeCurrency: string | null;
+  /** The full GP consultation's catalogue price in the target country. */
+  gpConsultPriceCents: number | null;
+  gpConsultCurrency: string | null;
   /** Pre-filled patient details for the payment-step form (pharmacy + address).
    *  Everything else the request already knows; the patient only edits these. */
   prefill: CrossBorderRxDeliveryDetails & { phone: string | null };
@@ -606,6 +642,10 @@ export type CrossBorderRxConsentView = {
   paymentUrl: string | null;
   /** Present when the patient declined — book a full GP consult instead. */
   gpBookingUrl: string | null;
+  /** Whether `revertCrossBorderRxConsent` may be called from this state —
+   *  true while the async fee is unpaid (PENDING_PAYMENT) or after a decline
+   *  (CONSENT_DECLINED); false once a doctor is already actioning the request. */
+  canChangeDecision: boolean;
 };
 
 export type CrossBorderRxConsentDecision = "AGREE" | "DECLINE";
@@ -632,6 +672,8 @@ async function loadRequestByConsentToken(token: string) {
       orderId: true,
       consentTokenExpiresAt: true,
       pharmacyName: true,
+      patientHealthIdNumber: true,
+      patientPassportNumber: true,
       patientAddressLine1: true,
       patientAddressLine2: true,
       patientAddressCity: true,
@@ -694,6 +736,21 @@ export async function getCrossBorderRxConsentView(
     gpBookingUrl = await buildGpBookingUrl(request.targetDoctorId, request.targetCountryCode);
   }
 
+  // Prices shown on the choice screen so the patient can compare before
+  // deciding — best-effort, never blocks the page if either lookup fails.
+  const [feeConfig, gpService] = await Promise.all([
+    prisma.doctorCrossBorderRxCountry.findFirst({
+      where: {
+        doctorId: request.targetDoctorId,
+        priceCents: { gt: 0 },
+        country: { code: { equals: request.targetCountryCode, mode: "insensitive" } },
+      },
+      select: { priceCents: true, country: { select: { currency: { select: { code: true } } } } },
+    }),
+    resolveGpSameDayService(request.targetCountryCode).catch(() => null),
+  ]);
+  const identityRequiresOneOf = request.targetCountryCode.trim().toLowerCase() === "br";
+
   // Pre-fill the payment-step form: prefer anything the patient already entered
   // on this request, else fall back to the source appointment + patient chart.
   const [srcAppt, profile] = await Promise.all([
@@ -718,11 +775,19 @@ export async function getCrossBorderRxConsentView(
         addressPostalCode: true,
         addressCountryCode: true,
         preferredPharmacy: true,
+        taxIdNumber: true,
+        passportNumber: true,
       },
     }),
   ]);
   const pick = <T>(...vals: (T | null | undefined)[]): T | null =>
     vals.find((v) => v !== null && v !== undefined && v !== "") ?? null;
+
+  // Only offer the chart's tax id as a prefill when it already belongs to the
+  // target country — a Brazilian CPF must not land in an Irish PPS field.
+  const chartIdIsLocal =
+    profile?.addressCountryCode?.trim().toLowerCase() ===
+    request.targetCountryCode.trim().toLowerCase();
 
   return {
     status: request.status,
@@ -730,9 +795,24 @@ export async function getCrossBorderRxConsentView(
     sourceDoctorName: parties.sourceDoctorName,
     targetDoctorName: parties.targetDoctorName,
     targetCountryName: parties.targetCountryName,
+    targetCountryCode: request.targetCountryCode,
+    healthIdLabel: patientTaxIdLabel(request.targetCountryCode),
+    identityRequiresOneOf,
+    prescriptionFeeCents: feeConfig?.priceCents ?? null,
+    prescriptionFeeCurrency: feeConfig?.country.currency.code ?? null,
+    gpConsultPriceCents: gpService?.basePriceCents ?? null,
+    gpConsultCurrency: gpService?.currencyCode ?? null,
     prefill: {
       phone: pick(srcAppt?.phone, profile?.phone),
       pharmacyName: pick(request.pharmacyName, profile?.preferredPharmacy),
+      healthIdNumber: pick(
+        decryptPhi(request.patientHealthIdNumber),
+        chartIdIsLocal ? decryptPhi(profile?.taxIdNumber ?? null) : null,
+      ),
+      passportNumber: pick(
+        decryptPhi(request.patientPassportNumber),
+        chartIdIsLocal ? decryptPhi(profile?.passportNumber ?? null) : null,
+      ),
       addressLine1: pick(request.patientAddressLine1, srcAppt?.addressLine1, profile?.addressLine1),
       addressLine2: pick(request.patientAddressLine2, srcAppt?.addressLine2, profile?.addressLine2),
       addressCity: pick(request.patientAddressCity, srcAppt?.addressCity, profile?.addressCity),
@@ -749,6 +829,7 @@ export async function getCrossBorderRxConsentView(
     },
     paymentUrl,
     gpBookingUrl,
+    canChangeDecision: request.status === "PENDING_PAYMENT" || request.status === "CONSENT_DECLINED",
   };
 }
 
@@ -760,9 +841,23 @@ export async function submitCrossBorderRxConsent(
 ): Promise<CrossBorderRxConsentDecisionResult> {
   const request = await loadRequestByConsentToken(token);
 
+  // Brazil needs ONE identity value to print on the prescription — CPF
+  // (healthIdNumber) or, failing that, a passport number.
+  if (
+    decision === "AGREE" &&
+    request.targetCountryCode.trim().toLowerCase() === "br" &&
+    !details?.healthIdNumber?.trim() &&
+    !details?.passportNumber?.trim()
+  ) {
+    throw new CrossBorderRxIdentityRequiredError(patientTaxIdLabel(request.targetCountryCode));
+  }
+
   const deliveryData = details
     ? {
         pharmacyName: details.pharmacyName?.trim() || null,
+        // Government id → encrypted at rest like every other stored id.
+        patientHealthIdNumber: encryptPhi(details.healthIdNumber?.trim() || null),
+        patientPassportNumber: encryptPhi(details.passportNumber?.trim() || null),
         patientAddressLine1: details.addressLine1?.trim() || null,
         patientAddressLine2: details.addressLine2?.trim() || null,
         patientAddressCity: details.addressCity?.trim() || null,
@@ -821,6 +916,25 @@ export async function submitCrossBorderRxConsent(
     request.targetCountryCode,
   );
   return { status: "CONSENT_DECLINED", paymentUrl: null, gpBookingUrl };
+}
+
+/**
+ * Public: patient changes their mind after AGREE (unpaid) or DECLINE, and
+ * wants to see the original two-option choice screen again. Only allowed
+ * while the async fee is still unpaid (PENDING_PAYMENT) or after a decline
+ * (CONSENT_DECLINED) — once a doctor is already actioning the request
+ * (AWAITING_DOCTOR onward) the decision is final.
+ */
+export async function revertCrossBorderRxConsent(token: string): Promise<{ status: string }> {
+  const request = await loadRequestByConsentToken(token);
+  if (request.status !== "PENDING_PAYMENT" && request.status !== "CONSENT_DECLINED") {
+    throw new CrossBorderRxNotActionableError();
+  }
+  await prisma.crossBorderPrescriptionRequest.update({
+    where: { id: request.id },
+    data: { status: "PENDING_CONSENT", decidedAt: null, soapConsentAt: null },
+  });
+  return { status: "PENDING_CONSENT" };
 }
 
 /**
@@ -887,6 +1001,7 @@ export async function onCrossBorderRxFeePaid(
       sourceAppointmentId: true,
       sourceDoctorId: true,
       pharmacyName: true,
+      patientHealthIdNumber: true,
       patientAddressLine1: true,
       patientAddressLine2: true,
       patientAddressCity: true,
@@ -921,6 +1036,8 @@ export async function onCrossBorderRxFeePaid(
       consultationMode: "ONLINE",
       // Patient-entered delivery details from the payment step.
       pharmacy: request.pharmacyName,
+      // Already encrypted on the request — copied across as-is.
+      patientHealthIdNumber: request.patientHealthIdNumber,
       addressLine1: request.patientAddressLine1,
       addressLine2: request.patientAddressLine2,
       addressCity: request.patientAddressCity,
@@ -928,6 +1045,19 @@ export async function onCrossBorderRxFeePaid(
       addressCountryCode: request.patientAddressCountryCode,
     },
     select: { id: true },
+  });
+
+  // Dual-write into the relational join table + legacy array (same pattern as
+  // complete-order-payment.service.ts) — without this the admin/patient order
+  // views can't resolve the doctor/consultation for a paid cross-border order,
+  // since they read through `orderAppointments`, not `CrossBorderPrescriptionRequest`.
+  await prisma.orderAppointment.createMany({
+    data: [{ orderId, appointmentId: appt.id }],
+    skipDuplicates: true,
+  });
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { appointmentIds: { push: appt.id } },
   });
 
   await ensureConsultationDraft(appt.id, request.targetDoctorId);
@@ -1127,6 +1257,8 @@ export type CrossBorderRxInboxItem = {
     objective: string | null;
     assessment: string | null;
     plan: string | null;
+    noteFormat: "SOAP" | "FREEFORM";
+    note: string | null;
   };
   asyncAppointmentId: string | null;
   sourceDoctorName: string | null;
@@ -1154,6 +1286,8 @@ export async function listCrossBorderRxInbox(
         sourceObjective: true,
         sourceAssessment: true,
         sourcePlan: true,
+        sourceNoteFormat: true,
+        sourceNote: true,
         asyncAppointmentId: true,
         sourceDoctorId: true,
         createdAt: true,
@@ -1181,6 +1315,8 @@ export async function listCrossBorderRxInbox(
           objective: r.sourceObjective,
           assessment: r.sourceAssessment,
           plan: r.sourcePlan,
+          noteFormat: r.sourceNoteFormat,
+          note: r.sourceNote,
         },
         asyncAppointmentId: r.asyncAppointmentId,
         sourceDoctorName: nameById.get(r.sourceDoctorId) ?? null,
@@ -1236,57 +1372,14 @@ export async function decideCrossBorderRxRequest(
   const patientUserId = await resolvePatientUserId(request.patientEmail);
 
   if (input.decision === "ACCEPT") {
+    // Accepting only commits Doctor B to prescribing and opens the workspace
+    // (the frontend navigates there). The patient + Doctor A "prescription
+    // sent" notifications and the appointment completion fire later, when the
+    // prescription DOCUMENT is finalised — see onCrossBorderRxPrescriptionFinalised.
     await prisma.crossBorderPrescriptionRequest.update({
       where: { id: request.id },
       data: { status: "ACCEPTED", decidedAt: new Date() },
     });
-    // Close the async consultation so it counts toward Doctor B's monthly
-    // payout statement (which only totals COMPLETED appointments) and starts
-    // the consultation-chat lock window. Doctor B still issues the actual
-    // prescription through the normal Rx tools on this appointment.
-    if (request.asyncAppointmentId) {
-      await prisma.appointment
-        .update({
-          where: { id: request.asyncAppointmentId, consultationCompletedAt: null },
-          data: { status: "COMPLETED", consultationCompletedAt: new Date() },
-        })
-        .catch(() => {
-          // Already completed (re-decision race) — the WHERE narrows to no rows
-          // and Prisma throws P2025. Ensure the status is COMPLETED regardless.
-          return prisma.appointment.update({
-            where: { id: request.asyncAppointmentId! },
-            data: { status: "COMPLETED" },
-          });
-        })
-        .catch(() => {});
-    }
-    // Doctor A (requesting): portal bell + email/WhatsApp that it's finalised.
-    await notifySourceDoctor(request.sourceDoctorId, request.sourceAppointmentId, {
-      snippet: `${request.patientFullName} · prescription finalised`,
-    });
-    void notifyRequestingDoctorFinalised(
-      request.sourceDoctorId,
-      request.patientFullName,
-    ).catch(() => {});
-    // Patient: portal bell + email + WhatsApp — sent to pharmacy.
-    if (patientUserId) {
-      await notifyUser(patientUserId, "CROSS_BORDER_RX_UPDATED", {
-        title: "Your prescription is on its way",
-        body: "Your prescription has been finalised and sent to your pharmacy. You should receive your medicine within a few days.",
-        href: "/account/bookings",
-      }).catch(() => {});
-    }
-    const src = await prisma.appointment.findUnique({
-      where: { id: request.sourceAppointmentId },
-      select: { phone: true, whatsappConsent: true, countryCode: true },
-    });
-    void notifyPatientCrossBorderAccepted({
-      fullName: request.patientFullName,
-      email: request.patientEmail,
-      phone: src?.phone ?? null,
-      countryCode: src?.countryCode ?? request.targetCountryCode,
-      whatsappConsent: src?.whatsappConsent ?? false,
-    }).catch(() => {});
     return { status: "ACCEPTED", upgradeUrl: null };
   }
 
@@ -1348,6 +1441,86 @@ export async function decideCrossBorderRxRequest(
   ).catch(() => {});
 
   return { status: "REFUSED", upgradeUrl };
+}
+
+/**
+ * Called when Doctor B finalises a prescription DOCUMENT on the async
+ * consultation (finalizeGeneratedDocument). This is the true "prescription
+ * issued" moment: mark the request ACCEPTED + finalised, complete the async
+ * appointment (payout + chat lock), and fire the patient + Doctor A "sent to
+ * pharmacy" notifications. Idempotent via `finalisedAt` — safe if the doctor
+ * finalises more than one document. No-op for non-cross-border appointments.
+ */
+export async function onCrossBorderRxPrescriptionFinalised(
+  asyncAppointmentId: string,
+): Promise<void> {
+  const request = await prisma.crossBorderPrescriptionRequest.findFirst({
+    where: {
+      asyncAppointmentId,
+      finalisedAt: null,
+      status: { in: ["AWAITING_DOCTOR", "MORE_INFO", "ACCEPTED"] },
+    },
+    select: {
+      id: true,
+      sourceDoctorId: true,
+      sourceAppointmentId: true,
+      patientEmail: true,
+      patientFullName: true,
+      targetCountryCode: true,
+    },
+  });
+  if (!request) return;
+
+  // Atomic guard: only the first finalise wins.
+  const claimed = await prisma.crossBorderPrescriptionRequest.updateMany({
+    where: { id: request.id, finalisedAt: null },
+    data: { status: "ACCEPTED", finalisedAt: new Date(), decidedAt: new Date() },
+  });
+  if (claimed.count === 0) return;
+
+  // Complete the async appointment (counts toward payout; starts chat lock).
+  await prisma.appointment
+    .update({
+      where: { id: asyncAppointmentId, consultationCompletedAt: null },
+      data: { status: "COMPLETED", consultationCompletedAt: new Date() },
+    })
+    .catch(() =>
+      prisma.appointment.update({
+        where: { id: asyncAppointmentId },
+        data: { status: "COMPLETED" },
+      }),
+    )
+    .catch(() => {});
+
+  // Doctor A (requesting): portal bell + email/WhatsApp.
+  await notifySourceDoctor(request.sourceDoctorId, request.sourceAppointmentId, {
+    snippet: `${request.patientFullName} · prescription finalised`,
+  });
+  void notifyRequestingDoctorFinalised(
+    request.sourceDoctorId,
+    request.patientFullName,
+  ).catch(() => {});
+
+  // Patient: portal bell + email + WhatsApp — sent to pharmacy.
+  const patientUserId = await resolvePatientUserId(request.patientEmail);
+  if (patientUserId) {
+    void notifyUser(patientUserId, "CROSS_BORDER_RX_UPDATED", {
+      title: "Your prescription is on its way",
+      body: "Your prescription has been finalised and sent to your pharmacy. You should receive your medicine within a few days.",
+      href: "/account/bookings",
+    }).catch(() => {});
+  }
+  const src = await prisma.appointment.findUnique({
+    where: { id: request.sourceAppointmentId },
+    select: { phone: true, whatsappConsent: true, countryCode: true },
+  });
+  void notifyPatientCrossBorderAccepted({
+    fullName: request.patientFullName,
+    email: request.patientEmail,
+    phone: src?.phone ?? null,
+    countryCode: src?.countryCode ?? request.targetCountryCode,
+    whatsappConsent: src?.whatsappConsent ?? false,
+  }).catch(() => {});
 }
 
 async function resolvePatientUserId(email: string): Promise<string | null> {

@@ -1,0 +1,1244 @@
+{
+  "hub": {
+    "navLabel": "Health tools",
+    "navLabelShort": "Tools",
+    "openLabel": "Open calculator",
+    "relatedHeading": "More free calculators"
+  },
+  "ui": {
+    "systolic": "Systolic (top number)",
+    "diastolic": "Diastolic (bottom number)",
+    "mmHg": "mmHg",
+    "questionsEyebrow": "Questions",
+    "faqSuffix": "FAQs",
+    "units": "Units",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "height": "Height",
+    "weight": "Weight",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Height (feet)",
+    "inchesLabel": "Inches",
+    "stoneLabel": "Weight (stone)",
+    "poundsLabel": "Pounds",
+    "poundsOnlyHint": "Leave stone empty to enter pounds only.",
+    "sex": "Sex",
+    "male": "Male",
+    "female": "Female",
+    "age": "Age",
+    "years": "years",
+    "activity": "Activity level",
+    "kcalPerDay": "kcal / day",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "suggestions": {
+    "heading": "Where to go from here",
+    "intro": "BMI is a starting point, not a plan. These are the consultations our doctors run for the things it flags.",
+    "viewLabel": "View service",
+    "gpTitle": "Online GP consultation",
+    "gpSummary": "Talk any result through with a registered doctor by video, and get the checks a calculator cannot give you.",
+    "nudgeUnderweight": "A result below the healthy range is worth a doctor's opinion, especially if it was not intentional.",
+    "nudgeHealthy": "Want to keep it there? Our clinicians can help you build habits that hold.",
+    "nudgeOverweight": "Small, supervised changes work better than another diet. Here is where to start.",
+    "nudgeObese": "At this level, medically supervised weight management works considerably better than dieting alone."
+  },
+  "bands": {
+    "bp": {
+      "low": {
+        "label": "Low blood pressure",
+        "summary": "Below the usual adult range. Often harmless, but worth a doctor's opinion if you feel dizzy, faint or unusually tired."
+      },
+      "optimal": {
+        "label": "Optimal",
+        "summary": "The lowest-risk range for adults. Nothing to act on from this reading alone."
+      },
+      "normal": {
+        "label": "Normal",
+        "summary": "Within the normal adult range. Worth re-checking now and again, especially if it has been drifting upwards."
+      },
+      "high-normal": {
+        "label": "High-normal",
+        "summary": "Above normal but not yet hypertension. This is the stage where salt, alcohol, weight and activity changes do the most."
+      },
+      "grade-1": {
+        "label": "Grade 1 hypertension",
+        "summary": "Mildly raised. Take a week of home readings and bring them to a doctor — a diagnosis needs the pattern, not one figure."
+      },
+      "isolated-systolic": {
+        "label": "Isolated systolic hypertension",
+        "summary": "The top number is raised while the bottom one is normal. It is the commonest pattern after 60 and still needs medical review."
+      },
+      "grade-2": {
+        "label": "Grade 2 hypertension",
+        "summary": "Substantially raised. Arrange a medical review soon rather than waiting for a routine appointment."
+      },
+      "grade-3": {
+        "label": "Grade 3 hypertension",
+        "summary": "Severely raised. This reading needs to be checked by a doctor today."
+      }
+    },
+    "bmi": {
+      "underweight": {
+        "label": "Underweight",
+        "summary": "Below the healthy range. Worth a GP conversation, especially if the weight loss was not intentional."
+      },
+      "healthy": {
+        "label": "Healthy weight",
+        "summary": "Within the range the WHO classes as healthy for adults."
+      },
+      "overweight": {
+        "label": "Overweight",
+        "summary": "Above the healthy range. A blood pressure and cholesterol check is a sensible next step."
+      },
+      "obese-1": {
+        "label": "Obesity class I",
+        "summary": "Structured weight management is usually offered at this level."
+      },
+      "obese-2": {
+        "label": "Obesity class II",
+        "summary": "Medical review is recommended, including screening for weight-related conditions."
+      },
+      "obese-3": {
+        "label": "Obesity class III",
+        "summary": "Specialist weight management review is recommended."
+      }
+    },
+    "activity": {
+      "sedentary": {
+        "label": "Sedentary",
+        "summary": "Desk job, little or no exercise"
+      },
+      "light": {
+        "label": "Lightly active",
+        "summary": "Light exercise 1–3 days a week"
+      },
+      "moderate": {
+        "label": "Moderately active",
+        "summary": "Moderate exercise 3–5 days a week"
+      },
+      "very": {
+        "label": "Very active",
+        "summary": "Hard exercise 6–7 days a week"
+      },
+      "extra": {
+        "label": "Extremely active",
+        "summary": "Physical job, or hard training twice a day"
+      }
+    },
+    "adhdFrequencies": [
+      "Never",
+      "Rarely",
+      "Sometimes",
+      "Often",
+      "Very often"
+    ],
+    "adhdQuestions": [
+      "How often do you leave the last details of a project unfinished once the hard part is behind you?",
+      "How often do you struggle to get things in order when a task needs organising?",
+      "How often do you forget appointments or commitments you had agreed to?",
+      "How often do you put off or avoid starting something that will take a lot of thought?",
+      "How often do you fidget with your hands or feet when you have to stay seated for a long time?",
+      "How often do you feel restlessly driven to keep doing things, as though something were pushing you along?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Screening result: positive",
+        "summary": "Your answers match the pattern this screener looks for, which means a full assessment is worth arranging. It is not a diagnosis: only a psychiatrist or a clinical psychologist can diagnose ADHD, and they do it from your whole history, not from six questions."
+      },
+      "negative": {
+        "label": "Screening result: negative",
+        "summary": "Your answers do not match the pattern this screener looks for. That does not rule ADHD out — six questions cover only part of it — so if these difficulties are affecting your work, your studies or your relationships, talk to a doctor anyway."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Assessment recommended now",
+        "summary": "Your age or your risk factors match the pattern guidelines use to recommend an osteoporosis assessment. This is not a diagnosis — the next step is a conversation with a doctor about a DXA bone density scan."
+      },
+      "discuss-next": {
+        "label": "Worth discussing at your next appointment",
+        "summary": "You have a risk factor that guidelines take into account, even though it does not on its own call for immediate assessment. Mention it next time you see a doctor."
+      },
+      "no-flags": {
+        "label": "No specific risk factors flagged",
+        "summary": "Nothing you entered matches the published risk factors guidelines use for osteoporosis case-finding. That is reassuring, but it is not a guarantee — mention any new fracture or fall to a doctor regardless."
+      }
+    }
+  },
+  "tools": {
+    "adhd-test": {
+      "cardTitle": "ADHD test",
+      "cardBlurb": "The six-question adult ADHD screener, scored the way the scale is designed.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "ADHD",
+      "h1Accent": "test",
+      "h1Trail": "{country}",
+      "metaTitle": "ADHD Test {country} | Free Adult ADHD Screening",
+      "metaDescription": "Take the six-question adult ADHD screener (ASRS v1.1 Part A) and see what your answers mean. A screening result is not a diagnosis — only a psychiatrist or clinical psychologist can make one.",
+      "lede": "Answer six questions about the last six months to see whether your answers match the pattern the adult ADHD screener looks for.",
+      "trustPoints": [
+        "The six-question ASRS v1.1 Part A screener",
+        "Scored per question, the way the scale is designed",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "widget": {
+        "title": "Your answers",
+        "instructions": "For each question, choose how often it has applied to you over the past six months.",
+        "placeholder": "Answer the six questions to see your screening result.",
+        "note": "This is a screening questionnaire, not a diagnosis. ADHD is diagnosed only by a psychiatrist or a clinical psychologist, after a full assessment. Nothing here is a recommendation for medication.",
+        "thresholdLabel": "Positive screen",
+        "thresholdValue": "{count} or more of {total}"
+      },
+      "sections": [
+        {
+          "heading": "How the screen is scored",
+          "body": [
+            "The questions are Part A of the World Health Organization's Adult ADHD Self-Report Scale — the short form used to decide whether a full assessment is worth arranging, rather than the assessment itself.",
+            "Scoring is per question, not a running total. Each item has its own threshold, and four or more items reaching their own threshold is a positive screen. Treating it as a flat \"four answers of Often\" rule is the usual mistake, and it misses the inattentive presentation, which is the one most often overlooked in adults."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "The six screening questions and the answer each one counts from",
+            "columns": [
+              "Question",
+              "What it asks about",
+              "Counts from"
+            ],
+            "rows": [
+              [
+                "1",
+                "Finishing the last details of a project",
+                "Sometimes"
+              ],
+              [
+                "2",
+                "Getting things in order for a task",
+                "Sometimes"
+              ],
+              [
+                "3",
+                "Remembering appointments and commitments",
+                "Sometimes"
+              ],
+              [
+                "4",
+                "Putting off tasks that take a lot of thought",
+                "Often"
+              ],
+              [
+                "5",
+                "Fidgeting when you have to stay seated",
+                "Often"
+              ],
+              [
+                "6",
+                "Feeling restlessly driven to keep going",
+                "Often"
+              ]
+            ],
+            "footnote": "Four or more questions at or above their own threshold is a positive screen. The scale was developed for adults from 18 onwards and is not a children's screener."
+          }
+        },
+        {
+          "heading": "What ADHD looks like in adults",
+          "body": [
+            "Adult ADHD rarely looks like the classroom picture. Hyperactivity often turns inward — restlessness, a mind that will not settle — while the inattentive side stays and gets expensive: missed deadlines, unopened admin, a working memory that keeps dropping things.",
+            "What matters for a diagnosis is that the difficulties are long-standing, show up in more than one part of life, and cause real impairment. Everyone loses their keys occasionally; that is not what is being asked."
+          ],
+          "bullets": [
+            "Starting tasks that matter, and finishing the ones that have stopped being interesting.",
+            "Time: underestimating it, losing it, arriving late despite genuinely trying not to.",
+            "Organisation — paperwork, bills, appointments — costing far more effort than it seems to cost other people.",
+            "Restlessness, or a constant low-level need to be doing something.",
+            "Interrupting, blurting things out, or acting on an idea before thinking it through.",
+            "Emotions that arrive fast and pass fast, often out of proportion to what caused them."
+          ]
+        },
+        {
+          "heading": "What this screen cannot tell you",
+          "body": [
+            "A six-question screener is a sorting tool. It is deliberately quick and deliberately over-inclusive, because its job is to decide who should be assessed properly — not to decide who has ADHD."
+          ],
+          "bullets": [
+            "It is not a diagnosis, and a positive result on its own means no more than \"worth assessing\".",
+            "A negative result does not rule ADHD out, particularly for the inattentive presentation and particularly in women, who are diagnosed later and less often.",
+            "Anxiety, depression, poor sleep, thyroid disease, chronic pain and heavy drinking all produce the same answers.",
+            "It cannot separate ADHD from autism, from a specific learning difficulty, or from the effects of a long stretch of stress.",
+            "It was designed and validated for adults. Children and teenagers need a different assessment entirely.",
+            "It says nothing about treatment. Medication is one option among several, and it is only ever considered after a diagnosis."
+          ]
+        },
+        {
+          "heading": "Getting properly assessed",
+          "body": [
+            "A diagnosis of ADHD is made by a psychiatrist or a clinical psychologist. The assessment is a structured clinical interview covering your history from childhood onwards, usually with rating scales and, where possible, an account from someone who has known you a long time."
+          ],
+          "bullets": [
+            "Start with a doctor. They will go through your history, check for the conditions that look like ADHD, and refer you for assessment.",
+            "Bring specifics rather than a score: school reports, work reviews, the things that keep going wrong and how long they have been going wrong for.",
+            "Say what else is going on — sleep, mood, alcohol, thyroid, a past head injury. Those change both the assessment and the order it happens in.",
+            "A screening result is a starting point for that conversation, not a substitute for it. Take yours with you.",
+            "If you are struggling to cope, or having thoughts of harming yourself, contact a doctor or the emergency services now rather than waiting for an assessment."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Can an online ADHD test diagnose ADHD?",
+          "answer": "No, and no online questionnaire can. This is a screener: it sorts people into \"worth assessing properly\" and \"not on these answers\". A diagnosis is made by a psychiatrist or a clinical psychologist, from a full interview about your history rather than from six questions."
+        },
+        {
+          "question": "What is the ASRS?",
+          "answer": "The Adult ADHD Self-Report Scale, developed with the World Health Organization. Part A is the six-question screener used here; the full scale has eighteen items. It is the most widely used adult ADHD screening instrument, which is why clinicians recognise the result you bring them."
+        },
+        {
+          "question": "What counts as a positive result?",
+          "answer": "Four or more of the six questions answered at or above that question's own threshold. The first three count from \"Sometimes\", the last three only from \"Often\" — the thresholds differ because the questions do, and a single flat cut-off would miss the inattentive presentation."
+        },
+        {
+          "question": "Can I have ADHD if my result is negative?",
+          "answer": "Yes. Six questions cannot cover a condition that presents differently at different ages and in different people, and the inattentive presentation in particular is under-detected — one reason women are diagnosed later and less often. If the difficulties are affecting your life, a negative screen is not a reason to stop asking."
+        },
+        {
+          "question": "Who can diagnose ADHD?",
+          "answer": "A psychiatrist or a clinical psychologist, depending on the country. A GP is normally where the process starts: they take the history, rule out the conditions that mimic ADHD — thyroid problems, sleep disorders, anxiety, depression — and refer you on for the assessment itself."
+        },
+        {
+          "question": "Does this ADHD test store my answers?",
+          "answer": "No. The scoring runs entirely in your browser. Nothing you select is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Want to talk your result through?",
+        "body": "Book a video consultation with a registered doctor, go through your history and the conditions that can look like ADHD, and find out what an assessment would involve.",
+        "label": "Book a consultation"
+      },
+      "suggestionsIntro": "A screening result is a reason to get assessed, not a diagnosis. These are the consultations that can take it further."
+    },
+    "blood-pressure-chart": {
+      "cardTitle": "Blood pressure chart",
+      "cardBlurb": "What your two numbers mean on the European adult blood pressure chart.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "Blood pressure",
+      "h1Accent": "chart",
+      "h1Trail": "{country}",
+      "metaTitle": "Blood Pressure Chart {country} | What Your Reading Means",
+      "metaDescription": "Check your systolic and diastolic numbers against the European adult blood pressure chart. See the category, what it means, and which readings need medical care the same day.",
+      "lede": "Enter the two numbers from your monitor to see where the reading sits on the European adult chart — and what, if anything, to do about it.",
+      "trustPoints": [
+        "European (ESC/ESH) adult categories",
+        "Flags readings that need same-day care",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "suggestionsIntro": "A blood pressure reading is a prompt, not a plan. These are the consultations our doctors run for what it flags.",
+      "widget": {
+        "title": "Your reading",
+        "placeholder": "The top number has to be higher than the bottom one — check both figures on your monitor.",
+        "note": "This chart is a screening reference, not a diagnosis. Hypertension is diagnosed from repeated readings, usually a week of home measurements or a 24-hour monitor, never from a single figure.",
+        "scaleLabel": "Where your systolic number sits",
+        "optimalLabel": "Optimal for most adults",
+        "optimalValue": "Below {systolic}/{diastolic} mmHg",
+        "urgentTitle": "Get medical help today",
+        "urgentBody": "A reading this high should be checked the same day. Sit quietly for five minutes and measure again — if it stays this high, contact a doctor today.",
+        "urgentSymptoms": "Call the emergency services now if you also have chest pain, weakness or numbness on one side of the body, difficulty speaking, or a sudden change in your vision."
+      },
+      "sections": [
+        {
+          "heading": "The adult blood pressure chart",
+          "body": [
+            "Blood pressure is written as two numbers: the systolic pressure while the heart contracts, over the diastolic pressure while it relaxes between beats. Both are measured in millimetres of mercury (mmHg).",
+            "The categories below are the European ones (ESC/ESH). Where the two numbers fall into different categories, the higher category is the one that counts — 128/95 is grade 1 hypertension, not normal."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "European adult blood pressure categories",
+            "columns": [
+              "Category",
+              "Systolic (mmHg)",
+              "Diastolic (mmHg)"
+            ],
+            "rows": [
+              [
+                "Low",
+                "Under 90",
+                "or under 60"
+              ],
+              [
+                "Optimal",
+                "Under 120",
+                "and under 80"
+              ],
+              [
+                "Normal",
+                "120 – 129",
+                "and/or 80 – 84"
+              ],
+              [
+                "High-normal",
+                "130 – 139",
+                "and/or 85 – 89"
+              ],
+              [
+                "Grade 1 hypertension",
+                "140 – 159",
+                "and/or 90 – 99"
+              ],
+              [
+                "Grade 2 hypertension",
+                "160 – 179",
+                "and/or 100 – 109"
+              ],
+              [
+                "Grade 3 hypertension",
+                "180 or more",
+                "and/or 110 or more"
+              ],
+              [
+                "Isolated systolic",
+                "140 or more",
+                "and under 90"
+              ]
+            ],
+            "footnote": "Clinic thresholds for adults. Home and 24-hour monitors read lower, so hypertension is 135/85 on a home device rather than 140/90. Pregnancy, childhood and dialysis use different targets entirely."
+          }
+        },
+        {
+          "heading": "How to take a reading worth trusting",
+          "body": [
+            "Most alarming readings are measurement artefacts. Blood pressure moves through the day and jumps with a rushed arrival, a full bladder or a conversation mid-cuff, so how you measure changes the number more than people expect."
+          ],
+          "bullets": [
+            "Sit still for five minutes first — back supported, feet flat on the floor, legs uncrossed.",
+            "No coffee, food, exercise or cigarettes for 30 minutes beforehand, and empty your bladder.",
+            "Rest your arm on a table so the cuff sits level with your heart, against bare skin.",
+            "Use a cuff that fits your arm. Too small a cuff reads high, and it is the commonest home-monitor error.",
+            "Stay quiet while it inflates. Talking adds several mmHg.",
+            "Take two readings a minute apart and use the second, or the average of the two.",
+            "Measure morning and evening for seven days, then bring the whole set to a doctor."
+          ]
+        },
+        {
+          "heading": "What a single reading cannot tell you",
+          "body": [
+            "A reading is a snapshot of one moment in one arm. That is enough to flag a problem and not enough to name one, which is why a diagnosis rests on repeated readings rather than on the first alarming figure."
+          ],
+          "bullets": [
+            "White-coat hypertension: raised in a clinic, normal at home. Common, and only home or 24-hour monitoring separates it out.",
+            "Masked hypertension: normal in the clinic, raised the rest of the time. The riskier of the two, and invisible without home readings.",
+            "Arms differ. A gap of more than 10 mmHg between them matters, and the higher arm is the one to use from then on.",
+            "An irregular pulse, atrial fibrillation included, makes most automatic monitors unreliable.",
+            "Not every home device is clinically validated, and an unvalidated one can be out by a wide margin.",
+            "Pregnancy has its own thresholds and its own risks. Raised blood pressure in pregnancy needs maternity review, not this chart."
+          ]
+        },
+        {
+          "heading": "When to see a doctor, and when to get help now",
+          "body": [
+            "Most raised readings are dealt with in an ordinary appointment. A few are not."
+          ],
+          "bullets": [
+            "Call the emergency services now if a very high reading comes with chest pain, weakness or numbness on one side of the body, difficulty speaking, or a sudden change in your vision. Those are signs of a heart attack or a stroke.",
+            "Get same-day medical care for a reading of 180/120 or above, even with no symptoms at all.",
+            "Arrange a review within a few weeks for readings repeatedly at or above 140/90.",
+            "Talk to a doctor if readings are repeatedly below 90/60 and you feel dizzy, faint or unusually tired.",
+            "Bring your home readings, and the device itself, to the appointment. The pattern is what gets treated, not the worst number."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "What is a normal blood pressure for an adult?",
+          "answer": "Under 120/80 mmHg is optimal, and 120–129 over 80–84 is still classed as normal. From 130/85 a reading is high-normal, and 140/90 or above measured in a clinic is hypertension. Home monitors read lower, so the home threshold is 135/85."
+        },
+        {
+          "question": "Which number matters more, the top or the bottom?",
+          "answer": "Both. The category is set by whichever number is worse, so 128/95 counts as grade 1 hypertension on the strength of the bottom number alone. Systolic pressure predicts cardiovascular risk better after about 50, diastolic before it."
+        },
+        {
+          "question": "What does an isolated systolic reading mean?",
+          "answer": "A systolic of 140 or more with a diastolic under 90. It is the commonest pattern of high blood pressure after 60, caused by arteries stiffening with age, and it carries real cardiovascular risk — it is not a harmless quirk of the top number."
+        },
+        {
+          "question": "Can one high reading mean I have hypertension?",
+          "answer": "No. Hypertension is diagnosed from repeated raised readings, usually backed by a week of home measurements or a 24-hour monitor. A single high reading is a reason to measure again properly, not a diagnosis."
+        },
+        {
+          "question": "What blood pressure is dangerous?",
+          "answer": "A reading of 180/120 or above needs medical attention the same day. If it comes with chest pain, weakness or numbness on one side, difficulty speaking or a sudden change in vision, call the emergency services immediately — those are symptoms of a heart attack or a stroke."
+        },
+        {
+          "question": "Does this blood pressure chart store my reading?",
+          "answer": "No. The comparison runs entirely in your browser. Nothing you type is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Want a doctor to look at your readings?",
+        "body": "Book a video consultation with a registered doctor, bring a week of home readings, and get a plan built on the pattern rather than on one number.",
+        "label": "Book a consultation"
+      }
+    },
+    "bmi-calculator": {
+      "cardTitle": "BMI calculator",
+      "cardBlurb": "Body mass index from your height and weight, on the WHO adult scale.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "BMI",
+      "h1Accent": "calculator",
+      "h1Trail": "{country}",
+      "metaTitle": "BMI Calculator {country} | Free Body Mass Index Check",
+      "metaDescription": "Work out your body mass index in seconds. Metric or imperial, WHO adult categories, and what your result actually means — with registered doctors if you want to go further.",
+      "lede": "Enter your height and weight to see your body mass index and where it sits on the World Health Organization adult scale.",
+      "trustPoints": [
+        "Metric and imperial (kg, stone, pounds)",
+        "WHO adult weight categories",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "widget": {
+        "title": "Your BMI",
+        "placeholder": "Enter your height and weight to see your body mass index.",
+        "note": "BMI is a screening measure, not a diagnosis. It cannot tell muscle from fat and is not valid during pregnancy or for under-18s.",
+        "healthyRangeLabel": "Healthy weight for your height",
+        "gapAbove": "{kg} kg above the healthy range",
+        "gapBelow": "{kg} kg below the healthy range",
+        "gapInside": "Inside the healthy range",
+        "gapLabel": "Distance to the healthy range",
+        "scaleLabel": "Where your BMI sits on the WHO scale"
+      },
+      "sections": [
+        {
+          "heading": "What your BMI result means",
+          "body": [
+            "The World Health Organization groups adult BMI into the bands below. They describe a population, not a person: two people with the same BMI can be in very different health."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "WHO adult BMI categories",
+            "columns": [
+              "BMI",
+              "Category",
+              "What it usually means"
+            ],
+            "rows": [
+              [
+                "Under 18.5",
+                "Underweight",
+                "Worth a conversation with a doctor, especially if the weight came off on its own"
+              ],
+              [
+                "18.5 – 24.9",
+                "Healthy weight",
+                "Nothing that needs acting on from this number alone"
+              ],
+              [
+                "25.0 – 29.9",
+                "Overweight",
+                "A good moment to have blood pressure and cholesterol checked"
+              ],
+              [
+                "30.0 – 34.9",
+                "Obesity class I",
+                "Structured weight management is usually offered from here"
+              ],
+              [
+                "35.0 – 39.9",
+                "Obesity class II",
+                "A medical review, and screening for the conditions that travel with it"
+              ],
+              [
+                "40.0 and over",
+                "Obesity class III",
+                "A referral into specialist weight management"
+              ]
+            ],
+            "footnote": "People of South Asian, Chinese and some other Asian backgrounds carry higher cardiometabolic risk at a lower BMI. The WHO suggests 23.0 and 27.5 as additional action points for those populations."
+          }
+        },
+        {
+          "heading": "How BMI is calculated",
+          "body": [
+            "BMI is your weight in kilograms divided by the square of your height in metres. That is the whole formula — there is no age, sex or body-composition term in it.",
+            "Worked example: someone 1.75 m tall weighing 78 kg has a BMI of 78 ÷ (1.75 × 1.75) = 25.5, which falls in the overweight band.",
+            "Imperial entries are converted first (1 stone = 6.35 kg, 1 inch = 2.54 cm), so the result is identical either way."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "What BMI does not tell you",
+          "body": [
+            "BMI is a screening number, not a diagnosis. It is useful precisely because it is crude — it needs only a tape measure and a scales — but that is also its limit."
+          ],
+          "bullets": [
+            "It cannot separate muscle from fat. Well-muscled people are routinely classed as overweight.",
+            "It ignores where fat sits. Waist circumference predicts cardiometabolic risk better than BMI does.",
+            "It is not validated for pregnancy — use your pre-pregnancy BMI for maternity care planning.",
+            "Children and teenagers need age-and-sex centile charts, not the adult bands above.",
+            "In adults over 65 a BMI slightly above 25 is not consistently linked to worse outcomes."
+          ]
+        },
+        {
+          "heading": "When to talk to a doctor about your weight",
+          "body": [],
+          "bullets": [
+            "You have lost or gained weight without trying to.",
+            "Your BMI is 30 or above, or 25 and above alongside high blood pressure, high cholesterol or raised blood sugar.",
+            "You are being investigated for, or already treated for, type 2 diabetes, sleep apnoea, PCOS or fatty liver disease.",
+            "You want to discuss medically supervised weight management rather than another diet."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "What is a healthy BMI for an adult?",
+          "answer": "For most adults aged 18 to 65, the World Health Organization considers a BMI between 18.5 and 24.9 to be the healthy range. Above 25 is classed as overweight and 30 or above as obesity. These are population thresholds, so a single reading is a prompt to look further, not a verdict."
+        },
+        {
+          "question": "Is BMI calculated differently for men and women?",
+          "answer": "No. The formula and the adult categories are identical. Women generally carry a higher proportion of body fat than men at the same BMI, which is one of the reasons the number is only a starting point."
+        },
+        {
+          "question": "How accurate is a BMI calculator?",
+          "answer": "The arithmetic is exact — the uncertainty is in what BMI measures. It correlates reasonably well with body fat across a population but can misclassify individuals, particularly athletes, older adults and people with a lot of muscle."
+        },
+        {
+          "question": "What should I do if my BMI is in the obese range?",
+          "answer": "Have your blood pressure, cholesterol and blood glucose checked, and talk to a doctor about a plan you can actually sustain. Weight management that includes medical review works considerably better than dieting alone."
+        },
+        {
+          "question": "Does this BMI calculator store my details?",
+          "answer": "No. The calculation runs entirely in your browser. Nothing you type is sent to our servers or saved."
+        },
+        {
+          "question": "Do I need a BMI to get weight-loss treatment?",
+          "answer": "Clinicians normally use BMI as one of the entry criteria for weight management programmes, usually alongside your medical history and any weight-related conditions. Your doctor will confirm what applies to you."
+        }
+      ],
+      "cta": {
+        "heading": "Want to talk your result through?",
+        "body": "Book a video consultation with a registered doctor and get a plan built around your history, not a number.",
+        "label": "Book a consultation"
+      }
+    },
+    "calorie-calculator": {
+      "cardTitle": "Calorie calculator",
+      "cardBlurb": "How many calories a day you need to maintain, lose or gain weight.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "Calorie",
+      "h1Accent": "calculator",
+      "h1Trail": "{country}",
+      "metaTitle": "Calorie Calculator {country} | Daily Calorie Needs",
+      "metaDescription": "Work out how many calories you need a day to maintain, lose or gain weight. Mifflin-St Jeor equation, five activity levels, and what the numbers actually mean — with registered doctors if you want to go further.",
+      "lede": "Enter your sex, age, height, weight and how active you are to see how many calories you burn in a day — and what to eat to maintain, lose or gain weight.",
+      "trustPoints": [
+        "Mifflin-St Jeor equation, the one clinicians use",
+        "Maintenance, loss and gain targets in one view",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "suggestionsIntro": "A calorie figure is a starting point, not a plan. These are the consultations our doctors run for weight, nutrition and the checks a number cannot give you.",
+      "widget": {
+        "title": "Your daily calories",
+        "placeholder": "Enter your details to see how many calories you burn in a day.",
+        "note": "Estimates for healthy adults, and a screening tool rather than a diagnosis or a prescribed diet. Talk to a doctor before changing your intake if you are pregnant or breastfeeding, under 18, or being treated for any condition.",
+        "noteFloored": "Your weight-loss target has been held at 1,200 kcal, the lowest daily intake this calculator will suggest. Eating below that should only be done under medical supervision.",
+        "resultLabel": "Maintenance calories",
+        "resultSummary": "What you burn on an average day at this activity level, everything included.",
+        "bmrLabel": "Basal metabolic rate",
+        "mildLossLabel": "Lose about 0.25 kg a week",
+        "lossLabel": "Lose about 0.5 kg a week",
+        "gainLabel": "Gain about 0.25 kg a week"
+      },
+      "sections": [
+        {
+          "heading": "What your calorie numbers mean",
+          "body": [
+            "The headline figure is your maintenance level: roughly what you burn in a day once your activity is counted in. Eat that much and your weight stays where it is.",
+            "The targets under it are the same figure with a deficit or a surplus applied. A 500 kcal daily deficit works out at about half a kilo a week, which is the rate most guidelines settle on — fast enough to notice, slow enough to keep."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Daily calorie targets from your maintenance figure",
+            "columns": [
+              "Goal",
+              "Daily intake",
+              "What to expect"
+            ],
+            "rows": [
+              [
+                "Maintain",
+                "Your maintenance figure",
+                "Weight holds steady over weeks, not days"
+              ],
+              [
+                "Mild loss",
+                "Maintenance − 250 kcal",
+                "About 0.25 kg a week"
+              ],
+              [
+                "Steady loss",
+                "Maintenance − 500 kcal",
+                "About 0.5 kg a week"
+              ],
+              [
+                "Gain",
+                "Maintenance + 300 kcal",
+                "About 0.25 kg a week, best paired with resistance training"
+              ]
+            ],
+            "footnote": "The loss targets here never drop below 1,200 kcal a day. Below that it is hard to meet your protein, vitamin and mineral needs from food, and an intake that low should be medically supervised."
+          }
+        },
+        {
+          "heading": "Choosing your activity level",
+          "body": [
+            "The activity multiplier is the biggest lever in this calculation: for the same body, the gap between sedentary and extremely active is more than 700 kcal a day. It covers everything you do, not just training — standing, walking, housework and your job all count.",
+            "Most people pick one level too high. If you train three times a week and sit for the rest of it, you are lightly to moderately active, not very active."
+          ],
+          "bullets": [
+            "Sedentary — a desk job and little or no deliberate exercise.",
+            "Lightly active — light exercise or sport one to three days a week.",
+            "Moderately active — moderate exercise three to five days a week.",
+            "Very active — hard exercise six or seven days a week.",
+            "Extremely active — a physically demanding job, or hard training twice a day."
+          ]
+        },
+        {
+          "heading": "How the calculation works",
+          "body": [
+            "Your basal metabolic rate — what the body burns at complete rest — comes from the Mifflin-St Jeor equation: 10 × weight in kg, plus 6.25 × height in cm, minus 5 × age, then plus 5 for men or minus 161 for women.",
+            "That figure is multiplied by your activity level, from 1.2 for sedentary up to 1.9 for extremely active. The result is your total daily energy expenditure — the maintenance number at the top of the read-out.",
+            "Worked example: a 30-year-old man, 180 cm and 80 kg, has a basal rate of 1,780 kcal. Lightly active (× 1.375) that is about 2,448 kcal a day to maintain his weight."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "What a calorie calculator cannot tell you",
+          "body": [
+            "Every equation here is a population average fitted to measured data, and individuals sit either side of it. Treat the number as an estimate to test against the scales over three or four weeks, not as a fact about your body."
+          ],
+          "bullets": [
+            "Estimates are typically within about 10% for most adults — that is 200 kcal either way on a 2,000 kcal day.",
+            "It says nothing about what those calories are made of, and protein, fibre and micronutrients decide whether a diet holds.",
+            "Thyroid conditions, some medications and a long history of dieting all shift energy expenditure away from the estimate.",
+            "It is not designed for children, for pregnancy or breastfeeding, or for athletes in heavy training blocks.",
+            "Very muscular people are underestimated, because the equation uses total body weight rather than lean mass."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "How many calories should I eat a day?",
+          "answer": "Enough to match what you burn, if your weight is where you want it. For most adults that lands somewhere between 1,800 and 2,800 kcal, but the range is wide because it depends on your size, age and how active you are. The calculator above gives your own figure rather than the average."
+        },
+        {
+          "question": "How many calories do I need to eat to lose weight?",
+          "answer": "About 500 kcal a day below your maintenance figure gives roughly half a kilo a week, and 250 below gives about a quarter of a kilo. Bigger deficits do not reliably work faster — they are simply harder to keep, and more of the loss comes from muscle."
+        },
+        {
+          "question": "Is 1,200 calories a day safe?",
+          "answer": "It is the lowest intake this calculator will suggest, and it is a floor rather than a recommendation. Below roughly that level it becomes difficult to get enough protein, vitamins and minerals from food, so a lower intake should only be followed under medical supervision."
+        },
+        {
+          "question": "Which formula does this calorie calculator use?",
+          "answer": "Mifflin-St Jeor for the basal rate, then a standard activity multiplier. It replaced the older Harris-Benedict equation in most clinical use because it is more accurate for modern body compositions, typically to within about 10% for healthy adults."
+        },
+        {
+          "question": "Do I have to count calories to lose weight?",
+          "answer": "No. Counting is one method of holding a deficit, and plenty of people manage the same thing by changing what they eat rather than by weighing it. Knowing roughly where your maintenance level sits is useful either way, because it tells you how big a change you are actually making."
+        },
+        {
+          "question": "Does this calorie calculator store my details?",
+          "answer": "No. The calculation runs entirely in your browser. Nothing you type is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Want a plan, not just a number?",
+        "body": "Book a video consultation with a registered doctor and go through what the figure means for your weight, your bloods and your history.",
+        "label": "Book a consultation"
+      }
+    },
+    "due-date-calculator": {
+      "cardTitle": "Due date calculator",
+      "cardBlurb": "Your estimated due date, how far along you are, and the weeks that matter in between.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "Due date",
+      "h1Accent": "calculator",
+      "h1Trail": "{country}",
+      "metaTitle": "Due Date Calculator {country} | Pregnancy Week by Week",
+      "metaDescription": "Work out your estimated due date and how many weeks pregnant you are from the first day of your last period. Adjusts for your cycle length, with the full 40-week breakdown.",
+      "lede": "Enter the first day of your last period to see your estimated due date, how far along you are today, and when each trimester starts.",
+      "trustPoints": [
+        "Adjusts for cycle lengths from 20 to 45 days",
+        "Trimester dates and the 37–42 week term window",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "widget": {
+        "title": "Your due date",
+        "placeholder": "Enter the first day of your last period to see your estimated due date.",
+        "note": "This is an estimate from the dates you enter, not a diagnosis. A dating scan measures the baby directly and replaces it.",
+        "lmpLabel": "First day of your last period",
+        "lmpHint": "The day bleeding started, not the day it stopped.",
+        "cycleLabel": "Cycle length",
+        "cycleHint": "Days from the start of one period to the start of the next. Leave it at 28 if you are not sure.",
+        "daysUnit": "days",
+        "gestationalAgeLabel": "How far along today",
+        "daysToGoLabel": "Days to go",
+        "secondTrimesterLabel": "Second trimester starts",
+        "thirdTrimesterLabel": "Third trimester starts",
+        "termWindowLabel": "Term window (37–42 weeks)",
+        "trimester1": "First trimester",
+        "trimester1Note": "Weeks 1 to 13. This is when antenatal care is usually booked and the dating scan is offered.",
+        "trimester2": "Second trimester",
+        "trimester2Note": "Weeks 14 to 27. The anomaly scan is normally offered around 20 weeks.",
+        "trimester3": "Third trimester",
+        "trimester3Note": "Week 28 onwards. Growth and blood pressure checks come closer together as term approaches.",
+        "outOfRangeNote": "Check the date — it is either in the future or more than 42 weeks ago, which is outside the range this calculator can date."
+      },
+      "sections": [
+        {
+          "heading": "Your pregnancy week by week",
+          "body": [
+            "Pregnancy is dated from the first day of your last period, not from conception, and it runs for 40 weeks from there. Before 37 weeks is preterm, 42 weeks and over is post-term, and the weeks in between are when almost every baby actually arrives.",
+            "The table below is the whole 40 weeks, split the way maternity services split them."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Pregnancy stages in weeks from the last menstrual period",
+            "columns": [
+              "Weeks",
+              "Stage",
+              "What usually happens"
+            ],
+            "rows": [
+              [
+                "1 – 13",
+                "First trimester",
+                "Antenatal booking, first blood tests and the dating scan"
+              ],
+              [
+                "14 – 27",
+                "Second trimester",
+                "The anomaly scan, normally around 20 weeks"
+              ],
+              [
+                "28 – 36",
+                "Third trimester",
+                "Growth, blood pressure and position checks come closer together"
+              ],
+              [
+                "37 – 38",
+                "Early term",
+                "Labour from here on is no longer preterm"
+              ],
+              [
+                "39 – 40",
+                "Full term",
+                "The estimated due date sits at the end of week 40"
+              ],
+              [
+                "41",
+                "Late term",
+                "Monitoring increases and induction is usually discussed"
+              ],
+              [
+                "42 and over",
+                "Post-term",
+                "Birth is normally brought on rather than waited for"
+              ]
+            ],
+            "footnote": "The last four rows are all the end of the third trimester — from 37 weeks it is counted in narrower bands because that is what changes the plan. Only about one pregnancy in twenty ends on its estimated date."
+          }
+        },
+        {
+          "heading": "How the due date is calculated",
+          "body": [
+            "The estimate is Naegele's rule: 280 days, or 40 weeks, from the first day of your last period. That assumes a 28-day cycle with ovulation around day 14.",
+            "If your cycles are longer or shorter, ovulation moves with them, so the calculator shifts the date by the difference. A 32-day cycle puts the estimate four days later; a 24-day cycle brings it four days earlier.",
+            "Worked example: a last period starting on 1 January with a 28-day cycle gives 8 October. The same period with a 32-day cycle gives 12 October."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Why a dating scan replaces this estimate",
+          "body": [
+            "A calculator can only work with the dates you give it. A scan measures the baby, which is why its date is the one your maternity team keeps using afterwards."
+          ],
+          "bullets": [
+            "It depends on remembering the first day of your last period accurately.",
+            "It assumes you ovulated in the middle of your cycle, which not everyone does.",
+            "Irregular cycles, recently stopped contraception and breastfeeding all make the last period a weak anchor.",
+            "A first-trimester scan measures the baby, usually between about 11 and 14 weeks, and is accurate to within a few days.",
+            "After IVF the dating comes from the transfer date rather than a period, so this estimate does not apply."
+          ]
+        },
+        {
+          "heading": "When to contact a doctor or midwife",
+          "body": [],
+          "bullets": [
+            "You think you are pregnant and have not yet arranged antenatal care — the first appointment and the dating scan both belong early.",
+            "You have bleeding, cramping or pain on one side in early pregnancy.",
+            "You have severe or constant vomiting, or cannot keep fluids down.",
+            "You have a long-term condition or take regular medicines — some need reviewing as soon as a pregnancy is confirmed.",
+            "You have reached 41 weeks, or you are past your due date and the baby's movements have changed."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "How accurate is a due date calculator?",
+          "answer": "The arithmetic is exact; the assumptions behind it are not. Only about one pregnancy in twenty ends on its estimated date, and the great majority of births happen in the weeks either side of it. A first-trimester scan is the accurate version, and once you have had one, its date is the one that is used."
+        },
+        {
+          "question": "How many weeks pregnant am I?",
+          "answer": "Pregnancy is counted from the first day of your last period, not from conception — which is why you are already around four weeks pregnant when a test first turns positive. Conception happens roughly two weeks after that first day, so the pregnancy is always dated about two weeks 'older' than the embryo."
+        },
+        {
+          "question": "What does 9w 3d mean?",
+          "answer": "Nine completed weeks and three days since the first day of your last period. Maternity records are written this way because a whole week is too coarse when a scan or a test has to happen inside a particular window."
+        },
+        {
+          "question": "Can I use this if my cycles are irregular?",
+          "answer": "You can, and entering your usual cycle length will get you closer than the 28-day default. But an irregular cycle is exactly the case where the last period is a weak anchor, so treat the result as a rough guide until you have been scanned."
+        },
+        {
+          "question": "Does the due date change after a scan?",
+          "answer": "Often, yes — usually by a few days. The scan measures the baby instead of counting from a remembered date, so it is the one that is kept. A change of a week or more is common when the date of the last period was uncertain."
+        },
+        {
+          "question": "Does this due date calculator store my details?",
+          "answer": "No. The calculation runs entirely in your browser. Nothing you type is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Questions in early pregnancy?",
+        "body": "Talk to a registered doctor by video about symptoms, the medicines you already take, or anything you would rather not sit on until your first appointment.",
+        "label": "Book a consultation"
+      },
+      "suggestionsIntro": "An estimated date is where antenatal care starts, not the whole of it. These are the consultations that take it further."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Osteoporosis risk checker",
+      "cardBlurb": "Which published risk factors for a fragility fracture apply to you, and whether it's worth asking for a bone density scan.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "Osteoporosis",
+      "h1Accent": "risk checker",
+      "h1Trail": "{country}",
+      "metaTitle": "Osteoporosis Risk Checker {country} | Should You Get a Bone Density Scan?",
+      "metaDescription": "Check the published risk factors for osteoporosis and fragility fracture, and see whether guidelines recommend you be assessed. Not FRAX, not a diagnosis — a case-finding checklist you can bring to a doctor.",
+      "lede": "Answer questions about your age, sex and risk factors to see whether published guidelines recommend you ask for a bone density assessment.",
+      "trustPoints": [
+        "Based on NICE case-finding guidance, not a proprietary score",
+        "Shows major and contributing risk factors separately",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "suggestionsIntro": "A flagged risk factor is a reason to ask about a bone density scan, not a diagnosis. These are the consultations that can take it further.",
+      "widget": {
+        "title": "Your risk factors",
+        "placeholder": "Answer the questions to see whether it's worth asking for a bone density assessment.",
+        "note": "This identifies who should be assessed for osteoporosis — it does not estimate your fracture risk and is not a diagnosis. A full assessment uses a DXA bone density scan and a validated tool such as FRAX, run by a clinician.",
+        "fractureLabel": "Fragility fracture after age 50",
+        "fractureHint": "A break from a fall from standing height or less — wrist, hip, spine or arm.",
+        "glucocorticoidLabel": "Oral steroids for 3 months or more",
+        "parentalHipLabel": "A parent broke a hip",
+        "smokerLabel": "Current smoker",
+        "alcoholLabel": "3 or more alcohol units a day",
+        "raLabel": "Rheumatoid arthritis",
+        "secondaryLabel": "A secondary cause of bone loss",
+        "secondaryHint": "Such as an overactive thyroid, malabsorption, or long-term liver or kidney disease.",
+        "fallsLabel": "2 or more falls in the past year",
+        "menopauseLabel": "Menopause before age 45",
+        "majorLabel": "Major factors flagged",
+        "contributingLabel": "Contributing factors flagged"
+      },
+      "sections": [
+        {
+          "heading": "Risk factors for a fragility fracture",
+          "body": [
+            "Osteoporosis itself has no symptoms — the first sign is often a fracture from a fall that would not normally break a bone. Guidelines therefore work backwards from risk factors, deciding who is worth assessing before a fracture happens rather than after.",
+            "The ten factors below are the ones NICE guideline CG146 lists for that decision. Two are treated as major on their own; the rest add up rather than acting alone."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Risk factors NICE case-finding guidance flags for assessment",
+            "columns": [
+              "Risk factor",
+              "Why it matters",
+              "Major or contributing"
+            ],
+            "rows": [
+              [
+                "Fragility fracture after 50",
+                "A broken wrist, hip, spine or arm from a low fall is the single strongest predictor of another one.",
+                "Major"
+              ],
+              [
+                "Long-term oral steroids (3+ months)",
+                "Glucocorticoids thin bone directly, independently of any other factor on this list.",
+                "Major"
+              ],
+              [
+                "A parent broke a hip",
+                "Points to inherited bone strength, separate from your own lifestyle.",
+                "Contributing"
+              ],
+              [
+                "Current smoker",
+                "Lowers bone density and slows healing if a fracture does happen.",
+                "Contributing"
+              ],
+              [
+                "3+ alcohol units a day",
+                "Reduces bone formation and raises the risk of a fall in the first place.",
+                "Contributing"
+              ],
+              [
+                "Rheumatoid arthritis",
+                "The condition and often its treatment both affect bone turnover.",
+                "Contributing"
+              ],
+              [
+                "A secondary cause of bone loss",
+                "Conditions such as an overactive thyroid or long-term liver or kidney disease reduce bone density on their own.",
+                "Contributing"
+              ],
+              [
+                "2+ falls in the past year",
+                "Most fragility fractures happen after a fall from standing height, not on their own.",
+                "Contributing"
+              ],
+              [
+                "Menopause before 45",
+                "Oestrogen protects bone, so losing it earlier gives bone loss a longer run.",
+                "Contributing"
+              ],
+              [
+                "Low body weight (BMI under 18.5)",
+                "Less body mass generally means less bone mass, and less cushioning if a fall happens.",
+                "Contributing"
+              ]
+            ],
+            "footnote": "Based on the risk factors NICE guideline CG146 (assessing the risk of fragility fracture) lists for case-finding. This is a screening list, not a diagnostic score."
+          }
+        },
+        {
+          "heading": "Who guidelines say should be assessed",
+          "body": [
+            "NICE, the UK's National Osteoporosis Guideline Group (NOGG) and the European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) set out materially the same threshold. It is an age cut-off plus a risk-factor cut-off, not a single number."
+          ],
+          "bullets": [
+            "All women aged 65 and over, and all men aged 75 and over — assessment is recommended on age alone.",
+            "Anyone younger with a major risk factor — a prior fragility fracture or long-term oral steroids — at any age, including under 50.",
+            "Anyone aged 50 and over with any one of the contributing factors in the table above.",
+            "This tool applies that published rule to what you enter. It does not calculate a probability, and it is not FRAX — FRAX is a separate, proprietary tool a clinician runs, combining these same kinds of factors with a bone density reading."
+          ]
+        },
+        {
+          "heading": "What this checker cannot tell you",
+          "body": [
+            "A risk-factor checklist is a sorting tool, not a measurement. It tells you whether it is worth asking about a scan — it cannot tell you what that scan would show."
+          ],
+          "bullets": [
+            "It is not a diagnosis. Osteoporosis is diagnosed from a DXA (dual-energy X-ray absorptiometry) bone density scan, not from a questionnaire.",
+            "It does not output a fracture probability. Tools that do — FRAX, the Garvan nomogram, QFracture — combine risk factors with a bone density reading, and a clinician runs them.",
+            "It is not FRAX and does not use FRAX's coefficients, which are proprietary to the University of Sheffield.",
+            "A \"no specific risk factors flagged\" result is reassuring, not a guarantee — mention any new fracture or fall to a doctor regardless of what this tool says.",
+            "It says nothing about treatment. Medication is a decision for a clinician, made after a diagnosis, not from a risk checklist."
+          ]
+        },
+        {
+          "heading": "Getting assessed",
+          "body": [],
+          "bullets": [
+            "Start with a doctor. They will weigh up your risk factors and decide whether a DXA scan referral makes sense.",
+            "Bring the factors this tool flagged for you — which ones, not just the tier — to make the conversation faster.",
+            "If you have already had a fragility fracture, ask about assessment regardless of your age or this tool's tier.",
+            "Calcium, vitamin D, weight-bearing exercise and stopping smoking all support bone health while you wait for any assessment.",
+            "Get medical care promptly for a new fracture from a low-energy fall, whatever this tool says — it needs treating in its own right."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is this the same as FRAX?",
+          "answer": "No. FRAX is a separate, proprietary tool developed by the University of Sheffield, and its coefficients are not published — this tool does not reproduce it or claim to match its output. This is a case-finding checklist based on published guidance (NICE CG146): it tells you whether it's worth being assessed, never a fracture probability."
+        },
+        {
+          "question": "What is a DXA scan?",
+          "answer": "A dual-energy X-ray absorptiometry scan — a low-dose X-ray that measures bone density, usually at the hip and spine. It is the test an assessment actually relies on; nothing on this page replaces it."
+        },
+        {
+          "question": "Does having risk factors mean I have osteoporosis?",
+          "answer": "No. A flagged risk factor means guidelines recommend you be assessed, not that you have the condition. Many people with risk factors have a normal bone density scan, and osteoporosis can also occur with none of the factors listed here."
+        },
+        {
+          "question": "What if my result is 'no specific risk factors flagged' but I'm still concerned?",
+          "answer": "Raise it with a doctor anyway. This tool covers the risk factors named in one clinical guideline; it does not cover every personal or family history that might be relevant, and a conversation costs nothing this checklist can weigh."
+        },
+        {
+          "question": "Who actually diagnoses osteoporosis?",
+          "answer": "A doctor, from a DXA bone density scan — usually a T-score of -2.5 or below at the hip or spine. A risk-factor questionnaire like this one can only suggest who should have that scan; it cannot diagnose anything itself."
+        },
+        {
+          "question": "Does this checker store my answers?",
+          "answer": "No. The scoring runs entirely in your browser. Nothing you select is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Want to talk about your bone health?",
+        "body": "Book a video consultation with a registered doctor, go through your risk factors, and find out whether a referral for a DXA scan makes sense.",
+        "label": "Book a consultation"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Ovulation calculator",
+      "cardBlurb": "Your fertile window, your estimated ovulation day and when your next period is due.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "Ovulation",
+      "h1Accent": "calculator",
+      "h1Trail": "{country}",
+      "metaTitle": "Ovulation Calculator {country} | Fertile Window Dates",
+      "metaDescription": "Work out your fertile window and estimated ovulation day from the first day of your last period. Adjusts for your own cycle length, with the six most fertile days set out day by day.",
+      "lede": "Enter the first day of your last period to see the six days you are most likely to conceive, your estimated ovulation day and when your next period is due.",
+      "trustPoints": [
+        "Counted back from your next period, so longer cycles are timed correctly",
+        "The whole six-day fertile window, not a single day",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "suggestionsIntro": "An ovulation estimate is a timing guide, not a fertility assessment. These are the consultations our doctors run when you want someone to look at the whole picture.",
+      "widget": {
+        "title": "Your fertile window",
+        "placeholder": "Enter the first day of your last period to see your fertile window.",
+        "note": "An estimate from the dates you enter, not a diagnosis — and not a method of contraception. Ovulation moves from cycle to cycle, and pregnancy is possible on days outside the window shown.",
+        "lmpLabel": "First day of your last period",
+        "lmpHint": "The day bleeding started, not the day it stopped.",
+        "cycleLabel": "Cycle length",
+        "cycleHint": "Days from the start of one period to the start of the next. Leave it at 28 if you are not sure.",
+        "daysUnit": "days",
+        "resultLabel": "Estimated ovulation",
+        "resultSummary": "Counted back 14 days from your next expected period, which is what keeps the timing right on cycles that are not 28 days long.",
+        "fertileWindowLabel": "Fertile window (6 days)",
+        "daysToOvulationLabel": "Days to ovulation",
+        "nextPeriodLabel": "Next period due",
+        "testFromLabel": "Test from"
+      },
+      "sections": [
+        {
+          "heading": "Your cycle, day by day",
+          "body": [
+            "A cycle is counted from the first day of bleeding. Ovulation is not pinned to day 14: it happens about 14 days before your NEXT period, so a 35-day cycle ovulates around day 21 and a 24-day cycle around day 10. That is why counting forward from your last period mis-times every cycle that is not 28 days.",
+            "The days below are one 28-day cycle. The calculator above shifts them to the cycle length you entered."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Fertile days across a 28-day cycle",
+            "columns": [
+              "Cycle day",
+              "What is happening",
+              "Chance of conceiving"
+            ],
+            "rows": [
+              [
+                "Day 1",
+                "Bleeding starts — the cycle is counted from here",
+                "Very low"
+              ],
+              [
+                "Days 2 – 8",
+                "An egg is maturing; the window has not opened yet",
+                "Low"
+              ],
+              [
+                "Days 9 – 13",
+                "Fertile window: sperm can survive up to five days",
+                "High"
+              ],
+              [
+                "Day 14",
+                "Ovulation — the egg is released",
+                "Highest"
+              ],
+              [
+                "Days 15 – 16",
+                "The egg survives less than a day after release",
+                "Falling fast"
+              ],
+              [
+                "Day 28",
+                "The next period is due — test from here if it does not arrive",
+                "Very low"
+              ]
+            ],
+            "footnote": "Sperm survive up to five days in the reproductive tract and an egg for under one, which is why the fertile window opens well before ovulation and shuts almost immediately after it."
+          }
+        },
+        {
+          "heading": "Signs you have actually ovulated",
+          "body": [
+            "A calculator predicts; these confirm. Tracking one or two of them across a couple of cycles tells you whether your own ovulation matches the estimate — and that is worth knowing before you plan anything around it."
+          ],
+          "bullets": [
+            "Cervical mucus turns clear, stretchy and slippery, like raw egg white, in the days just before ovulation.",
+            "Ovulation predictor kits detect the LH surge in urine, which comes 24 to 36 hours before the egg is released. Start testing a few days before the estimated date.",
+            "Basal body temperature rises by around 0.3 °C after ovulation, so it confirms it afterwards rather than predicting it.",
+            "Some people feel a one-sided ache mid-cycle, and some notice breast tenderness or a shift in libido.",
+            "A cycle can pass without ovulation at all. That happens to most people occasionally and does not by itself mean anything is wrong."
+          ]
+        },
+        {
+          "heading": "What this calculator cannot do",
+          "body": [
+            "It works from two things only: the date you enter and the assumption that your luteal phase is a standard 14 days. Both are reasonable, neither is guaranteed."
+          ],
+          "bullets": [
+            "It is not a method of contraception. Cycles move, sperm survive for days, and pregnancy is possible on days outside the window shown here.",
+            "Irregular cycles, recently stopped hormonal contraception, breastfeeding, PCOS and thyroid conditions all weaken the prediction.",
+            "Hormonal contraception suppresses ovulation, so there is nothing here to predict while you are using it.",
+            "Stress, illness, travel and heavy training can all delay ovulation in a given cycle.",
+            "It is a planning tool, not a fertility test: it says nothing about egg quality, sperm or the fallopian tubes."
+          ]
+        },
+        {
+          "heading": "When to talk to a doctor",
+          "body": [],
+          "bullets": [
+            "You have been trying to conceive for 12 months, or for 6 months if you are over 35.",
+            "Your cycles are shorter than 21 days, longer than 35 days, or unpredictable from one month to the next.",
+            "Your periods have stopped, or you are bleeding between them.",
+            "You have painful periods, pain during sex, or a diagnosis of PCOS, endometriosis or a thyroid condition.",
+            "You want preconception advice — folic acid, the medicines you already take, vaccinations and a blood pressure check all belong before a pregnancy rather than after it."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "When am I most fertile?",
+          "answer": "On the day of ovulation and the two days before it. The window as a whole covers about six days: the five before ovulation plus the day itself. Sperm survive up to five days and the egg under one, which is why the window opens early and closes fast."
+        },
+        {
+          "question": "Does ovulation always happen on day 14?",
+          "answer": "No. Day 14 is only true of a textbook 28-day cycle. Ovulation sits roughly 14 days before your next period, so on a 32-day cycle it lands around day 18 and on a 24-day cycle around day 10. Counting 14 days forward from your last period is the commonest way to get the timing wrong."
+        },
+        {
+          "question": "How do I work out ovulation with irregular cycles?",
+          "answer": "Enter your usual cycle length and treat the result as a wide estimate rather than a date. If your cycles vary by more than a few days, ovulation predictor kits or tracking cervical mucus will tell you far more than any calendar calculation, and cycles that are consistently under 21 or over 35 days are worth a doctor's opinion."
+        },
+        {
+          "question": "Can I use an ovulation calculator as contraception?",
+          "answer": "No. It is not a contraceptive method and should never be used as one. Ovulation shifts between cycles, sperm can survive up to five days, and pregnancy is possible on days this calculator marks as outside the fertile window. If you are avoiding pregnancy, use a recognised method of contraception."
+        },
+        {
+          "question": "When can I take a pregnancy test after ovulation?",
+          "answer": "Most home tests are reliable from the day your period is due, which is about 14 days after ovulation — the \"test from\" date in the read-out. Testing earlier can give a negative result even when you are pregnant, because there is not yet enough hCG in urine to detect."
+        },
+        {
+          "question": "Does this ovulation calculator store my details?",
+          "answer": "No. The calculation runs entirely in your browser. Nothing you type is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Trying to conceive?",
+        "body": "Talk to a registered doctor by video about irregular cycles, preconception checks or the medicines you already take.",
+        "label": "Book a consultation"
+      }
+    }
+  }
+}

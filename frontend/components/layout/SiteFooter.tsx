@@ -8,11 +8,19 @@
  * consultations, prescriptions, tests, and doctors.
  *
  * Server Component: no `usePathname()` of its own — the parsed pathname
- * comes in as a prop so this file doesn't force a client boundary.
+ * comes in as a prop so this file doesn't force a client boundary. Only two
+ * children hydrate: FooterNav (mobile accordions) and NewsletterSignup.
+ *
+ * LAYOUT
+ * A three-area grid: brand | nav side by side at >=768px with the newsletter
+ * panel spanning the full width beneath, collapsing to brand → newsletter →
+ * accordions on mobile. The newsletter sits between brand and nav in the DOM
+ * so the mobile order (the one most visitors get) matches the visual order.
  */
 
 import Image from "next/image";
 import Link from "next/link";
+import { Mail, Phone } from "lucide-react";
 import { countries as staticCountries, type CountryConfig } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -20,6 +28,10 @@ import {
 } from "@/lib/routing/country-slug";
 import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 import { buildBookHref } from "@/lib/routing/book-href";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { TOOLS } from "@/lib/tools/registry";
+import { isToolMarket } from "@/lib/tools/markets";
+import { getCountryContact } from "@/lib/content/country-contact";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 import type { SiteNavigationData } from "@/data/navigation";
 import {
@@ -31,6 +43,7 @@ import {
   IconTiktok,
   type BrandIcon,
 } from "@/components/ui/BrandIcons";
+import { FooterNav, type FooterGroup } from "./FooterNav";
 import { NewsletterSignup } from "./NewsletterSignup";
 import { CookieSettingsButton } from "@/components/compliance/CookieSettingsButton";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
@@ -99,16 +112,24 @@ export function SiteFooter({
   const activeCountryCode = parsed.country
     ? countryCodeFromSlug(parsed.country)
     : null;
+  // Pre-country (careBase null — the gateway page, or any global page like
+  // /about, /cart with no gh-last-country cookie, which every crawler hits)
+  // used to just assume every flag was on. Fine for a flag that varies by
+  // market, but a flag that's off in EVERY country (e.g. online-prescriptions,
+  // Ads compliance — next.config.ts) produced a guaranteed-dead footer link.
+  // Union across all markets instead: only counts as enabled here when at
+  // least one country actually has it on.
   const activeFeatures = activeCountryCode
     ? countryFeatures?.[activeCountryCode]
-    : undefined;
+    : countryFeatures
+      ? [...new Set(Object.values(countryFeatures).flatMap((f) => f ?? []))]
+      : undefined;
   // Admin-managed per-country override. Only applies when visitor is
   // inside a country scope (gateway page + global pages keep defaults).
   const override = activeCountryCode
     ? countryFooters?.[activeCountryCode] ?? null
     : null;
   const isFeatureEnabled = (slug: string) => {
-    if (!careBase) return true; // pre-country: keep links so the gate can route
     if (!activeFeatures) return true; // no toggle data → assume on (legacy default)
     return activeFeatures.includes(slug);
   };
@@ -151,11 +172,31 @@ export function SiteFooter({
     { label: navigation.footerMyAccount, href: "/account" },
   ];
 
+  // Free calculators, listed individually — there is no /tools index, and the
+  // footer is the crawlable path into each of them. Labels come from the tools
+  // bundle (translated in all six locales), gated by the same `isToolMarket`
+  // the routes and sitemap use. These get their OWN column: they are patient
+  // utilities, not company pages.
+  const toolsBundle = loadLocaleBundle(resolveLocale({ explicitLocale: parsed.lang })).tools;
+  const toolLinks =
+    activeCountryCode && parsed.lang && isToolMarket(activeCountryCode, parsed.lang)
+      ? TOOLS.flatMap((tool) => {
+          const copy = (toolsBundle.tools as Record<string, { cardTitle: string } | undefined>)[
+            tool.slug
+          ];
+          return copy ? [{ label: copy.cardTitle, href: `${careScope}/tools/${tool.slug}` }] : [];
+        })
+      : [];
+
   const companyLinks = [
     { label: navigation.navBlog, href: careBase ? `${careBase}/blog` : "/blog" },
     { label: navigation.navFaq, href: "/faq" },
-    { label: navigation.navAbout, href: "/about" },
-    { label: navigation.footerContactUs, href: "/contact" },
+    // Inside a country scope, link that market's own About and contact pages
+    // (its NAP, registration, languages and regulatory FAQs) rather than the
+    // global ones — these are the main internal links those pages get. Global
+    // pages keep /about and /contact.
+    { label: navigation.navAbout, href: careBase ? `${careBase}/about` : "/about" },
+    { label: navigation.footerContactUs, href: careBase ? `${careBase}/contact` : "/contact" },
     { label: navigation.footerPrivacyPolicy, href: "/privacy" },
     { label: navigation.footerTermsOfService, href: "/terms" },
     // Country-scoped legal hub (admin-authored CountryLegalDocument pages).
@@ -198,16 +239,24 @@ export function SiteFooter({
         }))
       : [];
 
-  // Built-in groups stay auto-derived (Care + Clinics from features,
-  // Account from auth pages, Company from global pages). Admin's
-  // override appends custom columns AFTER these — the patient still
-  // sees the in-country service links and country picker.
-  const groups: Array<{ h: string; items: Array<{ label: string; href: string; external?: boolean }> }> = [
-    { h: navigation.footerCareHeading, items: careLinks },
-    { h: navigation.footerClinicsHeading, items: clinicsLinks },
-    { h: navigation.footerAccountHeading, items: accountLinks },
-    { h: navigation.footerCompanyHeading, items: companyLinks },
-    ...(override?.customColumns ?? []).map((c) => ({ h: c.title, items: c.links })),
+  // Built-in groups stay auto-derived (Care + Clinics from features, Account
+  // from auth pages, Health Tools from the calculator registry, Company from
+  // global pages). Admin's override appends custom columns AFTER these — the
+  // patient still sees the in-country service links and country picker.
+  const groups: FooterGroup[] = [
+    { kind: "care", title: navigation.footerCareHeading, links: careLinks },
+    { kind: "clinics", title: navigation.footerClinicsHeading, links: clinicsLinks },
+    { kind: "account", title: navigation.footerAccountHeading, links: accountLinks },
+    // Own column, never folded into Company.
+    ...(toolLinks.length > 0
+      ? [{ kind: "tools" as const, title: toolsBundle.hub.navLabel, links: toolLinks }]
+      : []),
+    { kind: "company", title: navigation.footerCompanyHeading, links: companyLinks },
+    ...(override?.customColumns ?? []).map((c) => ({
+      kind: "custom" as const,
+      title: c.title,
+      links: c.links,
+    })),
   ];
 
   // Brand tagline + contact + social fall back to globals outside a
@@ -216,7 +265,14 @@ export function SiteFooter({
   // look the same as before this feature shipped.
   const tagline = override?.tagline ?? navigation.footerTagline;
   const contactEmail = override?.contactEmail ?? "info@myglobalhealth.online";
-  const contactPhone = override?.contactPhone ?? null;
+  // Fall back to the market's published support number (contact page / NAP /
+  // JSON-LD all read the same table) so the footer shows a phone even when the
+  // admin hasn't filled the per-country override.
+  const contactPhone =
+    override?.contactPhone ??
+    (activeCountryCode ? getCountryContact(activeCountryCode)?.phoneDisplay ?? null : null) ??
+    getCountryContact("IE")?.phoneDisplay ??
+    null;
   const contactAddress = override?.contactAddress ?? null;
   const contactHours = override?.contactHours ?? null;
   const socialLinks = SOCIAL_FIELDS.flatMap((entry) => {
@@ -231,146 +287,162 @@ export function SiteFooter({
 
   return (
     <footer className="gh-site-shell gh-footer-shell relative overflow-hidden">
+      {/* Atmosphere only: a dotted health-tech field in the lower corners and
+          a single ECG trace at the right edge. Both are painted with CSS/inline
+          SVG (no extra requests) and sit under the content layer. */}
+      <span aria-hidden className="gh-footer-dots" />
+      <svg
+        aria-hidden
+        focusable="false"
+        className="gh-footer-ecg"
+        viewBox="0 0 240 60"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M0 42h72l9-24 11 44 10-32 8 12h130"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+
       <div className="gh-footer-inner relative z-[1] mx-auto">
-        <div className="gh-footer-grid grid gap-x-8 gap-y-10">
-          <div>
+        <div className="gh-footer-layout">
+          <div className="gh-footer-brand">
             <Link
               href="/"
               className="gh-footer-brandLink gh-focus-on-dark inline-flex items-center"
               aria-label={siteName || "Global Health"}
             >
               {/* width/height match the rendered size (.gh-footer-logo is
-                  38px tall) so the optimizer serves a ~76px 2x variant
+                  64px tall) so the optimizer serves a ~128px 2x variant
                   instead of the full 399px source. */}
               <Image
                 src="/logos/global-health-light.png"
                 alt={siteName || "Global Health"}
-                width={58}
-                height={38}
+                width={98}
+                height={64}
                 className="gh-footer-logo"
               />
             </Link>
-            <p className="gh-footer-tagline mt-4 whitespace-pre-line">
-              {tagline}
-            </p>
-            <div className="gh-footer-contact mt-4 flex flex-col gap-1">
+            <p className="gh-footer-tagline whitespace-pre-line">{tagline}</p>
+
+            <ul className="gh-footer-contact">
               {contactEmail ? (
-                <a href={`mailto:${contactEmail}`} className="gh-footer-contactLink gh-focus-on-dark">
-                  {contactEmail}
-                </a>
+                <li>
+                  <a
+                    href={`mailto:${contactEmail}`}
+                    className="gh-footer-contactLink gh-focus-on-dark"
+                  >
+                    <span aria-hidden className="gh-footer-contactIcon">
+                      <Mail className="size-4" />
+                    </span>
+                    {contactEmail}
+                  </a>
+                </li>
               ) : null}
               {contactPhone ? (
-                <a
-                  href={`tel:${contactPhone.replace(/[^0-9+]/g, "")}`}
-                  className="gh-footer-contactLink gh-focus-on-dark"
-                >
-                  {contactPhone}
-                </a>
+                <li>
+                  <a
+                    href={`tel:${contactPhone.replace(/[^0-9+]/g, "")}`}
+                    className="gh-footer-contactLink gh-focus-on-dark"
+                  >
+                    <span aria-hidden className="gh-footer-contactIcon">
+                      <Phone className="size-4" />
+                    </span>
+                    {contactPhone}
+                  </a>
+                </li>
               ) : null}
               {contactAddress ? (
-                <span className="whitespace-pre-line">{contactAddress}</span>
+                <li className="gh-footer-contactPlain whitespace-pre-line">{contactAddress}</li>
               ) : null}
-              {contactHours ? <span>{contactHours}</span> : null}
-            </div>
+              {contactHours ? (
+                <li className="gh-footer-contactPlain">{contactHours}</li>
+              ) : null}
+            </ul>
+
             {socialLinks.length > 0 ? (
-              <div className="mt-4 flex gap-2">
-                {socialLinks.map(({ url, Icon, label }) => (
-                  <a
-                    key={url}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    className="gh-footer-socialLink"
-                  >
-                    <Icon className="size-4" />
-                  </a>
-                ))}
+              <div className="gh-footer-social">
+                <p className="gh-footer-socialHeading">{navigation.footerFollowUs}</p>
+                <ul className="gh-footer-socialRow">
+                  {socialLinks.map(({ url, Icon, label }) => (
+                    <li key={url}>
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                        className="gh-footer-socialLink gh-focus-on-dark"
+                      >
+                        <Icon className="size-4" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ) : null}
-            {/* Newsletter sits in the brand column so the footer grid stays a
-                single clean row (no orphaned full-width void below). */}
-            <div className="mt-7 max-w-[320px]">
-              <NewsletterSignup
-                countryCode={parsed.country ?? null}
-                locale={parsed.lang ?? null}
-                i18n={{
-                  stayInformed: navigation.footerStayInformed,
-                  newsletterDesc: navigation.footerNewsletterDesc,
-                  subscribe: navigation.footerSubscribe,
-                  newsletterSuccess: navigation.footerNewsletterSuccess,
-                }}
-              />
-            </div>
           </div>
 
-          {groups.map((group) => (
-            <div key={group.h}>
-              <p className="gh-footer-groupHeading m-0 inline-flex items-center gap-2 uppercase text-white">
-                <span
-                  aria-hidden
-                  className="gh-footer-groupAccent inline-block h-3 w-[3px] rounded-full"
-                />
-                {group.h}
-              </p>
-              <ul className="m-0 flex list-none flex-col gap-2 p-0">
-                {group.items.map((item) => {
-                  // Admin custom links may set `external: true` for offsite
-                  // URLs, mailto:, or tel:. Use a plain <a> in that case so
-                  // Next doesn't try to prefetch them. Internal hrefs keep
-                  // the <Link> for client-side nav. One renderer either way
-                  // — the only branch is the element type + tab attrs.
-                  const isExternal =
-                    item.external === true ||
-                    /^(https?:|mailto:|tel:)/i.test(item.href);
-                  const linkClass = "gh-footer-navLink gh-focus-on-dark";
-                  const newTab = item.external === true;
-                  return (
-                    <li key={item.label + item.href}>
-                      {isExternal ? (
-                        <a
-                          href={item.href}
-                          target={newTab ? "_blank" : undefined}
-                          rel={newTab ? "noopener noreferrer" : undefined}
-                          className={linkClass}
-                        >
-                          {item.label}
-                        </a>
-                      ) : (
-                        <Link href={item.href} className={linkClass}>
-                          {item.label}
-                        </Link>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+          {/* DOM-ordered between brand and nav so the mobile column order
+              (brand → newsletter → accordions) matches the visual order. */}
+          <div className="gh-footer-newsletterArea">
+            <NewsletterSignup
+              countryCode={parsed.country ?? null}
+              locale={parsed.lang ?? null}
+              i18n={{
+                stayInformed: navigation.footerStayInformed,
+                newsletterDesc: navigation.footerNewsletterDesc,
+                subscribe: navigation.footerSubscribe,
+                newsletterSuccess: navigation.footerNewsletterSuccess,
+                newsletterPrivacy: navigation.footerNewsletterPrivacy,
+                emailLabel: common.bookingForm.email,
+                invalidEmail: common.bookingForm.enterValidEmail,
+              }}
+            />
+          </div>
+
+          <nav aria-label={common.a11y.footerNavigation} className="gh-footer-navArea">
+            <FooterNav groups={groups} />
+          </nav>
         </div>
 
         {localeLinks.length > 1 ? (
           <nav
             aria-label={common.a11y.chooseLanguage}
-            className="gh-footer-localeRow mt-10 flex flex-wrap items-center gap-x-3 gap-y-1"
+            className="gh-footer-localeBar"
           >
-            {/* Plain <a>, not <Link>: a client-side nav would keep the shared
-                (site)/layout mounted, so the chrome never re-renders under the
-                new x-gh-locale header (same reason LanguageSwitcher hard-navs).
-                It also avoids prefetching every locale from every page. */}
-            {localeLinks.map((l) => (
-              <a
-                key={l.loc}
-                href={l.href}
-                hrefLang={l.hrefLang}
-                aria-current={l.isActive ? "true" : undefined}
-                className={`gh-footer-legalLink gh-focus-on-dark ${
-                  l.isActive ? "text-white" : ""
-                }`}
-              >
-                {l.label}
-              </a>
-            ))}
+            <span aria-hidden className="gh-footer-localeGlobe">
+              <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+                <path
+                  d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                />
+              </svg>
+            </span>
+            <ul className="gh-footer-localeRow">
+              {/* Plain <a>, not <Link>: a client-side nav would keep the shared
+                  (site)/layout mounted, so the chrome never re-renders under the
+                  new x-gh-locale header (same reason LanguageSwitcher hard-navs).
+                  It also avoids prefetching every locale from every page. */}
+              {localeLinks.map((l) => (
+                <li key={l.loc}>
+                  <a
+                    href={l.href}
+                    hrefLang={l.hrefLang}
+                    aria-current={l.isActive ? "true" : undefined}
+                    className="gh-footer-localeLink gh-focus-on-dark"
+                    data-active={l.isActive}
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </nav>
         ) : null}
 
@@ -381,25 +453,29 @@ export function SiteFooter({
         {/* items-center: legal links have a 44px tap-target min-height, so
             without centering the plain-text siblings (·, GDPR line) sat at
             the top of the row while the links floated lower. */}
-        <div className="gh-footer-copyrightBar flex flex-wrap items-center justify-between gap-3">
+        <div className="gh-footer-copyrightBar">
           <span suppressHydrationWarning>
             {copyrightPrefix} · {navigation.footerCopyrightSuffix}
           </span>
-          <span className="flex flex-wrap items-center gap-3">
+          <span className="gh-footer-legalRow">
             <Link
               href="/privacy"
               className="gh-footer-legalLink gh-focus-on-dark"
             >
               {navigation.footerPrivacyLink}
             </Link>
-            <span aria-hidden>·</span>
+            <span aria-hidden className="gh-footer-legalDot">
+              ·
+            </span>
             {/* Consent must be as easy to withdraw as it was to give — this
                 reopens the banner with the stored choices pre-filled. */}
             <CookieSettingsButton
               label={cookieCopy.settingsLink}
               className="gh-footer-legalLink gh-focus-on-dark"
             />
-            <span aria-hidden>·</span>
+            <span aria-hidden className="gh-footer-legalDot">
+              ·
+            </span>
             <span>{navigation.footerEuCompliant}</span>
           </span>
         </div>

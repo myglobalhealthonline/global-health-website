@@ -30,12 +30,22 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # same name — without these, next.config.ts's images.remotePatterns silently
 # builds with no backend-media host (only unsplash/pexels), which only broke
 # visibly once <Image> stopped hardcoding unoptimized for our own media.
+# Every NEXT_PUBLIC_* the app reads needs a line here. A var set on the
+# Railway service but missing from this list is NOT a runtime fallback — the
+# client bundle keeps a `process.env.X` lookup that resolves to undefined in
+# the browser, so the feature is dead with nothing logged anywhere. That is
+# exactly how GA4 and Clarity shipped dark from 2026-07-28: both ids folded
+# to "" at build, and the components render null before consent is ever read.
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS
 ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
+ARG NEXT_PUBLIC_CLARITY_PROJECT_ID
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS=$NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
+ENV NEXT_PUBLIC_CLARITY_PROJECT_ID=$NEXT_PUBLIC_CLARITY_PROJECT_ID
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

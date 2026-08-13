@@ -16,8 +16,9 @@ import {
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { notifyDoctor, notifyUser } from "../modules/notifications/notify.service.js";
+import { alertDoctorOfPatientMessage } from "../modules/notifications/patient-message-alert.service.js";
 import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
-import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 /**
  * Patient ↔ doctor consultation chat per appointment.
@@ -287,6 +288,16 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
             byRole: "PATIENT",
             channel: "doctor",
           }).catch((e) => app.log.error(e));
+
+          // Email + WhatsApp alert to the doctor — throttled per appointment
+          // so a burst of patient messages only alerts once.
+          void alertDoctorOfPatientMessage({
+            appointmentId: appt.id,
+            doctorId: appt.doctorId,
+            patientName: user.fullName,
+            snippet: body.data.body.slice(0, 140),
+            log: app.log,
+          });
         }
 
         const items = await listMessages(appt.id, "patient");
@@ -383,6 +394,14 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
             byRole: "PATIENT",
             channel: "doctor",
           }).catch((e) => app.log.error(e));
+
+          void alertDoctorOfPatientMessage({
+            appointmentId: appt.id,
+            doctorId: appt.doctorId,
+            patientName: user.fullName,
+            snippet: `Sent a file: ${safeName}`,
+            log: app.log,
+          });
         }
 
         const items = await listMessages(appt.id, "patient");
@@ -423,6 +442,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       const obj = await getObject(msg.storageKey);
       reply.header("content-type", msg.mimeType ?? "application/octet-stream");
       reply.header("content-disposition", `inline; filename="${msg.fileName ?? "file"}"`);
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
       return reply.send(streamToNodeReadable(obj.Body));
     } catch (err) {
       app.log.error(err);
@@ -454,7 +474,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }
@@ -698,7 +718,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }
@@ -706,6 +726,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       const obj = await getObject(msg.storageKey);
       reply.header("content-type", msg.mimeType ?? "application/octet-stream");
       reply.header("content-disposition", `inline; filename="${msg.fileName ?? "file"}"`);
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
       return reply.send(streamToNodeReadable(obj.Body));
     } catch (err) {
       app.log.error(err);

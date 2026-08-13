@@ -143,6 +143,7 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
             <Row label="Phone" value={profile.phone} />
             <Row label="Date of birth" value={fmt(profile.dateOfBirth)} />
             <Row label="Blood type" value={profile.bloodType} />
+            <Row label="Número de Utente" value={profile.utenteNumber} />
             <Row label="Registered" value={fmt(profile.createdAt)} />
           </div>
           <div>
@@ -179,6 +180,9 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
         {profile.insuranceProviderName ? (
           <p className="mt-3 text-portal-compact text-[var(--color-text-muted)]">
             Insurance provider: <strong>{profile.insuranceProviderName}</strong>
+            {profile.insurancePolicyNumber ? (
+              <> · Policy/card number: <strong>{profile.insurancePolicyNumber}</strong></>
+            ) : null}
           </p>
         ) : null}
       </Section>

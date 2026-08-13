@@ -39,7 +39,7 @@ export function PricingPlanCard({
   ctaHref,
   isCurrentPlan = false,
   hasActiveSub = false,
-  manageHref = "/account/membership",
+  manageHref = "/account/plans",
 }: PricingPlanCardProps) {
   const featured = plan.isFeatured;
   const price = formatPrice(plan.monthlyPriceCents, plan.currencyCode, { maximumFractionDigits: 0 });
@@ -62,7 +62,9 @@ export function PricingPlanCard({
     creditsLine,
     t.secureLine,
     t.bookingLine,
-    t.specialistLine,
+    // Only claim specialist savings when a rule actually grants them — a plan
+    // with no specialist discount must not advertise one.
+    ...(plan.hasSpecialistDiscount ? [t.specialistLine] : []),
     ...(wellnessLine ? [wellnessLine, t.wellnessRedeemLine] : []),
   ];
   const features = plan.features.length > 0 ? plan.features : autoFeatures;

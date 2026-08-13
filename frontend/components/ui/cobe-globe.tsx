@@ -107,10 +107,6 @@ function GlobeImpl({
   // loop keeps running (a bare callback is effectively free) so resuming
   // needs no separate wake-up wiring.
   const isIntersectingRef = useRef(true);
-  // ponytail: coarse-pointer (mobile/touch) devices redrew WebGL 60fps
-  // continuously with no way to ever stop — draw once so the canvas isn't
-  // blank, then gate future draws off like the other checks above.
-  const coarsePointerRef = useRef(false);
   const hasDrawnOnceRef = useRef(false);
   // Anchor-positioning fallback: our label element per marker id, plus the
   // cobe-created anchor element we copy left/top off. See the comment on
@@ -184,13 +180,6 @@ function GlobeImpl({
 
   useEffect(() => {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const coarseQuery = window.matchMedia("(pointer: coarse)");
-    coarsePointerRef.current = coarseQuery.matches;
-    const handleCoarseChange = (e: MediaQueryListEvent) => {
-      coarsePointerRef.current = e.matches;
-    };
-    coarseQuery.addEventListener("change", handleCoarseChange);
-    return () => coarseQuery.removeEventListener("change", handleCoarseChange);
   }, []);
 
   useEffect(() => {
@@ -262,13 +251,14 @@ function GlobeImpl({
 
       // Skip the actual WebGL draw (not the rAF loop itself, which stays
       // primed so resuming needs no extra wiring) when: the tab is hidden,
-      // the globe is scrolled offscreen, or reduced-motion is on and
-      // nothing is being dragged — there is nothing new to show.
+      // the globe is scrolled offscreen, or reduced-motion froze rotation
+      // after the scene already painted once. The first paint must NEVER be
+      // skipped — a fully blocked draw left the canvas permanently blank on
+      // devices with "remove animations" enabled. Dragging always draws.
       const shouldDraw =
         !document.hidden &&
         isIntersectingRef.current &&
-        (!reducedMotionRef.current || pointerInteracting.current !== null) &&
-        (!coarsePointerRef.current || !hasDrawnOnceRef.current);
+        (!hasDrawnOnceRef.current || pointerInteracting.current !== null || !reducedMotionRef.current);
       if (shouldDraw) {
         hasDrawnOnceRef.current = true;
         globe.update({
@@ -330,6 +320,26 @@ function GlobeImpl({
       }, 120);
     }
 
+    // Mobile browsers evict WebGL contexts on backgrounding/memory pressure.
+    // Without these handlers the canvas stays blank forever after eviction
+    // (nothing redrew after eviction). preventDefault on
+    // "lost" is required for "restored" to fire; on restore, tear down and
+    // rebuild the scene against the revived context.
+    const handleContextLost = (e: Event) => e.preventDefault();
+    const handleContextRestored = () => {
+      try {
+        globe?.destroy();
+      } catch {
+        // destroy against a lost context can throw — scene is gone either way
+      }
+      globe = null;
+      // init() starts a fresh render loop — kill the old one or two loops race
+      window.cancelAnimationFrame(animationId);
+      init();
+    };
+    canvas.addEventListener("webglcontextlost", handleContextLost);
+    canvas.addEventListener("webglcontextrestored", handleContextRestored);
+
     if (canvas.offsetWidth > 0) {
       init();
     } else {
@@ -357,6 +367,8 @@ function GlobeImpl({
       globe?.destroy();
       globe = null;
       canvas.removeEventListener("pointerdown", handlePointerDown);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+      canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       if (canvas.isConnected) {
         canvas.remove();
       }

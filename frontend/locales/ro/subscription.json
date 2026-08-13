@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "Avantajele selectate se deblochează după {months} luni plătite.",
-    "universalSingular": "Avantajele selectate se deblochează după {months} lună plătită.",
+    "universal": "Avantajele selectate sunt active începând cu luna plătită {months}.",
+    "universalSingular": "Avantajele selectate sunt active începând cu luna plătită {months}.",
     "detailed": "Creditele de consultații online de bază sunt disponibile din prima lună. Avantajele de membru selectate se deblochează după {months} plăți lunare reușite.",
     "detailedSingular": "Creditele de consultații online de bază sunt disponibile din prima lună. Avantajele de membru selectate se deblochează după {months} plată lunară reușită."
   },
@@ -104,7 +104,7 @@
     "error": "Nu am putut iniția abonamentul dumneavoastră. Vă rugăm să încercați din nou."
   },
   "manage": {
-    "title": "Abonamentul dumneavoastră",
+    "title": "Planurile dumneavoastră",
     "subtitle": "Gestionați planul, facturarea și beneficiile.",
     "currentPlan": "Planul actual",
     "status": "Stare",
@@ -125,11 +125,14 @@
     "changing": "Se programează schimbarea…",
     "pendingChange": "Se trece la {plan} la {date}.",
     "changeNote": "Schimbările de plan intră în vigoare la următoarea dată de facturare — fără calcul proporțional la mijlocul ciclului.",
+    "changeNoteUpgrade": "Upgrade-urile intră în vigoare imediat — plătiți doar diferența pentru restul lunii. Trecerea la un plan inferior are loc la următoarea dată de facturare.",
     "changeScheduled": "Schimbare programată — noul dumneavoastră plan începe la {date}.",
+    "upgradeApplied": "Sunteți acum pe {plan}. Noile dumneavoastră beneficii sunt deja disponibile.",
     "upgradeLabel": "Upgrade",
     "downgradeLabel": "Downgrade",
     "changeEffective": "Intră în vigoare pe {date} — până atunci păstrați planul actual, fără plată astăzi.",
     "changeConfirm": "Treceți la {plan} pe {date}? Până atunci păstrați planul actual și nu veți fi taxat astăzi.",
+    "upgradeConfirm": "Faceți upgrade la {plan} acum? Vi se va percepe doar diferența proporțională pentru restul perioadei de facturare, iar noile beneficii sunt disponibile imediat.",
     "cancelChange": "Anulează schimbarea programată",
     "cancelingChange": "Se anulează…",
     "changeCanceled": "Schimbare programată anulată — rămâneți pe planul actual.",

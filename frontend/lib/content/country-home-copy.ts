@@ -47,7 +47,9 @@ function key(code: CountryCode, locale: string): string {
   return `${code}:${locale}`;
 }
 
-const EXTRAS: Record<string, HomePageExtras> = {
+/** Exported for the title-budget regression test only — not part of the
+ *  public API other modules should read; use `homePageExtras()` instead. */
+export const EXTRAS: Record<string, HomePageExtras> = {
   "IE:en": {
     seoTitle:
       "Online Doctor Ireland | IMC-Registered GPs & Specialists | Same Day",
@@ -193,6 +195,18 @@ const EXTRAS: Record<string, HomePageExtras> = {
   "br:cs": { heroTitle: "Online lékařská péče v Brazílii" },
   "br:ro": { heroTitle: "Îngrijire medicală online în Brazilia" },
   "br:de": { heroTitle: "Online-medizinische Versorgung in Brasilien" },
+  // Czechia was missed when the es/ro/br entries above were added (same
+  // "no seeded HOME row" situation — confirmed live 2026-08-09: every
+  // Czechia HOME PageContentTranslation locale is null) — its home page fell
+  // through all the way to the generic "Medicína kdykoliv" ("Medicine
+  // anytime") i18n tagline instead of a market-specific title, the one
+  // country without the distinctive pattern every sibling market has.
+  "cz:en": { heroTitle: "Online medical care in Czechia" },
+  "cz:cs": { heroTitle: "Online lékařská péče v Česku" },
+  "cz:pt": { heroTitle: "Cuidados médicos online na Chéquia" },
+  "cz:es": { heroTitle: "Atención médica online en Chequia" },
+  "cz:ro": { heroTitle: "Îngrijire medicală online în Cehia" },
+  "cz:de": { heroTitle: "Online-medizinische Versorgung in Tschechien" },
 };
 
 const BUNDLE: Record<string, DeepPartial<HomeBundle>> = {

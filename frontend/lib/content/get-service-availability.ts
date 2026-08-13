@@ -1,4 +1,5 @@
 import "server-only";
+import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 /**
@@ -51,7 +52,10 @@ export async function getServiceAggregatedAvailability(
     serviceSlug,
   )}/aggregated-availability?days=${days}${insuranceParam}`;
   try {
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, {
+      cache: "no-store",
+      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+    });
     if (!res.ok) return empty;
     const json = (await res.json()) as { ok?: boolean; data?: ServiceAggregatedAvailability };
     if (!json.ok || !json.data) return empty;

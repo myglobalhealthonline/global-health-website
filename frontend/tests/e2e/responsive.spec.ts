@@ -7,7 +7,7 @@ import { expect, test, type Page } from "@playwright/test";
  *  1. Page-level horizontal overflow — no route may scroll the PAGE
  *     horizontally at any tested width. Inner scrollers are allowed only if
  *     they appear in HSCROLL_ALLOWLIST, which mirrors
- *     docs/responsive-audit/shared/INTENTIONAL_HORIZONTAL_SCROLL.md.
+ *     docs/design/responsive/shared/intentional-horizontal-scroll.md.
  *     Keep the two in sync.
  *  2. Overlay visibility — AppMenu / RecordDetailsDrawer content must land
  *     fully inside the viewport and be hit-testable (elementFromPoint).

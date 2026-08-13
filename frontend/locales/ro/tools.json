@@ -1,0 +1,1244 @@
+{
+  "hub": {
+    "navLabel": "Instrumente de sănătate",
+    "navLabelShort": "Instrumente",
+    "openLabel": "Deschide calculatorul",
+    "relatedHeading": "Alte calculatoare gratuite"
+  },
+  "ui": {
+    "systolic": "Sistolică (numărul de sus)",
+    "diastolic": "Diastolică (numărul de jos)",
+    "mmHg": "mmHg",
+    "questionsEyebrow": "Întrebări",
+    "faqSuffix": "Întrebări frecvente",
+    "units": "Unități",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "height": "Înălțime",
+    "weight": "Greutate",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Înălțime (picioare)",
+    "inchesLabel": "Inci",
+    "stoneLabel": "Greutate (stone)",
+    "poundsLabel": "Livre",
+    "poundsOnlyHint": "Lasă stone gol dacă vrei să introduci doar livre.",
+    "sex": "Sex",
+    "male": "Bărbat",
+    "female": "Femeie",
+    "age": "Vârstă",
+    "years": "ani",
+    "activity": "Nivel de activitate",
+    "kcalPerDay": "kcal / zi",
+    "yes": "Da",
+    "no": "Nu"
+  },
+  "suggestions": {
+    "heading": "Care e pasul următor",
+    "intro": "IMC este un punct de plecare, nu un plan. Acestea sunt consultațiile pe care le oferă medicii noștri pentru lucrurile pe care le semnalează.",
+    "viewLabel": "Vezi serviciul",
+    "gpTitle": "Consultație medicală online",
+    "gpSummary": "Discută orice rezultat prin video cu un medic înregistrat și fă-ți analizele pe care un calculator nu ți le poate da.",
+    "nudgeUnderweight": "Un rezultat sub intervalul sănătos merită opinia unui medic, mai ales dacă nu a fost intenționat.",
+    "nudgeHealthy": "Vrei să îl menții? Medicii noștri te ajută să construiești obiceiuri care rezistă.",
+    "nudgeOverweight": "Schimbările mici și supravegheate funcționează mai bine decât încă o dietă. De aici poți începe.",
+    "nudgeObese": "La acest nivel, managementul greutății sub supraveghere medicală funcționează considerabil mai bine decât o dietă ținută singur."
+  },
+  "bands": {
+    "bp": {
+      "low": {
+        "label": "Tensiune mică",
+        "summary": "Sub intervalul obișnuit la adulți. De multe ori nu înseamnă nimic, dar merită părerea unui medic dacă ai amețeli, leșini sau o oboseală neobișnuită."
+      },
+      "optimal": {
+        "label": "Optimă",
+        "summary": "Intervalul cu cel mai mic risc la adulți. Nu e nimic de făcut doar pe baza acestei valori."
+      },
+      "normal": {
+        "label": "Normală",
+        "summary": "În intervalul normal pentru adulți. Merită măsurată din nou din când în când, mai ales dacă a tot crescut."
+      },
+      "high-normal": {
+        "label": "Normal-înaltă",
+        "summary": "Peste normal, dar încă nu hipertensiune. Este etapa în care sarea, alcoolul, greutatea și mișcarea contează cel mai mult."
+      },
+      "grade-1": {
+        "label": "Hipertensiune grad 1",
+        "summary": "Ușor crescută. Măsoară o săptămână acasă și du valorile la medic — diagnosticul are nevoie de tipar, nu de o singură cifră."
+      },
+      "isolated-systolic": {
+        "label": "Hipertensiune sistolică izolată",
+        "summary": "Numărul de sus este crescut, iar cel de jos este normal. Este tiparul cel mai frecvent după 60 de ani și tot necesită evaluare medicală."
+      },
+      "grade-2": {
+        "label": "Hipertensiune grad 2",
+        "summary": "Considerabil crescută. Programează-te la medic în curând, fără să aștepți o consultație de rutină."
+      },
+      "grade-3": {
+        "label": "Hipertensiune grad 3",
+        "summary": "Foarte crescută. Această valoare trebuie văzută de un medic chiar astăzi."
+      }
+    },
+    "bmi": {
+      "underweight": {
+        "label": "Subponderal",
+        "summary": "Sub intervalul sănătos. Merită discutat cu un medic, mai ales dacă scăderea în greutate nu a fost intenționată."
+      },
+      "healthy": {
+        "label": "Greutate sănătoasă",
+        "summary": "În intervalul pe care OMS îl consideră sănătos la adulți."
+      },
+      "overweight": {
+        "label": "Supraponderal",
+        "summary": "Peste intervalul sănătos. Un pas rezonabil este verificarea tensiunii arteriale și a colesterolului."
+      },
+      "obese-1": {
+        "label": "Obezitate grad I",
+        "summary": "La acest nivel se propune de obicei un program structurat de management al greutății."
+      },
+      "obese-2": {
+        "label": "Obezitate grad II",
+        "summary": "Se recomandă evaluare medicală, inclusiv screening pentru bolile asociate greutății."
+      },
+      "obese-3": {
+        "label": "Obezitate grad III",
+        "summary": "Se recomandă evaluare de specialitate pentru managementul greutății."
+      }
+    },
+    "activity": {
+      "sedentary": {
+        "label": "Sedentar",
+        "summary": "Muncă de birou, puțină mișcare sau deloc"
+      },
+      "light": {
+        "label": "Ușor activ",
+        "summary": "Mișcare ușoară 1–3 zile pe săptămână"
+      },
+      "moderate": {
+        "label": "Moderat activ",
+        "summary": "Mișcare moderată 3–5 zile pe săptămână"
+      },
+      "very": {
+        "label": "Foarte activ",
+        "summary": "Antrenament intens 6–7 zile pe săptămână"
+      },
+      "extra": {
+        "label": "Extrem de activ",
+        "summary": "Muncă fizică sau antrenament intens de două ori pe zi"
+      }
+    },
+    "adhdFrequencies": [
+      "Niciodată",
+      "Rar",
+      "Uneori",
+      "Des",
+      "Foarte des"
+    ],
+    "adhdQuestions": [
+      "Cât de des lași neterminate ultimele detalii ale unui proiect, după ce ai trecut de partea grea?",
+      "Cât de des îți e greu să pui lucrurile în ordine când o sarcină cere organizare?",
+      "Cât de des uiți întâlniri sau lucruri pe care le-ai promis?",
+      "Cât de des amâni sau eviți să începi ceva care cere multă gândire?",
+      "Cât de des te foiești cu mâinile sau cu picioarele când trebuie să stai mult timp jos?",
+      "Cât de des te simți împins să tot faci ceva, ca și cum te-ar mâna ceva din spate?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Rezultatul screeningului: pozitiv",
+        "summary": "Răspunsurile tale se potrivesc cu tiparul pe care îl caută acest chestionar, deci merită să îți programezi o evaluare completă. Nu este un diagnostic: ADHD-ul îl pune doar un medic psihiatru sau un psiholog clinician, pornind de la întregul tău istoric, nu de la șase întrebări."
+      },
+      "negative": {
+        "label": "Rezultatul screeningului: negativ",
+        "summary": "Răspunsurile tale nu se potrivesc cu tiparul căutat. Asta nu exclude ADHD-ul — șase întrebări acoperă doar o parte — așa că, dacă aceste dificultăți îți afectează munca, studiile sau relațiile, discută oricum cu un medic."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Evaluare recomandată acum",
+        "summary": "Vârsta ta sau factorii tăi de risc se potrivesc cu tiparul pe care ghidurile îl folosesc pentru a recomanda o evaluare a osteoporozei. Nu este un diagnostic — pasul următor este o discuție cu un medic despre o densitometrie osoasă (DXA)."
+      },
+      "discuss-next": {
+        "label": "Merită discutat la următoarea consultație",
+        "summary": "Ai un factor de risc pe care ghidurile îl iau în calcul, chiar dacă, luat singur, nu impune o evaluare imediată. Menționează-l data viitoare când mergi la medic."
+      },
+      "no-flags": {
+        "label": "Niciun factor de risc specific semnalat",
+        "summary": "Nimic din ce ai completat nu se potrivește cu factorii de risc publicați pe care ghidurile îi folosesc pentru identificarea persoanelor cu risc de osteoporoză. Este liniștitor, dar nu este o garanție — menționează oricum unui medic orice fractură sau cădere nouă."
+      }
+    }
+  },
+  "tools": {
+    "adhd-test": {
+      "cardTitle": "Test ADHD",
+      "cardBlurb": "Chestionarul de screening ADHD pentru adulți, cu șase întrebări, punctat așa cum e construită scala.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Test",
+      "h1Accent": "ADHD",
+      "h1Trail": "{country}",
+      "metaTitle": "Test ADHD {country} | Screening Gratuit pentru Adulți",
+      "metaDescription": "Completează testul de screening ADHD pentru adulți, cu șase întrebări (ASRS v1.1, partea A), și vezi ce înseamnă răspunsurile tale. Un screening nu este un diagnostic — acesta poate fi pus doar de un medic psihiatru sau de un psiholog clinician.",
+      "lede": "Răspunde la șase întrebări despre ultimele șase luni ca să vezi dacă răspunsurile tale se potrivesc cu tiparul pe care îl caută screeningul ADHD la adulți.",
+      "trustPoints": [
+        "Screeningul ASRS v1.1, partea A — șase întrebări",
+        "Punctat pe fiecare întrebare, așa cum e construită scala",
+        "Rulează în browserul tău — nimic nu se trimite și nu se salvează"
+      ],
+      "widget": {
+        "title": "Răspunsurile tale",
+        "instructions": "La fiecare întrebare, alege cât de des ți s-a întâmplat în ultimele șase luni.",
+        "placeholder": "Răspunde la cele șase întrebări ca să vezi rezultatul screeningului.",
+        "note": "Acesta este un chestionar de screening, nu un diagnostic. ADHD-ul este diagnosticat doar de un medic psihiatru sau de un psiholog clinician, după o evaluare completă. Nimic de aici nu este o recomandare de tratament medicamentos.",
+        "thresholdLabel": "Screening pozitiv",
+        "thresholdValue": "{count} sau mai multe din {total}"
+      },
+      "sections": [
+        {
+          "heading": "Cum se punctează screeningul",
+          "body": [
+            "Întrebările sunt partea A din Adult ADHD Self-Report Scale a Organizației Mondiale a Sănătății — forma scurtă folosită ca să se decidă dacă merită programată o evaluare completă. Evaluarea propriu-zisă nu este.",
+            "Punctarea se face pe fiecare întrebare, nu ca total. Fiecare item are pragul lui, iar patru sau mai mulți itemi care își ating pragul înseamnă un screening pozitiv. Greșeala obișnuită este regula plată «patru răspunsuri de Des»: așa scapă prezentarea cu neatenție, exact cea care e cel mai des trecută cu vederea la adulți."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Cele șase întrebări de screening și răspunsul de la care contează fiecare",
+            "columns": [
+              "Întrebarea",
+              "Despre ce este",
+              "Contează de la"
+            ],
+            "rows": [
+              [
+                "1",
+                "Terminarea ultimelor detalii ale unui proiect",
+                "Uneori"
+              ],
+              [
+                "2",
+                "Punerea lucrurilor în ordine pentru o sarcină",
+                "Uneori"
+              ],
+              [
+                "3",
+                "Ținerea minte a întâlnirilor și a promisiunilor",
+                "Uneori"
+              ],
+              [
+                "4",
+                "Amânarea sarcinilor care cer multă gândire",
+                "Des"
+              ],
+              [
+                "5",
+                "Foiala când trebuie să stai mult timp jos",
+                "Des"
+              ],
+              [
+                "6",
+                "Senzația că ceva te împinge să tot faci",
+                "Des"
+              ]
+            ],
+            "footnote": "Patru sau mai multe întrebări la pragul propriu ori peste el înseamnă un screening pozitiv. Scala a fost dezvoltată pentru adulți de la 18 ani în sus și nu este un screening pentru copii."
+          }
+        },
+        {
+          "heading": "Cum arată ADHD-ul la adulți",
+          "body": [
+            "ADHD-ul la adult arată rareori ca imaginea din clasă. Hiperactivitatea se întoarce adesea spre interior — neliniște, o minte care nu se așază — în timp ce neatenția rămâne și începe să coste: termene ratate, hârtii nedeschise, o memorie de lucru din care cad lucruri.",
+            "Pentru un diagnostic contează ca dificultățile să vină de departe, să apară în mai multe zone ale vieții și să producă o limitare reală. Toată lumea își rătăcește cheile din când în când; nu despre asta se întreabă aici."
+          ],
+          "bullets": [
+            "Începerea sarcinilor care contează și terminarea celor care au încetat să fie interesante.",
+            "Timpul: subestimat, pierdut, întârzieri în ciuda efortului real de a nu întârzia.",
+            "Organizarea — hârtii, facturi, programări — cere mult mai mult efort decât pare să le ceară altora.",
+            "Neliniște sau o nevoie constantă și surdă de a face ceva.",
+            "Întreruperi, vorbe spuse pe nepusă masă sau acțiuni pornite înainte ca ideea să fie dusă până la capăt.",
+            "Emoții care vin repede și trec repede, adesea mai puternice decât ar cere situația."
+          ]
+        },
+        {
+          "heading": "Ce nu îți poate spune acest screening",
+          "body": [
+            "Un chestionar de șase întrebări este un instrument de triere. Este intenționat rapid și intenționat larg, pentru că treaba lui e să decidă cine ar trebui evaluat ca lumea — nu cine are ADHD."
+          ],
+          "bullets": [
+            "Nu este un diagnostic: în sine, un rezultat pozitiv înseamnă doar «merită o evaluare».",
+            "Un rezultat negativ nu exclude ADHD-ul, mai ales în prezentarea cu neatenție și mai ales la femei, diagnosticate mai târziu și mai rar.",
+            "Anxietatea, depresia, somnul prost, bolile tiroidiene, durerea cronică și consumul mare de alcool dau aceleași răspunsuri.",
+            "Nu separă ADHD-ul de autism, de o tulburare specifică de învățare sau de urmările unei perioade lungi de stres.",
+            "A fost construit și validat pentru adulți. Copiii și adolescenții au nevoie de o cu totul altă evaluare.",
+            "Nu spune nimic despre tratament. Medicația este una dintre opțiuni și se discută abia după un diagnostic."
+          ]
+        },
+        {
+          "heading": "Cum ajungi la o evaluare adevărată",
+          "body": [
+            "Diagnosticul de ADHD este pus de un medic psihiatru sau de un psiholog clinician. Evaluarea este un interviu clinic structurat despre istoricul tău începând din copilărie, de obicei cu scale de evaluare și, când se poate, cu relatarea cuiva care te cunoaște de mult."
+          ],
+          "bullets": [
+            "Începe cu un medic. Îți parcurge istoricul, verifică afecțiunile care seamănă cu ADHD-ul și te trimite mai departe pentru evaluare.",
+            "Du cu tine lucruri concrete, nu un scor: rezultate de la școală, evaluări de la muncă, ce iese prost în mod repetat și de cât timp.",
+            "Spune ce mai este în joc — somn, dispoziție, alcool, tiroidă, un traumatism cranian mai vechi. Astea schimbă evaluarea și ordinea ei.",
+            "Rezultatul unui screening este începutul acelei discuții, nu înlocuitorul ei. Ia-l cu tine.",
+            "Dacă nu mai faci față sau ai gânduri de a-ți face rău, contactează acum un medic sau serviciile de urgență, fără să aștepți o evaluare."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Poate un test ADHD online să pună un diagnostic?",
+          "answer": "Nu, și niciun chestionar online nu poate. Acesta este un screening: împarte oamenii în «merită evaluat ca lumea» și «după aceste răspunsuri, nu». Diagnosticul îl pune un medic psihiatru sau un psiholog clinician, dintr-un interviu complet despre istoricul tău, nu din șase întrebări."
+        },
+        {
+          "question": "Ce este ASRS?",
+          "answer": "Adult ADHD Self-Report Scale, dezvoltată împreună cu Organizația Mondială a Sănătății. Partea A este screeningul cu șase întrebări folosit aici; scala completă are optsprezece itemi. Este cel mai răspândit instrument de screening pentru ADHD la adulți, motiv pentru care rezultatul pe care îl duci la consultație este recunoscut."
+        },
+        {
+          "question": "Ce înseamnă un rezultat pozitiv?",
+          "answer": "Patru sau mai multe dintre cele șase întrebări răspunse la pragul propriu ori peste el. Primele trei contează de la «Uneori», ultimele trei abia de la «Des» — pragurile diferă pentru că întrebările diferă, iar un singur prag plat ar rata prezentarea cu neatenție."
+        },
+        {
+          "question": "Pot avea ADHD dacă rezultatul e negativ?",
+          "answer": "Da. Șase întrebări nu pot acoperi o tulburare care se manifestă diferit la vârste și la oameni diferiți, iar prezentarea cu neatenție e detectată prea rar — unul dintre motivele pentru care femeile primesc diagnosticul mai târziu și mai rar. Dacă dificultățile îți afectează viața, un screening negativ nu e un motiv să te oprești din întrebat."
+        },
+        {
+          "question": "Cine poate diagnostica ADHD?",
+          "answer": "Un medic psihiatru sau un psiholog clinician, în funcție de țară. Drumul începe de obicei la medicul de familie: ia istoricul, exclude afecțiunile care imită ADHD-ul — tiroidă, tulburări de somn, anxietate, depresie — și trimite mai departe pentru evaluarea propriu-zisă."
+        },
+        {
+          "question": "Acest test ADHD îmi salvează răspunsurile?",
+          "answer": "Nu. Punctarea rulează în întregime în browserul tău. Nimic din ce alegi nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei să discuți rezultatul?",
+        "body": "Programează o consultație video cu un medic înregistrat, parcurge-ți istoricul și afecțiunile care pot semăna cu ADHD-ul și află ce ar presupune o evaluare.",
+        "label": "Programează o consultație"
+      },
+      "suggestionsIntro": "Un rezultat de screening este un motiv să faci o evaluare, nu un diagnostic. Acestea sunt consultațiile care pot duce lucrurile mai departe."
+    },
+    "blood-pressure-chart": {
+      "cardTitle": "Tabel tensiune arterială",
+      "cardBlurb": "Ce înseamnă cele două valori ale tale în tabelul european al tensiunii arteriale pentru adulți.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Tensiune arterială",
+      "h1Accent": "normală",
+      "h1Trail": "{country}",
+      "metaTitle": "Tensiune Arterială Normală {country} | Tabel de Valori",
+      "metaDescription": "Compară tensiunea sistolică și diastolică cu tabelul european pentru adulți. Vezi categoria, ce înseamnă și ce valori au nevoie de îngrijire medicală în aceeași zi.",
+      "lede": "Introdu cele două numere de pe tensiometru ca să vezi unde se încadrează valoarea în tabelul european pentru adulți — și ce ai de făcut, dacă ai ceva de făcut.",
+      "trustPoints": [
+        "Categorii europene (ESC/ESH) pentru adulți",
+        "Semnalează valorile care cer îngrijire în aceeași zi",
+        "Rulează în browserul tău — nimic nu este trimis sau salvat"
+      ],
+      "suggestionsIntro": "O valoare a tensiunii este un semnal, nu un plan. Acestea sunt consultațiile pe care le oferă medicii noștri pentru lucrurile pe care le semnalează.",
+      "widget": {
+        "title": "Valoarea ta",
+        "placeholder": "Numărul de sus trebuie să fie mai mare decât cel de jos — verifică ambele cifre pe tensiometru.",
+        "note": "Acest tabel este un reper de screening, nu un diagnostic. Hipertensiunea se diagnostichează din măsurători repetate, de obicei o săptămână de măsurători acasă sau o monitorizare de 24 de ore, niciodată dintr-o singură cifră.",
+        "scaleLabel": "Unde se încadrează valoarea ta sistolică",
+        "optimalLabel": "Optimă pentru majoritatea adulților",
+        "optimalValue": "Sub {systolic}/{diastolic} mmHg",
+        "urgentTitle": "Cere ajutor medical astăzi",
+        "urgentBody": "O valoare atât de mare trebuie verificată în aceeași zi. Stai liniștit cinci minute și măsoară din nou — dacă rămâne la fel de mare, contactează un medic astăzi.",
+        "urgentSymptoms": "Sună imediat la 112 dacă ai și durere în piept, slăbiciune sau amorțeală pe o parte a corpului, dificultăți de vorbire sau o schimbare bruscă a vederii."
+      },
+      "sections": [
+        {
+          "heading": "Tabelul tensiunii arteriale la adulți",
+          "body": [
+            "Tensiunea arterială se scrie cu două numere: presiunea sistolică, în timp ce inima se contractă, peste presiunea diastolică, în timp ce se relaxează între bătăi. Ambele se măsoară în milimetri coloană de mercur (mmHg).",
+            "Categoriile de mai jos sunt cele europene (ESC/ESH). Când cele două numere cad în categorii diferite, contează cea mai mare: 128/95 este hipertensiune grad 1, nu tensiune normală."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Categoriile europene de tensiune arterială la adulți",
+            "columns": [
+              "Categorie",
+              "Sistolică (mmHg)",
+              "Diastolică (mmHg)"
+            ],
+            "rows": [
+              [
+                "Mică",
+                "Sub 90",
+                "sau sub 60"
+              ],
+              [
+                "Optimă",
+                "Sub 120",
+                "și sub 80"
+              ],
+              [
+                "Normală",
+                "120 – 129",
+                "și/sau 80 – 84"
+              ],
+              [
+                "Normal-înaltă",
+                "130 – 139",
+                "și/sau 85 – 89"
+              ],
+              [
+                "Hipertensiune grad 1",
+                "140 – 159",
+                "și/sau 90 – 99"
+              ],
+              [
+                "Hipertensiune grad 2",
+                "160 – 179",
+                "și/sau 100 – 109"
+              ],
+              [
+                "Hipertensiune grad 3",
+                "180 sau peste",
+                "și/sau 110 sau peste"
+              ],
+              [
+                "Sistolică izolată",
+                "140 sau peste",
+                "și sub 90"
+              ]
+            ],
+            "footnote": "Praguri pentru măsurarea în cabinet, la adulți. Tensiometrele de acasă și monitorizarea pe 24 de ore dau valori mai mici, așa că acasă hipertensiunea începe la 135/85, nu la 140/90. Sarcina, copilăria și dializa au ținte complet diferite."
+          }
+        },
+        {
+          "heading": "Cum măsori o tensiune în care poți avea încredere",
+          "body": [
+            "Cele mai multe valori alarmante sunt erori de măsurare. Tensiunea se schimbă pe parcursul zilei și urcă dacă ajungi în grabă, dacă ai vezica plină sau dacă vorbești cu manșeta pe braț, așa că felul în care măsori schimbă cifra mai mult decât se așteaptă lumea."
+          ],
+          "bullets": [
+            "Stai liniștit cinci minute înainte — cu spatele sprijinit, tălpile pe podea, picioarele neîncrucișate.",
+            "Fără cafea, mâncare, efort fizic sau țigări cu 30 de minute înainte, și golește-ți vezica.",
+            "Sprijină brațul pe masă, astfel încât manșeta să fie la nivelul inimii, pe pielea goală.",
+            "Folosește o manșetă potrivită ca mărime. Una prea mică arată valori mai mari și este cea mai frecventă eroare acasă.",
+            "Nu vorbi în timpul măsurării: vorbitul adaugă câțiva mmHg.",
+            "Măsoară de două ori, la un minut distanță, și folosește a doua valoare sau media celor două.",
+            "Măsoară dimineața și seara timp de șapte zile, apoi du toată seria la medic."
+          ]
+        },
+        {
+          "heading": "Ce nu îți poate spune o singură măsurătoare",
+          "body": [
+            "O valoare este o fotografie a unui moment, pe un singur braț. Este suficient ca să semnaleze o problemă, dar nu ca să îi dea un nume, și de aceea diagnosticul se sprijină pe măsurători repetate, nu pe prima cifră care sperie."
+          ],
+          "bullets": [
+            "Hipertensiunea de halat alb: mare în cabinet, normală acasă. Este frecventă și se separă doar prin măsurători acasă sau prin monitorizare pe 24 de ore.",
+            "Hipertensiunea mascată: normală în cabinet, mare în restul timpului. Este cea mai riscantă dintre cele două și rămâne invizibilă fără măsurători acasă.",
+            "Brațele diferă. O diferență mai mare de 10 mmHg între ele contează, iar de atunci se folosește brațul cu valoarea mai mare.",
+            "Un puls neregulat, inclusiv fibrilația atrială, face nesigure majoritatea tensiometrelor automate.",
+            "Nu orice aparat de acasă este validat clinic, iar unul nevalidat poate greși cu mult.",
+            "Sarcina are praguri și riscuri proprii: tensiunea mare în sarcină are nevoie de evaluare obstetricală, nu de acest tabel."
+          ]
+        },
+        {
+          "heading": "Când mergi la medic și când ceri ajutor imediat",
+          "body": [
+            "Cele mai multe valori crescute se rezolvă la o consultație obișnuită. Câteva nu."
+          ],
+          "bullets": [
+            "Sună imediat la 112 dacă o valoare foarte mare vine cu durere în piept, slăbiciune sau amorțeală pe o parte a corpului, dificultăți de vorbire sau o schimbare bruscă a vederii. Sunt semne de infarct sau de accident vascular cerebral.",
+            "Cere îngrijire medicală în aceeași zi pentru o valoare de 180/120 sau peste, chiar și fără niciun simptom.",
+            "Programează o evaluare în câteva săptămâni dacă valorile sunt în mod repetat la 140/90 sau peste.",
+            "Discută cu un medic dacă valorile sunt în mod repetat sub 90/60 și ai amețeli, leșini sau o oboseală neobișnuită.",
+            "Du la consultație măsurătorile de acasă și aparatul în sine. Se tratează tiparul, nu cea mai proastă cifră."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Care este tensiunea arterială normală la un adult?",
+          "answer": "Sub 120/80 mmHg este optimă, iar 120–129 pe 80–84 este încă normală. De la 130/85 valoarea este normal-înaltă, iar 140/90 sau peste, măsurată în cabinet, înseamnă hipertensiune. Tensiometrele de acasă arată valori mai mici, așa că acasă pragul este 135/85."
+        },
+        {
+          "question": "Care număr contează mai mult, cel de sus sau cel de jos?",
+          "answer": "Amândouă. Categoria este dată de numărul mai prost, așa că 128/95 înseamnă hipertensiune grad 1 doar din cauza valorii de jos. Tensiunea sistolică prezice mai bine riscul cardiovascular după aproximativ 50 de ani, iar cea diastolică înainte de această vârstă."
+        },
+        {
+          "question": "Ce înseamnă o tensiune sistolică izolată?",
+          "answer": "O sistolică de 140 sau peste, cu o diastolică sub 90. Este cel mai frecvent tipar de hipertensiune după 60 de ani, apare din rigidizarea arterelor odată cu vârsta și implică un risc cardiovascular real — nu este o ciudățenie inofensivă a numărului de sus."
+        },
+        {
+          "question": "O singură valoare mare înseamnă că am hipertensiune?",
+          "answer": "Nu. Hipertensiunea se diagnostichează din valori crescute repetate, de obicei susținute de o săptămână de măsurători acasă sau de o monitorizare pe 24 de ore. O singură valoare mare este un motiv să măsori din nou corect, nu un diagnostic."
+        },
+        {
+          "question": "Ce tensiune arterială este periculoasă?",
+          "answer": "O valoare de 180/120 sau peste are nevoie de îngrijire medicală în aceeași zi. Dacă vine cu durere în piept, slăbiciune sau amorțeală pe o parte, dificultăți de vorbire sau o schimbare bruscă a vederii, sună imediat la 112 — sunt simptome de infarct sau de accident vascular cerebral."
+        },
+        {
+          "question": "Acest tabel al tensiunii arteriale îmi salvează valorile?",
+          "answer": "Nu. Comparația se face integral în browserul tău. Nimic din ce introduci nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei ca un medic să îți vadă valorile?",
+        "body": "Programează o consultație video cu un medic înregistrat, adu o săptămână de măsurători de acasă și pleacă cu un plan construit pe tipar, nu pe o singură cifră.",
+        "label": "Programează o consultație"
+      }
+    },
+    "bmi-calculator": {
+      "cardTitle": "Calculator IMC",
+      "cardBlurb": "Indicele de masă corporală din înălțimea și greutatea ta, pe scala OMS pentru adulți.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Calculator",
+      "h1Accent": "IMC",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculator IMC {country} | Calculează-ți IMC",
+      "metaDescription": "Calculează-ți indicele de masă corporală în câteva secunde. Sistem metric sau imperial, categoriile OMS pentru adulți și ce înseamnă cu adevărat rezultatul tău.",
+      "lede": "Introdu înălțimea și greutatea ca să vezi indicele de masă corporală și unde se situează pe scala Organizației Mondiale a Sănătății pentru adulți.",
+      "trustPoints": [
+        "Metric și imperial (kg, stone, livre)",
+        "Categoriile de greutate ale OMS pentru adulți",
+        "Rulează în browserul tău — nimic nu este trimis sau salvat"
+      ],
+      "widget": {
+        "title": "IMC-ul tău",
+        "placeholder": "Introdu înălțimea și greutatea ca să vezi indicele de masă corporală.",
+        "note": "IMC este o măsură de screening, nu un diagnostic. Nu deosebește mușchiul de grăsime și nu este valabil în sarcină sau sub 18 ani.",
+        "healthyRangeLabel": "Greutate sănătoasă pentru înălțimea ta",
+        "gapAbove": "{kg} kg peste intervalul sănătos",
+        "gapBelow": "{kg} kg sub intervalul sănătos",
+        "gapInside": "În intervalul sănătos",
+        "gapLabel": "Distanța până la intervalul sănătos",
+        "scaleLabel": "Unde se situează IMC-ul tău pe scala OMS"
+      },
+      "sections": [
+        {
+          "heading": "Ce înseamnă rezultatul tău IMC",
+          "body": [
+            "Organizația Mondială a Sănătății grupează IMC-ul adulților în intervalele de mai jos. Ele descriu o populație, nu o persoană: două persoane cu același IMC pot avea stări de sănătate foarte diferite."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Categoriile de IMC ale OMS pentru adulți",
+            "columns": [
+              "IMC",
+              "Categorie",
+              "Ce înseamnă de obicei"
+            ],
+            "rows": [
+              [
+                "Sub 18,5",
+                "Subponderal",
+                "Merită o discuție cu medicul, mai ales dacă slăbirea nu a fost intenționată"
+              ],
+              [
+                "18,5 – 24,9",
+                "Greutate sănătoasă",
+                "Nu e nimic de schimbat doar din cauza acestei cifre"
+              ],
+              [
+                "25,0 – 29,9",
+                "Supraponderal",
+                "Un moment bun să îți verifici tensiunea și colesterolul"
+              ],
+              [
+                "30,0 – 34,9",
+                "Obezitate grad I",
+                "De aici se propune de obicei management structurat al greutății"
+              ],
+              [
+                "35,0 – 39,9",
+                "Obezitate grad II",
+                "O evaluare medicală și screening pentru bolile care vin de obicei cu ea"
+              ],
+              [
+                "40,0 și peste",
+                "Obezitate grad III",
+                "O trimitere către management specializat al greutății"
+              ]
+            ],
+            "footnote": "Persoanele de origine sud-asiatică, chineză și din alte câteva origini asiatice au un risc cardiometabolic mai mare la un IMC mai scăzut. OMS sugerează 23,0 și 27,5 ca praguri suplimentare de acțiune pentru aceste populații."
+          }
+        },
+        {
+          "heading": "Cum se calculează IMC",
+          "body": [
+            "IMC este greutatea ta în kilograme împărțită la pătratul înălțimii în metri. Aceasta este toată formula — nu intervin vârsta, sexul sau compoziția corporală.",
+            "Exemplu concret: o persoană de 1,75 m care cântărește 78 kg are un IMC de 78 ÷ (1,75 × 1,75) = 25,5, ceea ce se încadrează la supraponderal.",
+            "Valorile imperiale sunt convertite mai întâi (1 stone = 6,35 kg, 1 inch = 2,54 cm), așa că rezultatul este identic în oricare sistem."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Ce nu îți spune IMC",
+          "body": [
+            "IMC este un număr de screening, nu un diagnostic. Este util tocmai pentru că este simplu — sunt suficiente o ruletă și un cântar — dar aici este și limita lui."
+          ],
+          "bullets": [
+            "Nu separă mușchiul de grăsime. Persoanele foarte musculoase sunt clasificate frecvent ca supraponderale.",
+            "Ignoră locul unde se depune grăsimea. Circumferința taliei prezice riscul cardiometabolic mai bine decât IMC.",
+            "Nu este validat pentru sarcină — folosește IMC-ul dinainte de sarcină pentru planificarea îngrijirii.",
+            "Copiii și adolescenții au nevoie de curbe de percentile în funcție de vârstă și sex, nu de intervalele pentru adulți de mai sus.",
+            "La adulții peste 65 de ani, un IMC ușor peste 25 nu este asociat în mod constant cu rezultate mai slabe."
+          ]
+        },
+        {
+          "heading": "Când să discuți cu un medic despre greutatea ta",
+          "body": [],
+          "bullets": [
+            "Ai slăbit sau te-ai îngrășat fără să îți propui.",
+            "IMC-ul tău este 30 sau peste, ori 25 și peste împreună cu tensiune arterială mare, colesterol crescut sau glicemie crescută.",
+            "Ești în curs de investigare, sau deja tratat, pentru diabet de tip 2, apnee în somn, sindromul ovarelor polichistice sau ficat gras.",
+            "Vrei să discuți despre management al greutății sub supraveghere medicală, în locul unei alte diete."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Care este un IMC sănătos pentru un adult?",
+          "answer": "Pentru majoritatea adulților între 18 și 65 de ani, Organizația Mondială a Sănătății consideră sănătos un IMC între 18,5 și 24,9. Peste 25 se încadrează la supraponderal, iar 30 sau peste la obezitate. Sunt praguri populaționale, așa că o singură valoare este un motiv să analizezi mai departe, nu un verdict."
+        },
+        {
+          "question": "IMC se calculează diferit la bărbați și la femei?",
+          "answer": "Nu. Formula și categoriile pentru adulți sunt identice. Femeile au în general un procent mai mare de grăsime corporală decât bărbații la același IMC, iar acesta este unul dintre motivele pentru care cifra este doar un punct de plecare."
+        },
+        {
+          "question": "Cât de precis este un calculator IMC?",
+          "answer": "Calculul în sine este exact — incertitudinea ține de ceea ce măsoară IMC. Se corelează rezonabil cu grăsimea corporală la nivel de populație, dar poate încadra greșit indivizi, în special sportivi, vârstnici și persoane cu multă masă musculară."
+        },
+        {
+          "question": "Ce fac dacă IMC-ul meu este în intervalul de obezitate?",
+          "answer": "Verifică-ți tensiunea arterială, colesterolul și glicemia și discută cu un medic despre un plan pe care îl poți susține. Managementul greutății cu evaluare medicală funcționează considerabil mai bine decât o dietă ținută pe cont propriu."
+        },
+        {
+          "question": "Acest calculator IMC îmi stochează datele?",
+          "answer": "Nu. Calculul se face integral în browserul tău. Nimic din ce introduci nu este trimis către serverele noastre și nu este salvat."
+        },
+        {
+          "question": "Am nevoie de un IMC ca să primesc tratament pentru scădere în greutate?",
+          "answer": "Medicii folosesc de obicei IMC ca unul dintre criteriile de intrare în programele de management al greutății, de regulă alături de istoricul tău medical și de eventualele afecțiuni asociate greutății. Medicul tău îți va confirma ce se aplică în cazul tău."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei să discuți rezultatul?",
+        "body": "Programează o consultație video cu un medic înregistrat și primește un plan construit pe istoricul tău, nu pe un număr.",
+        "label": "Programează o consultație"
+      }
+    },
+    "calorie-calculator": {
+      "cardTitle": "Calculator calorii",
+      "cardBlurb": "De câte calorii ai nevoie pe zi ca să îți menții, să scazi sau să crești greutatea.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Calculator",
+      "h1Accent": "calorii",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculator Calorii {country} | Necesarul Zilnic de Calorii",
+      "metaDescription": "Calculează de câte calorii ai nevoie pe zi ca să îți menții, să scazi sau să crești greutatea. Ecuația Mifflin-St Jeor, cinci niveluri de activitate și ce înseamnă de fapt cifrele.",
+      "lede": "Introdu sexul, vârsta, înălțimea, greutatea și cât de activ ești ca să vezi câte calorii arzi într-o zi — și cât să mănânci ca să îți menții, să scazi sau să crești greutatea.",
+      "trustPoints": [
+        "Ecuația Mifflin-St Jeor, cea folosită în practica medicală",
+        "Menținere, slăbire și creștere într-o singură vedere",
+        "Rulează în browserul tău — nimic nu este trimis sau salvat"
+      ],
+      "suggestionsIntro": "O cifră de calorii este un punct de plecare, nu un plan. Acestea sunt consultațiile pe care le oferă medicii noștri pentru greutate, nutriție și analizele pe care un număr nu ți le poate da.",
+      "widget": {
+        "title": "Caloriile tale zilnice",
+        "placeholder": "Introdu datele tale ca să vezi câte calorii arzi într-o zi.",
+        "note": "Estimări pentru adulți sănătoși și un instrument de orientare, nu un diagnostic sau o dietă prescrisă. Discută cu un medic înainte să îți schimbi aportul dacă ești însărcinată sau alăptezi, ai sub 18 ani sau ești în tratament pentru o afecțiune.",
+        "noteFloored": "Ținta ta de slăbire a fost menținută la 1.200 kcal, cel mai mic aport zilnic pe care îl propune acest calculator. Sub această valoare se merge doar sub supraveghere medicală.",
+        "resultLabel": "Calorii de menținere",
+        "resultSummary": "Cât arzi într-o zi obișnuită la acest nivel de activitate, cu totul inclus.",
+        "bmrLabel": "Metabolism bazal",
+        "mildLossLabel": "Slăbește circa 0,25 kg pe săptămână",
+        "lossLabel": "Slăbește circa 0,5 kg pe săptămână",
+        "gainLabel": "Crește circa 0,25 kg pe săptămână"
+      },
+      "sections": [
+        {
+          "heading": "Ce înseamnă cifrele tale de calorii",
+          "body": [
+            "Cifra principală este nivelul tău de menținere: aproximativ cât arzi într-o zi, cu activitatea inclusă. Dacă mănânci atât, greutatea rămâne unde este.",
+            "Țintele de sub ea sunt aceeași cifră cu un deficit sau un surplus aplicat. Un deficit zilnic de 500 kcal înseamnă aproximativ o jumătate de kilogram pe săptămână, ritmul pe care îl recomandă majoritatea ghidurilor — destul de rapid ca să se vadă și destul de lent ca să poată fi ținut."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Ținte zilnice de calorii pornind de la valoarea ta de menținere",
+            "columns": [
+              "Obiectiv",
+              "Aport zilnic",
+              "La ce să te aștepți"
+            ],
+            "rows": [
+              [
+                "Menținere",
+                "Valoarea ta de menținere",
+                "Greutatea se menține în săptămâni, nu în zile"
+              ],
+              [
+                "Slăbire ușoară",
+                "Menținere − 250 kcal",
+                "Circa 0,25 kg pe săptămână"
+              ],
+              [
+                "Slăbire constantă",
+                "Menținere − 500 kcal",
+                "Circa 0,5 kg pe săptămână"
+              ],
+              [
+                "Creștere",
+                "Menținere + 300 kcal",
+                "Circa 0,25 kg pe săptămână, ideal împreună cu antrenament de forță"
+              ]
+            ],
+            "footnote": "Aici țintele de slăbire nu coboară niciodată sub 1.200 kcal pe zi. Sub această valoare este greu să îți acoperi din alimente nevoia de proteine, vitamine și minerale, iar un aport atât de mic ar trebui ținut sub supraveghere medicală."
+          }
+        },
+        {
+          "heading": "Cum îți alegi nivelul de activitate",
+          "body": [
+            "Multiplicatorul de activitate este cea mai mare pârghie din acest calcul: pentru același corp, diferența dintre sedentar și extrem de activ trece de 700 kcal pe zi. Include tot ce faci, nu doar antrenamentul — statul în picioare, mersul, treburile casei și munca ta intră la socoteală.",
+            "Cei mai mulți oameni aleg un nivel prea sus. Dacă te antrenezi de trei ori pe săptămână și în rest stai jos, ești ușor sau moderat activ, nu foarte activ."
+          ],
+          "bullets": [
+            "Sedentar — muncă de birou și puțină mișcare intenționată sau deloc.",
+            "Ușor activ — mișcare ușoară sau sport una până la trei zile pe săptămână.",
+            "Moderat activ — mișcare moderată trei până la cinci zile pe săptămână.",
+            "Foarte activ — antrenament intens șase sau șapte zile pe săptămână.",
+            "Extrem de activ — muncă fizică solicitantă sau antrenament intens de două ori pe zi."
+          ]
+        },
+        {
+          "heading": "Cum se face calculul",
+          "body": [
+            "Metabolismul bazal — cât arde corpul în repaus complet — vine din ecuația Mifflin-St Jeor: 10 × greutatea în kg, plus 6,25 × înălțimea în cm, minus 5 × vârsta, apoi plus 5 la bărbați sau minus 161 la femei.",
+            "Valoarea este înmulțită cu nivelul tău de activitate, de la 1,2 pentru sedentar până la 1,9 pentru extrem de activ. Rezultatul este consumul energetic total zilnic — cifra de menținere din capul rezultatului.",
+            "Exemplu concret: un bărbat de 30 de ani, cu 180 cm și 80 kg, are un metabolism bazal de 1.780 kcal. Ușor activ (× 1,375) înseamnă circa 2.448 kcal pe zi ca să își mențină greutatea."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Ce nu îți poate spune un calculator de calorii",
+          "body": [
+            "Fiecare ecuație de aici este o medie pe populație potrivită pe date măsurate, iar oamenii se așază de o parte sau de alta a ei. Ia cifra ca pe o estimare pe care o verifici pe cântar timp de trei-patru săptămâni, nu ca pe un adevăr despre corpul tău."
+          ],
+          "bullets": [
+            "La majoritatea adulților estimarea se încadrează de obicei în circa 10 % — adică 200 kcal în plus sau în minus la o zi de 2.000 kcal.",
+            "Nu spune nimic despre din ce sunt făcute caloriile, iar proteina, fibrele și micronutrienții decid dacă o alimentație se poate ține.",
+            "Bolile tiroidiene, unele medicamente și un istoric lung de diete mută consumul real față de estimare.",
+            "Nu este gândit pentru copii, pentru sarcină sau alăptare și nici pentru sportivi în perioade grele de antrenament.",
+            "Subestimează persoanele foarte musculoase, pentru că ecuația folosește greutatea totală, nu masa slabă."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Câte calorii ar trebui să mănânc pe zi?",
+          "answer": "Cât consumi, dacă greutatea ta este deja unde vrei. La majoritatea adulților asta înseamnă undeva între 1.800 și 2.800 kcal, dar intervalul este larg pentru că depinde de gabarit, vârstă și mișcare. Calculatorul de mai sus îți dă cifra ta, nu media."
+        },
+        {
+          "question": "Câte calorii trebuie să mănânc ca să slăbesc?",
+          "answer": "Cu aproximativ 500 kcal pe zi sub valoarea de menținere obții cam o jumătate de kilogram pe săptămână, iar cu 250 sub ea, cam un sfert. Deficitele mai mari nu funcționează sigur mai repede — sunt doar mai greu de ținut, iar o parte mai mare din pierdere vine din mușchi."
+        },
+        {
+          "question": "Sunt 1.200 de calorii pe zi sigure?",
+          "answer": "Este cel mai mic aport pe care îl propune acest calculator și este o limită de jos, nu o recomandare. Sub acest nivel devine greu să obții din alimente destule proteine, vitamine și minerale, așa că un aport mai mic ar trebui urmat doar sub supraveghere medicală."
+        },
+        {
+          "question": "Ce formulă folosește acest calculator de calorii?",
+          "answer": "Mifflin-St Jeor pentru metabolismul bazal, apoi un multiplicator de activitate standard. A înlocuit vechea ecuație Harris-Benedict în practica clinică pentru că este mai exactă pentru compozițiile corporale de azi, de obicei cu o abatere de circa 10 % la adulții sănătoși."
+        },
+        {
+          "question": "Trebuie să număr caloriile ca să slăbesc?",
+          "answer": "Nu. Numărarea este doar o metodă de a ține un deficit, iar mulți oameni obțin același lucru schimbând ce mănâncă, nu cântărind. Să știi aproximativ unde îți stă menținerea ajută oricum, pentru că îți arată cât de mare este de fapt schimbarea pe care o faci."
+        },
+        {
+          "question": "Acest calculator de calorii îmi salvează datele?",
+          "answer": "Nu. Calculul se face în întregime în browserul tău. Nimic din ce scrii nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei un plan, nu doar o cifră?",
+        "body": "Programează o consultație video cu un medic înregistrat și discută ce înseamnă cifra pentru greutatea ta, analizele tale și istoricul tău.",
+        "label": "Programează o consultație"
+      }
+    },
+    "due-date-calculator": {
+      "cardTitle": "Calculator de sarcină",
+      "cardBlurb": "Data probabilă a nașterii, în ce săptămână ești și săptămânile care contează pe drum.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Calculator",
+      "h1Accent": "de sarcină",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculator de Sarcină {country} | Data Nașterii și Săptămâni",
+      "metaDescription": "Află data probabilă a nașterii și în ce săptămână de sarcină ești, pornind de la prima zi a ultimei menstruații. Se ajustează după durata ciclului tău, cu toate cele 40 de săptămâni detaliate.",
+      "lede": "Introdu prima zi a ultimei menstruații ca să vezi data probabilă a nașterii, în ce săptămână ești astăzi și când începe fiecare trimestru.",
+      "trustPoints": [
+        "Se ajustează pentru cicluri de la 20 la 45 de zile",
+        "Datele trimestrelor și intervalul la termen (37–42 de săptămâni)",
+        "Rulează în browserul tău — nimic nu se trimite și nu se salvează"
+      ],
+      "widget": {
+        "title": "Data probabilă a nașterii",
+        "placeholder": "Introdu prima zi a ultimei menstruații ca să vezi data probabilă a nașterii.",
+        "note": "Este o estimare pornind de la datele introduse, nu un diagnostic. Ecografia de datare măsoară direct bebelușul și o înlocuiește.",
+        "lmpLabel": "Prima zi a ultimei menstruații",
+        "lmpHint": "Ziua în care a început sângerarea, nu ziua în care s-a oprit.",
+        "cycleLabel": "Durata ciclului",
+        "cycleHint": "Zile de la începutul unei menstruații până la începutul următoarei. Dacă nu știi, lasă 28.",
+        "daysUnit": "zile",
+        "gestationalAgeLabel": "În ce săptămână ești astăzi",
+        "daysToGoLabel": "Zile rămase",
+        "secondTrimesterLabel": "Începutul trimestrului doi",
+        "thirdTrimesterLabel": "Începutul trimestrului trei",
+        "termWindowLabel": "Interval la termen (37–42 de săptămâni)",
+        "trimester1": "Primul trimestru",
+        "trimester1Note": "Săptămânile 1–13. Atunci se începe urmărirea sarcinii și se face ecografia de datare.",
+        "trimester2": "Al doilea trimestru",
+        "trimester2Note": "Săptămânile 14–27. Ecografia de morfologie fetală se face de obicei în jurul săptămânii 20.",
+        "trimester3": "Al treilea trimestru",
+        "trimester3Note": "De la săptămâna 28. Controalele de creștere și de tensiune arterială se apropie unul de altul pe măsură ce vine termenul.",
+        "outOfRangeNote": "Verifică data — este în viitor sau mai veche de 42 de săptămâni, deci în afara intervalului pe care acest calculator îl poate data."
+      },
+      "sections": [
+        {
+          "heading": "Sarcina ta, săptămână cu săptămână",
+          "body": [
+            "Sarcina se datează de la prima zi a ultimei menstruații, nu de la concepție, și durează 40 de săptămâni de acolo. Înainte de 37 de săptămâni nașterea este prematură, de la 42 de săptămâni este postmatură, iar între aceste limite se nasc practic toți copiii.",
+            "Tabelul de mai jos sunt toate cele 40 de săptămâni, împărțite așa cum le împarte îngrijirea prenatală."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Etapele sarcinii în săptămâni de la ultima menstruație",
+            "columns": [
+              "Săptămâni",
+              "Etapă",
+              "Ce se întâmplă de obicei"
+            ],
+            "rows": [
+              [
+                "1 – 13",
+                "Primul trimestru",
+                "Prima consultație, primele analize și ecografia de datare"
+              ],
+              [
+                "14 – 27",
+                "Al doilea trimestru",
+                "Ecografia de morfologie fetală, de obicei în jurul săptămânii 20"
+              ],
+              [
+                "28 – 36",
+                "Al treilea trimestru",
+                "Controalele de creștere, tensiune și poziție devin mai dese"
+              ],
+              [
+                "37 – 38",
+                "Termen precoce",
+                "De aici înainte nașterea nu mai este prematură"
+              ],
+              [
+                "39 – 40",
+                "Termen complet",
+                "Data probabilă a nașterii este la sfârșitul săptămânii 40"
+              ],
+              [
+                "41",
+                "Termen tardiv",
+                "Monitorizarea crește și se discută de obicei inducerea nașterii"
+              ],
+              [
+                "42 și peste",
+                "Postmatur",
+                "Nașterea se induce de obicei, în loc să se mai aștepte"
+              ]
+            ],
+            "footnote": "Ultimele patru rânduri sunt toate sfârșitul trimestrului trei — de la 37 de săptămâni se numără în intervale mai scurte, pentru că asta schimbă planul. Doar aproximativ una din douăzeci de sarcini se încheie exact la data estimată."
+          }
+        },
+        {
+          "heading": "Cum se calculează data nașterii",
+          "body": [
+            "Estimarea este regula lui Naegele: 280 de zile, adică 40 de săptămâni, de la prima zi a ultimei menstruații. Presupune un ciclu de 28 de zile, cu ovulație în jurul zilei 14.",
+            "Dacă ciclurile tale sunt mai lungi sau mai scurte, ovulația se mută cu ele, așa că calculatorul deplasează data cu aceeași diferență. Un ciclu de 32 de zile împinge estimarea cu patru zile mai târziu; unul de 24 de zile o aduce cu patru zile mai devreme.",
+            "Exemplu: o ultimă menstruație începută pe 1 ianuarie, cu un ciclu de 28 de zile, dă 8 octombrie. Aceeași menstruație cu un ciclu de 32 de zile dă 12 octombrie."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "De ce ecografia de datare înlocuiește această estimare",
+          "body": [
+            "Un calculator poate lucra doar cu datele pe care i le dai. Ecografia măsoară bebelușul, motiv pentru care data ei este cea folosită mai departe de medicul care te urmărește."
+          ],
+          "bullets": [
+            "Depinde de cât de exact îți amintești prima zi a ultimei menstruații.",
+            "Presupune că ai ovulat la mijlocul ciclului, ceea ce nu se întâmplă la toată lumea.",
+            "Ciclurile neregulate, contracepția oprită recent și alăptarea fac din ultima menstruație un reper slab.",
+            "Ecografia din primul trimestru măsoară bebelușul, de obicei între săptămânile 11 și 14, cu o eroare de câteva zile.",
+            "După FIV datarea pornește de la data transferului, nu de la o menstruație, așa că estimarea de aici nu se aplică."
+          ]
+        },
+        {
+          "heading": "Când să contactezi un medic",
+          "body": [],
+          "bullets": [
+            "Crezi că ești însărcinată și încă nu ai început urmărirea sarcinii — prima consultație și ecografia de datare se fac amândouă devreme.",
+            "Ai sângerare, crampe sau durere pe o singură parte la începutul sarcinii.",
+            "Ai vărsături severe sau continue, ori nu reușești să reții lichide.",
+            "Ai o boală cronică sau iei medicamente în mod regulat — unele trebuie reevaluate imediat ce sarcina este confirmată.",
+            "Ai ajuns la 41 de săptămâni, sau ai trecut de termen și mișcările bebelușului s-au schimbat."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Cât de exact este un calculator de sarcină?",
+          "answer": "Calculul este exact; presupunerile din spatele lui nu sunt. Doar aproximativ una din douăzeci de sarcini se încheie exact la data estimată, iar marea majoritate a nașterilor au loc în săptămânile din jurul ei. Versiunea precisă este ecografia din primul trimestru, iar odată făcută, data ei este cea care se folosește."
+        },
+        {
+          "question": "În ce săptămână de sarcină sunt?",
+          "answer": "Săptămânile se numără de la prima zi a ultimei menstruații, nu de la concepție — de aceea ești deja la aproximativ patru săptămâni când un test iese pozitiv pentru prima dată. Concepția are loc cam două săptămâni după acea primă zi, așa că sarcina este mereu datată cu vreo două săptămâni „mai mare” decât embrionul."
+        },
+        {
+          "question": "Ce înseamnă 9w 3d?",
+          "answer": "Nouă săptămâni complete și trei zile de la prima zi a ultimei menstruații. Documentele de sarcină se scriu așa pentru că o săptămână întreagă este prea imprecisă atunci când o ecografie sau o analiză trebuie făcută într-o fereastră anume."
+        },
+        {
+          "question": "Îl pot folosi dacă am cicluri neregulate?",
+          "answer": "Poți, iar introducerea duratei tale obișnuite a ciclului te apropie mai mult decât valoarea implicită de 28 de zile. Dar un ciclu neregulat este exact cazul în care ultima menstruație e un reper slab, așa că ia rezultatul ca orientare până la ecografie."
+        },
+        {
+          "question": "Se schimbă data nașterii după ecografie?",
+          "answer": "Deseori da, de obicei cu câteva zile. Ecografia măsoară bebelușul în loc să numere de la o dată reținută din memorie, așa că data ei este cea păstrată. O diferență de o săptămână sau mai mult este frecventă atunci când data ultimei menstruații era incertă."
+        },
+        {
+          "question": "Acest calculator păstrează datele mele?",
+          "answer": "Nu. Calculul se face integral în browserul tău. Nimic din ce introduci nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Întrebări la începutul sarcinii?",
+        "body": "Discută prin video cu un medic înregistrat despre simptome, medicamentele pe care le iei deja sau orice nu vrei să aștepte până la prima consultație.",
+        "label": "Programează o consultație"
+      },
+      "suggestionsIntro": "O dată estimată este începutul îngrijirii prenatale, nu toată îngrijirea. Acestea sunt consultațiile care duc lucrurile mai departe."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Verificare risc de osteoporoză",
+      "cardBlurb": "Ce factori de risc publicați pentru fractura de fragilitate ți se aplică și dacă merită să ceri o densitometrie osoasă.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Risc de",
+      "h1Accent": "osteoporoză",
+      "h1Trail": "{country}",
+      "metaTitle": "Verificare Risc de Osteoporoză {country} | Ai Nevoie de o Densitometrie Osoasă?",
+      "metaDescription": "Verifică factorii de risc publicați pentru osteoporoză și fractura de fragilitate și vezi dacă ghidurile clinice recomandă să fii evaluat(ă). Nu este FRAX și nu este un diagnostic — o listă de identificare a riscului pe care o poți duce la medic.",
+      "lede": "Răspunde la întrebări despre vârsta, sexul și factorii tăi de risc pentru a vedea dacă ghidurile clinice publicate recomandă să ceri o evaluare a densității osoase.",
+      "trustPoints": [
+        "Bazat pe ghidul de identificare a riscului NICE, nu pe un scor proprietar",
+        "Arată separat factorii de risc majori și pe cei care contribuie",
+        "Funcționează în browser — nimic nu este trimis sau stocat"
+      ],
+      "suggestionsIntro": "Un factor de risc semnalat este un motiv să întrebi despre o densitometrie osoasă, nu un diagnostic. Acestea sunt consultațiile care pot duce lucrurile mai departe.",
+      "widget": {
+        "title": "Factorii tăi de risc",
+        "placeholder": "Răspunde la întrebări pentru a vedea dacă merită să ceri o evaluare a densității osoase.",
+        "note": "Acest instrument identifică cine ar trebui evaluat pentru osteoporoză — nu estimează riscul tău de fractură și nu este un diagnostic. O evaluare completă folosește o densitometrie osoasă (DXA) și un instrument validat precum FRAX, realizat de un medic.",
+        "fractureLabel": "Fractură de fragilitate după 50 de ani",
+        "fractureHint": "O fractură dintr-o cădere de la înălțimea proprie sau mai mică — încheietură, șold, coloană sau braț.",
+        "glucocorticoidLabel": "Corticosteroizi orali timp de 3 luni sau mai mult",
+        "parentalHipLabel": "Un părinte a suferit o fractură de șold",
+        "smokerLabel": "Fumător în prezent",
+        "alcoholLabel": "3 sau mai multe unități de alcool pe zi",
+        "raLabel": "Artrită reumatoidă",
+        "secondaryLabel": "O cauză secundară de pierdere osoasă",
+        "secondaryHint": "De exemplu hipertiroidism, malabsorbție, sau boală hepatică ori renală de lungă durată.",
+        "fallsLabel": "2 sau mai multe căderi în ultimul an",
+        "menopauseLabel": "Menopauză înainte de 45 de ani",
+        "majorLabel": "Factori majori semnalați",
+        "contributingLabel": "Factori care contribuie, semnalați"
+      },
+      "sections": [
+        {
+          "heading": "Factori de risc pentru fractura de fragilitate",
+          "body": [
+            "Osteoporoza nu are simptome proprii — primul semn este adesea o fractură în urma unei căderi care în mod normal nu ar rupe un os. De aceea, ghidurile pornesc de la factorii de risc, pentru a decide cine merită evaluat înainte să se producă o fractură, nu după.",
+            "Cei zece factori de mai jos sunt cei pe care ghidul NICE CG146 îi enumeră pentru această decizie. Doi dintre ei sunt considerați majori de la sine; ceilalți se adună, nu acționează izolat."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Factorii de risc pe care ghidul de identificare a riscului NICE îi semnalează pentru evaluare",
+            "columns": [
+              "Factor de risc",
+              "De ce contează",
+              "Major sau care contribuie"
+            ],
+            "rows": [
+              [
+                "Fractură de fragilitate după 50 de ani",
+                "O fractură a încheieturii, șoldului, coloanei sau brațului dintr-o cădere ușoară este cel mai puternic semn al unei noi fracturi.",
+                "Major"
+              ],
+              [
+                "Corticosteroizi orali de lungă durată (3+ luni)",
+                "Glucocorticoizii subțiază osul direct, independent de orice alt factor din această listă.",
+                "Major"
+              ],
+              [
+                "Un părinte a suferit o fractură de șold",
+                "Indică o rezistență osoasă moștenită, separată de propriul stil de viață.",
+                "Care contribuie"
+              ],
+              [
+                "Fumător în prezent",
+                "Scade densitatea osoasă și încetinește vindecarea dacă se produce o fractură.",
+                "Care contribuie"
+              ],
+              [
+                "3+ unități de alcool pe zi",
+                "Reduce formarea osoasă și crește chiar riscul de cădere.",
+                "Care contribuie"
+              ],
+              [
+                "Artrită reumatoidă",
+                "Boala în sine, și adesea tratamentul ei, afectează remodelarea osoasă.",
+                "Care contribuie"
+              ],
+              [
+                "O cauză secundară de pierdere osoasă",
+                "Afecțiuni precum hipertiroidismul sau boala hepatică ori renală de lungă durată reduc densitatea osoasă de la sine.",
+                "Care contribuie"
+              ],
+              [
+                "2+ căderi în ultimul an",
+                "Majoritatea fracturilor de fragilitate apar în urma unei căderi de la înălțimea proprie, nu izolat.",
+                "Care contribuie"
+              ],
+              [
+                "Menopauză înainte de 45 de ani",
+                "Estrogenul protejează osul, așa că pierderea lui mai devreme lasă mai mult timp pierderii osoase.",
+                "Care contribuie"
+              ],
+              [
+                "Greutate corporală scăzută (IMC sub 18,5)",
+                "Mai puțină masă corporală înseamnă de obicei mai puțină masă osoasă și mai puțină amortizare la o cădere.",
+                "Care contribuie"
+              ]
+            ],
+            "footnote": "Bazat pe factorii de risc pe care ghidul NICE CG146 (evaluarea riscului de fractură de fragilitate) îi enumeră pentru identificarea riscului. Este o listă de identificare a riscului, nu un scor de diagnostic."
+          }
+        },
+        {
+          "heading": "Cine ar trebui evaluat, conform ghidurilor clinice",
+          "body": [
+            "NICE, National Osteoporosis Guideline Group (NOGG) din Regatul Unit și European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) stabilesc, în esență, același prag. Este o combinație între un prag de vârstă și unul de factori de risc, nu un singur număr."
+          ],
+          "bullets": [
+            "Toate femeile de 65 de ani și peste, și toți bărbații de 75 de ani și peste — evaluarea este recomandată doar pe baza vârstei.",
+            "Persoanele mai tinere cu un factor de risc major — o fractură de fragilitate anterioară sau corticosteroizi orali de lungă durată — la orice vârstă, inclusiv sub 50 de ani.",
+            "Oricine are 50 de ani sau peste, cu unul dintre factorii care contribuie din tabelul de mai sus.",
+            "Acest instrument aplică regula publicată la ce completezi tu. Nu calculează o probabilitate și nu este FRAX — FRAX este un instrument proprietar separat, folosit de un medic, care combină acest tip de factori cu o măsurătoare a densității osoase."
+          ]
+        },
+        {
+          "heading": "Ce nu îți poate spune această verificare",
+          "body": [
+            "O listă de factori de risc este un instrument de triere, nu o măsurătoare. Îți spune dacă merită să întrebi despre o investigație — nu îți spune ce ar arăta acea investigație."
+          ],
+          "bullets": [
+            "Nu este un diagnostic. Osteoporoza se diagnostichează printr-o densitometrie osoasă (DXA), nu printr-un chestionar.",
+            "Nu oferă o probabilitate de fractură. Instrumentele care fac asta — FRAX, nomograma Garvan, QFracture — combină factorii de risc cu o măsurătoare a densității osoase și sunt folosite de un medic.",
+            "Nu este FRAX și nu folosește coeficienții acestuia, care sunt proprietatea Universității Sheffield.",
+            "Un rezultat „niciun factor de risc specific semnalat” este liniștitor, dar nu este o garanție — menționează oricum unui medic orice fractură sau cădere nouă.",
+            "Nu spune nimic despre tratament. Medicația este o decizie a unui medic, luată după un diagnostic, nu pornind de la o listă de factori de risc."
+          ]
+        },
+        {
+          "heading": "Cum ajungi la o evaluare",
+          "body": [],
+          "bullets": [
+            "Începe cu un medic. Acesta îți va analiza factorii de risc și va decide dacă are sens o trimitere pentru densitometrie osoasă.",
+            "Adu factorii pe care i-a semnalat acest instrument pentru tine — care anume, nu doar rezultatul — ca discuția să fie mai rapidă.",
+            "Dacă ai avut deja o fractură de fragilitate, întreabă despre evaluare indiferent de vârstă sau de rezultatul acestui instrument.",
+            "Calciu, vitamina D, exercițiile cu impact și renunțarea la fumat susțin sănătatea osoasă cât timp aștepți orice evaluare.",
+            "Cere asistență medicală rapid pentru o fractură nouă, apărută în urma unei căderi de mică energie, indiferent ce arată acest instrument — trebuie tratată în sine."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Este la fel ca FRAX?",
+          "answer": "Nu. FRAX este un instrument proprietar separat, dezvoltat de Universitatea Sheffield, ale cărui coeficienți nu sunt publicați — acest instrument nu îl reproduce și nu pretinde că îi egalează rezultatul. Aceasta este o listă de identificare a riscului bazată pe ghiduri publicate (NICE CG146): îți spune dacă merită să fii evaluat(ă), niciodată o probabilitate de fractură."
+        },
+        {
+          "question": "Ce este o densitometrie osoasă (DXA)?",
+          "answer": "O investigație de absorbțiometrie cu raze X cu energie duală — o radiografie cu doză mică ce măsoară densitatea osoasă, de obicei la șold și coloană. Este investigația pe care se bazează de fapt o evaluare; nimic din această pagină nu o înlocuiește."
+        },
+        {
+          "question": "Dacă am factori de risc, înseamnă că am osteoporoză?",
+          "answer": "Nu. Un factor de risc semnalat înseamnă că ghidurile recomandă să fii evaluat(ă), nu că ai afecțiunea. Multe persoane cu factori de risc au o densitometrie osoasă normală, iar osteoporoza poate apărea și fără niciunul dintre factorii de aici."
+        },
+        {
+          "question": "Ce fac dacă rezultatul meu este „niciun factor de risc specific semnalat”, dar tot sunt îngrijorat(ă)?",
+          "answer": "Discută oricum cu un medic. Acest instrument acoperă factorii de risc dintr-un singur ghid clinic; nu acoperă tot istoricul personal sau familial care ar putea fi relevant, iar o discuție nu costă nimic ce această listă nu poate cântări."
+        },
+        {
+          "question": "Cine diagnostichează de fapt osteoporoza?",
+          "answer": "Un medic, pe baza unei densitometrii osoase (DXA) — de obicei un scor T de -2,5 sau mai mic la șold sau coloană. Un chestionar de factori de risc precum acesta poate doar sugera cine ar trebui să facă acea investigație; nu poate diagnostica nimic prin el însuși."
+        },
+        {
+          "question": "Această verificare îmi stochează răspunsurile?",
+          "answer": "Nu. Calculul rulează integral în browserul tău. Nimic din ce selectezi nu este trimis către serverele noastre și nu este stocat."
+        }
+      ],
+      "cta": {
+        "heading": "Vrei să discuți despre sănătatea oaselor tale?",
+        "body": "Programează o videoconsultație cu un medic înregistrat, treci în revistă factorii tăi de risc și află dacă are sens o trimitere pentru densitometrie osoasă.",
+        "label": "Programează o consultație"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Calculator de ovulație",
+      "cardBlurb": "Zilele tale fertile, ziua estimată a ovulației și când urmează următoarea menstruație.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Calculator",
+      "h1Accent": "de ovulație",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculator Ovulație {country} | Zile Fertile și Ziua Ovulației",
+      "metaDescription": "Află zilele fertile și ziua estimată a ovulației pornind de la prima zi a ultimei menstruații. Se ajustează după durata ciclului tău, cu cele șase zile cele mai fertile detaliate.",
+      "lede": "Introdu prima zi a ultimei menstruații ca să vezi cele șase zile cu cea mai mare șansă de concepție, ziua estimată a ovulației și când urmează următoarea menstruație.",
+      "trustPoints": [
+        "Se numără înapoi de la următoarea menstruație, deci și ciclurile lungi ies corect",
+        "Toată fereastra fertilă de șase zile, nu o singură zi",
+        "Rulează în browserul tău — nimic nu se trimite și nu se salvează"
+      ],
+      "suggestionsIntro": "O estimare a ovulației este un reper de calendar, nu o evaluare a fertilității. Acestea sunt consultațiile pe care le fac medicii noștri când vrei ca cineva să se uite la tot tabloul.",
+      "widget": {
+        "title": "Zilele tale fertile",
+        "placeholder": "Introdu prima zi a ultimei menstruații ca să vezi zilele fertile.",
+        "note": "Este o estimare pornind de la datele introduse, nu un diagnostic — și nu este o metodă contraceptivă. Ovulația se mută de la un ciclu la altul, iar sarcina este posibilă și în zile din afara intervalului afișat.",
+        "lmpLabel": "Prima zi a ultimei menstruații",
+        "lmpHint": "Ziua în care a început sângerarea, nu ziua în care s-a oprit.",
+        "cycleLabel": "Durata ciclului",
+        "cycleHint": "Zile de la începutul unei menstruații până la începutul următoarei. Dacă nu știi, lasă 28.",
+        "daysUnit": "zile",
+        "resultLabel": "Ovulație estimată",
+        "resultSummary": "Numărată cu 14 zile înainte de următoarea menstruație așteptată — exact asta ține calendarul corect și la ciclurile care nu au 28 de zile.",
+        "fertileWindowLabel": "Fereastră fertilă (6 zile)",
+        "daysToOvulationLabel": "Zile până la ovulație",
+        "nextPeriodLabel": "Următoarea menstruație",
+        "testFromLabel": "Test de la"
+      },
+      "sections": [
+        {
+          "heading": "Ciclul tău, zi cu zi",
+          "body": [
+            "Ciclul se numără din prima zi de sângerare. Ovulația nu este fixată în ziua 14: apare cu aproximativ 14 zile înainte de URMĂTOAREA menstruație, așa că într-un ciclu de 35 de zile cade în jurul zilei 21, iar într-unul de 24 de zile în jurul zilei 10. De aceea numărarea a 14 zile înainte de la ultima menstruație greșește la orice ciclu care nu are 28 de zile.",
+            "Zilele de mai jos sunt un ciclu de 28 de zile. Calculatorul de mai sus le mută pe durata ciclului pe care ai introdus-o."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Zilele fertile într-un ciclu de 28 de zile",
+            "columns": [
+              "Ziua ciclului",
+              "Ce se întâmplă",
+              "Șansa de concepție"
+            ],
+            "rows": [
+              [
+                "Ziua 1",
+                "Începe sângerarea — de aici se numără ciclul",
+                "Foarte mică"
+              ],
+              [
+                "Zilele 2 – 8",
+                "Un ovul se maturează; fereastra nu s-a deschis încă",
+                "Mică"
+              ],
+              [
+                "Zilele 9 – 13",
+                "Fereastra fertilă: spermatozoizii supraviețuiesc până la cinci zile",
+                "Mare"
+              ],
+              [
+                "Ziua 14",
+                "Ovulația — ovulul este eliberat",
+                "Cea mai mare"
+              ],
+              [
+                "Zilele 15 – 16",
+                "Ovulul supraviețuiește mai puțin de o zi după eliberare",
+                "Scade rapid"
+              ],
+              [
+                "Ziua 28",
+                "Urmează menstruația — dacă nu vine, testează de aici",
+                "Foarte mică"
+              ]
+            ],
+            "footnote": "Spermatozoizii supraviețuiesc până la cinci zile în tractul reproducător, iar ovulul mai puțin de o zi, și de aceea fereastra fertilă se deschide cu mult înainte de ovulație și se închide aproape imediat după."
+          }
+        },
+        {
+          "heading": "Semne că ai ovulat cu adevărat",
+          "body": [
+            "Calculatorul prezice; aceste semne confirmă. Dacă urmărești unul-două timp de câteva cicluri, afli dacă ovulația ta se potrivește cu estimarea — și e bine de știut înainte să construiești ceva pe ea."
+          ],
+          "bullets": [
+            "Mucusul cervical devine clar, elastic și alunecos, ca albușul de ou crud, în zilele dinaintea ovulației.",
+            "Testele de ovulație detectează creșterea LH în urină, care apare cu 24–36 de ore înainte de eliberarea ovulului. Începe testarea cu câteva zile înainte de data estimată.",
+            "Temperatura bazală crește cu aproximativ 0,3 °C după ovulație, deci o confirmă ulterior, nu o anunță dinainte.",
+            "Unele persoane simt o durere pe o singură parte la mijlocul ciclului, altele observă sâni sensibili sau o schimbare a libidoului.",
+            "Un ciclu poate trece fără ovulație. Se întâmplă ocazional la majoritatea oamenilor și, în sine, nu înseamnă că e ceva în neregulă."
+          ]
+        },
+        {
+          "heading": "Ce nu poate face acest calculator",
+          "body": [
+            "Lucrează doar cu două lucruri: data pe care o introduci și presupunerea că faza luteală durează cele 14 zile obișnuite. Ambele sunt rezonabile, niciuna nu e garantată."
+          ],
+          "bullets": [
+            "Nu este o metodă contraceptivă. Ciclurile se mută, spermatozoizii supraviețuiesc zile întregi, iar sarcina este posibilă și în zile din afara ferestrei arătate aici.",
+            "Ciclurile neregulate, contracepția hormonală oprită recent, alăptarea, sindromul ovarelor polichistice și bolile tiroidiene slăbesc predicția.",
+            "Contracepția hormonală suprimă ovulația, deci cât timp o folosești nu este nimic de prezis.",
+            "Stresul, o boală, călătoriile și antrenamentele intense pot întârzia ovulația într-un ciclu.",
+            "Este un instrument de planificare, nu un test de fertilitate: nu spune nimic despre calitatea ovulelor, despre spermă sau despre trompe."
+          ]
+        },
+        {
+          "heading": "Când să vorbești cu un medic",
+          "body": [],
+          "bullets": [
+            "Încerci să rămâi însărcinată de 12 luni, sau de 6 luni dacă ai peste 35 de ani.",
+            "Ciclurile tale sunt mai scurte de 21 de zile, mai lungi de 35 sau imprevizibile de la o lună la alta.",
+            "Menstruația s-a oprit sau ai sângerări între menstruații.",
+            "Ai menstruații dureroase, durere la contact sexual sau un diagnostic de sindrom al ovarelor polichistice, endometrioză ori boală tiroidiană.",
+            "Vrei sfat înainte de concepție — acidul folic, medicamentele pe care le iei deja, vaccinurile și o măsurare a tensiunii arteriale țin de perioada dinainte de sarcină, nu de după."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Când sunt cel mai fertilă?",
+          "answer": "În ziua ovulației și în cele două zile dinaintea ei. Fereastra în ansamblu acoperă aproximativ șase zile: cele cinci dinainte de ovulație plus ziua în sine. Spermatozoizii supraviețuiesc până la cinci zile, iar ovulul mai puțin de una, de aceea fereastra se deschide devreme și se închide repede."
+        },
+        {
+          "question": "Ovulația are loc întotdeauna în ziua 14?",
+          "answer": "Nu. Ziua 14 este valabilă doar pentru ciclul de manual, de 28 de zile. Ovulația apare cu circa 14 zile înainte de următoarea menstruație, deci într-un ciclu de 32 de zile cade în jurul zilei 18, iar într-unul de 24 de zile în jurul zilei 10. Numărarea a 14 zile de la ultima menstruație este cea mai frecventă greșeală de calendar."
+        },
+        {
+          "question": "Cum calculez ovulația dacă am cicluri neregulate?",
+          "answer": "Introdu durata obișnuită a ciclului și tratează rezultatul ca pe un interval larg, nu ca pe o dată fixă. Dacă ciclurile îți variază cu mai mult de câteva zile, testele de ovulație sau urmărirea mucusului cervical îți spun mult mai mult decât orice calcul de calendar, iar ciclurile constant sub 21 sau peste 35 de zile merită o consultație."
+        },
+        {
+          "question": "Pot folosi un calculator de ovulație pe post de contracepție?",
+          "answer": "Nu. Nu este o metodă contraceptivă și nu ar trebui folosit niciodată așa. Ovulația se deplasează de la un ciclu la altul, spermatozoizii supraviețuiesc până la cinci zile, iar sarcina este posibilă și în zile pe care acest calculator le arată în afara ferestrei fertile. Dacă vrei să eviți o sarcină, folosește o metodă contraceptivă recunoscută."
+        },
+        {
+          "question": "Când pot face un test de sarcină după ovulație?",
+          "answer": "Majoritatea testelor de casă sunt fiabile din ziua în care ar trebui să vină menstruația, adică la aproximativ 14 zile după ovulație — data „Test de la” din rezultat. Un test mai devreme poate ieși negativ chiar dacă ești însărcinată, pentru că în urină nu este încă suficient hCG."
+        },
+        {
+          "question": "Acest calculator de ovulație păstrează datele mele?",
+          "answer": "Nu. Calculul se face integral în browserul tău. Nimic din ce introduci nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Încerci să rămâi însărcinată?",
+        "body": "Discută prin video cu un medic înregistrat despre cicluri neregulate, analizele dinaintea sarcinii sau medicamentele pe care le iei deja.",
+        "label": "Programează o consultație"
+      }
+    }
+  }
+}

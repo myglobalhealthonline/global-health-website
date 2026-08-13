@@ -17,7 +17,7 @@ import {
   formatCents,
   formatDate,
 } from "@/app/(portal)/(admin)/admin/corporate/_lib";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,7 @@ type PageProps = {
 
 async function updateCompanyAction(formData: FormData) {
   "use server";
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { settings: s } = loadLocaleBundle(locale).corporate;
   const read = (key: string) => String(formData.get(key) ?? "").trim();
   const optional = (key: string) => {
@@ -62,7 +62,7 @@ async function updateCompanyAction(formData: FormData) {
 
 export default async function CorporateSettingsPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
-  const [result, locale] = await Promise.all([fetchCorporateCompany(), getPageLocale()]);
+  const [result, locale] = await Promise.all([fetchCorporateCompany(), getPortalLocale()]);
   const { settings: s } = loadLocaleBundle(locale).corporate;
 
   if (!result.ok) {

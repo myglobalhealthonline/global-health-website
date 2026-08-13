@@ -37,8 +37,8 @@
   },
   "team": {
     "eyebrow": "Das Team",
-    "headline": "Der Arzt, den Sie wählen, ist",
-    "headlineAccent": "der Arzt, der Sie behandelt.",
+    "headline": "Sehe ich immer",
+    "headlineAccent": "denselben Arzt?",
     "body": "Jede Konsultation findet mit jemandem statt, der dort zugelassen ist, wo Sie sich befinden. Keine Call-Center, keine wechselnden Unbekannten — der Arzt auf dem Bildschirm ist der Arzt im Profil.",
     "registeredSingular": "registrierter Arzt",
     "registeredPlural": "registrierte Ärzte",
@@ -61,8 +61,8 @@
   },
   "howItWorks": {
     "eyebrow": "Wie es funktioniert",
-    "headlineMain": "Drei Schritte.",
-    "headlineAccent": "Ein klarerer Weg.",
+    "headlineMain": "Wie funktioniert",
+    "headlineAccent": "es?",
     "subtitle": "Von der Wahl eines Dienstes bis zum bestätigten Termin — wählen Sie einen Arzt, einen Zeitpunkt und erhalten Sie Versorgung von überall.",
     "step1Title": "Wählen Sie Ihren Dienst",
     "step1Body": "Durchsuchen Sie Allgemeinarzt-Konsultationen, Facharzt-Überweisungen und Heimtestdienste. Filtern Sie nach Sprache, Dringlichkeit oder Preis.",

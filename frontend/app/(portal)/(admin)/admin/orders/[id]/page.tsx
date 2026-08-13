@@ -19,6 +19,7 @@ import { InsuranceVerifyPanel } from "./_components/insurance-verify-panel";
 import { OrderMeetLinkDisplay } from "../_components/order-meet-link-display";
 import { UpdateAppointmentPanel } from "./_components/update-appointment-panel";
 import { AdminTrackingForm } from "./_components/tracking-form";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -155,6 +156,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
 
   return (
     <>
+      <SetCrumbTitle label={`#${formatOrderDisplayId(order)}`} />
       <Link
         href="/admin/orders"
         className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

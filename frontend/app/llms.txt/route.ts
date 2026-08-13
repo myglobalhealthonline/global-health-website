@@ -3,16 +3,35 @@ import { countries } from "@/data/countries";
 import { SITE_NAME } from "@/lib/constants";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { listBlogPosts, type BlogListItem } from "@/lib/content/get-public-blog";
 
 /**
  * `/llms.txt` is a draft-standard manifest for AI crawlers such as ChatGPT,
  * Perplexity, and Google AI Overviews. Keep it focused on canonical,
  * indexable public URLs.
  */
-export const dynamic = "force-static";
+// Rendered at request time, same reasoning as app/sitemap.ts: the article
+// list comes from the backend API, which is unreachable during the static
+// build — a build-time render would silently ship zero articles (the
+// try/catch fallback in listBlogPosts fires) and this route would regress
+// to exactly the gap it's meant to fix. llms.txt traffic is low-volume
+// AI-crawler-only, so per-request rendering is fine.
+export const dynamic = "force-dynamic";
+
+/** Mirrors blog-index-page.tsx's `blogPostHref` (no visitor cookie context
+ *  here, so it always falls back to the lowest country code — same as the
+ *  bare `/blog` index on a first visit). Every post has exactly one
+ *  canonical URL; keep this in sync with that function and with
+ *  resolveBlogPostRoute() on the backend. */
+function blogPostHref(origin: string, post: BlogListItem): string {
+  if (post.countries.length === 0) return `${origin}/blog/${post.slug}`;
+  const target = [...post.countries].sort((a, b) => a.code.localeCompare(b.code))[0];
+  return `${origin}/${target.slug}/${post.locale.toLowerCase()}/blog/${post.slug}`;
+}
 
 export async function GET() {
   const origin = getSiteUrl();
+  const posts = await listBlogPosts();
   const lines: string[] = [
     `# ${SITE_NAME}`,
     "",
@@ -37,7 +56,20 @@ export async function GET() {
     "## Site info",
     `- [About Global Health](${origin}/about): who we are, clinical governance, and how the service works.`,
     `- [FAQ](${origin}/faq): common questions about consultations, prescriptions, and payments.`,
-    `- [Health blog](${origin}/blog): clinician-reviewed health guides.`,
+    `- [Health blog](${origin}/blog): index of all clinician-reviewed health guides.`,
+  );
+
+  if (posts.length > 0) {
+    lines.push("", "## Articles");
+    for (const post of posts) {
+      const byline = post.author ? ` By ${post.author}.` : "";
+      lines.push(`- [${post.title}](${blogPostHref(origin, post)}): ${post.excerpt}${byline}`);
+    }
+  }
+
+  lines.push(
+    "",
+    "## Optional",
     `- [Privacy notice](${origin}/privacy)`,
     `- [Terms of service](${origin}/terms)`,
     `- [Sitemap](${origin}/sitemap.xml)`,

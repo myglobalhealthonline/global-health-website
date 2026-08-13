@@ -1,6 +1,13 @@
 import type PizZip from "pizzip";
+import type { GeneratedDocumentType } from "@prisma/client";
 import { buildLineGapXml, FOOTER_GAP_LINES } from "./docx-page-layout.js";
 import { clinicAddressLines } from "../../lib/clinic-addresses.js";
+
+const IE_REFERRAL_NOTICE_TEXT =
+  "Please note: We do not accept clinical correspondence, reports or patient results by post. Please send all correspondence and results via Healthmail, Healthlink, or by using the QR code provided on this referral/request.";
+
+const IE_CONTROLLED_MEDICATION_TEXT =
+  "Controlled medication: subject to patient ID verification and the pharmacy's dispensing criteria, including review of previously dispensed medications.";
 
 const COUNTRY_LEGAL_TEXTS: Partial<Record<string, { text: string; szHp: string }>> = {
   CZ: {
@@ -33,6 +40,60 @@ export function buildCountryLegalParagraphXml(countryCode: string): string {
     `<w:jc w:val="left"/>` +
     `<w:rPr>${rPr}</w:rPr></w:pPr>` +
     `<w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${escapeXml(text)}</w:t></w:r>` +
+    `</w:p>`
+  );
+}
+
+/**
+ * IE-only referral/exam-request correspondence notice (Healthmail/Healthlink, no post).
+ * Inject just above the footer band, alongside buildCountryLegalParagraphXml.
+ */
+export function buildIrelandReferralNoticeParagraphXml(
+  countryCode: string,
+  documentType: GeneratedDocumentType,
+): string {
+  if (countryCode.toUpperCase() !== "IE" || documentType !== "EXAMS_PRESCRIPTION") return "";
+  const FONT = process.platform === "win32" ? "Calibri" : "Carlito";
+  const rPr =
+    `<w:rFonts w:ascii="${FONT}" w:hAnsi="${FONT}" w:cs="${FONT}"/>` +
+    `<w:sz w:val="16"/><w:szCs w:val="16"/><w:b/><w:bCs/>` +
+    `<w:color w:val="26332D"/><w:rtl w:val="0"/>`;
+  return (
+    `<w:p><w:pPr>` +
+    `<w:spacing w:before="60" w:after="60" w:line="220" w:lineRule="auto"/>` +
+    `<w:jc w:val="left"/>` +
+    `<w:rPr>${rPr}</w:rPr></w:pPr>` +
+    `<w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${escapeXml(IE_REFERRAL_NOTICE_TEXT)}</w:t></w:r>` +
+    `</w:p>`
+  );
+}
+
+/**
+ * IE-only controlled-medication notice, shown on every prescription. Bordered
+ * paragraph so it stays "clearly visible" rather than blending into the footer.
+ * Inject just above the footer band.
+ */
+export function buildIrelandControlledMedicationParagraphXml(
+  countryCode: string,
+  documentType: GeneratedDocumentType,
+): string {
+  if (countryCode.toUpperCase() !== "IE" || documentType !== "PRESCRIPTION") return "";
+  const FONT = process.platform === "win32" ? "Calibri" : "Carlito";
+  const rPr =
+    `<w:rFonts w:ascii="${FONT}" w:hAnsi="${FONT}" w:cs="${FONT}"/>` +
+    `<w:sz w:val="18"/><w:szCs w:val="18"/><w:b/><w:bCs/>` +
+    `<w:color w:val="7A3714"/><w:rtl w:val="0"/>`;
+  return (
+    `<w:p><w:pPr>` +
+    `<w:pBdr><w:top w:val="single" w:sz="8" w:space="4" w:color="A24B1F"/>` +
+    `<w:bottom w:val="single" w:sz="8" w:space="4" w:color="A24B1F"/>` +
+    `<w:left w:val="single" w:sz="8" w:space="4" w:color="A24B1F"/>` +
+    `<w:right w:val="single" w:sz="8" w:space="4" w:color="A24B1F"/></w:pBdr>` +
+    `<w:shd w:val="clear" w:color="auto" w:fill="FDF3EA"/>` +
+    `<w:spacing w:before="120" w:after="120" w:line="240" w:lineRule="auto"/>` +
+    `<w:jc w:val="left"/>` +
+    `<w:rPr>${rPr}</w:rPr></w:pPr>` +
+    `<w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${escapeXml(IE_CONTROLLED_MEDICATION_TEXT)}</w:t></w:r>` +
     `</w:p>`
   );
 }

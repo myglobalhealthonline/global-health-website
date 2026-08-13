@@ -6,6 +6,8 @@
 import { SITE_NAME } from "@/lib/constants";
 import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildOgImageUrl, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from "@/lib/seo/og-image";
+import type { AggregateSnapshot } from "@/lib/api/reviews-config";
 
 const SITE_URL = getSiteUrl();
 
@@ -39,7 +41,46 @@ const BASE_SAME_AS = [
   "https://www.wikidata.org/wiki/Q140363271",
 ];
 
-export function organizationJsonLd(sameAs: string[] = []) {
+// How long a saved rating snapshot is trusted before it's treated as stale
+// and dropped from the schema — roughly 13 months. A rating an admin hasn't
+// touched in over a year is more likely wrong than right; better to emit
+// nothing than a number nobody has verified in a long time.
+const AGGREGATE_STALE_DAYS = 400;
+
+/**
+ * Build a schema.org `AggregateRating` node from a stored provider snapshot
+ * (`review.<provider>.aggregate` in Settings — see settings.service.ts).
+ *
+ * FAILS CLOSED: returns `undefined` (emit nothing) unless the aggregate is a
+ * real, positive, non-stale rating. A fabricated or defaulted AggregateRating
+ * on a medical site risks a Google structured-data manual action and is a
+ * consumer-protection problem — never relax these checks to "make ratings
+ * show up". See structured-data.test.ts for the guard test.
+ */
+export function aggregateRatingJsonLd(
+  aggregate: AggregateSnapshot | null | undefined,
+): Record<string, unknown> | undefined {
+  if (!aggregate) return undefined;
+  const { rating, count, updatedAt } = aggregate;
+  if (!Number.isFinite(rating) || rating <= 0 || rating > 5) return undefined;
+  if (!Number.isFinite(count) || count <= 0 || !Number.isInteger(count)) return undefined;
+  const updated = new Date(updatedAt);
+  if (Number.isNaN(updated.getTime())) return undefined;
+  const ageDays = (Date.now() - updated.getTime()) / (1000 * 60 * 60 * 24);
+  if (ageDays > AGGREGATE_STALE_DAYS) return undefined;
+  return {
+    "@type": "AggregateRating",
+    ratingValue: rating,
+    reviewCount: count,
+    bestRating: 5,
+    worstRating: 1,
+  };
+}
+
+export function organizationJsonLd(
+  sameAs: string[] = [],
+  aggregateRating?: Record<string, unknown>,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "MedicalOrganization",
@@ -62,6 +103,9 @@ export function organizationJsonLd(sameAs: string[] = []) {
     // regulator URLs are populated per active country from CountryAuthorityLink
     // rows (showInSchema) and merged on top of the base social profiles.
     sameAs: [...BASE_SAME_AS, ...sameAs],
+    // SEO audit 3.2 — only emitted when the caller resolved a real, fresh
+    // aggregate (see aggregateRatingJsonLd's fail-closed guard above).
+    ...(aggregateRating ? { aggregateRating } : {}),
     areaServed: [
       { "@type": "Country", name: "Ireland" },
       { "@type": "Country", name: "Portugal" },
@@ -246,7 +290,11 @@ export function physicianJsonLd(doc: {
       : undefined,
     knowsLanguage: doc.languages,
     areaServed: doc.countryName,
-    ...(doc.specialty ? { medicalSpecialty: doc.specialty } : {}),
+    // Structured MedicalSpecialty node rather than a bare free-text string —
+    // `doc.specialty` is a display label (often localized, e.g. "Cardiología"
+    // for the ES locale), so it's wrapped as the node's `name` instead of
+    // being asserted as a canonical schema.org enum token we can't verify.
+    ...(doc.specialty ? { medicalSpecialty: { "@type": "MedicalSpecialty", name: doc.specialty } } : {}),
     worksFor: {
       "@type": "MedicalOrganization",
       "@id": ORGANIZATION_ID,
@@ -281,18 +329,57 @@ export function physicianJsonLd(doc: {
   };
 }
 
-export function medicalBusinessJsonLd(country: {
+/** Stable per-country `@id` anchor, e.g. `#organization-ireland` — lets every
+ *  block for the same country entity (country home, service pages) merge
+ *  into one node instead of reading as duplicate/conflicting entities. */
+export function countryOrganizationId(countrySlug: string): string {
+  return `${ORGANIZATION_ID}-${countrySlug}`;
+}
+
+/**
+ * Schema.org `MedicalOrganization` for the country-level entity (e.g.
+ * "Global Health · Ireland"). Replaces the former `MedicalBusiness`/
+ * `MedicalClinic` split — both are `LocalBusiness` subtypes that need
+ * `address`/`geo` for any rich-result benefit, and Global Health is a
+ * virtual-only telehealth provider, so neither type earned anything while
+ * creating an inconsistent entity graph. `parentOrganization` links back to
+ * the site-wide `#organization` node.
+ */
+export function countryMedicalOrganizationJsonLd(country: {
   name: string;
+  /** URL slug, e.g. "ireland" — feeds the country-scoped `@id`. */
+  slug: string;
   url: string;
   identifier?: { label?: string | null; value: string } | null;
   sameAs?: string[];
   regulator?: SchemaRegulator | null;
+  /**
+   * Registered office. Deliberately emitted on MedicalOrganization and NOT
+   * LocalBusiness/MedicalClinic: those assert a location the public can
+   * attend, and these addresses are registered offices with no walk-in
+   * service (confirmed 2026-08-04). Omit for markets with no premises —
+   * an address the business does not hold is a fabricated locality signal.
+   */
+  address?: {
+    streetAddress: string;
+    addressLocality: string;
+    postalCode: string;
+    addressCountry: string;
+  } | null;
+  contactPoint?: {
+    telephone: string;
+    email?: string | null;
+    availableLanguage?: string[];
+    contactType?: string;
+  } | null;
 }) {
   return {
     "@context": "https://schema.org",
-    "@type": "MedicalBusiness",
+    "@type": "MedicalOrganization",
+    "@id": countryOrganizationId(country.slug),
     name: `${SITE_NAME} · ${country.name}`,
     url: country.url.startsWith("http") ? country.url : `${SITE_URL}${country.url}`,
+    parentOrganization: { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID },
     medicalSpecialty: ["GeneralPractice", "Cardiology", "Dermatology", "Psychiatry"],
     areaServed: { "@type": "Country", name: country.name },
     ...(country.identifier
@@ -305,6 +392,31 @@ export function medicalBusinessJsonLd(country: {
         }
       : {}),
     ...(country.sameAs && country.sameAs.length > 0 ? { sameAs: country.sameAs } : {}),
+    ...(country.address
+      ? {
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: country.address.streetAddress,
+            addressLocality: country.address.addressLocality,
+            postalCode: country.address.postalCode,
+            addressCountry: country.address.addressCountry,
+          },
+        }
+      : {}),
+    ...(country.contactPoint
+      ? {
+          contactPoint: {
+            "@type": "ContactPoint",
+            contactType: country.contactPoint.contactType ?? "customer support",
+            telephone: country.contactPoint.telephone,
+            ...(country.contactPoint.email ? { email: country.contactPoint.email } : {}),
+            ...(country.contactPoint.availableLanguage &&
+            country.contactPoint.availableLanguage.length > 0
+              ? { availableLanguage: country.contactPoint.availableLanguage }
+              : {}),
+          },
+        }
+      : {}),
     ...(country.regulator
       ? {
           memberOf: {
@@ -349,7 +461,20 @@ export function articleJsonLd(input: {
     headline: input.title,
     ...(input.description ? { description: input.description } : {}),
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
-    ...(input.imageSrc ? { image: input.imageSrc } : {}),
+    // ImageObject with explicit width/height (Google's Article guidance wants
+    // declared dimensions, ≥1200px wide) — reuses the site's existing OG-image
+    // pipeline, which always renders at a fixed OG_IMAGE_WIDTH x OG_IMAGE_HEIGHT,
+    // rather than guessing the raw cover photo's real (unstored) dimensions.
+    ...(input.imageSrc
+      ? {
+          image: {
+            "@type": "ImageObject",
+            url: buildOgImageUrl({ kind: "article", title: input.title, image: input.imageSrc }),
+            width: OG_IMAGE_WIDTH,
+            height: OG_IMAGE_HEIGHT,
+          },
+        }
+      : {}),
     ...(input.about ? { about: { "@type": "Thing", name: input.about } } : {}),
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
     ...(input.dateModified ? { dateModified: input.dateModified } : {}),
@@ -454,6 +579,34 @@ export function catalogueItemListJsonLd(items: Array<{ name: string; url: string
   };
 }
 
+/**
+ * A free calculator / screening tool page (`/{country}/{lang}/tools/...`).
+ *
+ * WebApplication rather than MedicalWebPage: the page's primary entity is the
+ * interactive tool, and `isAccessibleForFree` + a zero-price offer is what
+ * makes the "free tool" claim machine-readable. The explanatory copy around
+ * it is covered by the FAQPage block the same page emits.
+ */
+export function healthToolJsonLd(input: {
+  name: string;
+  description: string;
+  url: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: input.name,
+    description: truncateForSchema(input.description, 300),
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    applicationCategory: "HealthApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
 /** Best-guess Schema.org MedicalSpecialty for a service, from its slug/kind.
  *  Falls back to PrimaryCare for general GP services. */
 export function medicalSpecialtyForService(kind: string, slug: string): string {
@@ -480,20 +633,25 @@ export function medicalSpecialtyForService(kind: string, slug: string): string {
 }
 
 /**
- * Schema.org `MedicalClinic` for a service page, carrying the page's
- * `medicalSpecialty` and the bookable consultation as `availableService`
- * (a MedicalProcedure with a ReserveAction). Emitted alongside FAQPage so the
- * page advertises `MedicalClinic + MedicalSpecialty + FAQPage` per the SEO spec.
+ * Schema.org `MedicalOrganization` for a service page (the same country
+ * entity as `countryMedicalOrganizationJsonLd`, merged by `@id`), carrying
+ * the page's `medicalSpecialty` and the bookable consultation as
+ * `availableService` (a MedicalProcedure with a ReserveAction).
  */
 export function medicalClinicServiceJsonLd(input: {
   serviceName: string;
   description: string;
   specialty: string;
   countryName: string;
+  /** URL slug, e.g. "ireland" — feeds the country-scoped `@id`, same anchor
+   *  `countryMedicalOrganizationJsonLd` uses for the country home page. */
+  countrySlug: string;
   url: string;
   bookingUrl: string;
   /** Named clinical reviewer (Physician schema) for this service page's
-   *  content — same `reviewedBy` precedent as the blog Article schema.
+   *  content, surfaced as `employee` — `reviewedBy` is not a valid property
+   *  on MedicalOrganization/MedicalClinic (Google silently ignores it), so
+   *  this is the structurally correct way to attach the named physician.
    *  Omitted entirely when the country has no named reviewer. */
   reviewerPhysician?: ReturnType<typeof physicianJsonLd> | null;
   /** ISO timestamp of the admin-set clinical review date. Same field feeds
@@ -501,15 +659,29 @@ export function medicalClinicServiceJsonLd(input: {
    *  vocabulary, same precedent as the blog Article schema) — omitted
    *  entirely when the service has no review date set. */
   dateModified?: string | null;
+  /** SEO audit 3.3 — named author / clinical reviewer for THIS service's
+   *  content (Service.authorDoctorId / reviewerDoctorId), distinct from
+   *  `reviewerPhysician` above (the country's general "Clinical Director"
+   *  fallback, surfaced as `employee`). Attached directly as `author` /
+   *  `reviewedBy` on this node — the same non-strict-but-widely-adopted
+   *  E-E-A-T convention `articleJsonLd` already uses for blog posts (not a
+   *  Google rich-result requirement, but valuable for AI-search citation).
+   *  Omitted entirely when the service has no doctor linked. */
+  authorPhysician?: ReturnType<typeof physicianJsonLd> | null;
+  reviewedByPhysician?: ReturnType<typeof physicianJsonLd> | null;
 }) {
   return {
     "@context": "https://schema.org",
-    "@type": "MedicalClinic",
+    "@type": "MedicalOrganization",
+    "@id": countryOrganizationId(input.countrySlug),
     name: `${SITE_NAME} · ${input.countryName}`,
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    parentOrganization: { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID },
     medicalSpecialty: input.specialty,
     areaServed: { "@type": "Country", name: input.countryName },
-    ...(input.reviewerPhysician ? { reviewedBy: input.reviewerPhysician } : {}),
+    ...(input.reviewerPhysician ? { employee: input.reviewerPhysician } : {}),
+    ...(input.authorPhysician ? { author: input.authorPhysician } : {}),
+    ...(input.reviewedByPhysician ? { reviewedBy: input.reviewedByPhysician } : {}),
     ...(input.dateModified ? { dateModified: input.dateModified, lastReviewed: input.dateModified } : {}),
     availableService: {
       "@type": "MedicalProcedure",
@@ -572,24 +744,32 @@ export function consultationServiceOffersJsonLd(input: {
 }
 
 /**
- * Schema.org `Product` + nested `Offer` for one subscription plan tier on the
+ * Schema.org `Service` + nested `Offer` for one subscription plan tier on the
  * pricing page. Called once per plan from the same server-fetched plan list
- * the cards render, so price/currency always match what's on screen.
+ * the cards render, so price/currency always match what's on screen. `Service`
+ * replaces the previous `Product`/`Brand` typing — Google's Product guidance
+ * is scoped to purchasable goods, not recurring healthcare subscriptions, and
+ * `itemCondition` (required for Product rich results) doesn't apply to a plan
+ * anyway. This matches the `Service`+`Offer` pattern already used correctly
+ * elsewhere on the site (see `consultationServiceOffersJsonLd`).
  */
-export function subscriptionPlanProductJsonLd(input: {
+export function subscriptionPlanServiceJsonLd(input: {
   name: string;
   description?: string | null;
   url: string;
+  countryName: string;
   priceCents: number;
   currencyCode: string;
 }) {
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": "Service",
     name: input.name,
     ...(input.description ? { description: input.description } : {}),
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
-    brand: { "@type": "Brand", name: SITE_NAME },
+    serviceType: "Telehealth subscription plan",
+    provider: { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID },
+    areaServed: { "@type": "Country", name: input.countryName },
     offers: {
       "@type": "Offer",
       price: (input.priceCents / 100).toFixed(2),

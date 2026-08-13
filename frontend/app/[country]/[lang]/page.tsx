@@ -12,7 +12,6 @@ import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { LazyHydrate } from "@/components/motion/LazyHydrate";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { TrustMarquee, type TrustMarqueeItem } from "@/components/sections/TrustMarquee";
-import { fetchPublicReviewConfig } from "@/lib/api/reviews-config";
 import { localizedLanguageLabel } from "@/lib/content/languages";
 import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
@@ -32,7 +31,7 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import {
   breadcrumbJsonLd,
-  medicalBusinessJsonLd,
+  countryMedicalOrganizationJsonLd,
   faqJsonLd,
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
@@ -90,16 +89,32 @@ export async function generateMetadata({
   const extras = homePageExtras(code, lang);
   const { common: metaCommon } = loadLocaleBundle(lang as LocaleCode);
   const path = `/${country}/${lang}`;
+  // `config.name` is the country's English display name (DB `Country.name`),
+  // not locale-aware — the generic template fallback below must use the
+  // localized name (same `countryNames` map used by about/page.tsx and the
+  // legal-notice component) or a non-English locale's fallback title reads
+  // half-English, e.g. "Médico Online Czechia" instead of "...Chequia".
+  const localizedCountryName = metaCommon.countryNames?.[code] ?? config.name;
   const title =
-    page?.seoTitle ?? extras?.seoTitle ?? metaCommon.homeMeta.titleTemplate.replace("{country}", config.name);
+    page?.seoTitle ??
+    extras?.seoTitle ??
+    metaCommon.homeMeta.titleTemplate.replace("{country}", localizedCountryName);
   const description =
     page?.seoDescription ??
     extras?.seoDescription ??
-    metaCommon.homeMeta.descriptionTemplate.replace("{country}", config.name);
+    metaCommon.homeMeta.descriptionTemplate.replace("{country}", localizedCountryName);
   // OG/Twitter may carry a distinct social-optimised variant; fall back to
   // the page title/description otherwise.
   const ogTitle = extras?.ogTitle ?? title;
   const ogDescription = extras?.ogDescription ?? description;
+  // Market-only cluster: this country's supported locales as
+  // `{lang}-{REGION}` rows plus `x-default` → its own default-locale home.
+  // The gate (`/`) is deliberately NOT in it — see `app/(global)/page.tsx`
+  // for why (SEO-FOUNDATION-004). The default-locale variant used to add a
+  // language-only `{defaultLang}` → `/` return link here; that made six
+  // pages each declare the same content-negotiated URL to be a different
+  // language, so it was removed rather than repaired.
+  const languages = hreflangAlternates(config, "");
   return buildPublicMetadata({
     path,
     title,
@@ -111,8 +126,8 @@ export async function generateMetadata({
     kind: "country",
     subtitle: config.name,
     sourceImage: page?.ogImageSrc ?? undefined,
-    imageAlt: `${ogTitle} ? ${config.name}`,
-    languages: hreflangAlternates(config, ""),
+    imageAlt: `${ogTitle} — ${config.name}`,
+    languages,
   });
 }
 
@@ -392,13 +407,11 @@ export default async function CountryLangHomePage({
 
   // Trust marquee — country-specific proof points instead of the old
   // cross-country coverage belt (a visitor in Ireland doesn't care how
-  // many doctors Portugal has). Doctify aggregate is optional: only shown
-  // when the admin has connected a Doctify clinic and a snapshot exists.
-  const reviewConfigResult = await fetchPublicReviewConfig().catch(() => null);
-  const doctifyAggregate =
-    reviewConfigResult && reviewConfigResult.ok
-      ? (reviewConfigResult.data.doctify.aggregate ?? null)
-      : null;
+  // many doctors Portugal has). No Doctify rating/count stat here — the
+  // live widget (DoctifyReviewsSection, below) is Doctify's own current
+  // rating/count and is the source of truth; a separately-fetched number
+  // would be a second, manually-entered value that can silently drift from
+  // it. See SEO-GROWTH-015.
   // Marquee shows only 3 of the full (alphabetical) language pool — bias
   // toward major consultation languages so e.g. Portuguese surfaces ahead
   // of a minority language that happens to sort earlier (Bangla < Portuguese).
@@ -423,15 +436,6 @@ export default async function CountryLangHomePage({
         : gpLanguageNames.join(", ")
       : "";
   const trustMarqueeItems: TrustMarqueeItem[] = [
-    ...(doctifyAggregate
-      ? [
-          {
-            icon: "star" as const,
-            value: `${doctifyAggregate.rating.toFixed(1)}★`,
-            label: `${doctifyAggregate.count} Doctify reviews`,
-          },
-        ]
-      : []),
     {
       icon: "doctor" as const,
       value:
@@ -519,8 +523,9 @@ export default async function CountryLangHomePage({
     <>
       <JsonLd
         data={[
-          medicalBusinessJsonLd({
+          countryMedicalOrganizationJsonLd({
             name: config.name,
+            slug,
             url: countryUrl,
             identifier: countryTrust?.providerRegistration?.number
               ? {
@@ -536,8 +541,8 @@ export default async function CountryLangHomePage({
               : null,
           }),
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
-            { name: config.name, url: `/${slug}/${lang}` },
+            { name: cc.navigation.home, url: "/" },
+            { name: cc.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
           ]),
         ]}
       />
@@ -557,7 +562,11 @@ export default async function CountryLangHomePage({
           countryCode: code,
           countrySlug: slug,
           lang,
-          languages: gpLanguages.languages,
+          // Dropdown must only offer languages bookable right now — the full
+          // pool (gpLanguages.languages) still backs the trust/marquee copy
+          // above, where "N languages spoken" is a stable roster stat, not a
+          // same-day availability claim.
+          languages: gpLanguages.bookableLanguages,
           configured: gpLanguages.configured,
         }}
         heroTitle={page?.heroTitle ?? extras?.heroTitle ?? null}

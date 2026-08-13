@@ -22,7 +22,7 @@ export function BenefitsUnlockField({ defaultValue = STANDARD_UNLOCK_MONTHS }: P
 
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="gh-field-label">Benefits unlock after (paid months)</span>
+      <span className="gh-field-label">Benefits active from paid month</span>
       <input
         name="benefitsUnlockAfterPaidMonths"
         className="gh-input min-w-0"
@@ -33,11 +33,12 @@ export function BenefitsUnlockField({ defaultValue = STANDARD_UNLOCK_MONTHS }: P
         onChange={(e) => setValue(e.currentTarget.valueAsNumber)}
       />
       <span className="text-xs leading-snug text-[var(--color-text-muted)]">
-        How many paid months before plan benefits switch on. Standard is {STANDARD_UNLOCK_MONTHS}.
+        The paid month benefits switch on. Standard is {STANDARD_UNLOCK_MONTHS} — members get
+        nothing in month 1, and credits plus discounts from month {STANDARD_UNLOCK_MONTHS} onward.
       </span>
       {belowStandard ? (
         <span className="text-xs leading-snug text-[var(--color-status-warning-text)]">
-          This is below the standard 2-month benefit policy.
+          Below the standard policy — benefits would start in month 1.
         </span>
       ) : null}
     </label>

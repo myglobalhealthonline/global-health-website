@@ -353,6 +353,9 @@ export type PublicLandingSlug = {
   title: string | null;
   /** Services this landing page points at — used to build the reverse link. */
   serviceSlugs: string[];
+  /** Locales with a REAL translation row for this page (not `resolveTranslation`'s
+   *  fallback locale) — the source of truth for sitemap eligibility and hreflang. */
+  availableLocales: string[];
 };
 
 /**

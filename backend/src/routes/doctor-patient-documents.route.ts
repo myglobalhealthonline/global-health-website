@@ -3,6 +3,7 @@ import { prisma } from "../db/prisma.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 // ponytail: hard cap per collection — this aggregates a patient's WHOLE
 // history across every shared appointment, so unlike a per-appointment
@@ -49,6 +50,28 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
           where: { email },
           select: { id: true },
         });
+
+        // S-032 fix: this handler aggregates PHI (medical documents) across
+        // every appointment the doctor shares with this patient — guard once
+        // here, covering all three reads below (patientUploads, uploads,
+        // generated). No profile → nothing to guard.
+        if (profile) {
+          try {
+            await guardMedicalRead(
+              request,
+              { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+              { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              return reply
+                .status(403)
+                .send(medicalAccessDeniedResponse(guardError));
+            }
+            throw guardError;
+          }
+        }
+
         const patientUploads = profile
           ? await prisma.medicalDocument.findMany({
               where: { patientProfileId: profile.id, uploadedByRole: "PATIENT" },

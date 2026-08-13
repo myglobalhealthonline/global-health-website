@@ -8,7 +8,7 @@ import {
   listMedicalNotesForAppointment,
 } from "../modules/medical-notes/medical-notes.service.js";
 import { prisma } from "../db/prisma.js";
-import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 const createSchema = z.object({
   note: z.string().min(1).max(50000),
@@ -31,7 +31,7 @@ const doctorMedicalNotesRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -66,6 +66,19 @@ const doctorMedicalNotesRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
       }
       try {
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            request.params.id,
+            { resourceType: "CONSULT_NOTE", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
         const doctor = await prisma.doctor.findUnique({
           where: { id: auth.doctorId },
           select: { fullName: true },

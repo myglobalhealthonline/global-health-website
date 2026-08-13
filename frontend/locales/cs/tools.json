@@ -1,0 +1,1244 @@
+{
+  "hub": {
+    "navLabel": "Zdravotní nástroje",
+    "navLabelShort": "Nástroje",
+    "openLabel": "Otevřít kalkulačku",
+    "relatedHeading": "Další bezplatné kalkulačky"
+  },
+  "ui": {
+    "systolic": "Systolický (horní číslo)",
+    "diastolic": "Diastolický (dolní číslo)",
+    "mmHg": "mmHg",
+    "questionsEyebrow": "Otázky",
+    "faqSuffix": "Časté dotazy",
+    "units": "Jednotky",
+    "metric": "Metrické",
+    "imperial": "Imperiální",
+    "height": "Výška",
+    "weight": "Hmotnost",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Výška (stopy)",
+    "inchesLabel": "Palce",
+    "stoneLabel": "Hmotnost (stone)",
+    "poundsLabel": "Libry",
+    "poundsOnlyHint": "Nechte stone prázdné, chcete-li zadat jen libry.",
+    "sex": "Pohlaví",
+    "male": "Muž",
+    "female": "Žena",
+    "age": "Věk",
+    "years": "let",
+    "activity": "Úroveň aktivity",
+    "kcalPerDay": "kcal / den",
+    "yes": "Ano",
+    "no": "Ne"
+  },
+  "suggestions": {
+    "heading": "Kam dál",
+    "intro": "BMI je výchozí bod, ne plán. Tohle jsou konzultace, které naši lékaři vedou k tomu, na co upozorňuje.",
+    "viewLabel": "Zobrazit službu",
+    "gpTitle": "Online konzultace s lékařem",
+    "gpSummary": "Proberte jakýkoli výsledek po videu s registrovaným lékařem a nechte si udělat vyšetření, která vám kalkulačka dát nemůže.",
+    "nudgeUnderweight": "Výsledek pod zdravým rozmezím stojí za názor lékaře, zvlášť pokud nebyl záměrný.",
+    "nudgeHealthy": "Chcete si to udržet? Naši lékaři vám pomohou nastavit návyky, které vydrží.",
+    "nudgeOverweight": "Malé změny pod dohledem fungují lépe než další dieta. Začněte tady.",
+    "nudgeObese": "Na této úrovni funguje řízení hmotnosti pod lékařským dohledem výrazně lépe než dieta o samotě."
+  },
+  "bands": {
+    "bp": {
+      "low": {
+        "label": "Nízký tlak",
+        "summary": "Pod obvyklým rozmezím u dospělých. Často nic neznamená, ale pokud se vám točí hlava, omdléváte nebo se cítíte neobvykle unavení, stojí za názor lékaře."
+      },
+      "optimal": {
+        "label": "Optimální",
+        "summary": "Rozmezí s nejnižším rizikem u dospělých. Jen na základě této hodnoty není třeba nic dělat."
+      },
+      "normal": {
+        "label": "Normální",
+        "summary": "V normálním rozmezí pro dospělé. Vyplatí se občas změřit znovu, zvlášť pokud hodnoty postupně stoupají."
+      },
+      "high-normal": {
+        "label": "Vysoký normální",
+        "summary": "Nad normou, ale ještě ne hypertenze. Právě v této fázi udělá nejvíc omezení soli a alkoholu, hmotnost a pohyb."
+      },
+      "grade-1": {
+        "label": "Hypertenze 1. stupně",
+        "summary": "Mírně zvýšený. Měřte si tlak týden doma a výsledky vezměte lékaři — diagnóza potřebuje celý obraz, ne jednu hodnotu."
+      },
+      "isolated-systolic": {
+        "label": "Izolovaná systolická hypertenze",
+        "summary": "Horní číslo je zvýšené, dolní je normální. Po šedesátce jde o nejčastější typ vysokého tlaku a vyšetření u lékaře přesto vyžaduje."
+      },
+      "grade-2": {
+        "label": "Hypertenze 2. stupně",
+        "summary": "Výrazně zvýšený. Objednejte se k lékaři brzy, nečekejte na běžnou prohlídku."
+      },
+      "grade-3": {
+        "label": "Hypertenze 3. stupně",
+        "summary": "Velmi vysoký. Tuto hodnotu musí lékař posoudit ještě dnes."
+      }
+    },
+    "bmi": {
+      "underweight": {
+        "label": "Podváha",
+        "summary": "Pod zdravým rozmezím. Stojí za to to probrat s lékařem, zvlášť pokud úbytek hmotnosti nebyl záměrný."
+      },
+      "healthy": {
+        "label": "Zdravá hmotnost",
+        "summary": "V rozmezí, které WHO označuje u dospělých za zdravé."
+      },
+      "overweight": {
+        "label": "Nadváha",
+        "summary": "Nad zdravým rozmezím. Rozumným dalším krokem je kontrola krevního tlaku a cholesterolu."
+      },
+      "obese-1": {
+        "label": "Obezita I. stupně",
+        "summary": "Na této úrovni se obvykle nabízí strukturovaný program řízení hmotnosti."
+      },
+      "obese-2": {
+        "label": "Obezita II. stupně",
+        "summary": "Doporučuje se lékařské vyšetření včetně screeningu onemocnění spojených s hmotností."
+      },
+      "obese-3": {
+        "label": "Obezita III. stupně",
+        "summary": "Doporučuje se specializované vyšetření v oblasti řízení hmotnosti."
+      }
+    },
+    "activity": {
+      "sedentary": {
+        "label": "Sedavý režim",
+        "summary": "Práce vsedě, málo nebo žádný pohyb"
+      },
+      "light": {
+        "label": "Lehce aktivní",
+        "summary": "Lehký pohyb 1–3 dny v týdnu"
+      },
+      "moderate": {
+        "label": "Středně aktivní",
+        "summary": "Střední zátěž 3–5 dní v týdnu"
+      },
+      "very": {
+        "label": "Velmi aktivní",
+        "summary": "Náročný trénink 6–7 dní v týdnu"
+      },
+      "extra": {
+        "label": "Extrémně aktivní",
+        "summary": "Fyzická práce nebo náročný trénink dvakrát denně"
+      }
+    },
+    "adhdFrequencies": [
+      "Nikdy",
+      "Zřídka",
+      "Někdy",
+      "Často",
+      "Velmi často"
+    ],
+    "adhdQuestions": [
+      "Jak často necháte poslední detaily projektu nedodělané, jakmile máte tu těžkou část za sebou?",
+      "Jak často pro vás bývá těžké dát věci do pořádku, když si úkol žádá organizaci?",
+      "Jak často zapomenete na schůzku nebo na to, co jste slíbili?",
+      "Jak často odkládáte nebo se vyhýbáte něčemu, co vyžaduje hodně přemýšlení?",
+      "Jak často vrtíte rukama nebo nohama, když musíte dlouho sedět?",
+      "Jak často se cítíte neklidně hnaní dál, jako by vás něco pohánělo?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Výsledek screeningu: pozitivní",
+        "summary": "Vaše odpovědi odpovídají vzorci, který tento dotazník hledá — má tedy smysl domluvit si úplné vyšetření. Diagnóza to není: ADHD diagnostikuje pouze psychiatr nebo klinický psycholog, a to z celé vaší anamnézy, ne ze šesti otázek."
+      },
+      "negative": {
+        "label": "Výsledek screeningu: negativní",
+        "summary": "Vaše odpovědi hledanému vzorci neodpovídají. ADHD to nevylučuje — šest otázek pokrývá jen část — takže pokud vám tyto potíže komplikují práci, studium nebo vztahy, promluvte si s lékařem i tak."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Doporučujeme vyšetření již nyní",
+        "summary": "Váš věk nebo vaše rizikové faktory odpovídají vzorci, na jehož základě doporučení doporučují vyšetření osteoporózy. Nejde o diagnózu — dalším krokem je rozhovor s lékařem o kostní denzitometrii (DXA)."
+      },
+      "discuss-next": {
+        "label": "Stojí za zmínku při příští návštěvě lékaře",
+        "summary": "Máte rizikový faktor, se kterým doporučené postupy počítají, i když sám o sobě k okamžitému vyšetření nevede. Zmiňte ho při příští návštěvě lékaře."
+      },
+      "no-flags": {
+        "label": "Nebyl zjištěn žádný konkrétní rizikový faktor",
+        "summary": "Nic z toho, co jste zadali, neodpovídá zveřejněným rizikovým faktorům, které se používají k vyhledávání osteoporózy. To je uklidňující, ale není to záruka — jakoukoli novou zlomeninu nebo pád vždy zmiňte lékaři."
+      }
+    }
+  },
+  "tools": {
+    "adhd-test": {
+      "cardTitle": "ADHD test",
+      "cardBlurb": "Screeningový dotazník ADHD pro dospělé o šesti otázkách, vyhodnocený tak, jak je škála postavená.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "ADHD",
+      "h1Accent": "test",
+      "h1Trail": "{country}",
+      "metaTitle": "ADHD Test {country} | Bezplatný Screening Pro Dospělé",
+      "metaDescription": "Vyplňte screeningový test ADHD pro dospělé o šesti otázkách (ASRS v1.1, část A) a zjistěte, co vaše odpovědi znamenají. Výsledek screeningu není diagnóza — tu stanoví jen psychiatr nebo klinický psycholog.",
+      "lede": "Odpovězte na šest otázek o posledním půlroce a zjistěte, zda vaše odpovědi odpovídají vzorci, který screening ADHD u dospělých hledá.",
+      "trustPoints": [
+        "Screening ASRS v1.1, část A — šest otázek",
+        "Vyhodnocení po jednotlivých otázkách, jak je škála postavená",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "widget": {
+        "title": "Vaše odpovědi",
+        "instructions": "U každé otázky zvolte, jak často to na vás v posledním půlroce platilo.",
+        "placeholder": "Odpovězte na šest otázek a uvidíte výsledek screeningu.",
+        "note": "Jde o screeningový dotazník, nikoli o diagnózu. ADHD diagnostikuje pouze psychiatr nebo klinický psycholog po úplném vyšetření. Nic z toho zde není doporučení k užívání léků.",
+        "thresholdLabel": "Pozitivní screening",
+        "thresholdValue": "{count} a více z {total}"
+      },
+      "sections": [
+        {
+          "heading": "Jak se screening vyhodnocuje",
+          "body": [
+            "Otázky jsou částí A škály Adult ADHD Self-Report Scale Světové zdravotnické organizace — krátkou formou, podle které se rozhoduje, zda má smysl domluvit úplné vyšetření. Samotné vyšetření to není.",
+            "Vyhodnocuje se po jednotlivých otázkách, ne jako součet. Každá položka má vlastní hranici a čtyři a více položek, které svou hranici dosáhnou, znamenají pozitivní screening. Obvyklá chyba je brát to jako plošné „čtyřikrát často“ — takové pravidlo přehlédne nepozorný typ, tedy ten, který u dospělých uniká nejčastěji."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Šest screeningových otázek a odpověď, od které se každá počítá",
+            "columns": [
+              "Otázka",
+              "Čeho se týká",
+              "Počítá se od"
+            ],
+            "rows": [
+              [
+                "1",
+                "Dodělat poslední detaily projektu",
+                "Někdy"
+              ],
+              [
+                "2",
+                "Dát věci do pořádku kvůli úkolu",
+                "Někdy"
+              ],
+              [
+                "3",
+                "Udržet v hlavě schůzky a sliby",
+                "Někdy"
+              ],
+              [
+                "4",
+                "Odkládání úkolů, které vyžadují hodně přemýšlení",
+                "Často"
+              ],
+              [
+                "5",
+                "Vrtění, když musíte dlouho sedět",
+                "Často"
+              ],
+              [
+                "6",
+                "Pocit neklidného hnaní dál",
+                "Často"
+              ]
+            ],
+            "footnote": "Čtyři a více otázek na vlastní hranici nebo nad ní znamenají pozitivní screening. Škála vznikla pro dospělé od 18 let a není screeningem pro děti."
+          }
+        },
+        {
+          "heading": "Jak ADHD vypadá u dospělých",
+          "body": [
+            "ADHD v dospělosti málokdy vypadá jako obrázek ze školní lavice. Hyperaktivita se často obrací dovnitř — neklid, hlava, která se nezastaví — zatímco nepozornost zůstává a začíná něco stát: zmeškané termíny, neotevřená úřední pošta, pracovní paměť, které pořád něco vypadne.",
+            "Pro diagnózu je podstatné, že potíže trvají dlouho, projevují se ve více oblastech života a skutečně omezují. Klíče někam založí každý; na to se tu neptáme."
+          ],
+          "bullets": [
+            "Začít úkoly, na kterých záleží, a dokončit ty, které přestaly být zajímavé.",
+            "Čas: podceňovat ho, ztrácet ho, chodit pozdě navzdory upřímné snaze.",
+            "Organizace — papíry, faktury, termíny — stojí mnohem víc sil, než se zdá, že stojí ostatní.",
+            "Neklid nebo trvalá tichá potřeba něco dělat.",
+            "Skákat do řeči, vyhrknout něco nebo jednat dřív, než je nápad domyšlený.",
+            "Emoce, které přijdou rychle a rychle odejdou, často silněji, než by odpovídalo podnětu."
+          ]
+        },
+        {
+          "heading": "Co vám tento screening říct nemůže",
+          "body": [
+            "Dotazník o šesti otázkách je třídicí nástroj. Je záměrně rychlý a záměrně velkorysý, protože jeho úkolem je rozhodnout, kdo by měl projít pořádným vyšetřením — ne kdo má ADHD."
+          ],
+          "bullets": [
+            "Není to diagnóza. Pozitivní výsledek sám o sobě znamená jen „stojí za vyšetření“.",
+            "Negativní výsledek ADHD nevylučuje, zvlášť u nepozorného typu a zvlášť u žen, které bývají diagnostikovány později a méně často.",
+            "Úzkost, deprese, špatný spánek, onemocnění štítné žlázy, chronická bolest i vyšší konzumace alkoholu vedou ke stejným odpovědím.",
+            "Neodliší ADHD od autismu, od specifické poruchy učení ani od následků dlouhého zátěžového období.",
+            "Vznikl a byl ověřen pro dospělé. Děti a dospívající potřebují úplně jiné vyšetření.",
+            "O léčbě neříká nic. Léky jsou jednou z možností a přicházejí na řadu až po diagnóze."
+          ]
+        },
+        {
+          "heading": "Jak se dostat k pořádnému vyšetření",
+          "body": [
+            "Diagnózu ADHD stanoví psychiatr nebo klinický psycholog. Vyšetření je strukturovaný klinický rozhovor o vaší anamnéze od dětství, obvykle s dotazníky a pokud možno i s popisem od někoho, kdo vás dlouho zná."
+          ],
+          "bullets": [
+            "Začněte u lékaře. Projde s vámi anamnézu, vyloučí stavy, které ADHD připomínají, a odešle vás na vyšetření.",
+            "Vezměte s sebou konkrétní věci, ne skóre: vysvědčení, hodnocení z práce, to, co se opakovaně nedaří, a jak dlouho už to trvá.",
+            "Řekněte, co dalšího se děje — spánek, nálada, alkohol, štítná žláza, dřívější úraz hlavy. Mění to vyšetření i jeho pořadí.",
+            "Výsledek screeningu je začátek toho rozhovoru, ne jeho náhrada. Vezměte si ten svůj s sebou.",
+            "Pokud to nezvládáte nebo máte myšlenky na sebepoškození, obraťte se hned na lékaře nebo na tísňovou linku a nečekejte na vyšetření."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Může online ADHD test stanovit diagnózu?",
+          "answer": "Ne, a nedokáže to žádný online dotazník. Tohle je screening: rozdělí lidi na ty, u kterých má smysl pořádné vyšetření, a na ty, u kterých to podle těchto odpovědí neplatí. Diagnózu stanoví psychiatr nebo klinický psycholog z úplného rozhovoru o vaší anamnéze, ne ze šesti otázek."
+        },
+        {
+          "question": "Co je ASRS?",
+          "answer": "Adult ADHD Self-Report Scale, vytvořená ve spolupráci se Světovou zdravotnickou organizací. Část A je zdejší screening o šesti otázkách, celá škála jich má osmnáct. Je to nejrozšířenější screeningový nástroj pro ADHD u dospělých, takže výsledek, který přinesete, lékař zná."
+        },
+        {
+          "question": "Jaký výsledek se počítá jako pozitivní?",
+          "answer": "Čtyři a více z šesti otázek zodpovězených na vlastní hranici nebo nad ní. První tři se počítají od odpovědi „někdy“, poslední tři až od „často“ — hranice se liší, protože se liší otázky, a jediná plošná mez by nepozorný typ přehlédla."
+        },
+        {
+          "question": "Můžu mít ADHD, i když je výsledek negativní?",
+          "answer": "Ano. Šest otázek nepokryje stav, který se v různém věku a u různých lidí projevuje jinak. Zvlášť nepozorný typ bývá zachycen málo — je to jeden z důvodů, proč ženy dostávají diagnózu později a méně často. Pokud vám potíže komplikují život, negativní screening není důvod přestat se ptát."
+        },
+        {
+          "question": "Kdo může diagnostikovat ADHD?",
+          "answer": "Psychiatr nebo klinický psycholog, podle země. Cesta obvykle začíná u praktického lékaře: sebere anamnézu, vyloučí stavy, které ADHD napodobují — štítnou žlázu, poruchy spánku, úzkost, depresi — a odešle vás na samotné vyšetření."
+        },
+        {
+          "question": "Ukládá tento ADHD test moje odpovědi?",
+          "answer": "Ne. Vyhodnocení běží celé ve vašem prohlížeči. Nic z toho, co zvolíte, se neodesílá na naše servery ani se neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Chcete výsledek probrat?",
+        "body": "Objednejte se na videokonzultaci s registrovaným lékařem, projděte svou anamnézu i stavy, které mohou ADHD připomínat, a zjistěte, co vyšetření obnáší.",
+        "label": "Objednat konzultaci"
+      },
+      "suggestionsIntro": "Výsledek screeningu je důvod nechat se vyšetřit, ne diagnóza. Tyto konzultace vás posunou dál."
+    },
+    "blood-pressure-chart": {
+      "cardTitle": "Tabulka krevního tlaku",
+      "cardBlurb": "Co vaše dvě čísla znamenají v evropské tabulce krevního tlaku pro dospělé.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "Normální",
+      "h1Accent": "krevní tlak",
+      "h1Trail": "{country}",
+      "metaTitle": "Normální Krevní Tlak {country} | Tabulka Hodnot pro Dospělé",
+      "metaDescription": "Porovnejte systolický a diastolický tlak s evropskou tabulkou pro dospělé. Zjistěte kategorii, co znamená a které hodnoty vyžadují lékařskou péči ještě týž den.",
+      "lede": "Zadejte dvě čísla ze svého tlakoměru a uvidíte, kam hodnota patří v evropské tabulce pro dospělé — a co s tím případně dělat.",
+      "trustPoints": [
+        "Evropské kategorie (ESC/ESH) pro dospělé",
+        "Upozorní na hodnoty, které vyžadují péči týž den",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "suggestionsIntro": "Naměřený tlak je podnět, ne plán. Tohle jsou konzultace, které naši lékaři vedou k tomu, na co upozorňuje.",
+      "widget": {
+        "title": "Vaše hodnota",
+        "placeholder": "Horní číslo musí být vyšší než dolní — zkontrolujte obě hodnoty na tlakoměru.",
+        "note": "Tato tabulka je screeningová pomůcka, ne diagnóza. Hypertenze se určuje z opakovaných měření, obvykle z týdne měření doma nebo z 24hodinového monitorování, nikdy z jediné hodnoty.",
+        "scaleLabel": "Kam patří váš systolický tlak",
+        "optimalLabel": "Optimální pro většinu dospělých",
+        "optimalValue": "Pod {systolic}/{diastolic} mmHg",
+        "urgentTitle": "Vyhledejte lékařskou pomoc ještě dnes",
+        "urgentBody": "Takto vysokou hodnotu je třeba nechat posoudit týž den. Posaďte se, pět minut v klidu počkejte a změřte znovu — pokud zůstane takto vysoká, kontaktujte ještě dnes lékaře.",
+        "urgentSymptoms": "Okamžitě volejte záchrannou službu, pokud máte navíc bolest na hrudi, slabost nebo necitlivost jedné poloviny těla, potíže s řečí nebo náhlou změnu zraku."
+      },
+      "sections": [
+        {
+          "heading": "Tabulka krevního tlaku pro dospělé",
+          "body": [
+            "Krevní tlak se zapisuje dvěma čísly: systolickým tlakem při stahu srdce a diastolickým tlakem, když se mezi stahy uvolní. Obě hodnoty se měří v milimetrech rtuťového sloupce (mmHg).",
+            "Níže uvedené kategorie jsou evropské (ESC/ESH). Pokud každé z čísel spadá do jiné kategorie, platí ta vyšší: 128/95 je hypertenze 1. stupně, ne normální tlak."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Evropské kategorie krevního tlaku u dospělých",
+            "columns": [
+              "Kategorie",
+              "Systolický (mmHg)",
+              "Diastolický (mmHg)"
+            ],
+            "rows": [
+              [
+                "Nízký",
+                "Pod 90",
+                "nebo pod 60"
+              ],
+              [
+                "Optimální",
+                "Pod 120",
+                "a pod 80"
+              ],
+              [
+                "Normální",
+                "120 – 129",
+                "a/nebo 80 – 84"
+              ],
+              [
+                "Vysoký normální",
+                "130 – 139",
+                "a/nebo 85 – 89"
+              ],
+              [
+                "Hypertenze 1. stupně",
+                "140 – 159",
+                "a/nebo 90 – 99"
+              ],
+              [
+                "Hypertenze 2. stupně",
+                "160 – 179",
+                "a/nebo 100 – 109"
+              ],
+              [
+                "Hypertenze 3. stupně",
+                "180 a více",
+                "a/nebo 110 a více"
+              ],
+              [
+                "Izolovaná systolická",
+                "140 a více",
+                "a pod 90"
+              ]
+            ],
+            "footnote": "Hodnoty platné pro měření v ordinaci u dospělých. Domácí tlakoměry a 24hodinové monitorování ukazují nižší čísla, takže doma začíná hypertenze na 135/85, nikoli na 140/90. Těhotenství, dětský věk a dialýza mají zcela jiné cíle."
+          }
+        },
+        {
+          "heading": "Jak změřit tlak tak, aby výsledek něco znamenal",
+          "body": [
+            "Většina znepokojivých hodnot je chyba měření. Tlak se během dne mění a vyskočí, když přijdete uspěchaní, máte plný močový měchýř nebo mluvíte s nasazenou manžetou — způsob měření tedy ovlivní číslo víc, než většina lidí čeká."
+          ],
+          "bullets": [
+            "Nejdřív pět minut v klidu seďte — opřená záda, chodidla na zemi, nohy nepřekřížené.",
+            "Půl hodiny předtím žádná káva, jídlo, cvičení ani cigarety, a vyprázdněte močový měchýř.",
+            "Položte paži na stůl tak, aby manžeta byla ve výšce srdce, na holé kůži.",
+            "Použijte manžetu správné velikosti. Příliš malá ukazuje vyšší hodnoty a je to nejčastější chyba domácího měření.",
+            "Během měření mlčte: mluvení přidá několik mmHg.",
+            "Změřte dvakrát s minutovým odstupem a použijte druhou hodnotu nebo průměr obou.",
+            "Měřte ráno a večer po dobu sedmi dnů a celou sadu vezměte lékaři."
+          ]
+        },
+        {
+          "heading": "Co jedna hodnota nemůže prozradit",
+          "body": [
+            "Naměřený tlak je snímek jednoho okamžiku na jedné paži. To stačí na upozornění, ale ne na určení diagnózy — právě proto se diagnóza opírá o opakovaná měření, ne o první hodnotu, která vyleká."
+          ],
+          "bullets": [
+            "Hypertenze bílého pláště: vysoký tlak v ordinaci, normální doma. Je častá a odliší ji jen domácí měření nebo 24hodinové monitorování.",
+            "Maskovaná hypertenze: normální tlak v ordinaci, zvýšený po zbytek času. Je to rizikovější varianta a bez domácího měření zůstane neviditelná.",
+            "Paže se liší. Rozdíl větší než 10 mmHg mezi nimi má význam a od té chvíle se měří vždy na paži s vyšší hodnotou.",
+            "Nepravidelný pulz včetně fibrilace síní činí většinu automatických tlakoměrů nespolehlivými.",
+            "Ne každý domácí přístroj je klinicky validovaný a nevalidovaný se může mýlit o hodně.",
+            "Těhotenství má vlastní hranice i vlastní rizika: vysoký tlak v těhotenství patří do péče gynekologa, ne do této tabulky."
+          ]
+        },
+        {
+          "heading": "Kdy jít k lékaři a kdy volat pomoc hned",
+          "body": [
+            "Většina zvýšených hodnot se vyřeší při běžné návštěvě lékaře. Několik jich tam nepatří."
+          ],
+          "bullets": [
+            "Okamžitě volejte záchrannou službu, pokud je velmi vysoká hodnota provázena bolestí na hrudi, slabostí nebo necitlivostí jedné poloviny těla, potížemi s řečí nebo náhlou změnou zraku. Jsou to příznaky infarktu nebo cévní mozkové příhody.",
+            "Vyhledejte lékařskou péči týž den při hodnotě 180/120 a vyšší, i když nemáte žádné příznaky.",
+            "Objednejte se během několika týdnů, pokud se hodnoty opakovaně drží na 140/90 nebo výš.",
+            "Poraďte se s lékařem, pokud jsou hodnoty opakovaně pod 90/60 a točí se vám hlava, omdléváte nebo se cítíte neobvykle unavení.",
+            "Vezměte na kontrolu své naměřené hodnoty i samotný přístroj. Léčí se celkový obraz, ne nejhorší číslo."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Jaký je normální krevní tlak u dospělého?",
+          "answer": "Pod 120/80 mmHg je optimální a 120–129 na 80–84 se stále považuje za normální. Od 130/85 jde o vysoký normální tlak a 140/90 a více naměřených v ordinaci znamená hypertenzi. Domácí tlakoměry ukazují nižší čísla, doma je proto hranicí 135/85."
+        },
+        {
+          "question": "Které číslo je důležitější, horní, nebo dolní?",
+          "answer": "Obě. Kategorii určuje to horší z nich, takže 128/95 se počítá jako hypertenze 1. stupně jen kvůli dolnímu číslu. Systolický tlak předpovídá kardiovaskulární riziko lépe zhruba po padesátce, diastolický před ní."
+        },
+        {
+          "question": "Co znamená izolovaný systolický tlak?",
+          "answer": "Systolický tlak 140 a vyšší při diastolickém pod 90. Je to nejčastější podoba vysokého tlaku po šedesátce, vzniká tuhnutím tepen s věkem a nese skutečné kardiovaskulární riziko — není to neškodná zvláštnost horního čísla."
+        },
+        {
+          "question": "Znamená jedna vysoká hodnota, že mám hypertenzi?",
+          "answer": "Ne. Hypertenze se určuje z opakovaně zvýšených hodnot, obvykle doložených týdnem měření doma nebo 24hodinovým monitorováním. Jedna vysoká hodnota je důvod pořádně změřit znovu, ne diagnóza."
+        },
+        {
+          "question": "Jaký krevní tlak je nebezpečný?",
+          "answer": "Hodnota 180/120 a vyšší vyžaduje lékařskou péči týž den. Pokud ji provází bolest na hrudi, slabost nebo necitlivost jedné poloviny těla, potíže s řečí nebo náhlá změna zraku, volejte ihned záchrannou službu — jsou to příznaky infarktu nebo cévní mozkové příhody."
+        },
+        {
+          "question": "Ukládá tato tabulka krevního tlaku moje hodnoty?",
+          "answer": "Ne. Porovnání probíhá výhradně ve vašem prohlížeči. Nic, co zadáte, se neodesílá na naše servery ani neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Chcete, aby se na vaše hodnoty podíval lékař?",
+        "body": "Objednejte se na videokonzultaci k registrovanému lékaři, vezměte s sebou týden domácího měření a odejděte s plánem postaveným na celkovém obrazu, ne na jedné hodnotě.",
+        "label": "Objednat konzultaci"
+      }
+    },
+    "bmi-calculator": {
+      "cardTitle": "BMI kalkulačka",
+      "cardBlurb": "Index tělesné hmotnosti z vaší výšky a hmotnosti podle škály WHO pro dospělé.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "BMI",
+      "h1Accent": "kalkulačka",
+      "h1Trail": "{country}",
+      "metaTitle": "BMI Kalkulačka {country} | Výpočet BMI Online",
+      "metaDescription": "Spočítejte si index tělesné hmotnosti během několika sekund. Metrické i imperiální jednotky, kategorie WHO pro dospělé a co váš výsledek ve skutečnosti znamená.",
+      "lede": "Zadejte svou výšku a hmotnost a uvidíte svůj index tělesné hmotnosti a jeho místo na škále Světové zdravotnické organizace pro dospělé.",
+      "trustPoints": [
+        "Metrické i imperiální jednotky (kg, stone, libry)",
+        "Hmotnostní kategorie WHO pro dospělé",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "widget": {
+        "title": "Vaše BMI",
+        "placeholder": "Zadejte výšku a hmotnost a uvidíte svůj index tělesné hmotnosti.",
+        "note": "BMI je screeningová hodnota, nikoli diagnóza. Nerozliší sval od tuku a neplatí v těhotenství ani pro osoby mladší 18 let.",
+        "healthyRangeLabel": "Zdravá hmotnost pro vaši výšku",
+        "gapAbove": "{kg} kg nad zdravým rozmezím",
+        "gapBelow": "{kg} kg pod zdravým rozmezím",
+        "gapInside": "Ve zdravém rozmezí",
+        "gapLabel": "Vzdálenost od zdravého rozmezí",
+        "scaleLabel": "Kde se vaše BMI nachází na škále WHO"
+      },
+      "sections": [
+        {
+          "heading": "Co váš výsledek BMI znamená",
+          "body": [
+            "Světová zdravotnická organizace řadí BMI dospělých do níže uvedených pásem. Popisují populaci, nikoli jednotlivce: dva lidé se stejným BMI mohou být ve velmi odlišném zdravotním stavu."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Kategorie BMI podle WHO pro dospělé",
+            "columns": [
+              "BMI",
+              "Kategorie",
+              "Co to obvykle znamená"
+            ],
+            "rows": [
+              [
+                "Méně než 18,5",
+                "Podváha",
+                "Stojí za rozhovor s lékařem, hlavně pokud jste nehubli záměrně"
+              ],
+              [
+                "18,5 – 24,9",
+                "Zdravá hmotnost",
+                "Jen kvůli tomuhle číslu není potřeba nic měnit"
+              ],
+              [
+                "25,0 – 29,9",
+                "Nadváha",
+                "Dobrá chvíle nechat si změřit krevní tlak a cholesterol"
+              ],
+              [
+                "30,0 – 34,9",
+                "Obezita I. stupně",
+                "Odtud se obvykle nabízí strukturované řízení hmotnosti"
+              ],
+              [
+                "35,0 – 39,9",
+                "Obezita II. stupně",
+                "Lékařské vyšetření a screening onemocnění, která s nadváhou chodí ruku v ruce"
+              ],
+              [
+                "40,0 a více",
+                "Obezita III. stupně",
+                "Odeslání ke specializovanému řízení hmotnosti"
+              ]
+            ],
+            "footnote": "Lidé jihoasijského, čínského a některých dalších asijských původů mají vyšší kardiometabolické riziko už při nižším BMI. WHO pro tyto populace navrhuje jako další body pro zásah hodnoty 23,0 a 27,5."
+          }
+        },
+        {
+          "heading": "Jak se BMI počítá",
+          "body": [
+            "BMI je vaše hmotnost v kilogramech dělená druhou mocninou výšky v metrech. To je celý vzorec — nevstupuje do něj věk, pohlaví ani tělesné složení.",
+            "Praktický příklad: člověk vysoký 1,75 m s hmotností 78 kg má BMI 78 ÷ (1,75 × 1,75) = 25,5, což spadá do pásma nadváhy.",
+            "Imperiální hodnoty se nejprve převedou (1 stone = 6,35 kg, 1 palec = 2,54 cm), takže výsledek je v obou systémech stejný."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Co vám BMI neřekne",
+          "body": [
+            "BMI je screeningové číslo, nikoli diagnóza. Je užitečné právě proto, že je jednoduché — stačí metr a váha — ale právě v tom je i jeho hranice."
+          ],
+          "bullets": [
+            "Neoddělí sval od tuku. Lidé s velkým podílem svalové hmoty bývají běžně zařazeni do nadváhy.",
+            "Nebere v úvahu, kde je tuk uložen. Obvod pasu předpovídá kardiometabolické riziko lépe než BMI.",
+            "Není validováno pro těhotenství — pro plánování péče použijte BMI před otěhotněním.",
+            "Děti a dospívající potřebují percentilové grafy podle věku a pohlaví, ne výše uvedená pásma pro dospělé.",
+            "U dospělých nad 65 let není BMI mírně nad 25 konzistentně spojeno s horšími výsledky."
+          ]
+        },
+        {
+          "heading": "Kdy se o hmotnosti poradit s lékařem",
+          "body": [],
+          "bullets": [
+            "Zhubli jste nebo přibrali, aniž byste o to usilovali.",
+            "Vaše BMI je 30 a více, nebo 25 a více spolu s vysokým krevním tlakem, vysokým cholesterolem či zvýšenou glykemií.",
+            "Jste vyšetřováni nebo již léčeni pro diabetes 2. typu, spánkovou apnoe, syndrom polycystických ovarií nebo ztukovatění jater.",
+            "Chcete probrat řízení hmotnosti pod lékařským dohledem místo další diety."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Jaké BMI je u dospělého zdravé?",
+          "answer": "U většiny dospělých ve věku 18 až 65 let považuje Světová zdravotnická organizace za zdravé BMI mezi 18,5 a 24,9. Nad 25 se hodnotí jako nadváha a 30 a více jako obezita. Jde o populační hranice, takže jediná hodnota je podnětem k dalšímu zkoumání, ne verdiktem."
+        },
+        {
+          "question": "Počítá se BMI jinak u mužů a u žen?",
+          "answer": "Ne. Vzorec i kategorie pro dospělé jsou stejné. Ženy mají při stejném BMI obvykle vyšší podíl tělesného tuku než muži, což je jeden z důvodů, proč je toto číslo jen výchozím bodem."
+        },
+        {
+          "question": "Jak přesná je BMI kalkulačka?",
+          "answer": "Výpočet je přesný — nejistota je v tom, co BMI měří. S tělesným tukem koreluje na úrovni populace přiměřeně dobře, ale jednotlivce může zařadit špatně, zvlášť sportovce, starší lidi a osoby s velkým množstvím svalové hmoty."
+        },
+        {
+          "question": "Co mám dělat, když je moje BMI v pásmu obezity?",
+          "answer": "Nechte si zkontrolovat krevní tlak, cholesterol a glykemii a proberte s lékařem plán, který dokážete udržet. Řízení hmotnosti s lékařským dohledem funguje výrazně lépe než dieta o samotě."
+        },
+        {
+          "question": "Ukládá tato BMI kalkulačka moje údaje?",
+          "answer": "Ne. Výpočet probíhá výhradně ve vašem prohlížeči. Nic, co zadáte, se neodesílá na naše servery ani neukládá."
+        },
+        {
+          "question": "Potřebuji BMI, abych získal léčbu na snížení hmotnosti?",
+          "answer": "Lékaři obvykle používají BMI jako jedno ze vstupních kritérií programů řízení hmotnosti, zpravidla spolu s vaší anamnézou a případnými onemocněními spojenými s hmotností. Váš lékař potvrdí, co platí právě pro vás."
+        }
+      ],
+      "cta": {
+        "heading": "Chcete výsledek probrat?",
+        "body": "Objednejte se na videokonzultaci s registrovaným lékařem a získejte plán postavený na vaší anamnéze, ne na jednom čísle.",
+        "label": "Objednat konzultaci"
+      }
+    },
+    "calorie-calculator": {
+      "cardTitle": "Kalorická kalkulačka",
+      "cardBlurb": "Kolik kalorií denně potřebujete na udržení hmotnosti, hubnutí nebo nabírání.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "Kalorická",
+      "h1Accent": "kalkulačka",
+      "h1Trail": "{country}",
+      "metaTitle": "Kalorická Kalkulačka {country} | Výpočet Denního Příjmu",
+      "metaDescription": "Spočítejte si, kolik kalorií denně potřebujete na udržení hmotnosti, hubnutí nebo nabírání. Rovnice Mifflin-St Jeor, pět úrovní aktivity a co ta čísla ve skutečnosti znamenají — a registrovaní lékaři, pokud chcete jít dál.",
+      "lede": "Zadejte pohlaví, věk, výšku, hmotnost a to, jak jste aktivní, a uvidíte, kolik kalorií za den spálíte — a kolik jich jíst, abyste hmotnost udrželi, zhubli nebo nabrali.",
+      "trustPoints": [
+        "Rovnice Mifflin-St Jeor, kterou používají lékaři",
+        "Udržení, hubnutí i nabírání na jednom místě",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "suggestionsIntro": "Kalorie jsou výchozí bod, ne plán. Tohle jsou konzultace, které naši lékaři vedou k hmotnosti, výživě a k vyšetřením, která vám samotné číslo dát nemůže.",
+      "widget": {
+        "title": "Vaše denní kalorie",
+        "placeholder": "Zadejte své údaje a uvidíte, kolik kalorií za den spálíte.",
+        "note": "Odhad pro zdravé dospělé, orientační nástroj — ne diagnóza ani předepsaný jídelníček. Pokud jste těhotná, kojíte, je vám méně než 18 let nebo se s něčím léčíte, proberte změnu příjmu nejdřív s lékařem.",
+        "noteFloored": "Cíl pro hubnutí byl podržen na 1 200 kcal, což je nejnižší denní příjem, který tato kalkulačka nabídne. Nižší příjem patří výhradně pod lékařský dohled.",
+        "resultLabel": "Kalorie na udržení",
+        "resultSummary": "Kolik spálíte v běžný den při této úrovni aktivity, se vším všudy.",
+        "bmrLabel": "Bazální metabolismus",
+        "mildLossLabel": "Zhubnout asi 0,25 kg týdně",
+        "lossLabel": "Zhubnout asi 0,5 kg týdně",
+        "gainLabel": "Nabrat asi 0,25 kg týdně"
+      },
+      "sections": [
+        {
+          "heading": "Co vaše kalorická čísla znamenají",
+          "body": [
+            "Hlavní číslo je váš udržovací příjem: zhruba to, co za den spálíte, včetně pohybu. Když sníte tolik, hmotnost zůstane tam, kde je.",
+            "Cíle pod ním jsou totéž číslo s deficitem nebo přebytkem. Denní deficit 500 kcal odpovídá asi půl kilu týdně — na tomhle tempu se většina doporučení shodne, protože je dost rychlé, aby bylo vidět, a dost pomalé, aby se dalo udržet."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Denní kalorické cíle odvozené z udržovacího příjmu",
+            "columns": [
+              "Cíl",
+              "Denní příjem",
+              "Co čekat"
+            ],
+            "rows": [
+              [
+                "Udržení",
+                "Váš udržovací příjem",
+                "Hmotnost drží v řádu týdnů, ne dnů"
+              ],
+              [
+                "Mírné hubnutí",
+                "Udržovací příjem − 250 kcal",
+                "Asi 0,25 kg týdně"
+              ],
+              [
+                "Stabilní hubnutí",
+                "Udržovací příjem − 500 kcal",
+                "Asi 0,5 kg týdně"
+              ],
+              [
+                "Nabírání",
+                "Udržovací příjem + 300 kcal",
+                "Asi 0,25 kg týdně, nejlépe se silovým tréninkem"
+              ]
+            ],
+            "footnote": "Cíle pro hubnutí tady nikdy neklesnou pod 1 200 kcal denně. Pod touto hranicí je těžké pokrýt z jídla bílkoviny, vitaminy a minerály a takový příjem patří pod lékařský dohled."
+          }
+        },
+        {
+          "heading": "Jak si vybrat úroveň aktivity",
+          "body": [
+            "Koeficient aktivity je v tomhle výpočtu největší páka: u stejného těla je rozdíl mezi sedavým režimem a extrémní aktivitou přes 700 kcal denně. Počítá se do něj všechno, ne jen trénink — stání, chůze, domácnost i vaše práce.",
+            "Většina lidí sáhne po úrovni o stupeň vyšší. Pokud třikrát týdně cvičíte a zbytek času sedíte, jste lehce až středně aktivní, ne velmi aktivní."
+          ],
+          "bullets": [
+            "Sedavý režim — práce vsedě a málo nebo žádný cílený pohyb.",
+            "Lehce aktivní — lehký pohyb nebo sport jeden až tři dny v týdnu.",
+            "Středně aktivní — střední zátěž tři až pět dní v týdnu.",
+            "Velmi aktivní — náročný trénink šest nebo sedm dní v týdnu.",
+            "Extrémně aktivní — fyzicky náročná práce nebo tvrdý trénink dvakrát denně."
+          ]
+        },
+        {
+          "heading": "Jak výpočet funguje",
+          "body": [
+            "Bazální metabolismus — co tělo spálí v úplném klidu — vychází z rovnice Mifflin-St Jeor: 10 × hmotnost v kg plus 6,25 × výška v cm minus 5 × věk, a k tomu plus 5 u mužů nebo minus 161 u žen.",
+            "Toto číslo se násobí koeficientem aktivity, od 1,2 pro sedavý režim po 1,9 pro extrémní aktivitu. Výsledkem je celkový denní energetický výdej — udržovací číslo nahoře ve výsledku.",
+            "Příklad: třicetiletý muž, 180 cm a 80 kg, má bazální metabolismus 1 780 kcal. Při lehké aktivitě (× 1,375) je to asi 2 448 kcal denně na udržení hmotnosti."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Co vám kalorická kalkulačka neřekne",
+          "body": [
+            "Každá rovnice tady je populační průměr odvozený z měřených dat a jednotlivci leží na obou stranách. Berte to číslo jako odhad, který si tři až čtyři týdny ověříte na váze, ne jako fakt o svém těle."
+          ],
+          "bullets": [
+            "U většiny dospělých se odhad obvykle vejde do zhruba 10 % — to je 200 kcal na obě strany při příjmu 2 000 kcal.",
+            "Neříká nic o tom, z čeho se ty kalorie skládají, a přitom o udržitelnosti jídelníčku rozhodují bílkoviny, vláknina a mikroživiny.",
+            "Onemocnění štítné žlázy, některé léky i dlouhá historie diet posouvají skutečný výdej mimo odhad.",
+            "Není určená pro děti, pro těhotenství a kojení ani pro sportovce v náročných tréninkových blocích.",
+            "Velmi svalnaté lidi podhodnocuje, protože rovnice pracuje s celkovou hmotností, ne s aktivní tělesnou hmotou."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Kolik kalorií bych měl denně jíst?",
+          "answer": "Tolik, kolik spálíte, pokud je vaše hmotnost tam, kde ji chcete mít. U většiny dospělých to vychází někde mezi 1 800 a 2 800 kcal, ale rozpětí je široké, protože záleží na velikosti těla, věku a pohybu. Kalkulačka výše vám dá vaše vlastní číslo místo průměru."
+        },
+        {
+          "question": "Kolik kalorií mám jíst, abych zhubl?",
+          "answer": "Asi 500 kcal denně pod udržovacím příjmem odpovídá zhruba půl kilu týdně, 250 kcal pod ním asi čtvrt kilu. Větší deficity spolehlivě rychlejší nejsou — jen se hůř drží a víc úbytku jde z svalů."
+        },
+        {
+          "question": "Je 1 200 kcal denně bezpečných?",
+          "answer": "Je to nejnižší příjem, který tato kalkulačka nabídne, a jde o dolní hranici, ne o doporučení. Zhruba pod ní je obtížné pokrýt z jídla bílkoviny, vitaminy a minerály, takže nižší příjem patří jen pod lékařský dohled."
+        },
+        {
+          "question": "Jakou rovnici tato kalkulačka používá?",
+          "answer": "Mifflin-St Jeor pro bazální metabolismus a k tomu standardní koeficient aktivity. V klinické praxi nahradila starší rovnici Harris-Benedict, protože je pro dnešní tělesné složení přesnější — u zdravých dospělých obvykle zhruba do 10 %."
+        },
+        {
+          "question": "Musím kalorie počítat, abych zhubl?",
+          "answer": "Nemusíte. Počítání je jen jeden způsob, jak udržet deficit, a spoustě lidí stačí změnit, co jedí, místo aby to vážili. Vědět, kde přibližně leží váš udržovací příjem, se ale hodí tak jako tak — řekne vám, jak velkou změnu vlastně děláte."
+        },
+        {
+          "question": "Ukládá tato kalkulačka moje údaje?",
+          "answer": "Ne. Výpočet probíhá celý ve vašem prohlížeči. Nic z toho, co zadáte, se neodesílá na naše servery ani neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Chcete plán, ne jen číslo?",
+        "body": "Objednejte se na videokonzultaci s registrovaným lékařem a proberte, co to číslo znamená pro vaši hmotnost, krevní testy a anamnézu.",
+        "label": "Objednat konzultaci"
+      }
+    },
+    "due-date-calculator": {
+      "cardTitle": "Těhotenská kalkulačka",
+      "cardBlurb": "Předpokládaný termín porodu, v kolikátém týdnu jste a týdny, na kterých mezitím záleží.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "Těhotenská",
+      "h1Accent": "kalkulačka",
+      "h1Trail": "{country}",
+      "metaTitle": "Těhotenská Kalkulačka {country} | Termín Porodu a Týdny",
+      "metaDescription": "Spočítejte si předpokládaný termín porodu a v kolikátém týdnu těhotenství jste, podle prvního dne poslední menstruace. Zohledňuje délku vašeho cyklu, včetně přehledu všech 40 týdnů.",
+      "lede": "Zadejte první den poslední menstruace a uvidíte předpokládaný termín porodu, v kolikátém týdnu jste dnes a kdy začíná každý trimestr.",
+      "trustPoints": [
+        "Zohledňuje cykly od 20 do 45 dnů",
+        "Data trimestrů a období termínu (37.–42. týden)",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "widget": {
+        "title": "Váš termín porodu",
+        "placeholder": "Zadejte první den poslední menstruace a uvidíte předpokládaný termín porodu.",
+        "note": "Jde o odhad z dat, která zadáte, nikoli o diagnózu. Datovací ultrazvuk měří přímo miminko a tento odhad nahrazuje.",
+        "lmpLabel": "První den poslední menstruace",
+        "lmpHint": "Den, kdy krvácení začalo, ne kdy skončilo.",
+        "cycleLabel": "Délka cyklu",
+        "cycleHint": "Počet dnů od začátku jedné menstruace do začátku další. Pokud si nejste jistá, nechte 28.",
+        "daysUnit": "dnů",
+        "gestationalAgeLabel": "V kolikátém týdnu jste dnes",
+        "daysToGoLabel": "Zbývá dnů",
+        "secondTrimesterLabel": "Začátek druhého trimestru",
+        "thirdTrimesterLabel": "Začátek třetího trimestru",
+        "termWindowLabel": "Období termínu (37.–42. týden)",
+        "trimester1": "První trimestr",
+        "trimester1Note": "1. až 13. týden. V tomto období se obvykle registrujete v prenatální poradně a jde se na datovací ultrazvuk.",
+        "trimester2": "Druhý trimestr",
+        "trimester2Note": "14. až 27. týden. Screeningový ultrazvuk se obvykle provádí okolo 20. týdne.",
+        "trimester3": "Třetí trimestr",
+        "trimester3Note": "Od 28. týdne. Kontroly růstu a krevního tlaku jsou s blížícím se termínem častější.",
+        "outOfRangeNote": "Zkontrolujte datum — je v budoucnosti, nebo více než 42 týdnů zpátky, což je mimo rozsah, který tato kalkulačka umí spočítat."
+      },
+      "sections": [
+        {
+          "heading": "Vaše těhotenství týden po týdnu",
+          "body": [
+            "Těhotenství se datuje od prvního dne poslední menstruace, ne od početí, a od té chvíle trvá 40 týdnů. Před 37. týdnem jde o předčasný porod, od 42. týdne o porod po termínu a mezi těmito hranicemi se rodí prakticky všechna miminka.",
+            "Tabulka níže je celých 40 týdnů rozdělených tak, jak je dělí prenatální péče."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Fáze těhotenství v týdnech od poslední menstruace",
+            "columns": [
+              "Týdny",
+              "Fáze",
+              "Co se obvykle děje"
+            ],
+            "rows": [
+              [
+                "1. – 13.",
+                "První trimestr",
+                "Registrace v poradně, první krevní testy a datovací ultrazvuk"
+              ],
+              [
+                "14. – 27.",
+                "Druhý trimestr",
+                "Screeningový ultrazvuk, obvykle okolo 20. týdne"
+              ],
+              [
+                "28. – 36.",
+                "Třetí trimestr",
+                "Kontroly růstu, krevního tlaku a polohy jsou častější"
+              ],
+              [
+                "37. – 38.",
+                "Rané období termínu",
+                "Od této chvíle už porod není předčasný"
+              ],
+              [
+                "39. – 40.",
+                "Plný termín",
+                "Předpokládaný termín porodu leží na konci 40. týdne"
+              ],
+              [
+                "41.",
+                "Pozdní období termínu",
+                "Sledování se zintenzivňuje a obvykle se probírá vyvolání porodu"
+              ],
+              [
+                "42. a více",
+                "Po termínu",
+                "Porod se obvykle vyvolává, místo aby se dále čekalo"
+              ]
+            ],
+            "footnote": "Poslední čtyři řádky jsou všechny konec třetího trimestru — od 37. týdne se počítá v kratších úsecích, protože právě to mění postup. Přesně na předpokládaný termín se rodí jen asi jedno těhotenství z dvaceti."
+          }
+        },
+        {
+          "heading": "Jak se termín porodu počítá",
+          "body": [
+            "Odhad vychází z Naegeleho pravidla: 280 dnů, tedy 40 týdnů, od prvního dne poslední menstruace. Předpokládá 28denní cyklus s ovulací okolo 14. dne.",
+            "Pokud jsou vaše cykly delší nebo kratší, ovulace se posouvá s nimi, a proto kalkulačka posune datum o stejný rozdíl. Cyklus 32 dnů odhad posune o čtyři dny později, cyklus 24 dnů o čtyři dny dříve.",
+            "Praktický příklad: poslední menstruace začínající 1. ledna při 28denním cyklu dává 8. října. Stejná menstruace při 32denním cyklu dává 12. října."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Proč datovací ultrazvuk tento odhad nahrazuje",
+          "body": [
+            "Kalkulačka umí pracovat jen s daty, která jí zadáte. Ultrazvuk měří samotné miminko, a proto se dál pracuje s termínem z ultrazvuku."
+          ],
+          "bullets": [
+            "Spoléhá na to, že si přesně pamatujete první den poslední menstruace.",
+            "Předpokládá ovulaci v polovině cyklu, což neplatí u každé ženy.",
+            "Nepravidelný cyklus, nedávno ukončená antikoncepce i kojení dělají z poslední menstruace slabé vodítko.",
+            "Ultrazvuk v prvním trimestru měří miminko, obvykle mezi 11. a 14. týdnem, s odchylkou několika dnů.",
+            "Po IVF se datuje podle dne transferu, ne podle menstruace, takže tento odhad neplatí."
+          ]
+        },
+        {
+          "heading": "Kdy kontaktovat lékaře",
+          "body": [],
+          "bullets": [
+            "Myslíte si, že jste těhotná, a ještě nemáte zajištěnou prenatální péči — první prohlídka i datovací ultrazvuk patří na začátek.",
+            "Máte v časném těhotenství krvácení, křeče nebo bolest na jedné straně.",
+            "Máte silné nebo trvalé zvracení, případně v sobě neudržíte tekutiny.",
+            "Máte chronické onemocnění nebo pravidelně berete léky — některé je potřeba přehodnotit hned po potvrzení těhotenství.",
+            "Jste ve 41. týdnu, nebo máte po termínu a pohyby miminka se změnily."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Jak přesná je kalkulačka termínu porodu?",
+          "answer": "Výpočet je přesný, předpoklady za ním nikoli. Přesně na předpokládaný termín se rodí jen asi jedno těhotenství z dvaceti a velká většina porodů proběhne v týdnech okolo něj. Přesnou verzí je ultrazvuk v prvním trimestru — jakmile ho máte, pracuje se dál s jeho termínem."
+        },
+        {
+          "question": "V kolikátém týdnu těhotenství jsem?",
+          "answer": "Týdny se počítají od prvního dne poslední menstruace, ne od početí — proto jste ve chvíli, kdy test poprvé vyjde pozitivně, už asi ve čtvrtém týdnu. K početí dochází přibližně dva týdny po onom prvním dni, takže těhotenství je vždy datováno asi o dva týdny „starší“ než samotný embryonální vývoj."
+        },
+        {
+          "question": "Co znamená 9w 3d?",
+          "answer": "Devět dokončených týdnů a tři dny od prvního dne poslední menstruace. Takto se to zapisuje v těhotenské dokumentaci, protože celý týden je příliš hrubý údaj, když má ultrazvuk nebo krevní test proběhnout v konkrétním okně."
+        },
+        {
+          "question": "Můžu ji použít, když mám nepravidelný cyklus?",
+          "answer": "Můžete a zadání vaší obvyklé délky cyklu vás dostane blíž než výchozích 28 dnů. Nepravidelný cyklus je ale právě ten případ, kdy je poslední menstruace slabým vodítkem, takže výsledek berte jako orientační, dokud nebudete na ultrazvuku."
+        },
+        {
+          "question": "Změní se termín porodu po ultrazvuku?",
+          "answer": "Často ano, obvykle o několik dnů. Ultrazvuk měří miminko místo počítání od zapamatovaného data, a proto platí termín z něj. Rozdíl týdne i více je běžný, když bylo datum poslední menstruace nejisté."
+        },
+        {
+          "question": "Ukládá tato kalkulačka moje údaje?",
+          "answer": "Ne. Výpočet probíhá výhradně ve vašem prohlížeči. Nic, co zadáte, se neodesílá na naše servery ani neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Otázky na začátku těhotenství?",
+        "body": "Proberte po videu s registrovaným lékařem příznaky, léky, které už berete, nebo cokoli, s čím nechcete čekat na první prohlídku.",
+        "label": "Objednat konzultaci"
+      },
+      "suggestionsIntro": "Odhadovaný termín je začátek těhotenské péče, ne celá péče. Tyto konzultace posunou věc dál."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Kontrola rizika osteoporózy",
+      "cardBlurb": "Které zveřejněné rizikové faktory zlomeniny z křehkosti se týkají vás a zda má smysl žádat o vyšetření kostní density.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "Riziko",
+      "h1Accent": "osteoporózy",
+      "h1Trail": "{country}",
+      "metaTitle": "Kontrola Rizika Osteoporózy {country} | Potřebuji Denzitometrii?",
+      "metaDescription": "Zkontrolujte zveřejněné rizikové faktory osteoporózy a zlomeniny z křehkosti a zjistěte, zda doporučené postupy radí nechat se vyšetřit. Nejde o FRAX ani o diagnózu — je to seznam k vyhledání rizika, se kterým můžete jít k lékaři.",
+      "lede": "Odpovězte na otázky o svém věku, pohlaví a rizikových faktorech a zjistěte, zda zveřejněné doporučené postupy radí požádat o vyšetření kostní density.",
+      "trustPoints": [
+        "Založeno na doporučeních NICE pro vyhledávání rizika, ne na proprietárním skóre",
+        "Zvlášť zobrazuje velké a přispívající rizikové faktory",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "suggestionsIntro": "Zjištěný rizikový faktor je důvod zeptat se na vyšetření kostní density, ne diagnóza. Toto jsou konzultace, které mohou jít dál.",
+      "widget": {
+        "title": "Vaše rizikové faktory",
+        "placeholder": "Odpovězte na otázky a zjistěte, zda má smysl žádat o vyšetření kostní density.",
+        "note": "Toto určuje, kdo by měl být vyšetřen na osteoporózu — neodhaduje vaše riziko zlomeniny a není to diagnóza. Úplné vyšetření využívá kostní denzitometrii (DXA) a ověřený nástroj, jako je FRAX, který provádí lékař.",
+        "fractureLabel": "Zlomenina z křehkosti po 50. roce věku",
+        "fractureHint": "Zlomenina způsobená pádem z výšky postavy nebo nižší — zápěstí, kyčel, páteř nebo paže.",
+        "glucocorticoidLabel": "Perorální kortikosteroidy po dobu 3 měsíců nebo déle",
+        "parentalHipLabel": "Rodič měl zlomeninu kyčle",
+        "smokerLabel": "Současný kuřák",
+        "alcoholLabel": "3 nebo více jednotek alkoholu denně",
+        "raLabel": "Revmatoidní artritida",
+        "secondaryLabel": "Sekundární příčina úbytku kostní hmoty",
+        "secondaryHint": "Například zvýšená činnost štítné žlázy, porucha vstřebávání nebo dlouhodobé onemocnění jater či ledvin.",
+        "fallsLabel": "2 nebo více pádů za poslední rok",
+        "menopauseLabel": "Menopauza před 45. rokem věku",
+        "majorLabel": "Zjištěné velké rizikové faktory",
+        "contributingLabel": "Zjištěné přispívající rizikové faktory"
+      },
+      "sections": [
+        {
+          "heading": "Rizikové faktory zlomeniny z křehkosti",
+          "body": [
+            "Osteoporóza sama o sobě nemá příznaky — prvním signálem bývá až zlomenina po pádu, který by normálně kost nezlomil. Doporučené postupy proto vycházejí z rizikových faktorů a rozhodují, u koho má smysl vyšetření provést dřív, než ke zlomenině dojde, ne až potom.",
+            "Deset faktorů níže je těch, které pro toto rozhodnutí uvádí doporučený postup NICE CG146. Dva z nich jsou samy o sobě považovány za velké; ostatní se sčítají, místo aby působily samostatně."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Rizikové faktory, které doporučené postupy NICE pro vyhledávání rizika označují pro vyšetření",
+            "columns": [
+              "Rizikový faktor",
+              "Proč na něm záleží",
+              "Velký nebo přispívající"
+            ],
+            "rows": [
+              [
+                "Zlomenina z křehkosti po 50. roce",
+                "Zlomenina zápěstí, kyčle, páteře nebo paže po mírném pádu je nejsilnějším ukazatelem další zlomeniny.",
+                "Velký"
+              ],
+              [
+                "Dlouhodobé perorální kortikosteroidy (3+ měsíce)",
+                "Glukokortikoidy přímo oslabují kost, nezávisle na kterémkoli jiném faktoru z tohoto seznamu.",
+                "Velký"
+              ],
+              [
+                "Rodič měl zlomeninu kyčle",
+                "Ukazuje na zděděnou pevnost kostí, oddělenou od vašeho vlastního životního stylu.",
+                "Přispívající"
+              ],
+              [
+                "Současný kuřák",
+                "Snižuje kostní hustotu a zpomaluje hojení, pokud ke zlomenině dojde.",
+                "Přispívající"
+              ],
+              [
+                "3+ jednotky alkoholu denně",
+                "Snižuje tvorbu kosti a zvyšuje samotné riziko pádu.",
+                "Přispívající"
+              ],
+              [
+                "Revmatoidní artritida",
+                "Samotné onemocnění, a často i jeho léčba, ovlivňují přestavbu kosti.",
+                "Přispívající"
+              ],
+              [
+                "Sekundární příčina úbytku kostní hmoty",
+                "Stavy jako zvýšená činnost štítné žlázy nebo dlouhodobé onemocnění jater či ledvin samy o sobě snižují kostní hustotu.",
+                "Přispívající"
+              ],
+              [
+                "2+ pády za poslední rok",
+                "Většina zlomenin z křehkosti vzniká po pádu z výšky postavy, ne samostatně.",
+                "Přispívající"
+              ],
+              [
+                "Menopauza před 45. rokem",
+                "Estrogen chrání kost, takže jeho dřívější ztráta dává úbytku kostní hmoty více času.",
+                "Přispívající"
+              ],
+              [
+                "Nízká tělesná hmotnost (BMI pod 18,5)",
+                "Menší tělesná hmota obvykle znamená menší kostní hmotu a menší tlumení nárazu při pádu.",
+                "Přispívající"
+              ]
+            ],
+            "footnote": "Založeno na rizikových faktorech, které pro vyhledávání rizika uvádí doporučený postup NICE CG146 (posouzení rizika zlomeniny z křehkosti). Jde o seznam pro vyhledávání rizika, ne o diagnostické skóre."
+          }
+        },
+        {
+          "heading": "Koho podle doporučených postupů vyšetřit",
+          "body": [
+            "NICE, britská National Osteoporosis Guideline Group (NOGG) a European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) stanovují v podstatě stejnou hranici. Je to kombinace věkové hranice a hranice rizikových faktorů, ne jediné číslo."
+          ],
+          "bullets": [
+            "Všechny ženy od 65 let a všichni muži od 75 let — vyšetření se doporučuje jen na základě věku.",
+            "Mladší lidé s velkým rizikovým faktorem — předchozí zlomeninou z křehkosti nebo dlouhodobými perorálními kortikosteroidy — v jakémkoli věku, i pod 50 let.",
+            "Kdokoli od 50 let s alespoň jedním z přispívajících faktorů uvedených v tabulce výše.",
+            "Tento nástroj toto zveřejněné pravidlo aplikuje na to, co zadáte. Nepočítá pravděpodobnost a není to FRAX — FRAX je samostatný proprietární nástroj, který používá lékař a který kombinuje tento typ faktorů s naměřenou kostní hustotou."
+          ]
+        },
+        {
+          "heading": "Co vám tato kontrola nesdělí",
+          "body": [
+            "Seznam rizikových faktorů je nástroj pro třídění, ne měření. Řekne vám, zda má smysl zeptat se na vyšetření — neřekne vám, co by to vyšetření ukázalo."
+          ],
+          "bullets": [
+            "Není to diagnóza. Osteoporóza se diagnostikuje kostní denzitometrií (DXA), ne dotazníkem.",
+            "Nevydá pravděpodobnost zlomeniny. Nástroje, které to dělají — FRAX, Garvanův nomogram, QFracture — kombinují rizikové faktory s naměřenou kostní hustotou a používá je lékař.",
+            "Není to FRAX a nepoužívá jeho koeficienty, které jsou vlastnictvím Sheffieldské univerzity.",
+            "Výsledek „nebyl zjištěn žádný konkrétní rizikový faktor“ je uklidňující, ale není zárukou — jakoukoli novou zlomeninu nebo pád vždy zmiňte lékaři.",
+            "Neříká nic o léčbě. O lécích rozhoduje lékař, a to až po diagnóze, ne na základě seznamu rizikových faktorů."
+          ]
+        },
+        {
+          "heading": "Jak postupovat k vyšetření",
+          "body": [],
+          "bullets": [
+            "Začněte u lékaře. Zváží vaše rizikové faktory a rozhodne, zda dává smysl žádanka na kostní denzitometrii.",
+            "Vezměte s sebou faktory, které vám tento nástroj označil — které konkrétně, ne jen výsledek — konzultace pak bude rychlejší.",
+            "Pokud jste již měli zlomeninu z křehkosti, zeptejte se na vyšetření bez ohledu na svůj věk nebo výsledek tohoto nástroje.",
+            "Vápník, vitamin D, zátěžové cvičení a odvykání kouření podporují zdraví kostí, zatímco na vyšetření čekáte.",
+            "Při nové zlomenině po pádu z malé výšky vyhledejte lékařskou péči co nejdříve, ať už tento nástroj ukáže cokoli — potřebuje léčbu sama o sobě."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Je to totéž co FRAX?",
+          "answer": "Ne. FRAX je samostatný proprietární nástroj vyvinutý Sheffieldskou univerzitou, jehož koeficienty nejsou zveřejněné — tento nástroj ho nenapodobuje ani netvrdí, že se jeho výsledku rovná. Toto je seznam pro vyhledávání rizika založený na zveřejněných doporučených postupech (NICE CG146): řekne vám, zda má smysl nechat se vyšetřit, nikdy ne pravděpodobnost zlomeniny."
+        },
+        {
+          "question": "Co je kostní denzitometrie (DXA)?",
+          "answer": "Vyšetření duální rentgenovou absorpciometrií — rentgen s nízkou dávkou záření, který měří kostní hustotu, obvykle v oblasti kyčle a páteře. Je to vyšetření, na kterém vyšetření skutečně stojí; nic na této stránce ho nenahrazuje."
+        },
+        {
+          "question": "Znamená mít rizikové faktory, že mám osteoporózu?",
+          "answer": "Ne. Zjištěný rizikový faktor znamená, že doporučené postupy radí nechat se vyšetřit, ne že chorobu máte. Mnoho lidí s rizikovými faktory má normální výsledek kostní denzitometrie a osteoporóza se může objevit i bez jakéhokoli z uvedených faktorů."
+        },
+        {
+          "question": "Co když je můj výsledek 'nebyl zjištěn žádný konkrétní rizikový faktor', ale stále mám obavy?",
+          "answer": "I tak to proberte s lékařem. Tento nástroj pokrývá rizikové faktory z jednoho klinického doporučeného postupu; nepokrývá celou osobní ani rodinnou anamnézu, která může být relevantní, a rozhovor s lékařem vás nic nestojí."
+        },
+        {
+          "question": "Kdo skutečně diagnostikuje osteoporózu?",
+          "answer": "Lékař, na základě kostní denzitometrie (DXA) — obvykle T-skóre -2,5 nebo nižší v oblasti kyčle nebo páteře. Dotazník rizikových faktorů, jako je tento, může jen navrhnout, kdo by toto vyšetření měl podstoupit; sám o sobě nemůže nic diagnostikovat."
+        },
+        {
+          "question": "Ukládá si tato kontrola moje odpovědi?",
+          "answer": "Ne. Výpočet probíhá celý ve vašem prohlížeči. Nic z toho, co vyberete, se neodesílá na naše servery ani se neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Chcete probrat zdraví svých kostí?",
+        "body": "Objednejte si videokonzultaci s registrovaným lékařem, projděte si své rizikové faktory a zjistěte, zda dává smysl žádanka na kostní denzitometrii.",
+        "label": "Objednat konzultaci"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Ovulační kalkulačka",
+      "cardBlurb": "Vaše plodné dny, odhadovaný den ovulace a termín příští menstruace.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "Ovulační",
+      "h1Accent": "kalkulačka",
+      "h1Trail": "{country}",
+      "metaTitle": "Ovulační Kalkulačka {country} | Plodné Dny a Den Ovulace",
+      "metaDescription": "Spočítejte si plodné dny a odhadovaný den ovulace podle prvního dne poslední menstruace. Zohledňuje délku vašeho cyklu a šest nejplodnějších dnů rozepisuje den po dni.",
+      "lede": "Zadejte první den poslední menstruace a uvidíte šest dnů s nejvyšší pravděpodobností otěhotnění, odhadovaný den ovulace a termín příští menstruace.",
+      "trustPoints": [
+        "Počítá se zpětně od příští menstruace, takže i delší cykly sedí",
+        "Celé šestidenní plodné období, ne jediný den",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "suggestionsIntro": "Odhad ovulace je vodítko k načasování, nikoli vyšetření plodnosti. Toto jsou konzultace, které naši lékaři vedou, když chcete, aby se někdo podíval na celý obrázek.",
+      "widget": {
+        "title": "Vaše plodné dny",
+        "placeholder": "Zadejte první den poslední menstruace a uvidíte svoje plodné dny.",
+        "note": "Jde o odhad z dat, která zadáte, nikoli o diagnózu — a není to antikoncepční metoda. Ovulace se cyklus od cyklu posouvá a otěhotnět lze i ve dnech mimo zobrazené období.",
+        "lmpLabel": "První den poslední menstruace",
+        "lmpHint": "Den, kdy krvácení začalo, ne kdy skončilo.",
+        "cycleLabel": "Délka cyklu",
+        "cycleHint": "Počet dnů od začátku jedné menstruace do začátku další. Pokud si nejste jistá, nechte 28.",
+        "daysUnit": "dnů",
+        "resultLabel": "Odhadovaná ovulace",
+        "resultSummary": "Odečteno 14 dnů od očekávané příští menstruace — právě to udrží načasování správné i u cyklů, které nemají 28 dnů.",
+        "fertileWindowLabel": "Plodné období (6 dnů)",
+        "daysToOvulationLabel": "Dnů do ovulace",
+        "nextPeriodLabel": "Termín příští menstruace",
+        "testFromLabel": "Test od"
+      },
+      "sections": [
+        {
+          "heading": "Váš cyklus den po dni",
+          "body": [
+            "Cyklus se počítá od prvního dne krvácení. Ovulace není napevno 14. den: nastává zhruba 14 dnů před PŘÍŠTÍ menstruací, takže při 35denním cyklu vychází okolo 21. dne a při 24denním okolo 10. dne. Proto počítání 14 dnů dopředu od poslední menstruace mine u každého cyklu, který nemá 28 dnů.",
+            "Dny níže odpovídají jednomu 28dennímu cyklu. Kalkulačka nahoře je posune podle délky cyklu, kterou zadáte."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Plodné dny v rámci 28denního cyklu",
+            "columns": [
+              "Den cyklu",
+              "Co se děje",
+              "Šance na otěhotnění"
+            ],
+            "rows": [
+              [
+                "1. den",
+                "Začíná krvácení — odtud se cyklus počítá",
+                "Velmi nízká"
+              ],
+              [
+                "2.–8. den",
+                "Zraje vajíčko, plodné období ještě nezačalo",
+                "Nízká"
+              ],
+              [
+                "9.–13. den",
+                "Plodné období: spermie přežívají až pět dnů",
+                "Vysoká"
+              ],
+              [
+                "14. den",
+                "Ovulace — vajíčko se uvolňuje",
+                "Nejvyšší"
+              ],
+              [
+                "15.–16. den",
+                "Vajíčko po uvolnění přežívá necelý den",
+                "Rychle klesá"
+              ],
+              [
+                "28. den",
+                "Má přijít další menstruace — odtud testujte, pokud nepřijde",
+                "Velmi nízká"
+              ]
+            ],
+            "footnote": "Spermie přežívají v pohlavních cestách až pět dnů a vajíčko necelý jeden, a proto se plodné období otevírá dlouho před ovulací a téměř okamžitě po ní se zavírá."
+          }
+        },
+        {
+          "heading": "Podle čeho poznáte, že ovulace opravdu proběhla",
+          "body": [
+            "Kalkulačka předpovídá, tyto známky potvrzují. Když jednu dvě z nich pár cyklů sledujete, zjistíte, jestli vaše ovulace odpovídá odhadu — a to se hodí vědět dřív, než na tom cokoli postavíte."
+          ],
+          "bullets": [
+            "Hlen děložního hrdla je v dnech těsně před ovulací čirý, tažný a kluzký, podobný syrovému vaječnému bílku.",
+            "Ovulační testy zachytí v moči vzestup LH, který přichází 24 až 36 hodin před uvolněním vajíčka. Začněte testovat několik dnů před odhadovaným datem.",
+            "Bazální tělesná teplota po ovulaci stoupne asi o 0,3 °C, takže ji potvrzuje zpětně, nikoli dopředu.",
+            "Někdo v polovině cyklu cítí jednostrannou bolest, jiná žena vnímá citlivost prsou nebo změnu libida.",
+            "Cyklus může proběhnout i bez ovulace. Občas se to stane většině žen a samo o sobě to neznamená, že je něco v nepořádku."
+          ]
+        },
+        {
+          "heading": "Co tato kalkulačka neumí",
+          "body": [
+            "Pracuje jen se dvěma věcmi: s datem, které zadáte, a s předpokladem, že vaše luteální fáze trvá standardních 14 dnů. Obojí je rozumné, ani jedno není jisté."
+          ],
+          "bullets": [
+            "Není to antikoncepční metoda. Cykly se posouvají, spermie přežívají několik dnů a otěhotnět lze i ve dnech mimo zde zobrazené období.",
+            "Nepravidelné cykly, nedávno vysazená hormonální antikoncepce, kojení, syndrom polycystických ovarií a onemocnění štítné žlázy předpověď oslabují.",
+            "Hormonální antikoncepce ovulaci potlačuje, takže během jejího užívání není co předpovídat.",
+            "Stres, nemoc, cestování i tvrdý trénink mohou ovulaci v daném cyklu oddálit.",
+            "Je to nástroj k plánování, ne test plodnosti: nic neříká o kvalitě vajíček, o spermiích ani o vejcovodech."
+          ]
+        },
+        {
+          "heading": "Kdy se obrátit na lékaře",
+          "body": [],
+          "bullets": [
+            "Snažíte se otěhotnět 12 měsíců, nebo 6 měsíců, pokud je vám přes 35 let.",
+            "Vaše cykly jsou kratší než 21 dnů, delší než 35 dnů, nebo se měsíc od měsíce nedají odhadnout.",
+            "Menstruace se zastavila, nebo krvácíte i mezi menstruacemi.",
+            "Máte bolestivou menstruaci, bolest při sexu nebo diagnózu syndromu polycystických ovarií, endometriózy či onemocnění štítné žlázy.",
+            "Chcete poradit před otěhotněním — kyselina listová, léky, které už berete, očkování i změření krevního tlaku patří před těhotenství, ne až po něm."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Kdy jsem nejplodnější?",
+          "answer": "V den ovulace a dva dny před ním. Celé plodné období trvá zhruba šest dnů: pět dnů před ovulací a den samotné ovulace. Spermie přežívají až pět dnů a vajíčko necelý jeden, proto plodné období začíná brzy a rychle končí."
+        },
+        {
+          "question": "Nastává ovulace vždy 14. den?",
+          "answer": "Ne. Čtrnáctý den platí jen pro učebnicový 28denní cyklus. Ovulace přichází zhruba 14 dnů před příští menstruací, takže u 32denního cyklu vychází okolo 18. dne a u 24denního okolo 10. dne. Počítat 14 dnů dopředu od poslední menstruace je nejčastější způsob, jak se v načasování splést."
+        },
+        {
+          "question": "Jak spočítat ovulaci při nepravidelném cyklu?",
+          "answer": "Zadejte svou obvyklou délku cyklu a výsledek berte spíš jako široký odhad než jako přesné datum. Pokud se vám cykly liší o víc než pár dnů, řeknou vám ovulační testy nebo sledování hlenu mnohem víc než jakýkoli výpočet z kalendáře. Cykly trvale kratší než 21 dnů nebo delší než 35 dnů stojí za konzultaci s lékařem."
+        },
+        {
+          "question": "Můžu ovulační kalkulačku používat jako antikoncepci?",
+          "answer": "Ne. Není to antikoncepční metoda a nikdy by se tak neměla používat. Ovulace se mezi cykly posouvá, spermie přežívají až pět dnů a otěhotnět lze i ve dnech, které kalkulačka označí jako mimo plodné období. Pokud otěhotnět nechcete, používejte uznávanou antikoncepci."
+        },
+        {
+          "question": "Kdy si po ovulaci můžu udělat těhotenský test?",
+          "answer": "Většina domácích testů je spolehlivá ode dne, kdy měla přijít menstruace, tedy asi 14 dnů po ovulaci — to je datum „Test od“ ve výsledku. Dřívější test může vyjít negativní, i když těhotná jste, protože v moči ještě není dost hCG."
+        },
+        {
+          "question": "Ukládá tato ovulační kalkulačka moje údaje?",
+          "answer": "Ne. Výpočet probíhá výhradně ve vašem prohlížeči. Nic, co zadáte, se neodesílá na naše servery ani neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Snažíte se otěhotnět?",
+        "body": "Proberte po videu s registrovaným lékařem nepravidelné cykly, vyšetření před otěhotněním nebo léky, které už berete.",
+        "label": "Objednat konzultaci"
+      }
+    }
+  }
+}

@@ -11,12 +11,13 @@ import {
   BarChart3,
   Bell,
   Calendar,
-  CalendarClock,
   CalendarRange,
   FileText,
   Globe2,
   LayoutDashboard,
   MessagesSquare,
+  Landmark,
+  LifeBuoy,
   Receipt,
   ScrollText,
   ShieldCheck,
@@ -29,12 +30,14 @@ import {
   fetchDoctorAppointments,
   fetchDoctorComplianceStatus,
   fetchDoctorNotifications,
+  fetchDoctorPermissions,
+  fetchDoctorSupportUnread,
   fetchDoctorUnreadMessageCount,
 } from "@/lib/api/doctor-api";
 import { ComplianceBanner } from "./_components/compliance-banner";
 import { PortalShell, type PortalNavItem, type PortalNavGroup } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
 import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
@@ -73,14 +76,27 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const [notif, unreadMessages, compliance, locale, tourAppointments] = await Promise.all([
+  const [
+    notif,
+    unreadMessages,
+    unreadSupport,
+    compliance,
+    locale,
+    tourAppointments,
+    permissions,
+  ] = await Promise.all([
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
+    fetchDoctorSupportUnread(),
     fetchDoctorComplianceStatus(),
-    getPageLocale(),
+    getPortalLocale(),
     // Minimal page just to find one appointment id to walk the tour through
     // (steps 9-12 below) — no filters, first page is enough.
     fetchDoctorAppointments({ page: "1", pageSize: "5" }),
+    // Drives the country-director nav entry below. Cheap single-row query, and
+    // it has to be resolved here rather than on the page: an entry every doctor
+    // can see but only a director can open would just serve 403s.
+    fetchDoctorPermissions(),
   ]);
   const { doctor: d, common } = loadLocaleBundle(locale);
   // The tour prefers an upcoming (not cancelled/completed) appointment so the
@@ -112,11 +128,12 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   const tourSteps = [
     { title: d.tour.steps.welcome.title, body: d.tour.steps.welcome.body },
     { target: "/doctor", title: d.tour.steps.overview.title, body: d.tour.steps.overview.body },
-    { route: "/doctor/availability", target: "availability-form", title: d.tour.steps.availabilityForm.title, body: d.tour.steps.availabilityForm.body },
-    { target: "availability-week", title: d.tour.steps.availabilityWeek.title, body: d.tour.steps.availabilityWeek.body },
+    // Schedule is one page now (the calendar route redirects here), so these
+    // four steps walk the single surface instead of hopping between two.
+    { route: "/doctor/availability", target: "availability-week", title: d.tour.steps.availabilityWeek.title, body: d.tour.steps.availabilityWeek.body },
+    { target: "availability-add", title: d.tour.steps.availabilityForm.title, body: d.tour.steps.availabilityForm.body },
     { target: "availability-windows", title: d.tour.steps.availabilityWindows.title, body: d.tour.steps.availabilityWindows.body },
-    { route: "/doctor/calendar", target: "calendar-add", title: d.tour.steps.calendarAdd.title, body: d.tour.steps.calendarAdd.body },
-    { target: "calendar-timeoff", title: d.tour.steps.calendarTimeoff.title, body: d.tour.steps.calendarTimeoff.body },
+    { target: "availability-manage", title: d.tour.steps.calendarTimeoff.title, body: d.tour.steps.calendarTimeoff.body },
     { route: "/doctor/appointments", target: "appointments-summary", title: d.tour.steps.appointmentsSummary.title, body: d.tour.steps.appointmentsSummary.body },
     ...workspaceSteps,
     // Route back explicitly — the previous step may have left the tour on
@@ -138,6 +155,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     FORM_SUBMITTED: d.notifications.formSubmitted,
     CROSS_BORDER_RX_REQUESTED: d.notifications.crossBorderRxRequested,
     CROSS_BORDER_RX_UPDATED: d.notifications.crossBorderRxUpdated,
+    SUPPORT_REPLY: d.notifications.supportReply,
   };
   if (notif.ok) {
     unreadCount = notif.data.unreadCount;
@@ -176,8 +194,9 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       items: [
         { href: "/doctor/appointments", label: d.nav.appointments, icon: <Calendar className="size-4" aria-hidden /> },
         { href: "/doctor/messages", label: d.nav.messages, icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
-        { href: "/doctor/calendar", label: d.nav.calendar, icon: <CalendarRange className="size-4" aria-hidden /> },
-        { href: "/doctor/availability", label: d.nav.availability, icon: <CalendarClock className="size-4" aria-hidden /> },
+        // One schedule entry: the calendar and availability pages merged, and
+        // /doctor/calendar now redirects here.
+        { href: "/doctor/availability", label: d.nav.calendar, icon: <CalendarRange className="size-4" aria-hidden /> },
       ],
     },
     {
@@ -194,6 +213,18 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       items: [
         { href: "/doctor/invoices", label: d.nav.invoices, icon: <Receipt className="size-4" aria-hidden /> },
         { href: "/doctor/reports", label: d.nav.reports, icon: <BarChart3 className="size-4" aria-hidden /> },
+        // Country-director only. `isCountryDirector` is already ANDed with
+        // "has at least one granted market" server-side, so this single check
+        // can't show an entry the endpoint would refuse.
+        ...(permissions.ok && permissions.data.isCountryDirector
+          ? [
+              {
+                href: "/doctor/reports/country",
+                label: d.nav.countryConsultations,
+                icon: <Landmark className="size-4" aria-hidden />,
+              },
+            ]
+          : []),
       ],
     },
     {
@@ -204,6 +235,12 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
           label: d.nav.notifications,
           icon: <Bell className="size-4" aria-hidden />,
           badge: unreadCount,
+        },
+        {
+          href: "/doctor/support",
+          label: d.nav.support,
+          icon: <LifeBuoy className="size-4" aria-hidden />,
+          badge: unreadSupport,
         },
         ...profileItems,
         { href: "/doctor/security", label: d.nav.security, icon: <ShieldCheck className="size-4" aria-hidden /> },
@@ -270,6 +307,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
  *  the doctor Messages inbox; internal notes and clinical events live on the
  *  appointment workspace, so send those there instead. */
 function doctorNotificationHref(type: string, appointmentId?: string): string {
+  // Support replies are doctor-scoped, not per-appointment — they carry a
+  // threadId, no appointmentId. Must be handled BEFORE the guard below, or the
+  // guard swallows them into a dead-end link.
+  if (type === "SUPPORT_REPLY") return "/doctor/support";
   if (!appointmentId) return "/doctor/notifications";
   switch (type) {
     case "PATIENT_MESSAGE":

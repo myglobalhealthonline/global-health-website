@@ -1,4 +1,4 @@
-import { Edit3, FileText, Languages, Plus } from "lucide-react";
+import { Edit3, FileText, Plus } from "lucide-react";
 import { fetchAdminBlogPosts, fetchAdminCountries, type AdminBlogDto } from "@/lib/admin/admin-api";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, IconBtn, PageHeader, Pill } from "../_components/atoms";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
@@ -23,18 +23,42 @@ const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
 });
 
+/** Every language a post exists in, English first — admins read the English
+ *  row before the market one, so it leads regardless of what the article was
+ *  authored in. The authored locale keeps its "original" styling wherever it
+ *  lands. */
+function orderedLocales(p: AdminBlogDto): Array<{ locale: string; isOriginal: boolean }> {
+  const original = p.locale.toUpperCase();
+  return [original, ...p.translations.map((t) => t.locale.toUpperCase())]
+    .sort((a, b) => (a === "EN" ? -1 : b === "EN" ? 1 : a.localeCompare(b)))
+    .map((locale) => ({ locale, isOriginal: locale === original }));
+}
+
+/** The title and slug to list a post under: its English ones when an English
+ *  translation exists, otherwise the language it was authored in. Same reason
+ *  English leads the chips — the admin team reads the list in English, even
+ *  though the article itself is written for its market. */
+function listedTitle(p: AdminBlogDto): { title: string; slug: string } {
+  if (p.locale === "EN") return { title: p.title, slug: p.slug };
+  const en = p.translations.find((t) => t.locale.toUpperCase() === "EN" && t.title);
+  return en ? { title: en.title, slug: en.slug } : { title: p.title, slug: p.slug };
+}
+
 function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
   const fields: ColumnPriorityField<AdminBlogDto>[] = [
     {
       key: "title",
       label: "Title",
       priority: 1,
-      render: (p) => (
-        <>
-          <span className="line-clamp-1 max-w-[280px] font-semibold">{p.title}</span>
-          <span className="block font-mono text-portal-thead text-[var(--color-text-muted)]">{p.slug}</span>
-        </>
-      ),
+      render: (p) => {
+        const { title, slug } = listedTitle(p);
+        return (
+          <>
+            <span className="line-clamp-1 max-w-[280px] font-semibold">{title}</span>
+            <span className="block font-mono text-portal-thead text-[var(--color-text-muted)]">{slug}</span>
+          </>
+        );
+      },
     },
     {
       key: "category",
@@ -47,20 +71,47 @@ function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
         </span>
       ),
     },
-    { key: "lang", label: "Lang", priority: 2, render: (p) => p.locale },
     {
-      key: "translations",
-      label: "Translations",
+      key: "countries",
+      label: "Countries",
+      cardLabel: "Countries",
       priority: 3,
       render: (p) =>
-        p.translations.length > 0 ? (
-          <span className="inline-flex items-center gap-1 text-portal-meta text-[var(--color-text-muted)]">
-            <Languages className="size-3" aria-hidden />
-            {p.translations.length}
+        p.countries.length > 0 ? (
+          <span className="gh-admin-blog-chips">
+            {[...p.countries]
+              .sort((a, b) => a.country.name.localeCompare(b.country.name))
+              .map((c) => (
+                <span key={c.id} className="gh-admin-blog-chip">
+                  {c.country.name}
+                </span>
+              ))}
           </span>
         ) : (
-          <span className="text-portal-meta text-[var(--color-text-muted)]">—</span>
+          <span className="text-portal-meta text-[var(--color-text-muted)]">Global</span>
         ),
+    },
+    {
+      // One cell for every language this post exists in — the post's own
+      // locale plus each translation — instead of a bare "Lang" column that
+      // made the language look like the post's category.
+      key: "locales",
+      label: "Languages",
+      cardLabel: "Languages",
+      priority: 2,
+      render: (p) => (
+        <span className="gh-admin-blog-chips">
+          {orderedLocales(p).map(({ locale, isOriginal }) => (
+            <span
+              key={locale}
+              className={`gh-admin-blog-chip${isOriginal ? " gh-admin-blog-chip--original" : ""}`}
+              title={isOriginal ? "Original language" : undefined}
+            >
+              {locale}
+            </span>
+          ))}
+        </span>
+      ),
     },
     {
       key: "status",
@@ -107,6 +158,31 @@ function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
   );
 }
 
+/** Group posts by country for display. A post assigned to several countries
+ *  is listed under each of them, because an editor looking at "Ireland" wants
+ *  every article Ireland shows — not only the ones Ireland owns exclusively.
+ *  Posts with no assignment are global and get their own group at the end. */
+function groupByCountry(posts: AdminBlogDto[]): Array<{ key: string; name: string; posts: AdminBlogDto[] }> {
+  const groups = new Map<string, { name: string; posts: AdminBlogDto[] }>();
+  const global: AdminBlogDto[] = [];
+  for (const post of posts) {
+    if (post.countries.length === 0) {
+      global.push(post);
+      continue;
+    }
+    for (const link of post.countries) {
+      const entry = groups.get(link.country.id) ?? { name: link.country.name, posts: [] };
+      entry.posts.push(post);
+      groups.set(link.country.id, entry);
+    }
+  }
+  const out = [...groups.entries()]
+    .sort((a, b) => a[1].name.localeCompare(b[1].name))
+    .map(([id, v]) => ({ key: id, name: v.name, posts: v.posts }));
+  if (global.length > 0) out.push({ key: "global", name: "Global — all countries", posts: global });
+  return out;
+}
+
 export default async function AdminBlogListPage({
   searchParams,
 }: {
@@ -128,6 +204,13 @@ export default async function AdminBlogListPage({
   const posts = result.ok ? result.data.items : [];
   const publishedCount = posts.filter((p) => p.status === "PUBLISHED" && p.isActive).length;
   const translatedCount = posts.filter((p) => p.translations.length > 0).length;
+  const groups = groupByCountry(posts);
+  /* An article visible in several countries is listed under each of them,
+   * because that is what "articles in Ireland" means to whoever is looking.
+   * The consequence is that the group counts can sum higher than the number
+   * of articles, so the summary says which number it is rather than leaving
+   * the two silently disagreeing. */
+  const listings = groups.reduce((n, g) => n + g.posts.length, 0);
 
   return (
     <>
@@ -230,33 +313,52 @@ export default async function AdminBlogListPage({
             />
           </AdminCard>
         ) : (
-          <AdminCard padding={0}>
-            <div className="border-b border-[var(--color-border)] px-4 pt-4">
-              <AdminSummaryStrip
-                items={[
-                  {
-                    label: "Posts shown",
-                    value: posts.length,
-                    hint: "Matching filters",
-                    tone: "brand",
-                  },
-                  {
-                    label: "Published",
-                    value: publishedCount,
-                    hint: "Live articles",
-                    tone: publishedCount > 0 ? "success" : "neutral",
-                  },
-                  {
-                    label: "Translated",
-                    value: translatedCount,
-                    hint: "Has localized rows",
-                    tone: translatedCount > 0 ? "neutral" : "warning",
-                  },
-                ]}
-              />
-            </div>
-            <BlogPostsTable posts={result.data.items} />
-          </AdminCard>
+          <>
+            <AdminCard padding={0}>
+              <div className="px-4 py-4">
+                <AdminSummaryStrip
+                  items={[
+                    {
+                      label: "Articles",
+                      value: posts.length,
+                      hint:
+                        listings > posts.length
+                          ? `${listings} listings — some serve several countries`
+                          : "Matching filters",
+                      tone: "brand",
+                    },
+                    {
+                      label: "Published",
+                      value: publishedCount,
+                      hint: "Live articles",
+                      tone: publishedCount > 0 ? "success" : "neutral",
+                    },
+                    {
+                      label: "Translated",
+                      value: translatedCount,
+                      hint: "Has other languages",
+                      tone: translatedCount > 0 ? "neutral" : "warning",
+                    },
+                  ]}
+                />
+              </div>
+            </AdminCard>
+
+            {/* One section per country. Articles are the unit of work here,
+                and an article belongs to a market — grouping by language put
+                the same article in six places and hid which market owns it. */}
+            {groups.map((group) => (
+              <AdminCard key={group.key} padding={0} className="mt-4">
+                <div className="gh-admin-blog-group-head">
+                  <h2 className="gh-admin-blog-group-title">{group.name}</h2>
+                  <Pill tone="brand">
+                    {group.posts.length} {group.posts.length === 1 ? "article" : "articles"}
+                  </Pill>
+                </div>
+                <BlogPostsTable posts={group.posts} />
+              </AdminCard>
+            ))}
+          </>
         )}
       </div>
     </>

@@ -79,6 +79,17 @@ export type AdminServiceDto = {
   basePriceCents: number | null;
   currencyCode: string | null;
   isActive: boolean;
+  /** Clinical review date shown on the page as "Last reviewed" (E-E-A-T). */
+  lastReviewedAt: string | null;
+  /** Named author / clinical reviewer for this service's content. Free-text
+   *  fallback when no doctor is linked; linking a doctor drives the public
+   *  Physician author/reviewedBy JSON-LD. */
+  authorDisplayName: string | null;
+  reviewerDisplayName: string | null;
+  authorDoctorId: string | null;
+  reviewerDoctorId: string | null;
+  authorDoctor: { id: string; fullName: string } | null;
+  reviewerDoctor: { id: string; fullName: string } | null;
   /** Per-locale CMS content for the translation tabs. The default-locale
    *  row mirrors the base display columns above; absent rows fall back to
    *  base at read time. */

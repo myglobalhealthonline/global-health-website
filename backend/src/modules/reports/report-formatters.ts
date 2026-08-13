@@ -32,6 +32,30 @@ export type ReportRow = {
  *  e.g. account holder, IBAN, total to pay on a payout statement. */
 export type ReportSummaryItem = { label: string; value: string };
 
+/** Generic chrome strings around the table (row count, "no rows", truncation
+ *  note). Optional — a table that doesn't set this gets the English defaults
+ *  below, so every existing report export is unaffected. Only a table that
+ *  explicitly opts in (currently the doctor payout statement, whose language
+ *  the doctor picks in the portal) renders in another language. */
+export type ReportChrome = {
+  reportLabel: string;
+  generatedLabel: string;
+  rowSingular: string;
+  rowPlural: string;
+  noRowsInRange: string;
+  truncatedNote: string;
+};
+
+const DEFAULT_CHROME: ReportChrome = {
+  reportLabel: "Report",
+  generatedLabel: "Generated",
+  rowSingular: "row",
+  rowPlural: "rows",
+  noRowsInRange: "No rows in this range.",
+  truncatedNote:
+    "List truncated at the export row limit — narrow the date range or filters for a complete pull.",
+};
+
 export type ReportTable = {
   title: string;
   /** e.g. "Dr Jane Doe · last 30 days". Rendered under the title. */
@@ -45,6 +69,10 @@ export type ReportTable = {
   truncated?: boolean;
   /** ISO timestamp the report was generated. */
   generatedAt: string;
+  /** BCP-47 tag for `<html lang>` + date formatting. Defaults to "en-GB". */
+  locale?: string;
+  /** Chrome text override — see `ReportChrome`. Defaults to English. */
+  chrome?: ReportChrome;
 };
 
 export type ExportFormat = "csv" | "excel" | "pdf";
@@ -93,6 +121,7 @@ function csvCell(value: ReportCellValue): string {
 }
 
 export function toCsv(table: ReportTable): string {
+  const chrome = table.chrome ?? DEFAULT_CHROME;
   const lines: string[] = [];
   if (table.summary?.length) {
     for (const s of table.summary) {
@@ -109,11 +138,7 @@ export function toCsv(table: ReportTable): string {
     lines.push(table.columns.map((c) => csvCell(row[c.key])).join(","));
   }
   if (table.truncated) {
-    lines.push(
-      csvCell(
-        "NOTE: list truncated at the export row limit — narrow the date range or filters for a complete pull.",
-      ),
-    );
+    lines.push(csvCell(`NOTE: ${chrome.truncatedNote}`));
   }
   // CRLF + trailing newline mirrors the audit-log export for Excel parity.
   return lines.join("\r\n") + "\r\n";
@@ -130,9 +155,9 @@ function esc(value: ReportCellValue): string {
     .replace(/"/g, "&quot;");
 }
 
-function fmtGeneratedAt(iso: string): string {
+function fmtGeneratedAt(iso: string, locale = "en-GB"): string {
   try {
-    return new Date(iso).toLocaleString("en-GB", {
+    return new Date(iso).toLocaleString(locale, {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -146,6 +171,10 @@ function fmtGeneratedAt(iso: string): string {
 
 export function buildReportHtml(table: ReportTable): string {
   const logo = pdfLogoDataUrl();
+  const locale = table.locale ?? "en-GB";
+  const chrome = table.chrome ?? DEFAULT_CHROME;
+  const generatedLabel = `${chrome.generatedLabel} ${fmtGeneratedAt(table.generatedAt, locale)}`;
+  const rowCountLabel = `${table.rows.length} ${table.rows.length === 1 ? chrome.rowSingular : chrome.rowPlural}`;
   const head = table.columns
     .map(
       (c) =>
@@ -155,7 +184,7 @@ export function buildReportHtml(table: ReportTable): string {
 
   const body =
     table.rows.length === 0
-      ? `<tr><td colspan="${table.columns.length}" style="padding:18px 8px;text-align:center;color:#888;">No rows in this range.</td></tr>`
+      ? `<tr><td colspan="${table.columns.length}" style="padding:18px 8px;text-align:center;color:#888;">${esc(chrome.noRowsInRange)}</td></tr>`
       : table.rows
           .map((row) => {
             if (row._section) {
@@ -180,11 +209,11 @@ export function buildReportHtml(table: ReportTable): string {
     : "";
 
   const truncatedNote = table.truncated
-    ? `<p style="margin:12px 0 0;font-size:10px;color:#b45309;">List truncated at the export row limit — narrow the date range or filters for a complete pull.</p>`
+    ? `<p style="margin:12px 0 0;font-size:10px;color:#b45309;">${esc(chrome.truncatedNote)}</p>`
     : "";
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${esc(locale)}">
 <head>
 <meta charset="UTF-8">
 <title>${esc(table.title)}</title>
@@ -250,14 +279,14 @@ export function buildReportHtml(table: ReportTable): string {
   <div class="page">
     <div class="topline">
       ${logo ? `<img class="logo" src="${logo}" alt="Global Health" />` : `<span class="logo-text">Global Health</span>`}
-      <span class="caps">Report — ${esc(fmtGeneratedAt(table.generatedAt))}</span>
+      <span class="caps">${esc(chrome.reportLabel)} — ${esc(fmtGeneratedAt(table.generatedAt, locale))}</span>
     </div>
     <div class="masthead">
       <div>
         <div class="mast-title">${esc(table.title)}</div>
         ${table.subtitle ? `<p class="subtitle">${esc(table.subtitle)}</p>` : ""}
       </div>
-      <div class="meta">${table.rows.length} row${table.rows.length === 1 ? "" : "s"}</div>
+      <div class="meta">${esc(rowCountLabel)}</div>
     </div>
     ${summaryHtml}
     <div class="rule"></div>
@@ -265,7 +294,7 @@ export function buildReportHtml(table: ReportTable): string {
       <thead><tr>${head}</tr></thead>
       <tbody>${body}</tbody>
     </table>
-    <p class="count">Generated ${esc(fmtGeneratedAt(table.generatedAt))} · Global Health · myglobalhealth.online</p>
+    <p class="count">${esc(generatedLabel)} · Global Health · myglobalhealth.online</p>
     ${truncatedNote}
   </div>
 </body>
@@ -355,11 +384,12 @@ export function toExcelXml(table: ReportTable): string {
 export function fmtMoney(
   cents: number | null | undefined,
   currency: string | null | undefined,
+  locale = "en-GB",
 ): string {
   if (cents === null || cents === undefined) return "";
   const code = currency && currency.trim() ? currency : "USD";
   try {
-    return new Intl.NumberFormat("en-GB", { style: "currency", currency: code }).format(
+    return new Intl.NumberFormat(locale, { style: "currency", currency: code }).format(
       cents / 100,
     );
   } catch {
@@ -367,9 +397,9 @@ export function fmtMoney(
   }
 }
 
-export function fmtDate(value: Date | null | undefined): string {
+export function fmtDate(value: Date | null | undefined, locale = "en-GB"): string {
   if (!value) return "";
-  return value.toLocaleDateString("en-GB", {
+  return value.toLocaleDateString(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",

@@ -4,6 +4,8 @@ import { jwtVerify, importSPKI, type JWTPayload } from "jose";
 import { getRequestContext } from "@/lib/routing/get-request-context";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { PROD_SITE_URL } from "@/lib/seo/site-url";
+import { isGonePath } from "@/lib/seo/gone-content";
+import { countries } from "@/data/countries";
 
 /**
  * Frontend edge proxy.
@@ -29,6 +31,16 @@ import { PROD_SITE_URL } from "@/lib/seo/site-url";
  */
 const PUBLIC_FILE = /\.(.*)$/;
 
+// SEO audit Phase 4 #2 — bare `/{country}/` with a trailing slash.
+const COUNTRY_TRAILING_SLASH_RE = /^\/([a-z0-9-]+)\/$/;
+
+// Permanently removed entities (410 Gone). The list and the matcher that keeps
+// `next.config.ts` from 308ing these onto a dead URL both live in one place —
+// see lib/seo/gone-content.ts for why they have to agree.
+const GONE_BODY = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="robots" content="noindex"><title>Page removed</title></head>
+<body><h1>Page removed</h1><p>This profile is no longer available.</p></body></html>`;
+
 // Railway keeps its auto-generated `*.up.railway.app` domain publicly reachable
 // even after a custom domain is attached, and site-url.ts self-canonicalizes to
 // whatever host NEXT_PUBLIC_SITE_URL resolves to — so that domain is a fully
@@ -37,7 +49,7 @@ const PUBLIC_FILE = /\.(.*)$/;
 // Railway environments (staging clones) that share the same domain suffix.
 const CANONICAL_HOST = new URL(PROD_SITE_URL).host;
 
-// Content-Security-Policy (S-010 / MED-5 — see SECURITY_AUDIT2.md, workstream W6).
+// Content-Security-Policy (S-010 / MED-5 — see docs/audits/security/security-audit-2-2026-07-10.md, workstream W6).
 //
 // Two policies, one per rendering mode, because a per-request nonce is
 // fundamentally incompatible with static output (Next stamps nonces only during
@@ -118,7 +130,23 @@ function publicCsp(): string {
     // rendering, with nothing surfaced outside the console.
     // Microsoft Clarity loads its recorder from www.clarity.ms/tag/<id>; the
     // wildcard covers the CDN subdomains that tag pulls from.
-    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms",
+    // The ElevenLabs convai widget is loaded from unpkg
+    // (components/integrations/ElevenLabsConvai.tsx). Like Doctify's loader it
+    // renders INTO our DOM (a custom element with a shadow root), so its own
+    // fetches hit this policy rather than an iframe's — see connect-src/
+    // media-src below. Omitting the host fails silently: the custom element
+    // stays undefined and NOTHING renders, no visible error.
+    //
+    // `blob:` is there for the same widget's AudioWorklet: it builds its
+    // rawAudioProcessor worklet from a Blob URL, and a worklet module fetch is
+    // checked against script-src (worker-src does not cover it). Without it the
+    // launcher renders and looks fine until someone starts a call, which then
+    // fails with "Failed to load the rawAudioProcessor worklet module … you may
+    // need to self-host the worklet files". Loosening: any blob: script may
+    // execute on PUBLIC pages, which already carry 'unsafe-inline' — so this
+    // grants an attacker with script execution nothing new. The portal policy
+    // (nonceCsp, where PHI lives) is deliberately NOT given blob:.
+    "script-src 'self' 'unsafe-inline' https://*.doctify.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms https://unpkg.com blob:",
     // Tailwind + CMS emit inline <style>; keep permissive (style injection is
     // low value to an attacker relative to the breakage risk).
     "style-src 'self' 'unsafe-inline'",
@@ -153,9 +181,19 @@ function publicCsp(): string {
     // bug to fix by adding the host. (Note img-src is already `https:`, so a
     // pixel-shaped beacon cannot be blocked by CSP at all; the real control is
     // ad_Storage:"denied" via consentv2 in MicrosoftClarity.tsx.)
-    `connect-src 'self' https://*.doctify.com https://connect.facebook.net https://www.facebook.com https://www.googletagmanager.com https://*.google-analytics.com https://region1.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://*.clarity.ms${media}`,
-    // Doctify rating strips render in <iframe> from doctify.com.
-    "frame-src 'self' https://*.doctify.com",
+    // ElevenLabs convai: the widget fetches its agent config over https and
+    // then runs the conversation itself over a socket — api.elevenlabs.io for
+    // both, plus the LiveKit cloud edge the WebRTC transport dials. wss: is
+    // listed explicitly because connect-src does NOT treat a wss:// URL as
+    // covered by its https:// host entry.
+    `connect-src 'self' https://*.doctify.com https://connect.facebook.net https://www.facebook.com https://www.googletagmanager.com https://*.google-analytics.com https://region1.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://*.clarity.ms https://api.elevenlabs.io https://*.elevenlabs.io wss://api.elevenlabs.io wss://*.elevenlabs.io https://*.livekit.cloud wss://*.livekit.cloud${media}`,
+    // The widget plays agent speech from a MediaStream / Blob URL. Without an
+    // explicit media-src this fell back to default-src 'self', which blocks
+    // blob: audio — the widget would open, listen, and then be mute.
+    "media-src 'self' blob: data: https://*.elevenlabs.io",
+    // Doctify rating strips render in <iframe> from doctify.com; convai renders
+    // in-page, but some widget builds isolate the session in an iframe.
+    "frame-src 'self' https://*.doctify.com https://*.elevenlabs.io",
     `form-action 'self'${media}`,
     CSP_BASE,
   ].join("; ");
@@ -314,6 +352,69 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Permanently removed content — answer 410 Gone here and stop.
+  //
+  // Must run BEFORE the trailing-slash block and before `next.config.ts`
+  // `redirects()`, because the broad `/{country}-doctors/:slug` rule would
+  // otherwise 308 a retired profile onto a URL that then 404s:
+  //     /ireland-doctors/<slug>  ->  308  ->  /ireland/en/doctors/<slug>  ->  404
+  // Two hops to say "gone", and the 308 asserts a live successor that does not
+  // exist. A direct 410 says it once, and Google drops a 410 faster than a 404.
+  //
+  // Middleware runs earlier in the pipeline than `redirects()` — the same
+  // ordering the trailing-slash block below relies on, verified empirically
+  // (see next.config.ts `skipTrailingSlashRedirect`).
+  if (isGonePath(pathname)) {
+    return new NextResponse(GONE_BODY, {
+      status: 410,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        // Never let a CDN hold a 410 open longer than a correction would take.
+        "cache-control": "public, max-age=300",
+        "x-robots-tag": "noindex",
+      },
+    });
+  }
+
+  // Trailing-slash handling, reimplemented here now that `skipTrailingSlashRedirect`
+  // (next.config.ts) turns off Next's own automatic redirect. That redirect used
+  // to fire BEFORE this proxy ever ran — confirmed empirically, `/ireland/` never
+  // even reached this function — which made it impossible to collapse the
+  // country-home case (`/ireland/` -> `/ireland` -> `/ireland/en`, 2 hops) into
+  // one hop from either `next.config.ts` `redirects()` or here. Every other
+  // trailing-slash path gets the same 308-strip Next used to do automatically
+  // (below), so this is a "who handles it" change, not a behavior change, for
+  // everything except the country-home case.
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    const countryMatch = COUNTRY_TRAILING_SLASH_RE.exec(pathname);
+    const country = countryMatch ? countries.find((c) => c.slug === countryMatch[1]) : null;
+    if (country) {
+      // Mirrors `app/(redirect)/[country]/page.tsx`'s own `?lang=` handling:
+      // an explicit request for a supported locale is a temporary (307)
+      // redirect (the target varies per visitor), the plain country ->
+      // default-locale mapping is permanent (308). Only covers the
+      // statically seeded markets (`data/countries.ts`) — admin-added
+      // countries have no bare `/{slug}/` link anywhere on the site to
+      // trigger this and fall through to the generic strip below, same
+      // 2-hop result as before.
+      const requested = request.nextUrl.searchParams.get("lang")?.toLowerCase() ?? null;
+      const requestedSupported =
+        !!requested && country.supportedLocales.some((l) => l.toLowerCase() === requested);
+      const lang = requestedSupported ? requested! : (country.defaultLocale ?? "EN").toLowerCase();
+      // Built via `new URL()` rather than `request.nextUrl.clone()` +
+      // `.pathname =` — NextURL silently re-appends the trailing slash it
+      // was carrying from the original request when serialized (confirmed
+      // empirically: `.pathname` reads back correctly but `.toString()` /
+      // the Location header still has it), which is the whole reason this
+      // block exists. A plain WHATWG URL doesn't carry that state.
+      const oneHopUrl = new URL(`/${country.slug}/${lang}`, request.url);
+      return NextResponse.redirect(oneHopUrl, requestedSupported ? 307 : 308);
+    }
+    const strippedPath = pathname.replace(/\/+$/, "") || "/";
+    const strippedUrl = new URL(strippedPath + request.nextUrl.search, request.url);
+    return NextResponse.redirect(strippedUrl, 308);
+  }
+
   // Server Action invocations (sign-out, form submits, etc.) POST to the
   // current page URL carrying a `next-action` header. A raw edge redirect
   // here is not a valid Server Action response — the client action runtime
@@ -460,7 +561,24 @@ export async function proxy(request: NextRequest) {
   // Without this the cookie is only ever written by an explicit language-
   // switcher click, and navigating off a /{country}/{lang} page falls back
   // to Accept-Language (usually English).
-  if (context.pathLocale && context.pathLocale !== request.cookies.get("gh_locale")?.value) {
+  // ...but ONLY on a real top-level navigation. Next's `<Link>` prefetches and
+  // client-side RSC fetches hit this proxy too, and their responses' Set-Cookie
+  // is applied by the browser all the same — so a portal page merely RENDERING
+  // a link into a `/{country}/{lang}` route (e.g. the patient portal's "Book
+  // consultation" CTA, whose lang is the country default) silently retagged the
+  // visitor's language without a single click. Prefetching a link is not a
+  // language choice.
+  const isDocumentNavigation =
+    request.headers.get("sec-fetch-dest") === "document" ||
+    (!request.headers.has("sec-fetch-dest") &&
+      !request.headers.has("rsc") &&
+      !request.headers.has("next-router-prefetch"));
+
+  if (
+    isDocumentNavigation &&
+    context.pathLocale &&
+    context.pathLocale !== request.cookies.get("gh_locale")?.value
+  ) {
     response.cookies.set("gh_locale", context.pathLocale, {
       path: "/",
       maxAge: 31536000,

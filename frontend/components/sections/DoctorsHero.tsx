@@ -201,9 +201,12 @@ export function DoctorsHero({
         style={{
           width: 560,
           height: 560,
+          // ponytail: no filter: blur(). The gradient already fades to
+          // transparent at 62% of the radius, so there is no hard edge to
+          // soften and the interior is a ~170px ramp — an 8px blur on that is
+          // a no-op that cost a 313k px² filter raster and its own layer.
           background:
             "radial-gradient(circle, rgba(176,241,34,0.16), transparent 62%)",
-          filter: "blur(8px)",
         }}
       />
 

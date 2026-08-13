@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FileSearch, FileText, Download } from "lucide-react";
 import { fetchDoctorPatientDocuments } from "@/lib/api/doctor-api";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 // ponytail: cs/de/ro doctor.json don't yet carry these newer patients.*
 // keys (only en/pt/es do); cast to the full (en) shape rather than
@@ -20,7 +20,7 @@ type PatientsCopy = typeof EnDoctorLocale.patients;
  */
 export async function AllDocumentsCard({ email }: { email: string }) {
   const result = await fetchDoctorPatientDocuments(email);
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const p = d.patients as unknown as PatientsCopy;
 

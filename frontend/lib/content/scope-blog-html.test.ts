@@ -137,4 +137,39 @@ describe("scopeBlogHtml", () => {
     expect(out).not.toContain("<script");
     expect(out).toContain("ok");
   });
+
+  describe("h1 demotion carries the author's h1 styling", () => {
+    it("stamps the demoted heading and mirrors h1 selectors onto it", () => {
+      const out = scopeBlogHtml(
+        `<style>.gh-blog h1 { color: #FFFFFF; font-size: 5rem; } .gh-blog h2 { color: #1D4B36; }</style>` +
+          `<main class="gh-blog"><h1>Hero title</h1><h2>Section</h2></main>`,
+      );
+      // Semantic demotion still happens (one <h1> per page).
+      expect(out).not.toMatch(/<h1[\s>]/);
+      expect(out).toContain("<h2 data-blog-h1>Hero title</h2>");
+      // …and the author's h1 rule now also matches it, at higher specificity
+      // than their generic h2 rule, so the hero title keeps its own colour.
+      const css = scopedCss(out);
+      expect(css).toMatch(/\.gh-blog h1,\s*\.gh-blog h2\[data-blog-h1\]/);
+      // Original selector is kept, never replaced.
+      expect(css).toContain(".gh-blog h1");
+    });
+
+    it("mirrors bare and grouped h1 selectors, and leaves lookalikes alone", () => {
+      const css = scopedCss(
+        `<style>h1 { color: red } .hero h1, .promo h1 { color: blue } .h1 { color: green } h1-legacy { color: pink }</style>`,
+      );
+      expect(css).toMatch(/^\s*h1,\s*h2\[data-blog-h1\]/m);
+      expect(css).toContain(".hero h2[data-blog-h1]");
+      expect(css).toContain(".promo h2[data-blog-h1]");
+      // `.h1` is a class and `h1-legacy` a different type — neither is an h1.
+      expect(css).not.toContain(".h2[data-blog-h1]");
+      expect(css).not.toContain("h2[data-blog-h1]-legacy");
+    });
+
+    it("leaves style blocks without h1 selectors untouched", () => {
+      const css = scopedCss(`<style>.card { color: #111 } h2 { color: #222 }</style>`);
+      expect(css).not.toContain("data-blog-h1");
+    });
+  });
 });

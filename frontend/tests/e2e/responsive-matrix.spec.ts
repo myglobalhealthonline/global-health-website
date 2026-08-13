@@ -4,11 +4,11 @@ import path from "node:path";
 
 /**
  * Phase 8 FULL matrix runner — generates the data for
- * docs/responsive-audit/shared/FINAL_VERIFICATION.md. Not part of the normal
+ * docs/design/responsive/shared/final-verification.md. Not part of the normal
  * suite: run with RUN_MATRIX=1 (skipped otherwise). One test per role loops
  * routes × viewports and appends JSON rows to MATRIX_OUT; baseline
  * screenshots (390px + 1280px per route) land in
- * docs/responsive-audit/shared/baseline/.
+ * docs/design/responsive/shared/baseline/.
  *
  * Checks per route × viewport:
  *  - hscroll: page-level horizontal overflow (allow-list mirrors
@@ -38,7 +38,7 @@ const EXTRA = [
 ];
 
 const OUT = process.env.MATRIX_OUT ?? "matrix-results.jsonl";
-const SHOT_DIR = path.resolve(__dirname, "../../../docs/responsive-audit/shared/baseline");
+const SHOT_DIR = path.resolve(__dirname, "../../../docs/design/responsive/shared/baseline");
 
 type RouteDef = { route: string; name: string };
 
@@ -60,7 +60,7 @@ const ADMIN_ROUTES: RouteDef[] = [
 const DOCTOR_ROUTES: RouteDef[] = [
   { route: "/doctor/appointments", name: "doctor-appointments" },
   { route: "/doctor/invoices", name: "doctor-invoices" },
-  { route: "/doctor/calendar", name: "doctor-calendar" },
+  { route: "/doctor/availability", name: "doctor-availability" },
 ];
 const PATIENT_ROUTES: RouteDef[] = [
   { route: "/account/bookings", name: "account-bookings" },

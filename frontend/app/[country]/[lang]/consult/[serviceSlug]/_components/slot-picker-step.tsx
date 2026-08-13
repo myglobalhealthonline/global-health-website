@@ -27,7 +27,7 @@ type Props = {
   clinicTimezone?: string;
   i18n: CommonLocale["bookingForm"];
   /** Carry the chosen insurer (id or "none") across the step links. */
-  insurance?: string | null;
+  benefit?: string | null;
 };
 
 /**
@@ -45,7 +45,7 @@ export function SlotPickerStep({
   slots,
   clinicTimezone,
   i18n,
-  insurance,
+  benefit,
 }: Props) {
   const router = useRouter();
   const [navigating, startNavigate] = useTransition();
@@ -77,7 +77,7 @@ export function SlotPickerStep({
   function chooseSlot(slotId: string) {
     startNavigate(() => {
       router.push(
-        `${buildBookHref({ country, lang, service: serviceSlug, insurance, doctor: doctorSlug, slot: slotId })}#booking`,
+        `${buildBookHref({ country, lang, service: serviceSlug, benefit, doctor: doctorSlug, slot: slotId })}#booking`,
       );
     });
   }

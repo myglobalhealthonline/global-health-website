@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Globe2 } from "lucide-react";
 import { FlagBadge } from "./flag-badge";
 import type { CountryPickerOption } from "./country-picker-constants";
 
@@ -52,7 +52,9 @@ export function CountryPicker({
           className="gh-admin-country-picker inline-flex min-w-0 items-center gap-2.5 rounded-full px-3 py-2 text-sm font-semibold transition hover:bg-white/5 disabled:opacity-60"
           style={{ border: "1px solid var(--portal-chrome-border)", color: "var(--portal-chrome-text-active)" }}
         >
-          <FlagBadge code={current?.slug ?? "all"} size={16} />
+          {/* No country = global scope. A globe reads as "all markets";
+              FlagBadge has no flag for it and falls back to a blank chip. */}
+          {current ? <FlagBadge code={current.slug} size={16} /> : <Globe2 className="size-4 opacity-80" aria-hidden />}
           <span className="min-w-0 truncate" title={current?.name ?? "All countries"}>{current?.name ?? "All countries"}</span>
           <ChevronDown className="size-3.5 opacity-70" aria-hidden />
         </button>
@@ -75,6 +77,26 @@ export function CountryPicker({
           >
             Admin market scope
           </div>
+          <DropdownMenu.Item
+            onSelect={() => select("")}
+            className="gh-admin-country-picker-item flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-semibold outline-none data-[highlighted]:bg-[var(--portal-well)] focus-visible:ring-2 focus-visible:ring-[var(--portal-signal)]"
+            style={
+              current === null
+                ? { background: "var(--portal-mint-soft)", color: "var(--portal-accent-text)" }
+                : { color: "var(--portal-text)" }
+            }
+          >
+            <Globe2 className="size-4" aria-hidden />
+            <span>All countries</span>
+            {current === null ? (
+              <Check className="ml-auto size-3.5" style={{ color: "var(--portal-accent-text)" }} aria-hidden />
+            ) : null}
+          </DropdownMenu.Item>
+          <div
+            className="my-1 h-px"
+            style={{ background: "var(--portal-line)" }}
+            aria-hidden
+          />
           {countries.map((c) => {
             const active = c.slug === current?.slug;
             return (

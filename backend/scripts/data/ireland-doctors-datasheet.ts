@@ -3,7 +3,7 @@
  * "Doctor Profile Data Sheet" docx extraction (23 profiles found in sheet).
  * HTML entities decoded; paragraph breaks preserved as \n\n; bullets as "• " lines.
  *
- * Consumed by scripts/patch-ireland-doctors-datasheet.ts.
+ * Consumed by scripts/applied/patch-ireland-doctors-datasheet.ts.
  *
  * dbSlug is the AUTHORITATIVE DB slug (some sheet slugs differ).
  * Doctors known to be missing from the DB are still transcribed; the patch

@@ -3,6 +3,9 @@ import { timezoneLabel } from "./timezone-label.js";
 export type AutomationLang = "en" | "pt" | "ro" | "cs" | "es";
 type Lang = AutomationLang;
 
+/** Same address as whatsapp-contact-footer.ts / pre-payment-email-template.ts. */
+const SUPPORT_EMAIL = "globalhealth@myglobalhealth.online";
+
 type PortalWhatsAppAccess = {
   signInUrl: string;
   setPasswordUrl: string;
@@ -165,6 +168,15 @@ export function appendPatientPortalWhatsApp(
   const lines = [body, ""];
   lines.push(
     t(lang, {
+      en: `You can also manage your appointments at the Patient Portal: ${portal.signInUrl}`,
+      pt: `Também pode gerir as suas consultas no Portal do Paciente: ${portal.signInUrl}`,
+      ro: `De asemenea, puteți gestiona programările în Portalul Pacientului: ${portal.signInUrl}`,
+      cs: `Své termíny můžete také spravovat v Portálu pacienta: ${portal.signInUrl}`,
+      es: `También puede gestionar sus citas en el Portal del Paciente: ${portal.signInUrl}`,
+    }),
+  );
+  lines.push(
+    t(lang, {
       en: `Sign in: ${portal.signInUrl}`,
       pt: `Iniciar sessão: ${portal.signInUrl}`,
       ro: `Conectare: ${portal.signInUrl}`,
@@ -205,7 +217,6 @@ Patient: ${ctx.patientName}
 Service: ${ctx.serviceName}
 Date & time: ${ctx.appointmentDate}
 Order: #${ctx.orderNumber}
-Amount: ${ctx.totalLabel}
 Payment deadline: ${ctx.deadline}
 Global Health Team`,
     pt: `Olá ${ctx.doctorName},
@@ -214,7 +225,6 @@ Paciente: ${ctx.patientName}
 Serviço: ${ctx.serviceName}
 Data e hora: ${ctx.appointmentDate}
 Pedido: #${ctx.orderNumber}
-Valor: ${ctx.totalLabel}
 Prazo de pagamento: ${ctx.deadline}
 Equipa Global Health`,
     ro: `Bună ziua ${ctx.doctorName},
@@ -223,7 +233,6 @@ Pacient: ${ctx.patientName}
 Serviciu: ${ctx.serviceName}
 Data și ora: ${ctx.appointmentDate}
 Comandă: #${ctx.orderNumber}
-Sumă: ${ctx.totalLabel}
 Termen plată: ${ctx.deadline}
 Echipa Global Health`,
     cs: `Dobrý den ${ctx.doctorName},
@@ -232,7 +241,6 @@ Pacient: ${ctx.patientName}
 Služba: ${ctx.serviceName}
 Datum a čas: ${ctx.appointmentDate}
 Objednávka: #${ctx.orderNumber}
-Částka: ${ctx.totalLabel}
 Termín platby: ${ctx.deadline}
 Tým Global Health`,
     es: `Hola ${ctx.doctorName},
@@ -241,7 +249,6 @@ Paciente: ${ctx.patientName}
 Servicio: ${ctx.serviceName}
 Fecha y hora: ${ctx.appointmentDate}
 Pedido: #${ctx.orderNumber}
-Importe: ${ctx.totalLabel}
 Fecha límite de pago: ${ctx.deadline}
 Equipo Global Health`,
   });
@@ -419,6 +426,79 @@ export function reminderMessage(
     }),
     text,
     whatsapp,
+  };
+}
+
+/**
+ * Website self-serve checkout abandonment — the ONE message a patient who left
+ * the Stripe checkout page ever receives. Sent ~5 minutes into the 15-minute pay
+ * window, on both email and WhatsApp; the cancel that follows at the deadline is
+ * silent, so this message must carry the release time itself.
+ *
+ * The "or reply here" WhatsApp line is NOT part of the body — whatsappContactFooter
+ * is appended to every automation WhatsApp and already says exactly that.
+ */
+export function checkoutAbandonedMessage(
+  ctx: PrePaymentMessageContext,
+  lang: Lang,
+): { subject: string; text: string; whatsapp: string } {
+  const body = t(lang, {
+    en: `Hi ${ctx.patientName},
+We noticed you left the checkout page without completing payment for your consultation.
+📌 Service: ${ctx.serviceName}
+👤 Doctor: ${ctx.doctorName}
+📅 Date & Time: ${ctx.appointmentDate}
+💳 Complete payment: ${ctx.paymentLink}
+⚠️ Your reserved slot will be released at ${ctx.deadline} if payment is not completed.
+Did you run into a problem during checkout? Contact us at ${SUPPORT_EMAIL} and we will help.
+Global Health Team`,
+    pt: `Olá ${ctx.patientName},
+Reparámos que saiu da página de pagamento sem concluir o pagamento da sua consulta.
+📌 Serviço: ${ctx.serviceName}
+👤 Médico: ${ctx.doctorName}
+📅 Data e hora: ${ctx.appointmentDate}
+💳 Concluir pagamento: ${ctx.paymentLink}
+⚠️ A sua reserva será libertada às ${ctx.deadline} se o pagamento não for concluído.
+Teve algum problema durante o pagamento? Contacte-nos através de ${SUPPORT_EMAIL} e ajudamos.
+Equipa Global Health`,
+    ro: `Bună ${ctx.patientName},
+Am observat că ați părăsit pagina de plată fără a finaliza plata consultației.
+📌 Serviciu: ${ctx.serviceName}
+👤 Medic: ${ctx.doctorName}
+📅 Data și ora: ${ctx.appointmentDate}
+💳 Finalizați plata: ${ctx.paymentLink}
+⚠️ Intervalul rezervat va fi eliberat la ${ctx.deadline} dacă plata nu este finalizată.
+Ați întâmpinat o problemă la plată? Scrieți-ne la ${SUPPORT_EMAIL} și vă ajutăm.
+Echipa Global Health`,
+    cs: `Dobrý den ${ctx.patientName},
+všimli jsme si, že jste opustil(a) platební stránku, aniž byste dokončil(a) platbu za konzultaci.
+📌 Služba: ${ctx.serviceName}
+👤 Lékař: ${ctx.doctorName}
+📅 Datum a čas: ${ctx.appointmentDate}
+💳 Dokončit platbu: ${ctx.paymentLink}
+⚠️ Rezervovaný termín bude uvolněn v ${ctx.deadline}, pokud platba nebude dokončena.
+Narazili jste při platbě na problém? Napište nám na ${SUPPORT_EMAIL} a pomůžeme vám.
+Tým Global Health`,
+    es: `Hola ${ctx.patientName},
+Hemos visto que salió de la página de pago sin completar el pago de su consulta.
+📌 Servicio: ${ctx.serviceName}
+👤 Doctor: ${ctx.doctorName}
+📅 Fecha y hora: ${ctx.appointmentDate}
+💳 Completar el pago: ${ctx.paymentLink}
+⚠️ Su reserva se liberará a las ${ctx.deadline} si no se completa el pago.
+¿Tuvo algún problema durante el pago? Escríbanos a ${SUPPORT_EMAIL} y le ayudamos.
+Equipo Global Health`,
+  });
+  return {
+    subject: t(lang, {
+      en: `Order #${ctx.orderNumber} - Did something go wrong at checkout?`,
+      pt: `Pedido #${ctx.orderNumber} - Algo correu mal no pagamento?`,
+      ro: `Comandă #${ctx.orderNumber} - A apărut o problemă la plată?`,
+      cs: `Objednávka #${ctx.orderNumber} - Nastal problém při platbě?`,
+      es: `Pedido #${ctx.orderNumber} - ¿Algo salió mal en el pago?`,
+    }),
+    text: body,
+    whatsapp: body,
   };
 }
 

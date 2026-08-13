@@ -71,6 +71,7 @@ export function FeaturedDoctor({
   standalone = true,
   dark = true,
   featuredLabel,
+  titleAs: NameHeading = "h3",
 }: {
   doctor: DoctorSpotlightProps;
   /** Eyebrow above the standalone card — was a hardcoded English literal. */
@@ -78,6 +79,11 @@ export function FeaturedDoctor({
   standalone?: boolean;
   /** Surface theme — must match the section the card sits on. */
   dark?: boolean;
+  /** Heading level for the doctor's name. Defaults to h3, correct on the
+   *  country home where this card sits under a section <h2>. The doctors
+   *  directory renders it directly under the page <h1>, so it passes "h2"
+   *  to avoid skipping a level. Mirrors DoctorCard's titleAs. */
+  titleAs?: "h2" | "h3";
 }) {
   const trimmedImage = doctor.imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
@@ -217,12 +223,12 @@ export function FeaturedDoctor({
             </span>
 
             {/* Name */}
-            <h3
+            <NameHeading
               className="mt-3 font-extrabold tracking-[-0.03em] leading-tight text-[length:var(--text-h2)]"
               style={{ color: ink }}
             >
               {doctor.name}
-            </h3>
+            </NameHeading>
 
             {/* Meta row */}
             <div className="mt-4 flex flex-wrap gap-4">

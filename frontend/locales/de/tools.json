@@ -1,0 +1,1244 @@
+{
+  "hub": {
+    "navLabel": "Gesundheits-Tools",
+    "navLabelShort": "Tools",
+    "openLabel": "Rechner öffnen",
+    "relatedHeading": "Weitere kostenlose Rechner"
+  },
+  "ui": {
+    "systolic": "Systolisch (oberer Wert)",
+    "diastolic": "Diastolisch (unterer Wert)",
+    "mmHg": "mmHg",
+    "questionsEyebrow": "Fragen",
+    "faqSuffix": "Häufige Fragen",
+    "units": "Einheiten",
+    "metric": "Metrisch",
+    "imperial": "Imperial",
+    "height": "Größe",
+    "weight": "Gewicht",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Größe (Fuß)",
+    "inchesLabel": "Zoll",
+    "stoneLabel": "Gewicht (Stone)",
+    "poundsLabel": "Pfund",
+    "poundsOnlyHint": "Lassen Sie Stone leer, um nur Pfund einzugeben.",
+    "sex": "Geschlecht",
+    "male": "Männlich",
+    "female": "Weiblich",
+    "age": "Alter",
+    "years": "Jahre",
+    "activity": "Aktivitätsniveau",
+    "kcalPerDay": "kcal / Tag",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "suggestions": {
+    "heading": "Wie es weitergeht",
+    "intro": "Der BMI ist ein Ausgangspunkt, kein Plan. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte für das anbieten, worauf er hinweist.",
+    "viewLabel": "Leistung ansehen",
+    "gpTitle": "Ärztliche Online-Sprechstunde",
+    "gpSummary": "Besprechen Sie jedes Ergebnis per Video mit einer registrierten Ärztin oder einem registrierten Arzt und erhalten Sie die Untersuchungen, die ein Rechner nicht liefert.",
+    "nudgeUnderweight": "Ein Ergebnis unter dem gesunden Bereich verdient eine ärztliche Einschätzung, besonders wenn es unbeabsichtigt war.",
+    "nudgeHealthy": "Wollen Sie das halten? Unsere Behandelnden helfen Ihnen, Gewohnheiten aufzubauen, die tragen.",
+    "nudgeOverweight": "Kleine, begleitete Veränderungen wirken besser als die nächste Diät. Hier fangen Sie an.",
+    "nudgeObese": "Auf dieser Stufe wirkt ärztlich begleitetes Gewichtsmanagement deutlich besser als Diäten allein."
+  },
+  "bands": {
+    "bp": {
+      "low": {
+        "label": "Niedriger Blutdruck",
+        "summary": "Unterhalb des üblichen Bereichs für Erwachsene. Oft harmlos, aber eine ärztliche Einschätzung lohnt sich, wenn Ihnen schwindelig wird, Sie ohnmächtig werden oder ungewöhnlich müde sind."
+      },
+      "optimal": {
+        "label": "Optimal",
+        "summary": "Der Bereich mit dem geringsten Risiko für Erwachsene. Allein aufgrund dieses Wertes ist nichts zu tun."
+      },
+      "normal": {
+        "label": "Normal",
+        "summary": "Im normalen Bereich für Erwachsene. Gelegentlich nachmessen lohnt sich, vor allem wenn die Werte langsam steigen."
+      },
+      "high-normal": {
+        "label": "Hochnormal",
+        "summary": "Über dem Normalbereich, aber noch keine Hypertonie. In dieser Phase bewirken Salz, Alkohol, Gewicht und Bewegung am meisten."
+      },
+      "grade-1": {
+        "label": "Hypertonie Grad 1",
+        "summary": "Leicht erhöht. Messen Sie eine Woche lang zu Hause und bringen Sie die Werte zur Ärztin oder zum Arzt — für eine Diagnose zählt das Muster, nicht ein einzelner Wert."
+      },
+      "isolated-systolic": {
+        "label": "Isolierte systolische Hypertonie",
+        "summary": "Der obere Wert ist erhöht, der untere normal. Das ist das häufigste Muster ab 60 und braucht trotzdem eine ärztliche Abklärung."
+      },
+      "grade-2": {
+        "label": "Hypertonie Grad 2",
+        "summary": "Deutlich erhöht. Vereinbaren Sie bald eine ärztliche Abklärung, statt auf einen Routinetermin zu warten."
+      },
+      "grade-3": {
+        "label": "Hypertonie Grad 3",
+        "summary": "Stark erhöht. Dieser Wert muss noch heute ärztlich abgeklärt werden."
+      }
+    },
+    "bmi": {
+      "underweight": {
+        "label": "Untergewicht",
+        "summary": "Unterhalb des gesunden Bereichs. Ein ärztliches Gespräch lohnt sich, besonders wenn die Gewichtsabnahme unbeabsichtigt war."
+      },
+      "healthy": {
+        "label": "Normalgewicht",
+        "summary": "Innerhalb des Bereichs, den die WHO für Erwachsene als gesund einstuft."
+      },
+      "overweight": {
+        "label": "Übergewicht",
+        "summary": "Oberhalb des gesunden Bereichs. Eine Kontrolle von Blutdruck und Cholesterin ist ein sinnvoller nächster Schritt."
+      },
+      "obese-1": {
+        "label": "Adipositas Grad I",
+        "summary": "Auf dieser Stufe wird in der Regel ein strukturiertes Gewichtsmanagement angeboten."
+      },
+      "obese-2": {
+        "label": "Adipositas Grad II",
+        "summary": "Eine ärztliche Abklärung wird empfohlen, einschließlich Screening auf gewichtsbedingte Erkrankungen."
+      },
+      "obese-3": {
+        "label": "Adipositas Grad III",
+        "summary": "Eine fachärztliche Abklärung zum Gewichtsmanagement wird empfohlen."
+      }
+    },
+    "activity": {
+      "sedentary": {
+        "label": "Sitzend",
+        "summary": "Bürojob, wenig oder kein Sport"
+      },
+      "light": {
+        "label": "Leicht aktiv",
+        "summary": "Leichte Bewegung an 1–3 Tagen pro Woche"
+      },
+      "moderate": {
+        "label": "Mäßig aktiv",
+        "summary": "Moderate Bewegung an 3–5 Tagen pro Woche"
+      },
+      "very": {
+        "label": "Sehr aktiv",
+        "summary": "Intensives Training an 6–7 Tagen pro Woche"
+      },
+      "extra": {
+        "label": "Extrem aktiv",
+        "summary": "Körperliche Arbeit oder zweimal täglich hartes Training"
+      }
+    },
+    "adhdFrequencies": [
+      "Nie",
+      "Selten",
+      "Manchmal",
+      "Oft",
+      "Sehr oft"
+    ],
+    "adhdQuestions": [
+      "Wie oft lassen Sie die letzten Details eines Projekts liegen, sobald der schwierige Teil geschafft ist?",
+      "Wie oft fällt es Ihnen schwer, Ordnung in eine Aufgabe zu bringen, die Organisation verlangt?",
+      "Wie oft vergessen Sie Termine oder Zusagen, die Sie gemacht haben?",
+      "Wie oft schieben Sie etwas auf oder vermeiden es, wenn es viel Nachdenken erfordert?",
+      "Wie oft zappeln Ihre Hände oder Füße, wenn Sie lange sitzen bleiben müssen?",
+      "Wie oft fühlen Sie sich rastlos angetrieben, immer weiterzumachen, als würde Sie etwas vorwärtsschieben?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Screening-Ergebnis: auffällig",
+        "summary": "Ihre Antworten entsprechen dem Muster, auf das dieser Screener anspricht — eine vollständige Abklärung ist also sinnvoll. Eine Diagnose ist das nicht: ADHS diagnostizieren nur Psychiaterinnen und Psychiater oder klinische Psychologinnen und Psychologen, und zwar aus Ihrer gesamten Vorgeschichte, nicht aus sechs Fragen."
+      },
+      "negative": {
+        "label": "Screening-Ergebnis: unauffällig",
+        "summary": "Ihre Antworten entsprechen dem gesuchten Muster nicht. Ausgeschlossen ist ADHS damit nicht — sechs Fragen decken nur einen Teil ab. Wenn diese Schwierigkeiten Ihre Arbeit, Ihr Studium oder Ihre Beziehungen belasten, sprechen Sie trotzdem ärztlich darüber."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Abklärung jetzt empfohlen",
+        "summary": "Ihr Alter oder Ihre Risikofaktoren entsprechen dem Muster, nach dem Leitlinien eine Osteoporose-Abklärung empfehlen. Das ist keine Diagnose — der nächste Schritt ist ein Gespräch mit einer Ärztin oder einem Arzt über eine Knochendichtemessung (DXA)."
+      },
+      "discuss-next": {
+        "label": "Beim nächsten Termin ansprechen",
+        "summary": "Sie haben einen Risikofaktor, den Leitlinien berücksichtigen, auch wenn er allein noch keine sofortige Abklärung erfordert. Sprechen Sie ihn beim nächsten Arztbesuch an."
+      },
+      "no-flags": {
+        "label": "Keine spezifischen Risikofaktoren festgestellt",
+        "summary": "Nichts von dem, was Sie angegeben haben, entspricht den veröffentlichten Risikofaktoren, die Leitlinien zur Osteoporose-Früherkennung nutzen. Das ist beruhigend, aber keine Garantie — melden Sie jede neue Fraktur oder jeden Sturz trotzdem ärztlich."
+      }
+    }
+  },
+  "tools": {
+    "adhd-test": {
+      "cardTitle": "ADHS-Test",
+      "cardBlurb": "Der Sechs-Fragen-Screener für ADHS bei Erwachsenen, ausgewertet wie die Skala es vorsieht.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "ADHS",
+      "h1Accent": "Test",
+      "h1Trail": "{country}",
+      "metaTitle": "ADHS Test {country} | Kostenloser Selbsttest für Erwachsene",
+      "metaDescription": "Machen Sie den Sechs-Fragen-Screener für ADHS bei Erwachsenen (ASRS v1.1, Teil A) und sehen Sie, was Ihre Antworten bedeuten. Ein Screening ist keine Diagnose — die stellen nur Psychiatrie oder klinische Psychologie.",
+      "lede": "Beantworten Sie sechs Fragen zu den letzten sechs Monaten und sehen Sie, ob Ihre Antworten dem Muster entsprechen, auf das der ADHS-Screener für Erwachsene anspricht.",
+      "trustPoints": [
+        "Der Sechs-Fragen-Screener ASRS v1.1, Teil A",
+        "Pro Frage ausgewertet, wie die Skala es vorsieht",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "widget": {
+        "title": "Ihre Antworten",
+        "instructions": "Wählen Sie zu jeder Frage, wie oft das in den letzten sechs Monaten auf Sie zutraf.",
+        "placeholder": "Beantworten Sie die sechs Fragen, um Ihr Screening-Ergebnis zu sehen.",
+        "note": "Dies ist ein Screening-Fragebogen, keine Diagnose. ADHS diagnostizieren ausschließlich Psychiaterinnen und Psychiater oder klinische Psychologinnen und Psychologen nach einer vollständigen Abklärung. Nichts hier ist eine Empfehlung für Medikamente.",
+        "thresholdLabel": "Auffälliges Screening",
+        "thresholdValue": "{count} oder mehr von {total}"
+      },
+      "sections": [
+        {
+          "heading": "Wie das Screening ausgewertet wird",
+          "body": [
+            "Die Fragen sind Teil A der Adult ADHD Self-Report Scale der Weltgesundheitsorganisation — die Kurzform, mit der entschieden wird, ob eine vollständige Abklärung sinnvoll ist. Die Abklärung selbst ist sie nicht.",
+            "Ausgewertet wird pro Frage, nicht als Summe. Jede Frage hat ihre eigene Schwelle, und vier oder mehr Fragen, die ihre Schwelle erreichen, ergeben ein auffälliges Screening. Die übliche Verwechslung ist die starre Regel „viermal Oft“ — sie übersieht den unaufmerksamen Typ, der bei Erwachsenen am häufigsten übersehen wird."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Die sechs Screening-Fragen und die Antwort, ab der sie zählen",
+            "columns": [
+              "Frage",
+              "Worum es geht",
+              "Zählt ab"
+            ],
+            "rows": [
+              [
+                "1",
+                "Die letzten Details eines Projekts abschließen",
+                "Manchmal"
+              ],
+              [
+                "2",
+                "Ordnung in eine Aufgabe bringen",
+                "Manchmal"
+              ],
+              [
+                "3",
+                "Termine und Zusagen behalten",
+                "Manchmal"
+              ],
+              [
+                "4",
+                "Aufgaben aufschieben, die viel Nachdenken verlangen",
+                "Oft"
+              ],
+              [
+                "5",
+                "Zappeln, wenn man lange sitzen bleiben muss",
+                "Oft"
+              ],
+              [
+                "6",
+                "Sich rastlos angetrieben fühlen",
+                "Oft"
+              ]
+            ],
+            "footnote": "Vier oder mehr Fragen auf oder über ihrer eigenen Schwelle ergeben ein auffälliges Screening. Die Skala wurde für Erwachsene ab 18 entwickelt und ist kein Screener für Kinder."
+          }
+        },
+        {
+          "heading": "Wie ADHS bei Erwachsenen aussieht",
+          "body": [
+            "ADHS im Erwachsenenalter sieht selten aus wie das Bild aus dem Klassenzimmer. Die Hyperaktivität wandert oft nach innen — Unruhe, ein Kopf, der nicht zur Ruhe kommt —, während die Unaufmerksamkeit bleibt und teuer wird: verpasste Fristen, ungeöffnete Post, ein Arbeitsgedächtnis, das ständig etwas fallen lässt.",
+            "Für eine Diagnose zählt, dass die Schwierigkeiten lange bestehen, in mehr als einem Lebensbereich auftreten und tatsächlich belasten. Schlüssel verlegt jeder einmal; danach wird hier nicht gefragt."
+          ],
+          "bullets": [
+            "Aufgaben anfangen, die wichtig sind — und die zu Ende bringen, die nicht mehr interessant sind.",
+            "Zeit: sie unterschätzen, sie verlieren, trotz ehrlicher Mühe zu spät kommen.",
+            "Organisation — Papierkram, Rechnungen, Termine — kostet weit mehr Kraft, als sie andere zu kosten scheint.",
+            "Unruhe oder ein dauerndes leises Bedürfnis, irgendetwas zu tun.",
+            "Unterbrechen, herausplatzen oder handeln, bevor die Idee zu Ende gedacht ist.",
+            "Gefühle, die schnell kommen und schnell wieder gehen, oft heftiger, als der Anlass hergibt."
+          ]
+        },
+        {
+          "heading": "Was dieses Screening nicht leisten kann",
+          "body": [
+            "Ein Screener mit sechs Fragen ist ein Sortierwerkzeug. Er ist absichtlich schnell und absichtlich großzügig, denn seine Aufgabe ist zu entscheiden, wer richtig abgeklärt werden sollte — nicht, wer ADHS hat."
+          ],
+          "bullets": [
+            "Er ist keine Diagnose. Ein auffälliges Ergebnis bedeutet für sich genommen nur „eine Abklärung lohnt sich“.",
+            "Ein unauffälliges Ergebnis schließt ADHS nicht aus, besonders nicht beim unaufmerksamen Typ und besonders nicht bei Frauen, die später und seltener diagnostiziert werden.",
+            "Angst, Depression, schlechter Schlaf, Schilddrüsenerkrankungen, chronische Schmerzen und starker Alkoholkonsum führen zu denselben Antworten.",
+            "Er trennt ADHS nicht von Autismus, von einer Lernstörung oder von den Folgen einer langen Belastungsphase.",
+            "Er wurde für Erwachsene entwickelt und validiert. Kinder und Jugendliche brauchen eine ganz andere Abklärung.",
+            "Er sagt nichts über die Behandlung. Medikamente sind eine Möglichkeit unter mehreren und kommen erst nach einer Diagnose überhaupt zur Sprache."
+          ]
+        },
+        {
+          "heading": "Eine richtige Abklärung bekommen",
+          "body": [
+            "Die Diagnose ADHS stellen Psychiaterinnen und Psychiater oder klinische Psychologinnen und Psychologen. Die Abklärung ist ein strukturiertes klinisches Gespräch über Ihre Vorgeschichte ab der Kindheit, meist mit Fragebögen und, wenn möglich, mit der Schilderung einer Person, die Sie lange kennt."
+          ],
+          "bullets": [
+            "Fangen Sie ärztlich an. Dort werden Ihre Vorgeschichte durchgegangen, die Erkrankungen geprüft, die wie ADHS aussehen, und die Überweisung zur Abklärung ausgestellt.",
+            "Bringen Sie Konkretes statt einer Punktzahl mit: Zeugnisse, Beurteilungen, das, was immer wieder schiefgeht, und seit wann.",
+            "Sagen Sie, was sonst noch läuft — Schlaf, Stimmung, Alkohol, Schilddrüse, ein früheres Schädel-Hirn-Trauma. Das verändert die Abklärung und ihre Reihenfolge.",
+            "Ein Screening-Ergebnis ist der Einstieg in dieses Gespräch, nicht sein Ersatz. Nehmen Sie Ihres mit.",
+            "Wenn Sie den Alltag nicht mehr bewältigen oder Gedanken haben, sich etwas anzutun, wenden Sie sich sofort ärztlich oder an den Notruf, statt auf eine Abklärung zu warten."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Kann ein Online-ADHS-Test eine Diagnose stellen?",
+          "answer": "Nein, und kein Online-Fragebogen kann das. Dies ist ein Screener: Er sortiert in „lohnt eine richtige Abklärung“ und „nach diesen Antworten nicht“. Die Diagnose stellen Psychiatrie oder klinische Psychologie, aus einem vollständigen Gespräch über Ihre Vorgeschichte und nicht aus sechs Fragen."
+        },
+        {
+          "question": "Was ist die ASRS?",
+          "answer": "Die Adult ADHD Self-Report Scale, entwickelt mit der Weltgesundheitsorganisation. Teil A ist der hier verwendete Screener mit sechs Fragen; die vollständige Skala hat achtzehn. Sie ist das am weitesten verbreitete Screening-Instrument für ADHS bei Erwachsenen — deshalb ist das Ergebnis, das Sie mitbringen, in der Praxis bekannt."
+        },
+        {
+          "question": "Was gilt als auffälliges Ergebnis?",
+          "answer": "Vier oder mehr der sechs Fragen, beantwortet auf oder über der jeweils eigenen Schwelle. Die ersten drei zählen ab „Manchmal“, die letzten drei erst ab „Oft“ — die Schwellen unterscheiden sich, weil die Fragen sich unterscheiden, und ein einziger starrer Grenzwert würde den unaufmerksamen Typ übersehen."
+        },
+        {
+          "question": "Kann ich ADHS haben, obwohl das Ergebnis unauffällig ist?",
+          "answer": "Ja. Sechs Fragen können ein Störungsbild nicht abdecken, das sich in verschiedenen Lebensaltern und bei verschiedenen Menschen unterschiedlich zeigt. Gerade der unaufmerksame Typ wird zu selten erkannt — einer der Gründe, warum Frauen später und seltener diagnostiziert werden. Wenn die Schwierigkeiten Ihr Leben belasten, ist ein unauffälliges Screening kein Grund aufzuhören."
+        },
+        {
+          "question": "Wer darf ADHS diagnostizieren?",
+          "answer": "Je nach Land Psychiaterinnen und Psychiater oder klinische Psychologinnen und Psychologen. Der Weg beginnt in der Regel hausärztlich: Dort werden die Vorgeschichte erhoben, die Erkrankungen mit ähnlichem Bild ausgeschlossen — Schilddrüse, Schlafstörungen, Angst, Depression — und die Überweisung zur eigentlichen Abklärung ausgestellt."
+        },
+        {
+          "question": "Speichert dieser ADHS-Test meine Antworten?",
+          "answer": "Nein. Die Auswertung läuft vollständig in Ihrem Browser. Nichts, was Sie auswählen, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Möchten Sie Ihr Ergebnis besprechen?",
+        "body": "Buchen Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt, gehen Sie Ihre Vorgeschichte und die Erkrankungen durch, die wie ADHS aussehen können, und erfahren Sie, was eine Abklärung bedeutet.",
+        "label": "Termin buchen"
+      },
+      "suggestionsIntro": "Ein Screening-Ergebnis ist ein Grund für eine Abklärung, keine Diagnose. Diese Sprechstunden gehen den nächsten Schritt."
+    },
+    "blood-pressure-chart": {
+      "cardTitle": "Blutdrucktabelle",
+      "cardBlurb": "Was Ihre beiden Werte in der europäischen Blutdrucktabelle für Erwachsene bedeuten.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Blutdruck",
+      "h1Accent": "tabelle",
+      "h1Trail": "{country}",
+      "metaTitle": "Blutdrucktabelle {country} | Was Ihr Wert Bedeutet",
+      "metaDescription": "Vergleichen Sie Ihren systolischen und diastolischen Wert mit der europäischen Blutdrucktabelle für Erwachsene. Kategorie, Bedeutung und welche Werte noch am selben Tag ärztlich abgeklärt gehören.",
+      "lede": "Geben Sie die beiden Werte von Ihrem Messgerät ein und sehen Sie, wo die Messung in der europäischen Tabelle für Erwachsene liegt — und was gegebenenfalls zu tun ist.",
+      "trustPoints": [
+        "Europäische Kategorien (ESC/ESH) für Erwachsene",
+        "Weist auf Werte hin, die noch am selben Tag abgeklärt gehören",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Ein Blutdruckwert ist ein Hinweis, kein Plan. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte für das anbieten, worauf er hinweist.",
+      "widget": {
+        "title": "Ihr Messwert",
+        "placeholder": "Der obere Wert muss höher sein als der untere — prüfen Sie beide Zahlen auf Ihrem Messgerät.",
+        "note": "Diese Tabelle ist eine Orientierung zum Screening, keine Diagnose. Bluthochdruck wird aus wiederholten Messungen diagnostiziert, meist aus einer Woche Heimmessung oder einer 24-Stunden-Messung, nie aus einem einzelnen Wert.",
+        "scaleLabel": "Wo Ihr systolischer Wert liegt",
+        "optimalLabel": "Optimal für die meisten Erwachsenen",
+        "optimalValue": "Unter {systolic}/{diastolic} mmHg",
+        "urgentTitle": "Holen Sie sich noch heute ärztliche Hilfe",
+        "urgentBody": "Ein so hoher Wert gehört noch am selben Tag abgeklärt. Sitzen Sie fünf Minuten ruhig und messen Sie erneut — bleibt der Wert so hoch, wenden Sie sich noch heute an eine Ärztin oder einen Arzt.",
+        "urgentSymptoms": "Rufen Sie sofort den Rettungsdienst, wenn zusätzlich Brustschmerzen, Schwäche oder Taubheit einer Körperhälfte, Sprachstörungen oder eine plötzliche Sehstörung auftreten."
+      },
+      "sections": [
+        {
+          "heading": "Die Blutdrucktabelle für Erwachsene",
+          "body": [
+            "Der Blutdruck wird mit zwei Zahlen angegeben: dem systolischen Druck, während sich das Herz zusammenzieht, über dem diastolischen Druck, während es sich zwischen den Schlägen entspannt. Beide werden in Millimeter Quecksilbersäule (mmHg) gemessen.",
+            "Die Kategorien unten sind die europäischen (ESC/ESH). Fallen die beiden Werte in unterschiedliche Kategorien, zählt die höhere: 128/95 ist eine Hypertonie Grad 1 und kein normaler Blutdruck."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Europäische Blutdruckkategorien für Erwachsene",
+            "columns": [
+              "Kategorie",
+              "Systolisch (mmHg)",
+              "Diastolisch (mmHg)"
+            ],
+            "rows": [
+              [
+                "Niedrig",
+                "Unter 90",
+                "oder unter 60"
+              ],
+              [
+                "Optimal",
+                "Unter 120",
+                "und unter 80"
+              ],
+              [
+                "Normal",
+                "120 – 129",
+                "und/oder 80 – 84"
+              ],
+              [
+                "Hochnormal",
+                "130 – 139",
+                "und/oder 85 – 89"
+              ],
+              [
+                "Hypertonie Grad 1",
+                "140 – 159",
+                "und/oder 90 – 99"
+              ],
+              [
+                "Hypertonie Grad 2",
+                "160 – 179",
+                "und/oder 100 – 109"
+              ],
+              [
+                "Hypertonie Grad 3",
+                "180 oder mehr",
+                "und/oder 110 oder mehr"
+              ],
+              [
+                "Isoliert systolisch",
+                "140 oder mehr",
+                "und unter 90"
+              ]
+            ],
+            "footnote": "Grenzwerte für die Messung in der Praxis bei Erwachsenen. Heimmessgeräte und 24-Stunden-Messungen liefern niedrigere Werte, zu Hause beginnt Bluthochdruck deshalb bei 135/85 statt bei 140/90. In Schwangerschaft, Kindesalter und Dialyse gelten völlig andere Zielwerte."
+          }
+        },
+        {
+          "heading": "So messen Sie einen Wert, der etwas aussagt",
+          "body": [
+            "Die meisten erschreckenden Werte sind Messfehler. Der Blutdruck schwankt über den Tag und steigt, wenn Sie gehetzt ankommen, die Blase voll ist oder Sie mit angelegter Manschette sprechen — die Art zu messen verändert die Zahl also stärker, als die meisten erwarten."
+          ],
+          "bullets": [
+            "Sitzen Sie zuerst fünf Minuten ruhig — Rücken angelehnt, Füße flach auf dem Boden, Beine nicht überschlagen.",
+            "30 Minuten vorher kein Kaffee, kein Essen, kein Sport, keine Zigaretten, und entleeren Sie die Blase.",
+            "Legen Sie den Arm so auf den Tisch, dass die Manschette auf Herzhöhe und auf der bloßen Haut liegt.",
+            "Verwenden Sie eine passende Manschette. Eine zu kleine misst zu hoch und ist der häufigste Fehler bei der Heimmessung.",
+            "Sprechen Sie während der Messung nicht: Reden addiert mehrere mmHg.",
+            "Messen Sie zweimal im Abstand von einer Minute und nehmen Sie den zweiten Wert oder den Mittelwert.",
+            "Messen Sie sieben Tage lang morgens und abends und bringen Sie die ganze Reihe zur Ärztin oder zum Arzt."
+          ]
+        },
+        {
+          "heading": "Was eine einzelne Messung nicht sagen kann",
+          "body": [
+            "Ein Messwert ist eine Momentaufnahme an einem Arm. Das reicht, um ein Problem zu erkennen, aber nicht, um es zu benennen — deshalb stützt sich eine Diagnose auf wiederholte Messungen und nicht auf den ersten erschreckenden Wert."
+          ],
+          "bullets": [
+            "Weißkittelhypertonie: in der Praxis erhöht, zu Hause normal. Häufig, und nur Heimmessung oder eine 24-Stunden-Messung trennt sie ab.",
+            "Maskierte Hypertonie: in der Praxis normal, die übrige Zeit erhöht. Die riskantere der beiden und ohne Heimmessung unsichtbar.",
+            "Die Arme unterscheiden sich. Ein Unterschied von mehr als 10 mmHg ist bedeutsam, und ab dann gilt immer der Arm mit dem höheren Wert.",
+            "Ein unregelmäßiger Puls, auch Vorhofflimmern, macht die meisten automatischen Geräte unzuverlässig.",
+            "Nicht jedes Heimgerät ist klinisch validiert, und ein nicht validiertes kann deutlich danebenliegen.",
+            "Die Schwangerschaft hat eigene Grenzwerte und eigene Risiken: erhöhter Blutdruck in der Schwangerschaft gehört in die geburtshilfliche Betreuung, nicht in diese Tabelle."
+          ]
+        },
+        {
+          "heading": "Wann zur Ärztin oder zum Arzt — und wann sofort",
+          "body": [
+            "Die meisten erhöhten Werte lassen sich in einem normalen Termin klären. Einige nicht."
+          ],
+          "bullets": [
+            "Rufen Sie sofort den Rettungsdienst, wenn ein sehr hoher Wert mit Brustschmerzen, Schwäche oder Taubheit einer Körperhälfte, Sprachstörungen oder einer plötzlichen Sehstörung einhergeht. Das sind Anzeichen eines Herzinfarkts oder eines Schlaganfalls.",
+            "Suchen Sie bei einem Wert von 180/120 oder höher noch am selben Tag ärztliche Hilfe, auch ganz ohne Beschwerden.",
+            "Vereinbaren Sie innerhalb weniger Wochen einen Termin, wenn die Werte wiederholt bei 140/90 oder darüber liegen.",
+            "Sprechen Sie mit einer Ärztin oder einem Arzt, wenn die Werte wiederholt unter 90/60 liegen und Ihnen schwindelig ist, Sie ohnmächtig werden oder ungewöhnlich müde sind.",
+            "Bringen Sie Ihre Heimmesswerte und das Gerät selbst mit. Behandelt wird das Muster, nicht der schlechteste Einzelwert."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Was ist ein normaler Blutdruck für Erwachsene?",
+          "answer": "Unter 120/80 mmHg ist optimal, 120–129 zu 80–84 gilt weiterhin als normal. Ab 130/85 ist ein Wert hochnormal, und 140/90 oder höher, in der Praxis gemessen, bedeutet Bluthochdruck. Heimmessgeräte liefern niedrigere Werte, zu Hause liegt die Grenze deshalb bei 135/85."
+        },
+        {
+          "question": "Welcher Wert zählt mehr, der obere oder der untere?",
+          "answer": "Beide. Die Kategorie richtet sich nach dem schlechteren Wert, deshalb gilt 128/95 allein wegen der unteren Zahl als Hypertonie Grad 1. Der systolische Wert sagt das Herz-Kreislauf-Risiko ab etwa 50 besser voraus, der diastolische davor."
+        },
+        {
+          "question": "Was bedeutet ein isoliert systolischer Wert?",
+          "answer": "Ein systolischer Wert von 140 oder mehr bei einem diastolischen unter 90. Das ist ab 60 die häufigste Form von Bluthochdruck, sie entsteht durch die mit dem Alter steifer werdenden Arterien und bringt ein echtes Herz-Kreislauf-Risiko mit sich — es ist keine harmlose Eigenart des oberen Wertes."
+        },
+        {
+          "question": "Bedeutet ein einzelner hoher Wert, dass ich Bluthochdruck habe?",
+          "answer": "Nein. Bluthochdruck wird aus wiederholt erhöhten Werten diagnostiziert, in der Regel gestützt auf eine Woche Heimmessung oder eine 24-Stunden-Messung. Ein einzelner hoher Wert ist ein Grund, sauber nachzumessen, keine Diagnose."
+        },
+        {
+          "question": "Welcher Blutdruck ist gefährlich?",
+          "answer": "Ein Wert von 180/120 oder höher braucht noch am selben Tag ärztliche Hilfe. Kommen Brustschmerzen, Schwäche oder Taubheit einer Körperhälfte, Sprachstörungen oder eine plötzliche Sehstörung hinzu, rufen Sie sofort den Rettungsdienst — das sind Anzeichen eines Herzinfarkts oder eines Schlaganfalls."
+        },
+        {
+          "question": "Speichert diese Blutdrucktabelle meinen Wert?",
+          "answer": "Nein. Der Vergleich läuft vollständig in Ihrem Browser. Nichts von dem, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Sollen Ihre Werte ärztlich angesehen werden?",
+        "body": "Buchen Sie eine Videosprechstunde bei einer registrierten Ärztin oder einem registrierten Arzt, bringen Sie eine Woche Heimmesswerte mit und erhalten Sie einen Plan, der auf dem Muster beruht und nicht auf einer einzelnen Zahl.",
+        "label": "Termin buchen"
+      }
+    },
+    "bmi-calculator": {
+      "cardTitle": "BMI-Rechner",
+      "cardBlurb": "Body-Mass-Index aus Ihrer Größe und Ihrem Gewicht, auf der WHO-Skala für Erwachsene.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "BMI",
+      "h1Accent": "Rechner",
+      "h1Trail": "{country}",
+      "metaTitle": "BMI-Rechner {country} | BMI Kostenlos Berechnen",
+      "metaDescription": "Berechnen Sie Ihren Body-Mass-Index in Sekunden. Metrisch oder imperial, WHO-Kategorien für Erwachsene und was Ihr Ergebnis tatsächlich bedeutet.",
+      "lede": "Geben Sie Größe und Gewicht ein, um Ihren Body-Mass-Index zu sehen und wo er auf der Erwachsenenskala der Weltgesundheitsorganisation liegt.",
+      "trustPoints": [
+        "Metrisch und imperial (kg, Stone, Pfund)",
+        "WHO-Gewichtskategorien für Erwachsene",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "widget": {
+        "title": "Ihr BMI",
+        "placeholder": "Geben Sie Größe und Gewicht ein, um Ihren Body-Mass-Index zu sehen.",
+        "note": "Der BMI ist ein Screening-Wert, keine Diagnose. Er unterscheidet nicht zwischen Muskeln und Fett und gilt weder in der Schwangerschaft noch für unter 18-Jährige.",
+        "healthyRangeLabel": "Gesundes Gewicht für Ihre Größe",
+        "gapAbove": "{kg} kg über dem gesunden Bereich",
+        "gapBelow": "{kg} kg unter dem gesunden Bereich",
+        "gapInside": "Innerhalb des gesunden Bereichs",
+        "gapLabel": "Abstand zum gesunden Bereich",
+        "scaleLabel": "Wo Ihr BMI auf der WHO-Skala liegt"
+      },
+      "sections": [
+        {
+          "heading": "Was Ihr BMI-Ergebnis bedeutet",
+          "body": [
+            "Die Weltgesundheitsorganisation ordnet den BMI Erwachsener den unten stehenden Bereichen zu. Sie beschreiben eine Bevölkerung, nicht eine Person: Zwei Menschen mit demselben BMI können sehr unterschiedlich gesund sein."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "WHO-BMI-Kategorien für Erwachsene",
+            "columns": [
+              "BMI",
+              "Kategorie",
+              "Was das meist bedeutet"
+            ],
+            "rows": [
+              [
+                "Unter 18,5",
+                "Untergewicht",
+                "Ein ärztliches Gespräch lohnt sich, vor allem wenn die Abnahme ungewollt war"
+              ],
+              [
+                "18,5 – 24,9",
+                "Normalgewicht",
+                "Nichts, was allein wegen dieser Zahl zu ändern wäre"
+              ],
+              [
+                "25,0 – 29,9",
+                "Übergewicht",
+                "Ein guter Moment, Blutdruck und Cholesterin prüfen zu lassen"
+              ],
+              [
+                "30,0 – 34,9",
+                "Adipositas Grad I",
+                "Ab hier wird meist strukturiertes Gewichtsmanagement angeboten"
+              ],
+              [
+                "35,0 – 39,9",
+                "Adipositas Grad II",
+                "Eine ärztliche Abklärung und ein Screening auf die Begleiterkrankungen"
+              ],
+              [
+                "40,0 und mehr",
+                "Adipositas Grad III",
+                "Eine Überweisung zum fachärztlichen Gewichtsmanagement"
+              ]
+            ],
+            "footnote": "Menschen südasiatischer, chinesischer und einiger weiterer asiatischer Herkunft haben schon bei niedrigerem BMI ein höheres kardiometabolisches Risiko. Die WHO schlägt für diese Bevölkerungsgruppen 23,0 und 27,5 als zusätzliche Handlungsschwellen vor."
+          }
+        },
+        {
+          "heading": "Wie der BMI berechnet wird",
+          "body": [
+            "Der BMI ist Ihr Gewicht in Kilogramm geteilt durch das Quadrat Ihrer Größe in Metern. Das ist die vollständige Formel — Alter, Geschlecht und Körperzusammensetzung kommen darin nicht vor.",
+            "Rechenbeispiel: Eine 1,75 m große Person mit 78 kg hat einen BMI von 78 ÷ (1,75 × 1,75) = 25,5 und fällt damit in den Bereich Übergewicht.",
+            "Imperiale Eingaben werden zuerst umgerechnet (1 Stone = 6,35 kg, 1 Zoll = 2,54 cm), das Ergebnis ist also in beiden Systemen identisch."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Was der BMI Ihnen nicht sagt",
+          "body": [
+            "Der BMI ist eine Screening-Zahl, keine Diagnose. Er ist gerade deshalb nützlich, weil er grob ist — es braucht nur ein Maßband und eine Waage — doch genau darin liegt auch seine Grenze."
+          ],
+          "bullets": [
+            "Er trennt Muskeln nicht von Fett. Sehr muskulöse Menschen werden regelmäßig als übergewichtig eingestuft.",
+            "Er ignoriert, wo das Fett sitzt. Der Taillenumfang sagt das kardiometabolische Risiko besser voraus als der BMI.",
+            "Er ist für die Schwangerschaft nicht validiert — nutzen Sie für die Betreuungsplanung den BMI vor der Schwangerschaft.",
+            "Kinder und Jugendliche brauchen alters- und geschlechtsspezifische Perzentilkurven, nicht die obigen Erwachsenenbereiche.",
+            "Bei Erwachsenen über 65 Jahren ist ein BMI leicht über 25 nicht durchgängig mit schlechteren Ergebnissen verbunden."
+          ]
+        },
+        {
+          "heading": "Wann Sie Ihr Gewicht ärztlich besprechen sollten",
+          "body": [],
+          "bullets": [
+            "Sie haben ungewollt ab- oder zugenommen.",
+            "Ihr BMI liegt bei 30 oder darüber, oder bei 25 und darüber zusammen mit hohem Blutdruck, hohem Cholesterin oder erhöhtem Blutzucker.",
+            "Sie werden auf Typ-2-Diabetes, Schlafapnoe, PCOS oder eine Fettleber abgeklärt oder bereits behandelt.",
+            "Sie möchten ein ärztlich begleitetes Gewichtsmanagement besprechen statt der nächsten Diät."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Welcher BMI ist für Erwachsene gesund?",
+          "answer": "Für die meisten Erwachsenen zwischen 18 und 65 Jahren gilt bei der Weltgesundheitsorganisation ein BMI zwischen 18,5 und 24,9 als gesunder Bereich. Über 25 gilt als Übergewicht, ab 30 als Adipositas. Das sind Bevölkerungsschwellen — ein einzelner Wert ist also ein Anlass, genauer hinzusehen, kein Urteil."
+        },
+        {
+          "question": "Wird der BMI bei Männern und Frauen unterschiedlich berechnet?",
+          "answer": "Nein. Formel und Erwachsenenkategorien sind identisch. Frauen haben bei gleichem BMI in der Regel einen höheren Körperfettanteil als Männer — einer der Gründe, warum die Zahl nur ein Ausgangspunkt ist."
+        },
+        {
+          "question": "Wie genau ist ein BMI-Rechner?",
+          "answer": "Die Rechnung ist exakt — die Unsicherheit liegt darin, was der BMI misst. Auf Bevölkerungsebene korreliert er recht gut mit dem Körperfett, kann Einzelne aber falsch einordnen, vor allem Sportlerinnen und Sportler, ältere Menschen und Personen mit viel Muskelmasse."
+        },
+        {
+          "question": "Was tun, wenn mein BMI im Adipositas-Bereich liegt?",
+          "answer": "Lassen Sie Blutdruck, Cholesterin und Blutzucker kontrollieren und besprechen Sie mit einer Ärztin oder einem Arzt einen Plan, den Sie durchhalten können. Gewichtsmanagement mit ärztlicher Begleitung wirkt deutlich besser als Diäten allein."
+        },
+        {
+          "question": "Speichert dieser BMI-Rechner meine Daten?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts von dem, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        },
+        {
+          "question": "Brauche ich einen BMI für eine Abnehmbehandlung?",
+          "answer": "In der Regel nutzen Behandelnde den BMI als eines der Aufnahmekriterien für Gewichtsmanagement-Programme, meist zusammen mit Ihrer Krankengeschichte und etwaigen gewichtsbedingten Erkrankungen. Ihre Ärztin oder Ihr Arzt sagt Ihnen, was in Ihrem Fall gilt."
+        }
+      ],
+      "cta": {
+        "heading": "Möchten Sie Ihr Ergebnis besprechen?",
+        "body": "Buchen Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt und erhalten Sie einen Plan, der auf Ihrer Krankengeschichte beruht — nicht auf einer Zahl.",
+        "label": "Termin buchen"
+      }
+    },
+    "calorie-calculator": {
+      "cardTitle": "Kalorienrechner",
+      "cardBlurb": "Wie viele Kalorien Sie täglich brauchen, um Ihr Gewicht zu halten, abzunehmen oder zuzunehmen.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Kostenloser",
+      "h1Accent": "Kalorienrechner",
+      "h1Trail": "{country}",
+      "metaTitle": "Kalorienrechner {country} | Täglichen Kalorienbedarf Berechnen",
+      "metaDescription": "Berechnen Sie, wie viele Kalorien Sie täglich brauchen, um Ihr Gewicht zu halten, abzunehmen oder zuzunehmen. Mifflin-St-Jeor-Formel, fünf Aktivitätsstufen und was die Zahlen wirklich bedeuten.",
+      "lede": "Geben Sie Geschlecht, Alter, Größe, Gewicht und Ihr Aktivitätsniveau ein und sehen Sie, wie viele Kalorien Sie am Tag verbrauchen — und wie viel Sie essen sollten, um zu halten, abzunehmen oder zuzunehmen.",
+      "trustPoints": [
+        "Mifflin-St-Jeor-Formel, die auch in der Praxis verwendet wird",
+        "Erhalt, Abnahme und Zunahme auf einen Blick",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Eine Kalorienzahl ist ein Ausgangspunkt, kein Plan. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte zu Gewicht, Ernährung und den Untersuchungen anbieten, die eine Zahl nicht liefert.",
+      "widget": {
+        "title": "Ihre Kalorien pro Tag",
+        "placeholder": "Geben Sie Ihre Angaben ein, um Ihren Tagesverbrauch zu sehen.",
+        "note": "Schätzwerte für gesunde Erwachsene und ein Orientierungswerkzeug, keine Diagnose und kein verordneter Ernährungsplan. Sprechen Sie vor einer Umstellung mit einer Ärztin oder einem Arzt, wenn Sie schwanger sind oder stillen, unter 18 sind oder wegen einer Erkrankung behandelt werden.",
+        "noteFloored": "Ihr Abnehmziel wurde bei 1.200 kcal gehalten — der niedrigsten Tagesmenge, die dieser Rechner vorschlägt. Weniger sollte nur unter ärztlicher Aufsicht gegessen werden.",
+        "resultLabel": "Kalorien zum Halten",
+        "resultSummary": "Was Sie an einem durchschnittlichen Tag auf diesem Aktivitätsniveau verbrauchen, alles eingerechnet.",
+        "bmrLabel": "Grundumsatz",
+        "mildLossLabel": "Etwa 0,25 kg pro Woche abnehmen",
+        "lossLabel": "Etwa 0,5 kg pro Woche abnehmen",
+        "gainLabel": "Etwa 0,25 kg pro Woche zunehmen"
+      },
+      "sections": [
+        {
+          "heading": "Was Ihre Kalorienzahlen bedeuten",
+          "body": [
+            "Die große Zahl ist Ihr Erhaltungsbedarf: ungefähr das, was Sie an einem Tag inklusive Bewegung verbrauchen. Essen Sie so viel, bleibt Ihr Gewicht, wo es ist.",
+            "Die Ziele darunter sind dieselbe Zahl mit einem Defizit oder einem Überschuss. Ein tägliches Defizit von 500 kcal entspricht etwa einem halben Kilo pro Woche — auf dieses Tempo laufen die meisten Empfehlungen hinaus: schnell genug, um es zu merken, langsam genug, um es zu halten."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Tägliche Kalorienziele ausgehend von Ihrem Erhaltungsbedarf",
+            "columns": [
+              "Ziel",
+              "Tagesmenge",
+              "Was zu erwarten ist"
+            ],
+            "rows": [
+              [
+                "Halten",
+                "Ihr Erhaltungsbedarf",
+                "Das Gewicht bleibt über Wochen stabil, nicht über Tage"
+              ],
+              [
+                "Leichte Abnahme",
+                "Erhaltungsbedarf − 250 kcal",
+                "Etwa 0,25 kg pro Woche"
+              ],
+              [
+                "Stetige Abnahme",
+                "Erhaltungsbedarf − 500 kcal",
+                "Etwa 0,5 kg pro Woche"
+              ],
+              [
+                "Zunahme",
+                "Erhaltungsbedarf + 300 kcal",
+                "Etwa 0,25 kg pro Woche, am besten mit Krafttraining"
+              ]
+            ],
+            "footnote": "Die Abnehmziele fallen hier nie unter 1.200 kcal pro Tag. Darunter lassen sich Eiweiß-, Vitamin- und Mineralstoffbedarf kaum noch über die Nahrung decken, und eine so niedrige Zufuhr gehört unter ärztliche Aufsicht."
+          }
+        },
+        {
+          "heading": "Das richtige Aktivitätsniveau wählen",
+          "body": [
+            "Der Aktivitätsfaktor ist der größte Hebel in dieser Rechnung: Zwischen sitzend und extrem aktiv liegen beim selben Körper über 700 kcal pro Tag. Er umfasst alles, nicht nur das Training — Stehen, Gehen, Haushalt und Ihre Arbeit zählen mit.",
+            "Die meisten Menschen greifen eine Stufe zu hoch. Wer dreimal die Woche trainiert und sonst sitzt, ist leicht bis mäßig aktiv, nicht sehr aktiv."
+          ],
+          "bullets": [
+            "Sitzend — Bürojob und wenig oder kein bewusster Sport.",
+            "Leicht aktiv — leichte Bewegung oder Sport an ein bis drei Tagen pro Woche.",
+            "Mäßig aktiv — moderate Bewegung an drei bis fünf Tagen pro Woche.",
+            "Sehr aktiv — intensives Training an sechs oder sieben Tagen pro Woche.",
+            "Extrem aktiv — körperlich fordernde Arbeit oder zweimal täglich hartes Training."
+          ]
+        },
+        {
+          "heading": "So wird gerechnet",
+          "body": [
+            "Ihr Grundumsatz — was der Körper in völliger Ruhe verbraucht — stammt aus der Mifflin-St-Jeor-Formel: 10 × Gewicht in kg plus 6,25 × Größe in cm minus 5 × Alter, dann plus 5 bei Männern oder minus 161 bei Frauen.",
+            "Dieser Wert wird mit dem Aktivitätsfaktor multipliziert, von 1,2 für sitzend bis 1,9 für extrem aktiv. Das Ergebnis ist der Gesamtenergieumsatz — die Erhaltungszahl oben im Ergebnis.",
+            "Rechenbeispiel: Ein 30-jähriger Mann mit 180 cm und 80 kg hat einen Grundumsatz von 1.780 kcal. Leicht aktiv (× 1,375) sind das rund 2.448 kcal pro Tag, um sein Gewicht zu halten."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Was ein Kalorienrechner nicht sagen kann",
+          "body": [
+            "Jede Formel hier ist ein an Messdaten angepasster Bevölkerungsdurchschnitt, und Einzelne liegen darüber oder darunter. Nehmen Sie die Zahl als Schätzung, die Sie drei bis vier Wochen lang an der Waage überprüfen, nicht als Tatsache über Ihren Körper."
+          ],
+          "bullets": [
+            "Bei den meisten Erwachsenen liegt die Schätzung meist innerhalb von rund 10 % — das sind 200 kcal in beide Richtungen bei 2.000 kcal am Tag.",
+            "Sie sagt nichts darüber, woraus diese Kalorien bestehen, dabei entscheiden Eiweiß, Ballaststoffe und Mikronährstoffe darüber, ob eine Ernährung durchzuhalten ist.",
+            "Schilddrüsenerkrankungen, manche Medikamente und eine lange Diätgeschichte verschieben den tatsächlichen Verbrauch gegenüber der Schätzung.",
+            "Sie ist nicht für Kinder, für Schwangerschaft und Stillzeit oder für Sportlerinnen und Sportler in harten Trainingsphasen gedacht.",
+            "Sehr muskulöse Menschen werden unterschätzt, weil die Formel mit dem Gesamtgewicht statt mit der Magermasse rechnet."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wie viele Kalorien sollte ich am Tag essen?",
+          "answer": "So viele, wie Sie verbrauchen, wenn Ihr Gewicht dort ist, wo Sie es haben wollen. Bei den meisten Erwachsenen liegt das zwischen 1.800 und 2.800 kcal, doch die Spanne ist groß, weil Körpergröße, Alter und Bewegung mitspielen. Der Rechner oben gibt Ihnen Ihren eigenen Wert statt des Durchschnitts."
+        },
+        {
+          "question": "Wie viele Kalorien brauche ich zum Abnehmen?",
+          "answer": "Etwa 500 kcal pro Tag unter dem Erhaltungsbedarf ergeben rund ein halbes Kilo pro Woche, 250 kcal darunter etwa ein Viertelkilo. Größere Defizite wirken nicht verlässlich schneller — sie sind nur schwerer durchzuhalten, und ein größerer Teil des Verlusts geht auf Muskulatur."
+        },
+        {
+          "question": "Sind 1.200 Kalorien pro Tag sicher?",
+          "answer": "Das ist die niedrigste Menge, die dieser Rechner vorschlägt, und eine Untergrenze, keine Empfehlung. Darunter wird es schwierig, Eiweiß, Vitamine und Mineralstoffe über die Nahrung zu decken, deshalb gehört eine geringere Zufuhr unter ärztliche Aufsicht."
+        },
+        {
+          "question": "Welche Formel verwendet dieser Kalorienrechner?",
+          "answer": "Mifflin-St Jeor für den Grundumsatz und danach einen üblichen Aktivitätsfaktor. Sie hat die ältere Harris-Benedict-Formel in der Praxis weitgehend abgelöst, weil sie für heutige Körperzusammensetzungen genauer ist — bei gesunden Erwachsenen meist auf rund 10 % genau."
+        },
+        {
+          "question": "Muss ich Kalorien zählen, um abzunehmen?",
+          "answer": "Nein. Zählen ist nur eine Methode, ein Defizit zu halten, und viele erreichen dasselbe, indem sie ändern, was sie essen, statt es zu wiegen. Zu wissen, wo Ihr Erhaltungsbedarf ungefähr liegt, hilft trotzdem: Es zeigt, wie groß die Änderung tatsächlich ist."
+        },
+        {
+          "question": "Speichert dieser Kalorienrechner meine Angaben?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Sie wollen einen Plan, nicht nur eine Zahl?",
+        "body": "Buchen Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt und besprechen Sie, was die Zahl für Ihr Gewicht, Ihre Blutwerte und Ihre Krankengeschichte bedeutet.",
+        "label": "Termin buchen"
+      }
+    },
+    "due-date-calculator": {
+      "cardTitle": "Geburtstermin-Rechner",
+      "cardBlurb": "Ihr errechneter Geburtstermin, die aktuelle Schwangerschaftswoche und die Wochen, die dazwischen zählen.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Geburtstermin",
+      "h1Accent": "berechnen",
+      "h1Trail": "{country}",
+      "metaTitle": "Geburtstermin Berechnen {country} | Schwangerschaftswochen",
+      "metaDescription": "Berechnen Sie Ihren errechneten Geburtstermin und die aktuelle Schwangerschaftswoche ab dem ersten Tag der letzten Periode. Berücksichtigt Ihre Zykluslänge, mit allen 40 Wochen im Überblick.",
+      "lede": "Geben Sie den ersten Tag Ihrer letzten Periode ein und Sie sehen den errechneten Geburtstermin, die heutige Schwangerschaftswoche und den Beginn jedes Trimesters.",
+      "trustPoints": [
+        "Berücksichtigt Zykluslängen von 20 bis 45 Tagen",
+        "Trimester-Daten und das Terminfenster (37–42 Wochen)",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "widget": {
+        "title": "Ihr Geburtstermin",
+        "placeholder": "Geben Sie den ersten Tag Ihrer letzten Periode ein, um den errechneten Geburtstermin zu sehen.",
+        "note": "Das ist eine Schätzung aus den eingegebenen Daten, keine Diagnose. Der Ultraschall zur Terminbestimmung misst das Kind direkt und ersetzt sie.",
+        "lmpLabel": "Erster Tag der letzten Periode",
+        "lmpHint": "Der Tag, an dem die Blutung begonnen hat, nicht der Tag, an dem sie endete.",
+        "cycleLabel": "Zykluslänge",
+        "cycleHint": "Tage vom Beginn einer Periode bis zum Beginn der nächsten. Wenn Sie unsicher sind, lassen Sie 28 stehen.",
+        "daysUnit": "Tage",
+        "gestationalAgeLabel": "Heutige Schwangerschaftswoche",
+        "daysToGoLabel": "Tage bis zum Termin",
+        "secondTrimesterLabel": "Beginn des zweiten Trimesters",
+        "thirdTrimesterLabel": "Beginn des dritten Trimesters",
+        "termWindowLabel": "Terminfenster (37–42 Wochen)",
+        "trimester1": "Erstes Trimester",
+        "trimester1Note": "Woche 1 bis 13. In dieser Zeit wird die Vorsorge angemeldet und der Ultraschall zur Terminbestimmung gemacht.",
+        "trimester2": "Zweites Trimester",
+        "trimester2Note": "Woche 14 bis 27. Der große Organultraschall wird üblicherweise um die 20. Woche angeboten.",
+        "trimester3": "Drittes Trimester",
+        "trimester3Note": "Ab Woche 28. Wachstums- und Blutdruckkontrollen rücken näher zusammen, je näher der Termin kommt.",
+        "outOfRangeNote": "Prüfen Sie das Datum — es liegt in der Zukunft oder mehr als 42 Wochen zurück und damit außerhalb des Bereichs, den dieser Rechner datieren kann."
+      },
+      "sections": [
+        {
+          "heading": "Ihre Schwangerschaft Woche für Woche",
+          "body": [
+            "Eine Schwangerschaft wird ab dem ersten Tag der letzten Periode datiert, nicht ab der Empfängnis, und dauert von dort an 40 Wochen. Vor 37 Wochen ist eine Geburt eine Frühgeburt, ab 42 Wochen eine Übertragung — und dazwischen kommen praktisch alle Kinder zur Welt.",
+            "Die Tabelle unten sind die vollen 40 Wochen, aufgeteilt so, wie die Schwangerenvorsorge sie aufteilt."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Phasen der Schwangerschaft in Wochen ab der letzten Periode",
+            "columns": [
+              "Wochen",
+              "Phase",
+              "Was üblicherweise passiert"
+            ],
+            "rows": [
+              [
+                "1 – 13",
+                "Erstes Trimester",
+                "Anmeldung zur Vorsorge, erste Blutwerte und Terminbestimmung per Ultraschall"
+              ],
+              [
+                "14 – 27",
+                "Zweites Trimester",
+                "Der große Organultraschall, meist um die 20. Woche"
+              ],
+              [
+                "28 – 36",
+                "Drittes Trimester",
+                "Kontrollen von Wachstum, Blutdruck und Lage rücken näher zusammen"
+              ],
+              [
+                "37 – 38",
+                "Früher Termin",
+                "Ab hier ist eine Geburt keine Frühgeburt mehr"
+              ],
+              [
+                "39 – 40",
+                "Voller Termin",
+                "Der errechnete Termin liegt am Ende der 40. Woche"
+              ],
+              [
+                "41",
+                "Späterer Termin",
+                "Die Überwachung nimmt zu, und eine Einleitung wird üblicherweise besprochen"
+              ],
+              [
+                "42 und mehr",
+                "Übertragung",
+                "Die Geburt wird in der Regel eingeleitet statt weiter abgewartet"
+              ]
+            ],
+            "footnote": "Die letzten vier Zeilen sind alle das Ende des dritten Trimesters — ab 37 Wochen wird in kürzeren Abschnitten gezählt, weil sich genau dort das Vorgehen ändert. Nur etwa eine von zwanzig Schwangerschaften endet genau am errechneten Termin."
+          }
+        },
+        {
+          "heading": "Wie der Geburtstermin berechnet wird",
+          "body": [
+            "Die Schätzung ist die Naegele-Regel: 280 Tage, also 40 Wochen, ab dem ersten Tag der letzten Periode. Sie setzt einen 28-Tage-Zyklus mit Eisprung um Tag 14 voraus.",
+            "Sind Ihre Zyklen länger oder kürzer, verschiebt sich der Eisprung mit — der Rechner verschiebt den Termin daher um genau diese Differenz. Ein 32-Tage-Zyklus legt die Schätzung vier Tage später, ein 24-Tage-Zyklus vier Tage früher.",
+            "Beispiel: eine letzte Periode ab dem 1. Januar ergibt bei einem 28-Tage-Zyklus den 8. Oktober. Dieselbe Periode ergibt bei einem 32-Tage-Zyklus den 12. Oktober."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Warum der Ultraschall diese Schätzung ersetzt",
+          "body": [
+            "Ein Rechner kann nur mit den Daten arbeiten, die Sie ihm geben. Der Ultraschall misst das Kind — deshalb ist sein Termin der, mit dem Ihre Betreuung anschließend weiterarbeitet."
+          ],
+          "bullets": [
+            "Er hängt davon ab, dass Sie den ersten Tag der letzten Periode genau erinnern.",
+            "Er setzt einen Eisprung in der Zyklusmitte voraus, den nicht jede Person hat.",
+            "Unregelmäßige Zyklen, kürzlich abgesetzte Verhütung und Stillen machen die letzte Periode zu einem schwachen Anker.",
+            "Ein Ultraschall im ersten Trimester misst das Kind, meist zwischen der 11. und 14. Woche, und ist auf wenige Tage genau.",
+            "Nach einer IVF wird ab dem Transfertag datiert und nicht ab einer Periode — diese Schätzung gilt dann nicht."
+          ]
+        },
+        {
+          "heading": "Wann Sie ärztlichen Rat einholen sollten",
+          "body": [],
+          "bullets": [
+            "Sie vermuten eine Schwangerschaft und haben noch keine Vorsorge angemeldet — der erste Termin und die Terminbestimmung gehören beide früh.",
+            "Sie haben in der Frühschwangerschaft Blutungen, Krämpfe oder einseitige Schmerzen.",
+            "Sie erbrechen stark oder ständig oder können keine Flüssigkeit bei sich behalten.",
+            "Sie haben eine chronische Erkrankung oder nehmen regelmäßig Medikamente — manche müssen überprüft werden, sobald eine Schwangerschaft bestätigt ist.",
+            "Sie haben 41 Wochen erreicht, oder Sie sind über dem Termin und die Bewegungen des Kindes haben sich verändert."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wie genau ist ein Geburtstermin-Rechner?",
+          "answer": "Die Rechnung ist exakt, die Annahmen dahinter sind es nicht. Nur etwa eine von zwanzig Schwangerschaften endet genau am errechneten Termin, und die große Mehrheit der Geburten liegt in den Wochen darum herum. Die genaue Variante ist der Ultraschall im ersten Trimester, und sobald er gemacht ist, gilt sein Termin."
+        },
+        {
+          "question": "In welcher Schwangerschaftswoche bin ich?",
+          "answer": "Gezählt wird ab dem ersten Tag der letzten Periode, nicht ab der Empfängnis — deshalb sind Sie schon rund vier Wochen schwanger, wenn ein Test zum ersten Mal positiv ist. Die Empfängnis liegt etwa zwei Wochen nach diesem ersten Tag, die Schwangerschaft wird also immer rund zwei Wochen „älter“ datiert als der Embryo."
+        },
+        {
+          "question": "Was bedeutet 9w 3d?",
+          "answer": "Neun vollendete Wochen und drei Tage seit dem ersten Tag der letzten Periode. Im Mutterpass wird so geschrieben, weil eine ganze Woche zu grob ist, wenn ein Ultraschall oder eine Blutuntersuchung in einem bestimmten Fenster stattfinden muss."
+        },
+        {
+          "question": "Kann ich ihn bei unregelmäßigem Zyklus nutzen?",
+          "answer": "Ja, und Ihre übliche Zykluslänge einzugeben bringt Sie näher als die voreingestellten 28 Tage. Ein unregelmäßiger Zyklus ist aber genau der Fall, in dem die letzte Periode ein schwacher Anker ist — nehmen Sie das Ergebnis daher als Orientierung, bis ein Ultraschall gemacht wurde."
+        },
+        {
+          "question": "Ändert sich der Geburtstermin nach dem Ultraschall?",
+          "answer": "Häufig ja, meist um einige Tage. Der Ultraschall misst das Kind, statt von einem erinnerten Datum zu zählen, deshalb bleibt sein Termin stehen. Eine Abweichung von einer Woche oder mehr ist üblich, wenn das Datum der letzten Periode unsicher war."
+        },
+        {
+          "question": "Speichert dieser Rechner meine Angaben?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts von dem, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Fragen in der Frühschwangerschaft?",
+        "body": "Sprechen Sie per Video mit einer registrierten Ärztin oder einem registrierten Arzt über Beschwerden, Medikamente, die Sie schon nehmen, oder alles, was nicht bis zum ersten Vorsorgetermin warten soll.",
+        "label": "Termin buchen"
+      },
+      "suggestionsIntro": "Ein errechneter Termin ist der Anfang der Schwangerschaftsvorsorge, nicht das Ganze. Diese Sprechstunden gehen den nächsten Schritt."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Osteoporose-Risikocheck",
+      "cardBlurb": "Welche veröffentlichten Risikofaktoren für eine Fragilitätsfraktur auf Sie zutreffen, und ob eine Knochendichtemessung sinnvoll wäre.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Osteoporose-",
+      "h1Accent": "Risikocheck",
+      "h1Trail": "{country}",
+      "metaTitle": "Osteoporose-Risikocheck {country} | Brauche Ich Eine Knochendichtemessung?",
+      "metaDescription": "Prüfen Sie die veröffentlichten Risikofaktoren für Osteoporose und Fragilitätsfrakturen und sehen Sie, ob Leitlinien eine Abklärung empfehlen. Kein FRAX, keine Diagnose — eine Checkliste zur Früherkennung, die Sie zu einem Arzttermin mitnehmen können.",
+      "lede": "Beantworten Sie Fragen zu Alter, Geschlecht und Risikofaktoren, um zu sehen, ob veröffentlichte Leitlinien eine Knochendichtemessung empfehlen.",
+      "trustPoints": [
+        "Basiert auf der NICE-Leitlinie zur Früherkennung, nicht auf einem proprietären Score",
+        "Zeigt schwerwiegende und mitwirkende Risikofaktoren getrennt",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Ein festgestellter Risikofaktor ist ein Grund, nach einer Knochendichtemessung zu fragen, keine Diagnose. Das sind die Sprechstunden, die das weiter abklären können.",
+      "widget": {
+        "title": "Ihre Risikofaktoren",
+        "placeholder": "Beantworten Sie die Fragen, um zu sehen, ob eine Knochendichtemessung sinnvoll wäre.",
+        "note": "Dieses Tool zeigt, wer auf Osteoporose abgeklärt werden sollte — es schätzt nicht Ihr Frakturrisiko und ist keine Diagnose. Eine vollständige Abklärung nutzt eine Knochendichtemessung (DXA) und ein validiertes Instrument wie FRAX, durchgeführt von einer Ärztin oder einem Arzt.",
+        "fractureLabel": "Fragilitätsfraktur nach dem 50. Lebensjahr",
+        "fractureHint": "Ein Bruch durch einen Sturz aus Stehhöhe oder weniger — Handgelenk, Hüfte, Wirbelsäule oder Arm.",
+        "glucocorticoidLabel": "Orale Kortikosteroide für 3 Monate oder länger",
+        "parentalHipLabel": "Ein Elternteil hatte einen Hüftbruch",
+        "smokerLabel": "Aktuell Raucher/in",
+        "alcoholLabel": "3 oder mehr Alkoholeinheiten pro Tag",
+        "raLabel": "Rheumatoide Arthritis",
+        "secondaryLabel": "Eine sekundäre Ursache des Knochenabbaus",
+        "secondaryHint": "Zum Beispiel eine Schilddrüsenüberfunktion, eine Resorptionsstörung oder eine langfristige Leber- oder Nierenerkrankung.",
+        "fallsLabel": "2 oder mehr Stürze im letzten Jahr",
+        "menopauseLabel": "Menopause vor dem 45. Lebensjahr",
+        "majorLabel": "Festgestellte schwerwiegende Faktoren",
+        "contributingLabel": "Festgestellte mitwirkende Faktoren"
+      },
+      "sections": [
+        {
+          "heading": "Risikofaktoren für eine Fragilitätsfraktur",
+          "body": [
+            "Osteoporose selbst verursacht keine Symptome — das erste Anzeichen ist oft ein Bruch nach einem Sturz, der normalerweise keinen Knochen brechen würde. Leitlinien gehen deshalb von Risikofaktoren aus, um zu entscheiden, wer vor einem Bruch abgeklärt werden sollte, statt danach.",
+            "Die zehn Faktoren unten sind die, die die NICE-Leitlinie CG146 für diese Entscheidung nennt. Zwei gelten für sich genommen als schwerwiegend; die übrigen summieren sich, statt allein zu wirken."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Risikofaktoren, die die NICE-Leitlinie zur Früherkennung für eine Abklärung nennt",
+            "columns": [
+              "Risikofaktor",
+              "Warum er wichtig ist",
+              "Schwerwiegend oder mitwirkend"
+            ],
+            "rows": [
+              [
+                "Fragilitätsfraktur nach dem 50. Lebensjahr",
+                "Ein Bruch von Handgelenk, Hüfte, Wirbelsäule oder Arm durch einen leichten Sturz ist der stärkste Hinweis auf einen weiteren Bruch.",
+                "Schwerwiegend"
+              ],
+              [
+                "Langfristige orale Kortikosteroide (3+ Monate)",
+                "Glukokortikoide schwächen den Knochen direkt, unabhängig von jedem anderen Faktor dieser Liste.",
+                "Schwerwiegend"
+              ],
+              [
+                "Ein Elternteil hatte einen Hüftbruch",
+                "Weist auf eine vererbte Knochenfestigkeit hin, unabhängig vom eigenen Lebensstil.",
+                "Mitwirkend"
+              ],
+              [
+                "Aktuell Raucher/in",
+                "Senkt die Knochendichte und verlangsamt die Heilung, falls es zu einem Bruch kommt.",
+                "Mitwirkend"
+              ],
+              [
+                "3+ Alkoholeinheiten pro Tag",
+                "Verringert den Knochenaufbau und erhöht schon das Sturzrisiko selbst.",
+                "Mitwirkend"
+              ],
+              [
+                "Rheumatoide Arthritis",
+                "Die Erkrankung selbst, und oft auch ihre Behandlung, beeinflussen den Knochenstoffwechsel.",
+                "Mitwirkend"
+              ],
+              [
+                "Eine sekundäre Ursache des Knochenabbaus",
+                "Erkrankungen wie eine Schilddrüsenüberfunktion oder eine langfristige Leber- oder Nierenerkrankung senken die Knochendichte für sich genommen.",
+                "Mitwirkend"
+              ],
+              [
+                "2+ Stürze im letzten Jahr",
+                "Die meisten Fragilitätsfrakturen entstehen nach einem Sturz aus Stehhöhe, nicht isoliert.",
+                "Mitwirkend"
+              ],
+              [
+                "Menopause vor dem 45. Lebensjahr",
+                "Östrogen schützt den Knochen, sodass sein früherer Verlust dem Knochenabbau mehr Zeit gibt.",
+                "Mitwirkend"
+              ],
+              [
+                "Niedriges Körpergewicht (BMI unter 18,5)",
+                "Weniger Körpermasse bedeutet in der Regel weniger Knochenmasse und weniger Dämpfung bei einem Sturz.",
+                "Mitwirkend"
+              ]
+            ],
+            "footnote": "Basierend auf den Risikofaktoren, die die NICE-Leitlinie CG146 (Bewertung des Risikos einer Fragilitätsfraktur) zur Früherkennung nennt. Es handelt sich um eine Screening-Liste, keinen Diagnose-Score."
+          }
+        },
+        {
+          "heading": "Wer laut Leitlinien abgeklärt werden sollte",
+          "body": [
+            "NICE, die britische National Osteoporosis Guideline Group (NOGG) und die European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) setzen im Wesentlichen dieselbe Schwelle an. Es ist eine Kombination aus Alters- und Risikofaktoren-Schwelle, keine einzelne Zahl."
+          ],
+          "bullets": [
+            "Alle Frauen ab 65 Jahren und alle Männer ab 75 Jahren — eine Abklärung wird allein aufgrund des Alters empfohlen.",
+            "Jüngere Personen mit einem schwerwiegenden Risikofaktor — einer früheren Fragilitätsfraktur oder langfristigen oralen Kortikosteroiden — in jedem Alter, auch unter 50 Jahren.",
+            "Jede Person ab 50 Jahren mit einem der mitwirkenden Faktoren aus der obigen Tabelle.",
+            "Dieses Tool wendet diese veröffentlichte Regel auf Ihre Angaben an. Es berechnet keine Wahrscheinlichkeit und ist nicht FRAX — FRAX ist ein separates, proprietäres Instrument, das von einer Ärztin oder einem Arzt angewendet wird und diese Art von Faktoren mit einer Knochendichtemessung kombiniert."
+          ]
+        },
+        {
+          "heading": "Was dieser Check Ihnen nicht sagen kann",
+          "body": [
+            "Eine Liste von Risikofaktoren ist ein Sortierinstrument, keine Messung. Sie sagt Ihnen, ob es sich lohnt, nach einer Untersuchung zu fragen — nicht, was diese Untersuchung zeigen würde."
+          ],
+          "bullets": [
+            "Es ist keine Diagnose. Osteoporose wird durch eine Knochendichtemessung (DXA) diagnostiziert, nicht durch einen Fragebogen.",
+            "Es liefert keine Frakturwahrscheinlichkeit. Instrumente, die das tun — FRAX, das Garvan-Nomogramm, QFracture — kombinieren Risikofaktoren mit einer Knochendichtemessung und werden von einer Ärztin oder einem Arzt angewendet.",
+            "Es ist nicht FRAX und verwendet nicht dessen Koeffizienten, die Eigentum der University of Sheffield sind.",
+            "Ein Ergebnis „keine spezifischen Risikofaktoren festgestellt“ ist beruhigend, aber keine Garantie — melden Sie jede neue Fraktur oder jeden Sturz trotzdem ärztlich.",
+            "Es sagt nichts über eine Behandlung aus. Medikamente sind eine Entscheidung einer Ärztin oder eines Arztes, getroffen nach einer Diagnose, nicht anhand einer Risikoliste."
+          ]
+        },
+        {
+          "heading": "So kommen Sie zu einer Abklärung",
+          "body": [],
+          "bullets": [
+            "Beginnen Sie bei einer Ärztin oder einem Arzt. Sie oder er wägt Ihre Risikofaktoren ab und entscheidet, ob eine Überweisung zur Knochendichtemessung sinnvoll ist.",
+            "Nehmen Sie die von diesem Tool festgestellten Faktoren mit — welche genau, nicht nur die Kategorie —, damit das Gespräch schneller geht.",
+            "Wenn Sie bereits eine Fragilitätsfraktur hatten, fragen Sie unabhängig von Ihrem Alter oder dem Ergebnis dieses Tools nach einer Abklärung.",
+            "Kalzium, Vitamin D, Bewegung mit Belastung und Rauchstopp unterstützen die Knochengesundheit, während Sie auf eine Abklärung warten.",
+            "Holen Sie bei einem neuen Bruch durch einen leichten Sturz umgehend ärztliche Hilfe, unabhängig davon, was dieses Tool anzeigt — er muss für sich behandelt werden."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Ist das dasselbe wie FRAX?",
+          "answer": "Nein. FRAX ist ein separates, proprietäres Instrument der University of Sheffield, dessen Koeffizienten nicht veröffentlicht sind — dieses Tool bildet es nicht nach und beansprucht nicht, sein Ergebnis zu erreichen. Dies ist eine Checkliste zur Früherkennung, die auf veröffentlichten Leitlinien beruht (NICE CG146): Sie sagt Ihnen, ob sich eine Abklärung lohnt, niemals eine Frakturwahrscheinlichkeit."
+        },
+        {
+          "question": "Was ist eine Knochendichtemessung (DXA)?",
+          "answer": "Eine Dual-Röntgen-Absorptiometrie — eine niedrig dosierte Röntgenuntersuchung, die die Knochendichte misst, meist an Hüfte und Wirbelsäule. Sie ist die Untersuchung, auf der eine Abklärung tatsächlich beruht; nichts auf dieser Seite ersetzt sie."
+        },
+        {
+          "question": "Bedeuten Risikofaktoren, dass ich Osteoporose habe?",
+          "answer": "Nein. Ein festgestellter Risikofaktor bedeutet, dass Leitlinien eine Abklärung empfehlen, nicht dass die Erkrankung vorliegt. Viele Menschen mit Risikofaktoren haben eine normale Knochendichtemessung, und Osteoporose kann auch ohne einen der hier genannten Faktoren auftreten."
+        },
+        {
+          "question": "Was, wenn mein Ergebnis 'keine spezifischen Risikofaktoren festgestellt' ist, ich mir aber trotzdem Sorgen mache?",
+          "answer": "Sprechen Sie es trotzdem ärztlich an. Dieses Tool deckt die Risikofaktoren einer einzelnen klinischen Leitlinie ab; es deckt nicht die gesamte persönliche oder familiäre Vorgeschichte ab, die relevant sein könnte, und ein Gespräch kostet nichts, was diese Liste nicht abwägen kann."
+        },
+        {
+          "question": "Wer diagnostiziert Osteoporose tatsächlich?",
+          "answer": "Eine Ärztin oder ein Arzt, anhand einer Knochendichtemessung (DXA) — meist ein T-Score von -2,5 oder niedriger an Hüfte oder Wirbelsäule. Ein Risikofaktoren-Fragebogen wie dieser kann nur vorschlagen, wer diese Untersuchung bekommen sollte; er kann selbst nichts diagnostizieren."
+        },
+        {
+          "question": "Speichert dieser Check meine Antworten?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts, was Sie auswählen, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Möchten Sie über Ihre Knochengesundheit sprechen?",
+        "body": "Vereinbaren Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt, gehen Sie Ihre Risikofaktoren durch und finden Sie heraus, ob eine Überweisung zur Knochendichtemessung sinnvoll ist.",
+        "label": "Termin buchen"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Eisprungrechner",
+      "cardBlurb": "Ihre fruchtbaren Tage, der errechnete Eisprung und der Termin Ihrer nächsten Periode.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Eisprung",
+      "h1Accent": "berechnen",
+      "h1Trail": "{country}",
+      "metaTitle": "Eisprung Berechnen {country} | Fruchtbare Tage Und Eisprung",
+      "metaDescription": "Berechnen Sie Ihre fruchtbaren Tage und den voraussichtlichen Eisprung ab dem ersten Tag der letzten Periode. Berücksichtigt Ihre Zykluslänge, mit den sechs fruchtbarsten Tagen im Detail.",
+      "lede": "Geben Sie den ersten Tag Ihrer letzten Periode ein und Sie sehen die sechs Tage mit der höchsten Chance auf eine Schwangerschaft, den voraussichtlichen Eisprung und den Termin der nächsten Periode.",
+      "trustPoints": [
+        "Wird von der nächsten Periode zurückgerechnet, damit auch lange Zyklen stimmen",
+        "Das ganze sechstägige fruchtbare Fenster, nicht nur ein Tag",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Ein errechneter Eisprung ist eine zeitliche Orientierung, keine Fruchtbarkeitsuntersuchung. Das sind die Sprechstunden, die unsere Ärztinnen und Ärzte anbieten, wenn jemand das ganze Bild ansehen soll.",
+      "widget": {
+        "title": "Ihre fruchtbaren Tage",
+        "placeholder": "Geben Sie den ersten Tag Ihrer letzten Periode ein, um Ihre fruchtbaren Tage zu sehen.",
+        "note": "Eine Schätzung aus den eingegebenen Daten, keine Diagnose — und keine Verhütungsmethode. Der Eisprung verschiebt sich von Zyklus zu Zyklus, und eine Schwangerschaft ist auch an Tagen außerhalb des angezeigten Fensters möglich.",
+        "lmpLabel": "Erster Tag der letzten Periode",
+        "lmpHint": "Der Tag, an dem die Blutung begonnen hat, nicht der Tag, an dem sie endete.",
+        "cycleLabel": "Zykluslänge",
+        "cycleHint": "Tage vom Beginn einer Periode bis zum Beginn der nächsten. Wenn Sie unsicher sind, lassen Sie 28 stehen.",
+        "daysUnit": "Tage",
+        "resultLabel": "Voraussichtlicher Eisprung",
+        "resultSummary": "14 Tage vor der nächsten erwarteten Periode zurückgerechnet — genau das hält die Zeitrechnung auch bei Zyklen richtig, die nicht 28 Tage dauern.",
+        "fertileWindowLabel": "Fruchtbares Fenster (6 Tage)",
+        "daysToOvulationLabel": "Tage bis zum Eisprung",
+        "nextPeriodLabel": "Nächste Periode fällig",
+        "testFromLabel": "Test ab"
+      },
+      "sections": [
+        {
+          "heading": "Ihr Zyklus, Tag für Tag",
+          "body": [
+            "Ein Zyklus wird ab dem ersten Tag der Blutung gezählt. Der Eisprung ist nicht auf Tag 14 festgelegt: Er liegt etwa 14 Tage vor der NÄCHSTEN Periode, also bei einem 35-Tage-Zyklus um Tag 21 und bei einem 24-Tage-Zyklus um Tag 10. Deshalb geht das Vorwärtszählen von 14 Tagen ab der letzten Periode bei jedem Zyklus daneben, der nicht 28 Tage hat.",
+            "Die Tage unten sind ein 28-Tage-Zyklus. Der Rechner oben verschiebt sie auf die von Ihnen eingegebene Zykluslänge."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Fruchtbare Tage in einem 28-Tage-Zyklus",
+            "columns": [
+              "Zyklustag",
+              "Was passiert",
+              "Chance auf eine Schwangerschaft"
+            ],
+            "rows": [
+              [
+                "Tag 1",
+                "Die Blutung beginnt — ab hier wird gezählt",
+                "Sehr gering"
+              ],
+              [
+                "Tag 2 – 8",
+                "Eine Eizelle reift heran; das Fenster ist noch zu",
+                "Gering"
+              ],
+              [
+                "Tag 9 – 13",
+                "Fruchtbares Fenster: Spermien überleben bis zu fünf Tage",
+                "Hoch"
+              ],
+              [
+                "Tag 14",
+                "Eisprung — die Eizelle wird freigesetzt",
+                "Am höchsten"
+              ],
+              [
+                "Tag 15 – 16",
+                "Die Eizelle überlebt nach dem Eisprung weniger als einen Tag",
+                "Fällt schnell"
+              ],
+              [
+                "Tag 28",
+                "Die nächste Periode ist fällig — ab hier testen, wenn sie ausbleibt",
+                "Sehr gering"
+              ]
+            ],
+            "footnote": "Spermien überleben im Genitaltrakt bis zu fünf Tage, eine Eizelle weniger als einen — deshalb öffnet sich das fruchtbare Fenster lange vor dem Eisprung und schließt sich fast unmittelbar danach."
+          }
+        },
+        {
+          "heading": "Woran Sie merken, dass der Eisprung wirklich stattgefunden hat",
+          "body": [
+            "Ein Rechner sagt voraus, diese Zeichen bestätigen. Wer ein oder zwei davon über ein paar Zyklen verfolgt, weiß, ob der eigene Eisprung zur Schätzung passt — und das ist gut zu wissen, bevor man etwas darauf aufbaut."
+          ],
+          "bullets": [
+            "Der Zervixschleim wird in den Tagen vor dem Eisprung klar, spinnbar und glitschig, ähnlich wie rohes Eiweiß.",
+            "Ovulationstests messen den LH-Anstieg im Urin, der 24 bis 36 Stunden vor der Freisetzung der Eizelle kommt. Beginnen Sie ein paar Tage vor dem errechneten Termin.",
+            "Die Basaltemperatur steigt nach dem Eisprung um etwa 0,3 °C und bestätigt ihn damit im Nachhinein, statt ihn vorherzusagen.",
+            "Manche spüren mitten im Zyklus ein einseitiges Ziehen, andere bemerken empfindliche Brüste oder eine veränderte Libido.",
+            "Ein Zyklus kann auch ganz ohne Eisprung verlaufen. Das kommt bei den meisten gelegentlich vor und bedeutet für sich genommen nicht, dass etwas nicht stimmt."
+          ]
+        },
+        {
+          "heading": "Was dieser Rechner nicht kann",
+          "body": [
+            "Er arbeitet mit genau zwei Dingen: dem eingegebenen Datum und der Annahme, dass Ihre Lutealphase die üblichen 14 Tage dauert. Beides ist plausibel, keines davon sicher."
+          ],
+          "bullets": [
+            "Er ist keine Verhütungsmethode. Zyklen verschieben sich, Spermien überleben tagelang, und eine Schwangerschaft ist auch an Tagen außerhalb des hier gezeigten Fensters möglich.",
+            "Unregelmäßige Zyklen, kürzlich abgesetzte hormonelle Verhütung, Stillzeit, PCOS und Schilddrüsenerkrankungen schwächen die Vorhersage.",
+            "Hormonelle Verhütung unterdrückt den Eisprung — solange Sie sie anwenden, gibt es hier nichts vorherzusagen.",
+            "Stress, Krankheit, Reisen und hartes Training können den Eisprung in einem Zyklus verzögern.",
+            "Es ist ein Planungswerkzeug, kein Fruchtbarkeitstest: Es sagt nichts über Eizellqualität, Spermien oder die Eileiter."
+          ]
+        },
+        {
+          "heading": "Wann Sie ärztlichen Rat suchen sollten",
+          "body": [],
+          "bullets": [
+            "Sie versuchen seit 12 Monaten schwanger zu werden, oder seit 6 Monaten, wenn Sie über 35 sind.",
+            "Ihre Zyklen sind kürzer als 21 Tage, länger als 35 Tage oder von Monat zu Monat nicht vorhersehbar.",
+            "Ihre Periode bleibt aus, oder Sie bluten zwischen den Perioden.",
+            "Sie haben schmerzhafte Perioden, Schmerzen beim Sex oder eine Diagnose wie PCOS, Endometriose oder eine Schilddrüsenerkrankung.",
+            "Sie möchten eine Beratung vor der Schwangerschaft — Folsäure, Ihre bestehenden Medikamente, Impfungen und eine Blutdruckmessung gehören davor und nicht danach."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Wann bin ich am fruchtbarsten?",
+          "answer": "Am Tag des Eisprungs und an den zwei Tagen davor. Das Fenster insgesamt umfasst rund sechs Tage: die fünf vor dem Eisprung plus den Tag selbst. Spermien überleben bis zu fünf Tage, die Eizelle weniger als einen — deshalb öffnet sich das Fenster früh und schließt sich schnell."
+        },
+        {
+          "question": "Ist der Eisprung immer an Tag 14?",
+          "answer": "Nein. Tag 14 gilt nur für den Lehrbuch-Zyklus von 28 Tagen. Der Eisprung liegt etwa 14 Tage vor der nächsten Periode, bei einem 32-Tage-Zyklus also um Tag 18 und bei einem 24-Tage-Zyklus um Tag 10. 14 Tage ab der letzten Periode vorwärtszuzählen ist der häufigste Fehler bei der Zeitrechnung."
+        },
+        {
+          "question": "Wie berechne ich den Eisprung bei unregelmäßigem Zyklus?",
+          "answer": "Geben Sie Ihre übliche Zykluslänge ein und behandeln Sie das Ergebnis als groben Bereich, nicht als Datum. Schwanken Ihre Zyklen um mehr als ein paar Tage, sagen Ovulationstests oder der Zervixschleim weit mehr als jede Kalenderrechnung. Zyklen dauerhaft unter 21 oder über 35 Tagen gehören ärztlich abgeklärt."
+        },
+        {
+          "question": "Kann ich einen Eisprungrechner zur Verhütung nutzen?",
+          "answer": "Nein. Er ist keine Verhütungsmethode und sollte nie als solche verwendet werden. Der Eisprung verschiebt sich zwischen Zyklen, Spermien überleben bis zu fünf Tage, und eine Schwangerschaft ist auch an Tagen möglich, die dieser Rechner außerhalb des fruchtbaren Fensters zeigt. Wenn Sie eine Schwangerschaft vermeiden wollen, nutzen Sie eine anerkannte Verhütungsmethode."
+        },
+        {
+          "question": "Wann kann ich nach dem Eisprung einen Schwangerschaftstest machen?",
+          "answer": "Die meisten Heimtests sind ab dem Tag zuverlässig, an dem die Periode fällig wäre — etwa 14 Tage nach dem Eisprung, also das Datum „Test ab“ im Ergebnis. Früher getestet kann das Ergebnis negativ ausfallen, obwohl Sie schwanger sind, weil im Urin noch zu wenig hCG ist."
+        },
+        {
+          "question": "Speichert dieser Eisprungrechner meine Angaben?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts von dem, was Sie eingeben, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Kinderwunsch?",
+        "body": "Sprechen Sie per Video mit einer registrierten Ärztin oder einem registrierten Arzt über unregelmäßige Zyklen, Untersuchungen vor der Schwangerschaft oder Medikamente, die Sie schon nehmen.",
+        "label": "Termin buchen"
+      }
+    }
+  }
+}

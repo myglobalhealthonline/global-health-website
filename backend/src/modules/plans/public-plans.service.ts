@@ -54,6 +54,11 @@ export interface PublicPlanView {
   /** Admin-edited "Includes" bullets for the resolved locale. Empty → the card
    *  renders its auto-generated default bullets (§12). */
   features: string[];
+  /** True when at least one active consultation rule actually discounts a
+   *  specialist service. The card's default bullets advertise specialist
+   *  savings only when this holds — otherwise a plan with no specialist rule
+   *  promises a discount it cannot honour. */
+  hasSpecialistDiscount: boolean;
   /** Representative "after N paid months" unlock for the card's universal note,
    *  or null when nothing is gated. Data-driven — reflects the plan-level D25
    *  floor (which gates credits + discounts) as the headline. */
@@ -75,7 +80,7 @@ const publicPlanInclude = {
   perkRules: { orderBy: { perkKey: "asc" as const } },
   consultationRules: {
     where: { isActive: true },
-    select: { unlockAfterPaidMonths: true },
+    select: { unlockAfterPaidMonths: true, discountMode: true },
   },
   healthTestRules: {
     where: { isActive: true },
@@ -135,6 +140,8 @@ function serializePublicPlan(plan: PublicPlanRecord, requested: LocaleCode, defa
     wellnessCreditsPerMonth: plan.wellnessCreditsPerMonth,
     benefitsUnlockAfterPaidMonths: plan.benefitsUnlockAfterPaidMonths,
     features: tr?.features ?? [],
+    // consultationRules is already filtered to isActive by publicPlanInclude.
+    hasSpecialistDiscount: plan.consultationRules.some((r) => r.discountMode !== "NONE"),
     perkUnlockMonths: derivePerkUnlockMonths(plan),
     perks: plan.perkRules.map((p) => ({
       perkKey: p.perkKey,

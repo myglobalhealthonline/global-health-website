@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck, ArrowUpRight, RefreshCw } from "lucide-react";
+import { BlogCard } from "@/components/cards/BlogCard";
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { articleJsonLd, breadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { articleJsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
+import { extractArticleFaqs } from "@/lib/seo/article-faqs";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -17,6 +19,8 @@ import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
+import { sentenceCaseIfShouting } from "@/lib/text/sentence-case";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -35,8 +39,11 @@ type BlogPostRouteParams = {
 async function blogPhysicianInput(doctor: BlogDoctor | null, locale: LocaleCode) {
   if (!doctor) return null;
   const trust = doctor.countryCode ? await getCountryTrust(doctor.countryCode, locale) : null;
+  // Ranking-growth batch (2026-08-10): was hardcoded `/en/` regardless of the
+  // ARTICLE's own locale, so a Portuguese post's Physician schema pointed at
+  // an English-locale doctor URL. Use the article's resolved locale.
   const profileUrl =
-    doctor.countrySlug ? `/${doctor.countrySlug}/en/doctors/${doctor.slug}` : `/blog`;
+    doctor.countrySlug ? `/${doctor.countrySlug}/${locale}/doctors/${doctor.slug}` : `/blog`;
   return {
     name: doctor.name,
     url: profileUrl,
@@ -50,7 +57,9 @@ async function blogPhysicianInput(doctor: BlogDoctor | null, locale: LocaleCode)
 
 type ResolvedBlogRoute =
   | { kind: "not-found" }
-  | { kind: "redirect"; redirectTo: string }
+  /** `permanent` → 308 rather than 307. Set for the bare `/blog/{slug}` →
+   *  country-canonical hop: that URL is never coming back as a content home. */
+  | { kind: "redirect"; redirectTo: string; permanent?: boolean }
   | { kind: "render"; post: BlogPostFull; canonicalUrl: string; backHref: string };
 
 /**
@@ -65,13 +74,22 @@ async function resolveBlogPostRoute(params: BlogPostRouteParams): Promise<Resolv
   const code = countrySlug ? countryCodeFromSlug(countrySlug) : null;
 
   if (countrySlug) {
-    // Country-scoped route: fetch gated to (assigned-to-this-country OR global).
-    const post = await getBlogPost(slug, code ?? undefined);
+    // Country-scoped route: fetch gated to (assigned-to-this-country OR
+    // global), asking for the route's locale so a BlogTranslation is served
+    // when one exists for it.
+    const post = await getBlogPost(slug, code ?? undefined, lang);
     if (!post) return { kind: "not-found" };
     if (post.countries.length === 0) {
       // Actually global — bounce to its true canonical home instead of
       // letting the same content live at N country URLs.
       return { kind: "redirect", redirectTo: `/blog/${slug}` };
+    }
+    // Each locale is published under its own native slug. If this route was
+    // reached by another locale's slug, the served content now belongs to a
+    // different URL — send the visitor to it rather than serving one locale's
+    // body at another locale's address.
+    if (post.slug !== slug) {
+      return { kind: "redirect", redirectTo: `/${countrySlug}/${lang}/blog/${post.slug}` };
     }
     return {
       kind: "render",
@@ -92,7 +110,16 @@ async function resolveBlogPostRoute(params: BlogPostRouteParams): Promise<Resolv
       post.countries.find((c) => c.slug === cookieSlug) ??
       [...post.countries].sort((a, b) => a.code.localeCompare(b.code))[0];
     const targetLang = post.locale.toLowerCase();
-    return { kind: "redirect", redirectTo: `/${target.slug}/${targetLang}/blog/${slug}` };
+    // `post.slug` — NOT the requested one. The backend resolved this post by a
+    // slug that may belong to one of its translations, and returned that
+    // locale's row; targeting `post.slug` under `post.locale` lands on the
+    // country route's own canonical in ONE hop, instead of arriving at a URL
+    // that route would immediately redirect again.
+    return {
+      kind: "redirect",
+      redirectTo: `/${target.slug}/${targetLang}/blog/${post.slug}`,
+      permanent: true,
+    };
   }
   return { kind: "render", post, canonicalUrl: `/blog/${slug}`, backHref: "/blog" };
 }
@@ -102,6 +129,18 @@ export async function buildBlogPostMetadata(
 ): Promise<Metadata> {
   const routeParams = await params;
   const resolved = await resolveBlogPostRoute(routeParams);
+  // Redirect from generateMetadata, not only from the page body. `redirect()`
+  // thrown inside the page is raised BEHIND the route's Suspense boundary
+  // (`loading.tsx`), by which point the 200 and the <head> have already been
+  // flushed — the response Google saw was a 200 shell titled "Global Health",
+  // with no article body and a canonical pointing at the homepage, because this
+  // function used to answer `{}` (root metadata) for exactly this case.
+  // generateMetadata runs before anything is flushed, so the redirect is a real
+  // HTTP one.
+  if (resolved.kind === "redirect") {
+    if (resolved.permanent) permanentRedirect(resolved.redirectTo);
+    redirect(resolved.redirectTo);
+  }
   if (resolved.kind !== "render") return {};
   const { post, canonicalUrl } = resolved;
   const countryCode = post.countries.find(
@@ -117,50 +156,86 @@ export async function buildBlogPostMetadata(
     ro: "RO",
     de: "DE",
   };
-  // Blog posts have exactly one authored locale (post.locale) — there's no
-  // per-locale translation row like the CMS content-page/doctor tables. A
-  // country-scoped visitor hitting a locale that ISN'T the post's own locale
-  // (e.g. .../pt/blog/x when the post was written in EN) is served the same
-  // English body verbatim: canonicalize to the post's real-content URL and
-  // noindex the untranslated variant instead of self-canonicalizing a
-  // duplicate. Bare `/blog/[slug]` has no route lang, so it's always "its
-  // own" URL.
+  // A post is served in the route's locale when it was authored in it OR has
+  // a BlogTranslation for it — `post.locale` is the locale actually served,
+  // so comparing it to the route language answers both cases. A locale with
+  // no content of its own still falls back to the post's own language body;
+  // that variant is canonicalized to the real-content URL and noindexed
+  // rather than self-canonicalizing a duplicate. Bare `/blog/[slug]` has no
+  // route lang, so it is always "its own" URL.
   const postLanguage = post.locale.toLowerCase();
   const isTranslatedVariant = !routeParams.countrySlug || !routeParams.lang || language === postLanguage;
   const metadataPath = isTranslatedVariant
     ? canonicalUrl
     : `/${routeParams.countrySlug}/${postLanguage}/blog/${post.slug}`;
+  const displayTitle = sentenceCaseIfShouting(post.title);
   return buildPublicMetadata({
     path: metadataPath,
-    title: post.seoTitle ?? post.title,
+    title: sentenceCaseIfShouting(post.seoTitle ?? post.title),
     description: post.seoDescription ?? post.excerpt,
     type: "article",
     kind: "article",
     subtitle: post.category,
     sourceImage: post.coverImageSrc ?? undefined,
-    imageAlt: post.coverImageAlt ?? post.title,
+    imageAlt: post.coverImageAlt ?? displayTitle,
     locale: config
       ? ogLocales(config, language).locale
       : `${language}_${nativeRegion[language] ?? language.toUpperCase()}`,
-    languages: config ? hreflangAlternates(config, `/blog/${post.slug}`) : undefined,
+    // Each locale is published under its OWN native slug, so a single-suffix
+    // hreflang map would advertise every language at one slug and point most
+    // of them at a redirect. Build the map from the post's actual locale
+    // variants instead, falling back to the served slug for locales that have
+    // no content of their own (those pages are noindexed anyway).
+    languages: config ? blogHreflangAlternates(config, post) : undefined,
     noindex: !isTranslatedVariant,
   });
+}
+
+/** Per-locale hreflang for a blog post: `{lang}-{REGION}` → the URL that
+ *  language is actually published at. */
+function blogHreflangAlternates(
+  config: NonNullable<ReturnType<typeof getCountryByCode>>,
+  post: BlogPostFull,
+): Record<string, string> {
+  const slugFor = new Map(post.localeVariants.map((v) => [v.locale.toUpperCase(), v.slug]));
+  const base = hreflangAlternates(config, `/blog/${post.slug}`);
+  const out: Record<string, string> = {};
+  const defaultLang = (config.defaultLocale ?? "en").toUpperCase();
+  for (const [key, path] of Object.entries(base)) {
+    // Keys are `{lang}-{REGION}` plus `x-default`, which names the default
+    // locale's URL rather than a language of its own.
+    const lang = key === "x-default" ? defaultLang : key.split("-")[0]?.toUpperCase() ?? "";
+    const slug = slugFor.get(lang);
+    out[key] = slug ? path.replace(`/blog/${post.slug}`, `/blog/${slug}`) : path;
+  }
+  return out;
 }
 
 export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   const routeParams = await params;
   const resolved = await resolveBlogPostRoute(routeParams);
   if (resolved.kind === "not-found") notFound();
-  if (resolved.kind === "redirect") redirect(resolved.redirectTo);
+  if (resolved.kind === "redirect") {
+    if (resolved.permanent) permanentRedirect(resolved.redirectTo);
+    redirect(resolved.redirectTo);
+  }
   const { post, canonicalUrl, backHref } = resolved;
   const routeCode = routeParams.countrySlug ? countryCodeFromSlug(routeParams.countrySlug) : undefined;
+  const displayTitle = sentenceCaseIfShouting(post.title);
 
   const locale = await getPageLocale(post.locale);
   const { home } = loadLocaleBundle(locale);
   const blogI18n = home.blog;
+  // "Read article" lives on common.blogPage, not home.blog — the related-card
+  // grid shares the blog index's card, so it needs the index's label bundle.
+  const blogPageI18n = getCommonLocale(locale).blogPage;
+  const commonNav = getCommonLocale(locale).navigation;
 
+  // Ranking-growth batch (2026-08-10): was hardcoded `/en/` regardless of the
+  // article's own locale — a PT/ES/CS/RO article's CTA sent readers to an
+  // English-locale service page. Use the article's resolved locale.
   const ctaHref = post.ctaService
-    ? `/${post.ctaService.countrySlug}/en/services/${post.ctaService.slug}`
+    ? `/${post.ctaService.countrySlug}/${locale}/services/${post.ctaService.slug}`
     : "/";
 
   const formatted = new Date(post.publishedAt).toLocaleDateString(locale, {
@@ -199,6 +274,14 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         year: "numeric",
       })
     : formatted;
+  // Designed articles render their FAQs as visible <details> blocks; mirror
+  // them into FAQPage schema. Never fabricated — if the body has no FAQ
+  // markup, no FAQPage node is emitted.
+  const articleFaqs = extractArticleFaqs(post.body);
+  /** Body ships its own complete design (its own <style> block). */
+  const isDesignedBody = post.body.includes("<style");
+  /** Body closes with its own styled medical-disclaimer panel. */
+  const bodyHasOwnDisclaimer = /class="[^"]*\bdisclaimer\b/.test(post.body);
   const relatedHrefFor = (p: BlogListItem) =>
     routeParams.countrySlug && routeParams.lang
       ? `/${routeParams.countrySlug}/${routeParams.lang}/blog/${p.slug}`
@@ -209,7 +292,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
       <JsonLd
         data={[
           articleJsonLd({
-            title: post.title,
+            title: displayTitle,
             description: post.seoDescription ?? post.excerpt,
             url: `${getSiteUrl()}${canonicalUrl}`,
             datePublished: post.publishedAt,
@@ -225,10 +308,11 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             about: post.category,
           }),
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
-            { name: "Blog", url: backHref },
-            { name: post.title, url: canonicalUrl },
+            { name: commonNav.home, url: "/" },
+            { name: commonNav.blog, url: backHref },
+            { name: displayTitle, url: canonicalUrl },
           ]),
+          ...(articleFaqs.length > 0 ? [faqJsonLd(articleFaqs)] : []),
         ]}
       />
       {/* ── Article hero — matches the PageHero atmosphere (layered forest
@@ -285,7 +369,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
               />
               <Image
                 src={post.coverImageSrc}
-                alt={post.coverImageAlt ?? post.title}
+                alt={post.coverImageAlt ?? displayTitle}
                 fill
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -408,7 +492,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                 style={{
                   // Blog titles run far longer than service-hero titles, so the
                   // fitter is tuned to a 60-char budget instead of ~22.
-                  fontSize: fitHeadingFontSize(post.title, {
+                  fontSize: fitHeadingFontSize(displayTitle, {
                     minRem: 2.4,
                     maxRem: 4.2,
                     viewportTerm: "2.2vw + 1.7rem",
@@ -420,7 +504,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                   maxWidth: "20ch",
                 }}
               >
-                {post.title}
+                {displayTitle}
               </h1>
 
               {post.excerpt ? (
@@ -516,9 +600,9 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           container/padding here squeezes their grid columns. Plain rich-text
           bodies keep the site container + padding. */}
       <section
-        className={post.body.includes("<style") ? undefined : "mx-auto max-w-[var(--container-width)]"}
+        className={isDesignedBody ? undefined : "mx-auto max-w-[var(--container-width)]"}
         style={
-          post.body.includes("<style")
+          isDesignedBody
             ? { background: "var(--color-background-page)" }
             : { background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }
         }
@@ -528,13 +612,23 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             can't bleed into the site. Rendered server-side for SEO. */}
         <div
           className="gh-article-body gh-article-raw"
+          // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
           dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
         />
-        {reviewerName ? (
-          <p className="mx-auto mt-8 max-w-[76ch] text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
-            {blogI18n.clinicallyReviewedBy} {reviewerName}. {blogI18n.lastReviewed} {lastReviewedFormatted}.{" "}
-            {blogI18n.medicalDisclaimer}
-          </p>
+        {/* Designed articles nearly all close with their own styled
+            "Medical Disclaimer" panel; appending this one under it printed the
+            same notice twice (naming a different doctor, since this line reads
+            the linked reviewer and the body names the author). Only render it
+            when the body has no disclaimer of its own. The wrapper carries the
+            side padding — the designed-body section above is deliberately
+            unpadded, which left this paragraph flush to both screen edges. */}
+        {reviewerName && !bodyHasOwnDisclaimer ? (
+          <div className="mx-auto max-w-[var(--container-width)] px-5 pb-2 md:px-10">
+            <p className="mx-auto mt-8 max-w-[76ch] text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
+              {blogI18n.clinicallyReviewedBy} {reviewerName}. {blogI18n.lastReviewed} {lastReviewedFormatted}.{" "}
+              {blogI18n.medicalDisclaimer}
+            </p>
+          </div>
         ) : null}
       </section>
 
@@ -599,36 +693,27 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             >
               {blogI18n.moreArticles}
             </h2>
+            {/* Same card as the blog index, in its stacked orientation — the
+                cover image is already on BlogListItem, so the old text-only
+                tile was dropping an asset the data layer had all along. */}
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:mt-12">
               {relatedPosts.map((p) => (
-                <Link
+                <BlogCard
                   key={p.slug}
+                  orientation="stacked"
+                  headingLevel="h3"
+                  locale={locale}
+                  title={sentenceCaseIfShouting(p.title)}
+                  excerpt={p.excerpt}
                   href={relatedHrefFor(p)}
-                  className="gh2-glass-forest gh2-glass-hover gh-focus-on-dark group flex flex-col p-6"
-                >
-                  <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-accent)]">
-                    {p.category}
-                  </span>
-                  <h3
-                    className="mt-3 text-[17px] font-bold leading-snug"
-                    style={{ color: "rgba(255,255,255,0.92)" }}
-                  >
-                    {p.title}
-                  </h3>
-                  <p
-                    className="mt-3 line-clamp-4 text-[13px] leading-relaxed"
-                    style={{ color: "var(--gh2-on-dark-muted)" }}
-                  >
-                    {p.excerpt}
-                  </p>
-                  <span
-                    className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[12px] font-bold uppercase tracking-[0.14em] transition-colors group-hover:text-[var(--color-brand-accent)]"
-                    style={{ color: "var(--gh2-on-dark-faint)" }}
-                  >
-                    {p.readingTime} {blogI18n.minRead}
-                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
-                  </span>
-                </Link>
+                  category={p.category}
+                  publishedAt={p.publishedAt}
+                  coverImageSrc={p.coverImageSrc}
+                  coverImageAlt={p.coverImageAlt}
+                  readingTimeLabel={`${p.readingTime} ${blogI18n.minRead}`}
+                  readArticleLabel={blogPageI18n.readArticle}
+                  categoryFallback={blogPageI18n.categoryFallback}
+                />
               ))}
             </div>
           </div>

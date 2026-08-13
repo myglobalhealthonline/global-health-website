@@ -24,6 +24,7 @@ import {
   weekRangeIso,
 } from "@/components/calendar/calendar-utils";
 import { BASE_SLOT_MINUTES } from "@/lib/constants";
+import { MINUTES_IN_DAY } from "@/lib/time-of-day";
 import { dialCodeForCountry } from "@/lib/phone/dial-codes";
 import {
   hasErrors,
@@ -32,6 +33,7 @@ import {
 } from "@/lib/admin/manual-booking-validation";
 import { AvailabilityWeek } from "./_components/availability-week";
 import { EditWindowButton } from "./_components/edit-window-button";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +63,14 @@ function hhmmToMinutes(value: string): number {
   return h * 60 + m;
 }
 
+// End-of-day. An <input type="time"> submits midnight as "00:00", which parses
+// to minute 0 and trips the `end <= start` guard on a legitimate window that
+// runs to midnight. The API caps `endMinute` at 24 * 60, so map it there.
+function hhmmToEndMinutes(value: string): number {
+  const min = hhmmToMinutes(value);
+  return min === 0 ? MINUTES_IN_DAY : min;
+}
+
 type PageProps = {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ success?: string; error?: string; wk?: string }>;
@@ -84,7 +94,7 @@ export default async function AdminDoctorAvailabilityPage({
     try {
       const weekday = Number(formData.get("weekday"));
       const startMinute = hhmmToMinutes(String(formData.get("startTime") ?? ""));
-      const endMinute = hhmmToMinutes(String(formData.get("endTime") ?? ""));
+      const endMinute = hhmmToEndMinutes(String(formData.get("endTime") ?? ""));
       if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) {
         throw new Error("Invalid weekday");
       }
@@ -125,7 +135,7 @@ export default async function AdminDoctorAvailabilityPage({
       }
       const weekday = Number(formData.get("weekday"));
       const startMinute = hhmmToMinutes(String(formData.get("startTime") ?? ""));
-      const endMinute = hhmmToMinutes(String(formData.get("endTime") ?? ""));
+      const endMinute = hhmmToEndMinutes(String(formData.get("endTime") ?? ""));
       // An unchecked checkbox sends nothing at all — absence means "paused".
       const isActive = formData.get("isActive") !== null;
       if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) {
@@ -217,7 +227,14 @@ export default async function AdminDoctorAvailabilityPage({
           ?.bookingSetting?.timezone
       : null) ?? "Europe/Dublin";
   const weekAnchor = parseWeekAnchor(messages.wk, clinicTz);
-  const { fromIso, toIso } = weekRangeIso(weekAnchor, clinicTz);
+  // ±1 day, same as the admin calendar: the grid places blocks by the VIEWER's
+  // timezone, which can differ from the clinic's, so a slot near either edge of
+  // the week belongs in a column the unpadded clinic-local range never fetched.
+  // Without this the first or last day of the week can look empty here while
+  // the doctor's own calendar shows it.
+  const week = weekRangeIso(weekAnchor, clinicTz);
+  const fromIso = new Date(new Date(week.fromIso).getTime() - 86400000).toISOString();
+  const toIso = new Date(new Date(week.toIso).getTime() + 86400000).toISOString();
 
   const [calendarResult, servicesResult, clinicsResult] = await Promise.all([
     fetchAdminCalendar({ from: fromIso, to: toIso, doctorId: id }),
@@ -383,6 +400,7 @@ export default async function AdminDoctorAvailabilityPage({
 
   return (
     <>
+      <SetCrumbTitle label={doctor.fullName} />
       <Link
         href={`/admin/doctors/${id}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -392,7 +410,7 @@ export default async function AdminDoctorAvailabilityPage({
       <PageHeader
         eyebrow="Doctor"
         title={`${doctor.fullName} · Availability`}
-        description="Week calendar of booked appointments and open slots — click an open time to book. Recurring weekly windows below generate the slots (clinic timezone)."
+        description="Week calendar of booked appointments and open slots — click an open time to book, or use its corner buttons to block or remove it. Recurring weekly windows below generate the slots (clinic timezone)."
       />
 
       {messages.error ? (
@@ -408,7 +426,7 @@ export default async function AdminDoctorAvailabilityPage({
 
       <FormSection
         title="Week calendar"
-        description="Booked appointments and open slots for this doctor. Click a green (open) time to book directly — patient, service, and mode are filled in a quick dialog; the doctor and time come from the slot you clicked."
+        description="Booked appointments and open slots for this doctor. Click a green (open) time to book directly — patient, service, and mode are filled in a quick dialog; the doctor and time come from the slot you clicked. The corner buttons on a slot block it (⃠ — keeps the slot, marks it unavailable) or remove it (🗑 — deletes it for that date only, leaving the weekly window untouched); clicking a red blocked slot re-opens it."
       >
         <div className="gh-form-section__span-2 mt-4 min-w-0">
           {calendarResult.ok ? (

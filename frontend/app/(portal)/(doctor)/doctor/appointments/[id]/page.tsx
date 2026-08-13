@@ -42,13 +42,15 @@ import {
   ConsultationDocumentsTrigger,
 } from "./_components/consultation-documents-section";
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
+import { MedicalAccessDeniedNotice } from "../../_components/medical-access-denied";
 import { PatientContextPanel } from "./_components/patient-context-panel";
 import { ReferringRecordPanel } from "./_components/referring-record-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -65,7 +67,7 @@ type PageProps = {
  */
 export default async function DoctorAppointmentDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   // Same shared lexicon + collapsing logic as the appointments list
   // (lib/api/appointment-status-labels.ts) and the same locale keys
@@ -110,9 +112,17 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         >
           <ArrowLeft className="size-3.5" /> {d.appointmentDetail.back}
         </Link>
-        <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
-          {consultRes.message}
-        </p>
+        {consultRes.deniedAccess ? (
+          <MedicalAccessDeniedNotice
+            appointmentId={id}
+            denial={consultRes.deniedAccess}
+            copy={d.medicalAccessDenied}
+          />
+        ) : (
+          <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
+            {consultRes.message}
+          </p>
+        )}
       </div>
     );
   }
@@ -139,7 +149,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         consultation.subjective ||
         consultation.objective ||
         consultation.assessment ||
-        consultation.plan),
+        consultation.plan ||
+        consultation.note),
   );
   const timeReached = !appointment.scheduledAt || new Date(appointment.scheduledAt) <= new Date();
   // Services-used are scoped by consultationId, so we can only fetch
@@ -171,6 +182,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     soapObjective: d.crossBorderRxInbox.soapObjective,
     soapAssessment: d.crossBorderRxInbox.soapAssessment,
     soapPlan: d.crossBorderRxInbox.soapPlan,
+    soapNote: d.crossBorderRxInbox.soapNote,
     soapEmpty: d.crossBorderRxInbox.soapEmpty,
     sourceDocumentsNote: d.crossBorderRxInbox.sourceDocumentsNote,
   };
@@ -232,6 +244,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     <div
       className={`gh-doctor-appointment-workspace${isLive ? " gh-doctor-appointment-workspace--calm" : ""}`}
     >
+      <SetCrumbTitle label={appointment.fullName} />
       <Link
         href="/doctor/appointments"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
@@ -451,6 +464,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                             objective: consultation.objective ?? "",
                             assessment: consultation.assessment ?? "",
                             plan: consultation.plan ?? "",
+                            noteFormat: consultation.noteFormat,
+                            note: consultation.note ?? "",
                             status: consultation.status,
                             signedAt: consultation.signedAt,
                           }
@@ -460,6 +475,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                             objective: "",
                             assessment: "",
                             plan: "",
+                            noteFormat: "SOAP",
+                            note: "",
                             status: "DRAFT",
                             signedAt: null,
                           }

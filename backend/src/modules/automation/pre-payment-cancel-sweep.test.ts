@@ -85,8 +85,21 @@ describe("runPrePaymentCancelSweep", () => {
     if (skip()) return t.skip();
     const orderId = await pendingOrder(minutesFromNow(-1));
 
-    const r = await svc.runPrePaymentCancelSweep();
-    assert.ok(r.cancelled >= 1, "sweep reports at least this order cancelled");
+    // The sweep takes 100 due orders at a time, oldest deadline first. Other
+    // suites running concurrently leave PENDING orders whose deadlines are far
+    // further in the past than this one's minute, so a single pass can fill its
+    // batch entirely with theirs and never reach this order — reporting
+    // `cancelled: 0` while this order sits untouched.
+    //
+    // Sweeping until THIS order is done tests the same behaviour without
+    // asserting on a global counter that neighbouring suites can crowd out.
+    let cancelled = 0;
+    for (let pass = 0; pass < 5; pass += 1) {
+      cancelled += (await svc.runPrePaymentCancelSweep()).cancelled;
+      const seen = await prisma.order.findUniqueOrThrow({ where: { id: orderId } });
+      if (seen.status === "CANCELLED") break;
+    }
+    assert.ok(cancelled >= 1, "the sweep reports what it cancelled");
 
     const row = await prisma.order.findUniqueOrThrow({ where: { id: orderId } });
     assert.equal(row.status, "CANCELLED", "past-due order is cancelled");

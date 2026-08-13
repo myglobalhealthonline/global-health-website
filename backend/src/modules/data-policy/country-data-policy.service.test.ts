@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { before, describe, it, mock } from "node:test";
 
 /**
- * PRIV-002 (docs/security/priv-002-retention-table-2026-07-17.md): the admin
+ * PRIV-002 (docs/audits/security/priv-002-retention-table-2026-07-17.md): the admin
  * anonymize/deletion path now ERASES identity + REVOKES sessions while
  * RETAINING clinical/financial rows, and writes a completion audit record.
  *

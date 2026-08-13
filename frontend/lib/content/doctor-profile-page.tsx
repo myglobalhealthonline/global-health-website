@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, CalendarClock } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
@@ -7,9 +8,11 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { DoctorSharePageLink } from "@/components/sections/DoctorSharePageLink";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
-import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
 import { getCountryByCode } from "@/data/countries";
-import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import { ogLocales } from "@/lib/seo/hreflang";
+import { doctorHreflangCluster } from "@/lib/seo/doctor-hreflang";
+import { doctorIndexableCountryNames, withMarketTitle } from "@/lib/seo/doctor-market-title";
+import { summarizeLanguagesForMetadata } from "@/lib/seo/doctor-language-summary";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import {
   breadcrumbJsonLd,
@@ -18,7 +21,7 @@ import {
 } from "@/lib/seo/structured-data";
 
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
-import { buildBookHref } from "@/lib/routing/book-href";
+import { buildBookHref, buildServiceDetailHref } from "@/lib/routing/book-href";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -50,17 +53,10 @@ export async function buildDoctorProfileMetadata(
   const { doctorSlug, countrySlug: routeCountrySlug, lang } = await params;
   const code = routeCountrySlug ? countryCodeFromSlug(routeCountrySlug) : null;
   const data = await resolveDoctorProfilePageData(doctorSlug, lang, code ?? undefined);
-  const indexable = isPublicDoctorRecordIndexable({
-    fullName: data.profile.name,
-    title: data.profile.title,
-    bio: data.profile.bio,
-    languages: data.profile.languages,
-    specialties: data.profile.specialties,
-    imcRegistration: data.profile.imcRegistration,
-    medicalRegistrationUrl: data.profile.medicalRegistrationUrl,
-    qualifications: data.profile.qualifications,
-    editorialChecklist: data.profile.editorialChecklist,
-  });
+  // `data.indexable` is computed in resolveDoctorProfilePageData from the
+  // country-scoped backend record — the SAME value app/sitemap.ts derives, so a
+  // page that renders index,follow can never be missing from the sitemap.
+  const indexable = data.indexable;
   const countryNameToSlug: Record<string, string> = {
     Ireland: "ireland",
     Portugal: "portugal",
@@ -72,27 +68,69 @@ export async function buildDoctorProfileMetadata(
   const slug = routeCountrySlug ?? countryNameToSlug[data.profile.country] ?? "ireland";
   const routeLang = lang ?? "en";
   const canonical = `/${slug}/${routeLang}/doctors/${doctorSlug}`;
-  const title =
-    data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${data.profile.country}`;
-  const description =
-    data.profile.seoDescription ??
-    `Book an online consultation with ${data.profile.name}, ${data.profile.title} in ${data.profile.country}. Languages: ${data.profile.languages.join(", ") || "English"}.`;
+  const { common: metaCommon } = loadLocaleBundle(routeLang as LocaleCode);
+  const metaDp = metaCommon.doctorProfile;
   const resolvedCode = countryCodeFromSlug(slug);
   const config = resolvedCode ? getCountryByCode(resolvedCode) : null;
+  // `data.profile.country` is the doctor's PRIMARY country (see
+  // get-public-doctors.ts) — on a cross-listed doctor's secondary-market
+  // route it still reads e.g. "Ireland" even under /czechia/*. Every piece of
+  // metadata below must name the market the page is actually SERVING, so
+  // every `{country}` fill and the OG subtitle use the route-resolved name,
+  // falling back to the profile country only when the route didn't resolve
+  // (placeholder/legacy path). The description/socialDescription FALLBACK
+  // templates were the other leak: an admin `seoDescription` is already
+  // market-scoped by the backend merge, but the code-side template always
+  // substituted the primary country regardless of route.
+  const routeCountryName = config?.name ?? data.profile.country;
+  const fillProfileTemplate = (template: string) =>
+    template
+      .replace("{name}", data.profile.name)
+      .replace("{title}", data.profile.title)
+      .replace("{country}", routeCountryName)
+      .replace("{languages}", summarizeLanguagesForMetadata(data.profile.languages));
+  const baseTitle =
+    data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${routeCountryName}`;
+  // Cross-listed doctors (same clinician, multiple markets) currently share
+  // one admin `seoTitle` across every country page they appear on — a
+  // duplicate-title flag in GSC. Differentiate the SERP title by market only
+  // when the doctor is genuinely indexable in more than one country; single-
+  // market doctors (the vast majority) keep today's title exactly.
+  const marketCountries = indexable ? await doctorIndexableCountryNames(doctorSlug) : [];
+  const title = withMarketTitle(
+    baseTitle,
+    routeCountryName,
+    marketCountries,
+    resolvedCode ? metaCommon.countryNames?.[resolvedCode] : null,
+  );
+  const description =
+    data.profile.seoDescription ??
+    fillProfileTemplate(
+      metaDp.metaDescriptionTemplate ??
+        "Book an online consultation with {name}, {title} in {country}. Languages: {languages}.",
+    );
   return buildPublicMetadata({
     path: canonical,
     title,
     description,
     socialTitle: `${data.profile.name} | ${data.profile.title}`,
-    socialDescription: `Meet ${data.profile.name}, ${data.profile.title} serving patients in ${data.profile.country}. View credentials, languages and appointment options.`,
+    socialDescription: fillProfileTemplate(
+      metaDp.metaSocialDescriptionTemplate ??
+        "Meet {name}, {title} serving patients in {country}. View credentials, languages and appointment options.",
+    ),
     imageTitle: data.profile.name,
     type: "profile",
     kind: "doctor",
-    subtitle: `${data.profile.title} · ${data.profile.country}`,
+    subtitle: `${data.profile.title} · ${routeCountryName}`,
     sourceImage: data.profileImageSrc,
     imageAlt: data.profile.imageAltText ?? `${data.profile.name}, ${data.profile.title}`,
     locale: config ? ogLocales(config, routeLang).locale : undefined,
-    languages: config ? hreflangAlternates(config, `/doctors/${doctorSlug}`) : undefined,
+    // A noindexed profile emits NO alternates: it participates in no cluster,
+    // as neither target nor source. `doctorHreflangCluster` returns early on
+    // that, so noindex pages also do zero market-roster reads.
+    languages: config
+      ? await doctorHreflangCluster(config, doctorSlug, routeLang, indexable)
+      : undefined,
     keywords: data.profile.seoKeywords,
     noindex: !indexable,
   });
@@ -101,6 +139,20 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   const { doctorSlug, countrySlug: routeCountrySlug, lang: routeLang } = await params;
   const routeCode = routeCountrySlug ? countryCodeFromSlug(routeCountrySlug) : null;
   const data = await resolveDoctorProfilePageData(doctorSlug, routeLang, routeCode ?? undefined);
+
+  // A slug that only matches de-accented (legacy Wix URLs kept the diacritics)
+  // redirects to the live ASCII slug rather than rendering a second URL for
+  // the same clinician.
+  if (data.canonicalSlug && routeCountrySlug && routeLang) {
+    permanentRedirect(`/${routeCountrySlug}/${routeLang}/doctors/${data.canonicalSlug}`);
+  }
+  // No such clinician, confirmed by the backend (not an outage): 404 rather
+  // than render a profile fabricated from the URL slug. Those placeholders
+  // were noindexed, but legacy redirects still landed real visitors on a
+  // page describing a doctor who does not exist, carrying Physician schema.
+  if (data.missingConfirmed) {
+    notFound();
+  }
   const countryNameToSlug: Record<string, string> = {
     Ireland: "ireland",
     Portugal: "portugal",
@@ -128,6 +180,16 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // doctor card; we filter the country's GENERAL + SPECIALIST service
   // pool to that set so the patient sees one card per bookable service.
   const code = countryCodeFromSlug(slug);
+  // `data.profile.country` is the doctor's PRIMARY country (see
+  // get-public-doctors.ts) — on a cross-listed doctor's secondary-market
+  // route it still reads e.g. "Ireland" even under /czechia/*. Everything the
+  // patient reads or a crawler indexes on THIS page must name the market the
+  // route is actually serving — same fix as buildDoctorProfileMetadata above.
+  const routeCountryName = (code ? getCountryByCode(code)?.name : undefined) ?? data.profile.country;
+  // Breadcrumb-only localized country label — deliberately NOT used for
+  // `routeCountryName` above, which drives visible copy (country pill,
+  // "Registered in {country}") that this ticket does not touch.
+  const breadcrumbCountryName = (code ? c.countryNames?.[code] : undefined) ?? routeCountryName;
   // Short medical disclaimer (admin-authored, per country). Doctor profiles
   // show the lead line + a link through to the full disclaimer.
   const { short: doctorDisclaimer } = code
@@ -189,16 +251,35 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       : dp.pickTime
     : data.hero.primaryCta.label;
 
+  // E-E-A-T freshness signal — same "Last reviewed <date>" format the
+  // service page and blog byline already use. Renders nothing (via
+  // DoctorProfileTemplate's conditional trust-badge) when the admin hasn't
+  // set lastReviewedAt — never a fabricated fallback.
+  const reviewedDateFormatted = data.profile.lastReviewedAt
+    ? new Date(data.profile.lastReviewedAt).toLocaleDateString(lang, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : undefined;
+
   const templateData = {
     ...data,
     profile: {
       ...data.profile,
+      // Override the PRIMARY country with the market this page is actually
+      // serving — every visible badge/label in DoctorProfileTemplate reads
+      // `profile.country` (team link, "Registered in {country}", the country
+      // pill), and on a cross-listed doctor's secondary-market route the raw
+      // field is wrong (see routeCountryName above).
+      country: routeCountryName,
       registrationChamber: profileDoc?.registrationChamber,
       registrationDivision: profileDoc?.registrationDivision,
       registrationVerified: profileDoc?.registrationVerified,
       verificationUrl: verifyUrl,
       credentials: profileDoc?.credentials,
       regulatorName: regulator?.name ?? null,
+      reviewedDate: reviewedDateFormatted,
     },
     hero: {
       ...data.hero,
@@ -207,7 +288,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
         href: primaryCtaHref,
       },
       secondaryCta: {
-        label: dp.backToClinicians.replace("{country}", data.profile.country),
+        label: dp.backToClinicians.replace("{country}", routeCountryName),
         href: teamHref,
       },
     },
@@ -224,7 +305,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           physicianJsonLd({
             name: data.profile.name,
             title: data.profile.title,
-            countryName: data.profile.country,
+            countryName: routeCountryName,
             url: profileHref,
             imageSrc: data.profileImageSrc,
             languages: data.profile.languages,
@@ -239,9 +320,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             bio: data.profile.bio,
           }),
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
-            { name: data.profile.country, url: `/${slug}/${lang}` },
-            { name: "Doctors", url: teamHref },
+            { name: c.navigation.home, url: "/" },
+            { name: breadcrumbCountryName, url: `/${slug}/${lang}` },
+            { name: c.navigation.doctors, url: teamHref },
             { name: data.profile.name, url: profileHref },
           ]),
           // FAQPage schema mirrors the visible FAQ accordion — only emitted
@@ -304,12 +385,24 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                 return (
                   <ServiceCard
                     key={service.id}
-                    href={consultHref}
+                    // Genuine crawlable link to the service's own landing
+                    // page (international-linking batch, 2026-08-09) — doctor
+                    // profiles previously sent every assigned service straight
+                    // into the booking flow with no server-rendered anchor a
+                    // crawler could follow to `/services/{slug}`. Booking stays
+                    // the primary CTA; "View service details" is additive.
+                    detailHref={buildServiceDetailHref(slug, lang, service.slug)}
+                    bookHref={consultHref}
                     title={service.name}
                     description={service.summary ?? ""}
-                    duration={service.durationMinutes != null ? `${service.durationMinutes} min` : undefined}
+                    duration={
+                      service.durationMinutes != null
+                        ? `${service.durationMinutes} ${c.extra.minSuffix}`
+                        : undefined
+                    }
                     startingPrice={startingPrice}
-                    ctaLabel={dp.pickSlot}
+                    ctaLabel={dp.viewServiceDetails}
+                    bookLabel={dp.pickSlot}
                     imageSrc={service.imageSrc}
                     dark
                   />
@@ -344,7 +437,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
               >
                 {dp.notSetupForBookings
                   .replace("{name}", data.profile.name)
-                  .replace("{country}", data.profile.country)}
+                  .replace("{country}", routeCountryName)}
               </p>
               <Link
                 href={buildBookHref({ country: slug, lang, doctor: doctorSlug })}
@@ -386,10 +479,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
         theme="forest"
         variant="carousel"
         language={lang}
-        eyebrow="Patient reviews"
-        headline="What patients say about"
-        headlineAccent="our doctors"
-        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+        headline={c.doctify.patientsSayHeadline ?? "What patients say about"}
+        headlineAccent={c.doctify.patientsSayAccent ?? "our doctors"}
       />
       <StickyBookingCTA href={fallbackBookHref} label={dp.bookWithDoctor.replace("{name}", firstName ?? data.profile.name)} />
     </>

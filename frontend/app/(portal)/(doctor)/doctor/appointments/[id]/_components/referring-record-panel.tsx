@@ -14,6 +14,7 @@ export type ReferringRecordCopy = {
   soapPlan: string;
   soapEmpty: string;
   sourceDocumentsNote: string;
+  soapNote: string;
 };
 
 export type ReferringRecord = {
@@ -28,6 +29,8 @@ export type ReferringRecord = {
     objective: string | null;
     assessment: string | null;
     plan: string | null;
+    noteFormat: "SOAP" | "FREEFORM";
+    note: string | null;
   };
 };
 
@@ -48,13 +51,19 @@ export function ReferringRecordPanel({
   record: ReferringRecord;
   copy: ReferringRecordCopy;
 }) {
-  const rows: Array<[string, string | null]> = [
-    [copy.soapChiefComplaint, record.soap.chiefComplaint],
-    [copy.soapSubjective, record.soap.subjective],
-    [copy.soapObjective, record.soap.objective],
-    [copy.soapAssessment, record.soap.assessment],
-    [copy.soapPlan, record.soap.plan],
-  ];
+  const rows: Array<[string, string | null]> =
+    record.soap.noteFormat === "FREEFORM"
+      ? [
+          [copy.soapChiefComplaint, record.soap.chiefComplaint],
+          [copy.soapNote, record.soap.note],
+        ]
+      : [
+          [copy.soapChiefComplaint, record.soap.chiefComplaint],
+          [copy.soapSubjective, record.soap.subjective],
+          [copy.soapObjective, record.soap.objective],
+          [copy.soapAssessment, record.soap.assessment],
+          [copy.soapPlan, record.soap.plan],
+        ];
   const present = rows.filter(([, v]) => v && v.trim());
   const summary = record.clinicalSummary.trim();
 

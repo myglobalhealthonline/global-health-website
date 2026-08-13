@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "Vybrané výhody se odemknou po {months} zaplacených měsících.",
-    "universalSingular": "Vybrané výhody se odemknou po {months} zaplaceném měsíci.",
+    "universal": "Vybrané výhody jsou aktivní od {months}. zaplaceného měsíce.",
+    "universalSingular": "Vybrané výhody jsou aktivní od {months}. zaplaceného měsíce.",
     "detailed": "Základní kredity na online konzultace platí od 1. měsíce. Vybrané členské výhody se odemknou po {months} úspěšných měsíčních platbách.",
     "detailedSingular": "Základní kredity na online konzultace platí od 1. měsíce. Vybrané členské výhody se odemknou po {months} úspěšné měsíční platbě."
   },
@@ -104,7 +104,7 @@
     "error": "Vaše členství se nepodařilo zahájit. Zkuste to prosím znovu."
   },
   "manage": {
-    "title": "Vaše členství",
+    "title": "Vaše plány",
     "subtitle": "Spravujte svůj plán, fakturaci a výhody.",
     "currentPlan": "Aktuální plán",
     "status": "Stav",
@@ -125,11 +125,14 @@
     "changing": "Plánování změny…",
     "pendingChange": "Přepnutí na {plan} dne {date}.",
     "changeNote": "Změny plánu vstoupí v platnost při vaší příští platbě — bez poměrného přepočtu uprostřed cyklu.",
+    "changeNoteUpgrade": "Přechod na vyšší plán platí okamžitě — doplatíte pouze rozdíl za zbytek měsíce. Přechod na nižší plán se projeví při příští platbě.",
     "changeScheduled": "Změna naplánována — váš nový plán začíná {date}.",
+    "upgradeApplied": "Nyní máte plán {plan}. Vaše nové výhody jsou už k dispozici.",
     "upgradeLabel": "Vyšší plán",
     "downgradeLabel": "Nižší plán",
     "changeEffective": "Začne platit {date} — do té doby zůstáváte na svém aktuálním plánu, dnes bez platby.",
     "changeConfirm": "Přejít na {plan} dne {date}? Do té doby zůstanete na svém aktuálním plánu a dnes vám nic nestrhneme.",
+    "upgradeConfirm": "Přejít nyní na {plan}? Bude vám účtován pouze poměrný rozdíl za zbytek fakturačního období a nové výhody získáte okamžitě.",
     "cancelChange": "Zrušit naplánovanou změnu",
     "cancelingChange": "Ruší se…",
     "changeCanceled": "Naplánovaná změna zrušena — zůstáváte na svém aktuálním plánu.",

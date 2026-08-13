@@ -87,8 +87,8 @@ export function PricingPlansGrid({
           // target preselected; the current plan's card just manages.
           manageHref={
             plan.id === activePlanId
-              ? "/account/membership"
-              : `/account/membership?plan=${encodeURIComponent(plan.id)}`
+              ? "/account/plans"
+              : `/account/plans?plan=${encodeURIComponent(plan.id)}`
           }
         />
       ))}

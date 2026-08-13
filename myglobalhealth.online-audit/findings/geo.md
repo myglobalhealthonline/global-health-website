@@ -1,86 +1,121 @@
-# GEO / AI-Search Readiness Audit — myglobalhealth.online
-Date: 2026-07-24
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).** This audit predates the 2026-08 remediation batches. Every count, status and priority below is superseded. Kept as evidence only.
 
-## GEO Health Score: 68/100
+# GEO / AI Search Readiness — myglobalhealth.online
 
-| Dimension | Weight | Score | Notes |
+**Citability / GEO Health Score: 74 / 100**
+
+| Dimension | Weight | Score | Weighted |
 |---|---|---|---|
-| Citability | 25% | 55 | Answers exist but most are short bullet fragments, not 134-167w self-contained passages |
-| Structural Readability | 20% | 70 | Clean heading hierarchy, but H2/H3 are declarative ("Real doctors, registered locally") not question-form except FAQ |
-| Multi-Modal Content | 15% | 50 | No video/YouTube embeds, no data tables/infographics found |
-| Authority & Brand Signals | 20% | 55 | MedicalOrganization + doctor-registration schema is strong; no visible authorship/byline/dateline in rendered HTML |
-| Technical Accessibility | 20% | 95 | Fully SSR (`mode_used: raw`, `is_spa: false` on all 4 pages) — zero JS-rendering risk for crawlers |
+| Citability | 25% | 78 | 19.5 |
+| Structural Readability | 20% | 70 | 14.0 |
+| Multi-Modal Content | 15% | 50 | 7.5 |
+| Authority & Brand Signals | 20% | 72 | 14.4 |
+| Technical Accessibility | 20% | 92 | 18.4 |
+| **Total** | | | **73.8 ≈ 74** |
 
-## AI Crawler Access (robots.txt)
-All target crawlers explicitly allowed with `Allow: /`, only admin/account/api paths blocked:
-- GPTBot: **Allowed**
-- OAI-SearchBot: **Allowed**
-- ChatGPT-User: **Allowed**
-- ClaudeBot: **Allowed**
-- Claude-SearchBot / Claude-User: **Allowed**
-- anthropic-ai: **Allowed** (note: this is a training crawler; site chose to allow it — no issue, but worth a conscious decision)
-- Google-Extended: **Allowed**
-- Gemini-Deep-Research: **Allowed**
-- PerplexityBot / Perplexity-User: **Allowed**
-- CCBot: **not listed** (falls under `User-Agent: *` which also Allows `/` — so CCBot is allowed too by the wildcard block; if training-crawler exclusion is desired, this is a gap)
+---
 
-Sitemap declared: `https://www.myglobalhealth.online/sitemap.xml` — good.
+## 1. AI crawler access (robots.txt)
 
-**Severity: none** — crawler access is a non-issue, best-practice already implemented.
+`https://www.myglobalhealth.online/robots.txt` — clean, explicit per-agent blocks, all with `Allow: /` and the same narrow disallow list (`/admin`, `/account`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/verify-email`, `/api/`). No blanket AI block, no `Disallow: /health` or content paths.
 
-## llms.txt
-**Present** at `/llms.txt`, returns 200, well-formed markdown: site summary, per-country landing/booking/GP/specialist/doctor/lab-test links for 6 markets, plus About/FAQ/Blog/Privacy/Terms/Sitemap.
-No RSL 1.0 licensing block found in the file.
-**Severity: Low** — add an RSL licensing section if the business wants explicit AI-reuse terms; not currently blocking anything.
+| Crawler | Status |
+|---|---|
+| GPTBot | Allowed |
+| OAI-SearchBot | Allowed |
+| ChatGPT-User | Allowed |
+| ClaudeBot | Allowed |
+| Claude-SearchBot | Allowed |
+| Claude-User | Allowed |
+| anthropic-ai | Allowed (training bot — usually blocked; site allows it, acceptable but optional to restrict) |
+| Google-Extended | Allowed |
+| Gemini-Deep-Research | Allowed |
+| PerplexityBot | Allowed |
+| Perplexity-User | Allowed |
+| Bytespider | **Absent** — falls under wildcard `User-Agent: *` → allowed by default |
+| Applebot-Extended | **Absent** — allowed under wildcard |
+| Amazonbot | **Absent** — allowed under wildcard |
+| Meta-ExternalAgent | **Absent** — allowed under wildcard |
+| Claude-Web (legacy) | **Absent** (superseded by Claude-SearchBot/Claude-User, fine) |
+| CCBot | **Absent** — allowed under wildcard (recommended optional block for training-only crawler not done) |
 
-## Structured Data
-- Homepage: `MedicalOrganization` + `Country`/`PostalAddress`/`ContactPoint`/`WebSite` (1 block, 2.3KB) — solid entity graph.
-- About: adds `FAQPage` (Q&A pairs) + `BreadcrumbList`.
-- Service page (`/ireland/en/gp-consultation-online`): 5 schema blocks — org, `BreadcrumbList`, `MedicalProcedure`/`ReserveAction`, `Service`/`Offer`/`QuantitativeValue` (pricing), and `FAQPage`. This is the strongest page in the audit — pricing + procedure + FAQ schema all present.
-- FAQ page: `FAQPage` schema present, matches visible Q&A content.
+No hard blocks anywhere — best-case posture for AI visibility. Only gap: CCBot/Bytespider/Amazonbot ride the wildcard `Allow: /` since there's no dedicated rule; low priority since none of these drive citation traffic today.
 
-**Severity: none** — structured-data coverage is above average for the vertical.
+## 2. llms.txt — Present, well-formed, good but shallow
 
-## Citability (passage-level, via trafilatura extracted_text)
-- Homepage: opens with a direct 1-sentence value prop ("Licensed doctors and online care, in your country") followed by a 4-item bullet list — good hook, but no elaboration/stats to reach the 134-167 word optimal citation length.
-- About: "Real doctors, registered locally" section is close to ideal — 2-3 sentence self-contained claim ("Every clinician on the platform is licensed in your country... The doctor on the profile is the doctor on the call.") but under-length (~35 words); no supporting statistic (e.g., number of doctors, number of consultations).
-- Service page (GP consultation, Ireland): leads with credential-specific claim ("IMC-registered GPs... same-day appointments... Consultations in English, Portuguese, Spanish, Arabic and more") — good specificity, still short of 134-167w and lacks a cited statistic (e.g., average wait time, consultation count).
-- No page in the sample contains a numeric/statistical claim with source attribution (e.g., "X% of patients seen within Y minutes").
+`GET /llms.txt` → 200, correct Markdown spec structure (H1, blockquote summary, `##` sections, `- [Title](url): description` link list).
 
-**Severity: Medium** — content is directionally right (short, direct, factual) but consistently under the optimal citation length and missing sourced statistics, which are the two things AI Overviews/Perplexity reward most.
+Strengths:
+- Covers all 6 country hubs × 5 core pages (book, GP consultation, specialist, doctors, lab-tests) = 30 links, plus About/FAQ/Blog/Privacy/Terms/Sitemap.
+- Descriptions are short direct-answer summaries, not just page titles.
 
-## Q&A / FAQ Structure
-- Dedicated `/faq` page with FAQPage schema, organized into topic groups (Booking, Payment, etc.) — question-form headings, direct 1-2 sentence answers. This is the best-optimized content type on the site.
-- About and Service pages also carry FAQPage schema blocks (reused Q&A component) — good pattern, should be replicated onto every service/country landing page if not already.
+Gaps vs. spec best practice:
+- No `## Optional` section for lower-priority pages (legal, blog index) per the llms.txt convention — currently everything is flat in "Site info".
+- Individual blog articles (e.g. `/ireland/en/blog/when-to-see-a-gp-online-vs-in-person`) are **not listed** despite being the site's strongest E-E-A-T content (named physician author + clinical reviewer + dates). llms.txt only points to the `/blog` hub, which is broken (see §3).
+- No non-English locale entries (site is 6-locale but llms.txt is Ireland-en/Czechia-cs/Portugal-pt/Spain-es/Romania-ro/Brazil-pt only — one locale per country, not all 6 per country). Reasonable simplification, not a defect.
+- No `llms-full.txt` variant (optional, not required).
+- No RSL 1.0 licensing file/reference found (`/llms.txt` doesn't declare licensing terms, no `<link rel="license">` checked in HTML head — not verified but no RSL tags in the fetched JSON-LD).
 
-## Authority / Brand Signals
-- No visible author byline, credential line, or publish/update date rendered in the HTML on About/Service/FAQ (site metadata reports `publication_date: 2026-07-20` at the HTTP/meta level, but no in-content "Reviewed by Dr. X" or "Last updated" text was found in extracted_text).
-- Doctor-specific `MedicalProcedure`/registration schema (IMC etc.) is a strong E-E-A-T signal per-market.
-- Off-site brand signals (Wikipedia entity, Reddit threads, YouTube mentions, LinkedIn) were **not verifiable in this pass** — no live web-search tool was invoked; recommend a follow-up brand-mention crawl (YouTube mentions carry the strongest correlation, ~0.737, with AI citation).
+## 3. Passage-level citability
 
-**Severity: Medium** — missing on-page authorship/review dates is a quick, high-leverage fix for medical content (YMYL) trust signals.
+All pages checked are **server-rendered** — raw `curl` (no JS execution) returns full text content, confirmed by word counts matching rendered pages. This is a major structural advantage: every AI crawler doing a plain HTTP GET gets full content, no CSR blind spot.
 
-## Technical Accessibility
-All 4 sampled pages (`/`, `/about`, `/ireland/en/gp-consultation-online`, `/faq`) rendered via `mode_used: raw` with `is_spa: false` — content is present in the initial server response with no client-side rendering gap. This is the strongest dimension in the audit; AI crawlers that don't execute JS will see full content.
-
-## Top 5 Highest-Impact Changes
-
-1. **Add sourced statistics to hero/answer blocks** (e.g., doctor count, average booking time, consultation volume per country) on homepage, About, and service pages. Effort: Low (content only). Impact: High — directly targets the #1 citability gap.
-2. **Add visible authorship/clinical-review + "last updated" date** to About, FAQ, and service pages (e.g., "Clinically reviewed by Dr. X, [registration], updated [date]"). Effort: Low-Medium (component + CMS field). Impact: High — E-E-A-T signal for YMYL medical content.
-3. **Expand top-of-section answers to 134-167 words** on About and service pages (currently 35-80 word fragments) while keeping the direct-answer-first structure. Effort: Medium (copywriting). Impact: High — hits the documented optimal-citation length band.
-4. **Replicate FAQPage + Q&A pattern onto every country landing page and remaining service pages** (currently confirmed only on About/one GP service page/FAQ). Effort: Low (reuse existing component). Impact: Medium-High.
-5. **Add explicit CCBot/anthropic-ai training-crawler policy decision + optional RSL 1.0 licensing block** in robots.txt and llms.txt if the business wants to distinguish "AI search visibility" crawlers from "AI training" crawlers (currently CCBot is implicitly allowed via the wildcard rule). Effort: Low. Impact: Low-Medium (policy/compliance, not visibility).
-
-## Platform-Specific Estimated Scores
-(Based on structured-data coverage, SSR accessibility, and content-citability signals observed; not live-verified against ChatGPT/Perplexity/Bing outputs — no DataForSEO MCP tools were available in this session.)
-
-| Platform | Est. Score (0-100) | Rationale |
+| Page | Raw word count | Notes |
 |---|---|---|
-| Google AI Overviews | 65 | Strong schema + SSR, held back by short passages/no stats |
-| ChatGPT / OAI-SearchBot | 70 | Crawler fully allowed, llms.txt present — best-supported platform |
-| Perplexity | 62 | Crawler allowed, but weak on citable stat-backed passages Perplexity favors |
-| Bing Copilot | 60 | Depends on Bing index quality (not checked); schema/SSR support present |
+| `/` (homepage) | 122 | Country-selection gate only, single H2 ("Select the country where you need medical care"). By design — not a citable content page, but it's the canonical `/` and thin content there can suppress overall domain trust signals for AI crawlers that sample the root. |
+| `/ireland/en` | 3,459 | Good depth. H2s are marketing statements, not questions: "Built for people who shouldn't have to wait", "Why choose Global Health", "The doctor you book is the doctor you see" — low direct-extractability for query-matching (AI engines match question-shaped headings to user queries far more reliably). Has FAQPage schema section at bottom with real Q&A. |
+| `/ireland/en/services/acute-medical-consultation` | 1,292 | Well-structured: "What to Expect", "Conditions Commonly Assessed", "How It Works", "Frequently Asked Questions". FAQ answers are self-contained, 40–70 words, directly answer the question in the first sentence — this is the strongest citability pattern on the site. |
+| `/about` | 1,133 | H2s again mostly brand copy ("Medicine Anytime Anywhere isn't just a tagline..."), one FAQ block. |
+| `/ireland/en/blog/when-to-see-a-gp-online-vs-in-person` | 4,869 | Best citability asset on the site: question/scenario-shaped H2s ("When Online Care Is Appropriate", "When You Need to Be Seen in Person", "Emergency Warning Signs — Call 999/112"), FAQ section, "Key Resources" list, named-author byline + clinical reviewer + published/modified dates. This is the template every other page should follow. |
 
-## Notes / Limitations
-- No live web search performed for off-site brand mentions (Wikipedia/Reddit/YouTube/LinkedIn) or DataForSEO live ChatGPT visibility — recommend follow-up pass with those tools connected.
-- Sample limited to homepage, /about, one service page (Ireland GP consultation), and /faq per audit scope; other 5 country/service combinations not individually checked but share the same templates per llms.txt structure, so findings likely generalize.
+**Systemic issue: the `/blog` hub is broken.** `curl /blog` returns "No articles published yet" (245 words) while the sitemap lists dozens of live, indexed, locale-scoped articles at `/{country}/{locale}/blog/{slug}` (confirmed: `/ireland/en/blog/when-to-see-a-gp-online-vs-in-person` returns a full 4,869-word article with Article schema). The generic `/blog` aggregator isn't querying the locale-scoped content — it's an orphaned page that undersells the site's actual article inventory to any crawler or AI agent that starts there (and it's the URL listed in llms.txt).
+
+**Optimal passage length (134–167 words):** FAQ answers on the service page and article land in the 40–120 word range — good for direct Q&A snippets but slightly short of the ideal single-paragraph citation length recommended for AI Overviews/ChatGPT synthesis. Body paragraphs under H2s in the article run longer and are not chunked into standalone ~150-word blocks; they read as continuous prose, requiring the AI to do more extraction work rather than lifting a ready-made passage.
+
+## 4. Authority / E-E-A-T signals
+
+This is the strongest dimension on the site, and it's excellent for a YMYL vertical:
+
+- **Article schema with named physician authors**: `@type: Article` → `author: { @type: Physician, name: "Dr Tiago Miguel Figueira", jobTitle: "Physician", hasCredential: [IMC 523449 recognized by Irish Medical Council], memberOf: Irish Medical Council, worksFor: Global Health }`. This is textbook medical E-E-A-T structured data.
+- **Visible byline + clinical reviewer** in body text: "Written by Dr Tiago Miguel Figueira (IMC 523449), Clinical Director at Global Health" + "Clinically reviewed by Dr Ahmed Maklad" with read-time and date — exactly what Google/AI trust signals for medical content want.
+- **`datePublished` / `dateModified`** present and current (2026-07-24) on articles.
+- **Organization schema (`MedicalOrganization`)** on every page: legal name (Global Guest s.r.o.), founding date, description, and a strong `sameAs` array including **Wikidata** (`https://www.wikidata.org/wiki/Q140363271`), LinkedIn, YouTube, Instagram (per-country), TikTok, plus links to 12+ regulatory/authority bodies (Medical Council, HSE, HIQA, HPRA, RCPI, ICGP, etc.) — unusually thorough for entity grounding.
+- **FAQPage schema** on hub, service, and about pages.
+- **BreadcrumbList schema** present.
+- **MedicalClinic/MedicalBusiness** schema variants add local-service specificity.
+
+Gaps:
+- No Wikipedia article (only Wikidata entity) — Wikipedia presence is one of the highest-correlation signals for AI citation and is absent; young brand (founded 2023) makes this hard but a Wikidata item is a reasonable stepping stone if it's well-sourced.
+- Author bylines/reviewer credentials exist only on **articles**, not on the service pages themselves (service pages have FAQ schema but no visible clinician attribution on the medical claims made in body copy) — a missed opportunity since service pages carry the highest commercial-intent traffic.
+- Could not verify live third-party citation/backlink footprint (Reddit threads, directory listings, news mentions) in this pass — YouTube channel (`@GlobalHealth-y9o`) exists but activity/subscriber count wasn't confirmable via fetch; recommend a manual/DataForSEO check (`ai_opt_llm_ment_search`) for "online doctor Ireland" / "telemedicine Portugal" / "online GP consultation Ireland" query sets, since domain age (2023) means organic third-party mentions are likely still thin — this is probably the single biggest lever left (YouTube mentions carry ~0.737 correlation with AI citation, the strongest signal in the table, and it's the one channel already owned but under-leveraged on-site — no video embeds found on any page checked).
+
+## 5. Technical accessibility
+
+- All checked pages (home, Ireland hub, service page, about, blog article) are fully server-rendered — no CSR/hydration gap between raw HTML and what a browser shows. This is the best possible baseline for AI crawlers, which typically do not execute JS.
+- Sitemap present and large (1,153 URLs), correctly enumerates locale variants and the blog article URLs that the `/blog` hub itself fails to surface.
+- No SSRF/robots issues found; `Sitemap:` directive correctly declared in robots.txt.
+
+## Top 5 highest-impact fixes
+
+1. **Fix the `/blog` hub aggregator** so it lists the real locale-scoped articles instead of "No articles published yet". This is a one-line-cause, high-impact bug: it's the URL cited in `llms.txt`, and it currently tells every AI crawler that the site has zero editorial content when the opposite is true. *Effort: Low (likely a locale-filter bug in the blog index query).*
+
+2. **Add clinician byline + reviewer schema to service pages**, matching the pattern already built for blog articles (`Article.author = Physician` with `hasCredential`/`memberOf`). Service pages carry the highest-value medical claims (symptoms, treatment scope) and currently have no visible/structured clinical attribution. *Effort: Medium — reuse the existing Physician/Article schema helper from the blog pipeline.*
+
+3. **Rewrite H2s on hub/about pages from marketing statements to question form** — e.g. "Built for people who shouldn't have to wait" → "Why choose an online GP over an in-person wait?", "The doctor you book is the doctor you see" → "Will I see the same doctor every time?". Direct win for AI Overview / ChatGPT snippet matching since these engines pattern-match questions to headings. *Effort: Low, copy-only change.*
+
+4. **Chunk long-form article body paragraphs into ~140–160 word self-contained answer blocks** under each H2 (currently continuous prose). Keep the first sentence of each block as the direct answer. Apply to the article template so it propagates to all `/blog/*` posts. *Effort: Medium — content/template pattern, not code.*
+
+5. **List individual high-value blog articles in `llms.txt`** (not just the broken `/blog` hub) and add an `## Optional` section per the llms.txt convention for legal/lower-priority pages. Also route `anthropic-ai`/`CCBot` (training-only bots) to a training-block rule if the brand wants search-visibility without training-corpus inclusion — currently both are implicitly allowed via the wildcard. *Effort: Low.*
+
+## Platform-specific estimate
+
+(Estimated from technical/structural signals — no live DataForSEO/platform query run in this pass.)
+
+| Platform | Est. readiness | Rationale |
+|---|---|---|
+| Google AI Overviews | Medium-High | Strong schema + SSR + FAQPage; broken /blog hub and non-question H2s cap it |
+| ChatGPT / OAI-SearchBot | Medium | Full crawler access + llms.txt present, but llms.txt omits the strongest content (articles); young-domain trust signal is a headwind |
+| Perplexity | Medium | Full crawler access, SSR content favors it; passage chunking not yet optimal for direct lift |
+| Bing Copilot | Medium-High | Benefits most from clean schema + sitemap + SSR; less citation-count-dependent than ChatGPT |
+
+Only ~11% of domains get cited by both ChatGPT and Google AI Overviews — given the site's strong technical/schema foundation but thin third-party footprint (no Wikipedia, unverified Reddit/YouTube traction, 2023 founding), the realistic near-term win is Google AIO (schema-driven) before broad ChatGPT/Perplexity citation share.

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
+import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { PUBLIC_CONTENT_FETCH_TIMEOUT_MS } from "@/lib/content/public-content-source";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -86,8 +87,14 @@ export const getCountryTrust = cache(
     const timeout = setTimeout(() => controller.abort(), PUBLIC_CONTENT_FETCH_TIMEOUT_MS);
     try {
       const query = locale ? `?locale=${locale.toUpperCase()}` : "";
-      const res = await fetch(`${origin}/api/public/countries/${code}/trust${query}`, {
+      const path = `/api/public/countries/${code}/trust${query}`;
+      const res = await fetch(`${origin}${path}`, {
         method: "GET",
+        // Same `gh-ssr` rate-limit bucket every other server-side public read
+        // uses. Without it this lands in the shared egress-IP bucket, 429s
+        // under crawl load, and the `!res.ok → null` below silently drops the
+        // trust bar and the Organization `sameAs` schema. See lib/api/client.ts.
+        headers: serverReadAuthHeaders(path, "GET"),
         // `tags` ALONE does not cache: since Next 15 a bare `fetch` defaults to
         // no-store, so a tag with no `revalidate` only marks an entry that was
         // never written. That made this a real round-trip on every one of the

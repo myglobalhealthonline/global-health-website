@@ -1,0 +1,82 @@
+{
+  "invite": {
+    "subject": "Byli jste zaregistrováni do programu {planName}",
+    "heading": "Vaše členství je připraveno",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "Byli jste zaregistrováni do programu <strong>{planName}</strong> ({levelName}).",
+    "idLine": "Vaše členské číslo je <strong>{membershipId}</strong>.",
+    "action": "Zaregistrujte se nebo se přihlaste s touto e-mailovou adresou — <strong>{email}</strong> — a vaše výhody se zobrazí automaticky.",
+    "note": "Výhody platí pouze po přihlášení s touto adresou. Není třeba nic uplatňovat ani zadávat žádný kód.",
+    "cta": "Přihlásit se nebo zaregistrovat",
+    "signoff": "— Tým Global Health"
+  },
+  "confirmed": {
+    "subject": "Vaše členství {planName} je aktivní",
+    "heading": "Vaše členství je aktivní",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "Vaše členství <strong>{planName}</strong> ({levelName}) je nyní propojeno s tímto účtem.",
+    "idLine": "Členské číslo: <strong>{membershipId}</strong>.",
+    "action": "Členské ceny se uplatní automaticky, když si rezervujete termín přihlášeni.",
+    "cta": "Zobrazit členství",
+    "signoff": "— Tým Global Health"
+  },
+  "claim": {
+    "subject": "Potvrďte převzetí členství {planName}",
+    "heading": "Potvrďte své členství",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "Někdo přihlášený jako <strong>{requesterEmail}</strong> požádal o přidání vašeho členství <strong>{planName}</strong> ({levelName}) ke svému účtu.",
+    "idLine": "Číslo členství: <strong>{membershipId}</strong>.",
+    "action": "Pokud jste to byli vy, potvrďte to níže. Odkaz lze použít jednou a platí 24 hodin.",
+    "note": "Pokud jste to nebyli vy, tento e-mail ignorujte. Nic se nezmění a vaše členství zůstává tam, kde je.",
+    "cta": "Potvrdit převzetí",
+    "signoff": "— Tým Global Health"
+  },
+  "exhausted": {
+    "subject": "Vyčerpali jste poslední zahrnutou konzultaci",
+    "heading": "Zahrnuté konzultace jsou vyčerpané",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "V tomto období jste využili všech {allocated} konzultací zahrnutých ve vašem členství <strong>{planName}</strong> ({levelName}).",
+    "onwardsPercent": "Od teď máte na tyto konzultace <strong>slevu {fallbackPercent} %</strong>.",
+    "onwardsFixed": "Od teď vás tyto konzultace stojí <strong>{fallbackPrice}</strong>.",
+    "onwardsNone": "Od teď se tyto konzultace účtují za běžnou cenu.",
+    "action": "Nic dalšího se nemění — ostatní výhody členství platí dál a cenu vždy uvidíte před platbou.",
+    "cta": "Zobrazit členství",
+    "signoff": "— Tým Global Health"
+  },
+  "card": {
+    "labelCardholder": "Držitel karty",
+    "labelMemberId": "Členské číslo",
+    "labelValidThrough": "Platnost do",
+    "labelCoveredIn": "Platí v zemích",
+    "motto": "Medicine Anytime Anywhere",
+    "familyOf": "Rodinný člen čísla {membershipId}",
+    "valueOpenEnded": "Bez omezení",
+    "valueFrom": "Od {date}",
+    "valueEnded": "Ukončeno {date}",
+    "kindGeneral": "praktické konzultace",
+    "kindSpecialist": "odborné konzultace",
+    "benefitAllowance": "{count} zahrnutých konzultací ({subject})",
+    "benefitAllowanceShared": "{count} zahrnutých konzultací ({subject}), sdílených s hlavním členem",
+    "benefitPercent": "Sleva {percent} % na {subject}",
+    "benefitFixed": "{subject} za {price}",
+    "benefitExcluded": "{subject} nejsou zahrnuty",
+    "statusActive": "Aktivní",
+    "statusPending": "Čeká na aktivaci",
+    "statusSuspended": "Pozastaveno",
+    "statusExpired": "Vypršelo"
+  },
+  "welcome": {
+    "subject": "Vaše členská karta {planName}",
+    "heading": "Vítejte v programu {planName}",
+    "greeting": "Dobrý den, {firstName},",
+    "lead": "Vaše členství <strong>{planName}</strong> ({levelName}) je připraveno. Kartu najdete v příloze tohoto e-mailu.",
+    "idLine": "Vaše členské číslo je <strong>{membershipId}</strong>.",
+    "dependentIdLine": "Vaše členské číslo je <strong>{membershipId}</strong> v rámci rodinného členství <strong>{primaryMembershipId}</strong>.",
+    "benefitsHeading": "Co vaše členství zahrnuje",
+    "sharedNote": "Zahrnuté konzultace jsou sdílené v rámci celého rodinného členství, uvedený počet tedy platí pro celé členství, nikoli jen pro vás.",
+    "termsLine": "Toto jsou výhody platné k dnešnímu dni. Aktuální podmínky vašeho členství najdete vždy v členském portálu — před objednáním je zkontrolujte tam.",
+    "action": "Členské ceny se uplatní automaticky, pokud se objednáváte přihlášeni pod touto e-mailovou adresou.",
+    "cta": "Zobrazit členství",
+    "signoff": "— Tým Global Health"
+  }
+}

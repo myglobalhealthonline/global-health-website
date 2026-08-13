@@ -8,11 +8,16 @@
 # scratch (generated PDFs, one-off script output — never committable)
 /tmp
 
+# security scanner output (SARIF/JSON reports — regenerate, never commit)
+*.sarif
+
 # playwright e2e artifacts
 /test-results
 /playwright-report
 /blob-report
 /frontend/test-results
+# per-role authenticated sessions (real cookies) — regenerate via auth.setup.ts, never commit
+/frontend/tests/e2e/.storage
 
 # frontend
 /frontend/.next
@@ -35,6 +40,19 @@
 # out/ holds rendered previews and the send log. Never commit either.
 /backend/scripts/data/doctor-credentials.json
 /backend/scripts/out/
+
+# SÚKL communication certificates (Czech eRecept/ePoukaz mTLS) and any other
+# private-key material. Test or production, the file never belongs in git —
+# the real certificate lives outside the repo and SUKL_TEST_PFX_PATH points at
+# it. CI gitleaks catches the regression if someone force-adds one.
+/.secrets
+**/*.pfx
+**/*.p12
+**/*.key
+# Exception: throwaway self-signed keypairs used by the SÚKL cert-loader tests.
+# Disposable, generated locally, no relation to the SÚKL certificate — same
+# precedent as the committed test RS256 keypair in backend/.env.test.
+!/backend/src/lib/sukl/__fixtures__/*.p12
 
 # editor
 .vscode
@@ -81,9 +99,18 @@ docs/admin-portal-reference.html
 backups/
 
 # Session verification screenshots — large PNG dumps, never shipped
-docs/portal-implementation/screenshots/
-docs/portal-audits/doctor/screenshots/
-myglobalhealth.online-audit/screenshots/
+docs/plans/portal-implementation/screenshots/
+docs/audits/portal/doctor/screenshots/
+docs/audits/seo/site-audit-2026-07/screenshots/
+
+# Regenerable audit/QA artifacts. Re-run the tool instead of committing the
+# output: Lighthouse dumps, audit and QA screenshot sets.
+**/lighthouse/*.json
+docs/audits/service-hub-screenshots/
+frontend/docs/qa-screenshots/
 
 # Machine-translation drafts pending human review — never committed.
 backend/tmp/i18n-drafts/
+loadtest/backups/*.dump
+loadtest/config/secrets.json
+loadtest/results/

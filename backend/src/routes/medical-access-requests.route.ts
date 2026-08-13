@@ -14,14 +14,28 @@ import {
   listAllRequests,
 } from "../modules/medical-access-requests/medical-access-request.service.js";
 import { prisma } from "../db/prisma.js";
+import { resolvePatientProfileIdForAppointment } from "../utils/guard-medical-read.js";
 
 const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
   // ─── Doctor: submit a cross-country access request ────────────────────────
 
-  const createSchema = z.object({
-    patientProfileId: z.string().min(1),
-    reason: z.string().trim().min(10).max(1000),
-  });
+  // The doctor portal's "request access" flow is appointment-scoped — a
+  // denied doctor knows the appointment they were looking at, not the
+  // PatientProfile.id behind it. Accept either identifier: `appointmentId`
+  // is resolved server-side via the same helper `guardMedicalReadForAppointment`
+  // uses (never trust a client-supplied patientProfileId derived from an
+  // appointment the doctor doesn't actually own/see). Direct
+  // `patientProfileId` stays for the admin-console / future non-appointment
+  // callers of this same endpoint.
+  const createSchema = z
+    .object({
+      patientProfileId: z.string().min(1).optional(),
+      appointmentId: z.string().min(1).optional(),
+      reason: z.string().trim().min(10).max(1000),
+    })
+    .refine((d) => Boolean(d.patientProfileId) !== Boolean(d.appointmentId), {
+      message: "Provide exactly one of patientProfileId or appointmentId",
+    });
 
   app.post(
     "/api/medical-access-requests",
@@ -52,13 +66,21 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
 
+      let patientProfileId = body.data.patientProfileId ?? null;
+      if (!patientProfileId && body.data.appointmentId) {
+        patientProfileId = await resolvePatientProfileIdForAppointment(body.data.appointmentId);
+      }
+      if (!patientProfileId) {
+        return reply.status(404).send(errorResponse("Patient record not found"));
+      }
+
       try {
         const result = await createAccessRequest({
           requestingDoctorId: doctorProfile.id,
           requestingUserId: request.authUser.sub,
           requestingDoctorCountry: doctorProfile.country?.code ?? "UNKNOWN",
           requestedAccessScope: "GLOBAL_NETWORK",
-          patientProfileId: body.data.patientProfileId,
+          patientProfileId,
           reason: body.data.reason,
         });
         return reply.status(201).send(okResponse(result, "Access request submitted"));
@@ -78,6 +100,7 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(403).send(errorResponse("Patient access required"));
       }
 
+      // nosemgrep: gh-phi-route-missing-guard -- patient-self endpoint: gated above by role === "PATIENT" and scoped to the caller's own authUser.email; this file manages the guard's own request/grant inputs, not clinical content.
       const profile = await prisma.patientProfile.findUnique({
         where: { email: request.authUser.email },
         select: { id: true },

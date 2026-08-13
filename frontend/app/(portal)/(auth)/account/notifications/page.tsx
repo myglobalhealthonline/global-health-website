@@ -3,14 +3,14 @@ import { BellRing, Bell, CheckCircle2 } from "lucide-react";
 import { getServerNotifications } from "@/lib/api/me-subscription-server";
 import { PatientNotificationList } from "./_components/patient-notification-list";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const metadata: Metadata = { title: "Notifications", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function AccountNotificationsPage() {
-  const [data, locale] = await Promise.all([getServerNotifications(), getPageLocale()]);
+  const [data, locale] = await Promise.all([getServerNotifications(), getPortalLocale()]);
   const { account: a } = loadLocaleBundle(locale);
   const n = a.notificationsPage;
   const items = data?.items ?? [];

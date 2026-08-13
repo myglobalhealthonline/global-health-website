@@ -80,6 +80,10 @@ export type CommonLocale = {
     newsletterDesc: string;
     subscribe: string;
     newsletterSuccess: string;
+    /** Reassurance line under the newsletter form. */
+    newsletterPrivacy: string;
+    /** Heading above the social ribbon. */
+    followUs: string;
     disclaimer: string;
     copyrightSuffix: string;
     privacyLink: string;
@@ -108,6 +112,9 @@ export type CommonLocale = {
     viewProfile: string;
     bookAppointment: string;
     pickTime: string;
+    /** Card metadata label, e.g. "Languages" — same value as
+     *  doctorProfile.languagesLabel. */
+    languagesLabel: string;
     viewDoctors?: string;
     trustCard1Title?: string;
     trustCard1Subtitle?: string;
@@ -140,7 +147,13 @@ export type CommonLocale = {
     featuredClinician: string;
     registrationLabel: string;
     verifiedSuffix: string;
+    /** Heading above the always-crawlable full-roster link index below the
+     *  paginated carousel. "{country}" placeholder. */
+    allDoctorsHeading?: string;
   };
+  /** Localised country display names, keyed by lowercase country code.
+   *  data/countries.ts carries English names only. */
+  countryNames?: Record<string, string>;
   countrySelector: {
     title: string;
     description: string;
@@ -294,6 +307,8 @@ export type CommonLocale = {
     backToClinicians: string;
     bookWithDoctor: string;
     servicesOffered: string;
+    viewServiceDetails: string;
+    lastReviewedLabel: string;
     pickSlotWith: string;
     pickSlot: string;
     pickTimeWith: string;
@@ -330,14 +345,29 @@ export type CommonLocale = {
     fallbackBio?: string;
     fallbackQualification1?: string;
     fallbackQualification2?: string;
+    fallbackSpecialty1?: string;
+    fallbackSpecialty2?: string;
+    fallbackSpecialty3?: string;
+    /** Meta description fallbacks — "{name}", "{title}", "{country}", "{languages}". */
+    metaDescriptionTemplate?: string;
+    metaSocialDescriptionTemplate?: string;
     nextStep: string;
     patientReviews: string;
   };
   bookingForm: {
-    /** Booking-step plan benefit selector (B6). */
+    /** Benefit selector (§11.2) — the toggle, then the dropdown's own label. */
+    benefitToggleLabel: string;
     benefitHeading: string;
+    /** No benefit found on the account — precedes the claim link. */
+    benefitNoneFound: string;
+    benefitClaimCta: string;
+    benefitClaimHint: string;
+    /** Non-401 options failure. Visible, never a silently missing selector. */
+    benefitLoadError: string;
+    benefitLoadRetry: string;
     corporateOffAtCheckout: string;
-    benefitPayNormal: string;
+    /** "Uses 1 of your {count} remaining" — allowance units and plan credits. */
+    benefitScarcityNote: string;
     benefitUseCredit: string;
     benefitUseDiscount: string;
     /** Caption under the benefit selector: "{plan}" = subscriber's plan name. */
@@ -466,8 +496,11 @@ export type CommonLocale = {
     addToCart: string;
     whatCoversEyebrow: string;
     insideTitle: string;
+    markersCount: string;
     whyEyebrow: string;
     whyTitle: string;
+    howItWorksEyebrow: string;
+    beforeTestingEyebrow: string;
     ctaHeading: string;
     goodToKnow: string;
     disclaimer: string;
@@ -674,6 +707,14 @@ export type CommonLocale = {
     redirecting: string;
     paySecurely: string;
     redirectNote: string;
+    /**
+     * The €0 order (§6.5/§31). A benefit can cover a booking in full, and that
+     * order never reaches Stripe — checkout completes it and goes straight to
+     * the success page — so `redirectNote` and `paySecurely` are both untrue
+     * there.
+     */
+    zeroTotalNote: string;
+    confirmZeroTotal: string;
     orderSummary: string;
     subtotal: string;
     shipping: string;
@@ -704,13 +745,22 @@ export type CommonLocale = {
     stepDoctor: string;
     stepTime: string;
     stepDetails: string;
-    /** Insurance step — only shown for services with a bookable insurer. */
+    /**
+     * The insurance step (§11.3). Insurance and only insurance: it must be
+     * chosen before doctor/time because the insurer decides both the slot price
+     * and which doctors are bookable. Memberships, plans and corporate benefits
+     * are chosen in the booking form instead.
+     */
     stepInsurance: string;
     insuranceTitle: string;
     insuranceDesc: string;
     insuranceStandard: string;
     insuranceNone: string;
     noInsuranceDoctors: string;
+    /** Deferred-charge notice on each insurer (§33). */
+    benefitInsuranceNote: string;
+    /** "Memberships and plans are asked for later, once you've picked a time." */
+    insuranceBenefitLater: string;
     title: string;
     subtitle: string;
     bookingSteps: string;
@@ -808,6 +858,8 @@ export type CommonLocale = {
     chooseLanguage: string;
     searchLanguages: string;
     sectionNavigation: string;
+    /** aria-label on the footer's link-group <nav>. */
+    footerNavigation: string;
     sections: string;
     bookAnAppointment: string;
     patientReviews: string;
@@ -846,6 +898,9 @@ export type CommonLocale = {
     heroTitleLead?: string;
     heroTitleAccent?: string;
     heroLede?: string;
+    /** Per-country meta description. "{country}" placeholder. */
+    heroLedeCountryTemplate?: string;
+    heroTitleCountryTemplate?: string;
     heroCta?: string;
     heroSecondary?: string;
     articleSingular?: string;
@@ -853,6 +908,12 @@ export type CommonLocale = {
     loadingArticleAriaLabel?: string;
     categoryFallback?: string;
     readArticle?: string;
+    /** Heading for posts with no country assignment on the bare /blog hub. */
+    globalGroupLabel?: string;
+    /** Accessible name for the index's pagination nav, and its two controls. */
+    paginationLabel?: string;
+    paginationPrevious?: string;
+    paginationNext?: string;
   };
   /** Country-home <head> fallback title/description when no CMS override
    *  exists. "{country}" placeholder. */
@@ -871,7 +932,12 @@ export type CommonLocale = {
     trustSecureSubtitle: string;
   };
   /** Doctify reviews section lede (the eyebrow reuses a11y.patientReviews). */
-  doctify: { body: string };
+  doctify: {
+    body: string;
+    /** Doctor-facing reviews headline, split so the accent half can be styled. */
+    patientsSayHeadline?: string;
+    patientsSayAccent?: string;
+  };
   /** Shared day-agenda calendar (admin / doctor / patient portals). */
   calendar: {
     selectDay: string;
@@ -881,5 +947,20 @@ export type CommonLocale = {
   reports: {
     noRowsInRange: string;
     truncatedNotice: string;
+  };
+  /** LinkCallout variant labels (internal-linking spec). eyebrowSpecialist
+   *  above (serviceDetailPage) covers the UPGRADE variant. */
+  linkCallout: {
+    entry: string;
+    referral: string;
+    complementary: string;
+  };
+  /** /{country}/{lang}/health/{slug} landing pages. */
+  healthPage: {
+    seeAllLanguageDoctors: string;
+  };
+  /** Cross-silo "also available in <language>" link row (SEO audit 3.7). */
+  alsoAvailableIn: {
+    title: string;
   };
 };

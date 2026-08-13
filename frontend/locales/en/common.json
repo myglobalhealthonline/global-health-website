@@ -63,7 +63,7 @@
     "cta": "Start Your Online Consultation",
     "trustLine": "Licensed care · Privacy-first · Europe-wide clinics",
     "careHeading": "Care",
-    "clinicsHeading": "Clinics",
+    "clinicsHeading": "Clinics / Countries",
     "accountHeading": "Account",
     "companyHeading": "Company",
     "ourDoctors": "Our doctors",
@@ -74,10 +74,12 @@
     "privacyPolicy": "Privacy policy",
     "termsOfService": "Terms of service",
     "tagline": "Medicine anytime anywhere. Online medical consultations with locally-registered doctors in the markets where we operate.",
-    "stayInformed": "Stay informed",
+    "stayInformed": "Stay informed. Stay healthy.",
     "newsletterDesc": "Monthly health updates on new countries, doctors, and health topics. No spam.",
     "subscribe": "Subscribe",
     "newsletterSuccess": "Thanks — you're on the list.",
+    "newsletterPrivacy": "We respect your privacy. Unsubscribe anytime.",
+    "followUs": "Follow us",
     "disclaimer": "Online consultations are not a substitute for emergency care. If you need urgent help, call 112 or your local emergency number. Information on this website is general guidance; prescriptions, certificates, referrals and next steps depend on clinical assessment and are issued at the treating clinician's discretion.",
     "copyrightSuffix": "Medicine anytime anywhere",
     "privacyLink": "Privacy",
@@ -89,6 +91,14 @@
     "title": "Choose your country",
     "description": "Access your local clinic hub, team profiles, and consultations.",
     "enterClinic": "Enter clinic"
+  },
+  "countryNames": {
+    "ie": "Ireland",
+    "cz": "Czechia",
+    "pt": "Portugal",
+    "es": "Spain",
+    "ro": "Romania",
+    "br": "Brazil"
   },
   "entryGate": {
     "eyebrow": "Online Medical Clinic",
@@ -145,6 +155,7 @@
     "viewProfile": "View profile",
     "bookAppointment": "Book Consultation",
     "pickTime": "Pick a time",
+    "languagesLabel": "Languages",
     "bookWithTemplate": "Book with {name}",
     "viewDoctors": "View Doctors",
     "trustCard1Title": "Licensed in {country}",
@@ -168,7 +179,8 @@
     "showResults": "Show results",
     "featuredClinician": "Featured clinician",
     "registrationLabel": "Registration",
-    "verifiedSuffix": "Verified"
+    "verifiedSuffix": "Verified",
+    "allDoctorsHeading": "All doctors in {country}"
   },
   "cookie": {
     "title": "Cookie preferences",
@@ -185,7 +197,7 @@
     "marketingTitle": "Advertising",
     "marketingBody": "Meta Pixel — tells us which adverts bring patients to us.",
     "thirdPartyTitle": "Third-party content",
-    "thirdPartyBody": "Doctify patient-review widgets, embedded from doctify.com.",
+    "thirdPartyBody": "Doctify patient-review widgets (doctify.com) and the ElevenLabs voice assistant (elevenlabs.io) — the assistant uses your microphone only while you are talking to it.",
     "analyticsTitle": "Analytics — anonymous usage statistics",
     "analyticsBody": "Google Analytics and Microsoft Clarity (session replay) — show us which pages are useful and where the site is confusing. Page addresses are stripped of anything that could identify you, and neither runs on booking, cart, checkout, upload or verification pages.",
     "settingsLink": "Cookie settings",
@@ -229,8 +241,8 @@
       "feature3Subtitle": "Book appointments that suit you, including same-day slots.",
       "stat1Title": "Registered in {country}",
       "stat1Subtitle": "All GPs are registered to practise in {country}.",
-      "stat2Title": "45,000 consultations in 2025",
-      "stat2Subtitle": "Reviewed on Doctify.",
+      "stat2Title": "{count}+ consultations",
+      "stat2Subtitle": "Completed across our clinician network.",
       "stat3Title": "Trusted care",
       "stat3Subtitle": "Join patients across {country}."
     }
@@ -257,8 +269,8 @@
       "feature3Subtitle": "Private, confidential, and easy to book.",
       "stat1Title": "Registered in {country}",
       "stat1Subtitle": "All specialists are registered to practise in {country}.",
-      "stat2Title": "45,000 consultations in 2025",
-      "stat2Subtitle": "Reviewed on Doctify.",
+      "stat2Title": "{count}+ consultations",
+      "stat2Subtitle": "Completed across our clinician network.",
       "stat3Title": "Trusted care",
       "stat3Subtitle": "Join patients across {country}."
     }
@@ -285,6 +297,8 @@
     "backToClinicians": "Back to {country} clinicians",
     "bookWithDoctor": "Book with {name}",
     "servicesOffered": "Services offered",
+    "viewServiceDetails": "View service details",
+    "lastReviewedLabel": "Last reviewed",
     "pickSlotWith": "Pick a service to see open slots with {name}.",
     "pickSlot": "Pick a slot",
     "pickTimeWith": "Pick a time with {name}",
@@ -321,13 +335,24 @@
     "fallbackBio": "This clinician supports online consultations and follow-up guidance through Global Health.",
     "fallbackQualification1": "Qualifications and registration details are shown when verified by the clinic team.",
     "fallbackQualification2": "Patients can confirm clinician fit during the booking intake.",
+    "fallbackSpecialty1": "General consultation",
+    "fallbackSpecialty2": "Specialist referral guidance",
+    "fallbackSpecialty3": "Follow-up support",
+    "metaDescriptionTemplate": "Book an online consultation with {name}, {title} in {country}. Languages: {languages}.",
+    "metaSocialDescriptionTemplate": "Meet {name}, {title} serving patients in {country}. View credentials, languages and appointment options.",
     "nextStep": "Next step",
     "patientReviews": "Patient reviews"
   },
   "bookingForm": {
-    "benefitHeading": "Apply your plan",
+    "benefitToggleLabel": "I have a membership, insurance or plan",
+    "benefitHeading": "Which one should we apply?",
+    "benefitNoneFound": "We couldn't find a membership, plan or insurance on your account.",
+    "benefitClaimCta": "Link a membership to your account",
+    "benefitClaimHint": "— it applies to your booking once you confirm it by email.",
+    "benefitLoadError": "We couldn't load your benefits.",
+    "benefitLoadRetry": "Try again",
     "corporateOffAtCheckout": "off at checkout",
-    "benefitPayNormal": "Pay normally",
+    "benefitScarcityNote": "Uses 1 of your {count} remaining.",
     "benefitUseCredit": "Use plan credit",
     "benefitUseDiscount": "Use plan discount",
     "benefitExplainer": "Your {plan} plan applies to this consultation — the best price is preselected. You can change it.",
@@ -427,7 +452,7 @@
       "feature3Subtitle": "Our doctors are registered to practise in {country}.",
       "stat1Title": "Home blood test kits",
       "stat1Subtitle": "Clinical-grade kits delivered to your door.",
-      "stat2Title": "45,000 consultations in 2025",
+      "stat2Title": "{count}+ consultations",
       "stat2Subtitle": "Your results are sent to you securely and privately.",
       "stat3Title": "Secure and private",
       "stat3Subtitle": "Your health information is handled confidentially."
@@ -456,7 +481,10 @@
     "ctaHeading": "Order your {title} today",
     "goodToKnow": "Good to know",
     "disclaimer": "Test results are reviewed by a doctor registered to practise in {country}. This page is general information and is not a substitute for professional medical advice, diagnosis or treatment.",
-    "faqTitle": "Frequently asked questions"
+    "faqTitle": "Frequently asked questions",
+    "markersCount": "{count} markers",
+    "howItWorksEyebrow": "How it works",
+    "beforeTestingEyebrow": "Before you test"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Doctors handling repeat prescriptions",
@@ -654,6 +682,8 @@
     "redirecting": "Redirecting to Stripe…",
     "paySecurely": "Pay {amount} securely",
     "redirectNote": "You will be redirected to Stripe to complete payment. We never store your card details.",
+    "zeroTotalNote": "No payment is needed — your benefits cover this booking in full. Confirming completes it, and no card details are taken.",
+    "confirmZeroTotal": "Confirm booking — nothing to pay",
     "orderSummary": "Order summary",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
@@ -689,6 +719,8 @@
     "insuranceStandard": "Pay the standard price",
     "insuranceNone": "No insurance",
     "noInsuranceDoctors": "No doctor takes {insurer} for this service right now. You can book at the standard price instead.",
+    "insuranceBenefitLater": "Using a membership or a plan instead? We'll ask once you've picked your time.",
+    "benefitInsuranceNote": "We verify your cover after booking. You are not charged now.",
     "title": "Book your consultation",
     "subtitle": "{country} medical clinic. Choose a service, clinician, time, and patient details.",
     "bookingSteps": "Booking steps",
@@ -786,6 +818,7 @@
     "chooseLanguage": "Choose language",
     "searchLanguages": "Search languages…",
     "sectionNavigation": "Section navigation",
+    "footerNavigation": "Footer navigation",
     "sections": "Sections",
     "bookAnAppointment": "Book an appointment",
     "patientReviews": "Patient reviews",
@@ -831,13 +864,19 @@
     "heroTitleLead": "Health Guides from",
     "heroTitleAccent": "Registered Doctors.",
     "heroLede": "Evidence-based guides written and reviewed by our medical team. No ads, no fluff.",
+    "heroLedeCountryTemplate": "Evidence-based health guides for {country}, written and reviewed by our medical team. No ads, no fluff.",
     "heroCta": "Browse articles",
     "heroSecondary": "Back to home",
     "articleSingular": "article",
     "articlePlural": "articles",
     "loadingArticleAriaLabel": "Loading article…",
     "categoryFallback": "Health guide",
-    "readArticle": "Read article"
+    "readArticle": "Read article",
+    "heroTitleCountryTemplate": "{title} in {country}",
+    "globalGroupLabel": "Global",
+    "paginationLabel": "Pagination",
+    "paginationPrevious": "Previous",
+    "paginationNext": "Next"
   },
   "calendar": {
     "selectDay": "Select a day",
@@ -848,6 +887,19 @@
     "truncatedNotice": "List truncated at the export row limit — narrow the date range or filters for a complete pull."
   },
   "doctify": {
-    "body": "Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+    "body": "Independent, verified reviews collected by Doctify from patients treated by our clinicians.",
+    "patientsSayHeadline": "What patients say about",
+    "patientsSayAccent": "our doctors"
+  },
+  "linkCallout": {
+    "entry": "Start here",
+    "referral": "Next step",
+    "complementary": "Related care"
+  },
+  "healthPage": {
+    "seeAllLanguageDoctors": "See all {language}-speaking doctors"
+  },
+  "alsoAvailableIn": {
+    "title": "Also available in"
   }
 }

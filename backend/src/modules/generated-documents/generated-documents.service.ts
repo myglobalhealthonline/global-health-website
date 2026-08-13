@@ -41,6 +41,14 @@ const TITLES: Record<GeneratedDocumentType, string> = {
   CUSTOM_CERTIFICATE: "Medical certificate",
 };
 
+/** IE-only: shown on exams/examination-request documents (Healthmail/Healthlink, no post). */
+const IE_REFERRAL_NOTICE =
+  "Please note: We do not accept clinical correspondence, reports or patient results by post. Please send all correspondence and results via Healthmail, Healthlink, or by using the QR code provided on this referral/request.";
+
+/** IE-only: shown on every prescription (patient ID verification / pharmacy dispensing criteria). */
+const IE_CONTROLLED_MEDICATION_NOTICE =
+  "Controlled medication: subject to patient ID verification and the pharmacy's dispensing criteria, including review of previously dispensed medications.";
+
 /** Serialize generate per appointment + type (LibreOffice can take 10–15s). */
 const generateMutexByKey = new Map<string, { tail: Promise<void> }>();
 
@@ -110,6 +118,7 @@ function buildTemplateContext(input: {
     pt: "A Global Health é uma marca comercial da Global Guest s.r.o., entidade prestadora de cuidados de saúde registada na Entidade Reguladora da Saúde (ERS) sob o número 179287.",
   };
   const countryLegalText = COUNTRY_LEGAL_TEXT[input.appt.countryCode?.toLowerCase() ?? ""] ?? "";
+  const isIreland = (input.appt.countryCode ?? "").toLowerCase() === "ie";
 
   const base: Record<string, unknown> = {
     title: input.title,
@@ -129,6 +138,7 @@ function buildTemplateContext(input: {
 
   if (input.documentType === "EXAMS_PRESCRIPTION") {
     base.examsNotes = formatExamsNotes(f.exams, f.notes);
+    if (isIreland) base.ieReferralNotice = IE_REFERRAL_NOTICE;
   }
 
   if (input.documentType === "ABSENCE_CERTIFICATE") {
@@ -143,6 +153,7 @@ function buildTemplateContext(input: {
       if (f[key]?.trim()) base[key] = f[key].trim();
     }
     if (f.pharmacy?.trim()) base.pharmacy = f.pharmacy.trim();
+    if (isIreland) base.ieControlledNotice = IE_CONTROLLED_MEDICATION_NOTICE;
   }
 
   if (input.documentType === "OTHER") {
@@ -921,5 +932,92 @@ export async function finalizeGeneratedDocument(doctorId: string, documentId: st
     where: { id: doc.id },
     data: { sentToPatient: true },
   });
+  // If this prescription belongs to a cross-border async consultation, finalising
+  // it is the "prescription issued" moment: complete the request + notify the
+  // patient (sent to pharmacy) and the requesting doctor. Best-effort + idempotent;
+  // dynamically imported to avoid a module cycle. Never blocks the finalise.
+  try {
+    const { onCrossBorderRxPrescriptionFinalised } = await import(
+      "../cross-border-rx/cross-border-rx.service.js"
+    );
+    await onCrossBorderRxPrescriptionFinalised(doc.appointmentId);
+  } catch {
+    // A non-cross-border prescription (the common case) or a notify hiccup must
+    // never fail the finalise itself.
+  }
   return { ok: true as const };
+}
+
+const MEMED_DOC_TYPE_FILENAME: Record<GeneratedDocumentType, string> = {
+  EXAMS_PRESCRIPTION: "exam-prescription",
+  PRESCRIPTION: "medicine-prescription",
+  ABSENCE_CERTIFICATE: "absence-certificate",
+  OTHER: "document",
+  CUSTOM_CERTIFICATE: "certificate",
+};
+
+export class MemedDocumentAlreadyRecordedError extends Error {
+  constructor() {
+    super("This Memed document has already been recorded");
+    this.name = "MemedDocumentAlreadyRecordedError";
+  }
+}
+
+/**
+ * Record a document a BR doctor issued through the Memed e-prescription
+ * widget (see modules/memed/prescription-widget.service.ts). Memed already
+ * signed and hosts the original — we mirror the PDF into our own object
+ * storage so the existing download/email/WhatsApp-send paths
+ * (getGeneratedDocumentFile, sendGeneratedDocuments) work unchanged, and
+ * keep memedDocumentId/memedUrl as the record of where the legally-signed
+ * original lives.
+ */
+export async function createMemedIssuedDocument(input: {
+  appointmentId: string;
+  doctorId: string;
+  documentType: GeneratedDocumentType;
+  memedDocumentId: string;
+  memedUrl: string;
+}): Promise<GeneratedDocument | null> {
+  const appt = await prisma.appointment.findFirst({
+    where: { id: input.appointmentId, doctorId: input.doctorId },
+    select: { id: true, fullName: true, email: true },
+  });
+  if (!appt) return null;
+
+  const existing = await prisma.generatedDocument.findUnique({
+    where: { memedDocumentId: input.memedDocumentId },
+  });
+  if (existing) throw new MemedDocumentAlreadyRecordedError();
+
+  const res = await fetch(input.memedUrl, { signal: AbortSignal.timeout(20_000) });
+  if (!res.ok) throw new Error(`Could not fetch signed document from Memed (${res.status})`);
+  const pdfBuffer = Buffer.from(await res.arrayBuffer());
+  if (!pdfBuffer.length) throw new Error("Memed document download was empty");
+
+  const patientSlug =
+    appt.fullName
+      .replace(/[^a-zA-Z0-9\s]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .slice(0, 40) || "patient";
+  const docTypeLabel = MEMED_DOC_TYPE_FILENAME[input.documentType] ?? input.documentType.toLowerCase();
+  const fileName = `${patientSlug}-${docTypeLabel}-memed.pdf`;
+  const storageKey = `generated/${input.doctorId}/${appt.id}/${randomUUID()}/${fileName}`;
+
+  await putObject(storageKey, pdfBuffer, "application/pdf");
+
+  return prisma.generatedDocument.create({
+    data: {
+      appointmentId: appt.id,
+      doctorId: input.doctorId,
+      patientEmail: appt.email,
+      documentType: input.documentType,
+      fileName,
+      storageKey,
+      memedDocumentId: input.memedDocumentId,
+      memedUrl: input.memedUrl,
+      metadata: { source: "memed" },
+    },
+  });
 }

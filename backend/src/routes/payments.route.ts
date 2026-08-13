@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
-import { OrderStatus, PaymentStatus } from "@prisma/client";
+import { OrderStatus, PaymentStatus, PrePaymentFlow } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 import {
@@ -23,9 +23,13 @@ import {
   releaseRedemption,
 } from "../modules/subscriptions/redemption.service.js";
 import { releaseOrderCreditReservations } from "../modules/subscriptions/checkout-pricing.service.js";
+import { releaseOrderMembershipAllowance } from "../modules/memberships/membership-allowance.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
-import { sendPrePaymentCancelledNotifications } from "../modules/automation/pre-payment-flow.service.js";
+import {
+  sendPrePaymentCancelledNotifications,
+  sendWebCheckoutCancelNotifications,
+} from "../modules/automation/pre-payment-flow.service.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
@@ -522,17 +526,37 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                 await releaseOrderCreditReservations(orderId).catch((err) => {
                   app.log.error({ err, orderId }, "Release order credit reservations failed");
                 });
+                // Same for membership allowance units (§7): spent at checkout,
+                // and this abandoned-order path is one of the two crons that
+                // hand them back when the payment never arrives.
+                await releaseOrderMembershipAllowance(orderId).catch((err) => {
+                  app.log.error({ err, orderId }, "Release membership allowance failed");
+                });
                 // Cancel the consultation appointment(s) — release BOOKED slots
                 // + drop the events off the admin/doctor calendars.
                 await cancelOrderAppointments(orderId).catch((err) => {
                   app.log.error({ err, orderId }, "Cancel appointments on session expiry failed");
                 });
-                // Notify the patient (+ doctor) that the unpaid reservation was
-                // cancelled — the SAME cancelled message the deadline sweep sends,
-                // so a silent session-expiry cancel never happens again.
-                await sendPrePaymentCancelledNotifications(orderId).catch((err) => {
-                  app.log.error({ err, orderId }, "Cancelled notification on session expiry failed");
-                });
+                if (order.prePaymentFlow === PrePaymentFlow.WEB_CHECKOUT) {
+                  // Website checkout: the patient was already told at T-10min
+                  // that the slot would be released, and the doctor was never
+                  // told the booking existed. Only the admin alert (plus the
+                  // abandonment message itself, if the nudge never ran) — same
+                  // rule the cancel sweep applies.
+                  await sendWebCheckoutCancelNotifications(
+                    orderId,
+                    order.prePaymentReminderStage,
+                  ).catch((err) => {
+                    app.log.error({ err, orderId }, "Web-checkout abandon notification failed");
+                  });
+                } else {
+                  // Notify the patient (+ doctor) that the unpaid reservation was
+                  // cancelled — the SAME cancelled message the deadline sweep sends,
+                  // so a silent session-expiry cancel never happens again.
+                  await sendPrePaymentCancelledNotifications(orderId).catch((err) => {
+                    app.log.error({ err, orderId }, "Cancelled notification on session expiry failed");
+                  });
+                }
               }
             }
             return okResponse({ received: true });

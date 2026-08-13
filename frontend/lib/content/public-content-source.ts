@@ -1,4 +1,4 @@
-import { hasPublicApiBaseUrl } from "@/lib/api/client";
+import { hasPublicApiBaseUrl, isTransientStatus, type ApiResult } from "@/lib/api/client";
 
 /**
  * Next sets `NEXT_PHASE=phase-production-build` for the whole `next build`
@@ -21,6 +21,89 @@ const IS_BUILD = process.env.NEXT_PHASE === "phase-production-build";
 export const PUBLIC_CONTENT_FETCH_TIMEOUT_MS = IS_BUILD
   ? Number(process.env.PUBLIC_CONTENT_BUILD_TIMEOUT_MS) || 30_000
   : 4000;
+
+/**
+ * A public content read that could not be COMPLETED: timeout, network error,
+ * 429, backend 5xx, or a 200 whose payload is missing the record it promised.
+ * None of those confirm that the content is absent.
+ *
+ * Single-resource pages throw this instead of falling through to
+ * `notFound()`. An uncaught error in a server component is a 5xx, which tells
+ * a crawler "come back" — a 404 tells it the URL is gone and gets it dropped
+ * from the index. Before this, an 8-concurrent cold crawl of the sitemap hard
+ * -404'd 216 of 1,724 valid URLs purely on backend timeouts (SEO audit
+ * 2026-08-07); the same URLs returned 200 when requested sequentially.
+ *
+ * Next.js has no supported way to set a 503 from a page route, so this
+ * surfaces as a 500. That is the point: temporary, retryable, not "gone".
+ */
+export class PublicContentUnavailableError extends Error {
+  constructor(entity: string, detail: string) {
+    super(`[public-content] ${entity}: ${detail} — upstream unavailable, refusing to render 404`);
+    this.name = "PublicContentUnavailableError";
+  }
+}
+
+/**
+ * A deterministic 4xx from the backend that is NOT a 404: 400 "invalid slug",
+ * 401, 403, 409, 422. Retrying cannot change it, but it is not an answer about
+ * whether the content exists either — it almost always means the frontend and
+ * the backend disagree about the request contract.
+ *
+ * So it must never become a 404. Rendering "this page does not exist" off a
+ * contract bug both hides the defect and tells Google to drop a URL whose
+ * content is sitting in the database, unharmed.
+ */
+export class PublicContentRequestError extends Error {
+  constructor(entity: string, status: number, detail: string) {
+    super(
+      `[public-content] ${entity}: backend rejected the request with HTTP ${status} (${detail}) — ` +
+        `not a 404, refusing to render one`,
+    );
+    this.name = "PublicContentRequestError";
+  }
+}
+
+/**
+ * Classifies a failed single-resource read.
+ *
+ *   404                        NOT_FOUND — returns normally, so the caller
+ *                              returns null and the route may 404. This is the
+ *                              ONLY status allowed to reach `notFound()`.
+ *   429 / 5xx / no status      TEMPORARY_FAILURE — throws
+ *                              `PublicContentUnavailableError`. (`apiRequest`
+ *                              reports timeouts, aborts and socket errors with
+ *                              no `status` at all.)
+ *   any other 4xx              UPSTREAM_CLIENT_ERROR — throws
+ *                              `PublicContentRequestError`. No retry (it is
+ *                              deterministic), no null, no 404.
+ *
+ * Exception: with NO backend configured there is nothing to be unavailable —
+ * that is the CI compile-smoke build and local dev without an API. Keep the
+ * historical null/404 there rather than turning every page into a 500.
+ */
+export function assertAbsenceConfirmed(entity: string, res: ApiResult<unknown>): void {
+  if (res.ok || !hasPublicApiBaseUrl()) return;
+  if (res.status === 404) return;
+  if (res.status !== undefined && !isTransientStatus(res.status)) {
+    throw new PublicContentRequestError(entity, res.status, res.message);
+  }
+  throw new PublicContentUnavailableError(
+    entity,
+    res.status !== undefined ? `HTTP ${res.status}` : res.message,
+  );
+}
+
+/**
+ * The 200-with-no-record case: the backend answered, but the envelope has no
+ * usable row. Absence is NOT confirmed (a real absence is a 404 from all three
+ * detail routes — services.route.ts, health-tests.route.ts,
+ * public-seo-landing.route.ts), so this is a truncated/garbled response, not a
+ * missing page.
+ */
+export function missingRecordOn200(entity: string): never {
+  throw new PublicContentUnavailableError(entity, "backend returned 200 with no usable record");
+}
 
 /**
  * Surfaces a degraded content read.

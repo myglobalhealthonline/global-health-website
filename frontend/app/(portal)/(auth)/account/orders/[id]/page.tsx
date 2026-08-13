@@ -8,9 +8,10 @@ import { AdminCard, AdminSummaryStrip, PageHeader, Pill, SectionHeader } from "@
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { statusTone } from "@/lib/format-order-status";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,7 @@ function paymentHint(
 }
 
 export default async function AccountOrderDetailPage({ params }: Props) {
-  const [{ id }, locale] = await Promise.all([params, getPageLocale()]);
+  const [{ id }, locale] = await Promise.all([params, getPortalLocale()]);
   const res = await fetchAccountOrder(id);
   if (!res.ok) notFound();
   const order = res.data;
@@ -50,6 +51,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
 
   return (
     <div className="gh-patient-page gh-patient-order-detail-page">
+      <SetCrumbTitle label={`#${formatOrderDisplayId(order)}`} />
       <Link
         href="/account/orders"
         className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--portal-muted)] hover:text-[var(--portal-text)]"

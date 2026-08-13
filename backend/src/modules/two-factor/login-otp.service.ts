@@ -2,7 +2,7 @@ import { createHash, createHmac, randomBytes, randomInt, timingSafeEqual } from 
 import { prisma } from "../../db/prisma.js";
 
 /**
- * Task 4 (docs/security/phi-access-recovery-plan-2026-07-17.md): email-OTP —
+ * Task 4 (docs/plans/security/phi-access-recovery-plan-2026-07-17.md): email-OTP —
  * the "easy" second factor for REQUIRE_2FA_FOR_ROLES accounts that never
  * enrolled TOTP — plus the 30-day "trusted device" cookie that lets either
  * method skip re-challenging on a known browser.

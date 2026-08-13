@@ -1,5 +1,5 @@
 import type { CountryCode } from "@/data/countries";
-import { fetchDoctors, fetchDoctorsCount } from "@/lib/api/site-content-api";
+import { fetchDoctors, fetchDoctorsByCountry, fetchDoctorsCount } from "@/lib/api/site-content-api";
 import { cache } from "react";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { isKnownCountryCode } from "@/lib/content/merge-public-content";
@@ -63,6 +63,9 @@ export type PublicDoctorRecord = {
   editorialChecklist?: Record<string, unknown>;
   /** ISO timestamp string, when the backend row includes one (Prisma @updatedAt). */
   updatedAt?: string;
+  /** Admin-set clinical review date (E-E-A-T "Last reviewed" byline).
+   *  Absent until an admin sets it — never auto-populated. */
+  lastReviewedAt?: string;
 };
 
 function readCountry(row: unknown): { code: CountryCode; name: string; teamPath: string } | undefined {
@@ -220,6 +223,7 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
       ? (r.editorialChecklist as Record<string, unknown>)
       : undefined;
   const updatedAt = typeof r.updatedAt === "string" ? r.updatedAt : undefined;
+  const lastReviewedAt = typeof r.lastReviewedAt === "string" ? r.lastReviewedAt : undefined;
 
   return {
     id,
@@ -252,6 +256,7 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
     profileImageZoom: profileImage?.zoom ?? 1,
     ...(editorialChecklist ? { editorialChecklist } : {}),
     ...(updatedAt ? { updatedAt } : {}),
+    ...(lastReviewedAt ? { lastReviewedAt } : {}),
   };
 }
 
@@ -263,6 +268,40 @@ export const getPublicDoctorsNormalized = cache(
       return [];
     }
 
+    const out: PublicDoctorRecord[] = [];
+    for (const row of res.data) {
+      const n = normalizePublicDoctorRecord(row);
+      if (n) out.push(n);
+    }
+    return out;
+  },
+);
+
+/**
+ * A market's roster, normalized — the SAME representation the doctor profile
+ * page resolves from (`/api/countries/{code}/doctors`, which is the list form
+ * of the by-slug endpoint `resolveDoctorProfilePageData` uses).
+ *
+ * Use this, never `getPublicDoctorsNormalized`, whenever publication or
+ * indexability is being decided. The global `/api/doctors` roster is built by
+ * `listDoctors`, which does NOT include the `additionalCountries` join, so the
+ * per-market registration fields (`imcRegistration`, resolved from
+ * `DoctorCountry.registrationNumber`) are absent from every row — which made
+ * `validatePublicDoctorRecord` fail the "credentials" rule for 14 live,
+ * self-canonical Ireland doctors and drop them from the sitemap.
+ *
+ * NOTE: `record.countryCode` is the doctor's PRIMARY country, not the market
+ * queried here — a doctor rostered into this market via an active
+ * `DoctorCountry` row keeps their own primary code. Build URLs from the country
+ * you asked for, not from the record.
+ */
+export const getPublicDoctorsForMarket = cache(
+  async (countryCode: string, locale?: string): Promise<PublicDoctorRecord[]> => {
+    const res = await fetchDoctorsByCountry(countryCode, locale);
+    if (!res.ok) {
+      logPublicContentFallback(`country-doctors:${countryCode}`, res.message);
+      return [];
+    }
     const out: PublicDoctorRecord[] = [];
     for (const row of res.data) {
       const n = normalizePublicDoctorRecord(row);

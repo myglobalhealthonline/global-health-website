@@ -13,6 +13,7 @@ import { ManagedImageField } from "../../../_components/managed-image-field";
 import { SpecialtyTranslationTabs } from "../../_components/specialty-translation-tabs";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 import { displayNameFrom } from "@/lib/admin/display-name";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -110,6 +111,7 @@ export default async function AdminSpecialtyEditPage({
 
   return (
     <>
+      <SetCrumbTitle label={displayNameFrom(s.name, s.translations)} />
       <Link
         href="/admin/specialties"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

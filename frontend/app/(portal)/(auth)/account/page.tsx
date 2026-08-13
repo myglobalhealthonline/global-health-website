@@ -17,7 +17,7 @@ import { fetchAccountAppointments, fetchTrustpilotReminder, fetchAccountGhn } fr
 import { fetchAccountPayments } from "@/lib/api/account-payments-api";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { getServerAuthUser } from "@/lib/api/server-auth";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import {
   AdminCard,
@@ -48,7 +48,7 @@ export default async function AccountOverviewPage() {
     fetchAccountAppointments(),
     fetchAccountPayments(),
     resolveBookConsultationHref(),
-    getPageLocale(),
+    getPortalLocale(),
     fetchTrustpilotReminder(),
     fetchAccountGhn(),
   ]);
@@ -355,8 +355,8 @@ export default async function AccountOverviewPage() {
         </div>
       ) : null}
 
-      {/* ── Membership section: plan card only (owner request — everything
-          else, credits/wellness/perks/ledger, lives on /account/membership).
+      {/* ── Plan section: plan card only (owner request — everything
+          else, credits/wellness/perks/ledger, lives on /account/plans).
           Renders nothing for non-subscribers. ── */}
       <SubscriptionDashboard locale={locale} variant="compact" />
 

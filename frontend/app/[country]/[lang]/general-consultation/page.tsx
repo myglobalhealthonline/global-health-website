@@ -4,7 +4,7 @@ import Image from "next/image";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { ServiceHero } from "@/components/sections/ServiceHero";
-import { MessageCircle, ShieldCheck, Clock, Star, Lock } from "lucide-react";
+import { MessageCircle, ShieldCheck, Clock, Users, Lock } from "lucide-react";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { DoctorSharePageLink, DOCTOR_SHARE_PAGES } from "@/components/sections/DoctorSharePageLink";
@@ -49,6 +49,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 
 type Params = { country: string; lang: string };
 
@@ -114,12 +115,21 @@ export default async function CountryLangGeneralConsultationPage({
   if (!isCountryFeatureEnabled(overlay, "general-consultations")) notFound();
   // Independent of each other (and of `overlay`, already resolved above) —
   // started together instead of awaited one after another.
-  const [{ record: rawPage, disabled: pageDisabled }, services, doctors] =
+  const [{ record: rawPage, disabled: pageDisabled }, services, doctors, consultationCountResult] =
     await Promise.all([
       getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale),
       getCountryServices(code, "GENERAL", lang),
       getCountryDoctors(code, lang),
+      fetchGlobalConsultationCount(),
     ]);
+  // TRUST-METRIC-001: historical base + live completed-appointment count,
+  // formatted in the page's own locale. Falls back to the historical base
+  // alone (still a true, verified figure) if the backend read fails —
+  // never blocks the page or shows a stale hardcoded number.
+  const consultationCount = consultationCountResult.ok
+    ? consultationCountResult.data.total
+    : 45_000;
+  const consultationCountLabel = consultationCount.toLocaleString(lang);
 
   // Structured PageContent self-gates via publish status + per-section
   // toggles (the `disabled` flag already covers unpublished/inactive), so the
@@ -195,9 +205,9 @@ export default async function CountryLangGeneralConsultationPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Online GP consultation", url: `/${slug}/${lang}/gp-consultation-online` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+          { name: c.navigation.generalConsultation, url: `/${slug}/${lang}/gp-consultation-online` },
         ])}
       />
       <JsonLd
@@ -285,8 +295,8 @@ export default async function CountryLangGeneralConsultationPage({
             subtitle: gp.hero.stat1Subtitle.replace("{country}", config.name),
           },
           {
-            icon: <Star className="size-5" strokeWidth={2} aria-hidden />,
-            title: gp.hero.stat2Title.replace("{country}", config.name),
+            icon: <Users className="size-5" strokeWidth={2} aria-hidden />,
+            title: gp.hero.stat2Title.replace("{count}", consultationCountLabel),
             subtitle: gp.hero.stat2Subtitle.replace("{country}", config.name),
           },
           {

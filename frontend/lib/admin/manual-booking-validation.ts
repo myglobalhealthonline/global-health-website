@@ -114,3 +114,56 @@ export function parseDiscountPercent(
   }
   return { value: n === 0 ? null : n, error: null };
 }
+
+export type MembershipSelection = {
+  enrollmentId?: string | null;
+  override?: { benefitId: string; reason: string } | null;
+} | null;
+
+/**
+ * Parse the manual-booking form's benefit fields into the payload's
+ * `membership` object (§11.7).
+ *
+ * Returned as a discriminated pair, exactly like `parseDiscountPercent`, and
+ * for the same reason: a malformed benefit must stop the booking rather than
+ * fall through to the full price. An admin who picked a €0 allowance and
+ * quoted it down the phone should not discover the patient was charged €60
+ * because a field was dropped.
+ *
+ * The override's reason is required HERE as well as in the backend schema.
+ * Both matter: this one produces the message the admin reads, and the backend's
+ * is what a crafted request meets.
+ */
+export function parseMembershipSelection(input: {
+  enrollmentId?: string | null;
+  overrideBenefitId?: string | null;
+  overrideReason?: string | null;
+}): { value: MembershipSelection; error: string | null } {
+  const enrollmentId = (input.enrollmentId ?? "").trim();
+  const benefitId = (input.overrideBenefitId ?? "").trim();
+  const reason = (input.overrideReason ?? "").trim();
+
+  if (enrollmentId && benefitId) {
+    return {
+      value: null,
+      error: "Choose either the patient's own membership or a goodwill override, not both.",
+    };
+  }
+  if (benefitId) {
+    if (reason.length < 5) {
+      return {
+        value: null,
+        error: "A goodwill override needs a written reason of at least 5 characters.",
+      };
+    }
+    return { value: { override: { benefitId, reason } }, error: null };
+  }
+  // A reason typed without a benefit picked is a half-filled override, not a
+  // plain booking: silently dropping it would charge the full price under a
+  // form that looks like it granted something.
+  if (reason) {
+    return { value: null, error: "Pick the benefit the override should apply." };
+  }
+  if (enrollmentId) return { value: { enrollmentId }, error: null };
+  return { value: null, error: null };
+}

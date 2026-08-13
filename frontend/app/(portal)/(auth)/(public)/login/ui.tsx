@@ -9,7 +9,7 @@ import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import styles from "./login.module.css";
 
 /**
- * Phase 3 login-seed (docs/LOCALE_INVESTIGATION_2026-07-16.md §9): if this
+ * Phase 3 login-seed (docs/i18n/locale-investigation-2026-07-16.md §9): if this
  * browser has no `gh_locale` cookie yet (new device, cleared cookies), seed
  * it from the account's last explicit language choice so the user doesn't
  * land back on Accept-Language/country-default after signing in elsewhere.

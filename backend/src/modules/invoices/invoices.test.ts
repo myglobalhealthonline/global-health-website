@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { join } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { after, before, describe, it } from "node:test";
+import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
 
 loadEnv({ path: join(__dirname, "../../..", ".env") });
 
@@ -93,13 +94,14 @@ describe("invoices", () => {
 
   describe("generateInvoiceForOrder skip branches", () => {
     const uniq = `inv-test-${Date.now()}`;
+    const currencyCode = uniqueCurrencyCode();
     let currencyId: string;
     let countryId: string;
 
     before(async () => {
       if (bootError) return;
       const currency = await prisma.currency.create({
-        data: { code: `C${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+        data: { code: currencyCode, symbol: "€", decimals: 2 },
       });
       currencyId = currency.id;
       const country = await prisma.country.create({
@@ -123,7 +125,7 @@ describe("invoices", () => {
           email: `${uniq}@test.local`,
           fullName: "Invoice Test",
           countryCode,
-          currencyCode: `C${uniq}`.slice(0, 9),
+          currencyCode: currencyCode,
           subtotalCents: 1000,
           totalCents: 1000,
           ...overrides,

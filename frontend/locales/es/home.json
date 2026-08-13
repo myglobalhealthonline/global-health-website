@@ -37,8 +37,8 @@
   },
   "team": {
     "eyebrow": "El equipo",
-    "headline": "El médico que eliges es",
-    "headlineAccent": "el médico que te atiende.",
+    "headline": "¿Veré siempre",
+    "headlineAccent": "al mismo médico?",
     "body": "Cada consulta es con alguien colegiado donde estás. Sin call centres, sin rotación de desconocidos — el médico en pantalla es el médico del perfil.",
     "registeredSingular": "clínico registrado",
     "registeredPlural": "clínicos registrados",
@@ -61,8 +61,8 @@
   },
   "howItWorks": {
     "eyebrow": "Cómo funciona",
-    "headlineMain": "Tres pasos.",
-    "headlineAccent": "Un camino más claro.",
+    "headlineMain": "¿Cómo",
+    "headlineAccent": "funciona?",
     "subtitle": "Desde elegir un servicio hasta una cita confirmada — selecciona un clínico, elige un horario y recibe atención desde cualquier lugar.",
     "step1Title": "Elige tu servicio",
     "step1Body": "Navega por consultas de médico general, derivaciones a especialistas y pruebas en casa. Filtra por idioma, urgencia o precio.",

@@ -4,27 +4,23 @@
  * No database access — synthetic doctor input only, so it is safe to run
  * against a local env pointed at the live database.
  *
- *   node --import tsx scripts/preview-confidentiality-pdf.ts [out.pdf]
+ *   node --import tsx scripts/preview-confidentiality-pdf.ts [locale] [out.pdf]
  */
 import { writeFile } from "node:fs/promises";
+import { buildConfidentialityAgreementHtml } from "../src/modules/confidentiality/confidentiality-pdf.js";
 import {
-  buildConfidentialityAgreementHtml,
-  parseAgreementBlocks,
-} from "../src/modules/confidentiality/confidentiality-pdf.js";
-import { CURRENT_AGREEMENT_TEXT } from "../src/modules/confidentiality/confidentiality.service.js";
+  AGREEMENT_LOCALES,
+  resolveAgreementLocale,
+} from "../src/modules/confidentiality/confidentiality-agreement-content.js";
 import {
   closeSharedBrowser,
   htmlToPdfBuffer,
 } from "../src/modules/generated-documents/html-document-renderer.js";
 
 async function main(): Promise<void> {
-  const blocks = parseAgreementBlocks(CURRENT_AGREEMENT_TEXT);
-  console.log(
-    "parsed blocks:",
-    blocks.map((b) =>
-      b.kind === "clause" ? `${b.number}. ${b.heading}` : `intro(${b.text.slice(0, 44)}…)`,
-    ),
-  );
+  const [localeArg, outArg] = process.argv.slice(2);
+  const locale = resolveAgreementLocale(localeArg);
+  console.log(`locale: ${locale} (available: ${AGREEMENT_LOCALES.join(", ")})`);
 
   const html = buildConfidentialityAgreementHtml({
     doctor: {
@@ -33,12 +29,13 @@ async function main(): Promise<void> {
       countryName: "Portugal",
       email: "ana.ferreira@example.com",
     },
+    locale,
     acceptedAt: new Date("2026-07-01T10:12:00Z"),
     acceptedVersion: "1.0.0",
     issuedAt: new Date("2026-07-24T00:00:00Z"),
   });
 
-  const out = process.argv[2] ?? "confidentiality-preview.pdf";
+  const out = outArg ?? `confidentiality-preview-${locale}.pdf`;
   const pdf = await htmlToPdfBuffer(html);
   await writeFile(out, pdf);
   await writeFile(out.replace(/\.pdf$/, ".html"), html, "utf8");

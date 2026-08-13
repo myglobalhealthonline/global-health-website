@@ -16,8 +16,9 @@ import {
   requestStatusTone,
   REQUEST_TYPE_LABELS,
 } from "@/app/(portal)/(admin)/admin/corporate/_lib";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,7 @@ export default async function CorporateEmployeeDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [result, locale] = await Promise.all([fetchCorporateEmployeeById(id), getPageLocale()]);
+  const [result, locale] = await Promise.all([fetchCorporateEmployeeById(id), getPortalLocale()]);
   const t = loadLocaleBundle(locale).corporate.employees.detail;
   if (!result.ok) {
     if (result.status === 404) notFound();
@@ -69,6 +70,7 @@ export default async function CorporateEmployeeDetailPage({
 
   return (
     <>
+      <SetCrumbTitle label={`${employee.firstName} ${employee.lastName}`} />
       <PageHeader
         eyebrow={t.eyebrow}
         title={`${employee.firstName} ${employee.lastName}`}

@@ -127,7 +127,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
         </label>
       </FormSection>
 
-      <FormSection title="Pricing & credits">
+      <FormSection title="Billing" description="What the member is charged. This is the only price on this tab — per-visit prices live on the Consultations tab.">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">Monthly price</span>
           <input
@@ -153,20 +153,14 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
           />
           <Help>3-letter code, e.g. EUR.</Help>
         </label>
-        <label className="flex flex-col gap-1.5">
-          <span className="gh-field-label">Order on pricing page</span>
-          <input
-            name="displayOrder"
-            className="gh-input min-w-0"
-            type="number"
-            min="0"
-            defaultValue={initial?.displayOrder ?? 0}
-          />
-          <Help>Lower number shows first.</Help>
-        </label>
+      </FormSection>
 
+      <FormSection
+        title="Monthly allowance"
+        description="What the member receives each paid month. Consultation credits and wellness credits are separate — one buys GP visits, the other buys home test kits."
+      >
         <label className="flex flex-col gap-1.5">
-          <span className="gh-field-label">GP visits included / month</span>
+          <span className="gh-field-label">GP consultation credits / month</span>
           <input
             name="monthlyConsultationCredits"
             className="gh-input min-w-0"
@@ -174,7 +168,10 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
             min="0"
             defaultValue={initial?.monthlyConsultationCredits ?? DEFAULT_CREDITS[effectiveType]}
           />
-          <Help>How many online GP consultations a member gets each month.</Help>
+          <Help>
+            Essential 1, Comprehensive 2, Premium 3. Pick which GP services they can be spent on
+            over on the Consultations tab.
+          </Help>
         </label>
         {isPremium ? (
           <label className="flex flex-col gap-1.5">
@@ -186,14 +183,36 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
               min="0"
               defaultValue={initial?.wellnessCreditsPerMonth ?? 1}
             />
-            <Help>Used to claim home health-test kits (set those up below).</Help>
+            <Help>Earned every paid month and spent on home test kits. Premium only.</Help>
           </label>
         ) : (
           // Non-Premium: wellness is forced to 0 server-side; send an explicit 0.
           <input type="hidden" name="wellnessCreditsPerMonth" value="0" />
         )}
         <BenefitsUnlockField defaultValue={initial?.benefitsUnlockAfterPaidMonths ?? 2} />
+        {isPremium ? (
+          <label
+            className="flex items-center gap-2 self-end text-sm font-medium text-[var(--color-text-primary)]"
+            title="Let family members and a nominated person use this plan's credits (Premium only)"
+          >
+            <input type="checkbox" name="familyEnabled" className="size-4" defaultChecked={initial?.familyEnabled ?? false} />
+            Family / nominated person can use the credits
+          </label>
+        ) : null}
+      </FormSection>
 
+      <FormSection title="Card & visibility" description="How the plan appears on the public pricing page.">
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Order on pricing page</span>
+          <input
+            name="displayOrder"
+            className="gh-input min-w-0"
+            type="number"
+            min="0"
+            defaultValue={initial?.displayOrder ?? 0}
+          />
+          <Help>Lower number shows first.</Help>
+        </label>
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">Badge (optional)</span>
           <input
@@ -210,15 +229,6 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
             <input type="checkbox" name="isFeatured" className="size-4" defaultChecked={initial?.isFeatured ?? false} />
             Highlight this plan (recommended)
           </label>
-          {isPremium ? (
-            <label
-              className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]"
-              title="Let family members share this plan's credits (Premium only)"
-            >
-              <input type="checkbox" name="familyEnabled" className="size-4" defaultChecked={initial?.familyEnabled ?? false} />
-              Allow family credit sharing
-            </label>
-          ) : null}
           {initial ? (
             <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
               <input type="checkbox" name="isActive" className="size-4" defaultChecked={initial.isActive} />

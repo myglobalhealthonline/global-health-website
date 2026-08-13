@@ -23,7 +23,7 @@ import {
 } from "../services/patient-nationality.service.js";
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 import { VerificationStatus } from "@prisma/client";
-import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 
 const stringField = (max: number) =>
@@ -60,6 +60,8 @@ const adminPatchSchema = z
     statusAlert: stringField(500),
     clinicAlert: stringField(500),
     pricingPlanId: stringField(64),
+    insuranceProviderName: stringField(200),
+    insurancePolicyNumber: stringField(200),
   })
   .strict()
   .refine((d) => Object.keys(d).length > 0, { message: "Provide at least one field" });
@@ -244,7 +246,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           if (guardError instanceof MedicalAccessDeniedError) {
             return reply
               .status(403)
-              .send(errorResponse("Access to this medical record is not permitted"));
+              .send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -481,6 +483,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
             addressState: true,
             addressPostalCode: true,
             addressCountryCode: true,
+            insuranceProviderName: true,
+            insurancePolicyNumber: true,
           },
           take: 50,
         }),
@@ -501,6 +505,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           addressState: string | null;
           addressPostalCode: string | null;
           addressCountryCode: string | null;
+          insuranceProviderName: string | null;
+          insurancePolicyNumber: string | null;
         }
       >();
       // The booking picker must NEVER blank out just because one matched
@@ -529,6 +535,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           addressState: profile.addressState ?? null,
           addressPostalCode: profile.addressPostalCode ?? null,
           addressCountryCode: profile.addressCountryCode ?? null,
+          insuranceProviderName: profile.insuranceProviderName ?? null,
+          insurancePolicyNumber: safeDecrypt(profile.insurancePolicyNumber),
         });
       }
 
@@ -595,6 +603,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         addressState: null,
         addressPostalCode: null,
         addressCountryCode: null,
+        insuranceProviderName: null,
+        insurancePolicyNumber: null,
       };
       const patients = [...byKey.values()]
         .sort((a, b) => (b.lastBookedAt?.getTime() ?? 0) - (a.lastBookedAt?.getTime() ?? 0))
@@ -731,7 +741,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -831,7 +841,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }
@@ -874,7 +884,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }

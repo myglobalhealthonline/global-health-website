@@ -63,7 +63,7 @@
     "cta": "Iniciar Consulta Online",
     "trustLine": "Cuidados licenciados · Privacidade em primeiro lugar · Clínicas em toda a Europa",
     "careHeading": "Cuidados",
-    "clinicsHeading": "Clínicas",
+    "clinicsHeading": "Clínicas / países",
     "accountHeading": "Conta",
     "companyHeading": "Empresa",
     "ourDoctors": "Os nossos médicos",
@@ -74,10 +74,12 @@
     "privacyPolicy": "Política de privacidade",
     "termsOfService": "Termos de serviço",
     "tagline": "Medicina a qualquer hora e em qualquer lugar. Consultas médicas online com médicos registados localmente nos mercados onde operamos.",
-    "stayInformed": "Mantenha-se informado",
+    "stayInformed": "Mantenha-se informado. Mantenha-se saudável.",
     "newsletterDesc": "Atualizações mensais de saúde sobre novos países, médicos e temas de saúde. Sem spam.",
     "subscribe": "Subscrever",
     "newsletterSuccess": "Obrigado — está na lista.",
+    "newsletterPrivacy": "Respeitamos a sua privacidade. Cancele a subscrição quando quiser.",
+    "followUs": "Siga-nos",
     "disclaimer": "As consultas online não substituem os cuidados de emergência. Se precisar de ajuda urgente, ligue 112 ou o número de emergência local. A informação neste website é orientação geral; prescrições, certificados, referências e próximos passos dependem de avaliação clínica e são emitidos à discrição do médico.",
     "copyrightSuffix": "Medicina a qualquer hora e em qualquer lugar",
     "privacyLink": "Privacidade",
@@ -89,6 +91,14 @@
     "title": "Escolha o seu país",
     "description": "Aceda ao hub da sua clínica local, perfis da equipa e consultas.",
     "enterClinic": "Entrar na clínica"
+  },
+  "countryNames": {
+    "ie": "Irlanda",
+    "cz": "Chéquia",
+    "pt": "Portugal",
+    "es": "Espanha",
+    "ro": "Roménia",
+    "br": "Brasil"
   },
   "entryGate": {
     "eyebrow": "Clínica Médica Online",
@@ -144,6 +154,7 @@
     "viewProfile": "Ver perfil",
     "bookAppointment": "Marcar consulta",
     "pickTime": "Escolher horário",
+    "languagesLabel": "Idiomas",
     "bookWithTemplate": "Marcar com {name}",
     "viewDoctors": "Ver médicos",
     "trustCard1Title": "Licenciado em {country}",
@@ -168,7 +179,8 @@
     "showResults": "Ver resultados",
     "featuredClinician": "Clínico em destaque",
     "registrationLabel": "Registo",
-    "verifiedSuffix": "Verificado"
+    "verifiedSuffix": "Verificado",
+    "allDoctorsHeading": "Todos os médicos em {country}"
   },
   "cookie": {
     "title": "Preferências de cookies",
@@ -185,7 +197,7 @@
     "marketingTitle": "Publicidade",
     "marketingBody": "Meta Pixel — indica-nos que anúncios trazem doentes até nós.",
     "thirdPartyTitle": "Conteúdo de terceiros",
-    "thirdPartyBody": "Widgets de avaliações de doentes do Doctify, incorporados a partir de doctify.com.",
+    "thirdPartyBody": "Widgets de avaliações de doentes do Doctify (doctify.com) e o assistente de voz ElevenLabs (elevenlabs.io) — o assistente usa o seu microfone apenas enquanto fala com ele.",
     "analyticsTitle": "Análise — estatísticas de utilização anónimas",
     "analyticsBody": "Google Analytics e Microsoft Clarity (gravação de sessão) — mostram-nos que páginas são úteis e onde o site é confuso. Os endereços das páginas são limpos de tudo o que o possa identificar e nenhum deles é executado nas páginas de marcação, carrinho, pagamento, carregamento de ficheiros ou verificação.",
     "settingsLink": "Definições de cookies",
@@ -229,8 +241,8 @@
       "feature3Subtitle": "Marque consultas que lhe convêm, incluindo no próprio dia.",
       "stat1Title": "Registados em {country}",
       "stat1Subtitle": "Todos os clínicos gerais estão registados para exercer em {country}.",
-      "stat2Title": "45.000 consultas em 2025",
-      "stat2Subtitle": "Avaliado no Doctify.",
+      "stat2Title": "{count}+ consultas",
+      "stat2Subtitle": "Concluídas em toda a nossa rede de médicos.",
       "stat3Title": "Confiança reconhecida",
       "stat3Subtitle": "Junte-se a pacientes em {country}."
     }
@@ -257,8 +269,8 @@
       "feature3Subtitle": "Privadas, confidenciais e fáceis de marcar.",
       "stat1Title": "Registados em {country}",
       "stat1Subtitle": "Todos os especialistas estão registados para exercer em {country}.",
-      "stat2Title": "45.000 consultas em 2025",
-      "stat2Subtitle": "Avaliado no Doctify.",
+      "stat2Title": "{count}+ consultas",
+      "stat2Subtitle": "Concluídas em toda a nossa rede de médicos.",
       "stat3Title": "Confiança reconhecida",
       "stat3Subtitle": "Junte-se a pacientes em {country}."
     }
@@ -285,6 +297,8 @@
     "backToClinicians": "Voltar aos clínicos de {country}",
     "bookWithDoctor": "Marcar com {name}",
     "servicesOffered": "Serviços disponíveis",
+    "viewServiceDetails": "Ver detalhes do serviço",
+    "lastReviewedLabel": "Última revisão",
     "pickSlotWith": "Escolha um serviço para ver os horários disponíveis com {name}.",
     "pickSlot": "Escolher horário",
     "pickTimeWith": "Escolher horário com {name}",
@@ -321,13 +335,24 @@
     "fallbackBio": "Este clínico apoia consultas online e orientação de acompanhamento através da Global Health.",
     "fallbackQualification1": "As qualificações e detalhes de registo são apresentados quando verificados pela equipa da clínica.",
     "fallbackQualification2": "Os pacientes podem confirmar a adequação do clínico durante o processo de agendamento.",
+    "fallbackSpecialty1": "Consulta geral",
+    "fallbackSpecialty2": "Orientação para encaminhamento a especialista",
+    "fallbackSpecialty3": "Acompanhamento",
+    "metaDescriptionTemplate": "Marque uma consulta online com {name}, {title} em {country}. Idiomas: {languages}.",
+    "metaSocialDescriptionTemplate": "Conheça {name}, {title} que acompanha pacientes em {country}. Veja credenciais, idiomas e opções de marcação.",
     "nextStep": "Próximo passo",
     "patientReviews": "Avaliações de pacientes"
   },
   "bookingForm": {
-    "benefitHeading": "Aplicar o seu plano",
+    "benefitToggleLabel": "Tenho uma adesão, seguro ou plano",
+    "benefitHeading": "Qual devemos aplicar?",
+    "benefitNoneFound": "Não encontrámos qualquer adesão, plano ou seguro na sua conta.",
+    "benefitClaimCta": "Associe uma adesão à sua conta",
+    "benefitClaimHint": "— aplica-se à sua marcação assim que a confirmar por e-mail.",
+    "benefitLoadError": "Não foi possível carregar os seus benefícios.",
+    "benefitLoadRetry": "Tentar novamente",
     "corporateOffAtCheckout": "de desconto no pagamento",
-    "benefitPayNormal": "Pagar normalmente",
+    "benefitScarcityNote": "Usa 1 das suas {count} restantes.",
     "benefitUseCredit": "Usar crédito do plano",
     "benefitUseDiscount": "Usar desconto do plano",
     "benefitExplainer": "O seu plano {plan} aplica-se a esta consulta — o melhor preço está pré-selecionado. Pode alterá-lo.",
@@ -427,7 +452,7 @@
       "feature3Subtitle": "Os nossos médicos estão registados para exercer em {country}.",
       "stat1Title": "Resultados revistos por médicos",
       "stat1Subtitle": "Cada resultado é revisto por um médico registado.",
-      "stat2Title": "45.000 consultas em 2025",
+      "stat2Title": "{count}+ consultas",
       "stat2Subtitle": "A maioria dos resultados disponível em 24–48 horas.",
       "stat3Title": "Seguro e privado",
       "stat3Subtitle": "As suas informações de saúde são tratadas de forma confidencial."
@@ -456,7 +481,10 @@
     "ctaHeading": "Encomende o seu {title} hoje",
     "goodToKnow": "Bom saber",
     "disclaimer": "Os resultados das análises são revistos por um médico registado para exercer em {country}. Esta página contém informação geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional.",
-    "faqTitle": "Perguntas frequentes"
+    "faqTitle": "Perguntas frequentes",
+    "markersCount": "{count} marcadores",
+    "howItWorksEyebrow": "Como funciona",
+    "beforeTestingEyebrow": "Antes de fazer o teste"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Médicos que tratam prescrições renováveis",
@@ -654,6 +682,8 @@
     "redirecting": "A redirecionar para a Stripe…",
     "paySecurely": "Pagar {amount} em segurança",
     "redirectNote": "Será redirecionado para a Stripe para concluir o pagamento. Nunca guardamos os dados do seu cartão.",
+    "zeroTotalNote": "Não é necessário pagamento — os seus benefícios cobrem esta marcação na totalidade. Ao confirmar, fica concluída e não são pedidos dados do cartão.",
+    "confirmZeroTotal": "Confirmar marcação — nada a pagar",
     "orderSummary": "Resumo da encomenda",
     "subtotal": "Subtotal",
     "shipping": "Envio",
@@ -689,6 +719,8 @@
     "insuranceStandard": "Pagar o preço normal",
     "insuranceNone": "Sem seguro",
     "noInsuranceDoctors": "Neste momento nenhum médico aceita {insurer} para este serviço. Pode reservar ao preço normal.",
+    "insuranceBenefitLater": "Vai usar uma adesão ou um plano? Perguntamos depois de escolher a hora.",
+    "benefitInsuranceNote": "Verificamos a sua cobertura após a marcação. Não é cobrado agora.",
     "title": "Marque a sua consulta",
     "subtitle": "Clínica médica em {country}. Escolha um serviço, clínico, hora e dados do doente.",
     "bookingSteps": "Passos da marcação",
@@ -786,6 +818,7 @@
     "chooseLanguage": "Escolher idioma",
     "searchLanguages": "Pesquisar idiomas…",
     "sectionNavigation": "Navegação de secções",
+    "footerNavigation": "Navegação do rodapé",
     "sections": "Secções",
     "bookAnAppointment": "Marcar uma consulta",
     "patientReviews": "Avaliações de pacientes",
@@ -809,7 +842,7 @@
     "reviewRateStepSubmit": "Enviar"
   },
   "homeMeta": {
-    "titleTemplate": "Médico Online {country} | Clínicos Gerais e Especialistas Registados | Global Health",
+    "titleTemplate": "Médico Online {country} | Clínicos e Especialistas Registados | Global Health",
     "descriptionTemplate": "Consulte hoje um médico registado por videochamada — clínica geral, atestados médicos, referenciações para especialistas. Mesmo dia em {country}."
   },
   "pricingPage": {
@@ -831,13 +864,19 @@
     "heroTitleLead": "Guias de saúde de",
     "heroTitleAccent": "médicos registados.",
     "heroLede": "Guias baseados em evidências escritos e revistos pela nossa equipa médica. Sem anúncios, sem exageros.",
+    "heroLedeCountryTemplate": "Guias de saúde baseados em evidências para {country}, escritos e revistos pela nossa equipa médica. Sem anúncios.",
     "heroCta": "Explorar artigos",
     "heroSecondary": "Voltar ao início",
     "articleSingular": "artigo",
     "articlePlural": "artigos",
     "loadingArticleAriaLabel": "A carregar artigo…",
     "categoryFallback": "Guia de saúde",
-    "readArticle": "Ler artigo"
+    "readArticle": "Ler artigo",
+    "heroTitleCountryTemplate": "{title} em {country}",
+    "globalGroupLabel": "Global",
+    "paginationLabel": "Paginação",
+    "paginationPrevious": "Anterior",
+    "paginationNext": "Seguinte"
   },
   "calendar": {
     "selectDay": "Selecione um dia",
@@ -848,6 +887,19 @@
     "truncatedNotice": "Lista truncada no limite de linhas da exportação — restrinja o intervalo de datas ou os filtros para obter tudo."
   },
   "doctify": {
-    "body": "Avaliações independentes e verificadas, recolhidas pela Doctify junto de pacientes tratados pelos nossos clínicos."
+    "body": "Avaliações independentes e verificadas, recolhidas pela Doctify junto de pacientes tratados pelos nossos clínicos.",
+    "patientsSayHeadline": "O que os pacientes dizem sobre",
+    "patientsSayAccent": "os nossos médicos"
+  },
+  "linkCallout": {
+    "entry": "Comece aqui",
+    "referral": "Próximo passo",
+    "complementary": "Cuidados relacionados"
+  },
+  "healthPage": {
+    "seeAllLanguageDoctors": "Ver todos os médicos que falam {language}"
+  },
+  "alsoAvailableIn": {
+    "title": "Também disponível em"
   }
 }

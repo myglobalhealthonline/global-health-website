@@ -1,0 +1,22 @@
+-- Private membership plans, phase 7c — the enrollment's own locale.
+-- Spec: docs/plans/private-membership-plans-implementation.md §25.
+--
+-- ─── HAND-WRITTEN. DO NOT REGENERATE. ────────────────────────────────────────
+--
+-- One nullable column, no backfill, no constraint. `migrate diff` renders this
+-- correctly, but running it would also have re-emitted the drift it proposes on
+-- every run in this repo: dropping the four raw-SQL composite FKs that Prisma
+-- cannot express, and dropping five GIN trigram indexes on Appointment and
+-- PatientProfile to recreate them as plain btrees under the same names. Cut, as
+-- in 20260808100100 — nothing here touches either.
+--
+-- No preflight: an ADD COLUMN of a nullable enum cannot fail on existing data,
+-- so there is no half-applied state to guard against. (Prisma does not wrap a
+-- migration file in a transaction, which is why that matters at all.)
+
+-- AlterTable
+--
+-- The welcome email's locale while a row is still PENDING and has no `User` to
+-- read `preferredLocale` from. Once an account links, `User.preferredLocale`
+-- takes precedence — this is a fallback, never an override.
+ALTER TABLE "MembershipEnrollment" ADD COLUMN "preferredLocale" "LocaleCode";

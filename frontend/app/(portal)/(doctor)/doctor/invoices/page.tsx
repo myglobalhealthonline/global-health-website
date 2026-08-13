@@ -11,7 +11,7 @@ import {
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { PayoutInvoicePanel, type InvoiceStrings } from "./_components/payout-invoice-panel";
 import { InvoicesTabsClient } from "./_components/invoices-tabs-client";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -101,7 +101,7 @@ export default async function DoctorInvoicesPage({
   searchParams?: Promise<SearchParams>;
 }) {
   const sp = searchParams ? await searchParams : {};
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const status = pick(sp, "status");
   const from = pick(sp, "from");
@@ -340,7 +340,9 @@ export default async function DoctorInvoicesPage({
             )}
           </>
         }
-        statementPanel={<PayoutInvoicePanel strings={d.invoices as InvoiceStrings} />}
+        statementPanel={
+          <PayoutInvoicePanel strings={d.invoices as InvoiceStrings} defaultLocale={locale} />
+        }
       />
     </>
   );

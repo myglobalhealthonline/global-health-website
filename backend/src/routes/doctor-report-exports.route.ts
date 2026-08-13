@@ -16,6 +16,11 @@ import {
   serializeReport,
   type ReportTable,
 } from "../modules/reports/report-formatters.js";
+import {
+  payoutStatementLabelsFor,
+  resolvePayoutStatementLocale,
+} from "../modules/reports/payout-statement-content.js";
+import { renderPayoutStatementPdfBuffer } from "../modules/reports/payout-statement-pdf.js";
 
 /**
  * GET /api/doctor/reports/export?dataset=services|patients|appointments
@@ -52,6 +57,9 @@ const querySchema = z.object({
       "CANCELLED",
     ])
     .optional(),
+  /** Language to render the export in. Only `dataset=payout` honours this —
+   *  the doctor picks it explicitly from the payout-statement panel. */
+  locale: z.string().trim().min(2).max(8).optional(),
 });
 
 /** Resolve the from/to strings into a bounded date range. Defaults to the
@@ -116,6 +124,7 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
       };
 
       let table: ReportTable;
+      const payoutLocale = resolvePayoutStatementLocale(q.locale);
       if (q.dataset === "services") {
         // Service assignments aren't time-bounded — ignore the range.
         table = await doctorServicesReport(auth.doctorId, doctorName);
@@ -129,11 +138,17 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
           select: { accountHolder: true, ibanEncrypted: true, bic: true },
         });
         const iban = bankRow?.ibanEncrypted ? decryptPhi(bankRow.ibanEncrypted) : null;
-        table = await doctorPayoutStatementReport(auth.doctorId, doctorName, filters, {
-          accountHolder: bankRow?.accountHolder ?? null,
-          iban,
-          bic: bankRow?.bic ?? null,
-        });
+        table = await doctorPayoutStatementReport(
+          auth.doctorId,
+          doctorName,
+          filters,
+          {
+            accountHolder: bankRow?.accountHolder ?? null,
+            iban,
+            bic: bankRow?.bic ?? null,
+          },
+          payoutLocale,
+        );
       } else {
         table = await doctorAppointmentsReport(auth.doctorId, doctorName, filters);
       }
@@ -141,12 +156,23 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
       // JSON = the on-screen preview: same builder output the file formats use,
       // so the table shown on screen can never diverge from the download.
       if (q.format === "json") {
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- Fastify's typed reply.send() of a plain JSON object, not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
         return reply.send(table);
       }
 
       const stamp = new Date().toISOString().slice(0, 10);
       const base = `doctor-${q.dataset}-${stamp}`;
-      const out = await serializeReport(table, q.format);
+      // The payout statement's PDF follows the patient invoice's visual
+      // structure (masthead/parties/items/totals) instead of the generic
+      // report layout — CSV/Excel/JSON are unaffected, same ReportTable.
+      const out =
+        q.dataset === "payout" && q.format === "pdf"
+          ? {
+              body: await renderPayoutStatementPdfBuffer(table, payoutStatementLabelsFor(payoutLocale)),
+              contentType: "application/pdf",
+              ext: "pdf",
+            }
+          : await serializeReport(table, q.format);
       return reply
         .header("Content-Type", out.contentType)
         .header("Content-Disposition", `attachment; filename="${base}.${out.ext}"`)

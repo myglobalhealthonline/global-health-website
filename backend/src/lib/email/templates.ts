@@ -6,7 +6,7 @@ import { DEFAULT_EMAIL_LOGO_PATH } from "./resolve-email-logo-url.js";
 import { createBrazilConsentToken } from "../../modules/brazil-consent/brazil-consent-link.service.js";
 
 /** Shared branded transactional email shell — matches the public site's
- *  "Clinical Editorial" system (docs/DESIGN-GH2.md): deep-night forest
+ *  "Clinical Editorial" system (docs/design/design-system-gh2-clinical-editorial.md): deep-night forest
  *  gradient header, lime #B0F122 accent, mono eyebrow, hairline rules.
  *  Every transactional email routes through this. Email-safe: tables,
  *  inline styles, flat-color fallbacks behind gradients. */
@@ -97,6 +97,107 @@ export async function sendDoctorInviteEmail(opts: {
        <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Set password &amp; sign in</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
        <p>The link expires in 7 days. If you didn't expect this invite, you can ignore the email.</p>`,
+    ),
+  });
+}
+
+/**
+ * A doctor wrote into their support thread → alert the admin team.
+ *
+ * One email per recipient. Throttling lives upstream in
+ * `alertAdminsOfSupportMessage` (SupportThread.lastAdminEmailAt) so a doctor
+ * firing ten messages in a row doesn't fan out ten emails per admin.
+ */
+export async function sendSupportMessageAlertEmail(opts: {
+  to: string;
+  doctorName: string;
+  /** Absolute `/admin/support?open=<threadId>` URL. */
+  threadUrl: string;
+  /** First ~140 chars of the message, or "Sent a file: …". Optional. */
+  snippet?: string | null;
+}) {
+  const snippet = opts.snippet?.trim() || null;
+  const subject = `${opts.doctorName} has sent a text`;
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `${opts.doctorName} has sent a text${snippet ? `:\n\n"${snippet}"` : "."}\n\nOpen the support chat:\n${opts.threadUrl}\n\n— Global Health`,
+    html: wrapHtml(
+      "New support message",
+      `<p><strong>${escapeHtml(opts.doctorName)}</strong> has sent a text.</p>
+       ${
+         snippet
+           ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
+           : ""
+       }
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>
+       <p style="font-size:13px;color:#737373;">Any admin can reply — your first name is shown to the doctor so they know who answered.</p>`,
+    ),
+  });
+}
+
+/**
+ * A patient wrote into their clinic (admin) message thread → alert the admin
+ * team. Throttling lives upstream in `alertAdminsOfPatientMessage`
+ * (Appointment.lastPatientMsgAdminAlertAt) so a burst of patient messages
+ * doesn't fan out one email per message.
+ */
+export async function sendPatientMessageAdminAlertEmail(opts: {
+  to: string;
+  patientName: string;
+  /** Absolute `/admin/appointments/<id>/messages` (or admin inbox) URL. */
+  threadUrl: string;
+  snippet?: string | null;
+}) {
+  const snippet = opts.snippet?.trim() || null;
+  const subject = `${opts.patientName} sent a message`;
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `${opts.patientName} sent a message in the clinic chat${snippet ? `:\n\n"${snippet}"` : "."}\n\nOpen the conversation:\n${opts.threadUrl}\n\n— Global Health`,
+    html: wrapHtml(
+      "New patient message",
+      `<p><strong>${escapeHtml(opts.patientName)}</strong> sent a message in the clinic chat.</p>
+       ${
+         snippet
+           ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
+           : ""
+       }
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>`,
+    ),
+  });
+}
+
+/**
+ * A patient wrote into their doctor's consultation chat → alert the doctor.
+ * Throttling lives upstream in `alertDoctorOfPatientMessage`
+ * (Appointment.lastPatientMsgDoctorAlertAt).
+ */
+export async function sendPatientMessageDoctorAlertEmail(opts: {
+  to: string;
+  patientName: string;
+  /** Absolute `/doctor/appointments/<id>?tab=chat` URL. */
+  threadUrl: string;
+  snippet?: string | null;
+}) {
+  const snippet = opts.snippet?.trim() || null;
+  const subject = `${opts.patientName} sent you a message`;
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `${opts.patientName} sent you a message${snippet ? `:\n\n"${snippet}"` : "."}\n\nOpen the conversation:\n${opts.threadUrl}\n\n— Global Health`,
+    html: wrapHtml(
+      "New patient message",
+      `<p><strong>${escapeHtml(opts.patientName)}</strong> sent you a message.</p>
+       ${
+         snippet
+           ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
+           : ""
+       }
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>`,
     ),
   });
 }
@@ -368,8 +469,24 @@ export async function sendOrderConfirmationEmail(opts: {
     postalCode: string;
     countryCode: string;
   } | null;
+  /**
+   * Order contains a cross-border prescription line. These never ship — the
+   * doctor finalizes the prescription and the patient is notified — so the
+   * "we'll email you when it ships" copy below is wrong for them.
+   */
+  hasPrescriptionItem?: boolean;
 }) {
   const shortId = formatOrderDisplayId({ id: opts.orderId, orderNumber: opts.orderNumber });
+  const fulfillmentText = opts.shipAddress
+    ? "We'll send a separate email when your items ship."
+    : opts.hasPrescriptionItem
+      ? "Once the doctor finalizes your prescription, you'll get a notification."
+      : "We'll notify you as soon as your order is ready.";
+  const fulfillmentHtml = opts.shipAddress
+    ? "We'll send another email when it ships."
+    : opts.hasPrescriptionItem
+      ? "Once the doctor finalizes your prescription, you'll get a notification."
+      : "We'll notify you as soon as it's ready.";
   const itemLines = opts.items
     .map((i) => `  - ${i.name} × ${i.quantity}  ${i.lineLabel}`)
     .join("\n");
@@ -407,13 +524,13 @@ ${itemLines}
 
 Total paid: ${opts.totalLabel}${shipText}
 
-We'll send a separate email when your items ship. Track your order any time at your account page.
+${fulfillmentText} Track your order any time at your account page.
 
 — Global Health`,
     html: wrapHtml(
       "Order confirmed",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
-       <p>Your order is confirmed and being prepared. We'll send another email when it ships.</p>
+       <p>Your order is confirmed. ${escapeHtml(fulfillmentHtml)}</p>
        <p style="margin-top:16px;font-size:12px;color:#737373;">Order #${escapeHtml(shortId)}</p>
        <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;">
          ${itemRowsHtml}

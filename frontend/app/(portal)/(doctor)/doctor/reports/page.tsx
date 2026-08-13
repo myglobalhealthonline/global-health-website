@@ -1,9 +1,19 @@
-import { fetchDoctorMe, fetchDoctorReports } from "@/lib/api/doctor-api";
-import { AdminEmptyState, AdminSummaryStrip, PageHeader, SectionHeader } from "@/components/portal-atoms";
-import { CalendarCheck, FileCheck, Receipt, Repeat, Users } from "lucide-react";
+import {
+  fetchDoctorMe,
+  fetchDoctorPermissions,
+  fetchDoctorReports,
+} from "@/lib/api/doctor-api";
+import {
+  AdminEmptyState,
+  AdminSummaryStrip,
+  Btn,
+  PageHeader,
+  SectionHeader,
+} from "@/components/portal-atoms";
+import { CalendarCheck, FileCheck, Landmark, Receipt, Repeat, Users } from "lucide-react";
 import { ReportsCsvButton } from "./_components/csv-button";
 import { DoctorReportExports } from "./_components/report-exports";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +45,7 @@ export default async function DoctorReportsPage({
 }: {
   searchParams?: Promise<SearchParams>;
 }) {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const sp = searchParams ? await searchParams : {};
   const from = pick(sp, "from");
@@ -44,7 +54,7 @@ export default async function DoctorReportsPage({
   const consultationType = pick(sp, "consultationType");
   const paymentStatus = pick(sp, "paymentStatus");
   const status = pick(sp, "status");
-  const [result, meResult] = await Promise.all([
+  const [result, meResult, permissions] = await Promise.all([
     fetchDoctorReports({
       from,
       to,
@@ -54,7 +64,9 @@ export default async function DoctorReportsPage({
       status,
     }),
     fetchDoctorMe(),
+    fetchDoctorPermissions(),
   ]);
+  const isCountryDirector = permissions.ok && permissions.data.isCountryDirector;
 
   // The markets this doctor practises in — primary country plus any additional
   // ones. A single-market doctor gets no country filter at all, since it could
@@ -77,7 +89,24 @@ export default async function DoctorReportsPage({
         eyebrow={d.reports.eyebrow}
         title={d.reports.title}
         description={d.reports.description}
-        actions={result.ok ? <ReportsCsvButton data={result.data} label={d.reports.exportCsv} /> : null}
+        actions={
+          <>
+            {/* Country-director oversight lives on its own page — the tiles
+                above are strictly this doctor's own work. */}
+            {isCountryDirector ? (
+              <Btn
+                href="/doctor/reports/country"
+                variant="ghost"
+                iconLeft={<Landmark className="size-3.5" />}
+              >
+                {d.nav.countryConsultations}
+              </Btn>
+            ) : null}
+            {result.ok ? (
+              <ReportsCsvButton data={result.data} label={d.reports.exportCsv} />
+            ) : null}
+          </>
+        }
       />
 
       {result.ok ? (

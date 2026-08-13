@@ -2,13 +2,13 @@ import Link from "next/link";
 import { fetchDoctorMe, fetchDoctorProfileChangeRequests } from "@/lib/api/doctor-api";
 import { PageHeader } from "@/components/portal-atoms";
 import { ProfileSections, type ProfileStrings } from "./_components/profile-sections";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorProfilePage() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
   const [result, changeRequestsResult] = await Promise.all([
     fetchDoctorMe(),

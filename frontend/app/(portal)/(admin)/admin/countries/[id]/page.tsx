@@ -18,6 +18,7 @@ import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 import { FormSection } from "@/components/FormSection";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -122,6 +123,7 @@ export default async function AdminCountryDetailPage({
 
   return (
     <>
+      <SetCrumbTitle label={c.name} />
       <Link
         href="/admin/countries"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

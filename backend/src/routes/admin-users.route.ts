@@ -8,6 +8,7 @@ import { verifyGlobalAdminAccess, resolveAdminSessionActor } from "../utils/admi
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { emailSchema, fullNameSchema } from "../validations/shared.schema.js";
+import { applyPatientProfileUpdate } from "../modules/patient-profile/patient-profile.service.js";
 
 // Signals "would remove the last active SUPER_ADMIN" out of the transaction
 // below so the route can reply 409 instead of the generic 500 handler.
@@ -337,11 +338,13 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           // Both tables carry a unique on email. Check them inside the tx so
           // the answer can't go stale between check and write, and so the
           // admin gets a readable 409 rather than a raw P2002.
+          // nosemgrep: gh-phi-route-missing-guard -- admin-authenticated (verifyGlobalAdminAccess plugin hook); a data-integrity email-collision check on a user-email edit, narrow { id: true } select, not clinical content.
           const [takenByUser, takenByProfile] = await Promise.all([
             tx.user.findFirst({
               where: { email: nextEmail, id: { not: params.data.id } },
               select: { id: true },
             }),
+            // nosemgrep: gh-phi-route-missing-guard -- same data-integrity check as above, narrow { id: true } select, not clinical content.
             tx.patientProfile.findFirst({
               where: { email: nextEmail, userId: { not: params.data.id } },
               select: { id: true },
@@ -354,6 +357,7 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           // and doctor read does findUnique({ where: { email } }). Moving the
           // User without moving the profile would strand the entire clinical
           // chart at the old address, so both move together or neither does.
+          // nosemgrep: gh-phi-route-missing-guard -- admin-authenticated (verifyGlobalAdminAccess plugin hook); moves the linked PatientProfile row(s) to match a user's changed email, narrow { id, globalHealthNumber } select, not clinical content.
           const movedProfiles = await tx.patientProfile.findMany({
             where: { email: before.email },
             select: { id: true, globalHealthNumber: true },
@@ -407,6 +411,45 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           },
         });
       }, { isolationLevel: "Serializable" });
+      // The clinical chart (PatientProfile) carries its own copy of
+      // fullName/phone/dateOfBirth, keyed by email rather than userId, so it
+      // doesn't move automatically when the User row above changes. Mirror
+      // the edit onto an existing profile so "Account details" stays the
+      // single source of truth an admin needs to touch. Only sync onto a
+      // profile that already exists — a bare role=PATIENT flip with no
+      // profile yet shouldn't mint one missing its Global Health Number.
+      const identityChanged =
+        body.data.fullName !== undefined ||
+        body.data.phone !== undefined ||
+        body.data.dateOfBirth !== undefined;
+      if (identityChanged && updated.role === "PATIENT") {
+        const existingProfile = await prisma.patientProfile.findUnique({
+          where: { email: updated.email },
+          select: { id: true },
+        });
+        if (existingProfile) {
+          try {
+            await applyPatientProfileUpdate(
+              updated.email,
+              {
+                ...(body.data.fullName !== undefined && { fullName: body.data.fullName }),
+                ...(body.data.phone !== undefined && { phone: body.data.phone }),
+                ...(body.data.dateOfBirth !== undefined && {
+                  dateOfBirth: body.data.dateOfBirth ? new Date(body.data.dateOfBirth) : null,
+                }),
+              },
+              {
+                actor: { userId: sessionActor?.userId ?? null, role: sessionActor?.role ?? "ADMIN" },
+                ipAddress: request.ip,
+              },
+            );
+          } catch (syncError) {
+            // The User row already saved — don't fail the whole request over
+            // a chart-sync hiccup, just surface it in the logs.
+            app.log.error(syncError, "Failed to sync identity fields to PatientProfile");
+          }
+        }
+      }
       const roleChanged = body.data.role !== undefined && before?.role !== updated.role;
       // S-008: admin-user identity mutation (role change is a privilege
       // change) — audit write must not be silently swallowed.

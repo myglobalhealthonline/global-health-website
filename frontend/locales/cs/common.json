@@ -63,7 +63,7 @@
     "cta": "Zahájit online konzultaci",
     "trustLine": "Licencovaná péče · Soukromí na prvním místě · Kliniky po celé Evropě",
     "careHeading": "Péče",
-    "clinicsHeading": "Kliniky",
+    "clinicsHeading": "Kliniky / země",
     "accountHeading": "Účet",
     "companyHeading": "Společnost",
     "ourDoctors": "Naši lékaři",
@@ -74,10 +74,12 @@
     "privacyPolicy": "Zásady ochrany soukromí",
     "termsOfService": "Podmínky služby",
     "tagline": "Medicína kdykoliv a kdekoliv. Online lékařské konzultace s lékaři registrovanými ve vaší zemi na trzích, kde působíme.",
-    "stayInformed": "Zůstaňte informováni",
+    "stayInformed": "Zůstaňte informovaní. Zůstaňte zdraví.",
     "newsletterDesc": "Měsíční zdravotní aktualizace o nových zemích, lékařích a zdravotních tématech. Žádný spam.",
     "subscribe": "Odebírat",
     "newsletterSuccess": "Díky — jste na seznamu.",
+    "newsletterPrivacy": "Respektujeme vaše soukromí. Odhlásit se můžete kdykoli.",
+    "followUs": "Sledujte nás",
     "disclaimer": "Online konzultace nejsou náhradou za pohotovostní péči. Pokud potřebujete naléhavou pomoc, volejte 112 nebo místní číslo tísňové linky. Informace na tomto webu jsou obecným návodem; předpisy, certifikáty, doporučení a další kroky závisí na klinickém posouzení a jsou vydávány dle uvážení ošetřujícího lékaře.",
     "copyrightSuffix": "Medicína kdykoliv a kdekoliv",
     "privacyLink": "Soukromí",
@@ -89,6 +91,14 @@
     "title": "Vyberte svou zemi",
     "description": "Přistupte k vašemu místnímu centru kliniky, profilům týmu a konzultacím.",
     "enterClinic": "Vstoupit do kliniky"
+  },
+  "countryNames": {
+    "ie": "Irsko",
+    "cz": "Česko",
+    "pt": "Portugalsko",
+    "es": "Španělsko",
+    "ro": "Rumunsko",
+    "br": "Brazílie"
   },
   "entryGate": {
     "eyebrow": "Online lékařská klinika",
@@ -144,6 +154,7 @@
     "viewProfile": "Zobrazit profil",
     "bookAppointment": "Rezervovat konzultaci",
     "pickTime": "Vybrat čas",
+    "languagesLabel": "Jazyky",
     "bookWithTemplate": "Rezervovat s {name}",
     "viewDoctors": "Zobrazit lékaře",
     "trustCard1Title": "Licencováno v {country}",
@@ -168,7 +179,8 @@
     "showResults": "Zobrazit výsledky",
     "featuredClinician": "Vybraný lékař",
     "registrationLabel": "Registrace",
-    "verifiedSuffix": "Ověřeno"
+    "verifiedSuffix": "Ověřeno",
+    "allDoctorsHeading": "Všichni lékaři v {country}"
   },
   "cookie": {
     "title": "Nastavení cookies",
@@ -185,7 +197,7 @@
     "marketingTitle": "Reklama",
     "marketingBody": "Meta Pixel — ukazuje nám, které reklamy k nám přivádějí pacienty.",
     "thirdPartyTitle": "Obsah třetích stran",
-    "thirdPartyBody": "Widgety s hodnoceními pacientů od Doctify, vložené z doctify.com.",
+    "thirdPartyBody": "Widgety s hodnoceními pacientů od Doctify (doctify.com) a hlasový asistent ElevenLabs (elevenlabs.io) — asistent používá váš mikrofon pouze v době, kdy s ním mluvíte.",
     "analyticsTitle": "Analytika — anonymní statistiky používání",
     "analyticsBody": "Google Analytics a Microsoft Clarity (záznam relace) — ukazují nám, které stránky jsou užitečné a kde je web matoucí. Adresy stránek jsou zbaveny všeho, co by vás mohlo identifikovat, a ani jeden neběží na stránkách rezervace, košíku, platby, nahrávání souborů nebo ověření.",
     "settingsLink": "Nastavení cookies",
@@ -229,8 +241,8 @@
       "feature3Subtitle": "Objednejte se na termín, který vám vyhovuje, i ve stejný den.",
       "stat1Title": "Registrováni v {country}",
       "stat1Subtitle": "Všichni praktičtí lékaři jsou registrováni k výkonu praxe v {country}.",
-      "stat2Title": "45 000 konzultací v roce 2025",
-      "stat2Subtitle": "Hodnoceno na Doctify.",
+      "stat2Title": "{count}+ konzultací",
+      "stat2Subtitle": "Dokončeno v celé naší síti lékařů.",
       "stat3Title": "Důvěryhodná péče",
       "stat3Subtitle": "Přidejte se k pacientům v {country}."
     }
@@ -257,8 +269,8 @@
       "feature3Subtitle": "Soukromé, důvěrné a snadno objednatelné.",
       "stat1Title": "Registrováni v {country}",
       "stat1Subtitle": "Všichni specialisté jsou registrováni k výkonu praxe v {country}.",
-      "stat2Title": "45 000 konzultací v roce 2025",
-      "stat2Subtitle": "Hodnoceno na Doctify.",
+      "stat2Title": "{count}+ konzultací",
+      "stat2Subtitle": "Dokončeno v celé naší síti lékařů.",
       "stat3Title": "Důvěryhodná péče",
       "stat3Subtitle": "Přidejte se k pacientům v {country}."
     }
@@ -285,6 +297,8 @@
     "backToClinicians": "Zpět na lékaře v {country}",
     "bookWithDoctor": "Rezervovat s {name}",
     "servicesOffered": "Nabízené služby",
+    "viewServiceDetails": "Zobrazit podrobnosti o službě",
+    "lastReviewedLabel": "Naposledy zkontrolováno",
     "pickSlotWith": "Vyberte službu pro zobrazení volných termínů s {name}.",
     "pickSlot": "Vybrat termín",
     "pickTimeWith": "Vybrat termín s {name}",
@@ -321,13 +335,24 @@
     "fallbackBio": "Tento klinik podporuje online konzultace a následné poradenství prostřednictvím Global Health.",
     "fallbackQualification1": "Kvalifikace a registrační údaje jsou zobrazeny po ověření týmem kliniky.",
     "fallbackQualification2": "Pacienti mohou potvrdit vhodnost klinika během procesu rezervace.",
+    "fallbackSpecialty1": "Obecná konzultace",
+    "fallbackSpecialty2": "Doporučení ke specialistovi",
+    "fallbackSpecialty3": "Následná péče",
+    "metaDescriptionTemplate": "Objednejte se na online konzultaci s {name}, {title} v {country}. Jazyky: {languages}.",
+    "metaSocialDescriptionTemplate": "Seznamte se s {name}, {title} pečující o pacienty v {country}. Prohlédněte si kvalifikaci, jazyky a možnosti objednání.",
     "nextStep": "Další krok",
     "patientReviews": "Hodnocení pacientů"
   },
   "bookingForm": {
-    "benefitHeading": "Použít váš plán",
+    "benefitToggleLabel": "Mám členství, pojištění nebo plán",
+    "benefitHeading": "Kterou máme použít?",
+    "benefitNoneFound": "Ve vašem účtu jsme nenašli žádné členství, plán ani pojištění.",
+    "benefitClaimCta": "Připojte členství ke svému účtu",
+    "benefitClaimHint": "— na vaši rezervaci se uplatní, jakmile ji potvrdíte e-mailem.",
+    "benefitLoadError": "Vaše výhody se nepodařilo načíst.",
+    "benefitLoadRetry": "Zkusit znovu",
     "corporateOffAtCheckout": "sleva při platbě",
-    "benefitPayNormal": "Zaplatit běžně",
+    "benefitScarcityNote": "Využije 1 z vašich zbývajících {count}.",
     "benefitUseCredit": "Použít kredit plánu",
     "benefitUseDiscount": "Použít slevu plánu",
     "benefitExplainer": "Váš plán {plan} se vztahuje na tuto konzultaci — nejlepší cena je předvybrána. Můžete ji změnit.",
@@ -427,7 +452,7 @@
       "feature3Subtitle": "Naši lékaři jsou registrováni k výkonu praxe v {country}.",
       "stat1Title": "Výsledky posouzené lékařem",
       "stat1Subtitle": "Každý výsledek posuzuje registrovaný lékař.",
-      "stat2Title": "45 000 konzultací v roce 2025",
+      "stat2Title": "{count}+ konzultací",
       "stat2Subtitle": "Většina výsledků je k dispozici do 24–48 hodin.",
       "stat3Title": "Bezpečné a soukromé",
       "stat3Subtitle": "S vašimi zdravotními údaji nakládáme důvěrně."
@@ -456,7 +481,10 @@
     "ctaHeading": "Objednejte si {title} ještě dnes",
     "goodToKnow": "Dobré vědět",
     "disclaimer": "Výsledky testů posuzuje lékař registrovaný k výkonu praxe v {country}. Tato stránka obsahuje obecné informace a nenahrazuje odbornou lékařskou radu, diagnózu ani léčbu.",
-    "faqTitle": "Časté otázky"
+    "faqTitle": "Časté otázky",
+    "markersCount": "Počet markerů: {count}",
+    "howItWorksEyebrow": "Jak to funguje",
+    "beforeTestingEyebrow": "Před testováním"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Lékaři vyřizující opakované předpisy",
@@ -654,6 +682,8 @@
     "redirecting": "Přesměrování na Stripe…",
     "paySecurely": "Zaplatit {amount} bezpečně",
     "redirectNote": "Budete přesměrováni na Stripe k dokončení platby. Nikdy neukládáme údaje o vaší kartě.",
+    "zeroTotalNote": "Platba není potřeba — vaše výhody pokrývají tuto rezervaci v plné výši. Potvrzením ji dokončíte a nezadáváte žádné údaje o kartě.",
+    "confirmZeroTotal": "Potvrdit rezervaci — nic k zaplacení",
     "orderSummary": "Souhrn objednávky",
     "subtotal": "Mezisoučet",
     "shipping": "Doprava",
@@ -689,6 +719,8 @@
     "insuranceStandard": "Zaplatit běžnou cenu",
     "insuranceNone": "Bez pojištění",
     "noInsuranceDoctors": "Tuto službu momentálně žádný lékař s pojišťovnou {insurer} neposkytuje. Můžete rezervovat za běžnou cenu.",
+    "insuranceBenefitLater": "Chcete místo toho použít členství nebo plán? Zeptáme se po výběru času.",
+    "benefitInsuranceNote": "Krytí ověříme po rezervaci. Teď se nic neúčtuje.",
     "title": "Objednejte si konzultaci",
     "subtitle": "{country} lékařská klinika. Vyberte si službu, lékaře, čas a údaje pacienta.",
     "bookingSteps": "Kroky rezervace",
@@ -786,6 +818,7 @@
     "chooseLanguage": "Vybrat jazyk",
     "searchLanguages": "Hledat jazyky…",
     "sectionNavigation": "Navigace v sekcích",
+    "footerNavigation": "Navigace v patičce",
     "sections": "Sekce",
     "bookAnAppointment": "Objednat se na konzultaci",
     "patientReviews": "Hodnocení pacientů",
@@ -809,7 +842,7 @@
     "reviewRateStepSubmit": "Odeslat"
   },
   "homeMeta": {
-    "titleTemplate": "Online lékař {country} | Registrovaní praktičtí lékaři a specialisté | Global Health",
+    "titleTemplate": "Online lékař {country} | Registrovaní lékaři a specialisté | Global Health",
     "descriptionTemplate": "Promluvte si ještě dnes s registrovaným lékařem přes videohovor — praktický lékař, potvrzení, odeslání ke specialistovi. Tentýž den, {country}."
   },
   "pricingPage": {
@@ -831,13 +864,19 @@
     "heroTitleLead": "Zdravotní příručky od",
     "heroTitleAccent": "registrovaných lékařů.",
     "heroLede": "Příručky založené na důkazech, které napsal a zkontroloval náš lékařský tým. Žádné reklamy, žádné zbytečnosti.",
+    "heroLedeCountryTemplate": "Zdravotní příručky založené na důkazech pro {country}, které napsal a zkontroloval náš lékařský tým.",
     "heroCta": "Procházet články",
     "heroSecondary": "Zpět na domovskou stránku",
     "articleSingular": "článek",
     "articlePlural": "články",
     "loadingArticleAriaLabel": "Načítání článku…",
     "categoryFallback": "Zdravotní příručka",
-    "readArticle": "Přečíst článek"
+    "readArticle": "Přečíst článek",
+    "heroTitleCountryTemplate": "{title} – {country}",
+    "globalGroupLabel": "Globální",
+    "paginationLabel": "Stránkování",
+    "paginationPrevious": "Předchozí",
+    "paginationNext": "Další"
   },
   "calendar": {
     "selectDay": "Vyberte den",
@@ -848,6 +887,19 @@
     "truncatedNotice": "Seznam zkrácen na limit řádků exportu — zužte rozsah dat nebo filtry pro úplný výpis."
   },
   "doctify": {
-    "body": "Nezávislá ověřená hodnocení, která Doctify sbírá od pacientů ošetřených našimi lékaři."
+    "body": "Nezávislá ověřená hodnocení, která Doctify sbírá od pacientů ošetřených našimi lékaři.",
+    "patientsSayHeadline": "Co pacienti říkají o",
+    "patientsSayAccent": "našich lékařích"
+  },
+  "linkCallout": {
+    "entry": "Začněte zde",
+    "referral": "Další krok",
+    "complementary": "Související péče"
+  },
+  "healthPage": {
+    "seeAllLanguageDoctors": "Zobrazit všechny lékaře, kteří mluví jazykem {language}"
+  },
+  "alsoAvailableIn": {
+    "title": "Také dostupné v jazyce"
   }
 }

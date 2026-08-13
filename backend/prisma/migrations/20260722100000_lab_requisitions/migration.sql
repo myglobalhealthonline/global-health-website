@@ -11,7 +11,7 @@
 --
 -- Their Remote API is a form-handoff, not a booking API: our staff creates the
 -- requisition in WebLIMS through a pre-filled form, and results come back on a
--- separate channel. See docs/synlab/synlab-integration-questions.md.
+-- separate channel. See docs/guides/synlab-integration-questions.md.
 --
 -- Idempotent: this DB carries drift, so the migration must be safe to re-apply
 -- via `prisma migrate deploy`.

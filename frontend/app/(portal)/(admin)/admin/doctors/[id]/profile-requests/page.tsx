@@ -14,6 +14,7 @@ import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { revalidateDoctorProfileCache } from "@/lib/server/revalidate-doctor-profile";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +85,7 @@ function ValuePreview({
                 className="gh-article-body text-sm"
                 // Sanitized on submit and again here — the admin precedent on
                 // the doctor detail page does the same for the live bio.
+                // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- sanitizeDoctorBioHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/doctor-bio-format.ts).
                 dangerouslySetInnerHTML={{ __html: sanitizeDoctorBioHtml(t.bio) }}
               />
             ) : (
@@ -294,6 +296,7 @@ export default async function AdminDoctorProfileRequestsPage({
 
   return (
     <>
+      <SetCrumbTitle label={doctor.fullName} />
       <Link
         href={`/admin/doctors/${id}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

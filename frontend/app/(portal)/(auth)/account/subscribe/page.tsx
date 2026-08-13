@@ -5,7 +5,7 @@ import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { getServerSubscription } from "@/lib/api/me-subscription-server";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
@@ -35,10 +35,10 @@ export default async function SubscribeConfirmPage({
   // of letting them start a second membership (one active sub per user).
   const existing = await getServerSubscription();
   if (existing && (existing.status === "ACTIVE" || existing.status === "PAST_DUE")) {
-    redirect("/account/membership?subscription=already-active");
+    redirect("/account/plans?subscription=already-active");
   }
 
-  const pageLocale = await getPageLocale();
+  const pageLocale = await getPortalLocale();
   const locale: LocaleCode =
     langParam && isSupportedLocale(langParam) ? (langParam as LocaleCode) : pageLocale;
   const { subscription } = loadLocaleBundle(locale);

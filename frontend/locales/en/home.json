@@ -43,8 +43,8 @@
   },
   "team": {
     "eyebrow": "The team",
-    "headline": "The clinician you choose is",
-    "headlineAccent": "the clinician you see.",
+    "headline": "Will I see",
+    "headlineAccent": "the same doctor every time?",
     "body": "Every consultation is with someone licensed where you are. No call centres, no rota of strangers — the doctor on screen is the doctor on the profile.",
     "registeredSingular": "registered clinician",
     "registeredPlural": "registered clinicians",
@@ -67,8 +67,8 @@
   },
   "howItWorks": {
     "eyebrow": "How it works",
-    "headlineMain": "Three steps.",
-    "headlineAccent": "A clearer path.",
+    "headlineMain": "How does it",
+    "headlineAccent": "work?",
     "subtitle": "From choosing a service to a confirmed appointment — select a clinician, pick a time, and get care from anywhere.",
     "step1Title": "Choose your service",
     "step1Body": "Browse GP consultations, specialist referrals, and home-test services. Filter by language, urgency, or price.",

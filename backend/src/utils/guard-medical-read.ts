@@ -2,12 +2,33 @@ import type { FastifyRequest } from "fastify";
 import { prisma } from "../db/prisma.js";
 import {
   assertMedicalAccess,
+  describeDenyReason,
   MedicalAccessDeniedError,
   type AccessResult,
 } from "../lib/medical-access-guard.js";
 import { hasAcceptedCurrentAgreement } from "../modules/confidentiality/confidentiality.service.js";
+import { errorResponse } from "./response.js";
 
 export { MedicalAccessDeniedError };
+
+/**
+ * Single place every route's `catch (guardError)` block calls to build the
+ * 403 body. Keeps the existing message string for backward compatibility
+ * (every client renders `message` and ignores `details` today) and adds the
+ * structured reason/remedy in `details` so the doctor portal can act on it
+ * without a breaking response-shape change. No patient/clinical detail is
+ * included — reasonCode + remedy only, both drawn from the fixed catalog in
+ * medical-access-guard.ts.
+ */
+export function medicalAccessDeniedResponse(err: MedicalAccessDeniedError) {
+  const info = describeDenyReason(err.denyReason);
+  return errorResponse("Access to this medical record is not permitted", {
+    reasonCode: err.denyReason,
+    remedy: info.remedy,
+    selfFixable: info.selfFixable,
+    canRequestAccess: info.canRequestAccess,
+  });
+}
 
 /** Explicit actor identity, taken from the route's auth gate
  *  (verifyDoctorAccess / verifyAdminAccess / requireAuth). We don't read
@@ -177,6 +198,28 @@ export async function guardMedicalReadForAppointment(
   appointmentId: string,
   args: Omit<GuardMedicalReadArgs, "patientProfileId" | "relatedAppointmentId">,
 ): Promise<AccessResult | null> {
+  const profileId = await resolvePatientProfileIdForAppointment(appointmentId);
+  if (!profileId) return null;
+
+  return guardMedicalRead(request, actor, {
+    ...args,
+    patientProfileId: profileId,
+    relatedAppointmentId: appointmentId,
+  });
+}
+
+/**
+ * Resolve the PatientProfile.id behind an appointment (by userId, falling
+ * back to the appointment's email for guest bookings never claimed).
+ * Extracted out of `guardMedicalReadForAppointment` so other call sites that
+ * need the same appointment→profile mapping — e.g. the medical-access-request
+ * "request access" flow, which is appointment-scoped from the doctor portal —
+ * don't duplicate it. Returns null when there's no appointment or no profile
+ * yet, matching the existing `if (profile) { ... }` pattern used elsewhere.
+ */
+export async function resolvePatientProfileIdForAppointment(
+  appointmentId: string,
+): Promise<string | null> {
   const appt = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     select: { userId: true, email: true },
@@ -189,11 +232,5 @@ export async function guardMedicalReadForAppointment(
         where: { email: appt.email.toLowerCase() },
         select: { id: true },
       });
-  if (!profile) return null;
-
-  return guardMedicalRead(request, actor, {
-    ...args,
-    patientProfileId: profile.id,
-    relatedAppointmentId: appointmentId,
-  });
+  return profile?.id ?? null;
 }

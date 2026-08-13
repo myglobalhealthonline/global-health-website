@@ -48,6 +48,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     if (!verified.ok) {
       return reply.status(400).send(errorResponse(verified.message));
     }
+    // nosemgrep: gh-phi-route-missing-guard -- S-033 reclassified as a false positive (see docs/audits/security/audit-authz-rules-2026-08-02.md): this is a public, single-use capability-token flow (verifyPatientUploadToken), not a staff route. There is no session-bound actor to build a GuardActor from -- the token itself, minted by a doctor and verified above, is the authorization mechanism here, not the session-based medical-access guard.
     const profile = await prisma.patientProfile.findUnique({
       where: { email: verified.email },
       select: { fullName: true, email: true },
@@ -130,6 +131,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
       let label = `Patient upload: ${safeName}`;
       let sourceGeneratedDocumentId: string | undefined;
       if (verified.documentId) {
+        // nosemgrep: gh-phi-route-missing-guard -- S-033 reclassified as a false positive (see docs/audits/security/audit-authz-rules-2026-08-02.md): same public capability-token flow as the GET handler above -- double-scoped to verified.documentId AND appt.id (itself re-verified against verified.appointmentId/doctorId/email), no session-bound actor exists to guard against.
         const rx = await prisma.generatedDocument.findFirst({
           where: { id: verified.documentId, appointmentId: appt.id },
           select: { id: true, prescriptionNumber: true },

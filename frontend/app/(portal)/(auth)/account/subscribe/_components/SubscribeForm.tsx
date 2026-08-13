@@ -48,7 +48,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
     }
     setSubmitting(true);
     setError(null);
-    const returnTo = props.returnTo ?? "/account/membership";
+    const returnTo = props.returnTo ?? "/account/plans";
     const res = await startSubscription(props.planId, returnTo);
     if (res.ok && res.data.checkoutUrl) {
       const url = res.data.checkoutUrl;

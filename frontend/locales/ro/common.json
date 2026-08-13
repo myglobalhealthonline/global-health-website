@@ -63,7 +63,7 @@
     "cta": "Începeți consultația online",
     "trustLine": "Îngrijire licențiată · Confidențialitate pe primul loc · Clinici în toată Europa",
     "careHeading": "Îngrijire",
-    "clinicsHeading": "Clinici",
+    "clinicsHeading": "Clinici / țări",
     "accountHeading": "Cont",
     "companyHeading": "Companie",
     "ourDoctors": "Medicii noștri",
@@ -74,10 +74,12 @@
     "privacyPolicy": "Politica de confidențialitate",
     "termsOfService": "Termeni de serviciu",
     "tagline": "Medicină oricând și oriunde. Consultații medicale online cu medici înregistrați local pe piețele unde operăm.",
-    "stayInformed": "Rămâi informat",
+    "stayInformed": "Rămâi informat. Rămâi sănătos.",
     "newsletterDesc": "Actualizări lunare de sănătate despre noi țări, medici și subiecte de sănătate. Fără spam.",
     "subscribe": "Abonați-vă",
     "newsletterSuccess": "Mulțumim — sunteți pe listă.",
+    "newsletterPrivacy": "Îți respectăm confidențialitatea. Te poți dezabona oricând.",
+    "followUs": "Urmărește-ne",
     "disclaimer": "Consultațiile online nu înlocuiesc îngrijirea de urgență. Dacă aveți nevoie de ajutor urgent, sunați la 112 sau la numărul de urgență local. Informațiile de pe acest site sunt orientări generale; rețetele, certificatele, trimiterile și pașii următori depind de evaluarea clinică și sunt emise la discreția medicului curant.",
     "copyrightSuffix": "Medicină oricând și oriunde",
     "privacyLink": "Confidențialitate",
@@ -89,6 +91,14 @@
     "title": "Alegeți țara",
     "description": "Accesați hub-ul clinicii locale, profilurile echipei și consultațiile.",
     "enterClinic": "Intră în clinică"
+  },
+  "countryNames": {
+    "ie": "Irlanda",
+    "cz": "Cehia",
+    "pt": "Portugalia",
+    "es": "Spania",
+    "ro": "România",
+    "br": "Brazilia"
   },
   "entryGate": {
     "eyebrow": "Clinică medicală online",
@@ -144,6 +154,7 @@
     "viewProfile": "Vezi profil",
     "bookAppointment": "Programează consultație",
     "pickTime": "Alegeți o oră",
+    "languagesLabel": "Limbi",
     "bookWithTemplate": "Rezervă cu {name}",
     "viewDoctors": "Vezi medicii",
     "trustCard1Title": "Licențiat în {country}",
@@ -168,7 +179,8 @@
     "showResults": "Arată rezultatele",
     "featuredClinician": "Medic recomandat",
     "registrationLabel": "Înregistrare",
-    "verifiedSuffix": "Verificat"
+    "verifiedSuffix": "Verificat",
+    "allDoctorsHeading": "Toți medicii din {country}"
   },
   "cookie": {
     "title": "Preferințe cookie",
@@ -185,7 +197,7 @@
     "marketingTitle": "Publicitate",
     "marketingBody": "Meta Pixel — ne arată ce reclame aduc pacienți la noi.",
     "thirdPartyTitle": "Conținut de la terți",
-    "thirdPartyBody": "Widget-uri cu recenzii ale pacienților de la Doctify, încorporate de pe doctify.com.",
+    "thirdPartyBody": "Widget-uri cu recenzii ale pacienților de la Doctify (doctify.com) și asistentul vocal ElevenLabs (elevenlabs.io) — asistentul folosește microfonul doar cât timp vorbiți cu el.",
     "analyticsTitle": "Analiză — statistici anonime de utilizare",
     "analyticsBody": "Google Analytics și Microsoft Clarity (înregistrarea sesiunii) — ne arată ce pagini sunt utile și unde site-ul este confuz. Adresele paginilor sunt curățate de orice v-ar putea identifica, iar niciunul dintre ele nu rulează pe paginile de programare, coș, plată, încărcare de fișiere sau verificare.",
     "settingsLink": "Setări cookie",
@@ -229,8 +241,8 @@
       "feature3Subtitle": "Programează-te când îți convine, inclusiv în aceeași zi.",
       "stat1Title": "Înregistrați în {country}",
       "stat1Subtitle": "Toți medicii de familie sunt înregistrați pentru a profesa în {country}.",
-      "stat2Title": "45.000 de consultații în 2025",
-      "stat2Subtitle": "Evaluat pe Doctify.",
+      "stat2Title": "{count}+ consultații",
+      "stat2Subtitle": "Finalizate în întreaga noastră rețea de medici.",
       "stat3Title": "Îngrijire de încredere",
       "stat3Subtitle": "Alătură-te pacienților din {country}."
     }
@@ -257,8 +269,8 @@
       "feature3Subtitle": "Private, confidențiale și ușor de programat.",
       "stat1Title": "Înregistrați în {country}",
       "stat1Subtitle": "Toți specialiștii sunt înregistrați pentru a profesa în {country}.",
-      "stat2Title": "45.000 de consultații în 2025",
-      "stat2Subtitle": "Evaluat pe Doctify.",
+      "stat2Title": "{count}+ consultații",
+      "stat2Subtitle": "Finalizate în întreaga noastră rețea de medici.",
       "stat3Title": "Îngrijire de încredere",
       "stat3Subtitle": "Alătură-te pacienților din {country}."
     }
@@ -285,6 +297,8 @@
     "backToClinicians": "Înapoi la clinicienii din {country}",
     "bookWithDoctor": "Rezervă cu {name}",
     "servicesOffered": "Servicii oferite",
+    "viewServiceDetails": "Vezi detaliile serviciului",
+    "lastReviewedLabel": "Ultima verificare",
     "pickSlotWith": "Alege un serviciu pentru a vedea intervalele disponibile cu {name}.",
     "pickSlot": "Alege interval",
     "pickTimeWith": "Alege interval cu {name}",
@@ -321,13 +335,24 @@
     "fallbackBio": "Acest clinician susține consultații online și îndrumări de urmărire prin Global Health.",
     "fallbackQualification1": "Calificările și detaliile de înregistrare sunt afișate atunci când sunt verificate de echipa clinicii.",
     "fallbackQualification2": "Pacienții pot confirma potrivirea clinicianului în timpul procesului de programare.",
+    "fallbackSpecialty1": "Consultație generală",
+    "fallbackSpecialty2": "Îndrumare către specialist",
+    "fallbackSpecialty3": "Sprijin pentru monitorizare",
+    "metaDescriptionTemplate": "Programați o consultație online cu {name}, {title} în {country}. Limbi: {languages}.",
+    "metaSocialDescriptionTemplate": "Faceți cunoștință cu {name}, {title} care tratează pacienți în {country}. Vedeți acreditările, limbile și opțiunile de programare.",
     "nextStep": "Pasul următor",
     "patientReviews": "Recenzii ale pacienților"
   },
   "bookingForm": {
-    "benefitHeading": "Aplicați planul",
+    "benefitToggleLabel": "Am un abonament, o asigurare sau un plan",
+    "benefitHeading": "Pe care să îl aplicăm?",
+    "benefitNoneFound": "Nu am găsit niciun abonament, plan sau asigurare în contul dumneavoastră.",
+    "benefitClaimCta": "Asociați un abonament contului dumneavoastră",
+    "benefitClaimHint": "— se aplică programării dumneavoastră după ce o confirmați prin e-mail.",
+    "benefitLoadError": "Nu am putut încărca beneficiile dumneavoastră.",
+    "benefitLoadRetry": "Încercați din nou",
     "corporateOffAtCheckout": "reducere la plată",
-    "benefitPayNormal": "Plătiți normal",
+    "benefitScarcityNote": "Folosește 1 din cele {count} rămase.",
     "benefitUseCredit": "Folosiți creditul planului",
     "benefitUseDiscount": "Folosiți reducerea planului",
     "benefitExplainer": "Planul dumneavoastră {plan} se aplică acestei consultații — cel mai bun preț este preselectat. Îl puteți schimba.",
@@ -427,7 +452,7 @@
       "feature3Subtitle": "Medicii noștri sunt înregistrați pentru a profesa în {country}.",
       "stat1Title": "Rezultate verificate de medici",
       "stat1Subtitle": "Fiecare rezultat este verificat de un medic înregistrat.",
-      "stat2Title": "45.000 de consultații în 2025",
+      "stat2Title": "{count}+ consultații",
       "stat2Subtitle": "Majoritatea rezultatelor sunt disponibile în 24–48 de ore.",
       "stat3Title": "Sigur și privat",
       "stat3Subtitle": "Informațiile tale de sănătate sunt tratate confidențial."
@@ -456,7 +481,10 @@
     "ctaHeading": "Comandă {title} astăzi",
     "goodToKnow": "Bine de știut",
     "disclaimer": "Rezultatele testelor sunt verificate de un medic înregistrat pentru a profesa în {country}. Această pagină conține informații generale și nu înlocuiește sfatul, diagnosticul sau tratamentul medical profesional.",
-    "faqTitle": "Întrebări frecvente"
+    "faqTitle": "Întrebări frecvente",
+    "markersCount": "{count} markeri",
+    "howItWorksEyebrow": "Cum funcționează",
+    "beforeTestingEyebrow": "Înainte de testare"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Medici care gestionează rețetele repetate",
@@ -654,6 +682,8 @@
     "redirecting": "Redirecționare către Stripe…",
     "paySecurely": "Plătește {amount} în siguranță",
     "redirectNote": "Vei fi redirecționat către Stripe pentru a finaliza plata. Nu stocăm niciodată datele cardului tău.",
+    "zeroTotalNote": "Nu este necesară nicio plată — beneficiile tale acoperă integral această rezervare. Confirmarea o finalizează și nu se solicită date de card.",
+    "confirmZeroTotal": "Confirmă rezervarea — nimic de plată",
     "orderSummary": "Rezumatul comenzii",
     "subtotal": "Subtotal",
     "shipping": "Livrare",
@@ -689,6 +719,8 @@
     "insuranceStandard": "Plătiți prețul standard",
     "insuranceNone": "Fără asigurare",
     "noInsuranceDoctors": "Momentan niciun medic nu acceptă {insurer} pentru acest serviciu. Puteți rezerva la prețul standard.",
+    "insuranceBenefitLater": "Folosiți un abonament sau un plan? Vă întrebăm după ce alegeți ora.",
+    "benefitInsuranceNote": "Verificăm acoperirea după rezervare. Nu se percepe nimic acum.",
     "title": "Programează-ți consultația",
     "subtitle": "Clinică medicală din {country}. Alege un serviciu, un clinician, o oră și detaliile pacientului.",
     "bookingSteps": "Pașii programării",
@@ -786,6 +818,7 @@
     "chooseLanguage": "Alege limba",
     "searchLanguages": "Caută limbi…",
     "sectionNavigation": "Navigare pe secțiuni",
+    "footerNavigation": "Navigare în subsol",
     "sections": "Secțiuni",
     "bookAnAppointment": "Programează o consultație",
     "patientReviews": "Recenzii ale pacienților",
@@ -809,7 +842,7 @@
     "reviewRateStepSubmit": "Trimitere"
   },
   "homeMeta": {
-    "titleTemplate": "Medic Online {country} | Medici de Familie și Specialiști Înregistrați | Global Health",
+    "titleTemplate": "Medic Online {country} | Medici și Specialiști Înregistrați | Global Health",
     "descriptionTemplate": "Vorbiți azi cu un medic înregistrat prin apel video — medicină de familie, adeverințe medicale, trimiteri către specialiști. Aceeași zi, {country}."
   },
   "pricingPage": {
@@ -831,13 +864,19 @@
     "heroTitleLead": "Ghiduri de sănătate de la",
     "heroTitleAccent": "medici înregistrați.",
     "heroLede": "Ghiduri bazate pe dovezi, scrise și revizuite de echipa noastră medicală. Fără reclame, fără exagerări.",
+    "heroLedeCountryTemplate": "Ghiduri de sănătate bazate pe dovezi pentru {country}, scrise și revizuite de echipa noastră medicală.",
     "heroCta": "Răsfoiește articolele",
     "heroSecondary": "Înapoi la început",
     "articleSingular": "articol",
     "articlePlural": "articole",
     "loadingArticleAriaLabel": "Se încarcă articolul…",
     "categoryFallback": "Ghid de sănătate",
-    "readArticle": "Citește articolul"
+    "readArticle": "Citește articolul",
+    "heroTitleCountryTemplate": "{title} în {country}",
+    "globalGroupLabel": "Global",
+    "paginationLabel": "Paginare",
+    "paginationPrevious": "Anterior",
+    "paginationNext": "Următor"
   },
   "calendar": {
     "selectDay": "Selectați o zi",
@@ -848,6 +887,19 @@
     "truncatedNotice": "Listă trunchiată la limita de rânduri a exportului — restrângeți intervalul de date sau filtrele pentru un export complet."
   },
   "doctify": {
-    "body": "Recenzii independente și verificate, colectate de Doctify de la pacienți tratați de medicii noștri."
+    "body": "Recenzii independente și verificate, colectate de Doctify de la pacienți tratați de medicii noștri.",
+    "patientsSayHeadline": "Ce spun pacienții despre",
+    "patientsSayAccent": "medicii noștri"
+  },
+  "linkCallout": {
+    "entry": "Începeți aici",
+    "referral": "Pasul următor",
+    "complementary": "Îngrijire conexă"
+  },
+  "healthPage": {
+    "seeAllLanguageDoctors": "Vezi toți medicii care vorbesc {language}"
+  },
+  "alsoAvailableIn": {
+    "title": "Disponibil și în"
   }
 }

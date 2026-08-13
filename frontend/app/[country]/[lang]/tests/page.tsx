@@ -35,6 +35,9 @@ import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { RelatedArticles } from "@/components/sections/RelatedArticles";
+import { listRelatedBlogPosts } from "@/lib/content/get-public-blog";
+import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 
 type Params = { country: string; lang: string };
 
@@ -96,10 +99,24 @@ export default async function HealthTestsPage({
   const [
     items,
     { record: rawPage, disabled: pageDisabled },
+    relatedPosts,
+    consultationCountResult,
   ] = await Promise.all([
     getCountryHealthTests(code, lang),
     getPageContent(code, "HEALTH_TESTS", lang as PublicLocale),
+    // The hub is not a Service, so there is no ctaService to match on — link
+    // the market's newest articles instead. Purely a link-back: the articles
+    // already point down here, nothing pointed up.
+    listRelatedBlogPosts(code, lang),
+    fetchGlobalConsultationCount(),
   ]);
+  // TRUST-METRIC-001: historical base + live completed-appointment count.
+  // Falls back to the historical base alone (still a true figure) if the
+  // backend read fails.
+  const consultationCount = consultationCountResult.ok
+    ? consultationCountResult.data.total
+    : 45_000;
+  const consultationCountLabel = consultationCount.toLocaleString(lang);
 
   // Structured PageContent self-gates via publish status; legacy "pages"
   // country-feature no longer gates it.
@@ -119,9 +136,9 @@ export default async function HealthTestsPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Lab tests", url: `/${slug}/${lang}/lab-tests` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+          { name: c.testsPage.watermark, url: `/${slug}/${lang}/lab-tests` },
         ])}
       />
       <JsonLd data={faqJsonLd(hub.faq)} />
@@ -182,7 +199,7 @@ export default async function HealthTestsPage({
           },
           {
             icon: <Clock className="size-5" strokeWidth={2} aria-hidden />,
-            title: t.hero.stat2Title,
+            title: t.hero.stat2Title.replace("{count}", consultationCountLabel),
             subtitle: t.hero.stat2Subtitle,
           },
           {
@@ -307,6 +324,12 @@ export default async function HealthTestsPage({
       ) : (
         <FAQSection title={t.watermark} items={hub.faq} />
       )}
+
+      <RelatedArticles
+        title={c.serviceDetailPage.relatedTopicsTitle}
+        posts={relatedPosts}
+        basePath={`/${slug}/${lang}`}
+      />
 
       <DoctifyReviewsSection
         theme="ivory"

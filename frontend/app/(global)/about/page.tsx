@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
-import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { AboutArchPanel, Pillar } from "@/components/sections/AboutBlocks";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -13,6 +13,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
 import { getCountryDoctors } from "@/lib/content/get-country-collections";
+import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,27 +33,28 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-// Six live markets, each linked to its market home so the About page passes
-// PageRank down the hierarchy (SEO brief item 22). Flag code ≠ market name for
-// Czech Republic (flag "cz").
+// Six live markets, each linked to its own country About page — which states
+// that market's languages, offering and register, and links on to its market
+// home. This page passes PageRank down the hierarchy (SEO brief item 22).
+// Flag code ≠ market name for Czech Republic (flag "cz").
 const MARKETS: ReadonlyArray<{ code: string; name: string; href: string }> = [
-  { code: "ie", name: "Ireland", href: "/ireland/en" },
-  { code: "pt", name: "Portugal", href: "/portugal/pt" },
-  { code: "es", name: "Spain", href: "/spain/es" },
-  { code: "cz", name: "Czech Republic", href: "/czechia/cs" },
-  { code: "ro", name: "Romania", href: "/romania/ro" },
-  { code: "br", name: "Brazil", href: "/brazil/pt" },
+  { code: "ie", name: "Ireland", href: "/ireland/en/about" },
+  { code: "pt", name: "Portugal", href: "/portugal/pt/about" },
+  { code: "es", name: "Spain", href: "/spain/es/about" },
+  { code: "cz", name: "Czech Republic", href: "/czechia/cs/about" },
+  { code: "ro", name: "Romania", href: "/romania/ro/about" },
+  { code: "br", name: "Brazil", href: "/brazil/pt/about" },
 ];
 
 // Verifiable company facts for journalists/investors hitting /about (brief
 // section 6). Registry numbers + names are locale-independent, so this block
-// is authored once in English.
+// is authored once in English. "Consultations" is not in this static list —
+// TRUST-METRIC-001 makes it a live figure, spliced in by AboutPage below.
 const COMPANY_FACTS: ReadonlyArray<{ label: string; value: string }> = [
   { label: "Founded", value: "2023 — Global Guest s.r.o. (IČO: 19071680), Czech Republic" },
   { label: "Ireland branch", value: "2024 — Global Health (CRO 910267), Ireland" },
   { label: "Markets", value: "Ireland · Portugal · Spain · Czech Republic · Romania · Brazil" },
   { label: "Doctors", value: "60+ GPs and specialists across all markets" },
-  { label: "Consultations", value: "45,000+ consultations delivered in 2025" },
   { label: "Headquarters", value: "Prague, Czech Republic" },
   { label: "Operations", value: "Dublin · Lisbon · Prague" },
   { label: "Contact", value: "info@myglobalhealth.online" },
@@ -100,6 +102,22 @@ export default async function AboutPage() {
   const reviewer = ieDoctors.find((d) => d.isFeatured) ?? null;
   const reviewerHref = reviewer ? `/ireland/en/doctors/${reviewer.slug}` : null;
 
+  // TRUST-METRIC-001: historical base + live completed-appointment count.
+  // Falls back to the historical base alone (still a true figure) if the
+  // backend read fails. Spliced in after "Doctors" — see COMPANY_FACTS.
+  const consultationCountResult = await fetchGlobalConsultationCount();
+  const consultationCount = consultationCountResult.ok
+    ? consultationCountResult.data.total
+    : 45_000;
+  const companyFacts: ReadonlyArray<{ label: string; value: string }> = [
+    ...COMPANY_FACTS.slice(0, 4),
+    {
+      label: "Consultations",
+      value: `${consultationCount.toLocaleString("en")}+ consultations delivered, and growing`,
+    },
+    ...COMPANY_FACTS.slice(4),
+  ];
+
   return (
     <section>
       {/* DARK — hero */}
@@ -130,7 +148,29 @@ export default async function AboutPage() {
             subtitle: about.trust_card3_subtitle,
           },
         ]}
-        rightSlot={<AboutArchPanel locale={about} />}
+        rightSlot={
+          <AboutArchPanel
+            src="/images/stock/about.jpg"
+            alt="Global Health telemedicine platform — online doctor consultations across multiple markets"
+            floats={[
+              {
+                icon: <Globe2 className="size-4" strokeWidth={2} aria-hidden />,
+                title: about.float1_title,
+                subtitle: about.float1_subtitle,
+              },
+              {
+                icon: <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />,
+                title: about.float2_title,
+                subtitle: about.float2_subtitle,
+              },
+              {
+                icon: <Users className="size-4" strokeWidth={2} aria-hidden />,
+                title: about.float3_title,
+                subtitle: about.float3_subtitle,
+              },
+            ]}
+          />
+        }
         mobileBgSrc="/images/stock/about.jpg"
       />
 
@@ -294,7 +334,7 @@ export default async function AboutPage() {
             {about.company_headline}
           </h2>
           <dl className="mt-12 grid gap-x-12 sm:grid-cols-2">
-            {COMPANY_FACTS.map((f) => (
+            {companyFacts.map((f) => (
               <div
                 key={f.label}
                 className="grid gap-1 border-t border-[rgba(29,75,54,0.12)] py-5 sm:grid-cols-[9rem_1fr] sm:items-baseline sm:gap-6"
@@ -327,8 +367,8 @@ export default async function AboutPage() {
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "Home", url: "/" },
-            { name: "About", url: "/about" },
+            { name: common.navigation.home, url: "/" },
+            { name: common.navigation.about, url: "/about" },
           ]),
           faqJsonLd(FAQ_ITEMS.map((f) => ({ question: f.question, answer: f.answer }))),
         ]}
@@ -343,97 +383,6 @@ export default async function AboutPage() {
         headlineAccent={about.doctify_headline_accent}
       />
     </section>
-  );
-}
-
-function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_subtitle: string; float2_title: string; float2_subtitle: string; float3_title: string; float3_subtitle: string } }) {
-  return (
-    <div className="relative mx-auto aspect-square w-full max-w-[600px]">
-      <HeroPlusImage
-        src="/images/stock/about.jpg"
-        alt="Global Health telemedicine platform — online doctor consultations across multiple markets"
-      />
-
-      {/* Floating — Five countries */}
-      <div
-        className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0s]"
-      >
-        <span
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
-        >
-          <Globe2 className="size-4" strokeWidth={2} aria-hidden />
-        </span>
-        <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float1_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float1_subtitle}</span>
-        </span>
-      </div>
-
-      {/* Floating — Verified doctors */}
-      <div
-        className="gh-glass-emerald gh-floaty absolute -right-6 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
-      >
-        <span
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
-        >
-          <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
-        </span>
-        <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float2_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float2_subtitle}</span>
-        </span>
-      </div>
-
-      {/* Floating — No waiting rooms */}
-      <div
-        className="gh-glass-emerald gh-floaty absolute -left-6 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
-      >
-        <span
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
-        >
-          <Users className="size-4" strokeWidth={2} aria-hidden />
-        </span>
-        <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float3_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float3_subtitle}</span>
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function Pillar({
-  icon,
-  eyebrow,
-  title,
-  body,
-}: {
-  icon: React.ReactNode;
-  eyebrow: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <article>
-      <div className="flex items-center gap-3">
-        <span
-          className="inline-flex size-10 items-center justify-center rounded-full border border-[rgba(29,75,54,0.20)] bg-[rgba(29,75,54,0.08)] text-[var(--color-brand-primary)]"
-        >
-          {icon}
-        </span>
-        <span
-          className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-text-muted)] [font-variant-numeric:tabular-nums]"
-        >
-          {eyebrow}
-        </span>
-      </div>
-      <h3 className="mt-5 text-xl font-extrabold tracking-[-0.015em] text-[var(--color-text-primary)]">
-        {title}
-      </h3>
-      <p className="mt-3 max-w-[42ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-muted)]">
-        {body}
-      </p>
-    </article>
   );
 }
 

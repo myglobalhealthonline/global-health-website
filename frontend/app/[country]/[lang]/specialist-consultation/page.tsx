@@ -40,6 +40,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 import { getCountryLegal } from "@/lib/content/get-country-legal";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { selectSpecialistDoctors } from "@/lib/content/specialist-doctor-selection";
@@ -114,12 +115,21 @@ export default async function CountryLangSpecialistConsultationPage({
     services,
     doctors,
     legal,
+    consultationCountResult,
   ] = await Promise.all([
     getPageContent(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
     getCountryServices(code, "SPECIALIST", lang),
     getCountryDoctors(code, lang),
     getCountryLegal(code),
+    fetchGlobalConsultationCount(),
   ]);
+  // TRUST-METRIC-001: historical base + live completed-appointment count.
+  // Falls back to the historical base alone (still a true figure) if the
+  // backend read fails.
+  const consultationCount = consultationCountResult.ok
+    ? consultationCountResult.data.total
+    : 45_000;
+  const consultationCountLabel = consultationCount.toLocaleString(lang);
 
   // Structured PageContent self-gates via publish status; legacy "pages"
   // country-feature no longer gates it.
@@ -191,9 +201,9 @@ export default async function CountryLangSpecialistConsultationPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "See a specialist", url: `/${slug}/${lang}/see-a-specialist` },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${slug}/${lang}` },
+          { name: c.navigation.specialistConsultation, url: `/${slug}/${lang}/see-a-specialist` },
         ])}
       />
       <JsonLd data={faqJsonLd(hub.faq)} />
@@ -249,7 +259,7 @@ export default async function CountryLangSpecialistConsultationPage({
           },
           {
             icon: <Stethoscope className="size-5" strokeWidth={2} aria-hidden />,
-            title: sp.hero.stat2Title.replace("{country}", config.name),
+            title: sp.hero.stat2Title.replace("{count}", consultationCountLabel),
             subtitle: sp.hero.stat2Subtitle.replace("{country}", config.name),
           },
           {

@@ -42,6 +42,8 @@ import { HeaderScrollShell } from "@/components/layout/HeaderScrollShell";
 import { RememberCountryOnMount } from "@/components/layout/RememberCountryOnMount";
 import { HeaderAuthActions } from "@/components/layout/HeaderAuthActions";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
+import { TOOLS, getToolsCopy } from "@/lib/tools/registry";
+import { isToolMarket } from "@/lib/tools/markets";
 import { ArrowUpRight } from "lucide-react";
 
 function sectionNavForCountryLang(
@@ -49,6 +51,7 @@ function sectionNavForCountryLang(
   lang: string,
   features: string[] | undefined,
   nav: SiteNavigationData,
+  countryCode: string,
 ): SectionNavItem[] {
   const base = `/${countrySlug}/${lang}`;
   const enabled = (key: string) =>
@@ -88,6 +91,29 @@ function sectionNavForCountryLang(
     });
   }
 
+  // Free calculators, sitting beside Services. Built from the tool registry
+  // rather than a hand-kept list, so shipping a calculator puts it in the nav —
+  // there is no second place to remember. Labels come from that locale's
+  // tools.json, and the market gate is the same `isToolMarket` the routes and
+  // the sitemap use, so the nav can never offer a URL that 404s.
+  const toolsChildren = isToolMarket(countryCode, lang)
+    ? (() => {
+        const tools = getToolsCopy(lang as LocaleCode);
+        return TOOLS.flatMap((tool) => {
+          const copy = tools.tools[tool.slug];
+          return copy
+            ? [
+                {
+                  href: `${base}/tools/${tool.slug}`,
+                  label: copy.cardTitle,
+                  description: copy.cardBlurb,
+                },
+              ]
+            : [];
+        });
+      })()
+    : [];
+
   const items: SectionNavItem[] = [
     { href: base, label: nav.navHome, exact: true },
     { href: `${base}/doctors`, label: nav.navDoctors },
@@ -95,14 +121,29 @@ function sectionNavForCountryLang(
   if (servicesChildren.length > 0) {
     items.push({ label: nav.navServices, children: servicesChildren });
   }
+  if (toolsChildren.length > 0) {
+    // No hub row: there is no /tools index. Each calculator is its own page,
+    // which is the point — one page per query, not an index competing with them.
+    const hub = getToolsCopy(lang as LocaleCode).hub;
+    items.push({
+      // Short in the bar so the pill never wraps to two lines; the open menu
+      // carries the full name.
+      label: hub.navLabelShort,
+      menuHeading: hub.navLabel,
+      children: toolsChildren,
+    });
+  }
   // Strict opt-in (not the loose `enabled`): only show Plans where the country
   // explicitly enabled subscriptions, else the link would 404 (§36.15).
   if (features?.includes("subscriptions")) {
     items.push({ href: `${base}/pricing`, label: nav.navPlans });
   }
   items.push({ href: `${base}/blog`, label: nav.navBlog });
-  items.push({ href: "/about", label: nav.navAbout });
-  items.push({ href: "/contact", label: nav.navContact });
+  // In-country: the market's own About and contact pages (local NAP,
+  // register, languages, offering, regulatory FAQs). Both link on to the
+  // global /about and /contact. The global nav below keeps those.
+  items.push({ href: `${base}/about`, label: nav.navAbout });
+  items.push({ href: `${base}/contact`, label: nav.navContact });
   return items;
 }
 
@@ -162,13 +203,15 @@ export function SiteHeader({
     ? (countries.find((c) => c.code === activeCountryCode) ?? null)
     : null;
 
-  // Lang: URL > server-resolved locale (gh_locale cookie / Accept-Language)
-  // > last-country cookie > active country's default > "en". The server
-  // locale keeps the switcher in sync with what the page actually rendered
-  // in on global pages (/about, /blog) where there's no [lang] segment.
+  // Lang: URL segment (authoritative for the page being rendered) > the
+  // person's selected locale resolved by the layout > active country's default.
+  // The `gh-last-country` cookie's `lang` half is deliberately NOT consulted:
+  // it records the language of the last country page visited, which is a
+  // different thing from the language the visitor chose, and mixing the two is
+  // how "I picked Portuguese but the site stayed English" happened.
   const activeLang = (
     parsed.lang ??
-    (urlCountryCode ? null : (currentLocale ?? lastCountry?.lang)) ??
+    (urlCountryCode ? null : currentLocale) ??
     activeCountry?.defaultLocale ??
     "en"
   ) as LocaleCode;
@@ -177,19 +220,51 @@ export function SiteHeader({
   // the same locale the header renders its nav labels in.
   const a11y = getCommonLocale(activeLang).a11y;
 
+  // No country context (first-ever visit, or any client without the
+  // gh-last-country cookie — every crawler) used to fall through to
+  // `undefined`, which the nav builder's `enabled()` reads as "show it
+  // regardless." That is correct for a flag that's on somewhere and off
+  // elsewhere, but a flag that's off in EVERY market (e.g.
+  // online-prescriptions, Ads compliance — see next.config.ts) produced a
+  // guaranteed-dead link on every global page. Union across all markets
+  // instead: a flag counts as enabled here only if at least one country
+  // actually has it on.
   const activeFeatures = activeCountryCode
     ? countryFeatures?.[activeCountryCode]
-    : undefined;
+    : countryFeatures
+      ? [...new Set(Object.values(countryFeatures).flatMap((f) => f ?? []))]
+      : undefined;
 
   // Section nav: prefer the in-country IA when we have a country
   // context AT ALL (URL or cookie). Only show the global IA when the
   // visitor has truly never picked a country yet.
   const effectiveCountrySlug = parsed.country ?? lastCountry?.slug ?? null;
-  const effectiveLang = parsed.lang ?? lastCountry?.lang ?? null;
+  const effectiveLang = parsed.lang ?? (lastCountry ? activeLang : null);
   const sectionItems: SectionNavItem[] =
     activeCountry && effectiveCountrySlug && effectiveLang
-      ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures, navigation)
+      ? sectionNavForCountryLang(
+          effectiveCountrySlug,
+          effectiveLang,
+          activeFeatures,
+          navigation,
+          activeCountryCode ?? activeCountry.code,
+        )
       : sectionNavGlobal(navigation);
+
+  // The calculators, flattened for the mobile drawer (which expands sections
+  // inline rather than nesting a dropdown). Every calculator, no index.
+  const mobileToolLinks =
+    activeCountry && effectiveCountrySlug && effectiveLang && isToolMarket(activeCountry.code, effectiveLang)
+      ? (() => {
+          const tools = getToolsCopy(effectiveLang as LocaleCode);
+          return TOOLS.flatMap((tool) => {
+            const copy = tools.tools[tool.slug];
+            return copy
+              ? [{ href: `/${effectiveCountrySlug}/${effectiveLang}/tools/${tool.slug}`, label: copy.cardTitle }]
+              : [];
+          });
+        })()
+      : [];
 
   // Cart-first booking: the header "Book" CTA opens the guided /book page
   // (service → doctor → time → details in one flow). Outside a country we
@@ -237,6 +312,7 @@ export function SiteHeader({
           <CountrySwitcher
             activeCountryCode={activeCountryCode}
             countries={countries}
+            selectedLocale={activeLang}
             chooseCountryLabel={navigation.navChooseCountry}
             switchConfirmTemplate={navigation.navCountrySwitchConfirmTemplate}
             itemSingular={navigation.navCartItemSingular}
@@ -291,6 +367,8 @@ export function SiteHeader({
             bookHref={bookHref}
             countries={countries}
             lastCountry={lastCountry}
+            selectedLocale={activeLang}
+            toolLinks={mobileToolLinks}
             a11y={{
               openMenu: a11y.openMenu,
               menuDescription: a11y.mobileMenuDescription,

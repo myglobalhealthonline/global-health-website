@@ -127,9 +127,15 @@ export async function adminRequest<T>(
   }
 }
 
-export async function adminUploadFile(
-  file: File,
-): Promise<AdminApiResponse<{ key: string; publicUrl: string }>> {
+/**
+ * POST multipart/form-data to the admin API with the same cookie/token
+ * forwarding as `adminRequest`. `Content-Type` is deliberately left unset so
+ * fetch writes the multipart boundary itself.
+ */
+export async function adminPostMultipart<T>(
+  path: string,
+  body: FormData,
+): Promise<AdminApiResponse<T>> {
   try {
     const allCookies = (await cookies()).getAll();
     const validCookies = allCookies.filter((entry) => VALID_COOKIE_NAME.test(entry.name));
@@ -137,25 +143,39 @@ export async function adminUploadFile(
     const token = getAdminApiToken();
     const tokenFallbackEnabled = isAdminTokenFallbackEnabled();
 
-    const body = new FormData();
-    body.append("file", file);
-
     const headers: Record<string, string> = {};
     if (cookieHeader) headers.cookie = cookieHeader;
     if (!cookieHeader && tokenFallbackEnabled && token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`${getAdminApiBaseUrl()}/api/admin/media/upload`, {
+    const response = await fetch(`${getAdminApiBaseUrl()}${path}`, {
       method: "POST",
       headers,
       body,
       cache: "no-store",
     });
-    const json = (await response.json()) as { ok?: boolean; message?: string; data?: { key: string; publicUrl: string } };
+    const json = (await response.json()) as {
+      ok?: boolean;
+      message?: string;
+      data?: T;
+      details?: unknown;
+    };
     if (!response.ok || !json.ok) {
-      return { ok: false, message: json.message ?? "Upload failed", status: response.status };
+      return {
+        ok: false,
+        message: formatAdminErrorMessage(json.message ?? "Upload failed", json.details),
+        status: response.status,
+      };
     }
-    return { ok: true, data: json.data as { key: string; publicUrl: string }, message: json.message };
+    return { ok: true, data: json.data as T, message: json.message };
   } catch {
     return { ok: false, message: "Admin backend is unavailable" };
   }
+}
+
+export async function adminUploadFile(
+  file: File,
+): Promise<AdminApiResponse<{ key: string; publicUrl: string }>> {
+  const body = new FormData();
+  body.append("file", file);
+  return adminPostMultipart<{ key: string; publicUrl: string }>("/api/admin/media/upload", body);
 }

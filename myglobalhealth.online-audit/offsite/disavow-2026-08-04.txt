@@ -1,0 +1,59 @@
+# Google disavow file — myglobalhealth.online
+# Generated 2026-08-04 from OpenSEO/DataForSEO backlink data
+# (52 referring domains listed, 57 reported in summary).
+#
+# HOW TO USE
+#   1. https://search.google.com/search-console/disavow-links
+#   2. Select the sc-domain:myglobalhealth.online property.
+#   3. Upload this file. It REPLACES any previous disavow file — it is not
+#      additive, so never upload a partial list.
+#
+# SCOPE: only referring domains with a DataForSEO spam score of 50 or higher.
+# Every one of them is a link-shortener, scraped-directory, auto-generated
+# "website worth" page, or unrelated foreign spam site, and each contributes
+# 1-3 links. None is a real citation.
+#
+# DELIBERATELY NOT DISAVOWED — low spam score, or plausibly real:
+#   wix.to (195)          legacy Wix short links, your own former site
+#   boycat.co (101, 14)   volume is high but the score is low; watch it
+#   lalinguanostra.com (90, 0)
+#   craneflower.net (25, 0)
+#   globalguestgg.wixsite.com (18, 0)
+#   viesearch.com (10, 15), robuta.com (2, 15), yruz.one (2, 15)
+#   peruactivo.com (2, 10), five.co.in (1, 30), bib.az (9, 3)
+#   coombecommunitypharmacy.ie, askspud.ie — genuine Irish citations, keep
+#
+# CAVEAT worth reading before you upload: Google's own guidance is that most
+# sites never need a disavow file, and these 28 domains carry ~35 links out of
+# 520. There is no evidence of a manual action or algorithmic penalty here.
+# The upside is hygiene, not recovery. If you would rather do nothing, that is
+# a defensible call.
+
+domain:wheretobuybest.link
+domain:m98ufa.com
+domain:2x9.co
+domain:plumeriamarketing.com
+domain:australianwebdirectory.pro
+domain:australianwebdirectory.shop
+domain:getwebsiteworth.com
+domain:read.org.in
+domain:ggmap.us.com
+domain:way2check.cv
+domain:musweb.org
+domain:booksreadr.org
+domain:globalecommerce.org
+domain:simplewebdirectory.com
+domain:sergechel.info
+domain:ycm.info
+domain:anchorurl.cloud
+domain:alljobs.info
+domain:screenshots.wiki
+domain:quero.party
+domain:wallpapers.pro
+domain:tunca.org
+domain:ready.pro
+domain:urls-shortener.eu
+domain:buzzshrink.website
+domain:drjack.world
+domain:shortenurls.eu
+domain:bye.fyi

@@ -23,7 +23,7 @@ import {
   isTerminalAppointmentStatus,
 } from "@/lib/admin/appointment-status";
 import { FlagBadge } from "../../_components/flag-badge";
-import { SetCrumbTitle } from "../../_components/crumb-title";
+import { SetCrumbTitle } from "@/components/crumb-title";
 import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import { ScheduleSlotInput } from "../_components/schedule-slot-input";
 import { AdminAppointmentTabs } from "./_components/appointment-tabs";

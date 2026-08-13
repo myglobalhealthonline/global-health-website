@@ -10,7 +10,7 @@
  *   3. Wiring assertions: cookie persistence, per-key English fallback,
  *      resolution chain, switcher refresh, html lang.
  *
- * Writes docs/translation-audit/translation-audit.{md,json} at the repo root.
+ * Writes docs/i18n/translation-audit/translation-audit.{md,json} at the repo root.
  * Exits non-zero when CRITICAL findings exist (safe as a CI gate).
  *
  * No new i18n framework, no dependencies — node built-ins only.

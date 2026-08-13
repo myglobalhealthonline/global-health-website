@@ -91,15 +91,21 @@ export function ServicesGrid({
   const regularPageSize = pageSize && pageSize > 0 ? pageSize : PAGE_SIZE_REGULAR;
   const firstPageSize =
     pageSize && pageSize > 0 ? pageSize : canFeatureFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
-  const useFeaturedFirst = canFeatureFirst && page === 0;
   const totalPages =
     items.length <= firstPageSize
       ? 1
       : 1 + Math.ceil((items.length - firstPageSize) / regularPageSize);
-  const start = page === 0 ? 0 : firstPageSize + (page - 1) * regularPageSize;
-  const end = page === 0 ? firstPageSize : start + regularPageSize;
-  const paged = items.slice(start, end);
   const showPager = totalPages > 1;
+  // SEO batch (2026-08-10): every page's items render into the DOM, not just
+  // the current one — see the matching comment in ServiceCatalog.tsx. A
+  // crawler's initial-HTML read used to only ever see page 0 (5 items);
+  // items past position 5 were indexable/sitemapped/canonical but had no
+  // crawlable hub link at all.
+  const pages: Item[][] = Array.from({ length: totalPages }, (_, idx) => {
+    const start = idx === 0 ? 0 : firstPageSize + (idx - 1) * regularPageSize;
+    const end = idx === 0 ? firstPageSize : start + regularPageSize;
+    return items.slice(start, end);
+  });
 
   const goPrev = () => setPage((p) => p - 1);
   const goNext = () => setPage((p) => p + 1);
@@ -169,39 +175,50 @@ export function ServicesGrid({
         </div>
 
         {/* Card grid — dark sections reuse the home-page catalog tiles so
-            service pages and the country home share one card design. */}
-        <div
-          className={useFeaturedFirst ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}
-          {...(showPager ? swipe : {})}
-        >
-          {isDark
-            ? paged.map((item, i) => (
-                <ServiceTile
-                  key={item.detailHref ?? item.href ?? item.title}
-                  service={toCatalogItem(item)}
-                  variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
-                  i18n={{
-                    ...SERVICE_CATALOG_DEFAULT_I18N,
-                    // Featured tile shows the service's own summary, and Book
-                    // buttons keep the caller's (localised) label.
-                    featuredDescription:
-                      paged[0]?.description ?? SERVICE_CATALOG_DEFAULT_I18N.featuredDescription,
-                    bookConsultation:
-                      item.bookLabel ?? SERVICE_CATALOG_DEFAULT_I18N.bookConsultation,
-                    learnMore: learnMoreLabel,
-                    learnMoreAria: `${learnMoreLabel}: {title}`,
-                  }}
-                />
-              ))
-            : paged.map((item, i) => (
-                <ServiceCard
-                  key={item.detailHref ?? item.href ?? item.title}
-                  {...item}
-                  ctaLabel={learnMoreLabel}
-                  dark={isDark}
-                  featured={useFeaturedFirst && i === 0}
-                />
-              ))}
+            service pages and the country home share one card design.
+            Every page's items render (real `<Link>`/`<a>` in server HTML);
+            `hidden` swaps which group is visually active instead of client
+            state gating which items exist in the DOM. */}
+        <div {...(showPager ? swipe : {})}>
+          {pages.map((group, idx) => {
+            const groupFeatured = idx === 0 && canFeatureFirst;
+            return (
+              <div
+                key={idx}
+                hidden={idx !== page}
+                className={groupFeatured ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}
+              >
+                {isDark
+                  ? group.map((item, i) => (
+                      <ServiceTile
+                        key={item.detailHref ?? item.href ?? item.title}
+                        service={toCatalogItem(item)}
+                        variant={groupFeatured && i === 0 ? "featured" : "default"}
+                        i18n={{
+                          ...SERVICE_CATALOG_DEFAULT_I18N,
+                          // Featured tile shows the service's own summary, and Book
+                          // buttons keep the caller's (localised) label.
+                          featuredDescription:
+                            group[0]?.description ?? SERVICE_CATALOG_DEFAULT_I18N.featuredDescription,
+                          bookConsultation:
+                            item.bookLabel ?? SERVICE_CATALOG_DEFAULT_I18N.bookConsultation,
+                          learnMore: learnMoreLabel,
+                          learnMoreAria: `${learnMoreLabel}: {title}`,
+                        }}
+                      />
+                    ))
+                  : group.map((item, i) => (
+                      <ServiceCard
+                        key={item.detailHref ?? item.href ?? item.title}
+                        {...item}
+                        ctaLabel={learnMoreLabel}
+                        dark={isDark}
+                        featured={groupFeatured && i === 0}
+                      />
+                    ))}
+              </div>
+            );
+          })}
         </div>
 
         {/* Bottom pager — mirrors the header one so paging past row 1

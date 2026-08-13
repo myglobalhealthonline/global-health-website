@@ -13,12 +13,15 @@ import {
   fetchAdminDoctorRegistrations,
   fetchAdminDoctorCredentials,
   fetchAdminDoctorBank,
+  fetchAdminDoctorMarkets,
+  fetchAdminDoctorMarketBank,
   fetchAdminDoctorConfidentiality,
   fetchAdminDoctorProfileChangeRequests,
   fetchAdminPendingServiceRequests,
   postAdminDoctorInvite,
   purgeAdminDoctor,
   setAdminDoctorFeatured,
+  type AdminDoctorBankDto,
 } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
@@ -34,12 +37,21 @@ import { DoctorRegistrationsCard } from "../_components/registrations-card";
 import { DoctorCredentialsCard } from "../_components/doctor-credentials-card";
 import { DoctorConfidentialityCard } from "../_components/doctor-confidentiality-card";
 import { DoctorFaqsCard } from "../_components/doctor-faqs-card";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ success?: string; error?: string; revealBank?: string }>;
+  searchParams?: Promise<{
+    success?: string;
+    error?: string;
+    revealBank?: string;
+    /** Country id of a market whose bank details should be revealed —
+     *  separate from `revealBank` because a doctor can have distinct bank
+     *  details per market (see the fetch below). */
+    revealMarketBank?: string;
+  }>;
 };
 
 export default async function AdminDoctorDetailPage({
@@ -177,6 +189,59 @@ export default async function AdminDoctorDetailPage({
   const revealBank = messages.revealBank === "1";
   const bankResult = await fetchAdminDoctorBank(id, revealBank);
   const bank = bankResult.ok ? bankResult.data.bank : null;
+  // A doctor can ALSO enter payout bank details per market (multi-market
+  // doctors may bank differently per country — see market-form.tsx on the
+  // doctor side). `fetchAdminDoctorMarkets` already embeds each market's
+  // MASKED bank status for free, so the global-only card below used to read
+  // "not added" for a doctor who only ever filled in a market's bank form.
+  // Only the specific market being revealed triggers an audited decrypt.
+  const marketsResult = await fetchAdminDoctorMarkets(id);
+  const markets = marketsResult.ok ? marketsResult.data.markets : [];
+  const marketsWithBank = markets.filter(
+    (m) => m.bank.ibanSet || m.bank.accountHolder || m.bank.bic,
+  );
+  const revealMarketBankCountryId = messages.revealMarketBank ?? null;
+  let revealedMarketBank: AdminDoctorBankDto | null = null;
+  if (revealMarketBankCountryId) {
+    const marketBankResult = await fetchAdminDoctorMarketBank(
+      id,
+      revealMarketBankCountryId,
+      true,
+    );
+    revealedMarketBank = marketBankResult.ok ? marketBankResult.data.bank : null;
+  }
+  const hasGlobalBank = Boolean(
+    bank && (bank.ibanSet || bank.accountHolder || bank.bic),
+  );
+  const bankEntries: Array<{
+    key: string;
+    label: string;
+    bank: AdminDoctorBankDto;
+    revealed: boolean;
+    revealHref: string | null;
+  }> = [];
+  if (hasGlobalBank && bank) {
+    bankEntries.push({
+      key: "global",
+      label: "Global",
+      bank,
+      revealed: revealBank,
+      revealHref: bank.ibanSet && !revealBank ? `/admin/doctors/${id}?revealBank=1` : null,
+    });
+  }
+  for (const m of marketsWithBank) {
+    const revealed = revealMarketBankCountryId === m.countryId;
+    bankEntries.push({
+      key: m.countryId,
+      label: m.country.name,
+      bank: revealed && revealedMarketBank ? revealedMarketBank : m.bank,
+      revealed,
+      revealHref:
+        m.bank.ibanSet && !revealed
+          ? `/admin/doctors/${id}?revealMarketBank=${m.countryId}`
+          : null,
+    });
+  }
   // Confidentiality: electronic acceptance + the doctor's uploaded signed copies.
   const confidentialityResult = await fetchAdminDoctorConfidentiality(id);
   const confidentiality = confidentialityResult.ok ? confidentialityResult.data : null;
@@ -230,6 +295,7 @@ export default async function AdminDoctorDetailPage({
 
   return (
     <>
+      <SetCrumbTitle label={d.fullName} />
       <Link
         href="/admin/doctors"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -434,6 +500,7 @@ export default async function AdminDoctorDetailPage({
             {d.bio ? (
               <div
                 className="prose prose-sm mt-3 max-w-none text-[var(--color-text-body)]"
+                // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- sanitizeDoctorBioHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/doctor-bio-format.ts) before this renders.
                 dangerouslySetInnerHTML={{ __html: sanitizeDoctorBioHtml(d.bio) }}
               />
             ) : (
@@ -469,46 +536,52 @@ export default async function AdminDoctorDetailPage({
           <AdminCard>
             <h3 className={cardTitleClass}>Payout bank details</h3>
             <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
-              Entered by the doctor in their portal. The IBAN is stored
-              encrypted; revealing the full number is logged.
+              Entered by the doctor in their portal — either globally or per
+              market (a multi-market doctor can bank differently per
+              country). The IBAN is stored encrypted; revealing the full
+              number is logged.
             </p>
-            {bank && (bank.ibanSet || bank.accountHolder || bank.bic) ? (
-              <dl className="gh-admin-doctor-bank-list grid gap-3">
-                <div>
-                  <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                    Account holder
-                  </dt>
-                  <dd className="mt-1 text-portal-body text-[var(--color-text-primary)]">
-                    {bank.accountHolder ?? "—"}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                    IBAN
-                  </dt>
-                  <dd className="mt-1 font-mono text-portal-body text-[var(--color-text-primary)]">
-                    {revealBank && bank.iban
-                      ? bank.iban
-                      : bank.ibanMasked ?? "—"}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                    BIC / SWIFT
-                  </dt>
-                  <dd className="mt-1 font-mono text-portal-body text-[var(--color-text-primary)]">
-                    {bank.bic ?? "—"}
-                  </dd>
-                </div>
-                {bank.ibanSet && !revealBank ? (
-                  <a
-                    href={`/admin/doctors/${d.id}?revealBank=1`}
-                    className="gh-btn gh-btn-soft mt-1 w-fit"
-                  >
-                    Reveal full IBAN (logged)
-                  </a>
-                ) : null}
-              </dl>
+            {bankEntries.length > 0 ? (
+              <div className="grid gap-5">
+                {bankEntries.map((entry) => (
+                  <dl key={entry.key} className="gh-admin-doctor-bank-list grid gap-3">
+                    {bankEntries.length > 1 ? (
+                      <Pill tone="neutral">{entry.label}</Pill>
+                    ) : null}
+                    <div>
+                      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                        Account holder
+                      </dt>
+                      <dd className="mt-1 text-portal-body text-[var(--color-text-primary)]">
+                        {entry.bank.accountHolder ?? "—"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                        IBAN
+                      </dt>
+                      <dd className="mt-1 font-mono text-portal-body text-[var(--color-text-primary)]">
+                        {entry.revealed && entry.bank.iban
+                          ? entry.bank.iban
+                          : entry.bank.ibanMasked ?? "—"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                        BIC / SWIFT
+                      </dt>
+                      <dd className="mt-1 font-mono text-portal-body text-[var(--color-text-primary)]">
+                        {entry.bank.bic ?? "—"}
+                      </dd>
+                    </div>
+                    {entry.revealHref ? (
+                      <a href={entry.revealHref} className="gh-btn gh-btn-soft mt-1 w-fit">
+                        Reveal full IBAN (logged)
+                      </a>
+                    ) : null}
+                  </dl>
+                ))}
+              </div>
             ) : (
               <p className="text-portal-compact text-[var(--color-text-muted)]">
                 The doctor has not added payout bank details yet.

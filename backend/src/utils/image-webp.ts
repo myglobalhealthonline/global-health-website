@@ -3,6 +3,10 @@ import sharp from "sharp";
 /** Photo-quality WebP setting — visually lossless, ~25-35% smaller than source JPEG/PNG. */
 const WEBP_QUALITY = 82;
 
+/** No rendered image on the site is wider than this — caps byte size on
+ *  camera-resolution uploads without visible quality loss. */
+const MAX_WIDTH = 1920;
+
 const CONVERTIBLE_MIME = new Set(["image/jpeg", "image/png"]);
 
 export type ConvertedImage = {
@@ -22,6 +26,7 @@ export async function convertToWebpIfEligible(
 ): Promise<ConvertedImage | null> {
   if (!CONVERTIBLE_MIME.has(mimetype)) return null;
   const webpBuffer = await sharp(buffer, { animated: false })
+    .resize({ width: MAX_WIDTH, withoutEnlargement: true })
     .webp({ quality: WEBP_QUALITY })
     .toBuffer();
   return { buffer: webpBuffer, mimetype: "image/webp", extension: "webp" };

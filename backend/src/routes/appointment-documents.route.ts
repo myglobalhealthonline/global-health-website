@@ -23,7 +23,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
 import { sniffFileMime, verifySniffedMime } from "../utils/sniff-mime.js";
-import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 /**
  * Clinical document attachments per appointment.
@@ -105,7 +105,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -178,6 +178,20 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
       });
       if (!appt) {
         return reply.status(404).send(errorResponse("Appointment not found"));
+      }
+
+      try {
+        await guardMedicalReadForAppointment(
+          request,
+          { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+          appt.id,
+          { resourceType: "MEDICAL_DOC", accessAction: "UPLOADED" },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+        }
+        throw guardError;
       }
 
       const file = await request.file();
@@ -322,6 +336,20 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
       });
       if (!appt) {
         return reply.status(404).send(errorResponse("Appointment not found"));
+      }
+
+      try {
+        await guardMedicalReadForAppointment(
+          request,
+          { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+          appt.id,
+          { resourceType: "MEDICAL_DOC", accessAction: "UPLOADED" },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+        }
+        throw guardError;
       }
 
       const file = await request.file();
@@ -522,7 +550,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -554,6 +582,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         reply.header("X-Content-Type-Options", "nosniff");
         reply.header("Content-Security-Policy", "sandbox; default-src 'none'; object-src 'self'");
         reply.header("Cache-Control", "private, no-store");
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- Fastify's typed reply.send() of a binary buffer, not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput). CSP/nosniff headers above are the actual XSS defense for this download.
         return reply.send(buffer);
       } catch (error) {
         if (error instanceof NoSuchKey || error instanceof MediaObjectNotFoundError) {
@@ -579,6 +608,19 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!existing || existing.doctorId !== auth.doctorId) {
           return reply.status(404).send(errorResponse("Document not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            existing.appointmentId,
+            { resourceType: "MEDICAL_DOC", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
         }
         await prisma.appointmentDocument.delete({ where: { id: existing.id } });
         try {

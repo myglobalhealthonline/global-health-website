@@ -19,6 +19,34 @@
       "port": 4000
     },
     {
+      "name": "backend-dev-db",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--watch",
+        "--env-file=.env.dev",
+        "--import",
+        "tsx",
+        "src/server.ts"
+      ],
+      "cwd": "backend",
+      "port": 4000
+    },
+    {
+      "name": "frontend-prod-api",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "next",
+        "dev",
+        "-p",
+        "3100"
+      ],
+      "cwd": "frontend",
+      "env": {
+        "NEXT_PUBLIC_API_URL": "https://api.myglobalhealth.online"
+      },
+      "port": 3100
+    },
+    {
       "name": "frontend-prod",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": [

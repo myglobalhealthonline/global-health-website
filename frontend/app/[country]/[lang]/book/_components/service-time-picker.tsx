@@ -26,7 +26,7 @@ type Props = {
   clinicTimezone?: string;
   i18n: CommonLocale["bookingForm"];
   /** Carry the chosen insurer (id or "none") across the step links. */
-  insurance?: string | null;
+  benefit?: string | null;
 };
 
 /**
@@ -42,7 +42,7 @@ export function ServiceTimePicker({
   slots,
   clinicTimezone,
   i18n,
-  insurance,
+  benefit,
 }: Props) {
   const router = useRouter();
   const [navigating, startNavigate] = useTransition();
@@ -74,7 +74,7 @@ export function ServiceTimePicker({
   function chooseTime(startAt: string) {
     startNavigate(() => {
       router.push(
-        `${buildBookHref({ country, lang, service: serviceSlug, insurance, at: startAt })}#booking`,
+        `${buildBookHref({ country, lang, service: serviceSlug, benefit, at: startAt })}#booking`,
       );
     });
   }

@@ -2,13 +2,13 @@ import Link from "next/link";
 import { fetchDoctorNotifications } from "@/lib/api/doctor-api";
 import { PageHeader } from "@/components/portal-atoms";
 import { NotificationListClient } from "./_components/notification-list";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorNotificationsPage() {
-  const [result, locale] = await Promise.all([fetchDoctorNotifications(), getPageLocale()]);
+  const [result, locale] = await Promise.all([fetchDoctorNotifications(), getPortalLocale()]);
   const { doctor: d } = loadLocaleBundle(locale);
   const TYPE_LABEL: Record<string, string> = {
     APPOINTMENT_ASSIGNED: d.notifications.appointmentAssigned,

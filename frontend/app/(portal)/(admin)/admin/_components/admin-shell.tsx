@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IdleLogout } from "@/components/IdleLogout";
-import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
-import { CrumbTitleContext } from "./crumb-title";
+import {
+  applyCrumbTitles,
+  isEmailSegment,
+  isIdSegment,
+  PII_SAFE_CRUMB_LABEL,
+  shortIdLabel,
+  type Crumb,
+} from "@/lib/breadcrumb-utils";
+import { CrumbTitleContext, type CrumbTitleSetter } from "@/components/crumb-title";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import {
   BarChart3,
@@ -18,12 +25,14 @@ import {
   ImageIcon,
   Layers,
   LayoutDashboard,
+  LifeBuoy,
   Mail,
   Menu,
   MessagesSquare,
   Newspaper,
   ReceiptText,
   ShoppingBag,
+  Star,
   Stethoscope,
   Tags,
   UserRound,
@@ -71,11 +80,13 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/users": Users,
   "/admin/patients": HeartPulse,
   "/admin/messages": MessagesSquare,
+  "/admin/support": LifeBuoy,
   "/admin/newsletter": Mail,
   "/admin/orders": ShoppingBag,
   "/admin/invoices": ReceiptText,
   "/admin/automation": Workflow,
   "/admin/reports": BarChart3,
+  "/admin/settings/reviews": Star,
   "/admin/page-content": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
@@ -94,6 +105,7 @@ const GLOBAL_HREFS = new Set([
   "/admin/assets",
   "/admin/users",
   "/admin/messages",
+  "/admin/support",
   "/admin/orders",
   "/admin/invoices",
   "/admin/automation",
@@ -101,6 +113,11 @@ const GLOBAL_HREFS = new Set([
   "/admin/subscriptions",
   "/admin/reports",
   "/admin/audit-log",
+  "/admin/settings/reviews",
+  // Global, not country-scoped: the page works with no country selected
+  // (all patients) and carries its own `?countryCode=all` override. The
+  // topbar picker still narrows it, same as Doctors and Invoices.
+  "/admin/patients",
 ]);
 
 // Sub-groups within the Global section — related admin-wide links clustered
@@ -111,14 +128,26 @@ const GLOBAL_HREFS = new Set([
 const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
   { label: "Overview", hrefs: ["/admin", "/admin/calendar"] },
   { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
-  { label: "People", hrefs: ["/admin/users", "/admin/messages"] },
+  { label: "People", hrefs: ["/admin/users", "/admin/patients", "/admin/messages", "/admin/support"] },
   { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
-  { label: "System", hrefs: ["/admin/reports", "/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
+  {
+    label: "System",
+    hrefs: [
+      "/admin/reports",
+      "/admin/newsletter",
+      "/admin/automation",
+      "/admin/audit-log",
+      "/admin/settings/reviews",
+    ],
+  },
 ];
 
 const COUNTRY_HREFS = new Set([
-  "/admin/patients",
   "/admin/plans",
+  // Private membership programmes belong to exactly one country, so they sit
+  // with the country-scoped items. Deliberately absent from
+  // HREF_TO_FEATURE_KEY below — see the note there.
+  "/admin/memberships",
   "/admin/country-features",
   "/admin/country-home",
   "/admin/country-content",
@@ -133,6 +162,9 @@ const COUNTRY_HREFS = new Set([
   "/admin/insurance",
   "/admin/test-centers",
   "/admin/lab-requisitions",
+  // Czech-only in practice (SÚKL is the Czech drug authority), so it sits with
+  // the country-scoped items rather than in the global list.
+  "/admin/integrations/sukl",
 ]);
 
 /** Map sidebar href → feature key stored in `Country.enabledFeatures`.
@@ -151,6 +183,11 @@ const HREF_TO_FEATURE_KEY: Record<string, string> = {
   "/admin/health-tests": "health-tests",
   "/admin/plans": "subscriptions",
   "/admin/appointments": "appointments",
+  // NOTE: "/admin/memberships" is intentionally NOT listed. An entry here
+  // hides the item unless the country's `enabledFeatures` array contains the
+  // key, and no existing Country row's array can contain a key that did not
+  // exist when it was written — so adding one would hide the section in every
+  // market. Unmapped country-scoped items are always shown.
 };
 
 const ORDER: Record<string, number> = {
@@ -176,11 +213,13 @@ const ORDER: Record<string, number> = {
   "/admin/online-prescriptions": 5,
   "/admin/health-tests": 6,
   "/admin/plans": 7,
+  "/admin/memberships": 7.5,
   "/admin/appointments": 8,
   "/admin/patients": 8.2,
   "/admin/insurance": 8.5,
   "/admin/test-centers": 8.6,
   "/admin/lab-requisitions": 8.7,
+  "/admin/integrations/sukl": 8.8,
   "/admin/footer": 9,
 };
 
@@ -267,7 +306,7 @@ function useBreadcrumbs(
     // of its own (e.g. the topbar-selected country isn't a real URL segment)
     // — rendered as plain text instead of a Link, so it doesn't duplicate
     // the "Admin" crumb's target.
-    const crumbs: { label: string; href: string | null }[] = [];
+    const crumbs: Crumb[] = [];
     let acc = "";
     // Country-scoped routes (e.g. /admin/page-content) implicitly operate on the
     // topbar-selected country rather than a country segment in the URL —
@@ -283,12 +322,16 @@ function useBreadcrumbs(
         }
         continue;
       }
+      // A record segment (/plans/<id>, /patients/<email>) is an identifier, not
+      // a destination — several of them have no page of their own (the route is
+      // /plans/<id>/edit), so linking it 404s. Rendered as plain text instead.
+      const isRecord = isEmailSegment(segments[i]) || isIdSegment(segments[i]);
       const label = isEmailSegment(segments[i])
         ? PII_SAFE_CRUMB_LABEL
         : isIdSegment(segments[i])
           ? shortIdLabel(segments[i])
           : humanizeSegment(segments[i], countries);
-      crumbs.push({ label, href: acc });
+      crumbs.push({ label, href: isRecord ? null : acc, isRecord, segment: segments[i] });
     }
     return crumbs;
   }, [pathname, countries, activeCountry]);
@@ -319,19 +362,28 @@ export function AdminShell({
 }) {
   const [navOpen, setNavOpen] = useState(false);
   const pathname = usePathname();
-  // Detail pages (rendered inside <main>) can name their own trailing crumb
-  // via <SetCrumbTitle>, so a record route reads "… / Appointments / Thomas
-  // Lubbe" instead of "… / cmrtif3u…". Null on every route that doesn't set one.
-  const [crumbTitle, setCrumbTitle] = useState<string | null>(null);
+  // Detail pages (rendered inside <main>) can name their own crumbs via
+  // <SetCrumbTitle>, so a record route reads "… / Appointments / Thomas
+  // Lubbe" instead of "… / cmrtif3u…". Keyed by path segment (or the empty
+  // trailing key); empty on every route that sets none.
+  const [crumbTitles, setCrumbTitles] = useState<Record<string, string>>({});
+  const setCrumbTitle = useCallback<CrumbTitleSetter>((key, label) => {
+    setCrumbTitles((prev) => {
+      if (label === null) {
+        if (!(key in prev)) return prev;
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      if (prev[key] === label) return prev;
+      return { ...prev, [key]: label };
+    });
+  }, []);
   const derivedBreadcrumbs = useBreadcrumbs(pathname, countries, activeCountry);
-  const breadcrumbs = useMemo(() => {
-    if (!crumbTitle || derivedBreadcrumbs.length === 0) return derivedBreadcrumbs;
-    const last = derivedBreadcrumbs[derivedBreadcrumbs.length - 1];
-    return [
-      ...derivedBreadcrumbs.slice(0, -1),
-      { ...last, label: crumbTitle },
-    ];
-  }, [derivedBreadcrumbs, crumbTitle]);
+  const breadcrumbs = useMemo(
+    () => applyCrumbTitles(derivedBreadcrumbs, crumbTitles),
+    [derivedBreadcrumbs, crumbTitles],
+  );
   const navRef = useRef<HTMLElement | null>(null);
   const topbarRef = useRef<HTMLElement | null>(null);
   usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);

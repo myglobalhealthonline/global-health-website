@@ -8,7 +8,7 @@ import { deleteAuditLogs } from "../../test-utils/audit-cleanup.js";
 loadEnv({ path: join(__dirname, "../../..", ".env") });
 
 /**
- * Task 4 (docs/security/phi-access-recovery-plan-2026-07-17.md): email-OTP
+ * Task 4 (docs/plans/security/phi-access-recovery-plan-2026-07-17.md): email-OTP
  * second factor + trusted device. DB-backed like two-factor.service.test.ts
  * — skips (rather than fails) when no local DB is reachable.
  */

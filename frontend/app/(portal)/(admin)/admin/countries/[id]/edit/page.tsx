@@ -16,6 +16,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -134,6 +135,7 @@ export default async function AdminEditCountryPage({
 
   return (
     <>
+      <SetCrumbTitle label={country.name} />
       <Link
         href={`/admin/countries/${id}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

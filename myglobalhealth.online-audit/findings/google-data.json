@@ -1,0 +1,85 @@
+{
+  "collected_at": "2026-08-03",
+  "target": "https://www.myglobalhealth.online",
+  "credential_tier": {
+    "declared_tier": 2,
+    "actual_working_tier": 0,
+    "reason": "OAuth refresh_token invalid (HTTP 400 invalid_grant) blocks GSC, GA4, and Indexing API. PSI/CrUX/CrUX-History use API key auth and work normally."
+  },
+  "crux": {
+    "origin_all_devices": {
+      "LCP_ms": 1539,
+      "INP_ms": 137,
+      "CLS": 0.0,
+      "TTFB_ms": 534,
+      "FCP_ms": 1115,
+      "collection_period": {"first": "2026-06-28", "last": "2026-07-25"},
+      "rating": {"LCP": "good", "INP": "borderline_good", "CLS": "good", "TTFB": "good"}
+    },
+    "homepage_url_all_devices": {
+      "note": "URL-level query for https://www.myglobalhealth.online/ returned identical values to origin-level (CrUX likely serving origin fallback due to homepage sharing origin traffic bucket)",
+      "LCP_ms": 1539,
+      "INP_ms": 137,
+      "CLS": 0.0,
+      "TTFB_ms": 534,
+      "FCP_ms": 1115
+    },
+    "origin_phone": {
+      "note": "Latest week (period ending 2026-07-25) returned null for phone segment; values are last non-null week available in 25-week history",
+      "LCP_ms": 3098,
+      "INP_ms": 134,
+      "CLS": 0.0,
+      "TTFB_ms": 2618,
+      "FCP_ms": 2794,
+      "rating": {"LCP": "needs_improvement", "INP": "good", "CLS": "good", "TTFB": "needs_improvement"}
+    },
+    "origin_desktop": {
+      "note": "Latest week (period ending 2026-07-25) returned null for desktop segment; values are last non-null week available in 25-week history",
+      "LCP_ms": 3097,
+      "INP_ms": 59,
+      "CLS": 0.0,
+      "TTFB_ms": 1985,
+      "FCP_ms": 2504,
+      "rating": {"LCP": "needs_improvement", "INP": "good", "CLS": "good", "TTFB": "needs_improvement"}
+    },
+    "trend_25_week_origin_all": {
+      "FCP": {"direction": "improving", "change_pct": -29.6, "earliest_avg_ms": 2911, "latest_avg_ms": 2050},
+      "INP": {"direction": "degrading", "change_pct": 33.9, "earliest_avg_ms": 91, "latest_avg_ms": 122},
+      "CLS": {"direction": "improving", "change_pct": -100.0, "earliest_avg": 0.007, "latest_avg": 0.0},
+      "TTFB": {"direction": "improving", "change_pct": -36.9, "earliest_avg_ms": 2544, "latest_avg_ms": 1606},
+      "LCP": {"direction": "improving", "change_pct": -27.5, "earliest_avg_ms": 3352, "latest_avg_ms": 2431}
+    },
+    "trend_25_week_phone": {
+      "FCP": {"direction": "improving", "change_pct": -6.1},
+      "INP": {"direction": "stable", "change_pct": -4.1},
+      "CLS": {"direction": "improving", "change_pct": -100.0},
+      "TTFB": {"direction": "degrading", "change_pct": 23.3},
+      "LCP": {"direction": "improving", "change_pct": -12.3}
+    },
+    "trend_25_week_desktop": {
+      "FCP": {"direction": "stable", "change_pct": -4.5},
+      "INP": {"direction": "degrading", "change_pct": 16.9},
+      "CLS": {"direction": "stable", "change_pct": 0},
+      "TTFB": {"direction": "improving", "change_pct": -19.7},
+      "LCP": {"direction": "stable", "change_pct": 3.0}
+    }
+  },
+  "gsc": {
+    "status": "UNAVAILABLE",
+    "error": "OAuth refresh_token invalid_grant (HTTP 400). Could not build GSC service.",
+    "search_performance_last_28d": null,
+    "search_performance_prior_28d": null,
+    "top_queries": null,
+    "top_pages": null,
+    "country_breakdown": null,
+    "sitemap_status": null,
+    "url_inspection": null
+  },
+  "ga4": {
+    "status": "UNAVAILABLE",
+    "error": "OAuth refresh_token invalid_grant (HTTP 400). Could not build GA4 client.",
+    "organic_traffic_90d": null,
+    "landing_pages": null,
+    "conversions": null
+  }
+}

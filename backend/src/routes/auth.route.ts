@@ -309,6 +309,7 @@ const authRoute: FastifyPluginAsync = async (app) => {
       // Lazy import to avoid coupling at module-load; verifyAuthToken
       // is already exported from auth-session.
       const { verifyAuthToken } = await import("../utils/auth-session.js");
+      // nosemgrep: gh-route-raw-token-verify -- logout needs no prior authz gate (clearing your own cookie is always allowed); this only snapshots the actor id for the audit row before the session is torn down.
       payload = (verifyAuthToken(token) ?? null) as typeof payload;
     }
     reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());

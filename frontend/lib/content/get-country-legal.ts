@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { apiRequest } from "@/lib/api/client";
 import { PUBLIC_CONTENT_FETCH_TIMEOUT_MS } from "@/lib/content/public-content-source";
 
@@ -161,31 +162,73 @@ export async function getCountryDisclaimer(
   return { short, fullParagraphs: disclaimerParagraphs(full) };
 }
 
-export async function getCountryLegal(code: string): Promise<PublicCountryLegal | null> {
-  const result = await apiRequest<PublicCountryLegal>(
-    `/api/countries/${encodeURIComponent(code)}/legal`,
-    {
-      timeoutMs: PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [countryLegalCacheTag(code)],
-    },
+/* `cache()`-wrapped (same pattern as get-country-collections.ts) so a route's
+ * `generateMetadata` and its page component share ONE in-flight request per
+ * render instead of racing two. That matters here beyond the saved round-trip:
+ * this segment renders dynamically, and when `generateMetadata` resolves slower
+ * than the shell, React streams <title>/<link rel=canonical>/<meta description>
+ * into the BODY instead of <head> — and Google ignores a canonical in <body>.
+ * Reproduced on ~30% of /legal/* and /doctors/* URLs under a cold-cache
+ * concurrent burst (SEO audit 2026-08-03, myglobalhealth.online-audit/). */
+export const getCountryLegal = cache(
+  async (code: string): Promise<PublicCountryLegal | null> => {
+    const result = await apiRequest<PublicCountryLegal>(
+      `/api/countries/${encodeURIComponent(code)}/legal`,
+      {
+        timeoutMs: PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+        revalidate: REVALIDATE_SECONDS,
+        tags: [countryLegalCacheTag(code)],
+      },
+    );
+    return result.ok ? result.data : null;
+  },
+);
+
+/**
+ * Which locales have REAL, exact-locale content for a given legal document
+ * type — as opposed to the API's exact-locale → "en" → any-published-row
+ * fallback chain, which lets every supported locale 200 even when only one
+ * locale was ever actually authored. Shared by sitemap.ts (which locale
+ * variants to submit/hreflang) and legal/[type]/page.tsx (whether the
+ * CURRENT route is serving a real translation or a fallback body).
+ */
+export function exactLocalesForLegalType(
+  legal: Pick<PublicCountryLegal, "documents" | "profile"> | null | undefined,
+  type: LegalDocumentType,
+  countryDefaultLocale: string,
+): Set<string> {
+  const exact = new Set(
+    (legal?.documents ?? [])
+      .filter((d) => d.type === type)
+      .map((d) => d.locale.toLowerCase()),
   );
-  return result.ok ? result.data : null;
+  if (type === "MEDICAL_DISCLAIMER") {
+    for (const t of legal?.profile?.disclaimerTranslations ?? []) {
+      if (t.fullDisclaimer) exact.add(t.locale.toLowerCase());
+    }
+    // The profile's base fullDisclaimer (no per-locale override row) is
+    // authored directly by that country's admin, in that country's own
+    // primary language — mirrors the page's fallback ordering.
+    if (legal?.profile?.fullDisclaimer) exact.add(countryDefaultLocale.toLowerCase());
+  }
+  return exact;
 }
 
-export async function getCountryLegalDocument(
-  code: string,
-  type: LegalDocumentType,
-  locale: string,
-): Promise<PublicLegalDocument | null> {
-  const slug = LEGAL_TYPE_SLUGS[type];
-  const result = await apiRequest<PublicLegalDocument>(
-    `/api/countries/${encodeURIComponent(code)}/legal-documents/${slug}?locale=${encodeURIComponent(locale)}`,
-    {
-      timeoutMs: PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [countryLegalCacheTag(code)],
-    },
-  );
-  return result.ok ? result.data : null;
-}
+export const getCountryLegalDocument = cache(
+  async (
+    code: string,
+    type: LegalDocumentType,
+    locale: string,
+  ): Promise<PublicLegalDocument | null> => {
+    const slug = LEGAL_TYPE_SLUGS[type];
+    const result = await apiRequest<PublicLegalDocument>(
+      `/api/countries/${encodeURIComponent(code)}/legal-documents/${slug}?locale=${encodeURIComponent(locale)}`,
+      {
+        timeoutMs: PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+        revalidate: REVALIDATE_SECONDS,
+        tags: [countryLegalCacheTag(code)],
+      },
+    );
+    return result.ok ? result.data : null;
+  },
+);

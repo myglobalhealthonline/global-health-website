@@ -14,6 +14,8 @@ import {
 import { Flag } from "@/components/ui/Flag";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
+import { isPreselectionPairHref } from "@/lib/routing/book-href";
+import { BookNowButton } from "@/components/booking/BookNowButton";
 
 /**
  * Reusable premium service-page hero (clinical-editorial gh2 system).
@@ -358,19 +360,35 @@ export function ServiceHero({
             ) : null}
 
             <div className="mt-7 flex flex-wrap items-center gap-3.5">
-              <Link
-                href={primaryCta.href}
-                className="gh2-btn-lime pr-2 gh-focus-on-dark "
-              >
-                {primaryCta.label}
-                <span
-                  aria-hidden
-                  className="ml-1 inline-flex size-7 items-center justify-center rounded-full"
-                  style={{ background: "rgba(10,31,20,0.16)" }}
+              {isPreselectionPairHref(primaryCta.href) ? (
+                <BookNowButton
+                  href={primaryCta.href}
+                  className="gh2-btn-lime pr-2 gh-focus-on-dark "
                 >
-                  <ArrowUpRight className="size-4" strokeWidth={2} />
-                </span>
-              </Link>
+                  {primaryCta.label}
+                  <span
+                    aria-hidden
+                    className="ml-1 inline-flex size-7 items-center justify-center rounded-full"
+                    style={{ background: "rgba(10,31,20,0.16)" }}
+                  >
+                    <ArrowUpRight className="size-4" strokeWidth={2} />
+                  </span>
+                </BookNowButton>
+              ) : (
+                <Link
+                  href={primaryCta.href}
+                  className="gh2-btn-lime pr-2 gh-focus-on-dark "
+                >
+                  {primaryCta.label}
+                  <span
+                    aria-hidden
+                    className="ml-1 inline-flex size-7 items-center justify-center rounded-full"
+                    style={{ background: "rgba(10,31,20,0.16)" }}
+                  >
+                    <ArrowUpRight className="size-4" strokeWidth={2} />
+                  </span>
+                </Link>
+              )}
               <Link
                 href={secondaryCta.href}
                 className="gh2-btn-ghost gh-focus-on-dark "

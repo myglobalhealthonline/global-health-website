@@ -12,7 +12,6 @@ import {
   patchAdminPlan,
   postAdminPlanConsultationRule,
   postAdminPlanHealthTestRule,
-  postAdminPlanPerk,
   putAdminPlanTranslation,
 } from "@/lib/admin/plans-api";
 import { parsePlanForm } from "@/lib/admin/plan-form-parse";
@@ -21,24 +20,21 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import type { PublicPlan } from "@/data/pricing-plans";
 import { PricingPlanCard } from "@/app/[country]/[lang]/pricing/_components/PricingPlanCard";
 import { PlanFields, PLAN_TYPE_LABEL } from "../../../_components/plan-fields";
+import { PlanConsultationsFields } from "../../../_components/plan-consultations-fields";
 import { PlanTranslationTabs } from "../../../_components/plan-translation-tabs";
 import { PlanEditTabs } from "../../../_components/plan-edit-tabs";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { displayNameFrom } from "@/lib/admin/display-name";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
-const PERK_KEYS = [
-  "SPECIALIST_DISCOUNT",
-  "FAMILY_USAGE",
-  "WELLNESS_REDEMPTION",
-  "TEST_KIT_REDEMPTION",
-  "HIGHER_DISCOUNT_TIER",
-] as const;
-const UNLOCK_MODES = ["MONTH_1", "AFTER_PAID_MONTHS", "MANUAL_APPROVAL", "NOT_AVAILABLE"] as const;
-
-// Human-readable labels so the admin sees plain English, not raw enum keys.
+// Perk rules are no longer authored here: only WELLNESS_REDEMPTION and
+// TEST_KIT_REDEMPTION are read at runtime (redemption.service.ts), and with no
+// perk row redemption is unlocked by default. The other three keys never
+// affected pricing — the specialist discount lives on the Consultations tab.
+// These labels remain so pre-existing rows can be read and removed.
 const PERK_LABELS: Record<string, string> = {
   SPECIALIST_DISCOUNT: "Specialist discount",
   FAMILY_USAGE: "Family usage",
@@ -51,11 +47,6 @@ const UNLOCK_MODE_LABELS: Record<string, string> = {
   AFTER_PAID_MONTHS: "After N paid months",
   MANUAL_APPROVAL: "Manual admin approval",
   NOT_AVAILABLE: "Not available",
-};
-const SERVICE_KIND_LABELS: Record<string, string> = {
-  GENERAL: "General",
-  SPECIALIST: "Specialist",
-  PRESCRIPTION: "Prescription",
 };
 
 /**
@@ -127,9 +118,11 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
   const locales = Array.from(localeSet);
   const localeTabs = locales.map((code) => ({ code, isDefault: code === defaultLocale }));
 
-  // §36.11: never offer a PRESCRIPTION service in the plan picker.
+  // Only the two consultation kinds can ever carry a plan benefit — checkout
+  // plan-prices GENERAL_CONSULTATION / SPECIALIST_CONSULTATION lines only, and
+  // §36.11 rejects PRESCRIPTION outright.
   const services = (servicesResult.ok ? servicesResult.data.items : []).filter(
-    (s) => s.kind !== "PRESCRIPTION",
+    (s) => s.kind === "GENERAL" || s.kind === "SPECIALIST",
   );
   const healthTests = healthTestsResult.ok ? healthTestsResult.data.items : [];
 
@@ -170,6 +163,9 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     monthlyConsultationCredits: plan.monthlyConsultationCredits,
     wellnessCreditsPerMonth: plan.wellnessCreditsPerMonth,
     features: previewTr?.features ?? [],
+    hasSpecialistDiscount: plan.consultationRules.some(
+      (r) => r.isActive && r.discountMode !== "NONE",
+    ),
     perkUnlockMonths: previewUnlockMonths,
     perks: plan.perkRules.map((pk) => ({
       perkKey: pk.perkKey,
@@ -204,70 +200,131 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     );
   }
 
-  async function addConsultationRuleAction(formData: FormData) {
+  /**
+   * Reconcile every consultation rule from the two tick-lists in one submit.
+   *
+   * The plan-level choice is the source of truth: a ticked GP service becomes a
+   * credit rule, a ticked specialist service takes its own percent discount or
+   * fixed price, and an unticked service loses its rule entirely (so it prices
+   * at full price). `unlockAfterPaidMonths` is always 0 — the resolver takes
+   * max(plan floor, rule), so the plan-level setting is the only timing knob.
+   */
+  async function saveConsultationsAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    // UI choice maps onto backend fields (no enum change): FREE → PERCENT/100,
-    // UNAVAILABLE → isActive:false (excluded from the snapshot → standard price).
-    const choice = String(formData.get("discountMode") ?? "NONE");
-    let discountMode = "NONE";
-    let discountPercent: number | null = null;
-    let fixedPriceCents: number | null = null;
-    let isActive = true;
-    if (choice === "PERCENT") {
-      discountMode = "PERCENT";
-      discountPercent = Number(formData.get("discountPercent") ?? 0) || 0;
-    } else if (choice === "FIXED") {
-      discountMode = "FIXED";
-      fixedPriceCents = Math.round(Number(formData.get("fixedPrice") ?? 0) * 100);
-    } else if (choice === "FREE") {
-      discountMode = "PERCENT";
-      discountPercent = 100;
-    } else if (choice === "UNAVAILABLE") {
-      isActive = false;
-    }
-    const body = {
-      serviceId: String(formData.get("serviceId") ?? ""),
-      isIncluded: formData.get("isIncluded") === "on",
-      usesCredits: formData.get("usesCredits") === "on",
-      creditsPerUse: Number(formData.get("creditsPerUse") ?? 1) || 1,
-      discountMode,
-      discountPercent,
-      fixedPriceCents,
-      unlockAfterPaidMonths: Number(formData.get("unlockAfterPaidMonths") ?? 0) || 0,
-      familyUsable: formData.get("familyUsable") === "on",
-      isActive,
-    };
-    const result = await postAdminPlanConsultationRule(id, body);
-    revalidatePath(`/admin/plans/${id}/edit`);
-    if (!result.ok) redirect(`/admin/plans/${id}/edit?error=${encodeURIComponent(result.message)}`);
-    redirect(`/admin/plans/${id}/edit?success=Consultation+rule+saved`);
-  }
+    const fail = (message: string): never =>
+      redirect(`/admin/plans/${id}/edit?error=${encodeURIComponent(message)}`);
 
-  async function removeConsultationRuleAction(formData: FormData) {
-    "use server";
-    await requireAdminAction();
-    const result = await deleteAdminPlanConsultationRule(id, String(formData.get("serviceId") ?? ""));
+    // Re-read the plan and the service list instead of closing over the ones
+    // this render already loaded. An inline server action serialises every
+    // captured value into the page's client payload, and capturing `plan` +
+    // `services` here inflated that payload to megabytes. Re-fetching also
+    // means the save acts on current data, not on whatever the tab was
+    // rendered with.
+    const planResult = await fetchAdminPlanById(id);
+    if (!planResult.ok) return fail(`Could not load the plan: ${planResult.message}`);
+    const current = planResult.data.plan;
+    const servicesResult = await fetchAdminServices({
+      countryId: current.countryId,
+      pageSize: "250",
+      isActive: "true",
+    });
+    if (!servicesResult.ok) return fail(`Could not load services: ${servicesResult.message}`);
+    const currentServices = servicesResult.data.items.filter(
+      (s) => s.kind === "GENERAL" || s.kind === "SPECIALIST",
+    );
+
+    const gpChecked = new Set(formData.getAll("gpServiceIds").map(String));
+    const specialistChecked = new Set(formData.getAll("specialistServiceIds").map(String));
+    const creditsPerUse = Number(formData.get("creditsPerUse") ?? 1) || 1;
+
+    /** Per-service fixed price in cents. Blank / 0 / junk = not set. */
+    const fixedPriceCentsFor = (serviceId: string): number | null => {
+      const raw = String(formData.get(`fixedPrice_${serviceId}`) ?? "").trim();
+      if (raw === "") return null;
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value <= 0) return null;
+      return Math.round(value * 100);
+    };
+
+    /** Per-service discount percentage. Blank / 0 / out of range = not set. */
+    const discountPercentFor = (serviceId: string): number | null => {
+      const raw = String(formData.get(`discountPercent_${serviceId}`) ?? "").trim();
+      if (raw === "") return null;
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value <= 0 || value > 100) return null;
+      return value;
+    };
+
+    // Every ticked specialist service needs one of the two prices.
+    const unpriced = currentServices.filter(
+      (s) =>
+        specialistChecked.has(s.id) &&
+        fixedPriceCentsFor(s.id) === null &&
+        discountPercentFor(s.id) === null,
+    );
+    if (unpriced.length > 0) {
+      fail(
+        `Set a discount % (1-100) or a fixed price for: ${unpriced.map((s) => s.name).join(", ")}.`,
+      );
+    }
+
+    // A rule is only rewritten when something actually changed — an unchanged
+    // plan saves nothing and existing subscribers' snapshots stay untouched.
+    const existingByService = new Map(current.consultationRules.map((r) => [r.serviceId, r]));
+    const errors: string[] = [];
+
+    for (const service of currentServices) {
+      const existing = existingByService.get(service.id);
+      const wantsCredit = service.kind === "GENERAL" && gpChecked.has(service.id);
+      const wantsDiscount = service.kind === "SPECIALIST" && specialistChecked.has(service.id);
+
+      if (!wantsCredit && !wantsDiscount) {
+        if (existing) {
+          const result = await deleteAdminPlanConsultationRule(id, service.id);
+          if (!result.ok) errors.push(`${service.name}: ${result.message}`);
+        }
+        continue;
+      }
+
+      // A fixed price wins over a percentage when both are filled in.
+      const fixed = wantsDiscount ? fixedPriceCentsFor(service.id) : null;
+      const percent = wantsDiscount && fixed === null ? discountPercentFor(service.id) : null;
+      const body = {
+        serviceId: service.id,
+        isIncluded: wantsCredit,
+        usesCredits: wantsCredit,
+        creditsPerUse: wantsCredit ? creditsPerUse : 1,
+        discountMode: wantsDiscount ? (fixed !== null ? "FIXED" : "PERCENT") : "NONE",
+        discountPercent: percent,
+        fixedPriceCents: fixed,
+        unlockAfterPaidMonths: 0,
+        // Family usage is a plan-level property (Premium-only); the backend
+        // forces this false on non-Premium plans anyway.
+        familyUsable: current.familyEnabled,
+        isActive: true,
+      };
+      const unchanged =
+        existing &&
+        existing.isActive &&
+        existing.isIncluded === body.isIncluded &&
+        existing.usesCredits === body.usesCredits &&
+        existing.creditsPerUse === body.creditsPerUse &&
+        existing.discountMode === body.discountMode &&
+        (existing.discountPercent ?? null) === body.discountPercent &&
+        (existing.fixedPriceCents ?? null) === body.fixedPriceCents &&
+        existing.unlockAfterPaidMonths === 0 &&
+        existing.familyUsable === body.familyUsable;
+      if (unchanged) continue;
+
+      const result = await postAdminPlanConsultationRule(id, body);
+      if (!result.ok) errors.push(`${service.name}: ${result.message}`);
+    }
+
     revalidatePath(`/admin/plans/${id}/edit`);
     redirect(
-      `/admin/plans/${id}/edit?${result.ok ? "success=Consultation+rule+removed" : `error=${encodeURIComponent(result.message)}`}`,
+      `/admin/plans/${id}/edit?${errors.length ? `error=${encodeURIComponent(errors.join("; "))}` : "success=Consultations+saved"}`,
     );
-  }
-
-  async function addPerkAction(formData: FormData) {
-    "use server";
-    await requireAdminAction();
-    const unlockMode = String(formData.get("unlockMode") ?? "MONTH_1");
-    const body = {
-      perkKey: String(formData.get("perkKey") ?? ""),
-      unlockMode,
-      unlockAfterPaidMonths:
-        unlockMode === "AFTER_PAID_MONTHS" ? Number(formData.get("unlockAfterPaidMonths") ?? 0) : null,
-    };
-    const result = await postAdminPlanPerk(id, body);
-    revalidatePath(`/admin/plans/${id}/edit`);
-    if (!result.ok) redirect(`/admin/plans/${id}/edit?error=${encodeURIComponent(result.message)}`);
-    redirect(`/admin/plans/${id}/edit?success=Perk+rule+saved`);
   }
 
   async function removePerkAction(formData: FormData) {
@@ -337,6 +394,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
 
   return (
     <>
+      <SetCrumbTitle label={displayNameFrom(plan.name, plan.translations)} />
       <Link
         href="/admin/plans"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -372,10 +430,10 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         tabs={[
           {
             id: "basics",
-            label: "Basics & price",
+            label: "Plan & price",
             content: (
               <AdminCard padding={0}>
-                <SectionHeader title="Basics & price" description="Name, monthly price, and what's included each month. Saving updates billing automatically." />
+                <SectionHeader title="Plan & price" description="Name, monthly price, the monthly allowance, and how the card looks. Saving updates billing automatically." />
           <form action={updatePlanAction} className="flex flex-col gap-8 p-6">
             <PlanFields countries={countries} initial={plan} pinnedCountryId={plan.countryId} />
             <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
@@ -388,201 +446,75 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
             ),
           },
           {
-            id: "visits",
-            label: "Doctor visits",
+            id: "consultations",
+            label: "Consultations",
             content: (
               <AdminCard padding={0}>
                 <SectionHeader
-                  title="Doctor visits & discounts"
-            description="Which consultations this plan covers and what members pay for each. GP visits are usually covered by the monthly allowance; specialist visits usually get a discount. Prescriptions are never included."
-          />
-          <div className="p-6">
-            {plan.consultationRules.length === 0 ? (
-              <p className="mb-4 text-sm text-[var(--color-text-muted)]">No consultation rules yet.</p>
-            ) : (
-              <ul className="mb-6 flex flex-col gap-2">
-                {plan.consultationRules.map((rule) => (
-                  <li
-                    key={rule.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5"
-                  >
-                    <div className="flex flex-wrap items-center gap-2 text-sm">
-                      <span className="font-semibold text-[var(--color-text-primary)]">{rule.service.name}</span>
-                      <Pill tone={rule.service.kind === "SPECIALIST" ? "brand" : "neutral"}>
-                        {SERVICE_KIND_LABELS[rule.service.kind] ?? rule.service.kind}
-                      </Pill>
-                      {rule.isIncluded ? <Pill tone="active">Included</Pill> : null}
-                      {rule.usesCredits ? <Pill tone="published">{rule.creditsPerUse} credit/use</Pill> : null}
-                      {rule.discountMode === "PERCENT" && rule.discountPercent === 100 ? (
-                        <Pill tone="active">Free (100%)</Pill>
-                      ) : rule.discountMode !== "NONE" ? (
-                        <Pill tone="pending">
-                          {rule.discountMode === "PERCENT"
-                            ? `${rule.discountPercent ?? 0}% off`
-                            : `${((rule.fixedPriceCents ?? 0) / 100).toFixed(2)} fixed`}
-                        </Pill>
-                      ) : null}
-                      {rule.unlockAfterPaidMonths > 0 ? (
-                        <Pill tone="draft">unlock @ {rule.unlockAfterPaidMonths}mo</Pill>
-                      ) : null}
-                      {!rule.isActive ? <Pill tone="inactive">not available</Pill> : null}
-                    </div>
-                    <form action={removeConsultationRuleAction}>
-                      <input type="hidden" name="serviceId" value={rule.serviceId} />
-                      <ConfirmDeleteButton
-                        message={`Remove the rule for "${rule.service.name}"? This deletes it from the plan.`}
-                        className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
-                      >
-                        Remove
-                      </ConfirmDeleteButton>
-                    </form>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <p className="mb-4 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-4 py-3 text-portal-compact text-[var(--color-text-body)]">
-              <span className="font-semibold">Add or update a visit:</span> 1) pick the service, 2) choose what members pay,
-              3) (optional) set when it unlocks. Re-adding the same service updates it.
-            </p>
-            <form action={addConsultationRuleAction} className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <label className="flex flex-col gap-1.5 lg:col-span-2">
-                <span className="gh-field-label">Service (consultation)</span>
-                <select name="serviceId" className="gh-select min-w-0" required defaultValue="">
-                  <option value="">Select a service…</option>
-                  {services.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({SERVICE_KIND_LABELS[s.kind] ?? s.kind})
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1.5 lg:col-span-2">
-                <span className="gh-field-label">What members pay</span>
-                <select name="discountMode" className="gh-select min-w-0" defaultValue="NONE">
-                  <option value="NONE">Full price (no discount)</option>
-                  <option value="PERCENT">Percent discount</option>
-                  <option value="FIXED">Fixed price</option>
-                  <option value="FREE">Free (included)</option>
-                  <option value="UNAVAILABLE">Not available on this plan</option>
-                </select>
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Discount %</span>
-                <input name="discountPercent" type="number" min="0" max="100" step="0.01" className="gh-input min-w-0" placeholder="e.g. 10" />
-                <span className="text-xs text-[var(--color-text-muted)]">Only if &ldquo;Percent discount&rdquo;.</span>
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Fixed price</span>
-                <input name="fixedPrice" type="number" min="0" step="0.01" className="gh-input min-w-0" placeholder="e.g. 15.00" />
-                <span className="text-xs text-[var(--color-text-muted)]">Only if &ldquo;Fixed price&rdquo;.</span>
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Credits used per visit</span>
-                <input name="creditsPerUse" type="number" min="1" defaultValue="1" className="gh-input min-w-0" />
-                <span className="text-xs text-[var(--color-text-muted)]">If it uses the monthly allowance.</span>
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Unlock after (months)</span>
-                <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue={plan.benefitsUnlockAfterPaidMonths} className="gh-input min-w-0" />
-                <span className="text-xs text-[var(--color-text-muted)]">0 = available right away.</span>
-              </label>
-              <div className="flex flex-col gap-2 pt-1 text-sm lg:col-span-2">
-                <span className="gh-field-label">Covered by the plan?</span>
-                <label className="flex items-center gap-2" title="Free as part of the plan — no extra charge">
-                  <input type="checkbox" name="isIncluded" className="size-4" /> Included free with the plan
-                </label>
-                <label className="flex items-center gap-2" title="Each visit spends from the monthly credit allowance">
-                  <input type="checkbox" name="usesCredits" className="size-4" /> Spends from the monthly visit allowance
-                </label>
-                <label className="flex items-center gap-2" title="Family members on the plan can use this">
-                  <input type="checkbox" name="familyUsable" className="size-4" /> Family members can use it
-                </label>
-                <span className="text-xs text-[var(--color-text-muted)]">
-                  Tip: GP visits are usually &ldquo;included&rdquo; + &ldquo;spends from allowance&rdquo;. Specialist visits usually use a discount above instead.
-                </span>
-              </div>
-              <div className="lg:col-span-4">
-                <button type="submit" className="gh-btn gh-btn-secondary">
-                  Add / update visit
-                </button>
-              </div>
-            </form>
-          </div>
-              </AdminCard>
-            ),
-          },
-          {
-            id: "perks",
-            label: "Extra benefits",
-            content: (
-              <AdminCard padding={0}>
-                <SectionHeader title="Extra benefits (perks)" description="Optional bonuses (e.g. a bigger specialist discount) that switch on automatically once a member has paid for a set number of months." />
-          <div className="p-6">
-            {plan.perkRules.length === 0 ? (
-              <p className="mb-4 text-sm text-[var(--color-text-muted)]">No perk rules yet.</p>
-            ) : (
-              <ul className="mb-6 flex flex-col gap-2">
-                {plan.perkRules.map((perk) => (
-                  <li
-                    key={perk.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-semibold text-[var(--color-text-primary)]">
-                        {PERK_LABELS[perk.perkKey] ?? perk.perkKey}
-                      </span>
-                      <Pill tone="neutral">{UNLOCK_MODE_LABELS[perk.unlockMode] ?? perk.unlockMode}</Pill>
-                      {perk.unlockMode === "AFTER_PAID_MONTHS" ? (
-                        <Pill tone="draft">@ {perk.unlockAfterPaidMonths}mo</Pill>
-                      ) : null}
-                    </div>
-                    <form action={removePerkAction}>
-                      <input type="hidden" name="perkKey" value={perk.perkKey} />
-                      <ConfirmDeleteButton
-                        message={`Remove the "${PERK_LABELS[perk.perkKey] ?? perk.perkKey}" perk rule?`}
-                        className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
-                      >
-                        Remove
-                      </ConfirmDeleteButton>
-                    </form>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <form action={addPerkAction} className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Benefit</span>
-                <select name="perkKey" className="gh-select min-w-0" required defaultValue="">
-                  <option value="">Select a benefit…</option>
-                  {PERK_KEYS.map((k) => (
-                    <option key={k} value={k}>
-                      {PERK_LABELS[k] ?? k}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">When it switches on</span>
-                <select name="unlockMode" className="gh-select min-w-0" defaultValue="MONTH_1">
-                  {UNLOCK_MODES.map((m) => (
-                    <option key={m} value={m}>
-                      {UNLOCK_MODE_LABELS[m] ?? m}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">After how many months</span>
-                <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue={plan.benefitsUnlockAfterPaidMonths} className="gh-input min-w-0" />
-                <span className="text-xs text-[var(--color-text-muted)]">Only used with &ldquo;After N paid months&rdquo;.</span>
-              </label>
-              <div>
-                <button type="submit" className="gh-btn gh-btn-secondary">
-                  Add / update benefit
-                </button>
-              </div>
-            </form>
-          </div>
+                  title="Consultations"
+                  description="What the plan covers: which GP visits the monthly allowance pays for, and the plan's specialist discount. Prescriptions are never covered."
+                />
+                <form action={saveConsultationsAction} className="flex flex-col gap-6 p-6">
+                  <PlanConsultationsFields
+                    services={services}
+                    rules={plan.consultationRules}
+                    benefitsUnlockAfterPaidMonths={plan.benefitsUnlockAfterPaidMonths}
+                  />
+                  <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
+                    <button type="submit" className="gh-btn gh-btn-primary">
+                      Save consultations
+                    </button>
+                  </div>
+                </form>
+
+                {/* Perk rows predate the plan-level model above. Nothing here can
+                    be added any more — only WELLNESS_REDEMPTION / TEST_KIT_REDEMPTION
+                    still gate anything, and with no row redemption is open by
+                    default. Shown so leftovers can be cleared. */}
+                {plan.perkRules.length > 0 ? (
+                  <div className="border-t border-[var(--color-border)] p-6">
+                    <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+                      Old benefit rules
+                    </h3>
+                    <p className="mb-3 text-xs text-[var(--color-text-muted)]">
+                      Left over from the previous editor. Only the two redemption rules still do
+                      anything (they gate home test kits); the rest have no effect on pricing and
+                      can be removed.
+                    </p>
+                    <ul className="flex flex-col gap-2">
+                      {plan.perkRules.map((perk) => (
+                        <li
+                          key={perk.id}
+                          className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
+                        >
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-semibold text-[var(--color-text-primary)]">
+                              {PERK_LABELS[perk.perkKey] ?? perk.perkKey}
+                            </span>
+                            <Pill tone="neutral">{UNLOCK_MODE_LABELS[perk.unlockMode] ?? perk.unlockMode}</Pill>
+                            {perk.unlockMode === "AFTER_PAID_MONTHS" ? (
+                              <Pill tone="draft">@ {perk.unlockAfterPaidMonths}mo</Pill>
+                            ) : null}
+                            {perk.perkKey === "WELLNESS_REDEMPTION" || perk.perkKey === "TEST_KIT_REDEMPTION" ? (
+                              <Pill tone="active">gates test kits</Pill>
+                            ) : (
+                              <Pill tone="inactive">no effect</Pill>
+                            )}
+                          </div>
+                          <form action={removePerkAction}>
+                            <input type="hidden" name="perkKey" value={perk.perkKey} />
+                            <ConfirmDeleteButton
+                              message={`Remove the "${PERK_LABELS[perk.perkKey] ?? perk.perkKey}" rule?`}
+                              className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
+                            >
+                              Remove
+                            </ConfirmDeleteButton>
+                          </form>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </AdminCard>
             ),
           },
@@ -644,8 +576,17 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               </label>
               <label className="flex flex-col gap-1.5">
                 <span className="gh-field-label">Unlock after (months)</span>
-                <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue="0" className="gh-input min-w-0" />
-                <span className="text-xs text-[var(--color-text-muted)]">0 = available right away.</span>
+                <input
+                  name="unlockAfterPaidMonths"
+                  type="number"
+                  min="0"
+                  defaultValue={plan.benefitsUnlockAfterPaidMonths}
+                  className="gh-input min-w-0"
+                />
+                <span className="text-xs text-[var(--color-text-muted)]">
+                  Matches the plan&apos;s unlock setting. Kit redemption has its own gate — it does
+                  not inherit the plan-level one.
+                </span>
               </label>
               <div className="lg:col-span-4">
                 <button type="submit" className="gh-btn gh-btn-secondary">

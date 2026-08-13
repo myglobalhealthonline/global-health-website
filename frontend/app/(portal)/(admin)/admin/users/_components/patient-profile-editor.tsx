@@ -6,7 +6,6 @@ import {
   patchAdminPatientProfile,
 } from "@/lib/admin/admin-api";
 import { AdminCard } from "../../_components/atoms";
-import { PhoneField } from "@/components/forms/phone-field";
 
 /**
  * Admin-side editor for the PatientProfile row. Rendered on the user
@@ -74,9 +73,6 @@ export function PatientProfileEditor({
     };
 
     const body = {
-      fullName: text("fullName"),
-      phone: text("phone"),
-      dateOfBirth: text("dateOfBirth"),
       weightKg: num("weightKg"),
       heightM: num("heightM"),
       bmi: num("bmi"),
@@ -92,6 +88,7 @@ export function PatientProfileEditor({
       nationalIdNumber: text("nationalIdNumber"),
       taxIdNumber: text("taxIdNumber"),
       passportNumber: text("passportNumber"),
+      utenteNumber: text("utenteNumber"),
       addressLine1: text("addressLine1"),
       addressLine2: text("addressLine2"),
       addressCity: text("addressCity"),
@@ -101,6 +98,8 @@ export function PatientProfileEditor({
       preferredPharmacy: text("preferredPharmacy"),
       statusAlert: text("statusAlert"),
       clinicAlert: text("clinicAlert"),
+      insuranceProviderName: text("insuranceProviderName"),
+      insurancePolicyNumber: text("insurancePolicyNumber"),
     };
 
     if (listErrors.length > 0) {
@@ -151,23 +150,12 @@ export function PatientProfileEditor({
 
         <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Identity</h4>
+          <p className="mb-2 text-portal-meta text-[var(--color-text-muted)]">
+            Full name, phone, and date of birth are edited from
+            &ldquo;Account details&rdquo; above — that&apos;s the source of
+            truth and this chart follows it.
+          </p>
           <div className="gh-admin-support-field-grid grid gap-3 sm:grid-cols-2">
-            <Field
-              label="Full name"
-              name="fullName"
-              defaultValue={profile?.fullName ?? ""}
-              maxLength={200}
-            />
-            <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Phone</span>
-              <PhoneField name="phone" defaultValue={profile?.phone ?? ""} />
-            </label>
-            <Field
-              label="Date of birth (ISO)"
-              name="dateOfBirth"
-              type="datetime-local"
-              defaultValue={profile?.dateOfBirth?.slice(0, 16) ?? ""}
-            />
             <Field
               label="Blood type"
               name="bloodType"
@@ -193,7 +181,37 @@ export function PatientProfileEditor({
               defaultValue={profile?.passportNumber ?? ""}
               maxLength={64}
             />
+            <Field
+              label="Número de Utente"
+              name="utenteNumber"
+              defaultValue={profile?.utenteNumber ?? ""}
+              maxLength={64}
+              hint="Portuguese SNS healthcare number."
+            />
           </div>
+        </section>
+
+        <section className="gh-admin-patient-profile-section">
+          <h4 style={sectionTitleStyle}>Insurance</h4>
+          <div className="gh-admin-support-field-grid grid gap-3 sm:grid-cols-2">
+            <Field
+              label="Insurance provider"
+              name="insuranceProviderName"
+              defaultValue={profile?.insuranceProviderName ?? ""}
+              maxLength={200}
+            />
+            <Field
+              label="Policy / card number"
+              name="insurancePolicyNumber"
+              defaultValue={profile?.insurancePolicyNumber ?? ""}
+              maxLength={200}
+            />
+          </div>
+          {profile?.insuranceDocumentStatus ? (
+            <p className="mt-2 text-portal-meta text-[var(--color-text-muted)]">
+              Card verification status: {profile.insuranceDocumentStatus}
+            </p>
+          ) : null}
         </section>
 
         <section className="gh-admin-patient-profile-section">

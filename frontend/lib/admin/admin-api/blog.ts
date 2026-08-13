@@ -20,6 +20,8 @@ export type BlogTranslationDto = {
   content: string | null;
   seoTitle: string | null;
   seoDesc: string | null;
+  /** Alt text for the shared cover image, written in this locale. */
+  coverImageAlt: string | null;
   createdAt: string;
   updatedAt: string;
 };

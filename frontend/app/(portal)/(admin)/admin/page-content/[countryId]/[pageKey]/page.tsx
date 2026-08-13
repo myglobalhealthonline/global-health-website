@@ -15,6 +15,7 @@ import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { AdminCard, PageHeader } from "../../../_components/atoms";
 import { PageContentEditor } from "../../_components/page-content-editor";
 import { parsePageContentForm } from "../../_components/page-content-form-parse";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -92,6 +93,7 @@ export default async function AdminPageContentEditorPage({ params, searchParams 
 
   return (
     <>
+      <SetCrumbTitle label={country.name} />
       <Link
         href="/admin/page-content"
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

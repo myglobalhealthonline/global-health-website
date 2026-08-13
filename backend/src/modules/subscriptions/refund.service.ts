@@ -128,6 +128,30 @@ export async function reconcileRefund(params: ReconcileRefundParams): Promise<Re
   let consultationClawedBack = 0;
   let wellnessClawedBack = 0;
 
+  // Terminate at the PROVIDER first. A refund/dispute does not cancel a Stripe
+  // subscription — without this the row goes CANCELED here while Stripe keeps
+  // billing the customer every month, and the next `subscription_cycle` invoice
+  // would resurrect the membership. Best-effort: if the provider cancel fails we
+  // still reconcile (the money is already refunded and the credits must go), but
+  // it is a page-ops incident, and `processInvoicePaid` refuses to re-activate a
+  // CANCELED row as the backstop.
+  if (sub.status !== "CANCELED" && sub.stripeSubscriptionId) {
+    const billing = getBillingPort();
+    try {
+      await billing.cancelNow(sub.stripeSubscriptionId);
+    } catch (err) {
+      void emitOpsAlert({
+        severity: "critical",
+        title: "Refunded subscription could NOT be cancelled at the provider",
+        detail:
+          `sub ${sub.id} (${sub.stripeSubscriptionId}) was refunded/disputed and marked CANCELED locally, ` +
+          "but the provider cancel failed — it may keep billing. Cancel it manually now. " +
+          (err instanceof Error ? err.message : ""),
+        context: { subscriptionId: sub.id, stripeSubscriptionId: sub.stripeSubscriptionId },
+      });
+    }
+  }
+
   await prisma.$transaction(
     async (tx) => {
       if (unusedConsultation > 0) {
@@ -229,11 +253,50 @@ export async function refundSubscription(input: RefundSubscriptionInput): Promis
   await assertRefundAllowed(sub);
 
   const billing = getBillingPort();
+  // Stripe driver + no provider subscription = a row whose money we cannot
+  // reach: a checkout that never linked, or a legacy member imported from
+  // another platform whose paid months were taken elsewhere. Falling through to
+  // reconcileRefund would CANCEL the membership and claw the credits back while
+  // returning nothing — the customer loses both the money and the plan. Refuse.
+  if (billing.driver === "stripe" && !sub.stripeSubscriptionId) {
+    throw new RefundError(
+      "NO_PAID_PERIOD",
+      "This membership has no charge on file that we can refund",
+    );
+  }
   if (billing.driver === "stripe" && sub.stripeSubscriptionId) {
+    // Refund the invoice for the period being reversed, NOT "the latest
+    // invoice": after a mid-cycle upgrade the latest invoice is the small
+    // `subscription_update` proration, so refunding it returned €12 of a €50
+    // month while the reconciler still cancelled and clawed back everything.
+    // The mirrored row is written for every granting invoice, so its absence
+    // means we cannot identify the charge — refuse rather than guess (D17).
+    const periodInvoice = await prisma.subscriptionInvoice.findFirst({
+      where: {
+        userSubscriptionId: sub.id,
+        periodStart: sub.currentPeriodStart,
+        amountPaidCents: { gt: 0 },
+      },
+      // OLDEST first: the period's cycle/create invoice is the first one written
+      // for that periodStart. A proration invoice raised at the exact instant a
+      // cycle begins would share the periodStart, and "newest" would pick it —
+      // the very substitution this whole lookup exists to prevent.
+      orderBy: { createdAt: "asc" },
+      select: { stripeInvoiceId: true },
+    });
+    if (!periodInvoice) {
+      throw new RefundError("NO_PAID_PERIOD", "No mirrored invoice found for the current period");
+    }
+    let refunded: { refunded: boolean };
     try {
-      await billing.refundLatestPayment(sub.stripeSubscriptionId);
+      refunded = await billing.refundInvoicePayment(periodInvoice.stripeInvoiceId);
     } catch (err) {
       throw new RefundError("PROVIDER_FAILED", err instanceof Error ? err.message : "Provider refund failed");
+    }
+    // No charge resolved = no money returned. Reconciling anyway would cancel
+    // the membership and claw the credits back for free (§ fail closed).
+    if (!refunded.refunded) {
+      throw new RefundError("PROVIDER_FAILED", "Could not resolve the charge to refund");
     }
   }
 

@@ -13,6 +13,8 @@ import {
 import { Flag } from "@/components/ui/Flag";
 import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
+import { BookCta } from "@/components/booking/BookNowButton";
+
 
 /* ─── Mint icon box ──────────────────────────────────────────────────────── */
 function IconBox({ children }: { children: React.ReactNode }) {
@@ -93,6 +95,11 @@ type DoctorCardProps = {
    *  `common.doctors`. Required — these used to be English literals baked
    *  into the card, so every non-en page rendered them untranslated. */
   cardI18n: DoctorCardI18n;
+  /** Heading level for the doctor's name. Defaults to h3, correct wherever the
+   *  card grid sits under a section <h2>. The doctors directory renders its
+   *  grid directly under the page <h1> with no section heading above it, so it
+   *  passes "h2" to avoid skipping a level. */
+  titleAs?: "h2" | "h3";
 };
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
@@ -120,14 +127,20 @@ export function DoctorCard({
   imageZoom = 1,
   href,
   bookingHref,
-  ctaLabel = "View profile",
-  bookLabel = "Pick a time",
+  ctaLabel,
+  bookLabel,
   /** Override the primary button label (default: "Book with {firstName}"). */
   primaryLabel,
   dark = false,
   viewProfileAriaLabel,
   cardI18n,
+  titleAs: NameHeading = "h3",
 }: DoctorCardProps) {
+  // cardI18n is a required prop; the English fallback only guards a caller
+  // that skips TS (or an older call site mid-migration) from crashing.
+  const resolvedCtaLabel = ctaLabel ?? cardI18n?.viewProfileLabel ?? "View profile";
+  const resolvedBookLabel = bookLabel ?? cardI18n?.pickTimeLabel ?? "Pick a time";
+
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
   const src = trimmedImage ?? "";
@@ -256,12 +269,12 @@ export function DoctorCard({
       <div className="relative z-[1] flex flex-1 flex-col px-5 pb-5 pt-4">
 
         {/* Name — dark green, extrabold */}
-        <h3
+        <NameHeading
           className="text-[1.1rem] font-extrabold tracking-[-0.015em] leading-snug"
           style={{ color: "var(--dc-ink)" }}
         >
           {name}
-        </h3>
+        </NameHeading>
 
         {/* Metadata rows */}
         <div className="mt-4 space-y-3">
@@ -367,7 +380,7 @@ export function DoctorCard({
                   className="text-[10.5px] font-bold uppercase tracking-[0.13em]"
                   style={{ color: "var(--dc-muted)" }}
                 >
-                  Languages
+                  {cardI18n?.languagesLabel ?? "Languages"}
                 </p>
                 <p
                   className="text-[13px] font-semibold leading-snug"
@@ -393,10 +406,10 @@ export function DoctorCard({
                     : "gh2-btn-compact-secondary border-[color:var(--dc-line)] text-[color:var(--dc-ink)]"
                 }`}
               >
-                {ctaLabel}
+                {resolvedCtaLabel}
               </Link>
             ) : null}
-            <Link
+            <BookCta
               href={bookHref}
               className={`gh2-btn-compact relative z-20 flex-1 gap-1 ${
                 dark ? "gh2-btn-compact-primary-dark" : "gh2-btn-compact-primary"
@@ -404,13 +417,13 @@ export function DoctorCard({
             >
               {primaryLabel}
               <ArrowRight className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
-            </Link>
+            </BookCta>
           </div>
         ) : (
           /* Default stacked layout — full-width buttons for non-booking contexts */
           <div className="mt-auto space-y-2 pt-5">
             {bookHref ? (
-              <Link
+              <BookCta
                 href={bookHref}
                 className={`relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
                   dark
@@ -431,13 +444,13 @@ export function DoctorCard({
                 }
               >
                 <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
-                {primaryLabel ?? bookLabel ?? `Book with ${firstName}`}
+                {primaryLabel ?? resolvedBookLabel}
                 <ArrowRight
                   className="size-[15px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                   strokeWidth={1.8}
                   aria-hidden
                 />
-              </Link>
+              </BookCta>
             ) : null}
             {profileHref ? (
               <Link
@@ -448,7 +461,7 @@ export function DoctorCard({
                     : "relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
                 }
               >
-                {ctaLabel}
+                {resolvedCtaLabel}
                 <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
               </Link>
             ) : null}

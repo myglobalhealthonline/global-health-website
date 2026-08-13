@@ -45,6 +45,7 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
           .send(errorResponse("Invalid body", body.error.flatten()));
       }
       try {
+        // nosemgrep: gh-phi-route-missing-guard -- doctor-authenticated (verifyDoctorAccess above) and already scoped by doctorId: auth.doctorId; narrow { id, status } select, not clinical content.
         const consult = await prisma.consultation.findFirst({
           where: { id: request.params.consultationId, doctorId: auth.doctorId },
           select: { id: true, status: true },
@@ -121,6 +122,7 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
+        // nosemgrep: gh-phi-route-missing-guard -- doctor-authenticated (verifyDoctorAccess above); ownership checked immediately below via createdByUserId !== auth.userId. Narrow select, not clinical content.
         const existing = await prisma.shareLink.findUnique({
           where: { id: request.params.id },
           select: { id: true, createdByUserId: true },
@@ -160,6 +162,7 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       reply.header("Cache-Control", "private, no-store");
       try {
+        // nosemgrep: gh-phi-route-missing-guard -- deliberately public, token-scoped by an opaque SHA-256 tokenHash (S-009: raw token never persisted). This capability-URL model is the endpoint's whole purpose, an intentional alternative to the session-based guard.
         const link = await prisma.shareLink.findUnique({
           where: { tokenHash: hashToken(request.params.token) },
           include: {
@@ -205,6 +208,8 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
             objective: c.objective,
             assessment: c.assessment,
             plan: c.plan,
+            noteFormat: c.noteFormat,
+            note: c.note,
             doctor: c.doctor,
             appointment: {
               ...c.appointment,

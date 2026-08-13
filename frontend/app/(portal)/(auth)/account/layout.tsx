@@ -15,6 +15,7 @@ import {
   CreditCard,
   FileText,
   History,
+  IdCard,
   LayoutDashboard,
   MessagesSquare,
   PillBottle,
@@ -32,7 +33,7 @@ import { fetchPatientUnreadMessageCount } from "@/lib/api/account-appointments-a
 import { getServerNotifications } from "@/lib/api/me-subscription-server";
 import { fetchMeCorporate } from "@/lib/corporate/corporate-api";
 import type { NotificationPopoverItem } from "@/components/NotificationPopover";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
 import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
@@ -65,7 +66,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   const [bookHref, unreadMessages, locale, notifications, corporateResult] = await Promise.all([
     resolveBookConsultationHref(),
     fetchPatientUnreadMessageCount(),
-    getPageLocale(),
+    getPortalLocale(),
     getServerNotifications(),
     fetchMeCorporate(),
   ]);
@@ -115,7 +116,11 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     {
       label: a.nav.groupMembership,
       items: [
-        { href: "/account/membership", label: a.nav.membership, icon: <BadgeCheck className="size-4" aria-hidden /> },
+        { href: "/account/plans", label: a.nav.plans, icon: <BadgeCheck className="size-4" aria-hidden /> },
+        // Always shown, not gated on holding one: the page is also the way to
+        // the claim form, which is exactly what someone with no membership
+        // linked yet needs to reach.
+        { href: "/account/membership", label: a.nav.membership, icon: <IdCard className="size-4" aria-hidden /> },
         ...(hasCorporateMembership
           ? [{ href: "/account/corporate", label: a.nav.corporate, icon: <Briefcase className="size-4" aria-hidden /> }]
           : []),

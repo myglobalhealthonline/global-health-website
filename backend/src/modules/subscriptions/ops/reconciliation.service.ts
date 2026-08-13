@@ -111,17 +111,21 @@ async function checkLedgerBalanceInvariant(): Promise<InvariantAlert[]> {
 
 /** Active plans in subscription-enabled countries must have a Stripe Price. */
 async function checkPriceSyncFailures(): Promise<Array<{ planId: string; slug: string }>> {
+  // Filtered in the query rather than in JS. Selecting `country` and reading
+  // `p.country.enabledFeatures` afterwards loads the relation separately, so a
+  // country deleted between the two reads yields `p.country === null` and a
+  // TypeError — which is exactly what happened intermittently under the test
+  // suite, where teardown hooks drop countries constantly. One query cannot
+  // race itself, and this is less code besides.
   const plans = await prisma.pricingPlan.findMany({
-    where: { isActive: true, stripePriceId: null },
-    select: {
-      id: true,
-      slug: true,
-      country: { select: { enabledFeatures: true } },
+    where: {
+      isActive: true,
+      stripePriceId: null,
+      country: { enabledFeatures: { has: "subscriptions" } },
     },
+    select: { id: true, slug: true },
   });
-  return plans
-    .filter((p) => p.country.enabledFeatures.includes("subscriptions"))
-    .map((p) => ({ planId: p.id, slug: p.slug }));
+  return plans.map((p) => ({ planId: p.id, slug: p.slug }));
 }
 
 /** Expired reservations the sweep should have released (terminal missing). */
@@ -157,7 +161,14 @@ async function checkStripeDrift(): Promise<DriftEntry[]> {
   const subs = await prisma.userSubscription.findMany({
     where: { status: { in: ["ACTIVE", "PAST_DUE"] }, stripeSubscriptionId: { not: null } },
     take: 200,
-    select: { id: true, status: true, stripeSubscriptionId: true, currentPeriodEnd: true },
+    select: {
+      id: true,
+      status: true,
+      stripeSubscriptionId: true,
+      currentPeriodEnd: true,
+      stripePriceId: true,
+      pendingStripePriceId: true,
+    },
   });
   const drift: DriftEntry[] = [];
   // Bounded-parallel (batches of 8) to cut wall-clock vs. one serial Stripe
@@ -180,6 +191,24 @@ async function checkStripeDrift(): Promise<DriftEntry[]> {
               field: "status",
               db: sub.status,
               stripe: live.status,
+            });
+          }
+          // Price drift (§39): the provider item price IS what the customer
+          // pays. It diverges when a plan change was charged at Stripe but
+          // failed to apply here — the money moves, no status or period changes,
+          // and nothing else in this report would ever notice.
+          //
+          // A scheduled DOWNGRADE is not drift: `schedulePlanChange` swaps the
+          // provider item price straight away (with no proration, so it only
+          // bites at the next cycle) while our row carries the intent in
+          // `pendingStripePriceId` until that cycle applies it.
+          const expectedPriceIds = [sub.stripePriceId, sub.pendingStripePriceId].filter(Boolean);
+          if (live.priceId && expectedPriceIds.length > 0 && !expectedPriceIds.includes(live.priceId)) {
+            entries.push({
+              subscriptionId: sub.id,
+              field: "stripePriceId",
+              db: sub.stripePriceId,
+              stripe: live.priceId,
             });
           }
           // Period-end drift (§39): tolerate <1 min skew, flag real divergence.

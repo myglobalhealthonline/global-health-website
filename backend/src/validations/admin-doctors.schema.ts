@@ -32,6 +32,15 @@ export const profileImageRefSchema = z.preprocess(
 export const focalPointSchema = z.coerce.number().int().min(0).max(100);
 export const zoomSchema = z.coerce.number().min(1).max(3);
 
+/** Accept "", undefined, null, or an ISO/date string → Date | null. Mirrors
+ *  admin-services.schema.ts's optionalNullableDate. */
+const optionalNullableDate = z
+  .preprocess(
+    (v) => (v === "" || v === undefined || v === null ? null : v),
+    z.coerce.date().nullable(),
+  )
+  .optional();
+
 export const adminDoctorsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   // Admin duplicate-check UIs fetch up to 250 rows in one country.
@@ -188,6 +197,22 @@ const adminDoctorBaseObject = z.object({
     .max(50)
     .optional(),
   /**
+   * Country-director master switch. When on, the doctor can view every
+   * consultation in the markets listed in `directorCountryIds` (read-only, no
+   * financial figures). Off means no country-wide access at all, even if
+   * per-country grants are still on the DoctorCountry rows.
+   */
+  isCountryDirector: z.boolean().optional(),
+  /**
+   * Which of the doctor's markets the directorship covers. Country IDs, not
+   * codes — this matches the checkbox values on the admin form and the
+   * `DoctorCountry.countryId` rows the backend flips. An empty array revokes
+   * every grant; omitted leaves the existing grants untouched. Ids that aren't
+   * one of the doctor's own markets are ignored downstream (the update is scoped
+   * by `doctorId`), so this can't grant a market the doctor doesn't operate in.
+   */
+  directorCountryIds: z.array(z.string().min(1).max(120)).max(50).optional(),
+  /**
    * SEO metadata for the public doctor profile page. Kept admin-managed
    * (not on the doctor's self-edit form) so changes can't break canonical
    * URL signals after the doctor has signed up.
@@ -206,6 +231,9 @@ const adminDoctorBaseObject = z.object({
     .optional()
     .nullable()
     .transform((v) => (v === "" || v === undefined ? null : v)),
+  /** Clinical review date shown on the doctor profile as "Last reviewed"
+   *  (E-E-A-T signal). Admin-set only — never auto-populated on create. */
+  lastReviewedAt: optionalNullableDate,
   /** Per-locale CMS content (title, bio, SEO). The default-locale entry
    *  mirrors the base fields above; backend upserts one DoctorTranslation
    *  row per entry. */

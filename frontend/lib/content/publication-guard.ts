@@ -1,5 +1,20 @@
-const INTERNAL_COPY_PATTERNS = [
-  /\bTODO\b/i,
+/**
+ * Development/internal copy that must never reach a public page. Shared with
+ * `lib/content/publication-validation.ts` so the "is this copy publishable?"
+ * question has exactly one answer — this file is the leaf (no imports), so it
+ * owns the list.
+ *
+ * `TODO` is deliberately the ONLY case-sensitive pattern here. Case-insensitive
+ * `\btodo\b` also matched the ordinary Spanish/Portuguese word "todo" ("all"),
+ * which silently noindexed fully published clinicians whose bios are written in
+ * those languages (confirmed: dr-javier-villarte-betancor, dr-silvina-irale) and
+ * made `sanitizePublicCopyString` swap their real bios for boilerplate. A real
+ * development placeholder is written in caps — `TODO`, `TODO:`, `[TODO]`,
+ * `TODO(name)` all still match, because `\b` only requires a non-word character
+ * on each side.
+ */
+export const INTERNAL_COPY_PATTERNS = [
+  /\bTODO\b/,
   /\bplaceholder\b/i,
   /\bmigration\b/i,
   /\badapter\b/i,

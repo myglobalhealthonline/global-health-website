@@ -22,10 +22,22 @@ import {
 import {
   fetchCrossBorderRxConsent,
   submitCrossBorderRxConsent,
+  revertCrossBorderRxConsent,
   type CrossBorderRxConsentView,
 } from "@/lib/api/public-api";
+import { formatPrice } from "@/lib/format-currency";
+import type enLegal from "@/locales/en/legal.json";
+
+type Copy = typeof enLegal.crossBorderConsent;
 
 const FOREST = "#1D4B36";
+
+/** `{doctor}` / `{price}` / ... placeholder substitution — plain text only,
+ *  no embedded markup, so every locale string stays a single translatable
+ *  sentence instead of a template split across JSX. */
+function fmt(template: string, vars: Record<string, string>): string {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) => vars[key] ?? "");
+}
 
 function Shell({ children }: { children: ReactNode }) {
   return (
@@ -54,22 +66,22 @@ function Card({ children }: { children: ReactNode }) {
   );
 }
 
-function Eyebrow() {
+function Eyebrow({ t }: { t: Copy }) {
   return (
     <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-text-muted)]">
-      Global Health · Secure request
+      {t.eyebrow}
     </p>
   );
 }
 
-function ConsentForm() {
+function ConsentForm({ t }: { t: Copy }) {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
   const [info, setInfo] = useState<CrossBorderRxConsentView | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const [acting, setActing] = useState<"AGREE" | "DECLINE" | null>(null);
+  const [acting, setActing] = useState<"AGREE" | "DECLINE" | "REVERT" | null>(null);
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [gpBookingUrl, setGpBookingUrl] = useState<string | null>(null);
   // "choose" = the two options; "details" = the pre-filled pharmacy/address form
@@ -77,6 +89,8 @@ function ConsentForm() {
   const [step, setStep] = useState<"choose" | "details">("choose");
   const [form, setForm] = useState({
     pharmacyName: "",
+    healthIdNumber: "",
+    passportNumber: "",
     addressLine1: "",
     addressLine2: "",
     addressCity: "",
@@ -84,24 +98,21 @@ function ConsentForm() {
     addressCountryCode: "",
   });
 
-  useEffect(() => {
-    if (!token) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- token comes from the URL, only known post-mount
-      setError("This consent link is invalid.");
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLoading(false);
-      return;
-    }
+  function loadConsent() {
+    setLoading(true);
     fetchCrossBorderRxConsent(token).then((res) => {
       if (!res.ok) {
         setError(res.message);
       } else {
         setInfo(res.data);
+        setError(null);
         setPaymentUrl(res.data.paymentUrl);
         setGpBookingUrl(res.data.gpBookingUrl);
         const p = res.data.prefill;
         setForm({
           pharmacyName: p.pharmacyName ?? "",
+          healthIdNumber: p.healthIdNumber ?? "",
+          passportNumber: p.passportNumber ?? "",
           addressLine1: p.addressLine1 ?? "",
           addressLine2: p.addressLine2 ?? "",
           addressCity: p.addressCity ?? "",
@@ -111,12 +122,26 @@ function ConsentForm() {
       }
       setLoading(false);
     });
+  }
+
+  useEffect(() => {
+    if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- token comes from the URL, only known post-mount
+      setError("This consent link is invalid.");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false);
+      return;
+    }
+    loadConsent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadConsent closes over `token` itself
   }, [token]);
 
   function decide(
     decision: "AGREE" | "DECLINE",
     details?: {
       pharmacyName: string;
+      healthIdNumber: string;
+      passportNumber: string;
       addressLine1: string;
       addressLine2: string;
       addressCity: string;
@@ -149,6 +174,22 @@ function ConsentForm() {
     });
   }
 
+  function changeMind() {
+    setError(null);
+    setActing("REVERT");
+    startTransition(async () => {
+      const res = await revertCrossBorderRxConsent(token);
+      if (!res.ok) {
+        setError(res.message);
+        setActing(null);
+        return;
+      }
+      setStep("choose");
+      loadConsent();
+      setActing(null);
+    });
+  }
+
   // ── Loading ──────────────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -156,7 +197,7 @@ function ConsentForm() {
         <Card>
           <div className="flex flex-col items-center gap-3 py-8 text-center">
             <Loader2 className="size-7 animate-spin text-[var(--color-brand-primary)]" aria-hidden />
-            <p className="text-sm text-[var(--color-text-muted)]">Loading your request…</p>
+            <p className="text-sm text-[var(--color-text-muted)]">{t.loading}</p>
           </div>
         </Card>
       </Shell>
@@ -168,16 +209,14 @@ function ConsentForm() {
     return (
       <Shell>
         <Card>
-          <Eyebrow />
+          <Eyebrow t={t} />
           <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">
-            We couldn&rsquo;t open this request
+            {t.errorTitle}
           </h1>
           <p role="alert" className="mt-3 rounded-xl bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-body)]">
             {error}
           </p>
-          <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-            The link may have expired. Please ask your doctor to send a new one.
-          </p>
+          <p className="mt-4 text-sm text-[var(--color-text-muted)]">{t.errorHint}</p>
         </Card>
       </Shell>
     );
@@ -187,27 +226,55 @@ function ConsentForm() {
 
   const doctorB = info.targetDoctorName;
   // Names already include the doctor's title (e.g. "Dr", "MUDr.") — never prepend another.
-  const doctorA = info.sourceDoctorName ?? "Your doctor";
+  const doctorA = info.sourceDoctorName ?? t.defaultSourceDoctor;
   const busy = pending || acting !== null;
+  const isIreland = info.targetCountryCode.trim().toLowerCase() === "ie";
+  const postalCodeLabel = isIreland ? t.eircodeOptional : t.postalCode;
+  const prescriptionFeeDisplay =
+    info.prescriptionFeeCents != null
+      ? formatPrice(info.prescriptionFeeCents, info.prescriptionFeeCurrency)
+      : null;
+  const gpConsultPriceDisplay =
+    info.gpConsultPriceCents != null
+      ? formatPrice(info.gpConsultPriceCents, info.gpConsultCurrency)
+      : null;
 
   // ── Already agreed → resume payment ──────────────────────────────────────
   if (info.status === "PENDING_PAYMENT") {
     return (
       <Shell>
         <Card>
-          <Eyebrow />
+          <Eyebrow t={t} />
           <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">
-            You&rsquo;re almost done
+            {t.pendingPaymentTitle}
           </h1>
           <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-text-body)]">
-            Thank you — you&rsquo;ve agreed to share your consultation notes with {doctorB}.
-            Complete the payment to send your request.
+            {fmt(t.pendingPaymentBody, { doctor: doctorB })}
           </p>
-          {paymentUrl ? (
-            <a href={paymentUrl} className="gh2-btn-lime mt-6 inline-flex w-full items-center justify-center gap-2 sm:w-auto">
-              Continue to payment <ArrowRight className="size-4" aria-hidden />
-            </a>
+          {error ? (
+            <p role="alert" className="mt-4 rounded-xl bg-[rgba(200,40,40,0.08)] px-4 py-3 text-sm text-[#9b1c1c]">
+              {error}
+            </p>
           ) : null}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            {info.canChangeDecision ? (
+              <button
+                type="button"
+                onClick={changeMind}
+                disabled={busy}
+                className="text-sm font-semibold text-[var(--color-text-muted)] disabled:opacity-60"
+              >
+                {t.changeMind}
+              </button>
+            ) : (
+              <span />
+            )}
+            {paymentUrl ? (
+              <a href={paymentUrl} className="gh2-btn-lime inline-flex items-center justify-center gap-2">
+                {t.continueToPayment} <ArrowRight className="size-4" aria-hidden />
+              </a>
+            ) : null}
+          </div>
         </Card>
       </Shell>
     );
@@ -218,23 +285,39 @@ function ConsentForm() {
     return (
       <Shell>
         <Card>
-          <Eyebrow />
+          <Eyebrow t={t} />
           <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">
-            Book a full GP consultation
+            {t.declinedTitle}
           </h1>
           <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-text-body)]">
-            No problem — your record won&rsquo;t be shared. You can book a full consultation with
-            {doctorB}. You&rsquo;ll choose a time and fill in a short form.
+            {fmt(t.declinedBody, { doctor: doctorB })}
           </p>
-          {gpBookingUrl ? (
-            <a href={gpBookingUrl} className="gh2-btn-lime mt-6 inline-flex w-full items-center justify-center gap-2 sm:w-auto">
-              Book a consultation <ArrowRight className="size-4" aria-hidden />
-            </a>
-          ) : (
-            <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-              Please contact us to arrange your consultation.
+          {error ? (
+            <p role="alert" className="mt-4 rounded-xl bg-[rgba(200,40,40,0.08)] px-4 py-3 text-sm text-[#9b1c1c]">
+              {error}
             </p>
-          )}
+          ) : null}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            {info.canChangeDecision ? (
+              <button
+                type="button"
+                onClick={changeMind}
+                disabled={busy}
+                className="text-sm font-semibold text-[var(--color-text-muted)] disabled:opacity-60"
+              >
+                {t.changeMind}
+              </button>
+            ) : (
+              <span />
+            )}
+            {gpBookingUrl ? (
+              <a href={gpBookingUrl} className="gh2-btn-lime inline-flex items-center justify-center gap-2">
+                {t.bookConsultationCta} <ArrowRight className="size-4" aria-hidden />
+              </a>
+            ) : (
+              <p className="text-sm text-[var(--color-text-muted)]">{t.contactUsHint}</p>
+            )}
+          </div>
         </Card>
       </Shell>
     );
@@ -247,10 +330,8 @@ function ConsentForm() {
         <Card>
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <CheckCircle2 className="size-9 text-[var(--color-brand-mint,#8FB021)]" aria-hidden />
-            <h1 className="text-xl font-bold text-[var(--color-text-primary)]">
-              This request has already been handled
-            </h1>
-            <p className="text-sm text-[var(--color-text-muted)]">You can safely close this page.</p>
+            <h1 className="text-xl font-bold text-[var(--color-text-primary)]">{t.handledTitle}</h1>
+            <p className="text-sm text-[var(--color-text-muted)]">{t.handledBody}</p>
           </div>
         </Card>
       </Shell>
@@ -264,46 +345,83 @@ function ConsentForm() {
     const field =
       "mt-1 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface,#fff)] px-3 py-2 text-sm text-[var(--color-text-primary)]";
     const label = "text-xs font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
-    const canPay = form.pharmacyName.trim().length > 0 && form.addressLine1.trim().length > 0;
+    const needsIdentity = info.identityRequiresOneOf;
+    const hasIdentity =
+      !needsIdentity || form.healthIdNumber.trim().length > 0 || form.passportNumber.trim().length > 0;
+    const canPay =
+      form.pharmacyName.trim().length > 0 && form.addressLine1.trim().length > 0 && hasIdentity;
     return (
       <Shell>
         <Card>
-          <Eyebrow />
+          <Eyebrow t={t} />
           <h1 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-            Confirm your delivery details
+            {t.detailsTitle}
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-body)]">
-            Please enter your <strong>pharmacy name</strong> and confirm your{" "}
-            <strong>delivery address</strong> so {doctorB} can send your prescription to the right
-            place. Everything else is already on file.
+            {fmt(t.detailsIntro, { doctor: doctorB, idLabel: info.healthIdLabel })}
           </p>
 
           <div className="mt-5 grid gap-4">
             <label className="block">
-              <span className={label}>Pharmacy name</span>
+              <span className={label}>{t.pharmacyName}</span>
               <input
                 className={field}
                 value={form.pharmacyName}
                 onChange={set("pharmacyName")}
-                placeholder="e.g. Farmácia Central, Lisbon"
                 maxLength={200}
               />
             </label>
             <label className="block">
-              <span className={label}>Address line 1</span>
+              <span className={label}>
+                {fmt(needsIdentity ? t.idNumberLabelRequired : t.idNumberLabelOptional, {
+                  label: info.healthIdLabel,
+                  country: info.targetCountryName,
+                })}
+              </span>
+              <input
+                className={field}
+                value={form.healthIdNumber}
+                onChange={set("healthIdNumber")}
+                maxLength={60}
+                autoComplete="off"
+              />
+              <span className="mt-1 block text-xs text-[var(--color-text-muted)]">
+                {fmt(needsIdentity ? t.idNumberHintRequired : t.idNumberHintOptional, {
+                  label: info.healthIdLabel,
+                  country: info.targetCountryName,
+                })}
+              </span>
+            </label>
+            {needsIdentity ? (
+              <label className="block">
+                <span className={label}>{t.passportNumber}</span>
+                <input
+                  className={field}
+                  value={form.passportNumber}
+                  onChange={set("passportNumber")}
+                  maxLength={60}
+                  autoComplete="off"
+                />
+                <span className="mt-1 block text-xs text-[var(--color-text-muted)]">
+                  {fmt(t.passportHint, { label: info.healthIdLabel })}
+                </span>
+              </label>
+            ) : null}
+            <label className="block">
+              <span className={label}>{t.addressLine1}</span>
               <input className={field} value={form.addressLine1} onChange={set("addressLine1")} maxLength={300} />
             </label>
             <label className="block">
-              <span className={label}>Address line 2 (optional)</span>
+              <span className={label}>{t.addressLine2}</span>
               <input className={field} value={form.addressLine2} onChange={set("addressLine2")} maxLength={300} />
             </label>
             <div className="grid grid-cols-2 gap-4">
               <label className="block">
-                <span className={label}>City</span>
+                <span className={label}>{t.city}</span>
                 <input className={field} value={form.addressCity} onChange={set("addressCity")} maxLength={200} />
               </label>
               <label className="block">
-                <span className={label}>Postal code</span>
+                <span className={label}>{postalCodeLabel}</span>
                 <input className={field} value={form.addressPostalCode} onChange={set("addressPostalCode")} maxLength={40} />
               </label>
             </div>
@@ -322,7 +440,7 @@ function ConsentForm() {
               disabled={busy}
               className="text-sm font-semibold text-[var(--color-text-muted)] disabled:opacity-60"
             >
-              ← Back
+              ← {t.back}
             </button>
             <button
               type="button"
@@ -332,11 +450,11 @@ function ConsentForm() {
             >
               {acting === "AGREE" ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" aria-hidden /> Please wait…
+                  <Loader2 className="size-4 animate-spin" aria-hidden /> {t.pleaseWait}
                 </>
               ) : (
                 <>
-                  Continue to payment <ArrowRight className="size-4" aria-hidden />
+                  {t.continueToPayment} <ArrowRight className="size-4" aria-hidden />
                 </>
               )}
             </button>
@@ -359,16 +477,15 @@ function ConsentForm() {
             <ShieldCheck className="size-6" style={{ color: FOREST }} aria-hidden />
           </span>
           <div>
-            <Eyebrow />
+            <Eyebrow t={t} />
             <h1 className="mt-1 text-2xl font-bold leading-tight text-[var(--color-text-primary)]">
-              Your prescription request
+              {t.heading}
             </h1>
           </div>
         </div>
 
         <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-text-body)]">
-          {doctorA} has asked <strong>{doctorB}</strong> in{" "}
-          <strong>{info.targetCountryName}</strong> to issue a prescription for you.
+          {fmt(t.intro, { sourceDoctor: doctorA, targetDoctor: doctorB, country: info.targetCountryName })}
         </p>
 
         {/* What will be shared */}
@@ -376,11 +493,10 @@ function ConsentForm() {
           <FileText className="mt-0.5 size-5 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
           <div>
             <p className="text-sm font-semibold text-[var(--color-text-primary)]">
-              What this means
+              {t.whatThisMeans}
             </p>
             <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-body)]">
-              To prescribe for you, {doctorB} needs to see your consultation notes. Choose an
-              option below to continue.
+              {fmt(t.whatThisMeansBody, { doctor: doctorB })}
             </p>
           </div>
         </div>
@@ -398,12 +514,18 @@ function ConsentForm() {
             <div className="flex items-center gap-2">
               <CheckCircle2 className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
               <h2 className="text-base font-bold text-[var(--color-text-primary)]">
-                Share &amp; get your prescription
+                {t.optionAShareTitle}
               </h2>
             </div>
-            <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--color-text-body)]">
-              Share your consultation notes with {doctorB} and pay the prescription fee.
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-body)]">
+              {fmt(t.optionAShareBody, { doctor: doctorB })}
             </p>
+            {prescriptionFeeDisplay ? (
+              <p className="mt-2 text-sm font-semibold text-[var(--color-text-primary)]">
+                {fmt(t.optionAPrice, { price: prescriptionFeeDisplay })}
+              </p>
+            ) : null}
+            <div className="flex-1" />
             <button
               type="button"
               onClick={() => {
@@ -413,7 +535,7 @@ function ConsentForm() {
               disabled={busy}
               className="gh2-btn-lime mt-4 inline-flex w-full items-center justify-center gap-2 disabled:opacity-60"
             >
-              Agree &amp; continue <ArrowRight className="size-4" aria-hidden />
+              {t.agreeContinue} <ArrowRight className="size-4" aria-hidden />
             </button>
           </div>
 
@@ -422,12 +544,18 @@ function ConsentForm() {
             <div className="flex items-center gap-2">
               <Stethoscope className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
               <h2 className="text-base font-bold text-[var(--color-text-primary)]">
-                Prefer a full consultation?
+                {t.optionBTitle}
               </h2>
             </div>
-            <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--color-text-body)]">
-              Don&rsquo;t share your notes — book a full GP consultation with {doctorB} instead.
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-body)]">
+              {fmt(t.optionBBody, { doctor: doctorB })}
             </p>
+            {gpConsultPriceDisplay ? (
+              <p className="mt-2 text-sm font-semibold text-[var(--color-text-primary)]">
+                {fmt(t.optionBPrice, { price: gpConsultPriceDisplay })}
+              </p>
+            ) : null}
+            <div className="flex-1" />
             <button
               type="button"
               onClick={() => decide("DECLINE")}
@@ -436,11 +564,11 @@ function ConsentForm() {
             >
               {acting === "DECLINE" ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" aria-hidden /> Please wait…
+                  <Loader2 className="size-4 animate-spin" aria-hidden /> {t.pleaseWait}
                 </>
               ) : (
                 <>
-                  <CalendarClock className="size-4" aria-hidden /> Book a GP consultation
+                  <CalendarClock className="size-4" aria-hidden /> {t.bookGp}
                 </>
               )}
             </button>
@@ -450,14 +578,14 @@ function ConsentForm() {
         {/* Trust footer */}
         <p className="mt-6 flex items-center justify-center gap-1.5 text-xs text-[var(--color-text-muted)]">
           <Lock className="size-3.5" aria-hidden />
-          Your information is encrypted and only shared with your consent.
+          {t.trustFooter}
         </p>
       </Card>
     </Shell>
   );
 }
 
-export function CrossBorderConsentPageClient() {
+export function CrossBorderConsentPageClient({ t }: { t: Copy }) {
   return (
     <Suspense
       fallback={
@@ -465,13 +593,13 @@ export function CrossBorderConsentPageClient() {
           <Card>
             <div className="flex flex-col items-center gap-3 py-8 text-center">
               <Loader2 className="size-7 animate-spin text-[var(--color-brand-primary)]" aria-hidden />
-              <p className="text-sm text-[var(--color-text-muted)]">Loading…</p>
+              <p className="text-sm text-[var(--color-text-muted)]">{t.loadingShort}</p>
             </div>
           </Card>
         </Shell>
       }
     >
-      <ConsentForm />
+      <ConsentForm t={t} />
     </Suspense>
   );
 }

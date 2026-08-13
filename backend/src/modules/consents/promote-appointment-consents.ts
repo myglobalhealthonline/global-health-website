@@ -9,22 +9,25 @@ const SCOPE_TO_CONSENT_TYPE: Record<string, string> = {
 
 /**
  * Promote booking-time medical-access consent captured on guest/patient
- * Appointment rows into the append-only PatientConsent ledger, once the
- * booking is tied to a user account (guest claim on login/verify, or a
- * logged-in booking). Idempotent: skips any appointment whose scope/
- * cross-border choice already has a matching source="BOOKING_FORM" row for
- * that patient profile — safe to call repeatedly (e.g. on every login).
+ * Appointment rows into the append-only PatientConsent ledger. Works for
+ * both logged-in bookings (userId set) and guest bookings (userId null,
+ * matched by email) — a guest promotion is a no-op if no PatientProfile
+ * exists yet for that email (e.g. the payment path upserts one; the
+ * booking-form path may not have one yet). Idempotent: skips any
+ * appointment whose scope/cross-border choice already has a matching
+ * source="BOOKING_FORM" row for that patient profile — safe to call
+ * repeatedly (e.g. on every login, every payment webhook redelivery).
  *
  * Non-fatal by design — callers fire-and-forget this; a promotion miss
  * must never block login, email verification, or booking.
  */
 export async function promoteAppointmentConsents(
-  userId: string,
+  userId: string | null,
   email: string,
 ): Promise<void> {
   const appointments = await prisma.appointment.findMany({
     where: {
-      userId,
+      ...(userId ? { userId } : { email: { equals: email, mode: "insensitive" }, userId: null }),
       OR: [
         { medicalAccessConsentScope: { not: null } },
         { crossBorderConsentAccepted: true },
@@ -39,7 +42,16 @@ export async function promoteAppointmentConsents(
   });
   if (appointments.length === 0) return;
 
-  const profile = await resolveOrCreatePatientProfile(userId, email);
+  let profile: { id: string; globalHealthNumber: string | null } | null;
+  if (userId) {
+    profile = await resolveOrCreatePatientProfile(userId, email);
+  } else {
+    profile = await prisma.patientProfile.findUnique({
+      where: { email: email.toLowerCase() },
+      select: { id: true, globalHealthNumber: true },
+    });
+    if (!profile) return;
+  }
 
   const alreadyPromoted = await prisma.patientConsent.findMany({
     where: {
@@ -57,7 +69,7 @@ export async function promoteAppointmentConsents(
     consentType: string;
     consentValue: boolean;
     source: string;
-    changedByUserId: string;
+    changedByUserId: string | null;
     changedByRole: string;
   }[] = [];
 

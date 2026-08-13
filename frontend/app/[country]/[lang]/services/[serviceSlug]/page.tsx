@@ -14,7 +14,7 @@ import {
   Stethoscope,
   Video,
 } from "lucide-react";
-import { getCountryByCode } from "@/data/countries";
+import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
@@ -23,25 +23,39 @@ import {
   getCountryServices,
 } from "@/lib/content/get-country-collections";
 import { buildBookHref } from "@/lib/routing/book-href";
+import { listingPath } from "@/lib/routing/service-listing-path";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
-import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import { hreflangRegion, ogLocales } from "@/lib/seo/hreflang";
+import { isRetiredHealthSlug } from "@/lib/seo/health-service-canonical";
+import {
+  isPublicServiceRecordIndexable,
+  safeLocalizedServiceMeta,
+} from "@/lib/content/publication-validation";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
+  breadcrumbJsonLd,
+  consultationServiceOffersJsonLd,
   faqJsonLd,
   medicalClinicServiceJsonLd,
   medicalSpecialtyForService,
   physicianJsonLd,
 } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
+import { AlsoAvailableIn } from "@/components/sections/AlsoAvailableIn";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { ClinicalReviewer } from "@/components/sections/ClinicalReviewer";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
+import { toolSlugsForService } from "@/lib/tools/service-suggestions";
+import { getToolCopy } from "@/lib/tools/registry";
+import { applyMarketToolCopy } from "@/lib/tools/market-copy";
+import { isToolMarket } from "@/lib/tools/markets";
+import { listRelatedBlogPosts } from "@/lib/content/get-public-blog";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
@@ -58,20 +72,68 @@ function stripHtml(value: string | null): string | null {
   return text.length > 0 ? text : null;
 }
 
-/** Back-link target = the listing this service belongs to, by kind. */
-function listingPath(
-  kind: string,
-  country: string,
-  lang: string,
-  labels: { specialist: string; prescription: string; general: string },
-): { href: string; label: string } {
-  if (kind === "SPECIALIST") {
-    return { href: `/${country}/${lang}/specialist-consultation`, label: labels.specialist };
+/**
+ * Locale codes a service genuinely renders `index,follow` in — the SAME
+ * `isPublicServiceRecordIndexable` membership test the robots tag and
+ * `sitemap.ts` use, so none of those three can disagree. Shared by
+ * `indexableServiceAlternates`'s hreflang map (below) and (2026-08-09) the
+ * page's own `AlsoAvailableIn` link row, so a crawlable "also available in"
+ * link can never point at a locale this service has no real content for.
+ *
+ * Parallel, not sequential — up to 6 locale reads in a row pushed
+ * `generateMetadata` past Next's streaming-metadata cutoff (metadata
+ * resolving after the initial `<head>` flush lands `<title>`/canonical/
+ * hreflang outside `<head>` for crawlers not in next.config.ts's
+ * `htmlLimitedBots`). Each read is independent and `cache()`-wrapped, so
+ * calling this a second time from the page component (for AlsoAvailableIn)
+ * dedupes against the `generateMetadata` call within the same request.
+ */
+async function indexableServiceLocales(
+  config: NonNullable<ReturnType<typeof getCountryByCode>>,
+  code: CountryCode,
+  serviceSlug: string,
+): Promise<string[]> {
+  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
+  const langs = (config.supportedLocales ?? [defaultLocale]).map((l) => l.toLowerCase());
+  const records = await Promise.all(
+    langs.map((alt) => getCountryServiceDetail(code, serviceSlug, alt)),
+  );
+  return langs.filter((alt, i) => {
+    const record = records[i];
+    return record != null && isPublicServiceRecordIndexable(record, alt, defaultLocale);
+  });
+}
+
+/**
+ * hreflang cluster for a service, restricted to the locale variants that
+ * actually render `index,follow`.
+ *
+ * hreflang is a reciprocal claim that each listed URL is a publishable
+ * alternate of this page, so advertising a locale this service has no real
+ * content for asks Google to index a page that says noindex about itself.
+ *
+ * Returns `undefined` when no locale qualifies (a service with no publishable
+ * version anywhere advertises nothing) — including for the page's own locale,
+ * which is then noindexed too.
+ */
+async function indexableServiceAlternates(
+  config: NonNullable<ReturnType<typeof getCountryByCode>>,
+  code: CountryCode,
+  countrySlugParam: string,
+  serviceSlug: string,
+): Promise<Record<string, string> | undefined> {
+  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
+  const region = hreflangRegion(config.code);
+  const eligible = await indexableServiceLocales(config, code, serviceSlug);
+  if (eligible.length === 0) return undefined;
+  const out: Record<string, string> = {};
+  for (const alt of eligible) {
+    out[`${alt}-${region}`] = `/${countrySlugParam}/${alt}/services/${serviceSlug}`;
   }
-  if (kind === "PRESCRIPTION") {
-    return { href: `/${country}/${lang}/prescriptions`, label: labels.prescription };
-  }
-  return { href: `/${country}/${lang}/general-consultation`, label: labels.general };
+  // x-default points at the market's own language when that variant qualifies,
+  // otherwise at the first one that does — never at a locale we just excluded.
+  const xDefault = out[`${defaultLocale}-${region}`] ?? Object.values(out)[0];
+  return { ...out, "x-default": xDefault };
 }
 
 export async function generateMetadata({
@@ -87,30 +149,74 @@ export async function generateMetadata({
   const detail = await getCountryServiceDetail(code, serviceSlug, lang);
   if (!detail) return { title: SITE_NAME };
 
-  // When an admin SEO title exists it already carries branding, so set it
-  // absolute to bypass the layout's "%s · Global Health" template. Otherwise
-  // fall back to the bare service name and let the template add the brand.
-  const title = detail.seoTitle ?? detail.name;
+  // Publication gate — one shared rule for robots, hreflang and the sitemap.
+  // An editorially incomplete locale still serves a real 200 page (legacy
+  // redirects and existing links land on it); it just stops claiming to be an
+  // indexable, hreflang-advertised alternate.
+  const defaultLocale = (config?.defaultLocale ?? "en").toLowerCase();
+  const indexable = config
+    ? isPublicServiceRecordIndexable(detail, lang, defaultLocale)
+    : false;
+  const safeMeta = safeLocalizedServiceMeta(detail, lang, defaultLocale);
+
+  // Admin SEO titles here already carry the service AND the country, and the
+  // translated locales run 15-35 chars longer than the English they were
+  // budgeted against — a prod audit found 747 of 786 service title rows over
+  // Google's ~60-char display budget. `brandSuffix: false` drops the layout's
+  // " · Global Health" suffix on this route only: 15 chars back with zero
+  // keyword loss, instead of truncating the tail (see page-seo.ts SOCIAL_TITLE_LIMIT
+  // for why truncation is off the table). Social/OG titles keep their own brand.
+  //
+  // Both slots take the first value that is non-empty AND genuinely in this
+  // locale (`safeLocalizedServiceMeta`). The merge chain behind the API is
+  // translation-row → base columns, and the base columns are authored in the
+  // market's default language — so reading `detail.seoTitle` raw published a
+  // Spanish <title> on the Czech, German and English URLs of any service whose
+  // translation rows carry no seoTitle of their own.
+  // When no seoTitle is set for this locale, safeMeta.title falls back to
+  // the same heroTitle/name value the H1 renders below — append the
+  // country so the <title> reads as more than a bare duplicate of the H1,
+  // without touching the (majority) case where an admin-authored seoTitle
+  // already differentiates it.
+  const h1Fallback = detail.heroTitle ?? detail.name;
+  const title =
+    safeMeta.title && safeMeta.title !== h1Fallback
+      ? safeMeta.title
+      : config?.name
+        ? `${h1Fallback} | ${config.name}`
+        : h1Fallback;
   const baseDescription =
-    detail.seoDescription ?? detail.summary ?? `Learn about ${detail.name} and book a consultation.`;
+    safeMeta.description ?? `Learn about ${title} and book a consultation.`;
   // Append the auto insurance line to the meta description when companies cover
   // this service, capped so the description stays a sensible length for SERPs.
   const description = detail.insuranceSeoLine
     ? `${baseDescription} ${detail.insuranceSeoLine}`.slice(0, 320)
     : baseDescription;
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/services/${serviceSlug}`,
     title,
     description,
+    brandSuffix: false,
     type: "website",
     kind: "service",
     subtitle: config?.name,
     sourceImage: detail.imageSrc ?? undefined,
     imageAlt: `${detail.name} in ${config?.name ?? country}`,
     locale: config ? ogLocales(config, lang).locale : undefined,
-    languages: config ? hreflangAlternates(config, `/services/${serviceSlug}`) : undefined,
+    languages: config
+      ? await indexableServiceAlternates(config, code, country, serviceSlug)
+      : undefined,
+    noindex: !indexable,
     keywords: detail.seoKeywords.length > 0 ? detail.seoKeywords : undefined,
   });
+  if (indexable) return metadata;
+  // `noindex, FOLLOW` — an editorially incomplete service is still a real page
+  // with real internal links (its market's other services, the doctors who
+  // staff it). `buildPublicMetadata`'s shared `noindex` is `noindex, nofollow`,
+  // which is right for the routes that use it but would strand this page's link
+  // equity. Overridden here rather than in the helper so doctor/blog robots are
+  // untouched.
+  return { ...metadata, robots: { index: false, follow: true } };
 }
 
 /**
@@ -148,19 +254,32 @@ export default async function ServiceDetailPage({
   // Country-specific short medical disclaimer (admin-authored, per country);
   // falls back to the generic translated line when not set. Independent of
   // the doctor/service reads below — started together instead of sequentially.
-  const [{ short: shortDisclaimer }, generals, specialists, allDoctors, landingRes] =
-    await Promise.all([
-      getCountryDisclaimer(code, lang),
-      // Clinicians assigned to this service — surfaced as a credibility strip
-      // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
-      getCountryServices(code, "GENERAL", lang),
-      getCountryServices(code, "SPECIALIST", lang),
-      getCountryDoctors(code, lang),
-      // SEO landing pages that point AT this service. They are kept out of nav
-      // and the service hub by design (Rule 6), so this is their only internal
-      // inbound link — without it Google left all 90 of them unindexed.
-      fetchLandingSlugs(code, lang).catch(() => null),
-    ]);
+  const [
+    { short: shortDisclaimer },
+    generals,
+    specialists,
+    allDoctors,
+    landingRes,
+    relatedPosts,
+    eligibleLocales,
+  ] = await Promise.all([
+    getCountryDisclaimer(code, lang),
+    // Clinicians assigned to this service — surfaced as a credibility strip
+    // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
+    getCountryServices(code, "GENERAL", lang),
+    getCountryServices(code, "SPECIALIST", lang),
+    getCountryDoctors(code, lang),
+    // SEO landing pages that point AT this service. They are kept out of nav
+    // and the service hub by design (Rule 6), so this is their only internal
+    // inbound link — without it Google left all 90 of them unindexed.
+    fetchLandingSlugs(code, lang).catch(() => null),
+    // Blog articles written FOR this service (BlogPost.ctaService). They link
+    // down here; without this section nothing links back up into them.
+    listRelatedBlogPosts(code, lang, { serviceSlug }),
+    // Same eligibility decision generateMetadata's hreflang cluster already
+    // made — feeds AlsoAvailableIn below, cache()-deduped against that call.
+    indexableServiceLocales(config, code, serviceSlug),
+  ]);
   const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", config.name);
   const serviceCard =
     generals.find((s) => s.slug === serviceSlug) ??
@@ -171,16 +290,71 @@ export default async function ServiceDetailPage({
 
   // Capped at 4 to match the spec's max-boxes rule — a link dump would defeat
   // the point of keeping these pages off the hub in the first place.
-  const relatedTopics = (landingRes?.ok ? landingRes.data.landingPages : [])
-    .filter((p) => p.title && p.serviceSlugs.includes(serviceSlug))
-    .slice(0, 4);
+  const relatedTopics: Array<{ key: string; href: string; title: string }> = [
+    ...(landingRes?.ok ? landingRes.data.landingPages : [])
+      .filter(
+        (p) =>
+          p.title && p.serviceSlugs.includes(serviceSlug) && !isRetiredHealthSlug(country, p.slug),
+      )
+      .slice(0, 4)
+      .map((p) => ({ key: `health-${p.slug}`, href: `/${country}/${lang}/health/${p.slug}`, title: p.title! })),
+    // Blog articles written FOR this service (BlogPost.ctaService). They link
+    // down here; without this nothing linked back up into them, leaving the
+    // sitemap as a new article's only inbound link.
+    ...relatedPosts.map((p) => ({
+      key: `blog-${p.slug}`,
+      href: `/${country}/${lang}/blog/${p.slug}`,
+      title: p.title,
+    })),
+    // The free calculators relevant to THIS service. Same reason the landing
+    // pages are here: the tools are otherwise linked only from the header
+    // dropdown and the footer, which Google treats as site-wide boilerplate —
+    // on 2026-08-06 every one of the 198 tool URLs was "Discovered - currently
+    // not indexed" with the sitemap as its sole referring URL. Anchor text is
+    // the tool's own `cardTitle`, which is already the market's head term
+    // (Brazil's due-date card reads "Calculadora gestacional"), so this must go
+    // through `applyMarketToolCopy` rather than reading the locale file raw.
+    ...(isToolMarket(code, lang)
+      ? toolSlugsForService({ slug: serviceSlug, name: serviceCard?.name ?? "" }).flatMap(
+          (toolSlug) => {
+            const copy = getToolCopy(lang as LocaleCode, toolSlug);
+            if (!copy) return [];
+            return [
+              {
+                key: `tool-${toolSlug}`,
+                href: `/${country}/${lang}/tools/${toolSlug}`,
+                title: applyMarketToolCopy(code, lang, toolSlug, copy).cardTitle,
+              },
+            ];
+          },
+        )
+      : []),
+  ];
 
   // Named clinical reviewer for the E-E-A-T byline + schema — the country's
   // admin-flagged "Clinical Director" (CountryDoctorCard.isFeatured, same
   // flag the /doctors spotlight uses), never a fabricated name. Renders
   // nothing when the country has no featured doctor set.
   const reviewer = allDoctors.find((d) => d.isFeatured) ?? null;
-  const reviewerTrust = reviewer ? await getCountryTrust(code, lang as LocaleCode) : null;
+  // SEO audit 3.3 — this SERVICE's own linked author/reviewer doctor
+  // (Service.authorDoctorId/reviewerDoctorId), distinct from the country
+  // "Clinical Director" fallback above. Looked up against the same
+  // already-fetched per-country doctor list — a doctor linked from a
+  // different country simply won't resolve here and nothing is emitted
+  // (fail closed, never a guessed profile).
+  const contentAuthor = detail.authorDoctorId
+    ? (allDoctors.find((d) => d.id === detail.authorDoctorId) ?? null)
+    : null;
+  const contentReviewer = detail.reviewerDoctorId
+    ? (allDoctors.find((d) => d.id === detail.reviewerDoctorId) ?? null)
+    : null;
+  const trust =
+    reviewer || contentAuthor || contentReviewer
+      ? await getCountryTrust(code, lang as LocaleCode)
+      : null;
+  const regulator = trust?.regulator?.name
+    ? { name: trust.regulator.name, url: trust.regulator.url }
+    : null;
   const reviewerHref = reviewer ? `/${country}/${lang}/doctors/${reviewer.slug}` : null;
   const reviewerPhysician = reviewer
     ? physicianJsonLd({
@@ -190,11 +364,23 @@ export default async function ServiceDetailPage({
         url: reviewerHref!,
         registrationNumber: reviewer.registrationNumber,
         chamber: reviewer.registrationChamber,
-        regulator: reviewerTrust?.regulator?.name
-          ? { name: reviewerTrust.regulator.name, url: reviewerTrust.regulator.url }
-          : null,
+        regulator,
       })
     : null;
+  const toContentPhysician = (doc: typeof allDoctors[number] | null) =>
+    doc
+      ? physicianJsonLd({
+          name: doc.fullName,
+          title: doc.title,
+          countryName: config.name,
+          url: `/${country}/${lang}/doctors/${doc.slug}`,
+          registrationNumber: doc.registrationNumber,
+          chamber: doc.registrationChamber,
+          regulator,
+        })
+      : null;
+  const authorPhysician = toContentPhysician(contentAuthor);
+  const reviewedByPhysician = toContentPhysician(contentReviewer);
 
   const back = listingPath(detail.kind, country, lang, {
     specialist: t.backSpecialist,
@@ -226,11 +412,46 @@ export default async function ServiceDetailPage({
       : null;
   const bookLabel = detail.ctaLabel ?? t.bookLabel;
 
+  // SEO audit 2.4 — `Offer`/price structured data. Never emitted with a
+  // default/guessed price or currency — a wrong price on a medical service
+  // is a consumer-protection problem, not just an SEO gap.
+  const offerJsonLd =
+    detail.basePriceCents != null && detail.basePriceCents > 0 && detail.currencyCode
+      ? consultationServiceOffersJsonLd({
+          name: detail.name,
+          description: stripHtml(detail.heroDescription) ?? stripHtml(detail.summary) ?? detail.name,
+          serviceType: medicalSpecialtyForService(detail.kind, detail.slug),
+          countryName: config.name,
+          url: `/${country}/${lang}/services/${serviceSlug}`,
+          offers: [
+            {
+              name: detail.name,
+              url: `/${country}/${lang}/services/${serviceSlug}`,
+              priceCents: detail.basePriceCents,
+              currencyCode: detail.currencyCode,
+              durationMinutes: detail.durationMinutes,
+            },
+          ],
+        })
+      : null;
+
   return (
     <>
       {detail.faqs.length > 0 ? (
         <JsonLd data={faqJsonLd(detail.faqs.map((f) => ({ question: f.question, answer: f.answer })))} />
       ) : null}
+      {/* SEO audit Phase 4 #5 — service detail pages emitted zero
+       * BreadcrumbList (verified in prod for both /ireland/en and non-EN
+       * locales like /portugal/pt — broader than the audit's original
+       * "non-English localised pages only" framing). Mirrors the same
+       * 3-level shape health/[slug]/page.tsx already uses. */}
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: c.countryNames?.[code] ?? config.name, url: `/${country}/${lang}` },
+          { name: back.label, url: back.href },
+          { name: detail.name, url: `/${country}/${lang}/services/${serviceSlug}` },
+        ])}
+      />
       <JsonLd
         data={medicalClinicServiceJsonLd({
           serviceName: detail.name,
@@ -238,12 +459,21 @@ export default async function ServiceDetailPage({
             stripHtml(detail.heroDescription) ?? stripHtml(detail.summary) ?? detail.name,
           specialty: medicalSpecialtyForService(detail.kind, detail.slug),
           countryName: config.name,
+          countrySlug: country,
           url: `/${country}/${lang}/services/${serviceSlug}`,
           bookingUrl: bookHref,
           reviewerPhysician,
+          authorPhysician,
+          reviewedByPhysician,
           dateModified: detail.lastReviewedAt,
         })}
       />
+
+      {/* SEO audit 2.4 — `Offer`/price structured data. Only emitted when a
+       *  real price exists for this service in this country (never a
+       *  default/guessed price or currency — wrong price markup on a medical
+       *  service is a consumer-protection problem, not just an SEO gap). */}
+      {offerJsonLd ? <JsonLd data={offerJsonLd} /> : null}
 
       {/* ── Hero — 50/50 split: image left, content + booking right ── */}
       <section
@@ -522,9 +752,17 @@ export default async function ServiceDetailPage({
               className="gh2-card-ivory mt-8 border-t-2 border-t-[rgba(176,241,34,0.24)] p-6 md:p-8"
             >
               {resolvedLinks.length > 0 ? (
-                <ServiceLinkedBody bodyHtml={bodyHtml} links={resolvedLinks} />
+                <ServiceLinkedBody
+                  bodyHtml={bodyHtml}
+                  links={resolvedLinks}
+                  labels={{ upgrade: t.eyebrowSpecialist, ...c.linkCallout }}
+                />
               ) : (
-                <div className="gh-article-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+                <div
+                  className="gh-article-body"
+                  // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- bodyHtml = scopeBlogHtml(detail.detailBody), sanitize-html with a controlled allowlist.
+                  dangerouslySetInnerHTML={{ __html: bodyHtml }}
+                />
               )}
             </div>
           </div>
@@ -603,9 +841,9 @@ export default async function ServiceDetailPage({
             </h2>
             <ul className="mt-4 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
               {relatedTopics.map((topic) => (
-                <li key={topic.slug}>
+                <li key={topic.key}>
                   <Link
-                    href={`/${country}/${lang}/health/${topic.slug}`}
+                    href={topic.href}
                     className="inline-flex min-h-11 items-center font-semibold text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
                   >
                     {topic.title}
@@ -616,6 +854,14 @@ export default async function ServiceDetailPage({
           </div>
         </section>
       ) : null}
+
+      <AlsoAvailableIn
+        country={config}
+        lang={lang}
+        suffix={`/services/${serviceSlug}`}
+        title={c.alsoAvailableIn.title}
+        eligibleLocales={eligibleLocales}
+      />
 
       {/* Doctify social proof — compact verified-rating strip */}
       <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">

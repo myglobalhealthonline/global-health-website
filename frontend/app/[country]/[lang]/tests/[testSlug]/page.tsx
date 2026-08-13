@@ -22,12 +22,15 @@ import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
+import { ImportantInfoSection } from "@/components/sections/ServiceContentSections";
 import {
-  ChecklistSection,
-  WhyChooseSection,
-  ImportantInfoSection,
-} from "@/components/sections/ServiceContentSections";
+  BiomarkerManifestSection,
+  KitPrepSection,
+  KitStepsSection,
+  ReasonsToTestSection,
+  parseTitledNotes,
+} from "@/components/sections/HealthTestSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -121,11 +124,20 @@ export default async function HealthTestDetailPage({
 
   return (
     <>
+      {/* The FAQs render visually below but emitted no FAQPage schema, unlike
+          the /services/ pages that use the same FAQSection — so the answers
+          were invisible to rich results. Same guard and shape as the service
+          route (see services/[serviceSlug]/page.tsx). */}
+      {detail.faqs.length > 0 ? (
+        <JsonLd
+          data={faqJsonLd(detail.faqs.map((f) => ({ question: f.question, answer: f.answer })))}
+        />
+      ) : null}
       <JsonLd
         data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${country}/${lang}` },
-          { name: "Lab tests", url: backHref },
+          { name: c.navigation.home, url: "/" },
+          { name: c.countryNames?.[code] ?? config.name, url: `/${country}/${lang}` },
+          { name: c.testsPage.watermark, url: backHref },
           { name: detail.title, url: `/${country}/${lang}/lab-tests/${testSlug}` },
         ])}
       />
@@ -469,33 +481,59 @@ export default async function HealthTestDetailPage({
       />
 
       {detail.whatThisTestCovers.length > 0 ? (
-        <ChecklistSection
+        <BiomarkerManifestSection
           eyebrow={t.whatCoversEyebrow}
           title={t.insideTitle.replace("{title}", detail.title)}
           items={detail.whatThisTestCovers}
-          theme="light"
+          // The section counts markers inside panels itself, and drops the
+          // chip on single-marker kits (vitamin D, PSA) so it never reads
+          // "1 markers".
+          countTemplate={t.markersCount}
         />
       ) : null}
 
       {detail.whyGetTested.length > 0 ? (
-        <WhyChooseSection
+        <ReasonsToTestSection
           eyebrow={t.whyEyebrow}
           title={t.whyTitle}
           items={detail.whyGetTested}
-          theme="soft"
         />
       ) : null}
 
-      {detail.extraSections.map((sec, i) =>
-        sec.body.trim() ? (
+      {/* `kind` picks the layout. Sections written by an admin carry no kind
+          and keep the plain-prose rendering they had. */}
+      {detail.extraSections.map((sec, i) => {
+        if (!sec.body.trim()) return null;
+        const key = `${sec.title}-${i}`;
+        if (sec.kind === "steps") {
+          return (
+            <KitStepsSection
+              key={key}
+              eyebrow={t.howItWorksEyebrow}
+              title={sec.title || t.howItWorksEyebrow}
+              steps={parseTitledNotes(sec.body)}
+            />
+          );
+        }
+        if (sec.kind === "notes") {
+          return (
+            <KitPrepSection
+              key={key}
+              eyebrow={t.beforeTestingEyebrow}
+              title={sec.title || t.goodToKnow}
+              notes={parseTitledNotes(sec.body)}
+            />
+          );
+        }
+        return (
           <ImportantInfoSection
-            key={`${sec.title}-${i}`}
+            key={key}
             title={sec.title || t.goodToKnow}
             paragraphs={sec.body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)}
             theme={i % 2 === 0 ? "soft" : "light"}
           />
-        ) : null,
-      )}
+        );
+      })}
 
       {detail.faqs.length > 0 ? (
         <FAQSection
@@ -503,6 +541,11 @@ export default async function HealthTestDetailPage({
           items={detail.faqs}
         />
       ) : null}
+
+      {/* No AlsoAvailableIn here by design (owner call, 2026-08-06): the kit
+          copy is English-only, so the locale links led to pages showing the
+          same English text under a Portuguese/Spanish/Czech heading. The
+          hreflang alternates in generateMetadata still cover it for search. */}
 
       {/* Closing CTA band — mirror of the service detail booking band. */}
       <section

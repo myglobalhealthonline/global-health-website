@@ -81,7 +81,7 @@ export interface InvoicesView {
 
 async function meRequest<T>(
   path: string,
-  options: { method?: "GET" | "POST" | "PATCH"; body?: unknown } = {},
+  options: { method?: "GET" | "POST" | "PATCH" | "PUT"; body?: unknown } = {},
 ): Promise<MeResult<T>> {
   try {
     const hasBody = options.body !== undefined;
@@ -115,6 +115,15 @@ async function meRequest<T>(
  *  Stripe checkout to await the webhook flipping status to ACTIVE (B4). */
 export function getSubscription(): Promise<MeResult<SubscriptionView>> {
   return meRequest(`subscription?locale=${readClientLocale().toUpperCase()}`);
+}
+
+/** Pull the subscription's true state from Stripe and apply it. The membership
+ *  poller calls this (not just a DB read) so a lost or slow webhook can't leave
+ *  a paid membership stuck on INCOMPLETE. Idempotent. */
+export function syncSubscription(): Promise<
+  MeResult<{ status: string; changed: boolean; detail: string }>
+> {
+  return meRequest("subscription/sync", { method: "POST" });
 }
 
 export function getRedemptions(): Promise<MeResult<RedemptionsView>> {
@@ -160,6 +169,12 @@ export interface CartCoverageLine {
   savedCents: number;
   /** Present when the member's corporate plan discounted this line. */
   corporateDiscount?: CorporateDiscountInfo | null;
+  /**
+   * Present when a private membership priced this line (§6.2). Without it a €0
+   * allowance line looks identical to any other uncovered line, and the cart
+   * would show the list price next to a charge of nothing.
+   */
+  membership?: { label: string; savedCents: number; allowanceUsed: boolean } | null;
   /** The benefit currently selected on this line. */
   selection: BenefitSelection;
   /** Why this line resolved as it did (drives warning chips). */
@@ -189,33 +204,56 @@ export function getCartPreview(): Promise<MeResult<CartCoverageView>> {
   return meRequest(`cart-preview?locale=${readClientLocale().toUpperCase()}`);
 }
 
-export interface ServiceBenefitOption {
-  selection: BenefitSelection;
+/**
+ * Cross-source benefit options (§6.3). Replaced `/api/me/benefit-preview`,
+ * which priced only the plan + corporate subset: two price sources for the
+ * same booking would have drifted the first time either engine changed.
+ */
+export type BenefitOptionSource = "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN" | "INSURANCE";
+
+export type BenefitOptionNote =
+  | { key: "ALLOWANCE_UNIT"; remaining: number }
+  | { key: "PLAN_CREDIT"; remaining: number }
+  | { key: "ALLOWANCE_EXHAUSTED" }
+  | { key: "INSURANCE_DEFERRED" };
+
+export interface BenefitOption {
+  source: BenefitOptionSource;
+  /** Enrollment id, company id, insurer id, or `credit` / `discount`. */
+  refId: string;
+  label: string;
   unitPriceCents: number;
-  creditsToReserve: number;
+  discountCents: number;
+  note: BenefitOptionNote | null;
+  indicative: boolean;
+  recommended: boolean;
 }
 
-export interface ServiceBenefitPreview {
-  subscriptionId: string | null;
-  planName: string | null;
-  benefitsUnlocked: boolean;
-  consultationCreditsRemaining: number;
-  eligibleSelections: BenefitSelection[];
-  options: ServiceBenefitOption[];
-  basePriceCents: number;
-  /** Automatic corporate-membership discount for this service, if any. */
-  corporateDiscount?: CorporateDiscountInfo | null;
+export interface BenefitOptionsView {
+  fullPriceCents: number;
+  currencyCode: string;
+  slotPriced: boolean;
+  options: BenefitOption[];
 }
 
-/** Per-service benefit preview for the booking step (B6). Guests get 401 →
- *  the form simply omits the selector. */
-export function getBenefitPreview(
+/** Every benefit source the patient can use for this service, priced.
+ *  Guests get 401 → the form shows the standard price only. */
+export function getBenefitOptions(
   serviceId: string,
-  basePriceCents: number,
-): Promise<MeResult<ServiceBenefitPreview>> {
-  const qs = `?serviceId=${encodeURIComponent(serviceId)}&basePriceCents=${basePriceCents}&locale=${readClientLocale().toUpperCase()}`;
-  return meRequest(`benefit-preview${qs}`);
+  opts: { doctorId?: string | null; timeSlotId?: string | null } = {},
+): Promise<MeResult<BenefitOptionsView>> {
+  const params = new URLSearchParams({
+    serviceId,
+    locale: readClientLocale().toUpperCase(),
+  });
+  if (opts.doctorId) params.set("doctorId", opts.doctorId);
+  if (opts.timeSlotId) params.set("timeSlotId", opts.timeSlotId);
+  return meRequest(`benefit-options?${params.toString()}`);
 }
+
+// The cart-level benefit choice used to live here as a PUT. It now rides on
+// `POST /api/cart/items` (§11.4) — see `AddItemInput.benefit` in cart-client —
+// so a line can never exist without the benefit that prices it.
 
 /** Patient in-app notifications (§30). Payload carries pre-localized copy. */
 export interface NotificationItem {
@@ -254,7 +292,11 @@ export function devActivateSubscription(): Promise<MeResult<{ activated: boolean
   return meRequest("subscription/dev-activate", { method: "POST" });
 }
 
-export function changePlan(planId: string): Promise<MeResult<{ pendingChangeEffectiveAt: string | null }>> {
+/** Upgrades apply immediately (`applied: true`, prorated difference charged);
+ *  downgrades are scheduled for `pendingChangeEffectiveAt` with no charge. */
+export function changePlan(
+  planId: string,
+): Promise<MeResult<{ pendingChangeEffectiveAt: string | null; applied: boolean }>> {
   return meRequest("subscription/change", { method: "POST", body: { planId } });
 }
 

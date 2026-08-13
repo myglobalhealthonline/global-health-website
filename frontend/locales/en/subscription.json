@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "Selected perks unlock after {months} paid months.",
-    "universalSingular": "Selected perks unlock after {months} paid month.",
+    "universal": "Selected perks become active from paid month {months}.",
+    "universalSingular": "Selected perks become active from paid month {months}.",
     "detailed": "Core online consultation credits start from month 1. Selected member perks unlock after {months} successful monthly payments.",
     "detailedSingular": "Core online consultation credits start from month 1. Selected member perks unlock after {months} successful monthly payment."
   },
@@ -104,7 +104,7 @@
     "error": "We couldn't start your membership. Please try again."
   },
   "manage": {
-    "title": "Your membership",
+    "title": "Your plans",
     "subtitle": "Manage your plan, billing and benefits.",
     "currentPlan": "Current plan",
     "status": "Status",
@@ -125,11 +125,14 @@
     "changing": "Scheduling change…",
     "pendingChange": "Switching to {plan} on {date}.",
     "changeNote": "Plan changes take effect at your next billing date — no mid-cycle proration.",
+    "changeNoteUpgrade": "Upgrades start straight away — you only pay the difference for the rest of this month. Downgrades take effect at your next billing date.",
     "changeScheduled": "Change scheduled — your new plan starts on {date}.",
+    "upgradeApplied": "You're on {plan} now. Your new benefits are already available.",
     "upgradeLabel": "Upgrade",
     "downgradeLabel": "Downgrade",
     "changeEffective": "Takes effect on {date} — you keep your current plan until then, with no charge today.",
     "changeConfirm": "Switch to {plan} on {date}? You'll stay on your current plan until then and won't be charged today.",
+    "upgradeConfirm": "Upgrade to {plan} now? You'll be charged only the prorated difference for the rest of this billing period, and your new benefits are available immediately.",
     "cancelChange": "Cancel scheduled change",
     "cancelingChange": "Cancelling…",
     "changeCanceled": "Scheduled change cancelled — you'll stay on your current plan.",

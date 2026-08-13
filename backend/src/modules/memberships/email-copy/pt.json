@@ -1,0 +1,82 @@
+{
+  "invite": {
+    "subject": "Foi inscrito no plano {planName}",
+    "heading": "A sua adesão está pronta",
+    "greeting": "Olá {firstName},",
+    "lead": "Foi inscrito no plano <strong>{planName}</strong> ({levelName}).",
+    "idLine": "O seu número de membro é <strong>{membershipId}</strong>.",
+    "action": "Registe-se ou inicie sessão com este endereço de email — <strong>{email}</strong> — e os seus benefícios aparecem automaticamente.",
+    "note": "Os benefícios só se aplicam com sessão iniciada nesse endereço. Não há nada a resgatar nem código a introduzir.",
+    "cta": "Iniciar sessão ou registar",
+    "signoff": "— A equipa Global Health"
+  },
+  "confirmed": {
+    "subject": "A sua adesão ao plano {planName} está ativa",
+    "heading": "A sua adesão está ativa",
+    "greeting": "Olá {firstName},",
+    "lead": "A sua adesão ao plano <strong>{planName}</strong> ({levelName}) está associada a esta conta.",
+    "idLine": "Número de membro: <strong>{membershipId}</strong>.",
+    "action": "Os preços de membro são aplicados automaticamente quando marca com sessão iniciada.",
+    "cta": "Ver a minha adesão",
+    "signoff": "— A equipa Global Health"
+  },
+  "claim": {
+    "subject": "Confirme a associação da sua adesão {planName}",
+    "heading": "Confirme a sua adesão",
+    "greeting": "Olá {firstName},",
+    "lead": "Alguém com sessão iniciada como <strong>{requesterEmail}</strong> pediu para associar a sua adesão <strong>{planName}</strong> ({levelName}) à conta dessa pessoa.",
+    "idLine": "Número de adesão: <strong>{membershipId}</strong>.",
+    "action": "Se foi você, confirme abaixo. A ligação funciona uma vez e expira em 24 horas.",
+    "note": "Se não foi você, ignore este e-mail. Nada muda e a sua adesão mantém-se onde está.",
+    "cta": "Confirmar",
+    "signoff": "— A equipa da Global Health"
+  },
+  "exhausted": {
+    "subject": "Usou a sua última consulta incluída",
+    "heading": "As suas consultas incluídas esgotaram",
+    "greeting": "Olá {firstName},",
+    "lead": "Já usou as {allocated} consultas incluídas na sua adesão <strong>{planName}</strong> ({levelName}) neste período.",
+    "onwardsPercent": "A partir de agora passa a ter <strong>{fallbackPercent}% de desconto</strong> nestas consultas.",
+    "onwardsFixed": "A partir de agora estas consultas custam-lhe <strong>{fallbackPrice}</strong>.",
+    "onwardsNone": "A partir de agora estas consultas são cobradas ao preço normal.",
+    "action": "Nada mais muda — os restantes benefícios da sua adesão mantêm-se, e o preço é sempre mostrado antes de pagar.",
+    "cta": "Ver a minha adesão",
+    "signoff": "— A equipa Global Health"
+  },
+  "card": {
+    "labelCardholder": "Titular",
+    "labelMemberId": "N.º de membro",
+    "labelValidThrough": "Válido até",
+    "labelCoveredIn": "Cobertura em",
+    "motto": "Medicine Anytime Anywhere",
+    "familyOf": "Membro da família de {membershipId}",
+    "valueOpenEnded": "Sem termo",
+    "valueFrom": "A partir de {date}",
+    "valueEnded": "Terminou em {date}",
+    "kindGeneral": "consultas de clínica geral",
+    "kindSpecialist": "consultas de especialidade",
+    "benefitAllowance": "{count} {subject} incluídas",
+    "benefitAllowanceShared": "{count} {subject} incluídas, partilhadas com o titular principal",
+    "benefitPercent": "{percent}% de desconto em {subject}",
+    "benefitFixed": "{subject} por {price}",
+    "benefitExcluded": "{subject} não estão cobertas",
+    "statusActive": "Ativo",
+    "statusPending": "Pendente",
+    "statusSuspended": "Suspenso",
+    "statusExpired": "Expirado"
+  },
+  "welcome": {
+    "subject": "O seu cartão de membro {planName}",
+    "heading": "Bem-vindo à {planName}",
+    "greeting": "Olá {firstName},",
+    "lead": "A sua adesão <strong>{planName}</strong> ({levelName}) está ativa. O seu cartão segue em anexo neste email.",
+    "idLine": "O seu número de membro é <strong>{membershipId}</strong>.",
+    "dependentIdLine": "O seu número de membro é <strong>{membershipId}</strong>, na adesão familiar de <strong>{primaryMembershipId}</strong>.",
+    "benefitsHeading": "O que a sua adesão cobre",
+    "sharedNote": "As consultas incluídas são partilhadas por toda a adesão familiar, pelo que o número acima corresponde ao total da adesão e não apenas a si.",
+    "termsLine": "Estes são os benefícios em vigor hoje. As condições atuais da sua adesão estão sempre no portal do membro — confirme aí antes de marcar.",
+    "action": "Os seus preços de membro são aplicados automaticamente quando marca com sessão iniciada neste endereço.",
+    "cta": "Ver a minha adesão",
+    "signoff": "— A equipa Global Health"
+  }
+}

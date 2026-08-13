@@ -270,6 +270,28 @@ export function weekLabel(anchorDayKey: string): string {
     : `${fmt(first, true)} – ${fmt(last, true)}`;
 }
 
+/**
+ * "23–29 June 2026" (or "30 Jun – 6 Jul 2026" across a month boundary) for an
+ * arbitrary [firstKey, lastKey] range — unlike `weekLabel` (always the full
+ * Mon-Sun week), this reflects whatever subset of days is actually visible, so
+ * a windowed 4-day view says "10–13 Aug", not the underlying week's "10–16 Aug".
+ */
+export function rangeLabel(firstKey: string, lastKey: string): string {
+  const first = firstKey.split("-").map(Number);
+  const last = lastKey.split("-").map(Number);
+  const sameMonth = first[1] === last[1] && first[0] === last[0];
+  const fmt = (parts: number[], withMonthYear: boolean) =>
+    new Intl.DateTimeFormat("en-IE", {
+      day: "numeric",
+      ...(withMonthYear ? { month: "short", year: "numeric" } : {}),
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])));
+  if (firstKey === lastKey) return fmt(first, true);
+  return sameMonth
+    ? `${first[2]}–${fmt(last, true)}`
+    : `${fmt(first, true)} – ${fmt(last, true)}`;
+}
+
 /** Parse a "YYYY-MM-DD" week anchor from a search param; falls back to today
  *  in `tz`. Any calendar date in the target week works as the anchor. */
 export function parseWeekAnchor(

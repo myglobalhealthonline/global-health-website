@@ -12,12 +12,15 @@ import {
   adminPatientsReport,
   adminServicesReport,
   doctorPayoutStatementReport,
+  resolveCommissionPayoutDoctorIds,
+  type PayoutBankInfo,
   type ReportFilters,
 } from "../modules/reports/report-datasets.js";
 import {
   serializeReport,
   type ReportTable,
 } from "../modules/reports/report-formatters.js";
+import { resolvePayoutStatementLocale } from "../modules/reports/payout-statement-content.js";
 
 /**
  * GET /api/admin/reports/export?dataset=services|patients|appointments
@@ -66,6 +69,11 @@ const querySchema = z.object({
       "CANCELLED",
     ])
     .optional(),
+  /** Language to render the export in. Honoured by `dataset=payout` (admin
+   *  picks it explicitly, so finance can hand a doctor a statement in the
+   *  doctor's own language — defaults to English) and `dataset=commission-payouts`
+   *  (Brazil-only today, so it defaults to Portuguese instead). */
+  locale: z.string().trim().min(2).max(8).optional(),
 });
 
 function resolveRange(from?: string, to?: string): { from?: Date; to?: Date } {
@@ -129,10 +137,99 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
       } else if (q.dataset === "patients") {
         table = await adminPatientsReport(filters);
       } else if (q.dataset === "commission-payouts") {
-        // No bank details on this one, so no DOCTOR_BANK_VIEWED audit: it spans
-        // every doctor and is a "what to transfer" worksheet. Finance reads the
-        // IBAN from the per-doctor payout statement, which does audit the reveal.
-        table = await adminCommissionPayoutReport(filters);
+        // Finance runs the bank transfer straight from this worksheet, so it
+        // carries every covered doctor's bank details in the clear. Same rule
+        // as the single-doctor payout statement: a full-IBAN reveal is
+        // financial data and must be audited (DOCTOR_BANK_VIEWED) per doctor,
+        // failing the export if any audit write fails.
+        const doctorIds = await resolveCommissionPayoutDoctorIds(filters);
+        const bankByDoctorId = new Map<string, PayoutBankInfo>();
+        if (doctorIds.length > 0) {
+          const bankRows = await prisma.doctorBankAccount.findMany({
+            where: { doctorId: { in: doctorIds } },
+            select: { doctorId: true, accountHolder: true, ibanEncrypted: true, bic: true },
+          });
+          const actor = resolveAdminSessionActor(request);
+          for (const b of bankRows) {
+            const iban = b.ibanEncrypted ? decryptPhi(b.ibanEncrypted) : null;
+            bankByDoctorId.set(b.doctorId, {
+              accountHolder: b.accountHolder,
+              iban,
+              bic: b.bic,
+            });
+            if (iban) {
+              await recordCriticalAudit({
+                actorUserId: actor?.userId ?? null,
+                actorRole: actor?.role ?? "ADMIN",
+                action: "DOCTOR_BANK_VIEWED",
+                entityType: "Doctor",
+                entityId: b.doctorId,
+                request,
+              });
+            }
+          }
+
+          // Some doctors bank per MARKET (DoctorMarketBankAccount) instead of
+          // globally — a multi-market doctor can have a different account per
+          // country. A doctor missing from the global lookup above isn't
+          // necessarily missing bank details entirely; check their markets
+          // before reporting "not on file". Only fall back when exactly one
+          // market has bank details set — with more than one, which account
+          // to pay into is genuinely ambiguous and guessing wrong risks
+          // sending the transfer to the wrong account.
+          const missingGlobalBank = doctorIds.filter((doctorId) => {
+            const entry = bankByDoctorId.get(doctorId);
+            return !entry || (!entry.iban && !entry.accountHolder && !entry.bic);
+          });
+          if (missingGlobalBank.length > 0) {
+            const marketBankRows = await prisma.doctorCountry.findMany({
+              where: {
+                doctorId: { in: missingGlobalBank },
+                bankAccount: { isNot: null },
+              },
+              select: {
+                doctorId: true,
+                bankAccount: {
+                  select: { accountHolder: true, ibanEncrypted: true, bic: true },
+                },
+              },
+            });
+            const marketBanksByDoctorId = new Map<string, typeof marketBankRows>();
+            for (const row of marketBankRows) {
+              const list = marketBanksByDoctorId.get(row.doctorId) ?? [];
+              list.push(row);
+              marketBanksByDoctorId.set(row.doctorId, list);
+            }
+            for (const [doctorId, rows] of marketBanksByDoctorId) {
+              if (rows.length !== 1) continue;
+              const marketBank = rows[0].bankAccount!;
+              const iban = marketBank.ibanEncrypted ? decryptPhi(marketBank.ibanEncrypted) : null;
+              bankByDoctorId.set(doctorId, {
+                accountHolder: marketBank.accountHolder,
+                iban,
+                bic: marketBank.bic,
+              });
+              if (iban) {
+                await recordCriticalAudit({
+                  actorUserId: actor?.userId ?? null,
+                  actorRole: actor?.role ?? "ADMIN",
+                  action: "DOCTOR_BANK_VIEWED",
+                  entityType: "Doctor",
+                  entityId: doctorId,
+                  request,
+                });
+              }
+            }
+          }
+        }
+        // Brazil is the only commission market today, so this defaults to
+        // Portuguese rather than English — the admin can still override via
+        // `?locale=`.
+        table = await adminCommissionPayoutReport(
+          filters,
+          bankByDoctorId,
+          resolvePayoutStatementLocale(q.locale, "pt"),
+        );
       } else if (q.dataset === "payout") {
         const [doctor, bankRow] = await Promise.all([
           prisma.doctor.findUnique({
@@ -145,14 +242,38 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
           }),
         ]);
 
+        // Some doctors bank per MARKET (DoctorMarketBankAccount) instead of
+        // globally — fall back to it when the global row is empty. Narrowed
+        // by `countryCode` when the admin picked one; unscoped, only fall
+        // back if exactly one market has bank details (more than one is
+        // genuinely ambiguous — guessing wrong risks the wrong account).
+        let effectiveBank = bankRow;
+        if (!bankRow?.ibanEncrypted && !bankRow?.accountHolder && !bankRow?.bic) {
+          const marketRows = await prisma.doctorCountry.findMany({
+            where: {
+              doctorId: q.doctorId!,
+              bankAccount: { isNot: null },
+              ...(q.countryCode
+                ? { country: { code: { equals: q.countryCode, mode: "insensitive" } } }
+                : {}),
+            },
+            select: {
+              bankAccount: { select: { accountHolder: true, ibanEncrypted: true, bic: true } },
+            },
+          });
+          if (marketRows.length === 1) {
+            effectiveBank = marketRows[0].bankAccount;
+          }
+        }
+
         // Finance needs the full IBAN to pay the doctor, so the statement
         // carries it in the clear. A full-IBAN reveal is financial data — audit
         // it (DOCTOR_BANK_VIEWED) exactly as the dedicated bank-reveal route
         // does, and fail the export if the audit write fails rather than emit
         // un-audited account details.
         let iban: string | null = null;
-        if (bankRow?.ibanEncrypted) {
-          iban = decryptPhi(bankRow.ibanEncrypted);
+        if (effectiveBank?.ibanEncrypted) {
+          iban = decryptPhi(effectiveBank.ibanEncrypted);
           const actor = resolveAdminSessionActor(request);
           await recordCriticalAudit({
             actorUserId: actor?.userId ?? null,
@@ -169,10 +290,11 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
           doctor?.fullName ?? "Doctor",
           filters,
           {
-            accountHolder: bankRow?.accountHolder ?? null,
+            accountHolder: effectiveBank?.accountHolder ?? null,
             iban,
-            bic: bankRow?.bic ?? null,
+            bic: effectiveBank?.bic ?? null,
           },
+          resolvePayoutStatementLocale(q.locale),
         );
       } else {
         table = await adminAppointmentsReport(filters);
@@ -181,11 +303,19 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
       // JSON = the on-screen preview: same builder output the file formats use,
       // so the table shown on screen can never diverge from the download.
       if (q.format === "json") {
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- Fastify's typed reply.send() of a plain JSON object, not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
         return reply.send(table);
       }
 
       const stamp = new Date().toISOString().slice(0, 10);
-      const base = `admin-${q.dataset}-${stamp}`;
+      // Payout statements carry their language in the filename — finance often
+      // pulls the same month in two languages and the files must not collide.
+      const base =
+        q.dataset === "payout"
+          ? `admin-payout-${resolvePayoutStatementLocale(q.locale)}-${stamp}`
+          : q.dataset === "commission-payouts"
+            ? `admin-commission-payouts-${resolvePayoutStatementLocale(q.locale, "pt")}-${stamp}`
+            : `admin-${q.dataset}-${stamp}`;
       const out = await serializeReport(table, q.format);
       return reply
         .header("Content-Type", out.contentType)

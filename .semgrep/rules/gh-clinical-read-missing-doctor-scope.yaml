@@ -1,0 +1,29 @@
+rules:
+  - id: gh-clinical-read-missing-doctor-scope
+    languages: [typescript]
+    severity: ERROR
+    message: >
+      verifyClinicalReadAccess() admits both DOCTOR and ADMIN callers and
+      returns `doctorId: string | null` — it does NOT itself restrict a
+      DOCTOR caller to their own patients. Every handler that calls it must
+      filter the Prisma query by `auth.doctorId` (e.g.
+      `...(auth.role === "DOCTOR" && auth.doctorId ? { doctorId: auth.doctorId } : {})`
+      in a `where` clause, or an equivalent ownership check like
+      `existing.doctorId !== auth.doctorId`). Without it, any authenticated
+      doctor can read another doctor's patient records — a cross-tenant IDOR.
+      This handler calls verifyClinicalReadAccess but never references
+      `auth.doctorId` anywhere afterward.
+    metadata:
+      category: security
+      references:
+        - docs/audits/security/audit-authz-rules-2026-08-02.md
+    patterns:
+      - pattern: const auth = await verifyClinicalReadAccess(...);
+      - pattern-not-inside: |
+          async (...) => {
+            ...
+            const auth = await verifyClinicalReadAccess(...);
+            ...
+            <... auth.doctorId ...>
+            ...
+          }

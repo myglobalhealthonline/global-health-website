@@ -6,23 +6,12 @@
  */
 
 /**
- * Pick the right ID label for the country and use whichever ID the
- * patient has on file. Falls back through tax → national → passport so
- * the most-relevant value lands on the document. Returns null when no
- * IDs are stored.
+ * Country-specific label for the health / tax identifier a prescription
+ * carries (PPS in IE, NIF in PT, CPF in BR, ...). Exported so the
+ * cross-border consent form can ask the patient for the right one.
  */
-export function buildPatientIdLine(
-  countryCode: string,
-  profile: {
-    nationalIdNumber: string | null;
-    taxIdNumber: string | null;
-    passportNumber: string | null;
-  } | null,
-): string | null {
-  if (!profile) return null;
-  const upper = countryCode.toUpperCase();
-  // Country-specific tax ID labels for the line that goes on Rx.
-  const taxLabel =
+export function patientTaxIdLabel(countryCode: string): string {
+  return (
     {
       PT: "NIF",
       BR: "CPF",
@@ -32,7 +21,48 @@ export function buildPatientIdLine(
       CZ: "Rodné číslo",
       RM: "CNP",
       RO: "CNP",
-    }[upper] ?? "Tax ID";
+    }[countryCode.toUpperCase()] ?? "Tax ID"
+  );
+}
+
+/**
+ * Pick the right ID label for the country and use whichever ID the
+ * patient has on file. Falls back through tax → national → passport so
+ * the most-relevant value lands on the document. Returns null when no
+ * IDs are stored.
+ *
+ * `healthIdNumber` is the identifier captured FOR the issuing country
+ * (cross-border Rx asks the patient for it at the payment step). When it
+ * is present it always wins — it is the only value guaranteed to belong
+ * to `countryCode`.
+ *
+ * Without it, the chart IDs are only used when they plausibly belong to
+ * the issuing country: a profile whose address country differs from the
+ * document country prints NO id line at all. Printing a Brazilian CPF
+ * under the label "PPS" on an Irish prescription is worse than printing
+ * nothing.
+ */
+export function buildPatientIdLine(
+  countryCode: string,
+  profile: {
+    nationalIdNumber: string | null;
+    taxIdNumber: string | null;
+    passportNumber: string | null;
+    addressCountryCode?: string | null;
+  } | null,
+  healthIdNumber?: string | null,
+): string | null {
+  const upper = countryCode.toUpperCase();
+  const taxLabel = patientTaxIdLabel(upper);
+  if (healthIdNumber && healthIdNumber.trim()) {
+    return `${taxLabel}: ${healthIdNumber.trim()}`;
+  }
+  if (!profile) return null;
+  // Foreign chart IDs never get a local label — see the doc comment.
+  // `SP`/`RM` are legacy aliases of ES/RO in our country table.
+  const alias = (c: string) => ({ SP: "ES", RM: "RO" })[c] ?? c;
+  const profileCountry = profile.addressCountryCode?.trim().toUpperCase();
+  if (profileCountry && alias(profileCountry) !== alias(upper)) return null;
   if (profile.taxIdNumber) {
     return `${taxLabel}: ${profile.taxIdNumber}`;
   }

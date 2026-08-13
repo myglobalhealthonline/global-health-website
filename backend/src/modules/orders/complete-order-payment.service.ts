@@ -100,6 +100,12 @@ export async function completeOrderPaymentFromCheckoutSession(
     // unique asyncAppointmentId), so calling it on the redelivery / sync-order
     // path too is a self-heal, mirroring commitCreditsForPaidOrder above.
     await settleCrossBorderRxOnPaid(orderId, log);
+    // Medical-access consent promotion (see below): the first-flip path fires
+    // this from fulfillPaidOrderFromCheckoutSession, which this branch never
+    // calls — so a redelivery/sync-order call that lands here would silently
+    // never promote if the first delivery's own promotion attempt had failed.
+    // Idempotent, same as the two calls above, so self-healing here is safe.
+    void promoteConsentsAfterPayment(orderId, log);
     return { alreadyPaid: true, orderId };
   }
 
@@ -474,6 +480,7 @@ async function fulfillPaidOrderFromCheckoutSession(
       if (
         aptEmail &&
         (item.patientNationalIdNumber ||
+          item.patientPassportNumber ||
           item.patientUtenteNumber ||
           item.patientAddressLine1 ||
           item.patientAddressCity)
@@ -483,6 +490,7 @@ async function fulfillPaidOrderFromCheckoutSession(
           select: {
             nationalIdNumber: true,
             taxIdNumber: true,
+            passportNumber: true,
             utenteNumber: true,
             addressLine1: true,
             addressLine2: true,
@@ -505,6 +513,10 @@ async function fulfillPaidOrderFromCheckoutSession(
             // Encrypted on the way in: `existing` is already ciphertext when a
             // key is configured, so keeping it as-is is correct and only the
             // fresh snapshot value needs wrapping.
+            passportNumber: fill(
+              existing?.passportNumber ?? null,
+              encryptPhi(item.patientPassportNumber),
+            ),
             utenteNumber: fill(
               existing?.utenteNumber ?? null,
               encryptPhi(item.patientUtenteNumber),
@@ -529,6 +541,7 @@ async function fulfillPaidOrderFromCheckoutSession(
             dateOfBirth: aptDob,
             nationalIdNumber: item.patientNationalIdNumber,
             taxIdNumber: item.patientNationalIdNumber,
+            passportNumber: encryptPhi(item.patientPassportNumber),
             utenteNumber: encryptPhi(item.patientUtenteNumber),
             addressLine1: item.patientAddressLine1,
             addressLine2: item.patientAddressLine2,
@@ -583,19 +596,56 @@ async function fulfillPaidOrderFromCheckoutSession(
         .catch(() => {});
     }
     // Promote booking-time medical-access consent into the append-only
-    // ledger for logged-in checkouts (guest orders get promoted later, on
-    // login/verify — see auth.route.ts). Fire-and-forget: a promotion miss
-    // must never affect the paid order.
-    void prisma.order
-      .findUnique({ where: { id: orderId }, select: { userId: true, email: true } })
-      .then((order) => {
-        if (!order?.userId) return;
-        return import("../consents/promote-appointment-consents.js").then((m) =>
-          m.promoteAppointmentConsents(order.userId as string, order.email),
-        );
-      })
-      .catch(() => {});
+    // ledger — see promoteConsentsAfterPayment below. Fire-and-forget: a
+    // promotion miss must never affect the paid order.
+    void promoteConsentsAfterPayment(orderId, log);
   });
+}
+
+/**
+ * Promote booking-time medical-access consent into the append-only
+ * PatientConsent ledger for both logged-in and guest checkouts — this is
+ * also where a guest's PatientProfile gets upserted by email (in
+ * fulfillPaidOrderFromCheckoutSession above), so this is the most reliable
+ * point to catch guest promotions. Idempotent (promoteAppointmentConsents
+ * skips consent types that already have a matching source="BOOKING_FORM"
+ * row), so it is safe to call from BOTH the first-flip fulfillment path AND
+ * the alreadyPaid short-circuit (webhook redelivery / sync-order race) —
+ * mirroring commitCreditsForPaidOrder / settleCrossBorderRxOnPaid above,
+ * which already self-heal on every call for the same reason.
+ *
+ * Fire-and-forget: a promotion miss must never affect the paid order — but
+ * it gates a doctor's PHI access, so a failure must never be swallowed
+ * silently (a bare `.catch(() => {})` here is how ORD-000298 went unnoticed:
+ * resolveOrCreatePatientProfile's case-sensitive email lookup missed the
+ * existing profile and the fallback create() hit the unique constraint on
+ * PatientProfile.userId, and nothing recorded it).
+ */
+async function promoteConsentsAfterPayment(orderId: string, log: PaymentLog): Promise<void> {
+  let order: { userId: string | null; email: string } | null = null;
+  try {
+    order = await prisma.order.findUnique({
+      where: { id: orderId },
+      select: { userId: true, email: true },
+    });
+    if (!order?.email) return;
+    const { promoteAppointmentConsents } = await import(
+      "../consents/promote-appointment-consents.js"
+    );
+    await promoteAppointmentConsents(order.userId ?? null, order.email);
+  } catch (err) {
+    log.error(
+      { err, orderId, userId: order?.userId ?? null, email: order?.email },
+      "Could not promote booking-time medical-access consents after payment",
+    );
+    await emitOpsAlert({
+      severity: "critical",
+      title: "Post-payment medical-access consent promotion failed",
+      detail:
+        "The patient's booking-time consent was not written to the ledger, so their doctor may be denied PHI access (DOCTOR_NO_VALID_ACCESS_PATH). Run backend/scripts/promote-guest-consents.ts or backfill manually.",
+      context: { orderId, userId: order?.userId ?? null, email: order?.email },
+    });
+  }
 }
 
 function formatOrderMoney(currencyCode: string, cents: number): string {
@@ -613,7 +663,7 @@ async function sendShopOrderConfirmationEmail(
     orderNumber?: string | null;
     currencyCode: string;
     totalCents: number;
-    items: { name: string; quantity: number; lineTotalCents: number }[];
+    items: { name: string; quantity: number; lineTotalCents: number; kind: string }[];
     shipName: string | null;
     shipLine1: string | null;
     shipLine2: string | null;
@@ -645,6 +695,7 @@ async function sendShopOrderConfirmationEmail(
           countryCode: paidOrder.shipCountryCode ?? "",
         }
       : null,
+    hasPrescriptionItem: paidOrder.items.some((i) => i.kind === "PRESCRIPTION_SERVICE"),
   });
 }
 

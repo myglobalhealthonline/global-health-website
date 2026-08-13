@@ -40,6 +40,20 @@ function inferIcon(label: string): NonNullable<TrustRibbonItem["icon"]> {
   return "sparkles";
 }
 
+/**
+ * Value type size, in container units so it measures against its own tile
+ * rather than the viewport.
+ *
+ * A single cap for every tile would shrink "GDPR" to whatever "Accredited"
+ * needs, so the budget scales with the string: ~140cqi spread across the
+ * characters keeps a long word on one line while short ones stay oversized.
+ * `3.4vw` remains the upper bound so nothing outgrows the original design.
+ */
+function valueFontSize(value: string): string {
+  const chars = Math.max(3, value.trim().length);
+  return `clamp(1.15rem, min(3.4vw, ${(140 / chars).toFixed(1)}cqi), 3rem)`;
+}
+
 const FALLBACK_ITEMS: TrustRibbonItem[] = [
   { v: "GDPR", l: "Compliant by default", icon: "lock" },
 ];
@@ -78,7 +92,14 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
                         i % 2 === 1 ? "border-l pl-6" : ""
                       } ${i === 2 ? "lg:border-l" : ""}`
                 }
-                style={isLight ? undefined : { borderColor: hairline }}
+                // Container query so the value below can size itself against
+                // the tile, not the viewport — a 2-column tile is far narrower
+                // than 3.4vw assumed.
+                style={
+                  isLight
+                    ? { containerType: "inline-size" }
+                    : { borderColor: hairline, containerType: "inline-size" }
+                }
                 role="listitem"
               >
                 <div className="flex items-center justify-between">
@@ -95,9 +116,12 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
                 </div>
                 <div>
                   <p
-                    className="break-words font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
+                    className="font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
                     style={{
-                      fontSize: "clamp(2rem,3.4vw,3rem)",
+                      // One line, always: `break-words` used to snap a single
+                      // word ("Accredited") mid-word once the tile got narrow.
+                      whiteSpace: "nowrap",
+                      fontSize: valueFontSize(it.v),
                       color: "var(--color-brand-accent)",
                     }}
                   >

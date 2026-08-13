@@ -1,7 +1,7 @@
 import { expect, test, type Cookie, type Page } from "@playwright/test";
 
 /**
- * Phase F regression spec — docs/portal-implementation/TASK.md §11.
+ * Phase F regression spec — docs/plans/portal-implementation/task.md §11.
  * Covers the doctor/admin appointment workspace, calendars, and
  * account pages after the Phase B/C/D portal fixes (commits 4ca59296,
  * 07d75ad2, 21b7dacd): sticky tab/rail overlap, tab state preservation,
@@ -151,7 +151,7 @@ test.describe("portal responsive regression — overflow", () => {
     for (const vp of VIEWPORTS) {
       for (const route of [
         `/doctor/appointments/${TEST_APPOINTMENT_ID}`,
-        "/doctor/calendar",
+        "/doctor/availability",
         "/doctor/appointments",
       ]) {
         test(`${route} @ ${vp.width}x${vp.height} has no page h-scroll`, async ({ page }) => {
@@ -327,7 +327,7 @@ test.describe("calendar day AppSheet — fits viewport at short height", () => {
 
   test("doctor calendar day sheet: content fits, body scrolls, footer reachable", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 550 });
-    await page.goto("/doctor/calendar", { waitUntil: "domcontentloaded" });
+    await page.goto("/doctor/availability", { waitUntil: "domcontentloaded" });
     const dayCell = page.locator(".gh-calendar-day").first();
     await dayCell.click();
 

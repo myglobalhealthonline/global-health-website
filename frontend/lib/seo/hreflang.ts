@@ -53,6 +53,45 @@ export function hreflangAlternates(
 }
 
 /**
+ * `hreflangAlternates` restricted to the locales that actually render
+ * `index,follow`, given a per-locale eligibility verdict the caller has already
+ * computed from its own publication rule.
+ *
+ * hreflang is a reciprocal claim that each listed URL is a publishable
+ * alternate, so a cluster containing a noindexed variant asks Google to index a
+ * page that says the opposite about itself. This builder holds the URL shape
+ * and the x-default convention; it deliberately does NOT decide indexability —
+ * that stays with the caller's single source of truth.
+ *
+ * `eligibleLocales` is the set of already-verified locales, lowercase. Returns
+ * `undefined` when it is empty: a record with no publishable variant anywhere
+ * advertises no alternates at all, rather than an x-default pointing at a page
+ * we just excluded.
+ */
+export function indexableHreflangCluster(
+  country: CountryConfig,
+  suffix: string,
+  eligibleLocales: Iterable<string>,
+): Record<string, string> | undefined {
+  const slug = COUNTRY_CODE_TO_SLUG[country.code];
+  const region = hreflangRegion(country.code);
+  const defaultLang = (country.defaultLocale ?? "en").toLowerCase();
+  const eligible = new Set([...eligibleLocales].map((l) => l.toLowerCase()));
+  const out: Record<string, string> = {};
+  // Iterate the country's configured order, not the caller's, so x-default's
+  // fallback pick is deterministic rather than dependent on Set insertion.
+  for (const lang of supportedLocalesOf(country)) {
+    if (!eligible.has(lang)) continue;
+    out[`${lang}-${region}`] = `/${slug}/${lang}${suffix}`;
+  }
+  if (Object.keys(out).length === 0) return undefined;
+  // Prefer the market's own language. When that variant is not publishable,
+  // fall to the first configured locale that is — never to an excluded one.
+  out["x-default"] = out[`${defaultLang}-${region}`] ?? Object.values(out)[0];
+  return out;
+}
+
+/**
  * Natural region for a language's OWN locale tag (`en` -> British English,
  * `de` -> Germany, …) — used for `og:locale:alternate` entries, which name
  * *other* language versions of the page and therefore must carry a real,

@@ -87,6 +87,7 @@ export function RichBodySection({
             lineHeight: 1.75,
             color: isLight ? "var(--color-text-body)" : "rgba(255,255,255,0.72)",
           }}
+          // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- safeHtml = sanitizePageBodyHtml(trimmed), sanitize-html with a controlled allowlist.
           dangerouslySetInnerHTML={{ __html: safeHtml }}
         />
       </div>

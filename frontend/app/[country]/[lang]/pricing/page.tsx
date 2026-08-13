@@ -10,7 +10,7 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
-import { breadcrumbJsonLd, subscriptionPlanProductJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, subscriptionPlanServiceJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
@@ -91,10 +91,11 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
       {plans.length > 0 ? (
         <JsonLd
           data={plans.map((plan) =>
-            subscriptionPlanProductJsonLd({
+            subscriptionPlanServiceJsonLd({
               name: plan.name,
               description: plan.shortDescription,
               url: `/${slug}/${lang}/pricing`,
+              countryName: config.name,
               priceCents: plan.monthlyPriceCents,
               currencyCode: plan.currencyCode,
             }),

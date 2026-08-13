@@ -1,85 +1,318 @@
-# Technical SEO Audit — myglobalhealth.online
-Date: 2026-07-24 | Pages sampled: home (/), /ireland/en, /about, /privacy, /terms (declared only),
-/ireland/en/services/acute-medical-consultation, /brazil/pt/doctors/dr-renato-sarmento, robots.txt,
-sitemap.xml, apex/non-www redirect, `*.up.railway.app` fallback host.
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).** This audit predates the 2026-08 remediation batches. Every count, status and priority below is superseded. Kept as evidence only.
 
-## Score: 88/100
+# Technical SEO — myglobalhealth.online
 
-## What works
-- **Crawlability**: `robots.txt` is current and well-formed — allows `/`, blocks `/admin`, `/account`,
-  `/login`, `/register`, auth flows, `/api/`. Explicit allow rules for GPTBot, OAI-SearchBot,
-  ChatGPT-User, ClaudeBot, Claude-SearchBot, Claude-User (correct 2026 AI-crawler tokens).
-- **Sitemap**: declared in robots.txt, resolves 200, valid `urlset`, includes per-URL
-  `xhtml:link rel="alternate" hreflang` blocks (en-IE/pt-IE/es-IE/cs-IE/ro-IE/de-IE + x-default) for
-  country/locale variants. Covers home, country homes, service pages, doctor profiles.
-- **Railway fallback domain**: confirmed via `frontend/proxy.ts:365-367` — any request whose `Host`
-  ends in `.up.railway.app` and isn't the canonical host gets `X-Robots-Tag: noindex, nofollow, noarchive`
-  set at the edge on every response. This is a genuine noindex mechanism (not just a stale robots.txt
-  declaration), so it validates as a pass.
-- **HTTPS/redirects**: non-www apex (`myglobalhealth.online`) 301s cleanly to
-  `https://www.myglobalhealth.online` (single-hop, no chain). HSTS present
-  (`max-age=31536000; includeSubDomains; preload`).
-- **Security headers**: HSTS, `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`,
-  `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` restricting
-  camera/mic/geolocation/browsing-topics, and a real (non-report-only on HTML routes) CSP with
-  `frame-ancestors 'self'`, `object-src 'none'`, `base-uri 'self'`.
-- **Canonicals**: self-referencing, absolute, correct on every sampled page (home, country home,
-  about, privacy, service, doctor).
-- **Rendering**: fully SSR — `render_page.py --mode auto` resolved every sampled URL via raw fetch
-  (`mode_used: "raw"`, `is_spa: false`), meaning Googlebot/Bingbot see full content with zero JS
-  execution dependency. No CSR shell risk.
-- **Structured data**: `MedicalOrganization`/`WebSite`/`PostalAddress` on home; `MedicalClinic` +
-  `FAQPage` on service pages; doctor pages carry 2 JSON-LD blocks (person/clinic). All validated as
-  well-formed JSON by the audit tool.
-- **Mobile**: `<meta name="viewport" content="width=device-width, initial-scale=1">` present on every
-  sampled page.
-- **Meta robots**: `index, follow` correctly set on public pages (home, country home, about).
+Crawl: 500 pages fetched from the XML sitemap (1,153 total URLs), 2026-08-02.
+Method: raw HTTP `GET` of the served HTML (no JS execution) — everything below is
+what a crawler sees on first byte.
 
-## Issues (prioritized)
+## Summary
 
-### High
-1. **No in-`<head>` hreflang tags on rendered HTML** — hreflang alternates exist only in
-   `sitemap.xml`, not as `<link rel="alternate" hreflang="…">` in the actual page `<head>`
-   (grep for `hreflang` on `/ireland/en` and `/about` returned 0 matches). Sitemap-only hreflang is a
-   valid Google signal on its own, but relying on a single channel is fragile — sitemap generation
-   drift (seen historically per project memory: multiple uncommitted i18n/locale branches) won't
-   surface as a broken page, only as silent duplicate-content/wrong-locale serving in search results.
-   Recommend adding matching `<link rel="alternate" hreflang>` tags in the Next.js `generateMetadata`
-   for `[country]/[lang]` routes so the two sources can't drift apart. Defer full validation
-   methodology to the `seo-hreflang` sub-skill.
-
-### Medium
-2. **Legal pages are global-only, not country-localized in the sitemap.** Only `/privacy` and
-   `/terms` are declared; no per-country legal variants (e.g. `/ireland/en/terms`,
-   `/brazil/pt/privacy`) even though the site has country-specific consent/compliance content
-   elsewhere (Brazil consent flow, per-country disclaimers per project history). If per-country legal
-   copy exists behind these routes it isn't indexed as such; if it's genuinely one global doc that's
-   fine but should be a deliberate decision, not a gap.
-3. **Locale/slug mismatch on Brazil market**: sitemap shows `/brazil/en/services/segunda-opiniao-medica`
-   and `/brazil/es/services/...` using Portuguese-language slugs under `en`/`es` locale paths (e.g.
-   `atestado-medico-online`, `consulta-pele-online`). Slugs should generally match the locale's
-   language for keyword-relevance in that market's SERPs — worth confirming this is intentional
-   (shared canonical slug across locales) vs. a translation/localization gap.
-
-### Low
-4. **CSP is `report-only` on `robots.txt` itself** (`content-security-policy-report-only` header seen
-   on `/robots.txt`) vs. an enforcing `Content-Security-Policy` on HTML page routes (confirmed via
-   render_page fetch of `/`). Inconsistent but low-impact since `/robots.txt` isn't a script-execution
-   surface — flagging only for header-hygiene consistency.
-5. No `IndexNow` submission observed/configured (not confirmed either way from static inspection) —
-   recommend confirming Bing/Yandex/Naver IndexNow key + endpoint wiring exists for faster re-crawl
-   on the frequent CMS content pushes this project does (weekly market launches per project history).
-
-## Category pass/fail
-| Category | Status |
+| Check | Result |
 |---|---|
-| Crawlability (robots.txt, sitemap, noindex) | Pass |
-| Indexability (canonicals, meta robots) | Pass |
-| Security (HTTPS, headers) | Pass |
-| URL structure / redirects | Pass |
-| Mobile viewport | Pass |
-| Core Web Vitals (source-level) | Not fully assessable — no field/lab data collected this pass; SSR + JSON-LD sizes small (2.3KB), no obvious render-blocking red flags in headers (`link rel=preload` on CSS chunks present) |
-| Structured Data | Pass |
-| JS rendering (CSR vs SSR) | Pass — full SSR, no Playwright fallback triggered |
-| hreflang | Partial — sitemap only, no head tags (High) |
-| IndexNow | Unconfirmed (Low) |
+| Pages fetched | 500 / 500 returned `200` |
+| Fetch errors | 0 |
+| Redirects encountered mid-crawl | 0 |
+| Avg response time | 316 ms (p90 340 ms) |
+| Median served HTML | 230 KB (max 590 KB) |
+| Sitemap URLs sampled outside the crawl | 73 / 73 returned `200` |
+| Server-side rendering | Full — body text present in raw HTML, no CSR gap |
+
+Crawlability and indexability are fundamentally healthy. The defects are
+concentrated in **metadata emission on two route groups** and in **page weight**.
+
+---
+
+## Critical: 2 route groups emit no `<head>` metadata at all
+
+39 of the 500 crawled pages return HTML with **no `<title>`, no
+`meta description`, no `rel=canonical`, no `meta robots`, no Open Graph tags and
+no `twitter:card`**. Verified by direct `curl` — the `<head>` goes straight from
+`<meta charSet>` / preload links to the stylesheets.
+
+Affected route groups:
+
+| Route group | In 500-page crawl | Total in sitemap |
+|---|---|---|
+| `/{country}/{locale}/legal/*` | 21 | 36 |
+| `/{country}/{locale}/doctors/{slug}` | 18 | 91 |
+| **Total** | **39** | **127 (11.0% of the site)** |
+
+Examples:
+
+```
+/ireland/en/legal/privacy-policy        h1 "Privacy Policy"       3,615 words, no title
+/spain/es/legal/terms-of-service        h1 "Términos y Condiciones" 7,696 words, no title
+/spain/en/doctors/dr-syed-tahir         h1 "Dr. Syed Tahir"       1,239 words, no title
+/ireland/en/doctors/silvia-alexandre-fernandes  1,518 words, no title
+```
+
+These are not thin pages — the legal pages run 2,700–8,200 words and the doctor
+profiles 900–1,500 words with full `Physician` + `EducationalOccupationalCredential`
++ `FAQPage` + `BreadcrumbList` JSON-LD. The structured data is excellent and the
+metadata is entirely absent, which strongly suggests these routes have no
+`generateMetadata` export (or one that throws and is being swallowed).
+
+Consequences:
+- Google synthesises a title from the `<h1>`/anchor text — an unmanaged SERP snippet.
+- No self-referencing canonical on 127 URLs, so parameterised or
+  alternate-cased variants are free to be treated as separate URLs.
+- No `og:*`/`twitter:*` → link previews on WhatsApp, LinkedIn, Slack render bare.
+- The 91 doctor profiles are the site's strongest E-E-A-T asset and its most
+  brand-searchable pages ("Dr. Syed Tahir"), and they are shipping without titles.
+
+**Fix:** add `generateMetadata` to the `legal/[slug]` and `doctors/[slug]` route
+segments. Confirm the fix by asserting `<title>` presence in the crawl for all
+127 URLs.
+
+---
+
+## Server, security and transport
+
+Response headers on `https://www.myglobalhealth.online/`:
+
+| Header | Value | Verdict |
+|---|---|---|
+| `strict-transport-security` | `max-age=31536000; includeSubDomains; preload` | Good |
+| `content-security-policy` | Enforcing, `default-src 'self'`, `object-src 'none'`, `base-uri 'self'`, `frame-ancestors 'self'` | Good |
+| `x-content-type-options` | `nosniff` | Good |
+| `referrer-policy` | `strict-origin-when-cross-origin` | Good |
+| `permissions-policy` | `camera=(), microphone=(self), geolocation=(), browsing-topics=()` | Good |
+| `x-frame-options` | `SAMEORIGIN` | Good (redundant with `frame-ancestors`) |
+| `cross-origin-opener-policy` | **absent** | Minor — add `same-origin` |
+| `Cache-Control` | Varies by route — see below | **Partial problem** |
+
+The CSP still carries `script-src 'unsafe-inline'` and `blob:`. That is a known,
+deliberate trade-off in this codebase (the ElevenLabs AudioWorklet needs `blob:`;
+Next.js inline bootstrap needs the inline allowance). No SEO impact; flagged for
+completeness only.
+
+### `Cache-Control: no-store` on the entry gate, legal and global pages
+
+Measured per route:
+
+| Route | `Cache-Control` | ISR |
+|---|---|---|
+| `/` (entry gate) | `private, no-cache, no-store, max-age=0, must-revalidate` | no |
+| `/about`, `/faq`, `/blog`, `/contact`, `/terms`, `/privacy` | `private, no-cache, no-store, max-age=0, must-revalidate` | no |
+| `/{country}/{locale}/legal/*` | `private, no-cache, no-store, max-age=0, must-revalidate` | no |
+| `/ireland/en` (country home) | `public, max-age=0, s-maxage=60, stale-while-revalidate=300` | `x-nextjs-prerender: 1` |
+| `/{country}/{locale}/services/*` | `public, max-age=0, s-maxage=60, stale-while-revalidate=300` | yes |
+| `/{country}/{locale}/doctors/*` | `public, max-age=0, s-maxage=60, stale-while-revalidate=300` | yes |
+
+So the bulk of the site (~1,000 content URLs) **is** correctly CDN-cacheable via
+ISR. The problem is narrower than it first appears, but it lands on the worst
+possible page: **the root entry gate — the URL every brand search and every
+external link hits — is `no-store` and not prerendered.** Every visitor pays a
+full origin round-trip before they can even pick a country. The 7 root-level
+global pages and the 36 `/legal/*` pages share the same treatment.
+
+CrUX shows the cost: TTFB in the latest reported week is **2,618 ms on phone**
+(Poor) and **1,985 ms on desktop** (Needs Improvement), against a blended 28-day
+figure of 534 ms.
+
+**Fix:** the `no-store` header is correct and required for the authenticated
+route groups (`(admin)`, `(doctor)`, `(auth)`, `/account`, `/api`). It should not
+be reaching `/`, `/legal/*`, or the root-level marketing pages. Move those onto
+the same ISR treatment the country pages already use. Fixing `/` alone is the
+single cheapest TTFB win available.
+
+Note the overlap: `/legal/*` and the root gate are also the routes missing
+metadata and hreflang. All three symptoms point at the same set of route
+segments being configured differently from the rest of the app — likely one
+shared layout or route-group config.
+
+---
+
+## URL structure and redirects
+
+| Test | Result |
+|---|---|
+| `http://www.` → `https://www.` | `301`, single hop ✓ |
+| Apex `myglobalhealth.online` → `www` | `301` ✓ |
+| `/ireland/en` | `200` ✓ |
+| `/ireland` | `308` → `/ireland/en` ✓ |
+| `/ireland/` (trailing slash) | `308` → `/ireland` → `308` → `/ireland/en` — **2-hop chain** |
+| `/zzz-does-not-exist-404` | `404` ✓ (correct, not a soft-404) |
+| `/health`, `/doctors`, `/pricing` (unprefixed) | `404` |
+| `/favicon.ico` | **`404`** |
+
+Two issues:
+
+1. **Trailing-slash double redirect.** `/ireland/` costs two hops before content.
+   Every country prefix has this. Collapse to one hop by normalising the slash
+   and the locale in a single rule.
+2. **`/favicon.ico` returns 404.** Browsers and several crawlers request this path
+   unconditionally regardless of `<link rel="icon">`. Add the file (or a rewrite)
+   at the well-known path.
+
+The unprefixed `/health`, `/doctors`, `/pricing` 404s are correct behaviour for a
+country-scoped IA — noted only because they are plausible manual-entry and legacy
+inbound paths worth redirecting to the entry gate.
+
+### Legacy Wix URLs — handled, but blog articles land on a hub
+
+The pre-migration Wix paths are redirected server-side, not left to 404:
+
+```
+308  /es/home-sp                                     -> /spain/es
+308  /home-sp                                        -> /spain/es
+308  /pt/home                                        -> /ireland/pt
+308  /plans-pricing                                  -> /ireland/en/pricing
+308  /service-page/gp-consultation                   -> /ireland/en/see-a-specialist
+308  /service-page/pt-cons-med-dr-tiago-...          -> /ireland/en/see-a-specialist
+308  /post/getting-a-gp-sick-note-online-simplified  -> /ireland/en/blog
+308  /post/diabetes-a-silent-disease                 -> /ireland/en/blog
+308  /post/hand-foot-and-mouth-disease               -> /ireland/en/blog
+404  /about-1, /contact-1, /doctors-1, /es/servicios
+```
+
+Two problems:
+
+1. **`/post/*` blanket-redirects to the blog hub even when the exact article
+   exists.** `/post/diabetes-a-silent-disease` should go to
+   `/ireland/en/blog/diabetes-a-silent-disease`, which is live and 2,385+ words.
+   Redirecting a specific article to a listing page is the textbook soft-404
+   pattern — Google routinely treats it as a 404 and drops the accumulated
+   equity of the legacy URL. These legacy URLs still hold SERP positions, so
+   this is measurable lost traffic. Map `/post/{slug}` to the matching article
+   slug per-article, with the hub only as a genuine last-resort fallback.
+2. **`/pt/home` → `/ireland/pt`.** On Wix, `/pt/` was the Portugal market, not
+   Portuguese-language-in-Ireland. Verify the intent; if it was Portugal, this
+   should target `/portugal/pt`.
+
+---
+
+## Canonicals
+
+| | Count |
+|---|---|
+| Self-referencing canonical | 461 / 500 |
+| Cross-canonical | 1 (`/` → `https://www.myglobalhealth.online`, i.e. self, no trailing slash) |
+| **Missing canonical** | **39** (the legal + doctor routes above) |
+
+No cross-domain, chained or conflicting canonicals. Clean apart from the missing 39.
+
+---
+
+## Hreflang
+
+454 pages carry hreflang. Validation across all of them:
+
+| Check | Result |
+|---|---|
+| Missing `x-default` | 0 |
+| Self-reference present in own cluster | 454 / 454 ✓ |
+| Malformed language/region codes | 0 |
+| Reciprocity (2,267 pairs checked within the crawl) | **0 failures** ✓ |
+| Cluster sizes | 7 alternates (416 pages), 4 alternates (38 pages — Brazil, which ships `en`/`pt`/`es` only) |
+| Pages with **no** hreflang | 46 |
+
+The implementation is, for a 6-country × 6-locale site, unusually correct.
+
+Two defects:
+
+1. **79 hreflang targets are absent from the XML sitemap** — mostly locale
+   variants of the `/legal` hub, e.g. `/ireland/pt/legal`, `/ireland/es/legal`.
+   The pages exist and are referenced as alternates but are never submitted.
+   Either add them to the sitemap or drop them from the clusters.
+2. **The 46 pages with no hreflang** are the 39 metadata-less routes plus the 7
+   root-level global pages (`/`, `/about`, `/faq`, `/blog`, `/contact`, `/terms`,
+   `/privacy`). The root pages are English-only while the rest of the site serves
+   six languages — see the IA finding below.
+
+---
+
+## Page weight
+
+| | Value |
+|---|---|
+| Median served HTML | 230 KB |
+| Heaviest | 590 KB (`/ireland/de`, `/ireland/ro`, `/ireland/es`, `/ireland/pt`, `/ireland/cs`) |
+
+A 230 KB **median HTML document** is roughly 4–5× what comparable content-led
+sites ship. The country-home pages at ~590 KB are the extreme.
+
+Root cause confirmed by the performance pass: **38.6% of `/ireland/en` (230.5 KB
+of 596.6 KB) is the inlined Next.js RSC flight payload** (`self.__next_f.push`),
+and ~91 KB of that is the full GP-availability schedule being serialised
+server-side into the document rather than fetched client-side after hydration.
+The same pattern appears on service pages (55.2% inline script) and doctor
+profiles (41.5%).
+
+This is the largest single byte win on the site, and it lines up with
+`/ireland/en` being the worst Lighthouse result measured (score 49, LCP 4,809 ms,
+TBT 1,515 ms). See `performance.md`.
+
+---
+
+## Information architecture
+
+The root `/` is a **country-selection entry gate: 114 words, 6 internal links, one
+`<h1>`, no hreflang, no `BreadcrumbList`.**
+
+Every external link, every brand search and all crawl equity lands on the site's
+thinnest page, which then distributes through exactly six anchors. This is the
+structural bottleneck of the whole site. It is a defensible UX choice for a
+multi-jurisdiction medical service (you must not show Irish prescribing content
+to a Brazilian patient), but the SEO cost is real and can be reduced without
+changing the gate's function — see `ACTION-PLAN.md`.
+
+Related: the 7 root-level global pages are English-only, while every equivalent
+country-scoped page has six locales. `/terms` (687 words) and `/privacy` (547
+words) also coexist with far longer country-scoped equivalents at
+`/{country}/{locale}/legal/terms-of-service` (6,414–8,207 words) and
+`/legal/privacy-policy` (3,496–4,358 words). Two sets of legal pages of very
+different lengths, both indexable, is both an SEO duplication problem and a
+compliance ambiguity worth resolving.
+
+`/blog` (232 words) is in the main navigation of every page and in the sitemap,
+and renders "No articles published yet" — while 44 country-scoped article URLs
+serve full articles. The global hub is a broken aggregator.
+
+---
+
+## XML sitemap
+
+| Check | Result |
+|---|---|
+| Discoverable from robots.txt | ✓ |
+| Format | Valid `urlset` (single file, not an index) |
+| URLs | 1,153 |
+| Status of sampled URLs | 573 checked (500 crawled + 73 sampled), 100% `200` |
+| `lastmod` | Present on all URLs, real dates (1,111 in 2026-07, 31 in 2026-08, 3 in 2026-06) |
+| `changefreq` | Present |
+| `priority` | Present and genuinely varied (1.0 → 0.3) |
+| Non-canonical / noindex / redirecting URLs in sitemap | 0 |
+
+Composition:
+
+| Page type | URLs |
+|---|---|
+| `services` | 666 |
+| `doctors` | 124 (91 profiles + 33 index) |
+| `health` | 90 |
+| `blog` | 44 |
+| `legal` | 42 |
+| country homes | 39 |
+| `gp-consultation-online` | 33 |
+| `book` | 33 |
+| `pricing` | 33 |
+| `lab-tests` | 24 |
+| `see-a-specialist` | 24 |
+| root | 1 |
+
+This is a well-built sitemap. The only gap is the 79 hreflang targets it omits.
+At 1,153 URLs it is also comfortably within single-file limits, so no index file
+is needed.
+
+Note: `/book` (33 URLs) is a transactional booking funnel entry. It is
+indexable and in the sitemap, which is defensible, but confirm it is the intended
+landing experience rather than a step that should be `noindex`.
+
+## robots.txt
+
+Correct. `Allow: /` with targeted disallows for `/admin`, `/account`, `/login`,
+`/register`, `/forgot-password`, `/reset-password`, `/verify-email`, `/api/`.
+The same block is repeated per-user-agent for the major AI crawlers, all
+permissive. Sitemap declared. No accidental blocking of any indexable content.

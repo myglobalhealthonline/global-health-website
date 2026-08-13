@@ -2,17 +2,31 @@ import type { MetadataRoute } from "next";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { getPublicDoctorBySlug, getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
-import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
+import { getPublicDoctorsForMarket } from "@/lib/content/get-public-doctors";
+import {
+  isPublicDoctorRecordIndexable,
+  isPublicServiceRecordIndexable,
+} from "@/lib/content/publication-validation";
 import { getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { hreflangRegion } from "@/lib/seo/hreflang";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
-import { getCountryLegal, LEGAL_TYPE_SLUGS } from "@/lib/content/get-country-legal";
+import {
+  exactLocalesForLegalType,
+  getCountryLegal,
+  LEGAL_TYPE_SLUGS,
+} from "@/lib/content/get-country-legal";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
+import { eligibleLandingLocales } from "@/lib/seo/landing-locale-eligibility";
 import { newestTimestamp } from "@/lib/seo/newest-timestamp";
+import {
+  isRetiredHealthSlug,
+  resolveHealthCanonicalServiceSlug,
+} from "@/lib/seo/health-service-canonical";
+import { TOOL_SLUGS } from "@/lib/tools/registry";
+import { toolHreflangAlternates, toolMarkets } from "@/lib/tools/markets";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -127,16 +141,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   };
   const dated = (ts: string | undefined) => (ts ? { lastModified: ts } : undefined);
 
-  // Service detail pages — active public GP/specialist services per country.
+  // Service detail pages — active public GP/specialist services per country,
+  // one entry per locale variant that actually renders indexable.
   // (PRESCRIPTION/HOME_DELIVERY kinds stay out: hidden from the public site
   // for Ads compliance.)
+  //
+  // Read PER LOCALE, not once: the unlocalized list merges every row to the
+  // country's default locale, so it cannot see that a service has no real
+  // content in Czech or German. Submitting `service × every supported locale`
+  // regardless is what put 24 empty Spain URLs (`<p><br /></p>` bodies) in the
+  // sitemap while their pages carried no content at all. The membership test is
+  // `isPublicServiceRecordIndexable`, the identical predicate the service page
+  // uses for its robots tag and hreflang cluster — same shape as the doctor
+  // loop further down.
   for (const country of countries) {
     try {
-      const services = await getPublicServicesForCountry(country.code);
-      for (const s of services) {
-        if (s.kind !== "GENERAL" && s.kind !== "SPECIALIST") continue;
-        bump(country.code, "service", s.updatedAt);
-        pushLocalized(country, `/services/${s.slug}`, 0.7, dated(s.updatedAt ?? undefined));
+      const langs = countryLangs(country);
+      const defaultLocale = (country.defaultLocale ?? "en").toLowerCase();
+      // slug → the locales whose merged record renders index,follow.
+      const indexableLangsBySlug = new Map<string, string[]>();
+      const updatedAtBySlug = new Map<string, string | undefined>();
+      for (const lang of langs) {
+        for (const s of await getPublicServicesForCountry(country.code, lang)) {
+          if (!isPublicServiceRecordIndexable(s, lang, defaultLocale)) continue;
+          const forSlug = indexableLangsBySlug.get(s.slug) ?? [];
+          forSlug.push(lang);
+          indexableLangsBySlug.set(s.slug, forSlug);
+          updatedAtBySlug.set(
+            s.slug,
+            newestTimestamp(updatedAtBySlug.get(s.slug), s.updatedAt) ?? undefined,
+          );
+        }
+      }
+      for (const [slug, indexableLangs] of indexableLangsBySlug) {
+        const updatedAt = updatedAtBySlug.get(slug);
+        bump(country.code, "service", updatedAt);
+        pushLocalized(country, `/services/${slug}`, 0.7, dated(updatedAt), indexableLangs);
       }
     } catch {
       // Service list unavailable — keep the rest of the sitemap.
@@ -158,8 +198,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // SEO landing pages — published condition/audience pages per country.
   // Indexed here (Rule 6) but deliberately absent from nav + listing pages.
-  // One entry per enabled locale, each carrying hreflang alternates so Google
-  // indexes the translated variants and understands they are the same page.
+  //
+  // International-locale batch (2026-08-09): this used to submit
+  // `landing page × every supported locale` regardless of whether that locale
+  // has a real translation row — the same class of bug `exactLocalesForLegalType`
+  // fixed for /legal/* (46 of 297 country x locale x type combinations served
+  // the wrong language). `page.availableLocales` is the backend's own record
+  // of which locales have a genuine translation for THIS page (seo-landing.service.ts
+  // `listPublishedLandingSlugs`) — the exact same field the page itself now
+  // reads (app/[country]/[lang]/health/[slug]/page.tsx) to decide noindex, so
+  // sitemap eligibility and indexability can never disagree.
   for (const country of countries) {
     try {
       const res = await fetchLandingSlugs(country.code);
@@ -167,17 +215,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const slug = `/${country.slug || countrySlug(country.code)}`;
       const defaultLang = (country.defaultLocale ?? "en").toLowerCase();
       const region = hreflangRegion(country.code);
-      const langs =
-        country.supportedLocales && country.supportedLocales.length > 0
-          ? country.supportedLocales.map((l) => l.toLowerCase())
-          : [defaultLang];
       for (const page of res.data.landingPages) {
+        // A retired landing page still exists in the CMS but is 301'd in
+        // next.config.ts, so submitting it would put a redirecting URL in the
+        // sitemap — the one defect this sitemap currently doesn't have.
+        if (isRetiredHealthSlug(country.slug || countrySlug(country.code), page.slug)) continue;
+        // A `/health/` page that canonicalizes onto a `/services/` twin is an
+        // alias, not an independent URL: submitting it asks Google to index a
+        // page whose own <link rel=canonical> points elsewhere. The service
+        // page is already in the sitemap and owns the hreflang cluster (see
+        // app/[country]/[lang]/health/[slug]/page.tsx). The canonical decision
+        // itself is unchanged — this only makes the sitemap agree with it.
+        if (
+          resolveHealthCanonicalServiceSlug(country.slug || countrySlug(country.code), page.slug)
+        ) {
+          continue;
+        }
+        const langs = eligibleLandingLocales(
+          page.availableLocales,
+          country.supportedLocales ?? [],
+          defaultLang,
+        );
+        if (langs.length === 0) continue;
         bump(country.code, "landing", page.updatedAt);
         const languages: Record<string, string> = {};
         for (const lang of langs) {
           languages[`${lang}-${region}`] = `${base}${slug}/${lang}/health/${page.slug}`;
         }
-        languages["x-default"] = `${base}${slug}/${defaultLang}/health/${page.slug}`;
+        languages["x-default"] = `${base}${slug}/${langs[0]}/health/${page.slug}`;
         for (const lang of langs) {
           urls.push({
             url: `${base}${slug}/${lang}/health/${page.slug}`,
@@ -215,30 +280,50 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (winner) stampByType.set(d.type, winner);
         bump(country.code, "legal", d.updatedAt);
       }
-      // Default locale ONLY. Legal pages were 231 of 1353 sitemap URLs — 17%
-      // of the crawl budget — for boilerplate that answers no query (nothing
-      // legal appears anywhere in Search Console's query report) and that
-      // Google was already declining: 65% indexed, 71 of them sharing 17
-      // titles because "Cookie Policy · Ireland" is identical in all six
-      // locales. Submitting six near-duplicates per document spends crawl on
-      // the pages that earn nothing, while real content still waits.
-      //
-      // Every locale variant stays live, linked from the footer, and fully
-      // indexable — this drops them from the SUBMITTED set, nothing more.
-      // Compliance needs these reachable, not searchable.
-      const legalLangs = [countryLangs(country)[0]];
-      pushLocalized(country, "/legal", 0.3, dated(newest(country.code, "legal")), legalLangs);
+      // SEO audit Phase 4 #6 (2026-08-03): every locale variant, not just the
+      // default. This used to submit the default locale ONLY — deliberately,
+      // to save crawl budget on near-duplicate boilerplate (231/1353 URLs at
+      // the time). But `/legal` and `/legal/{type}` emit full hreflang
+      // `alternates.languages` for every supported locale via
+      // `hreflangAlternates()` (see legal/page.tsx, legal/[type]/page.tsx) —
+      // so the non-default locale URLs were referenced as hreflang targets
+      // without ever being submitted, 79 of them per the audit. Every one of
+      // those URLs is live and 200 (`getCountryLegal`/`getCountryLegalDocument`
+      // fall back exact-locale → "en" → any published row, so a type with any
+      // published document resolves for every locale — verified against
+      // app/[country]/[lang]/legal/[type]/page.tsx's notFound() condition),
+      // and `/legal*` is now on the CDN-cacheable route list in
+      // next.config.ts (commit a104a910), so the crawl-budget cost that
+      // motivated the restriction is smaller than it was. Submit the full set
+      // instead of dropping the hreflang alternates.
+      pushLocalized(country, "/legal", 0.3, dated(newest(country.code, "legal")));
       const types = new Set((legal?.documents ?? []).map((d) => d.type));
       // The profile-only MEDICAL_DISCLAIMER fallback carries no timestamp of
       // its own — it stays undated rather than borrowing an unrelated one.
       if (legal?.profile?.fullDisclaimer) types.add("MEDICAL_DISCLAIMER");
+      const countryDefaultLocale = (country.defaultLocale ?? "en").toLowerCase();
       for (const type of types) {
+        // International-locale batch (2026-08-09): a type resolving for
+        // EVERY locale (comment above) is exactly the problem — most of
+        // those locales get the exact-locale → "en" → any-published-row
+        // FALLBACK body, not a real translation (verified live: 46 of 297
+        // country x locale x type combinations serve the wrong language,
+        // e.g. /ireland/pt/legal/cookie-policy renders English). Submitting
+        // every locale variant duplicate-indexes the same fallback text
+        // under N URLs and hreflangs them at each other. Only submit —
+        // and only cross-reference via hreflang — locales that actually
+        // have their OWN exact-locale content for this type; the page
+        // itself still 200s for the rest (self-noindex,follow, see
+        // legal/[type]/page.tsx) so UX access isn't affected.
+        const exactLocales = exactLocalesForLegalType(legal, type, countryDefaultLocale);
+        const langsOverride = countryLangs(country).filter((l) => exactLocales.has(l));
+        if (langsOverride.length === 0) continue;
         pushLocalized(
           country,
           `/legal/${LEGAL_TYPE_SLUGS[type]}`,
           0.3,
           dated(stampByType.get(type)),
-          legalLangs,
+          langsOverride,
         );
       }
     } catch {
@@ -246,8 +331,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Static legal / global pages.
+  // Static legal / global pages. `/` is the country entry gate — the domain
+  // root, canonical and indexable, so it belongs here at top priority.
   urls.push(
+    // No trailing slash: `getPublicUrl("/")` deliberately strips it, so the
+    // gate's own <link rel="canonical"> is the bare origin. Submitting the
+    // slashed form here made the sitemap the one place that disagreed with
+    // the canonical it points at. Google normalises the two, so this is
+    // consistency rather than a bug fix — don't "restore" the slash.
+    { url: base, changeFrequency: "monthly", priority: 1 },
     { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.5 },
@@ -255,7 +347,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.4 },
   );
   // `/blog` (global index) is pushed after the post loop below, so it can be
-  // dated from the newest post. The five above are hand-authored pages with no
+  // dated from the newest post. The six above are hand-authored pages with no
   // row behind them — nothing honest to date them from, so they stay undated.
 
   // Blog posts — published, admin-managed. [] when API unavailable.
@@ -268,6 +360,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const posts = await listBlogPosts();
     for (const p of posts) {
       newestPostAt = newestTimestamp(newestPostAt, p.publishedAt);
+      // The bare list is UNFILTERED (it backs the global /blog hub — see
+      // getPublicBlogPosts), so it also returns country-assigned posts. Those
+      // do NOT live at `/blog/{slug}`: that URL 308s to the post's country
+      // canonical (resolveBlogPostRoute). Submitting it put 16 redirecting
+      // URLs in the sitemap — before the redirect was made a real one, they
+      // were worse still: indexable 200 shells canonicalized to the homepage.
+      // Only a genuinely global post (no country assignment) canonicalizes to
+      // the bare URL, and only those are submitted.
+      if (p.countries.length > 0) continue;
       urls.push({
         url: `${base}/blog/${p.slug}`,
         lastModified: p.publishedAt,
@@ -291,12 +392,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const p of countryPosts) {
         if (p.countries.length === 0) continue; // already emitted above as a bare-URL entry
         bump(country.code, "blog", p.publishedAt);
-        // A blog post has exactly one authored locale (BlogListItem carries
-        // no per-locale translation), so every OTHER enabled locale for this
-        // country would just be an English-body page with noindex set by
-        // buildBlogPostMetadata — don't submit those to Google. Only the
-        // post's actual content locale is emitted here.
-        pushLocalized(country, `/blog/${p.slug}`, 0.5, { lastModified: p.publishedAt }, [p.locale.toLowerCase()]);
+        // One URL per locale the post actually has content for — its authored
+        // locale plus every BlogTranslation — each under that locale's own
+        // native slug. Locales with no content of their own are still served
+        // (falling back to the authored body) but carry noindex from
+        // buildBlogPostMetadata, so they are deliberately not submitted.
+        for (const variant of p.localeVariants) {
+          pushLocalized(country, `/blog/${variant.slug}`, 0.5, { lastModified: p.publishedAt }, [
+            variant.locale.toLowerCase(),
+          ]);
+        }
       }
     } catch {
       // Blog list unavailable for this country — keep the rest of the sitemap.
@@ -310,32 +415,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // "noindex in sitemap" penalty, so we apply the identical predicate here
   // (`isPublicDoctorRecordIndexable`, same helper the page uses) before
   // listing a locale.
-  try {
-    const byCode = new Map(countries.map((c) => [c.code, c]));
-    const allDoctors = await getPublicDoctorsNormalized();
-    for (const d of allDoctors) {
-      const country = byCode.get(d.countryCode);
-      if (!country) continue;
-      const indexableLangs = (
-        await Promise.all(
-          countryLangs(country).map(async (lang) => {
-            const localized = await getPublicDoctorBySlug(d.slug, lang);
-            return localized && isPublicDoctorRecordIndexable(localized) ? lang : null;
-          }),
-        )
-      ).filter((lang): lang is string => lang !== null);
-      if (indexableLangs.length === 0) continue;
-      bump(country.code, "doctor", d.updatedAt);
-      pushLocalized(
-        country,
-        `/doctors/${d.slug}`,
-        0.7,
-        dated(d.updatedAt ?? undefined),
-        indexableLangs,
-      );
+  //
+  // Read per MARKET (`getPublicDoctorsForMarket`), never from the global
+  // `/api/doctors` roster: that roster omits the `additionalCountries` join, so
+  // every row is missing the per-market registration number the validator
+  // requires — which silently withheld 14 live, indexable Ireland doctors from
+  // this sitemap while their pages rendered index,follow. The market list is
+  // the list form of the very endpoint the profile page resolves from, and it
+  // also returns the doctors rostered into the market via an active
+  // DoctorCountry link, so genuine multi-market clinicians get an entry under
+  // each market they are actually published in — and only those (the backend
+  // filters on the link, so no foreign-country duplicates are possible).
+  for (const country of countries) {
+    try {
+      const langs = countryLangs(country);
+      // slug → the locales whose market record renders index,follow.
+      const indexableLangsBySlug = new Map<string, string[]>();
+      const updatedAtBySlug = new Map<string, string | undefined>();
+      for (const lang of langs) {
+        for (const doctor of await getPublicDoctorsForMarket(country.code, lang)) {
+          if (!isPublicDoctorRecordIndexable(doctor)) continue;
+          const langsForSlug = indexableLangsBySlug.get(doctor.slug) ?? [];
+          langsForSlug.push(lang);
+          indexableLangsBySlug.set(doctor.slug, langsForSlug);
+          updatedAtBySlug.set(
+            doctor.slug,
+            newestTimestamp(updatedAtBySlug.get(doctor.slug), doctor.updatedAt) ?? undefined,
+          );
+        }
+      }
+      for (const [slug, indexableLangs] of indexableLangsBySlug) {
+        const updatedAt = updatedAtBySlug.get(slug);
+        bump(country.code, "doctor", updatedAt);
+        pushLocalized(country, `/doctors/${slug}`, 0.7, dated(updatedAt), indexableLangs);
+      }
+    } catch {
+      // Doctor list unavailable for this country — keep the rest of the sitemap.
     }
-  } catch {
-    // Doctor list unavailable — sitemap still emits the country tree.
   }
 
   // Plan rows back-date /pricing only; the plans themselves have no public
@@ -381,6 +497,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       pushLocalized(country, "/pricing", 0.6, dated(newest(code, "plan")));
     }
     pushLocalized(country, "/blog", 0.6, dated(newest(code, "blog")));
+    // Country contact pages carry the market's NAP (where premises exist),
+    // registration and regulatory FAQs. Undated — the copy is code-resident,
+    // not CMS content, so there is no child timestamp to derive from.
+    pushLocalized(country, "/contact", 0.5);
+    // Country About pages: the market's languages, offering and registration.
+    // Undated for the same reason — the copy is code-resident, not CMS.
+    pushLocalized(country, "/about", 0.5);
+
+  }
+
+  // Free health tools. Emitted OUTSIDE the per-country loop above, because
+  // `pushLocalized` builds hreflang alternates from one country's locales and
+  // the tools need a single cross-market cluster instead — the same page
+  // translated per market, not six unrelated pages. See `lib/tools/markets.ts`.
+  // Undated: the copy is code-resident, so there is no child timestamp.
+  for (const tool of TOOL_SLUGS) {
+    // Absolute: sitemap alternates must be full URLs, unlike the metadata
+    // ones, which `buildPublicMetadata` absolutises for us.
+    const languages = Object.fromEntries(
+      Object.entries(toolHreflangAlternates(`/tools/${tool}`)).map(([tag, path]) => [
+        tag,
+        `${base}${path}`,
+      ]),
+    );
+    for (const market of toolMarkets()) {
+      urls.push({
+        url: `${base}/${market.slug}/${market.lang}/tools/${tool}`,
+        changeFrequency: "monthly",
+        priority: 0.7,
+        alternates: { languages },
+      });
+    }
   }
 
   return urls;

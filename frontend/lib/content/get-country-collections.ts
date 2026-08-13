@@ -4,11 +4,16 @@ import {
   fetchHealthTestsByCountry,
   fetchHealthTestDetail,
   fetchLandingPage,
+  fetchLandingSlugs,
   fetchServiceDetail,
   fetchServicesByCountry,
   fetchSpecialtiesByCountry,
 } from "@/lib/api/site-content-api";
-import { logPublicContentFallback } from "@/lib/content/public-content-source";
+import {
+  assertAbsenceConfirmed,
+  logPublicContentFallback,
+  missingRecordOn200,
+} from "@/lib/content/public-content-source";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 
 /**
@@ -141,11 +146,29 @@ export type CountryServiceDetail = {
   insuranceSeoLine: string | null;
   /** ISO timestamp — admin-set clinical review date. Null when unset. */
   lastReviewedAt: string | null;
+  /** Named author / clinical reviewer for this service's content — free-text
+   *  fallback plus the linked Doctor id (when set), driving the public
+   *  Physician author/reviewedBy JSON-LD (see structured-data.ts). */
+  authorDisplayName: string | null;
+  reviewerDisplayName: string | null;
+  authorDoctorId: string | null;
+  reviewerDoctorId: string | null;
+  /** `PUBLIC` for anything the public endpoint returns. */
+  visibility: string | null;
+  /** Locale that actually supplied this row's content, and the display fields
+   *  the requested locale's own translation row provided. Both feed the shared
+   *  per-locale publication rule — see `PublicServiceLocaleRecord`. */
+  resolvedLocale: string | null;
+  translatedFields: string[] | null;
 };
 
 export type HealthTestFaqItem = { id: string; question: string; answer: string };
 
 /** Full health-test detail (admin CMS content) for the public test page. */
+/** One "extra section" block. `kind` selects a richer layout on the health
+ *  test detail page; absent means plain prose. */
+export type ExtraSection = { title: string; body: string; kind?: "steps" | "notes" };
+
 export type CountryHealthTestDetail = {
   id: string;
   slug: string;
@@ -165,7 +188,7 @@ export type CountryHealthTestDetail = {
   whatThisTestCovers: string[];
   whyGetTested: string[];
   /** Admin "extra sections" JSON — array of { title, body } when authored. */
-  extraSections: Array<{ title: string; body: string }>;
+  extraSections: ExtraSection[];
   faqs: HealthTestFaqItem[];
 };
 
@@ -571,10 +594,12 @@ function resolveGallery(value: unknown): string[] {
 
 /** Parse the admin `extraSections` JSON into a list of titled prose blocks.
  *  Tolerates either { title, body } or { heading, content } shapes; skips
- *  entries without renderable text. */
-function readExtraSections(value: unknown): Array<{ title: string; body: string }> {
+ *  entries without renderable text. An optional `kind` ("steps" | "notes")
+ *  lets a seeded section pick a richer layout; admin-authored sections have
+ *  no kind and keep rendering as plain prose. */
+function readExtraSections(value: unknown): ExtraSection[] {
   if (!Array.isArray(value)) return [];
-  const out: Array<{ title: string; body: string }> = [];
+  const out: ExtraSection[] = [];
   for (const entry of value) {
     if (!entry || typeof entry !== "object") continue;
     const r = entry as Record<string, unknown>;
@@ -583,7 +608,8 @@ function readExtraSections(value: unknown): Array<{ title: string; body: string 
     const body =
       typeof r.body === "string" ? r.body : typeof r.content === "string" ? r.content : "";
     if (!body.trim() && !title.trim()) continue;
-    out.push({ title, body });
+    const kind = r.kind === "steps" || r.kind === "notes" ? r.kind : undefined;
+    out.push({ title, body, kind });
   }
   return out;
 }
@@ -605,22 +631,26 @@ function readFaqs(value: unknown): ServiceFaq[] {
 }
 
 /** Single service detail (admin CMS content) for the public service page.
- *  Returns null when the slug doesn't resolve for this country. */
+ *  Returns null ONLY when the backend confirmed the slug doesn't resolve for
+ *  this country; throws `PublicContentUnavailableError` when it couldn't
+ *  answer (see public-content-source.ts). */
 export const getCountryServiceDetail = cache(async (
   countryCode: string,
   slug: string,
   locale?: string,
 ): Promise<CountryServiceDetail | null> => {
+  const entity = `service-detail:${countryCode}:${slug}`;
   const res = await fetchServiceDetail(slug, countryCode, locale);
   if (!res.ok) {
-    logPublicContentFallback(`service-detail:${countryCode}:${slug}`, res.message);
+    assertAbsenceConfirmed(entity, res);
+    logPublicContentFallback(entity, res.message);
     return null;
   }
   const row = res.data.service;
-  if (!row || typeof row !== "object") return null;
+  if (!row || typeof row !== "object") missingRecordOn200(entity);
   const r = row as Record<string, unknown>;
   if (typeof r.id !== "string" || typeof r.slug !== "string" || typeof r.name !== "string") {
-    return null;
+    missingRecordOn200(entity);
   }
   const kind = typeof r.kind === "string" ? r.kind : "GENERAL";
   return {
@@ -648,6 +678,15 @@ export const getCountryServiceDetail = cache(async (
     insuranceOptions: parseInsuranceOptions(r.insuranceOptions),
     insuranceSeoLine: typeof r.insuranceSeoLine === "string" ? r.insuranceSeoLine : null,
     lastReviewedAt: typeof r.lastReviewedAt === "string" ? r.lastReviewedAt : null,
+    authorDisplayName: typeof r.authorDisplayName === "string" ? r.authorDisplayName : null,
+    reviewerDisplayName: typeof r.reviewerDisplayName === "string" ? r.reviewerDisplayName : null,
+    authorDoctorId: typeof r.authorDoctorId === "string" ? r.authorDoctorId : null,
+    reviewerDoctorId: typeof r.reviewerDoctorId === "string" ? r.reviewerDoctorId : null,
+    visibility: typeof r.visibility === "string" ? r.visibility : null,
+    resolvedLocale: typeof r.resolvedLocale === "string" ? r.resolvedLocale : null,
+    translatedFields: Array.isArray(r.translatedFields)
+      ? r.translatedFields.filter((f): f is string => typeof f === "string")
+      : null,
   };
 });
 
@@ -669,6 +708,9 @@ export type CountryLandingPage = {
   bodyHtml: string | null;
   template: CountryLandingPageTemplate | null;
   faq: Array<{ question: string; answer: string }> | null;
+  /** Locale that actually supplied this content (see `resolveTranslation`
+   *  backend-side) — `null` only when the backend predates the field. */
+  resolvedLocale: string | null;
 };
 
 function readLandingTemplate(v: unknown): CountryLandingPageTemplate | null {
@@ -713,15 +755,17 @@ export const getCountryLandingPage = cache(async (
   slug: string,
   locale?: string,
 ): Promise<CountryLandingPage | null> => {
+  const entity = `landing:${countryCode}:${slug}`;
   const res = await fetchLandingPage(slug, countryCode, locale);
   if (!res.ok) {
-    logPublicContentFallback(`landing:${countryCode}:${slug}`, res.message);
+    assertAbsenceConfirmed(entity, res);
+    logPublicContentFallback(entity, res.message);
     return null;
   }
   const p = res.data.page;
-  if (!p || typeof p !== "object") return null;
+  if (!p || typeof p !== "object") missingRecordOn200(entity);
   const r = p as Record<string, unknown>;
-  if (typeof r.slug !== "string" || typeof r.title !== "string") return null;
+  if (typeof r.slug !== "string" || typeof r.title !== "string") missingRecordOn200(entity);
   return {
     slug: r.slug,
     title: r.title,
@@ -730,26 +774,48 @@ export const getCountryLandingPage = cache(async (
     bodyHtml: typeof r.bodyHtml === "string" ? r.bodyHtml : null,
     template: readLandingTemplate(r.template),
     faq: readLandingFaq(r.faq),
+    resolvedLocale: typeof r.resolvedLocale === "string" ? r.resolvedLocale : null,
   };
 });
 
+/**
+ * Which locales have a genuine translation row for a country's landing page —
+ * the same `availableLocales` the sitemap uses, reused here so a single
+ * `/health/[slug]` page's indexability/hreflang decision can never disagree
+ * with what's actually submitted to Google. One request per country (not per
+ * locale), cached per-request like every other collection here.
+ */
+export const getLandingAvailableLocales = cache(async (
+  countryCode: string,
+  slug: string,
+): Promise<string[]> => {
+  const res = await fetchLandingSlugs(countryCode);
+  if (!res.ok) return [];
+  const page = res.data.landingPages.find((p) => p.slug === slug);
+  return page?.availableLocales.map((l) => l.toLowerCase()) ?? [];
+});
+
 /** Single health-test detail (admin CMS content) for the public test page.
- *  Returns null when the slug doesn't resolve for this country. */
+ *  Returns null ONLY when the backend confirmed the slug doesn't resolve for
+ *  this country; throws `PublicContentUnavailableError` when it couldn't
+ *  answer (see public-content-source.ts). */
 export const getCountryHealthTestDetail = cache(async (
   countryCode: string,
   slug: string,
   locale?: string,
 ): Promise<CountryHealthTestDetail | null> => {
+  const entity = `health-test-detail:${countryCode}:${slug}`;
   const res = await fetchHealthTestDetail(slug, countryCode, locale);
   if (!res.ok) {
-    logPublicContentFallback(`health-test-detail:${countryCode}:${slug}`, res.message);
+    assertAbsenceConfirmed(entity, res);
+    logPublicContentFallback(entity, res.message);
     return null;
   }
   const row = res.data.healthTest;
-  if (!row || typeof row !== "object") return null;
+  if (!row || typeof row !== "object") missingRecordOn200(entity);
   const r = row as Record<string, unknown>;
   if (typeof r.id !== "string" || typeof r.slug !== "string" || typeof r.title !== "string") {
-    return null;
+    missingRecordOn200(entity);
   }
   const imagePath = typeof r.productImagePath === "string" ? r.productImagePath : null;
   return {

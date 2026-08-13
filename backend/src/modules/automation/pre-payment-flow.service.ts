@@ -3,6 +3,7 @@ import { prisma } from "../../db/prisma.js";
 import { releaseSlotsToBaseGrid } from "../doctor-availability/doctor-availability.service.js";
 import { cancelOrderAppointments } from "../appointments/appointments.service.js";
 import { releaseOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
+import { releaseOrderMembershipAllowance } from "../memberships/membership-allowance.service.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
 import { wrapHtml } from "../../lib/email/templates.js";
@@ -34,6 +35,7 @@ import {
   patientWhatsAppInitial,
   appendPatientPortalWhatsApp,
   reminderMessage,
+  checkoutAbandonedMessage,
   doctorEmailSubjectBooking,
   doctorEmailSubjectCancelled,
   doctorWhatsAppBookingReceived,
@@ -75,6 +77,25 @@ const URGENT_BOOKING_HOURS = 2;
  * cheap, and charging a patient for a consultation we just cancelled is not.
  */
 const MIN_PAY_WINDOW_MIN = 10;
+
+/**
+ * Website self-serve checkout (PrePaymentFlow.WEB_CHECKOUT).
+ *
+ * A patient who opened Stripe Checkout on the site and walked away never
+ * committed to anything, so the hours-before-consultation ladder is wrong for
+ * them: it holds the slot for hours or days and buries them in "pay now" nudges.
+ * They get a flat 15-minute window instead, ONE abandonment message 10 minutes
+ * before it closes (i.e. ~5 minutes in), then a silent cancel. Manual, doctor-
+ * portal and insurance bookings are untouched — they opt out by simply not
+ * passing `webCheckout`.
+ */
+const WEB_CHECKOUT_PAY_WINDOW_MIN = 15;
+/** Abandonment message fires this long BEFORE the deadline. Derived, not stored. */
+const WEB_CHECKOUT_NUDGE_LEAD_MIN = 10;
+/** Stage 1 = checkout created, 2 = abandonment message, 3 = cancel. */
+export const WEB_CHECKOUT_NUDGE_STAGE = 2;
+export const WEB_CHECKOUT_CANCEL_STAGE = 3;
+
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
@@ -92,12 +113,20 @@ export const PRE_PAYMENT_REMINDER_HOURS_BEFORE_CONSULT = PRE_PAYMENT_REMINDER_HO
 export const PRE_PAYMENT_CANCEL_STAGE = 7;
 
 export function prePaymentReminderHours(flow: PrePaymentFlow): readonly number[] {
-  return flow === PrePaymentFlow.WITHIN_48H
-    ? PRE_PAYMENT_REMINDER_HOURS_WITHIN_48H
-    : PRE_PAYMENT_REMINDER_HOURS_OUTSIDE_48H;
+  switch (flow) {
+    case PrePaymentFlow.WITHIN_48H:
+      return PRE_PAYMENT_REMINDER_HOURS_WITHIN_48H;
+    case PrePaymentFlow.OUTSIDE_48H:
+      return PRE_PAYMENT_REMINDER_HOURS_OUTSIDE_48H;
+    // Web checkout has no hours-before-consultation ladder at all; its one
+    // message is clock-based off paymentDueAt (runWebCheckoutAbandonNudge).
+    case PrePaymentFlow.WEB_CHECKOUT:
+      return [];
+  }
 }
 
 export function prePaymentCancelStage(flow: PrePaymentFlow): number {
+  if (flow === PrePaymentFlow.WEB_CHECKOUT) return WEB_CHECKOUT_CANCEL_STAGE;
   return 1 + prePaymentReminderHours(flow).length + 1;
 }
 
@@ -108,6 +137,8 @@ export function prePaymentLastReminderStage(flow: PrePaymentFlow): number {
 export function computePrePaymentPlan(input: {
   bookedAt: Date;
   consultationStartAt: Date | null;
+  /** Website self-serve checkout → flat 15-minute window, see WEB_CHECKOUT. */
+  webCheckout?: boolean;
 }): { flow: PrePaymentFlow; paymentDueAt: Date } {
   const bookedAt = input.bookedAt;
   const consultAt = input.consultationStartAt;
@@ -123,33 +154,60 @@ export function computePrePaymentPlan(input: {
   const floorAt = new Date(bookedAt.getTime() + MIN_PAY_WINDOW_MIN * MS_MIN);
   const notBefore = (due: Date): Date => (due.getTime() < floorAt.getTime() ? floorAt : due);
 
-  if (hoursUntilConsult <= 48) {
-    // Urgent last-minute booking (≤2h out): a 1h-before deadline would already
-    // be in the past at booking time, cancelling the order immediately. Shrink
-    // the lead to 5 minutes before the consultation so the patient can still pay.
-    const leadMs = hoursUntilConsult <= URGENT_BOOKING_HOURS ? 5 * MS_MIN : 1 * MS_HOUR;
+  const standard: { flow: PrePaymentFlow; paymentDueAt: Date } =
+    hoursUntilConsult <= 48
+      ? {
+          // Urgent last-minute booking (≤2h out): a 1h-before deadline would already
+          // be in the past at booking time, cancelling the order immediately. Shrink
+          // the lead to 5 minutes before the consultation so the patient can still pay.
+          flow: PrePaymentFlow.WITHIN_48H,
+          paymentDueAt: notBefore(
+            consultAt != null
+              ? new Date(
+                  consultAt.getTime() -
+                    (hoursUntilConsult <= URGENT_BOOKING_HOURS ? 5 * MS_MIN : 1 * MS_HOUR),
+                )
+              : new Date(bookedAt.getTime() + 1 * MS_HOUR),
+          ),
+        }
+      : {
+          flow: PrePaymentFlow.OUTSIDE_48H,
+          paymentDueAt: notBefore(
+            consultAt != null
+              ? new Date(consultAt.getTime() - 24 * MS_HOUR)
+              : new Date(bookedAt.getTime() + 24 * MS_HOUR),
+          ),
+        };
+
+  if (input.webCheckout === true) {
+    const windowClose = new Date(bookedAt.getTime() + WEB_CHECKOUT_PAY_WINDOW_MIN * MS_MIN);
+    // Take the EARLIER of the 15-minute window and whatever the normal rules
+    // would have given: a website booking for a slot 8 minutes out must not sit
+    // unpaid past its own consultation. `notBefore` is not re-applied here —
+    // 15 min already clears MIN_PAY_WINDOW_MIN, and re-flooring would push the
+    // deadline back out past a near-term slot, which is the whole reason for
+    // taking the min.
     return {
-      flow: PrePaymentFlow.WITHIN_48H,
-      paymentDueAt: notBefore(
-        consultAt != null
-          ? new Date(consultAt.getTime() - leadMs)
-          : new Date(bookedAt.getTime() + 1 * MS_HOUR),
-      ),
+      flow: PrePaymentFlow.WEB_CHECKOUT,
+      paymentDueAt:
+        standard.paymentDueAt.getTime() < windowClose.getTime()
+          ? standard.paymentDueAt
+          : windowClose,
     };
   }
 
-  return {
-    flow: PrePaymentFlow.OUTSIDE_48H,
-    paymentDueAt: notBefore(
-      consultAt != null
-        ? new Date(consultAt.getTime() - 24 * MS_HOUR)
-        : new Date(bookedAt.getTime() + 24 * MS_HOUR),
-    ),
-  };
+  return standard;
 }
 
 function automationBaseKey(flow: PrePaymentFlow): string {
-  return flow === PrePaymentFlow.WITHIN_48H ? "pre_payment_flow_a" : "pre_payment_flow_b";
+  switch (flow) {
+    case PrePaymentFlow.WITHIN_48H:
+      return "pre_payment_flow_a";
+    case PrePaymentFlow.OUTSIDE_48H:
+      return "pre_payment_flow_b";
+    case PrePaymentFlow.WEB_CHECKOUT:
+      return "pre_payment_flow_web";
+  }
 }
 
 function maxStage(flow: PrePaymentFlow): number {
@@ -157,6 +215,10 @@ function maxStage(flow: PrePaymentFlow): number {
 }
 
 function stageThresholdHours(flow: PrePaymentFlow, stage: number): number | null {
+  // Web-checkout stages are clock-based off paymentDueAt, not hours before the
+  // consultation. Returning null here is what keeps runPrePaymentReminderCron
+  // from ever sending a ladder reminder to a website order.
+  if (flow === PrePaymentFlow.WEB_CHECKOUT) return null;
   if (stage === 1) return null;
   const hours = prePaymentReminderHours(flow);
   const idx = stage - 2;
@@ -176,6 +238,12 @@ export type StartPrePaymentFlowOptions = {
     setPasswordUrl: string;
     tempPassword: string | null;
   };
+  /**
+   * Website self-serve checkout. Opt-in, never inferred: the absence of `portal`
+   * also matches the insurance path, which pre-claims its slot and must keep the
+   * full ladder. Only the public checkout route sets this.
+   */
+  webCheckout?: boolean;
 };
 
 async function resolveConsultationStartForOrder(orderId: string): Promise<Date | null> {
@@ -566,6 +634,7 @@ export async function startPrePaymentFlow(
   const plan = computePrePaymentPlan({
     bookedAt: order.createdAt,
     consultationStartAt: consultAt,
+    webCheckout: opts?.webCheckout === true,
   });
 
   await prisma.order.update({
@@ -591,7 +660,27 @@ export async function startPrePaymentFlow(
   // For website self-service orders skip all stage-1 notifications (patient + doctor).
   // Manual bookings (portal options always provided) send reservation alerts to both.
   const isManualBooking = Boolean(opts?.portal);
-  if (isManualBooking) {
+  // A "pay by <deadline> or lose your slot" message with no link in it is worse
+  // than no message at all — the patient cannot act on it. If the checkout
+  // session could not be created, tell staff instead of the patient and let an
+  // admin resend once the payment path is healthy.
+  if (isManualBooking && !ctx.paymentLink) {
+    const run = await createAutomationRun({
+      automationKey: stageKey,
+      orderId,
+      channel: "email",
+      recipient: o.email,
+      summary: "Patient stage-1 SUPPRESSED — no payment link could be created",
+      status: "RUNNING",
+    });
+    await finishAutomationRun(run.id, {
+      status: "FAILED",
+      summary: "Patient stage-1 SUPPRESSED — no payment link could be created",
+      error:
+        "resolveOrderPaymentUrl returned empty (Stripe checkout session creation failed) — patient WhatsApp/email withheld rather than sent with a blank payment link",
+    });
+    await notifyDoctorOnBooking(orderId, primary.doctorId, staffCtx, lang);
+  } else if (isManualBooking) {
     await notifyDoctorOnBooking(orderId, primary.doctorId, staffCtx, lang);
     await sendWhatsApp(
       stageKey,
@@ -757,6 +846,130 @@ export async function sendPrePaymentCancelledNotifications(
   }
 }
 
+/**
+ * The single message of the WEB_CHECKOUT flow: "we noticed you left the checkout
+ * page". Email + WhatsApp, patient only — the doctor was never told about this
+ * booking in the first place (website orders skip the stage-1 doctor alert), so
+ * there is nothing to retract.
+ *
+ * Normally sent ~5 minutes into the 15-minute window by
+ * runWebCheckoutAbandonNudge; the cancel sweep reuses it as a last-resort single
+ * notice for an order that reached its deadline without ever being nudged.
+ */
+async function sendCheckoutAbandonedMessage(orderId: string, stageKey: string): Promise<void> {
+  const paymentUrl = await resolveOrderPaymentUrl(orderId, null);
+  const loaded = await loadOrderContext(orderId, paymentUrl);
+  if (!loaded) return;
+  const { order, primary, lang, ctx, phoneHints } = loaded;
+  const msg = checkoutAbandonedMessage(ctx, lang);
+  await sendWhatsApp(
+    stageKey,
+    orderId,
+    order.phone,
+    msg.whatsapp,
+    "Patient WhatsApp — checkout abandoned",
+    lang,
+    phoneHints,
+    primary.patientWhatsappConsent,
+  );
+  await sendPatientEmail(
+    stageKey,
+    orderId,
+    order.email,
+    lang,
+    ctx,
+    "Patient email — checkout abandoned",
+    "abandoned",
+    msg.subject,
+  );
+}
+
+/**
+ * What a WEB_CHECKOUT order sends when its 15-minute window closes: an admin
+ * alert, and nothing else. The patient was already told at T-10min that the slot
+ * would be released now, and the doctor was never told the booking existed, so
+ * the ladder's "reservation cancelled" pair would be two messages nobody needs.
+ *
+ * Exception — `stageBeforeCancel < WEB_CHECKOUT_NUDGE_STAGE` means the nudge
+ * never went out (scheduler outage, or a deadline clamped so hard by a near-term
+ * consultation that no tick fell inside the nudge window). Send it now instead:
+ * a cancel in total silence is the one outcome this flow must not produce.
+ *
+ * No credit note is possible here — website orders are not invoiced before
+ * payment (see resolveCancellationCreditNote).
+ */
+export async function sendWebCheckoutCancelNotifications(
+  orderId: string,
+  stageBeforeCancel: number,
+): Promise<void> {
+  if (stageBeforeCancel < WEB_CHECKOUT_NUDGE_STAGE) {
+    await sendCheckoutAbandonedMessage(
+      orderId,
+      `pre_payment_flow_web_stage_${WEB_CHECKOUT_NUDGE_STAGE}_at_cancel`,
+    ).catch(() => undefined);
+  }
+
+  const loaded = await loadOrderContext(orderId, null);
+  if (!loaded) return;
+  const { primary, staffCtx } = loaded;
+  await sendAdminBookingAlert(orderId, "pre_payment_flow_web", "web_checkout_abandoned", {
+    orderNumber: staffCtx.orderNumber,
+    appointmentDateTime: staffCtx.appointmentDate,
+    doctorName: staffCtx.doctorName,
+    serviceName: staffCtx.serviceName,
+    patientName: staffCtx.patientName,
+    patientWhatsappConsent: primary.patientWhatsappConsent,
+  }).catch(() => undefined);
+}
+
+/**
+ * Website-checkout abandonment nudge. Runs on the 60-SECOND cancel tick, not the
+ * 15-minute reminder tick — the whole window is 15 minutes, so a 15-minute tick
+ * would deliver this late or not at all.
+ */
+export async function runWebCheckoutAbandonNudge() {
+  const now = new Date();
+  const nudgeHorizon = new Date(now.getTime() + WEB_CHECKOUT_NUDGE_LEAD_MIN * MS_MIN);
+  const due = await prisma.order.findMany({
+    where: {
+      status: "PENDING",
+      paymentStatus: { in: ["UNPAID", "PENDING"] },
+      prePaymentFlow: PrePaymentFlow.WEB_CHECKOUT,
+      prePaymentReminderStage: { lt: WEB_CHECKOUT_NUDGE_STAGE },
+      // Past the deadline → runPrePaymentCancelSweep owns the order.
+      paymentDueAt: { not: null, gt: now, lte: nudgeHorizon },
+    },
+    take: 100,
+    orderBy: { paymentDueAt: "asc" },
+    select: { id: true },
+  });
+
+  let sent = 0;
+  for (const order of due) {
+    // Claim the stage BEFORE sending. The ladder's send-then-stamp is safe on a
+    // 15-minute tick; here a 6s-serialized WhatsApp batch can easily outlive the
+    // 60s interval, and a duplicate "you left checkout" message is worse than a
+    // missed one.
+    const claim = await prisma.order.updateMany({
+      where: { id: order.id, prePaymentReminderStage: { lt: WEB_CHECKOUT_NUDGE_STAGE } },
+      data: { prePaymentReminderStage: WEB_CHECKOUT_NUDGE_STAGE },
+    });
+    if (claim.count !== 1) continue;
+    try {
+      await sendCheckoutAbandonedMessage(
+        order.id,
+        `pre_payment_flow_web_stage_${WEB_CHECKOUT_NUDGE_STAGE}`,
+      );
+      sent++;
+    } catch {
+      // Per-channel failures are already recorded as FAILED AutomationRun rows.
+      // The stage stays claimed — see the duplicate-vs-missed trade above.
+    }
+  }
+
+  return { candidates: due.length, sent };
+}
+
 async function executeReminderStage(
   orderId: string,
   flow: PrePaymentFlow,
@@ -770,6 +983,24 @@ async function executeReminderStage(
   const stageKey = `${baseKey}_stage_${stage}`;
   // Reminder stages only — the cancel stage is owned by runPrePaymentCancelSweep.
   const kind = stage === prePaymentLastReminderStage(flow) ? "final" : "mid";
+  // Same rule as stage 1: never chase a patient for payment without a link.
+  if (!ctx.paymentLink) {
+    const run = await createAutomationRun({
+      automationKey: stageKey,
+      orderId,
+      channel: "email",
+      recipient: order.email,
+      summary: `Patient reminder ${stage} SUPPRESSED — no payment link could be created`,
+      status: "RUNNING",
+    });
+    await finishAutomationRun(run.id, {
+      status: "FAILED",
+      summary: `Patient reminder ${stage} SUPPRESSED — no payment link could be created`,
+      error:
+        "resolveOrderPaymentUrl returned empty (Stripe checkout session creation failed) — reminder withheld rather than sent with a blank payment link",
+    });
+    return;
+  }
   const emailVariant: PrePaymentEmailVariant = kind === "final" ? "final" : "reminder";
   const msg = reminderMessage(ctx, lang, kind);
   await sendWhatsApp(
@@ -910,6 +1141,10 @@ export async function cancelPrePaymentOrder(orderId: string): Promise<boolean> {
   // after the TTL — release them now rather than leaving the patient short of a
   // credit for a booking that no longer exists.
   await releaseOrderCreditReservations(orderId).catch(() => undefined);
+  // Same for private-membership allowance units, which are spent at checkout
+  // and have no TTL of their own — this cron and the abandoned-order cleanup
+  // are the only things that give them back on a never-paid order (§7).
+  await releaseOrderMembershipAllowance(orderId).catch(() => undefined);
 
   return true;
 }
@@ -981,7 +1216,13 @@ export async function runPrePaymentCancelSweep() {
   });
 
   // Pass 1 — enforce every deadline. No sends in this loop.
-  const claimed: { orderId: string; stageKey: string }[] = [];
+  const claimed: {
+    orderId: string;
+    stageKey: string;
+    flow: PrePaymentFlow;
+    /** Stage BEFORE the cancel claim — tells us whether the web nudge ever went out. */
+    stageBeforeCancel: number;
+  }[] = [];
   for (const order of due) {
     if (!order.prePaymentFlow) continue;
     const flow = order.prePaymentFlow;
@@ -999,6 +1240,8 @@ export async function runPrePaymentCancelSweep() {
       claimed.push({
         orderId: order.id,
         stageKey: `${automationBaseKey(flow)}_stage_${cancelStage}`,
+        flow,
+        stageBeforeCancel: order.prePaymentReminderStage,
       });
     } catch {
       // Swallowed deliberately: an order left PENDING here is simply retried by
@@ -1008,8 +1251,12 @@ export async function runPrePaymentCancelSweep() {
 
   // Pass 2 — tell the patient and doctor. Slow (serialized WhatsApp), but every
   // deadline above is already enforced, so nothing time-critical waits on this.
-  for (const { orderId, stageKey } of claimed) {
+  for (const { orderId, stageKey, flow, stageBeforeCancel } of claimed) {
     try {
+      if (flow === PrePaymentFlow.WEB_CHECKOUT) {
+        await sendWebCheckoutCancelNotifications(orderId, stageBeforeCancel);
+        continue;
+      }
       await sendPrePaymentCancelledNotifications(orderId, stageKey);
     } catch {
       // The cancellation is already committed and won't be retried — per-channel
@@ -1081,6 +1328,13 @@ export async function resendPrePaymentInitialNotifications(orderId: string) {
   }
 
   const { order: o, primary, lang, ctx, staffCtx, phoneHints, portal } = loaded;
+  // Fail the resend loudly rather than re-sending the same linkless message the
+  // admin is trying to correct.
+  if (!ctx.paymentLink) {
+    throw new Error(
+      "No payment link could be created for this order (Stripe checkout session creation failed) — nothing was sent. Check the backend logs for [order-payment-url].",
+    );
+  }
   const flow = o.prePaymentFlow ?? PrePaymentFlow.WITHIN_48H;
   const baseKey = `${automationBaseKey(flow)}_stage_1_resend`;
 

@@ -12,7 +12,7 @@
  *
  * Covers only the per-country DB fields (PageContentTranslation, Service,
  * Doctor, CountryFooter, Country). Deliberately NOT covered here — see the
- * triage doc docs/ireland-gp-content-brief-triage.md:
+ * triage doc docs/plans/content-briefs/ireland-gp-content-brief-triage.md:
  *   - Romania/Brazil footer clinics (brief §10) — market go-live decision, not
  *     a copy edit; do NOT flip Country.isActive from a content script.
  *   - Hero bullets / review stat / Practice-areas H2 / Team H2 (brief items

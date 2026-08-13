@@ -8,6 +8,10 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
+import {
+  clearedCartBenefitFields,
+  setCartBenefit,
+} from "../modules/benefits/benefit-selection.service.js";
 import { resolveTranslation } from "../modules/shared/resolve-translation.js";
 import {
   holdConsecutiveSlots,
@@ -113,6 +117,26 @@ const addItemBodySchema = z.object({
   insuranceCompanyId: z.string().min(1).max(120).optional(),
   insurancePolicyNumber: z.string().trim().max(120).optional().or(z.literal("")),
   /**
+   * Cart-level benefit choice (§11.4). Carried here rather than by a separate
+   * call, so there is no window in which a line exists without the benefit that
+   * prices it — a cart in that state sits at UNSET with eligible sources and is
+   * rejected at checkout (§6.4) with no UI anywhere to repair it.
+   *
+   * `refId` is the enrollment id for MEMBERSHIP and `credit` / `discount` for
+   * PUBLIC_PLAN. CORPORATE needs none (at most one membership), and for
+   * INSURANCE it is display state only — the per-line `insuranceCompanyId`
+   * above is what the insurance lifecycle actually reads (§33).
+   *
+   * `UNSET` is deliberately not accepted: it is the initial state, and letting a
+   * client set it back would re-open §6.4's reject path on a decided cart.
+   */
+  benefit: z
+    .object({
+      source: z.enum(["NONE", "MEMBERSHIP", "CORPORATE", "PUBLIC_PLAN", "INSURANCE"]),
+      refId: z.string().trim().min(1).max(80).optional(),
+    })
+    .optional(),
+  /**
    * Patient intake snapshot. REQUIRED for consultation kinds (the cart
    * route below enforces presence + consent). Ignored for product
    * kinds — those rows don't carry patient data.
@@ -131,6 +155,8 @@ const addItemBodySchema = z.object({
       // Required-ness is enforced upstream by the appointments route /
       // mint flow based on BookingSetting per country.
       nationalIdNumber: z.string().trim().max(50).optional().or(z.literal("")),
+      // Alternative to nationalIdNumber — Brazil requires ONE of CPF/passport.
+      passportNumber: z.string().trim().max(60).optional().or(z.literal("")),
       // PT-only Número de Utente. Shown when the country's
       // BookingSetting.collectUtenteNumber is on, but never required —
       // patients without an SNS number must still be able to book.
@@ -322,11 +348,14 @@ async function resolveActiveCart(
   return { cart: await loadFullCart(cart.id), userId: null, cookieToken };
 }
 
+// upsert, not find-then-create: `Cart.userId` is @unique and the frontend
+// fires several cart requests in parallel right after login — a check-then-
+// create races itself into P2002.
 async function getOrCreateUserCart(userId: string) {
-  const existing = await prisma.cart.findUnique({ where: { userId } });
-  if (existing) return existing;
-  return prisma.cart.create({
-    data: {
+  return prisma.cart.upsert({
+    where: { userId },
+    update: {},
+    create: {
       userId,
       countryCode: "",
       currencyCode: "",
@@ -491,7 +520,20 @@ async function releaseHeldSlotsForItems(
   }
 }
 
-async function mergeCarts(sourceId: string, targetId: string) {
+/** Exported for cart-merge.test.ts — not part of the route surface. */
+export async function mergeCarts(sourceId: string, targetId: string) {
+  // One-shot claim on the guest cart. `Cart.cookieToken` is unique AND
+  // nullable, so nulling it does double duty: the cart stops being reachable
+  // by the guest cookie lookup, and the updateMany count is an atomic "this
+  // request owns the merge" flag. The frontend fires several cart calls in
+  // parallel right after login; without this they all merge the same source
+  // and can interleave (double-counted quantities, half-moved carts).
+  const claim = await prisma.cart.updateMany({
+    where: { id: sourceId, cookieToken: { not: null } },
+    data: { cookieToken: null },
+  });
+  if (claim.count === 0) return;
+
   const target = await prisma.cart.findUnique({
     where: { id: targetId },
     include: { items: true },
@@ -502,16 +544,24 @@ async function mergeCarts(sourceId: string, targetId: string) {
   });
   if (!source || !target) return;
 
+  // Collect the writes and commit them as one unit — a merge that dies
+  // halfway used to leave items split across two carts. Slot releases stay
+  // OUT of the transaction on purpose: releaseSlotsToBaseGrid re-materialises
+  // the base grid and swallows unique/exclusion violations, and in Postgres a
+  // caught constraint error still aborts the enclosing transaction. They run
+  // after the commit, so a failed merge just leaves the slots HELD until the
+  // 10-minute sweep — the safe direction to fail in.
+  const ops: Prisma.PrismaPromise<unknown>[] = [];
+  const slotsToRelease: string[] = [];
+
   // If target is empty, just move country/currency from source.
-  let targetCountry = target.countryCode;
-  let targetCurrency = target.currencyCode;
-  if (!targetCountry && source.countryCode) {
-    targetCountry = source.countryCode;
-    targetCurrency = source.currencyCode;
-    await prisma.cart.update({
-      where: { id: target.id },
-      data: { countryCode: targetCountry, currencyCode: targetCurrency },
-    });
+  if (!target.countryCode && source.countryCode) {
+    ops.push(
+      prisma.cart.update({
+        where: { id: target.id },
+        data: { countryCode: source.countryCode, currencyCode: source.currencyCode },
+      }),
+    );
   }
 
   // If target already has items from a different country, drop the
@@ -522,7 +572,7 @@ async function mergeCarts(sourceId: string, targetId: string) {
   // patients from booking the same time.
   if (target.countryCode && source.countryCode !== target.countryCode) {
     await releaseHeldSlotsForItems(source.items);
-    await prisma.cart.delete({ where: { id: sourceId } });
+    await prisma.cart.deleteMany({ where: { id: sourceId } });
     return;
   }
 
@@ -542,7 +592,7 @@ async function mergeCarts(sourceId: string, targetId: string) {
     const itemIsInsurance = Boolean(item.insuranceCompanyId);
     if ((itemIsInsurance && targetHasOther) || (!itemIsInsurance && targetHasInsurance)) {
       if (item.timeSlotId) {
-        await releaseSlotsToBaseGrid([item.timeSlotId]);
+        slotsToRelease.push(item.timeSlotId);
       }
       continue;
     }
@@ -563,60 +613,40 @@ async function mergeCarts(sourceId: string, targetId: string) {
         dupe.quantity + item.quantity,
         CART_ITEM_MAX_QTY,
       );
-      await prisma.cartItem.update({
-        where: { id: dupe.id },
-        data: { quantity: merged },
-      });
+      ops.push(
+        prisma.cartItem.update({
+          where: { id: dupe.id },
+          data: { quantity: merged },
+        }),
+      );
     } else {
-      await prisma.cartItem.create({
-        data: {
-          cartId: target.id,
-          kind: item.kind,
-          healthTestId: item.healthTestId,
-          serviceId: item.serviceId,
-          name: item.name,
-          unitPriceCents: item.unitPriceCents,
-          // Snapshot the per-unit shipping fee too — without this the
-          // checkout total drops the shipping line on merged items.
-          shippingCents: item.shippingCents ?? 0,
-          quantity: item.quantity,
-          timeSlotId: item.timeSlotId,
-          doctorId: item.doctorId,
-          // Consultation lines carry the reservation deadline — drop
-          // it onto the new row so sweep + countdown keep working.
-          heldUntil: item.heldUntil,
-          // Patient intake snapshot — keep so the merged cart still
-          // mints the Appointment with the right data.
-          patientFullName: item.patientFullName,
-          patientEmail: item.patientEmail,
-          patientPhone: item.patientPhone,
-          patientDateOfBirth: item.patientDateOfBirth,
-          patientNotes: item.patientNotes,
-          patientConsentAcceptedAt: item.patientConsentAcceptedAt,
-          bookingForOther: item.bookingForOther,
-          // Carry the per-line benefit choice across the merge. The benefit is
-          // only ever applied for an active subscriber at checkout, so this is
-          // harmless on its own.
-          benefitSelection: item.benefitSelection,
-          // SECURITY: never carry a familyMemberId across a merge. The source
-          // is a guest cookie cart whose items were added without an
-          // authenticated ownership check, so a crafted/foreign id could ride
-          // in. The owner can re-select an approved dependent on the cart page.
-          familyMemberId: null,
-          // Insurance snapshot — carry it so the merged line keeps its
-          // negotiated price at checkout. Without insuranceCompanyId the
-          // checkout recompute would fall back to peak/base and charge a
-          // different amount than the patient was shown. Re-validated
-          // server-side at checkout, so a stale/forged company just reverts to
-          // the base price (never cheaper).
-          insuranceCompanyId: item.insuranceCompanyId,
-          insurancePolicyNumber: item.insurancePolicyNumber,
-          insurancePriceCents: item.insurancePriceCents,
-        },
-      });
+      // Re-parent the existing row instead of copy-then-delete. Copying would
+      // duplicate `timeSlotId`, which is globally @unique on CartItem, and the
+      // source row is not deleted until after this loop → P2002 on every
+      // guest→user merge that carries a consultation.
+      ops.push(
+        prisma.cartItem.update({
+          where: { id: item.id },
+          data: {
+            cartId: target.id,
+            // SECURITY: never carry a familyMemberId across a merge. The source
+            // is a guest cookie cart whose items were added without an
+            // authenticated ownership check, so a crafted/foreign id could ride
+            // in. The owner can re-select an approved dependent on the cart page.
+            familyMemberId: null,
+          },
+        }),
+      );
     }
   }
-  await prisma.cart.delete({ where: { id: sourceId } });
+
+  // deleteMany, not delete: tolerant if the row is already gone. Items still
+  // sitting in the source cart (the insurance-conflict skips above) cascade
+  // away with it.
+  ops.push(prisma.cart.deleteMany({ where: { id: sourceId } }));
+  await prisma.$transaction(ops);
+
+  if (slotsToRelease.length) await releaseSlotsToBaseGrid(slotsToRelease);
 }
 
 function serializeCart(
@@ -725,7 +755,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
       const queryParse = cartQuerySchema.safeParse(request.query);
       const requestedLocale = queryParse.success ? queryParse.data.locale : undefined;
-      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber } =
+      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber, benefit } =
         body.data;
       const qty = quantity ?? 1;
       const insuranceCompanyIdValue = insuranceCompanyId?.trim() || null;
@@ -1006,6 +1036,17 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                   errorResponse("A national ID number is required for bookings in this country."),
                 );
               }
+              // Brazil: CPF (nationalIdNumber) or, failing that, a passport
+              // number — the prescription needs ONE identifier to print.
+              if (
+                svc.country.code.trim().toLowerCase() === "br" &&
+                !patient?.nationalIdNumber?.trim() &&
+                !patient?.passportNumber?.trim()
+              ) {
+                return reply.status(400).send(
+                  errorResponse("Enter your CPF or your passport number to continue."),
+                );
+              }
               if (settings.requireAddress) {
                 const missing: string[] = [];
                 if (!patient?.addressLine1?.trim()) missing.push("street address");
@@ -1154,6 +1195,23 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         );
       }
 
+      // Cart-level benefit (§11.4), recorded BEFORE the line is created so a
+      // rejected benefit — an enrollment that is not this patient's, or one
+      // whose term has lapsed — never leaves a half-written cart behind.
+      //
+      // Guests are ignored rather than rejected: they hold no benefits
+      // (decision 6), and their one legitimate source, insurance, is a per-line
+      // concept that travels in `insuranceCompanyId` above.
+      if (benefit && userId) {
+        const saved = await setCartBenefit(userId, {
+          source: benefit.source,
+          refId: benefit.refId ?? null,
+        });
+        if (!saved.ok) {
+          return reply.status(saved.status).send(errorResponse(saved.message));
+        }
+      }
+
       // Stamp country/currency on first item
       if (!cart.countryCode) {
         await prisma.cart.update({
@@ -1269,6 +1327,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             // New booking snapshot — mirrors the Appointment columns the
             // post-payment webhook will write when minting from this row.
             patientNationalIdNumber: patient?.nationalIdNumber || null,
+            patientPassportNumber: patient?.passportNumber || null,
             patientUtenteNumber: patient?.utenteNumber || null,
             patientTimezone: patient?.patientTimezone || null,
             patientAddressLine1: patient?.addressLine1 || null,
@@ -1447,7 +1506,15 @@ const cartRoute: FastifyPluginAsync = async (app) => {
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
     await prisma.cart.update({
       where: { id: cart.id },
-      data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
+      data: {
+        countryCode: "",
+        currencyCode: "",
+        abandonedEmailSentAt: null,
+        // An emptied cart has no benefit choice. Leaving one behind means the
+        // next cart silently inherits it — and a stale NONE would suppress a
+        // corporate member's discount from then on, invisibly.
+        ...clearedCartBenefitFields(),
+      },
     });
     return okResponse(EMPTY_CART);
   });

@@ -8,9 +8,11 @@ import compress from "@fastify/compress";
 import helmet from "@fastify/helmet";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
-import Fastify from "fastify";
+import Fastify, { type FastifyError } from "fastify";
 import { env } from "./config/env.js";
 import { buildOriginGuardHook } from "./utils/origin-guard.js";
+import { isTrustedBuildRead, isTrustedSsrPublicRead } from "./utils/rate-limit-trust.js";
+import { errorResponse } from "./utils/response.js";
 
 export async function buildApp() {
   // bodyLimit applies to non-multipart payloads. Aligned with the
@@ -167,45 +169,32 @@ export async function buildApp() {
     client.on("error", (err) => app.log.warn({ err }, "rate-limit Redis error (failing open)"));
     rateLimitRedis = client;
   }
-  // A `next build` prerenders ~550 public pages across ~15 worker processes
-  // from ONE egress IP in well under a minute, so the 300/min default below
-  // 429s most of it. Pre-P-001 that only cost a slow build; now those pages
-  // are statically generated, so a rejected read BAKES an empty plan grid /
-  // doctor list into a file that is then served (and crawled) until ISR
-  // revalidates. The frontend marks build-phase reads with `x-gh-build`,
-  // authenticated by the same shared secret the client-IP forwarding uses.
+  // Three rate-limit classes, each with its OWN bucket key and ceiling. See
+  // utils/rate-limit-trust.ts for what qualifies and why build and SSR are
+  // deliberately kept apart.
   //
-  // Deliberately NOT an allowList (a full bypass): a leaked secret would then
-  // grant unmetered reads. This keeps the limiter on and only raises the
-  // ceiling, on an allowlist of anonymous public marketing GETs — never a
-  // mutation, never /api/auth|me|account|admin|doctor|corporate|payments.
-  const BUILD_READ_PREFIXES = [
-    "/api/countries",
-    "/api/public/countries",
-    "/api/doctors",
-    "/api/services",
-    "/api/specialties",
-    "/api/health-tests",
-    "/api/assets",
-    "/api/blog",
-    "/api/blog-posts",
-    "/api/pricing",
-  ];
-  const isTrustedBuildRead = (req: { method: string; url: string; headers: Record<string, unknown> }) => {
-    const secret = env.PROXY_CLIENT_IP_SECRET;
-    if (!secret || req.headers["x-gh-proxy-secret"] !== secret) return false;
-    if (req.headers["x-gh-build"] !== "1") return false;
-    if (req.method !== "GET") return false;
-    const path = req.url.split("?")[0];
-    return BUILD_READ_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`));
-  };
+  //   gh-build   `next build` prerenders ~550 public pages across ~15 worker
+  //              processes from ONE egress IP in well under a minute. A
+  //              rejected read BAKES an empty plan grid / doctor list into a
+  //              static file that is then served (and crawled) until ISR
+  //              revalidates, so this gets a deliberately huge short-burst
+  //              ceiling. Nobody is waiting on a prerender.
+  //   gh-ssr     Live server-side page rendering. Runs CONTINUOUSLY, so its
+  //              ceiling must stay near what this server can actually serve —
+  //              it does NOT inherit the build ceiling. Env-tunable via
+  //              RATE_LIMIT_SSR_MAX (see config/env.ts for the sizing).
+  //   <visitor>  Everything else: the real visitor IP the frontend forwards
+  //              on proxied browser calls, else request.ip. Unchanged.
+  const proxySecret = env.PROXY_CLIENT_IP_SECRET;
 
   await app.register(rateLimit, {
     global: true,
     timeWindow: "1 minute",
-    // Still bounded — a runaway build gets throttled, it just isn't capped at
-    // a ceiling a single build blows through in seconds.
-    max: (req) => (isTrustedBuildRead(req) ? 20_000 : 300),
+    max: (req) => {
+      if (isTrustedBuildRead(req, proxySecret)) return 20_000;
+      if (isTrustedSsrPublicRead(req, proxySecret)) return env.RATE_LIMIT_SSR_MAX;
+      return 300;
+    },
     skipOnError: true, // never 500 because Redis is down etc.
     // The Next.js frontend proxies browser API calls server-side, so at this
     // hop request.ip is the frontend service's egress IP for EVERY visitor —
@@ -214,11 +203,13 @@ export async function buildApp() {
     // the real visitor IP it forwards. Secret mismatch/absent → request.ip,
     // so direct callers can't spoof their bucket with a forged header.
     keyGenerator: (req) => {
-      const secret = env.PROXY_CLIENT_IP_SECRET;
-      if (secret && req.headers["x-gh-proxy-secret"] === secret) {
-        // Builds get their own bucket so a deploy can't exhaust the quota of
-        // real visitors sharing the frontend's egress IP.
-        if (isTrustedBuildRead(req)) return "gh-build";
+      if (proxySecret && req.headers["x-gh-proxy-secret"] === proxySecret) {
+        // Builds and SSR each get their own bucket so neither can exhaust the
+        // quota of real visitors sharing the frontend's egress IP — nor each
+        // other's. Checked before the forwarded-IP branch because a build/SSR
+        // read carries no meaningful per-visitor IP.
+        if (isTrustedBuildRead(req, proxySecret)) return "gh-build";
+        if (isTrustedSsrPublicRead(req, proxySecret)) return "gh-ssr";
         const fwd = req.headers["x-gh-client-ip"];
         if (typeof fwd === "string" && fwd.length > 0 && fwd.length <= 64) {
           return fwd;
@@ -264,6 +255,25 @@ export async function buildApp() {
       reply.header("Cache-Control", "private, no-store");
     }
     return payload;
+  });
+
+  // CWE-209: Fastify's default error handler puts `err.message` in the 500
+  // body, and the frontend renders it. An unhandled Prisma error therefore
+  // shipped the ORM name, the model + column that failed, and the absolute
+  // server path (`/app/dist/routes/cart.route.js:441`) straight to the
+  // browser — and Prisma validation errors embed the offending `data`
+  // payload, which on this codebase means patient name/email/DOB. Swallow
+  // every 5xx into a fixed string; the real error still goes to the log.
+  // 4xx (validation, rate-limit, CORS) keep their own client-facing text —
+  // `reply.send(err)` inside an error handler falls through to Fastify's
+  // default serialization, so those response shapes are unchanged.
+  app.setErrorHandler((err: FastifyError, request, reply) => {
+    const status = typeof err.statusCode === "number" ? err.statusCode : 500;
+    if (status < 500) return reply.send(err);
+    request.log.error({ err, url: request.url }, "unhandled route error");
+    return reply
+      .status(500)
+      .send(errorResponse("Something went wrong. Please try again."));
   });
 
   // Auto-register every `*.route.ts` (or `*.route.js` in dist) under

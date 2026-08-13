@@ -1,10 +1,17 @@
 import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { CartItemKind, OrderStatus, PaymentStatus, type Prisma } from "@prisma/client";
+import {
+  CartItemKind,
+  type CartBenefitSource,
+  OrderStatus,
+  PaymentStatus,
+  type Prisma,
+} from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import {
   getStripeClient,
   isStripeConfigured,
+  resolveCheckoutPaymentMethods,
 } from "../lib/stripe/client.js";
 import { env } from "../config/env.js";
 import { generateOrderNumber } from "../lib/order-number.js";
@@ -27,7 +34,24 @@ import {
   releaseOrderCreditReservations,
   reserveAndPriceConsultations,
 } from "../modules/subscriptions/checkout-pricing.service.js";
-import { resolveCorporateDiscountsForItems } from "../modules/corporate/corporate-benefit.service.js";
+import {
+  resolveCorporateDiscountsForItems,
+  type CorporateDiscount,
+} from "../modules/corporate/corporate-benefit.service.js";
+import {
+  clearedCartBenefitFields,
+  hasEligibleBenefitSources,
+} from "../modules/benefits/benefit-selection.service.js";
+import {
+  MembershipCheckoutError,
+  planMembershipCheckout,
+  repriceWithoutAllowance,
+} from "../modules/memberships/membership-checkout.service.js";
+import {
+  releaseOrderMembershipAllowance,
+  spendAllowanceUnit,
+} from "../modules/memberships/membership-allowance.service.js";
+import { sendMembershipAllowanceExhaustedEmail } from "../modules/memberships/membership-emails.js";
 import { computeEffectivePrices } from "../modules/orders/effective-pricing.service.js";
 import {
   computeOrderCommission,
@@ -38,7 +62,7 @@ import {
   assertOrderCountryScope,
   resolveOrderListCountryScope,
 } from "../utils/order-country-scope.js";
-import { recordCriticalAudit } from "../modules/audit/audit.service.js";
+import { recordAudit, recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
@@ -87,8 +111,59 @@ type OrderConsultationDto = {
   consultationType: string;
 };
 
+const CONSULTATION_ITEM_KINDS: CartItemKind[] = [
+  CartItemKind.GENERAL_CONSULTATION,
+  CartItemKind.SPECIALIST_CONSULTATION,
+];
+
+type OrderItemForConsultationFallback = {
+  id: string;
+  kind: CartItemKind;
+  appointmentId: string | null;
+  doctorId: string | null;
+  timeSlotId: string | null;
+};
+
+type ConsultationFallbackContext = {
+  doctorNameById: Map<string, string>;
+  slotStartById: Map<string, Date>;
+};
+
+/** Batch-resolve doctor names + slot start times for consultation `OrderItem`s
+ *  that haven't been minted into an Appointment yet (order still PENDING, or
+ *  CANCELLED before payment ever reached the webhook). `doctorId`/`timeSlotId`
+ *  are plain scalars on `OrderItem` — there's no Prisma relation to `include`
+ *  them through — so this does one batched pair of lookups covering every
+ *  order in a list response, instead of an include or per-order query. */
+async function resolveUnmintedConsultationContext(
+  itemLists: OrderItemForConsultationFallback[][],
+): Promise<ConsultationFallbackContext> {
+  const unminted = itemLists
+    .flat()
+    .filter((i) => i.appointmentId === null && CONSULTATION_ITEM_KINDS.includes(i.kind));
+  const doctorIds = [
+    ...new Set(unminted.map((i) => i.doctorId).filter((id): id is string => id !== null)),
+  ];
+  const slotIds = [
+    ...new Set(unminted.map((i) => i.timeSlotId).filter((id): id is string => id !== null)),
+  ];
+
+  const [doctors, slots] = await Promise.all([
+    prisma.doctor.findMany({ where: { id: { in: doctorIds } }, select: { id: true, fullName: true } }),
+    prisma.doctorTimeSlot.findMany({ where: { id: { in: slotIds } }, select: { id: true, startAt: true } }),
+  ]);
+
+  return {
+    doctorNameById: new Map(doctors.map((d) => [d.id, d.fullName])),
+    slotStartById: new Map(slots.map((s) => [s.id, s.startAt])),
+  };
+}
+
 /** Flatten an order's `orderAppointments` join into a lean, wire-ready list of
- *  consultations (earliest scheduled first; unscheduled last). */
+ *  consultations (earliest scheduled first; unscheduled last), falling back
+ *  to the reserving `OrderItem`'s doctor/slot — via the batched `context` —
+ *  for consultation lines that never got an Appointment minted (no payment
+ *  yet, or cancelled first). */
 function buildOrderConsultations(
   orderAppointments: {
     appointment: {
@@ -98,21 +173,35 @@ function buildOrderConsultations(
       doctor: { fullName: string } | null;
     } | null;
   }[],
+  items: OrderItemForConsultationFallback[] = [],
+  context?: ConsultationFallbackContext,
 ): OrderConsultationDto[] {
-  return orderAppointments
+  const minted = orderAppointments
     .map((oa) => oa.appointment)
     .filter((a): a is NonNullable<typeof a> => a !== null)
+    .map((a) => ({
+      appointmentId: a.id,
+      doctorName: a.doctor?.fullName ?? null,
+      scheduledAt: a.scheduledAt,
+      consultationType: a.consultationType,
+    }));
+
+  const unminted = items
+    .filter((i) => i.appointmentId === null && CONSULTATION_ITEM_KINDS.includes(i.kind))
+    .map((i) => ({
+      appointmentId: i.id,
+      doctorName: (i.doctorId ? context?.doctorNameById.get(i.doctorId) : null) ?? null,
+      scheduledAt: (i.timeSlotId ? context?.slotStartById.get(i.timeSlotId) : null) ?? null,
+      consultationType: i.kind as string,
+    }));
+
+  return [...minted, ...unminted]
     .sort(
       (a, b) =>
         (a.scheduledAt?.getTime() ?? Number.POSITIVE_INFINITY) -
         (b.scheduledAt?.getTime() ?? Number.POSITIVE_INFINITY),
     )
-    .map((a) => ({
-      appointmentId: a.id,
-      doctorName: a.doctor?.fullName ?? null,
-      scheduledAt: a.scheduledAt?.toISOString() ?? null,
-      consultationType: a.consultationType,
-    }));
+    .map((c) => ({ ...c, scheduledAt: c.scheduledAt?.toISOString() ?? null }));
 }
 
 const checkoutBodySchema = z.object({
@@ -196,6 +285,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid checkout data", body.error.flatten()));
       }
 
+      // Set once the order transaction has COMMITTED and cleared again as soon
+      // as the order is safely confirmed. Anything that throws in between has
+      // left an order holding allowance units against a payment that will
+      // never arrive, so the catch block releases them (§7, the Stripe
+      // boundary). The order tx commits before Stripe is called, so this
+      // compensating write is the only thing standing between a Stripe outage
+      // and members permanently losing consultations they never had.
+      let uncommittedOrderId: string | null = null;
       try {
         const { cartId, userId } = await resolveActiveCartForCheckout(request);
         if (!cartId) {
@@ -222,6 +319,81 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               "An insurance consultation must be booked on its own. Please remove the other items and try again.",
             ),
           );
+        }
+
+        // ── Which benefit engine runs (§6.4) ─────────────────────────
+        // Exactly one, chosen by the patient at the booking step. That is what
+        // makes "benefits never stack" structural rather than three engines
+        // each remembering to defer to the others — and it is the one
+        // behavioural change to an existing engine: NONE now suppresses
+        // corporate's previously automatic discount.
+        let benefitSource: CartBenefitSource = cart.benefitSource;
+        if (benefitSource === "UNSET") {
+          // The step never ran for this cart: created before the phase 5
+          // deploy, added from a surface that skips the wizard, or a missed
+          // backfill. Resolve it live rather than let any of those brick a
+          // cart — this runtime rule, not the backfill, is the guarantee.
+          const eligible = await hasEligibleBenefitSources({
+            userId,
+            serviceIds: cart.items
+              .map((i) => i.serviceId)
+              .filter((id): id is string => Boolean(id)),
+          });
+          if (eligible) {
+            // Something cheaper was on offer and the patient never saw it.
+            // Charging full price silently would take money they were never
+            // shown a chance to save.
+            return reply.status(400).send(
+              errorResponse(
+                // The wire code is unchanged for compatibility, but there is no
+                // benefit step any more (§11) — the choice rides on add-to-cart,
+                // so a cart in this state was filled before that shipped or from
+                // a surface that does not send one. Reopening the booking is the
+                // repair, and it is the only one the patient can perform.
+                "We couldn't confirm which benefit to apply to this booking. Please reopen the booking to continue.",
+                { code: "BENEFIT_STEP_INCOMPLETE" },
+              ),
+            );
+          }
+          benefitSource = "NONE";
+        } else if (benefitSource === "NONE" && userId) {
+          /**
+           * DIAGNOSTIC ONLY (§26 polish). An eligible patient is checking out
+           * at `NONE`, so they are paying full price while holding something
+           * cheaper. That is a legitimate outcome — decision 44 exists for
+           * exactly it — but nothing recorded it, which made "I should have got
+           * my discount" unanswerable: the order is indistinguishable from a
+           * full-price booking by someone who merely happens to hold a
+           * membership.
+           *
+           * Fire-and-forget, and never awaited: this must not add latency to a
+           * checkout, must not fail one, and nothing downstream branches on it.
+           */
+          void hasEligibleBenefitSources({
+            userId,
+            serviceIds: cart.items
+              .map((i) => i.serviceId)
+              .filter((id): id is string => Boolean(id)),
+          })
+            .then((eligible) => {
+              if (!eligible) return;
+              return recordAudit({
+                actorUserId: userId,
+                action: "MEMBERSHIP_BENEFIT_DECLINED",
+                entityType: "Cart",
+                entityId: cart.id,
+                metadata: {
+                  serviceIds: cart.items.map((i) => i.serviceId).filter(Boolean),
+                  membershipEnrollmentId: cart.membershipEnrollmentId,
+                  // The two readings this row exists to tell apart: a member who
+                  // deliberately declined, and a client that sent NONE without
+                  // ever showing them the choice. Neither is inferable later.
+                  declinedAllowanceUnit: cart.membershipDeclineUnit,
+                },
+                request,
+              });
+            })
+            .catch(() => undefined);
         }
 
         // Anti-manipulation gate: re-derive the price of every consultation
@@ -290,7 +462,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           // Subscription pricing (§21): logged-in users only (D15). Reserves
           // credits / applies discounts on consultation lines inside the tx so
           // a reservation rolls back with the order.
-          const planResult = userId
+          //
+          // §6.4: this engine runs ONLY when the patient chose PUBLIC_PLAN.
+          // Under any other source it is skipped entirely, so nothing is
+          // reserved and the commit/release helpers below are no-ops.
+          const planResult = userId && benefitSource === "PUBLIC_PLAN"
             ? await reserveAndPriceConsultations(tx, {
                 userId,
                 countryCode: cart.countryCode,
@@ -316,23 +492,52 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   { finalUnitPriceCents: number; creditCovered: boolean; reservationId?: string }
                 >(),
               };
-          // Corporate benefit engine (plan doc §3.3): automatic % discount
-          // for active corporate members on eligible lines the subscription
-          // plan did NOT already benefit-price. Recomputed server-side
-          // inside the tx — never trusted from the client. No stacking:
-          // plan benefit (credit/discount) wins, else corporate.
-          const corporateDiscounts = await resolveCorporateDiscountsForItems(tx, {
-            userId,
-            // Same exclusion as the subscription engine — insurance price wins.
-            items: cart.items
-              .filter((i) => !i.insuranceCompanyId)
-              .map((i) => ({
-                id: i.id,
-                kind: i.kind,
-                serviceId: i.serviceId,
-                baseCents: effectiveUnitPrice(i),
-              })),
-          });
+          // Corporate benefit engine (plan doc §3.3): a % discount for active
+          // corporate members. Recomputed server-side inside the tx — never
+          // trusted from the client.
+          //
+          // §6.4 changed WHEN it runs. It used to apply automatically to every
+          // eligible line; now it runs only when the patient picked CORPORATE
+          // at the benefit step. That is the user-visible change in phase 5:
+          // an existing corporate member still gets their discount, but by
+          // pre-selection rather than silently.
+          const corporateDiscounts =
+            benefitSource === "CORPORATE"
+              ? await resolveCorporateDiscountsForItems(tx, {
+                  // Insurance-priced lines stay excluded — the negotiated
+                  // price is final (§33) — even though an INSURANCE cart never
+                  // reaches this branch anyway.
+                  userId,
+                  items: cart.items
+                    .filter((i) => !i.insuranceCompanyId)
+                    .map((i) => ({
+                      id: i.id,
+                      kind: i.kind,
+                      serviceId: i.serviceId,
+                      baseCents: effectiveUnitPrice(i),
+                    })),
+                })
+              : new Map<string, CorporateDiscount>();
+
+          // Membership engine (§6.2). Throws rather than downgrades: a cart
+          // claiming MEMBERSHIP with an enrollment that is not the session
+          // user's, or no longer active, must fail loudly. Silently charging
+          // full price would charge a number the patient never confirmed.
+          const membershipPlan =
+            benefitSource === "MEMBERSHIP"
+              ? await planMembershipCheckout(tx, {
+                  userId,
+                  enrollmentId: cart.membershipEnrollmentId,
+                  // Decision 44: the member may have declined the included
+                  // visit to keep it for later. WHICH RULE, not a price —
+                  // every figure is still re-derived inside.
+                  declineUnit: cart.membershipDeclineUnit,
+                  items: cart.items.map((i) => ({ id: i.id, serviceId: i.serviceId })),
+                  fullPriceByItemId: new Map(
+                    cart.items.map((i) => [i.id, effectiveUnitPrice(i)]),
+                  ),
+                })
+              : null;
           const corporateLineDiscount = (
             i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
           ): number => {
@@ -347,13 +552,17 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           };
           const finalUnitPrice = (
             i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
-          ) =>
+          ) => {
             // Insurance lines: the validated insurance price (effectiveUnitPrice)
-            // is final, no plan/corporate layer applies.
-            i.insuranceCompanyId
-              ? effectiveUnitPrice(i)
-              : (planResult.lines.get(i.id)?.finalUnitPriceCents ?? effectiveUnitPrice(i)) -
-                corporateLineDiscount(i);
+            // is final, no plan/corporate/membership layer applies.
+            if (i.insuranceCompanyId) return effectiveUnitPrice(i);
+            const membershipLine = membershipPlan?.lines.get(i.id);
+            if (membershipLine) return membershipLine.unitPriceCents;
+            return (
+              (planResult.lines.get(i.id)?.finalUnitPriceCents ?? effectiveUnitPrice(i)) -
+              corporateLineDiscount(i)
+            );
+          };
           const subtotalCents = cart.items.reduce(
             (s, i) => s + finalUnitPrice(i) * i.quantity,
             0,
@@ -407,8 +616,15 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               shipCountryCode: body.data.shipCountryCode
                 ? body.data.shipCountryCode.toUpperCase()
                 : null,
-              items: {
-                create: cart.items.map((i) => ({
+            },
+          });
+          // Lines are created one at a time, not nested, so each CartItem's id
+          // can be paired with the OrderItem it produced. The pairing used to
+          // be inferred from `timeSlotId`, which silently skipped any line
+          // without a slot — and an allowance line whose spend is skipped is a
+          // free consultation nobody is charged for.
+          const buildItem = (i: (typeof cart.items)[number]) => ({
+                  orderId: created.id,
                   kind: i.kind,
                   healthTestId: i.healthTestId,
                   serviceId: i.serviceId,
@@ -440,9 +656,22 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                     corporateLineDiscount(i) > 0
                       ? corporateDiscounts.get(i.id)?.companyId ?? null
                       : null,
+                  // Membership audit trail (§3.7). unitPriceCents above is
+                  // ALREADY the member price; these record how it got there —
+                  // and `membershipAllowanceUsed` is what every release path
+                  // scans for when it has to give a unit back.
+                  membershipEnrollmentId: membershipPlan?.lines.has(i.id)
+                    ? membershipPlan.enrollment.id
+                    : null,
+                  membershipBenefitId: membershipPlan?.lines.get(i.id)?.benefitId ?? null,
+                  membershipDiscountCents:
+                    membershipPlan?.lines.get(i.id)?.discountCents ?? null,
+                  membershipAllowanceUsed:
+                    membershipPlan?.lines.get(i.id)?.allowanceUsed ?? false,
                   // Carry the new booking snapshot through to the order
                   // item; the payment webhook reads it to mint Appointment.
                   patientNationalIdNumber: i.patientNationalIdNumber,
+                  patientPassportNumber: i.patientPassportNumber,
                   patientUtenteNumber: i.patientUtenteNumber,
                   patientTimezone: i.patientTimezone,
                   patientAddressLine1: i.patientAddressLine1,
@@ -467,24 +696,114 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   // Commission-market snapshot (see the block above).
                   doctorPayoutCents: commissionByCartItemId.get(i.id)?.doctorPayoutCents ?? null,
                   commissionCents: commissionByCartItemId.get(i.id)?.commissionCents ?? null,
-                })),
-              },
-            },
-            include: { items: true },
           });
-          // Link each reservation to its OrderItem (consultation lines carry a
-          // unique timeSlotId) so commit/release can find them by order.
           const cartToOrderItem = new Map<string, string>();
+          const orderItems: Awaited<ReturnType<typeof tx.orderItem.create>>[] = [];
           for (const ci of cart.items) {
-            if (!ci.timeSlotId) continue;
-            const oi = created.items.find((o) => o.timeSlotId === ci.timeSlotId);
-            if (oi) cartToOrderItem.set(ci.id, oi.id);
+            const oi = await tx.orderItem.create({ data: buildItem(ci) });
+            cartToOrderItem.set(ci.id, oi.id);
+            orderItems.push(oi);
           }
+          const order = { ...created, items: orderItems };
           await linkReservationsToOrderItems(tx, planResult.lines, cartToOrderItem);
-          return { order: created, subtotalCents, totalCents };
+
+          // ── Spend allowance units (§7) ──────────────────────────────
+          // Only now, because the ledger's idempotency key is
+          // `${orderItemId}:SPEND` and the order lines did not exist a moment
+          // ago. The counter update is conditional, so a concurrent checkout
+          // can still take the last unit out from under the price we just
+          // wrote — `unavailable` re-prices that line onto the row's fallback
+          // and corrects the order, rather than handing out a unit twice.
+          const exhausted: { enrollmentId: string; benefitId: string }[] = [];
+          const corrections: { orderItemId: string; unitPriceCents: number; discountCents: number; quantity: number }[] = [];
+          if (membershipPlan) {
+            for (const ci of cart.items) {
+              const line = membershipPlan.lines.get(ci.id);
+              if (!line?.allowanceUsed || !line.poolBenefit) continue;
+              const orderItemId = cartToOrderItem.get(ci.id);
+              if (!orderItemId) continue;
+              // The POOL row, not the governing one (§21.4): one counter,
+              // spendable in every configured covered country. Spending
+              // against the booking country's row would split the pool.
+              const spend = await spendAllowanceUnit(tx, {
+                benefit: line.poolBenefit,
+                enrollment: membershipPlan.enrollment,
+                orderId: created.id,
+                orderItemId,
+              });
+              if (spend.outcome === "unavailable") {
+                const repriced = repriceWithoutAllowance({
+                  enrollment: membershipPlan.enrollment,
+                  service: line.service,
+                  fullPriceCents: effectiveUnitPrice(ci),
+                });
+                corrections.push({
+                  orderItemId,
+                  unitPriceCents: repriced.unitPriceCents,
+                  discountCents: repriced.discountCents,
+                  quantity: ci.quantity,
+                });
+                continue;
+              }
+              if (spend.remainingAfter === 0) {
+                exhausted.push({
+                  enrollmentId: membershipPlan.enrollment.id,
+                  benefitId: line.poolBenefit.id,
+                });
+              }
+            }
+          }
+
+          let finalSubtotal = subtotalCents;
+          for (const c of corrections) {
+            await tx.orderItem.update({
+              where: { id: c.orderItemId },
+              data: {
+                unitPriceCents: c.unitPriceCents,
+                lineTotalCents: c.unitPriceCents * c.quantity,
+                membershipDiscountCents: c.discountCents > 0 ? c.discountCents : null,
+                membershipAllowanceUsed: false,
+              },
+            });
+          }
+          if (corrections.length > 0) {
+            const items = await tx.orderItem.findMany({
+              where: { orderId: created.id },
+              select: { lineTotalCents: true },
+            });
+            finalSubtotal = items.reduce((s, i) => s + i.lineTotalCents, 0);
+            await tx.order.update({
+              where: { id: created.id },
+              data: { subtotalCents: finalSubtotal, totalCents: finalSubtotal + shippingCents },
+            });
+            // No commission recompute: §6.6 blocks membership plans outright in
+            // `commissionReceiptEnabled` countries, so a corrected membership
+            // line and a commission snapshot cannot coexist.
+          }
+
+          return {
+            order,
+            subtotalCents: finalSubtotal,
+            totalCents: finalSubtotal + shippingCents,
+            exhausted,
+          };
         }, { timeout: 15_000 });
         const order = txResult.order;
         const totalCents = txResult.totalCents;
+        uncommittedOrderId = order.id;
+
+        // Allowance-exhausted email (§12/§27). Fired AFTER the transaction
+        // commits — a send inside it would go out even if the checkout rolled
+        // back — and deduped, so a cart whose two lines empty the same counter
+        // produces one message, not two.
+        for (const key of new Set(
+          txResult.exhausted.map((e) => `${e.enrollmentId}:${e.benefitId}`),
+        )) {
+          const [enrollmentId, benefitId] = key.split(":");
+          void sendMembershipAllowanceExhaustedEmail({ enrollmentId, benefitId }).catch((err) => {
+            app.log.warn({ err, enrollmentId }, "Allowance-exhausted email failed");
+          });
+        }
 
         // ── €0 fully-credit order → confirm without Stripe (§36.3) ────
         // No charge exists, so commit the credit reservations now and run the
@@ -505,10 +824,23 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             { stripeEventId: `free_${order.id}`, eventType: "free_order" },
             app.log,
           );
+          // Confirmed and fulfilled — the allowance is legitimately spent, so
+          // a later failure clearing the cart must NOT hand the unit back.
+          uncommittedOrderId = null;
           await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
           await prisma.cart.update({
             where: { id: cart.id },
-            data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
+            data: {
+              countryCode: "",
+              currencyCode: "",
+              abandonedEmailSentAt: null,
+              // The benefit choice is not part of the item rows, so without
+              // this the NEXT cart inherits this order's decision — and a
+              // stale NONE would silently suppress a corporate member's
+              // discount on every future order, with nothing in the UI to
+              // explain why.
+              ...clearedCartBenefitFields(),
+            },
           });
           return okResponse({ orderId: order.id, url: null, free: true });
         }
@@ -545,11 +877,25 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           void notifyAdminsOfInsuranceOrder(order.id, app.log).catch((err) => {
             app.log.warn({ err, orderId: order.id }, "Insurance admin-notify failed");
           });
+          // An insurance cart is alone-in-cart and its source is INSURANCE, so
+          // it holds no allowance units; the reset is here for symmetry, so a
+          // later edit cannot make this the one exit that leaks.
+          uncommittedOrderId = null;
           // Clear the cart (items moved to the order).
           await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
           await prisma.cart.update({
             where: { id: cart.id },
-            data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
+            data: {
+              countryCode: "",
+              currencyCode: "",
+              abandonedEmailSentAt: null,
+              // The benefit choice is not part of the item rows, so without
+              // this the NEXT cart inherits this order's decision — and a
+              // stale NONE would silently suppress a corporate member's
+              // discount on every future order, with nothing in the UI to
+              // explain why.
+              ...clearedCartBenefitFields(),
+            },
           });
           return okResponse({
             orderId: order.id,
@@ -560,6 +906,12 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
 
         // Paid order → Stripe is required from here on.
         if (!isStripeConfigured(cart.countryCode)) {
+          // This 503 returns AFTER the order transaction committed, so it is a
+          // non-success exit holding allowance units. Release before returning
+          // — it is the one such exit that never reaches the catch block.
+          await releaseOrderMembershipAllowance(order.id).catch((err) => {
+            app.log.error({ err, orderId: order.id }, "Allowance release on unconfigured Stripe failed");
+          });
           return reply
             .status(503)
             .send(errorResponse("Payments not configured. Set STRIPE_SECRET_KEY."));
@@ -619,10 +971,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               order.items[0]?.name ?? "Medical Consultation",
             )) ?? { enabled: true };
 
+        const paymentMethodConfig = await resolveCheckoutPaymentMethods(
+          stripe,
+          cart.countryCode,
+          body.data.email,
+        );
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
-          payment_method_types: ["card"],
-          customer_email: body.data.email,
+          ...paymentMethodConfig,
           client_reference_id: order.id,
           line_items: lineItems,
           success_url: successUrl,
@@ -647,19 +1003,49 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           },
         });
 
-        void startPrePaymentFlow(order.id, session.url ?? null).catch((err) => {
+        // Website self-serve checkout: 15-minute pay window, one abandonment
+        // message, then a silent cancel — NOT the hours-before-consultation
+        // ladder that manual and insurance bookings run on.
+        void startPrePaymentFlow(order.id, session.url ?? null, { webCheckout: true }).catch((err) => {
           app.log.warn({ err, orderId: order.id }, "Pre-payment flow start failed");
         });
+
+        // A payable session exists. The units stay spent from here: if the
+        // patient never pays, the pre-payment cancel cron releases them on the
+        // same schedule it releases reserved plan credits. Anything that fails
+        // AFTER this point must not hand them back — the patient may still pay.
+        uncommittedOrderId = null;
 
         // Clear the cart (items moved to order)
         await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
         await prisma.cart.update({
           where: { id: cart.id },
-          data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
+          data: {
+            countryCode: "",
+            currencyCode: "",
+            abandonedEmailSentAt: null,
+            ...clearedCartBenefitFields(),
+          },
         });
 
         return okResponse({ orderId: order.id, url: session.url, sessionId: session.id });
       } catch (err) {
+        // The order transaction committed before Stripe was called, so a
+        // failure here — a Stripe outage, a network error, a bad config —
+        // leaves allowance units spent against a payment that will never
+        // exist. Compensating release, because the spend's transaction is
+        // long gone and cannot be rolled back (§7).
+        if (uncommittedOrderId) {
+          await releaseOrderMembershipAllowance(uncommittedOrderId).catch((releaseErr) => {
+            app.log.error(
+              { err: releaseErr, orderId: uncommittedOrderId },
+              "Allowance release after failed checkout failed",
+            );
+          });
+        }
+        if (err instanceof MembershipCheckoutError) {
+          return reply.status(400).send(errorResponse(err.message));
+        }
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));
         }
@@ -695,6 +1081,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         orderBy: { createdAt: "desc" },
         include: { items: true, ...orderConsultationsInclude },
       });
+      const consultationCtx = await resolveUnmintedConsultationContext(orders.map((o) => o.items));
       return okResponse({
         items: orders.map((o) => ({
           id: o.id,
@@ -707,7 +1094,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           shippingCents: o.shippingCents,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
-          consultations: buildOrderConsultations(o.orderAppointments),
+          consultations: buildOrderConsultations(o.orderAppointments, o.items, consultationCtx),
           paidAt: o.paidAt?.toISOString() ?? null,
           createdAt: o.createdAt.toISOString(),
         })),
@@ -794,10 +1181,28 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
       try {
         const url = await resolveOrderPaymentUrl(params.data.id);
-        return okResponse({ url: url || null, payable: Boolean(url) });
+        if (url) return okResponse({ url, payable: true, status: "PAYABLE" });
+        // Not payable — tell the caller WHY so the pay page can show the right
+        // message (already paid vs cancelled/expired) instead of a dead link.
+        const order = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          select: { status: true, paymentStatus: true },
+        });
+        let status: "PAID" | "CANCELLED" | "UNAVAILABLE" = "UNAVAILABLE";
+        if (order) {
+          if (order.paymentStatus === "PAID" || order.status === "PAID") status = "PAID";
+          else if (
+            order.status === "CANCELLED" ||
+            order.status === "REFUNDED" ||
+            order.paymentStatus === "REFUNDED"
+          ) {
+            status = "CANCELLED";
+          }
+        }
+        return okResponse({ url: null, payable: false, status });
       } catch (err) {
         app.log.error({ err, orderId: params.data.id }, "pay-url resolve failed");
-        return okResponse({ url: null, payable: false });
+        return okResponse({ url: null, payable: false, status: "UNAVAILABLE" });
       }
     },
   );
@@ -829,6 +1234,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           include: { items: true, ...orderConsultationsInclude },
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
+        const consultationCtx = await resolveUnmintedConsultationContext([order.items]);
         return okResponse({
           id: order.id,
           orderNumber: order.orderNumber,
@@ -863,7 +1269,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             healthTestId: i.healthTestId,
             serviceId: i.serviceId,
           })),
-          consultations: buildOrderConsultations(order.orderAppointments),
+          consultations: buildOrderConsultations(order.orderAppointments, order.items, consultationCtx),
           trackingNumber: order.trackingNumber,
           trackingCarrier: order.trackingCarrier,
           trackingUrl: order.trackingUrl,
@@ -1023,7 +1429,16 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         where: and.length ? { AND: and } : {},
         orderBy: { createdAt: "desc" },
         include: {
-          items: { select: { quantity: true, kind: true } },
+          items: {
+            select: {
+              id: true,
+              quantity: true,
+              kind: true,
+              appointmentId: true,
+              doctorId: true,
+              timeSlotId: true,
+            },
+          },
           invoices: { where: { documentType: { not: "CREDIT_NOTE" } }, select: { id: true }, take: 1 },
           ...orderConsultationsInclude,
         },
@@ -1033,6 +1448,21 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       const hasMore = orders.length > limit;
       const page = hasMore ? orders.slice(0, limit) : orders;
       const nextCursor = hasMore ? page[page.length - 1]?.id ?? null : null;
+      const consultationCtx = await resolveUnmintedConsultationContext(page.map((o) => o.items));
+
+      // First-order star: the earliest order per customer email across ALL
+      // orders (not just this page), so paging doesn't change who gets the
+      // star. `distinct` + `orderBy: createdAt asc` picks one row per email.
+      const pageEmails = [...new Set(page.map((o) => o.email))];
+      const earliestOrders = pageEmails.length
+        ? await prisma.order.findMany({
+            where: { email: { in: pageEmails } },
+            orderBy: { createdAt: "asc" },
+            distinct: ["email"],
+            select: { id: true, email: true },
+          })
+        : [];
+      const firstOrderIdByEmail = new Map(earliestOrders.map((o) => [o.email, o.id]));
 
       const needingMeet = page.filter((o) =>
         orderNeedsAutoMeetLink({
@@ -1076,12 +1506,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           fullName: o.fullName,
           countryCode: o.countryCode,
           currencyCode: o.currencyCode,
+          bookingSource: o.bookingSource,
+          isFirstOrder: firstOrderIdByEmail.get(o.email) === o.id,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
           meetingUrl: meetingUrlById.get(o.id) ?? o.meetingUrl,
           hasConsultation: orderHasConsultationItem(o.items),
           invoiceId: o.invoices[0]?.id ?? null,
-          consultations: buildOrderConsultations(o.orderAppointments),
+          consultations: buildOrderConsultations(o.orderAppointments, o.items, consultationCtx),
           // Suppress the pay link once the order is no longer payable
           // (cancelled / refunded / already paid).
           stripeCheckoutUrl:
@@ -1228,7 +1660,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             appointmentId: i.appointmentId,
           })),
           appointmentIds: order.appointmentIds,
-          consultations: buildOrderConsultations(order.orderAppointments),
+          consultations: buildOrderConsultations(
+            order.orderAppointments,
+            order.items,
+            await resolveUnmintedConsultationContext([order.items]),
+          ),
           meetingUrl,
           trackingNumber: order.trackingNumber,
           trackingCarrier: order.trackingCarrier,
@@ -1384,6 +1820,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             await releaseOrderCreditReservations(orderId).catch((err) => {
               request.log.error({ err, orderId }, "Bulk release order credit reservations failed");
             });
+            await releaseOrderMembershipAllowance(orderId).catch((err) => {
+              request.log.error({ err, orderId }, "Bulk release membership allowance failed");
+            });
           } else if (body.data.status === OrderStatus.FULFILLED) {
             await commitOrderCreditReservations(orderId).catch((err) => {
               request.log.error({ err, orderId }, "Bulk commit order credit reservations failed");
@@ -1472,6 +1911,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         } else if (body.data.status === OrderStatus.CANCELLED) {
           await releaseOrderCreditReservations(order.id).catch((err) => {
             request.log.error({ err, orderId: order.id }, "Release order credit reservations failed");
+          });
+          await releaseOrderMembershipAllowance(order.id).catch((err) => {
+            request.log.error({ err, orderId: order.id }, "Release membership allowance failed");
           });
           // Cancel the order's consultation appointments (releases BOOKED slots
           // and drops the events off the admin + doctor calendars).
@@ -1578,6 +2020,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         await releaseOrderCreditReservations(order.id).catch((err) => {
           request.log.error({ err, orderId: order.id }, "Release order credit reservations on refund failed");
+        });
+        await releaseOrderMembershipAllowance(order.id).catch((err) => {
+          request.log.error({ err, orderId: order.id }, "Release membership allowance on refund failed");
         });
         // Refund also cancels the consultation: cancel the appointments, which
         // releases their BOOKED slots and removes the admin + doctor calendar events.

@@ -12,7 +12,7 @@
  *
  * Covers only the per-country DB fields (PageContent SPECIALIST_CONSULTATION /
  * EN, plus the five specialist Service rows). Deliberately NOT covered here —
- * see the triage doc docs/ireland-specialist-content-brief-triage.md:
+ * see the triage doc docs/plans/content-briefs/ireland-specialist-content-brief-triage.md:
  *   - Paediatric card "250 min" (brief §4.3) — clinical DATA, not copy. The
  *     script DETECTS and warns; it does NOT guess a duration. Fix in CMS after
  *     the clinical team confirms 25 vs 50 min.

@@ -8,11 +8,17 @@ import {
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
 import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
+import { releaseMembershipAllowanceForSlot } from "../modules/memberships/membership-allowance.service.js";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
 import { formatDoctorForPatientNotification } from "../lib/doctor-name.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
+import {
+  holdsMembershipSuperAdminRole,
+  MEMBERSHIP_SUPER_ADMIN_FORBIDDEN,
+  verifyManageMembershipsAccess,
+} from "../utils/manage-memberships-auth.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import {
@@ -32,10 +38,13 @@ import {
   InsuranceNotCoveredError,
   DoctorNotAvailableInCountryError,
   DoctorNotFoundError,
+  MembershipNotAvailableError,
+  MembershipWithInsuranceError,
   ServiceNotFoundError,
   ServicePriceMissingError,
   SlotNotAvailableError,
 } from "../modules/appointments/manual-booking.service.js";
+import { MembershipOverrideError } from "../modules/memberships/membership-override.service.js";
 import {
   adminUpdateAppointment,
   AppointmentNotFoundError,
@@ -107,6 +116,21 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     const actor = resolveAdminSessionActor(request);
     const adminUserId: string | null = actor?.userId ?? null;
 
+    // The goodwill override (§11.7, decision 26) needs a SUPER_ADMIN in a real
+    // session. This route's onRequest hook is plain `verifyAdminAccess`, so the
+    // check lands in the handler rather than on the hook — the rest of the
+    // endpoint stays reachable by every admin tier that takes phone bookings,
+    // and only the escape hatch is raised. `holdsMembershipSuperAdminRole` is
+    // the same rule the allowance adjust uses, reached through the same
+    // `verifyManageMembershipsAccess` — one notion of "admin" across both writes
+    // that hand out money by hand, and the shared master token reaches neither.
+    if (body.data.membership?.override) {
+      const membershipAuth = await verifyManageMembershipsAccess(request);
+      if (!membershipAuth.ok || !holdsMembershipSuperAdminRole(membershipAuth)) {
+        return reply.status(403).send(errorResponse(MEMBERSHIP_SUPER_ADMIN_FORBIDDEN));
+      }
+    }
+
     try {
       const result = await createManualBooking({
         adminUserId,
@@ -123,6 +147,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         insuranceCompanyId: body.data.insuranceCompanyId ?? null,
         insurancePolicyNumber: body.data.insurancePolicyNumber ?? null,
         discountPercent: body.data.discountPercent ?? null,
+        membership: body.data.membership ?? null,
         returnTo: body.data.returnTo,
         request,
       });
@@ -143,8 +168,19 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         // Insurance: doctor outside the insurer's network, or the insurer
         // doesn't cover the service. Same anti-tamper rationale.
         error instanceof DoctorNotInInsuranceNetworkError ||
-        error instanceof InsuranceNotCoveredError
+        error instanceof InsuranceNotCoveredError ||
+        // Membership: not this patient's, not active, wrong country, no rule for
+        // the service, or asked for alongside insurance. Same anti-tamper
+        // rationale — and never downgraded to full price, because the admin
+        // quoted the member price from the options list (§13.2).
+        error instanceof MembershipNotAvailableError ||
+        error instanceof MembershipWithInsuranceError
       ) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      // The benefit row named by an override vanished, went inactive, or does
+      // not govern this service.
+      if (error instanceof MembershipOverrideError) {
         return reply.status(422).send(errorResponse(error.message));
       }
       if (error instanceof ServicePriceMissingError) {
@@ -471,7 +507,9 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     try {
       const before = await prisma.appointment.findUnique({
         where: { id: params.data.id },
-        select: { status: true, doctorId: true, fullName: true },
+        // timeSlotId is read here because the slot release below nulls it, and
+        // it is the only link from this appointment to its order line (§7).
+        select: { status: true, doctorId: true, fullName: true, timeSlotId: true },
       });
       const appointment = await updateAppointmentStatus(params.data.id, body.data.status);
       if (!appointment) {
@@ -486,6 +524,12 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         before &&
         before.status !== "CANCELLED"
       ) {
+        // A membership allowance unit paid for a €0 consultation; cancelling
+        // it must give the unit back (decision 16) — the member consumed
+        // nothing. Idempotent, and a no-op for every non-membership booking.
+        await releaseMembershipAllowanceForSlot(before.timeSlotId).catch((err) => {
+          app.log.warn({ err }, "Allowance release failed on admin cancel");
+        });
         const releasedSlotId = await releaseAppointmentSlot(params.data.id).catch(
           (err) => {
             app.log.warn({ err }, "Slot release failed on admin cancel");

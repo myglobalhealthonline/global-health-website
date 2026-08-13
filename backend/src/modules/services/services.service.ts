@@ -124,21 +124,44 @@ type ServiceDisplayBase = {
 
 type ServiceTranslationRow = ServiceDisplayBase & { locale: LocaleCode };
 
+const SERVICE_DISPLAY_FIELDS = [
+  "name",
+  "summary",
+  "seoTitle",
+  "seoDescription",
+  "heroTitle",
+  "heroDescription",
+  "detailBody",
+  "ctaLabel",
+] as const satisfies readonly (keyof ServiceDisplayBase)[];
+
 /**
  * Merge a service's base display columns with the best translation for the
  * requested locale (requested → default → first → base). Returns the row
  * with display fields overwritten by the resolved values, the raw
  * `translations` array stripped, and the locale that actually resolved.
+ *
+ * `translatedFields` names the display fields the resolved translation row
+ * actually supplied. Everything else fell through to the base columns, which
+ * are authored in the country's default locale — so a consumer rendering a
+ * non-default locale can tell "this value is in my language" from "this value
+ * is the market's own language leaking through the fallback". The public site
+ * uses it to decide indexability and to pick a safe localized <title>.
  */
 function mergeServiceTranslation<
   S extends ServiceDisplayBase & { translations: ServiceTranslationRow[] },
 >(service: S, requested: LocaleCode, defaultLocale: LocaleCode): Omit<S, "translations"> & {
   resolvedLocale: LocaleCode;
+  translatedFields: string[];
 } {
   const { tr, resolvedLocale } = resolveTranslation(service.translations, requested, defaultLocale);
   const { translations: _translations, ...rest } = service;
+  const translatedFields = tr
+    ? SERVICE_DISPLAY_FIELDS.filter((field) => tr[field] != null)
+    : [];
   return {
     ...rest,
+    translatedFields,
     name: tr?.name ?? service.name,
     summary: tr?.summary ?? service.summary,
     seoTitle: tr?.seoTitle ?? service.seoTitle,
@@ -294,6 +317,10 @@ const adminServiceInclude = {
   },
   // Per-locale CMS content for the admin translation tabs (form pre-fill).
   translations: { orderBy: { locale: "asc" as const } },
+  // Named author / clinical reviewer doctor (E-E-A-T) — the admin form's
+  // doctor pickers need name to display the current selection.
+  authorDoctor: { select: { id: true, fullName: true } },
+  reviewerDoctor: { select: { id: true, fullName: true } },
   // Insurance: which active companies cover this service, and the doctor↔insurer
   // network rows. Lets the manual-booking form offer an insurer + narrow the
   // doctor list without extra round-trips (mirrors the public payload).
@@ -897,6 +924,13 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
           detailBody: input.detailBody === null ? null : sanitizeRichHtml(input.detailBody),
         }),
         ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
+        ...(input.lastReviewedAt !== undefined && { lastReviewedAt: input.lastReviewedAt }),
+        ...(input.authorDisplayName !== undefined && { authorDisplayName: input.authorDisplayName }),
+        ...(input.reviewerDisplayName !== undefined && {
+          reviewerDisplayName: input.reviewerDisplayName,
+        }),
+        ...(input.authorDoctorId !== undefined && { authorDoctorId: input.authorDoctorId }),
+        ...(input.reviewerDoctorId !== undefined && { reviewerDoctorId: input.reviewerDoctorId }),
         ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
         ...(input.durationMinutes !== undefined && { durationMinutes: input.durationMinutes }),
@@ -974,6 +1008,13 @@ export async function updateAdminService(
           detailBody: body.detailBody === null ? null : sanitizeRichHtml(body.detailBody),
         }),
         ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
+        ...(body.lastReviewedAt !== undefined && { lastReviewedAt: body.lastReviewedAt }),
+        ...(body.authorDisplayName !== undefined && { authorDisplayName: body.authorDisplayName }),
+        ...(body.reviewerDisplayName !== undefined && {
+          reviewerDisplayName: body.reviewerDisplayName,
+        }),
+        ...(body.authorDoctorId !== undefined && { authorDoctorId: body.authorDoctorId }),
+        ...(body.reviewerDoctorId !== undefined && { reviewerDoctorId: body.reviewerDoctorId }),
         ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
         ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
         ...(body.durationMinutes !== undefined && { durationMinutes: body.durationMinutes }),

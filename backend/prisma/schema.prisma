@@ -91,10 +91,26 @@ enum ConsultationStatus {
   SIGNED
 }
 
+/// SOAP (4 structured sections) vs a single free-text note — some specialities
+/// don't work naturally in SOAP, so the doctor picks per note.
+enum ConsultationNoteFormat {
+  SOAP
+  FREEFORM
+}
+
 /// Author side for internal (doctor ↔ admin) per-appointment notes. Kept
 /// separate from the patient-facing `MessageAuthorRole` so we never mix
 /// the two threads.
 enum InternalMessageAuthorRole {
+  DOCTOR
+  ADMIN
+}
+
+/// Author side of the doctor ↔ support (admin team) thread. Deliberately
+/// separate from `InternalMessageAuthorRole` / `ChatAuthorRole` so the three
+/// threads can never be mixed. SUPER_ADMIN authors stamp as ADMIN here; the
+/// real role is preserved on the AuditLog row.
+enum SupportMessageAuthorRole {
   DOCTOR
   ADMIN
 }
@@ -142,6 +158,15 @@ enum NotificationType {
   // the staff bell or { title, body, href } for the patient bell.
   CROSS_BORDER_RX_REQUESTED
   CROSS_BORDER_RX_UPDATED
+  // Doctor ↔ support (admin team) chat. SUPPORT_MESSAGE notifies every global
+  // admin when a doctor writes in; SUPPORT_REPLY notifies the doctor when an
+  // admin replies. Payload carries { threadId, snippet, byUserName, byRole } —
+  // NOT appointmentId, since this thread isn't appointment-scoped.
+  SUPPORT_MESSAGE
+  SUPPORT_REPLY
+  // A HEALTH_TEST kit order was paid — staff bell. Payload carries a snippet
+  // (customer, kit, address, Memed booking status).
+  HEALTH_TEST_BOOKED
 }
 
 /// Exam lifecycle.
@@ -215,6 +240,16 @@ enum AuditAction {
   DOCTOR_PHOTO_UPDATED
   DOCTOR_PHOTO_REMOVED
   DOCTOR_BANK_VIEWED
+  /// A country director listed every consultation in one of their granted
+  /// markets. Audited like DOCTOR_BANK_VIEWED because it is a cross-doctor
+  /// read of patient names, not a mutation.
+  COUNTRY_CONSULTATIONS_VIEWED
+  /// An admin ran a fiscal/tax-ID search across all patients (S-031). Audited
+  /// like COUNTRY_CONSULTATIONS_VIEWED because it is a cross-patient read, not
+  /// a mutation — the search term itself is never logged, only that a search
+  /// occurred (the medical-access guard is not used here: this is a 200-row
+  /// fan-out search, not a single-resource read).
+  PATIENT_TAX_ID_SEARCHED
   DOCTOR_PROFILE_CHANGE_REQUESTED
   DOCTOR_PROFILE_CHANGE_CANCELLED
   DOCTOR_PROFILE_CHANGE_REVIEWED
@@ -302,6 +337,93 @@ enum AuditAction {
   CROSS_BORDER_RX_REQUESTED
   /// Doctor B accepted / asked for more info / refused a request.
   CROSS_BORDER_RX_DECIDED
+  // --- SÚKL (Czech ePoukaz / eRecept) ---
+  /// An admin ran the SÚKL connection test: certificate validation and, once the
+  /// endpoint is known, a mutual-TLS handshake. Audited because it exercises the
+  /// facility's national-authority credential.
+  SUKL_CONNECTION_TESTED
+  /// A doctor's SÚKL professional identity mapping was created or changed.
+  SUKL_DOCTOR_IDENTITY_UPDATED
+  /// A doctor's SÚKL mapping was revoked, ending their ability to prescribe
+  /// under the facility's workplace code.
+  SUKL_DOCTOR_IDENTITY_REVOKED
+  // --- Doctor ↔ admin support chat ---
+  /// A message was posted to a doctor's support thread, by either side. The
+  /// actor's real role (ADMIN vs SUPER_ADMIN) is recorded here even though the
+  /// message row stamps both as ADMIN.
+  SUPPORT_MESSAGE_POSTED
+  // --- Private membership plans (phase 1 — config only) ---
+  /// Plan/level/benefit configuration needs a real admin session, so every
+  /// write is audited with the actor and a diff of the changed fields.
+  /// Allowance and report-access actions are added by their own phases.
+  MEMBERSHIP_PLAN_CREATED
+  MEMBERSHIP_PLAN_UPDATED
+  MEMBERSHIP_PLAN_DEACTIVATED
+  MEMBERSHIP_LEVEL_CREATED
+  MEMBERSHIP_LEVEL_UPDATED
+  MEMBERSHIP_LEVEL_DELETED
+  MEMBERSHIP_BENEFIT_CREATED
+  MEMBERSHIP_BENEFIT_UPDATED
+  MEMBERSHIP_BENEFIT_DELETED
+
+  // --- Private membership plans (phase 2 — enrollment, linking, import) ---
+  MEMBERSHIP_ENROLLMENT_CREATED
+  MEMBERSHIP_ENROLLMENT_UPDATED
+  MEMBERSHIP_ENROLLMENT_SUSPENDED
+  MEMBERSHIP_ENROLLMENT_REACTIVATED
+  MEMBERSHIP_ENROLLMENT_REMOVED
+  /// Written by the linker, so the actor is the member themselves, not an admin.
+  MEMBERSHIP_ENROLLMENT_LINKED
+  MEMBERSHIP_ENROLLMENT_INVITED
+  MEMBERSHIP_IMPORT_COMMITTED
+  MEMBERSHIP_IMPORT_CANCELLED
+
+  // --- Private membership plans (phase 3 — member portal, claim, card) ---
+  /// Step 1 of the claim, written on EVERY attempt including misses. The
+  /// entity is the attempt itself (`MembershipClaimAttempt`, entityId = the
+  /// submitted membership id, lowercased), not an enrollment — a miss has no
+  /// enrollment to point at, and the probed ids are the signal enumeration
+  /// detection needs (§5.3).
+  MEMBERSHIP_CLAIM_REQUESTED
+  /// Step 2 succeeded: the link sent to the enrolled address was opened by the
+  /// session that asked for it, and the enrollment is now the member's.
+  MEMBERSHIP_CLAIM_CONFIRMED
+  /// Step 2 refused — bad, expired, reused or wrong-session token, or the
+  /// enrollment stopped being claimable in between.
+  MEMBERSHIP_CLAIM_REJECTED
+  MEMBERSHIP_DEPENDENT_ADDED
+  MEMBERSHIP_DEPENDENT_REMOVED
+  /// Staff card lookup. Reads member PII, so it is audited like a report view.
+  MEMBERSHIP_VERIFY_LOOKUP
+  /// SUPER_ADMIN hand-correction of an allowance counter (§7). Metadata carries
+  /// the requested delta AND the applied one — the counter clamps into
+  /// [0, allocated], so the two can differ and the row must say what happened.
+  MEMBERSHIP_ALLOWANCE_ADJUSTED
+  /// SUPER_ADMIN goodwill override on an admin manual booking (§26): a benefit
+  /// the patient is not entitled to, priced by a real benefit row's rule.
+  MEMBERSHIP_BENEFIT_OVERRIDDEN
+  /// Usage report opened (§32). Both the per-plan view and the per-member
+  /// drill-down write one — the latter lists a named member's bookings.
+  MEMBERSHIP_REPORT_VIEWED
+  /// A country was added to a plan's coverage (§26). An admin-visible COST
+  /// event: it grants benefits to every existing member of the plan
+  /// immediately, with no per-member action.
+  MEMBERSHIP_PLAN_COUNTRY_ADDED
+  /// A country was removed from a plan's coverage. New bookings only —
+  /// anything already booked keeps its price (decision 17).
+  MEMBERSHIP_PLAN_COUNTRY_REMOVED
+  /// The card + welcome email went out for an enrollment (decision 41).
+  /// `cardIssuedAt` is the dedupe; this is the trail of when and to whom.
+  MEMBERSHIP_CARD_ISSUED
+  /// A BR doctor issued a prescription/certificate/exam request through
+  /// Memed's e-prescription widget instead of our own DOCX pipeline.
+  MEMED_DOCUMENT_ISSUED
+  /// An eligible member checked out at `benefitSource = NONE`. DIAGNOSTIC ONLY
+  /// — nothing branches on it and no price changes. Without it, "I should have
+  /// got my discount" is unanswerable: the order looks like a full-price
+  /// booking by someone who happens to hold a membership, and there is no
+  /// record of whether they declined or the client never sent a choice.
+  MEMBERSHIP_BENEFIT_DECLINED
   /// Doctor pressed "notify patient" from the consultation room — patient
   /// was emailed/WhatsApp'd that the doctor is ready to see them.
   PATIENT_NOTIFIED_DOCTOR_READY
@@ -446,6 +568,12 @@ model Country {
   /// lists the exams it offers (from the global ExamType catalog) with our
   /// cost + a markup → the patient price. See TestCenter.
   testCenters                 TestCenter[]
+  /// Private membership plans whose PRIMARY country is this one (decision 34).
+  /// Never shown on the public site. See MembershipPlan.
+  membershipPlans             MembershipPlan[]
+  /// Plans that COVER this market, primary or not. A plan reaches a country
+  /// through here, so this is the list to read for "which plans work here".
+  membershipPlanCountries     MembershipPlanCountry[]
   createdAt                   DateTime                     @default(now())
   updatedAt                   DateTime                     @updatedAt
 }
@@ -508,6 +636,10 @@ model Doctor {
   bio                             String?
   seoTitle                        String?
   seoDescription                  String?
+  /// Clinical review date shown on the doctor profile as "Last reviewed"
+  /// (E-E-A-T signal, mirrors Service.lastReviewedAt). Nullable, no
+  /// backfill — set by admins going forward, never auto-populated.
+  lastReviewedAt                  DateTime?
   // Phase 2: imcRegistration removed. Per-country registration lives on
   // DoctorCountry.registrationNumber. Public payload computes the
   // display value via `overrideImcRegistrationFromCountry`.
@@ -537,6 +669,9 @@ model Doctor {
   profileChangeRequests           DoctorProfileChangeRequest[]
   /// Inverse of `User.doctorId`. When set, that User logs in as this doctor.
   loginUser                       User?                            @relation("DoctorUserLink")
+  /// The doctor's standing support conversation with the admin team. Created
+  /// lazily on first visit to /doctor/support.
+  supportThread                   SupportThread?                   @relation("DoctorSupportThread")
   /// Inverse of `Appointment.doctorId`. Populated when admin assigns
   /// the doctor on the scheduling form.
   appointments                    Appointment[]                    @relation("AppointmentDoctor")
@@ -550,6 +685,9 @@ model Doctor {
   availabilities                  DoctorAvailability[]
   /// Generated bookable slots. Booking flow claims one atomically.
   timeSlots                       DoctorTimeSlot[]
+  /// One-off "this date only" holes punched in the recurring windows so an
+  /// admin-removed slot isn't regenerated. See DoctorAvailabilityException.
+  availabilityExceptions          DoctorAvailabilityException[]
   /// Inverse of `Consultation.doctorId`. Populated when the doctor
   /// starts a consult on one of their assigned appointments.
   consultations                   Consultation[]
@@ -574,6 +712,13 @@ model Doctor {
   /// who may FULFIL such a request is the `crossBorderRx*` config below.
   /// Default false so existing doctors keep current scope until an admin grants it.
   canRequestCrossJurisdictionRx   Boolean                          @default(false)
+  /// Per-doctor RBAC: this doctor is a country director and may view every
+  /// consultation booked in the markets flagged on their DoctorCountry rows
+  /// (`DoctorCountry.directorAccess`). Master switch — false means no
+  /// country-wide access at all, even if child rows are flagged, mirroring how
+  /// `crossBorderRxEnabled` gates `crossBorderRxCountries`. Grants a read-only,
+  /// money-free consultation list; admin bypasses via role=ADMIN. Default false.
+  isCountryDirector               Boolean                          @default(false)
   /// Review destination for this doctor's completed consultations.
   /// false (default) — the patient gets our own 7-dimension form at
   ///   /reviews/rate, sent immediately on completion. Unchanged behaviour.
@@ -614,6 +759,11 @@ model Doctor {
   /// Article author/reviewedBy Physician schema for E-E-A-T.
   authoredBlogPosts               BlogPost[]                       @relation("BlogAuthorDoctor")
   reviewedBlogPosts               BlogPost[]                       @relation("BlogReviewerDoctor")
+  /// Services where this doctor is the named author / clinical reviewer
+  /// (inverse of Service.authorDoctorId / reviewerDoctorId). Same E-E-A-T
+  /// pattern as the blog relations above, applied to service pages (§3.3).
+  authoredServices                 Service[]                        @relation("ServiceAuthorDoctor")
+  reviewedServices                 Service[]                        @relation("ServiceReviewerDoctor")
   /// Medical notes this doctor has authored on patient appointments.
   authoredMedicalNotes            MedicalNote[]                    @relation("MedicalNoteAuthor")
   confidentialityAgreements       DoctorConfidentialityAgreement[]
@@ -787,6 +937,13 @@ model DoctorTimeSlot {
   status      DoctorSlotStatus @default(OPEN)
   /// Optional reason when status = BLOCKED. Free-text, admin-only.
   blockReason String?
+  /// True for a slot an admin created by hand for one specific date, rather
+  /// than one derived from a `DoctorAvailability` window. Two consequences:
+  /// the generators never re-create it (nothing to derive it from), and the
+  /// "window changed → drop stale future OPEN slots" sweeps skip it. Without
+  /// the flag, editing any weekly window would silently delete every one-off
+  /// slot the admin had added.
+  isAdHoc     Boolean          @default(false)
   doctor      Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   /// One slot ↔ at most one appointment. Set via `Appointment.timeSlotId`.
   appointment Appointment?     @relation("AppointmentSlot")
@@ -795,6 +952,37 @@ model DoctorTimeSlot {
 
   @@unique([doctorId, startAt])
   @@index([doctorId, startAt, status])
+}
+
+/// A single-date hole in a doctor's recurring availability — the tombstone that
+/// makes "remove this slot" stick.
+///
+/// `DoctorTimeSlot` rows are derived from `DoctorAvailability` windows and
+/// re-materialised on every availability read (`ensureSlotsForRange`), so
+/// deleting a slot row on its own does nothing durable: the next patient or
+/// admin read regenerates it. Both generators skip any candidate whose span
+/// overlaps an exception row, so removing "this Tuesday 11:00" leaves the
+/// weekly Tuesday window itself untouched and every other Tuesday still
+/// generates normally.
+///
+/// Distinct from status = BLOCKED: a blocked slot still exists and shows red on
+/// the calendar; an exception means the slot is gone from that date entirely.
+model DoctorAvailabilityException {
+  id        String   @id @default(cuid())
+  doctorId  String
+  /// UTC span the generators must not fill — mirrors the removed slot's own
+  /// `startAt`/`endAt`, so it also covers a longer service-duration candidate
+  /// that would have started inside the removed span.
+  startAt   DateTime
+  endAt     DateTime
+  /// Optional admin note ("clinic closed", "double-booked in error").
+  reason    String?
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  /// Removing the same slot twice is a no-op, not a duplicate row.
+  @@unique([doctorId, startAt])
+  @@index([doctorId, startAt])
 }
 
 /// Join row letting one Doctor profile appear on multiple country rosters.
@@ -827,6 +1015,17 @@ model DoctorCountry {
   /// don't accidentally issue Rx under an unconfirmed credential.
   isVerified           Boolean                    @default(false)
   verifiedAt           DateTime?
+  /// Memed's own prescriber id for this doctor+country, once registered
+  /// (lazy-provisioned on first widget session request — see
+  /// lib/memed/prescription-client.ts ensurePrescriber). BR only in
+  /// practice; null everywhere else and until Memed credentials arrive.
+  memedPrescriberId    String?
+  /// Country-director grant for THIS market. When true AND
+  /// `Doctor.isCountryDirector`, the doctor may view every consultation booked
+  /// in this country, across all doctors. Read-only and money-free — see
+  /// /api/doctor/country-consultations. Untick the market in the admin profile
+  /// form and the row is dropped, which correctly revokes the directorship.
+  directorAccess       Boolean                    @default(false)
   doctor               Doctor                     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   country              Country                    @relation(fields: [countryId], references: [id], onDelete: Cascade)
   translations         DoctorMarketTranslation[]
@@ -842,6 +1041,7 @@ model DoctorCountry {
   @@unique([doctorId, countryId])
   @@index([countryId, active])
   @@index([countryId, isVerified])
+  @@index([countryId, directorAccess])
   @@index([doctorId])
 }
 
@@ -1023,6 +1223,18 @@ model Service {
   /// Clinical review date shown on the service page as "Last reviewed"
   /// (E-E-A-T signal). Nullable, no backfill — set by admins going forward.
   lastReviewedAt           DateTime?
+  /// Named author / clinical reviewer for THIS service's content — mirrors
+  /// BlogPost's authorDisplayName/reviewerDisplayName/authorDoctorId/
+  /// reviewerDoctorId shape. Free-text display names are the fallback when
+  /// no doctor is linked; linking a real Doctor drives the public Physician
+  /// author/reviewedBy JSON-LD (E-E-A-T / AI-search citation), same as the
+  /// Article schema already does for blog posts. Ships empty everywhere —
+  /// no doctor is auto-assigned; a clinician review is a deliberate,
+  /// per-service editorial action, not a migration default.
+  authorDisplayName        String?
+  reviewerDisplayName      String?
+  authorDoctorId           String?
+  reviewerDoctorId         String?
   /// Who may see/book this service. PUBLIC keeps today's behaviour.
   /// CORPORATE_ONLY = corporate employee onboarding (pre-assessment);
   /// CORPORATE_REQUEST_ONLY = bookable only against an open
@@ -1036,6 +1248,8 @@ model Service {
   consultationSetting      Json?
   bookingSetting           Json?
   country                  Country                        @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  authorDoctor              Doctor?                       @relation("ServiceAuthorDoctor", fields: [authorDoctorId], references: [id], onDelete: SetNull)
+  reviewerDoctor            Doctor?                       @relation("ServiceReviewerDoctor", fields: [reviewerDoctorId], references: [id], onDelete: SetNull)
   assets                   Asset[]
   /// Inverse of `ServiceDoctor.serviceId`. Admin-controlled M:N — which
   /// doctors are bookable for this service.
@@ -1070,6 +1284,9 @@ model Service {
   targetLinks              ServiceLink[]                  @relation("TargetLinks")
   /// Subscription plan rules that reference this service (§20).
   planConsultationRules    PlanConsultationRule[]
+  /// Private-membership benefit rows pinned to this exact service (rare —
+  /// most rows target a ServiceKind). See MembershipBenefit.
+  membershipBenefits       MembershipBenefit[]
   /// Corporate benefit rules pinned to this exact service (rare — most
   /// rules match by kind).
   corporateBenefitRules    CorporateBenefitRule[]
@@ -1559,6 +1776,8 @@ model HealthTest {
   /// Appointments where the patient picked this specific health test
   /// at booking (`?service=<healthTestSlug>` matched a row here).
   appointments       Appointment[]
+  /// Paid-order lines for this kit — drives the Memed auto-booking hook.
+  orderItems         OrderItem[]
   /// Per-locale CMS content (title, descriptions, SEO, detail copy). The
   /// base columns above stay as the default-locale copy + final fallback;
   /// a translation row overrides them for a given locale. Operational
@@ -1931,12 +2150,28 @@ model Appointment {
   consultationCompletedAt        DateTime?
   /// Doctor can re-open the consultation chat after the 24h window.
   chatReopenedByDoctor           Boolean                   @default(false)
+  /// Throttle stamp for the patient→admin (clinic thread) email/WhatsApp
+  /// alert — consecutive patient messages inside the throttle window don't
+  /// re-fan-out. Claimed via conditional updateMany (see
+  /// patient-message-alert.service.ts), same pattern as SupportThread.lastAdminEmailAt.
+  lastPatientMsgAdminAlertAt     DateTime?
+  /// Same throttle, patient→doctor consultation chat thread.
+  lastPatientMsgDoctorAlertAt    DateTime?
   /// Legacy doctor-dashboard finalize workflow.
   finalized                      Boolean                   @default(false)
   notesUploaded                  Boolean                   @default(false)
   filesUploaded                  Boolean                   @default(false)
   manualEntry                    Boolean                   @default(false)
+  /// Provenance icon on the admin dashboard / appointments list — see
+  /// BookingSource doc comment. Set alongside `manualEntry` at creation time.
+  bookingSource                  BookingSource             @default(WEBSITE)
   pharmacy                       String?
+  /// Health / tax identifier valid in THIS appointment's country (PPS in IE,
+  /// NIF in PT, ...). Populated for cross-border prescriptions, where the
+  /// patient's chart id belongs to their home country and must not be printed
+  /// under a local label. Null everywhere else — the chart id is used then.
+  /// AES-256-GCM encrypted (`phi:v1:` envelope).
+  patientHealthIdNumber          String?
   symptoms                       String?
   formResponses                  Json?
   generatedDocuments             GeneratedDocument[]
@@ -2208,6 +2443,13 @@ model GeneratedDocument {
   uploadTokenExpiresAt DateTime?
   /// Unique public ID for certificate verification. CUSTOM_CERTIFICATE only.
   certificateId        String?               @unique
+  /// Set when this document was issued through Memed's e-prescription widget
+  /// (BR doctors) instead of our own DOCX/HTML render pipeline. The PDF is
+  /// still mirrored into our own object storage (storageKey) so download/
+  /// email/WhatsApp sending work unchanged; these two just record where the
+  /// legally-signed original lives.
+  memedDocumentId      String?               @unique
+  memedUrl             String?
   appointment          Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   doctor               Doctor                @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   createdAt            DateTime              @default(now())
@@ -2382,6 +2624,16 @@ enum CartItemKind {
   LAB_EXAM
 }
 
+/// How a booking/order was created. WEBSITE = self-service checkout
+/// (default). MANUAL = admin console phone/walk-in booking
+/// (manual-booking.service.ts, origin.source "admin_manual"). AI_CALL =
+/// the AI phone agent's partner-API booking (origin.source "partner_api").
+enum BookingSource {
+  WEBSITE
+  MANUAL
+  AI_CALL
+}
+
 enum OrderStatus {
   PENDING
   PAID
@@ -2393,6 +2645,9 @@ enum OrderStatus {
 enum PrePaymentFlow {
   WITHIN_48H
   OUTSIDE_48H
+  /// Website self-serve checkout: 15-minute pay window, a single abandonment
+  /// message at T-10min, then cancel. No hours-before-consultation ladder.
+  WEB_CHECKOUT
 }
 
 enum AutomationRunStatus {
@@ -2414,10 +2669,40 @@ model Cart {
   /// Stamped when the abandoned-cart reminder has been emailed.
   /// Prevents re-sending. Cleared on checkout / cart-clear.
   abandonedEmailSentAt DateTime?
+  /// Cart-level benefit choice (§25). One source per cart, so benefits can
+  /// never stack. UNSET until the benefit step runs — see `CartBenefitSource`.
+  benefitSource        CartBenefitSource @default(UNSET)
+  /// Which enrollment the patient chose, when `benefitSource = MEMBERSHIP`.
+  /// Display-only: checkout re-resolves it and re-checks ownership (§13.2).
+  membershipEnrollmentId String?
+  membershipEnrollment   MembershipEnrollment? @relation(fields: [membershipEnrollmentId], references: [id], onDelete: SetNull)
+  /// Decision 44: the member deliberately declined the allowance unit and wants
+  /// the booking country's own percent/fixed rule instead. Per CART, matching
+  /// decision 25 — one benefit choice applied to every eligible line. `false`
+  /// is "take the unit", which is also where cheapest-first pre-selection
+  /// lands. Checkout reads this as WHICH RULE, never as a price.
+  membershipDeclineUnit  Boolean    @default(false)
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
 
   @@index([updatedAt, abandonedEmailSentAt])
+}
+
+/// Which benefit engine prices a cart (§3.7). Exactly one may run per order,
+/// which is what makes "benefits never stack" structural rather than a rule
+/// someone has to remember.
+///
+/// UNSET vs NONE is the load-bearing distinction: UNSET means the patient has
+/// not reached the benefit step yet, NONE means they got there and declined.
+/// Only NONE suppresses corporate's automatic discount — treating UNSET as a
+/// refusal would silently drop the discount corporate members get today.
+enum CartBenefitSource {
+  NONE
+  UNSET
+  MEMBERSHIP
+  CORPORATE
+  PUBLIC_PLAN
+  INSURANCE
 }
 
 /// Per-consultation-line benefit choice (§ appointment-claim). PAY_NORMAL is the
@@ -2485,6 +2770,9 @@ model CartItem {
   /// asking again at checkout. Mirrors the new Appointment columns added
   /// in the same migration. Nullable for product items.
   patientNationalIdNumber           String?
+  /// Alternative to `patientNationalIdNumber` — Brazil requires ONE of
+  /// CPF/passport. Plaintext here, encrypted when copied to PatientProfile.
+  patientPassportNumber             String?
   /// PT-only Número de Utente captured at add-to-cart. Stored plaintext
   /// here (like `patientNationalIdNumber`); it is encrypted when the
   /// payment webhook copies it onto the PatientProfile.
@@ -2556,6 +2844,10 @@ model Order {
   doctorPayoutTotalCents        Int?
   status                        OrderStatus           @default(PENDING)
   paymentStatus                 PaymentStatus         @default(UNPAID)
+  /// Provenance of the booking — see BookingSource doc comment. Set at
+  /// creation time by manual-booking.service.ts / partner-booking.service.ts;
+  /// self-service checkout (orders.route.ts) leaves the WEBSITE default.
+  bookingSource                 BookingSource         @default(WEBSITE)
   /// Insurance card manual-verification state. Null = ordinary (non-insurance)
   /// order. PENDING = booked with insurance, awaiting admin card verification
   /// (no Stripe session yet, slot reserved). VERIFIED = admin confirmed the
@@ -2613,6 +2905,9 @@ model Order {
   /// Fiscal documents for this order (empty for Portugal / pre-invoice orders).
   /// Normally one invoice/receipt, plus a CREDIT_NOTE if the order was refunded.
   invoices                      Invoice[]
+  /// MEMED hand-off record, if one was ever attempted. Nothing in this repo
+  /// reads or writes it — see the MemedBooking model for why it is here.
+  memedBooking                  MemedBooking?
   /// Set ONLY on synthetic subscription orders minted for a corporate
   /// company's offline annual billing (admin-generated invoice/receipt/
   /// credit note in the corporate Invoices tab). Null on every ordinary
@@ -2647,6 +2942,40 @@ model Order {
   /// postPaymentStage as the leading equality condition.
   @@index([paymentStatus, postPaymentStage], map: "Order_paymentStatus_postPaymentStage_idx")
   @@index([corporateCompanyId])
+}
+
+/// Outbound hand-off record for MEMED, the Brazilian e-prescription platform:
+/// one row per Order, a status, the provider's reference, a response snapshot
+/// and an error field.
+///
+/// **Nothing in this repo reads or writes it, and this model exists only so
+/// that `prisma migrate diff` stops proposing `DROP TABLE "MemedBooking"`.**
+/// The table was created in production on 2026-08-07 by migration
+/// `20260808120000_memed_booking`, which exists in no git ref and could not be
+/// reconstructed (Prisma checksums applied migrations, so hand-written SQL
+/// producing an identical schema still breaks every later `migrate deploy`).
+/// With no model here, production's table read as drift, and a `DROP TABLE`
+/// for a name nobody recognises survives review as legitimate cleanup — that
+/// is the failure this model prevents. Modelled to match production exactly.
+///
+/// Full account: `docs/guides/orphan-migration-memed-booking.md`. Do not
+/// delete this model without also deciding what happens to the table.
+model MemedBooking {
+  id               String    @id
+  orderId          String    @unique
+  order            Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status           String    @default("PENDING")
+  memedReferenceId String?
+  responseSnapshot Json?
+  error            String?
+  requestedAt      DateTime  @default(now())
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  /// `@default(now())` alongside `@updatedAt` because production's column
+  /// carries `DEFAULT CURRENT_TIMESTAMP`; without it the schema drifts again.
+  updatedAt        DateTime  @default(now()) @updatedAt
+
+  @@index([status, createdAt])
 }
 
 /// Relational join between Order and Appointment (code review 2026-07-05,
@@ -2696,6 +3025,7 @@ model OrderItem {
   order                             Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
   kind                              CartItemKind
   healthTestId                      String?
+  healthTest                        HealthTest?      @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
   serviceId                         String?
   /// Snapshot — independent of source row deletion.
   name                              String
@@ -2726,6 +3056,39 @@ model OrderItem {
   /// which company, for reconciliation).
   corporateDiscountCents            Int?
   corporateCompanyId                String?
+  /// Private-membership audit trail — set when the membership engine priced
+  /// this line (§3.7). `unitPriceCents` is ALREADY the member price; these
+  /// record how it got there. Bare ids like `corporateCompanyId`, no relation.
+  membershipEnrollmentId            String?
+  /// The GOVERNING row — the one for the BOOKING's country — never the pool
+  /// row (§21.5b). Under phase 7's shared pool those differ for any allowance
+  /// line outside the plan's primary country, and both readings look plausible.
+  /// This one wins because §23's per-country split and the two override CHECKs
+  /// below both read this column, while the ledger already reaches the pool
+  /// through `balanceId`. Silently wrong either way — nothing catches it.
+  membershipBenefitId               String?
+  membershipDiscountCents           Int?
+  /// True when an allowance unit paid for this line (unit price is then 0).
+  /// Reporting separates allowance usage from discounted usage on this.
+  membershipAllowanceUsed           Boolean          @default(false)
+  /// The SUPER_ADMIN's written reason when this line was priced by the §26
+  /// goodwill override — a benefit the patient is not entitled to, applied by
+  /// hand on an admin manual booking. Non-null IS the override flag and the
+  /// SOLE discriminator: reporting splits goodwill from real usage on this
+  /// column alone, never by inferring it from a missing id.
+  ///
+  /// `membershipEnrollmentId` is still set whenever the patient holds an
+  /// enrollment — expired, suspended or allowance-exhausted included, which are
+  /// the common override cases — because dropping it would discard the
+  /// attribution per-member reporting needs. It is null only for a goodwill
+  /// grant to someone with no membership at all.
+  ///
+  /// Two CHECK constraints enforce the rest (migration
+  /// 20260807220200, invisible to `migrate diff` — keep them): a reason implies
+  /// `membershipBenefitId` (a real benefit row governed the price, so it is
+  /// reproducible) and implies `membershipAllowanceUsed = false` (goodwill is
+  /// our cost, not the partner's consumption).
+  membershipOverrideReason          String?
   /// Approved dependent this order line was booked for (Premium family
   /// usage). Copied from the CartItem at checkout for audit + portal.
   familyMemberId                    String?
@@ -2735,6 +3098,7 @@ model OrderItem {
   /// with the right timezone, address, ID number, and dual GDPR consent
   /// even when the booking is for someone other than the payer.
   patientNationalIdNumber           String?
+  patientPassportNumber             String?
   patientUtenteNumber               String?
   patientTimezone                   String?
   patientAddressLine1               String?
@@ -2861,7 +3225,7 @@ model User {
   /// UI language the user last explicitly chose while authenticated
   /// (LanguageSwitcher). Nullable — most users never override it. Seeds
   /// the `gh_locale` cookie on login when that cookie is absent (Phase 3
-  /// of docs/LOCALE_INVESTIGATION_2026-07-16.md); never itself read by
+  /// of docs/i18n/locale-investigation-2026-07-16.md); never itself read by
   /// resolveLocale() directly.
   preferredLocale              LocaleCode?
   emailVerifiedAt              DateTime?
@@ -2889,6 +3253,11 @@ model User {
   /// messages live on `Message.authorUserId` which is unrelated to
   /// this relation name.
   internalMessages             InternalMessage[]            @relation("InternalMessageAuthor")
+  /// Support-chat messages this user authored (doctor ↔ admin team thread).
+  /// Distinct from `internalMessages`, which is per-appointment.
+  supportMessages              SupportMessage[]             @relation("SupportMessageAuthor")
+  /// This admin's per-thread read cursors for the doctor support inbox.
+  supportThreadReads           SupportThreadRead[]          @relation("SupportThreadReader")
   /// Doctor portal notifications routed to this user.
   notifications                Notification[]
   /// Share links this user created (signed consultation URLs etc.).
@@ -2937,6 +3306,15 @@ model User {
   corporateCompanyAdmin        CorporateCompany?            @relation("CorporateCompanyAdmin")
   corporateEmployees           CorporateEmployee[]
   corporateBeneficiaries       CorporateBeneficiary[]
+  /// Private membership enrollments linked to this account. Linking happens
+  /// on email verification and requires `emailVerifiedAt` — a bare email
+  /// match is not proof of mailbox ownership (§5.2). One person may hold
+  /// several memberships (§19). See MembershipEnrollment.
+  membershipEnrollments        MembershipEnrollment[]
+  /// Outstanding claim confirmations this account has requested (§5.3). The
+  /// link is emailed to the ENROLLED address; this side records who asked, so
+  /// only that session can complete the claim.
+  membershipClaimTokens        MembershipClaimToken[]
   createdAt                    DateTime                     @default(now())
   updatedAt                    DateTime                     @updatedAt
 }
@@ -3077,6 +3455,11 @@ model BlogTranslation {
   content   String?
   seoTitle  String?
   seoDesc   String?
+  /// Alt text for the post's cover image, in THIS locale. The image itself is
+  /// shared across every locale (BlogPost.coverAssetId), but its description
+  /// is prose and has to be read in the language of the page around it.
+  /// Falls back to Asset.altText, then to the displayed title.
+  coverImageAlt String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -3345,6 +3728,11 @@ model Consultation {
   assessment     String?
   /// SOAP: Plan — prescriptions, follow-up, referrals.
   plan           String?
+  /// Whether this note is written as structured SOAP (the 4 fields above) or
+  /// as a single free-text note (below) — doctor's choice, per note.
+  noteFormat     ConsultationNoteFormat @default(SOAP)
+  /// Free-text note body, used only when `noteFormat` is FREEFORM.
+  note           String?
   status         ConsultationStatus    @default(DRAFT)
   signedAt       DateTime?
   appointment    Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
@@ -3466,6 +3854,10 @@ model CrossBorderPrescriptionRequest {
   sourceObjective      String?
   sourceAssessment     String?
   sourcePlan           String?
+  /// Snapshot of the source note's format + free-text body, when the treating
+  /// doctor wrote a single note instead of SOAP.
+  sourceNoteFormat     ConsultationNoteFormat @default(SOAP)
+  sourceNote           String?
   /// Patient consent to disclose the SOAP snapshot to the prescribing doctor.
   /// The raw token only ever lives in the consent link emailed to the patient;
   /// we store its SHA-256 hash (same pattern as ShareLink / MedicalAccessRequest).
@@ -3477,6 +3869,17 @@ model CrossBorderPrescriptionRequest {
   /// confirmed address). Applied to the async Appointment when it's minted so
   /// the prescribing doctor + prescription have the right pharmacy + address.
   pharmacyName             String?
+  /// Health / tax identifier for the TARGET country (PPS in IE, NIF in PT,
+  /// CPF in BR, ...), asked at the payment step. The chart's `taxIdNumber` is
+  /// the patient's HOME-country id, so it must never be printed under a
+  /// foreign label — this is the only value the prescription may use.
+  /// Optional: patients without one still get a prescription, with no id line.
+  /// AES-256-GCM encrypted (`phi:v1:` envelope, same as PatientProfile ids).
+  patientHealthIdNumber    String?
+  /// Passport number, collected as the alternative to `patientHealthIdNumber`
+  /// for target countries that require ONE of the two (Brazil: CPF or
+  /// passport). AES-256-GCM encrypted, same envelope.
+  patientPassportNumber    String?
   patientAddressLine1      String?
   patientAddressLine2      String?
   patientAddressCity       String?
@@ -3494,6 +3897,10 @@ model CrossBorderPrescriptionRequest {
   /// Timestamps for the terminal transitions (audit/reporting convenience).
   paidAt               DateTime?
   decidedAt            DateTime?
+  /// Set when Doctor B finalises the prescription document. Guards the
+  /// patient + Doctor A "prescription sent" notifications so they fire exactly
+  /// once even if several documents are finalised.
+  finalisedAt          DateTime?
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
 
@@ -3735,6 +4142,77 @@ model ConsultationMessage {
   createdAt     DateTime       @default(now())
 
   @@index([appointmentId, createdAt])
+}
+
+/// One support conversation per doctor, shared by the whole admin team.
+///
+/// Deliberately NOT appointment-scoped — that's `InternalMessage`. This is the
+/// doctor's standing line to operations ("my payout looks wrong", "I can't set
+/// availability"), so it has no appointment to hang off.
+model SupportThread {
+  id               String                    @id @default(cuid())
+  doctorId         String                    @unique
+  doctor           Doctor                    @relation("DoctorSupportThread", fields: [doctorId], references: [id], onDelete: Cascade)
+  /// Denormalised so the admin inbox can order threads without a correlated
+  /// subquery per row.
+  lastMessageAt    DateTime?
+  lastMessageRole  SupportMessageAuthorRole?
+  /// Throttle stamp for the "doctor has sent a text" admin email fan-out.
+  /// Claimed atomically (conditional updateMany) before each send, and reset
+  /// to null when an admin replies so the next doctor message alerts at once.
+  lastAdminEmailAt DateTime?
+  messages         SupportMessage[]
+  readStates       SupportThreadRead[]
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+
+  @@index([lastMessageAt])
+}
+
+/// One message in a doctor's support thread. `body` is nullable so a message
+/// can be attachment-only (same shape as `ConsultationMessage`); the route
+/// rejects rows carrying neither body nor storageKey.
+model SupportMessage {
+  id           String                   @id @default(cuid())
+  threadId     String
+  thread       SupportThread            @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  authorRole   SupportMessageAuthorRole
+  /// Null only if the author account is later deleted. Required on ADMIN rows
+  /// so the UI can name the replying admin — and so the viewing admin's own
+  /// replies can render as "Me".
+  authorUserId String?
+  author       User?                    @relation("SupportMessageAuthor", fields: [authorUserId], references: [id], onDelete: SetNull)
+  body         String?
+  /// Object-storage key for an attached file. Null when text-only.
+  storageKey   String?
+  fileName     String?
+  mimeType     String?
+  byteSize     Int?
+  /// Doctor-side read flag, meaningful only on ADMIN-authored rows. The doctor
+  /// is a single reader, so a boolean suffices on this side; the admin side
+  /// needs `SupportThreadRead` instead.
+  readByDoctor Boolean                  @default(false)
+  createdAt    DateTime                 @default(now())
+
+  @@index([threadId, createdAt])
+  @@index([threadId, authorRole, readByDoctor])
+}
+
+/// Per-admin read cursor. The admin side of a support thread has N readers, so
+/// read state can't live on the message row — that limitation is why
+/// `InternalMessage` has to derive "unread" from Notification rows
+/// (internal-messages.route.ts). A cursor keeps the badge exact and
+/// independent of the bell.
+model SupportThreadRead {
+  id          String        @id @default(cuid())
+  threadId    String
+  adminUserId String
+  lastReadAt  DateTime
+  thread      SupportThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  admin       User          @relation("SupportThreadReader", fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, adminUserId])
+  @@index([adminUserId])
 }
 
 /// Per-service FAQ entries managed by admin. Distinct from the global country-scoped Faq model
@@ -5209,7 +5687,7 @@ enum LabRequisitionStatus {
 ///
 /// Deliberately NOT modelled as a booking: the WebLIMS Remote API has no slots
 /// and no appointment times — the patient walks into a collection point. See
-/// `docs/synlab/synlab-integration-questions.md` for the protocol and the open
+/// `docs/guides/synlab-integration-questions.md` for the protocol and the open
 /// questions with the laboratory.
 ///
 /// Most foreign keys here are plain id columns rather than Prisma relations,
@@ -5346,4 +5824,581 @@ model LabResultFile {
   @@index([matchStatus, receivedAt])
   @@index([requisitionId])
   @@index([patientIdBlindIndex])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SÚKL — Czech ePoukaz / eRecept integration
+//
+// Authentication to SÚKL is mutual TLS with a WORKPLACE communication
+// certificate issued to the legal entity, which SÚKL confirmed is sufficient —
+// no doctor personal qualified signature. Consequently NOTHING here stores key
+// material, a national personal identifier (rodné číslo), or a personal signing
+// certificate. Only the certificate's public metadata and the doctor's
+// professional identifiers are persisted.
+//
+// The ePoukaz voucher table is deliberately absent: its columns (identifier
+// format, status enumeration, validity fields) are dictated by the ePoukaz XSD,
+// which has not been supplied yet. Inventing them now would guarantee a
+// rewrite. See docs/sukl/INTERFACE_INVENTORY.md.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Health of the facility's SÚKL connection. TEST_ONLY until SÚKL grants
+/// production permissions; DISABLED is the explicit off switch.
+enum SuklIntegrationStatus {
+  NOT_CONFIGURED
+  TEST_ONLY
+  ACTIVE
+  ERROR
+  DISABLED
+}
+
+/// A doctor's mapping to SÚKL. UNVERIFIED until a SÚKL call has actually
+/// succeeded under that identifier — we never assume a pasted code is real.
+enum SuklDoctorIdentityStatus {
+  UNVERIFIED
+  VERIFIED
+  REJECTED
+  REVOKED
+}
+
+/// One workplace's SÚKL connection, plus the observed state of the certificate
+/// it authenticates with.
+///
+/// This row is a mirror, not a source of truth: the certificate itself lives in
+/// SUKL_TEST_PFX_BASE64 / SUKL_TEST_PFX_PATH and is refreshed here by the
+/// expiry-monitor job. `secretReference` records WHICH environment variable
+/// holds it — never the value.
+///
+/// One row per (environment, workplaceCode), so a test and a future production
+/// registration for the same workplace coexist without either overwriting the
+/// other's status.
+model SuklFacilityIntegration {
+  id            String @id @default(cuid())
+  /// Lowercase app country code. "cz" for every row today; present so the table
+  /// does not have to be renamed if another national eRecept system is added.
+  countryCode   String @default("cz")
+  /// "test" | "production", mirroring SUKL_ENVIRONMENT. Part of the unique key
+  /// precisely so a test row can never be mistaken for a production one.
+  environment   String
+  /// IČO of the legal entity (Global Guest s.r.o. = 19071680). 8 digits.
+  ico           String
+  /// Workplace code assigned by SÚKL.
+  workplaceCode String
+  /// e.g. "AMBULANCE". Determines which SÚKL operations are permitted to us, so
+  /// it is recorded rather than assumed.
+  workplaceType String @default("AMBULANCE")
+
+  // ─── Certificate mirror (public metadata only) ─────────────────────────────
+  /// Full SHA-256 fingerprint. Only its last 8 characters are ever returned by
+  /// the API; the whole value stays server-side for rotation comparisons.
+  certificateFingerprint String?
+  certificateSubject     String?
+  certificateIssuer      String?
+  certificateExpiresAt   DateTime?
+  /// Which env var supplied the certificate: "SUKL_TEST_PFX_BASE64" or
+  /// "SUKL_TEST_PFX_PATH". A NAME, never a value, never a filesystem path.
+  secretReference        String?
+
+  status              SuklIntegrationStatus @default(NOT_CONFIGURED)
+  /// Last time a TLS handshake with SÚKL actually succeeded.
+  lastConnectionAt    DateTime?
+  /// Normalised code from lib/sukl/errors.ts, e.g. SUKL_TLS_HANDSHAKE_FAILED.
+  lastErrorCode       String?
+  /// Redacted message that accompanied `lastErrorCode`. Safe to show an admin.
+  lastErrorMessage    String?
+  lastErrorAt         DateTime?
+  /// Highest expiry threshold already alerted on (60/30/14/7), so the ops alert
+  /// fires once per band instead of daily.
+  lastExpiryAlertDays Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([environment, workplaceCode])
+  @@index([countryCode, status])
+}
+
+/// Links a platform doctor to their SÚKL professional identity for one
+/// environment.
+///
+/// `doctorUserId` is a plain id column, not a relation: this is an audit record
+/// of a registration with a national authority and must outlive an account
+/// deletion. Explicitly NOT stored — the doctor's rodné číslo, their national
+/// identity key, or any personal signing certificate. Those are forbidden by
+/// the integration's security model and are not needed, because authentication
+/// runs on the facility certificate.
+model SuklDoctorIdentity {
+  id                         String  @id @default(cuid())
+  doctorUserId               String
+  /// Doctor.id when the practitioner also has a public profile row.
+  doctorId                   String?
+  environment                String
+  /// SÚKL's identifier for the prescriber. Format unconfirmed — SÚKL has not
+  /// yet told us whether this is an IČP, a KRZP code, or their own value, so it
+  /// is stored as opaque text and validated only for length.
+  suklProfessionalIdentifier String
+  /// Any username / account reference SÚKL issues alongside the identifier.
+  suklUsernameOrReference    String?
+  /// Workplace the doctor prescribes under. Must match a
+  /// SuklFacilityIntegration.workplaceCode for the same environment.
+  workplaceCode              String
+  /// Medical speciality code (odbornost), when the interface requires one.
+  specialityCode             String?
+
+  status          SuklDoctorIdentityStatus @default(UNVERIFIED)
+  /// Set when a real SÚKL call succeeded under this identifier.
+  verifiedAt      DateTime?
+  /// User.id of the admin who created or last changed the mapping.
+  updatedByUserId String?
+  notes           String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([doctorUserId, environment])
+  @@index([environment, workplaceCode])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Private membership plans — docs/plans/private-membership-plans-implementation.md
+// Benefit source #4. Admin-created partner programmes, never shown on the
+// public site, usable only by the people an admin enrolled. No billing of any
+// kind: the payer fields are metadata, never charged (§15). Deliberately
+// SEPARATE from PricingPlan/UserSubscription (monthly Stripe credits),
+// CorporatePlan (company-billed auto-discount) and InsuranceCompany
+// (negotiated flat price) — decision 1, no reuse. The only shared surfaces
+// are the booking flow, the cart/order tables and checkout price composition.
+// ---------------------------------------------------------------------------
+
+enum MembershipEnrollmentStatus {
+  PENDING /// imported, no account linked yet — grants nothing
+  ACTIVE
+  SUSPENDED /// admin-paused, benefits off, row and history retained
+  EXPIRED /// endDate passed
+  REMOVED /// soft delete; re-import of the same email revives this row
+}
+
+enum MembershipMemberType {
+  PRIMARY
+  DEPENDENT
+}
+
+enum MembershipAllowancePool {
+  SHARED /// one pool for the primary + all their dependents
+  PER_PERSON /// each covered person gets their own pool
+}
+
+enum MembershipBenefitType {
+  ALLOWANCE /// N included consultations, then the fallback
+  PERCENT
+  FIXED
+  EXCLUDED /// explicitly no benefit — carves a service out of a kind rule
+}
+
+enum MembershipFallbackType {
+  NONE
+  PERCENT
+  FIXED
+}
+
+enum MembershipLedgerReason {
+  SPEND
+  REFUND
+  ADMIN_ADJUST
+}
+
+enum MembershipImportStatus {
+  PREVIEW
+  COMMITTED
+  CANCELLED
+}
+
+/// One partner programme (e.g. "MEMS"). Invisible to the public site.
+///
+/// Phase 7 (decision 34) made a plan MULTI-country: it has one PRIMARY country,
+/// fixed at creation and the source of the shared allowance pool (§21.4), plus a
+/// `MembershipPlanCountry` row per covered country — including the primary's own.
+/// A country being covered is not the same as it being configured: benefits come
+/// from `MembershipBenefit` rows keyed to that country, and a covered country
+/// with none gives NO benefit at all, allowance units included (§20).
+model MembershipPlan {
+  id               String  @id @default(cuid())
+  primaryCountryId String
+  primaryCountry   Country @relation(fields: [primaryCountryId], references: [id], onDelete: Cascade)
+  /// Every covered country, the primary included. Existence of the row is what
+  /// makes a country selectable when configuring benefits, and the FK target
+  /// that proves a benefit row's country is actually covered (§21.1).
+  countries        MembershipPlanCountry[]
+  slug             String
+  /// Internal/default name; patient-facing copy comes from the translations.
+  name          String
+  internalNotes String?
+  isActive      Boolean @default(true)
+
+  // Payer metadata (§15) — all optional. Never charged, never invoiced, never
+  // surfaced to patients. Recorded so ops know who the programme is billed to
+  // outside this system.
+  payerName        String?
+  payerEmail       String?
+  payerPhone       String?
+  payerAmountCents Int?
+  payerCurrency    String?
+  payerNotes       String?
+
+  levels        MembershipLevel[]
+  translations  MembershipPlanTranslation[]
+  enrollments   MembershipEnrollment[]
+  importBatches MembershipImportBatch[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([primaryCountryId, slug])
+  /// FK target for MembershipEnrollment(planId, countryId) — the raw-SQL
+  /// composite FK that pins an enrollment's reporting country to its plan's
+  /// primary one (§21.2). Before phase 7 that pinning came from the level's
+  /// countryId, which no longer exists.
+  @@unique([id, primaryCountryId])
+  @@index([primaryCountryId, isActive])
+}
+
+/// One covered country, INCLUDING the primary (§21.1). Its existence is what
+/// makes a country configurable; `MembershipBenefit(planId, countryId)` points
+/// here via a raw-SQL composite FK, so a benefit row for an uncovered country
+/// is structurally impossible.
+///
+/// App-enforced: the primary country's row always exists and cannot be deleted
+/// while the plan lives.
+model MembershipPlanCountry {
+  id        String         @id @default(cuid())
+  planId    String
+  plan      MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  countryId String
+  country   Country        @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now())
+
+  /// FK target for MembershipBenefit(planId, countryId). A two-column FK needs
+  /// a two-column unique — this one is it.
+  @@unique([planId, countryId])
+  @@index([countryId])
+}
+
+model MembershipPlanTranslation {
+  id          String         @id @default(cuid())
+  planId      String
+  plan        MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  locale      LocaleCode
+  name        String
+  description String?
+
+  @@unique([planId, locale])
+}
+
+/// A tier inside a plan (Gold, Silver). Every plan has at least one; a plan
+/// without tiers gets an auto-created default level (decision 2).
+model MembershipLevel {
+  id        String         @id @default(cuid())
+  planId    String
+  plan      MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  slug      String
+  name      String
+  sortOrder Int            @default(0)
+  /// Exactly one level per plan carries true — enforced by the partial unique
+  /// index MembershipLevel_one_default_per_plan (raw SQL; Prisma cannot
+  /// express a WHERE clause on a unique). Auto-created for tier-less plans and
+  /// used as the import default when the CSV has no `level` column.
+  isDefault Boolean        @default(false)
+  isActive  Boolean        @default(true)
+
+  // Family (§11). maxDependents > 0 requires familyEnabled.
+  familyEnabled Boolean                 @default(false)
+  maxDependents Int                     @default(0)
+  allowancePool MembershipAllowancePool @default(PER_PERSON)
+
+  /// Card background, admin-set per level (decision 45). Hex, validated
+  /// `^#[0-9a-fA-F]{6}$`. Null = the default card face. The FOREGROUND is
+  /// derived from this colour's relative luminance and never stored (§24.2),
+  /// so an admin cannot produce white-on-pale.
+  cardBackgroundHex String?
+
+  benefits     MembershipBenefit[]
+  translations MembershipLevelTranslation[]
+  enrollments  MembershipEnrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([planId, slug])
+  /// FK target for MembershipEnrollment(levelId, planId) — a level now spans
+  /// the plan's countries, so the enrollment FK pins it to the PLAN rather
+  /// than to a country (§21.2).
+  @@unique([id, planId])
+  @@index([planId, isActive])
+}
+
+model MembershipLevelTranslation {
+  id          String          @id @default(cuid())
+  levelId     String
+  level       MembershipLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  locale      LocaleCode
+  name        String
+  description String?
+
+  @@unique([levelId, locale])
+}
+
+/// What a level gives. Targets EITHER a service kind (GENERAL / SPECIALIST
+/// only) OR one specific service in the plan's country. A service row always
+/// beats a kind row for that service (§6.2). The invariants below are checked
+/// at the API AND by CHECK constraints in the migration.
+model MembershipBenefit {
+  id        String          @id @default(cuid())
+  levelId   String
+  level     MembershipLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  /// Denormalised from the level so the raw-SQL composite FK
+  /// (planId, countryId) -> MembershipPlanCountry can prove the country this
+  /// row configures is one the plan actually covers. No Prisma relation: a
+  /// single-column FK here would be redundant with the composite one.
+  planId    String
+  /// WHICH covered country this row configures (§21.3). Before phase 7 this
+  /// was "the level's country" and there was only ever one; the column and its
+  /// values are unchanged, only the meaning widened.
+  countryId String
+
+  /// GENERAL | SPECIALIST only — consultations only (§18).
+  serviceKind ServiceKind?
+  serviceId   String?
+  service     Service?     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  benefitType     MembershipBenefitType
+  /// ALLOWANCE only: included consultations for the term.
+  allowanceCount  Int?
+  /// PERCENT only: 0 < percentOff <= 100. Applies to the peak-adjusted price (§29).
+  percentOff      Float?
+  /// FIXED only: what the member pays, in the service's currency. Overrides peak.
+  fixedPriceCents Int?
+
+  /// Used once the allowance hits zero (ALLOWANCE rows only) — §24.
+  fallbackType       MembershipFallbackType @default(NONE)
+  fallbackPercent    Float?
+  fallbackFixedCents Int?
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  balances MembershipAllowanceBalance[]
+
+  @@unique([levelId, countryId, serviceKind])
+  @@unique([levelId, countryId, serviceId])
+  @@index([levelId, countryId, isActive])
+}
+
+/// One person on one level. Only ACTIVE grants benefits, and only while
+/// startDate <= now AND (endDate IS NULL OR endDate >= now).
+model MembershipEnrollment {
+  id        String          @id @default(cuid())
+  planId    String
+  plan      MembershipPlan  @relation(fields: [planId], references: [id], onDelete: Cascade)
+  levelId   String
+  level     MembershipLevel @relation(fields: [levelId], references: [id])
+  /// Always == plan.primaryCountryId. Attribution for per-country reporting
+  /// (§23), NOT a restriction on where benefits apply (decision 38). Pinned by
+  /// the raw-SQL composite FK to MembershipPlan(id, primaryCountryId) — before
+  /// phase 7 that pinning came from the level's countryId (§21.2).
+  countryId String
+
+  /// GENERATED (decision 40): `<PLANPREFIX>-<8 crypto-random base32 chars>`.
+  /// Unguessable by design — it is half of what the claim form checks. NO
+  /// `@unique` here: PostgreSQL's plain unique is case-sensitive, so `ABC1`
+  /// and `abc1` could coexist while lookups compare case-insensitively.
+  /// Uniqueness is the raw unique index on lower("membershipId"); every
+  /// lookup queries via lower().
+  membershipId String
+  /// The partner's own member number, when they supply one (decision 40).
+  /// Searchable in admin, NOT a key — duplicates across plans are possible
+  /// and permitted.
+  partnerReference String?
+  /// Lowercased + trimmed at write time. The linking key (assumption 5).
+  /// Uniqueness within a plan is the partial index
+  /// MembershipEnrollment_plan_email_active_key (planId, lower(email))
+  /// WHERE status <> 'REMOVED' — deliberately NOT a Prisma @@unique, so a
+  /// removed row does not block a re-add.
+  email        String
+  firstName    String
+  lastName     String
+  phone        String?
+  dateOfBirth  DateTime?
+
+  /// Set when the account is linked (verified-email match, or claim form).
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  linkedAt  DateTime?
+  /// Set only when linked via the manual claim form, for audit.
+  claimedAt DateTime?
+
+  memberType          MembershipMemberType   @default(PRIMARY)
+  primaryEnrollmentId String?
+  primaryEnrollment   MembershipEnrollment?  @relation("MembershipDependents", fields: [primaryEnrollmentId], references: [id], onDelete: Cascade)
+  dependents          MembershipEnrollment[] @relation("MembershipDependents")
+  relationship        String?
+
+  status    MembershipEnrollmentStatus @default(PENDING)
+  startDate DateTime
+  /// null = open-ended. A past date kills benefits (live check + daily cron).
+  endDate   DateTime?
+
+  /// Set when the card + welcome email went out (decision 41). THE dedupe: a
+  /// re-import must email nobody twice.
+  cardIssuedAt DateTime?
+
+  /// What language to write to this person in while the row is still PENDING
+  /// (§25). Supplied by the import CSV's optional `locale` column, because a
+  /// Czech partner enrolling Irish members knows what they read and the plan's
+  /// primary-country default alone would write to all of them in Czech.
+  ///
+  /// PRECEDENCE: this is only the fallback for an unlinked row. The moment an
+  /// account links, `User.preferredLocale` wins for anything member-facing —
+  /// otherwise a member who sets their language in the portal keeps receiving
+  /// email in whatever the CSV said. Null falls back to the plan's primary
+  /// country default, then English.
+  preferredLocale LocaleCode?
+
+  importBatchId    String?
+  importBatch      MembershipImportBatch? @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  createdByAdminId String?
+  /// Free-text admin note (why suspended, partner reference, …).
+  adminNotes       String?
+
+  balances      MembershipAllowanceBalance[]
+  ledgerEntries MembershipUsageLedger[]
+  inviteLogs    MembershipInviteLog[]
+  claimTokens   MembershipClaimToken[]
+  carts         Cart[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([userId, status])
+  @@index([planId, status])
+  @@index([primaryEnrollmentId])
+  @@index([planId, partnerReference])
+}
+
+/// One counter per (benefit row, holder). The holder owns the pool: self under
+/// PER_PERSON, the primary enrollment under SHARED (§11). Created lazily on
+/// first use; `allocated` is snapshotted from the benefit row at creation so a
+/// later admin edit does not silently change a live term.
+model MembershipAllowanceBalance {
+  id                 String               @id @default(cuid())
+  benefitId          String
+  benefit            MembershipBenefit    @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+  holderEnrollmentId String
+  holderEnrollment   MembershipEnrollment @relation(fields: [holderEnrollmentId], references: [id], onDelete: Cascade)
+  allocated          Int
+  used               Int                  @default(0)
+  /// Term this counter belongs to — copied from the holder's startDate. A term
+  /// renewal (new startDate) creates a NEW balance row rather than resetting.
+  termStart          DateTime
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  ledgerEntries MembershipUsageLedger[]
+
+  @@unique([benefitId, holderEnrollmentId, termStart])
+}
+
+/// Append-only audit trail of every allowance movement. `used` on the balance
+/// is the authority; both are written in the same transaction, and
+/// `idempotencyKey` makes a retried checkout a clean no-op (§7).
+model MembershipUsageLedger {
+  id           String                     @id @default(cuid())
+  balanceId    String
+  balance      MembershipAllowanceBalance @relation(fields: [balanceId], references: [id], onDelete: Cascade)
+  /// WHO consumed it (may be a dependent while the balance holder is the primary).
+  enrollmentId String
+  enrollment   MembershipEnrollment       @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  /// -1 spend, +1 refund, ± admin adjust.
+  delta        Int
+  reason       MembershipLedgerReason
+
+  orderId       String?
+  orderItemId   String?
+  appointmentId String?
+  /// ADMIN_ADJUST only.
+  actorAdminId  String?
+  note          String?
+
+  /// `${orderItemId}:SPEND` / `${orderItemId}:REFUND` — makes retries safe.
+  idempotencyKey String   @unique
+  createdAt      DateTime @default(now())
+
+  @@index([balanceId, reason])
+  @@index([enrollmentId])
+  @@index([orderId])
+}
+
+/// CSV import batch. Preview-then-commit (§22): the commit step re-reads
+/// `previewData` server-side and never trusts a client payload.
+model MembershipImportBatch {
+  id                String                 @id @default(cuid())
+  planId            String
+  plan              MembershipPlan         @relation(fields: [planId], references: [id], onDelete: Cascade)
+  fileName          String
+  uploadedByAdminId String?
+  status            MembershipImportStatus @default(PREVIEW)
+  rowCount          Int                    @default(0)
+  createdCount      Int                    @default(0)
+  revivedCount      Int                    @default(0)
+  rejectedCount     Int                    @default(0)
+  /// Server-side parse result. The commit step reads THIS.
+  previewData       Json
+  committedAt       DateTime?
+  createdAt         DateTime               @default(now())
+
+  enrollments MembershipEnrollment[]
+
+  @@index([planId, status])
+}
+
+/// A nudge email only — linking is by verified email, so there is no token to
+/// redeem and the link is the ordinary signup/login URL (§12).
+model MembershipInviteLog {
+  id            String               @id @default(cuid())
+  enrollmentId  String
+  enrollment    MembershipEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  email         String
+  sentByAdminId String?
+  sentAt        DateTime?
+  error         String?
+  createdAt     DateTime             @default(now())
+
+  @@index([enrollmentId])
+}
+
+/// Single-use confirmation for a membership claim (§5.3). The claim form's
+/// step 1 mints one and emails the link to the ENROLLED address; step 2
+/// consumes it. Mechanics copy PasswordResetToken exactly: 32 random bytes,
+/// only the sha256 hash stored, single use, short TTL — so a DB leak yields
+/// no usable link. `userId` is the session that requested it, and step 2
+/// checks it, so a forwarded or intercepted link is useless to anyone else.
+model MembershipClaimToken {
+  id           String               @id @default(cuid())
+  enrollmentId String
+  enrollment   MembershipEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  /// The account that asked to claim. Only this session may confirm.
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash    String               @unique
+  /// The enrolled address the link was sent to, kept for audit. Not a lookup
+  /// key — the token hash is.
+  email        String
+  expiresAt    DateTime
+  usedAt       DateTime?
+  createdAt    DateTime             @default(now())
+
+  @@index([enrollmentId])
+  @@index([userId])
 }

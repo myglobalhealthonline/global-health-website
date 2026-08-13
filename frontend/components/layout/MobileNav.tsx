@@ -37,6 +37,7 @@ import {
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { Flag } from "@/components/ui/Flag";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
+import { countryLinkLocale } from "@/lib/i18n/country-link-locale";
 import { usePublicAuth } from "@/components/layout/PublicAuthContext";
 
 export function MobileNav({
@@ -47,6 +48,8 @@ export function MobileNav({
   bookHref,
   countries,
   lastCountry,
+  selectedLocale,
+  toolLinks = [],
   a11y,
 }: {
   siteName: string;
@@ -58,6 +61,12 @@ export function MobileNav({
   /** Remembered country (server-read gh-last-country cookie) so the drawer
    *  keeps the in-country IA on global pages — mirrors SiteHeader. */
   lastCountry?: { code: CountryCode; slug: string; lang: string } | null;
+  /** The language this visitor chose (SiteHeader's `activeLang`). Decides the
+   *  `[lang]` of country links — the remembered cookie's `lang` records where
+   *  they've been, not what they picked. */
+  selectedLocale?: string | null;
+  /** Free-calculator links, resolved server-side by SiteHeader (see above). */
+  toolLinks?: Array<{ href: string; label: string }>;
   /** Localized drawer a11y strings, resolved server-side by SiteHeader. */
   a11y: { openMenu: string; menuDescription: string; chooseLanguage: string };
 }) {
@@ -75,7 +84,7 @@ export function MobileNav({
     lastCountry?.code ??
     null;
   const navCountrySlug = parsed.country ?? lastCountry?.slug ?? null;
-  const navLang = parsed.lang ?? lastCountry?.lang ?? null;
+  const navLang = parsed.lang ?? selectedLocale ?? lastCountry?.lang ?? null;
 
   // Country/language switches HARD-navigate (window.location.href) and sync
   // the gh_locale cookie. Client-side nav (<Link>) preserves the shared
@@ -93,9 +102,15 @@ export function MobileNav({
   const portalHref = authUser?.role === "ADMIN" ? "/admin" : "/account";
   const portalLabel = authUser?.role === "ADMIN" ? navigation.navAdminPortal : navigation.navAccountPortal;
 
+  // Union across all markets when there's no active country (first-ever
+  // visit, or any client without the gh-last-country cookie — every
+  // crawler): a flag that's off in EVERY market must not fail open into a
+  // guaranteed-dead link. Mirrors the identical fix in SiteHeader/SiteFooter.
   const activeFeatures = activeCountryCode
     ? countryFeatures?.[activeCountryCode]
-    : undefined;
+    : countryFeatures
+      ? [...new Set(Object.values(countryFeatures).flatMap((f) => f ?? []))]
+      : undefined;
   const isFeatureOn = (key: string) =>
     !activeFeatures || activeFeatures.length === 0 || activeFeatures.includes(key);
 
@@ -148,9 +163,14 @@ export function MobileNav({
                 },
               ]
             : []),
+          // Free calculators, resolved server-side and passed in: this is a
+          // client component, and importing the tool registry here would drag
+          // all six locale bundles into the browser.
+          ...toolLinks,
           { href: `/${navCountrySlug}/${navLang}/blog`, label: navigation.navBlog },
-          { href: "/about", label: navigation.navAbout },
-          { href: "/contact", label: navigation.navContact },
+          // Country-scoped, matching SiteHeader/SiteFooter.
+          { href: `/${navCountrySlug}/${navLang}/about`, label: navigation.navAbout },
+          { href: `/${navCountrySlug}/${navLang}/contact`, label: navigation.navContact },
         ]
       : [
           { href: "/", label: navigation.navHome },
@@ -236,14 +256,10 @@ export function MobileNav({
                   // client-side slug registry proxy isn't warm yet.
                   const slug =
                     c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase();
-                  // Keep the visitor's language when the target country
-                  // supports it; otherwise the target's default.
-                  const nextLang = (
-                    parsed.lang &&
-                    (c.supportedLocales as string[]).includes(parsed.lang)
-                      ? parsed.lang
-                      : c.defaultLocale
-                  ).toLowerCase();
+                  // The visitor's SELECTED language when the target country
+                  // serves it; otherwise the target's default. Same rule as the
+                  // desktop switcher — see lib/i18n/country-link-locale.ts.
+                  const nextLang = countryLinkLocale(selectedLocale ?? parsed.lang, c);
                   const swapped = swapCountryInPath(pathname, slug, nextLang);
                   const href =
                     swapped === pathname ? `/${slug}/${nextLang}` : swapped;

@@ -43,6 +43,7 @@ const i18n = {
   featuredClinician: "Featured clinician",
   registrationLabel: "Registration",
   verifiedSuffix: "Verified",
+  languagesLabel: "Languages",
 };
 
 const gpService = "svc-gp";
@@ -135,5 +136,53 @@ describe("buildDoctorDirectoryView", () => {
     const gpOption = typeGroup.options.find((o) => o.token === "gp")!;
     // Toggling off "gp" (currently active) should drop &type= but keep &lang=es.
     expect(gpOption.href).toBe("/ie/en/doctors?lang=es");
+  });
+});
+
+/**
+ * Internal-discovery batch (2026-08-09). `/doctors` renders through a client
+ * `useState` carousel (`DoctorTeamTemplate`, PAGE_SIZE=6) — a crawler landing
+ * cold on the route (no JS execution) can only ever see whichever cards that
+ * component chooses to mount. On production this meant every country's
+ * roster beyond the first 6 non-featured doctors had no inlink from its own
+ * listing page at all: Ireland's 22 doctors, 7 discoverable (1 featured + 6
+ * paged), 15 orphaned from this page.
+ *
+ * The fix adds an always-rendered link index below the carousel, sourced
+ * from the SAME `doctors` prop the carousel slices — so its correctness
+ * depends entirely on `buildDoctorDirectoryView` never truncating that array
+ * itself. These tests pin that invariant at the data layer, where it can
+ * actually be tested (no jsdom/testing-library in this repo, so
+ * `DoctorTeamTemplate`'s JSX is exercised live in the browser, not here).
+ */
+describe("buildDoctorDirectoryView never truncates the grid — the crawlable-index fix's precondition", () => {
+  function bigRoster(n: number): CountryDoctorCard[] {
+    return Array.from({ length: n }, (_, i) =>
+      doc({ id: String(i), slug: `doctor-${i}`, fullName: `Doctor ${i}`, assignedServiceIds: [gpService] }),
+    );
+  }
+
+  it("a roster far larger than the carousel's PAGE_SIZE (6) comes back whole", () => {
+    const bigCtx: DoctorDirectoryContext = { ...ctx(), doctors: bigRoster(22) };
+    const view = buildDoctorDirectoryView(bigCtx, [], []);
+    expect(view.doctorCards).toHaveLength(22);
+    expect(view.doctorCards.every((d) => typeof d.href === "string" && d.href.length > 0)).toBe(true);
+  });
+
+  it("every card keeps a real href and a non-empty name — what the index renders as anchor text", () => {
+    const bigCtx: DoctorDirectoryContext = { ...ctx(), doctors: bigRoster(30) };
+    const view = buildDoctorDirectoryView(bigCtx, [], []);
+    for (const d of view.doctorCards) {
+      expect(d.href, d.name).toMatch(/^\/ie\/en\/doctors\/doctor-\d+$/);
+      expect(d.name.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("totalDoctorCount matches the actual card count returned, not a fixed page size", () => {
+    const bigCtx: DoctorDirectoryContext = { ...ctx(), doctors: bigRoster(19) };
+    const view = buildDoctorDirectoryView(bigCtx, [], []);
+    // 19 total minus 0 featured here (bigRoster sets none) = 19 in the grid.
+    expect(view.totalDoctorCount).toBe(19);
+    expect(view.doctorCards).toHaveLength(19);
   });
 });

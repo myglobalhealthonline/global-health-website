@@ -1,5 +1,9 @@
 import { env } from "../../config/env.js";
-import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
+import {
+  sendWhatsAppText,
+  sendWhatsAppGroupText,
+  formatWhatsAppSendError,
+} from "../../lib/whatsapp/wasender.js";
 import { wrapHtml } from "../../lib/email/templates.js";
 import { createAutomationRun, finishAutomationRun } from "./automation-run.service.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
@@ -34,15 +38,23 @@ export type AdminBookingAlertContext = {
 export type AdminBookingAlertEvent =
   | "booking_received"
   | "payment_confirmed"
-  | "appointment_updated";
+  | "appointment_updated"
+  /** Website checkout left unpaid for 15 minutes — reservation released. */
+  | "web_checkout_abandoned";
 
 const HEADLINE: Record<AdminBookingAlertEvent, string> = {
   booking_received: "🆕 New booking (payment pending)",
   payment_confirmed: "✅ Booking confirmed — payment received",
   appointment_updated: "✏️ Appointment updated",
+  web_checkout_abandoned: "🚫 Website checkout abandoned — reservation released",
 };
 
 const WITHHELD_PATIENT_LABEL = "Withheld (patient declined WhatsApp updates)";
+
+/** Extra WhatsApp group that mirrors the booking-confirmed alert only. */
+function bookingConfirmedGroupJid(): string | undefined {
+  return env.ADMIN_NOTIFY_WHATSAPP_GROUP_JID?.trim() || undefined;
+}
 
 function parseRecipients(raw: string | undefined): string[] {
   if (!raw?.trim()) return [];
@@ -175,6 +187,47 @@ export async function sendAdminBookingAlert(
         summary,
         error: err instanceof Error ? err.message : String(err),
       }).catch(() => undefined);
+    }
+  }
+
+  if (event === "payment_confirmed") {
+    const groupJid = bookingConfirmedGroupJid();
+    if (groupJid) {
+      const run = await createAutomationRun({
+        automationKey: `${automationKeyPrefix}_admin_whatsapp_group`,
+        orderId,
+        channel: "whatsapp",
+        recipient: groupJid,
+        summary,
+        status: "RUNNING",
+      }).catch(() => null);
+      try {
+        const result = await sendWhatsAppGroupText({ to: groupJid, message: text });
+        if (run) {
+          if (!result.ok && !result.skipped) {
+            await finishAutomationRun(run.id, {
+              status: "FAILED",
+              summary,
+              error: formatWhatsAppSendError(result),
+              recipient: groupJid,
+            });
+          } else {
+            await finishAutomationRun(run.id, {
+              status: result.skipped ? "SKIPPED" : "SUCCESS",
+              summary: result.skipped ? `${summary} (WhatsApp not configured)` : summary,
+              recipient: groupJid,
+            });
+          }
+        }
+      } catch (err) {
+        if (run) {
+          await finishAutomationRun(run.id, {
+            status: "FAILED",
+            summary,
+            error: err instanceof Error ? err.message : String(err),
+          }).catch(() => undefined);
+        }
+      }
     }
   }
 

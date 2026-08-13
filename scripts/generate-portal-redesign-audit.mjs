@@ -358,7 +358,7 @@ function batchPlan(portalAudits, sharedRows) {
     "Each batch must update the relevant audit markdown as work is completed.",
     "",
     ...section("Batch 0 - Inventory only", [
-      "Create `docs/portal-redesign/README.md`.",
+      "Create `docs/design/portal-redesign/README.md`.",
       "Create admin, doctor, patient/account, shared component, batch plan, and screenshot checklist markdown files.",
       "No UI redesign work in this batch.",
       "Validation: audit files exist and include source-tree-derived rows.",
@@ -406,7 +406,7 @@ function batchPlan(portalAudits, sharedRows) {
     ]),
     ...section("Batch 7 - Screenshot review and polish", [
       "Take screenshots for every audited route or document the exact inaccessible reason.",
-      "Update `docs/portal-redesign/screenshot-checklist.md`.",
+      "Update `docs/design/portal-redesign/screenshot-checklist.md`.",
       "Run build, lint if available, and typecheck.",
       "Final response must report counts, changed files, reviewed routes, checks, and inaccessible pages.",
     ]),

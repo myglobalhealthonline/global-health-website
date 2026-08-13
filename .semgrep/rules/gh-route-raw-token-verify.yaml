@@ -1,0 +1,63 @@
+rules:
+  - id: gh-route-raw-token-verify
+    languages: [typescript]
+    severity: WARNING
+    message: >
+      verifyAuthToken() only checks the JWT signature — unlike
+      verifyAdminAccess / verifyGlobalAdminAccess / verifyDoctorAccess /
+      verifyClinicalReadAccess / requireAuth / resolveOptionalAuthUser, it
+      does NOT re-check the current DB tokenVersion or active/deleted state.
+      A session that should have been invalidated (role changed, password
+      reset, account deactivated, "sign out of all devices") still passes
+      verifyAuthToken until the JWT naturally expires. If this call is
+      resolving an actor id purely for audit attribution AFTER one of the
+      real gates above has already authorized the request, suppress with
+      `// nosemgrep: gh-route-raw-token-verify` noting which gate ran first.
+      If it is the ONLY identity check in this handler, it is a live gap —
+      route it through one of the real gates instead.
+    metadata:
+      category: security
+      references:
+        - docs/audits/security/audit-authz-rules-2026-08-02.md
+    patterns:
+      - pattern: verifyAuthToken(...)
+      - pattern-not-inside: |
+          async (...) => {
+            ...
+            <... verifyAdminAccess(...) ...>
+            ...
+            verifyAuthToken(...)
+            ...
+          }
+      - pattern-not-inside: |
+          async (...) => {
+            ...
+            <... verifyGlobalAdminAccess(...) ...>
+            ...
+            verifyAuthToken(...)
+            ...
+          }
+      - pattern-not-inside: |
+          async (...) => {
+            ...
+            <... verifyDoctorAccess(...) ...>
+            ...
+            verifyAuthToken(...)
+            ...
+          }
+      - pattern-not-inside: |
+          async (...) => {
+            ...
+            <... verifyClinicalReadAccess(...) ...>
+            ...
+            verifyAuthToken(...)
+            ...
+          }
+      - pattern-not-inside: |
+          async (...) => {
+            ...
+            <... resolveOptionalAuthUser(...) ...>
+            ...
+            verifyAuthToken(...)
+            ...
+          }

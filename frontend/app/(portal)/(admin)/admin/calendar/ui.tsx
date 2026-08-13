@@ -3,14 +3,18 @@
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
+import { Plus } from "lucide-react";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { WeekCalendar } from "@/components/calendar/WeekCalendar";
+import { CapacityCalendar } from "@/components/calendar/CapacityCalendar";
+import { LaneCalendar } from "@/components/calendar/LaneCalendar";
 import { DayAgenda } from "@/components/calendar/DayAgenda";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { AppSheet } from "@/components/AppSheet";
 import {
+  addDaysKey,
   addMonths,
   addWeeksKey,
   dayLabel,
@@ -19,19 +23,36 @@ import {
   weekDaysOf,
   yearMonthParam,
 } from "@/components/calendar/calendar-utils";
+import {
+  AddSlotDialog,
+  describeAddResult,
+} from "@/components/calendar/add-slot-dialog";
+import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
+import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
-import { adminToggleSlotStatus } from "@/lib/api/admin-slot-client";
+import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
+import { describeBulkResult } from "@/lib/calendar/bulk-result-copy";
+import type { BulkSlotAction } from "@/lib/api/slot-bulk-types";
+import {
+  adminBulkSlotAction,
+  adminCreateSlots,
+  adminRemoveSlot,
+  adminToggleSlotStatus,
+} from "@/lib/api/admin-slot-client";
 
 type Option = { id: string; name: string };
 
-type CalendarView = "month" | "week";
+type CalendarView = "lanes" | "capacity" | "month" | "week";
 
 type Props = {
   year: number;
   month: number;
   view: CalendarView;
-  /** Any calendar date inside the week the week-view renders ("YYYY-MM-DD"). */
+  /** Any calendar date inside the week the week/capacity views render
+   *  ("YYYY-MM-DD"). */
   weekAnchor: string;
+  /** The single day the lane view renders ("YYYY-MM-DD"). */
+  dayAnchor: string;
   items: CalendarItem[];
   doctorOptions: Option[];
   typeOptions: string[];
@@ -55,6 +76,7 @@ export function AdminCalendarUI({
   month,
   view,
   weekAnchor,
+  dayAnchor,
   items,
   doctorOptions,
   typeOptions,
@@ -70,6 +92,21 @@ export function AdminCalendarUI({
   const [daySheetOpen, setDaySheetOpen] = useState(false);
   const [slotBusy, setSlotBusy] = useState(false);
   const [slotError, setSlotError] = useState<string | null>(null);
+  const [blockTarget, setBlockTarget] = useState<CalendarItem | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<CalendarItem | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  // Add reports partial success ("added 20, skipped 4") — information, not an
+  // error, so it gets its own line rather than the warning banner.
+  const [slotNotice, setSlotNotice] = useState<string | null>(null);
+  // Bulk work is per-doctor: the endpoint is scoped to one calendar, and a
+  // sweep across every doctor at once is not a thing an admin should be able to
+  // do by accident. The week grid and day agenda therefore need the doctor
+  // filter set; the lane grid names a doctor per row, so there the FIRST
+  // selected slot fixes the doctor and later picks are held to it.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selectionDoctorId, setSelectionDoctorId] = useState<string | null>(null);
+  const bulkReady = Boolean(filters.doctorId);
+  const bulkDoctorId = filters.doctorId || selectionDoctorId;
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
     const eventId = searchParams.get("event");
     return eventId ? items.find((i) => i.id === eventId) ?? null : null;
@@ -89,20 +126,141 @@ export function AdminCalendarUI({
     setDaySheetOpen(true);
   }
 
-  // Unblocking returns the slot to bookable inventory, so re-read the day from
-  // the server rather than patching local state — the agenda is server-rendered.
-  async function onUnblockSlot(item: CalendarItem) {
+  // Block/unblock returns the slot to (or takes it out of) bookable inventory,
+  // so re-read the day from the server rather than patching local state — the
+  // grid and agenda are both server-rendered.
+  async function setSlotStatus(
+    item: CalendarItem,
+    status: "OPEN" | "BLOCKED",
+    reason?: string,
+  ) {
     const doctorId = item.meta?.doctorId;
-    if (!doctorId || item.status !== "BLOCKED") return;
+    if (!doctorId) {
+      setSlotError("This slot has no doctor — reload the calendar and try again.");
+      return;
+    }
     setSlotError(null);
     setSlotBusy(true);
-    const res = await adminToggleSlotStatus(doctorId, item.id.replace(/^s-/, ""), "OPEN");
+    const res = await adminToggleSlotStatus(
+      doctorId,
+      item.id.replace(/^s-/, ""),
+      status,
+      reason,
+    );
     setSlotBusy(false);
     if (!res.ok) {
       setSlotError(res.message);
       return;
     }
+    setBlockTarget(null);
     router.refresh();
+  }
+
+  function onUnblockSlot(item: CalendarItem) {
+    if (item.status !== "BLOCKED") return;
+    void setSlotStatus(item, "OPEN");
+  }
+
+  // Removal deletes the slot for THIS date and records an availability
+  // exception server-side, so the weekly window can't regenerate it.
+  async function removeSlot(item: CalendarItem, reason?: string) {
+    const doctorId = item.meta?.doctorId;
+    if (!doctorId) {
+      setSlotError("This slot has no doctor — reload the calendar and try again.");
+      return;
+    }
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminRemoveSlot(doctorId, item.id.replace(/^s-/, ""), reason);
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setRemoveTarget(null);
+    router.refresh();
+  }
+
+  // One-off slots for the doctor the calendar is filtered to. The grid can show
+  // every doctor at once, so "which doctor" has to come from the filter — the
+  // button is disabled until one is picked.
+  async function addSlots(startAtIsos: string[], durationMinutes: number) {
+    if (!filters.doctorId) return;
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminCreateSlots(filters.doctorId, startAtIsos, durationMinutes);
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    setAddOpen(false);
+    setSlotNotice(describeAddResult(res.data));
+    router.refresh();
+  }
+
+  function openRemoveDialog(item: CalendarItem) {
+    if (item.kind !== "slot") return;
+    if (item.status !== "OPEN" && item.status !== "BLOCKED") return;
+    if (!item.meta?.doctorId) return;
+    setDaySheetOpen(false);
+    setSlotError(null);
+    setRemoveTarget(item);
+  }
+
+  function clearSelection() {
+    setSelected(new Set());
+    setSelectionDoctorId(null);
+  }
+
+  function toggleSelected(item: CalendarItem) {
+    const id = item.id.replace(/^s-/, "");
+    const itemDoctorId = item.meta?.doctorId ?? null;
+    // A selection that outlived its doctor would post slot ids to the wrong
+    // calendar, so the doctor rides along with the set and dies with it.
+    if (selectionDoctorId && itemDoctorId && itemDoctorId !== selectionDoctorId) return;
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      if (next.size === 0) setSelectionDoctorId(null);
+      else if (itemDoctorId) setSelectionDoctorId(itemDoctorId);
+      return next;
+    });
+  }
+
+  /** Bulk over the current selection, or over a date × time sweep. Both post to
+   *  the doctor-scoped bulk endpoint, which skips booked and held slots. */
+  async function runBulk(
+    action: BulkSlotAction,
+    payload: { slotIds?: string[]; spans?: { fromUtc: string; toUtc: string }[] },
+    reason?: string,
+  ) {
+    if (!bulkDoctorId) return;
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminBulkSlotAction(bulkDoctorId, {
+      action,
+      ...payload,
+      ...(reason ? { reason } : {}),
+    });
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    if (payload.slotIds) clearSelection();
+    setSlotNotice(describeBulkResult(action, res.data));
+    router.refresh();
+  }
+
+  function openBlockDialog(item: CalendarItem) {
+    if (item.status !== "OPEN" || !item.meta?.doctorId) return;
+    // Same composition rule as openEvent: the dialog replaces the day sheet
+    // rather than stacking on top of it.
+    setDaySheetOpen(false);
+    setSlotError(null);
+    setBlockTarget(item);
   }
   // Default to "all" so open (bookable) slots — and their Book action — are
   // visible as soon as a day is picked.
@@ -137,6 +295,7 @@ export function AdminCalendarUI({
       country: string;
       view: CalendarView;
       wk: string;
+      d: string;
     }>,
   ) {
     const params = new URLSearchParams();
@@ -147,20 +306,38 @@ export function AdminCalendarUI({
     if (doctorId) params.set("doctorId", doctorId);
     if (type) params.set("type", type);
     if (country) params.set("country", country);
-    // Week is the default, so only Month is spelled out in the URL.
+    // Lanes is the default, so only the other three are spelled out in the URL.
     const nextView = next.view ?? view;
-    if (nextView === "month") {
-      params.set("view", "month");
-    } else {
+    if (nextView !== "lanes") params.set("view", nextView);
+    if (nextView === "lanes") {
+      params.set("d", next.d ?? dayAnchor);
+    } else if (nextView !== "month") {
       params.set("wk", next.wk ?? weekAnchor);
     }
     router.push(`${pathname}?${params.toString()}`);
+    // Next caches the RSC payload per URL on the client, so navigating to a
+    // week or month you visited before a mutation would replay the stale one.
+    router.refresh();
   }
 
   // `ym` rides along with the anchor so flipping back to Month lands on the
   // month the admin was just reading, not the one they started from.
   function goToWeek(anchor: string) {
     pushParams({ view: "week", wk: anchor, ym: anchor.slice(0, 7) });
+  }
+
+  function goToCapacity(anchor: string) {
+    pushParams({ view: "capacity", wk: anchor, ym: anchor.slice(0, 7) });
+  }
+
+  // The band the capacity grid was clicked on is remembered in component state
+  // rather than the URL: it only decides where the lane grid scrolls to, and a
+  // link that pins a scroll offset is a link that ages badly.
+  const [laneFocusHour, setLaneFocusHour] = useState<number | null>(null);
+
+  function goToLanes(anchor: string, focusHour: number | null = null) {
+    setLaneFocusHour(focusHour);
+    pushParams({ view: "lanes", d: anchor, ym: anchor.slice(0, 7) });
   }
 
   // Same deep link the day agenda's "Book" action uses: an open slot in the
@@ -176,6 +353,7 @@ export function AdminCalendarUI({
   }
 
   const weekDays = useMemo(() => weekDaysOf(weekAnchor), [weekAnchor]);
+
 
   return (
     <div className="gh-admin-calendar-ui grid gap-4">
@@ -231,13 +409,32 @@ export function AdminCalendarUI({
           </label>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="gh-btn gh-btn-outline"
+            disabled={!filters.doctorId}
+            title={
+              filters.doctorId
+                ? "Add one-off slots for this doctor"
+                : "Pick a doctor first — slots belong to one calendar"
+            }
+            onClick={() => {
+              setSlotError(null);
+              setSlotNotice(null);
+              setAddOpen(true);
+            }}
+          >
+            <Plus className="size-3.5" aria-hidden /> Add slots
+          </button>
           <ViewToggle
             view={view}
-            onChange={(next) =>
-              next === "week"
-                ? goToWeek(selectedDay || todayKey(tz))
-                : pushParams({ view: "month" })
-            }
+            onChange={(next) => {
+              const anchor = selectedDay || todayKey(tz);
+              if (next === "lanes") goToLanes(anchor);
+              else if (next === "capacity") goToCapacity(anchor);
+              else if (next === "week") goToWeek(anchor);
+              else pushParams({ view: "month" });
+            }}
           />
           <TimezoneSelect value={tz} options={tzList} onChange={setTz} />
         </div>
@@ -252,7 +449,55 @@ export function AdminCalendarUI({
         <LegendDot tone="var(--portal-danger)" label="Blocked" />
       </div>
 
-      {view === "week" ? (
+      {/* Block/unblock failures on the week grid have no drawer to land in —
+          and the dialog shows its own copy while it's open. */}
+      {slotError &&
+      !blockTarget &&
+      !removeTarget &&
+      !addOpen &&
+      !daySheetOpen ? (
+        <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
+          {slotError}
+        </p>
+      ) : null}
+      {slotNotice ? (
+        <p className="gh-status-success rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
+          {slotNotice}
+        </p>
+      ) : null}
+
+      {view === "lanes" ? (
+        <LaneCalendar
+          dayKey={dayAnchor}
+          items={itemsByDay.get(dayAnchor) ?? []}
+          tz={tz}
+          todayKey={todayKey(tz)}
+          focusHour={laneFocusHour}
+          onSelectOpenSlot={startSlotBooking}
+          onSelectConsultation={openEvent}
+          onBlockSlot={openBlockDialog}
+          onUnblockSlot={onUnblockSlot}
+          onRemoveSlot={openRemoveDialog}
+          selectedIds={selected}
+          onToggleSelect={toggleSelected}
+          selectionDoctorId={selectionDoctorId}
+          slotActionsBusy={slotBusy}
+          onPrevDay={() => goToLanes(addDaysKey(dayAnchor, -1))}
+          onNextDay={() => goToLanes(addDaysKey(dayAnchor, 1))}
+          onToday={() => goToLanes(todayKey(tz))}
+        />
+      ) : view === "capacity" ? (
+        <CapacityCalendar
+          weekDays={weekDays}
+          itemsByDay={itemsByDay}
+          tz={tz}
+          todayKey={todayKey(tz)}
+          onSelectCell={(dayKey, startHour) => goToLanes(dayKey, startHour)}
+          onPrevWeek={() => goToCapacity(addWeeksKey(weekAnchor, -1))}
+          onNextWeek={() => goToCapacity(addWeeksKey(weekAnchor, 1))}
+          onToday={() => goToCapacity(todayKey(tz))}
+        />
+      ) : view === "week" ? (
         <WeekCalendar
           anchorDayKey={weekAnchor}
           weekDays={weekDays}
@@ -261,6 +506,12 @@ export function AdminCalendarUI({
           todayKey={todayKey(tz)}
           onSelectOpenSlot={startSlotBooking}
           onSelectConsultation={openEvent}
+          onBlockSlot={openBlockDialog}
+          onSelectBlockedSlot={onUnblockSlot}
+          onRemoveSlot={openRemoveDialog}
+          selectedIds={selected}
+          onToggleSelect={bulkReady ? toggleSelected : undefined}
+          slotActionsBusy={slotBusy}
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
           onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
           onToday={() => goToWeek(todayKey(tz))}
@@ -289,6 +540,13 @@ export function AdminCalendarUI({
           }}
         />
       )}
+
+      <SelectionActionBar
+        count={selected.size}
+        busy={slotBusy}
+        onAction={(action) => void runBulk(action, { slotIds: [...selected] })}
+        onClear={clearSelection}
+      />
 
       {/* Day agenda — lux sheet, same skin as the event drawer. */}
       <AppSheet
@@ -343,33 +601,107 @@ export function AdminCalendarUI({
           }
           showDoctorName
           onSelectConsultation={openEvent}
-          // Blocked-only: OPEN chips render a "Book" link below, and a link
-          // cannot nest inside a button.
-          canToggleSlot={(item) => item.status === "BLOCKED" && Boolean(item.meta?.doctorId)}
-          onSelectSlot={onUnblockSlot}
+          selectedIds={selected}
+          onToggleSelect={bulkReady ? toggleSelected : undefined}
+          // Every slot action is an explicit chip button (Book / Block /
+          // Re-open / Remove), so the chip itself is never a button — nesting
+          // them would be invalid markup.
+          canToggleSlot={() => false}
           slotActionsBusy={slotBusy}
           renderSlotAction={(item) => {
+            if (!item.meta?.doctorId) return null;
+            if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
             // Only genuinely bookable inventory gets the deep link into the
             // manual-booking form, prefilled with doctor + slot.
-            if (item.status !== "OPEN" || !item.meta?.doctorId || !item.meta?.countryCode) {
-              return null;
-            }
-            const params = new URLSearchParams({
-              countryCode: item.meta.countryCode,
-              doctorId: item.meta.doctorId,
-              slotId: item.id.replace(/^s-/, ""),
-            });
+            const params =
+              item.status === "OPEN" && item.meta.countryCode
+                ? new URLSearchParams({
+                    countryCode: item.meta.countryCode,
+                    doctorId: item.meta.doctorId,
+                    slotId: item.id.replace(/^s-/, ""),
+                  })
+                : null;
+            const actionClass =
+              "ml-0.5 rounded-full border border-current px-1.5 text-portal-micro font-bold uppercase tracking-wide hover:opacity-80 disabled:opacity-50";
             return (
-              <a
-                href={`/admin/appointments/new?${params.toString()}`}
-                className="ml-0.5 rounded-full border border-current px-1.5 text-portal-micro font-bold uppercase tracking-wide hover:opacity-80"
-              >
-                Book
-              </a>
+              <>
+                {params ? (
+                  <a href={`/admin/appointments/new?${params.toString()}`} className={actionClass}>
+                    Book
+                  </a>
+                ) : null}
+                <button
+                  type="button"
+                  disabled={slotBusy}
+                  onClick={() =>
+                    item.status === "OPEN" ? openBlockDialog(item) : onUnblockSlot(item)
+                  }
+                  className={actionClass}
+                >
+                  {item.status === "OPEN" ? "Block" : "Re-open"}
+                </button>
+                <button
+                  type="button"
+                  disabled={slotBusy}
+                  onClick={() => openRemoveDialog(item)}
+                  className={actionClass}
+                >
+                  Remove
+                </button>
+              </>
             );
           }}
         />
       </AppSheet>
+
+      <BlockSlotDialog
+        key={blockTarget?.id ?? "no-block"}
+        open={blockTarget !== null}
+        slot={blockTarget}
+        tz={tz}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setBlockTarget(null);
+          setSlotError(null);
+        }}
+        onConfirm={(reason) => {
+          if (blockTarget) void setSlotStatus(blockTarget, "BLOCKED", reason || undefined);
+        }}
+      />
+
+      <AddSlotDialog
+        key={addOpen ? `add-${selectedDay}` : "no-add"}
+        open={addOpen}
+        doctorName={doctorOptions.find((d) => d.id === filters.doctorId)?.name ?? null}
+        tz={tz}
+        defaultDate={view === "week" ? weekAnchor : selectedDay || todayKey(tz)}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setAddOpen(false);
+          setSlotError(null);
+        }}
+        onConfirm={(startAtIsos, durationMinutes) =>
+          void addSlots(startAtIsos, durationMinutes)
+        }
+      />
+
+      <RemoveSlotDialog
+        key={removeTarget?.id ?? "no-remove"}
+        open={removeTarget !== null}
+        slot={removeTarget}
+        tz={tz}
+        busy={slotBusy}
+        error={slotError}
+        onClose={() => {
+          setRemoveTarget(null);
+          setSlotError(null);
+        }}
+        onConfirm={(reason) => {
+          if (removeTarget) void removeSlot(removeTarget, reason || undefined);
+        }}
+      />
 
       <EventDetailDialog
         item={activeItem}
@@ -385,8 +717,9 @@ function monthTuple(ym: { year: number; month: number }): [number, number] {
   return [ym.year, ym.month];
 }
 
-/** Month ↔ Week segmented control. The view lives in the URL (`view=week`),
- *  so a week the admin is reading survives a refresh and can be linked to. */
+/** Lanes ↔ Capacity ↔ Week ↔ Month segmented control. The view lives in the
+ *  URL (`view=capacity`), so whatever the admin is reading survives a refresh
+ *  and can be linked to. Lanes is the default and carries no param. */
 function ViewToggle({
   view,
   onChange,
@@ -401,7 +734,7 @@ function ViewToggle({
       className="inline-flex items-center gap-0.5 rounded-[999px] p-0.5"
       style={{ border: "1px solid var(--portal-line-strong)" }}
     >
-      {(["month", "week"] as const).map((v) => {
+      {(["lanes", "capacity", "week", "month"] as const).map((v) => {
         const active = v === view;
         return (
           <button

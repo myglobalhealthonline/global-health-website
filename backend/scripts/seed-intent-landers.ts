@@ -17,7 +17,7 @@
  *    electronically" (flagged previously as a Google Ads outcome-claim, see
  *    prescriptions/page.tsx comment). No stronger claim added here.
  *  - Prices: IE GP €39 confirmed live (frontend/lib/content/country-home-copy.ts).
- *    CZ GP 650 Kč confirmed live (backend/scripts/patch-czechia-gp-content.ts).
+ *    CZ GP 650 Kč confirmed live (backend/scripts/applied/patch-czechia-gp-content.ts).
  *    PT GP price €39 owner-confirmed 2026-07-25.
  *
  *   node --import tsx scripts/seed-intent-landers.ts          # dry-run

@@ -265,6 +265,35 @@ export const createManualAppointmentBodySchema = z
      *  price the server resolves (base / peak / insurance). 100 comps the
      *  booking outright — no payment link is issued. */
     discountPercent: z.number().int().min(0).max(100).optional().nullable(),
+    /**
+     * Private-membership benefit for this booking (§11.7). Omit for none.
+     *
+     * `enrollmentId` is the patient's own membership, taken from
+     * `/api/admin/membership-benefit-options`. `override` is the SUPER_ADMIN
+     * goodwill grant — a level's benefit rule applied to someone not entitled to
+     * it — whose written reason is mandatory here rather than by convention,
+     * because that reason is the only record of a price given outside every
+     * configured rule. The role check is the route's; this is the shape.
+     */
+    membership: z
+      .object({
+        enrollmentId: z.string().trim().min(1).max(64).optional().nullable(),
+        override: z
+          .object({
+            benefitId: z.string().trim().min(1).max(64),
+            reason: z.string().trim().min(5).max(500),
+          })
+          .strict()
+          .optional()
+          .nullable(),
+      })
+      .strict()
+      .optional()
+      .nullable()
+      .refine(
+        (value) => !(value?.enrollmentId && value?.override),
+        "Choose either the patient's own membership or a goodwill override, not both.",
+      ),
     returnTo: z
       .string()
       .trim()

@@ -56,6 +56,16 @@ export interface CreateSubscriptionCheckoutInput {
   metadata: Record<string, string>;
   /** Plan's country — pins the Checkout page language (see checkout-branding.ts). */
   countryCode?: string | null;
+  /**
+   * MIGRATION ONLY (legacy subscribers imported from another platform, §38.9).
+   * First charge is deferred to this instant — Checkout collects and mandates
+   * the card today but takes €0, and Stripe raises the first real invoice at
+   * `trialEnd`. Set it to the date the member's OLD platform would have billed
+   * next, so the import neither double-charges nor gives away a free month.
+   * Must be ≥48h in the future (Stripe constraint). Never used by the normal
+   * patient subscribe flow — v1 has no trials (D23).
+   */
+  trialEnd?: Date | null;
 }
 
 export interface BillingPortalInput {
@@ -66,6 +76,13 @@ export interface BillingPortalInput {
 export interface SchedulePlanChangeInput {
   subscriptionId: string;
   newPriceId: string;
+  /**
+   * UPGRADES only. Swap the price immediately and invoice the prorated
+   * difference now, so the customer gets what they just paid more for today
+   * (industry norm). Downgrades leave this false: the price change lands at the
+   * next cycle and the customer keeps the tier they already paid for.
+   */
+  prorateNow?: boolean;
 }
 
 export interface BillingSubscriptionView {
@@ -107,9 +124,15 @@ export interface BillingPort {
    *  never accumulate two paid subscriptions (a duplicate or abandoned checkout
    *  otherwise leaves an orphan active subscription at the provider that our DB
    *  never tracks). Returns how many were canceled. No-op on the fake driver. */
+  /**
+   * Clear ABANDONED provider subscriptions before opening a fresh Checkout.
+   * `skippedPaid` counts subscriptions left running because they already have a
+   * paid invoice — cancelling those would forfeit the customer's money, so the
+   * caller must abort the new Checkout instead of charging a second time.
+   */
   cancelActiveSubscriptionsForCustomer(
     customerId: string,
-  ): Promise<{ canceled: number }>;
+  ): Promise<{ canceled: number; skippedPaid: number }>;
 
   createBillingPortalSession(
     input: BillingPortalInput,
@@ -118,10 +141,25 @@ export interface BillingPort {
   /** Flag the subscription to cancel at the end of the current period. */
   cancelAtPeriodEnd(subscriptionId: string): Promise<void>;
 
-  /** Refund the most recent paid invoice's charge for a subscription. Returns
-   *  `{ refunded:false }` when no charge is found or the driver has no provider
-   *  (fake) — the caller then reconciles credits/state inline (§36.5). */
-  refundLatestPayment(subscriptionId: string): Promise<{ refunded: boolean }>;
+  /**
+   * Terminate the subscription NOW at the provider — no further invoices.
+   * Required whenever we mark a row CANCELED for a reason the provider doesn't
+   * know about (refund, dispute, cancel-after-grace): `cancelAtPeriodEnd` is
+   * NOT enough, and a local-only CANCEL leaves Stripe billing the customer every
+   * month against a membership we no longer honour. Idempotent — an already-
+   * canceled or unknown subscription reports `{ canceled:true }`.
+   */
+  cancelNow(subscriptionId: string): Promise<{ canceled: boolean }>;
+
+  /**
+   * Refund the charge behind ONE SPECIFIC invoice. The invoice id is always
+   * supplied by the caller (the mirrored `SubscriptionInvoice` for the period
+   * being refunded) — "the latest invoice" is NOT the period charge once a
+   * mid-cycle upgrade has billed a small `subscription_update` proration on top.
+   * `{ refunded:false }` means no charge could be resolved; on the real driver
+   * the caller MUST treat that as a failure rather than reconcile regardless.
+   */
+  refundInvoicePayment(stripeInvoiceId: string): Promise<{ refunded: boolean }>;
 
   /** Schedule a next-cycle price/plan change (Q10=B, no proration). */
   schedulePlanChange(
@@ -132,4 +170,31 @@ export interface BillingPort {
   retrieveSubscription(
     subscriptionId: string,
   ): Promise<BillingSubscriptionView | null>;
+
+  /**
+   * Newest subscription id on a customer, or null. Recovers the link when
+   * `checkout.session.completed` never arrived and our row has no
+   * `stripeSubscriptionId` — the only handle we still hold is the customer.
+   */
+  findLatestSubscriptionIdForCustomer(customerId: string): Promise<string | null>;
+
+  /** Most recent PAID invoice on a subscription (provider-sync fallback). */
+  retrieveLatestPaidInvoice(
+    subscriptionId: string,
+  ): Promise<BillingInvoiceView | null>;
+}
+
+/** A paid invoice, normalised for `applyPaidInvoice`. */
+export interface BillingInvoiceView {
+  id: string;
+  billingReason: string | null;
+  amountPaidCents: number;
+  currency: string | null;
+  number: string | null;
+  taxCents: number;
+  hostedInvoiceUrl: string | null;
+  pdfUrl: string | null;
+  status: string | null;
+  periodStart: Date | null;
+  periodEnd: Date | null;
 }

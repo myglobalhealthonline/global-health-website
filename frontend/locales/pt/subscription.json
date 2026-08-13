@@ -30,8 +30,8 @@
     ]
   },
   "note": {
-    "universal": "As vantagens selecionadas são desbloqueadas após {months} meses pagos.",
-    "universalSingular": "As vantagens selecionadas são desbloqueadas após {months} mês pago.",
+    "universal": "As vantagens selecionadas ficam ativas a partir do {months}.º mês pago.",
+    "universalSingular": "As vantagens selecionadas ficam ativas a partir do {months}.º mês pago.",
     "detailed": "Os créditos de consulta online incluídos começam a partir do mês 1. As vantagens de membro selecionadas são desbloqueadas após {months} pagamentos mensais bem-sucedidos.",
     "detailedSingular": "Os créditos de consulta online incluídos começam a partir do mês 1. As vantagens de membro selecionadas são desbloqueadas após {months} pagamento mensal bem-sucedido."
   },
@@ -104,7 +104,7 @@
     "error": "Não foi possível iniciar a sua adesão. Por favor, tente novamente."
   },
   "manage": {
-    "title": "A sua adesão",
+    "title": "Os seus planos",
     "subtitle": "Faça a gestão do seu plano, faturação e benefícios.",
     "currentPlan": "Plano atual",
     "status": "Estado",
@@ -125,11 +125,14 @@
     "changing": "A agendar alteração…",
     "pendingChange": "A mudar para {plan} em {date}.",
     "changeNote": "As alterações de plano entram em vigor na sua próxima data de faturação — sem rateio a meio do ciclo.",
+    "changeNoteUpgrade": "As melhorias de plano começam de imediato — paga apenas a diferença pelo resto do mês. As mudanças para um plano inferior entram em vigor na próxima data de faturação.",
     "changeScheduled": "Alteração agendada — o seu novo plano começa em {date}.",
+    "upgradeApplied": "Já está no plano {plan}. Os seus novos benefícios já estão disponíveis.",
     "upgradeLabel": "Atualizar",
     "downgradeLabel": "Reduzir",
     "changeEffective": "Entra em vigor a {date} — mantém o seu plano atual até lá, sem cobrança hoje.",
     "changeConfirm": "Mudar para {plan} a {date}? Mantém o seu plano atual até lá e não será cobrado hoje.",
+    "upgradeConfirm": "Mudar já para {plan}? Ser-lhe-á cobrada apenas a diferença proporcional pelo resto do período de faturação, e os seus novos benefícios ficam disponíveis de imediato.",
     "cancelChange": "Cancelar alteração agendada",
     "cancelingChange": "A cancelar…",
     "changeCanceled": "Alteração agendada cancelada — mantém o seu plano atual.",

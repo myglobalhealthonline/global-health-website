@@ -42,6 +42,7 @@ describe("auth-session (SEC-004: RS256-only)", () => {
     // Exactly what a frontend-secret compromise could forge before SEC-004.
     const forged = jwt.sign(
       { sub: "attacker", role: "SUPER_ADMIN", email: "evil@x.y", tokenVersion: 0 },
+      // nosemgrep: javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret -- deliberate negative-test fixture proving a token forged with the legacy secret is rejected; LEGACY_HS256_SECRET is test-only, not a live credential.
       LEGACY_HS256_SECRET,
       { algorithm: "HS256", issuer: JWT_ISSUER, audience: JWT_AUDIENCE },
     );

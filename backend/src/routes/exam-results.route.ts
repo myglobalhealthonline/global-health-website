@@ -9,7 +9,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
-import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
 /**
  * Exam-result endpoints, doctor-only (MVP).
@@ -86,7 +86,7 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -130,6 +130,19 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            appt.id,
+            { resourceType: "EXAM_RESULT", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
         }
         const desiredStatus = body.data.status ?? "COMPLETED";
         const row = await prisma.examResult.create({
@@ -208,10 +221,23 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
       try {
         const existing = await prisma.examResult.findUnique({
           where: { id: request.params.examId },
-          select: { id: true, doctorId: true },
+          select: { id: true, doctorId: true, appointmentId: true },
         });
         if (!existing || existing.doctorId !== auth.doctorId) {
           return reply.status(404).send(errorResponse("Exam result not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            existing.appointmentId,
+            { resourceType: "EXAM_RESULT", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
         }
         await prisma.examResult.delete({ where: { id: existing.id } });
         // S-008: PHI clinical record — audit write must not be silently
@@ -258,6 +284,19 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!existing || existing.doctorId !== auth.doctorId) {
           return reply.status(404).send(errorResponse("Exam result not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            existing.appointmentId,
+            { resourceType: "EXAM_RESULT", accessAction: "UPDATED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
         }
         const data: Record<string, unknown> = {};
         if (body.data.testName !== undefined) data.testName = body.data.testName;

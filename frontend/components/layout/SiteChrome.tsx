@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { BookingSkipLink } from "@/components/layout/BookingSkipLink";
+import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
+import { ElevenLabsConvai } from "@/components/integrations/ElevenLabsConvai";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { CountryTrustBar } from "@/components/sections/CountryTrustBar";
 import { EMERGENCY_NOTICE } from "@/lib/constants";
@@ -116,6 +118,12 @@ export function SiteChrome({
           parsed={parsed}
         />
       )}
+      {/* Floating contact pair, on every PUBLIC route (gateway home included —
+       * they are chrome, not page content) and on no portal route, since the
+       * portal layouts don't render SiteChrome. WhatsApp bottom-left, the
+       * ElevenLabs convai launcher bottom-right (it fixes itself there). */}
+      <WhatsAppFab />
+      <ElevenLabsConvai />
     </>
   );
 }

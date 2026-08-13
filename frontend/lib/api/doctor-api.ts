@@ -1,6 +1,8 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
+import type { SupportMessage } from "@/lib/api/support-chat-api";
 
 /**
  * Server-side fetchers for the doctor portal. Each call forwards the
@@ -9,9 +11,31 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
  * leak another doctor's data.
  */
 
+/** Structured deny-reason payload a 403 from the medical-access guard carries
+ *  in `details` (see backend/src/utils/guard-medical-read.ts
+ *  `medicalAccessDeniedResponse`). `remedy` is server-authored English —
+ *  doctor-portal UI should prefer looking up `reasonCode` against
+ *  doctor.json's `medicalAccessDenied` keys and only fall back to `remedy`
+ *  for an uncatalogued code, so the notice stays translatable. */
+export type MedicalAccessDeniedDetails = {
+  reasonCode: string;
+  remedy: string;
+  selfFixable: boolean;
+  canRequestAccess: boolean;
+};
+
 type ApiResult<T> =
   | { ok: true; data: T; message?: string }
-  | { ok: false; message: string; status?: number };
+  | { ok: false; message: string; status?: number; deniedAccess?: MedicalAccessDeniedDetails };
+
+function isMedicalAccessDeniedDetails(v: unknown): v is MedicalAccessDeniedDetails {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    typeof (v as { reasonCode?: unknown }).reasonCode === "string" &&
+    typeof (v as { canRequestAccess?: unknown }).canRequestAccess === "boolean"
+  );
+}
 
 async function doctorRequest<T>(path: string): Promise<ApiResult<T>> {
   const apiUrl = getBackendOrigin();
@@ -29,12 +53,17 @@ async function doctorRequest<T>(path: string): Promise<ApiResult<T>> {
       ok?: boolean;
       data?: T;
       message?: string;
+      details?: unknown;
     };
     if (!res.ok || !json.ok || json.data === undefined) {
       return {
         ok: false,
         status: res.status,
         message: json.message ?? "Doctor portal request failed",
+        deniedAccess:
+          res.status === 403 && isMedicalAccessDeniedDetails(json.details)
+            ? json.details
+            : undefined,
       };
     }
     return { ok: true, data: json.data as T, message: json.message };
@@ -115,6 +144,11 @@ export type DoctorPermissions = {
   doctorId: string;
   canCreateManualAppointments: boolean;
   canRequestCrossJurisdictionRx: boolean;
+  /** True only when the master flag is on AND at least one market is granted —
+   *  the backend ANDs the two, so this can be trusted to gate the nav entry
+   *  without the caller also checking `directorCountries.length`. */
+  isCountryDirector: boolean;
+  directorCountries: Array<{ code: string; name: string }>;
 };
 
 export async function fetchDoctorPermissions() {
@@ -132,6 +166,8 @@ export type CrossBorderRxInboxItem = {
     objective: string | null;
     assessment: string | null;
     plan: string | null;
+    noteFormat: "SOAP" | "FREEFORM";
+    note: string | null;
   };
   asyncAppointmentId: string | null;
   sourceDoctorName: string | null;
@@ -251,6 +287,21 @@ export type DoctorAppointment = {
 export async function fetchDoctorUnreadMessageCount(): Promise<number> {
   const result = await doctorRequest<{ unreadCount: number }>("/api/doctor/messages/unread");
   return result.ok && typeof result.data.unreadCount === "number" ? result.data.unreadCount : 0;
+}
+
+/** Unread admin replies in the doctor's support thread — drives the Account
+ *  nav badge. Returns 0 on any failure so a nav render never breaks. */
+export async function fetchDoctorSupportUnread(): Promise<number> {
+  const result = await doctorRequest<{ unreadCount: number }>("/api/doctor/support/unread");
+  return result.ok && typeof result.data.unreadCount === "number" ? result.data.unreadCount : 0;
+}
+
+/** Server-side first paint of the support thread. The client component keeps it
+ *  fresh by polling the same-origin proxy afterwards. */
+export async function fetchDoctorSupportThread() {
+  return doctorRequest<{ threadId: string; items: SupportMessage[] }>(
+    "/api/doctor/support/thread",
+  );
 }
 
 export type DoctorMessageThread = {
@@ -392,6 +443,8 @@ export type ConsultationDto = {
   objective: string | null;
   assessment: string | null;
   plan: string | null;
+  noteFormat: "SOAP" | "FREEFORM";
+  note: string | null;
   status: "DRAFT" | "SIGNED";
   signedAt: string | null;
   createdAt: string;
@@ -485,6 +538,8 @@ export type AppointmentDetailDto = {
       objective: string | null;
       assessment: string | null;
       plan: string | null;
+      noteFormat: "SOAP" | "FREEFORM";
+      note: string | null;
     };
   } | null;
   createdAt: string;
@@ -621,8 +676,8 @@ export type ConsultationServiceLineDto = {
 
 export async function fetchDoctorConsultationServices(consultationId: string) {
   // Service names are translatable; backend resolves against ?locale=, so
-  // thread the doctor's UI language (gh_locale cookie) through.
-  const locale = (await cookies()).get("gh_locale")?.value;
+  // thread the doctor's UI language (their own saved selection) through.
+  const locale = await getPortalLocale();
   const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
   return doctorRequest<{ items: ConsultationServiceLineDto[] }>(
     `/api/doctor/consultations/${consultationId}/services${qs}`,
@@ -743,6 +798,70 @@ export async function fetchDoctorReports(query?: {
   );
 }
 
+// Country-director consultation oversight. Unlike every other fetcher in this
+// file, the rows are NOT this doctor's own — they cover every doctor in the
+// markets an admin granted. Payload is deliberately narrow: patient name only
+// (no email/phone), no clinical content, no money.
+export type DoctorCountryConsultationsDto = {
+  range: { from: string; to: string };
+  filters: {
+    countryCode: string | null;
+    consultationType: string | null;
+    status: string | null;
+    paymentStatus: string | null;
+    doctorId: string | null;
+    search: string | null;
+  };
+  items: Array<{
+    id: string;
+    createdAt: string;
+    scheduledAt: string | null;
+    patientName: string;
+    countryCode: string;
+    consultationType: string;
+    status: string;
+    paymentStatus: string;
+    doctorId: string | null;
+    doctorName: string | null;
+  }>;
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  counts: {
+    byStatus: Array<{ status: string; count: number }>;
+    byPayment: Array<{ paymentStatus: string; count: number }>;
+  };
+  /** The granted markets — drives the country filter, so it stays populated
+   *  even when the current range has no rows. */
+  countries: Array<{ code: string; name: string }>;
+  doctors: Array<{ id: string; fullName: string }>;
+};
+
+export async function fetchDoctorCountryConsultations(query?: {
+  from?: string;
+  to?: string;
+  countryCode?: string;
+  consultationType?: string;
+  status?: string;
+  paymentStatus?: string;
+  doctorId?: string;
+  search?: string;
+  page?: string;
+  pageSize?: string;
+}) {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query ?? {})) {
+    if (value !== undefined && value !== "") params.set(key, value);
+  }
+  const qs = params.toString();
+  return doctorRequest<DoctorCountryConsultationsDto>(
+    qs
+      ? `/api/doctor/country-consultations?${qs}`
+      : "/api/doctor/country-consultations",
+  );
+}
+
 // Notifications
 export type DoctorNotificationDto = {
   id: string;
@@ -805,8 +924,8 @@ export type DoctorServicesPayload = {
 
 export async function fetchDoctorServices() {
   // Service names/summaries are translatable; backend resolves against
-  // ?locale=, so thread the doctor's UI language (gh_locale cookie) through.
-  const locale = (await cookies()).get("gh_locale")?.value;
+  // ?locale=, so thread the doctor's UI language (their own saved selection).
+  const locale = await getPortalLocale();
   const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
   return doctorRequest<DoctorServicesPayload>(`/api/doctor/services${qs}`);
 }

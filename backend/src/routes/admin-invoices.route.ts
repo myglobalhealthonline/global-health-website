@@ -2,17 +2,19 @@ import type { FastifyPluginAsync } from "fastify";
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import {
   assertOrderCountryScope,
   resolveOrderListCountryScope,
 } from "../utils/order-country-scope.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 import { resendInvoiceDocument, resendInvoiceWhatsApp } from "../modules/invoices/generate-invoice.service.js";
 import { isCommissionCountry } from "../modules/orders/commission.service.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Admin invoice endpoints.
@@ -204,6 +206,13 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
       // Fiscal / tax number (NIF) lives on PatientProfile, keyed by email — no
       // relation to Order/Invoice. Resolve matching profile emails first, then
       // fold them into the OR as case-insensitive order-email matches.
+      //
+      // S-031: this is a fan-out search across every patient's tax ID, not a
+      // single-resource read, so guardMedicalRead (designed for one patient
+      // at a time) doesn't fit — per-match guarding would be slow and is the
+      // wrong tool. Instead, log the search itself as one audit event: who
+      // searched, and that a match attempt happened, never the raw search
+      // term (only its length) or which patients matched.
       let taxEmails: string[] = [];
       try {
         const taxMatches = await prisma.patientProfile.findMany({
@@ -212,6 +221,17 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           take: 200,
         });
         taxEmails = taxMatches.map((p) => p.email);
+        const actor = resolveAdminSessionActor(request);
+        // Fire-and-forget: a missing audit row must never fail the search.
+        recordAudit({
+          actorUserId: actor?.userId ?? null,
+          actorRole: actor?.role ?? "ADMIN",
+          action: "PATIENT_TAX_ID_SEARCHED",
+          entityType: "PatientProfile",
+          entityId: "*",
+          metadata: { searchTermLength: q.length, matchCount: taxEmails.length },
+          request,
+        });
       } catch (err) {
         // Non-fatal: fiscal-number matching is best-effort, never break search.
         app.log.warn({ err }, "invoice search: tax-id lookup failed");
@@ -513,8 +533,29 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
         // PatientProfile — taxpayer ID
         const profile = await prisma.patientProfile.findUnique({
           where: { email: invoice.order.email.toLowerCase() },
-          select: { taxIdNumber: true },
+          select: { id: true, taxIdNumber: true },
         });
+
+        // S-031 fix: guard this PHI read. Reason resolution (x-phi-reason /
+        // gh_phi_reason) is automatic inside the guard — no per-route
+        // threading needed. No profile (guest order) → nothing to guard.
+        if (profile) {
+          const actor = resolveAdminSessionActor(request);
+          try {
+            await guardMedicalRead(
+              request,
+              { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
+              { patientProfileId: profile.id, resourceType: "SENSITIVE_PROFILE", accessAction: "VIEWED" },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              return reply
+                .status(403)
+                .send(medicalAccessDeniedResponse(guardError));
+            }
+            throw guardError;
+          }
+        }
 
         // Consultation date from the appointment
         const consultApptId = consultItem?.appointmentId ?? null;

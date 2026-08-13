@@ -3,6 +3,12 @@ import { SITE_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
+// NOTE (2026-08-04): this is the fallback for routes that set no title of
+// their own — it is NOT what `/` renders. The entry gate has its own
+// locale-aware metadata in app/(global)/page.tsx, sourced from each locale's
+// `entryGate.seoTitle` / `seoDescription`, which already names the service and
+// the markets for the brand-adjacent queries `/` ranks on. Editing the
+// constants here does not change the gate's snippet; edit the locale bundles.
 const DESCRIPTION =
   "Online medical consultations with licensed clinicians across Ireland, Czechia, Portugal, Spain, and Romania.";
 
@@ -28,4 +34,14 @@ export const rootMetadata: Metadata = {
     template: `%s · ${SITE_NAME}`,
   },
   description: DESCRIPTION,
+  // `app/icon.png` / `app/apple-icon.png` already emit these via Next's file
+  // convention — declared explicitly too so the <link rel="icon"> tags are
+  // guaranteed to render (SEO audit Phase 4 #1). `app/favicon.ico` covers the
+  // literal /favicon.ico request browsers/crawlers make regardless of the
+  // <link> tags.
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    shortcut: [{ url: "/favicon.ico" }],
+    apple: [{ url: "/apple-icon.png" }],
+  },
 };

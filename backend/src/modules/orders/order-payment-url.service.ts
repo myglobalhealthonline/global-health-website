@@ -1,6 +1,10 @@
 import { env } from "../../config/env.js";
 import { prisma } from "../../db/prisma.js";
-import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
+import {
+  getStripeClient,
+  isStripeConfigured,
+  resolveCheckoutPaymentMethods,
+} from "../../lib/stripe/client.js";
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
 import { checkoutBranding } from "../billing/checkout-branding.js";
 import { isCommissionCountry } from "./commission.service.js";
@@ -114,10 +118,14 @@ export async function resolveOrderPaymentUrl(
           order.items[0]?.name ?? "Medical Consultation",
         );
 
+    const paymentMethodConfig = await resolveCheckoutPaymentMethods(
+      stripe,
+      order.countryCode,
+      order.email,
+    );
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types: ["card"],
-      customer_email: order.email,
+      ...paymentMethodConfig,
       client_reference_id: order.id,
       line_items: lineItems,
       success_url: successUrl,
@@ -139,7 +147,14 @@ export async function resolveOrderPaymentUrl(
     });
 
     return session.url?.trim() ?? "";
-  } catch {
+  } catch (err) {
+    // NEVER swallow this silently: an empty return here is what ships a patient
+    // a payment message with a blank link (see the PT eu_bank_transfer outage).
+    // The caller still degrades to "", but the reason must be in the logs.
+    console.error(
+      `[order-payment-url] Stripe checkout session creation FAILED for order ${orderId} (${order.countryCode}):`,
+      err instanceof Error ? err.message : err,
+    );
     return "";
   }
 }

@@ -21,6 +21,12 @@ function renderedDocumentTitle(title: Metadata["title"]): string {
   throw new Error("Expected metadata to provide a renderable document title");
 }
 
+function rawDocumentTitle(title: Metadata["title"]): string {
+  if (typeof title === "string") return title;
+  if (title && typeof title === "object" && "absolute" in title) return title.absolute;
+  throw new Error("Expected metadata to provide a renderable document title");
+}
+
 function expectWordSafeTruncation(value: string, source: string): void {
   const finalWord = value.match(/[\p{L}\p{N}]+(?=[^\p{L}\p{N}]*$)/u)?.[0];
   const sourceWords = new Set(source.match(/[\p{L}\p{N}]+/gu) ?? []);
@@ -50,7 +56,13 @@ describe("buildPublicMetadata", () => {
     const twitter = metadata.twitter as TwitterMetadata;
     const image = firstImage(openGraph.images);
 
-    expect(metadata.title).toBe("Online GP Consultation in Ireland");
+    // `buildPublicMetadata` now always returns `{ absolute }`, because the root
+    // layout's `%s · Global Health` template would otherwise append 16 chars
+    // AFTER the 60-char search budget had been enforced. 32 + 16 = 48, so the
+    // brand still fits here and is added deliberately rather than by template.
+    expect(rawDocumentTitle(metadata.title)).toBe(
+      "Online GP Consultation in Ireland · Global Health",
+    );
     expect(metadata.description).toBe(
       "Book an appointment with an Ireland-registered general practitioner.",
     );
@@ -161,7 +173,7 @@ describe("buildPublicMetadata", () => {
     );
   });
 
-  it("keeps social titles word-safe but never truncates the indexed document title", () => {
+  it("keeps social titles within their word-safe budget while the search title stays complete", () => {
     const title =
       "Online Doctor Ireland | IMC-Registered General Practitioners and Specialists | Global Health";
     const metadata = buildPublicMetadata({
@@ -171,20 +183,26 @@ describe("buildPublicMetadata", () => {
       locale: "en_IE",
       kind: "service",
     });
-    const documentTitle = renderedDocumentTitle(metadata.title);
+    const documentTitle = rawDocumentTitle(metadata.title);
     const openGraph = metadata.openGraph as OpenGraphMetadata;
     const ogTitle = openGraph.title as string;
 
-    // Google indexes the whole document title and clips it only for display,
-    // so every keyword survives here — ellipsis truncation would delete them.
-    expect(documentTitle).toBe(title);
+    // 2026-08-09 on-page SEO batch: the document title drops the trailing
+    // brand (Google appends the site name itself from `WebSite` schema) but
+    // keeps the complete meaningful phrase — no word-chop, no ellipsis, even
+    // though it runs past the 60-char SERP-display guideline. The social
+    // (OG/Twitter) card is a real bounded surface and still word-safe-truncates.
+    expect(documentTitle).toBe(
+      "Online Doctor Ireland | IMC-Registered General Practitioners and Specialists",
+    );
     expect(documentTitle).not.toContain("…");
+    expect(documentTitle.toLowerCase()).not.toContain("global health");
 
     expect(ogTitle.length).toBeLessThanOrEqual(74);
     expectWordSafeTruncation(ogTitle, title);
   });
 
-  it("keeps search and social descriptions within word-safe preview limits", () => {
+  it("keeps the search description complete while social descriptions stay within word-safe preview limits", () => {
     const description =
       "Book an online consultation with Irish Medical Council registered general practitioners and specialists, with multilingual support, transparent pricing, secure records, and convenient appointments throughout Ireland.";
     const metadata = buildPublicMetadata({
@@ -200,11 +218,16 @@ describe("buildPublicMetadata", () => {
     const ogDescription = openGraph.description as string;
     const twitterDescription = twitter.description as string;
 
-    expect(metaDescription.length).toBeLessThanOrEqual(160);
+    // 2026-08-09 on-page SEO batch: the search <meta name="description"> is
+    // no longer word-chopped — it stays the complete, normalized authored
+    // sentence even past the 155-char SERP-snippet guideline. Social cards
+    // are a real bounded surface and keep their own word-safe budget.
+    expect(metaDescription).toBe(description);
+    expect(metaDescription).not.toContain("…");
+
     expect(ogDescription.length).toBeLessThanOrEqual(125);
     expect(twitterDescription.length).toBeLessThanOrEqual(125);
 
-    expectWordSafeTruncation(metaDescription, description);
     expectWordSafeTruncation(ogDescription, description);
     expectWordSafeTruncation(twitterDescription, description);
   });
@@ -227,7 +250,7 @@ describe("buildPublicMetadata", () => {
     }
   });
 
-  it("brands a long document title without dropping any of its keywords", () => {
+  it("keeps a long, unbranded document title complete past the search budget", () => {
     const source =
       "A very detailed specialist consultation service for patients throughout Ireland";
     const metadata = buildPublicMetadata({
@@ -236,22 +259,53 @@ describe("buildPublicMetadata", () => {
       description: "Licensed medical care in Ireland.",
     });
 
-    const title = renderedDocumentTitle(metadata.title);
-    expect(title).toBe(`${source} · Global Health`);
+    const title = rawDocumentTitle(metadata.title);
+    expect(title).toBe(source);
     expect(title).not.toContain("…");
   });
 
-  it("does not truncate a realistic homepage title that fits within the new budget", () => {
+  it("drops the brand rather than the copy when adding it would exceed the budget", () => {
     const metadata = buildPublicMetadata({
       path: "/",
       title: "Licensed online consultations tailored to where you live",
       description: "Meet licensed doctors and specialists online, in your country.",
     });
 
-    const title = renderedDocumentTitle(metadata.title);
-    expect(title).toBe(
-      "Licensed online consultations tailored to where you live · Global Health",
-    );
+    // 55 chars of copy + 16 for " · Global Health" = 71, over the 60-char
+    // search budget. The copy is what earns the click, and Google appends the
+    // site name itself from `WebSite` schema, so the brand is what gives way —
+    // never a mid-word ellipsis through the copy.
+    const title = rawDocumentTitle(metadata.title);
+    expect(title).toBe("Licensed online consultations tailored to where you live");
+    expect(title.length).toBeLessThanOrEqual(60);
+    expect(title).not.toContain("…");
+  });
+
+  it("omits the brand suffix on routes that opt out, and still respects the search budget", () => {
+    const source = "Consulta Pediátrica de Medicina Geral na Irlanda | Médico Online para Crianças";
+    const metadata = buildPublicMetadata({
+      path: "/ireland/pt/services/paediatric-consultation",
+      title: source,
+      description: "Consultas pediátricas no mesmo dia com médicos registados na Irlanda.",
+      kind: "service",
+      brandSuffix: false,
+    });
+    const openGraph = metadata.openGraph as OpenGraphMetadata;
+    const documentTitle = rawDocumentTitle(metadata.title);
+
+    // Document title: no brand added (source carries none), and — 2026-08-09
+    // on-page SEO batch — this 78-char source stays complete even though it
+    // runs past the ~60-char search-display guideline. `brandSuffix: false`
+    // only ever controlled whether OUR brand is appended, never whether the
+    // search title gets word-chopped.
+    expect(documentTitle).toBe(source);
+    expect(documentTitle).not.toContain("Global Health");
+    expect(documentTitle).not.toContain("…");
+
+    // Social cards keep their own word-safe budget and carry the brand via
+    // `siteName`, so dropping the document-title suffix costs them nothing.
+    expect((openGraph.title as string).length).toBeLessThanOrEqual(74);
+    expect(openGraph.siteName).toBe("Global Health");
   });
 
   it("keeps doctor OG metadata on the branded endpoint when the source image is untrusted", () => {
@@ -270,5 +324,69 @@ describe("buildPublicMetadata", () => {
     expect(imageUrl.origin).toBe("https://myglobalhealth.online");
     expect(imageUrl.pathname).toBe("/api/og");
     expect(image).toMatchObject({ width: 1200, height: 630, alt: "Dr Aoife Murphy" });
+  });
+});
+
+// 2026-08-03 SEO audit (2.1): compactSearchTitle isn't exported, so these
+// exercise it the same way real callers do — through buildPublicMetadata's
+// document title. Fixtures are real over-length titles from the audit.
+describe("compactSearchTitle", () => {
+  beforeEach(() => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://myglobalhealth.online/");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("passes an under-limit title through untouched", () => {
+    // 77 chars including brand, but the audit's own worst-case example —
+    // used here to prove the untouched path still works right at the edge
+    // once the brand is counted in.
+    const title = "Online Doctors Ireland | IMC-Registered GPs & Specialists";
+    expect(Array.from(title).length).toBeLessThanOrEqual(60);
+
+    const metadata = buildPublicMetadata({ path: "/ireland/en/doctors", title, description: "d" });
+    expect(rawDocumentTitle(metadata.title)).toBe(title);
+  });
+
+  it("drops the trailing brand when that alone brings it under the limit", () => {
+    const title = "Online Doctors Ireland | IMC-Registered GPs & Specialists · Global Health";
+    const metadata = buildPublicMetadata({ path: "/ireland/en/doctors", title, description: "d" });
+    const result = rawDocumentTitle(metadata.title);
+
+    expect(result).toBe("Online Doctors Ireland | IMC-Registered GPs & Specialists");
+    expect(Array.from(result).length).toBeLessThanOrEqual(60);
+    expect(result).not.toContain("…");
+  });
+
+  it("drops the brand but keeps the complete phrase when that still leaves it over the limit", () => {
+    const title =
+      "Online Specialist Consultation Ireland | Cardiology, Neurology, Paediatrics | Global Health";
+    const metadata = buildPublicMetadata({
+      path: "/ireland/en/specialist-consultation",
+      title,
+      description: "d",
+    });
+    const result = rawDocumentTitle(metadata.title);
+
+    expect(result).toBe(
+      "Online Specialist Consultation Ireland | Cardiology, Neurology, Paediatrics",
+    );
+    expect(result).not.toContain("…");
+    expect(result.toLowerCase()).not.toContain("global health");
+  });
+
+  it("keeps a long title complete when it carries no brand suffix at all", () => {
+    // Audit fixture minus its trailing brand, isolating the no-brand-present branch.
+    const title = "Médico Online España | Médicos de Cabecera y Especialistas Colegiados";
+    expect(Array.from(title).length).toBeGreaterThan(60);
+
+    const metadata = buildPublicMetadata({ path: "/spain/es/x", title, description: "d" });
+    const result = rawDocumentTitle(metadata.title);
+
+    expect(result).toBe(title);
+    expect(result).not.toContain("…");
   });
 });

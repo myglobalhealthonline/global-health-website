@@ -72,6 +72,9 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
     languages,
     seoTitle: base?.seoTitle ?? "",
     seoDescription: base?.seoDescription ?? "",
+    // Admin-set only, never defaulted — "" (blank) clears it, absent leaves
+    // it untouched on update per the create/edit page's own undefined check.
+    lastReviewedAt: String(formData.get("lastReviewedAt") ?? "").trim(),
     specialtyIds,
     additionalCountryIds,
     translations,
@@ -89,6 +92,14 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
     canRequestCrossJurisdictionRx:
       formData.get("canRequestCrossJurisdictionRx") === "on",
     trustpilotInviteEnabled: formData.get("trustpilotInviteEnabled") === "on",
+    // Country-director master switch + the markets it covers. The ids are
+    // DoctorCountry.countryId values; the backend scopes the write by doctorId,
+    // so an id outside the doctor's own markets simply matches nothing.
+    isCountryDirector: formData.get("isCountryDirector") === "on",
+    directorCountryIds: formData
+      .getAll("directorCountryIds")
+      .map((v) => String(v).trim())
+      .filter(Boolean),
     crossBorderRxEnabled: formData.get("crossBorderRxEnabled") === "on",
     // Per-country price + payout. The form renders a hidden
     // `crossBorderRxCountryId` per country row plus `crossBorderRxPrice_<id>` /

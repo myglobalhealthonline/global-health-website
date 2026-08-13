@@ -1,0 +1,221 @@
+{
+  "property": "547083375",
+  "report": "organic_traffic",
+  "date_range": {
+    "start": "2026-05-05",
+    "end": "2026-08-02"
+  },
+  "totals": {
+    "sessions": 24,
+    "users": 23,
+    "pageviews": 69,
+    "avg_daily_sessions": 6.0
+  },
+  "daily_data": [
+    {
+      "date": "20260725",
+      "sessions": 6,
+      "users": 5,
+      "pageviews": 25,
+      "bounce_rate": 16.7,
+      "avg_session_duration": 157.5,
+      "engagement_rate": 83.3
+    },
+    {
+      "date": "20260726",
+      "sessions": 5,
+      "users": 5,
+      "pageviews": 22,
+      "bounce_rate": 60.0,
+      "avg_session_duration": 209.1,
+      "engagement_rate": 40.0
+    },
+    {
+      "date": "20260727",
+      "sessions": 8,
+      "users": 8,
+      "pageviews": 12,
+      "bounce_rate": 37.5,
+      "avg_session_duration": 114.0,
+      "engagement_rate": 62.5
+    },
+    {
+      "date": "20260728",
+      "sessions": 5,
+      "users": 5,
+      "pageviews": 10,
+      "bounce_rate": 20.0,
+      "avg_session_duration": 475.9,
+      "engagement_rate": 80.0
+    }
+  ],
+  "top_pages": [
+    {
+      "landing_page": "/",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 21,
+      "bounce_rate": 33.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "landing_page": "/ireland/en/blog/sick-certificate-ireland-employee-rights",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 5,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/spain/en/services/consulta-medica-online",
+      "sessions": 2,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/czechia/cs/doctors/mudr-ahmed-maklad",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/czechia/cs/doctors/mudr-vojt\u011bch-\u010dern\u00fd",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/czechia/cs/services/cestovni-medicina-praha",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/czechia/cs/services/muzske-zdravi-online",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/ireland/en/doctors/dr-ahmed-maklad",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/ireland/en/doctors/dr-khoiamul-islam",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/ireland/en/doctors/dr-mirza-aun-mohammad",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 11,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/ireland/en/doctors/dr-mohammed-omar",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/ireland/en/doctors/dr-muhammad-usman-yoosuf",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 5,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/ireland/es/health/sick-cert-online",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/portugal/pt/doctors",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/portugal/pt/doctors/dr-lucas-alvarenga-berto",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/portugal/pt/doctors/dra-margarida-andrade",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/romania/ro/doctors",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/spain/cs/services/cardiologo-online",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 6,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/spain/es/doctors/dr-fabiana-cornejo",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/spain/pt",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    }
+  ],
+  "quota_tokens_used": {
+    "daily_consumed": 1,
+    "daily_remaining": 199987,
+    "hourly_consumed": 1,
+    "hourly_remaining": 39999
+  },
+  "error": null
+}

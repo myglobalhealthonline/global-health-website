@@ -7,6 +7,7 @@ import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Mail, Clock, AlertTriangle, ShieldCheck, BadgeCheck, MessageSquare } from "lucide-react";
+import { countries as seededCountries } from "@/data/countries";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
@@ -51,6 +52,10 @@ const CONTACT_PAGE_JSONLD = {
 export default async function ContactPage() {
   const locale = await getPageLocale();
   const { contact } = loadLocaleBundle(locale);
+  const countryT = contact.country;
+  // Static seed list, not the CMS fetch: this is a link row, and the country
+  // contact routes are code-resident, so every seeded market has one.
+  const countries = seededCountries;
 
   return (
     <section>
@@ -162,6 +167,32 @@ export default async function ContactPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Crawlable path into each market's own contact page — those
+                  carry the local NAP, register and regulatory FAQs, and this
+                  is their inbound link from the global surface. */}
+              <nav className="mt-10" aria-labelledby="contact-countries">
+                <h2
+                  id="contact-countries"
+                  className="text-xl font-extrabold tracking-[-0.015em]"
+                  style={{ color: "var(--color-text-primary)" }}
+                >
+                  {countryT.onlineOnlyLabel}
+                </h2>
+                <ul className="mt-4 space-y-2">
+                  {countries.map((c) => (
+                    <li key={c.code}>
+                      <a
+                        href={`/${c.slug || c.code}/${c.defaultLocale}/contact`}
+                        className="text-sm font-medium underline underline-offset-2"
+                        style={{ color: "var(--color-brand-primary)" }}
+                      >
+                        {c.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             </aside>
 
             <div>

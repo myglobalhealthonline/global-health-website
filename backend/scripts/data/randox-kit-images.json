@@ -1,0 +1,18 @@
+{
+  "general-health-test": "/api/media/media/37eb4640-1954-4b55-86fb-6717f5717196-general-health-test.webp",
+  "heart-health-cholesterol-test": "/api/media/media/7b8d30aa-81b9-44b8-90be-083df3d155b6-heart-health-cholesterol-test.webp",
+  "female-hormone-test": "/api/media/media/8c066ef9-e0ef-43a5-8a9a-d180d02dd827-female-hormone-test.webp",
+  "male-hormone-test": "/api/media/media/64217d6a-330d-443b-ae29-d865245836b1-male-hormone-test.webp",
+  "psa-prostate-test": "/api/media/media/2d3a54bd-4288-4cfd-a6c7-0aecde54e42a-psa-prostate-test.webp",
+  "amh-fertility-test": "/api/media/media/8126068b-5a6d-40b8-91d8-4c2bf6f1bf6a-amh-fertility-test.webp",
+  "vitamin-d-test": "/api/media/media/2bef517f-dcd7-401f-a8ce-35e5240bb75c-vitamin-d-test.webp",
+  "vitamin-b12-test": "/api/media/media/4bf486ed-84a5-4cce-8a71-f90994a8dae7-vitamin-b12-test.webp",
+  "gut-microbiome-test": "/api/media/media/dbfdbca4-1d14-473d-90ea-c8b54d360c77-gut-microbiome-test.webp",
+  "nutrition-lifestyle-dna-test": "/api/media/media/38f2a8a7-a530-4b89-b01a-d6dd6c68766c-nutrition-lifestyle-dna-test.webp",
+  "genetic-haemochromatosis-test": "/api/media/media/5886da70-4a57-4552-b20c-6fed6e8490ac-genetic-haemochromatosis-test.webp",
+  "genetic-coeliac-disease-test": "/api/media/media/12d0d3cc-1811-4d5f-b810-e73e2ad787c6-genetic-coeliac-disease-test.webp",
+  "genetic-lactose-intolerance-test": "/api/media/media/937f6f4c-de92-435a-a3fc-848d0d92d7d9-genetic-lactose-intolerance-test.webp",
+  "fracture-risk-assessment-test": "/api/media/media/1c582c5a-6916-443e-a7d2-13eaa74be0d9-fracture-risk-assessment-test.webp",
+  "thyroid-function-test": "/api/media/media/45dcc6e2-ccdc-4291-af34-eae72ae0cbb7-thyroid-function-test.webp",
+  "type-1-diabetes-risk-test": "/api/media/media/1041e348-a86e-45a3-8d32-2389b906fbf8-type-1-diabetes-risk-test.webp"
+}

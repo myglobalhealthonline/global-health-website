@@ -3,13 +3,13 @@ import Link from "next/link";
 import { fetchDoctorServices } from "@/lib/api/doctor-api";
 import { AdminCard, PageHeader } from "@/components/portal-atoms";
 import { DoctorServiceSelectionForm } from "./_components/service-selection-form";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorServicesPage() {
-  const [result, locale] = await Promise.all([fetchDoctorServices(), getPageLocale()]);
+  const [result, locale] = await Promise.all([fetchDoctorServices(), getPortalLocale()]);
   const { doctor: d } = loadLocaleBundle(locale);
 
   if (!result.ok) {

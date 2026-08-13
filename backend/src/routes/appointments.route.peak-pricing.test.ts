@@ -3,6 +3,7 @@ import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import { buildApp } from "../app.js";
 import { prisma } from "../db/prisma.js";
+import { uniqueCurrencyCode } from "../test-utils/unique-currency-code.js";
 
 /**
  * Regression test for a bug found in a prior review pass: POST
@@ -22,6 +23,8 @@ describe("POST /api/appointments — peak pricing", () => {
   let bootError: unknown = null;
 
   const uniq = `peakbook-${Date.now()}`;
+
+  const currencyCode = uniqueCurrencyCode();
   let currencyId: string;
   let countryId: string;
   let countryCode: string;
@@ -39,7 +42,7 @@ describe("POST /api/appointments — peak pricing", () => {
     }
 
     const currency = await prisma.currency.create({
-      data: { code: `C${uniq}`.slice(0, 9), symbol: "€", decimals: 2 },
+      data: { code: currencyCode, symbol: "€", decimals: 2 },
     });
     currencyId = currency.id;
     // Lowercase — the booking schema lowercases the incoming country code

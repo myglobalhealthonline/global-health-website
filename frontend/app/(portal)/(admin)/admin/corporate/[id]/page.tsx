@@ -53,6 +53,7 @@ import {
   requestStatusTone,
   REQUEST_TYPE_LABELS,
 } from "../_lib";
+import { SetCrumbTitle } from "@/components/crumb-title";
 
 export const dynamic = "force-dynamic";
 
@@ -281,6 +282,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
 
   return (
     <>
+      <SetCrumbTitle label={company.name} />
       <PageHeader
         eyebrow="Global"
         title={company.name}

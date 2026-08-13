@@ -204,6 +204,11 @@ export function CartServiceCard({
                   className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-5 text-sm font-bold tracking-[-0.005em] text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)]"
                 >
                   {detailLabel}
+                  {/* sr-only suffix (not aria-label): SEO/a11y anchor-text
+                      audits read visible/text content only, so an aria-label
+                      alone still flags "Learn more" as generic — matches
+                      ServiceCard's TwoActions pattern. */}
+                  <span className="sr-only">: {title}</span>
                   <ArrowRight className="size-4 shrink-0" aria-hidden />
                 </Link>
               ) : null}
@@ -299,6 +304,7 @@ export function CartServiceCard({
               className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-5 text-sm font-bold tracking-[-0.005em] text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)]"
             >
               {detailLabel}
+              <span className="sr-only">: {title}</span>
               <ArrowRight className="size-4 shrink-0" aria-hidden />
             </Link>
           ) : null}

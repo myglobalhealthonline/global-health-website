@@ -1,9 +1,9 @@
 import { CommandBandSkeleton, StatGridSkeleton } from "@/components/portal-skeletons";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export default async function DoctorDashboardLoading() {
-  const locale = await getPageLocale();
+  const locale = await getPortalLocale();
   const { doctor: d } = loadLocaleBundle(locale);
 
   return (

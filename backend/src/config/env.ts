@@ -38,6 +38,16 @@ const optionalPem = z
   )
   .transform((v) => (typeof v === "string" ? v.replace(/\\n/g, "\n") : v));
 
+/** Wraps any optional string rule so a blank var counts as unset.
+ *
+ *  `optionalSecret` already does this for plain strings, but a var with its own
+ *  shape rule — `.url()`, a regex — cannot reuse it. Without this, a documented
+ *  blank placeholder (`SUKL_EPOUKAZ_CUEP_TEST_URL=`) fails validation and the process
+ *  refuses to BOOT, which is a far worse outcome than the var simply being
+ *  absent. Blank and missing must mean the same thing. */
+const blankAsUnset = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), schema);
+
 const envSchema = z.object({
   // Railway (and a few other PaaS) export NODE_ENV as the empty string
   // when no value is set, which bypasses Zod's `.default()` (that only
@@ -150,7 +160,7 @@ const envSchema = z.object({
   INVOICE_EXPRESS_ACCOUNT: optionalSecret,
 
   /** Synlab CZ — WebLIMS 2 Remote API (electronic laboratory requisitions).
-   *  See docs/synlab/synlab-integration-questions.md.
+   *  See docs/guides/synlab-integration-questions.md.
    *
    *  BASE_URL + CLIENT_ID + CLIENT_SECRET are the hard gate: with any of them
    *  unset `isWeblimsConfigured()` is false and the whole lab handoff is dark —
@@ -182,6 +192,88 @@ const envSchema = z.object({
    *  billing model is self-pay, so this is the code sent on every requisition
    *  until insurance-billed exams are supported. */
   WEBLIMS_SELFPAY_INSURANCE_CODE: z.string().trim().min(1).optional(),
+
+  /** Memed (doc.memed.com.br) — Brazil prescription/exam-kit partner API.
+   *  No production credentials yet (partner onboarding in progress, see
+   *  parcerias@memed.com.br). All optional so the integration ships dark:
+   *  `isMemedConfigured()` is false until every var below is set, and a paid
+   *  HEALTH_TEST order just logs "Memed not configured" instead of throwing. */
+  MEMED_BASE_URL: z.string().trim().url().optional(),
+  MEMED_CLIENT_ID: optionalSecret,
+  MEMED_CLIENT_SECRET: optionalSecret,
+  MEMED_API_TOKEN: optionalSecret,
+  /** Dr. Tiago's Memed doctor id — every kit booking is attributed to this one
+   *  fixed doctor account. */
+  MEMED_DEFAULT_DOCTOR_ID: z.string().trim().min(1).optional(),
+
+  /** Memed Prescrição — the doctor-facing e-prescription/certificate WIDGET,
+   *  a different Memed product surface from the booking API above (separate
+   *  credentials expected). BR doctors embed this in the doctor portal to
+   *  digitally sign prescriptions/certificates/exam requests themselves —
+   *  see lib/memed/prescription-client.ts. No credentials yet; all optional
+   *  so `isMemedPrescriptionConfigured()` stays false and the doctor portal
+   *  falls back to the existing unsigned DOCX flow until this is live. */
+  MEMED_PRESCRIPTION_BASE_URL: z.string().trim().url().optional(),
+  MEMED_PRESCRIPTION_CLIENT_ID: optionalSecret,
+  MEMED_PRESCRIPTION_SECRET: optionalSecret,
+  /** Memed's widget JS bundle URL — frontend-facing, kept in env so
+   *  sandbox/prod can be swapped without a redeploy. */
+  MEMED_PRESCRIPTION_SCRIPT_URL: z.string().trim().url().optional(),
+
+  /** SÚKL (Czech State Institute for Drug Control) — ePoukaz / eRecept.
+   *  See docs/sukl/SECURITY_MODEL.md and docs/sukl/INTERFACE_INVENTORY.md.
+   *
+   *  Authentication is mutual TLS with a *workplace* communication certificate
+   *  issued to Global Guest s.r.o. — NOT a doctor's personal signing key. SÚKL
+   *  confirmed no per-doctor qualified signature is required, which is why no
+   *  doctor key material is accepted or stored anywhere in this integration.
+   *
+   *  Everything here is optional so the feature ships dark: with the gate
+   *  unsatisfied `isSuklConfigured()` is false, the admin console renders a red
+   *  status card and no SÚKL call can fire. See lib/sukl/index.ts.
+   *
+   *  Certificate source, checked in this order:
+   *    SUKL_TEST_PFX_BASE64 — Railway. Decoded in backend memory, never to disk.
+   *    SUKL_TEST_PFX_PATH   — local dev. Absolute path OUTSIDE the repo.
+   *  BASE64 wins when both are set, so a Railway service cannot accidentally
+   *  fall through to a stale path baked into an image. */
+  /** Every var here is wrapped so a blank placeholder means "unset" rather than
+   *  a validation failure — these are documented as blank in .env.example, and a
+   *  blank value must never stop the process booting. */
+  SUKL_ENVIRONMENT: blankAsUnset(z.enum(["test", "production"]).optional()),
+  SUKL_TEST_PFX_PATH: optionalSecret,
+  SUKL_TEST_PFX_BASE64: optionalSecret,
+  SUKL_TEST_PFX_PASSWORD: optionalSecret,
+  /** Test workplace code assigned by SÚKL (case SUKL206641/2026). */
+  SUKL_TEST_WORKPLACE_CODE: optionalSecret,
+  /** IČO of the legal entity that owns the workplace. Exactly 8 digits. */
+  SUKL_TEST_ENTITY_ICO: blankAsUnset(
+    z
+      .string()
+      .trim()
+      .regex(/^\d{8}$/, "SUKL_TEST_ENTITY_ICO must be 8 digits")
+      .optional(),
+  ),
+  /** SÚKL exposes ePoukaz as TWO separate SOAP services, not one base URL with
+   *  paths: CUEP is the voucher service itself, COMMON carries the shared
+   *  operations (code lists, versions, ping). Each has its own host, so they are
+   *  configured independently and gated independently.
+   *
+   *  MUST be reconciled against the `soap:address` values in the current ePoukaz
+   *  v19 WSDL before any request is sent — the host is only half of an endpoint
+   *  and the path comes from the WSDL. See docs/sukl/INTERFACE_INVENTORY.md.
+   *
+   *  No defaults: an unset service is reported as unconfigured rather than
+   *  silently pointed at nothing (same reasoning as WEBLIMS_BASE_URL).
+   *
+   *  Deliberately absent: the cross-border pharmacist endpoint. It is not
+   *  configured until SÚKL confirms which cross-border workflow an outpatient
+   *  workplace may perform — see docs/sukl/SCOPE_CONFIRMATION.md Q7. */
+  SUKL_EPOUKAZ_CUEP_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
+  SUKL_EPOUKAZ_COMMON_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
+  SUKL_REQUEST_TIMEOUT_MS: blankAsUnset(
+    z.coerce.number().int().min(1_000).max(120_000).default(30_000),
+  ),
 
   /** Subscription billing provider. `fake` (default) = in-memory port, no
    *  Stripe keys needed (dev/test). `stripe` = real Stripe Subscriptions —
@@ -227,6 +319,29 @@ const envSchema = z.object({
    *  on request.ip only (previous behaviour). */
   PROXY_CLIENT_IP_SECRET: z.string().min(16).optional(),
 
+  /** Requests per minute for the `gh-ssr` bucket — live server-side public
+   *  content reads from the Next.js frontend (see utils/rate-limit-trust.ts).
+   *  Separate from the build bucket's 20,000/min on purpose: a build is a
+   *  short burst nobody waits on, SSR runs continuously and must stay near
+   *  what this server can actually serve.
+   *
+   *  Default 3,000/min = 50 req/s, chosen from measurement (2026-08-08), not
+   *  guessed:
+   *    - DEMAND. One cold service-page render = 12 backend GETs. A
+   *      concurrency-12 crawl of 59 pages issued 145 backend requests in 28s
+   *      (~311/min) against a dev-mode frontend; a compiled frontend renders
+   *      roughly an order of magnitude faster, so ~3,000/min covers that same
+   *      crawl shape with headroom. Steady-state layout reads across 6 markets
+   *      x 6 locales are ~288/min of that on their own.
+   *    - CAPACITY. With the limiter bypassed this server sustained 110-120
+   *      req/s (6,600-7,200/min) with ZERO 5xx up to 64 concurrent, and the pg
+   *      pool never exceeded its 10 connections. 3,000/min is ~45% of measured
+   *      capacity, leaving the rest for real visitors and deploy-time builds.
+   *  So: 10x the old shared ceiling, less than half of what the box can do,
+   *  and still a real ceiling — an abusive SSR workload hits it. Raise only
+   *  with a measurement that shows sustained legitimate demand above it. */
+  RATE_LIMIT_SSR_MAX: z.coerce.number().int().min(300).max(20_000).default(3_000),
+
   /** Optional ops-alert webhook (Slack/Discord/generic). When set, money/ops
    *  reconciliation findings + subscription webhook failures POST a JSON
    *  {text,severity,...} here. Unset → alerts are logged only (§39). */
@@ -246,6 +361,21 @@ const envSchema = z.object({
   /** Comma-separated staff inboxes that receive the same admin booking alert by
    *  email. Unset → the email leg is skipped. */
   ADMIN_NOTIFY_EMAILS: z.string().trim().optional(),
+
+  /** WhatsApp group JID that mirrors the payment_confirmed admin alert
+   *  (e.g. "120363413688325038@g.us"). Unset → that group leg is skipped. */
+  ADMIN_NOTIFY_WHATSAPP_GROUP_JID: z.string().trim().optional(),
+
+  /** Minutes to suppress repeat "doctor has sent a text" support-chat emails on
+   *  the same thread. The window is cleared the moment an admin replies, so an
+   *  answered thread always alerts again immediately. */
+  SUPPORT_ALERT_THROTTLE_MINUTES: z.coerce.number().int().min(0).max(1440).default(15),
+
+  /** Minutes to suppress repeat "patient sent a message" email+WhatsApp alerts
+   *  (admin clinic thread and doctor consultation thread) on the same
+   *  appointment. A burst of consecutive patient messages only alerts once
+   *  per window; the in-portal bell still fires on every message. */
+  PATIENT_MESSAGE_ALERT_THROTTLE_MINUTES: z.coerce.number().int().min(0).max(1440).default(15),
 
   BRAZIL_BOOKING_URL: z.string().trim().url().optional(),
   BRAZIL_CONSENT_NOTIFY_EMAIL: z.string().trim().email().optional(),
@@ -551,6 +681,18 @@ if (
   throw new Error(
     "ADMIN_TOKEN_FALLBACK_ENABLED must not be true in production — session-based admin auth must be " +
       "the sole path. Remove this env var from Railway.",
+  );
+}
+
+// SÚKL production is not approved. Switching environments is NOT a URL swap:
+// production needs a different communication certificate, production endpoints,
+// production workplace identifiers, doctor mappings, written SÚKL permission and
+// a security review. Refuse to boot rather than let a one-line env flip send
+// real prescription data to the live national eRecept system.
+if (parsed.SUKL_ENVIRONMENT === "production") {
+  throw new Error(
+    "SUKL_ENVIRONMENT=production is not approved — only the SÚKL test environment is " +
+      "implemented. See docs/sukl/SECURITY_MODEL.md for the production checklist.",
   );
 }
 

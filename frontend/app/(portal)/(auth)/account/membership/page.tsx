@@ -1,177 +1,109 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Award, Activity, CalendarClock, CreditCard, Sparkles, Gift, CheckCircle2 } from "lucide-react";
-import { getCountryByCode } from "@/data/countries";
-import { getServerAuthUser } from "@/lib/api/server-auth";
-import {
-  getServerCredits,
-  getServerRedemptions,
-  getServerSubscription,
-} from "@/lib/api/me-subscription-server";
-import { getCountryPlans } from "@/lib/content/get-country-plans";
-import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { BadgeCheck } from "lucide-react";
+import { getServerMemberships } from "@/lib/api/me-memberships-server";
+import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
-import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
-import { AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
-import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
-import { MembershipTabsClient } from "./_components/MembershipTabsClient";
-import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
-import { RewardsPanel } from "../rewards/_components/RewardsPanel";
+import { interpolate } from "@/lib/subscription/format";
+import { AdminCard, AdminEmptyState, PageHeader, Pill } from "@/components/portal-atoms";
+import { MembershipDigitalCard } from "./_components/MembershipDigitalCard";
+import { statusLabel } from "./_components/membership-status";
 
-export const metadata: Metadata = { title: "Your membership", robots: { index: false } };
+export const metadata: Metadata = { title: "Membership", robots: { index: false } };
 
-type Search = { subscription?: string; redemption?: string; plan?: string; tab?: string };
+/**
+ * Private membership plans — member landing (§10).
+ *
+ * This route used to be the public subscription page; that moved to
+ * /account/plans, so the empty state points there. Old bookmarks land here,
+ * and "no membership" is exactly what a subscriber arriving by bookmark sees.
+ */
+export default async function MembershipPage() {
+  const [memberships, locale] = await Promise.all([getServerMemberships(), getPortalLocale()]);
+  const { account } = loadLocaleBundle(locale);
+  const t = account.privateMembership as unknown as Record<string, string>;
 
-export default async function MembershipPage({
-  searchParams,
-}: {
-  searchParams: Promise<Search>;
-}) {
-  const [
-    { subscription: returnState, plan: requestedPlanId, redemption: redemptionState },
-    sub,
-    credits,
-    redemptions,
-    user,
-    locale,
-  ] = await Promise.all([
-    searchParams,
-    getServerSubscription(),
-    getServerCredits(),
-    getServerRedemptions(),
-    getServerAuthUser(),
-    getPageLocale(),
-  ]);
-  const { subscription, account: a } = loadLocaleBundle(locale);
-  const t = subscription.manage;
-  const rt = subscription.redeem;
+  const rows = memberships ?? [];
+  const [plansHintBefore, plansHintAfter = ""] = t.emptyPlansHint.split("{link}");
 
-  if (!sub || !sub.plan) {
-    return (
-      <div className="gh-patient-page gh-patient-membership-page">
-        <PageHeader title={t.title} description={t.subtitle} />
+  return (
+    <div className="gh-patient-page">
+      <PageHeader
+        eyebrow={t.title}
+        icon={<BadgeCheck aria-hidden />}
+        title={t.title}
+        description={t.subtitle}
+      />
+
+      {rows.length === 0 ? (
         <div className="gh-patient-empty-state gh-card max-w-xl p-8">
           <AdminEmptyState
-            title={a.membership.noActiveMembership}
-            description={t.noSubscription}
+            title={t.emptyTitle}
+            description={t.emptyBody}
             action={
-              <Link href="/" className="gh-btn gh-btn-primary inline-flex justify-center">
-                {t.browsePlans}
+              <Link
+                href="/account/membership/claim"
+                className="gh-btn gh-btn-primary inline-flex justify-center"
+              >
+                {t.claimCta}
               </Link>
             }
           />
+          {/* Old /account/membership bookmarks used to be the subscription
+              page, so say where it went rather than leave a subscriber staring
+              at "no membership". */}
+          <p className="mt-4 text-sm opacity-70">
+            {plansHintBefore}
+            <Link href="/account/plans" className="underline">
+              {t.plansLink}
+            </Link>
+            {plansHintAfter}
+          </p>
         </div>
-      </div>
-    );
-  }
+      ) : (
+        <div className="flex flex-col gap-5">
+          {rows.map((membership) => (
+            <AdminCard key={membership.id} padding={0}>
+              <div className="gh-membership-summary">
+                <MembershipDigitalCard membership={membership} t={t} />
+                <div className="flex flex-col gap-2 p-5">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base font-semibold">{membership.planName}</h2>
+                    <Pill tone={membership.status === "ACTIVE" ? "active" : "neutral"}>
+                      {statusLabel(membership.status, t)}
+                    </Pill>
+                  </div>
+                  <p className="text-sm opacity-70">{membership.levelName}</p>
+                  {/* A future start date is the one case where ACTIVE does not
+                      mean "usable" (§5.2) — say so, rather than let the pill
+                      imply otherwise. */}
+                  {membership.termState === "NOT_STARTED" ? (
+                    <p className="text-sm">
+                      {interpolate(t.notStartedNote, {
+                        date: formatAppDate(membership.startDate),
+                      })}
+                    </p>
+                  ) : null}
+                  <Link
+                    href={`/account/membership/${membership.id}`}
+                    className="mt-2 inline-flex text-sm font-semibold underline"
+                    style={{ color: "var(--portal-primary)" }}
+                  >
+                    {t.viewMembership}
+                  </Link>
+                </div>
+              </div>
+            </AdminCard>
+          ))}
 
-  // Upgrade/downgrade options come from the same country's catalogue. Also
-  // drives the wellness-kit unlock condition below (one fetch, both tabs).
-  const config = sub.countryCode ? getCountryByCode(sub.countryCode) : null;
-  const plans = sub.countryCode ? await getCountryPlans(sub.countryCode, locale) : [];
-  const planOptions: PlanOption[] = plans
-    .filter((p) => p.id !== sub.plan!.id)
-    .map((p) => ({
-      id: p.id,
-      name: p.name,
-      priceLabel: formatPrice(p.monthlyPriceCents, p.currencyCode, { maximumFractionDigits: 0 }),
-      priceCents: p.monthlyPriceCents,
-    }));
-
-  const priceLabel = formatPrice(sub.plan.monthlyPriceCents, sub.plan.currencyCode, {
-    maximumFractionDigits: 0,
-  });
-  const nextBillingLabel = sub.currentPeriodEnd ? formatAppDate(sub.currentPeriodEnd) : null;
-  const pendingChangeDate = sub.pendingChange?.effectiveAt
-    ? formatAppDate(sub.pendingChange.effectiveAt)
-    : null;
-  const pricingHref = config ? `/${config.slug}/${locale}/pricing` : "/";
-
-  const kits = redemptions?.kits ?? [];
-  const livePlan = plans.find((p) => p.id === sub.plan?.id);
-  const unlockByKit = new Map(
-    (livePlan?.wellnessKits ?? []).map((k) => [k.healthTestId, k.unlockAfterPaidMonths]),
-  );
-  const kitsWithUnlock = kits.map((k) => ({
-    ...k,
-    unlockMonths: unlockByKit.get(k.healthTestId) ?? null,
-  }));
-
-  return (
-    <div className="gh-patient-page gh-patient-membership-page">
-      <PageHeader title={t.title} description={t.subtitle} />
-      <MembershipTabsClient
-        tabMembership={a.nav.membership}
-        tabRewards={a.nav.rewards}
-        tabsAria={a.membership.tabsAria}
-        membershipPanel={
-          <>
-            <AdminSummaryStrip
-              className="mb-5"
-              items={[
-                { label: a.membership.sumPlan, value: sub.plan.name, hint: a.membership.sumPlanHint, icon: <Award aria-hidden /> },
-                { label: a.membership.sumStatus, value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? a.membership.cancellationScheduled : a.membership.sumStatusHint, icon: <Activity aria-hidden /> },
-                { label: a.membership.sumNextBilling, value: nextBillingLabel ?? a.membership.notScheduled, hint: a.membership.sumNextBillingHint, icon: <CalendarClock aria-hidden /> },
-                { label: a.membership.sumPrice, value: priceLabel, hint: a.membership.sumPriceHint, icon: <CreditCard aria-hidden /> },
-              ]}
-            />
-            <ManagePanel
-              t={t}
-              status={sub.status}
-              planName={sub.plan.name}
-              priceLabel={priceLabel}
-              currentPriceCents={sub.plan.monthlyPriceCents}
-              nextBillingLabel={nextBillingLabel}
-              cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
-              pendingChangePlanName={sub.pendingChange?.planName ?? null}
-              pendingChangeDate={pendingChangeDate}
-              planOptions={planOptions}
-              // Pricing-page "Switch to this plan" carries ?plan= — preselect it in
-              // the change dropdown when it's a valid switch target.
-              initialPlanId={planOptions.some((p) => p.id === requestedPlanId) ? requestedPlanId! : null}
-              returnState={returnState ?? null}
-              pricingHref={pricingHref}
-            />
-            {/* Consolidated benefits: GP credits remaining, wellness, discount perks
-                and their unlock conditions (Req 3). Reuses the dashboard widgets;
-                `embedded` hides its plan card since ManagePanel shows that above. */}
-            <SubscriptionDashboard locale={locale} embedded />
-          </>
-        }
-        rewardsPanel={
-          kits.length === 0 ? (
-            <div className="gh-patient-empty-state gh-card max-w-xl p-8">
-              <AdminEmptyState
-                as="h2"
-                title={a.membership.noRewardsTitle}
-                description={subscription.dashboard.wellnessNone}
-              />
-            </div>
-          ) : (
-            <>
-              <AdminSummaryStrip
-                className="mb-5"
-                items={[
-                  { label: a.membership.sumWellnessBalance, value: String(credits?.wellness.balance ?? 0), hint: a.membership.sumWellnessBalanceHint, icon: <Sparkles aria-hidden /> },
-                  { label: a.membership.sumRewardKits, value: String(kitsWithUnlock.length), hint: a.membership.sumRewardKitsHint, icon: <Gift aria-hidden /> },
-                  { label: a.membership.sumEligibleNow, value: String(kitsWithUnlock.filter((kit) => kit.eligible).length), hint: a.membership.sumEligibleNowHint, icon: <CheckCircle2 aria-hidden /> },
-                  { label: a.membership.sumMembership, value: sub.status.toLowerCase(), hint: sub.plan?.name ?? a.membership.currentPlanHint, icon: <Award aria-hidden /> },
-                ]}
-              />
-              <RewardsPanel
-                t={rt}
-                shippingLabels={a.rewards}
-                kits={kitsWithUnlock}
-                wellnessBalance={credits?.wellness.balance ?? 0}
-                prefillName={user?.fullName ?? ""}
-                prefillCountry={(sub.countryCode ?? "").toUpperCase()}
-                returnState={redemptionState ?? null}
-              />
-            </>
-          )
-        }
-      />
+          <p className="text-sm">
+            <Link href="/account/membership/claim" className="underline">
+              {t.claimCta}
+            </Link>
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -22,7 +22,8 @@ import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
-import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
+import { aggregateRatingJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
+import { fetchPublicReviewConfig, resolvePrimaryAggregate } from "@/lib/api/reviews-config";
 import { rootMetadata } from "@/lib/seo/root-metadata";
 import { toHtmlLang } from "@/lib/i18n/html-lang";
 import { LocaleCookieSync } from "@/components/i18n/LocaleCookieSync";
@@ -89,12 +90,13 @@ export default async function CountryLangRootLayout({
     countryDefaultLocale: config.defaultLocale,
   });
 
-  const [{ common, navigation }, assets, activeFooter, activeTrust] =
+  const [{ common, navigation }, assets, activeFooter, activeTrust, reviewConfigResult] =
     await Promise.all([
       getSiteContext({ explicitCountryCode: code, explicitLocale: lang }),
       getPublicAssetsNormalized(),
       getCountryFooter(code, currentLocale),
       getCountryTrust(code, currentLocale),
+      fetchPublicReviewConfig().catch(() => null),
     ]);
 
   // Organization `sameAs` — this country's official authorities (IMC, ERS,
@@ -102,6 +104,15 @@ export default async function CountryLangRootLayout({
   const organizationSameAs = activeTrust
     ? activeTrust.authorityLinks.filter((l) => l.showInSchema).map((l) => l.url)
     : [];
+
+  // SEO audit 3.2 — AggregateRating on the site-wide MedicalOrganization
+  // node. Fails closed: undefined unless admin has configured a
+  // primaryProvider AND that provider has a real, fresh aggregate saved
+  // (see aggregateRatingJsonLd's guard) — renders nothing until an admin
+  // enters real numbers at /admin/settings/reviews.
+  const aggregateRating = aggregateRatingJsonLd(
+    resolvePrimaryAggregate(reviewConfigResult && reviewConfigResult.ok ? reviewConfigResult.data : null),
+  );
 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
@@ -154,7 +165,9 @@ export default async function CountryLangRootLayout({
             parsed={parsed}
             isGatewayHome={false}
           >
-            <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
+            <JsonLd
+              data={[organizationJsonLd(organizationSameAs, aggregateRating), websiteJsonLd()]}
+            />
             {children}
           </SiteChrome>
         </CartProvider>

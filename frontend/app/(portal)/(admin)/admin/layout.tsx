@@ -36,9 +36,15 @@ async function logoutAdminAction() {
   redirect("/login?next=/admin");
 }
 
+/** Empty slug = "All countries" (global scope) — delete the cookie so every
+ *  `getActiveCountry` consumer resolves to null and drops its country filter. */
 async function setCountryPreferenceAction(slug: string) {
   "use server";
   const jar = await cookies();
+  if (!slug) {
+    jar.delete(COUNTRY_PREF_COOKIE);
+    return;
+  }
   jar.set(COUNTRY_PREF_COOKIE, slug, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
@@ -87,6 +93,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/assets", label: "Assets" },
     { href: "/admin/users", label: "Users" },
     { href: "/admin/messages", label: "Messages" },
+    { href: "/admin/support", label: "Doctor support" },
     { href: "/admin/orders", label: "Orders" },
     { href: "/admin/automation", label: "Automation" },
     { href: "/admin/invoices", label: "Invoices" },
@@ -95,6 +102,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/corporate", label: "Corporate" },
     { href: "/admin/reports", label: "Reports" },
     { href: "/admin/audit-log", label: "Audit log" },
+    { href: "/admin/settings/reviews", label: "Reviews" },
     // Country-scoped — "Pages" first as the visibility controller.
     // Three sidebar entries were removed as redundant:
     //   - /admin/services was a cross-kind catalogue listing; General
@@ -114,11 +122,13 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/online-prescriptions", label: "Prescriptions" },
     { href: "/admin/health-tests", label: "Health tests" },
     { href: "/admin/plans", label: "Plans" },
+    { href: "/admin/memberships", label: "Memberships" },
     { href: "/admin/appointments", label: "Appointments" },
     { href: "/admin/patients", label: "Patients" },
     { href: "/admin/insurance", label: "Insurance" },
     { href: "/admin/test-centers", label: "Test centers" },
     { href: "/admin/lab-requisitions", label: "Lab requisitions" },
+    { href: "/admin/integrations/sukl", label: "SÚKL ePoukaz" },
   ];
 
   // Country options for the topbar picker. Pulled best-effort; if backend is
@@ -137,8 +147,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       }));
       const jar = await cookies();
       const preferred = jar.get(COUNTRY_PREF_COOKIE)?.value;
-      activeCountry =
-        countryOptions.find((c) => c.slug === preferred) ?? countryOptions[0] ?? null;
+      // No cookie (or an unknown slug) = "All countries". Do NOT fall back to
+      // the first country: that made the global scope unreachable, and it
+      // disagreed with `getActiveCountry`, which every page uses and which
+      // already resolves a missing cookie to null.
+      activeCountry = countryOptions.find((c) => c.slug === preferred) ?? null;
     }
   } catch {
     // ignore — shell still renders
@@ -268,7 +281,17 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 /** Where a notification of `type` should land. Chat threads open in place
  *  inside the Messages inbox (patient tab or internal tab); everything else
  *  is a clinical event that belongs on the appointment record. */
-function adminNotificationHref(type: string, appointmentId?: string): string {
+function adminNotificationHref(
+  type: string,
+  appointmentId?: string,
+  threadId?: string,
+): string {
+  // Support messages are doctor-scoped, not per-appointment — they carry a
+  // threadId, no appointmentId. Must be handled BEFORE the guard below, or the
+  // guard sends them to /admin/appointments.
+  if (type === "SUPPORT_MESSAGE") {
+    return threadId ? `/admin/support?open=${threadId}` : "/admin/support";
+  }
   if (!appointmentId) {
     return type === "PATIENT_MESSAGE" || type === "MESSAGE_REPLY"
       ? "/admin/messages"
@@ -304,9 +327,20 @@ function actorRoleLabel(role?: string): string | null {
  *  actually renders the event. */
 function mapAdminNotification(n: AdminNotificationDto): NotificationPopoverItem {
   const p = n.payload ?? {};
-  const href = adminNotificationHref(n.type, p.appointmentId);
+  const href = adminNotificationHref(n.type, p.appointmentId, p.threadId);
   const who = p.byUserName?.trim() || null;
   const role = actorRoleLabel(p.byRole);
+
+  if (n.type === "SUPPORT_MESSAGE") {
+    return {
+      id: n.id,
+      title: who ? `${who} sent a support message` : "New support message",
+      body: p.snippet ?? null,
+      href,
+      createdAt: n.createdAt,
+      readAt: n.readAt,
+    };
+  }
 
   if (n.type === "PATIENT_MESSAGE" || n.type === "MESSAGE_REPLY") {
     const channel = p.channel === "doctor" ? "doctor chat" : "clinic chat";
@@ -368,6 +402,10 @@ function notificationTypeLabel(type: string): string {
       return "Exam requested";
     case "EXAM_LOGGED":
       return "Exam result logged";
+    case "SUPPORT_MESSAGE":
+      return "New support message";
+    case "SUPPORT_REPLY":
+      return "Support reply";
     default:
       return "New notification";
   }

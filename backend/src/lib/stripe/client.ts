@@ -35,6 +35,9 @@ type StripeInstance = InstanceType<typeof Stripe>;
 
 export type StripeAccountId = "ie" | "pt" | "cz";
 
+/** The account `getStripeClient()` uses when no country is passed. */
+export const DEFAULT_STRIPE_ACCOUNT: StripeAccountId = "ie";
+
 interface StripeAccountConfig {
   secretKey?: string;
   webhookSecret?: string;
@@ -123,6 +126,46 @@ export function getConfiguredWebhookSecrets(): string[] {
     if (secret) secrets.add(secret);
   }
   return [...secrets];
+}
+
+// Stripe's default export resolves to the constructor interface, not the type
+// namespace (same quirk noted in checkout-branding.ts), so this is declared
+// structurally rather than pulled off `Stripe.Checkout.SessionCreateParams`.
+type CheckoutPaymentMethodType = "card" | "mb_way" | "multibanco" | "customer_balance";
+
+export type CheckoutPaymentMethodConfig = {
+  customer_email?: string;
+  customer?: string;
+  payment_method_types: CheckoutPaymentMethodType[];
+  phone_number_collection?: { enabled: boolean };
+};
+
+/**
+ * Portugal gets card + MB WAY + Multibanco; every other market keeps plain card.
+ *
+ * NO `customer_balance` (EU bank transfer) for PT. Stripe accepts
+ * `eu_bank_transfer` for DE, FR, IE and NL only — passing `country: "PT"` makes
+ * checkout.sessions.create throw outright, which took every PT payment path
+ * down (manual booking, web checkout, and the pay-link resolver) and shipped
+ * patients a payment message with an empty link. The PT account also lacks the
+ * `bank_transfer_payments` capability, so the method could not have worked
+ * regardless. Multibanco already covers the bank-reference habit PT patients
+ * expect. Do not re-add bank transfer without a Stripe-supported country AND
+ * the capability enabled on the PT account.
+ */
+export async function resolveCheckoutPaymentMethods(
+  _stripe: StripeInstance,
+  countryCode: string | null | undefined,
+  email: string,
+): Promise<CheckoutPaymentMethodConfig> {
+  if (countryCode?.trim().toLowerCase() !== "pt") {
+    return { customer_email: email, payment_method_types: ["card"] };
+  }
+  return {
+    customer_email: email,
+    payment_method_types: ["card", "mb_way", "multibanco"],
+    phone_number_collection: { enabled: true },
+  };
 }
 
 const clients = new Map<StripeAccountId, StripeInstance>();

@@ -1,150 +1,92 @@
-# SXO Gap Score — myglobalhealth.online
+> **Historical audit — current status is tracked in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).** This audit predates the 2026-08 remediation batches. Every count, status and priority below is superseded. Kept as evidence only.
 
-**SXO Gap Score: 38/100** (separate from SEO Health Score)
+# SXO Gap Analysis — myglobalhealth.online
 
-## Primary Finding (lead with this) — CRITICAL indexing/page-type mismatch
+Scope: SERP-backwards analysis for 8 commercial head terms across 6 markets, scored against 6 target pages (Ireland funnel).
 
-Google is NOT ranking the site's actual, well-built target page (`/ireland/en`). Site-scoped
-and query searches surface legacy artifacts instead:
-- `myglobalhealth.online/home` — "Clinic Ireland | Global Health"
-- `myglobalhealth.online/es/home-sp` — "Global Health · Global Health"
-- `myglobalhealth.online/post/easily-schedule-your-online-doctor-appointment`
-- `myglobalhealth.online/corporate-plans`
-- `myglobalhealth.online/service-page/erectile-dysfunction-consultation`
+## 1. SERP Consensus by Query
 
-None of these are the current Next.js `/ireland/en` service page. This matches the known
-Wix-legacy soft-404/slug issue already flagged in `project_seo_404_slug_title_investigation`.
-Net effect: for every query tested ("online doctor ireland", "same day GP appointment ireland
-online", "online gp consultation ireland"), the site does not appear on page 1 at all —
-competitors (webdoctor.ie, gpdoctor.ie, eirdoc.com, dronline.ie, healthhero.ie, gpline.ie)
-occupy 100% of visible slots. This is a distribution/indexing failure, not a content-quality
-failure — `/ireland/en` itself is competitive on content depth once it's found.
+| Query | Dominant page type | Format signals | Who ranks |
+|---|---|---|---|
+| online doctor ireland / online gp ireland | Country-specific telemedicine brand homepage | Price anchor in title/meta (from €20-€35), doctor count, IMC registration badge, single primary CTA | webdoctor.ie, mediconline.ie, smartscripts.ie, eirdoc.com, onlinedoc.ie |
+| sick cert online ireland | **Dedicated single-purpose transactional landing page** (not a subpage of a general GP page) | Price front and center (€24.99+), "24/7 no appointment," legal-validity FAQ, explicit DSP/employer-acceptance caveat | doconcall.ie/online-sick-cert-ireland, medhub.ie, getsickcert.ie, sicknote.com |
+| medico online portugal | Country-brand homepage / insurer-linked service (Médis, Multicare) | 24/7 availability badge, specialty list, "same doctor for family" trust hook | mediconanet.pt, medis.pt, teleconsultaportugal.com, dronline.pt |
+| médico online españa / consulta médica online | Country-brand homepage, price-per-consult from €20, response-time SLA ("<3h") | ZAVA, Virtual Clínica, tuMédico, Doctoralia (marketplace/directory format also ranks) |
+| online doctor romania / medic online | Country-brand homepage, pharmacy-delivery integration hook | mediculonline.ro, doclandia.ro, dr-online.net, directdoc.ro |
+| telemedicina brasil | Country-brand homepage + regulatory-trust content (CFM Law 14.510) | brasiltelemedicina.com.br, portaltelemedicina.com.br |
 
-## Page classification
+SERP features observed: no classic featured snippets/PAA captured by WebSearch tool, but AI-overview-style summaries synthesize competitor answer content directly — meaning competitor pages are structured for extractability (short answer blocks, FAQ-style headers). No local-pack signal surfaced (these are national/remote services, not location-based).
 
-| Page | Classification | Word count | H1/H2 | Schema | Images | Internal links |
-|---|---|---|---|---|---|---|
-| Homepage (`/`) | Country/locale gate (interstitial) | 96 | 1/1 | 2 blocks | ~2 | 0 |
-| `/ireland/en` | Local Service page | 1,860 | 1/11 | 5 blocks | 35 | 123 |
+## 2. Page-Type Mismatch Findings — lead finding
 
-Homepage title: "Licensed online consultations tailored to where you live" — correct pattern
-for a gate page, but it means the homepage cannot itself rank for country-service queries
-(no location/price/urgency signal, 0 internal links is also a crawl-depth risk — country pages
-depend entirely on JS-driven navigation from the gate for discovery).
+**CRITICAL — "sick cert online ireland" has no matching page type on the site.**
+The intent cluster is dominated by dedicated single-purpose transactional pages. Global Health has:
+- `/ireland/en/gp-consultation-online` — sick cert is one bullet among acute illness, prescription reviews, referrals, chronic disease (1,434 words, general-purpose page)
+- `/post/getting-a-gp-sick-note-online-simplified` — an **informational blog post**, not a transactional page, and it is the only Global Health URL currently surfaced by search for this query
+There is no equivalent of doconcall's `/online-sick-cert-ireland` or getsickcert.ie's price-forward, FAQ-forward single-purpose page. This is an entire high-intent commercial cluster the site cannot compete for because the required page type doesn't exist, not because of thin content on an existing page.
 
-`/ireland/en` title: "Online Doctor Ireland | IMC-Registered GPs | Global Health" — good keyword
-match. Meta description carries price (€29), same-day, sick certs/prescriptions/referrals,
-11 languages — strong CTR bait, aligned with what ranks elsewhere.
+**HIGH — price inconsistency across the funnel undermines the price/comparison-shopper page type SERP rewards.**
+`/ireland/en` meta description: "same-day appointments **from €29**." `/ireland/en/gp-consultation-online` meta description: "same-day appointments **from €39**." Competitors that rank (smartscripts.ie €20, ZAVA, tuMédico) lead with one single, consistent number. A shopper who clicks the hub result and lands on the GP page sees a €10 jump before they've booked anything.
 
-## SERP consensus (4 queries, top 8-9 results each)
+**MEDIUM — `/ireland/en/pricing` is subscription-first, SERP rewards single-consult pricing.**
+442 words, "Comprehensive Care Plan €39/month" is the primary object on the page. Every ranking competitor for the head terms leads with a one-off consultation price (from €X), not a monthly plan. Subscription framing is a legitimate business model but it is not what searchers for "online doctor ireland" are primed to compare against — it reads as a mismatch at the moment of price comparison.
 
-- **online doctor ireland**: mediconline.ie, webdoctor.ie, onlinedoc.ie, gpline.ie,
-  smartscripts.ie, eirdoc.com, dooctor.ie, superdrug.com/ie — 8/8 **Local Service pages**
-  (brand-run telehealth homepages/landing pages), 100% consensus.
-- **same day GP appointment ireland online**: gpdoctor.ie, gpappointment.ie, getyourgp.ie
-  (blog), webdoctor.ie, doxonline.ie, dawsonmedical.ie, liffeymedical.ie, eirdoc.com,
-  dooctor.ie — dominant type Local Service page (7/9), 1 blog, 1 clinic-booking page.
-- **online gp consultation ireland**: gpdoctor.ie, dronline.ie, getsickcert.ie, webdoctor.ie
-  (x2), gpline.ie, healthhero.ie, gp24.ie — 8/8 Local Service pages, 100% consensus.
-- **médico online portugal**: medis.pt, mediconanet.pt, teleconsultaportugal.com (x2),
-  advancecare.pt, multicare.pt (x2), dronline.pt — Local Service pages, insurer-portal hybrid;
-  same consensus pattern, no blog/informational content ranking.
+**ALIGNED — `/ireland/en` and `/ireland/en/gp-consultation-online` match the dominant SERP page type well.** Both are country-specific brand/service pages with strong depth (3,196 and 1,434 words), FAQPage + Offer + Service + MedicalOrganization schema (6 and 5 blocks respectively — confirmed via structured_data extraction), IMC registration signals, and multilingual claims that mirror what ranks.
 
-**Dominant SERP page type across all 4 queries: Local/Transactional Service page (~90%
-confidence).** No featured snippets or PAA blocks observed; results are pure commercial
-service listings — price, same-day/24-7 availability, and registered-doctor trust badge are
-the three recurring on-page signals across every ranking competitor.
+**Root domain (`myglobalhealth.online/`) — ALIGNED as architecture, but leaking indexation.** 105 words, 1 H1/H2, 2 schema blocks, 6 internal links — correctly thin, because it's a country-selection gate, not a query-answering page; it should never be the intended landing page for any of these head terms and isn't competing on this SERP set. The risk is elsewhere: WebSearch turned up legacy indexed URLs (`/es/home-sp`, `/service-page/pt-cons-med-dr-tiago-miguel-figueira`, `/ireland-doctors/dr-mala-vili-rajan`) that are old Wix-era paths still ranking/indexed alongside the current Next.js site — consistent with the known legacy-Wix-orphan issue already tracked for this project. These compete for brand equity/clicks against the correct current URLs and should be redirected, not just left live.
 
-`/ireland/en` is the CORRECT page type for this SERP (ALIGNED on page-type). The mismatch is
-that it is invisible to the index (see Primary Finding above), which makes the type-alignment
-moot until fixed.
+**Romania and Brazil — not independently verifiable in this pass.** Only Ireland pages were in scope for scoring. Per project history, Romania/Brazil market go-live has open blockers; if `/romania/*` and `/brazil/*` equivalents to `/ireland/en` don't exist yet or aren't published, that is a CRITICAL page-type mismatch for "online doctor romania," "medic online," and "telemedicina brasil" — the SERP wants a full country-brand homepage and there may be no page to rank at all. Needs direct confirmation outside this audit's scope.
 
-## User stories (cite the SERP signal that generated each)
+## 3. User Stories (cite SERP signal)
 
-1. *"I need a doctor today, not next week."* — every ranking competitor headline advertises
-   same-day/7-day availability (webdoctor.ie: "same or next-day, 7 days a week"; gpdoctor.ie:
-   "same-day"). Urgent-need patient, awareness stage.
-2. *"How much will this cost before I book?"* — price appears in the title/snippet on
-   smartscripts.ie (€20), superdrug (from), gpdoctor.ie (€30), healthhero.ie (€39). Price-shopper,
-   consideration stage.
-3. *"Is this doctor actually licensed to treat me in my country?"* — every Irish competitor
-   foregrounds "Irish Medical Council-registered" in the snippet copy; Portuguese competitors
-   foreground insurer/certified-team language. Expat/trust-seeker, consideration stage.
-4. *"I just need a sick cert / prescription, not a long consultation."* — getsickcert.ie ranks
-   on its name alone; smartscripts.ie leads with "GP Prescription in 2 hours €20." Task-completer,
-   decision stage.
-5. *"Which language can I actually get seen in?"* — recurring across the multi-country brand
-   (11 languages in `/ireland/en` meta) but this trust signal is absent from every SERP result
-   we found — a gap the site can own if it becomes indexable.
+1. "As a worker who woke up sick, I need a certificate my employer will accept, fast, without booking a full GP consult." — derived from doconcall/getsickcert/sicknote.com all leading with price + "24/7 no appointment needed" + legal-validity FAQ. **Awareness/decision, same session.** Not served: no matching page.
+2. "As an Irish Medical Council skeptic, I need to verify this doctor is really registered before I pay." — derived from every ranking competitor surfacing IMC registration as a trust badge in snippet/title. **Consideration.** Served well: `/ireland/en/doctors` shows named doctors + registration numbers.
+3. "As an expat, I want to see doctors who speak my language before I commit to booking." — derived from Médis/Portugal and Spain results emphasizing specialty/availability breadth, and doctor-directory competitors (Doctoralia) surfacing language filters. **Consideration.** Served: doctor profiles list languages (e.g., "Dr Abdelrahman Mustafa — English, Arabic").
+4. "As a price-comparer with 4 tabs open, I want one clear number I can compare across services in under 10 seconds." — derived from every SERP result anchoring price in the title/meta itself (from €20, €24.99, €35, €39...). **Decision.** Broken: €29 vs €39 conflict, and pricing page defaults to subscription framing instead of a single comparable number.
+5. "As someone who just wants to talk to a doctor tonight, I want to know consultations happen today, not 'book an appointment' ambiguity." — derived from "same-day," "24/7," "<3 working hours" response-time framing across ES/PT/IE competitors. **Decision.** Served on `/ireland/en/gp-consultation-online` ("same-day appointments" in meta + Offer schema) but not reinforced with same urgency on `/ireland/en/pricing`.
 
-## Gap analysis — `/ireland/en` (100 pts)
+## 4. Gap Scores (out of 100) — `/ireland/en/gp-consultation-online` (best-matching page, used as funnel exemplar)
 
 | Dimension | Score | Evidence |
 |---|---|---|
-| Page Type | 15/15 | Correct Local Service page type, matches 90% SERP consensus |
-| Content Depth | 12/15 | 1,860 words, 11 H2 — deeper than most thin competitor landers, but structure not verified against FAQ/PAA coverage |
-| UX Signals | 9/15 | 123 internal links (strong), but homepage gate has 0 internal links out — most users never reach this page via crawl path; CTA copy not verified |
-| Schema | 10/15 | 5 schema blocks present (LocalBusiness/Service class likely) but FAQPage/BreadcrumbList presence not confirmed in this pass |
-| Media | 12/15 | 35 images — image-rich vs. text-only competitors |
-| Authority | 6/15 | Not indexed/ranking at all for any tested query — zero visible authority signal in SERP; competitor domains (webdoctor.ie 800k patients claim) dominate trust |
-| Freshness | 5/10 | Not independently verified this pass (publication_date not captured) |
-| **Total** | **69/100** | Content is competitive; the score is capped by the indexing failure, which this rubric doesn't directly penalize but the Primary Finding does |
+| Page Type | 12/15 | Matches SERP's country-service-page consensus; loses points for not being sick-cert-specific when that's a named intent it half-serves |
+| Content Depth | 13/15 | 1,434 words, 8 H2s — in line with competitor depth |
+| UX Signals | 10/15 | Clear CTA structure per extracted text ("Talk to a GP," "Safe & confidential," "Quick appointments") but price contradicts hub page |
+| Schema | 15/15 | 6 blocks incl. FAQPage, Offer, Service, MedicalOrganization, BreadcrumbList — matches/exceeds what ranks |
+| Media | 10/15 | 17 images present; no video consult demo/trust visuals confirmed in extracted content |
+| Authority | 12/15 | IMC registration language present; no visible review count/Trustpilot integration in extracted text (competitors like webdoctor.ie lead with "800,000 patients trusted") |
+| Freshness | 7/10 | publication_date 2026-07-20 for homepage sample; no visible "last reviewed by Dr. X" clinical-review date on the GP page itself |
+| **Total** | **79/100** | |
 
-## Persona scoring (25 pts each: Relevance / Clarity / Trust / Action)
+`/ireland/en/pricing` scores far lower on Page Type (subscription vs single-consult framing) and UX Signals (price inconsistency) — estimate ~52/100. The sick-cert intent scores **0/100 on Page Type** because no page exists to evaluate.
 
-Sorted weakest first.
+## 5. Persona Scoring (25 pts each: Relevance / Clarity / Trust / Action)
 
-**1. Urgent-need patient (need a doctor within hours)** — **11/25** lowest
-- Relevance 6/25: page isn't found in search for "same day GP appointment ireland" — score
-  reflects that the page itself, if found, states same-day but the finding funnel is broken
-- Clarity 3/25: same-day framing exists in meta description but not confirmed above-the-fold on
-  the rendered page in this pass
-- Trust 2/25: IMC registration not confirmed in visible H1/H2 copy captured
-- Action: not scored — CTA text not captured this pass
-- **Fix**: get `/ireland/en` re-crawled/indexed (submit via GSC, fix internal linking from
-  homepage gate, canonical/sitemap check) before any copy change matters.
+| Persona | Relevance | Clarity | Trust | Action | Total | Fix priority |
+|---|---|---|---|---|---|---|
+| **Anxious patient, needs same-day cert** | 5 | 8 | 10 | 12 | **35/100** | #1 — build a dedicated `/ireland/en/sick-cert-online` transactional page: price-forward, "issued within X minutes," DSP electronic-cert caveat handled explicitly (competitors all address it — hiding it is worse than stating it), single CTA |
+| **Price-comparison shopper** | 12 | 10 | 12 | 15 | **49/100** | #2 — fix the €29/€39 meta-description conflict (root cause: two independently authored SEO title/meta pairs); lead `/pricing` with a single one-off consult price before the subscription pitch |
+| **Expat, own-language doctor** | 20 | 18 | 20 | 15 | **73/100** | #3 — add an explicit language filter/facet on `/ireland/en/doctors` (currently language is only visible per-profile, not filterable at a glance per extracted content) |
 
-**2. Price-shopper** — **14/25**
-- Relevance 4/25 (meta has €29, good) but not found via search
-- Clarity 5/25: price surfaces only in meta description, not confirmed as an on-page hero element
-- Trust 3/25, Action: not scored
-- **Fix**: surface price as a visible on-page badge (competitors put it in H1/hero), not just meta.
+Sort order for remediation: sick-cert persona first (largest score gap, entire keyword cluster unaddressed), price-shopper second (root-cause fix is a two-line meta edit, cheap win), expat persona last (already strongest, minor polish only).
 
-**3. Expat / trust-seeker (multi-country, wants registered doctor)** — **17/25**
-- Relevance 7/25: 11-language claim is a genuine differentiator vs. every competitor found
-- Clarity 5/25, Trust 3/25 (IMC/registration badge presence not confirmed on-page), Action 2/25
-- **Fix**: multi-language + multi-country credential signal is the site's one real SERP
-  differentiator — make it the headline USP once indexing is fixed.
+## 6. Funnel Break Points
 
-**4. Task-completer (just wants a sick cert/prescription)** — **19/25**
-- Relevance 8/25 (meta lists sick certs/prescriptions/referrals explicitly, matches
-  getsickcert.ie/smartscripts.ie pattern), Clarity 5/25, Trust 4/25, Action 2/25
-- **Fix**: consider a dedicated task-specific lander (mirrors getsickcert.ie's single-purpose
-  page ranking on name alone).
+- **Sick cert intent: breaks before the click.** No page exists for Google to serve, so the funnel never starts for this cluster.
+- **Price-shopper intent: breaks between hub and service page.** Click lands on `/ireland/en` (€29 promise) → navigates to `/ireland/en/gp-consultation-online` (€39) → contradiction reads as bait-and-switch, likely bounce before reaching `/pricing` at all.
+- **Pricing page itself: breaks between price page and booking.** Subscription-first framing (€39/month) doesn't answer "how much for one consult right now," forcing the shopper to hunt or leave.
+- Awareness→consideration→decision is otherwise intact on the IMC-registration and doctor-directory path (`/ireland/en/doctors`), which is the strongest leg of the funnel.
 
-## Cross-skill recommendations
+## 7. Limitations
 
-- Indexing/legacy-slug gap is the dominant issue → run `/seo page` deep audit on `/ireland/en`
-  canonical + sitemap + Google Search Console coverage, and reconcile against
-  `project_seo_404_slug_title_investigation` findings (legacy Wix soft-404s).
-- Schema types (FAQPage/LocalBusiness) not confirmed → run `/seo schema` to verify/generate.
-- E-E-A-T / doctor credential visibility → run `/seo content` for deep IMC-registration and
-  author/reviewer signal analysis.
-- Local intent strongly present in every SERP (Dublin address surfaced in search snippet
-  already) → run `/seo local` to check Google Business Profile alignment.
+- No Google Search Console query data (OAuth grant broken per project notes) — SERP positions/impressions for these exact terms on myglobalhealth.online could not be confirmed; this is SERP-backwards inference from top-ranking competitors only, not confirmed rank tracking.
+- WebSearch did not surface a classic featured-snippet/PAA block for any of the 8 queries in this pass — SERP-feature analysis is based on result titles/snippets only.
+- Romania and Brazil target pages were not in the page list to score and were not independently fetched; RO/BR mismatch severity above is inferred from project history, not verified live.
+- `content`/raw HTML from `render_page.py` is truncated in this environment's JSON output; page structure conclusions rely on `parse_html.py` (title/meta/H-tag/schema counts) and `structured_data` block summaries rather than raw markup inspection.
+- Legacy Wix URL indexation was observed opportunistically via WebSearch, not audited exhaustively — treat as a pointer to re-run the existing legacy-redirect tracking, not a new full audit.
 
-## Limitations
+## Cross-skill follow-ups
 
-- Homepage/`/ireland/en` raw fetch (render_page.py --mode auto, direct invocation) returned a
-  thin/truncated shell (503 chars, no H1) inconsistent with parse_html.py's own fetch, which
-  returned full rendered content (1,860 words for `/ireland/en`). Findings above rely on the
-  parse_html.py results as source of truth; on-page hero/CTA copy and confirmed schema `@type`
-  values were not independently re-verified within this pass due to a tool timeout on the
-  second verification attempt.
-- No PAA/featured-snippet/AI Overview data captured — WebSearch tool does not expose these
-  SERP features directly; consensus above is inferred from result list + snippet content only.
-- Only 4 queries analyzed (Ireland x3, Portugal x1); Spain/Czechia/Brazil/Romania not covered.
-- Publication/freshness date not captured for either page this pass.
-
----
-Generate a PDF report? Use `/seo google report`
+- Missing schema for a would-be sick-cert page → `/seo schema` once the page exists.
+- E-E-A-T/authority gap (no visible review-count trust signal vs. competitors' "800,000 patients") → `/seo content`.
+- Legacy Wix URLs still indexed → existing redirect-audit workstream, not a new `/seo local` or `/seo page` task.

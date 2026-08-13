@@ -693,22 +693,27 @@ img {
 }
 
 .gh-footer-shell {
-  color: rgba(255, 255, 255, 0.7);
-  padding: clamp(56px, 7vw, 88px) 0 0;
+  color: rgba(247, 250, 248, 0.68);
+  padding: clamp(64px, 7vw, 96px) 0 0;
   /* Unified glass chrome — identical recipe to the navbar (both states):
-   * translucent --gh-chrome fill + blur + lime hairline + layered shadow.
+   * translucent --gh-chrome fill + lime hairline + layered shadow.
    * Overrides the .gh-site-shell forest gradient (defined later, equal
    * specificity). */
   background: var(--gh-chrome);
-  -webkit-backdrop-filter: var(--gh-chrome-filter);
-  backdrop-filter: var(--gh-chrome-filter);
+  /* ponytail: NO backdrop-filter, unlike the navbar. The navbar is sticky, so
+   * page content genuinely scrolls under it; the footer is position:relative
+   * at the end of the document — its only backdrop is body's flat #0f2e25.
+   * blur(18px) of a solid colour is a no-op, and this element is 1428x1170
+   * (1.67M px², 58% of every backdrop-filter on the page) so the compositor
+   * paid for that no-op every scroll frame. Composite delta from dropping it
+   * is ~1/255 per channel. Restore only if content ever paints behind it. */
   border-top: var(--gh-chrome-border);
   box-shadow: var(--gh-chrome-shadow);
 }
 
 .gh-footer-inner {
-  max-width: 1320px;
-  padding: 0 clamp(20px, 4vw, 40px);
+  max-width: 1400px;
+  padding: 0 clamp(20px, 4vw, 56px);
 }
 
 .gh-header-brandLink {
@@ -734,86 +739,581 @@ img {
   text-decoration: none;
 }
 
-.gh-newsletter-desc {
-  font-size: 13px;
-  line-height: 1.5;
-  max-width: 280px;
+/* ══════════════════════════════════════════════════════════════════════
+ * PUBLIC SITE FOOTER  (SiteFooter.tsx / FooterNav.tsx / NewsletterSignup.tsx)
+ *
+ * Layout: three grid areas — brand | nav side by side from 768px with the
+ * newsletter panel spanning beneath; a single column below that, where the
+ * link groups become accordions. The newsletter sits between brand and nav
+ * in the DOM so mobile visual order == DOM order.
+ *
+ * No backdrop-filter anywhere in here — see the note on .gh-footer-shell.
+ * ══════════════════════════════════════════════════════════════════════ */
+
+.gh-footer-layout {
+  display: grid;
+  gap: clamp(36px, 5vw, 56px) clamp(32px, 4vw, 64px);
+  grid-template-areas:
+    "brand"
+    "news"
+    "nav";
 }
 
-.gh-newsletter-accentBar {
-  display: inline-block;
-  height: 0.75rem;
-  width: 3px;
-  border-radius: 9999px;
+.gh-footer-brand { grid-area: brand; }
+.gh-footer-newsletterArea { grid-area: news; }
+.gh-footer-navArea { grid-area: nav; }
+
+/* Tablet: full-width brand row, then the link columns, then the newsletter.
+   Side-by-side brand+nav only buys cramped columns at this width. */
+@media (min-width: 768px) {
+  .gh-footer-layout {
+    grid-template-areas:
+      "brand"
+      "nav"
+      "news";
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  /* Park the social ribbon beside the brand text instead of under it —
+     otherwise the full-width brand row is half empty. Every child is placed
+     explicitly; auto-placement would spill the contact list into column 2. */
+  .gh-footer-brand {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+    column-gap: 48px;
+    align-items: start;
+  }
+
+  .gh-footer-brand .gh-footer-brandLink { grid-area: 1 / 1 / 2 / 2; }
+  .gh-footer-brand .gh-footer-tagline { grid-area: 2 / 1 / 3 / 2; }
+  .gh-footer-brand .gh-footer-contact { grid-area: 3 / 1 / 4 / 2; }
+
+  .gh-footer-brand .gh-footer-social {
+    grid-area: 1 / 2 / 4 / 3;
+    align-self: center;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+/* Only at 1280+ is there room for brand and five link columns side by side.
+   Below that the brand spans the row and the columns keep their width. */
+@media (min-width: 1280px) {
+  .gh-footer-layout {
+    grid-template-columns: minmax(230px, 1.05fr) minmax(0, 3.5fr);
+    grid-template-areas:
+      "brand nav"
+      "news  news";
+  }
+}
+
+/* ── Brand column ─────────────────────────────────────────────── */
+
+.gh-footer-brandLink {
+  text-decoration: none;
+  /* Logo mark box is 58x38 — floor the BOX (not just the pixels) so
+     getBoundingClientRect (and Lighthouse's tap-target audit, which reads
+     the same rect) sees >=44px tall, not just the icon glyph. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.gh-footer-logo {
+  height: 64px;
+  width: auto;
+}
+
+.gh-footer-tagline {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.65;
+  max-width: 34ch;
+  color: rgba(247, 250, 248, 0.68);
+}
+
+.gh-footer-contact {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: rgba(247, 250, 248, 0.78);
+}
+
+.gh-footer-contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+  transition: color 200ms ease-out;
+}
+
+.gh-footer-contactLink:hover,
+.gh-footer-contactLink:focus-visible {
+  color: var(--color-brand-accent);
+}
+
+.gh-footer-contactIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  border: 1px solid rgba(176, 241, 34, 0.22);
+  background: rgba(8, 65, 52, 0.45);
+  color: var(--color-brand-accent);
+  transition: border-color 200ms ease-out, background-color 200ms ease-out;
+}
+
+.gh-footer-contactLink:hover .gh-footer-contactIcon,
+.gh-footer-contactLink:focus-visible .gh-footer-contactIcon {
+  border-color: rgba(176, 241, 34, 0.45);
+  background: rgba(176, 241, 34, 0.12);
+}
+
+.gh-footer-contactPlain {
+  padding-left: 46px;
+  font-size: 13px;
+  color: rgba(247, 250, 248, 0.6);
+}
+
+/* ── Social ribbon ────────────────────────────────────────────── */
+
+.gh-footer-social {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gh-footer-socialHeading {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(247, 250, 248, 0.7);
+}
+
+.gh-footer-socialRow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gh-footer-socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  transition: transform 200ms ease-out, color 200ms ease-out,
+    border-color 200ms ease-out, background-color 200ms ease-out;
+}
+
+.gh-footer-socialLink:hover {
+  transform: translateY(-2px);
+  border-color: rgba(198, 255, 0, 0.45);
+  background: rgba(176, 241, 34, 0.1);
+  color: #fff;
+}
+
+.gh-footer-socialLink:active {
+  transform: scale(0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-footer-socialLink { transition: none; }
+  .gh-footer-socialLink:hover { transform: none; }
+}
+
+/* ── Link groups: columns at >=768px, accordions below ────────── */
+
+.gh-footer-navGrid {
+  display: grid;
+  gap: 8px clamp(16px, 2.4vw, 32px);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .gh-footer-navGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px clamp(16px, 2.4vw, 32px);
+    align-items: start;
+  }
+}
+
+/* 1024-1279: the brand spans its own row, so the link columns get the full
+   width and auto-fit lands on five. */
+@media (min-width: 1024px) {
+  .gh-footer-navGrid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+/* 1280+: brand and columns share a row, so the nav track is narrower than at
+   1024. Drop the per-column floor to 135px — at 150px the fifth group wrapped
+   under the others and left the row half empty. */
+@media (min-width: 1280px) {
+  .gh-footer-navGrid {
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  }
+}
+
+.gh-footer-groupHeading {
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #f7faf8;
+}
+
+.gh-footer-groupStatic {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gh-footer-groupIcon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: var(--color-brand-accent);
+}
+
+/* Accordion trigger — hidden at desktop, where .gh-footer-groupStatic shows.
+   Exactly one of the two is in the a11y tree at any width. */
+.gh-footer-groupTrigger { display: none; }
+
+.gh-footer-chevron {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  margin-left: auto;
+  color: rgba(247, 250, 248, 0.65);
+  transition: transform 220ms ease-out, color 220ms ease-out;
+}
+
+.gh-footer-groupList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.gh-footer-navLink {
+  /* Real box growth (not the pseudo-element hit-slop trick) — these links
+     stack tightly, so an invisible expanded hit area would overlap the
+     neighbouring link. min-height floors the actual box at 44px so adjacent
+     targets never overlap (WCAG 2.5.5 / Google mobile-usability). */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  font-size: 14px;
+  line-height: 1.4;
+  text-decoration: none;
+  color: rgba(247, 250, 248, 0.68);
+  transition: color 200ms ease-out, transform 200ms ease-out;
+}
+
+.gh-footer-navLink:hover,
+.gh-footer-navLink:focus-visible {
+  color: var(--color-brand-accent);
+  transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-footer-navLink { transition: none; }
+  .gh-footer-navLink:hover { transform: none; }
+}
+
+@media (max-width: 767.98px) {
+  .gh-footer-groupStatic { display: none; }
+
+  .gh-footer-groupHeading { margin: 0; }
+
+  .gh-footer-group + .gh-footer-group { margin-top: 10px; }
+
+  .gh-footer-groupTrigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 56px;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(198, 255, 0, 0.16);
+    background: rgba(8, 65, 52, 0.45);
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    color: #f7faf8;
+    text-align: left;
+    transition: border-color 200ms ease-out, background-color 200ms ease-out;
+  }
+
+  .gh-footer-groupTrigger:hover,
+  .gh-footer-groupTrigger[aria-expanded="true"] {
+    border-color: rgba(198, 255, 0, 0.45);
+    background: rgba(8, 65, 52, 0.62);
+  }
+
+  .gh-footer-groupTrigger:active {
+    background: rgba(8, 65, 52, 0.75);
+  }
+
+  .gh-footer-groupTrigger[aria-expanded="true"] .gh-footer-chevron {
+    transform: rotate(180deg);
+    color: var(--color-brand-accent);
+  }
+
+  /* 0fr → 1fr animates the panel without measuring anything in JS. The list
+     is also visibility:hidden while closed so screen readers and sequential
+     focus skip it — a zero-height overflow:hidden box alone does not. */
+  .gh-footer-groupPanel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 240ms ease-out;
+  }
+
+  .gh-footer-groupPanel[data-open="true"] {
+    grid-template-rows: 1fr;
+  }
+
+  .gh-footer-groupPanel > .gh-footer-groupList {
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 200ms ease-out, visibility 0s linear 240ms;
+  }
+
+  .gh-footer-groupPanel[data-open="true"] > .gh-footer-groupList {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  .gh-footer-groupPanel .gh-footer-navLink {
+    position: relative;
+    padding: 0 18px 0 30px;
+  }
+
+  .gh-footer-groupPanel .gh-footer-navLink::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    width: 4px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-brand-accent);
+    opacity: 0.65;
+  }
+
+  .gh-footer-groupList > li + li .gh-footer-navLink {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-footer-groupPanel,
+  .gh-footer-groupPanel > .gh-footer-groupList,
+  .gh-footer-chevron {
+    transition: none;
+  }
+}
+
+/* ── Newsletter panel ─────────────────────────────────────────── */
+
+.gh-newsletter-panel {
+  display: grid;
+  gap: 24px;
+  align-items: center;
+  padding: clamp(22px, 3vw, 32px);
+  border-radius: 22px;
+  border: 1px solid rgba(198, 255, 0, 0.16);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(176, 241, 34, 0.08), transparent 55%),
+    rgba(8, 65, 52, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@media (min-width: 900px) {
+  .gh-newsletter-panel {
+    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr);
+    gap: clamp(24px, 4vw, 56px);
+  }
+}
+
+.gh-newsletter-pitch {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 22px);
+}
+
+/* Under ~400px the illustration steals enough width to break the heading
+   across three lines. Stack it instead. */
+@media (max-width: 399.98px) {
+  .gh-newsletter-pitch {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+.gh-newsletter-illustration {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(72px, 9vw, 104px);
+  height: clamp(72px, 9vw, 104px);
+  flex: none;
+  color: var(--color-brand-accent);
+}
+
+.gh-newsletter-illustration > svg {
+  position: relative;
+  z-index: 1;
+  width: 78%;
+  height: 78%;
+}
+
+.gh-newsletter-illustrationGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(176, 241, 34, 0.22),
+    rgba(176, 241, 34, 0) 68%
+  );
+}
+
+.gh-newsletter-heading {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #f7faf8;
+}
+
+.gh-newsletter-desc {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 46ch;
+  color: rgba(247, 250, 248, 0.68);
+}
+
+.gh-newsletter-formCol {
+  min-width: 0;
 }
 
 .gh-newsletter-form {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 480px) {
+  .gh-newsletter-form {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
 }
 
 .gh-newsletter-label {
-  flex: 1;
+  display: block;
+  min-width: 0;
 }
 
 .gh-newsletter-inputWrap {
   position: relative;
+  display: block;
 }
 
 .gh-newsletter-inputIcon {
   pointer-events: none;
   position: absolute;
   top: 50%;
-  left: 0.75rem;
-  width: 1rem;
-  height: 1rem;
-  color: rgba(255, 255, 255, 0.4);
+  left: 0.9rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: rgba(247, 250, 248, 0.45);
   transform: translateY(-50%);
 }
 
 .gh-newsletter-input {
   width: 100%;
-  min-height: 48px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.5rem 0.75rem 0.5rem 2.25rem;
-  font-size: 0.875rem;
+  min-height: 52px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(0, 37, 30, 0.6);
+  padding: 0.5rem 0.9rem 0.5rem 2.75rem;
+  font-size: 0.9375rem;
   color: #fff;
+  transition: border-color 200ms ease-out, background-color 200ms ease-out;
 }
 
 .gh-newsletter-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(247, 250, 248, 0.42);
+}
+
+.gh-newsletter-input:hover {
+  border-color: rgba(198, 255, 0, 0.28);
 }
 
 .gh-newsletter-input:focus {
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(198, 255, 0, 0.45);
   outline: none;
 }
 
 .gh-newsletter-input:focus-visible {
   outline: 2px solid var(--color-brand-accent);
   outline-offset: 2px;
-  box-shadow: 0 0 0 5px rgba(3, 31, 24, 0.85);
+}
+
+.gh-newsletter-input[aria-invalid="true"] {
+  border-color: rgba(255, 145, 145, 0.6);
 }
 
 .gh-newsletter-submit {
-  flex-shrink: 0;
-  min-height: 48px;
-  border-radius: 0.5rem;
-  background: #fff;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  border-radius: 12px;
+  background: var(--color-brand-accent);
+  padding: 0.5rem 1.75rem;
+  font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--color-brand-primary);
-  box-shadow: 0 2px 8px rgba(15, 46, 37, 0.18);
-  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+  color: #06251c;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out,
+    filter 200ms ease-out;
 }
 
 .gh-newsletter-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(15, 46, 37, 0.3);
+  filter: brightness(1.06);
+  box-shadow: 0 10px 24px rgba(176, 241, 34, 0.22);
 }
 
 .gh-newsletter-submit:active:not(:disabled) {
@@ -822,27 +1322,34 @@ img {
 
 .gh-newsletter-submit:disabled {
   opacity: 0.6;
-}
-
-.gh-newsletter-submit:focus-visible {
-  outline: 2px solid var(--color-brand-accent);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 5px rgba(3, 31, 24, 0.85);
+  cursor: not-allowed;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gh-newsletter-submit {
-    transition: none;
-  }
+  .gh-newsletter-submit { transition: none; }
+  .gh-newsletter-submit:hover:not(:disabled) { transform: none; }
+}
 
-  .gh-newsletter-submit:hover:not(:disabled) {
-    transform: none;
-  }
+.gh-newsletter-privacy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: rgba(247, 250, 248, 0.6);
+}
+
+.gh-newsletter-privacyIcon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: var(--color-brand-accent);
 }
 
 .gh-newsletter-status {
-  margin-top: 0.5rem;
-  font-size: 12px;
+  margin-top: 8px;
+  font-size: 12.5px;
 }
 
 .gh-newsletter-statusOk {
@@ -855,132 +1362,146 @@ img {
   font-weight: 600;
 }
 
-.gh-footer-brandLink {
-  text-decoration: none;
-  /* Logo mark's own box is 58x38 — floor the box (not just the pixels) so
-     getBoundingClientRect (and Lighthouse's tap-target audit, which reads
-     the same rect) sees >=44px tall, not just the icon glyph. */
-  display: inline-flex;
+/* ── Language selector ────────────────────────────────────────── */
+
+.gh-footer-localeBar {
+  display: flex;
   align-items: center;
-  min-height: 44px;
+  gap: 6px;
+  margin-top: clamp(28px, 4vw, 40px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(198, 255, 0, 0.16);
+  background: rgba(8, 65, 52, 0.45);
+  min-width: 0;
 }
 
-.gh-footer-logo {
-  height: 38px;
-  width: auto;
-}
-
-.gh-footer-tagline {
-  font-size: 14px;
-  line-height: 1.6;
-  max-width: 320px;
-}
-
-.gh-footer-contact {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.gh-footer-contactLink {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: inherit;
-  text-decoration: none;
-  transition: color 200ms ease-out;
-}
-
-.gh-footer-contactLink:hover,
-.gh-footer-contactLink:focus-visible {
-  color: var(--color-brand-accent);
-}
-
-.gh-footer-groupHeading {
-  margin-bottom: 14px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-}
-
-.gh-footer-groupAccent {
-  background: var(--color-brand-accent);
-}
-
-.gh-footer-navLink {
-  /* Real box growth (not the pseudo-element hit-slop trick) — these links
-     stack with only an 8px gap, so an invisible expanded hit area would
-     overlap the neighbouring link. min-height/-width floors the actual
-     box at 44px so adjacent targets never overlap; the extra footer
-     height/gutter is intentional (WCAG 2.5.5 / Google mobile-usability). */
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  min-width: 44px;
-  font-size: 14px;
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
-  transition: color 200ms ease-out, transform 200ms ease-out;
-}
-
-.gh-footer-navLink:hover,
-.gh-footer-navLink:focus-visible {
-  color: var(--color-brand-accent);
-  transform: translateX(2px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gh-footer-navLink {
-    transition: none;
-  }
-
-  .gh-footer-navLink:hover {
-    transform: none;
-  }
-}
-
-.gh-footer-socialLink {
+.gh-footer-localeGlobe {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 40px;
+  height: 40px;
+  flex: none;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.7);
-  transition: transform 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out;
+  border: 1px solid rgba(198, 255, 0, 0.16);
+  color: var(--color-brand-accent);
 }
 
-.gh-footer-socialLink:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-brand-accent);
+.gh-footer-localeGlobe > svg {
+  width: 20px;
+  height: 20px;
+}
+
+.gh-footer-localeRow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Six native language names never fit a 320px phone. Scroll the row rather
+     than shrink the labels past legibility; the scrollbar itself is hidden. */
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.gh-footer-localeRow::-webkit-scrollbar {
+  display: none;
+}
+
+.gh-footer-localeRow > li {
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+
+.gh-footer-localeRow > li + li::before {
+  content: "";
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.gh-footer-localeLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 clamp(12px, 2vw, 22px);
+  border-radius: 999px;
+  font-size: 14px;
+  white-space: nowrap;
+  text-decoration: none;
+  color: rgba(247, 250, 248, 0.68);
+  transition: color 200ms ease-out;
+}
+
+.gh-footer-localeLink:hover,
+.gh-footer-localeLink:focus-visible {
   color: #fff;
 }
 
-.gh-footer-socialLink:active {
-  transform: scale(0.95);
+.gh-footer-localeLink[data-active="true"] {
+  position: relative;
+  font-weight: 600;
+  color: var(--color-brand-accent);
 }
 
-.gh-footer-socialLink:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(176, 241, 34, 0.5);
+.gh-footer-localeLink[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  left: clamp(12px, 2vw, 22px);
+  right: clamp(12px, 2vw, 22px);
+  bottom: 8px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-brand-accent);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .gh-footer-socialLink {
-    transition: none;
+@media (min-width: 900px) {
+  .gh-footer-localeRow > li {
+    flex: 1 1 0;
+    justify-content: center;
   }
 
-  .gh-footer-socialLink:hover {
-    transform: none;
+  .gh-footer-localeLink {
+    width: 100%;
   }
+}
+
+/* ── Regulatory + legal bar ───────────────────────────────────── */
+
+.gh-footer-regulatory {
+  margin-top: 24px;
+  max-width: 92ch;
 }
 
 .gh-footer-copyrightBar {
-  margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.65);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12.5px;
+  color: rgba(247, 250, 248, 0.6);
+}
+
+.gh-footer-legalRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.gh-footer-legalDot {
+  color: var(--color-brand-accent);
+  opacity: 0.75;
 }
 
 .gh-footer-legalLink {
@@ -998,9 +1519,51 @@ img {
   color: var(--color-brand-accent);
 }
 
+/* ── Decoration ───────────────────────────────────────────────── */
+
 .gh-footer-watermark {
   font-size: clamp(3.25rem, 10.5vw, 9.5rem);
   margin-bottom: -0.18em;
+}
+
+/* Dotted health-tech field in the bottom corners. Two radial-gradient tiles
+   masked to the corners — no image request, no cost beyond one empty span. */
+.gh-footer-dots {
+  position: absolute;
+  inset: auto 0 0;
+  height: 220px;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(176, 241, 34, 0.16) 1px, transparent 1px),
+    radial-gradient(rgba(176, 241, 34, 0.16) 1px, transparent 1px);
+  background-size: 14px 14px, 14px 14px;
+  background-position: 0 0, 7px 7px;
+  background-repeat: repeat, repeat;
+  -webkit-mask-image:
+    radial-gradient(70% 120% at 0% 100%, #000 0%, transparent 62%),
+    radial-gradient(70% 120% at 100% 100%, #000 0%, transparent 62%);
+  mask-image:
+    radial-gradient(70% 120% at 0% 100%, #000 0%, transparent 62%),
+    radial-gradient(70% 120% at 100% 100%, #000 0%, transparent 62%);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+}
+
+.gh-footer-ecg {
+  position: absolute;
+  right: 0;
+  /* Sits in the watermark band, clear of the legal bar at every width. */
+  bottom: 10px;
+  width: min(240px, 34vw);
+  height: 60px;
+  z-index: 0;
+  pointer-events: none;
+  color: rgba(176, 241, 34, 0.42);
+}
+
+@media (max-width: 767.98px) {
+  .gh-footer-ecg { display: none; }
 }
 
 /* Country home hero — full-bleed photo + forest tint */
@@ -1150,23 +1713,6 @@ img {
   background: rgba(255, 255, 255, 0.07);
   color: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Site footer grid — replaces SiteFooter.tsx inline <style> block.
- * Brand column (1.5fr) + four link columns at lg, collapses to 3 / 2 /
- * 1 column at smaller viewports. Caller composes with `.grid` for the
- * display rule; this class owns only the column template. */
-.gh-footer-grid {
-  grid-template-columns: 1.5fr repeat(4, 1fr);
-}
-@media (max-width: 1100px) {
-  .gh-footer-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 700px) {
-  .gh-footer-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px) {
-  .gh-footer-grid { grid-template-columns: 1fr; }
 }
 
 /* Buttons — slightly taller, slightly tighter typography. */
@@ -1547,10 +2093,10 @@ img {
  * visitors never render this. Same forest-glass material as the wizard
  * chrome so it reads as part of the flow, not a bolted-on banner. */
 .gh-portal-return-band {
+  /* ponytail: NO backdrop-filter — 0.92 fill, same call as
+   * .gh2-glass-forest above. */
   background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.92);
   border-bottom: var(--gh-chrome-border);
-  -webkit-backdrop-filter: var(--gh-chrome-filter);
-  backdrop-filter: var(--gh-chrome-filter);
 }
 .gh-portal-return-band__link {
   display: inline-flex;
@@ -1873,7 +2419,7 @@ img {
 }
 
 /* Portal system v4 "Obsidian Ivory": forest-black glass chrome, gallery-ivory
- * content, lime voltage. Token reference: docs/portal-redesign/DESIGN.md §3.
+ * content, lime voltage. Token reference: docs/design/portal-redesign/portal-design-system.md §3.
  * Preserves pre-existing var names consumed with a fallback elsewhere in this
  * file (--portal-bg, --portal-surface, --portal-line, --portal-line-strong,
  * --portal-muted, --portal-radius*, --portal-shadow*, --portal-sidebar-w,
@@ -3141,10 +3687,14 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
 }
 
 .gh-app-sheet--public {
+  /* ponytail: NO backdrop-filter. The fill is 0.94 opaque and its backdrop is
+   * .gh-app-sheet-overlay--public — a near-flat dark scrim — so the blur had
+   * nothing to resolve. It also mattered more here than on a static card: the
+   * sheet slides in on transform, and a moving element re-samples its own
+   * backdrop every frame, so this ran the full 18px+saturate+brightness chain
+   * on every frame of every open and close. */
   background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.94);
   border: var(--gh-chrome-border);
-  -webkit-backdrop-filter: var(--gh-chrome-filter);
-  backdrop-filter: var(--gh-chrome-filter);
   box-shadow: var(--liquid-specular), 0 18px 40px -18px rgba(4, 24, 18, 0.55);
   color: #eef7ef;
 }
@@ -3479,19 +4029,22 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
   background-size: 22px 22px;
 }
 
-/* Soft idle float for hero info cards — slower + shorter travel than
- * .animate-float so overlapping cards drift gently out of phase via
- * per-card animation-delay. Killed under reduced-motion. */
-@keyframes gh-floaty {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-9px); }
-}
-.gh-floaty {
-  animation: gh-floaty 5.5s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .gh-floaty { animation: none; }
-}
+/* Idle float for hero info cards — RETIRED 2026-08-06, same call as the
+ * perpetual headline pulse below.
+ *
+ * ponytail: every .gh-floaty call site in the repo sits on the same element
+ * as .gh-glass-emerald, which carries backdrop-filter. A moving element
+ * re-samples its own backdrop, so this ran blur(22px) + saturate + brightness
+ * on 3 cards per page at 60fps FOREVER — idle, not just on scroll — across
+ * pricing / contact / about / doctors hero / blog index / ContactArchPanel.
+ * There is no markup arrangement that keeps both: wrapping the badge in an
+ * animated parent still moves the glass child. So it is the float or the
+ * material, and the material is what you see at rest. (pointer: coarse) has
+ * always disabled this animation, so touch devices never had it either.
+ *
+ * The class is kept as an inert hook rather than stripped from 6 files; if a
+ * float is ever wanted back, put it on an element WITHOUT backdrop-filter. */
+.gh-floaty { }
 
 /* Hero accent glow — the lime headline word gets a soft, static bloom.
  * Spec §9: perpetual pulse removed (was distracting); glow kept static. */
@@ -3905,6 +4458,65 @@ body.gh-cookie-bar-open {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+ * FLOATING WHATSAPP BUTTON (bottom-LEFT)
+ * ═══════════════════════════════════════════════════════════════
+ * Left corner on purpose: the ElevenLabs convai launcher fixes itself to the
+ * bottom-right from inside its own shadow DOM and can't be moved, so this one
+ * yields the right edge. Same z-layer as the consent bar (--z-fixed-bar); the
+ * mobile bottom offset stays well below the bar's own 6rem so they never
+ * overlap. Solid brand green — no backdrop-filter, so no mobile/@supports
+ * fallback block is needed. */
+.gh-whatsapp-fab {
+  position: fixed;
+  left: 1rem;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: var(--z-fixed-bar);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 999px;
+  background: #25d366;
+  color: #fff;
+  box-shadow:
+    0 8px 24px rgba(37, 211, 102, 0.34),
+    0 2px 6px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+
+.gh-whatsapp-fab:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow:
+    0 12px 30px rgba(37, 211, 102, 0.42),
+    0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.gh-whatsapp-fab:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .gh-whatsapp-fab {
+    left: 1.5rem;
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-whatsapp-fab {
+    transition: none;
+  }
+
+  .gh-whatsapp-fab:hover {
+    transform: none;
+  }
+}
+
 .gh-cookie-title {
   font-size: 1rem;
   font-weight: 700;
@@ -4248,7 +4860,8 @@ body.gh-cookie-bar-open {
   .gh-command-band::before {
     animation: none;
   }
-  .gh-floaty,
+  /* .gh-floaty is no longer listed here — it carries no animation at all now
+   * (see its rule), so there is nothing left for this block to switch off. */
   .animate-float,
   .animate-pulse-glow {
     animation: none;
@@ -4269,4 +4882,140 @@ body.gh-cookie-bar-open {
     width: auto !important;
     transform-origin: top center;
   }
+}
+
+
+/* ------------------------------------------------------------------ *
+ * Free health tools (/{country}/{lang}/tools) — range slider.
+ * Public surface, so it lives here rather than portal.css. No
+ * backdrop-filter, so it needs no entry in the mobile fallback blocks.
+ * ------------------------------------------------------------------ */
+.gh-tool-range {
+  --gh-tool-range-fill: 0%;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+/* Track — filled portion in forest, remainder in a faint forest tint. */
+.gh-tool-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--color-brand-primary) 0 var(--gh-tool-range-fill),
+    rgba(29, 75, 54, 0.14) var(--gh-tool-range-fill) 100%
+  );
+}
+.gh-tool-range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(29, 75, 54, 0.14);
+}
+.gh-tool-range::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-brand-primary);
+}
+
+/* Thumb — 20px hit target on a 6px track, so it stays draggable on touch. */
+.gh-tool-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 3px solid var(--color-brand-primary);
+  box-shadow: 0 1px 3px rgba(16, 44, 34, 0.28);
+  transition: transform 120ms ease;
+}
+.gh-tool-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 3px solid var(--color-brand-primary);
+  box-shadow: 0 1px 3px rgba(16, 44, 34, 0.28);
+  transition: transform 120ms ease;
+}
+.gh-tool-range:active::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+.gh-tool-range:active::-moz-range-thumb {
+  transform: scale(1.08);
+}
+.gh-tool-range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+}
+.gh-tool-range:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-tool-range::-webkit-slider-thumb,
+  .gh-tool-range::-moz-range-thumb {
+    transition: none;
+  }
+}
+
+/* Slider on the dark instrument chassis. The forest track tint and thumb ring
+ * above are tuned for ivory and disappear on `gh2-glass-forest`. */
+.gh2-dark-content .gh-tool-range::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    var(--color-brand-accent) 0 var(--gh-tool-range-fill),
+    rgba(255, 255, 255, 0.16) var(--gh-tool-range-fill) 100%
+  );
+}
+.gh2-dark-content .gh-tool-range::-moz-range-track {
+  background: rgba(255, 255, 255, 0.16);
+}
+.gh2-dark-content .gh-tool-range::-moz-range-progress {
+  background: var(--color-brand-accent);
+}
+.gh2-dark-content .gh-tool-range::-webkit-slider-thumb {
+  background: #ffffff;
+  border-color: var(--color-brand-accent);
+}
+.gh2-dark-content .gh-tool-range::-moz-range-thumb {
+  background: #ffffff;
+  border-color: var(--color-brand-accent);
+}
+
+/* Native <select> in the tool panel. The option list is drawn by the OS, and
+ * a dark control gave a white popup with white text — an empty-looking box.
+ * color-scheme:dark was not honoured reliably enough to depend on, so the
+ * control is light instead: every engine draws a legible dark-on-white list
+ * from that, and it matches the white read-out below it. */
+.gh-tool-select {
+  color-scheme: light;
+  background-color: #ffffff !important;
+  color: var(--color-brand-primary) !important;
+  border-color: rgba(29, 75, 54, 0.18) !important;
+}
+.gh-tool-select option {
+  background-color: #ffffff;
+  color: #1d4b36;
+}
+
+/* ── Health-test "What's included" manifest ──────────────────────────
+ * Panel rows are native <details>. Tailwind's group-open variant does not
+ * emit a rotation in this setup, so the chevron flip lives here.
+ */
+.gh-manifest-chevron {
+  transition: transform 200ms ease;
+}
+details[open] > summary .gh-manifest-chevron {
+  /* `transform`, not the standalone `rotate` property — the latter does not
+   * apply to SVG elements, same as the other icon flips in this file. */
+  transform: rotate(180deg);
 }

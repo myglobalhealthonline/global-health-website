@@ -26,9 +26,9 @@ New dropdowns/popovers/dialogs/drawers — never hand-roll: use `AppMenu`
 (drawer/sheet). New list/table pages — never hand-write twin table+card
 markup: use a `ColumnPriorityTable` config (`ResponsiveField` priority 1-4 +
 drawer flag), which renders both the desktop table and the `PortalMobileCard`
-fallback from one source. See `docs/responsive-audit/HANDOFF.md` for the full
-migration history and `shared/RESPONSIVE_DESIGN_SYSTEM_PLAN.md` for the rules
-(z-token scale, height-axis tiers, theme fidelity).
+fallback from one source. See `docs/design/responsive/handoff.md` for the full
+migration history and `docs/design/responsive/shared/responsive-design-system-plan.md`
+for the rules (z-token scale, height-axis tiers, theme fidelity).
 
 ## Agent workflow rules
 
@@ -42,9 +42,78 @@ migration history and `shared/RESPONSIVE_DESIGN_SYSTEM_PLAN.md` for the rules
 - Heavy skills (full seo-audit crawl etc.): invoke only for genuinely full runs.
   Narrow verification/fix tasks get a plain instruction instead.
 
+## Analytics / SEO services connected (2026-08-03)
+
+No credentials here — handles only. The tooling finds its own tokens.
+
+| Service | Handle | Notes |
+| --- | --- | --- |
+| Search Console | `sc-domain:myglobalhealth.online` | OAuth. **Token dies ~2026-08-10** — the consent screen is still in Testing, which caps refresh tokens at 7 days. Publish it to stop the weekly re-auth. |
+| GA4 | property `547083375` | Data API enabled 2026-08-03. Consent-gated tag; **only 07-25 → 07-28 has data** (see the Dockerfile ARG bug in the plan doc's §7). |
+| CrUX + PageSpeed | API key | Key-based, so unaffected by the OAuth expiry. |
+| openseo MCP | tool list | SERP, keywords, backlinks, site audit. Announces itself — nothing to configure. |
+
+Config `~/.config/claude-seo/google-api.json` · scripts
+`~/.claude/plugins/marketplaces/agricidaniel-claude-seo/scripts/` · check auth
+with `py .../google_auth.py --check`.
+
+Traps that have each cost a wasted round already:
+
+- **`py`, never `python`** — `python` on PATH is a broken WindowsApps stub.
+- **URL Inspection results nest `index_status.coverage_state`.** There is no
+  top-level `verdict`; a flat read reports every row as UNKNOWN.
+- **`--check` reporting `[OK]` proved nothing** until it was patched on
+  2026-08-03 to actually attempt the refresh. It lives in the plugin
+  marketplace, outside this repo, so a plugin update reverts it.
+- **The plugin's "add the service account as Viewer" error is hardcoded** and
+  fires on any 403. In practice it has meant a disabled API, not missing access.
+  Call the API raw before acting on that message.
+- **Grepping served HTML for `hreflang` returns zero** — it is emitted as
+  camelCase `hrefLang`.
+- Quotas: URL Inspection ~7.5 s/URL, 2,000/day. Indexing API 200/day and
+  officially JobPosting/BroadcastEvent-only — do not mass-submit.
+
+**Canonical SEO control file: `docs/plans/seo-control-state.md`.** It holds the
+remediation ledger, the growth roadmap, and the indexation watchlist. Every other
+SEO markdown in the repo is historical evidence and carries a header saying so.
+
+Two rules that override any older SEO document:
+
+- Before starting an SEO remediation or growth batch, refresh the relevant
+  OpenSEO/GSC data and verify live production behaviour. Historical audit counts
+  are context, not the current source of truth.
+- After every implemented/deployed SEO batch, update the ledger and roadmap in
+  `seo-control-state.md` before starting the next batch.
+
+Do not rerun the full ~1,000-page crawl per batch — it is for global technical
+validation, periodic baselines, or post-sitewide-change only. Everything narrower
+gets a focused OpenSEO/GSC pull plus a live production check.
+
+`docs/plans/seo-indexation-plan-2026-07-28.md` is superseded as a status document
+but its §2 design decisions and §5 "explicitly not doing" list are still binding.
+
 ## Dependency overrides
 
 `pnpm.overrides` are NOT inherited by the deployed services (each builds
 standalone with `--ignore-workspace`). Mirror every security pin into root,
 `frontend/`, and `backend/` package.json. CI gate: `scripts/check-override-drift.mjs`.
-See `docs/dependency-overrides.md`.
+See `docs/guides/dependency-overrides.md`.
+
+## Security scanning (added 2026-08-02)
+
+CI runs OSV-Scanner (SCA), Trivy (container), Semgrep (generic SAST +
+`.semgrep/rules/`, 5 repo-specific authorization rules), and Playwright
+(`e2e-authz`). Rules and fixtures live in `.semgrep/rules/` /
+`.semgrep/tests/`. **Custom rules must be run per-file, never as one
+multi-file batch** — that combination gives wrong results with this repo's
+`pattern-not-inside` rules in Semgrep 1.172.0 (see
+`docs/guides/security-scanning-runbook.md`). A suppression is always
+`// nosemgrep: <rule-id> -- <specific reason>`, placed on the line
+immediately before Semgrep's *reported* line — never a bare disable, and
+never inside a template literal (the comment becomes literal output there).
+`backend/src/routes/authz-matrix.test.ts` is the integration authorization
+matrix; testing the medical-access guard's actual allow/deny decision
+requires forcing `env.MEDICAL_ACCESS_ENFORCE = true` at runtime (`.env.test`
+defaults to shadow mode). Full findings: `docs/audits/security/
+security-tooling-audit-2026-08-02.md`. Runbook: `docs/guides/
+security-scanning-runbook.md`.

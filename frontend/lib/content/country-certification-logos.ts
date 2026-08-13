@@ -54,16 +54,6 @@ const LOGOS_BY_COUNTRY: Record<string, CountryCertificationLogo[]> = {
       tone: "light",
     },
     {
-      name: "Level Health",
-      alt: "Level Health",
-      src: "/logos/partners/level-health.svg",
-      href: "https://www.levelhealth.ie/",
-      width: 220,
-      height: 72,
-      kind: "partner",
-      tone: "dark",
-    },
-    {
       name: "Coombe Community Pharmacy",
       alt: "Coombe Community Pharmacy",
       src: "/logos/partners/coombe-community-pharmacy.png",

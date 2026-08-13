@@ -2,6 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "../../db/prisma.js";
 import { registerPatient } from "../auth/auth.service.js";
+import { linkMembershipsInBackground } from "../memberships/membership-linking.service.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
 import {
   memberInviteText,
@@ -280,6 +281,9 @@ export async function acceptInvite(input: AcceptInviteInput): Promise<AcceptInvi
       where: { id: userId },
       data: { emailVerifiedAt: new Date() },
     });
+    // Every place that sets emailVerifiedAt is a membership link trigger
+    // (§5.2) — this account may also hold a private membership enrollment.
+    linkMembershipsInBackground(userId);
   }
 
   const dob = input.profile.dateOfBirth ? new Date(input.profile.dateOfBirth) : null;

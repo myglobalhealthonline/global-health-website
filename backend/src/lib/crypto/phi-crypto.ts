@@ -26,6 +26,19 @@ const TAG_BYTES = 16;
 function key(): Buffer | null {
   const raw = env.PHI_ENCRYPTION_KEY?.trim();
   if (!raw) return null;
+  // A raw `${{...}}` means the Railway secret template was never resolved —
+  // typically a local checkout's .env carrying the template literal instead
+  // of the real value (Railway only resolves it in `railway run` / deploy).
+  // Hashing that literal instead of the real secret produces ciphertext the
+  // real key can never decrypt, and it fails SILENTLY (decrypt just returns
+  // null per-field) — this happened once already (2026-08-06). Fail loud
+  // instead of writing unrecoverable garbage.
+  if (raw.startsWith("${{")) {
+    throw new Error(
+      "PHI_ENCRYPTION_KEY is an unresolved Railway template placeholder, not the " +
+        "real secret. Run this process via `railway run` instead of a plain local .env.",
+    );
+  }
   // Derive a fixed 32-byte key from the configured secret so any
   // sufficiently-long passphrase works as the key material.
   return createHash("sha256").update(raw).digest();
@@ -93,6 +106,7 @@ export const PHI_ENCRYPTED_FIELDS = [
   "taxIdNumber",
   "passportNumber",
   "utenteNumber",
+  "insurancePolicyNumber",
 ] as const;
 type PhiField = (typeof PHI_ENCRYPTED_FIELDS)[number];
 
@@ -150,13 +164,25 @@ export function encryptPhiFields<T extends Partial<Record<PhiField, string | nul
   return out;
 }
 
-/** Decrypt the PHI fields present on a read row (in place, immutably). */
+/**
+ * Decrypt the PHI fields present on a read row (in place, immutably).
+ * Degrades per-field to null on failure (legacy row, key rotation, corrupt
+ * ciphertext) instead of throwing — one bad field must never take down the
+ * whole profile read.
+ */
 export function decryptPhiFields<T extends Partial<Record<PhiField, string | null>>>(
   row: T,
 ): T {
   const out: T = { ...row };
   for (const f of PHI_ENCRYPTED_FIELDS) {
-    if (f in out) out[f] = decryptPhi(out[f]) as T[PhiField];
+    if (f in out) {
+      try {
+        out[f] = decryptPhi(out[f]) as T[PhiField];
+      } catch {
+        console.warn(`[phi-crypto] failed to decrypt PatientProfile.${f} — returning null`);
+        out[f] = null as T[PhiField];
+      }
+    }
   }
   return out;
 }

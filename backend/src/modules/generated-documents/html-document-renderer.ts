@@ -90,6 +90,13 @@ async function getBrowser(): Promise<import("playwright").Browser> {
         browser.on("disconnected", () => {
           browserPromise = null;
         });
+        // NOTE: an idle browser keeps the owning process alive, which in tests
+        // reads as a hang rather than a leak — every assertion passes and then
+        // the worker sits until the runner's timeout. There is no `unref`
+        // escape hatch here: Playwright, unlike Puppeteer, does not expose the
+        // browser's child process. `closeSharedBrowser()` in an `after` hook is
+        // the only mechanism, which is why §24.3 makes it mandatory for any
+        // test that transitively renders.
         return browser;
       })
       .catch((err) => {

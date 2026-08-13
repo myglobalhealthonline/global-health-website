@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
+import { releaseMembershipAllowanceForSlot } from "../modules/memberships/membership-allowance.service.js";
 import { resolveStaffTimeZone } from "../modules/automation/staff-timezone.js";
 import { formatNotificationDateTime } from "../modules/notifications/notification-datetime.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
@@ -229,6 +230,14 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         const isCancelling =
           body.data.status === "CANCELLED" && appt.status !== "CANCELLED";
         if ((isReschedule || isCancelling) && appt.timeSlotId) {
+          // Cancelling returns a spent allowance unit (decision 16). A
+          // RESCHEDULE deliberately does not: the consultation still happens,
+          // so the unit stays spent on the same order line.
+          if (isCancelling) {
+            await releaseMembershipAllowanceForSlot(appt.timeSlotId).catch((err) => {
+              app.log.warn({ err }, "Allowance release failed on doctor cancel");
+            });
+          }
           const releasedSlotId = await releaseAppointmentSlot(appt.id).catch(
             (err) => {
               app.log.warn({ err }, "Slot release failed on doctor update");

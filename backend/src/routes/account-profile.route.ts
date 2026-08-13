@@ -582,6 +582,7 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       const contentType = obj.ContentType ?? "application/octet-stream";
       void reply.header("Content-Type", contentType);
       void reply.header("Cache-Control", "private, no-store");
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
       return reply.send(stream);
     } catch (error) {
       app.log.error(error);
@@ -619,6 +620,7 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
 
       void reply.header("Content-Type", obj.ContentType ?? "application/octet-stream");
       void reply.header("Cache-Control", "private, no-store");
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
       return reply.send(stream);
     } catch (error) {
       app.log.error(error);

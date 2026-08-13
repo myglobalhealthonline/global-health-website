@@ -31,10 +31,21 @@ const TARGETS: Target[] = [
   {
     // 2026-07-24 re-audit: IE/EN row is 167 chars, truncates live at 155 as
     // "...languages. Global…" — trimmed "consultation" + kept the brand close.
+    //
+    // 2026-08-03 SEO audit: "same-day APPOINTMENTS from €29" contradicted the
+    // same page's own hero badge ("GP consultations from €39") and the GP
+    // service page's meta ("same-day appointments from €39"). Both numbers are
+    // real — IE prices are repeat prescription €29, GP €39, sick cert €45 —
+    // but "appointments from €29" reads as a €29 GP slot, so a searcher who
+    // clicks the SERP snippet lands on €39 and sees a price rise. Reworded to
+    // "Consultations from €29", which is accurate, keeps the cheaper hook, and
+    // matches the visible on-page line "Consultations at Global Health cost
+    // from €29.00". The GP page keeps €39 — that now reads as a service tier,
+    // not a contradiction.
     countryCode: "ie",
     locale: "EN",
     after:
-      "IMC-registered GPs available today — same-day appointments from €29. Sick certs, prescriptions, specialist referrals, 11 languages. Global Health Ireland.",
+      "IMC-registered GPs available today — consultations from €29. Sick certs, prescriptions, specialist referrals, 11 languages. Global Health Ireland.",
   },
   {
     // 2026-07-24 re-audit: BR/PT row is 170 chars, truncates live at 155 as

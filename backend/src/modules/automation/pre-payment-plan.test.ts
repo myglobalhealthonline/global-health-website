@@ -103,4 +103,59 @@ describe("computePrePaymentPlan", () => {
     assert.equal(plan.flow, PrePaymentFlow.OUTSIDE_48H);
     assert.equal(minutesAfterBooking(plan.paymentDueAt), 24 * 60);
   });
+
+  describe("website self-serve checkout", () => {
+    it("gives a flat 15-minute window regardless of how far out the slot is", () => {
+      for (const hoursOut of [6, 30, 24 * 5]) {
+        const plan = computePrePaymentPlan({
+          bookedAt,
+          consultationStartAt: new Date(bookedAt.getTime() + hoursOut * 60 * 60_000),
+          webCheckout: true,
+        });
+
+        assert.equal(plan.flow, PrePaymentFlow.WEB_CHECKOUT, `${hoursOut}h out`);
+        assert.equal(minutesAfterBooking(plan.paymentDueAt), 15, `${hoursOut}h out`);
+      }
+    });
+
+    it("still applies the 15-minute window when there is no consultation time", () => {
+      const plan = computePrePaymentPlan({
+        bookedAt,
+        consultationStartAt: null,
+        webCheckout: true,
+      });
+
+      assert.equal(plan.flow, PrePaymentFlow.WEB_CHECKOUT);
+      assert.equal(minutesAfterBooking(plan.paymentDueAt), 15);
+    });
+
+    it("never holds the slot longer than the normal rules would", () => {
+      // Slot 8 minutes out: the standard urgent rule floors at booking+10min,
+      // which is earlier than booking+15min, so it wins. A website order must
+      // not sit unpaid well past its own consultation.
+      const plan = computePrePaymentPlan({
+        bookedAt,
+        consultationStartAt: new Date(bookedAt.getTime() + 8 * 60_000),
+        webCheckout: true,
+      });
+
+      assert.equal(plan.flow, PrePaymentFlow.WEB_CHECKOUT);
+      assert.equal(minutesAfterBooking(plan.paymentDueAt), 10);
+    });
+
+    it("leaves every other caller on the old ladder", () => {
+      // Regression guard: the web flow is opt-in, so manual/doctor-portal/
+      // insurance bookings must produce byte-identical plans to before.
+      const consultationStartAt = new Date(bookedAt.getTime() + 30 * 60 * 60_000);
+      const omitted = computePrePaymentPlan({ bookedAt, consultationStartAt });
+      const explicitFalse = computePrePaymentPlan({
+        bookedAt,
+        consultationStartAt,
+        webCheckout: false,
+      });
+
+      assert.equal(omitted.flow, PrePaymentFlow.WITHIN_48H);
+      assert.deepEqual(explicitFalse, omitted);
+    });
+  });
 });

@@ -6,7 +6,7 @@ import { requireAuth } from "../utils/require-auth.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { getObject, isMediaStorageConfigured, putObject, streamToNodeReadable } from "../services/object-storage.js";
-import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
 import {
@@ -247,6 +247,7 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
           `attachment; filename="${encodeURIComponent(fileName)}"`,
         );
         void reply.header("Cache-Control", "private, no-store");
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
         return reply.send(stream);
       } catch (error) {
         app.log.error(error);
@@ -286,7 +287,7 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
           );
         } catch (guardError) {
           if (guardError instanceof MedicalAccessDeniedError) {
-            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
           }
           throw guardError;
         }
@@ -320,7 +321,7 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }
@@ -336,6 +337,7 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
           `attachment; filename="${encodeURIComponent(doc.fileName)}"`,
         );
         void reply.header("Cache-Control", "private, no-store");
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
         return reply.send(stream);
       } catch (error) {
         app.log.error(error);
@@ -390,7 +392,7 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
         );
       } catch (guardError) {
         if (guardError instanceof MedicalAccessDeniedError) {
-          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
       }

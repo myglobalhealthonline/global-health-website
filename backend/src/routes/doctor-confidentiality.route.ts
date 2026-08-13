@@ -18,7 +18,8 @@ import {
   acceptConfidentialityAgreement,
   listDoctorAgreementStatuses,
   hasAcceptedCurrentAgreement,
-  CURRENT_AGREEMENT_TEXT,
+  getDoctorAgreementLocale,
+  agreementTextFor,
   CURRENT_AGREEMENT_VERSION,
 } from "../modules/confidentiality/confidentiality.service.js";
 import { renderConfidentialityAgreementPdf } from "../modules/confidentiality/confidentiality-pdf.js";
@@ -71,8 +72,11 @@ const doctorConfidentialityRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
       try {
-        const status = await getConfidentialityStatus(doctorProfile.id);
-        return okResponse({ ...status, agreementText: CURRENT_AGREEMENT_TEXT });
+        const [status, locale] = await Promise.all([
+          getConfidentialityStatus(doctorProfile.id),
+          getDoctorAgreementLocale(doctorProfile.id),
+        ]);
+        return okResponse({ ...status, agreementText: agreementTextFor(locale) });
       } catch (error) {
         return replyWithError(reply, app.log, error, "Could not read confidentiality status");
       }
@@ -158,7 +162,10 @@ const doctorConfidentialityRoute: FastifyPluginAsync = async (app) => {
     if (!doctor) return reply.status(404).send(errorResponse("Doctor profile not found"));
 
     try {
-      const status = await getConfidentialityStatus(auth.doctorId);
+      const [status, locale] = await Promise.all([
+        getConfidentialityStatus(auth.doctorId),
+        getDoctorAgreementLocale(auth.doctorId),
+      ]);
       const pdf = await renderConfidentialityAgreementPdf({
         doctor: {
           fullName: doctor.fullName,
@@ -166,6 +173,7 @@ const doctorConfidentialityRoute: FastifyPluginAsync = async (app) => {
           countryName: doctor.country?.name ?? null,
           email: auth.email,
         },
+        locale,
         acceptedAt: status.accepted ? status.acceptedAt : null,
         acceptedVersion: status.accepted ? status.agreementVersion : null,
         issuedAt: new Date(),

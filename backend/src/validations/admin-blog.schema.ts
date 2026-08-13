@@ -117,6 +117,8 @@ export const blogTranslationBodySchema = z.object({
   content: z.string().max(200000).optional().nullable(),
   seoTitle: optionalNullableString(180),
   seoDesc: optionalNullableString(320),
+  /** Alt text for the shared cover image, in this locale. */
+  coverImageAlt: optionalNullableString(300),
 });
 
 export type BlogTranslationBody = z.infer<typeof blogTranslationBodySchema>;

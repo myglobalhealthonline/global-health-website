@@ -1,7 +1,13 @@
 import type { PrePaymentMessageContext } from "./pre-payment-messages.js";
 
 type Lang = "en" | "pt" | "ro" | "cs" | "es";
-export type PrePaymentEmailVariant = "initial" | "reminder" | "final" | "cancelled";
+export type PrePaymentEmailVariant =
+  | "initial"
+  | "reminder"
+  | "final"
+  | "cancelled"
+  /** Website checkout abandoned — the single message of the WEB_CHECKOUT flow. */
+  | "abandoned";
 
 export type PrePaymentEmailPortalAccess = {
   setPasswordUrl: string;
@@ -68,6 +74,15 @@ function introCopy(lang: Lang, variant: PrePaymentEmailVariant): string {
       es: "Su reserva de consulta ha sido cancelada porque no se recibió el pago antes de la fecha límite.",
     });
   }
+  if (variant === "abandoned") {
+    return t(lang, {
+      en: "We noticed you left the checkout page without completing payment for your consultation. Your slot is still reserved, but it will be released at the time below if payment is not completed. Did you run into a problem during checkout? Just reply to this email and we will help.",
+      pt: "Reparámos que saiu da página de pagamento sem concluir o pagamento da sua consulta. A sua reserva ainda está ativa, mas será libertada à hora indicada abaixo se o pagamento não for concluído. Teve algum problema durante o pagamento? Basta responder a este e-mail e ajudamos.",
+      ro: "Am observat că ați părăsit pagina de plată fără a finaliza plata consultației. Intervalul este încă rezervat, dar va fi eliberat la ora de mai jos dacă plata nu este finalizată. Ați întâmpinat o problemă la plată? Răspundeți la acest e-mail și vă ajutăm.",
+      cs: "Všimli jsme si, že jste opustil(a) platební stránku, aniž byste dokončil(a) platbu za konzultaci. Termín je stále rezervován, ale bude uvolněn v níže uvedený čas, pokud platba nebude dokončena. Narazili jste při platbě na problém? Odpovězte na tento e-mail a pomůžeme vám.",
+      es: "Hemos visto que salió de la página de pago sin completar el pago de su consulta. Su reserva sigue activa, pero se liberará a la hora indicada abajo si no se completa el pago. ¿Tuvo algún problema durante el pago? Responda a este correo y le ayudamos.",
+    });
+  }
   if (variant === "final") {
     return t(lang, {
       en: "This is a final reminder. Your reservation will be cancelled unless payment is completed before the deadline below.",
@@ -131,6 +146,14 @@ function labels(lang: Lang) {
       ro: "Termen de plată",
       cs: "Termín platby",
       es: "Fecha límite de pago",
+    }),
+    /** Abandoned-checkout wording: the deadline IS the slot-release time. */
+    slotReleasedAt: t(lang, {
+      en: "Slot released at",
+      pt: "Reserva libertada às",
+      ro: "Interval eliberat la",
+      cs: "Termín uvolněn v",
+      es: "Reserva liberada a las",
     }),
     orderNo: t(lang, {
       en: "Order",
@@ -202,6 +225,13 @@ function labels(lang: Lang) {
       cs: "Přihlaste se pro zobrazení rezervace a správu péče.",
       es: "Inicie sesión para ver su cita y gestionar su atención.",
     }),
+    manageAppointmentsLead: t(lang, {
+      en: "You can also manage your appointments at the Patient Portal:",
+      pt: "Também pode gerir as suas consultas no Portal do Paciente:",
+      ro: "De asemenea, puteți gestiona programările în Portalul Pacientului:",
+      cs: "Své termíny můžete také spravovat v Portálu pacienta:",
+      es: "También puede gestionar sus citas en el Portal del Paciente:",
+    }),
     setPasswordButton: t(lang, {
       en: "Set your password",
       pt: "Definir palavra-passe",
@@ -268,6 +298,7 @@ export function buildPortalBlock(lang: Lang, portal: PrePaymentEmailPortalAccess
 
   return `<h3 style="margin:32px 0 12px;color:#1D4B36;font-size:17px;">${L.portalHeading}</h3>
         <p style="margin:0 0 16px;font-size:14px;color:#2D3B36;">${L.portalLead}</p>
+        <p style="margin:0 0 16px;font-size:14px;color:#2D3B36;">${L.manageAppointmentsLead} <a href="${esc(portal.signInUrl)}" style="color:#1D4B36;font-weight:600;">${esc(portal.signInUrl)}</a></p>
         <p style="margin:16px 0;text-align:center;">
           <a href="${esc(portal.setPasswordUrl)}"
              style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;">
@@ -290,6 +321,7 @@ export function buildPortalTextBlock(lang: Lang, portal: PrePaymentEmailPortalAc
     "",
     L.portalHeading,
     L.portalLead,
+    `${L.manageAppointmentsLead} ${portal.signInUrl}`,
     `${L.setPasswordButton}: ${portal.setPasswordUrl}`,
     `(${L.setPasswordHint})`,
   ];
@@ -365,7 +397,7 @@ export function buildPrePaymentEmailHtml(
     [L.doctor, esc(ctx.doctorName)],
     [L.service, esc(ctx.serviceName)],
     [L.price, esc(ctx.totalLabel)],
-    [L.deadline, esc(ctx.deadline)],
+    [variant === "abandoned" ? L.slotReleasedAt : L.deadline, esc(ctx.deadline)],
   ];
   const detailTable = detailRows
     .map(
@@ -442,7 +474,7 @@ export function buildPrePaymentEmailText(
     `${L.doctor}: ${ctx.doctorName}`,
     `${L.service}: ${ctx.serviceName}`,
     `${L.price}: ${ctx.totalLabel}`,
-    `${L.deadline}: ${ctx.deadline}`,
+    `${variant === "abandoned" ? L.slotReleasedAt : L.deadline}: ${ctx.deadline}`,
   ];
   if (variant !== "cancelled" && ctx.paymentLink?.trim()) {
     lines.push("", `${L.payButton}: ${ctx.paymentLink}`);

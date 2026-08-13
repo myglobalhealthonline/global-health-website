@@ -1,0 +1,1244 @@
+{
+  "hub": {
+    "navLabel": "Ferramentas de saúde",
+    "navLabelShort": "Ferramentas",
+    "openLabel": "Abrir calculadora",
+    "relatedHeading": "Mais calculadoras gratuitas"
+  },
+  "ui": {
+    "systolic": "Sistólica (número de cima)",
+    "diastolic": "Diastólica (número de baixo)",
+    "mmHg": "mmHg",
+    "questionsEyebrow": "Perguntas",
+    "faqSuffix": "Perguntas frequentes",
+    "units": "Unidades",
+    "metric": "Métrico",
+    "imperial": "Imperial",
+    "height": "Altura",
+    "weight": "Peso",
+    "cm": "cm",
+    "kg": "kg",
+    "feetLabel": "Altura (pés)",
+    "inchesLabel": "Polegadas",
+    "stoneLabel": "Peso (stone)",
+    "poundsLabel": "Libras",
+    "poundsOnlyHint": "Deixe stone vazio para usar apenas libras.",
+    "sex": "Sexo",
+    "male": "Homem",
+    "female": "Mulher",
+    "age": "Idade",
+    "years": "anos",
+    "activity": "Nível de atividade",
+    "kcalPerDay": "kcal / dia",
+    "yes": "Sim",
+    "no": "Não"
+  },
+  "suggestions": {
+    "heading": "O passo seguinte",
+    "intro": "O IMC é um ponto de partida, não um plano. Estas são as consultas que os nossos médicos fazem para o que ele sinaliza.",
+    "viewLabel": "Ver serviço",
+    "gpTitle": "Consulta médica online",
+    "gpSummary": "Discuta qualquer resultado por vídeo com um médico registado e faça os exames que uma calculadora não lhe dá.",
+    "nudgeUnderweight": "Um resultado abaixo do intervalo saudável merece a opinião de um médico, sobretudo se não foi intencional.",
+    "nudgeHealthy": "Quer manter-se assim? Os nossos clínicos ajudam-no a criar hábitos que se aguentam.",
+    "nudgeOverweight": "Mudanças pequenas e acompanhadas funcionam melhor do que mais uma dieta. Comece por aqui.",
+    "nudgeObese": "Neste nível, a gestão do peso com acompanhamento médico funciona bastante melhor do que fazer dieta sozinho."
+  },
+  "bands": {
+    "bp": {
+      "low": {
+        "label": "Tensão baixa",
+        "summary": "Abaixo do intervalo habitual em adultos. Muitas vezes não tem importância, mas merece a opinião de um médico se sentir tonturas, desmaios ou cansaço fora do normal."
+      },
+      "optimal": {
+        "label": "Ótima",
+        "summary": "O intervalo de menor risco em adultos. Não há nada a fazer só por causa desta leitura."
+      },
+      "normal": {
+        "label": "Normal",
+        "summary": "Dentro do intervalo normal em adultos. Vale a pena voltar a medir de vez em quando, sobretudo se tem vindo a subir."
+      },
+      "high-normal": {
+        "label": "Normal-alta",
+        "summary": "Acima do normal, mas ainda não é hipertensão. É a fase em que o sal, o álcool, o peso e a atividade física fazem mais diferença."
+      },
+      "grade-1": {
+        "label": "Hipertensão de grau 1",
+        "summary": "Ligeiramente elevada. Faça uma semana de medições em casa e leve-as a um médico — o diagnóstico precisa do padrão, não de um valor isolado."
+      },
+      "isolated-systolic": {
+        "label": "Hipertensão sistólica isolada",
+        "summary": "O número de cima está elevado e o de baixo é normal. É o padrão mais frequente a partir dos 60 anos e ainda assim exige avaliação médica."
+      },
+      "grade-2": {
+        "label": "Hipertensão de grau 2",
+        "summary": "Bastante elevada. Marque uma avaliação médica em breve, sem esperar por uma consulta de rotina."
+      },
+      "grade-3": {
+        "label": "Hipertensão de grau 3",
+        "summary": "Muito elevada. Esta leitura tem de ser vista por um médico ainda hoje."
+      }
+    },
+    "bmi": {
+      "underweight": {
+        "label": "Baixo peso",
+        "summary": "Abaixo do intervalo saudável. Vale a pena falar com um médico, sobretudo se a perda de peso não foi intencional."
+      },
+      "healthy": {
+        "label": "Peso saudável",
+        "summary": "Dentro do intervalo que a OMS classifica como saudável para adultos."
+      },
+      "overweight": {
+        "label": "Excesso de peso",
+        "summary": "Acima do intervalo saudável. Avaliar a pressão arterial e o colesterol é um passo sensato."
+      },
+      "obese-1": {
+        "label": "Obesidade grau I",
+        "summary": "A este nível costuma ser proposto um programa estruturado de gestão do peso."
+      },
+      "obese-2": {
+        "label": "Obesidade grau II",
+        "summary": "Recomenda-se avaliação médica, incluindo rastreio de doenças associadas ao peso."
+      },
+      "obese-3": {
+        "label": "Obesidade grau III",
+        "summary": "Recomenda-se avaliação especializada em gestão do peso."
+      }
+    },
+    "activity": {
+      "sedentary": {
+        "label": "Sedentário",
+        "summary": "Trabalho sentado, pouco ou nenhum exercício"
+      },
+      "light": {
+        "label": "Pouco ativo",
+        "summary": "Exercício ligeiro 1–3 dias por semana"
+      },
+      "moderate": {
+        "label": "Moderadamente ativo",
+        "summary": "Exercício moderado 3–5 dias por semana"
+      },
+      "very": {
+        "label": "Muito ativo",
+        "summary": "Exercício intenso 6–7 dias por semana"
+      },
+      "extra": {
+        "label": "Extremamente ativo",
+        "summary": "Trabalho físico ou treino intenso duas vezes por dia"
+      }
+    },
+    "adhdFrequencies": [
+      "Nunca",
+      "Raramente",
+      "Às vezes",
+      "Frequentemente",
+      "Muito frequentemente"
+    ],
+    "adhdQuestions": [
+      "Com que frequência deixa por acabar os últimos pormenores de um projeto, depois de passada a parte difícil?",
+      "Com que frequência lhe custa pôr as coisas em ordem quando uma tarefa exige organização?",
+      "Com que frequência se esquece de compromissos ou de coisas que combinou?",
+      "Com que frequência adia ou evita começar algo que exige pensar muito?",
+      "Com que frequência mexe as mãos ou os pés quando tem de ficar sentado muito tempo?",
+      "Com que frequência se sente empurrado a continuar a fazer coisas, como se algo o impelisse?"
+    ],
+    "adhd": {
+      "positive": {
+        "label": "Resultado do rastreio: positivo",
+        "summary": "As suas respostas correspondem ao padrão que este questionário procura, pelo que vale a pena marcar uma avaliação completa. Não é um diagnóstico: a PHDA só é diagnosticada por um psiquiatra ou um psicólogo clínico, a partir de toda a sua história e não de seis perguntas."
+      },
+      "negative": {
+        "label": "Resultado do rastreio: negativo",
+        "summary": "As suas respostas não correspondem ao padrão que este questionário procura. Isso não exclui a PHDA — seis perguntas cobrem apenas uma parte — por isso, se estas dificuldades afetam o seu trabalho, os seus estudos ou as suas relações, fale na mesma com um médico."
+      }
+    },
+    "osteoporosis": {
+      "assess-now": {
+        "label": "Avaliação recomendada agora",
+        "summary": "A sua idade ou os seus fatores de risco correspondem ao padrão que as orientações utilizam para recomendar uma avaliação da osteoporose. Isto não é um diagnóstico — o passo seguinte é falar com um médico sobre uma densitometria óssea (DXA)."
+      },
+      "discuss-next": {
+        "label": "Vale a pena falar disto na próxima consulta",
+        "summary": "Tem um fator de risco que as orientações têm em conta, ainda que, por si só, não implique uma avaliação imediata. Mencione-o na próxima vez que consultar um médico."
+      },
+      "no-flags": {
+        "label": "Nenhum fator de risco específico identificado",
+        "summary": "Nada do que introduziu corresponde aos fatores de risco publicados que as orientações utilizam para identificar quem deve ser avaliado para osteoporose. Isto é tranquilizador, mas não é uma garantia — mencione sempre uma nova fratura ou queda a um médico."
+      }
+    }
+  },
+  "tools": {
+    "adhd-test": {
+      "cardTitle": "Teste de PHDA",
+      "cardBlurb": "O rastreio de PHDA no adulto com seis perguntas, pontuado como a escala foi desenhada.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Teste de",
+      "h1Accent": "PHDA",
+      "h1Trail": "{country}",
+      "metaTitle": "Teste de PHDA {country} | Rastreio Gratuito para Adultos",
+      "metaDescription": "Faça o rastreio de PHDA no adulto com seis perguntas (ASRS v1.1, parte A) e veja o que as suas respostas significam. Um rastreio não é um diagnóstico — esse só pode ser feito por um psiquiatra ou um psicólogo clínico.",
+      "lede": "Responda a seis perguntas sobre os últimos seis meses para ver se as suas respostas correspondem ao padrão que o rastreio de PHDA no adulto procura.",
+      "trustPoints": [
+        "O rastreio ASRS v1.1, parte A — seis perguntas",
+        "Pontuado pergunta a pergunta, como a escala foi desenhada",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "widget": {
+        "title": "As suas respostas",
+        "instructions": "Em cada pergunta, escolha com que frequência isso lhe aconteceu nos últimos seis meses.",
+        "placeholder": "Responda às seis perguntas para ver o resultado do rastreio.",
+        "note": "Este é um questionário de rastreio, não um diagnóstico. A PHDA só é diagnosticada por um psiquiatra ou um psicólogo clínico, após uma avaliação completa. Nada aqui é uma recomendação de medicação.",
+        "thresholdLabel": "Rastreio positivo",
+        "thresholdValue": "{count} ou mais de {total}"
+      },
+      "sections": [
+        {
+          "heading": "Como o rastreio é pontuado",
+          "body": [
+            "As perguntas são a parte A da Adult ADHD Self-Report Scale da Organização Mundial da Saúde — a forma curta que serve para decidir se vale a pena marcar uma avaliação completa, e não a avaliação em si.",
+            "A pontuação é feita pergunta a pergunta, não como um total. Cada item tem o seu próprio limiar, e quatro ou mais itens a atingir o respetivo limiar são um rastreio positivo. O erro habitual é tratar isto como uma regra fixa de «quatro respostas Frequentemente»: assim escapa a apresentação desatenta, que é justamente a mais vezes ignorada nos adultos."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "As seis perguntas do rastreio e a resposta a partir da qual cada uma conta",
+            "columns": [
+              "Pergunta",
+              "Sobre o que é",
+              "Conta a partir de"
+            ],
+            "rows": [
+              [
+                "1",
+                "Terminar os últimos pormenores de um projeto",
+                "Às vezes"
+              ],
+              [
+                "2",
+                "Pôr as coisas em ordem para uma tarefa",
+                "Às vezes"
+              ],
+              [
+                "3",
+                "Lembrar-se de compromissos e combinações",
+                "Às vezes"
+              ],
+              [
+                "4",
+                "Adiar tarefas que exigem pensar muito",
+                "Frequentemente"
+              ],
+              [
+                "5",
+                "Mexer-se quando é preciso ficar sentado muito tempo",
+                "Frequentemente"
+              ],
+              [
+                "6",
+                "Sentir-se empurrado a continuar sem parar",
+                "Frequentemente"
+              ]
+            ],
+            "footnote": "Quatro ou mais perguntas no respetivo limiar ou acima dele são um rastreio positivo. A escala foi desenvolvida para adultos a partir dos 18 anos e não é um rastreio para crianças."
+          }
+        },
+        {
+          "heading": "Como a PHDA se apresenta no adulto",
+          "body": [
+            "A PHDA no adulto raramente se parece com a imagem da sala de aula. A hiperatividade vira-se muitas vezes para dentro — inquietação, uma cabeça que não assenta — enquanto a desatenção fica e começa a sair cara: prazos que passam, papelada por abrir, uma memória de trabalho a quem caem coisas.",
+            "Para um diagnóstico, o que conta é que as dificuldades venham de longe, apareçam em mais do que uma área da vida e causem uma limitação real. Toda a gente perde as chaves de vez em quando; não é isso que se está a perguntar."
+          ],
+          "bullets": [
+            "Começar as tarefas que importam e acabar as que deixaram de ser interessantes.",
+            "O tempo: subestimá-lo, perdê-lo, chegar atrasado por muito que se tente.",
+            "A organização — papéis, contas, marcações — custar muito mais esforço do que parece custar aos outros.",
+            "Inquietação, ou uma necessidade constante e surda de estar a fazer alguma coisa.",
+            "Interromper, dizer o que vem à cabeça ou agir antes de pensar a ideia até ao fim.",
+            "Emoções que chegam depressa e passam depressa, muitas vezes desproporcionadas em relação ao que as provocou."
+          ]
+        },
+        {
+          "heading": "O que este rastreio não lhe pode dizer",
+          "body": [
+            "Um questionário de seis perguntas é uma ferramenta de triagem. É propositadamente rápido e propositadamente abrangente, porque a função dele é decidir quem deve ser avaliado como deve ser — e não quem tem PHDA."
+          ],
+          "bullets": [
+            "Não é um diagnóstico: por si só, um resultado positivo significa apenas «vale uma avaliação».",
+            "Um resultado negativo não exclui a PHDA, sobretudo na apresentação desatenta e sobretudo nas mulheres, diagnosticadas mais tarde e com menos frequência.",
+            "Ansiedade, depressão, mau sono, doença da tiroide, dor crónica e consumo elevado de álcool produzem as mesmas respostas.",
+            "Não separa a PHDA do autismo, de uma dificuldade específica de aprendizagem, nem dos efeitos de um período longo de stress.",
+            "Foi desenhado e validado para adultos. Crianças e adolescentes precisam de uma avaliação completamente diferente.",
+            "Não diz nada sobre o tratamento. A medicação é uma opção entre várias e só se coloca depois de um diagnóstico."
+          ]
+        },
+        {
+          "heading": "Como chegar a uma avaliação a sério",
+          "body": [
+            "O diagnóstico de PHDA é feito por um psiquiatra ou por um psicólogo clínico. A avaliação é uma entrevista clínica estruturada sobre a sua história desde a infância, habitualmente com escalas e, quando possível, com o relato de alguém que o conhece há muito tempo."
+          ],
+          "bullets": [
+            "Comece por um médico. Vai rever a sua história, excluir as situações que se parecem com PHDA e encaminhá-lo para avaliação.",
+            "Leve factos concretos em vez de uma pontuação: registos da escola, avaliações de trabalho, o que corre mal repetidamente e há quanto tempo.",
+            "Diga o que mais se passa — sono, humor, álcool, tiroide, um traumatismo craniano antigo. Isso muda a avaliação e a ordem em que é feita.",
+            "Um resultado de rastreio é o ponto de partida dessa conversa, não o substituto dela. Leve o seu consigo.",
+            "Se não está a conseguir lidar com a situação, ou se tem pensamentos de se magoar, contacte já um médico ou os serviços de emergência em vez de esperar por uma avaliação."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Um teste de PHDA online pode dar um diagnóstico?",
+          "answer": "Não, e nenhum questionário online pode. Isto é um rastreio: separa as pessoas entre «vale a pena avaliar a sério» e «com estas respostas, não». O diagnóstico é feito por um psiquiatra ou um psicólogo clínico, a partir de uma entrevista completa sobre a sua história e não de seis perguntas."
+        },
+        {
+          "question": "O que é a ASRS?",
+          "answer": "A Adult ADHD Self-Report Scale, desenvolvida com a Organização Mundial da Saúde. A parte A é o rastreio de seis perguntas usado aqui; a escala completa tem dezoito itens. É o instrumento de rastreio de PHDA no adulto mais usado no mundo, e por isso o resultado que levar é reconhecido em consulta."
+        },
+        {
+          "question": "O que conta como resultado positivo?",
+          "answer": "Quatro ou mais das seis perguntas respondidas no respetivo limiar ou acima dele. As três primeiras contam a partir de «Às vezes» e as três últimas só a partir de «Frequentemente» — os limiares diferem porque as perguntas diferem, e um único corte fixo deixaria de fora a apresentação desatenta."
+        },
+        {
+          "question": "Posso ter PHDA com um resultado negativo?",
+          "answer": "Pode. Seis perguntas não cobrem um quadro que se manifesta de maneira diferente em idades e pessoas diferentes, e a apresentação desatenta em particular é pouco detetada — uma das razões pelas quais as mulheres são diagnosticadas mais tarde e com menos frequência. Se as dificuldades lhe estão a afetar a vida, um rastreio negativo não é motivo para deixar de perguntar."
+        },
+        {
+          "question": "Quem pode diagnosticar PHDA?",
+          "answer": "Um psiquiatra ou um psicólogo clínico, conforme o país. O caminho começa normalmente num médico de família: recolhe a história, exclui as situações que imitam a PHDA — tiroide, perturbações do sono, ansiedade, depressão — e encaminha para a avaliação propriamente dita."
+        },
+        {
+          "question": "Este teste de PHDA guarda as minhas respostas?",
+          "answer": "Não. A pontuação é calculada inteiramente no seu navegador. Nada do que selecionar é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Quer discutir o seu resultado?",
+        "body": "Marque uma videoconsulta com um médico registado, reveja a sua história e as situações que podem parecer PHDA, e perceba o que envolveria uma avaliação.",
+        "label": "Marcar consulta"
+      },
+      "suggestionsIntro": "Um resultado de rastreio é um motivo para ser avaliado, não um diagnóstico. Estas são as consultas que podem dar o passo seguinte."
+    },
+    "blood-pressure-chart": {
+      "cardTitle": "Tabela de tensão arterial",
+      "cardBlurb": "O que os seus dois números significam na tabela europeia de tensão arterial para adultos.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Tabela de",
+      "h1Accent": "tensão arterial",
+      "h1Trail": "{country}",
+      "metaTitle": "Tensão Arterial Normal {country} | Tabela de Valores",
+      "metaDescription": "Compare os seus valores de tensão sistólica e diastólica com a tabela europeia para adultos. Veja a categoria, o que significa e que leituras exigem cuidados médicos no próprio dia.",
+      "lede": "Introduza os dois números do seu medidor para ver onde fica a leitura na tabela europeia para adultos — e o que fazer, se houver alguma coisa a fazer.",
+      "trustPoints": [
+        "Categorias europeias (ESC/ESH) para adultos",
+        "Sinaliza as leituras que precisam de cuidados no próprio dia",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "suggestionsIntro": "Uma leitura da tensão é um alerta, não um plano. Estas são as consultas que os nossos médicos fazem para o que ela sinaliza.",
+      "widget": {
+        "title": "A sua leitura",
+        "placeholder": "O número de cima tem de ser maior do que o de baixo — confirme os dois valores no seu medidor.",
+        "note": "Esta tabela é uma referência de rastreio, não um diagnóstico. A hipertensão é diagnosticada com leituras repetidas, normalmente uma semana de medições em casa ou um registo de 24 horas, nunca com um valor isolado.",
+        "scaleLabel": "Onde se situa o seu valor sistólico",
+        "optimalLabel": "Ótima para a maioria dos adultos",
+        "optimalValue": "Abaixo de {systolic}/{diastolic} mmHg",
+        "urgentTitle": "Procure ajuda médica hoje",
+        "urgentBody": "Uma leitura tão alta deve ser avaliada no próprio dia. Fique sentado e calmo durante cinco minutos e volte a medir — se continuar assim, contacte um médico ainda hoje.",
+        "urgentSymptoms": "Ligue já para o número de emergência se tiver também dor no peito, fraqueza ou falta de sensibilidade num dos lados do corpo, dificuldade em falar ou uma alteração súbita da visão."
+      },
+      "sections": [
+        {
+          "heading": "A tabela de tensão arterial para adultos",
+          "body": [
+            "A tensão arterial escreve-se com dois números: a pressão sistólica, enquanto o coração contrai, sobre a pressão diastólica, enquanto relaxa entre batimentos. Ambas são medidas em milímetros de mercúrio (mmHg).",
+            "As categorias abaixo são as europeias (ESC/ESH). Quando os dois números caem em categorias diferentes, vale a mais alta: 128/95 é hipertensão de grau 1, e não uma tensão normal."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Categorias europeias de tensão arterial em adultos",
+            "columns": [
+              "Categoria",
+              "Sistólica (mmHg)",
+              "Diastólica (mmHg)"
+            ],
+            "rows": [
+              [
+                "Baixa",
+                "Menos de 90",
+                "ou menos de 60"
+              ],
+              [
+                "Ótima",
+                "Menos de 120",
+                "e menos de 80"
+              ],
+              [
+                "Normal",
+                "120 – 129",
+                "e/ou 80 – 84"
+              ],
+              [
+                "Normal-alta",
+                "130 – 139",
+                "e/ou 85 – 89"
+              ],
+              [
+                "Hipertensão de grau 1",
+                "140 – 159",
+                "e/ou 90 – 99"
+              ],
+              [
+                "Hipertensão de grau 2",
+                "160 – 179",
+                "e/ou 100 – 109"
+              ],
+              [
+                "Hipertensão de grau 3",
+                "180 ou mais",
+                "e/ou 110 ou mais"
+              ],
+              [
+                "Sistólica isolada",
+                "140 ou mais",
+                "e menos de 90"
+              ]
+            ],
+            "footnote": "Limiares de consultório para adultos. Os medidores domésticos e os registos de 24 horas dão valores mais baixos, pelo que em casa a hipertensão começa em 135/85 e não em 140/90. A gravidez, a infância e a diálise têm objetivos diferentes."
+          }
+        },
+        {
+          "heading": "Como fazer uma medição em que se possa confiar",
+          "body": [
+            "A maioria das leituras alarmantes é um problema de medição. A tensão varia ao longo do dia e sobe se chegar a correr, se tiver a bexiga cheia ou se falar com a braçadeira insuflada, por isso a forma de medir muda o número mais do que se pensa."
+          ],
+          "bullets": [
+            "Fique sentado e quieto cinco minutos antes, com as costas apoiadas, os pés assentes no chão e as pernas sem cruzar.",
+            "Nada de café, comida, exercício ou tabaco nos 30 minutos anteriores, e esvazie a bexiga.",
+            "Apoie o braço numa mesa para que a braçadeira fique ao nível do coração, sobre a pele nua.",
+            "Use uma braçadeira do tamanho certo. Uma pequena demais dá valores altos e é o erro mais comum em casa.",
+            "Não fale enquanto mede: falar acrescenta vários mmHg.",
+            "Faça duas leituras com um minuto de intervalo e use a segunda, ou a média das duas.",
+            "Meça de manhã e à noite durante sete dias e leve a série completa a um médico."
+          ]
+        },
+        {
+          "heading": "O que uma única leitura não lhe pode dizer",
+          "body": [
+            "Uma leitura é uma fotografia de um momento, num braço. Chega para sinalizar um problema, mas não para lhe dar um nome, e é por isso que o diagnóstico assenta em leituras repetidas e não no primeiro valor que assusta."
+          ],
+          "bullets": [
+            "Hipertensão da bata branca: alta no consultório e normal em casa. É frequente e só se distingue medindo em casa ou com um registo de 24 horas.",
+            "Hipertensão mascarada: normal no consultório e alta o resto do tempo. É a mais perigosa das duas e fica invisível sem medições em casa.",
+            "Os braços diferem. Uma diferença superior a 10 mmHg entre eles importa, e daí em diante usa-se sempre o braço com o valor mais alto.",
+            "Um pulso irregular, incluindo a fibrilhação auricular, torna pouco fiáveis a maioria dos medidores automáticos.",
+            "Nem todos os aparelhos domésticos estão validados clinicamente, e um aparelho não validado pode desviar-se bastante.",
+            "A gravidez tem limiares e riscos próprios: a tensão alta na gravidez precisa de avaliação obstétrica, não desta tabela."
+          ]
+        },
+        {
+          "heading": "Quando falar com um médico e quando pedir ajuda já",
+          "body": [
+            "A maioria das tensões altas resolve-se numa consulta normal. Algumas não."
+          ],
+          "bullets": [
+            "Ligue já para o número de emergência se uma leitura muito alta vier acompanhada de dor no peito, fraqueza ou falta de sensibilidade num dos lados do corpo, dificuldade em falar ou uma alteração súbita da visão. São sinais de enfarte ou de AVC.",
+            "Procure cuidados médicos no próprio dia perante uma leitura de 180/120 ou superior, mesmo sem qualquer sintoma.",
+            "Marque uma avaliação nas semanas seguintes se as leituras estiverem repetidamente em 140/90 ou acima.",
+            "Fale com um médico se as leituras estiverem repetidamente abaixo de 90/60 e sentir tonturas, desmaios ou cansaço fora do normal.",
+            "Leve à consulta as suas medições e também o aparelho. O que se trata é o padrão, não o pior valor."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é a tensão arterial normal num adulto?",
+          "answer": "Abaixo de 120/80 mmHg é ótima, e entre 120–129 sobre 80–84 continua a ser considerada normal. A partir de 130/85 a leitura é normal-alta, e 140/90 ou mais medida no consultório é hipertensão. Os medidores domésticos dão valores mais baixos, por isso em casa o limiar é 135/85."
+        },
+        {
+          "question": "Que número conta mais, o de cima ou o de baixo?",
+          "answer": "Os dois. A categoria é definida pelo número pior, por isso 128/95 conta como hipertensão de grau 1 só pelo valor de baixo. A sistólica prevê melhor o risco cardiovascular a partir dos 50 anos e a diastólica antes dessa idade."
+        },
+        {
+          "question": "O que significa uma tensão sistólica isolada?",
+          "answer": "Uma sistólica de 140 ou mais com uma diastólica abaixo de 90. É o padrão mais frequente de hipertensão a partir dos 60 anos, resulta do endurecimento das artérias com a idade e acarreta risco cardiovascular real — não é uma particularidade inofensiva do número de cima."
+        },
+        {
+          "question": "Uma única leitura alta significa que tenho hipertensão?",
+          "answer": "Não. A hipertensão é diagnosticada com leituras altas repetidas, normalmente apoiadas por uma semana de medições em casa ou por um registo de 24 horas. Uma leitura alta isolada é motivo para voltar a medir bem, não um diagnóstico."
+        },
+        {
+          "question": "Que tensão arterial é perigosa?",
+          "answer": "Uma leitura de 180/120 ou superior precisa de atenção médica no próprio dia. Se vier com dor no peito, fraqueza ou falta de sensibilidade num dos lados, dificuldade em falar ou uma alteração súbita da visão, ligue imediatamente para o número de emergência — são sintomas de enfarte ou de AVC."
+        },
+        {
+          "question": "Esta tabela de tensão arterial guarda a minha leitura?",
+          "answer": "Não. A comparação é feita inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Quer que um médico veja as suas leituras?",
+        "body": "Marque uma videoconsulta com um médico registado, leve uma semana de medições em casa e receba um plano construído a partir do padrão e não de um valor isolado.",
+        "label": "Marcar consulta"
+      }
+    },
+    "bmi-calculator": {
+      "cardTitle": "Calculadora de IMC",
+      "cardBlurb": "Índice de massa corporal a partir da sua altura e peso, na escala da OMS para adultos.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Calculadora",
+      "h1Accent": "de IMC",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculadora IMC {country} | Calcular IMC Online",
+      "metaDescription": "Calcule o seu índice de massa corporal em segundos. Sistema métrico ou imperial, categorias da OMS para adultos e o que o resultado significa na prática.",
+      "lede": "Introduza a sua altura e o seu peso para ver o índice de massa corporal e onde se situa na escala da Organização Mundial de Saúde para adultos.",
+      "trustPoints": [
+        "Métrico e imperial (kg, stone, libras)",
+        "Categorias de peso da OMS para adultos",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "widget": {
+        "title": "O seu IMC",
+        "placeholder": "Introduza a altura e o peso para ver o seu índice de massa corporal.",
+        "note": "O IMC é uma medida de rastreio, não um diagnóstico. Não distingue músculo de gordura e não é válido na gravidez nem para menores de 18 anos.",
+        "healthyRangeLabel": "Peso saudável para a sua altura",
+        "gapAbove": "{kg} kg acima do intervalo saudável",
+        "gapBelow": "{kg} kg abaixo do intervalo saudável",
+        "gapInside": "Dentro do intervalo saudável",
+        "gapLabel": "Distância ao intervalo saudável",
+        "scaleLabel": "Onde o seu IMC se situa na escala da OMS"
+      },
+      "sections": [
+        {
+          "heading": "O que significa o seu resultado de IMC",
+          "body": [
+            "A Organização Mundial de Saúde agrupa o IMC dos adultos nas faixas abaixo. Descrevem uma população, não uma pessoa: duas pessoas com o mesmo IMC podem ter estados de saúde muito diferentes."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Categorias de IMC da OMS para adultos",
+            "columns": [
+              "IMC",
+              "Categoria",
+              "O que costuma significar"
+            ],
+            "rows": [
+              [
+                "Inferior a 18,5",
+                "Baixo peso",
+                "Vale uma conversa com um médico, sobretudo se a perda não foi procurada"
+              ],
+              [
+                "18,5 – 24,9",
+                "Peso saudável",
+                "Nada que precise de ser mudado só por causa deste número"
+              ],
+              [
+                "25,0 – 29,9",
+                "Excesso de peso",
+                "Bom momento para avaliar a tensão arterial e o colesterol"
+              ],
+              [
+                "30,0 – 34,9",
+                "Obesidade grau I",
+                "A partir daqui costuma ser proposta gestão estruturada do peso"
+              ],
+              [
+                "35,0 – 39,9",
+                "Obesidade grau II",
+                "Uma avaliação médica, e rastreio das doenças que costumam acompanhá-lo"
+              ],
+              [
+                "40,0 ou mais",
+                "Obesidade grau III",
+                "Uma referenciação para gestão especializada do peso"
+              ]
+            ],
+            "footnote": "Pessoas de origem do Sul da Ásia, chinesa e de algumas outras origens asiáticas apresentam maior risco cardiometabólico com um IMC mais baixo. A OMS sugere 23,0 e 27,5 como pontos de ação adicionais nessas populações."
+          }
+        },
+        {
+          "heading": "Como se calcula o IMC",
+          "body": [
+            "O IMC é o seu peso em quilogramas dividido pelo quadrado da sua altura em metros. É esta a fórmula completa — não entra a idade, o sexo nem a composição corporal.",
+            "Exemplo prático: alguém com 1,75 m e 78 kg tem um IMC de 78 ÷ (1,75 × 1,75) = 25,5, o que cai na faixa de excesso de peso.",
+            "Os valores imperiais são convertidos primeiro (1 stone = 6,35 kg, 1 polegada = 2,54 cm), pelo que o resultado é idêntico em qualquer sistema."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "O que o IMC não lhe diz",
+          "body": [
+            "O IMC é um número de rastreio, não um diagnóstico. É útil precisamente por ser simples — basta uma fita métrica e uma balança — mas é aí que também está o seu limite."
+          ],
+          "bullets": [
+            "Não separa músculo de gordura. Pessoas muito musculadas são frequentemente classificadas com excesso de peso.",
+            "Ignora onde a gordura se localiza. O perímetro abdominal prevê melhor o risco cardiometabólico do que o IMC.",
+            "Não está validado para a gravidez — use o IMC anterior à gravidez para o planeamento dos cuidados.",
+            "Crianças e adolescentes precisam de curvas de percentis por idade e sexo, não das faixas de adulto acima.",
+            "Em adultos com mais de 65 anos, um IMC ligeiramente acima de 25 não está consistentemente associado a piores resultados."
+          ]
+        },
+        {
+          "heading": "Quando falar com um médico sobre o seu peso",
+          "body": [],
+          "bullets": [
+            "Perdeu ou ganhou peso sem o ter procurado.",
+            "O seu IMC é 30 ou mais, ou 25 ou mais acompanhado de pressão arterial elevada, colesterol alto ou glicemia aumentada.",
+            "Está a ser investigado, ou já é tratado, por diabetes tipo 2, apneia do sono, SOP ou fígado gordo.",
+            "Quer discutir gestão do peso com acompanhamento médico em vez de mais uma dieta."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é um IMC saudável para um adulto?",
+          "answer": "Para a maioria dos adultos entre os 18 e os 65 anos, a Organização Mundial de Saúde considera saudável um IMC entre 18,5 e 24,9. Acima de 25 é classificado como excesso de peso e 30 ou mais como obesidade. São limiares populacionais, por isso um único valor é um convite a investigar mais, não um veredicto."
+        },
+        {
+          "question": "O IMC calcula-se de forma diferente para homens e mulheres?",
+          "answer": "Não. A fórmula e as categorias de adulto são idênticas. As mulheres têm geralmente uma proporção de massa gorda superior à dos homens para o mesmo IMC, o que é uma das razões pelas quais o número é apenas um ponto de partida."
+        },
+        {
+          "question": "Qual é a precisão de uma calculadora de IMC?",
+          "answer": "A aritmética é exata — a incerteza está no que o IMC mede. Correlaciona-se razoavelmente com a gordura corporal ao nível de uma população, mas pode classificar mal indivíduos, sobretudo atletas, pessoas mais velhas e pessoas com muita massa muscular."
+        },
+        {
+          "question": "O que devo fazer se o meu IMC estiver na faixa de obesidade?",
+          "answer": "Avalie a pressão arterial, o colesterol e a glicemia, e fale com um médico sobre um plano que consiga manter. A gestão do peso com acompanhamento médico funciona consideravelmente melhor do que fazer dieta sozinho."
+        },
+        {
+          "question": "Esta calculadora de IMC guarda os meus dados?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        },
+        {
+          "question": "Preciso de um IMC para aceder a tratamento para perda de peso?",
+          "answer": "Os clínicos usam habitualmente o IMC como um dos critérios de entrada em programas de gestão do peso, normalmente em conjunto com o seu historial médico e eventuais doenças associadas ao peso. O seu médico confirmará o que se aplica ao seu caso."
+        }
+      ],
+      "cta": {
+        "heading": "Quer discutir o seu resultado?",
+        "body": "Marque uma videoconsulta com um médico registado e receba um plano construído a partir do seu historial, não de um número.",
+        "label": "Marcar consulta"
+      }
+    },
+    "calorie-calculator": {
+      "cardTitle": "Calculadora de calorias",
+      "cardBlurb": "Quantas calorias por dia precisa para manter, perder ou ganhar peso.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Calculadora",
+      "h1Accent": "de calorias",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculadora Calorias {country} | Calorias Diárias",
+      "metaDescription": "Calcule quantas calorias precisa por dia para manter, perder ou ganhar peso. Equação de Mifflin-St Jeor, cinco níveis de atividade e o que os números significam na prática.",
+      "lede": "Introduza o sexo, a idade, a altura, o peso e o seu nível de atividade para ver quantas calorias gasta por dia — e quantas comer para manter, perder ou ganhar peso.",
+      "trustPoints": [
+        "Equação de Mifflin-St Jeor, a que os clínicos utilizam",
+        "Manutenção, perda e ganho numa só vista",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "suggestionsIntro": "Um número de calorias é um ponto de partida, não um plano. Estas são as consultas que os nossos médicos fazem para o peso, a nutrição e os exames que um número não lhe dá.",
+      "widget": {
+        "title": "As suas calorias diárias",
+        "placeholder": "Introduza os seus dados para ver quantas calorias gasta por dia.",
+        "note": "Estimativas para adultos saudáveis e uma ferramenta de orientação, não um diagnóstico nem um plano alimentar prescrito. Fale com um médico antes de alterar a sua ingestão se estiver grávida ou a amamentar, tiver menos de 18 anos ou estiver a ser tratado por alguma doença.",
+        "noteFloored": "O seu objetivo de perda foi mantido em 1.200 kcal, a ingestão diária mais baixa que esta calculadora propõe. Comer abaixo disso só deve ser feito com acompanhamento médico.",
+        "resultLabel": "Calorias de manutenção",
+        "resultSummary": "O que gasta num dia normal com este nível de atividade, tudo incluído.",
+        "bmrLabel": "Metabolismo basal",
+        "mildLossLabel": "Perder cerca de 0,25 kg por semana",
+        "lossLabel": "Perder cerca de 0,5 kg por semana",
+        "gainLabel": "Ganhar cerca de 0,25 kg por semana"
+      },
+      "sections": [
+        {
+          "heading": "O que significam os seus números de calorias",
+          "body": [
+            "O número principal é o seu nível de manutenção: aproximadamente o que gasta num dia, já com a atividade contada. Se comer isso, o peso mantém-se onde está.",
+            "Os objetivos abaixo são o mesmo número com um défice ou um excedente aplicado. Um défice diário de 500 kcal corresponde a cerca de meio quilo por semana, que é o ritmo em que a maioria das recomendações assenta — rápido o suficiente para se notar e lento o suficiente para se aguentar."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Objetivos diários de calorias a partir da sua manutenção",
+            "columns": [
+              "Objetivo",
+              "Ingestão diária",
+              "O que esperar"
+            ],
+            "rows": [
+              [
+                "Manter",
+                "O seu valor de manutenção",
+                "O peso mantém-se ao longo de semanas, não de dias"
+              ],
+              [
+                "Perda ligeira",
+                "Manutenção − 250 kcal",
+                "Cerca de 0,25 kg por semana"
+              ],
+              [
+                "Perda constante",
+                "Manutenção − 500 kcal",
+                "Cerca de 0,5 kg por semana"
+              ],
+              [
+                "Ganho",
+                "Manutenção + 300 kcal",
+                "Cerca de 0,25 kg por semana, de preferência com treino de força"
+              ]
+            ],
+            "footnote": "Aqui os objetivos de perda nunca descem abaixo de 1.200 kcal por dia. Abaixo desse valor é difícil cobrir com alimentos as necessidades de proteína, vitaminas e minerais, e uma ingestão tão baixa deve ser acompanhada por um médico."
+          }
+        },
+        {
+          "heading": "Como escolher o seu nível de atividade",
+          "body": [
+            "O multiplicador de atividade é a maior alavanca deste cálculo: para o mesmo corpo, a diferença entre sedentário e extremamente ativo passa das 700 kcal por dia. Conta tudo o que faz, não só o treino — estar de pé, andar, as tarefas de casa e o seu trabalho entram na conta.",
+            "A maioria das pessoas escolhe um nível acima do real. Se treina três vezes por semana e passa o resto do tempo sentado, é pouco a moderadamente ativo, não muito ativo."
+          ],
+          "bullets": [
+            "Sedentário — trabalho sentado e pouco ou nenhum exercício deliberado.",
+            "Pouco ativo — exercício ligeiro ou desporto de um a três dias por semana.",
+            "Moderadamente ativo — exercício moderado de três a cinco dias por semana.",
+            "Muito ativo — exercício intenso seis ou sete dias por semana.",
+            "Extremamente ativo — trabalho fisicamente exigente ou treino intenso duas vezes por dia."
+          ]
+        },
+        {
+          "heading": "Como funciona o cálculo",
+          "body": [
+            "O seu metabolismo basal — o que o corpo gasta em repouso completo — vem da equação de Mifflin-St Jeor: 10 × peso em kg, mais 6,25 × altura em cm, menos 5 × idade, e depois mais 5 nos homens ou menos 161 nas mulheres.",
+            "Esse valor é multiplicado pelo seu nível de atividade, de 1,2 para sedentário até 1,9 para extremamente ativo. O resultado é o gasto energético total diário — o número de manutenção que aparece no topo.",
+            "Exemplo prático: um homem de 30 anos, com 180 cm e 80 kg, tem um metabolismo basal de 1.780 kcal. Pouco ativo (× 1,375) são cerca de 2.448 kcal por dia para manter o peso."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "O que uma calculadora de calorias não lhe diz",
+          "body": [
+            "Todas as equações aqui usadas são médias populacionais ajustadas a dados medidos, e as pessoas ficam de um lado ou do outro. Encare o número como uma estimativa para testar na balança durante três ou quatro semanas, não como um facto sobre o seu corpo."
+          ],
+          "bullets": [
+            "Na maioria dos adultos a estimativa costuma ficar dentro de cerca de 10 % — são 200 kcal para cada lado num dia de 2.000 kcal.",
+            "Não diz nada sobre de que são feitas essas calorias, e são a proteína, a fibra e os micronutrientes que decidem se a alimentação se aguenta.",
+            "Doenças da tiroide, alguns medicamentos e um longo historial de dietas afastam o gasto real da estimativa.",
+            "Não foi pensada para crianças, para a gravidez ou a amamentação, nem para atletas em blocos de treino exigentes.",
+            "Subestima pessoas muito musculadas, porque a equação usa o peso total e não a massa magra."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quantas calorias devo comer por dia?",
+          "answer": "As que gasta, se o seu peso já estiver onde quer. Na maioria dos adultos isso fica entre 1.800 e 2.800 kcal, mas o intervalo é largo porque depende do tamanho, da idade e da atividade. A calculadora acima dá-lhe o seu próprio valor em vez da média."
+        },
+        {
+          "question": "Quantas calorias preciso de comer para emagrecer?",
+          "answer": "Cerca de 500 kcal por dia abaixo da manutenção dão sensivelmente meio quilo por semana, e 250 abaixo dão cerca de um quarto de quilo. Défices maiores não funcionam de forma fiável mais depressa — são apenas mais difíceis de manter e mais perda vem do músculo."
+        },
+        {
+          "question": "1.200 calorias por dia é seguro?",
+          "answer": "É a ingestão mais baixa que esta calculadora propõe e é um limite mínimo, não uma recomendação. Abaixo desse nível torna-se difícil obter proteína, vitaminas e minerais suficientes através dos alimentos, por isso uma ingestão menor só deve ser seguida com acompanhamento médico."
+        },
+        {
+          "question": "Que fórmula usa esta calculadora de calorias?",
+          "answer": "Mifflin-St Jeor para o metabolismo basal e depois um multiplicador de atividade padrão. Substituiu a antiga equação de Harris-Benedict na prática clínica por ser mais exata para as composições corporais atuais, normalmente dentro de cerca de 10 % em adultos saudáveis."
+        },
+        {
+          "question": "Tenho de contar calorias para emagrecer?",
+          "answer": "Não. Contar é apenas uma forma de manter um défice, e muitas pessoas conseguem o mesmo mudando o que comem em vez de o pesarem. Saber onde fica aproximadamente a sua manutenção é útil de qualquer maneira, porque mostra o tamanho real da mudança que está a fazer."
+        },
+        {
+          "question": "Esta calculadora de calorias guarda os meus dados?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Quer um plano e não só um número?",
+        "body": "Marque uma videoconsulta com um médico registado e perceba o que o número significa para o seu peso, as suas análises e o seu historial.",
+        "label": "Marcar consulta"
+      }
+    },
+    "due-date-calculator": {
+      "cardTitle": "Calculadora da data do parto",
+      "cardBlurb": "A data provável do parto, em que semana está e as semanas que contam pelo meio.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Calculadora da",
+      "h1Accent": "data do parto",
+      "h1Trail": "{country}",
+      "metaTitle": "Calculadora de Gravidez {country} | Semanas e Data do Parto",
+      "metaDescription": "Calcule a data provável do parto e de quantas semanas está a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com as 40 semanas em detalhe.",
+      "lede": "Indique o primeiro dia da última menstruação para ver a data provável do parto, em que semana está hoje e quando começa cada trimestre.",
+      "trustPoints": [
+        "Ajusta-se a ciclos de 20 a 45 dias",
+        "Datas dos trimestres e a janela de termo (37–42 semanas)",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "widget": {
+        "title": "A sua data provável do parto",
+        "placeholder": "Indique o primeiro dia da última menstruação para ver a data provável do parto.",
+        "note": "É uma estimativa a partir das datas que indicar, não um diagnóstico. A ecografia de datação mede o bebé diretamente e substitui-a.",
+        "lmpLabel": "Primeiro dia da última menstruação",
+        "lmpHint": "O dia em que o sangramento começou, não o dia em que terminou.",
+        "cycleLabel": "Duração do ciclo",
+        "cycleHint": "Dias entre o início de uma menstruação e o início da seguinte. Se não souber, deixe 28.",
+        "daysUnit": "dias",
+        "gestationalAgeLabel": "Semanas de gravidez hoje",
+        "daysToGoLabel": "Dias que faltam",
+        "secondTrimesterLabel": "Início do segundo trimestre",
+        "thirdTrimesterLabel": "Início do terceiro trimestre",
+        "termWindowLabel": "Janela de termo (37–42 semanas)",
+        "trimester1": "Primeiro trimestre",
+        "trimester1Note": "Semanas 1 a 13. É quando se marca a vigilância da gravidez e se faz a ecografia de datação.",
+        "trimester2": "Segundo trimestre",
+        "trimester2Note": "Semanas 14 a 27. A ecografia morfológica é habitualmente feita por volta das 20 semanas.",
+        "trimester3": "Terceiro trimestre",
+        "trimester3Note": "Da semana 28 em diante. As avaliações de crescimento e de tensão arterial ficam mais próximas à medida que se aproxima o termo.",
+        "outOfRangeNote": "Verifique a data — está no futuro ou há mais de 42 semanas, fora do intervalo que esta calculadora consegue datar."
+      },
+      "sections": [
+        {
+          "heading": "A sua gravidez semana a semana",
+          "body": [
+            "A gravidez é datada a partir do primeiro dia da última menstruação, não a partir da conceção, e conta 40 semanas desde aí. Antes das 37 semanas é pré-termo, às 42 semanas ou mais é pós-termo, e é entre essas semanas que praticamente todos os bebés nascem.",
+            "A tabela abaixo são as 40 semanas inteiras, divididas como as divide a vigilância da gravidez."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Fases da gravidez em semanas a partir da última menstruação",
+            "columns": [
+              "Semanas",
+              "Fase",
+              "O que costuma acontecer"
+            ],
+            "rows": [
+              [
+                "1 – 13",
+                "Primeiro trimestre",
+                "Marcação da vigilância, primeiras análises e ecografia de datação"
+              ],
+              [
+                "14 – 27",
+                "Segundo trimestre",
+                "A ecografia morfológica, habitualmente por volta das 20 semanas"
+              ],
+              [
+                "28 – 36",
+                "Terceiro trimestre",
+                "As avaliações de crescimento, tensão arterial e posição ficam mais próximas"
+              ],
+              [
+                "37 – 38",
+                "Termo precoce",
+                "A partir daqui o parto já não é pré-termo"
+              ],
+              [
+                "39 – 40",
+                "Termo completo",
+                "A data provável do parto situa-se no fim da semana 40"
+              ],
+              [
+                "41",
+                "Termo tardio",
+                "A vigilância aumenta e discute-se habitualmente a indução"
+              ],
+              [
+                "42 ou mais",
+                "Pós-termo",
+                "O parto é normalmente induzido em vez de se esperar"
+              ]
+            ],
+            "footnote": "As últimas quatro linhas são todas o fim do terceiro trimestre — a partir das 37 semanas conta-se em intervalos mais curtos porque é isso que muda o plano. Apenas cerca de uma gravidez em vinte termina na data prevista."
+          }
+        },
+        {
+          "heading": "Como se calcula a data do parto",
+          "body": [
+            "A estimativa é a regra de Naegele: 280 dias, ou 40 semanas, a partir do primeiro dia da última menstruação. Assume um ciclo de 28 dias com ovulação por volta do dia 14.",
+            "Se os seus ciclos forem mais longos ou mais curtos, a ovulação acompanha-os, por isso a calculadora desloca a data pela diferença. Um ciclo de 32 dias adia a estimativa quatro dias; um ciclo de 24 dias antecipa-a quatro dias.",
+            "Exemplo prático: uma última menstruação iniciada a 1 de janeiro com um ciclo de 28 dias dá 8 de outubro. A mesma menstruação com um ciclo de 32 dias dá 12 de outubro."
+          ],
+          "bullets": []
+        },
+        {
+          "heading": "Por que motivo a ecografia de datação substitui esta estimativa",
+          "body": [
+            "Uma calculadora só pode trabalhar com as datas que lhe der. A ecografia mede o bebé, e é por isso que a data dela passa a ser a usada pela equipa que a acompanha."
+          ],
+          "bullets": [
+            "Depende de recordar com exatidão o primeiro dia da última menstruação.",
+            "Assume que ovulou a meio do ciclo, o que não acontece a todas as pessoas.",
+            "Ciclos irregulares, contraceção interrompida há pouco tempo e amamentação tornam a última menstruação uma referência fraca.",
+            "A ecografia do primeiro trimestre mede o bebé, habitualmente entre as 11 e as 14 semanas, com uma margem de poucos dias.",
+            "Depois de uma FIV a datação parte da data da transferência e não de uma menstruação, pelo que esta estimativa não se aplica."
+          ]
+        },
+        {
+          "heading": "Quando contactar um médico",
+          "body": [],
+          "bullets": [
+            "Pensa que está grávida e ainda não marcou a vigilância da gravidez — a primeira consulta e a ecografia de datação são ambas precoces.",
+            "Tem hemorragia, cólicas ou dor de um só lado no início da gravidez.",
+            "Tem vómitos intensos ou persistentes, ou não consegue manter líquidos.",
+            "Tem uma doença crónica ou toma medicação regular — alguns medicamentos precisam de ser revistos assim que a gravidez é confirmada.",
+            "Chegou às 41 semanas, ou passou a data prevista e os movimentos do bebé mudaram."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Qual é a precisão de uma calculadora da data do parto?",
+          "answer": "A conta é exata; os pressupostos não. Apenas cerca de uma gravidez em vinte termina na data prevista e a grande maioria dos partos acontece nas semanas em torno dela. A ecografia do primeiro trimestre é a versão precisa e, depois de a fazer, é essa data que passa a ser usada."
+        },
+        {
+          "question": "De quantas semanas estou grávida?",
+          "answer": "As semanas contam-se a partir do primeiro dia da última menstruação, não da conceção — é por isso que já está com cerca de quatro semanas quando um teste dá positivo pela primeira vez. A conceção ocorre cerca de duas semanas depois desse primeiro dia, pelo que a gravidez é sempre datada cerca de duas semanas mais «velha» do que o embrião."
+        },
+        {
+          "question": "O que significa 9w 3d?",
+          "answer": "Nove semanas completas e três dias desde o primeiro dia da última menstruação. Os registos de obstetrícia usam esta forma porque uma semana inteira é demasiado grosseira quando uma ecografia ou uma análise tem de ser feita numa janela concreta."
+        },
+        {
+          "question": "Posso usar isto se tiver ciclos irregulares?",
+          "answer": "Pode, e indicar a duração habitual do ciclo aproxima o resultado mais do que os 28 dias por omissão. Mas um ciclo irregular é precisamente o caso em que a última menstruação é uma referência fraca, por isso trate o resultado como orientação até fazer a ecografia."
+        },
+        {
+          "question": "A data do parto muda depois da ecografia?",
+          "answer": "Muitas vezes sim, normalmente alguns dias. A ecografia mede o bebé em vez de contar a partir de uma data recordada, por isso é a dela que fica. Uma diferença de uma semana ou mais é comum quando a data da última menstruação era incerta."
+        },
+        {
+          "question": "Esta calculadora guarda os meus dados?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Dúvidas no início da gravidez?",
+        "body": "Fale por vídeo com um médico registado sobre sintomas, a medicação que já toma ou aquilo que preferir não deixar para a primeira consulta.",
+        "label": "Marcar consulta"
+      },
+      "suggestionsIntro": "Uma data estimada é o início da vigilância da gravidez, não o seu todo. Estas são as consultas que dão o passo seguinte."
+    },
+    "osteoporosis-risk-checker": {
+      "cardTitle": "Avaliação de risco de osteoporose",
+      "cardBlurb": "Quais os fatores de risco publicados para fratura de fragilidade que se aplicam a si, e se vale a pena pedir uma densitometria óssea.",
+      "eyebrow": "Ferramenta de saúde gratuita",
+      "h1Lead": "Risco de",
+      "h1Accent": "osteoporose",
+      "h1Trail": "{country}",
+      "metaTitle": "Avaliação de Risco de Osteoporose {country} | Preciso de uma Densitometria Óssea?",
+      "metaDescription": "Verifique os fatores de risco publicados para osteoporose e fratura de fragilidade, e veja se as orientações clínicas recomendam que seja avaliado. Não é o FRAX nem um diagnóstico — uma lista de verificação para levar ao médico.",
+      "lede": "Responda a perguntas sobre a sua idade, sexo e fatores de risco para ver se as orientações clínicas publicadas recomendam que peça uma avaliação da densidade óssea.",
+      "trustPoints": [
+        "Baseado nas orientações de rastreio da NICE, não numa pontuação proprietária",
+        "Mostra separadamente os fatores de risco maiores e contribuintes",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "suggestionsIntro": "Um fator de risco identificado é motivo para perguntar sobre uma densitometria óssea, não um diagnóstico. Estas são as consultas que podem aprofundar o assunto.",
+      "widget": {
+        "title": "Os seus fatores de risco",
+        "placeholder": "Responda às perguntas para ver se vale a pena pedir uma avaliação da densidade óssea.",
+        "note": "Isto identifica quem deve ser avaliado para osteoporose — não estima o seu risco de fratura e não é um diagnóstico. Uma avaliação completa utiliza uma densitometria óssea (DXA) e uma ferramenta validada como o FRAX, realizada por um médico.",
+        "fractureLabel": "Fratura de fragilidade depois dos 50 anos",
+        "fractureHint": "Uma fratura resultante de uma queda de pé ou inferior — pulso, anca, coluna ou braço.",
+        "glucocorticoidLabel": "Corticosteroides orais durante 3 meses ou mais",
+        "parentalHipLabel": "Um dos pais fraturou a anca",
+        "smokerLabel": "Fumador atual",
+        "alcoholLabel": "3 ou mais unidades de álcool por dia",
+        "raLabel": "Artrite reumatoide",
+        "secondaryLabel": "Uma causa secundária de perda óssea",
+        "secondaryHint": "Como hipertiroidismo, má absorção, ou doença hepática ou renal de longa duração.",
+        "fallsLabel": "2 ou mais quedas no último ano",
+        "menopauseLabel": "Menopausa antes dos 45 anos",
+        "majorLabel": "Fatores maiores identificados",
+        "contributingLabel": "Fatores contribuintes identificados"
+      },
+      "sections": [
+        {
+          "heading": "Fatores de risco de fratura de fragilidade",
+          "body": [
+            "A osteoporose não tem sintomas — o primeiro sinal é muitas vezes uma fratura resultante de uma queda que normalmente não partiria um osso. Por isso, as orientações clínicas partem dos fatores de risco para decidir quem vale a pena avaliar antes de a fratura acontecer, e não depois.",
+            "Os dez fatores abaixo são os que a orientação CG146 da NICE indica para essa decisão. Dois são considerados maiores por si só; os restantes somam-se em vez de atuarem isoladamente."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Fatores de risco que as orientações de rastreio da NICE assinalam para avaliação",
+            "columns": [
+              "Fator de risco",
+              "Porque é importante",
+              "Maior ou contribuinte"
+            ],
+            "rows": [
+              [
+                "Fratura de fragilidade depois dos 50",
+                "Uma fratura do pulso, anca, coluna ou braço numa queda ligeira é o indicador mais forte de uma nova fratura.",
+                "Maior"
+              ],
+              [
+                "Corticosteroides orais de longa duração (3+ meses)",
+                "Os glicocorticoides enfraquecem diretamente o osso, independentemente de qualquer outro fator desta lista.",
+                "Maior"
+              ],
+              [
+                "Um dos pais fraturou a anca",
+                "Aponta para uma predisposição hereditária da resistência óssea, distinta do seu próprio estilo de vida.",
+                "Contribuinte"
+              ],
+              [
+                "Fumador atual",
+                "Reduz a densidade óssea e atrasa a cicatrização caso ocorra uma fratura.",
+                "Contribuinte"
+              ],
+              [
+                "3+ unidades de álcool por dia",
+                "Reduz a formação óssea e aumenta o próprio risco de queda.",
+                "Contribuinte"
+              ],
+              [
+                "Artrite reumatoide",
+                "A doença e, muitas vezes, o seu tratamento afetam o metabolismo ósseo.",
+                "Contribuinte"
+              ],
+              [
+                "Uma causa secundária de perda óssea",
+                "Condições como hipertiroidismo ou doença hepática ou renal de longa duração reduzem a densidade óssea por si só.",
+                "Contribuinte"
+              ],
+              [
+                "2+ quedas no último ano",
+                "A maioria das fraturas de fragilidade acontece depois de uma queda de pé, não isoladamente.",
+                "Contribuinte"
+              ],
+              [
+                "Menopausa antes dos 45 anos",
+                "O estrogénio protege o osso, pelo que a sua perda mais cedo dá mais tempo à perda óssea.",
+                "Contribuinte"
+              ],
+              [
+                "Baixo peso corporal (IMC abaixo de 18,5)",
+                "Menos massa corporal significa geralmente menos massa óssea, e menos amortecimento numa queda.",
+                "Contribuinte"
+              ]
+            ],
+            "footnote": "Baseado nos fatores de risco que a orientação CG146 da NICE (avaliação do risco de fratura de fragilidade) indica para o rastreio. É uma lista de rastreio, não uma pontuação de diagnóstico."
+          }
+        },
+        {
+          "heading": "Quem as orientações clínicas dizem que deve ser avaliado",
+          "body": [
+            "A NICE, o National Osteoporosis Guideline Group (NOGG) do Reino Unido e a European Society for Clinical and Economic Aspects of Osteoporosis (ESCEO) definem um limiar essencialmente igual. É um critério de idade mais um critério de fatores de risco, não um único número."
+          ],
+          "bullets": [
+            "Todas as mulheres com 65 anos ou mais, e todos os homens com 75 anos ou mais — a avaliação é recomendada só pela idade.",
+            "Pessoas mais jovens com um fator de risco maior — uma fratura de fragilidade anterior ou corticosteroides orais de longa duração — a qualquer idade, incluindo antes dos 50 anos.",
+            "Qualquer pessoa com 50 anos ou mais que tenha um dos fatores contribuintes indicados na tabela acima.",
+            "Esta ferramenta aplica essa regra publicada ao que introduzir. Não calcula uma probabilidade e não é o FRAX — o FRAX é uma ferramenta proprietária distinta, utilizada por um médico, que combina este tipo de fatores com uma medição da densidade óssea."
+          ]
+        },
+        {
+          "heading": "O que esta avaliação não lhe diz",
+          "body": [
+            "Uma lista de fatores de risco é um instrumento de triagem, não uma medição. Diz-lhe se vale a pena perguntar sobre um exame — não lhe diz o que esse exame mostraria."
+          ],
+          "bullets": [
+            "Não é um diagnóstico. A osteoporose é diagnosticada através de uma densitometria óssea (DXA), não através de um questionário.",
+            "Não indica uma probabilidade de fratura. As ferramentas que o fazem — FRAX, o nomograma de Garvan, o QFracture — combinam fatores de risco com uma medição da densidade óssea, e são utilizadas por um médico.",
+            "Não é o FRAX e não utiliza os seus coeficientes, que são propriedade da Universidade de Sheffield.",
+            "Um resultado \"nenhum fator de risco específico identificado\" é tranquilizador, mas não é uma garantia — mencione sempre uma nova fratura ou queda a um médico.",
+            "Não diz nada sobre tratamento. A medicação é uma decisão de um médico, tomada depois de um diagnóstico, e não a partir de uma lista de fatores de risco."
+          ]
+        },
+        {
+          "heading": "Como avançar para uma avaliação",
+          "body": [],
+          "bullets": [
+            "Comece por falar com um médico. Ele ou ela vai ponderar os seus fatores de risco e decidir se faz sentido pedir uma densitometria óssea.",
+            "Leve os fatores que esta ferramenta identificou para si — quais, e não apenas o resultado — para tornar a consulta mais rápida.",
+            "Se já teve uma fratura de fragilidade, pergunte sobre avaliação independentemente da sua idade ou do resultado desta ferramenta.",
+            "Cálcio, vitamina D, exercício com impacto e deixar de fumar ajudam a saúde óssea enquanto aguarda qualquer avaliação.",
+            "Procure cuidados médicos rapidamente perante uma nova fratura resultante de uma queda ligeira, seja qual for o resultado desta ferramenta — precisa de ser tratada por si só."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Isto é o mesmo que o FRAX?",
+          "answer": "Não. O FRAX é uma ferramenta proprietária distinta, desenvolvida pela Universidade de Sheffield, cujos coeficientes não são publicados — esta ferramenta não o reproduz nem afirma corresponder ao seu resultado. Esta é uma lista de rastreio baseada em orientações publicadas (NICE CG146): diz-lhe se vale a pena ser avaliado, nunca uma probabilidade de fratura."
+        },
+        {
+          "question": "O que é uma densitometria óssea (DXA)?",
+          "answer": "Um exame de absorciometria de raios X de dupla energia — um raio X de baixa dose que mede a densidade óssea, normalmente na anca e na coluna. É o exame em que uma avaliação realmente se baseia; nada nesta página o substitui."
+        },
+        {
+          "question": "Ter fatores de risco significa que tenho osteoporose?",
+          "answer": "Não. Um fator de risco identificado significa que as orientações recomendam que seja avaliado, não que tenha a doença. Muitas pessoas com fatores de risco têm uma densitometria óssea normal, e a osteoporose também pode surgir sem nenhum dos fatores aqui listados."
+        },
+        {
+          "question": "E se o meu resultado for 'nenhum fator de risco específico identificado' mas continuo preocupado?",
+          "answer": "Fale com um médico na mesma. Esta ferramenta cobre os fatores de risco de uma orientação clínica; não cobre todo o historial pessoal ou familiar que possa ser relevante, e uma conversa não custa nada que esta lista não consiga avaliar."
+        },
+        {
+          "question": "Quem diagnostica efetivamente a osteoporose?",
+          "answer": "Um médico, a partir de uma densitometria óssea (DXA) — normalmente um T-score de -2,5 ou inferior na anca ou na coluna. Um questionário de fatores de risco como este só pode sugerir quem deve fazer esse exame; não pode diagnosticar nada por si próprio."
+        },
+        {
+          "question": "Esta avaliação guarda as minhas respostas?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que selecionar é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Quer falar sobre a sua saúde óssea?",
+        "body": "Marque uma teleconsulta com um médico registado, reveja os seus fatores de risco e saiba se faz sentido pedir uma densitometria óssea.",
+        "label": "Marcar consulta"
+      }
+    },
+    "ovulation-calculator": {
+      "cardTitle": "Calculadora de ovulação",
+      "cardBlurb": "Os seus dias férteis, o dia previsto de ovulação e quando é esperada a próxima menstruação.",
+      "eyebrow": "Ferramenta gratuita",
+      "h1Lead": "Calculadora de",
+      "h1Accent": "ovulação",
+      "h1Trail": "{country}",
+      "metaTitle": "Período Fértil {country} | Calculadora de Ovulação",
+      "metaDescription": "Calcule os seus dias férteis e o dia previsto de ovulação a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com os seis dias mais férteis em detalhe.",
+      "lede": "Indique o primeiro dia da última menstruação para ver os seis dias com maior probabilidade de engravidar, o dia previsto de ovulação e quando é esperada a próxima menstruação.",
+      "trustPoints": [
+        "Conta para trás a partir da próxima menstruação, por isso os ciclos longos batem certo",
+        "A janela fértil completa de seis dias, e não um único dia",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "suggestionsIntro": "Uma estimativa de ovulação é uma orientação de datas, não uma avaliação da fertilidade. Estas são as consultas que os nossos médicos fazem quando quer que alguém olhe para o quadro completo.",
+      "widget": {
+        "title": "Os seus dias férteis",
+        "placeholder": "Indique o primeiro dia da última menstruação para ver os seus dias férteis.",
+        "note": "É uma estimativa a partir das datas que indicar, não um diagnóstico — e não é um método contracetivo. A ovulação muda de ciclo para ciclo e é possível engravidar em dias fora da janela apresentada.",
+        "lmpLabel": "Primeiro dia da última menstruação",
+        "lmpHint": "O dia em que o sangramento começou, não o dia em que terminou.",
+        "cycleLabel": "Duração do ciclo",
+        "cycleHint": "Dias entre o início de uma menstruação e o início da seguinte. Se não souber, deixe 28.",
+        "daysUnit": "dias",
+        "resultLabel": "Ovulação prevista",
+        "resultSummary": "Contada 14 dias para trás a partir da próxima menstruação esperada, que é o que mantém as datas certas em ciclos que não têm 28 dias.",
+        "fertileWindowLabel": "Janela fértil (6 dias)",
+        "daysToOvulationLabel": "Dias até à ovulação",
+        "nextPeriodLabel": "Próxima menstruação prevista",
+        "testFromLabel": "Teste a partir de"
+      },
+      "sections": [
+        {
+          "heading": "O seu ciclo, dia a dia",
+          "body": [
+            "O ciclo conta-se a partir do primeiro dia de sangramento. A ovulação não está fixada ao dia 14: acontece cerca de 14 dias antes da PRÓXIMA menstruação, por isso num ciclo de 35 dias cai por volta do dia 21 e num de 24 dias por volta do dia 10. É por isso que contar 14 dias para a frente a partir da última menstruação falha em todos os ciclos que não são de 28 dias.",
+            "Os dias abaixo correspondem a um ciclo de 28 dias. A calculadora acima desloca-os para a duração que indicar."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Dias férteis num ciclo de 28 dias",
+            "columns": [
+              "Dia do ciclo",
+              "O que está a acontecer",
+              "Probabilidade de engravidar"
+            ],
+            "rows": [
+              [
+                "Dia 1",
+                "Começa o sangramento — o ciclo conta-se a partir daqui",
+                "Muito baixa"
+              ],
+              [
+                "Dias 2 – 8",
+                "Um óvulo está a amadurecer; a janela ainda não abriu",
+                "Baixa"
+              ],
+              [
+                "Dias 9 – 13",
+                "Janela fértil: os espermatozoides sobrevivem até cinco dias",
+                "Alta"
+              ],
+              [
+                "Dia 14",
+                "Ovulação — o óvulo é libertado",
+                "A mais alta"
+              ],
+              [
+                "Dias 15 – 16",
+                "O óvulo sobrevive menos de um dia depois de libertado",
+                "Cai depressa"
+              ],
+              [
+                "Dia 28",
+                "É esperada a próxima menstruação — se não vier, faça o teste a partir daqui",
+                "Muito baixa"
+              ]
+            ],
+            "footnote": "Os espermatozoides sobrevivem até cinco dias no aparelho reprodutor e o óvulo menos de um, e é por isso que a janela fértil abre bastante antes da ovulação e fecha quase imediatamente a seguir."
+          }
+        },
+        {
+          "heading": "Sinais de que ovulou mesmo",
+          "body": [
+            "A calculadora prevê; estes sinais confirmam. Acompanhar um ou dois durante alguns ciclos diz-lhe se a sua ovulação corresponde à estimativa — e isso convém saber antes de organizar seja o que for à volta dela."
+          ],
+          "bullets": [
+            "O muco cervical fica transparente, elástico e escorregadio, parecido com clara de ovo crua, nos dias imediatamente antes da ovulação.",
+            "Os testes de ovulação detetam o pico de LH na urina, que surge 24 a 36 horas antes de o óvulo ser libertado. Comece a testar alguns dias antes da data prevista.",
+            "A temperatura basal sobe cerca de 0,3 °C depois da ovulação, por isso confirma-a a posteriori em vez de a prever.",
+            "Há quem sinta uma dor de um só lado a meio do ciclo, e quem note os seios mais sensíveis ou uma alteração da libido.",
+            "Um ciclo pode passar sem ovulação. Acontece pontualmente à maioria das pessoas e, por si só, não quer dizer que algo esteja errado."
+          ]
+        },
+        {
+          "heading": "O que esta calculadora não consegue fazer",
+          "body": [
+            "Trabalha apenas com duas coisas: a data que indicar e o pressuposto de que a sua fase lútea dura os habituais 14 dias. Ambas são razoáveis, nenhuma é garantida."
+          ],
+          "bullets": [
+            "Não é um método contracetivo. Os ciclos mudam, os espermatozoides sobrevivem vários dias e é possível engravidar em dias fora da janela aqui apresentada.",
+            "Ciclos irregulares, contraceção hormonal parada há pouco tempo, amamentação, SOP e doenças da tiroide enfraquecem a previsão.",
+            "A contraceção hormonal suprime a ovulação, por isso enquanto a usar não há nada para prever.",
+            "Stress, doença, viagens e treino intenso podem atrasar a ovulação num determinado ciclo.",
+            "É uma ferramenta de planeamento, não um exame de fertilidade: nada diz sobre a qualidade dos óvulos, sobre o esperma ou sobre as trompas."
+          ]
+        },
+        {
+          "heading": "Quando falar com um médico",
+          "body": [],
+          "bullets": [
+            "Está a tentar engravidar há 12 meses, ou há 6 meses se tiver mais de 35 anos.",
+            "Os seus ciclos são mais curtos do que 21 dias, mais longos do que 35 ou imprevisíveis de mês para mês.",
+            "A menstruação parou, ou tem perdas de sangue entre menstruações.",
+            "Tem menstruações dolorosas, dor nas relações sexuais ou diagnóstico de SOP, endometriose ou doença da tiroide.",
+            "Quer aconselhamento pré-concecional — o ácido fólico, a medicação que já toma, as vacinas e a medição da tensão arterial pertencem ao antes da gravidez e não ao depois."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Quando estou mais fértil?",
+          "answer": "No dia da ovulação e nos dois dias anteriores. A janela no seu conjunto cobre cerca de seis dias: os cinco antes da ovulação mais o próprio dia. Os espermatozoides sobrevivem até cinco dias e o óvulo menos de um, e é por isso que a janela abre cedo e fecha depressa."
+        },
+        {
+          "question": "A ovulação acontece sempre ao dia 14?",
+          "answer": "Não. O dia 14 só é verdade no ciclo de manual, de 28 dias. A ovulação fica cerca de 14 dias antes da menstruação seguinte, por isso num ciclo de 32 dias cai por volta do dia 18 e num de 24 dias por volta do dia 10. Contar 14 dias para a frente a partir da última menstruação é a forma mais comum de errar as datas."
+        },
+        {
+          "question": "Como calcular a ovulação com ciclos irregulares?",
+          "answer": "Indique a duração habitual do seu ciclo e trate o resultado como um intervalo largo, não como uma data. Se os seus ciclos variam mais do que alguns dias, os testes de ovulação ou a observação do muco cervical dizem-lhe muito mais do que qualquer cálculo de calendário, e ciclos sempre abaixo de 21 dias ou acima de 35 merecem a opinião de um médico."
+        },
+        {
+          "question": "Posso usar uma calculadora de ovulação como contraceção?",
+          "answer": "Não. Não é um método contracetivo e nunca deve ser usada como tal. A ovulação desloca-se entre ciclos, os espermatozoides sobrevivem até cinco dias e é possível engravidar em dias que esta calculadora marca como fora da janela fértil. Se quer evitar uma gravidez, use um método contracetivo reconhecido."
+        },
+        {
+          "question": "Quando posso fazer um teste de gravidez depois da ovulação?",
+          "answer": "A maioria dos testes caseiros é fiável a partir do dia em que a menstruação era esperada, cerca de 14 dias depois da ovulação — a data «Teste a partir de» no resultado. Testar antes disso pode dar negativo mesmo estando grávida, porque ainda não há hCG suficiente na urina."
+        },
+        {
+          "question": "Esta calculadora de ovulação guarda os meus dados?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que escrever é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "A tentar engravidar?",
+        "body": "Fale por vídeo com um médico registado sobre ciclos irregulares, exames antes de engravidar ou a medicação que já toma.",
+        "label": "Marcar consulta"
+      }
+    }
+  }
+}

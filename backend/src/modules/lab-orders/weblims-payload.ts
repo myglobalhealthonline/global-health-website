@@ -12,7 +12,7 @@ import type {
  * rules — which are where this integration is most likely to go wrong — are
  * unit-testable on plain objects.
  *
- * See docs/synlab/synlab-integration-questions.md for the questions that still
+ * See docs/guides/synlab-integration-questions.md for the questions that still
  * govern this mapping (C1, C4, C5, B3, B4).
  */
 
