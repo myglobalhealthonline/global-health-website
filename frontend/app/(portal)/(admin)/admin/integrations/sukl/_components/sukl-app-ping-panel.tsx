@@ -136,10 +136,22 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
           </p>
 
           {result.errorCode ? (
-            <p className="mt-2 mb-0 text-sm">
-              <strong>{result.errorCode}</strong>
-              {result.errorMessage ? ` — ${result.errorMessage}` : ""}
-            </p>
+            <div className="mt-2">
+              <p className="m-0 text-sm">
+                <strong>{result.errorCode}</strong>
+              </p>
+              {result.errorMessage ? (
+                // Wrapped rather than inline: SÚKL's fault strings are long and
+                // the useful part (which element it objected to) is at the END,
+                // so a single truncated line hides exactly what is needed.
+                <p
+                  className="m-0 mt-1 whitespace-pre-wrap break-words text-sm"
+                  style={{ color: "var(--portal-text-2)" }}
+                >
+                  {result.errorMessage}
+                </p>
+              ) : null}
+            </div>
           ) : null}
 
           {result.responseHeaders && Object.keys(result.responseHeaders).length > 0 ? (
