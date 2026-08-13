@@ -295,6 +295,12 @@ const envSchema = z.object({
    *  SW_KLIENTA identifies our software to SÚKL, max 12 characters. We choose
    *  it; it is not issued. */
   SUKL_TEST_UZIVATEL: optionalSecret,
+  /** Optional HTTP Basic password, sent with SUKL_TEST_UZIVATEL as the username
+   *  IN ADDITION to the client certificate. Opt-in: leave unset unless SÚKL's
+   *  response actually asks for a credential scheme (a `WWW-Authenticate`
+   *  header), because sending a password to a server that never requested one
+   *  is its own mistake. This is the test-access account password. */
+  SUKL_TEST_PASSWORD: optionalSecret,
   SUKL_INTERFACE_VERSION: blankAsUnset(
     z
       .string()
