@@ -15,6 +15,8 @@ import {
   getCrossBorderRxConsentView,
   submitCrossBorderRxConsent,
   revertCrossBorderRxConsent,
+  getPendingMoreInfoForSourceAppointment,
+  answerPendingMoreInfo,
   CrossBorderRxSourceNotFoundError,
   CrossBorderRxTargetNotAvailableError,
   CrossBorderRxServicePriceMissingError,
@@ -25,6 +27,9 @@ import {
   CrossBorderRxConsentInvalidError,
   CrossBorderRxConsentExpiredError,
   CrossBorderRxIdentityRequiredError,
+  CrossBorderRxMoreInfoNotFoundError,
+  CrossBorderRxMoreInfoAlreadyAnsweredError,
+  CrossBorderRxAnswerRequiredError,
 } from "../modules/cross-border-rx/cross-border-rx.service.js";
 
 /**
@@ -77,6 +82,10 @@ const consentBodySchema = z.object({
     .optional(),
 });
 const revertBodySchema = z.object({ token: z.string().min(10).max(400) });
+
+const moreInfoAnswerBodySchema = z.object({
+  answer: z.string().trim().min(1).max(5000),
+});
 
 const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
   // ── Doctor A: target countries + authorised doctors ──────────────
@@ -341,6 +350,61 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not update your choice"));
+      }
+    },
+  );
+
+  // ── Doctor A: pending "more information" question on their own appointment ─
+  app.get<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/cross-border-rx/more-info",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const data = await getPendingMoreInfoForSourceAppointment(request.params.id, auth.doctorId);
+        return okResponse({ pending: data });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load the request"));
+      }
+    },
+  );
+
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/cross-border-rx/more-info",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      const body = moreInfoAnswerBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid request", body.error.flatten()));
+      }
+      try {
+        const data = await answerPendingMoreInfo(
+          request.params.id,
+          auth.doctorId,
+          auth.fullName,
+          body.data.answer,
+        );
+        return okResponse(data, "Answer sent");
+      } catch (error) {
+        if (error instanceof CrossBorderRxMoreInfoNotFoundError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxMoreInfoAlreadyAnsweredError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxAnswerRequiredError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not submit your answer"));
       }
     },
   );
