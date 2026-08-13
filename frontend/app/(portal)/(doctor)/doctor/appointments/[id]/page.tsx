@@ -16,6 +16,7 @@ import { formatAppDualTz } from "@/lib/format-datetime";
 import {
   fetchDoctorConsultation,
   fetchDoctorConsultationServices,
+  fetchDoctorCrossBorderRxMoreInfo,
   fetchDoctorDocuments,
   fetchDoctorGeneratedDocuments,
   fetchDoctorMe,
@@ -45,6 +46,7 @@ import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
 import { MedicalAccessDeniedNotice } from "../../_components/medical-access-denied";
 import { PatientContextPanel } from "./_components/patient-context-panel";
 import { ReferringRecordPanel } from "./_components/referring-record-panel";
+import { CrossBorderMoreInfoPanel } from "./_components/cross-border-more-info-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
@@ -92,6 +94,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     generatedDocsRes,
     meRes,
     permsRes,
+    moreInfoRes,
   ] = await Promise.all([
     fetchDoctorConsultation(id),
     fetchDoctorInternalMessages(id),
@@ -101,6 +104,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     fetchDoctorGeneratedDocuments(id),
     fetchDoctorMe(),
     fetchDoctorPermissions(),
+    fetchDoctorCrossBorderRxMoreInfo(id),
   ]);
 
   if (!consultRes.ok) {
@@ -136,6 +140,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const doctorName = meRes.ok ? meRes.data.doctor.fullName : d.portal.sectionLabel;
   const canRequestCrossJurisdictionRx =
     permsRes.ok && permsRes.data.canRequestCrossJurisdictionRx;
+  const pendingMoreInfo = moreInfoRes.ok ? moreInfoRes.data.pending : null;
   const documentsTabBadge =
     pendingSendCount > 0 ? String(pendingSendCount) : null;
   const consultationMode = appointment.consultationMode ?? "ONLINE";
@@ -448,6 +453,13 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 }
               >
                 <div className="gh-form-section__span-2">
+                  {pendingMoreInfo ? (
+                    <CrossBorderMoreInfoPanel
+                      appointmentId={appointment.id}
+                      initial={pendingMoreInfo}
+                      copy={d.crossBorderRxMoreInfo}
+                    />
+                  ) : null}
                   {appointment.crossBorderSource ? (
                     <ReferringRecordPanel
                       record={appointment.crossBorderSource}
