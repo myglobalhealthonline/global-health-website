@@ -928,6 +928,8 @@
   "finalizeChecklist": {
     "finalizedTitle": "Appointment finalized",
     "finalizedDescription": "Notes and required documents were confirmed for this consultation.",
+    "cancelledTitle": "Appointment cancelled",
+    "cancelledDescription": "This appointment was cancelled and can no longer be finalized.",
     "confirmBothItems": "Confirm both checklist items before finalizing.",
     "title": "Final consultation checklist",
     "description": "Confirm clinical notes and files before closing the appointment.",

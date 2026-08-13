@@ -2,11 +2,13 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, ClipboardCheck, Circle } from "lucide-react";
+import { CheckCircle2, ClipboardCheck, Circle, XCircle } from "lucide-react";
 
 export type FinalizeChecklistCopy = {
   finalizedTitle: string;
   finalizedDescription: string;
+  cancelledTitle: string;
+  cancelledDescription: string;
   confirmBothItems: string;
   title: string;
   description: string;
@@ -32,6 +34,7 @@ export function FinalizeChecklist({
   appointmentId,
   initialFinalized,
   initialFilesUploaded,
+  cancelled,
   noteRecorded,
   timeReached,
   copy,
@@ -39,6 +42,8 @@ export function FinalizeChecklist({
   appointmentId: string;
   initialFinalized: boolean;
   initialFilesUploaded: boolean;
+  /** Status is CANCELLED — takes priority over the finalize checklist. */
+  cancelled: boolean;
   /** Derived: consultation has at least one non-empty SOAP field. */
   noteRecorded: boolean;
   /** Derived: the appointment's scheduled time has passed (or is unset). */
@@ -49,6 +54,20 @@ export function FinalizeChecklist({
   const [filesUploaded, setFilesUploaded] = useState(initialFilesUploaded);
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
+
+  if (cancelled) {
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50/80 p-3 text-sm font-semibold text-red-800">
+        <p className="flex items-center gap-2">
+          <XCircle className="size-4" aria-hidden />
+          {copy.cancelledTitle}
+        </p>
+        <p className="mt-1 text-portal-meta font-medium text-red-700">
+          {copy.cancelledDescription}
+        </p>
+      </div>
+    );
+  }
 
   if (initialFinalized) {
     return (

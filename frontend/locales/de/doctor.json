@@ -907,6 +907,8 @@
   "finalizeChecklist": {
     "finalizedTitle": "Termin abgeschlossen",
     "finalizedDescription": "Notizen und erforderliche Dokumente wurden für diese Konsultation bestätigt.",
+    "cancelledTitle": "Termin storniert",
+    "cancelledDescription": "Dieser Termin wurde storniert und kann nicht mehr abgeschlossen werden.",
     "confirmBothItems": "Bestätigen Sie beide Checklistenpunkte vor dem Abschluss.",
     "title": "Abschließende Konsultations-Checkliste",
     "description": "Bestätigen Sie klinische Notizen und Dateien vor dem Schließen des Termins.",
