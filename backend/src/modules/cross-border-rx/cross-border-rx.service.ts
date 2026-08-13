@@ -26,7 +26,10 @@ import {
   notifyPatientCrossBorderAccepted,
   notifyRequestingDoctorFinalised,
   notifyStaffCrossBorderRequest,
+  notifySourceDoctorMoreInfoRequested,
+  notifyTargetDoctorMoreInfoAnswered,
 } from "./cross-border-rx-notifications.service.js";
+import { createMedicalNote } from "../medical-notes/medical-notes.service.js";
 import {
   copyDisclosedDocuments,
   copyDisclosedPatientContext,
@@ -134,6 +137,24 @@ export class CrossBorderRxIdentityRequiredError extends Error {
   constructor(label: string) {
     super(`Enter your ${label} or your passport number so the prescription can identify you.`);
     this.name = "CrossBorderRxIdentityRequiredError";
+  }
+}
+export class CrossBorderRxMoreInfoNotFoundError extends Error {
+  constructor() {
+    super("There is no pending question for this appointment.");
+    this.name = "CrossBorderRxMoreInfoNotFoundError";
+  }
+}
+export class CrossBorderRxMoreInfoAlreadyAnsweredError extends Error {
+  constructor() {
+    super("This question has already been answered.");
+    this.name = "CrossBorderRxMoreInfoAlreadyAnsweredError";
+  }
+}
+export class CrossBorderRxAnswerRequiredError extends Error {
+  constructor() {
+    super("An answer is required.");
+    this.name = "CrossBorderRxAnswerRequiredError";
   }
 }
 
@@ -1398,12 +1419,27 @@ export async function decideCrossBorderRxRequest(
         },
       });
     }
+    // New round: overwrites any still-unanswered previous question.
     await prisma.crossBorderPrescriptionRequest.update({
       where: { id: request.id },
-      data: { status: "MORE_INFO" },
+      data: {
+        status: "MORE_INFO",
+        moreInfoQuestion: message,
+        moreInfoAnswer: null,
+        moreInfoAskedAt: new Date(),
+        moreInfoAnsweredAt: null,
+      },
     });
     await notifySourceDoctor(request.sourceDoctorId, request.sourceAppointmentId, {
       snippet: `${request.patientFullName} · more information requested`,
+    });
+    // Doctor A answers in-portal, on their own appointment's consultation
+    // tab — link straight there, no public token/link needed.
+    await notifySourceDoctorMoreInfoRequested({
+      sourceDoctorId: request.sourceDoctorId,
+      patientFullName: request.patientFullName,
+      question: message,
+      appointmentUrl: `${env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000"}/doctor/appointments/${request.sourceAppointmentId}?tab=consultation`,
     });
     if (patientUserId) {
       await notifyUser(patientUserId, "CROSS_BORDER_RX_UPDATED", {
@@ -1441,6 +1477,91 @@ export async function decideCrossBorderRxRequest(
   ).catch(() => {});
 
   return { status: "REFUSED", upgradeUrl };
+}
+
+// ── Doctor A: answer Doctor B's "more information" request (in-portal) ─────
+
+export type CrossBorderRxPendingMoreInfo = {
+  targetDoctorName: string;
+  question: string;
+  answer: string | null;
+  answered: boolean;
+};
+
+/**
+ * Doctor A's own appointment page reads this to show (or not show) the
+ * pending-question panel. Returns null when there's nothing pending — no
+ * open MORE_INFO round on a request sourced from this appointment.
+ */
+export async function getPendingMoreInfoForSourceAppointment(
+  appointmentId: string,
+  doctorId: string,
+): Promise<CrossBorderRxPendingMoreInfo | null> {
+  const request = await prisma.crossBorderPrescriptionRequest.findFirst({
+    where: { sourceAppointmentId: appointmentId, sourceDoctorId: doctorId, status: "MORE_INFO" },
+    select: { targetDoctorId: true, moreInfoQuestion: true, moreInfoAnswer: true, moreInfoAnsweredAt: true },
+  });
+  if (!request || !request.moreInfoQuestion) return null;
+  const targetDoctor = await prisma.doctor.findUnique({
+    where: { id: request.targetDoctorId },
+    select: { fullName: true },
+  });
+  return {
+    targetDoctorName: targetDoctor?.fullName ?? "the prescribing doctor",
+    question: request.moreInfoQuestion,
+    answer: request.moreInfoAnswer,
+    answered: request.moreInfoAnsweredAt !== null,
+  };
+}
+
+/**
+ * Doctor A submits their answer from the appointment's consultation tab.
+ * Attaches it to this appointment's MedicalNote history (permanent
+ * consultation record) and notifies Doctor B (email + WhatsApp) so they know
+ * to come back and decide. One answer per MORE_INFO round — a later
+ * MORE_INFO decision opens a fresh round (see decideCrossBorderRxRequest).
+ */
+export async function answerPendingMoreInfo(
+  appointmentId: string,
+  doctorId: string,
+  actorDoctorDisplayName: string,
+  answer: string,
+): Promise<{ status: "ANSWERED" }> {
+  const trimmed = answer.trim();
+  if (!trimmed) throw new CrossBorderRxAnswerRequiredError();
+
+  const request = await prisma.crossBorderPrescriptionRequest.findFirst({
+    where: { sourceAppointmentId: appointmentId, sourceDoctorId: doctorId, status: "MORE_INFO" },
+    select: { id: true, targetDoctorId: true, patientFullName: true, moreInfoQuestion: true, moreInfoAnsweredAt: true },
+  });
+  if (!request || !request.moreInfoQuestion) throw new CrossBorderRxMoreInfoNotFoundError();
+  if (request.moreInfoAnsweredAt) throw new CrossBorderRxMoreInfoAlreadyAnsweredError();
+
+  const targetDoctor = await prisma.doctor.findUnique({
+    where: { id: request.targetDoctorId },
+    select: { fullName: true },
+  });
+
+  await prisma.crossBorderPrescriptionRequest.update({
+    where: { id: request.id },
+    data: { moreInfoAnswer: trimmed, moreInfoAnsweredAt: new Date() },
+  });
+
+  await createMedicalNote({
+    appointmentId,
+    doctorId,
+    doctorDisplayName: actorDoctorDisplayName,
+    content: `Reply to ${targetDoctor?.fullName ?? "the prescribing doctor"}'s request for more information (cross-border prescription):\n\nQ: ${request.moreInfoQuestion}\n\nA: ${trimmed}`,
+  }).catch(() => {});
+
+  await notifyTargetDoctorMoreInfoAnswered({
+    targetDoctorId: request.targetDoctorId,
+    patientFullName: request.patientFullName,
+    question: request.moreInfoQuestion,
+    answer: trimmed,
+  });
+
+  return { status: "ANSWERED" };
 }
 
 /**
