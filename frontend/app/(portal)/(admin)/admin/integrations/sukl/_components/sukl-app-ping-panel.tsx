@@ -21,17 +21,13 @@ const SERVICES = [
   { value: "common", label: "Common" },
 ];
 
-/** Candidate paths, from the internal soap:address SÚKL publish. Offered to the
- *  operator one at a time — never swept automatically, because repeatedly
- *  probing a national health system's host is exactly what their rate limiting
- *  is there to stop. */
-const PATHS = [
-  "/",
-  "/Endpoints/CommonWebService.asmx",
-  "/LekovyZaznam/Endpoints/CommonWebService.asmx",
-  "/Endpoints/CuepWebService.asmx",
-  "/LekovyZaznam/Endpoints/CuepWebService.asmx",
-];
+/**
+ * Only "/" remains. Tested 2026-08-13: every path derived from the internal
+ * soap:address returned 404, while "/" returned 401 — 404 means absent, 401
+ * means present and refusing us. Keeping the disproven options would invite
+ * someone to re-run a settled question against a rate-limited service.
+ */
+const PATHS = ["/"];
 
 export function SuklAppPingPanel({ callable }: { callable: boolean }) {
   const [service, setService] = useState("common");
@@ -144,6 +140,31 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
               <strong>{result.errorCode}</strong>
               {result.errorMessage ? ` — ${result.errorMessage}` : ""}
             </p>
+          ) : null}
+
+          {result.responseHeaders && Object.keys(result.responseHeaders).length > 0 ? (
+            <div className="mt-3">
+              <p
+                className="m-0 mb-1 text-[10.5px] font-bold uppercase tracking-[0.12em]"
+                style={{ color: "var(--portal-muted)" }}
+              >
+                Response headers
+              </p>
+              <ul className="m-0 list-none p-0 text-xs">
+                {Object.entries(result.responseHeaders).map(([k, v]) => (
+                  <li key={k}>
+                    <code>{k}</code>: {v}
+                  </li>
+                ))}
+              </ul>
+              {result.responseHeaders["www-authenticate"] ? (
+                <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-warning-text)" }}>
+                  SÚKL is ASKING for a credential scheme, not rejecting the certificate. Set{" "}
+                  <code>SUKL_TEST_PASSWORD</code> (the test-access account password, paired with
+                  the login name) and try again.
+                </p>
+              ) : null}
+            </div>
           ) : null}
 
           {result.bodyExcerpt ? (
