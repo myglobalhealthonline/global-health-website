@@ -896,11 +896,14 @@ export async function createManualBooking(
           }
         : {}),
       // Card captured on this booking, synced onto the profile the same way
-      // as the identity fields above.
+      // as the identity fields above. Status is VERIFIED, not a fill —
+      // the admin taking this booking IS the verifier (see
+      // insuranceVerificationStatus below), same as the Order write.
       ...(insuranceCompanyId
         ? {
             insuranceProviderName: insuranceCompanyName,
             insurancePolicyNumber: input.insurancePolicyNumber?.trim() || null,
+            insuranceDocumentStatus: "VERIFIED",
           }
         : {}),
     },
