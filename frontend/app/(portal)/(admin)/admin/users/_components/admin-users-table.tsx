@@ -76,9 +76,9 @@ function userFields(): ColumnPriorityField<AdminUserDto>[] {
         <Link
           href={`/admin/users/${u.id}`}
           onClick={(e) => e.stopPropagation()}
-          className="gh-link text-sm font-medium"
+          className="gh-btn gh-btn-secondary text-sm"
         >
-          Open →
+          Open
         </Link>
       ),
     },
