@@ -39,18 +39,31 @@ export class SuklError extends Error {
   readonly stage: SuklStage;
   /** Upstream HTTP status, when the failure happened after a response arrived. */
   readonly httpStatus?: number;
+  /**
+   * A short, truncated excerpt of the upstream response.
+   *
+   * Populated ONLY for transport-level rejections (401/403), where the body is
+   * an infrastructure error page rather than a business document — that is the
+   * one case where SÚKL's own words are the fastest route to a diagnosis, and
+   * discarding them leaves an operator with nothing to act on.
+   *
+   * Never populated for a successful or business response, which may carry
+   * patient data. Truncated hard, and treated as untrusted text by callers.
+   */
+  readonly bodyExcerpt?: string;
 
   constructor(
     code: SuklErrorCode,
     stage: SuklStage,
     message: string,
-    options?: { cause?: unknown; httpStatus?: number },
+    options?: { cause?: unknown; httpStatus?: number; bodyExcerpt?: string },
   ) {
     super(message, options?.cause === undefined ? undefined : { cause: options.cause });
     this.name = "SuklError";
     this.code = code;
     this.stage = stage;
     this.httpStatus = options?.httpStatus;
+    this.bodyExcerpt = options?.bodyExcerpt;
   }
 
   /** The only field that may cross an HTTP boundary or reach a log. */
