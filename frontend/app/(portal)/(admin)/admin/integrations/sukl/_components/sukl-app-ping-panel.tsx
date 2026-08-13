@@ -194,9 +194,11 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
                 {result.bodyExcerpt}
               </pre>
               <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
-                Truncated. An HTTP 401/403 usually means the certificate is not mapped to an
-                account for this service, the path is wrong, or a prior Login is expected — try
-                another path above before concluding it is a permissions problem.
+                Truncated. SÚKL require an HTTP Authorization header in addition to the client
+                certificate — if their text mentions <code>Authorization header</code> or fault{" "}
+                <code>S019</code>, set <code>SUKL_TEST_PASSWORD</code> to the test-access account
+                password and try again. The path is not the problem: <code>/</code> is confirmed
+                by their own <code>faultactor</code>.
               </p>
             </div>
           ) : null}
