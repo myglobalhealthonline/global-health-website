@@ -294,6 +294,95 @@ export async function notifyRequestingDoctorFinalised(
   }
 }
 
+/** Doctor A (the requesting doctor): Doctor B needs more information. */
+export async function notifySourceDoctorMoreInfoRequested(opts: {
+  sourceDoctorId: string;
+  patientFullName: string;
+  question: string;
+  answerUrl: string;
+}): Promise<void> {
+  const contact = await resolveDoctorContact(opts.sourceDoctorId);
+  if (!contact) return;
+  const msg = `The prescribing doctor needs more information about ${opts.patientFullName}'s cross-border prescription request:\n\n"${opts.question}"\n\nAnswer here:\n${opts.answerUrl}`;
+  if (contact.whatsappNumber) {
+    try {
+      await sendWhatsAppText({
+        to: contact.whatsappNumber,
+        message: msg,
+        hints: contact.whatsappHints,
+      });
+    } catch {
+      // best-effort
+    }
+  }
+  if (contact.loginEmail) {
+    try {
+      await sendAutomationEmail(
+        {
+          to: contact.loginEmail,
+          subject: "More information needed — cross-border prescription",
+          text: msg,
+          html: wrapHtml(
+            "More information needed",
+            `<p>The prescribing doctor needs more information about
+             ${esc(opts.patientFullName)}'s cross-border prescription request:</p>
+             <p style="padding:12px 16px;border-left:3px solid #1D4B36;background:#F5F7F5;">${esc(opts.question)}</p>
+             ${ctaButton(opts.answerUrl, "Answer the question")}`,
+          ),
+        },
+        { recordLabel: "cross-border-more-info" },
+      );
+    } catch {
+      // best-effort
+    }
+  }
+}
+
+/** Doctor B (the prescribing doctor): Doctor A answered the question. */
+export async function notifyTargetDoctorMoreInfoAnswered(opts: {
+  targetDoctorId: string;
+  patientFullName: string;
+  question: string;
+  answer: string;
+}): Promise<void> {
+  const contact = await resolveDoctorContact(opts.targetDoctorId);
+  if (!contact) return;
+  const msg = `The requesting doctor answered your question about ${opts.patientFullName}'s cross-border prescription request:\n\nQ: "${opts.question}"\nA: "${opts.answer}"\n\nReview and decide:\n${INBOX_URL}`;
+  if (contact.whatsappNumber) {
+    try {
+      await sendWhatsAppText({
+        to: contact.whatsappNumber,
+        message: msg,
+        hints: contact.whatsappHints,
+      });
+    } catch {
+      // best-effort
+    }
+  }
+  if (contact.loginEmail) {
+    try {
+      await sendAutomationEmail(
+        {
+          to: contact.loginEmail,
+          subject: "Your question was answered — cross-border prescription",
+          text: msg,
+          html: wrapHtml(
+            "Your question was answered",
+            `<p>The requesting doctor answered your question about
+             ${esc(opts.patientFullName)}'s cross-border prescription request:</p>
+             <p style="padding:12px 16px;border-left:3px solid #1D4B36;background:#F5F7F5;"><strong>Q:</strong> ${esc(opts.question)}</p>
+             <p style="padding:12px 16px;border-left:3px solid #1D4B36;background:#F5F7F5;"><strong>A:</strong> ${esc(opts.answer)}</p>
+             ${ctaButton(INBOX_URL, "Review the request")}`,
+          ),
+        },
+        { recordLabel: "cross-border-more-info" },
+      );
+    } catch {
+      // best-effort
+    }
+  }
+}
+
 // ── 1) Patient: pay the async fee (on request creation) ───────────────────────
 
 export async function notifyPatientCrossBorderPayment(opts: {

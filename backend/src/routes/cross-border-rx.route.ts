@@ -15,6 +15,8 @@ import {
   getCrossBorderRxConsentView,
   submitCrossBorderRxConsent,
   revertCrossBorderRxConsent,
+  getCrossBorderRxMoreInfoView,
+  submitCrossBorderRxMoreInfoAnswer,
   CrossBorderRxSourceNotFoundError,
   CrossBorderRxTargetNotAvailableError,
   CrossBorderRxServicePriceMissingError,
@@ -25,6 +27,10 @@ import {
   CrossBorderRxConsentInvalidError,
   CrossBorderRxConsentExpiredError,
   CrossBorderRxIdentityRequiredError,
+  CrossBorderRxMoreInfoInvalidError,
+  CrossBorderRxMoreInfoExpiredError,
+  CrossBorderRxMoreInfoAlreadyAnsweredError,
+  CrossBorderRxAnswerRequiredError,
 } from "../modules/cross-border-rx/cross-border-rx.service.js";
 
 /**
@@ -38,6 +44,10 @@ import {
  * every row to targetDoctorId = self):
  *   GET  /api/doctor/cross-border-rx
  *   POST /api/doctor/cross-border-rx/:requestId/decision
+ *
+ * Doctor A (answering a MORE_INFO question — public, token-based, no auth):
+ *   GET  /api/public/cross-border-rx-more-info
+ *   POST /api/public/cross-border-rx-more-info
  */
 
 const createBodySchema = z.object({
@@ -77,6 +87,12 @@ const consentBodySchema = z.object({
     .optional(),
 });
 const revertBodySchema = z.object({ token: z.string().min(10).max(400) });
+
+const moreInfoQuerySchema = z.object({ token: z.string().min(10).max(400) });
+const moreInfoBodySchema = z.object({
+  token: z.string().min(10).max(400),
+  answer: z.string().trim().min(1).max(5000),
+});
 
 const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
   // ── Doctor A: target countries + authorised doctors ──────────────
@@ -341,6 +357,65 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not update your choice"));
+      }
+    },
+  );
+
+  // ── Public: Doctor A answers Doctor B's "more information" request ──
+  app.get(
+    "/api/public/cross-border-rx-more-info",
+    { config: { rateLimit: { max: 30, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const q = moreInfoQuerySchema.safeParse(request.query);
+      if (!q.success) return reply.status(400).send(errorResponse("Invalid link"));
+      try {
+        const data = await getCrossBorderRxMoreInfoView(q.data.token);
+        return okResponse(data);
+      } catch (error) {
+        if (error instanceof CrossBorderRxMoreInfoInvalidError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxMoreInfoExpiredError) {
+          return reply.status(410).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load the request"));
+      }
+    },
+  );
+
+  app.post(
+    "/api/public/cross-border-rx-more-info",
+    { config: { rateLimit: { max: 20, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const body = moreInfoBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid request", body.error.flatten()));
+      }
+      try {
+        const data = await submitCrossBorderRxMoreInfoAnswer(body.data.token, body.data.answer);
+        return okResponse(data, "Answer sent");
+      } catch (error) {
+        if (error instanceof CrossBorderRxMoreInfoInvalidError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxMoreInfoExpiredError) {
+          return reply.status(410).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxMoreInfoAlreadyAnsweredError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        if (error instanceof CrossBorderRxAnswerRequiredError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not submit your answer"));
       }
     },
   );

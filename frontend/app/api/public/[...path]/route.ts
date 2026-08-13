@@ -18,12 +18,14 @@ const ALLOWED_PATHS: Record<string, Set<string>> = {
     "reviews/rate",
     "patient-upload",
     "cross-border-rx-consent",
+    "cross-border-rx-more-info",
   ]),
   POST: new Set([
     "brazil-consent/submit",
     "reviews/rate",
     "patient-upload",
     "cross-border-rx-consent",
+    "cross-border-rx-more-info",
   ]),
 };
 
