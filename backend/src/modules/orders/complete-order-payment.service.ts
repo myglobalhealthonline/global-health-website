@@ -555,6 +555,12 @@ async function fulfillPaidOrderFromCheckoutSession(
               existing?.insurancePolicyNumber ?? null,
               item.insurancePolicyNumber,
             ),
+            // Not a `fill()` — the enum default is NOT_VERIFIED (not null), so
+            // nullish-coalescing would never let this flip. An insurance line
+            // only reaches payment once its order cleared the PENDING
+            // verification gate (or was VERIFIED outright by an admin taking
+            // a manual booking), so its presence here IS the verified signal.
+            ...(item.insuranceCompanyId ? { insuranceDocumentStatus: "VERIFIED" as const } : {}),
           },
           create: {
             email: aptEmail.toLowerCase(),
@@ -573,6 +579,7 @@ async function fulfillPaidOrderFromCheckoutSession(
             addressCountryCode: item.patientAddressCountryCode,
             insuranceProviderName: insuranceCompany?.name ?? null,
             insurancePolicyNumber: item.insurancePolicyNumber,
+            ...(item.insuranceCompanyId ? { insuranceDocumentStatus: "VERIFIED" as const } : {}),
           },
         });
       }
