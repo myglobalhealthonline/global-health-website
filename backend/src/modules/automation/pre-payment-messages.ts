@@ -429,15 +429,7 @@ export function reminderMessage(
   };
 }
 
-/**
- * Website self-serve checkout abandonment — the ONE message a patient who left
- * the Stripe checkout page ever receives. Sent ~5 minutes into the 15-minute pay
- * window, on both email and WhatsApp; the cancel that follows at the deadline is
- * silent, so this message must carry the release time itself.
- *
- * The "or reply here" WhatsApp line is NOT part of the body — whatsappContactFooter
- * is appended to every automation WhatsApp and already says exactly that.
- */
+
 export function checkoutAbandonedMessage(
   ctx: PrePaymentMessageContext,
   lang: Lang,
