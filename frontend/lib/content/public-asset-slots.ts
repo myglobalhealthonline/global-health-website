@@ -14,7 +14,6 @@ export const PUBLIC_ASSET_KEYS = {
     doctorSpotlight: "ireland-doctor-spotlight",
     homeDelivery: "ireland-home-delivery",
     cta: "ireland-cta",
-    partnerLevelHealth: "partner-logo-level-health",
     partnerIp: "partner-logo-ip",
     partnerPharmacy: "partner-logo-pharmacy",
     partnerDoctify: "partner-logo-doctify",
@@ -34,7 +33,6 @@ export const PUBLIC_ASSET_KEYS = {
 
 /** Partner logos in display order (only rendered when uploaded & active). */
 export const IRELAND_PARTNER_LOGO_KEYS = [
-  PUBLIC_ASSET_KEYS.irelandHome.partnerLevelHealth,
   PUBLIC_ASSET_KEYS.irelandHome.partnerIp,
   PUBLIC_ASSET_KEYS.irelandHome.partnerPharmacy,
   PUBLIC_ASSET_KEYS.irelandHome.partnerDoctify,
