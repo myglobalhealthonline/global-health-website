@@ -31,6 +31,9 @@ export type SuklHealthStatusDto = {
   workplaceCode: string | null;
   ico: string | null;
   services: SuklServiceStatusDto[];
+  /** True when a real SOAP call can be attempted (identity + version present). */
+  callable: boolean;
+  missingForCall: string[];
   certificateValid: boolean;
   certificateSource: "base64" | "path" | null;
   subject: string | null;
@@ -97,6 +100,21 @@ export type SuklConnectionTestDto = {
   errorCode: string | null;
   errorMessage: string | null;
   durationMs: number;
+};
+
+/** Result of SÚKL's AppPing — the first real SOAP operation. */
+export type SuklAppPingDto = {
+  service: string;
+  label: string;
+  ok: boolean;
+  httpStatus: number;
+  durationMs: number;
+  /** Our correlation id. Quote this to SÚKL when investigating a call. */
+  requestId: string;
+  responseMessageId: string | null;
+  interfaceVersion: string;
+  errorCode: string | null;
+  errorMessage: string | null;
 };
 
 export async function fetchSuklStatus() {
