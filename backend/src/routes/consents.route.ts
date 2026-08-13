@@ -157,6 +157,18 @@ export async function resolveOrCreatePatientProfile(
     ghn = null; // Counter unavailable — a backfill job assigns one later.
   }
 
+  // Best-effort clinic/data-residency folder at creation time: same
+  // single-country rule as backfill-country-folder-code.ts — only set it
+  // when this patient's non-cancelled appointments agree on one country,
+  // otherwise leave null for that script to reconcile later.
+  const apptCountries = await prisma.appointment.findMany({
+    where: { userId, status: { not: "CANCELLED" } },
+    select: { countryCode: true },
+    distinct: ["countryCode"],
+  });
+  const countryFolderCode =
+    apptCountries.length === 1 ? apptCountries[0].countryCode : null;
+
   return prisma.patientProfile.create({
     data: {
       email: normalizedEmail,
@@ -164,6 +176,7 @@ export async function resolveOrCreatePatientProfile(
       fullName: user?.fullName ?? email,
       phone: user?.phone ?? null,
       globalHealthNumber: ghn,
+      ...(countryFolderCode ? { countryFolderCode } : {}),
       emailHash: computeEmailBlindIndex(normalizedEmail),
     },
     select: { id: true, globalHealthNumber: true },
