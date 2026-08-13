@@ -3869,6 +3869,15 @@ model CrossBorderPrescriptionRequest {
   consentTokenExpiresAt DateTime?
   /// When the patient granted disclosure consent (null until they agree).
   soapConsentAt        DateTime?
+  /// Doctor B → Doctor A "request more information" round. Doctor A answers
+  /// in-portal, on the source appointment's own consultation tab (they're
+  /// already authenticated there — no link/token needed). The answer is also
+  /// written onto the source appointment's MedicalNote history. Each new
+  /// MORE_INFO decision overwrites these fields for the next round.
+  moreInfoQuestion     String?
+  moreInfoAnswer       String?
+  moreInfoAskedAt      DateTime?
+  moreInfoAnsweredAt   DateTime?
   /// Patient-entered delivery details captured at the payment step (pharmacy +
   /// confirmed address). Applied to the async Appointment when it's minted so
   /// the prescribing doctor + prescription have the right pharmacy + address.
