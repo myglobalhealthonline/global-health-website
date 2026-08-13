@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
-import { UserRole } from "@prisma/client";
+import { UserRole, VerificationStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import {
@@ -34,6 +34,12 @@ export async function upsertPatientProfileByEmail(
     fullName?: string | null;
     phone?: string | null;
     dateOfBirth?: Date | null;
+    /** Clinic/data-residency folder (lowercase Country.code), e.g. from the
+     *  booking's countryCode. Only ever fills a missing value — matches
+     *  backfill-country-folder-code.ts's "never overwrite" rule, since an
+     *  existing folder may already reflect a deliberate, different
+     *  assignment. */
+    countryFolderCode?: string | null;
   },
   options?: {
     /** Pre-computed bcrypt hash to use when creating the User row.
@@ -87,7 +93,7 @@ export async function upsertPatientProfileByEmail(
     let ghn: string | null = null;
     const existing = await prisma.patientProfile.findUnique({
       where: { email },
-      select: { globalHealthNumber: true, fullName: true, dateOfBirth: true },
+      select: { globalHealthNumber: true, fullName: true, dateOfBirth: true, countryFolderCode: true },
     });
     if (!existing) {
       try {
@@ -118,6 +124,7 @@ export async function upsertPatientProfileByEmail(
         phone: createPhone,
         dateOfBirth: createDob,
         ...(ghn ? { globalHealthNumber: ghn } : {}),
+        ...(input.countryFolderCode ? { countryFolderCode: input.countryFolderCode.toLowerCase() } : {}),
         emailHash: computeEmailBlindIndex(email),
         phoneHash: createPhone ? computePhoneBlindIndex(createPhone) : null,
         nameDobHash: nameDobHashFor(createFullName, createDob),
@@ -129,6 +136,11 @@ export async function upsertPatientProfileByEmail(
         ...(input.dateOfBirth !== undefined ? { dateOfBirth: input.dateOfBirth } : {}),
         // Backfill GHN for profiles that existed before this feature shipped.
         ...(!existing?.globalHealthNumber && ghn ? { globalHealthNumber: ghn } : {}),
+        // Same never-overwrite rule as the backfill script — only fills a
+        // currently-null folder, never corrects an existing one.
+        ...(!existing?.countryFolderCode && input.countryFolderCode
+          ? { countryFolderCode: input.countryFolderCode.toLowerCase() }
+          : {}),
         // Recompute affected blind indexes when the source field changes.
         ...(input.phone !== undefined
           ? { phoneHash: createPhone ? computePhoneBlindIndex(createPhone) : null }
@@ -244,6 +256,7 @@ export type ProfileWriteFields = {
   pricingPlanId?: string | null;
   insuranceProviderName?: string | null;
   insurancePolicyNumber?: string | null;
+  insuranceDocumentStatus?: VerificationStatus;
 };
 
 export type ProfileWriteFieldsWithAlerts = ProfileWriteFields & {
@@ -388,6 +401,35 @@ export async function applyPatientProfileUpdate(
         oldValue: before?.phone ?? null,
         newValue: profile.phone ?? null,
         ipAddress: options.ipAddress ?? null,
+      });
+    }
+    // Keep the login account (User) in step with the medical profile —
+    // whichever surface (patient/doctor/admin) edits identity fields here,
+    // the account name/phone/dob shouldn't silently drift out of sync.
+    if (
+      profile.userId &&
+      ("fullName" in input || "phone" in input || "dateOfBirth" in input)
+    ) {
+      await prisma.user.update({
+        where: { id: profile.userId },
+        data: {
+          ...(input.fullName ? { fullName: input.fullName.trim() } : {}),
+          ...("phone" in input ? { phone: input.phone?.trim() || null } : {}),
+          ...("dateOfBirth" in input ? { dateOfBirth: input.dateOfBirth ?? null } : {}),
+        },
+      });
+    }
+    // Push a name change onto the patient's still-active appointments too,
+    // so the name a doctor/admin sees on an upcoming booking matches the
+    // profile. COMPLETED/CANCELLED rows are left alone — those are closed
+    // clinical records and keep the name as it was at that visit.
+    if (input.fullName && profile.userId) {
+      await prisma.appointment.updateMany({
+        where: {
+          userId: profile.userId,
+          status: { notIn: ["COMPLETED", "CANCELLED"] },
+        },
+        data: { fullName: input.fullName.trim() },
       });
     }
     return { profile, alertChanges };

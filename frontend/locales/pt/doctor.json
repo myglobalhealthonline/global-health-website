@@ -907,6 +907,8 @@
   "finalizeChecklist": {
     "finalizedTitle": "Consulta finalizada",
     "finalizedDescription": "As notas e os documentos necessários foram confirmados para esta consulta.",
+    "cancelledTitle": "Consulta cancelada",
+    "cancelledDescription": "Esta consulta foi cancelada e já não pode ser finalizada.",
     "confirmBothItems": "Confirme os dois itens da lista antes de finalizar.",
     "title": "Lista de verificação final da consulta",
     "description": "Confirme as notas clínicas e os ficheiros antes de encerrar a consulta.",

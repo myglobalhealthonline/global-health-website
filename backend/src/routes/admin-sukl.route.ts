@@ -5,6 +5,7 @@ import { recordAudit, recordCriticalAudit } from "../modules/audit/audit.service
 import {
   fetchSuklWsdl,
   getSuklHealthStatus,
+  runSuklAppPing,
   listSuklDoctorIdentities,
   revokeSuklDoctorIdentity,
   runSuklConnectionTest,
@@ -17,6 +18,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import {
   suklDoctorIdentityBodySchema,
   suklDoctorParamsSchema,
+  suklPingQuerySchema,
   suklWsdlQuerySchema,
 } from "../validations/admin-sukl.schema.js";
 
@@ -149,6 +151,45 @@ const adminSuklRoute: FastifyPluginAsync = async (app) => {
           httpStatus: result.httpStatus,
           looksLikeWsdl: result.summary.looksLikeWsdl,
           operations: result.summary.operations.length,
+        },
+      });
+      return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  // Calls SÚKL's AppPing. Read-only, but RATE LIMITED per user per minute with
+  // temporary blocking on excess — so it is a manual admin action and must not
+  // be wired to any automated check.
+  app.post("/api/admin/sukl/app-ping", async (request, reply) => {
+    // Same path validation as the WSDL reader — a PATH, never a URL — but its
+    // own default, because pinging `/?wsdl` would be a category error.
+    const query = suklPingQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid ping request", query.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await runSuklAppPing(query.data.service, query.data.path);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklFacilityIntegration",
+        entityId: query.data.service,
+        request,
+        metadata: {
+          kind: "app-ping",
+          ok: result.ok,
+          httpStatus: result.httpStatus,
+          durationMs: result.durationMs,
+          // Our correlation id, so a SÚKL-side investigation can find the call.
+          // The Uzivatel is a credential and is deliberately NOT recorded.
+          requestId: result.requestId,
+          interfaceVersion: result.interfaceVersion,
+          path: result.path,
+          errorCode: result.errorCode,
         },
       });
       return okResponse(result);

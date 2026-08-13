@@ -907,6 +907,8 @@
   "finalizeChecklist": {
     "finalizedTitle": "Termín dokončen",
     "finalizedDescription": "Poznámky a požadované dokumenty byly pro tuto konzultaci potvrzeny.",
+    "cancelledTitle": "Termín zrušen",
+    "cancelledDescription": "Tento termín byl zrušen a už jej nelze dokončit.",
     "confirmBothItems": "Před dokončením potvrďte obě položky kontrolního seznamu.",
     "title": "Závěrečný kontrolní seznam konzultace",
     "description": "Před uzavřením termínu potvrďte klinické poznámky a soubory.",

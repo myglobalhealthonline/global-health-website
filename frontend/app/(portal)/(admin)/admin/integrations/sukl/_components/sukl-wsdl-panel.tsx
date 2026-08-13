@@ -32,7 +32,8 @@ type WsdlResult = {
     addresses: string[];
     bindings: Array<{ name: string | null; transport: string | null }>;
     operations: string[];
-    soapVersion: string;
+    soapVersions: string[];
+    interfaceVersion: string | null;
     imports: string[];
     byteLength: number;
   };
@@ -151,7 +152,20 @@ export function SuklWsdlPanel({ configured }: { configured: boolean }) {
           {s.looksLikeWsdl ? (
             <dl className="grid gap-1 text-sm">
               <Line label="targetNamespace">{s.targetNamespace ?? "—"}</Line>
-              <Line label="SOAP version">{s.soapVersion}</Line>
+              <Line label="Interface version">
+                {s.interfaceVersion ? (
+                  <>
+                    <code>{s.interfaceVersion}</code> — this is the value{" "}
+                    <code>SUKL_INTERFACE_VERSION</code> must be set to
+                  </>
+                ) : (
+                  "not stated in this document"
+                )}
+              </Line>
+              <Line label="SOAP bindings">
+                {s.soapVersions.join(", ") || "—"}
+                {s.soapVersions.length > 1 ? " (we send 1.1)" : ""}
+              </Line>
               <Line label="Services">{s.services.join(", ") || "—"}</Line>
               <Line label="Ports">
                 {s.ports.map((p) => p.name).filter(Boolean).join(", ") || "—"}

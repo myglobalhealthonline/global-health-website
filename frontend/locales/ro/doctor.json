@@ -907,6 +907,8 @@
   "finalizeChecklist": {
     "finalizedTitle": "Programare finalizată",
     "finalizedDescription": "Notele și documentele necesare au fost confirmate pentru această consultație.",
+    "cancelledTitle": "Programare anulată",
+    "cancelledDescription": "Această programare a fost anulată și nu mai poate fi finalizată.",
     "confirmBothItems": "Confirmați ambele elemente din listă înainte de finalizare.",
     "title": "Listă finală de verificare a consultației",
     "description": "Confirmați notele clinice și fișierele înainte de a închide programarea.",

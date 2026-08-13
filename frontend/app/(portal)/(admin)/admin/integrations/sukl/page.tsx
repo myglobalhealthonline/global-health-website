@@ -3,6 +3,7 @@ import { AdminCard, PageHeader, Pill, StatCard } from "../../_components/atoms";
 import { SuklConnectionPanel } from "./_components/sukl-connection-panel";
 import { SuklDoctorIdentities } from "./_components/sukl-doctor-identities";
 import { SuklWsdlPanel } from "./_components/sukl-wsdl-panel";
+import { SuklAppPingPanel } from "./_components/sukl-app-ping-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -184,6 +185,15 @@ export default async function AdminSuklPage() {
 
       <AdminCard>
         <SuklConnectionPanel configured={status.configured} />
+      </AdminCard>
+
+      <AdminCard>
+        <SuklAppPingPanel callable={status.callable} />
+        {status.missingForCall.length > 0 ? (
+          <p className="mt-3 mb-0 text-xs" style={{ color: "var(--portal-muted)" }}>
+            Still needed before any SÚKL call: {status.missingForCall.join(", ")}
+          </p>
+        ) : null}
       </AdminCard>
 
       <AdminCard>

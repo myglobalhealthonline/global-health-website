@@ -135,26 +135,93 @@ test("a SOAP fault arrives as a resolved 500, not a rejection", async () => {
   }
 });
 
-test("401 becomes SUKL_AUTHENTICATION_FAILED", async () => {
+test("401 keeps the reason: status, body excerpt and WWW-Authenticate", async () => {
+  // This is the case that actually happened against SÚKL. The earlier version
+  // threw away everything except a guess, so the test asserts the evidence
+  // survives — a bare "rejected" is what sent the last investigation at the
+  // certificate when the real question was the credential scheme.
   const srv = await startMtlsServer((_req, res) => {
-    res.writeHead(401);
-    res.end("nope");
+    res.writeHead(401, {
+      "www-authenticate": 'Basic realm="erecept"',
+      server: "Microsoft-IIS/10.0",
+    });
+    res.end("<html><body>401 - Unauthorized: Access is denied.</body></html>");
   });
   try {
-    await assert.rejects(
-      () =>
-        suklRequest({
-          baseUrl: srv.url,
-          path: "/epoukaz",
-          body: "<req/>",
-          pfx,
-          passphrase: FIXTURE_PASSWORD,
-          ca: [caPem],
-          timeoutMs: 5000,
-        }),
-      (e: unknown) =>
-        e instanceof SuklError && e.code === "SUKL_AUTHENTICATION_FAILED" && e.httpStatus === 401,
-    );
+    await suklRequest({
+      baseUrl: srv.url,
+      path: "/",
+      body: "<req/>",
+      pfx,
+      passphrase: FIXTURE_PASSWORD,
+      ca: [caPem],
+      timeoutMs: 5000,
+    });
+    assert.fail("expected a SuklError");
+  } catch (e) {
+    assert.ok(e instanceof SuklError);
+    assert.equal(e.code, "SUKL_AUTHENTICATION_FAILED");
+    assert.equal(e.httpStatus, 401);
+    assert.match(e.bodyExcerpt ?? "", /Access is denied/);
+    assert.equal(e.responseHeaders?.["www-authenticate"], 'Basic realm="erecept"');
+    assert.equal(e.responseHeaders?.server, "Microsoft-IIS/10.0");
+    // The message must not assert a single cause it cannot know.
+    assert.match(e.safeMessage, /401/);
+  } finally {
+    await srv.close();
+  }
+});
+
+test("403 is captured the same way", async () => {
+  const srv = await startMtlsServer((_req, res) => {
+    res.writeHead(403, { server: "Microsoft-IIS/10.0" });
+    res.end("403.16 - Client certificate is untrusted");
+  });
+  try {
+    await suklRequest({
+      baseUrl: srv.url,
+      path: "/",
+      body: "<req/>",
+      pfx,
+      passphrase: FIXTURE_PASSWORD,
+      ca: [caPem],
+      timeoutMs: 5000,
+    });
+    assert.fail("expected a SuklError");
+  } catch (e) {
+    assert.ok(e instanceof SuklError);
+    assert.equal(e.httpStatus, 403);
+    // The IIS sub-status is exactly what distinguishes the causes.
+    assert.match(e.bodyExcerpt ?? "", /403\.16/);
+  } finally {
+    await srv.close();
+  }
+});
+
+test("Basic credentials are sent only when configured", async () => {
+  const seenAuth: Array<string | undefined> = [];
+  const srv = await startMtlsServer((req, res) => {
+    seenAuth.push(req.headers.authorization);
+    res.writeHead(200, { "content-type": "text/xml" });
+    res.end("<ok/>");
+  });
+  try {
+    const common = {
+      baseUrl: srv.url,
+      path: "/",
+      body: "<req/>",
+      pfx,
+      passphrase: FIXTURE_PASSWORD,
+      ca: [caPem],
+      timeoutMs: 5000,
+    };
+    await suklRequest(common);
+    // Sending a password to a server that never asked for one is its own
+    // mistake, so absence is the default and is asserted.
+    assert.equal(seenAuth[0], undefined);
+
+    await suklRequest({ ...common, basicAuth: { username: "u", password: "p" } });
+    assert.equal(seenAuth[1], "Basic " + Buffer.from("u:p").toString("base64"));
   } finally {
     await srv.close();
   }

@@ -13,6 +13,7 @@ import { deleteObject } from "../../services/object-storage.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
 import { linkMembershipsInBackground } from "../memberships/membership-linking.service.js";
+import { applyPatientProfileUpdate } from "../patient-profile/patient-profile.service.js";
 
 export type SafeUser = {
   id: string;
@@ -685,6 +686,30 @@ export async function patchUserProfile(id: string, input: ProfilePatchInput) {
         ...(input.preferredLocale !== undefined && { preferredLocale: input.preferredLocale }),
       },
     });
+
+    // Patients also have a parallel PatientProfile (the medical record
+    // doctors/admins see) — this generic account-settings save must not
+    // let it drift out of step with the identity fields edited here.
+    if (
+      user.role === UserRole.PATIENT &&
+      (input.fullName !== undefined || input.phone !== undefined || dobValue !== undefined)
+    ) {
+      await applyPatientProfileUpdate(
+        user.email,
+        {
+          ...(input.fullName !== undefined ? { fullName: input.fullName } : {}),
+          ...(input.phone !== undefined ? { phone: input.phone } : {}),
+          ...(dobValue !== undefined ? { dateOfBirth: dobValue } : {}),
+        },
+        { actor: { userId: id, role: user.role } },
+      ).catch((err) => {
+        // Don't fail the account-settings save over a profile-side guard
+        // (e.g. VerifiedPhoneLockedError) — the User row above already
+        // committed. Log so the drift is visible instead of silent.
+        console.error("[patchUserProfile] PatientProfile sync failed", err);
+      });
+    }
+
     return toSafeUser(user);
   } catch (error) {
     throw normalizeDbError(error, "Could not update profile");

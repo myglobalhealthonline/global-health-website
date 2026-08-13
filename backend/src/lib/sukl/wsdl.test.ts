@@ -17,6 +17,7 @@ const SAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:tns="http://www.sukl.cz/erp/201704"
                   targetNamespace="http://www.sukl.cz/erp/201704">
+  <!--202201A-->
   <wsdl:import location="https://example.test/types.wsdl" namespace="urn:x"/>
   <wsdl:portType name="CUERLekar_PortType">
     <wsdl:operation name="ZalozitPredpis"><wsdl:input message="tns:a"/></wsdl:operation>
@@ -39,7 +40,10 @@ test("extracts the published address, namespace, operations and SOAP version", (
   const s = summariseWsdl(SAMPLE);
   assert.equal(s.looksLikeWsdl, true);
   assert.equal(s.targetNamespace, "http://www.sukl.cz/erp/201704");
-  assert.equal(s.soapVersion, "1.1");
+  // SÚKL publish BOTH bindings; the reader reports both, 1.1 first because
+  // that is the one the transport sends.
+  assert.deepEqual(s.soapVersions, ["1.1"]);
+  assert.equal(s.interfaceVersion, "202201A");
   assert.deepEqual(s.services, ["CUERLekar"]);
   assert.deepEqual(s.addresses, ["https://lekar-soap.test-erecept.sukl.cz/cuer/Lekar"]);
   assert.deepEqual(s.ports, [
@@ -51,9 +55,26 @@ test("extracts the published address, namespace, operations and SOAP version", (
   assert.equal(s.namespaces.soap, "http://schemas.xmlsoap.org/wsdl/soap/");
 });
 
-test("recognises SOAP 1.2 by its binding namespace", () => {
-  const s = summariseWsdl(SAMPLE.replace("wsdl/soap/", "wsdl/soap12/"));
-  assert.equal(s.soapVersion, "1.2");
+test("recognises SOAP 1.2, and reports both when both are published", () => {
+  assert.deepEqual(summariseWsdl(SAMPLE.replace("wsdl/soap/", "wsdl/soap12/")).soapVersions, [
+    "1.2",
+  ]);
+  // SÚKL's real WSDLs declare soap AND soap12 — the reader must not collapse
+  // that to whichever it noticed last.
+  const both = SAMPLE.replace(
+    'xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"',
+    'xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"',
+  );
+  assert.deepEqual(summariseWsdl(both).soapVersions, ["1.1", "1.2"]);
+});
+
+test("extracts the interface version from SÚKL's XML comment", () => {
+  // The value the Zprava header must carry. Not negotiated — a wrong one is
+  // rejected — so it is worth pulling out of 150 KB of XML explicitly.
+  assert.equal(summariseWsdl("<!--202601B--><wsdl:definitions/>").interfaceVersion, "202601B");
+  assert.equal(summariseWsdl("<!-- 202605A --><wsdl:definitions/>").interfaceVersion, "202605A");
+  // A version-shaped string that is not in the comment form must be ignored.
+  assert.equal(summariseWsdl("<wsdl:definitions x=\"202601B\"/>").interfaceVersion, null);
 });
 
 test("a non-WSDL response is reported as such rather than half-parsed", () => {

@@ -17,24 +17,42 @@ Last reviewed: 2026-08-04.
 | Environment | SÚKL **test** only | — |
 | Certificate authority | SÚKL | SÚKL confirmed the ÚZIS test CA is unavailable |
 | Authentication | Workplace communication certificate over mutual TLS | Confirmed by SÚKL |
-| Doctor personal qualified signature | **Not required** | Confirmed by SÚKL |
+| Doctor personal qualified signature | **REQUIRED for some active operations** — see below | SÚKL, ticket 40336, 2026-08-13. This REVERSES the earlier understanding. |
 | Scope of this build | ePoukaz only | Product decision, 2026-08-04 |
 | Cross-border eRecept | Out of scope, blocked on Q7 below | Product decision |
 
-### Consequences of the confirmed authentication model
+### Authentication model — CHANGED 2026-08-13
 
-Because authentication is the facility certificate and nothing else:
+The earlier position ("workplace certificate only, no doctor signature") is
+**superseded**. SÚKL (ticket 40336) state:
 
-- No XML digital signature layer is built, and `xml-crypto` is not a dependency.
-- No doctor personal key material, personal qualified certificate, or national
-  identity key is accepted, transmitted or stored anywhere. `SuklDoctorIdentity`
-  holds professional identifiers only.
-- Rotating the credential is a Railway secret change plus a redeploy, not a
-  per-doctor operation.
+> Some active operations must be signed with a personal qualified certificate.
+> The signature is not required if you have implemented authentication using
+> Citizen Identity [Identita občana].
 
-If SÚKL later contradicts this, it is not a small change: it introduces XML-DSig,
-per-doctor certificate handling, and a separate security and legal review before
-any key material may be stored. That would be its own gated phase.
+Creating an ePoukaz is an active operation, so mutual TLS with the workplace
+certificate is **necessary but not sufficient**. There are two lawful routes and
+they have very different costs:
+
+**Route A — personal qualified signature (XML-DSig).** Each prescribing doctor
+signs the payload with their own qualified certificate. Introduces an XML
+signature layer, per-doctor key handling, and the security and legal review that
+the previous decision record already said would be required before any key
+material may be stored. In the test environment SÚKL accept a DEMO qualified
+certificate, e.g. PostSignum's test certificate.
+
+**Route B — Identita občana (Citizen Identity).** Authenticate the doctor
+through the national identity scheme instead, which removes the signature
+requirement. No per-doctor key material is stored by us. Cost moves from
+cryptography to an identity-federation integration and its own onboarding.
+
+**Nothing about this is decided.** Q15–Q17 below must be answered first, and the
+choice needs product and legal input, not just engineering. Until then the build
+stops at the transport layer, which is unaffected either way — mutual TLS is
+still required in both routes.
+
+What this does NOT change: the facility certificate, the mTLS transport, the
+admin console and the monitoring are all still correct and still needed.
 
 ## Intended user journey (ePoukaz)
 
@@ -82,30 +100,47 @@ Numbered so replies can cite them.
   SÚKL accepts the workplace certificate. The earlier timeouts were the office
   network, not an allowlist. Developer machines may still be unable to reach the
   hosts; test from the deployed backend.
-- **Q2** Which ePoukaz operations may an **ambulance / outpatient** workplace
-  call? Specifically: create, read/status, amend, cancel, and code-list retrieval.
-  Some published documentation is written for pharmacy information systems.
-- **Q3** Is there a read-only or ping-style operation we may call safely and
-  repeatedly to verify connectivity? Today's connection test proves the TLS
-  handshake only, because none is known. **Lead:** the older `201704` doctor
-  eRecept WSDL exposes `AppPing`, `AppPingZEP` and `GetAppInfo` — ask whether
-  ePoukaz has equivalents and whether an ambulance workplace may call them.
+- **Q2** ~~Which operations may an outpatient workplace call?~~ **ANSWERED
+  2026-08-13.** The documentation contains a **searchable table of services
+  stating which role may use each service**. Read that table and record the
+  outcome per operation in `INTERFACE_INVENTORY.md` — do not infer it.
+- **Q3** ~~Is there a safe read-only/ping operation?~~ **ANSWERED 2026-08-13 —
+  yes, but rate-limited.** SÚKL: *"It is possible to use it, but not in such a
+  way that it unnecessarily burdens the system. Each user has a limited number
+  of calls within one minute; if exceeded, their access is temporarily
+  blocked."*
+  **Operational consequence:** any ping must be deliberate and infrequent. The
+  admin connection test is manual and the certificate monitor runs daily, so
+  both are safe — but nothing may poll SÚKL on a timer, and a health check must
+  never be wired to an uptime monitor.
 - **Q3b** ~~What is the certificate's PKCS#12 export password?~~ **RESOLVED
   2026-08-05.** The password was correct; the certificate simply could not be
   opened by Node because SÚKL exports with legacy RC2. Converted to
   AES-256/PBKDF2 — see `TESTING_RUNBOOK.md`. Worth telling SÚKL that their export
   format is unreadable by modern OpenSSL 3 runtimes.
-- **Q4** Which interface version should we target — `202601A` or `202601B` — and
-  do they differ in the operations available to an outpatient workplace?
+- **Q4** ~~Which interface version?~~ **ANSWERED 2026-08-13.** Production is
+  **`202604A`**; test is **`202605A`**, which is expected to reach production
+  within a month (announced at https://epreskripce.gov.cz/). Our earlier note of
+  `202601A` / `202601B` was **out of date** — build against `202605A` for test
+  and expect it to become production.
 
 **Identity**
 
-- **Q5** Must a separate **test doctor identity** be issued for the test
-  environment, or do doctors' existing production ePrescription identities apply?
-  If separate, how is one requested?
-- **Q6** What exactly is the prescriber identifier — IČP, KRZP code, or a
-  SÚKL-issued value — and what is its format? (Stored as opaque text until
-  answered; see `SuklDoctorIdentity.suklProfessionalIdentifier`.)
+- **Q5** ~~Separate test doctor identity?~~ **ANSWERED 2026-08-13.** Test and
+  production are **separate account systems**, each with its own access SSL
+  certificates. Doctors normally have **no test-environment account** — in
+  practice only the system developer does, which is us. Test accounts for
+  doctors can be requested if needed. For production, each doctor applies at
+  https://pristupy.sukl.cz/ .
+  **Consequence:** test-phase ePoukaz work does not need per-doctor test
+  accounts; production onboarding does, and it is a per-doctor action they must
+  take themselves.
+- **Q6** ~~Prescriber identifier format?~~ **PARTIALLY ANSWERED 2026-08-13.**
+  Logins are assigned by SÚKL's **External Identity** system (Externí identita),
+  via https://pristupy.sukl.cz/ for production and the test-access portal for
+  test. The literal format was not given, so
+  `SuklDoctorIdentity.suklProfessionalIdentifier` stays opaque text. Confirm the
+  exact field once the documentation is read.
 
 **Cross-border (scope gate — no code until answered)**
 
@@ -119,19 +154,34 @@ Numbered so replies can cite them.
 - **Q9** What patient identification data is required, and what consent and audit
   obligations attach to a cross-border lookup?
 
-- **Q13** What do the certificate subject's `O=150928353` and `OU=150928371`
-  denote, and which identifier belongs in an ePoukaz request payload as the
-  workplace? The application/workplace code is `00150928369` and that is what is
-  configured. The certificate subject values are treated as **separate
-  identifiers with unconfirmed semantics** — the code deliberately does not
-  require them to equal the workplace code, since asserting that would break a
-  valid setup. Confirmation is needed before building request payloads.
+- **Q13** ~~Which identifier goes in the request as the workplace?~~
+  **ANSWERED 2026-08-13.** SÚKL: *"You only need to use the workplace code in
+  the request: 00150928369."* The certificate subject's `O` / `OU` are not used
+  in payloads. This confirms the existing design decision not to compare them —
+  `SUKL_TEST_WORKPLACE_CODE` is the value to send.
+
+**Signature / authentication (raised 2026-08-13 — blocks the ePoukaz build)**
+
+- **Q15** Exactly which ePoukaz operations require a personal qualified
+  signature? "Some active operations" needs to become a list, per operation,
+  cross-referenced with the role table from Q2.
+- **Q16** What does "authentication using Identita občana" mean concretely for a
+  server-to-server integration where the doctor is already authenticated in our
+  portal? What does it replace — the signature only, or part of the transport
+  authentication? What is the onboarding process?
+- **Q17** If we take the signature route: what is signed (the whole envelope, a
+  specific element), which XML-DSig profile and canonicalisation, and where does
+  the signature belong in the message? Are there reference examples?
 
 **Operational**
 
-- **Q10** After an ambiguous network failure on a create operation, is there a way
-  to ask SÚKL whether the request was accepted? Without one, no create can be
-  safely auto-retried.
+- **Q10** After an ambiguous network failure on a create operation, is there a
+  way to ask SÚKL whether the request was accepted? **PARTIALLY ANSWERED
+  2026-08-13** — SÚKL described only the two clear cases: a failed handshake
+  means nothing was sent, and a delivered call returns documented error codes
+  (Excel attachment in the technical documentation). The genuinely ambiguous
+  case — request sent, response lost — was not addressed, so **no create may be
+  auto-retried**. Re-ask once the error-code list has been read.
 - **Q11** ~~Renewal procedure?~~ **ANSWERED 2026-08-07** by Petra Zdražilová,
   Oddělení eRecept. The test certificate may be renewed **at the earliest one
   month before expiry** — for the current certificate that is **from 5 October

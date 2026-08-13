@@ -5,8 +5,10 @@ import { URL } from "node:url";
 import { loadSuklPfx } from "./certificate.js";
 import {
   isSuklServiceConfigured,
+  suklPassword,
   suklServiceUrl,
   suklTimeoutMs,
+  suklUzivatel,
   SUKL_SERVICE_ENV_VARS,
   SUKL_SERVICE_LABELS,
   type SuklService,
@@ -24,6 +26,20 @@ import { SuklError, SuklNotConfiguredError } from "./errors.js";
  *
  * `rejectUnauthorized` is never disabled. If SÚKL's test chain is not in Node's
  * trust store the fix is to supply their CA through `ca`, not to stop verifying.
+ * In practice no extra CA is needed — SÚKL's server certificate is issued by a
+ * public CA and validates against Node's built-in store.
+ *
+ * RATE LIMIT — confirmed by SÚKL 2026-08-13: each user has a limited number of
+ * calls per minute, and exceeding it TEMPORARILY BLOCKS ACCESS. Nothing here may
+ * be called on a timer. The admin connection test is manual and the certificate
+ * monitor runs daily, which is within bounds; do not wire any SÚKL call to an
+ * uptime probe, a health check, or an unbounded retry loop.
+ *
+ * SIGNATURE — also confirmed 2026-08-13: some active operations additionally
+ * require a personal qualified signature unless the doctor is authenticated via
+ * Identita občana. This transport carries the message; it does not sign it. The
+ * route is undecided (SCOPE_CONFIRMATION.md Q15–Q17), so the payload layer must
+ * not assume mutual TLS alone is sufficient to create a voucher.
  *
  * What this file deliberately does NOT do: build a SOAP envelope. The operation
  * names, namespaces and message shapes come from SÚKL's WSDL/XSD, which we do
@@ -141,6 +157,16 @@ export interface SuklRequestOptions {
   /** SOAPAction header value. Comes from the WSDL — never invent one. */
   soapAction?: string;
   contentType?: string;
+  /**
+   * Optional HTTP Basic credentials, sent IN ADDITION to the client certificate.
+   *
+   * Only supplied when explicitly configured. SÚKL's test-access accounts have
+   * both a login name and a password, and their COMMON service exposes a `Login`
+   * operation, so an HTTP-layer credential is plausible — but sending a password
+   * to a server that never asked for one is not, which is why this is opt-in
+   * rather than always-on.
+   */
+  basicAuth?: { username: string; password: string };
   /** Hard cap on the response we will buffer. Guards against a huge document. */
   maxBytes?: number;
 }
@@ -192,6 +218,15 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
         timeout,
         headers: {
           accept: "text/xml, application/soap+xml, application/wsdl+xml, */*",
+          ...(options.basicAuth
+            ? {
+                authorization:
+                  "Basic " +
+                  Buffer.from(
+                    `${options.basicAuth.username}:${options.basicAuth.password}`,
+                  ).toString("base64"),
+              }
+            : {}),
           ...(method === "POST"
             ? {
                 "content-type": options.contentType ?? "text/xml; charset=utf-8",
@@ -221,13 +256,43 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
           const durationMs = Date.now() - startedAt;
 
           if (status === 401 || status === 403) {
+            // Keep an excerpt. A 401/403 body is an infrastructure error page,
+            // not a business document, and it is the only thing that
+            // distinguishes "certificate not mapped to an account" from
+            // "wrong path" from "this service needs a prior Login". Throwing
+            // that away — as this did — leaves an operator with a sentence that
+            // sounds definitive and explains nothing.
+            const excerpt = Buffer.concat(chunks)
+              .toString("utf8")
+              .replace(/\s+/g, " ")
+              .trim()
+              // 600 characters cut SÚKL off mid-sentence on fault S026, losing the
+              // half that explained what to do. Their faults are long, in Czech,
+              // and back-loaded — the actionable clause is at the END. 4000 is
+              // still a hard cap on an error page, not a licence to log bodies.
+              .slice(0, 4000);
+            // A deliberately narrow allowlist: these say WHY we were refused.
+            // Copying every header would risk echoing something sensitive back
+            // through an API response.
+            const interesting: Record<string, string> = {};
+            for (const name of ["www-authenticate", "server", "x-powered-by", "location"]) {
+              const v = response.headers[name];
+              if (typeof v === "string" && v) interesting[name] = v;
+            }
             fail(
               new SuklError(
                 "SUKL_AUTHENTICATION_FAILED",
                 "response",
-                "SÚKL accepted the TLS connection but rejected our identity — the workplace " +
-                  "certificate may not be registered for this service.",
-                { httpStatus: status },
+                `SÚKL accepted the TLS connection but rejected the request with HTTP ${status}. ` +
+                  "SÚKL require an HTTP Authorization header IN ADDITION to the client " +
+                  "certificate (their fault S019: 'Neuvedena HTTP Authorization header'), so " +
+                  "the usual cause is SUKL_TEST_PASSWORD being unset. Read the response " +
+                  "excerpt for their own explanation before assuming anything else.",
+                {
+                  httpStatus: status,
+                  bodyExcerpt: excerpt || undefined,
+                  responseHeaders: Object.keys(interesting).length ? interesting : undefined,
+                },
               ),
             );
             return;
@@ -317,12 +382,16 @@ export async function suklPost(
 ): Promise<SuklResponse> {
   if (!isSuklServiceConfigured(service)) throw notConfigured(service);
   const { pfx, passphrase } = loadSuklPfx();
+  // Basic credentials only when a password is explicitly configured.
+  const user = suklUzivatel();
+  const password = suklPassword();
   return suklRequest({
     baseUrl: suklServiceUrl(service)!,
     path,
     body,
     pfx,
     passphrase,
+    ...(user && password ? { basicAuth: { username: user, password } } : {}),
     timeoutMs: options.timeoutMs ?? suklTimeoutMs(),
     ...(options.soapAction ? { soapAction: options.soapAction } : {}),
     ...(options.contentType ? { contentType: options.contentType } : {}),

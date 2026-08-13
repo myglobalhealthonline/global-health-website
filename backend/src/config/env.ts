@@ -271,6 +271,47 @@ const envSchema = z.object({
    *  workplace may perform — see docs/sukl/SCOPE_CONFIRMATION.md Q7. */
   SUKL_EPOUKAZ_CUEP_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
   SUKL_EPOUKAZ_COMMON_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
+
+  /** Request identity. EVERY SÚKL operation — including the read-only ping —
+   *  carries `Pristupujici { Uzivatel, Pracoviste }`, so without these no call
+   *  can be made at all. Confirmed against `identifikace_pristupujiciho_type`
+   *  in CommonSchema.xsd.
+   *
+   *  UZIVATEL is the account login issued by SÚKL's External Identity system;
+   *  the observed format is a GUID (the schema allows any string up to 36
+   *  chars). It identifies the CALLING ACCOUNT, not the prescribing doctor — in
+   *  the test environment SÚKL expect the system developer's account, because
+   *  doctors normally have no test account. Treat it as a credential: never log
+   *  it, never return it from an API.
+   *
+   *  `Pracoviste` is the 11-digit workplace code, already configured as
+   *  SUKL_TEST_WORKPLACE_CODE — the schema field is exactly that value.
+   *
+   *  INTERFACE_VERSION goes in the `Zprava` header of every message (pattern
+   *  `[0-9]{6}[A-Z]`, e.g. 202601B). It is not negotiated and a wrong value is
+   *  rejected, so there is no default — read it from the WSDL that the admin
+   *  console fetches.
+   *
+   *  SW_KLIENTA identifies our software to SÚKL, max 12 characters. We choose
+   *  it; it is not issued. */
+  SUKL_TEST_UZIVATEL: optionalSecret,
+  /** Optional HTTP Basic password, sent with SUKL_TEST_UZIVATEL as the username
+   *  IN ADDITION to the client certificate. Opt-in: leave unset unless SÚKL's
+   *  response actually asks for a credential scheme (a `WWW-Authenticate`
+   *  header), because sending a password to a server that never requested one
+   *  is its own mistake. This is the test-access account password. */
+  SUKL_TEST_PASSWORD: optionalSecret,
+  SUKL_INTERFACE_VERSION: blankAsUnset(
+    z
+      .string()
+      .trim()
+      .regex(/^\d{6}[A-Z]$/, "SUKL_INTERFACE_VERSION must look like 202601B")
+      .optional(),
+  ),
+  SUKL_SW_KLIENTA: blankAsUnset(
+    z.string().trim().min(1).max(12, "SUKL_SW_KLIENTA is limited to 12 characters").optional(),
+  ),
+
   SUKL_REQUEST_TIMEOUT_MS: blankAsUnset(
     z.coerce.number().int().min(1_000).max(120_000).default(30_000),
   ),
