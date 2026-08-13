@@ -161,8 +161,15 @@ export async function resolveOrCreatePatientProfile(
   // single-country rule as backfill-country-folder-code.ts — only set it
   // when this patient's non-cancelled appointments agree on one country,
   // otherwise leave null for that script to reconcile later.
+  // Cross-border-rx appointments store countryCode = the prescription's
+  // TARGET jurisdiction, not the patient's own country — excluded so a
+  // cross-border request doesn't masquerade as a second home country.
   const apptCountries = await prisma.appointment.findMany({
-    where: { userId, status: { not: "CANCELLED" } },
+    where: {
+      userId,
+      status: { not: "CANCELLED" },
+      consultationType: { not: "cross-border-prescription" },
+    },
     select: { countryCode: true },
     distinct: ["countryCode"],
   });
