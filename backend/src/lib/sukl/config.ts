@@ -114,6 +114,11 @@ export function suklUzivatel(): string | null {
   return env.SUKL_TEST_UZIVATEL?.trim() ?? null;
 }
 
+/** Optional HTTP Basic password paired with `suklUzivatel()`. A CREDENTIAL. */
+export function suklPassword(): string | null {
+  return env.SUKL_TEST_PASSWORD?.trim() ?? null;
+}
+
 /** Interface version for the `Zprava` header, e.g. "202601B". */
 export function suklInterfaceVersion(): string | null {
   return env.SUKL_INTERFACE_VERSION?.trim() ?? null;
