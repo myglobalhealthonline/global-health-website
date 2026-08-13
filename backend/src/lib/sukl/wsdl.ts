@@ -27,8 +27,15 @@ export interface WsdlSummary {
   addresses: string[];
   bindings: Array<{ name: string | null; transport: string | null }>;
   operations: string[];
-  /** SOAP binding namespace tells 1.1 from 1.2. */
-  soapVersion: "1.1" | "1.2" | "unknown";
+  /** Which SOAP bindings the document declares. SÚKL publish BOTH, so this is a
+   *  list rather than a single value — reporting only "1.2" because the soap12
+   *  namespace appeared would hide that 1.1 is available and is what we send. */
+  soapVersions: Array<"1.1" | "1.2">;
+  /** SÚKL stamp the interface version into the schema as an XML comment, e.g.
+   *  `<!--202601B-->`. It is the value the `Zprava` header must carry, and it is
+   *  not negotiated — a wrong one is rejected — so extracting it here saves
+   *  hunting through 150 KB of XML for the single string that matters. */
+  interfaceVersion: string | null;
   /** Other WSDL/XSD documents this one pulls in — usually where the types live. */
   imports: string[];
   byteLength: number;
@@ -51,13 +58,17 @@ export function summariseWsdl(xml: string): WsdlSummary {
     if (m[1] && m[2] && !namespaces[m[1]]) namespaces[m[1]] = m[2];
   }
 
-  const soapVersion = Object.values(namespaces).some((u) =>
-    u.includes("wsdl/soap12"),
-  )
-    ? "1.2"
-    : Object.values(namespaces).some((u) => u.includes("wsdl/soap"))
-      ? "1.1"
-      : "unknown";
+  const ns = Object.values(namespaces);
+  const soapVersions: Array<"1.1" | "1.2"> = [];
+  // Order matters for the reader: 1.1 first because that is what the transport
+  // sends (text/xml + a SOAPAction header).
+  if (ns.some((u) => /wsdl\/soap\/?$/.test(u))) soapVersions.push("1.1");
+  if (ns.some((u) => u.includes("wsdl/soap12"))) soapVersions.push("1.2");
+
+  // `<!--202601B-->`. Anchored to the comment form SÚKL actually use rather than
+  // a loose search, so a version-shaped string elsewhere in the document cannot
+  // be mistaken for the interface version.
+  const interfaceVersion = /<!--\s*(\d{6}[A-Z])\s*-->/.exec(xml)?.[1] ?? null;
 
   return {
     looksLikeWsdl,
@@ -77,7 +88,8 @@ export function summariseWsdl(xml: string): WsdlSummary {
       }),
     ),
     operations: all(/<(?:\w+:)?operation[^>]*\bname\s*=\s*"([^"]+)"/gi, xml),
-    soapVersion,
+    soapVersions,
+    interfaceVersion,
     imports: all(
       /<(?:\w+:)?(?:import|include)[^>]*\b(?:location|schemaLocation)\s*=\s*"([^"]+)"/gi,
       xml,
