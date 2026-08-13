@@ -16,6 +16,11 @@ export {
   isSuklConfigured,
   isSuklServiceConfigured,
   isAnySuklServiceConfigured,
+  isSuklCallable,
+  suklMissingCallConfig,
+  suklUzivatel,
+  suklInterfaceVersion,
+  suklSwKlienta,
   suklMissingConfig,
   suklWorkplaceCode,
   suklIco,
@@ -47,6 +52,21 @@ export {
   suklHandshakeProbe,
 } from "./transport.js";
 export { summariseWsdl, addressToPath } from "./wsdl.js";
+export {
+  buildSoapEnvelope,
+  escapeXml,
+  el,
+  extractFault,
+  extractElementText,
+  extractAllElementText,
+} from "./envelope.js";
+export type { SoapFault } from "./envelope.js";
+export {
+  suklAppPing,
+  buildAppPingRequest,
+  interpretAppPingResponse,
+} from "./app-ping.js";
+export type { SuklAppPingResult } from "./app-ping.js";
 export type { WsdlSummary } from "./wsdl.js";
 export type {
   SuklResponse,
