@@ -2130,6 +2130,10 @@ model Appointment {
   // notification fan-out to the assigned doctor. Tracked separately so
   // the patient-email path and the doctor-notification path can diverge.
   doctorReminderSentAt           DateTime?
+  // Set once the consultation-start+5min no-show check has run for this
+  // appointment (whether or not the doctor turned out to be absent), so the
+  // job never re-checks/re-notifies. Null means "not checked yet".
+  doctorNoShowNotifiedAt         DateTime?
   user                           User?                     @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments                       Payment[]
   messages                       Message[]
