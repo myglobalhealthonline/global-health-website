@@ -280,8 +280,10 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
                 "SUKL_AUTHENTICATION_FAILED",
                 "response",
                 `SÚKL accepted the TLS connection but rejected the request with HTTP ${status}. ` +
-                  "Possible causes: the certificate is not mapped to an account for this " +
-                  "service, the request path is wrong, or the service expects a prior Login.",
+                  "SÚKL require an HTTP Authorization header IN ADDITION to the client " +
+                  "certificate (their fault S019: 'Neuvedena HTTP Authorization header'), so " +
+                  "the usual cause is SUKL_TEST_PASSWORD being unset. Read the response " +
+                  "excerpt for their own explanation before assuming anything else.",
                 {
                   httpStatus: status,
                   bodyExcerpt: excerpt || undefined,
