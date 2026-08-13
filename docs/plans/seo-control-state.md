@@ -3387,3 +3387,252 @@ classification (§16.6).
 UNCOMMITTED.**
 
 ---
+
+## 17. CZ-SEO-007 — Czech travel-medicine duplicate URL & search-ownership investigation (2026-08-13)
+
+**Mode: read-only investigation.** No redirects, no canonical changes, no page
+deletion, no metadata/content edits, no CMS publication changes, no deploy.
+CZ-SEO-006 closed separately (commit `505b9011`, pushed to
+`origin/Dev-hassaan`) before this pass began.
+
+### 17.1 The alleged duplicate pair, resolved exactly
+
+Source: §10.3's opportunity map (`Travel medicine` row, 2026-08-12), the only
+place in the repo's evidence trail naming this pair. Not resolved from memory
+— cross-checked against `frontend/next.config.ts`, the CZ localized-slug
+migration script, the live sitemap and a live Googlebot-UA fetch.
+
+| | `cestovni-medicina-praha` | `travel-health-prague` |
+| --- | --- | --- |
+| Full cs URL | `/czechia/cs/services/cestovni-medicina-praha` | `/czechia/cs/services/travel-health-prague` |
+| HTTP (live probe, Googlebot UA) | 200 | **308** → the cestovni URL |
+| CMS/service identity | Live `Service` row, CZ market | **Same row** — not a second service |
+| Sitemap | Yes, all 6 locale variants | No |
+| Canonical (declared) | Self | n/a (redirect, no page to canonicalize) |
+| Robots | `index, follow` | n/a |
+
+**These are not two services or two CMS pages — they are one Service row
+under its current slug, plus a legacy English slug kept alive only as a
+`next.config.ts` redirect rule.** `backend/scripts/migrate-localized-service-slugs.ts`
+(also mirrored in `frontend/next.config.ts:557`) **renames the Service row's
+`slug` column in place** (`UPDATE ... SET slug = newSlug`, in a transaction,
+idempotent) — it does not create a second row. The script's own conflict
+guard (`!! CONFLICT ${newSlug} held by ACTIVE ${holder.id}`) is the only path
+that could have produced a genuine second live row, and nothing in the repo
+or live site shows that path was taken for this slug. The redirect rule
+(`"travel-health-prague": "cestovni-medicina-praha"`) was added in commit
+`79083081`, **2026-07-19**, alongside `/services` and `/consult` coverage.
+Live probe confirms both sections 308 correctly today, including
+`/czechia/en/services/travel-health-prague` (also 308, same target family).
+
+### 17.2 Live intent/content comparison
+
+Only one page exists to compare — the redirect target. Live fetch,
+Googlebot UA, 2026-08-13:
+
+- **Title:** "Cestovní medicína online | Předpis na malárii a příprava na cestu"
+- **Meta description:** malaria-prevention medical prep for travel; explicit
+  that antimalarials are prescription-only and not available at a
+  vaccination center; ČLK-registered doctor risk assessment + eReceipt;
+  same-day appointment.
+- **H1:** "Cestovní medicína — předpis na malárii a příprava na cestu online"
+- **Robots:** `index, follow`. **Canonical:** self.
+- **hreflang cluster:** 6 locales (cs/en/pt/es/ro/de) + `x-default` → cs, all
+  present in the sitemap.
+
+**Classification: not a duplicate-content question at all — there is one
+document.** The "duplicate" is a live URL vs. a dead URL that still returns a
+body via redirect, not two competing pieces of content.
+
+### 17.3 GSC demand and query×page ownership
+
+Fresh pull, `get_search_console_performance`, 90-day window
+**2026-05-09 → 2026-08-09** (`dataState=all`, last complete date consistent
+with §1's lag note), `page` dimension, filtered per URL family:
+
+| Page (all locales) | Clicks | Impr | Notes |
+| --- | ---: | ---: | --- |
+| `cestovni-medicina-praha` — cs | 2 | 20 | pos 13.0 |
+| `cestovni-medicina-praha` — pt | 0 | 9 | pos 23.4 — Portuguese-language queries landing on the CZ market's page (§17.3 note below) |
+| `cestovni-medicina-praha` — de/en/es/ro | 0 | 9 (combined) | pos 4.5–75.7, all ≤3 impressions each |
+| `cestovni-medicina-praha` total | **2** | **38** | — |
+| `travel-health-prague` (legacy) — cs | 2 | 43 | pos 11.6 |
+| `travel-health-prague` (legacy) — en | 0 | 19 | pos 8.0 |
+| `travel-health-prague` total | **2** | **62** | — |
+
+Query-level breakdown is mostly withheld by GSC's own low-count anonymization
+(query×page pull for both URL families returns only 8 named rows combined,
+covering ~10 of the 100 total impressions) — **there is no identifiable
+commercial query cluster to test for cannibalization; the visible fragments
+are noise** (a bare "ano", "antimalarika cena" at position 2 with 1
+impression/0 clicks, "do they speak english?", and four Portuguese
+"consulta do viajante" variants that are themselves a locale-mismatch
+curiosity, not commercial signal). Daily time series for `travel-health-prague`
+(16-month pull) shows **zero impressions before 2026-07-19** and a thin,
+continuous trickle from **2026-07-19 through 2026-08-09** (1–7/day) — i.e.
+the legacy URL's GSC activity starts the same day the redirect rule shipped
+and has continued since, not a residual tail from before the migration.
+
+**Per rule 4: do not manufacture a commercial cluster where GSC contains
+none.** At ~100 combined impressions and 4 clicks over 90 days, this is
+sub-material demand by this document's own standard (compare §2's country
+scoreboard, where whole-market Czechia is 90 clicks/1,891 impressions in 28
+days) — thinner than every other Czech content-gap row in §10.3 except the
+tools cluster.
+
+### 17.4 Cannibalization test
+
+Applying the four-part test from the ticket:
+
+1. Intent materially overlaps — **trivially yes**, since both URLs render/
+   redirect to the same content.
+2. Both URLs participate in the same query family — **weakly**; the two
+   named cs queries visible in GSC ("ano", "cestovní medicína") are
+   split one-each across the two URLs, but the sample is too small (2
+   queries) to establish a real family.
+3. Ownership unstable/split, or the wrong URL wins — **the legacy URL
+   currently draws more impressions in GSC's own attribution** (62 vs. 38
+   combined; cs 43 vs. 20) — superficially matching "wrong URL wins."
+4. Consolidation plausibly improves clarity — **no**: the correct
+   consolidation (a 308 to the canonical, self-canonical target, full
+   hreflang cluster, sitemap inclusion) **already shipped** on 2026-07-19.
+   There is nothing left to consolidate in code.
+
+**Verdict: NOT true cannibalization.** Condition 4 fails outright — this
+document does not classify "Google hasn't yet processed an already-correct
+redirect" as cannibalization anywhere else (see §6 watchlist: Hlavatý,
+Telmo Coelho, the Ireland sick-cert/atestado pairs, `ie-medical-consultation`
+— all show the identical "legacy URL still earning impressions/clicks despite
+a live, correct 308" pattern, all classified WAITING FOR GOOGLE, none
+classified as cannibalization or given a redirect/canonical implementation
+beyond the one already shipped).
+
+### 17.5 URL Inspection / canonical evidence
+
+`inspect_urls`, 2026-08-13, all three relevant URLs:
+
+| URL | Verdict | Coverage | Google's canonical | Last crawl | Referring URLs |
+| --- | --- | --- | --- | --- | --- |
+| `.../services/travel-health-prague` (cs) | PASS | Submitted and indexed | **itself** (not yet flipped to "Page with redirect") | **2026-07-18** — one day *before* the redirect rule shipped | `/czechia` (bare, unlocalized — itself now a 308 to `/czechia/cs`, per §3's canonicalisation table; stale referrer) |
+| `.../services/cestovni-medicina-praha` (cs) | PASS | Submitted and indexed | self, matches user canonical | 2026-07-20 | `/general-consultation-cz` (legacy alias, itself a 308 → `/czechia/cs/gp-consultation-online` — live-probed this pass), sitemap.xml |
+| `.../services/travel-health-prague` (en) | PASS | Submitted and indexed | itself | 2026-07-19 | `/czechia/cs/services/travel-health-prague` |
+
+**Google has not recrawled the legacy cs URL since before the redirect
+existed.** This is the same mechanism documented throughout §5/§6 for every
+other legacy-slug consolidation in this repo — a live, correct redirect that
+Google's index has not yet caught up to. It is not evidence of a routing
+defect, a wrong canonical, or competing live content.
+
+### 17.6 Internal-link ownership
+
+Live-probed CZ homepage (`/czechia/cs`) and repo-wide grep, 2026-08-13:
+
+- `/czechia/cs` links to the current-shape URL **three times** (two nav/body
+  anchors + one `/czechia/cs/book?service=cestovni-medicina-praha` CTA).
+  **Zero** live anchors to `travel-health-prague` anywhere in production
+  markup.
+- Repo-wide grep for the legacy slug outside `next.config.ts` and the
+  migration script returns only Next.js's auto-generated `routes.d.ts`
+  typegen artifacts (build output, not authored links, not shipped markup).
+- `cestovni-medicina-praha` is not hardcoded anywhere in `frontend/` — it is
+  entirely CMS-driven through the generic `[serviceSlug]` route, same
+  architecture as every other service page in the catalog.
+
+**No conflicting internal-link signal exists in production.** Google's
+stale self-canonical on the legacy URL is explained entirely by crawl
+timing (§17.5), not by any current internal link still pointing at it.
+
+### 17.7 Bookability / product state
+
+`cestovni-medicina-praha` renders a full booking CTA
+(`/czechia/cs/book?service=cestovni-medicina-praha`) on the live page and
+sits in the same CZ consult/services catalog architecture as
+`neschopenka-online`, `lekar-online-praha` and the rest of §10.3's Czechia
+map — none of which carry any open bookability question in this document.
+No indication of a CZ-SEO-006-style onboarding gap (that pattern was
+doctor-record-specific: zero `DoctorAvailability`/`assignedServices` rows).
+A full DB dive was judged disproportionate to a sub-100-impression cluster
+with no positive signal of a supply problem; not performed this pass.
+
+### 17.8 Targeted SERP
+
+Not re-run this pass — §10.3's live-SERP finding from the same 2026-08-12
+rebaseline already answers this question and nothing in production changed
+since: **100% local-pack + vaccination-clinic organic results, zero
+telehealth competitors in the top 20** for the Czech travel-medicine query
+set. This is a page-type/business-model wall (patients search this as a
+"where do I get a travel vaccine near me" local-intent query, not a
+telehealth query), independent of and orthogonal to the duplicate-URL
+question this ticket was scoped to resolve.
+
+### 17.9 Primary classification
+
+**Corrected 2026-08-13 (COUNTRY-WAVE-001-CLOSE): E — INDEXING/CRAWL
+TRANSITION / NORMAL REDIRECT RECRAWL LAG** (superseding this section's
+original G call — G's "different technical defect" framing overstated it;
+there is no defect, just Google not yet having recrawled a correct fix).
+
+- Old slug (`travel-health-prague`) and new slug (`cestovni-medicina-praha`)
+  are **one `Service` row** — the migration script renames the slug column
+  in place, it does not create a second row (§17.1).
+- The legacy URL **already 308s directly** to the current canonical, both
+  `/services` and `/consult`, one hop, correct target (§17.1, §17.5).
+- **No live legacy internal links** anywhere in production — the CZ
+  homepage and every grepped source link only the current slug (§17.6).
+- Google's legacy-canonical evidence is a crawl dated **2026-07-18**, one day
+  **before** the 2026-07-19 redirect shipped (§17.5) — stale-by-construction,
+  not a live conflict.
+- **No duplication and no cannibalization** — see §17.4; condition 4
+  (consolidation would improve clarity) fails outright since the correct
+  redirect is already live.
+- **Recheck ~2026-09-01**, aligned with the existing §6 watchlist cadence.
+- **No implementation** — nothing to redirect, canonicalize, retarget or
+  noindex that isn't already correct in production.
+
+Not A/B/C/D under this ticket's original G-track reasoning (§17.4, still
+valid): no true cannibalization, no product-state problem, no live
+duplicate-URL shape, and the canonical page is not "too new" (crawled
+2026-07-20, 3+ weeks of history). Not F outright, since ~100 impressions/90d
+is not literally zero — but it is thin enough that no implementation is
+justified regardless.
+
+### 17.10 CZ-SEO-008 — not proposed
+
+**No implementation gap exists to propose one for.** The correct fix — a
+308 from the legacy English slug to the canonical Czech slug, covering both
+`/services` and `/consult`, self-canonical target, full hreflang cluster,
+sitemap-eligible — **already shipped in commit `79083081` on 2026-07-19**.
+The only remaining state is Google's own recrawl of a URL it indexed one day
+*before* that fix landed. There is nothing left to redirect, canonicalize,
+retarget or noindex. Add both URLs to the existing §6 indexation watchlist
+(same recheck cadence, next due 2026-09-01) rather than opening a new
+ticket; escalate only if `travel-health-prague`'s last-crawl date fails to
+advance past 2026-07-19 by the next recheck **and** Google's verdict is
+still self-canonical rather than "Page with redirect."
+
+### 17.11 Control-state carry-forwards (unchanged by this pass)
+
+Global Foundation = VERIFIED / MONITOR EXCEPTIONS. Ireland labs = WAIT
+~2026-09-08. Czech GP = CZ-SEO-001 — RANKING RAMP / WAIT-MEASURE, remeasure
+~2026-09-08. Czech mental health = CZ-SEO-002 — NO REAL ASYMMETRY / MONITOR.
+Czech women's health = CZ-SEO-003 — EXISTING PAGE / NO DEMAND / NO ACTION.
+Czech doctor supply (Felici / Nytra / Kharlamova) = CZ-SEO-006 — D,
+PRODUCT/OPERATIONS STATE NEEDS RESOLUTION, frozen pending an ownership
+decision — not reopened this pass. Hlavatý = ADMIN-DEACTIVATED 2026-08-12,
+REASON UNCONFIRMED — frozen, not reopened this pass.
+
+**§6 watchlist addition (both new rows, not yet applied to §6 — see note
+below):**
+
+| URL | Production state | Google's stored state | Last crawl | Status |
+| --- | --- | --- | --- | --- |
+| `/czechia/cs/services/travel-health-prague` | 308 → `.../cestovni-medicina-praha` (live since `79083081`, 2026-07-19) | Self-canonical, "Submitted and indexed" | **2026-07-18** (pre-dates the fix by 1 day) | WAIT FOR GOOGLE (added 2026-08-13, CZ-SEO-007) |
+| `/czechia/en/services/travel-health-prague` | 308 → `.../cestovni-medicina-praha` (en) | Self-canonical, "Submitted and indexed" | 2026-07-19 | WAIT FOR GOOGLE (added 2026-08-13, CZ-SEO-007) |
+
+*Note: these two rows describe the intended §6 addition; the actual §6 table
+edit is deferred to keep this section's diff isolated for review — apply
+verbatim to §6 when this ticket's docs commit is authorized.*
+
+**NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-007 UPDATE UNCOMMITTED.**
+
+---
