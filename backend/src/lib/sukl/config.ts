@@ -102,6 +102,56 @@ export function suklTimeoutMs(): number {
   return env.SUKL_REQUEST_TIMEOUT_MS;
 }
 
+// ─── Request identity ────────────────────────────────────────────────────────
+//
+// Every operation carries `Pristupujici { Uzivatel, Pracoviste }` plus a
+// `Zprava` header — even the read-only AppPing. These accessors give the one
+// blocking value (Uzivatel) a single place to be reported as missing, rather
+// than letting it surface as an opaque SÚKL fault.
+
+/** The calling account's login. A CREDENTIAL — never log or return it. */
+export function suklUzivatel(): string | null {
+  return env.SUKL_TEST_UZIVATEL?.trim() ?? null;
+}
+
+/** Interface version for the `Zprava` header, e.g. "202601B". */
+export function suklInterfaceVersion(): string | null {
+  return env.SUKL_INTERFACE_VERSION?.trim() ?? null;
+}
+
+/** Our software identifier, max 12 chars. Defaulted — SÚKL does not issue it. */
+export function suklSwKlienta(): string {
+  return env.SUKL_SW_KLIENTA?.trim() || "GlobalHlth";
+}
+
+/**
+ * True when an actual SOAP operation can be attempted: certificate, a service
+ * host, and the identity plus version that every message carries.
+ *
+ * Deliberately distinct from `isSuklConfigured()` (certificate) and
+ * `isSuklServiceConfigured()` (network). A deployment can hold a valid
+ * certificate AND reach SÚKL and still be unable to send anything; the console
+ * should say which of the three is missing rather than showing one red light.
+ */
+export function isSuklCallable(service: SuklService): boolean {
+  return (
+    isSuklConfigured() &&
+    isSuklServiceConfigured(service) &&
+    Boolean(suklUzivatel()) &&
+    Boolean(suklInterfaceVersion()) &&
+    Boolean(suklWorkplaceCode())
+  );
+}
+
+/** What is still missing before any operation can be called. Safe to display. */
+export function suklMissingCallConfig(service: SuklService): string[] {
+  const missing = suklMissingConfig();
+  if (!isSuklServiceConfigured(service)) missing.push(SUKL_SERVICE_ENV_VARS[service]);
+  if (!suklUzivatel()) missing.push("SUKL_TEST_UZIVATEL");
+  if (!suklInterfaceVersion()) missing.push("SUKL_INTERFACE_VERSION");
+  return missing;
+}
+
 /**
  * Last 8 hex characters of a SHA-256 fingerprint, colons stripped. Enough for a
  * human to confirm "Railway is serving the same certificate I have locally"
