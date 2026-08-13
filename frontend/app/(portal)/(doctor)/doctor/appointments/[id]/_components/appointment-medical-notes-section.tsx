@@ -39,9 +39,6 @@ export type AppointmentMedicalNotesCopy = {
   viewNote: string;
 };
 
-// ponytail: this component is currently unused within the appointment
-// workspace (no caller renders it) — copy stays optional with an English
-// fallback so it's safe if/when it gets wired up.
 const DEFAULT_COPY: AppointmentMedicalNotesCopy = {
   title: "Medical notes",
   addNoteLabel: "Add medical note",
