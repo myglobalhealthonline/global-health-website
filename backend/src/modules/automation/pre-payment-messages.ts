@@ -187,7 +187,7 @@ export function appendPatientPortalWhatsApp(
   if (portal.setPasswordUrl && portal.setPasswordUrl !== portal.signInUrl) {
     lines.push(
       t(lang, {
-        en: `Set password: ${portal.setPasswordUrl}`,
+        en: `Set password here: ${portal.setPasswordUrl}`,
         pt: `Definir palavra-passe: ${portal.setPasswordUrl}`,
         ro: `Setați parola: ${portal.setPasswordUrl}`,
         cs: `Nastavit heslo: ${portal.setPasswordUrl}`,
