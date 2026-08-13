@@ -483,7 +483,8 @@ async function fulfillPaidOrderFromCheckoutSession(
           item.patientPassportNumber ||
           item.patientUtenteNumber ||
           item.patientAddressLine1 ||
-          item.patientAddressCity)
+          item.patientAddressCity ||
+          item.insuranceCompanyId)
       ) {
         const existing = await tx.patientProfile.findUnique({
           where: { email: aptEmail.toLowerCase() },
@@ -498,8 +499,19 @@ async function fulfillPaidOrderFromCheckoutSession(
             addressState: true,
             addressPostalCode: true,
             addressCountryCode: true,
+            insuranceProviderName: true,
+            insurancePolicyNumber: true,
           },
         });
+        // Card snapshot lives on the order — resolve the company name once
+        // so it lands on the profile alongside the (already-encrypted)
+        // policy number instead of just the opaque insuranceCompanyId.
+        const insuranceCompany = item.insuranceCompanyId
+          ? await tx.insuranceCompany.findUnique({
+              where: { id: item.insuranceCompanyId },
+              select: { name: true },
+            })
+          : null;
         const fill = <T>(existingVal: T | null, snapshotVal: T | null): T | null =>
           existingVal ?? snapshotVal ?? null;
         await tx.patientProfile.upsert({
@@ -533,6 +545,16 @@ async function fulfillPaidOrderFromCheckoutSession(
               existing?.addressCountryCode ?? null,
               item.patientAddressCountryCode,
             ),
+            insuranceProviderName: fill(
+              existing?.insuranceProviderName ?? null,
+              insuranceCompany?.name ?? null,
+            ),
+            // Already ciphertext (same phi:v1: envelope) — copied verbatim,
+            // same treatment as the Appointment snapshot above.
+            insurancePolicyNumber: fill(
+              existing?.insurancePolicyNumber ?? null,
+              item.insurancePolicyNumber,
+            ),
           },
           create: {
             email: aptEmail.toLowerCase(),
@@ -549,6 +571,8 @@ async function fulfillPaidOrderFromCheckoutSession(
             addressState: item.patientAddressState,
             addressPostalCode: item.patientAddressPostalCode,
             addressCountryCode: item.patientAddressCountryCode,
+            insuranceProviderName: insuranceCompany?.name ?? null,
+            insurancePolicyNumber: item.insurancePolicyNumber,
           },
         });
       }
