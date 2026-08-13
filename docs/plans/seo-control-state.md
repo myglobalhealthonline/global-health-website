@@ -3636,3 +3636,199 @@ verbatim to §6 when this ticket's docs commit is authorized.*
 **NO IMPLEMENTATION / NO DEPLOY / CZ-SEO-007 UPDATE UNCOMMITTED.**
 
 ---
+
+## 18. COUNTRY-WAVE-001-CLOSE — Ireland mental-health legacy canonical resolution (2026-08-13)
+
+**Mode: narrow read-only investigation.** No redirects, no canonical changes,
+no content edits, no deploy.
+
+### 18.1 URL family, resolved exactly
+
+Not guessed — resolved from `frontend/next.config.ts`, live Googlebot-UA
+probes, the sitemap, and GSC.
+
+| URL | Role |
+| --- | --- |
+| `/ireland/en/services/mental-health-consultation` | **Current canonical.** In sitemap (6-locale hreflang cluster: en/pt/es/cs/ro/de), self-canonical, `index, follow`. |
+| `/ireland/mental-health-assessment-consultation` | **Legacy Wix-shape URL**, bare `/ireland/{slug}`. 308 → the current canonical, single hop (verified live). Not in sitemap. |
+| `/es/ireland/mental-health-assessment-consultation` | **Locale-prefixed legacy variant.** 308 → the current canonical (as of the 2026-07-30 fix — see §18.6). Not in sitemap. Near-dead in GSC (2 impressions/90d, pos 89.5). |
+| `/ireland/{cs,es,pt,ro}/services/mental-health-consultation` | Sibling-locale current-shape pages, all in sitemap, all thin but present in GSC. |
+
+No other legacy slug for this service was found (repo-wide grep, sitemap,
+GSC page-dimension pull all agree on this one legacy shape plus its
+locale-prefixed variant).
+
+### 18.2 Live HTTP migration signals
+
+All live-probed 2026-08-13, Googlebot UA:
+
+| URL | HTTP | Hops | Final target | Final status | Canonical (declared) | Robots | hreflang | Sitemap |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `/ireland/mental-health-assessment-consultation` | 308 | 1 | `/ireland/en/services/mental-health-consultation` | 200 | self (target page) | `index,follow` (target) | 6-locale cluster (target) | No (legacy) / Yes (target) |
+| `/es/ireland/mental-health-assessment-consultation` | 308 | 1 | same target | 200 | same | same | same | No (legacy) / Yes (target) |
+
+**Healthy migration shape confirmed: legacy → one permanent redirect → exact
+current canonical.** No chain, no wrong target, no 200 legacy duplicate, no
+redirect-to-home/directory, no locale mismatch. (An earlier, cruder rule
+shipped 2026-07-24 sent the locale-prefixed variant to a generic specialist
+hub instead of the exact page — see §18.6 — but that was superseded 6 days
+later and is not live today.)
+
+### 18.3 90-day GSC ownership
+
+Extraction 2026-08-13, `dataState=all`, window **2026-05-10 → 2026-08-10**
+(latest complete date consistent with the doc's standard 3-day lag).
+
+| Page | Clicks | Impr | CTR | Avg pos |
+| --- | ---: | ---: | ---: | ---: |
+| `/ireland/en/services/mental-health-consultation` (current) | **1** | **82** | 1.2% | 20.1 |
+| `/ireland/mental-health-assessment-consultation` (legacy bare) | 0 | 50 | 0% | 41.8 |
+| `/es/ireland/mental-health-assessment-consultation` (legacy es) | 0 | 2 | 0% | 89.5 |
+| `/ireland/{cs,es,pt,ro}/services/mental-health-consultation` (current, other locales) | 0 | 21 (combined) | 0% | 4.3–12.75 |
+
+**Current already owns 61% of combined impressions and the only click.**
+This corrects the original Country Wave 1 note's "single-digit impressions"
+characterization — the legacy URL's real 90-day volume is 50 impressions,
+not single digits — but the ownership direction it flagged (Google still
+showing the legacy URL) is real, just not dominant.
+
+Query×page attribution (26 rows, `contains: mental-health`) shows the
+overlapping query set directly: "mental health assessment," "mental health
+assessment ireland," "mental health assessment specialists," "mental health
+evaluation," and "psychiatric assessment ireland" all appear on **both**
+URLs. **On every one of these shared queries, the current page ranks better
+than the legacy page** (e.g. "mental health assessment ireland": current
+pos 16 vs. legacy pos 40; "mental health assessment specialists": current
+pos 29.75 vs. legacy pos 40.5). The legacy page has never converted a
+click in this window; the current page has one.
+
+**Ownership is transitioning, in the current page's favor, not stuck.**
+
+### 18.4 URL Inspection / canonical evidence
+
+`inspect_urls`, 2026-08-13:
+
+| URL | Verdict | Coverage | User canonical | Google canonical | Last crawl | Referring URLs |
+| --- | --- | --- | --- | --- | --- | --- |
+| `/ireland/mental-health-assessment-consultation` | PASS | Submitted and indexed | current-shape page (declared correctly) | **itself** — Google overrides the declared canonical | **2026-05-29** | `/general-consultation-ie` (itself now a 308 → `/ireland/en/gp-consultation-online`, live-probed this pass — a second-order stale referrer) |
+| `/ireland/en/services/mental-health-consultation` (current) | PASS | Submitted and indexed | self | self, matches | **2026-08-12** | `/ireland/en` (homepage), `/ireland/ro/services/mental-health-consultation` (sibling locale) |
+| `/es/ireland/mental-health-assessment-consultation` | PASS | Submitted and indexed | itself (no redirect target declared at last crawl) | itself | **2026-05-02** | none |
+
+**Google has not recrawled either legacy URL since before either redirect
+fix shipped.** The bare legacy URL's last crawl (05-29) predates the
+correct exact-target fix (07-30) by two months and even predates the
+current page's own ranking ramp (first GSC impression 07-18). The
+locale-prefixed legacy URL's last crawl (05-02) predates the *first*
+redirect attempt for it (07-24) by nearly three months, and its
+`userCanonical` at that stale snapshot is itself — consistent with it
+having no redirect at all yet at crawl time.
+
+### 18.5 Timeline
+
+| Event | Date |
+| --- | --- |
+| Google's last recorded crawl of `/es/ireland/mental-health-assessment-consultation` | 2026-05-02 |
+| Google's last recorded crawl of `/ireland/mental-health-assessment-consultation` (bare) | 2026-05-29 |
+| First redirect for the locale-prefixed shape shipped (`126a84e3`) — to a generic specialist hub, not the exact page | 2026-07-24 |
+| Current page's first GSC impression | 2026-07-18 |
+| Correct exact-target redirect shipped for both bare and locale-prefixed shapes (`699a89b2`) | 2026-07-30 |
+| Google's last recorded crawl of the current-shape page | 2026-08-12 |
+| Today (this investigation) | 2026-08-13 |
+
+**Reading:** both legacy crawls predate both redirect fixes by weeks to
+months. Google simply has not recrawled either legacy URL since the site's
+current migration state (whichever version of it) existed — this is
+**normal migration lag**, not a persistent post-fix conflict, because there
+has been no post-fix crawl to be persistent about yet.
+
+### 18.6 Internal links and sitemap
+
+- Sitemap contains **only** the current-shape URL, all 6 locales — confirmed
+  by live sitemap fetch, zero legacy rows.
+- Ireland homepage (`/ireland/en`) links the current-shape URL twice (nav/
+  body anchor + `/ireland/en/book?service=mental-health-consultation` CTA).
+  Zero anchors to either legacy shape.
+- Repo-wide grep for the legacy slug outside `next.config.ts` and Next's
+  typegen build artifacts returns exactly one hit:
+  `frontend/data/routes.ts:79`, a static Wix-migration checklist file
+  ("Route inventory mirrored from README... implement gradually") with
+  **zero importers anywhere in the codebase** — the same dead-code pattern
+  already documented for `lib/seo/page-seo.ts` in §5
+  (`SEO-FOUNDATION-001-E`). It renders nothing and links nothing live.
+- **Quantified remaining live legacy links: zero.**
+
+### 18.7 Content/product identity
+
+The legacy slug (`mental-health-assessment-consultation`) and current slug
+(`mental-health-consultation`) represent the **same service** — this is a
+same-service Wix-era slug simplification, the identical pattern used
+site-wide for every other Ireland/CZ/PT/RO legacy-to-current rename in this
+document (§10.1's redirect table, the CZ localized-slug map in §17.1, etc.),
+not a case of two distinct services being conflated. The current page's
+query set ("mental health assessment," "psychiatric assessment ireland,"
+"mental health evaluation") is squarely the same patient intent the legacy
+slug's own name describes. No broader content audit performed or needed —
+out of this ticket's scope per its own instruction.
+
+### 18.8 Root-cause classification
+
+**A — NORMAL REDIRECT / CANONICAL REPROCESSING LAG.** Migration signals are
+clean (§18.2: single hop, correct exact target, verified live for both
+shapes), the legacy crawl evidence predates both redirect fixes by weeks to
+months (§18.4, §18.5), and query×page attribution already shows the current
+page winning every shared query and the majority of total impressions
+(§18.3) despite Google's stale canonical record. Not B (redirect is clean).
+Not C (no post-fix crawl exists yet to conflict with anything). Not D (zero
+live internal legacy links, §18.6). Not E (same service, same intent,
+§18.7). Not F (50 impressions/90d on the legacy URL is real, not
+negligible — it just isn't evidence of a defect).
+
+### 18.9 Implementation gate
+
+**A → close as WAIT/MONITOR. No `IE-SEO-001` proposed** — there is no
+redirect, canonical, internal-link or content defect to repair; the code is
+already correct and verified live. Recheck alongside the next scheduled
+`inspect_urls` pass (§6 cadence, next due 2026-09-01): escalate only if by
+then the legacy bare URL's last-crawl date has advanced past 2026-07-30
+**and** Google's `googleCanonical` is still self-selecting the legacy URL
+rather than resolving to the current page.
+
+### 18.10 Country Wave 1 closure
+
+All IE + CZ open items reassessed against current evidence:
+
+| Item | State |
+| --- | --- |
+| Ireland sick certificate | MONITOR (unchanged) |
+| Ireland labs | WAIT ~2026-09-08 (unchanged) |
+| Ireland general GP | Authority wall / no action (unchanged) |
+| **Ireland mental health** | **NORMAL REDIRECT LAG (A) / WAIT-MONITOR — resolved this pass, added to §6 watchlist cadence** |
+| Czech GP | Ranking ramp / remeasure ~2026-09-08 (unchanged) |
+| Czech mental health | No real asymmetry (unchanged) |
+| Czech women's health | Existing page / no demand (unchanged) |
+| Czech doctor incomplete onboarding (Felici/Nytra/Kharlamova) | Operations dependency, frozen (unchanged, CZ-SEO-006) |
+| Hlavatý | Admin-deactivated / reason unconfirmed, business dependency, frozen (unchanged) |
+| Czech travel medicine | Normal redirect recrawl lag (E, corrected) / recheck ~2026-09-01 (CZ-SEO-007, unchanged this pass) |
+
+**No open IE/CZ item resolves to B–E (an actual defect) this pass.** Every
+item is either already-healthy-and-monitored, a genuine recrawl-timing wait,
+or an operations/business dependency outside SEO's remit.
+
+**COUNTRY WAVE 1 — IRELAND + CZECHIA: COMPLETE / MONITOR EXCEPTIONS.**
+
+### 18.11 Next-wave recommendation
+
+Country Wave 1 closes without an actionable SEO implementation. Recommend
+**COUNTRY WAVE 2 — PORTUGAL + SPAIN** as the next wave. Not started this
+run, per this ticket's own scope limit.
+
+### 18.12 §6 watchlist addition (deferred, apply on commit authorization)
+
+| URL | Production state | Google's stored state | Last crawl | Status |
+| --- | --- | --- | --- | --- |
+| `/ireland/mental-health-assessment-consultation` | 308 → current canonical (live since `699a89b2`, 2026-07-30) | Self-canonical (overrides declared canonical), "Submitted and indexed" | **2026-05-29** (predates the fix) | WAIT FOR GOOGLE (added 2026-08-13, COUNTRY-WAVE-001-CLOSE) |
+| `/es/ireland/mental-health-assessment-consultation` | 308 → current canonical (live since `699a89b2`, 2026-07-30) | Self-canonical, "Submitted and indexed" | **2026-05-02** (predates both fixes) | WAIT FOR GOOGLE (added 2026-08-13, COUNTRY-WAVE-001-CLOSE) |
+
+**NO IMPLEMENTATION / NO DEPLOY / CLOSURE UPDATE UNCOMMITTED.**
+
+---
