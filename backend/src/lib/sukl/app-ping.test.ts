@@ -94,6 +94,33 @@ test("a SÚKL S009 fault is reported with its code and text", () => {
   assert.match(v.errorMessage ?? "", /AppPingDotaz/);
 });
 
+test("prefers SÚKL's own error code over the generic soap:Server", () => {
+  // Every SÚKL failure carries faultcode "soap:Server", which distinguishes
+  // nothing. Their real code lives in the structured <Chyba> inside <detail>,
+  // and it is what an operator needs: S019 and S026 have completely different
+  // fixes (send a header vs. use a different password).
+  const body =
+    "<soap:Envelope><soap:Body><soap:Fault>" +
+    "<faultcode>soap:Server</faultcode>" +
+    "<faultstring>S026 - Chybné uživatelské jméno/heslo</faultstring>" +
+    "<detail><Chyba><Kod>S026</Kod>" +
+    "<Popis>Chybné uživatelské jméno/heslo nebo zablokovaný účet</Popis>" +
+    "</Chyba></detail>" +
+    "</soap:Fault></soap:Body></soap:Envelope>";
+  const v = interpretAppPingResponse({ httpStatus: 401, body });
+  assert.equal(v.ok, false);
+  assert.equal(v.errorCode, "S026");
+  assert.match(v.errorMessage ?? "", /zablokovan/);
+});
+
+test("falls back to the SOAP faultcode when there is no structured Chyba", () => {
+  const body =
+    "<soap:Envelope><soap:Body><soap:Fault>" +
+    "<faultcode>soap:Client</faultcode><faultstring>Bad</faultstring>" +
+    "</soap:Fault></soap:Body></soap:Envelope>";
+  assert.equal(interpretAppPingResponse({ httpStatus: 500, body }).errorCode, "soap:Client");
+});
+
 test("a clean 200 is a pass, and echoes the message id", () => {
   const body =
     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>' +
