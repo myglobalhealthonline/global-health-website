@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Check, MessageCircleQuestion, X } from "lucide-react";
+import { Check, MessageCircleQuestion } from "lucide-react";
 
 export type CrossBorderRxInboxCopy = {
   fromLabel: string;
@@ -23,7 +23,7 @@ export type CrossBorderRxInboxCopy = {
   couldNotSubmit: string;
 };
 
-type Decision = "ACCEPT" | "MORE_INFO" | "REFUSE";
+type Decision = "ACCEPT" | "MORE_INFO";
 
 export function CrossBorderRxDecisionPanel({
   requestId,
@@ -100,15 +100,6 @@ export function CrossBorderRxDecisionPanel({
           onClick={() => setMode(mode === "MORE_INFO" ? null : "MORE_INFO")}
         >
           <MessageCircleQuestion className="size-3.5" /> {copy.requestInfo}
-        </button>
-        <button
-          type="button"
-          className="gh-btn gh-btn-soft"
-          disabled={pending}
-          onClick={() => setMode(mode === "REFUSE" ? null : "REFUSE")}
-          title={copy.refuseHint}
-        >
-          <X className="size-3.5" /> {copy.refuse}
         </button>
       </div>
 

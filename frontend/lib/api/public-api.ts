@@ -158,6 +158,27 @@ export function revertCrossBorderRxConsent(token: string) {
   });
 }
 
+export type CrossBorderRxMoreInfoView = {
+  patientFullName: string;
+  targetDoctorName: string;
+  question: string | null;
+  answer: string | null;
+  answered: boolean;
+};
+
+export function fetchCrossBorderRxMoreInfo(token: string) {
+  return publicFetch<CrossBorderRxMoreInfoView>(
+    `/api/public/cross-border-rx-more-info?token=${encodeURIComponent(token)}`,
+  );
+}
+
+export function submitCrossBorderRxMoreInfoAnswer(token: string, answer: string) {
+  return publicFetch<{ status: string }>("/api/public/cross-border-rx-more-info", {
+    method: "POST",
+    body: JSON.stringify({ token, answer }),
+  });
+}
+
 export function fetchPatientUploadInfo(token: string) {
   return publicFetch<{ email: string; fullName: string | null }>(
     `/api/public/patient-upload?token=${encodeURIComponent(token)}`,

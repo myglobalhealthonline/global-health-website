@@ -26,7 +26,10 @@ import {
   notifyPatientCrossBorderAccepted,
   notifyRequestingDoctorFinalised,
   notifyStaffCrossBorderRequest,
+  notifySourceDoctorMoreInfoRequested,
+  notifyTargetDoctorMoreInfoAnswered,
 } from "./cross-border-rx-notifications.service.js";
+import { createMedicalNote } from "../medical-notes/medical-notes.service.js";
 import {
   copyDisclosedDocuments,
   copyDisclosedPatientContext,
@@ -45,6 +48,20 @@ function hashConsentToken(token: string): string {
 function buildConsentUrl(rawToken: string): string {
   const base = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
   return `${base}/cross-border-consent?token=${encodeURIComponent(rawToken)}`;
+}
+
+/**
+ * Doctor B → Doctor A "request more information" token. Same S-009 rule as
+ * the consent token above: the raw token lives only in the emailed/WhatsApped
+ * link, the DB stores its SHA-256 hash. 14-day TTL, matching the consent link.
+ */
+const MORE_INFO_TOKEN_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+function hashMoreInfoToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+function buildMoreInfoUrl(rawToken: string): string {
+  const base = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
+  return `${base}/cross-border-more-info?token=${encodeURIComponent(rawToken)}`;
 }
 
 /**
@@ -134,6 +151,30 @@ export class CrossBorderRxIdentityRequiredError extends Error {
   constructor(label: string) {
     super(`Enter your ${label} or your passport number so the prescription can identify you.`);
     this.name = "CrossBorderRxIdentityRequiredError";
+  }
+}
+export class CrossBorderRxMoreInfoInvalidError extends Error {
+  constructor() {
+    super("This link is invalid.");
+    this.name = "CrossBorderRxMoreInfoInvalidError";
+  }
+}
+export class CrossBorderRxMoreInfoExpiredError extends Error {
+  constructor() {
+    super("This link has expired. Ask the prescribing doctor to request more information again.");
+    this.name = "CrossBorderRxMoreInfoExpiredError";
+  }
+}
+export class CrossBorderRxMoreInfoAlreadyAnsweredError extends Error {
+  constructor() {
+    super("This question has already been answered.");
+    this.name = "CrossBorderRxMoreInfoAlreadyAnsweredError";
+  }
+}
+export class CrossBorderRxAnswerRequiredError extends Error {
+  constructor() {
+    super("An answer is required.");
+    this.name = "CrossBorderRxAnswerRequiredError";
   }
 }
 
@@ -1398,12 +1439,30 @@ export async function decideCrossBorderRxRequest(
         },
       });
     }
+    // Mint a fresh Doctor-A answer link. Overwrites any still-unanswered
+    // previous round for this request — same "resend supersedes" behaviour
+    // as PatientUploadLink.
+    const moreInfoToken = randomBytes(32).toString("base64url");
     await prisma.crossBorderPrescriptionRequest.update({
       where: { id: request.id },
-      data: { status: "MORE_INFO" },
+      data: {
+        status: "MORE_INFO",
+        moreInfoTokenHash: hashMoreInfoToken(moreInfoToken),
+        moreInfoTokenExpiresAt: new Date(Date.now() + MORE_INFO_TOKEN_TTL_MS),
+        moreInfoQuestion: message,
+        moreInfoAnswer: null,
+        moreInfoAskedAt: new Date(),
+        moreInfoAnsweredAt: null,
+      },
     });
     await notifySourceDoctor(request.sourceDoctorId, request.sourceAppointmentId, {
       snippet: `${request.patientFullName} · more information requested`,
+    });
+    await notifySourceDoctorMoreInfoRequested({
+      sourceDoctorId: request.sourceDoctorId,
+      patientFullName: request.patientFullName,
+      question: message,
+      answerUrl: buildMoreInfoUrl(moreInfoToken),
     });
     if (patientUserId) {
       await notifyUser(patientUserId, "CROSS_BORDER_RX_UPDATED", {
@@ -1441,6 +1500,112 @@ export async function decideCrossBorderRxRequest(
   ).catch(() => {});
 
   return { status: "REFUSED", upgradeUrl };
+}
+
+// ── Doctor A: answer Doctor B's "more information" request ─────────────────
+
+async function loadRequestByMoreInfoToken(token: string) {
+  const moreInfoTokenHash = hashMoreInfoToken(token);
+  const request = await prisma.crossBorderPrescriptionRequest.findUnique({
+    where: { moreInfoTokenHash },
+    select: {
+      id: true,
+      sourceDoctorId: true,
+      sourceAppointmentId: true,
+      targetDoctorId: true,
+      patientFullName: true,
+      moreInfoTokenExpiresAt: true,
+      moreInfoQuestion: true,
+      moreInfoAnswer: true,
+      moreInfoAnsweredAt: true,
+    },
+  });
+  if (!request) throw new CrossBorderRxMoreInfoInvalidError();
+  if (
+    !request.moreInfoTokenExpiresAt ||
+    request.moreInfoTokenExpiresAt.getTime() < Date.now()
+  ) {
+    throw new CrossBorderRxMoreInfoExpiredError();
+  }
+  return request;
+}
+
+export type CrossBorderRxMoreInfoView = {
+  patientFullName: string;
+  targetDoctorName: string;
+  question: string | null;
+  answer: string | null;
+  answered: boolean;
+};
+
+/** Public: Doctor A's view of Doctor B's question, before/after answering. */
+export async function getCrossBorderRxMoreInfoView(
+  token: string,
+): Promise<CrossBorderRxMoreInfoView> {
+  const request = await loadRequestByMoreInfoToken(token);
+  const targetDoctor = await prisma.doctor.findUnique({
+    where: { id: request.targetDoctorId },
+    select: { fullName: true },
+  });
+  return {
+    patientFullName: request.patientFullName,
+    targetDoctorName: targetDoctor?.fullName ?? "the prescribing doctor",
+    question: request.moreInfoQuestion,
+    answer: request.moreInfoAnswer,
+    answered: request.moreInfoAnsweredAt !== null,
+  };
+}
+
+/**
+ * Public: Doctor A submits their answer. Attaches it to the source
+ * appointment's MedicalNote history (so it's part of the permanent
+ * consultation record) and notifies Doctor B (email + WhatsApp) so they
+ * know to come back and decide. One answer per MORE_INFO round — the token
+ * (and this function) goes inert once answered; a later MORE_INFO decision
+ * mints a fresh token for the next round.
+ */
+export async function submitCrossBorderRxMoreInfoAnswer(
+  token: string,
+  answer: string,
+): Promise<{ status: "ANSWERED" }> {
+  const trimmed = answer.trim();
+  if (!trimmed) throw new CrossBorderRxAnswerRequiredError();
+  const request = await loadRequestByMoreInfoToken(token);
+  if (request.moreInfoAnsweredAt) {
+    throw new CrossBorderRxMoreInfoAlreadyAnsweredError();
+  }
+
+  const [sourceDoctor, targetDoctor] = await Promise.all([
+    prisma.doctor.findUnique({
+      where: { id: request.sourceDoctorId },
+      select: { fullName: true },
+    }),
+    prisma.doctor.findUnique({
+      where: { id: request.targetDoctorId },
+      select: { fullName: true },
+    }),
+  ]);
+
+  await prisma.crossBorderPrescriptionRequest.update({
+    where: { id: request.id },
+    data: { moreInfoAnswer: trimmed, moreInfoAnsweredAt: new Date() },
+  });
+
+  await createMedicalNote({
+    appointmentId: request.sourceAppointmentId,
+    doctorId: request.sourceDoctorId,
+    doctorDisplayName: sourceDoctor?.fullName ?? "Doctor",
+    content: `Reply to ${targetDoctor?.fullName ?? "the prescribing doctor"}'s request for more information (cross-border prescription):\n\nQ: ${request.moreInfoQuestion ?? ""}\n\nA: ${trimmed}`,
+  }).catch(() => {});
+
+  await notifyTargetDoctorMoreInfoAnswered({
+    targetDoctorId: request.targetDoctorId,
+    patientFullName: request.patientFullName,
+    question: request.moreInfoQuestion ?? "",
+    answer: trimmed,
+  });
+
+  return { status: "ANSWERED" };
 }
 
 /**
