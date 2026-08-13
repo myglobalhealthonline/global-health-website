@@ -552,6 +552,21 @@ export async function fetchDoctorConsultation(appointmentId: string) {
   }>(`/api/doctor/appointments/${appointmentId}/consultation`);
 }
 
+export type CrossBorderRxPendingMoreInfoDto = {
+  targetDoctorName: string;
+  question: string;
+  answer: string | null;
+  answered: boolean;
+};
+
+/** Doctor A's own appointment: a pending "more information" question from
+ *  Doctor B on a cross-border prescription request sourced here, if any. */
+export async function fetchDoctorCrossBorderRxMoreInfo(appointmentId: string) {
+  return doctorRequest<{ pending: CrossBorderRxPendingMoreInfoDto | null }>(
+    `/api/doctor/appointments/${appointmentId}/cross-border-rx/more-info`,
+  );
+}
+
 export type DoctorDocumentDto = {
   id: string;
   label: string;
