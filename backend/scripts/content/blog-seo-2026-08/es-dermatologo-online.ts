@@ -64,7 +64,7 @@ const es: LocalePost = {
     h1: "Dermatólogo online",
     deck: "La piel es la especialidad que mejor se adapta a la consulta a distancia, y también la que más fácilmente se estropea con una mala fotografía.",
     intro:
-      "Un <strong>dermatólogo online</strong> puede evaluar, diagnosticar y tratar buena parte de los problemas de piel más frecuentes —<strong>acné, rosácea, dermatitis, psoriasis, urticaria, caída del cabello, onicomicosis</strong>— a partir de una buena historia clínica y de imágenes correctas, y puede emitir receta electrónica cuando está indicado. Lo que no puede es explorar con <strong>dermatoscopio</strong>, tomar una <strong>biopsia</strong> ni tratar una lesión con crioterapia o cirugía. Por eso, ante un <strong>lunar</strong> nuevo o que cambia, la consulta online sirve para decidir con qué urgencia hay que verlo en persona, no para descartar nada. Esa es la frontera, y conviene conocerla antes de reservar.",
+      "Un <strong>dermatólogo online</strong> puede evaluar, diagnosticar y tratar buena parte de los problemas de piel más frecuentes —<strong>acné, rosácea, dermatitis, psoriasis, urticaria, caída del cabello, onicomicosis</strong>— a partir de una buena historia clínica y de imágenes correctas, y puede emitir receta electrónica cuando está indicado. También evalúa presentaciones más complejas —acné grave, psoriasis extensa o resistente, dermatitis atópica grave, hidradenitis supurativa, vitíligo extenso, alopecia areata— y ofrece segunda opinión especializada, coordinando la derivación presencial cuando el caso lo requiere. Lo que no puede es explorar con <strong>dermatoscopio</strong>, tomar una <strong>biopsia</strong> ni tratar una lesión con crioterapia o cirugía. Por eso, ante un <strong>lunar</strong> nuevo o que cambia, la consulta online sirve para decidir con qué urgencia hay que verlo en persona, no para descartar nada. Esa es la frontera, y conviene conocerla antes de reservar.",
     facts: [
       "Buena para acné, eczema y psoriasis",
       "Los lunares necesitan dermatoscopio",
@@ -105,6 +105,10 @@ const es: LocalePost = {
             "<strong>Caída del cabello</strong> — orientación diagnóstica, analítica dirigida y tratamiento.",
             "<strong>Onicomicosis y micosis cutáneas</strong> — confirmación y tratamiento, con muestra si es necesaria.",
             "<strong>Revisión de un tratamiento en curso</strong> que no está funcionando o que produce efectos adversos.",
+            "<strong>Casos graves o resistentes a tratamiento</strong> — acné grave, psoriasis extensa, dermatitis atópica grave, incluida la valoración para tratamiento sistémico o biológico.",
+            "<strong>Afecciones autoinmunes e inflamatorias complejas</strong> — hidradenitis supurativa, liquen plano, vitíligo extenso, con coordinación especializada donde esté indicado.",
+            "<strong>Alopecia extensa o resistente</strong> — incluida alopecia areata y alopecia cicatricial, con coordinación de biopsia cuando es necesaria.",
+            "<strong>Segunda opinión dermatológica especializada</strong> — revisión independiente de un diagnóstico o tratamiento recibido de otro dermatólogo.",
           ]),
           p("Hay además una ventaja poco discutida: la consulta a distancia permite <strong>seguimiento frecuente</strong>. En procesos crónicos, revisar la evolución cada pocas semanas con fotografías comparables suele valer más que una consulta presencial semestral."),
         ],
@@ -230,7 +234,7 @@ const es: LocalePost = {
     faqs: [
       {
         q: "¿Qué puede diagnosticar un dermatólogo online?",
-        a: "Con una buena historia clínica e imágenes correctas se manejan bien el acné, la rosácea, la dermatitis atópica y de contacto, la psoriasis, la urticaria, las micosis, la onicomicosis y la caída del cabello, además del seguimiento de tratamientos en curso.",
+        a: "Con una buena historia clínica e imágenes correctas se manejan bien el acné, la rosácea, la dermatitis atópica y de contacto, la psoriasis, la urticaria, las micosis, la onicomicosis y la caída del cabello, además del seguimiento de tratamientos en curso. La consulta especialista también evalúa presentaciones graves o resistentes, afecciones autoinmunes, hidradenitis supurativa, vitíligo extenso, alopecia areata y ofrece segunda opinión.",
       },
       {
         q: "¿Sirve una consulta online para revisar un lunar?",
@@ -278,7 +282,7 @@ const en: LocalePost = {
     h1: "Online dermatologist",
     deck: "Skin is the specialty that adapts best to remote consultation, and also the one most easily ruined by a bad photograph.",
     intro:
-      "An <strong>online dermatologist</strong> can assess, diagnose and treat a large share of the commonest skin problems — <strong>acne, rosacea, dermatitis, psoriasis, urticaria, hair loss, nail fungus</strong> — from a good history and correct images, and can issue an electronic prescription where indicated. What they cannot do is examine with a <strong>dermatoscope</strong>, take a <strong>biopsy</strong>, or treat a lesion with cryotherapy or surgery. So for a <strong>mole</strong> that is new or changing, an online consultation is there to decide how urgently it must be seen in person — not to rule anything out. That is the boundary, and it is worth knowing before you book.",
+      "An <strong>online dermatologist</strong> can assess, diagnose and treat a large share of the commonest skin problems — <strong>acne, rosacea, dermatitis, psoriasis, urticaria, hair loss, nail fungus</strong> — from a good history and correct images, and can issue an electronic prescription where indicated. They also assess more complex presentations — severe or treatment-resistant acne, extensive or resistant psoriasis, severe atopic dermatitis, hidradenitis suppurativa, extensive vitiligo, alopecia areata — and offer a specialist second opinion, coordinating in-person referral when the case requires it. What they cannot do is examine with a <strong>dermatoscope</strong>, take a <strong>biopsy</strong>, or treat a lesion with cryotherapy or surgery. So for a <strong>mole</strong> that is new or changing, an online consultation is there to decide how urgently it must be seen in person — not to rule anything out. That is the boundary, and it is worth knowing before you book.",
     facts: [
       "Good for acne, eczema and psoriasis",
       "Moles need a dermatoscope",
@@ -319,6 +323,10 @@ const en: LocalePost = {
             "<strong>Hair loss</strong> — diagnostic orientation, targeted blood tests and treatment.",
             "<strong>Nail and skin fungal infections</strong> — confirmation and treatment, with a sample if required.",
             "<strong>Review of a current treatment</strong> that is not working or is causing side effects.",
+            "<strong>Severe or treatment-resistant cases</strong> — severe acne, extensive psoriasis, severe atopic dermatitis, including assessment for systemic or biologic treatment.",
+            "<strong>Complex autoimmune and inflammatory conditions</strong> — hidradenitis suppurativa, lichen planus, extensive vitiligo, with specialist coordination where indicated.",
+            "<strong>Extensive or resistant hair loss</strong> — including alopecia areata and scarring alopecia, with biopsy coordination when needed.",
+            "<strong>Specialist dermatology second opinion</strong> — an independent review of a diagnosis or treatment received from another dermatologist.",
           ]),
           p("There is also an advantage that is rarely discussed: remote consultation makes <strong>frequent follow-up</strong> practical. In chronic conditions, reviewing progress every few weeks with comparable photographs is usually worth more than one clinic visit every six months."),
         ],
@@ -444,7 +452,7 @@ const en: LocalePost = {
     faqs: [
       {
         q: "What can an online dermatologist diagnose?",
-        a: "With a good history and correct images, acne, rosacea, atopic and contact dermatitis, psoriasis, urticaria, fungal infections, nail fungus and hair loss are all handled well, as is follow-up of treatment already under way.",
+        a: "With a good history and correct images, acne, rosacea, atopic and contact dermatitis, psoriasis, urticaria, fungal infections, nail fungus and hair loss are all handled well, as is follow-up of treatment already under way. The specialist consultation also assesses severe or resistant presentations, autoimmune conditions, hidradenitis suppurativa, extensive vitiligo, alopecia areata, and offers a second opinion.",
       },
       {
         q: "Is an online consultation any use for checking a mole?",
@@ -492,7 +500,7 @@ const pt: LocalePost = {
     h1: "Dermatologista online",
     deck: "A pele é a especialidade que melhor se adapta à consulta à distância e também aquela que mais facilmente se estraga com uma má fotografia.",
     intro:
-      "Um <strong>dermatologista online</strong> pode avaliar, diagnosticar e tratar boa parte dos problemas de pele mais frequentes — <strong>acne, rosácea, dermatite, psoríase, urticária, queda de cabelo, onicomicose</strong> — a partir de uma boa história clínica e de imagens corretas, e pode emitir receita eletrónica quando está indicado. O que não pode é observar com <strong>dermatoscópio</strong>, fazer uma <strong>biópsia</strong> nem tratar uma lesão com crioterapia ou cirurgia. Por isso, perante um <strong>sinal</strong> novo ou que muda, a consulta online serve para decidir com que urgência tem de ser visto presencialmente, não para excluir nada. É essa a fronteira, e convém conhecê-la antes de marcar.",
+      "Um <strong>dermatologista online</strong> pode avaliar, diagnosticar e tratar boa parte dos problemas de pele mais frequentes — <strong>acne, rosácea, dermatite, psoríase, urticária, queda de cabelo, onicomicose</strong> — a partir de uma boa história clínica e de imagens corretas, e pode emitir receita eletrónica quando está indicado. Avalia também apresentações mais complexas — acne grave, psoríase extensa ou resistente, dermatite atópica grave, hidradenite supurativa, vitiligo extenso, alopecia areata — e oferece segunda opinião especializada, coordenando a referenciação presencial quando o caso o exige. O que não pode é observar com <strong>dermatoscópio</strong>, fazer uma <strong>biópsia</strong> nem tratar uma lesão com crioterapia ou cirurgia. Por isso, perante um <strong>sinal</strong> novo ou que muda, a consulta online serve para decidir com que urgência tem de ser visto presencialmente, não para excluir nada. É essa a fronteira, e convém conhecê-la antes de marcar.",
     facts: [
       "Boa para acne, eczema e psoríase",
       "Os sinais precisam de dermatoscópio",
@@ -533,6 +541,10 @@ const pt: LocalePost = {
             "<strong>Queda de cabelo</strong> — orientação diagnóstica, análises dirigidas e tratamento.",
             "<strong>Onicomicose e micoses cutâneas</strong> — confirmação e tratamento, com colheita se necessário.",
             "<strong>Revisão de um tratamento em curso</strong> que não está a resultar ou que provoca efeitos adversos.",
+            "<strong>Casos graves ou resistentes a tratamento</strong> — acne grave, psoríase extensa, dermatite atópica grave, incluindo avaliação para tratamento sistémico ou biológico.",
+            "<strong>Afeções autoimunes e inflamatórias complexas</strong> — hidradenite supurativa, líquen plano, vitiligo extenso, com coordenação especializada quando indicado.",
+            "<strong>Alopecia extensa ou resistente</strong> — incluindo alopecia areata e alopecia cicatricial, com coordenação de biópsia quando necessário.",
+            "<strong>Segunda opinião dermatológica especializada</strong> — revisão independente de um diagnóstico ou tratamento recebido de outro dermatologista.",
           ]),
           p("Há ainda uma vantagem pouco discutida: a consulta à distância permite <strong>seguimento frequente</strong>. Em processos crónicos, rever a evolução de poucas em poucas semanas com fotografias comparáveis vale habitualmente mais do que uma consulta presencial de seis em seis meses."),
         ],
@@ -658,7 +670,7 @@ const pt: LocalePost = {
     faqs: [
       {
         q: "O que pode diagnosticar um dermatologista online?",
-        a: "Com uma boa história clínica e imagens corretas tratam-se bem a acne, a rosácea, a dermatite atópica e de contacto, a psoríase, a urticária, as micoses, a onicomicose e a queda de cabelo, além do seguimento de tratamentos em curso.",
+        a: "Com uma boa história clínica e imagens corretas tratam-se bem a acne, a rosácea, a dermatite atópica e de contacto, a psoríase, a urticária, as micoses, a onicomicose e a queda de cabelo, além do seguimento de tratamentos em curso. A consulta especializada avalia ainda apresentações graves ou resistentes, afeções autoimunes, hidradenite supurativa, vitiligo extenso, alopecia areata e oferece segunda opinião.",
       },
       {
         q: "Uma consulta online serve para ver um sinal?",
@@ -706,7 +718,7 @@ const cs: LocalePost = {
     h1: "Dermatolog online",
     deck: "Kůže je obor, který se konzultaci na dálku přizpůsobuje nejlépe — a zároveň ten, který nejsnáze pokazí špatná fotografie.",
     intro:
-      "<strong>Dermatolog online</strong> dokáže posoudit, diagnostikovat a léčit velkou část nejčastějších kožních potíží — <strong>akné, růžovku, ekzém, lupénku, kopřivku, vypadávání vlasů, plísně nehtů</strong> — na základě dobré anamnézy a správných snímků a v indikovaných případech může vystavit elektronický recept. Co udělat nemůže, je vyšetření <strong>dermatoskopem</strong>, <strong>biopsie</strong> ani ošetření léze kryoterapií nebo chirurgicky. U <strong>znaménka</strong>, které je nové nebo se mění, proto online konzultace slouží k rozhodnutí, jak naléhavě je třeba vidět je osobně — ne k vyloučení čehokoli. To je ta hranice a vyplatí se ji znát dřív, než se objednáte.",
+      "<strong>Dermatolog online</strong> dokáže posoudit, diagnostikovat a léčit velkou část nejčastějších kožních potíží — <strong>akné, růžovku, ekzém, lupénku, kopřivku, vypadávání vlasů, plísně nehtů</strong> — na základě dobré anamnézy a správných snímků a v indikovaných případech může vystavit elektronický recept. Posoudí i složitější stavy — těžké akné, rozsáhlou nebo na léčbu odolnou lupénku, těžkou atopickou dermatitidu, hidradenitis suppurativa, rozsáhlé vitiligo, alopecia areata — a nabízí odborný druhý názor, přičemž v případě potřeby zajistí odeslání na osobní vyšetření. Co udělat nemůže, je vyšetření <strong>dermatoskopem</strong>, <strong>biopsie</strong> ani ošetření léze kryoterapií nebo chirurgicky. U <strong>znaménka</strong>, které je nové nebo se mění, proto online konzultace slouží k rozhodnutí, jak naléhavě je třeba vidět je osobně — ne k vyloučení čehokoli. To je ta hranice a vyplatí se ji znát dřív, než se objednáte.",
     facts: [
       "Vhodné pro akné, ekzém a lupénku",
       "Znaménka potřebují dermatoskop",
@@ -747,6 +759,10 @@ const cs: LocalePost = {
             "<strong>Vypadávání vlasů</strong> — diagnostické směřování, cílené odběry a léčba.",
             "<strong>Onychomykóza a kožní mykózy</strong> — potvrzení a léčba, v případě potřeby s odběrem vzorku.",
             "<strong>Revize probíhající léčby</strong>, která nefunguje nebo působí nežádoucí účinky.",
+            "<strong>Závažné nebo na léčbu odolné případy</strong> — těžké akné, rozsáhlá lupénka, těžká atopická dermatitida, včetně posouzení vhodnosti systémové nebo biologické léčby.",
+            "<strong>Složité autoimunitní a zánětlivé stavy</strong> — hidradenitis suppurativa, lichen planus, rozsáhlé vitiligo, s odbornou koordinací tam, kde je indikována.",
+            "<strong>Rozsáhlé nebo odolné vypadávání vlasů</strong> — včetně alopecia areata a jizevnaté alopecie, s koordinací biopsie, je-li potřeba.",
+            "<strong>Odborný druhý názor v dermatologii</strong> — nezávislé posouzení diagnózy nebo léčby od jiného dermatologa.",
           ]),
           p("Je tu ještě jedna málo zmiňovaná výhoda: konzultace na dálku umožňuje <strong>časté sledování</strong>. U chronických onemocnění bývá kontrola vývoje po několika týdnech se srovnatelnými fotografiemi cennější než jedna osobní návštěva za půl roku."),
         ],
@@ -872,7 +888,7 @@ const cs: LocalePost = {
     faqs: [
       {
         q: "Co dokáže dermatolog online diagnostikovat?",
-        a: "S dobrou anamnézou a správnými snímky se dobře zvládá akné, růžovka, atopická i kontaktní dermatitida, lupénka, kopřivka, mykózy, onychomykóza a vypadávání vlasů, stejně jako sledování již probíhající léčby.",
+        a: "S dobrou anamnézou a správnými snímky se dobře zvládá akné, růžovka, atopická i kontaktní dermatitida, lupénka, kopřivka, mykózy, onychomykóza a vypadávání vlasů, stejně jako sledování již probíhající léčby. Odborná konzultace posoudí i závažné či na léčbu odolné případy, autoimunitní stavy, hidradenitis suppurativa, rozsáhlé vitiligo, alopecia areata a nabízí druhý názor.",
       },
       {
         q: "Hodí se online konzultace na kontrolu znaménka?",
@@ -920,7 +936,7 @@ const roPost: LocalePost = {
     h1: "Dermatolog online",
     deck: "Pielea este specialitatea care se potrivește cel mai bine consultației la distanță și, în același timp, cea pe care o strică cel mai ușor o fotografie proastă.",
     intro:
-      "Un <strong>dermatolog online</strong> poate evalua, diagnostica și trata o bună parte dintre cele mai frecvente probleme ale pielii — <strong>acnee, rozacee, dermatită, psoriazis, urticarie, cădere a părului, onicomicoză</strong> — pornind de la o anamneză bună și de la imagini corecte, iar acolo unde este indicat poate elibera rețetă electronică. Ce nu poate face este să examineze cu <strong>dermatoscopul</strong>, să preleveze o <strong>biopsie</strong> sau să trateze o leziune prin crioterapie ori chirurgical. De aceea, în fața unei <strong>alunițe</strong> noi sau care se schimbă, consultația online servește la a decide cu ce urgență trebuie văzută fizic, nu la a exclude ceva. Aceasta este granița și merită cunoscută înainte de programare.",
+      "Un <strong>dermatolog online</strong> poate evalua, diagnostica și trata o bună parte dintre cele mai frecvente probleme ale pielii — <strong>acnee, rozacee, dermatită, psoriazis, urticarie, cădere a părului, onicomicoză</strong> — pornind de la o anamneză bună și de la imagini corecte, iar acolo unde este indicat poate elibera rețetă electronică. Evaluează și situații mai complexe — acnee severă, psoriazis extins sau rezistent la tratament, dermatită atopică severă, hidradenită supurativă, vitiligo extins, alopecie areata — și oferă a doua opinie de specialitate, coordonând trimiterea la un consult fizic atunci când cazul o cere. Ce nu poate face este să examineze cu <strong>dermatoscopul</strong>, să preleveze o <strong>biopsie</strong> sau să trateze o leziune prin crioterapie ori chirurgical. De aceea, în fața unei <strong>alunițe</strong> noi sau care se schimbă, consultația online servește la a decide cu ce urgență trebuie văzută fizic, nu la a exclude ceva. Aceasta este granița și merită cunoscută înainte de programare.",
     facts: [
       "Bună pentru acnee, eczemă și psoriazis",
       "Alunițele au nevoie de dermatoscop",
@@ -961,6 +977,10 @@ const roPost: LocalePost = {
             "<strong>Căderea părului</strong> — orientare diagnostică, analize țintite și tratament.",
             "<strong>Onicomicoză și micoze cutanate</strong> — confirmare și tratament, cu prelevare de probă dacă este necesar.",
             "<strong>Revizuirea unui tratament în curs</strong> care nu funcționează sau produce efecte adverse.",
+            "<strong>Cazuri severe sau rezistente la tratament</strong> — acnee severă, psoriazis extins, dermatită atopică severă, inclusiv evaluarea pentru tratament sistemic sau biologic.",
+            "<strong>Afecțiuni autoimune și inflamatorii complexe</strong> — hidradenită supurativă, lichen plan, vitiligo extins, cu coordonare de specialitate acolo unde este indicat.",
+            "<strong>Cădere extinsă sau rezistentă a părului</strong> — inclusiv alopecie areata și alopecie cicatricială, cu coordonarea unei biopsii atunci când este necesar.",
+            "<strong>A doua opinie de specialitate în dermatologie</strong> — evaluare independentă a unui diagnostic sau tratament primit de la alt dermatolog.",
           ]),
           p("Există și un avantaj discutat rar: consultația la distanță permite <strong>urmărire frecventă</strong>. În bolile cronice, revederea evoluției la câteva săptămâni, cu fotografii comparabile, valorează de obicei mai mult decât o consultație fizică o dată la șase luni."),
         ],
@@ -1086,7 +1106,7 @@ const roPost: LocalePost = {
     faqs: [
       {
         q: "Ce poate diagnostica un dermatolog online?",
-        a: "Cu o anamneză bună și imagini corecte se conduc bine acneea, rozaceea, dermatita atopică și de contact, psoriazisul, urticaria, micozele, onicomicoza și căderea părului, plus urmărirea tratamentelor în curs.",
+        a: "Cu o anamneză bună și imagini corecte se conduc bine acneea, rozaceea, dermatita atopică și de contact, psoriazisul, urticaria, micozele, onicomicoza și căderea părului, plus urmărirea tratamentelor în curs. Consultația de specialitate evaluează și cazuri severe sau rezistente, afecțiuni autoimune, hidradenită supurativă, vitiligo extins, alopecie areata și oferă a doua opinie.",
       },
       {
         q: "Este utilă o consultație online pentru o aluniță?",
@@ -1134,7 +1154,7 @@ const de: LocalePost = {
     h1: "Hautarzt online",
     deck: "Die Haut ist das Fachgebiet, das sich der Fernbehandlung am besten fügt — und zugleich das, was ein schlechtes Foto am schnellsten zunichtemacht.",
     intro:
-      "Ein <strong>Hautarzt online</strong> kann einen großen Teil der häufigsten Hautprobleme beurteilen, diagnostizieren und behandeln — <strong>Akne, Rosazea, Ekzeme, Schuppenflechte, Nesselsucht, Haarausfall, Nagelpilz</strong> — auf Grundlage einer guten Anamnese und richtiger Bilder, und kann bei entsprechender Indikation ein elektronisches Rezept ausstellen. Nicht möglich sind die Untersuchung mit dem <strong>Dermatoskop</strong>, eine <strong>Biopsie</strong> sowie die Behandlung einer Läsion mit Kryotherapie oder Chirurgie. Bei einem <strong>Muttermal</strong>, das neu ist oder sich verändert, dient die Online-Sprechstunde deshalb dazu zu entscheiden, wie dringend es persönlich gesehen werden muss — nicht dazu, etwas auszuschließen. Das ist die Grenze, und man sollte sie vor der Buchung kennen.",
+      "Ein <strong>Hautarzt online</strong> kann einen großen Teil der häufigsten Hautprobleme beurteilen, diagnostizieren und behandeln — <strong>Akne, Rosazea, Ekzeme, Schuppenflechte, Nesselsucht, Haarausfall, Nagelpilz</strong> — auf Grundlage einer guten Anamnese und richtiger Bilder, und kann bei entsprechender Indikation ein elektronisches Rezept ausstellen. Ebenso beurteilt werden komplexere Verläufe — schwere Akne, ausgedehnte oder therapieresistente Schuppenflechte, schwere atopische Dermatitis, Hidradenitis suppurativa, ausgedehnte Vitiligo, Alopecia areata — sowie eine fachärztliche Zweitmeinung, wobei bei Bedarf die Überweisung vor Ort koordiniert wird. Nicht möglich sind die Untersuchung mit dem <strong>Dermatoskop</strong>, eine <strong>Biopsie</strong> sowie die Behandlung einer Läsion mit Kryotherapie oder Chirurgie. Bei einem <strong>Muttermal</strong>, das neu ist oder sich verändert, dient die Online-Sprechstunde deshalb dazu zu entscheiden, wie dringend es persönlich gesehen werden muss — nicht dazu, etwas auszuschließen. Das ist die Grenze, und man sollte sie vor der Buchung kennen.",
     facts: [
       "Gut bei Akne, Ekzem und Schuppenflechte",
       "Muttermale brauchen ein Dermatoskop",
@@ -1175,6 +1195,10 @@ const de: LocalePost = {
             "<strong>Haarausfall</strong> — diagnostische Einordnung, gezielte Laborwerte und Therapie.",
             "<strong>Nagelpilz und Hautpilz</strong> — Bestätigung und Behandlung, bei Bedarf mit Probenentnahme.",
             "<strong>Überprüfung einer laufenden Therapie</strong>, die nicht wirkt oder Nebenwirkungen macht.",
+            "<strong>Schwere oder therapieresistente Fälle</strong> — schwere Akne, ausgedehnte Schuppenflechte, schwere atopische Dermatitis, einschließlich der Beurteilung für eine systemische oder biologische Therapie.",
+            "<strong>Komplexe autoimmune und entzündliche Erkrankungen</strong> — Hidradenitis suppurativa, Lichen planus, ausgedehnte Vitiligo, mit fachärztlicher Koordination, wo angezeigt.",
+            "<strong>Ausgedehnter oder therapieresistenter Haarausfall</strong> — einschließlich Alopecia areata und vernarbender Alopezie, mit Koordination einer Biopsie bei Bedarf.",
+            "<strong>Fachärztliche Zweitmeinung in der Dermatologie</strong> — unabhängige Beurteilung einer Diagnose oder Behandlung eines anderen Hautarztes.",
           ]),
           p("Hinzu kommt ein selten diskutierter Vorteil: Die Ferne macht <strong>häufige Verlaufskontrollen</strong> praktikabel. Bei chronischen Verläufen ist eine Kontrolle alle paar Wochen mit vergleichbaren Fotos meist mehr wert als ein Praxisbesuch alle sechs Monate."),
         ],
@@ -1300,7 +1324,7 @@ const de: LocalePost = {
     faqs: [
       {
         q: "Was kann ein Hautarzt online diagnostizieren?",
-        a: "Mit guter Anamnese und richtigen Bildern lassen sich Akne, Rosazea, atopisches und Kontaktekzem, Schuppenflechte, Nesselsucht, Pilzinfektionen, Nagelpilz und Haarausfall gut behandeln, ebenso die Verlaufskontrolle laufender Therapien.",
+        a: "Mit guter Anamnese und richtigen Bildern lassen sich Akne, Rosazea, atopisches und Kontaktekzem, Schuppenflechte, Nesselsucht, Pilzinfektionen, Nagelpilz und Haarausfall gut behandeln, ebenso die Verlaufskontrolle laufender Therapien. Die fachärztliche Sprechstunde beurteilt zudem schwere oder therapieresistente Fälle, Autoimmunerkrankungen, Hidradenitis suppurativa, ausgedehnte Vitiligo, Alopecia areata und bietet eine Zweitmeinung.",
       },
       {
         q: "Taugt eine Online-Sprechstunde zur Kontrolle eines Muttermals?",
