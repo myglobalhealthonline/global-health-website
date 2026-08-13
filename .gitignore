@@ -111,3 +111,6 @@ frontend/docs/qa-screenshots/
 
 # Machine-translation drafts pending human review — never committed.
 backend/tmp/i18n-drafts/
+loadtest/backups/*.dump
+loadtest/config/secrets.json
+loadtest/results/

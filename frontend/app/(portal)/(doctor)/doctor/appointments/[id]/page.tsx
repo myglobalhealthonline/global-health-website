@@ -392,6 +392,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       appointmentId={appointment.id}
                       initialFinalized={appointment.finalized ?? false}
                       initialFilesUploaded={appointment.filesUploaded ?? false}
+                      cancelled={appointment.status === "CANCELLED"}
                       noteRecorded={noteRecorded}
                       timeReached={timeReached}
                       copy={d.finalizeChecklist}

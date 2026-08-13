@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
-import { UserRole } from "@prisma/client";
+import { UserRole, VerificationStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import {
@@ -244,6 +244,7 @@ export type ProfileWriteFields = {
   pricingPlanId?: string | null;
   insuranceProviderName?: string | null;
   insurancePolicyNumber?: string | null;
+  insuranceDocumentStatus?: VerificationStatus;
 };
 
 export type ProfileWriteFieldsWithAlerts = ProfileWriteFields & {

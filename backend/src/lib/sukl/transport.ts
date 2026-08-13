@@ -24,6 +24,20 @@ import { SuklError, SuklNotConfiguredError } from "./errors.js";
  *
  * `rejectUnauthorized` is never disabled. If SÚKL's test chain is not in Node's
  * trust store the fix is to supply their CA through `ca`, not to stop verifying.
+ * In practice no extra CA is needed — SÚKL's server certificate is issued by a
+ * public CA and validates against Node's built-in store.
+ *
+ * RATE LIMIT — confirmed by SÚKL 2026-08-13: each user has a limited number of
+ * calls per minute, and exceeding it TEMPORARILY BLOCKS ACCESS. Nothing here may
+ * be called on a timer. The admin connection test is manual and the certificate
+ * monitor runs daily, which is within bounds; do not wire any SÚKL call to an
+ * uptime probe, a health check, or an unbounded retry loop.
+ *
+ * SIGNATURE — also confirmed 2026-08-13: some active operations additionally
+ * require a personal qualified signature unless the doctor is authenticated via
+ * Identita občana. This transport carries the message; it does not sign it. The
+ * route is undecided (SCOPE_CONFIRMATION.md Q15–Q17), so the payload layer must
+ * not assume mutual TLS alone is sufficient to create a voucher.
  *
  * What this file deliberately does NOT do: build a SOAP envelope. The operation
  * names, namespaces and message shapes come from SÚKL's WSDL/XSD, which we do

@@ -564,6 +564,16 @@ export async function createManualBooking(
     insuranceCompanyId && input.insurancePolicyNumber?.trim()
       ? encryptPhi(input.insurancePolicyNumber.trim())
       : null;
+  // Resolved once and reused below to sync the card onto PatientProfile —
+  // the profile stores a free-text provider name, not the FK id.
+  const insuranceCompanyName = insuranceCompanyId
+    ? (
+        await prisma.insuranceCompany.findUnique({
+          where: { id: insuranceCompanyId },
+          select: { name: true },
+        })
+      )?.name ?? null
+    : null;
 
   // ── Private membership (§11.7) ──────────────────────────────────────────
   // Resolved here, alongside the insurance checks and for the same reason: both
@@ -883,6 +893,17 @@ export async function createManualBooking(
         ? {
             addressCountryCode:
               input.patient.addressCountryCode?.trim().toLowerCase() || null,
+          }
+        : {}),
+      // Card captured on this booking, synced onto the profile the same way
+      // as the identity fields above. Status is VERIFIED, not a fill —
+      // the admin taking this booking IS the verifier (see
+      // insuranceVerificationStatus below), same as the Order write.
+      ...(insuranceCompanyId
+        ? {
+            insuranceProviderName: insuranceCompanyName,
+            insurancePolicyNumber: input.insurancePolicyNumber?.trim() || null,
+            insuranceDocumentStatus: "VERIFIED",
           }
         : {}),
     },

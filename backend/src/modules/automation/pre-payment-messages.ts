@@ -168,7 +168,7 @@ export function appendPatientPortalWhatsApp(
   const lines = [body, ""];
   lines.push(
     t(lang, {
-      en: `You can also manage your appointments at the Patient Portal: ${portal.signInUrl}`,
+      en: `You can also manage your appointments by signing in to the Patient Portal: ${portal.signInUrl}`,
       pt: `Também pode gerir as suas consultas no Portal do Paciente: ${portal.signInUrl}`,
       ro: `De asemenea, puteți gestiona programările în Portalul Pacientului: ${portal.signInUrl}`,
       cs: `Své termíny můžete také spravovat v Portálu pacienta: ${portal.signInUrl}`,
@@ -187,7 +187,7 @@ export function appendPatientPortalWhatsApp(
   if (portal.setPasswordUrl && portal.setPasswordUrl !== portal.signInUrl) {
     lines.push(
       t(lang, {
-        en: `Set password: ${portal.setPasswordUrl}`,
+        en: `Set password here: ${portal.setPasswordUrl}`,
         pt: `Definir palavra-passe: ${portal.setPasswordUrl}`,
         ro: `Setați parola: ${portal.setPasswordUrl}`,
         cs: `Nastavit heslo: ${portal.setPasswordUrl}`,
@@ -429,15 +429,7 @@ export function reminderMessage(
   };
 }
 
-/**
- * Website self-serve checkout abandonment — the ONE message a patient who left
- * the Stripe checkout page ever receives. Sent ~5 minutes into the 15-minute pay
- * window, on both email and WhatsApp; the cancel that follows at the deadline is
- * silent, so this message must carry the release time itself.
- *
- * The "or reply here" WhatsApp line is NOT part of the body — whatsappContactFooter
- * is appended to every automation WhatsApp and already says exactly that.
- */
+
 export function checkoutAbandonedMessage(
   ctx: PrePaymentMessageContext,
   lang: Lang,

@@ -106,6 +106,15 @@ column for a rodné číslo, a national identity key, or a personal signing
 certificate. That is a schema-level guarantee, not a convention: there is nowhere
 to put such a value without a migration and the review that would accompany it.
 
+**Pending decision, 2026-08-13.** SÚKL have since said that some active ePoukaz
+operations require a **personal qualified signature** unless the doctor is
+authenticated through Identita občana. If the signature route is taken, this
+guarantee is exactly what has to be revisited — and the migration needed to store
+any doctor key material is the trigger for the security and legal review, not an
+afterthought to it. Nothing is decided; see `SCOPE_CONFIRMATION.md` (Q15–Q17).
+The Identita občana route would keep this section true as written, which is a
+point in its favour.
+
 `SuklFacilityIntegration` stores certificate **public** metadata plus
 `secretReference`, which holds the *name* of the environment variable that
 supplied the certificate — never a value and never a path.
