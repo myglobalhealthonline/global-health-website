@@ -51,12 +51,27 @@ export class SuklError extends Error {
    * patient data. Truncated hard, and treated as untrusted text by callers.
    */
   readonly bodyExcerpt?: string;
+  /**
+   * Selected response headers, for a 401/403 only.
+   *
+   * `www-authenticate` is the single most informative header here: its presence
+   * means the server is ASKING for a credential scheme (Basic, Negotiate, …)
+   * rather than refusing one it already rejected. That distinction decides
+   * whether the fix is "supply a password" or "get the certificate mapped", and
+   * nothing else in the response reveals it.
+   */
+  readonly responseHeaders?: Record<string, string>;
 
   constructor(
     code: SuklErrorCode,
     stage: SuklStage,
     message: string,
-    options?: { cause?: unknown; httpStatus?: number; bodyExcerpt?: string },
+    options?: {
+      cause?: unknown;
+      httpStatus?: number;
+      bodyExcerpt?: string;
+      responseHeaders?: Record<string, string>;
+    },
   ) {
     super(message, options?.cause === undefined ? undefined : { cause: options.cause });
     this.name = "SuklError";
@@ -64,6 +79,7 @@ export class SuklError extends Error {
     this.stage = stage;
     this.httpStatus = options?.httpStatus;
     this.bodyExcerpt = options?.bodyExcerpt;
+    this.responseHeaders = options?.responseHeaders;
   }
 
   /** The only field that may cross an HTTP boundary or reach a log. */
