@@ -193,7 +193,7 @@ export default async function AdminPatientsPage({
               className="gh-input w-52"
             />
           </label>
-          <button type="submit" className="gh-btn-primary flex items-center gap-1.5">
+          <button type="submit" className="gh-btn gh-btn-primary text-sm flex items-center gap-1.5">
             <Search className="size-3.5" aria-hidden />
             Search
           </button>

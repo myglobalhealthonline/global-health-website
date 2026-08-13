@@ -5,6 +5,7 @@ import {
   runWebCheckoutAbandonNudge,
 } from "../modules/automation/pre-payment-flow.service.js";
 import { runPostPaymentReminderCron } from "../modules/automation/post-payment-flow.service.js";
+import { runDoctorNoShowCheckCron } from "../modules/automation/doctor-no-show-check.service.js";
 import {
   cancelAfterGrace,
   sendDueRenewalReminders,
@@ -47,6 +48,9 @@ const TRUSTPILOT_INVITES_INTERVAL_MS = 60 * 60 * 1000;
 // warn bands are 60/30/14/7 days out and the job is a no-op when the
 // integration is unconfigured.
 const SUKL_CERTIFICATE_INTERVAL_MS = 24 * 60 * 60 * 1000;
+// 60s — doctor no-show check fires as soon as an appointment crosses
+// scheduledAt+5min; a coarser interval would blur that "+5min" precision.
+const DOCTOR_NO_SHOW_INTERVAL_MS = 60 * 1000;
 
 // Distinct advisory-lock keys, one per job, so only one replica runs a given
 // tick when horizontally scaled. Single-replica (today) always acquires → no
@@ -63,6 +67,7 @@ const LOCK_DATA_RETENTION = 4010009;
 const LOCK_TRUSTPILOT_INVITES = 4010010;
 const LOCK_SUKL_CERTIFICATE = 4010011;
 const LOCK_MEMBERSHIP_EXPIRY = 4010012;
+const LOCK_DOCTOR_NO_SHOW = 4010013;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -199,6 +204,30 @@ async function tickPostPayment(log: Logger) {
         log.info(`[cron] post-payment: candidates=${r.candidates} meetingLink=${r.meetingLinkSent} 1h=${r.oneHourSent} 5min=${r.fiveMinSent}`);
       } catch (err) {
         log.error(`[cron] post-payment error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: true },
+  );
+}
+
+async function tickDoctorNoShow(log: Logger) {
+  // Non-idempotent: sends the doctor an email+WhatsApp nudge. The send is
+  // guarded by an atomic per-appointment claim (updateMany WHERE
+  // doctorNoShowNotifiedAt IS NULL) so a concurrent duplicate run can't
+  // double-send the same appointment — but fail CLOSED anyway, matching
+  // every other send-bearing job on this scheduler.
+  await withAdvisoryLock(
+    LOCK_DOCTOR_NO_SHOW,
+    async () => {
+      try {
+        const r = await runDoctorNoShowCheckCron();
+        if (r.notified > 0 || r.unknown > 0) {
+          log.info(
+            `[cron] doctor-no-show: candidates=${r.candidates} checked=${r.checked} notified=${r.notified} unknown=${r.unknown}`,
+          );
+        }
+      } catch (err) {
+        log.error(`[cron] doctor-no-show error: ${err instanceof Error ? err.message : String(err)}`);
       }
     },
     { failClosed: true },
@@ -439,7 +468,7 @@ export function startInternalScheduler(log: Logger): () => void {
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
-    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, trustpilot-invites 60m, sukl-certificate 24h",
+    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, trustpilot-invites 60m, sukl-certificate 24h, doctor-no-show 60s",
   );
 
   const timers: NodeJS.Timeout[] = [];
@@ -471,6 +500,10 @@ export function startInternalScheduler(log: Logger): () => void {
       // Safe on boot: idempotent, and a deploy is exactly when a stale ACTIVE
       // badge or a leaked allowance unit is most likely to be noticed.
       void tickMembershipExpiry(log);
+      // Safe on boot: the per-appointment doctorNoShowNotifiedAt guard means
+      // a redeploy can't double-notify — and it's exactly when a missed
+      // check during the previous process's downtime should get caught up.
+      void tickDoctorNoShow(log);
     }, startupJitterMs),
   );
 
@@ -490,6 +523,7 @@ export function startInternalScheduler(log: Logger): () => void {
   );
   timers.push(setInterval(() => void tickSuklCertificate(log), SUKL_CERTIFICATE_INTERVAL_MS));
   timers.push(setInterval(() => void tickMembershipExpiry(log), DAILY_INTERVAL_MS));
+  timers.push(setInterval(() => void tickDoctorNoShow(log), DOCTOR_NO_SHOW_INTERVAL_MS));
 
   return () => {
     for (const t of timers) clearTimeout(t);
