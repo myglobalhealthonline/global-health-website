@@ -7,6 +7,8 @@ import {
   isAnySuklServiceConfigured,
   isSuklConfigured,
   isSuklServiceConfigured,
+  isSuklCallable,
+  suklMissingCallConfig,
   suklEnvironment,
   suklHandshakeProbe,
   suklIco,
@@ -14,6 +16,7 @@ import {
   suklServiceUrl,
   suklWorkplaceCode,
   suklGet,
+  suklAppPing,
   summariseWsdl,
   addressToPath,
   SuklError,
@@ -137,6 +140,9 @@ export async function getSuklHealthStatus(): Promise<SuklHealthStatus> {
     workplaceCode,
     ico: suklIco(),
     services: suklServiceStatuses(),
+    // CUEP is the service that matters for issuing, so it drives the flag.
+    callable: isSuklCallable("cuep"),
+    missingForCall: suklMissingCallConfig("cuep"),
     certificateValid: false,
     certificateSource: null,
     subject: null,
@@ -487,6 +493,24 @@ export async function fetchSuklWsdl(
     })),
     raw: response.body,
   };
+}
+
+// ─── AppPing ─────────────────────────────────────────────────────────────────
+
+export type { SuklAppPingResult } from "../../lib/sukl/index.js";
+
+/**
+ * Calls SÚKL's `AppPing` — the first real SOAP operation.
+ *
+ * Read-only and permitted, but SÚKL RATE LIMIT calls per user per minute and
+ * temporarily block access on excess, so this stays a manual admin action. It
+ * must never be attached to a timer, health check or uptime probe.
+ *
+ * A pass proves the whole stack short of business payloads: mutual TLS, the
+ * envelope, the `Zprava` header, the accessing identity, and fault handling.
+ */
+export async function runSuklAppPing(service: SuklService) {
+  return suklAppPing(service);
 }
 
 // ─── Doctor identity mappings ────────────────────────────────────────────────
