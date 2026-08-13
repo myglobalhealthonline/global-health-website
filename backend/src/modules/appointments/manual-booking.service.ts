@@ -842,6 +842,7 @@ export async function createManualBooking(
       fullName,
       phone: input.patient.phone ?? null,
       dateOfBirth: dob,
+      countryFolderCode: input.countryCode,
     },
     {
       passwordHashOverride: tempHash,
