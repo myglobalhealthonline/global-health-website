@@ -233,7 +233,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-010 | Spain market audit | Market analysis | **CLOSED as an audit; findings promoted to the roadmap** | 2026-08-12 | n/a | n/a | See SEO-GROWTH-013 (Spain commercial-service underperformance) and the closed SEO-GROWTH-011 doctor-locale investigation. **No standalone Spain audit document exists in the repository** — the audit was conducted in-session; its conclusions are recorded in §6 and §7 |
 | SEO-GROWTH-013 | Spain commercial-service underperformance | Ranking | **CLOSED — INVESTIGATED / NO STRUCTURAL DEFECT** | 2026-08-12 | All 6 commercial URLs technically clean (200, index/follow, self-canonical, in sitemap, correctly linked from `/spain/es`). Not cannibalization — page roles are legitimately distinct (homepage brand+generic, `gp-consultation-online` = GP hub/catalog, `services/consulta-medica-online` = GP detail, `services/dermatologia-especialista-online` = specialist detail) | Bottleneck is SERP competitive wall (national insurers + Doctoralia/TopDoctors-scale aggregators dominate the generic cluster; boutique/solo practitioners dominate specialty clusters) plus a verified trust-presentation gap: Doctify reviews render on hub/team pages but not on service detail pages | See §7 SEO-GROWTH-013 for full findings and substantive conclusions. Next: SEO-GROWTH-014, a feasibility investigation only (not an implementation batch) — do not add Doctify UI/schema before that lands |
 | SEO-GROWTH-014 | Spain service-detail Doctify trust-signal feasibility | Trust presentation / data provenance | **CLOSED — GLOBAL DOCTIFY APPROACH CONFIRMED** | 2026-08-12 | `DoctifyWidget` (`variant="horizontal"`) already renders on every service-detail page (`services/[serviceSlug]/page.tsx:870`) — the widget was never missing. It uses one real Doctify practice (`tenant=athena-ie`, `slugs=global-health-ireland`, `profileType=practice`) | `review.doctify.clinicId` / `review.doctify.aggregate` and every other `review.*` Setting key are **unset in production** (direct read-only DB check, 2026-08-12: zero rows) — confirmed still true, unaffected by SEO-GROWTH-015 | Original finding stands (no per-market Doctify profile exists; the manual `review.*` aggregate system is empty and untouched). The business decision on what to do about it is now made, not deferred: treat the one existing Doctify practice as the site's single **global** MyGlobalHealth review profile and show it everywhere, rather than wait for market-by-market Doctify registrations. See SEO-GROWTH-015 |
-| SEO-GROWTH-015 | Global Doctify trust integration (revised from an Ireland-only gate) | Trust presentation / implementation | **IMPLEMENTED — VERIFIED, NOT DEPLOYED (uncommitted)** | 2026-08-12 | First pass added a per-market gate (`isDoctifyConfiguredForMarket`, Ireland-only) — **reverted** on explicit direction: the Doctify profile is the site's one global review profile, shown on every market's pages, same as before any of this ticket's work, with two real fixes kept: `language` now flows through to Doctify's widget URLs (was hardcoded `"en"`), and the homepage's manually-entered `review.doctify.aggregate` stat (a second, driftable copy of Doctify's number) was removed — the live widget is the UI's only source of truth for the rating/count now | `AggregateRating` JSON-LD explicitly **not** populated from Doctify — Google's review-snippet policy prohibits aggregating another site's reviews into your own markup; schema stays exactly as SEO-GROWTH-014 found it (fail-closed, empty) | See §7 SEO-GROWTH-015 for the full file list and verification. Also fixed the "45.000 consultas/Valorado en Doctify" pairing on the GP and specialist hero stat strips (implied the volume number was a Doctify rating) — volume claim kept, Doctify/rating wording dropped. Awaiting explicit commit authorization |
+| SEO-GROWTH-015 | Global Doctify trust integration (revised from an Ireland-only gate) | Trust presentation / implementation | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-13 | Commit `770ee012` ("fix(trust): make Doctify integration global and locale-aware", 2026-08-12) is present on `main`, `Dev-hassaan`, `Dev-nauman`; live production re-confirmed 2026-08-13 (`curl -A Mozilla/5.0` against `/spain/es/gp-consultation-online` serves "45.057+ consultas" with no "Valorado en Doctify" pairing anywhere on the page — post-fix copy). First pass added a per-market gate (`isDoctifyConfiguredForMarket`, Ireland-only) — **reverted** on explicit direction: the Doctify profile is the site's one global review profile, shown on every market's pages, same as before any of this ticket's work, with two real fixes kept: `language` now flows through to Doctify's widget URLs (was hardcoded `"en"`), and the homepage's manually-entered `review.doctify.aggregate` stat (a second, driftable copy of Doctify's number) was removed — the live widget is the UI's only source of truth for the rating/count now | `AggregateRating` JSON-LD explicitly **not** populated from Doctify — Google's review-snippet policy prohibits aggregating another site's reviews into your own markup; schema stays exactly as SEO-GROWTH-014 found it (fail-closed, empty) | See §7 SEO-GROWTH-015 for the full file list and verification. Also fixed the "45.000 consultas/Valorado en Doctify" pairing on the GP and specialist hero stat strips (implied the volume number was a Doctify rating) — volume claim kept, Doctify/rating wording dropped. Awaiting explicit commit authorization |
 | SEO-GROWTH-011 | Spain doctor cross-locale ranking "fragmentation" (Alfredo del Valle) | Indexation / hreflang | **EXPECTED BEHAVIOR — CLOSED, no code change** | 2026-08-12 | All 5 locale URLs (`spain/{es,cs,en,pt,de}/doctors/dr-alfredo-del-valle`) are 200, self-canonical (each declares and Google accepts its own canonical — no consolidation attempted by either side), `index, follow`, in sitemap, carry distinct per-locale `<title>` (Dermatólogo/Dermatolog/Dermatologist/Dermatologista/Dermatologe — real translation, not a duplicate stub), and cross-link each other via the sibling-locale switcher. The one legacy URL in the cluster, `/pt/spain-doctors/dr-alfredo-del-valle`, is "Crawled – currently not indexed" (last crawl 2026-03-08) and draws 1 impression in 90 days — a dead stub, not a participant | Google serves each locale variant as its own PASS result; no `noindex`, no wrong-canonical, no stale-crawl divergence | None. See §7 for the full query×URL matrix and reasoning |
 | SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
 | SEO-GROWTH-016 | Ireland at-home lab-test cluster: 1,041 impressions, 4 clicks, position 27.1, from a zero base | Ranking / content-intent | **INVESTIGATED — BOTTLENECK = INDEXING RAMP. No content, schema, linking or metadata work justified yet** | 2026-08-12 | `/ireland/en/lab-tests` + 16 detail pages all 200, `index, follow`, self-canonical, in sitemap, `richResults` PASS. Hub serves **14 real anchors**. Copy is **independently written, not Randox-duplicated**. Page format already matches what the SERP rewards. No cannibalization. `Product`/`Offer` schema absent but data exists. Hub meta carries a **stale €89 price** (real entry price €57) and a wrong "up to 10 days" turnaround | Detail pages first crawled 2026-08-01 → 08-08 and earned **100% of their 28-day impressions in the final 7 days**, while the hub dropped from ~479 to 11 — a hub→detail hand-off completed inside the measurement window. Cluster position improved 37.5 → 26.3 → 20.3 over 08-09/08-10/08-11 | **WAIT / MEASURE, re-measure 2026-09-08.** Full findings and early-exit triggers in §7 SEO-GROWTH-016 |
@@ -3830,5 +3830,367 @@ run, per this ticket's own scope limit.
 | `/es/ireland/mental-health-assessment-consultation` | 308 → current canonical (live since `699a89b2`, 2026-07-30) | Self-canonical, "Submitted and indexed" | **2026-05-02** (predates both fixes) | WAIT FOR GOOGLE (added 2026-08-13, COUNTRY-WAVE-001-CLOSE) |
 
 **NO IMPLEMENTATION / NO DEPLOY / CLOSURE UPDATE UNCOMMITTED.**
+
+---
+
+## 19. COUNTRY-WAVE-002 — Portugal + Spain opportunity investigation (2026-08-13)
+
+**Mode: read-only investigation.** No redirects, no canonical/metadata/schema
+changes, no content edits, no deploy, no commits. Two read-only Prisma scripts
+added this pass (both untracked, both select-only, modeled on
+`investigate-cz-doctor-supply.ts`): `backend/scripts/investigate-pt-doctor-service-supply.ts`,
+`backend/scripts/investigate-es-market-inventory.ts`.
+
+Extraction date: **2026-08-13**, closecheck normalization pass same day.
+**Latest complete GSC date (both markets, `dataState=final`): 2026-08-10.**
+Verified by pulling `dataState=final` sitewide for 2026-08-05→08-13: rows stop
+at 08-10, confirming Google's own settle point — not a per-market difference,
+so no divergent dates to preserve. The original draft's "2026-08-11/12" was an
+artifact of using `dataState=all` (includes still-settling partial days); this
+pass uses `final` throughout §19.2.
+
+### 19.1 Closed items — reaffirmed, not reopened
+
+| Item | Status | New evidence found? |
+| --- | --- | --- |
+| Telmo Coelho (Portugal) | **WAIT FOR GOOGLE** (SEO-GROWTH-007) | None — `coverageState` still "Excluded by 'noindex' tag", last crawl still 2026-07-26, current page still genuinely `index,follow` in production. Not reopened. |
+| Alfredo del Valle cross-locale (Spain) | **CLOSED** (SEO-GROWTH-011) | None — all 5 locale URLs still PASS/self-canonical/indexed; legacy `/pt/spain-doctors/...` stub still outside the hreflang cluster, still not indexed. Not reopened. |
+| Robots/sitemap/global-canonical/hreflang framework, breadcrumb localization, root-homepage hreflang | Closed via `SEO-FOUNDATION-004/005` | None — not re-audited, per scope. |
+| SEO-GROWTH-013 (Spain SERP/business wall) | Closed — INVESTIGATED / NO STRUCTURAL DEFECT | Re-verified live with fresh GSC + 2 fresh SERP pulls; conclusion unchanged (§19.5). |
+| SEO-GROWTH-014 (Spain Doctify feasibility, global-widget decision) | Closed | Not reopened; superseded by SEO-GROWTH-015 shipping (§19.0 below). |
+
+### 19.0 Ledger correction found in passing (data only, not a Wave-2 finding)
+
+§5's SEO-GROWTH-015 row currently reads **"IMPLEMENTED — VERIFIED, NOT DEPLOYED
+(uncommitted)."** That is stale. `git log` confirms commit **`770ee012`**
+("fix(trust): make Doctify integration global and locale-aware", 2026-08-12
+11:34 +0500, Brxerq) is present on `main`, `Dev-hassaan`, and `Dev-nauman`, and
+live production (`curl -A Mozilla/5.0` against `/spain/es/gp-consultation-online`)
+serves "45.057+ consultas" with no "Valorado en Doctify" pairing — the
+post-fix copy, not the pre-fix copy. **SEO-GROWTH-015 is live in production.**
+Re-verified again during the COUNTRY-WAVE-002-CLOSECHECK pass (2026-08-13,
+same curl check, same result). §5's row is corrected in this pass to
+**CLOSED — VERIFIED BY PRODUCTION CHECK** — this was a stale-ledger fix, not a
+Wave-2 finding, and involved no runtime code change.
+
+### 19.2 Fresh GSC baselines — normalized (page-path scope, matched definition)
+
+The original draft compared **incompatible scopes** — Portugal used a
+page-path cut (`/portugal/`, broad, includes every locale) while Spain used a
+searcher-country cut (`country=esp`). Corrected here: both markets now use the
+**same definition** — primary-locale page-path (`/portugal/pt/`,
+`/spain/es/`), all searcher countries, `dataState=final`, ending on the shared
+latest-complete date **2026-08-10**.
+
+**Portugal** (page-path `contains /portugal/pt/`, all searcher countries):
+
+| Window | Dates | Clicks | Impr | CTR | Avg pos (impr-weighted) |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Current 28d | 2026-07-14 → 08-10 | 14 | 1,757 | 0.80% | 22.0 |
+| Prior 28d | 2026-06-16 → 07-13 | 0 | 0 | n/a | n/a |
+
+**Spain** (page-path `contains /spain/es/`, all searcher countries):
+
+| Window | Dates | Clicks | Impr | CTR | Avg pos (impr-weighted) |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Current 28d | 2026-07-14 → 08-10 | 25 | 1,383 | 1.81% | 28.1 |
+| Prior 28d | 2026-06-16 → 07-13 | 0 | 0 | n/a | n/a |
+
+Under the matched scope, **both markets' prior-28d window is a hard zero**
+(not "~zero" as the mismatched-scope draft phrased it) — the primary-locale
+pages genuinely did not exist/were not indexed before this window. This
+*strengthens*, not weakens, the "new discovery, not ranking loss" read: there
+is no established cohort to have lost ranking on. Reassessed and unchanged.
+
+**Secondary views (searcher-country cuts, kept separate, not mixed with the
+above):** Spain `country=esp` sitewide (any page) showed current 28d
+78 clicks / 3,377 impr / pos 23.6 vs. prior 33 / 546 / pos 13.6 in the original
+draft's pull (2026-07-13→08-10) — wider than the primary-locale scope because
+it includes non-`/es/`-locale Spain pages and non-`/spain/`-path pages ranking
+for Spain-country searchers. Not re-pulled this pass; retained for reference
+only, not used for the headline comparison above.
+
+### 19.3 Portugal inventory highlights
+
+68 `/portugal/pt/*` sitemap URLs; 16 primary-market doctors (15 active), 42
+services (22 active+sitemapped, 20 inactive+correctly unindexed, 0 unstaffed
+active services found for Portugal — all active PT services are staffed).
+Full cluster-by-cluster table: see agent transcript §2 (not reproduced in
+full here — condensed into §19.6 below).
+
+### 19.4 Spain inventory highlights
+
+327 `/spain/*` sitemap URLs across 6 locales; 14 doctors (13 active), 40
+services (20 active+sitemapped, **4 active+bookable+`noindex`** — see §19.5.1
+— 16 fully inactive/unstaffed).
+
+#### 19.5.1 4 Spain services correctly noindexed on a content gate — resolved exactly
+
+`consulta-diagnotico-vascular`, `consulta-flebologia-y-linfologia`,
+`consulta-online-medicina-estetica`, `consulta-salud-vascular-circulatoria`:
+all `isActive=true`, `visibility=PUBLIC`, each has exactly 1 real bookable
+doctor, all serve live 200s, all `noindex, follow`, self-canonical, absent
+from sitemap, internally linked (`follow`, not orphaned).
+
+| URL | Service name | Kind | Doctor | ES translation row | ES `detailBody` |
+| --- | --- | --- | --- | --- | --- |
+| `/spain/es/services/consulta-diagnotico-vascular` | Consulta Diagnóstico Vascular | SPECIALIST | Dr. Leandro Wang | Exists (name OK) | `<p><br /></p>` — 0 plain-text chars |
+| `/spain/es/services/consulta-flebologia-y-linfologia` | Consulta Online Flebología y Linfología | SPECIALIST | Dr. Leandro Wang | Exists (name OK) | `<p><br /></p>` — 0 plain-text chars |
+| `/spain/es/services/consulta-online-medicina-estetica` | Consulta Online Medicina Estética | GENERAL | Dra. María Fernanda Ocampo Mora | Exists (name OK) | `<p><br /></p>` — 0 plain-text chars |
+| `/spain/es/services/consulta-salud-vascular-circulatoria` | Consulta Salud Vascular / Circulatoria | GENERAL | Dra. Eszter Szilágyi | Exists (name OK) | `<p><br /></p>` — 0 plain-text chars |
+
+Re-queried live from Prisma (`Service` + `ServiceTranslation`, `es`
+`countryDefaultLocale`) this pass: root cause confirmed exactly, not
+approximately — `detailBody` for all 4 is the literal empty-paragraph HTML
+stub `<p><br /></p>` (strips to 0 chars), `summary` and `heroDescription` are
+also empty in ES, so `isPublicServiceRecordIndexable`'s "body" check
+(§`publication-validation.ts:291-297`) fails correctly. `seoTitle`/
+`seoDescription` exist (auto-generated boilerplate: "Book X with a licensed
+doctor..."), which is why the pages 200 but stay `noindex` — not a defect,
+confirms SEO-DOC-002's pattern exactly. **The content-length diagnosis was
+right — classification E (technical/publication defect) does not apply to
+any of the 4.**
+
+**First-party source content check (DB-wide, not invented):** a
+Prisma search across all countries for vascular/vein/circulation/phlebology/
+lymphology-named services found nothing outside Spain's own empty rows — no
+translatable source exists for the 3 vascular/phlebology services. Aesthetic
+medicine is different: Ireland runs `aesthetic-medicine-consultation` with a
+real 6,747-character English `detailBody` — an available translation source
+for `consulta-online-medicina-estetica` specifically.
+
+**Demand test (property-wide GSC, `dataState=all`, 16-month lookback,
+`query contains` each service's Spanish stem — not scoped to the noindexed
+pages, which correctly have no data of their own):**
+
+| Service | Query stems checked | Property-wide GSC hits |
+| --- | --- | --- |
+| Diagnóstico vascular | `vascular`, `venos*`, `circulator*` | 1 impression total, English "vascular consultation" (not the Spanish stem), pos 9, landing on the legacy-shaped `/spain/vascular-circulatory-health-consultation` URL — not a Spanish-query signal |
+| Flebología y linfología | `flebolog*`, `linfolog*`, `varic*` | 0 rows, any language, any window tried (28d/90d/16mo) |
+| Medicina estética | `estetic*` | 0 rows, any language, any window tried |
+| Salud vascular circulatoria | `vascular`, `venos*`, `circulator*` | Same 1 English impression as diagnóstico vascular (shared stem) |
+
+**Classification: NO OBSERVED MGH DEMAND** for all 4 in their actual Spanish
+product language — zero Spanish-query impressions anywhere on the property
+across 16 months, not merely zero on their own (correctly noindexed) pages.
+Per the ticket's own instruction, this is not inferred from the noindexed
+page's own zero impressions; it is a direct property-wide Spanish-query
+search that came back empty.
+
+**Targeted SERP check — run once, for the one service with plausible
+commercial value and an available content source** (aesthetic medicine is a
+mainstream consumer category and has the Irish source copy to translate;
+vascular diagnostics/phlebology are niche specialist procedures with zero
+demand signal and no source content, so no SERP credits spent there per the
+ticket's "only for services with at least plausible commercial value" gate):
+
+"medicina estetica online" (es-ES, live SERP pull, 2026-08-13) returns **zero
+patient-telehealth or clinic competitors in the top 20** — the entire page is
+professional-training content (Máster/Curso en Medicina Estética from
+universities and training academies: UNIR, Escuela Clínica, Emagister,
+GrupoCTO, etc.) plus an AI Overview on the same training topic. The query's
+search intent is **aspiring aesthetic-medicine practitioners looking for
+certification courses, not patients looking to book a consultation** — a
+different audience than MGH's product entirely, not merely a competitive
+wall. Confirms and explains the zero property-wide GSC demand: the natural
+Spanish query for this service doesn't reach a patient audience at all.
+
+**Per-service classification (§7 rubric):**
+
+| Service | Classification | Reasoning |
+| --- | --- | --- |
+| `consulta-diagnotico-vascular` | **D — NO MATERIAL DEMAND** | Zero Spanish-query GSC signal, 16mo, property-wide; no first-party source content exists anywhere in the DB to translate even if demand appeared |
+| `consulta-flebologia-y-linfologia` | **D — NO MATERIAL DEMAND** | Same — zero demand, no source content |
+| `consulta-salud-vascular-circulatoria` | **D — NO MATERIAL DEMAND** | Same — zero demand, no source content |
+| `consulta-online-medicina-estetica` | **C — SERP/BUSINESS-MODEL WALL** | Zero demand in the patient-intent sense is explained, not just observed: the head Spanish query is dominated by professional-training intent, not patient-booking intent. A complete Spanish page (translation source exists) would not compete for this query's actual searchers |
+
+**No classification A found among the 4.** Action for all 4 remains
+editorial/content, but is now downgraded from "write ES body copy to unlock
+indexing" (implying a waiting SEO opportunity) to "no SEO case exists to
+prioritize this content" — genuinely a product-completeness/consistency task
+if pursued at all, not a ranked SEO backlog item.
+
+### 19.5 Doctor ecosystem findings
+
+**Portugal** — Telmo's WAIT-FOR-GOOGLE pattern is not unique to him. Two more
+doctors sit behind the identical mechanism (current-shape URL genuinely
+`index,follow` in production; Google's cached coverage state is stale,
+predating the SEO-DOC-001 backfill `52c42d1a`, 2026-08-08):
+
+| Doctor | Current URL Google state | Legacy URL Google state | 90d name-demand | Status |
+| --- | --- | --- | --- | --- |
+| Telmo Coelho (psychiatry) | Excluded (noindex tag), last crawl 2026-07-26 | PASS, indexed | ~354 impr / 32 clicks, pos 2.3–5.7, all on legacy | WAIT FOR GOOGLE (unchanged) |
+| **Vitor Hugo de Matos Pais** (GP) | Excluded, last crawl **2026-07-16** (oldest) | PASS, indexed, last crawl 2026-06-28 | ~67 impr / 0 clicks, pos 3.9–6.7 | **WAIT FOR GOOGLE — new watchlist addition** |
+| **Pedro Santos** (oncology) | Excluded, last crawl **2026-08-06** (freshest — canonical already resolved correctly, just not lifted yet) | Also excluded, same crawl date | Includes a generic query: "melhor oncologista de portugal" 14 impr pos 11.8 | **WAIT FOR GOOGLE — new watchlist addition** |
+| Rui Diogo Rodrigues (cardiology) | PASS, fresh crawl 2026-08-11 | — | ~25 impr, transitioning correctly | No action — healthy |
+
+No Portugal doctor offers a stronger *actionable* opportunity than Telmo —
+Vitor Pais and Pedro Santos are the same recrawl-timing mechanism, not a
+distinct, code-fixable defect, and are recommended as siblings on the same
+watchlist entry rather than separate tickets.
+
+**Spain** — `dr-tomas-ruiz-palacios` confirmed strong and stable (~7 clicks/36
+impr/90d, pos 2.2–2.4, es page) — already optimal, no action needed.
+**Correction**: the prior note that `dr-luz-marina-zuluaga-rios` held "25% CTR
+at pos 1.9" does not reproduce — fresh 90d pull shows 3 impressions / 0 clicks
+across every locale and URL variant for her name. **Reclassified: LOW-DATA
+NOISE**, was almost certainly a 1-click/small-denominator artifact from an
+earlier window. Not a candidate. No other Spain doctor surfaces as a new
+opportunity.
+
+### 19.6 Commercial-service opportunity findings
+
+**Portugal — atestado/carta de condução cluster (the roadmap's own flagged
+candidate), re-verified with fresh evidence:**
+Product gate passes (2 active bookable doctors), internal linking confirmed
+live from `/portugal/pt` and booking CTAs, but every head query sits at
+position 42–53 ("exame medico carta condução" pos 44.6, "atestado médico para
+carta de condução" pos 42). Live SERP check (2 queries, pt/Portugal): MGH
+absent from top 20 on both; page one is government/regulatory sources
+(sns24.gov.pt, iasaude.pt, ordemdosmedicos.pt) plus **8–10 dedicated
+Portugal-specific atestado telemedicine competitors** live since the ~2017
+regulation date, plus a 3-result local pack, plus an AI Overview.
+**Classification: SERP-BUSINESS WALL — CONFIRMED (upgraded from "feasibility
+looks poor" to a verified negative).** No content batch recommended.
+`baixa-medica` (separate, correctly-distinct regulatory cluster) sits at a
+materially healthier position (pt pos 6.2) on real if modest volume — MONITOR,
+not a batch.
+
+**Spain — médico general / consulta online cluster, re-verified:** homepage
+(669 impr/pos 32.8), GP hub (87/32.6), GP detail (`consulta-medica-online`,
+best-positioned, 54 impr/pos 22.1) form a legitimate **SUPPORTIVE CLUSTER**
+(brand landing / catalog+trust-stats / single-service FAQ — no consolidation
+case). Live SERP check ("medico online", es-ES): MGH absent from top 20; page
+one is an AI Overview plus national insurers (caser.es, dkv.es, sanitas.es,
+segurcaixaadeslas.es, aegon.es) and marketplace aggregators (doctoralia.es,
+topdoctors.es). **SERP-BUSINESS WALL — reconfirmed, unchanged from
+SEO-GROWTH-013.**
+
+**Spain — dermatología especialista, re-verified:** the prior "trust
+presentation gap" root cause **has already shipped** (SEO-GROWTH-015,
+`770ee012`, live — see §19.0). Live SERP check ("dermatologia online",
+es-ES): MGH absent from top 20; wall is lower than the GP cluster (boutique
+solo-practitioner dermatology sites + 1-2 aggregators, no insurers) but still
+real. Ranking upside from the shipped fix is capped by an unchanged
+architectural fact: the Doctify widget stays client-rendered
+(`ssr:false`) and consent-gated by design (SEO-GROWTH-014's own conclusion,
+correctly not reopened) — Googlebot's crawled DOM is unaffected by the fix; it
+corrects a customer-facing factual claim and may lift conversion, not
+necessarily rankings. **No further SEO work justified; re-measure after a
+normal recrawl-and-ramp window.**
+
+### 19.7 Query ownership / cannibalization
+
+Portugal: atestado/baixa-medica/certificados-medicos families confirmed
+**CORRECT CLUSTER** (distinct regulatory intents, non-overlapping query sets).
+Doctor legacy-vs-current pairs are **TRANSITIONAL LEGACY OWNERSHIP** (recrawl
+lag), not cannibalization. Spain: médico-general homepage/hub/detail overlap
+reconfirmed **SUPPORTIVE CLUSTER with a minor INTENT SPLIT**, not
+cannibalization — detail page already wins the shared head terms. No TRUE
+CANNIBALIZATION found in either market this pass.
+
+### 19.8 Blog/content
+
+Portugal: 4 PT-locale posts, all near-zero PT-locale impressions; one EN
+variant (baixa-medica self-declaration) draws 13 impr/pos 4.4, informational,
+correctly supportive, not competing. Spain: 1 ES post
+(`diabetes-una-enfermedad-silenciosa`), **zero impressions/clicks, 90d**.
+Neither market's blog content is a material asset or a candidate this pass.
+
+### 19.9 Internal-link check (top candidates only)
+
+Portugal: homepage → atestado/baixa-medica confirmed live (direct anchors +
+booking CTAs); Telmo's profile → services links match his assigned services
+exactly. Spain: both `dermatologia-especialista-online` and
+`consulta-medica-online` confirmed healthy, contextual sibling/hub/doctor
+linking, live-fetched. No internal-link defect found on any top candidate in
+either market.
+
+### 19.10 Product/operations gate
+
+All top candidates in both markets pass the product/operations gate (real,
+active, bookable clinicians) **except** the 4 Spain vascular/aesthetic
+services (§19.5.1 — content-completion dependency, not a supply problem) and
+Portugal's 12 unstaffed specialist services (already correctly unindexed, no
+action possible until staffed).
+
+### 19.11 Secondary locales
+
+No wrong-language ownership or meaningful primary-locale displacement found
+in either market. Two minor, non-actionable notes flagged for awareness only:
+Portugal's `consulta-de-psiquiatria` ranks better on its en-locale URL (pos
+5.7) than pt-locale (pos 21.4) for the same market's service — plausibly
+thinner pt-query volume, not investigated further. Spain's
+`/spain/en/services/consulta-medica-online` draws 7 clicks/514 impr globally,
+0 of the clicks from Spain-country searchers (they're non-resident
+English-language demand, e.g. "doctor spain," "telemedicine spain") — flat vs.
+the prior measurement, confirmed still not a bottleneck.
+
+### 19.12 Portugal opportunity map
+
+| Cluster | Demand | Current performance | Correct page? | Maturity | SERP feasibility | Commercial value | Bottleneck | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Atestado/carta de condução | Real (60+ impr head terms) | Pos 42–53 | Yes | Mature | **Confirmed poor** (10 competitors + gov + local pack + AI Overview) | Medium | SERP-BUSINESS WALL | NO WORK RECOMMENDED |
+| Baixa-medica (sick note) | Modest, growing | pt pos 6.2 | Yes | Recovering | Untested, position already healthy | Medium | None found | MONITOR |
+| Telmo Coelho | Strong branded (354 impr/32 clicks) | On legacy URL only | Yes | Backfilled 08-08 | n/a | High | Google recrawl lag | WAIT FOR GOOGLE |
+| Vitor Hugo de Matos Pais | Real branded (~67 impr) | On legacy URL only | Yes | Same backfill batch | n/a | Medium-high | Google recrawl lag | WAIT FOR GOOGLE (new) |
+| Pedro Santos | Real, partly generic (14 impr pos 11.8) | Both excluded, canonical resolved | Yes | Same batch, furthest along | n/a | Medium | Google recrawl lag | WAIT FOR GOOGLE (new) |
+| GP generic cluster (homepage/hub/detail) | Real ("medico online portugal" 57 impr) | Pos 28.9–46.9 | Ambiguous | Mature | Untested, pattern matches confirmed IE/ES walls | Medium | Authority/competition | AUTHORITY-LIMITED |
+| 12 unstaffed specialist services | None (correctly unindexed) | n/a | n/a | n/a | n/a | Zero until staffed | No clinician | PRODUCT-OPERATIONS CONSTRAINT |
+| Travel medicine | Weak (120 impr, pos 49.3) | Poor | Yes | Immature | Untested | Low-medium | Unproven at this position | NO MATERIAL DEMAND yet |
+| Blog (4 PT posts) | Negligible | n/a | n/a | n/a | n/a | Low | Thin demand | MONITOR |
+
+### 19.13 Spain opportunity map
+
+| Cluster | Demand | Current performance | Correct page? | Maturity | SERP feasibility | Commercial value | Bottleneck | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Dermatología especialista | Real, small (93 impr) | Pos 42.9 | Yes | New (first crawl 07-19) | Lower wall (boutique + aggregators) | Medium | Trust-presentation — **fix shipped, awaiting recrawl** | MONITOR, re-measure |
+| Médico general / consulta online | Real, largest (669+87+54 impr) | Best pos 22.1 | Yes (supportive cluster) | New (first crawl 07-17) | Hard wall (insurers + aggregators + AI Overview) | High in theory | SERP-BUSINESS WALL | MONITOR only |
+| Salud mental online | Minimal (3 impr) | n/a | Yes | New | Untested, too small | Low | Low-data | MONITOR |
+| `/spain/en/…consulta-medica-online` | Small, non-resident (7 clicks/514 impr) | Flat | Wrong-locale for the bulk; sliver legit | Established, plateaued | n/a | Negligible | Minor, non-blocking | MONITOR |
+| 3 vascular/phlebology services (diagnóstico vascular, flebología/linfología, salud vascular circulatoria) | **D — none found** (0 property-wide Spanish-query GSC hits, 16mo; no source content anywhere in DB) | n/a | n/a (correctly noindexed) | Not indexed | Not run — demand gate not met | None demonstrated | Content-completion gate | NO MATERIAL DEMAND — not an SEO candidate |
+| Medicina estética service | **C — SERP/business-model wall** (0 demand; SERP is 100% professional-training intent, not patient intent) | n/a | n/a (correctly noindexed) | Not indexed | Tested — wrong audience, not just competitive | None viable via this query | Content gate + wrong intent | NOT ACTIONABLE — wrong-intent wall, not a content-completion opportunity |
+| Other 17 active ES service pages | Zero Spain-country demand | 0 impr each | Yes | New | Untested | n/a | NO MATERIAL DEMAND | MONITOR |
+| Tomás Ruiz Palacios (doctor) | Real, strong (pos 2.2–2.4) | Already winning | Yes | Established | n/a | High CTR, low volume | None | NO ACTION |
+| Luz Marina Zuluaga Ríos (doctor) | Evaporated (3 impr/90d) | Not reproducible | n/a | n/a | n/a | Negligible now | Was low-data noise | CORRECTION, not a candidate |
+| Blog | Zero | 0 impr/90d | n/a | n/a | n/a | Negligible | No demand | MONITOR |
+
+### 19.14 Cross-market ranking
+
+Nothing in either market clears the bar for **ROOT CAUSE CONFIRMED —
+IMPLEMENTATION READY**. Ranked by remaining signal strength (all are
+zero-remaining-code-work items):
+
+1. **Spain dermatología re-measure** — highest confidence of eventual signal (fix already shipped 2026-08-12), zero further implementation, pure wait.
+2. **Portugal doctor recrawl trio** (Telmo + Vitor Pais + Pedro Santos) — strongest raw demand of anything found this wave (354+67+14 impr on branded/near-branded queries), zero further implementation, pure wait — same mechanism already proven out by SEO-DOC-001.
+3. **Portugal atestado wall / Spain médico-general wall** — largest raw impression volume in both markets, but both independently confirmed SERP/business walls this pass. Correctly ranked last of the real candidates: high volume, low feasibility.
+4. **Spain 4 noindexed bookable services** — resolved exactly this pass (§19.5.1), not left open: 3 have zero demonstrated demand and no first-party content to translate (classification D), the 4th (medicina estética) is a confirmed SERP/business-model wall on wrong search intent (classification C). None is classification A. Ranked last because none is an open opportunity, not because of low confidence.
+
+A high-volume authority wall (#3) is deliberately ranked above the fully-closed
+item (#4), per this ticket's own instruction that a wall with real volume
+still outranks a dependency with none.
+
+### 19.15 Selected candidate
+
+**NO IMPLEMENTATION JUSTIFIED — MONITOR / MOVE TO NEXT WAVE.**
+
+No PT-SEO-001 or ES-SEO-001 is proposed. Every candidate surfaced this pass is
+either (a) a confirmed SERP/business wall with no code-side lever (including,
+after this closecheck pass, all 4 of the Spain noindexed services — 3 on zero
+demand, 1 on wrong search intent), (b) already fixed and pending Google
+recrawl/ramp, or (c) blocked on non-SEO editorial/content work with no SEO
+case behind it. This mirrors how Country Wave 1 closed (§18) — no manufactured
+ticket where the evidence says "wait" or "no."
+
+### 19.16 Measurement plan (watchlist additions, apply on next ledger housekeeping pass)
+
+| Item | Target | Success condition | Failure condition | Recheck window |
+| --- | --- | --- | --- | --- |
+| Spain dermatología (`/spain/es/services/dermatologia-especialista-online`) | Position/CTR movement post-SEO-GROWTH-015 | Position improves from 42.9 and/or CTR rises off 0% within one normal recrawl-and-ramp cycle | No movement after cycle → treat as confirming the SERP wall, not the widget fix | ~2026-09-08 (matches SEO-GROWTH-016 cadence) |
+| Portugal doctor trio (Telmo, Vitor Pais, Pedro Santos) | Current-shape URL `coverageState` via `inspect_urls` | Coverage flips to "Submitted and indexed" / PASS and legacy URL impressions migrate to current URL | Coverage still stale past 2026-09-01 with no recrawl progress | ~2026-09-01 (existing §6 cadence) |
+| Spain 3 vascular/phlebology services | Property-wide Spanish-query GSC demand | New Spanish-query impressions appear property-wide for vascular/flebología/linfología stems | n/a — no SEO-side check needed unless demand appears | Not scheduled — no signal to watch for |
+| Spain medicina estética service | n/a — closed as SERP/business-model wall, not a content-completion watch item | n/a | n/a | Not scheduled |
+
+**NO COUNTRY-WAVE-002 IMPLEMENTATION / NO DEPLOY / WAVE-2 UPDATE UNCOMMITTED.**
 
 ---
