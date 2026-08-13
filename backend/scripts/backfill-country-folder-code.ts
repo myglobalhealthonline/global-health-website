@@ -68,15 +68,25 @@ async function main() {
     for (const profile of rows) {
       total += 1;
 
+      // Cross-border-rx appointments store countryCode = the prescription's
+      // TARGET jurisdiction, not the patient's own country — excluded here
+      // or e.g. a Brazil patient with one genuine 'br' visit plus a
+      // cross-border request targeting 'ie' reads as spanning two countries
+      // and gets skipped as ambiguous when they're not ambiguous at all.
       const appts = profile.userId
         ? await prisma.appointment.findMany({
-            where: { userId: profile.userId, status: { notIn: ["CANCELLED"] } },
+            where: {
+              userId: profile.userId,
+              status: { notIn: ["CANCELLED"] },
+              consultationType: { not: "cross-border-prescription" },
+            },
             select: { countryCode: true },
           })
         : await prisma.appointment.findMany({
             where: {
               email: { equals: profile.email, mode: "insensitive" },
               status: { notIn: ["CANCELLED"] },
+              consultationType: { not: "cross-border-prescription" },
             },
             select: { countryCode: true },
           });
