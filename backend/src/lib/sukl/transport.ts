@@ -266,7 +266,11 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
               .toString("utf8")
               .replace(/\s+/g, " ")
               .trim()
-              .slice(0, 600);
+              // 600 characters cut SÚKL off mid-sentence on fault S026, losing the
+              // half that explained what to do. Their faults are long, in Czech,
+              // and back-loaded — the actionable clause is at the END. 4000 is
+              // still a hard cap on an error page, not a licence to log bodies.
+              .slice(0, 4000);
             // A deliberately narrow allowlist: these say WHY we were refused.
             // Copying every header would risk echoing something sensitive back
             // through an API response.
