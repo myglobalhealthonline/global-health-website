@@ -10,7 +10,7 @@ import {
   type SuklService,
 } from "./config.js";
 import { buildSoapEnvelope, el, extractElementText, extractFault } from "./envelope.js";
-import { SuklError, SuklNotConfiguredError } from "./errors.js";
+import { isSuklError, SuklError, SuklNotConfiguredError } from "./errors.js";
 import { suklPost } from "./transport.js";
 
 /**
@@ -51,11 +51,26 @@ const SERVICE_NAMESPACE: Record<SuklService, string> = {
 };
 
 /**
- * Endpoint path. SÚKL's published `soap:address` points at an internal host
- * (`test-erp-as02`), so it cannot be used directly — but their reverse proxy
- * serves the WSDL from the host root, which is where operations are posted too.
+ * Default endpoint path. SÚKL's published `soap:address` points at an internal
+ * host (`test-erp-as02`), so it cannot be used directly — but their reverse
+ * proxy serves the WSDL from the host root, so that is the first candidate.
+ *
+ * Overridable per call because "the WSDL is served here" does not prove
+ * "operations are posted here", and an HTTP 401/403 is exactly what a wrong
+ * path looks like from the outside. Being able to try the alternatives without
+ * a redeploy turns a guessing game into three quick attempts.
  */
-const ENDPOINT_PATH = "/";
+export const DEFAULT_ENDPOINT_PATH = "/";
+
+/** Paths worth trying when the default is rejected, derived from the internal
+ *  `soap:address` SÚKL publish. Offered to the operator, never auto-swept. */
+export const CANDIDATE_ENDPOINT_PATHS = [
+  "/",
+  "/Endpoints/CommonWebService.asmx",
+  "/LekovyZaznam/Endpoints/CommonWebService.asmx",
+  "/Endpoints/CuepWebService.asmx",
+  "/LekovyZaznam/Endpoints/CuepWebService.asmx",
+] as const;
 
 export interface SuklAppPingResult {
   service: SuklService;
@@ -71,6 +86,10 @@ export interface SuklAppPingResult {
   /** Populated only when SÚKL returned an error/fault. Safe to display. */
   errorCode: string | null;
   errorMessage: string | null;
+  /** The path actually used, so a successful attempt is reproducible. */
+  path: string;
+  /** Truncated upstream excerpt, present only for a 401/403. Untrusted text. */
+  bodyExcerpt: string | null;
 }
 
 export function buildAppPingRequest(input: {
@@ -149,7 +168,10 @@ export function interpretAppPingResponse(input: { httpStatus: number; body: stri
   return { ok: true, responseMessageId, errorCode: null, errorMessage: null };
 }
 
-export async function suklAppPing(service: SuklService): Promise<SuklAppPingResult> {
+export async function suklAppPing(
+  service: SuklService,
+  options: { path?: string } = {},
+): Promise<SuklAppPingResult> {
   const uzivatel = suklUzivatel();
   const pracoviste = suklWorkplaceCode();
   const verze = suklInterfaceVersion();
@@ -177,7 +199,33 @@ export async function suklAppPing(service: SuklService): Promise<SuklAppPingResu
     namespace: SERVICE_NAMESPACE[service],
   });
 
-  const response = await suklPost(service, ENDPOINT_PATH, envelope, { soapAction: "AppPing" });
+  const path = options.path?.trim() || DEFAULT_ENDPOINT_PATH;
+
+  let response;
+  try {
+    response = await suklPost(service, path, envelope, { soapAction: "AppPing" });
+  } catch (error) {
+    // A transport-level rejection still carries diagnosis worth returning
+    // rather than throwing away — particularly the 401/403 excerpt.
+    if (isSuklError(error)) {
+      return {
+        service,
+        label: SUKL_SERVICE_LABELS[service],
+        ok: false,
+        httpStatus: error.httpStatus ?? 0,
+        durationMs: 0,
+        requestId,
+        responseMessageId: null,
+        interfaceVersion: verze!,
+        errorCode: error.code,
+        errorMessage: error.safeMessage,
+        path,
+        bodyExcerpt: error.bodyExcerpt ?? null,
+      };
+    }
+    throw error;
+  }
+
   const verdict = interpretAppPingResponse({
     httpStatus: response.httpStatus,
     body: response.body,
@@ -194,6 +242,8 @@ export async function suklAppPing(service: SuklService): Promise<SuklAppPingResu
     interfaceVersion: verze!,
     errorCode: verdict.errorCode,
     errorMessage: verdict.errorMessage,
+    path,
+    bodyExcerpt: null,
   };
 }
 
