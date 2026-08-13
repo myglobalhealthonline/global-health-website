@@ -1,6 +1,12 @@
 # SÚKL interface inventory
 
-> **Status: BLOCKED — the vendor documentation package has not been supplied.**
+> **Status: documentation LOCATED 2026-08-13, not yet read.**
+>
+> SÚKL (ticket 40336) confirm the current WSDL/XSD, interface-version notes and
+> the service/role table are published in the **Supplier (Dodavatel)** section of
+> https://epreskripce.gov.cz/ , with an ePoukaz-specific page. Download it into
+> `docs/sukl/vendor/` and fill this file in from the documents — not from memory,
+> and not from the summaries in this file.
 >
 > Every heading below is deliberately empty. This file is the source of truth for
 > operation names, endpoint URLs, XML namespaces, headers and message shapes, and
@@ -44,12 +50,17 @@ Sources:
 | SÚKL test API information | https://testapi.sukl.cz/index_en.html |
 | Test access portal | https://testpristupy.sukl.cz/ |
 
-Interface versions published by SÚKL as of 1 January 2026, to be **verified against
-the downloaded WSDL/XSD rather than trusted from this table**:
+**Interface versions — corrected 2026-08-13 by SÚKL (ticket 40336).** The
+`202601A` / `202601B` figures previously recorded here were out of date:
 
-- ePoukaz: `202601A`, `202601B`
-- Cross-border eRecept: `201912B`
-- Main eRecept interfaces: `202501A`
+| Environment | Version |
+|---|---|
+| Production | `202604A` |
+| Test | `202605A` — expected to reach production within a month of 2026-08-13 |
+
+Build against **`202605A`**, which is what the test environment serves and what
+production will become. Announcements appear at https://epreskripce.gov.cz/ .
+Still verify against the downloaded WSDL rather than trusting this table.
 
 ## Inventory
 
@@ -59,9 +70,20 @@ _BLOCKED — awaiting vendor package._
 
 ### Operations
 
-_BLOCKED._ For each operation, record: name, direction, whether it mutates,
-whether an outpatient (ambulance) workplace is permitted to call it, and the
-minimum role required.
+_To be filled from the documentation._ SÚKL confirm it contains a **searchable
+table of services showing which role may use each service** — that table is the
+authority on what an ambulance/outpatient workplace may call. Record per
+operation: name, direction, whether it mutates, whether our role may call it,
+**and whether it requires a personal qualified signature** (see below).
+
+Two constraints already known:
+
+- **Rate limits are enforced per user per minute**, and exceeding them
+  temporarily blocks access. Nothing may poll SÚKL on a timer.
+- **Some active operations require a personal qualified signature**, unless
+  authentication is done through Identita občana. Which operations, exactly, is
+  question Q15 — and it gates the whole payload layer. See
+  `SCOPE_CONFIRMATION.md`.
 
 ### Test service hosts
 
@@ -148,12 +170,24 @@ _BLOCKED._
 
 ### Authentication requirements
 
-**Partially known.** SÚKL confirmed that the workplace communication certificate
-authenticates the connection over mutual TLS and that **no doctor personal
-qualified signature is required**. That is what the implemented transport does.
+**Corrected 2026-08-13 — the earlier entry here was wrong.**
 
-Still unknown: whether any operation additionally requires an in-message
-identifier or credential beyond the TLS client certificate.
+Mutual TLS with the workplace communication certificate authenticates the
+*connection*, and that part is built and proven. But SÚKL state that **some
+active operations must additionally be signed with a personal qualified
+certificate**, unless the doctor is authenticated through **Identita občana**
+(Citizen Identity), which removes the signature requirement.
+
+Creating an ePoukaz is an active operation, so the transport alone is not
+sufficient to issue one. Two routes exist and neither is chosen yet — see
+"Authentication model — CHANGED 2026-08-13" in `SCOPE_CONFIRMATION.md`, and
+Q15–Q17 there.
+
+For the test environment SÚKL accept a **DEMO qualified certificate**, e.g.
+PostSignum's test certificate.
+
+Also settled: the request payload carries the **workplace code `00150928369`**.
+The certificate subject's `O` and `OU` are not used in payloads.
 
 ### Required doctor / facility / workplace fields
 
@@ -164,16 +198,20 @@ an IČP, a KRZP code, or a value of their own.
 
 ### Error and fault structures
 
-_BLOCKED._ Needed to map SÚKL faults onto `SUKL_SOAP_FAULT` /
-`SUKL_BUSINESS_VALIDATION_FAILED` / `SUKL_SCHEMA_VALIDATION_FAILED` in
-`backend/src/lib/sukl/errors.ts`.
+_To be filled from the documentation._ SÚKL confirm the error codes are
+documented in an **Excel attachment** within the technical documentation package.
+Map them onto `SUKL_SOAP_FAULT` / `SUKL_BUSINESS_VALIDATION_FAILED` /
+`SUKL_SCHEMA_VALIDATION_FAILED` in `backend/src/lib/sukl/errors.ts`.
 
 ### Idempotency and duplicate handling
 
-_BLOCKED._ Specifically: does SÚKL expose a way to ask "did you already accept
-this?" after an ambiguous network failure? Without one, a create operation can
-never be safely auto-retried, and the planned key format
-`sukl-epoukaz:{appointmentId}:{attemptGroup}` protects us only on our own side.
+**Partially answered 2026-08-13.** SÚKL addressed the two unambiguous cases: a
+failed TLS handshake means nothing was delivered, and a delivered call returns a
+documented error code. They did **not** address the case that actually matters —
+request sent, response lost.
+
+Until that is answered, **no create operation may be auto-retried**. The planned
+key `sukl-epoukaz:{appointmentId}:{attemptGroup}` protects only our own side.
 
 ## Downstream work this file unblocks
 
