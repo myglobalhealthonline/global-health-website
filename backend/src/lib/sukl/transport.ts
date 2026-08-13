@@ -5,8 +5,10 @@ import { URL } from "node:url";
 import { loadSuklPfx } from "./certificate.js";
 import {
   isSuklServiceConfigured,
+  suklPassword,
   suklServiceUrl,
   suklTimeoutMs,
+  suklUzivatel,
   SUKL_SERVICE_ENV_VARS,
   SUKL_SERVICE_LABELS,
   type SuklService,
@@ -155,6 +157,16 @@ export interface SuklRequestOptions {
   /** SOAPAction header value. Comes from the WSDL — never invent one. */
   soapAction?: string;
   contentType?: string;
+  /**
+   * Optional HTTP Basic credentials, sent IN ADDITION to the client certificate.
+   *
+   * Only supplied when explicitly configured. SÚKL's test-access accounts have
+   * both a login name and a password, and their COMMON service exposes a `Login`
+   * operation, so an HTTP-layer credential is plausible — but sending a password
+   * to a server that never asked for one is not, which is why this is opt-in
+   * rather than always-on.
+   */
+  basicAuth?: { username: string; password: string };
   /** Hard cap on the response we will buffer. Guards against a huge document. */
   maxBytes?: number;
 }
@@ -206,6 +218,15 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
         timeout,
         headers: {
           accept: "text/xml, application/soap+xml, application/wsdl+xml, */*",
+          ...(options.basicAuth
+            ? {
+                authorization:
+                  "Basic " +
+                  Buffer.from(
+                    `${options.basicAuth.username}:${options.basicAuth.password}`,
+                  ).toString("base64"),
+              }
+            : {}),
           ...(method === "POST"
             ? {
                 "content-type": options.contentType ?? "text/xml; charset=utf-8",
@@ -246,6 +267,14 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
               .replace(/\s+/g, " ")
               .trim()
               .slice(0, 600);
+            // A deliberately narrow allowlist: these say WHY we were refused.
+            // Copying every header would risk echoing something sensitive back
+            // through an API response.
+            const interesting: Record<string, string> = {};
+            for (const name of ["www-authenticate", "server", "x-powered-by", "location"]) {
+              const v = response.headers[name];
+              if (typeof v === "string" && v) interesting[name] = v;
+            }
             fail(
               new SuklError(
                 "SUKL_AUTHENTICATION_FAILED",
@@ -253,7 +282,11 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
                 `SÚKL accepted the TLS connection but rejected the request with HTTP ${status}. ` +
                   "Possible causes: the certificate is not mapped to an account for this " +
                   "service, the request path is wrong, or the service expects a prior Login.",
-                { httpStatus: status, bodyExcerpt: excerpt || undefined },
+                {
+                  httpStatus: status,
+                  bodyExcerpt: excerpt || undefined,
+                  responseHeaders: Object.keys(interesting).length ? interesting : undefined,
+                },
               ),
             );
             return;
@@ -343,12 +376,16 @@ export async function suklPost(
 ): Promise<SuklResponse> {
   if (!isSuklServiceConfigured(service)) throw notConfigured(service);
   const { pfx, passphrase } = loadSuklPfx();
+  // Basic credentials only when a password is explicitly configured.
+  const user = suklUzivatel();
+  const password = suklPassword();
   return suklRequest({
     baseUrl: suklServiceUrl(service)!,
     path,
     body,
     pfx,
     passphrase,
+    ...(user && password ? { basicAuth: { username: user, password } } : {}),
     timeoutMs: options.timeoutMs ?? suklTimeoutMs(),
     ...(options.soapAction ? { soapAction: options.soapAction } : {}),
     ...(options.contentType ? { contentType: options.contentType } : {}),
