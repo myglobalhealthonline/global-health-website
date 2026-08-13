@@ -235,13 +235,25 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
           const durationMs = Date.now() - startedAt;
 
           if (status === 401 || status === 403) {
+            // Keep an excerpt. A 401/403 body is an infrastructure error page,
+            // not a business document, and it is the only thing that
+            // distinguishes "certificate not mapped to an account" from
+            // "wrong path" from "this service needs a prior Login". Throwing
+            // that away — as this did — leaves an operator with a sentence that
+            // sounds definitive and explains nothing.
+            const excerpt = Buffer.concat(chunks)
+              .toString("utf8")
+              .replace(/\s+/g, " ")
+              .trim()
+              .slice(0, 600);
             fail(
               new SuklError(
                 "SUKL_AUTHENTICATION_FAILED",
                 "response",
-                "SÚKL accepted the TLS connection but rejected our identity — the workplace " +
-                  "certificate may not be registered for this service.",
-                { httpStatus: status },
+                `SÚKL accepted the TLS connection but rejected the request with HTTP ${status}. ` +
+                  "Possible causes: the certificate is not mapped to an account for this " +
+                  "service, the request path is wrong, or the service expects a prior Login.",
+                { httpStatus: status, bodyExcerpt: excerpt || undefined },
               ),
             );
             return;
