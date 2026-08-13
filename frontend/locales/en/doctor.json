@@ -987,6 +987,20 @@
     "copied": "Copied",
     "done": "Done"
   },
+  "crossBorderRxMoreInfo": {
+    "title": "More information requested",
+    "fromLabel": "Requested by",
+    "questionLabel": "Question",
+    "answerLabel": "Your answer",
+    "answerPlaceholder": "Write your answer…",
+    "submit": "Send answer",
+    "submitting": "Sending…",
+    "answerRequired": "Enter an answer before sending.",
+    "couldNotSubmit": "Could not send your answer.",
+    "answerSent": "Answer sent.",
+    "waitingForDoctor": "Waiting for the prescribing doctor to review your answer.",
+    "yourAnswer": "Your answer"
+  },
   "crossBorderRxInbox": {
     "eyebrow": "Cross-border",
     "title": "Cross-border prescription requests",
