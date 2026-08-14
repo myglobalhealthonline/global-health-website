@@ -120,16 +120,16 @@ unified — the sitemap currently mixes `mudr-` (3), `dr-` (1) and bare (1).
 > anchors, verified in raw HTML from `curl` against the built page, and all 33
 > targets return 200 on production.
 >
-> **§3b is UNRESOLVED and needs a human decision.** It asks for the markup
-> `SEO-FOUNDATION-004` removed on 2026-08-12 with production verification. It
-> also conflates two separate claims: the six alternates (clearly wrong, and
-> why the fix happened) and `x-default` (a genuinely open question — a root
-> selector page is the textbook `x-default` target, but making `/` the
-> `x-default` requires the six market clusters to point at it, which is a much
-> larger change than §3b describes). Four options costed in ledger §5b.
+> **§3b is SUPERSEDED by `SEO-FOUNDATION-004`** (Hassaan, 2026-08-14 — author of
+> this item; it was written without knowledge of that fix). Six pages declaring
+> one URL to be six different languages cannot be right, and §3b's link-equity
+> rationale is already satisfied by §3a's anchors. `/` stays out of the hreflang
+> graph. A global `x-default → /` is recorded in ledger §5b as the correct end
+> state, unscheduled; revisit only if GSC shows unmatched-locale traffic landing
+> on the wrong cluster.
 >
-> The "do 3a and 3b in the same PR" instruction below could not be followed for
-> that reason. §3a shipped alone; its link-equity goal does not depend on §3b.
+> The "do 3a and 3b in the same PR" instruction below is therefore void. §3a
+> shipped alone; its link-equity goal never depended on §3b.
 
 `/` is the site's highest-authority page: 5,440 impressions, 357 clicks over 90
 days, and the entry point for essentially all 58 referring domains.

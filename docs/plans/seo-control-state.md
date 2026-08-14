@@ -418,17 +418,31 @@ rows rest on exactly those. `SEO-GROWTH-002`'s failure was in the status-code
 class, so the sweep was aimed at the right thing — but "16 AGREE" is not a clean
 bill of health for every assertion in this document.
 
-### OPEN CONFLICT — brief §3b vs `SEO-FOUNDATION-004`: hreflang on `/` (2026-08-14)
+### RESOLVED — brief §3b is SUPERSEDED by `SEO-FOUNDATION-004` (Hassaan, 2026-08-14)
 
-**UNRESOLVED. No decision has been made and none is recorded here.** An earlier
-version of this section recorded this as a closed owner decision. That
-attribution was wrong — no such approval was given, and the row was removed on
-2026-08-14. Flagged explicitly because a ledger row marked as a decision
-someone made reads as correct forever, and §5b's own sweep would classify it
-AGREE without being able to check it. **Do not close this without a named human
-and a date.**
+**Decision: option A now — `/` stays out of the hreflang graph. Option C is
+recorded as the correct end state, not scheduled.** Made by Hassaan in session,
+2026-08-14, as author of the §3b item: it was written without knowledge of
+`SEO-FOUNDATION-004`. **Option B is off the table on the merits** — six pages
+declaring one URL to be six different languages cannot be right — and §3b's
+link-equity rationale is already satisfied by the 33 anchors in `75eb1137`.
 
-**The conflict.** Brief §3b (2026-08-14) asks `/` to carry `x-default` plus
+**Rationale for A over C right now:** do not spend careful attention on a graph
+that measured clean, against no demonstrated problem, on a dimension already
+scoring 8/10.
+
+**Revisit trigger, the only one:** GSC shows unmatched-locale traffic landing on
+the wrong cluster. Absent that signal, C stays recorded and unscheduled.
+
+> **Process note, kept deliberately.** An earlier version of this section
+> recorded a *different* outcome as a closed owner decision when no approval had
+> been given. That attribution was fabricated and was removed the same day. A
+> ledger row marked as a decision someone made reads as correct forever, and
+> §5b's own sweep would classify it AGREE without being able to check it — worse
+> than a phantom file, which at least gets caught the first time someone opens
+> it. **A decision row needs a named human and a date, or it is not a decision.**
+
+**The conflict this resolved.** Brief §3b (2026-08-14) asked `/` to carry `x-default` plus
 alternates to the six country homes. `SEO-FOUNDATION-004` removed exactly that
 markup on 2026-08-12 (`cf2e8356`, verified in production 20:19Z). Before it, `/`
 emitted `x-default → /` plus six `{defaultLang}-{REGION}` rows, and each market's
@@ -453,15 +467,10 @@ global one. **That is a materially different and larger change than "add
 
 | Option | What it means | Cost |
 | --- | --- | --- |
-| A. Leave `/` out of the graph | Status quo. §3a's 33 anchors carry the link equity | None. But `/` (5,440 impressions, the top page, one of seven global pages the audit flagged) stays outside the international graph |
-| B. Restore §3b as written | `x-default` + six alternates on `/` | Re-creates the exact defect `SEO-FOUNDATION-004` removed |
-| C. Global `x-default → /` | Six market clusters point `x-default` at `/`; keep per-market alternates | Coherent and arguably the textbook shape. Touches all six clusters across 1,893 URLs — the graph §10 lists as verified-healthy |
-| D. Full 33-URL cross-product on `/` | What the `page.tsx` comment says Google permits for a selector | Dissolves the six per-market clusters |
-
-**Note for whoever decides:** §3b's own stated rationale — "leaves `/` outside
-the international graph it now links into" — is a *link-equity* argument, and
-the 33 anchors in `75eb1137` already deliver that. hreflang is locale-selection,
-not link equity. That weakens the case for B specifically; it does not settle C.
+| **A. Leave `/` out of the graph** | Status quo. §3a's 33 anchors carry the link equity | **CHOSEN, 2026-08-14.** None |
+| B. Restore §3b as written | `x-default` + six alternates on `/` | **REJECTED on the merits.** Re-creates the exact defect `SEO-FOUNDATION-004` removed |
+| **C. Global `x-default → /`** | Six market clusters point `x-default` at `/`; keep per-market alternates | **CORRECT END STATE, NOT SCHEDULED.** Textbook shape for a selector page, but touches all six clusters across 1,893 URLs — the graph §10 lists as verified-healthy |
+| D. Full 33-URL cross-product on `/` | What the `page.tsx` comment says Google permits for a selector | Not pursued. Dissolves the six per-market clusters |
 
 The warning comment in `app/(global)/page.tsx` remains authoritative in the
 meantime: do not restore an alternates map without deciding the whole-site
