@@ -479,6 +479,40 @@ The warning comment in `app/(global)/page.tsx` remains authoritative in the
 meantime: do not restore an alternates map without deciding the whole-site
 cluster shape first.
 
+### Dated check — SEO-DOC-004 outcome, due 2026-09-08
+
+**Deliberately aligned to the existing 2026-09-08 review day** (Ireland labs,
+CZ-SEO-001) so it is one trip to GSC, not three.
+
+**Prediction, recorded 2026-08-14 so it stays falsifiable:** Czech GSC is **flat**
+on these three URLs. The 48 clicks / 30% CTR / position 4.4 that
+`mudr-jana-cyplinska` carried do **not** return. Redirecting a clinician-name
+query onto a roster that never names her is the shape Google commonly treats as
+a soft 404 — the target is not a close equivalent, so it typically inherits
+nothing.
+
+| What to check on 2026-09-08 | Expected | What it would mean if different |
+| --- | --- | --- |
+| Czech clicks on the three legacy URLs | ~0, and falling as Google drops them | A rise means the roster redirect inherited more than expected — good news, record it |
+| `inspect_urls` on the three legacy URLs | "Page with redirect", verdict NEUTRAL | Still 404 in Google's stored state = recrawl lag, not a defect. Re-check, do not act |
+| `/czechia/cs/doctors` position/impressions | Unchanged or slightly up | — |
+
+**Flat is the PASS condition, not the fail condition.** §2 fixed the defect
+without recovering the traffic; the recovery is §5's successor page. Do not read
+flat numbers on 2026-09-08 as evidence the redirect failed — that reading is
+exactly what this row exists to prevent. The only result that would indicate a
+real problem is Google continuing to serve a 404 for these URLs after a recrawl.
+
+### Before starting §7 — check whether §5 and §7 share a template
+
+Five minutes, potentially large payoff. §5's successor page (a departed
+clinician: states they no longer practise, lists same-specialty same-language
+clinicians) and §7's language versions of `/about`/`/faq`/`/blog` are the same
+shape: **a page that exists per language, is not a country page, and needs its
+own hreflang.** If one template serves both, §5 gets materially cheaper and the
+traffic recovery above arrives sooner than the §5 slot in the work order
+implies. If they diverge, five minutes lost.
+
 ### Handoff — state at 2026-08-14 session end
 
 **DEPLOYED. The §2 fix is live and verified — see `SEO-DOC-004`.** Someone
