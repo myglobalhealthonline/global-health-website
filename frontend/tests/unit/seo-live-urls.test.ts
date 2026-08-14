@@ -145,6 +145,30 @@ async function rosterSlugs(): Promise<Map<string, Set<string>>> {
   return out;
 }
 
+/**
+ * Known, decided, still-broken URLs. A gate that stays red for an item someone
+ * has already decided not to fix trains people to ignore it — which is the
+ * exact failure this check exists to prevent, one layer up. So an exception is
+ * allowed, but only with a reason, and the reason is asserted to exist.
+ *
+ * This is NOT a place to silence a failure you have not decided about. If a new
+ * URL shows up here, decide it and record it in `seo-control-state.md` first.
+ */
+const KNOWN_BROKEN: ReadonlyArray<{ path: string; reason: string }> = [
+  {
+    path: "/brazil-doctors/dr-renato-sarmento",
+    reason:
+      "Brazil has no /{country}-doctors/:slug rule where the other five markets do — a real " +
+      "structural asymmetry, surfaced 2026-08-14. GSC 90d: rowCount 0, hasMore false, so Google " +
+      "has never seen one of these URLs. Not fixed because Brazil is out of scope pending legal " +
+      "review of whether consultations can be delivered there at all; it is one rule of the same " +
+      "shape as the other five whenever that clears. See seo-control-state.md §5b.",
+  },
+];
+
+const isKnownBroken = (url: string) =>
+  KNOWN_BROKEN.some((k) => new URL(url).pathname === k.path);
+
 /** Parameterised rules whose source is a doctor family — what the expansion covers. */
 function parameterisedDoctorRuleCount(rules: Rule[]): number {
   return rules.filter((r) => !isLiteral(r.source) && /-doctors\/|\/doctors\//.test(r.source)).length;
@@ -181,6 +205,17 @@ describe("GONE_DOCTORS entries are documented decisions, not oversights", () => 
     },
   );
 
+  it.each(KNOWN_BROKEN.map((k) => [k.path, k] as const))(
+    "%s is an exception with a real recorded reason, not a silenced failure",
+    (_path, k) => {
+      // The exception list is the one place a failure can be made to disappear,
+      // so it gets the same treatment as GONE_DOCTORS: the justification has to
+      // exist and has to point somewhere a reader can check.
+      expect(k.reason.trim().length, `${k.path}: no reason given`).toBeGreaterThan(40);
+      expect(k.reason, `${k.path}: reason cites no ledger entry`).toMatch(/seo-control-state\.md/);
+    },
+  );
+
   it("no redirect rule points at a slug that is listed as gone", async () => {
     // The exact bug `slugMatcherExcludingGone` exists to prevent, asserted at
     // the rule level rather than trusting the lookahead compiled correctly.
@@ -206,7 +241,9 @@ live("live URL assertions (SEO_CHECK_BASE)", () => {
       const parameterised = rules.length - literal.length;
 
       const results = await mapPool(literal, (r) => probe(r.source));
-      const dead = results.filter((r) => r.status >= 400 && !GONE_PATHS.has(new URL(r.url).pathname));
+      const dead = results.filter(
+        (r) => r.status >= 400 && !GONE_PATHS.has(new URL(r.url).pathname) && !isKnownBroken(r.url),
+      );
 
       // No silent caps: say plainly what this pass could not cover.
       console.log(
@@ -258,7 +295,7 @@ live("live URL assertions (SEO_CHECK_BASE)", () => {
 
       const results = await mapPool(unique, (p) => probe(p));
       const gone = (url: string) => GONE_PATHS.has(new URL(url).pathname);
-      const dead = results.filter((r) => r.status >= 400 && !gone(r.url));
+      const dead = results.filter((r) => r.status >= 400 && !gone(r.url) && !isKnownBroken(r.url));
       const wrongGone = results.filter((r) => gone(r.url) && r.status !== 410);
 
       const clinicians = [...universe.values()].reduce((n, s) => n + s.size, 0);

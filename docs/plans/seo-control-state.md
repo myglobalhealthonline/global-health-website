@@ -266,27 +266,30 @@ measurable loss today, and none should be dressed up as one. Full reasoning in �
 
 #### SEO-DOC-004 — verification status and expected outcome
 
-**Status: CLOSED-PENDING-VERIFICATION. `8189baa6` is not deployed.** The
-original acceptance check ran against a local Next server pointed at the
-production API, which proves the redirect *config*, not the deployed behaviour.
-A dev-server probe is an assumption wearing an assertion's clothes — the same
-error class as a phantom file, one layer down, and it is what put
-`SEO-GROWTH-002` in this ledger wrong.
+**Status: CLOSED — VERIFIED ON DEPLOYED PRODUCTION, 2026-08-14.** `8189baa6`
+reached `main` and Railway auto-deployed it the same day.
 
-Production was re-probed 2026-08-14 by the new §4 check (`seo-live-urls`,
-`SEO_CHECK_BASE=https://www.myglobalhealth.online`). **It still fails, exactly as
-expected pre-deploy:**
+The original check ran against a local Next server pointed at the production
+API, which proves the redirect *config*, not the deployed behaviour — an
+assumption wearing an assertion's clothes, and the same error class that put
+`SEO-GROWTH-002` in this ledger wrong. The row was therefore held at
+CLOSED-PENDING-VERIFICATION until the deployed probe ran. **It has now run.**
+
+Direct probe, `https://www.myglobalhealth.online`:
 
 ```
-× no redirect terminates in a 404
-  /czechia-doctors/mudr-jana-cyplinska -> 404 (1 hops, final /czechia/cs/doctors/mudr-jana-cyplinska)
-  /czechia-doctors/mudr-libor-hlavaty  -> 404 (1 hops, final /czechia/cs/doctors/mudr-libor-hlavaty)
-  /czechia-doctors/mudr-andrei-lavrov  -> 404 (1 hops, final /czechia/cs/doctors/mudr-andrei-lavrov)
-× the three Czech P0 fixtures resolve 200 in one hop  (404, expected 200)
+/czechia-doctors/mudr-jana-cyplinska  hops=1 final=200 -> /czechia/cs/doctors
+/czechia-doctors/mudr-libor-hlavaty   hops=1 final=200 -> /czechia/cs/doctors
+/czechia-doctors/mudr-andrei-lavrov   hops=1 final=200 -> /czechia/cs/doctors
 ```
 
-**After deploy, re-run that job and replace this block with the passing output.**
-Do not mark SEO-DOC-004 CLOSED until the passing output is in this file.
+Full §4 gate against the same host: **Test Files 1 passed, Tests 8 passed** —
+no redirect terminates in an error, all 128 expanded doctor URLs resolve, every
+sitemap entry is a live indexable 200, every `GONE_DOCTORS` URL answers 410.
+
+The identical run **failed** on these three URLs before the deploy. That
+before/after pair is the check demonstrating itself against real production
+rather than a fixture.
 
 **Expected outcome: the 48 clicks do not come back. Record this now.**
 Redirecting a clinician-name query sitting at position 4.4 onto a generic roster
@@ -478,23 +481,30 @@ cluster shape first.
 
 ### Handoff — state at 2026-08-14 session end
 
-**Blocked on deploy. `Dev-hassaan` carries 8 unpushed commits, 3 of them another
-session's.** The SEO commits are `8189baa6`, `4a60ad7f`, `f8623dac`, `75eb1137`,
-`92fa57a8`, `4a9674a6`, `5a5f7e99`. Also on the branch, from a concurrent
-session and **unreviewed by anyone in the SEO thread**: `d946dd6c` (404-page
-redesign), `4eee0131` and `214b41a5` (membership email locale fixes).
+**DEPLOYED. The §2 fix is live and verified — see `SEO-DOC-004`.** Someone
+pushed to `main` during the 2026-08-14 session and Railway auto-deployed;
+`8189baa6` is on `origin/main` and production now resolves all three Czech URLs
+200 in one hop.
 
-> **Say this out loud when asking for the push:** *this push carries someone
-> else's work too — confirm with whoever owns it that it is ready to ship.*
-> Otherwise the redirect fix deploys alongside three unreviewed commits, and if
-> one of them breaks something the SEO work is in the same deploy and the bisect
-> is confusing. One line converts a silent coupling into a decision someone made.
+**That deploy also shipped three commits nobody in the SEO thread reviewed:**
+`d946dd6c` (404-page redesign) and `4eee0131` / `214b41a5` (membership email
+locale fixes), all from a concurrent session on the same branch. They are in
+production now. Nothing has gone wrong — the 404-redesign interaction was probed
+directly (real 404s still 404, `dr-grainne-ahern` still 410, the Czech redirect
+still 308) — but the coupling was silent, and if one of those three misbehaves,
+the SEO commits are in the same deploy and a bisect will be confusing. **Worth
+someone who owns that work confirming it was ready to ship.** The general
+lesson: a shared branch means a push is a decision about everyone's work on it,
+so say so out loud when asking for one.
 
-Three asks for Nauman: (1) `git push origin Dev-hassaan`, then `main` for
-production; (2) confirm Railway → Settings → Source still says `main` for
-Production (it did on 2026-08-12, per `SEO-FOUNDATION-004`); (3) name the channel
-that should receive `seo-live-urls` failures. Until (1) and (2), the three Czech
-URLs are still live 404s.
+Two commits remain unpushed at session end (`1bc83a91` and the follow-up
+recording this verification) — documentation only.
+
+**Still open for Nauman:** (1) confirm Railway → Settings → Source still says
+`main` for Production (it did on 2026-08-12, per `SEO-FOUNDATION-004`, and the
+auto-deploy is consistent with that); (2) name the channel that should receive
+`seo-live-urls` failures — the GitHub issue is a placeholder for a channel
+somebody actually watches.
 
 **Order for the next session: §7 before §6.** §7 (language versions of `/about`,
 `/faq`, `/blog`) needs no deploy. §6's acceptance cannot be evaluated until one
