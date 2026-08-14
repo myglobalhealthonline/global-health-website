@@ -333,13 +333,46 @@ against real production rather than a synthetic fixture. The sitemap and
   data-dependent, so the check has to resolve against live data. That is why it
   is network-gated rather than a static build step.
 
-**Coverage limit, logged by the run itself rather than left implicit:** 99 of
-364 redirect rules have a literal source and are probed. The other 265 are
-parameterised (`:slug`) and have no single URL to request — their dead-slug
-failures are only visible against a legacy-slug corpus from GSC, which this
-check does not have. That is precisely how cyplinska/hlavaty/lavrov survived,
-so it is the known ceiling, not an oversight. Upgrade path: feed the check a
-GSC page export and probe the real legacy slugs.
+**Coverage, after the 2026-08-14 expansion.** 99 of 364 redirect rules have a
+literal source and are probed directly. The 26 parameterised *doctor* rules —
+the family the P0 lived in — are now expanded against a live slug universe built
+from the roster pages, the sitemap and `GONE_DOCTORS`, giving 128 real URLs
+probed. The roster is used rather than the sitemap alone on purpose: a `noindex`
+doctor is absent from the sitemap but their URL is still live and still a
+redirect target (Czechia: 8 on the roster, 5 in the sitemap).
+
+**Remaining gap, two parts, both genuinely needing a GSC top-pages export:**
+(1) legacy slugs belonging to nobody on the current roster — the
+cyplinska/hlavaty/lavrov shape, which by definition cannot be derived from live
+data; (2) honorific-drift legacy slugs (`mudr-` vs `dr-`).
+
+**Part (2) is deliberately NOT synthesised, and the reason is worth keeping.**
+The first version of the expansion generated every honorific variant of every
+live slug. It reported 109 failures — every one a URL like
+`/ireland-doctors/mgr-grainne-ahern` that has never existed anywhere and
+correctly 404s. That is the same failure shape as the truncated GSC pull, the
+diacritic-free Czech keyword research and this document's own redirect-arrow
+attribution bug: **a corpus not grounded in anything real, read as evidence.**
+Four instances now, one of them inside the fix for another. The corpus is
+therefore restricted to two grounded shapes per clinician — the current URL, and
+the legacy URL with the slug carried 1:1, which is what the broad rule actually
+does. Fabricating the rest is not a substitute for the export.
+
+**Alerting.** A failing scheduled run opens (or comments on) a GitHub issue
+labelled `seo-live-urls`. A red check in a CI log surfaces nothing, which is the
+exact gap this gate exists to close — "the team catches these when something
+surfaces them, and nothing surfaces them". **Open item: mirror this to the
+channel the team actually reads** (the same one the WhatsApp ops reports go to).
+That is one repository secret plus a `curl` step; no channel or webhook secret
+exists in this repo today, so the issue is the strongest option available
+without one.
+
+**Placeholder guard.** The type forces `clickCost`/`approvedBy` to exist, not to
+be true — `approvedBy: "TBD"` compiles. A cheap lint rejects `TBD`/`TODO`/`N/A`/
+`unknown`/`pending`/`FIXME`, requires a digit in the click cost, and requires the
+approver to be longer than a bare word. It catches the placeholder someone types
+intending to come back. It cannot catch a plausible fabrication and is not meant
+to.
 
 ---
 
@@ -384,6 +417,23 @@ indexability, canonical tags, sitemap membership or hreflang, and several CLOSED
 rows rest on exactly those. `SEO-GROWTH-002`'s failure was in the status-code
 class, so the sweep was aimed at the right thing — but "16 AGREE" is not a clean
 bill of health for every assertion in this document.
+
+### Open finding — `/brazil-doctors/*` has no redirect rule (2026-08-14)
+
+Surfaced by the SEO-DOC-005 slug expansion, not predicted by any audit.
+`/brazil-doctors/dr-renato-sarmento` returns **404 with no redirect matching at
+all** — five of six markets carry a `/{country}-doctors/:slug` rule and Brazil
+does not, despite Brazil having been a Wix section (`/home-br` and
+`/brazil-team` both have legacy rules).
+
+**Real asymmetry, zero measured demand.** GSC, 2026-05-11 → 08-11, page contains
+`brazil-doctors`: `rowCount: 0, hasMore: false` (§0.1 satisfied). Google has
+never seen one of these URLs.
+
+**Not actioned.** Brazil is out of scope pending legal review of whether
+consultations can be delivered there at all, and the fix has no measurable
+upside. It is one rule of the same shape as the other five whenever that review
+clears. Recorded so the next person does not re-derive it.
 
 ### Decisions closed 2026-08-14 (stop re-opening these)
 

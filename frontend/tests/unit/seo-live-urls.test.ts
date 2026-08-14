@@ -94,6 +94,62 @@ async function redirectRules(): Promise<Rule[]> {
 /** Sources with no `:param` — a literal URL we can actually request. */
 const isLiteral = (source: string) => !/[:(*]/.test(source);
 
+/** Country slug -> its default locale, as the redirect map uses them. */
+const MARKETS: ReadonlyArray<readonly [string, string]> = [
+  ["ireland", "en"],
+  ["portugal", "pt"],
+  ["spain", "es"],
+  ["czechia", "cs"],
+  ["romania", "ro"],
+  ["brazil", "pt"],
+];
+
+/**
+ * NOT DONE HERE, and the reason matters: generating honorific variants.
+ *
+ * The first version of this pass expanded each live slug across every honorific
+ * (`mudr-`, `dra.-`, `mgr-`, …) on the theory that legacy Wix slugs drifted that
+ * way. It produced 109 "failures" — every one a URL like
+ * `/ireland-doctors/mgr-grainne-ahern` that has never existed anywhere and
+ * correctly 404s. A 404 on a URL nobody ever linked is not a defect.
+ *
+ * That is the same failure shape as the truncated GSC pull, the diacritic-free
+ * keyword research and the redirect-arrow attribution bug: a corpus that is not
+ * grounded in anything real, read as evidence. Which honorific variants ACTUALLY
+ * existed is knowable only from GSC — that is the enrichment this pass is
+ * explicitly waiting on, and fabricating the corpus is not a substitute for it.
+ *
+ * So the corpus below is exactly two grounded shapes per live clinician: the
+ * current URL, and the legacy URL with the slug carried over 1:1 (which is what
+ * the broad `/{country}-doctors/:slug` rule actually does).
+ */
+
+/**
+ * Live doctor slugs per market, scraped from the roster pages rather than the
+ * sitemap. The roster is the wider set on purpose: a `noindex` doctor is absent
+ * from the sitemap but their URL is still live and still a redirect target
+ * (Czechia: 8 on the roster, 5 in the sitemap).
+ */
+async function rosterSlugs(): Promise<Map<string, Set<string>>> {
+  const out = new Map<string, Set<string>>();
+  await Promise.all(
+    MARKETS.map(async ([country, lang]) => {
+      const res = await fetch(`${BASE}/${country}/${lang}/doctors`, {
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      const html = res.ok ? await res.text() : "";
+      const found = [...html.matchAll(new RegExp(`/${country}/[a-z]{2}/doctors/([a-z0-9.-]+)`, "g"))];
+      out.set(country, new Set(found.map((m) => m[1])));
+    }),
+  );
+  return out;
+}
+
+/** Parameterised rules whose source is a doctor family — what the expansion covers. */
+function parameterisedDoctorRuleCount(rules: Rule[]): number {
+  return rules.filter((r) => !isLiteral(r.source) && /-doctors\/|\/doctors\//.test(r.source)).length;
+}
+
 async function sitemapUrls(): Promise<string[]> {
   const res = await fetch(`${BASE}/sitemap.xml`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
   expect(res.status, "sitemap.xml must be fetchable").toBe(200);
@@ -112,6 +168,16 @@ describe("GONE_DOCTORS entries are documented decisions, not oversights", () => 
       expect(d.approvedBy.trim().length, `${d.slug}: approvedBy is empty`).toBeGreaterThan(0);
       // A cost with no number is a sentence, not a measurement.
       expect(d.clickCost, `${d.slug}: clickCost quotes no figure`).toMatch(/\d/);
+      // The type forces the fields to EXIST, not to be true — `approvedBy:
+      // "TBD"` compiles. This is the cheap half of closing that: it catches the
+      // placeholder someone types while intending to come back. It cannot catch
+      // a plausible-looking fabrication, and is not meant to.
+      const PLACEHOLDER = /^(tbd|todo|n\/?a|unknown|\?+|xxx+|pending|fixme)\b/i;
+      expect(d.approvedBy, `${d.slug}: approvedBy is a placeholder`).not.toMatch(PLACEHOLDER);
+      expect(d.clickCost, `${d.slug}: clickCost is a placeholder`).not.toMatch(PLACEHOLDER);
+      // An approver is a person and a date, not a bare word.
+      expect(d.approvedBy.trim().length, `${d.slug}: approvedBy is too terse to be an approval`)
+        .toBeGreaterThan(8);
     },
   );
 
@@ -145,9 +211,8 @@ live("live URL assertions (SEO_CHECK_BASE)", () => {
       // No silent caps: say plainly what this pass could not cover.
       console.log(
         `[seo] probed ${literal.length} literal redirect sources; ` +
-          `${parameterised} parameterised rules NOT covered (a :slug rule has no ` +
-          `single URL to probe — its dead-slug failures are only visible against a ` +
-          `legacy-slug corpus from GSC, which this check does not have).`,
+          `${parameterised} parameterised rules are covered separately by the ` +
+          `slug-expansion pass below.`,
       );
 
       expect(
@@ -156,6 +221,66 @@ live("live URL assertions (SEO_CHECK_BASE)", () => {
       ).toEqual([]);
     },
     300_000,
+  );
+
+  it(
+    "no parameterised doctor rule points at a dead slug",
+    async () => {
+      // The P0 lived exactly here: `/czechia-doctors/:slug` is a single rule,
+      // so the literal pass above never touches it, yet three of its inputs
+      // 308'd onto a 404. The slug universe needed to expand it is already
+      // available live — the roster pages, the sitemap and GONE_DOCTORS — so
+      // this does not wait on a GSC export.
+      const roster = await rosterSlugs();
+      const sitemap = await sitemapUrls();
+
+      const universe = new Map<string, Set<string>>();
+      for (const [country] of MARKETS) {
+        const set = new Set<string>(roster.get(country) ?? []);
+        for (const p of sitemap) {
+          const m = new RegExp(`^/${country}/[a-z]{2}/doctors/([a-z0-9.-]+)$`).exec(p);
+          if (m) set.add(m[1]);
+        }
+        for (const d of GONE_DOCTORS) if (d.country === country) set.add(d.slug);
+        universe.set(country, set);
+      }
+
+      // Two grounded shapes per clinician — see the note above on why no
+      // honorific variants are generated.
+      const targets: string[] = [];
+      for (const [country, lang] of MARKETS) {
+        for (const slug of universe.get(country) ?? []) {
+          targets.push(`/${country}-doctors/${slug}`);
+          targets.push(`/${country}/${lang}/doctors/${slug}`);
+        }
+      }
+      const unique = [...new Set(targets)];
+
+      const results = await mapPool(unique, (p) => probe(p));
+      const gone = (url: string) => GONE_PATHS.has(new URL(url).pathname);
+      const dead = results.filter((r) => r.status >= 400 && !gone(r.url));
+      const wrongGone = results.filter((r) => gone(r.url) && r.status !== 410);
+
+      const clinicians = [...universe.values()].reduce((n, s) => n + s.size, 0);
+      console.log(
+        `[seo] expanded ${parameterisedDoctorRuleCount(await redirectRules())} parameterised ` +
+          `doctor rules over ${clinicians} live clinicians -> ${unique.length} real URLs probed. ` +
+          `REMAINING GAP, two parts, both needing a GSC top-pages export: (1) legacy slugs ` +
+          `belonging to nobody on the current roster — the cyplinska/hlavaty/lavrov shape; ` +
+          `(2) honorific-drift legacy slugs (mudr- vs dr-), which are NOT generated here ` +
+          `because a fabricated corpus reports 404s on URLs that never existed.`,
+      );
+
+      expect(
+        dead.map((r) => `${r.url} -> ${r.status} (final ${r.finalUrl})`),
+        "a doctor URL shape resolves to an error",
+      ).toEqual([]);
+      expect(
+        wrongGone.map((r) => `${r.url} -> ${r.status}`),
+        "a listed-gone URL stopped answering 410",
+      ).toEqual([]);
+    },
+    900_000,
   );
 
   it(
