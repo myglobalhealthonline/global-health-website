@@ -61,14 +61,19 @@ export async function requireCorporateAdmin(
   request.corporateCompany = company;
 }
 
-/** True when the company itself can currently confer benefits. */
+/** True when the company itself can currently confer benefits. Both ends of
+ *  the contract window count — a contract dated to start next quarter must
+ *  not hand out discounts today. */
 export function companyIsLive(company: {
   status: string;
+  contractStartAt?: Date | null;
   contractEndAt: Date | null;
 }): boolean {
+  const now = Date.now();
   return (
     company.status === "ACTIVE" &&
-    (!company.contractEndAt || company.contractEndAt.getTime() > Date.now())
+    (!company.contractStartAt || company.contractStartAt.getTime() <= now) &&
+    (!company.contractEndAt || company.contractEndAt.getTime() > now)
   );
 }
 
@@ -141,6 +146,30 @@ export async function getBeneficiaryMembershipForUser(userId: string): Promise<
     include: { company: { include: { plan: true } } },
     orderBy: { createdAt: "desc" },
   });
+}
+
+/**
+ * Locale segment for a member-facing booking deep link (`/{country}/{lang}/…`).
+ * The member's own account preference wins; otherwise the company country's
+ * admin-configured default. Hardcoding "en" sent Czech and Portuguese
+ * employees an English booking page.
+ */
+export async function memberBookingLocale(
+  userId: string | null | undefined,
+  countryCode: string,
+): Promise<string> {
+  if (userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { preferredLocale: true },
+    });
+    if (user?.preferredLocale) return user.preferredLocale.toLowerCase();
+  }
+  const country = await prisma.country.findUnique({
+    where: { code: countryCode.toLowerCase() },
+    select: { defaultLocale: true },
+  });
+  return (country?.defaultLocale ?? "EN").toLowerCase();
 }
 
 // ─── Status machine ─────────────────────────────────────────────────────────
@@ -224,7 +253,9 @@ export async function issueBenefitCard(opts: {
     });
     return;
   }
-  // Retry once on the (astronomically unlikely) cardNumber collision.
+  // Retry once on the (astronomically unlikely) cardNumber collision — and
+  // ONLY on that. Swallowing every error here would silently retry a genuine
+  // failure (bad FK, dead connection) and then report success.
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       await prisma.corporateBenefitCard.create({
@@ -238,7 +269,8 @@ export async function issueBenefitCard(opts: {
       });
       return;
     } catch (error) {
-      if (attempt === 1) throw error;
+      const isUniqueCollision = (error as { code?: string })?.code === "P2002";
+      if (attempt === 1 || !isUniqueCollision) throw error;
     }
   }
 }

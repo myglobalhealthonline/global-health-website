@@ -298,3 +298,86 @@ describe("legacy-redirect-recovery batch 2", () => {
     );
   });
 });
+
+/**
+ * P0, 2026-08-14 (seo-implementation-brief-2026-08-14.md §2).
+ *
+ * Three Czech clinicians are absent from the live roster but NOT confirmed
+ * retired, so `GONE_DOCTORS`/410 is gated (seo-control-state.md §14.8). Their
+ * legacy URLs were 308ing onto `/czechia/cs/doctors/{slug}`, which 404s —
+ * verified live on production before the fix. Both URL shapes now land on the
+ * Czech roster, which makes no claim about any individual.
+ *
+ * These MUST NOT terminate on a per-doctor URL: that is the 404.
+ */
+const CZ_UNRESOLVED = ["mudr-jana-cyplinska", "mudr-libor-hlavaty", "mudr-andrei-lavrov"];
+
+describe("Czech unresolved-disposition doctors (P0 2026-08-14)", () => {
+  const shapes = (slug: string) => [
+    `/czechia-doctors/${slug}`,
+    `/cs/czechia-doctors/${slug}`,
+    `/es/czechia-doctors/${slug}`,
+    `/pt/czechia-doctors/${slug}`,
+    `/ro/czechia-doctors/${slug}`,
+    ...["en", "pt", "es", "cs", "ro", "de"].map((l) => `/czechia/${l}/doctors/${slug}`),
+  ];
+
+  it.each(CZ_UNRESOLVED.flatMap(shapes))("%s resolves to a Czech roster page", async (from) => {
+    const all = await rules();
+    const dest = resolve(all, from);
+    expect(dest, `${from} -> ${dest}`).toMatch(/^\/czechia\/(en|pt|es|cs|ro|de)\/doctors$/);
+    expect(dest).not.toMatch(/:\w+/); // no unsubstituted params
+  });
+
+  it("never terminates on a per-doctor URL — that URL is the 404", async () => {
+    const all = await rules();
+    for (const from of CZ_UNRESOLVED.flatMap(shapes)) {
+      for (const slug of CZ_UNRESOLVED) {
+        expect(resolve(all, from), `${from} still points at the dead slug`).not.toContain(slug);
+      }
+    }
+  });
+
+  it("is a single hop and permanent", async () => {
+    const all = await rules();
+    for (const from of CZ_UNRESOLVED.flatMap(shapes)) {
+      expect(firstMatch(all, from)!.rule.permanent, from).toBe(true);
+      const dest = resolve(all, from);
+      expect(firstMatch(all, dest), `${from} -> ${dest} is a chain`).toBeNull();
+    }
+  });
+
+  it("the specific rules precede the broad /czechia-doctors/:slug rule", async () => {
+    const all = await rules();
+    for (const from of CZ_UNRESOLVED.flatMap(shapes)) {
+      const specific = firstMatch(all, from)!.index;
+      const broad = all
+        .map((r, i) => ({ r, i }))
+        .filter(({ r, i }) => i !== specific && /:slug/.test(r.source) && toRegex(r.source).test(from))
+        .map(({ i }) => i);
+      for (const b of broad) {
+        expect(specific, `${from}: #${specific} must precede broad #${b}`).toBeLessThan(b);
+      }
+    }
+  });
+
+  it("the guard bites — without the specific rules the legacy URL 404s again", async () => {
+    const all = await rules();
+    const isSpecific = (r: Rule) => CZ_UNRESOLVED.some((s) => r.source.includes(s));
+    const broken = [...all.filter((r) => !isSpecific(r)), ...all.filter(isSpecific)];
+    expect(all.filter(isSpecific).length).toBeGreaterThan(0);
+    expect(resolve(broken, "/czechia-doctors/mudr-libor-hlavaty")).toBe(
+      "/czechia/cs/doctors/mudr-libor-hlavaty", // the 404 production was serving
+    );
+  });
+
+  it("leaves live Czech clinicians on their own profile", async () => {
+    const all = await rules();
+    expect(resolve(all, "/czechia-doctors/mudr-romana-pavlu")).toBe(
+      "/czechia/cs/doctors/mudr-romana-pavlu",
+    );
+    expect(resolve(all, "/czechia-doctors/mudr-michael-nytra")).toBe(
+      "/czechia/cs/doctors/dr-michael-nytra",
+    );
+  });
+});

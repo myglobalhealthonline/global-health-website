@@ -32,6 +32,21 @@ export type GoneDoctor = {
   legacyPrefix: string;
   /** The doctor slug, lowercase. */
   slug: string;
+  /**
+   * What answering 410 here costs, in measured search traffic. Required, and
+   * required to be non-empty, because a 410 is a deliberate decision to throw
+   * traffic away: the number is what makes that a decision rather than an
+   * oversight. Quote the window (e.g. "74 clicks / 600 impressions over 90
+   * days across 4 URL variants, average position 3.8").
+   */
+  clickCost: string;
+  /**
+   * The human who confirmed this entity is gone, and when. Required because
+   * absence from the roster is NOT evidence of removal — that mistake was made
+   * once (mudr-jana-cyplinska, 410'd and reverted the same day, 2026-08-08) and
+   * this field is what makes repeating it impossible to do silently.
+   */
+  approvedBy: string;
 };
 
 /**
@@ -54,7 +69,14 @@ export type GoneDoctor = {
  * CONFIRMED RETIRED / LIVE UNDER ANOTHER IDENTITY it actually is.
  */
 export const GONE_DOCTORS: readonly GoneDoctor[] = [
-  { country: "ireland", legacyPrefix: "ireland-doctors", slug: "dr-grainne-ahern" },
+  {
+    country: "ireland",
+    legacyPrefix: "ireland-doctors",
+    slug: "dr-grainne-ahern",
+    clickCost:
+      "74 clicks / 600 impressions over 90 days across 4 URL variants, average position 3.8 (measured 2026-08-08)",
+    approvedBy: "Owner decision, 2026-08-08 — confirmed departed",
+  },
 ];
 
 /** Site locales — the `[lang]` segment, and the legacy Wix locale prefix. */

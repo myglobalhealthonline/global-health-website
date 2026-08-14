@@ -5019,3 +5019,203 @@ details[open] > summary .gh-manifest-chevron {
    * apply to SVG elements, same as the other icon flips in this file. */
   transform: rotate(180deg);
 }
+
+/* ── 404 — vitals monitor (components/sections/NotFound404) ───────────
+ * Forest band with an ECG trace that flatlines across the dead URL. Same
+ * material vocabulary as .gh2-glass-forest (solid dark fill, lit top edge,
+ * no backdrop-filter) so it needs no entry in the coarse-pointer /
+ * @supports fallback blocks above.
+ */
+.gh2-404 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - var(--header-height));
+  padding: 72px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(143, 176, 33, 0.18) 0%, transparent 60%),
+    radial-gradient(80% 60% at 50% 120%, rgba(176, 241, 34, 0.1) 0%, transparent 70%),
+    #06221a;
+  color: #ffffff;
+}
+/* Clinical grid — the monitor screen behind the panel. Masked so it fades
+ * out before the section edges instead of butting into the chrome. */
+.gh2-404::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(70% 60% at 50% 45%, #000 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 45%, #000 0%, transparent 100%);
+}
+.gh2-404-inner {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  text-align: center;
+}
+.gh2-404-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gh2-on-dark-muted);
+}
+.gh2-404-monitor {
+  margin: 34px auto 0;
+  max-width: 620px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-card);
+  background: rgba(4, 24, 18, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 40px -18px rgba(4, 24, 18, 0.55);
+  overflow: hidden;
+}
+.gh2-404-monitor-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gh2-on-dark-faint);
+}
+.gh2-404-code {
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--color-brand-accent);
+}
+.gh2-404-ecg {
+  display: block;
+  width: 100%;
+  height: 150px;
+}
+.gh2-404-trace {
+  fill: none;
+  stroke: var(--color-brand-accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px rgba(176, 241, 34, 0.45));
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: gh2-404-draw 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes gh2-404-draw {
+  0% {
+    stroke-dashoffset: 1400;
+  }
+  55%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+.gh2-404-flatlabel {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  fill: rgba(255, 255, 255, 0.45);
+}
+.gh2-404-monitor-bottom {
+  display: flex;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.gh2-404-quicklink {
+  flex: 1;
+  min-height: 48px; /* tap-target floor, spec §8 tier 1 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gh2-on-dark-muted);
+  text-decoration: none;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
+}
+.gh2-404-quicklink + .gh2-404-quicklink {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+.gh2-404-quicklink:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+.gh2-404-title {
+  margin-top: 38px;
+  font-size: clamp(2.1rem, 5.2vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.03;
+  letter-spacing: -0.04em;
+}
+.gh2-404-lede {
+  margin: 16px auto 0;
+  max-width: 46ch;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--gh2-on-dark-muted);
+}
+.gh2-404-actions {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+/* Four quick links do not fit one row on a phone — 2x2 grid instead of a
+ * horizontal squeeze, and the vertical divider becomes a grid rule. */
+@media (max-width: 520px) {
+  .gh2-404 {
+    padding: 48px 16px;
+  }
+  .gh2-404-monitor-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .gh2-404-quicklink + .gh2-404-quicklink {
+    border-left: 0;
+  }
+  .gh2-404-quicklink:nth-child(even) {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .gh2-404-quicklink:nth-child(n + 3) {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .gh2-404-ecg {
+    height: 120px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh2-404-trace {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+/* Header and footer ONLY on a 404. `SiteChrome` also renders the country
+ * trust bar / medical-disclaimer <aside> and the two floating widgets, and
+ * on a dead URL they are noise around the one thing the visitor needs: a way
+ * out. Done in CSS rather than a `minimal` prop because three of the four
+ * 404 boundaries are rendered as CHILDREN of an already-rendered layout —
+ * they cannot reach back up and change how their own chrome was built.
+ * Browsers without :has() just see the extra sections, which is harmless. */
+body:has(.gh2-404) > aside,
+body:has(.gh2-404) .gh-whatsapp-fab,
+body:has(.gh2-404) elevenlabs-convai {
+  display: none;
+}

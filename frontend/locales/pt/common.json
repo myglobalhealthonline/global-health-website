@@ -127,7 +127,11 @@
   "notFound": {
     "title": "Página não encontrada",
     "body": "A página que procura não existe ou foi movida.",
-    "cta": "Voltar ao início"
+    "cta": "Voltar ao início",
+    "eyebrow": "Erro 404",
+    "monitorLabel": "Monitor da página",
+    "noSignal": "Sem sinal neste endereço",
+    "quickLinksLabel": "Ou continue com"
   },
   "error": {
     "title": "Algo correu mal",

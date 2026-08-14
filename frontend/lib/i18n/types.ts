@@ -186,6 +186,14 @@ export type CommonLocale = {
     title: string;
     body: string;
     cta: string;
+    /** Status pill above the headline. */
+    eyebrow: string;
+    /** Caption on the vitals-monitor panel. */
+    monitorLabel: string;
+    /** Label drawn across the flatlined ECG segment. */
+    noSignal: string;
+    /** Heading over the recovery links row. */
+    quickLinksLabel: string;
   };
   error: {
     title: string;

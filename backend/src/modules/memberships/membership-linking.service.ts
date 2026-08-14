@@ -153,8 +153,7 @@ export async function linkMembershipsForUser(
         planName: candidate.plan.name,
         levelName: candidate.level.name,
         membershipId: candidate.membershipId,
-        countryId: candidate.plan.primaryCountryId,
-        preferredLocale: user.preferredLocale,
+        enrollmentId: candidate.id,
       }).catch(() => undefined);
     }
   }

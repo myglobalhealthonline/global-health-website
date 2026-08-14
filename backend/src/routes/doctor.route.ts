@@ -504,7 +504,10 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         // Real consultation length for the calendar: the claimed slot already
         // spans it exactly; `service.durationMinutes` covers slot-less rows.
         timeSlot: { select: { endAt: true } },
-        service: { select: { durationMinutes: true } },
+        // `visibility` drives the corporate badge in the doctor queue — an
+        // onboarding pre-assessment or a company-requested consultation reads
+        // as an ordinary booking otherwise.
+        service: { select: { durationMinutes: true, visibility: true, name: true } },
       } as const;
 
       // Doctor-queue ordering: UPCOMING consultations first (soonest at the
@@ -581,6 +584,15 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           endAt: resolveConsultationEndAt({ ...r, timeSlot, service }),
           createdAt: r.createdAt.toISOString(),
           notesPreview: r.notes ? r.notes.slice(0, 200) : null,
+          // Corporate context for the queue. No company name or medical
+          // detail — just which private corporate flow this booking came
+          // from, so the assigned doctor knows what is expected of it.
+          corporateFlow:
+            service?.visibility === "CORPORATE_ONLY"
+              ? ("PRE_ASSESSMENT" as const)
+              : service?.visibility === "CORPORATE_REQUEST_ONLY"
+                ? ("COMPANY_REQUEST" as const)
+                : null,
         })),
         pagination: {
           page,

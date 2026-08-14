@@ -127,7 +127,11 @@
   "notFound": {
     "title": "Pagina nu a fost găsită",
     "body": "Pagina pe care o căutați nu există sau a fost mutată.",
-    "cta": "Înapoi acasă"
+    "cta": "Înapoi acasă",
+    "eyebrow": "Eroare 404",
+    "monitorLabel": "Monitor pagină",
+    "noSignal": "Fără semnal la această adresă",
+    "quickLinksLabel": "Sau continuați cu"
   },
   "error": {
     "title": "Ceva a mers greșit",

@@ -171,6 +171,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       galleryImagePaths: raw.galleryImagePaths,
       doctorIds: raw.doctorIds,
       shippingCents: raw.shippingCents,
+      visibility: raw.visibility,
       isActive: raw.isActive,
     };
 

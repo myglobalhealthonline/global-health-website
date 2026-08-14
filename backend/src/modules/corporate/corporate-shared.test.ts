@@ -61,6 +61,24 @@ describe("companyIsLive (discount kill-switch §2.4)", () => {
       true,
     );
   });
+  it("a contract that has not started yet confers nothing", () => {
+    assert.equal(
+      companyIsLive({
+        status: "ACTIVE",
+        contractStartAt: new Date(Date.now() + 86_400_000),
+        contractEndAt: null,
+      }),
+      false,
+    );
+    assert.equal(
+      companyIsLive({
+        status: "ACTIVE",
+        contractStartAt: new Date(Date.now() - 86_400_000),
+        contractEndAt: null,
+      }),
+      true,
+    );
+  });
 });
 
 describe("card + profile helpers", () => {

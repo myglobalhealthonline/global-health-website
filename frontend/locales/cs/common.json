@@ -127,7 +127,11 @@
   "notFound": {
     "title": "Stránka nenalezena",
     "body": "Stránka, kterou hledáte, neexistuje nebo byla přesunuta.",
-    "cta": "Zpět na hlavní stránku"
+    "cta": "Zpět na hlavní stránku",
+    "eyebrow": "Chyba 404",
+    "monitorLabel": "Monitor stránky",
+    "noSignal": "Na této adrese není žádný signál",
+    "quickLinksLabel": "Nebo pokračujte zde"
   },
   "error": {
     "title": "Něco se pokazilo",

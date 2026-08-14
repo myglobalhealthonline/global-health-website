@@ -87,6 +87,29 @@ const QUEUE_START_DATE = "2026-07-15";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
+/**
+ * Marks the two private corporate flows in the doctor queue. Without it a
+ * company's onboarding pre-assessment reads as an ordinary consultation, so
+ * the assigned doctor has no idea an employee's membership activation hangs
+ * on completing it. Carries no company name and no medical detail.
+ */
+function CorporateFlowTag({
+  flow,
+  d,
+}: {
+  flow: DoctorAppointment["corporateFlow"];
+  d: ReturnType<typeof loadLocaleBundle>["doctor"];
+}) {
+  if (!flow) return null;
+  return (
+    <span className="rounded-full border border-[var(--portal-line)] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--portal-muted)]">
+      {flow === "PRE_ASSESSMENT"
+        ? d.appointments.corporatePreAssessment
+        : d.appointments.corporateRequest}
+    </span>
+  );
+}
+
 function pick(sp: SearchParams, key: string): string | undefined {
   const v = sp[key];
   return typeof v === "string" && v.trim() !== "" ? v.trim() : undefined;
@@ -413,7 +436,12 @@ export default async function DoctorAppointmentsPage({
                             : d.common.unscheduled
                         }
                         person={a.fullName}
-                        service={<span className="capitalize">{a.consultationType}</span>}
+                        service={
+                          <span className="inline-flex items-center gap-2">
+                            <span className="capitalize">{a.consultationType}</span>
+                            <CorporateFlowTag flow={a.corporateFlow} d={d} />
+                          </span>
+                        }
                         tone={statusToneForAppointmentCard(a.status)}
                         live={live}
                         statusPill={
@@ -486,7 +514,15 @@ export default async function DoctorAppointmentsPage({
                         tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
                         live={live}
                         meta={[
-                          { label: d.common.type, value: <span className="capitalize">{a.consultationType}</span> },
+                          {
+                            label: d.common.type,
+                            value: (
+                              <span className="inline-flex items-center gap-2">
+                                <span className="capitalize">{a.consultationType}</span>
+                                <CorporateFlowTag flow={a.corporateFlow} d={d} />
+                              </span>
+                            ),
+                          },
                           {
                             label: d.appointments.scheduled,
                             value: a.scheduledAt

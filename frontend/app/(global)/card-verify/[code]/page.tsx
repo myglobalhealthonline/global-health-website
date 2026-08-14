@@ -20,9 +20,11 @@ type CardData = {
   validFrom: string;
   validUntil: string;
   valid: boolean;
-  memberName: string;
-  companyName: string;
-  planName: string;
+  /** Null unless the card is currently valid — an inactive card must not
+   *  answer "who is this and where do they work". */
+  memberName: string | null;
+  companyName: string | null;
+  planName: string | null;
 };
 
 async function fetchCard(
@@ -95,9 +97,15 @@ export default async function CardVerifyPage({
 
               <div className="space-y-3 text-sm">
                 <Row label={t.cardNumber} value={result.data.cardNumber} mono />
-                <Row label={t.member} value={result.data.memberName} />
-                <Row label={t.company} value={result.data.companyName} />
-                <Row label={t.plan} value={result.data.planName} />
+                {result.data.memberName ? (
+                  <Row label={t.member} value={result.data.memberName} />
+                ) : null}
+                {result.data.companyName ? (
+                  <Row label={t.company} value={result.data.companyName} />
+                ) : null}
+                {result.data.planName ? (
+                  <Row label={t.plan} value={result.data.planName} />
+                ) : null}
                 <Row
                   label={t.memberType}
                   value={result.data.memberType === "EMPLOYEE" ? t.employee : t.beneficiary}

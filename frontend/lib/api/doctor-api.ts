@@ -282,6 +282,11 @@ export type DoctorAppointment = {
   notesPreview: string | null;
   finalized?: boolean;
   manualEntry?: boolean;
+  /** Which private corporate flow this booking came from, when any:
+   *  PRE_ASSESSMENT = an employee's onboarding assessment (the company's
+   *  assigned doctor), COMPANY_REQUEST = an Illness-Benefit / Fit-for-Work
+   *  consultation the employer requested. Null for ordinary bookings. */
+  corporateFlow?: "PRE_ASSESSMENT" | "COMPANY_REQUEST" | null;
 };
 
 export async function fetchDoctorUnreadMessageCount(): Promise<number> {

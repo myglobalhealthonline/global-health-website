@@ -78,6 +78,10 @@ export type AdminServiceDto = {
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
+  /** Who may see and book this service. Anything but PUBLIC is hidden from
+   *  every public surface and gated server-side at booking — this is how the
+   *  private corporate consultations stay private. */
+  visibility: "PUBLIC" | "CORPORATE_ONLY" | "CORPORATE_REQUEST_ONLY" | "ADMIN_ONLY";
   isActive: boolean;
   /** Clinical review date shown on the page as "Last reviewed" (E-E-A-T). */
   lastReviewedAt: string | null;

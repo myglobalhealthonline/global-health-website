@@ -8,6 +8,7 @@ import {
   getBeneficiaryMembershipForUser,
   getEmployeeMembershipForUser,
   isEmployeeProfileComplete,
+  memberBookingLocale,
 } from "../modules/corporate/corporate-shared.js";
 import {
   serializeBeneficiary,
@@ -42,19 +43,30 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
         planServiceSlug(employee.company.planId, "PRE_ASSESSMENT"),
       ]);
       // Plan-assigned pre-assessment service first; fall back to any
-      // CORPORATE_ONLY service in the company's country (pre-assignment data).
-      const preAssessmentService = await prisma.service.findFirst({
-        where: {
-          ...(assignedPreAssessmentSlug ? { slug: assignedPreAssessmentSlug } : {}),
-          visibility: "CORPORATE_ONLY",
-          isActive: true,
-          country: { code: employee.company.countryCode },
-        },
-        select: { slug: true },
-      });
+      // CORPORATE_ONLY service in the company's country. The fallback has to
+      // be a SECOND query — folding the slug into one `findFirst` meant a
+      // plan pointing at a slug with no row in this country returned null and
+      // left the employee with no way to book.
+      const preAssessmentBase = {
+        visibility: "CORPORATE_ONLY" as const,
+        isActive: true,
+        country: { code: employee.company.countryCode },
+      };
+      const preAssessmentService =
+        (assignedPreAssessmentSlug
+          ? await prisma.service.findFirst({
+              where: { ...preAssessmentBase, slug: assignedPreAssessmentSlug },
+              select: { slug: true },
+            })
+          : null) ??
+        (await prisma.service.findFirst({
+          where: preAssessmentBase,
+          select: { slug: true },
+        }));
       const profileComplete = isEmployeeProfileComplete(employee);
+      const locale = await memberBookingLocale(userId, employee.company.countryCode);
       const bookPath = preAssessmentService
-        ? `/${employee.company.countryCode.toLowerCase()}/en/book?service=${preAssessmentService.slug}${
+        ? `/${employee.company.countryCode.toLowerCase()}/${locale}/book?service=${preAssessmentService.slug}${
             employee.company.preAssessmentDoctorId
               ? `&doctor=${employee.company.preAssessmentDoctorId}`
               : ""
@@ -83,7 +95,12 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
           type: r.type,
           label: REQUEST_TYPE_LABEL[r.type],
           status: r.status,
-          bookPath: requestBookPath(employee.company.countryCode, r.type, r.service.slug),
+          bookPath: requestBookPath(
+            employee.company.countryCode,
+            locale,
+            r.type,
+            r.service.slug,
+          ),
           createdAt: r.createdAt.toISOString(),
         })),
       });

@@ -127,7 +127,11 @@
   "notFound": {
     "title": "Page not found",
     "body": "The page you are looking for does not exist or has been moved.",
-    "cta": "Back to home"
+    "cta": "Back to home",
+    "eyebrow": "Error 404",
+    "monitorLabel": "Page monitor",
+    "noSignal": "No signal on this address",
+    "quickLinksLabel": "Or continue with"
   },
   "error": {
     "title": "Something went wrong",

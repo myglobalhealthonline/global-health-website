@@ -922,6 +922,47 @@ const nextConfig: NextConfig = {
       { source: "/spain-doctors/javier-villarte-betancor", destination: "/spain/es/doctors/dr-javier-villarte-betancor", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/spain-doctors/javier-villarte-betancor", destination: "/spain/es/doctors/dr-javier-villarte-betancor", permanent: true },
       { source: "/spain-doctors/tomás-ruiz-palacios", destination: "/spain/es/doctors/dr-tomas-ruiz-palacios", permanent: true },
+      // mudr-michael-nytra -> dr-michael-nytra: same collapse as Maklad above.
+      // Verified live 2026-08-14: the legacy URL 308'd onto
+      // /czechia/cs/doctors/mudr-michael-nytra, which itself 308'd onto
+      // dr-michael-nytra. Two hops, both correct, flattened to one.
+      { source: "/czechia-doctors/mudr-michael-nytra", destination: "/czechia/cs/doctors/dr-michael-nytra", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/czechia-doctors/mudr-michael-nytra", destination: "/czechia/cs/doctors/dr-michael-nytra", permanent: true },
+
+      // ── Czech clinicians with an UNRESOLVED disposition (2026-08-14, P0) ──
+      //
+      // Hlavatý, Lavrov and Cyplinská are absent from the live Czechia roster
+      // (verified 2026-08-14 against /czechia/cs/doctors — 8 clinicians, none
+      // of these three) but NOT confirmed retired. Until 2026-08-14 the broad
+      // rule below 308'd all three onto /czechia/cs/doctors/{slug}, which
+      // returns 404 — a redirect terminating in a dead end, in the site's
+      // best-CTR market (Cyplinská alone: 48 clicks, 30% CTR, position 4.4
+      // over 90 days).
+      //
+      // 410 is NOT the fix and is deliberately not used: `GONE_DOCTORS`
+      // asserts confirmed removal, and seo-control-state.md §14.8 gates that
+      // assertion behind positive disposition evidence none of the three has.
+      // The Czech roster page makes no claim about any individual, is in the
+      // right language and market, and captures the "find a Czech doctor"
+      // intent these queries carry. Swap the destination for a per-clinician
+      // successor page when the §5 removal policy lands, or for the profile
+      // itself if a disposition check finds them live under another identity.
+      //
+      // Both URL shapes are covered: the legacy shape holds the GSC equity,
+      // the current shape is what Google actually has stored as a 404.
+      ...["mudr-jana-cyplinska", "mudr-libor-hlavaty", "mudr-andrei-lavrov"].flatMap((slug) => [
+        { source: `/czechia-doctors/${slug}`, destination: "/czechia/cs/doctors", permanent: true },
+        {
+          source: `/:locale(cs|es|pt|ro)/czechia-doctors/${slug}`,
+          destination: "/czechia/cs/doctors",
+          permanent: true,
+        },
+        {
+          source: `/czechia/:lang${LANG}/doctors/${slug}`,
+          destination: "/czechia/:lang/doctors",
+          permanent: true,
+        },
+      ]),
 
       // Legacy Wix doctor profiles — slugs carried over 1:1.
       //
@@ -936,8 +977,12 @@ const nextConfig: NextConfig = {
         destination: "/ireland/en/doctors/:slug",
         permanent: true,
       },
-      // Same gone-slug exclusion as ireland-doctors below — mudr-jana-cyplinska
-      // must fall through to the 410 in proxy.ts, not be 308'd onto a dead URL.
+      // Same gone-slug mechanism as ireland-doctors above. NOTE: no Czech slug
+      // is currently in `GONE_DOCTORS`, so this compiles to a plain `:slug` —
+      // the exclusion is inert here. mudr-jana-cyplinska is handled by the
+      // explicit rule above, not by this lookahead (an earlier version of this
+      // comment claimed the 410; that was never true after the 2026-08-08
+      // revert removed her from `GONE_DOCTORS`).
       {
         source: `/czechia-doctors/${slugMatcherExcludingGone("czechia-doctors")}`,
         destination: "/czechia/cs/doctors/:slug",

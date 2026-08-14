@@ -1,4 +1,4 @@
-import { Prisma, type LocaleCode } from "@prisma/client";
+import { LocaleCode, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { linkMembershipsForEmail } from "./membership-linking.service.js";
@@ -231,21 +231,19 @@ export async function previewMembershipImport(input: {
       id: true,
       slug: true,
       primaryCountryId: true,
-      primaryCountry: {
-        select: { defaultLocale: true, countryLocales: { select: { locale: true } } },
-      },
     },
   });
   if (!plan) throw new MembershipImportError("Membership plan not found");
 
-  // Which languages this plan can actually write in: the primary country's
-  // configured locales plus its default (§25). An unrecognised one is a
-  // warning, not a rejection — a mistyped language must not cost the admin a
-  // 200-row import.
-  const supportedLocales = new Set<LocaleCode>([
-    plan.primaryCountry.defaultLocale,
-    ...plan.primaryCountry.countryLocales.map((l) => l.locale),
-  ]);
+  // Which languages this plan can write in: every locale the system has email
+  // copy for (§25) — NOT the primary country's configured ones. Those model
+  // which languages that country's public SITE serves, which says nothing about
+  // what a member reads: a Czech partner enrolling Irish members is the exact
+  // case the `locale` column exists for, and gating on CZ's site locales
+  // silently wrote to all of them in Czech. Same list the admin form offers.
+  // An unrecognised code is still a warning, not a rejection — a mistyped
+  // language must not cost the admin a 200-row import.
+  const supportedLocales = new Set<LocaleCode>(Object.values(LocaleCode));
 
   const levels = await prisma.membershipLevel.findMany({
     where: { planId: plan.id },
@@ -323,7 +321,7 @@ export async function previewMembershipImport(input: {
         // Ignored rather than rejected (§25): the row is still a perfectly
         // good member, they just get the plan's default language.
         warnings.push(
-          `Locale "${localeRaw}" is not configured for this plan's country — falling back to the default`,
+          `Locale "${localeRaw}" is not a language we send email in — falling back to the default`,
         );
       }
     }

@@ -127,7 +127,11 @@
   "notFound": {
     "title": "Seite nicht gefunden",
     "body": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
-    "cta": "Zurück zur Startseite"
+    "cta": "Zurück zur Startseite",
+    "eyebrow": "Fehler 404",
+    "monitorLabel": "Seiten-Monitor",
+    "noSignal": "Kein Signal unter dieser Adresse",
+    "quickLinksLabel": "Oder hier weiter"
   },
   "error": {
     "title": "Etwas ist schiefgelaufen",

@@ -207,14 +207,25 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
     return okResponse({ id: employee.id, status });
   });
 
+  // Batch ceiling + send concurrency. One awaited email per row meant 500
+  // rows held a single HTTP request open for minutes and lost every result
+  // to the gateway timeout. Rows are written fast and sequentially; only the
+  // slow part (email + WhatsApp) runs in bounded parallel.
+  const BULK_MAX_ROWS = 200;
+  const BULK_SEND_CONCURRENCY = 10;
+
   app.post("/api/corporate/employees/bulk", async (request, reply) => {
-    const schema = z.object({ employees: z.array(employeeInputSchema).min(1).max(500) });
+    const schema = z.object({
+      employees: z.array(employeeInputSchema).min(1).max(BULK_MAX_ROWS),
+    });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) {
       return reply.status(400).send(errorResponse("Invalid bulk payload", parsed.error.flatten()));
     }
     const companyId = request.corporateCompany!.id;
     const results: { email: string; ok: boolean; status?: string; message?: string }[] = [];
+    const pendingInvites: { email: string; employeeId: string; index: number }[] = [];
+
     for (const row of parsed.data.employees) {
       const data = employeeDataFromInput(row);
       try {
@@ -232,8 +243,11 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
               data: { ...data, status: "DRAFT", userId: null, preAssessmentAppointmentId: null },
             })
           : await prisma.corporateEmployee.create({ data: { companyId, ...data } });
-        const status = await mintAndSendInvite({ type: "EMPLOYEE", memberId: employee.id });
-        results.push({ email: data.email, ok: true, status });
+        pendingInvites.push({
+          email: data.email,
+          employeeId: employee.id,
+          index: results.push({ email: data.email, ok: true }) - 1,
+        });
       } catch (error) {
         results.push({
           email: data.email,
@@ -241,6 +255,23 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
           message: error instanceof Error ? error.message : "Failed",
         });
       }
+    }
+
+    for (let i = 0; i < pendingInvites.length; i += BULK_SEND_CONCURRENCY) {
+      await Promise.all(
+        pendingInvites.slice(i, i + BULK_SEND_CONCURRENCY).map(async (pending) => {
+          const row = results[pending.index]!;
+          try {
+            row.status = await mintAndSendInvite({
+              type: "EMPLOYEE",
+              memberId: pending.employeeId,
+            });
+          } catch (error) {
+            row.ok = false;
+            row.message = error instanceof Error ? error.message : "Invite failed";
+          }
+        }),
+      );
     }
     return okResponse({ results });
   });
