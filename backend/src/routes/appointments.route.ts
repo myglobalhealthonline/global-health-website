@@ -15,6 +15,7 @@ import { recordAudit } from "../modules/audit/audit.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../modules/pricing/peak-pricing.service.js";
 import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
 import { promoteAppointmentConsents } from "../modules/consents/promote-appointment-consents.js";
+import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/appointments", {
@@ -143,6 +144,46 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
         app.log.warn(error, "Unable to resolve booking owner from auth cookie; proceeding as guest booking");
       }
 
+      // Corporate visibility gate — the cart and the service detail read both
+      // enforce this, and THIS path (direct booking) did not: anyone who knew
+      // the slug could book a private corporate consultation, guest included.
+      // Runs before the appointment is created so nothing is written for a
+      // booking that is not allowed.
+      if (parsed.data.serviceSlug) {
+        const gated = await prisma.service.findFirst({
+          where: {
+            slug: parsed.data.serviceSlug,
+            country: { code: parsed.data.country },
+            isActive: true,
+          },
+          select: { id: true, visibility: true },
+        });
+        if (gated && gated.visibility !== "PUBLIC") {
+          // This endpoint carries no doctorId — the doctor is whoever owns the
+          // chosen slot, which is what the company's pre-assessment pin is
+          // checked against.
+          const slot = parsed.data.timeSlotId
+            ? await prisma.doctorTimeSlot.findUnique({
+                where: { id: parsed.data.timeSlotId },
+                select: { doctorId: true },
+              })
+            : null;
+          const gate = await assertCorporateServiceBookable({
+            userId: authUserId,
+            serviceId: gated.id,
+            visibility: gated.visibility,
+            doctorId: slot?.doctorId ?? null,
+          });
+          if (!gate.ok) {
+            // Unauthenticated callers get the same 404 as a nonexistent slug
+            // so the endpoint is not an existence oracle for private services.
+            return reply
+              .status(authUserId ? 403 : 404)
+              .send(errorResponse(authUserId ? gate.message : "Service not found"));
+          }
+        }
+      }
+
       const created = await createAppointmentWithOptionalOwner(parsed.data, { userId: authUserId });
 
       // Promote the medical-access consent just captured straight into the
@@ -222,6 +263,14 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
                 currencyCode: priceCurrencyCode,
               },
             });
+            // Corporate lifecycle hook — the checkout path fires this on the
+            // paid-order webhook; a direct booking never went through it, so a
+            // pre-assessment booked here never reached PREASSESSMENT_BOOKED
+            // and the employee never auto-activated. No-ops for public
+            // services. Fire-and-forget: bookkeeping must not fail a booking.
+            void import("../modules/corporate/corporate-status.service.js")
+              .then((m) => m.onCorporateAppointmentCreated(created.id))
+              .catch(() => {});
           } else {
             // Fall through to HealthTest — slug came from a test card.
             // Stamps healthTestId + the test's price/currency so Stripe
