@@ -6,7 +6,12 @@ import {
   sendCompanyNoticeEmail,
   sendMembershipStatusEmail,
 } from "./corporate-emails.js";
-import { issueBenefitCard, syncCardStatus } from "./corporate-shared.js";
+import {
+  canTransitionBeneficiary,
+  canTransitionEmployee,
+  issueBenefitCard,
+  syncCardStatus,
+} from "./corporate-shared.js";
 
 function fireAndForget(promise: Promise<unknown>, label: string): void {
   void promise.catch((error) => {
@@ -29,6 +34,84 @@ async function notifyMember(opts: {
       payload: { title: opts.title, body: opts.body, href: opts.href },
     },
   });
+}
+
+/**
+ * "Employee/beneficiary completed profile" notice to the company contact —
+ * one of the required notification events. Called from the invite-accept
+ * route once the membership row has been written.
+ */
+export async function notifyCompanyMemberProfileComplete(
+  memberType: "EMPLOYEE" | "BENEFICIARY",
+  memberId: string,
+): Promise<void> {
+  const member =
+    memberType === "EMPLOYEE"
+      ? await prisma.corporateEmployee.findUnique({
+          where: { id: memberId },
+          include: { company: true },
+        })
+      : await prisma.corporateBeneficiary.findUnique({
+          where: { id: memberId },
+          include: { company: true },
+        });
+  if (!member) return;
+  const who = `${member.firstName} ${member.lastName}`;
+  await sendCompanyNoticeEmail({
+    to: member.company.contactEmail,
+    contactName: member.company.contactName,
+    subject: memberType === "EMPLOYEE" ? "Employee registered" : "Beneficiary registered",
+    bodyLines: [
+      memberType === "EMPLOYEE"
+        ? `${who} has accepted their invitation and completed their profile. Next step: their pre-assessment consultation.`
+        : `${who} has accepted their beneficiary invitation and completed their profile.`,
+    ],
+  });
+}
+
+/**
+ * A company's contract lapsed (daily cron). Tell the company contact and
+ * every member whose card just stopped working — an expiry that nobody is
+ * told about looks like a broken discount at the checkout.
+ */
+export async function notifyCompanyExpired(companyId: string): Promise<void> {
+  const company = await prisma.corporateCompany.findUnique({
+    where: { id: companyId },
+    select: {
+      name: true,
+      contactName: true,
+      contactEmail: true,
+      employees: {
+        where: { status: { in: ["ACTIVE", "SUSPENDED"] } },
+        select: { email: true, firstName: true },
+      },
+      beneficiaries: {
+        where: { status: { in: ["ACTIVE", "SUSPENDED"] } },
+        select: { email: true, firstName: true },
+      },
+    },
+  });
+  if (!company) return;
+  await sendCompanyNoticeEmail({
+    to: company.contactEmail,
+    contactName: company.contactName,
+    subject: "Corporate plan expired",
+    bodyLines: [
+      `The Global Health Corporate Plan for ${company.name} reached its contract end date and is now expired.`,
+      "Employee and beneficiary benefit cards and consultation discounts are paused until the contract is renewed.",
+    ],
+  });
+  for (const member of [...company.employees, ...company.beneficiaries]) {
+    fireAndForget(
+      sendMembershipStatusEmail({
+        to: member.email,
+        firstName: member.firstName,
+        companyName: company.name,
+        statusLabel: "expired",
+      }),
+      "company expiry member email",
+    );
+  }
 }
 
 /**
@@ -168,10 +251,23 @@ export async function setEmployeeStanding(
   if (!employee) return { ok: false, message: "Employee not found" };
   if (employee.status === "REMOVED") return { ok: false, message: "Employee already removed" };
 
+  // Idempotent no-ops (double-clicked admin button) short-circuit before the
+  // transition table, which by design forbids X → X.
+  const target = action === "SUSPEND" ? "SUSPENDED" : action === "REACTIVATE" ? "ACTIVE" : "REMOVED";
+  if (employee.status === target) return { ok: true };
+  if (!canTransitionEmployee(employee.status, target)) {
+    return {
+      ok: false,
+      message:
+        action === "SUSPEND"
+          ? "Only active members can be suspended"
+          : action === "REACTIVATE"
+            ? "Only suspended members can be reactivated"
+            : "This member cannot be removed",
+    };
+  }
+
   if (action === "SUSPEND") {
-    if (employee.status !== "ACTIVE" && employee.status !== "SUSPENDED") {
-      return { ok: false, message: "Only active members can be suspended" };
-    }
     await prisma.$transaction([
       prisma.corporateEmployee.update({ where: { id: employeeId }, data: { status: "SUSPENDED" } }),
       prisma.corporateBeneficiary.updateMany({
@@ -197,9 +293,6 @@ export async function setEmployeeStanding(
   }
 
   if (action === "REACTIVATE") {
-    if (employee.status !== "SUSPENDED") {
-      return { ok: false, message: "Only suspended members can be reactivated" };
-    }
     await prisma.$transaction([
       prisma.corporateEmployee.update({ where: { id: employeeId }, data: { status: "ACTIVE" } }),
       prisma.corporateBeneficiary.updateMany({
@@ -224,7 +317,10 @@ export async function setEmployeeStanding(
     return { ok: true };
   }
 
-  // REMOVE — terminal. Cards expire, open requests cancel, beneficiaries removed.
+  // REMOVE — terminal. Cards expire, open requests cancel, beneficiaries
+  // removed, and every outstanding invite link dies with the membership
+  // (otherwise the cron keeps "reminding" people who no longer belong here,
+  // and a live token still points at a dead membership).
   await prisma.$transaction([
     prisma.corporateEmployee.update({ where: { id: employeeId }, data: { status: "REMOVED" } }),
     prisma.corporateBeneficiary.updateMany({
@@ -234,6 +330,12 @@ export async function setEmployeeStanding(
     prisma.corporateServiceRequest.updateMany({
       where: { employeeId, status: { in: ["REQUESTED", "EMPLOYEE_NOTIFIED"] } },
       data: { status: "CANCELLED", cancelledAt: new Date() },
+    }),
+    prisma.corporateInvite.deleteMany({
+      where: {
+        usedAt: null,
+        OR: [{ employeeId }, { beneficiary: { employeeId } }],
+      },
     }),
   ]);
   await syncCardStatus({ employeeId, status: "EXPIRED" });
@@ -264,24 +366,37 @@ export async function setBeneficiaryStanding(
   if (!beneficiary) return { ok: false, message: "Beneficiary not found" };
   if (beneficiary.status === "REMOVED") return { ok: false, message: "Already removed" };
 
+  const next = action === "SUSPEND" ? "SUSPENDED" : action === "REACTIVATE" ? "ACTIVE" : "REMOVED";
+  if (beneficiary.status === next) return { ok: true };
+  if (!canTransitionBeneficiary(beneficiary.status, next)) {
+    return {
+      ok: false,
+      message:
+        action === "SUSPEND"
+          ? "Only active beneficiaries can be suspended"
+          : action === "REACTIVATE"
+            ? "Only suspended beneficiaries can be reactivated"
+            : "This beneficiary cannot be removed",
+    };
+  }
+
   if (action === "SUSPEND" || action === "REACTIVATE") {
-    const expected = action === "SUSPEND" ? "ACTIVE" : "SUSPENDED";
-    const next = action === "SUSPEND" ? "SUSPENDED" : "ACTIVE";
-    if (beneficiary.status !== expected) {
-      return { ok: false, message: `Only ${expected.toLowerCase()} beneficiaries can be ${action.toLowerCase()}d` };
-    }
     await prisma.corporateBeneficiary.update({
       where: { id: beneficiaryId },
       data: { status: next },
     });
-    await syncCardStatus({ beneficiaryId, status: next });
+    await syncCardStatus({ beneficiaryId, status: next as "ACTIVE" | "SUSPENDED" });
     return { ok: true };
   }
 
-  await prisma.corporateBeneficiary.update({
-    where: { id: beneficiaryId },
-    data: { status: "REMOVED" },
-  });
+  await prisma.$transaction([
+    prisma.corporateBeneficiary.update({
+      where: { id: beneficiaryId },
+      data: { status: "REMOVED" },
+    }),
+    // Same reason as the employee path: a removed member keeps no live token.
+    prisma.corporateInvite.deleteMany({ where: { beneficiaryId, usedAt: null } }),
+  ]);
   await syncCardStatus({ beneficiaryId, status: "EXPIRED" });
   return { ok: true };
 }

@@ -58,6 +58,11 @@ export async function mintAndSendInvite(opts: {
         ...memberWhere,
         email: member.email,
         expiresAt: new Date(Date.now() + INVITE_TTL_MS),
+        // Stamp the REMINDER flag on the row this send actually creates.
+        // Stamping the previous row was useless — the deleteMany above wipes
+        // it — so the cron's `reminderSentAt: null` dedup never matched and
+        // it re-reminded the same member every 3 days forever.
+        ...(opts.isReminder ? { reminderSentAt: new Date() } : {}),
       },
     }),
   ]);
@@ -210,9 +215,32 @@ export type AcceptInviteResult =
       ok: true;
       userId: string;
       memberType: "EMPLOYEE" | "BENEFICIARY";
+      /** The membership row this invite belongs to. The caller must use THIS
+       *  id — re-finding "the newest row for this user" activates the wrong
+       *  membership when someone is a member of two companies. */
+      memberId: string;
       newStatus: string;
     }
   | { ok: false; status: number; message: string };
+
+/** Thrown inside the accept transaction when another request consumed the
+ *  invite first — the tx rolls back and the caller answers 410. */
+class InviteAlreadyClaimedError extends Error {}
+
+/**
+ * Single-use claim: flips `usedAt` only if it is still null. Returning 0 means
+ * a concurrent accept won the race, so the whole transaction must roll back.
+ */
+async function claimInvite(
+  tx: { corporateInvite: { updateMany: (args: never) => Promise<{ count: number }> } },
+  inviteId: string,
+): Promise<void> {
+  const claimed = await tx.corporateInvite.updateMany({
+    where: { id: inviteId, usedAt: null },
+    data: { usedAt: new Date() },
+  } as never);
+  if (claimed.count === 0) throw new InviteAlreadyClaimedError();
+}
 
 /**
  * Consume an invite: create a fresh PATIENT account (or link the
@@ -302,44 +330,47 @@ export async function acceptInvite(input: AcceptInviteInput): Promise<AcceptInvi
     dateOfBirth: dob ?? member.dateOfBirth,
   };
 
-  if (invite.type === "EMPLOYEE" && invite.employee) {
-    const complete = isEmployeeProfileComplete(profilePatch);
-    const newStatus = complete ? "PREASSESSMENT_PENDING" : "PROFILE_INCOMPLETE";
-    await prisma.$transaction([
-      prisma.corporateEmployee.update({
-        where: { id: invite.employee.id },
-        data: {
-          userId,
-          ...profilePatch,
-          ...(input.profile.addressLine2?.trim()
-            ? { addressLine2: input.profile.addressLine2.trim() }
-            : {}),
-          status: newStatus,
-        },
-      }),
-      prisma.corporateInvite.update({
-        where: { id: invite.id },
-        data: { usedAt: new Date() },
-      }),
-    ]);
-    return { ok: true, userId, memberType: "EMPLOYEE", newStatus };
-  }
+  try {
+    if (invite.type === "EMPLOYEE" && invite.employee) {
+      const employeeId = invite.employee.id;
+      const complete = isEmployeeProfileComplete(profilePatch);
+      const newStatus = complete ? "PREASSESSMENT_PENDING" : "PROFILE_INCOMPLETE";
+      await prisma.$transaction(async (tx) => {
+        await claimInvite(tx, invite.id);
+        await tx.corporateEmployee.update({
+          where: { id: employeeId },
+          data: {
+            userId,
+            ...profilePatch,
+            ...(input.profile.addressLine2?.trim()
+              ? { addressLine2: input.profile.addressLine2.trim() }
+              : {}),
+            status: newStatus,
+          },
+        });
+      });
+      return { ok: true, userId, memberType: "EMPLOYEE", memberId: employeeId, newStatus };
+    }
 
-  if (invite.type === "BENEFICIARY" && invite.beneficiary) {
-    const complete = isBeneficiaryProfileComplete(profilePatch);
-    // Beneficiaries have no pre-assessment gate — profile complete ⇒ ACTIVE.
-    const newStatus = complete ? "ACTIVE" : "PROFILE_INCOMPLETE";
-    await prisma.$transaction([
-      prisma.corporateBeneficiary.update({
-        where: { id: invite.beneficiary.id },
-        data: { userId, ...profilePatch, status: newStatus },
-      }),
-      prisma.corporateInvite.update({
-        where: { id: invite.id },
-        data: { usedAt: new Date() },
-      }),
-    ]);
-    return { ok: true, userId, memberType: "BENEFICIARY", newStatus };
+    if (invite.type === "BENEFICIARY" && invite.beneficiary) {
+      const beneficiaryId = invite.beneficiary.id;
+      const complete = isBeneficiaryProfileComplete(profilePatch);
+      // Beneficiaries have no pre-assessment gate — profile complete ⇒ ACTIVE.
+      const newStatus = complete ? "ACTIVE" : "PROFILE_INCOMPLETE";
+      await prisma.$transaction(async (tx) => {
+        await claimInvite(tx, invite.id);
+        await tx.corporateBeneficiary.update({
+          where: { id: beneficiaryId },
+          data: { userId, ...profilePatch, status: newStatus },
+        });
+      });
+      return { ok: true, userId, memberType: "BENEFICIARY", memberId: beneficiaryId, newStatus };
+    }
+  } catch (error) {
+    if (error instanceof InviteAlreadyClaimedError) {
+      return { ok: false, status: 410, message: "This invitation link is no longer valid" };
+    }
+    throw error;
   }
 
   return { ok: false, status: 410, message: "This invitation link is no longer valid" };

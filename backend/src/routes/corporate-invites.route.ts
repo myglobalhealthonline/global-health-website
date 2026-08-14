@@ -8,7 +8,10 @@ import {
   acceptInvite,
   lookupInvite,
 } from "../modules/corporate/corporate-invite.service.js";
-import { activateBeneficiary } from "../modules/corporate/corporate-status.service.js";
+import {
+  activateBeneficiary,
+  notifyCompanyMemberProfileComplete,
+} from "../modules/corporate/corporate-status.service.js";
 import { serializeCard } from "../modules/corporate/corporate-serializers.js";
 
 /**
@@ -70,15 +73,16 @@ const corporateInvitesRoute: FastifyPluginAsync = async (app) => {
       if (!result.ok) return reply.status(result.status).send(errorResponse(result.message));
 
       // Beneficiaries with a complete profile are ACTIVE straight away —
-      // issue the card + notifications now.
+      // issue the card + notifications now. Activate the row THIS invite
+      // belongs to (result.memberId), never "the newest row for this user".
       if (result.memberType === "BENEFICIARY" && result.newStatus === "ACTIVE") {
-        const beneficiary = await prisma.corporateBeneficiary.findFirst({
-          where: { userId: result.userId },
-          select: { id: true },
-          orderBy: { createdAt: "desc" },
-        });
-        if (beneficiary) await activateBeneficiary(beneficiary.id);
+        await activateBeneficiary(result.memberId);
       }
+      // Notification spec: the company is told when a member finishes their
+      // profile. Fire-and-forget — a mail failure must not fail the accept.
+      void notifyCompanyMemberProfileComplete(result.memberType, result.memberId).catch(
+        (error) => request.log.warn({ err: error }, "corporate profile-complete notice failed"),
+      );
 
       // Auto-login (the invite click + password proved identity).
       const user = await prisma.user.findUnique({
@@ -116,12 +120,16 @@ const corporateInvitesRoute: FastifyPluginAsync = async (app) => {
       const member = card.employee ?? card.beneficiary;
       if (!member) return reply.status(404).send(errorResponse("Card not found"));
       const expired = card.validUntil.getTime() < Date.now();
+      const valid = card.status === "ACTIVE" && !expired;
+      // A desk agent verifying a live card needs the holder's name; a
+      // suspended/expired/unknown card must not become a lookup oracle for
+      // "who is this person and where do they work".
       return okResponse({
         ...serializeCard(card),
-        valid: card.status === "ACTIVE" && !expired,
-        memberName: `${member.firstName} ${member.lastName}`,
-        companyName: member.company.name,
-        planName: member.company.plan.name,
+        valid,
+        memberName: valid ? `${member.firstName} ${member.lastName}` : null,
+        companyName: valid ? member.company.name : null,
+        planName: valid ? member.company.plan.name : null,
       });
     },
   );

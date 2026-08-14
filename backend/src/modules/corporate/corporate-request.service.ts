@@ -5,6 +5,7 @@ import {
   corporateRequestText,
   sendCorporateRequestEmail,
 } from "./corporate-emails.js";
+import { memberBookingLocale } from "./corporate-shared.js";
 
 const REQUEST_TTL_DAYS = 60;
 
@@ -34,13 +35,17 @@ export async function planServiceSlug(
   return row?.service.slug ?? null;
 }
 
-/** Booking deep link for the employee (site is /{country}/{lang}/…). */
+/** Booking deep link for the employee (site is /{country}/{lang}/…). Pass the
+ *  member's resolved locale — see `memberBookingLocale`. */
 export function requestBookPath(
   countryCode: string,
+  locale: string,
   type: CorporateRequestType,
   serviceSlug?: string | null,
 ): string {
-  return `/${countryCode.toLowerCase()}/en/book?service=${serviceSlug ?? REQUEST_TYPE_SERVICE_SLUG[type]}`;
+  return `/${countryCode.toLowerCase()}/${locale.toLowerCase()}/book?service=${
+    serviceSlug ?? REQUEST_TYPE_SERVICE_SLUG[type]
+  }`;
 }
 
 export type CreateRequestResult =
@@ -114,7 +119,8 @@ export async function createCorporateRequest(opts: {
 
   // Notify the employee. Email success flips the status to
   // EMPLOYEE_NOTIFIED; failures leave it at REQUESTED for a later resend.
-  const bookPath = requestBookPath(employee.company.countryCode, opts.type, slug);
+  const locale = await memberBookingLocale(employee.userId, employee.company.countryCode);
+  const bookPath = requestBookPath(employee.company.countryCode, locale, opts.type, slug);
   let notified = false;
   try {
     const result = await sendCorporateRequestEmail({

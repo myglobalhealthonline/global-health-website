@@ -215,8 +215,11 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
               <option value="">{e.search.allStatuses}</option>
               <option value="INVITE_SENT">{e.search.statusInviteSent}</option>
               <option value="INVITE_FAILED">{e.search.statusInviteFailed}</option>
-              <option value="REGISTERED">{e.search.statusRegistered}</option>
-              <option value="PROFILE_COMPLETE">{e.search.statusProfileComplete}</option>
+              {/* REGISTERED / PROFILE_COMPLETE are never written — invite
+                  accept goes straight to PROFILE_INCOMPLETE or
+                  PREASSESSMENT_PENDING — so offering them was a filter that
+                  always returned nothing. */}
+              <option value="PROFILE_INCOMPLETE">{e.search.statusProfileIncomplete}</option>
               <option value="PREASSESSMENT_PENDING">{e.search.statusPreassessmentPending}</option>
               <option value="PREASSESSMENT_BOOKED">{e.search.statusPreassessmentBooked}</option>
               <option value="ACTIVE">{e.search.statusActive}</option>

@@ -4,6 +4,7 @@ import { isValidCronSecret } from "../utils/cron-auth.js";
 import { prisma } from "../db/prisma.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { mintAndSendInvite } from "../modules/corporate/corporate-invite.service.js";
+import { notifyCompanyExpired } from "../modules/corporate/corporate-status.service.js";
 
 /**
  * Corporate plan daily housekeeping. Token-gated (X-Cron-Token), fail
@@ -40,10 +41,22 @@ const cronCorporateRoute: FastifyPluginAsync = async (app) => {
         data: { status: "EXPIRED" },
       });
 
-      const expiredCompanies = await prisma.corporateCompany.updateMany({
+      // Read the rows BEFORE flipping them so the expiry notices can be sent
+      // (notification spec: "membership expired"). Previously the contract
+      // simply lapsed in silence.
+      const companiesToExpire = await prisma.corporateCompany.findMany({
         where: { status: "ACTIVE", contractEndAt: { lt: now } },
+        select: { id: true },
+      });
+      const expiredCompanies = await prisma.corporateCompany.updateMany({
+        where: { id: { in: companiesToExpire.map((c) => c.id) } },
         data: { status: "EXPIRED" },
       });
+      for (const company of companiesToExpire) {
+        await notifyCompanyExpired(company.id).catch((error) =>
+          app.log.error({ err: error, companyId: company.id }, "corporate expiry notice failed"),
+        );
+      }
       // Cards under expired companies + independently overdue cards.
       const expiredCards = await prisma.corporateBenefitCard.updateMany({
         where: {
@@ -57,14 +70,23 @@ const cronCorporateRoute: FastifyPluginAsync = async (app) => {
         data: { status: "EXPIRED" },
       });
 
-      // One reminder per unused invite older than 3 days (member still
-      // in an invite-stage status).
+      // Exactly ONE reminder per unused invite older than 3 days, and only
+      // while the member is still waiting to register. mintAndSendInvite
+      // deletes this row and mints a replacement that carries
+      // reminderSentAt, so the replacement can never re-qualify here.
       const staleInvites = await prisma.corporateInvite.findMany({
         where: {
           usedAt: null,
           reminderSentAt: null,
           expiresAt: { gt: now },
           createdAt: { lt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000) },
+          // Removed / suspended / already-registered members must never be
+          // chased. Their invites are deleted on removal too, but a status
+          // filter keeps this correct for rows written before that fix.
+          OR: [
+            { employee: { status: { in: ["DRAFT", "INVITED", "INVITE_SENT", "INVITE_FAILED"] } } },
+            { beneficiary: { status: { in: ["INVITED", "INVITE_SENT", "INVITE_FAILED"] } } },
+          ],
         },
         select: { id: true, type: true, employeeId: true, beneficiaryId: true },
         take: 100,
@@ -74,16 +96,15 @@ const cronCorporateRoute: FastifyPluginAsync = async (app) => {
         const memberId = invite.employeeId ?? invite.beneficiaryId;
         if (!memberId) continue;
         try {
-          // mintAndSendInvite replaces the open invite row; stamp the OLD
-          // row first so a send failure doesn't retry forever.
-          await prisma.corporateInvite.update({
-            where: { id: invite.id },
-            data: { reminderSentAt: now },
-          });
           await mintAndSendInvite({ type: invite.type, memberId, isReminder: true });
           remindersSent += 1;
         } catch (error) {
           app.log.error({ err: error, inviteId: invite.id }, "corporate invite reminder failed");
+          // The old row survives a mint failure only if the delete never ran;
+          // stamp it so a persistently failing address is not retried daily.
+          await prisma.corporateInvite
+            .updateMany({ where: { id: invite.id }, data: { reminderSentAt: now } })
+            .catch(() => undefined);
         }
       }
 

@@ -178,6 +178,32 @@ export type GenerateCorporateInvoiceInput = {
   send: boolean;
 };
 
+/**
+ * The one money rule of a corporate billing document: quantity × unit price
+ * must equal the total it charges. Rounding the unit price (10000 / 3 →
+ * 3 × 3333 = 9999) shipped a fiscal PDF whose lines did not add up to its
+ * own total, so a non-divisible amount is refused instead.
+ */
+export function priceCorporateInvoiceLine(
+  rawAmountCents: number,
+  rawQuantity: number,
+):
+  | { ok: true; amountCents: number; quantity: number; unitPriceCents: number }
+  | { ok: false; message: string } {
+  const amountCents = Math.round(rawAmountCents);
+  const quantity = Math.max(1, Math.round(rawQuantity));
+  if (!Number.isFinite(amountCents) || amountCents <= 0) {
+    return { ok: false, message: "Amount must be greater than zero." };
+  }
+  if (amountCents % quantity !== 0) {
+    return {
+      ok: false,
+      message: `Amount ${(amountCents / 100).toFixed(2)} does not divide evenly by quantity ${quantity}. Adjust the amount or use quantity 1.`,
+    };
+  }
+  return { ok: true, amountCents, quantity, unitPriceCents: amountCents / quantity };
+}
+
 export type GenerateCorporateInvoiceResult =
   | { ok: true; invoiceId: string; invoiceNumber: string }
   | { ok: false; message: string };
@@ -196,6 +222,13 @@ export async function generateCorporateSubscriptionInvoice(
     include: { plan: { select: { currencyCode: true } } },
   });
   if (!company) return { ok: false, message: "Company not found" };
+  // The fiscal series comes from the company's country, so the document must
+  // be denominated in that country's currency — a CZ-series invoice priced in
+  // the plan's EUR is not a valid document.
+  const country = await prisma.country.findUnique({
+    where: { code: company.countryCode.toLowerCase() },
+    select: { currency: { select: { code: true } } },
+  });
 
   const countryCode = company.countryCode.toLowerCase();
   if (!invoicePrefix(countryCode)) {
@@ -205,13 +238,10 @@ export async function generateCorporateSubscriptionInvoice(
     };
   }
 
-  const amountCents = Math.round(input.amountCents);
-  const quantity = Math.max(1, Math.round(input.quantity));
-  if (!Number.isFinite(amountCents) || amountCents <= 0) {
-    return { ok: false, message: "Amount must be greater than zero." };
-  }
-  const unitPriceCents = Math.round(amountCents / quantity);
-  const currencyCode = company.plan.currencyCode;
+  const priced = priceCorporateInvoiceLine(input.amountCents, input.quantity);
+  if (!priced.ok) return { ok: false, message: priced.message };
+  const { amountCents, quantity, unitPriceCents } = priced;
+  const currencyCode = country?.currency.code ?? company.plan.currencyCode;
 
   // documentType drives the paid/unpaid state the PDF renders.
   const isUnpaid = input.documentType === "INVOICE";

@@ -1007,6 +1007,14 @@ export async function createManualBooking(
     console.error("[manual-booking] consent promotion failed", err);
   });
 
+  // Corporate lifecycle hook — an admin booking a pre-assessment (or an
+  // employee's requested Illness-Benefit / Fit-for-Work consultation) must
+  // advance the same statuses the self-service checkout does. No-ops for
+  // public services. Dynamic import avoids a module cycle.
+  void import("../corporate/corporate-status.service.js")
+    .then((m) => m.onCorporateAppointmentCreated(appointmentId))
+    .catch(() => {});
+
   const orderNumber = await generateOrderNumber();
 
   // Commission markets: freeze the doctor payout + our commission at sale time,

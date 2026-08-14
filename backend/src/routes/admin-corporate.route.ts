@@ -58,6 +58,22 @@ async function localAdminCountryFilter(request: FastifyRequest): Promise<string[
   return user?.allowedCountryFolders ?? [];
 }
 
+/**
+ * True when this actor may read the company. ADMIN/SUPER_ADMIN always may;
+ * LOCAL_ADMIN only within their allowed countries. EVERY company-scoped read
+ * must call this — the beneficiaries and requests lists used to skip it and
+ * handed a LOCAL_ADMIN any company's rows by id.
+ */
+async function canReadCompany(request: FastifyRequest, companyId: string): Promise<boolean> {
+  const localFolders = await localAdminCountryFilter(request);
+  if (!localFolders) return true;
+  const scoped = await prisma.corporateCompany.findFirst({
+    where: { id: companyId, countryCode: { in: localFolders } },
+    select: { id: true },
+  });
+  return Boolean(scoped);
+}
+
 const paginationQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
@@ -435,13 +451,8 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid employees query", query.error.flatten()));
     }
     const { page, pageSize } = query.data;
-    const localFolders = await localAdminCountryFilter(request);
-    if (localFolders) {
-      const scoped = await prisma.corporateCompany.findFirst({
-        where: { id, countryCode: { in: localFolders } },
-        select: { id: true },
-      });
-      if (!scoped) return reply.status(404).send(errorResponse("Company not found"));
+    if (!(await canReadCompany(request, id))) {
+      return reply.status(404).send(errorResponse("Company not found"));
     }
     const where = { companyId: id };
     const [total, employees] = await prisma.$transaction([
@@ -478,17 +489,30 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
-    const employee = await prisma.corporateEmployee.create({
-      data: {
-        companyId: id,
-        firstName: parsed.data.firstName,
-        lastName: parsed.data.lastName,
-        email: parsed.data.email.toLowerCase(),
-        phone: parsed.data.phone || null,
-        department: parsed.data.department || null,
-        jobTitle: parsed.data.jobTitle || null,
-      },
+    const email = parsed.data.email.toLowerCase();
+    const data = {
+      firstName: parsed.data.firstName,
+      lastName: parsed.data.lastName,
+      email,
+      phone: parsed.data.phone || null,
+      department: parsed.data.department || null,
+      jobTitle: parsed.data.jobTitle || null,
+    };
+    // Same duplicate handling as the corporate portal route — without it the
+    // unique (companyId, email) index surfaced as a raw 500.
+    const existing = await prisma.corporateEmployee.findUnique({
+      where: { companyId_email: { companyId: id, email } },
+      select: { id: true, status: true },
     });
+    if (existing && existing.status !== "REMOVED") {
+      return reply.status(409).send(errorResponse("An employee with this email already exists"));
+    }
+    const employee = existing
+      ? await prisma.corporateEmployee.update({
+          where: { id: existing.id },
+          data: { ...data, status: "DRAFT", userId: null, preAssessmentAppointmentId: null },
+        })
+      : await prisma.corporateEmployee.create({ data: { companyId: id, ...data } });
     const status = await mintAndSendInvite({ type: "EMPLOYEE", memberId: employee.id });
     return okResponse({ id: employee.id, status });
   });
@@ -504,6 +528,13 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload"));
     if (parsed.data.action === "FORCE_ACTIVATE") {
+      // activateEmployee no-ops on an unknown id, so check first — otherwise a
+      // typo'd id answers 200 "activated" and nothing happened.
+      const exists = await prisma.corporateEmployee.findUnique({
+        where: { id },
+        select: { id: true },
+      });
+      if (!exists) return reply.status(404).send(errorResponse("Employee not found"));
       await activateEmployee(id);
       return okResponse({ id });
     }
@@ -528,6 +559,9 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid beneficiaries query", query.error.flatten()));
     }
     const { page, pageSize } = query.data;
+    if (!(await canReadCompany(request, id))) {
+      return reply.status(404).send(errorResponse("Company not found"));
+    }
     const where = { companyId: id };
     const [total, beneficiaries] = await prisma.$transaction([
       prisma.corporateBeneficiary.count({ where }),
@@ -577,6 +611,9 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid requests query", query.error.flatten()));
     }
     const { page, pageSize } = query.data;
+    if (!(await canReadCompany(request, id))) {
+      return reply.status(404).send(errorResponse("Company not found"));
+    }
     const where = { companyId: id };
     const [total, requests] = await prisma.$transaction([
       prisma.corporateServiceRequest.count({ where }),
@@ -636,12 +673,9 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     const { id } = request.params as { id: string };
     // Scope LOCAL_ADMIN to their allowed countries (same guard the other
     // company-scoped reads use).
-    const localFolders = await localAdminCountryFilter(request);
-    const company = await prisma.corporateCompany.findFirst({
-      where: { id, ...(localFolders ? { countryCode: { in: localFolders } } : {}) },
-      select: { id: true },
-    });
-    if (!company) return reply.status(404).send(errorResponse("Company not found"));
+    if (!(await canReadCompany(request, id))) {
+      return reply.status(404).send(errorResponse("Company not found"));
+    }
     const documents = await listCorporateInvoiceDocuments(id);
     return okResponse(documents);
   });
