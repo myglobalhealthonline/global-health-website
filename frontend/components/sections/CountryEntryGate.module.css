@@ -554,6 +554,49 @@
   transform: translateY(-1px);
 }
 
+/* Language alternates (brief §3a). Quiet by design — this is a crawlable
+   sitemap-in-the-footer, not a second entry gate. Same weight as the legal
+   footer below it, deliberately: it must be REAL (no hidden, no display:none,
+   no aria-hidden — a link Google is told to ignore passes nothing), but it
+   must not compete with the country cards for a visitor's attention. */
+.altLocales {
+  z-index: 3;
+  padding: 16px clamp(20px, 4vw, 48px) 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.altLocales ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.altLocales li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.altLocaleCountry {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.altLocales a {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+}
+
+.altLocales a:hover,
+.altLocales a:focus-visible {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: underline;
+}
+
 .footer {
   z-index: 3;
   padding: 14px clamp(20px, 4vw, 48px) 20px;

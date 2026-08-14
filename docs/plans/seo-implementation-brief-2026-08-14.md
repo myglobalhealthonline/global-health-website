@@ -35,6 +35,28 @@ These exist because the audit got things wrong in ways that looked convincing.
 4. **`py`, never `python`** (see root `CLAUDE.md`).
 5. **Manual Actions and Security Issues have no Search Console API.** They must
    be checked by a human in the GSC UI. No tooling in this repo can read them.
+6. **Derive corpora from observed data. Never synthesise them.** Roster, sitemap,
+   GSC export, live probe — those are observations. An API's default window, a
+   transliterated keyword guess, a parsed formatting convention and a generated
+   permutation set are all *constructions*, and a construction is internally
+   consistent whether or not it corresponds to anything. **Where synthesis is
+   unavoidable, the synthetic portion is reported as UNCOVERED, never as
+   passing.**
+
+   This is the single root of every wrong answer this workstream has produced.
+   Four instances, one shape:
+
+   | Incident | The rule that replaced reality | What it produced |
+   | --- | --- | --- |
+   | Truncated GSC pull (§0.1) | API default: 1,000 rows, clicks desc | "Portugal is crawl-starved at 10% coverage." Per-country re-pull: ~65% |
+   | Diacritic-free keywords (§0.3) | Transliterate Czech to ASCII | `lekar online` returned zero competitors; `lékař online` a full field |
+   | Ledger sweep, 2026-08-14 | "Every code in a row applies to every path in it" | 20 false disagreements, nearly a systematic-ledger-rot finding |
+   | Honorific cross-product, 2026-08-14 | Generate every honorific × every live slug | 109 "failures", all URLs like `/ireland-doctors/mgr-grainne-ahern` that never existed |
+
+   The fourth happened *inside the fix for the third*, which is the point: the
+   shape is not obvious in the moment, because a constructed corpus fails
+   convincingly. All four were caught by checking the instrument rather than the
+   result — and none of them by re-reading the conclusion.
 
 ---
 

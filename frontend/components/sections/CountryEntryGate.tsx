@@ -113,6 +113,35 @@ function locationForCountry(country: CountryConfig): [number, number] {
   return COUNTRY_LOCATIONS[normalized] ?? COUNTRY_LOCATIONS[iso] ?? FALLBACK_COUNTRY_LOCATION;
 }
 
+/**
+ * Endonyms for the language-alternate links (brief §3a). Native names, so the
+ * list reads correctly whatever language the gate itself rendered in — and so
+ * this needs no key in the six `common.json` bundles.
+ */
+const LOCALE_LABELS: Record<string, string> = {
+  en: "English",
+  pt: "Português",
+  es: "Español",
+  cs: "Čeština",
+  ro: "Română",
+  de: "Deutsch",
+};
+
+/**
+ * Accessible name for that nav. Kept local for the same reason as the endonyms:
+ * the locale bundles were under concurrent edit when this shipped, and one map
+ * here beats a six-file merge conflict. Fold it into `common.json` next time
+ * those files are touched anyway.
+ */
+const ALT_LOCALES_LABEL: Record<string, string> = {
+  en: "Choose a country and language",
+  pt: "Escolha um país e idioma",
+  es: "Elija un país e idioma",
+  cs: "Vyberte zemi a jazyk",
+  ro: "Alegeți o țară și o limbă",
+  de: "Land und Sprache wählen",
+};
+
 /** First supported locale among the browser's preference list, or null. */
 function matchNavigatorLocale(): LocaleCode | null {
   if (typeof navigator === "undefined") return null;
@@ -477,6 +506,47 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
           </div>
         </div>
       </section>
+
+      {/*
+        Language alternates — SEO-GROWTH-018 / brief §3a, 2026-08-14.
+
+        The six country cards above link only each market's DEFAULT locale, so
+        the 27 non-default country x language combinations received nothing from
+        the site's highest-authority page (5,440 impressions, 357 clicks / 90d,
+        and the entry point for essentially all 58 referring domains). Among the
+        27 were `/ireland/pt`, `/ireland/ro`, `/ireland/cs` and `/ireland/es` —
+        the Portuguese-, Romanian-, Czech- and Spanish-language consultations for
+        the communities those languages serve in Ireland. That is the product
+        differentiator no competitor has (webdoctor.ie earned Irish national
+        press for doing it in TWO languages; this site runs six with verified
+        full-length translated content), and the topology was starving it.
+
+        Deliberately plain `<a href>`, not the card's `enter()` handler: these
+        exist to be crawled and followed. They intentionally do NOT set the
+        locale cookie — a reader picking "Português" for Ireland is choosing a
+        page, not changing their whole-site language preference.
+
+        Rendered for every requester, identical HTML. No `hidden`, no
+        `display:none` — a link Google is told to ignore passes nothing.
+      */}
+      <nav className={styles.altLocales} aria-label={ALT_LOCALES_LABEL[detectedLocale] ?? ALT_LOCALES_LABEL.en}>
+        <ul>
+          {countries.map((c) => {
+            const slug = c.slug || countrySlug(c.code);
+            const supported = c.supportedLocales?.length ? c.supportedLocales : [crawlLangFor(c)];
+            return (
+              <li key={c.code}>
+                <span className={styles.altLocaleCountry}>{c.name}</span>
+                {supported.map((loc) => (
+                  <a key={loc} href={`/${slug}/${String(loc).toLowerCase()}`} hrefLang={String(loc).toLowerCase()}>
+                    {LOCALE_LABELS[String(loc).toLowerCase()] ?? String(loc).toUpperCase()}
+                  </a>
+                ))}
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
 
       {/* Footer */}
       <footer ref={footerRef} className={`${styles.footer} relative flex flex-wrap justify-between gap-4`}>
