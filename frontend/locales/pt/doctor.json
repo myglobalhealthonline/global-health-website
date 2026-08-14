@@ -150,6 +150,8 @@
     "emptyTitle": "Ainda não há consultas",
     "emptyDesc": "Novas consultas atribuídas aparecerão aqui assim que forem agendadas.",
     "meetingLinkNotCreated": "Link de reunião ainda não criado",
+    "corporatePreAssessment": "Pré-avaliação corporativa",
+    "corporateRequest": "Solicitada pela empresa",
     "scheduled": "Agendada",
     "meeting": "Reunião",
     "ready": "Pronto",

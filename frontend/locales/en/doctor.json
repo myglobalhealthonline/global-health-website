@@ -150,6 +150,8 @@
     "emptyTitle": "No appointments yet",
     "emptyDesc": "New assigned consultations will appear here as soon as they are scheduled.",
     "meetingLinkNotCreated": "Meeting link not yet created",
+    "corporatePreAssessment": "Corporate pre-assessment",
+    "corporateRequest": "Company-requested",
     "scheduled": "Scheduled",
     "meeting": "Meeting",
     "ready": "Ready",

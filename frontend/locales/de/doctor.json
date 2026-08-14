@@ -150,6 +150,8 @@
     "emptyTitle": "Noch keine Termine",
     "emptyDesc": "Neu zugewiesene Konsultationen erscheinen hier, sobald sie geplant sind.",
     "meetingLinkNotCreated": "Meeting-Link noch nicht erstellt",
+    "corporatePreAssessment": "Betriebliche Erstuntersuchung",
+    "corporateRequest": "Vom Unternehmen angefordert",
     "scheduled": "Geplant",
     "meeting": "Meeting",
     "ready": "Bereit",

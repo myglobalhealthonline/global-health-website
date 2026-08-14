@@ -150,6 +150,8 @@
     "emptyTitle": "Zatím žádné termíny",
     "emptyDesc": "Nově přiřazené konzultace se zde zobrazí, jakmile budou naplánovány.",
     "meetingLinkNotCreated": "Odkaz na schůzku zatím nebyl vytvořen",
+    "corporatePreAssessment": "Firemní vstupní konzultace",
+    "corporateRequest": "Vyžádáno zaměstnavatelem",
     "scheduled": "Naplánováno",
     "meeting": "Schůzka",
     "ready": "Připraveno",
