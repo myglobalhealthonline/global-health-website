@@ -57,6 +57,21 @@ These exist because the audit got things wrong in ways that looked convincing.
    shape is not obvious in the moment, because a constructed corpus fails
    convincingly. All four were caught by checking the instrument rather than the
    result — and none of them by re-reading the conclusion.
+   **Extension — retrieval is not exemption.** The rule above catches
+   *constructed* corpora. It does not catch a number that was genuinely
+   observed, correctly reported, and describes a corpus that no longer exists.
+   **A retrieved number carries the date and scope of the instrument that
+   produced it, not the date you read it.** Fifth instance, 2026-08-14:
+   `brokenPages: 666` was cited as evidence of the legacy Wix estate's scale. It
+   is a real figure from a real API — and a stale Wix-era crawl of the *old*
+   site, already re-confirmed as noise in §1 of `seo-control-state.md` on
+   2026-08-12. It survived because it was true-shaped, supported the argument
+   being made, and nobody re-read what the ledger already said about it.
+
+   Practical form: before a number becomes load-bearing, state what produced it
+   and when. If either answer is "not sure", it is context, not evidence. The
+   grounded substitute in this case was the 364 redirect rules in
+   `next.config.ts` expanding across six locales — checkable today, in this repo.
 7. **Provenance decays the same way data does. Attribute to a commit hash or a
    named human plus a date — never to "the session", "the team", or an
    unattributed "we".** §0.6 catches synthesised *data*. This catches synthesised
