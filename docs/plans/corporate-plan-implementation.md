@@ -1,5 +1,11 @@
 # Corporate Plan (Private B2B) — Implementation Plan
 
+> **Built and remediated. Sections 0–9 below are the ORIGINAL 2026-07-05 plan
+> and are kept as the design record — where they disagree with §10, §10 wins.**
+> Read [§10 Post-build conformance](#10-post-build-conformance-2026-08-14) for
+> what actually shipped, which spec lines were interpreted differently, and
+> what is still open.
+
 > Status: APPROVED FOR EXECUTION · Branch: `Dev-hassaan` · Date: 2026-07-05
 > Source of truth for business rules: user brief 2026-07-05 ("latest rule wins"):
 > **Corporate Standard · €180/employee/year · 10% GP discount (configurable) · max 5 beneficiaries/employee · corporate-only consultations hidden from public.**
@@ -736,3 +742,88 @@ tables; acceptance #17 satisfied by construction.
 12. **Enum migration safety** → new enum values not referenced in same migration tx (seed is a separate script) — PG-safe.
 13. **`NotificationType` additions** — verified enum is extensible (subscription values were added post-freeze memory note; that note is stale).
 14. **Appointment→request linkage** — cart/appointment creation for CORPORATE_REQUEST_ONLY service stamps `CorporateServiceRequest.appointmentId` + status BOOKED in same tx as appointment mint; appointment COMPLETED webhook/status-change hook flips request COMPLETED + (for pre-assessment) employee ACTIVE. Hook lives where AppointmentStatus is PATCHed (admin appointments route + doctor actions route) — single helper `onAppointmentStatusChanged()` called from both.
+
+---
+
+## 10. Post-build conformance (2026-08-14)
+
+Written after a full spec-vs-code review of the shipped feature plus a
+remediation pass. Every claim here was checked against the code on the date
+above, not against this plan's own §0–9.
+
+### 10.1 Discount is selected, not silently applied (spec deviation — CLOSED)
+
+The 2026-07-05 brief reads as though an active member's 10% GP discount
+applies automatically at checkout. It does not, and that is deliberate:
+the phase-5 memberships work (§6.4 of the memberships plan) put **every**
+benefit source behind one choice, and corporate was folded into it.
+
+`backend/src/routes/orders.route.ts` branches the same way for all of them:
+
+| Source | Applies when |
+|---|---|
+| Public plan credit/discount | `benefitSource === "PUBLIC_PLAN"` |
+| Corporate | `benefitSource === "CORPORATE"` |
+| Membership | `benefitSource === "MEMBERSHIP"` |
+| Insurance | per-line `insuranceCompanyId` |
+
+Corporate therefore behaves **exactly like the other plans**, which is the
+required behaviour. Two guards stop it from costing a member money:
+
+- The booking form pre-selects the cheapest option and switches the benefit
+  toggle ON (`consultation-booking-form.tsx`, `opts.find(o => o.recommended)`).
+  For a corporate member with nothing cheaper, that is the corporate discount
+  — so the patient sees it applied without doing anything, and may opt out.
+- A cart whose choice never ran (`benefitSource === "UNSET"`) while the
+  patient IS eligible is refused at checkout with `BENEFIT_STEP_INCOMPLETE`
+  rather than quietly charged full price.
+
+**Do not "fix" this by making corporate auto-apply.** It would desynchronise
+corporate from every other benefit source and reintroduce stacking questions
+§9.7 already settled.
+
+### 10.2 Fixed in the 2026-08-14 remediation pass
+
+| Area | Was | Now |
+|---|---|---|
+| Invite reminders | `reminderSentAt` stamped on the row `mintAndSendInvite` then deleted ⇒ every unaccepted invitee re-mailed every 3 days forever, removed employees included | Stamped on the invite that is actually created; cron filters on member status; `REMOVE` deletes outstanding invites |
+| Invite proxy | Forwarded no client-IP headers ⇒ 30 lookups / 10 accepts per hour shared by the whole platform | `proxyClientIpHeaders()` + 20s timeout, same as the `/api/auth` proxy |
+| `POST /api/appointments` | No visibility check ⇒ anyone knowing a slug could book a private corporate consultation | `assertCorporateServiceBookable` before the appointment row is created |
+| Admin beneficiaries + requests reads | No LOCAL_ADMIN country scope | All four company-scoped reads share `canReadCompany()` |
+| Invite accept | Re-found "newest beneficiary for this user"; token claimed non-atomically | Returns `memberId`; claims the token inside the tx (`updateMany where usedAt: null`) |
+| Corporate invoices | `round(amount/qty)` drifted the line total off the order total; currency from the plan while the series came from the country | `priceCorporateInvoiceLine` refuses non-divisible amounts; currency from the company's country |
+| Pre-assessment linkage | Hook fired only on the paid-order webhook | Also fires from direct booking and admin manual booking |
+| Status machine | `canTransition*` referenced only by its own test | Drives `setEmployeeStanding` / `setBeneficiaryStanding`, idempotent on repeats |
+| Booking deep links | Hardcoded `/en` | `memberBookingLocale()` — user preference, else country default |
+| Card verification | Returned member + company name for expired/suspended cards | Identity fields only when `valid` |
+| Bulk import | 500 rows × one awaited email each | 200-row cap, sends in bounded parallel |
+| Notifications | Nothing on profile completion or contract expiry | `notifyCompanyMemberProfileComplete`, `notifyCompanyExpired` |
+| Service visibility | Settable only by the seed script | Admin service form field (`ASYNC_PRESCRIPTION` still forced `ADMIN_ONLY`) |
+| Doctor portal | A pre-assessment looked like any other booking | `corporateFlow` badge in the queue (no company name, no medical detail) |
+
+Also: `companyIsLive` now honours `contractStartAt`; benefit-card creation
+retries only on `P2002`; admin employee-create de-duplicates by email;
+`FORCE_ACTIVATE` 404s on an unknown id.
+
+### 10.3 Known-and-accepted
+
+- **`REGISTERED` and `PROFILE_COMPLETE` are never written.** Invite accept goes
+  straight to `PROFILE_INCOMPLETE` or `PREASSESSMENT_PENDING` — the two skipped
+  states describe the same instant. The enum values stay (removing them is a
+  migration for no gain); the corporate portal's status filter no longer offers
+  them.
+- **No QR code on the benefit card** — no QR library in the repo. The card
+  carries a verification code and `/card-verify/<code>`, which the brief allows.
+
+### 10.4 Still open
+
+1. **`scripts/seed-corporate-plan.ts` has not been run on production.** Without
+   `CorporatePlan` + `CorporateBenefitRule` + the three corporate services,
+   discounts resolve to null and request creation 409s. Needs an explicit
+   go-ahead — it writes to the live database.
+2. **No end-to-end walk-through on a real company yet**: invite → accept →
+   pre-assessment → card → discount at checkout.
+3. **`frontend/locales/*/doctor.json` drift (pre-existing, unrelated):** 20 EN
+   keys missing in the five other locales (`medicalAccessDenied.*`,
+   `crossBorderRx.*`) and 2 extra. `deepMergeLocale` falls back to EN, so those
+   strings render in English rather than breaking.
