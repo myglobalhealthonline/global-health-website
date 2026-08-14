@@ -337,6 +337,7 @@ export default async function AdminEditServicePage({
       galleryImagePaths: raw.galleryImagePaths,
       doctorIds: raw.doctorIds,
       shippingCents: raw.shippingCents,
+      visibility: raw.visibility,
       isActive: raw.isActive,
     };
 

@@ -940,9 +940,11 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
           galleryImagePaths: input.galleryImagePaths,
         }),
         ...(input.shippingCents !== undefined && { shippingCents: input.shippingCents }),
+        ...(input.visibility !== undefined && { visibility: input.visibility }),
         // The inner cross-jurisdiction prescription service is never public —
         // force ADMIN_ONLY so it can't leak into listings / slug lookups /
-        // sitemaps / the public cart, regardless of the form.
+        // sitemaps / the public cart, regardless of the form. Deliberately
+        // AFTER the explicit visibility above so it always wins.
         ...(input.kind === "ASYNC_PRESCRIPTION" && { visibility: "ADMIN_ONLY" as const }),
         isActive: input.isActive ?? true,
       },
@@ -994,9 +996,14 @@ export async function updateAdminService(
       data: {
         ...(body.countryId !== undefined && { countryId: body.countryId }),
         ...(body.kind !== undefined && { kind: body.kind }),
+        ...(body.visibility !== undefined && { visibility: body.visibility }),
         // Keep the inner cross-jurisdiction prescription service ADMIN_ONLY
-        // whenever an admin sets/keeps its kind (mirror of create above).
-        ...(body.kind === "ASYNC_PRESCRIPTION" && { visibility: "ADMIN_ONLY" as const }),
+        // (mirror of create above). Checked against the EFFECTIVE kind so an
+        // explicit `visibility: PUBLIC` cannot expose an existing
+        // ASYNC_PRESCRIPTION row. Listed last so it always wins.
+        ...((body.kind ?? existing.kind) === "ASYNC_PRESCRIPTION" && {
+          visibility: "ADMIN_ONLY" as const,
+        }),
         ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.name !== undefined && { name: body.name }),
         ...(body.summary !== undefined && { summary: body.summary }),
