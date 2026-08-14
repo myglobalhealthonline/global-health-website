@@ -123,7 +123,7 @@ export async function requestMembershipClaim(opts: {
     planName: enrollment.plan.name,
     levelName: enrollment.level.name,
     membershipId: enrollment.membershipId,
-    countryId: enrollment.plan.primaryCountryId,
+    enrollmentId: enrollment.id,
     requesterEmail: user.email,
     token,
   }).catch(() => undefined);
@@ -244,8 +244,7 @@ export async function confirmMembershipClaim(opts: {
       planName: row.enrollment.plan.name,
       levelName: row.enrollment.level.name,
       membershipId: row.enrollment.membershipId,
-      countryId: row.enrollment.plan.primaryCountryId,
-      preferredLocale: user.preferredLocale,
+      enrollmentId: row.enrollment.id,
     }).catch(() => undefined);
   }
 

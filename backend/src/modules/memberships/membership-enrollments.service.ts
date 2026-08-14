@@ -752,7 +752,7 @@ export async function sendMembershipEnrollmentInvite(id: string, actorAdminId: s
     planName: enrollment.plan.name,
     levelName: enrollment.level.name,
     membershipId: enrollment.membershipId,
-    countryId: enrollment.plan.primaryCountryId,
+    enrollmentId: enrollment.id,
   }).catch((error: unknown) => ({
     ok: false as const,
     message: error instanceof Error ? error.message : "Send failed",

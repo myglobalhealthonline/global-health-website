@@ -2,7 +2,12 @@ import { LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { absoluteSiteUrl, sendEmail, type SendEmailAttachment } from "../../lib/email/send-email.js";
 import { wrapHtml } from "../../lib/email/templates.js";
-import { cardStatusLabel, type CardCopy, type MembershipCardContent } from "./membership-card-content.js";
+import {
+  cardStatusLabel,
+  resolveCardLocale,
+  type CardCopy,
+  type MembershipCardContent,
+} from "./membership-card-content.js";
 import enCopy from "./email-copy/en.json";
 import ptCopy from "./email-copy/pt.json";
 import esCopy from "./email-copy/es.json";
@@ -20,10 +25,11 @@ import deCopy from "./email-copy/de.json";
  * else. Copy is per-locale JSON with an English fallback, mirroring
  * `subscriptions/email-copy` — the pattern already proven in this codebase.
  *
- * Locale resolution (§12): a `PENDING` enrollment has no `User`, so the invite
- * uses the plan country's `defaultLocale`. The confirmation goes to a linked
- * account, so it prefers `User.preferredLocale`, then the country default, then
- * English.
+ * Locale resolution (§12/§25): every template resolves from the ENROLLMENT via
+ * `enrollmentLocale` — linked `User.preferredLocale`, then the enrollment's own
+ * `preferredLocale` (what the admin form / import CSV set), then the plan's
+ * primary-country default, then English. Reading the country default directly
+ * is the bug this replaced: it wrote to a Czech partner's Irish members in Czech.
  */
 
 type EmailBundle = typeof enCopy;
@@ -62,12 +68,25 @@ function button(link: string, label: string): string {
   <p style="font-size:13px;color:#737373;">${escapeHtml(link)}</p>`;
 }
 
-async function countryDefaultLocale(countryId: string): Promise<LocaleCode> {
-  const country = await prisma.country.findUnique({
-    where: { id: countryId },
-    select: { defaultLocale: true },
+/**
+ * The locale for ANY membership email, resolved from the enrollment itself.
+ *
+ * Precedence is `resolveCardLocale`'s (§25) and deliberately not re-implemented
+ * here: linked account's own preference → the enrollment's stored language (the
+ * admin form / CSV `locale` column) → the plan's primary-country default →
+ * English. Every template goes through this, because reading the country
+ * default alone silently ignored the language an admin set on the member.
+ */
+async function enrollmentLocale(enrollmentId: string): Promise<LocaleCode> {
+  const row = await prisma.membershipEnrollment.findUnique({
+    where: { id: enrollmentId },
+    select: {
+      preferredLocale: true,
+      user: { select: { preferredLocale: true } },
+      plan: { select: { primaryCountry: { select: { defaultLocale: true } } } },
+    },
   });
-  return country?.defaultLocale ?? LocaleCode.EN;
+  return row ? resolveCardLocale(row) : LocaleCode.EN;
 }
 
 function bundleFor(locale: LocaleCode | string | null | undefined): EmailBundle {
@@ -105,9 +124,9 @@ export async function sendMembershipInviteEmail(opts: {
   planName: string;
   levelName: string;
   membershipId: string;
-  countryId: string;
+  enrollmentId: string;
 }) {
-  const locale = await countryDefaultLocale(opts.countryId);
+  const locale = await enrollmentLocale(opts.enrollmentId);
   const copy = bundleFor(locale).invite;
   const vars = {
     firstName: escapeHtml(opts.firstName),
@@ -145,10 +164,9 @@ export async function sendMembershipEnrollmentConfirmedEmail(opts: {
   planName: string;
   levelName: string;
   membershipId: string;
-  countryId: string;
-  preferredLocale?: LocaleCode | null;
+  enrollmentId: string;
 }) {
-  const locale = opts.preferredLocale ?? (await countryDefaultLocale(opts.countryId));
+  const locale = await enrollmentLocale(opts.enrollmentId);
   const copy = bundleFor(locale).confirmed;
   const vars = {
     firstName: escapeHtml(opts.firstName),
@@ -212,7 +230,7 @@ export async function sendMembershipAllowanceExhaustedEmail(opts: {
   });
   if (!benefit) return null;
 
-  const locale = enrollment.user?.preferredLocale ?? (await countryDefaultLocale(enrollment.countryId));
+  const locale = await enrollmentLocale(opts.enrollmentId);
   const copy = bundleFor(locale).exhausted;
   const to = enrollment.user?.email ?? enrollment.email;
 
@@ -257,10 +275,9 @@ export async function sendMembershipAllowanceExhaustedEmail(opts: {
  * mailbox opens this link. The copy names the requester so a recipient who did
  * not ask can recognise a claim attempt on their membership.
  *
- * Locale: the plan country's `defaultLocale`, English fallback — the enrolled
- * person is `PENDING`, has no `User`, and so has no `preferredLocale`. Using
- * the *requester's* locale here would be wrong twice over: it leaks a
- * preference of theirs and writes to a stranger in the wrong language.
+ * Locale: the ENROLLMENT's, never the requester's — using the requester's would
+ * be wrong twice over: it leaks a preference of theirs and writes to a stranger
+ * in the wrong language.
  */
 export async function sendMembershipClaimConfirmationEmail(opts: {
   /** The ENROLLED address. Never pass the session user's. */
@@ -269,13 +286,13 @@ export async function sendMembershipClaimConfirmationEmail(opts: {
   planName: string;
   levelName: string;
   membershipId: string;
-  countryId: string;
+  enrollmentId: string;
   /** Shown in the body so an unexpected claim is recognisable. */
   requesterEmail: string;
   /** Raw token — only ever in this mail, never persisted (§5.3). */
   token: string;
 }) {
-  const locale = await countryDefaultLocale(opts.countryId);
+  const locale = await enrollmentLocale(opts.enrollmentId);
   const copy = bundleFor(locale).claim;
   const vars = {
     firstName: escapeHtml(opts.firstName),

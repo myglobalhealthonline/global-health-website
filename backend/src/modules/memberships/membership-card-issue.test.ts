@@ -294,6 +294,16 @@ describe("membership card issue (database)", () => {
     assert.match(sent[0].subject, /Mitgliedskarte/);
   });
 
+  it("sends the invite in the enrollment's language, not the plan country's", async (t) => {
+    if (!prisma) return t.skip();
+    // The plan's primary country defaults to EN; the admin set CS on the member.
+    const enrollment = await makeEnrollment({ preferredLocale: "CS" });
+    sent.length = 0;
+    await enrollments.sendMembershipEnrollmentInvite(enrollment.id, null);
+    assert.equal(sent.length, 1);
+    assert.match(sent[0].subject, /Byli jste zaregistrov/);
+  });
+
   it("gives a dependent its own card and its own email (§43)", async (t) => {
     if (!prisma) return t.skip();
     const primary = await makeEnrollment({ levelId: sharedLevelId });
