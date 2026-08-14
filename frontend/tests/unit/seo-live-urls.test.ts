@@ -153,8 +153,15 @@ async function rosterSlugs(): Promise<Map<string, Set<string>>> {
  *
  * This is NOT a place to silence a failure you have not decided about. If a new
  * URL shows up here, decide it and record it in `seo-control-state.md` first.
+ *
+ * Two guards, because they stop different things. The `reason` citation stops
+ * silencing-by-laziness. It does NOT stop silencing-by-diligence — someone
+ * writing a plausible ledger reference for a real failure they would rather not
+ * fix. `reviewBy` is what stops that: when the date passes, the gate fails until
+ * a human re-parks the item with a new date. A parked item has to be re-parked
+ * deliberately rather than parked forever.
  */
-const KNOWN_BROKEN: ReadonlyArray<{ path: string; reason: string }> = [
+const KNOWN_BROKEN: ReadonlyArray<{ path: string; reason: string; reviewBy: string }> = [
   {
     path: "/brazil-doctors/dr-renato-sarmento",
     reason:
@@ -163,6 +170,9 @@ const KNOWN_BROKEN: ReadonlyArray<{ path: string; reason: string }> = [
       "has never seen one of these URLs. Not fixed because Brazil is out of scope pending legal " +
       "review of whether consultations can be delivered there at all; it is one rule of the same " +
       "shape as the other five whenever that clears. See seo-control-state.md §5b.",
+    // Naturally dated to the legal review. If that has not resolved by then, the
+    // right move is a new date with a note on why, not a longer silence.
+    reviewBy: "2026-11-14",
   },
 ];
 
@@ -213,6 +223,16 @@ describe("GONE_DOCTORS entries are documented decisions, not oversights", () => 
       // exist and has to point somewhere a reader can check.
       expect(k.reason.trim().length, `${k.path}: no reason given`).toBeGreaterThan(40);
       expect(k.reason, `${k.path}: reason cites no ledger entry`).toMatch(/seo-control-state\.md/);
+      expect(k.reviewBy, `${k.path}: reviewBy is not an ISO date`).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      // The date is the guard the citation cannot be: once it passes, this fails
+      // until someone re-parks the item deliberately. Re-parking means a NEW
+      // date and a note on why, not a longer silence.
+      const due = new Date(`${k.reviewBy}T00:00:00Z`).getTime();
+      expect(
+        Date.now(),
+        `${k.path}: parked until ${k.reviewBy}, which has passed. Re-decide it and set a new ` +
+          `reviewBy with a note in seo-control-state.md, or fix the URL. Reason on file: ${k.reason}`,
+      ).toBeLessThan(due);
     },
   );
 

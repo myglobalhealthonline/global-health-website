@@ -500,11 +500,21 @@ so say so out loud when asking for one.
 Two commits remain unpushed at session end (`1bc83a91` and the follow-up
 recording this verification) — documentation only.
 
-**Still open for Nauman:** (1) confirm Railway → Settings → Source still says
-`main` for Production (it did on 2026-08-12, per `SEO-FOUNDATION-004`, and the
-auto-deploy is consistent with that); (2) name the channel that should receive
-`seo-live-urls` failures — the GitHub issue is a placeholder for a channel
-somebody actually watches.
+**Still open for Nauman — three, all the same class: a control that exists but
+routes to nobody.**
+
+1. Confirm Railway → Settings → Source still says `main` for Production (it did
+   on 2026-08-12 per `SEO-FOUNDATION-004`, and the auto-deploy is consistent).
+2. Name the channel that should receive `seo-live-urls` failures. The GitHub
+   issue is a placeholder for a channel somebody actually watches — an unread
+   issue is the same silent failure one layer up.
+3. **Consider branch protection requiring a PR to `main`.** Railway auto-deploys
+   `main` on push, so anyone merging ships whatever else is sitting on the
+   branch — which is exactly what happened on 2026-08-14. "A push is a decision
+   about everyone's work on it" is the right lesson but relies on people
+   remembering it; a required PR converts that into a moment where someone sees
+   the full diff. **Repo-policy call, not an SEO one** — recorded here because
+   it is the same gap as the unread issue, not because this workstream owns it.
 
 **Order for the next session: §7 before §6.** §7 (language versions of `/about`,
 `/faq`, `/blog`) needs no deploy. §6's acceptance cannot be evaluated until one
