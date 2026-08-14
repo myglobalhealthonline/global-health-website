@@ -114,7 +114,20 @@ unified — the sitemap currently mixes `mudr-` (3), `dr-` (1) and bare (1).
 
 ---
 
-## 3. P1 — Root entry gate topology
+## 3. ~~P1 — Root entry gate topology~~ — 3a DONE, 3b REJECTED (2026-08-14)
+
+> **§3a landed** (`75eb1137`): `/` serves exactly 33 crawlable country×language
+> anchors, verified in raw HTML from `curl` against the built page, and all 33
+> targets return 200 on production.
+>
+> **§3b is rejected, by owner decision 2026-08-14.** It asks for exactly the
+> markup `SEO-FOUNDATION-004` removed on 2026-08-13 with evidence — six pages
+> each declaring `/` to be a different language while `/` declares itself
+> `x-default`. §3b's own stated rationale ("leaves `/` outside the international
+> graph it now links into") is a **link-equity** argument, and §3a's 33 anchors
+> deliver that. hreflang is locale-selection, not link-equity, and `/` is not a
+> language variant of any market home. The "do 3a and 3b in the same PR"
+> instruction above is therefore superseded. See ledger §5b.
 
 `/` is the site's highest-authority page: 5,440 impressions, 357 clicks over 90
 days, and the entry point for essentially all 58 referring domains.

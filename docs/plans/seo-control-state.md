@@ -437,6 +437,28 @@ clears. Recorded so the next person does not re-derive it.
 
 ### Decisions closed 2026-08-14 (stop re-opening these)
 
+**`/` gets no hreflang. `SEO-FOUNDATION-004` stands.** The 2026-08-14 brief's
+§3b asked for `x-default` plus alternates to the six country homes — precisely
+the markup removed on 2026-08-13 because it made six pages each declare `/` to
+be a different language (`en`, `cs`, `pt` twice, `es`, `ro`) while `/` declared
+itself `x-default`; at most one can be true. Owner decision 2026-08-14: **do not
+restore it.** §3b's rationale was link-equity, and the 33 anchors shipped in
+`75eb1137` deliver that; hreflang is locale-selection, not link equity, and `/`
+is a selector page, not a language variant of any market home. The third option
+— a full 33-URL cross-product cluster on `/`, which Google would permit — was
+rejected because it dissolves the six per-market clusters that are currently
+clean across 1,893 URLs. The warning comment in `app/(global)/page.tsx` is
+authoritative; do not "restore an alternates map" without reopening this.
+
+**`/` now links 33 country×language homes (`SEO-GROWTH-018`, `75eb1137`).** Was
+six — every market's default locale only — so the 27 non-default combinations
+got nothing from the site's highest-authority page, including `/ireland/{pt,ro,
+cs,es}`, the community-language product. Verified in raw HTML (not the rendered
+DOM): 33 distinct anchors, all 33 targets 200 on production. The endonyms and
+the nav's accessible name are held in `CountryEntryGate.tsx` rather than the six
+`common.json` bundles, which were under concurrent edit — fold them in next time
+those files are touched.
+
 **Czech slug convention stays mixed.** `mudr-` (3), `dr-` (2) and bare (1) coexist
 in the Czech roster and that is now a decision, not an open item. Renaming live,
 currently-ranking URLs for cosmetic uniformity costs a redirect hop and resets
