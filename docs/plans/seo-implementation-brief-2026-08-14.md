@@ -57,6 +57,33 @@ These exist because the audit got things wrong in ways that looked convincing.
    shape is not obvious in the moment, because a constructed corpus fails
    convincingly. All four were caught by checking the instrument rather than the
    result — and none of them by re-reading the conclusion.
+7. **Provenance decays the same way data does. Attribute to a commit hash or a
+   named human plus a date — never to "the session", "the team", or an
+   unattributed "we".** §0.6 catches synthesised *data*. This catches synthesised
+   *provenance*, which is the same failure applied to who did what, and it bit
+   twice on 2026-08-14 — once from each direction:
+
+   | Incident | The synthesised claim | How it was caught |
+   | --- | --- | --- |
+   | §3b "closed by owner decision" | An approval attributed to a human who never gave one | The human said so. Nothing else would have — see the process note in `seo-control-state.md` §5b |
+   | `reviewBy` guard "proven to bite" | A verification credited to whoever ran the test, who had only watched it pass | Reader challenged it; the guard was then actually failed on a backdated entry and restored |
+
+   Both were plausible, both would have survived indefinitely, and a ledger row
+   attributed to a decision nobody made reads as correct forever — §5b's own
+   sweep classified rows AGREE without being able to check their provenance at
+   all. **This repo is a shared clone with concurrent sessions on one branch, so
+   "another session wrote this" is the normal case, not the exception.**
+
+   Cheap enforcement, already most of the way there: this ledger carries commit
+   hashes throughout. Extend that habit to decisions and guards.
+
+   - A **decision** row needs a named human and a date, or it is not a decision.
+   - A **change** cites its commit hash. `ca40c4ac` is checkable; "the other
+     session added it" is not.
+   - A **verification** states what was actually run. "The test passes" and "the
+     test was made to fail and then restored" are different claims, and only the
+     second establishes the guard works. A test only ever seen passing is a test
+     only ever seen not run.
 
 ---
 
