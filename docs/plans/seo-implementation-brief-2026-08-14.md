@@ -102,6 +102,15 @@ These exist because the audit got things wrong in ways that looked convincing.
 
 ---
 
+> **Do not trim the instance tables out of §0.6 and §0.7 for length.** They are
+> the load-bearing part. Each rule reads as complete right up until the case it
+> does not cover walks through it — §0.6 caught four failures and read as
+> finished, then `brokenPages: 666` passed every check it made. The cases are
+> what let the next reader recognise the shape in something that is not on the
+> list yet; the principle alone is easy to agree with and impossible to apply.
+
+---
+
 ## 1. Open founder items — these gate §13 ONLY
 
 Neither is technical. They gate the **off-page work in §13** and nothing else.
