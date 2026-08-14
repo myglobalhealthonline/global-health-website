@@ -311,6 +311,37 @@ working tree when the fix was staged. Noted so a future bisect over that file is
 not confusing; no code is affected.
 
 | SEO-DOC-005 | Nothing validated the redirect map, the sitemap or `GONE_DOCTORS` against the live doctor set | CI / process | **CLOSED — gate shipped, and it fails on the real defect** | 2026-08-14 | `frontend/tests/unit/seo-live-urls.test.ts` + a `seo-live-urls` CI job (push to main, weekly cron, `workflow_dispatch`). `GoneDoctor` now *requires* `clickCost` and `approvedBy`, so an undocumented 410 is a type error, not a review miss | n/a | Re-run the job after every deploy that touches redirects; see the §4 notes below |
+| SEO-DOC-006 | SEO-DOC-001's recrawl tail measured: **117 doctor-locale URLs across 25 doctors** still carry a `noindex` verdict Google formed *before* the `52c42d1a` backfill | Indexation (measurement) | **OPEN — WAIT FOR GOOGLE, no action authorized** | 2026-08-14 | All 117 serve `index, follow`, self-canonical, 200, and are in the sitemap with `lastmod` `2026-08-08T20:22Z`. Bio substance re-verified on all 25 doctors (Physician JSON-LD 175–300 chars, doctor-specific, in-locale) — the guard correctly stopped applying, it did not break | Every one last crawled **2026-07-16 → 2026-08-06**, i.e. all before the 2026-08-08 fix. Zero exceptions | **Watchlist only — see §6.** Do NOT submit via URL Inspection: this is the same mechanism §19.5 classifies WAIT FOR GOOGLE for Telmo/Vitor Pais/Pedro Santos, all three of whom appear in this set. Reversing that posture is an owner decision, not a maintenance step |
+
+#### SEO-DOC-006 — how the 117 were found, and why the number is not ~75
+
+Found by diffing the **1,924 live sitemap URLs against the 1,851 pages with any
+GSC impression in 90 days**, then inspecting the doctor URLs in the 721-URL
+remainder. Impressions prove indexation, so the remainder is a bounded candidate
+set that costs one sitemap fetch plus one GSC query — not a crawl. It answers the
+half §4's gate cannot: §4 asserts every sitemap entry is a live indexable 200
+(it passed here, 721/721, zero `noindex`, zero cross-canonical), which says
+nothing about whether Google agrees. This diff is what catches
+technically-perfect-but-not-indexed.
+
+**A stratified 68-URL sample put the figure at ~75. The real number is 117.**
+The sample extrapolated at 10% of 721 assuming even distribution; doctor URLs
+cluster (92 of the 184 doctor URLs in the remainder are Portugal alone), so the
+sample understated by ~60%. Recorded because the same sampling shortcut will
+understate any per-template finding in this codebase — enumerate the template's
+own URLs rather than extrapolating a site-wide sample.
+
+Distribution: Portugal 75, Czechia 18, Romania 18, Brazil 3, Spain 2, Ireland 1.
+Per-doctor list with crawl dates:
+[`docs/audits/seo/doctor-recrawl-tail-2026-08-14.md`](../audits/seo/doctor-recrawl-tail-2026-08-14.md).
+
+**Two negatives worth not re-deriving.** The sitemap is *not* mis-submitted —
+GSC reports `submitted: 1900`, `errors: 0`, `is_pending: false` against 1,924
+live (grew 24 since last read), so discovery is working and the ~115 extrapolated
+"unknown to Google" URLs elsewhere in the remainder are crawl starvation, not a
+parsing fault. And `lastmod` is *not* the blocker — these pages have carried a
+correct `2026-08-08` `lastmod` for six days and were still not recrawled, which
+is also why the 305 sitemap entries missing `lastmod` are tidying, not a fix.
 
 #### SEO-DOC-005 — what the gate does and does not cover
 
@@ -667,7 +698,7 @@ investigations on these until the last-crawl date advances past the fix date.**
 | `/portugal/pt/health/atestado-medico-online` | 308 → `/portugal/pt/services/baixa-medica` | Submitted and indexed, self-canonical | **2026-07-25** | 2026-08-10 | WAIT FOR GOOGLE |
 | `/portugal/es/health/atestado-medico-online` | 308 → `/portugal/es/services/baixa-medica` | Indexed (legacy ES family, last observed crawl 2026-06-04) | **2026-06-04** | 2026-08-10 | WAIT FOR GOOGLE |
 | `/czechia-doctors/mudr-libor-hlavaty` | **CORRECTED 2026-08-14** — 308 → `/czechia/cs/doctors` (200). The previous entry claimed the per-doctor target returned "200, indexable"; re-probed live 2026-08-14 it returned **404**, and §14 (2026-08-13) already recorded him as absent from the roster. SEO-DOC-004 fixed the routing | Legacy URL still carries the ranking (573 impr / pos 11.0, 90d) | — | 2026-08-14 | WAIT FOR GOOGLE |
-| 28 doctors backfilled to `readyToIndex` | 200, indexable | Recrawl pending | — | 2026-08-08 | WAIT FOR GOOGLE |
+| 28 doctors backfilled to `readyToIndex` — **measured 2026-08-14: 117 doctor-locale URLs across 25 doctors still hold the pre-fix verdict** (Portugal 75, Czechia 18, Romania 18, Brazil 3, Spain 2, Ireland 1). Full URL list in SEO-DOC-006 | 200, `index, follow`, self-canonical, in sitemap; bios re-verified substantive on all 25 | Excluded by `noindex` — **every one last crawled 2026-07-16 → 2026-08-06, all before the fix. Zero exceptions**, so no page has yet been re-evaluated on its current content | **2026-07-16 → 2026-08-06** | 2026-08-08 | WAIT FOR GOOGLE |
 | `/service-page/ie-medical-consultation` (legacy Wix) | 308 → `/ireland/en/see-a-specialist` | **Submitted and indexed, self-canonical** | **2026-07-08** | — | WAIT FOR GOOGLE (added 2026-08-12, SEO-GROWTH-017) |
 | `/pt/about` (legacy) | 308 → `/about` | Still earning 781 impr / 8 clicks / position 8.7 | — | — | WAIT FOR GOOGLE (added 2026-08-12). Query mix is brand and **brand-collision** terms for unrelated entities ("clinic global health", "help global") — no commercial value, do not optimise |
 
@@ -683,6 +714,15 @@ the list until it shows the same verdict.
 Recheck cadence: **one `inspect_urls` pass every 2–3 weeks**, not per session. Next
 recheck due **2026-09-01**. Escalate an item only if its crawl date has advanced past
 its fix date and Google's verdict is still wrong.
+
+**Recheck of 2026-08-14 (SEO-DOC-006) — counts as the pass; next due stays
+2026-09-01.** 252 of the 2,000 daily URL Inspection calls used: 68 stratified
+across the sitemap remainder, 184 covering every zero-impression doctor URL. No
+item escalated — the escalation condition is a crawl date advancing *past* the
+fix date, and all 117 crawl dates sit before it, so the correct reading is "not
+yet re-evaluated", not "re-evaluated and still wrong". The cheap way to re-run
+this without spending quota is the sitemap-vs-GSC-impressions diff in SEO-DOC-006;
+inspect only what it returns.
 
 ---
 
