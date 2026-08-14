@@ -242,6 +242,14 @@ export type DisclosedCrossBorderRecord = {
     noteFormat: "SOAP" | "FREEFORM";
     note: string | null;
   };
+  /** The current MORE_INFO round, if this doctor has asked one — null once
+   *  there's never been a question, or after a later ACCEPT/REFUSE decision
+   *  moves the request out of MORE_INFO. */
+  moreInfo: {
+    question: string;
+    answer: string | null;
+    answered: boolean;
+  } | null;
 };
 
 /**
@@ -275,6 +283,9 @@ export async function getDisclosedCrossBorderRecord(
       sourcePlan: true,
       sourceNoteFormat: true,
       sourceNote: true,
+      moreInfoQuestion: true,
+      moreInfoAnswer: true,
+      moreInfoAnsweredAt: true,
     },
   });
   if (!request) return null;
@@ -301,5 +312,12 @@ export async function getDisclosedCrossBorderRecord(
       noteFormat: request.sourceNoteFormat,
       note: request.sourceNote,
     },
+    moreInfo: request.moreInfoQuestion
+      ? {
+          question: request.moreInfoQuestion,
+          answer: request.moreInfoAnswer,
+          answered: request.moreInfoAnsweredAt !== null,
+        }
+      : null,
   };
 }
