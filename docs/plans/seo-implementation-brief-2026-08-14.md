@@ -55,7 +55,17 @@ read as a project-wide hold.
 
 ---
 
-## 2. P0 — Czech legacy redirects resolving to 404
+## 2. ~~P0 — Czech legacy redirects resolving to 404~~ — DONE 2026-08-14
+
+> **Landed.** All three now 308 to `/czechia/{lang}/doctors` in one hop, both URL
+> shapes, all six locales; `mudr-michael-nytra`'s two-hop chain collapsed in the
+> same change. 410 was deliberately not used — see ledger `SEO-DOC-004`.
+> Deviations from the acceptance text below: (a) the three unresolved clinicians
+> land on the roster rather than a 410, because `GONE_DOCTORS` asserts confirmed
+> removal and §14.8 of the ledger gates that on evidence none of them has; (b)
+> the Czech slug convention is left mixed on purpose — renaming live, ranking
+> slugs for cosmetic uniformity adds redirect hops and resets URL history for no
+> ranking gain.
 
 Three legacy Czech doctor URLs 308-redirect into pages that return 404. This is
 in the highest-CTR market (Czechia, 7.48% CTR, average position 12.0).
@@ -332,12 +342,70 @@ Credits remaining at handoff: ~700. Nothing worth buying before the re-baseline.
 
 | Market | 90d clicks / impressions | SERP structure | Verdict |
 | --- | --- | --- | --- |
-| **Ireland** | 452 / 8,555 | No HSE anywhere. Nine commercial `.ie` operators, several with ETV under 15. Leader `webdoctor.ie` (459 referring domains). | **Winnable.** Priority market. |
+| **Ireland** | 452 / 8,555 — but see §12a: **commercial pages sit at position 28.4**, the worst of any market | No HSE anywhere. Nine commercial `.ie` operators, several with ETV under 15. Leader `webdoctor.ie` (459 referring domains). | **Winnable, and priority — but on openness and the community-language product, not on current traction.** The 452 clicks are brand queries and doctor-name pages. Organic revenue contribution from commercial pages is close to zero today. Hold the priority knowingly; do not infer it from the blended 20.1, which brand traffic was propping up. |
 | **Portugal** | 369 / 6,395 | `sns24.gov.pt` positions 1–2, Ordem dos Médicos, CUF, Hospital da Luz. Three established commercial specialists below. | Head terms walled. Long-tail service pages only — `certificado-medico-carta-de-conducao` already at position 14.8. |
 | **Czechia** | 198 / 2,647 | `online lékař`: commercial `konzultacelekare.cz` at 1, insurers at 2 and 6. `telemedicína`: institutional. `neschopenka` terms: no competitive field (ČSSZ owns it). | **Split.** Commercial head is enterable. Do not run a `neschopenka` campaign — `/czechia/cs/services/neschopenka-online` sits at 16.6 against the state system. Build more `muzske-zdravi-online` (position 2.2) and `lekar-online-praha` (5.9) shaped pages. |
 | **Romania** ⚠️ **DO NOT RETIRE — the low click count is the argument FOR investing, not against** | 22 / 1,240 | `medic online`: `medic.chat` at 1, Regina Maria and MedLife at 2–3, then nine commercial sites. **No state service, no regulator, no institutional presence anywhere in the top 14 — the only market in the audit with a completely unobstructed SERP.** | **Fully open and starved of authority.** 22 clicks in an unobstructed field measures referring-domain count, not market viability. Every other market has something structural in the way; Romania has nothing but our own weakness. Retiring it would cut the one market where authority converts directly to position. |
 | **Spain** | 148 / 4,552 | Five insurers in the top 30 (Sanitas, Caser, Asisa, Aegon, Generali), three in the top 10. Online consultation is a bundled insurance benefit. | Confirms `SEO-GROWTH-013` independently. Correctly deprioritised. |
 | **Brazil** | 49 / 4,358 | Not measured. GSC shows no commercial queries at all — impressions are entirely calculator tools at positions 40–78. Content localisation is genuine (BR verb forms, R$, correct `pt-BR` cluster). | **Not an SEO question.** Whether consultations can legally be delivered in Brazil is a legal matter requiring qualified counsel. That answer decides whether Brazil stays in the matrix. |
+
+---
+
+## 12a. First move on content — port the Czech pattern to Ireland, but test it
+
+**This is the audit's conclusion, and it is not the one it started with.** The
+opening assumption was that Ireland is the priority market and should compete for
+Irish head terms. The segmented baseline in §11 says otherwise.
+
+### What the numbers actually say
+
+| | Commercial position | Commercial CTR | Blended position |
+| --- | --- | --- | --- |
+| Ireland | **28.4** | 0.77% | 20.1 |
+| Czechia | **13.0** | 5.45% | 12.0 |
+
+Ireland's blended 20.1 is brand queries (`global health`, `global health ireland`)
+and doctor-name pages (`dr grainne ahern galway` at position 1.9). Strip those and
+the pages that convert sit at 28.4 — **further from page one than Romania's**.
+Ireland has been contesting `online gp ireland` against a leader with 459
+referring domains from a base of 58, and losing at 28.4.
+
+Czechia is the only working commercial pattern in the audit, and its shape is
+legible:
+
+- `muzske-zdravi-online` — **position 2.2, 22.2% CTR** — niche-clinical
+- `lekar-online-praha` — **position 5.9, 12% CTR** — city-local
+
+Neither is a head term. Both are specific enough that a low-authority site can
+rank.
+
+### The move
+
+Build the Irish equivalents — specialty-plus-city and niche-clinical, not head
+terms:
+
+- `online-doctor-dublin`, `online-doctor-cork`, `online-doctor-galway`
+- `mens-health-online-ireland`, `womens-health-online-ireland`
+- specialty-plus-city combinations where the SERP is thin
+
+Let `online gp ireland` come later, once referring domains support it. The §13
+community-language angle compounds here: `portuguese-speaking-doctor-dublin` is
+both a thin SERP and the differentiator no competitor has.
+
+### Caution — do not port this wholesale
+
+**Some of Czechia's 13.0 is market structure, not page strategy.** The Czech field
+is smaller and less contested than Ireland's; `find_serp_competitors` returned a
+thinner competitor set for `online lékař` than for `online gp ireland`. The
+pattern is a hypothesis with strong supporting evidence, not a proven transfer.
+
+**Test on three or four Irish pages and check position at 60 days before
+committing the content budget.** If the test pages reach the teens, scale. If they
+stall in the 20s, the 13.0 was Czech market structure and Ireland needs the
+authority work in §13 first.
+
+Record the test pages and their day-0 positions in the ledger when they ship, or
+the 60-day read has no baseline — the same failure §11 was written to prevent.
 
 ---
 
