@@ -546,6 +546,7 @@ export type AppointmentDetailDto = {
       noteFormat: "SOAP" | "FREEFORM";
       note: string | null;
     };
+    moreInfo: { question: string; answer: string | null; answered: boolean } | null;
   } | null;
   createdAt: string;
 };

@@ -15,6 +15,10 @@ export type ReferringRecordCopy = {
   soapEmpty: string;
   sourceDocumentsNote: string;
   soapNote: string;
+  moreInfoTitle: string;
+  moreInfoQuestionLabel: string;
+  moreInfoAnswerLabel: string;
+  moreInfoAwaitingAnswer: string;
 };
 
 export type ReferringRecord = {
@@ -32,6 +36,7 @@ export type ReferringRecord = {
     noteFormat: "SOAP" | "FREEFORM";
     note: string | null;
   };
+  moreInfo: { question: string; answer: string | null; answered: boolean } | null;
 };
 
 /**
@@ -123,6 +128,32 @@ export function ReferringRecordPanel({
           ))}
         </dl>
       )}
+
+      {record.moreInfo ? (
+        <div className="mt-3 rounded-md border border-amber-300 bg-amber-50 p-3">
+          <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-amber-900">
+            {copy.moreInfoTitle}
+          </p>
+          <p className="mt-1 text-portal-label font-semibold text-[var(--portal-muted)]">
+            {copy.moreInfoQuestionLabel}
+          </p>
+          <p className="whitespace-pre-wrap text-portal-compact text-[var(--portal-text)]">
+            {record.moreInfo.question}
+          </p>
+          <p className="mt-2 text-portal-label font-semibold text-[var(--portal-muted)]">
+            {copy.moreInfoAnswerLabel}
+          </p>
+          {record.moreInfo.answered ? (
+            <p className="whitespace-pre-wrap text-portal-compact text-[var(--portal-text)]">
+              {record.moreInfo.answer}
+            </p>
+          ) : (
+            <p className="text-portal-compact text-[var(--portal-muted)]">
+              {copy.moreInfoAwaitingAnswer}
+            </p>
+          )}
+        </div>
+      ) : null}
 
       <p className="mt-3 text-portal-meta text-[var(--portal-muted)]">
         {copy.sourceDocumentsNote}

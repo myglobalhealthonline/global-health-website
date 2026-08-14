@@ -1774,6 +1774,7 @@
     "couldNotSubmit": "Could not send your answer.",
     "answerSent": "Answer sent.",
     "waitingForDoctor": "Waiting for the prescribing doctor to review your answer.",
+    "awaitingAnswer": "Not answered yet.",
     "yourAnswer": "Your answer"
   },
   "crossBorderRxInbox": {

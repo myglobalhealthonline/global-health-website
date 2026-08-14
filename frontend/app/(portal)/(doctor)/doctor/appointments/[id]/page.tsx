@@ -190,6 +190,10 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     soapNote: d.crossBorderRxInbox.soapNote,
     soapEmpty: d.crossBorderRxInbox.soapEmpty,
     sourceDocumentsNote: d.crossBorderRxInbox.sourceDocumentsNote,
+    moreInfoTitle: d.crossBorderRxMoreInfo.title,
+    moreInfoQuestionLabel: d.crossBorderRxMoreInfo.questionLabel,
+    moreInfoAnswerLabel: d.crossBorderRxMoreInfo.answerLabel,
+    moreInfoAwaitingAnswer: d.crossBorderRxMoreInfo.awaitingAnswer,
   };
   // Shared by both renderers of the patient-context card (>=lg rail, <lg tab).
   const patientContextCopy = {
