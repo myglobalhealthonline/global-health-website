@@ -305,14 +305,15 @@ describe("membership import (database)", () => {
    * member of a Czech-primary plan in Czech, so the partner gets to say — and
    * getting it wrong must cost them the language, not the row.
    */
-  it("takes a supported locale off the row and ignores an unsupported one with a warning", async (t) => {
+  it("takes any language we send email in, and only warns on one we do not", async (t) => {
     if (!prisma) return t.skip();
     await clearEnrollments();
     await prisma.countryLocale.create({ data: { countryId, locale: "PT" } });
     const csv = [
       HEADER,
       row({ email: `loc1-${uniq}@test.local`, firstName: "A", lastName: "One", locale: "PT" }),
-      // Configured nowhere for this country: warn, do not reject.
+      // NOT one of this country's site locales, and that is deliberately fine:
+      // the column says what the MEMBER reads, not what the country's site serves.
       row({ email: `loc2-${uniq}@test.local`, firstName: "B", lastName: "Two", locale: "CS" }),
       // Not a locale at all.
       row({ email: `loc3-${uniq}@test.local`, firstName: "C", lastName: "Three", locale: "klingon" }),
@@ -327,10 +328,10 @@ describe("membership import (database)", () => {
       "an unrecognised language never costs the admin a row",
     );
     assert.equal(rows[0].preferredLocale, "PT");
-    assert.equal(rows[1].preferredLocale, null);
-    assert.match((rows[1].warnings ?? []).join(" "), /not configured/i);
+    assert.equal(rows[1].preferredLocale, "CS");
+    assert.deepEqual(rows[1].warnings, [], "a language we send email in is never a warning");
     assert.equal(rows[2].preferredLocale, null);
-    assert.match((rows[2].warnings ?? []).join(" "), /not configured/i);
+    assert.match((rows[2].warnings ?? []).join(" "), /not a language we send email in/i);
     assert.equal(rows[3].preferredLocale, null);
     assert.deepEqual(rows[3].warnings, [], "no locale asked for is not a problem");
   });
