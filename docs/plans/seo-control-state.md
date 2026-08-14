@@ -262,7 +262,150 @@ measurable loss today, and none should be dressed up as one. Full reasoning in �
 | SEO-DOC-001 | 135 doctor-locale URLs `noindex` because `editorialChecklist` was `null` | Indexation | **CLOSED (28 doctors backfilled)** | 2026-08-08 | `52c42d1a` | Recrawl pending | Watchlist |
 | SEO-DOC-002 | 26 doctor-locale URLs `noindex` on genuinely thin bios (5 doctors) | Content | **MANUAL ACTION REQUIRED** | 2026-08-08 | Correctly `noindex`; the guard is working as designed | n/a | Clinical/editorial team must write real bios; do not weaken `isPublicDoctorRecordIndexable()` |
 | SEO-DOC-003 | Jana Cyplinska 410 | Legacy routing | **CLOSED — reverted, insufficient evidence of retirement** | 2026-08-08 | `36bbd5e5` | n/a | None |
-| SEO-DOC-004 | Three Czech legacy doctor URLs 308'd into a 404 (`mudr-jana-cyplinska`, `mudr-libor-hlavaty`, `mudr-andrei-lavrov`) | Legacy routing | **CLOSED — routed to the Czech roster; disposition still unresolved** | 2026-08-14 | Both URL shapes (legacy `/czechia-doctors/{slug}` + current `/czechia/{lang}/doctors/{slug}`, all 6 locales) now 308 to `/czechia/{lang}/doctors` in one hop, verified locally against the production API — every one of the 11 `/czechia-doctors/:slug` URLs known to GSC or the sitemap now terminates 200 in exactly one hop. `mudr-michael-nytra`'s 2-hop chain collapsed in the same change. **410 deliberately NOT used** — `GONE_DOCTORS` asserts confirmed removal and §14.8 gates that on disposition evidence none of the three has | Legacy URLs still hold the equity: Cyplinská 48 clicks / 30% CTR / pos 4.4; Hlavatý 2 clicks / 567 impr; Lavrov 2 clicks (90d) | Disposition check still owed (§14.8). Upgrade the destination to a per-clinician successor page when the §5 removal policy lands |
+| SEO-DOC-004 | Three Czech legacy doctor URLs 308'd into a 404 (`mudr-jana-cyplinska`, `mudr-libor-hlavaty`, `mudr-andrei-lavrov`) | Legacy routing | **CLOSED — routed to the Czech roster; disposition still unresolved** | 2026-08-14 | Both URL shapes (legacy `/czechia-doctors/{slug}` + current `/czechia/{lang}/doctors/{slug}`, all 6 locales) now 308 to `/czechia/{lang}/doctors` in one hop, verified locally against the production API — every one of the 11 `/czechia-doctors/:slug` URLs known to GSC or the sitemap now terminates 200 in exactly one hop. `mudr-michael-nytra`'s 2-hop chain collapsed in the same change. **410 deliberately NOT used** — `GONE_DOCTORS` asserts confirmed removal and §14.8 gates that on disposition evidence none of the three has | Legacy URLs still hold the equity: Cyplinská 48 clicks / 30% CTR / pos 4.4; Hlavatý 2 clicks / 567 impr; Lavrov 2 clicks (90d) | **PRODUCTION RE-PROBE OWED** — see the verification note below. Disposition check still owed (§14.8). Upgrade the destination to a per-clinician successor page when the §5 removal policy lands |
+
+#### SEO-DOC-004 — verification status and expected outcome
+
+**Status: CLOSED-PENDING-VERIFICATION. `8189baa6` is not deployed.** The
+original acceptance check ran against a local Next server pointed at the
+production API, which proves the redirect *config*, not the deployed behaviour.
+A dev-server probe is an assumption wearing an assertion's clothes — the same
+error class as a phantom file, one layer down, and it is what put
+`SEO-GROWTH-002` in this ledger wrong.
+
+Production was re-probed 2026-08-14 by the new §4 check (`seo-live-urls`,
+`SEO_CHECK_BASE=https://www.myglobalhealth.online`). **It still fails, exactly as
+expected pre-deploy:**
+
+```
+× no redirect terminates in a 404
+  /czechia-doctors/mudr-jana-cyplinska -> 404 (1 hops, final /czechia/cs/doctors/mudr-jana-cyplinska)
+  /czechia-doctors/mudr-libor-hlavaty  -> 404 (1 hops, final /czechia/cs/doctors/mudr-libor-hlavaty)
+  /czechia-doctors/mudr-andrei-lavrov  -> 404 (1 hops, final /czechia/cs/doctors/mudr-andrei-lavrov)
+× the three Czech P0 fixtures resolve 200 in one hop  (404, expected 200)
+```
+
+**After deploy, re-run that job and replace this block with the passing output.**
+Do not mark SEO-DOC-004 CLOSED until the passing output is in this file.
+
+**Expected outcome: the 48 clicks do not come back. Record this now.**
+Redirecting a clinician-name query sitting at position 4.4 onto a generic roster
+that never names her is the shape Google commonly treats as a soft 404 — the
+target is not a close equivalent of the source, so it typically will not inherit
+the ranking, and the redirect may end up treated as a 404 regardless. That does
+not make the change wrong: it stops a hard 404 and gives a real patient
+somewhere real to land, and 410 was correctly gated on missing disposition
+evidence. But it means **§2 fixed the defect without recovering the traffic.
+The recovery lives entirely in the §5 removal policy** — a per-clinician
+successor page that names the person, states they no longer practise here, and
+lists same-specialty same-language clinicians is a close equivalent; a roster
+index is not. Do not read flat Czech GSC numbers in three weeks as evidence this
+fix failed. It is the predicted result.
+
+**Commit hygiene:** `8189baa6` also carries unrelated pre-existing edits to
+`docs/plans/seo-implementation-brief-2026-08-14.md` that were uncommitted in the
+working tree when the fix was staged. Noted so a future bisect over that file is
+not confusing; no code is affected.
+
+| SEO-DOC-005 | Nothing validated the redirect map, the sitemap or `GONE_DOCTORS` against the live doctor set | CI / process | **CLOSED — gate shipped, and it fails on the real defect** | 2026-08-14 | `frontend/tests/unit/seo-live-urls.test.ts` + a `seo-live-urls` CI job (push to main, weekly cron, `workflow_dispatch`). `GoneDoctor` now *requires* `clickCost` and `approvedBy`, so an undocumented 410 is a type error, not a review miss | n/a | Re-run the job after every deploy that touches redirects; see the §4 notes below |
+
+#### SEO-DOC-005 — what the gate does and does not cover
+
+Three assertions, one per §4 bullet: no redirect terminates in an error; every
+sitemap entry is a live indexable 200; every `GONE_DOCTORS` URL answers 410,
+with a click cost and a named approver recorded.
+
+**Demonstrated, not asserted.** Run against production on 2026-08-14 it *failed*
+on the three Czech P0 URLs — the exact defect §4 was written to retire, caught
+against real production rather than a synthetic fixture. The sitemap and
+`GONE_DOCTORS` assertions passed on the same run.
+
+**Two design decisions worth not re-deriving:**
+
+- **It is not a pull-request gate.** The failures it catches are data-shaped,
+  not code-shaped: a doctor row going inactive breaks a redirect target with no
+  commit behind it. A PR gate would block unrelated work on a defect the PR
+  neither caused nor can fix. It runs on merge to main, weekly, and on demand.
+  The offline half — the `GONE_DOCTORS` metadata check and the gone-slug rule
+  check — *does* run on every PR, because that half is code-shaped.
+- **A route-shape check would not have worked.** `/czechia/[lang]/doctors/[slug]`
+  exists; the slugs do not. Every real failure in this class has been
+  data-dependent, so the check has to resolve against live data. That is why it
+  is network-gated rather than a static build step.
+
+**Coverage limit, logged by the run itself rather than left implicit:** 99 of
+364 redirect rules have a literal source and are probed. The other 265 are
+parameterised (`:slug`) and have no single URL to request — their dead-slug
+failures are only visible against a legacy-slug corpus from GSC, which this
+check does not have. That is precisely how cyplinska/hlavaty/lavrov survived,
+so it is the known ceiling, not an oversight. Upgrade path: feed the check a
+GSC page export and probe the real legacy slugs.
+
+---
+
+## 5b. Ledger-integrity sweep — 2026-08-14, one-off
+
+**Why this ran.** `SEO-GROWTH-002` was written `CLOSED — VERIFIED BY PRODUCTION
+CHECK` (2026-08-12) asserting a URL returned "200 `index, follow`". It returned
+404. §14, written the *next day*, independently recorded the same clinician as
+absent from the roster — so this document disagreed with itself for two days and
+nothing surfaced it. One verified-CLOSED row being wrong is evidence about the
+other rows in a 349 KB ledger, not just about that row. This sweep sized which.
+
+**Method.** Extracted every table row asserting a production URL state, probed
+all of them against production without following redirects, and compared. Script:
+`ledger_sweep.py` (session scratchpad — one-off, deliberately not committed; §4's
+CI assertion is the durable version of this check). Attribution is the whole
+game: a row reading `` `A` → 308 → `B` `` asserts 308 about A and says nothing
+about B's own status, so codes are attributed to redirect *sources* only. Rows
+naming several paths and one code are reported AMBIGUOUS rather than counted
+either way.
+
+**Result — 54 distinct URLs across 66 row-claims: 16 AGREE, 2 flagged, 36
+AMBIGUOUS, 0 unreachable. Both flagged rows are attribution artefacts, not
+ledger errors,** adjudicated by hand:
+
+| Flagged | Verdict |
+| --- | --- |
+| `/ireland/en/blog` (row `SEO-GROWTH-009`) | The row's 308 belongs to `/post/*`, the redirect source; the blog hub itself correctly serves 200. Row is right |
+| `/pt/spain-doctors/dr-alfredo-del-valle` (row `SEO-GROWTH-011`) | The row's "200" describes the five `spain/{locale}` URLs; the same row separately calls this legacy path a dead stub. It 308s to a 200. Row is right |
+
+All 36 AMBIGUOUS rows were read individually and every one is consistent with
+production (sources 308, targets 200). The single genuine exception in the whole
+file is `/czechia/cs/doctors/mudr-libor-hlavaty`, still 404 because `8189baa6`
+is not deployed yet.
+
+**Conclusion: `SEO-GROWTH-002` was one stale row, not a systematic problem with
+how CLOSED is written.** No further audit of past rows is warranted.
+
+**Scope limit, stated so it is not over-read.** This sweep tests HTTP status
+codes and redirect targets only. It does **not** verify claims about
+indexability, canonical tags, sitemap membership or hreflang, and several CLOSED
+rows rest on exactly those. `SEO-GROWTH-002`'s failure was in the status-code
+class, so the sweep was aimed at the right thing — but "16 AGREE" is not a clean
+bill of health for every assertion in this document.
+
+### Decisions closed 2026-08-14 (stop re-opening these)
+
+**Czech slug convention stays mixed.** `mudr-` (3), `dr-` (2) and bare (1) coexist
+in the Czech roster and that is now a decision, not an open item. Renaming live,
+currently-ranking URLs for cosmetic uniformity costs a redirect hop and resets
+URL history for no ranking gain. The acceptance criterion in
+`seo-implementation-brief-2026-08-14.md` §2 that asked for unification was wrong
+on this point and is superseded by this row.
+
+**The sitemap check in §4 needs two assertions, not one.** They are separate
+properties and conflating them manufactures false failures:
+
+1. Every sitemap entry returns 200 **and is indexable**. A `noindex` page listed
+   in the sitemap is the defect.
+2. Every 200-but-`noindex` page carries a **recorded reason**. Not every
+   indexable-looking page belongs in the sitemap.
+
+`mudr-nataliya-kharlamova` and `dr-gabriele-felici` serve 200, are `noindex` on
+empty bios (CZ-SEO-005), and are correctly *absent* from the sitemap. They pass
+assertion 2 and are out of scope for assertion 1. A naive "every live doctor URL
+must be in the sitemap" check flags them as failures; that check would be wrong.
 
 ---
 

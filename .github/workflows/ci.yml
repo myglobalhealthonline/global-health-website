@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # `seo-live-urls` probes deployed production, so it also needs to run on a
+  # clock (production can rot with no commit behind it — a doctor row going
+  # inactive breaks a redirect target without anyone touching this repo) and
+  # on demand after a deploy.
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
 
 # Least privilege by default; jobs that need more (e.g. gitleaks PR comments)
 # scope it themselves at the job level.
@@ -149,6 +156,47 @@ jobs:
 
       - name: Run frontend tests
         run: pnpm --filter frontend test
+
+  # ── SEO live-URL assertions ─────────────────────────────────────────────────
+  # §4 of docs/plans/seo-implementation-brief-2026-08-14.md. Asserts against
+  # DEPLOYED PRODUCTION that no redirect terminates in a 404, that every sitemap
+  # entry is a live indexable 200, and that every GONE_DOCTORS URL answers 410.
+  #
+  # Deliberately NOT part of `test-frontend`, and deliberately not on pull_request:
+  # the failures it catches are data-shaped, not code-shaped. A doctor row going
+  # inactive breaks a redirect target with no commit behind it, so a PR gate would
+  # block unrelated work on a defect the PR did not cause and cannot fix. It runs
+  # on merge to main (verifies what just shipped), weekly (catches data rot), and
+  # on demand (verify a deploy). The offline half — GONE_DOCTORS metadata and the
+  # gone-slug rule check — lives in the same file and DOES run on every PR via
+  # test-frontend, because that half is code-shaped.
+  #
+  # This is the gate that would have caught SEO-DOC-004: three Czech redirects
+  # 308ing into a 404 for long enough to reach the ledger as "CLOSED — VERIFIED
+  # BY PRODUCTION CHECK".
+  seo-live-urls:
+    name: SEO live URL assertions (production)
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+        with:
+          version: "10.33.2"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Probe production URLs
+        env:
+          SEO_CHECK_BASE: https://www.myglobalhealth.online
+        run: pnpm --filter frontend test tests/unit/seo-live-urls.test.ts
 
   # ── E2E (Playwright, role-authenticated) ────────────────────────────────────
   # S-028 (2026-08-02 audit): docs/audits/security/audit-authz-matrix-2026-08-02.md.

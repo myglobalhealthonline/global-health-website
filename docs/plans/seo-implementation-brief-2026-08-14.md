@@ -141,7 +141,15 @@ counting `<a href>` matches in the raw HTML, not the rendered DOM.
 
 ---
 
-## 4. P1 — Build-time assertion (retires a class of defect)
+## 4. ~~P1 — Build-time assertion (retires a class of defect)~~ — DONE 2026-08-14
+
+> **Landed.** `frontend/tests/unit/seo-live-urls.test.ts` + the `seo-live-urls`
+> CI job. All three bullets asserted; the three Czech URLs are fixtures, and the
+> check currently *fails* on them against production because the §2 fix is not
+> deployed — which is the acceptance criterion demonstrated rather than claimed.
+> Taken before §3 on the evidence that a `CLOSED — VERIFIED BY PRODUCTION CHECK`
+> ledger row was wrong. See ledger `SEO-DOC-005` for the coverage ceiling
+> (99 of 364 rules probed) and why this is not a pull-request gate.
 
 The Czech 404s and the `gone-content.ts` policy are the same failure: a redirect
 map and a removal list that nothing validates against the live doctor set. The
