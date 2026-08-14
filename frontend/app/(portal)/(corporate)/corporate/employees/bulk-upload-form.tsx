@@ -29,6 +29,9 @@ const HEADER = [
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Server-side ceiling — `BULK_MAX_ROWS` in backend/src/routes/corporate.route.ts. */
+const BULK_MAX_ROWS = 200;
+
 type RowErrorCode = "missingName" | "invalidEmail" | "invalidDob";
 type ParsedRow = { row: CorporateEmployeeInput; line: number; error?: RowErrorCode };
 
@@ -42,7 +45,33 @@ function parseRows(text: string): ParsedRow[] {
     .filter(Boolean);
   if (lines.length === 0) return [];
 
-  const splitLine = (line: string) => line.split(/\t|,|;/).map((c) => c.trim());
+  // Quote-aware split. A plain `split(/\t|,|;/)` shifted every later column
+  // whenever an address contained a comma — the row imported with the address
+  // in `dateOfBirth`, the DOB in `employeeCode`, and so on.
+  const splitLine = (line: string) => {
+    const cells: string[] = [];
+    let cell = "";
+    let quoted = false;
+    for (let i = 0; i < line.length; i += 1) {
+      const char = line[i];
+      if (quoted) {
+        if (char === '"') {
+          if (line[i + 1] === '"') {
+            cell += '"';
+            i += 1;
+          } else quoted = false;
+        } else cell += char;
+        continue;
+      }
+      if (char === '"') quoted = true;
+      else if (char === "," || char === ";" || char === "\t") {
+        cells.push(cell.trim());
+        cell = "";
+      } else cell += char;
+    }
+    cells.push(cell.trim());
+    return cells;
+  };
   const first = splitLine(lines[0]).map((c) => c.toLowerCase().replace(/[\s_-]/g, ""));
   const hasHeader = first[0] === "firstname";
   const body = hasHeader ? lines.slice(1) : lines;
@@ -95,7 +124,10 @@ export function BulkUploadForm({ action, t }: { action: BulkAction; t: BulkUploa
       setParsed(null);
       return;
     }
-    if (rows.length > 500) {
+    // Must match the server's cap (`BULK_MAX_ROWS` in corporate.route.ts).
+    // Previewing 500 and offering to upload them meant a 201-row paste got a
+    // raw English Zod error on submit and imported nothing.
+    if (rows.length > BULK_MAX_ROWS) {
       setError(t.errorTooManyRows);
       setParsed(null);
       return;

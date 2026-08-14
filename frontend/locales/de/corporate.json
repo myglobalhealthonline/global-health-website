@@ -85,7 +85,7 @@
       "uploadButton": "Lade {count} Mitarbeiter hoch + Einladungen senden",
       "uploadButtonPlural": "Lade {count} Mitarbeiter hoch + Einladungen senden",
       "errorEmptyRows": "Fügen Sie mindestens eine Zeile ein",
-      "errorTooManyRows": "Maximal 500 Mitarbeiter pro Upload",
+      "errorTooManyRows": "Maximal 200 Mitarbeiter pro Upload",
       "errorMissingName": "Name fehlt",
       "errorInvalidEmail": "Ungültige E-Mail",
       "errorInvalidDob": "Das Geburtsdatum muss im Format JJJJ-MM-TT sein",

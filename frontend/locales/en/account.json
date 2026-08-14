@@ -549,7 +549,14 @@
     "dateOfBirth": "Date of birth",
     "addAndInvite": "Add + send invite",
     "maxReached": "You've used all {max} beneficiary places. Remove one to add another.",
-    "privacyNote": "Your employer sees onboarding status and counts only — never your consultations, medical records, or your beneficiaries' personal details."
+    "privacyNote": "Your employer sees onboarding status and counts only — never your consultations, medical records, or your beneficiaries' personal details.",
+    "profileTitle": "Complete your membership profile",
+    "profileDesc": "We need these details before your pre-assessment can be booked.",
+    "profileAddress": "Address",
+    "profileCity": "City",
+    "profilePostalCode": "Postal code",
+    "profileSave": "Save profile",
+    "profileSaved": "Profile updated"
   },
   "insurance": {
     "title": "Insurance details",

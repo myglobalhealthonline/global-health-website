@@ -821,9 +821,196 @@ retries only on `P2002`; admin employee-create de-duplicates by email;
    `CorporatePlan` + `CorporateBenefitRule` + the three corporate services,
    discounts resolve to null and request creation 409s. Needs an explicit
    go-ahead — it writes to the live database.
-2. **No end-to-end walk-through on a real company yet**: invite → accept →
-   pre-assessment → card → discount at checkout.
+2. ~~**No end-to-end walk-through on a real company yet**: invite → accept →
+   pre-assessment → card → discount at checkout.~~ Superseded by §10.6: the
+   checkout, cart-add gate, cart preview, manual booking, lifecycle hook and
+   doctor badge were all exercised against the dev database. Invite → accept
+   remains covered only by the earlier browser pass.
 3. **`frontend/locales/*/doctor.json` drift (pre-existing, unrelated):** 20 EN
    keys missing in the five other locales (`medicalAccessDenied.*`,
    `crossBorderRx.*`) and 2 extra. `deepMergeLocale` falls back to EN, so those
    strings render in English rather than breaking.
+
+### 10.5 Second-pass remediation (2026-08-14)
+
+An independent second-pass review ran against the dev database and drove the
+frontend in a browser. What it found, and what changed. Every item below has a
+runnable check (an assertion harness against the dev DB + the running server, or
+a rendered-HTML assertion); the ones that were not executed are called out.
+
+**The feature was unreachable from every UI surface.** The booking wizard builds
+its service list from the public country catalogue, which filters
+`visibility: "PUBLIC"`, so a corporate slug never resolved and every product link
+(`/api/me/corporate` `bookPath`, the request email, the in-app notification,
+`/account/corporate`) landed on "this service is not available in this country".
+The service-detail read compounded it: `fetchServiceDetail` is an ISR-cached
+`apiRequest`, so it forwarded no cookie and the backend saw an anonymous
+requester.
+
+- The cached public path stays PUBLIC-only. Making it auth-aware would turn a
+  404 into a cross-user cache leak — `services.route.ts` already documents why
+  that response carries no `Cache-Control`.
+- `frontend/lib/corporate/corporate-api.ts` gained
+  `fetchCorporateBookableService`: per-request, `cache: "no-store"`,
+  cookie-forwarded, and it accepts only `CORPORATE_ONLY` /
+  `CORPORATE_REQUEST_ONLY` rows.
+- `book/page.tsx` runs that ONE extra lookup when `?service=` did not resolve
+  against the public list, and merges the row in — `selectedService`,
+  `currentStep`, `itemKind` and every downstream href are all derived from
+  membership in that array, so slug resolution alone would have fixed the 404
+  and still shown the banner. `getPublicServiceBySlug` now also returns
+  `assignedDoctorIds` (the detail read stripped them, which left the merged row
+  with no clinicians to offer at the doctor step).
+- The pre-assessment deep link carries the pinned doctor as an **id**, and the
+  wizard matched `?doctor=` on slug only — it now accepts either.
+
+**Money, benefits and PII.**
+
+| Was | Now |
+|---|---|
+| Invoice form labelled "Amount (EUR)" and prefilled the plan total, while the document was minted in the country's currency (a BR company produced `BR-00005 · R$360.00` from a €360 figure) | `computeBillingSummary` returns `documentCurrencyCode` (the company's country, the same source the document uses); the form labels that currency and **refuses the prefill**, with an explicit note, when the plan currency differs |
+| Employee-side beneficiary REMOVE set status + expired the card but left invites live — the token lookup kept returning the removed person's name, company and masked email | The route delegates to `setBeneficiaryStanding`, so both sides share one removal path |
+| Card verification ignored the company: a SUSPENDED company verified `valid: true` forever (the nightly sweep only matches `EXPIRED`), and a contract that ended overnight verified until the cron ran | `valid` also requires `companyIsLive` |
+| "Race-safe max-N" was a comment: READ COMMITTED let 8 concurrent POSTs all read the pre-burst count (measured 8 rows on a cap of 5) | `SELECT … FOR UPDATE` on the employee row inside the transaction, with a raised interactive-transaction timeout so the queued callers do not time out against a remote DB |
+| The request-only gate only READ the open request, and the `REQUESTED → BOOKED` flip was a fire-and-forget hook — two simultaneous bookings both succeeded | `claimCorporateRequest` (updateMany + status guard) runs inside the appointment's own transaction via `createAppointmentWithOptionalOwner`'s new `onCreatedInTx`; the loser gets 409. The paid-order hook claims the same way |
+| A SUSPENDED employee could add beneficiaries — each one a card and a 10% discount | Beneficiary management requires an employee in good standing |
+| `getActiveMembershipForUser` resolved beneficiaries without looking at the parent employee, and `setBeneficiaryStanding("REACTIVATE")` used `syncCardStatus` (an `updateMany`, silently a no-op with no card row) | The resolver requires `employee: { status: "ACTIVE" }`; REACTIVATE goes through `activateBeneficiary`, so a card always exists |
+| A SUSPENDED company kept a fully working portal: employees added, invites sent and accepted, billable headcount growing | Growth actions (employee create, bulk, resend, new request) sit behind `requireLiveCompany`; `acceptInvite` refuses when the company is not live. Reads stay open |
+| A pinned pre-assessment doctor was only checked when the booking named a doctor — a booking with no slot skipped it | The gate takes `bookingIntent`; booking call sites require the pin to be met. Read-only visibility checks are unaffected (they carry no doctor and must not 404) |
+| `PROFILE_INCOMPLETE` was terminal: the invite form left phone/address optional, the pre-assessment gate refused, and `PATCH /api/me/corporate/profile` did not exist | The invite form requires exactly what completeness requires, and the new `PATCH /api/me/corporate/profile` (plus a form on `/account/corporate`) recomputes status — employee → `PREASSESSMENT_PENDING`, beneficiary → `activateBeneficiary` |
+| Bulk upload previewed 500 rows and offered to upload them; the server caps at 200, so a 201-row paste failed with raw English Zod text and imported nothing | Client cap is the server's 200, message localised in all six locales |
+
+**PT corporate billing is manual, by decision.** `invoicePrefix()` has no PT entry
+(Portugal uses InvoiceExpress), so the Invoices tab used to render a form that
+400s on submit. It now renders an explicit "issued through InvoiceExpress" state
+instead. Wiring the corporate path into `pt-invoicexpress.service.ts` is a
+separate piece of work with tax consequences — that service is built around
+patient orders, while corporate mints synthetic ones.
+
+**Sweep items** (read-only leads in the review, each verified before acting):
+the CORPORATE_ONLY linkage hook now scopes its employee match to the booking's
+country; the bookability gate takes `serviceCountryCode` so a member cannot book
+another country's row of a corporate service; `resolveCorporateDiscount` filters
+to GENERAL/SPECIALIST like its batch sibling; both resend-invite routes carry a
+route-level rate limit; Suspend is only rendered where the transition table
+allows it; the bulk-upload CSV parser is quote-aware (an address containing a
+comma used to shift every later column).
+
+**Deferred, needs the owner's number:** a per-country corporate plan row
+(`corporate-standard-br` with its own `annualPricePerEmployeeCents` +
+`currencyCode`). `companyInputSchema.planSlug` and the slug-keyed `CorporatePlan`
+already support it with no migration. Stamping an FX rate on a fiscal document is
+an audit liability and drifts against the signed contract, so the BR price has to
+come from the contract, not from a conversion.
+
+### 10.6 Third pass (2026-08-14) — scope removal, checks, end-to-end verification
+
+**C3: the corporate subscription-invoice generator is removed.** The brief asks
+the admin and corporate dashboards to *show* the annual price calculation and a
+billing summary (employees × price per employee per year = total). It never asks
+the platform to *issue* the company's Invoice / Receipt / Credit-note: the
+company is billed offline under a signed agreement and no money moves through the
+platform. That capability was self-inflicted scope and it produced three of the
+second pass's worst defects — wrong currency on a fiscal document, a dead PT
+path, and a buyer-identity hole. Deleting it retires them rather than guarding
+them, and it retires the outstanding "BR corporate price" question with them:
+there is no document left to denominate.
+
+Production was confirmed clean first (read-only, `backend/.env`):
+`order.count({ corporateCompanyId: { not: null } })` = 0 and
+`invoice.count({ order: { corporateCompanyId: { not: null } } })` = 0, so no
+number from a national fiscal series was ever consumed on production. (The
+`BR-00005..00007` numbers spent during remediation were on the dev database.)
+
+Removed:
+
+- `corporate-invoice.service.ts` — `generateCorporateSubscriptionInvoice`,
+  `priceCorporateInvoiceLine`, `renderAndSendCorporateInvoice`, and the
+  `subscription` half of `listCorporateInvoiceDocuments`. The module is now
+  purely the employees' consultation-document listing. Its query keeps a
+  `corporateCompanyId: null` filter so a legacy synthetic billing order can
+  never surface as a consultation document.
+- `admin-corporate.route.ts` — `POST /api/admin/corporate/companies/:id/invoices`
+  and its Zod schema. The `GET` listing stays behind `canReadCompany`.
+- `corporate-invoice.service.test.ts` — it only covered
+  `priceCorporateInvoiceLine`.
+- The admin company page's "Generate document" form and "Subscription documents"
+  section, **including the `currencyMismatch` refusal and the
+  `ISSUED_EXTERNALLY` / InvoiceExpress PT state added during remediation** —
+  both existed only to protect the generator. The tab now renders one card,
+  "Employee consultation documents", which states that the company's own annual
+  plan is invoiced offline under contract.
+- `postCorporateInvoice` in `frontend/lib/admin/admin-api/corporate.ts`;
+  `fetchCorporateInvoices` now returns `{ consultations }` only.
+
+Kept deliberately: `documentCurrencyCode` on `computeBillingSummary` (the
+settings page and company header still show a contract value in the company's own
+currency); `Order.corporateCompanyId` and `CorporateCompany.subscriptionOrders`
+(dropping a column buys nothing and costs a migration on a live database where
+`prisma migrate dev` is known broken); and the company's postal address fields
+(*company address* is a required Step 1 detail independent of invoicing — only
+its printing on a fiscal document went away).
+
+Verified: `POST .../invoices` → **404**; `GET .../invoices` → `{ consultations:
+[…] }`; the rendered admin Invoices tab contains "Employee consultation
+documents" and "invoiced offline under contract" and contains neither "Generate
+document" nor "Subscription documents"; backend and frontend `tsc --noEmit` both
+clean with the test file removed.
+
+**Two checks on the remediation itself.**
+
+- *`assignedDoctorIds` on a public read.* Safe, and the endpoint is not shared-
+  cached. `services.route.ts` sets no `Cache-Control` on `GET /api/services/:slug`
+  precisely because the response is auth-dependent; the only still-cached
+  sibling, `/api/services/:slug/faqs`, returns `service.faqs` alone. Of the two
+  frontend callers, `fetchServiceDetail` is the ISR path and forwards no cookie,
+  so its cached entry is anonymous by construction (`allowCorporate: false` →
+  PUBLIC rows only), while `fetchCorporateBookableService` is `cache: "no-store"`
+  with cookies. The field itself is not new information: the ISR public
+  country-services list already publishes the same ids as
+  `assignedDoctors[].doctorId` (`get-country-collections.ts`).
+- *`?doctor=` accepting an id.* It cannot reach an unassigned clinician:
+  `SelectedServiceFlow` resolves the doctor only out of `serviceDoctors`, which
+  is `doctors ∩ service.assignedDoctorIds`. But the id form did not actually
+  work — that resolver matched on `doctor.slug` only, while `/api/me/corporate`
+  emits `&doctor=<Doctor.id>`, so the pin was silently dropped and the employee
+  landed in the generic time-then-doctor flow. **Fixed**: the lookup now accepts
+  slug or id, matching the page-level resolver.
+
+**Verification pass that A1 unblocked** — run against the dev database and the
+running dev server, each with an assertion harness:
+
+| What | Result |
+|---|---|
+| Real checkout, `benefitSource: "CORPORATE"` (Stripe test card, then `POST /api/payments/sync-order`) | 25% of €39.00 applied: order `ORD-000191` total **€29.25**, `OrderItem.corporateDiscountCents` **975**, `corporateCompanyId` stamped; invoice **IE-00177** (`INVOICE_RECEIPT`) built by `buildInvoicePdfData` at **€29.25**; appointment created |
+| `me-cart-preview.route.ts` corporate path | `corporateDiscount { percent: 25, amountCents: 975 }`, `totalFinalCents` 2925 |
+| Cart-add gate, all three corporate services | anon → **404** "Sign in to book this service" (×3); non-corporate patient and ACTIVE employee → **403** on pre-assessment; employee with no open request → **403** on illness-benefit and fit-for-work; employee **with** an open request clears the visibility gate (falls through to the 400 for a missing slot) |
+| Admin manual booking (**U2**) | Charges the **full** €39.00 — `discountPercent`/`discountCents` null, `corporateDiscountCents` null. `manual-booking.service.ts` reads the corporate benefit engine nowhere; its only corporate references are the lifecycle hook and a comment about the same net-price convention. **No contradiction with the brief** — the discount does not apply outside the platform |
+| Corporate lifecycle hook on the manual-booking path | Admin booking of the CORPORATE_ONLY pre-assessment advanced the employee `PROFILE_COMPLETE → PREASSESSMENT_BOOKED` with `preAssessmentAppointmentId` set |
+| Doctor-portal corporate badge (`doctor.route.ts`) | The queue row for that appointment carries `corporateFlow: "PRE_ASSESSMENT"` |
+| **U1 / criterion 17** — Corporate Standard on the public pricing page | Zero occurrences of "corporate" in the served HTML of `/{ie/en, pt/pt, br/pt, es/es, cz/cs, ro/ro}/pricing` |
+| Email templates | All seven corporate emails rendered through the real `sendEmail` path (captured via `setEmailCaptureHook`): member invite (employee + beneficiary reminder), admin invite, request, card-activated, membership-status, company notice. Full shell, non-empty text alternative, company name HTML-escaped |
+| Mobile + the four non-EN/PT locales | `/account/corporate` at 375×812 in ES, CS, RO and DE: content translated, `documentElement.scrollWidth === 375` (no horizontal overflow) in every one |
+
+Two cosmetic findings from that pass, not fixed here: the portal shell keeps
+`<html lang="en">` whatever locale it renders, and the corporate page's
+breadcrumb title ("Corporate") and the company status pill ("ACTIVE") stay
+untranslated.
+
+One deliberate behaviour worth naming: the cart-add gate answers **404** to an
+anonymous caller but **403** with a specific message to a signed-in non-corporate
+patient (`reply.status(corporateUserId ? 403 : 404)`). That is an existence
+oracle for any logged-in user. It is intentional — an eligible-looking member
+needs to know *why* — but it is a deviation from the "same 404 as a nonexistent
+slug" rule the rest of the gate follows.
+
+**Step 1 is inverted, and the brief is amended to match the build.** The brief
+has the corporate user log in, enter company details, then add employees. The
+implementation has a platform admin create the company
+(`POST /api/admin/corporate/companies`) and invite the CORPORATE_ADMIN, who can
+then only edit what exists; there is no corporate self-onboarding path.
+**Decision (2026-08-14): keep the implemented flow and amend the brief.** A
+corporate plan is a contracted B2B agreement at €180/employee/year — nobody
+should be able to self-provision one, and the admin-provisioned path is the
+correct design for it. No self-registration route is planned. This supersedes the
+brief's Step 1 wording.

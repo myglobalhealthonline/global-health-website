@@ -549,7 +549,14 @@
     "dateOfBirth": "Data nașterii",
     "addAndInvite": "Adăugați + trimiteți invitația",
     "maxReached": "Ați folosit toate cele {max} locuri pentru beneficiari. Eliminați unul pentru a adăuga altul.",
-    "privacyNote": "Angajatorul dvs. vede doar starea înscrierii și numărători — niciodată consultațiile, dosarele medicale sau datele personale ale beneficiarilor dvs."
+    "privacyNote": "Angajatorul dvs. vede doar starea înscrierii și numărători — niciodată consultațiile, dosarele medicale sau datele personale ale beneficiarilor dvs.",
+    "profileTitle": "Completați profilul de membru",
+    "profileDesc": "Avem nevoie de aceste date înainte de a putea programa evaluarea inițială.",
+    "profileAddress": "Adresă",
+    "profileCity": "Oraș",
+    "profilePostalCode": "Cod poștal",
+    "profileSave": "Salvați profilul",
+    "profileSaved": "Profil actualizat"
   },
   "insurance": {
     "title": "Detalii asigurare",

@@ -13,6 +13,7 @@ import {
   notifyCompanyMemberProfileComplete,
 } from "../modules/corporate/corporate-status.service.js";
 import { serializeCard } from "../modules/corporate/corporate-serializers.js";
+import { companyIsLive } from "../modules/corporate/corporate-shared.js";
 
 /**
  * Public corporate-invite endpoints. Tokens are single-use, 7-day,
@@ -120,7 +121,11 @@ const corporateInvitesRoute: FastifyPluginAsync = async (app) => {
       const member = card.employee ?? card.beneficiary;
       if (!member) return reply.status(404).send(errorResponse("Card not found"));
       const expired = card.validUntil.getTime() < Date.now();
-      const valid = card.status === "ACTIVE" && !expired;
+      // The company itself must still be live. A card row alone said nothing
+      // about it: a SUSPENDED company kept verifying (the nightly sweep only
+      // expires cards for companies already flipped to EXPIRED), and a contract
+      // that ended overnight verified until the cron caught up.
+      const valid = card.status === "ACTIVE" && !expired && companyIsLive(member.company);
       // A desk agent verifying a live card needs the holder's name; a
       // suspended/expired/unknown card must not become a lookup oracle for
       // "who is this person and where do they work".

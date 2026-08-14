@@ -1190,6 +1190,10 @@ export async function getPublicServiceBySlug(
       ...mergedRest,
       faqs,
       links,
+      // Same ids the country services list already publishes. The booking
+      // wizard needs them to offer a clinician: a corporate service is never
+      // in that list, so this detail read is its only source.
+      assignedDoctorIds: [...assignedDoctorIds],
       insuranceOptions,
       insuranceSeoLine: buildInsuranceSeoLine(insuranceOptions.map((o) => o.name)),
     };

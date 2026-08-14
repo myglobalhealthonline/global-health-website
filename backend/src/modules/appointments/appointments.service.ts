@@ -112,6 +112,13 @@ function buildBookingExtras(input: BookingInput) {
 
 type CreateAppointmentOptions = {
   userId?: string | null;
+  /**
+   * Runs inside the SAME transaction as the appointment INSERT, right after it.
+   * For claims that must be atomic with the booking — the corporate
+   * request-only gate, which has to consume its one open request exactly once.
+   * Throwing rolls the whole booking back (slot claim included).
+   */
+  onCreatedInTx?: (tx: Prisma.TransactionClient, appointmentId: string) => Promise<void>;
 };
 
 export async function createAppointmentWithOptionalOwner(
@@ -205,29 +212,36 @@ export async function createAppointmentWithOptionalOwner(
             ...buildBookingExtras(input),
           },
         });
+        await options.onCreatedInTx?.(tx, id);
       });
       return { id, status: "REQUEST_RECEIVED" };
     }
 
-    await prisma.appointment.create({
-      data: {
-        id,
-        userId: options.userId ?? null,
-        countryCode: input.country,
-        consultationType: input.consultationType,
-        fullName: input.fullName,
-        email: input.email,
-        phone: input.phone || null,
-        dateOfBirth: dob,
-        notes: input.notes || null,
-        consentAccepted: input.consentAccepted,
-        crossBorderConsentAccepted: input.crossBorderConsentAccepted,
-        medicalAccessConsentScope: input.medicalAccessConsentScope ?? "DIRECT",
-        status: "REQUEST_RECEIVED",
-        consultationMode: "ONLINE",
-        ...buildBookingExtras(input),
-      },
-    });
+    const untimedData = {
+      id,
+      userId: options.userId ?? null,
+      countryCode: input.country,
+      consultationType: input.consultationType,
+      fullName: input.fullName,
+      email: input.email,
+      phone: input.phone || null,
+      dateOfBirth: dob,
+      notes: input.notes || null,
+      consentAccepted: input.consentAccepted,
+      crossBorderConsentAccepted: input.crossBorderConsentAccepted,
+      medicalAccessConsentScope: input.medicalAccessConsentScope ?? "DIRECT",
+      status: "REQUEST_RECEIVED" as const,
+      consultationMode: "ONLINE" as const,
+      ...buildBookingExtras(input),
+    };
+    if (options.onCreatedInTx) {
+      await prisma.$transaction(async (tx) => {
+        await tx.appointment.create({ data: untimedData });
+        await options.onCreatedInTx!(tx, id);
+      });
+    } else {
+      await prisma.appointment.create({ data: untimedData });
+    }
 
     return { id, status: "REQUEST_RECEIVED" };
   } catch (error) {

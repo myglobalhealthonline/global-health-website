@@ -163,8 +163,12 @@ export function CorporateInviteForm({
               />
             </div>
           ) : null}
+          {/* Required because membership completeness requires them: an
+              employee needs date of birth + phone + address, a beneficiary
+              date of birth + phone. Leaving them optional dropped members into
+              PROFILE_INCOMPLETE, which blocks the pre-assessment. */}
           <div className="grid gap-2">
-            <label htmlFor="invite-phone" className="gh-field-label">
+            <label htmlFor="invite-phone" className="gh-field-label" data-required>
               {i18n.phone}
             </label>
             <input
@@ -173,11 +177,17 @@ export function CorporateInviteForm({
               type="tel"
               defaultValue={invite.prefill.phone ?? ""}
               className="gh-input"
+              required
+              aria-required="true"
               autoComplete="tel"
             />
           </div>
           <div className="grid gap-2 sm:col-span-2">
-            <label htmlFor="invite-address" className="gh-field-label">
+            <label
+              htmlFor="invite-address"
+              className="gh-field-label"
+              {...(invite.type === "EMPLOYEE" ? { "data-required": true } : {})}
+            >
               {i18n.address}
             </label>
             <input
@@ -185,6 +195,8 @@ export function CorporateInviteForm({
               name="addressLine1"
               defaultValue={invite.prefill.addressLine1 ?? ""}
               className="gh-input"
+              required={invite.type === "EMPLOYEE"}
+              aria-required={invite.type === "EMPLOYEE" ? "true" : undefined}
               autoComplete="address-line1"
             />
           </div>

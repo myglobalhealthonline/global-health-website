@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import {
   fetchMeCorporate,
+  patchMeCorporateProfile,
   postMeCorporateBeneficiary,
   removeMeCorporateBeneficiary,
   resendMeCorporateBeneficiaryInvite,
@@ -65,6 +66,27 @@ async function addBeneficiaryAction(formData: FormData) {
   if (!result.ok) back({ error: result.message });
   revalidatePath("/account/corporate");
   back({ success: "Beneficiary added — invite sent" });
+}
+
+/** Self-service escape from PROFILE_INCOMPLETE. `/account/profile` writes the
+ *  User row; membership completeness is computed from the membership row, so
+ *  this is the only surface that can actually clear the status. */
+async function saveCorporateProfileAction(formData: FormData) {
+  "use server";
+  const read = (key: string) => {
+    const value = String(formData.get(key) ?? "").trim();
+    return value || undefined;
+  };
+  const result = await patchMeCorporateProfile({
+    phone: read("phone"),
+    dateOfBirth: read("dateOfBirth"),
+    addressLine1: read("addressLine1"),
+    city: read("city"),
+    postalCode: read("postalCode"),
+  });
+  if (!result.ok) back({ error: result.message });
+  revalidatePath("/account/corporate");
+  back({ success: "profile" });
 }
 
 async function beneficiaryRowAction(formData: FormData) {
@@ -144,10 +166,19 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
   const maxBeneficiaries = membership.maxBeneficiaries ?? 5;
   const openRequests = membership.openRequests ?? [];
 
+  // Employees compute completeness from the membership row; a beneficiary is
+  // simply left in PROFILE_INCOMPLETE until theirs is filled in.
+  const needsProfile = isEmployee
+    ? Boolean(onboarding && !onboarding.profileComplete)
+    : membership.status === "PROFILE_INCOMPLETE";
+  const profile = membership.profile;
+
   const checklist = onboarding
     ? [
         { label: t.stepAccount, done: true },
-        { label: t.stepProfile, done: onboarding.profileComplete, href: "/account/profile", cta: t.completeProfile },
+        // Anchors at the form below — /account/profile writes the User row,
+        // which never clears this step.
+        { label: t.stepProfile, done: onboarding.profileComplete, href: "#corporate-profile", cta: t.completeProfile },
         {
           label: t.stepBook,
           done: onboarding.preAssessment.booked,
@@ -184,7 +215,9 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
         <p className="gh-status-warning mb-4 rounded-md border px-4 py-3 text-sm">{sp.error}</p>
       ) : null}
       {sp.success ? (
-        <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">{sp.success}</p>
+        <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">
+          {sp.success === "profile" ? t.profileSaved : sp.success}
+        </p>
       ) : null}
       {sp.welcome ? (
         <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">
@@ -224,6 +257,75 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
               ))}
             </ul>
           </AdminCard>
+        ) : null}
+
+        {/* Membership profile — only while it is blocking the member. */}
+        {needsProfile ? (
+          <div id="corporate-profile" className="lg:col-span-2">
+          <AdminCard padding={0} className="overflow-hidden">
+            <SectionHeader as="h2" title={t.profileTitle} description={t.profileDesc} />
+            <form
+              action={saveCorporateProfileAction}
+              className="grid grid-cols-1 gap-3 border-t border-[var(--color-border)] px-5 py-4 sm:grid-cols-3"
+            >
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">{t.dateOfBirth} *</span>
+                <input
+                  name="dateOfBirth"
+                  type="date"
+                  required
+                  defaultValue={profile?.dateOfBirth ?? ""}
+                  className="gh-input"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">{t.phoneWhatsApp} *</span>
+                <input
+                  name="phone"
+                  required
+                  maxLength={40}
+                  defaultValue={profile?.phone ?? ""}
+                  className="gh-input"
+                />
+              </label>
+              {isEmployee ? (
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">{t.profileAddress} *</span>
+                  <input
+                    name="addressLine1"
+                    required
+                    maxLength={240}
+                    defaultValue={profile?.addressLine1 ?? ""}
+                    className="gh-input"
+                  />
+                </label>
+              ) : null}
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">{t.profileCity}</span>
+                <input
+                  name="city"
+                  maxLength={120}
+                  defaultValue={profile?.city ?? ""}
+                  className="gh-input"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">{t.profilePostalCode}</span>
+                <input
+                  name="postalCode"
+                  maxLength={24}
+                  defaultValue={profile?.postalCode ?? ""}
+                  className="gh-input"
+                />
+              </label>
+              <div className="flex justify-end sm:col-span-3">
+                <Btn type="submit" variant="primary" size="sm">
+                  {t.profileSave}
+                </Btn>
+              </div>
+            </form>
+          </AdminCard>
+          </div>
         ) : null}
 
         {/* Digital benefit card — full width: the card face is 1.5:1, and the

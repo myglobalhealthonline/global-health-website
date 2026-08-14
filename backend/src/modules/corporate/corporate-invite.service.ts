@@ -10,6 +10,7 @@ import {
   sendCorporateMemberInviteEmail,
 } from "./corporate-emails.js";
 import {
+  companyIsLive,
   isBeneficiaryProfileComplete,
   isEmployeeProfileComplete,
 } from "./corporate-shared.js";
@@ -266,6 +267,16 @@ export async function acceptInvite(input: AcceptInviteInput): Promise<AcceptInvi
   if (!member) return { ok: false, status: 410, message: "This invitation link is no longer valid" };
   if (["REMOVED", "SUSPENDED"].includes(member.status)) {
     return { ok: false, status: 410, message: "This membership is no longer active" };
+  }
+  // The member row can be fine while the company behind it is suspended or its
+  // contract has lapsed — accepting then would create an account and a
+  // membership that confer nothing.
+  if (!companyIsLive(member.company)) {
+    return {
+      ok: false,
+      status: 410,
+      message: "This company's corporate plan is not active — contact your employer",
+    };
   }
 
   const email = invite.email.toLowerCase();

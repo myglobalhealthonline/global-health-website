@@ -86,7 +86,10 @@ export type CorporateBillingSummary = {
   employeeCount: number;
   pricePerEmployeeCents: number;
   totalAnnualCents: number;
+  /** Contract currency (the plan row). */
   currencyCode: string;
+  /** Currency a fiscal document for this company is minted in (its country). */
+  documentCurrencyCode: string;
 };
 
 export type CorporateCompanyDto = {
@@ -272,6 +275,71 @@ export async function cancelCorporatePortalRequest(id: string) {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   Corporate service resolution for the public booking wizard.
+
+   `/api/services/:slug` answers differently for a signed-in corporate
+   member than for everyone else, so it CANNOT go through the cached
+   `fetchServiceDetail` path (Next data cache + tags — an auth-dependent
+   entry there would serve one member's response to the next visitor).
+   This is the separate per-request, cookie-forwarded, no-store path:
+   the backend runs the eligibility gate and 404s everyone else.
+   ───────────────────────────────────────────────────────────── */
+
+/** Corporate consultation resolved for the booking wizard, shaped like the
+ *  public country-services cards it gets merged into. */
+export type CorporateBookableService = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string;
+  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY";
+  durationMinutes: number | null;
+  basePriceCents: number | null;
+  currencyCode: string | null;
+  assignedDoctorIds: string[];
+  insuranceOptions: never[];
+};
+
+export async function fetchCorporateBookableService(
+  countryCode: string,
+  slug: string,
+  locale?: string,
+): Promise<CorporateBookableService | null> {
+  const params = new URLSearchParams({ countryCode });
+  if (locale) params.set("locale", locale.toUpperCase());
+  const res = await corporateRequest<{ service: Record<string, unknown> }>(
+    `/api/services/${encodeURIComponent(slug)}?${params.toString()}`,
+  );
+  if (!res.ok) return null;
+  const r = res.data?.service;
+  if (!r || typeof r !== "object") return null;
+  if (typeof r.id !== "string" || typeof r.slug !== "string" || typeof r.name !== "string") {
+    return null;
+  }
+  // PUBLIC rows already come from the cached list — only corporate rows are
+  // this path's business, so anything else is treated as "not found" and the
+  // wizard falls back to its normal unavailable notice.
+  if (r.visibility !== "CORPORATE_ONLY" && r.visibility !== "CORPORATE_REQUEST_ONLY") {
+    return null;
+  }
+  return {
+    id: r.id,
+    slug: r.slug,
+    name: r.name,
+    summary: typeof r.summary === "string" ? r.summary : "",
+    kind: r.kind === "SPECIALIST" ? "SPECIALIST" : "GENERAL",
+    durationMinutes: typeof r.durationMinutes === "number" ? r.durationMinutes : null,
+    basePriceCents: typeof r.basePriceCents === "number" ? r.basePriceCents : null,
+    currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : null,
+    assignedDoctorIds: Array.isArray(r.assignedDoctorIds)
+      ? r.assignedDoctorIds.filter((id): id is string => typeof id === "string")
+      : [],
+    // Corporate consultations are never sold through an insurer.
+    insuranceOptions: [],
+  };
+}
+
+/* ─────────────────────────────────────────────────────────────
    Patient-portal membership — /api/me/corporate (role PATIENT).
    Same cookie-forward transport, member-scoped on the backend.
    ───────────────────────────────────────────────────────────── */
@@ -314,6 +382,14 @@ export type MeCorporateMembershipDto = {
       bookPath: string | null;
     };
   };
+  /** The member's own membership-row profile (prefills the completion form). */
+  profile?: {
+    phone: string | null;
+    dateOfBirth: string | null;
+    addressLine1: string | null;
+    city: string | null;
+    postalCode: string | null;
+  };
   card: CorporateCardDto | null;
   beneficiaries?: MeCorporateBeneficiaryDto[];
   openRequests?: {
@@ -344,6 +420,19 @@ export async function postMeCorporateBeneficiary(body: {
 }) {
   return corporateRequest<{ id: string; status: string }>("/api/me/corporate/beneficiaries", {
     method: "POST",
+    body,
+  });
+}
+
+export async function patchMeCorporateProfile(body: {
+  phone?: string;
+  dateOfBirth?: string;
+  addressLine1?: string;
+  city?: string;
+  postalCode?: string;
+}) {
+  return corporateRequest<{ status: string }>("/api/me/corporate/profile", {
+    method: "PATCH",
     body,
   });
 }

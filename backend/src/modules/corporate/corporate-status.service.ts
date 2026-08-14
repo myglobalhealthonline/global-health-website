@@ -380,12 +380,21 @@ export async function setBeneficiaryStanding(
     };
   }
 
-  if (action === "SUSPEND" || action === "REACTIVATE") {
+  if (action === "REACTIVATE") {
+    // Must go through activateBeneficiary: `syncCardStatus` is an updateMany,
+    // so it silently no-ops when the member has no card row yet (every
+    // PROFILE_INCOMPLETE beneficiary). That produced ACTIVE members with a 10%
+    // discount and nothing to show at a clinic desk.
+    await activateBeneficiary(beneficiaryId);
+    return { ok: true };
+  }
+
+  if (action === "SUSPEND") {
     await prisma.corporateBeneficiary.update({
       where: { id: beneficiaryId },
       data: { status: next },
     });
-    await syncCardStatus({ beneficiaryId, status: next as "ACTIVE" | "SUSPENDED" });
+    await syncCardStatus({ beneficiaryId, status: "SUSPENDED" });
     return { ok: true };
   }
 
@@ -399,6 +408,34 @@ export async function setBeneficiaryStanding(
   ]);
   await syncCardStatus({ beneficiaryId, status: "EXPIRED" });
   return { ok: true };
+}
+
+/** Thrown when another booking consumed the open request first. */
+export class CorporateRequestAlreadyClaimedError extends Error {
+  constructor() {
+    super("This consultation request has already been booked");
+    this.name = "CorporateRequestAlreadyClaimedError";
+  }
+}
+
+/**
+ * Consume ONE open corporate service request and bind it to the appointment,
+ * atomically. Must run inside the appointment's own transaction: the
+ * bookability gate only reads the request, so without this claim two
+ * simultaneous bookings both saw it open and both went through.
+ */
+export async function claimCorporateRequest(
+  tx: {
+    corporateServiceRequest: { updateMany: (args: never) => Promise<{ count: number }> };
+  },
+  requestId: string,
+  appointmentId: string,
+): Promise<void> {
+  const claimed = await tx.corporateServiceRequest.updateMany({
+    where: { id: requestId, status: { in: ["REQUESTED", "EMPLOYEE_NOTIFIED"] } },
+    data: { status: "BOOKED", appointmentId },
+  } as never);
+  if (claimed.count === 0) throw new CorporateRequestAlreadyClaimedError();
 }
 
 /**
@@ -415,6 +452,7 @@ export async function onCorporateAppointmentCreated(appointmentId: string): Prom
       id: true,
       userId: true,
       email: true,
+      countryCode: true,
       service: { select: { id: true, visibility: true } },
     },
   });
@@ -424,9 +462,13 @@ export async function onCorporateAppointmentCreated(appointmentId: string): Prom
 
   if (visibility === "CORPORATE_ONLY") {
     // Pre-assessment: match by linked user first, fall back to invite email.
+    // Scoped to the booking's own country — an unscoped match would stamp the
+    // pre-assessment on the wrong membership for someone employed by two
+    // companies.
     const employee = await prisma.corporateEmployee.findFirst({
       where: {
         status: { in: ["PROFILE_COMPLETE", "PREASSESSMENT_PENDING", "PREASSESSMENT_BOOKED"] },
+        company: { countryCode: appointment.countryCode.toLowerCase() },
         OR: [
           ...(appointment.userId ? [{ userId: appointment.userId }] : []),
           { email: { equals: appointment.email, mode: "insensitive" as const } },
@@ -466,8 +508,10 @@ export async function onCorporateAppointmentCreated(appointmentId: string): Prom
     orderBy: { createdAt: "asc" },
   });
   if (!request) return;
-  await prisma.corporateServiceRequest.update({
-    where: { id: request.id },
+  // updateMany + status guard, not update: this hook also runs from the paid
+  // -order webhook, where two orders can land on one open request.
+  await prisma.corporateServiceRequest.updateMany({
+    where: { id: request.id, status: { in: ["REQUESTED", "EMPLOYEE_NOTIFIED"] } },
     data: { appointmentId: appointment.id, status: "BOOKED" },
   });
 }

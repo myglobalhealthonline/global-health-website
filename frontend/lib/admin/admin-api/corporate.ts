@@ -114,7 +114,10 @@ export type CorporateCompanyDetailDto = {
     employeeCount: number;
     pricePerEmployeeCents: number;
     totalAnnualCents: number;
+    /** Contract currency (the plan row). */
     currencyCode: string;
+    /** Currency a fiscal document for this company is minted in (its country). */
+    documentCurrencyCode: string;
   };
   createdAt: string;
   updatedAt: string;
@@ -377,28 +380,12 @@ export type CorporateInvoiceDocument = {
   email: string;
   totalCents: number;
   currencyCode: string;
-  source: "SUBSCRIPTION" | "CONSULTATION";
 };
 
+/** Read-only. Corporate subscription billing is invoiced offline under
+ *  contract — the platform issues no fiscal document for it. */
 export async function fetchCorporateInvoices(companyId: string) {
-  return adminRequest<{
-    subscription: CorporateInvoiceDocument[];
-    consultations: CorporateInvoiceDocument[];
-  }>(`/api/admin/corporate/companies/${companyId}/invoices`);
-}
-
-export async function postCorporateInvoice(
-  companyId: string,
-  body: {
-    documentType: CorporateInvoiceDocumentType;
-    amountCents: number;
-    description: string;
-    quantity?: number;
-    send?: boolean;
-  },
-) {
-  return adminRequest<{ invoiceId: string; invoiceNumber: string }>(
+  return adminRequest<{ consultations: CorporateInvoiceDocument[] }>(
     `/api/admin/corporate/companies/${companyId}/invoices`,
-    { method: "POST", body },
   );
 }

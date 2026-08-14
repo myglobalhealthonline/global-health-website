@@ -85,7 +85,7 @@
       "uploadButton": "Încărcați {count} angajat + trimiteți invitații",
       "uploadButtonPlural": "Încărcați {count} angajați + trimiteți invitații",
       "errorEmptyRows": "Lipirea a cel puțin unui rând",
-      "errorTooManyRows": "Maximum 500 angajați per încărcare",
+      "errorTooManyRows": "Maximum 200 angajați per încărcare",
       "errorMissingName": "Nume lipsă",
       "errorInvalidEmail": "Email invalid",
       "errorInvalidDob": "Data nașterii trebuie să fie în formatul YYYY-MM-DD",

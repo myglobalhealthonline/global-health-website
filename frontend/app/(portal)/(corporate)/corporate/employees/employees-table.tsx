@@ -20,6 +20,19 @@ type EmployeesTableLocale = ReturnType<typeof loadLocaleBundle>["corporate"]["em
 
 const INVITE_STATUSES = ["DRAFT", "INVITED", "INVITE_SENT", "INVITE_FAILED"];
 
+/** Statuses the backend's employee transition table actually allows SUSPEND
+ *  from. Rendering the button anywhere else guaranteed the "Only active
+ *  members can be suspended" refusal. Keep in sync with EMPLOYEE_TRANSITIONS
+ *  in backend/src/modules/corporate/corporate-shared.ts. */
+const SUSPENDABLE_STATUSES = [
+  "REGISTERED",
+  "PROFILE_INCOMPLETE",
+  "PROFILE_COMPLETE",
+  "PREASSESSMENT_PENDING",
+  "PREASSESSMENT_BOOKED",
+  "ACTIVE",
+];
+
 /** Same row-action forms rendered in both the desktop action cell and the
  *  drawer footer — identical `<form action={employeeRowAction}>` POSTs. */
 function EmployeeActionForms({
@@ -50,7 +63,7 @@ function EmployeeActionForms({
             {t.reactivate}
           </Btn>
         </form>
-      ) : employee.status !== "REMOVED" ? (
+      ) : SUSPENDABLE_STATUSES.includes(employee.status) ? (
         <form action={employeeRowAction}>
           <input type="hidden" name="employeeId" value={employee.id} />
           <input type="hidden" name="action" value="SUSPEND" />
@@ -234,7 +247,7 @@ export function EmployeesTable({
                     </button>
                   </AppMenuItem>
                 </form>
-              ) : e.status !== "REMOVED" ? (
+              ) : SUSPENDABLE_STATUSES.includes(e.status) ? (
                 <form action={employeeRowAction}>
                   <input type="hidden" name="employeeId" value={e.id} />
                   <input type="hidden" name="action" value="SUSPEND" />

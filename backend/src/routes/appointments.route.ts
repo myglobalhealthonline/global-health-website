@@ -16,6 +16,10 @@ import { computeSlotPrice, getServicePeakConfig } from "../modules/pricing/peak-
 import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
 import { promoteAppointmentConsents } from "../modules/consents/promote-appointment-consents.js";
 import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
+import {
+  claimCorporateRequest,
+  CorporateRequestAlreadyClaimedError,
+} from "../modules/corporate/corporate-status.service.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/appointments", {
@@ -149,6 +153,7 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
       // the slug could book a private corporate consultation, guest included.
       // Runs before the appointment is created so nothing is written for a
       // booking that is not allowed.
+      let claimCorporateRequestId: string | null = null;
       if (parsed.data.serviceSlug) {
         const gated = await prisma.service.findFirst({
           where: {
@@ -173,6 +178,11 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
             serviceId: gated.id,
             visibility: gated.visibility,
             doctorId: slot?.doctorId ?? null,
+            serviceCountryCode: parsed.data.country,
+            // A real booking, so a pinned pre-assessment doctor must be MET,
+            // not merely "not contradicted": a booking with no slot (and so no
+            // doctor at all) used to slip the pin entirely.
+            bookingIntent: true,
           });
           if (!gate.ok) {
             // Unauthenticated callers get the same 404 as a nonexistent slug
@@ -181,10 +191,31 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
               .status(authUserId ? 403 : 404)
               .send(errorResponse(authUserId ? gate.message : "Service not found"));
           }
+          claimCorporateRequestId = gate.requestId ?? null;
         }
       }
 
-      const created = await createAppointmentWithOptionalOwner(parsed.data, { userId: authUserId });
+      let created: { id: string; status: string };
+      try {
+        created = await createAppointmentWithOptionalOwner(parsed.data, {
+          userId: authUserId,
+          // Consume the open corporate request in the booking's own
+          // transaction. The gate only READ it, so two simultaneous requests
+          // both passed and both booked against one entitlement.
+          ...(claimCorporateRequestId
+            ? {
+                onCreatedInTx: async (tx, appointmentId) => {
+                  await claimCorporateRequest(tx, claimCorporateRequestId!, appointmentId);
+                },
+              }
+            : {}),
+        });
+      } catch (error) {
+        if (error instanceof CorporateRequestAlreadyClaimedError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        throw error;
+      }
 
       // Promote the medical-access consent just captured straight into the
       // append-only ledger — for logged-in bookings by userId, and for guest

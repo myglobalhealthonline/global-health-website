@@ -16,7 +16,6 @@ import {
   patchCorporateEmployee,
   postCorporateAdminInvite,
   postCorporateEmployee,
-  postCorporateInvoice,
   postCorporateRequest,
   resendCorporateBeneficiaryInvite,
   resendCorporateEmployeeInvite,
@@ -59,6 +58,24 @@ export const dynamic = "force-dynamic";
 
 const TABS = ["overview", "employees", "beneficiaries", "requests", "invoices", "settings"] as const;
 type Tab = (typeof TABS)[number];
+
+/** Statuses SUSPEND is actually reachable from. Rendering the button on the
+ *  others guaranteed the "Only active members can be suspended" refusal. Keep
+ *  in sync with the transition tables in
+ *  backend/src/modules/corporate/corporate-shared.ts. */
+const SUSPENDABLE_EMPLOYEE_STATUSES = new Set([
+  "REGISTERED",
+  "PROFILE_INCOMPLETE",
+  "PROFILE_COMPLETE",
+  "PREASSESSMENT_PENDING",
+  "PREASSESSMENT_BOOKED",
+  "ACTIVE",
+]);
+const SUSPENDABLE_BENEFICIARY_STATUSES = new Set([
+  "REGISTERED",
+  "PROFILE_INCOMPLETE",
+  "ACTIVE",
+]);
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -213,37 +230,6 @@ async function updateDoctorAction(formData: FormData) {
   if (!result.ok) backTo(companyId, "settings", { error: result.message });
   revalidatePath(`/admin/corporate/${companyId}`);
   backTo(companyId, "settings", { success: "Pre-assessment doctor updated" });
-}
-
-async function generateInvoiceAction(formData: FormData) {
-  "use server";
-  await requireAdminAction();
-  const companyId = String(formData.get("companyId") ?? "");
-  const documentType = String(formData.get("documentType") ?? "") as CorporateInvoiceDocumentType;
-  const description = String(formData.get("description") ?? "").trim();
-  const amountMajor = Number(String(formData.get("amount") ?? "").trim());
-  const quantity = Math.max(1, Math.round(Number(String(formData.get("quantity") ?? "1")) || 1));
-  const send = formData.get("send") === "on";
-
-  if (!["INVOICE", "RECEIPT", "INVOICE_RECEIPT", "CREDIT_NOTE"].includes(documentType)) {
-    backTo(companyId, "invoices", { error: "Pick a document type" });
-  }
-  if (!description) backTo(companyId, "invoices", { error: "Enter a description" });
-  if (!Number.isFinite(amountMajor) || amountMajor <= 0) {
-    backTo(companyId, "invoices", { error: "Enter an amount greater than zero" });
-  }
-  const result = await postCorporateInvoice(companyId, {
-    documentType,
-    amountCents: Math.round(amountMajor * 100),
-    description,
-    quantity,
-    send,
-  });
-  if (!result.ok) backTo(companyId, "invoices", { error: result.message });
-  revalidatePath(`/admin/corporate/${companyId}`);
-  backTo(companyId, "invoices", {
-    success: `${result.data.invoiceNumber} created${send ? " and emailed" : ""}`,
-  });
 }
 
 /* ── Page ────────────────────────────────────────────────────────────────── */
@@ -632,7 +618,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                                   Reactivate
                                 </Btn>
                               </form>
-                            ) : e.status !== "REMOVED" ? (
+                            ) : SUSPENDABLE_EMPLOYEE_STATUSES.has(e.status) ? (
                               <form action={employeeActionAction}>
                                 <input type="hidden" name="companyId" value={company.id} />
                                 <input type="hidden" name="employeeId" value={e.id} />
@@ -721,7 +707,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                                 Reactivate
                               </Btn>
                             </form>
-                          ) : b.status !== "REMOVED" ? (
+                          ) : SUSPENDABLE_BENEFICIARY_STATUSES.has(b.status) ? (
                             <form action={beneficiaryActionAction}>
                               <input type="hidden" name="companyId" value={company.id} />
                               <input type="hidden" name="beneficiaryId" value={b.id} />
@@ -877,118 +863,29 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
       ) : null}
 
       {tab === "invoices" ? (
-        <>
-          <AdminCard padding={0} className="mb-4 overflow-hidden">
-            <details>
-              <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3.5 text-sm font-bold text-[var(--color-text-primary)] [&::-webkit-details-marker]:hidden">
-                <Receipt className="size-4" aria-hidden /> Generate document
-              </summary>
-              <form
-                action={generateInvoiceAction}
-                className="grid grid-cols-1 gap-3 border-t border-[var(--color-border)] px-5 py-4 sm:grid-cols-2"
-              >
-                <input type="hidden" name="companyId" value={company.id} />
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Document type *</span>
-                  <select name="documentType" defaultValue="INVOICE_RECEIPT" className="gh-select">
-                    <option value="INVOICE">Invoice — unpaid (bill to pay later)</option>
-                    <option value="INVOICE_RECEIPT">Invoice / Receipt — paid</option>
-                    <option value="RECEIPT">Receipt — paid</option>
-                    <option value="CREDIT_NOTE">Credit note — refund</option>
-                  </select>
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">
-                    Amount ({company.billing.currencyCode}) *
-                  </span>
-                  <input
-                    name="amount"
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    required
-                    defaultValue={(company.billing.totalAnnualCents / 100).toFixed(2)}
-                    className="gh-input"
-                  />
-                </label>
-                <label className="flex flex-col gap-1 sm:col-span-2">
-                  <span className="gh-field-label">Description *</span>
-                  <input
-                    name="description"
-                    required
-                    maxLength={240}
-                    defaultValue={`${company.plan.name} — annual corporate plan (${company.billing.employeeCount} employees)`}
-                    className="gh-input"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Quantity</span>
-                  <input name="quantity" type="number" min="1" step="1" defaultValue={1} className="gh-input" />
-                </label>
-                <label className="flex items-center gap-2 self-end pb-2 text-sm text-[var(--color-text-primary)]">
-                  <input type="checkbox" name="send" className="size-4" />
-                  Email to {company.billingEmail}
-                </label>
-                <div className="sm:col-span-2">
-                  <Btn type="submit" variant="primary" size="sm">
-                    Generate
-                  </Btn>
-                  <span className="ml-3 text-portal-meta text-[var(--color-text-muted)]">
-                    Uses the same fiscal format + numbering series as patient invoices.
-                  </span>
-                </div>
-              </form>
-            </details>
-          </AdminCard>
-
-          <AdminCard padding={0} className="mb-4 overflow-hidden">
-            <SectionHeader
-              title="Subscription documents"
-              description="Invoices, receipts and credit notes generated for this company's billing."
+        <AdminCard padding={0} className="overflow-hidden">
+          <SectionHeader
+            title="Employee consultation documents"
+            description="Invoices and receipts from consultations booked by this company's employees. The company's own annual plan is invoiced offline under contract — no document is issued here."
+          />
+          {!invoicesResult || !invoicesResult.ok ? (
+            <p className="gh-status-warning m-5 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+              Could not load documents{invoicesResult ? `: ${invoicesResult.message}` : ""}
+            </p>
+          ) : invoicesResult.data.consultations.length === 0 ? (
+            <AdminEmptyState
+              icon={<Receipt className="size-8" aria-hidden />}
+              title="No consultation documents"
+              description="Once employees book and pay for consultations, their invoices/receipts appear here."
             />
-            {!invoicesResult || !invoicesResult.ok ? (
-              <p className="gh-status-warning m-5 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
-                Could not load documents{invoicesResult ? `: ${invoicesResult.message}` : ""}
-              </p>
-            ) : invoicesResult.data.subscription.length === 0 ? (
-              <AdminEmptyState
-                icon={<Receipt className="size-8" aria-hidden />}
-                title="No subscription documents"
-                description="Generate an invoice, receipt or credit note above — it appears here to download or email."
-              />
-            ) : (
-              <div className="flex flex-col gap-2 border-t border-[var(--color-border)] px-4 py-4">
-                {invoicesResult.data.subscription.map((doc) => (
-                  <CorporateInvoiceRow key={doc.id} doc={doc} />
-                ))}
-              </div>
-            )}
-          </AdminCard>
-
-          <AdminCard padding={0} className="overflow-hidden">
-            <SectionHeader
-              title="Employee consultation documents"
-              description="Invoices and receipts from consultations booked by this company's employees."
-            />
-            {!invoicesResult || !invoicesResult.ok ? (
-              <p className="gh-status-warning m-5 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
-                Could not load documents{invoicesResult ? `: ${invoicesResult.message}` : ""}
-              </p>
-            ) : invoicesResult.data.consultations.length === 0 ? (
-              <AdminEmptyState
-                icon={<Receipt className="size-8" aria-hidden />}
-                title="No consultation documents"
-                description="Once employees book and pay for consultations, their invoices/receipts appear here."
-              />
-            ) : (
-              <div className="flex flex-col gap-2 border-t border-[var(--color-border)] px-4 py-4">
-                {invoicesResult.data.consultations.map((doc) => (
-                  <CorporateInvoiceRow key={doc.id} doc={doc} />
-                ))}
-              </div>
-            )}
-          </AdminCard>
-        </>
+          ) : (
+            <div className="flex flex-col gap-2 border-t border-[var(--color-border)] px-4 py-4">
+              {invoicesResult.data.consultations.map((doc) => (
+                <CorporateInvoiceRow key={doc.id} doc={doc} />
+              ))}
+            </div>
+          )}
+        </AdminCard>
       ) : null}
 
       {tab === "settings" ? (

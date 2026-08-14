@@ -107,6 +107,7 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
           userId,
           serviceId: (service as { id: string }).id,
           visibility: visibility as "CORPORATE_ONLY" | "CORPORATE_REQUEST_ONLY" | "ADMIN_ONLY",
+          serviceCountryCode: countryCode ?? null,
         });
         if (!gate.ok) {
           return reply.status(404).send(errorResponse("Service not found"));

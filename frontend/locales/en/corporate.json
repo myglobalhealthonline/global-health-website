@@ -85,7 +85,7 @@
       "uploadButton": "Upload {count} employee + send invites",
       "uploadButtonPlural": "Upload {count} employees + send invites",
       "errorEmptyRows": "Paste at least one row",
-      "errorTooManyRows": "Maximum 500 employees per upload",
+      "errorTooManyRows": "Maximum 200 employees per upload",
       "errorMissingName": "Missing name",
       "errorInvalidEmail": "Invalid email",
       "errorInvalidDob": "Date of birth must be YYYY-MM-DD",

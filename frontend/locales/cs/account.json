@@ -549,7 +549,14 @@
     "dateOfBirth": "Datum narození",
     "addAndInvite": "Přidat a odeslat pozvánku",
     "maxReached": "Využili jste všech {max} míst pro rodinné příslušníky. Pro přidání dalšího jednoho odeberte.",
-    "privacyNote": "Váš zaměstnavatel vidí pouze stav registrace a počty — nikdy vaše konzultace, zdravotní záznamy ani osobní údaje vašich rodinných příslušníků."
+    "privacyNote": "Váš zaměstnavatel vidí pouze stav registrace a počty — nikdy vaše konzultace, zdravotní záznamy ani osobní údaje vašich rodinných příslušníků.",
+    "profileTitle": "Doplňte profil svého členství",
+    "profileDesc": "Tyto údaje potřebujeme, než bude možné objednat vaše vstupní vyšetření.",
+    "profileAddress": "Adresa",
+    "profileCity": "Město",
+    "profilePostalCode": "PSČ",
+    "profileSave": "Uložit profil",
+    "profileSaved": "Profil aktualizován"
   },
   "insurance": {
     "title": "Údaje o pojištění",

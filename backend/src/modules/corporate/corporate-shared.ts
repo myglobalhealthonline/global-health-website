@@ -99,7 +99,11 @@ export async function getActiveMembershipForUser(
       include: { company: { include: { plan: true } } },
     }),
     prisma.corporateBeneficiary.findFirst({
-      where: { userId, status: "ACTIVE" },
+      // A beneficiary's benefit is derived from their employee's — a
+      // beneficiary row left/put ACTIVE under a SUSPENDED or REMOVED employee
+      // kept its 10% and its card, which is exactly what suspending the
+      // employee was meant to stop.
+      where: { userId, status: "ACTIVE", employee: { status: "ACTIVE" } },
       include: { company: { include: { plan: true } } },
     }),
   ]);
@@ -293,16 +297,30 @@ export async function computeBillingSummary(company: CompanyWithPlan): Promise<{
   employeeCount: number;
   pricePerEmployeeCents: number;
   totalAnnualCents: number;
+  /** Currency of the CONTRACT (the plan row) — what the totals above are in. */
   currencyCode: string;
+  /** Currency any fiscal document for this company is actually minted in —
+   *  the company's country, same source `generateCorporateSubscriptionInvoice`
+   *  uses. Differs from `currencyCode` whenever a plan is sold outside its own
+   *  currency zone (an EUR plan on a BR company), and a form that labels the
+   *  contract total with the document's currency under-bills by the FX gap. */
+  documentCurrencyCode: string;
 }> {
-  const employeeCount = await prisma.corporateEmployee.count({
-    where: { companyId: company.id, status: { in: BILLABLE_EMPLOYEE_STATUSES } },
-  });
+  const [employeeCount, country] = await Promise.all([
+    prisma.corporateEmployee.count({
+      where: { companyId: company.id, status: { in: BILLABLE_EMPLOYEE_STATUSES } },
+    }),
+    prisma.country.findUnique({
+      where: { code: company.countryCode.toLowerCase() },
+      select: { currency: { select: { code: true } } },
+    }),
+  ]);
   return {
     employeeCount,
     pricePerEmployeeCents: company.plan.annualPricePerEmployeeCents,
     totalAnnualCents: employeeCount * company.plan.annualPricePerEmployeeCents,
     currencyCode: company.plan.currencyCode,
+    documentCurrencyCode: country?.currency.code ?? company.plan.currencyCode,
   };
 }
 

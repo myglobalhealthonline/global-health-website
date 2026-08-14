@@ -549,7 +549,14 @@
     "dateOfBirth": "Fecha de nacimiento",
     "addAndInvite": "Añadir y enviar invitación",
     "maxReached": "Ha usado las {max} plazas de beneficiarios. Elimine una para añadir otra.",
-    "privacyNote": "Su empresa solo ve el estado de incorporación y los recuentos — nunca sus consultas, historiales médicos ni los datos personales de sus beneficiarios."
+    "privacyNote": "Su empresa solo ve el estado de incorporación y los recuentos — nunca sus consultas, historiales médicos ni los datos personales de sus beneficiarios.",
+    "profileTitle": "Complete el perfil de su afiliación",
+    "profileDesc": "Necesitamos estos datos antes de poder reservar su evaluación previa.",
+    "profileAddress": "Dirección",
+    "profileCity": "Ciudad",
+    "profilePostalCode": "Código postal",
+    "profileSave": "Guardar perfil",
+    "profileSaved": "Perfil actualizado"
   },
   "insurance": {
     "title": "Datos del seguro",

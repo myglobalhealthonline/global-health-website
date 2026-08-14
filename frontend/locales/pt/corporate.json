@@ -85,7 +85,7 @@
       "uploadButton": "Carregar {count} funcionário + enviar convites",
       "uploadButtonPlural": "Carregar {count} funcionários + enviar convites",
       "errorEmptyRows": "Cole pelo menos uma linha",
-      "errorTooManyRows": "Máximo de 500 funcionários por carregamento",
+      "errorTooManyRows": "Máximo de 200 funcionários por carregamento",
       "errorMissingName": "Nome em falta",
       "errorInvalidEmail": "Email inválido",
       "errorInvalidDob": "A data de nascimento deve ser YYYY-MM-DD",

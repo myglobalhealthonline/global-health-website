@@ -865,6 +865,8 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               serviceId: svc.id,
               visibility: svc.visibility,
               doctorId: doctorId ?? null,
+              serviceCountryCode: svc.country.code,
+              bookingIntent: true,
             });
             if (!gate.ok) {
               return reply.status(corporateUserId ? 403 : 404).send(errorResponse(gate.message));

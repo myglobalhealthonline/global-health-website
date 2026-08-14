@@ -549,7 +549,14 @@
     "dateOfBirth": "Data de nascimento",
     "addAndInvite": "Adicionar e enviar convite",
     "maxReached": "Usou todos os {max} lugares de beneficiários. Remova um para adicionar outro.",
-    "privacyNote": "A sua entidade empregadora vê apenas o estado de integração e contagens — nunca as suas consultas, registos médicos ou os dados pessoais dos seus beneficiários."
+    "privacyNote": "A sua entidade empregadora vê apenas o estado de integração e contagens — nunca as suas consultas, registos médicos ou os dados pessoais dos seus beneficiários.",
+    "profileTitle": "Complete o perfil da sua adesão",
+    "profileDesc": "Precisamos destes dados antes de poder marcar a sua pré-avaliação.",
+    "profileAddress": "Morada",
+    "profileCity": "Cidade",
+    "profilePostalCode": "Código postal",
+    "profileSave": "Guardar perfil",
+    "profileSaved": "Perfil atualizado"
   },
   "insurance": {
     "title": "Dados do seguro",

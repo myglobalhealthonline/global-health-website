@@ -85,7 +85,7 @@
       "uploadButton": "Nahrát {count} zaměstnance + odeslat pozvánky",
       "uploadButtonPlural": "Nahrát {count} zaměstnanců + odeslat pozvánky",
       "errorEmptyRows": "Vložte alespoň jeden řádek",
-      "errorTooManyRows": "Maximálně 500 zaměstnanců na nahrání",
+      "errorTooManyRows": "Maximálně 200 zaměstnanců na nahrání",
       "errorMissingName": "Chybí jméno",
       "errorInvalidEmail": "Neplatný e-mail",
       "errorInvalidDob": "Datum narození musí být ve formátu RRRR-MM-DD",

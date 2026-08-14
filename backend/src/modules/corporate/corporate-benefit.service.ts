@@ -29,6 +29,10 @@ export async function resolveCorporateDiscount(input: {
   baseCents: number;
 }): Promise<CorporateDiscount | null> {
   if (!input.userId || input.baseCents <= 0) return null;
+  // Same kinds the batch (checkout) resolver covers. Without this, a rule on
+  // another ServiceKind would show a discount in the benefit picker that
+  // checkout then refuses to apply.
+  if (input.serviceKind !== "GENERAL" && input.serviceKind !== "SPECIALIST") return null;
   const membership = await getActiveMembershipForUser(input.userId);
   if (!membership) return null;
 
@@ -136,6 +140,17 @@ export async function assertCorporateServiceBookable(input: {
   serviceId: string;
   visibility: "CORPORATE_ONLY" | "CORPORATE_REQUEST_ONLY" | "ADMIN_ONLY";
   doctorId?: string | null;
+  /** True when the caller is actually creating a booking (cart add, appointment
+   *  create). A pinned pre-assessment doctor is then REQUIRED, not merely
+   *  "not contradicted" — a booking that names no doctor slipped the pin.
+   *  Read-only visibility checks (the service-detail lookup) leave it off:
+   *  they carry no doctor and must not 404 an otherwise eligible member. */
+  bookingIntent?: boolean;
+  /** Country of the service being booked. When given, the requester's company
+   *  must be in that country — the corporate services are seeded per country,
+   *  and nothing else stopped a PT employee booking the CZ row of their own
+   *  company's service. */
+  serviceCountryCode?: string | null;
   isAdmin?: boolean;
 }): Promise<CorporateBookabilityResult> {
   if (input.isAdmin) return { ok: true };
@@ -146,11 +161,16 @@ export async function assertCorporateServiceBookable(input: {
     return { ok: false, message: "Sign in to book this service" };
   }
 
+  const companyCountry = input.serviceCountryCode
+    ? { company: { countryCode: input.serviceCountryCode.toLowerCase() } }
+    : {};
+
   if (input.visibility === "CORPORATE_ONLY") {
     const employee = await prisma.corporateEmployee.findFirst({
       where: {
         userId: input.userId,
         status: { in: ["PROFILE_COMPLETE", "PREASSESSMENT_PENDING", "PREASSESSMENT_BOOKED"] },
+        ...companyCountry,
       },
       include: { company: { include: { plan: true } } },
     });
@@ -158,7 +178,7 @@ export async function assertCorporateServiceBookable(input: {
       return { ok: false, message: "This consultation is only available during corporate onboarding" };
     }
     const pinned = employee.company.preAssessmentDoctorId;
-    if (pinned && input.doctorId && input.doctorId !== pinned) {
+    if (pinned && input.doctorId !== pinned && (input.bookingIntent || input.doctorId)) {
       return { ok: false, message: "Pre-assessment consultations must be booked with your company's assigned doctor" };
     }
     return { ok: true, employeeId: employee.id, pinnedDoctorId: pinned ?? null };
@@ -169,7 +189,11 @@ export async function assertCorporateServiceBookable(input: {
     where: {
       serviceId: input.serviceId,
       status: { in: ["REQUESTED", "EMPLOYEE_NOTIFIED"] },
-      employee: { userId: input.userId, status: { notIn: ["REMOVED", "SUSPENDED"] } },
+      employee: {
+        userId: input.userId,
+        status: { notIn: ["REMOVED", "SUSPENDED"] },
+        ...companyCountry,
+      },
     },
     include: { company: true },
     orderBy: { createdAt: "asc" },

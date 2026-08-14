@@ -549,7 +549,14 @@
     "dateOfBirth": "Geburtsdatum",
     "addAndInvite": "Hinzufügen + Einladung senden",
     "maxReached": "Sie haben alle {max} Plätze für Angehörige belegt. Entfernen Sie eine Person, um eine andere hinzuzufügen.",
-    "privacyNote": "Ihr Arbeitgeber sieht nur Onboarding-Status und Anzahlen — niemals Ihre Konsultationen, Krankenakten oder die persönlichen Daten Ihrer Angehörigen."
+    "privacyNote": "Ihr Arbeitgeber sieht nur Onboarding-Status und Anzahlen — niemals Ihre Konsultationen, Krankenakten oder die persönlichen Daten Ihrer Angehörigen.",
+    "profileTitle": "Vervollständigen Sie Ihr Mitgliedsprofil",
+    "profileDesc": "Wir benötigen diese Angaben, bevor Ihre Voruntersuchung gebucht werden kann.",
+    "profileAddress": "Adresse",
+    "profileCity": "Stadt",
+    "profilePostalCode": "Postleitzahl",
+    "profileSave": "Profil speichern",
+    "profileSaved": "Profil aktualisiert"
   },
   "insurance": {
     "title": "Versicherungsdaten",

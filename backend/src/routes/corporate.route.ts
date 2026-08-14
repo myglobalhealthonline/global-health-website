@@ -6,6 +6,7 @@ import { requireAuth } from "../utils/require-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   BILLABLE_EMPLOYEE_STATUSES,
+  companyIsLive,
   computeBillingSummary,
   requireCorporateAdmin,
 } from "../modules/corporate/corporate-shared.js";
@@ -97,6 +98,24 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
   app.addHook("preHandler", requireAuth);
   app.addHook("preHandler", requireCorporateAdmin);
 
+  /**
+   * Growth actions (headcount, invites, new consultation requests) need a live
+   * contract. A SUSPENDED or lapsed company kept a fully working portal: it
+   * could add billable employees and send branded invites from an account that
+   * confers no benefits. Reads stay open — the admin still has to see their
+   * own state to fix the billing that suspended them.
+   */
+  const requireLiveCompany = async (
+    request: Parameters<typeof requireCorporateAdmin>[0],
+    reply: Parameters<typeof requireCorporateAdmin>[1],
+  ): Promise<void> => {
+    if (!companyIsLive(request.corporateCompany!)) {
+      void reply
+        .status(403)
+        .send(errorResponse("Your corporate plan is not active — contact Global Health"));
+    }
+  };
+
   // ── Company ────────────────────────────────────────────────────────────
   app.get("/api/corporate/company", async (request) => {
     const company = request.corporateCompany!;
@@ -182,7 +201,7 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
     });
   });
 
-  app.post("/api/corporate/employees", async (request, reply) => {
+  app.post("/api/corporate/employees", { preHandler: requireLiveCompany }, async (request, reply) => {
     const parsed = employeeInputSchema.safeParse(request.body);
     if (!parsed.success) {
       return reply.status(400).send(errorResponse("Invalid employee details", parsed.error.flatten()));
@@ -214,7 +233,7 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
   const BULK_MAX_ROWS = 200;
   const BULK_SEND_CONCURRENCY = 10;
 
-  app.post("/api/corporate/employees/bulk", async (request, reply) => {
+  app.post("/api/corporate/employees/bulk", { preHandler: requireLiveCompany }, async (request, reply) => {
     const schema = z.object({
       employees: z.array(employeeInputSchema).min(1).max(BULK_MAX_ROWS),
     });
@@ -363,7 +382,12 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
     return reply.status(400).send(errorResponse("Nothing to update"));
   });
 
-  app.post("/api/corporate/employees/:id/resend-invite", async (request, reply) => {
+  // Rate-limited like the public invite endpoints: this one also sends mail
+  // (and WhatsApp) to an address the caller supplies.
+  app.post("/api/corporate/employees/:id/resend-invite", {
+    preHandler: requireLiveCompany,
+    config: { rateLimit: { max: 30, timeWindow: "1 hour" } },
+  }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const employee = await prisma.corporateEmployee.findFirst({
       where: { id, companyId: request.corporateCompany!.id },
@@ -395,7 +419,7 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
     return okResponse({ requests: requests.map(serializeRequest) });
   });
 
-  app.post("/api/corporate/requests", async (request, reply) => {
+  app.post("/api/corporate/requests", { preHandler: requireLiveCompany }, async (request, reply) => {
     const schema = z.object({
       employeeId: z.string().min(1),
       type: z.enum(["ILLNESS_BENEFIT", "FIT_FOR_WORK"]),
