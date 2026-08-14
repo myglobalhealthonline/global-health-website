@@ -122,7 +122,26 @@ export async function resolveCorporateDiscountsForItems(
 
 export type CorporateBookabilityResult =
   | { ok: true; requestId?: string; employeeId?: string; pinnedDoctorId?: string | null }
-  | { ok: false; message: string };
+  | {
+      ok: false;
+      message: string;
+      /** True only when the requester actually belongs to some corporate company.
+       *  Callers answer 403 + `message` for those people (they need to know WHY
+       *  their own benefit was refused) and a bare 404 for everyone else, so a
+       *  private corporate service is not an existence oracle for any logged-in
+       *  patient — only for the members it already exists for. */
+      isMember: boolean;
+    };
+
+/** Any non-removed corporate membership for this user, employee or beneficiary.
+ *  Only consulted on the refusal path, so it costs nothing in the happy case. */
+async function holdsCorporateMembership(userId: string): Promise<boolean> {
+  const [employee, beneficiary] = await Promise.all([
+    prisma.corporateEmployee.count({ where: { userId, status: { not: "REMOVED" } } }),
+    prisma.corporateBeneficiary.count({ where: { userId, status: { not: "REMOVED" } } }),
+  ]);
+  return employee + beneficiary > 0;
+}
 
 /**
  * Server-side gate for booking a non-PUBLIC service (cart add +
@@ -155,11 +174,12 @@ export async function assertCorporateServiceBookable(input: {
 }): Promise<CorporateBookabilityResult> {
   if (input.isAdmin) return { ok: true };
   if (input.visibility === "ADMIN_ONLY") {
-    return { ok: false, message: "Service not found" };
+    return { ok: false, message: "Service not found", isMember: false };
   }
   if (!input.userId) {
-    return { ok: false, message: "Sign in to book this service" };
+    return { ok: false, message: "Sign in to book this service", isMember: false };
   }
+  const userId = input.userId;
 
   const companyCountry = input.serviceCountryCode
     ? { company: { countryCode: input.serviceCountryCode.toLowerCase() } }
@@ -175,11 +195,20 @@ export async function assertCorporateServiceBookable(input: {
       include: { company: { include: { plan: true } } },
     });
     if (!employee || !companyIsLive(employee.company)) {
-      return { ok: false, message: "This consultation is only available during corporate onboarding" };
+      return {
+        ok: false,
+        message: "This consultation is only available during corporate onboarding",
+        isMember: await holdsCorporateMembership(userId),
+      };
     }
     const pinned = employee.company.preAssessmentDoctorId;
     if (pinned && input.doctorId !== pinned && (input.bookingIntent || input.doctorId)) {
-      return { ok: false, message: "Pre-assessment consultations must be booked with your company's assigned doctor" };
+      return {
+        ok: false,
+        message: "Pre-assessment consultations must be booked with your company's assigned doctor",
+        // An employee row was found, so this requester is unambiguously a member.
+        isMember: true,
+      };
     }
     return { ok: true, employeeId: employee.id, pinnedDoctorId: pinned ?? null };
   }
@@ -199,7 +228,11 @@ export async function assertCorporateServiceBookable(input: {
     orderBy: { createdAt: "asc" },
   });
   if (!request || !companyIsLive(request.company)) {
-    return { ok: false, message: "This consultation requires an open request from your company" };
+    return {
+      ok: false,
+      message: "This consultation requires an open request from your company",
+      isMember: await holdsCorporateMembership(userId),
+    };
   }
   return { ok: true, requestId: request.id, employeeId: request.employeeId };
 }

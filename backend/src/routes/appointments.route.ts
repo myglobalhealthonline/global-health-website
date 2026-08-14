@@ -185,11 +185,14 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
             bookingIntent: true,
           });
           if (!gate.ok) {
-            // Unauthenticated callers get the same 404 as a nonexistent slug
-            // so the endpoint is not an existence oracle for private services.
+            // Only an actual corporate member is told WHY: a private service
+            // must not be an existence oracle. Being merely signed in used to
+            // earn a 403 + reason, which confirmed the service to every patient
+            // on the platform; now anyone outside the plan gets the same 404 as
+            // a nonexistent slug, exactly like a guest.
             return reply
-              .status(authUserId ? 403 : 404)
-              .send(errorResponse(authUserId ? gate.message : "Service not found"));
+              .status(gate.isMember ? 403 : 404)
+              .send(errorResponse(gate.isMember ? gate.message : "Service not found"));
           }
           claimCorporateRequestId = gate.requestId ?? null;
         }

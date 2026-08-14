@@ -267,6 +267,26 @@ export function PortalShell({
   const topbarRef = useRef<HTMLElement | null>(null);
   usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
 
+  // WCAG 3.1.1 (Language of Page). The portal ROOT layout hardcodes
+  // `<html lang="en">` on purpose — reading the locale there needs
+  // cookies()/headers() in a root layout, which un-statics everything below it
+  // (P-001, see app/(portal)/layout.tsx). But a Czech portal announcing itself
+  // as English makes a screen reader pronounce every string with English
+  // phonetics. The portal already knows its locale HERE, on the client, so the
+  // attribute is corrected after hydration — no server work, nothing
+  // un-statics. Server-rendered HTML still says "en" for the first paint;
+  // fixing that properly means moving locale into the URL for portal routes.
+  useEffect(() => {
+    if (!locale) return;
+    const html = document.documentElement;
+    const previous = html.lang;
+    const next = locale.toLowerCase();
+    if (previous !== next) html.lang = next;
+    return () => {
+      html.lang = previous;
+    };
+  }, [locale]);
+
   // Topbar seam-light swap — the ONLY scroll-linked effect in the system
   // (DESIGN.md §5.2). Purely presentational, one class toggle applied
   // directly to the DOM node (rAF-throttled) so it never re-renders the

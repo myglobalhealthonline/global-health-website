@@ -869,7 +869,12 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               bookingIntent: true,
             });
             if (!gate.ok) {
-              return reply.status(corporateUserId ? 403 : 404).send(errorResponse(gate.message));
+              // Same rule as POST /api/appointments: the reason is disclosed to
+              // corporate members only. A signed-in non-member gets the 404 a
+              // guest gets, so cart-add is not an existence oracle either.
+              return reply
+                .status(gate.isMember ? 403 : 404)
+                .send(errorResponse(gate.isMember ? gate.message : "Service not found"));
             }
           }
           // Sanity: kind must match service.kind
