@@ -316,6 +316,9 @@ export function ConsultationBookingForm({
         // visible: dropping the selector on a transient failure would charge a
         // member full price with nothing on screen to explain why.
         if (res.status !== 401) setBenefitError(true);
+        // A guest genuinely holds nothing, so the answer IS "none" — mark it
+        // loaded, or the block below would sit blank forever.
+        else setBenefitLoaded(true);
         return;
       }
       const opts = res.data.options;
@@ -921,16 +924,19 @@ export function ConsultationBookingForm({
                       ))}
                     </select>
                   </label>
-                ) : (
+                ) : benefitLoaded ? (
+                  // Only after the options actually loaded. Rendering this
+                  // while the request is still in flight told a member who
+                  // holds a membership that their account has none.
                   <p className="text-xs text-[var(--color-text-muted)]">{i18n.benefitNoneFound}</p>
-                )}
+                ) : null}
 
                 <BenefitScarcityNote option={chosenOption ?? undefined} template={i18n.benefitScarcityNote} />
 
                 {/* The claim page, not an inline form. The emailed confirm link
                   * is what proves the claimant owns the enrolled address (§5.3),
                   * and a booking flow is exactly where that would get weakened. */}
-                {benefitOptions.every((o) => o.source !== "MEMBERSHIP") ? (
+                {benefitLoaded && benefitOptions.every((o) => o.source !== "MEMBERSHIP") ? (
                   <p className="text-xs text-[var(--color-text-muted)]">
                     <Link href="/account/membership/claim" className="font-semibold underline">
                       {i18n.benefitClaimCta}
