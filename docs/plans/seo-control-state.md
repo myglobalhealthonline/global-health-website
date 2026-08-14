@@ -550,6 +550,46 @@ routes to nobody.**
    the full diff. **Repo-policy call, not an SEO one** — recorded here because
    it is the same gap as the unread issue, not because this workstream owns it.
 
+**A fourth ask, and it is a DIFFERENT KIND — flag the distinction so it is not
+triaged as another policy question.** Items 1–3 are decisions only Nauman can
+make. This one is a read-only lookup that happens to have no API.
+
+> **Open GSC → Page indexing → Not indexed, and report two numbers: the count
+> for "Discovered – currently not indexed" and the count for "Crawled –
+> currently not indexed."** Thirty seconds. Not the whole report — those two.
+
+**Ask for the COUNTS, not the URL lists.** GSC shows only a 1,000-URL sample per
+reason and the sample is not necessarily representative; the reason-level counts
+are the reliable figure. Reading the sample as the population is a §0.6 error.
+
+### §6 scoping rule — decide it from those two numbers, before writing anything
+
+The indexation picture is already mostly resolved by arithmetic and does not
+need investigating: **indexed 1.91K against a ~1,900-URL sitemap** means
+essentially the whole sitemap is in, and the 1.52K not-indexed are URLs never
+submitted — the legacy Wix estate now answering 308 ("Page with redirect"), the
+deliberate `noindex` set (portal, auth, CZ-SEO-005's empty-bio doctors),
+robots-blocked paths, and parameter variants. **All of those are correct
+outcomes.** The 2026-07-10 step change shows both bars rising together, which is
+the new architecture being discovered, not something breaking.
+
+Do NOT cite `brokenPages: 666` as evidence of the legacy estate's scale — it is
+a known false positive from a stale Wix-era crawl (see §1). The grounded support
+is the 364 redirect rules in `next.config.ts` expanding across six locales.
+
+Only two of the eleven reasons bear on §6, because they are the state
+`/ireland/en/health/hypertension` is in — known to Google, never fetched,
+reachable only via the locale switcher:
+
+| "Discovered" + "Crawled – currently not indexed" | What §6 is |
+| --- | --- |
+| **Tens** | A narrow fix. Add inbound links to the `/health/*` family from country homes, sibling services and same-language blog posts, exactly as the brief scopes it. The rest of the 1.52K is noise |
+| **Hundreds** | A materially larger internal-linking project than §6 describes, and the scope should be re-cut before starting rather than discovered halfway through |
+
+If the counts show the bulk of the 1.52K sitting somewhere *other* than "Page
+with redirect" and "Excluded by noindex", that contradicts the arithmetic above
+and is a genuinely new finding — bring it back rather than proceeding.
+
 **Order for the next session: §7 before §6.** §7 (language versions of `/about`,
 `/faq`, `/blog`) needs no deploy. §6's acceptance cannot be evaluated until one
 lands, so starting there stalls at the acceptance step with an unverifiable
