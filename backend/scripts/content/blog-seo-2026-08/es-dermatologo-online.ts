@@ -120,10 +120,11 @@ const es: LocalePost = {
         h2: "Lo que una consulta online no puede hacer",
         blocks: [
           lead("Lo ponemos pronto y sin adornos, porque casi ningún servicio de teledermatología lo escribe."),
-          p("Una consulta a distancia <strong>no incluye dermatoscopia</strong>. El dermatoscopio es el instrumento que permite ver estructuras de la lesión que la vista y una fotografía normal no muestran, y es la base de la valoración de lesiones pigmentadas. Ninguna cámara de móvil lo sustituye, por buena que sea la foto."),
+          p("Una consulta a distancia <strong>no incluye dermatoscopia</strong>. El dermatoscopio es el instrumento que permite ver estructuras de la lesión que la vista y una fotografía normal no muestran, y es la base de la valoración de lesiones pigmentadas. Ninguna cámara de móvil <em>desnuda</em> lo sustituye, por buena que sea la foto: el dermatoscopio elimina el reflejo de la superficie —con luz polarizada o con una interfaz de gel— y permite ver el patrón pigmentario, los vasos y las estructuras que están por debajo de la capa córnea. Una foto capta color y textura de superficie, no eso."),
+          p("La distinción importa porque hay un punto intermedio: existen <strong>adaptadores dermatoscópicos para móvil</strong> que sí realizan dermatoscopia de verdad. Con uno de ellos, la valoración a distancia de una lesión pigmentada deja de ser una foto y pasa a ser una dermatoscopia. Sin él, una lente macro de clip y un filtro polarizador mejoran mucho la imagen, pero siguen sin equivaler a la prueba."),
           ul([
             "<strong>Dermatoscopia</strong> — imprescindible en lunares y lesiones pigmentadas.",
-            "<strong>Biopsia cutánea</strong> — la única forma de obtener un diagnóstico histológico.",
+            "<strong>Biopsia cutánea</strong> — la única forma de obtener un diagnóstico histológico. El <em>acto</em> es presencial; la <strong>derivación</strong> para hacerla sí puede emitirse desde la consulta online.",
             "<strong>Extirpación quirúrgica</strong> y <strong>crioterapia</strong> — actos presenciales.",
             "<strong>Palpación</strong> de una lesión: su consistencia, si está infiltrada o adherida.",
             "<strong>Exploración completa del cuerpo</strong> en pacientes con muchos nevus o antecedentes de melanoma.",
@@ -146,6 +147,7 @@ const es: LocalePost = {
             "<strong>Enfoque</strong>: toque la pantalla sobre la lesión antes de disparar y compruebe que la foto no ha salido movida.",
             "<strong>Escala</strong>: coloque una regla o una moneda al lado para dar referencia de tamaño.",
             "<strong>Sin filtros</strong>, sin recortes y sin retoques. El color es información clínica.",
+            "<strong>Una lente macro de clip</strong> cuesta poco y mejora de verdad el detalle; un <strong>filtro polarizador</strong> reduce el brillo y acerca la imagen a lo que ve un dermatoscopio.",
             "<strong>Serie</strong>: si el proceso evoluciona, repita la misma toma, con la misma luz y el mismo encuadre.",
           ]),
           p("Añada a las imágenes lo que ninguna foto muestra: <strong>desde cuándo</strong>, si <strong>pica</strong>, duele o quema, si ha cambiado de tamaño o de color, qué se ha aplicado ya y con qué resultado, qué medicación toma y qué alergias tiene. Con eso, la consulta a distancia se parece mucho a la presencial."),
@@ -166,7 +168,7 @@ const es: LocalePost = {
             "Una herida o costra que <strong>no cura</strong> en semanas.",
             "Antecedentes personales o familiares de <strong>melanoma</strong>, muchos nevus o quemaduras solares graves en la infancia.",
           ]),
-          p("En cualquiera de esos casos, la vía correcta es la valoración presencial con dermatoscopio. Una consulta online bien hecha le dirá exactamente eso, y le ayudará a llegar a ella con el historial ordenado en lugar de esperar meses sin saber si debía preocuparse."),
+          p("En cualquiera de esos casos el recorrido correcto tiene tres pasos: consulta online para decidir la urgencia, derivación escrita y fechada, y valoración presencial con dermatoscopio, que es donde se cierra el diagnóstico. Un médico colegiado puede emitir esa derivación —incluida la de biopsia— desde la consulta a distancia; lo que no se hace a distancia es el procedimiento. Una consulta online bien hecha le dirá exactamente eso, y le ayudará a llegar a ella con el historial ordenado en lugar de esperar meses sin saber si debía preocuparse."),
           cite(`Información divulgativa sobre lesiones cutáneas y prevención: <a href="${AEDV}" rel="nofollow noopener" target="_blank">Academia Española de Dermatología y Venereología</a>.`),
         ],
       },
@@ -228,7 +230,7 @@ const es: LocalePost = {
       { label: "Registro de colegiados — CGCOM", href: CGCOM_REGISTRO },
     ],
     sourcesNote:
-      "Los enlaces abren en sitios externos. Global Health no realiza dermatoscopia, biopsias ni procedimientos quirúrgicos: cuando el caso los requiere, lo indicamos y derivamos.",
+      "Los enlaces abren en sitios externos. Global Health no realiza biopsias ni procedimientos quirúrgicos, y sin adaptador dermatoscópico tampoco dermatoscopia: cuando el caso lo requiere, lo indicamos y emitimos la derivación correspondiente.",
     faqEyebrow: "FAQ",
     faqH2: "Preguntas frecuentes",
     faqs: [
@@ -238,7 +240,7 @@ const es: LocalePost = {
       },
       {
         q: "¿Sirve una consulta online para revisar un lunar?",
-        a: "Sirve para decidir la urgencia, no para descartar. La valoración de lesiones pigmentadas se basa en la dermatoscopia, que exige consulta presencial. Si un lunar es nuevo, cambia, sangra o se diferencia del resto, la indicación correcta es verlo en persona.",
+        a: "Sirve para decidir la urgencia, no para descartar con una foto normal: la valoración de lesiones pigmentadas se basa en la dermatoscopia, y una cámara de móvil sin adaptador no la sustituye. Con un adaptador dermatoscópico para móvil sí se obtiene una dermatoscopia real. Aun así, ante un lunar nuevo, que cambia, que sangra o distinto del resto, el diagnóstico se cierra en persona; la consulta online decide la urgencia y emite la derivación.",
       },
       {
         q: "¿Un dermatólogo online puede recetarme?",
@@ -338,10 +340,11 @@ const en: LocalePost = {
         h2: "What an online consultation cannot do",
         blocks: [
           lead("We put this early and plainly, because almost no teledermatology service writes it down."),
-          p("A remote consultation <strong>does not include dermoscopy</strong>. The dermatoscope is the instrument that shows structures within a lesion that the naked eye and an ordinary photograph do not, and it is the basis of assessing pigmented lesions. No phone camera replaces it, however good the photograph."),
+          p("A remote consultation <strong>does not include dermoscopy</strong>. The dermatoscope is the instrument that shows structures within a lesion that the naked eye and an ordinary photograph do not, and it is the basis of assessing pigmented lesions. No <em>bare</em> phone camera replaces it, however good the photograph: a dermatoscope removes the surface reflection — with polarised light or a gel interface — and lets the pigment network, the vessels and the structures beneath the horny layer be seen. A photograph captures surface colour and texture, not that."),
+          p("The distinction matters because there is a middle ground: <strong>phone dermatoscope attachments</strong> exist that perform genuine dermoscopy. With one of those, remote assessment of a pigmented lesion stops being a photograph and becomes a dermoscopy. Without one, a clip-on macro lens and a polarising filter improve the image considerably, but they still do not amount to the examination."),
           ul([
             "<strong>Dermoscopy</strong> — indispensable for moles and pigmented lesions.",
-            "<strong>Skin biopsy</strong> — the only way to obtain a histological diagnosis.",
+            "<strong>Skin biopsy</strong> — the only way to obtain a histological diagnosis. The <em>procedure</em> has to be in person; the <strong>referral</strong> for it can be issued from the online consultation.",
             "<strong>Surgical excision</strong> and <strong>cryotherapy</strong> — in-person procedures.",
             "<strong>Palpation</strong> of a lesion: its consistency, whether it is infiltrated or fixed.",
             "<strong>Full-body examination</strong> in people with many naevi or a history of melanoma.",
@@ -364,6 +367,7 @@ const en: LocalePost = {
             "<strong>Focus</strong>: tap the screen on the lesion before you shoot and check the image is not blurred.",
             "<strong>Scale</strong>: place a ruler or a coin beside it to give a size reference.",
             "<strong>No filters</strong>, no cropping and no retouching. Colour is clinical information.",
+            "<strong>A clip-on macro lens</strong> costs little and genuinely improves the detail; a <strong>polarising filter</strong> cuts the glare and brings the image closer to what a dermatoscope sees.",
             "<strong>A series</strong>: if the problem is evolving, repeat the same shot, same light, same framing.",
           ]),
           p("Add to the images what no photograph shows: <strong>how long</strong> it has been there, whether it <strong>itches</strong>, hurts or burns, whether it has changed in size or colour, what you have already applied and with what result, what medication you take and what allergies you have. With that, a remote consultation looks a great deal like a clinic one."),
@@ -384,7 +388,7 @@ const en: LocalePost = {
             "A wound or crust that <strong>does not heal</strong> over a period of weeks.",
             "Personal or family history of <strong>melanoma</strong>, many naevi, or severe sunburn in childhood.",
           ]),
-          p("In any of those cases the correct route is in-person assessment with a dermatoscope. A well-run online consultation will tell you exactly that, and will help you arrive with your history in order rather than waiting months not knowing whether to worry."),
+          p("In any of those cases the correct route has three steps: an online consultation to decide the urgency, a written and dated referral, and in-person assessment with a dermatoscope, which is where the diagnosis is closed. A registered doctor can issue that referral — including one for biopsy — from the remote consultation; what is not done remotely is the procedure. A well-run online consultation will tell you exactly that, and will help you arrive with your history in order rather than waiting months not knowing whether to worry."),
           cite(`General information on skin lesions and prevention: <a href="${AEDV}" rel="nofollow noopener" target="_blank">Spanish Academy of Dermatology and Venereology</a>.`),
         ],
       },
@@ -446,7 +450,7 @@ const en: LocalePost = {
       { label: "Register of doctors — CGCOM", href: CGCOM_REGISTRO },
     ],
     sourcesNote:
-      "Links open on external sites. Global Health does not perform dermoscopy, biopsies or surgical procedures: where a case requires them, we say so and refer.",
+      "Links open on external sites. Global Health does not perform biopsies or surgical procedures, and without a dermatoscope attachment no dermoscopy either: where a case requires them, we say so and issue the referral.",
     faqEyebrow: "FAQ",
     faqH2: "Common questions",
     faqs: [
@@ -456,7 +460,7 @@ const en: LocalePost = {
       },
       {
         q: "Is an online consultation any use for checking a mole?",
-        a: "It is useful for deciding urgency, not for ruling anything out. Assessment of pigmented lesions rests on dermoscopy, which requires an in-person visit. If a mole is new, changing, bleeding or unlike your others, the correct advice is to have it seen in person.",
+        a: "It is useful for deciding urgency, not for ruling anything out from an ordinary photograph: assessment of pigmented lesions rests on dermoscopy, and a phone camera without an attachment does not replace it. With a phone dermatoscope attachment you do get real dermoscopy. Even so, for a mole that is new, changing, bleeding or unlike your others, the diagnosis is closed in person; the online consultation decides the urgency and issues the referral.",
       },
       {
         q: "Can an online dermatologist prescribe for me?",
@@ -556,10 +560,11 @@ const pt: LocalePost = {
         h2: "O que uma consulta online não pode fazer",
         blocks: [
           lead("Dizemo-lo cedo e sem rodeios, porque quase nenhum serviço de teledermatologia o escreve."),
-          p("Uma consulta à distância <strong>não inclui dermatoscopia</strong>. O dermatoscópio é o instrumento que permite ver estruturas da lesão que a vista e uma fotografia normal não mostram, e é a base da avaliação de lesões pigmentadas. Nenhuma câmara de telemóvel o substitui, por melhor que seja a foto."),
+          p("Uma consulta à distância <strong>não inclui dermatoscopia</strong>. O dermatoscópio é o instrumento que permite ver estruturas da lesão que a vista e uma fotografia normal não mostram, e é a base da avaliação de lesões pigmentadas. Nenhuma câmara de telemóvel <em>sozinha</em> o substitui, por melhor que seja a foto: o dermatoscópio elimina o reflexo da superfície — com luz polarizada ou com uma interface de gel — e permite ver o padrão pigmentar, os vasos e as estruturas abaixo da camada córnea. Uma fotografia capta cor e textura de superfície, não isso."),
+          p("A distinção importa porque há um meio-termo: existem <strong>adaptadores dermatoscópicos para telemóvel</strong> que fazem dermatoscopia a sério. Com um deles, a avaliação à distância de uma lesão pigmentada deixa de ser uma fotografia e passa a ser uma dermatoscopia. Sem ele, uma lente macro de clipe e um filtro polarizador melhoram muito a imagem, mas continuam a não equivaler ao exame."),
           ul([
             "<strong>Dermatoscopia</strong> — imprescindível em sinais e lesões pigmentadas.",
-            "<strong>Biópsia cutânea</strong> — a única forma de obter um diagnóstico histológico.",
+            "<strong>Biópsia cutânea</strong> — a única forma de obter um diagnóstico histológico. O <em>ato</em> é presencial; a <strong>referenciação</strong> para o fazer pode sair da consulta online.",
             "<strong>Excisão cirúrgica</strong> e <strong>crioterapia</strong> — atos presenciais.",
             "<strong>Palpação</strong> de uma lesão: a sua consistência, se está infiltrada ou aderente.",
             "<strong>Observação completa do corpo</strong> em pessoas com muitos nevos ou antecedentes de melanoma.",
@@ -582,6 +587,7 @@ const pt: LocalePost = {
             "<strong>Foco</strong>: toque no ecrã sobre a lesão antes de disparar e confirme que a foto não ficou tremida.",
             "<strong>Escala</strong>: coloque uma régua ou uma moeda ao lado para dar referência de tamanho.",
             "<strong>Sem filtros</strong>, sem cortes e sem retoques. A cor é informação clínica.",
+            "<strong>Uma lente macro de clipe</strong> custa pouco e melhora mesmo o detalhe; um <strong>filtro polarizador</strong> corta o brilho e aproxima a imagem do que vê um dermatoscópio.",
             "<strong>Série</strong>: se o processo evolui, repita a mesma imagem, com a mesma luz e o mesmo enquadramento.",
           ]),
           p("Junte às imagens aquilo que nenhuma foto mostra: <strong>desde quando</strong>, se <strong>faz comichão</strong>, dói ou arde, se mudou de tamanho ou de cor, o que já aplicou e com que resultado, que medicação toma e que alergias tem. Com isso, a consulta à distância aproxima-se muito da presencial."),
@@ -602,7 +608,7 @@ const pt: LocalePost = {
             "Uma ferida ou crosta que <strong>não sara</strong> ao fim de semanas.",
             "Antecedentes pessoais ou familiares de <strong>melanoma</strong>, muitos nevos ou queimaduras solares graves na infância.",
           ]),
-          p("Em qualquer desses casos, a via correta é a avaliação presencial com dermatoscópio. Uma consulta online bem feita dir-lhe-á exatamente isso e ajudá-lo-á a chegar lá com o historial organizado, em vez de esperar meses sem saber se devia preocupar-se."),
+          p("Em qualquer desses casos, o percurso correto tem três passos: consulta online para decidir a urgência, referenciação escrita e datada, e avaliação presencial com dermatoscópio, que é onde o diagnóstico se fecha. Um médico inscrito na ordem pode emitir essa referenciação — incluindo a de biópsia — a partir da consulta à distância; o que não se faz à distância é o procedimento. Uma consulta online bem feita dir-lhe-á exatamente isso e ajudá-lo-á a chegar lá com o historial organizado, em vez de esperar meses sem saber se devia preocupar-se."),
           cite(`Informação divulgativa sobre lesões cutâneas e prevenção: <a href="${AEDV}" rel="nofollow noopener" target="_blank">Academia Espanhola de Dermatologia e Venereologia</a>.`),
         ],
       },
@@ -664,7 +670,7 @@ const pt: LocalePost = {
       { label: "Registo de médicos — CGCOM", href: CGCOM_REGISTRO },
     ],
     sourcesNote:
-      "As ligações abrem em sítios externos. A Global Health não realiza dermatoscopia, biópsias nem procedimentos cirúrgicos: quando o caso os exige, indicamo-lo e referenciamos.",
+      "As ligações abrem em sítios externos. A Global Health não realiza biópsias nem procedimentos cirúrgicos e, sem adaptador dermatoscópico, também não dermatoscopia: quando o caso os exige, indicamo-lo e emitimos a referenciação.",
     faqEyebrow: "FAQ",
     faqH2: "Perguntas frequentes",
     faqs: [
@@ -674,7 +680,7 @@ const pt: LocalePost = {
       },
       {
         q: "Uma consulta online serve para ver um sinal?",
-        a: "Serve para decidir a urgência, não para excluir. A avaliação de lesões pigmentadas assenta na dermatoscopia, que exige consulta presencial. Se um sinal é novo, muda, sangra ou é diferente dos restantes, a indicação correta é vê-lo presencialmente.",
+        a: "Serve para decidir a urgência, não para excluir a partir de uma fotografia normal: a avaliação de lesões pigmentadas assenta na dermatoscopia, e uma câmara de telemóvel sem adaptador não a substitui. Com um adaptador dermatoscópico para telemóvel obtém-se dermatoscopia a sério. Ainda assim, perante um sinal novo, que muda, que sangra ou diferente dos restantes, o diagnóstico fecha-se presencialmente; a consulta online decide a urgência e emite a referenciação.",
       },
       {
         q: "Um dermatologista online pode receitar?",
@@ -774,10 +780,11 @@ const cs: LocalePost = {
         h2: "Co online konzultace udělat nemůže",
         blocks: [
           lead("Píšeme to hned a bez příkras, protože téměř žádná teledermatologická služba to neuvádí."),
-          p("Konzultace na dálku <strong>nezahrnuje dermatoskopii</strong>. Dermatoskop je přístroj, který ukáže struktury uvnitř léze, jež pouhé oko ani běžná fotografie nezobrazí, a je základem hodnocení pigmentových lézí. Žádný fotoaparát v telefonu jej nenahradí, ať je snímek jakkoli dobrý."),
+          p("Konzultace na dálku <strong>nezahrnuje dermatoskopii</strong>. Dermatoskop je přístroj, který ukáže struktury uvnitř léze, jež pouhé oko ani běžná fotografie nezobrazí, a je základem hodnocení pigmentových lézí. Samotný fotoaparát v telefonu jej nenahradí, ať je snímek jakkoli dobrý: dermatoskop odstraní odraz od povrchu — polarizovaným světlem nebo gelovou vrstvou — a ukáže pigmentovou síť, cévy a struktury pod rohovou vrstvou. Fotografie zachytí barvu a povrchovou texturu, nikoli tohle."),
+          p("Rozdíl je podstatný, protože existuje mezistupeň: <strong>dermatoskopické nástavce na telefon</strong>, které skutečnou dermatoskopii provedou. S nimi přestává být hodnocení pigmentové léze na dálku fotografií a stává se dermatoskopií. Bez nich makro předsádka a polarizační filtr obraz výrazně zlepší, vyšetření ale nenahradí."),
           ul([
             "<strong>Dermatoskopie</strong> — nezbytná u znamének a pigmentových lézí.",
-            "<strong>Kožní biopsie</strong> — jediný způsob, jak získat histologickou diagnózu.",
+            "<strong>Kožní biopsie</strong> — jediný způsob, jak získat histologickou diagnózu. Samotný <em>výkon</em> je osobní; <strong>indikaci a doporučení</strong> k němu lze vystavit z online konzultace.",
             "<strong>Chirurgické odstranění</strong> a <strong>kryoterapie</strong> — výkony vyžadující osobní návštěvu.",
             "<strong>Pohmat</strong> léze: její konzistence, zda je infiltrovaná nebo fixovaná ke spodině.",
             "<strong>Prohlídka celého těla</strong> u lidí s velkým počtem névů nebo s melanomem v anamnéze.",
@@ -800,6 +807,7 @@ const cs: LocalePost = {
             "<strong>Zaostření</strong>: klepněte na displeji na lézi a před odesláním zkontrolujte, že snímek není rozmazaný.",
             "<strong>Měřítko</strong>: přiložte pravítko nebo minci, aby byla patrná velikost.",
             "<strong>Bez filtrů</strong>, bez ořezů a bez retuší. Barva je klinická informace.",
+            "<strong>Makro předsádka na klip</strong> stojí málo a detail skutečně zlepší; <strong>polarizační filtr</strong> potlačí odlesky a přiblíží snímek tomu, co vidí dermatoskop.",
             "<strong>Série</strong>: pokud se stav vyvíjí, opakujte stejný záběr při stejném světle a ve stejné kompozici.",
           ]),
           p("Ke snímkům přidejte to, co žádná fotografie neukáže: <strong>jak dlouho</strong> potíž trvá, zda <strong>svědí</strong>, bolí nebo pálí, zda se změnila velikost či barva, co jste už použili a s jakým výsledkem, jaké léky užíváte a jaké máte alergie. S tím se konzultace na dálku velmi blíží té osobní."),
@@ -820,7 +828,7 @@ const cs: LocalePost = {
             "Ranka nebo strup, který se <strong>nehojí</strong> po řadu týdnů.",
             "Osobní nebo rodinná anamnéza <strong>melanomu</strong>, velký počet névů nebo těžké spáleniny v dětství.",
           ]),
-          p("V každém z těchto případů je správnou cestou osobní vyšetření dermatoskopem. Dobře vedená online konzultace vám přesně to řekne a pomůže vám k němu dorazit se srovnanou dokumentací, místo abyste měsíce čekali s nejistotou, zda se máte znepokojovat."),
+          p("V každém z těchto případů má správný postup tři kroky: online konzultaci pro rozhodnutí o naléhavosti, písemné a datované doporučení a osobní vyšetření dermatoskopem, kde se diagnóza uzavírá. Registrovaný lékař může takové doporučení — včetně doporučení k biopsii — vystavit z konzultace na dálku; na dálku se nedělá samotný výkon. Dobře vedená online konzultace vám přesně to řekne a pomůže vám k němu dorazit se srovnanou dokumentací, místo abyste měsíce čekali s nejistotou, zda se máte znepokojovat."),
           cite(`Osvětové informace o kožních lézích a prevenci: <a href="${AEDV}" rel="nofollow noopener" target="_blank">Španělská akademie dermatologie a venerologie</a>.`),
         ],
       },
@@ -882,7 +890,7 @@ const cs: LocalePost = {
       { label: "Registr lékařů — CGCOM", href: CGCOM_REGISTRO },
     ],
     sourcesNote:
-      "Odkazy vedou na externí weby. Global Health neprovádí dermatoskopii, biopsie ani chirurgické výkony: pokud je případ vyžaduje, upozorníme na to a odešleme vás dál.",
+      "Odkazy vedou na externí weby. Global Health neprovádí biopsie ani chirurgické výkony a bez dermatoskopického nástavce ani dermatoskopii: pokud je případ vyžaduje, upozorníme na to a vystavíme doporučení.",
     faqEyebrow: "FAQ",
     faqH2: "Časté dotazy",
     faqs: [
@@ -892,7 +900,7 @@ const cs: LocalePost = {
       },
       {
         q: "Hodí se online konzultace na kontrolu znaménka?",
-        a: "Hodí se k rozhodnutí o naléhavosti, ne k vyloučení. Hodnocení pigmentových lézí stojí na dermatoskopii, která vyžaduje osobní vyšetření. Pokud je znaménko nové, mění se, krvácí nebo se liší od ostatních, správným doporučením je osobní prohlídka.",
+        a: "Hodí se k rozhodnutí o naléhavosti, ne k vyloučení z běžné fotografie: hodnocení pigmentových lézí stojí na dermatoskopii a fotoaparát telefonu bez nástavce ji nenahradí. S dermatoskopickým nástavcem na telefon jde o skutečnou dermatoskopii. I tak se u znaménka, které je nové, mění se, krvácí nebo se liší od ostatních, diagnóza uzavírá osobně; online konzultace rozhodne o naléhavosti a vystaví doporučení.",
       },
       {
         q: "Může mi dermatolog online předepsat lék?",
@@ -992,10 +1000,11 @@ const roPost: LocalePost = {
         h2: "Ce nu poate face o consultație online",
         blocks: [
           lead("O spunem devreme și fără ocolișuri, pentru că aproape niciun serviciu de teledermatologie nu o scrie."),
-          p("O consultație la distanță <strong>nu include dermatoscopie</strong>. Dermatoscopul este instrumentul care arată structuri ale leziunii pe care ochiul liber și o fotografie obișnuită nu le redau și stă la baza evaluării leziunilor pigmentare. Nicio cameră de telefon nu îl înlocuiește, oricât de bună ar fi fotografia."),
+          p("O consultație la distanță <strong>nu include dermatoscopie</strong>. Dermatoscopul este instrumentul care arată structuri ale leziunii pe care ochiul liber și o fotografie obișnuită nu le redau și stă la baza evaluării leziunilor pigmentare. Nicio cameră de telefon <em>simplă</em> nu îl înlocuiește, oricât de bună ar fi fotografia: dermatoscopul elimină reflexia de suprafață — cu lumină polarizată sau cu o interfață de gel — și arată rețeaua pigmentară, vasele și structurile de sub stratul cornos. O fotografie prinde culoarea și textura de la suprafață, nu asta."),
+          p("Distincția contează pentru că există o cale de mijloc: <strong>adaptoare dermatoscopice pentru telefon</strong>, care fac dermatoscopie adevărată. Cu unul dintre ele, evaluarea la distanță a unei leziuni pigmentare nu mai este o fotografie, ci o dermatoscopie. Fără el, o lentilă macro cu clips și un filtru polarizant îmbunătățesc mult imaginea, dar tot nu echivalează cu examinarea."),
           ul([
             "<strong>Dermatoscopia</strong> — indispensabilă la alunițe și leziuni pigmentare.",
-            "<strong>Biopsia cutanată</strong> — singura cale de a obține un diagnostic histologic.",
+            "<strong>Biopsia cutanată</strong> — singura cale de a obține un diagnostic histologic. <em>Procedura</em> se face fizic; <strong>trimiterea</strong> pentru ea poate fi emisă din consultația online.",
             "<strong>Excizia chirurgicală</strong> și <strong>crioterapia</strong> — acte care se fac fizic.",
             "<strong>Palparea</strong> unei leziuni: consistența ei, dacă este infiltrată sau aderentă.",
             "<strong>Examinarea completă a corpului</strong> la persoane cu mulți nevi sau cu antecedente de melanom.",
@@ -1018,6 +1027,7 @@ const roPost: LocalePost = {
             "<strong>Focalizare</strong>: atingeți ecranul pe leziune înainte de a fotografia și verificați că imaginea nu este mișcată.",
             "<strong>Scară</strong>: puneți alături o riglă sau o monedă, ca reper de mărime.",
             "<strong>Fără filtre</strong>, fără decupaje și fără retușuri. Culoarea este informație clinică.",
+            "<strong>O lentilă macro cu clips</strong> costă puțin și chiar îmbunătățește detaliul; un <strong>filtru polarizant</strong> reduce reflexiile și apropie imaginea de ce vede un dermatoscop.",
             "<strong>Serie</strong>: dacă procesul evoluează, repetați aceeași imagine, cu aceeași lumină și același cadru.",
           ]),
           p("Adăugați la imagini ceea ce nicio fotografie nu arată: <strong>de când</strong> există, dacă <strong>mănâncă</strong>, doare sau arde, dacă și-a schimbat mărimea sau culoarea, ce ați aplicat deja și cu ce rezultat, ce medicamente luați și ce alergii aveți. Cu acestea, consultația la distanță se apropie mult de cea fizică."),
@@ -1038,7 +1048,7 @@ const roPost: LocalePost = {
             "O rană sau o crustă care <strong>nu se vindecă</strong> în câteva săptămâni.",
             "Antecedente personale sau familiale de <strong>melanom</strong>, mulți nevi sau arsuri solare grave în copilărie.",
           ]),
-          p("În oricare dintre aceste cazuri, calea corectă este evaluarea fizică cu dermatoscop. O consultație online făcută bine vă va spune exact asta și vă va ajuta să ajungeți acolo cu istoricul pus în ordine, în loc să așteptați luni de zile fără să știți dacă aveați motiv de îngrijorare."),
+          p("În oricare dintre aceste cazuri, traseul corect are trei pași: consultația online pentru a decide urgența, o trimitere scrisă și datată și evaluarea fizică cu dermatoscop, acolo unde diagnosticul se închide. Un medic înscris în colegiu poate emite acea trimitere — inclusiv pentru biopsie — din consultația la distanță; la distanță nu se face procedura. O consultație online făcută bine vă va spune exact asta și vă va ajuta să ajungeți acolo cu istoricul pus în ordine, în loc să așteptați luni de zile fără să știți dacă aveați motiv de îngrijorare."),
           cite(`Informații de popularizare despre leziunile cutanate și prevenție: <a href="${AEDV}" rel="nofollow noopener" target="_blank">Academia Spaniolă de Dermatologie și Venerologie</a>.`),
         ],
       },
@@ -1100,7 +1110,7 @@ const roPost: LocalePost = {
       { label: "Registrul medicilor — CGCOM", href: CGCOM_REGISTRO },
     ],
     sourcesNote:
-      "Linkurile se deschid pe site-uri externe. Global Health nu efectuează dermatoscopie, biopsii sau proceduri chirurgicale: când cazul le cere, o spunem și trimitem mai departe.",
+      "Linkurile se deschid pe site-uri externe. Global Health nu efectuează biopsii sau proceduri chirurgicale, iar fără adaptor dermatoscopic nici dermatoscopie: când cazul le cere, o spunem și emitem trimiterea.",
     faqEyebrow: "Întrebări frecvente",
     faqH2: "Întrebări frecvente",
     faqs: [
@@ -1110,7 +1120,7 @@ const roPost: LocalePost = {
       },
       {
         q: "Este utilă o consultație online pentru o aluniță?",
-        a: "Este utilă pentru a decide urgența, nu pentru a exclude. Evaluarea leziunilor pigmentare se bazează pe dermatoscopie, care cere consult fizic. Dacă o aluniță este nouă, se schimbă, sângerează sau diferă de restul, indicația corectă este să fie văzută fizic.",
+        a: "Este utilă pentru a decide urgența, nu pentru a exclude pe baza unei fotografii obișnuite: evaluarea leziunilor pigmentare se bazează pe dermatoscopie, iar camera telefonului fără adaptor nu o înlocuiește. Cu un adaptor dermatoscopic pentru telefon se obține dermatoscopie adevărată. Chiar și așa, la o aluniță nouă, care se schimbă, sângerează sau diferă de restul, diagnosticul se închide fizic; consultația online decide urgența și emite trimiterea.",
       },
       {
         q: "Un dermatolog online îmi poate prescrie tratament?",
@@ -1210,10 +1220,11 @@ const de: LocalePost = {
         h2: "Was eine Online-Sprechstunde nicht leisten kann",
         blocks: [
           lead("Wir schreiben es früh und ohne Beschönigung, weil es fast kein teledermatologischer Anbieter tut."),
-          p("Eine Sprechstunde aus der Ferne <strong>umfasst keine Dermatoskopie</strong>. Das Dermatoskop zeigt Strukturen innerhalb einer Läsion, die das bloße Auge und ein normales Foto nicht abbilden, und ist die Grundlage der Beurteilung pigmentierter Läsionen. Keine Handykamera ersetzt es, so gut das Foto auch sein mag."),
+          p("Eine Sprechstunde aus der Ferne <strong>umfasst keine Dermatoskopie</strong>. Das Dermatoskop zeigt Strukturen innerhalb einer Läsion, die das bloße Auge und ein normales Foto nicht abbilden, und ist die Grundlage der Beurteilung pigmentierter Läsionen. Keine <em>bloße</em> Handykamera ersetzt es, so gut das Foto auch sein mag: Das Dermatoskop nimmt die Oberflächenreflexion weg — mit polarisiertem Licht oder einer Gelschicht — und zeigt Pigmentnetz, Gefäße und die Strukturen unter der Hornschicht. Ein Foto erfasst Farbe und Oberflächentextur, nicht das."),
+          p("Der Unterschied zählt, weil es einen Zwischenweg gibt: <strong>Dermatoskop-Aufsätze fürs Handy</strong> leisten echte Dermatoskopie. Mit einem davon ist die Beurteilung einer pigmentierten Läsion aus der Ferne kein Foto mehr, sondern eine Dermatoskopie. Ohne ihn verbessern eine Makro-Klemmlinse und ein Polfilter das Bild deutlich, ersetzen die Untersuchung aber nicht."),
           ul([
             "<strong>Dermatoskopie</strong> — unverzichtbar bei Muttermalen und pigmentierten Läsionen.",
-            "<strong>Hautbiopsie</strong> — der einzige Weg zu einer histologischen Diagnose.",
+            "<strong>Hautbiopsie</strong> — der einzige Weg zu einer histologischen Diagnose. Der <em>Eingriff</em> erfolgt vor Ort; die <strong>Überweisung</strong> dafür kann aus der Online-Sprechstunde kommen.",
             "<strong>Operative Entfernung</strong> und <strong>Kryotherapie</strong> — Eingriffe vor Ort.",
             "<strong>Tasten</strong> einer Läsion: ihre Konsistenz, ob sie infiltriert oder verschieblich ist.",
             "<strong>Ganzkörperuntersuchung</strong> bei Menschen mit vielen Nävi oder Melanom in der Vorgeschichte.",
@@ -1236,6 +1247,7 @@ const de: LocalePost = {
             "<strong>Schärfe</strong>: Tippen Sie vor dem Auslösen auf die Läsion und prüfen Sie, dass das Bild nicht verwackelt ist.",
             "<strong>Maßstab</strong>: Legen Sie ein Lineal oder eine Münze daneben, damit die Größe erkennbar ist.",
             "<strong>Keine Filter</strong>, keine Zuschnitte, keine Retusche. Farbe ist klinische Information.",
+            "<strong>Eine Makro-Klemmlinse</strong> kostet wenig und verbessert das Detail wirklich; ein <strong>Polfilter</strong> nimmt die Spiegelung und bringt das Bild näher an das, was ein Dermatoskop sieht.",
             "<strong>Serie</strong>: Verändert sich der Befund, wiederholen Sie dieselbe Aufnahme bei gleichem Licht und gleichem Bildausschnitt.",
           ]),
           p("Ergänzen Sie, was kein Foto zeigt: <strong>seit wann</strong> es besteht, ob es <strong>juckt</strong>, schmerzt oder brennt, ob sich Größe oder Farbe verändert haben, was Sie bereits aufgetragen haben und mit welchem Ergebnis, welche Medikamente Sie nehmen und welche Allergien bestehen. Damit kommt die Sprechstunde aus der Ferne der Praxis sehr nahe."),
@@ -1256,7 +1268,7 @@ const de: LocalePost = {
             "Eine Wunde oder Kruste, die über Wochen <strong>nicht heilt</strong>.",
             "Eigene oder familiäre <strong>Melanom</strong>-Vorgeschichte, viele Nävi oder schwere Sonnenbrände in der Kindheit.",
           ]),
-          p("In all diesen Fällen ist der richtige Weg die Untersuchung vor Ort mit dem Dermatoskop. Eine gut geführte Online-Sprechstunde sagt Ihnen genau das und hilft Ihnen, mit geordneter Vorgeschichte dorthin zu kommen, statt monatelang im Unklaren zu bleiben, ob Sie sich Sorgen machen sollten."),
+          p("In all diesen Fällen führt der richtige Weg über drei Schritte: eine Online-Sprechstunde zur Einschätzung der Dringlichkeit, eine schriftliche und datierte Überweisung und die Untersuchung vor Ort mit dem Dermatoskop, wo die Diagnose geschlossen wird. Eine registrierte Ärztin kann diese Überweisung — auch die zur Biopsie — aus der Fernsprechstunde ausstellen; nicht aus der Ferne erfolgt der Eingriff selbst. Eine gut geführte Online-Sprechstunde sagt Ihnen genau das und hilft Ihnen, mit geordneter Vorgeschichte dorthin zu kommen, statt monatelang im Unklaren zu bleiben, ob Sie sich Sorgen machen sollten."),
           cite(`Allgemeinverständliche Informationen zu Hautveränderungen und Vorbeugung: <a href="${AEDV}" rel="nofollow noopener" target="_blank">Spanische Akademie für Dermatologie und Venerologie</a>.`),
         ],
       },
@@ -1318,7 +1330,7 @@ const de: LocalePost = {
       { label: "Ärzteregister — CGCOM", href: CGCOM_REGISTRO },
     ],
     sourcesNote:
-      "Die Links öffnen externe Websites. Global Health führt keine Dermatoskopie, keine Biopsien und keine operativen Eingriffe durch: Wo ein Fall sie erfordert, sagen wir das und überweisen.",
+      "Die Links öffnen externe Websites. Global Health führt keine Biopsien und keine operativen Eingriffe durch, ohne Dermatoskop-Aufsatz auch keine Dermatoskopie: Wo ein Fall sie erfordert, sagen wir das und stellen die Überweisung aus.",
     faqEyebrow: "FAQ",
     faqH2: "Häufige Fragen",
     faqs: [
@@ -1328,7 +1340,7 @@ const de: LocalePost = {
       },
       {
         q: "Taugt eine Online-Sprechstunde zur Kontrolle eines Muttermals?",
-        a: "Sie taugt zur Einschätzung der Dringlichkeit, nicht zum Ausschluss. Die Beurteilung pigmentierter Läsionen beruht auf der Dermatoskopie und erfordert einen Praxisbesuch. Ist ein Mal neu, verändert es sich, blutet es oder unterscheidet es sich von den übrigen, gehört es vor Ort untersucht.",
+        a: "Sie taugt zur Einschätzung der Dringlichkeit, nicht zum Ausschluss anhand eines gewöhnlichen Fotos: Die Beurteilung pigmentierter Läsionen beruht auf der Dermatoskopie, und eine Handykamera ohne Aufsatz ersetzt sie nicht. Mit einem Dermatoskop-Aufsatz fürs Handy entsteht echte Dermatoskopie. Dennoch wird bei einem neuen, sich verändernden, blutenden oder von den übrigen abweichenden Mal die Diagnose vor Ort geschlossen; die Online-Sprechstunde klärt die Dringlichkeit und stellt die Überweisung aus.",
       },
       {
         q: "Darf ein Hautarzt online mir etwas verschreiben?",
