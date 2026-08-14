@@ -114,20 +114,22 @@ unified — the sitemap currently mixes `mudr-` (3), `dr-` (1) and bare (1).
 
 ---
 
-## 3. ~~P1 — Root entry gate topology~~ — 3a DONE, 3b REJECTED (2026-08-14)
+## 3. P1 — Root entry gate topology — 3a DONE, **3b OPEN**
 
 > **§3a landed** (`75eb1137`): `/` serves exactly 33 crawlable country×language
 > anchors, verified in raw HTML from `curl` against the built page, and all 33
 > targets return 200 on production.
 >
-> **§3b is rejected, by owner decision 2026-08-14.** It asks for exactly the
-> markup `SEO-FOUNDATION-004` removed on 2026-08-13 with evidence — six pages
-> each declaring `/` to be a different language while `/` declares itself
-> `x-default`. §3b's own stated rationale ("leaves `/` outside the international
-> graph it now links into") is a **link-equity** argument, and §3a's 33 anchors
-> deliver that. hreflang is locale-selection, not link-equity, and `/` is not a
-> language variant of any market home. The "do 3a and 3b in the same PR"
-> instruction above is therefore superseded. See ledger §5b.
+> **§3b is UNRESOLVED and needs a human decision.** It asks for the markup
+> `SEO-FOUNDATION-004` removed on 2026-08-12 with production verification. It
+> also conflates two separate claims: the six alternates (clearly wrong, and
+> why the fix happened) and `x-default` (a genuinely open question — a root
+> selector page is the textbook `x-default` target, but making `/` the
+> `x-default` requires the six market clusters to point at it, which is a much
+> larger change than §3b describes). Four options costed in ledger §5b.
+>
+> The "do 3a and 3b in the same PR" instruction below could not be followed for
+> that reason. §3a shipped alone; its link-equity goal does not depend on §3b.
 
 `/` is the site's highest-authority page: 5,440 impressions, 357 clicks over 90
 days, and the entry point for essentially all 58 referring domains.

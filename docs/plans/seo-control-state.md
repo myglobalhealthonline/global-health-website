@@ -418,6 +418,55 @@ rows rest on exactly those. `SEO-GROWTH-002`'s failure was in the status-code
 class, so the sweep was aimed at the right thing — but "16 AGREE" is not a clean
 bill of health for every assertion in this document.
 
+### OPEN CONFLICT — brief §3b vs `SEO-FOUNDATION-004`: hreflang on `/` (2026-08-14)
+
+**UNRESOLVED. No decision has been made and none is recorded here.** An earlier
+version of this section recorded this as a closed owner decision. That
+attribution was wrong — no such approval was given, and the row was removed on
+2026-08-14. Flagged explicitly because a ledger row marked as a decision
+someone made reads as correct forever, and §5b's own sweep would classify it
+AGREE without being able to check it. **Do not close this without a named human
+and a date.**
+
+**The conflict.** Brief §3b (2026-08-14) asks `/` to carry `x-default` plus
+alternates to the six country homes. `SEO-FOUNDATION-004` removed exactly that
+markup on 2026-08-12 (`cf2e8356`, verified in production 20:19Z). Before it, `/`
+emitted `x-default → /` plus six `{defaultLang}-{REGION}` rows, and each market's
+default-locale home emitted a bare language row back (`pt → /`, `en → /`, …).
+That made six pages each declare this one content-negotiated URL to be a
+different language — `en`, `cs`, `pt` *twice* (Portugal and Brazil), `es`, `ro` —
+while `/` declared itself `x-default`. At most one of those claims can be true,
+and `/portugal/pt` and `/brazil/pt` both claiming `pt → /` is unambiguously
+wrong. It was classified an architecture/semantic defect with **no demonstrated
+ranking impact**, and `/` stayed the site's top page throughout.
+
+**Two distinct claims, and the brief conflates them — this is the part worth
+deciding on.** `SEO-FOUNDATION-004` removed *both* the six alternates and the
+`x-default` from `/`. The alternates were clearly wrong. `x-default` is a
+separate question, and a root selector page is the textbook `x-default` target.
+But `x-default` has no meaning standing alone: it is an annotation *within* a
+cluster. Putting it back on `/` in isolation does nothing. Making `/` genuinely
+the `x-default` means each of the six market clusters naming `/` instead of
+itself — replacing six per-market `x-default → self` declarations with one
+global one. **That is a materially different and larger change than "add
+`x-default` to `/`", and it is the option nobody has actually costed.**
+
+| Option | What it means | Cost |
+| --- | --- | --- |
+| A. Leave `/` out of the graph | Status quo. §3a's 33 anchors carry the link equity | None. But `/` (5,440 impressions, the top page, one of seven global pages the audit flagged) stays outside the international graph |
+| B. Restore §3b as written | `x-default` + six alternates on `/` | Re-creates the exact defect `SEO-FOUNDATION-004` removed |
+| C. Global `x-default → /` | Six market clusters point `x-default` at `/`; keep per-market alternates | Coherent and arguably the textbook shape. Touches all six clusters across 1,893 URLs — the graph §10 lists as verified-healthy |
+| D. Full 33-URL cross-product on `/` | What the `page.tsx` comment says Google permits for a selector | Dissolves the six per-market clusters |
+
+**Note for whoever decides:** §3b's own stated rationale — "leaves `/` outside
+the international graph it now links into" — is a *link-equity* argument, and
+the 33 anchors in `75eb1137` already deliver that. hreflang is locale-selection,
+not link equity. That weakens the case for B specifically; it does not settle C.
+
+The warning comment in `app/(global)/page.tsx` remains authoritative in the
+meantime: do not restore an alternates map without deciding the whole-site
+cluster shape first.
+
 ### Open finding — `/brazil-doctors/*` has no redirect rule (2026-08-14)
 
 Surfaced by the SEO-DOC-005 slug expansion, not predicted by any audit.
@@ -436,19 +485,6 @@ upside. It is one rule of the same shape as the other five whenever that review
 clears. Recorded so the next person does not re-derive it.
 
 ### Decisions closed 2026-08-14 (stop re-opening these)
-
-**`/` gets no hreflang. `SEO-FOUNDATION-004` stands.** The 2026-08-14 brief's
-§3b asked for `x-default` plus alternates to the six country homes — precisely
-the markup removed on 2026-08-13 because it made six pages each declare `/` to
-be a different language (`en`, `cs`, `pt` twice, `es`, `ro`) while `/` declared
-itself `x-default`; at most one can be true. Owner decision 2026-08-14: **do not
-restore it.** §3b's rationale was link-equity, and the 33 anchors shipped in
-`75eb1137` deliver that; hreflang is locale-selection, not link equity, and `/`
-is a selector page, not a language variant of any market home. The third option
-— a full 33-URL cross-product cluster on `/`, which Google would permit — was
-rejected because it dissolves the six per-market clusters that are currently
-clean across 1,893 URLs. The warning comment in `app/(global)/page.tsx` is
-authoritative; do not "restore an alternates map" without reopening this.
 
 **`/` now links 33 country×language homes (`SEO-GROWTH-018`, `75eb1137`).** Was
 six — every market's default locale only — so the 27 non-default combinations
