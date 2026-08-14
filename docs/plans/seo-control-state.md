@@ -476,6 +476,39 @@ The warning comment in `app/(global)/page.tsx` remains authoritative in the
 meantime: do not restore an alternates map without deciding the whole-site
 cluster shape first.
 
+### Handoff — state at 2026-08-14 session end
+
+**Blocked on deploy. `Dev-hassaan` carries 8 unpushed commits, 3 of them another
+session's.** The SEO commits are `8189baa6`, `4a60ad7f`, `f8623dac`, `75eb1137`,
+`92fa57a8`, `4a9674a6`, `5a5f7e99`. Also on the branch, from a concurrent
+session and **unreviewed by anyone in the SEO thread**: `d946dd6c` (404-page
+redesign), `4eee0131` and `214b41a5` (membership email locale fixes).
+
+> **Say this out loud when asking for the push:** *this push carries someone
+> else's work too — confirm with whoever owns it that it is ready to ship.*
+> Otherwise the redirect fix deploys alongside three unreviewed commits, and if
+> one of them breaks something the SEO work is in the same deploy and the bisect
+> is confusing. One line converts a silent coupling into a decision someone made.
+
+Three asks for Nauman: (1) `git push origin Dev-hassaan`, then `main` for
+production; (2) confirm Railway → Settings → Source still says `main` for
+Production (it did on 2026-08-12, per `SEO-FOUNDATION-004`); (3) name the channel
+that should receive `seo-live-urls` failures. Until (1) and (2), the three Czech
+URLs are still live 404s.
+
+**Order for the next session: §7 before §6.** §7 (language versions of `/about`,
+`/faq`, `/blog`) needs no deploy. §6's acceptance cannot be evaluated until one
+lands, so starting there stalls at the acceptance step with an unverifiable
+change. If the push takes a day, §7 keeps the session productive.
+
+**Expectation to set before §6 starts, same shape as the SEO-DOC-004 note.** Its
+acceptance criterion — `lastCrawlTime` going non-null on
+`/ireland/en/health/hypertension` — is real but slow, and Google will not
+necessarily crawl within the session or the week. **The deliverable is the
+inbound links shipped and verified in raw HTML; the crawl verdict is a follow-up
+`inspect_urls` check on a named date, not a blocker for closing the work.** A
+still-null `lastCrawlTime` at the next check is not evidence the linking failed.
+
 ### Open finding — `/brazil-doctors/*` has no redirect rule (2026-08-14)
 
 Surfaced by the SEO-DOC-005 slug expansion, not predicted by any audit.
