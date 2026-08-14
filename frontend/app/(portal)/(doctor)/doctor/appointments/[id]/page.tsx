@@ -47,12 +47,6 @@ import { MedicalAccessDeniedNotice } from "../../_components/medical-access-deni
 import { PatientContextPanel } from "./_components/patient-context-panel";
 import { ReferringRecordPanel } from "./_components/referring-record-panel";
 import { CrossBorderMoreInfoPanel } from "./_components/cross-border-more-info-panel";
-import { AppointmentMedicalNotesSection } from "./_components/appointment-medical-notes-section";
-import {
-  formatConsultationTypeLabel,
-  formatOrderRef,
-  formatSessionParts,
-} from "@/lib/doctor-session-display";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
@@ -466,18 +460,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       copy={d.crossBorderRxMoreInfo}
                     />
                   ) : null}
-                  <div className="mb-6">
-                    <AppointmentMedicalNotesSection
-                      appointmentId={appointment.id}
-                      session={{
-                        ...formatSessionParts(appointment.scheduledAt, appointment.createdAt),
-                        orderNumber: formatOrderRef(appointment.id),
-                        consultationTypeLabel: formatConsultationTypeLabel(appointment.consultationType),
-                        uploadedBy: doctorName,
-                      }}
-                      copy={d.appointmentMedicalNotes}
-                    />
-                  </div>
                   {appointment.crossBorderSource ? (
                     <ReferringRecordPanel
                       record={appointment.crossBorderSource}

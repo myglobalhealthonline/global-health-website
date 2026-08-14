@@ -39,6 +39,13 @@ export type AppointmentMedicalNotesCopy = {
   viewNote: string;
 };
 
+// This component is intentionally not mounted in the appointment workspace
+// (see dea4a505 "drop Clinical tab" — manual ad-hoc note entry was replaced
+// by the read-only "Consultation notes" section on the patient's history
+// page, `doctor/patients/[email]/_components/consultation-history-panel.tsx`,
+// which already reads the same MedicalNote rows). Kept for its working
+// GET/POST wiring in case a future feature needs it — copy stays optional
+// with an English fallback so it's safe if/when it gets wired up again.
 const DEFAULT_COPY: AppointmentMedicalNotesCopy = {
   title: "Medical notes",
   addNoteLabel: "Add medical note",
