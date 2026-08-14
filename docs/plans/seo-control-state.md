@@ -40,6 +40,15 @@ Supporting rules:
   as labelled historical context.
 - **An OpenSEO/MCP recommendation is a hypothesis.** Verify it against GSC, a live SERP,
   and the actual site architecture before it enters the roadmap.
+- **This clone is shared with concurrent sessions — treat it as a standing
+  condition, not an incident.** Other sessions' uncommitted work appears in the
+  working tree without warning, and has changed mid-session more than once. So:
+  run `git status` before staging, **stage by explicit path**, and never
+  `git add -A` / `git add .` in this repo. A tidy-looking commit that sweeps in
+  another session's half-finished backend edit is the failure mode this prevents.
+  Corollary: `git log` is the source of truth for what shipped — a session's own
+  account of what it committed or pushed can be wrong, and was on 2026-08-14
+  (SEO-DOC-006 was reported unpushed while already present on `origin/main`).
 
 ---
 
@@ -311,7 +320,38 @@ working tree when the fix was staged. Noted so a future bisect over that file is
 not confusing; no code is affected.
 
 | SEO-DOC-005 | Nothing validated the redirect map, the sitemap or `GONE_DOCTORS` against the live doctor set | CI / process | **CLOSED — gate shipped, and it fails on the real defect** | 2026-08-14 | `frontend/tests/unit/seo-live-urls.test.ts` + a `seo-live-urls` CI job (push to main, weekly cron, `workflow_dispatch`). `GoneDoctor` now *requires* `clickCost` and `approvedBy`, so an undocumented 410 is a type error, not a review miss | n/a | Re-run the job after every deploy that touches redirects; see the §4 notes below |
-| SEO-DOC-006 | SEO-DOC-001's recrawl tail measured: **117 doctor-locale URLs across 25 doctors** still carry a `noindex` verdict Google formed *before* the `52c42d1a` backfill | Indexation (measurement) | **OPEN — WAIT FOR GOOGLE, no action authorized** | 2026-08-14 | All 117 serve `index, follow`, self-canonical, 200, and are in the sitemap with `lastmod` `2026-08-08T20:22Z`. Bio substance re-verified on all 25 doctors (Physician JSON-LD 175–300 chars, doctor-specific, in-locale) — the guard correctly stopped applying, it did not break | Every one last crawled **2026-07-16 → 2026-08-06**, i.e. all before the 2026-08-08 fix. Zero exceptions | **Watchlist only — see §6.** Do NOT submit via URL Inspection: this is the same mechanism §19.5 classifies WAIT FOR GOOGLE for Telmo/Vitor Pais/Pedro Santos, all three of whom appear in this set. Reversing that posture is an owner decision, not a maintenance step |
+| SEO-DOC-006 | SEO-DOC-001's recrawl tail measured: **117 doctor-locale URLs across 25 doctors** still carry a `noindex` verdict Google formed *before* the `52c42d1a` backfill | Indexation (measurement) | **OPEN — WAIT FOR GOOGLE, no action authorized** | 2026-08-14 | All 117 serve `index, follow`, self-canonical, 200, and are in the sitemap with `lastmod` `2026-08-08T20:22Z`. Bio substance re-verified on all 25 doctors (Physician JSON-LD 175–300 chars, doctor-specific, in-locale) — the guard correctly stopped applying, it did not break | Every one last crawled **2026-07-16 → 2026-08-06**, i.e. all before the 2026-08-08 fix. Zero exceptions | **Watchlist only — see §6.** Do NOT submit via URL Inspection: this is the same mechanism §19.5 classifies WAIT FOR GOOGLE for Telmo/Vitor Pais/Pedro Santos, all three of whom appear in this set. Reversing that posture is an owner decision, not a maintenance step. **`reviewBy: 2026-09-01`** — pass condition below |
+
+#### SEO-DOC-006 — `reviewBy: 2026-09-01`, and what counts as pass
+
+**This row expires. It does not sit open indefinitely.** SEO-DOC-001 was a
+correct observation with no date attached, which is how "Recrawl pending" stayed
+unquantified for six days; stating the date here is what stops SEO-DOC-006
+inheriting the same shape.
+
+**Pass condition — crawl date, NOT indexation.** On 2026-09-01, re-inspect a
+sample of the 117 and read **`last_crawl_time` only**:
+
+- **PASS — close the row.** Crawl date has advanced past **2026-08-08** on the
+  sampled URLs. Google has re-evaluated the pages against their current content.
+  That is the whole assertion. **Whether the pages are then indexed is a
+  different question and must not gate this row** — a recrawled page that Google
+  still declines to index is a content/authority finding, opened as its own
+  ticket, not evidence that the backfill failed.
+- **FAIL — escalate.** Crawl date has advanced past 2026-08-08 **and** the
+  verdict is still `noindex`. This is the only outcome that indicts the fix, and
+  it is the §6 escalation condition already written ("crawl date advanced past
+  the fix date and Google's verdict is still wrong").
+- **NEITHER — extend, do not escalate.** Crawl date still predates 2026-08-08.
+  Nothing has been tested yet. Re-date `reviewBy` and wait. Three consecutive
+  extensions means the pages are not being crawled at all, which is a §6/§13
+  crawl-budget finding, not a doctor-indexability one.
+
+Tying the condition to indexation instead of crawl date would make the row
+unfalsifiable in exactly the way §5's SEO-DOC-004 note warns about: flat numbers
+in three weeks would read as failure when the pages had never been re-fetched.
+
+Re-run cost is the §2 diff plus a sample, not another 184-URL pass.
 
 #### SEO-DOC-006 — how the 117 were found, and why the number is not ~75
 
