@@ -759,14 +759,23 @@ pages — it spends scarce budget on thin ones and dilutes what reaches the page
 that matter.
 
 **Backfill trigger — stated before the numbers arrive, per the SEO-DOC-004
-discipline.** Translate the remaining 22 when, and only when, **the 11 authored
-URLs together earn ≥ 150 impressions in a 28-day window**, measured no earlier
-than **2026-09-30** (six weeks post-deploy, so the crawl has had time to
-happen). Below that, the constraint is discovery or authority, not language
-coverage, and translating 22 more pages would repeat the same bet at triple the
-cost. If the 11 earn **zero** impressions by 2026-10-31, the correct conclusion
-is that the FAQ family is not a viable entry point for this domain yet — revisit
-the family, do not backfill it.
+discipline.** Measured on the 11 authored URLs together, in a 28-day window, no
+earlier than **2026-09-30** (six weeks post-deploy, so the crawl has had time to
+happen). All three bands are named in advance, because the middle one is the
+likeliest outcome for a new page family on a domain with 58 referring domains,
+and an unnamed band is exactly where a flat-ish result gets reread as whatever
+the reader needs it to be:
+
+| 28-day impressions | Verdict | Action |
+| --- | --- | --- |
+| **≥ 150** | The family earns its crawl | Translate the remaining 22 |
+| **1 – 149** | Indexed but not yet earning | **HOLD. Do not translate. Remeasure at the next 28-day window.** The constraint is discovery or authority, not language coverage — translating 22 more pages repeats the same bet at triple the cost |
+| **0 by 2026-10-31** | Not a viable entry point for this domain yet | Revisit the family. Do not backfill it |
+
+The hold band is a real verdict, not a deferral: it says the evidence came back
+and it was insufficient, which is a different claim from "we have not looked
+yet". Record each remeasurement with its date and count, so a third flat window
+is visible as a pattern rather than re-litigated as a first result.
 
 **Open question to confirm, not a gap to fill — Brazil.** The Brazil copy cites
 Resolução CFM nº 2.314/2022 and deliberately does NOT cite Resolução CFM
