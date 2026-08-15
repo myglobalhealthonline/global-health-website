@@ -1,0 +1,114 @@
+{
+  "es": {
+    "groups": [
+      {
+        "eyebrow": "España",
+        "title": "Preguntas sobre España",
+        "items": [
+          {
+            "question": "¿Tienen consulta física en España?",
+            "answer": "No. En España operamos exclusivamente como clínica online: no hay consulta física ni sala de espera que visitar. Todas las citas se realizan por videollamada segura, desde el móvil o el ordenador, con la misma privacidad que una consulta presencial. Nuestra sede social está registrada en Irlanda, pero los médicos que te atienden están colegiados para ejercer con pacientes en España. Este modelo permite ofrecer citas con mayor disponibilidad, sin desplazamientos ni salas de espera, manteniendo el mismo nivel de valoración clínica que recibirías en un centro tradicional. Si buscas una dirección a la que acudir en persona, este no es el servicio adecuado para ti."
+          },
+          {
+            "question": "¿Los médicos están colegiados en España?",
+            "answer": "Sí. Todos los médicos que atienden a pacientes en España están colegiados en el Colegio Oficial de Médicos que corresponde a su especialidad y provincia, cumpliendo los mismos requisitos de formación y habilitación que cualquier médico que ejerce de forma presencial en el país. El perfil de cada profesional en nuestra plataforma indica su colegiación, para que puedas comprobarlo antes de reservar. Trabajar con médicos colegiados nos permite ofrecer valoraciones clínicas, informes y, cuando procede, recetas, con la misma validez legal que una consulta presencial. Si tienes dudas sobre la colegiación de un médico concreto, puedes consultarlo con nosotros por correo electrónico antes de tu cita."
+          },
+          {
+            "question": "¿El proceso es igual en todas las comunidades autónomas?",
+            "answer": "No siempre. La sanidad pública en España está transferida a cada comunidad autónoma, por lo que trámites como la incapacidad temporal, la validez de determinados justificantes o los circuitos de derivación pueden variar según dónde vivas. Nuestros médicos tienen esto en cuenta durante la consulta y te orientarán sobre el paso siguiente más adecuado según tu comunidad autónoma, aunque la gestión final de las prestaciones públicas corresponde siempre al INSS y al servicio de salud autonómico correspondiente. Si tu situación depende de un trámite específico de tu región, coméntaselo al médico al inicio de la consulta para que pueda orientarte con precisión."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Reservas",
+        "title": "Cómo reservar tu consulta",
+        "items": [
+          {
+            "question": "¿Cómo reservo una consulta?",
+            "answer": "Reservar una consulta es sencillo: eliges el tipo de cita que necesitas, el médico y un horario disponible, y confirmas el pago de forma segura desde la web. Antes de confirmar, verás el precio de la consulta con claridad. Recibirás la confirmación por correo electrónico con el enlace a la videollamada y, si lo necesitas, un recordatorio antes de la hora acordada. No hace falta desplazarte ni esperar en ninguna sala: solo necesitas conexión a internet y un dispositivo con cámara. Si tienes dudas sobre qué tipo de consulta reservar, puedes escribirnos por correo electrónico y te orientamos antes de que reserves."
+          },
+          {
+            "question": "¿Puedo conseguir cita el mismo día?",
+            "answer": "En muchos casos sí. La disponibilidad depende del tipo de consulta y de los médicos con agenda abierta ese día, pero al ser un servicio online solemos ofrecer citas con mayor rapidez que una consulta presencial, incluyendo, con frecuencia, el mismo día en que reservas. El calendario de reservas muestra en tiempo real los horarios realmente disponibles, así que lo que ves al reservar es lo que hay. Si tu necesidad es urgente en el sentido médico —no solo por rapidez de agenda— recuerda que una consulta online no sustituye a una urgencia real: en ese caso, llama al 112."
+          },
+          {
+            "question": "¿Puedo cambiar o cancelar mi cita?",
+            "answer": "Sí. Puedes cambiar de horario o cancelar tu cita desde tu cuenta con la antelación indicada en las condiciones de reserva, que se muestran antes de confirmar el pago. Cancelar o reprogramar con tiempo suficiente libera el horario para otro paciente y, según el plazo, puede permitirte recuperar el importe pagado. Si necesitas ayuda para gestionar el cambio, o si surge un imprevisto justo antes de la cita, puedes escribirnos por correo electrónico y te ayudamos a encontrar una solución. Te recomendamos revisar las condiciones de cancelación de tu cita concreta, ya que pueden variar según el tipo de consulta reservada."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Cómo son las consultas online",
+        "items": [
+          {
+            "question": "¿Cómo es una consulta por videollamada?",
+            "answer": "La consulta se realiza por videollamada segura, igual que una cita presencial pero desde donde te encuentres. El médico revisa tu motivo de consulta, te hace las preguntas necesarias y, si hace falta, te pide que le muestres algo con la cámara o que describas los síntomas con más detalle. Al final de la valoración, te explica el diagnóstico probable, el plan a seguir y, cuando corresponde clínicamente, te entrega una receta, un informe o un justificante. La duración es similar a la de una consulta presencial estándar. Solo necesitas un dispositivo con cámara y micrófono, y un lugar tranquilo donde puedas hablar con privacidad."
+          },
+          {
+            "question": "¿Qué puedo consultar en una cita online?",
+            "answer": "Puedes reservar una consulta general con un médico de familia para síntomas comunes, seguimiento de tratamientos o dudas de salud, así como consultas con especialistas según la disponibilidad en cada momento. La plataforma indica claramente qué tipo de consulta estás reservando y qué incluye. No todas las situaciones son adecuadas para una valoración online: si el médico considera, durante la consulta, que necesitas una exploración física, pruebas presenciales o atención urgente, te lo indicará y te orientará sobre dónde acudir. El objetivo es siempre ofrecerte la valoración más segura posible, no forzar una solución online cuando no es la adecuada."
+          },
+          {
+            "question": "¿En qué idiomas se atienden las consultas?",
+            "answer": "Las consultas para pacientes en España se ofrecen en español y en inglés. El idioma de cada médico aparece indicado en su perfil, así que puedes elegir con quién reservar según el idioma en el que te sientas más cómodo explicando tus síntomas. Las cuestiones administrativas —reservas, pagos, dudas sobre tu cuenta— también se atienden por correo electrónico en español e inglés. Si tienes preferencia por un idioma concreto para tu consulta clínica, revisa el perfil del médico antes de reservar, ya que no todos los profesionales de la plataforma atienden en los mismos idiomas."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Bajas y recetas",
+        "title": "Bajas, justificantes y recetas",
+        "items": [
+          {
+            "question": "¿Pueden darme la baja médica (incapacidad temporal)?",
+            "answer": "No directamente. La baja médica, o incapacidad temporal, es un trámite oficial que en España se gestiona a través del sistema público: la emite un médico del servicio de salud de tu comunidad autónoma, y la prestación económica asociada la reconoce el INSS según sus propios criterios. Una consulta online con nosotros no sustituye ese circuito público. Lo que sí puede ofrecerte el médico, cuando la valoración clínica lo justifica, es un informe o justificante médico privado que documenta tu estado de salud y puede servirte de apoyo ante tu empresa mientras gestionas la baja oficial por la vía pública correspondiente a tu comunidad autónoma."
+          },
+          {
+            "question": "¿Qué es un justificante médico y en qué se diferencia de la baja?",
+            "answer": "El justificante médico es un documento que acredita que has sido valorado por un médico en una fecha concreta y recoge su apreciación clínica; no es lo mismo que el parte de baja, que es el documento oficial que reconoce la incapacidad temporal para trabajar dentro del sistema público. Nuestros médicos pueden emitir un justificante médico privado tras la valoración, cuando resulta clínicamente apropiado, para que lo presentes ante tu empresa o donde lo necesites. La baja oficial y su prestación económica siguen dependiendo del servicio de salud de tu comunidad autónoma y del INSS, con sus propios trámites y requisitos."
+          },
+          {
+            "question": "¿Pueden recetarme medicación en una consulta online?",
+            "answer": "Sí, cuando el médico lo considera clínicamente apropiado tras valorarte. Si tu situación lo permite, puede emitir una receta electrónica al finalizar la consulta, que podrás retirar en cualquier farmacia con tu tarjeta sanitaria o documento de identidad, según el circuito habitual en España. No todas las consultas terminan en receta: hay tratamientos, pruebas o derivaciones que requieren valoración presencial, y el médico te lo indicará si es tu caso. La prescripción de determinados medicamentos, especialmente los de mayor control, puede requerir una consulta presencial adicional según la normativa vigente, y el médico te lo explicará durante la cita."
+          },
+          {
+            "question": "¿Puedo pedir un informe médico para mi empresa?",
+            "answer": "Sí. Si tras la consulta el médico considera que está clínicamente justificado, puede emitirte un informe o justificante que recoja la valoración realizada y tu estado de salud en ese momento, para que lo presentes ante tu empresa. Cada empresa establece sus propios requisitos sobre qué documentación acepta, así que conviene que confirmes con tu departamento de recursos humanos qué necesitan exactamente antes de la cita. Ten en cuenta que este informe es distinto del parte de baja oficial: si tu situación requiere incapacidad temporal reconocida y su prestación económica, ese trámite depende del servicio de salud de tu comunidad autónoma y del INSS."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidad",
+        "title": "Privacidad y datos médicos",
+        "items": [
+          {
+            "question": "¿Cómo protegen mis datos médicos?",
+            "answer": "Tus datos de salud se tratan conforme al RGPD y a la normativa española de protección de datos, con acceso restringido al personal médico y administrativo que necesita consultarlos para prestarte el servicio. Las videollamadas se realizan mediante conexiones cifradas, y tu historial clínico se almacena en sistemas con controles de seguridad y copias de respaldo, no en documentos sueltos ni correos electrónicos. No compartimos tu información médica con terceros sin tu consentimiento, salvo cuando la ley nos obligue a ello. Si quieres más detalle sobre cómo tratamos tus datos, puedes consultar nuestra política de privacidad o escribirnos directamente."
+          },
+          {
+            "question": "¿Puedo acceder al historial de mis consultas?",
+            "answer": "Sí. Desde tu cuenta puedes consultar el historial de tus citas anteriores, incluyendo los informes, justificantes o recetas que el médico haya emitido durante cada consulta. Este historial te permite, por ejemplo, compartir con otro profesional sanitario lo que se valoró en una cita anterior, o recuperar un documento que necesites presentar más adelante. El acceso está protegido por tu inicio de sesión personal, y solo tú puedes consultarlo salvo que autorices expresamente a otra persona a hacerlo. Si no encuentras un documento que esperabas ver, escríbenos por correo electrónico y lo revisamos contigo."
+          },
+          {
+            "question": "¿Quién puede ver mi información médica?",
+            "answer": "Solo pueden acceder a tu información médica el médico que te atiende y el personal estrictamente necesario para el funcionamiento del servicio, como soporte técnico o administrativo en tareas que lo requieran, siempre bajo el mismo deber de confidencialidad que rige a cualquier profesional sanitario. No compartimos tu historial con tu empresa, tu aseguradora ni ningún tercero sin tu consentimiento expreso, salvo obligación legal. Si en algún momento necesitas que compartamos un documento con otra persona o entidad —por ejemplo, otro médico— puedes autorizarlo tú mismo desde tu cuenta o solicitándolo por escrito."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagos",
+        "title": "Precios y pagos",
+        "items": [
+          {
+            "question": "¿Cuánto cuesta una consulta?",
+            "answer": "El precio depende del tipo de consulta que reserves —general, con especialista, u otro servicio— y se muestra siempre con claridad antes de que confirmes y pagues tu cita, así que sabrás exactamente lo que vas a pagar antes de reservar. No hay cargos ocultos: si durante la consulta el médico recomienda un servicio adicional, se te indicará el coste antes de que decidas si quieres continuar. Los precios pueden actualizarse con el tiempo, por lo que la cifra definitiva es siempre la que ves en la pantalla de reserva en el momento de confirmar, no una tarifa fija publicada aparte."
+          },
+          {
+            "question": "¿Qué métodos de pago aceptan?",
+            "answer": "Aceptamos pago con tarjeta de crédito o débito de forma segura a través de la plataforma en el momento de reservar tu cita. El pago se procesa mediante conexiones cifradas antes de que se confirme el horario, y recibirás justificante del cobro por correo electrónico junto con la confirmación de tu cita. Si tienes un plan de suscripción activo, el coste de las consultas incluidas se gestiona automáticamente sin que tengas que introducir tus datos de pago en cada reserva. Si tienes dudas sobre un cargo concreto, puedes escribirnos y te lo revisamos con el detalle de la transacción."
+          }
+        ]
+      }
+    ]
+  }
+}

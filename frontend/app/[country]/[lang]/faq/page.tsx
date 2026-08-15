@@ -22,7 +22,8 @@ import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
-import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import { getMarketFaq, marketFaqLocales } from "@/lib/content/country-faq";
+import { hreflangAlternates, indexableHreflangCluster, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { buildBookHref } from "@/lib/routing/book-href";
 
@@ -51,21 +52,36 @@ async function resolve(country: string, lang: string) {
   // Market name in the page's own language ("Brasil", "Česko"), matching the
   // country /about page.
   const countryName = getCommonLocale(locale).countryNames?.[code] ?? config.name;
+  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase() as LocaleCode;
   return {
     code,
     config,
     countryName,
     locale,
+    defaultLocale,
     faq: bundle.faq,
     aboutBundle: bundle.about,
     aboutT,
     market: resolveAboutCopy(config, contact, about, aboutT, countryName),
+    // Researched, per-market copy where it exists. `exact: false` means this
+    // locale is reading someone else's language — see country-faq.ts.
+    marketFaq: getMarketFaq(code, locale, defaultLocale),
   };
 }
 
-/** Market FAQs first, then the four global groups, in one tabbed set. */
+/**
+ * The tabbed question set.
+ *
+ * Researched per-market copy wins outright when this country has it: those
+ * groups are written against that market's own SERP and healthcare system
+ * (which instrument the sick note actually is, who issues it, which regulator),
+ * so pairing them with the generic set would restate the same answers in
+ * weaker words. Until a market has that copy, fall back to the original shape —
+ * templated market FAQs from `country-about`, then the four shared groups.
+ */
 function faqGroups(resolved: NonNullable<Awaited<ReturnType<typeof resolve>>>) {
-  const { faq, market, countryName } = resolved;
+  const { faq, market, countryName, marketFaq } = resolved;
+  if (marketFaq) return marketFaq.groups;
   return [
     { eyebrow: countryName, title: market.faqHeading, items: market.faqs },
     {
@@ -112,7 +128,17 @@ export async function generateMetadata({
   const { country, lang } = await params;
   const resolved = await resolve(country, lang);
   if (!resolved) return { title: SITE_NAME };
-  const { config, countryName, faq } = resolved;
+  const { code, config, countryName, faq, marketFaq } = resolved;
+
+  // Once a market has researched copy, only the locales that actually carry it
+  // are publishable: the rest render a fallback language and must not claim to
+  // be a translated alternate. Before any market copy exists the page is the
+  // same generic set in every locale, which IS genuinely translated, so the
+  // full cluster is correct. Same rule as /legal/* (exactLocalesForLegalType).
+  const exactLocales = marketFaqLocales(code);
+  const languages = marketFaq
+    ? indexableHreflangCluster(config, "/faq", exactLocales)
+    : hreflangAlternates(config, "/faq");
 
   return buildPublicMetadata({
     path: `/${country}/${lang}/faq`,
@@ -125,7 +151,11 @@ export async function generateMetadata({
     sourceImage: "/images/stock/contact.jpg",
     imageAlt: `${faq.faq_section_title} — ${countryName}`,
     locale: ogLocales(config, lang).locale,
-    languages: hreflangAlternates(config, "/faq"),
+    ...(languages ? { languages } : {}),
+    // Serving a fallback language is fine for a reader and wrong for an index
+    // entry. (`buildPublicMetadata` emits noindex,nofollow — every link on this
+    // page is also reachable from the country home, so nothing is stranded.)
+    noindex: marketFaq ? !marketFaq.exact : false,
   });
 }
 

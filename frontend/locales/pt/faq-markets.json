@@ -1,0 +1,226 @@
+{
+  "br": {
+    "groups": [
+      {
+        "eyebrow": "Brasil",
+        "title": "Perguntas sobre o Brasil",
+        "items": [
+          {
+            "question": "Os médicos são registrados no Brasil?",
+            "answer": "Sim. Todos os médicos que atendem pacientes no Brasil através da Global Health possuem registro no Conselho Regional de Medicina (CRM) do seu estado, sob supervisão do Conselho Federal de Medicina (CFM). Essa informação está disponível no perfil de cada médico antes de você marcar a consulta, incluindo o número do CRM e a especialidade. A teleconsulta segue as mesmas exigências éticas e técnicas de uma consulta presencial: o médico avalia seu quadro clínico e decide a conduta conforme seu julgamento profissional, com base nas normas do CFM para o exercício da medicina à distância no país."
+          },
+          {
+            "question": "A teleconsulta e o atestado emitido online têm validade jurídica no Brasil?",
+            "answer": "Sim. A telemedicina é reconhecida como forma legítima de exercício da medicina pelo Conselho Federal de Medicina (Resolução CFM nº 2.314/2022), e um atestado emitido após uma teleconsulta real tem validade jurídica desde que assinado digitalmente pelo médico responsável, conforme as normas do CFM. Isso é diferente de um documento gerado apenas por um questionário, sem avaliação médica — o nosso atestado só é emitido depois de uma consulta com um médico, e apenas quando clinicamente apropriado ao seu quadro. A aceitação pelo empregador e o benefício do INSS são avaliados conforme os critérios de cada um, e não por nós."
+          },
+          {
+            "question": "O que eu faço em caso de emergência médica?",
+            "answer": "A Global Health é uma clínica online e não substitui o atendimento de emergência. Se você tiver sintomas graves — dor no peito, dificuldade para respirar, sangramento intenso, perda de consciência ou qualquer sinal de risco à vida — ligue imediatamente para o 192 (SAMU) ou vá ao pronto-socorro mais próximo. As nossas teleconsultas são indicadas para avaliação de sintomas não urgentes, acompanhamento de saúde, atestados e prescrições quando clinicamente apropriado. A linha de atendimento da Global Health não é monitorada para emergências clínicas, portanto não deve ser usada nessas situações. Em caso de dúvida sobre a gravidade dos sintomas, procure sempre atendimento presencial."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Agendamento",
+        "title": "Como agendar sua consulta",
+        "items": [
+          {
+            "question": "Como marco uma consulta na Global Health?",
+            "answer": "Você pode marcar uma teleconsulta diretamente pelo site, escolhendo o tipo de atendimento — clínico geral ou especialista, conforme disponível no Brasil — e um horário que funcione para você. Depois de escolher o horário, você preenche um breve formulário com seus dados e histórico relevante, confirma o pagamento e recebe o link da videochamada por e-mail. Não é necessário ligar ou enviar mensagem para agendar; todo o processo é feito online, em poucos minutos. Se preferir esclarecer dúvidas administrativas antes de marcar, pode escrever para o nosso e-mail de contato, atendido em português e inglês."
+          },
+          {
+            "question": "Existe consulta no mesmo dia?",
+            "answer": "Sim, na maioria dos casos há horários disponíveis no mesmo dia, dependendo da demanda e da disponibilidade dos médicos no momento em que você acessa a agenda. Ao abrir a página de agendamento, você vê apenas os horários realmente livres, então o que aparece ali já reflete a disponibilidade real. Se você precisar de um atestado ou de orientação rápida, recomendamos agendar assim que perceber o sintoma, já que os horários mais próximos tendem a preencher primeiro. Para situações que não podem esperar por uma vaga, procure atendimento presencial ou, em emergência, ligue para o 192."
+          },
+          {
+            "question": "Quanto custa uma consulta?",
+            "answer": "O valor de cada tipo de consulta é mostrado antes de você confirmar o agendamento, na tela de escolha do horário, para que você saiba exatamente quanto vai pagar antes de finalizar. Os preços podem variar conforme o tipo de atendimento — clínico geral, especialista ou exames, quando disponíveis no Brasil — e são atualizados periodicamente, por isso não os publicamos fora da própria página de agendamento. Você também pode conferir os valores na página de cada serviço antes de marcar. Não cobramos nenhuma taxa oculta: o valor mostrado no momento da reserva é o valor final da consulta."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Como funciona a teleconsulta",
+        "items": [
+          {
+            "question": "Como funciona a consulta por vídeo?",
+            "answer": "Depois de confirmar o agendamento, você recebe um link para a videochamada, acessível pelo celular, tablet ou computador, sem necessidade de baixar aplicativo. No horário marcado, você entra na sala virtual e é atendido por um médico registrado no Conselho Regional de Medicina do seu estado, que vai ouvir seus sintomas, revisar seu histórico relevante e conduzir a avaliação da mesma forma que faria presencialmente. Ao final, o médico decide a conduta apropriada — que pode incluir orientação, prescrição ou atestado, quando clinicamente indicado. Toda a consulta é registrada em prontuário eletrônico, como em qualquer atendimento médico formal."
+          },
+          {
+            "question": "Em quais idiomas posso ser atendido?",
+            "answer": "As teleconsultas da Global Health no Brasil são realizadas em português e em inglês. Você pode escolher o idioma preferido ao marcar a consulta, e o perfil de cada médico indica em quais idiomas ele atende, para que você saiba antes de reservar o horário. Se você tiver mais conforto se comunicando em um dos dois idiomas — por exemplo, se for estrangeiro residindo no Brasil ou brasileiro no exterior —, pode filtrar os médicos disponíveis por idioma diretamente na agenda. O restante do site também está disponível nos dois idiomas, incluindo os documentos que você recebe após a consulta."
+          },
+          {
+            "question": "No que a Global Health é diferente de um atestado feito só por questionário?",
+            "answer": "Diferente de serviços que emitem um atestado apenas com base em um formulário preenchido pelo paciente, sem uma avaliação real, na Global Health todo atestado e toda prescrição são precedidos de uma teleconsulta com um médico registrado no CRM do seu estado. O médico conversa com você por vídeo, avalia seus sintomas e seu histórico, e só então decide se a emissão do documento é clinicamente apropriada — o que significa que, em alguns casos, o resultado da consulta pode ser diferente de simplesmente receber o atestado pedido. Essa avaliação real é o que sustenta a validade médica e jurídica do documento."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Atestados",
+        "title": "Atestados e receitas",
+        "items": [
+          {
+            "question": "O atestado médico emitido pela Global Health é aceito pelo meu empregador?",
+            "answer": "O atestado é emitido por um médico registrado no Conselho Regional de Medicina do seu estado, após uma avaliação real por videochamada, e segue as normas do Conselho Federal de Medicina para documentos emitidos por telemedicina. Isso dá ao documento a mesma validade de um atestado emitido presencialmente. Ainda assim, cada empregador define suas próprias políticas internas de aceitação de atestados, e o benefício previdenciário, quando aplicável, é avaliado pelo INSS conforme seus próprios critérios — não podemos garantir a decisão de terceiros. Recomendamos verificar a política da sua empresa se você tiver dúvidas específicas sobre o seu caso."
+          },
+          {
+            "question": "Vocês emitem receita médica online?",
+            "answer": "Sim. Quando clinicamente apropriado, o médico pode emitir uma prescrição durante ou logo após a teleconsulta, seguindo as mesmas regras de segurança e registro de qualquer receita médica no Brasil. A prescrição é enviada digitalmente e pode ser usada em farmácias que aceitam receita eletrônica. Nem toda consulta resulta em prescrição — isso depende exclusivamente da avaliação do médico sobre o seu quadro, e alguns medicamentos controlados têm regras específicas que podem exigir avaliação adicional ou não podem ser prescritos remotamente. O médico explica durante a consulta se a sua situação permite prescrição por telemedicina."
+          },
+          {
+            "question": "Em quanto tempo recebo o atestado ou a receita depois da consulta?",
+            "answer": "Na maioria dos casos, o documento é emitido logo após o término da consulta, ainda no mesmo atendimento, e enviado para o e-mail cadastrado na sua conta. Você também pode acessá-lo na área de documentos do seu perfil, de onde pode baixá-lo ou reenviá-lo sempre que precisar. Em situações que exigem análise adicional por parte do médico, a emissão pode levar um pouco mais de tempo, mas você é avisado durante a consulta se isso for necessário. Se não receber o documento esperado dentro do prazo informado, entre em contato pelo nosso e-mail de suporte."
+          },
+          {
+            "question": "Que tipos de atestado a Global Health emite?",
+            "answer": "Emitimos atestados para afastamento por doença comum, sempre com base na avaliação do médico durante a teleconsulta e apenas quando clinicamente apropriado ao seu quadro. A finalidade e o período de afastamento são decididos pelo médico responsável, não escolhidos pelo paciente no momento do agendamento. Alguns tipos de atestado — como os que exigem exame físico presencial ou perícia específica — podem não ser adequados para emissão por telemedicina, e o médico vai orientá-lo nesses casos. Se você tiver uma necessidade específica, pode descrevê-la ao agendar, e o médico avalia durante a consulta se é possível atendê-la remotamente."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidade",
+        "title": "Privacidade e seus dados",
+        "items": [
+          {
+            "question": "Meus dados de saúde estão protegidos?",
+            "answer": "Sim. Tratamos seus dados de saúde em conformidade com a Lei Geral de Proteção de Dados (LGPD), que estabelece regras rígidas para a coleta, o armazenamento e o uso de dados sensíveis, incluindo informações médicas. Suas informações são armazenadas de forma segura e usadas apenas para prestar o atendimento médico, gerenciar seu histórico e cumprir obrigações legais. Não vendemos nem compartilhamos seus dados de saúde com terceiros para fins comerciais. Se quiser saber mais sobre como tratamos seus dados, você pode consultar nossa política de privacidade, disponível no rodapé do site, ou entrar em contato pelo nosso e-mail."
+          },
+          {
+            "question": "Quem tem acesso ao meu prontuário e às minhas consultas?",
+            "answer": "Seu prontuário é acessado apenas pelos profissionais diretamente envolvidos no seu atendimento, como o médico que realizou a consulta, e por sistemas administrativos necessários para o funcionamento da plataforma, sempre sob controle de acesso. Não compartilhamos o conteúdo clínico da sua consulta com o seu empregador, familiares ou terceiros sem sua autorização, exceto quando exigido por lei. Você pode acessar seu próprio histórico de consultas, atestados e prescrições a qualquer momento na área de documentos do seu perfil. Essa é uma das proteções centrais da LGPD para dados de saúde, tratados como dados sensíveis pela legislação brasileira."
+          },
+          {
+            "question": "Posso pedir para excluir os meus dados?",
+            "answer": "Sim. Como titular dos dados, a LGPD garante a você o direito de solicitar informações sobre quais dados temos, corrigi-los quando estiverem incorretos, ou pedir a exclusão, dentro dos limites da lei. É importante saber que alguns registros médicos precisam ser mantidos por um período mínimo por exigência legal e ética da profissão médica, mesmo após um pedido de exclusão, então nem todo dado pode ser apagado imediatamente. Para exercer qualquer um desses direitos, entre em contato pelo nosso e-mail de suporte, e explicaremos quais dados podem ser removidos e em quanto tempo o pedido é atendido."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagamentos",
+        "title": "Formas de pagamento",
+        "items": [
+          {
+            "question": "Quais formas de pagamento vocês aceitam?",
+            "answer": "Aceitamos os principais cartões de crédito e débito internacionais no momento da reserva da consulta, processados de forma segura na própria página de agendamento. O valor exato e as formas disponíveis para o seu tipo de consulta são mostrados antes de você confirmar o pagamento, para que não haja surpresas. Caso alguma forma de pagamento específica não apareça como opção no momento da sua reserva, isso significa que não está disponível para esse serviço no Brasil. Se tiver dúvidas sobre um pagamento já realizado ou sobre um problema na cobrança, entre em contato pelo nosso e-mail de suporte."
+          },
+          {
+            "question": "O plano de saúde ou convênio reembolsa a consulta?",
+            "answer": "A Global Health não fatura diretamente convênios ou planos de saúde brasileiros — o pagamento da consulta é feito por você no momento da reserva. Dependendo do seu plano, pode ser possível solicitar reembolso à sua operadora apresentando o recibo da consulta e o atestado ou relatório emitido, mas isso depende inteiramente das regras e da cobertura do seu próprio convênio, que não controlamos. Após a consulta, você pode acessar e baixar o recibo na área de documentos do seu perfil para enviar à sua operadora, caso o seu plano preveja esse tipo de reembolso."
+          }
+        ]
+      }
+    ]
+  },
+  "pt": {
+    "groups": [
+      {
+        "eyebrow": "Portugal",
+        "title": "Perguntas sobre Portugal",
+        "items": [
+          {
+            "question": "Os médicos estão inscritos na Ordem dos Médicos?",
+            "answer": "Sim. Todos os médicos que consultam na Global Health Portugal estão inscritos na Ordem dos Médicos, a entidade reguladora da profissão em Portugal. Cada consulta é feita por videochamada segura com um médico habilitado, que avalia o seu caso antes de propor qualquer tratamento, atestado ou receita. A inscrição na Ordem garante que o médico cumpre as regras deontológicas e técnicas exigidas para exercer em Portugal, tal como aconteceria numa consulta presencial. Pode confirmar a inscrição de qualquer médico diretamente no site da Ordem dos Médicos, se preferir verificar antes de marcar."
+          },
+          {
+            "question": "Qual a relação da Global Health com o SNS24?",
+            "answer": "A Global Health é um serviço privado, distinto do SNS24, a linha e portal público de saúde. Não substituímos o SNS24 nem impedimos o seu uso: muitos doentes recorrem às duas vias consoante a situação, por exemplo usando o SNS24 para triagem gratuita e a Global Health quando preferem marcar uma consulta médica privada mais rápida, num horário à sua escolha, sem depender da disponibilidade do centro de saúde. A escolha é sua. Se procurar cuidados urgentes ou uma situação que exija atendimento presencial imediato, o SNS24 ou o serviço de urgência continuam a ser o caminho correto, não a Global Health."
+          },
+          {
+            "question": "E se precisar de ajuda urgente?",
+            "answer": "A Global Health não é um serviço de emergência e a nossa linha telefónica não está preparada para lidar com emergências clínicas. Se tiver sintomas graves, dor no peito, dificuldade respiratória, hemorragia importante ou qualquer situação que ponha a vida em risco, ligue imediatamente para o 112 ou dirija-se ao serviço de urgência hospitalar mais próximo. Uma consulta online é adequada para avaliação de sintomas não urgentes, renovação de tratamento, atestados e aconselhamento geral, mas não substitui uma equipa de emergência presencial. Em caso de dúvida sobre a gravidade da situação, opte sempre pela via mais segura e contacte o 112."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Marcações",
+        "title": "Como marcar uma consulta",
+        "items": [
+          {
+            "question": "Como marco uma consulta na Global Health?",
+            "answer": "Pode marcar uma consulta diretamente no site, escolhendo o tipo de consulta que procura, por exemplo clínica geral, uma especialidade ou um atestado médico. Depois de indicar os seus dados e o motivo da consulta, escolhe um horário disponível no calendário e confirma o pagamento. O valor da consulta é sempre apresentado antes de concluir a marcação, para que saiba exatamente o que vai pagar. Após a marcação, recebe a confirmação com a hora da videochamada e as instruções de acesso, por email e na sua área de doente."
+          },
+          {
+            "question": "Quanto tempo demora até ser atendido?",
+            "answer": "O tempo de espera depende do tipo de consulta e da disponibilidade dos médicos no momento em que marca. O calendário de marcação mostra apenas os horários realmente disponíveis, pelo que a hora que escolhe é a hora em que será atendido, sem filas de espera nem urgências a saltar a sua vez. Para pedidos com alguma urgência clínica, mas não uma emergência, procure os horários mais próximos disponíveis no próprio dia. Se a sua situação for grave, não aguarde por uma consulta online: contacte o 112 ou dirija-se a um serviço de urgência."
+          },
+          {
+            "question": "Posso marcar consultas fora do horário de expediente?",
+            "answer": "O calendário de marcação mostra sempre os horários realmente disponíveis nesse momento, que podem incluir períodos fora do horário comercial habitual, consoante a disponibilidade dos médicos nesse dia. Não precisa de telefonar nem de esperar por uma linha para marcar: todo o processo é feito online, a qualquer hora do dia, mesmo que a consulta em si só possa realizar-se num horário disponível mais tarde. Se não encontrar um horário que lhe convém no dia em que procura, volte a consultar o calendário mais tarde, porque a disponibilidade é atualizada regularmente."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Como funcionam as consultas",
+        "items": [
+          {
+            "question": "Como decorre uma consulta online?",
+            "answer": "A consulta decorre por videochamada segura, através do computador, tablet ou telemóvel, na hora que marcou. O médico começa por confirmar a sua identidade e o motivo da consulta, depois faz-lhe perguntas sobre os sintomas e o historial relevante, tal como aconteceria numa consulta presencial. Consoante a avaliação, pode receber uma recomendação, uma receita, um atestado ou a indicação para procurar cuidados presenciais, sempre que a situação o justifique clinicamente. No final, fica com um resumo da consulta disponível na sua área de doente, incluindo qualquer documento emitido."
+          },
+          {
+            "question": "Preciso de preparar alguma coisa antes da consulta?",
+            "answer": "Ajuda ter por perto uma lista dos medicamentos que toma atualmente, incluindo a dosagem, e uma breve descrição dos sintomas e há quanto tempo os sente. Se tiver exames, análises ou relatórios médicos recentes relacionados com o motivo da consulta, tê-los à mão permite ao médico avaliar o seu caso com mais informação. Garanta também uma ligação à internet estável e um local sossegado, para que a videochamada decorra sem interrupções. Nada disto é obrigatório: se não tiver esta informação disponível, o médico continua a poder avaliá-lo com base no que descrever durante a consulta."
+          },
+          {
+            "question": "Os médicos falam português e inglês?",
+            "answer": "Sim. As consultas na Global Health Portugal são disponibilizadas em português e em inglês, para que possa escolher a língua em que se sente mais confortável a descrever os seus sintomas. Pode indicar a sua preferência ao marcar a consulta, e a informação é encaminhada para o médico antes da videochamada. Documentos como atestados e receitas seguem também a terminologia médica portuguesa habitual, para que sejam reconhecidos sem dificuldade por entidades patronais, farmácias ou outras instituições em Portugal, independentemente da língua em que decorreu a consulta."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Atestados",
+        "title": "Atestados e receitas",
+        "items": [
+          {
+            "question": "Emitem atestado médico (baixa médica)?",
+            "answer": "Sim, é um dos serviços disponíveis. Se, após a avaliação, o médico considerar clinicamente adequado, emite um atestado médico de incapacidade temporária para o trabalho, também conhecido como baixa médica. O atestado é sempre uma decisão clínica do médico que o consultou, tomada com base na sua situação nessa consulta, nunca um documento automático. A atribuição de subsídio de doença correspondente é decidida separadamente pela Segurança Social, segundo as suas próprias regras e prazos, pelo que o atestado é apenas o primeiro passo do processo, não uma garantia do subsídio."
+          },
+          {
+            "question": "Emitem atestado para a carta de condução?",
+            "answer": "Sim, este é um serviço próprio e distinto do atestado de doença, com uma página dedicada onde pode consultar as condições aplicáveis antes de marcar. Os atestados para carta de condução seguem os requisitos definidos pelo IMT, que estabelecem o que pode ser avaliado remotamente e em que situações. O médico realiza a avaliação exigida durante a videochamada e, quando aplicável, emite o atestado nos termos previstos. Recomendamos que consulte a página do serviço antes de marcar, para confirmar que a sua situação (primeira carta, renovação ou outra) está abrangida pela avaliação remota."
+          },
+          {
+            "question": "Podem renovar a minha receita ou tratamento habitual?",
+            "answer": "Sim, a renovação de tratamento é um dos motivos de consulta mais comuns. Numa consulta de renovação, o médico revê a medicação que já toma, confirma que continua clinicamente adequada e, sendo esse o caso, emite uma nova receita. Não é uma renovação automática: o médico pode pedir mais informação, sugerir um ajuste ou recomendar uma consulta presencial se a situação o justificar. Para tratamentos que exigem vigilância regular, análises periódicas ou consultas de especialidade, o médico indica-lhe o acompanhamento mais adequado durante a própria consulta."
+          },
+          {
+            "question": "O atestado é aceite pela entidade patronal e pela Segurança Social?",
+            "answer": "O atestado é emitido por um médico inscrito na Ordem dos Médicos após uma avaliação clínica, com o mesmo valor legal de um atestado emitido presencialmente. Cada entidade patronal pode ter procedimentos próprios para comunicar uma ausência, por isso vale a pena confirmar os requisitos da sua empresa. A atribuição de subsídio de doença é decidida separadamente pela Segurança Social, de acordo com as suas próprias regras e prazos de comunicação, que pode consultar diretamente com esse organismo. A Global Health não tem intervenção nessa decisão, apenas na emissão do atestado."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidade",
+        "title": "Privacidade e processo clínico",
+        "items": [
+          {
+            "question": "Os meus dados clínicos estão protegidos?",
+            "answer": "Sim. Os seus dados de saúde são tratados como informação clínica sensível, com acesso restrito às pessoas envolvidas nos seus cuidados, e protegidos de acordo com o Regulamento Geral de Proteção de Dados. As videochamadas decorrem através de ligações seguras e o registo da consulta fica guardado na sua área de doente, não partilhado publicamente nem com terceiros sem o seu consentimento, salvo obrigação legal. Recomendamos ainda cuidados básicos do seu lado, como realizar a consulta num local privado e manter a sua conta protegida com uma palavra-passe segura."
+          },
+          {
+            "question": "Quem tem acesso ao meu processo clínico?",
+            "answer": "O seu processo clínico é acessível apenas ao médico que o está a consultar e, quando aplicável, à equipa envolvida diretamente nos seus cuidados, como parte da gestão normal do processo. Não partilhamos os seus dados de saúde com entidades patronais, seguradoras ou terceiros sem o seu consentimento explícito, exceto quando exigido por lei, por exemplo em situações de saúde pública. Pode consultar o histórico das suas consultas, atestados e receitas a qualquer momento na sua área de doente, que funciona como o seu ponto único de acesso a estes documentos."
+          },
+          {
+            "question": "Posso pedir para apagar os meus dados?",
+            "answer": "Sim. Como titular dos dados, pode solicitar o acesso, a retificação ou o apagamento dos seus dados pessoais, nos termos do Regulamento Geral de Proteção de Dados. Alguma informação clínica pode ter de ser conservada por um período mínimo, por obrigação legal aplicável a registos de saúde, mesmo após um pedido de eliminação; nesses casos explicamos-lhe qual o prazo aplicável e porquê. Para exercer este direito, pode contactar-nos diretamente pelos canais indicados na página de contactos, onde encontra também a informação sobre como apresentar reclamações junto da autoridade de controlo."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagamentos",
+        "title": "Preços e pagamento",
+        "items": [
+          {
+            "question": "Quanto custa uma consulta?",
+            "answer": "O preço de cada tipo de consulta, seja clínica geral, uma especialidade ou um atestado, é sempre apresentado antes de confirmar a marcação, para que saiba exatamente quanto vai pagar antes de avançar. Os preços variam consoante o tipo de consulta e podem ser atualizados ao longo do tempo, por isso preferimos mostrar o valor atual no momento da marcação em vez de o publicar aqui, onde poderia ficar desatualizado. Se tiver alguma dúvida sobre o valor de um serviço específico antes de marcar, pode confirmar diretamente na página desse serviço ou através dos nossos contactos."
+          },
+          {
+            "question": "Que métodos de pagamento aceitam?",
+            "answer": "O pagamento é feito online, no momento da marcação, através dos métodos disponíveis apresentados nessa altura no processo de checkout, normalmente cartão de pagamento. Não é necessário nenhum pagamento por transferência bancária manual nem em dinheiro no momento da consulta. Após o pagamento, recebe um comprovativo associado à sua marcação, disponível também na sua área de doente para consulta posterior, por exemplo para efeitos de reembolso junto de um seguro de saúde, caso a sua apólice cubra este tipo de consulta. Confirme sempre com a sua seguradora as condições aplicáveis antes de marcar."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "cz": {
+    "groups": [
+      {
+        "eyebrow": "Česko",
+        "title": "Otázky pro Česko",
+        "items": [
+          {
+            "question": "Jsou lékaři Global Health registrovaní v Česku?",
+            "answer": "Ano. Lékaři, kteří konzultují přes Global Health Česko, jsou registrovaní u České lékařské komory, profesní organizace, která vede registr praktických i specializovaných lékařů v ČR. Registraci konkrétního lékaře najdete na jeho profilu spolu s jeho odborností a jazyky, ve kterých konzultuje. Naše sídlo je v Praze 1, na adrese Rybná 24 — jde o registrační sídlo společnosti, nikoli o ordinaci pro osobní návštěvy. Všechna vyšetření probíhají zabezpečeným videohovorem, takže lokalita pacienta v Česku nehraje roli — konzultovat můžete odkudkoli v zemi."
+          },
+          {
+            "question": "V jakém jazyce mohu konzultaci absolvovat?",
+            "answer": "Konzultace nabízíme v češtině i angličtině. Profil každého lékaře uvádí, ve kterém jazyce nebo jazycích konzultuje, takže si můžete vybrat lékaře podle jazyka ještě před objednáním. Telefonní linka pro dotazy k objednávkám, platbám a účtu je rovněž obsluhována česky i anglicky. Pokud preferujete konzultaci v jiném jazyce, doporučujeme si to ověřit přímo u konkrétního lékaře před rezervací, protože nabídka jazyků se může lišit podle jeho specializace a dostupnosti v daný den. Pokud si nejste jistí, kterého lékaře zvolit, filtr jazyka najdete přímo v rezervačním systému při výběru termínu."
+          },
+          {
+            "question": "Nahrazuje Global Health mého praktického lékaře?",
+            "answer": "Ne, Global Health funguje jako doplněk k vaší běžné zdravotní péči, nikoli jako náhrada registrace u praktického lékaře. Někdy je online konzultace rychlejší cestou k odbornému posouzení, například u akutních potíží mimo ordinační hodiny vaší kliniky nebo u specializovaného dotazu. U některých úkonů, jako je vystavení neschopenky, ale zůstává rozhodující vztah s vaším registrovaným praktickým lékařem a pravidla ČSSZ. Doporučujeme mít i nadále svého praktického lékaře evidovaného u zdravotní pojišťovny pro dlouhodobou péči a preventivní prohlídky. Pro dlouhodobé sledování chronických onemocnění, očkování nebo pravidelné preventivní prohlídky zůstává osobní praktický lékař nenahraditelný, protože zajišťuje kontinuitu péče a vedení zdravotnické dokumentace v jednom místě."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Objednání",
+        "title": "Jak probíhá objednání",
+        "items": [
+          {
+            "question": "Jak si objednám konzultaci?",
+            "answer": "Konzultaci objednáte online během několika minut: vyberete si obor (praktický lékař nebo specialista), zvolíte volný termín z kalendáře konkrétního lékaře a potvrdíte objednávku. Cena konzultace se zobrazí ještě před dokončením rezervace, takže víte přesně, co platíte. Po potvrzení obdržíte e-mailem odkaz na video hovor a případné pokyny k přípravě. Objednávku můžete provést z počítače i mobilního telefonu bez nutnosti instalovat samostatnou aplikaci. Pokud si nejste jistí, kterého lékaře zvolit, u každého profilu najdete jeho specializaci, hodnocení a nejbližší volný termín, takže rozhodnutí zabere jen chvíli."
+          },
+          {
+            "question": "Jak rychle mohu lékaře konzultovat?",
+            "answer": "V Česku bývají k dispozici termíny v ten samý den, u praktického lékaře i u řady specialistů, v závislosti na aktuální vytíženosti a jazyku, ve kterém chcete konzultovat. Přesnou dostupnost vidíte přímo v kalendáři při výběru lékaře — systém zobrazuje pouze reálně volné termíny. Pokud potřebujete péči skutečně naléhavě, online konzultace není určena k řešení akutních a život ohrožujících stavů; v takovém případě volejte 155 nebo 112, případně vyhledejte nejbližší pohotovost. Mimo špičku bývá výběr termínů ještě širší, zejména u praktických lékařů konzultujících anglicky i česky. Doporučujeme objednávku provést s předstihem, pokud preferujete konkrétního lékaře nebo konkrétní čas."
+          },
+          {
+            "question": "Mohu si objednat konzultaci pro své dítě nebo rodinného příslušníka?",
+            "answer": "Ano, konzultaci lze objednat i jménem dítěte nebo jiného rodinného příslušníka, pokud rezervaci provádí zákonný zástupce nebo osoba s jejich souhlasem. Při objednávání zadáváte údaje osoby, která bude konzultovat, ne pouze osoby, která platí. U dětí a nezletilých lékař během konzultace posoudí, zda je online forma pro dané potíže vhodná, a v opačném případě doporučí osobní vyšetření. Doporučujeme mít při konzultaci dítěte k dispozici i zdravotní kartičku a případnou dokumentaci od praktického lékaře. Platba za konzultaci probíhá jedním účtem bez ohledu na to, kdo z rodiny konzultuje. Po konzultaci najdete záznam a případné dokumenty v pacientském účtu osoby, která byla vyšetřena."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konzultace",
+        "title": "Online konzultace",
+        "items": [
+          {
+            "question": "Jak probíhá online konzultace?",
+            "answer": "Konzultace probíhá formou zabezpečeného videohovoru v prohlížeči, v čase, který jste si rezervovali. Lékař si s vámi projde potíže, případnou anamnézu a užívané léky, a na základě toho navrhne další postup — může jít o doporučení léčby, vystavení eReceptu, doporučení dalšího vyšetření nebo, je-li to klinicky odůvodněné, o vystavení potvrzení. Konzultace obvykle trvá do dvaceti minut. Po jejím skončení najdete záznam a případné dokumenty ve svém pacientském účtu. Před konzultací doporučujeme mít připravený seznam užívaných léků a stručný popis potíží, ať vyšetření proběhne co nejefektivněji. Pokud spojení vypadne, lékař se pokusí hovor obnovit nebo vám nabídne náhradní termín."
+          },
+          {
+            "question": "Jaké potíže lze řešit online a kdy je potřeba osobní vyšetření?",
+            "answer": "Online se dobře řeší běžná akutní onemocnění (nachlazení, chřipka, infekce močových cest), preskripce a přeskripce běžných léků, kožní a jiné dotazy, kde postačí popis a případně fotografie, i konzultace se specialistou. Pokud potíže vyžadují fyzické vyšetření, laboratorní odběr nebo zobrazovací metodu, lékař vás na to během konzultace upozorní a doporučí vhodné pracoviště nebo pohotovost. Cílem je bezpečné posouzení na dálku, nikoli nahrazení osobního vyšetření tam, kde je nezbytné. U kožních potíží pomáhá zaslání kvalitní fotografie ještě před začátkem hovoru, u dýchacích a jiných akutních potíží lékař posoudí závažnost přímo během hovoru."
+          },
+          {
+            "question": "Mohu konzultovat specialistu, nebo jen praktického lékaře?",
+            "answer": "Přes Global Health Česko můžete objednat konzultaci jak s praktickým lékařem, tak s vybranými specialisty — nabídka oborů je uvedená přímo v rezervačním systému a liší se podle aktuální dostupnosti lékařů. Ke specialistovi se u nás objednáváte přímo, bez nutnosti čekat na papírové doporučení od praktického lékaře, samotný specialista ale může v konzultaci doporučit další kroky, případně osobní vyšetření nebo vyšetření u jiného odborníka, pokud to daný stav vyžaduje. Aktuální seznam dostupných specializací se může měnit podle toho, kteří lékaři v daný den konzultují, takže doporučujeme zkontrolovat nabídku přímo v rezervačním systému."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Neschopenka a recepty",
+        "title": "Neschopenka, eRecept a léky",
+        "items": [
+          {
+            "question": "Může mi lékař přes Global Health vystavit neschopenku?",
+            "answer": "Neschopenka (dočasná pracovní neschopnost) je vždy rozhodnutím ošetřujícího lékaře na základě vyšetření, a to i telefonického či video, a odesílá se elektronicky přímo do systému ČSSZ jako eNeschopenka — soukromá platforma ji sama o sobě „nevydává\" ani nezaručuje. Pokud to stav pacienta odůvodňuje, lékař ji během nebo po konzultaci vystaví stejným postupem jako při osobní návštěvě. O nároku na nemocenské dávky pak podle vlastních pravidel rozhoduje ČSSZ, nikoli ošetřující lékař ani Global Health. Doporučujeme mít připravené rodné číslo a údaje zaměstnavatele."
+          },
+          {
+            "question": "Jak funguje eNeschopenka a proč ji nevystavuje jen soukromá klinika na požádání?",
+            "answer": "Neschopenka je dnes plně elektronická (eNeschopenka) a vystavuje ji přímo ošetřující lékař prostřednictvím ePortálu ČSSZ nebo napojeného lékařského softwaru — dokument jde rovnou do systému ČSSZ, zaměstnavateli i pojištěnci, bez papírové varianty. Vystavení je vázané na vyšetření a klinické posouzení lékařem, nikoli na žádost pacienta u konkrétního poskytovatele. Aktuální průběh a historii svých neschopenek najdete i vy sami po přihlášení na ePortálu ČSSZ, včetně údajů o ošetřujícím lékaři a délce pracovní neschopnosti. Pro pacienta se tak nic nemění v tom, jak neschopenku využije — jen už nemusí nic fyzicky nosit svému zaměstnavateli, protože zaměstnavatel má vlastní přístup do systému ČSSZ."
+          },
+          {
+            "question": "Dostanu při konzultaci eRecept?",
+            "answer": "Pokud to zdravotní stav vyžaduje a lékař to po posouzení uzná za vhodné, může během online konzultace vystavit eRecept, který se elektronicky uloží do Centrálního úložiště elektronických receptů. Recept si pak vyzvednete v jakékoli lékárně v ČR po předložení rodného čísla nebo SMS kódu, bez nutnosti nosit papírovou verzi. Ne každá konzultace nutně končí předpisem — záleží na klinickém posouzení lékaře. U vybraných látek, například opioidů nebo léků se zvláštním režimem, mohou platit dodatečná omezení daná zákonem. Recept lze díky elektronické podobě vyzvednout i mimo místo bydliště, prakticky v jakékoli lékárně v Česku, což usnadňuje vyzvednutí léku i na cestách."
+          },
+          {
+            "question": "Můžete mi předepsat opakovaně stejný lék, který už dlouhodobě užívám?",
+            "answer": "U chronické medikace lékař během konzultace zkontroluje vaši aktuální léčbu a v případě potřeby vystaví eRecept na pokračování terapie, pokud to shledá klinicky vhodným. U léků vyžadujících pravidelné sledování, například laboratorní kontroly, může lékař doporučit osobní vyšetření nebo odběr dříve, než recept prodlouží. Zvláště u opioidů, návykových látek a některých psychofarmak platí přísnější pravidla pro předepisování na dálku, a lékař vás o nich v konzultaci informuje. Pokud od poslední kontroly uplynula delší doba, může lékař doporučit nejprve krátkou osobní návštěvu u vašeho praktického lékaře, než recept obnoví."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Soukromí",
+        "title": "Soukromí a záznamy",
+        "items": [
+          {
+            "question": "Jak jsou moje zdravotní údaje chráněné?",
+            "answer": "Veškerá zdravotnická dokumentace a přenos dat během video konzultace jsou šifrované a zpracovávané v souladu s GDPR a českou legislativou o ochraně osobních a citlivých údajů. Přístup k vašim záznamům má pouze ošetřující lékař a omezený okruh oprávněného personálu, který zajišťuje chod platformy. Data neprodáváme ani nesdílíme s třetími stranami pro marketingové účely. Podrobnosti o zpracování údajů najdete v našich zásadách ochrany osobních údajů, dostupných na webu. Přístupy k systému jsou navíc auditované, takže lze zpětně dohledat, kdo a kdy se záznamem pracoval. V případě dotazu k ochraně údajů se můžete obrátit přímo na naši podporu."
+          },
+          {
+            "question": "Kdo má přístup k záznamu z mé konzultace?",
+            "answer": "Záznam a poznámky z konzultace vidí primárně lékař, který vás vyšetřil, a vy sami ve svém pacientském účtu. Pokud si to vyžádáte a udělíte souhlas, může být souhrn zpřístupněn i vašemu praktickému lékaři nebo jinému ošetřujícímu odborníkovi pro návaznost péče. Bez vašeho výslovného souhlasu záznamy nesdílíme se zaměstnavatelem, zdravotní pojišťovnou ani jinou třetí stranou — s výjimkou zákonem stanovených případů, například hlášení vybraných infekčních onemocnění. Stejná pravidla platí i pro záznamy o vystaveném eReceptu nebo neschopence, pokud k jejich vydání během konzultace došlo. Souhlas se sdílením lze kdykoli odvolat prostřednictvím pacientského účtu."
+          },
+          {
+            "question": "Mohu si vyžádat kopii svého lékařského záznamu?",
+            "answer": "Ano. Jako pacient máte právo požádat o kopii své zdravotnické dokumentace vedené v souvislosti s konzultacemi přes Global Health, a to prostřednictvím pacientského účtu nebo e-mailem na naši podporu. Žádost obvykle vyřídíme do několika pracovních dnů. Totéž platí pro záznam o vystaveném eReceptu nebo neschopence, pokud k nim během konzultace došlo. Kopii dokumentace může být vhodné mít i pro předání vašemu praktickému lékaři nebo jinému specialistovi. Dokumentaci obdržíte v elektronické podobě, kterou lze snadno přeposlat nebo vytisknout podle potřeby. V případě nejasností ohledně rozsahu poskytnutých údajů se můžete obrátit na naši podporu. Údaje uchováváme po dobu stanovenou zdravotnickou legislativou."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Platby",
+        "title": "Platby a ceny",
+        "items": [
+          {
+            "question": "Kolik konzultace stojí a jak platím?",
+            "answer": "Cenu konkrétní konzultace vidíte vždy před dokončením objednávky, protože se liší podle typu konzultace (praktický lékař, specialista) a zvoleného lékaře, a je spravovaná přímo v rezervačním systému, takže vždy odpovídá aktuální nabídce. Platba probíhá online platební kartou v okamžiku rezervace, bezpečně přes zabezpečenou platební bránu. Žádné skryté poplatky navíc neúčtujeme — cena zobrazená při objednání je cena, kterou zaplatíte. Fakturu k platbě obdržíte automaticky e-mailem. Přijímáme běžné platební karty a platba je zpracovaná okamžitě, takže rezervaci máte potvrzenou ihned po dokončení objednávky. Fakturu lze kdykoli dohledat zpětně i ve svém pacientském účtu."
+          },
+          {
+            "question": "Proplácí mi konzultaci zdravotní pojišťovna?",
+            "answer": "Global Health je soukromá placená služba a platbu provádíte přímo nám, nikoli přes systém veřejného zdravotního pojištění. Některé zdravotní pojišťovny v Česku, například ZPMVČR, nabízejí svým klientům vlastní telefonickou nebo online linku jako pojištěnou výhodu — jde ale o oddělenou službu pojišťovny, nikoli o proplácení konzultací u soukromých poskytovatelů, jako je Global Health. Zda vám pojišťovna nabízí příspěvek na soukromou péči, doporučujeme ověřit přímo u své pojišťovny. V praxi to znamená, že platbu za konzultaci u Global Health hradíte vy sami, bez ohledu na to, jakou pojišťovnu máte. Přesné podmínky jednotlivých pojišťoven se liší a mohou se v čase měnit."
+          }
+        ]
+      }
+    ]
+  }
+}

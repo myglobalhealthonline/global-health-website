@@ -12,6 +12,8 @@ import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { hreflangRegion } from "@/lib/seo/hreflang";
+import { marketFaqLocales } from "@/lib/content/country-faq";
+import type { LocaleCode } from "@/lib/i18n/types";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
   exactLocalesForLegalType,
@@ -503,9 +505,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Country About pages: the market's languages, offering and registration.
     // Undated for the same reason — the copy is code-resident, not CMS.
     pushLocalized(country, "/about", 0.5);
-    // Country FAQ pages: the market's regulatory FAQs plus the shared booking/
-    // care/privacy/payment groups. Code-resident copy, so undated too.
-    pushLocalized(country, "/faq", 0.5);
+    // Country FAQ pages. Once a market has researched per-market copy, only the
+    // locales that actually carry it are submitted — the others render a
+    // fallback language and self-noindex (see lib/content/country-faq.ts), and
+    // submitting a noindexed URL is the defect this file already avoids for
+    // /legal/* and for service and doctor locale variants. A market with no
+    // per-market copy yet serves the same genuinely-translated generic set in
+    // every locale, so it submits the full set. Undated: code-resident copy.
+    const faqLocales = marketFaqLocales(code);
+    pushLocalized(
+      country,
+      "/faq",
+      0.5,
+      undefined,
+      faqLocales.length > 0 ? countryLangs(country).filter((l) => faqLocales.includes(l as LocaleCode)) : undefined,
+    );
 
   }
 

@@ -1,0 +1,114 @@
+{
+  "ro": {
+    "groups": [
+      {
+        "eyebrow": "România",
+        "title": "Despre serviciul nostru în România",
+        "items": [
+          {
+            "question": "Aveți cabinet medical în România?",
+            "answer": "Global Health funcționează în România exclusiv ca o clinică online. Nu avem cabinet fizic în România, iar sediul social al companiei este în Irlanda. Toate consultațiile au loc prin apel video securizat, direct de pe telefon, tabletă sau calculator, fără să fie nevoie să vă deplasați. Acest model online vă permite să vorbiți cu un medic fără sală de așteptare și, de multe ori, chiar în ziua în care faceți programarea. Dacă preferați o vizită fizică, un cabinet local vi se poate potrivi mai bine — platforma noastră este gândită pentru pacienți confortabili cu o consultație la distanță, prin video."
+          },
+          {
+            "question": "Medicii sunt înregistrați la Colegiul Medicilor din România?",
+            "answer": "Da. Toți medicii care consultă pacienți din România prin platforma noastră sunt înregistrați la Colegiul Medicilor din România, autoritatea care reglementează profesia medicală în țară. Înregistrarea fiecărui medic poate fi verificată direct pe profilul său din platformă, unde găsiți și specializarea, alături de limbile în care oferă consultații. Acest lucru înseamnă că medicul cu care vorbiți respectă aceleași standarde profesionale și etice ca un medic consultat fizic, într-un cabinet din România. Dacă aveți nelămuriri legate de înregistrarea unui anumit medic, ne puteți contacta prin e-mail înainte de programare, iar echipa vă poate confirma detaliile relevante."
+          },
+          {
+            "question": "Consultațiile se desfășoară în limba română?",
+            "answer": "Da. Consultațiile pentru pacienții din România se desfășoară în limba română, iar unii medici oferă și consultații în limba engleză. Limbile vorbite de fiecare medic sunt afișate pe profilul său, astfel încât puteți alege dinainte un medic potrivit nevoilor dumneavoastră lingvistice. Și asistența administrativă — programări, facturare, întrebări despre cont — este disponibilă prin e-mail, în română și engleză. Dacă preferați o anumită limbă pentru discuția medicală propriu-zisă, verificați profilul medicului înainte de a confirma programarea, sau scrieți-ne și vă recomandăm un medic potrivit nevoii dumneavoastră."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Programări",
+        "title": "Programarea unei consultații",
+        "items": [
+          {
+            "question": "Cum programez o consultație online?",
+            "answer": "Programarea se face direct din platformă: alegeți tipul de consultație de care aveți nevoie, apoi un interval orar disponibil dintr-o listă de medici. Completați un scurt formular cu datele dumneavoastră și cu motivul consultației, astfel încât medicul să aibă context înainte de apel. Prețul consultației este afișat clar înainte de confirmarea programării, fără costuri ascunse. După plată primiți o confirmare cu linkul către consultația video, pe e-mail și în contul dumneavoastră din platformă. Întregul proces durează, de regulă, câteva minute și nu necesită deplasare la niciun cabinet fizic."
+          },
+          {
+            "question": "Pot obține o programare în aceeași zi?",
+            "answer": "În multe cazuri, da — platforma afișează disponibilitatea în timp real, iar pentru consultațiile generale există frecvent intervale libere chiar în ziua respectivă, în funcție de programul medicilor activi. Disponibilitatea variază însă de la o zi la alta și de la un tip de consultație la altul, mai ales pentru specialități cu mai puțini medici pe platformă. Vă recomandăm să verificați lista de intervale disponibile direct pe pagina de programare, pentru a vedea cea mai apropiată oră liberă. Dacă nu găsiți un interval potrivit astăzi, puteți programa la fel de ușor pentru următoarele zile."
+          },
+          {
+            "question": "Pot anula sau reprograma o consultație?",
+            "answer": "Da, o consultație poate fi anulată sau reprogramată din contul dumneavoastră, înainte de ora stabilită. Termenul exact pentru anulare fără penalizare și eventualele condiții de rambursare sunt afișate în platformă chiar la momentul programării, astfel încât să le cunoașteți dinainte de a confirma. Dacă întâmpinați o problemă tehnică sau aveți nevoie de ajutor pentru a schimba ora consultației, echipa de suport vă poate ajuta prin e-mail. Reprogramarea este utilă mai ales dacă apare un imprevizibil de ultim moment sau dacă starea dumneavoastră de sănătate se schimbă înainte de consultație."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultații",
+        "title": "Cum decurge o consultație online",
+        "items": [
+          {
+            "question": "Cum decurge o consultație video?",
+            "answer": "La ora programată, primiți acces la un apel video securizat direct din platformă sau prin linkul trimis pe e-mail. Medicul vă întreabă despre simptome, istoric medical și tratamentele urmate, la fel ca la o consultație față în față, apoi vă oferă o evaluare și recomandări. În funcție de situație, medicul poate emite o rețetă, o adeverință medicală sau vă poate recomanda un consult suplimentar. Consultația durează, de regulă, câteva zeci de minute, timp suficient pentru a discuta problema în detaliu. Aveți nevoie doar de o conexiune stabilă la internet și de un loc liniștit."
+          },
+          {
+            "question": "Ce echipament îmi trebuie pentru o consultație?",
+            "answer": "Este nevoie doar de un telefon, o tabletă sau un calculator cu cameră, microfon și conexiune la internet — nu este necesar niciun software specializat, consultația se desfășoară direct din browser sau din aplicație. Vă recomandăm un loc liniștit, cu lumină bună, pentru ca medicul să vă poată vedea și auzi clar. Dacă aveți documente medicale relevante — analize recente, rețete anterioare — este util să le aveți la îndemână în timpul apelului. Testați camera și microfonul înainte de oră, iar dacă întâmpinați probleme tehnice, echipa de suport vă poate ghida prin e-mail."
+          },
+          {
+            "question": "Ce fac dacă am o urgență medicală?",
+            "answer": "Global Health nu este un serviciu de urgență, iar consultațiile online nu înlocuiesc îngrijirea de urgență. Dacă aveți simptome grave sau vă aflați în pericol, sunați imediat la 112 sau mergeți la cea mai apropiată unitate de primiri urgențe. Platforma noastră este potrivită pentru afecțiuni obișnuite, nu urgente — răceli, infecții ușoare, reînnoiri de tratament, întrebări medicale generale. Dacă nu sunteți sigur dacă situația dumneavoastră este o urgență, cel mai sigur este să contactați medicul de familie sau serviciile de urgență, nu să așteptați o programare online."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Concediu și rețete",
+        "title": "Concediu medical și rețete",
+        "items": [
+          {
+            "question": "Puteți elibera concediu medical online?",
+            "answer": "Un medic care vă evaluează într-o consultație online poate elibera o adeverință medicală ce atestă evaluarea efectuată, atunci când este indicat clinic. Recunoașterea acesteia ca bază pentru un concediu medical oficial și pentru indemnizația aferentă depinde de CNAS și de relația contractuală a medicului respectiv cu casa de asigurări, precum și de regulile propriului angajator — aspecte pe care nu le putem garanta noi. Subiectul concediilor medicale obținute online este, de altfel, activ dezbătut în presa juridică din România. Dacă aveți nevoie de un concediu recunoscut oficial de CNAS, verificați dinainte cu angajatorul și, dacă e cazul, cu medicul dumneavoastră de familie."
+          },
+          {
+            "question": "Adeverința eliberată online este acceptată de angajator?",
+            "answer": "Adeverința este emisă de medicul care v-a evaluat și atestă consultația și constatările medicale. Fiecare angajator își stabilește însă propriile cerințe pentru actele acceptate ca justificare a absenței, iar unii solicită documente emise conform procedurilor CNAS. Vă recomandăm să verificați din timp politica internă a angajatorului dumneavoastră, mai ales dacă aveți nevoie ca absența să fie recunoscută și plătită ca indemnizație de concediu medical. Echipa noastră vă poate oferi adeverința emisă de medic, dar nu poate garanta acceptarea ei de o anumită instituție sau angajator — decizia rămâne a lor, potrivit reglementărilor proprii."
+          },
+          {
+            "question": "Puteți elibera o rețetă online?",
+            "answer": "Da. Dacă, în urma evaluării, medicul consideră că un tratament medicamentos este indicat, poate emite o rețetă pe care o puteți ridica de la orice farmacie, prezentând un act de identitate. Nu orice afecțiune necesită sau permite tratament la distanță — decizia aparține întotdeauna medicului, în funcție de simptome și de istoricul dumneavoastră medical. Anumite categorii de medicamente, precum cele cu regim special, nu pot fi prescrise printr-o consultație online și necesită o evaluare față în față. Dacă aveți o rețetă anterioară pe care doriți să o discutați, o puteți menționa medicului în timpul consultației."
+          },
+          {
+            "question": "Rețeta eliberată online este compensată de CNAS?",
+            "answer": "Depinde de tipul rețetei și de statutul medicului față de CNAS. O rețetă electronică emisă de medicul care v-a consultat poate fi ridicată de la farmacie, însă compensarea prin sistemul CNAS urmează regulile proprii ale casei de asigurări și presupune, de regulă, ca medicul emitent să aibă contract cu CNAS pentru acel tip de prescripție. Nu putem garanta compensarea unei rețete emise prin platforma noastră. Dacă acest aspect este important pentru dumneavoastră, întrebați farmacistul la ridicarea rețetei sau verificați direct cu CNAS înainte de a programa o consultație."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Confidențialitate",
+        "title": "Confidențialitate și date medicale",
+        "items": [
+          {
+            "question": "Cum îmi sunt protejate datele medicale?",
+            "answer": "Datele dumneavoastră medicale sunt stocate criptat și accesate doar de personalul autorizat implicat direct în îngrijirea dumneavoastră — în principal medicul care vă consultă. Apelurile video se desfășoară printr-o conexiune securizată, iar informațiile introduse în platformă, precum simptomele, istoricul sau documentele încărcate, nu sunt partajate cu terți în scopuri comerciale. Respectăm cerințele legale privind protecția datelor cu caracter personal aplicabile în Uniunea Europeană. Dacă aveți întrebări specifice despre modul în care sunt folosite datele dumneavoastră sau despre politica noastră de confidențialitate, ne puteți scrie oricând la adresa de e-mail de contact."
+          },
+          {
+            "question": "Cine are acces la istoricul meu medical?",
+            "answer": "Accesul la fișa dumneavoastră medicală este limitat la medicii implicați direct în îngrijirea dumneavoastră și la personalul strict necesar pentru funcționarea platformei, de exemplu pentru suport tehnic legat de contul dumneavoastră. Un medic nou, la o consultație viitoare, poate vedea istoricul consultațiilor anterioare din platformă pentru a oferi o îngrijire coerentă, cu excepția cazului în care alegeți altfel. Datele nu sunt vândute și nu sunt partajate cu angajatori, asigurători sau alte instituții fără consimțământul dumneavoastră explicit sau fără o obligație legală clară care să ne impună acest lucru într-un caz concret."
+          },
+          {
+            "question": "Pot descărca sau șterge datele mele?",
+            "answer": "Da. Puteți solicita o copie a datelor dumneavoastră medicale stocate în platformă, precum și ștergerea contului și a informațiilor asociate, sub rezerva perioadelor de păstrare impuse de lege pentru documentele medicale. Aceste cereri se procesează prin e-mail, la adresa noastră de contact, și sunt tratate conform drepturilor pe care legislația europeană privind protecția datelor le acordă pacienților. Rețineți că anumite înregistrări medicale pot fi păstrate o perioadă minimă obligatorie, chiar și după o solicitare de ștergere, atunci când legea o impune, indiferent de preferința dumneavoastră personală."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Plăți",
+        "title": "Plăți și facturare",
+        "items": [
+          {
+            "question": "Cât costă o consultație?",
+            "answer": "Prețul fiecărei consultații este afișat clar în platformă înainte de a confirma programarea, în funcție de tipul de consultație și de medicul ales. Nu publicăm prețuri fixe aici, pentru că pot varia în timp și în funcție de serviciul solicitat — varianta actualizată este mereu cea afișată pe pagina de programare. Nu există costuri ascunse: suma pe care o vedeți înainte de plată este suma finală pe care o veți plăti. Dacă aveți un plan sau un abonament activ, eventualele beneficii incluse sunt aplicate automat înainte de a vi se cere plata."
+          },
+          {
+            "question": "Ce metode de plată acceptați?",
+            "answer": "Acceptăm plata online, prin card, direct în platformă, în momentul confirmării programării. Procesarea plății este securizată, iar datele cardului dumneavoastră nu sunt stocate de noi. Dacă aveți un abonament sau un plan care acoperă anumite servicii, costul consultației poate fi redus sau acoperit integral, în funcție de beneficiile incluse — acest lucru este afișat automat înainte de plată. Pentru întrebări legate de o factură sau de o plată care nu a fost procesată corect, ne puteți contacta prin e-mail, iar echipa noastră vă răspunde cu detalii despre tranzacția respectivă."
+          }
+        ]
+      }
+    ]
+  }
+}

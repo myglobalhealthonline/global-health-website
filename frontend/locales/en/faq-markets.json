@@ -1,0 +1,674 @@
+{
+  "br": {
+    "groups": [
+      {
+        "eyebrow": "Brazil",
+        "title": "Questions about Brazil",
+        "items": [
+          {
+            "question": "Are the doctors registered in Brazil?",
+            "answer": "Yes. Every doctor seeing patients in Brazil through Global Health holds registration with the Regional Council of Medicine (Conselho Regional de Medicina, or CRM) of their state, under the oversight of the Federal Council of Medicine (Conselho Federal de Medicina, CFM). You can see this registration number, along with the doctor's specialty, on their profile before you book. Telehealth consultations follow the same ethical and clinical standards as an in-person visit: the doctor reviews your symptoms and history and decides the appropriate course of action based on their professional judgment, in line with CFM rules for remote medical practice in Brazil."
+          },
+          {
+            "question": "Is a telehealth consultation and an online medical certificate legally valid in Brazil?",
+            "answer": "Yes. Telemedicine is recognised as a legitimate form of medical practice by Brazil's Federal Council of Medicine (Resolução CFM nº 2.314/2022), and a certificate issued after a real consultation carries legal validity when signed digitally by the responsible doctor, following CFM rules. This is different from a certificate generated purely from a questionnaire, with no medical assessment — ours is issued only after a consultation with a doctor, and only where clinically appropriate to your situation. Whether an employer accepts it, and how any INSS benefit is assessed, is decided by each of them under their own criteria, not by us."
+          },
+          {
+            "question": "What should I do in a medical emergency?",
+            "answer": "Global Health is an online clinic and is not a substitute for emergency care. If you have severe symptoms — chest pain, difficulty breathing, heavy bleeding, loss of consciousness, or any sign of a life-threatening condition — call 192 (SAMU) immediately or go to your nearest emergency department. Our telehealth consultations are designed for non-urgent symptom assessment, ongoing care, certificates and prescriptions where clinically appropriate. Our contact line is not monitored for medical emergencies and should never be used for one. If you are unsure how serious your symptoms are, always err on the side of seeking in-person care."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Booking",
+        "title": "How to book your consultation",
+        "items": [
+          {
+            "question": "How do I book a consultation with Global Health?",
+            "answer": "You can book a video consultation directly on the website by choosing the type of care you need — general practice or a specialist, where available in Brazil — and a time that works for you. After picking a slot, you fill in a short form with your details and relevant history, confirm payment, and receive the video-call link by email. There is no need to call or message anyone to book; the whole process happens online in a few minutes. If you have an administrative question before booking, you can write to our contact email, answered in Portuguese and English."
+          },
+          {
+            "question": "Is same-day booking available?",
+            "answer": "In most cases, yes — same-day slots are usually available, depending on demand and doctor availability at the time you check the schedule. The booking page only shows times that are genuinely open, so what you see reflects real availability rather than a placeholder calendar. If you need a certificate or quick guidance, it is worth booking as soon as you notice the symptom, since the nearest slots tend to fill first. If your situation cannot wait for an appointment, seek in-person care, or call 192 in a medical emergency."
+          },
+          {
+            "question": "How much does a consultation cost?",
+            "answer": "The price of each consultation type is shown before you confirm your booking, on the scheduling screen, so you know exactly what you will pay before finishing. Prices can vary by consultation type — general practice, specialist, or tests, where available in Brazil — and are updated from time to time, which is why we do not publish them outside the booking page itself. You can also check pricing on each service's own page before you book. There are no hidden fees: the amount shown at the time of booking is the final price of the consultation."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultations",
+        "title": "How the telehealth consultation works",
+        "items": [
+          {
+            "question": "How does the video consultation work?",
+            "answer": "Once your booking is confirmed, you receive a link to the video call, accessible from your phone, tablet or computer, with no app download required. At your appointment time, you join the virtual room and are seen by a doctor registered with the Regional Council of Medicine of their state, who listens to your symptoms, reviews any relevant history, and carries out the assessment much as they would in person. At the end, the doctor decides on the appropriate next step, which may include guidance, a prescription, or a certificate, where clinically indicated. The consultation is recorded in an electronic medical record, as with any formal medical visit."
+          },
+          {
+            "question": "Which languages can I be seen in?",
+            "answer": "Global Health's telehealth consultations in Brazil are carried out in Portuguese and in English. You can choose your preferred language when booking, and each doctor's profile states which languages they consult in, so you know before reserving a slot. If you are more comfortable in one language over the other — for example, as a foreign resident in Brazil or a Brazilian living abroad — you can filter available doctors by language directly on the schedule. The rest of the site, including the documents you receive after your consultation, is also available in both languages."
+          },
+          {
+            "question": "How is Global Health different from a certificate issued through a questionnaire alone?",
+            "answer": "Unlike services that issue a certificate based only on a form the patient fills in, with no real assessment, every certificate and prescription at Global Health follows an actual video consultation with a doctor registered with their state's CRM. The doctor talks with you, reviews your symptoms and history, and only then decides whether issuing the document is clinically appropriate — which means the outcome of your visit can, in some cases, differ from simply receiving whatever was requested. That real assessment is what supports both the medical and the legal standing of the document you receive."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Certificates",
+        "title": "Certificates and prescriptions",
+        "items": [
+          {
+            "question": "Will my employer accept a medical certificate from Global Health?",
+            "answer": "The certificate is issued by a doctor registered with the Regional Council of Medicine of their state, after a real video assessment, and follows Federal Council of Medicine (CFM) rules for documents issued through telemedicine — which gives it the same standing as a certificate issued in person. Even so, each employer sets its own internal policy for accepting certificates, and any INSS benefit, where applicable, is assessed by INSS against its own criteria — we cannot guarantee a third party's decision. If you have a specific concern about your workplace, we recommend checking your employer's own policy beforehand."
+          },
+          {
+            "question": "Do you issue prescriptions online?",
+            "answer": "Yes. Where clinically appropriate, the doctor can issue a prescription during or shortly after the consultation, following the same safety and record-keeping rules as any prescription issued in Brazil. It is sent digitally and can be used at pharmacies that accept electronic prescriptions. Not every consultation results in a prescription — that depends entirely on the doctor's assessment of your case, and certain controlled medications carry specific rules that may require further evaluation or cannot be prescribed remotely at all. The doctor will explain during the consultation whether your situation is one telemedicine can prescribe for."
+          },
+          {
+            "question": "How long after the consultation do I receive the certificate or prescription?",
+            "answer": "In most cases, the document is issued right after the consultation ends, during the same visit, and sent to the email on your account. You can also find it in the documents area of your profile, where you can download it or resend it whenever you need to. In situations that need further review by the doctor, issuing the document can take a little longer, but you will be told during the consultation if that applies to you. If you do not receive the expected document within the stated time, contact us through our support email."
+          },
+          {
+            "question": "What types of certificate does Global Health issue?",
+            "answer": "We issue certificates for common-illness leave, based on the doctor's assessment during the consultation and only where clinically appropriate to your situation. The reason and length of leave are decided by the assessing doctor, not chosen by the patient at booking. Some certificate types — such as those requiring an in-person physical exam or a specific formal evaluation — may not be suitable for issuing through telemedicine, and the doctor will advise you if that applies. If you have a specific need, you can describe it when booking, and the doctor will assess during the consultation whether it can be handled remotely."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacy",
+        "title": "Privacy and your records",
+        "items": [
+          {
+            "question": "Is my health data protected?",
+            "answer": "Yes. We handle your health data in accordance with Brazil's General Data Protection Law (Lei Geral de Proteção de Dados, LGPD), which sets strict rules for collecting, storing and using sensitive data, including medical information. Your information is stored securely and used only to provide your care, manage your history, and meet legal obligations. We do not sell your health data or share it with third parties for commercial purposes. If you would like more detail on how we handle your data, you can review our privacy policy, linked in the site footer, or contact us by email."
+          },
+          {
+            "question": "Who can see my medical record and consultation history?",
+            "answer": "Your record is accessed only by the professionals directly involved in your care, such as the doctor who saw you, and by administrative systems needed to run the platform, always under access controls. We do not share the clinical content of your consultation with your employer, family members or other third parties without your authorisation, except where required by law. You can view your own consultation history, certificates and prescriptions at any time in the documents area of your profile. This is one of the core protections LGPD gives to health data, which Brazilian law treats as sensitive."
+          },
+          {
+            "question": "Can I ask for my data to be deleted?",
+            "answer": "Yes. As the data subject, LGPD gives you the right to ask what data we hold about you, to correct anything that is wrong, and to request deletion, within the limits the law allows. Some medical records must be kept for a minimum period under legal and professional medical requirements, even after a deletion request, so not everything can be removed immediately. To exercise any of these rights, contact us through our support email, and we will explain which data can be removed and how long the request takes to complete."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Payments",
+        "title": "Payment methods",
+        "items": [
+          {
+            "question": "What payment methods do you accept?",
+            "answer": "We accept major international credit and debit cards at the time you book, processed securely on the booking page itself. The exact price and the payment options available for your consultation type are shown before you confirm payment, so there are no surprises. If a particular payment method does not appear as an option when you book, it means it is not currently available for that service in Brazil. If you have a question about a payment you have already made, or a billing issue, contact us through our support email."
+          },
+          {
+            "question": "Does health insurance (convênio) reimburse the consultation?",
+            "answer": "Global Health does not bill Brazilian health insurers or convênios directly — you pay for the consultation yourself at the time of booking. Depending on your plan, it may be possible to request reimbursement from your insurer by submitting the consultation receipt and any certificate or report issued, but that depends entirely on your own plan's rules and coverage, which we do not control. After your consultation, you can access and download the receipt in the documents area of your profile to send to your insurer, if your plan allows this type of reimbursement."
+          }
+        ]
+      }
+    ]
+  },
+  "cz": {
+    "groups": [
+      {
+        "eyebrow": "Czechia",
+        "title": "Questions for Czechia",
+        "items": [
+          {
+            "question": "Are Global Health doctors registered in Czechia?",
+            "answer": "Yes. Every doctor consulting through Global Health Czechia holds registration with the Czech Medical Chamber (Česká lékařská komora), the professional body that maintains the register of general practitioners and specialists in the Czech Republic. Each doctor's registration, specialty and consultation languages are listed on their profile. Our registered office is in Prague 1, at Rybná 24 — this is a company address, not a walk-in surgery. Every assessment happens by secure video call, so where you are within Czechia makes no difference to booking."
+          },
+          {
+            "question": "Which language can I consult in?",
+            "answer": "Consultations are available in Czech and English. Each doctor's profile states which language or languages they consult in, so you can choose a doctor by language before booking. Our phone line for booking, billing and account questions is also answered in Czech and English. If you need a consultation in another language, check with the specific doctor before booking, since language availability varies by specialty and by day. If you're unsure which doctor to pick, the language filter in the booking calendar makes it easy to narrow down options quickly."
+          },
+          {
+            "question": "Does Global Health replace my registered GP?",
+            "answer": "No. Global Health complements your existing care rather than replacing your registration with a praktický lékař (registered GP). An online consultation can be the faster route to an assessment — for an acute problem outside your clinic's hours, or for a specialist opinion. For some things, such as a sickness certificate, the relationship with your own registered GP and ČSSZ's own rules still govern what applies. We recommend keeping a registered GP with your zdravotní pojišťovna for ongoing and preventive care."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Booking",
+        "title": "How booking works",
+        "items": [
+          {
+            "question": "How do I book a consultation?",
+            "answer": "Booking takes a few minutes online: choose the type of consultation (GP or specialist), pick an available slot from that doctor's calendar, and confirm. The price is shown before you complete the booking, so you know exactly what you're paying. Once confirmed, you'll receive a video-call link and any preparation instructions by email. You can book from a computer or phone, and no separate app is required. If you're not sure which doctor to choose, each profile shows their specialty, rating and next available slot, so the decision usually takes only a moment."
+          },
+          {
+            "question": "How quickly can I see a doctor?",
+            "answer": "Same-day appointments are usually available in Czechia, for both GP and specialist consultations, depending on current demand and the language you need. Exact availability is shown live in each doctor's calendar — only genuinely open slots appear. Online consultation is not designed for emergencies or life-threatening symptoms. If you need urgent care, call 155 (Czech medical rescue) or 112, or attend your nearest emergency department rather than waiting for an online slot. Availability tends to be even wider outside peak hours, particularly for GPs consulting in both Czech and English. Booking ahead is worth doing if you have a preferred doctor or time in mind."
+          },
+          {
+            "question": "Can I book a consultation for my child or another family member?",
+            "answer": "Yes, a consultation can be booked on behalf of a child or another family member, provided the booking is made by a parent, legal guardian, or with the patient's consent. When booking, you enter the details of the person being seen, not just the person paying. For children, the doctor assesses during the consultation whether an online format is appropriate for the symptoms, and will recommend an in-person visit if it is not. Having the child's health-insurance card and any GP records to hand helps."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultations",
+        "title": "Online consultations",
+        "items": [
+          {
+            "question": "What happens during an online consultation?",
+            "answer": "The consultation takes place by secure video call, in your browser, at the time you booked. The doctor discusses your symptoms, relevant history and any medication you take, then decides on next steps — which might include treatment advice, an eRecept, a referral for further tests, or, where clinically appropriate, a certificate. Consultations typically run up to twenty minutes. Afterwards, a summary and any documents issued appear in your patient account. It helps to have a short summary of your symptoms and current medications ready beforehand, so the time is used efficiently. If the connection drops, the doctor will try to reconnect or offer a replacement slot."
+          },
+          {
+            "question": "What can be treated online, and when do I need to be seen in person?",
+            "answer": "Online consultations work well for common acute conditions (colds, flu, urinary infections), routine and repeat prescriptions, skin and other concerns that can be assessed from a description or photo, and specialist opinions. Where a condition needs a physical examination, a lab sample or imaging, the doctor will tell you during the consultation and point you to the right place, including emergency care if needed. The aim is safe remote assessment, not a substitute for an in-person exam where one is genuinely required."
+          },
+          {
+            "question": "Can I see a specialist, or only a GP?",
+            "answer": "Global Health Czechia offers consultations with both GPs and a range of specialists — the specialties on offer are shown directly in the booking system and vary with doctor availability. You can book a specialist directly, without waiting for a paper referral from a GP first. The specialist may still recommend further steps during the consultation, including an in-person examination or referral to another clinician, if your condition calls for it. The exact list of available specialties can shift depending on which doctors are consulting on a given day, so it's worth checking the booking system directly for current availability."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Sick notes & prescriptions",
+        "title": "Neschopenka, eRecept and prescriptions",
+        "items": [
+          {
+            "question": "Can a Global Health doctor issue me a neschopenka?",
+            "answer": "A neschopenka (certified sickness absence) is always a decision made by the treating doctor following an assessment — which can include a video consultation — and it is submitted electronically straight into the ČSSZ system as an eNeschopenka; a private platform does not issue or guarantee one by itself. Where a patient's condition supports it, the doctor completes it during or after the consultation, the same way as after an in-person visit. Entitlement to the sickness benefit itself is then decided by ČSSZ under its own rules, not by the doctor or by Global Health. Have your rodné číslo and employer details ready."
+          },
+          {
+            "question": "How does eNeschopenka work, and why isn't it just issued by a private clinic on request?",
+            "answer": "Sickness certification in Czechia is now fully electronic (eNeschopenka), and it is submitted directly by the treating doctor through ČSSZ's ePortál or connected medical software — the document goes straight to ČSSZ, the employer and the insured person, with no paper version. Issuing one depends on a clinical assessment by the doctor, not on a request made to a particular provider. You can also see the current status and history of your own eNeschopenka after logging into ePortál ČSSZ, including the treating doctor and the length of the absence."
+          },
+          {
+            "question": "Will I get an eRecept from a consultation?",
+            "answer": "Where your condition warrants it and the assessing doctor judges it clinically appropriate, they can issue an eRecept during an online consultation, which is stored electronically in the Central Repository of Electronic Prescriptions. You then collect the medication at any pharmacy in the Czech Republic using your rodné číslo or an SMS code — no paper copy needed. Not every consultation ends in a prescription; it depends on clinical judgment. Certain medications, such as opioids or other controlled substances, carry additional legal restrictions on remote prescribing."
+          },
+          {
+            "question": "Can I get a repeat prescription for medication I already take long-term?",
+            "answer": "For ongoing medication, the doctor reviews your current treatment during the consultation and, where clinically appropriate, issues an eRecept to continue it. For medicines that need regular monitoring, such as periodic blood tests, the doctor may ask you to have those done, or to be seen in person, before renewing the prescription. Stricter rules apply to remote prescribing of opioids, other controlled substances and some psychiatric medications, and the doctor will explain these during your consultation if relevant. If a significant amount of time has passed since your last check-up, the doctor may suggest a short in-person visit to your GP before renewing the prescription."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacy",
+        "title": "Privacy and records",
+        "items": [
+          {
+            "question": "How is my health information protected?",
+            "answer": "All medical records and the video connection used during your consultation are encrypted and handled under GDPR and Czech data-protection law covering personal and sensitive health data. Access to your records is limited to the treating doctor and a small number of authorised staff who keep the platform running. We do not sell your data or share it with third parties for marketing. Full details of how your data is processed are set out in our privacy policy, available on the website."
+          },
+          {
+            "question": "Who can see the record from my consultation?",
+            "answer": "The consultation record and notes are primarily visible to the doctor who saw you, and to you in your own patient account. With your consent, a summary can be shared with your registered GP or another treating clinician for continuity of care. Without your explicit consent, we do not share your records with an employer, your health insurer, or any other third party — except where the law requires it, for example reporting certain notifiable infectious diseases. The same limits apply to any eRecept or eNeschopenka issued during the consultation. Consent to share can be withdrawn at any time through your patient account."
+          },
+          {
+            "question": "Can I request a copy of my medical record?",
+            "answer": "Yes. As a patient you have the right to request a copy of the medical record kept in connection with your Global Health consultations, either through your patient account or by emailing our support team. Requests are usually handled within a few business days. This includes any eRecept or eNeschopenka issued during a consultation. A copy is useful to hand to your registered GP or another specialist if you continue care outside our platform. Records are retained for the period required by Czech healthcare-record legislation."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Payments",
+        "title": "Payments and pricing",
+        "items": [
+          {
+            "question": "How much does a consultation cost, and how do I pay?",
+            "answer": "The price for a specific consultation is always shown before you complete the booking, since it varies by consultation type (GP or specialist) and by doctor, and is managed directly in the booking system so it always reflects current pricing. Payment is taken online by card at the time of booking, through a secure payment gateway. There are no hidden extra charges — the price shown at booking is the price you pay, and an invoice is emailed automatically. We accept standard payment cards and processing is instant, so your booking is confirmed as soon as checkout completes. Past invoices remain available in your patient account at any time."
+          },
+          {
+            "question": "Will my health insurer cover the consultation?",
+            "answer": "Global Health is a private, paid service, and payment goes directly to us rather than through the public health-insurance system. Some Czech health insurers, such as ZPMVČR, offer their own phone or online doctor line as a covered member benefit — but that is a separate service run by the insurer, not reimbursement for consultations with private providers like Global Health. Check directly with your zdravotní pojišťovna if you want to know whether it offers a contribution toward private care."
+          }
+        ]
+      }
+    ]
+  },
+  "es": {
+    "groups": [
+      {
+        "eyebrow": "Spain",
+        "title": "Questions about Spain",
+        "items": [
+          {
+            "question": "Do you have a physical clinic in Spain?",
+            "answer": "No. In Spain we operate exclusively as an online clinic — there is no physical practice or waiting room to visit. Every appointment takes place over secure video call, from your phone or computer, with the same privacy as an in-person visit. Our registered office sits in Ireland, but the doctors who see you hold registration to practise with patients in Spain. This model lets us offer appointments with greater availability, without travel or waiting rooms, while keeping the same standard of clinical assessment you would get at a traditional practice. If you're looking for an address to visit in person, this isn't the right service for you."
+          },
+          {
+            "question": "Are your doctors registered in Spain?",
+            "answer": "Yes. Every doctor seeing patients in Spain is registered with the relevant Colegio Oficial de Médicos for their specialty and province, meeting the same training and licensing requirements as any doctor practising in person in the country. Each doctor's profile on our platform states their registration, so you can check it before booking. Working only with registered doctors is what lets us provide clinical assessments, reports and, where appropriate, prescriptions with the same legal standing as an in-person consultation. If you have questions about a specific doctor's registration, you can email us before your appointment and we'll confirm it."
+          },
+          {
+            "question": "Does the process work the same way in every comunidad autónoma?",
+            "answer": "Not always. Public healthcare in Spain is devolved to each comunidad autónoma, so processes like statutory sick leave, the validity of certain certificates, and referral pathways can vary depending on where you live. Our doctors take this into account during your consultation and will point you toward the most appropriate next step for your region, though the public benefit itself is always administered by the INSS and your regional health service. If your situation depends on a specific regional procedure, mention it to the doctor at the start of the consultation so they can advise you accurately."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Booking",
+        "title": "How to book your consultation",
+        "items": [
+          {
+            "question": "How do I book a consultation?",
+            "answer": "Booking is straightforward: choose the type of appointment you need, pick a doctor and an available time, and confirm payment securely online. You'll see the price clearly before you confirm. You'll then get an email confirmation with a link to the video call and, if useful, a reminder ahead of the appointment. There's no travelling and no waiting room — you just need an internet connection and a device with a camera. If you're not sure which type of consultation to book, email us beforehand and we'll point you in the right direction."
+          },
+          {
+            "question": "Can I get an appointment the same day?",
+            "answer": "In many cases, yes. Availability depends on the type of consultation and which doctors have open slots that day, but as an online service we can generally offer appointments faster than an in-person clinic, often including the same day you book. The booking calendar shows real-time availability, so what you see is what's actually bookable. If your need is urgent in the medical sense — not just a matter of finding a fast slot — remember that an online consultation is not emergency care: in that case, call 112."
+          },
+          {
+            "question": "Can I change or cancel my appointment?",
+            "answer": "Yes. You can reschedule or cancel from your account within the notice period shown before you confirm payment. Cancelling or rescheduling with enough notice frees the slot for another patient and, depending on timing, may entitle you to a refund. If you need help making a change, or something comes up right before your appointment, email us and we'll help find a solution. It's worth checking the cancellation terms for your specific booking, since they can vary by consultation type and appointment date."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultations",
+        "title": "What an online consultation looks like",
+        "items": [
+          {
+            "question": "What is a video consultation like?",
+            "answer": "The consultation happens over secure video call — much like an in-person appointment, but from wherever you are. The doctor reviews your reason for the visit, asks the questions they need to, and if relevant, may ask you to show something on camera or describe your symptoms in more detail. At the end of the assessment, they'll explain the likely diagnosis, next steps and, where clinically appropriate, provide a prescription, report or medical certificate. The length is similar to a standard in-person appointment. You just need a device with a camera and microphone, and somewhere private to talk."
+          },
+          {
+            "question": "What can I see a doctor about online?",
+            "answer": "You can book a general consultation with a family doctor for common symptoms, treatment follow-up or general health questions, as well as specialist consultations where available. The platform states clearly what each booking type includes. Not every situation is suited to an online assessment: if the doctor decides during the consultation that you need a physical examination, in-person tests or urgent care, they'll tell you and point you toward the right next step. The goal is always the safest possible assessment for you, not forcing an online answer where one isn't appropriate."
+          },
+          {
+            "question": "What languages are consultations available in?",
+            "answer": "Consultations for patients in Spain are offered in Spanish and English. Each doctor's language is listed on their profile, so you can choose who to book based on the language you're most comfortable explaining your symptoms in. Administrative questions — bookings, payments, account queries — are also handled by email in Spanish and English. If you have a language preference for your clinical consultation, check the doctor's profile before booking, since not every doctor on the platform consults in the same languages."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Sick leave",
+        "title": "Sick notes, medical reports and prescriptions",
+        "items": [
+          {
+            "question": "Can you issue a Spanish sick note (baja médica / incapacidad temporal)?",
+            "answer": "Not directly. Sick leave, or incapacidad temporal, is an official process handled through Spain's public system: it's issued by a doctor within your comunidad autónoma's health service, and the associated benefit payment is assessed by the INSS under its own rules. An online consultation with us doesn't replace that public route. What a doctor can provide, when the clinical assessment supports it, is a private medical report or certificate documenting your condition, which can support you with your employer while you go through the official sick-leave process via the public system in your region."
+          },
+          {
+            "question": "What is a justificante médico, and how is it different from a baja?",
+            "answer": "A justificante médico is a document confirming you were assessed by a doctor on a given date, recording their clinical observations. It's not the same as a parte de baja, which is the official document recognising incapacity to work within the public system. Our doctors can issue a private justificante médico after your consultation, where clinically appropriate, for you to give to your employer or wherever it's needed. The official sick leave and its associated benefit remain the responsibility of your regional health service and the INSS, with their own procedures and requirements."
+          },
+          {
+            "question": "Can I get a prescription from an online consultation?",
+            "answer": "Yes, when the doctor decides it's clinically appropriate after assessing you. If your situation allows it, they can issue an electronic prescription at the end of the consultation, which you can collect at any pharmacy in Spain with your health card or ID, following the usual process. Not every consultation ends in a prescription — some treatments, tests or referrals need an in-person assessment, and the doctor will tell you if that's the case for you. Certain more tightly controlled medications may require a follow-up in-person consultation under current rules, which the doctor will explain during your appointment."
+          },
+          {
+            "question": "Can I request a medical report for my employer?",
+            "answer": "Yes. If the doctor decides after the consultation that it's clinically justified, they can issue a report or certificate documenting the assessment and your health at that time, for you to give to your employer. Requirements for what documentation is accepted vary by employer, so it's worth checking with your HR department beforehand. Keep in mind this report is different from the official parte de baja: if your situation calls for recognised sick leave and its associated benefit, that process depends on your regional health service and the INSS."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacy",
+        "title": "Privacy and medical records",
+        "items": [
+          {
+            "question": "How do you protect my medical data?",
+            "answer": "Your health data is handled under GDPR and Spanish data-protection law, with access limited to the clinical and administrative staff who need it to provide your care. Video calls run over encrypted connections, and your clinical record is stored in systems with security controls and backups, not in loose documents or email. We don't share your medical information with third parties without your consent, except where the law requires it. If you'd like more detail on how we handle your data, our privacy policy has the specifics, or you can email us directly."
+          },
+          {
+            "question": "Can I access my consultation history?",
+            "answer": "Yes. From your account you can view your past appointments, including any reports, certificates or prescriptions a doctor issued during each consultation. This history lets you, for example, share what was assessed in a previous appointment with another healthcare professional, or retrieve a document you need later. Access is protected by your personal login, and only you can view it unless you expressly authorise someone else to. If a document you expected to see isn't there, email us and we'll look into it with you."
+          },
+          {
+            "question": "Who can see my medical information?",
+            "answer": "Only the doctor treating you and staff strictly necessary to run the service — such as technical or administrative support where required — can access your medical information, all bound by the same confidentiality obligations as any healthcare professional. We don't share your record with your employer, insurer or any other third party without your explicit consent, except where the law requires it. If you ever need us to share a document with someone else, such as another doctor, you can authorise that yourself from your account or request it in writing."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Payments",
+        "title": "Pricing and payments",
+        "items": [
+          {
+            "question": "How much does a consultation cost?",
+            "answer": "The price depends on the type of consultation you book — general, specialist, or another service — and is always shown clearly before you confirm and pay, so you know exactly what you'll be charged before booking. There are no hidden fees: if the doctor recommends an additional service during your consultation, you'll be told the cost before deciding whether to go ahead. Prices can be updated over time, so the figure that applies is always the one shown on the booking screen at the moment you confirm, not a separate published rate."
+          },
+          {
+            "question": "What payment methods do you accept?",
+            "answer": "We accept credit and debit card payment, processed securely through the platform when you book your appointment. Payment runs over encrypted connections before your slot is confirmed, and you'll receive a payment confirmation by email along with your booking confirmation. If you have an active membership plan, the cost of included consultations is handled automatically, so you don't need to enter payment details every time you book. If you have a question about a specific charge, email us and we'll look into the transaction details with you."
+          }
+        ]
+      }
+    ]
+  },
+  "ie": {
+    "groups": [
+      {
+        "eyebrow": "Ireland",
+        "title": "Ireland",
+        "items": [
+          {
+            "question": "Are the doctors registered with the Irish Medical Council?",
+            "answer": "Yes. Every doctor who sees patients through Global Health in Ireland holds registration with the Irish Medical Council, the same standing required for any GP or specialist practising in the country. You can ask to see a doctor's registration details before or during your consultation if you'd like to confirm this yourself. Registration means the doctor has met the Council's requirements for qualification, fitness to practise and ongoing professional standards, and is accountable to it in the same way as any doctor you'd see in a clinic. This applies whether you're booking a general consultation, a specialist referral, or a sick cert."
+          },
+          {
+            "question": "Do I need to already be a patient to book a consultation?",
+            "answer": "No prior relationship with us is required. You can create an account and book your first consultation the same way as any returning patient — there's no waiting list to join or referral needed to get started with a general consultation. During booking you'll be asked for basic details and your symptoms or reason for the visit, which the doctor reviews before or during the call. If ongoing care, a specialist opinion or a lab test is appropriate, the doctor can arrange the next step from there. Anyone based in Ireland can use the service without having seen one of our doctors before."
+          },
+          {
+            "question": "What should I do in a medical emergency?",
+            "answer": "Global Health is an online consultation service, not an emergency service, and it isn't monitored for urgent or life-threatening situations. If you or someone with you has a medical emergency, call 112 or 999 immediately, or go straight to your nearest emergency department — don't wait for an online appointment. Our doctors can assess non-urgent symptoms, issue a sick cert where appropriate, or refer you onward, but video consultations aren't suitable for chest pain, severe breathing difficulty, heavy bleeding, loss of consciousness or other emergencies. If a doctor believes during a consultation that your symptoms need urgent in-person care, they will tell you to seek it straight away."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Booking",
+        "title": "Booking your appointment",
+        "items": [
+          {
+            "question": "How do I book an appointment online?",
+            "answer": "Booking is done directly through the website: choose the type of consultation you need, pick an available time, and enter your details and the reason for your visit. You'll see the price for that consultation before you confirm and pay, so there are no surprises at checkout. Once booked, you'll get a confirmation with the time and how to join — usually by video, sometimes by phone. If you're not sure which consultation type fits your situation, the booking flow will guide you, and you can always contact us with questions about scheduling, payment or your account beforehand."
+          },
+          {
+            "question": "How quickly can I see a doctor in Ireland?",
+            "answer": "Same-day appointments are usually available, and many patients are seen within a few hours of booking, though exact availability depends on demand and the type of consultation you need. Requests that feel urgent, like needing a sick cert before a shift, are generally easier to fit in quickly than a longer specialist consultation. The booking page always shows real available times rather than an estimate, so you'll know exactly when you can be seen before you pay. If nothing suitable is showing on a given day, checking again shortly afterwards or trying an early morning slot often turns up a same-day option."
+          },
+          {
+            "question": "Can I book or ask questions by phone as well as online?",
+            "answer": "Booking itself happens online, but our phone line is there for questions about your account, an existing booking, or payment, and is answered in English. It isn't used for clinical advice or for diagnosing you over the phone — that happens during your actual consultation with a doctor, whether that's by video or by phone call depending on the appointment type you book. If you're unsure which service to choose or run into an issue completing a booking, calling or emailing us is the quickest way to get it sorted before your appointment time arrives."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultations",
+        "title": "Your consultation",
+        "items": [
+          {
+            "question": "Is the consultation by video or phone?",
+            "answer": "Most consultations take place by secure video call, which lets the doctor see you and assess visible symptoms directly, similar to an in-person visit. Some consultation types, particularly quick follow-ups or certain sick cert requests, may be offered by phone instead — the booking page tells you which format applies before you confirm. Either way, the call happens at your scheduled time through a private link or number sent with your confirmation, and you don't need to download any special software beyond a basic browser or phone connection. If a doctor feels your symptoms need to be seen in person, they'll tell you during the call."
+          },
+          {
+            "question": "What happens during an online GP consultation?",
+            "answer": "The doctor will ask about your symptoms, medical history and any medication you're taking, much as they would in a clinic, then assess what can reasonably be evaluated over video or phone. Based on that assessment, they may offer advice, issue a sick cert, send a prescription to your pharmacy, or refer you for a lab test or a specialist opinion where that's the appropriate next step — none of this is guaranteed in advance and depends entirely on what the doctor finds during your consultation. Appointments are timed so there's room for questions, and you'll get written follow-up instructions afterwards summarising what was discussed and agreed."
+          },
+          {
+            "question": "What if the doctor can't help me over a video call?",
+            "answer": "Not every condition can be safely assessed remotely, and a doctor may tell you during your consultation that you need to be seen in person — whether that's your regular GP, a specialist, or an emergency department, depending on how urgent it is. In that situation the doctor will explain why and what happens next rather than guessing at a diagnosis over a video call. This is a normal and expected outcome of online assessment, not a failure of the service: video consultations suit a wide range of symptoms, but some things genuinely need hands-on examination or in-person tests to assess properly and safely."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Sick certs",
+        "title": "Sick certs and prescriptions",
+        "items": [
+          {
+            "question": "How do I get a sick cert online?",
+            "answer": "Book a general consultation and explain your symptoms to the doctor by video or phone, the same as you would in a GP surgery. If the doctor's assessment supports it, they'll issue a sick cert electronically, usually sent to your email the same day. A sick cert is only issued where it's clinically appropriate after the doctor has actually assessed you — it isn't something you can request and receive automatically, and the doctor may ask follow-up questions or decline to issue one if your description doesn't support it. You don't need to be an existing patient to book this type of consultation."
+          },
+          {
+            "question": "How long does it take to receive my sick cert?",
+            "answer": "Once your consultation is complete and the doctor has decided a sick cert is appropriate, it's typically issued and emailed to you the same day, often within a few hours. Turnaround depends on how quickly you're seen and how busy the service is at that time, so booking earlier in the day generally means a faster result. The cert itself states the dates it covers based on what the doctor assessed — it isn't backdated beyond what's clinically justified. If you need it urgently for a shift or a deadline, mention this when booking so you can choose the earliest available appointment."
+          },
+          {
+            "question": "Will my employer accept a sick cert issued online?",
+            "answer": "A sick cert issued by an Irish Medical Council-registered doctor after a proper assessment carries the same standing whether the consultation happened online or in a surgery — Irish law doesn't require a certificate to come from a face-to-face visit. That said, individual employers set their own sick-leave policies, so it's worth checking what your employer expects if you're unsure. Statutory entitlements such as Illness Benefit are a separate matter: they're assessed by the Department of Social Protection under its own criteria and certification requirements, and our doctors can issue a medical cert but can't submit or decide a benefit claim on your behalf."
+          },
+          {
+            "question": "Can the doctor send a prescription to my pharmacy?",
+            "answer": "Where a prescription is clinically appropriate, the doctor can send it electronically to a pharmacy of your choice, so it's often ready to collect shortly after your consultation ends. You'll be asked which pharmacy you'd like to use during or after the appointment. Not every consultation results in a prescription — the doctor decides based on your symptoms and history, and some medications aren't suitable to prescribe without an in-person examination or further tests. If a prescription isn't appropriate, the doctor will explain the reasoning and suggest other options, which might include a follow-up, a referral, or simple self-care advice instead."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacy",
+        "title": "Privacy and records",
+        "items": [
+          {
+            "question": "Is my medical information kept confidential?",
+            "answer": "Yes. Your consultation details are treated as sensitive medical information under Irish and EU data protection law, and are only used to provide your care and any directly related administration, such as issuing a sick cert or sending a prescription to your pharmacy. Doctors are bound by the same confidentiality obligations that apply to any registered practitioner in Ireland. Your information isn't shared with your employer, family members or anyone else without your consent, except in the rare circumstances the law requires disclosure, such as a serious risk to safety. Our privacy policy sets out exactly what's collected and how it's used in full."
+          },
+          {
+            "question": "Who can see my consultation records?",
+            "answer": "Your records are accessible to the doctor who treated you and to the limited administrative staff who need them to run the service, such as fulfilling a prescription or issuing documentation you've requested. They aren't shared with your employer or anyone else unless you specifically ask us to, for example by requesting a copy be sent somewhere. If a doctor decides you need onward referral to a specialist or a lab test, relevant details are shared with that provider so your care can continue, but only what's needed for that purpose. Access is logged and restricted in line with our data protection obligations."
+          },
+          {
+            "question": "Can I get a copy of my medical records?",
+            "answer": "Yes, you're entitled to request a copy of your consultation records and any certificates or prescriptions issued to you, under your data protection rights. You can do this through your account or by contacting us directly, and we'll confirm what's needed to verify your identity before releasing anything, since these are sensitive health records. There's no need to have a specific reason for asking — access to your own records is your right. If you want records sent on to another doctor, a new employer, or an insurer, let us know and we can arrange that with your consent."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Payments",
+        "title": "Payments",
+        "items": [
+          {
+            "question": "How much does a consultation cost?",
+            "answer": "Pricing depends on the type of consultation you need — a general consultation, a specialist referral and a sick cert-focused visit aren't necessarily priced the same. Rather than list figures here that could go out of date, the exact price for your chosen appointment is always shown clearly during booking, before you confirm or pay anything. If you hold one of our membership plans, some consultations may already be included as part of your plan rather than charged individually — this is shown at checkout too. If you have a question about cost before booking, contact us and we can point you to the right consultation type."
+          },
+          {
+            "question": "What payment methods do you accept?",
+            "answer": "Payment is taken securely online by card at the time of booking, so your appointment is confirmed and paid for before you see the doctor. If you're a member on one of our plans, eligible consultations may be covered under your membership instead of a separate charge — this is applied automatically at checkout where it applies. We don't take payment over the phone or by any method outside the booking flow, which keeps your card details out of emails or calls. If a payment doesn't go through, the booking page will let you know straight away so you can try again or use a different card."
+          }
+        ]
+      }
+    ]
+  },
+  "pt": {
+    "groups": [
+      {
+        "eyebrow": "Portugal",
+        "title": "Portugal FAQs",
+        "items": [
+          {
+            "question": "Are the doctors registered with the Ordem dos Médicos?",
+            "answer": "Yes. Every doctor who consults through Global Health Portugal is registered with the Ordem dos Médicos, the professional body that regulates doctors in Portugal. Each appointment takes place over secure video with a licensed doctor, who assesses your situation before recommending any treatment, certificate or prescription. That registration means the same professional and ethical standards apply as they would in a face-to-face consultation. If you would like to verify a doctor's registration yourself, the Ordem dos Médicos publishes a public register you can check directly on its website before or after booking."
+          },
+          {
+            "question": "How does Global Health relate to SNS24?",
+            "answer": "Global Health is a private service, separate from SNS24, Portugal's public health line and portal. We do not replace SNS24, and using our service does not stop you from also using the public system. Many patients use both, depending on the situation — SNS24 for free triage or public-system care, and Global Health when they want a faster private appointment at a time that suits them, without waiting on local health-centre availability. The choice is yours. For urgent symptoms or anything requiring immediate in-person assessment, SNS24 or the emergency services remain the right first call, not an online consultation."
+          },
+          {
+            "question": "What if I need urgent care?",
+            "answer": "Global Health is not an emergency service, and our phone line is not set up to handle clinical emergencies. If you have severe symptoms — chest pain, breathing difficulty, heavy bleeding, or anything that feels life-threatening — call 112 immediately or go to your nearest hospital emergency department. An online consultation is well suited to non-urgent symptoms, prescription renewals, certificates and general medical advice, but it cannot replace an in-person emergency team. If you are ever unsure how serious a situation is, take the safer option and contact 112 rather than waiting for an online appointment."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Booking",
+        "title": "Booking an appointment",
+        "items": [
+          {
+            "question": "How do I book a consultation?",
+            "answer": "You can book directly on the website by choosing the type of consultation you need, such as a general medicine appointment, a specialist consultation or a medical certificate. After entering your details and the reason for the visit, you pick an available slot from the calendar and confirm payment. The price is always shown before you complete the booking, so you know exactly what you will pay. Once booked, you receive a confirmation with the video-call time and joining instructions, sent by email and also visible in your patient account."
+          },
+          {
+            "question": "How long until I'm seen?",
+            "answer": "Waiting time depends on the type of consultation and doctor availability at the moment you book. The booking calendar only shows slots that are genuinely open, so the time you choose is the time you will actually be seen — there is no separate queue and no walk-ins jumping ahead of your slot. If your situation feels somewhat urgent but is not an emergency, look for the earliest same-day slot shown. If it is serious, do not wait for an online appointment at all: call 112 or go to your nearest emergency department instead."
+          },
+          {
+            "question": "Can I book outside normal office hours?",
+            "answer": "The booking calendar always shows the slots genuinely available at that moment, which can include times outside typical office hours depending on which doctors are working that day. You never need to call or wait on hold to book — the whole process happens online, any time of day, even if the appointment itself can only take place at a later available slot. If nothing suitable shows up when you check, it is worth looking again later, since new slots are added and availability updates regularly throughout the day."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultations",
+        "title": "What to expect",
+        "items": [
+          {
+            "question": "What happens during an online consultation?",
+            "answer": "The consultation takes place over secure video, on your computer, tablet or phone, at the time you booked. The doctor starts by confirming your identity and the reason for the visit, then asks about your symptoms and relevant history, much as they would face to face. Depending on the assessment, you may receive advice, a prescription, a certificate, or a recommendation to seek in-person care where that is clinically appropriate. Afterwards, a summary of the consultation and any document issued is saved to your patient account, so you can find it again whenever you need it."
+          },
+          {
+            "question": "Do I need to prepare anything beforehand?",
+            "answer": "It helps to have a list of any medication you currently take, including the dose, plus a short description of your symptoms and how long you have had them. If you have recent test results, scans or letters relevant to the reason for your visit, having them to hand gives the doctor more to work with. A stable internet connection and a quiet, private place for the call also make things easier. None of this is required — if you do not have this information ready, the doctor can still assess you based on what you describe."
+          },
+          {
+            "question": "Do the doctors speak English?",
+            "answer": "Yes. Global Health Portugal consultations are available in both Portuguese and English, so you can choose whichever language you feel most comfortable describing your symptoms in. You can set your preference when booking, and it is passed to the doctor ahead of the call. Certificates and prescriptions still use the standard Portuguese medical terminology employers, pharmacies and other institutions in Portugal expect to see, regardless of which language the consultation itself was conducted in, so the documents remain recognisable and usable in the local system."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Certificates",
+        "title": "Certificates and prescriptions",
+        "items": [
+          {
+            "question": "Can I get a sick certificate (atestado / baixa médica)?",
+            "answer": "Yes, this is one of the services available. If, after assessing you, the doctor judges it clinically appropriate, they issue a medical certificate of temporary incapacity for work — what is known locally as an atestado médico or baixa médica. Issuing a certificate is always a clinical decision made by the doctor who saw you, based on your assessment that day, never an automatic document. Any related sickness benefit is decided separately by Segurança Social under its own rules and timelines, so the certificate is the first step of the process, not a guarantee of the benefit itself."
+          },
+          {
+            "question": "Do you issue driving-licence medical certificates?",
+            "answer": "Yes, this is its own service, separate from a sick certificate, with a dedicated page where you can check the conditions before booking. Driving-licence certificates follow the requirements set by the IMT, which define what can be assessed remotely and under which circumstances. The doctor carries out the required assessment during the video call and, where applicable, issues the certificate on those terms. We recommend checking the service page before booking to confirm your situation — first licence, renewal or another case — is one the remote assessment actually covers."
+          },
+          {
+            "question": "Can a doctor renew my usual prescription?",
+            "answer": "Yes, prescription renewal is one of the most common reasons patients book with us. In a renewal consultation, the doctor reviews the medication you are already taking, confirms it is still clinically appropriate, and issues a new prescription if so. It is never an automatic renewal — the doctor may ask for more information, suggest an adjustment, or recommend an in-person visit if the situation calls for it. For treatments that need regular monitoring, periodic blood tests or specialist input, the doctor will tell you what follow-up makes sense during the consultation itself."
+          },
+          {
+            "question": "Will my employer or Segurança Social accept the certificate?",
+            "answer": "The certificate is issued by a doctor registered with the Ordem dos Médicos after a clinical assessment, and it carries the same legal standing as one issued in person. Individual employers can have their own procedures for reporting absence, so it is worth checking your company's process. Any sickness benefit is decided separately by Segurança Social, under its own rules and reporting deadlines, which you can confirm directly with them. Global Health has no role in that benefit decision — our part is limited to the clinical assessment and issuing the certificate itself."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacy",
+        "title": "Privacy and your record",
+        "items": [
+          {
+            "question": "Is my medical data kept private and secure?",
+            "answer": "Yes. Your health information is treated as sensitive clinical data, accessible only to the people involved in your care, and handled in line with the GDPR. Video consultations run over encrypted connections, and your consultation record is stored in your patient account rather than shared publicly or passed to third parties without your consent, except where the law requires it. It also helps to take a few precautions on your side — joining the call from a private space and keeping your account protected with a strong, unique password."
+          },
+          {
+            "question": "Who can access my medical record?",
+            "answer": "Your medical record is accessible only to the doctor treating you and, where relevant, the team directly involved in managing your care, as part of normal clinical practice. We do not share your health data with employers, insurers or other third parties without your explicit consent, except where the law requires disclosure, such as certain public-health situations. You can review your consultation history, certificates and prescriptions at any time from your patient account, which acts as a single place to find these documents whenever you need them again."
+          },
+          {
+            "question": "Can I ask for my data to be deleted?",
+            "answer": "Yes. As the data subject, you can request access to, correction of, or deletion of your personal data under the GDPR. Some clinical information may need to be kept for a minimum period because health records are subject to their own legal retention rules, even after a deletion request — where that applies, we explain the timeline and the reason for it. To exercise this right, you can contact us through the channels on our contact page, which also explains how to raise a complaint with the data protection authority if you are not satisfied."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Payments",
+        "title": "Pricing and payment",
+        "items": [
+          {
+            "question": "How much does a consultation cost?",
+            "answer": "The price for each type of consultation — general medicine, a specialist visit, or a certificate — is always shown before you confirm your booking, so you know exactly what you will pay before going ahead. Prices vary by consultation type and can change over time, which is why we show the current figure at the point of booking rather than publishing it here, where it could go out of date. If you want to check the price of a specific service before booking, you can see it on that service's page or ask us directly."
+          },
+          {
+            "question": "What payment methods do you accept?",
+            "answer": "Payment is taken online at the time of booking, through whichever methods are offered at checkout, typically a payment card. There is no need to pay by manual bank transfer or in cash at the time of the consultation. Once you have paid, you receive a receipt linked to your booking, also available afterwards in your patient account — useful, for example, if you want to claim the cost back from private health insurance, where your policy covers this kind of consultation. Always check the specific terms with your insurer before booking if that matters to you."
+          }
+        ]
+      }
+    ]
+  },
+  "ro": {
+    "groups": [
+      {
+        "eyebrow": "Romania",
+        "title": "About our service in Romania",
+        "items": [
+          {
+            "question": "Do you have a clinic in Romania?",
+            "answer": "Global Health operates in Romania as an online-only clinic. We hold no physical premises in Romania, and the company's registered office is in Ireland. Every consultation takes place over a secure video call, from a phone, tablet or computer, so there is no waiting room to visit. This online model lets you speak with a doctor without traveling, often on the same day you book. If you would rather see a doctor in person, a local clinic may suit you better — our platform is built for patients comfortable with a remote, video-based consultation instead."
+          },
+          {
+            "question": "Are the doctors registered in Romania?",
+            "answer": "Yes. Every doctor who consults patients from Romania through our platform is registered with the Colegiul Medicilor din România, the body that regulates the medical profession in the country. Each doctor's registration, specialty and consultation languages are shown on their profile, so you can check before booking. This means the doctor you speak with meets the same professional and ethical standards as a doctor seen in person at a Romanian clinic. If you have a question about a specific doctor's registration, you can email us before booking and our team will confirm the relevant details for you."
+          },
+          {
+            "question": "Are consultations available in Romanian?",
+            "answer": "Yes. Consultations for patients in Romania are held in Romanian, and several doctors also consult in English. Each doctor's profile lists the languages they speak, so you can pick a doctor who matches your preference before booking. Administrative support — bookings, billing, account questions — is also handled by email in both Romanian and English. If a particular language matters for your consultation itself, check the doctor's profile before confirming your appointment, or write to us and we can point you toward a doctor who consults in the language you need."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Booking",
+        "title": "Booking a consultation",
+        "items": [
+          {
+            "question": "How do I book an online consultation?",
+            "answer": "Booking happens directly on the platform: choose the type of consultation you need, then pick an available time slot from the list of doctors. You fill in a short form with your details and the reason for the visit, so the doctor has context before the call. The price is shown clearly before you confirm the booking, with no hidden costs. After payment you receive a confirmation with the video-call link, by email and in your account. The whole process usually takes a few minutes and does not require visiting any physical location."
+          },
+          {
+            "question": "Can I get a same-day appointment?",
+            "answer": "Often, yes — the platform shows real-time availability, and general consultations frequently have open slots on the same day, depending on which doctors are active. Availability varies day to day and by consultation type, particularly for specialties with fewer doctors on the platform. Check the list of available time slots directly on the booking page to see the earliest opening. If nothing suits you today, you can just as easily book for the following days — the same booking flow applies no matter how far ahead you schedule."
+          },
+          {
+            "question": "Can I cancel or reschedule a consultation?",
+            "answer": "Yes, a consultation can be cancelled or rescheduled from your account before the scheduled time. The exact cancellation window and any refund conditions are shown in the platform at the time of booking, so you know them before you confirm. If you run into a technical issue or need help changing your appointment time, our support team can help by email. Rescheduling is useful if something comes up at short notice or if your symptoms change before the consultation is due to take place."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultations",
+        "title": "How an online consultation works",
+        "items": [
+          {
+            "question": "How does a video consultation work?",
+            "answer": "At your scheduled time, you join a secure video call directly from the platform or through the link sent by email. The doctor asks about your symptoms, medical history and current treatments, much as they would in person, then gives you an assessment and recommendations. Depending on the situation, the doctor may issue a prescription, a medical certificate, or suggest a further consultation. Appointments usually run for several tens of minutes, enough time to discuss the issue properly. All you need is a stable internet connection and a quiet, private space to talk."
+          },
+          {
+            "question": "What equipment do I need for a consultation?",
+            "answer": "Just a phone, tablet or computer with a camera, microphone and internet connection — no special software is required, as the call runs directly in your browser or the app. A quiet, well-lit space helps the doctor see and hear you clearly. If you have relevant medical documents — recent test results, earlier prescriptions — it helps to have them nearby during the call. Test your camera and microphone before your appointment time, and if you run into technical trouble, our support team can talk you through it by email beforehand or shortly after the call."
+          },
+          {
+            "question": "What should I do in a medical emergency?",
+            "answer": "Global Health is not an emergency service, and online consultations are not a substitute for emergency care. If you have severe or life-threatening symptoms, call 112 immediately or go to your nearest emergency department. Our platform is suited to everyday, non-urgent concerns — colds, minor infections, treatment renewals, general medical questions — rather than emergencies. If you are unsure whether your situation counts as an emergency, the safer choice is to contact your family doctor or emergency services directly, rather than waiting for an online appointment to become available."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Medical leave & prescriptions",
+        "title": "Medical leave certificates and prescriptions",
+        "items": [
+          {
+            "question": "Can you issue a concediu medical (medical leave certificate) online?",
+            "answer": "A doctor who assesses you in an online consultation can issue a medical certificate recording that assessment, where clinically appropriate. Whether it counts as an official concediu medical for statutory sick-leave purposes, and whether the related benefit gets paid, depends on CNAS and on that doctor's own contractual arrangement with the health insurance house, as well as on your employer's own rules — outcomes we cannot guarantee. Whether medical leave obtained through an online consultation is fully recognised is, in fact, an actively debated question in Romanian legal commentary. If you need a certificate CNAS will recognise for benefit purposes, check with your employer and your registered family doctor beforehand."
+          },
+          {
+            "question": "Will my employer accept a certificate issued online?",
+            "answer": "The certificate is issued by the doctor who assessed you and records that consultation and its findings. Employers set their own requirements for what they accept as proof of absence, and some ask specifically for documents issued through CNAS procedures. We recommend checking your employer's internal policy in advance, especially if you need the absence recognised and paid as medical-leave benefit. We can provide the certificate issued by the doctor, but we cannot guarantee that a particular employer or institution will accept it — that decision rests with them, under their own rules."
+          },
+          {
+            "question": "Can you issue a prescription online?",
+            "answer": "Yes. If, after assessing you, the doctor considers medication appropriate, they can issue a prescription you can collect from any pharmacy by showing ID. Not every condition can or should be treated remotely — that judgment always sits with the doctor, based on your symptoms and history. Certain categories of medication, such as those under special control, cannot be prescribed through an online consultation and require an in-person assessment. If you have an existing prescription you would like to discuss, you can raise it with the doctor during your consultation."
+          },
+          {
+            "question": "Is a prescription issued online covered by CNAS?",
+            "answer": "It depends on the type of prescription and the issuing doctor's status with CNAS. An electronic prescription from the doctor who consulted you can be collected at a pharmacy, but reimbursement through the CNAS system follows the insurance house's own rules and generally requires the issuing doctor to hold a CNAS contract covering that type of prescription. We cannot guarantee that a prescription issued through our platform will be reimbursed. If this matters to you, ask the pharmacist when you collect the prescription, or check directly with CNAS before booking your consultation."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacy",
+        "title": "Privacy and medical records",
+        "items": [
+          {
+            "question": "How is my medical data protected?",
+            "answer": "Your medical data is stored encrypted and accessed only by authorised staff directly involved in your care — mainly the doctor treating you. Video calls run over a secure connection, and the information you enter in the platform, such as symptoms, history or uploaded documents, is not shared with third parties for commercial purposes. We follow the data-protection requirements that apply across the European Union. If you have specific questions about how your data is used, or would like to see our privacy policy in full, you can write to us at our contact email address at any time."
+          },
+          {
+            "question": "Who can see my medical history?",
+            "answer": "Access to your medical record is limited to the doctors directly involved in your care and the staff strictly necessary to run the platform, such as technical support tied to your account. A new doctor at a future consultation can see your consultation history in the platform to provide consistent care, unless you choose otherwise. Your data is not sold, and it is not shared with employers, insurers or other institutions without your explicit consent or a clear legal obligation that requires us to disclose it in a specific case that actually arises."
+          },
+          {
+            "question": "Can I download or delete my data?",
+            "answer": "Yes. You can request a copy of your medical data stored on the platform, as well as deletion of your account and associated information, subject to the retention periods the law requires for medical records. These requests are handled by email at our contact address, in line with the rights that European data-protection law grants patients over their own information. Note that certain medical records may need to be kept for a minimum period even after a deletion request, when the law requires it, regardless of your personal preference on the matter."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Payments",
+        "title": "Payments and billing",
+        "items": [
+          {
+            "question": "How much does a consultation cost?",
+            "answer": "Each consultation's price is shown clearly in the platform before you confirm your booking, depending on the type of consultation and the doctor you choose. We don't list fixed prices here, since they can change over time and by service — the figure shown on the booking page is always the current one. There are no hidden costs: the amount you see before paying is the final amount you'll be charged. If you hold an active plan or membership, any included benefits are applied automatically before you're asked to pay, reducing or covering the price shown."
+          },
+          {
+            "question": "What payment methods do you accept?",
+            "answer": "We accept online card payment, taken directly in the platform when you confirm your booking. Payment processing is secure, and we do not store your card details ourselves. If you have a subscription or plan that covers certain services, the consultation cost may be reduced or covered in full depending on your included benefits, applied automatically before payment. For questions about a bill or a payment that didn't go through correctly, you can contact us by email and our team will look into the transaction for you."
+          }
+        ]
+      }
+    ]
+  }
+}

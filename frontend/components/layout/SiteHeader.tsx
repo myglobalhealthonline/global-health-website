@@ -139,10 +139,13 @@ function sectionNavForCountryLang(
     items.push({ href: `${base}/pricing`, label: nav.navPlans });
   }
   items.push({ href: `${base}/blog`, label: nav.navBlog });
-  // In-country: the market's own About and contact pages (local NAP,
-  // register, languages, offering, regulatory FAQs). Both link on to the
-  // global /about and /contact. The global nav below keeps those.
+  // In-country: the market's own About, FAQ and contact pages (local NAP,
+  // register, languages, offering, regulatory FAQs).
   items.push({ href: `${base}/about`, label: nav.navAbout });
+  // FAQ is a 33-URL family (country x locale). Footer-only linking is the
+  // /health/* topology that left those pages under-crawled — the nav is the
+  // link that gets followed on every page of the market.
+  items.push({ href: `${base}/faq`, label: nav.navFaq });
   items.push({ href: `${base}/contact`, label: nav.navContact });
   return items;
 }
