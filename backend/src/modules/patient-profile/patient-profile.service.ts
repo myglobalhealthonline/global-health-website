@@ -53,6 +53,16 @@ export async function upsertPatientProfileByEmail(
      *  manual-booking flow so the patient is force-redirected to the
      *  change-password page on first sign-in. */
     mustChangePassword?: boolean;
+    /** Correct an existing countryFolderCode instead of only filling a null
+     *  one. A manual booking's country is derived from the service being
+     *  booked (never patient-entered), so it's more authoritative than a
+     *  stale folder value — unlike self-service signup, where an existing
+     *  folder may reflect a deliberate, different assignment. Without this,
+     *  a profile that picked up a wrong/stale folder (e.g. from
+     *  backfill-country-folder-code.ts) stays stuck on it forever and
+     *  disappears from that country's admin patient list even though every
+     *  subsequent booking is in the correct country. */
+    overwriteCountryFolder?: boolean;
   },
 ) {
   const email = input.email.trim().toLowerCase();
@@ -136,9 +146,12 @@ export async function upsertPatientProfileByEmail(
         ...(input.dateOfBirth !== undefined ? { dateOfBirth: input.dateOfBirth } : {}),
         // Backfill GHN for profiles that existed before this feature shipped.
         ...(!existing?.globalHealthNumber && ghn ? { globalHealthNumber: ghn } : {}),
-        // Same never-overwrite rule as the backfill script — only fills a
-        // currently-null folder, never corrects an existing one.
-        ...(!existing?.countryFolderCode && input.countryFolderCode
+        // Same never-overwrite rule as the backfill script by default — only
+        // fills a currently-null folder. Manual-booking callers opt into
+        // overwriteCountryFolder so a fresh booking's country corrects a
+        // stale one instead of being silently dropped.
+        ...(input.countryFolderCode &&
+        (options?.overwriteCountryFolder || !existing?.countryFolderCode)
           ? { countryFolderCode: input.countryFolderCode.toLowerCase() }
           : {}),
         // Recompute affected blind indexes when the source field changes.
