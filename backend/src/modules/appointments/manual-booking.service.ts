@@ -847,6 +847,12 @@ export async function createManualBooking(
     {
       passwordHashOverride: tempHash,
       mustChangePassword: true,
+      // A manual booking's country comes from the service being booked, not
+      // patient input — more authoritative than a stale stored folder, so it
+      // should correct one rather than being silently dropped (fixes Brazil
+      // doctor-manual-booked patients stuck on an old folder and vanishing
+      // from that country's admin patient list).
+      overwriteCountryFolder: true,
     },
   );
 
