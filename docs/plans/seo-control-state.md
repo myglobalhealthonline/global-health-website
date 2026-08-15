@@ -246,8 +246,8 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-011 | Spain doctor cross-locale ranking "fragmentation" (Alfredo del Valle) | Indexation / hreflang | **EXPECTED BEHAVIOR — CLOSED, no code change** | 2026-08-12 | All 5 locale URLs (`spain/{es,cs,en,pt,de}/doctors/dr-alfredo-del-valle`) are 200, self-canonical (each declares and Google accepts its own canonical — no consolidation attempted by either side), `index, follow`, in sitemap, carry distinct per-locale `<title>` (Dermatólogo/Dermatolog/Dermatologist/Dermatologista/Dermatologe — real translation, not a duplicate stub), and cross-link each other via the sibling-locale switcher. The one legacy URL in the cluster, `/pt/spain-doctors/dr-alfredo-del-valle`, is "Crawled – currently not indexed" (last crawl 2026-03-08) and draws 1 impression in 90 days — a dead stub, not a participant | Google serves each locale variant as its own PASS result; no `noindex`, no wrong-canonical, no stale-crawl divergence | None. See §7 for the full query×URL matrix and reasoning |
 | SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
 | SEO-GROWTH-016 | Ireland at-home lab-test cluster: 1,041 impressions, 4 clicks, position 27.1, from a zero base | Ranking / content-intent | **INVESTIGATED — BOTTLENECK = INDEXING RAMP. No content, schema, linking or metadata work justified yet** | 2026-08-12 | `/ireland/en/lab-tests` + 16 detail pages all 200, `index, follow`, self-canonical, in sitemap, `richResults` PASS. Hub serves **14 real anchors**. Copy is **independently written, not Randox-duplicated**. Page format already matches what the SERP rewards. No cannibalization. `Product`/`Offer` schema absent but data exists. Hub meta carries a **stale €89 price** (real entry price €57) and a wrong "up to 10 days" turnaround | Detail pages first crawled 2026-08-01 → 08-08 and earned **100% of their 28-day impressions in the final 7 days**, while the hub dropped from ~479 to 11 — a hub→detail hand-off completed inside the measurement window. Cluster position improved 37.5 → 26.3 → 20.3 over 08-09/08-10/08-11 | **WAIT / MEASURE, re-measure 2026-09-08.** Full findings and early-exit triggers in §7 SEO-GROWTH-016 |
-| SEO-GLOBAL-LANG-002 | Bare `/about`, `/blog`, `/faq` carry no country signal; `/{country}/{lang}/faq` did not exist | Site architecture / legacy routing | **IMPLEMENTED — NOT COMMITTED, NOT DEPLOYED** | 2026-08-15 | Local only: 33 FAQ URLs live and verified (200, per-country title, hreflang, `FAQPage`); bare trio 301s to `/ireland/en/*` asserted at config level, **not probed at runtime** (a second dev server cannot run on the same directory under Next 16) | Unchanged — nothing deployed | Commit + deploy, then run `SEO_CHECK_BASE=https://www.myglobalhealth.online` `seo-live-urls`. Add the three retired URLs to §6 once Google's stored state can lag. See §5 SEO-GLOBAL-LANG-002 |
-| SEO-GLOBAL-LANG-003 | Country FAQ pages shipped with one shared question set across all 33 URLs | Content / indexation | **IMPLEMENTED, COMMITTED (`9175893b`), NOT DEPLOYED** | 2026-08-15 | 18 researched questions per market; 11 authored URLs `index,follow` and in the sitemap, 22 unwritten ones `noindex,nofollow` and withheld. ES/CZ/RO state plainly that the state sick-leave instrument is not ours to issue. FAQ added to country header + mobile nav. Redirect chain/loop guard added and mutation-checked | Unchanged — nothing deployed | Deploy, then `seo-live-urls`. Backfill trigger and the open Brazil integration question are stated in §5 SEO-GLOBAL-LANG-003 |
+| SEO-GLOBAL-LANG-002 | Bare `/about`, `/blog`, `/faq` carry no country signal; `/{country}/{lang}/faq` did not exist | Site architecture / legacy routing | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-15 | Deployed (`5f67b9d8`). `/about`, `/faq`, `/blog` each 308 to `/ireland/en/*` in one hop; `seo-live-urls` 8 passed against production; sitemap carries 0 entries for the retired trio | Not yet recrawled — the three retired URLs are new entrants to §6 | Watchlist only. Re-inspect the three retired URLs once Google's crawl date advances past 2026-08-15. See §5 SEO-GLOBAL-LANG-002 |
+| SEO-GLOBAL-LANG-003 | Country FAQ pages shipped with one shared question set across all 33 URLs | Content / indexation | **DEPLOYED — AWAITING MEASUREMENT** | 2026-08-15 | Live (`9175893b`, nav placement revised in `96f771db`). 18 researched questions per market. Production confirms the split is system-enforced: `/ireland/en/faq` + `/spain/es/faq` `index, follow`; `/ireland/de/faq` + `/spain/de/faq` `noindex, nofollow`; sitemap carries exactly the 11 authored URLs. ES/CZ/RO state plainly that the state sick-leave instrument is not ours to issue. FAQ is footer-only (nav placement reversed, Hassaan 2026-08-15) | 11 new URLs, none crawled yet | **Measure no earlier than 2026-09-30** against the three-band backfill trigger in §5 SEO-GLOBAL-LANG-003. Brazil integration question is open and needs a human, not a SERP |
 | SEO-GROWTH-017 | `/service-page/ie-medical-consultation` (legacy Wix) still self-canonical and indexed in Google | Legacy routing | **WAITING FOR GOOGLE** | 2026-08-12 | 308 → `/ireland/en/see-a-specialist` (live probe, Googlebot UA) | "Submitted and indexed", **self-canonical**, last crawl **2026-07-08** — predates nothing in particular; Google simply has not recrawled. Referring URLs include `/home` and `booking-services-sitemap.xml`, both Wix-era artefacts | Watchlist only (§6). 147 impressions / 3 clicks / position 24.1 in the current window |
 
 ### Global foundation audit (`SEO-FOUNDATION-001`, 2026-08-12)
@@ -672,16 +672,25 @@ country set.
 
 ### SEO-GLOBAL-LANG-002 — FAQ built country-scoped, bare trio retired (2026-08-15)
 
-**Implemented, not yet committed or deployed.** This closes the question
-`SEO-GLOBAL-LANG-001` left open: the bare URLs become 301s into the country set,
-not a kept global tier.
+**DEPLOYED AND VERIFIED IN PRODUCTION, 2026-08-15** (commit `5f67b9d8`; see the
+verification block below). This closes the question `SEO-GLOBAL-LANG-001` left
+open: the bare URLs become permanent redirects into the country set, not a kept
+global tier.
+
+**Status codes — the record and the wire.** These are written up throughout as
+"301", which is the intent; **Next emits `308` for `permanent: true`**, and
+that is what production serves. 308 is the method-preserving equivalent and
+Google consolidates 301 and 308 identically, so nothing here needs changing —
+but a later probe will see 308 where an older sentence says 301, and that is a
+wording difference, NOT config drift. Do not "fix" the config on the strength
+of it.
 
 **Decision (Hassaan, 2026-08-15).** Remove `/about`, `/blog` and `/faq`. All
 three now redirect permanently to their Ireland equivalent — priority market and
 the OpenSEO project default. **No locale or geo detection on those redirects**:
 Googlebot crawls from the US and would only ever see one market's page, and a
 visitor-varying redirect makes the target unverifiable. `/about`'s 58 referring
-domains are the reason this is a 301 and not a 410.
+domains are the reason this is a permanent redirect and not a 410.
 
 **What was built.**
 
@@ -701,12 +710,22 @@ with per-country titles (`Frequently asked questions — Ireland`, `Časté otá
 Česko`), self-canonical, six-locale hreflang + `x-default`, `FAQPage` and
 `BreadcrumbList` emitted; `/ireland/xx/faq` 404s. Sitemap emits 33 FAQ entries.
 Footer on `/ireland/en/about` links `/ireland/en/faq` (0 occurrences of `/faq`).
-Redirect *runtime* behaviour is **not** verified — Next 16 refuses a second dev
-server on the same directory and one was already running, so the redirect block
-was asserted at config level (sources present, `permanent: true`, no destination
-still naming a retired path) rather than probed. **Run
-`SEO_CHECK_BASE=… seo-live-urls` after deploy** — it is the assertion that every
-redirect target 200s and no sitemap entry redirects.
+
+**Redirect runtime behaviour — CLOSED, verified against production 2026-08-15.**
+At the time of writing this section it was asserted at config level only (Next 16
+refuses a second dev server on the same directory, and another session held it),
+and that gap is now closed on the live site:
+
+- `seo-live-urls` against `https://www.myglobalhealth.online`: **8 passed**,
+  ~120 s. No redirect terminates in a 404; every sitemap entry returns 200 and
+  is indexable.
+- Direct probes: `/about`, `/faq`, `/blog` each return **308** straight to
+  `/ireland/en/*` (see the status-code note above), in one hop.
+- The translation gate is enforced by the system, not by memory:
+  `/ireland/en/faq` and `/spain/es/faq` serve `index, follow`, while
+  `/ireland/de/faq` and `/spain/de/faq` serve `noindex, nofollow`.
+- Production sitemap: **11** FAQ URLs, and **0** entries for the bare
+  `/about`, `/blog` or `/faq`.
 
 **Prediction to record before the numbers arrive** (same discipline as
 `SEO-DOC-004`): the measure is **non-English impressions on the 33 FAQ URLs that
@@ -722,7 +741,8 @@ Q&A from `faq.json` (translated in all six locales) and the market copy from
 
 ### SEO-GLOBAL-LANG-003 — per-market FAQ copy, 11 indexable of 33 (2026-08-15)
 
-**Implemented and committed (`9175893b`), NOT deployed.** Follows
+**DEPLOYED AND VERIFIED IN PRODUCTION, 2026-08-15** (`9175893b`; nav placement
+revised in `96f771db`). Follows
 `SEO-GLOBAL-LANG-002`, which shipped the route with four templated questions
 plus nine shared ones — identical across all 33 URLs, i.e. a page per market in
 URL shape only. This replaces that with 18 questions per market.
@@ -788,22 +808,33 @@ are the documents signed to the ICP-Brasil standard? If yes, the citations
 belong in the copy and are a genuine ranking asset in that market. If no, the
 current wording is correct and should stay. Do not resolve this from the SERP.
 
-**Also in this batch.** FAQ joined the country header and mobile nav — a 33-URL
-family reachable only from the footer is the `/health/*` reachability defect
-(§6 of the brief) repeated. And `tests/unit/redirect-chains.test.ts` now follows
-every redirect destination back through the ordered rule list using Next's own
-bundled `path-to-regexp`, failing on any chain or loop; `seo-live-urls` proves a
-redirect does not 404 but follows up to 5 hops, so a rule landing on another
-rule passed it silently. **Verification claim, stated at its real strength
-(§0.7):** the guard was made to fail — injecting `/careers → /about` produced
-`CHAIN: /careers -> /about -> /ireland/en/about` — and then restored. What it
-proves is one-hop resolution through the rule list, NOT origin-server behaviour;
-that remains asserted-only until the post-deploy gate runs.
+**Nav placement — decided, then reversed the same day.** FAQ was added to the
+country header and mobile nav on the reachability argument (a 33-URL family
+reachable only from the footer is the `/health/*` defect, §6 of the brief,
+repeated). **Hassaan reversed it (2026-08-15, `96f771db`): FAQ is footer-only.**
+The FAQ is a support page, not a step in the booking journey, and the primary
+nav is the wrong place to spend that attention. The footer link is still on
+every page. Each removal site carries a comment recording the decision, so it is
+not "fixed" back on reachability grounds by someone reading only this ledger.
+**The reachability cost is real and accepted, not disproved** — if the 11 URLs
+come back flat at the 2026-09-30 measurement, footer-only linking is one
+candidate explanation and should be weighed before the copy is blamed.
 
-**Next action:** deploy, then run
-`SEO_CHECK_BASE=https://www.myglobalhealth.online pnpm --filter frontend test seo-live-urls`.
-One run covers both open items — the redirect runtime gap from
-`SEO-GLOBAL-LANG-002` and the 11 new FAQ URLs.
+**Chain guard.** `tests/unit/redirect-chains.test.ts` follows every redirect
+destination back through the ordered rule list using Next's own bundled
+`path-to-regexp`, failing on any chain or loop. `seo-live-urls` proves a redirect
+does not 404 but follows up to 5 hops, so a rule landing on another rule passed
+it silently. **Verification claim, stated at its real strength (§0.7):** the
+guard was made to fail — injecting `/careers → /about` produced
+`CHAIN: /careers -> /about -> /ireland/en/about` — and then restored. What the
+guard itself proves is one-hop resolution through the rule list, not
+origin-server behaviour; **that second half is now closed separately** by the
+production gate recorded under `SEO-GLOBAL-LANG-002`.
+
+**Post-deploy gate — RUN, 2026-08-15.**
+`SEO_CHECK_BASE=https://www.myglobalhealth.online pnpm --filter frontend test seo-live-urls`
+→ **8 passed**, ~120 s. Covered both open items in one run: the redirect runtime
+gap from `SEO-GLOBAL-LANG-002` and the 11 new FAQ URLs.
 
 ### `/pt/about` — 1,005 Brazilian impressions are someone else's brand (2026-08-15)
 
@@ -1027,7 +1058,8 @@ investigations on these until the last-crawl date advances past the fix date.**
 | `/czechia-doctors/mudr-libor-hlavaty` | **CORRECTED 2026-08-14** — 308 → `/czechia/cs/doctors` (200). The previous entry claimed the per-doctor target returned "200, indexable"; re-probed live 2026-08-14 it returned **404**, and §14 (2026-08-13) already recorded him as absent from the roster. SEO-DOC-004 fixed the routing | Legacy URL still carries the ranking (573 impr / pos 11.0, 90d) | — | 2026-08-14 | WAIT FOR GOOGLE |
 | 28 doctors backfilled to `readyToIndex` — **measured 2026-08-14: 117 doctor-locale URLs across 25 doctors still hold the pre-fix verdict** (Portugal 75, Czechia 18, Romania 18, Brazil 3, Spain 2, Ireland 1). Full URL list in SEO-DOC-006 | 200, `index, follow`, self-canonical, in sitemap; bios re-verified substantive on all 25 | Excluded by `noindex` — **every one last crawled 2026-07-16 → 2026-08-06, all before the fix. Zero exceptions**, so no page has yet been re-evaluated on its current content | **2026-07-16 → 2026-08-06** | 2026-08-08 | WAIT FOR GOOGLE |
 | `/service-page/ie-medical-consultation` (legacy Wix) | 308 → `/ireland/en/see-a-specialist` | **Submitted and indexed, self-canonical** | **2026-07-08** | — | WAIT FOR GOOGLE (added 2026-08-12, SEO-GROWTH-017) |
-| `/pt/about` (legacy) | 308 → `/about` | Still earning 781 impr / 8 clicks / position 8.7 | — | — | WAIT FOR GOOGLE (added 2026-08-12). Query mix is brand and **brand-collision** terms for unrelated entities ("clinic global health", "help global") — no commercial value, do not optimise |
+| `/about`, `/blog`, `/faq` (retired 2026-08-15) | 308 → `/ireland/en/{about,blog,faq}`, one hop, verified live 2026-08-15 | Not yet recrawled. Pre-retirement 90d: `/about` ~560 impr / **0 clicks** (58 referring domains — the equity this 308 exists to pass), `/blog` 127 impr / 4 clicks / pos 4.65, `/faq` `rowCount: 0` | — | 2026-08-15 | WAIT FOR GOOGLE (added 2026-08-15, SEO-GLOBAL-LANG-002). `/blog`'s position 4.65 is the one worth watching — it is the only one of the three that was ranking |
+| `/pt/about` (legacy) | 308 → `/ireland/en/about` (repointed 2026-08-15 — it used to target the now-retired `/about`, which would have made it a two-hop chain) | Still earning 781 impr / 8 clicks / position 8.7 | — | — | WAIT FOR GOOGLE (added 2026-08-12). Query mix is brand and **brand-collision** terms for unrelated entities ("clinic global health", "help global") — no commercial value, do not optimise |
 
 **One watchlist item resolved this pass.** `/ireland-doctors/dr-mohammed-omar`, the
 representative of the legacy Irish doctor family, was re-inspected 2026-08-12: Google
