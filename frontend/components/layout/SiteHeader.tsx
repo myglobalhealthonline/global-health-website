@@ -142,10 +142,8 @@ function sectionNavForCountryLang(
   // In-country: the market's own About, FAQ and contact pages (local NAP,
   // register, languages, offering, regulatory FAQs).
   items.push({ href: `${base}/about`, label: nav.navAbout });
-  // FAQ is a 33-URL family (country x locale). Footer-only linking is the
-  // /health/* topology that left those pages under-crawled — the nav is the
-  // link that gets followed on every page of the market.
-  items.push({ href: `${base}/faq`, label: nav.navFaq });
+  // FAQ is deliberately NOT here (Hassaan, 2026-08-15) — it lives in the
+  // footer only, which still puts it on every page of the market.
   items.push({ href: `${base}/contact`, label: nav.navContact });
   return items;
 }
@@ -163,7 +161,7 @@ function sectionNavGlobal(nav: SiteNavigationData): SectionNavItem[] {
     { href: "/", label: nav.navHome, exact: true },
     { href: "/ireland/en/about", label: nav.navAbout },
     { href: "/ireland/en/blog", label: nav.navBlog },
-    { href: "/ireland/en/faq", label: nav.navFaq },
+    // FAQ is footer-only sitewide (Hassaan, 2026-08-15).
     { href: "/contact", label: nav.navContact },
   ];
 }

@@ -170,7 +170,7 @@ export function MobileNav({
           { href: `/${navCountrySlug}/${navLang}/blog`, label: navigation.navBlog },
           // Country-scoped, matching SiteHeader/SiteFooter.
           { href: `/${navCountrySlug}/${navLang}/about`, label: navigation.navAbout },
-          { href: `/${navCountrySlug}/${navLang}/faq`, label: navigation.navFaq },
+          // No FAQ — footer only, matching SiteHeader.
           { href: `/${navCountrySlug}/${navLang}/contact`, label: navigation.navContact },
         ]
       : [
@@ -179,7 +179,7 @@ export function MobileNav({
           // 2026-08-15 and 301 here. Mirrors SiteHeader's sectionNavGlobal.
           { href: "/ireland/en/about", label: navigation.navAbout },
           { href: "/ireland/en/blog", label: navigation.navBlog },
-          { href: "/ireland/en/faq", label: navigation.navFaq },
+          // FAQ is footer-only sitewide, matching SiteHeader.
           { href: "/contact", label: navigation.navContact },
         ];
 
