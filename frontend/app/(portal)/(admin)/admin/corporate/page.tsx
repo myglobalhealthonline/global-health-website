@@ -237,9 +237,12 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                     <option value="" disabled>
                       Choose a service…
                     </option>
+                    {/* The name shown is whichever country row the slug
+                        dedupe kept, so the slug is printed too — that is what
+                        actually gets assigned. */}
                     {plansResult.data.serviceOptions.map((opt) => (
                       <option key={opt.slug} value={opt.slug}>
-                        {opt.name}
+                        {opt.slug} — {opt.name}
                       </option>
                     ))}
                   </select>

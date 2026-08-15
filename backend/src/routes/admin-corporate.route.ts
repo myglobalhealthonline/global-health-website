@@ -173,12 +173,17 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
         orderBy: { createdAt: "asc" },
       }),
       // Assignment picker options — one entry per slug (Service rows are
-      // per-country duplicates of the same catalog slug).
+      // per-country duplicates of the same catalog slug). Ordered by SLUG, not
+      // name: `distinct` keeps the first row per slug in the result order, so
+      // ordering by name kept whichever country's LOCALIZED name sorted first
+      // and hid the English one ("Illness Benefit Consultation" lost to
+      // "Avaliação para subsídio de doença"). The picker submits the slug, so
+      // the UI labels each option with it.
       prisma.service.findMany({
         where: { isActive: true },
         select: { slug: true, name: true, visibility: true },
         distinct: ["slug"],
-        orderBy: { name: "asc" },
+        orderBy: { slug: "asc" },
       }),
     ]);
     return okResponse({ plans, serviceOptions });
