@@ -558,19 +558,52 @@
    sitemap-in-the-footer, not a second entry gate. Same weight as the legal
    footer below it, deliberately: it must be REAL (no hidden, no display:none,
    no aria-hidden — a link Google is told to ignore passes nothing), but it
-   must not compete with the country cards for a visitor's attention. */
+   must not compete with the country cards for a visitor's attention, hence
+   the collapsed `details` wrapper. */
 .altLocales {
+  position: relative;
   z-index: 3;
   padding: 16px clamp(20px, 4vw, 48px) 0;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.4);
 }
 
+/* Collapsed by default: the 33 links stay in the DOM and crawlable, but the
+   visitor sees one quiet line instead of a wall of language names. */
+.altLocales summary {
+  width: fit-content;
+  cursor: pointer;
+  list-style: none;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.altLocales summary::-webkit-details-marker {
+  display: none;
+}
+
+.altLocales summary::after {
+  content: "";
+  display: inline-block;
+  margin-left: 7px;
+  border: 3px solid transparent;
+  border-top-color: currentColor;
+  transform: translateY(2px);
+}
+
+.altLocales[open] summary::after {
+  transform: translateY(-1px) rotate(180deg);
+}
+
+.altLocales summary:hover,
+.altLocales summary:focus-visible {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .altLocales ul {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 18px;
-  margin: 0;
+  margin: 10px 0 0;
   padding: 0;
   list-style: none;
 }

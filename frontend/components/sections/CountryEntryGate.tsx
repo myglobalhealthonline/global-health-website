@@ -159,7 +159,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
   const [countryQuery, setCountryQuery] = useState("");
   const panelSlotRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const footerRef = useRef<HTMLElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
 
   // Replay the slug registry so client slug helpers resolve admin-added codes.
   registerCountrySlugs(countries);
@@ -248,6 +248,9 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
     };
     const ro = new ResizeObserver(applyAsync);
     ro.observe(panel);
+    // The footer block carries the collapsible language-alternates list, so its
+    // height changes when a visitor opens it — re-fit or the panel overlaps it.
+    if (footerRef.current) ro.observe(footerRef.current);
     window.addEventListener("resize", applyAsync);
     return () => {
       cancelAnimationFrame(raf);
@@ -526,35 +529,41 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
         locale cookie — a reader picking "Português" for Ireland is choosing a
         page, not changing their whole-site language preference.
 
-        Rendered for every requester, identical HTML. No `hidden`, no
-        `display:none` — a link Google is told to ignore passes nothing.
+        Rendered for every requester, identical HTML. Collapsed into a `details`
+        rather than hidden: 33 raw links under the hero read as spam to a
+        visitor, but `hidden`/`display:none`/`aria-hidden` would tell Google to
+        ignore them and a link Google ignores passes nothing. A closed `details`
+        keeps them real, crawlable and one click away.
       */}
-      <nav className={styles.altLocales} aria-label={ALT_LOCALES_LABEL[detectedLocale] ?? ALT_LOCALES_LABEL.en}>
-        <ul>
-          {countries.map((c) => {
-            const slug = c.slug || countrySlug(c.code);
-            const supported = c.supportedLocales?.length ? c.supportedLocales : [crawlLangFor(c)];
-            return (
-              <li key={c.code}>
-                <span className={styles.altLocaleCountry}>{c.name}</span>
-                {supported.map((loc) => (
-                  <a key={loc} href={`/${slug}/${String(loc).toLowerCase()}`} hrefLang={String(loc).toLowerCase()}>
-                    {LOCALE_LABELS[String(loc).toLowerCase()] ?? String(loc).toUpperCase()}
-                  </a>
-                ))}
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+      <div ref={footerRef}>
+        <details className={styles.altLocales}>
+          <summary>{ALT_LOCALES_LABEL[detectedLocale] ?? ALT_LOCALES_LABEL.en}</summary>
+          <ul>
+            {countries.map((c) => {
+              const slug = c.slug || countrySlug(c.code);
+              const supported = c.supportedLocales?.length ? c.supportedLocales : [crawlLangFor(c)];
+              return (
+                <li key={c.code}>
+                  <span className={styles.altLocaleCountry}>{c.name}</span>
+                  {supported.map((loc) => (
+                    <a key={loc} href={`/${slug}/${String(loc).toLowerCase()}`} hrefLang={String(loc).toLowerCase()}>
+                      {LOCALE_LABELS[String(loc).toLowerCase()] ?? String(loc).toUpperCase()}
+                    </a>
+                  ))}
+                </li>
+              );
+            })}
+          </ul>
+        </details>
 
-      {/* Footer */}
-      <footer ref={footerRef} className={`${styles.footer} relative flex flex-wrap justify-between gap-4`}>
-        <span suppressHydrationWarning>
-          © {new Date().getFullYear()} Global Health · {copy.euProvider}
-        </span>
-        <span>{copy.gdprNote}</span>
-      </footer>
+        {/* Footer */}
+        <footer className={`${styles.footer} relative flex flex-wrap justify-between gap-4`}>
+          <span suppressHydrationWarning>
+            © {new Date().getFullYear()} Global Health · {copy.euProvider}
+          </span>
+          <span>{copy.gdprNote}</span>
+        </footer>
+      </div>
     </div>
   );
 }
