@@ -7460,6 +7460,10 @@ button.gh-capacity-cell:hover {
   position: relative;
   container-type: inline-size;
   width: 100%;
+  /* Physical-card proportions, physical-card size. Without a cap the face grew
+     with the full-width portal column (1500px+ on a wide desktop) and ran taller
+     than the viewport. */
+  max-width: 560px;
   aspect-ratio: 1.5 / 1;
   overflow: hidden;
   isolation: isolate;
