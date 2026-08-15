@@ -52,6 +52,7 @@ These exist because the audit got things wrong in ways that looked convincing.
    | Diacritic-free keywords (§0.3) | Transliterate Czech to ASCII | `lekar online` returned zero competitors; `lékař online` a full field |
    | Ledger sweep, 2026-08-14 | "Every code in a row applies to every path in it" | 20 false disagreements, nearly a systematic-ledger-rot finding |
    | Honorific cross-product, 2026-08-14 | Generate every honorific × every live slug | 109 "failures", all URLs like `/ireland-doctors/mgr-grainne-ahern` that never existed |
+   | `grep -c` on served HTML, 2026-08-15 | "Count of matches" — the flag counts matching *lines* | "1 FAQ link" on a page carrying 2 (header + footer). Minified HTML is one line, so the ceiling was 1 no matter what the page contained |
 
    The fourth happened *inside the fix for the third*, which is the point: the
    shape is not obvious in the moment, because a constructed corpus fails
@@ -72,6 +73,25 @@ These exist because the audit got things wrong in ways that looked convincing.
    and when. If either answer is "not sure", it is context, not evidence. The
    grounded substitute in this case was the 364 redirect rules in
    `next.config.ts` expanding across six locales — checkable today, in this repo.
+
+   **Second extension — the unit is part of the number.** §0.6 catches a corpus
+   that was constructed; the first extension catches one that has expired. The
+   sixth instance (2026-08-15) is neither: the instrument ran correctly, on the
+   right corpus, at the right moment, and answered a question adjacent to the
+   one asked. `grep -c 'href="…/faq"'` counts matching **lines**, not matches,
+   and served HTML is a single line — so it reported `1` for a page carrying two
+   FAQ links and would have reported `1` for a page carrying fifty. The number
+   was real, current, and about the wrong unit. Caught only because `about`,
+   `blog` and `contact` were expected to differ from `faq` and all four came
+   back `1` — an implausible *pattern*, not an implausible value. Hassaan
+   reports the same shape from a longest-`description` extractor (raised
+   2026-08-15; not otherwise recorded in this repo, so treat it as a second
+   sighting rather than a citation).
+
+   Practical form: when a count is load-bearing, name its unit and confirm the
+   instrument measures that unit — `grep -o … | wc -l` counts occurrences,
+   `grep -c` counts lines. A count that cannot exceed 1 is a flag, not a count.
+   The tell is a set of independent measurements landing on the same value.
 7. **Provenance decays the same way data does. Attribute to a commit hash or a
    named human plus a date — never to "the session", "the team", or an
    unattributed "we".** §0.6 catches synthesised *data*. This catches synthesised

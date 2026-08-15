@@ -247,6 +247,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
 | SEO-GROWTH-016 | Ireland at-home lab-test cluster: 1,041 impressions, 4 clicks, position 27.1, from a zero base | Ranking / content-intent | **INVESTIGATED — BOTTLENECK = INDEXING RAMP. No content, schema, linking or metadata work justified yet** | 2026-08-12 | `/ireland/en/lab-tests` + 16 detail pages all 200, `index, follow`, self-canonical, in sitemap, `richResults` PASS. Hub serves **14 real anchors**. Copy is **independently written, not Randox-duplicated**. Page format already matches what the SERP rewards. No cannibalization. `Product`/`Offer` schema absent but data exists. Hub meta carries a **stale €89 price** (real entry price €57) and a wrong "up to 10 days" turnaround | Detail pages first crawled 2026-08-01 → 08-08 and earned **100% of their 28-day impressions in the final 7 days**, while the hub dropped from ~479 to 11 — a hub→detail hand-off completed inside the measurement window. Cluster position improved 37.5 → 26.3 → 20.3 over 08-09/08-10/08-11 | **WAIT / MEASURE, re-measure 2026-09-08.** Full findings and early-exit triggers in §7 SEO-GROWTH-016 |
 | SEO-GLOBAL-LANG-002 | Bare `/about`, `/blog`, `/faq` carry no country signal; `/{country}/{lang}/faq` did not exist | Site architecture / legacy routing | **IMPLEMENTED — NOT COMMITTED, NOT DEPLOYED** | 2026-08-15 | Local only: 33 FAQ URLs live and verified (200, per-country title, hreflang, `FAQPage`); bare trio 301s to `/ireland/en/*` asserted at config level, **not probed at runtime** (a second dev server cannot run on the same directory under Next 16) | Unchanged — nothing deployed | Commit + deploy, then run `SEO_CHECK_BASE=https://www.myglobalhealth.online` `seo-live-urls`. Add the three retired URLs to §6 once Google's stored state can lag. See §5 SEO-GLOBAL-LANG-002 |
+| SEO-GLOBAL-LANG-003 | Country FAQ pages shipped with one shared question set across all 33 URLs | Content / indexation | **IMPLEMENTED, COMMITTED (`9175893b`), NOT DEPLOYED** | 2026-08-15 | 18 researched questions per market; 11 authored URLs `index,follow` and in the sitemap, 22 unwritten ones `noindex,nofollow` and withheld. ES/CZ/RO state plainly that the state sick-leave instrument is not ours to issue. FAQ added to country header + mobile nav. Redirect chain/loop guard added and mutation-checked | Unchanged — nothing deployed | Deploy, then `seo-live-urls`. Backfill trigger and the open Brazil integration question are stated in §5 SEO-GLOBAL-LANG-003 |
 | SEO-GROWTH-017 | `/service-page/ie-medical-consultation` (legacy Wix) still self-canonical and indexed in Google | Legacy routing | **WAITING FOR GOOGLE** | 2026-08-12 | 308 → `/ireland/en/see-a-specialist` (live probe, Googlebot UA) | "Submitted and indexed", **self-canonical**, last crawl **2026-07-08** — predates nothing in particular; Google simply has not recrawled. Referring URLs include `/home` and `booking-services-sitemap.xml`, both Wix-era artefacts | Watchlist only (§6). 147 impressions / 3 clicks / position 24.1 in the current window |
 
 ### Global foundation audit (`SEO-FOUNDATION-001`, 2026-08-12)
@@ -718,6 +719,82 @@ there; `/blog`'s 127 impressions / 4 clicks and `/about`'s ~560 impressions /
 `app/(global)/about/page.tsx`, which is deleted. The country FAQ route takes its
 Q&A from `faq.json` (translated in all six locales) and the market copy from
 `country-about.ts`, so no locale renders English Q&A under a translated heading.
+
+### SEO-GLOBAL-LANG-003 — per-market FAQ copy, 11 indexable of 33 (2026-08-15)
+
+**Implemented and committed (`9175893b`), NOT deployed.** Follows
+`SEO-GLOBAL-LANG-002`, which shipped the route with four templated questions
+plus nine shared ones — identical across all 33 URLs, i.e. a page per market in
+URL shape only. This replaces that with 18 questions per market.
+
+**Research spend: 191 OpenSEO credits, 1,059 remaining.** The People Also Ask
+blocks returned null question text in 8 of 12 SERPs, so no PAA strings were
+harvestable and `get_keyword_metrics` was correctly skipped (nothing to
+hydrate). Question phrasing came from a free WebSearch pass per market instead.
+What the paid pull did buy was SERP *composition*, which is what changed the
+copy: Ireland is privately dominated and uses "sick cert" verbatim; Portugal has
+SNS24 in 2 of 5 and a distinct driving-licence certificate; Spain, Czechia and
+Romania are dominated by the state instrument's own institutions.
+
+**The finding that shapes three of the six pages.** `baja médica`
+(incapacidad temporal, Seguridad Social), `eNeschopenka` (ČSSZ) and
+`concediu medical` (CNAS) are state instruments Global Health does not issue.
+Those three pages now say so plainly. That is the honest answer on a YMYL page,
+it is what makes the three pages substantively different from each other and
+from competitors who fudge it, and it matches the Czech market verdict already
+in §12 — win on what we actually do, do not run a `neschopenka` campaign.
+
+**Indexation is gated on translation, not on route existence.**
+
+| | Count | State |
+| --- | --- | --- |
+| Authored (English ×6 markets, plus each market's own language) | **11** | `index,follow`, in sitemap, in hreflang cluster |
+| Not yet authored | **22** | `noindex,nofollow`, absent from sitemap and hreflang, still serve a readable fallback |
+
+Rationale beyond the `/legal/*` precedent (Hassaan, 2026-08-15): 117 doctor
+URLs are still awaiting recrawl and ~115 more have never been fetched. Crawl
+budget is rationed by authority and the domain has 58 referring domains.
+Submitting 33 indexable URLs where 22 are unwritten does not buy 33 ranking
+pages — it spends scarce budget on thin ones and dilutes what reaches the pages
+that matter.
+
+**Backfill trigger — stated before the numbers arrive, per the SEO-DOC-004
+discipline.** Translate the remaining 22 when, and only when, **the 11 authored
+URLs together earn ≥ 150 impressions in a 28-day window**, measured no earlier
+than **2026-09-30** (six weeks post-deploy, so the crawl has had time to
+happen). Below that, the constraint is discovery or authority, not language
+coverage, and translating 22 more pages would repeat the same bet at triple the
+cost. If the 11 earn **zero** impressions by 2026-10-31, the correct conclusion
+is that the FAQ family is not a viable entry point for this domain yet — revisit
+the family, do not backfill it.
+
+**Open question to confirm, not a gap to fill — Brazil.** The Brazil copy cites
+Resolução CFM nº 2.314/2022 and deliberately does NOT cite Resolução CFM
+2.382/2024, the Atesta CFM platform, or the ICP-Brasil digital-signature
+standard. All three are real and all three are the authority signals in that
+SERP. They were dropped because citing them implies an operational integration
+**nobody has verified we have**. What needs answering, by a human with access to
+the Brazil operation: does the platform issue atestados through Atesta CFM, and
+are the documents signed to the ICP-Brasil standard? If yes, the citations
+belong in the copy and are a genuine ranking asset in that market. If no, the
+current wording is correct and should stay. Do not resolve this from the SERP.
+
+**Also in this batch.** FAQ joined the country header and mobile nav — a 33-URL
+family reachable only from the footer is the `/health/*` reachability defect
+(§6 of the brief) repeated. And `tests/unit/redirect-chains.test.ts` now follows
+every redirect destination back through the ordered rule list using Next's own
+bundled `path-to-regexp`, failing on any chain or loop; `seo-live-urls` proves a
+redirect does not 404 but follows up to 5 hops, so a rule landing on another
+rule passed it silently. **Verification claim, stated at its real strength
+(§0.7):** the guard was made to fail — injecting `/careers → /about` produced
+`CHAIN: /careers -> /about -> /ireland/en/about` — and then restored. What it
+proves is one-hop resolution through the rule list, NOT origin-server behaviour;
+that remains asserted-only until the post-deploy gate runs.
+
+**Next action:** deploy, then run
+`SEO_CHECK_BASE=https://www.myglobalhealth.online pnpm --filter frontend test seo-live-urls`.
+One run covers both open items — the redirect runtime gap from
+`SEO-GLOBAL-LANG-002` and the 11 new FAQ URLs.
 
 ### `/pt/about` — 1,005 Brazilian impressions are someone else's brand (2026-08-15)
 
