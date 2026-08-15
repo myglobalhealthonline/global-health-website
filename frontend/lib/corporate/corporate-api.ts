@@ -366,11 +366,28 @@ export type MeCorporateBeneficiaryDto = {
   createdAt: string;
 };
 
+export type MeCorporateBenefitsDto = {
+  discounts: { label: string; discountPercent: number }[];
+  includedServices: {
+    slug: string;
+    name: string;
+    role: "INCLUDED" | "PRE_ASSESSMENT" | "ILLNESS_BENEFIT" | "FIT_FOR_WORK";
+    visibility: "PUBLIC" | "CORPORATE_ONLY" | "CORPORATE_REQUEST_ONLY" | "ADMIN_ONLY";
+    bookPath: string | null;
+  }[];
+};
+
 export type MeCorporateMembershipDto = {
   memberType: "EMPLOYEE" | "BENEFICIARY";
   companyName: string;
   companyLive: boolean;
+  /** Company's market — the country segment of every portal booking link.
+   *  Optional so the portal survives a frontend deploy that lands before the
+   *  backend one. */
+  countryCode?: string;
+  locale?: string;
   planName: string;
+  benefits?: MeCorporateBenefitsDto;
   maxBeneficiaries?: number;
   status: string;
   onboarding?: {

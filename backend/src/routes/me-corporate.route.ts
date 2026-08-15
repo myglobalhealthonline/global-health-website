@@ -26,6 +26,7 @@ import {
   planServiceSlug,
   requestBookPath,
 } from "../modules/corporate/corporate-request.service.js";
+import { resolveMemberBenefits } from "../modules/corporate/corporate-benefit.service.js";
 
 /**
  * Patient-portal corporate membership endpoints. Everything is scoped
@@ -71,6 +72,12 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
         }));
       const profileComplete = isEmployeeProfileComplete(employee);
       const locale = await memberBookingLocale(userId, employee.company.countryCode);
+      const benefits = await resolveMemberBenefits({
+        planId: employee.company.planId,
+        countryCode: employee.company.countryCode,
+        locale,
+        memberType: "EMPLOYEE",
+      });
       const bookPath = preAssessmentService
         ? `/${employee.company.countryCode.toLowerCase()}/${locale}/book?service=${preAssessmentService.slug}${
             employee.company.preAssessmentDoctorId
@@ -82,7 +89,12 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
         memberType: "EMPLOYEE",
         companyName: employee.company.name,
         companyLive: companyIsLive(employee.company),
+        // Every portal booking link is `/{country}/{lang}/…`; without this the
+        // portal had no country for a member who has never booked yet.
+        countryCode: employee.company.countryCode,
+        locale,
         planName: employee.company.plan.name,
+        benefits,
         maxBeneficiaries: employee.company.plan.maxBeneficiariesPerEmployee,
         status: employee.status,
         onboarding: {
@@ -126,11 +138,21 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
       const card = await prisma.corporateBenefitCard.findUnique({
         where: { beneficiaryId: beneficiary.id },
       });
+      const locale = await memberBookingLocale(userId, beneficiary.company.countryCode);
+      const benefits = await resolveMemberBenefits({
+        planId: beneficiary.company.planId,
+        countryCode: beneficiary.company.countryCode,
+        locale,
+        memberType: "BENEFICIARY",
+      });
       return okResponse({
         memberType: "BENEFICIARY",
         companyName: beneficiary.company.name,
         companyLive: companyIsLive(beneficiary.company),
+        countryCode: beneficiary.company.countryCode,
+        locale,
         planName: beneficiary.company.plan.name,
+        benefits,
         status: beneficiary.status,
         profile: {
           phone: beneficiary.phone,

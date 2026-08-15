@@ -5,6 +5,7 @@ import {
   CalendarCheck2,
   CheckCircle2,
   Circle,
+  Percent,
   UserPlus,
 } from "lucide-react";
 import {
@@ -165,6 +166,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
   const beneficiaries = (membership.beneficiaries ?? []).filter((b) => b.status !== "REMOVED");
   const maxBeneficiaries = membership.maxBeneficiaries ?? 5;
   const openRequests = membership.openRequests ?? [];
+  const benefits = membership.benefits ?? { discounts: [], includedServices: [] };
 
   // Employees compute completeness from the membership row; a beneficiary is
   // simply left in PROFILE_INCOMPLETE until theirs is filled in.
@@ -366,6 +368,70 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
               </p>
             ) : null}
           </div>
+        </AdminCard>
+
+        {/* What the plan actually gives them. The discounts here are the same
+            CorporateBenefitRule rows the checkout pricing engine applies, and
+            the services are the plan's assignments resolved to this company's
+            country — both were invisible to members before. */}
+        <AdminCard padding={0} className="overflow-hidden lg:col-span-2">
+          <SectionHeader
+            as="h2"
+            title={t.benefitsTitle}
+            description={t.benefitsDesc.replace("{plan}", membership.planName)}
+          />
+          {benefits.discounts.length === 0 && benefits.includedServices.length === 0 ? (
+            <p className="px-5 py-4 text-sm text-[var(--color-text-muted)]">{t.benefitsEmpty}</p>
+          ) : (
+            <div className="grid gap-4 border-t border-[var(--color-border)] px-5 py-4 sm:grid-cols-2">
+              {benefits.discounts.length > 0 ? (
+                <div>
+                  <p className="gh-field-label mb-2">{t.benefitsDiscounts}</p>
+                  <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+                    {benefits.discounts.map((d) => (
+                      <li
+                        key={`${d.label}-${d.discountPercent}`}
+                        className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-primary)]"
+                      >
+                        <Percent className="size-4 shrink-0 text-emerald-600" aria-hidden />
+                        {t.benefitsDiscountLine
+                          .replace("{percent}", String(d.discountPercent))
+                          .replace("{label}", d.label)}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 text-xs text-[var(--color-text-muted)]">
+                    {t.benefitsDiscountHint}
+                  </p>
+                </div>
+              ) : null}
+              {benefits.includedServices.length > 0 ? (
+                <div>
+                  <p className="gh-field-label mb-2">{t.benefitsServices}</p>
+                  <ul className="m-0 flex list-none flex-col gap-2 p-0">
+                    {benefits.includedServices.map((s) => (
+                      <li key={s.slug} className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+                          {s.name}
+                        </span>
+                        {s.bookPath ? (
+                          <Btn href={s.bookPath} variant="primary" size="sm">
+                            {t.benefitsBook}
+                          </Btn>
+                        ) : (
+                          <span className="text-xs text-[var(--color-text-muted)]">
+                            {s.visibility === "CORPORATE_ONLY"
+                              ? t.benefitsOnboardingOnly
+                              : t.benefitsRequestOnly}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </div>
+          )}
         </AdminCard>
 
         {/* Open requests */}

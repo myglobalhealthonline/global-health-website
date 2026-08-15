@@ -120,6 +120,104 @@ export async function resolveCorporateDiscountsForItems(
   return out;
 }
 
+/** What a member's plan gives them, resolved for their company's country.
+ *  Purely for display on /account/corporate — the authoritative discount is
+ *  still `resolveCorporateDiscount` at pricing time. */
+export type MemberBenefits = {
+  discounts: { label: string; discountPercent: number }[];
+  includedServices: {
+    slug: string;
+    name: string;
+    role: string;
+    visibility: string;
+    /** Set only when the member can open the booking flow directly. */
+    bookPath: string | null;
+  }[];
+};
+
+const SERVICE_KIND_LABEL: Record<string, string> = {
+  GENERAL: "GP consultations",
+  SPECIALIST: "Specialist consultations",
+};
+
+/**
+ * Plan benefit rules + included services, resolved to the company country's
+ * Service rows (the catalogue is per-country, the plan assignment is by slug).
+ * Rules on kinds checkout does not discount are dropped rather than advertised
+ * — see the GENERAL/SPECIALIST guard in `resolveCorporateDiscount`.
+ */
+export async function resolveMemberBenefits(input: {
+  planId: string;
+  countryCode: string;
+  locale: string;
+  memberType: "EMPLOYEE" | "BENEFICIARY";
+}): Promise<MemberBenefits> {
+  const [rules, planServices] = await Promise.all([
+    prisma.corporateBenefitRule.findMany({
+      where: { corporatePlanId: input.planId, isActive: true },
+      include: { service: { select: { slug: true, kind: true } } },
+    }),
+    prisma.corporatePlanService.findMany({
+      where: { corporatePlanId: input.planId },
+      select: { role: true, service: { select: { slug: true } } },
+      orderBy: { createdAt: "asc" },
+    }),
+  ]);
+
+  const slugs = Array.from(
+    new Set([
+      ...planServices.map((ps) => ps.service.slug),
+      ...rules.flatMap((r) => (r.service ? [r.service.slug] : [])),
+    ]),
+  );
+  const localRows = slugs.length
+    ? await prisma.service.findMany({
+        where: {
+          slug: { in: slugs },
+          isActive: true,
+          country: { code: input.countryCode.toLowerCase() },
+        },
+        select: { slug: true, name: true, visibility: true },
+      })
+    : [];
+  const bySlug = new Map(localRows.map((s) => [s.slug, s]));
+
+  const discounts = rules
+    .filter((r) => r.discountPercent > 0)
+    .filter((r) => input.memberType !== "BENEFICIARY" || r.appliesToBeneficiaries)
+    .flatMap((r) => {
+      const kind = r.service?.kind ?? r.serviceKind;
+      if (kind !== "GENERAL" && kind !== "SPECIALIST") return [];
+      const label = r.service
+        ? (bySlug.get(r.service.slug)?.name ?? r.service.slug)
+        : SERVICE_KIND_LABEL[kind];
+      return [{ label, discountPercent: r.discountPercent }];
+    });
+
+  const includedServices = planServices.flatMap((ps) => {
+    const row = bySlug.get(ps.service.slug);
+    // No row in this country (or deactivated) = not actually offered here.
+    if (!row) return [];
+    return [
+      {
+        slug: row.slug,
+        name: row.name,
+        role: ps.role as string,
+        visibility: row.visibility as string,
+        // CORPORATE_REQUEST_ONLY needs an open company request (surfaced
+        // separately as `openRequests`); CORPORATE_ONLY is the onboarding
+        // pre-assessment, which has its own checklist link.
+        bookPath:
+          row.visibility === "PUBLIC"
+            ? `/${input.countryCode.toLowerCase()}/${input.locale.toLowerCase()}/book?service=${row.slug}`
+            : null,
+      },
+    ];
+  });
+
+  return { discounts, includedServices };
+}
+
 export type CorporateBookabilityResult =
   | { ok: true; requestId?: string; employeeId?: string; pinnedDoctorId?: string | null }
   | {
