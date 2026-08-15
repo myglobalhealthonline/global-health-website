@@ -68,6 +68,11 @@ impression-weighted from those rows.
 | Prior 28d | 2026-06-17 → 2026-07-14 | 414 | 10,860 | 3.81% | 13.1 |
 | Last 3 months | 2026-05-12 → 2026-08-11 | 1,617 | 54,877 | 2.95% | 16.1 |
 
+> **Superseded as a reporting format, not as data (2026-08-15, §22.2).** The blended
+> average position column is retired from future entries — while indexation is still
+> expanding it measures how much got indexed, not how well anything ranks. Report
+> segments instead. The numbers below stand as recorded.
+
 **Read this correctly.** Clicks grew 74% period-over-period, which is real. Impressions
 grew 209%, which is faster, so CTR fell and average position deepened. Nothing in the
 click series suggests a ranking loss — the mechanism was diagnosed and closed in
@@ -5439,6 +5444,10 @@ into the existing Romania recheck rather than a standalone item:
   Romanian-language commercial query volume on that cluster rises above
   single-impression noise
 - **~2026-09-08**: Ireland lab cluster, Czech GP ranking ramp, Spain dermatología
+- **~2026-09-30**: country FAQ measurement (§5 `SEO-GLOBAL-LANG-003`) **+ legacy
+  consolidation share (§22.3) in the same trip** — both are GSC pulls on the same
+  property, and §22.3 carries a stated threshold so the number cannot be reread as
+  "still consolidating" indefinitely
 - **event-driven only**: Czech doctor onboarding/business state, Hlavatý disposition,
   Spain gated-service content completion
 - **~2026-11-13**: Brazil/Romania generic commercial SERP-wall recheck
@@ -5446,5 +5455,165 @@ into the existing Romania recheck rather than a standalone item:
 Do not reopen any item early absent a genuine production/search regression.
 
 **SIX-MARKET SEO PROGRAM COMPLETE / MONITOR EXCEPTIONS — NO IMPLEMENTATION / NO DEPLOY.**
+
+---
+
+## 22. LEGACY-CONSOLIDATION-001 — migration click evidence, legacy duplicate audit, blended-metric retirement (2026-08-15)
+
+**Why this ran.** A "performance dropped" report. It had not. The pass is recorded
+because what it produced is durable: the first click-level evidence the migration is
+working, a closed finding on legacy duplicates, and a measure that needs a date and a
+threshold rather than a rerun.
+
+### 22.1 Headline — clicks 420 → 738, the first real evidence the migration is working
+
+28-day windows, `get_search_console_performance`, `dataState=all`. Totals summed from
+the `date` dimension and cross-checked against the `device` dimension (identical on both
+windows); position is impression-weighted from the device rows.
+
+| Window | Dates | Clicks | Impressions | CTR | Blended position |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Current 28d | 2026-07-16 → 2026-08-12 | **738** | 36,028 | 2.05% | 18.4 |
+| Prior 28d | 2026-06-18 → 2026-07-15 | 420 | 10,928 | 3.84% | 13.1 |
+
+**Clicks +76%.** This is the finding. It extends §1's 414 → 719 (windows one day
+earlier) with a second, independently-summed window, and it is the first measurement in
+this document that shows the migration paying in clicks rather than in indexed URLs.
+
+**The CTR and position lines below it are arithmetic, not findings.** Impressions grew
+230% against 76% click growth, so both ratios had to fall; 26,000 new impressions
+entering at positions 20–46 drag any sitewide mean. Mechanism already diagnosed and
+closed in `SEO-GROWTH-012` — 568 previously-zero-impression pages, 75% of the volume the
+`/tools/*` cluster. Nothing in the click series suggests a ranking loss, and the
+query-level diff below confirms it.
+
+**Query-level diff, same windows.** No page or query family collapsed. The largest
+losers are 1–4 click doctor-name queries whose *rank held* while impressions fell
+(`dr grainne ahern galway` 5 → 1 clicks at position 2.3 → 2.1). The gainers are larger
+and commercial: `global health` 14 → 25, `global health ireland` 3 → 13, `global health
+online` 2 → 8, `globalhealth` 3 → 7. At page level `/` went 108 → 144 clicks, and doctor
+traffic visibly moved onto the current URL shape (`/ireland/en/doctors/dr-fahad-farooq`
+1 → 14).
+
+### 22.2 Blended position is retired from this ledger — report segments
+
+**Do not record a sitewide average position while indexation is still expanding.** It is
+currently measuring how much got indexed, not how well anything ranks, and it will keep
+falling as more URLs enter. The blended figures above are kept only because they are what
+a reader arrives holding; they are not a metric this document tracks going forward.
+
+Segments measured this pass (same 28 days), which do carry meaning:
+
+| Segment | Clicks | Impressions | CTR | Position |
+| --- | ---: | ---: | ---: | ---: |
+| Mobile | 509 | 15,945 | 3.19% | 11.9 |
+| Desktop | 224 | 19,826 | 1.13% | 23.7 |
+| Tablet | 5 | 257 | 1.95% | 20.1 |
+
+The commercial-vs-tools/informational split stays as `SEO-GROWTH-012` defined it; no
+fresh per-segment numbers were pulled this pass, and none are invented here.
+
+### 22.3 Legacy URLs — ZERO duplicates. Finding closed as "nothing to do"
+
+**Every legacy URL earning search impressions is already consolidated.** This closes an
+item open since the audit's first pass, and it closes it with no work.
+
+Method: every non-current-shape URL appearing in the two page-dimension GSC pulls for the
+current window (282 distinct paths), probed against production without following
+redirects.
+
+| Result | Count | What it is |
+| --- | ---: | --- |
+| 308 | 278 | Already consolidated. GSC attributes to the redirect *source* for weeks after the redirect lands |
+| 410 | 1 | `/ireland-doctors/dr-grainne-ahern` — deliberate, see §22.4 |
+| 200 | 2 | `/` and `/privacy` — live canonical pages, corpus artefact, see §22.5 |
+
+**Real duplicate count: zero.** Redirected URLs cannot compete with their targets, so
+framing the 308s as competing pages would have put work against a reporting artefact.
+
+`/online-prescriptions/*` was probed as its own family first, because that shape was
+absent from the earlier legacy probe set (`/service-page/*`, `/post/*`, `/product-page/*`
+and `/{country}-doctors/*` were covered; this was not). All 10 shapes 308, including the
+`/cs/` and `/es/` prefixed ones. Covered deliberately by `next.config.ts` — the
+`online-prescriptions` feature flag is off in every market for Ads compliance, so the
+aliases point at the GP page rather than forming a 308 → 404 chain. The
+556-impressions/0-clicks reading on `/online-prescriptions/bacterial-vaginosis-prescription`
+is a redirect source accumulating impressions, not a live page.
+
+**Consolidation progress — the metric this leaves behind, with a date and a threshold.**
+Of the 768 clicks attributed at page-dimension level, **369 (48%) still enter through a
+legacy URL that 308s**, five weeks after the redirects landed. (Page-dimension totals
+run slightly above the 738 date-dimension total; the share is computed within one
+dimension.)
+
+- **Re-measure 2026-09-30**, in the same trip as the country-FAQ measurement (§21.10
+  calendar, §5 `SEO-GLOBAL-LANG-003`). Not before — this needs crawl time, not attention.
+- **Threshold, stated in advance so it cannot be reread as "still consolidating":**
+  the legacy click share should be **materially below 48% — call it under 30%**. If it
+  is not, five weeks has become ten with no movement, and that is a **crawl-rate
+  finding** to be worked alongside the 117 un-recrawled doctor URLs in §6, not a wait.
+- Same underlying story as those 117 URLs: production is right, Google's stored state
+  is behind.
+
+### 22.4 Pre-registered — the Grainne Ahern numbers will vanish next window. That is the 410 working
+
+`/ireland/en/doctors/dr-grainne-ahern` shows **8 clicks / 142 impressions** in the
+current window, and `/ireland-doctors/dr-grainne-ahern` a further 2 / 51. The 410 landed
+**2026-08-08, mid-window**, so both figures are pre-410 days inside the range.
+
+**Recorded now so that whoever pulls October's numbers does not read a fresh
+regression:** these go to zero by design. The cost was booked at the decision —
+74 clicks / 600 impressions / 90 days / average position 3.8, owner-confirmed departure,
+`GONE_DOCTORS` in `frontend/lib/seo/gone-content.ts`. Both the legacy and current-shape
+URLs answer 410 by design (the two-part mechanism: middleware 410 plus gone-slug
+exclusion from the broad redirects), which is also why the `grainne ahern` query lost all
+19 of its impressions in the diff. The recovery path is unchanged and still lives in §5's
+successor page — it is not a redirect problem and must not be "fixed" with one.
+
+### 22.5 The two 200s are the seventh instance of the corpus-assembly failure
+
+The legacy corpus was built by URL-shape pattern-matching, which swept in `/` and
+`/privacy` — legitimate canonical pages that happen to be redirect *targets*, one of them
+the site's own homepage. The probe ran correctly; the corpus was assembled by a rule
+rather than observed.
+
+Same family as the honorific-drift synthesis, the truncated GSC pull, the diacritic-free
+Czech keyword research and this document's redirect-arrow attribution bug (§5, "Four
+instances now" — that tally was written 2026-08-14 and has not been updated since;
+counted as the **seventh** by Hassaan in session, 2026-08-15).
+
+**The tell was the same shape as the `grep -c` sitemap case: a "legacy" bucket containing
+the homepage is implausible on its face.** Implausibility of the *output* remains the
+cheapest available detector for this class — cheaper than validating the corpus, and it
+is what caught this one.
+
+### 22.6 The two high-impression zero-click blog pages are NOT title problems
+
+Pulled query-level before writing them up, exactly because an average position can hide a
+bimodal spread with a different fix. Both turned out to be the latter.
+
+| Page | Page-level | Query-level reality |
+| --- | --- | --- |
+| `/ireland/en/blog/illness-benefit-ireland-how-to-claim` | 524 impr / 1 click / pos 9.9 | 46 queries, all zero-click. The best positions are on **navigational state-benefit queries** — `ib1 form online` pos 1, `ib1 form` pos 2.3, `ib1 form online login` pos 9.6 — where the searcher wants welfare.ie, not a clinic blog. Head query `illness benefit ireland` sits at 15.5, not 9.9 |
+| `/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment` | 882 impr / 0 clicks / pos 28.6 | 145 queries, **almost every one a single impression at position 74–100**, with a handful at 15–28. The 28.6 mean describes no actual query |
+
+**Neither is a snippet or title defect.** The first is wrong-intent ranking on a
+government-form family; the second is page-8-to-10 visibility on a generic informational
+family owned by public-health institutions. A title rewrite would move nothing. No work
+item is proposed for either.
+
+**Data limitation, stated:** GSC's query dimension returns far fewer impressions than the
+page dimension for both pages (118 of 524; ~150 of 882) because rare queries are withheld.
+The distribution shape is reliable; the totals are not.
+
+### 22.7 Control-state carry-forwards
+
+- **No code changed. Nothing deployed.** This pass is measurement and one closed finding.
+- §1's baseline stands; §22.1 is a second window, not a correction to it.
+- §6's watchlist is unchanged — the consolidation share in §22.3 is a *progress* measure
+  over the whole legacy family, not a per-URL watchlist item, and it is dated in the
+  §21.10 calendar rather than added as an eleventh row.
+- `SEO-GROWTH-012` remains the diagnosis of the impression surge. §22 adds click
+  evidence to it and does not reopen it.
 
 ---
