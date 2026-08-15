@@ -613,6 +613,14 @@ this document.**
 **Why: the brief's §7 assumed those three pages have no country dimension. Two
 of the three already do.** Production probe, 2026-08-15, `curl -sL`:
 
+> **This table is the PRE-RETIREMENT state and was superseded the same day.**
+> The first three rows (`/about`, `/faq`, `/blog` → 200, "itself") stopped being
+> true when `SEO-GLOBAL-LANG-002` shipped; all three now 308 to their Ireland
+> equivalent, and `/portugal/pt/faq` and `/ireland/en/faq` — 404 here — now
+> serve 200. Kept unedited because it is a dated observation and the reasoning
+> below depends on what was true when the decision was made; read it as history,
+> not as current state.
+
 | URL | Status | Resolves to |
 | --- | --- | --- |
 | `/about` | 200 | itself |

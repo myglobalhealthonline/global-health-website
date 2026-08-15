@@ -119,6 +119,17 @@ These exist because the audit got things wrong in ways that looked convincing.
      test was made to fail and then restored" are different claims, and only the
      second establishes the guard works. A test only ever seen passing is a test
      only ever seen not run.
+   - A **removal** greps the ledger for the path it deletes or moves, **in the
+     same pass as the code change**. Added 2026-08-15, from the `/pt/about` row:
+     it named `/about` as its redirect target an hour after `/about` was
+     deleted. It passed `seo-live-urls` (the redirect resolves) and the chain
+     guard (one hop) because both were right — the redirect worked. What had
+     rotted was the sentence describing it, and **no gate reads prose**. It was
+     caught only because adjacent rows were being rewritten and it was in view.
+     Do not build a checker for this; the tooling cannot know which sentences
+     are about which URLs. Grep at deletion time instead, while the path is
+     still in your hand — otherwise "found it while nearby" is the whole
+     detection strategy, and being nearby is luck.
 
 ---
 
