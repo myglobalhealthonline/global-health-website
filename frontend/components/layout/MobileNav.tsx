@@ -174,9 +174,11 @@ export function MobileNav({
         ]
       : [
           { href: "/", label: navigation.navHome },
-          { href: "/about", label: navigation.navAbout },
-          { href: "/blog", label: navigation.navBlog },
-          { href: "/faq", label: navigation.navFaq },
+          // Ireland-scoped: the bare /about, /blog and /faq were retired on
+          // 2026-08-15 and 301 here. Mirrors SiteHeader's sectionNavGlobal.
+          { href: "/ireland/en/about", label: navigation.navAbout },
+          { href: "/ireland/en/blog", label: navigation.navBlog },
+          { href: "/ireland/en/faq", label: navigation.navFaq },
           { href: "/contact", label: navigation.navContact },
         ];
 

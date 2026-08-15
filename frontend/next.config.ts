@@ -991,9 +991,10 @@ const nextConfig: NextConfig = {
       { source: "/pt/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
       { source: "/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
       { source: "/romania-doctors/:slug", destination: "/romania/ro/doctors/:slug", permanent: true },
-      // Legacy Wix top-level pages with no per-country equivalent on the new
-      // platform — there is only one canonical /about page (app/(global)/about).
-      { source: "/pt/about", destination: "/about", permanent: true },
+      // Legacy Wix top-level pages. The bare /about was retired (2026-08-15,
+      // see the "retired global pages" block at the end of this list) — these
+      // point straight at the Ireland market page so no chain forms.
+      { source: "/pt/about", destination: "/ireland/en/about", permanent: true },
       { source: "/portugal/medical-certificate-for-driving-license", destination: "/portugal/pt/services/certificado-medico-carta-de-conducao", permanent: true },
       // Brazil deliberately supports only en/es/pt (admin decision, not a
       // content gap) — CS/RO/DE are still valid site-wide locale codes
@@ -1089,8 +1090,8 @@ const nextConfig: NextConfig = {
       { source: "/cs", destination: "/czechia/cs", permanent: true },
 
       // -- one-off top-level pages, bare + locale-prefixed ----------------
-      { source: "/careers", destination: "/about", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/careers", destination: "/about", permanent: true },
+      { source: "/careers", destination: "/ireland/en/about", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/careers", destination: "/ireland/en/about", permanent: true },
       { source: "/legal-notices", destination: "/ireland/en/legal", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/legal-notices", destination: "/ireland/en/legal", permanent: true },
       { source: "/book-online", destination: "/ireland/en/book", permanent: true },
@@ -1176,7 +1177,7 @@ const nextConfig: NextConfig = {
       { source: "/:locale(cs|es|pt|ro)/brazil/:slug", destination: "/brazil/pt", permanent: true },
 
       // Remaining one-offs the sweep turned up.
-      { source: "/:locale(cs|es|pt|ro)/blog", destination: "/blog", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/blog", destination: "/ireland/en/blog", permanent: true },
       // (bare + locale-prefixed /booking-calendar/:slug are declared once,
       // higher up in the legacy Wix block — a second copy here was dead.)
       { source: "/:locale(cs|es|pt|ro)/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
@@ -1184,8 +1185,8 @@ const nextConfig: NextConfig = {
       // /{country}/{lang}/services/<slug>, which this cannot match.
       { source: "/services/:slug", destination: "/ireland/en/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/privacy", destination: "/privacy", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/about", destination: "/about", permanent: true },
-      { source: "/frequent-asked-questions", destination: "/faq", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/about", destination: "/ireland/en/about", permanent: true },
+      { source: "/frequent-asked-questions", destination: "/ireland/en/faq", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/gift-card", destination: "/", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/partner-clinics", destination: "/", permanent: true },
       { source: "/es/partnerclinics", destination: "/", permanent: true },
@@ -1289,6 +1290,25 @@ const nextConfig: NextConfig = {
       { source: "/post/:slug", destination: "/ireland/en/blog", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/post/:slug", destination: "/ireland/en/blog", permanent: true },
       { source: "/blog/categories/:slug", destination: "/ireland/en/blog", permanent: true },
+
+      // -- Retired global pages (2026-08-15) ------------------------------
+      // /about, /blog and /faq carried no country signal: one page per topic
+      // for six markets, competing with the country versions that now exist
+      // for all three (`app/[country]/[lang]/{about,blog,faq}`). Retired as
+      // 301s rather than 410s — /about holds external backlinks from 58
+      // referring domains, and a 301 passes that equity on.
+      //
+      // Ireland is the target for all three: priority market and the project
+      // default. Deliberately NOT locale- or geo-detected — Googlebot crawls
+      // from the US and would only ever see one market's page anyway, and
+      // varying a redirect by visitor makes the canonical unverifiable.
+      //
+      // `/blog/:slug` is NOT retired: a post with no country assignment
+      // canonicalizes at the bare URL and is submitted there (see sitemap.ts).
+      { source: "/about", destination: "/ireland/en/about", permanent: true },
+      { source: "/faq", destination: "/ireland/en/faq", permanent: true },
+      { source: "/blog", destination: "/ireland/en/blog", permanent: true },
+      { source: "/blog/page/:n", destination: "/ireland/en/blog", permanent: true },
     ];
   },
 };

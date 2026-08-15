@@ -35,7 +35,9 @@ type PageProps = {
  *  own path leaves every translated URL serving stale HTML. Pass them all. */
 function bustBlogCaches(...slugs: string[]) {
   revalidateTag(PUBLIC_BLOG_TAG, "max");
-  revalidatePath("/blog");
+  // No `revalidatePath("/blog")`: the global hub was retired 2026-08-15 and now
+  // 301s. The country hubs are covered by PUBLIC_BLOG_TAG above; the bare
+  // `/blog/{slug}` post pages still exist and are busted below.
   for (const slug of new Set(slugs.filter(Boolean))) revalidatePath(`/blog/${slug}`);
 }
 

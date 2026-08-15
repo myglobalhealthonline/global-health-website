@@ -246,6 +246,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-GROWTH-011 | Spain doctor cross-locale ranking "fragmentation" (Alfredo del Valle) | Indexation / hreflang | **EXPECTED BEHAVIOR — CLOSED, no code change** | 2026-08-12 | All 5 locale URLs (`spain/{es,cs,en,pt,de}/doctors/dr-alfredo-del-valle`) are 200, self-canonical (each declares and Google accepts its own canonical — no consolidation attempted by either side), `index, follow`, in sitemap, carry distinct per-locale `<title>` (Dermatólogo/Dermatolog/Dermatologist/Dermatologista/Dermatologe — real translation, not a duplicate stub), and cross-link each other via the sibling-locale switcher. The one legacy URL in the cluster, `/pt/spain-doctors/dr-alfredo-del-valle`, is "Crawled – currently not indexed" (last crawl 2026-03-08) and draws 1 impression in 90 days — a dead stub, not a participant | Google serves each locale variant as its own PASS result; no `noindex`, no wrong-canonical, no stale-crawl divergence | None. See §7 for the full query×URL matrix and reasoning |
 | SEO-GROWTH-012 | August impression-surge diagnosis | Indexation / discovery | **CLOSED — EXPECTED GOOGLE DISCOVERY / TOOL-INTENT MIX SHIFT** | 2026-08-12 | 4-day-window page pull (08-06→08-09) vs. the preceding 5-day window: 946 pages earned impressions vs. 584 before; **568 of those pages had zero impressions in the prior window.** These newly-surfacing pages account for 4,990 of the period's impression growth — existing pages' impressions were flat to slightly down (−257) over the same comparison. 75% of the new-page volume (3,726 impr) is `/tools/*` calculators (BMI, calorie, blood pressure, ovulation, ADHD test, due-date) across every market and locale; the rest spreads thinly across lab-tests, services, legal, blog, doctors, health. Spot-checked 4 representative URLs (`inspect_urls` + live Googlebot fetch): all PASS, `index,follow`, self-canonical, in sitemap, last-crawl clustered 2026-08-05→08-08 — Google (re)crawled them right at the surge, not a code deploy (the tool pages themselves shipped weeks earlier, see `244d629e` et al.) | Google evidently ran a discovery/recrawl pass across previously-unindexed locale×tool combinations in early August; timing lines up with — but is not proven to be caused by — the crawlability/discovery batches shipped 08-08/08-09 | None. See §7 for the full breakdown and the corrected NEXT-1 framing |
 | SEO-GROWTH-016 | Ireland at-home lab-test cluster: 1,041 impressions, 4 clicks, position 27.1, from a zero base | Ranking / content-intent | **INVESTIGATED — BOTTLENECK = INDEXING RAMP. No content, schema, linking or metadata work justified yet** | 2026-08-12 | `/ireland/en/lab-tests` + 16 detail pages all 200, `index, follow`, self-canonical, in sitemap, `richResults` PASS. Hub serves **14 real anchors**. Copy is **independently written, not Randox-duplicated**. Page format already matches what the SERP rewards. No cannibalization. `Product`/`Offer` schema absent but data exists. Hub meta carries a **stale €89 price** (real entry price €57) and a wrong "up to 10 days" turnaround | Detail pages first crawled 2026-08-01 → 08-08 and earned **100% of their 28-day impressions in the final 7 days**, while the hub dropped from ~479 to 11 — a hub→detail hand-off completed inside the measurement window. Cluster position improved 37.5 → 26.3 → 20.3 over 08-09/08-10/08-11 | **WAIT / MEASURE, re-measure 2026-09-08.** Full findings and early-exit triggers in §7 SEO-GROWTH-016 |
+| SEO-GLOBAL-LANG-002 | Bare `/about`, `/blog`, `/faq` carry no country signal; `/{country}/{lang}/faq` did not exist | Site architecture / legacy routing | **IMPLEMENTED — NOT COMMITTED, NOT DEPLOYED** | 2026-08-15 | Local only: 33 FAQ URLs live and verified (200, per-country title, hreflang, `FAQPage`); bare trio 301s to `/ireland/en/*` asserted at config level, **not probed at runtime** (a second dev server cannot run on the same directory under Next 16) | Unchanged — nothing deployed | Commit + deploy, then run `SEO_CHECK_BASE=https://www.myglobalhealth.online` `seo-live-urls`. Add the three retired URLs to §6 once Google's stored state can lag. See §5 SEO-GLOBAL-LANG-002 |
 | SEO-GROWTH-017 | `/service-page/ie-medical-consultation` (legacy Wix) still self-canonical and indexed in Google | Legacy routing | **WAITING FOR GOOGLE** | 2026-08-12 | 308 → `/ireland/en/see-a-specialist` (live probe, Googlebot UA) | "Submitted and indexed", **self-canonical**, last crawl **2026-07-08** — predates nothing in particular; Google simply has not recrawled. Referring URLs include `/home` and `booking-services-sitemap.xml`, both Wix-era artefacts | Watchlist only (§6). 147 impressions / 3 clicks / position 24.1 in the current window |
 
 ### Global foundation audit (`SEO-FOUNDATION-001`, 2026-08-12)
@@ -574,7 +575,207 @@ flat numbers on 2026-09-08 as evidence the redirect failed — that reading is
 exactly what this row exists to prevent. The only result that would indicate a
 real problem is Google continuing to serve a 404 for these URLs after a recrawl.
 
+### Template check ANSWERED — §5 and §7 do NOT share a template (2026-08-15)
+
+**Result: they diverge, and §5 is cheap anyway — for a different reason than
+the check was hoping for.** The check below asked whether the brief's §5
+successor page and §7 language pages are one template. They are not, and the
+five minutes were worth spending because the answer changes what §5 costs.
+
+| | brief §5 — departed-clinician successor | brief §7 — global page language versions |
+| --- | --- | --- |
+| URL shape | `/{country}/{lang}/doctors/{slug}` — country-scoped, one per supported locale | `/{lang}/{about\|faq\|blog}` — no country dimension at all |
+| Route | `app/[country]/[lang]/doctors/[doctorSlug]/page.tsx`, **already exists** | `app/(global)/{about,faq,blog}`, reached by a `beforeFiles` rewrite |
+| Layout | `app/[country]/[lang]/layout.tsx` | `app/(global)/layout.tsx` → `PublicShell` |
+| hreflang builder | `doctorHreflangCluster` → `indexableHreflangCluster`, region-qualified `{lang}-{REGION}` | `globalPageHreflang`, **bare** language codes, market-neutral |
+| What it needs built | a render state + a roster/410 policy decision | URLs and a hreflang cluster |
+
+The shared property the check hypothesised — "a page per language, not a
+country page, with its own hreflang" — holds for §7 and **fails for §5 on both
+halves**: a departed Irish clinician's page is a country page, and its hreflang
+is region-qualified because it belongs to Ireland's market cluster.
+
+**The useful finding is the last row.** §5 needs no new template at all. It is
+a state of a route that already exists, whose hreflang, canonical, robots and
+sitemap behaviour are already correct and already tested — so the real §5 work
+is the `GONE_DOCTORS`/`isPublicDoctorRecordIndexable` policy decision plus the
+"same specialty, same language" list, not page construction. §7 shipping first
+does not make §5 cheaper, because §5 was never expensive.
+
+### SEO-GLOBAL-LANG-001 — brief §7 BUILT AND REVERTED, NOT SHIPPED (2026-08-15)
+
+**Language-only versions of `/about`, `/faq`, `/blog` (`/{pt,es,cs,ro,de}/…`,
+bare-language hreflang) were implemented, verified locally, then reverted
+before commit. Nothing shipped. The working tree is back to `e49ad5e1` plus
+this document.**
+
+**Why: the brief's §7 assumed those three pages have no country dimension. Two
+of the three already do.** Production probe, 2026-08-15, `curl -sL`:
+
+| URL | Status | Resolves to |
+| --- | --- | --- |
+| `/about` | 200 | itself |
+| `/faq` | 200 | itself |
+| `/blog` | 200 | itself |
+| `/pt/about` | 200 | `/about` (308 followed) |
+| `/portugal/pt/about` | **200** | itself |
+| `/ireland/en/about` | **200** | itself |
+| `/portugal/pt/blog` | **200** | itself |
+| `/portugal/pt/faq` | **404** | — |
+| `/ireland/en/faq` | **404** | — |
+
+So `about` and `blog` each already exist in **two** shapes — a bare global page
+and a `/{country}/{lang}` page — and `faq` exists only as the bare one.
+Shipping §7 as written would have added a **third** shape for about and blog:
+three URL families of overlapping content, two competing hreflang clusters, and
+nothing declaring which is canonical. That is a worse defect than the one §7
+set out to fix, and it is the reason this was reverted rather than committed.
+
+**Decision — country-oriented is the architecture (Hassaan, 2026-08-15).** Not
+language-only. `/{country}/{lang}` is the existing, indexed, hreflang-complete
+shape and it wins by default. The remaining gap is FAQ: build
+`/{country}/{lang}/faq` and stop treating `/faq` as the only home for it.
+
+**Answering the footer question, since it is the same finding from the other
+end.** The header, footer and mobile nav are ALREADY country-aware for about
+and blog, and structurally cannot be for FAQ:
+
+| Component | about / blog | faq |
+| --- | --- | --- |
+| `SiteFooter.tsx:192,198` | `careBase ? \`${careBase}/blog\` : "/blog"` — country-scoped whenever there is a country context | **`href: "/faq"`, hardcoded, no country branch** |
+| `SiteHeader.tsx:141,145` vs `:156` | `${base}/blog`, `${base}/about` in the country branch | `/faq` in the no-country branch only |
+| `MobileNav.tsx:170,172` vs `:179` | same pattern | same |
+
+The footer is not inconsistent by oversight. It points at a non-country page
+for exactly one item, FAQ, because **no country FAQ route exists to point at**.
+Building `/{country}/{lang}/faq` and dropping the hardcoded `"/faq"` are one
+change, not two.
+
+**What stays open and needs a decision before the FAQ work starts.** The bare
+`/about`, `/faq` and `/blog` are live and indexed. `/about` is not a duplicate
+of `/{country}/{lang}/about` — it is a distinct corporate page (registry
+numbers, the six-market grid, `TRUST-METRIC-001`'s live consultation count),
+whereas the country version carries that market's register, offerings and
+office. `/blog` is a cross-market hub grouped by country; the country versions
+are single-market. So "delete the global ones" is not obviously right, and
+"keep both" is what created this ambiguity. Someone has to say which of these
+the bare URLs become: a kept global tier with its own role, or 301s into the
+country set.
+
+**GSC on what is at stake if they are redirected** (90d, 2026-05-11 → 08-11,
+`page` × `country`, `rowCount: 77 / 72`, `hasMore: false` on both):
+`/about` ~560 impressions **0 clicks** (GBR 185, ARE 94, USA 57, CMR 51, IRL
+30; positions 30–57) · `/blog` 127 impressions / 4 clicks / position 4.65 ·
+`/faq` **`rowCount: 0`** — zero impressions in 90 days on any URL ·
+`/pt/about` 1,029 impressions / 10 clicks / position 9.2.
+
+### SEO-GLOBAL-LANG-002 — FAQ built country-scoped, bare trio retired (2026-08-15)
+
+**Implemented, not yet committed or deployed.** This closes the question
+`SEO-GLOBAL-LANG-001` left open: the bare URLs become 301s into the country set,
+not a kept global tier.
+
+**Decision (Hassaan, 2026-08-15).** Remove `/about`, `/blog` and `/faq`. All
+three now redirect permanently to their Ireland equivalent — priority market and
+the OpenSEO project default. **No locale or geo detection on those redirects**:
+Googlebot crawls from the US and would only ever see one market's page, and a
+visitor-varying redirect makes the target unverifiable. `/about`'s 58 referring
+domains are the reason this is a 301 and not a 410.
+
+**What was built.**
+
+| Change | File |
+| --- | --- |
+| `/{country}/{lang}/faq` — market FAQ group (from `resolveAboutCopy`, the same source the country `/about` uses) + the four `faq.json` groups, `FAQPage` + `BreadcrumbList` JSON-LD, full hreflang cluster | `app/[country]/[lang]/faq/page.tsx` (new) |
+| 33 FAQ URLs added; the three bare entries removed | `app/sitemap.ts` |
+| `/about`, `/faq`, `/blog`, `/blog/page/:n` → `/ireland/en/*`; five pre-existing rules that terminated on the bare pages repointed so no chain forms (`/pt/about`, `/careers` ×2, `/{locale}/blog`, `/{locale}/about`, `/frequent-asked-questions`) | `next.config.ts` |
+| Route files deleted | `app/(global)/{about,faq,blog/page.tsx,blog/page/[n]}` |
+| Every remaining internal link repointed: footer (now `careScope`, Ireland outside a country), header + mobile global nav, `NotFound404`, `blog-post-page` back-link, `data/navigation.ts`, and the country `/about`'s "worldwide" link (now the entry gate — the page it pointed at no longer exists) | 7 files |
+
+`/blog/{slug}` is deliberately **kept**: a post with no country assignment
+canonicalizes there and is submitted there. Only the hub and its pagination went.
+
+**Verification, 2026-08-15.** `tsc` clean. All six markets' FAQ URLs serve 200
+with per-country titles (`Frequently asked questions — Ireland`, `Časté otázky —
+Česko`), self-canonical, six-locale hreflang + `x-default`, `FAQPage` and
+`BreadcrumbList` emitted; `/ireland/xx/faq` 404s. Sitemap emits 33 FAQ entries.
+Footer on `/ireland/en/about` links `/ireland/en/faq` (0 occurrences of `/faq`).
+Redirect *runtime* behaviour is **not** verified — Next 16 refuses a second dev
+server on the same directory and one was already running, so the redirect block
+was asserted at config level (sources present, `permanent: true`, no destination
+still naming a retired path) rather than probed. **Run
+`SEO_CHECK_BASE=… seo-live-urls` after deploy** — it is the assertion that every
+redirect target 200s and no sitemap entry redirects.
+
+**Prediction to record before the numbers arrive** (same discipline as
+`SEO-DOC-004`): the measure is **non-English impressions on the 33 FAQ URLs that
+did not previously exist**, plus `/ireland/en/{about,blog}` absorbing the bare
+pages' equity. `/faq` had `rowCount: 0` over 90 days, so nothing is at risk
+there; `/blog`'s 127 impressions / 4 clicks and `/about`'s ~560 impressions /
+**0 clicks** are the stakes on the other two.
+
+**This also closes the "hardcoded English FAQ" gap below.** `FAQ_ITEMS` lived in
+`app/(global)/about/page.tsx`, which is deleted. The country FAQ route takes its
+Q&A from `faq.json` (translated in all six locales) and the market copy from
+`country-about.ts`, so no locale renders English Q&A under a translated heading.
+
+### `/pt/about` — 1,005 Brazilian impressions are someone else's brand (2026-08-15)
+
+**Keep this finding regardless of what happens to §7.** It was the brief's
+stated justification for the whole item and it does not justify anything.
+
+Brief §7 read: "`/pt/about` 308-redirects a Portuguese searcher into English at
+position 19.4." The URL fact is right and the number is stale — it is
+**1,005 impressions / 8 clicks / position 9.2 from Brazil**, plus 22/2 from
+Portugal. But the query breakdown says these are not our searchers:
+
+| Query | Impressions | Country |
+| --- | --- | --- |
+| `globalhealth` | 451 | BRA |
+| `clinic global health` | 297 | BRA |
+| `clinic.globalhealth` | 126 | BRA |
+| `global health` | 65 | BRA |
+| `minha clinica help global` | 26 | BRA |
+| `help global consulta online` / `help global brazil login` / `help global telemedicina` | 7 | BRA |
+
+`clinic.globalhealth`, `minha clinica help global` and the `help global *`
+family are **navigational queries for a different Brazilian telehealth brand**.
+That is why CTR is 0.8% at position 9.2. Navigational traffic for someone
+else's product converts at zero in any language, so no amount of translating
+`/about` recovers it.
+
+**Consequence for how this work is justified and measured.** The case for
+giving these pages country/language URLs is architectural — a six-language,
+six-market site whose corporate pages Google can only see in one English
+rendering — not a traffic projection. **The prediction to record is non-English
+impressions on URLs that did not previously exist, not clicks on `/pt/about`.**
+Same discipline as `SEO-DOC-004`: state it before the number arrives, so a flat
+`/pt/about` afterwards is not misread as failure.
+
+### Known content gap — `/about`'s FAQ block is hardcoded English
+
+`app/(global)/about/page.tsx` holds `FAQ_ITEMS` (5 Q&A) and `COMPANY_FACTS` as
+English string constants, and `FAQ_ITEMS` feeds both the visible FAQ section
+and the `FAQPage` JSON-LD. Any non-English rendering of `/about` therefore
+shows an English FAQ under a translated heading.
+
+`COMPANY_FACTS` is defensible and the file says why — registry numbers and
+company names are locale-independent. `FAQ_ITEMS` is not: on a YMYL medical
+site, English Q&A under a Portuguese heading, emitted as `FAQPage` schema,
+reads as machine-translated or half-built and is a quality signal pointing the
+wrong way.
+
+Today this only affects the cookie-negotiated rendering of a single URL, which
+Google effectively only ever crawls in English — so it is latent, not live.
+**It becomes a blocker the moment any non-English rendering of this page gets
+its own indexable URL** (Hassaan, 2026-08-15). Whichever shape that URL ends up
+taking, either translate the five items into all six locales first, or ship the
+non-English variants `noindex` until they are. Do not ship it as a follow-up.
+
 ### Before starting §7 — check whether §5 and §7 share a template
+
+**DONE, 2026-08-15 — see the section immediately above for the answer. Kept
+for the reasoning, not as an open action.**
 
 Five minutes, potentially large payoff. §5's successor page (a departed
 clinician: states they no longer practise, lists same-specialty same-language

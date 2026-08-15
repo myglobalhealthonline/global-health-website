@@ -342,13 +342,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: base, changeFrequency: "monthly", priority: 1 },
     { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${base}/about`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/faq`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.4 },
   );
-  // `/blog` (global index) is pushed after the post loop below, so it can be
-  // dated from the newest post. The six above are hand-authored pages with no
-  // row behind them — nothing honest to date them from, so they stay undated.
+  // `/about`, `/faq` and `/blog` used to be listed here. All three were retired
+  // on 2026-08-15 and now 301 to their Ireland market equivalent
+  // (next.config.ts, "Retired global pages") — the country versions carry the
+  // country signal these never could. A redirecting URL must not be submitted.
+  // The four above are hand-authored pages with no row behind them — nothing
+  // honest to date them from, so they stay undated.
 
   // Blog posts — published, admin-managed. [] when API unavailable.
   // Global posts (no countries assigned) canonicalize at the bare URL;
@@ -379,12 +380,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   } catch {
     // Blog list unavailable — sitemap still emits the rest.
   }
-  urls.push({
-    url: `${base}/blog`,
-    changeFrequency: "weekly",
-    priority: 0.6,
-    ...dated(newestPostAt),
-  });
+  // (The global `/blog` hub used to be pushed here, dated from `newestPostAt`.
+  // Retired 2026-08-15 — see the note above the static block. The bare
+  // `/blog/{slug}` post URLs above are unaffected: they are still the canonical
+  // for a post with no country assignment.)
 
   for (const country of countries) {
     try {
@@ -504,6 +503,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Country About pages: the market's languages, offering and registration.
     // Undated for the same reason — the copy is code-resident, not CMS.
     pushLocalized(country, "/about", 0.5);
+    // Country FAQ pages: the market's regulatory FAQs plus the shared booking/
+    // care/privacy/payment groups. Code-resident copy, so undated too.
+    pushLocalized(country, "/faq", 0.5);
 
   }
 

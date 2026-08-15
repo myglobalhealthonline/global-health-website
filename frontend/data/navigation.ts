@@ -105,7 +105,8 @@ export function buildSiteNavigationData(
   // dropdown; About menu is intentionally light. Wix legacy items (gift card,
   // careers detail pages, etc.) are deferred for Phase 2+.
   const aboutMenuLinks: NavLink[] = [
-    { label: copy.footer.aboutUs, href: "/about" },
+    // Ireland: the bare /about was retired 2026-08-15 and 301s here.
+    { label: copy.footer.aboutUs, href: "/ireland/en/about" },
   ];
 
   const headerUtilityLinks: NavLink[] = [];
@@ -122,7 +123,8 @@ export function buildSiteNavigationData(
       links: [
         { label: copy.footer.contactUs, href: "/contact" },
         { label: copy.footer.clinics, href: "/#countries" },
-        { label: copy.footer.aboutUs, href: "/about" },
+        // Ireland: the bare /about was retired 2026-08-15 and 301s here.
+    { label: copy.footer.aboutUs, href: "/ireland/en/about" },
       ],
     },
     {

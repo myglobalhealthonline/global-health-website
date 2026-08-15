@@ -147,13 +147,20 @@ function sectionNavForCountryLang(
   return items;
 }
 
-/** Outside-a-country nav: no per-country service links. */
+/**
+ * Outside-a-country nav: no per-country service links.
+ *
+ * About/blog/FAQ have existed only per market since 2026-08-15 (the bare
+ * `/about`, `/blog`, `/faq` were retired and 301 to Ireland — next.config.ts).
+ * They point at Ireland here for the same reason the footer's Care links do:
+ * a live page beats sending every pre-country visitor a redirect.
+ */
 function sectionNavGlobal(nav: SiteNavigationData): SectionNavItem[] {
   return [
     { href: "/", label: nav.navHome, exact: true },
-    { href: "/about", label: nav.navAbout },
-    { href: "/blog", label: nav.navBlog },
-    { href: "/faq", label: nav.navFaq },
+    { href: "/ireland/en/about", label: nav.navAbout },
+    { href: "/ireland/en/blog", label: nav.navBlog },
+    { href: "/ireland/en/faq", label: nav.navFaq },
     { href: "/contact", label: nav.navContact },
   ];
 }

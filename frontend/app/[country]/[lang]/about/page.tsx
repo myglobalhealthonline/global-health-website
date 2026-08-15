@@ -318,9 +318,13 @@ export default async function CountryAboutPage({ params }: { params: Promise<Par
                 <BadgeCheck className="size-4" strokeWidth={1.75} aria-hidden />
                 {contact.regulator.name}
               </a>
-              {/* The one link back up to the global company page. */}
+              {/* The one link back up to the whole company. The global /about
+                  page it used to point at was retired on 2026-08-15 (it carried
+                  no country signal and 301s here-ish now — next.config.ts), so
+                  this is the entry gate, which is what "worldwide" means today:
+                  every market we operate in, one hop away. */}
               <Link
-                href="/about"
+                href="/"
                 className="inline-flex items-center gap-2 font-medium underline underline-offset-4"
                 style={{ color: "var(--color-brand-accent)" }}
               >

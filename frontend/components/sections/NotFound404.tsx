@@ -58,9 +58,13 @@ export async function NotFound404() {
         { label: t.navigation.contact, href: `${base}/contact` },
       ]
     : [
-        { label: t.navigation.about, href: "/about" },
-        { label: t.navigation.blog, href: "/blog" },
-        { label: t.navigation.faq, href: "/faq" },
+        // No country scope resolved (a 404 outside `/{country}/{lang}`).
+        // About/blog/FAQ only exist per market since 2026-08-15, so these fall
+        // back to Ireland — the same default the bare URLs 301 to — rather than
+        // linking a redirect. /contact is still a real global page.
+        { label: t.navigation.about, href: "/ireland/en/about" },
+        { label: t.navigation.blog, href: "/ireland/en/blog" },
+        { label: t.navigation.faq, href: "/ireland/en/faq" },
         { label: t.navigation.contact, href: "/contact" },
       ];
 

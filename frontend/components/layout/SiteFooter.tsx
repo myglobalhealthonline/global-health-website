@@ -189,13 +189,14 @@ export function SiteFooter({
       : [];
 
   const companyLinks = [
-    { label: navigation.navBlog, href: careBase ? `${careBase}/blog` : "/blog" },
-    { label: navigation.navFaq, href: "/faq" },
-    // Inside a country scope, link that market's own About and contact pages
-    // (its NAP, registration, languages and regulatory FAQs) rather than the
-    // global ones — these are the main internal links those pages get. Global
-    // pages keep /about and /contact.
-    { label: navigation.navAbout, href: careBase ? `${careBase}/about` : "/about" },
+    // Blog, FAQ and About exist ONLY per market since 2026-08-15 — the bare
+    // /blog, /faq and /about were retired and 301 to Ireland (next.config.ts).
+    // `careScope` is the country in scope, or Ireland outside one, so these
+    // always name a live page rather than a redirect. /contact still has a
+    // real global variant, so it keeps the careBase (null-on-global) form.
+    { label: navigation.navBlog, href: `${careScope}/blog` },
+    { label: navigation.navFaq, href: `${careScope}/faq` },
+    { label: navigation.navAbout, href: `${careScope}/about` },
     { label: navigation.footerContactUs, href: careBase ? `${careBase}/contact` : "/contact" },
     { label: navigation.footerPrivacyPolicy, href: "/privacy" },
     { label: navigation.footerTermsOfService, href: "/terms" },

@@ -121,7 +121,10 @@ async function resolveBlogPostRoute(params: BlogPostRouteParams): Promise<Resolv
       permanent: true,
     };
   }
-  return { kind: "render", post, canonicalUrl: `/blog/${slug}`, backHref: "/blog" };
+  // `backHref` points at Ireland, not the bare `/blog`: that hub was retired on
+  // 2026-08-15 and 301s here anyway (next.config.ts). The post itself keeps its
+  // bare canonical — it has no country assignment, so no market owns it.
+  return { kind: "render", post, canonicalUrl: `/blog/${slug}`, backHref: "/ireland/en/blog" };
 }
 
 export async function buildBlogPostMetadata(
