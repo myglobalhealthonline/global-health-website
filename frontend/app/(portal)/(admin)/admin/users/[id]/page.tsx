@@ -335,7 +335,9 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
               <p className="text-portal-compact text-[var(--color-text-muted)]">
                 Login identifier. Changing it clears email verification, signs
                 the user out everywhere, and moves their patient chart to the
-                new address. Tell the user before you change it.
+                new address. The system emails the new address a temporary
+                password and a set-password link automatically — double-check
+                the spelling before submitting.
               </p>
               <form action={updateEmailAction} className="mt-3 flex flex-col gap-2">
                 <input
