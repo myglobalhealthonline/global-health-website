@@ -8,6 +8,7 @@ import {
   type VerificationData,
   type VerificationStatus,
 } from "@/lib/api/account-profile-api";
+import { IdentityVerificationCard } from "./identity-verification-card";
 
 type VerificationI18n = {
   title: string;
@@ -255,6 +256,11 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
           </div>
         </div>
       </div>
+
+      {/* Sits below the ID upload because it depends on it — the face has
+          nothing to be matched against until the document is on file. Renders
+          nothing unless the server says this patient is in scope. */}
+      <IdentityVerificationCard />
 
       {msg ? (
         <p

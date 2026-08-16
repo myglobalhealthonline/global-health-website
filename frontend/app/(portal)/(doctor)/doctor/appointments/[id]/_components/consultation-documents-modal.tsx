@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { type DocumentContext } from "./document-context-banner";
+import { PrescriptionIdentityNotice } from "./prescription-identity-notice";
 import { MemedPrescribePanel } from "./memed-prescribe-panel";
 import { PortalTabs } from "@/components/PortalTabs";
 import { buildExamTypeIdsField } from "@/lib/doctor/exam-type-ids";
@@ -660,6 +661,12 @@ export function ConsultationDocumentsModal({
           {tab === "medicine" ? (
             <div className="space-y-3">
               <p className="text-sm text-[var(--portal-muted)]">{copy.medicineIntro}</p>
+              {/* Ireland: say up front what this prescription will claim about
+                  the patient's identity, so an unverified one is a decision
+                  rather than something noticed later on the PDF. */}
+              {context && context.countryCode.toLowerCase() === "ie" ? (
+                <PrescriptionIdentityNotice email={context.patient.email} />
+              ) : null}
               {meds.map((m, i) => (
                 <input
                   key={i}

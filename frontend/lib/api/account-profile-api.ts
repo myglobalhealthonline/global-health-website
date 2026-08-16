@@ -19,6 +19,26 @@ export type VerificationData = {
   insuranceDocumentStatus: VerificationStatus;
 };
 
+/**
+ * Ireland controlled-medication identity check. Note what is absent: the
+ * face-match score. It is a reviewer's aid, and showing it to the patient
+ * would let them tune their photo against the matcher.
+ */
+export type IdentityVerificationData = {
+  /** Server's call on whether this patient is in scope (Ireland). */
+  relevant: boolean;
+  status: VerificationStatus;
+  verifiedAt: string | null;
+  hasIdDocument: boolean;
+  hasSelfie: boolean;
+  selfieUploadedAt: string | null;
+  /** Set when a doctor asked the patient to verify — drives the portal prompt. */
+  requestedAt: string | null;
+  referenceId: string | null;
+  reviewNotes: string | null;
+  automatedCheckAvailable: boolean;
+};
+
 export type NationalityDoc = {
   id: string;
   slotNumber: 1 | 2;
@@ -107,6 +127,23 @@ export function uploadIdDocument(file: File, side: "front" | "back", documentTyp
   form.append("side", side);
   form.append("documentType", documentType);
   return postForm<{ uploaded: boolean; side: string }>(`${BASE}/id-document`, form);
+}
+
+export function fetchIdentityVerification() {
+  return get<{ identityVerification: IdentityVerificationData }>(
+    `${BASE}/identity-verification`,
+  );
+}
+
+export function uploadVerificationSelfie(file: File) {
+  const form = new FormData();
+  form.append("file", file);
+  return postForm<{
+    uploaded: boolean;
+    status: VerificationStatus;
+    referenceId: string;
+    automatedCheckRan: boolean;
+  }>(`${BASE}/identity-verification/selfie`, form);
 }
 
 export function fetchNationality() {

@@ -1,4 +1,4 @@
-import { ShieldCheck, ShieldX } from "lucide-react";
+import { BadgeCheck, ShieldCheck, ShieldX } from "lucide-react";
 import type { Metadata } from "next";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
@@ -18,6 +18,14 @@ type CertificateData = {
   consultationDate: string | null;
   issuedAt: string;
   dateInfo: { date?: string; from?: string; to?: string };
+  /** Ireland controlled medications. Absent unless the document itself made
+   *  the claim — there is no "not verified" state to render. */
+  identityVerified?: {
+    verified: true;
+    label: string;
+    verifiedAt: string;
+    referenceId: string;
+  };
 };
 
 async function fetchCertificate(
@@ -93,6 +101,19 @@ export default async function CertificateVerifyPage({
                   <Row label="To" value={result.data.dateInfo.to} />
                 ) : null}
               </div>
+
+              {result.data.identityVerified ? (
+                <div className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                  <p className="flex items-center gap-2 text-sm font-bold text-emerald-900">
+                    <BadgeCheck className="size-5" aria-hidden />
+                    {result.data.identityVerified.label}
+                  </p>
+                  <p className="mt-1 text-xs text-emerald-800">
+                    Verified on {result.data.identityVerified.verifiedAt} · Reference{" "}
+                    <span className="font-mono">{result.data.identityVerified.referenceId}</span>
+                  </p>
+                </div>
+              ) : null}
 
               <p className="mt-6 text-xs text-[var(--color-text-muted)]">
                 {cert.confirmAuthenticityHint}

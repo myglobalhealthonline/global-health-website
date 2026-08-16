@@ -9,6 +9,8 @@ const ALLOWED: Record<string, Set<string>> = {
     "insurance",
     "verification",
     "id-document/download",
+    "identity-verification",
+    "identity-verification/selfie/download",
     "nationality",
     "nationality/1/download",
     "nationality/2/download",
@@ -17,6 +19,7 @@ const ALLOWED: Record<string, Set<string>> = {
   POST: new Set([
     "insurance/document",
     "id-document",
+    "identity-verification/selfie",
     "nationality/1/upload",
     "nationality/2/upload",
   ]),
