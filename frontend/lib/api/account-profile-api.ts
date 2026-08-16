@@ -32,8 +32,10 @@ export type IdentityVerificationData = {
   hasIdDocument: boolean;
   hasSelfie: boolean;
   selfieUploadedAt: string | null;
-  /** Set when a doctor asked the patient to verify — drives the portal prompt. */
+  /** Set when verification was asked for — by a doctor, or by the booking flow. */
   requestedAt: string | null;
+  /** False when the booking flow raised it rather than a named doctor. */
+  requestedByDoctor: boolean;
   referenceId: string | null;
   reviewNotes: string | null;
   automatedCheckAvailable: boolean;

@@ -126,44 +126,92 @@ export async function getVerificationSummary(
 }
 
 /**
- * Patient submitted a selfie. Opens a new verification cycle, runs the
- * face-match assist, and parks the result at PENDING for a human.
+ * Bring the patient's open verification cycle in line with the images now on
+ * file. Safe to call after EITHER upload, in either order.
  *
- * Deliberately does NOT set VERIFIED however good the score is.
+ * The two uploads are independent by design — a patient can take their selfie
+ * before they have their passport to hand, or the reverse — so this reconciles
+ * whatever exists rather than enforcing a sequence. It opens a cycle as soon as
+ * a selfie exists (an ID alone is the pre-existing admin document flow and has
+ * nothing to review here), backfills the ID snapshot when it arrives later, and
+ * runs the face-match assist at the first moment both images are present.
+ *
+ * Deliberately never sets VERIFIED, however good the score is.
  */
-export async function openVerificationCycle(input: {
-  patientProfileId: string;
-  selfieKey: string;
-  idDocumentKey: string | null;
-}): Promise<IdentityVerificationEvent> {
-  const match = input.idDocumentKey
-    ? await compareSelfieToIdDocument({
-        selfieKey: input.selfieKey,
-        idDocumentKey: input.idDocumentKey,
-      })
-    : null;
-
+export async function syncVerificationCycle(
+  patientProfileId: string,
+): Promise<IdentityVerificationEvent | null> {
   const profile = await prisma.patientProfile.findUnique({
-    where: { id: input.patientProfileId },
-    select: { idVerifyRequestedAt: true, idVerifyRequestedBy: true },
+    where: { id: patientProfileId },
+    select: {
+      idDocumentKey: true,
+      selfieImageKey: true,
+      idVerifyRequestedAt: true,
+      idVerifyRequestedBy: true,
+    },
   });
+  if (!profile?.selfieImageKey) return null;
+
+  // Reuse the cycle already awaiting review rather than opening a second one:
+  // a patient uploading their ID after their selfie is still making ONE claim,
+  // and two open cycles would give the doctor two things to review.
+  const open = await prisma.identityVerificationEvent.findFirst({
+    where: { patientProfileId, reviewedAt: null },
+    orderBy: { createdAt: "desc" },
+  });
+
+  // Only score once both images exist, and only if this cycle has no score yet.
+  const needsMatch =
+    Boolean(profile.idDocumentKey) &&
+    (open === null || (open.faceMatchRanAt === null && open.faceMatchScore === null));
+
+  const match =
+    needsMatch && profile.idDocumentKey
+      ? await compareSelfieToIdDocument({
+          selfieKey: profile.selfieImageKey,
+          idDocumentKey: profile.idDocumentKey,
+        })
+      : null;
+
+  const scoreFields = match
+    ? {
+        // Records what actually happened, not what was configured: a cycle with
+        // no score is a pure manual review even when the provider is enabled.
+        method: "AWS_REKOGNITION_COMPAREFACES",
+        faceMatchScore: match.score,
+        faceMatchProvider: match.provider,
+        faceMatchRawResult: match.raw as Prisma.InputJsonValue,
+        faceMatchRanAt: match.ranAt,
+      }
+    : {};
+
+  if (open) {
+    return prisma.identityVerificationEvent.update({
+      where: { id: open.id },
+      data: {
+        // Snapshots track the CURRENT images, so a late ID upload is the one
+        // the doctor is shown and the one the audit trail records.
+        idDocumentKeySnapshot: profile.idDocumentKey,
+        selfieImageKeySnapshot: profile.selfieImageKey,
+        ...scoreFields,
+      },
+    });
+  }
 
   return prisma.identityVerificationEvent.create({
     data: {
       referenceId: newReferenceId(),
-      patientProfileId: input.patientProfileId,
+      patientProfileId,
       status: "PENDING",
-      // Records what actually happened, not what was configured: a cycle with
-      // no score is a pure manual review even when the provider is enabled.
       method: match ? "AWS_REKOGNITION_COMPAREFACES" : "MANUAL_REVIEW",
-      idDocumentKeySnapshot: input.idDocumentKey,
-      selfieImageKeySnapshot: input.selfieKey,
+      idDocumentKeySnapshot: profile.idDocumentKey,
+      selfieImageKeySnapshot: profile.selfieImageKey,
       faceMatchScore: match?.score ?? null,
       faceMatchProvider: match?.provider ?? null,
       faceMatchRawResult: match ? (match.raw as Prisma.InputJsonValue) : undefined,
       faceMatchRanAt: match?.ranAt ?? null,
-      requestedAt: profile?.idVerifyRequestedAt ?? null,
-      requestedByDoctorId: profile?.idVerifyRequestedBy ?? null,
+      requestedAt: profile.idVerifyRequestedAt,
+      requestedByDoctorId: profile.idVerifyRequestedBy,
     },
   });
 }

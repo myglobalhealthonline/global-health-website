@@ -21,7 +21,7 @@ import {
 import { encryptPhi, decryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
   getVerificationSummary,
-  openVerificationCycle,
+  syncVerificationCycle,
   faceMatchAvailable,
   isVerificationRelevantForPatient,
 } from "../modules/identity-verification/identity-verification.service.js";
@@ -367,6 +367,16 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
 
       await prisma.patientProfile.update({ where: { id: profile.id }, data });
 
+      // The patient may have taken their verification photo first. If so, this
+      // is the second half: backfill the cycle's ID snapshot and run the match
+      // now that both images exist. No-ops when there is no selfie yet.
+      if (side === "front") {
+        await syncVerificationCycle(profile.id).catch((e) => {
+          app.log.error(e, "identity verification sync after ID upload failed");
+          return null;
+        });
+      }
+
       await guardMedicalRead(
         request,
         { userId: request.authUser!.sub, role: "PATIENT" },
@@ -411,19 +421,10 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     }
     mimetype = sniffedMime;
 
-    // The ID document has to already be on file — there is nothing to match a
-    // face against otherwise, and a selfie sitting alone in the review queue
-    // just wastes a reviewer's time.
-    const existing = await prisma.patientProfile.findUnique({
-      where: { id: profile.id },
-      select: { idDocumentKey: true },
-    });
-    if (!existing?.idDocumentKey) {
-      return reply
-        .status(409)
-        .send(errorResponse("Upload your ID document before taking the verification photo"));
-    }
-
+    // No ID-document precondition: the two uploads are independent, so a
+    // patient can take their photo before they have their passport to hand.
+    // syncVerificationCycle backfills the ID and runs the match whenever the
+    // second half arrives.
     const ext = mimetype.split("/")[1];
     const storageKey = `patient-docs/${profile.id}/identity-verification/selfie-${randomUUID()}.${ext}`;
 
@@ -440,11 +441,12 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         },
       });
 
-      const event = await openVerificationCycle({
-        patientProfileId: profile.id,
-        selfieKey: storageKey,
-        idDocumentKey: existing.idDocumentKey,
-      });
+      // Cannot be null here — the selfie key was just written, which is the
+      // only condition syncVerificationCycle needs to open a cycle.
+      const event = await syncVerificationCycle(profile.id);
+      if (!event) {
+        return reply.status(500).send(errorResponse("Could not open verification"));
+      }
 
       await guardMedicalRead(
         request,
@@ -508,6 +510,10 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
           hasSelfie: summary.hasSelfie,
           selfieUploadedAt: summary.selfieUploadedAt,
           requestedAt: summary.requestedAt,
+          // Who asked. The booking flow raises this too, and telling a patient
+          // "your doctor asked" when nobody did is a small lie the portal
+          // should not tell.
+          requestedByDoctor: summary.requestedByDoctorId !== null,
           referenceId: summary.latestEvent?.referenceId ?? null,
           reviewNotes: summary.latestEvent?.reviewNotes ?? null,
           automatedCheckAvailable: faceMatchAvailable(),

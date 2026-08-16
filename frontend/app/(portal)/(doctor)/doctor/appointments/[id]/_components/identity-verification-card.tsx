@@ -159,14 +159,21 @@ export function IdentityVerificationCard({ email }: { email: string }) {
         </p>
       )}
 
-      {!data.hasIdDocument && (
+      {/* The patient can supply these in either order, so say which half is
+          outstanding rather than assuming the ID comes first. */}
+      {!data.hasIdDocument && !data.hasSelfie && (
         <p className="mt-2 text-portal-meta text-[var(--portal-muted)]">
-          No ID document on file.
+          No ID document or verification photo on file.
         </p>
       )}
       {data.hasIdDocument && !data.hasSelfie && (
         <p className="mt-2 text-portal-meta text-[var(--portal-muted)]">
-          ID on file, but the patient has not taken a verification photo yet.
+          ID on file — waiting on the patient&rsquo;s verification photo.
+        </p>
+      )}
+      {!data.hasIdDocument && data.hasSelfie && (
+        <p className="mt-2 text-portal-meta text-[var(--portal-muted)]">
+          Verification photo on file — waiting on the patient&rsquo;s ID document.
         </p>
       )}
 

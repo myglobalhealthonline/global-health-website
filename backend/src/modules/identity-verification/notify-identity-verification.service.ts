@@ -27,11 +27,15 @@ function verificationUrl(): string {
 }
 
 function emailText(patientName: string, doctorName: string | null): string {
-  const who = doctorName ? `${doctorName} has` : "Your doctor has";
+  // No doctor name means the booking flow raised this, not a person — say so
+  // rather than inventing a doctor who asked.
+  const opening = doctorName
+    ? `${doctorName} has asked you to confirm your identity before your consultation.`
+    : "Before your consultation we need to confirm your identity.";
   return [
     `Hello ${patientName},`,
     "",
-    `${who} asked you to confirm your identity before your consultation.`,
+    opening,
     "",
     "Irish rules require us to confirm who you are before certain medications can be prescribed. It takes about two minutes:",
     "",
@@ -48,11 +52,13 @@ function emailText(patientName: string, doctorName: string | null): string {
 }
 
 function emailHtml(patientName: string, doctorName: string | null): string {
-  const who = doctorName ? `${escapeHtml(doctorName)} has` : "Your doctor has";
+  const opening = doctorName
+    ? `${escapeHtml(doctorName)} has asked you to confirm your identity before your consultation.`
+    : "Before your consultation we need to confirm your identity.";
   const url = verificationUrl();
   return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#0F2E25">
   <p>Hello ${escapeHtml(patientName)},</p>
-  <p>${who} asked you to confirm your identity before your consultation.</p>
+  <p>${opening}</p>
   <p>Irish rules require us to confirm who you are before certain medications can be prescribed. It takes about two minutes:</p>
   <ol>
     <li>Sign in to your Global Health account</li>

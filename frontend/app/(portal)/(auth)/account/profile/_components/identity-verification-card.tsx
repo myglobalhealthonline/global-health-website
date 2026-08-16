@@ -205,7 +205,9 @@ export function IdentityVerificationCard({
 
   if (!loaded || !data?.relevant) return null;
 
-  const canSubmit = data.hasIdDocument;
+  // The two uploads are independent — a patient can take their photo before
+  // they have their passport to hand. The ID is still required overall, so its
+  // absence is surfaced as an outstanding step, not as a lock on this one.
   const showCapture = data.status !== "VERIFIED" || preview !== null;
 
   return (
@@ -224,19 +226,23 @@ export function IdentityVerificationCard({
 
       {data.requestedAt && data.status !== "VERIFIED" && (
         <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          Your doctor has asked you to complete this before your consultation.
+          {data.requestedByDoctor
+            ? "Your doctor has asked you to complete this before your consultation."
+            : "Please complete this before your consultation."}
         </p>
       )}
 
       <StatusRow data={data} />
 
-      {!canSubmit && (
+      {!data.hasIdDocument && (
         <p className="mt-4 rounded-lg bg-[var(--portal-well)] px-4 py-3 text-sm text-[var(--portal-muted)]">
-          Upload your government ID above first — we need it to compare against your photo.
+          {data.hasSelfie
+            ? "Photo received. Still needed: upload your government ID above."
+            : "You also need to upload your government ID above — you can do that before or after taking your photo."}
         </p>
       )}
 
-      {canSubmit && showCapture && (
+      {showCapture && (
         <div className="mt-4 space-y-3">
           {preview ? (
             <>
