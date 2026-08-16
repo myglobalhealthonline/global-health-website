@@ -66,7 +66,13 @@ function StatusRow({ data }: { data: IdentityVerificationData }) {
   );
 }
 
-export function IdentityVerificationCard() {
+export function IdentityVerificationCard({
+  /** Bump to force a re-read — the ID upload lives in the parent tab, and this
+   *  card would otherwise keep showing the pre-upload state until a reload. */
+  refreshKey = 0,
+}: {
+  refreshKey?: number;
+}) {
   const [data, setData] = useState<IdentityVerificationData | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [camera, setCamera] = useState<CameraState>("idle");
@@ -94,7 +100,7 @@ export function IdentityVerificationCard() {
       if (res.ok) setData(res.data.identityVerification);
       setLoaded(true);
     });
-  }, []);
+  }, [refreshKey]);
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());

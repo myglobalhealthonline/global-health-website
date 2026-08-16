@@ -51,7 +51,7 @@ const DEFAULT_I18N: VerificationI18n = {
   uploadFront: "Upload front",
   uploadBack: "Upload back",
   uploading: "Uploading…",
-  uploaded: "ID document uploaded — awaiting admin review",
+  uploaded: "ID document uploaded — awaiting review",
   badgeNotVerified: "Not verified",
   badgePending: "Pending review",
   badgeVerified: "Verified",
@@ -90,6 +90,10 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
   const [loaded, setLoaded] = useState(false);
   const [docType, setDocType] = useState("passport");
   const [uploadSide, setUploadSide] = useState<"front" | "back">("front");
+  // Bumped on a successful ID upload so the identity-verification card below
+  // re-reads its status. It owns a separate fetch, and without this nudge a
+  // patient who has just uploaded their ID keeps being told to upload their ID.
+  const [idDocVersion, setIdDocVersion] = useState(0);
   const [pending, startUpload] = useTransition();
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const frontRef = useRef<HTMLInputElement>(null);
@@ -114,6 +118,7 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
         setData((prev) =>
           prev ? { ...prev, idVerificationStatus: "PENDING" } : prev,
         );
+        setIdDocVersion((v) => v + 1);
         setMsg({ kind: "ok", text: i18n.uploaded });
       } else {
         setMsg({ kind: "err", text: res.message });
@@ -260,7 +265,7 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
       {/* Sits below the ID upload because it depends on it — the face has
           nothing to be matched against until the document is on file. Renders
           nothing unless the server says this patient is in scope. */}
-      <IdentityVerificationCard />
+      <IdentityVerificationCard refreshKey={idDocVersion} />
 
       {msg ? (
         <p
