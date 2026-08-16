@@ -88,6 +88,16 @@
     background: #FDF3EA; font-size: 9pt; font-weight: 700; color: #7A3714;
     line-height: 1.5; break-inside: avoid;
   }
+  /* Reads as a confirmation, not a warning — deliberately green against the
+     amber controlled-medication notice it sits under. Only ever rendered when
+     a clinician confirmed the patient's identity. */
+  .identity-verified {
+    margin-top: 2.5mm; padding: 2.6mm 4mm; border: 0.75pt solid #2F6B4F;
+    background: #F1F8F3; font-size: 9pt; color: #1C4632;
+    line-height: 1.5; break-inside: avoid;
+  }
+  .identity-verified .iv-title { font-weight: 700; letter-spacing: 0.02em; }
+  .identity-verified .iv-meta { font-size: 8pt; color: #3F6B57; margin-top: 0.8mm; }
 
   /* signature */
   .signature-block { margin-top: 12mm; display: flex; justify-content: space-between; align-items: flex-end; gap: 10mm; break-inside: avoid; }

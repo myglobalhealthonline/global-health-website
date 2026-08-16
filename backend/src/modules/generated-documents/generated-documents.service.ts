@@ -32,6 +32,8 @@ import {
   createPatientUploadToken,
   hashToken,
 } from "../patient-upload/patient-upload-link.service.js";
+import { resolveVerificationForPrescription } from "../identity-verification/identity-verification.service.js";
+import { recordCriticalAudit } from "../audit/audit.service.js";
 
 const TITLES: Record<GeneratedDocumentType, string> = {
   ABSENCE_CERTIFICATE: "Medical absence certificate",
@@ -45,9 +47,16 @@ const TITLES: Record<GeneratedDocumentType, string> = {
 const IE_REFERRAL_NOTICE =
   "Please note: We do not accept clinical correspondence, reports or patient results by post. Please send all correspondence and results via Healthmail, Healthlink, or by using the QR code provided on this referral/request.";
 
-/** IE-only: shown on every prescription (patient ID verification / pharmacy dispensing criteria). */
+/**
+ * IE-only: shown on EVERY prescription, verified patient or not. It states the
+ * conditions a controlled medication is dispensed under; it is not a claim
+ * about this particular patient, so it is unconditional by design.
+ *
+ * The per-patient claim is the separate `ieIdentityVerified` block below,
+ * which only ever appears when a human confirmed a verification cycle.
+ */
 const IE_CONTROLLED_MEDICATION_NOTICE =
-  "Controlled medication: subject to patient ID verification and the pharmacy's dispensing criteria, including review of previously dispensed medications.";
+  "Controlled Medication: Subject to patient ID verification and pharmacy's dispensing criteria including review of previously dispensed medication records available";
 
 /** Serialize generate per appointment + type (LibreOffice can take 10–15s). */
 const generateMutexByKey = new Map<string, { tail: Promise<void> }>();
@@ -89,6 +98,34 @@ async function withGenerateLock<T>(
   }
 }
 
+/**
+ * Record that a prescription cited a verified identity.
+ *
+ * Awaited, not fire-and-forget: this row is the link between a controlled
+ * medication and the identity check that justified it, so losing it silently
+ * would hollow out the audit trail the workflow exists to produce.
+ */
+async function auditIdentityLink(input: {
+  documentId: string;
+  doctorId: string;
+  certificateId: string | null;
+  verification: { eventId: string; referenceId: string; verifiedAt: Date };
+}): Promise<void> {
+  await recordCriticalAudit({
+    actorRole: "DOCTOR",
+    action: "IDENTITY_VERIFICATION_LINKED_TO_PRESCRIPTION",
+    entityType: "GeneratedDocument",
+    entityId: input.documentId,
+    metadata: {
+      doctorId: input.doctorId,
+      certificateId: input.certificateId,
+      identityVerificationEventId: input.verification.eventId,
+      referenceId: input.verification.referenceId,
+      verifiedAt: input.verification.verifiedAt.toISOString(),
+    },
+  });
+}
+
 function buildTemplateContext(input: {
   documentType: GeneratedDocumentType;
   title: string;
@@ -107,6 +144,8 @@ function buildTemplateContext(input: {
   birthDate: string;
   fields?: Record<string, string>;
   dataProtectionLawName?: string | null;
+  /** Non-null only when a human confirmed the patient's identity (IE). */
+  identityVerification?: { referenceId: string; verifiedAt: Date } | null;
 }): Record<string, unknown> {
   const consultationDate = input.appt.scheduledAt
     ? formatDateDdMmYyyy(input.appt.scheduledAt)
@@ -154,6 +193,14 @@ function buildTemplateContext(input: {
     }
     if (f.pharmacy?.trim()) base.pharmacy = f.pharmacy.trim();
     if (isIreland) base.ieControlledNotice = IE_CONTROLLED_MEDICATION_NOTICE;
+    // Printed only for a confirmed verification. There is deliberately no
+    // "not verified" counterpart: an unverified prescription stays silent on
+    // identity rather than advertising the gap to whoever handles the paper.
+    if (isIreland && input.identityVerification) {
+      base.ieIdentityVerified = "Patient Identity Verified";
+      base.ieIdentityVerifiedRef = input.identityVerification.referenceId;
+      base.ieIdentityVerifiedAt = formatDateDdMmYyyy(input.identityVerification.verifiedAt);
+    }
   }
 
   if (input.documentType === "OTHER") {
@@ -354,6 +401,18 @@ async function generateAppointmentDocumentUnlocked(input: {
     dataProtectionLawName = country?.legalProfile?.dataProtectionLawName ?? null;
   }
 
+  // Ireland controlled-medication identity check. Resolves to null for every
+  // other country, every other document type, and any patient without a
+  // human-confirmed verification — in which case nothing is printed and the
+  // document is byte-for-byte what it was before this feature existed.
+  const identityVerification =
+    input.documentType === "PRESCRIPTION"
+      ? await resolveVerificationForPrescription({
+          patientEmail: appt.email,
+          countryCode: appt.countryCode,
+        })
+      : null;
+
   const templateContext = buildTemplateContext({
     documentType: input.documentType,
     title,
@@ -365,6 +424,7 @@ async function generateAppointmentDocumentUnlocked(input: {
     birthDate,
     fields: input.fields,
     dataProtectionLawName,
+    identityVerification,
   });
 
   const templateData: Record<string, string> = {
@@ -544,10 +604,23 @@ async function generateAppointmentDocumentUnlocked(input: {
               }
             : {}),
           ...(cert ? { certificateId: cert.certificateId } : {}),
+          // Written on every redraw, including back to null — a doctor
+          // regenerating the PDF after a verification was rejected must not
+          // leave a stale "verified" pin behind on the row.
+          idVerifyEventId: identityVerification?.eventId ?? null,
+          idVerifiedAt: identityVerification?.verifiedAt ?? null,
         },
       });
       if (previousStorageKey !== storageKey) {
         await deleteObject(previousStorageKey).catch(() => {});
+      }
+      if (identityVerification) {
+        await auditIdentityLink({
+          documentId: row.id,
+          doctorId: input.doctorId,
+          certificateId: row.certificateId,
+          verification: identityVerification,
+        });
       }
       const portal = getHealthPortalForCountry(appt.countryCode);
       return {
@@ -579,8 +652,23 @@ async function generateAppointmentDocumentUnlocked(input: {
           }
         : {}),
       ...(cert ? { certificateId: cert.certificateId } : {}),
+      ...(identityVerification
+        ? {
+            idVerifyEventId: identityVerification.eventId,
+            idVerifiedAt: identityVerification.verifiedAt,
+          }
+        : {}),
     },
   });
+
+  if (identityVerification) {
+    await auditIdentityLink({
+      documentId: row.id,
+      doctorId: input.doctorId,
+      certificateId: row.certificateId,
+      verification: identityVerification,
+    });
+  }
 
   if (input.documentType !== "OTHER" && !input.editDocumentId) {
     const prior = await prisma.generatedDocument.findMany({

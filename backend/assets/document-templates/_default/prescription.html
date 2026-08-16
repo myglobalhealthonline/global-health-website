@@ -56,6 +56,12 @@
     </ul>
 
     {{#if ieControlledNotice}}<div class="controlled-notice">{{ieControlledNotice}}</div>{{/if}}
+    {{#if ieIdentityVerified}}
+    <div class="identity-verified">
+      <div class="iv-title">&#10003; {{ieIdentityVerified}}</div>
+      <div class="iv-meta">Verified {{ieIdentityVerifiedAt}} &middot; Reference {{ieIdentityVerifiedRef}}</div>
+    </div>
+    {{/if}}
 
     <div class="signature-block">
       <div class="sig-left">
