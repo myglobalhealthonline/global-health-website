@@ -116,11 +116,14 @@ const envSchema = z.object({
    * All optional. Unset means no automated score is produced and verification
    * falls back to pure human review; the feature still works.
    */
-  REKOGNITION_REGION: z.string().trim().min(1).optional(),
-  REKOGNITION_ACCESS_KEY_ID: z.string().trim().min(1).optional(),
-  REKOGNITION_SECRET_ACCESS_KEY: z.string().trim().min(1).optional(),
-  /** Similarity % below which CompareFaces is asked not to bother returning a match. */
-  REKOGNITION_MIN_SIMILARITY: z.coerce.number().min(0).max(100).default(70),
+  REKOGNITION_REGION: optionalSecret,
+  REKOGNITION_ACCESS_KEY_ID: optionalSecret,
+  REKOGNITION_SECRET_ACCESS_KEY: optionalSecret,
+  /** Similarity % below which CompareFaces is asked not to bother returning a
+   *  match. blankAsUnset is load-bearing, not decoration: `z.coerce.number()`
+   *  turns a blank var into 0, which would silently drop the threshold to
+   *  "match anything" — the opposite of a safe default. */
+  REKOGNITION_MIN_SIMILARITY: blankAsUnset(z.coerce.number().min(0).max(100).default(70)),
 
   /** SendGrid (transactional email fallback when Gmail is not configured). */
   SENDGRID_API_KEY: z.string().trim().min(1).optional(),
