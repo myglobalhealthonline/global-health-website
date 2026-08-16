@@ -510,6 +510,16 @@ const envSchema = z.object({
   GOOGLE_OAUTH_CLIENT_ID: z.string().trim().min(1).optional(),
   GOOGLE_OAUTH_CLIENT_SECRET: z.string().trim().min(1).optional(),
   GOOGLE_OAUTH_REFRESH_TOKEN: z.string().trim().min(1).optional(),
+  // SEO reporting accepts the shorter aliases too. Calendar/Meet and Gmail
+  // continue using the GOOGLE_OAUTH_* names above with their own tokens.
+  GOOGLE_CLIENT_ID: optionalSecret,
+  GOOGLE_CLIENT_SECRET: optionalSecret,
+  GOOGLE_OAUTH_REDIRECT_URI: blankAsUnset(z.string().trim().url().optional()),
+  GOOGLE_GSC_SITE_URL: optionalSecret,
+  GOOGLE_GA4_PROPERTY_ID: blankAsUnset(z.string().trim().regex(/^\d+$/).optional()),
+  // Refresh token authorized for webmasters.readonly + analytics.readonly.
+  // Deliberately separate from Calendar/Meet and Gmail refresh tokens.
+  GOOGLE_SEO_REFRESH_TOKEN: optionalSecret,
   GOOGLE_CALENDAR_ID: z.string().trim().min(1).optional(),
 });
 
