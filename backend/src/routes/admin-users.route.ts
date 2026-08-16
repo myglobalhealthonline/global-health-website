@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 import { Prisma, UserRole } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError, normalizeDbError } from "../modules/shared/db-errors.js";
@@ -9,6 +10,8 @@ import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { emailSchema, fullNameSchema } from "../validations/shared.schema.js";
 import { applyPatientProfileUpdate } from "../modules/patient-profile/patient-profile.service.js";
+import { issuePasswordResetToken } from "../modules/auth/auth.service.js";
+import { sendEmailChangedEmail } from "../lib/email/templates.js";
 
 // Signals "would remove the last active SUPER_ADMIN" out of the transaction
 // below so the route can reply 409 instead of the generic 500 handler.
@@ -304,6 +307,13 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       // log the admin out for nothing.
       const nextEmail = body.data.email;
       const emailChanging = nextEmail !== undefined && nextEmail !== before.email;
+      // A corrected email may no longer be an inbox the patient can prove
+      // control of via their old password, so hand them a fresh temp
+      // password (mailed to the NEW address below) alongside the usual
+      // set-your-own-password link — same shape as the admin-create-patient
+      // and doctor-invite flows.
+      const tempPassword = emailChanging ? randomBytes(9).toString("base64url") : null;
+      const tempPasswordHash = tempPassword ? await bcrypt.hash(tempPassword, 12) : null;
       // Last-SUPER_ADMIN protection: refuse to demote or deactivate the
       // only remaining active SUPER_ADMIN — that would leave nobody able
       // to grant SUPER_ADMIN back.
@@ -398,6 +408,10 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
             // A new address is unproven — drop verification so the account
             // re-verifies rather than inheriting the old address's trust.
             ...(emailChanging && { emailVerifiedAt: null }),
+            // Temp password issued below travels only to the NEW address by
+            // email, so the old password (possibly known only via the old,
+            // now-wrong inbox) stops working the moment the email moves.
+            ...(tempPasswordHash && { passwordHash: tempPasswordHash, mustChangePassword: true }),
             ...(bumpTokenVersion && { tokenVersion: { increment: 1 } }),
           },
           select: {
@@ -450,6 +464,28 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           }
         }
       }
+      // Notify the patient at their NEW address — the old inbox may no
+      // longer be theirs, which is often the whole reason for the edit, so
+      // it gets nothing. Runs after the transaction commits; a mail hiccup
+      // must not roll back an already-saved email correction.
+      let emailChangeNotified = false;
+      if (emailChanging && tempPassword) {
+        try {
+          const inviteToken = await issuePasswordResetToken(updated.id, {
+            ttlMinutes: 7 * 24 * 60,
+            isInvite: true,
+          });
+          await sendEmailChangedEmail({
+            to: updated.email,
+            fullName: updated.fullName,
+            tempPassword,
+            token: inviteToken,
+          });
+          emailChangeNotified = true;
+        } catch (notifyError) {
+          app.log.error(notifyError, "Failed to send email-changed notification to patient");
+        }
+      }
       const roleChanged = body.data.role !== undefined && before?.role !== updated.role;
       // S-008: admin-user identity mutation (role change is a privilege
       // change) — audit write must not be silently swallowed.
@@ -465,6 +501,7 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           ...(roleChanged ? { roleFrom: before?.role, roleTo: updated.role } : {}),
           ...(body.data.isActive !== undefined ? { isActive: updated.isActive } : {}),
           ...(body.data.doctorId !== undefined ? { doctorLinked: Boolean(updated.doctorId) } : {}),
+          ...(emailChanging ? { emailChangeNotified } : {}),
           // Both addresses are already-logged identifiers on this route, and
           // an email move is exactly the event an auditor needs to retrace.
           ...(emailChanging ? { emailFrom: before?.email, emailTo: updated.email } : {}),
