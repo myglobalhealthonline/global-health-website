@@ -104,6 +104,24 @@ const envSchema = z.object({
    */
   LOCAL_MEDIA_ROOT: z.string().trim().min(1).optional(),
 
+  /**
+   * AWS Rekognition — face match between a patient's selfie and the photo on
+   * their ID document (Ireland controlled-medication verification).
+   *
+   * Deliberately NOT the S3_* credentials: object storage here is an
+   * S3-compatible bucket (Railway/Scaleway) with its own endpoint, whereas
+   * Rekognition is a real AWS service and needs real AWS keys. Pin the region
+   * to an EU one — the images are biometric-adjacent personal data.
+   *
+   * All optional. Unset means no automated score is produced and verification
+   * falls back to pure human review; the feature still works.
+   */
+  REKOGNITION_REGION: z.string().trim().min(1).optional(),
+  REKOGNITION_ACCESS_KEY_ID: z.string().trim().min(1).optional(),
+  REKOGNITION_SECRET_ACCESS_KEY: z.string().trim().min(1).optional(),
+  /** Similarity % below which CompareFaces is asked not to bother returning a match. */
+  REKOGNITION_MIN_SIMILARITY: z.coerce.number().min(0).max(100).default(70),
+
   /** SendGrid (transactional email fallback when Gmail is not configured). */
   SENDGRID_API_KEY: z.string().trim().min(1).optional(),
   EMAIL_FROM: z.string().trim().email().optional(),
