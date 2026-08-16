@@ -50,7 +50,10 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
 
 /** Dynamic (id-bearing) paths allowed per method, matched by pattern. */
 const PATTERN_TABLE: Record<string, RegExp[]> = {
-  GET: [/^memberships\/[^/]+$/],
+  // The card PNG is a download, so it goes through the browser rather than
+  // `fetch` — without it here the anchor got this proxy's JSON 404 and Chrome
+  // saved "card.json".
+  GET: [/^memberships\/[^/]+$/, /^memberships\/[^/]+\/card\.png$/],
   POST: [/^memberships\/[^/]+\/dependents$/],
   DELETE: [/^memberships\/dependents\/[^/]+$/],
   PATCH: [/^notifications\/[^/]+\/read$/],
@@ -105,9 +108,14 @@ async function proxyMe(request: NextRequest, segments: string[]) {
       { status: timedOut ? 504 : 503 },
     );
   }
+  const disposition = upstream.headers.get("content-disposition");
   return new NextResponse(upstream.body, {
     status: upstream.status,
-    headers: { "content-type": upstream.headers.get("content-type") ?? "application/json" },
+    headers: {
+      "content-type": upstream.headers.get("content-type") ?? "application/json",
+      // Carries the card's filename through to the browser's save dialog.
+      ...(disposition ? { "content-disposition": disposition } : {}),
+    },
   });
 }
 
