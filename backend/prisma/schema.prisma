@@ -278,6 +278,18 @@ enum AuditAction {
   MEDICAL_ACCESS_CONSENT_CHANGED
   ID_VERIFICATION_SUBMITTED
   ID_VERIFICATION_UPDATED
+  // --- Ireland controlled-medication identity verification ---
+  /// Patient submitted a live selfie to be matched against their ID document.
+  /// Separate from ID_VERIFICATION_SUBMITTED (that one is the ID upload) —
+  /// this is the moment biometric-adjacent data enters the workflow.
+  IDENTITY_VERIFICATION_SELFIE_SUBMITTED
+  /// A doctor or the booking flow asked the patient to complete verification.
+  IDENTITY_VERIFICATION_REQUESTED
+  /// A human confirmed or rejected a verification cycle. The face-match score
+  /// is recorded in metadata; it never decides on its own.
+  IDENTITY_VERIFICATION_REVIEWED
+  /// A verified identity was pinned to an issued prescription document.
+  IDENTITY_VERIFICATION_LINKED_TO_PRESCRIPTION
   MEDICAL_ACCESS_REQUEST_CREATED
   MEDICAL_ACCESS_REQUEST_APPROVED
   MEDICAL_ACCESS_REQUEST_DENIED
@@ -762,8 +774,8 @@ model Doctor {
   /// Services where this doctor is the named author / clinical reviewer
   /// (inverse of Service.authorDoctorId / reviewerDoctorId). Same E-E-A-T
   /// pattern as the blog relations above, applied to service pages (§3.3).
-  authoredServices                 Service[]                        @relation("ServiceAuthorDoctor")
-  reviewedServices                 Service[]                        @relation("ServiceReviewerDoctor")
+  authoredServices                Service[]                        @relation("ServiceAuthorDoctor")
+  reviewedServices                Service[]                        @relation("ServiceReviewerDoctor")
   /// Medical notes this doctor has authored on patient appointments.
   authoredMedicalNotes            MedicalNote[]                    @relation("MedicalNoteAuthor")
   confidentialityAgreements       DoctorConfidentialityAgreement[]
@@ -1248,8 +1260,8 @@ model Service {
   consultationSetting      Json?
   bookingSetting           Json?
   country                  Country                        @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  authorDoctor              Doctor?                       @relation("ServiceAuthorDoctor", fields: [authorDoctorId], references: [id], onDelete: SetNull)
-  reviewerDoctor            Doctor?                       @relation("ServiceReviewerDoctor", fields: [reviewerDoctorId], references: [id], onDelete: SetNull)
+  authorDoctor             Doctor?                        @relation("ServiceAuthorDoctor", fields: [authorDoctorId], references: [id], onDelete: SetNull)
+  reviewerDoctor           Doctor?                        @relation("ServiceReviewerDoctor", fields: [reviewerDoctorId], references: [id], onDelete: SetNull)
   assets                   Asset[]
   /// Inverse of `ServiceDoctor.serviceId`. Admin-controlled M:N — which
   /// doctors are bookable for this service.
@@ -2359,6 +2371,22 @@ model PatientProfile {
   idVerificationAdminNotes  String?
   idVerificationReviewedBy  String?
   idVerificationReviewedAt  DateTime?
+  /// Ireland controlled-medication identity check (IE-only workflow). The
+  /// patient uploads a live selfie which is face-matched against the photo on
+  /// `idDocumentKey`; a human (doctor or admin) confirms the result. S3
+  /// storageKey only — never a public URL, same handling as `idDocumentKey`.
+  selfieImageKey            String?
+  selfieUploadedAt          DateTime?
+  /// Set when a doctor (or the booking flow, for an unverified IE patient)
+  /// asked the patient to complete identity verification. `idVerifyRequestedBy`
+  /// holds a Doctor id and is a plain column, not a relation — same shape as
+  /// `idVerificationReviewedBy` — and is null when the request was raised by
+  /// the system rather than a named doctor.
+  idVerifyRequestedAt       DateTime?
+  idVerifyRequestedBy       String?
+  /// Append-only history of every submit/review cycle. The status columns
+  /// above are the current state; these rows are the audit trail.
+  idVerifyEvents            IdentityVerificationEvent[]
   /// Phone / email verification. Email status mirrors User.emailVerifiedAt.
   phoneVerificationStatus   VerificationStatus           @default(NOT_VERIFIED)
   phoneVerifiedAt           DateTime?
@@ -2424,17 +2452,17 @@ model PatientProfile {
 }
 
 model GeneratedDocument {
-  id                   String                @id @default(cuid())
+  id                   String                     @id @default(cuid())
   /// Legacy import: source patient-embedded generated-doc element id (re-routed
   /// from MedicalDocument so doctors see it in consultation history). Unique.
-  legacyMongoId        String?               @unique
+  legacyMongoId        String?                    @unique
   appointmentId        String
   doctorId             String
   patientEmail         String
   documentType         GeneratedDocumentType
   fileName             String
   storageKey           String
-  sentToPatient        Boolean               @default(false)
+  sentToPatient        Boolean                    @default(false)
   metadata             Json?
   /// Per-appointment sequential stamp; only set for EXAMS_PRESCRIPTION.
   prescriptionNumber   Int?
@@ -2446,18 +2474,27 @@ model GeneratedDocument {
   uploadTokenHash      String?
   uploadTokenExpiresAt DateTime?
   /// Unique public ID for certificate verification. CUSTOM_CERTIFICATE only.
-  certificateId        String?               @unique
+  certificateId        String?                    @unique
   /// Set when this document was issued through Memed's e-prescription widget
   /// (BR doctors) instead of our own DOCX/HTML render pipeline. The PDF is
   /// still mirrored into our own object storage (storageKey) so download/
   /// email/WhatsApp sending work unchanged; these two just record where the
   /// legally-signed original lives.
-  memedDocumentId      String?               @unique
+  memedDocumentId      String?                    @unique
   memedUrl             String?
-  appointment          Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  doctor               Doctor                @relation(fields: [doctorId], references: [id], onDelete: Restrict)
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
+  /// Ireland controlled-medication prescriptions only. Set at generation time
+  /// when the patient held a VERIFIED identity check, and pinned to the exact
+  /// cycle that backed it — so the "Patient Identity Verified" line printed on
+  /// the document (and returned by the public certificate lookup the QR code
+  /// points at) stays true even if the patient's status changes later. Null
+  /// means the document makes no identity claim at all.
+  idVerifyEventId      String?
+  idVerifiedAt         DateTime?
+  idVerifyEvent        IdentityVerificationEvent? @relation(fields: [idVerifyEventId], references: [id], onDelete: SetNull)
+  appointment          Appointment                @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctor               Doctor                     @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
 
   @@index([appointmentId, documentType])
   @@index([appointmentId, sentToPatient])
@@ -2521,14 +2558,14 @@ enum ReviewInviteChannel {
 }
 
 model ReviewInvite {
-  id                    String       @id @default(cuid())
+  id                    String              @id @default(cuid())
   /// Legacy import: source `reviewinvites._id` (Mongo ObjectId hex). Null for
   /// native rows. Unique — loader upserts on it idempotently.
-  legacyMongoId         String?      @unique
+  legacyMongoId         String?             @unique
   /// SHA-256 hex digest of the bearer token — never store the raw token
   /// (S-009). The raw token only ever exists in the URL emailed/WhatsApp'd
   /// to the patient.
-  tokenHash             String       @unique
+  tokenHash             String              @unique
   appointmentId         String?
   orderNumber           String?
   customerName          String?
@@ -2560,8 +2597,8 @@ model ReviewInvite {
   valueForMoney         Int?
   likeliness            Int?
   bookingExperience     Int?
-  appointment           Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
-  createdAt             DateTime     @default(now())
+  appointment           Appointment?        @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  createdAt             DateTime            @default(now())
 
   @@index([appointmentId])
   /// Backs the cron's "due and not yet handled" scan.
@@ -2664,18 +2701,18 @@ enum AutomationRunStatus {
 }
 
 model Cart {
-  id                   String     @id @default(cuid())
-  userId               String?    @unique
-  cookieToken          String?    @unique
-  countryCode          String
-  currencyCode         String
-  items                CartItem[]
+  id                     String                @id @default(cuid())
+  userId                 String?               @unique
+  cookieToken            String?               @unique
+  countryCode            String
+  currencyCode           String
+  items                  CartItem[]
   /// Stamped when the abandoned-cart reminder has been emailed.
   /// Prevents re-sending. Cleared on checkout / cart-clear.
-  abandonedEmailSentAt DateTime?
+  abandonedEmailSentAt   DateTime?
   /// Cart-level benefit choice (§25). One source per cart, so benefits can
   /// never stack. UNSET until the benefit step runs — see `CartBenefitSource`.
-  benefitSource        CartBenefitSource @default(UNSET)
+  benefitSource          CartBenefitSource     @default(UNSET)
   /// Which enrollment the patient chose, when `benefitSource = MEMBERSHIP`.
   /// Display-only: checkout re-resolves it and re-checks ownership (§13.2).
   membershipEnrollmentId String?
@@ -2685,9 +2722,9 @@ model Cart {
   /// decision 25 — one benefit choice applied to every eligible line. `false`
   /// is "take the unit", which is also where cheapest-first pre-selection
   /// lands. Checkout reads this as WHICH RULE, never as a price.
-  membershipDeclineUnit  Boolean    @default(false)
-  createdAt            DateTime   @default(now())
-  updatedAt            DateTime   @updatedAt
+  membershipDeclineUnit  Boolean               @default(false)
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
 
   @@index([updatedAt, abandonedEmailSentAt])
 }
@@ -3449,23 +3486,23 @@ model BlogPost {
 }
 
 model BlogTranslation {
-  id        String   @id @default(cuid())
-  postId    String
-  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
-  locale    String
-  title     String
-  slug      String
-  excerpt   String?
-  content   String?
-  seoTitle  String?
-  seoDesc   String?
+  id            String   @id @default(cuid())
+  postId        String
+  post          BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  locale        String
+  title         String
+  slug          String
+  excerpt       String?
+  content       String?
+  seoTitle      String?
+  seoDesc       String?
   /// Alt text for the post's cover image, in THIS locale. The image itself is
   /// shared across every locale (BlogPost.coverAssetId), but its description
   /// is prose and has to be read in the language of the page around it.
   /// Falls back to Asset.altText, then to the displayed title.
   coverImageAlt String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@unique([postId, locale])
   @@index([postId])
@@ -3720,8 +3757,8 @@ model GpAssignmentLog {
 /// from the portal. Locks on SIGN; further edits would require an
 /// amendment row (out of scope today).
 model Consultation {
-  id             String                @id @default(cuid())
-  appointmentId  String                @unique
+  id             String                 @id @default(cuid())
+  appointmentId  String                 @unique
   doctorId       String
   chiefComplaint String?
   /// SOAP: Subjective — patient-reported history.
@@ -3737,18 +3774,18 @@ model Consultation {
   noteFormat     ConsultationNoteFormat @default(SOAP)
   /// Free-text note body, used only when `noteFormat` is FREEFORM.
   note           String?
-  status         ConsultationStatus    @default(DRAFT)
+  status         ConsultationStatus     @default(DRAFT)
   signedAt       DateTime?
-  appointment    Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  doctor         Doctor                @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  appointment    Appointment            @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctor         Doctor                 @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   /// Per-consult services-rendered line items.
   servicesUsed   ConsultationService[]
   /// Share links pointing at this consultation (signed referral URLs).
   shareLinks     ShareLink[]
   /// Clinical prescriptions issued during this consult.
   prescriptions  Prescription[]
-  createdAt      DateTime              @default(now())
-  updatedAt      DateTime              @updatedAt
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
 
   @@index([doctorId, status])
 }
@@ -3827,95 +3864,95 @@ enum CrossBorderRxStatus {
 /// can prescribe without cross-border access to the origin-country file. If
 /// Doctor B needs the full chart they use the standard MedicalAccessRequest.
 model CrossBorderPrescriptionRequest {
-  id                   String              @id @default(cuid())
+  id                        String                 @id @default(cuid())
   /// The consultation the request was raised from (Doctor A's appointment).
-  sourceAppointmentId  String
+  sourceAppointmentId       String
   /// Doctor A — the requesting/treating doctor.
-  sourceDoctorId       String
+  sourceDoctorId            String
   /// Snapshot of the patient identity from the source appointment, so the
   /// async fee Order + notifications resolve without a join back.
-  patientEmail         String
-  patientFullName      String
+  patientEmail              String
+  patientFullName           String
   /// Target market (lowercase ISO code, matching the rest of the app).
-  targetCountryCode    String
+  targetCountryCode         String
   /// Legacy: the inner ASYNC_PRESCRIPTION Service. Nullable now — fee + payout
   /// come from the prescriber doctor's `crossBorderRx*` config, not a service.
-  targetServiceId      String?
+  targetServiceId           String?
   /// Snapshot of the prescriber's payout (cents) at request time, in the target
   /// country currency. The payout statement reads this to value the async
   /// consult (which no longer carries a ServiceDoctor payout).
-  payoutCents          Int?
+  payoutCents               Int?
   /// Doctor B — the admin-authorised prescribing doctor in the target country.
-  targetDoctorId       String
+  targetDoctorId            String
   /// Doctor A's clinical rationale, shown to Doctor B (no PHI file access).
-  clinicalSummary      String
+  clinicalSummary           String
   /// Snapshot of the source consultation's SOAP note, copied at request time so
   /// the disclosed record is fixed and doesn't drift if the source note changes.
   /// Disclosed to Doctor B ONLY after the patient consents (status advances past
   /// PENDING_CONSENT) — the consent gate is enforced in the service layer.
-  sourceChiefComplaint String?
-  sourceSubjective     String?
-  sourceObjective      String?
-  sourceAssessment     String?
-  sourcePlan           String?
+  sourceChiefComplaint      String?
+  sourceSubjective          String?
+  sourceObjective           String?
+  sourceAssessment          String?
+  sourcePlan                String?
   /// Snapshot of the source note's format + free-text body, when the treating
   /// doctor wrote a single note instead of SOAP.
-  sourceNoteFormat     ConsultationNoteFormat @default(SOAP)
-  sourceNote           String?
+  sourceNoteFormat          ConsultationNoteFormat @default(SOAP)
+  sourceNote                String?
   /// Patient consent to disclose the SOAP snapshot to the prescribing doctor.
   /// The raw token only ever lives in the consent link emailed to the patient;
   /// we store its SHA-256 hash (same pattern as ShareLink / MedicalAccessRequest).
-  consentTokenHash     String?             @unique
-  consentTokenExpiresAt DateTime?
+  consentTokenHash          String?                @unique
+  consentTokenExpiresAt     DateTime?
   /// When the patient granted disclosure consent (null until they agree).
-  soapConsentAt        DateTime?
+  soapConsentAt             DateTime?
   /// Doctor B → Doctor A "request more information" round. Doctor A answers
   /// in-portal, on the source appointment's own consultation tab (they're
   /// already authenticated there — no link/token needed). The answer is also
   /// written onto the source appointment's MedicalNote history. Each new
   /// MORE_INFO decision overwrites these fields for the next round.
-  moreInfoQuestion     String?
-  moreInfoAnswer       String?
-  moreInfoAskedAt      DateTime?
-  moreInfoAnsweredAt   DateTime?
+  moreInfoQuestion          String?
+  moreInfoAnswer            String?
+  moreInfoAskedAt           DateTime?
+  moreInfoAnsweredAt        DateTime?
   /// Patient-entered delivery details captured at the payment step (pharmacy +
   /// confirmed address). Applied to the async Appointment when it's minted so
   /// the prescribing doctor + prescription have the right pharmacy + address.
-  pharmacyName             String?
+  pharmacyName              String?
   /// Health / tax identifier for the TARGET country (PPS in IE, NIF in PT,
   /// CPF in BR, ...), asked at the payment step. The chart's `taxIdNumber` is
   /// the patient's HOME-country id, so it must never be printed under a
   /// foreign label — this is the only value the prescription may use.
   /// Optional: patients without one still get a prescription, with no id line.
   /// AES-256-GCM encrypted (`phi:v1:` envelope, same as PatientProfile ids).
-  patientHealthIdNumber    String?
+  patientHealthIdNumber     String?
   /// Passport number, collected as the alternative to `patientHealthIdNumber`
   /// for target countries that require ONE of the two (Brazil: CPF or
   /// passport). AES-256-GCM encrypted, same envelope.
-  patientPassportNumber    String?
-  patientAddressLine1      String?
-  patientAddressLine2      String?
-  patientAddressCity       String?
-  patientAddressPostalCode String?
+  patientPassportNumber     String?
+  patientAddressLine1       String?
+  patientAddressLine2       String?
+  patientAddressCity        String?
+  patientAddressPostalCode  String?
   patientAddressCountryCode String?
   /// The Order minted for the async fee (slot-less checkout).
-  orderId              String?
+  orderId                   String?
   /// The Appointment minted for Doctor B once the fee is paid (drives the
   /// consult-note + prescription workspace and the payout via serviceId).
-  asyncAppointmentId   String?             @unique
+  asyncAppointmentId        String?                @unique
   /// The full-consultation Appointment created if the patient upgrades after a
   /// refusal.
-  upgradeAppointmentId String?             @unique
-  status               CrossBorderRxStatus @default(PENDING_CONSENT)
+  upgradeAppointmentId      String?                @unique
+  status                    CrossBorderRxStatus    @default(PENDING_CONSENT)
   /// Timestamps for the terminal transitions (audit/reporting convenience).
-  paidAt               DateTime?
-  decidedAt            DateTime?
+  paidAt                    DateTime?
+  decidedAt                 DateTime?
   /// Set when Doctor B finalises the prescription document. Guards the
   /// patient + Doctor A "prescription sent" notifications so they fire exactly
   /// once even if several documents are finalised.
-  finalisedAt          DateTime?
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  finalisedAt               DateTime?
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime               @updatedAt
 
   @@index([targetDoctorId, status])
   @@index([sourceDoctorId, status])
@@ -4327,6 +4364,61 @@ model PatientNationalityDocument {
 
   @@unique([patientProfileId, slotNumber])
   @@index([patientProfileId])
+}
+
+/// Ireland controlled-medication identity verification — one row per
+/// submit/review cycle, never updated after review (append-only trail).
+///
+/// Why a separate table and not just the `PatientProfile.idVerification*`
+/// columns: those hold only the CURRENT state, and a controlled-medication
+/// prescription has to be defensible years later against the state that
+/// existed the day it was issued. `GeneratedDocument.idVerifyEventId` pins
+/// each prescription to the exact cycle that backed it, so a later
+/// re-verification (or revocation) can never rewrite what an already-issued
+/// document claimed.
+///
+/// Data minimisation: the images themselves are NOT duplicated here — the
+/// `*KeySnapshot` columns record WHICH object was reviewed, pointing at the
+/// same private S3 keys already on PatientProfile. No biometric template is
+/// stored; `faceMatchScore` is a bare similarity number and the raw provider
+/// response is kept only for dispute resolution.
+model IdentityVerificationEvent {
+  id                     String              @id @default(cuid())
+  /// Short human-quotable reference printed on the prescription and shown on
+  /// the public verification page. Opaque — carries no patient data.
+  referenceId            String              @unique
+  patientProfileId       String
+  /// Outcome of THIS cycle. PENDING until a human confirms; the face-match
+  /// score alone never sets VERIFIED.
+  status                 VerificationStatus  @default(PENDING)
+  /// How the identity was established, e.g. "AWS_REKOGNITION_COMPAREFACES"
+  /// (score-assisted) or "MANUAL_REVIEW" (no automated score available).
+  method                 String
+  /// S3 keys as they stood when this cycle was submitted.
+  idDocumentKeySnapshot  String?
+  selfieImageKeySnapshot String?
+  /// Automated face-match assist. Null when the provider is unconfigured or
+  /// errored — verification then falls back to pure human review.
+  faceMatchScore         Float?
+  faceMatchProvider      String?
+  faceMatchRawResult     Json?
+  faceMatchRanAt         DateTime?
+  /// Who asked for this verification. Null = patient-initiated.
+  requestedByDoctorId    String?
+  requestedAt            DateTime?
+  /// The human who made the final call. Doctor or admin User id.
+  reviewedByUserId       String?
+  reviewedByRole         String?
+  reviewedAt             DateTime?
+  reviewNotes            String?
+  patientProfile         PatientProfile      @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  /// Documents (prescriptions) issued on the strength of this verification.
+  generatedDocuments     GeneratedDocument[]
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  @@index([patientProfileId, createdAt])
+  @@index([status])
 }
 
 /// Generic medical document. Covers patient uploads, doctor uploads, exam requests,
@@ -6036,18 +6128,18 @@ enum MembershipImportStatus {
 /// from `MembershipBenefit` rows keyed to that country, and a covered country
 /// with none gives NO benefit at all, allowance units included (§20).
 model MembershipPlan {
-  id               String  @id @default(cuid())
+  id               String                  @id @default(cuid())
   primaryCountryId String
-  primaryCountry   Country @relation(fields: [primaryCountryId], references: [id], onDelete: Cascade)
+  primaryCountry   Country                 @relation(fields: [primaryCountryId], references: [id], onDelete: Cascade)
   /// Every covered country, the primary included. Existence of the row is what
   /// makes a country selectable when configuring benefits, and the FK target
   /// that proves a benefit row's country is actually covered (§21.1).
   countries        MembershipPlanCountry[]
   slug             String
   /// Internal/default name; patient-facing copy comes from the translations.
-  name          String
-  internalNotes String?
-  isActive      Boolean @default(true)
+  name             String
+  internalNotes    String?
+  isActive         Boolean                 @default(true)
 
   // Payer metadata (§15) — all optional. Never charged, never invoiced, never
   // surfaced to patients. Recorded so ops know who the programme is billed to
@@ -6228,7 +6320,7 @@ model MembershipEnrollment {
   /// and `abc1` could coexist while lookups compare case-insensitively.
   /// Uniqueness is the raw unique index on lower("membershipId"); every
   /// lookup queries via lower().
-  membershipId String
+  membershipId     String
   /// The partner's own member number, when they supply one (decision 40).
   /// Searchable in admin, NOT a key — duplicates across plans are possible
   /// and permitted.
@@ -6238,11 +6330,11 @@ model MembershipEnrollment {
   /// MembershipEnrollment_plan_email_active_key (planId, lower(email))
   /// WHERE status <> 'REMOVED' — deliberately NOT a Prisma @@unique, so a
   /// removed row does not block a re-add.
-  email        String
-  firstName    String
-  lastName     String
-  phone        String?
-  dateOfBirth  DateTime?
+  email            String
+  firstName        String
+  lastName         String
+  phone            String?
+  dateOfBirth      DateTime?
 
   /// Set when the account is linked (verified-email match, or claim form).
   userId    String?
