@@ -19,6 +19,13 @@ import {
   NationalityNotFoundError,
 } from "../services/patient-nationality.service.js";
 import { encryptPhi, decryptPhi } from "../lib/crypto/phi-crypto.js";
+import {
+  getVerificationSummary,
+  openVerificationCycle,
+  faceMatchAvailable,
+  isVerificationRelevantForPatient,
+} from "../modules/identity-verification/identity-verification.service.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 import {
@@ -92,6 +99,12 @@ const ALLOWED_MIME = new Set([
   "image/webp",
   "application/pdf",
 ]);
+/**
+ * Selfies are photographs, never documents. Excluding PDF is not just tidiness:
+ * the face matcher needs decodable image bytes, and a PDF "selfie" would sail
+ * past upload only to produce an unscoreable cycle at review time.
+ */
+const SELFIE_ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_BYTES = 10 * 1024 * 1024;
 
 async function requirePatient(request: { authUser?: { role: string; email: string; sub: string } | null }) {
@@ -367,6 +380,145 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // ─── Identity verification: live selfie (Ireland controlled meds) ─────────
+
+  app.post("/api/account/profile/identity-verification/selfie", async (request, reply) => {
+    const profile = await requirePatient(request);
+    if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+    if (!isMediaStorageConfigured()) {
+      return reply.status(503).send(errorResponse("Upload storage not configured"));
+    }
+
+    let fileBuffer: Buffer | null = null;
+    let mimetype = "application/octet-stream";
+
+    for await (const part of request.parts()) {
+      if (part.type === "file" && part.fieldname === "file") {
+        fileBuffer = await part.toBuffer();
+        mimetype = part.mimetype;
+      }
+    }
+
+    if (!fileBuffer || fileBuffer.length === 0) {
+      return reply.status(400).send(errorResponse("Photo is required"));
+    }
+    if (fileBuffer.length > MAX_BYTES) {
+      return reply.status(413).send(errorResponse("Photo too large (max 10 MB)"));
+    }
+    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, SELFIE_ALLOWED_MIME);
+    if (!sniffedMime) {
+      return reply.status(400).send(errorResponse("Photo must be a JPG, PNG or WebP image"));
+    }
+    mimetype = sniffedMime;
+
+    // The ID document has to already be on file — there is nothing to match a
+    // face against otherwise, and a selfie sitting alone in the review queue
+    // just wastes a reviewer's time.
+    const existing = await prisma.patientProfile.findUnique({
+      where: { id: profile.id },
+      select: { idDocumentKey: true },
+    });
+    if (!existing?.idDocumentKey) {
+      return reply
+        .status(409)
+        .send(errorResponse("Upload your ID document before taking the verification photo"));
+    }
+
+    const ext = mimetype.split("/")[1];
+    const storageKey = `patient-docs/${profile.id}/identity-verification/selfie-${randomUUID()}.${ext}`;
+
+    try {
+      await putObject(storageKey, fileBuffer, mimetype);
+      await prisma.patientProfile.update({
+        where: { id: profile.id },
+        data: {
+          selfieImageKey: storageKey,
+          selfieUploadedAt: new Date(),
+          // Back to PENDING even if they were VERIFIED before: a new face
+          // submission is a new claim and has to be looked at again.
+          idVerificationStatus: "PENDING",
+        },
+      });
+
+      const event = await openVerificationCycle({
+        patientProfileId: profile.id,
+        selfieKey: storageKey,
+        idDocumentKey: existing.idDocumentKey,
+      });
+
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "SELFIE_IMAGE", accessAction: "UPLOADED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+
+      // Critical (not fire-and-forget): this is the moment biometric-adjacent
+      // data enters the workflow, so a lost audit row must surface as an error.
+      await recordCriticalAudit({
+        actorUserId: request.authUser!.sub,
+        actorRole: "PATIENT",
+        action: "IDENTITY_VERIFICATION_SELFIE_SUBMITTED",
+        entityType: "IdentityVerificationEvent",
+        entityId: event.id,
+        metadata: {
+          patientProfileId: profile.id,
+          referenceId: event.referenceId,
+          method: event.method,
+          faceMatchScore: event.faceMatchScore,
+        },
+        request,
+      });
+
+      return okResponse(
+        {
+          uploaded: true,
+          status: "PENDING",
+          referenceId: event.referenceId,
+          // Never the score — the patient must not be able to tune their photo
+          // against the matcher, and it is a reviewer's aid, not a result.
+          automatedCheckRan: event.faceMatchScore !== null,
+        },
+        "Verification photo submitted for review",
+      );
+    } catch (error) {
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Upload failed"));
+    }
+  });
+
+  app.get("/api/account/profile/identity-verification", async (request, reply) => {
+    const profile = await requirePatient(request);
+    if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+
+    try {
+      const summary = await getVerificationSummary(profile.id);
+      if (!summary) return reply.status(404).send(errorResponse("Profile not found"));
+
+      const relevant = await isVerificationRelevantForPatient({
+        patientProfileId: profile.id,
+        patientEmail: profile.email,
+      });
+
+      return okResponse({
+        identityVerification: {
+          relevant,
+          status: summary.status,
+          verifiedAt: summary.verifiedAt,
+          hasIdDocument: summary.hasIdDocument,
+          hasSelfie: summary.hasSelfie,
+          selfieUploadedAt: summary.selfieUploadedAt,
+          requestedAt: summary.requestedAt,
+          referenceId: summary.latestEvent?.referenceId ?? null,
+          reviewNotes: summary.latestEvent?.reviewNotes ?? null,
+          automatedCheckAvailable: faceMatchAvailable(),
+        },
+      });
+    } catch (error) {
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not load identity verification"));
+    }
+  });
+
   // ─── Verification status (read-only for patient) ──────────────────────────
 
   app.get("/api/account/profile/verification", async (request, reply) => {
@@ -581,6 +733,37 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
 
       const contentType = obj.ContentType ?? "application/octet-stream";
       void reply.header("Content-Type", contentType);
+      void reply.header("Cache-Control", "private, no-store");
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
+      return reply.send(stream);
+    } catch (error) {
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Download failed"));
+    }
+  });
+
+  app.get("/api/account/profile/identity-verification/selfie/download", async (request, reply) => {
+    const profile = await requirePatient(request);
+    if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+
+    try {
+      const row = await prisma.patientProfile.findUnique({
+        where: { id: profile.id },
+        select: { selfieImageKey: true },
+      });
+      if (!row?.selfieImageKey) return reply.status(404).send(errorResponse("Photo not found"));
+
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "SELFIE_IMAGE", accessAction: "DOWNLOADED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+
+      const obj = await getObject(row.selfieImageKey);
+      const stream = streamToNodeReadable(obj.Body);
+      if (!stream) return reply.status(404).send(errorResponse("Photo not found"));
+
+      void reply.header("Content-Type", obj.ContentType ?? "application/octet-stream");
       void reply.header("Cache-Control", "private, no-store");
       // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming an S3 object's Node Readable via Fastify's typed reply.send(), not writing an HTML string built from user input; this rule is tuned for Express res.write(userInput).
       return reply.send(stream);

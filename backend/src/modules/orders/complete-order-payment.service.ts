@@ -625,6 +625,14 @@ async function fulfillPaidOrderFromCheckoutSession(
       void import("../corporate/corporate-status.service.js")
         .then((m) => m.onCorporateAppointmentCreated(appointmentId))
         .catch(() => {});
+      // Ireland: ask the patient to verify their identity now, while there is
+      // still time before the consultation. Verification needs a human to
+      // review a photo, so a request raised mid-consultation is already too
+      // late to help that consultation. No-ops for every other country, and
+      // for a patient already verified or already asked.
+      void import("../identity-verification/on-appointment-confirmed.js")
+        .then((m) => m.onAppointmentConfirmed(appointmentId))
+        .catch(() => {});
     }
     // Promote booking-time medical-access consent into the append-only
     // ledger — see promoteConsentsAfterPayment below. Fire-and-forget: a

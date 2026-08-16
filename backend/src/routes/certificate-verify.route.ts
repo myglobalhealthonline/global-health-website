@@ -22,6 +22,8 @@ const certificateVerifyRoute: FastifyPluginAsync = async (app) => {
             documentType: true,
             createdAt: true,
             metadata: true,
+            idVerifiedAt: true,
+            idVerifyEvent: { select: { referenceId: true } },
             appointment: {
               select: {
                 fullName: true,
@@ -64,6 +66,22 @@ const certificateVerifyRoute: FastifyPluginAsync = async (app) => {
         if (meta.startDate) dateInfo.from = formatDateDdMmYyyy(meta.startDate);
         if (meta.endDate) dateInfo.to = formatDateDdMmYyyy(meta.endDate);
 
+        // Ireland controlled medications. Reflects what the paper says, from
+        // the pin taken at issuance — so a scan years later reports the check
+        // that actually backed this prescription, not the patient's status
+        // today. Omitted entirely when the document made no identity claim:
+        // this endpoint is public, and "not verified" about a named patient is
+        // not something an unauthenticated scanner should be told.
+        const identityVerified =
+          doc.idVerifiedAt && doc.idVerifyEvent
+            ? {
+                verified: true,
+                label: "Patient Identity Verified",
+                verifiedAt: formatDateDdMmYyyy(doc.idVerifiedAt),
+                referenceId: doc.idVerifyEvent.referenceId,
+              }
+            : null;
+
         return okResponse({
           certificateId: doc.certificateId,
           certificateName: certName,
@@ -72,6 +90,7 @@ const certificateVerifyRoute: FastifyPluginAsync = async (app) => {
           consultationDate,
           issuedAt,
           dateInfo,
+          ...(identityVerified ? { identityVerified } : {}),
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
