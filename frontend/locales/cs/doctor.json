@@ -161,7 +161,8 @@
     "notifyReadySending": "Odesílání…",
     "notifyReadySent": "Pacient byl informován",
     "notifyReadyPartial": "Odesláno e-mailem — WhatsApp neodeslán",
-    "notifyReadyFailed": "Pacienta se nepodařilo informovat"
+    "notifyReadyFailed": "Pacienta se nepodařilo informovat",
+    "verifyIdentity": "Ověřit"
   },
   "appointmentDetail": {
     "back": "Zpět na termíny",
@@ -249,7 +250,10 @@
     "internalNotesPlaceholderFromAdmin": "Poznámka pro lékaře (např. pacient volal ohledně následného vyšetření)…",
     "internalNotesPostNote": "Odeslat poznámku",
     "internalNotesPostFailed": "Nepodařilo se odeslat.",
-    "brCpf": "CPF"
+    "brCpf": "CPF",
+    "tabIdentity": "Totožnost",
+    "identityTitle": "Ověření totožnosti pacienta",
+    "identityDesc": "Porovnejte doklad totožnosti s ověřovací fotografií a poté potvrďte nebo zamítněte. Potvrzená totožnost se tiskne na recepty na kontrolované léky."
   },
   "patients": {
     "eyebrow": "Záznamy pacientů",

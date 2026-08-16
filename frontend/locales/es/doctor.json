@@ -161,7 +161,8 @@
     "notifyReadySending": "Notificando…",
     "notifyReadySent": "Paciente notificado",
     "notifyReadyPartial": "Notificado por email — WhatsApp no enviado",
-    "notifyReadyFailed": "No se pudo notificar al paciente"
+    "notifyReadyFailed": "No se pudo notificar al paciente",
+    "verifyIdentity": "Verificar"
   },
   "appointmentDetail": {
     "back": "Volver a las citas",
@@ -249,7 +250,10 @@
     "internalNotesPlaceholderFromAdmin": "Nota para el médico (por ejemplo, el paciente llamó sobre el seguimiento)…",
     "internalNotesPostNote": "Publicar nota",
     "internalNotesPostFailed": "No se pudo publicar.",
-    "brCpf": "CPF"
+    "brCpf": "CPF",
+    "tabIdentity": "Identidad",
+    "identityTitle": "Verificación de identidad del paciente",
+    "identityDesc": "Compare el documento de identidad con la foto de verificación y luego confirme o rechace. Una identidad confirmada se imprime en las recetas de medicamentos controlados."
   },
   "patients": {
     "eyebrow": "Registros de pacientes",

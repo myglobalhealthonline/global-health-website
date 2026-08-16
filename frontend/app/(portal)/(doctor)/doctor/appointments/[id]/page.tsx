@@ -9,6 +9,7 @@ import {
   MapPin,
   MessageSquare,
   Printer,
+  ShieldCheck,
   Stethoscope,
   User,
 } from "lucide-react";
@@ -37,6 +38,7 @@ import { AppointmentDocumentsTab } from "./_components/appointment-documents-tab
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { DoctorConsultationChatSection } from "./_components/consultation-chat-section";
 import { AppointmentTabs } from "./_components/appointment-tabs";
+import { IdentityVerificationCard } from "./_components/identity-verification-card";
 import { FinalizeChecklist } from "./_components/finalize-checklist";
 import {
   ConsultationDocumentsSection,
@@ -650,6 +652,33 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               </div>
             ),
           },
+          // Ireland only: identity verification decides whether a controlled
+          // prescription may claim the patient was checked, and the doctor is
+          // the one who confirms it. It gets a tab of its own because the
+          // sidebar card is easy to miss and the "Verify" action on the
+          // appointments list deep-links straight here (`?tab=identity`).
+          ...(appointment.countryCode.toLowerCase() === "ie"
+            ? [
+                {
+                  id: "identity",
+                  label: d.appointmentDetail.tabIdentity,
+                  icon: <ShieldCheck aria-hidden />,
+                  panel: (
+                    <FormSection
+                      title={d.appointmentDetail.identityTitle}
+                      description={d.appointmentDetail.identityDesc}
+                    >
+                      <div className="gh-form-section__span-2">
+                        <IdentityVerificationCard
+                          email={appointment.email}
+                          variant="panel"
+                        />
+                      </div>
+                    </FormSection>
+                  ),
+                },
+              ]
+            : []),
           {
             id: "documents",
             label: d.appointmentDetail.tabDocuments,

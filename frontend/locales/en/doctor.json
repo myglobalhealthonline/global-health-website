@@ -161,7 +161,8 @@
     "notifyReadySending": "Notifying…",
     "notifyReadySent": "Patient notified",
     "notifyReadyPartial": "Notified by email — WhatsApp not sent",
-    "notifyReadyFailed": "Could not notify patient"
+    "notifyReadyFailed": "Could not notify patient",
+    "verifyIdentity": "Verify"
   },
   "appointmentDetail": {
     "back": "Back to appointments",
@@ -249,7 +250,10 @@
     "ptFieldCancel": "Cancel",
     "ptFieldSaveFailed": "Could not save. Try again.",
     "tabsAriaLabel": "Appointment sections",
-    "brCpf": "CPF"
+    "brCpf": "CPF",
+    "tabIdentity": "Identity",
+    "identityTitle": "Patient identity verification",
+    "identityDesc": "Compare the ID document with the verification photo, then confirm or reject. A confirmed identity is printed on controlled-medication prescriptions."
   },
   "patients": {
     "eyebrow": "Patient records",

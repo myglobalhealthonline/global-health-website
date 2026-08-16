@@ -161,7 +161,8 @@
     "notifyReadySending": "Se trimite…",
     "notifyReadySent": "Pacient anunțat",
     "notifyReadyPartial": "Trimis prin email — WhatsApp netrimis",
-    "notifyReadyFailed": "Pacientul nu a putut fi anunțat"
+    "notifyReadyFailed": "Pacientul nu a putut fi anunțat",
+    "verifyIdentity": "Verifică"
   },
   "appointmentDetail": {
     "back": "Înapoi la programări",
@@ -249,7 +250,10 @@
     "internalNotesPlaceholderFromAdmin": "Notă pentru medic (de exemplu, pacientul a sunat pentru un follow-up)…",
     "internalNotesPostNote": "Publică notă",
     "internalNotesPostFailed": "Nu s-a putut publica.",
-    "brCpf": "CPF"
+    "brCpf": "CPF",
+    "tabIdentity": "Identitate",
+    "identityTitle": "Verificarea identității pacientului",
+    "identityDesc": "Comparați actul de identitate cu fotografia de verificare, apoi confirmați sau respingeți. O identitate confirmată este tipărită pe rețetele de medicamente controlate."
   },
   "patients": {
     "eyebrow": "Fișe pacienți",

@@ -42,10 +42,22 @@ function StatusPill({ data }: { data: DoctorIdentityVerification }) {
   return <span className="gh-badge gh-badge-neutral">Not verified</span>;
 }
 
-export function IdentityVerificationCard({ email }: { email: string }) {
+export function IdentityVerificationCard({
+  email,
+  /**
+   * "rail" — compact, collapsed, for the patient sidebar.
+   * "panel" — the dedicated Identity tab: larger photos, open by default,
+   *   because the doctor navigated there specifically to review.
+   */
+  variant = "rail",
+}: {
+  email: string;
+  variant?: "rail" | "panel";
+}) {
+  const isPanel = variant === "panel";
   const [data, setData] = useState<DoctorIdentityVerification | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(variant === "panel");
   const [busy, setBusy] = useState(false);
   const [notes, setNotes] = useState("");
   const [msg, setMsg] = useState<Msg>(null);
@@ -111,7 +123,11 @@ export function IdentityVerificationCard({ email }: { email: string }) {
   const canCompare = data.hasIdDocument && data.hasSelfie;
 
   return (
-    <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
+    <div
+      className={`rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] ${
+        isPanel ? "p-4" : "mt-4 p-3"
+      }`}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
@@ -131,7 +147,9 @@ export function IdentityVerificationCard({ email }: { email: string }) {
             </p>
           )}
         </div>
-        {canCompare && (
+        {/* The panel is the Identity tab itself — the doctor navigated there to
+            review, so there is nothing to expand. */}
+        {canCompare && !isPanel && (
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -188,7 +206,9 @@ export function IdentityVerificationCard({ email }: { email: string }) {
               <img
                 src={identityImageUrl(email, "id")}
                 alt="Patient's government ID document"
-                className="max-h-56 w-full rounded border border-[var(--portal-line)] object-contain"
+                className={`w-full rounded border border-[var(--portal-line)] object-contain ${
+                  isPanel ? "max-h-96" : "max-h-56"
+                }`}
               />
             </figure>
             <figure className="m-0">
@@ -201,7 +221,9 @@ export function IdentityVerificationCard({ email }: { email: string }) {
               <img
                 src={identityImageUrl(email, "selfie")}
                 alt="Patient's verification photo"
-                className="max-h-56 w-full rounded border border-[var(--portal-line)] object-contain"
+                className={`w-full rounded border border-[var(--portal-line)] object-contain ${
+                  isPanel ? "max-h-96" : "max-h-56"
+                }`}
               />
             </figure>
           </div>

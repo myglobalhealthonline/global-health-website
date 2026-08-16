@@ -161,7 +161,8 @@
     "notifyReadySending": "Wird gesendet…",
     "notifyReadySent": "Patient benachrichtigt",
     "notifyReadyPartial": "Per E-Mail gesendet — WhatsApp nicht gesendet",
-    "notifyReadyFailed": "Patient konnte nicht benachrichtigt werden"
+    "notifyReadyFailed": "Patient konnte nicht benachrichtigt werden",
+    "verifyIdentity": "Prüfen"
   },
   "appointmentDetail": {
     "back": "Zurück zu den Terminen",
@@ -249,7 +250,10 @@
     "internalNotesPlaceholderFromAdmin": "Notiz für Arzt (z. B. Patient hat wegen Nachsorge angerufen)…",
     "internalNotesPostNote": "Notiz posten",
     "internalNotesPostFailed": "Konnte nicht posten.",
-    "brCpf": "CPF"
+    "brCpf": "CPF",
+    "tabIdentity": "Identität",
+    "identityTitle": "Identitätsprüfung des Patienten",
+    "identityDesc": "Vergleichen Sie das Ausweisdokument mit dem Verifizierungsfoto und bestätigen oder lehnen Sie ab. Eine bestätigte Identität wird auf Rezepten für kontrollierte Medikamente gedruckt."
   },
   "patients": {
     "eyebrow": "Patientenakten",
