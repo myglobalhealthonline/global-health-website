@@ -250,15 +250,20 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         .status(403)
         .send(errorResponse("Only SUPER_ADMIN can change a user's role or doctor link"));
     }
-    // Email is the login identifier AND the password-reset destination, so
-    // rewriting it is an account-takeover primitive (point the address at
-    // yourself, then request a reset). Same bar as a role change.
-    // fullName / phone / dateOfBirth stay open to plain ADMIN — they are
-    // ordinary PII corrections with no privilege effect.
-    if (body.data.email !== undefined && sessionActor?.role !== "SUPER_ADMIN") {
+    // Email is the login identifier AND the password-reset destination —
+    // open to ADMIN and SUPER_ADMIN (LOCAL_ADMIN is already excluded from
+    // this whole plugin above; PATIENT/DOCTOR never reach admin auth).
+    // The takeover primitive this guards against (retarget the email, then
+    // reset the password) is mitigated below: the changed address always
+    // gets a fresh temp password mailed to it, not a silent handoff.
+    if (
+      body.data.email !== undefined &&
+      sessionActor?.role !== "SUPER_ADMIN" &&
+      sessionActor?.role !== "ADMIN"
+    ) {
       return reply
         .status(403)
-        .send(errorResponse("Only SUPER_ADMIN can change a user's email"));
+        .send(errorResponse("Only an admin can change a user's email"));
     }
     // Self-protection: an admin acting on their own account can't change
     // their own role or deactivate themselves through this endpoint —
