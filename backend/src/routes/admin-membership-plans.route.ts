@@ -22,7 +22,6 @@ import {
   updateMembershipPlan,
   MembershipBenefitNotFoundError,
   MembershipBenefitServiceError,
-  MembershipCommissionCountryError,
   MembershipCountryNotFoundError,
   MembershipLastLevelError,
   MembershipLevelFamilyError,
@@ -84,9 +83,6 @@ function handleMembershipError(
     error instanceof LocaleNotSupportedError
   ) {
     return reply.status(400).send(errorResponse(error.message));
-  }
-  if (error instanceof MembershipCommissionCountryError) {
-    return reply.status(422).send(errorResponse(error.message));
   }
   if (
     error instanceof MembershipPlanNotFoundError ||

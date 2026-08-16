@@ -60,6 +60,15 @@ export type CommissionLineInput = {
    * `undefined` = no override, do the normal lookup.
    */
   payoutOverrideCents?: number;
+  /**
+   * This line's price was cut by a private-membership benefit, so a payout above
+   * the price charged is the designed outcome rather than an incident: Global
+   * Health funds the difference from the membership fee and the doctor is still
+   * paid in full. Suppresses the "payout exceeds the price charged" alert only —
+   * the clamp, the commission figure and the payout are unchanged, so the fiscal
+   * document still shows exactly what was collected.
+   */
+  membershipFunded?: boolean;
 };
 
 export type CommissionLineResult = {
@@ -230,10 +239,13 @@ export async function computeOrderCommission(
     const payoutTotal = payoutPerUnit * line.quantity;
     const rawCommission = lineTotalCents - payoutTotal;
 
-    if (rawCommission < 0) {
+    if (rawCommission < 0 && !line.membershipFunded) {
       // Payout exceeds the price — reachable via an off-peak or negotiated
       // insurance price that dropped below a payout set against the base price.
       // Clamp so we never issue a negative receipt, and alert: this line loses money.
+      //
+      // A membership-funded line is exempt: there the subsidy is the product, so
+      // the alert would fire on every included visit and train ops to ignore it.
       void emitOpsAlert({
         severity: "critical",
         title: "Doctor payout exceeds the price charged",

@@ -584,6 +584,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   insuranceCompanyId: i.insuranceCompanyId,
                   quantity: i.quantity,
                   unitPriceCents: finalUnitPrice(i),
+                  // A membership benefit priced this line, so a payout above the
+                  // price is intended (Global Health funds it from the fee) and
+                  // must not raise the loss alert.
+                  membershipFunded: Boolean(membershipPlan?.lines.get(i.id)),
                 })),
                 shippingCents,
                 { countryCode: cart.countryCode },

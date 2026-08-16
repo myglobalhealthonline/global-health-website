@@ -297,7 +297,7 @@ describe("admin membership plan routes", () => {
     assert.ok(audit, "audit row written");
   });
 
-  it("refuses a plan in a commission-model country → 422 (§6.6)", async (t) => {
+  it("allows a plan in a commission-model country (Brazil, 2026-08-16)", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({
       method: "POST",
@@ -305,7 +305,7 @@ describe("admin membership plan routes", () => {
       cookies: superCookie,
       payload: planPayload(`commission-${uniq}`, commissionCountryId),
     });
-    assert.equal(res.statusCode, 422, res.body);
+    assert.equal(res.statusCode, 200, res.body);
   });
 
   it("rejects an unknown country → 400", async (t) => {
@@ -695,18 +695,18 @@ describe("admin membership plan routes", () => {
     assert.equal(still.length, 1);
   });
 
-  it("refuses to cover a commission-model country (§6.6, open item 3)", async (t) => {
+  it("covers a commission-model country (Brazil, 2026-08-16)", async (t) => {
     if (!app) return t.skip();
-    const { planId } = await createPlan(`nocommission-${uniq}`);
+    const { planId } = await createPlan(`commissioncover-${uniq}`);
     const res = await app.inject({
       method: "POST",
       url: `/api/admin/membership-plans/${planId}/countries`,
       cookies: superCookie,
       payload: { countryId: commissionCountryId },
     });
-    // Same 422 the create path gives: a €0 allowance line there clamps the
-    // commission to zero and alerts per line.
-    assert.equal(res.statusCode, 422, res.body);
+    // A fully covered line there bills a commission of zero — what was actually
+    // collected — and the doctor is still paid in full from the membership fee.
+    assert.equal(res.statusCode, 200, res.body);
   });
 
   it("removing coverage deletes that country's benefit rows and reports the count", async (t) => {

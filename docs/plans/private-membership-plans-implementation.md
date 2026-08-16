@@ -1107,12 +1107,18 @@ line as for a full-price one.
 line priced below the payout (any allowance €0 line, and many discounted ones)
 produces a negative commission, which the service clamps to 0 **and fires a
 critical ops alert per line** ("Doctor payout exceeds the price charged").
-Ireland has `commissionReceiptEnabled = false`, so launch is unaffected — but:
+**Resolved 2026-08-16 — Brazil is open for memberships.** The decision:
 
-- the API must **reject creating a `MembershipPlan` in a country with
-  `commissionReceiptEnabled = true`** until the commission interaction is
-  designed (alert suppression + how a €0 line appears on the fiscal receipt);
-- a test pins that rejection.
+- the fiscal document shows the commission actually collected, so a fully
+  covered line shows zero. Nothing is fabricated onto the receipt;
+- the doctor is still paid their full `ServiceDoctor.doctorAmountCents`, funded
+  by Global Health out of the membership fee;
+- `CommissionLineInput.membershipFunded` marks a line whose price came from a
+  membership benefit, and `computeOrderCommission` skips the "payout exceeds the
+  price charged" alert for exactly those lines — every other route to a negative
+  commission still pages ops;
+- set at both call sites that can carry a benefit: the self-service checkout
+  (`orders.route.ts`) and the admin manual booking (`manual-booking.service.ts`).
 
 ---
 
@@ -1929,10 +1935,15 @@ a public-plan credit booking.
 
 1. Ireland's exact locale set for the plan/level translations and the three emails —
    read from `CountryLocale` for `ie` at implementation time.
-2. Commission-model markets (§6.6): membership plans are blocked in
-   `commissionReceiptEnabled` countries for now. Design the commission interaction
-   (alert handling + fiscal receipt for €0/discounted lines) before Brazil gets
-   memberships.
+2. ~~Commission-model markets (§6.6): membership plans are blocked in
+   `commissionReceiptEnabled` countries for now.~~ **Resolved 2026-08-16.**
+   Brazil is open for memberships. The fiscal document keeps showing only the
+   commission actually collected — zero on a fully covered line — the doctor is
+   still paid their full `ServiceDoctor.doctorAmountCents`, and Global Health
+   funds the difference out of the membership fee. `computeOrderCommission`
+   takes a `membershipFunded` flag per line and skips the "payout exceeds the
+   price charged" alert for those, so a designed subsidy no longer pages ops.
+   Every other line keeps the alert.
 
 Resolved during code review (2026-08-07):
 
@@ -2629,8 +2640,9 @@ in a generated migration, which is why every step re-runs `membership-ddl-check.
    carves it out with no code.
 2. Per-country caps on the shared pool are explicitly **not** built. If cost-shifting
    into an expensive market becomes real, that is the fix — not a redesign.
-3. Commission-model markets remain blocked (§6.6). Multi-country makes this likelier to
-   surface: a plan covering Brazil would hit it.
+3. ~~Commission-model markets remain blocked (§6.6).~~ **Resolved 2026-08-16** —
+   Brazil can be a plan's primary country and can be added as covered coverage.
+   See §18 open item 2 for what the commission receipt shows.
 4. **A service-specific allowance is no longer expressible, and that is a real
    capability loss** — recorded here because it was not called out when §21.3 was
    written, and it surfaced immediately: the dev database held exactly one such row

@@ -27,23 +27,6 @@ export class MembershipCountryNotFoundError extends Error {
   }
 }
 
-/**
- * §6.6. In a commission market `computeOrderCommission` derives the commission
- * as `lineTotal − doctorPayout`, so any membership line priced below the payout
- * (every €0 allowance line, and plenty of discounted ones) clamps to zero and
- * fires a critical ops alert per line. Ireland has the flag off, so launch is
- * unaffected — but the interaction has to be designed before a commission
- * market gets memberships, and until then the API refuses to create the plan.
- */
-export class MembershipCommissionCountryError extends Error {
-  constructor() {
-    super(
-      "Membership plans are not yet supported in commission-model countries — the commission and fiscal-receipt interaction is undesigned",
-    );
-    this.name = "MembershipCommissionCountryError";
-  }
-}
-
 export class MembershipPlanNotFoundError extends Error {
   constructor() {
     super("Membership plan not found");
@@ -184,10 +167,9 @@ export async function getMembershipPlanById(planId: string) {
 export async function createMembershipPlan(body: AdminMembershipPlanCreateBody) {
   const country = await prisma.country.findUnique({
     where: { id: body.countryId },
-    select: { id: true, commissionReceiptEnabled: true },
+    select: { id: true },
   });
   if (!country) throw new MembershipCountryNotFoundError();
-  if (country.commissionReceiptEnabled) throw new MembershipCommissionCountryError();
 
   try {
     return await prisma.$transaction(async (tx) => {
@@ -283,10 +265,12 @@ export async function deactivateMembershipPlan(planId: string) {
  * country, members get nothing there (§20) — the level editor badges exactly
  * that state, and `copyPrimaryKindRules` is the one-click way out of it.
  *
- * Commission markets are refused for the same reason plan creation refuses them
- * (§6.6, open item 3): a €0 allowance line in a commission country clamps the
- * commission to zero and fires a per-line ops alert. Adding the country is the
- * other door into that, and it was open.
+ * Commission markets (Brazil) are allowed since 2026-08-16. There the fiscal
+ * document shows only our commission, so a fully-covered membership line shows
+ * a commission of zero — correct, because that is what was collected. Global
+ * Health funds the visit out of the membership fee and the doctor is still paid
+ * their full payout; `computeOrderCommission` skips its loss alert for those
+ * lines rather than treating a designed subsidy as an incident.
  */
 export async function addPlanCountry(planId: string, countryId: string) {
   const plan = await prisma.membershipPlan.findUnique({
@@ -297,10 +281,9 @@ export async function addPlanCountry(planId: string, countryId: string) {
 
   const country = await prisma.country.findUnique({
     where: { id: countryId },
-    select: { id: true, commissionReceiptEnabled: true },
+    select: { id: true },
   });
   if (!country) throw new MembershipCountryNotFoundError();
-  if (country.commissionReceiptEnabled) throw new MembershipCommissionCountryError();
 
   const existing = await prisma.membershipPlanCountry.findUnique({
     where: { planId_countryId: { planId, countryId } },

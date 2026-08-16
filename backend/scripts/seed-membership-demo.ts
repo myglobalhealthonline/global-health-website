@@ -34,15 +34,9 @@ function log(action: string, detail: unknown) {
 async function main() {
   const country = await prisma.country.findFirst({
     where: { code: COUNTRY_CODE },
-    select: { id: true, code: true, name: true, commissionReceiptEnabled: true },
+    select: { id: true, code: true, name: true },
   });
   if (!country) throw new Error(`No country ${COUNTRY_CODE}`);
-  // §6.6: membership plans are blocked in commission markets until the
-  // commission interaction is designed. Fail here rather than seed something
-  // the API itself would reject.
-  if (country.commissionReceiptEnabled) {
-    throw new Error(`${country.code} is a commission market — memberships are blocked (§6.6)`);
-  }
 
   const service = await prisma.service.findFirst({
     where: { countryId: country.id, kind: "GENERAL", isActive: true },

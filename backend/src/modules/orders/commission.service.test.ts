@@ -355,6 +355,30 @@ describe("commission.service", () => {
       assert.equal(state.alerts[0].severity, "critical");
     });
 
+    it("does NOT alert when the shortfall is a membership benefit", async () => {
+      // Brazil-type market with private memberships (2026-08-16). A 100%-covered
+      // visit charges nothing, so the commission is zero and Global Health funds
+      // the payout from the membership fee — designed, not an incident.
+      state.serviceDoctorPayouts["svc-1:doc-1"] = 14000;
+      const r = await svc.computeOrderCommission(
+        [
+          {
+            id: "l1",
+            serviceId: "svc-1",
+            doctorId: "doc-1",
+            quantity: 1,
+            unitPriceCents: 0,
+            membershipFunded: true,
+          },
+        ],
+        0,
+      );
+      assert.equal(r.lines[0].commissionCents, 0);
+      assert.equal(r.doctorPayoutTotalCents, 14000, "the doctor is still owed the full payout");
+      await flush();
+      assert.equal(state.alerts.length, 0);
+    });
+
     it("returns zeroed totals for an empty basket", async () => {
       const r = await svc.computeOrderCommission([], 0);
       assert.deepEqual(r, { lines: [], commissionTotalCents: 0, doctorPayoutTotalCents: 0 });

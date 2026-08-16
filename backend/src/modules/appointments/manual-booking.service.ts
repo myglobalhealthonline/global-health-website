@@ -1042,6 +1042,9 @@ export async function createManualBooking(
             insuranceCompanyId,
             quantity: 1,
             unitPriceCents: amountCents,
+            // Same exemption as the self-service checkout: a membership-priced
+            // line below the payout is the benefit working, not a loss to alert on.
+            membershipFunded: membershipLine != null,
           },
         ],
         0,

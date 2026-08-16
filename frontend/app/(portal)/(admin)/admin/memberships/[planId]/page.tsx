@@ -60,14 +60,14 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
     .sort((a, b) => Number(b.isDefault) - Number(a.isDefault) || a.code.localeCompare(b.code));
   const tabs = localeTabs.length > 0 ? localeTabs : [{ code: defaultLocale, isDefault: true }];
 
-  // Candidates for the covered-country manager. Commission markets are excluded
-  // here as well as refused by the API (§6.6, open item 3): a €0 allowance line
-  // there clamps the commission to zero and alerts per line, so offering the
-  // country would be offering a 422.
+  // Candidates for the covered-country manager. Commission markets (Brazil) are
+  // included since 2026-08-16: a fully covered line simply shows a commission of
+  // zero on the fiscal document, which is what was collected, and the doctor is
+  // still paid in full out of the membership fee.
   const countriesResult = await fetchAdminCountries();
   const covered = new Set(plan.countries.map((c) => c.countryId));
   const addableCountries = (countriesResult.ok ? countriesResult.data.countries : [])
-    .filter((c) => c.isActive && !c.commissionReceiptEnabled && !covered.has(c.id))
+    .filter((c) => c.isActive && !covered.has(c.id))
     .map((c) => ({ id: c.id, code: c.code, name: c.name }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
