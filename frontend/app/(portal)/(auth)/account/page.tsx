@@ -29,6 +29,7 @@ import {
   StatCard,
 } from "@/components/portal-atoms";
 import { Star } from "lucide-react";
+import { IdentityVerificationBanner } from "./_components/identity-verification-banner";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { SubscriptionDashboard } from "./_components/SubscriptionDashboard";
@@ -316,6 +317,11 @@ export default async function AccountOverviewPage() {
           </Link>
         </div>
       ) : null}
+
+      {/* Ireland: same shape as the email prompt above — it is the same kind
+          of ask. Self-gates on the server's scope decision and disappears
+          once verified. */}
+      <IdentityVerificationBanner copy={a.dashboard.identityBanner} />
 
       {/* ── Trustpilot review reminder ────────────────────────────── */}
       {/* Trustpilot green (#00b67a) is the third-party brand's own color,

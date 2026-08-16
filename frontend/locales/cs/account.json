@@ -90,7 +90,14 @@
     "summaryQuickPathHint": "Zahajte konzultaci nebo zkontrolujte schůzky",
     "trustpilotEyebrow": "Podělte se o svou zkušenost",
     "trustpilotBody": "Vaše konzultace je dokončena — napište nám recenzi na Trustpilot",
-    "trustpilotCta": "Napsat recenzi"
+    "trustpilotCta": "Napsat recenzi",
+    "identityBanner": {
+      "title": "Ověřte svou totožnost",
+      "body": "Před konzultací potvrďte, kdo jste — nahrajte doklad totožnosti a pořiďte fotografii. Zabere to asi dvě minuty.",
+      "bodyRequested": "Váš lékař vás požádal, abyste před konzultací potvrdili svou totožnost.",
+      "bodyPending": "Děkujeme — doklad i fotografii máme. Váš lékař je před konzultací potvrdí.",
+      "bodyRejected": "Vaši totožnost se nepodařilo potvrdit. Pořiďte prosím novou fotografii."
+    }
   },
   "bookings": {
     "breadcrumb": "Účet",

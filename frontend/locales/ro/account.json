@@ -90,7 +90,14 @@
     "summaryQuickPathHint": "Începeți o consultație sau verificați programările",
     "trustpilotEyebrow": "Împărtășiți experiența dvs.",
     "trustpilotBody": "Consultația dvs. s-a încheiat — lăsați-ne o recenzie pe Trustpilot",
-    "trustpilotCta": "Scrieți o recenzie"
+    "trustpilotCta": "Scrieți o recenzie",
+    "identityBanner": {
+      "title": "Verificați-vă identitatea",
+      "body": "Confirmați cine sunteți înainte de consultație — încărcați actul de identitate și faceți o fotografie. Durează aproximativ două minute.",
+      "bodyRequested": "Medicul dumneavoastră v-a cerut să vă confirmați identitatea înainte de consultație.",
+      "bodyPending": "Mulțumim — avem actul și fotografia. Medicul le va confirma înainte de consultație.",
+      "bodyRejected": "Identitatea dumneavoastră nu a putut fi confirmată. Vă rugăm să faceți o fotografie nouă."
+    }
   },
   "bookings": {
     "breadcrumb": "Cont",

@@ -90,7 +90,14 @@
     "summaryQuickPathHint": "Konsultation starten oder Termine überprüfen",
     "trustpilotEyebrow": "Teilen Sie Ihre Erfahrung",
     "trustpilotBody": "Ihre Konsultation ist abgeschlossen — hinterlassen Sie uns eine Bewertung auf Trustpilot",
-    "trustpilotCta": "Bewertung schreiben"
+    "trustpilotCta": "Bewertung schreiben",
+    "identityBanner": {
+      "title": "Bestätigen Sie Ihre Identität",
+      "body": "Bestätigen Sie vor Ihrer Konsultation, wer Sie sind — laden Sie Ihren Ausweis hoch und machen Sie ein Foto. Dauert etwa zwei Minuten.",
+      "bodyRequested": "Ihre Ärztin oder Ihr Arzt hat Sie gebeten, Ihre Identität vor der Konsultation zu bestätigen.",
+      "bodyPending": "Danke — Ausweis und Foto liegen uns vor. Ihre Ärztin oder Ihr Arzt bestätigt sie vor der Konsultation.",
+      "bodyRejected": "Ihre Identität konnte nicht bestätigt werden. Bitte machen Sie ein neues Foto."
+    }
   },
   "bookings": {
     "breadcrumb": "Konto",

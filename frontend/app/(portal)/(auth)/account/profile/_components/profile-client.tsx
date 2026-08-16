@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   BadgeCheck,
@@ -30,6 +31,16 @@ import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type Tab = "contact" | "medical" | "verification" | "insurance" | "nationality" | "privacy";
 
+/** Runtime list for validating a `?tab=` value — a bad one falls back to Contact. */
+const TAB_IDS: readonly Tab[] = [
+  "contact",
+  "medical",
+  "verification",
+  "insurance",
+  "nationality",
+  "privacy",
+];
+
 type Account = ReturnType<typeof loadLocaleBundle>["account"];
 
 export type ProfilePageI18n = {
@@ -49,7 +60,13 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>("contact");
+  // `?tab=<id>` deep link. The identity-verification email and the dashboard
+  // banner both point at ?tab=verification; without this they would land the
+  // patient on Contact and leave them to find the tab themselves.
+  const tabParam = useSearchParams().get("tab");
+  const [activeTab, setActiveTab] = useState<Tab>(() =>
+    tabParam && TAB_IDS.includes(tabParam as Tab) ? (tabParam as Tab) : "contact",
+  );
   const [initialContact, setInitialContact] = useState({ fullName: "", phone: "", dateOfBirth: "" });
   // 17-001: on-blur required-field check, same rule the native `required`
   // attribute already enforces at submit — just surfaced earlier.

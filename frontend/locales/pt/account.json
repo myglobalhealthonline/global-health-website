@@ -90,7 +90,14 @@
     "summaryQuickPathHint": "Inicie uma consulta ou reveja as suas marcações",
     "trustpilotEyebrow": "Partilhe a sua experiência",
     "trustpilotBody": "A sua consulta terminou — deixe-nos uma avaliação no Trustpilot",
-    "trustpilotCta": "Escrever uma avaliação"
+    "trustpilotCta": "Escrever uma avaliação",
+    "identityBanner": {
+      "title": "Verifique a sua identidade",
+      "body": "Confirme quem é antes da sua consulta — carregue o seu documento de identificação e tire uma fotografia. Demora cerca de dois minutos.",
+      "bodyRequested": "O seu médico pediu-lhe para confirmar a sua identidade antes da consulta.",
+      "bodyPending": "Obrigado — recebemos o seu documento e a sua fotografia. O seu médico irá confirmá-los antes da consulta.",
+      "bodyRejected": "Não foi possível confirmar a sua identidade. Por favor, tire uma nova fotografia."
+    }
   },
   "bookings": {
     "breadcrumb": "Conta",

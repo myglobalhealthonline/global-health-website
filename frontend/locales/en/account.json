@@ -90,7 +90,14 @@
     "summaryQuickPathHint": "Start a consultation or review appointments",
     "trustpilotEyebrow": "Share your experience",
     "trustpilotBody": "Your consultation is complete — leave us a review on Trustpilot",
-    "trustpilotCta": "Write a review"
+    "trustpilotCta": "Write a review",
+    "identityBanner": {
+      "title": "Verify your identity",
+      "body": "Confirm who you are before your consultation — upload your ID and take a photo. Takes about two minutes.",
+      "bodyRequested": "Your doctor has asked you to confirm your identity before your consultation.",
+      "bodyPending": "Thanks — we have your ID and photo. Your doctor will confirm them before your consultation.",
+      "bodyRejected": "Your identity could not be confirmed. Please take a new photo."
+    }
   },
   "bookings": {
     "breadcrumb": "Account",
