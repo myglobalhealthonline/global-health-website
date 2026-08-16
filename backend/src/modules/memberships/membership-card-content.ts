@@ -5,7 +5,7 @@ import { deriveCardPalette, type CardPalette } from "../../lib/card-colour.js";
 /**
  * The ONE builder behind every rendering of a membership card (§24.3).
  *
- * The web card, the PDF and the welcome email body all read this. Chrome may
+ * The web card, the card image and the welcome email body all read this. Chrome may
  * differ between renderers — that is accepted — but what the card *says* comes
  * from here, so the printed card and the emailed one cannot drift on the
  * member's ID, their covered countries, or what their benefits are.
@@ -86,7 +86,7 @@ export type MembershipCardContent = {
    * (§24.1). Deliberately the CONFIGURED countries, not every covered one: a
    * covered country with no benefit rows gives no benefit at all (§20), and
    * printing its code on a card the member shows at a desk would be a
-   * member-facing lie with a PDF's shelf life.
+   * member-facing lie with a saved image's shelf life.
    */
   countryCodes: string[];
   memberType: "PRIMARY" | "DEPENDENT";
@@ -256,7 +256,7 @@ function statusLabel(status: string, copy: CardCopy): string {
  * One benefit row as a sentence.
  *
  * The §43 shared-pool wording lives here rather than in the templates so the
- * card, the PDF and the email cannot disagree about it — a dependent must never
+ * card, the card image and the email cannot disagree about it — a dependent must never
  * be told "you have 6 visits" when the pool belongs to their primary and may
  * already be spent. Conditioned on the LEVEL's pool mode: on `PER_PERSON` the
  * dependent really does hold their own units and the shared wording would be

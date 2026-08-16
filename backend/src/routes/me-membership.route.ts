@@ -14,6 +14,17 @@ import {
   requestMembershipClaim,
 } from "../modules/memberships/membership-claim.service.js";
 import {
+  buildCardContentFromRow,
+  cardContentSelect,
+  cardStatusLabel,
+  resolveCardLocale,
+} from "../modules/memberships/membership-card-content.js";
+import { membershipCardCopy } from "../modules/memberships/membership-emails.js";
+import {
+  membershipCardFilename,
+  renderMembershipCardPng,
+} from "../modules/memberships/membership-card-image.js";
+import {
   MembershipDependentError,
   MembershipEnrollmentConflictError,
   MembershipEnrollmentNotFoundError,
@@ -83,6 +94,34 @@ const meMembershipRoute: FastifyPluginAsync = async (app) => {
     // Identical answer for "no such enrollment" and "not yours".
     if (!view) return reply.status(404).send(errorResponse("Membership not found"));
     return okResponse(view);
+  });
+
+  /**
+   * The card as a downloadable PNG — the same render that goes out with the
+   * welcome email, so what a member saves to a wallet app matches what they
+   * were sent. Scoped to the caller's own enrollments exactly like the read
+   * above: someone else's id is a 404, not a card.
+   */
+  app.get<{ Params: { id: string } }>("/api/me/memberships/:id/card.png", async (request, reply) => {
+    const row = await prisma.membershipEnrollment.findFirst({
+      where: { id: request.params.id, userId: request.authUser!.sub, status: { not: "REMOVED" } },
+      select: cardContentSelect,
+    });
+    if (!row) return reply.status(404).send(errorResponse("Membership not found"));
+
+    const copy = membershipCardCopy(resolveCardLocale(row));
+    const content = buildCardContentFromRow(row, copy);
+    const png = await renderMembershipCardPng(content, copy, cardStatusLabel(content, copy));
+
+    return reply
+      .header("Content-Type", "image/png")
+      .header(
+        "Content-Disposition",
+        `attachment; filename="${membershipCardFilename(content.membershipId)}"`,
+      )
+      // A card is per-member data behind a session — never a shared cache.
+      .header("Cache-Control", "private, no-store")
+      .send(png);
   });
 
   /**

@@ -7,10 +7,10 @@ import {
   cardStatusLabel,
   resolveCardLocale,
 } from "./membership-card-content.js";
-import { membershipCardFilename, renderMembershipCardPdf } from "./membership-card-pdf.js";
+import { membershipCardFilename, renderMembershipCardPng } from "./membership-card-image.js";
 
 /**
- * Issue a membership card: build it, mail it with the PDF attached, stamp
+ * Issue a membership card: build it, mail it with the card image attached, stamp
  * `cardIssuedAt` (decisions 41 + 43, §25).
  *
  * **`cardIssuedAt` is the whole dedupe.** A re-import must email nobody twice,
@@ -51,7 +51,7 @@ export async function issueMembershipCard(opts: {
   const copy = membershipCardCopy(resolveCardLocale(row));
   const content = buildCardContentFromRow(row, copy);
 
-  const pdf = await renderMembershipCardPdf(content, copy, cardStatusLabel(content, copy));
+  const image = await renderMembershipCardPng(content, copy, cardStatusLabel(content, copy));
   const to = content.accountEmail ?? content.email;
 
   const result = await sendMembershipWelcomeCardEmail({
@@ -59,8 +59,8 @@ export async function issueMembershipCard(opts: {
     to,
     attachment: {
       filename: membershipCardFilename(content.membershipId),
-      content: pdf,
-      contentType: "application/pdf",
+      content: image,
+      contentType: "image/png",
     },
   }).catch(() => ({ ok: false as const }));
 

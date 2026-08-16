@@ -967,7 +967,7 @@
     "cardNumber": "N.º de membresía",
     "cardPlan": "Plan",
     "cardValid": "Vigencia",
-    "print": "Imprimir tarjeta",
+    "downloadCard": "Descargar tarjeta",
     "statusPending": "Pendiente",
     "statusActive": "Activa",
     "statusSuspended": "Suspendida",

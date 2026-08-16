@@ -95,7 +95,7 @@ function bundleFor(locale: LocaleCode | string | null | undefined): EmailBundle 
 
 /**
  * The card-and-status strings for one locale (§24). Exported because the card
- * builder, the PDF and this file must all read the SAME copy — a second bundle
+ * builder, the card image and this file must all read the SAME copy — a second bundle
  * would be exactly the drift §24.3's "one shared builder" exists to prevent.
  */
 export function membershipCardCopy(locale: LocaleCode): CardCopy {
@@ -327,7 +327,7 @@ export async function sendMembershipClaimConfirmationEmail(opts: {
  * attachment.
  *
  * Everything it says about the membership comes from `MembershipCardContent`,
- * the same builder the web card and the PDF read (§24.3), so the card in the
+ * the same builder the web card and the card image read (§24.3), so the card in the
  * attachment and the benefits in the body cannot disagree.
  *
  * Three things here are load-bearing and easy to undo by accident:
@@ -345,7 +345,7 @@ export async function sendMembershipClaimConfirmationEmail(opts: {
  */
 export async function sendMembershipWelcomeCardEmail(opts: {
   content: MembershipCardContent;
-  /** The PDF card. Built by the caller so this file never touches Chromium. */
+  /** The card PNG. Built by the caller so this file never touches Chromium. */
   attachment: SendEmailAttachment;
   /** Where to send. The linked account's address wins over the enrolled one. */
   to?: string;

@@ -7435,18 +7435,40 @@ button.gh-capacity-cell:hover {
 
 /* "Printable" (§10): the browser's own print dialog, with the portal chrome
    dropped so the card is what comes out. No PDF pipeline, no print route. */
+/* Ctrl+P on a membership page prints the CARD, nothing else. The download
+   button hands out a PNG (that is what a wallet app wants), but the browser's
+   own print path still exists and used to emit the whole washed-out portal
+   page: the old rules named `.gh-membership-card`, a class that does not
+   exist — the card is `.gh-member-card`. Visibility rather than `display`,
+   so the card can stay inside its layout ancestors while they vanish. */
 @media print {
-  .gh-portal-shell__sidebar,
-  .gh-portal-shell__topbar,
-  .gh-patient-page > header,
-  .gh-membership-card ~ * {
-    display: none !important;
+  /* `html` too: the portal's dark ground is painted on the root element, and
+     leaving it would print a full page of ink around the card. */
+  html,
+  body {
+    background: #fff !important;
   }
 
-  .gh-membership-card {
+  body * {
+    visibility: hidden;
+  }
+
+  .gh-member-card,
+  .gh-member-card * {
+    visibility: visible;
+  }
+
+  .gh-member-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150mm;
+    margin: 0;
     box-shadow: none;
-    border: 1px solid #d5d9d4;
     break-inside: avoid;
+    /* Without this the dark face prints as the pale ghost in the old output. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
 

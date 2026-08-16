@@ -967,7 +967,7 @@
     "cardNumber": "N.º de adesão",
     "cardPlan": "Plano",
     "cardValid": "Validade",
-    "print": "Imprimir cartão",
+    "downloadCard": "Transferir cartão",
     "statusPending": "Pendente",
     "statusActive": "Ativa",
     "statusSuspended": "Suspensa",

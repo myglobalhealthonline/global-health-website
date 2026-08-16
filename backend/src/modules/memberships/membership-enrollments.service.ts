@@ -812,7 +812,7 @@ export async function addMemberDependent(
   // `issueCard: false` — this is the one enrollment path that has passed no
   // admin (§25). The address is member-typed, unverified and attacker-chosen,
   // and auto-mailing it would turn the portal into a way to send branded mail
-  // with a PDF attachment to arbitrary addresses; `maxDependents` bounds the
+  // with a card image attached to arbitrary addresses; `maxDependents` bounds the
   // volume but not the shape. Decision 43 still holds — the dependent gets
   // their own card, issued by the linker the moment they prove they own the
   // mailbox, which is the same gate §5.2 already applies before the membership

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, Download } from "lucide-react";
 import { getServerMembership } from "@/lib/api/me-memberships-server";
 import { groupBenefitsByCountry } from "@/lib/api/me-memberships";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
@@ -11,7 +11,6 @@ import { AdminCard, PageHeader, Pill, SectionHeader } from "@/components/portal-
 import { SetCrumbTitle } from "@/components/crumb-title";
 import { MembershipDigitalCard } from "../_components/MembershipDigitalCard";
 import { MembershipDependentsPanel } from "../_components/MembershipDependentsPanel";
-import { MembershipPrintButton } from "../_components/MembershipPrintButton";
 import {
   benefitFallback,
   benefitTarget,
@@ -85,7 +84,19 @@ export default async function MembershipDetailPage({
             </p>
           ) : null}
           <div className="flex justify-end">
-            <MembershipPrintButton label={t.print} />
+            {/* A plain anchor, not a client component: the endpoint is
+                same-origin with the session cookie and answers with
+                Content-Disposition: attachment, so the browser saves the PNG
+                itself. The image is what members put in a wallet app — a PDF
+                was never usable there. */}
+            <a
+              href={`/api/me/memberships/${membership.id}/card.png`}
+              download
+              className="gh-btn gh-btn-secondary inline-flex items-center gap-2"
+            >
+              <Download className="size-4" aria-hidden />
+              {t.downloadCard}
+            </a>
           </div>
         </AdminCard>
       </div>

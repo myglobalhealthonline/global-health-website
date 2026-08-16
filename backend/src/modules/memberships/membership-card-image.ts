@@ -1,16 +1,14 @@
-import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.js";
+import { htmlElementToPngBuffer } from "../generated-documents/html-document-renderer.js";
 import { pdfLogoDataUrl } from "../../lib/pdf/brand.js";
 import type { CardCopy, MembershipCardContent } from "./membership-card-content.js";
 
 /**
- * The membership card as a PDF (§24.3).
+ * The membership card as a PNG (§24.3).
  *
- * Goes through the existing document pipeline — `htmlToPdfBuffer`, the same
- * Chromium the `GeneratedDocument` templates render through. That helper is A4
- * at zero margin and takes no options, so the card is **centred on an A4 page**
- * rather than the helper being widened for one caller: it is a page a member
- * prints, and a shared renderer is the wrong thing to parameterise for a single
- * consumer.
+ * An image, not a PDF: members save this to a wallet app, a photo roll or a
+ * chat thread, and none of those take an A4 page with a card floating in the
+ * middle of it. Rendered by the same shared Chromium the `GeneratedDocument`
+ * templates use, cropped to the card element at 3x.
  *
  * NOT stored as a `GeneratedDocument` row (§24.3) — it is reproducible from the
  * enrollment at any time, and a stored copy would go stale the moment a level's
@@ -63,15 +61,13 @@ export function renderMembershipCardHtml(
   return `<!doctype html>
 <html><head><meta charset="utf-8"><title>${escapeHtml(content.membershipId)}</title>
 <style>
-  @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
   body {
-    margin: 0;
-    /* Centred on the page, because the helper only makes A4 (§24.3). */
-    display: flex; align-items: center; justify-content: center;
-    width: 210mm; height: 297mm;
+    /* No page: the render is cropped to the .card element, so the document is
+       the card and nothing else. Transparent, so the crop keeps the corners. */
+    margin: 0; width: max-content;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: #ffffff;
+    background: transparent;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   .card {
@@ -155,15 +151,15 @@ export function renderMembershipCardHtml(
 </body></html>`;
 }
 
-export async function renderMembershipCardPdf(
+export async function renderMembershipCardPng(
   content: MembershipCardContent,
   copy: CardCopy,
   statusText: string,
 ): Promise<Buffer> {
-  return htmlToPdfBuffer(renderMembershipCardHtml(content, copy, statusText));
+  return htmlElementToPngBuffer(renderMembershipCardHtml(content, copy, statusText), ".card");
 }
 
-/** `membership-card-GH-MEMB-ABC12345.pdf` — safe on every filesystem. */
+/** `membership-card-GH-MEMB-ABC12345.png` — safe on every filesystem. */
 export function membershipCardFilename(membershipId: string): string {
-  return `membership-card-${membershipId.replace(/[^A-Za-z0-9._-]/g, "-")}.pdf`;
+  return `membership-card-${membershipId.replace(/[^A-Za-z0-9._-]/g, "-")}.png`;
 }

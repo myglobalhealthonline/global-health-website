@@ -967,7 +967,7 @@
     "cardNumber": "Nr. de membru",
     "cardPlan": "Plan",
     "cardValid": "Valabil",
-    "print": "Tipăriți cardul",
+    "downloadCard": "Descarcă cardul",
     "statusPending": "În așteptare",
     "statusActive": "Activ",
     "statusSuspended": "Suspendat",

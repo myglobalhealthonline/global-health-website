@@ -144,6 +144,24 @@ export async function htmlToPdfBuffer(html: string): Promise<Buffer> {
   }
 }
 
+/**
+ * One element of a rendered page as a PNG, at 3x so the result is usable as a
+ * saved image (wallet apps, a phone's photo roll) rather than a screen-sized
+ * thumbnail. Transparent outside the element, so a rounded card keeps its
+ * corners instead of gaining white ones.
+ */
+export async function htmlElementToPngBuffer(html: string, selector: string): Promise<Buffer> {
+  const browser = await getBrowser();
+  const page = await browser.newPage({ deviceScaleFactor: 3 });
+  try {
+    await page.setContent(html, { waitUntil: "load" });
+    const shot = await page.locator(selector).screenshot({ type: "png", omitBackground: true });
+    return Buffer.from(shot);
+  } finally {
+    await page.close();
+  }
+}
+
 export async function closePdfBrowser(): Promise<void> {
   if (browserPromise) {
     const b = await browserPromise;

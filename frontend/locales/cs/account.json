@@ -967,7 +967,7 @@
     "cardNumber": "Číslo členství",
     "cardPlan": "Plán",
     "cardValid": "Platnost",
-    "print": "Vytisknout kartu",
+    "downloadCard": "Stáhnout kartu",
     "statusPending": "Čeká na potvrzení",
     "statusActive": "Aktivní",
     "statusSuspended": "Pozastaveno",

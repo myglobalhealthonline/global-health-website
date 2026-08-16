@@ -8,7 +8,7 @@ import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
  * §25/§41/§43 — card issue and its dedupe.
  *
  * These go through the REAL renderer: `issueMembershipCard` builds an actual
- * PDF through the shared Chromium the document pipeline uses. Stubbing it would
+ * PNG through the shared Chromium the document pipeline uses. Stubbing it would
  * leave the one thing most likely to break — a card that renders on a developer
  * machine and throws in a container — untested.
  *
@@ -163,7 +163,7 @@ describe("membership card issue (database)", () => {
     assert.ok(after?.cardIssuedAt, "the send must stamp the dedupe column");
   });
 
-  it("attaches the PDF card", async (t) => {
+  it("attaches the card image", async (t) => {
     if (!prisma) return t.skip();
     const enrollment = await makeEnrollment();
     sent.length = 0;
@@ -171,10 +171,10 @@ describe("membership card issue (database)", () => {
 
     const attachment = sent[0]?.attachments?.[0];
     assert.ok(attachment, "the welcome email must carry the card");
-    assert.match(attachment.filename, /\.pdf$/);
-    assert.equal(attachment.contentType, "application/pdf");
-    // A real PDF, not an empty buffer or an error page.
-    assert.equal(attachment.content.subarray(0, 5).toString("latin1"), "%PDF-");
+    assert.match(attachment.filename, /\.png$/);
+    assert.equal(attachment.contentType, "image/png");
+    // A real PNG, not an empty buffer or an error page.
+    assert.equal(attachment.content.subarray(1, 4).toString("latin1"), "PNG");
     assert.ok(attachment.content.length > 1000, "a card that small did not render");
   });
 
@@ -359,7 +359,7 @@ describe("membership card issue (database)", () => {
     if (!prisma) return t.skip();
     // The one enrollment path that has passed no admin. The address is
     // member-typed and unverified; auto-sending would make the portal a way to
-    // send branded mail with a PDF attachment to arbitrary addresses. The card
+    // send branded mail with a card image attached to arbitrary addresses. The card
     // still issues — on linking, via the linker.
     const owner = await prisma!.user.create({
       data: {
@@ -409,7 +409,7 @@ describe("membership card issue (database)", () => {
     await linking.linkMembershipsForUser(depUser.id);
 
     assert.equal(sent.length, 1, "linking issues the card the member path withheld");
-    assert.ok(sent[0].attachments?.[0], "and it carries the PDF, not just a notice");
+    assert.ok(sent[0].attachments?.[0], "and it carries the card image, not just a notice");
     const linked = await prisma!.membershipEnrollment.findUnique({
       where: { id: dependent!.id },
       select: { cardIssuedAt: true },

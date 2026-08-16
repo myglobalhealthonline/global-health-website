@@ -261,7 +261,7 @@ async function toView(
   );
 
   // Primary country first, then alphabetically — the same order the card, the
-  // PDF and the welcome email use, so a member comparing them sees one list.
+  // card image and the welcome email use, so a member comparing them sees one list.
   const configuredCountryIds = [...new Set(row.level.benefits.map((b) => b.countryId))]
     .filter((id) => countryById.has(id))
     .sort((a, b) => {
