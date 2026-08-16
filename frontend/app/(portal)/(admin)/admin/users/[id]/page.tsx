@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import {
-  requireAdminAction,
-  requireSuperAdminAction,
-} from "@/lib/admin/require-admin-action";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -85,11 +82,11 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
       ? patientProfileResult.data.profile
       : null;
 
-  // Gates the email editor. The backend rejects a non-SUPER_ADMIN email
-  // change on its own; this only keeps a control the operator can't use
-  // from rendering at all.
+  // Gates the email editor. The backend rejects the change for anyone but
+  // ADMIN/SUPER_ADMIN on its own; this only keeps a control the operator
+  // can't use from rendering at all.
   const viewer = await getServerAuthUser();
-  const canEditEmail = viewer?.role === "SUPER_ADMIN";
+  const canEditEmail = viewer?.role === "SUPER_ADMIN" || viewer?.role === "ADMIN";
 
   // Identity corrections (typo'd name, stale phone, missing DOB). Open to
   // plain ADMIN — no privilege effect. Email is deliberately NOT here; it
@@ -129,12 +126,12 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
     redirect(`/admin/users/${id}?success=${encodeURIComponent("Account details saved")}`);
   }
 
-  // Email is the login identifier and the password-reset destination, so
-  // rewriting it is an account-takeover primitive. SUPER_ADMIN only — the
-  // backend enforces the same bar independently.
+  // Email is the login identifier and the password-reset destination.
+  // Open to ADMIN/SUPER_ADMIN — the backend enforces the same bar
+  // independently and mails a fresh temp password to the new address.
   async function updateEmailAction(formData: FormData) {
     "use server";
-    await requireSuperAdminAction();
+    await requireAdminAction();
     const email = String(formData.get("email") ?? "").trim().toLowerCase();
     if (!email.includes("@")) {
       redirect(
@@ -335,7 +332,9 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
               <p className="text-portal-compact text-[var(--color-text-muted)]">
                 Login identifier. Changing it clears email verification, signs
                 the user out everywhere, and moves their patient chart to the
-                new address. Tell the user before you change it.
+                new address. The system emails the new address a temporary
+                password and a set-password link automatically — double-check
+                the spelling before submitting.
               </p>
               <form action={updateEmailAction} className="mt-3 flex flex-col gap-2">
                 <input
