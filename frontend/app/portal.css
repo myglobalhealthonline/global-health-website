@@ -3796,6 +3796,14 @@ a.gh-admin-summary-item--link:focus-visible {
   }
 }
 
+/* card-image:start — everything between these two markers is copied verbatim
+ * into `backend/assets/member-card.css` by `scripts/build-member-card-css.mjs`,
+ * so the downloadable PNG and the emailed card are the SAME face as the web
+ * card rather than a hand-written cousin that drifts. Edit the card here and
+ * nowhere else, then re-run the script (CI runs it with --check). Only
+ * `--portal-signal` and the `--gh-card-*` tint variables may be referenced
+ * from outside this block; the backend supplies both. */
+
 /* ── Membership card (Signal) ────────────────────────────────────────────
  * Physical-card render of the member's subscription, top of the membership
  * tab. Everything sizes off `cqw` against the card itself (container-type:
@@ -4295,6 +4303,8 @@ a.gh-admin-summary-item--link:focus-visible {
 .gh-member-card[data-tinted] .gh-member-card__sep {
   background: linear-gradient(transparent, var(--gh-card-chrome), transparent);
 }
+
+/* card-image:end */
 
 .gh-patient-tabs > button {
   white-space: nowrap;

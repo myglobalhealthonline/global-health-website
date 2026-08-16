@@ -1,34 +1,76 @@
+import fs from "node:fs";
+import path from "node:path";
 import { htmlElementToPngBuffer } from "../generated-documents/html-document-renderer.js";
-import { pdfLogoDataUrl } from "../../lib/pdf/brand.js";
 import type { CardCopy, MembershipCardContent } from "./membership-card-content.js";
 
 /**
- * The membership card as a PNG (§24.3).
+ * The membership card as a PNG — the SAME face the member sees on the site.
  *
  * An image, not a PDF: members save this to a wallet app, a photo roll or a
  * chat thread, and none of those take an A4 page with a card floating in the
- * middle of it. Rendered by the same shared Chromium the `GeneratedDocument`
- * templates use, cropped to the card element at 3x.
+ * middle of it.
+ *
+ * **The chrome is not re-authored here.** This file builds the markup of
+ * `MembershipCard.tsx` and styles it with `assets/member-card.css`, which is
+ * copied verbatim out of `frontend/app/portal.css` by
+ * `scripts/build-member-card-css.mjs`. The two services deploy standalone, so a
+ * generated copy is how one authored design reaches both; the copy is checked
+ * in and CI runs the script with `--check`. Edit the card in portal.css.
+ *
+ * The old renderer was a hand-written cousin of the web card, which is exactly
+ * how the downloadable card ended up looking like a different product.
  *
  * NOT stored as a `GeneratedDocument` row (§24.3) — it is reproducible from the
  * enrollment at any time, and a stored copy would go stale the moment a level's
  * colour or name changed.
- *
- * Chrome here is deliberately a close cousin of `.gh-member-card` rather than a
- * copy of it: §24.3 accepts chrome differing between renderers. What must NOT
- * differ is what the card says, and that all arrives pre-formatted in
- * `MembershipCardContent`.
  */
 
-/** The default face, when no `cardBackgroundHex` is set (§24.2). */
-const DEFAULT_FACE = {
-  background:
-    "radial-gradient(circle at 84% 5%, rgba(168,255,24,0.14), transparent 34%)," +
-    "radial-gradient(circle at 12% 100%, rgba(44,124,83,0.30), transparent 38%)," +
-    "linear-gradient(135deg, #021b14 0%, #052c21 54%, #02150f 100%)",
-  foreground: "#F7FAEF",
-  chrome: "#A8FF18",
-};
+/** Wide enough that the 3x crop lands ~1680px, small enough to stay one card. */
+const CARD_WIDTH_PX = 560;
+
+/** The site's own stack (globals.css `--font-manrope`) plus the portal token
+ *  the card block references. Everything else it needs is in the copied CSS. */
+const PAGE_TOKENS = `
+  /* The subset of Tailwind's preflight the card depends on. Without it the UA
+     stylesheet's heading/paragraph margins push the content past the card's
+     fixed aspect ratio and the footer is cropped. */
+  *, *::before, *::after { box-sizing: border-box; }
+  h1, h2, h3, p, figure { margin: 0; }
+  h1, h2, h3 { font-size: inherit; font-weight: inherit; }
+  img, svg { display: block; }
+  :root { --portal-signal: #b0f122; }
+  body {
+    margin: 0;
+    width: ${CARD_WIDTH_PX}px;
+    background: transparent;
+    font-family: "Aptos", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+`;
+
+let cachedCss: string | null = null;
+
+function cardCss(): string {
+  if (cachedCss === null) {
+    cachedCss = fs.readFileSync(path.join(process.cwd(), "assets", "member-card.css"), "utf8");
+  }
+  return cachedCss;
+}
+
+let cachedMark: string | null = null;
+
+/** The globe mark alone — the same file the web card loads from /logos. */
+function markDataUrl(): string {
+  if (cachedMark === null) {
+    const file = path.join(process.cwd(), "assets", "brand", "global-health-mark.png");
+    try {
+      cachedMark = `data:image/png;base64,${fs.readFileSync(file).toString("base64")}`;
+    } catch {
+      cachedMark = "";
+    }
+  }
+  return cachedMark;
+}
 
 function escapeHtml(value: string): string {
   return value
@@ -39,115 +81,94 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
+/** Same rule as `MembershipCard.tsx`: anything not live renders drained. */
+const LIVE = new Set(["ACTIVE", "TRIALING"]);
+
 export function renderMembershipCardHtml(
   content: MembershipCardContent,
   copy: CardCopy,
   statusText: string,
 ): string {
+  const live = LIVE.has(content.status.toUpperCase());
   const palette = content.palette;
-  const face = palette
-    ? { background: palette.background, foreground: palette.foreground, chrome: palette.chrome }
-    : DEFAULT_FACE;
-  const muted = palette ? palette.muted : "rgba(247,250,239,0.8)";
 
-  const countries = content.countryCodes.join(" · ");
-  const familyLine =
+  // `data-tinted` + the four variables, exactly as the component sets them —
+  // the copied CSS repaints its own chrome from these (§24.2).
+  const tint = palette
+    ? ` data-tinted style="--gh-card-bg:${palette.background};--gh-card-fg:${palette.foreground};` +
+      `--gh-card-muted:${palette.muted};--gh-card-chrome:${palette.chrome}"`
+    : "";
+
+  const footnote =
     content.memberType === "DEPENDENT" && content.primaryMembershipId
-      ? `<p class="family">${escapeHtml(
+      ? `<p class="gh-member-card__footnote">${escapeHtml(
           copy.familyOf.replace("{membershipId}", content.primaryMembershipId),
         )}</p>`
       : "";
 
   return `<!doctype html>
 <html><head><meta charset="utf-8"><title>${escapeHtml(content.membershipId)}</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    /* No page: the render is cropped to the .card element, so the document is
-       the card and nothing else. Transparent, so the crop keeps the corners. */
-    margin: 0; width: max-content;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: transparent;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
-  }
-  .card {
-    position: relative; overflow: hidden;
-    width: 150mm; height: 94.6mm; /* ISO/IEC 7810 ID-1 ratio, 1.586:1 */
-    padding: 9mm 10mm;
-    display: flex; flex-direction: column; justify-content: space-between; gap: 5mm;
-    border-radius: 5mm;
-    border: 0.4mm solid ${face.chrome};
-    background: ${face.background};
-    color: ${face.foreground};
-  }
-  .top { display: flex; align-items: flex-start; justify-content: space-between; }
-  .brand { display: flex; align-items: center; gap: 3mm; }
-  .brand img { width: 9mm; height: 9mm; object-fit: contain; }
-  .brand-name { font-size: 11pt; font-weight: 700; letter-spacing: 0.14em; margin: 0; }
-  .motto { margin: 1.5mm 0 0; font-size: 7.5pt; letter-spacing: 0.08em; color: ${muted}; }
-  .pill {
-    display: inline-flex; align-items: center; gap: 2mm;
-    padding: 1.6mm 4mm; border-radius: 999px;
-    border: 0.25mm solid ${face.chrome};
-    font-size: 7.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-  }
-  .dot { width: 2mm; height: 2mm; border-radius: 50%; background: ${face.chrome}; }
-  .plan { margin: 0; font-size: 19pt; font-weight: 700; letter-spacing: -0.01em; }
-  .level { margin: 1mm 0 0; font-size: 9.5pt; color: ${muted}; }
-  .rule { height: 0.35mm; background: ${face.chrome}; opacity: 0.5; margin: 4mm 0; }
-  .label {
-    font-size: 7pt; font-weight: 650; letter-spacing: 0.06em;
-    text-transform: uppercase; color: ${muted}; margin: 0 0 1mm;
-  }
-  .value { margin: 0; font-size: 11.5pt; font-weight: 700; letter-spacing: 0.02em; }
-  .slots { display: flex; gap: 12mm; }
-  .foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 6mm; }
-  .countries { font-size: 10pt; font-weight: 700; letter-spacing: 0.1em; }
-  .family { margin: 1.5mm 0 0; font-size: 7.5pt; color: ${muted}; }
-  .id { font-family: "Courier New", monospace; }
-</style></head>
+<style>${PAGE_TOKENS}${cardCss()}</style></head>
 <body>
-  <div class="card">
-    <div class="top">
+<article class="gh-member-card${live ? "" : " gh-member-card--dim"}"${tint}>
+  <span aria-hidden="true" class="gh-member-card__ring"></span>
+  <div class="gh-member-card__inner">
+    <header class="gh-member-card__top">
       <div>
-        <div class="brand">
-          <img src="${pdfLogoDataUrl()}" alt="">
-          <p class="brand-name">GLOBAL HEALTH</p>
+        <div class="gh-member-card__lock">
+          <img src="${markDataUrl()}" alt="" class="gh-member-card__mark" width="180" height="182">
+          <p class="gh-member-card__brand">GLOBAL HEALTH</p>
         </div>
-        <p class="motto">${escapeHtml(copy.motto)}</p>
+        <p class="gh-member-card__motto">${escapeHtml(copy.motto)}</p>
       </div>
-      <span class="pill"><span class="dot"></span>${escapeHtml(statusText)}</span>
+      <span class="gh-member-card__pill gh-member-card__pill--${live ? "live" : "muted"}">
+        <span aria-hidden="true" class="gh-member-card__dot"></span>
+        <span class="gh-member-card__pill-text">${escapeHtml(statusText)}</span>
+      </span>
+    </header>
+
+    <h2 class="gh-member-card__plan">${escapeHtml(content.planName)}</h2>
+
+    <div aria-hidden="true" class="gh-member-card__pulse">
+      <svg viewBox="0 0 96 40" fill="none" preserveAspectRatio="xMaxYMid meet">
+        <path
+          d="M0 20H18q3-6 6 0h6l4 8 5-21 5 30 4-17h5q5-10 10 0h33"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
     </div>
 
-    <div>
-      <p class="plan">${escapeHtml(content.planName)}</p>
-      <p class="level">${escapeHtml(content.levelName)}</p>
-      <div class="rule"></div>
-      <p class="label">${escapeHtml(copy.labelCardholder)}</p>
-      <p class="value">${escapeHtml(content.holderName)}</p>
+    <div class="gh-member-card__holder">
+      <div class="gh-member-card__label">${escapeHtml(copy.labelCardholder)}</div>
+      <strong class="gh-member-card__name">${escapeHtml(content.holderName)}</strong>
     </div>
 
-    <div>
-      <div class="slots">
-        <div>
-          <p class="label">${escapeHtml(copy.labelMemberId)}</p>
-          <p class="value id">${escapeHtml(content.membershipId)}</p>
-        </div>
-        <div>
-          <p class="label">${escapeHtml(copy.labelValidThrough)}</p>
-          <p class="value">${escapeHtml(content.validThrough)}</p>
-        </div>
+    <div class="gh-member-card__slots">
+      <div>
+        <div class="gh-member-card__label">${escapeHtml(copy.labelMemberId)}</div>
+        <strong class="gh-member-card__value">${escapeHtml(content.membershipId)}</strong>
       </div>
-      ${familyLine}
-      <div class="rule"></div>
-      <div class="foot">
-        <div>
-          <p class="label">${escapeHtml(copy.labelCoveredIn)}</p>
-          <p class="countries">${escapeHtml(countries)}</p>
-        </div>
+      <span aria-hidden="true" class="gh-member-card__sep"></span>
+      <div>
+        <div class="gh-member-card__label">${escapeHtml(copy.labelValidThrough)}</div>
+        <strong class="gh-member-card__value">${escapeHtml(content.validThrough)}</strong>
       </div>
     </div>
+
+    ${footnote}
+
+    <footer class="gh-member-card__foot">
+      <span class="gh-member-card__country">${escapeHtml(content.countryCodes.join(" · "))}</span>
+      <span class="gh-member-card__marks">
+        <span aria-hidden="true" class="gh-member-card__care"></span>
+      </span>
+    </footer>
   </div>
+</article>
 </body></html>`;
 }
 
@@ -156,7 +177,10 @@ export async function renderMembershipCardPng(
   copy: CardCopy,
   statusText: string,
 ): Promise<Buffer> {
-  return htmlElementToPngBuffer(renderMembershipCardHtml(content, copy, statusText), ".card");
+  return htmlElementToPngBuffer(
+    renderMembershipCardHtml(content, copy, statusText),
+    ".gh-member-card",
+  );
 }
 
 /** `membership-card-GH-MEMB-ABC12345.png` — safe on every filesystem. */

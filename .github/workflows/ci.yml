@@ -58,6 +58,12 @@ jobs:
         # that resolves the package. See docs/guides/dependency-overrides.md.
         run: node scripts/check-override-drift.mjs
 
+      - name: Check membership-card CSS copy is in sync
+        # The card is authored once in frontend/app/portal.css; the backend
+        # renders the downloadable/emailed PNG from a generated copy, because
+        # the two services deploy standalone.
+        run: node scripts/build-member-card-css.mjs --check
+
       - name: Audit dependencies (workspace)
         # S-028 (2026-08-02): the npm audit endpoints this once needed
         # --ignore-registry-errors to route around (they returned 410) are
