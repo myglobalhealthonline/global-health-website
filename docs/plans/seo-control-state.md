@@ -154,7 +154,7 @@ Verified against production on 2026-08-12 unless noted.
 
 | Area | State | Evidence |
 | --- | --- | --- |
-| Sitemap | **1,906 URLs**, live. Supersedes every earlier count (1,353 / 1,304 / 1,153 / 1,924 all appear in older docs). | `curl sitemap.xml \| grep -c '<loc>'`, 2026-08-12 |
+| Sitemap | **1,932 URLs**, live. Supersedes every earlier count (1,906 / 1,353 / 1,304 / 1,153 / 1,924 all appear in older docs). Eight-row stratified sample returned 200, `index, follow`, self-canonical. | live sitemap + HTML probes, 2026-08-16 |
 | robots.txt | Correct. Site allowed; only `/admin`, `/account`, auth routes and `/api/` disallowed; per-agent blocks for AI crawlers. **No legacy-Wix Disallow** — deliberate, so Googlebot can reach the 308s. | live fetch 2026-08-12 |
 | `lastmod` | Real per-row dates; hub pages derive from newest child, so the section-pages loop **must stay last** in `frontend/app/sitemap.ts`. Never use build time. | design decision, unchanged |
 | Legacy redirects | 276 redirect rules in `frontend/next.config.ts`. Spot-checked families all 308 to correct current-shape targets. | live probes 2026-08-12 |
@@ -5615,5 +5615,80 @@ The distribution shape is reliable; the totals are not.
   §21.10 calendar rather than added as an eleventh row.
 - `SEO-GROWTH-012` remains the diagnosis of the impression surge. §22 adds click
   evidence to it and does not reopen it.
+
+---
+
+## 23. RANKING-INCIDENT-001 — early audit after owner-reported ranking drop (2026-08-16)
+
+**Trigger.** Owner reported rankings dropping and explicitly asked for the audit before
+the §21.10 measurement calendar. That is a genuine regression report under §0, so the
+early evidence refresh ran. It does not move the dated pass/fail gates for crawl-lag
+items that still need time.
+
+### 23.1 Verdict — no sitewide ranking or technical incident
+
+Latest complete GSC day: **2026-08-13**. Matched date-dimension totals:
+
+| Window | Current | Comparison | Clicks | Impressions | CTR | Blended position |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| 7 days | 2026-08-07 → 08-13 | 2026-07-31 → 08-06 | **204 vs 172 (+19%)** | **16,769 vs 7,399 (+127%)** | 1.22% vs 2.32% | 19.1 vs 17.8 |
+| 14 days | 2026-07-31 → 08-13 | 2026-07-17 → 07-30 | **376 vs 374 (flat)** | **24,168 vs 14,001 (+73%)** | 1.56% vs 2.67% | 18.7 vs 17.8 |
+| 28 days | 2026-07-17 → 08-13 | 2026-06-19 → 07-16 | **750 vs 437 (+72%)** | **38,169 vs 10,871 (+251%)** | 1.96% vs 4.02% | 18.4 vs 13.3 |
+
+The reported drop is the blended position/CTR line, not a click loss. The mechanism is
+still `SEO-GROWTH-012`: page-dimension visibility expanded from 756 pages in the prior
+week to 1,143 in the current week. New tool, blog and lab URLs enter at lower positions
+and mechanically deepen the mean. Mobile position was stable (12.4 → 12.6) while
+desktop impressions nearly doubled (4,200 → 8,351) and desktop position moved 21.9 →
+25.7. Five priority markets gained clicks; Spain was effectively flat (25 → 24).
+
+**Reporting rule reaffirmed:** do not use sitewide average position as a ranking KPI
+while discovery is expanding. Report fixed commercial cohorts separately from tools,
+informational blogs and legacy redirect sources.
+
+### 23.2 Live technical verification
+
+- Full production gate: `SEO_CHECK_BASE=https://www.myglobalhealth.online pnpm
+  --filter frontend exec vitest run tests/unit/seo-live-urls.test.ts` — **8/8 passed**.
+- Host, protocol and trailing-slash canonicalization remain correct. `robots.txt`,
+  sampled canonicals, `robots` directives, `hrefLang` clusters, schema and deliberate
+  308/410 behavior all matched the architecture.
+- Live sitemap: **1,932 URLs** (+26 since 2026-08-12). Eight sampled URLs were 200,
+  indexable and self-canonical. 314 rows omit `lastmod`, up nine from the §5b sweep;
+  many are deliberately undated static pages. No synthetic date is proposed.
+- Repository history since the baseline contains no SEO-affecting deploy regression.
+  The country FAQ route/redirect batch is live and behaves as ledgered.
+- `scripts/seo-ledger-sweep.py` reported three apparent disagreements. All are dated
+  historical observations already labelled superseded: the two pre-retirement FAQ
+  404s and the legacy Alfredo del Valle 200. This is sweep context loss, not production
+  drift.
+
+### 23.3 Isolated losses
+
+| URL / query | 7-day change | Verification | Decision |
+| --- | --- | --- | --- |
+| `/ireland/en/services/neurology-specialist-consultation` | 26 → 3 impressions, 2 → 0 clicks, position 15.5 → 30.3 | Live 200, `index, follow`, self-canonical. URL Inspection PASS and indexed, but last crawl 2026-07-18 and stored `user_canonical` absent. | **One manual action:** inspect in GSC and request indexing, then recheck after seven complete days. The stale crawl is not established as the cause; this removes one low-risk uncertainty. No code change. |
+| `/` | 35 → 17 clicks; impressions 429 → 427; position **improved** 24.6 → 18.2 | URL Inspection PASS, indexed, canonical match, crawled 2026-08-15. | CTR/query-mix watch, not a ranking fix. Do not rewrite title on one week. |
+| `/spain/es/doctors/dr-alfredo-del-valle` | 25 → 0 impressions, 4 → 0 clicks | Live 200/indexable/canonical; URL Inspection PASS, indexed, canonical match. Prior named-query sample was only 10 impressions. | Demand/sample volatility until repeated for 14 days. No code change. |
+| `praktický lékař online` → Czech GP page | position 15.0 → 22.8 on 16 → 12 impressions | URL Inspection PASS, indexed, canonical, crawled 2026-08-13. | Below the pre-registered maturity gate; keep the 2026-09-08 check unless a 14-day ≥20% loss develops. |
+
+### 23.4 Action and carry-forwards
+
+1. **Today:** manually request re-indexing for the Ireland neurology page through GSC
+   URL Inspection. This is the safest next check, not a proven root-cause fix. It is a
+   single-URL recrawl request, not Indexing API submission.
+2. **Reporting fix implemented:** the admin GSC endpoint now pulls authoritative totals,
+   daily rows and page rows separately; returns impression-weighted `revenue`, `tools`,
+   `informational`, `legacy` and `other` summaries; and defaults to 28 likely-complete
+   days ending three days before the request date. Focused backend tests: **8/8
+   passed**; backend type-check passed.
+3. **No public SEO template or routing change and no deploy.** Production already serves
+   the correct search signals; the code change prevents reporting mix from being read as
+   a sitewide ranking incident. Speculative metadata or template edits would target the
+   wrong mechanism.
+4. §21.10's measurement calendar remains in force for every other item. This early
+   audit closes the reported broad incident; it does not pre-judge the September
+   crawl-lag thresholds.
+5. Shareable report: `docs/audits/seo/seo-audit-2026-08-16.html`.
 
 ---

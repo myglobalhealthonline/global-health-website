@@ -46,7 +46,7 @@ const legacyPathPatterns = [
   /^\/(?:[a-z]{2}\/)?(?:ireland|czechia|portugal|spain|brazil|romania)-doctors(?:\/|$)/,
   /^\/(?:service-page|product-page|post|online-prescriptions)(?:\/|$)/,
   /^\/(?:[a-z]{2}\/)?home(?:-[a-z]{2})?(?:\/|$)/,
-  /^\/(?:[a-z]{2}\/)?(?:about|faq)\/?$/,
+  /^\/(?:[a-z]{2}\/)?(?:about|faq|blog)\/?$/,
   /^\/ireland-(?:specialist-consultations|sick-leave)(?:\/|$)/,
 ];
 
@@ -59,8 +59,8 @@ export function classifySearchConsolePage(page: string): SearchConsoleSegment {
   }
 
   if (legacyPathPatterns.some((pattern) => pattern.test(path))) return "legacy";
-  if (path.includes("/tools/")) return "tools";
-  if (path === "/blog" || /\/blog(?:\/|$)/.test(path)) return "informational";
+  if (path === "/tools" || path.includes("/tools/")) return "tools";
+  if (/\/blog(?:\/|$)/.test(path)) return "informational";
   if (path === "/") return "revenue";
   if (/^\/(?:ireland|czechia|portugal|spain|brazil|romania)\/(?:en|cs|pt|es|ro|de)\/?$/.test(path)) {
     return "revenue";
