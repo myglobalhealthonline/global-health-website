@@ -102,6 +102,39 @@ export async function sendDoctorInviteEmail(opts: {
 }
 
 /**
+ * Sent to the patient's NEW address when an admin corrects the email on
+ * their account (admin/users edit, SUPER_ADMIN-only). The old address gets
+ * nothing — it may no longer belong to the patient, which is often exactly
+ * why the correction was needed. Carries a temp password for immediate
+ * login plus a 7-day set-your-own-password link, mirroring the doctor/patient
+ * invite flow.
+ */
+export async function sendEmailChangedEmail(opts: {
+  to: string;
+  fullName: string;
+  tempPassword: string;
+  token: string;
+}) {
+  const link = absoluteSiteUrl(
+    `/reset-password?token=${encodeURIComponent(opts.token)}&invite=1`,
+  );
+  return sendEmail({
+    to: opts.to,
+    subject: "Your email address has been corrected — Global Health",
+    text: `Hi ${opts.fullName},\n\nOur team corrected the email address on your Global Health account to this one. You can log in right away with the temporary password below, or set your own password using the link.\n\nTemporary password: ${opts.tempPassword}\n\nSet your own password:\n${link}\n\nThe link expires in 7 days. If anything here looks wrong, please contact our support team.\n\n— Global Health`,
+    html: wrapHtml(
+      "Your email address has been corrected",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>Our team corrected the email address on your Global Health account to this one. You can log in right away with the temporary password below, or set your own password using the link.</p>
+       <p style="margin:20px 0;padding:14px 18px;background:#F6F8F1;border-radius:10px;font-family:'Cascadia Code',Consolas,Menlo,monospace;font-size:16px;letter-spacing:0.04em;color:#1B4D3E;">${escapeHtml(opts.tempPassword)}</p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Set your own password</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
+       <p>The link expires in 7 days. If anything here looks wrong, please contact our support team.</p>`,
+    ),
+  });
+}
+
+/**
  * A doctor wrote into their support thread → alert the admin team.
  *
  * One email per recipient. Throttling lives upstream in
