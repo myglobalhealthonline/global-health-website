@@ -18,8 +18,9 @@ the ledger wins on facts and this file wins on process.
    §5 (remediation ledger), §6 (indexation watchlist), §7 (roadmap), then §21.10 (the
    dated measurement calendar — the closest thing to a to-do list).
 2. **`CLAUDE.md`, the SEO sections** — repo conventions. Codex does **not** read
-   `CLAUDE.md` automatically. Section 4 below mirrors the parts that matter; read the
-   file itself before trusting the mirror.
+   `CLAUDE.md` automatically; the repo-root `AGENTS.md` it *does* read points at it.
+   Section 4 below mirrors the parts that matter; read the file itself before trusting
+   the mirror.
 3. **`docs/plans/seo-indexation-plan-2026-07-28.md`** — superseded as a status
    document, but its §2 design decisions and §5 "explicitly not doing" list are still
    binding.
@@ -32,41 +33,36 @@ open a new batch because the roadmap looks quiet.
 
 ## 2. What changes when the work moves to Codex
 
-### 2.1 Fix this first — the global `AGENTS.md` is for a different project
+### 2.1 Instruction files — both fixed 2026-08-16
 
-`~/.codex/AGENTS.md` currently contains instructions for a Django project called
-**Nashaa Sports**. Codex loads it globally, so it applies to this repo and will
-actively mislead you about stack, structure and conventions. This repo is Next.js 16 +
-Fastify + Prisma, not Django.
+`~/.codex/AGENTS.md` used to carry ~380 lines of instructions for a Django project
+called **Nashaa Sports**, which no longer exists. Codex loads that file globally, so it
+applied to this repo and described the wrong stack entirely. The dead half was removed
+on 2026-08-16; the generic ECC half was kept, and the original is preserved at
+`~/.codex/AGENTS.md.nashaa-backup-2026-08-16` if anything needs recovering.
 
-Either scope that file to its own project, or add a repo-root `AGENTS.md` that
-overrides it. A minimal one that makes this handover discoverable:
+A repo-root `AGENTS.md` now exists as well, so Codex loads this repo's conventions
+automatically: stack, the `proxy.ts` naming trap, redirect-ordering, the CSS split, the
+shared-clone git rules, and pointers to `CLAUDE.md` and to this handover.
 
-```markdown
-# AGENTS.md
-
-Next.js 16 (`frontend/`) + Fastify/Prisma (`backend/`) telemedicine platform.
-Repo conventions live in `CLAUDE.md` — read it; it is not loaded automatically.
-
-SEO work: read `docs/plans/seo-handover-codex.md` first, then
-`docs/plans/seo-control-state.md` (canonical ledger).
-
-The Next middleware convention file here is `proxy.ts`, NOT `middleware.ts`.
-```
-
-### 2.2 Capability delta — what you lose, and what replaces it
+### 2.2 Capability delta — smaller than it looks
 
 | Capability | In Claude Code | In Codex |
 | --- | --- | --- |
-| GSC Search Analytics, URL Inspection | `openseo` MCP | **Not configured.** Use the Python scripts (§2.3) or add an MCP entry |
-| SERP / keyword / backlink data (DataForSEO) | `openseo` MCP | **Not configured.** Same options |
+| GSC Search Analytics, URL Inspection | `openseo` MCP | **Already configured** — `[mcp_servers.openseo]` in `~/.codex/config.toml`, same `https://app.openseo.so/mcp` endpoint |
+| SERP / keyword / backlink data (DataForSEO) | `openseo` MCP | **Same server, same tools** |
 | SEO specialist subagents and skills (`seo-audit`, `seo-technical`, …) | `claude-seo` plugin | **Gone.** Their underlying Python scripts still exist on disk (§2.3) |
 | Google APIs (GSC, GA4, CrUX, PageSpeed) | Plugin scripts + shared OAuth token | **Works** — plain Python, any process can run it (§2.3) |
 | Everything repo-resident (ledger, redirects, `GONE_DOCTORS`, CI gate, sweep script) | — | **Unaffected.** This is most of the system |
 
-The important line in that table is the last one. The durable parts of this SEO system
-are files in this repo and a CI job, not agent tooling. What you lose is *research
-convenience*, not the control surface.
+**The only real loss is the `claude-seo` subagent layer** — the prepackaged audit
+personas. The data access moves intact, and so does everything that actually holds the
+system: the ledger, the redirects, `GONE_DOCTORS`, the CI gate and the sweep script are
+files in this repo, not agent tooling.
+
+OpenSEO tools cost credits. Focused research is fine; ask before a batch over ~2,000
+credits. GSC-backed tools (`get_search_console_performance`, `inspect_urls`) are
+read-only and use none.
 
 ### 2.3 Google API access — paths, and the one that expires
 
@@ -210,8 +206,10 @@ once, on 2026-08-08, and reverted the same day.
 
 ## 6. First session checklist
 
-1. Fix or override `~/.codex/AGENTS.md` (§2.1) before anything else.
-2. `py ~/.claude/plugins/.../google_auth.py --check`, then make one real GSC call and
+1. Confirm the `openseo` MCP server actually connected this session — it is configured
+   (§2.2), which is not the same as reachable.
+2. If you need the Google APIs directly rather than through OpenSEO: run
+   `py ~/.claude/plugins/.../google_auth.py --check`, then make one real call and
    confirm it returns rows. `--check` alone has lied before.
 3. Read `seo-control-state.md` §0, §5, §6, §7, §21.10, §22.
 4. `py scripts/seo-ledger-sweep.py` — confirms the ledger still agrees with production
