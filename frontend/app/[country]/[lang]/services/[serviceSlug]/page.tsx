@@ -25,6 +25,7 @@ import {
 import { buildBookHref } from "@/lib/routing/book-href";
 import { listingPath } from "@/lib/routing/service-listing-path";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import { BookCta } from "@/components/booking/BookNowButton";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangRegion, ogLocales } from "@/lib/seo/hreflang";
@@ -717,13 +718,13 @@ export default async function ServiceDetailPage({
                   </ul>
 
                   {/* CTA */}
-                  <Link
+                  <BookCta
                     href={bookHref}
                     className="mt-4 flex h-[52px] w-full items-center justify-center gap-2.5 rounded-[12px] bg-[var(--color-brand-accent)] text-[clamp(14px,1vw,16px)] font-bold text-[#0a1f14] shadow-[0_4px_12px_rgba(176,241,34,0.14)] transition-all"
                   >
                     {bookLabel}
                     <ArrowRight className="size-4" strokeWidth={2.5} aria-hidden />
-                  </Link>
+                  </BookCta>
 
                   {/* Secure checkout note */}
                   <p
@@ -902,10 +903,10 @@ export default async function ServiceDetailPage({
               </p>
             </div>
             <div className="flex lg:justify-end">
-              <Link href={bookHref} className="gh2-btn-lime gh-focus-on-dark">
+              <BookCta href={bookHref} className="gh2-btn-lime gh-focus-on-dark">
                 {bookLabel}
                 <ArrowRight className="size-4" aria-hidden />
-              </Link>
+              </BookCta>
             </div>
           </div>
         </div>

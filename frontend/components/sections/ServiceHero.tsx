@@ -14,7 +14,7 @@ import {
 import { Flag } from "@/components/ui/Flag";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
-import { isPreselectionPairHref } from "@/lib/routing/book-href";
+import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 import { BookNowButton } from "@/components/booking/BookNowButton";
 
 /**
@@ -360,7 +360,7 @@ export function ServiceHero({
             ) : null}
 
             <div className="mt-7 flex flex-wrap items-center gap-3.5">
-              {isPreselectionPairHref(primaryCta.href) ? (
+              {isBookingWorkflowHref(primaryCta.href) ? (
                 <BookNowButton
                   href={primaryCta.href}
                   className="gh2-btn-lime pr-2 gh-focus-on-dark "

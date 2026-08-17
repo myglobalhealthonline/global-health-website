@@ -26,6 +26,7 @@ import { BookCta } from "@/components/booking/BookNowButton";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { applyBookingWorkflowIndexing } from "@/lib/seo/booking-workflow-metadata";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
@@ -69,18 +70,31 @@ export async function generateStaticParams(): Promise<Params[]> {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams?: Promise<SearchParams>;
 }): Promise<Metadata> {
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
-  const config = code ? await getPublicCountryByCode(code) : null;
-  if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
+  if (!code || !isSupportedLocale(lang)) {
+    return applyBookingWorkflowIndexing({ title: SITE_NAME }, await searchParams);
+  }
+  // The overlay merge is the accurate source (admin can add markets and toggle
+  // locales), but it is a network read. When it is unavailable mid-render, fall
+  // back to the same seed config the page body itself gates on — otherwise this
+  // route would emit metadata for a country the page renders happily, and an
+  // ISR/data-cache entry could hold a canonical-less, hreflang-less variant.
+  // Both branches are `CountryConfig`, so OG locale and hreflang stay complete.
+  const config = (await getPublicCountryByCode(code)) ?? getCountryByCode(code);
+  if (!config) {
+    return applyBookingWorkflowIndexing({ title: SITE_NAME }, await searchParams);
+  }
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
   const title = `${common.bookPage.title} — ${config.name}`;
   const description = common.bookPage.subtitle.replace("{country}", config.name);
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/book`,
     title,
     description,
@@ -90,6 +104,7 @@ export async function generateMetadata({
     imageAlt: `${common.bookPage.title} — ${config.name}`,
     languages: hreflangAlternates(config, "/book"),
   });
+  return applyBookingWorkflowIndexing(metadata, await searchParams);
 }
 
 export default async function CountryLangBookPage({
@@ -1069,7 +1084,7 @@ function ServiceChoiceCard({
             {/* Doctor-first flow: `href` already pins this doctor AND this
                 service, so an anchor here would re-expose the cross-product one
                 hop behind the crawlable ?doctor= URL. Same client-side control
-                the cards use — see isPreselectionPairHref. */}
+                the cards use — see isBookingWorkflowHref. */}
             <BookCta
               href={href}
               className="gh2-btn-compact gh2-btn-compact-primary-dark"

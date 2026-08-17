@@ -3,16 +3,13 @@
 import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { isPreselectionPairHref } from "@/lib/routing/book-href";
+import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 
 /**
- * Client-side substitute for `<Link href>` on booking URLs that preselect
- * BOTH a service and a doctor (see `isPreselectionPairHref`). Those pairs are
- * a doctor x service cross-product — rendering them as anchors made ~2,800
- * URLs crawlable for no reason, since their only job is preselecting two
- * wizard fields. A real `<button>` keeps keyboard/screen-reader support for
- * free; `router.push` keeps browser history/back-button behaviour identical
- * to what a link would have done.
+ * Client-side substitute for `<Link href>` on booking URLs carrying wizard
+ * state. Those URLs only preselect fields; they are not separate landing pages.
+ * A real `<button>` keeps keyboard/screen-reader support, while `router.push`
+ * preserves browser history and back-button behaviour.
  */
 export function BookNowButton({
   href,
@@ -42,10 +39,9 @@ export function BookNowButton({
 }
 
 /**
- * Booking CTA that picks its own element: a service+doctor preselection pair
- * renders as the client-side button above, every other booking href stays a
- * real crawlable `<Link>`. Identical className/style/children either way, so
- * call sites swap `<Link>` for `<BookCta>` and nothing else changes.
+ * Booking CTA that picks its own element: any wizard-state URL renders as the
+ * client-side button above; the clean `/book` landing URL remains a crawlable
+ * `<Link>`. Identical className/style/children either way.
  *
  * Server components may render this — it is a client component, so the
  * decision runs in the same place for SSR and hydration.
@@ -63,7 +59,7 @@ export function BookCta({
   ariaLabel?: string;
   children?: ReactNode;
 }) {
-  if (isPreselectionPairHref(href)) {
+  if (isBookingWorkflowHref(href)) {
     return (
       <BookNowButton href={href} className={className} style={style} ariaLabel={ariaLabel}>
         {children}

@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/BrandIcons";
 import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { BookCta } from "@/components/booking/BookNowButton";
 
 type DoctorSpotlightProps = {
   name: string;
@@ -301,7 +302,7 @@ export function FeaturedDoctor({
           {/* CTAs — site-wide pair: lime primary w/ glow + outline secondary */}
           <div className="mt-7 flex flex-wrap items-center gap-2.5">
             {bookHref ? (
-              <Link
+              <BookCta
                 href={bookHref}
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                 style={{
@@ -312,7 +313,7 @@ export function FeaturedDoctor({
               >
                 {bookWithText}
                 <ArrowRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
-              </Link>
+              </BookCta>
             ) : null}
 
 

@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { ArrowRight, ShieldCheck, UserRound } from "lucide-react";
-import { buildBookHref, isPreselectionPairHref } from "@/lib/routing/book-href";
+import { buildBookHref } from "@/lib/routing/book-href";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { InsuranceOption } from "@/lib/content/get-country-collections";
 import { BookingSectionHeader } from "./booking-section-header";
@@ -49,25 +48,16 @@ export function InsuranceStep({
   const hrefFor = (benefit: string) =>
     buildBookHref({ country, lang, service: serviceSlug, doctor: doctorSlug, benefit });
 
-  // hrefFor always carries `benefit`, but only pins BOTH service and doctor
-  // when a doctor was already chosen upstream — hrefFor(...) with
-  // doctorSlug === null is a service-only link and must stay a real anchor.
-  const choiceCard = (href: string, children: React.ReactNode) =>
-    isPreselectionPairHref(href) ? (
-      <BookNowButton
-        href={href}
-        className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)] w-full text-left"
-      >
-        {children}
-      </BookNowButton>
-    ) : (
-      <Link
-        href={href}
-        className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)]"
-      >
-        {children}
-      </Link>
-    );
+  // hrefFor always carries `benefit`, so every choice here is booking-wizard
+  // state — never a crawlable anchor.
+  const choiceCard = (href: string, children: React.ReactNode) => (
+    <BookNowButton
+      href={href}
+      className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)] w-full text-left"
+    >
+      {children}
+    </BookNowButton>
+  );
 
   return (
     <div className="grid gap-6">

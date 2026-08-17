@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock, Tag, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
-import { isPreselectionPairHref } from "@/lib/routing/book-href";
+import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 import { BookCta, BookNowButton } from "@/components/booking/BookNowButton";
 
 
@@ -118,11 +118,11 @@ export function ServiceCard({
   // Card-wide overlay link — a sibling (not parent) of the footer buttons so
   // there are no nested anchors. In single-CTA mode it is the only link.
   // In single-CTA mode `overlayHref` is the caller's `href` verbatim, which
-  // can be a service+doctor preselection pair (e.g. doctor-profile-page.tsx's
-  // per-service consultHref) — render a client-side button there instead of
-  // a crawlable anchor, same as every other booking CTA.
+  // can carry booking-wizard state (e.g. doctor-profile-page.tsx's per-service
+  // consultHref) — render a client-side button there instead of a crawlable
+  // anchor, same as every other booking CTA.
   const overlay = overlayHref ? (
-    isPreselectionPairHref(overlayHref) ? (
+    isBookingWorkflowHref(overlayHref) ? (
       <BookNowButton
         href={overlayHref}
         ariaLabel={`${learnLabel}: ${title}`}

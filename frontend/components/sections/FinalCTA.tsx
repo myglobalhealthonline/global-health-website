@@ -9,7 +9,7 @@ import { ArrowUpRight } from "lucide-react";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
-import { isPreselectionPairHref } from "@/lib/routing/book-href";
+import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 import { BookNowButton } from "@/components/booking/BookNowButton";
 
 export type FinalCtaI18n = {
@@ -119,7 +119,7 @@ export function FinalCTA({
               </p>
 
               <div className="mt-10 flex flex-wrap gap-3">
-                {isPreselectionPairHref(primaryHref) ? (
+                {isBookingWorkflowHref(primaryHref) ? (
                   <BookNowButton href={primaryHref} className="gh2-btn-lime gh-focus-on-dark">
                     {i18n?.primaryCta ?? "Book Appointment"}
                     <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden />

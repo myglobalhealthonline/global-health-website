@@ -22,6 +22,19 @@ type BookHrefInput = {
   benefit?: string | null;
 };
 
+export const BOOKING_WORKFLOW_PARAM_KEYS = [
+  "doctor",
+  "service",
+  "serviceId",
+  "slot",
+  "gp",
+  "language",
+  "at",
+  "insurance",
+  "benefit",
+  "from",
+] as const;
+
 export function buildBookHref({
   country,
   lang,
@@ -59,11 +72,9 @@ export function buildServiceDetailHref(country: string, lang: string, serviceSlu
  * True when a booking href already pins BOTH the service and the doctor.
  *
  * Those combinations are a cross-product: every doctor x every service they
- * are assigned to. Rendered as anchors they were ~2,800 crawlable URLs whose
- * only job is to preselect two wizard fields. Callers render an accessible
- * button that navigates client-side instead, so the combination never appears
- * in server-rendered markup. Single-parameter booking links stay real anchors:
- * they are useful, finite entry points and are deliberately kept crawlable.
+ * are assigned to. Kept as the narrower classifier for flow-specific logic; it
+ * has no callers today because crawlability is now governed sitewide by the
+ * broader `isBookingWorkflowHref` below.
  */
 export function isPreselectionPairHref(href: string | null | undefined): boolean {
   if (!href) return false;
@@ -73,4 +84,18 @@ export function isPreselectionPairHref(href: string | null | undefined): boolean
   const hasService = params.has("service") || params.has("serviceId");
   const hasDoctor = params.has("doctor");
   return hasService && hasDoctor;
+}
+
+/**
+ * True for a booking-wizard URL carrying any supported workflow state.
+ *
+ * This powers metadata decisions for `/book?...`: the page keeps the clean
+ * canonical `/book`, but any wizard-state variant is treated as `noindex`.
+ */
+export function isBookingWorkflowHref(href: string | null | undefined): boolean {
+  if (!href) return false;
+  const queryIndex = href.indexOf("?");
+  if (queryIndex === -1) return false;
+  const params = new URLSearchParams(href.slice(queryIndex + 1));
+  return BOOKING_WORKFLOW_PARAM_KEYS.some((key) => params.has(key));
 }

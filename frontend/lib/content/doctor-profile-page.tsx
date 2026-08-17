@@ -7,6 +7,7 @@ import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTempl
 import { JsonLd } from "@/components/seo/JsonLd";
 import { DoctorSharePageLink } from "@/components/sections/DoctorSharePageLink";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
+import { BookCta } from "@/components/booking/BookNowButton";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
 import { getCountryByCode } from "@/data/countries";
 import { ogLocales } from "@/lib/seo/hreflang";
@@ -446,7 +447,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                   .replace("{name}", data.profile.name)
                   .replace("{country}", routeCountryName)}
               </p>
-              <Link
+              <BookCta
                 href={buildBookHref({ country: slug, lang, doctor: doctorSlug })}
                 className="mt-5 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:bg-white"
                 style={{
@@ -456,7 +457,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
               >
                 {dp.browseOtherClinicians}
                 <ArrowRight className="size-4" aria-hidden />
-              </Link>
+              </BookCta>
             </div>
           </div>
         </section>

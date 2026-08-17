@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
+import { BookCta } from "@/components/booking/BookNowButton";
 import { useSwipePage } from "@/hooks/use-swipe-page";
 
 export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
@@ -362,7 +363,7 @@ function TileActions({
         <span className="sr-only">: {title}</span>
         <ArrowUpRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
       </Link>
-      <Link
+      <BookCta
         href={bookHref}
         aria-label={`${bookLabel}: ${title}`}
         className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
@@ -373,7 +374,7 @@ function TileActions({
         }}
       >
         {bookLabel}
-      </Link>
+      </BookCta>
     </div>
   );
 }

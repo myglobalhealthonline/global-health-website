@@ -17,6 +17,7 @@ import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { focalStyle } from "@/components/media/doctor-photo";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
+import { BookCta } from "@/components/booking/BookNowButton";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 type DoctorProfileTemplateProps = {
@@ -360,13 +361,13 @@ export function DoctorProfileTemplate({
 
               {/* CTA buttons */}
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <Link
+                <BookCta
                   href={hero.primaryCta.href}
                   className="gh2-btn-lime shadow-[0_4px_24px_rgba(167,243,11,0.28)]"
                 >
                   <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
                   {hero.primaryCta.label}
-                </Link>
+                </BookCta>
 
                 {verifyHref ? (
                   <a
@@ -538,13 +539,13 @@ export function DoctorProfileTemplate({
                 {t?.calendarInviteBody ??
                   "You'll receive a calendar invite immediately after booking — no back-and-forth."}
               </p>
-              <Link
+              <BookCta
                 href={hero.primaryCta.href}
                 className="gh2-btn-lime mt-8 w-full justify-center"
               >
                 {hero.primaryCta.label}
                 <ArrowUpRight className="h-4 w-4" aria-hidden />
-              </Link>
+              </BookCta>
             </div>
           </aside>
         </div>
@@ -572,13 +573,13 @@ export function DoctorProfileTemplate({
                 {bottomCta.description}
               </p>
             </div>
-            <Link
+            <BookCta
               href={bottomCta.ctaHref}
               className="gh2-btn-lime lg:justify-self-end"
             >
               {bottomCta.ctaLabel}
               <ArrowUpRight className="h-4 w-4" aria-hidden />
-            </Link>
+            </BookCta>
           </div>
         </div>
       </section>

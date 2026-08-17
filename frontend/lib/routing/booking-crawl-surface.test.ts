@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildBookHref, isPreselectionPairHref } from "@/lib/routing/book-href";
+import {
+  buildBookHref,
+  isBookingWorkflowHref,
+  isPreselectionPairHref,
+} from "@/lib/routing/book-href";
 
 /**
  * Booking crawl surface.
@@ -10,38 +14,37 @@ import { buildBookHref, isPreselectionPairHref } from "@/lib/routing/book-href";
  * cross-product — every doctor times every service they are assigned to —
  * whose only job is preselecting two wizard fields.
  *
- * The rule these tests pin:
- *   • ONE service and ONE doctor link stay real, crawlable anchors. They are
- *     finite, useful entry points and are deliberately kept.
- *   • The service×doctor PAIR never appears in server-rendered markup. Cards
- *     and CTAs render an accessible `<button>` that navigates client-side, so
- *     the combination still works for a user and still preselects both fields.
+ * The current rule these tests pin:
+ *   • The clean `/book` landing page stays a real, crawlable anchor.
+ *   • Any URL carrying wizard state renders as an accessible `<button>` that
+ *     navigates client-side. The state still works for patients without
+ *     exposing parameter variants as fresh crawler entry points.
  */
 
 const AT = { country: "ireland", lang: "en" };
 
-describe("isPreselectionPairHref — what stays crawlable", () => {
-  it("keeps a doctor-only booking link crawlable", () => {
+describe("isBookingWorkflowHref — what stops being an anchor", () => {
+  it("detects a doctor-only booking state", () => {
     const href = buildBookHref({ ...AT, doctor: "dr-ahmed-maklad" });
     expect(href).toBe("/ireland/en/book?doctor=dr-ahmed-maklad");
-    expect(isPreselectionPairHref(href)).toBe(false);
+    expect(isBookingWorkflowHref(href)).toBe(true);
   });
 
-  it("keeps a service-only booking link crawlable", () => {
+  it("detects a service-only booking state", () => {
     const href = buildBookHref({ ...AT, service: "womens-health-consultation" });
     expect(href).toBe("/ireland/en/book?service=womens-health-consultation");
-    expect(isPreselectionPairHref(href)).toBe(false);
+    expect(isBookingWorkflowHref(href)).toBe(true);
   });
 
-  it("keeps the clean booking URL crawlable", () => {
-    expect(isPreselectionPairHref(buildBookHref(AT))).toBe(false);
-    expect(isPreselectionPairHref("/ireland/en/book")).toBe(false);
+  it("keeps only the clean booking URL crawlable", () => {
+    expect(isBookingWorkflowHref(buildBookHref(AT))).toBe(false);
+    expect(isBookingWorkflowHref("/ireland/en/book")).toBe(false);
   });
 
-  it("does not treat other single-parameter booking links as pairs", () => {
-    expect(isPreselectionPairHref(buildBookHref({ ...AT, benefit: "none" }))).toBe(false);
-    expect(isPreselectionPairHref(buildBookHref({ ...AT, at: "2026-08-09T10:00" }))).toBe(false);
-    expect(isPreselectionPairHref(buildBookHref({ ...AT, doctor: "d", slot: "s" }))).toBe(false);
+  it("detects the other supported wizard parameters", () => {
+    expect(isBookingWorkflowHref(buildBookHref({ ...AT, benefit: "none" }))).toBe(true);
+    expect(isBookingWorkflowHref(buildBookHref({ ...AT, at: "2026-08-09T10:00" }))).toBe(true);
+    expect(isBookingWorkflowHref(buildBookHref({ ...AT, doctor: "d", slot: "s" }))).toBe(true);
   });
 });
 
@@ -50,6 +53,7 @@ describe("isPreselectionPairHref — what stops being an anchor", () => {
     const href = buildBookHref({ ...AT, service: "gp-consultation", doctor: "dr-x" });
     expect(href).toBe("/ireland/en/book?service=gp-consultation&doctor=dr-x");
     expect(isPreselectionPairHref(href)).toBe(true);
+    expect(isBookingWorkflowHref(href)).toBe(true);
   });
 
   it("detects the id-based form the wizard uses", () => {
