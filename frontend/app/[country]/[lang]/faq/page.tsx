@@ -140,7 +140,7 @@ export async function generateMetadata({
     ? indexableHreflangCluster(config, "/faq", exactLocales)
     : hreflangAlternates(config, "/faq");
 
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/faq`,
     // Country-qualified so the 33 variants don't ship one identical title.
     title: `${faq.faq_section_title} — ${countryName}`,
@@ -153,10 +153,15 @@ export async function generateMetadata({
     locale: ogLocales(config, lang).locale,
     ...(languages ? { languages } : {}),
     // Serving a fallback language is fine for a reader and wrong for an index
-    // entry. (`buildPublicMetadata` emits noindex,nofollow — every link on this
-    // page is also reachable from the country home, so nothing is stranded.)
+    // entry.
     noindex: marketFaq ? !marketFaq.exact : false,
   });
+  if (!marketFaq || marketFaq.exact) return metadata;
+  // `noindex, FOLLOW` — the fallback-language variant is a real page with real
+  // internal links; `buildPublicMetadata`'s shared `noindex` is
+  // `noindex, nofollow`, which needlessly cuts them. Same override as
+  // /services/*, /health/*, /legal/* and blog pagination.
+  return { ...metadata, robots: { index: false, follow: true } };
 }
 
 export default async function CountryFAQPage({ params }: { params: Promise<Params> }) {

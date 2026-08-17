@@ -42,22 +42,29 @@ describe("robots.txt policy", () => {
     }
   });
 
-  it("restricts admin, account, auth and API surfaces", () => {
+  it("restricts admin, gated account subpages and the API", () => {
     const wildcard = rulesArray().find((r) => r.userAgent === "*");
     const disallow = wildcard?.disallow as string[];
+    for (const path of ["/admin", "/admin/*", "/account/*", "/api/"]) {
+      expect(disallow).toContain(path);
+    }
+  });
+
+  it("leaves the noindexed auth pages crawlable", () => {
+    // A Disallow here would hide the `noindex, nofollow` these pages already
+    // serve, and `/login` alone has ~1,000 internal inlinks — exactly the
+    // shape that produces a URL-only SERP entry. See the comment in robots.ts.
+    const prefixes = allDisallows().map((d) => d.replace(/\*$/, ""));
     for (const path of [
-      "/admin",
-      "/admin/*",
-      "/account",
-      "/account/*",
       "/login",
       "/register",
       "/forgot-password",
       "/reset-password",
       "/verify-email",
-      "/api/",
+      "/account",
     ]) {
-      expect(disallow).toContain(path);
+      const blockedBy = prefixes.find((p) => path.startsWith(p));
+      expect(blockedBy, `${path} blocked by robots rule "${blockedBy}"`).toBeUndefined();
     }
   });
 

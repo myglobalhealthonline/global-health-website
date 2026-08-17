@@ -109,7 +109,7 @@ export async function buildDoctorProfileMetadata(
       metaDp.metaDescriptionTemplate ??
         "Book an online consultation with {name}, {title} in {country}. Languages: {languages}.",
     );
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: canonical,
     title,
     description,
@@ -134,6 +134,13 @@ export async function buildDoctorProfileMetadata(
     keywords: data.profile.seoKeywords,
     noindex: !indexable,
   });
+  if (indexable) return metadata;
+  // `noindex, FOLLOW` — same rule as the service page: a clinician whose record
+  // fails the editorial gate (thin bio, no registration number) is still a real
+  // page carrying real internal links (their market's services, the country
+  // team page, the booking flow). `buildPublicMetadata`'s shared `noindex` is
+  // `noindex, nofollow`, which strands those links.
+  return { ...metadata, robots: { index: false, follow: true } };
 }
 export async function renderDoctorProfilePage(params: Promise<DoctorProfileRouteParams>) {
   const { doctorSlug, countrySlug: routeCountrySlug, lang: routeLang } = await params;
