@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Building2, Plus } from "lucide-react";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
+  corporateDoctorMarkets,
   deleteCorporatePlanService,
   fetchCorporateCompanies,
   fetchCorporatePlans,
@@ -287,7 +288,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                           >
                             {plansResult.data.doctorOptions.map((opt) => (
                               <option key={opt.id} value={opt.id}>
-                                {opt.fullName} — {opt.country.code.toUpperCase()}
+                                {opt.fullName} — {corporateDoctorMarkets(opt)}
                               </option>
                             ))}
                           </select>
@@ -367,7 +368,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                     </option>
                     {plansResult.data.doctorOptions.map((opt) => (
                       <option key={opt.id} value={opt.id}>
-                        {opt.fullName} — {opt.country.code.toUpperCase()}
+                        {opt.fullName} — {corporateDoctorMarkets(opt)}
                       </option>
                     ))}
                   </select>
@@ -375,8 +376,9 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                 <label className="flex flex-col gap-1">
                   <span className="gh-field-label">Country</span>
                   {/* Blank = every market the plan serves. A pinned country
-                      must match the assigned doctor's own market — the API
-                      refuses the pair otherwise. */}
+                      must be one of the markets listed next to the assigned
+                      doctor (primary or an extra listing) — the API refuses
+                      the pair otherwise. */}
                   <select name="countryCode" className="gh-select w-44" defaultValue="">
                     <option value="">All countries</option>
                     {plansResult.data.countryOptions.map((opt) => (

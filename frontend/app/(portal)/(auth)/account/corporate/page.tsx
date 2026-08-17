@@ -429,7 +429,17 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                         <Percent className="size-4 shrink-0 text-emerald-600" aria-hidden />
                         {t.benefitsDiscountLine
                           .replace("{percent}", String(d.discountPercent))
-                          .replace("{label}", d.label)}
+                          .replace(
+                            "{label}",
+                            // A ServiceKind carries no translated name in the
+                            // data model, so the localized wording lives here
+                            // and `d.label` is only the English fallback.
+                            d.serviceKind === "GENERAL"
+                              ? t.benefitsKindGeneral
+                              : d.serviceKind === "SPECIALIST"
+                                ? t.benefitsKindSpecialist
+                                : d.label,
+                          )}
                       </li>
                     ))}
                   </ul>

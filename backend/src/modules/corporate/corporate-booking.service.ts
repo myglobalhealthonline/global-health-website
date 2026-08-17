@@ -92,7 +92,14 @@ export async function listCorporateServiceSlots(
 }
 
 export type CorporateBookingResult =
-  | { ok: true; appointmentId: string }
+  | {
+      ok: true;
+      appointmentId: string;
+      /** The membership row the eligibility gate matched, when it named one.
+       *  Handed to `onCorporateAppointmentCreated` so the pre-assessment is
+       *  stamped on THIS employee rather than re-derived from the booking. */
+      employeeId?: string;
+    }
   | { ok: false; status: number; message: string };
 
 /**
@@ -112,6 +119,9 @@ export async function bookCorporateConsultation(input: {
     email: string;
     phone?: string | null;
     notes?: string | null;
+    /** GDPR opt-IN for WhatsApp appointment updates. Defaults OFF — the
+     *  confirmation send fails closed on anything but an explicit true. */
+    whatsappConsent?: boolean;
   };
   consentAccepted: boolean;
 }): Promise<CorporateBookingResult> {
@@ -184,6 +194,7 @@ export async function bookCorporateConsultation(input: {
           phone: input.patient.phone || null,
           notes: input.patient.notes || null,
           consentAccepted: true,
+          whatsappConsent: input.patient.whatsappConsent === true,
           status: "REQUEST_RECEIVED",
           consultationMode: "ONLINE",
           doctorId: claimed.doctorId,
@@ -207,5 +218,5 @@ export async function bookCorporateConsultation(input: {
     throw error;
   }
 
-  return { ok: true, appointmentId };
+  return { ok: true, appointmentId, ...(gate.employeeId ? { employeeId: gate.employeeId } : {}) };
 }

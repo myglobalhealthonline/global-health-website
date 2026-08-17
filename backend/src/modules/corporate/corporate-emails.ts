@@ -138,6 +138,105 @@ export async function sendCardActivatedEmail(opts: {
   });
 }
 
+/**
+ * Booking confirmation for a corporate consultation.
+ *
+ * Catalogue bookings get theirs from the order-keyed post-payment automation
+ * (`post-payment-flow.service.ts`), which loads its whole context from an
+ * `Order`. A corporate consultation deliberately mints none, so it could never
+ * enter that pipeline and the member was left with no confirmation at all.
+ * Unlike the catalogue "request received" note, the slot here is already
+ * confirmed, so the copy states the time rather than promising a follow-up.
+ */
+export type CorporateBookingCopy = {
+  firstName: string;
+  consultationName: string;
+  doctorName: string | null;
+  when: string;
+  /** Null when Meet is unconfigured or provisioning failed — the copy then
+   *  points at the bookings page instead of promising a link. */
+  meetingUrl: string | null;
+};
+
+export async function sendCorporateBookingConfirmationEmail(
+  opts: CorporateBookingCopy & { to: string },
+) {
+  const link = absoluteSiteUrl("/account/bookings");
+  const withDoctor = opts.doctorName ? ` with ${opts.doctorName}` : "";
+  const joinLine = opts.meetingUrl
+    ? `Join here at the appointment time: ${opts.meetingUrl}`
+    : "The video link appears on your bookings page once the clinic adds it.";
+  return sendEmail({
+    to: opts.to,
+    subject: `Booking confirmed — ${opts.consultationName}`,
+    text: `Hi ${opts.firstName},\n\nYour ${opts.consultationName}${withDoctor} is booked for ${opts.when}.\n\nIt is covered by your corporate plan — there is nothing to pay.\n\n${joinLine}\n\nSee your bookings: ${link}\n\n— Global Health`,
+    html: wrapHtml(
+      "Booking confirmed",
+      `<p>Hi ${escapeHtml(opts.firstName)},</p>
+       <p>Your <strong>${escapeHtml(opts.consultationName)}</strong>${escapeHtml(withDoctor)} is booked for <strong>${escapeHtml(opts.when)}</strong>.</p>
+       <p>It is covered by your corporate plan — there is nothing to pay.</p>
+       ${
+         opts.meetingUrl
+           ? `<p>Join here at the appointment time:<br/><a href="${opts.meetingUrl}">${escapeHtml(opts.meetingUrl)}</a></p>${button(opts.meetingUrl, "Join the consultation")}`
+           : `<p>The video link appears on your bookings page once the clinic adds it.</p>${button(link, "View your bookings")}`
+       }`,
+    ),
+  });
+}
+
+/** Same copy, channel-neutral, for the WhatsApp send. */
+export function corporateBookingText(opts: CorporateBookingCopy): string {
+  const withDoctor = opts.doctorName ? ` with ${opts.doctorName}` : "";
+  const tail = opts.meetingUrl
+    ? `Join here at the appointment time: ${opts.meetingUrl}`
+    : `Your bookings: ${absoluteSiteUrl("/account/bookings")}`;
+  return `Hi ${opts.firstName}, your ${opts.consultationName}${withDoctor} is booked for ${opts.when}. It is covered by your corporate plan — nothing to pay. ${tail}`;
+}
+
+/** Doctor-side copy. Deliberately omits the employer, matching the doctor
+ *  queue's own rule — the assigned doctor is told which corporate flow the
+ *  booking came from, never which company the patient works for. */
+export type CorporateDoctorBookingCopy = {
+  doctorName: string;
+  patientName: string;
+  consultationName: string;
+  when: string;
+  meetingUrl: string | null;
+};
+
+export async function sendCorporateDoctorBookingEmail(
+  opts: CorporateDoctorBookingCopy & { to: string },
+) {
+  const link = absoluteSiteUrl("/doctor/appointments");
+  const joinLine = opts.meetingUrl
+    ? `Join here at the appointment time: ${opts.meetingUrl}`
+    : "The video link will be added to the appointment.";
+  return sendEmail({
+    to: opts.to,
+    subject: `New corporate consultation — ${opts.when}`,
+    text: `Hi ${opts.doctorName},\n\n${opts.patientName} has booked a ${opts.consultationName} with you for ${opts.when}.\n\nThis is a corporate-plan consultation — free to the member and outside the payout statement.\n\n${joinLine}\n\nYour queue: ${link}\n\n— Global Health`,
+    html: wrapHtml(
+      "New corporate consultation",
+      `<p>Hi ${escapeHtml(opts.doctorName)},</p>
+       <p><strong>${escapeHtml(opts.patientName)}</strong> has booked a <strong>${escapeHtml(opts.consultationName)}</strong> with you for <strong>${escapeHtml(opts.when)}</strong>.</p>
+       <p>This is a corporate-plan consultation — free to the member and outside the payout statement.</p>
+       ${
+         opts.meetingUrl
+           ? `<p>Join here at the appointment time:<br/><a href="${opts.meetingUrl}">${escapeHtml(opts.meetingUrl)}</a></p>`
+           : "<p>The video link will be added to the appointment.</p>"
+       }
+       ${button(link, "Open your queue")}`,
+    ),
+  });
+}
+
+export function corporateDoctorBookingText(opts: CorporateDoctorBookingCopy): string {
+  const tail = opts.meetingUrl
+    ? `Join: ${opts.meetingUrl}`
+    : `Your queue: ${absoluteSiteUrl("/doctor/appointments")}`;
+  return `Hi ${opts.doctorName}, ${opts.patientName} booked a ${opts.consultationName} with you for ${opts.when} (corporate plan — free to the member). ${tail}`;
+}
+
 export function cardActivatedText(opts: {
   firstName: string;
   companyName: string;

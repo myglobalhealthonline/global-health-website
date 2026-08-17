@@ -124,7 +124,15 @@ export async function resolveCorporateDiscountsForItems(
  *  Purely for display on /account/corporate — the authoritative discount is
  *  still `resolveCorporateDiscount` at pricing time. */
 export type MemberBenefits = {
-  discounts: { label: string; discountPercent: number }[];
+  discounts: {
+    label: string;
+    discountPercent: number;
+    /** Set for a kind rule, null for a rule pinned to one service. `label` is
+     *  an English fallback for the kind case — the portal renders its own
+     *  localized wording off this field, because a ServiceKind has no
+     *  translated name anywhere in the data model. */
+    serviceKind: "GENERAL" | "SPECIALIST" | null;
+  }[];
   includedServices: {
     id: string;
     name: string;
@@ -166,6 +174,18 @@ export async function resolveMemberBenefits(input: {
   countryCode: string;
   locale: string;
   memberType: "EMPLOYEE" | "BENEFICIARY";
+  /**
+   * Whether this member's discount actually applies at checkout right now —
+   * i.e. `getActiveMembershipForUser` resolves for them. False during
+   * onboarding and while suspended.
+   *
+   * Only the concrete `discountedServices` figures are gated on it. A
+   * mid-onboarding member seeing "you pay €45" next to a Book link that then
+   * charges €50 is the one thing this list must never do; the percentage
+   * summary above it stays, because the page frames it as what completing
+   * onboarding unlocks.
+   */
+  discountsActive: boolean;
 }): Promise<MemberBenefits> {
   const countryCode = input.countryCode.toLowerCase();
   const [rules, planServices] = await Promise.all([
@@ -217,13 +237,21 @@ export async function resolveMemberBenefits(input: {
     const label = r.service
       ? (bySlug.get(r.service.slug)?.name ?? r.service.slug)
       : SERVICE_KIND_LABEL[kind];
-    return [{ label, discountPercent: r.discountPercent }];
+    return [
+      {
+        label,
+        discountPercent: r.discountPercent,
+        serviceKind: r.service ? null : (kind as "GENERAL" | "SPECIALIST"),
+      },
+    ];
   });
 
   return {
     discounts,
     includedServices: planServices,
-    discountedServices: await resolveDiscountedServices(applicableRules, countryCode, input.locale),
+    discountedServices: input.discountsActive
+      ? await resolveDiscountedServices(applicableRules, countryCode, input.locale)
+      : [],
   };
 }
 

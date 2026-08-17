@@ -49,6 +49,9 @@ async function bookAction(formData: FormData) {
     ...(phone ? { phone } : {}),
     ...(notes ? { notes } : {}),
     consentAccepted: true,
+    // Separate GDPR opt-IN (Art. 4(11)) — never folded into the booking
+    // consent above, and only meaningful when a number was given.
+    whatsappConsent: Boolean(phone) && formData.get("whatsappConsent") === "on",
   });
   if (!result.ok) back(result.message);
 
@@ -59,8 +62,18 @@ async function bookAction(formData: FormData) {
 }
 
 /** Slots arrive flat and chronological; the picker groups them by calendar day
- *  so a 60-day window is navigable in one native select. */
-function groupByDay(slots: { id: string; startAt: string }[], locale: string) {
+ *  so a 60-day window is navigable in one native select.
+ *
+ *  `timeZone` is the clinic zone the slot grid was generated in and is NOT
+ *  optional in practice: this page is a server component, so an omitted zone
+ *  formats in the renderer's own zone — UTC in production — and every member
+ *  is shown an hour nobody's appointment is at. */
+function groupByDay(
+  slots: { id: string; startAt: string }[],
+  locale: string,
+  timeZone: string | null,
+) {
+  const zone = timeZone ?? "UTC";
   const groups = new Map<string, { id: string; label: string }[]>();
   for (const slot of slots) {
     const start = new Date(slot.startAt);
@@ -68,8 +81,13 @@ function groupByDay(slots: { id: string; startAt: string }[], locale: string) {
       weekday: "long",
       day: "numeric",
       month: "long",
+      timeZone: zone,
     });
-    const time = start.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
+    const time = start.toLocaleTimeString(locale, {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: zone,
+    });
     const bucket = groups.get(day);
     if (bucket) bucket.push({ id: slot.id, label: time });
     else groups.set(day, [{ id: slot.id, label: time }]);
@@ -106,8 +124,8 @@ export default async function CorporateBookPage({ params, searchParams }: PagePr
     );
   }
 
-  const { service, slots, companyLive } = result.data;
-  const days = groupByDay(slots, locale);
+  const { service, slots, timeZone, companyLive } = result.data;
+  const days = groupByDay(slots, locale, timeZone);
   // No assigned doctor (deactivated), no times, or a company whose contract
   // has lapsed — all three mean the form must not be submittable, and each
   // gets its own message rather than an empty picker.
@@ -204,6 +222,11 @@ export default async function CorporateBookPage({ params, searchParams }: PagePr
             <label className="flex items-start gap-2 sm:col-span-2">
               <input type="checkbox" name="consentAccepted" required className="mt-1" />
               <span className="text-sm text-[var(--color-text-body)]">{t.bookConsent}</span>
+            </label>
+
+            <label className="flex items-start gap-2 sm:col-span-2">
+              <input type="checkbox" name="whatsappConsent" className="mt-1" />
+              <span className="text-sm text-[var(--color-text-body)]">{t.bookWhatsAppConsent}</span>
             </label>
 
             <div className="flex justify-end gap-2 sm:col-span-2">

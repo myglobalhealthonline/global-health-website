@@ -175,7 +175,16 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       // the booking runs on that doctor's ordinary availability.
       prisma.doctor.findMany({
         where: { active: true },
-        select: { id: true, fullName: true, country: { select: { code: true, name: true } } },
+        select: {
+          id: true,
+          fullName: true,
+          country: { select: { code: true, name: true } },
+          // Every market the doctor may be pinned to, not just the primary one
+          // — `assertAssignableDoctor` accepts DoctorCountry listings too, so a
+          // label showing only the primary country made a legal assignment look
+          // like a mistake (and an illegal one look fine).
+          additionalCountries: { select: { country: { select: { code: true } } } },
+        },
         orderBy: { fullName: "asc" },
       }),
       prisma.country.findMany({

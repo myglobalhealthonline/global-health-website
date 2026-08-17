@@ -443,8 +443,16 @@ export async function claimCorporateRequest(
  * member portal. Links the appointment to the employee (pre-assessment) or to
  * the open company request, and advances the relevant status. Safe to call for
  * any appointment; no-ops for ordinary catalogue bookings.
+ *
+ * `employeeId` is the row the bookability gate already resolved, passed through
+ * by the portal booking path. Callers that mint an appointment without running
+ * that gate (paid-order webhook, admin manual booking) omit it and fall back to
+ * the lookup below.
  */
-export async function onCorporateAppointmentCreated(appointmentId: string): Promise<void> {
+export async function onCorporateAppointmentCreated(
+  appointmentId: string,
+  employeeId?: string,
+): Promise<void> {
   const appointment = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     select: {
@@ -452,25 +460,36 @@ export async function onCorporateAppointmentCreated(appointmentId: string): Prom
       userId: true,
       email: true,
       countryCode: true,
-      corporateService: { select: { id: true, role: true } },
+      corporateService: { select: { id: true, role: true, corporatePlanId: true } },
     },
   });
   if (!appointment?.corporateService) return;
   const { role } = appointment.corporateService;
 
   if (role === "PRE_ASSESSMENT") {
-    // Pre-assessment: match by linked user first, fall back to invite email.
-    // Scoped to the booking's own country — an unscoped match would stamp the
-    // pre-assessment on the wrong membership for someone employed by two
-    // companies.
+    // Pre-assessment: use the employee the gate already identified when we have
+    // it, else match by linked user first and fall back to the invite email.
+    //
+    // The fallback is scoped to the consultation's PLAN, not to the booking's
+    // country. Country scoping was wrong: `Appointment.countryCode` falls back
+    // to the assigned DOCTOR's market for an "all countries" consultation, so a
+    // company in one market whose consultation is delivered by a doctor in
+    // another never matched — the booking succeeded, was free and correctly
+    // doctored, but the employee stayed stuck before PREASSESSMENT_BOOKED with
+    // no error anywhere. The plan is what actually decides whose pre-assessment
+    // this is, and it still separates someone employed by two companies.
     const employee = await prisma.corporateEmployee.findFirst({
       where: {
         status: { in: ["PROFILE_COMPLETE", "PREASSESSMENT_PENDING", "PREASSESSMENT_BOOKED"] },
-        company: { countryCode: appointment.countryCode.toLowerCase() },
-        OR: [
-          ...(appointment.userId ? [{ userId: appointment.userId }] : []),
-          { email: { equals: appointment.email, mode: "insensitive" as const } },
-        ],
+        ...(employeeId
+          ? { id: employeeId }
+          : {
+              company: { planId: appointment.corporateService.corporatePlanId },
+              OR: [
+                ...(appointment.userId ? [{ userId: appointment.userId }] : []),
+                { email: { equals: appointment.email, mode: "insensitive" as const } },
+              ],
+            }),
       },
       include: { company: true },
     });

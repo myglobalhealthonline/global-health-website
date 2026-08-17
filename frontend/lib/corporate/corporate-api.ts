@@ -303,7 +303,11 @@ export type MeCorporateBeneficiaryDto = {
 
 export type MeCorporateBenefitsDto = {
   /** Percentage off the PUBLIC catalogue, applied at checkout. */
-  discounts: { label: string; discountPercent: number }[];
+  discounts: {
+    label: string;
+    discountPercent: number;
+    serviceKind: "GENERAL" | "SPECIALIST" | null;
+  }[];
   /** The plan's own free consultations — portal-only, no price, no checkout. */
   includedServices: {
     id: string;
@@ -406,6 +410,9 @@ export async function fetchMeCorporateService(id: string) {
   return corporateRequest<{
     service: MeCorporateServiceDto;
     slots: MeCorporateSlotDto[];
+    /** IANA zone of the clinic the slots belong to. Null when the assigned
+     *  doctor is inactive (no slots either). */
+    timeZone: string | null;
     companyLive: boolean;
   }>(`/api/me/corporate/services/${encodeURIComponent(id)}`);
 }
@@ -419,6 +426,7 @@ export async function bookMeCorporateService(
     phone?: string;
     notes?: string;
     consentAccepted: true;
+    whatsappConsent?: boolean;
   },
 ) {
   return corporateRequest<{ appointmentId: string }>(

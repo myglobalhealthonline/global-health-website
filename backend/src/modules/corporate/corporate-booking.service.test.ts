@@ -23,7 +23,7 @@ type Row = Record<string, unknown> | null;
 const state: {
   corporateService: Row;
   slot: Row;
-  gate: { ok: boolean; requestId?: string; message?: string; isMember?: boolean };
+  gate: { ok: boolean; requestId?: string; employeeId?: string; message?: string; isMember?: boolean };
   created: Record<string, unknown>[];
   claimedRequests: string[];
   claimDuration: number | null;
@@ -162,6 +162,22 @@ describe("bookCorporateConsultation", () => {
     state.gate = { ok: true, requestId: "req-9" };
     await svc.bookCorporateConsultation(input);
     assert.deepEqual(state.claimedRequests, ["req-9"]);
+  });
+
+  /** The pre-assessment hook used to re-find the employee from the booking and
+   *  scoped that search by country, which silently lost anyone whose
+   *  consultation is delivered by a doctor in another market. The gate already
+   *  knows the row, so the id has to survive the return. */
+  it("returns the employee the gate matched, so the status hook needn't re-derive it", async () => {
+    state.gate = { ok: true, employeeId: "emp-7" };
+    const result = await svc.bookCorporateConsultation(input);
+    assert.equal(result.ok, true);
+    assert.equal(result.ok && result.employeeId, "emp-7");
+  });
+
+  it("omits employeeId when the gate named none", async () => {
+    const result = await svc.bookCorporateConsultation(input);
+    assert.equal(result.ok && result.employeeId, undefined);
   });
 
   it("books without a request — corporate consultations carry no usage limit", async () => {

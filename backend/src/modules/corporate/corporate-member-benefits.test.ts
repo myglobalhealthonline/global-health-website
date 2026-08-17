@@ -65,8 +65,14 @@ beforeEach(() => {
   ];
 });
 
-const load = (memberType: "EMPLOYEE" | "BENEFICIARY" = "EMPLOYEE") =>
-  svc.resolveMemberBenefits({ planId: "plan-1", countryCode: "ie", locale: "en", memberType });
+const load = (memberType: "EMPLOYEE" | "BENEFICIARY" = "EMPLOYEE", discountsActive = true) =>
+  svc.resolveMemberBenefits({
+    planId: "plan-1",
+    countryCode: "ie",
+    locale: "en",
+    memberType,
+    discountsActive,
+  });
 
 describe("resolveMemberBenefits — discounted public services", () => {
   it("prices every service of a discounted kind", async () => {
@@ -109,6 +115,20 @@ describe("resolveMemberBenefits — discounted public services", () => {
     ];
     assert.equal((await load("BENEFICIARY")).discountedServices.length, 0);
     assert.equal((await load("EMPLOYEE")).discountedServices.length, 2);
+  });
+
+  /** Mid-onboarding and suspended members are not priced by
+   *  `resolveCorporateDiscount`, so quoting them a member price next to a Book
+   *  link would promise a total checkout does not honour. The percentage
+   *  summary stays — the page frames it as what onboarding unlocks. */
+  it("quotes no member prices while the discount does not yet apply", async () => {
+    state.rules = [
+      { serviceId: null, serviceKind: "GENERAL", discountPercent: 10, appliesToBeneficiaries: true },
+    ];
+    const inactive = await load("EMPLOYEE", false);
+    assert.deepEqual(inactive.discountedServices, []);
+    assert.equal(inactive.discounts.length, 1);
+    assert.equal((await load("EMPLOYEE", true)).discountedServices.length, 2);
   });
 
   it("never advertises a kind checkout does not discount", async () => {

@@ -6,6 +6,7 @@ import { requireAuth } from "../utils/require-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   companyIsLive,
+  getActiveMembershipForUser,
   getBeneficiaryMembershipForUser,
   getEmployeeMembershipForUser,
   isBeneficiaryProfileComplete,
@@ -28,6 +29,8 @@ import {
   listCorporateServiceSlots,
   listCorporateServicesForPlan,
 } from "../modules/corporate/corporate-booking.service.js";
+import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
+import { notifyCorporateBookingCreated } from "../modules/corporate/corporate-booking-notifications.js";
 import {
   REQUEST_TYPE_LABEL,
   corporateBookPath,
@@ -106,6 +109,9 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
         countryCode: employee.company.countryCode,
         locale,
         memberType: "EMPLOYEE",
+        // The same resolver checkout prices from, so the portal's "you pay"
+        // figures cannot disagree with what the member is actually charged.
+        discountsActive: Boolean(await getActiveMembershipForUser(userId)),
       });
       const bookPath = preAssessmentService ? corporateBookPath(preAssessmentService.id) : null;
       return okResponse({
@@ -163,6 +169,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
         countryCode: beneficiary.company.countryCode,
         locale,
         memberType: "BENEFICIARY",
+        discountsActive: Boolean(await getActiveMembershipForUser(userId)),
       });
       return okResponse({
         memberType: "BENEFICIARY",
@@ -413,6 +420,9 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
       countryCode: company.countryCode,
       locale,
       memberType: employee ? "EMPLOYEE" : "BENEFICIARY",
+      // The card prints percentages only, but a card is issued at activation,
+      // so this is true whenever one exists.
+      discountsActive: true,
     });
 
     const png = await renderCorporateCardPng({
@@ -471,7 +481,11 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     const service = services.find((s) => s.id === id);
     if (!service) return reply.status(404).send(errorResponse("Consultation not found"));
     const slots = service.doctor ? await listCorporateServiceSlots(id) : [];
-    return okResponse({ service, slots, companyLive: companyIsLive(company) });
+    // The clinic zone the slot grid was generated in. Without it the portal's
+    // slot labels render in whatever timezone the renderer happens to run in
+    // (UTC on the server), which is not the hour anyone shows up at.
+    const timeZone = service.doctor ? await resolveDoctorTimeZone(service.doctor.id) : null;
+    return okResponse({ service, slots, timeZone, companyLive: companyIsLive(company) });
   });
 
   const bookBodySchema = z.object({
@@ -481,6 +495,8 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     phone: z.string().trim().max(40).optional(),
     notes: z.string().trim().max(4000).optional(),
     consentAccepted: z.literal(true),
+    /** Separate, optional opt-IN — never bundled into `consentAccepted`. */
+    whatsappConsent: z.boolean().optional(),
   });
 
   // Rate-limited like the other booking surfaces: it claims a real slot on a
@@ -494,18 +510,26 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     if (!parsed.success) {
       return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
     }
-    const { timeSlotId, fullName, email, phone, notes } = parsed.data;
+    const { timeSlotId, fullName, email, phone, notes, whatsappConsent } = parsed.data;
     const result = await bookCorporateConsultation({
       userId,
       corporateServiceId: id,
       timeSlotId,
-      patient: { fullName, email, phone, notes },
+      patient: { fullName, email, phone, notes, whatsappConsent },
       consentAccepted: true,
     });
     if (!result.ok) return reply.status(result.status).send(errorResponse(result.message));
     // Links the booking to the employee (pre-assessment) or the open company
     // request, and advances the corporate status machine.
-    await onCorporateAppointmentCreated(result.appointmentId);
+    await onCorporateAppointmentCreated(result.appointmentId, result.employeeId);
+    // Patient confirmation (email always, WhatsApp on consent). Catalogue
+    // bookings get theirs from the Order-keyed post-payment automation, which a
+    // Order-less corporate booking can never reach. Fire-and-forget — a mail
+    // outage must not fail a booking that already claimed a real slot.
+    void notifyCorporateBookingCreated(result.appointmentId).catch((error) =>
+      request.log.warn({ err: error, appointmentId: result.appointmentId },
+        "corporate booking confirmation failed"),
+    );
     return okResponse({ appointmentId: result.appointmentId });
   });
 };

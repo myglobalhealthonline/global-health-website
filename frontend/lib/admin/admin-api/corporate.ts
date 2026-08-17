@@ -66,7 +66,19 @@ export type CorporateDoctorOptionDto = {
   id: string;
   fullName: string;
   country: { code: string; name: string };
+  /** Extra market listings (DoctorCountry). Assignable alongside `country`. */
+  additionalCountries: { country: { code: string } }[];
 };
+
+/** Every market a doctor may be pinned to, primary first, e.g. "PT, IE". */
+export function corporateDoctorMarkets(opt: CorporateDoctorOptionDto): string {
+  return [
+    opt.country.code,
+    ...opt.additionalCountries.map((row) => row.country.code),
+  ]
+    .map((code) => code.toUpperCase())
+    .join(", ");
+}
 
 export type CorporateCountryOptionDto = {
   code: string;
