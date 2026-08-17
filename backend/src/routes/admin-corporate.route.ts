@@ -29,6 +29,11 @@ import {
   setEmployeeStanding,
 } from "../modules/corporate/corporate-status.service.js";
 import { listCorporateInvoiceDocuments } from "../modules/corporate/corporate-invoice.service.js";
+import {
+  companyDeletionCheck,
+  deleteCorporateCompany,
+  deleteCorporateEmployee,
+} from "../modules/corporate/corporate-deletion.service.js";
 
 /**
  * Platform-admin corporate management. ADMIN/SUPER_ADMIN get full
@@ -497,9 +502,16 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       },
     });
     if (!company) return reply.status(404).send(errorResponse("Company not found"));
-    const billing = await computeBillingSummary(company);
+    const [billing, deletion] = await Promise.all([
+      computeBillingSummary(company),
+      // Resolved here so the settings tab can render the Delete button already
+      // knowing whether it would be refused, and say why. The DELETE route
+      // re-runs it — this is for the label, not the decision.
+      companyDeletionCheck(company.id),
+    ]);
     return okResponse({
       ...company,
+      deletion,
       contractStartAt: company.contractStartAt.toISOString().slice(0, 10),
       contractEndAt: company.contractEndAt ? company.contractEndAt.toISOString().slice(0, 10) : null,
       createdAt: company.createdAt.toISOString(),
@@ -509,6 +521,21 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
         : null,
       billing,
     });
+  });
+
+  /** Hard delete — only a company with no history at all. Anything real gets
+   *  EXPIRED (status) instead, which keeps every record and stops benefits. */
+  app.delete("/api/admin/corporate/companies/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    if (!(await canReadCompany(request, id))) {
+      return reply.status(404).send(errorResponse("Company not found"));
+    }
+    const result = await deleteCorporateCompany(id);
+    if (!result.deletable) return reply.status(400).send(errorResponse(result.reason));
+    return okResponse({ id });
   });
 
   app.patch("/api/admin/corporate/companies/:id", async (request, reply) => {
@@ -654,6 +681,25 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     }
     const result = await setEmployeeStanding(id, parsed.data.action);
     if (!result.ok) return reply.status(400).send(errorResponse(result.message ?? "Not allowed"));
+    return okResponse({ id });
+  });
+
+  /** Hard delete — only for an employee who never used the plan. Anyone with
+   *  history gets REMOVE (soft) instead; the check answers with which. */
+  app.delete("/api/admin/corporate/employees/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const employee = await prisma.corporateEmployee.findUnique({
+      where: { id },
+      select: { companyId: true },
+    });
+    if (!employee || !(await canReadCompany(request, employee.companyId))) {
+      return reply.status(404).send(errorResponse("Employee not found"));
+    }
+    const result = await deleteCorporateEmployee(id);
+    if (!result.deletable) return reply.status(400).send(errorResponse(result.reason));
     return okResponse({ id });
   });
 

@@ -5,6 +5,8 @@ import { ArrowLeft, ClipboardList, ExternalLink, Receipt, UserRound, Users } fro
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
   cancelCorporateRequest,
+  deleteCorporateCompany,
+  deleteCorporateEmployee,
   fetchCorporateBeneficiaries,
   fetchCorporateCompanyById,
   fetchCorporateEmployees,
@@ -88,6 +90,17 @@ function backTo(companyId: string, tab: Tab, params: Record<string, string>): ne
 
 /* ── Server actions ──────────────────────────────────────────────────────── */
 
+async function deleteCompanyAction(formData: FormData) {
+  "use server";
+  await requireAdminAction();
+  const companyId = String(formData.get("companyId") ?? "");
+  const result = await deleteCorporateCompany(companyId);
+  // Stay on the company when the API refuses — the reason is the whole point.
+  if (!result.ok) backTo(companyId, "settings", { error: result.message });
+  revalidatePath("/admin/corporate");
+  redirect(`/admin/corporate?success=${encodeURIComponent("Company deleted")}`);
+}
+
 async function updateCompanyAction(formData: FormData) {
   "use server";
   await requireAdminAction();
@@ -159,6 +172,15 @@ async function employeeActionAction(formData: FormData) {
     if (!result.ok) backTo(companyId, "employees", { error: result.message });
     revalidatePath(`/admin/corporate/${companyId}`);
     backTo(companyId, "employees", { success: "Invite resent" });
+  }
+  // DELETE is the hard one — the API refuses it for anyone who ever used the
+  // plan and answers with the reason, which is exactly what the admin needs to
+  // read to know that REMOVE is the action they wanted.
+  if (action === "DELETE") {
+    const result = await deleteCorporateEmployee(employeeId);
+    if (!result.ok) backTo(companyId, "employees", { error: result.message });
+    revalidatePath(`/admin/corporate/${companyId}`);
+    backTo(companyId, "employees", { success: "Employee deleted" });
   }
   const result = await patchCorporateEmployee(employeeId, action as CorporateEmployeeAction);
   if (!result.ok) backTo(companyId, "employees", { error: result.message });
@@ -424,6 +446,36 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                 </Btn>
               </div>
             </form>
+            {/* Deleting a company erases its employees, beneficiaries, invites
+                and cards. Allowed only while none of that has any history —
+                a test record, a mistyped one. Everything real gets Expired,
+                which stops benefits and keeps every row. */}
+            <div className="border-t border-[var(--color-border)] px-5 py-4">
+              <p className="gh-field-label mb-1">Delete this company</p>
+              {company.deletion?.deletable ? (
+                <>
+                  <p className="mb-3 text-portal-meta text-[var(--color-text-muted)]">
+                    Nothing on this company has been used yet, so it can be erased
+                    outright — it, its employees, their beneficiaries, invites and
+                    cards. The corporate admin login survives; delete that account
+                    separately if you meant to.
+                  </p>
+                  <form action={deleteCompanyAction}>
+                    <input type="hidden" name="companyId" value={company.id} />
+                    <Btn type="submit" variant="danger" size="sm">
+                      Delete company
+                    </Btn>
+                  </form>
+                </>
+              ) : (
+                <p className="text-portal-meta text-[var(--color-text-muted)]">
+                  {company.deletion?.reason ??
+                    "This company cannot be deleted — set its status to Expired instead."}{" "}
+                  Expiring it stops every benefit and card while keeping the
+                  records the appointments and orders refer to.
+                </p>
+              )}
+            </div>
           </AdminCard>
 
           <div className="flex flex-col gap-4">
@@ -623,6 +675,19 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                                 </Btn>
                               </form>
                             ) : null}
+                            {/* Delete erases the row (and its beneficiaries,
+                                invites and card). Offered on every employee
+                                because the API — not this button — decides:
+                                anyone who used the plan is refused with the
+                                reason, and Remove above is the answer for them. */}
+                            <form action={employeeActionAction}>
+                              <input type="hidden" name="companyId" value={company.id} />
+                              <input type="hidden" name="employeeId" value={e.id} />
+                              <input type="hidden" name="action" value="DELETE" />
+                              <Btn type="submit" variant="ghost" size="sm">
+                                Delete
+                              </Btn>
+                            </form>
                           </div>
                         </Td>
                       </Tr>

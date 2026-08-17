@@ -161,6 +161,9 @@ export type CorporateCompanyDetailDto = {
     /** Currency a fiscal document for this company is minted in (its country). */
     documentCurrencyCode: string;
   };
+  /** Whether a HARD delete is allowed, and why not when it isn't. Optional so
+   *  the page survives a frontend deploy landing before the backend one. */
+  deletion?: { deletable: true } | { deletable: false; reason: string };
   createdAt: string;
   updatedAt: string;
 };
@@ -378,6 +381,21 @@ export async function patchCorporateEmployee(id: string, action: CorporateEmploy
   return adminRequest<{ id: string }>(`/api/admin/corporate/employees/${id}`, {
     method: "PATCH",
     body: { action },
+  });
+}
+
+/** HARD delete. Refused with a reason for anyone who ever used the plan — use
+ *  the REMOVE action for them, which keeps the record and stops the benefit. */
+export async function deleteCorporateEmployee(id: string) {
+  return adminRequest<{ id: string }>(`/api/admin/corporate/employees/${id}`, {
+    method: "DELETE",
+  });
+}
+
+/** HARD delete. Refused for a company with any history — expire it instead. */
+export async function deleteCorporateCompany(id: string) {
+  return adminRequest<{ id: string }>(`/api/admin/corporate/companies/${id}`, {
+    method: "DELETE",
   });
 }
 
