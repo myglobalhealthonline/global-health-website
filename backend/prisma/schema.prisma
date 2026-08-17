@@ -3105,6 +3105,14 @@ model OrderItem {
   /// which company, for reconciliation).
   corporateDiscountCents            Int?
   corporateCompanyId                String?
+  /// WHICH CorporateBenefitRule priced this line. Bare id, no relation (same
+  /// convention as `corporateCompanyId`). This column is the annual-limit
+  /// counter: a capped rule counts the lines carrying its id inside the
+  /// company's current contract year, so cancelling or refunding the order
+  /// gives the use back with no ledger and no release path. Set whenever a rule
+  /// priced the line, INCLUDING when it saved nothing — an exhausted €0 co-pay
+  /// still consumed a use.
+  corporateBenefitRuleId            String?
   /// Private-membership audit trail — set when the membership engine priced
   /// this line (§3.7). `unitPriceCents` is ALREADY the member price; these
   /// record how it got there. Bare ids like `corporateCompanyId`, no relation.
@@ -3194,6 +3202,9 @@ model OrderItem {
   commissionCents                   Int?
 
   @@index([orderId])
+  /// Corporate annual-limit counting. Partial in spirit — almost every line is
+  /// null here, and the counter query always filters on a concrete rule id.
+  @@index([corporateBenefitRuleId])
 }
 
 /// Append-only ledger of Stripe events per Appointment. One row per webhook
@@ -5470,6 +5481,16 @@ model CorporatePlan {
   currencyCode                String                 @default("EUR")
   maxBeneficiariesPerEmployee Int                    @default(5)
   isActive                    Boolean                @default(true)
+  /// Display grouping for the plan comparison matrix ("Basic" / "Standard" /
+  /// "Premium"). Free text, not an enum: the tiers are marketing copy that
+  /// changes without a migration.
+  tier                        String?
+  /// Matrix column order. Prices are NOT monotonic across the range
+  /// (Basic+ €350 sits above Standard €180), so nothing can be sorted by price.
+  sortOrder                   Int                    @default(0)
+  /// Footnote for plans whose price is not final ("pending due to season
+  /// delays"). Rendered next to the price wherever the plan is priced.
+  priceNote                   String?
   benefitRules                CorporateBenefitRule[]
   includedServices            CorporatePlanService[]
   companies                   CorporateCompany[]
@@ -5523,21 +5544,52 @@ model CorporatePlanService {
   @@index([doctorId])
 }
 
-/// Configurable discount rule. Matches by pinned serviceId (takes
-/// precedence) or by ServiceKind (GENERAL = GP consultations). v1 seed:
-/// { serviceKind: GENERAL, discountPercent: 10, appliesToBeneficiaries: true }.
+/// How a rule prices the line it matches. There is no EXCLUDED member: the
+/// ABSENCE of a rule is exclusion — an uncovered service prices at full price
+/// through the ordinary chain, so a row saying "not covered" would only be a
+/// row that does nothing.
+enum CorporateCoverage {
+  /// Fully covered — the member pays nothing.
+  INCLUDED
+  /// Member pays exactly `copayCents`, whatever the service costs. The plan
+  /// absorbs the remainder (recorded on OrderItem.corporateDiscountCents for
+  /// reconciliation; nothing is billed to the company for it).
+  COPAY
+  /// Percentage off the resolved price — the original v1 behaviour.
+  DISCOUNT
+}
+
+/// Configurable coverage rule. Matches by pinned serviceId (takes precedence)
+/// or by ServiceKind (GENERAL = GP consultations). Within each of those two
+/// tiers the rule that leaves the member paying LEAST wins, which is what lets
+/// a plan carry both the sitewide 15% employee-benefit-program row and a
+/// stronger INCLUDED/COPAY row on the same kind.
 model CorporateBenefitRule {
-  id                     String        @id @default(cuid())
+  id                     String            @id @default(cuid())
   corporatePlanId        String
-  corporatePlan          CorporatePlan @relation(fields: [corporatePlanId], references: [id], onDelete: Cascade)
+  corporatePlan          CorporatePlan     @relation(fields: [corporatePlanId], references: [id], onDelete: Cascade)
   serviceKind            ServiceKind?
   serviceId              String?
-  service                Service?      @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  service                Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  coverage               CorporateCoverage @default(DISCOUNT)
+  /// Only meaningful for DISCOUNT. Kept required (not nullable) so every
+  /// pre-coverage row keeps working unchanged.
   discountPercent        Float
-  appliesToBeneficiaries Boolean       @default(true)
-  isActive               Boolean       @default(true)
-  createdAt              DateTime      @default(now())
-  updatedAt              DateTime      @updatedAt
+  /// COPAY only — what the member pays, in the plan's currency. Clamped to the
+  /// service price at pricing time: a co-pay above the list price must never
+  /// charge more than the service costs.
+  copayCents             Int?
+  /// Max covered uses per contract year (null = unlimited). Beyond it the rule
+  /// stops matching and the member falls through to the next-best rule, or to
+  /// full price. Counted from paid/pending order lines stamped with the rule.
+  annualLimit            Int?
+  /// Rules sharing a non-null group share ONE counter — "Physiotherapy or
+  /// Chiropractic (up to 5x)" is 5 across both, not 5 each.
+  limitGroup             String?
+  appliesToBeneficiaries Boolean           @default(true)
+  isActive               Boolean           @default(true)
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
 
   @@index([corporatePlanId, isActive])
 }

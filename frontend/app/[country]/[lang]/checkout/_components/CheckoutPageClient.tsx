@@ -23,6 +23,7 @@ import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { PhoneField } from "@/components/forms/phone-field";
 import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
 import { PlanCoverage, type PlanCoverageStrings } from "@/components/cart/PlanCoverage";
+import { corporateCoverageLabel } from "@/lib/corporate-coverage-label";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import type { CartItem } from "@/lib/api/cart-types";
@@ -646,7 +647,11 @@ export function CheckoutPageClient({
                   {corporateSaved > 0 && corporateDiscount ? (
                     <div className="flex justify-between gap-3">
                       <dt style={{ color: "var(--color-brand-accent)" }}>
-                        {corporateDiscount.planName} ({corporateDiscount.companyName}) −{corporateDiscount.percent}%
+                        {corporateDiscount.planName} ({corporateDiscount.companyName}){" "}
+                        {corporateCoverageLabel(corporateDiscount, cart.currencyCode, {
+                          copay: cartT.corporateCopay,
+                          included: cartT.corporateIncluded,
+                        })}
                       </dt>
                       <dd className="shrink-0 font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-accent)" }}>
                         −{formatPrice(corporateSaved, cart.currencyCode)}

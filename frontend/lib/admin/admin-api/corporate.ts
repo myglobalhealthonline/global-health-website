@@ -30,11 +30,22 @@ export type CorporateMemberStatus =
   | "SUSPENDED"
   | "REMOVED";
 
+/** CorporateCoverage enum — how a rule prices the line it matches. There is no
+ *  EXCLUDED member: no rule = full price. */
+export type CorporateCoverage = "INCLUDED" | "COPAY" | "DISCOUNT";
+
 export type CorporateBenefitRuleDto = {
   id: string;
   serviceKind: CorporateServiceKind | null;
   serviceId: string | null;
+  coverage: CorporateCoverage;
   discountPercent: number;
+  /** COPAY only — what the member pays, in the plan currency's minor units. */
+  copayCents: number | null;
+  /** Covered uses per contract year; null = unlimited. */
+  annualLimit: number | null;
+  /** Rules sharing a group share one counter (physio OR chiro, 5 total). */
+  limitGroup: string | null;
   appliesToBeneficiaries: boolean;
   isActive: boolean;
 };
@@ -93,6 +104,11 @@ export type CorporatePlanDto = {
   currencyCode: string;
   maxBeneficiariesPerEmployee: number;
   isActive: boolean;
+  /** Matrix grouping ("Basic" / "Standard" / "Premium") + column order. */
+  tier: string | null;
+  sortOrder: number;
+  /** Footnote for a price that is not final. */
+  priceNote: string | null;
   benefitRules: CorporateBenefitRuleDto[];
   includedServices: CorporatePlanServiceDto[];
   _count: { companies: number };
@@ -245,6 +261,9 @@ export async function patchCorporatePlan(
     annualPricePerEmployeeCents?: number;
     maxBeneficiariesPerEmployee?: number;
     isActive?: boolean;
+    tier?: string | null;
+    sortOrder?: number;
+    priceNote?: string | null;
   },
 ) {
   return adminRequest<{ id: string }>(`/api/admin/corporate/plans/${id}`, {
@@ -253,14 +272,23 @@ export async function patchCorporatePlan(
   });
 }
 
+/** Coverage fields are shared by create + edit. `discountPercent` is always
+ *  sent (the column is required); it is only READ for DISCOUNT coverage. */
+export type CorporateRuleInput = {
+  coverage: CorporateCoverage;
+  discountPercent: number;
+  copayCents?: number | null;
+  annualLimit?: number | null;
+  limitGroup?: string | null;
+  appliesToBeneficiaries: boolean;
+  isActive: boolean;
+};
+
 export async function postCorporatePlanRule(
   planId: string,
-  body: {
+  body: CorporateRuleInput & {
     serviceKind?: CorporateServiceKind | null;
     serviceId?: string | null;
-    discountPercent: number;
-    appliesToBeneficiaries: boolean;
-    isActive: boolean;
   },
 ) {
   return adminRequest<{ id: string }>(`/api/admin/corporate/plans/${planId}/rules`, {
@@ -269,13 +297,16 @@ export async function postCorporatePlanRule(
   });
 }
 
-export async function patchCorporateRule(
-  ruleId: string,
-  body: { discountPercent?: number; appliesToBeneficiaries?: boolean; isActive?: boolean },
-) {
+export async function patchCorporateRule(ruleId: string, body: Partial<CorporateRuleInput>) {
   return adminRequest<{ id: string }>(`/api/admin/corporate/rules/${ruleId}`, {
     method: "PATCH",
     body,
+  });
+}
+
+export async function deleteCorporateRule(ruleId: string) {
+  return adminRequest<{ id: string }>(`/api/admin/corporate/rules/${ruleId}`, {
+    method: "DELETE",
   });
 }
 

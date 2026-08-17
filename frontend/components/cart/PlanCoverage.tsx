@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Award, LogIn, Sparkles } from "lucide-react";
 import { getCartPreview, type CartCoverageView } from "@/lib/api/me-subscription";
+import { corporateCoverageLabel } from "@/lib/corporate-coverage-label";
 import { formatPrice } from "@/lib/format-currency";
 import { interpolate } from "@/lib/subscription/format";
 
@@ -128,7 +129,11 @@ export function PlanCoverage({
     }
     if (line.corporateDiscount) {
       return {
-        label: `${line.corporateDiscount.planName} −${line.corporateDiscount.percent}%`,
+        label: `${line.corporateDiscount.planName} ${corporateCoverageLabel(
+          line.corporateDiscount,
+          currency,
+          { copay: t.youPay, included: t.included },
+        )}`,
         tone: "var(--color-brand-accent)",
       };
     }

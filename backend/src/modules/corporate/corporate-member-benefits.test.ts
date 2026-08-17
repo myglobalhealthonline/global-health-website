@@ -18,7 +18,11 @@ import { before, beforeEach, describe, it, mock } from "node:test";
 type Rule = {
   serviceId: string | null;
   serviceKind: string | null;
+  coverage?: "INCLUDED" | "COPAY" | "DISCOUNT";
   discountPercent: number;
+  copayCents?: number | null;
+  annualLimit?: number | null;
+  limitGroup?: string | null;
   appliesToBeneficiaries: boolean;
   service?: { slug: string; kind: string } | null;
 };
@@ -152,5 +156,65 @@ describe("resolveMemberBenefits — discounted public services", () => {
 
   it("returns nothing when the plan has no rules at all", async () => {
     assert.deepEqual((await load()).discountedServices, []);
+  });
+
+  /** The member page must quote the co-pay itself, not a percentage of it —
+   *  the percentage differs per service and the amount does not. */
+  it("quotes a co-pay as the price the member pays", async () => {
+    state.rules = [
+      {
+        serviceId: null,
+        serviceKind: "GENERAL",
+        coverage: "COPAY",
+        discountPercent: 0,
+        copayCents: 2000,
+        appliesToBeneficiaries: true,
+      },
+    ];
+    const { discounts, discountedServices } = await load();
+    assert.equal(discounts[0].coverage, "COPAY");
+    assert.equal(discounts[0].copayCents, 2000);
+    assert.deepEqual(
+      discountedServices.map((s) => [s.slug, s.memberPriceCents]),
+      [
+        ["gp", 2000],
+        ["gp-extended", 2000],
+      ],
+    );
+  });
+
+  it("surfaces the annual limit so the plan card can print it", async () => {
+    state.rules = [
+      {
+        serviceId: null,
+        serviceKind: "GENERAL",
+        coverage: "COPAY",
+        discountPercent: 0,
+        copayCents: 4000,
+        annualLimit: 5,
+        limitGroup: "physio-chiro",
+        appliesToBeneficiaries: true,
+      },
+    ];
+    assert.equal((await load()).discounts[0].annualLimit, 5);
+  });
+
+  /** An INCLUDED row is the "✓" column of the plan matrix. */
+  it("prices an included service at zero", async () => {
+    state.rules = [
+      {
+        serviceId: null,
+        serviceKind: "GENERAL",
+        coverage: "INCLUDED",
+        discountPercent: 0,
+        appliesToBeneficiaries: true,
+      },
+    ];
+    const { discounts, discountedServices } = await load();
+    assert.equal(discounts[0].discountPercent, 100);
+    assert.deepEqual(
+      discountedServices.map((s) => s.memberPriceCents),
+      [0, 0],
+    );
   });
 });

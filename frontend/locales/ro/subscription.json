@@ -164,6 +164,7 @@
     "viewPlans": "Vezi planurile",
     "included": "Inclus în planul tău",
     "discounted": "Reducere de plan",
+    "youPay": "Plătiți {amount}",
     "notCovered": "Neinclus în planul tău",
     "youSave": "Economisești {amount} cu planul tău",
     "creditsLeft": "{count} credite de consultație rămase după aceasta",

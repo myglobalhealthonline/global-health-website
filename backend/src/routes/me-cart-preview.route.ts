@@ -116,6 +116,11 @@ const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
         corporateDiscount: {
           percent: number;
           amountCents: number;
+          /** INCLUDED / COPAY / DISCOUNT — the cart shows "included" or a
+           *  co-pay amount instead of a percentage for the first two. */
+          coverage: CorporateDiscount["coverage"];
+          /** What the member pays, COPAY only. */
+          copayCents: number | null;
           companyName: string;
           planName: string;
         } | null;
@@ -136,6 +141,8 @@ const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
           corporateDiscount: {
             percent: corp.discountPercent,
             amountCents: corp.discountCents,
+            coverage: corp.coverage,
+            copayCents: corp.copayCents,
             companyName: corp.companyName,
             planName: corp.planName,
           },
@@ -169,6 +176,8 @@ const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
           corporateDiscount: {
             percent: corp.discountPercent,
             amountCents: corp.discountCents,
+            coverage: corp.coverage,
+            copayCents: corp.copayCents,
             companyName: corp.companyName,
             planName: corp.planName,
           },

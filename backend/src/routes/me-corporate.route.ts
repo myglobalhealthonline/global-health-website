@@ -106,6 +106,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
       const locale = await memberBookingLocale(userId, employee.company.countryCode);
       const benefits = await resolveMemberBenefits({
         planId: employee.company.planId,
+        currencyCode: employee.company.plan.currencyCode,
         countryCode: employee.company.countryCode,
         locale,
         memberType: "EMPLOYEE",
@@ -166,6 +167,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
       const locale = await memberBookingLocale(userId, beneficiary.company.countryCode);
       const benefits = await resolveMemberBenefits({
         planId: beneficiary.company.planId,
+        currencyCode: beneficiary.company.plan.currencyCode,
         countryCode: beneficiary.company.countryCode,
         locale,
         memberType: "BENEFICIARY",
@@ -417,6 +419,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     const copy = membershipCardCopy(localeCode);
     const benefits = await resolveMemberBenefits({
       planId: company.planId,
+      currencyCode: company.plan.currencyCode,
       countryCode: company.countryCode,
       locale,
       memberType: employee ? "EMPLOYEE" : "BENEFICIARY",
@@ -440,7 +443,18 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
       }),
       countryCode: company.countryCode,
       memberType: employee ? "EMPLOYEE" : "BENEFICIARY",
-      benefitLines: benefits.discounts.map((d) => `${d.discountPercent}% · ${d.label}`),
+      // A co-pay is a fixed amount, so the card prints the amount instead of a
+      // percentage — the percentage of a co-pay depends on which service the
+      // member books, and a card cannot qualify it. Money and "%" both read the
+      // same in every locale the card ships in, so neither needs card copy.
+      benefitLines: benefits.discounts.map((d) =>
+        d.coverage === "COPAY" && d.copayCents != null
+          ? `${new Intl.NumberFormat(locale, {
+              style: "currency",
+              currency: company.plan.currencyCode,
+            }).format(d.copayCents / 100)} · ${d.label}`
+          : `${d.discountPercent}% · ${d.label}`,
+      ),
       locale: localeCode,
     }, copy);
 

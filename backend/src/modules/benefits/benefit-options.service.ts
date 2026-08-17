@@ -345,8 +345,11 @@ async function corporateOption(args: {
       unitPriceCents: Math.max(0, args.fullPriceCents - discount.discountCents),
       discountCents: discount.discountCents,
       note: null,
-      // Corporate is always a percentage rule, so its figure moves with peak.
-      indicative: !args.slotPriced,
+      // A percentage rule moves with peak pricing, so its figure is indicative
+      // until a slot fixes the base. A co-pay or fully-included rule does not:
+      // the member pays the same amount whatever the slot costs, so marking it
+      // indicative would warn about a number that cannot change.
+      indicative: discount.coverage === "DISCOUNT" && !args.slotPriced,
       recommended: false,
     },
   ];

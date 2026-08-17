@@ -169,7 +169,9 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
           },
           _count: { select: { companies: true } },
         },
-        orderBy: { createdAt: "asc" },
+        // Matrix order, not price order: the range is not monotonic (Basic+
+        // €350 sits above Standard €180).
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
       }),
       // Every corporate consultation names exactly one delivering doctor, and
       // the booking runs on that doctor's ordinary availability.
@@ -301,12 +303,46 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       annualPricePerEmployeeCents: z.number().int().min(0).optional(),
       maxBeneficiariesPerEmployee: z.number().int().min(0).max(20).optional(),
       isActive: z.boolean().optional(),
+      tier: z.string().trim().max(60).nullish(),
+      sortOrder: z.number().int().min(0).max(999).optional(),
+      priceNote: z.string().trim().max(240).nullish(),
     });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
     const plan = await prisma.corporatePlan.update({ where: { id }, data: parsed.data });
     return okResponse({ id: plan.id });
   });
+
+  /**
+   * A rule that cannot price anything is a configuration mistake, not a
+   * harmless row: the plan card advertises it and checkout then ignores it.
+   * Rejecting it here is the only place an admin finds out.
+   */
+  function coverageProblem(rule: {
+    coverage?: "INCLUDED" | "COPAY" | "DISCOUNT";
+    copayCents?: number | null;
+    discountPercent?: number;
+  }): string | null {
+    if (rule.coverage === "COPAY" && rule.copayCents == null) {
+      return "A co-pay rule needs the amount the member pays";
+    }
+    if (rule.coverage === "DISCOUNT" && rule.discountPercent != null && rule.discountPercent <= 0) {
+      return "A discount rule needs a percentage above 0";
+    }
+    return null;
+  }
+
+  const ruleShape = {
+    coverage: z.enum(["INCLUDED", "COPAY", "DISCOUNT"]).default("DISCOUNT"),
+    // Required by the column, and still the field DISCOUNT rules use. Sending 0
+    // with coverage INCLUDED/COPAY is correct — the percentage is not read.
+    discountPercent: z.number().min(0).max(100),
+    copayCents: z.number().int().min(0).nullish(),
+    annualLimit: z.number().int().min(1).max(365).nullish(),
+    limitGroup: z.string().trim().min(1).max(60).nullish(),
+    appliesToBeneficiaries: z.boolean().default(true),
+    isActive: z.boolean().default(true),
+  };
 
   app.post("/api/admin/corporate/plans/:id/rules", async (request, reply) => {
     if (!(await requireWriteActor(request))) {
@@ -316,12 +352,12 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     const schema = z.object({
       serviceKind: z.enum(["GENERAL", "SPECIALIST", "PRESCRIPTION", "HEALTH_TEST", "HOME_DELIVERY"]).nullable().optional(),
       serviceId: z.string().nullable().optional(),
-      discountPercent: z.number().min(0).max(100),
-      appliesToBeneficiaries: z.boolean().default(true),
-      isActive: z.boolean().default(true),
+      ...ruleShape,
     });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const problem = coverageProblem(parsed.data);
+    if (problem) return reply.status(400).send(errorResponse(problem));
     const rule = await prisma.corporateBenefitRule.create({
       data: { corporatePlanId: id, ...parsed.data },
     });
@@ -333,14 +369,34 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       return reply.status(403).send(errorResponse("Read-only access"));
     }
     const { ruleId } = request.params as { ruleId: string };
-    const schema = z.object({
-      discountPercent: z.number().min(0).max(100).optional(),
-      appliesToBeneficiaries: z.boolean().optional(),
-      isActive: z.boolean().optional(),
-    });
+    const schema = z.object(ruleShape).partial();
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const existing = await prisma.corporateBenefitRule.findUnique({
+      where: { id: ruleId },
+      select: { coverage: true, copayCents: true, discountPercent: true },
+    });
+    if (!existing) return reply.status(404).send(errorResponse("Rule not found"));
+    // Validate the RESULTING row: switching coverage to COPAY without sending an
+    // amount, or clearing the amount on an existing co-pay rule, are both the
+    // same broken row arrived at from different directions.
+    const problem = coverageProblem({
+      coverage: parsed.data.coverage ?? existing.coverage,
+      copayCents:
+        parsed.data.copayCents !== undefined ? parsed.data.copayCents : existing.copayCents,
+      discountPercent: parsed.data.discountPercent ?? existing.discountPercent,
+    });
+    if (problem) return reply.status(400).send(errorResponse(problem));
     await prisma.corporateBenefitRule.update({ where: { id: ruleId }, data: parsed.data });
+    return okResponse({ id: ruleId });
+  });
+
+  app.delete("/api/admin/corporate/rules/:ruleId", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { ruleId } = request.params as { ruleId: string };
+    await prisma.corporateBenefitRule.delete({ where: { id: ruleId } }).catch(() => undefined);
     return okResponse({ id: ruleId });
   });
 

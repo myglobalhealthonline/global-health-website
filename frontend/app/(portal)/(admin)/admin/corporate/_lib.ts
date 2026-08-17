@@ -79,22 +79,51 @@ const SERVICE_KIND_LABELS: Record<CorporateServiceKind, string> = {
   HOME_DELIVERY: "Home delivery",
 };
 
-/** "10% off GP consultations · beneficiaries included" */
-export function ruleLabel(rule: {
-  serviceKind: CorporateServiceKind | null;
-  serviceId: string | null;
-  discountPercent: number;
-  appliesToBeneficiaries: boolean;
-}): string {
+/** CorporateCoverage enum, in the order the editor offers it. */
+export const COVERAGE_LABELS: Record<string, string> = {
+  DISCOUNT: "Discount %",
+  COPAY: "Co-pay (fixed)",
+  INCLUDED: "Included (free)",
+};
+
+/** What a new rule can cover. Pinning to one service is a separate id field —
+ *  Service rows exist per country, so there is no single global choice. */
+export const RULE_TARGET_LABELS: Record<string, string> = SERVICE_KIND_LABELS;
+
+/** "Co-pay €20.00 · GP consultations · 5 / year · families" */
+export function ruleLabel(
+  rule: {
+    serviceKind: CorporateServiceKind | null;
+    serviceId: string | null;
+    coverage?: "INCLUDED" | "COPAY" | "DISCOUNT";
+    discountPercent: number;
+    copayCents?: number | null;
+    annualLimit?: number | null;
+    limitGroup?: string | null;
+    appliesToBeneficiaries: boolean;
+  },
+  currencyCode = "EUR",
+): string {
   const target = rule.serviceId
     ? "pinned service"
     : rule.serviceKind
       ? SERVICE_KIND_LABELS[rule.serviceKind]
       : "all services";
-  const beneficiaries = rule.appliesToBeneficiaries
-    ? "beneficiaries included"
-    : "employees only";
-  return `${rule.discountPercent}% off ${target} · ${beneficiaries}`;
+  const what =
+    rule.coverage === "INCLUDED"
+      ? "Included"
+      : rule.coverage === "COPAY"
+        ? `Co-pay ${formatCents(rule.copayCents ?? 0, currencyCode)}`
+        : `${rule.discountPercent}% off`;
+  return [
+    `${what} · ${target}`,
+    rule.annualLimit != null
+      ? `${rule.annualLimit} / year${rule.limitGroup ? ` (shared: ${rule.limitGroup})` : ""}`
+      : null,
+    rule.appliesToBeneficiaries ? "families" : "employees only",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 /* CorporatePlanServiceRole enum (backend/prisma/schema.prisma). */

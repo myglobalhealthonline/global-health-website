@@ -638,6 +638,8 @@
     "planSavings": "Economii cu planul",
     "total": "Total",
     "corporateOff": "reducere",
+    "corporateCopay": "plătiți {amount}",
+    "corporateIncluded": "inclus în planul dumneavoastră",
     "continueToCheckout": "Continuă către finalizare",
     "trustSecure": "Plată securizată oferită de Stripe",
     "trustNoStore": "Nu stocăm niciodată datele cardului tău",

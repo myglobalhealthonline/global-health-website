@@ -637,6 +637,10 @@ export type CommonLocale = {
   };
   cartPage: {
     corporateOff: string;
+    /** Corporate co-pay: the member pays this fixed amount, not a percentage. */
+    corporateCopay: string;
+    /** Corporate rule that covers the service in full. */
+    corporateIncluded: string;
     kindGeneral: string;
     kindSpecialist: string;
     kindTest: string;

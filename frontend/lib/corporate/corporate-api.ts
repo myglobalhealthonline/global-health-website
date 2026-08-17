@@ -302,10 +302,18 @@ export type MeCorporateBeneficiaryDto = {
 };
 
 export type MeCorporateBenefitsDto = {
-  /** Percentage off the PUBLIC catalogue, applied at checkout. */
+  /** What the plan does to PUBLIC catalogue prices at checkout: free
+   *  (INCLUDED), a fixed member price (COPAY), or a percentage off (DISCOUNT). */
   discounts: {
     label: string;
+    /** Optional so the portal survives a frontend deploy landing first — treat
+     *  a missing value as DISCOUNT, which is what every pre-coverage rule is. */
+    coverage?: "INCLUDED" | "COPAY" | "DISCOUNT";
     discountPercent: number;
+    copayCents?: number | null;
+    copayCurrencyCode?: string | null;
+    /** Covered uses per contract year; null/absent = unlimited. */
+    annualLimit?: number | null;
     serviceKind: "GENERAL" | "SPECIALIST" | null;
   }[];
   /** The plan's own free consultations — portal-only, no price, no checkout. */
@@ -323,6 +331,7 @@ export type MeCorporateBenefitsDto = {
     slug: string;
     name: string;
     kind: string;
+    coverage?: "INCLUDED" | "COPAY" | "DISCOUNT";
     discountPercent: number;
     basePriceCents: number;
     memberPriceCents: number;

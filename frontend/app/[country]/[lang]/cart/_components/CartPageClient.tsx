@@ -25,6 +25,7 @@ import { useCart } from "@/components/cart/CartContext";
 import { MobileOrderTotalBar } from "@/components/cart/MobileOrderTotalBar";
 import { PlanCoverage, type PlanCoverageStrings } from "@/components/cart/PlanCoverage";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
+import { corporateCoverageLabel } from "@/lib/corporate-coverage-label";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { CART_ITEM_MAX_QTY, type BenefitSelection, type CartItem } from "@/lib/api/cart-types";
@@ -656,9 +657,16 @@ function CartItemRow({
             className="mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11.5px] font-semibold"
             style={{ background: "var(--color-brand-mint-dim)", color: "var(--color-brand-primary)" }}
           >
-            {coverageLine.corporateDiscount.planName} ({coverageLine.corporateDiscount.companyName})
-            −{coverageLine.corporateDiscount.percent}% ·{" "}
-            {formatPrice(coverageLine.corporateDiscount.amountCents, currency)} {t.corporateOff}
+            {coverageLine.corporateDiscount.planName} ({coverageLine.corporateDiscount.companyName}){" "}
+            {corporateCoverageLabel(coverageLine.corporateDiscount, currency, {
+              copay: t.corporateCopay,
+              included: t.corporateIncluded,
+            })}
+            {/* The saving is only worth spelling out next to a percentage — a
+                co-pay already states the whole price the member pays. */}
+            {coverageLine.corporateDiscount.coverage === "DISCOUNT"
+              ? ` · ${formatPrice(coverageLine.corporateDiscount.amountCents, currency)} ${t.corporateOff}`
+              : null}
           </p>
         ) : null}
 

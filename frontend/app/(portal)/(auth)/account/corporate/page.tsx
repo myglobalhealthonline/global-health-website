@@ -421,27 +421,46 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                 <div>
                   <p className="gh-field-label mb-2">{t.benefitsDiscounts}</p>
                   <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
-                    {benefits.discounts.map((d) => (
-                      <li
-                        key={`${d.label}-${d.discountPercent}`}
-                        className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-primary)]"
-                      >
-                        <Percent className="size-4 shrink-0 text-emerald-600" aria-hidden />
-                        {t.benefitsDiscountLine
-                          .replace("{percent}", String(d.discountPercent))
-                          .replace(
-                            "{label}",
-                            // A ServiceKind carries no translated name in the
-                            // data model, so the localized wording lives here
-                            // and `d.label` is only the English fallback.
-                            d.serviceKind === "GENERAL"
-                              ? t.benefitsKindGeneral
-                              : d.serviceKind === "SPECIALIST"
-                                ? t.benefitsKindSpecialist
-                                : d.label,
-                          )}
-                      </li>
-                    ))}
+                    {benefits.discounts.map((d) => {
+                      // A ServiceKind carries no translated name in the data
+                      // model, so the localized wording lives here and `d.label`
+                      // is only the English fallback.
+                      const label =
+                        d.serviceKind === "GENERAL"
+                          ? t.benefitsKindGeneral
+                          : d.serviceKind === "SPECIALIST"
+                            ? t.benefitsKindSpecialist
+                            : d.label;
+                      // A co-pay states the amount, not a percentage of it: the
+                      // percentage differs per service and the amount does not.
+                      const line =
+                        d.coverage === "INCLUDED"
+                          ? t.benefitsIncludedLine.replace("{label}", label)
+                          : d.coverage === "COPAY" && d.copayCents != null
+                            ? t.benefitsCopayLine
+                                .replace(
+                                  "{amount}",
+                                  formatMoney(d.copayCents, d.copayCurrencyCode ?? null, locale),
+                                )
+                                .replace("{label}", label)
+                            : t.benefitsDiscountLine
+                                .replace("{percent}", String(d.discountPercent))
+                                .replace("{label}", label);
+                      return (
+                        <li
+                          key={`${d.label}-${d.coverage}-${d.discountPercent}-${d.copayCents ?? ""}`}
+                          className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-primary)]"
+                        >
+                          <Percent className="size-4 shrink-0 text-emerald-600" aria-hidden />
+                          {line}
+                          {d.annualLimit != null ? (
+                            <span className="text-xs font-normal text-[var(--color-text-muted)]">
+                              {t.benefitsLimitSuffix.replace("{count}", String(d.annualLimit))}
+                            </span>
+                          ) : null}
+                        </li>
+                      );
+                    })}
                   </ul>
                   <p className="mt-2 text-xs text-[var(--color-text-muted)]">
                     {t.benefitsDiscountHint}
@@ -498,7 +517,13 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                       {s.name}
                     </p>
                     <p className="text-xs text-[var(--color-text-muted)]">
-                      {t.pricesSaving.replace("{percent}", String(s.discountPercent))}
+                      {/* A co-pay is a fixed price, so quoting the percentage it
+                          happens to work out to would invite the wrong sum. */}
+                      {s.coverage === "INCLUDED"
+                        ? t.pricesIncluded
+                        : s.coverage === "COPAY"
+                          ? t.pricesFixed
+                          : t.pricesSaving.replace("{percent}", String(s.discountPercent))}
                     </p>
                   </div>
                   <p className="text-sm">

@@ -164,6 +164,7 @@
     "viewPlans": "View plans",
     "included": "Included with your plan",
     "discounted": "Plan discount",
+    "youPay": "You pay {amount}",
     "notCovered": "Not covered by your plan",
     "youSave": "You save {amount} with your plan",
     "creditsLeft": "{count} consultation credits left after this",

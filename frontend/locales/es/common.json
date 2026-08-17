@@ -638,6 +638,8 @@
     "planSavings": "Ahorro del plan",
     "total": "Total",
     "corporateOff": "de descuento",
+    "corporateCopay": "paga {amount}",
+    "corporateIncluded": "incluido en su plan",
     "continueToCheckout": "Continuar al pago",
     "trustSecure": "Pago seguro con tecnología de Stripe",
     "trustNoStore": "Nunca almacenamos los datos de tu tarjeta",

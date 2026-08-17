@@ -164,6 +164,7 @@
     "viewPlans": "Zobrazit plány",
     "included": "Zahrnuto ve vašem plánu",
     "discounted": "Sleva plánu",
+    "youPay": "Zaplatíte {amount}",
     "notCovered": "Není zahrnuto ve vašem plánu",
     "youSave": "Ušetříte {amount} se svým plánem",
     "creditsLeft": "Poté zbývá {count} kreditů na konzultace",

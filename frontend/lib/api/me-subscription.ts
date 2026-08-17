@@ -150,11 +150,17 @@ export type CartCoverageReason =
   | "SERVICE_NOT_FAMILY_USABLE"
   | "MEMBER_NOT_ALLOWED";
 
-/** Corporate-membership discount attached to a preview line (plan doc §3.3).
+/** Corporate-plan coverage attached to a preview line (plan doc §3.3).
  *  Automatic — no selection; applied only when no plan benefit priced the line. */
 export interface CorporateDiscountInfo {
+  /** Effective percentage off. Truthful for every coverage, but for a co-pay it
+   *  depends on the service price — show `copayCents` there instead. */
   percent: number;
   amountCents: number;
+  /** INCLUDED = free, COPAY = fixed member price, DISCOUNT = percentage off. */
+  coverage: "INCLUDED" | "COPAY" | "DISCOUNT";
+  /** What the member pays, COPAY only. */
+  copayCents: number | null;
   companyName: string;
   planName: string;
 }

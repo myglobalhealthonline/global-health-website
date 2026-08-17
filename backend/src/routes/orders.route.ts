@@ -538,18 +538,25 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   ),
                 })
               : null;
-          const corporateLineDiscount = (
+          // The corporate rule that priced this line, or null when none did.
+          // One helper for both the money and the audit stamp: the rule id must
+          // be recorded on exactly the lines whose price it set, because that
+          // stamp is what the annual-limit counter reads.
+          const corporateLine = (
             i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
-          ): number => {
-            if (i.insuranceCompanyId) return 0;
+          ): CorporateDiscount | null => {
+            if (i.insuranceCompanyId) return null;
             const planLine = planResult.lines.get(i.id);
             const base = effectiveUnitPrice(i);
             const planBenefitApplied = Boolean(
               planLine && (planLine.creditCovered || planLine.finalUnitPriceCents < base),
             );
-            if (planBenefitApplied) return 0;
-            return corporateDiscounts.get(i.id)?.discountCents ?? 0;
+            if (planBenefitApplied) return null;
+            return corporateDiscounts.get(i.id) ?? null;
           };
+          const corporateLineDiscount = (
+            i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
+          ): number => corporateLine(i)?.discountCents ?? 0;
           const finalUnitPrice = (
             i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
           ) => {
@@ -653,13 +660,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   // (which lines drew on a credit/discount, for which dependent).
                   benefitSelection: i.benefitSelection,
                   familyMemberId: i.familyMemberId,
-                  // Corporate discount audit trail (unitPriceCents above is
-                  // already discounted; these record how much + which company).
+                  // Corporate coverage audit trail (unitPriceCents above is
+                  // already covered/discounted; these record how much, which
+                  // company, and which rule). `corporateBenefitRuleId` is
+                  // stamped whenever a rule priced the line — it is the
+                  // annual-limit counter, not a savings record.
                   corporateDiscountCents: corporateLineDiscount(i) > 0 ? corporateLineDiscount(i) : null,
-                  corporateCompanyId:
-                    corporateLineDiscount(i) > 0
-                      ? corporateDiscounts.get(i.id)?.companyId ?? null
-                      : null,
+                  corporateCompanyId: corporateLine(i)?.companyId ?? null,
+                  corporateBenefitRuleId: corporateLine(i)?.ruleId ?? null,
                   // Membership audit trail (§3.7). unitPriceCents above is
                   // ALREADY the member price; these record how it got there —
                   // and `membershipAllowanceUsed` is what every release path

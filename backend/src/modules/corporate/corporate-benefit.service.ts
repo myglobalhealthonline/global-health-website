@@ -1,4 +1,4 @@
-import type { ServiceKind } from "@prisma/client";
+import type { CorporateCoverage, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { percentDiscountAmountCents } from "../subscriptions/pricing-resolver.js";
 import {
@@ -7,7 +7,16 @@ import {
 } from "./corporate-shared.js";
 
 export type CorporateDiscount = {
+  /** Which rule priced the line. Stamped on the OrderItem — it IS the
+   *  annual-limit counter, so it must survive to checkout. */
+  ruleId: string;
+  coverage: CorporateCoverage;
+  /** Effective percentage off, derived for EVERY coverage (a €20 co-pay on a
+   *  €50 service reports 60). Kept truthful rather than zeroed so any display
+   *  that only knows about percentages still shows a correct number. */
   discountPercent: number;
+  /** What the member pays, COPAY only. Null for INCLUDED/DISCOUNT. */
+  copayCents: number | null;
   discountCents: number;
   companyId: string;
   companyName: string;
@@ -15,12 +24,220 @@ export type CorporateDiscount = {
   memberType: "EMPLOYEE" | "BENEFICIARY";
 };
 
+/** The rule fields pricing actually needs. */
+type RuleRow = {
+  id: string;
+  serviceId: string | null;
+  serviceKind: ServiceKind | null;
+  coverage: CorporateCoverage;
+  discountPercent: number;
+  copayCents: number | null;
+  annualLimit: number | null;
+  limitGroup: string | null;
+  appliesToBeneficiaries: boolean;
+};
+
+const RULE_SELECT = {
+  id: true,
+  serviceId: true,
+  serviceKind: true,
+  coverage: true,
+  discountPercent: true,
+  copayCents: true,
+  annualLimit: true,
+  limitGroup: true,
+  appliesToBeneficiaries: true,
+} as const;
+
+/** Rules sharing a group share one counter — "Physiotherapy or Chiropractic
+ *  (up to 5x)" is 5 across both, not 5 each. Ungrouped rules count alone. */
+function limitKey(rule: RuleRow): string {
+  return rule.limitGroup ?? rule.id;
+}
+
 /**
- * Corporate benefit engine — the ONLY place discount eligibility is
- * decided. Called from checkout pricing (inside the Order tx) and the
- * cart/benefit preview endpoints. Returns null when no discount
- * applies. Never trusts client input: membership, company status,
- * contract window, and rule matching are all resolved from the DB here.
+ * What the member pays under this rule, or null when the rule cannot price the
+ * line (misconfigured co-pay, 0% discount).
+ *
+ * The co-pay is clamped to the service price: a €20 co-pay on a €15 service
+ * charges €15. Charging a member MORE than the public price because their
+ * employer bought them a benefit is the one outcome this must never produce.
+ */
+function memberPriceCents(rule: RuleRow, baseCents: number): number | null {
+  switch (rule.coverage) {
+    case "INCLUDED":
+      return 0;
+    case "COPAY":
+      if (rule.copayCents == null) return null;
+      return Math.min(Math.max(0, rule.copayCents), baseCents);
+    default:
+      if (rule.discountPercent <= 0) return null;
+      return Math.max(0, baseCents - percentDiscountAmountCents(baseCents, rule.discountPercent));
+  }
+}
+
+/**
+ * The rule that leaves the member paying least, within the winning tier.
+ *
+ * Tiering is unchanged from v1: a rule pinned to this exact service beats any
+ * kind rule. What is new is that a tier can hold several rules — a plan carries
+ * both the sitewide 15% employee-benefit-program row and (say) an INCLUDED row
+ * on GENERAL — so within the tier the best member price wins. Picking by array
+ * order instead would make the outcome depend on row insertion order.
+ *
+ * `exhausted` removes rules whose annual limit is spent BEFORE tiering, so a
+ * used-up pinned rule falls through to the kind rules rather than blocking them.
+ */
+function pickRule(
+  rules: RuleRow[],
+  input: {
+    serviceId: string;
+    serviceKind: ServiceKind;
+    baseCents: number;
+    memberType: "EMPLOYEE" | "BENEFICIARY";
+    exhausted?: (rule: RuleRow) => boolean;
+  },
+): { rule: RuleRow; memberPrice: number } | null {
+  const eligible = rules.filter(
+    (rule) =>
+      (input.memberType !== "BENEFICIARY" || rule.appliesToBeneficiaries) &&
+      !(input.exhausted?.(rule) ?? false),
+  );
+  const pinned = eligible.filter((rule) => rule.serviceId === input.serviceId);
+  const byKind = eligible.filter((rule) => !rule.serviceId && rule.serviceKind === input.serviceKind);
+  const tier = pinned.length > 0 ? pinned : byKind;
+
+  let best: { rule: RuleRow; memberPrice: number } | null = null;
+  for (const rule of tier) {
+    const memberPrice = memberPriceCents(rule, input.baseCents);
+    // A rule that leaves the member at full price is not a benefit, and
+    // stamping it would burn an annual-limit use for nothing.
+    if (memberPrice == null || memberPrice >= input.baseCents) continue;
+    if (!best || memberPrice < best.memberPrice) best = { rule, memberPrice };
+  }
+  return best;
+}
+
+/**
+ * Start of the contract year the company is currently in — the
+ * `contractStartAt` anniversary. A contract signed in September resets its
+ * allowances each September, not each January.
+ *
+ * ponytail: a Feb-29 contract start lands on Mar 1 in non-leap years (JS
+ * `setUTCFullYear` rolls over). One day of drift on a yearly window; a
+ * day-of-year calendar would be the fix if it ever matters.
+ */
+export function contractYearStart(contractStartAt: Date, now: Date = new Date()): Date {
+  const anniversary = new Date(contractStartAt);
+  anniversary.setUTCFullYear(contractStartAt.getUTCFullYear() + (now.getUTCFullYear() - contractStartAt.getUTCFullYear()));
+  if (anniversary.getTime() > now.getTime()) {
+    anniversary.setUTCFullYear(anniversary.getUTCFullYear() - 1);
+  }
+  return anniversary;
+}
+
+/**
+ * Uses already consumed this contract year, keyed by `limitKey`.
+ *
+ * The count IS the authority — there is no balance row and no ledger. Order
+ * lines carry the rule id, so a cancelled or refunded order drops out of the
+ * count on its own and the use comes back with no release path to forget. Only
+ * capped rules are queried, so an uncapped plan costs nothing here.
+ *
+ * ponytail: two checkouts racing for the last covered visit can both pass —
+ * the read is not locked. Losing that race costs the plan one extra covered
+ * consultation, not money the member was charged. A row lock (as the membership
+ * allowance balance uses) is the upgrade if overspend ever needs to be exact.
+ */
+async function loadUsage(
+  userId: string,
+  rules: RuleRow[],
+  windowStart: Date,
+): Promise<Map<string, number>> {
+  const used = new Map<string, number>();
+  const capped = rules.filter((rule) => rule.annualLimit != null);
+  if (capped.length === 0) return used;
+
+  const rows = await prisma.orderItem.groupBy({
+    by: ["corporateBenefitRuleId"],
+    where: {
+      corporateBenefitRuleId: { in: capped.map((rule) => rule.id) },
+      order: {
+        userId,
+        // PENDING counts: an unpaid checkout is holding the use, and the
+        // 15-minute pay window cancels it (releasing it) if it never pays.
+        status: { notIn: ["CANCELLED", "REFUNDED"] },
+        createdAt: { gte: windowStart },
+      },
+    },
+    _sum: { quantity: true },
+  });
+
+  const byRuleId = new Map(capped.map((rule) => [rule.id, rule]));
+  for (const row of rows) {
+    const rule = row.corporateBenefitRuleId ? byRuleId.get(row.corporateBenefitRuleId) : undefined;
+    if (!rule) continue;
+    const key = limitKey(rule);
+    used.set(key, (used.get(key) ?? 0) + (row._sum.quantity ?? 0));
+  }
+  return used;
+}
+
+/** The cap that applies to a group. Rules in one group should carry the same
+ *  limit; when they disagree the most generous one governs, because the
+ *  alternative is silently honouring a smaller number the admin never saw. */
+function groupLimit(rules: RuleRow[], key: string): number | null {
+  let limit: number | null = null;
+  for (const rule of rules) {
+    if (limitKey(rule) !== key || rule.annualLimit == null) continue;
+    limit = limit == null ? rule.annualLimit : Math.max(limit, rule.annualLimit);
+  }
+  return limit;
+}
+
+/**
+ * Exhaustion test over a live tally, so several lines in ONE cart cannot each
+ * spend the same last use. `pending` is mutated by the caller as it allocates.
+ */
+function makeExhaustedTest(rules: RuleRow[], used: Map<string, number>, pending: Map<string, number>) {
+  return (rule: RuleRow): boolean => {
+    if (rule.annualLimit == null) return false;
+    const key = limitKey(rule);
+    const limit = groupLimit(rules, key);
+    if (limit == null) return false;
+    return (used.get(key) ?? 0) + (pending.get(key) ?? 0) >= limit;
+  };
+}
+
+function toDiscount(
+  picked: { rule: RuleRow; memberPrice: number },
+  baseCents: number,
+  membership: { company: { id: string; name: string; plan: { name: string } } },
+  memberType: "EMPLOYEE" | "BENEFICIARY",
+): CorporateDiscount {
+  const discountCents = Math.max(0, baseCents - picked.memberPrice);
+  return {
+    ruleId: picked.rule.id,
+    coverage: picked.rule.coverage,
+    discountPercent:
+      picked.rule.coverage === "DISCOUNT"
+        ? picked.rule.discountPercent
+        : Math.round((discountCents / baseCents) * 100),
+    copayCents: picked.rule.coverage === "COPAY" ? picked.memberPrice : null,
+    discountCents,
+    companyId: membership.company.id,
+    companyName: membership.company.name,
+    planName: membership.company.plan.name,
+    memberType,
+  };
+}
+
+/**
+ * Corporate benefit engine — the ONLY place coverage eligibility is decided.
+ * Called from checkout pricing (inside the Order tx) and the cart/benefit
+ * preview endpoints. Returns null when nothing applies. Never trusts client
+ * input: membership, company status, contract window, rule matching and annual
+ * limits are all resolved from the DB here.
  */
 export async function resolveCorporateDiscount(input: {
   userId: string | null | undefined;
@@ -36,33 +253,34 @@ export async function resolveCorporateDiscount(input: {
   const membership = await getActiveMembershipForUser(input.userId);
   if (!membership) return null;
 
-  const rules = await prisma.corporateBenefitRule.findMany({
+  const rules: RuleRow[] = await prisma.corporateBenefitRule.findMany({
     where: { corporatePlanId: membership.company.planId, isActive: true },
+    select: RULE_SELECT,
   });
-  // Pinned-service rule wins over kind rule.
-  const rule =
-    rules.find((r) => r.serviceId === input.serviceId) ??
-    rules.find((r) => !r.serviceId && r.serviceKind === input.serviceKind);
-  if (!rule) return null;
-  if (membership.memberType === "BENEFICIARY" && !rule.appliesToBeneficiaries) return null;
-  if (rule.discountPercent <= 0) return null;
+  if (rules.length === 0) return null;
 
-  const discountCents = percentDiscountAmountCents(input.baseCents, rule.discountPercent);
-  if (discountCents <= 0) return null;
-  return {
-    discountPercent: rule.discountPercent,
-    discountCents,
-    companyId: membership.company.id,
-    companyName: membership.company.name,
-    planName: membership.company.plan.name,
+  const used = await loadUsage(
+    input.userId,
+    rules,
+    contractYearStart(membership.company.contractStartAt),
+  );
+  const picked = pickRule(rules, {
+    serviceId: input.serviceId,
+    serviceKind: input.serviceKind,
+    baseCents: input.baseCents,
     memberType: membership.memberType,
-  };
+    exhausted: makeExhaustedTest(rules, used, new Map()),
+  });
+  if (!picked) return null;
+
+  const discount = toDiscount(picked, input.baseCents, membership, membership.memberType);
+  return discount.discountCents > 0 ? discount : null;
 }
 
 /**
- * Batch sibling for checkout: resolve discounts for many order lines
- * with one membership + one rules query. `client` lets the checkout tx
- * read through its own transaction handle.
+ * Batch sibling for checkout: resolve coverage for many order lines with one
+ * membership + one rules query. `client` lets the checkout tx read through its
+ * own transaction handle.
  */
 export async function resolveCorporateDiscountsForItems(
   client: {
@@ -85,8 +303,9 @@ export async function resolveCorporateDiscountsForItems(
 
   const membership = await getActiveMembershipForUser(input.userId);
   if (!membership) return out;
-  const rules = await prisma.corporateBenefitRule.findMany({
+  const rules: RuleRow[] = await prisma.corporateBenefitRule.findMany({
     where: { corporatePlanId: membership.company.planId, isActive: true },
+    select: RULE_SELECT,
   });
   if (rules.length === 0) return out;
 
@@ -97,36 +316,57 @@ export async function resolveCorporateDiscountsForItems(
   } as never);
   const kindById = new Map(services.map((s) => [s.id, s.kind]));
 
+  const used = await loadUsage(
+    input.userId,
+    rules,
+    contractYearStart(membership.company.contractStartAt),
+  );
+  // Uses this cart is about to take, so two capped lines in one order cannot
+  // both spend the last one.
+  // ponytail: one use per line, while history counts `quantity`. A consultation
+  // line is quantity 1 in every flow that reaches here; make it symmetric if a
+  // multi-quantity consultation ever becomes possible.
+  const pending = new Map<string, number>();
+  const exhausted = makeExhaustedTest(rules, used, pending);
+
   for (const item of consultationItems) {
     const serviceKind = kindById.get(item.serviceId as string);
     if (!serviceKind) continue;
-    const rule =
-      rules.find((r) => r.serviceId === item.serviceId) ??
-      rules.find((r) => !r.serviceId && r.serviceKind === serviceKind);
-    if (!rule) continue;
-    if (membership.memberType === "BENEFICIARY" && !rule.appliesToBeneficiaries) continue;
-    if (rule.discountPercent <= 0) continue;
-    const discountCents = percentDiscountAmountCents(item.baseCents, rule.discountPercent);
-    if (discountCents <= 0) continue;
-    out.set(item.id, {
-      discountPercent: rule.discountPercent,
-      discountCents,
-      companyId: membership.company.id,
-      companyName: membership.company.name,
-      planName: membership.company.plan.name,
+    const picked = pickRule(rules, {
+      serviceId: item.serviceId as string,
+      serviceKind,
+      baseCents: item.baseCents,
       memberType: membership.memberType,
+      exhausted,
     });
+    if (!picked) continue;
+    const discount = toDiscount(picked, item.baseCents, membership, membership.memberType);
+    if (discount.discountCents <= 0) continue;
+    if (picked.rule.annualLimit != null) {
+      const key = limitKey(picked.rule);
+      pending.set(key, (pending.get(key) ?? 0) + 1);
+    }
+    out.set(item.id, discount);
   }
   return out;
 }
 
 /** What a member's plan gives them, resolved for their company's country.
- *  Purely for display on /account/corporate — the authoritative discount is
+ *  Purely for display on /account/corporate — the authoritative coverage is
  *  still `resolveCorporateDiscount` at pricing time. */
 export type MemberBenefits = {
   discounts: {
     label: string;
+    coverage: CorporateCoverage;
+    /** Percentage for DISCOUNT rows; 100 for INCLUDED. Meaningless for COPAY
+     *  (the saving depends on the service price) — read `copayCents` there. */
     discountPercent: number;
+    copayCents: number | null;
+    /** Currency `copayCents` is denominated in — the PLAN's, not the country's.
+     *  Null unless there is a co-pay to denominate. */
+    copayCurrencyCode: string | null;
+    /** Covered uses per contract year, null = unlimited. */
+    annualLimit: number | null;
     /** Set for a kind rule, null for a rule pinned to one service. `label` is
      *  an English fallback for the kind case — the portal renders its own
      *  localized wording off this field, because a ServiceKind has no
@@ -141,13 +381,14 @@ export type MemberBenefits = {
     durationMinutes: number;
     doctorId: string;
   }[];
-  /** Every public service the member's rules actually discount, with the price
-   *  they would pay. Priced by the same `percentDiscountAmountCents` rounding
-   *  checkout uses, so the "you pay" figure is not an approximation of it. */
+  /** Every public service the member's rules actually cover, with the price
+   *  they would pay. Priced by the same helpers checkout uses, so the "you pay"
+   *  figure is not an approximation of it. */
   discountedServices: {
     slug: string;
     name: string;
     kind: string;
+    coverage: CorporateCoverage;
     discountPercent: number;
     basePriceCents: number;
     memberPriceCents: number;
@@ -162,20 +403,27 @@ const SERVICE_KIND_LABEL: Record<string, string> = {
 };
 
 /**
- * Plan benefit rules (discounts on the public catalogue) + the plan's own
- * free corporate consultations. Discount labels still resolve against the
- * company country's Service rows, because that is what checkout discounts;
- * the consultations are plan-owned rows with no catalogue involvement.
- * Rules on kinds checkout does not discount are dropped rather than advertised
+ * Plan benefit rules (coverage of the public catalogue) + the plan's own free
+ * corporate consultations. Coverage labels still resolve against the company
+ * country's Service rows, because that is what checkout prices; the
+ * consultations are plan-owned rows with no catalogue involvement.
+ * Rules on kinds checkout does not cover are dropped rather than advertised
  * — see the GENERAL/SPECIALIST guard in `resolveCorporateDiscount`.
+ *
+ * Annual limits are shown but NOT decremented here: this is the plan's
+ * entitlement, not the member's remaining balance. A "3 of 5 left" readout
+ * would need the same per-member count pricing does.
  */
 export async function resolveMemberBenefits(input: {
   planId: string;
+  /** The plan's currency. Co-pays are fixed amounts in it — a bare number with
+   *  no currency is the one thing a member must not be shown. */
+  currencyCode?: string;
   countryCode: string;
   locale: string;
   memberType: "EMPLOYEE" | "BENEFICIARY";
   /**
-   * Whether this member's discount actually applies at checkout right now —
+   * Whether this member's coverage actually applies at checkout right now —
    * i.e. `getActiveMembershipForUser` resolves for them. False during
    * onboarding and while suspended.
    *
@@ -191,7 +439,7 @@ export async function resolveMemberBenefits(input: {
   const [rules, planServices] = await Promise.all([
     prisma.corporateBenefitRule.findMany({
       where: { corporatePlanId: input.planId, isActive: true },
-      include: { service: { select: { slug: true, kind: true } } },
+      select: { ...RULE_SELECT, service: { select: { slug: true, kind: true } } },
     }),
     prisma.corporatePlanService.findMany({
       where: {
@@ -227,8 +475,11 @@ export async function resolveMemberBenefits(input: {
     : [];
   const bySlug = new Map(localRows.map((s) => [s.slug, s]));
 
+  // A rule that can never price anything (0% discount, co-pay with no amount)
+  // is dropped rather than advertised as a benefit.
   const applicableRules = rules
-    .filter((r) => r.discountPercent > 0)
+    .filter((r) => r.coverage !== "DISCOUNT" || r.discountPercent > 0)
+    .filter((r) => r.coverage !== "COPAY" || r.copayCents != null)
     .filter((r) => input.memberType !== "BENEFICIARY" || r.appliesToBeneficiaries);
 
   const discounts = applicableRules.flatMap((r) => {
@@ -240,7 +491,11 @@ export async function resolveMemberBenefits(input: {
     return [
       {
         label,
-        discountPercent: r.discountPercent,
+        coverage: r.coverage,
+        discountPercent: r.coverage === "INCLUDED" ? 100 : r.discountPercent,
+        copayCents: r.coverage === "COPAY" ? r.copayCents : null,
+        copayCurrencyCode: r.coverage === "COPAY" ? (input.currencyCode ?? null) : null,
+        annualLimit: r.annualLimit,
         serviceKind: r.service ? null : (kind as "GENERAL" | "SPECIALIST"),
       },
     ];
@@ -250,7 +505,7 @@ export async function resolveMemberBenefits(input: {
     discounts,
     includedServices: planServices,
     discountedServices: input.discountsActive
-      ? await resolveDiscountedServices(applicableRules, countryCode, input.locale)
+      ? await resolveDiscountedServices(applicableRules, input.memberType, countryCode, input.locale)
       : [],
   };
 }
@@ -258,12 +513,16 @@ export async function resolveMemberBenefits(input: {
 /**
  * The member's rules applied across the country's public catalogue, so the
  * portal can show a real "you pay" figure per service instead of a bare
- * percentage. Matching order mirrors `resolveCorporateDiscount` exactly —
- * pinned service wins over kind — because a list that disagreed with checkout
- * would be worse than no list.
+ * percentage. Matching goes through the same `pickRule` checkout uses — a list
+ * that disagreed with checkout would be worse than no list.
+ *
+ * Annual limits are NOT applied: this is the catalogue price under the plan,
+ * and a member who has spent their 5 physio visits still needs to see what the
+ * benefit is. Checkout is where the cap bites.
  */
 async function resolveDiscountedServices(
-  rules: { serviceId: string | null; serviceKind: string | null; discountPercent: number }[],
+  rules: RuleRow[],
+  memberType: "EMPLOYEE" | "BENEFICIARY",
   countryCode: string,
   locale: string,
 ): Promise<MemberBenefits["discountedServices"]> {
@@ -301,24 +560,32 @@ async function resolveDiscountedServices(
   });
 
   return services.flatMap((service) => {
-    const rule =
-      rules.find((r) => r.serviceId === service.id) ??
-      rules.find((r) => !r.serviceId && r.serviceKind === service.kind);
-    // A price-less service has nothing to discount, so it would only add a
+    // A price-less service has nothing to cover, so it would only add a
     // "0% off" row. The query already filters these out; the guard is what
     // makes that non-null for the arithmetic below.
-    if (!rule || service.basePriceCents == null) return [];
+    if (service.basePriceCents == null) return [];
     const basePriceCents = service.basePriceCents;
-    const discountCents = percentDiscountAmountCents(basePriceCents, rule.discountPercent);
+    const picked = pickRule(rules, {
+      serviceId: service.id,
+      serviceKind: service.kind as ServiceKind,
+      baseCents: basePriceCents,
+      memberType,
+    });
+    if (!picked) return [];
+    const discountCents = basePriceCents - picked.memberPrice;
     if (discountCents <= 0) return [];
     return [
       {
         slug: service.slug,
         name: service.name,
         kind: service.kind as string,
-        discountPercent: rule.discountPercent,
+        coverage: picked.rule.coverage,
+        discountPercent:
+          picked.rule.coverage === "DISCOUNT"
+            ? picked.rule.discountPercent
+            : Math.round((discountCents / basePriceCents) * 100),
         basePriceCents,
-        memberPriceCents: Math.max(0, basePriceCents - discountCents),
+        memberPriceCents: picked.memberPrice,
         currencyCode: service.currencyCode,
         bookPath: `/${countryCode}/${locale.toLowerCase()}/book?service=${service.slug}`,
       },
@@ -363,6 +630,10 @@ async function holdsCorporateMembership(userId: string): Promise<boolean> {
  * none does (these consultations are free and unlimited for members).
  *
  * INCLUDED: any active member of the plan.
+ *
+ * Annual limits live on CorporateBenefitRule and cap coverage of PRICED
+ * CATALOGUE services at checkout. They do not apply here: a CorporatePlanService
+ * carries no price, no order line and therefore nothing to count.
  */
 export async function assertCorporateServiceBookable(input: {
   userId: string | null | undefined;

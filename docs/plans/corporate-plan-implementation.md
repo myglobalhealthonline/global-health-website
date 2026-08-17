@@ -1014,3 +1014,132 @@ corporate plan is a contracted B2B agreement at €180/employee/year — nobody
 should be able to self-provision one, and the admin-provisioned path is the
 correct design for it. No self-registration route is planned. This supersedes the
 brief's Step 1 wording.
+
+---
+
+## 11. Coverage model — the 7-plan matrix (2026-08-17)
+
+The commercial plan range is seven plans (Basic, Basic +, Standard, Standard +,
+Premium, Premium +, Premium ++), each sold at a price per employee per year, and
+each column of the matrix marks a benefit as included (✓), excluded (✕) or
+subject to a fixed co-pay (€20 general consultation on the Premium tier, €40
+physiotherapy/chiropractic up to 5× on Premium ++). The v1 engine could express
+only a percentage discount, so three of those four states had no representation.
+
+### 11.1 Decisions
+
+1. **A plan is bought by the COMPANY, for all of its employees.** Employees are
+   not individually assignable to different plans. `CorporateCompany.planId`
+   already models this and did not change. A company that genuinely needs two
+   plans becomes two company records.
+2. **A co-pay is a fixed price override, not a discount.** The member pays
+   exactly the co-pay whatever the service costs; the plan absorbs the rest,
+   recorded on `OrderItem.corporateDiscountCents` for reconciliation only —
+   nothing is billed to the company for it (the annual per-employee fee is
+   billed offline).
+3. **The comparison matrix is sales content; the database stores only rules that
+   fire at pricing time.** The four non-bookable rows (operational activities,
+   health data management, corporate reporting, follow-up & monitoring) are
+   service commitments with nothing to price, and an EXCLUDED row would be a row
+   that does nothing — the ABSENCE of a rule is exclusion.
+4. **Annual limits are enforced**, by counting order lines rather than running a
+   balance.
+
+### 11.2 Schema
+
+```prisma
+enum CorporateCoverage { INCLUDED  COPAY  DISCOUNT }
+
+model CorporateBenefitRule {
+  coverage    CorporateCoverage @default(DISCOUNT)
+  copayCents  Int?      // COPAY only, in the PLAN's currency
+  annualLimit Int?      // null = unlimited
+  limitGroup  String?   // rules sharing a group share ONE counter
+}
+model CorporatePlan { tier String?  sortOrder Int  priceNote String? }
+model OrderItem     { corporateBenefitRuleId String? }
+```
+
+Migration `20260817180000_corporate_coverage_rules` — additive only; every
+existing rule keeps its behaviour because `DISCOUNT` is the enum default.
+
+`tier` / `sortOrder` exist because the range is **not monotonic in price**
+(Basic + at €350 sits above Standard at €180), so nothing can be ordered by
+price. `priceNote` carries the "pending due to season delays" footnote.
+
+### 11.3 Pricing rules (`corporate-benefit.service.ts`)
+
+- `memberPriceCents()` — INCLUDED → 0; COPAY → `min(copayCents, base)`;
+  DISCOUNT → percentage. **The co-pay is clamped to the list price**: a €20
+  co-pay on a €15 service charges €15. Charging a member more than the public
+  price because their employer bought them a benefit is the one outcome this
+  must never produce.
+- `pickRule()` — a rule pinned to the exact service still beats a kind rule
+  (unchanged). What is new is that a tier can hold several rules, so **within a
+  tier the best member price wins**. That is what lets a Premium plan carry both
+  the sitewide 15% employee-benefit-program row and a €20 co-pay row on GENERAL:
+  the co-pay wins at €39–60, and on a service cheaper than €20 the co-pay stops
+  being a benefit and the 15% takes over instead of the member losing coverage.
+  Selecting by array order would make the price depend on row insertion order.
+- A rule that leaves the member at full price is not a match, so it never burns
+  an annual-limit use for nothing.
+
+### 11.4 Annual limits — counted, not balanced
+
+`OrderItem.corporateBenefitRuleId` is stamped whenever a rule priced the line
+(including when it saved nothing), and the counter is
+`SUM(quantity)` over those lines for the member's user, inside the company's
+current contract year (`contractStartAt` anniversary), excluding CANCELLED and
+REFUNDED orders.
+
+No balance row, no ledger, no release path: **cancelling or refunding an order
+gives the use back by itself**, which is the property the membership allowance
+system needs an expiry job to emulate. PENDING orders count — an unpaid checkout
+is holding the use, and the 15-minute pay window cancels it if it never pays.
+
+Two known ceilings, both marked `ponytail:` in the code:
+- concurrent checkouts racing for the last covered visit can both pass (the read
+  is not locked). Cost: one extra covered consultation, never money charged to
+  the member.
+- in-cart allocation counts one use per line while history counts `quantity`;
+  consultation lines are quantity 1 in every flow that reaches the resolver.
+
+An exhausted rule is removed BEFORE tiering, so the member falls through to the
+next-best rule (15%) rather than to full price.
+
+Limits do NOT apply to `CorporatePlanService` bookings — those carry no price
+and no order line, so there is nothing to count.
+
+### 11.5 What was seeded, and what admins must still configure
+
+`seed-corporate-plan.ts` now seeds all seven plans (prices, tier, matrix order,
+price notes), the 15% employee-benefit-program row on every plan, and the €20
+GENERAL co-pay on the three Premium plans. `corporate-standard` keeps its slug —
+it is the plan already live in production.
+
+Not seeded, and why:
+- pre-assessment / occupational / fit-for-work / illness-injury rows are
+  `CorporatePlanService` consultations, each naming one delivering doctor per
+  market — an admin decision the script cannot make;
+- the physiotherapy / chiropractic €40 co-pay (5 per year, shared limit group)
+  must be pinned to specific Service rows, because a kind-wide SPECIALIST rule
+  would co-pay cardiology too. **Physiotherapy exists**
+  (`physiotherapy-specialist-consultation`, `nutrition-specialist-consultation`);
+  **chiropractic has no Service row in any market** and must be created first;
+- legal health tests: the price is still pending, and the engine deliberately
+  covers GENERAL/SPECIALIST consultations only.
+
+### 11.6 Still open (needs a business answer)
+
+1. Chiropractic services — create per country, or leave the matrix row as
+   sales-only copy?
+2. The 5-visit cap counts **per member** (a beneficiary spends their own),
+   not per employee household. Confirm.
+3. Currency: plans are priced in EUR with one price each, but companies exist in
+   CZ/RO. The co-pay is denominated in the plan's currency; per-country plan
+   pricing is not modelled.
+4. Row-to-service mapping for "Online Consult (Occup./Prof.)", "Fit-for-work",
+   "Illness/Injury Benefit" and "Legal Health Tests", per country.
+5. The employee benefit program is seeded as 15% on GENERAL only. Extending it
+   to chiropractic / nutrition / physiotherapy needs pinned SPECIALIST rules —
+   a kind-wide SPECIALIST row would discount every specialty.

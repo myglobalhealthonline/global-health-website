@@ -638,6 +638,8 @@
     "planSavings": "Plan savings",
     "total": "Total",
     "corporateOff": "off",
+    "corporateCopay": "you pay {amount}",
+    "corporateIncluded": "included with your plan",
     "continueToCheckout": "Continue to checkout",
     "trustSecure": "Secure checkout powered by Stripe",
     "trustNoStore": "We never store your card details",

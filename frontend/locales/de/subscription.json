@@ -164,6 +164,7 @@
     "viewPlans": "Tarife ansehen",
     "included": "In Ihrem Tarif enthalten",
     "discounted": "Tarifrabatt",
+    "youPay": "Sie zahlen {amount}",
     "notCovered": "Nicht in Ihrem Tarif enthalten",
     "youSave": "Sie sparen {amount} mit Ihrem Tarif",
     "creditsLeft": "{count} Beratungsguthaben danach übrig",

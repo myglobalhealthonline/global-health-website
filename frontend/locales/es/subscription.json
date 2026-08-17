@@ -164,6 +164,7 @@
     "viewPlans": "Ver planes",
     "included": "Incluido en tu plan",
     "discounted": "Descuento del plan",
+    "youPay": "Paga {amount}",
     "notCovered": "No incluido en tu plan",
     "youSave": "Ahorras {amount} con tu plan",
     "creditsLeft": "{count} créditos de consulta restantes después de esto",
