@@ -598,7 +598,8 @@
     "planBeneficiaries": "Beneficiários permitidos",
     "planContact": "Contacto da empresa",
     "planContactDetails": "Dados de contacto",
-    "planContactHint": "Questões sobre elegibilidade, suspensões ou saída do plano são para a sua entidade patronal, não para a Global Health."
+    "planContactHint": "Questões sobre elegibilidade, suspensões ou saída do plano são para a sua entidade patronal, não para a Global Health.",
+    "downloadCard": "Transferir cartão"
   },
   "insurance": {
     "title": "Dados do seguro",

@@ -390,7 +390,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                     className="gh-btn gh-btn-secondary inline-flex items-center gap-2"
                   >
                     <Download className="size-4" aria-hidden />
-                    {tMembership.downloadCard}
+                    {t.downloadCard}
                   </a>
                 </div>
               </>

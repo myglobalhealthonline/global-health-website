@@ -598,7 +598,8 @@
     "planBeneficiaries": "Beneficiari permiși",
     "planContact": "Persoana de contact a companiei",
     "planContactDetails": "Date de contact",
-    "planContactHint": "Întrebările despre eligibilitate, suspendări sau retragerea din plan se adresează angajatorului, nu Global Health."
+    "planContactHint": "Întrebările despre eligibilitate, suspendări sau retragerea din plan se adresează angajatorului, nu Global Health.",
+    "downloadCard": "Descarcă cardul"
   },
   "insurance": {
     "title": "Detalii asigurare",

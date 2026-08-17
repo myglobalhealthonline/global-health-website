@@ -598,7 +598,8 @@
     "planBeneficiaries": "Beneficiarios permitidos",
     "planContact": "Contacto de la empresa",
     "planContactDetails": "Datos de contacto",
-    "planContactHint": "Las cuestiones sobre elegibilidad, suspensiones o baja del plan corresponden a su empresa, no a Global Health."
+    "planContactHint": "Las cuestiones sobre elegibilidad, suspensiones o baja del plan corresponden a su empresa, no a Global Health.",
+    "downloadCard": "Descargar tarjeta"
   },
   "insurance": {
     "title": "Datos del seguro",

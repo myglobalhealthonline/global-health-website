@@ -598,7 +598,8 @@
     "planBeneficiaries": "Povolený počet oprávněných osob",
     "planContact": "Kontaktní osoba společnosti",
     "planContactDetails": "Kontaktní údaje",
-    "planContactHint": "Dotazy k nároku, pozastavení nebo ukončení účasti v plánu řešte se svým zaměstnavatelem, nikoli s Global Health."
+    "planContactHint": "Dotazy k nároku, pozastavení nebo ukončení účasti v plánu řešte se svým zaměstnavatelem, nikoli s Global Health.",
+    "downloadCard": "Stáhnout kartu"
   },
   "insurance": {
     "title": "Údaje o pojištění",

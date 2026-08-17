@@ -598,7 +598,8 @@
     "planBeneficiaries": "Beneficiaries allowed",
     "planContact": "Company contact",
     "planContactDetails": "Contact details",
-    "planContactHint": "Questions about eligibility, suspensions or leaving the plan go to your employer, not to Global Health."
+    "planContactHint": "Questions about eligibility, suspensions or leaving the plan go to your employer, not to Global Health.",
+    "downloadCard": "Download card"
   },
   "insurance": {
     "title": "Insurance details",

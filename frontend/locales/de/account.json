@@ -598,7 +598,8 @@
     "planBeneficiaries": "Zulässige Angehörige",
     "planContact": "Ansprechperson im Unternehmen",
     "planContactDetails": "Kontaktdaten",
-    "planContactHint": "Fragen zu Anspruch, Aussetzung oder Austritt aus dem Tarif richten Sie an Ihren Arbeitgeber, nicht an Global Health."
+    "planContactHint": "Fragen zu Anspruch, Aussetzung oder Austritt aus dem Tarif richten Sie an Ihren Arbeitgeber, nicht an Global Health.",
+    "downloadCard": "Karte herunterladen"
   },
   "insurance": {
     "title": "Versicherungsdaten",
