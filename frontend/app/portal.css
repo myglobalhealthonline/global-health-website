@@ -5467,10 +5467,15 @@ a.gh-appointment-card:hover {
 .gh-admin-main :where(.grid) {
   min-width: 0;
 }
+/* Bare `input` here means TEXT-LIKE inputs only. Checkboxes and radios must be
+ * excluded from every rule in this block: the well recipe (fill, radius, inset
+ * shadow) plus `min-height: 44px` stretched the native control into a pale
+ * 44px-tall box with its tick stranded ~30px below the label's first line —
+ * every consent/toggle row in both portals. */
 .gh-portal-shell .gh-input,
 .gh-portal-shell .gh-select,
 .gh-portal-shell .gh-textarea,
-.gh-admin-main input,
+.gh-admin-main input:not([type="checkbox"]):not([type="radio"]),
 .gh-admin-main select,
 .gh-admin-main textarea {
   min-width: 0;
@@ -5487,7 +5492,7 @@ a.gh-appointment-card:hover {
 
 .gh-portal-shell .gh-input,
 .gh-portal-shell .gh-select,
-.gh-admin-main input,
+.gh-admin-main input:not([type="checkbox"]):not([type="radio"]),
 .gh-admin-main select {
   min-height: 44px;
 }
@@ -5500,7 +5505,7 @@ a.gh-appointment-card:hover {
 .gh-portal-shell .gh-input:focus-visible,
 .gh-portal-shell .gh-select:focus-visible,
 .gh-portal-shell .gh-textarea:focus-visible,
-.gh-admin-main input:focus-visible,
+.gh-admin-main input:not([type="checkbox"]):not([type="radio"]):focus-visible,
 .gh-admin-main select:focus-visible,
 .gh-admin-main textarea:focus-visible {
   outline: none;
@@ -5529,7 +5534,7 @@ a.gh-appointment-card:hover {
   border-color: var(--portal-danger);
   box-shadow: 0 0 0 3px var(--portal-danger-soft);
 }
-.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea) {
+.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
   min-width: 0;
   border-radius: var(--portal-radius) !important;
   border-color: var(--portal-line) !important;
@@ -5542,7 +5547,7 @@ a.gh-appointment-card:hover {
   transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
 }
 
-.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea):focus-visible {
+.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input:not([type="checkbox"]):not([type="radio"]), select, textarea):focus-visible {
   outline: none;
   background: var(--portal-surface) !important;
   border-color: var(--portal-mint-text) !important;
@@ -5560,7 +5565,7 @@ a.gh-appointment-card:hover {
   box-shadow: 0 0 0 3px var(--portal-danger-soft) !important;
 }
 
-.gh-admin-main :where(.gh-input, .gh-select, input, select) {
+.gh-admin-main :where(.gh-input, .gh-select, input:not([type="checkbox"]):not([type="radio"]), select) {
   min-height: 44px !important;
 }
 
