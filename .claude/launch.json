@@ -36,15 +36,14 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": [
         "next",
-        "dev",
-        "-p",
-        "3100"
+        "dev"
       ],
       "cwd": "frontend",
       "env": {
         "NEXT_PUBLIC_API_URL": "https://api.myglobalhealth.online"
       },
-      "port": 3100
+      "port": 3100,
+      "autoPort": true
     },
     {
       "name": "frontend-prod",
