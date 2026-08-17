@@ -31,8 +31,8 @@ import {
   Thead,
   Tr,
 } from "../_components/atoms";
+import { RuleFields } from "./_components/RuleFields";
 import {
-  COVERAGE_LABELS,
   PLAN_SERVICE_ROLE_LABELS,
   RULE_TARGET_LABELS,
   companyStatusLabel,
@@ -246,7 +246,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
       <PageHeader
         eyebrow="Global"
         title="Corporate"
-        description="Private corporate plan — companies, employee benefits, and the shared Corporate Standard plan."
+        description="Corporate plans, what each one covers, and the companies on them."
         actions={
           <Btn
             href="/admin/corporate/new"
@@ -279,16 +279,32 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
         </AdminCard>
       ) : (
         plansResult.data.plans.map((plan) => (
-          <AdminCard key={plan.id} padding={0} className="mb-5 overflow-hidden">
-            <SectionHeader
-              title={`${plan.name} plan`}
-              description={`${plan._count.companies} companies · max ${plan.maxBeneficiariesPerEmployee} beneficiaries per employee`}
-              right={
+          <AdminCard key={plan.id} padding={0} className="mb-3 overflow-hidden">
+            {/* Seven plans, each with a price form, its consultations and its
+                coverage rules, is far too much page open at once. A plan opens
+                only when you go to work on it — and one already sold to a
+                company starts open, because that is the one being looked at. */}
+            <details open={plan._count.companies > 0}>
+            <summary className="flex cursor-pointer flex-wrap items-center gap-3 px-5 py-3.5">
+              <span className="text-sm font-bold text-[var(--color-text-primary)]">
+                {plan.name}
+              </span>
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                {formatCents(plan.annualPricePerEmployeeCents, plan.currencyCode)} / employee / year
+                {" · "}
+                {plan._count.companies} {plan._count.companies === 1 ? "company" : "companies"}
+                {" · "}
+                {plan.benefitRules.length} {plan.benefitRules.length === 1 ? "rule" : "rules"}
+                {" · "}
+                {plan.includedServices.length}{" "}
+                {plan.includedServices.length === 1 ? "consultation" : "consultations"}
+              </span>
+              <span className="ml-auto">
                 <Pill tone={plan.isActive ? "active" : "inactive"}>
                   {plan.isActive ? "Active" : "Inactive"}
                 </Pill>
-              }
-            />
+              </span>
+            </summary>
             <div className="border-t border-[var(--color-border)] px-5 py-4">
               <form
                 action={updatePlanAction}
@@ -335,7 +351,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                 <label className="flex flex-col gap-1">
                   {/* The range is not monotonic in price — Basic + (€350) sits
                       above Standard (€180) — so matrix order is explicit. */}
-                  <span className="gh-field-label">Matrix order</span>
+                  <span className="gh-field-label">Display order</span>
                   <input
                     type="number"
                     name="sortOrder"
@@ -352,7 +368,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                     name="priceNote"
                     className="gh-input w-72"
                     maxLength={240}
-                    placeholder="Price pending — season delays"
+                    placeholder="optional footnote"
                     defaultValue={plan.priceNote ?? ""}
                   />
                 </label>
@@ -378,12 +394,31 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                   No consultations yet — add the ones this plan includes.
                 </p>
               ) : (
-                <ul className="m-0 mb-4 flex list-none flex-col gap-2 p-0">
+                <ul className="m-0 mb-4 flex list-none flex-col gap-1.5 p-0">
                   {plan.includedServices.map((ps) => (
-                    <li key={ps.id}>
+                    <li
+                      key={ps.id}
+                      className="rounded-lg border border-[var(--color-border)] px-3 py-2"
+                    >
+                      {/* Same rule as the coverage rules below: read as a line,
+                          expand to edit. Six inputs per consultation, times
+                          four consultations, is not a list — it is a wall. */}
+                      <details>
+                        <summary className="flex cursor-pointer flex-wrap items-center gap-2 text-sm font-semibold text-[var(--color-text-primary)]">
+                          {ps.name}
+                          <span className="text-portal-compact font-normal text-[var(--color-text-muted)]">
+                            {PLAN_SERVICE_ROLE_LABELS[ps.role] ?? ps.role} · {ps.doctor.fullName} ·{" "}
+                            {ps.countryCode ? ps.countryCode.toUpperCase() : "all countries"} ·{" "}
+                            {ps.durationMinutes} min
+                          </span>
+                          {!ps.isActive ? <Pill tone="inactive">Inactive</Pill> : null}
+                          <span className="text-portal-compact font-normal text-[var(--color-text-muted)]">
+                            Edit
+                          </span>
+                        </summary>
                       <form
                         action={updatePlanServiceAction}
-                        className="flex flex-wrap items-end gap-3"
+                        className="mt-3 flex flex-wrap items-end gap-3 border-t border-[var(--color-border)] pt-3"
                       >
                         <input type="hidden" name="planServiceId" value={ps.id} />
                         <label className="flex flex-col gap-1">
@@ -461,11 +496,19 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                           Remove
                         </Btn>
                       </form>
+                      </details>
                     </li>
                   ))}
                 </ul>
               )}
-              <form action={addPlanServiceAction} className="flex flex-wrap items-end gap-3">
+              <details className="rounded-lg border border-dashed border-[var(--color-border)] px-3 py-2">
+                <summary className="cursor-pointer text-sm font-semibold text-[var(--color-text-primary)]">
+                  Add a consultation
+                </summary>
+              <form
+                action={addPlanServiceAction}
+                className="mt-3 flex flex-wrap items-end gap-3 border-t border-[var(--color-border)] pt-3"
+              >
                 <input type="hidden" name="planId" value={plan.id} />
                 <label className="flex flex-col gap-1">
                   <span className="gh-field-label">Consultation name</span>
@@ -531,219 +574,115 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                   Add consultation
                 </Btn>
               </form>
+              </details>
             </div>
             <div className="border-t border-[var(--color-border)] px-5 py-4">
               <p className="gh-field-label mb-1">Coverage rules</p>
               <p className="mb-3 text-portal-meta text-[var(--color-text-muted)]">
-                What the plan does to the price of a PUBLIC catalogue
-                consultation. Included = free, co-pay = the member pays that
-                fixed amount whatever the service costs, discount = a
-                percentage off. A service with no rule is simply not covered.
-                When two rules could apply, the one that leaves the member
-                paying least wins.
+                What this plan does to the price of a PUBLIC catalogue
+                consultation. A service with no rule here is not covered — the
+                member pays full price. When two rules could apply, the one that
+                leaves the member paying least wins.
               </p>
               {plan.benefitRules.length === 0 ? (
                 <p className="mb-3 text-sm text-[var(--color-text-muted)]">
-                  No coverage rules yet — run the corporate seed, or add one below.
+                  No coverage rules yet — add one below.
                 </p>
               ) : (
-                <ul className="m-0 mb-4 flex list-none flex-col gap-3 p-0">
+                <ul className="m-0 mb-4 flex list-none flex-col gap-1.5 p-0">
                   {plan.benefitRules.map((rule) => (
-                    <li key={rule.id}>
-                      <form
-                        action={updateRuleAction}
-                        className="flex flex-wrap items-end gap-3"
-                      >
-                        <input type="hidden" name="ruleId" value={rule.id} />
-                        <span className="min-w-[16rem] pb-2 text-sm font-semibold text-[var(--color-text-primary)]">
+                    <li
+                      key={rule.id}
+                      className="rounded-lg border border-[var(--color-border)] px-3 py-2"
+                    >
+                      {/* Collapsed by default: the rule reads as one sentence,
+                          and the eight inputs that can change it only appear
+                          once you ask to change it. */}
+                      <details>
+                        <summary className="flex cursor-pointer flex-wrap items-center gap-2 text-sm font-semibold text-[var(--color-text-primary)]">
                           {ruleLabel(rule, plan.currencyCode)}
-                        </span>
-                        <label className="flex flex-col gap-1">
-                          <span className="gh-field-label">Coverage</span>
-                          <select
-                            name="coverage"
-                            className="gh-select w-40"
-                            defaultValue={rule.coverage}
-                          >
-                            {Object.entries(COVERAGE_LABELS).map(([value, label]) => (
-                              <option key={value} value={value}>
-                                {label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="flex flex-col gap-1">
-                          <span className="gh-field-label">Discount %</span>
-                          <input
-                            type="number"
-                            name="discountPercent"
-                            min={0}
-                            max={100}
-                            step="0.5"
-                            defaultValue={rule.discountPercent}
-                            className="gh-input w-24"
-                          />
-                        </label>
-                        <label className="flex flex-col gap-1">
-                          <span className="gh-field-label">
-                            Co-pay ({plan.currencyCode})
+                          {!rule.isActive ? <Pill tone="inactive">Inactive</Pill> : null}
+                          <span className="text-portal-compact font-normal text-[var(--color-text-muted)]">
+                            Edit
                           </span>
-                          <input
-                            type="number"
-                            name="copayAmount"
-                            min={0}
-                            step="0.01"
-                            className="gh-input w-28"
-                            defaultValue={
-                              rule.copayCents == null ? "" : (rule.copayCents / 100).toFixed(2)
-                            }
-                          />
-                        </label>
-                        <label className="flex flex-col gap-1">
-                          <span className="gh-field-label">Limit / year</span>
-                          <input
-                            type="number"
-                            name="annualLimit"
-                            min={1}
-                            max={365}
-                            step={1}
-                            placeholder="∞"
-                            className="gh-input w-24"
-                            defaultValue={rule.annualLimit ?? ""}
-                          />
-                        </label>
-                        <label className="flex flex-col gap-1">
-                          {/* Same group on two rules = ONE shared counter, which
-                              is how "physiotherapy or chiropractic, up to 5x"
-                              is 5 across both. */}
-                          <span className="gh-field-label">Shared limit group</span>
-                          <input
-                            name="limitGroup"
-                            className="gh-input w-40"
-                            maxLength={60}
-                            placeholder="physio-chiro"
-                            defaultValue={rule.limitGroup ?? ""}
-                          />
-                        </label>
-                        <label className="inline-flex items-center gap-1.5 pb-2 text-portal-compact text-[var(--color-text-muted)]">
-                          <input
-                            type="checkbox"
-                            name="appliesToBeneficiaries"
-                            defaultChecked={rule.appliesToBeneficiaries}
-                          />
-                          Families
-                        </label>
-                        <label className="inline-flex items-center gap-1.5 pb-2 text-portal-compact text-[var(--color-text-muted)]">
-                          <input type="checkbox" name="isActive" defaultChecked={rule.isActive} />
-                          Active
-                        </label>
-                        <Btn type="submit" variant="secondary" size="sm">
-                          Save
-                        </Btn>
-                      </form>
-                      <form action={removeRuleAction} className="mt-1">
-                        <input type="hidden" name="ruleId" value={rule.id} />
-                        <Btn type="submit" variant="ghost" size="sm">
-                          Remove
-                        </Btn>
-                      </form>
+                        </summary>
+                        <div className="mt-3 flex flex-wrap items-end gap-3 border-t border-[var(--color-border)] pt-3">
+                          <form
+                            action={updateRuleAction}
+                            className="flex flex-wrap items-end gap-3"
+                          >
+                            <input type="hidden" name="ruleId" value={rule.id} />
+                            <RuleFields
+                              currencyCode={plan.currencyCode}
+                              defaults={{
+                                coverage: rule.coverage,
+                                discountPercent: rule.discountPercent,
+                                copayCents: rule.copayCents,
+                                annualLimit: rule.annualLimit,
+                                limitGroup: rule.limitGroup,
+                                appliesToBeneficiaries: rule.appliesToBeneficiaries,
+                                isActive: rule.isActive,
+                              }}
+                            />
+                            <Btn type="submit" variant="secondary" size="sm">
+                              Save
+                            </Btn>
+                          </form>
+                          <form action={removeRuleAction}>
+                            <input type="hidden" name="ruleId" value={rule.id} />
+                            <Btn type="submit" variant="ghost" size="sm">
+                              Remove
+                            </Btn>
+                          </form>
+                        </div>
+                      </details>
                     </li>
                   ))}
                 </ul>
               )}
-              <form action={addRuleAction} className="flex flex-wrap items-end gap-3">
-                <input type="hidden" name="planId" value={plan.id} />
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Covers</span>
-                  <select name="target" className="gh-select w-56" defaultValue="GENERAL">
-                    {Object.entries(RULE_TARGET_LABELS).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">…or pin one service (id)</span>
-                  <input
-                    name="serviceId"
-                    className="gh-input w-56"
-                    maxLength={40}
-                    placeholder="cmr85udfk0000ckjuyy97rf4l"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Coverage</span>
-                  <select name="coverage" className="gh-select w-40" defaultValue="DISCOUNT">
-                    {Object.entries(COVERAGE_LABELS).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Discount %</span>
-                  <input
-                    type="number"
-                    name="discountPercent"
-                    min={0}
-                    max={100}
-                    step="0.5"
-                    className="gh-input w-24"
-                    defaultValue={15}
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Co-pay ({plan.currencyCode})</span>
-                  <input
-                    type="number"
-                    name="copayAmount"
-                    min={0}
-                    step="0.01"
-                    className="gh-input w-28"
-                    placeholder="20.00"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Limit / year</span>
-                  <input
-                    type="number"
-                    name="annualLimit"
-                    min={1}
-                    max={365}
-                    step={1}
-                    placeholder="∞"
-                    className="gh-input w-24"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Shared limit group</span>
-                  <input
-                    name="limitGroup"
-                    className="gh-input w-40"
-                    maxLength={60}
-                    placeholder="physio-chiro"
-                  />
-                </label>
-                <label className="inline-flex items-center gap-1.5 pb-2 text-portal-compact text-[var(--color-text-muted)]">
-                  <input type="checkbox" name="appliesToBeneficiaries" defaultChecked />
-                  Families
-                </label>
-                <label className="inline-flex items-center gap-1.5 pb-2 text-portal-compact text-[var(--color-text-muted)]">
-                  <input type="checkbox" name="isActive" defaultChecked />
-                  Active
-                </label>
-                <Btn type="submit" variant="secondary" size="sm">
-                  Add rule
-                </Btn>
-              </form>
-              <p className="mt-2 text-portal-meta text-[var(--color-text-muted)]">
-                Pinning to one service — the physiotherapy / chiropractic co-pay,
-                for example — needs the Service id, because a service row exists
-                per country. Copy it from the service&rsquo;s admin page.
-              </p>
+              <details className="rounded-lg border border-dashed border-[var(--color-border)] px-3 py-2">
+                <summary className="cursor-pointer text-sm font-semibold text-[var(--color-text-primary)]">
+                  Add a coverage rule
+                </summary>
+                <form
+                  action={addRuleAction}
+                  className="mt-3 flex flex-wrap items-end gap-3 border-t border-[var(--color-border)] pt-3"
+                >
+                  <input type="hidden" name="planId" value={plan.id} />
+                  <label className="flex flex-col gap-1">
+                    <span className="gh-field-label">Applies to</span>
+                    <select name="target" className="gh-select w-56" defaultValue="GENERAL">
+                      {Object.entries(RULE_TARGET_LABELS).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-1">
+                    {/* Pinning is per-country: a Service row exists per market,
+                        so there is no single global service to pick from. */}
+                    <span className="gh-field-label">Or just one service</span>
+                    <input
+                      name="serviceId"
+                      className="gh-input w-56"
+                      maxLength={40}
+                      placeholder="paste a Service id"
+                    />
+                  </label>
+                  <RuleFields currencyCode={plan.currencyCode} />
+                  <Btn type="submit" variant="secondary" size="sm">
+                    Add rule
+                  </Btn>
+                </form>
+                <p className="mt-2 text-portal-meta text-[var(--color-text-muted)]">
+                  Pinning to one service — the physiotherapy co-pay, for example
+                  — overrides the &ldquo;applies to&rdquo; choice. Copy the id
+                  from that service&rsquo;s admin page; each country has its own.
+                </p>
+              </details>
             </div>
+            </details>
           </AdminCard>
         ))
       )}
