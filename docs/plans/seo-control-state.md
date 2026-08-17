@@ -5692,3 +5692,35 @@ informational blogs and legacy redirect sources.
 5. Shareable report: `docs/audits/seo/seo-audit-2026-08-16.html`.
 
 ---
+
+## 24. LEGACY-URL-CLEANUP-002 — owner-directed dead-link disposition (2026-08-17)
+
+**Trigger.** The owner supplied the current GSC "Crawled – currently not indexed"
+export and directed that non-live Wix aliases be removed rather than kept as redirects
+to dead or unrelated pages. Focused production probes confirmed the defect: several
+doctor aliases ended at 404, while broad product and category rules sent identifiable
+content to `/` or to a generic hub despite an exact current page existing.
+
+**Decision and implementation.** Exact surviving lab-product aliases now redirect to
+their matching `/ireland/{lang}/lab-tests/{slug}` page; `home-delivery` routes to the
+localized lab hub; the observed `all-products` and `health-education` categories route
+to the localized lab and blog hubs. Homepage fallbacks for `product-page/*`,
+`gift-card`, and broad category aliases were removed. Observed dead doctor aliases,
+unmistakable CMS placeholders, retired beauty/telemedicine products, and gift-card
+aliases are path-level 410s in `frontend/lib/seo/gone-content.ts`.
+
+Path-level doctor removals are deliberately distinct from `GONE_DOCTORS`: Mirza Aun
+Muhammad and Irene Galve Moros still appear in migration data even though the probed
+production profile URLs returned 404. The Wix-era language variants of those aliases
+are retired without claiming the clinician entity is departed; current canonical
+doctor-route shapes remain governed by the live content inventory.
+
+**Verification.** Focused redirect/gone-path suites: 135 passed, 5 network-gated tests
+skipped; frontend TypeScript passed; Next production build passed (885 static pages,
+degraded fallback enabled because the configured backend returned missing-country
+content during prerendering). A built-app HTTP pass verified 7 representative direct
+308s and 7 direct 410s; every 410 had no
+`Location` header, including the encoded Unicode and parenthesized URL cases. No
+production deploy was performed in this pass.
+
+---

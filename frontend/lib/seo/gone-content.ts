@@ -82,13 +82,84 @@ export const GONE_DOCTORS: readonly GoneDoctor[] = [
 /** Site locales — the `[lang]` segment, and the legacy Wix locale prefix. */
 export const GONE_LOCALES = ["en", "pt", "es", "cs", "ro", "de"] as const;
 
-/** Every URL shape a removed entity was reachable at. */
-export const GONE_PATHS: ReadonlySet<string> = new Set(
-  GONE_DOCTORS.flatMap(({ country, legacyPrefix, slug }) => [
+export type RetiredLegacyUrl = {
+  /** Exact Wix-era path. This does not declare the underlying entity gone. */
+  path: string;
+  reason: string;
+  approvedBy: string;
+};
+
+/**
+ * Observed Wix aliases that terminate at a production 404, plus unmistakable
+ * CMS placeholders. These are path-level removals, deliberately separate from
+ * `GONE_DOCTORS`: some clinicians still exist in migration data, so a dead old
+ * alias is not enough evidence to declare the person departed or to 410 every
+ * current-shape locale URL for that clinician.
+ */
+export const RETIRED_LEGACY_URLS: readonly RetiredLegacyUrl[] = [
+  ...[
+    "/ireland-doctors/dr-andra-cristea",
+    "/es/ireland-doctors/dr-mirza-aun-mohammad",
+    "/ro/spain-doctors/irene-galve-moros",
+    "/es/spain-doctors/irene-galve-moros",
+    "/pt/spain-doctors/dr-yliana-muñoz-bravo",
+    "/pt/spain-doctors/dr-daniela-stefani-",
+    "/portugal-doctors/dr-luis-infante",
+  ].map((path) => ({
+    path,
+    reason: "Observed Wix alias redirected to a current-shape clinician URL that returned 404 on 2026-08-17",
+    approvedBy: "Site owner instruction, 2026-08-17 — remove non-live legacy links rather than retain dead redirects",
+  })),
+  ...[
+    "/ro/l",
+    "/ro/general-5",
+    "/es/items-2/this-is-a-title-03",
+    "/es/product-page/beauty-focus-multibeauty",
+    "/pt/product-page/beauty-focus-multibeauty",
+    "/cs/product-page/beauty-focus-multibeauty",
+    "/ro/product-page/beauty-focus-multibeauty",
+    "/product-page/telemedicine-kit",
+    "/pt/product-page/telemedicine-kit",
+    "/cs/product-page/telemedicine-kit",
+    "/gift-card",
+    "/cs/gift-card",
+    "/es/gift-card",
+    "/pt/gift-card",
+    "/ro/gift-card",
+  ].map((path) => ({
+    path,
+    reason: "Wix CMS placeholder or retired product alias with no matching current route in the 2026-08-17 route inventory",
+    approvedBy: "Site owner instruction, 2026-08-17 — remove non-live legacy links rather than retain dead redirects",
+  })),
+];
+
+export const RETIRED_LEGACY_PATHS: ReadonlySet<string> = new Set(
+  RETIRED_LEGACY_URLS.map(({ path }) => path),
+);
+
+const RETIRED_LEGACY_DOCTOR_ALIAS_PATHS = [...RETIRED_LEGACY_PATHS].flatMap((path) => {
+  const segments = path.replace(/^\/+/, "").split("/");
+  const prefixIndex = segments.findIndex((segment) => segment.endsWith("-doctors"));
+  const legacyPrefix = segments[prefixIndex];
+  const slug = segments[prefixIndex + 1];
+  if (!legacyPrefix || !slug) return [];
+  return [
     `/${legacyPrefix}/${slug}`,
-    ...GONE_LOCALES.map((l) => `/${l}/${legacyPrefix}/${slug}`),
-    ...GONE_LOCALES.map((l) => `/${country}/${l}/doctors/${slug}`),
-  ]),
+    ...GONE_LOCALES.map((locale) => `/${locale}/${legacyPrefix}/${slug}`),
+  ];
+});
+
+/** Every removed entity path and retired Wix alias shape that must return 410. */
+export const GONE_PATHS: ReadonlySet<string> = new Set(
+  [
+    ...GONE_DOCTORS.flatMap(({ country, legacyPrefix, slug }) => [
+      `/${legacyPrefix}/${slug}`,
+      ...GONE_LOCALES.map((l) => `/${l}/${legacyPrefix}/${slug}`),
+      ...GONE_LOCALES.map((l) => `/${country}/${l}/doctors/${slug}`),
+    ]),
+    ...RETIRED_LEGACY_PATHS,
+    ...RETIRED_LEGACY_DOCTOR_ALIAS_PATHS,
+  ],
 );
 
 /** Case- and trailing-slash-insensitive; tolerates percent-encoded paths. */
@@ -112,7 +183,20 @@ export function isGonePath(pathname: string): boolean {
  * to carry a lookahead that excludes nothing.
  */
 export function slugMatcherExcludingGone(legacyPrefix: string): string {
-  const slugs = GONE_DOCTORS.filter((d) => d.legacyPrefix === legacyPrefix).map((d) => d.slug);
+  const retiredLegacySlugs = [...RETIRED_LEGACY_PATHS].flatMap((path) => {
+    const segments = path.replace(/^\/+/, "").split("/");
+    const prefixIndex = segments.indexOf(legacyPrefix);
+    return prefixIndex >= 0 && segments[prefixIndex + 1] ? [segments[prefixIndex + 1]] : [];
+  });
+  const slugs = [
+    ...GONE_DOCTORS.filter((d) => d.legacyPrefix === legacyPrefix).map((d) => d.slug),
+    ...retiredLegacySlugs,
+  ]
+    .flatMap((slug) => {
+      const encoded = encodeURIComponent(slug);
+      return encoded === slug ? [slug] : [slug, encoded];
+    })
+    .filter((slug, index, all) => all.indexOf(slug) === index);
   if (slugs.length === 0) return ":slug";
   const alternation = slugs.map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
   // Two details, both found live on 2026-08-08 rather than reasoned out — the

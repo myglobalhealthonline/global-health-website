@@ -798,13 +798,59 @@ const nextConfig: NextConfig = {
       // (HTTP 200 + "Page not found"), which is what users hit from old
       // search results. Inventory mirrors data/routes.ts.
       { source: "/home", destination: "/", permanent: true },
-      { source: "/gift-card", destination: "/", permanent: true },
-      { source: "/home-delivery", destination: "/", permanent: true },
       { source: "/partner-clinics", destination: "/", permanent: true },
-      { source: "/category/:slug", destination: "/", permanent: true },
+      { source: "/home-delivery", destination: "/ireland/en/lab-tests", permanent: true },
+      { source: "/category/health-education", destination: "/ireland/en/blog", permanent: true },
       { source: "/pricing-plans/list", destination: "/ireland/en/pricing", permanent: true },
       { source: "/online-prescription", destination: "/ireland/en/gp-consultation-online", permanent: true },
       { source: "/home-health-test", destination: "/ireland/en/lab-tests", permanent: true },
+      ...[
+        ["psa-test-%28prostatic-specific-antigen%29", "psa-prostate-test"],
+        ["amh-test-%28anti-m%C3%BCllerian-hormone%29", "amh-fertility-test"],
+      ].flatMap(([legacySlug, currentSlug]) => [
+        { source: `/home-health-tests/${legacySlug}`, destination: `/ireland/en/lab-tests/${currentSlug}`, permanent: true },
+        { source: `/:locale(cs|es|pt|ro)/home-health-tests/${legacySlug}`, destination: `/ireland/:locale/lab-tests/${currentSlug}`, permanent: true },
+        { source: `/home-health-tests-1/${legacySlug}`, destination: `/ireland/en/lab-tests/${currentSlug}`, permanent: true },
+        { source: `/:locale(cs|es|pt|ro)/home-health-tests-1/${legacySlug}`, destination: `/ireland/:locale/lab-tests/${currentSlug}`, permanent: true },
+      ]),
+      // Exact Wix product aliases. These must precede the collection catch-all
+      // so surviving tests keep their accumulated equity on the matching
+      // product page rather than being flattened onto the lab hub.
+      ...[
+        ["genetic-lactose-intolereance-test", "genetic-lactose-intolerance-test"],
+        ["thyroid-home-blood-test", "thyroid-function-test"],
+        ["heart-health-home-test", "heart-health-cholesterol-test"],
+        ["female-hormone-test", "female-hormone-test"],
+        ["male-hormone-test", "male-hormone-test"],
+        ["psa-test-prostatic-specific-antigen", "psa-prostate-test"],
+        ["amh-test-anti-m%C3%BCllerian-hormone", "amh-fertility-test"],
+        ["gut-microbiome-test", "gut-microbiome-test"],
+        ["coeliac-disease-test", "genetic-coeliac-disease-test"],
+        ["osentia-fracture-risk-assessment-test", "fracture-risk-assessment-test"],
+        ["general-health-blood-hometest", "general-health-test"],
+        ["nutrition-and-lifestyle-home-dna-test", "nutrition-lifestyle-dna-test"],
+      ].flatMap(([legacySlug, currentSlug]) => [
+        { source: `/product-page/${legacySlug}`, destination: `/ireland/en/lab-tests/${currentSlug}`, permanent: true },
+        { source: `/:locale(cs|es|pt|ro)/product-page/${legacySlug}`, destination: `/ireland/:locale/lab-tests/${currentSlug}`, permanent: true },
+      ]),
+      ...[
+        ["heart-health-home-test", "heart-health-cholesterol-test"],
+        ["female-hormone-test", "female-hormone-test"],
+        ["male-hormone-test", "male-hormone-test"],
+        ["thyroid-home-blood-test", "thyroid-function-test"],
+        ["gut-microbiome-test", "gut-microbiome-test"],
+        ["nutrition-and-lifestyle-home-dna-test", "nutrition-lifestyle-dna-test"],
+        ["osentia-fracture-risk-assessment-test", "fracture-risk-assessment-test"],
+        ["haemochromatosis-test", "genetic-haemochromatosis-test"],
+        ["vitamin-d-blood-test", "vitamin-d-test"],
+        ["vitamin-b12-blood-test", "vitamin-b12-test"],
+        ["coeliac-disease-test", "genetic-coeliac-disease-test"],
+      ].flatMap(([legacySlug, currentSlug]) => [
+        { source: `/home-health-tests/${legacySlug}`, destination: `/ireland/en/lab-tests/${currentSlug}`, permanent: true },
+        { source: `/:locale(cs|es|pt|ro)/home-health-tests/${legacySlug}`, destination: `/ireland/:locale/lab-tests/${currentSlug}`, permanent: true },
+        { source: `/home-health-tests-1/${legacySlug}`, destination: `/ireland/en/lab-tests/${currentSlug}`, permanent: true },
+        { source: `/:locale(cs|es|pt|ro)/home-health-tests-1/${legacySlug}`, destination: `/ireland/:locale/lab-tests/${currentSlug}`, permanent: true },
+      ]),
       { source: "/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
       { source: "/booking-calendar", destination: "/ireland/en/book", permanent: true },
       // Wix appended the service name as a path segment (…/consulta-de-urologia).
@@ -988,8 +1034,16 @@ const nextConfig: NextConfig = {
         destination: "/czechia/cs/doctors/:slug",
         permanent: true,
       },
-      { source: "/pt/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
-      { source: "/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
+      {
+        source: `/pt/portugal-doctors/${slugMatcherExcludingGone("portugal-doctors")}`,
+        destination: "/portugal/pt/doctors/:slug",
+        permanent: true,
+      },
+      {
+        source: `/spain-doctors/${slugMatcherExcludingGone("spain-doctors")}`,
+        destination: "/spain/es/doctors/:slug",
+        permanent: true,
+      },
       { source: "/romania-doctors/:slug", destination: "/romania/ro/doctors/:slug", permanent: true },
       // Legacy Wix top-level pages. The bare /about was retired (2026-08-15,
       // see the "retired global pages" block at the end of this list) — these
@@ -1055,12 +1109,24 @@ const nextConfig: NextConfig = {
         destination: "/ireland/en/doctors/:slug",
         permanent: true,
       },
-      { source: "/:locale(cs|es|pt|ro)/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/spain-doctors/:slug", destination: "/spain/es/doctors/:slug", permanent: true },
+      {
+        source: `/:locale(cs|es|pt|ro)/portugal-doctors/${slugMatcherExcludingGone("portugal-doctors")}`,
+        destination: "/portugal/pt/doctors/:slug",
+        permanent: true,
+      },
+      {
+        source: `/:locale(cs|es|pt|ro)/spain-doctors/${slugMatcherExcludingGone("spain-doctors")}`,
+        destination: "/spain/es/doctors/:slug",
+        permanent: true,
+      },
       { source: "/:locale(cs|es|pt|ro)/romania-doctors/:slug", destination: "/romania/ro/doctors/:slug", permanent: true },
       // Bare (unprefixed) portugal-doctors — the other 4 country families
       // already have bare rules above; portugal-doctors was missing one.
-      { source: "/portugal-doctors/:slug", destination: "/portugal/pt/doctors/:slug", permanent: true },
+      {
+        source: `/portugal-doctors/${slugMatcherExcludingGone("portugal-doctors")}`,
+        destination: "/portugal/pt/doctors/:slug",
+        permanent: true,
+      },
 
       // -- locale-prefixed team/hub pages ---------------------------------
       { source: "/:locale(cs|es|pt|ro)/ireland-team", destination: "/ireland/en/doctors", permanent: true },
@@ -1085,7 +1151,7 @@ const nextConfig: NextConfig = {
       { source: "/:locale(es|pt)/home-br", destination: "/brazil/:locale", permanent: true },
       { source: "/:locale(cs|ro)/home-br", destination: "/brazil/pt", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/home", destination: "/ireland/:locale", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/home-delivery", destination: "/", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-delivery", destination: "/ireland/:locale/lab-tests", permanent: true },
       // Bare Wix language-root (e.g. plain /cs with no page segment).
       { source: "/cs", destination: "/czechia/cs", permanent: true },
 
@@ -1180,19 +1246,18 @@ const nextConfig: NextConfig = {
       { source: "/:locale(cs|es|pt|ro)/blog", destination: "/ireland/en/blog", permanent: true },
       // (bare + locale-prefixed /booking-calendar/:slug are declared once,
       // higher up in the legacy Wix block — a second copy here was dead.)
-      { source: "/:locale(cs|es|pt|ro)/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-health-tests/:slug", destination: "/ireland/:locale/lab-tests", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/home-health-tests-1/:slug", destination: "/ireland/:locale/lab-tests", permanent: true },
       // Top-level /services/<slug> only — the live pages are
       // /{country}/{lang}/services/<slug>, which this cannot match.
       { source: "/services/:slug", destination: "/ireland/en/gp-consultation-online", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/privacy", destination: "/privacy", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/about", destination: "/ireland/en/about", permanent: true },
       { source: "/frequent-asked-questions", destination: "/ireland/en/faq", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/gift-card", destination: "/", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/partner-clinics", destination: "/", permanent: true },
       { source: "/es/partnerclinics", destination: "/", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/category/:slug", destination: "/", permanent: true },
-      { source: "/product-page/:slug", destination: "/", permanent: true },
-      { source: "/:locale(cs|es|pt|ro)/product-page/:slug", destination: "/", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/category/all-products", destination: "/ireland/:locale/lab-tests", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/category/health-education", destination: "/ireland/:locale/blog", permanent: true },
 
       // -- Ireland partner-clinic / prescriptions / service-page ----------
       { source: "/ireland-partner-clinic/:slug", destination: "/ireland/en", permanent: true },
