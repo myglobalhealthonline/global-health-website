@@ -115,7 +115,18 @@ before(async () => {
       },
       corporateBookingText: () => "patient text",
       corporateDoctorBookingText: () => "doctor text",
+      sendCorporateBookingCancelledEmail: async (o: { to: string }) => {
+        state.emails.push({ to: o.to, meetingUrl: null });
+      },
+      sendCorporateDoctorCancelledEmail: async (o: { to: string }) => {
+        state.emails.push({ to: o.to, meetingUrl: null });
+      },
+      corporateBookingCancelledText: () => "patient cancelled text",
+      corporateDoctorCancelledText: () => "doctor cancelled text",
     },
+  });
+  mock.module("./corporate-request.service.js", {
+    namedExports: { corporateBookPath: (id: string) => `/account/corporate/book/${id}` },
   });
   svc = await import("./corporate-booking-notifications.js");
 });
@@ -220,6 +231,44 @@ describe("notifyCorporateBookingCreated", () => {
       corporateService: null,
     };
     await svc.notifyCorporateBookingCreated("appt-1");
+    assert.deepEqual(state.emails, []);
+    assert.deepEqual(state.whatsapps, []);
+    assert.deepEqual(state.bells, []);
+  });
+});
+
+describe("notifyCorporateBookingCancelled", () => {
+  it("tells the member and the doctor, on every channel", async () => {
+    await svc.notifyCorporateBookingCancelled("appt-1");
+    assert.deepEqual(state.emails.map((e) => e.to), ["pedro@example.test", "tiago@example.test"]);
+    assert.deepEqual(state.whatsapps.map((w) => w.to), ["+351911111111", "+353871234567"]);
+    // The patient self-cancel path rings no bell at all today, so this is the
+    // only signal the doctor gets that the slot came back.
+    assert.deepEqual(state.bells, [{ doctorId: "doc-1", type: "APPOINTMENT_STATUS_CHANGED" }]);
+  });
+
+  it("keeps the same consent asymmetry as the confirmation", async () => {
+    state.appointment = { ...(state.appointment as Record<string, unknown>), whatsappConsent: false };
+    await svc.notifyCorporateBookingCancelled("appt-1");
+    assert.equal(state.whatsapps.find((w) => w.to === "+351911111111")?.patientConsent, false);
+    const doctor = state.whatsapps.find((w) => w.to === "+353871234567");
+    assert.equal(doctor && "patientConsent" in doctor, false);
+  });
+
+  it("never mints a meeting link on the way out", async () => {
+    state.meetConfigured = true;
+    await svc.notifyCorporateBookingCancelled("appt-1");
+    assert.deepEqual(state.meetAttendees, []);
+    assert.equal(state.updateManyWhere, null);
+  });
+
+  it("no-ops for an ordinary catalogue cancellation", async () => {
+    state.appointment = {
+      ...(state.appointment as Record<string, unknown>),
+      corporateServiceId: null,
+      corporateService: null,
+    };
+    await svc.notifyCorporateBookingCancelled("appt-1");
     assert.deepEqual(state.emails, []);
     assert.deepEqual(state.whatsapps, []);
     assert.deepEqual(state.bells, []);

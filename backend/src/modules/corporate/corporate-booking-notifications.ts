@@ -7,12 +7,17 @@ import { resolveDoctorContact } from "../../lib/whatsapp/resolve-doctor-contact.
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
 import { notifyDoctor } from "../notifications/notify.service.js";
 import {
+  corporateBookingCancelledText,
   corporateBookingText,
   corporateDoctorBookingText,
+  corporateDoctorCancelledText,
+  sendCorporateBookingCancelledEmail,
   sendCorporateBookingConfirmationEmail,
   sendCorporateDoctorBookingEmail,
+  sendCorporateDoctorCancelledEmail,
 } from "./corporate-emails.js";
 import { resolveDoctorTimeZone } from "../doctor-availability/doctor-availability.service.js";
+import { corporateBookPath } from "./corporate-request.service.js";
 
 /**
  * Everything a corporate consultation needs at booking time: a Google Meet
@@ -77,15 +82,7 @@ export async function notifyCorporateBookingCreated(appointmentId: string): Prom
   const timeZone = appointment.doctorId
     ? await resolveDoctorTimeZone(appointment.doctorId)
     : "UTC";
-  const when = appointment.scheduledAt.toLocaleString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone,
-    timeZoneName: "short",
-  });
+  const when = formatWhen(appointment.scheduledAt, timeZone);
 
   const firstName = appointment.fullName.trim().split(/\s+/)[0] || appointment.fullName;
   const patientCopy = {
@@ -153,6 +150,121 @@ export async function notifyCorporateBookingCreated(appointmentId: string): Prom
       "doctor whatsapp",
     );
   }
+}
+
+/**
+ * The member and the doctor are told when a corporate consultation is
+ * cancelled — from the patient's own "Cancel" button, from an admin status
+ * change, or from the doctor portal, all three of which funnel through
+ * `onCorporateAppointmentStatusChanged`.
+ *
+ * Nothing in the product emailed anyone on cancellation:
+ * `cancelAppointmentForPatient` writes an audit row and stops, and the admin
+ * status route only rings the doctor's bell. The catalogue's cancellation mail
+ * is the non-payment / credit-note pair, which is order-keyed and so unreachable
+ * for a free booking. Same fire-and-forget contract as the confirmation.
+ */
+export async function notifyCorporateBookingCancelled(appointmentId: string): Promise<void> {
+  const appointment = await prisma.appointment.findUnique({
+    where: { id: appointmentId },
+    select: {
+      email: true,
+      fullName: true,
+      phone: true,
+      countryCode: true,
+      consultationType: true,
+      scheduledAt: true,
+      whatsappConsent: true,
+      corporateServiceId: true,
+      doctorId: true,
+    },
+  });
+  if (!appointment?.corporateServiceId || !appointment.scheduledAt) return;
+
+  const doctorContact = await resolveDoctorContact(appointment.doctorId);
+  const timeZone = appointment.doctorId
+    ? await resolveDoctorTimeZone(appointment.doctorId)
+    : "UTC";
+  const when = formatWhen(appointment.scheduledAt, timeZone);
+  const firstName = appointment.fullName.trim().split(/\s+/)[0] || appointment.fullName;
+  const rebookPath = corporateBookPath(appointment.corporateServiceId);
+
+  await settle(
+    sendCorporateBookingCancelledEmail({
+      to: appointment.email,
+      firstName,
+      consultationName: appointment.consultationType,
+      when,
+      rebookPath,
+    }),
+    "patient cancellation email",
+  );
+
+  if (appointment.phone) {
+    await settle(
+      sendWhatsAppText({
+        to: appointment.phone,
+        message: corporateBookingCancelledText({
+          firstName,
+          consultationName: appointment.consultationType,
+          when,
+          rebookPath,
+        }),
+        hints: { orderCountryCode: appointment.countryCode },
+        patientConsent: appointment.whatsappConsent,
+      }),
+      "patient cancellation whatsapp",
+    );
+  }
+
+  if (!appointment.doctorId) return;
+  const doctorCopy = {
+    doctorName: doctorContact?.fullName ?? "there",
+    patientName: appointment.fullName,
+    consultationName: appointment.consultationType,
+    when,
+  };
+
+  // The patient self-cancel path rings no bell at all today, so this is the
+  // only signal the assigned doctor gets that their slot came back.
+  await settle(
+    notifyDoctor(appointment.doctorId, "APPOINTMENT_STATUS_CHANGED", {
+      snippet: `${appointment.fullName} · ${appointment.consultationType} · ${when} · cancelled`,
+    }),
+    "doctor cancellation notification",
+  );
+
+  if (doctorContact?.loginEmail) {
+    await settle(
+      sendCorporateDoctorCancelledEmail({ to: doctorContact.loginEmail, ...doctorCopy }),
+      "doctor cancellation email",
+    );
+  }
+
+  if (doctorContact?.whatsappNumber) {
+    await settle(
+      sendWhatsAppText({
+        to: doctorContact.whatsappNumber,
+        message: corporateDoctorCancelledText(doctorCopy),
+        hints: doctorContact.whatsappHints,
+      }),
+      "doctor cancellation whatsapp",
+    );
+  }
+}
+
+/** Clinic-zone wall clock. Shared so a confirmation and its cancellation can
+ *  never disagree about what time the consultation was. */
+function formatWhen(at: Date, timeZone: string): string {
+  return at.toLocaleString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone,
+    timeZoneName: "short",
+  });
 }
 
 /** One failing channel must not take the others down with it. */

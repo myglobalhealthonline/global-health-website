@@ -193,6 +193,78 @@ export function corporateBookingText(opts: CorporateBookingCopy): string {
   return `Hi ${opts.firstName}, your ${opts.consultationName}${withDoctor} is booked for ${opts.when}. It is covered by your corporate plan — nothing to pay. ${tail}`;
 }
 
+/**
+ * Cancellation notice for a corporate consultation.
+ *
+ * Nothing anywhere emails a patient when a booked consultation is cancelled —
+ * `cancelAppointmentForPatient` records an audit row and stops, and the admin
+ * status route only rings the doctor's bell. The catalogue's only cancellation
+ * mail is the non-payment / credit-note pair, which is order-keyed and never
+ * reaches a free booking. Scoped to corporate here rather than bolted onto
+ * `updateAppointmentStatus`, so no catalogue booking's mail behaviour changes
+ * and nothing can double up with the order-cancel flows.
+ */
+export async function sendCorporateBookingCancelledEmail(opts: {
+  to: string;
+  firstName: string;
+  consultationName: string;
+  when: string;
+  rebookPath: string;
+}) {
+  const link = absoluteSiteUrl(opts.rebookPath);
+  return sendEmail({
+    to: opts.to,
+    subject: `Cancelled — ${opts.consultationName}`,
+    text: `Hi ${opts.firstName},\n\nYour ${opts.consultationName} on ${opts.when} has been cancelled. Nothing was charged.\n\nThe time has been released. You can book another one whenever you are ready:\n\n${link}\n\n— Global Health`,
+    html: wrapHtml(
+      "Consultation cancelled",
+      `<p>Hi ${escapeHtml(opts.firstName)},</p>
+       <p>Your <strong>${escapeHtml(opts.consultationName)}</strong> on <strong>${escapeHtml(opts.when)}</strong> has been cancelled. Nothing was charged.</p>
+       <p>The time has been released — you can book another one whenever you are ready.</p>
+       ${button(link, "Book another consultation")}`,
+    ),
+  });
+}
+
+export function corporateBookingCancelledText(opts: {
+  firstName: string;
+  consultationName: string;
+  when: string;
+  rebookPath: string;
+}): string {
+  return `Hi ${opts.firstName}, your ${opts.consultationName} on ${opts.when} has been cancelled. Nothing was charged and the time is released. Book another: ${absoluteSiteUrl(opts.rebookPath)}`;
+}
+
+export async function sendCorporateDoctorCancelledEmail(opts: {
+  to: string;
+  doctorName: string;
+  patientName: string;
+  consultationName: string;
+  when: string;
+}) {
+  const link = absoluteSiteUrl("/doctor/appointments");
+  return sendEmail({
+    to: opts.to,
+    subject: `Cancelled — ${opts.consultationName}, ${opts.when}`,
+    text: `Hi ${opts.doctorName},\n\n${opts.patientName}'s ${opts.consultationName} on ${opts.when} has been cancelled. The slot is back on your calendar.\n\nYour queue: ${link}\n\n— Global Health`,
+    html: wrapHtml(
+      "Consultation cancelled",
+      `<p>Hi ${escapeHtml(opts.doctorName)},</p>
+       <p><strong>${escapeHtml(opts.patientName)}</strong>'s <strong>${escapeHtml(opts.consultationName)}</strong> on <strong>${escapeHtml(opts.when)}</strong> has been cancelled. The slot is back on your calendar.</p>
+       ${button(link, "Open your queue")}`,
+    ),
+  });
+}
+
+export function corporateDoctorCancelledText(opts: {
+  doctorName: string;
+  patientName: string;
+  consultationName: string;
+  when: string;
+}): string {
+  return `Hi ${opts.doctorName}, ${opts.patientName}'s ${opts.consultationName} on ${opts.when} has been cancelled. The slot is back on your calendar: ${absoluteSiteUrl("/doctor/appointments")}`;
+}
+
 /** Doctor-side copy. Deliberately omits the employer, matching the doctor
  *  queue's own rule — the assigned doctor is told which corporate flow the
  *  booking came from, never which company the patient works for. */

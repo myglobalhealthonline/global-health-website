@@ -545,6 +545,16 @@ export async function onCorporateAppointmentStatusChanged(
 ): Promise<void> {
   if (newStatus !== "COMPLETED" && newStatus !== "CANCELLED") return;
 
+  if (newStatus === "CANCELLED") {
+    // Patient "Cancel", admin status change and the doctor portal all funnel
+    // through here, and none of them told anyone. Fire-and-forget: the state
+    // change below must land whether or not the mail provider is up.
+    const { notifyCorporateBookingCancelled } = await import(
+      "./corporate-booking-notifications.js"
+    );
+    fireAndForget(notifyCorporateBookingCancelled(appointmentId), "cancellation notice");
+  }
+
   const employee = await prisma.corporateEmployee.findUnique({
     where: { preAssessmentAppointmentId: appointmentId },
     select: { id: true, status: true },
