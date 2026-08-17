@@ -538,7 +538,6 @@
     "benefitsDiscountLine": "{percent}% reducere la {label}",
     "benefitsDiscountHint": "Se aplică automat la plată.",
     "benefitsServices": "Consultații incluse",
-    "benefitsRequestOnly": "Se poate programa după ce compania o solicită",
     "benefitsOnboardingOnly": "Parte din procesul de înscriere",
     "benefitsBook": "Programează",
     "benefitsEmpty": "Planul dumneavoastră nu are încă beneficii configurate.",

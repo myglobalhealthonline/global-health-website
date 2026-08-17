@@ -538,7 +538,6 @@
     "benefitsDiscountLine": "{percent} % Rabatt auf {label}",
     "benefitsDiscountHint": "Wird beim Bezahlen automatisch angewendet.",
     "benefitsServices": "Enthaltene Konsultationen",
-    "benefitsRequestOnly": "Buchbar, sobald Ihr Unternehmen sie anfordert",
     "benefitsOnboardingOnly": "Teil Ihres Onboardings",
     "benefitsBook": "Buchen",
     "benefitsEmpty": "In Ihrem Tarif sind noch keine Leistungen konfiguriert.",

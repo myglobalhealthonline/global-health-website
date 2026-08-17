@@ -104,7 +104,6 @@ const companyInputSchema = z.object({
   contactEmail: z.string().trim().email().max(320),
   contactPhone: z.string().trim().max(40).optional(),
   planSlug: z.string().trim().default("corporate-standard"),
-  preAssessmentDoctorId: z.string().trim().optional(),
   contractEndAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   /** When set, immediately create + invite the CORPORATE_ADMIN login. */
   adminEmail: z.string().trim().email().max(320).optional(),
@@ -202,18 +201,28 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
   });
 
   /** A doctor who actually exists, is active, and — when the consultation is
-   *  pinned to a market — practises in it. Without the country check a plan
-   *  could hand a PT employee an IE doctor's slots. */
+   *  pinned to a market — practises in it. Both the doctor's primary country
+   *  and their additional DoctorCountry listings count: a doctor primarily in
+   *  PT but listed in IE really does practise in IE, and checking only the
+   *  primary refused a legitimate assignment. */
   async function assertAssignableDoctor(
     doctorId: string,
     countryCode: string | null | undefined,
   ): Promise<string | null> {
     const doctor = await prisma.doctor.findFirst({
       where: { id: doctorId, active: true },
-      select: { country: { select: { code: true } } },
+      select: {
+        country: { select: { code: true } },
+        additionalCountries: { select: { country: { select: { code: true } } } },
+      },
     });
     if (!doctor) return "Doctor not found";
-    if (countryCode && doctor.country.code !== countryCode) {
+    if (!countryCode) return null;
+    const markets = new Set([
+      doctor.country.code,
+      ...doctor.additionalCountries.map((row) => row.country.code),
+    ]);
+    if (!markets.has(countryCode)) {
       return "The assigned doctor does not practise in that country";
     }
     return null;
@@ -396,7 +405,6 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
         contactEmail: input.contactEmail,
         contactPhone: input.contactPhone || null,
         planId: plan.id,
-        preAssessmentDoctorId: input.preAssessmentDoctorId || null,
         contractEndAt: input.contractEndAt ? new Date(`${input.contractEndAt}T23:59:59.000Z`) : null,
       },
     });
@@ -421,7 +429,6 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       include: {
         plan: true,
         adminUser: { select: { email: true, emailVerifiedAt: true } },
-        preAssessmentDoctor: { select: { id: true, fullName: true } },
       },
     });
     if (!company) return reply.status(404).send(errorResponse("Company not found"));
@@ -446,7 +453,6 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     const { id } = request.params as { id: string };
     const schema = companyInputSchema.partial().extend({
       status: z.enum(["ACTIVE", "SUSPENDED", "EXPIRED"]).optional(),
-      preAssessmentDoctorId: z.string().nullable().optional(),
       contractEndAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
     });
     const parsed = schema.safeParse(request.body);

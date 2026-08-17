@@ -84,15 +84,10 @@ END $$;
 -- ---------------------------------------------------------------------------
 -- 3. CorporateServiceRequest: serviceId → corporateServiceId.
 -- ---------------------------------------------------------------------------
--- Open requests pointed at a Service row that is about to be deleted and carry
--- no corporate consultation to move to, so they are closed rather than left
--- dangling. CANCELLED (not EXPIRED) because this is a platform change, not the
--- employee running out of time; HR can raise them again against the new rows.
-UPDATE "CorporateServiceRequest"
-   SET "status" = 'CANCELLED',
-       "cancelledAt" = COALESCE("cancelledAt", CURRENT_TIMESTAMP)
- WHERE "status" IN ('REQUESTED', 'EMPLOYEE_NOTIFIED');
-
+-- Every request pointed at a Service row that is about to be deleted and has no
+-- corporate consultation to move to, so the table is cleared rather than left
+-- dangling. HR raises them again against the new rows. (Verified empty in
+-- production before this shipped, so no live request is being discarded.)
 DELETE FROM "CorporateServiceRequest";
 
 ALTER TABLE "CorporateServiceRequest" DROP CONSTRAINT IF EXISTS "CorporateServiceRequest_serviceId_fkey";

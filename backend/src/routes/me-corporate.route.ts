@@ -457,17 +457,6 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     return beneficiary?.company ?? null;
   }
 
-  app.get("/api/me/corporate/services", async (request, reply) => {
-    const userId = request.authUser!.sub;
-    const company = await memberCompany(userId);
-    if (!company) return reply.status(403).send(errorResponse("No corporate membership"));
-    const services = await listCorporateServicesForPlan({
-      planId: company.planId,
-      countryCode: company.countryCode,
-    });
-    return okResponse({ services, companyLive: companyIsLive(company) });
-  });
-
   app.get("/api/me/corporate/services/:id", async (request, reply) => {
     const userId = request.authUser!.sub;
     const { id } = request.params as { id: string };

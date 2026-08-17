@@ -538,7 +538,6 @@
     "benefitsDiscountLine": "{percent} % sleva na {label}",
     "benefitsDiscountHint": "Uplatní se automaticky při platbě.",
     "benefitsServices": "Zahrnuté konzultace",
-    "benefitsRequestOnly": "Lze objednat, jakmile o to vaše společnost požádá",
     "benefitsOnboardingOnly": "Součást vašeho nástupu",
     "benefitsBook": "Objednat",
     "benefitsEmpty": "Ve vašem plánu zatím nejsou nastaveny žádné výhody.",

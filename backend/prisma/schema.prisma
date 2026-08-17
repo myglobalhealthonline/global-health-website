@@ -5557,8 +5557,11 @@ model CorporateCompany {
   /// company when the login is deleted; admin re-invites a new one.
   adminUserId           String?                   @unique
   adminUser             User?                     @relation("CorporateCompanyAdmin", fields: [adminUserId], references: [id], onDelete: SetNull)
-  /// "Selected Doctor/Admin" — employee pre-assessments are pinned to
-  /// this doctor when set (server-enforced at booking time).
+  /// DEPRECATED — nothing reads or writes this. The doctor who delivers a
+  /// pre-assessment is now the one assigned to the plan's PRE_ASSESSMENT
+  /// CorporatePlanService, which is also what the booking runs on. Kept as a
+  /// column (no reader, no writer, no UI) rather than dropped, so an
+  /// already-deployed value is not destroyed by a migration that buys nothing.
   preAssessmentDoctorId String?
   preAssessmentDoctor   Doctor?                   @relation(fields: [preAssessmentDoctorId], references: [id], onDelete: SetNull)
   contractStartAt       DateTime                  @default(now())

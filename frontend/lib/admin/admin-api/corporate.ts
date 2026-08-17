@@ -122,8 +122,6 @@ export type CorporateCompanyDetailDto = {
     maxBeneficiariesPerEmployee: number;
   };
   adminLogin: { email: string; active: boolean } | null;
-  preAssessmentDoctorId: string | null;
-  preAssessmentDoctor: { id: string; fullName: string } | null;
   contractStartAt: string;
   contractEndAt: string | null;
   billing: {

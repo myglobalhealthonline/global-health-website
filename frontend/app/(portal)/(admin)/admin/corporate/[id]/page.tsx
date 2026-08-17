@@ -3,7 +3,6 @@ import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { ArrowLeft, ClipboardList, ExternalLink, Receipt, UserRound, Users } from "lucide-react";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
-import { fetchAdminDoctors } from "@/lib/admin/admin-api";
 import {
   cancelCorporateRequest,
   fetchCorporateBeneficiaries,
@@ -219,19 +218,6 @@ async function cancelRequestAction(formData: FormData) {
   backTo(companyId, "requests", { success: "Request cancelled" });
 }
 
-async function updateDoctorAction(formData: FormData) {
-  "use server";
-  await requireAdminAction();
-  const companyId = String(formData.get("companyId") ?? "");
-  const doctorId = String(formData.get("preAssessmentDoctorId") ?? "").trim();
-  const result = await patchCorporateCompany(companyId, {
-    preAssessmentDoctorId: doctorId || null,
-  });
-  if (!result.ok) backTo(companyId, "settings", { error: result.message });
-  revalidatePath(`/admin/corporate/${companyId}`);
-  backTo(companyId, "settings", { success: "Pre-assessment doctor updated" });
-}
-
 /* ── Page ────────────────────────────────────────────────────────────────── */
 
 export default async function AdminCorporateCompanyPage({ params, searchParams }: PageProps) {
@@ -255,14 +241,13 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
   }
   const company = companyResult.data;
 
-  const [employeesResult, beneficiariesResult, requestsResult, doctorsResult, invoicesResult] =
+  const [employeesResult, beneficiariesResult, requestsResult, invoicesResult] =
     await Promise.all([
       tab === "employees" || tab === "requests"
         ? fetchCorporateEmployees(id)
         : Promise.resolve(null),
       tab === "beneficiaries" ? fetchCorporateBeneficiaries(id) : Promise.resolve(null),
       tab === "requests" ? fetchCorporateRequests(id) : Promise.resolve(null),
-      tab === "settings" ? fetchAdminDoctors({ pageSize: "250" }) : Promise.resolve(null),
       tab === "invoices" ? fetchCorporateInvoices(id) : Promise.resolve(null),
     ]);
 
@@ -890,42 +875,6 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
 
       {tab === "settings" ? (
         <div className="grid gap-4 lg:grid-cols-2">
-          <AdminCard padding={0} className="overflow-hidden">
-            <SectionHeader
-              title="Pre-assessment doctor"
-              description="Employees are pinned to this doctor for their onboarding pre-assessment. Unset = any doctor offering the service."
-            />
-            <form
-              action={updateDoctorAction}
-              className="flex flex-wrap items-end gap-3 border-t border-[var(--color-border)] px-5 py-4"
-            >
-              <input type="hidden" name="companyId" value={company.id} />
-              <label className="flex min-w-[16rem] flex-col gap-1">
-                <span className="gh-field-label">Doctor</span>
-                <select
-                  name="preAssessmentDoctorId"
-                  defaultValue={company.preAssessmentDoctorId ?? ""}
-                  className="gh-select"
-                >
-                  <option value="">No doctor pinned</option>
-                  {(doctorsResult?.ok ? doctorsResult.data.items : []).map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.fullName} ({d.country.code.toUpperCase()})
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <Btn type="submit" variant="secondary" size="sm">
-                Save
-              </Btn>
-              {!company.preAssessmentDoctorId ? (
-                <span className="text-portal-meta text-[var(--color-text-muted)]">
-                  ⚠ No doctor pinned — employees can book with any GP offering the pre-assessment.
-                </span>
-              ) : null}
-            </form>
-          </AdminCard>
-
           <AdminCard padding={0} className="overflow-hidden">
             <SectionHeader
               title="Plan"

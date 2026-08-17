@@ -538,7 +538,6 @@
     "benefitsDiscountLine": "{percent}% de desconto em {label}",
     "benefitsDiscountHint": "Aplicado automaticamente no pagamento.",
     "benefitsServices": "Consultas incluídas",
-    "benefitsRequestOnly": "Marcável assim que a sua empresa o solicitar",
     "benefitsOnboardingOnly": "Parte da sua integração",
     "benefitsBook": "Marcar",
     "benefitsEmpty": "O seu plano ainda não tem benefícios configurados.",

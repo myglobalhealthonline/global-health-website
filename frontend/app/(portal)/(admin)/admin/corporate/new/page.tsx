@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
-import { fetchAdminCountries, fetchAdminDoctors } from "@/lib/admin/admin-api";
+import { fetchAdminCountries } from "@/lib/admin/admin-api";
 import { fetchCorporatePlans, postCorporateCompany } from "@/lib/admin/admin-api/corporate";
 import { AdminCard, Btn, PageHeader, SectionHeader } from "../../_components/atoms";
 
@@ -35,7 +35,6 @@ async function createCompanyAction(formData: FormData) {
     city: optional("city"),
     postalCode: optional("postalCode"),
     planSlug: optional("planSlug") ?? "corporate-standard",
-    preAssessmentDoctorId: optional("preAssessmentDoctorId"),
     contractEndAt: optional("contractEndAt"),
     adminEmail: optional("adminEmail"),
   };
@@ -55,15 +54,13 @@ async function createCompanyAction(formData: FormData) {
 
 export default async function AdminNewCorporateCompanyPage({ searchParams }: PageProps) {
   const messages = searchParams ? await searchParams : {};
-  const [plansResult, countriesResult, doctorsResult] = await Promise.all([
+  const [plansResult, countriesResult] = await Promise.all([
     fetchCorporatePlans(),
     fetchAdminCountries(),
-    fetchAdminDoctors({ pageSize: "250" }),
   ]);
 
   const plans = plansResult.ok ? plansResult.data.plans : [];
   const countries = countriesResult.ok ? countriesResult.data.countries : [];
-  const doctors = doctorsResult.ok ? doctorsResult.data.items : [];
 
   return (
     <>
@@ -171,17 +168,6 @@ export default async function AdminNewCorporateCompanyPage({ searchParams }: Pag
                     </option>
                   ))
                 )}
-              </select>
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Pre-assessment doctor</span>
-              <select name="preAssessmentDoctorId" defaultValue="" className="gh-select">
-                <option value="">No doctor assigned</option>
-                {doctors.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.fullName} ({d.country.code.toUpperCase()})
-                  </option>
-                ))}
               </select>
             </label>
             <label className="flex flex-col gap-1">
