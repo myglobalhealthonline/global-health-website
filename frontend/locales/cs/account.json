@@ -573,7 +573,20 @@
     "profileCity": "Město",
     "profilePostalCode": "PSČ",
     "profileSave": "Uložit profil",
-    "profileSaved": "Profil aktualizován"
+    "profileSaved": "Profil aktualizován",
+    "bookTitle": "Objednejte se na konzultaci",
+    "bookFree": "Zdarma v rámci vašeho plánu",
+    "bookWith": "S lékařem {doctor}",
+    "bookDuration": "{minutes} min",
+    "bookChooseTime": "Vyberte čas",
+    "bookNoTimes": "Momentálně nejsou k dispozici žádné termíny. Zkuste to prosím zanedlouho znovu.",
+    "bookUnavailable": "Tato konzultace není dostupná",
+    "bookYourDetails": "Vaše údaje",
+    "bookNotes": "Cokoli, co by měl lékař vědět (nepovinné)",
+    "bookConsent": "Souhlasím s touto konzultací a s přístupem lékaře k mé zdravotní dokumentaci.",
+    "bookSubmit": "Potvrdit objednání",
+    "backToMembership": "Zpět na mé členství",
+    "bookFullName": "Celé jméno"
   },
   "insurance": {
     "title": "Údaje o pojištění",

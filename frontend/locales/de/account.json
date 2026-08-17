@@ -573,7 +573,20 @@
     "profileCity": "Stadt",
     "profilePostalCode": "Postleitzahl",
     "profileSave": "Profil speichern",
-    "profileSaved": "Profil aktualisiert"
+    "profileSaved": "Profil aktualisiert",
+    "bookTitle": "Ihre Beratung buchen",
+    "bookFree": "Kostenlos mit Ihrem Tarif",
+    "bookWith": "Mit {doctor}",
+    "bookDuration": "{minutes} Min.",
+    "bookChooseTime": "Zeit auswählen",
+    "bookNoTimes": "Derzeit sind keine Termine verfügbar. Bitte schauen Sie in Kürze erneut vorbei.",
+    "bookUnavailable": "Diese Beratung ist nicht verfügbar",
+    "bookYourDetails": "Ihre Angaben",
+    "bookNotes": "Was die Ärztin oder der Arzt wissen sollte (optional)",
+    "bookConsent": "Ich willige in diese Beratung und in den Zugriff der Ärztin oder des Arztes auf meine Krankenakte ein.",
+    "bookSubmit": "Buchung bestätigen",
+    "backToMembership": "Zurück zu meiner Mitgliedschaft",
+    "bookFullName": "Vollständiger Name"
   },
   "insurance": {
     "title": "Versicherungsdaten",

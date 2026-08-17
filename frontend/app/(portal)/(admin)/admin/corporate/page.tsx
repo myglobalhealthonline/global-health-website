@@ -7,6 +7,7 @@ import {
   fetchCorporateCompanies,
   fetchCorporatePlans,
   patchCorporatePlan,
+  patchCorporatePlanService,
   patchCorporateRule,
   postCorporatePlanService,
   type CorporatePlanServiceRole,
@@ -29,7 +30,6 @@ import {
   companyStatusLabel,
   companyStatusTone,
   formatCents,
-  planServiceRoleLabel,
   ruleLabel,
 } from "./_lib";
 
@@ -107,6 +107,38 @@ async function addPlanServiceAction(formData: FormData) {
   }
   revalidatePath("/admin/corporate");
   redirect(`/admin/corporate?success=${encodeURIComponent("Consultation added to plan")}`);
+}
+
+async function updatePlanServiceAction(formData: FormData) {
+  "use server";
+  await requireAdminAction();
+  const id = String(formData.get("planServiceId") ?? "").trim();
+  const name = String(formData.get("name") ?? "").trim();
+  const doctorId = String(formData.get("doctorId") ?? "").trim();
+  const countryCode = String(formData.get("countryCode") ?? "").trim();
+  const durationMinutes = Number(formData.get("durationMinutes"));
+  const role = String(formData.get("role") ?? "INCLUDED") as CorporatePlanServiceRole;
+  if (!id || !name || !doctorId) {
+    redirect(
+      `/admin/corporate?error=${encodeURIComponent("Name and assigned doctor are required")}`,
+    );
+  }
+  const result = await patchCorporatePlanService(id, {
+    name,
+    doctorId,
+    role,
+    countryCode: countryCode || null,
+    // An unchecked checkbox posts nothing, so absence means "off" here.
+    isActive: formData.get("isActive") === "on",
+    ...(Number.isFinite(durationMinutes) && durationMinutes > 0
+      ? { durationMinutes: Math.round(durationMinutes) }
+      : {}),
+  });
+  if (!result.ok) {
+    redirect(`/admin/corporate?error=${encodeURIComponent(result.message)}`);
+  }
+  revalidatePath("/admin/corporate");
+  redirect(`/admin/corporate?success=${encodeURIComponent("Consultation updated")}`);
 }
 
 async function removePlanServiceAction(formData: FormData) {
@@ -230,19 +262,82 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
               ) : (
                 <ul className="m-0 mb-4 flex list-none flex-col gap-2 p-0">
                   {plan.includedServices.map((ps) => (
-                    <li key={ps.id} className="flex flex-wrap items-center gap-3">
-                      <span className="min-w-[16rem] text-sm font-semibold text-[var(--color-text-primary)]">
-                        {ps.name}
-                      </span>
-                      <Pill tone={ps.role === "INCLUDED" ? "neutral" : "info"}>
-                        {planServiceRoleLabel(ps.role)}
-                      </Pill>
-                      <span className="text-portal-meta text-[var(--color-text-muted)]">
-                        {ps.doctor.fullName} · {ps.durationMinutes} min ·{" "}
-                        {ps.countryCode ? ps.countryCode.toUpperCase() : "All countries"}
-                      </span>
-                      {!ps.isActive ? <Pill tone="inactive">Inactive</Pill> : null}
-                      <form action={removePlanServiceAction}>
+                    <li key={ps.id}>
+                      <form
+                        action={updatePlanServiceAction}
+                        className="flex flex-wrap items-end gap-3"
+                      >
+                        <input type="hidden" name="planServiceId" value={ps.id} />
+                        <label className="flex flex-col gap-1">
+                          <span className="gh-field-label">Name</span>
+                          <input
+                            name="name"
+                            className="gh-input w-64"
+                            required
+                            maxLength={240}
+                            defaultValue={ps.name}
+                          />
+                        </label>
+                        <label className="flex flex-col gap-1">
+                          <span className="gh-field-label">Assigned doctor</span>
+                          <select
+                            name="doctorId"
+                            className="gh-select w-64"
+                            defaultValue={ps.doctorId}
+                          >
+                            {plansResult.data.doctorOptions.map((opt) => (
+                              <option key={opt.id} value={opt.id}>
+                                {opt.fullName} — {opt.country.code.toUpperCase()}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="flex flex-col gap-1">
+                          <span className="gh-field-label">Country</span>
+                          <select
+                            name="countryCode"
+                            className="gh-select w-44"
+                            defaultValue={ps.countryCode ?? ""}
+                          >
+                            <option value="">All countries</option>
+                            {plansResult.data.countryOptions.map((opt) => (
+                              <option key={opt.code} value={opt.code}>
+                                {opt.name}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="flex flex-col gap-1">
+                          <span className="gh-field-label">Duration (min)</span>
+                          <input
+                            type="number"
+                            name="durationMinutes"
+                            className="gh-input w-28"
+                            min={5}
+                            max={240}
+                            step={5}
+                            defaultValue={ps.durationMinutes}
+                          />
+                        </label>
+                        <label className="flex flex-col gap-1">
+                          <span className="gh-field-label">Role</span>
+                          <select name="role" className="gh-select w-56" defaultValue={ps.role}>
+                            {Object.entries(PLAN_SERVICE_ROLE_LABELS).map(([value, label]) => (
+                              <option key={value} value={value}>
+                                {label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="inline-flex items-center gap-1.5 pb-2 text-portal-compact text-[var(--color-text-muted)]">
+                          <input type="checkbox" name="isActive" defaultChecked={ps.isActive} />
+                          Active
+                        </label>
+                        <Btn type="submit" variant="secondary" size="sm">
+                          Save
+                        </Btn>
+                      </form>
+                      <form action={removePlanServiceAction} className="mt-1">
                         <input type="hidden" name="planServiceId" value={ps.id} />
                         <Btn type="submit" variant="ghost" size="sm">
                           Remove

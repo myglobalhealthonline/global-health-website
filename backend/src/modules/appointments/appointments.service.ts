@@ -630,8 +630,14 @@ export async function getAppointmentById(id: string): Promise<AdminAppointmentDe
     const row = await prisma.appointment.findUnique({
       where: { id },
       // Live catalogue service name as a fallback for the booked-line
-      // snapshot below (appointments booked without an order line).
-      select: { ...ADMIN_APPT_SELECT, service: { select: { name: true } } },
+      // snapshot below (appointments booked without an order line). A free
+      // corporate-plan consultation has neither, so its own name is the
+      // third fallback.
+      select: {
+        ...ADMIN_APPT_SELECT,
+        service: { select: { name: true } },
+        corporateService: { select: { name: true } },
+      },
     });
     if (!row) return null;
 
@@ -647,12 +653,12 @@ export async function getAppointmentById(id: string): Promise<AdminAppointmentDe
     ]);
     const order = orders.get(id) ?? null;
 
-    const { service, ...appointmentFields } = row;
+    const { service, corporateService, ...appointmentFields } = row;
     return {
       ...toAdminAppointment(appointmentFields as AppointmentRecord),
       orderId: order?.orderId ?? null,
       orderNumber: order?.orderNumber ?? null,
-      serviceName: bookedLine?.name ?? service?.name ?? null,
+      serviceName: bookedLine?.name ?? service?.name ?? corporateService?.name ?? null,
     };
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");

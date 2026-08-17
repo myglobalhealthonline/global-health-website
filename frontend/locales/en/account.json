@@ -573,7 +573,20 @@
     "profileCity": "City",
     "profilePostalCode": "Postal code",
     "profileSave": "Save profile",
-    "profileSaved": "Profile updated"
+    "profileSaved": "Profile updated",
+    "bookTitle": "Book your consultation",
+    "bookFree": "Free with your plan",
+    "bookWith": "With {doctor}",
+    "bookDuration": "{minutes} min",
+    "bookChooseTime": "Choose a time",
+    "bookNoTimes": "No times are available right now. Please check back shortly.",
+    "bookUnavailable": "This consultation is not available",
+    "bookYourDetails": "Your details",
+    "bookNotes": "Anything the doctor should know (optional)",
+    "bookConsent": "I consent to this consultation and to the doctor accessing my medical record.",
+    "bookSubmit": "Confirm booking",
+    "backToMembership": "Back to my membership",
+    "bookFullName": "Full name"
   },
   "insurance": {
     "title": "Insurance details",

@@ -573,7 +573,20 @@
     "profileCity": "Oraș",
     "profilePostalCode": "Cod poștal",
     "profileSave": "Salvați profilul",
-    "profileSaved": "Profil actualizat"
+    "profileSaved": "Profil actualizat",
+    "bookTitle": "Programați-vă consultația",
+    "bookFree": "Gratuit cu planul dumneavoastră",
+    "bookWith": "Cu {doctor}",
+    "bookDuration": "{minutes} min",
+    "bookChooseTime": "Alegeți o oră",
+    "bookNoTimes": "Nu există ore disponibile momentan. Vă rugăm să reveniți în curând.",
+    "bookUnavailable": "Această consultație nu este disponibilă",
+    "bookYourDetails": "Datele dumneavoastră",
+    "bookNotes": "Ceva ce medicul ar trebui să știe (opțional)",
+    "bookConsent": "Consimt la această consultație și la accesul medicului la dosarul meu medical.",
+    "bookSubmit": "Confirmați programarea",
+    "backToMembership": "Înapoi la abonamentul meu",
+    "bookFullName": "Nume complet"
   },
   "insurance": {
     "title": "Detalii asigurare",

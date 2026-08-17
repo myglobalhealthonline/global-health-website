@@ -361,6 +361,45 @@ export async function fetchMeCorporate() {
   return corporateRequest<MeCorporateMembershipDto>("/api/me/corporate");
 }
 
+/* ── Corporate consultations (free, portal-only) ───────────────────────── */
+
+export type MeCorporateServiceDto = {
+  id: string;
+  name: string;
+  description: string | null;
+  role: "INCLUDED" | "PRE_ASSESSMENT" | "ILLNESS_BENEFIT" | "FIT_FOR_WORK";
+  durationMinutes: number;
+  /** Null when the assigned doctor has been deactivated — nothing bookable. */
+  doctor: { id: string; fullName: string } | null;
+};
+
+export type MeCorporateSlotDto = { id: string; startAt: string; endAt: string };
+
+export async function fetchMeCorporateService(id: string) {
+  return corporateRequest<{
+    service: MeCorporateServiceDto;
+    slots: MeCorporateSlotDto[];
+    companyLive: boolean;
+  }>(`/api/me/corporate/services/${encodeURIComponent(id)}`);
+}
+
+export async function bookMeCorporateService(
+  id: string,
+  body: {
+    timeSlotId: string;
+    fullName: string;
+    email: string;
+    phone?: string;
+    notes?: string;
+    consentAccepted: true;
+  },
+) {
+  return corporateRequest<{ appointmentId: string }>(
+    `/api/me/corporate/services/${encodeURIComponent(id)}/book`,
+    { method: "POST", body },
+  );
+}
+
 export async function postMeCorporateBeneficiary(body: {
   firstName: string;
   lastName: string;

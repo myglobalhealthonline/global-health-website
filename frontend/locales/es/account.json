@@ -573,7 +573,20 @@
     "profileCity": "Ciudad",
     "profilePostalCode": "Código postal",
     "profileSave": "Guardar perfil",
-    "profileSaved": "Perfil actualizado"
+    "profileSaved": "Perfil actualizado",
+    "bookTitle": "Reservar su consulta",
+    "bookFree": "Gratis con su plan",
+    "bookWith": "Con {doctor}",
+    "bookDuration": "{minutes} min",
+    "bookChooseTime": "Elegir una hora",
+    "bookNoTimes": "No hay horarios disponibles en este momento. Vuelva a consultar en breve.",
+    "bookUnavailable": "Esta consulta no está disponible",
+    "bookYourDetails": "Sus datos",
+    "bookNotes": "Algo que el médico deba saber (opcional)",
+    "bookConsent": "Consiento esta consulta y el acceso del médico a mi historia clínica.",
+    "bookSubmit": "Confirmar reserva",
+    "backToMembership": "Volver a mi membresía",
+    "bookFullName": "Nombre completo"
   },
   "insurance": {
     "title": "Datos del seguro",

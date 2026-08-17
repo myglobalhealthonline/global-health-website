@@ -19,8 +19,14 @@ import { mintAndSendInvite } from "../modules/corporate/corporate-invite.service
 import {
   activateBeneficiary,
   notifyCompanyMemberProfileComplete,
+  onCorporateAppointmentCreated,
   setBeneficiaryStanding,
 } from "../modules/corporate/corporate-status.service.js";
+import {
+  bookCorporateConsultation,
+  listCorporateServiceSlots,
+  listCorporateServicesForPlan,
+} from "../modules/corporate/corporate-booking.service.js";
 import {
   REQUEST_TYPE_LABEL,
   corporateBookPath,
@@ -334,6 +340,81 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     }
     const status = await mintAndSendInvite({ type: "BENEFICIARY", memberId: id, isReminder: true });
     return okResponse({ id, status });
+  });
+
+  // ── Corporate consultations (free, portal-only) ────────────────────────────
+
+  /** The member's own company + plan, whether they are an employee or a
+   *  beneficiary. Employees are resolved even mid-onboarding, because the
+   *  pre-assessment is bookable before the membership is ACTIVE. */
+  async function memberCompany(userId: string) {
+    const employee = await getEmployeeMembershipForUser(userId);
+    if (employee) return employee.company;
+    const beneficiary = await getBeneficiaryMembershipForUser(userId);
+    return beneficiary?.company ?? null;
+  }
+
+  app.get("/api/me/corporate/services", async (request, reply) => {
+    const userId = request.authUser!.sub;
+    const company = await memberCompany(userId);
+    if (!company) return reply.status(403).send(errorResponse("No corporate membership"));
+    const services = await listCorporateServicesForPlan({
+      planId: company.planId,
+      countryCode: company.countryCode,
+    });
+    return okResponse({ services, companyLive: companyIsLive(company) });
+  });
+
+  app.get("/api/me/corporate/services/:id", async (request, reply) => {
+    const userId = request.authUser!.sub;
+    const { id } = request.params as { id: string };
+    const company = await memberCompany(userId);
+    if (!company) return reply.status(403).send(errorResponse("No corporate membership"));
+    const services = await listCorporateServicesForPlan({
+      planId: company.planId,
+      countryCode: company.countryCode,
+    });
+    // Resolved from the member's OWN plan list, so a consultation belonging to
+    // another plan 404s here rather than leaking its name via the slot feed.
+    const service = services.find((s) => s.id === id);
+    if (!service) return reply.status(404).send(errorResponse("Consultation not found"));
+    const slots = service.doctor ? await listCorporateServiceSlots(id) : [];
+    return okResponse({ service, slots, companyLive: companyIsLive(company) });
+  });
+
+  const bookBodySchema = z.object({
+    timeSlotId: z.string().trim().min(1).max(64),
+    fullName: z.string().trim().min(1).max(240),
+    email: z.string().trim().email().max(320),
+    phone: z.string().trim().max(40).optional(),
+    notes: z.string().trim().max(4000).optional(),
+    consentAccepted: z.literal(true),
+  });
+
+  // Rate-limited like the other booking surfaces: it claims a real slot on a
+  // real doctor's calendar, free or not.
+  app.post("/api/me/corporate/services/:id/book", {
+    config: { rateLimit: { max: 20, timeWindow: "1 hour" } },
+  }, async (request, reply) => {
+    const userId = request.authUser!.sub;
+    const { id } = request.params as { id: string };
+    const parsed = bookBodySchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    }
+    const { timeSlotId, fullName, email, phone, notes } = parsed.data;
+    const result = await bookCorporateConsultation({
+      userId,
+      corporateServiceId: id,
+      timeSlotId,
+      patient: { fullName, email, phone, notes },
+      consentAccepted: true,
+    });
+    if (!result.ok) return reply.status(result.status).send(errorResponse(result.message));
+    // Links the booking to the employee (pre-assessment) or the open company
+    // request, and advances the corporate status machine.
+    await onCorporateAppointmentCreated(result.appointmentId);
+    return okResponse({ appointmentId: result.appointmentId });
   });
 };
 
