@@ -5,6 +5,7 @@ import {
   CalendarCheck2,
   CheckCircle2,
   Circle,
+  Download,
   Percent,
   UserPlus,
 } from "lucide-react";
@@ -109,6 +110,20 @@ async function beneficiaryRowAction(formData: FormData) {
 
 /** `validUntil` arrives as "YYYY-MM-DD"; render it in the portal locale. Parsed
  *  as UTC so a negative-offset browser can't roll the date back a day. */
+/** Prices come from the country's own Service rows, so the currency is
+ *  whatever that market charges in — never assume the plan's. */
+function formatMoney(cents: number, currencyCode: string | null, locale: string) {
+  const amount = cents / 100;
+  if (!currencyCode) return amount.toFixed(2);
+  try {
+    return new Intl.NumberFormat(locale, { style: "currency", currency: currencyCode }).format(
+      amount,
+    );
+  } catch {
+    return `${amount.toFixed(2)} ${currencyCode}`;
+  }
+}
+
 function formatCardDate(isoDate: string, locale: string) {
   const parsed = new Date(`${isoDate}T00:00:00Z`);
   if (Number.isNaN(parsed.getTime())) return isoDate;
@@ -167,6 +182,8 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
   const maxBeneficiaries = membership.maxBeneficiaries ?? 5;
   const openRequests = membership.openRequests ?? [];
   const benefits = membership.benefits ?? { discounts: [], includedServices: [] };
+  const discountedServices = benefits.discountedServices ?? [];
+  const planDetails = membership.planDetails ?? null;
 
   // Employees compute completeness from the membership row; a beneficiary is
   // simply left in PROFILE_INCOMPLETE until theirs is filled in.
@@ -357,10 +374,26 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
               <p className="text-sm text-[var(--color-text-muted)]">{t.cardPending}</p>
             )}
             {card ? (
-              <p className="mt-3 text-xs text-[var(--color-text-muted)]">
-                {t.valid} {card.validFrom} → {card.validUntil} · {t.verifyAt}{" "}
-                <span className="font-mono">/card-verify/{card.cardNumber}</span>
-              </p>
+              <>
+                <p className="mt-3 text-xs text-[var(--color-text-muted)]">
+                  {t.valid} {card.validFrom} → {card.validUntil} · {t.verifyAt}{" "}
+                  <span className="font-mono">/card-verify/{card.cardNumber}</span>
+                </p>
+                <div className="mt-3 flex justify-end">
+                  {/* A plain anchor, not a client component: the endpoint is
+                      same-origin with the session cookie and answers with
+                      Content-Disposition: attachment, so the browser saves the
+                      PNG itself. An image is what members put in a wallet app. */}
+                  <a
+                    href="/api/me/corporate/card.png"
+                    download
+                    className="gh-btn gh-btn-secondary inline-flex items-center gap-2"
+                  >
+                    <Download className="size-4" aria-hidden />
+                    {tMembership.downloadCard}
+                  </a>
+                </div>
+              </>
             ) : null}
             {card && card.status !== "ACTIVE" ? (
               <p className="gh-status-warning mt-3 rounded-md border px-4 py-3 text-sm">
@@ -437,7 +470,80 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
           )}
         </AdminCard>
 
-        {/* Open requests */}
+          {/* What the member would actually pay on the public catalogue. The
+            percentages above are the rule; this is the rule applied, priced by
+            the same rounding checkout uses. */}
+        {discountedServices.length > 0 ? (
+          <AdminCard padding={0} className="overflow-hidden lg:col-span-2">
+            <SectionHeader
+              as="h2"
+              title={t.pricesTitle}
+              description={t.pricesDesc}
+            />
+            <ul className="m-0 list-none divide-y divide-[var(--color-border)] border-t border-[var(--color-border)] p-0">
+              {discountedServices.map((s) => (
+                <li key={s.slug} className="flex flex-wrap items-center gap-3 px-5 py-3.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-[var(--color-text-primary)]">
+                      {s.name}
+                    </p>
+                    <p className="text-xs text-[var(--color-text-muted)]">
+                      {t.pricesSaving.replace("{percent}", String(s.discountPercent))}
+                    </p>
+                  </div>
+                  <p className="text-sm">
+                    <span className="text-[var(--color-text-muted)] line-through">
+                      {formatMoney(s.basePriceCents, s.currencyCode, locale)}
+                    </span>{" "}
+                    <span className="font-semibold text-[var(--color-text-primary)]">
+                      {formatMoney(s.memberPriceCents, s.currencyCode, locale)}
+                    </span>
+                  </p>
+                  <Btn href={s.bookPath} variant="secondary" size="sm">
+                    {t.benefitsBook}
+                  </Btn>
+                </li>
+              ))}
+            </ul>
+          </AdminCard>
+        ) : null}
+
+        {/* Plan details */}
+        {planDetails ? (
+          <AdminCard padding={0} className="overflow-hidden lg:col-span-2">
+            <SectionHeader as="h2" title={t.planTitle} description={t.planDesc} />
+            <dl className="m-0 grid gap-x-6 gap-y-3 border-t border-[var(--color-border)] px-5 py-4 sm:grid-cols-2">
+              {[
+                [t.planCompany, planDetails.companyName],
+                [t.planName, planDetails.planName],
+                [
+                  t.planCover,
+                  `${formatCardDate(planDetails.contractStartAt.slice(0, 10), locale)} → ${
+                    planDetails.contractEndAt
+                      ? formatCardDate(planDetails.contractEndAt.slice(0, 10), locale)
+                      : t.planOpenEnded
+                  }`,
+                ],
+                [t.planBeneficiaries, String(planDetails.maxBeneficiaries)],
+                [t.planContact, planDetails.contactName],
+                [
+                  t.planContactDetails,
+                  [planDetails.contactEmail, planDetails.contactPhone].filter(Boolean).join(" · "),
+                ],
+              ].map(([label, value]) => (
+                <div key={label} className="flex flex-col gap-0.5">
+                  <dt className="gh-field-label">{label}</dt>
+                  <dd className="m-0 text-sm text-[var(--color-text-primary)]">{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="border-t border-[var(--color-border)] px-5 py-3 text-xs text-[var(--color-text-muted)]">
+              {t.planContactHint}
+            </p>
+          </AdminCard>
+        ) : null}
+
+      {/* Open requests */}
         <AdminCard padding={0} className="overflow-hidden">
           <SectionHeader as="h2" title={t.requestsTitle} description={t.requestsDesc} />
           {openRequests.length === 0 ? (

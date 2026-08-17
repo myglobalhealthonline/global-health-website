@@ -133,6 +133,19 @@ export type MemberBenefits = {
     durationMinutes: number;
     doctorId: string;
   }[];
+  /** Every public service the member's rules actually discount, with the price
+   *  they would pay. Priced by the same `percentDiscountAmountCents` rounding
+   *  checkout uses, so the "you pay" figure is not an approximation of it. */
+  discountedServices: {
+    slug: string;
+    name: string;
+    kind: string;
+    discountPercent: number;
+    basePriceCents: number;
+    memberPriceCents: number;
+    currencyCode: string | null;
+    bookPath: string;
+  }[];
 };
 
 const SERVICE_KIND_LABEL: Record<string, string> = {
@@ -151,6 +164,7 @@ const SERVICE_KIND_LABEL: Record<string, string> = {
 export async function resolveMemberBenefits(input: {
   planId: string;
   countryCode: string;
+  locale: string;
   memberType: "EMPLOYEE" | "BENEFICIARY";
 }): Promise<MemberBenefits> {
   const countryCode = input.countryCode.toLowerCase();
@@ -193,19 +207,95 @@ export async function resolveMemberBenefits(input: {
     : [];
   const bySlug = new Map(localRows.map((s) => [s.slug, s]));
 
-  const discounts = rules
+  const applicableRules = rules
     .filter((r) => r.discountPercent > 0)
-    .filter((r) => input.memberType !== "BENEFICIARY" || r.appliesToBeneficiaries)
-    .flatMap((r) => {
-      const kind = r.service?.kind ?? r.serviceKind;
-      if (kind !== "GENERAL" && kind !== "SPECIALIST") return [];
-      const label = r.service
-        ? (bySlug.get(r.service.slug)?.name ?? r.service.slug)
-        : SERVICE_KIND_LABEL[kind];
-      return [{ label, discountPercent: r.discountPercent }];
-    });
+    .filter((r) => input.memberType !== "BENEFICIARY" || r.appliesToBeneficiaries);
 
-  return { discounts, includedServices: planServices };
+  const discounts = applicableRules.flatMap((r) => {
+    const kind = r.service?.kind ?? r.serviceKind;
+    if (kind !== "GENERAL" && kind !== "SPECIALIST") return [];
+    const label = r.service
+      ? (bySlug.get(r.service.slug)?.name ?? r.service.slug)
+      : SERVICE_KIND_LABEL[kind];
+    return [{ label, discountPercent: r.discountPercent }];
+  });
+
+  return {
+    discounts,
+    includedServices: planServices,
+    discountedServices: await resolveDiscountedServices(applicableRules, countryCode, input.locale),
+  };
+}
+
+/**
+ * The member's rules applied across the country's public catalogue, so the
+ * portal can show a real "you pay" figure per service instead of a bare
+ * percentage. Matching order mirrors `resolveCorporateDiscount` exactly —
+ * pinned service wins over kind — because a list that disagreed with checkout
+ * would be worse than no list.
+ */
+async function resolveDiscountedServices(
+  rules: { serviceId: string | null; serviceKind: string | null; discountPercent: number }[],
+  countryCode: string,
+  locale: string,
+): Promise<MemberBenefits["discountedServices"]> {
+  if (rules.length === 0) return [];
+  const kinds = Array.from(
+    new Set(
+      rules.flatMap((r) =>
+        r.serviceKind === "GENERAL" || r.serviceKind === "SPECIALIST" ? [r.serviceKind] : [],
+      ),
+    ),
+  );
+  const pinnedIds = rules.flatMap((r) => (r.serviceId ? [r.serviceId] : []));
+  if (kinds.length === 0 && pinnedIds.length === 0) return [];
+
+  const services = await prisma.service.findMany({
+    where: {
+      isActive: true,
+      visibility: "PUBLIC",
+      country: { code: countryCode },
+      basePriceCents: { gt: 0 },
+      OR: [
+        ...(kinds.length ? [{ kind: { in: kinds as ("GENERAL" | "SPECIALIST")[] } }] : []),
+        ...(pinnedIds.length ? [{ id: { in: pinnedIds } }] : []),
+      ],
+    },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      kind: true,
+      basePriceCents: true,
+      currencyCode: true,
+    },
+    orderBy: [{ kind: "asc" }, { name: "asc" }],
+  });
+
+  return services.flatMap((service) => {
+    const rule =
+      rules.find((r) => r.serviceId === service.id) ??
+      rules.find((r) => !r.serviceId && r.serviceKind === service.kind);
+    // A price-less service has nothing to discount, so it would only add a
+    // "0% off" row. The query already filters these out; the guard is what
+    // makes that non-null for the arithmetic below.
+    if (!rule || service.basePriceCents == null) return [];
+    const basePriceCents = service.basePriceCents;
+    const discountCents = percentDiscountAmountCents(basePriceCents, rule.discountPercent);
+    if (discountCents <= 0) return [];
+    return [
+      {
+        slug: service.slug,
+        name: service.name,
+        kind: service.kind as string,
+        discountPercent: rule.discountPercent,
+        basePriceCents,
+        memberPriceCents: Math.max(0, basePriceCents - discountCents),
+        currencyCode: service.currencyCode,
+        bookPath: `/${countryCode}/${locale.toLowerCase()}/book?service=${service.slug}`,
+      },
+    ];
+  });
 }
 
 export type CorporateBookabilityResult =

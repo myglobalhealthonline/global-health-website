@@ -586,7 +586,20 @@
     "bookConsent": "I consent to this consultation and to the doctor accessing my medical record.",
     "bookSubmit": "Confirm booking",
     "backToMembership": "Back to my membership",
-    "bookFullName": "Full name"
+    "bookFullName": "Full name",
+    "pricesTitle": "Your member prices",
+    "pricesDesc": "What you pay on our public services with your corporate discount applied.",
+    "pricesSaving": "{percent}% off with your plan",
+    "planTitle": "Plan details",
+    "planDesc": "Your employer's cover and who to contact about it.",
+    "planCompany": "Company",
+    "planName": "Plan",
+    "planCover": "Cover period",
+    "planOpenEnded": "Open-ended",
+    "planBeneficiaries": "Beneficiaries allowed",
+    "planContact": "Company contact",
+    "planContactDetails": "Contact details",
+    "planContactHint": "Questions about eligibility, suspensions or leaving the plan go to your employer, not to Global Health."
   },
   "insurance": {
     "title": "Insurance details",

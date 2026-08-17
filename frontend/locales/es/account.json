@@ -586,7 +586,20 @@
     "bookConsent": "Consiento esta consulta y el acceso del médico a mi historia clínica.",
     "bookSubmit": "Confirmar reserva",
     "backToMembership": "Volver a mi membresía",
-    "bookFullName": "Nombre completo"
+    "bookFullName": "Nombre completo",
+    "pricesTitle": "Sus precios de miembro",
+    "pricesDesc": "Lo que paga en nuestros servicios públicos con su descuento corporativo aplicado.",
+    "pricesSaving": "{percent}% de descuento con su plan",
+    "planTitle": "Detalles del plan",
+    "planDesc": "La cobertura de su empresa y con quién contactar al respecto.",
+    "planCompany": "Empresa",
+    "planName": "Plan",
+    "planCover": "Periodo de cobertura",
+    "planOpenEnded": "Sin fecha de fin",
+    "planBeneficiaries": "Beneficiarios permitidos",
+    "planContact": "Contacto de la empresa",
+    "planContactDetails": "Datos de contacto",
+    "planContactHint": "Las cuestiones sobre elegibilidad, suspensiones o baja del plan corresponden a su empresa, no a Global Health."
   },
   "insurance": {
     "title": "Datos del seguro",

@@ -313,6 +313,32 @@ export type MeCorporateBenefitsDto = {
     durationMinutes: number;
     doctorId: string;
   }[];
+  /** Public services the member's rules discount, with the price they pay.
+   *  Optional so the portal survives a frontend deploy landing first. */
+  discountedServices?: {
+    slug: string;
+    name: string;
+    kind: string;
+    discountPercent: number;
+    basePriceCents: number;
+    memberPriceCents: number;
+    currencyCode: string | null;
+    bookPath: string;
+  }[];
+};
+
+/** Plan facts a member may see about their own membership. No billing. */
+export type MeCorporatePlanDetailsDto = {
+  companyName: string;
+  planName: string;
+  countryCode: string;
+  status: string;
+  contractStartAt: string;
+  contractEndAt: string | null;
+  maxBeneficiaries: number;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string | null;
 };
 
 export type MeCorporateMembershipDto = {
@@ -326,6 +352,7 @@ export type MeCorporateMembershipDto = {
   locale?: string;
   planName: string;
   benefits?: MeCorporateBenefitsDto;
+  planDetails?: MeCorporatePlanDetailsDto;
   maxBeneficiaries?: number;
   status: string;
   onboarding?: {

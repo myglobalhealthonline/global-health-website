@@ -586,7 +586,20 @@
     "bookConsent": "Consinto esta consulta e o acesso do médico ao meu processo clínico.",
     "bookSubmit": "Confirmar marcação",
     "backToMembership": "Voltar à minha adesão",
-    "bookFullName": "Nome completo"
+    "bookFullName": "Nome completo",
+    "pricesTitle": "Os seus preços de membro",
+    "pricesDesc": "O que paga nos nossos serviços públicos com o seu desconto corporativo aplicado.",
+    "pricesSaving": "{percent}% de desconto com o seu plano",
+    "planTitle": "Detalhes do plano",
+    "planDesc": "A cobertura da sua entidade patronal e quem contactar sobre ela.",
+    "planCompany": "Empresa",
+    "planName": "Plano",
+    "planCover": "Período de cobertura",
+    "planOpenEnded": "Sem termo",
+    "planBeneficiaries": "Beneficiários permitidos",
+    "planContact": "Contacto da empresa",
+    "planContactDetails": "Dados de contacto",
+    "planContactHint": "Questões sobre elegibilidade, suspensões ou saída do plano são para a sua entidade patronal, não para a Global Health."
   },
   "insurance": {
     "title": "Dados do seguro",

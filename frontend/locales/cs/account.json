@@ -586,7 +586,20 @@
     "bookConsent": "Souhlasím s touto konzultací a s přístupem lékaře k mé zdravotní dokumentaci.",
     "bookSubmit": "Potvrdit objednání",
     "backToMembership": "Zpět na mé členství",
-    "bookFullName": "Celé jméno"
+    "bookFullName": "Celé jméno",
+    "pricesTitle": "Vaše členské ceny",
+    "pricesDesc": "Kolik zaplatíte za naše veřejné služby po uplatnění firemní slevy.",
+    "pricesSaving": "{percent}% sleva v rámci vašeho plánu",
+    "planTitle": "Podrobnosti plánu",
+    "planDesc": "Krytí od vašeho zaměstnavatele a na koho se v této věci obrátit.",
+    "planCompany": "Společnost",
+    "planName": "Plán",
+    "planCover": "Období krytí",
+    "planOpenEnded": "Bez data ukončení",
+    "planBeneficiaries": "Povolený počet oprávněných osob",
+    "planContact": "Kontaktní osoba společnosti",
+    "planContactDetails": "Kontaktní údaje",
+    "planContactHint": "Dotazy k nároku, pozastavení nebo ukončení účasti v plánu řešte se svým zaměstnavatelem, nikoli s Global Health."
   },
   "insurance": {
     "title": "Údaje o pojištění",

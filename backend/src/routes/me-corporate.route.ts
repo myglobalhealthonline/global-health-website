@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import type { LocaleCode } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { requireAuth } from "../utils/require-auth.js";
@@ -33,6 +34,45 @@ import {
   planServiceForRole,
 } from "../modules/corporate/corporate-request.service.js";
 import { resolveMemberBenefits } from "../modules/corporate/corporate-benefit.service.js";
+import {
+  corporateCardFilename,
+  renderCorporateCardPng,
+} from "../modules/corporate/corporate-card-image.js";
+import { membershipCardCopy } from "../modules/memberships/membership-emails.js";
+
+/**
+ * The plan facts a member is entitled to see about their OWN membership:
+ * who the employer is, which plan, how long the cover runs, and who to ask.
+ * Deliberately no billing figures — what the company pays per employee is
+ * commercial data between the company and Global Health, not member-facing.
+ */
+function serializePlanDetails(company: {
+  name: string;
+  countryCode: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string | null;
+  status: string;
+  contractStartAt: Date;
+  contractEndAt: Date | null;
+  plan: { name: string; maxBeneficiariesPerEmployee: number };
+}) {
+  return {
+    companyName: company.name,
+    planName: company.plan.name,
+    countryCode: company.countryCode,
+    status: company.status,
+    contractStartAt: company.contractStartAt.toISOString(),
+    contractEndAt: company.contractEndAt ? company.contractEndAt.toISOString() : null,
+    maxBeneficiaries: company.plan.maxBeneficiariesPerEmployee,
+    // The company's own contact — who a member chases about eligibility,
+    // suspensions or leaving the plan. Global Health support cannot answer
+    // those; only the employer can.
+    contactName: company.contactName,
+    contactEmail: company.contactEmail,
+    contactPhone: company.contactPhone,
+  };
+}
 
 /**
  * Patient-portal corporate membership endpoints. Everything is scoped
@@ -64,6 +104,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
       const benefits = await resolveMemberBenefits({
         planId: employee.company.planId,
         countryCode: employee.company.countryCode,
+        locale,
         memberType: "EMPLOYEE",
       });
       const bookPath = preAssessmentService ? corporateBookPath(preAssessmentService.id) : null;
@@ -77,6 +118,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
         locale,
         planName: employee.company.plan.name,
         benefits,
+        planDetails: serializePlanDetails(employee.company),
         maxBeneficiaries: employee.company.plan.maxBeneficiariesPerEmployee,
         status: employee.status,
         onboarding: {
@@ -119,6 +161,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
       const benefits = await resolveMemberBenefits({
         planId: beneficiary.company.planId,
         countryCode: beneficiary.company.countryCode,
+        locale,
         memberType: "BENEFICIARY",
       });
       return okResponse({
@@ -129,6 +172,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
         locale,
         planName: beneficiary.company.plan.name,
         benefits,
+        planDetails: serializePlanDetails(beneficiary.company),
         status: beneficiary.status,
         profile: {
           phone: beneficiary.phone,
@@ -340,6 +384,65 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     }
     const status = await mintAndSendInvite({ type: "BENEFICIARY", memberId: id, isReminder: true });
     return okResponse({ id, status });
+  });
+
+  /**
+   * The benefit card as a downloadable PNG — the same renderer the private
+   * membership card uses, so the two stay one design. Scoped to the caller's
+   * own membership: there is no id in the path at all, so someone else's card
+   * is not addressable here.
+   */
+  app.get("/api/me/corporate/card.png", async (request, reply) => {
+    const userId = request.authUser!.sub;
+    const employee = await getEmployeeMembershipForUser(userId);
+    const beneficiary = employee ? null : await getBeneficiaryMembershipForUser(userId);
+    const member = employee ?? beneficiary;
+    if (!member) return reply.status(404).send(errorResponse("No corporate membership"));
+
+    const company = member.company;
+    const card = await prisma.corporateBenefitCard.findUnique({
+      where: employee ? { employeeId: employee.id } : { beneficiaryId: beneficiary!.id },
+    });
+    if (!card) return reply.status(404).send(errorResponse("No card has been issued yet"));
+
+    const locale = await memberBookingLocale(userId, company.countryCode);
+    const localeCode = locale.toUpperCase() as LocaleCode;
+    const copy = membershipCardCopy(localeCode);
+    const benefits = await resolveMemberBenefits({
+      planId: company.planId,
+      countryCode: company.countryCode,
+      locale,
+      memberType: employee ? "EMPLOYEE" : "BENEFICIARY",
+    });
+
+    const png = await renderCorporateCardPng({
+      cardNumber: card.cardNumber,
+      holderName: `${member.firstName} ${member.lastName}`.trim(),
+      email: member.email,
+      firstName: member.firstName,
+      companyName: company.name,
+      planName: company.plan.name,
+      status: card.status,
+      validThrough: card.validUntil.toLocaleDateString(locale, {
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "UTC",
+      }),
+      countryCode: company.countryCode,
+      memberType: employee ? "EMPLOYEE" : "BENEFICIARY",
+      benefitLines: benefits.discounts.map((d) => `${d.discountPercent}% · ${d.label}`),
+      locale: localeCode,
+    }, copy);
+
+    return reply
+      .header("Content-Type", "image/png")
+      .header(
+        "Content-Disposition",
+        `attachment; filename="${corporateCardFilename(card.cardNumber)}"`,
+      )
+      // A card is per-member data behind a session — never a shared cache.
+      .header("Cache-Control", "private, no-store")
+      .send(png);
   });
 
   // ── Corporate consultations (free, portal-only) ────────────────────────────

@@ -586,7 +586,20 @@
     "bookConsent": "Consimt la această consultație și la accesul medicului la dosarul meu medical.",
     "bookSubmit": "Confirmați programarea",
     "backToMembership": "Înapoi la abonamentul meu",
-    "bookFullName": "Nume complet"
+    "bookFullName": "Nume complet",
+    "pricesTitle": "Prețurile dumneavoastră de membru",
+    "pricesDesc": "Cât plătiți pentru serviciile noastre publice cu reducerea corporativă aplicată.",
+    "pricesSaving": "{percent}% reducere cu planul dumneavoastră",
+    "planTitle": "Detaliile planului",
+    "planDesc": "Acoperirea oferită de angajator și pe cine să contactați în legătură cu ea.",
+    "planCompany": "Companie",
+    "planName": "Plan",
+    "planCover": "Perioada de acoperire",
+    "planOpenEnded": "Fără termen",
+    "planBeneficiaries": "Beneficiari permiși",
+    "planContact": "Persoana de contact a companiei",
+    "planContactDetails": "Date de contact",
+    "planContactHint": "Întrebările despre eligibilitate, suspendări sau retragerea din plan se adresează angajatorului, nu Global Health."
   },
   "insurance": {
     "title": "Detalii asigurare",

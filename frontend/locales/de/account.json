@@ -586,7 +586,20 @@
     "bookConsent": "Ich willige in diese Beratung und in den Zugriff der Ärztin oder des Arztes auf meine Krankenakte ein.",
     "bookSubmit": "Buchung bestätigen",
     "backToMembership": "Zurück zu meiner Mitgliedschaft",
-    "bookFullName": "Vollständiger Name"
+    "bookFullName": "Vollständiger Name",
+    "pricesTitle": "Ihre Mitgliederpreise",
+    "pricesDesc": "Was Sie für unsere öffentlichen Leistungen mit Ihrem Firmenrabatt zahlen.",
+    "pricesSaving": "{percent}% Rabatt mit Ihrem Tarif",
+    "planTitle": "Tarifdetails",
+    "planDesc": "Der Versicherungsschutz Ihres Arbeitgebers und die zuständige Ansprechperson.",
+    "planCompany": "Unternehmen",
+    "planName": "Tarif",
+    "planCover": "Deckungszeitraum",
+    "planOpenEnded": "Unbefristet",
+    "planBeneficiaries": "Zulässige Angehörige",
+    "planContact": "Ansprechperson im Unternehmen",
+    "planContactDetails": "Kontaktdaten",
+    "planContactHint": "Fragen zu Anspruch, Aussetzung oder Austritt aus dem Tarif richten Sie an Ihren Arbeitgeber, nicht an Global Health."
   },
   "insurance": {
     "title": "Versicherungsdaten",
