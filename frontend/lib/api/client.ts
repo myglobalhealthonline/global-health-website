@@ -196,6 +196,21 @@ export async function acquireBuildSlot(): Promise<() => void> {
 }
 
 /**
+ * Next's own "this route can't be static" signal, thrown by an uncached fetch
+ * during prerender. Matched by digest/name rather than by importing Next's
+ * internal error class, which is not part of its public surface.
+ */
+function isDynamicServerError(error: unknown): boolean {
+  const candidate = error as { digest?: unknown; name?: string; message?: string } | null;
+  if (!candidate) return false;
+  if (typeof candidate.digest === "string" && candidate.digest.startsWith("DYNAMIC_SERVER_USAGE")) {
+    return true;
+  }
+  if (candidate.name === "DynamicServerError") return true;
+  return typeof candidate.message === "string" && candidate.message.includes("Dynamic server usage");
+}
+
+/**
  * How long to wait before a retry. 429s carry "Rate limit exceeded, retry in N
  * seconds" (or a Retry-After header) and are honoured exactly; everything else
  * backs off exponentially with jitter so a fleet of prerender workers that all
@@ -414,6 +429,13 @@ export async function apiRequest<T>(
         await new Promise((resolve) => setTimeout(resolve, waitMs));
       } catch (err) {
         if (isLast) throw err;
+        // A DynamicServerError is not a transient blip — it is Next refusing an
+        // uncached fetch inside a static render, which is exactly what the
+        // `no-store` retry below turns every subsequent attempt into. Retrying
+        // it can never succeed, and it REPLACES the real first error (a
+        // truncated response, a 429) with itself in every later log line, so
+        // the build reports the symptom and buries the cause. Rethrow at once.
+        if (isDynamicServerError(err)) throw err;
         const waitMs = Math.min(retryBaseMs * 2 ** attempt * (1 + Math.random()), retryCapMs);
         if (IS_BUILD) {
           console.warn(
