@@ -20,7 +20,9 @@ export function corporateInviteLink(token: string): string {
 }
 
 /** Member invite (employee or beneficiary). Also used verbatim for the
- *  WhatsApp text — keep the copy channel-neutral. */
+ *  WhatsApp text — keep the copy channel-neutral, and keep every URL alone on
+ *  its own line (WhatsApp linkifies to the next whitespace, so trailing prose
+ *  on a link line reads as part of the link). */
 export function memberInviteText(opts: {
   firstName: string;
   companyName: string;
@@ -28,9 +30,13 @@ export function memberInviteText(opts: {
   link: string;
 }): string {
   const intro = opts.isBeneficiary
-    ? `you have been added to ${opts.companyName}'s Global Health Corporate Plan as a family/extended beneficiary`
-    : `${opts.companyName} has added you to its Global Health Corporate Plan`;
-  return `Hi ${opts.firstName}, ${intro}. Set up your account to activate your digital benefit card and member discount: ${opts.link} (link expires in 7 days).`;
+    ? `You have been added to ${opts.companyName}'s Global Health Corporate Plan as a family/extended beneficiary.`
+    : `${opts.companyName} has added you to its Global Health Corporate Plan.`;
+  return `Hi ${opts.firstName},
+${intro}
+Set up your account to activate your digital benefit card and member discount:
+🔗 ${opts.link}
+⏳ The link expires in 7 days.`;
 }
 
 export async function sendCorporateMemberInviteEmail(opts: {
@@ -114,7 +120,10 @@ export function corporateRequestText(opts: {
   requestLabel: string;
   bookPath: string;
 }): string {
-  return `Hi ${opts.firstName}, ${opts.companyName} has requested a ${opts.requestLabel} for you via Global Health. Book here: ${absoluteSiteUrl(opts.bookPath)}`;
+  return `Hi ${opts.firstName},
+${opts.companyName} has requested a ${opts.requestLabel} for you via Global Health.
+Book your appointment here:
+🔗 ${absoluteSiteUrl(opts.bookPath)}`;
 }
 
 export async function sendCardActivatedEmail(opts: {
@@ -186,11 +195,15 @@ export async function sendCorporateBookingConfirmationEmail(
 
 /** Same copy, channel-neutral, for the WhatsApp send. */
 export function corporateBookingText(opts: CorporateBookingCopy): string {
-  const withDoctor = opts.doctorName ? ` with ${opts.doctorName}` : "";
   const tail = opts.meetingUrl
-    ? `Join here at the appointment time: ${opts.meetingUrl}`
-    : `Your bookings: ${absoluteSiteUrl("/account/bookings")}`;
-  return `Hi ${opts.firstName}, your ${opts.consultationName}${withDoctor} is booked for ${opts.when}. It is covered by your corporate plan — nothing to pay. ${tail}`;
+    ? `Join at the appointment time:\n💻 ${opts.meetingUrl}`
+    : `The video link appears on your bookings page once the clinic adds it:\n🔗 ${absoluteSiteUrl("/account/bookings")}`;
+  return `Hi ${opts.firstName},
+Your consultation is confirmed.
+📌 Service: ${opts.consultationName}${opts.doctorName ? `\n👤 Doctor: ${opts.doctorName}` : ""}
+📅 Date & Time: ${opts.when}
+✅ Covered by your corporate plan — nothing to pay.
+${tail}`;
 }
 
 /**
@@ -232,7 +245,11 @@ export function corporateBookingCancelledText(opts: {
   when: string;
   rebookPath: string;
 }): string {
-  return `Hi ${opts.firstName}, your ${opts.consultationName} on ${opts.when} has been cancelled. Nothing was charged and the time is released. Book another: ${absoluteSiteUrl(opts.rebookPath)}`;
+  return `Hi ${opts.firstName},
+Your ${opts.consultationName} on ${opts.when} has been cancelled.
+Nothing was charged and the time has been released.
+Book another one here:
+🔗 ${absoluteSiteUrl(opts.rebookPath)}`;
 }
 
 export async function sendCorporateDoctorCancelledEmail(opts: {
@@ -262,7 +279,10 @@ export function corporateDoctorCancelledText(opts: {
   consultationName: string;
   when: string;
 }): string {
-  return `Hi ${opts.doctorName}, ${opts.patientName}'s ${opts.consultationName} on ${opts.when} has been cancelled. The slot is back on your calendar: ${absoluteSiteUrl("/doctor/appointments")}`;
+  return `Hi ${opts.doctorName},
+${opts.patientName}'s ${opts.consultationName} on ${opts.when} has been cancelled.
+The slot is back on your calendar:
+🔗 ${absoluteSiteUrl("/doctor/appointments")}`;
 }
 
 /** Doctor-side copy. Deliberately omits the employer, matching the doctor
@@ -304,9 +324,15 @@ export async function sendCorporateDoctorBookingEmail(
 
 export function corporateDoctorBookingText(opts: CorporateDoctorBookingCopy): string {
   const tail = opts.meetingUrl
-    ? `Join: ${opts.meetingUrl}`
-    : `Your queue: ${absoluteSiteUrl("/doctor/appointments")}`;
-  return `Hi ${opts.doctorName}, ${opts.patientName} booked a ${opts.consultationName} with you for ${opts.when} (corporate plan — free to the member). ${tail}`;
+    ? `Join at the appointment time:\n💻 ${opts.meetingUrl}`
+    : `Your queue:\n🔗 ${absoluteSiteUrl("/doctor/appointments")}`;
+  return `Hi ${opts.doctorName},
+You have a new corporate consultation.
+👤 Patient: ${opts.patientName}
+📌 Service: ${opts.consultationName}
+📅 Date & Time: ${opts.when}
+✅ Corporate plan — free to the member.
+${tail}`;
 }
 
 export function cardActivatedText(opts: {
@@ -314,7 +340,11 @@ export function cardActivatedText(opts: {
   companyName: string;
   cardNumber: string;
 }): string {
-  return `Hi ${opts.firstName}, your Global Health corporate membership with ${opts.companyName} is active. Benefit card ${opts.cardNumber}: ${absoluteSiteUrl("/account/corporate")}`;
+  return `Hi ${opts.firstName},
+Your Global Health corporate membership with ${opts.companyName} is now active.
+💳 Benefit card: ${opts.cardNumber}
+View your card here:
+🔗 ${absoluteSiteUrl("/account/corporate")}`;
 }
 
 export async function sendMembershipStatusEmail(opts: {
