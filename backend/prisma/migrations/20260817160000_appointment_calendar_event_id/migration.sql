@@ -1,0 +1,14 @@
+-- Appointment.calendarEventId — the Google Calendar event backing `meetingUrl`.
+--
+-- Meet links were created and never tracked, so a cancelled consultation left
+-- its calendar event standing: the doctor kept showing as busy for an
+-- appointment nobody would attend, and any attendee kept a live invite. The
+-- delete call needs the event id, and the Meet URL cannot be turned back into
+-- one, so it has to be stored at creation time.
+--
+-- Null for links an admin pasted in by hand and for every booking made before
+-- this column existed; the cleanup skips those rather than guessing.
+--
+-- Idempotent: this repo deploys with `migrate deploy` against a live database
+-- that carries drift, so the statement must be safe to re-run.
+ALTER TABLE "Appointment" ADD COLUMN IF NOT EXISTS "calendarEventId" TEXT;

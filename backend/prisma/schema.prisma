@@ -2130,6 +2130,12 @@ model Appointment {
   // receives a SendGrid email with the link.
   scheduledAt                    DateTime?
   meetingUrl                     String?
+  /// Google Calendar event id backing `meetingUrl`, when we created it. Without
+  /// it a cancelled consultation cannot have its calendar entry removed, so the
+  /// doctor stays blocked out for an appointment nobody will attend. Null for
+  /// links an admin pasted in by hand and for every booking made before this
+  /// column existed — the cleanup simply skips those.
+  calendarEventId                String?
   // Reminder job marks this once it has emailed the patient ~24h before
   // scheduledAt, so re-runs don't double-send. Null means "not sent yet".
   reminderSentAt                 DateTime?

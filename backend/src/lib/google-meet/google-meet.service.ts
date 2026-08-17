@@ -74,12 +74,28 @@ function toGoogleDateTime(date: Date): string {
  * When `attendeeEmails` are provided, Google sends calendar invites to
  * those attendees (`sendUpdates=all`).
  */
+/** Meet link plus the calendar event that carries it. The event id is what
+ *  makes the booking's calendar entry removable later — without it a cancelled
+ *  consultation leaves the doctor blocked out for an appointment that is not
+ *  happening. */
+export type CalendarEventForAppointment = { meetLink: string; eventId: string | null };
+
+/** Back-compat wrapper: callers that only need the join link. */
 export async function createMeetLinkForAppointment(input: {
   startTime: Date;
   endTime: Date;
   serviceTitle: string;
   attendeeEmails?: string[];
 }): Promise<string> {
+  return (await createCalendarEventForAppointment(input)).meetLink;
+}
+
+export async function createCalendarEventForAppointment(input: {
+  startTime: Date;
+  endTime: Date;
+  serviceTitle: string;
+  attendeeEmails?: string[];
+}): Promise<CalendarEventForAppointment> {
   if (!isGoogleMeetConfigured()) {
     throw new Error(
       "Google Meet is not configured. Set GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, and GOOGLE_OAUTH_REFRESH_TOKEN.",
@@ -126,12 +142,42 @@ export async function createMeetLinkForAppointment(input: {
     signal: AbortSignal.timeout(GOOGLE_API_TIMEOUT_MS),
   });
 
-  const calData = (await calResponse.json()) as { error?: { message?: string } };
+  const calData = (await calResponse.json()) as {
+    id?: string;
+    error?: { message?: string };
+  };
   if (!calResponse.ok) {
     throw new Error(
       `Calendar API Error: ${calData.error?.message ?? JSON.stringify(calData)}`,
     );
   }
 
-  return meetLink;
+  return { meetLink, eventId: calData.id ?? null };
+}
+
+/**
+ * Remove a booking's calendar event — used when the consultation is cancelled.
+ *
+ * A cancelled consultation used to leave its event standing, so the doctor's
+ * calendar kept showing them busy for an appointment nobody would attend, and
+ * any attendee kept a live invite. Google answers 404/410 for an event that is
+ * already gone; both count as success here, so cancelling twice is a no-op
+ * rather than an error.
+ */
+export async function deleteCalendarEventForAppointment(eventId: string): Promise<void> {
+  if (!isGoogleMeetConfigured() || !eventId.trim()) return;
+  const token = await getAccessToken();
+  const calendarId = env.GOOGLE_CALENDAR_ID?.trim() || "primary";
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(
+    calendarId,
+  )}/events/${encodeURIComponent(eventId)}?sendUpdates=all`;
+
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(GOOGLE_API_TIMEOUT_MS),
+  });
+  if (res.ok || res.status === 404 || res.status === 410) return;
+  const body = (await res.json().catch(() => ({}))) as { error?: { message?: string } };
+  throw new Error(`Calendar API Error (delete): ${body.error?.message ?? res.status}`);
 }

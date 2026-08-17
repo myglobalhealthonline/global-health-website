@@ -547,12 +547,16 @@ export async function onCorporateAppointmentStatusChanged(
 
   if (newStatus === "CANCELLED") {
     // Patient "Cancel", admin status change and the doctor portal all funnel
-    // through here, and none of them told anyone. Fire-and-forget: the state
-    // change below must land whether or not the mail provider is up.
-    const { notifyCorporateBookingCancelled } = await import(
-      "./corporate-booking-notifications.js"
+    // through here, and none of them told anyone. The import is INSIDE the
+    // fire-and-forget, not awaited ahead of it: a module that failed to load
+    // must not stop the employee below being put back to PREASSESSMENT_PENDING,
+    // which is what lets them rebook at all.
+    fireAndForget(
+      import("./corporate-booking-notifications.js").then((m) =>
+        m.notifyCorporateBookingCancelled(appointmentId),
+      ),
+      "cancellation notice",
     );
-    fireAndForget(notifyCorporateBookingCancelled(appointmentId), "cancellation notice");
   }
 
   const employee = await prisma.corporateEmployee.findUnique({

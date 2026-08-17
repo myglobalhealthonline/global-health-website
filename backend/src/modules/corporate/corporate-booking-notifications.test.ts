@@ -24,6 +24,8 @@ const state: {
   meetConfigured: boolean;
   meetThrows: boolean;
   meetAttendees: string[];
+  deletedEvents: string[];
+  deleteThrows: boolean;
   updateManyWhere: Record<string, unknown> | null;
   emails: { to: string; meetingUrl: string | null }[];
   whatsapps: { to: string; patientConsent?: boolean | null }[];
@@ -34,6 +36,8 @@ const state: {
   meetConfigured: false,
   meetThrows: false,
   meetAttendees: [],
+  deletedEvents: [],
+  deleteThrows: false,
   updateManyWhere: null,
   emails: [],
   whatsapps: [],
@@ -53,6 +57,7 @@ before(async () => {
             state.updateManyWhere = args.where;
             return { count: 1 };
           },
+          update: async () => ({}),
         },
       },
     },
@@ -60,10 +65,14 @@ before(async () => {
   mock.module("../../lib/google-meet/google-meet.service.js", {
     namedExports: {
       isGoogleMeetConfigured: () => state.meetConfigured,
-      createMeetLinkForAppointment: async (opts: { attendeeEmails?: string[] }) => {
+      createCalendarEventForAppointment: async (opts: { attendeeEmails?: string[] }) => {
         state.meetAttendees = opts.attendeeEmails ?? [];
         if (state.meetThrows) throw new Error("meet down");
-        return "https://meet.google.com/minted";
+        return { meetLink: "https://meet.google.com/minted", eventId: "evt-1" };
+      },
+      deleteCalendarEventForAppointment: async (eventId: string) => {
+        if (state.deleteThrows) throw new Error("calendar down");
+        state.deletedEvents.push(eventId);
       },
     },
   });
@@ -149,6 +158,8 @@ beforeEach(() => {
   state.meetConfigured = false;
   state.meetThrows = false;
   state.meetAttendees = [];
+  state.deletedEvents = [];
+  state.deleteThrows = false;
   state.updateManyWhere = null;
   state.emails = [];
   state.whatsapps = [];
@@ -253,6 +264,26 @@ describe("notifyCorporateBookingCancelled", () => {
     assert.equal(state.whatsapps.find((w) => w.to === "+351911111111")?.patientConsent, false);
     const doctor = state.whatsapps.find((w) => w.to === "+353871234567");
     assert.equal(doctor && "patientConsent" in doctor, false);
+  });
+
+  /** A cancelled consultation used to leave its calendar event standing, so the
+   *  doctor kept showing as busy for an appointment nobody would attend. */
+  it("frees the doctor's calendar before anyone is told", async () => {
+    state.appointment = { ...(state.appointment as Record<string, unknown>), calendarEventId: "evt-1" };
+    await svc.notifyCorporateBookingCancelled("appt-1");
+    assert.deepEqual(state.deletedEvents, ["evt-1"]);
+  });
+
+  it("leaves an admin-pasted link alone — no event id, nothing to delete", async () => {
+    await svc.notifyCorporateBookingCancelled("appt-1");
+    assert.deepEqual(state.deletedEvents, []);
+  });
+
+  it("still notifies both sides when the calendar delete fails", async () => {
+    state.appointment = { ...(state.appointment as Record<string, unknown>), calendarEventId: "evt-1" };
+    state.deleteThrows = true;
+    await svc.notifyCorporateBookingCancelled("appt-1");
+    assert.deepEqual(state.emails.map((e) => e.to), ["pedro@example.test", "tiago@example.test"]);
   });
 
   it("never mints a meeting link on the way out", async () => {

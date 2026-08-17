@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import {
-  createMeetLinkForAppointment,
+  createCalendarEventForAppointment,
+  deleteCalendarEventForAppointment,
   isGoogleMeetConfigured,
 } from "../../lib/google-meet/google-meet.service.js";
 import { resolveDoctorContact } from "../../lib/whatsapp/resolve-doctor-contact.js";
@@ -36,7 +37,10 @@ import { corporateBookPath } from "./corporate-request.service.js";
  * outage still sends the confirmations and a mail outage still notifies the
  * doctor.
  */
-export async function notifyCorporateBookingCreated(appointmentId: string): Promise<void> {
+export async function notifyCorporateBookingCreated(
+  appointmentId: string,
+  log?: NotifyLog,
+): Promise<void> {
   const appointment = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     select: {
@@ -96,6 +100,7 @@ export async function notifyCorporateBookingCreated(appointmentId: string): Prom
   await settle(
     sendCorporateBookingConfirmationEmail({ to: appointment.email, ...patientCopy }),
     "patient email",
+    log,
   );
 
   if (appointment.phone) {
@@ -109,6 +114,7 @@ export async function notifyCorporateBookingCreated(appointmentId: string): Prom
         patientConsent: appointment.whatsappConsent,
       }),
       "patient whatsapp",
+      log,
     );
   }
 
@@ -129,12 +135,14 @@ export async function notifyCorporateBookingCreated(appointmentId: string): Prom
       snippet: `${appointment.fullName} · ${appointment.consultationType} · ${when} · corporate`,
     }),
     "doctor portal notification",
+    log,
   );
 
   if (doctorContact?.loginEmail) {
     await settle(
       sendCorporateDoctorBookingEmail({ to: doctorContact.loginEmail, ...doctorCopy }),
       "doctor email",
+      log,
     );
   }
 
@@ -148,6 +156,7 @@ export async function notifyCorporateBookingCreated(appointmentId: string): Prom
         hints: doctorContact.whatsappHints,
       }),
       "doctor whatsapp",
+      log,
     );
   }
 }
@@ -164,7 +173,10 @@ export async function notifyCorporateBookingCreated(appointmentId: string): Prom
  * is the non-payment / credit-note pair, which is order-keyed and so unreachable
  * for a free booking. Same fire-and-forget contract as the confirmation.
  */
-export async function notifyCorporateBookingCancelled(appointmentId: string): Promise<void> {
+export async function notifyCorporateBookingCancelled(
+  appointmentId: string,
+  log?: NotifyLog,
+): Promise<void> {
   const appointment = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     select: {
@@ -177,9 +189,26 @@ export async function notifyCorporateBookingCancelled(appointmentId: string): Pr
       whatsappConsent: true,
       corporateServiceId: true,
       doctorId: true,
+      calendarEventId: true,
     },
   });
   if (!appointment?.corporateServiceId || !appointment.scheduledAt) return;
+
+  // Free the doctor's calendar before anyone is told, so the "slot is back"
+  // message is already true when it lands. Only events we created carry an id;
+  // an admin-pasted link has none and is left alone.
+  if (appointment.calendarEventId) {
+    await settle(
+      deleteCalendarEventForAppointment(appointment.calendarEventId).then(() =>
+        prisma.appointment.update({
+          where: { id: appointmentId },
+          data: { calendarEventId: null },
+        }),
+      ),
+      "calendar event removal",
+      log,
+    );
+  }
 
   const doctorContact = await resolveDoctorContact(appointment.doctorId);
   const timeZone = appointment.doctorId
@@ -198,6 +227,7 @@ export async function notifyCorporateBookingCancelled(appointmentId: string): Pr
       rebookPath,
     }),
     "patient cancellation email",
+    log,
   );
 
   if (appointment.phone) {
@@ -214,6 +244,7 @@ export async function notifyCorporateBookingCancelled(appointmentId: string): Pr
         patientConsent: appointment.whatsappConsent,
       }),
       "patient cancellation whatsapp",
+      log,
     );
   }
 
@@ -232,12 +263,14 @@ export async function notifyCorporateBookingCancelled(appointmentId: string): Pr
       snippet: `${appointment.fullName} · ${appointment.consultationType} · ${when} · cancelled`,
     }),
     "doctor cancellation notification",
+    log,
   );
 
   if (doctorContact?.loginEmail) {
     await settle(
       sendCorporateDoctorCancelledEmail({ to: doctorContact.loginEmail, ...doctorCopy }),
       "doctor cancellation email",
+      log,
     );
   }
 
@@ -249,6 +282,7 @@ export async function notifyCorporateBookingCancelled(appointmentId: string): Pr
         hints: doctorContact.whatsappHints,
       }),
       "doctor cancellation whatsapp",
+      log,
     );
   }
 }
@@ -267,12 +301,20 @@ function formatWhen(at: Date, timeZone: string): string {
   });
 }
 
+/** Just the sliver of the Fastify logger this module needs, so a caller that
+ *  has a request-scoped logger gets these failures into the structured log
+ *  instead of a bare stdout line nobody greps. */
+export type NotifyLog = { warn: (obj: Record<string, unknown>, msg: string) => void };
+
 /** One failing channel must not take the others down with it. */
-async function settle(promise: Promise<unknown>, label: string): Promise<void> {
+async function settle(promise: Promise<unknown>, label: string, log?: NotifyLog): Promise<void> {
   try {
     await promise;
   } catch (error) {
-    console.error(`[corporate] booking confirmation — ${label} failed:`, error);
+    if (log) log.warn({ err: error, channel: label }, "corporate notification failed");
+    // No request-scoped logger on the cancellation path (it runs from a status
+    // hook, not a route), so keep the module's existing console fallback.
+    else console.error(`[corporate] notification — ${label} failed:`, error);
   }
 }
 
@@ -291,17 +333,20 @@ async function provisionMeetLink(input: {
 }): Promise<string | null> {
   if (!isGoogleMeetConfigured()) return null;
   try {
-    const meetLink = await createMeetLinkForAppointment({
+    const { meetLink, eventId } = await createCalendarEventForAppointment({
       startTime: input.startAt,
       endTime: new Date(input.startAt.getTime() + input.durationMinutes * 60_000),
       serviceTitle: input.title,
       attendeeEmails: input.attendeeEmails.filter(Boolean),
     });
     // Guarded update: an admin who set a link by hand in the meantime wins.
-    await prisma.appointment.updateMany({
+    const claimed = await prisma.appointment.updateMany({
       where: { id: input.appointmentId, meetingUrl: null },
-      data: { meetingUrl: meetLink },
+      data: { meetingUrl: meetLink, calendarEventId: eventId },
     });
+    if (claimed.count === 1) return meetLink;
+    // Someone got there first — read back only on that rare branch, and use
+    // theirs, since it is the one the appointment now carries.
     const saved = await prisma.appointment.findUnique({
       where: { id: input.appointmentId },
       select: { meetingUrl: true },

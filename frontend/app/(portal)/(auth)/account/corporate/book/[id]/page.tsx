@@ -49,9 +49,12 @@ async function bookAction(formData: FormData) {
     ...(phone ? { phone } : {}),
     ...(notes ? { notes } : {}),
     consentAccepted: true,
-    // Separate GDPR opt-IN (Art. 4(11)) — never folded into the booking
-    // consent above, and only meaningful when a number was given.
-    whatsappConsent: Boolean(phone) && formData.get("whatsappConsent") === "on",
+    // Separate GDPR opt-IN (Art. 4(11)) — never folded into the booking consent
+    // above. Recorded exactly as ticked even with no phone on this form: the
+    // consent is a standing preference, and discarding it here silently threw
+    // away a choice the member had made. The send itself is what checks for a
+    // number.
+    whatsappConsent: formData.get("whatsappConsent") === "on",
   });
   if (!result.ok) back(result.message);
 

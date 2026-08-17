@@ -526,7 +526,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     // bookings get theirs from the Order-keyed post-payment automation, which a
     // Order-less corporate booking can never reach. Fire-and-forget — a mail
     // outage must not fail a booking that already claimed a real slot.
-    void notifyCorporateBookingCreated(result.appointmentId).catch((error) =>
+    void notifyCorporateBookingCreated(result.appointmentId, request.log).catch((error) =>
       request.log.warn({ err: error, appointmentId: result.appointmentId },
         "corporate booking confirmation failed"),
     );
