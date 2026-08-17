@@ -83,15 +83,15 @@ export default async function CorporateInvitePage({
       {result.state === "invalid" ? (
         <div className="text-center">
           <h1
-            className="font-extrabold tracking-[-0.04em]"
-            style={{ fontSize: "clamp(1.5rem,3vw,2rem)", lineHeight: 1.1, color: "#0D3A28" } as React.CSSProperties}
+            className="font-extrabold tracking-[-0.04em] text-[var(--color-text-primary)]"
+            style={{ fontSize: "clamp(1.5rem,3vw,2rem)", lineHeight: 1.1 } as React.CSSProperties}
           >
             {t.invalidTitle}
           </h1>
-          <p className="mt-3 text-sm leading-relaxed" style={{ color: "#7A9A83" }}>
+          <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">
             {result.message}
           </p>
-          <p className="mt-2 text-sm leading-relaxed" style={{ color: "#7A9A83" }}>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">
             {t.invalidAsk}
           </p>
         </div>
@@ -99,12 +99,12 @@ export default async function CorporateInvitePage({
         <>
           <div className="mb-6 text-center">
             <h1
-              className="font-extrabold tracking-[-0.04em]"
-              style={{ fontSize: "clamp(1.5rem,3vw,2rem)", lineHeight: 1.1, color: "#0D3A28" } as React.CSSProperties}
+              className="font-extrabold tracking-[-0.04em] text-[var(--color-text-primary)]"
+              style={{ fontSize: "clamp(1.5rem,3vw,2rem)", lineHeight: 1.1 } as React.CSSProperties}
             >
               {t.welcome.replace("{name}", result.invite.firstName)}
             </h1>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: "#7A9A83" }}>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-body)]">
               {t.invitedBy.replace("{company}", result.invite.companyName)}
               {result.invite.type === "BENEFICIARY" ? t.asBeneficiary : ""}. {t.accountUses}{" "}
               <strong>{result.invite.maskedEmail}</strong>.

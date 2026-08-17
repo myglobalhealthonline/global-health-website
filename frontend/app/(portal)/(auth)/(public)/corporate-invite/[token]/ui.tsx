@@ -117,7 +117,7 @@ export function CorporateInviteForm({
           {invite.existingAccount ? i18n.existingPassword : i18n.createPassword}
         </label>
         {invite.existingAccount ? (
-          <p className="text-xs leading-relaxed" style={{ color: "#7A9A83" }}>
+          <p className="text-xs leading-relaxed text-[var(--color-text-muted)]">
             {i18n.existingNote}
           </p>
         ) : null}
