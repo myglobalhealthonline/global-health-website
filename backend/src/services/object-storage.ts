@@ -58,6 +58,11 @@ function contentTypeForKey(key: string): string {
   if (lower.endsWith(".webp")) return "image/webp";
   if (lower.endsWith(".gif")) return "image/gif";
   if (lower.endsWith(".svg")) return "image/svg+xml";
+  // Patient ID documents are frequently scanned PDFs. Without this the local
+  // dev path served them as octet-stream, so the browser offered a download
+  // instead of rendering — S3 returns the stored type, so this only ever bit
+  // developers, which is exactly why it went unnoticed.
+  if (lower.endsWith(".pdf")) return "application/pdf";
   return "application/octet-stream";
 }
 

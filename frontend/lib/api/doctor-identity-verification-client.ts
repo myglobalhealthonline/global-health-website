@@ -27,8 +27,13 @@ export type DoctorIdentityVerification = {
   status: VerificationStatus;
   verifiedAt: string | null;
   hasIdDocument: boolean;
-  /** ID uploads accept PDF, which cannot render in an <img>. */
-  idDocumentIsPdf: boolean;
+  /**
+   * How to render the ID document. "image" only for known image extensions;
+   * anything else (PDF, unknown, legacy) is "embed", which can display far
+   * more than an <img> can. Optional so a stale backend that omits it falls
+   * through to the embed rather than to a broken image.
+   */
+  idDocumentRenderAs?: "image" | "embed";
   hasSelfie: boolean;
   selfieUploadedAt: string | null;
   requestedAt: string | null;

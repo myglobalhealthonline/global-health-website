@@ -59,6 +59,9 @@ export function IdentityVerificationCard({
   const [loaded, setLoaded] = useState(false);
   const [open, setOpen] = useState(variant === "panel");
   const [busy, setBusy] = useState(false);
+  // Set when the ID <img> fails to load, so the pane can fall back to an embed
+  // instead of leaving a broken box in front of the reviewer.
+  const [idImageFailed, setIdImageFailed] = useState(false);
   const [notes, setNotes] = useState("");
   const [msg, setMsg] = useState<Msg>(null);
 
@@ -217,13 +220,16 @@ export function IdentityVerificationCard({
                   render — that showed the doctor a broken image with no clue
                   why. Embed those instead, keeping the link above as the
                   fallback if the browser declines to render inline. */}
-              {data.idDocumentIsPdf ? (
+              {/* Embed unless the backend positively says "image". An older
+                  backend omits the field entirely, and defaulting THAT to
+                  <img> is what left a broken box in front of a reviewer. */}
+              {data.idDocumentRenderAs !== "image" || idImageFailed ? (
                 // iframe, not <object>: the site CSP sets `object-src 'none'`
                 // (proxy.ts CSP_BASE), which would block an <object> silently,
                 // while `frame-src 'self'` permits this same-origin embed.
                 <iframe
                   src={identityImageUrl(email, "id")}
-                  title="Patient's government ID document (PDF)"
+                  title="Patient's government ID document"
                   className={`w-full rounded border border-[var(--portal-line)] bg-white ${
                     isPanel ? "h-96" : "h-56"
                   }`}
@@ -233,6 +239,13 @@ export function IdentityVerificationCard({
                 <img
                   src={identityImageUrl(email, "id")}
                   alt="Patient's government ID document"
+                  // Belt and braces. `idDocumentRenderAs` should already route
+                  // anything non-image to the embed, but it only arrives if the
+                  // BACKEND is current — and a doctor must never be left
+                  // staring at a broken box deciding someone's identity. Any
+                  // load failure (stale API, odd content type, missing object)
+                  // falls through to the embed, which can render far more.
+                  onError={() => setIdImageFailed(true)}
                   className={`w-full rounded border border-[var(--portal-line)] object-contain ${
                     isPanel ? "max-h-96" : "max-h-56"
                   }`}

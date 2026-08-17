@@ -46,17 +46,29 @@ function newReferenceId(): string {
   return `IDV-${out.slice(0, 4)}-${out.slice(4, 8)}`;
 }
 
+/** Extensions an <img> can actually display. Everything else goes to an embed. */
+const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".bmp"];
+
+function resolveRenderAs(storageKey: string | null): "image" | "embed" {
+  const key = (storageKey ?? "").toLowerCase();
+  return IMAGE_EXTENSIONS.some((ext) => key.endsWith(ext)) ? "image" : "embed";
+}
+
 export type IdentityVerificationSummary = {
   status: VerificationStatus;
   verifiedAt: Date | null;
   hasIdDocument: boolean;
   /**
-   * ID documents accept PDF (a scanned passport is very often one), but a PDF
-   * cannot render in an <img>. The reviewer UI needs to know which element to
-   * use, so resolve it here from the stored key rather than making the client
-   * fetch the object just to read its content type.
+   * How the reviewer should render the ID document.
+   *
+   * Allowlist, not a blocklist: only known image extensions get "image"; every
+   * other case — PDF, no extension, an unexpected format, a legacy key — gets
+   * "embed". An <iframe> can display images AND PDFs, an <img> can only do
+   * images, so defaulting to the embed means an unrecognised document degrades
+   * to something viewable rather than to a broken box. A doctor deciding
+   * someone's identity must never be shown a silent failure.
    */
-  idDocumentIsPdf: boolean;
+  idDocumentRenderAs: "image" | "embed";
   hasSelfie: boolean;
   selfieUploadedAt: Date | null;
   requestedAt: Date | null;
@@ -124,7 +136,7 @@ export async function getVerificationSummary(
     verifiedAt:
       profile.idVerificationStatus === "VERIFIED" ? profile.idVerificationReviewedAt : null,
     hasIdDocument: Boolean(profile.idDocumentKey),
-    idDocumentIsPdf: (profile.idDocumentKey ?? "").toLowerCase().endsWith(".pdf"),
+    idDocumentRenderAs: resolveRenderAs(profile.idDocumentKey),
     hasSelfie: Boolean(profile.selfieImageKey),
     selfieUploadedAt: profile.selfieUploadedAt,
     requestedAt: profile.idVerifyRequestedAt,
