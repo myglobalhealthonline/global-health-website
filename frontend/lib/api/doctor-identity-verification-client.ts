@@ -27,6 +27,8 @@ export type DoctorIdentityVerification = {
   status: VerificationStatus;
   verifiedAt: string | null;
   hasIdDocument: boolean;
+  /** ID uploads accept PDF, which cannot render in an <img>. */
+  idDocumentIsPdf: boolean;
   hasSelfie: boolean;
   selfieUploadedAt: string | null;
   requestedAt: string | null;
