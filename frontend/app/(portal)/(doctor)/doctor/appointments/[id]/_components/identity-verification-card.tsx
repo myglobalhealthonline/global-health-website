@@ -199,23 +199,61 @@ export function IdentityVerificationCard({
         <div className="mt-3 space-y-3">
           <div className="grid gap-2 sm:grid-cols-2">
             <figure className="m-0">
-              <figcaption className="mb-1 text-portal-meta text-[var(--portal-muted)]">
-                ID document
+              <figcaption className="mb-1 flex flex-wrap items-baseline justify-between gap-2 text-portal-meta text-[var(--portal-muted)]">
+                <span>ID document</span>
+                {/* Always offered, for both formats: a passport scan can be
+                    denser than the inline box, and the doctor is being asked
+                    to match a face against it. */}
+                <a
+                  href={identityImageUrl(email, "id")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-[var(--portal-text)]"
+                >
+                  Open full size
+                </a>
               </figcaption>
-              {/* eslint-disable-next-line @next/next/no-img-element -- authenticated, no-store, access-logged stream from the backend; next/image would need a public URL and would cache what must not be cached. */}
-              <img
-                src={identityImageUrl(email, "id")}
-                alt="Patient's government ID document"
-                className={`w-full rounded border border-[var(--portal-line)] object-contain ${
-                  isPanel ? "max-h-96" : "max-h-56"
-                }`}
-              />
+              {/* Scanned passports are frequently PDFs, which an <img> cannot
+                  render — that showed the doctor a broken image with no clue
+                  why. Embed those instead, keeping the link above as the
+                  fallback if the browser declines to render inline. */}
+              {data.idDocumentIsPdf ? (
+                // iframe, not <object>: the site CSP sets `object-src 'none'`
+                // (proxy.ts CSP_BASE), which would block an <object> silently,
+                // while `frame-src 'self'` permits this same-origin embed.
+                <iframe
+                  src={identityImageUrl(email, "id")}
+                  title="Patient's government ID document (PDF)"
+                  className={`w-full rounded border border-[var(--portal-line)] bg-white ${
+                    isPanel ? "h-96" : "h-56"
+                  }`}
+                />
+              ) : (
+                /* eslint-disable-next-line @next/next/no-img-element -- authenticated, no-store, access-logged stream from the backend; next/image would need a public URL and would cache what must not be cached. */
+                <img
+                  src={identityImageUrl(email, "id")}
+                  alt="Patient's government ID document"
+                  className={`w-full rounded border border-[var(--portal-line)] object-contain ${
+                    isPanel ? "max-h-96" : "max-h-56"
+                  }`}
+                />
+              )}
             </figure>
             <figure className="m-0">
-              <figcaption className="mb-1 text-portal-meta text-[var(--portal-muted)]">
-                Verification photo
-                {data.selfieUploadedAt &&
-                  ` · ${new Date(data.selfieUploadedAt).toLocaleDateString()}`}
+              <figcaption className="mb-1 flex flex-wrap items-baseline justify-between gap-2 text-portal-meta text-[var(--portal-muted)]">
+                <span>
+                  Verification photo
+                  {data.selfieUploadedAt &&
+                    ` · ${new Date(data.selfieUploadedAt).toLocaleDateString()}`}
+                </span>
+                <a
+                  href={identityImageUrl(email, "selfie")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-[var(--portal-text)]"
+                >
+                  Open full size
+                </a>
               </figcaption>
               {/* eslint-disable-next-line @next/next/no-img-element -- see above. */}
               <img

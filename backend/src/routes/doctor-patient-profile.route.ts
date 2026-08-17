@@ -323,6 +323,7 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
             status: summary.status,
             verifiedAt: summary.verifiedAt,
             hasIdDocument: summary.hasIdDocument,
+            idDocumentIsPdf: summary.idDocumentIsPdf,
             hasSelfie: summary.hasSelfie,
             selfieUploadedAt: summary.selfieUploadedAt,
             requestedAt: summary.requestedAt,

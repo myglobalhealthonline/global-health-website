@@ -50,6 +50,13 @@ export type IdentityVerificationSummary = {
   status: VerificationStatus;
   verifiedAt: Date | null;
   hasIdDocument: boolean;
+  /**
+   * ID documents accept PDF (a scanned passport is very often one), but a PDF
+   * cannot render in an <img>. The reviewer UI needs to know which element to
+   * use, so resolve it here from the stored key rather than making the client
+   * fetch the object just to read its content type.
+   */
+  idDocumentIsPdf: boolean;
   hasSelfie: boolean;
   selfieUploadedAt: Date | null;
   requestedAt: Date | null;
@@ -117,6 +124,7 @@ export async function getVerificationSummary(
     verifiedAt:
       profile.idVerificationStatus === "VERIFIED" ? profile.idVerificationReviewedAt : null,
     hasIdDocument: Boolean(profile.idDocumentKey),
+    idDocumentIsPdf: (profile.idDocumentKey ?? "").toLowerCase().endsWith(".pdf"),
     hasSelfie: Boolean(profile.selfieImageKey),
     selfieUploadedAt: profile.selfieUploadedAt,
     requestedAt: profile.idVerifyRequestedAt,
