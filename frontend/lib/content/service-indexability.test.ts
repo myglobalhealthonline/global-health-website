@@ -157,7 +157,7 @@ describe("isPublicServiceRecordIndexable — incomplete records are held back", 
       false,
     );
     expect(
-      isPublicServiceRecordIndexable(serviceRecord({ visibility: "CORPORATE_ONLY" }), "es", "es"),
+      isPublicServiceRecordIndexable(serviceRecord({ visibility: "ADMIN_ONLY" }), "es", "es"),
     ).toBe(false);
   });
 

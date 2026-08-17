@@ -784,6 +784,8 @@ model Doctor {
   /// Corporate companies whose employee pre-assessment consultations are
   /// pinned to this doctor ("selected Doctor/Admin").
   corporatePreAssessmentCompanies CorporateCompany[]
+  /// Corporate-plan consultations this doctor is the assigned provider for.
+  corporatePlanServices           CorporatePlanService[]
   createdAt                       DateTime                         @default(now())
   updatedAt                       DateTime                         @updatedAt
 
@@ -1247,12 +1249,10 @@ model Service {
   reviewerDisplayName      String?
   authorDoctorId           String?
   reviewerDoctorId         String?
-  /// Who may see/book this service. PUBLIC keeps today's behaviour.
-  /// CORPORATE_ONLY = corporate employee onboarding (pre-assessment);
-  /// CORPORATE_REQUEST_ONLY = bookable only against an open
-  /// CorporateServiceRequest; ADMIN_ONLY = internal. Every non-PUBLIC
-  /// value is excluded from public listings, slug lookups, sitemaps,
-  /// slot feeds, and cart-add is gated server-side.
+  /// Who may see/book this service. PUBLIC keeps today's behaviour;
+  /// ADMIN_ONLY = internal, excluded from public listings, slug lookups,
+  /// sitemaps and slot feeds, with cart-add gated server-side.
+  /// Corporate consultations are NOT Service rows — see CorporatePlanService.
   visibility               ServiceVisibility              @default(PUBLIC)
   /// Additional product images. Empty by default. Hero image still lives
   /// on the related Asset row (kind=IMAGE, synced via syncOwnedImageAsset).
@@ -1302,11 +1302,6 @@ model Service {
   /// Corporate benefit rules pinned to this exact service (rare — most
   /// rules match by kind).
   corporateBenefitRules    CorporateBenefitRule[]
-  /// Corporate plans that list this service row as an included benefit.
-  corporatePlanServices    CorporatePlanService[]
-  /// Corporate Illness-Benefit / Fit-for-Work requests that resolved to
-  /// this (corporate-request-only) service.
-  corporateServiceRequests CorporateServiceRequest[]
   createdAt                DateTime                       @default(now())
   updatedAt                DateTime                       @updatedAt
 
@@ -2161,6 +2156,13 @@ model Appointment {
   /// Illness-Benefit / Fit-for-Work CorporateServiceRequest.
   corporateEmployeePreAssessment CorporateEmployee?
   corporateServiceRequest        CorporateServiceRequest?
+  /// Set instead of `serviceId` when this is a free corporate-plan
+  /// consultation booked from the member portal. Mutually exclusive with
+  /// `serviceId` in practice, and the reason a serialised appointment must
+  /// read its display name/duration from whichever of the two is set.
+  /// Never carries an Order, so it never reaches payout or invoicing.
+  corporateServiceId             String?
+  corporateService               CorporatePlanService?     @relation(fields: [corporateServiceId], references: [id], onDelete: SetNull)
   /// Set when the appointment moves to COMPLETED status. Used to
   /// compute the 24h chat-window expiry on the consultation chat.
   consultationCompletedAt        DateTime?
@@ -5387,8 +5389,6 @@ model FamilyMember {
 /// public surface server-side (listings, slug lookup, slots, cart-add).
 enum ServiceVisibility {
   PUBLIC
-  CORPORATE_ONLY // corporate employee onboarding (pre-assessment)
-  CORPORATE_REQUEST_ONLY // bookable only against an open CorporateServiceRequest
   ADMIN_ONLY // internal
 }
 
@@ -5471,10 +5471,10 @@ model CorporatePlan {
   updatedAt                   DateTime               @updatedAt
 }
 
-/// What a plan-assigned service is FOR. PRE_ASSESSMENT / ILLNESS_BENEFIT /
-/// FIT_FOR_WORK drive the corporate flows (resolved by the assigned
-/// service's SLUG in the company's country, since Service rows are
-/// per-country); INCLUDED is a plain "part of the plan" listing.
+/// What a plan-assigned consultation is FOR. PRE_ASSESSMENT drives the
+/// employee onboarding checklist; ILLNESS_BENEFIT / FIT_FOR_WORK are the
+/// consultations a company raises a CorporateServiceRequest for; INCLUDED
+/// is a plain "part of the plan" consultation the member books at will.
 enum CorporatePlanServiceRole {
   INCLUDED
   PRE_ASSESSMENT
@@ -5482,20 +5482,39 @@ enum CorporatePlanServiceRole {
   FIT_FOR_WORK
 }
 
-/// Admin-assigned service included in a corporate plan. The serviceId is a
-/// representative row (any country); runtime resolution goes slug + the
-/// company's countryCode.
+/// A consultation a corporate plan includes. Deliberately self-contained —
+/// NOT a Service row. It has no price, no slug, no public surface: enrolled
+/// members book it free from the portal against `doctor`'s ordinary
+/// availability, and the resulting Appointment carries no Order, so it never
+/// reaches checkout, commission, doctor payout or invoicing.
 model CorporatePlanService {
   id              String                   @id @default(cuid())
   corporatePlanId String
   corporatePlan   CorporatePlan            @relation(fields: [corporatePlanId], references: [id], onDelete: Cascade)
-  serviceId       String
-  service         Service                  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  /// Null = offered to every company on the plan. Set = that market only, so
+  /// a plan spanning markets can pin a local doctor per country. Matched
+  /// against `CorporateCompany.countryCode`, which is how every other
+  /// corporate row scopes country — lowercase ISO-2, no FK.
+  countryCode     String?
+  name            String
+  description     String?
+  /// Minutes of the assigned doctor's base grid this booking consumes.
+  durationMinutes Int                      @default(30)
+  /// The one doctor who delivers this consultation. Restrict, not Cascade:
+  /// deleting a doctor must not silently drop a plan's benefit.
+  doctorId        String
+  doctor          Doctor                   @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   role            CorporatePlanServiceRole @default(INCLUDED)
+  isActive        Boolean                  @default(true)
+  sortOrder       Int                      @default(0)
+  appointments    Appointment[]
+  requests        CorporateServiceRequest[]
   createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
 
-  @@unique([corporatePlanId, serviceId])
-  @@index([corporatePlanId])
+  @@index([corporatePlanId, isActive, sortOrder])
+  @@index([countryCode])
+  @@index([doctorId])
 }
 
 /// Configurable discount rule. Matches by pinned serviceId (takes
@@ -5666,9 +5685,9 @@ model CorporateBenefitCard {
 }
 
 /// Illness-Benefit / Fit-for-Work request raised by the corporate admin
-/// (or platform admin) for a specific employee. The linked service is
-/// CORPORATE_REQUEST_ONLY, so the employee can only book it while an
-/// open request row exists.
+/// (or platform admin) for a specific employee. Points at the plan's
+/// CorporatePlanService row for that role; the employee books it free from
+/// the portal.
 model CorporateServiceRequest {
   id                String                 @id @default(cuid())
   companyId         String
@@ -5676,8 +5695,8 @@ model CorporateServiceRequest {
   employeeId        String
   employee          CorporateEmployee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   type              CorporateRequestType
-  serviceId         String
-  service           Service                @relation(fields: [serviceId], references: [id])
+  corporateServiceId String
+  corporateService   CorporatePlanService  @relation(fields: [corporateServiceId], references: [id], onDelete: Cascade)
   requestedByUserId String
   reason            String?
   status            CorporateRequestStatus @default(REQUESTED)

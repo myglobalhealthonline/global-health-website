@@ -7,7 +7,6 @@ import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
 import {
   clearedCartBenefitFields,
   setCartBenefit,
@@ -848,34 +847,12 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           if (!svc || !svc.isActive) {
             return reply.status(404).send(errorResponse("Service not found"));
           }
-          // Corporate-only services: server-side eligibility gate (plan
-          // doc §3.2). Guests and ineligible users get the same 404 as a
-          // nonexistent service — cart-add is the enforcement point that
-          // matters because it claims the slot.
+          // ADMIN_ONLY services are never bookable from the storefront —
+          // same 404 as a nonexistent service, so this is not an existence
+          // oracle. Cart-add is the enforcement point that matters because
+          // it claims the slot.
           if (svc.visibility !== "PUBLIC") {
-            let corporateUserId: string | null = null;
-            try {
-              const authed = await resolveOptionalAuthUser(request);
-              if (authed && authed.role === "PATIENT") corporateUserId = authed.id;
-            } catch {
-              // fall through — unauthenticated gets rejected below
-            }
-            const gate = await assertCorporateServiceBookable({
-              userId: corporateUserId,
-              serviceId: svc.id,
-              visibility: svc.visibility,
-              doctorId: doctorId ?? null,
-              serviceCountryCode: svc.country.code,
-              bookingIntent: true,
-            });
-            if (!gate.ok) {
-              // Same rule as POST /api/appointments: the reason is disclosed to
-              // corporate members only. A signed-in non-member gets the 404 a
-              // guest gets, so cart-add is not an existence oracle either.
-              return reply
-                .status(gate.isMember ? 403 : 404)
-                .send(errorResponse(gate.isMember ? gate.message : "Service not found"));
-            }
+            return reply.status(404).send(errorResponse("Service not found"));
           }
           // Sanity: kind must match service.kind
           const expectedKind =

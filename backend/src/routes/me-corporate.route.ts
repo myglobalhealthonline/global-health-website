@@ -23,8 +23,8 @@ import {
 } from "../modules/corporate/corporate-status.service.js";
 import {
   REQUEST_TYPE_LABEL,
-  planServiceSlug,
-  requestBookPath,
+  corporateBookPath,
+  planServiceForRole,
 } from "../modules/corporate/corporate-request.service.js";
 import { resolveMemberBenefits } from "../modules/corporate/corporate-benefit.service.js";
 
@@ -40,51 +40,27 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     const employee = await getEmployeeMembershipForUser(userId);
 
     if (employee) {
-      const [card, openRequests, assignedPreAssessmentSlug] = await Promise.all([
+      const [card, openRequests, preAssessmentService] = await Promise.all([
         prisma.corporateBenefitCard.findUnique({ where: { employeeId: employee.id } }),
         prisma.corporateServiceRequest.findMany({
           where: { employeeId: employee.id, status: { in: ["REQUESTED", "EMPLOYEE_NOTIFIED", "BOOKED"] } },
           orderBy: { createdAt: "desc" },
-          include: { service: { select: { slug: true } } },
+          select: { id: true, type: true, status: true, createdAt: true, corporateServiceId: true },
         }),
-        planServiceSlug(employee.company.planId, "PRE_ASSESSMENT"),
+        planServiceForRole(
+          employee.company.planId,
+          "PRE_ASSESSMENT",
+          employee.company.countryCode,
+        ),
       ]);
-      // Plan-assigned pre-assessment service first; fall back to any
-      // CORPORATE_ONLY service in the company's country. The fallback has to
-      // be a SECOND query — folding the slug into one `findFirst` meant a
-      // plan pointing at a slug with no row in this country returned null and
-      // left the employee with no way to book.
-      const preAssessmentBase = {
-        visibility: "CORPORATE_ONLY" as const,
-        isActive: true,
-        country: { code: employee.company.countryCode },
-      };
-      const preAssessmentService =
-        (assignedPreAssessmentSlug
-          ? await prisma.service.findFirst({
-              where: { ...preAssessmentBase, slug: assignedPreAssessmentSlug },
-              select: { slug: true },
-            })
-          : null) ??
-        (await prisma.service.findFirst({
-          where: preAssessmentBase,
-          select: { slug: true },
-        }));
       const profileComplete = isEmployeeProfileComplete(employee);
       const locale = await memberBookingLocale(userId, employee.company.countryCode);
       const benefits = await resolveMemberBenefits({
         planId: employee.company.planId,
         countryCode: employee.company.countryCode,
-        locale,
         memberType: "EMPLOYEE",
       });
-      const bookPath = preAssessmentService
-        ? `/${employee.company.countryCode.toLowerCase()}/${locale}/book?service=${preAssessmentService.slug}${
-            employee.company.preAssessmentDoctorId
-              ? `&doctor=${employee.company.preAssessmentDoctorId}`
-              : ""
-          }`
-        : null;
+      const bookPath = preAssessmentService ? corporateBookPath(preAssessmentService.id) : null;
       return okResponse({
         memberType: "EMPLOYEE",
         companyName: employee.company.name,
@@ -122,12 +98,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
           type: r.type,
           label: REQUEST_TYPE_LABEL[r.type],
           status: r.status,
-          bookPath: requestBookPath(
-            employee.company.countryCode,
-            locale,
-            r.type,
-            r.service.slug,
-          ),
+          bookPath: corporateBookPath(r.corporateServiceId),
           createdAt: r.createdAt.toISOString(),
         })),
       });
@@ -142,7 +113,6 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
       const benefits = await resolveMemberBenefits({
         planId: beneficiary.company.planId,
         countryCode: beneficiary.company.countryCode,
-        locale,
         memberType: "BENEFICIARY",
       });
       return okResponse({

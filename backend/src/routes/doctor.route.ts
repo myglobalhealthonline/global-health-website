@@ -504,10 +504,12 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         // Real consultation length for the calendar: the claimed slot already
         // spans it exactly; `service.durationMinutes` covers slot-less rows.
         timeSlot: { select: { endAt: true } },
-        // `visibility` drives the corporate badge in the doctor queue — an
+        service: { select: { durationMinutes: true, name: true } },
+        // A corporate-plan consultation has no Service row at all: this is
+        // where its name, length and queue badge come from. Without it an
         // onboarding pre-assessment or a company-requested consultation reads
-        // as an ordinary booking otherwise.
-        service: { select: { durationMinutes: true, visibility: true, name: true } },
+        // as an unnamed ordinary booking.
+        corporateService: { select: { name: true, role: true, durationMinutes: true } },
       } as const;
 
       // Doctor-queue ordering: UPCOMING consultations first (soonest at the
@@ -578,19 +580,23 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         });
       }
       return okResponse({
-        items: rows.map(({ timeSlot, service, ...r }) => ({
+        items: rows.map(({ timeSlot, service, corporateService, ...r }) => ({
           ...r,
           scheduledAt: r.scheduledAt?.toISOString() ?? null,
-          endAt: resolveConsultationEndAt({ ...r, timeSlot, service }),
+          endAt: resolveConsultationEndAt({
+            ...r,
+            timeSlot,
+            service: service ?? corporateService,
+          }),
           createdAt: r.createdAt.toISOString(),
           notesPreview: r.notes ? r.notes.slice(0, 200) : null,
           // Corporate context for the queue. No company name or medical
           // detail — just which private corporate flow this booking came
           // from, so the assigned doctor knows what is expected of it.
           corporateFlow:
-            service?.visibility === "CORPORATE_ONLY"
+            corporateService?.role === "PRE_ASSESSMENT"
               ? ("PRE_ASSESSMENT" as const)
-              : service?.visibility === "CORPORATE_REQUEST_ONLY"
+              : corporateService
                 ? ("COMPANY_REQUEST" as const)
                 : null,
         })),

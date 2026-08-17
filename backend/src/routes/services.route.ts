@@ -1,20 +1,9 @@
-import type { FastifyPluginAsync, FastifyRequest } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
 import { LocaleCode } from "@prisma/client";
 import { listServices, listSpecialties, getPublicServiceBySlug } from "../modules/services/services.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { z } from "zod";
-import { env } from "../config/env.js";
-import { verifyAuthToken } from "../utils/auth-session.js";
-import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
-
-/** Optional auth — public route, but a signed-in corporate member may
- *  fetch their (non-public) corporate services by slug. */
-function optionalUserId(request: FastifyRequest): string | null {
-  const token = request.cookies?.[env.AUTH_COOKIE_NAME];
-  if (!token) return null;
-  return verifyAuthToken(token)?.sub ?? null;
-}
 
 const slugParamsSchema = z.object({ slug: z.string().trim().min(1) });
 const countryQuerySchema = z.object({
@@ -72,12 +61,6 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  // No shared Cache-Control here (unlike the other public GETs in this
-  // file): the response is auth-dependent (`allowCorporate`) — a
-  // CORPORATE_ONLY/CORPORATE_REQUEST_ONLY/ADMIN_ONLY service resolves
-  // differently for a signed-in corporate member vs. everyone else at the
-  // exact same URL, so a shared/public cache would leak one user's response
-  // to another.
   app.get("/api/services/:slug", async (request, reply) => {
     const params = slugParamsSchema.safeParse(request.params);
     if (!params.success) {
@@ -88,30 +71,9 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
     const locale = query.success ? query.data.locale : undefined;
 
     try {
-      const userId = optionalUserId(request);
-      const service = await getPublicServiceBySlug(
-        params.data.slug,
-        countryCode,
-        locale,
-        { allowCorporate: Boolean(userId) },
-      );
+      const service = await getPublicServiceBySlug(params.data.slug, countryCode, locale);
       if (!service) {
         return reply.status(404).send(errorResponse("Service not found"));
-      }
-      // Non-public services only resolve for eligible corporate members —
-      // everyone else gets the same 404 as a nonexistent slug (no
-      // existence oracle).
-      const visibility = (service as { visibility?: string }).visibility;
-      if (visibility && visibility !== "PUBLIC") {
-        const gate = await assertCorporateServiceBookable({
-          userId,
-          serviceId: (service as { id: string }).id,
-          visibility: visibility as "CORPORATE_ONLY" | "CORPORATE_REQUEST_ONLY" | "ADMIN_ONLY",
-          serviceCountryCode: countryCode ?? null,
-        });
-        if (!gate.ok) {
-          return reply.status(404).send(errorResponse("Service not found"));
-        }
       }
       return okResponse({ service });
     } catch (error) {

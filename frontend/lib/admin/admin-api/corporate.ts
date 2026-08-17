@@ -45,16 +45,32 @@ export type CorporatePlanServiceRole =
   | "ILLNESS_BENEFIT"
   | "FIT_FOR_WORK";
 
+/** A free, portal-only consultation a plan includes. Not a catalogue
+ *  service — it has no slug and no price, and books against `doctor`'s
+ *  ordinary availability. */
 export type CorporatePlanServiceDto = {
   id: string;
+  name: string;
+  description: string | null;
+  /** Null = every market the plan serves. */
+  countryCode: string | null;
+  durationMinutes: number;
   role: CorporatePlanServiceRole;
-  service: { id: string; slug: string; name: string; visibility: string };
+  isActive: boolean;
+  sortOrder: number;
+  doctorId: string;
+  doctor: { id: string; fullName: string };
 };
 
-export type CorporateServiceOptionDto = {
-  slug: string;
+export type CorporateDoctorOptionDto = {
+  id: string;
+  fullName: string;
+  country: { code: string; name: string };
+};
+
+export type CorporateCountryOptionDto = {
+  code: string;
   name: string;
-  visibility: string;
 };
 
 export type CorporatePlanDto = {
@@ -170,16 +186,38 @@ export type CorporateRequestDto = {
 export const fetchCorporatePlans = cache(async () => {
   return adminRequest<{
     plans: CorporatePlanDto[];
-    serviceOptions: CorporateServiceOptionDto[];
+    doctorOptions: CorporateDoctorOptionDto[];
+    countryOptions: CorporateCountryOptionDto[];
   }>("/api/admin/corporate/plans");
 });
 
+export type CorporatePlanServiceInput = {
+  name: string;
+  description?: string | null;
+  countryCode?: string | null;
+  durationMinutes: number;
+  doctorId: string;
+  role: CorporatePlanServiceRole;
+  isActive?: boolean;
+  sortOrder?: number;
+};
+
 export async function postCorporatePlanService(
   planId: string,
-  body: { serviceSlug: string; role: CorporatePlanServiceRole },
+  body: CorporatePlanServiceInput,
 ) {
   return adminRequest<{ id: string }>(`/api/admin/corporate/plans/${planId}/services`, {
     method: "POST",
+    body,
+  });
+}
+
+export async function patchCorporatePlanService(
+  id: string,
+  body: Partial<CorporatePlanServiceInput>,
+) {
+  return adminRequest<{ id: string }>(`/api/admin/corporate/plan-services/${id}`, {
+    method: "PATCH",
     body,
   });
 }

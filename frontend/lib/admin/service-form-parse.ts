@@ -48,17 +48,12 @@ type ParsedServiceBody = {
   /** Shipping fee in cents charged per item at checkout. 0 = no
    *  shipping (the default for online consultations). */
   shippingCents: number;
-  /** Public / corporate-only / corporate-request-only / admin-only. */
-  visibility: "PUBLIC" | "CORPORATE_ONLY" | "CORPORATE_REQUEST_ONLY" | "ADMIN_ONLY";
+  /** Public catalogue row, or admin-only internal row. */
+  visibility: "PUBLIC" | "ADMIN_ONLY";
   isActive: boolean;
 };
 
-const SERVICE_VISIBILITIES = [
-  "PUBLIC",
-  "CORPORATE_ONLY",
-  "CORPORATE_REQUEST_ONLY",
-  "ADMIN_ONLY",
-] as const;
+const SERVICE_VISIBILITIES = ["PUBLIC", "ADMIN_ONLY"] as const;
 
 /** Unknown/absent value falls back to PUBLIC — the catalogue default. */
 function readVisibility(raw: FormDataEntryValue | null): ParsedServiceBody["visibility"] {

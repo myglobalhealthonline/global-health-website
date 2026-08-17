@@ -15,11 +15,6 @@ import { recordAudit } from "../modules/audit/audit.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../modules/pricing/peak-pricing.service.js";
 import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
 import { promoteAppointmentConsents } from "../modules/consents/promote-appointment-consents.js";
-import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
-import {
-  claimCorporateRequest,
-  CorporateRequestAlreadyClaimedError,
-} from "../modules/corporate/corporate-status.service.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/appointments", {
@@ -148,12 +143,9 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
         app.log.warn(error, "Unable to resolve booking owner from auth cookie; proceeding as guest booking");
       }
 
-      // Corporate visibility gate — the cart and the service detail read both
-      // enforce this, and THIS path (direct booking) did not: anyone who knew
-      // the slug could book a private corporate consultation, guest included.
-      // Runs before the appointment is created so nothing is written for a
-      // booking that is not allowed.
-      let claimCorporateRequestId: string | null = null;
+      // Non-public services are never bookable through this endpoint. Corporate
+      // consultations no longer live in the Service catalogue at all — they are
+      // CorporatePlanService rows booked from the member portal.
       if (parsed.data.serviceSlug) {
         const gated = await prisma.service.findFirst({
           where: {
@@ -161,64 +153,16 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
             country: { code: parsed.data.country },
             isActive: true,
           },
-          select: { id: true, visibility: true },
+          select: { visibility: true },
         });
         if (gated && gated.visibility !== "PUBLIC") {
-          // This endpoint carries no doctorId — the doctor is whoever owns the
-          // chosen slot, which is what the company's pre-assessment pin is
-          // checked against.
-          const slot = parsed.data.timeSlotId
-            ? await prisma.doctorTimeSlot.findUnique({
-                where: { id: parsed.data.timeSlotId },
-                select: { doctorId: true },
-              })
-            : null;
-          const gate = await assertCorporateServiceBookable({
-            userId: authUserId,
-            serviceId: gated.id,
-            visibility: gated.visibility,
-            doctorId: slot?.doctorId ?? null,
-            serviceCountryCode: parsed.data.country,
-            // A real booking, so a pinned pre-assessment doctor must be MET,
-            // not merely "not contradicted": a booking with no slot (and so no
-            // doctor at all) used to slip the pin entirely.
-            bookingIntent: true,
-          });
-          if (!gate.ok) {
-            // Only an actual corporate member is told WHY: a private service
-            // must not be an existence oracle. Being merely signed in used to
-            // earn a 403 + reason, which confirmed the service to every patient
-            // on the platform; now anyone outside the plan gets the same 404 as
-            // a nonexistent slug, exactly like a guest.
-            return reply
-              .status(gate.isMember ? 403 : 404)
-              .send(errorResponse(gate.isMember ? gate.message : "Service not found"));
-          }
-          claimCorporateRequestId = gate.requestId ?? null;
+          return reply.status(404).send(errorResponse("Service not found"));
         }
       }
 
-      let created: { id: string; status: string };
-      try {
-        created = await createAppointmentWithOptionalOwner(parsed.data, {
-          userId: authUserId,
-          // Consume the open corporate request in the booking's own
-          // transaction. The gate only READ it, so two simultaneous requests
-          // both passed and both booked against one entitlement.
-          ...(claimCorporateRequestId
-            ? {
-                onCreatedInTx: async (tx, appointmentId) => {
-                  await claimCorporateRequest(tx, claimCorporateRequestId!, appointmentId);
-                },
-              }
-            : {}),
-        });
-      } catch (error) {
-        if (error instanceof CorporateRequestAlreadyClaimedError) {
-          return reply.status(409).send(errorResponse(error.message));
-        }
-        throw error;
-      }
+      const created = await createAppointmentWithOptionalOwner(parsed.data, {
+        userId: authUserId,
+      });
 
       // Promote the medical-access consent just captured straight into the
       // append-only ledger — for logged-in bookings by userId, and for guest

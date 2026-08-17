@@ -14,7 +14,6 @@ import {
   type CountryDoctorCard,
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
-import { fetchCorporateBookableService } from "@/lib/corporate/corporate-api";
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
 import { getGpAvailability } from "@/lib/content/get-gp-availability";
 import { getServiceAggregatedAvailability } from "@/lib/content/get-service-availability";
@@ -166,25 +165,11 @@ export default async function CountryLangBookPage({
     getCountryDoctors(code, lang),
   ]);
 
-  const publicServices = [...generalServicesRaw, ...specialistServicesRaw];
-  const publicMatch =
-    publicServices.find((s) => s.slug === serviceSlugParam || s.id === serviceIdParam) ?? null;
-  // Corporate consultations (pre-assessment, illness benefit, fit-for-work) are
-  // never in the public catalogue, so every product link into this page
-  // (`/api/me/corporate` bookPath, the request email, /account/corporate) landed
-  // on the "service unavailable" notice. Resolve THAT one slug through the
-  // per-request, auth-aware, uncached path and merge the row in; ineligible
-  // visitors get null and keep the notice — no existence oracle.
-  const corporateService =
-    !publicMatch && serviceSlugParam
-      ? await fetchCorporateBookableService(code, serviceSlugParam, lang)
-      : null;
-  const services = corporateService
-    ? [...publicServices, corporateService]
-    : publicServices;
-  const selectedService = publicMatch ?? corporateService;
-  // The pre-assessment deep link carries the company's pinned doctor as an ID,
-  // not a slug — accept either.
+  // Corporate consultations never appear here: they are CorporatePlanService
+  // rows, not catalogue services, and are booked from /account/corporate.
+  const services = [...generalServicesRaw, ...specialistServicesRaw];
+  const selectedService =
+    services.find((s) => s.slug === serviceSlugParam || s.id === serviceIdParam) ?? null;
   const requestedDoctor = doctorSlugParam
     ? doctors.find(
         (doctor) => doctor.slug === doctorSlugParam || doctor.id === doctorSlugParam,

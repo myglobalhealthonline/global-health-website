@@ -410,20 +410,23 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                   <p className="gh-field-label mb-2">{t.benefitsServices}</p>
                   <ul className="m-0 flex list-none flex-col gap-2 p-0">
                     {benefits.includedServices.map((s) => (
-                      <li key={s.slug} className="flex flex-wrap items-center gap-2">
+                      <li key={s.id} className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold text-[var(--color-text-primary)]">
                           {s.name}
                         </span>
-                        {s.bookPath ? (
-                          <Btn href={s.bookPath} variant="primary" size="sm">
+                        <span className="text-xs text-[var(--color-text-muted)]">
+                          {s.durationMinutes} min
+                        </span>
+                        {/* Free and unlimited for members: the only gate is the
+                            onboarding one, which the checklist above owns. */}
+                        {s.role === "PRE_ASSESSMENT" ? (
+                          <span className="text-xs text-[var(--color-text-muted)]">
+                            {t.benefitsOnboardingOnly}
+                          </span>
+                        ) : (
+                          <Btn href={`/account/corporate/book/${s.id}`} variant="primary" size="sm">
                             {t.benefitsBook}
                           </Btn>
-                        ) : (
-                          <span className="text-xs text-[var(--color-text-muted)]">
-                            {s.visibility === "CORPORATE_ONLY"
-                              ? t.benefitsOnboardingOnly
-                              : t.benefitsRequestOnly}
-                          </span>
                         )}
                       </li>
                     ))}

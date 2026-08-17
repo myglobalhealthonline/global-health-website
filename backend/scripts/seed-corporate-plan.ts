@@ -1,24 +1,19 @@
 /**
- * Seed: Corporate Standard plan (private B2B) + corporate-only services.
+ * Seed: Corporate Standard plan (private B2B).
  *
- *   pnpm --filter backend exec node --import tsx scripts/seed-corporate-plan.ts [--country=ie]
+ *   pnpm --filter backend exec node --import tsx scripts/seed-corporate-plan.ts
  *
  * Idempotent (upserts by slug). Creates:
  *   1. CorporatePlan "corporate-standard" — €180/employee/year, EUR, max 5
  *      beneficiaries per employee.
  *   2. CorporateBenefitRule — 10% off GENERAL (GP) consultations, beneficiaries
  *      included. Configurable later from the admin corporate pages.
- *   3. Per active country (or just --country=xx): three hidden services —
- *        corporate-pre-assessment      (CORPORATE_ONLY)
- *        corporate-illness-benefit     (CORPORATE_REQUEST_ONLY)
- *        corporate-fit-for-work        (CORPORATE_REQUEST_ONLY)
- *      All €0 (included in the plan), GENERAL kind, isActive=true. They never
- *      appear on public surfaces (ServiceVisibility gate).
  *
- * AFTER SEEDING an admin still has to:
- *   - assign doctors to the corporate services (ServiceDoctor), otherwise
- *     no slots are bookable;
- *   - set each company's preAssessmentDoctorId ("selected Doctor/Admin").
+ * It deliberately seeds NO consultations. A corporate consultation
+ * (CorporatePlanService) names one assigned doctor, and which doctor delivers
+ * it in which market is an admin decision this script cannot make. Add them on
+ * /admin/corporate → Corporate consultations, which is also where the
+ * pre-assessment / illness-benefit / fit-for-work roles are set.
  *
  * Refuses to run when NODE_ENV=production unless ALLOW_PROD_SEED=1.
  */
@@ -29,123 +24,6 @@ if (process.env.NODE_ENV === "production" && process.env.ALLOW_PROD_SEED !== "1"
   console.error("Refusing to seed on production without ALLOW_PROD_SEED=1");
   process.exit(1);
 }
-
-const countryArg = process.argv.find((a) => a.startsWith("--country="))?.split("=")[1];
-
-const CORPORATE_SERVICES = [
-  {
-    slug: "corporate-pre-assessment",
-    name: "Pre-assessment Consultation",
-    summary:
-      "Initial corporate onboarding consultation with your company's assigned Global Health doctor.",
-    visibility: "CORPORATE_ONLY" as const,
-  },
-  {
-    slug: "corporate-illness-benefit",
-    name: "Illness Benefit Consultation",
-    summary:
-      "Company-requested consultation to assess illness benefit eligibility for an employee.",
-    visibility: "CORPORATE_REQUEST_ONLY" as const,
-  },
-  {
-    slug: "corporate-fit-for-work",
-    name: "Fit-for-Work Consultation",
-    summary:
-      "Company-requested consultation to assess an employee's fitness to return to work.",
-    visibility: "CORPORATE_REQUEST_ONLY" as const,
-  },
-];
-
-const CORPORATE_SERVICE_LOCALIZATION: Record<
-  string,
-  Record<string, { name: string; summary: string }>
-> = {
-  es: {
-    "corporate-pre-assessment": {
-      name: "Consulta de preevaluación",
-      summary:
-        "Consulta inicial de incorporación corporativa con el médico asignado por Global Health para su empresa.",
-    },
-    "corporate-illness-benefit": {
-      name: "Consulta para prestación por enfermedad",
-      summary:
-        "Consulta solicitada por la empresa para valorar la elegibilidad de un empleado para la prestación por enfermedad.",
-    },
-    "corporate-fit-for-work": {
-      name: "Consulta de aptitud para el trabajo",
-      summary:
-        "Consulta solicitada por la empresa para valorar si un empleado está en condiciones de reincorporarse al trabajo.",
-    },
-  },
-  pt: {
-    "corporate-pre-assessment": {
-      name: "Consulta de pré-avaliação",
-      summary:
-        "Consulta inicial de integração corporativa com o médico da Global Health atribuído à sua empresa.",
-    },
-    "corporate-illness-benefit": {
-      name: "Avaliação para subsídio de doença",
-      summary:
-        "Consulta clínica solicitada pela empresa para avaliar a condição do colaborador e a elegibilidade para subsídio de doença.",
-    },
-    "corporate-fit-for-work": {
-      name: "Avaliação de aptidão para o trabalho",
-      summary:
-        "Consulta clínica solicitada pela empresa para confirmar se o colaborador está em condições de regressar ao trabalho com segurança.",
-    },
-  },
-  br: {
-    "corporate-pre-assessment": {
-      name: "Consulta de pré-avaliação",
-      summary:
-        "Consulta inicial de integração corporativa com o médico da Global Health designado para a sua empresa.",
-    },
-    "corporate-illness-benefit": {
-      name: "Avaliação para benefício por doença",
-      summary:
-        "Consulta clínica solicitada pela empresa para avaliar a condição do colaborador e a elegibilidade para benefício por doença.",
-    },
-    "corporate-fit-for-work": {
-      name: "Avaliação de aptidão para o trabalho",
-      summary:
-        "Consulta clínica solicitada pela empresa para confirmar se o colaborador está em condições de regressar ao trabalho com segurança.",
-    },
-  },
-  ro: {
-    "corporate-pre-assessment": {
-      name: "Consultație de preevaluare",
-      summary:
-        "Consultația inițială de integrare corporativă cu medicul Global Health desemnat companiei dumneavoastră.",
-    },
-    "corporate-illness-benefit": {
-      name: "Consultație pentru evaluarea indemnizației de boală",
-      summary:
-        "Consultație solicitată de companie pentru evaluarea eligibilității unui angajat pentru indemnizație de boală.",
-    },
-    "corporate-fit-for-work": {
-      name: "Consultație pentru aptitudinea de muncă",
-      summary:
-        "Consultație solicitată de companie pentru a evalua dacă un angajat este apt să revină la muncă.",
-    },
-  },
-  cz: {
-    "corporate-pre-assessment": {
-      name: "Vstupní lékařská konzultace",
-      summary:
-        "Úvodní firemní konzultace s lékařem Global Health přiděleným vaší společnosti.",
-    },
-    "corporate-illness-benefit": {
-      name: "Konzultace k nemocenské dávce",
-      summary:
-        "Konzultace vyžádaná zaměstnavatelem za účelem posouzení nároku zaměstnance na nemocenskou dávku.",
-    },
-    "corporate-fit-for-work": {
-      name: "Konzultace pracovní způsobilosti",
-      summary:
-        "Konzultace vyžádaná zaměstnavatelem k posouzení, zda je zaměstnanec způsobilý k návratu do práce.",
-    },
-  },
-};
 
 async function main() {
   const plan = await prisma.corporatePlan.upsert({
@@ -177,64 +55,18 @@ async function main() {
     });
     console.log("rule created: GENERAL 10% (beneficiaries included)");
   } else {
-    console.log(
-      `rule exists: GENERAL ${existingRule.discountPercent}% — left untouched`,
-    );
+    console.log(`rule exists: GENERAL ${existingRule.discountPercent}% — left untouched`);
   }
 
-  const countries = await prisma.country.findMany({
-    where: { isActive: true, ...(countryArg ? { code: countryArg.toLowerCase() } : {}) },
-    select: { id: true, code: true, name: true },
+  const consultations = await prisma.corporatePlanService.count({
+    where: { corporatePlanId: plan.id },
   });
-  if (countries.length === 0) {
-    console.error(countryArg ? `country ${countryArg} not found/active` : "no active countries");
-    process.exit(1);
-  }
-
-  for (const country of countries) {
-    for (const svc of CORPORATE_SERVICES) {
-      const localized = CORPORATE_SERVICE_LOCALIZATION[country.code]?.[svc.slug];
-      await prisma.service.upsert({
-        where: { countryId_slug: { countryId: country.id, slug: svc.slug } },
-        create: {
-          countryId: country.id,
-          kind: "GENERAL",
-          slug: svc.slug,
-          name: localized?.name ?? svc.name,
-          summary: localized?.summary ?? svc.summary,
-          basePriceCents: 0,
-          isActive: true,
-          visibility: svc.visibility,
-          sortOrder: 999,
-        },
-        update: {
-          visibility: svc.visibility,
-          name: localized?.name ?? svc.name,
-          summary: localized?.summary ?? svc.summary,
-        },
-      });
-    }
-    console.log(`services ok: ${country.code} (${country.name})`);
-  }
-
-  // Link the three services to the plan (CorporatePlanService — powers the
-  // admin "Included services" list and the flow-role slug resolution).
-  const ROLE_BY_SLUG = {
-    "corporate-pre-assessment": "PRE_ASSESSMENT",
-    "corporate-illness-benefit": "ILLNESS_BENEFIT",
-    "corporate-fit-for-work": "FIT_FOR_WORK",
-  } as const;
-  for (const [slug, role] of Object.entries(ROLE_BY_SLUG)) {
-    const service = await prisma.service.findFirst({ where: { slug }, select: { id: true } });
-    if (!service) continue;
-    await prisma.corporatePlanService.upsert({
-      where: {
-        corporatePlanId_serviceId: { corporatePlanId: plan.id, serviceId: service.id },
-      },
-      create: { corporatePlanId: plan.id, serviceId: service.id, role },
-      update: {}, // never overwrite an admin-changed role
-    });
-    console.log(`plan service ok: ${slug} → ${role}`);
+  if (consultations === 0) {
+    console.log(
+      "\nNext: add the plan's consultations on /admin/corporate (name, assigned doctor,\n" +
+        "duration, role). Until at least a PRE_ASSESSMENT one exists, employees cannot\n" +
+        "complete onboarding.",
+    );
   }
 }
 

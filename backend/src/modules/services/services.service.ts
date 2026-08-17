@@ -1097,21 +1097,13 @@ export async function getPublicServiceBySlug(
   slug: string,
   countryCode?: string,
   locale?: LocaleCode,
-  opts?: {
-    /** Corporate booking flow: allow CORPORATE_ONLY / CORPORATE_REQUEST_ONLY
-     *  rows through. The ROUTE must verify the requester's corporate
-     *  eligibility before serving a non-PUBLIC service (plan doc §3.2). */
-    allowCorporate?: boolean;
-  },
 ) {
   try {
     const row = await prisma.service.findFirst({
       where: {
         slug,
         isActive: true,
-        visibility: opts?.allowCorporate
-          ? { in: ["PUBLIC", "CORPORATE_ONLY", "CORPORATE_REQUEST_ONLY"] }
-          : "PUBLIC",
+        visibility: "PUBLIC",
         ...(countryCode ? { country: { code: countryCode, isActive: true } } : {}),
       },
       include: {

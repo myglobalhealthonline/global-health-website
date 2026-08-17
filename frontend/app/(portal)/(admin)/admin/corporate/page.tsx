@@ -84,17 +84,29 @@ async function addPlanServiceAction(formData: FormData) {
   "use server";
   await requireAdminAction();
   const planId = String(formData.get("planId") ?? "").trim();
-  const serviceSlug = String(formData.get("serviceSlug") ?? "").trim();
+  const name = String(formData.get("name") ?? "").trim();
+  const doctorId = String(formData.get("doctorId") ?? "").trim();
+  const countryCode = String(formData.get("countryCode") ?? "").trim();
+  const durationMinutes = Number(formData.get("durationMinutes"));
   const role = String(formData.get("role") ?? "INCLUDED") as CorporatePlanServiceRole;
-  if (!planId || !serviceSlug) {
-    redirect(`/admin/corporate?error=${encodeURIComponent("Pick a service to add")}`);
+  if (!planId || !name || !doctorId) {
+    redirect(
+      `/admin/corporate?error=${encodeURIComponent("Name and assigned doctor are required")}`,
+    );
   }
-  const result = await postCorporatePlanService(planId, { serviceSlug, role });
+  const result = await postCorporatePlanService(planId, {
+    name,
+    doctorId,
+    role,
+    countryCode: countryCode || null,
+    durationMinutes:
+      Number.isFinite(durationMinutes) && durationMinutes > 0 ? Math.round(durationMinutes) : 30,
+  });
   if (!result.ok) {
     redirect(`/admin/corporate?error=${encodeURIComponent(result.message)}`);
   }
   revalidatePath("/admin/corporate");
-  redirect(`/admin/corporate?success=${encodeURIComponent("Service added to plan")}`);
+  redirect(`/admin/corporate?success=${encodeURIComponent("Consultation added to plan")}`);
 }
 
 async function removePlanServiceAction(formData: FormData) {
@@ -103,7 +115,7 @@ async function removePlanServiceAction(formData: FormData) {
   const id = String(formData.get("planServiceId") ?? "").trim();
   if (id) await deleteCorporatePlanService(id);
   revalidatePath("/admin/corporate");
-  redirect(`/admin/corporate?success=${encodeURIComponent("Service removed from plan")}`);
+  redirect(`/admin/corporate?success=${encodeURIComponent("Consultation removed from plan")}`);
 }
 
 export default async function AdminCorporatePage({ searchParams }: PageProps) {
@@ -204,21 +216,32 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
               </form>
             </div>
             <div className="border-t border-[var(--color-border)] px-5 py-4">
-              <p className="gh-field-label mb-3">Included services</p>
+              <p className="gh-field-label mb-1">Corporate consultations</p>
+              <p className="mb-3 text-portal-meta text-[var(--color-text-muted)]">
+                Free for enrolled members and booked only from the member
+                portal — never listed publicly, never charged, and never part
+                of a doctor payout. Each one runs on its assigned doctor&rsquo;s
+                ordinary availability.
+              </p>
               {plan.includedServices.length === 0 ? (
                 <p className="mb-3 text-sm text-[var(--color-text-muted)]">
-                  No services assigned yet — add the consultations this plan includes.
+                  No consultations yet — add the ones this plan includes.
                 </p>
               ) : (
                 <ul className="m-0 mb-4 flex list-none flex-col gap-2 p-0">
                   {plan.includedServices.map((ps) => (
                     <li key={ps.id} className="flex flex-wrap items-center gap-3">
-                      <span className="min-w-[18rem] text-sm font-semibold text-[var(--color-text-primary)]">
-                        {ps.service.name}
+                      <span className="min-w-[16rem] text-sm font-semibold text-[var(--color-text-primary)]">
+                        {ps.name}
                       </span>
                       <Pill tone={ps.role === "INCLUDED" ? "neutral" : "info"}>
                         {planServiceRoleLabel(ps.role)}
                       </Pill>
+                      <span className="text-portal-meta text-[var(--color-text-muted)]">
+                        {ps.doctor.fullName} · {ps.durationMinutes} min ·{" "}
+                        {ps.countryCode ? ps.countryCode.toUpperCase() : "All countries"}
+                      </span>
+                      {!ps.isActive ? <Pill tone="inactive">Inactive</Pill> : null}
                       <form action={removePlanServiceAction}>
                         <input type="hidden" name="planServiceId" value={ps.id} />
                         <Btn type="submit" variant="ghost" size="sm">
@@ -232,20 +255,53 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
               <form action={addPlanServiceAction} className="flex flex-wrap items-end gap-3">
                 <input type="hidden" name="planId" value={plan.id} />
                 <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Service</span>
-                  <select name="serviceSlug" className="gh-select w-72" required defaultValue="">
+                  <span className="gh-field-label">Consultation name</span>
+                  <input
+                    name="name"
+                    className="gh-input w-64"
+                    required
+                    maxLength={240}
+                    placeholder="Fit-for-Work Consultation"
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Assigned doctor</span>
+                  <select name="doctorId" className="gh-select w-64" required defaultValue="">
                     <option value="" disabled>
-                      Choose a service…
+                      Choose a doctor…
                     </option>
-                    {/* The name shown is whichever country row the slug
-                        dedupe kept, so the slug is printed too — that is what
-                        actually gets assigned. */}
-                    {plansResult.data.serviceOptions.map((opt) => (
-                      <option key={opt.slug} value={opt.slug}>
-                        {opt.slug} — {opt.name}
+                    {plansResult.data.doctorOptions.map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.fullName} — {opt.country.code.toUpperCase()}
                       </option>
                     ))}
                   </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Country</span>
+                  {/* Blank = every market the plan serves. A pinned country
+                      must match the assigned doctor's own market — the API
+                      refuses the pair otherwise. */}
+                  <select name="countryCode" className="gh-select w-44" defaultValue="">
+                    <option value="">All countries</option>
+                    {plansResult.data.countryOptions.map((opt) => (
+                      <option key={opt.code} value={opt.code}>
+                        {opt.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Duration (min)</span>
+                  <input
+                    type="number"
+                    name="durationMinutes"
+                    className="gh-input w-28"
+                    min={5}
+                    max={240}
+                    step={5}
+                    defaultValue={30}
+                  />
                 </label>
                 <label className="flex flex-col gap-1">
                   <span className="gh-field-label">Role</span>
@@ -258,7 +314,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                   </select>
                 </label>
                 <Btn type="submit" variant="secondary" size="sm">
-                  Add service
+                  Add consultation
                 </Btn>
               </form>
             </div>

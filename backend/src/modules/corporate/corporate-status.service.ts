@@ -439,11 +439,10 @@ export async function claimCorporateRequest(
 }
 
 /**
- * Booking hook — call after an appointment is created for a corporate
- * service (checkout mint or direct create). Links the appointment to
- * the employee (pre-assessment) or the open request, and advances the
- * relevant status. Safe to call for any appointment; no-ops for
- * non-corporate services.
+ * Booking hook — call after a corporate-plan consultation is booked from the
+ * member portal. Links the appointment to the employee (pre-assessment) or to
+ * the open company request, and advances the relevant status. Safe to call for
+ * any appointment; no-ops for ordinary catalogue bookings.
  */
 export async function onCorporateAppointmentCreated(appointmentId: string): Promise<void> {
   const appointment = await prisma.appointment.findUnique({
@@ -453,14 +452,13 @@ export async function onCorporateAppointmentCreated(appointmentId: string): Prom
       userId: true,
       email: true,
       countryCode: true,
-      service: { select: { id: true, visibility: true } },
+      corporateService: { select: { id: true, role: true } },
     },
   });
-  if (!appointment?.service) return;
-  const { visibility } = appointment.service;
-  if (visibility === "PUBLIC" || visibility === "ADMIN_ONLY") return;
+  if (!appointment?.corporateService) return;
+  const { role } = appointment.corporateService;
 
-  if (visibility === "CORPORATE_ONLY") {
+  if (role === "PRE_ASSESSMENT") {
     // Pre-assessment: match by linked user first, fall back to invite email.
     // Scoped to the booking's own country — an unscoped match would stamp the
     // pre-assessment on the wrong membership for someone employed by two
@@ -495,11 +493,12 @@ export async function onCorporateAppointmentCreated(appointmentId: string): Prom
     return;
   }
 
-  // CORPORATE_REQUEST_ONLY — attach to the oldest open request for this
-  // user + service.
+  // Attach to the oldest open company request for this user + consultation,
+  // when one exists. A member booking with no open request is still valid —
+  // corporate consultations carry no usage limit.
   const request = await prisma.corporateServiceRequest.findFirst({
     where: {
-      serviceId: appointment.service.id,
+      corporateServiceId: appointment.corporateService.id,
       status: { in: ["REQUESTED", "EMPLOYEE_NOTIFIED"] },
       employee: appointment.userId
         ? { userId: appointment.userId }

@@ -126,12 +126,12 @@ export async function resolveCorporateDiscountsForItems(
 export type MemberBenefits = {
   discounts: { label: string; discountPercent: number }[];
   includedServices: {
-    slug: string;
+    id: string;
     name: string;
+    description: string | null;
     role: string;
-    visibility: string;
-    /** Set only when the member can open the booking flow directly. */
-    bookPath: string | null;
+    durationMinutes: number;
+    doctorId: string;
   }[];
 };
 
@@ -141,43 +141,54 @@ const SERVICE_KIND_LABEL: Record<string, string> = {
 };
 
 /**
- * Plan benefit rules + included services, resolved to the company country's
- * Service rows (the catalogue is per-country, the plan assignment is by slug).
+ * Plan benefit rules (discounts on the public catalogue) + the plan's own
+ * free corporate consultations. Discount labels still resolve against the
+ * company country's Service rows, because that is what checkout discounts;
+ * the consultations are plan-owned rows with no catalogue involvement.
  * Rules on kinds checkout does not discount are dropped rather than advertised
  * — see the GENERAL/SPECIALIST guard in `resolveCorporateDiscount`.
  */
 export async function resolveMemberBenefits(input: {
   planId: string;
   countryCode: string;
-  locale: string;
   memberType: "EMPLOYEE" | "BENEFICIARY";
 }): Promise<MemberBenefits> {
+  const countryCode = input.countryCode.toLowerCase();
   const [rules, planServices] = await Promise.all([
     prisma.corporateBenefitRule.findMany({
       where: { corporatePlanId: input.planId, isActive: true },
       include: { service: { select: { slug: true, kind: true } } },
     }),
     prisma.corporatePlanService.findMany({
-      where: { corporatePlanId: input.planId },
-      select: { role: true, service: { select: { slug: true } } },
-      orderBy: { createdAt: "asc" },
+      where: {
+        corporatePlanId: input.planId,
+        isActive: true,
+        OR: [{ countryCode: null }, { countryCode }],
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        role: true,
+        durationMinutes: true,
+        doctorId: true,
+      },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
     }),
   ]);
 
-  const slugs = Array.from(
-    new Set([
-      ...planServices.map((ps) => ps.service.slug),
-      ...rules.flatMap((r) => (r.service ? [r.service.slug] : [])),
-    ]),
+  const pinnedSlugs = Array.from(
+    new Set(rules.flatMap((r) => (r.service ? [r.service.slug] : []))),
   );
-  const localRows = slugs.length
+  const localRows = pinnedSlugs.length
     ? await prisma.service.findMany({
         where: {
-          slug: { in: slugs },
+          slug: { in: pinnedSlugs },
           isActive: true,
-          country: { code: input.countryCode.toLowerCase() },
+          visibility: "PUBLIC",
+          country: { code: countryCode },
         },
-        select: { slug: true, name: true, visibility: true },
+        select: { slug: true, name: true },
       })
     : [];
   const bySlug = new Map(localRows.map((s) => [s.slug, s]));
@@ -194,39 +205,18 @@ export async function resolveMemberBenefits(input: {
       return [{ label, discountPercent: r.discountPercent }];
     });
 
-  const includedServices = planServices.flatMap((ps) => {
-    const row = bySlug.get(ps.service.slug);
-    // No row in this country (or deactivated) = not actually offered here.
-    if (!row) return [];
-    return [
-      {
-        slug: row.slug,
-        name: row.name,
-        role: ps.role as string,
-        visibility: row.visibility as string,
-        // CORPORATE_REQUEST_ONLY needs an open company request (surfaced
-        // separately as `openRequests`); CORPORATE_ONLY is the onboarding
-        // pre-assessment, which has its own checklist link.
-        bookPath:
-          row.visibility === "PUBLIC"
-            ? `/${input.countryCode.toLowerCase()}/${input.locale.toLowerCase()}/book?service=${row.slug}`
-            : null,
-      },
-    ];
-  });
-
-  return { discounts, includedServices };
+  return { discounts, includedServices: planServices };
 }
 
 export type CorporateBookabilityResult =
-  | { ok: true; requestId?: string; employeeId?: string; pinnedDoctorId?: string | null }
+  | { ok: true; requestId?: string; employeeId?: string }
   | {
       ok: false;
       message: string;
       /** True only when the requester actually belongs to some corporate company.
        *  Callers answer 403 + `message` for those people (they need to know WHY
        *  their own benefit was refused) and a bare 404 for everyone else, so a
-       *  private corporate service is not an existence oracle for any logged-in
+       *  corporate consultation is not an existence oracle for any logged-in
        *  patient — only for the members it already exists for. */
       isMember: boolean;
     };
@@ -242,95 +232,94 @@ async function holdsCorporateMembership(userId: string): Promise<boolean> {
 }
 
 /**
- * Server-side gate for booking a non-PUBLIC service (cart add +
- * direct appointment create). PUBLIC services never reach this.
+ * Server-side gate for booking a CorporatePlanService from the member portal.
+ * Corporate consultations are not Service rows and are never reachable from
+ * the storefront, so this is the ONLY booking path they have.
  *
- * CORPORATE_ONLY (pre-assessment): requester must be a not-yet-active
- * corporate employee of a live company; when the company pins a
- * pre-assessment doctor, the booking must use that doctor.
+ * PRE_ASSESSMENT: requester must be a not-yet-active employee of a live
+ * company; when the company pins a pre-assessment doctor, that pin wins over
+ * the plan's assigned doctor.
  *
- * CORPORATE_REQUEST_ONLY: requester must be the employee of an OPEN
- * CorporateServiceRequest for this exact service.
+ * ILLNESS_BENEFIT / FIT_FOR_WORK: an open CorporateServiceRequest for this
+ * consultation is consumed when one exists; the booking is not blocked when
+ * none does (these consultations are free and unlimited for members).
+ *
+ * INCLUDED: any active member of the plan.
  */
 export async function assertCorporateServiceBookable(input: {
   userId: string | null | undefined;
-  serviceId: string;
-  visibility: "CORPORATE_ONLY" | "CORPORATE_REQUEST_ONLY" | "ADMIN_ONLY";
-  doctorId?: string | null;
-  /** True when the caller is actually creating a booking (cart add, appointment
-   *  create). A pinned pre-assessment doctor is then REQUIRED, not merely
-   *  "not contradicted" — a booking that names no doctor slipped the pin.
-   *  Read-only visibility checks (the service-detail lookup) leave it off:
-   *  they carry no doctor and must not 404 an otherwise eligible member. */
-  bookingIntent?: boolean;
-  /** Country of the service being booked. When given, the requester's company
-   *  must be in that country — the corporate services are seeded per country,
-   *  and nothing else stopped a PT employee booking the CZ row of their own
-   *  company's service. */
-  serviceCountryCode?: string | null;
+  corporateServiceId: string;
   isAdmin?: boolean;
 }): Promise<CorporateBookabilityResult> {
   if (input.isAdmin) return { ok: true };
-  if (input.visibility === "ADMIN_ONLY") {
-    return { ok: false, message: "Service not found", isMember: false };
-  }
   if (!input.userId) {
-    return { ok: false, message: "Sign in to book this service", isMember: false };
+    return { ok: false, message: "Sign in to book this consultation", isMember: false };
   }
   const userId = input.userId;
 
-  const companyCountry = input.serviceCountryCode
-    ? { company: { countryCode: input.serviceCountryCode.toLowerCase() } }
-    : {};
+  const corporateService = await prisma.corporatePlanService.findFirst({
+    where: { id: input.corporateServiceId, isActive: true },
+    select: { id: true, corporatePlanId: true, countryCode: true, role: true },
+  });
+  if (!corporateService) {
+    return { ok: false, message: "Consultation not found", isMember: false };
+  }
 
-  if (input.visibility === "CORPORATE_ONLY") {
+  const notEligible = async (message: string) => ({
+    ok: false as const,
+    message,
+    isMember: await holdsCorporateMembership(userId),
+  });
+  const companyScope = {
+    planId: corporateService.corporatePlanId,
+    ...(corporateService.countryCode ? { countryCode: corporateService.countryCode } : {}),
+  };
+
+  if (corporateService.role === "PRE_ASSESSMENT") {
+    // Onboarding-only: the employee is mid-onboarding, so no ACTIVE membership
+    // exists yet and `getActiveMembershipForUser` cannot answer for them.
     const employee = await prisma.corporateEmployee.findFirst({
       where: {
-        userId: input.userId,
+        userId,
         status: { in: ["PROFILE_COMPLETE", "PREASSESSMENT_PENDING", "PREASSESSMENT_BOOKED"] },
-        ...companyCountry,
+        company: companyScope,
       },
-      include: { company: { include: { plan: true } } },
+      include: { company: true },
     });
     if (!employee || !companyIsLive(employee.company)) {
-      return {
-        ok: false,
-        message: "This consultation is only available during corporate onboarding",
-        isMember: await holdsCorporateMembership(userId),
-      };
+      return notEligible("This consultation is only available during corporate onboarding");
     }
-    const pinned = employee.company.preAssessmentDoctorId;
-    if (pinned && input.doctorId !== pinned && (input.bookingIntent || input.doctorId)) {
-      return {
-        ok: false,
-        message: "Pre-assessment consultations must be booked with your company's assigned doctor",
-        // An employee row was found, so this requester is unambiguously a member.
-        isMember: true,
-      };
-    }
-    return { ok: true, employeeId: employee.id, pinnedDoctorId: pinned ?? null };
+    return { ok: true, employeeId: employee.id };
   }
 
-  // CORPORATE_REQUEST_ONLY
+  // `getActiveMembershipForUser` already rejects non-live companies.
+  const membership = await getActiveMembershipForUser(userId);
+  if (!membership) {
+    return notEligible("This consultation is only available to active corporate members");
+  }
+  if (membership.company.planId !== corporateService.corporatePlanId) {
+    return notEligible("This consultation is not part of your company's plan");
+  }
+  if (
+    corporateService.countryCode &&
+    corporateService.countryCode !== membership.company.countryCode
+  ) {
+    return notEligible("This consultation is not offered in your company's country");
+  }
+
+  // Consume an open company request when there is one. Its absence is not a
+  // refusal — these consultations carry no usage limit.
   const request = await prisma.corporateServiceRequest.findFirst({
     where: {
-      serviceId: input.serviceId,
+      corporateServiceId: corporateService.id,
       status: { in: ["REQUESTED", "EMPLOYEE_NOTIFIED"] },
-      employee: {
-        userId: input.userId,
-        status: { notIn: ["REMOVED", "SUSPENDED"] },
-        ...companyCountry,
-      },
+      employee: { userId, status: { notIn: ["REMOVED", "SUSPENDED"] } },
     },
-    include: { company: true },
     orderBy: { createdAt: "asc" },
+    select: { id: true, employeeId: true },
   });
-  if (!request || !companyIsLive(request.company)) {
-    return {
-      ok: false,
-      message: "This consultation requires an open request from your company",
-      isMember: await holdsCorporateMembership(userId),
-    };
-  }
-  return { ok: true, requestId: request.id, employeeId: request.employeeId };
+  return {
+    ok: true,
+    ...(request ? { requestId: request.id, employeeId: request.employeeId } : {}),
+  };
 }

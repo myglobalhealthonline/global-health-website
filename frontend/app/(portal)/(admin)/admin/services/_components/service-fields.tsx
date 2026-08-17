@@ -382,17 +382,11 @@ export function ServiceFields({
           className="gh-select"
         >
           <option value="PUBLIC">Public — listed on the website</option>
-          <option value="CORPORATE_ONLY">
-            Corporate only — corporate onboarding (pre-assessment)
-          </option>
-          <option value="CORPORATE_REQUEST_ONLY">
-            Corporate request only — bookable against an open company request
-          </option>
           <option value="ADMIN_ONLY">Admin only — internal</option>
         </select>
         <span className="text-portal-thead text-[var(--color-text-muted)]">
-          Anything other than Public is hidden from listings, search, sitemaps
-          and the public booking flow, and is gated server-side at booking.
+          Admin only is hidden from listings, search, sitemaps and the public
+          booking flow, and is refused server-side at booking.
         </span>
       </label>
 

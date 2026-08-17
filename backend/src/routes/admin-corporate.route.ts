@@ -160,67 +160,108 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
   // ponytail: unpaginated — plans are an admin-configured catalog (a
   // handful of pricing tiers), not a growth table. Paginate if that changes.
   app.get("/api/admin/corporate/plans", async () => {
-    const [plans, serviceOptions] = await Promise.all([
+    const [plans, doctorOptions, countryOptions] = await Promise.all([
       prisma.corporatePlan.findMany({
         include: {
           benefitRules: true,
           includedServices: {
-            include: { service: { select: { id: true, slug: true, name: true, visibility: true } } },
-            orderBy: { createdAt: "asc" },
+            include: { doctor: { select: { id: true, fullName: true } } },
+            orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
           },
           _count: { select: { companies: true } },
         },
         orderBy: { createdAt: "asc" },
       }),
-      // Assignment picker options — one entry per slug (Service rows are
-      // per-country duplicates of the same catalog slug). Ordered by SLUG, not
-      // name: `distinct` keeps the first row per slug in the result order, so
-      // ordering by name kept whichever country's LOCALIZED name sorted first
-      // and hid the English one ("Illness Benefit Consultation" lost to
-      // "Avaliação para subsídio de doença"). The picker submits the slug, so
-      // the UI labels each option with it.
-      prisma.service.findMany({
+      // Every corporate consultation names exactly one delivering doctor, and
+      // the booking runs on that doctor's ordinary availability.
+      prisma.doctor.findMany({
+        where: { active: true },
+        select: { id: true, fullName: true, country: { select: { code: true, name: true } } },
+        orderBy: { fullName: "asc" },
+      }),
+      prisma.country.findMany({
         where: { isActive: true },
-        select: { slug: true, name: true, visibility: true },
-        distinct: ["slug"],
-        orderBy: { slug: "asc" },
+        select: { code: true, name: true },
+        orderBy: { name: "asc" },
       }),
     ]);
-    return okResponse({ plans, serviceOptions });
+    return okResponse({ plans, doctorOptions, countryOptions });
   });
 
-  /** Assign (or re-role) an included service on a plan. Picked by slug —
-   *  runtime resolution is slug + company country. */
+  /** Corporate consultation payload. No price and no slug by design: these
+   *  are free, portal-only consultations, not catalogue services. */
+  const corporateServiceSchema = z.object({
+    name: z.string().trim().min(1).max(240),
+    description: z.string().trim().max(2000).nullish(),
+    countryCode: z.string().trim().min(2).max(8).toLowerCase().nullish(),
+    durationMinutes: z.number().int().min(5).max(240).default(30),
+    doctorId: z.string().trim().min(1).max(40),
+    role: z.enum(["INCLUDED", "PRE_ASSESSMENT", "ILLNESS_BENEFIT", "FIT_FOR_WORK"]).default("INCLUDED"),
+    isActive: z.boolean().default(true),
+    sortOrder: z.number().int().min(0).max(999).default(0),
+  });
+
+  /** A doctor who actually exists, is active, and — when the consultation is
+   *  pinned to a market — practises in it. Without the country check a plan
+   *  could hand a PT employee an IE doctor's slots. */
+  async function assertAssignableDoctor(
+    doctorId: string,
+    countryCode: string | null | undefined,
+  ): Promise<string | null> {
+    const doctor = await prisma.doctor.findFirst({
+      where: { id: doctorId, active: true },
+      select: { country: { select: { code: true } } },
+    });
+    if (!doctor) return "Doctor not found";
+    if (countryCode && doctor.country.code !== countryCode) {
+      return "The assigned doctor does not practise in that country";
+    }
+    return null;
+  }
+
   app.post("/api/admin/corporate/plans/:id/services", async (request, reply) => {
     if (!(await requireWriteActor(request))) {
       return reply.status(403).send(errorResponse("Read-only access"));
     }
     const { id } = request.params as { id: string };
-    const schema = z.object({
-      serviceSlug: z.string().trim().min(1).max(240),
-      role: z.enum(["INCLUDED", "PRE_ASSESSMENT", "ILLNESS_BENEFIT", "FIT_FOR_WORK"]).default("INCLUDED"),
-    });
-    const parsed = schema.safeParse(request.body);
+    const parsed = corporateServiceSchema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
-    const { serviceSlug, role } = parsed.data;
-    const service = await prisma.service.findFirst({
-      where: { slug: serviceSlug, isActive: true },
-      select: { id: true, visibility: true },
-    });
-    if (!service) return reply.status(404).send(errorResponse("Service not found"));
-    // Flow roles depend on the visibility gates the booking pipeline enforces.
-    if (role === "PRE_ASSESSMENT" && service.visibility !== "CORPORATE_ONLY") {
-      return reply.status(400).send(errorResponse("Pre-assessment must use a CORPORATE_ONLY service"));
-    }
-    if ((role === "ILLNESS_BENEFIT" || role === "FIT_FOR_WORK") && service.visibility !== "CORPORATE_REQUEST_ONLY") {
-      return reply.status(400).send(errorResponse("Request services must be CORPORATE_REQUEST_ONLY"));
-    }
-    const row = await prisma.corporatePlanService.upsert({
-      where: { corporatePlanId_serviceId: { corporatePlanId: id, serviceId: service.id } },
-      create: { corporatePlanId: id, serviceId: service.id, role },
-      update: { role },
+    const { countryCode, doctorId, ...rest } = parsed.data;
+    const problem = await assertAssignableDoctor(doctorId, countryCode);
+    if (problem) return reply.status(400).send(errorResponse(problem));
+    const row = await prisma.corporatePlanService.create({
+      data: { ...rest, corporatePlanId: id, doctorId, countryCode: countryCode ?? null },
     });
     return okResponse({ id: row.id });
+  });
+
+  app.patch("/api/admin/corporate/plan-services/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const parsed = corporateServiceSchema.partial().safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const existing = await prisma.corporatePlanService.findUnique({
+      where: { id },
+      select: { doctorId: true, countryCode: true },
+    });
+    if (!existing) return reply.status(404).send(errorResponse("Consultation not found"));
+    const { countryCode, doctorId, ...rest } = parsed.data;
+    // Either field alone can invalidate the pair, so re-check the resulting
+    // combination rather than only what was sent.
+    const nextCountry = countryCode !== undefined ? (countryCode ?? null) : existing.countryCode;
+    const problem = await assertAssignableDoctor(doctorId ?? existing.doctorId, nextCountry);
+    if (problem) return reply.status(400).send(errorResponse(problem));
+    await prisma.corporatePlanService.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(doctorId !== undefined ? { doctorId } : {}),
+        ...(countryCode !== undefined ? { countryCode: countryCode ?? null } : {}),
+      },
+    });
+    return okResponse({ id });
   });
 
   app.delete("/api/admin/corporate/plan-services/:id", async (request, reply) => {

@@ -5,7 +5,6 @@ import {
   corporateRequestText,
   sendCorporateRequestEmail,
 } from "./corporate-emails.js";
-import { memberBookingLocale } from "./corporate-shared.js";
 
 const REQUEST_TTL_DAYS = 60;
 
@@ -14,38 +13,38 @@ export const REQUEST_TYPE_LABEL: Record<CorporateRequestType, string> = {
   FIT_FOR_WORK: "Fit-for-Work Consultation",
 };
 
-export const REQUEST_TYPE_SERVICE_SLUG: Record<CorporateRequestType, string> = {
-  ILLNESS_BENEFIT: "corporate-illness-benefit",
-  FIT_FOR_WORK: "corporate-fit-for-work",
+const REQUEST_TYPE_ROLE: Record<CorporateRequestType, CorporatePlanServiceRole> = {
+  ILLNESS_BENEFIT: "ILLNESS_BENEFIT",
+  FIT_FOR_WORK: "FIT_FOR_WORK",
 };
 
 /**
- * Slug of the service the plan assigns to a role (admin-configured on
- * /admin/corporate), or null when the plan has no assignment — callers
- * fall back to the seeded REQUEST_TYPE_SERVICE_SLUG defaults.
+ * The plan's corporate consultation for a role, scoped to the company's
+ * market. A country-pinned row wins over the plan-wide one, so a market with
+ * its own assigned doctor is never served the generic row.
  */
-export async function planServiceSlug(
+export async function planServiceForRole(
   corporatePlanId: string,
   role: CorporatePlanServiceRole,
-): Promise<string | null> {
-  const row = await prisma.corporatePlanService.findFirst({
-    where: { corporatePlanId, role },
-    select: { service: { select: { slug: true } } },
+  countryCode: string,
+): Promise<{ id: string; name: string } | null> {
+  const rows = await prisma.corporatePlanService.findMany({
+    where: {
+      corporatePlanId,
+      role,
+      isActive: true,
+      OR: [{ countryCode: null }, { countryCode: countryCode.toLowerCase() }],
+    },
+    select: { id: true, name: true, countryCode: true },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
   });
-  return row?.service.slug ?? null;
+  return rows.find((r) => r.countryCode !== null) ?? rows[0] ?? null;
 }
 
-/** Booking deep link for the employee (site is /{country}/{lang}/…). Pass the
- *  member's resolved locale — see `memberBookingLocale`. */
-export function requestBookPath(
-  countryCode: string,
-  locale: string,
-  type: CorporateRequestType,
-  serviceSlug?: string | null,
-): string {
-  return `/${countryCode.toLowerCase()}/${locale.toLowerCase()}/book?service=${
-    serviceSlug ?? REQUEST_TYPE_SERVICE_SLUG[type]
-  }`;
+/** Where the employee books a corporate consultation: the member portal, not
+ *  the public booking funnel — these consultations are not catalogue services. */
+export function corporateBookPath(corporateServiceId: string): string {
+  return `/account/corporate/book/${corporateServiceId}`;
 }
 
 export type CreateRequestResult =
@@ -73,23 +72,16 @@ export async function createCorporateRequest(opts: {
     return { ok: false, status: 400, message: "Requests can only be created for invited or active employees" };
   }
 
-  const slug =
-    (await planServiceSlug(employee.company.planId, opts.type)) ??
-    REQUEST_TYPE_SERVICE_SLUG[opts.type];
-  const service = await prisma.service.findFirst({
-    where: {
-      slug,
-      visibility: "CORPORATE_REQUEST_ONLY",
-      isActive: true,
-      country: { code: employee.company.countryCode },
-    },
-    select: { id: true },
-  });
-  if (!service) {
+  const corporateService = await planServiceForRole(
+    employee.company.planId,
+    REQUEST_TYPE_ROLE[opts.type],
+    employee.company.countryCode,
+  );
+  if (!corporateService) {
     return {
       ok: false,
       status: 409,
-      message: `The ${REQUEST_TYPE_LABEL[opts.type]} service is not configured for this country yet`,
+      message: `The ${REQUEST_TYPE_LABEL[opts.type]} consultation is not configured on this plan yet`,
     };
   }
 
@@ -110,7 +102,7 @@ export async function createCorporateRequest(opts: {
       companyId: opts.companyId,
       employeeId: employee.id,
       type: opts.type,
-      serviceId: service.id,
+      corporateServiceId: corporateService.id,
       requestedByUserId: opts.requestedByUserId,
       reason: opts.reason?.trim() || null,
       expiresAt: new Date(Date.now() + REQUEST_TTL_DAYS * 24 * 60 * 60 * 1000),
@@ -119,8 +111,7 @@ export async function createCorporateRequest(opts: {
 
   // Notify the employee. Email success flips the status to
   // EMPLOYEE_NOTIFIED; failures leave it at REQUESTED for a later resend.
-  const locale = await memberBookingLocale(employee.userId, employee.company.countryCode);
-  const bookPath = requestBookPath(employee.company.countryCode, locale, opts.type, slug);
+  const bookPath = corporateBookPath(corporateService.id);
   let notified = false;
   try {
     const result = await sendCorporateRequestEmail({

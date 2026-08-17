@@ -244,7 +244,7 @@ function textOf(value: string | string[] | null | undefined): string | null {
 
 async function collectServiceJobs(completed: Set<string>, legacyCompleted: Set<string>): Promise<Job[]> {
   const services = await prisma.service.findMany({
-    where: { visibility: { in: ["PUBLIC", "CORPORATE_ONLY", "CORPORATE_REQUEST_ONLY"] } },
+    where: { visibility: "PUBLIC" },
     orderBy: { slug: "asc" },
     select: {
       id: true, slug: true, name: true, summary: true, seoTitle: true, seoDescription: true,
@@ -267,7 +267,7 @@ async function collectServiceJobs(completed: Set<string>, legacyCompleted: Set<s
 
 async function collectServiceFaqJobs(completed: Set<string>, legacyCompleted: Set<string>): Promise<Job[]> {
   const services = await prisma.service.findMany({
-    where: { visibility: { in: ["PUBLIC", "CORPORATE_ONLY", "CORPORATE_REQUEST_ONLY"] } },
+    where: { visibility: "PUBLIC" },
     orderBy: { slug: "asc" },
     select: {
       slug: true,

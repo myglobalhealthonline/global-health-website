@@ -10,12 +10,7 @@ export const serviceKindSchema = z.enum([
   "ASYNC_PRESCRIPTION",
 ]);
 
-export const serviceVisibilitySchema = z.enum([
-  "PUBLIC",
-  "CORPORATE_ONLY",
-  "CORPORATE_REQUEST_ONLY",
-  "ADMIN_ONLY",
-]);
+export const serviceVisibilitySchema = z.enum(["PUBLIC", "ADMIN_ONLY"]);
 
 /** Lowercase URL segment style: letters, numbers, hyphens (no leading/trailing hyphen). */
 export const serviceSlugSchema = z
@@ -252,10 +247,9 @@ const adminServiceBodyShape = {
     .max(200)
     .optional(),
   /** Who may see and book this service. PUBLIC is the catalogue default;
-   *  the corporate flows need CORPORATE_ONLY (pre-assessment) and
-   *  CORPORATE_REQUEST_ONLY (Illness Benefit / Fit-for-Work), which were
-   *  previously only settable by the seed script. ASYNC_PRESCRIPTION is
-   *  forced to ADMIN_ONLY downstream regardless of what is sent here. */
+   *  ADMIN_ONLY is internal. ASYNC_PRESCRIPTION is forced to ADMIN_ONLY
+   *  downstream regardless of what is sent here. Corporate consultations are
+   *  NOT services — see CorporatePlanService. */
   visibility: serviceVisibilitySchema.optional(),
   isActive: z.boolean().optional(),
 } satisfies z.ZodRawShape;
