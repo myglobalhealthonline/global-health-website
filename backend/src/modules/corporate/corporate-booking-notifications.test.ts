@@ -23,6 +23,7 @@ const state: {
   appointment: Row;
   meetConfigured: boolean;
   meetThrows: boolean;
+  meetAttendees: string[];
   updateManyWhere: Record<string, unknown> | null;
   emails: { to: string; meetingUrl: string | null }[];
   whatsapps: { to: string; patientConsent?: boolean | null }[];
@@ -32,6 +33,7 @@ const state: {
   appointment: null,
   meetConfigured: false,
   meetThrows: false,
+  meetAttendees: [],
   updateManyWhere: null,
   emails: [],
   whatsapps: [],
@@ -58,7 +60,8 @@ before(async () => {
   mock.module("../../lib/google-meet/google-meet.service.js", {
     namedExports: {
       isGoogleMeetConfigured: () => state.meetConfigured,
-      createMeetLinkForAppointment: async () => {
+      createMeetLinkForAppointment: async (opts: { attendeeEmails?: string[] }) => {
+        state.meetAttendees = opts.attendeeEmails ?? [];
         if (state.meetThrows) throw new Error("meet down");
         return "https://meet.google.com/minted";
       },
@@ -134,6 +137,7 @@ beforeEach(() => {
   };
   state.meetConfigured = false;
   state.meetThrows = false;
+  state.meetAttendees = [];
   state.updateManyWhere = null;
   state.emails = [];
   state.whatsapps = [];
@@ -169,6 +173,18 @@ describe("notifyCorporateBookingCreated", () => {
     await svc.notifyCorporateBookingCreated("appt-1");
     assert.deepEqual(state.updateManyWhere, { id: "appt-1", meetingUrl: null });
     assert.ok(state.emails.every((e) => e.meetingUrl === "https://meet.google.com/minted"));
+  });
+
+  /** Google mails every attendee its own raw calendar invite
+   *  (`?sendUpdates=all`). Listing the patient reached them as "Invitation
+   *  from an unknown sender" with a Report spam button, put the doctor's
+   *  personal address in the patient's Who list and the patient's address in
+   *  the subject. The member's link belongs in our own branded confirmation. */
+  it("never puts the patient on the calendar event", async () => {
+    state.meetConfigured = true;
+    await svc.notifyCorporateBookingCreated("appt-1");
+    assert.deepEqual(state.meetAttendees, ["tiago@example.test"]);
+    assert.equal(state.meetAttendees.includes("pedro@example.test"), false);
   });
 
   it("does not re-mint when the appointment already has a link", async () => {

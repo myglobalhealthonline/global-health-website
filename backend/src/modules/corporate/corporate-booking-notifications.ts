@@ -62,7 +62,14 @@ export async function notifyCorporateBookingCreated(appointmentId: string): Prom
       startAt: appointment.scheduledAt,
       durationMinutes: appointment.corporateService.durationMinutes,
       title: appointment.consultationType,
-      attendeeEmails: [appointment.email, doctorContact?.loginEmail ?? ""],
+      // Doctor only — NEVER the patient. Google mails every attendee its own
+      // raw calendar invite (`?sendUpdates=all`), which reaches the member as
+      // "Invitation from an unknown sender" with a Report spam button, and
+      // puts the doctor's personal address in the patient's Who list and the
+      // patient's address in the subject line. The member's join link belongs
+      // in our own branded confirmation below. Mirrors the paid flow, which
+      // passes `uniqueEmails(doctorEmail)` for the same reason.
+      attendeeEmails: doctorContact?.loginEmail ? [doctorContact.loginEmail] : [],
     }));
 
   // The clinic's zone, not the server's: this runs in UTC in production, and a
