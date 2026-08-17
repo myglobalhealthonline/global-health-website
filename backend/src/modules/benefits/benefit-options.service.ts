@@ -285,6 +285,9 @@ export async function listBenefitOptions(args: {
       serviceId: service.id,
       serviceKind: service.kind,
       fullPriceCents,
+      // A fixed co-pay is denominated in the plan's currency, so the engine
+      // needs the line's currency to refuse a EUR co-pay on a CZK service.
+      currencyCode,
       slotPriced,
     }),
     planOptions({
@@ -328,6 +331,7 @@ async function corporateOption(args: {
   serviceId: string;
   serviceKind: ServiceKind;
   fullPriceCents: number;
+  currencyCode: string;
   slotPriced: boolean;
 }): Promise<BenefitOption[]> {
   const discount = await resolveCorporateDiscount({
@@ -335,6 +339,7 @@ async function corporateOption(args: {
     serviceId: args.serviceId,
     serviceKind: args.serviceKind,
     baseCents: args.fullPriceCents,
+    currencyCode: args.currencyCode,
   });
   if (!discount || discount.discountCents <= 0) return [];
   return [

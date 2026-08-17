@@ -63,17 +63,45 @@ function limitKey(rule: RuleRow): string {
  * charges €15. Charging a member MORE than the public price because their
  * employer bought them a benefit is the one outcome this must never produce.
  */
-function memberPriceCents(rule: RuleRow, baseCents: number): number | null {
+function memberPriceCents(
+  rule: RuleRow,
+  baseCents: number,
+  /** False when the line is priced in a currency the co-pay is not denominated
+   *  in. See `copayApplies`. */
+  copayUsable = true,
+): number | null {
   switch (rule.coverage) {
     case "INCLUDED":
       return 0;
     case "COPAY":
-      if (rule.copayCents == null) return null;
+      if (rule.copayCents == null || !copayUsable) return null;
       return Math.min(Math.max(0, rule.copayCents), baseCents);
     default:
       if (rule.discountPercent <= 0) return null;
       return Math.max(0, baseCents - percentDiscountAmountCents(baseCents, rule.discountPercent));
   }
+}
+
+/**
+ * Whether a fixed co-pay may price a line at all.
+ *
+ * `copayCents` is denominated in the PLAN's currency (EUR for every plan we
+ * sell). A service priced in CZK or RON is a different unit entirely, and
+ * applying a €20 co-pay to it would charge 20 CZK — roughly €0.80 — for a
+ * consultation worth twenty times that. No FX conversion happens anywhere in
+ * the pricing chain, so the only safe answer is that the co-pay does not apply:
+ * the member falls through to the plan's percentage rule, which is
+ * currency-agnostic by construction.
+ *
+ * An unpriced service (null currency) is treated as matching — it has no
+ * conflicting unit to disagree with.
+ */
+function copayApplies(
+  planCurrencyCode: string | null | undefined,
+  serviceCurrencyCode: string | null | undefined,
+): boolean {
+  if (!planCurrencyCode || !serviceCurrencyCode) return true;
+  return planCurrencyCode.toUpperCase() === serviceCurrencyCode.toUpperCase();
 }
 
 /**
@@ -95,6 +123,8 @@ function pickRule(
     serviceKind: ServiceKind;
     baseCents: number;
     memberType: "EMPLOYEE" | "BENEFICIARY";
+    /** Default true — see `copayApplies`. */
+    copayUsable?: boolean;
     exhausted?: (rule: RuleRow) => boolean;
   },
 ): { rule: RuleRow; memberPrice: number } | null {
@@ -109,7 +139,7 @@ function pickRule(
 
   let best: { rule: RuleRow; memberPrice: number } | null = null;
   for (const rule of tier) {
-    const memberPrice = memberPriceCents(rule, input.baseCents);
+    const memberPrice = memberPriceCents(rule, input.baseCents, input.copayUsable ?? true);
     // A rule that leaves the member at full price is not a benefit, and
     // stamping it would burn an annual-limit use for nothing.
     if (memberPrice == null || memberPrice >= input.baseCents) continue;
@@ -244,6 +274,9 @@ export async function resolveCorporateDiscount(input: {
   serviceId: string;
   serviceKind: ServiceKind;
   baseCents: number;
+  /** The currency `baseCents` is in. Omitted = assume it matches the plan's;
+   *  supply it wherever it is known, or a EUR co-pay can price a CZK line. */
+  currencyCode?: string | null;
 }): Promise<CorporateDiscount | null> {
   if (!input.userId || input.baseCents <= 0) return null;
   // Same kinds the batch (checkout) resolver covers. Without this, a rule on
@@ -269,6 +302,7 @@ export async function resolveCorporateDiscount(input: {
     serviceKind: input.serviceKind,
     baseCents: input.baseCents,
     memberType: membership.memberType,
+    copayUsable: copayApplies(membership.company.plan.currencyCode, input.currencyCode),
     exhausted: makeExhaustedTest(rules, used, new Map()),
   });
   if (!picked) return null;
@@ -284,7 +318,11 @@ export async function resolveCorporateDiscount(input: {
  */
 export async function resolveCorporateDiscountsForItems(
   client: {
-    service: { findMany: (args: never) => Promise<{ id: string; kind: ServiceKind }[]> };
+    service: {
+      findMany: (
+        args: never,
+      ) => Promise<{ id: string; kind: ServiceKind; currencyCode: string | null }[]>;
+    };
   },
   input: {
     userId: string | null | undefined;
@@ -312,9 +350,10 @@ export async function resolveCorporateDiscountsForItems(
   const serviceIds = Array.from(new Set(consultationItems.map((i) => i.serviceId as string)));
   const services = await client.service.findMany({
     where: { id: { in: serviceIds } },
-    select: { id: true, kind: true },
+    select: { id: true, kind: true, currencyCode: true },
   } as never);
   const kindById = new Map(services.map((s) => [s.id, s.kind]));
+  const currencyById = new Map(services.map((s) => [s.id, s.currencyCode]));
 
   const used = await loadUsage(
     input.userId,
@@ -337,6 +376,10 @@ export async function resolveCorporateDiscountsForItems(
       serviceKind,
       baseCents: item.baseCents,
       memberType: membership.memberType,
+      copayUsable: copayApplies(
+        membership.company.plan.currencyCode,
+        currencyById.get(item.serviceId as string),
+      ),
       exhausted,
     });
     if (!picked) continue;
@@ -505,7 +548,13 @@ export async function resolveMemberBenefits(input: {
     discounts,
     includedServices: planServices,
     discountedServices: input.discountsActive
-      ? await resolveDiscountedServices(applicableRules, input.memberType, countryCode, input.locale)
+      ? await resolveDiscountedServices(
+          applicableRules,
+          input.memberType,
+          countryCode,
+          input.locale,
+          input.currencyCode,
+        )
       : [],
   };
 }
@@ -525,6 +574,7 @@ async function resolveDiscountedServices(
   memberType: "EMPLOYEE" | "BENEFICIARY",
   countryCode: string,
   locale: string,
+  planCurrencyCode?: string,
 ): Promise<MemberBenefits["discountedServices"]> {
   if (rules.length === 0) return [];
   const kinds = Array.from(
@@ -570,6 +620,7 @@ async function resolveDiscountedServices(
       serviceKind: service.kind as ServiceKind,
       baseCents: basePriceCents,
       memberType,
+      copayUsable: copayApplies(planCurrencyCode, service.currencyCode),
     });
     if (!picked) return [];
     const discountCents = basePriceCents - picked.memberPrice;

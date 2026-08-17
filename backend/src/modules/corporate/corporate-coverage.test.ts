@@ -71,7 +71,7 @@ before(async () => {
           planId: "plan-1",
           countryCode: "ie",
           contractStartAt: new Date("2026-01-01T00:00:00Z"),
-          plan: { name: "Corporate Premium" },
+          plan: { name: "Corporate Premium", currencyCode: "EUR" },
         },
       }),
     },
@@ -84,12 +84,13 @@ beforeEach(() => {
   state.used = {};
 });
 
-const price = (baseCents: number, serviceId = "gp-1") =>
+const price = (baseCents: number, serviceId = "gp-1", currencyCode = "EUR") =>
   svc.resolveCorporateDiscount({
     userId: "user-1",
     serviceId,
     serviceKind: "GENERAL",
     baseCents,
+    currencyCode,
   });
 
 describe("corporate coverage — what the member pays", () => {
@@ -120,6 +121,25 @@ describe("corporate coverage — what the member pays", () => {
   it("ignores a co-pay rule with no amount configured", async () => {
     state.rules = [rule({ coverage: "COPAY", discountPercent: 0, copayCents: null })];
     assert.equal(await price(5000), null);
+  });
+
+  /** The plan is priced in EUR. A CZK service is a different unit, and no FX
+   *  happens anywhere in the pricing chain — a €20 co-pay applied to it would
+   *  charge 20 CZK, about €0.80, for a full consultation. */
+  it("refuses a co-pay on a service priced in another currency", async () => {
+    state.rules = [rule({ id: "copay", coverage: "COPAY", discountPercent: 0, copayCents: 2000 })];
+    assert.equal(await price(50000, "gp-1", "CZK"), null);
+    assert.equal((await price(5000, "gp-1", "EUR"))?.copayCents, 2000);
+  });
+
+  it("falls back to the percentage rule on a foreign-currency line", async () => {
+    state.rules = [
+      rule({ id: "ebp", coverage: "DISCOUNT", discountPercent: 15 }),
+      rule({ id: "copay", coverage: "COPAY", discountPercent: 0, copayCents: 2000 }),
+    ];
+    const czk = await price(50000, "gp-1", "CZK");
+    assert.equal(czk?.ruleId, "ebp");
+    assert.equal(czk?.discountCents, 7500);
   });
 
   it("keeps percentage rules working unchanged", async () => {
