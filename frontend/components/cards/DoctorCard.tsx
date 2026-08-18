@@ -301,7 +301,13 @@ export function DoctorCard({
                     href={medicalRegistrationUrl ?? verificationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={cardI18n.verifyRegistrationAria}
+                    // WCAG 2.5.3 Label in Name: the accessible name must start with the
+                    // visible text (the registration number), not replace it.
+                    aria-label={
+                      imcRegistration
+                        ? `${imcRegistration} — ${cardI18n.verifyRegistrationAria}`
+                        : cardI18n.verifyRegistrationAria
+                    }
                     // min-h-11 floors the box at the 44px touch target
                     // (WCAG 2.5.5) — this is the tappable "verify" link.
                     className="relative z-20 inline-flex min-h-11 items-center gap-1 text-[13px] font-semibold underline underline-offset-2 transition-opacity hover:opacity-70"

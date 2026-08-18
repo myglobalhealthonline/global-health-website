@@ -398,7 +398,13 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
       {/* Header — brand + tagline */}
       <header className={`${styles.header} relative flex items-center justify-between`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logos/global-health-light.png" alt="Global Health" className={styles.logo} />
+        <img
+          src="/logos/global-health-light.png"
+          alt="Global Health"
+          width={399}
+          height={260}
+          className={styles.logo}
+        />
         <p className={`${styles.tagline} hidden uppercase sm:block`}>{copy.eyebrow}</p>
       </header>
 

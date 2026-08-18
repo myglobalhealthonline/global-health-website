@@ -79,7 +79,7 @@ export function CorporateBenefitCard({
       <div className="gh-benefitcard__content">
         {/* eslint-disable-next-line @next/next/no-img-element -- the face scales
             with the container (43cqi); next/image would need a fixed intrinsic
-            box and this asset is already 41 KB. */}
+            box and this asset is only 9.6 KB. */}
         <img
           className="gh-benefitcard__logo"
           src="/logos/global-health-dark.png"

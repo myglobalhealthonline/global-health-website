@@ -465,6 +465,8 @@ export function AdminShell({
               <img
                 src="/logos/global-health-light.png"
                 alt="Global Health"
+                width={399}
+                height={260}
                 style={{ height: 44, width: "auto" }}
               />
             </Link>

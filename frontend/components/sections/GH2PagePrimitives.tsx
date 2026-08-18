@@ -363,6 +363,8 @@ export function GH2AuthShell({
             <img
               src="/logos/global-health-light.png"
               alt="Global Health"
+              width={399}
+              height={260}
               style={{ height: 76, width: "auto" }}
             />
           </Link>
@@ -472,7 +474,13 @@ export function GH2AuthShell({
           <div className="mb-4 flex items-center justify-between lg:hidden">
             <Link href="/" className="inline-flex items-center" style={{ textDecoration: "none" }}>
               {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, same as SiteFooter */}
-              <img src="/logos/global-health-dark.png" alt="Global Health" style={{ height: 56, width: "auto" }} />
+              <img
+                src="/logos/global-health-dark.png"
+                alt="Global Health"
+                width={404}
+                height={272}
+                style={{ height: 56, width: "auto" }}
+              />
             </Link>
             <Link
               href="/"
