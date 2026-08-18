@@ -97,6 +97,12 @@ export type MembershipCardContent = {
   /** Null = keep the default face and its fixed lime chrome (§24.2). */
   palette: CardPalette | null;
   benefitsByCountry: CardCountryBenefits[];
+  /**
+   * The programme's own opening note, from the plan translation's
+   * `description`. Null for every plan that leaves it blank - which is all of
+   * them by default, so the standard mail is unchanged.
+   */
+  intro: string | null;
   locale: LocaleCode;
 };
 
@@ -119,7 +125,7 @@ const contentSelect = {
       name: true,
       primaryCountryId: true,
       primaryCountry: { select: { code: true, defaultLocale: true } },
-      translations: { select: { locale: true, name: true } },
+      translations: { select: { locale: true, name: true, description: true } },
       countries: {
         select: {
           countryId: true,
@@ -193,6 +199,23 @@ function translate(
   fallback: string,
 ): string {
   return translations.find((t) => t.locale === locale)?.name ?? fallback;
+}
+
+/**
+ * The plan's opening note for one locale.
+ *
+ * Falls back to the English row rather than to a base column, because unlike
+ * `name` there is no base column to fall back to: the note exists only as a
+ * translation. Blank is a real answer - it means "send the standard email".
+ */
+export function pickPlanIntro(
+  translations: { locale: LocaleCode; description: string | null }[],
+  locale: LocaleCode,
+): string | null {
+  const own = translations.find((t) => t.locale === locale)?.description?.trim();
+  if (own) return own;
+  const en = translations.find((t) => t.locale === LocaleCode.EN)?.description?.trim();
+  return en || null;
 }
 
 function interpolate(template: string, vars: Record<string, string>): string {
@@ -374,6 +397,7 @@ export function buildCardContentFromRow(row: ContentRow, copy: CardCopy): Member
     primaryMembershipId: row.primaryEnrollment?.membershipId ?? null,
     palette: deriveCardPalette(row.level.cardBackgroundHex),
     benefitsByCountry,
+    intro: pickPlanIntro(row.plan.translations, locale),
     locale,
   };
 }

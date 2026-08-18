@@ -38,6 +38,7 @@ export function MembershipTranslationTabs({
   defaultLocale,
   initialTranslations,
   baseFallback,
+  descriptionHint = "Shown to the member on their membership page and card.",
   idPrefix,
 }: {
   locales: LocaleTab[];
@@ -45,6 +46,8 @@ export function MembershipTranslationTabs({
   initialTranslations: MembershipTranslationInitial[];
   /** Seeds the default-locale tab from the row's internal name. */
   baseFallback: { name: string; description: string | null };
+  /** What the Description box is actually used for at this call site. */
+  descriptionHint?: string;
   /** Distinguishes the plan tab-strip from a level's on the same page. */
   idPrefix: string;
 }) {
@@ -101,7 +104,7 @@ export function MembershipTranslationTabs({
                 placeholder={blankHint}
               />
               <span className="text-portal-thead text-[var(--color-text-muted)]">
-                Shown to the member on their membership page and card.
+                {descriptionHint}
               </span>
             </label>
           </div>

@@ -4,6 +4,7 @@ import { absoluteSiteUrl, sendEmail, type SendEmailAttachment } from "../../lib/
 import { wrapHtml } from "../../lib/email/templates.js";
 import {
   cardStatusLabel,
+  pickPlanIntro,
   resolveCardLocale,
   type CardCopy,
   type MembershipCardContent,
@@ -69,6 +70,31 @@ function button(link: string, label: string): string {
 }
 
 /**
+ * The programme's own opening note, as the FIRST paragraph of the mail.
+ *
+ * Admin-entered free text (the plan translation's `description`), so it is
+ * escaped and its line breaks are the only markup it gets - a partner note is
+ * never a place to let HTML through.
+ *
+ * Left blank the whole block disappears and the mail is byte-for-byte the
+ * standard one. That is the point: one optional field covers "explain why you
+ * are getting this card" for any programme, without a per-programme template.
+ */
+function introHtml(intro: string | null): string {
+  if (!intro) return "";
+  const html = intro
+    .split(/\r?\n/)
+    .map((line) => escapeHtml(line))
+    .join("<br />");
+  return `<p>${html}</p>`;
+}
+
+/** The same note for the text/plain alternative. */
+function introText(intro: string | null): string[] {
+  return intro ? [intro] : [];
+}
+
+/**
  * The locale for ANY membership email, resolved from the enrollment itself.
  *
  * Precedence is `resolveCardLocale`'s (§25) and deliberately not re-implemented
@@ -77,16 +103,25 @@ function button(link: string, label: string): string {
  * English. Every template goes through this, because reading the country
  * default alone silently ignored the language an admin set on the member.
  */
-async function enrollmentLocale(enrollmentId: string): Promise<LocaleCode> {
+async function enrollmentContext(
+  enrollmentId: string,
+): Promise<{ locale: LocaleCode; intro: string | null }> {
   const row = await prisma.membershipEnrollment.findUnique({
     where: { id: enrollmentId },
     select: {
       preferredLocale: true,
       user: { select: { preferredLocale: true } },
-      plan: { select: { primaryCountry: { select: { defaultLocale: true } } } },
+      plan: {
+        select: {
+          primaryCountry: { select: { defaultLocale: true } },
+          translations: { select: { locale: true, description: true } },
+        },
+      },
     },
   });
-  return row ? resolveCardLocale(row) : LocaleCode.EN;
+  if (!row) return { locale: LocaleCode.EN, intro: null };
+  const locale = resolveCardLocale(row);
+  return { locale, intro: pickPlanIntro(row.plan.translations, locale) };
 }
 
 function bundleFor(locale: LocaleCode | string | null | undefined): EmailBundle {
@@ -126,7 +161,7 @@ export async function sendMembershipInviteEmail(opts: {
   membershipId: string;
   enrollmentId: string;
 }) {
-  const locale = await enrollmentLocale(opts.enrollmentId);
+  const { locale, intro } = await enrollmentContext(opts.enrollmentId);
   const copy = bundleFor(locale).invite;
   const vars = {
     firstName: escapeHtml(opts.firstName),
@@ -143,10 +178,17 @@ export async function sendMembershipInviteEmail(opts: {
   return sendEmail({
     to: opts.to,
     subject: interpolate(copy.subject, { ...vars, planName: opts.planName }),
-    text: [interpolate(copy.greeting, vars), ...lines.map(toPlain), link, copy.signoff].join("\n\n"),
+    text: [
+      interpolate(copy.greeting, vars),
+      ...introText(intro),
+      ...lines.map(toPlain),
+      link,
+      copy.signoff,
+    ].join("\n\n"),
     html: wrapHtml(
       interpolate(copy.heading, vars),
       `<p>${interpolate(copy.greeting, vars)}</p>
+       ${introHtml(intro)}
        ${lines.map((line) => `<p>${line}</p>`).join("\n       ")}
        ${button(link, copy.cta)}`,
     ),
@@ -166,7 +208,7 @@ export async function sendMembershipEnrollmentConfirmedEmail(opts: {
   membershipId: string;
   enrollmentId: string;
 }) {
-  const locale = await enrollmentLocale(opts.enrollmentId);
+  const { locale } = await enrollmentContext(opts.enrollmentId);
   const copy = bundleFor(locale).confirmed;
   const vars = {
     firstName: escapeHtml(opts.firstName),
@@ -230,7 +272,7 @@ export async function sendMembershipAllowanceExhaustedEmail(opts: {
   });
   if (!benefit) return null;
 
-  const locale = await enrollmentLocale(opts.enrollmentId);
+  const { locale } = await enrollmentContext(opts.enrollmentId);
   const copy = bundleFor(locale).exhausted;
   const to = enrollment.user?.email ?? enrollment.email;
 
@@ -292,7 +334,7 @@ export async function sendMembershipClaimConfirmationEmail(opts: {
   /** Raw token — only ever in this mail, never persisted (§5.3). */
   token: string;
 }) {
-  const locale = await enrollmentLocale(opts.enrollmentId);
+  const { locale } = await enrollmentContext(opts.enrollmentId);
   const copy = bundleFor(locale).claim;
   const vars = {
     firstName: escapeHtml(opts.firstName),
@@ -402,6 +444,7 @@ export async function sendMembershipWelcomeCardEmail(opts: {
     subject: interpolate(copy.subject, { ...vars, planName: content.planName }),
     text: [
       interpolate(copy.greeting, vars),
+      ...introText(content.intro),
       ...leadLines.map(toPlain),
       copy.benefitsHeading,
       benefitsText,
@@ -412,6 +455,7 @@ export async function sendMembershipWelcomeCardEmail(opts: {
     html: wrapHtml(
       interpolate(copy.heading, vars),
       `<p>${interpolate(copy.greeting, vars)}</p>
+       ${introHtml(content.intro)}
        ${leadLines.map((line) => `<p>${line}</p>`).join("\n       ")}
        <h3 style="margin:26px 0 0;font-size:16px;">${escapeHtml(copy.benefitsHeading)}</h3>
        ${benefitsHtml}

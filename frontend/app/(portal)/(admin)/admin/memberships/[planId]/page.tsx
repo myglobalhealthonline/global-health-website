@@ -295,7 +295,7 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
         <AdminCard padding={0}>
           <SectionHeader
             title="Member-facing text"
-            description="What the member reads on their membership page and card, per language. One save covers every language."
+            description="The programme name the member sees, and the opening note added to its emails, per language. One save covers every language."
           />
           <form action={saveTranslationsAction} className="flex flex-col gap-6 p-6">
             <MembershipTranslationTabs
@@ -308,6 +308,7 @@ export default async function AdminMembershipPlanPage({ params, searchParams }: 
                 description: t.description,
               }))}
               baseFallback={{ name: plan.name, description: null }}
+              descriptionHint="Opening note for this programme's emails. Filled in, it becomes the first paragraph of the invite and the welcome/card email - use it to explain why the member is receiving the membership. Left blank, the standard email is sent."
             />
             <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">

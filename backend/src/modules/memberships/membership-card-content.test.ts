@@ -309,11 +309,31 @@ describe("the card's own fields (§24.1)", () => {
 
   it("translates the plan and level names when a translation exists", () => {
     const r = row({ preferredLocale: LocaleCode.CS });
-    r.plan.translations = [{ locale: LocaleCode.CS, name: "Partnerský program" }];
+    r.plan.translations = [{ locale: LocaleCode.CS, name: "Partnerský program", description: null }];
     r.level.translations = [{ locale: LocaleCode.CS, name: "Standardní" }];
     const content = buildCardContentFromRow(r, csCopy.card);
     assert.equal(content.planName, "Partnerský program");
     assert.equal(content.levelName, "Standardní");
+  });
+
+  it("carries the plan note as the email intro, falling back to English", () => {
+    const r = row({ preferredLocale: LocaleCode.CS });
+    r.plan.translations = [
+      { locale: LocaleCode.EN, name: "Partner programme", description: "Booked with us? Read on." },
+      { locale: LocaleCode.CS, name: "Partnersky program", description: null },
+    ];
+    assert.equal(
+      buildCardContentFromRow(r, csCopy.card).intro,
+      "Booked with us? Read on.",
+      "a blank note in the member's own language must fall back to English, not blank the intro",
+    );
+
+    r.plan.translations[1].description = "Rezervovali jste pobyt?";
+    assert.equal(buildCardContentFromRow(r, csCopy.card).intro, "Rezervovali jste pobyt?");
+  });
+
+  it("leaves the intro null when no plan note is set, so the standard email is sent", () => {
+    assert.equal(buildCardContentFromRow(row({}), enCopy.card).intro, null);
   });
 
   it("falls back to the untranslated name rather than showing a blank", () => {

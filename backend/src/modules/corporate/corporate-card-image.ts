@@ -51,6 +51,9 @@ export function buildCorporateCardContent(
     holderName: input.holderName,
     email: input.email,
     accountEmail: null,
+    // Corporate cards are not a membership programme, so there is no plan
+    // translation to carry an opening note.
+    intro: null,
     firstName: input.firstName,
     planName: input.planName,
     levelName: input.companyName,
