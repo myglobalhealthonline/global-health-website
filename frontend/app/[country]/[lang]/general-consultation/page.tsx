@@ -330,7 +330,7 @@ export default async function CountryLangGeneralConsultationPage({
 
       {/* 1 — What this is: short authored positioning intro (when present). */}
       {page?.sections.intro ? (
-        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+        <ServiceIntro eyebrow={c.sections.overview} body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
 
       {/* 2 — The product: bookable GP consultations, straight after the hero
@@ -356,7 +356,7 @@ export default async function CountryLangGeneralConsultationPage({
       {/* Who it's for (authored hub copy, when present). */}
       {page?.sections.whoFor ? (
         <ChecklistSection
-          eyebrow="Who it's for"
+          eyebrow={c.sections.whoItsFor}
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
@@ -409,10 +409,10 @@ export default async function CountryLangGeneralConsultationPage({
         theme="ivory"
         variant="carousel"
         language={lang}
-        eyebrow="Patient reviews"
-        headline="Trusted by patients in"
-        headlineAccent={config.name}
-        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+        eyebrow={c.a11y.patientReviews}
+        headline={c.doctify.patientsSayHeadline ?? "What patients say about"}
+        headlineAccent={c.doctify.patientsSayAccent ?? "our doctors"}
+        body={c.doctify.body}
       />
 
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} i18n={home.finalCta} />

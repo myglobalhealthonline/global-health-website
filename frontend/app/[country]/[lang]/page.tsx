@@ -581,7 +581,7 @@ export default async function CountryLangHomePage({
       <TrustMarquee items={trustMarqueeItems} ariaLabel={cc.a11y.whyPatientsTrustUs} />
       {/* Overview intro sits BELOW the trust marquee (marquee hugs the hero). */}
       {page?.sections.intro ? (
-        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+        <ServiceIntro eyebrow={cc.sections.overview} body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
       <TrustRibbon items={trustItems} theme="light" />
       <LazyHydrate>
@@ -599,7 +599,7 @@ export default async function CountryLangHomePage({
       />
       {page?.sections.whoFor ? (
         <ChecklistSection
-          eyebrow="Who it's for"
+          eyebrow={cc.sections.whoItsFor}
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}

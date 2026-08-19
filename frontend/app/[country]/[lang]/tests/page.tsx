@@ -214,9 +214,9 @@ export default async function HealthTestsPage({
           country). Off by default — DB section replaces the generic hub
           copy 1:1 when set, never both (Part B.3). */}
       {page?.sections.intro ? (
-        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+        <ServiceIntro eyebrow={c.sections.overview} body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : (
-        <ServiceIntro body={hub.overview.body} theme={themeProp(page?.introTheme, "light")} />
+        <ServiceIntro eyebrow={hub.overview.eyebrow} body={hub.overview.body} theme={themeProp(page?.introTheme, "light")} />
       )}
 
       {items.length > 0 ? (
@@ -291,7 +291,7 @@ export default async function HealthTestsPage({
 
       {page?.sections.whoFor ? (
         <ChecklistSection
-          eyebrow="Who it's for"
+          eyebrow={c.sections.whoItsFor}
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
@@ -335,10 +335,10 @@ export default async function HealthTestsPage({
         theme="ivory"
         variant="carousel"
         language={lang}
-        eyebrow="Patient reviews"
-        headline="Trusted by patients"
-        headlineAccent="across Europe"
-        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+        eyebrow={c.a11y.patientReviews}
+        headline={c.doctify.patientsSayHeadline ?? "What patients say about"}
+        headlineAccent={c.doctify.patientsSayAccent ?? "our doctors"}
+        body={c.doctify.body}
       />
 
       <FinalCTA

@@ -274,9 +274,9 @@ export default async function CountryLangSpecialistConsultationPage({
           country). Off by default — additive to the existing hub copy
           below, in the same GP-hub relative order (Part B.3). */}
       {page?.sections.intro ? (
-        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+        <ServiceIntro eyebrow={c.sections.overview} body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : serviceItems.length > 0 ? (
-        <ServiceIntro body={hub.overview.body} theme={themeProp(page?.introTheme, "light")} />
+        <ServiceIntro eyebrow={hub.overview.eyebrow} body={hub.overview.body} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
 
       {/* 1 — The product: specialist consultations straight after the hero. */}
@@ -297,7 +297,7 @@ export default async function CountryLangSpecialistConsultationPage({
 
       {page?.sections.whoFor ? (
         <ChecklistSection
-          eyebrow="Who it's for"
+          eyebrow={c.sections.whoItsFor}
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}

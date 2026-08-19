@@ -950,6 +950,13 @@ export type CommonLocale = {
     patientsSayHeadline?: string;
     patientsSayAccent?: string;
   };
+  /** Section eyebrows shared by the public country/hub pages. These used to be
+   *  hardcoded English literals at each call site, so every localized page
+   *  rendered "Overview" and "Who it's for" in English. */
+  sections: {
+    overview: string;
+    whoItsFor: string;
+  };
   /** Shared day-agenda calendar (admin / doctor / patient portals). */
   calendar: {
     selectDay: string;

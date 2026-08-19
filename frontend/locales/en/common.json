@@ -897,6 +897,10 @@
     "patientsSayHeadline": "What patients say about",
     "patientsSayAccent": "our doctors"
   },
+  "sections": {
+    "overview": "Overview",
+    "whoItsFor": "Who it's for"
+  },
   "linkCallout": {
     "entry": "Start here",
     "referral": "Next step",

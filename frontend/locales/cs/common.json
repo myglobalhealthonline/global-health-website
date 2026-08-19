@@ -897,6 +897,10 @@
     "patientsSayHeadline": "Co pacienti říkají o",
     "patientsSayAccent": "našich lékařích"
   },
+  "sections": {
+    "overview": "Přehled",
+    "whoItsFor": "Pro koho je to vhodné"
+  },
   "linkCallout": {
     "entry": "Začněte zde",
     "referral": "Další krok",

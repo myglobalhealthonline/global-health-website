@@ -154,7 +154,7 @@ export default async function PrescriptionsPage({
       {/* Admin-authored structured sections (DB-backed, toggle-gated per
           country). Off by default. Order mirrors the GP hub (Part B.3). */}
       {page?.sections.intro ? (
-        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+        <ServiceIntro eyebrow={c.sections.overview} body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
 
       <TrustRibbon
@@ -200,7 +200,7 @@ export default async function PrescriptionsPage({
 
       {page?.sections.whoFor ? (
         <ChecklistSection
-          eyebrow="Who it's for"
+          eyebrow={c.sections.whoItsFor}
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
@@ -228,10 +228,10 @@ export default async function PrescriptionsPage({
         theme="ivory"
         variant="grid"
         language={lang}
-        eyebrow="Patient reviews"
-        headline="Trusted by patients"
-        headlineAccent="for prescriptions"
-        body="Independent, verified reviews collected by Doctify from patients who have used our prescription services."
+        eyebrow={c.a11y.patientReviews}
+        headline={c.doctify.patientsSayHeadline ?? "What patients say about"}
+        headlineAccent={c.doctify.patientsSayAccent ?? "our doctors"}
+        body={c.doctify.body}
       />
 
       <FinalCTA primaryHref={bookHref} secondaryHref={fallbackHref} />

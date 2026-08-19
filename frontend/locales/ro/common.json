@@ -897,6 +897,10 @@
     "patientsSayHeadline": "Ce spun pacienții despre",
     "patientsSayAccent": "medicii noștri"
   },
+  "sections": {
+    "overview": "Prezentare generală",
+    "whoItsFor": "Cui i se poate potrivi"
+  },
   "linkCallout": {
     "entry": "Începeți aici",
     "referral": "Pasul următor",
