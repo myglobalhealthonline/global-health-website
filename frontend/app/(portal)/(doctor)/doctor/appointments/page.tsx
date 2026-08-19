@@ -54,14 +54,13 @@ function isAppointmentLive(a: Pick<DoctorAppointment, "scheduledAt" | "status">)
   return start <= now && now <= start + LIVE_WINDOW_MS;
 }
 
-// "Notify ready" stops making sense once the consultation's own time window
-// has closed — `endAt` is the real slot/service span (see
-// resolveConsultationEndAt on the backend); COMPLETED/CANCELLED rows are
-// over regardless of the clock.
-function isConsultationOver(a: Pick<DoctorAppointment, "endAt" | "status">): boolean {
-  if (a.status === "COMPLETED" || a.status === "CANCELLED") return true;
-  if (!a.endAt) return false;
-  return new Date(a.endAt).getTime() < Date.now();
+// "Notify ready" stops making sense only once the row is finalized. It is
+// deliberately NOT gated on the slot's end instant: doctors routinely start
+// late, and a 15-minute consultation that is already 20 minutes overdue is
+// exactly when "I'm ready, come in" needs to go out. Gating on `endAt` left
+// the button silently greyed at the moment it was most needed.
+function isConsultationOver(a: Pick<DoctorAppointment, "status">): boolean {
+  return a.status === "COMPLETED" || a.status === "CANCELLED";
 }
 
 function statusToneForAppointmentCard(status: string): AppointmentCardTone {

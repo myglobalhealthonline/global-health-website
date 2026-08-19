@@ -2,7 +2,6 @@ import { prisma } from "../../db/prisma.js";
 import { sendEmail } from "../../lib/email/send-email.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
 import { detectAutomationLanguage } from "../automation/pre-payment-messages.js";
-import { resolveConsultationEndAt } from "./consultation-end.js";
 import {
   doctorReadyEmailHtml,
   doctorReadyEmailSubject,
@@ -67,8 +66,6 @@ export async function notifyPatientDoctorReady(opts: {
       meetingUrl: true,
       status: true,
       scheduledAt: true,
-      timeSlot: { select: { endAt: true } },
-      service: { select: { durationMinutes: true } },
       doctor: { select: { fullName: true } },
     },
   });
@@ -85,16 +82,14 @@ export async function notifyPatientDoctorReady(opts: {
   if (!appt.email) {
     return { ok: false, status: 400, message: "This appointment has no patient email" };
   }
-  const endAt = resolveConsultationEndAt(appt);
-  const consultationOver =
-    appt.status === "COMPLETED" ||
-    appt.status === "CANCELLED" ||
-    (endAt != null && new Date(endAt).getTime() < Date.now());
-  if (consultationOver) {
+  // Only finalized rows are refused. The slot's end instant is deliberately
+  // NOT a guard: doctors run late, and an overdue-but-still-open consultation
+  // is precisely when "I'm ready, come in" needs to reach the patient.
+  if (appt.status === "COMPLETED" || appt.status === "CANCELLED") {
     return {
       ok: false,
       status: 400,
-      message: "This consultation's time has already passed",
+      message: "This consultation is already closed",
     };
   }
 
