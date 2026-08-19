@@ -1,17 +1,21 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import path from "node:path";
 import {
   AlertRemovalRequiresNoteError,
   normalizeAlert,
   removePatientAlert,
 } from "./patient-alert-log.service.js";
 
-const here = dirname(fileURLToPath(import.meta.url));
+// `__dirname`, not import.meta.url: `pnpm run build` emits CommonJS, and
+// import.meta is a hard compile error there (TS1470). Same pattern as
+// doctor-dashboard-parity-migration.test.ts.
 const migrationSql = readFileSync(
-  join(here, "../../../prisma/migrations/20260819120000_patient_alert_log/migration.sql"),
+  path.resolve(
+    __dirname,
+    "../../../prisma/migrations/20260819120000_patient_alert_log/migration.sql",
+  ),
   "utf8",
 );
 
