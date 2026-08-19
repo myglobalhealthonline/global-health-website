@@ -56,7 +56,11 @@ const LAB_REDIRECTS = [
   ["/product-page/heart-health-home-test", "/ireland/en/lab-tests/heart-health-cholesterol-test"],
   ["/product-page/female-hormone-test", "/ireland/en/lab-tests/female-hormone-test"],
   ["/product-page/male-hormone-test", "/ireland/en/lab-tests/male-hormone-test"],
-  ["/product-page/thyroid-home-blood-test", "/ireland/en/lab-tests/thyroid-function-test"],
+  // 2026-08-19: was pinned to /ireland/en/lab-tests/thyroid-function-test,
+  // which has never been published — the redirect fired and landed on a 404.
+  // No thyroid test is live, so the hub is the honest destination. Restore the
+  // exact mapping here and in next.config.ts if one is ever published.
+  ["/product-page/thyroid-home-blood-test", "/ireland/en/lab-tests"],
   ["/product-page/psa-test-prostatic-specific-antigen", "/ireland/en/lab-tests/psa-prostate-test"],
   ["/product-page/amh-test-anti-m%C3%BCllerian-hormone", "/ireland/en/lab-tests/amh-fertility-test"],
   ["/product-page/gut-microbiome-test", "/ireland/en/lab-tests/gut-microbiome-test"],

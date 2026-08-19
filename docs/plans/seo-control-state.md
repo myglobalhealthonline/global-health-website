@@ -5778,3 +5778,199 @@ internal-linking spec's Rule 6. Editorial volume and source citation remain
 owner/clinician work, not code.
 
 ---
+
+## 26. EXT-AUDIT-002 — deploy check, reviewer-byline root cause, authority and editorial groundwork (2026-08-19)
+
+Follow-up batch to §25. Full working document, including the target lists and
+article proposals that are too long for this file:
+`docs/plans/seo-followup-batch-2026-08-19.md`. **No code was changed and nothing
+was deployed, sent or submitted in this pass.**
+
+**`553bc088` has not shipped.** Googlebot-UA fetch of `/portugal/en` on
+2026-08-19, `<script>` stripped: `Rated by real patients` appears 0 times,
+`doctify` 0 times, and none of the fourteen served `h2` elements is the reviews
+heading. The commit is on `origin/Dev-hassaan` only. SEO-009/010/011 therefore
+remain unverified in production; re-run both checks after deploying.
+
+**SEO-012 — clinical-reviewer byline, correcting §25's third finding.** §25
+recorded the two missing bylines as unset `Service.reviewerDoctorId` values,
+inferred from a ten-page sample. A full sweep of all 116 English service URLs
+from the live sitemap shows the gap is **38 pages**, and it is not that field.
+
+Missing bylines by country: Ireland 0/23, Portugal 0/23, Czechia 0/15,
+Romania 0/17, **Spain 20/20, Brazil 18/18**. A clean per-country split, because
+`services/[serviceSlug]/page.tsx:339` feeds the visible byline from
+`allDoctors.find((d) => d.isFeatured)` — the country's Clinical Director, stored
+in `Setting["featured_doctor:<code>"]` and resolved at
+`doctors.service.ts:541`. `Service.reviewerDoctorId` resolves separately into
+`contentReviewer` and reaches only the JSON-LD `reviewedBy` (line 384), never
+the rendered byline. Spain and Brazil simply have no `featured_doctor` row;
+their `/doctors` pages render no Clinical Director spotlight either, while the
+other four markets do. Setting `reviewerDoctorId` would have changed the
+structured data and left all 38 pages visually unchanged.
+
+Blog posts are unaffected — they use a genuinely per-post
+`BlogPost.reviewerDoctorId`, which is why `/spain/en/blog/sick-leave-anxiety-spain`
+shows a named Spanish reviewer while every Spanish service page shows none.
+
+Also note: `parar-de-fumar-online` is a Brazil slug. Portugal's stop-smoking
+page is `deixar-de-fumar` and already carries a byline.
+
+**Fix is owner-side, two admin actions**, at `/admin/doctors/<id>` → "Set
+Director (ES)" / "Set Director (BR)". Recommended: Brazil — Dr. Renato Sarmento
+(CRM 170837/SP, Family and Community Medicine; the only doctor on the roster).
+Spain — Dra. María Fernanda Ocampo Mora (CGCOM 291409735); of the six Spanish
+profiles carrying a CGCOM verification link she is the one whose practice is
+actually general and family medicine. Do **not** add a code fallback from
+`reviewerDoctorId` — it would change what 78 already-correct pages display.
+
+**Backlink profile rebaselined:** rank 43, 520 backlinks, **59** referring
+domains (§25's 57 is superseded), spam score 7. Two findings that change the
+off-site plan:
+
+- All 195 `wix.to` backlinks — 37.5% of the profile, from the only rank-70
+  domain in it — point at legacy `/booking-calendar/<slug>` URLs that now
+  resolve to six generic country `/book` pages. None of the equity reaches any
+  of the 116 service pages. `baja-medica`, a Spanish service, landed on
+  `/ireland/en/book`. **Fixed in this pass — see SEO-013 below.**
+- Roughly 240 backlinks arrived 2026-05-21 → 2026-08-01 from eleven
+  article-directory and link-farm domains, taking referring domains 42 → 53 in
+  May 2026 alone. Ask the owner whether links were bought. **Do not disavow**
+  absent a manual action in Search Console.
+
+**Doctify language limitation independently re-verified and widened** from
+eleven codes to fifteen. Only `en` (25,538 bytes) and `de` (25,559) return
+populated chrome; `pt`, `pt-PT`, `pt-BR`, `es`, `es-ES`, `cs`, `cs-CZ`, `ro`,
+`ro-RO`, `fr`, `it`, `nl`, `pl` each return a **byte-identical** 25,447-byte
+payload with the label spans empty. Identical length across four language
+families indicates a single "unknown language → empty string" branch, not
+thirteen incomplete translation files. A support message is drafted in the
+working document and has **not** been sent.
+
+**Editorial groundwork.** 43 article topics proposed across IE (10), PT (9),
+CZ (8), RO (8), ES (8), each tied to a real GSC query or Google Ads volume
+figure, an existing service page, and named primary sources. Brazil is
+deliberately deferred: no Clinical Director, one doctor on the roster, and its
+GSC impressions are dominated by brand collision with unrelated Brazilian
+entities (`clinic global health` 428, `clinic.globalhealth` 167,
+`help global brazil`). Nothing is drafted or published. Every proposal carries
+the same gate: `BlogPost` needs a named, consenting `authorDoctorId` and
+`reviewerDoctorId` and a real `lastReviewedAt` before it can publish — no
+invented byline, review date, statistic, or patient review.
+
+DMARC remains assigned elsewhere; no DNS was touched. No script was run against
+`backend/.env`, which points at production — every database question was
+answered from live public pages, public JSON-LD, and repository code.
+
+---
+
+**SEO-013 — legacy `/booking-calendar/*` link equity redirected to service
+pages.** The one item in this batch that was fixable in code.
+`frontend/next.config.ts`, guarded by
+`frontend/tests/unit/booking-calendar-legacy-redirects.test.ts`.
+
+All 195 `wix.to` targets were pulled, de-duplicated (195 distinct bare
+`/booking-calendar/<slug>` paths, no locale prefix) and matched by hand against
+the live sitemap. **94 now redirect to their service page**; the remaining 101
+have no live equivalent and keep a `/book` fallback — a redirect into a 404 is
+worse than one to a booking page. Excluded on purpose: the 18 `-prescription`
+slugs (those flows are flag-hidden, so linking to them would surface pages meant
+to stay unlisted), specialties with no live page (urology, venereology,
+geriatrics, endocrinology, gastroenterology, immunoallergology, pneumology,
+rheumatology, genetics), and six slugs spelled identically in Portuguese and
+Spanish (`consulta-de-genética`, `consulta-ortopédica`, `consulta-pediátrica`
+and their `-1` duplicates) where there is no market marker to read.
+
+Secondary win: Wix left most non-Irish slugs unprefixed, so they all defaulted
+to Ireland's English booking page. Two wildcard rules for `konsultace-*` /
+`konzultace-*` plus 23 spelled-out ES/PT slugs cut `/ireland/en/book` from 75
+legacy slugs to 39, with `/czechia/cs/book` going 0 → 14 and `/spain/es/book`
+2 → 10.
+
+**Trap worth remembering: Next matches redirect `source` values against the
+ENCODED pathname.** A literal `ã`/`ț`/`é` in a `source` never matches a real
+request — the rule compiles, type-checks, ships, and silently does nothing while
+the slug falls through to the catch-all. Found by driving the rules through a
+local dev server instead of reading them: of 30 probe slugs, all 14 ASCII ones
+matched and all 16 accented ones missed. Fixed with `encodeURIComponent` at
+construction time so the source table stays readable. Roughly half the mapped
+slugs are accented, so a review-only pass would have shipped a table that did
+nothing for them. The unit test asserts this specifically and goes red when the
+encoding is removed.
+
+Verification: frontend `tsc --noEmit` clean; all 195 legacy slugs driven through
+a local dev server percent-encoded as a browser sends them — 195/195 redirect,
+0 wrong destinations, 0 non-redirects; all 67 distinct destinations fetched from
+production return 200; the new test 6/6, and 2/6 red when `encodeURIComponent`
+is removed. `vitest run tests/unit`: 277 passed, 5 skipped, 1 failure —
+`portal-breadcrumb-routes.test.ts`, **pre-existing and unrelated** (it reads only
+the `app/` tree and never imports `next.config`; two portal breadcrumb trails
+point at parent pages that do not exist). Not committed, not deployed.
+
+---
+
+**SEO-014 — every URL an external site actually links to, swept for dead ends.**
+Same pass as SEO-013, widened from the `wix.to` slugs to the whole backlink
+profile. The 520 backlinks reduce to **36 distinct target paths**; each was
+fetched from production. **Seven returned a hard 404.**
+
+| Path | Was | Now |
+| --- | --- | --- |
+| `/services-1-4` | 404 | `/ireland/en` |
+| `/pricing-plans/checkout-1` | 404 | `/ireland/en/pricing` (via a new `/pricing-plans/:slug`) |
+| `/product-page/haemochromatosis-test` | 404 | `…/lab-tests/genetic-haemochromatosis-test` |
+| `/product-page/vitamin-d-blood-test` | 404 | `…/lab-tests/vitamin-d-test` |
+| `/product-page/vitamin-b12-blood-test` | 404 | `…/lab-tests/vitamin-b12-test` |
+| `/product-page/thyroid-home-blood-test` | 301 **into a 404** | `/ireland/en/lab-tests` |
+| `/pt/portugal/traveler/'s-consultation` | 404 | `…/services/consulta-do-viajante` |
+
+`/services-1-4` is the only broken link the site has from a genuine referring
+site — Coombe Community Pharmacy's homepage.
+
+**Two root causes, not seven one-offs.**
+
+1. *No `/product-page/:slug` catch-all ever existed*, though `/home-health-tests`
+   has had one all along. Three slugs were listed in the `/home-health-tests`
+   alias table but never in the `/product-page` one, and with nothing to break
+   their fall they 404'd instead of reaching the lab hub. Catch-all added.
+2. *A redirect can be present, correct-looking and still dead at the far end.*
+   `/product-page/thyroid-home-blood-test` pointed at
+   `/ireland/en/lab-tests/thyroid-function-test`, which has never been
+   published. `legacy-url-cleanup.test.ts` asserted that exact destination, so
+   the test was pinning the bug in place. Both corrected; no thyroid test is
+   live, so it now falls to the hub. **All 136 literal redirect destinations in
+   `next.config.ts` were then fetched from production — this was the only dead
+   one.**
+
+**Regression caught while fixing it, worth remembering.** The first version of
+the `/product-page/:slug` catch-all swallowed `/es/product-page/beauty-focus-multibeauty`,
+which is registered in `lib/seo/gone-content.ts` and must answer **410 Gone**.
+A catch-all redirect silently converts a 410 into a 301 and keeps a retired URL
+alive in the index. Both new catch-alls now use `slugMatcherExcludingGone("product-page")`,
+the helper the doctor-alias rules already use. Verified live: `/es/product-page/beauty-focus-multibeauty`
+still answers 410. **Any future catch-all over a legacy Wix prefix needs the
+same treatment.**
+
+Also retargeted, where a precise page existed and the link was landing on a hub:
+`/{locale}/portugal/traveler's-consultation` (**eight referring domains — the
+largest non-homepage cluster in the profile**) went to
+`/portugal/pt/see-a-specialist` because only the bare, non-locale-prefixed
+apostrophe form had a rule; it now reaches
+`/portugal/pt/services/consulta-do-viajante`. And
+`/post/hand-foot-and-mouth-disease-signs-and-treatment` was falling to the blog
+index although the article is published under exactly that slug.
+
+Net across all 36 linked paths: **0 broken (was 7), 22 landing on a precise
+page (was 20).** The 13 that still land on a hub are correct — seven retired
+blog posts with no current equivalent, a thyroid test that does not exist, the
+pricing page, the homepage, and two specialist hubs at the right level.
+
+Verification: frontend `tsc --noEmit` clean; 24 redirect assertions against a
+local dev server including 10 regression cases, 0 failures; all 36 linked paths
+re-swept, 0 non-redirects; `vitest run tests/unit` 282 passed, 5 skipped, 1
+failure (`portal-breadcrumb-routes.test.ts`, pre-existing and unrelated, being
+fixed separately). New guard: `frontend/tests/unit/legacy-wix-backlink-targets.test.ts`,
+which asserts no lab-test redirect points at an unpublished slug.
+
+---
+

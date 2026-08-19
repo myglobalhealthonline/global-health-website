@@ -802,6 +802,14 @@ const nextConfig: NextConfig = {
       { source: "/home-delivery", destination: "/ireland/en/lab-tests", permanent: true },
       { source: "/category/health-education", destination: "/ireland/en/blog", permanent: true },
       { source: "/pricing-plans/list", destination: "/ireland/en/pricing", permanent: true },
+      // …/checkout-1 and friends still carry links. Catch the whole Wix
+      // pricing-plans tree rather than adding one rule per leaf.
+      { source: "/pricing-plans/:slug", destination: "/ireland/en/pricing", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/pricing-plans/:slug", destination: "/ireland/en/pricing", permanent: true },
+      // Wix service-collection page. Linked from an Irish pharmacy's homepage
+      // and hard-404'd — the only broken link from a genuine referring site.
+      { source: "/services-1-4", destination: "/ireland/en", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/services-1-4", destination: "/ireland/en", permanent: true },
       { source: "/online-prescription", destination: "/ireland/en/gp-consultation-online", permanent: true },
       { source: "/home-health-test", destination: "/ireland/en/lab-tests", permanent: true },
       ...[
@@ -818,7 +826,6 @@ const nextConfig: NextConfig = {
       // product page rather than being flattened onto the lab hub.
       ...[
         ["genetic-lactose-intolereance-test", "genetic-lactose-intolerance-test"],
-        ["thyroid-home-blood-test", "thyroid-function-test"],
         ["heart-health-home-test", "heart-health-cholesterol-test"],
         ["female-hormone-test", "female-hormone-test"],
         ["male-hormone-test", "male-hormone-test"],
@@ -829,15 +836,44 @@ const nextConfig: NextConfig = {
         ["osentia-fracture-risk-assessment-test", "fracture-risk-assessment-test"],
         ["general-health-blood-hometest", "general-health-test"],
         ["nutrition-and-lifestyle-home-dna-test", "nutrition-lifestyle-dna-test"],
+        // 2026-08-19: these three carry live backlinks and were listed in the
+        // /home-health-tests table but never here, so /product-page/<slug>
+        // 404'd — there was no /product-page catch-all to break their fall.
+        ["haemochromatosis-test", "genetic-haemochromatosis-test"],
+        ["vitamin-d-blood-test", "vitamin-d-test"],
+        ["vitamin-b12-blood-test", "vitamin-b12-test"],
       ].flatMap(([legacySlug, currentSlug]) => [
         { source: `/product-page/${legacySlug}`, destination: `/ireland/en/lab-tests/${currentSlug}`, permanent: true },
         { source: `/:locale(cs|es|pt|ro)/product-page/${legacySlug}`, destination: `/ireland/:locale/lab-tests/${currentSlug}`, permanent: true },
       ]),
+      // Catch-all for the rest of the Wix product catalogue, mirroring the
+      // one /home-health-tests has had all along. Without it an unlisted
+      // /product-page/<slug> is a hard 404, which is how the three aliases
+      // above went unnoticed. MUST stay below the exact aliases.
+      //
+      // `slugMatcherExcludingGone` is load-bearing: retired products such as
+      // /product-page/beauty-focus-multibeauty are meant to answer 410 Gone,
+      // and a catch-all redirect would quietly convert that into a 301 and
+      // keep them alive in the index.
+      {
+        source: `/product-page/${slugMatcherExcludingGone("product-page")}`,
+        destination: "/ireland/en/lab-tests",
+        permanent: true,
+      },
+      {
+        source: `/:locale(cs|es|pt|ro)/product-page/${slugMatcherExcludingGone("product-page")}`,
+        destination: "/ireland/:locale/lab-tests",
+        permanent: true,
+      },
       ...[
         ["heart-health-home-test", "heart-health-cholesterol-test"],
         ["female-hormone-test", "female-hormone-test"],
         ["male-hormone-test", "male-hormone-test"],
-        ["thyroid-home-blood-test", "thyroid-function-test"],
+        // thyroid-home-blood-test deliberately absent: it used to point at
+        // /ireland/en/lab-tests/thyroid-function-test, which does not exist —
+        // a redirect straight into a 404. No thyroid test is live, so it now
+        // falls to the lab-tests hub via the catch-all below. Restore the
+        // alias if a thyroid test is ever published.
         ["gut-microbiome-test", "gut-microbiome-test"],
         ["nutrition-and-lifestyle-home-dna-test", "nutrition-lifestyle-dna-test"],
         ["osentia-fracture-risk-assessment-test", "fracture-risk-assessment-test"],
@@ -859,6 +895,228 @@ const nextConfig: NextConfig = {
       // those to their own market's booking page instead of dumping every
       // market's inbound link on /ireland/en/book. MUST stay above the generic
       // /booking-calendar/:slug rule below — first match wins.
+      //
+      // wix.to is the strongest referring domain in the profile by a wide
+      // margin (rank 70, 195 of 520 backlinks) and every one of its links
+      // lands here. Sending all of them to six generic /book pages wastes
+      // that on pages nothing competes for, so the slugs below — checked one
+      // by one against the live sitemap on 2026-08-19 — go straight to their
+      // service page instead. Deliberately partial: a legacy specialty with
+      // no live equivalent (urology, venereology, geriatrics, endocrinology,
+      // …) is NOT listed and keeps the market /book fallback, because a
+      // redirect into a 404 is worse than a redirect to a booking page.
+      // The `-prescription` slugs are left alone on purpose — those flows are
+      // hidden behind a flag (see the prescription scrub), so pointing links
+      // at them would surface pages that are meant to stay unlisted.
+      // Only the bare form is declared: all 195 inbound links use it, and
+      // locale-prefixed variants still fall through to the generic rules.
+      ...(
+        [
+          [
+            "ireland",
+            "en",
+            [
+              ["sick-leave", "sick-certificate-ireland"],
+              ["travel-consultation", "travel-health-consultation"],
+              ["treatment-refill", "treatment-review"],
+              ["weight-loss-consultation", "weight-management-consultation"],
+              ["cardiology-consultation", "cardiology-specialist-consultation"],
+              // Wix's own misspelling, kept verbatim — it is what the links use.
+              ["dermathology-consultation", "skin-dermatology-consultation"],
+              ["neurology-consultation", "neurology-specialist-consultation"],
+              ["migraine-consultation", "neurology-specialist-consultation"],
+              ["psychiatric-consultation", "psychiatry-specialist-consultation"],
+              ["psychology-consultation", "psychology-specialist-consultation"],
+              ["physiotherapy-consultation", "physiotherapy-specialist-consultation"],
+              ["pediatrics-consultation", "paediatric-consultation"],
+              ["dietitian-consultation", "nutrition-specialist-consultation"],
+              ["diabetes-consultation", "chronic-disease-consultation"],
+              ["hypertension-consultation", "chronic-disease-consultation"],
+              ["orthopedic-consultation", "musculoskeletal-pain-assessment"],
+              ["pain-management-consultation", "musculoskeletal-pain-assessment"],
+              ["referral-consultation", "referral-and-investigations"],
+              ["self-referral", "referral-and-investigations"],
+              ["erectile-dysfunction-consultation", "mens-health-consultation"],
+              ["respiratory-infections", "acute-medical-consultation"],
+              ["ie-aesthetic-medicine-online-consultat", "aesthetic-medicine-consultation"],
+              ["ie-mental-health-assessment", "mental-health-consultation"],
+              ["ie-paediatric-primary-care-cons", "paediatric-consultation"],
+              ["ie-in-person-manual-therapy", "physiotherapy-specialist-consultation"],
+            ],
+          ],
+          [
+            "portugal",
+            "pt",
+            [
+              ["baixa-medica", "baixa-medica"],
+              ["medicare-baixa-medica", "baixa-medica"],
+              ["certificado-medico-para-carta-condução", "certificado-medico-carta-de-conducao"],
+              ["medicare-cert-medico-carta-condução", "certificado-medico-carta-de-conducao"],
+              ["consulta-do-viajante", "consulta-do-viajante"],
+              ["pt-medicare-consulta-do-viajante-1", "consulta-do-viajante"],
+              ["consulta-medica", "consulta-medica"],
+              ["consulta-de-medicina", "consulta-medica"],
+              ["pt-consulta-de-medicina-1", "consulta-medica"],
+              ["pt-medicare-consulta-de-medicina", "consulta-medica"],
+              ["pt-cons-de-medicina-geral-e-familiar", "medicina-geral-e-familiar"],
+              ["pt-cons-cessação-tabagica", "deixar-de-fumar"],
+              ["consulta-de-cardiologia", "consulta-cardiologia"],
+              ["pt-medicare-consulta-de-cardiologia", "consulta-cardiologia"],
+              ["consulta-de-dermatologia", "consulta-dermatologia"],
+              ["pt-medicare-consulta-de-dermatologia", "consulta-dermatologia"],
+              ["consulta-de-oncologia", "consulta-de-oncologia"],
+              ["pt-medicare-consulta-de-oncologia", "consulta-de-oncologia"],
+              ["consulta-de-psicologia", "consulta-de-psicologia"],
+              ["pt-medicare-consulta-de-psicologia", "consulta-de-psicologia"],
+              ["consulta-de-psiquiatria", "consulta-de-psiquiatria"],
+              ["pt-medicare-consulta-de-psiquiatria", "consulta-de-psiquiatria"],
+              ["pt-medicare-consulta-pediátrica", "consulta-de-pediatria"],
+              ["consulta-de-perda-de-peso", "perda-de-peso"],
+              ["pt-medicare-consulta-de-perda-de-peso", "perda-de-peso"],
+              ["renovação-tratamento", "renovacao-de-tratamento"],
+              ["medicare-renovação-tratamento", "renovacao-de-tratamento"],
+              ["medicare-consulta-disfunção-erectil", "saude-do-homem"],
+              // Wix's typo for "disfunção", kept verbatim.
+              ["consulta-para-a-dsifunção-erectil", "saude-do-homem"],
+            ],
+          ],
+          [
+            "spain",
+            "es",
+            [
+              // "baja médica" is the Spanish sick-leave note; the Portuguese
+              // "baixa-medica" one letter away is a different market, above.
+              ["baja-medica", "justificante-medico-online"],
+              ["consulta-de-cardiología", "cardiologo-online"],
+              ["consulta-de-dermatología", "dermatologia-especialista-online"],
+              ["consulta-de-psicología", "psicologo-online"],
+              ["consulta-de-psiquiatría", "psiquiatra-online"],
+              ["consulta-pérdida-de-peso", "control-peso-online"],
+              ["renovacion-de-tratamiento", "renovacion-tratamiento-online"],
+              ["consulta-para-disfunción-eréctil", "salud-masculina-online"],
+              ["medicina-fisica-y-rehabilitacion", "musculoesqueletico-online"],
+              ["sp-consulta-medica-pediatrica", "pediatria-online"],
+            ],
+          ],
+          [
+            "czechia",
+            "cs",
+            [
+              ["pracovní-neschopnost", "neschopenka-online"],
+              ["obnova-léčby", "obnoveni-lecby"],
+              ["lékařská-konzultace", "lekar-online-praha"],
+              ["konsultace-s-dermatologem", "kozni-konzultace-praha"],
+              ["konsultace-s-pediatrem", "detsky-lekar-online"],
+              ["konsultace-s-psychiatrem", "dusevni-zdravi-online"],
+              ["konsultace-s-psychologem", "dusevni-zdravi-online"],
+              ["konzultace-pro-hubnutí", "kontrola-vahy-online"],
+              ["konzultace-pro-diabetes", "chronicka-onemocneni"],
+              ["konzultace-pro-erektilní-dysfunkci", "muzske-zdravi-online"],
+              ["ortopedická-konsultace", "bolesti-pohyboveho-aparatu"],
+              ["konsultace-s-fyzioterapeutem", "bolesti-pohyboveho-aparatu"],
+            ],
+          ],
+          [
+            "romania",
+            "ro",
+            [
+              ["ro-consultație-de-dermatologie", "consultatie-dermatologica"],
+              ["ro-consultație-de-neurologie", "consultatie-neurologie"],
+              ["ro-consultație-pentru-migrenă", "consultatie-neurologie"],
+              ["ro-consultație-de-pediatrie", "consultatie-pediatrie"],
+              ["ro-consultație-de-psihiatrie", "sanatate-mintala-online"],
+              ["ro-consultație-de-psihologie", "sanatate-mintala-online"],
+              ["ro-consultație-de-nutriție", "controlul-greutatii"],
+              ["ro-consultație-diabet", "boli-cronice-online"],
+              ["ro-consultație-hipertensiune", "boli-cronice-online"],
+              ["ro-consultație-medic-de-familie", "medic-online-romania"],
+              ["ro-consultație-respiratorie", "medic-online-romania"],
+              // Wix truncated "…managementul-durerii" at 40 characters.
+              ["ro-consultație-pentru-managementul-dure", "evaluare-durere"],
+              ["ro-consultație-de-ortopedie", "dureri-musculo-scheletice"],
+              ["ro-consultație-de-fizioterapie", "dureri-musculo-scheletice"],
+              ["ro-consultație-disfuncție-erectilă", "sanatatea-barbatului-online"],
+              ["ro-consultație-de-ginecologie-obstet", "sanatatea-femeii-online"],
+              ["ro-reînnoire-tratament", "reinnoire-tratament"],
+            ],
+          ],
+        ] as ReadonlyArray<readonly [string, string, ReadonlyArray<readonly [string, string]>]>
+      ).flatMap(([country, lang, pairs]) =>
+        pairs.map(([legacySlug, serviceSlug]) => ({
+          // Next matches redirect sources against the ENCODED pathname, so a
+          // literal `ã`/`ț`/`é` in `source` can never match the request — the
+          // rule silently does nothing and the slug falls through to the
+          // market /book rule. Verified against a dev server on 2026-08-19:
+          // all 16 accented slugs missed until they were encoded here, all 14
+          // ASCII ones matched either way. Keep the table above readable and
+          // encode at construction time. (Uppercase hex, which is what the
+          // wix.to links send; a lowercase-encoded variant would still land
+          // on the /book fallback, i.e. today's behaviour.)
+          source: `/booking-calendar/${encodeURIComponent(legacySlug)}`,
+          destination: `/${country}/${lang}/services/${serviceSlug}`,
+          permanent: true,
+        })),
+      ),
+      // The GP hub is not a /services/<slug> page, so it sits outside the
+      // table above.
+      {
+        source: "/booking-calendar/ie-gp-family-medicine",
+        destination: "/ireland/en/gp-consultation-online",
+        permanent: true,
+      },
+      // Legacy specialties with no live service page of their own still have
+      // to land somewhere, and Wix left most of them unprefixed — so they were
+      // all defaulting to Ireland's English booking page, including every
+      // Czech one. The market is recoverable from the language, so send them
+      // to their own market's /book instead of a page they cannot read.
+      // Czech is a clean prefix match; everything else is spelled out, because
+      // Spanish and Portuguese differ by an accent or a single letter
+      // (neumología/pneumologia, inmuno-/immuno-, con/com).
+      { source: "/booking-calendar/:slug(konsultace-.*)", destination: "/czechia/cs/book", permanent: true },
+      { source: "/booking-calendar/:slug(konzultace-.*)", destination: "/czechia/cs/book", permanent: true },
+      ...(
+        [
+          ["spain", "es", [
+            "consulta-con-dietista",
+            "consulta-de-endocrinología",
+            "consulta-de-gastroenterología",
+            "consulta-de-inmunoalergología",
+            "consulta-de-neumología",
+            "consulta-de-neurología",
+            "consulta-de-oncología",
+            "consulta-de-reumatología",
+            "consulta-de-urología",
+          ]],
+          ["portugal", "pt", [
+            "consulta-com-dietista",
+            "consulta-da-diabetes",
+            "medicare-consulta-da-diabetes",
+            "consulta-para-diabetes",
+            "consulta-de-endocrinologia",
+            "consulta-de-gastroenterologia",
+            "consulta-de-immunoalergologia",
+            "consulta-de-neurologia",
+            "consulta-de-pneumologia",
+            "consulta-de-reumatologia",
+            "consulta-de-urologia",
+            "consulta-de-venerologia",
+            "consulta-de-fisioterapia",
+            "consulta-de-fisioterapia-1",
+          ]],
+        ] as ReadonlyArray<readonly [string, string, ReadonlyArray<string>]>
+      ).flatMap(([country, lang, slugs]) =>
+        slugs.map((legacySlug) => ({
+          // Same encoding rule as the service table above.
+          source: `/booking-calendar/${encodeURIComponent(legacySlug)}`,
+          destination: `/${country}/${lang}/book`,
+          permanent: true,
+        })),
+      ),
+      // Left on the Ireland fallback on purpose: `consulta-de-genética`,
+      // `consulta-ortopédica` and `consulta-pediátrica` (and their `-1`
+      // duplicates) are spelled identically in Portuguese and Spanish, so
+      // there is no market marker to read. Guessing would send half of them
+      // to the wrong country for no gain over the status quo.
       { source: "/booking-calendar/:slug(ro-.*)", destination: "/romania/ro/book", permanent: true },
       { source: "/booking-calendar/:slug(pt-.*)", destination: "/portugal/pt/book", permanent: true },
       { source: "/booking-calendar/:slug(cz-.*)", destination: "/czechia/cs/book", permanent: true },
@@ -1230,6 +1488,14 @@ const nextConfig: NextConfig = {
       { source: "/:locale(cs|es|pt|ro)/portugal/smoking-cessation-consultation", destination: "/portugal/pt/services/deixar-de-fumar", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/portugal/medical-consultation", destination: "/portugal/pt/services/consulta-medica", permanent: true },
       { source: "/:locale(cs|es|pt|ro)/portugal/travelers-consultation", destination: "/portugal/pt/services/consulta-do-viajante", permanent: true },
+      // The apostrophe variants. Eight referring domains — the largest
+      // non-homepage backlink cluster on the site — point at the locale-
+      // prefixed apostrophe form, which only the `/{locale}/portugal/{slug}`
+      // catch-all was matching, dumping all of it on the specialist hub. One
+      // of them was linked with a stray slash before the apostrophe.
+      { source: "/:locale(cs|es|pt|ro)/portugal/traveler's-consultation", destination: "/portugal/pt/services/consulta-do-viajante", permanent: true },
+      { source: "/:locale(cs|es|pt|ro)/portugal/traveler/'s-consultation", destination: "/portugal/pt/services/consulta-do-viajante", permanent: true },
+      { source: "/portugal/traveler/'s-consultation", destination: "/portugal/pt/services/consulta-do-viajante", permanent: true },
       // The rest go to that country's specialist hub, which is the closest live
       // intent — a dead-end 404 helps nobody. Ireland is included so the
       // /{locale}/ireland/{slug} shape stops falling through to the
@@ -1346,6 +1612,10 @@ const nextConfig: NextConfig = {
       // the hub on purpose; see the redirect audit report for the full list.
       { source: "/post/diabetes-a-silent-disease", destination: "/ireland/en/blog/diabetes-a-silent-disease", permanent: true },
       { source: "/post/hand-foot-and-mouth-disease", destination: "/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment", permanent: true },
+      // 2026-08-19: the full-length Wix slug carries a live backlink and was
+      // falling to the hub, even though the article is published under exactly
+      // this name.
+      { source: "/post/hand-foot-and-mouth-disease-signs-and-treatment", destination: "/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment", permanent: true },
       // 2026-08-04: two more exact slug matches the original pass missed —
       // both articles are PUBLISHED under these very slugs, so the catch-all
       // below was sending readers (and the sick-cert article's own in-body

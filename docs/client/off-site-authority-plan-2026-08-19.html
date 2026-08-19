@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Link Authority Action Plan &mdash; Global Health</title>
+<meta name="description" content="Off-site authority action plan for myglobalhealth.online: existing backlinks by country, links to fix, partners to contact, and directories to get listed in.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
+
+<style>
+  :root {
+    --paper:      #FBFAF7;
+    --surface:    #FFFFFF;
+    --surface-2:  #F2F4EF;
+    --ink:        #16211C;
+    --ink-2:      #3E4B45;
+    --muted:      #6B7770;
+    --rule:       #DDE2DC;
+    --rule-soft:  #EAEDE8;
+    --forest:     #1D4B36;
+    --forest-ink: #123024;
+    --lime:       #6F9B0E;
+    --lime-bg:    #EDF7D6;
+    --risk:       #8C2F2F;
+    --risk-bg:    #F8ECEA;
+    --hold:       #8A5E15;
+    --hold-bg:    #FBF2DF;
+    --ok:         #2F6B4F;
+    --ok-bg:      #E6F1EA;
+    --shadow:     0 1px 2px rgba(22,33,28,.05), 0 8px 24px -16px rgba(22,33,28,.22);
+    --step-bg:    #1D4B36;
+    --step-fg:    #FBFAF7;
+
+    --f-display: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+    --f-body:    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --f-mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #101613;
+      --surface:    #161E1A;
+      --surface-2:  #1C2621;
+      --ink:        #EDF1EC;
+      --ink-2:      #C2CCC5;
+      --muted:      #8B9891;
+      --rule:       #2A352F;
+      --rule-soft:  #212B26;
+      --forest:     #7FC49F;
+      --forest-ink: #A8DCBF;
+      --lime:       #B0F122;
+      --lime-bg:    #1F2A14;
+      --risk:       #E39A94;
+      --risk-bg:    #2C1A18;
+      --hold:       #DCB56A;
+      --hold-bg:    #2A2113;
+      --ok:         #7FC49F;
+      --ok-bg:      #16261D;
+      --shadow:     0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+      --step-bg:    #1F2E26;
+      --step-fg:    #7FC49F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:      #101613;
+    --surface:    #161E1A;
+    --surface-2:  #1C2621;
+    --ink:        #EDF1EC;
+    --ink-2:      #C2CCC5;
+    --muted:      #8B9891;
+    --rule:       #2A352F;
+    --rule-soft:  #212B26;
+    --forest:     #7FC49F;
+    --forest-ink: #A8DCBF;
+    --lime:       #B0F122;
+    --lime-bg:    #1F2A14;
+    --risk:       #E39A94;
+    --risk-bg:    #2C1A18;
+    --hold:       #DCB56A;
+    --hold-bg:    #2A2113;
+    --ok:         #7FC49F;
+    --ok-bg:      #16261D;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+    --step-bg:    #1F2E26;
+    --step-fg:    #7FC49F;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 28px 96px;
+  }
+
+  /* ── masthead ─────────────────────────────────────────── */
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding: 56px 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: clamp(2.1rem, 5vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .standfirst {
+    font-size: 1.0625rem;
+    color: var(--ink-2);
+    max-width: 64ch;
+    margin: 0;
+  }
+
+  /* ── scoreboard ───────────────────────────────────────── */
+  .score {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 40px 0 0;
+  }
+  .score > div {
+    background: var(--surface);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .score dt {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+  }
+  .score dd {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .score small {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── sections ─────────────────────────────────────────── */
+  section { margin-top: 72px; }
+  h2 {
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: 1.6rem;
+    letter-spacing: -.015em;
+    margin: 0 0 6px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--f-body);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    margin: 32px 0 8px;
+    letter-spacing: -.005em;
+  }
+  h4 {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 26px 0 10px;
+  }
+  p { max-width: 68ch; margin: 12px 0; }
+  .lede { font-size: 1.0625rem; color: var(--ink-2); }
+  ul, ol { max-width: 68ch; padding-left: 20px; }
+  li { margin: 7px 0; }
+  a { color: var(--forest); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--lime);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  code, .mono { font-family: var(--f-mono); font-size: .86em; }
+  .dom { font-family: var(--f-mono); font-size: 13px; word-break: break-all; }
+
+  /* ── priority board ───────────────────────────────────── */
+  .board { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+  .step {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+  }
+  .step-n {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--step-fg);
+    background: var(--step-bg);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+  }
+  .step-body { padding: 18px 22px 20px; }
+  .step-body h3 { margin: 0 0 4px; font-size: 1.0625rem; }
+  .step-body p { margin: 6px 0 0; font-size: 14.5px; color: var(--ink-2); }
+  .who {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-top: 12px;
+  }
+
+  /* ── tables ───────────────────────────────────────────── */
+  .tw { overflow-x: auto; margin: 18px 0 4px; border: 1px solid var(--rule); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th {
+    text-align: left;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+    background: var(--surface-2);
+  }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-size: 13px;
+    color: var(--muted);
+    padding: 0 0 10px;
+  }
+
+  /* ── chips ────────────────────────────────────────────── */
+  .chip {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .c-keep   { background: var(--ok-bg);   color: var(--ok);   border-color: color-mix(in srgb, var(--ok) 30%, transparent); }
+  .c-fix    { background: var(--lime-bg); color: var(--lime); border-color: color-mix(in srgb, var(--lime) 35%, transparent); }
+  .c-ignore { background: var(--surface-2); color: var(--muted); border-color: var(--rule); }
+  .c-risk   { background: var(--risk-bg); color: var(--risk); border-color: color-mix(in srgb, var(--risk) 30%, transparent); }
+  .c-hold   { background: var(--hold-bg); color: var(--hold); border-color: color-mix(in srgb, var(--hold) 32%, transparent); }
+
+  /* ── callouts ─────────────────────────────────────────── */
+  .note {
+    border-left: 3px solid var(--forest);
+    background: var(--surface);
+    padding: 16px 20px;
+    margin: 24px 0;
+  }
+  .note.warn { border-left-color: var(--risk); }
+  .note.hold { border-left-color: var(--hold); }
+  .note p { margin: 6px 0; font-size: 14.5px; }
+  .note p:first-child { margin-top: 0; }
+  .note p:last-child { margin-bottom: 0; }
+  .note strong { font-weight: 600; }
+
+  /* ── market blocks ────────────────────────────────────── */
+  .market { margin-top: 40px; }
+  .market-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 8px;
+  }
+  .market-head h3 {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .market-head .tally {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  /* ── email drafts ─────────────────────────────────────── */
+  details {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    margin: 14px 0;
+  }
+  summary {
+    cursor: pointer;
+    padding: 13px 18px;
+    font-weight: 600;
+    font-size: 14.5px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before {
+    content: "+";
+    font-family: var(--f-mono);
+    font-weight: 600;
+    color: var(--forest);
+    font-size: 16px;
+    line-height: 1;
+  }
+  details[open] summary::before { content: "\2212"; }
+  details[open] summary { border-bottom: 1px solid var(--rule); }
+  .draft {
+    padding: 18px 22px 22px;
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    color: var(--ink-2);
+    background: var(--surface-2);
+    margin: 0;
+    overflow-x: auto;
+  }
+
+  footer {
+    margin-top: 80px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  footer p { max-width: 72ch; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 18px 72px; }
+    .masthead { padding-top: 36px; }
+    .step { grid-template-columns: 40px 1fr; }
+    .step-body { padding: 15px 16px 17px; }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .wrap { max-width: none; padding: 0; }
+    details { break-inside: avoid; }
+    details:not([open]) .draft { display: block; }
+    section { break-before: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="eyebrow">Global Health &middot; myglobalhealth.online &middot; 19 August 2026</span>
+    <h1>Link Authority Action Plan</h1>
+    <p class="standfirst">Every technical box on the website is now ticked. What is holding the rankings back is off the website: who links to Global Health, and who does not. This is the list of people to contact and the links to fix &mdash; nothing here needs a developer.</p>
+  </header>
+
+  <dl class="score">
+    <div><dt>Backlink rank</dt><dd>43</dd><small>Out of 100. Unchanged for 12 months.</small></div>
+    <div><dt>Total links</dt><dd>520</dd><small>From 59 different websites.</small></div>
+    <div><dt>Genuinely useful</dt><dd>3</dd><small>Real, relevant sites linking to us.</small></div>
+    <div><dt>Markets with zero links</dt><dd>4</dd><small>Spain, Czechia, Romania, Brazil.</small></div>
+  </dl>
+
+  <section>
+    <h2>The honest read</h2>
+    <p class="lede">520 links sounds healthy. It is not. When you sort them by who actually sent them, the picture changes completely.</p>
+
+    <div class="tw">
+      <table>
+        <caption>All 54 linking websites currently on record, grouped by what they actually are.</caption>
+        <thead>
+          <tr><th>Group</th><th class="num">Sites</th><th class="num">Links</th><th>What it is</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Our own old Wix site</strong></td>
+            <td class="num">2</td><td class="num">213</td>
+            <td>Leftover short links from the old website. They still work. No action needed.</td>
+          </tr>
+          <tr>
+            <td><strong>Article-posting sites</strong></td>
+            <td class="num">17</td><td class="num">~240</td>
+            <td>Blog-posting and article-syndication sites. Articles about Global Health were placed on them between May and August 2026.</td>
+          </tr>
+          <tr>
+            <td><strong>Automated listing pages</strong></td>
+            <td class="num">26</td><td class="num">~30</td>
+            <td>&ldquo;Domain statistics&rdquo; and link-shortener pages that scrape any website and generate a page about it. Nobody chose to link to us.</td>
+          </tr>
+          <tr>
+            <td><strong>Link sellers advertising us</strong></td>
+            <td class="num">6</td><td class="num">6</td>
+            <td>Pages selling backlink packages, using myglobalhealth.online as an advertised example. See below.</td>
+          </tr>
+          <tr>
+            <td><strong>Real, relevant websites</strong></td>
+            <td class="num">3</td><td class="num">5</td>
+            <td>An Irish pharmacy, an Irish local directory, a Polish business directory.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note warn">
+      <p><strong>Six of these links come from pages that sell backlinks, and they name us in the advertisement.</strong></p>
+      <p>The anchor text on <span class="dom">m98ufa.com</span>, <span class="dom">betulcrime.com</span>, <span class="dom">betwinnermirror.com</span>, <span class="dom">plumeriamarketing.com</span>, <span class="dom">ggmap.us.com</span> and <span class="dom">homesforsaleoldgreenwichct.com</span> reads, word for word:</p>
+      <p><em>&ldquo;High Quality Dofollow Backlinks DA 50 PA 40 Premium PBN Network Service myglobalhealth.online Rank First Page Google Fast SEO Link Building Buy Backlinks Online Cheap&rdquo;</em></p>
+      <p>Between them, these six sites score 60&ndash;75 out of 100 for spam. Alongside them, the number of linking sites jumped from 42 to 53 in May 2026 alone, almost entirely article-posting sites.</p>
+      <p><strong>The one question we need answered before anything else:</strong> did anyone buy a link package, or hire an agency that did? Not a problem to admit &mdash; it changes what we do next, and guessing wrong is expensive either way.</p>
+    </div>
+
+    <div class="note hold">
+      <p><strong>Do not disavow anything yet.</strong> Disavowing tells Google to ignore links. Google already ignores most low-quality links on its own, and a disavow file that is too broad throws away good links with the bad ones &mdash; permanently, and it takes months to recover.</p>
+      <p>We only file one if Google Search Console shows a <em>manual action</em> against the site. It currently does not.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What to do, in order</h2>
+    <p class="lede">Three things, and the first one is a question rather than a task. Everything after that is outreach.</p>
+
+    <div class="board">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-body">
+          <h3>Confirm whether links were purchased</h3>
+          <p>Check with anyone who has done marketing or SEO work for Global Health since roughly March 2026, including freelancers and agencies. We need a yes or a no, not a defence.</p>
+          <span class="who">Owner &middot; this week</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-body">
+          <h3>Convert the partners who already trust us</h3>
+          <p>Global Health links out to Medicare and SYNLAB on the Portugal pages. Neither links back. These are live commercial relationships, so the ask is reasonable and costs nothing &mdash; and a link from a real Portuguese healthcare brand is worth more than every article-posting site combined.</p>
+          <span class="who">Owner &middot; draft emails below</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-body">
+          <h3>Get listed where a clinic is supposed to be listed</h3>
+          <p>Regulator registers, professional bodies and national health directories in each of the six markets. Slow, unglamorous, and the only category of link a competitor cannot buy their way past.</p>
+          <span class="who">Owner or practice manager &middot; over the next quarter</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The links we already have, by country</h2>
+    <p class="lede">Sorted by which market each link points at. Four of the six markets have no links pointing at them at all &mdash; which is the single clearest explanation for why they rank the way they do.</p>
+
+    <div class="market">
+      <div class="market-head">
+        <h3>Ireland</h3>
+        <span class="tally">8 linking sites &middot; 2 worth keeping</span>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Linking site</th><th>Spam</th><th>Verdict</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dom">coombecommunitypharmacy.ie</span><br><small>Coombe Community Pharmacy, Dublin</small></td>
+              <td class="num">10</td>
+              <td><span class="chip c-fix">Fix</span></td>
+              <td><strong>Their link is broken.</strong> It points at a page that no longer exists. Ask them to update it &mdash; draft email below.</td>
+            </tr>
+            <tr>
+              <td><span class="dom">askspud.ie</span><br><small>Irish local business directory</small></td>
+              <td class="num">0</td>
+              <td><span class="chip c-keep">Keep</span></td>
+              <td>Working listing. Worth checking the opening hours and phone number on it are current.</td>
+            </tr>
+            <tr><td><span class="dom">youslade.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td rowspan="6">Article-posting sites. Articles placed in mid-2026, mostly about sick certs and weight management. Leave them alone &mdash; asking for removal draws attention and gains nothing.</td></tr>
+            <tr><td><span class="dom">tokemonkey.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td></tr>
+            <tr><td><span class="dom">yruz.one</span></td><td class="num">15</td><td><span class="chip c-ignore">Ignore</span></td></tr>
+            <tr><td><span class="dom">freearticlesmania.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td></tr>
+            <tr><td><span class="dom">peruactivo.com</span></td><td class="num">12</td><td><span class="chip c-ignore">Ignore</span></td></tr>
+            <tr><td><span class="dom">robuta.com</span></td><td class="num">15</td><td><span class="chip c-ignore">Ignore</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="market">
+      <div class="market-head">
+        <h3>Portugal</h3>
+        <span class="tally">11 linking sites &middot; 0 worth keeping</span>
+      </div>
+      <p>Every Portuguese link came from the same May&ndash;August 2026 article campaign. They point at three pages: the driving-licence medical certificate, the general medical consultation, and the travellers&rsquo; consultation. One of them, <span class="dom">worldhealthorganization.co</span>, is a private site with no connection to the World Health Organization &mdash; a name chosen to look authoritative.</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Linking site</th><th>Spam</th><th>Verdict</th><th>Points at</th></tr></thead>
+          <tbody>
+            <tr><td><span class="dom">articlescad.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Driving-licence certificate</td></tr>
+            <tr><td><span class="dom">dailystorypro.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Driving-licence certificate</td></tr>
+            <tr><td><span class="dom">articlewaves.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Driving-licence certificate</td></tr>
+            <tr><td><span class="dom">worldhealthorganization.co</span></td><td class="num">0</td><td><span class="chip c-risk">Note</span></td><td>Driving-licence certificate</td></tr>
+            <tr><td><span class="dom">whatson.plus</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Medical consultation</td></tr>
+            <tr><td><span class="dom">blogsgod.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Medical consultation</td></tr>
+            <tr><td><span class="dom">regic.net</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Medical consultation</td></tr>
+            <tr><td><span class="dom">lalinguanostra.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Travellers&rsquo; consultation</td></tr>
+            <tr><td><span class="dom">craneflower.net</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Travellers&rsquo; consultation</td></tr>
+            <tr><td><span class="dom">facerelation.com</span></td><td class="num">0</td><td><span class="chip c-ignore">Ignore</span></td><td>Travellers&rsquo; consultation</td></tr>
+            <tr><td><span class="dom">boycat.co</span></td><td class="num">14</td><td><span class="chip c-ignore">Ignore</span></td><td>Blog articles</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="market">
+      <div class="market-head">
+        <h3>Spain &middot; Czechia &middot; Romania &middot; Brazil</h3>
+        <span class="tally">0 linking sites</span>
+      </div>
+      <p>Not a single website in any of these four countries links to Global Health. Not a directory, not a regulator, not a partner, not a local news site. Four full markets, thirteen doctors in Spain alone, and no off-site presence whatsoever.</p>
+      <p>This is the biggest and most fixable gap in the whole plan. The target lists further down are ordered with that in mind.</p>
+    </div>
+
+    <div class="market">
+      <div class="market-head">
+        <h3>No market &mdash; homepage only</h3>
+        <span class="tally">32 linking sites</span>
+      </div>
+      <p>These all point at the homepage with the anchor text &ldquo;myglobalhealth.online&rdquo; and nothing else. Twenty-six are automated pages that scrape any domain and publish statistics about it; six are the link-sellers quoted above. None were chosen by a person.</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Linking sites</th><th>Spam</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dom">m98ufa.com &middot; betulcrime.com &middot; betwinnermirror.com &middot; plumeriamarketing.com &middot; ggmap.us.com &middot; homesforsaleoldgreenwichct.com</span></td>
+              <td class="num">60&ndash;75</td>
+              <td><span class="chip c-risk">Evidence</span></td>
+            </tr>
+            <tr>
+              <td><span class="dom">wheretobuybest.link &middot; 2x9.co &middot; australianwebdirectory.pro &middot; australianwebdirectory.shop &middot; getwebsiteworth.com &middot; globalecommerce.org &middot; booksreadr.org &middot; musweb.org &middot; read.org.in &middot; simplewebdirectory.com &middot; drjack.world &middot; bye.fyi &middot; ycm.info &middot; alljobs.info &middot; tunca.org &middot; sergechel.info &middot; anchorurl.cloud &middot; urls-shortener.eu &middot; shortenurls.eu &middot; buzzshrink.website &middot; quero.party &middot; ready.pro &middot; wallpapers.pro &middot; five.co.in &middot; viesearch.com &middot; bib.az</span></td>
+              <td class="num">0&ndash;60</td>
+              <td><span class="chip c-ignore">Ignore</span></td>
+            </tr>
+            <tr>
+              <td><span class="dom">informacja.com</span><br><small>Polish business directory</small></td>
+              <td class="num">0</td>
+              <td><span class="chip c-keep">Keep</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Links to fix</h2>
+    <p class="lede">One link on a real website is broken. It is worth an email because the site that sent it is exactly the kind we want more of.</p>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>Site</th><th>Currently points at</th><th>Should point at</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="dom">coombecommunitypharmacy.ie</span><br><small>Homepage, anchor text &ldquo;Global Health&rdquo;</small></td>
+            <td><span class="dom">myglobalhealth.online/services-1-4</span><br><small><span class="chip c-risk">404</span> page not found</small></td>
+            <td><span class="dom">myglobalhealth.online/ireland/en</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details>
+      <summary>Draft email &mdash; Coombe Community Pharmacy</summary>
+      <pre class="draft">Subject: Small broken link on your homepage
+
+Hello,
+
+Thank you for listing Global Health on your homepage — we appreciate it.
+
+The link is pointing at an old address on our site that no longer exists,
+so it currently opens an error page for anyone who clicks it. The current
+address is:
+
+    https://www.myglobalhealth.online/ireland/en
+
+If you could update the link when you next have a moment, that would be
+great. Happy to help with anything at our end.
+
+Thanks again,
+[name]
+Global Health</pre>
+    </details>
+
+    <div class="note">
+      <p><strong>While you are in touch:</strong> Coombe Community Pharmacy is a real Dublin pharmacy that already chose to mention Global Health. If there is any working relationship there &mdash; prescription fulfilment, referrals &mdash; it is worth asking whether they would list Global Health on a partners or services page rather than only the homepage. That is a stronger and more permanent link.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Partners who already work with us</h2>
+    <p class="lede">The fastest wins on this page. In each case the relationship exists, the link only flows one way, and nobody has asked.</p>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>Partner</th><th>Situation</th><th>The ask</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Medicare Portugal</strong><br><span class="dom">medicare.pt</span></td>
+            <td>Their logo and a link to their site appear on the Global Health Portugal pages. Nothing comes back.</td>
+            <td>A listing on their partner or network page, linking to the Portuguese site.</td>
+            <td><span class="chip c-keep">High</span> Portuguese, healthcare, real relationship</td>
+          </tr>
+          <tr>
+            <td><strong>SYNLAB Portugal</strong><br><span class="dom">synlab.pt</span></td>
+            <td>Same &mdash; logo and outbound link on our side only.</td>
+            <td>A partner listing, ideally pointing at the Portugal lab-tests page.</td>
+            <td><span class="chip c-keep">High</span> Same reasons</td>
+          </tr>
+          <tr>
+            <td><strong>Randox</strong><br><span class="dom">randox.com</span></td>
+            <td>Lab partner for the Irish home tests.</td>
+            <td>A partner or stockist listing pointing at the Ireland lab-tests page.</td>
+            <td><span class="chip c-keep">High</span> If the partnership is still active</td>
+          </tr>
+          <tr>
+            <td><strong>Doctify</strong><br><span class="dom">doctify.com</span></td>
+            <td>Paying customer &mdash; their review widget runs on every page of the site.</td>
+            <td>Confirm the Global Health practice profile links back to the website. Plus a separate language request, below.</td>
+            <td><span class="chip c-keep">Medium</span> Healthcare directory, already paid for</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details>
+      <summary>Draft email &mdash; Medicare Portugal / SYNLAB Portugal (adapt the first line)</summary>
+      <pre class="draft">Subject: Reciprocal listing — Global Health
+
+Hello [name],
+
+We work together on [describe the arrangement in one line], and Global
+Health features [Medicare / SYNLAB] on our Portuguese pages, with your
+logo and a link to your website.
+
+Would you be open to listing Global Health on your partners page in
+return? A short entry and a link to:
+
+    https://www.myglobalhealth.online/portugal/pt
+
+We are happy to supply a logo, a one-line description in Portuguese, and
+whatever format suits your page. And if there is anything you would like
+changed about how you are presented on our side, tell us and we will sort
+it out.
+
+Best regards,
+[name]
+Global Health — myglobalhealth.online</pre>
+    </details>
+
+    <details>
+      <summary>Draft message &mdash; Doctify support, about the missing widget translations</summary>
+      <pre class="draft">Subject: Widget label translations for pt / es / cs / ro — tenant athena-ie
+
+Hello,
+
+We run the Doctify review widget on myglobalhealth.online under tenant
+athena-ie, practice slug global-health-ireland. Our site serves six
+languages, and we would like the widget's own labels to match the page
+language, but we can only get them to appear in English and German.
+
+We tested this before contacting you. Requesting the widget across fifteen
+language codes, with every other setting identical:
+
+  - English returned the labels populated: "Excellent", "based on",
+    "patient review".
+  - German returned them populated too: "Ausgezeichnet",
+    "Patientenbewertung".
+  - Portuguese, Spanish, Czech, Romanian, French, Italian, Dutch and
+    Polish — including regional variants — each returned an identical
+    response with the label fields empty.
+
+The empty labels are the problem for us. On our Portuguese, Spanish, Czech
+and Romanian pages the widget shows a bare rating number with no
+"Excellent", no "based on N patient reviews" and no "Source: Doctify" — a
+score with nothing explaining what it is or where it came from.
+
+Three questions:
+
+  1. Is there a language code we have not tried that returns populated
+     labels for Portuguese, Spanish, Czech or Romanian?
+  2. If those languages exist but are not enabled for our tenant, can they
+     be switched on for athena-ie?
+  3. If they are not available yet, is there a timeline — and in the
+     meantime, could unsupported languages fall back to the English labels
+     instead of returning empty ones? A rating with no words around it is
+     worse for our patients than an English label would be.
+
+Happy to share the exact requests and responses if that helps.
+
+Thanks,
+[name]
+Global Health — myglobalhealth.online</pre>
+    </details>
+  </section>
+
+  <section>
+    <h2>Where to get listed, by country</h2>
+    <p class="lede">Regulator registers and professional bodies first &mdash; they are free, they are permanent, and they are the only links a competitor cannot outspend us on. Health directories second, for patient traffic as much as ranking.</p>
+
+    <div class="note">
+      <p><strong>Two of these are compliance obligations, not marketing.</strong> The Portuguese ERS register and the Czech national provider register are where a licensed healthcare provider is supposed to appear. Confirming the Global Health entry exists and is current is worth doing regardless of what it does for search.</p>
+    </div>
+
+    <div class="market">
+      <div class="market-head"><h3>Portugal</h3><span class="tally">Start here &mdash; strongest existing relationships</span></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Where</th><th>Cost</th><th>Needs</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><strong>ERS &mdash; provider register</strong><br><span class="dom">ers.pt/pt/prestadores/servicos/pesquisa-de-prestadores/</span><br><small>Register at <span class="dom">www2.ers.pt/dmz/registo-prestador.aspx</span></small></td><td>Free</td><td>Portuguese provider licence, which we should already hold</td><td><span class="chip c-keep">Highest</span> Government register</td></tr>
+            <tr><td><strong>Saúde Bem-Estar</strong><br><span class="dom">saudebemestar.pt</span></td><td>Editorial, may be paid</td><td>A named doctor willing to be quoted</td><td><span class="chip c-keep">Medium</span></td></tr>
+            <tr><td><strong>Atlas da Saúde</strong><br><span class="dom">atlasdasaude.pt</span></td><td>Editorial</td><td>Same</td><td><span class="chip c-keep">Medium</span></td></tr>
+            <tr><td><strong>APMGF</strong> &mdash; family medicine association<br><span class="dom">apmgf.pt</span></td><td>Membership fee</td><td>A member GP on the team</td><td><span class="chip c-keep">Medium</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="market">
+      <div class="market-head"><h3>Spain</h3><span class="tally">13 doctors, zero links</span></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Where</th><th>Cost</th><th>Needs</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Doctoralia España</strong><br><span class="dom">doctoralia.es</span></td><td>Free tier, paid upgrades</td><td>A profile per doctor</td><td><span class="chip c-keep">High</span> Biggest Spanish health directory &mdash; patient traffic more than ranking</td></tr>
+            <tr><td><strong>Top Doctors España</strong><br><span class="dom">topdoctors.es</span></td><td>Paid</td><td>Specialist credentials, editorially screened</td><td><span class="chip c-keep">Medium-high</span></td></tr>
+            <tr><td><strong>Provincial Colegios de Médicos</strong><br><span class="dom">cgcom.es</span></td><td>Free</td><td>Already applies to our registered doctors</td><td><span class="chip c-keep">Medium</span> Confirms credentials are real</td></tr>
+            <tr><td><strong>CuidatePlus, ConSalud.es</strong></td><td>Editorial</td><td>A doctor available for comment</td><td><span class="chip c-keep">Medium</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="market">
+      <div class="market-head"><h3>Ireland</h3><span class="tally">Best-performing market, thinnest link profile</span></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Where</th><th>Cost</th><th>Needs</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Irish Haemochromatosis Association</strong><br><span class="dom">haemochromatosis-ir.com</span></td><td>Free or membership</td><td>We offer the genetic test</td><td><span class="chip c-keep">High</span> Ireland has the world&rsquo;s highest carrier rate and people search for this</td></tr>
+            <tr><td><strong>ADHD Ireland</strong><br><span class="dom">adhdireland.ie</span></td><td>Free or partner fee</td><td>We offer adult ADHD assessment</td><td><span class="chip c-keep">High</span> Large unmet demand in Irish search</td></tr>
+            <tr><td><strong>ICGP</strong> &mdash; Irish College of General Practitioners<br><span class="dom">icgp.ie</span></td><td>Membership fee</td><td>An ICGP-member GP</td><td><span class="chip c-keep">Medium</span></td></tr>
+            <tr><td><strong>Golden Pages</strong><br><span class="dom">goldenpages.ie</span></td><td>Free tier</td><td>Name, address, phone</td><td><span class="chip c-keep">Low-medium</span></td></tr>
+            <tr><td><strong>Silicon Republic, Irish Tech News, BusinessPlus</strong></td><td>Free (editorial)</td><td>A genuine story &mdash; funding, a new market, clinician numbers</td><td><span class="chip c-keep">Medium-high</span> One-off but real</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="market">
+      <div class="market-head"><h3>Czechia</h3><span class="tally">Second-best clicks per effort, zero links</span></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Where</th><th>Cost</th><th>Needs</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Firmy.cz</strong> (Seznam)<br><span class="dom">firmy.cz</span></td><td>Free tier, paid upgrades</td><td>Czech business details</td><td><span class="chip c-keep">High</span> Seznam is a real search engine in Czechia, not just a directory</td></tr>
+            <tr><td><strong>NRPZS</strong> &mdash; national provider register<br><span class="dom">nrpzs.uzis.cz</span></td><td>Free</td><td>Czech provider licence</td><td><span class="chip c-hold">Verify</span> Government register &mdash; we could not reach the site to confirm the address, so check it before relying on it</td></tr>
+            <tr><td><strong>Známý lékař</strong><br><span class="dom">znamylekar.cz</span></td><td>Free tier, paid upgrades</td><td>A profile per doctor</td><td><span class="chip c-keep">Medium-high</span> Czech equivalent of Doctoralia</td></tr>
+            <tr><td><strong>ČLK</strong> &mdash; Czech Medical Chamber<br><span class="dom">lkcr.cz</span></td><td>Free</td><td>Already applies to our doctors</td><td><span class="chip c-keep">Medium</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="market">
+      <div class="market-head"><h3>Romania</h3><span class="tally">Already ranking well on some terms with no links at all</span></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Where</th><th>Cost</th><th>Needs</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><strong>ROmedic</strong><br><span class="dom">romedic.ro</span></td><td>Free tier, paid upgrades</td><td>Clinic and doctor listings</td><td><span class="chip c-keep">Medium-high</span> Main Romanian health directory</td></tr>
+            <tr><td><strong>Colegiul Medicilor din România</strong><br><span class="dom">cmr.ro</span></td><td>Free</td><td>Already applies to our doctors</td><td><span class="chip c-keep">Medium</span></td></tr>
+            <tr><td><strong>CNAS</strong> &mdash; provider list<br><span class="dom">cnas.ro</span></td><td>Free</td><td>A CNAS contract, which we may not have</td><td><span class="chip c-hold">Check first</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="market">
+      <div class="market-head"><h3>Brazil</h3><span class="tally">Lowest priority &mdash; see the note</span></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Where</th><th>Cost</th><th>Needs</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Doctoralia Brasil</strong><br><span class="dom">doctoralia.com.br</span></td><td>Free tier, paid upgrades</td><td>A profile per doctor &mdash; currently one doctor</td><td><span class="chip c-keep">Medium</span></td></tr>
+            <tr><td><strong>SBIS</strong> &mdash; health informatics society<br><span class="dom">sbis.org.br</span></td><td>Membership</td><td>Relevant if we hold or want SBIS-CFM telemedicine certification</td><td><span class="chip c-keep">Medium</span> Doubles as a trust badge</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note hold">
+        <p><strong>Brazil is worth pausing on.</strong> Searches for &ldquo;Global Health&rdquo; in Brazil are mostly people looking for unrelated Brazilian companies with similar names &mdash; a different clinic system and a telemedicine service called Help Global. Most of what looks like demand there is not demand for us.</p>
+        <p>Brazil also has one doctor on the roster. Directory profiles need doctors to list. Worth revisiting once the Brazilian team is larger.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Wikidata &mdash; free, and half-done already</h2>
+    <p class="lede">Global Health has a Wikidata entry, and it is in better shape than most. Wikidata is the structured database Google and the AI assistants read to work out what a company is, so gaps there show up as gaps in how the brand is understood.</p>
+
+    <p><strong>Already on the entry:</strong> official website, headquarters, founding year, legal name, employee count, the six operating countries, industry, founder, Crunchbase, LinkedIn, four Facebook pages, five Instagram accounts, and a photo.</p>
+
+    <h4>Worth adding</h4>
+    <ul>
+      <li>The YouTube channel &mdash; <span class="mono">@GlobalHealth-y9o</span></li>
+      <li>The TikTok account &mdash; <span class="mono">globalhealth.online</span></li>
+      <li>The company logo, as a separate item from the existing photo</li>
+      <li>The public contact email and phone number</li>
+      <li>The Czech company registration number (IČO) for Global Guest s.r.o.</li>
+    </ul>
+    <p>Anyone can edit Wikidata with a free account. If it would be easier, we can prepare the exact entries for someone to paste in.</p>
+
+    <div class="note warn">
+      <p><strong>Do not try to create a Wikipedia article.</strong> Wikipedia requires substantial coverage in independent publications that Global Health does not have yet. An article created too early gets deleted, and a deletion discussion is a permanent, publicly searchable record. Worth revisiting after real press coverage exists &mdash; which is part of why the Irish tech-press item above is on the list.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Three things not to do</h2>
+    <ol>
+      <li><strong>Do not buy more links.</strong> Whatever the last campaign cost, the ranking has not moved in twelve months. Six of those links are now sitting on pages advertising link-selling services with our domain name in the sales copy.</li>
+      <li><strong>Do not ask the article sites to remove their links.</strong> It gains nothing, and some of them respond by demanding payment.</li>
+      <li><strong>Do not file a disavow file.</strong> Not unless Google Search Console shows a manual action. It is easy to do harm and slow to undo.</li>
+    </ol>
+  </section>
+
+  <footer>
+    <p>Prepared 19 August 2026. Link figures are from a fresh extraction on the same date: rank 43, 520 links from 59 domains, of which 54 were individually itemised by the data provider. Every website address in this document was checked as live on 19 August 2026, with one exception, marked <em>Verify</em>. Search demand figures come from Global Health&rsquo;s own Search Console data.</p>
+    <p>Content and editorial planning is covered separately.</p>
+  </footer>
+
+</div>
+</body>
+</html>
