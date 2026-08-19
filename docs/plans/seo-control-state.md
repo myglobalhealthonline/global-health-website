@@ -5792,6 +5792,26 @@ was deployed, sent or submitted in this pass.**
 heading. The commit is on `origin/Dev-hassaan` only. SEO-009/010/011 therefore
 remain unverified in production; re-run both checks after deploying.
 
+> **Superseded later the same day — `553bc088` has since shipped and SEO-009/010
+> are verified in production.** Googlebot-UA fetch of `/portugal/en`, `<script>`
+> stripped: `Rated by real patients`, `Patient reviews` and the lede each appear
+> once in the served DOM (SEO-009). Certification-logo variants now request
+> `w=640/828` for `livro-de-reclamacoes-red.png` and `w=64/128` for
+> `ordem-dos-medicos.png`, down from `1200/2560` and `160/384` (SEO-010). SEO-011
+> ships in the same commit and the same build; its user-visible effect (English
+> widget labels instead of blanks on `pt`/`es`/`cs`/`ro`) still needs one manual
+> pass with third-party consent accepted, since the widget script is injected
+> client-side after consent and is not observable in the HTML response.
+
+> **SEO-012 closed by the owner, same day.** Both Clinical Director settings were
+> created as recommended — Spain: Dra. María Fernanda Ocampo Mora; Brazil:
+> Dr. Renato Sarmento. A full re-sweep of all 116 English service URLs from the
+> live sitemap now returns a named clinical-reviewer byline on every one:
+> Ireland 23/23, Portugal 23/23, Czechia 15/15, Romania 17/17, Spain 20/20,
+> Brazil 18/18. Zero missing, down from 38. No code change was made, which was
+> the correct call — the rendered byline reads the country's featured doctor, not
+> `Service.reviewerDoctorId`.
+
 **SEO-012 — clinical-reviewer byline, correcting §25's third finding.** §25
 recorded the two missing bylines as unset `Service.reviewerDoctorId` values,
 inferred from a ten-page sample. A full sweep of all 116 English service URLs
