@@ -125,7 +125,18 @@ const envSchema = z.object({
    *  "match anything" — the opposite of a safe default. */
   REKOGNITION_MIN_SIMILARITY: blankAsUnset(z.coerce.number().min(0).max(100).default(70)),
 
-  /** SendGrid (transactional email fallback when Gmail is not configured). */
+  /** SMTP sender (Migadu). Preferred over Gmail: the apex SPF record authorizes
+   *  Migadu and the key1/key2/key3 DKIM CNAMEs are published, so mail sent this
+   *  way aligns on both and passes DMARC. Gmail API sends do not align. */
+  SMTP_HOST: z.string().trim().min(1).optional(),
+  SMTP_PORT: blankAsUnset(z.coerce.number().int().min(1).max(65535).default(465)),
+  SMTP_USER: z.string().trim().min(1).optional(),
+  SMTP_PASSWORD: optionalSecret,
+  /** From header, e.g. `Global Health <globalhealth@myglobalhealth.online>`.
+   *  Must be on the Migadu-hosted domain or SPF alignment breaks. Defaults to SMTP_USER. */
+  SMTP_FROM: z.string().trim().min(1).optional(),
+
+  /** SendGrid (transactional email fallback when SMTP/Gmail are not configured). */
   SENDGRID_API_KEY: z.string().trim().min(1).optional(),
   EMAIL_FROM: z.string().trim().email().optional(),
   /** Gmail API sender (uses GOOGLE_OAUTH_* client + GMAIL_SEND_REFRESH_TOKEN with gmail.send scope). */

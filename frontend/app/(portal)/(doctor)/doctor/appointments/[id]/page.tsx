@@ -50,6 +50,7 @@ import { PatientContextPanel } from "./_components/patient-context-panel";
 import { ReferringRecordPanel } from "./_components/referring-record-panel";
 import { CrossBorderMoreInfoPanel } from "./_components/cross-border-more-info-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { PatientAlertBanners } from "@/components/patient-alerts";
 import { FormSection } from "@/components/FormSection";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -459,6 +460,16 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 }
               >
                 <div className="gh-form-section__span-2">
+                  {/* Same red/amber banners as the patient chart, so an alert
+                      raised on the chart is in front of the doctor while they
+                      write the note — on a past, present, or future
+                      appointment. Read-only: removal (which needs a note)
+                      stays on the chart. */}
+                  <PatientAlertBanners
+                    statusAlert={appointment.statusAlert}
+                    clinicAlert={appointment.clinicAlert}
+                    className="mb-3"
+                  />
                   {pendingMoreInfo ? (
                     <CrossBorderMoreInfoPanel
                       appointmentId={appointment.id}

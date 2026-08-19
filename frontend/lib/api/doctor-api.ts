@@ -505,6 +505,12 @@ export type AppointmentDetailDto = {
    *  above, which is the booking-time snapshot. The card's editable row reads
    *  and writes this one, so a save can't look like it reverted. */
   profileDateOfBirth?: string | null;
+  /** Doctor-only alert banners from the patient chart, repeated on the
+   *  appointment payload so the consultation tab can show them without a
+   *  second (separately audited) profile fetch. Read-only here — they are
+   *  set and removed on the chart. */
+  statusAlert?: string | null;
+  clinicAlert?: string | null;
   /** Número de Utente — the PT SNS number, needed for electronic prescription.
    *  Disclosed in every market (a number already on file is readable by the
    *  treating doctor regardless of whether that market's booking form asks

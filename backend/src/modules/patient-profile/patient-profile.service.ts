@@ -15,6 +15,10 @@ import {
   computePhoneBlindIndex,
   computeNameDobBlindIndex,
 } from "../../lib/blind-index.js";
+import {
+  AlertRemovalRequiresNoteError,
+  normalizeAlert,
+} from "./patient-alert-log.service.js";
 
 /**
  * Compute the nameDob blind index from a (fullName, dob) pair. Returns null
@@ -280,6 +284,9 @@ export type ProfileWriteFieldsWithAlerts = ProfileWriteFields & {
 type WriteOutcome = {
   profile: Awaited<ReturnType<typeof prisma.patientProfile.findUnique>>;
   alertChanges: { statusAlert?: boolean; clinicAlert?: boolean };
+  /** Alert text as it stood before this write, so the caller can log the
+   *  SET/UPDATED history row without re-reading the row. */
+  alertPrevious: { statusAlert: string | null; clinicAlert: string | null };
 };
 
 /**
@@ -353,6 +360,21 @@ export async function applyPatientProfileUpdate(
   ) {
     throw new VerifiedPhoneLockedError();
   }
+  // An alert may be set or reworded here, but never cleared: wiping a
+  // colleague's red banner has to carry a reason, which only
+  // removePatientAlert() collects. Empty-to-empty is not a removal, so a form
+  // that always posts every field still works.
+  for (const field of ["statusAlert", "clinicAlert"] as const) {
+    if (!(field in input)) continue;
+    const next = normalizeAlert(input[field]);
+    if (next === null && normalizeAlert(before?.[field]) !== null) {
+      throw new AlertRemovalRequiresNoteError();
+    }
+    // Normalize "" to null so a blanked-then-retyped alert doesn't leave an
+    // empty string behind that renders as a banner with no text.
+    input = { ...input, [field]: next };
+  }
+
   // Encrypt the government-ID fields before they touch the DB (no-op when
   // PHI_ENCRYPTION_KEY is unset). The returned row is decrypted below.
   // fullName/phone/dateOfBirth are NOT PHI-encrypted, so the plaintext on
@@ -445,7 +467,14 @@ export async function applyPatientProfileUpdate(
         data: { fullName: input.fullName.trim() },
       });
     }
-    return { profile, alertChanges };
+    return {
+      profile,
+      alertChanges,
+      alertPrevious: {
+        statusAlert: before?.statusAlert ?? null,
+        clinicAlert: before?.clinicAlert ?? null,
+      },
+    };
   } catch (error) {
     throw normalizeDbError(error, "Patient profile update temporarily unavailable");
   }

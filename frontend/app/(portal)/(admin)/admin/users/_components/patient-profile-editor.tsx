@@ -6,6 +6,7 @@ import {
   patchAdminPatientProfile,
 } from "@/lib/admin/admin-api";
 import { AdminCard } from "../../_components/atoms";
+import { PatientAlertsCard } from "@/components/patient-alerts";
 
 /**
  * Admin-side editor for the PatientProfile row. Rendered on the user
@@ -130,23 +131,19 @@ export function PatientProfileEditor({
         alerts visible to the assigned doctor on the patient chart.
       </p>
 
+      {/* Live preview of the doctor-facing banners, plus the remove-with-note
+          flow and the chart history. Outside the <form> on purpose: removal
+          posts on its own and must not be swept into a profile save. */}
+      <div className="mb-4">
+        <PatientAlertsCard
+          email={email}
+          apiBase="/api/admin/patients"
+          statusAlert={profile?.statusAlert}
+          clinicAlert={profile?.clinicAlert}
+        />
+      </div>
+
       <form action={saveProfile} className="gh-admin-patient-profile-form grid gap-6">
-        {profile?.statusAlert ? (
-          <p
-            className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-portal-compact font-semibold text-red-800"
-            role="status"
-          >
-            ⚠ Status alert preview: {profile.statusAlert}
-          </p>
-        ) : null}
-        {profile?.clinicAlert ? (
-          <p
-            className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-portal-compact text-amber-900"
-            role="status"
-          >
-            ⓘ Clinic alert preview: {profile.clinicAlert}
-          </p>
-        ) : null}
 
         <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Identity</h4>
@@ -283,9 +280,16 @@ export function PatientProfileEditor({
           <h4 style={sectionTitleStyle}>Clinical alerts</h4>
           <p className="mb-2 text-portal-meta text-[var(--color-text-muted)]">
             Visible to the doctor only (red / yellow banners on the chart).
-            Patient never sees these.
+            Patient never sees these. Clearing a box here is rejected —
+            removing an alert needs a reason, so use Remove above.
           </p>
-          <div className="grid gap-3">
+          {/* Keyed on the stored values so the router.refresh() that follows a
+              removal actually resets these uncontrolled boxes; without it the
+              removed text would sit in the DOM and re-post on the next save. */}
+          <div
+            className="grid gap-3"
+            key={`${profile?.statusAlert ?? ""}|${profile?.clinicAlert ?? ""}`}
+          >
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Status alert (red)</span>
               <textarea

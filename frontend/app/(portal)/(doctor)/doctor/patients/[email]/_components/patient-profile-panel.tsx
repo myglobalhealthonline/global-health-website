@@ -3,6 +3,11 @@
 import { useEffect, useState, useTransition } from "react";
 import { Link2 } from "lucide-react";
 import { FormSection } from "@/components/FormSection";
+import {
+  PatientAlertsCard,
+  type PatientAlertCopy,
+  type PatientAlertType,
+} from "@/components/patient-alerts";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type Profile = {
@@ -68,6 +73,23 @@ export type PatientProfileCopy = {
   sendUploadLink: string;
   uploadLinkSent: string;
   uploadLinkFailed: string;
+  alertStatusLabel: string;
+  alertClinicLabel: string;
+  alertRemove: string;
+  alertRemoveTitle: string;
+  alertRemoveNoteLabel: string;
+  alertRemoveNotePlaceholder: string;
+  alertRemoveConfirm: string;
+  alertRemoveCancel: string;
+  alertRemoveNoteRequired: string;
+  alertRemoveFailed: string;
+  alertHistoryTitle: string;
+  alertHistoryEmpty: string;
+  alertActionSet: string;
+  alertActionUpdated: string;
+  alertActionRemoved: string;
+  alertHistoryNoteLabel: string;
+  alertHistoryPreviousLabel: string;
 };
 
 type PatchPayload = {
@@ -126,6 +148,8 @@ export function PatientProfilePanel({
   // (see comment below), so a field-by-field snapshot diff isn't available —
   // any edit event flips this flag; it's cleared again on a successful save.
   const [dirty, setDirty] = useState(false);
+  /** Bumped on alert removal to remount the uncontrolled alert textareas. */
+  const [alertsKey, setAlertsKey] = useState(0);
   useUnsavedChanges(dirty);
   const markDirty = () => setDirty(true);
 
@@ -156,6 +180,41 @@ export function PatientProfilePanel({
     Number.isFinite(w) && w > 0 && Number.isFinite(h) && h > 0
       ? w / (h * h)
       : null;
+
+  const alertCopy: PatientAlertCopy = {
+    statusAlertLabel: copy.alertStatusLabel,
+    clinicAlertLabel: copy.alertClinicLabel,
+    removeAction: copy.alertRemove,
+    removeTitle: copy.alertRemoveTitle,
+    removeNoteLabel: copy.alertRemoveNoteLabel,
+    removeNotePlaceholder: copy.alertRemoveNotePlaceholder,
+    removeConfirm: copy.alertRemoveConfirm,
+    removeCancel: copy.alertRemoveCancel,
+    removeNoteRequired: copy.alertRemoveNoteRequired,
+    removeFailed: copy.alertRemoveFailed,
+    historyTitle: copy.alertHistoryTitle,
+    historyEmpty: copy.alertHistoryEmpty,
+    actionSet: copy.alertActionSet,
+    actionUpdated: copy.alertActionUpdated,
+    actionRemoved: copy.alertActionRemoved,
+    historyNoteLabel: copy.alertHistoryNoteLabel,
+    historyPreviousLabel: copy.alertHistoryPreviousLabel,
+  };
+
+  /**
+   * A removal clears the field server-side, so drop it from local state AND
+   * remount the alert inputs: they are uncontrolled, and a stale
+   * `defaultValue` would re-post the removed text on the next Save, quietly
+   * resurrecting the alert that was just retired.
+   */
+  function onAlertRemoved(type: PatientAlertType) {
+    setProfile((current) =>
+      current
+        ? { ...current, [type === "STATUS" ? "statusAlert" : "clinicAlert"]: null }
+        : current,
+    );
+    setAlertsKey((k) => k + 1);
+  }
 
   function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -204,8 +263,16 @@ export function PatientProfilePanel({
       addressPostalCode: text("addressPostalCode"),
       addressCountryCode: text("addressCountryCode"),
       preferredPharmacy: text("preferredPharmacy"),
-      statusAlert: text("statusAlert"),
-      clinicAlert: text("clinicAlert"),
+      // Only sent once the profile has loaded: before that every box is
+      // empty, and an empty alert box now means "clear this alert", which the
+      // API rejects without a note. Blanking one deliberately still errors —
+      // with the message pointing at Remove — instead of silently no-opping.
+      ...(profile
+        ? {
+            statusAlert: text("statusAlert"),
+            clinicAlert: text("clinicAlert"),
+          }
+        : {}),
     };
     setSaveMsg(null);
     startTransition(async () => {
@@ -256,22 +323,19 @@ export function PatientProfilePanel({
     <FormSection title={copy.chartTitle} className="gh-doctor-patient-profile-panel">
       <div className="gh-form-section__span-2">
       {profile ? <IdVerificationBadge status={profile.idVerificationStatus} copy={copy} /> : null}
-      {profile?.statusAlert ? (
-        <div
-          role="alert"
-          className="mt-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-portal-compact font-semibold text-red-800"
-        >
-          ⚠ {profile.statusAlert}
-        </div>
-      ) : null}
-      {profile?.clinicAlert ? (
-        <div
-          role="status"
-          className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-portal-compact text-amber-900"
-        >
-          ⓘ {profile.clinicAlert}
-        </div>
-      ) : null}
+      {/* Banners + the remove-with-note flow + the chart-visible history of
+          both. Editing the text stays on the form below; clearing an alert
+          only happens here, because the API demands a reason for it. */}
+      <div className="mt-3">
+        <PatientAlertsCard
+          email={email}
+          apiBase="/api/doctor/patients"
+          statusAlert={profile?.statusAlert}
+          clinicAlert={profile?.clinicAlert}
+          copy={alertCopy}
+          onRemoved={onAlertRemoved}
+        />
+      </div>
 
       <form
         className="gh-doctor-patient-profile-form mt-4 grid gap-5 text-sm"
@@ -445,7 +509,7 @@ export function PatientProfilePanel({
           <p className="-mt-1 mb-2 text-portal-meta text-[var(--portal-muted)]">
             {copy.clinicalAlertsDesc}
           </p>
-          <div className="grid gap-3">
+          <div className="grid gap-3" key={alertsKey}>
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">{copy.statusAlertField}</span>
               <textarea
