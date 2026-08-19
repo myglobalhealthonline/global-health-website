@@ -6,6 +6,7 @@ import {
   computeNameDobBlindIndex,
 } from "../../lib/blind-index.js";
 import { sendPatientMergeNotificationEmail } from "../../lib/email/templates.js";
+import { movePatientEmailReferences } from "../patient-profile/patient-email-move.js";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -186,9 +187,61 @@ export async function mergePatients(params: {
         data: { patientProfileId: primaryPatientId },
       });
 
-      // MedicalNote — patientEmail column stays as-is on the note row.
-      // We do NOT touch patientEmail; it is a historical snapshot.
-      // (No FK from MedicalNote to PatientProfile — joined by email, not id.)
+      // Everything else hanging off the duplicate's User row. Appointment was
+      // handled above; these were missed, and Order in particular meant a
+      // merged patient's unpaid order stayed attached to an account that no
+      // longer represents them — including the address its payment reminders
+      // are sent to.
+      if (duplicateSnapshot.userId && primarySnapshot.userId) {
+        const from = duplicateSnapshot.userId;
+        const to = primarySnapshot.userId;
+
+        await tx.order.updateMany({ where: { userId: from }, data: { userId: to } });
+        await tx.userSubscription.updateMany({ where: { userId: from }, data: { userId: to } });
+        await tx.consultationCreditLedger.updateMany({ where: { userId: from }, data: { userId: to } });
+        await tx.wellnessCreditLedger.updateMany({ where: { userId: from }, data: { userId: to } });
+        await tx.healthTestRedemption.updateMany({ where: { userId: from }, data: { userId: to } });
+        await tx.membershipEnrollment.updateMany({ where: { userId: from }, data: { userId: to } });
+
+        // Cart.userId is unique, so a blind move collides whenever both
+        // accounts have one. The primary's cart is the live one — the
+        // duplicate's is an abandoned basket, not a record we owe the patient.
+        const primaryCart = await tx.cart.findFirst({
+          where: { userId: to },
+          select: { id: true },
+        });
+        if (!primaryCart) {
+          await tx.cart.updateMany({ where: { userId: from }, data: { userId: to } });
+        }
+
+        // The duplicate account must stop being a way in. Its credentials were
+        // mailed to whatever address created it — often the very typo that
+        // caused the duplicate — and after this merge it holds no records of
+        // its own worth signing in for.
+        await tx.passwordResetToken.updateMany({
+          where: { userId: from, usedAt: null },
+          data: { usedAt: new Date() },
+        });
+        await tx.user.update({
+          where: { id: from },
+          data: { isActive: false, tokenVersion: { increment: 1 } },
+        });
+      }
+
+      // The tables that store the patient's address by value rather than by
+      // foreign key — appointments, orders, notes, generated documents,
+      // membership rows. `consultation-history` assembles the chart by
+      // matching `patientEmail` against the profile's address, so notes and
+      // documents left on the duplicate's address would be missing from the
+      // surviving patient's own history — the exact opposite of what a merge
+      // is for. This reverses an earlier decision to treat `patientEmail` as
+      // untouchable history: it reads as history only while the two addresses
+      // belong to two people, and a merge is the assertion that they don't.
+      await movePatientEmailReferences(
+        tx,
+        duplicateSnapshot.email,
+        primarySnapshot.email,
+      );
 
       // PatientConsent
       await tx.patientConsent.updateMany({
@@ -242,6 +295,15 @@ export async function mergePatients(params: {
           mergedByAdminId: adminId,
         },
       });
+    }, {
+      // A merge re-points ~20 tables, each a separate round trip. Against a
+      // hosted database that comfortably exceeds Prisma's 5s default and the
+      // whole merge rolls back with P2028 — the failure is clean, but the
+      // merge can never succeed. Widened to fit the round trips rather than
+      // splitting the work up, because a half-applied merge (records moved,
+      // duplicate still active) is far worse than a slow one.
+      timeout: 30_000,
+      maxWait: 10_000,
     });
 
     // ── 4. Audit both records (fire-and-forget) ────────────────────────────

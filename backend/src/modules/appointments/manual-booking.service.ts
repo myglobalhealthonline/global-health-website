@@ -23,6 +23,10 @@ import {
   applyPatientProfileUpdate,
   upsertPatientProfileByEmail,
 } from "../patient-profile/patient-profile.service.js";
+import {
+  findPatientsMatchingIdentity,
+  type PatientIdentityMatch,
+} from "../patient-profile/patient-identity-match.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import {
   holdConsecutiveSlots,
@@ -213,6 +217,44 @@ export class SlotNotAvailableError extends Error {
   }
 }
 
+/**
+ * The typed email belongs to no account, but the phone number or the
+ * name+date-of-birth already identifies an existing patient — so completing
+ * this booking would create a SECOND record for someone we already have.
+ *
+ * Raised because identity here is keyed on email alone: any address not
+ * currently in use silently mints a new patient, and an admin re-typing a
+ * placeholder address (or fixing a typo in the wrong direction) gets a
+ * duplicate with no warning. That is exactly how GH-2026-001488 was created
+ * alongside GH-2026-001483 on 2026-08-19.
+ *
+ * Carries the matches so the admin can pick the existing patient's address
+ * instead. Overridable via `allowDuplicatePatient` for the genuine case of two
+ * different people sharing a name and birthday.
+ */
+export class DuplicatePatientError extends Error {
+  readonly matches: PatientIdentityMatch[];
+
+  constructor(matches: PatientIdentityMatch[]) {
+    const described = matches
+      .map((m) => {
+        const how = m.matchReasons.includes("phone")
+          ? m.matchReasons.includes("name_dob")
+            ? "same phone and name+date of birth"
+            : "same phone number"
+          : "same name and date of birth";
+        return `${m.globalHealthNumber ?? "no GHN"} (${m.email}) — ${how}`;
+      })
+      .join("; ");
+    super(
+      `That email doesn't match any account, but this patient already exists: ${described}. ` +
+        "Book under their existing email, or confirm you want a separate record.",
+    );
+    this.name = "DuplicatePatientError";
+    this.matches = matches;
+  }
+}
+
 export type MembershipRequestInput = {
   enrollmentId?: string | null;
   override?: { benefitId: string; reason: string } | null;
@@ -287,6 +329,12 @@ export type CreateManualBookingInput = {
     addressPostalCode?: string | null;
     addressCountryCode?: string | null;
   };
+  /** Proceed even though the phone or name+date of birth already identifies an
+   *  existing patient. The admin ticks this only after seeing the matches
+   *  `DuplicatePatientError` reported — two different people genuinely can
+   *  share a name and a birthday. Defaults to false, so the duplicate has to
+   *  be a decision rather than an accident. */
+  allowDuplicatePatient?: boolean;
   serviceId: string;
   /** Required — the assigned doctor whose open slot is being booked. */
   doctorId: string;
@@ -613,6 +661,31 @@ export async function createManualBooking(
       throw new Error(
         "In-person appointments need a clinic or a location address.",
       );
+    }
+  }
+
+  // Duplicate-patient guard. Runs BEFORE the slot is held so a rejected
+  // booking never leaves a reserved slot behind.
+  //
+  // Only when the typed address belongs to nobody: an address already in use
+  // takes the normal upsert path and cannot produce a duplicate. When it
+  // belongs to nobody, `upsertPatientProfileByEmail` will create a fresh
+  // patient — silently, even if the phone number and date of birth already
+  // identify someone we have. Checking here turns that into a question the
+  // admin answers rather than a duplicate discovered weeks later.
+  if (!input.allowDuplicatePatient) {
+    const existingAccount = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+    if (!existingAccount) {
+      const matches = await findPatientsMatchingIdentity({
+        email,
+        fullName,
+        phone: input.patient.phone ?? null,
+        dateOfBirth: parseDateOfBirth(input.patient.dateOfBirth ?? null),
+      });
+      if (matches.length > 0) throw new DuplicatePatientError(matches);
     }
   }
 

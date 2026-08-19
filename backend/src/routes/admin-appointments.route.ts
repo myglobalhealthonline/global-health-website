@@ -38,6 +38,7 @@ import {
   InsuranceNotCoveredError,
   DoctorNotAvailableInCountryError,
   DoctorNotFoundError,
+  DuplicatePatientError,
   MembershipNotAvailableError,
   MembershipWithInsuranceError,
   ServiceNotFoundError,
@@ -135,6 +136,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       const result = await createManualBooking({
         adminUserId,
         patient: body.data.patient,
+        allowDuplicatePatient: body.data.allowDuplicatePatient ?? false,
         serviceId: body.data.serviceId,
         doctorId: body.data.doctorId,
         timeSlotId: body.data.timeSlotId,
@@ -195,6 +197,15 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       // admin re-picks instead of double-booking.
       if (error instanceof SlotNotAvailableError) {
         return reply.status(409).send(errorResponse(error.message));
+      }
+      // The typed email is new but this person already exists. 409 with the
+      // matching records attached, so the form can offer the existing
+      // patient's address instead of quietly minting a second chart. Nothing
+      // was reserved — the check runs before the slot is held.
+      if (error instanceof DuplicatePatientError) {
+        return reply
+          .status(409)
+          .send(errorResponse(error.message, { matches: error.matches }));
       }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

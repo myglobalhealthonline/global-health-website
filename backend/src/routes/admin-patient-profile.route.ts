@@ -386,6 +386,12 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       }
 
       const where: Record<string, unknown> = {};
+      // A merged duplicate is not a patient any more — its records now live on
+      // the surviving profile. `isMerged` was being written by the merge
+      // service and read by nothing, so a completed merge left both copies in
+      // this list and the duplicate stayed bookable. Set as its own key rather
+      // than folded into `where.OR`, which the ID-number filter below owns.
+      where.isMerged = false;
       // Country folder codes are stored lowercase (matching Country.code);
       // match case-insensitively so a stray legacy uppercase row still hits.
       if (requested) where.countryFolderCode = { equals: requested, mode: "insensitive" };
@@ -468,7 +474,10 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           take: 300,
         }),
         prisma.patientProfile.findMany({
-          where: { email: { contains: q, mode: "insensitive" } },
+          // Never offer a merged duplicate as a booking target — picking it
+          // would start building a record on a profile that has already been
+          // folded into someone else.
+          where: { email: { contains: q, mode: "insensitive" }, isMerged: false },
           select: {
             email: true,
             fullName: true,

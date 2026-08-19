@@ -10,6 +10,7 @@ import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { emailSchema, fullNameSchema } from "../validations/shared.schema.js";
 import { applyPatientProfileUpdate } from "../modules/patient-profile/patient-profile.service.js";
+import { movePatientEmailReferences } from "../modules/patient-profile/patient-email-move.js";
 import { issuePasswordResetToken } from "../modules/auth/auth.service.js";
 import { sendEmailChangedEmail } from "../lib/email/templates.js";
 
@@ -335,6 +336,9 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         body.data.isActive !== undefined ||
         body.data.doctorId !== undefined ||
         emailChanging;
+      // Filled inside the transaction, read afterwards for the audit entry so
+      // the log records how much of the record actually moved with the address.
+      let movedEmailRefs: Record<string, number> = {};
       // Count + update run in one SERIALIZABLE transaction so two concurrent
       // demotions of different SUPER_ADMINs can't both pass the count check
       // and leave zero active SUPER_ADMINs (ReadCommitted would still let
@@ -397,6 +401,14 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
               })),
             });
           }
+          // User + PatientProfile were only ever half the record. Appointments,
+          // orders, notes and documents each keep their own copy of the address
+          // and none of them has an FK back here, so they stay on the old one
+          // unless we move them explicitly — which left paid orders mailing
+          // payment links to a dead inbox, and left the admin patient-picker
+          // still offering the old address on the next booking (which is how a
+          // corrected patient ends up duplicated under the freed address).
+          movedEmailRefs = await movePatientEmailReferences(tx, before.email, nextEmail);
         }
         return tx.user.update({
           where: { id: params.data.id },
@@ -510,6 +522,10 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           // Both addresses are already-logged identifiers on this route, and
           // an email move is exactly the event an auditor needs to retrace.
           ...(emailChanging ? { emailFrom: before?.email, emailTo: updated.email } : {}),
+          // Per-table counts of the stored copies that moved with the address,
+          // so an auditor can tell a clean correction from one that landed
+          // while rows were still being written under the old email.
+          ...(emailChanging ? { movedEmailRefs } : {}),
         },
         request,
       });
@@ -596,6 +612,89 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not reset password"));
     }
+    },
+  );
+
+  // Re-send the "we corrected your email address" notice to a patient whose
+  // address is already right in the database. The PATCH above only mails that
+  // notice as a side-effect of the address actually changing, so once the
+  // correction is saved there is no way to tell the patient about it again —
+  // which matters because the first attempt can silently fail to land (a
+  // misaligned DMARC transport, a spam folder) and the patient is left with an
+  // account they don't know exists.
+  app.post(
+    "/api/admin/users/:id/resend-email-correction",
+    { config: { rateLimit: { max: 5, timeWindow: "1 hour" } } },
+    async (request, reply) => {
+      const params = idParamSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply.status(400).send(errorResponse("Invalid user id"));
+      }
+      const sessionActor = resolveAdminSessionActor(request);
+      try {
+        const user = await prisma.user.findUnique({
+          where: { id: params.data.id },
+          select: { id: true, email: true, fullName: true, role: true, isActive: true },
+        });
+        if (!user) {
+          return reply.status(404).send(errorResponse("User not found"));
+        }
+        if (user.role !== UserRole.PATIENT) {
+          return reply
+            .status(400)
+            .send(errorResponse("This notice is only for patient accounts"));
+        }
+        if (!user.isActive) {
+          return reply
+            .status(400)
+            .send(errorResponse("Cannot notify a deactivated account"));
+        }
+        // Mint fresh credentials rather than re-sending old ones: we cannot
+        // know the previous temp password (only its hash was kept), and any
+        // link from the earlier attempt may already be expired.
+        const tempPassword = randomBytes(9).toString("base64url");
+        const tempPasswordHash = await bcrypt.hash(tempPassword, 12);
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            passwordHash: tempPasswordHash,
+            mustChangePassword: true,
+            // The new credentials supersede the old ones, so any session or
+            // outstanding link riding on them must stop working now.
+            tokenVersion: { increment: 1 },
+          },
+        });
+        await prisma.passwordResetToken.updateMany({
+          where: { userId: user.id, usedAt: null },
+          data: { usedAt: new Date() },
+        });
+        const inviteToken = await issuePasswordResetToken(user.id, {
+          ttlMinutes: 7 * 24 * 60,
+          isInvite: true,
+        });
+        await sendEmailChangedEmail({
+          to: user.email,
+          fullName: user.fullName,
+          tempPassword,
+          token: inviteToken,
+        });
+        await recordCriticalAudit({
+          actorUserId: sessionActor?.userId ?? null,
+          actorRole: sessionActor?.role ?? "ADMIN",
+          action: "USER_UPDATED",
+          entityType: "User",
+          entityId: user.id,
+          metadata: { emailCorrectionResent: true, email: user.email },
+          request,
+        });
+        return okResponse({ sent: true, to: user.email }, "Notice sent");
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error, "Could not resend email-correction notice");
+        return reply.status(500).send(errorResponse("Could not send the notice"));
+      }
     },
   );
 };

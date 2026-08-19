@@ -110,10 +110,25 @@ export async function createFollowUpBooking(
       amountCents: true,
       clinicId: true,
       locationAddress: true,
+      // The account this appointment belongs to. Its address is the live one;
+      // `source.email` is only a snapshot of what was typed at booking time.
+      user: { select: { email: true } },
     },
   });
   if (!source) throw new FollowUpSourceNotFoundError();
   if (!source.serviceId) throw new FollowUpSourceNotBillableError();
+
+  // Book the follow-up against the patient's CURRENT address, not the one
+  // frozen onto the source appointment. Downstream identity is keyed on email,
+  // so a stale snapshot doesn't just mislabel the row — it fails to find the
+  // account and mints a second patient for someone we already have.
+  //
+  // That is exactly how GH-2026-001488 was created on 2026-08-19: an admin
+  // corrected the address at 09:57:21, the appointment row kept the old one,
+  // and the doctor booked a follow-up 26 seconds later that read the stale
+  // value and created a whole new patient. Appointment emails now travel with
+  // a correction too, so both halves of that failure are closed.
+  const patientEmail = source.user?.email ?? source.email;
 
   const mode = input.consultationMode ?? source.consultationMode;
   if (mode === "IN_PERSON" && !source.clinicId && !source.locationAddress?.trim()) {
@@ -123,12 +138,19 @@ export async function createFollowUpBooking(
   return createManualBooking({
     adminUserId: input.actorUserId,
     patient: {
-      email: source.email,
+      email: patientEmail,
       fullName: source.fullName,
       phone: source.phone,
       // ISO date — createManualBooking slices the first 10 chars back off.
       dateOfBirth: source.dateOfBirth?.toISOString() ?? null,
     },
+    // The duplicate-patient guard stays ON here. This path is not the safe one
+    // it looks like: it created the 2026-08-19 duplicate, and it is the path
+    // where nobody is watching, because the doctor never types an address and
+    // so never sees which one is being used. With the live address resolved
+    // above the guard is normally a no-op — the account exists, so the check
+    // short-circuits — and it only speaks up when the follow-up would
+    // genuinely start a second chart.
     serviceId: source.serviceId,
     doctorId: input.doctorId,
     timeSlotId: input.timeSlotId,

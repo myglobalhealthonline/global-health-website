@@ -30,6 +30,7 @@ import {
   ServiceNotFoundError,
   ServicePriceMissingError,
   SlotNotAvailableError,
+  DuplicatePatientError,
 } from "../modules/appointments/manual-booking.service.js";
 import {
   partnerAvailabilityQuerySchema,
@@ -239,6 +240,30 @@ const partnerApiRoute: FastifyPluginAsync = async (app) => {
         // request is a replay. Re-read availability and pick another slot.
         if (error instanceof SlotNotAvailableError) {
           return reply.status(409).send(errorResponse(error.message));
+        }
+        // The caller gave an address we've never seen for someone whose phone
+        // (or name + date of birth) already identifies a patient. Booking on
+        // would start a second chart for one person.
+        //
+        // Unlike the admin and doctor routes, the matched records are NOT
+        // returned: the partner path is driven by whoever is on the phone, and
+        // a mistyped digit can match a stranger — handing back that stranger's
+        // email and name would be a disclosure to a caller who has proved
+        // nothing. Only the Global Health Number goes back, which is enough for
+        // a human to find the record and not enough to identify anyone.
+        if (error instanceof DuplicatePatientError) {
+          return reply.status(409).send(
+            errorResponse(
+              "A patient with these details already exists under a different email address. " +
+                "Confirm the address on file before booking.",
+              {
+                matches: error.matches.map((m) => ({
+                  globalHealthNumber: m.globalHealthNumber,
+                  matchReasons: m.matchReasons,
+                })),
+              },
+            ),
+          );
         }
         if (
           error instanceof ServiceNotFoundError ||

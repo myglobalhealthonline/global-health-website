@@ -240,6 +240,11 @@ export const createManualAppointmentBodySchema = z
         addressCountryCode: z.string().trim().max(8).optional().nullable(),
       })
       .strict(),
+    /** Re-submit with this set to book anyway after the server reported that
+     *  the phone or name+date of birth already belongs to an existing patient.
+     *  Off by default so a duplicate record is always a deliberate answer to
+     *  that warning rather than something nobody was shown. */
+    allowDuplicatePatient: z.boolean().optional(),
     serviceId: z.string().trim().min(1).max(60),
     // Doctor is now required: a manual booking always claims one of the
     // doctor's real open slots, so there is always an assigned doctor.

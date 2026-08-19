@@ -32,6 +32,7 @@ import {
   ServiceNotFoundError,
   ServicePriceMissingError,
   SlotNotAvailableError,
+  DuplicatePatientError,
 } from "../modules/appointments/manual-booking.service.js";
 import { notifyPatientDoctorReady } from "../modules/appointments/notify-doctor-ready.service.js";
 
@@ -570,6 +571,22 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         // Race loser / stale picker — the doctor re-picks an open slot.
         if (error instanceof SlotNotAvailableError) {
           return reply.status(409).send(errorResponse(error.message));
+        }
+        // Following up would start a SECOND chart for this patient. Normally
+        // unreachable — the follow-up resolves the patient's live address, so
+        // the account exists and the check short-circuits — but it fires if the
+        // source appointment never had an account behind it. Doctors can't fix
+        // patient identity from the portal, so this points at admin rather than
+        // offering an override.
+        if (error instanceof DuplicatePatientError) {
+          return reply
+            .status(409)
+            .send(
+              errorResponse(
+                "This patient already exists under a different email address, so booking a follow-up here would create a second record. Ask an administrator to merge the records first.",
+                { matches: error.matches },
+              ),
+            );
         }
         // The source's service/doctor can disappear or be unassigned between
         // the source lookup and the booking (admin edit, deactivation). All

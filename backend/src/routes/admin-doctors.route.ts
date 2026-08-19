@@ -16,6 +16,7 @@ import {
   type DoctorDeleteBlockers,
 } from "../modules/doctors/doctors.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { movePatientEmailReferences } from "../modules/patient-profile/patient-email-move.js";
 import { issuePasswordResetToken } from "../modules/auth/auth.service.js";
 import { sendDoctorInviteEmail } from "../lib/email/templates.js";
 import { recordAudit, recordCriticalAudit } from "../modules/audit/audit.service.js";
@@ -401,6 +402,12 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
                 })),
               });
             }
+            // Same reason the profile moves above: a doctor who is also a
+            // patient here has appointments, orders, notes and documents that
+            // each store the address by value with no FK back to User. Left
+            // behind, their own chart and payment emails stay pinned to an
+            // address that no longer reaches them.
+            await movePatientEmailReferences(tx, previousEmail, email);
             await tx.user.update({
               where: { id: linked.id },
               data: {
