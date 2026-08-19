@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PatientAlertBanners } from "@/components/patient-alerts";
 
 type SafetyProfile = {
   allergies: string[];
@@ -61,22 +62,11 @@ export function PatientSafetyStrip({
       aria-label={copy.safetyTitle}
       className="gh-card gh-doctor-safety-strip mb-4 p-4"
     >
-      {profile?.statusAlert ? (
-        <div
-          role="alert"
-          className="mb-2 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-portal-compact font-semibold text-red-800"
-        >
-          ⚠ {profile.statusAlert}
-        </div>
-      ) : null}
-      {profile?.clinicAlert ? (
-        <div
-          role="status"
-          className="mb-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-portal-compact text-amber-900"
-        >
-          ⓘ {profile.clinicAlert}
-        </div>
-      ) : null}
+      <PatientAlertBanners
+        statusAlert={profile?.statusAlert}
+        clinicAlert={profile?.clinicAlert}
+        className="mb-2"
+      />
       <div className="gh-doctor-safety-strip__grid grid gap-3 sm:grid-cols-3">
         <SafetyItem label={copy.safetyAllergies} value={list(profile?.allergies)} />
         <SafetyItem

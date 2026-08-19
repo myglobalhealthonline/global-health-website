@@ -2438,6 +2438,9 @@ model PatientProfile {
   contactChangeLogs         PatientContactChangeLog[]
   medicalAccessRequests     MedicalAccessRequest[]
   deletionRequests          DataDeletionRequest[]
+  /// Append-only history of statusAlert/clinicAlert changes, including the
+  /// mandatory note captured when an alert is removed.
+  alertLogs                 PatientAlertLog[]
   createdAt                 DateTime                     @default(now())
   updatedAt                 DateTime                     @updatedAt
 
@@ -2506,6 +2509,49 @@ model GeneratedDocument {
 
   @@index([appointmentId, documentType])
   @@index([appointmentId, sentToPatient])
+}
+
+/// Which banner an alert-log row is about — mirrors the two
+/// `PatientProfile` alert columns.
+enum PatientAlertType {
+  STATUS
+  CLINIC
+}
+
+/// SET      — went from empty to a value.
+/// UPDATED  — text changed while staying non-empty.
+/// REMOVED  — cleared. Only ever written by the remove-with-note endpoints,
+///            which reject a blank `note`; a plain PATCH that blanks a
+///            non-empty alert is rejected (AlertRemovalRequiresNoteError).
+enum PatientAlertAction {
+  SET
+  UPDATED
+  REMOVED
+}
+
+/// Chart-visible history of the doctor-only alert banners. Distinct from the
+/// PATIENT_ALERT_UPDATED audit event: that one is a compliance trail keyed to
+/// the actor, this one is part of the clinical record the doctor reads, so it
+/// keeps the previous text and the removal rationale.
+model PatientAlertLog {
+  id               String             @id @default(cuid())
+  patientProfileId String
+  patientProfile   PatientProfile     @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  alertType        PatientAlertType
+  action           PatientAlertAction
+  /// Alert text before the change (null on SET).
+  previousValue    String?
+  /// Alert text after the change (null on REMOVED).
+  newValue         String?
+  /// Why the alert was removed. Required on REMOVED, null otherwise.
+  note             String?
+  actorUserId      String?
+  /// DOCTOR / ADMIN — free-form so a future SYSTEM writer needs no migration.
+  actorRole        String
+  actorName        String?
+  createdAt        DateTime           @default(now())
+
+  @@index([patientProfileId, createdAt])
 }
 
 /// Free-text clinical note per appointment (not a PDF; no review/send).

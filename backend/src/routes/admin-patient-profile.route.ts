@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
+import type { PatientAlertType } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
 import { prisma } from "../db/prisma.js";
@@ -17,6 +18,13 @@ import { absoluteSiteUrl } from "../lib/email/send-email.js";
 import { emailSchema, fullNameSchema } from "../validations/shared.schema.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import {
+  AlertNotFoundError,
+  AlertRemovalRequiresNoteError,
+  listPatientAlertLog,
+  recordAlertChanges,
+  removePatientAlert,
+} from "../modules/patient-profile/patient-alert-log.service.js";
+import {
   listNationalityDocuments,
   adminUpdateNationalityVerification,
   NationalityNotFoundError,
@@ -28,6 +36,15 @@ import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
+
+/** `:type` path segment → PatientAlertType. */
+const adminAlertTypeParam = z
+  .enum(["status", "clinic"])
+  .transform((value): PatientAlertType => (value === "status" ? "STATUS" : "CLINIC"));
+
+const adminRemoveAlertSchema = z.object({
+  note: z.string().trim().min(3).max(500),
+});
 
 const adminPatchSchema = z
   .object({
@@ -279,7 +296,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       try {
         const { dateOfBirth, ...rest } = body.data;
         const actor = resolveAdminSessionActor(request);
-        const { profile, alertChanges } = await applyPatientProfileUpdate(
+        const { profile, alertChanges, alertPrevious } = await applyPatientProfileUpdate(
           email,
           {
             ...rest,
@@ -304,6 +321,23 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           metadata: { email, changedFields: Object.keys(body.data) },
           request,
         }).catch(() => {});
+        if ((alertChanges.statusAlert || alertChanges.clinicAlert) && profile) {
+          // Chart-visible history, same rows the doctor portal reads. REMOVED
+          // rows only ever come from the remove endpoint below.
+          void recordAlertChanges({
+            patientProfileId: profile.id,
+            actor: {
+              userId: actor?.userId ?? null,
+              role: actor?.role ?? "ADMIN",
+              name: null,
+            },
+            before: alertPrevious,
+            after: {
+              statusAlert: profile.statusAlert,
+              clinicAlert: profile.clinicAlert,
+            },
+          });
+        }
         if (alertChanges.statusAlert || alertChanges.clinicAlert) {
           recordAudit({
             actorUserId: actor?.userId ?? null,
@@ -324,6 +358,9 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           profile: serializeProfile(profile, { includeAlerts: true }),
         });
       } catch (error) {
+        if (error instanceof AlertRemovalRequiresNoteError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
         if (error instanceof PricingPlanCountryMismatchError) {
           return reply.status(400).send(errorResponse(error.message));
         }
@@ -975,6 +1012,119 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       } catch (error) {
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not load payment history"));
+      }
+    },
+  );
+  // ─── Alert history + removal (mirrors the doctor portal) ───────────────────
+
+  app.get<{ Params: { email: string } }>(
+    "/api/admin/patients/:email/alert-log",
+    async (request, reply) => {
+      let email: string;
+      try {
+        email = decodeURIComponent(request.params.email).trim().toLowerCase();
+      } catch {
+        return reply.status(400).send(errorResponse("Invalid email param"));
+      }
+      try {
+        const profile = await prisma.patientProfile.findUnique({
+          where: { email },
+          select: { id: true },
+        });
+        if (!profile) return okResponse({ entries: [] });
+        return okResponse({ entries: await listPatientAlertLog(profile.id) });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load alert history"));
+      }
+    },
+  );
+
+  app.post<{ Params: { email: string; type: string } }>(
+    "/api/admin/patients/:email/alerts/:type/remove",
+    async (request, reply) => {
+      let email: string;
+      try {
+        email = decodeURIComponent(request.params.email).trim().toLowerCase();
+      } catch {
+        return reply.status(400).send(errorResponse("Invalid email param"));
+      }
+      const alertType = adminAlertTypeParam.safeParse(request.params.type);
+      if (!alertType.success) {
+        return reply.status(400).send(errorResponse("Unknown alert type"));
+      }
+      const body = adminRemoveAlertSchema.safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("A removal note is required", body.error.flatten()));
+      }
+      const actor = resolveAdminSessionActor(request);
+      const existing = await prisma.patientProfile.findUnique({
+        where: { email },
+        select: { id: true },
+      });
+      if (!existing) {
+        return reply.status(404).send(errorResponse("No alert to remove"));
+      }
+      try {
+        await guardMedicalRead(
+          request,
+          { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
+          {
+            patientProfileId: existing.id,
+            resourceType: "SENSITIVE_PROFILE",
+            accessAction: "UPDATED",
+          },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+        }
+        throw guardError;
+      }
+
+      try {
+        const { profile, previousValue } = await removePatientAlert({
+          email,
+          alertType: alertType.data,
+          note: body.data.note,
+          actor: {
+            userId: actor?.userId ?? null,
+            role: actor?.role ?? "ADMIN",
+            name: null,
+          },
+        });
+        recordAudit({
+          actorUserId: actor?.userId ?? null,
+          actorRole: actor?.role ?? "ADMIN",
+          action: "PATIENT_ALERT_UPDATED",
+          entityType: "PatientProfile",
+          entityId: profile.id,
+          // Values stay out of the audit log (they are clinical free-text);
+          // the text + note live on PatientAlertLog.
+          metadata: { email, removed: alertType.data, hadValue: previousValue !== null },
+          request,
+        }).catch(() => {});
+        return okResponse({
+          profile: serializeProfile(profile, { includeAlerts: true }),
+          entries: await listPatientAlertLog(profile.id),
+        });
+      } catch (error) {
+        if (error instanceof AlertRemovalRequiresNoteError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof AlertNotFoundError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not remove alert"));
       }
     },
   );

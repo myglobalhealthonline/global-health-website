@@ -188,6 +188,13 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             select: {
               id: true,
               globalHealthNumber: true,
+              // Doctor-only alert banners, rendered at the top of the
+              // consultation tab with the same red/amber UI as the patient
+              // chart. Read-only here: setting or clearing one still happens
+              // on the chart, so the workspace needs no extra endpoint and no
+              // second SENSITIVE_PROFILE fetch just to show the banner.
+              statusAlert: true,
+              clinicAlert: true,
               // Postal address is already doctor-visible (it survives
               // `stripIdentityFields` on /api/doctor/patients/:email/profile);
               // surfacing it here just saves a hop to the patient chart.
@@ -304,6 +311,8 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             // Canonical DOB, separate from the booking-time `dateOfBirth`
             // above: the card's editable row writes and reads this one.
             profileDateOfBirth: patientProfile?.dateOfBirth?.toISOString() ?? null,
+            statusAlert: patientProfile?.statusAlert ?? null,
+            clinicAlert: patientProfile?.clinicAlert ?? null,
             utenteNumber,
             taxIdNumber,
             nationalIdNumber,

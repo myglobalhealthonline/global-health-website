@@ -1,9 +1,17 @@
 import sgMail from "@sendgrid/mail";
 import { env } from "../../config/env.js";
 import { isGmailConfigured, sendViaGmail } from "./gmail-send.js";
+import { isSmtpConfigured, sendViaSmtp } from "./smtp-send.js";
 
 /**
- * Transactional email — Gmail API (preferred) or SendGrid, else dev console log.
+ * Transactional email — SMTP (preferred), Gmail API, or SendGrid, else dev
+ * console log.
+ *
+ * SMTP is first because it is the only DMARC-aligned path for
+ * myglobalhealth.online: the apex SPF record authorizes Migadu and Migadu's
+ * DKIM keys are published, so both mechanisms align with the From domain. The
+ * Gmail API signs as `…gappssmtp.com`, which authenticates but does not align.
+ * See smtp-send.ts for the variables.
  *
  * Gmail setup (consultation document attachments, etc.):
  *   GMAIL_SEND_FROM=globalhealth@myglobalhealth.online
@@ -28,7 +36,9 @@ function ensureSendGridInitialized() {
 
 export function isEmailConfigured(): boolean {
   return (
-    isGmailConfigured() || Boolean(env.SENDGRID_API_KEY && env.EMAIL_FROM)
+    isSmtpConfigured() ||
+    isGmailConfigured() ||
+    Boolean(env.SENDGRID_API_KEY && env.EMAIL_FROM)
   );
 }
 
@@ -48,10 +58,11 @@ export type SendEmailInput = {
 };
 
 export type SendEmailResult =
+  | { ok: true; id: string | null; mode: "smtp" }
   | { ok: true; id: string | null; mode: "gmail" }
   | { ok: true; id: string | null; mode: "sendgrid" }
   | { ok: true; id: null; mode: "log"; reason: string }
-  | { ok: false; mode: "gmail" | "sendgrid" | "log"; message: string };
+  | { ok: false; mode: "smtp" | "gmail" | "sendgrid" | "log"; message: string };
 
 /** Mask an email so logs never carry a full patient address. */
 function maskEmail(email: string): string {
@@ -92,6 +103,14 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     emailCaptureHook(input);
     return { ok: true, id: null, mode: "log", reason: "captured by test hook" };
   }
+  if (isSmtpConfigured()) {
+    const result = await sendViaSmtp(input);
+    if (result.ok) {
+      return { ok: true, id: result.id, mode: "smtp" };
+    }
+    return { ok: false, mode: "smtp", message: result.message };
+  }
+
   if (isGmailConfigured()) {
     const result = await sendViaGmail(input);
     if (result.ok) {
@@ -108,7 +127,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
       input,
       hasSendGrid
         ? "EMAIL_FROM missing — logged instead of sending"
-        : "No Gmail or SendGrid configured — logged instead of sending",
+        : "No SMTP, Gmail or SendGrid configured — logged instead of sending",
     );
   }
 
