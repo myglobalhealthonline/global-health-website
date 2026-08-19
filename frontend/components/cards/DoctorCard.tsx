@@ -188,14 +188,18 @@ export function DoctorCard({
       }}
     >
       {/* Whole-card overlay link — routes to profile. CTAs below sit
-          above this via z-index so their own anchor handlers fire. */}
+          above this via z-index so their own anchor handlers fire.
+          sr-only text, not aria-label: this is the FIRST link to the profile
+          in source order, and crawlers read text content only — an aria-label
+          alone left it as an anchor-text-less internal link. */}
       {profileHref ? (
         <Link
           href={profileHref}
-          aria-label={viewProfileAriaLabel ?? `View profile for ${name}`}
           className="absolute inset-0 z-0 rounded-[var(--radius-card)] focus:outline-none"
           tabIndex={-1}
-        />
+        >
+          <span className="sr-only">{viewProfileAriaLabel ?? `View profile for ${name}`}</span>
+        </Link>
       ) : null}
 
       {/* ── Portrait ── */}

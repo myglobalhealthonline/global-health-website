@@ -42,7 +42,6 @@ export function CartIcon({
   return (
     <Link
       href={href}
-      aria-label={`Cart (${count} item${count === 1 ? "" : "s"})`}
       className={`relative -mx-1 inline-flex size-11 items-center justify-center rounded-full ${
         isDark
           ? "text-white hover:bg-white/12"
@@ -50,6 +49,9 @@ export function CartIcon({
       } ${className ?? ""}`}
       style={style}
     >
+      {/* sr-only, not aria-label — an icon-only anchor otherwise ships as an
+          internal link with no anchor text. */}
+      <span className="sr-only">{`Cart (${count} item${count === 1 ? "" : "s"})`}</span>
       <ShoppingCart className="size-4" aria-hidden />
       {count > 0 ? (
         <span

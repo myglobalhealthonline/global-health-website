@@ -399,10 +399,14 @@ export function ServiceTile({
   const overlay = (
     <Link
       href={overlayHref}
-      aria-label={twoButton ? i18n.learnMoreAria.replace("{title}", s.title) : s.title}
       className="absolute inset-0 z-[var(--z-base)] rounded-[var(--radius-card)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]"
       tabIndex={twoButton ? -1 : 0}
-    />
+    >
+      {/* sr-only, not aria-label — crawlers read text content only. */}
+      <span className="sr-only">
+        {twoButton ? i18n.learnMoreAria.replace("{title}", s.title) : s.title}
+      </span>
+    </Link>
   );
 
   /* ── Featured card — horizontal layout: image left | content right ── */

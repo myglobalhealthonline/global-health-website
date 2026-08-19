@@ -131,10 +131,12 @@ export function ServiceCard({
     ) : (
       <Link
         href={overlayHref}
-        aria-label={`${learnLabel}: ${title}`}
         className="absolute inset-0 z-[1] rounded-[var(--radius-card)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]"
         tabIndex={twoButton ? -1 : 0}
-      />
+      >
+        {/* sr-only, not aria-label — crawlers read text content only. */}
+        <span className="sr-only">{`${learnLabel}: ${title}`}</span>
+      </Link>
     )
   ) : null;
 

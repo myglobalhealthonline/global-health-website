@@ -41,9 +41,11 @@ export function HeaderAuthActions({
           lime dot is the signature live-status accent. */}
       <Link
         href={authed ? "/account/notifications" : "/login"}
-        aria-label={a11y.notifications}
         className="gh-focus-on-dark relative hidden size-11 items-center justify-center rounded-full text-white/85 transition-colors duration-200 hover:bg-white/12 hover:text-white xl:inline-flex"
       >
+        {/* sr-only, not aria-label — icon-only anchors otherwise ship as
+            internal links with no anchor text. */}
+        <span className="sr-only">{a11y.notifications}</span>
         <Bell className="size-4" strokeWidth={2} aria-hidden />
         <span
           aria-hidden
@@ -61,7 +63,13 @@ export function HeaderAuthActions({
           aria-label={a11y.yourAccount}
           className="gh-focus-on-dark group hidden size-11 items-center justify-center rounded-full transition-transform duration-200 active:scale-95 xl:inline-flex"
         >
-          <span className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white/50 transition-[background-color,border-color] duration-200 group-hover:border-[var(--color-brand-accent)] group-hover:bg-white/[0.16]">
+          {/* The glyph is decorative — the link’s only real text is the
+              sr-only label, so the anchor never reads as just "•". */}
+          <span className="sr-only">{a11y.yourAccount}</span>
+          <span
+            aria-hidden
+            className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white/50 transition-[background-color,border-color] duration-200 group-hover:border-[var(--color-brand-accent)] group-hover:bg-white/[0.16]"
+          >
             •
           </span>
         </Link>
@@ -93,7 +101,11 @@ export function HeaderAuthActions({
         >
           {/* 44px hit area; 36px visual circle so the tight lg header row
               keeps its previous width. */}
-          <span className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white transition-[background-color,border-color] duration-200 group-hover:border-[var(--color-brand-accent)] group-hover:bg-white/[0.16]">
+          <span className="sr-only">{a11y.yourAccount}</span>
+          <span
+            aria-hidden
+            className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white transition-[background-color,border-color] duration-200 group-hover:border-[var(--color-brand-accent)] group-hover:bg-white/[0.16]"
+          >
             {initialFromEmail(user.email)}
           </span>
         </Link>
