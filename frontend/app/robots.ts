@@ -20,6 +20,32 @@ import { getSiteUrl } from "@/lib/seo/site-url";
  */
 const DISALLOW = ["/admin", "/admin/*", "/account/*", "/api/"];
 
+/**
+ * Read-only public API prefixes that must stay crawlable despite the blanket
+ * `/api/` disallow. Longest-match wins in Google's robots parser, so these
+ * `Allow` lines beat `Disallow: /api/`.
+ *
+ * - `/api/media/` serves EVERY CMS image (doctor photos, service art). Blocking
+ *   it kept the whole library out of Google Images and made Googlebot render
+ *   the doctor pages with broken portraits.
+ * - `/api/og` is the `og:image` endpoint referenced by every page's metadata.
+ * - The two availability endpoints are the anonymous reads the rendered
+ *   booking sections make client-side; without them Googlebot renders those
+ *   sections empty.
+ *
+ * Deliberately NOT allowed: the rest of `/api/public/*` (brazil-consent,
+ * reviews/rate, patient-upload, cross-border-rx-consent). Those are
+ * token-gated consent/upload surfaces reached from emailed links, carry no
+ * indexable content, and there is no upside to inviting a crawler in.
+ */
+const ALLOW = [
+  "/",
+  "/api/media/",
+  "/api/og",
+  "/api/public/gp-availability",
+  "/api/public/booking-availability",
+];
+
 /** AI answer-engine crawlers (AEO) — explicitly allowed so the site is
  *  eligible for ChatGPT search, Claude, Gemini/AI Overviews, and Perplexity
  *  citations. Same portal/auth disallows as everyone else. */
@@ -40,8 +66,8 @@ const AI_CRAWLERS = [
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: DISALLOW },
-      ...AI_CRAWLERS.map((userAgent) => ({ userAgent, allow: "/", disallow: DISALLOW })),
+      { userAgent: "*", allow: ALLOW, disallow: DISALLOW },
+      ...AI_CRAWLERS.map((userAgent) => ({ userAgent, allow: ALLOW, disallow: DISALLOW })),
     ],
     sitemap: `${getSiteUrl()}/sitemap.xml`,
   };

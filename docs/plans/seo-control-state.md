@@ -297,7 +297,7 @@ or verification URL:
 | cz | `dr-michael-nytra` | bio (0 chars) |
 | cz | `dr-gabriele-felici` | bio (0 chars) |
 | ie | `dr-arooj-iqbal-lodhi` | bio (0 chars) |
-| ie | `roney-carli` | bio only (86 chars, needs 120+) — registration waived, see below |
+| ie | `roney-carli` | **nothing — closed 2026-08-19**, full bio supplied by the clinic and applied in all six Ireland locales; registration waived |
 | ie | `priscila-figueiredo` | **nothing — closed 2026-08-19**, registration waived |
 | ro | `dr-robert-gabriel-brindus` | bio (0 chars) |
 | ro | `dr-alexandra-palaga` | bio (13 chars) |
@@ -315,8 +315,12 @@ by loosening the rule: `editorialChecklist.nonPhysician: true`, applied to both 
 production by `backend/scripts/applied/patch-ie-non-physician-practitioners.ts`.
 It waives **exactly one** requirement — the registration — and is never inferred
 from the free-text title. Bio depth, name, title, blocked-copy and `readyToIndex`
-all still apply, which is why Priscila now renders `index, follow` and Roney does
-not (86-char bio). The same flag also makes `physicianJsonLd` emit a plain
+all still apply — Roney was still held back by an 86-char bio until the clinic
+supplied the full text on 2026-08-19 (applied in all six Ireland locales with
+per-locale titles and SEO, `patch-roney-carli-profile.ts` +
+`patch-roney-carli-seo.ts`; his stored `seoDescription` had also been claiming an
+online video consultation he has no bookable service for). Both now render
+`index, follow` in production. The same flag also makes `physicianJsonLd` emit a plain
 `Person` node instead of `Physician`, and drop `medicalSpecialty`: claiming a
 medical type for a non-medical practitioner is a false credential claim, and this
 is a public page about a real person. Frontend change is **local, not yet

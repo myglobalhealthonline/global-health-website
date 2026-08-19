@@ -30,7 +30,7 @@ describe("robots.txt policy", () => {
   it("allows the public site for the wildcard agent", () => {
     const wildcard = rulesArray().find((r) => r.userAgent === "*");
     expect(wildcard).toBeDefined();
-    expect(wildcard?.allow).toBe("/");
+    expect(wildcard?.allow).toContain("/");
   });
 
   it("never disallows the whole site", () => {
@@ -39,6 +39,34 @@ describe("robots.txt policy", () => {
     expect(allDisallows()).not.toContain("/");
     for (const rule of rulesArray()) {
       expect(rule.allow).not.toBe(undefined);
+    }
+  });
+
+  it("does not open the token-gated public API surfaces", () => {
+    // brazil-consent / reviews-rate / patient-upload / cross-border-rx-consent
+    // are reached from emailed token links. No indexable content, so they stay
+    // under the blanket `Disallow: /api/`.
+    for (const rule of rulesArray()) {
+      for (const allowed of rule.allow as string[]) {
+        expect(allowed).not.toBe("/api/");
+        expect(allowed).not.toBe("/api/public/");
+      }
+    }
+  });
+
+  it("keeps the public read-only API prefixes crawlable", () => {
+    // `/api/media/` carries every CMS image and `/api/og` every og:image; the
+    // blanket `Disallow: /api/` hid both from Googlebot until 2026-08-19.
+    for (const rule of rulesArray()) {
+      const allow = rule.allow as string[];
+      for (const path of [
+        "/api/media/",
+        "/api/og",
+        "/api/public/gp-availability",
+        "/api/public/booking-availability",
+      ]) {
+        expect(allow, `${rule.userAgent} must allow ${path}`).toContain(path);
+      }
     }
   });
 
@@ -132,7 +160,7 @@ describe("robots.txt policy", () => {
     const expected = [...(wildcard?.disallow as string[])].sort();
     for (const rule of rulesArray()) {
       expect([...(rule.disallow as string[])].sort()).toEqual(expected);
-      expect(rule.allow).toBe("/");
+      expect(rule.allow).toContain("/");
     }
   });
 });
