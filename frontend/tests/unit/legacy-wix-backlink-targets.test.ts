@@ -56,7 +56,7 @@ describe("legacy Wix paths that carry backlinks", () => {
 
   it("catches unlisted /product-page slugs instead of 404ing them", async () => {
     const all = await rules();
-    const catchAll = all.findIndex((r) => r.source === "/product-page/:slug");
+    const catchAll = all.findIndex((r) => r.source.startsWith("/product-page/:slug"));
     const lastAlias = all.reduce(
       (acc, r, i) => (r.source.startsWith("/product-page/") && !r.source.includes(":") ? i : acc),
       -1,
@@ -66,6 +66,17 @@ describe("legacy Wix paths that carry backlinks", () => {
     // First match wins, so the exact aliases have to be declared above it.
     expect(lastAlias).toBeGreaterThan(-1);
     expect(catchAll).toBeGreaterThan(lastAlias);
+  });
+
+  it("lets retired products keep answering 410 rather than redirecting", async () => {
+    // A catch-all over a legacy Wix prefix silently converts a 410 into a 301
+    // and keeps the URL alive in the index. Both /product-page catch-alls must
+    // therefore carry the gone-exclusion matcher, not a bare `:slug`.
+    const catchAlls = (await rules()).filter((r) => /^(\/:locale\([^)]*\))?\/product-page\/:slug/.test(r.source));
+    expect(catchAlls).toHaveLength(2);
+    for (const rule of catchAlls) {
+      expect(rule.source, rule.source).toContain("beauty-focus-multibeauty");
+    }
   });
 
   it("rescues the paths that were returning 404", async () => {
