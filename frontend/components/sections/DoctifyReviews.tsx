@@ -9,7 +9,7 @@ import {
   writeConsent,
 } from "@/components/compliance/cookie-consent";
 import { useConsent } from "@/components/compliance/use-consent";
-import { SectionSeam } from "@/components/ui/SectionSeam";
+import { ReviewsSectionShell } from "@/components/sections/ReviewsSectionShell";
 
 /**
  * Doctify review widgets — the site's single, global MyGlobalHealth review
@@ -46,6 +46,29 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
 
 const TENANT = "athena-ie";
 const SLUG = "global-health-ireland";
+
+/**
+ * Doctify ships widget chrome for `en` and `de` only.
+ *
+ * Any other code — `pt`, `es`, `cs`, `ro`, and regional forms like `pt-PT` —
+ * does not fall back to English: Doctify returns the label spans EMPTY, so
+ * "Excellent", "based on", "patient reviews" and "Source: Doctify" all
+ * disappear and the widget renders a bare rating number with no words around
+ * it. Verified 2026-08-19 by fetching `get-script` for eleven codes and
+ * diffing the returned markup; `en` and `de` were the only two that came back
+ * populated ("Excellent"/"Ausgezeichnet", "based on"/"Basierend auf").
+ *
+ * So map to the nearest supported language instead of forwarding the page
+ * locale blindly. This affects ONLY the third-party widget's own chrome — the
+ * section heading and lede around it come from our locale bundle and stay in
+ * the page's language, as does the iframe's accessible `title`.
+ */
+const DOCTIFY_LANGUAGES = new Set(["en", "de"]);
+
+export function doctifyLanguage(language: string): string {
+  const base = language.toLowerCase().split("-")[0];
+  return DOCTIFY_LANGUAGES.has(base) ? base : "en";
+}
 
 /** Doctify's widget scripts hijack the single global `window.onresize`
  *  (a plain assignment, not `addEventListener`) to reposition/redraw their
@@ -167,7 +190,7 @@ export function DoctifyRatingStrip({
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
-    `&dotsArrowsColor=${onDark ? "FFFFFF" : "1D4B36"}&language=${language}` +
+    `&dotsArrowsColor=${onDark ? "FFFFFF" : "1D4B36"}&language=${doctifyLanguage(language)}` +
     `&profileType=practice&slugs=${SLUG}&tenantId=${TENANT}` +
     `&theme=${onDark ? "ivory" : "transparent"}&widgetName=average-carousel-rating-widget`;
 
@@ -223,7 +246,7 @@ export function DoctifyWidget({
     const script = document.createElement("script");
     script.src =
       `https://www.doctify.com/get-script?widget_container_id=${id}` +
-      `&${VARIANT_QUERY[variant]}&tenant=${TENANT}&language=${language}` +
+      `&${VARIANT_QUERY[variant]}&tenant=${TENANT}&language=${doctifyLanguage(language)}` +
       `&profileType=practice&slugs=${SLUG}&background=${theme === "dark" ? "ivory" : "transparent"}`;
     script.async = true;
     script.onload = () => setLoaded(true);
@@ -271,6 +294,28 @@ export function DoctifyWidget({
 
 /* ── Full section wrapper — gh2 forest / ivory treatments ── */
 
+export function DoctifyReviewsBody({
+  theme = "ivory",
+  variant = "carousel",
+  language = "en",
+}: {
+  theme?: "ivory" | "forest";
+  variant?: DoctifyWidgetVariant;
+  language?: string;
+}) {
+  const dark = theme === "forest";
+  return dark ? (
+    <div className="gh2-glass-forest overflow-hidden rounded-[var(--radius-card)] p-4 md:p-6">
+      <DoctifyRatingStrip onDark language={language} />
+    </div>
+  ) : (
+    <DoctifyWidget variant={variant} language={language} theme="light" />
+  );
+}
+
+/** Whole section, widget included. `DoctifyReviewsSectionLazy` renders the
+ *  shell on the server and defers only `DoctifyReviewsBody` — prefer it at
+ *  page level so the copy ships in the HTML response. */
 export function DoctifyReviewsSection({
   theme = "ivory",
   variant = "carousel",
@@ -288,67 +333,17 @@ export function DoctifyReviewsSection({
   headlineAccent?: string;
   body?: string;
 }) {
-  const dark = theme === "forest";
-  // `eyebrow`/`body` used to default to English string literals. No caller
-  // passes either, so every non-en page rendered an English eyebrow and lede
-  // above a translated headline — resolve them from the locale instead.
-  const common = getCommonLocale(resolveLocale({ explicitLocale: language }));
-  const eyebrowText = eyebrow ?? common.a11y.patientReviews;
-  const bodyText = body ?? common.doctify.body;
   return (
-    <section
-      className={
-        dark
-          ? "gh-inline-clamp-section relative gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
-          : "gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-      }
+    <ReviewsSectionShell
+      theme={theme}
+      language={language}
+      eyebrow={eyebrow}
+      headline={headline}
+      headlineAccent={headlineAccent}
+      body={body}
     >
-      <SectionSeam theme={dark ? "dark" : "light"} />
-      <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-        <div className="mb-10 md:mb-12">
-          <span
-            className={dark
-              ? "text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]"
-              : "text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]"}
-          >
-            {eyebrowText}
-          </span>
-          <h2
-            className={dark
-              ? "mt-3 max-w-[24ch] text-[clamp(1.9rem,3.5vw+0.4rem,3rem)] font-extrabold leading-[1.04] tracking-[-0.03em] text-white/92"
-              : "mt-3 max-w-[24ch] text-[clamp(1.9rem,3.5vw+0.4rem,3rem)] font-extrabold leading-[1.04] tracking-[-0.03em] text-[var(--color-text-primary)]"}
-          >
-            {headline}{" "}
-            <span
-              className={dark ? "text-[var(--color-brand-accent)]" : "text-[var(--color-brand-primary)]"}
-            >
-              {headlineAccent}
-            </span>
-          </h2>
-          <p
-            className={dark
-              ? "mt-4 max-w-[54ch] text-[15px] leading-relaxed text-[var(--gh2-on-dark-muted)]"
-              : "mt-4 max-w-[54ch] text-[15px] leading-relaxed text-[var(--color-text-muted)]"}
-          >
-            {bodyText}
-          </p>
-        </div>
-
-        {dark ? (
-          <div
-            className="gh2-glass-forest overflow-hidden rounded-[var(--radius-card)] p-4 md:p-6"
-          >
-            <DoctifyRatingStrip onDark language={language} />
-          </div>
-        ) : (
-          <DoctifyWidget
-            variant={variant}
-            language={language}
-            theme={dark ? "dark" : "light"}
-          />
-        )}
-      </div>
-    </section>
+      <DoctifyReviewsBody theme={theme} variant={variant} language={language} />
+    </ReviewsSectionShell>
   );
 }
 
@@ -386,7 +381,7 @@ export function DoctifyInlineRating({
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
-    `&dotsArrowsColor=FFFFFF&language=${language}` +
+    `&dotsArrowsColor=FFFFFF&language=${doctifyLanguage(language)}` +
     `&profileType=practice&slugs=${SLUG}&tenantId=${TENANT}` +
     `&theme=transparent&widgetName=average-carousel-rating-widget`;
 

@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, type ComponentProps } from "react";
-import type { DoctifyReviewsSection, DoctifyWidget } from "./DoctifyReviews";
+import type { DoctifyReviewsBody, DoctifyWidget } from "./DoctifyReviews";
+import { ReviewsSectionShell } from "./ReviewsSectionShell";
 
 /**
  * `ssr: false` is only legal inside a Client Component. This wrapper isolates
@@ -10,13 +11,13 @@ import type { DoctifyReviewsSection, DoctifyWidget } from "./DoctifyReviews";
  * component instead of building their own `dynamic(...)` per file.
  */
 
-const DoctifyReviewsSectionImpl = dynamic(
-  () => import("./DoctifyReviews").then((m) => m.DoctifyReviewsSection),
+const DoctifyReviewsBodyImpl = dynamic(
+  () => import("./DoctifyReviews").then((m) => m.DoctifyReviewsBody),
   {
     ssr: false,
     loading: () => <div aria-hidden className="min-h-[420px] w-full" />,
   },
-) as (props: ComponentProps<typeof DoctifyReviewsSection>) => React.JSX.Element;
+) as (props: ComponentProps<typeof DoctifyReviewsBody>) => React.JSX.Element;
 
 const DoctifyWidgetImpl = dynamic(
   () => import("./DoctifyReviews").then((m) => m.DoctifyWidget),
@@ -62,12 +63,41 @@ function useNearViewport(rootMargin = "300px") {
   return { ref, near };
 }
 
-export function DoctifyReviewsSectionLazy(
-  props: ComponentProps<typeof DoctifyReviewsSection>,
-): React.JSX.Element {
+/**
+ * Section copy renders on the server; only the third-party widget waits for
+ * the viewport. Deferring the whole section (as this did until 2026-08-19)
+ * kept a translated h2 + lede out of the HTML response on eleven page types,
+ * so crawlers and AI scrapers saw an empty 420px div where the site's patient
+ * proof should be.
+ */
+export function DoctifyReviewsSectionLazy({
+  theme,
+  variant,
+  language,
+  eyebrow,
+  headline,
+  headlineAccent,
+  body,
+}: Omit<ComponentProps<typeof ReviewsSectionShell>, "children"> & {
+  variant?: ComponentProps<typeof DoctifyReviewsBody>["variant"];
+}): React.JSX.Element {
   const { ref, near } = useNearViewport();
-  if (!near) return <div ref={ref} aria-hidden className="min-h-[420px] w-full" />;
-  return <DoctifyReviewsSectionImpl {...props} />;
+  return (
+    <ReviewsSectionShell
+      theme={theme}
+      language={language}
+      eyebrow={eyebrow}
+      headline={headline}
+      headlineAccent={headlineAccent}
+      body={body}
+    >
+      {near ? (
+        <DoctifyReviewsBodyImpl theme={theme} variant={variant} language={language} />
+      ) : (
+        <div ref={ref} aria-hidden className="min-h-[420px] w-full" />
+      )}
+    </ReviewsSectionShell>
+  );
 }
 
 export function DoctifyWidgetLazy(

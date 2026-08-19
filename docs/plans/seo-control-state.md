@@ -220,6 +220,9 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-006 | Performance baseline | Performance | **CLOSED — healthy** | 2026-07-10 | No regression signal | n/a | Re-measure only after a substantial sitewide change |
 | SEO-007 | Shared CSS/JS payload investigation | Performance | **CLOSED — no change required** | 2026-07 | n/a | n/a | None |
 | SEO-008 | `brokenPages: 666` in the backlinks API | Data quality | **FALSE POSITIVE** | 2026-08-12 | Figure derives from a stale Wix-era crawl of the old site | n/a | Ignore permanently |
+| SEO-009 | Patient-reviews section absent from the HTML response | Content / GEO | **IMPLEMENTED LOCALLY — AWAITING DEPLOY** | 2026-08-19 | `DoctifyReviewsSectionLazy` loaded the entire section through `dynamic(..., { ssr: false })`, so its translated eyebrow, `<h2>` and lede existed only inside the RSC flight payload — the served DOM carried a blank 420px div on all eleven page types that render it, in six countries × six locales. Fixed by splitting the chrome into a server-rendered `ReviewsSectionShell`; only the third-party Doctify widget still defers (consent + viewport gated, unchanged). Verified against a local server on the production API: the copy now appears in the DOM outside `<script>`. Regression test added to `DoctifyReviews.render.test.tsx` | Google renders JS and may have seen the section post-render; HTML-only scanners and AI crawlers saw nothing | Deploy, then re-fetch a country home with Googlebot UA and confirm the `<h2>` is in the raw HTML |
+| SEO-010 | Certification-logo `width`/`height` did not match the real assets | Performance / CLS | **IMPLEMENTED LOCALLY — AWAITING DEPLOY** | 2026-08-19 | Six of eleven raster logos in `frontend/lib/content/country-certification-logos.ts` declared an aspect ratio the file does not have (worst: `cfm.webp` declared 260×92 for a 600×400 image), so the pre-load reserved box was the wrong shape. All eleven now declare the true ratio at the 72px display height, which also drops `livro-de-reclamacoes-red.png` from a 1200/2560 srcset to 640/828 and `ordem-dos-medicos.png`'s 2x variant from 14.3 KB to 6.7 KB. Note `livro-de-reclamacoes-red.png` encodes *larger* at 640w (9.6 KB) than at 1200w (7.7 KB) — Next's AVIF output is not monotonic in width for this flat-colour asset, so that one file costs ~2 KB more; kept anyway because the declared ratio is now correct | n/a | Deploy; no follow-up probe needed |
+| SEO-011 | Doctify widget rendered wordless on four of six locales | Content / trust UI | **IMPLEMENTED LOCALLY — AWAITING DEPLOY** | 2026-08-19 | The widget URLs forwarded the page locale straight to Doctify. Doctify ships widget chrome for `en` and `de` only, and does **not** fall back to English for anything else — it returns the label spans empty, so on `pt`, `es`, `cs` and `ro` pages the rating rendered with no "Excellent", no "based on … patient reviews" and no "Source: Doctify", just a bare number. Established by fetching Doctify's `get-script` for eleven language codes (`en`, `pt`, `es`, `cs`, `de`, `ro`, `fr`, `it`, `nl`, `en-GB`, `pt-PT`) and diffing the returned markup with the per-request CSS hash normalised away: only `en` and `de` came back populated. `doctifyLanguage()` now maps any unsupported locale to `en`, resolving regional forms on their base subtag. Section copy and the iframe's accessible `title` still use the page locale | n/a | Deploy, then load a `/portugal/pt` page, accept third-party consent and confirm the widget shows its English labels rather than blanks |
 
 ### Metadata
 
@@ -5722,5 +5725,56 @@ content during prerendering). A built-app HTTP pass verified 7 representative di
 308s and 7 direct 410s; every 410 had no
 `Location` header, including the encoded Unicode and parenthesized URL cases. No
 production deploy was performed in this pass.
+
+---
+
+## 25. EXT-AUDIT-001 — third-party audit triage and content-visibility fix (2026-08-19)
+
+**Trigger.** The owner supplied three external reports — a diib scorecard, a
+generic "Issues to fix"/"Recommendations" audit of `/portugal/en`, and a Website
+Carbon rating — plus a reviewer summary. Every claim was checked against live
+production and the repository before any work started.
+
+**False positives, verified and not to be reopened without new evidence.**
+
+| External claim | What production actually serves (2026-08-19) |
+| --- | --- |
+| "Add Alt Attributes to all images" | 49 `<img>` elements on `/portugal/en`, none missing `alt` |
+| "Implement an Analytics Tracking Tool" / "Install a Facebook Pixel" | GTM, Clarity and the Meta Pixel are all present but consent-gated; the scanner declined cookies and therefore saw none of them |
+| "Add an SPF Mail Record" | `v=spf1 include:spf.migadu.com -all` is published |
+| "Increase length of Title Tag" / "Make greater use of Header Tags" | Title is 53 characters; the page carries one `<h1>` and ten `<h2>` |
+| "Serve resources from a CDN" | Railway's edge already serves the site; `/_next/static/*` is `public, max-age=31536000, immutable` |
+| "Add Business Address and Phone Number" / "Add Local Business Schema" | `MedicalOrganization` with `PostalAddress`, `ContactPoint`, Wikidata and fifteen regulator `sameAs` entries is emitted. `LocalBusiness` is the wrong type — there is no walk-in premises |
+| "Eliminate render-blocking resources" (HIGH) | Two stylesheets totalling 39 KB brotli. Mobile speed 1.1 s against a 2.7 s industry average, Core Web Vitals 96/100, Performance grade A+. No architectural change is justified |
+| "Create and link your Facebook Page / X Profile" | `sameAs` already lists five Instagram accounts, LinkedIn, YouTube, TikTok and Wikidata. Off-site business decisions with negligible SEO value |
+
+**Real findings.** Three, none of them the ones the reports ranked highest.
+
+1. *Email authentication* — DMARC is `p=none`, and raising it would break
+   transactional mail: SPF authorises only Migadu with a hard fail, DKIM
+   publishes only Migadu selectors, and `backend/src/lib/email/send-email.ts`
+   sends through the Gmail API or SendGrid. Both paths currently fail SPF and
+   DKIM alignment. Owner has assigned this elsewhere; recorded here so the
+   dependency is visible.
+2. *Off-site authority* — 57 referring domains, backlink rank 43, with `wix.to`
+   still the largest single referrer. This is the ranking ceiling and no code
+   change addresses it. Tracked in the growth roadmap, not the ledger.
+3. *Content credibility* — the reviewer's "few cited sources, minimal patient
+   proof" reading was partly a rendering artefact: the entire patient-reviews
+   section was absent from the served HTML (SEO-009 above). Clinical-reviewer
+   bylines were sampled across ten English service pages and eight carried a
+   named, credentialed reviewer, so the E-E-A-T scaffolding is present and
+   mostly populated; `ClinicalReviewer` deliberately renders nothing when no
+   real reviewer is assigned, so the two gaps are unset data, not a defect.
+
+**Implemented in this pass:** SEO-009 and SEO-010. Frontend `tsc --noEmit`
+clean; `components/sections` suite 5/5 including a new SSR regression test.
+No deploy performed.
+
+**Not implemented, and why.** Adding home-page links into `/health/*` was
+considered for "limited editorial depth" and rejected: those pages are
+deliberately excluded from navigation and service listings under the
+internal-linking spec's Rule 6. Editorial volume and source citation remain
+owner/clinician work, not code.
 
 ---
