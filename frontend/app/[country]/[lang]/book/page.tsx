@@ -1036,7 +1036,7 @@ function ServiceChoiceCard({
         <div className="relative min-h-[150px] overflow-hidden">
           <Image
             src={service.imageSrc}
-            alt={`${service.name} online consultation`}
+            alt={service.name}
             fill
             sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
             className="object-cover"

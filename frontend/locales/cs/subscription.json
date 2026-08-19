@@ -85,7 +85,8 @@
     "archSecurePaymentsTitle": "Bezpečné platby",
     "archSecurePaymentsSubtitle": "Chráněno Stripe",
     "archLicensedTitle": "Licencovaní lékaři",
-    "archLicensedSubtitleTemplate": "Registrováno v {country}"
+    "archLicensedSubtitleTemplate": "Registrováno v {country}",
+    "archImageAltTemplate": "Lékař prochází plány zdravotního předplatného v {country}"
   },
   "subscribe": {
     "title": "Potvrďte své členství",

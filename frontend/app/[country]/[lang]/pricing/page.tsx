@@ -284,6 +284,8 @@ type PlansArchPanelI18n = {
   archSecurePaymentsSubtitle: string;
   archLicensedTitle: string;
   archLicensedSubtitleTemplate: string;
+  /** "{country}" placeholder. Alt text for the hero collage image. */
+  archImageAltTemplate: string;
 };
 
 function PlansArchPanel({ countryName, i18n }: { countryName: string; i18n: PlansArchPanelI18n }) {
@@ -291,7 +293,7 @@ function PlansArchPanel({ countryName, i18n }: { countryName: string; i18n: Plan
     <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage
         src="/images/stock/plans.webp"
-        alt={`Doctor reviewing health subscription plans in ${countryName}`}
+        alt={i18n.archImageAltTemplate.replace("{country}", countryName)}
       />
 
       {/* Floating — Monthly care */}

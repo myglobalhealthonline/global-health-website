@@ -426,7 +426,7 @@ export function ServiceTile({
             <>
               <Image
                 src={tileImageSrc}
-                alt={`${s.title} telemedicine consultation`}
+                alt={s.title}
                 fill
                 sizes="(min-width:1024px) 40vw, 100vw"
                 unoptimized={isUnoptimizedImageSrc(tileImageSrc)}
@@ -570,7 +570,7 @@ export function ServiceTile({
           >
             <Image
               src={tileImageSrc}
-              alt={`${s.title} telemedicine consultation`}
+              alt={s.title}
               fill
               sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
               unoptimized={isUnoptimizedImageSrc(tileImageSrc)}

@@ -85,7 +85,8 @@
     "archSecurePaymentsTitle": "Plăți securizate",
     "archSecurePaymentsSubtitle": "Protejat de Stripe",
     "archLicensedTitle": "Medici licențiați",
-    "archLicensedSubtitleTemplate": "Înregistrați în {country}"
+    "archLicensedSubtitleTemplate": "Înregistrați în {country}",
+    "archImageAltTemplate": "Medic care analizează planurile de abonament medical în {country}"
   },
   "subscribe": {
     "title": "Confirmați abonamentul",

@@ -85,7 +85,8 @@
     "archSecurePaymentsTitle": "Pagos seguros",
     "archSecurePaymentsSubtitle": "Protegido por Stripe",
     "archLicensedTitle": "Médicos colegiados",
-    "archLicensedSubtitleTemplate": "Colegiados en {country}"
+    "archLicensedSubtitleTemplate": "Colegiados en {country}",
+    "archImageAltTemplate": "Médico revisando planes de suscripción de salud en {country}"
   },
   "subscribe": {
     "title": "Confirme su membresía",

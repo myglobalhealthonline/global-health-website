@@ -85,7 +85,8 @@
     "archSecurePaymentsTitle": "Pagamentos seguros",
     "archSecurePaymentsSubtitle": "Protegido pela Stripe",
     "archLicensedTitle": "Médicos licenciados",
-    "archLicensedSubtitleTemplate": "Registados em {country}"
+    "archLicensedSubtitleTemplate": "Registados em {country}",
+    "archImageAltTemplate": "Médico a rever planos de subscrição de saúde em {country}"
   },
   "subscribe": {
     "title": "Confirme a sua adesão",

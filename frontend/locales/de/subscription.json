@@ -85,7 +85,8 @@
     "archSecurePaymentsTitle": "Sichere Zahlungen",
     "archSecurePaymentsSubtitle": "Durch Stripe geschützt",
     "archLicensedTitle": "Approbierte Ärzte",
-    "archLicensedSubtitleTemplate": "Registriert in {country}"
+    "archLicensedSubtitleTemplate": "Registriert in {country}",
+    "archImageAltTemplate": "Arzt prüft Gesundheits-Abonnements in {country}"
   },
   "subscribe": {
     "title": "Bestätigen Sie Ihre Mitgliedschaft",
