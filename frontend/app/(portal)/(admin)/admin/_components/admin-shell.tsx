@@ -8,6 +8,7 @@ import {
   applyCrumbTitles,
   isEmailSegment,
   isIdSegment,
+  isPagelessPrefix,
   PII_SAFE_CRUMB_LABEL,
   shortIdLabel,
   type Crumb,
@@ -331,7 +332,10 @@ function useBreadcrumbs(
         : isIdSegment(segments[i])
           ? shortIdLabel(segments[i])
           : humanizeSegment(segments[i], countries);
-      crumbs.push({ label, href: isRecord ? null : acc, isRecord, segment: segments[i] });
+      // Grouping prefixes such as /memberships/<planId>/levels have no page
+      // of their own either — plain text, same as a record segment.
+      const linkable = !isRecord && !isPagelessPrefix(acc);
+      crumbs.push({ label, href: linkable ? acc : null, isRecord, segment: segments[i] });
     }
     return crumbs;
   }, [pathname, countries, activeCountry]);

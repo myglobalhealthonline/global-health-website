@@ -1,6 +1,7 @@
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { isPagelessPrefix } from "@/lib/breadcrumb-utils";
 
 /**
  * The portal shells build breadcrumbs from the pathname, linking every path
@@ -8,8 +9,9 @@ import { describe, expect, it } from "vitest";
  * that's how "/admin/plans/<id>" (only .../edit exists) became a dead link.
  *
  * The shells now render record-id segments as plain text, so a gap is only
- * harmless when the missing prefix ends in a dynamic segment. Any OTHER gap
- * is a real dead crumb.
+ * harmless when the missing prefix ends in a dynamic segment, or when the
+ * prefix is listed as pageless in lib/breadcrumb-utils (the shells render
+ * those as plain text too). Any OTHER gap is a real dead crumb.
  */
 const PORTAL_ROOT = join(process.cwd(), "app", "(portal)");
 const GROUP_RE = /^\(.*\)$/;
@@ -45,6 +47,7 @@ describe("portal breadcrumb routes", () => {
         const prefix = `/${parts.slice(0, i).join("/")}`;
         if (routes.has(prefix)) continue;
         if (DYNAMIC_RE.test(parts[i - 1])) continue; // rendered as plain text, not a link
+        if (isPagelessPrefix(prefix)) continue; // ditto — a grouping prefix the shells never link
         dead.push(`${prefix} (from ${route})`);
       }
     }

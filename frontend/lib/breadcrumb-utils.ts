@@ -84,3 +84,33 @@ export function applyCrumbTitles(crumbs: Crumb[], titles: Record<string, string>
     return crumb;
   });
 }
+
+/**
+ * Path prefixes that group routes without having a page of their own, in
+ * normalized form (see `crumbRouteKey`). Their listing already lives on the
+ * parent page — plan levels on /admin/memberships/<planId>, bookable
+ * corporate services on /account/corporate — so an index page would only
+ * duplicate it. Both shells render these as plain text, since linking them
+ * 404s; tests/unit/portal-breadcrumb-routes.test.ts reads the same set.
+ */
+const PAGELESS_PREFIXES = new Set([
+  "/admin/memberships/:id/levels",
+  "/account/corporate/book",
+]);
+
+const DYNAMIC_SEGMENT_RE = /^\[.*\]$/;
+
+/** Path with record ids (and `[param]` route slots) collapsed to ":id". */
+export function crumbRouteKey(path: string): string {
+  return path
+    .split("/")
+    .map((seg) =>
+      isIdSegment(seg) || isEmailSegment(seg) || DYNAMIC_SEGMENT_RE.test(seg) ? ":id" : seg,
+    )
+    .join("/");
+}
+
+/** True if `path` is a grouping prefix with no page behind it. */
+export function isPagelessPrefix(path: string): boolean {
+  return PAGELESS_PREFIXES.has(crumbRouteKey(path));
+}
